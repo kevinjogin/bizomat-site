@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 951 tools with unique ids and every previously published id kept', () => {
+test('register: 958 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 951);
+  assert.equal(ids.length, 958);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 757 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 764 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 757);
+  assert.equal(ids.length, 764);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -5885,6 +5885,191 @@ test('sixtieth-pass tools give pass and fail verdicts and reject bad inputs', ()
   assert.ok(slow.checks.some((c: { status: string }) => c.status === 'fail'), 'spindle speed above the machine fails');
   const cases: Array<[string, Inputs]> = [
     ['worm-cutter-profile-correction', { Dw: 40 }], ['industrial-worm-gearing-design', { C: 50 }], ['worm-hob-design', { A: 30 }], ['worm-hob-design', { fl: 'helical', Nrel: 9 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+// Sixty-first handbook pass (handbook84): tools from open pages of the page ledger.
+// Expected values are the handbook's own tables and examples (compound indexing Table 1b and the 127-division example, the
+// Heim factor table and hammer example, the hydraulic press capacity table, the silent chain hub and hob tables, the helical
+// gear example) and independent closed forms.
+const IN84 = 25.4;
+
+test('compound indexing reproduces the handbook Table 1b movements and the 127-division example', () => {
+  const chk = (N: number, w: number, a: number, A: number, b: number, B: number, R: number, sign = 'plus') =>
+    engine.run('compound-indexing', { mode: 'check', N, w, a, A, b, B, R, sign }).values;
+  // Approximate movements: [N, whole, a, A, b, B, revolutions, precise divisions, diameter at which error = 0.001]
+  const rows: Array<[number, number, number, number, number, number, number, number, number]> = [
+    [51, 7, 41, 47, 37, 49, 11, 51.00005, 322.55], [53, 0, 26, 29, 19, 31, 2, 52.99926, 22.89], [53, 5, 43, 47, 43, 49, 9, 53.00006, 263.9],
+    [167, 0, 6, 37, 39, 49, 4, 167.00058, 92.34], [199, 0, 26, 37, 13, 43, 5, 198.99937, 101.29], [209, 0, 9, 41, 8, 49, 2, 208.9987, 51.16],
+    [219, 0, 24, 39, 14, 47, 5, 218.99642, 19.45], [242, 0, 4, 37, 19, 49, 3, 242.00222, 34.63], [244, 0, 36, 39, 11, 49, 7, 243.99453, 14.19],
+  ];
+  for (const [N, w, a, A, b, B, R, Np, D] of rows) {
+    const x = chk(N, w, a, A, b, B, R);
+    near(x.Np, Np, 0.000006, `${N}: precise divisions`);
+    near(x.measure, D, 0.006, `${N}: diameter at which error = 0.001`);
+    assert.equal(x.exact, 0);
+  }
+  // Exact movements from the table.
+  for (const [N, a, A, b, B] of [[51, 10, 15, 2, 17], [52, 30, 39, 0, 15], [54, 20, 27, 0, 15], [152, 5, 19, 0, 15], [160, 4, 16, 0, 15]]) {
+    const x = chk(N, 0, a, A, b, B, 1);
+    assert.equal(x.exact, 1, `${N}: exact`);
+    near(x.Np, N, 1e-12, `${N}: divisions`);
+    near(x.err, 0, 1e-12, `${N}: no error`);
+  }
+  // Example: 127 teeth, 16 DP (about 7.9 in), first approximation 42/47 + 2/39 over 3 revolutions.
+  const ex = engine.run('compound-indexing', { mode: 'check', N: 127, w: 0, a: 42, A: 47, b: 2, B: 39, R: 3, dia: 7.9 * IN84 }).values;
+  near(ex.Np, 126.99769, 0.000006, '127: precise divisions 126.99769');
+  near(ex.measure, 17.5, 0.006, '127: diameter at which error = 0.001 is 17.50');
+  near(ex.err / IN84, 0.00045, 0.000005, '127: error at 7.9 in about 0.00045 in');
+  near(ex.err / IN84, (7.9 / ex.measure) * 0.001, 1e-12, 'error = (diameter ÷ measure) × 0.001');
+});
+
+test('compound indexing search finds simple, exact compound and the best approximate movements', () => {
+  const s35 = engine.run('compound-indexing', { N: 35 });
+  assert.equal(s35.text, 'SIMPLE INDEXING IS EXACT');
+  assert.deepEqual([s35.values.w, s35.values.a, s35.values.A], [1, 3, 21], '35 divisions: 1 turn and 3 holes in 21 (fewest holes)');
+  const s51 = engine.run('compound-indexing', { N: 51 });
+  assert.equal(s51.text, 'COMPOUND INDEXING IS EXACT');
+  const v = s51.values;
+  near(v.w + v.a / v.A + v.sign * v.b / v.B, 40 / 51, 1e-12, '51: movement = 40 ÷ 51 turns');
+  const cin = engine.run('compound-indexing', { N: 51, plates: 'cin' });
+  assert.equal(cin.text, 'SIMPLE INDEXING IS EXACT', 'Cincinnati side 2 has a 51-hole circle');
+  // 53 has no exact movement on the Brown & Sharpe plates; the search does at least as well as the table at each revolution count.
+  const b2 = engine.run('compound-indexing', { N: 53, Rmax: 2, tol: 0.000001 });
+  assert.equal(b2.text, 'NO MOVEMENT WITHIN TOLERANCE');
+  assert.ok(b2.values.measure >= 22.89 - 0.006, '53 within 2 revolutions: at least the table’s 22.89');
+  const b13 = engine.run('compound-indexing', { N: 53, Rmax: 13, tol: 0.000001 }).values;
+  assert.ok(b13.measure >= 263.9 - 0.006, '53 within 13 revolutions: at least the table’s 263.90');
+  const c127 = engine.run('compound-indexing', { N: 127, tol: 0.000001 }).values;
+  assert.ok(c127.measure >= 218.98 - 0.01, '127: at least the table’s best 218.98');
+  // The recommended approximation is the fewest revolutions within tolerance.
+  const loose = engine.run('compound-indexing', { N: 127, tol: 1 });
+  assert.equal(loose.text, 'APPROXIMATE INDEXING WITHIN TOLERANCE');
+  assert.ok(loose.values.err <= 1);
+  assert.equal(engine.run('compound-indexing', { mode: 'check', N: 52, w: 0, a: 30, A: 39, b: 0, B: 15, R: 2 }).text, 'MOVEMENT REPEATS DIVISIONS');
+});
+
+test('Unified thread gauge sizes follow the ANSI B1.2 Table 5 formulas', () => {
+  const v = engine.run('unified-thread-gauge-limits').values; // 1/4-20 UNC-2A/2B
+  const p = 1 / 20, Hs = 0.866025 * p;
+  near(v.H, Hs, 1e-12, 'H = 0.866025 p');
+  near(v.goRingPD, 0.2164, 1e-12, 'GO ring PD = max PD');
+  near(v.goRingMinor, 0.2164 - Hs / 2, 1e-12, 'GO ring minor = max PD − H/2');
+  near(v.ngRingMinor, 0.2127 - Hs / 4, 1e-12, 'NOT GO ring minor = min PD − H/4');
+  near(v.ngPlugMaj, 0.2224 + Hs / 2, 1e-12, 'NOT GO plug major = max PD + H/2');
+  near(v.trunc, 0.06 * Math.cbrt(p * p) + 0.017 * p, 1e-12, 'truncation 0.060 ∛p² + 0.017p');
+  near(v.trunc, 0.0089933, 0.0000001, '20 TPI truncation');
+  near(v.setGoTrunc, 0.2489 - v.trunc, 1e-12, 'GO setting plug truncated major');
+  near(v.setNgTrunc, 0.2127 + Hs / 2, 1e-12, 'NOT GO setting plug truncated major');
+  assert.equal(v.crest, 0, 'coarse pitch: full NOT GO setting plug major = max major');
+  near(v.setNgFull, 0.2489, 1e-12, 'full portion = max major');
+  // Fine pitch: the 0.001 in crest rule applies (sample limits for 80 TPI).
+  const f = engine.run('unified-thread-gauge-limits', { n: 80, eMaj: 0.0595, eMajMin: 0.0563, ePDmax: 0.0514, ePDmin: 0.0496, iMaj: 0.06, iPDmin: 0.0519, iPDmax: 0.0542, iMinMin: 0.0465, iMinMax: 0.0514, xPD: 0.0002, xMaj: 0.0003, plain: 0.00004 }).values;
+  assert.equal(f.crest, 1);
+  near(f.setNgFull, 0.0595 + 0.216506 / 80 - (0.0018 + 0.0017), 1e-12, 'max major + 0.216506p − (PD tol + 0.0017)');
+  // The rule is the diameter at which a 60° thread on the minimum pitch diameter has a 0.001 in crest (0.0017 ≈ 0.001 √3).
+  near(f.setNgFull, 0.0496 + 0.0595 - 0.0514 - 0.649519 / 80 + 0.866025 / 80 - 0.0017, 0.00001, 'crest-width geometry');
+  near(0.0017, 0.001 * Math.sqrt(3), 0.00004, '0.0017 ≈ 0.001 √3');
+});
+
+test('Heim hammer test reproduces Table 6 and the handbook example', () => {
+  const B = [[0.1, 1.01], [0.15, 1.63], [0.2, 2.31], [0.25, 3.08], [0.3, 3.94], [0.35, 4.9], [0.4, 5.97], [0.45, 7.17], [0.5, 8.52], [0.55, 10.03], [0.6, 11.73]];
+  for (const [A, b] of B) {
+    const x = engine.run('forging-hammer-efficiency', { D: 60, H0: 90, H1: 90 * (1 - A) }).values;
+    near(x.A, A, 1e-12, `A = ${A}`);
+    near(x.B, b, 0.0076, `Table 6: B at A = ${A}`);
+  }
+  // 100 kg (220 lb) hammer, 180 blows/min, 1.97 in × 2.95 in cylinder with A = 0.35, 10.3 hp supplied.
+  const ex = engine.run('forging-hammer-efficiency', { D: 1.97 * IN84, H0: 2.95 * IN84, H1: 2.95 * 0.65 * IN84, bpm: 180, Pin: 10.3 * 0.7456999 }).values;
+  near(ex.Wft, 1376, 1.5, 'work per blow 1376 ft·lb (handbook rounds B to 4.9)');
+  near(ex.PuFt, 4128, 5, '4128 ft·lb per second');
+  near(ex.eff, 4128 / (10.3 * 550) * 100, 0.1, 'efficiency 4128 ÷ 5665 (handbook: 72 per cent)');
+  near(ex.WJ, ex.Wft * 1.3558179483, 1e-9, 'joules');
+});
+
+test('hydraulic press capacity reproduces the handbook table and pressure rules', () => {
+  const PSI = 0.0689476; // bar per psi
+  const cases: Array<[number, number, number]> = [[10, 3100, 122], [10, 3200, 126], [10, 3900, 153], [10, 4000, 157], [20, 4000, 628]];
+  for (const [D, P, C] of cases) {
+    const x = engine.run('press-gauge-pressure-for-work', { D: D * IN84, P: P * PSI, Pmax: 300 }).values;
+    near(x.Fst, C, 0.55, `${D} in ram at ${P} psi: ${C} tons`);
+    near(x.Fst, 0.7854 * D * D * P / 2000, 0.0001 * C, 'C = 0.7854 D² P ÷ 2000 (printed rounded as 0.00039 D² P)');
+  }
+  const v = engine.run('press-gauge-pressure-for-work').values;
+  near(v.Pneed / 10, 20000 * 40 / (0.7854 * 250 * 250), 0.0002, 'P = A Pa ÷ (0.7854 D²)');
+  near(v.PaAt, v.FkN * 1000 / 20000, 1e-12, 'Pa = force ÷ area of work');
+  near(v.FneedkN, 800, 1e-12, 'force for the pressure wanted');
+});
+
+test('permanent-magnet motor constants follow the handbook definitions', () => {
+  const v = engine.run('pm-dc-motor-constants').values;
+  const w = 4580 * 2 * Math.PI / 60;
+  near(v.Ist, 48 / 1.2, 1e-12, 'I_STo = V ÷ R');
+  near(v.KT, 4 / 40, 1e-12, 'K_T = T_STo ÷ I_STo');
+  near(v.KE, 48 / w, 1e-12, 'K_E = V ÷ ω_NL');
+  near(v.KM, 0.1 / Math.sqrt(1.2), 1e-12, 'K_M = K_T ÷ √R');
+  near(v.DM, 4 / w, 1e-12, 'D_M = T_STo ÷ ω_NL');
+  near(v.TM, 0.00012 / v.DM, 1e-12, 'T_M = J_M ÷ D_M');
+  near(v.TL, 0.1 * 20, 1e-12, 'T_L = K_T × I_L');
+  near(v.nL, 4580 * (1 - 2 / 4), 1e-9, 'speed on the straight-line characteristic');
+  near(v.fn, Math.sqrt(2000 / 0.0004) / (2 * Math.PI), 1e-9, 'f_n = √(K ÷ J_L) ÷ 2π');
+  near(engine.run('pm-dc-motor-constants', { IL: 60 }).values.TL, 4, 1e-12, 'current limit above stall current: torque capped at stall');
+});
+
+test('silent chain sprocket reproduces the handbook hub and hob tables', () => {
+  const hob = [4.019, 4.341, 4.662, 4.983, 5.304, 5.626, 5.946, 6.265, 6.586, 6.905, 7.226, 7.546, 7.865, 8.185, 8.503];
+  hob.forEach((h, i) => {
+    const Nt = 17 + i;
+    near(engine.run('silent-chain-sprocket-tooth-form', { Nt, P: IN84 }).values.MHD / IN84, h, 0.001, `Table 5 hobbed, ${Nt} teeth`);
+    near(engine.run('silent-chain-sprocket-tooth-form', { Nt, P: IN84, cut: 'straddle' }).values.MHD / IN84, h + 0.08, 0.001, `Table 5 straddle, ${Nt} teeth`);
+  });
+  const hgd: Array<[number, number]> = [[20, 6.163], [28, 8.659], [38, 11.809], [51, 15.924], [69, 21.636], [95, 29.899], [130, 41.026]];
+  // Table 10 prints 41.026 in for 130 teeth where the formula gives 41.030 in (0.01 %); the other entries agree to the last digit.
+  for (const [Nt, d] of hgd) near(engine.run('silent-chain-sprocket-tooth-form', { Nt, P: IN84 }).values.HGD / IN84, d, Nt === 130 ? 0.005 : 0.0006, `Table 10, 1 in pitch, ${Nt} teeth`);
+  near(engine.run('silent-chain-sprocket-tooth-form', { Nt: 20, P: 9.525 }).values.HGD / IN84, 2.311, 0.0006, 'Table 10, 3/8 in pitch, 20 teeth');
+  near(engine.run('silent-chain-sprocket-tooth-form', { Nt: 28, P: 9.525 }).values.HGD / IN84, 3.247, 0.0006, 'Table 10, 3/8 in pitch, 28 teeth');
+  const v = engine.run('silent-chain-sprocket-tooth-form').values;
+  const t = Math.PI / 21, cot = 1 / Math.tan(t);
+  near(v.E, 25.4 * (cot - 0.22), 1e-9, 'E');
+  near(v.B, 25.4 * Math.sqrt(1.515213 + (cot - 1.1) ** 2), 1e-9, 'B');
+  near(v.face, 60 - 720 / 21, 1e-12, 'faces 60° − 720°/N apart');
+  near(engine.run('silent-chain-sprocket-tooth-form', { size: 'small', P: 4.7625 }).values.face, 70 - 720 / 21, 1e-12, '3/16 in: 70° − 720°/N');
+  near(engine.run('silent-chain-sprocket-tooth-form', { Nt: 12 }).values.face, 0, 1e-12, '12 teeth: faces parallel');
+});
+
+test('helical gear helix angle for a centre distance reproduces the handbook example', () => {
+  const v = engine.run('helical-gear-helix-for-centre-distance', { mn: IN84 / 6, z1: 18, z2: 30, C: 4.5 * IN84 }).values;
+  near(v.cos, 0.88889, 0.000005, 'cos ψ = 0.88889');
+  near(v.psi, 27.266, 0.0005, 'ψ = 27.266°');
+  near(v.L1 / IN84, 20.5728, 0.0003, 'L1 = 20.5728 in');
+  near(v.L2 / IN84, 34.288, 0.0004, 'L2 = 34.2880 in (the handbook rounds sin ψ to 0.45812)');
+  near(v.sumD, 2 * 4.5 * IN84, 1e-9, 'pitch diameters add up to 2C');
+  near(v.L1, 2 * Math.PI * (v.d1 / 2) / Math.tan(v.psi * Math.PI / 180), 1e-9, 'L = 2πR ÷ tan ψ');
+});
+
+test('sixty-first-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('compound-indexing').text, 'APPROXIMATE INDEXING WITHIN TOLERANCE');
+  assert.equal(engine.run('compound-indexing', { mode: 'check' }).text, 'MOVEMENT TOO COARSE');
+  assert.equal(engine.run('compound-indexing', { mode: 'check', tol: 0.02 }).text, 'MOVEMENT WITHIN TOLERANCE');
+  assert.equal(engine.run('unified-thread-gauge-limits').text, 'GAUGE SIZES SET');
+  assert.equal(engine.run('unified-thread-gauge-limits', { xPD: 0.002 }).text, 'GAUGE TOLERANCES OVERLAP');
+  assert.equal(engine.run('forging-hammer-efficiency').text, 'HAMMER TESTED');
+  assert.equal(engine.run('forging-hammer-efficiency', { Pin: 3 }).text, 'CHECK THE POWER MEASUREMENT');
+  assert.equal(engine.run('forging-hammer-efficiency', { H1: 70 }).tone, 'warn');
+  assert.equal(engine.run('press-gauge-pressure-for-work').text, 'PRESS REACHES THE PRESSURE ON THE WORK');
+  assert.equal(engine.run('press-gauge-pressure-for-work', { Pa: 80 }).text, 'PRESS CANNOT REACH THE PRESSURE');
+  assert.equal(engine.run('pm-dc-motor-constants').text, 'RESONANCE ABOVE THE CONTROL BANDWIDTH');
+  assert.equal(engine.run('pm-dc-motor-constants', { K: 10 }).text, 'RESONANCE INSIDE THE CONTROL BANDWIDTH');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form').text, 'SPROCKET FORM AND HUB FIT');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form', { hub: 150 }).text, 'CHANGE THE TEETH OR THE HUB');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form', { Nt: 15, hub: 50 }).text, 'CHANGE THE TEETH OR THE HUB');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form', { Nt: 19, hub: 100 }).tone, 'warn');
+  assert.equal(engine.run('helical-gear-helix-for-centre-distance').text, 'HELIX ANGLE FITS THE CENTRE DISTANCE');
+  assert.equal(engine.run('helical-gear-helix-for-centre-distance', { psiMax: 20 }).text, 'HELIX ANGLE OUTSIDE THE ACCEPTED RANGE');
+  const cases: Array<[string, Inputs]> = [
+    ['compound-indexing', { mode: 'check', a: 47 }], ['compound-indexing', { mode: 'check', a: 0, b: 2, sign: 'minus' }],
+    ['unified-thread-gauge-limits', { ePDmin: 0.22 }], ['unified-thread-gauge-limits', { iMinMax: 0.22 }],
+    ['forging-hammer-efficiency', { H1: 80 }], ['helical-gear-helix-for-centre-distance', { C: 96 }], ['helical-gear-helix-for-centre-distance', { psiMin: 50 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

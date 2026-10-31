@@ -5927,6 +5927,76 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter chooses tap drills and specifies 6H tapped holes; the tap’s own pitch diameter limits are not discussed."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "broaching-knurling-and-indexing",
+   "tool": "compound-indexing",
+   "type": "complements",
+   "note": "Takes this chapter’s simple indexing on a 40:1 head on to the compound movements it says reach numbers simple indexing cannot, with the error an approximate movement leaves at the work.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains simple indexing (40 ÷ divisions, hole circles) and names compound indexing for other numbers; tool finds simple, exact compound and approximate compound movements on standard plates."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "choosing-and-using-measuring-instruments",
+   "tool": "unified-thread-gauge-limits",
+   "type": "complements",
+   "note": "Gives the sizes of the GO and NOT GO thread gauges this chapter describes for checking threads against their limits, and how much of the product tolerance the gauge tolerances take.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains go and not-go plug, ring and thread gauges that check whether a feature lies within its limits; tool computes the ANSI B1.2 Unified thread gauge sizes and tolerance directions."
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "screw-presses-and-drop-hammers",
+   "tool": "forging-hammer-efficiency",
+   "type": "complements",
+   "note": "Measures the work a hammer blow actually does, by the Heim lead cylinder test, to set against the stored energy this chapter calculates from the tup weight and drop height.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter computes a drop hammer’s stored energy and striking speed from tup mass and drop; tool gives the work per blow, useful power and efficiency from a lead cylinder test."
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "hydraulic-and-servo-presses",
+   "tool": "press-gauge-pressure-for-work",
+   "type": "complements",
+   "note": "Carries this chapter’s force from pressure times piston area on to the pressure the ram puts on the area of the work, and the gauge pressure a required pressure on the work needs.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes a hydraulic press from F = p × A and the pressure for a rated force; tool applies the handbook rules for pressure on the work and the gauge pressure for it."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "helical-gears-and-axial-thrust",
+   "tool": "helical-gear-helix-for-centre-distance",
+   "type": "complements",
+   "note": "Works this chapter’s fitting of a helical pair to an existing centre distance for any module and teeth, with the leads and the helix angle at the outside diameter for setting up the cut.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives cos β = mn (z1 + z2) ÷ 2a to fit a helical pair to a fixed housing; tool computes the same helix angle with transverse module, pitch diameters and leads."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-electric-motors-and-drives",
+   "tool": "pm-dc-motor-constants",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter selects induction motors, starters and variable speed drives and only names servo motors; permanent-magnet motor constants, current limits and torsional resonance in a control loop are not discussed."
+  },
+  {
+   "reados": "publication/inspecting-to-the-drawing",
+   "chapter": "choose-the-instrument-for-the-tolerance",
+   "tool": "unified-thread-gauge-limits",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter plans instruments for a metric part with plain GO and NO-GO bore plugs; thread gauges are only named as a kind of attribute gauge and Unified thread gauge sizes are not discussed."
   }
  ]
 }

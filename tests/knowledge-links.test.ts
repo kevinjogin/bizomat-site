@@ -13,13 +13,13 @@ const links = readLinks();
 const graph = buildGraph(links, catalogue);
 const ROOT = process.cwd();
 
-test('the catalogues are read from source: 114 publications, every edited collection and 951 tools', () => {
+test('the catalogues are read from source: 114 publications, every edited collection and 958 tools', () => {
   const books = [...catalogue.books.values()];
   const pubDirs = readdirSync(join(ROOT, 'src', 'content', 'reados-publications')).filter((d) => !d.startsWith('.'));
   assert.equal(books.filter((b) => b.kind === 'publication').length, pubDirs.length);
   assert.equal(books.filter((b) => b.kind === 'collection').length, readCollectionSubjects().length);
   assert.equal(readCollectionSubjects().length, (readFileSync(join(ROOT, 'src', 'utils', 'reados-collections.ts'), 'utf8').match(/\{slug:'/g) ?? []).length, 'every collection is parsed');
-  assert.equal(catalogue.tools.size, 951);
+  assert.equal(catalogue.tools.size, 958);
 });
 
 test('every relationship references an existing READOS book, chapter and WORKOS tool, with valid fields', () => {
