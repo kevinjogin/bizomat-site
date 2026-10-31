@@ -7046,6 +7046,258 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter covers holding work on a magnetic chuck against grinding forces; wheel life and Taylor constants are not discussed."
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "how-metal-tires",
+   "tool": "fatigue-design-check",
+   "type": "applies",
+   "note": "Runs the whole first fatigue estimate for a notched part: corrected endurance limit, Peterson notch factor, Goodman, Soderberg and Gerber factors, first-cycle yield and an S-N life above the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "stress-cycles",
+   "tool": "shaft-combined-stress",
+   "type": "applies",
+   "note": "Finds the bending, torsional and direct stresses in a round shaft at one instant, with principal, von Mises and Tresca stresses: the nominal stresses a fatigue check starts from.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "stress-cycles",
+   "tool": "principal-stress",
+   "type": "explains",
+   "note": "Resolves a plane stress state into principal stresses, their direction and von Mises and Tresca equivalents, showing how the stresses on a rotating shaft change round a revolution.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "notches",
+   "tool": "fatigue-notch-factor",
+   "type": "applies",
+   "note": "Turns a theoretical stress concentration factor and notch radius into Peterson's notch sensitivity and the fatigue notch factor, using the steel estimate or an entered material constant.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "mean-stress",
+   "tool": "goodman-fatigue",
+   "type": "applies",
+   "note": "Gives Goodman, Soderberg and Gerber fatigue safety factors and the first-cycle yield factor for an alternating and mean stress against a corrected endurance limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "finite-life-and-damage",
+   "tool": "sn-fatigue-life",
+   "type": "applies",
+   "note": "Estimates cycles to failure from a Basquin S-N line between 10³ cycles and the corrected endurance limit, and the stress allowed for a required life.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "shafts",
+   "tool": "shaft-diameter",
+   "type": "applies",
+   "note": "Sizes a solid shaft for combined bending and torque by the equivalent torque rule with shock and fatigue factors and a keyway allowance, as a first size before the notch checks.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "bolted-joints",
+   "tool": "bolted-joint-fatigue",
+   "type": "applies",
+   "note": "Checks a preloaded bolt under a load cycling from zero: alternating, mean and preload stresses and the Goodman fatigue factor from the bolt's fully corrected endurance strength.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "bolted-joints",
+   "tool": "turn-of-nut-fatigue-check",
+   "type": "applies",
+   "note": "Finds bolt stiffness, preload from a turn angle past snug, the joint constant and the preload's share of proof, then the bolt's Goodman fatigue factor under a cyclic load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "springs",
+   "tool": "spring-fatigue-check",
+   "type": "applies",
+   "note": "Checks a helical compression spring cycling between two lengths: rate, loads, Wahl-corrected stresses, solid length and Goodman, Soderberg, Gerber and yield factors.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "surfaces-scatter-and-proof",
+   "tool": "feed-for-finish",
+   "type": "complements",
+   "note": "Gives the theoretical Ra and Rt of a turned surface from feed and nose radius, or the feed for a target Ra, for planning the finish at a fatigue-critical fillet.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "surfaces-scatter-and-proof",
+   "tool": "surface-roughness-acceptance",
+   "type": "applies",
+   "note": "Accepts or rejects measured roughness values against a drawing limit by the 16% rule or the max rule as the tool describes them, with the evaluation length to use.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "surfaces-scatter-and-proof",
+   "tool": "weibull-reliability",
+   "type": "applies",
+   "note": "Gives reliability, failure probability, hazard rate, B10 life and mean life from Weibull shape and scale, and whether a fleet's failures show a wear-out pattern.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "elastic-then-plastic",
+   "tool": "elastic-constants",
+   "type": "applies",
+   "note": "Calculates E, G, Poisson's ratio, bulk modulus and the Lamé constant from any two of E, G and ν, and flags pairs that imply an implausible Poisson's ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "reading-a-tensile-test",
+   "tool": "tensile-test-evaluation",
+   "type": "applies",
+   "note": "Evaluates a round tensile specimen: yield, tensile strength, yield ratio, elongation, reduction of area, modulus and true fracture values, checked against specification minimums.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "true-stress-and-work-hardening",
+   "tool": "true-stress-strain",
+   "type": "applies",
+   "note": "Converts a tensile load and dimensions into nominal and true stress and strain, with the power-law flow stress K εⁿ, elongation and reduction of area.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "hardness-and-grain-size",
+   "tool": "brinell-hardness",
+   "type": "applies",
+   "note": "Calculates Brinell hardness from force, ball and dent diameter, checks the indentation ratio and least thickness, and gives an approximate tensile strength for steel.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "hardness-and-grain-size",
+   "tool": "grain-size",
+   "type": "applies",
+   "note": "Converts grain counts or a mean lineal intercept into the ASTM grain size number and the equivalent measures, for relating grain size to yield strength.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "yield-under-combined-stress",
+   "tool": "triaxial-stress-check",
+   "type": "applies",
+   "note": "Finds principal stresses of a three-dimensional stress state, von Mises and Tresca safety factors against yield, and the principal strains and volume change by Hooke's law.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "yield-under-combined-stress",
+   "tool": "principal-stress",
+   "type": "complements",
+   "note": "Resolves a plane stress state into principal stresses with von Mises and Tresca factors; valid at free surfaces, where the third principal stress is zero.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "first-yield-and-proof-tests",
+   "tool": "pressure-tube-torsion-check",
+   "type": "applies",
+   "note": "Checks a thin-walled tube under pressure, end thrust and torque: hoop, axial and shear stresses, principal stresses and the von Mises safety factor against yield.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "bending-plate-past-yield",
+   "tool": "bend-radius-limits",
+   "type": "applies",
+   "note": "Gives the smallest bend radius from tensile reduction of area and the largest that still takes a permanent set, and checks a planned radius against both.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "bending-plate-past-yield",
+   "tool": "bending-springback",
+   "type": "applies",
+   "note": "Calculates the final radius, springback factor and angle to bend to for free bending from tool radius, thickness, yield strength and modulus.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "bending-plate-past-yield",
+   "tool": "bend-feasibility-check",
+   "type": "applies",
+   "note": "Combines bend radius limits, springback and air-bending force against press capacity, with a check of the V-die opening, for a press-brake bend.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "bending-tube",
+   "tool": "tube-bending-plan",
+   "type": "applies",
+   "note": "Plans tube bends: developed length, outer and inner wall after bending, outer fibre strain, radius and wall ratios and the angle to bend to, against wall, radius and elongation limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "rolling-threads",
+   "tool": "thread-rolling-setup",
+   "type": "applies",
+   "note": "Sets up cylindrical-die thread rolling: pitch diameter blank, thread height, stress area, roll pitch diameter and lead for the starts, and the starts that fit the machine.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "restraint-residual-stress-and-annealing",
+   "tool": "thermal-stress",
+   "type": "applies",
+   "note": "Gives the stress and force from fully or partly restrained thermal expansion and the safety factor against yield, showing why restrained cooling of welds reaches yield.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yield-and-plastic-flow-by-the-numbers",
+   "chapter": "restraint-residual-stress-and-annealing",
+   "tool": "restrained-bar-thermal-check",
+   "type": "applies",
+   "note": "Checks a bar held at both ends while heated: thermal stress and force, yield factor, Euler or Johnson buckling load and the temperature rises at buckling and yield.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
