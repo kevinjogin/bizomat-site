@@ -7535,6 +7535,36 @@
    "note": "Checks a flexible coupling's torque with service factor, peak torque, speed, combined misalignment share, bore and hub key stresses against its ratings.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "thrust-bearings",
+   "tool": "tapered-land-thrust-bearing-design",
+   "type": "complements",
+   "note": "Designs the tapered land thrust bearing this chapter describes: pad layout, film factor, friction loss and whether the film passes the oil the heat needs.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains how tapered lands give each pad a converging wedge and where they suit; tool applies the handbook tapered land procedure with leakage factor, film factor K, friction from J and the film flow."
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "thrust-bearings",
+   "tool": "tilting-pad-thrust-bearing-design",
+   "type": "complements",
+   "note": "Designs the Michell or Kingsbury tilting pad bearing this chapter introduces: operating number, film, friction, oil flow and temperature rise.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter introduces Michell’s and Kingsbury’s pivoted pads and where they suit; tool applies the handbook tilting pad procedure with the operating number, film factor α, friction coefficient and temperature rise."
+  },
+  {
+   "reados": "publication/plain-bearings-by-the-numbers",
+   "chapter": "thrust-bearings",
+   "tool": "step-thrust-bearing-design",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter compares flat, tapered land and tilting pad thrust faces; step thrust bearings are not discussed."
   }
  ]
 }

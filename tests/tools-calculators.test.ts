@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 983 tools with unique ids and every previously published id kept', () => {
+test('register: 986 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 983);
+  assert.equal(ids.length, 986);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 789 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 792 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 789);
+  assert.equal(ids.length, 792);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6517,5 +6517,41 @@ test('sixty-seventh-pass tools give their verdicts and reject bad inputs', () =>
   assert.equal(engine.run('flat-plate-thrust-bearing-design').text, 'THRUST BEARING LAID OUT');
   assert.equal(engine.run('flat-plate-thrust-bearing-design', { D2: 120 }).text, 'ENLARGE THE THRUST FACE');
   const cases: Array<[string, Inputs]> = [['journal-bearing-lubrication-analysis', { cd: 60 }], ['flat-plate-thrust-bearing-design', { D2: 70 }], ['flat-plate-thrust-bearing-design', { i: 60, s: 20 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Sixty-eighth handbook pass (handbook91): deep audit of the thrust bearing section. Expected values are the handbook's
+// step (25 lb, 5000 rpm), tapered land (70,000 lb, 3600 rpm) and tilting pad (70,000 lb, 3600 rpm) examples.
+const IN91 = 25.4, LBF91 = 4.4482216152605, PSI91 = 6.894757293168;
+
+test('step thrust bearing design reproduces the handbook example', () => {
+  const v = engine.run('step-thrust-bearing-design', { W: 25 * LBF91, D1: 1 * IN91, D2: 3 * IN91, s: 0.062 * IN91, i: 6, n: 5000, Z: 25, rho: 880, cp: 1.9383 }).values;
+  near(v.aIn, 1, 1e-12, 'a = 1 in'); near(v.BIn, 6.28, 0.005, 'B = 6.28 in'); near(v.iApp, 5.9, 0.05, 'about 5.9 pads'); near(v.bIn, 0.985, 0.001, 'b = 0.985 in');
+  near(v.U, 2620, 3, 'U = 2620 fpm'); near(v.hIn, 0.0057, 0.0001, 'h = 0.0057 in'); near(v.eIn, 0.004, 0.0001, 'e = 0.004 in'); near(v.Pf, 0.133, 0.002, 'Pf = 0.133 hp');
+  near(v.b2In, 0.537, 0.001, 'b2 = 0.537 in'); near(v.c, 3.4, 0.001, 'c = 3.4 Btu/gal °F'); near(v.Q, 0.06, 0.001, 'Q = 0.060 gpm'); near(v.dtF, 28, 0.6, 'Δt = 28 °F');
+});
+
+test('tapered land thrust bearing design reproduces the handbook example', () => {
+  const v = engine.run('tapered-land-thrust-bearing-design', { W: 70000 * LBF91, D1: 7 * IN91, D2: 17 * IN91, pDesign: 400 * PSI91, Kg: 0.9, s: 0.5 * IN91, i: 6, n: 3600, d2: 0.005 * IN91, Z: 18, rho: 880, cp: 1.9953, dT: 50 / 1.8, h: 0.0022 * IN91, J: 260, YG: 0.61 }).values;
+  near(v.D2reqIn, 17.2, 0.05, 'D2 = 17.2 in'); near(v.aIn, 5, 1e-12, 'a = 5 in'); near(v.BIn, 37.7, 0.05, 'B = 37.7 in'); near(v.iApp, 6.85, 0.01, 'about 6.85 pads');
+  near(v.bIn, 5.78, 0.01, 'b = 5.78 in'); near(v.pPsi, 404, 1, 'p = 404 psi'); near(v.U, 11300, 15, 'U = 11,300 fpm'); near(v.YL, 2.75, 0.01, 'YL = 2.75 (read from Fig. 8 in the example)');
+  near(v.K, 4150, 15, 'K = 4150'); near(v.Pf, 91, 0.5, 'Pf = 91 hp'); near(v.Q, 22, 0.15, 'Q = 22.0 gpm'); near(v.YS, 0.963, 0.001, 'YS = 0.963'); near(v.ratio, 0.41, 0.005, 'D1/D2 = 0.41'); near(v.QF, 26.7, 0.1, 'QF = 26.7 gpm');
+});
+
+test('tilting pad thrust bearing design reproduces the handbook example', () => {
+  const v = engine.run('tilting-pad-thrust-bearing-design', { W: 70000 * LBF91, D1: 7 * IN91, D2: 15 * IN91, Kg: 0.8, i: 6, b: 4.75 * IN91, n: 3600, Z2: 18, rho: 880, cp: 1.9953, alpha: 0.3, f: 0.0036 }).values;
+  near(v.aIn, 4, 1e-12, 'a = 4 in'); near(v.BIn, 34.6, 0.05, 'B = 34.6 in'); near(v.iEst, 6.9, 0.05, 'about 6.9 pads'); near(v.bEstIn, 4.61, 0.01, 'b ≈ 4.61 in');
+  near(v.U, 10400, 40, 'U = 10,400 fpm'); near(v.pPsi, 614, 0.5, 'p = 614 psi'); near(v.O, 1.86e-6, 0.01e-6, 'O = 1.86 × 10⁻⁶'); near(v.hminIn, 0.0014, 0.00005, 'hmin = 0.0014 in');
+  near(v.Pf, 79.4, 0.4, 'Pf = 79.4 hp (printed with U = 10,400)'); near(v.Q, 21.02, 0.1, 'Q = 21.02 gpm'); near(v.dtF, 45.7, 0.1, 'Δt = 45.7 °F');
+});
+
+test('sixty-eighth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('step-thrust-bearing-design').text, 'STEP BEARING LAID OUT');
+  assert.equal(engine.run('step-thrust-bearing-design', { dTmax: 10 }).text, 'TEMPERATURE RISE TOO HIGH: ADD CHAMFERS');
+  assert.equal(engine.run('tapered-land-thrust-bearing-design').text, 'FILM FLOW CARRIES THE HEAT');
+  assert.equal(engine.run('tapered-land-thrust-bearing-design', { YG: 0.4 }).text, 'ADD CHAMFERS OR MORE TAPER');
+  assert.equal(engine.run('tilting-pad-thrust-bearing-design').text, 'TILTING PAD BEARING SATISFACTORY');
+  assert.equal(engine.run('tilting-pad-thrust-bearing-design', { dTmax: 20 }).text, 'TEMPERATURE RISE TOO HIGH');
+  const cases: Array<[string, Inputs]> = [['step-thrust-bearing-design', { D2: 20 }], ['tapered-land-thrust-bearing-design', { D2: 150 }], ['tilting-pad-thrust-bearing-design', { b: 200 }], ['step-thrust-bearing-design', { i: 60, s: 10 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });
