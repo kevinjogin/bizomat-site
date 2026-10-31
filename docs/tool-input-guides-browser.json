@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-31",
- "base": "http://127.0.0.1:8816",
- "tools": 977,
- "passed": 977,
- "inputs": 8441,
- "figures": 8441,
+ "base": "http://127.0.0.1:8826",
+ "tools": 978,
+ "passed": 978,
+ "inputs": 8450,
+ "figures": 8450,
  "sample": [
   {
    "id": "make-buy",
@@ -5989,6 +5989,12 @@
    "ok": true,
    "inputs": 12,
    "figures": 12
+  },
+  {
+   "id": "bolt-grip-thread-length",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
   }
  ]
 }

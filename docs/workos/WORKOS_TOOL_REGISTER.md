@@ -3487,3 +3487,13 @@ Six tools in batch handbook87 from open and candidate pages of the page-by-page 
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Surface Roughness Acceptance (ISO 16 % Rule and Max Rule, Evaluation Length)** `surface-roughness-acceptance` | SURFACE ACCEPTED | Upper limit (16 % rule); Evaluation length; Model and application | 750 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook88 (added 31 October 2026)
+
+One tool in batch handbook88, from the last buildable candidate of the page-by-page ledger: a bolt and screw grip length check using the thread length rules for socket head cap screws, metric bolts and screws, and heavy hex structural bolts (pp. 1572–1573, 1593–1594, 1682, 1696). Thread lengths, transition lengths, clamped thickness and the engagement needed are always user inputs. WORKOS now holds 978 tools.
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint)** `bolt-grip-thread-length` | LENGTH SUITS THE JOINT | Full thread within the joint; Thread engagement; Table values; Model and application | 1572–1573, 1593–1594, 1682, 1696 | Automated |
