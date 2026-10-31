@@ -2,7 +2,7 @@
 
 Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 570 relationships (312 from links authors wrote in the books, 258 from editorial review). Rejected: 110. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 598 relationships (339 from links authors wrote in the books, 259 from editorial review). Rejected: 113. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -268,6 +268,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Oval Sheet Metal Work by the Numbers | Constructing a four-centre oval | Four-Arc Oval Approximating an Ellipse (End and Side Radii and Their Centres) | applies | Chapter derives R = [(a − r)² + b² − r²] ÷ 2(b − r) from the length, width and end radius; tool uses the handbook equations (2) and (3), which reduce to the same side radius, and adds the handbook end radius rule. |
 | Tanks and Hoppers by the Numbers | Cones, pyramids and frustums | Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring) | applies | Chapter gives the spherical cap volume π h ÷ 6 (3a² + h²) and sphere radius (a² + h²) ÷ 2h for a dished bottom; tool computes the handbook segment S, sphere and other sections by the same relations. |
 | Hand Forming Sheet Metal by the Numbers | Sizing the blank for a dome | Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring) | applies | Chapter sizes dome blanks from the spherical cap area and sphere radius found from rim radius and height; tool returns the handbook segment area π(F² + E²/4) and sphere radius from the same two dimensions. |
+| Combustion by the Numbers | Fuel, air and the reaction | Fuel Oil Heating Value from Baumé Gravity (Specific Gravity, Heat per kg and per Litre, Fuel Use) | complements | Chapter defines higher and lower heating values and why the rating basis matters; tool gives the handbook gross heating value of fuel oil from its Baumé gravity and the oil burned at an efficiency, noting the gross basis. |
 
 ## 2. Rejected
 
@@ -383,6 +384,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Power Presses by the Numbers | Flywheel energy and slowdown | Engine Flywheel Rim Weight and Arm Proportions (Energy Excess Factor, Speed Variation) | Rejected: chapter works out a press flywheel’s stored energy and slowdown per stroke; engine energy-excess factors, small speed variations and arm proportions are not discussed. |
 | Marking Out by the Numbers | Large arcs, ellipses and curves by points | Conic Section from Its General Equation (Parabola, Ellipse, Hyperbola: Centre, Vertices, Foci, Directrix) | Rejected: chapter marks out ellipses from their axes with string, trammel and ordinates; conic equations in general form are not discussed. |
 | Marking Out by the Numbers | Large arcs, ellipses and curves by points | Four-Arc Oval Approximating an Ellipse (End and Side Radii and Their Centres) | Rejected: chapter mentions the four-centre approximation in one sentence and refers to the oval book for it. |
+| Combustion by the Numbers | Where the heat goes: available heat and the furnace load | Fuel Oil Heating Value from Baumé Gravity (Specific Gravity, Heat per kg and per Litre, Fuel Use) | Rejected: chapter works out available heat for a natural gas furnace from flue temperature and excess air; oil gravity and oil heating values are not discussed. |
+| Permanent Magnets in Machines by the Numbers | Permanent-magnet servo motors | Moment of Inertia, Section Modulus and Momentum Converter | Rejected: chapter sizes servo motors with inertias already in kg·m²; converting inertia units is not discussed. |
+| Arc Welding by the Numbers | Duty cycle, supply and cables | Area Converter | Rejected: chapter sizes welding cables in mm² only; circular mils and other area units are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 

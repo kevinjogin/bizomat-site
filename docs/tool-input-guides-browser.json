@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-31",
- "base": "http://127.0.0.1:8808",
- "tools": 971,
- "passed": 971,
- "inputs": 8412,
- "figures": 8412,
+ "base": "http://127.0.0.1:8816",
+ "tools": 977,
+ "passed": 977,
+ "inputs": 8441,
+ "figures": 8441,
  "sample": [
   {
    "id": "make-buy",
@@ -5953,6 +5953,42 @@
    "ok": true,
    "inputs": 10,
    "figures": 10
+  },
+  {
+   "id": "area-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "volume-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "inertia-converter",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "silent-chain-sprocket-inspection",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "fuel-oil-heating-value",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "surface-roughness-acceptance",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
   }
  ]
 }

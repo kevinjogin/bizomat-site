@@ -3457,3 +3457,33 @@ Six tools in batch handbook86 from open and candidate pages of the page-by-page 
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Engine Flywheel Rim Weight and Arm Proportions (Energy Excess Factor, Speed Variation)** `engine-flywheel-rim-and-arms` | RIM AND ARMS SIZED | Speed variation; Rim stress; Arms; Model and application | 3010–3011 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook87 (added 31 October 2026)
+
+Six tools in batch handbook87 from open and candidate pages of the page-by-page ledger: an area converter (square measure, pp. 2675–2677), a volume and capacity converter (cubic measure, pp. 2678–2681), a moment of inertia, section modulus and momentum converter (p. 2699), a silent chain sprocket inspection check (ANSI B29.2M, pp. 3458–3464), fuel oil heating value from the Baumé gravity (pp. 381, 2694, 3012) and surface roughness acceptance by the ISO 16 % and max rules (p. 750). Measurements, roughness readings, heat demand and appliance efficiency are always user inputs. WORKOS now holds 977 tools.
+
+### Units
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Area Converter** `area-converter` | CONVERTED | Conversion factors; Model and application | 2675–2677 | Automated + cross-check |
+| **Volume and Capacity Converter** `volume-converter` | CONVERTED | Conversion factors; Model and application | 2678–2681 | Automated |
+| **Moment of Inertia, Section Modulus and Momentum Converter** `inertia-converter` | CONVERTED | Conversion factors; Kind of quantity; Model and application | 2699 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Silent Chain Sprocket Inspection (Over-Pin Diameter, Eccentricity and Guide Groove Tolerances)** `silent-chain-sprocket-inspection` | SPROCKET ACCEPTED | Over-pin diameter; Eccentricity; Guide groove; Gauge pins; Model and application | 3458–3464 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Fuel Oil Heating Value from Baumé Gravity (Specific Gravity, Heat per kg and per Litre, Fuel Use)** `fuel-oil-heating-value` | HEATING VALUE ESTIMATED | Range of the formula; Tested value; Model and application | 381, 2694, 3012 | Automated |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Surface Roughness Acceptance (ISO 16 % Rule and Max Rule, Evaluation Length)** `surface-roughness-acceptance` | SURFACE ACCEPTED | Upper limit (16 % rule); Evaluation length; Model and application | 750 | Automated |
