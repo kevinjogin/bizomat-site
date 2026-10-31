@@ -2,7 +2,7 @@
 
 Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 626 relationships (363 from links authors wrote in the books, 263 from editorial review). Rejected: 116. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 657 relationships (391 from links authors wrote in the books, 266 from editorial review). Rejected: 116. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -273,6 +273,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining by the Numbers | Milling: feed per tooth, chip thinning and feed rate | Milling Mean Chip Thickness and Equivalent Chip Thickness (Feed per Tooth for Light Radial Cuts) | complements | Chapter corrects feed per tooth for radial chip thinning at light engagement; tool computes the engagement angle, mean chip thickness, ECT and the feed for a target chip by the handbook end and face milling relations. |
 | Machining and Metal Parts | Milling cutters and milling strategies: speeds, feeds, chip thickness and parts that are easy to mill | Milling Mean Chip Thickness and Equivalent Chip Thickness (Feed per Tooth for Light Radial Cuts) | complements | Chapter explains radial chip thinning below half-diameter engagement; tool gives the mean chip thickness and the feed per tooth needed for a chosen chip from the radial depth, cutter diameter and teeth. |
 | Machining and Metal Parts | Grinding, honing and lapping: finishing hard parts to tight tolerances | Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration) | complements | Chapter covers wheel life, dressing and setting the dressing interval from a trial; tool applies the handbook Taylor lines V T^0.26 = C at constant ECT with a shop calibration to give wheel speed, removal rate and work speed. |
+| Plain Bearings by the Numbers | Supplying the oil | Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness) | complements | Chapter calculates the side flow a journal bearing film loses and how the oil is supplied; tool applies the handbook analysis with hydrodynamic flow N l cd q d ÷ 294 and pressure flow from the supply pressure. |
+| Plain Bearings by the Numbers | Oil temperature and the heat balance | Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness) | complements | Chapter finds a bearing’s running temperature from the balance of heat made and shed; tool repeats the handbook assumed-versus-actual temperature rise until they agree within 5 °F. |
+| Plain Bearings by the Numbers | Thrust bearings | Flat Plate Thrust Bearing Design (Pad Layout, Unit Load, Friction Loss, Oil Flow, Chamfer Depth) | complements | Chapter checks a thrust face’s unit load and PV and explains why flat faces need pads and a wedge; tool applies the handbook flat plate design: pad layout, unit load, friction from the M chart, oil flow and chamfer depth. |
 
 ## 2. Rejected
 

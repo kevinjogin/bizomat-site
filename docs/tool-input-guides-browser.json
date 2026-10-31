@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-31",
- "base": "http://127.0.0.1:8836",
- "tools": 981,
- "passed": 981,
- "inputs": 8479,
- "figures": 8479,
+ "base": "http://127.0.0.1:8846",
+ "tools": 983,
+ "passed": 983,
+ "inputs": 8510,
+ "figures": 8510,
  "sample": [
   {
    "id": "make-buy",
@@ -6013,6 +6013,18 @@
    "ok": true,
    "inputs": 9,
    "figures": 9
+  },
+  {
+   "id": "journal-bearing-lubrication-analysis",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
+  },
+  {
+   "id": "flat-plate-thrust-bearing-design",
+   "ok": true,
+   "inputs": 18,
+   "figures": 18
   }
  ]
 }

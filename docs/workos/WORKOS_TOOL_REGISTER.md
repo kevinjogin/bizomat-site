@@ -3514,3 +3514,14 @@ Three tools in batch handbook89 from a deeper audit of pages that live tools cit
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Single-Point Thread Cutting Tool Relief and Nose Angles (Leading and Trailing Flanks)** `thread-tool-relief-angles` | TOOL ANGLES SET | Trailing relief; Effective relief; Model and application | 2040–2041 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook90 (added 1 November 2026)
+
+Two tools in batch handbook90 from the deep audit of pages cited only within wide page ranges: the handbook’s full journal bearing lubrication analysis for pressure-fed bearings with the temperature-rise iteration (pp. 2328–2338), and flat plate thrust bearing design with pad layout, friction loss, oil flow and chamfer depth (pp. 2338–2344). Chart readings (eccentricity ratio, torque parameter, flow factor, friction loss, kinetic energy factor), oil properties and clearances are always user inputs. WORKOS now holds 983 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness)** `journal-bearing-lubrication-analysis` | ASSUMED TEMPERATURE RISE CONFIRMED | Temperature rise iteration; Minimum film thickness; Temperature rise; Flow; Model and application | 2328–2338 | Automated + cross-check |
+| **Flat Plate Thrust Bearing Design (Pad Layout, Unit Load, Friction Loss, Oil Flow, Chamfer Depth)** `flat-plate-thrust-bearing-design` | THRUST BEARING LAID OUT | Outside diameter; Unit load; Temperature rise; Chamfer flow; Outside to inside diameter; Model and application | 2338–2344 | Automated + cross-check |
