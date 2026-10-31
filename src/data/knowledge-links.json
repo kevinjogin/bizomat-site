@@ -5649,6 +5649,132 @@
    "evidence": "book-link"
   },
   {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "preparing-surfaces-for-bonding",
+   "tool": "hansen-solvent-compatibility",
+   "type": "applies",
+   "note": "Screens whether a cleaning solvent is likely to dissolve or swell a plastic from Hansen parameters, Ra and RED; used to choose a cleaner for a polycarbonate window before bonding.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "preparing-surfaces-for-bonding",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Calculates the dew point of moist air and checks a surface temperature against it with a margin; used to find condensation on cold aluminium stock brought into a humid workshop.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "adhesives-and-how-they-cure",
+   "tool": "arrhenius-acceleration-check",
+   "type": "complements",
+   "note": "Gives the Arrhenius acceleration factor between two temperatures for an activation energy, with a sensitivity table; used to scale an epoxy’s cure times and to plan ageing tests.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "lap-joints-and-shear-lag",
+   "tool": "lap-joint-length",
+   "type": "applies",
+   "note": "Sizes the overlap of a brazed, soldered or bonded lap joint and its capacity at a chosen overlap, assuming uniform shear; used with a coupon strength measured at the real overlap.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "thermal-movement-and-bondline-thickness",
+   "tool": "plastic-thermal-mismatch",
+   "type": "applies",
+   "note": "Gives the restrained thermal stress in a plastic part on metal and the relative movement if free; used for a polycarbonate window bonded to an aluminium door in sun and frost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "testing-bonded-joints",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Calculates Cpk and its lower confidence bound from a sample against specification limits; used for lap shear coupons against a minimum strength, with a dummy upper limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/adhesive-bonding-by-the-numbers",
+   "chapter": "proving-a-bonding-process",
+   "tool": "process-change-trial",
+   "type": "applies",
+   "note": "Plans the coupons needed per group and evaluates a before-and-after trial with Welch’s t-test; used to prove that a new surface preparation raised lap shear strength.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "vapour-pressure-and-boiling",
+   "tool": "clausius-boiling-margin-check",
+   "type": "applies",
+   "note": "Gives vapour pressure at a temperature and boiling temperature at a pressure from one boiling point by Clausius–Clapeyron; used for acetone in a hot workshop and solvent store.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "flammable-headspaces",
+   "tool": "solvent-headspace-lel-check",
+   "type": "applies",
+   "note": "Screens the saturated headspace of a solvent in a closed space against its lower explosive limit by Clausius–Clapeyron and Raoult’s law; used for drums and tanks of five solvents.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "evaporative-cooling-blush-and-condensation",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Calculates the dew point of moist air and checks a surface temperature against it with a margin; used for a freshly sprayed guard cooled by evaporating thinner on a humid day.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "capturing-vapour-at-the-source",
+   "tool": "extraction-duct-check",
+   "type": "applies",
+   "note": "Checks a local exhaust duct serving several hoods: total airflow, duct velocity, friction and fittings loss and fan pressure; used for the hoods at Plant S’s solvent benches.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "recovering-solvent",
+   "tool": "vacuum-boiling-point",
+   "type": "applies",
+   "note": "Gives the boiling temperature at a reduced pressure and the pressure to boil at a temperature limit by Clausius–Clapeyron; used to run a still for dirty thinner below 70 °C.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "substitution-reduction-and-proof",
+   "tool": "hansen-solvent-compatibility",
+   "type": "applies",
+   "note": "Screens whether a solvent is likely to dissolve or swell a plastic from Hansen parameters, Ra and RED; used to choose a wiping solvent safe for polycarbonate windows on guards.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/solvent-vapours-by-the-numbers",
+   "chapter": "substitution-reduction-and-proof",
+   "tool": "process-change-trial",
+   "type": "applies",
+   "note": "Plans the parts needed per group and evaluates a before-and-after trial with Welch’s t-test; used to prove the solvent saving per frame from a change of wiping solvent.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/first-of-a-kind-technology-by-the-numbers",
    "chapter": "ramp-up-to-nameplate",
    "tool": "reliability-growth-check",
