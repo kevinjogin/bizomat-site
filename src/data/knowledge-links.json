@@ -7328,6 +7328,213 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter checks a thrust face’s unit load and PV and explains why flat faces need pads and a wedge; tool applies the handbook flat plate design: pad layout, unit load, friction from the M chart, oil flow and chamfer depth."
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "stress-at-a-point",
+   "tool": "torsion-member-comparison",
+   "type": "example",
+   "note": "Compares the shear stress, twist and mass of a tube, a solid bar and a rectangle under the same torque, showing why a hollow spindle carries torque efficiently.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "principal-stresses-and-mohrs-circle",
+   "tool": "principal-stress",
+   "type": "applies",
+   "note": "Turns σx, σy and τxy into the principal stresses, their angle, the maximum shear and the von Mises and Tresca safety factors for a plane stress element.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "tubes-under-combined-loads",
+   "tool": "pressure-tube-torsion-check",
+   "type": "applies",
+   "note": "Checks a thin-walled tube under internal pressure, axial load and torque: hoop, axial and shear stresses, principal stresses, von Mises stress and the thin-wall limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "tubes-under-combined-loads",
+   "tool": "thin-tube-torsion",
+   "type": "complements",
+   "note": "Gives the Bredt thin-wall shear stress, torsion constant and twist of a closed tube, for comparison with the exact torsion stress at the outer surface.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "thick-walls",
+   "tool": "pressure-cylinder",
+   "type": "applies",
+   "note": "Finds the Lamé hoop, radial and axial stresses at the bore of a thick cylinder under internal pressure, the thin-wall estimate beside them and the von Mises safety factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "three-dimensional-stress",
+   "tool": "principal-stress-3d",
+   "type": "applies",
+   "note": "Solves the stress invariants of a general six-component state for the three principal stresses, the maximum shear and the von Mises safety factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "three-dimensional-stress",
+   "tool": "triaxial-stress-check",
+   "type": "applies",
+   "note": "Checks a three-dimensional stress state by von Mises and Tresca and adds the principal strains, volume change and shear and bulk moduli from E and Poisson's ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "strain-and-hookes-law",
+   "tool": "matrix-3x3",
+   "type": "complements",
+   "note": "Inverts the 3 × 3 Hooke's law matrix for a given Poisson's ratio, so that three normal strains can be turned back into stresses and the round trip checked.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "interference-fits-on-hollow-shafts",
+   "tool": "shrink-fit-design",
+   "type": "applies",
+   "note": "Works an interference fit backwards from the torque: required pressure and interference for a solid or hollow shaft, hub stresses, press force and heating temperature.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "interference-fits-on-hollow-shafts",
+   "tool": "interference-fit-limits-check",
+   "type": "applies",
+   "note": "Checks a fit over its IT tolerance limits: holding torque at the least interference, hub stress at the most, and the press force or heating needed to assemble.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "interference-fits-on-hollow-shafts",
+   "tool": "press-fit",
+   "type": "applies",
+   "note": "Gives the contact pressure, hub stresses, holding torque, axial force and heating temperature for one chosen interference, as used for the assembly instructions.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "compatibility-and-thermal-restraint",
+   "tool": "thermal-stress",
+   "type": "applies",
+   "note": "Finds the stress and force in a bar whose thermal expansion is fully or partly restrained, compared with its yield strength, with a flag to check buckling.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "compatibility-and-thermal-restraint",
+   "tool": "restrained-bar-thermal-check",
+   "type": "applies",
+   "note": "Checks a restrained bar heated in service for yield and Euler or Johnson buckling, and gives the temperature rises at which each would begin.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/stress-transformation-by-the-numbers",
+   "chapter": "compatibility-and-thermal-restraint",
+   "tool": "fit-at-temperature-check",
+   "type": "applies",
+   "note": "Checks a fit between different metals at assembly and operating temperature: interference, pressure, holding torque and outer member stress at each.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "what-misalignment-is",
+   "tool": "shaft-angular-offset",
+   "type": "applies",
+   "note": "Converts an offset change across an axial span into angular misalignment in degrees, milliradians and millimetres per 100 mm.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "foundations-and-baseplates",
+   "tool": "machine-foundation-block",
+   "type": "applies",
+   "note": "Gives a first estimate of a concrete block under a machine: mass, depth, soil bearing pressure, natural frequency on the soil and its ratio to the running speed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "levelling-and-soft-foot",
+   "tool": "machine-levelling-wedge-check",
+   "type": "applies",
+   "note": "Checks levelling wedges under a machine or base: load on the worst wedge, drive and withdrawal forces, self-locking, travel and lift per millimetre.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "pipe-strain",
+   "tool": "pipe-support-span-check",
+   "type": "complements",
+   "note": "Checks pipe spans for weight, bending stress and sag, used here to find where pipe and valve weight would otherwise hang on the pump flange.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "pipe-strain",
+   "tool": "pipe-run-expansion-check",
+   "type": "applies",
+   "note": "Checks how a bend leg takes a hot pipe run's growth: leg stress and the force pushed onto the pump end, against the nozzle allowance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "rim-and-face",
+   "tool": "rim-face-alignment",
+   "type": "applies",
+   "note": "Turns rim and face dial readings into offset and angularity at the coupling and the shim or move correction at the movable machine's front and back feet.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "thermal-growth",
+   "tool": "alignment-thermal-growth",
+   "type": "applies",
+   "note": "Estimates each machine's vertical growth from centreline height and support temperature rise, and the cold offset that gives true alignment when hot.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "making-the-moves",
+   "tool": "shaft-alignment-plan",
+   "type": "applies",
+   "note": "Combines rim and face readings with thermal growth into cold shim corrections at the feet, and checks the running offset and angularity against tolerances.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "couplings-acceptance-and-records",
+   "tool": "flexible-coupling-selection",
+   "type": "applies",
+   "note": "Checks a flexible coupling's torque with service factor, peak torque, speed, combined misalignment share, bore and hub key stresses against its ratings.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
