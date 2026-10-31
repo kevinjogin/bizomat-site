@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 971 tools with unique ids and every previously published id kept', () => {
+test('register: 977 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 971);
+  assert.equal(ids.length, 977);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 777 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 783 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 777);
+  assert.equal(ids.length, 783);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6302,4 +6302,109 @@ test('sixty-third-pass tools give their verdicts and reject bad inputs', () => {
     ['hole-location-disks', { x: 50, y: 10, z: 10 }], ['metal-ball-lot-check', { Dmax: 5.99, Dmin: 5.995 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixty-fourth handbook pass (handbook87): tools from open and candidate pages of the page ledger.
+// Expected values are the handbook's own conversion tables (Tables 16, 21, 57 and 58), the ANSI silent chain sprocket
+// Tables 3a and 4a, and the fuel oil heating value text, with independent closed forms.
+const IN87 = 25.4;
+
+test('area and volume converters reproduce the handbook square and cubic measure tables', () => {
+  const a = (value: number, from: string) => engine.run('area-converter', { value, from }).values.si;
+  near(a(1, 'acre'), 4046.856, 0.001, '1 acre = 4046.856 m²');
+  near(a(1, 'ha') / a(1, 'acre'), 2.471, 0.0005, '1 hectare = 2.471 acres');
+  near(1 / a(1, 'ft2'), 10.764, 0.0005, '1 m² = 10.764 ft²');
+  near(1 / a(1, 'yd2'), 1.196, 0.0005, '1 m² = 1.196 yd²');
+  near(a(1, 'mi2') / 1e6, 2.5899, 0.0001, '1 mile² = 2.5899 km²');
+  near(a(1, 'cm2') / a(1, 'in2'), 0.155, 0.00001, '1 cm² = 0.155 in²');
+  near(a(1, 'in2') / a(1, 'cmil'), 1273239, 1, '1 in² = 1,273,239 circular mils');
+  near(a(1, 'yd2'), 0.83612736, 1e-12, '1 yd² = 0.83612736 m² exactly');
+  const v = (value: number, from: string) => engine.run('volume-converter', { value, from }).values.si;
+  near(1 / v(1, 'yd3'), 1.30795, 0.00001, '1 m³ = 1.30795 yd³');
+  near(1 / v(1, 'ft3'), 35.314667, 0.000001, '1 m³ = 35.314667 ft³');
+  near(1 / v(1, 'in3'), 61023.74, 0.01, '1 m³ = 61,023.74 in³');
+  near(1 / v(1, 'usgal'), 264.17205, 0.00001, '1 m³ = 264.17205 US gal');
+  near(1 / v(1, 'ukgal'), 219.96925, 0.00001, '1 m³ = 219.96925 Imperial gal');
+  near(v(1, 'in3') / v(1, 'usfloz'), 0.55411256, 1e-8, '1 in³ = 0.55411256 US fl oz');
+  near(v(1, 'usfloz') * 1e6, 29.57353, 0.00001, '1 US fl oz = 29.57353 mL');
+  near(v(1, 'ukfloz') * 1e6, 28.41306, 0.00001, '1 Imperial fl oz = 28.41306 mL');
+  near(v(1, 'ft3') / v(1, 'usgal'), 7.4805, 0.00005, '1 ft³ = 7.4805 US gal');
+  near(v(1, 'yd3') / v(1, 'usgal'), 201.97403, 0.00001, '1 yd³ = 201.97403 US gal');
+  near(v(1, 'usbu') / v(1, 'ft3'), 1.2445, 0.00005, '1 US bushel = 1.2445 ft³');
+});
+
+test('inertia converter reproduces the handbook Tables 57 and 58', () => {
+  const c = (from: string, value = 1) => engine.run('inertia-converter', { value, from }).values.si;
+  near(1 / c('lbft2'), 23.73036, 0.00001, 'kg·m² to lb·ft²');
+  near(1 / c('lbin2'), 3417.171, 0.001, 'kg·m² to lb·in²');
+  near(c('lbft2'), 0.04214011, 1e-8, 'lb·ft² to kg·m²');
+  near(c('lbin2'), 0.0002926397, 1e-10, 'lb·in² to kg·m²');
+  near(c('ft4'), 0.008630975, 1e-9, 'ft⁴ to m⁴');
+  near(c('in4') / c('cm4'), 41.62314, 0.00001, 'in⁴ to cm⁴');
+  near(1 / c('ft4'), 115.8618, 0.0001, 'm⁴ to ft⁴');
+  near(c('cm4') / c('in4'), 0.0240251, 1e-7, 'cm⁴ to in⁴');
+  near(c('ft3'), 0.02831685, 1e-8, 'ft³ to m³');
+  near(c('in3'), 0.00001638706, 5e-12, 'in³ to m³');
+  near(1 / c('ft3'), 35.31466, 0.00001, 'm³ to ft³');
+  near(1 / c('in3'), 61023.76, 0.02, 'm³ to in³ (Table 57 prints 61,023.76; exact and Table 21 61,023.74)');
+  near(1 / c('lbfts'), 7.233011, 0.000005, 'kg·m/s to lb·ft/s');
+  near(1 / c('lbins'), 86.79614, 0.00005, 'kg·m/s to lb·in/s');
+  near(c('lbfts'), 0.138255, 0.000001, 'lb·ft/s to kg·m/s');
+  near(c('slugft2') / c('lbft2'), 9.80665 / 0.3048, 1e-9, 'slug·ft² = 32.174 lb·ft²');
+});
+
+test('silent chain sprocket inspection reproduces the handbook Tables 3a and 4a', () => {
+  const s = (Nt: number, P = IN87) => engine.run('silent-chain-sprocket-inspection', { Nt, P }).values;
+  // Table 3a, 1 in pitch: pitch, rounded-tooth outside and over-pin diameters.
+  const t3: Array<[number, number, number, number]> = [[96, 30.563, 30.627, 30.923], [124, 39.475, 39.542, 39.838], [125, 39.793, 39.86, 40.153], [150, 47.75, 47.82, 48.115]];
+  for (const [n, pd, od, opd] of t3) {
+    const x = s(n);
+    near(x.PD / IN87, pd, 0.0006, `PD ${n}`); near(x.OD / IN87, od, 0.0006, `OD ${n}`); near(x.OPD / IN87, opd, 0.0011, `OPD ${n}`);
+  }
+  // Table 4a tolerances (in) by tooth band, against (0.004 + 0.001 P √N) at each band's top tooth number; the printed table departs from its own formula by up to 0.0014 in.
+  const bands = [15, 24, 35, 48, 63, 80, 99, 120, 143, 144];
+  const t4: Array<[number, number[]]> = [[0.375, [0.005, 0.006, 0.006, 0.006, 0.007, 0.007, 0.008, 0.008, 0.008, 0.009]], [1, [0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.016]], [2, [0.012, 0.014, 0.017, 0.019, 0.021, 0.023, 0.025, 0.027, 0.028, 0.028]]];
+  for (const [p, row] of t4) row.forEach((tol, i) => { const n = Math.max(17, bands[i]); near(s(n, p * IN87).tolIn, 0.004 + 0.001 * p * Math.sqrt(n), 1e-12, 'formula'); near(0.004 + 0.001 * p * Math.sqrt(bands[i]), tol, 0.0015, `Table 4a ${p} in, ${bands[i]} teeth`); });
+  near(s(25).tir / IN87, 0.001 * s(25).PD / IN87, 1e-12, 'eccentricity 0.001 × PD');
+  near(s(17, 9.525).tir / IN87, 0.006, 1e-12, 'eccentricity not less than 0.006 in');
+  near(s(150, 2 * IN87).tir / IN87, 0.032, 1e-12, 'eccentricity not more than 0.032 in');
+  near(s(25).Gmin, s(25).G - 0.03 * IN87, 1e-12, 'guide groove +0, −0.030 in');
+});
+
+test('fuel oil heating value follows the handbook formula and Baumé scale', () => {
+  const v = engine.run('fuel-oil-heating-value', { from: 'be', be: 26.9 }).values;
+  near(v.sg, 140 / 156.9, 1e-12, 'SG = 140 ÷ (130 + °Bé)');
+  near(v.hv, 18650 + 40 * 16.9, 1e-9, 'BTU/lb = 18,650 + 40 (°Bé − 10)');
+  // The handbook gives 19,376 BTU/lb and 143,950 BTU per gallon for 26.9 °Bé mid-continent oil; the gallon figure follows from the pound figure and the gravity.
+  near(v.BTUgal / v.hv * 19376, 143950, 250, 'BTU per gallon from BTU per pound');
+  near(engine.run('fuel-oil-heating-value', { from: 'sg', sg: 140 / 156.9 }).values.be, 26.9, 1e-9, 'Baumé from specific gravity');
+  near(v.kgh, 100 * 3.6 / 0.8 / v.MJkg, 1e-9, 'oil burned = output ÷ (efficiency × heating value)');
+});
+
+test('sixty-fourth-pass tools give their verdicts and reject bad inputs', () => {
+  for (const id of ['area-converter', 'volume-converter', 'inertia-converter']) assert.equal(engine.run(id).text, 'CONVERTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection').text, 'SPROCKET ACCEPTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { OPDm: 209.7 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { OPDm: 210 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { TIRm: 0.3 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { Gm: 170 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('fuel-oil-heating-value').text, 'HEATING VALUE ESTIMATED');
+  assert.equal(engine.run('fuel-oil-heating-value', { be: 90 }).tone, 'warn');
+  const cases: Array<[string, Inputs]> = [['silent-chain-sprocket-inspection', { P: 9.51 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+test('surface roughness acceptance applies the 16 % and max rules', () => {
+  const r = (over: Inputs) => engine.run('surface-roughness-acceptance', over);
+  const d = r({});
+  assert.equal(d.text, 'SURFACE ACCEPTED');
+  near(d.values.shareAbove, 100 / 12, 1e-9, '1 of 12 above'); near(d.values.ln, 4, 1e-12, 'ln = 5 lr');
+  const exc = r({ nAbove: 2 }); // 16.7 % above, mean + σ = 0.73 within 0.8: the handbook exception
+  assert.equal(exc.text, 'SURFACE ACCEPTED'); assert.equal(exc.tone, 'warn');
+  assert.equal(r({ nAbove: 2, mean: 0.75, sd: 0.1 }).text, 'SURFACE REJECTED');
+  assert.equal(r({ nAbove: 1, n: 6, mean: 0.75, sd: 0.1 }).text, 'SURFACE REJECTED'); // 1 in 6 is 16.7 %
+  assert.equal(r({ rule: 'max' }).text, 'SURFACE REJECTED');
+  assert.equal(r({ rule: 'max', vmax: 0.79 }).text, 'SURFACE ACCEPTED');
+  assert.equal(r({ lower: 'yes', Lw: 0.6, nBelow: 3 }).text, 'SURFACE REJECTED');
+  assert.equal(r({ nAbove: 13 }).text, 'CHECK INPUTS');
 });

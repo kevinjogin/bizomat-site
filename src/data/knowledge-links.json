@@ -6720,6 +6720,46 @@
    "note": "Calculates a rolling bearing's outer race, inner race, roller spin and cage defect frequencies and matches a measured spectrum peak to them.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "fuel-air-and-the-reaction",
+   "tool": "fuel-oil-heating-value",
+   "type": "complements",
+   "note": "Estimates the higher heating value of a fuel oil from its gravity, the gross basis this chapter explains, and the oil a burner uses for a heat output.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter defines higher and lower heating values and why the rating basis matters; tool gives the handbook gross heating value of fuel oil from its Baumé gravity and the oil burned at an efficiency, noting the gross basis."
+  },
+  {
+   "reados": "publication/combustion-by-the-numbers",
+   "chapter": "available-heat-and-the-furnace-load",
+   "tool": "fuel-oil-heating-value",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter works out available heat for a natural gas furnace from flue temperature and excess air; oil gravity and oil heating values are not discussed."
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "permanent-magnet-servo-motors",
+   "tool": "inertia-converter",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes servo motors with inertias already in kg·m²; converting inertia units is not discussed."
+  },
+  {
+   "reados": "publication/arc-welding-by-the-numbers",
+   "chapter": "duty-cycle-supply-and-cables",
+   "tool": "area-converter",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sizes welding cables in mm² only; circular mils and other area units are not discussed."
   }
  ]
 }
