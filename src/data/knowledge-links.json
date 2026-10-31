@@ -6760,6 +6760,222 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter sizes welding cables in mm² only; circular mils and other area units are not discussed."
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "from-liquid-to-solid",
+   "tool": "melting-energy",
+   "type": "applies",
+   "note": "Works out the heat to warm, melt and superheat a charge, the latent heat share, the energy drawn at a furnace efficiency, the melting time and the energy cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "melting-energy-time-and-cost",
+   "tool": "melt-furnace-batch-plan",
+   "type": "applies",
+   "note": "Adds charging and tapping time to the melt heat balance to give the cycle per melt, complete melts and metal per shift against demand, and energy cost per kg.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "getting-the-chemistry-right",
+   "tool": "melt-charge-blend",
+   "type": "applies",
+   "note": "Blends two charge materials to a target content by alligation, allowing for melt loss, and gives each material's mass and the charge cost per kg.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "patterns-and-allowances",
+   "tool": "casting-pattern-plan",
+   "type": "applies",
+   "note": "Gives casting and pattern dimensions of a block casting from machining and shrinkage allowances, then casting mass, metal to pour for a yield and a ladle check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "patterns-and-allowances",
+   "tool": "pattern-shrinkage",
+   "type": "applies",
+   "note": "Gives one pattern dimension from the finished size, machining allowance and shrinkage allowance, and estimates casting weight from the pattern's weight.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "gating-filling-the-mould",
+   "tool": "gating-choke-area",
+   "type": "applies",
+   "note": "Sizes the choke for a pouring time from metal velocity under the head, with sprue diameter, runner and gate areas, and checks the velocity at the gates.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "solidification-time",
+   "tool": "casting-solidification",
+   "type": "applies",
+   "note": "Gives casting and riser moduli and solidification times by Chvorinov's rule and checks the riser-to-casting modulus ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "risers-and-feeding",
+   "tool": "casting-pour-plan",
+   "type": "applies",
+   "note": "Checks a riser's modulus and its volume against the feed the casting's shrinkage needs, and gives metal poured, casting yield, choke area and a ladle check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "defects-gas-oxides-and-grain",
+   "tool": "grain-size-acceptance",
+   "type": "applies",
+   "note": "Averages up to five grain size field readings, converts them to ASTM grain size number G, and checks the average and the spread against a specification.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "heat-treating-castings",
+   "tool": "furnace-heat-treat-plan",
+   "type": "applies",
+   "note": "Estimates heat into a furnace load, heat-up time, cycle time, energy and cost per load and per kg of work, including the basket and standing losses.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "heat-treating-castings",
+   "tool": "quench-tank-temperature-check",
+   "type": "applies",
+   "note": "Finds the quench bath temperature after a hot load, the rise per load, loads before the bath limit and the average heat input against the cooler.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/metal-casting-by-the-numbers",
+   "chapter": "inspecting-and-proving-castings",
+   "tool": "brinell-test-check",
+   "type": "applies",
+   "note": "Calculates Brinell hardness from two indentation diameters and checks the indentation ratio, thickness, edge distance and spacing rules and the specification.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "why-induction-hardening",
+   "tool": "vickers-knoop-hardness",
+   "type": "applies",
+   "note": "Turns a Vickers or Knoop indentation diagonal and test force into hardness, with the indentation depth and the least layer thickness it needs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "reference-depth-and-the-curie-point",
+   "tool": "induction-hardening-plan",
+   "type": "applies",
+   "note": "Gives the reference depth at a frequency from hot resistivity and permeability, its ratio to the case, the frequency for your range, and the layer's heating energy and power.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "the-steel-and-its-transformation",
+   "tool": "brinell-test-check",
+   "type": "applies",
+   "note": "Calculates Brinell hardness from two indentation diameters, checks the validity rules and specification, and gives a rough tensile estimate for steel.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "the-steel-and-its-transformation",
+   "tool": "grain-size-acceptance",
+   "type": "applies",
+   "note": "Averages up to five grain size field readings, converts them to ASTM grain size number G, and checks the average and spread against a specification.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "quenching-the-hot-layer",
+   "tool": "quench-tank-temperature-check",
+   "type": "applies",
+   "note": "Finds the quench bath temperature after a hot load, the rise per load, loads before the bath limit and the average heat input against the cooler.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "quenching-the-hot-layer",
+   "tool": "coolant-tank-maintenance",
+   "type": "complements",
+   "note": "Written for metalworking fluid sumps; its refractometer, correction and make-up arithmetic applies unchanged to keeping a polymer quenchant at its concentration.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "tempering-after-hardening",
+   "tool": "furnace-heat-treat-plan",
+   "type": "applies",
+   "note": "Estimates heat into a tempering load, heat-up and cycle time, energy and cost per load and per kg, including the basket and standing losses.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "measuring-case-depth",
+   "tool": "vickers-test-check",
+   "type": "applies",
+   "note": "Evaluates one Vickers indentation: hardness and depth, and checks of thickness, edge distance, spacing and diagonal difference against your rules and specification.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "measuring-case-depth",
+   "tool": "linear-interpolation",
+   "type": "applies",
+   "note": "Interpolates between two points in either direction, here the depth at which a hardness traverse crosses the limit hardness for effective case depth.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "distortion-cracks-and-residual-stress",
+   "tool": "thermal-growth",
+   "type": "complements",
+   "note": "Gives the free thermal growth of a length for a constant coefficient; it shows what the hot layer tries to do, not the restrained, transforming result.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "controlling-the-process",
+   "tool": "individuals-chart-check",
+   "type": "applies",
+   "note": "Builds an individuals control chart from up to twelve readings in time order: mean, moving range, sigma, control limits and points out of control.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/induction-hardening-by-the-numbers",
+   "chapter": "controlling-the-process",
+   "tool": "process-capability",
+   "type": "applies",
+   "note": "Calculates Cp, Cpk and the one-sided indices from specification limits, process mean and within-process standard deviation, flagging unconfirmed assumptions.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
