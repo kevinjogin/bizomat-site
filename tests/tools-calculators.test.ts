@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 965 tools with unique ids and every previously published id kept', () => {
+test('register: 971 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 965);
+  assert.equal(ids.length, 971);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 771 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 777 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 771);
+  assert.equal(ids.length, 777);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6172,6 +6172,134 @@ test('sixty-second-pass tools give pass and fail verdicts and reject bad inputs'
   const cases: Array<[string, Inputs]> = [
     ['cutter-clearance-grinding-setup', { d: 120 }], ['spline-shaft-milling-cutter', { W: 30 }], ['spline-shaft-milling-cutter', { Ns: 12, W: 10 }],
     ['top-knurling-cam-rise', { depthFrom: 'given', dg: 5 }], ['gear-angular-backlash', { D: 40 }], ['gear-angular-backlash', { dC: -0.5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixty-third handbook pass (handbook86): tools from open and candidate pages of the page ledger.
+// Expected values are the handbook's own examples (spherical sections Examples 7 to 11, the parabola and hyperbola examples,
+// the disk method example, the metal ball marking examples and the engine flywheel Examples 1 and 2) and independent closed forms.
+const IN86 = 25.4;
+
+test('spherical sections reproduce the handbook examples', () => {
+  const r = (over: Inputs) => engine.run('sphere-sections', over).values;
+  // Example 7: wall G, R1 12.5 cm, R2 10 cm: 3220.13 cm² and 3992.44 cm³ (here in mm).
+  const g = r({ sec: 'G', R1: 125, R2: 100 });
+  near(g.area / 100, 3220.13, 0.01, 'Example 7 area');
+  near(g.vol / 1000, 3992.44, 0.01, 'Example 7 volume');
+  // Example 8: sector K, R 15 cm, φ 90°: area 414.07 cm²; the volume follows 2πR²F ÷ 3 with F = R(1 − cos ½φ).
+  const k = r({ sec: 'K', R: 150, phi: 90 });
+  near(k.area / 100, 414.07, 0.01, 'Example 8 area');
+  near(k.Fdep, 150 * (1 - Math.cos(Math.PI / 4)), 1e-9, 'depth of the sector');
+  near(k.vol, 2 * Math.PI * 150 ** 2 * k.Fdep / 3, 1e-6, 'Kv = 2πR²F ÷ 3');
+  // Example 9: segment S, E 20 cm, F 5 cm: 392.70 cm² and 850.85 cm³.
+  const s = r({ sec: 'S', E: 200, F: 50 });
+  near(s.area / 100, 392.7, 0.01, 'Example 9 area');
+  near(s.vol / 1000, 850.85, 0.01, 'Example 9 volume');
+  near(s.Rsph, 125, 1e-9, 'segment sphere radius');
+  // Example 10: hollow sector U, R1 5 in, R2 4 in, φ 30°: area 8.78 in². The printed volume 13.06 in³ is three times (2π/3)(R1³ − R2³)(1 − cos ½φ).
+  const u = r({ sec: 'U', R1: 5, R2: 4, phi: 30 });
+  near(u.area, 8.78, 0.005, 'Example 10 area');
+  near(3 * u.vol, 13.06, 0.005, 'printed Example 10 volume is 3 × the sector volume');
+  near(u.vol, r({ sec: 'K', R: 5, phi: 30 }).vol - r({ sec: 'K', R: 4, phi: 30 }).vol, 1e-9, 'U = K(R1) − K(R2)');
+  // Example 11: ring W, R1 5 in, R2 4 in: 789.56 in² and 1579.13 in³; part ring Z scales by φ ÷ 360.
+  const w = r({ sec: 'W', R1: 5, R2: 4 });
+  near(w.area, 789.56, 0.01, 'Example 11 area');
+  near(w.vol, 1579.13, 0.01, 'Example 11 volume');
+  near(r({ sec: 'Z', R1: 5, R2: 4, phi: 90 }).vol, w.vol / 4, 1e-9, 'quarter ring');
+  // Zone T cut 20 and 60 mm from the centre of a 100 mm sphere: radius 100, area 2πRH, volume π∫(R² − z²)dz.
+  const t = r({ sec: 'T', P: 2 * Math.sqrt(100 ** 2 - 20 ** 2), Q: 2 * Math.sqrt(100 ** 2 - 60 ** 2), H: 40 });
+  near(t.Rsph, 100, 1e-9, 'zone sphere radius');
+  near(t.area, 2 * Math.PI * 100 * 40, 1e-6, 'zone area');
+  near(t.vol, Math.PI * (100 ** 2 * 40 - (60 ** 3 - 20 ** 3) / 3), 1e-6, 'zone volume');
+  near(r({ sec: 'fromvol', Nv: 4 / 3 * Math.PI * 50 ** 3 / 1e6 }).Rsph, 50, 1e-9, 'radius from volume');
+});
+
+test('conic sections reproduce the handbook parabola and hyperbola examples', () => {
+  const c = (A: number, C: number, D: number, E: number, F: number) => engine.run('conic-section-equation', { A, C, D, E, F });
+  // 4y² − 8x − 12y + 1 = 0: vertex (−1, 3/2), p = 1/2, focus (1/2, 3/2), directrix x = −3/2.
+  const p = c(0, 4, -8, -12, 1);
+  assert.equal(p.text, 'PARABOLA IDENTIFIED');
+  near(p.values.h, -1, 1e-12, 'h'); near(p.values.k, 1.5, 1e-12, 'k'); near(p.values.p, 0.5, 1e-12, 'p');
+  // 9x² − 4y² − 36x + 8y − 4 = 0: h 2, k 1, a 2, b 3, c √13, e √13 ÷ 2.
+  const h = c(9, -4, -36, 8, -4);
+  assert.equal(h.text, 'HYPERBOLA IDENTIFIED');
+  near(h.values.h, 2, 1e-12, 'h'); near(h.values.k, 1, 1e-12, 'k'); near(h.values.a, 2, 1e-12, 'a'); near(h.values.b, 3, 1e-12, 'b');
+  near(h.values.c, Math.sqrt(13), 1e-12, 'c'); near(h.values.e, Math.sqrt(13) / 2, 1e-12, 'e');
+  const v = c(1, 0, 0, -4, 0); // x² = 4y
+  near(v.values.p, 1, 1e-12, 'vertical parabola p');
+  const e = c(9, 25, 0, 0, -225); // x²/25 + y²/9 = 1
+  assert.equal(e.text, 'ELLIPSE IDENTIFIED');
+  near(e.values.a, 5, 1e-12, 'a'); near(e.values.b, 3, 1e-12, 'b'); near(e.values.e, 0.8, 1e-12, 'e');
+  assert.equal(c(1, 1, 0, 0, -4).text, 'CIRCLE IDENTIFIED');
+  const vert = c(-4, 9, 0, 0, -36); // y²/4 − x²/9 = 1
+  near(vert.values.a, 2, 1e-12, 'vertical hyperbola a'); near(vert.values.b, 3, 1e-12, 'vertical hyperbola b');
+});
+
+test('four-arc oval follows the handbook equations and closes tangentially', () => {
+  const v = engine.run('four-arc-oval', { A: 400, B: 100 }).values;
+  near(v.r, 100 ** 2 / 800 * 4 ** 0.38, 1e-12, 'r = (B² ÷ 2A)(A ÷ B)^0.38');
+  near(v.X, (400 ** 2 / 4 - 400 * v.r + 100 * v.r - 100 ** 2 / 4) / (100 - 2 * v.r), 1e-9, 'equation (2)');
+  near(v.R, 50 + v.X, 1e-12, 'R = B/2 + X');
+  near(v.tang, 0, 1e-9, 'arcs meet tangentially');
+  near(v.area, 30631.7048, 0.001, 'area against a numerical integration of the outline');
+  near(v.aEll, Math.PI * 100 * 400 / 4, 1e-9, 'ellipse area');
+});
+
+test('disk method reproduces the handbook hole location example', () => {
+  // x = 0.930, y = 0.720, z = 0.860 in: disk A 1.070 in, radius B 0.395 in, radius C 0.325 in.
+  const v = engine.run('hole-location-disks', { x: 0.93 * IN86, y: 0.72 * IN86, z: 0.86 * IN86 }).values;
+  near(v.dA / IN86, 1.07, 1e-9, 'disk A diameter');
+  near(v.rB / IN86, 0.395, 1e-9, 'disk B radius');
+  near(v.rC / IN86, 0.325, 1e-9, 'disk C radius');
+  near(v.angA + v.angB + v.angC, 180, 1e-9, 'angles');
+  near(Math.hypot(v.Cx - 0.93 * IN86, v.Cy), 0.72 * IN86, 1e-9, 'hole C is y from hole B');
+});
+
+test('metal ball lot check reproduces the handbook marking examples', () => {
+  // 1/4 in, Grade 16, −0.0002 in ball gauge: accepted 0.249760 to 0.249850 in; measured 0.249823 marks −0.000180 in.
+  const D = 0.249823 * IN86;
+  const i = engine.run('metal-ball-lot-check', { Dw: 6.35, gage: -0.0002 * IN86 * 1000, devMinus: 0.00004 * IN86 * 1000, devPlus: 0.00005 * IN86 * 1000, inc: 0.00001 * IN86 * 1000, Dmax: D, Dmin: D });
+  near(i.values.lo / IN86, 0.24976, 1e-9, 'lower limit');
+  near(i.values.hi / IN86, 0.24985, 1e-9, 'upper limit');
+  near(i.values.spec / 1000 / IN86, -0.00018, 1e-9, 'specific diameter −0.000180 in');
+  assert.equal(i.text, 'LOT ACCEPTED');
+  // 6 mm, Grade 16, −4 µm: accepted 5.99500 to 5.99725 mm; measured 5.99627 mm marks −3.75 µm.
+  const mm = engine.run('metal-ball-lot-check').values;
+  near(mm.DwmL, 5.99627, 1e-9, 'lot mean diameter');
+  near(mm.lo, 5.995, 1e-12, 'lower limit'); near(mm.hi, 5.99725, 1e-12, 'upper limit');
+  near(mm.spec, -3.75, 1e-9, 'specific diameter −3.75 µm');
+  // Balls per kilogram: handbook 1,910,000 ÷ (D³ ρ) with D in mm and ρ in g/cm³.
+  near(mm.perKg, 1910000 / (6 ** 3 * 7.833), 0.2, 'balls per kilogram');
+});
+
+test('engine flywheel rim weight reproduces the handbook examples', () => {
+  // Example 1: 150 hp non-condensing engine, 200 rpm, 2 %, cut-off ¼ (c 0.209), 6 ft mean diameter: 2110 lb nearly.
+  const a = engine.run('engine-flywheel-rim-and-arms', { given: 'power', P: 150 * 0.745699872, N: 200, pct: 2, c: 0.209, Dm: 6 * 0.3048 }).values;
+  near(a.lb, 2110, 5, 'Example 1');
+  // Example 2: 158,340 ft·lb per revolution, c 0.163, 1 %, 18 ft, 75 rpm: 16,650 lb nearly (11,745 uses g = 32.2 ft/s²).
+  const b = engine.run('engine-flywheel-rim-and-arms', { given: 'work', Wrev: 158340 * 1.3558179483, N: 75, pct: 1, c: 0.163, Dm: 18 * 0.3048 }).values;
+  near(b.lb, 16650, 40, 'Example 2');
+  near(b.mass, 100 * b.E / (Math.PI * 18 * 0.3048 * 75 / 60) ** 2, 1e-9, 'm = nE ÷ v²');
+  near(engine.run('engine-flywheel-rim-and-arms', { arms: '6', ds: 100 }).values.Wa, 130, 1e-12, '6 arms: 1.3 D');
+  const e8 = engine.run('engine-flywheel-rim-and-arms', { arms: '8', ds: 100 }).values;
+  near(e8.Wa, 120, 1e-12, '8 arms: 1.2 D'); near(e8.ta, 60, 1e-12, 'thickness half the width'); near(e8.AtipMin, 2 / 3 * e8.Ahub, 1e-12, 'rim area two-thirds of hub area');
+});
+
+test('sixty-third-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('sphere-sections').text, 'SECTION CALCULATED');
+  assert.equal(engine.run('conic-section-equation').text, 'HYPERBOLA IDENTIFIED');
+  assert.equal(engine.run('four-arc-oval').text, 'OVAL LAID OUT');
+  assert.equal(engine.run('hole-location-disks').text, 'DISK SIZES SET');
+  assert.equal(engine.run('metal-ball-lot-check').text, 'LOT ACCEPTED');
+  assert.equal(engine.run('metal-ball-lot-check', { Dmax: 5.998, Dmin: 5.9979 }).text, 'LOT REJECTED');
+  assert.equal(engine.run('metal-ball-lot-check', { Dmax: 5.9975, Dmin: 5.995 }).text, 'LOT REJECTED');
+  assert.equal(engine.run('engine-flywheel-rim-and-arms').text, 'RIM AND ARMS SIZED');
+  const cases: Array<[string, Inputs]> = [
+    ['sphere-sections', { sec: 'G', R1: 100, R2: 120 }], ['sphere-sections', { sec: 'W', R1: 10, R2: 20 }],
+    ['conic-section-equation', { A: 0, C: 0 }], ['conic-section-equation', { A: 1, C: 1, D: 0, E: 0, F: 1 }], ['conic-section-equation', { A: 1, C: -1, D: 0, E: 0, F: 0 }], ['conic-section-equation', { A: 0, C: 1, D: 0 }],
+    ['four-arc-oval', { A: 100, B: 200 }], ['four-arc-oval', { rFrom: 'given', rg: 60 }],
+    ['hole-location-disks', { x: 50, y: 10, z: 10 }], ['metal-ball-lot-check', { Dmax: 5.99, Dmin: 5.995 }],
   ];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
 });

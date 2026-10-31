@@ -6417,6 +6417,66 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter taps metric M8 holes and checks them with gauges; Unified inch cut thread tap limits are not discussed."
+  },
+  {
+   "reados": "publication/oval-sheet-metal-work-by-the-numbers",
+   "chapter": "constructing-a-four-centre-oval",
+   "tool": "four-arc-oval",
+   "type": "applies",
+   "note": "Gives the side radius, centres and tangent points of the four-centre oval this chapter constructs, with the handbook equation for the end radius or your own, and the area against the true ellipse.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives R = [(a − r)² + b² − r²] ÷ 2(b − r) from the length, width and end radius; tool uses the handbook equations (2) and (3), which reduce to the same side radius, and adds the handbook end radius rule."
+  },
+  {
+   "reados": "publication/tanks-and-hoppers-by-the-numbers",
+   "chapter": "cones-pyramids-and-frustums",
+   "tool": "sphere-sections",
+   "type": "applies",
+   "note": "Works out the volume, area and sphere radius of the spherical caps and whole spheres this chapter uses for dished tank bottoms, with the other spherical sections beside them.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the spherical cap volume π h ÷ 6 (3a² + h²) and sphere radius (a² + h²) ÷ 2h for a dished bottom; tool computes the handbook segment S, sphere and other sections by the same relations."
+  },
+  {
+   "reados": "publication/hand-forming-sheet-metal-by-the-numbers",
+   "chapter": "sizing-the-blank-for-a-dome",
+   "tool": "sphere-sections",
+   "type": "applies",
+   "note": "Gives the surface area and sphere radius of the spherical cap that sets the blank for a hand-raised dome, from its rim diameter and height.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes dome blanks from the spherical cap area and sphere radius found from rim radius and height; tool returns the handbook segment area π(F² + E²/4) and sphere radius from the same two dimensions."
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "flywheel-energy-and-slowdown",
+   "tool": "engine-flywheel-rim-and-arms",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter works out a press flywheel’s stored energy and slowdown per stroke; engine energy-excess factors, small speed variations and arm proportions are not discussed."
+  },
+  {
+   "reados": "publication/marking-out-by-the-numbers",
+   "chapter": "large-arcs-ellipses-and-curves-by-points",
+   "tool": "conic-section-equation",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter marks out ellipses from their axes with string, trammel and ordinates; conic equations in general form are not discussed."
+  },
+  {
+   "reados": "publication/marking-out-by-the-numbers",
+   "chapter": "large-arcs-ellipses-and-curves-by-points",
+   "tool": "four-arc-oval",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter mentions the four-centre approximation in one sentence and refers to the oval book for it."
   }
  ]
 }
