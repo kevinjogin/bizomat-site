@@ -3422,3 +3422,38 @@ Seven tools in batch handbook85 from open and candidate pages of the page-by-pag
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Silent Chain Width for a Power (Rating per Unit Width and Service Factor)** `silent-chain-width` | CHAIN WIDTH CARRIES THE POWER | Width; Lubrication; Rating; Model and application | 3475–3476 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook86 (added 31 October 2026)
+
+Six tools in batch handbook86 from open and candidate pages of the page-by-page ledger: areas and volumes of spherical sections (pp. 52–54), conic sections from their general equation (pp. 54–55), the four-arc oval that approximates an ellipse (p. 51), locating three holes by the disk method (pp. 3481–3482), a standard metal ball lot check with package marking and balls per kilogram (pp. 3355–3357, 3361–3362) and engine flywheel rim weight with arm proportions (pp. 3010–3011). Densities, ball grade tolerances, marking increments and the factor of energy excess are always user inputs. WORKOS now holds 971 tools.
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring)** `sphere-sections` | SECTION CALCULATED | Section; Model and application | 52–54 | Automated + cross-check |
+| **Four-Arc Oval Approximating an Ellipse (End and Side Radii and Their Centres)** `four-arc-oval` | OVAL LAID OUT | Arcs meet tangentially; Shape; Model and application | 51 | Automated + cross-check |
+
+### Mathematics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Conic Section from Its General Equation (Parabola, Ellipse, Hyperbola: Centre, Vertices, Foci, Directrix)** `conic-section-equation` | HYPERBOLA IDENTIFIED | Curve; Rotated curves; Model and application | 54–55 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Locating Three Holes by the Disk Method (Disk Diameters from Centre Distances)** `hole-location-disks` | DISK SIZES SET | Disks touch; Disk accuracy; Model and application | 3481–3482 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Standard Metal Ball Lot Check (Lot Mean Diameter, Ball Gauge, Specific Diameter, Balls per Kilogram)** `metal-ball-lot-check` | LOT ACCEPTED | Lot mean diameter; Lot diameter variation; Package marking; Individual balls; Model and application | 3355–3357, 3361–3362 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Engine Flywheel Rim Weight and Arm Proportions (Energy Excess Factor, Speed Variation)** `engine-flywheel-rim-and-arms` | RIM AND ARMS SIZED | Speed variation; Rim stress; Arms; Model and application | 3010–3011 | Automated |

@@ -2,7 +2,7 @@
 
 Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 567 relationships (312 from links authors wrote in the books, 255 from editorial review). Rejected: 107. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 570 relationships (312 from links authors wrote in the books, 258 from editorial review). Rejected: 110. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -265,6 +265,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Gears by the Numbers | Backlash and tooth thickness | Angular Backlash of a Gear Pair (and Backlash from a Centre Distance Change) | complements | Chapter defines circumferential backlash and derives backlash from tooth thinning and centre distance changes; tool gives the handbook angular backlash 6875 B ÷ D minutes and the 2 Δc tan φ change. |
 | Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Spline Shaft Milling Cutter (Cutter Angle and Chordal Width at the Root) | complements | Chapter lists milling with form cutters among spline manufacturing methods for small quantities; tool computes the handbook spline-shaft milling cutter angle and chordal width at the root. |
 | Deep Drawing and Spinning by the Numbers | Draw, spin or something else | Rubber Pad (Guerin) Forming Pressure and Pad Thickness Check | complements | Chapter names hydroforming or rubber-pad forming as a lower tooling cost alternative; tool gives the handbook pad pressure F × 2000 ÷ A and the pad thickness rules for the Guerin process. |
+| Oval Sheet Metal Work by the Numbers | Constructing a four-centre oval | Four-Arc Oval Approximating an Ellipse (End and Side Radii and Their Centres) | applies | Chapter derives R = [(a − r)² + b² − r²] ÷ 2(b − r) from the length, width and end radius; tool uses the handbook equations (2) and (3), which reduce to the same side radius, and adds the handbook end radius rule. |
+| Tanks and Hoppers by the Numbers | Cones, pyramids and frustums | Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring) | applies | Chapter gives the spherical cap volume π h ÷ 6 (3a² + h²) and sphere radius (a² + h²) ÷ 2h for a dished bottom; tool computes the handbook segment S, sphere and other sections by the same relations. |
+| Hand Forming Sheet Metal by the Numbers | Sizing the blank for a dome | Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring) | applies | Chapter sizes dome blanks from the spherical cap area and sphere radius found from rim radius and height; tool returns the handbook segment area π(F² + E²/4) and sphere radius from the same two dimensions. |
 
 ## 2. Rejected
 
@@ -377,6 +380,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining and Metal Parts | Grinding, honing and lapping: finishing hard parts to tight tolerances | Milling Cutter Clearance Grinding Set-up (Clearance Needed, Wheel and Tooth-Rest Offsets, Indicator Drops) | Rejected: chapter names tool and cutter grinding in one line among grinding processes; clearance angles, wheel offsets and tooth rest settings are not discussed. |
 | Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Top Knurling on an Automatic Screw Machine (Cam Rise and Revolutions) | Rejected: chapter explains form and cut knurling and matching the pitch to the diameter; cross-slide knurling cam rise and revolutions on screw machines are not discussed. |
 | Machining by the Numbers | Drilling, reaming and tapping calculations | Unified Inch Cut Thread Tap Limits (Major and Pitch Diameter, ASME B94.9) | Rejected: chapter taps metric M8 holes and checks them with gauges; Unified inch cut thread tap limits are not discussed. |
+| Power Presses by the Numbers | Flywheel energy and slowdown | Engine Flywheel Rim Weight and Arm Proportions (Energy Excess Factor, Speed Variation) | Rejected: chapter works out a press flywheel’s stored energy and slowdown per stroke; engine energy-excess factors, small speed variations and arm proportions are not discussed. |
+| Marking Out by the Numbers | Large arcs, ellipses and curves by points | Conic Section from Its General Equation (Parabola, Ellipse, Hyperbola: Centre, Vertices, Foci, Directrix) | Rejected: chapter marks out ellipses from their axes with string, trammel and ordinates; conic equations in general form are not discussed. |
+| Marking Out by the Numbers | Large arcs, ellipses and curves by points | Four-Arc Oval Approximating an Ellipse (End and Side Radii and Their Centres) | Rejected: chapter mentions the four-centre approximation in one sentence and refers to the oval book for it. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -449,7 +455,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Specifications, Product Quality and Sustainability | collection | products | nothing |
 | SQL, Queries and Data Correctness | collection | technology | nothing |
 | Sustainability and Environmental Management | collection | business | Business & Commercial |
-| Tanks and Hoppers by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Teams, Incentives and Performance | collection | business | Business & Commercial |
 | The Small Business Operating Handbook | publication | Business | Business & Commercial |
 | Thermit Welding by the Numbers | publication | Manufacturing | Manufacturing & Production |

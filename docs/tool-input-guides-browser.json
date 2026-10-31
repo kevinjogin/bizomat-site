@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-31",
- "base": "http://127.0.0.1:8794",
- "tools": 965,
- "passed": 965,
- "inputs": 8368,
- "figures": 8368,
+ "base": "http://127.0.0.1:8808",
+ "tools": 971,
+ "passed": 971,
+ "inputs": 8412,
+ "figures": 8412,
  "sample": [
   {
    "id": "make-buy",
@@ -5917,6 +5917,42 @@
    "ok": true,
    "inputs": 6,
    "figures": 6
+  },
+  {
+   "id": "sphere-sections",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "conic-section-equation",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "four-arc-oval",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "hole-location-disks",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "metal-ball-lot-check",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "engine-flywheel-rim-and-arms",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
   }
  ]
 }
