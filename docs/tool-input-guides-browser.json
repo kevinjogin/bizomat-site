@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-31",
- "base": "http://127.0.0.1:8846",
- "tools": 983,
- "passed": 983,
- "inputs": 8510,
- "figures": 8510,
+ "base": "http://127.0.0.1:8851",
+ "tools": 986,
+ "passed": 986,
+ "inputs": 8554,
+ "figures": 8554,
  "sample": [
   {
    "id": "make-buy",
@@ -6025,6 +6025,24 @@
    "ok": true,
    "inputs": 18,
    "figures": 18
+  },
+  {
+   "id": "step-thrust-bearing-design",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "tapered-land-thrust-bearing-design",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "tilting-pad-thrust-bearing-design",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
   }
  ]
 }

@@ -3525,3 +3525,15 @@ Two tools in batch handbook90 from the deep audit of pages cited only within wid
 |---|---|---|---|---|
 | **Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness)** `journal-bearing-lubrication-analysis` | ASSUMED TEMPERATURE RISE CONFIRMED | Temperature rise iteration; Minimum film thickness; Temperature rise; Flow; Model and application | 2328–2338 | Automated + cross-check |
 | **Flat Plate Thrust Bearing Design (Pad Layout, Unit Load, Friction Loss, Oil Flow, Chamfer Depth)** `flat-plate-thrust-bearing-design` | THRUST BEARING LAID OUT | Outside diameter; Unit load; Temperature rise; Chamfer flow; Outside to inside diameter; Model and application | 2338–2344 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook91 (added 1 November 2026)
+
+Three tools in batch handbook91 completing the deep audit of the thrust bearing section: step thrust bearing design with film thickness, step depth, friction, oil flow and temperature rise (pp. 2345–2347), tapered land thrust bearing design with the film factor, friction and film flow (pp. 2347–2352), and tilting pad (Kingsbury) thrust bearing design with the operating number, film, friction, oil flow and temperature rise (pp. 2352–2356). Chart readings, taper values, oil properties and accepted limits are always user inputs. WORKOS now holds 986 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise)** `step-thrust-bearing-design` | STEP BEARING LAID OUT | Temperature rise; Outside diameter; Pad shape; Model and application | 2339, 2345–2347 | Automated + cross-check |
+| **Tapered Land Thrust Bearing Design (Pad Layout, Film Factor, Friction, Oil Flow Required and Passed)** `tapered-land-thrust-bearing-design` | FILM FLOW CARRIES THE HEAT | Oil flow; Film thickness; Unit load; Model and application | 2339, 2347–2352 | Automated + cross-check |
+| **Tilting Pad (Kingsbury) Thrust Bearing Design (Operating Number, Film, Friction, Oil Flow, Temperature Rise)** `tilting-pad-thrust-bearing-design` | TILTING PAD BEARING SATISFACTORY | Temperature rise; Minimum film; Unit load; Model and application | 2339, 2352–2356 | Automated + cross-check |

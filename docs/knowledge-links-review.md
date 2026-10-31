@@ -2,7 +2,7 @@
 
 Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 657 relationships (391 from links authors wrote in the books, 266 from editorial review). Rejected: 116. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 659 relationships (391 from links authors wrote in the books, 268 from editorial review). Rejected: 117. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -276,6 +276,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Plain Bearings by the Numbers | Supplying the oil | Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness) | complements | Chapter calculates the side flow a journal bearing film loses and how the oil is supplied; tool applies the handbook analysis with hydrodynamic flow N l cd q d ÷ 294 and pressure flow from the supply pressure. |
 | Plain Bearings by the Numbers | Oil temperature and the heat balance | Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness) | complements | Chapter finds a bearing’s running temperature from the balance of heat made and shed; tool repeats the handbook assumed-versus-actual temperature rise until they agree within 5 °F. |
 | Plain Bearings by the Numbers | Thrust bearings | Flat Plate Thrust Bearing Design (Pad Layout, Unit Load, Friction Loss, Oil Flow, Chamfer Depth) | complements | Chapter checks a thrust face’s unit load and PV and explains why flat faces need pads and a wedge; tool applies the handbook flat plate design: pad layout, unit load, friction from the M chart, oil flow and chamfer depth. |
+| Plain Bearings by the Numbers | Thrust bearings | Tapered Land Thrust Bearing Design (Pad Layout, Film Factor, Friction, Oil Flow Required and Passed) | complements | Chapter explains how tapered lands give each pad a converging wedge and where they suit; tool applies the handbook tapered land procedure with leakage factor, film factor K, friction from J and the film flow. |
+| Plain Bearings by the Numbers | Thrust bearings | Tilting Pad (Kingsbury) Thrust Bearing Design (Operating Number, Film, Friction, Oil Flow, Temperature Rise) | complements | Chapter introduces Michell’s and Kingsbury’s pivoted pads and where they suit; tool applies the handbook tilting pad procedure with the operating number, film factor α, friction coefficient and temperature rise. |
 
 ## 2. Rejected
 
@@ -397,6 +399,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Elements and Mechanical Design | Bolted joints that stay tight: preload, torque, fatigue and locking | Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint) | Rejected: chapter covers preload, torque, fatigue and locking; grip gauging and body lengths of bolts are not discussed. |
 | Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint) | Rejected: chapter specifies tapped hole depths and drill depths; the length and thread length of the screw are not discussed. |
 | Magnetic Workholding by the Numbers | Grinding on a magnetic chuck | Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration) | Rejected: chapter covers holding work on a magnetic chuck against grinding forces; wheel life and Taylor constants are not discussed. |
+| Plain Bearings by the Numbers | Thrust bearings | Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise) | Rejected: chapter compares flat, tapered land and tilting pad thrust faces; step thrust bearings are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 
