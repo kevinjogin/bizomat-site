@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 978 tools with unique ids and every previously published id kept', () => {
+test('register: 981 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 978);
+  assert.equal(ids.length, 981);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 784 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 787 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 784);
+  assert.equal(ids.length, 787);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6432,4 +6432,54 @@ test('sixty-fifth-pass tool gives its verdicts and rejects bad inputs', () => {
   assert.equal(engine.run('bolt-grip-thread-length', { std: 'structural', L: 38.1, Lt: 35.052, Y: 8.636, d: 19.05, P: 2.54, grip: 1, need: 1 }).text, 'LENGTH SUITS THE JOINT');
   const bad = engine.run('bolt-grip-thread-length', { Lt: 50 });
   assert.equal(bad.text, 'CHECK INPUTS'); assert.equal(bad.primary, undefined);
+});
+
+// Sixty-sixth handbook pass (handbook89): deep audit of pages cited only within wide ranges. Expected values are the
+// handbook's grinding Examples 6 and 7 and Tables 1 and 6, the double Acme thread tool example, and milling Tables 2a and 2b.
+test('grinding wheel life plan reproduces the handbook Taylor tables and Examples 6 and 7', () => {
+  const g = (over: Inputs) => engine.run('grinding-wheel-life-plan', over).values;
+  near(g({ C: 4690, T: 15 }).V, 2319, 1, 'Example 6: V15');
+  near(g({ C: 4690, T: 45 }).V, 1743, 1, 'Example 6: V45');
+  const t1 = g({ C: 6965, ECT: 0.00033, T: 10 }); // Table 1, group 1, ECT 0.00033
+  near(t1.V10, 3830, 3, 'Table 1 V10'); near(t1.V100, 2105, 3, 'Table 1 V100'); near(t1.SMRR, 1265, 2, 'Table 1 SMRR10');
+  // Example 7: shop VU 1800 m/min, TU 7 min at ECT 0.00017 on group 6 (standard C 5290).
+  const e7 = g({ cal: 'yes', VU: 1800, TU: 7, CshopStd: 5290, C: 5290, ECT: 0.00017, T: 1 });
+  near(e7.CU, 2985, 1, 'CU = VU TU^0.26'); near(e7.ratio, 0.564, 0.0005, 'ratio to the standard constant');
+  near(e7.V10, 1640, 1, 'V10U'); near(e7.V100, 900, 2, 'V100U (printed rounded to 900)'); near(e7.SMRR, 507, 1, 'SMRR1U');
+  const e33 = g({ cal: 'yes', VU: 1800, TU: 7, CshopStd: 5290, C: 4690, ECT: 0.00033, T: 10 });
+  near(e33.V10, 1455, 3, 'ECT 0.00033 V10U'); near(e33.V100, 800, 2, 'ECT 0.00033 V100U'); near(e33.SMRR, 480, 2, 'ECT 0.00033 SMRR10U');
+  const e50 = g({ cal: 'yes', VU: 1800, TU: 7, CshopStd: 5290, C: 3590, ECT: 0.0005, T: 9 });
+  near(e50.V, 1144, 1, 'V9 at ECT 0.00050'); near(e50.SMRR, 572, 1, 'SMRR at T = 9');
+  const d = g({});
+  near(d.Vw, d.SMRR / (1000 * 0.01), 1e-9, 'Vw = SMRR ÷ 1000 ar'); near(d.tc, 200 / d.FR + 0.05, 1e-12, 'time per pass');
+});
+
+test('thread tool relief angles reproduce the handbook double Acme example', () => {
+  // 1 in, 5 tpi double Acme: lead 0.400 in, K 0.780 in, 29°, effective relief 10°.
+  const v = engine.run('thread-tool-relief-angles', { lead: 0.4 * 25.4, Dmaj: 25.4, Kmin: 0.78 * 25.4, ang: 29, ae: 10 }).values;
+  near(v.psi, 9.27, 0.005, 'ψ'); near(v.phi, 7.26, 0.005, 'φ'); near(v.a, 19.27, 0.005, 'a'); near(v.at, 2.74, 0.005, "a′");
+  near(v.b, 18.70, 0.005, 'b'); near(v.bt, 2.65, 0.01, "b′"); near(v.n, 30.26, 0.01, 'n');
+});
+
+test('milling chip thickness reproduces the handbook Tables 2a and 2b', () => {
+  const r = (mode: string, ar: number, over: Inputs = {}) => engine.run('milling-chip-thickness-ect', { mode, D: 100, ar: ar * 100, ...over }).values;
+  const end: Array<[number, number, number, number]> = [[1, 180, 0.637, 1], [0.9, 143.13, 0.721, 0.884], [0.8, 126.87, 0.723, 0.881], [0.7355, 118.102, 0.714, 0.892], [0.6137, 103.144, 0.682, 0.934], [0.393, 77.643, 0.58, 1.098], [0.217, 55.528, 0.448, 1.422], [0.125, 41.41, 0.346, 1.84], [0.0625, 28.955, 0.247, 2.574], [0.03, 19.948, 0.172, 3.694], [0.01, 11.478, 0.1, 6.377]];
+  for (const [a, AE, hf, fr] of end) { const x = r('end', a); near(x.AE, AE, 0.01, `end AE ${a}`); near(x.hf, hf, 0.0011, `end hm/fz ${a}`); near(x.feedRatio, fr, 0.003, `end fz/fz0 ${a}`); }
+  const face: Array<[number, number, number, number]> = [[1, 180, 0.637, 1.398], [0.9, 128.316, 0.804, 1.107], [0.8, 106.26, 0.863, 1.032], [0.7355, 94.702, 0.89, 1], [0.6137, 75.715, 0.929, 0.958], [0.393, 46.282, 0.973, 0.915], [0.217, 25.066, 0.992, 0.897], [0.125, 14.361, 0.997, 0.892], [0.03, 3.438, 1, 0.89]];
+  for (const [a, AE, hf, fr] of face) { const x = r('face', a); near(x.AE, AE, 0.01, `face AE ${a}`); near(x.hf, hf, 0.0011, `face hm/fz ${a}`); near(x.feedRatio, fr, 0.003, `face fz/fz0 ${a}`); }
+  // Table 2b ECT at fz0 = 0.17 mm with aa/CEL = 0.95: end milling z = 2, face milling z = 8.
+  for (const [a, e] of [[1, 0.103], [0.9, 0.093], [0.125, 0.013], [0.0625, 0.006]]) near(r('end', a, { z: 2, fz: 0.17 }).ECT, e, 0.0006, `end ECT ${a}`);
+  for (const [a, e] of [[1, 0.411], [0.9, 0.37], [0.217, 0.089], [0.125, 0.051]]) near(r('face', a, { z: 8, fz: 0.17 }).ECT, e, 0.0006, `face ECT ${a}`);
+  near(r('end', 1, { fz: 0.17 }).hm, 0.108, 0.0005, 'hm = 0.108 mm at full slot and 0.17 mm/tooth');
+});
+
+test('sixty-sixth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('grinding-wheel-life-plan').text, 'WHEEL SPEED WITHIN THE WHEEL RATING');
+  assert.equal(engine.run('grinding-wheel-life-plan', { T: 2 }).text, 'WHEEL SPEED ABOVE THE WHEEL RATING');
+  assert.equal(engine.run('thread-tool-relief-angles').text, 'TOOL ANGLES SET');
+  assert.equal(engine.run('thread-tool-relief-angles', { ae: 5, lead: 30 }).text, 'TRAILING FLANK WOULD RUB');
+  assert.equal(engine.run('milling-chip-thickness-ect').text, 'CHIP THICK ENOUGH');
+  assert.equal(engine.run('milling-chip-thickness-ect', { ar: 0.25 }).text, 'RAISE THE FEED PER TOOTH');
+  const cases: Array<[string, Inputs]> = [['thread-tool-relief-angles', { Kmin: 30 }], ['milling-chip-thickness-ect', { ar: 30 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });

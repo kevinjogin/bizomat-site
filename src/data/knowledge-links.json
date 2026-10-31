@@ -7006,6 +7006,46 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter specifies tapped hole depths and drill depths; the length and thread length of the screw are not discussed."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "milling-feed-and-chip-thinning",
+   "tool": "milling-chip-thickness-ect",
+   "type": "complements",
+   "note": "Gives the mean and equivalent chip thickness and the feed per tooth that holds a chosen chip at light radial engagement, the handbook form of the chip thinning correction this chapter applies.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter corrects feed per tooth for radial chip thinning at light engagement; tool computes the engagement angle, mean chip thickness, ECT and the feed for a target chip by the handbook end and face milling relations."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "milling-cutters-and-milling-strategies",
+   "tool": "milling-chip-thickness-ect",
+   "type": "complements",
+   "note": "Works out how far the chip thins at a light radial cut and the feed per tooth that restores it, the chip thinning this chapter explains for adaptive and high-speed toolpaths.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains radial chip thinning below half-diameter engagement; tool gives the mean chip thickness and the feed per tooth needed for a chosen chip from the radial depth, cutter diameter and teeth."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "grinding-honing-and-lapping",
+   "tool": "grinding-wheel-life-plan",
+   "type": "complements",
+   "note": "Sets the wheel speed for a wanted wheel life between dressings and calibrates it with one shop result, as this chapter’s dressing-interval trial does.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers wheel life, dressing and setting the dressing interval from a trial; tool applies the handbook Taylor lines V T^0.26 = C at constant ECT with a shop calibration to give wheel speed, removal rate and work speed."
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "grinding-on-a-magnetic-chuck",
+   "tool": "grinding-wheel-life-plan",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers holding work on a magnetic chuck against grinding forces; wheel life and Taylor constants are not discussed."
   }
  ]
 }
