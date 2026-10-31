@@ -3355,3 +3355,39 @@ Six tools in batch handbook83 from pages the page-by-page ledger had marked as c
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Slot Milling against High-Speed End Milling (Feed Rate, Equivalent Tooling Time, Cost per Part)** `slot-vs-high-speed-milling-cost` | HIGH-SPEED MILLING COSTS LESS | Cost per part; Spindle speed (slot); Spindle speed (high-speed); Passes; Cutting data; Model and application | 1167–1169 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook84 (added 31 October 2026)
+
+Seven tools in batch handbook84 from pages the page-by-page ledger listed as open (formula lines not yet read): compound indexing with standard index plates (pp. 2079–2086), Unified inch thread gauge sizes from ANSI B1.2 Table 5 (pp. 2013–2014), the Heim lead cylinder test of a forging hammer (pp. 3234–3236), hydraulic press gauge pressure for a pressure on the work (p. 3224), permanent-magnet control motor constants and torsional resonance (pp. 3413–3414), silent chain sprocket tooth form, hub and hob diameters (pp. 3468–3473) and the helix angle of a helical pair for a fixed centre distance (p. 2078). Gauge tolerances, product thread limits, motor data, process pressures and accepted ranges are always user inputs. WORKOS now holds 958 tools.
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Compound Indexing on a Dividing Head (Exact and Approximate Movements, Error at the Work)** `compound-indexing` | APPROXIMATE INDEXING WITHIN TOLERANCE | Simple indexing; Exact compound indexing; Accuracy; Set-up; Model and application | 2079–2086 | Automated + cross-check |
+| **Unified Inch Thread Gauge Sizes (GO and NOT GO Plugs, Rings and Setting Gauges)** `unified-thread-gauge-limits` | GAUGE SIZES SET | External PD tolerance; Internal PD tolerance; Plain gauges; Full-form NOT GO setting plug; Lead and half-angle; Model and application | 2013–2014, 1808 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Forging Hammer Efficiency by the Heim Lead Cylinder Test (Work per Blow and Efficiency)** `forging-hammer-efficiency` | HAMMER TESTED | Cylinder proportions; Reduction in range; Efficiency; Lead; Model and application | 3234–3236 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Hydraulic Press Gauge Pressure for a Pressure on the Work (Capacity and Pressure on the Material)** `press-gauge-pressure-for-work` | PRESS REACHES THE PRESSURE ON THE WORK | Gauge pressure needed; Gauge pressure set; Pressure at the setting; Tooling; Model and application | 3224 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Permanent-Magnet Control Motor Constants (Torque and Voltage Constants, Damping, Time Constant, Resonance)** `pm-dc-motor-constants` | RESONANCE ABOVE THE CONTROL BANDWIDTH | Torsional resonance; Current limit; Rated point; Peak torque; Model and application | 3413–3414 | Automated |
+| **Silent Chain Sprocket Tooth Form, Hub and Hob Diameters (ANSI B29.2M)** `silent-chain-sprocket-tooth-form` | SPROCKET FORM AND HUB FIT | Number of teeth; Tooth faces; Hub clearance; Pitch; Model and application | 3468–3473 | Automated |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Helical Gear Helix Angle and Leads for a Fixed Centre Distance** `helical-gear-helix-for-centre-distance` | HELIX ANGLE FITS THE CENTRE DISTANCE | Helix angle range; Centre distance; Hands; Model and application | 2078 | Automated + cross-check |

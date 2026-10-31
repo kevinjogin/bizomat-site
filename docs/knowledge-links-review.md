@@ -1,8 +1,8 @@
 # READOS ↔ WORKOS connections: items for review
 
-Generated 2026-10-30 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
+Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 488 relationships (241 from links authors wrote in the books, 247 from editorial review). Rejected: 102. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 524 relationships (272 from links authors wrote in the books, 252 from editorial review). Rejected: 104. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -257,6 +257,11 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining and Metal Parts | Milling cutters and milling strategies: speeds, feeds, chip thickness and parts that are easy to mill | Slot Milling against High-Speed End Milling (Feed Rate, Equivalent Tooling Time, Cost per Part) | complements | Chapter explains adaptive, trochoidal and high-efficiency toolpaths that avoid full-width engagement; tool computes the handbook total cost per part of slot against high-speed end milling. |
 | Machine Elements and Mechanical Design | Gears and gearboxes: choosing reducers and geared motors that last | Industrial Worm Gearing Proportions (Coarse Pitch: Diameters, Lead Angle, Face Width, Thread Length, Efficiency) | complements | Chapter notes worm efficiency falls as ratio rises and self-locking depends on ratio and efficiency; tool computes worm and wormgear driving efficiency from lead angle and friction, plus the empirical ratio rules. |
 | Machining by the Numbers | Drilling, reaming and tapping calculations | Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers) | complements | Chapter checks tapped M8 holes with go and no-go thread gauges to catch tap wear; tool gives the ASME B94.9 pitch and major diameter limits of a metric ground tap and checks a measured tap. |
+| Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Compound Indexing on a Dividing Head (Exact and Approximate Movements, Error at the Work) | complements | Chapter explains simple indexing (40 ÷ divisions, hole circles) and names compound indexing for other numbers; tool finds simple, exact compound and approximate compound movements on standard plates. |
+| Machining and Metal Parts | Choosing and using measuring instruments: callipers, micrometers, indicators, gauges and CMMs | Unified Inch Thread Gauge Sizes (GO and NOT GO Plugs, Rings and Setting Gauges) | complements | Chapter explains go and not-go plug, ring and thread gauges that check whether a feature lies within its limits; tool computes the ANSI B1.2 Unified thread gauge sizes and tolerance directions. |
+| Power Presses by the Numbers | Screw presses, fly presses and drop hammers | Forging Hammer Efficiency by the Heim Lead Cylinder Test (Work per Blow and Efficiency) | complements | Chapter computes a drop hammer’s stored energy and striking speed from tup mass and drop; tool gives the work per blow, useful power and efficiency from a lead cylinder test. |
+| Power Presses by the Numbers | Hydraulic and servo presses | Hydraulic Press Gauge Pressure for a Pressure on the Work (Capacity and Pressure on the Material) | complements | Chapter sizes a hydraulic press from F = p × A and the pressure for a rated force; tool applies the handbook rules for pressure on the work and the gauge pressure for it. |
+| Gears by the Numbers | Helical gears and axial thrust | Helical Gear Helix Angle and Leads for a Fixed Centre Distance | complements | Chapter derives cos β = mn (z1 + z2) ÷ 2a to fit a helical pair to a fixed housing; tool computes the same helix angle with transverse module, pitch diameters and leads. |
 
 ## 2. Rejected
 
@@ -364,6 +369,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Electronics Packaging by the Numbers | Write the packaging brief | Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable) | Rejected: chapter sets drop and impact requirements for a product enclosure; beam and spring shock formulas do not model a product drop. |
 | Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Wormgear Hob Design (Over-Size Diameters, Sharpening Allowance, Setting Angle, Flutes) | Rejected: chapter mentions hobbing only as a generating process for splines and gears; hob diameters, sharpening allowance and flutes are not discussed. |
 | Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers) | Rejected: chapter chooses tap drills and specifies 6H tapped holes; the tap’s own pitch diameter limits are not discussed. |
+| Machine Elements and Mechanical Design | Selecting electric motors and drives: sizing, efficiency, starting, enclosures and variable speed | Permanent-Magnet Control Motor Constants (Torque and Voltage Constants, Damping, Time Constant, Resonance) | Rejected: chapter selects induction motors, starters and variable speed drives and only names servo motors; permanent-magnet motor constants, current limits and torsional resonance in a control loop are not discussed. |
+| Inspecting to the Drawing | Choose the instrument for the tolerance | Unified Inch Thread Gauge Sizes (GO and NOT GO Plugs, Rings and Setting Gauges) | Rejected: chapter plans instruments for a metric part with plain GO and NO-GO bore plugs; thread gauges are only named as a kind of attribute gauge and Unified thread gauge sizes are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 
