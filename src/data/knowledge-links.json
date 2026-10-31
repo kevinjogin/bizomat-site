@@ -3943,6 +3943,132 @@
    "reason": "Chapter defines COP for cooling and heating, the Carnot limit from two temperatures and realistic COPs as a fraction of it; the tool calculates all three from the user’s figures."
   },
   {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "holding-against-cutting-forces",
+   "tool": "face-milling-power-plan",
+   "type": "applies",
+   "note": "Plans a face milling cut: teeth, speed, feed, engagement angle, mean chip thickness, corrected kc and cutting power, from which the chapter takes the cutting force the magnetic chuck must resist.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "holding-against-cutting-forces",
+   "tool": "fixture-clamp-force",
+   "type": "complements",
+   "note": "Finds the clamping force to hold a part against cutting forces by friction alone or with a positive stop, showing why stops cut the force a magnetic chuck or clamp must provide.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "holding-against-cutting-forces",
+   "tool": "vacuum-table-workholding-check",
+   "type": "complements",
+   "note": "Checks a vacuum table against milling: holding force from vacuum and sealed area, friction, cutting force from power and speed, sliding safety factor and largest feed, compared with the magnet.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "grinding-on-a-magnetic-chuck",
+   "tool": "surface-grinding-planner",
+   "type": "applies",
+   "note": "Plans a surface grinding pass: wheel speed against its marking, contact length, removal rate, grinding power against the spindle, passes and time; the chapter derives the grinding force from it.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "grinding-on-a-magnetic-chuck",
+   "tool": "measurement-temperature-error",
+   "type": "applies",
+   "note": "Calculates the apparent size error when part and gauge are not at 20 °C, the size corrected to 20 °C and the share of tolerance used, as for plates measured warm off the grinder.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "lifting-magnets",
+   "tool": "plate-lift-plan",
+   "type": "applies",
+   "note": "Finds a plate's area, centroid and mass from its outline and thickness, and the load on each of two lift points against their working load limit, used to load-check the lifting magnets.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/magnetic-workholding-by-the-numbers",
+   "chapter": "lifting-magnets",
+   "tool": "lifting-beam-design",
+   "type": "applies",
+   "note": "Checks a below-the-hook lifting beam for bending stress and deflection, or a spreader beam for compression and buckling, with a dynamic factor, as for the beam carrying the two magnets.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "load-lines-and-magnetic-circuits",
+   "tool": "ball-detent-check",
+   "type": "applies",
+   "note": "Checks a spring-loaded ball detent: spring rate, preload and stress, release force from the notch angle and friction, and load at full rise, the alternative compared with a magnetic catch.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "magnetic-couplings-and-sealless-pumps",
+   "tool": "pump-system-design",
+   "type": "applies",
+   "note": "Designs a pumping system: velocity, friction factor, losses, total head, hydraulic, shaft and motor power and NPSH available, giving the shaft power the magnetic coupling must transmit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "magnetic-couplings-and-sealless-pumps",
+   "tool": "torque-power",
+   "type": "applies",
+   "note": "Converts shaft power and speed into steady torque, the running torque that the pump's magnetic coupling transmits and that the chapter compares with its slip torque.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "magnetic-couplings-and-sealless-pumps",
+   "tool": "flexible-coupling-selection",
+   "type": "complements",
+   "note": "Screens a coupling's torque with a service factor and starting peak against its ratings, plus speed, misalignment, bore and key; the chapter applies its torque checks to a magnetic coupling.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "eddy-currents-brakes-and-holding",
+   "tool": "holding-brake-sizing",
+   "type": "applies",
+   "note": "Checks a holding brake: stop time, stopping angle, energy per stop and per hour against ratings, and holding factor on the load torque, as for the servo brake on the film-reel lift.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "permanent-magnet-servo-motors",
+   "tool": "motor-duty-cycle-check",
+   "type": "applies",
+   "note": "Sizes a motor for a repeated move: segment torques, RMS torque against the continuous rating, peak torque, inertia ratio and regenerated energy, the duty the chapter relates to magnet heating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/permanent-magnets-in-machines-by-the-numbers",
+   "chapter": "handling-storing-and-proving-magnets",
+   "tool": "acceptance-sampling-plan",
+   "type": "applies",
+   "note": "Designs the smallest single sampling plan meeting the producer's risk at the AQL and the consumer's risk at the RQL, with its AOQL, as used for incoming lots of magnet segments.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/process-chillers-by-the-numbers",
    "chapter": "the-chiller-and-its-limit",
    "tool": "carnot-limit-check",

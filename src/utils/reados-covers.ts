@@ -174,6 +174,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'marking-out-by-the-numbers': { motif: 'triangle', tone: 'carbon' },
   'plate-work-by-the-numbers': { motif: 'cube', tone: 'carbon' },
   'configure-price-quote-by-the-numbers': { motif: 'estimate', tone: 'ember' },
+  'magnetic-workholding-by-the-numbers': { motif: 'fixture', tone: 'carbon' },
+  'permanent-magnets-in-machines-by-the-numbers': { motif: 'orbit', tone: 'carbon' },
   'engineering-tools-people-use': { motif: 'interface', tone: 'paper' },
   'viscosity-by-the-numbers': { motif: 'lens', tone: 'paper' },
   'plain-bearings-by-the-numbers': { motif: 'scales', tone: 'graphite' },
