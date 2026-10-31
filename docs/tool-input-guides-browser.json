@@ -1,10 +1,10 @@
 {
  "generated": "2026-10-31",
- "base": "http://127.0.0.1:8786",
- "tools": 958,
- "passed": 958,
- "inputs": 8322,
- "figures": 8322,
+ "base": "http://127.0.0.1:8794",
+ "tools": 965,
+ "passed": 965,
+ "inputs": 8368,
+ "figures": 8368,
  "sample": [
   {
    "id": "make-buy",
@@ -113,6 +113,13 @@
   },
   {
    "id": "blocked-in-liquid-pressure-check",
+   "keyboardOpens": true,
+   "keyboardCloses": true,
+   "mobileOverflow": false,
+   "reducedMotionAnimations": 0
+  },
+  {
+   "id": "top-knurling-cam-rise",
    "keyboardOpens": true,
    "keyboardCloses": true,
    "mobileOverflow": false,
@@ -5865,6 +5872,48 @@
   },
   {
    "id": "helical-gear-helix-for-centre-distance",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "cutter-clearance-grinding-setup",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "spline-shaft-milling-cutter",
+   "ok": true,
+   "inputs": 3,
+   "figures": 3
+  },
+  {
+   "id": "top-knurling-cam-rise",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "rubber-pad-forming-pressure",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "gear-angular-backlash",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "unified-cut-thread-tap-limits",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "silent-chain-width",
    "ok": true,
    "inputs": 6,
    "figures": 6

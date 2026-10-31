@@ -2,7 +2,7 @@
 
 Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 524 relationships (272 from links authors wrote in the books, 252 from editorial review). Rejected: 104. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 567 relationships (312 from links authors wrote in the books, 255 from editorial review). Rejected: 107. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -262,6 +262,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Power Presses by the Numbers | Screw presses, fly presses and drop hammers | Forging Hammer Efficiency by the Heim Lead Cylinder Test (Work per Blow and Efficiency) | complements | Chapter computes a drop hammer’s stored energy and striking speed from tup mass and drop; tool gives the work per blow, useful power and efficiency from a lead cylinder test. |
 | Power Presses by the Numbers | Hydraulic and servo presses | Hydraulic Press Gauge Pressure for a Pressure on the Work (Capacity and Pressure on the Material) | complements | Chapter sizes a hydraulic press from F = p × A and the pressure for a rated force; tool applies the handbook rules for pressure on the work and the gauge pressure for it. |
 | Gears by the Numbers | Helical gears and axial thrust | Helical Gear Helix Angle and Leads for a Fixed Centre Distance | complements | Chapter derives cos β = mn (z1 + z2) ÷ 2a to fit a helical pair to a fixed housing; tool computes the same helix angle with transverse module, pitch diameters and leads. |
+| Gears by the Numbers | Backlash and tooth thickness | Angular Backlash of a Gear Pair (and Backlash from a Centre Distance Change) | complements | Chapter defines circumferential backlash and derives backlash from tooth thinning and centre distance changes; tool gives the handbook angular backlash 6875 B ÷ D minutes and the 2 Δc tan φ change. |
+| Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Spline Shaft Milling Cutter (Cutter Angle and Chordal Width at the Root) | complements | Chapter lists milling with form cutters among spline manufacturing methods for small quantities; tool computes the handbook spline-shaft milling cutter angle and chordal width at the root. |
+| Deep Drawing and Spinning by the Numbers | Draw, spin or something else | Rubber Pad (Guerin) Forming Pressure and Pad Thickness Check | complements | Chapter names hydroforming or rubber-pad forming as a lower tooling cost alternative; tool gives the handbook pad pressure F × 2000 ÷ A and the pad thickness rules for the Guerin process. |
 
 ## 2. Rejected
 
@@ -371,6 +374,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers) | Rejected: chapter chooses tap drills and specifies 6H tapped holes; the tap’s own pitch diameter limits are not discussed. |
 | Machine Elements and Mechanical Design | Selecting electric motors and drives: sizing, efficiency, starting, enclosures and variable speed | Permanent-Magnet Control Motor Constants (Torque and Voltage Constants, Damping, Time Constant, Resonance) | Rejected: chapter selects induction motors, starters and variable speed drives and only names servo motors; permanent-magnet motor constants, current limits and torsional resonance in a control loop are not discussed. |
 | Inspecting to the Drawing | Choose the instrument for the tolerance | Unified Inch Thread Gauge Sizes (GO and NOT GO Plugs, Rings and Setting Gauges) | Rejected: chapter plans instruments for a metric part with plain GO and NO-GO bore plugs; thread gauges are only named as a kind of attribute gauge and Unified thread gauge sizes are not discussed. |
+| Machining and Metal Parts | Grinding, honing and lapping: finishing hard parts to tight tolerances | Milling Cutter Clearance Grinding Set-up (Clearance Needed, Wheel and Tooth-Rest Offsets, Indicator Drops) | Rejected: chapter names tool and cutter grinding in one line among grinding processes; clearance angles, wheel offsets and tooth rest settings are not discussed. |
+| Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Top Knurling on an Automatic Screw Machine (Cam Rise and Revolutions) | Rejected: chapter explains form and cut knurling and matching the pitch to the diameter; cross-slide knurling cam rise and revolutions on screw machines are not discussed. |
+| Machining by the Numbers | Drilling, reaming and tapping calculations | Unified Inch Cut Thread Tap Limits (Major and Pitch Diameter, ASME B94.9) | Rejected: chapter taps metric M8 holes and checks them with gauges; Unified inch cut thread tap limits are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -404,7 +410,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Database Foundations for Business | collection | technology | nothing |
 | Database Performance, Concurrency and Safe Change | collection | technology | nothing |
 | Decision-Making Machines | collection | technology | nothing |
-| Deep Drawing and Spinning by the Numbers | publication | Manufacturing | Manufacturing & Production |
 | Drawings That Make Parts | publication | Engineering | Engineering & Design |
 | Ductwork by the Numbers | publication | Engineering | Engineering & Design |
 | Electroplating by the Numbers | publication | Manufacturing | Manufacturing & Production |

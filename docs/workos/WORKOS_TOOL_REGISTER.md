@@ -3391,3 +3391,34 @@ Seven tools in batch handbook84 from pages the page-by-page ledger listed as ope
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Helical Gear Helix Angle and Leads for a Fixed Centre Distance** `helical-gear-helix-for-centre-distance` | HELIX ANGLE FITS THE CENTRE DISTANCE | Helix angle range; Centre distance; Hands; Model and application | 2078 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook85 (added 31 October 2026)
+
+Seven tools in batch handbook85 from open and candidate pages of the page-by-page ledger: milling cutter clearance grinding set-up and indicator-drop checks (pp. 838–843), the spline-shaft milling cutter (p. 836), top knurling cam rise on automatic screw machines (p. 1170), rubber pad (Guerin) forming pressure (pp. 1364–1365), angular backlash of a gear pair (pp. 2168–2169), Unified inch cut thread tap limits (ASME B94.9 Table 3, p. 910) and silent chain width for a power (pp. 3475–3476). Brinell hardness, land width, feeds, tap table tolerances, chain ratings, service factors and required pressures are always user inputs. WORKOS now holds 965 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Milling Cutter Clearance Grinding Set-up (Clearance Needed, Wheel and Tooth-Rest Offsets, Indicator Drops)** `cutter-clearance-grinding-setup` | CLEARANCE SUITS THE CUT | Clearance angle; Set-up; Land width; Burrs; Model and application | 838–843 | Automated + cross-check |
+| **Spline Shaft Milling Cutter (Cutter Angle and Chordal Width at the Root)** `spline-shaft-milling-cutter` | CUTTER PROPORTIONS SET | Space between splines; Spline width tolerance; Model and application | 836 | Automated + cross-check |
+| **Top Knurling on an Automatic Screw Machine (Cam Rise and Revolutions)** `top-knurling-cam-rise` | KNURLING CAM SET | Cam rise; Feed; Model and application | 1170 | Automated + cross-check |
+| **Rubber Pad (Guerin) Forming Pressure and Pad Thickness Check** `rubber-pad-forming-pressure` | PAD FORMS THE PART | Forming pressure; Pad thickness; Pad hardness; Model and application | 1364–1365 | Automated |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Angular Backlash of a Gear Pair (and Backlash from a Centre Distance Change)** `gear-angular-backlash` | ANGULAR PLAY ACCEPTED | Play at the smaller gear; Binding; Measurement; Model and application | 2168–2169 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Unified Inch Cut Thread Tap Limits (Major and Pitch Diameter, ASME B94.9)** `unified-cut-thread-tap-limits` | TAP WITHIN ITS LIMITS | Pitch diameter; Major diameter; Lead; Half angle; Model and application | 910 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Silent Chain Width for a Power (Rating per Unit Width and Service Factor)** `silent-chain-width` | CHAIN WIDTH CARRIES THE POWER | Width; Lubrication; Rating; Model and application | 3475–3476 | Automated |
