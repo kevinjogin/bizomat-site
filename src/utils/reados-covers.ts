@@ -201,6 +201,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'louvres-and-ventilators-by-the-numbers': { motif: 'gates', tone: 'ember' },
   'fine-particles-by-the-numbers': { motif: 'bubbles', tone: 'carbon' },
   'random-error-and-drift-by-the-numbers': { motif: 'streak', tone: 'paper' },
+  'trips-and-alarms-by-the-numbers': { motif: 'decision', tone: 'paper' },
+  'simulating-noisy-systems-by-the-numbers': { motif: 'code', tone: 'paper' },
   'diffusion-by-the-numbers': { motif: 'solid', tone: 'carbon' },
   'heating-and-cooling-times-by-the-numbers': { motif: 'streak', tone: 'carbon' },
   'fins-and-heat-sinks-by-the-numbers': { motif: 'interface', tone: 'carbon' },

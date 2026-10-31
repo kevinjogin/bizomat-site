@@ -5649,6 +5649,114 @@
    "evidence": "book-link"
   },
   {
+   "reados": "publication/simulating-noisy-systems-by-the-numbers",
+   "chapter": "random-numbers-you-can-trust",
+   "tool": "normal-out-of-spec",
+   "type": "applies",
+   "note": "Gives the expected fraction of standard Gaussian values beyond chosen limits, the reference against which a random generator's tail counts are checked before a simulation is run.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/simulating-noisy-systems-by-the-numbers",
+   "chapter": "random-numbers-you-can-trust",
+   "tool": "standard-deviation-chi-square-check",
+   "type": "applies",
+   "note": "Tests a sample standard deviation against a target and gives its confidence interval: used to check a generator's spread and, with the effective sample size, a correlated simulated input.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/simulating-noisy-systems-by-the-numbers",
+   "chapter": "time-steps-accuracy-and-heuns-method",
+   "tool": "tank-drain-time-check",
+   "type": "applies",
+   "note": "Gives the exact drain time of a vertical cylindrical tank through a bottom orifice, the closed-form result used to verify a simulation's integration method and time step before noise is added.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/simulating-noisy-systems-by-the-numbers",
+   "chapter": "how-many-runs",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Calculates how many independent simulated days are needed to estimate a mean output, such as the daily maximum level, within a stated margin at 90, 95 or 99% confidence.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/simulating-noisy-systems-by-the-numbers",
+   "chapter": "rare-events",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the lower confidence bound on the mean time between events from operating hours and an event count, including zero events: the bound for a simulation that produced no overflows.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/simulating-noisy-systems-by-the-numbers",
+   "chapter": "verify-validate-and-decide",
+   "tool": "two-sample-t",
+   "type": "applies",
+   "note": "Compares two means with Welch's t-test, giving the difference, its confidence interval and the p-value: used to check simulated daily maximum levels against logged plant data.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/trips-and-alarms-by-the-numbers",
+   "chapter": "margins-in-standard-deviations",
+   "tool": "normal-out-of-spec",
+   "type": "applies",
+   "note": "Gives the fraction of readings beyond a threshold, in parts per million, from the signal's mean and standard deviation: the tail probability behind a trip's margin in standard deviations.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/trips-and-alarms-by-the-numbers",
+   "chapter": "filtering-before-the-comparator",
+   "tool": "ewma-chart-check",
+   "type": "complements",
+   "note": "Calculates an EWMA statistic over up to twenty readings with control limits. Its weighting factor is the same recursion as a first-order trip filter, so it shows how a filter weights recent readings.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/trips-and-alarms-by-the-numbers",
+   "chapter": "drift-towards-the-trip",
+   "tool": "cusum-chart-check",
+   "type": "applies",
+   "note": "Runs a tabular CUSUM on hourly mean pressures against a clean-condition target and reports the first hour the lower sum passes the decision interval, giving early warning of a drift towards a trip.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/trips-and-alarms-by-the-numbers",
+   "chapter": "voting-between-sensors",
+   "tool": "system-reliability",
+   "type": "complements",
+   "note": "Gives the reliability of identical redundant units with a constant failure rate at the end of a proof-test interval. A check on one-out-of-n arithmetic; it does not model voting, common cause or proof testing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/trips-and-alarms-by-the-numbers",
+   "chapter": "proving-the-settings",
+   "tool": "reliability-demonstration-test",
+   "type": "applies",
+   "note": "Calculates the running hours and production days needed to demonstrate a mean time between nuisance trips at a chosen confidence, with a stated number of trips allowed during the test.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/trips-and-alarms-by-the-numbers",
+   "chapter": "proving-the-settings",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the lower confidence bound on the mean time between nuisance trips from logged running hours and trip count, and the further trip-free hours needed to meet an objective.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/adhesive-bonding-by-the-numbers",
    "chapter": "preparing-surfaces-for-bonding",
    "tool": "hansen-solvent-compatibility",
