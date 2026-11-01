@@ -2,7 +2,7 @@
 
 Generated 2026-11-01 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 770 relationships (484 from links authors wrote in the books, 286 from editorial review). Rejected: 123. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 772 relationships (484 from links authors wrote in the books, 288 from editorial review). Rejected: 125. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -296,6 +296,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Elements and Mechanical Design | Selecting bearings and lubrication for reliable machines: types, life, fits, sealing and failure causes | Roller Bearing Load Ratings from Geometry (Basic Dynamic and Static Ratings, L10 Life, Static Safety) | complements | Chapter gives L10 = (C ÷ P)^(10/3) for roller bearings with C from the catalogue; tool applies the handbook formula C = fc (i leff cos α)^(7/9) Z^(3/4) D^(29/27) and the static rating. |
 | Machine Elements and Mechanical Design | Specifying springs that work, last and are easy to make and assemble | Disc Spring Forces, Stresses and Fatigue Life (Corrected Outside Diameter, Critical Points, Life Equations) | complements | Chapter sets out spring fatigue and service duty by cycles and names disc springs as a spring type; tool applies the handbook disc spring stress points and fatigue life equations for Groups 1 and 2. |
 | Springs by the Numbers | Disc spring stacks: large forces in short spaces | Disc Spring Forces, Stresses and Fatigue Life (Corrected Outside Diameter, Critical Points, Life Equations) | complements | Chapter sets out the Almen–László force and top inner-edge stress and series and parallel stacking; tool applies the handbook stresses at points 0 to 3, the critical-point rule and the fatigue life equations for Groups 1 and 2. |
+| Bolted Joints by the Numbers | Tightening by torque: the nut factor and its scatter | Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction) | complements | Chapter explains that K bundles thread geometry, thread friction and bearing-face friction; tool applies the handbook JIS relation K = (P ÷ π + μs d2 sec α′ + μw Dw) ÷ 2d and the yield clamping force formula. |
+| Bolted Joints by the Numbers | Designing a tension joint for separation, proof load and scatter | Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction) | complements | Chapter sets preload as a share of proof load and allows for nut factor scatter; tool gives the yield clamping force Ffy = σy As ÷ √(1 + 3[(2 ÷ dA)(P ÷ π + μs d2 sec α′)]²) and the preload a torque gives against it. |
 
 ## 2. Rejected
 
@@ -424,6 +426,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Part Repairs by the Numbers | Gears and sprockets | Bevel Gear Milling Offset and Caliper Settings (Cutter Setover, Cutting Angle, Chordal Thickness at Both Ends) | Rejected: chapter covers rebuilding a broken tooth by welding and restoring its profile by filing or milling; it does not cover milling a complete bevel gear with a formed cutter. |
 | Printed Mechanisms That Run | Carry shafts in real bearings | Ball Bearing Load Ratings from Geometry (Basic Dynamic and Static Ratings, L10 Life, Static Safety) | Rejected: chapter takes the catalogue ratings of a standard 608 bearing for a printed mechanism; working the rating out from ball geometry adds nothing a reader of that chapter needs. |
 | Machine Elements and Mechanical Design | Choosing fasteners and threads: thread systems, grades, screws for sheet and plastics, inserts and pins | Thread Measurement over Wires by the Involute Helicoid Formula (Multi-Start Threads and Worms, Pitch Diameter from a Reading) | Rejected: chapter only names the three-wire method for fastener threads; the tool is for multi-start threads and worms where the lead angle matters, which the chapter does not cover. |
+| Bolted Joints by the Numbers | Stretch and angle: setting preload closer to the bolt, and checking it | Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction) | Rejected: chapter covers setting and checking preload by stretch and turn angle; the tool works from friction coefficients and torque, which the chapter deliberately moves away from. |
+| Vibrating Machine Elements by the Numbers | Find the surge inside a spring | Cam Follower Force Analysis (Return Spring Rate, Normal Force with Guide Friction, Cam Torque, Surface Error) | Rejected: chapter is about surge, the natural frequency inside a spring; the tool sizes the return spring rate from the follower inertia and does not check surge. |
 
 ## 3. Published READOS books with no approved connection
 

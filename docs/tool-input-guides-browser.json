@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-01",
  "base": "http://127.0.0.1:8861",
- "tools": 1002,
- "passed": 1002,
- "inputs": 8691,
- "figures": 8691,
+ "tools": 1006,
+ "passed": 1006,
+ "inputs": 8733,
+ "figures": 8733,
  "sample": [
   {
    "id": "make-buy",
@@ -6136,6 +6136,30 @@
   },
   {
    "id": "thread-wire-involute-helicoid",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "modified-constant-velocity-cam",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "cam-size-and-curvature",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "cam-follower-force-analysis",
+   "ok": true,
+   "inputs": 19,
+   "figures": 19
+  },
+  {
+   "id": "bolt-torque-coefficient-yield",
    "ok": true,
    "inputs": 9,
    "figures": 9

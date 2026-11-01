@@ -3604,3 +3604,21 @@ Four tools in batch handbook95 from the deep audit of the ball and roller bearin
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Thread Measurement over Wires by the Involute Helicoid Formula (Multi-Start Threads and Worms, Pitch Diameter from a Reading)** `thread-wire-involute-helicoid` | USE THE EXACT FORMULA | Simplified formula; Wire contact; Wire accuracy; Model and application | 1997–2001 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook96 (added 1 November 2026)
+
+Four tools in batch handbook96 from the deep audit of the cam design pages and the torque–tension pages for fasteners: the modified constant-velocity cam with parabolic matching (pp. 2288–2291), the smallest cam for a maximum pressure angle with the radius of curvature and the undercut and cutter checks (pp. 2297–2301), the force analysis of a translating roller follower with the return spring rate, guide friction, cam torque and surface error (pp. 2301–2305), and the JIS torque coefficient and yield clamping force of a metric bolt (pp. 1529–1531). Friction coefficients, limits, dynamic factors and loads are always user inputs. WORKOS now holds 1006 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Modified Constant-Velocity Cam with Parabolic Matching (Rise Angles, Displacement Table, Acceleration)** `modified-constant-velocity-cam` | MODIFIED CONSTANT VELOCITY RISE | Follower acceleration; Rise angle; Pressure angle and curvature; Model and application | 2288–2291 | Automated + cross-check |
+| **Cam Size for a Maximum Pressure Angle and Radius of Curvature (Smallest Base Radius, Undercut, Cutter Check)** `cam-size-and-curvature` | CAM SIZE AND CURVATURE | Pressure angle; Undercutting; Cutter radius; Return; Model and application | 2297–2301 | Automated |
+| **Cam Follower Force Analysis (Return Spring Rate, Normal Force with Guide Friction, Cam Torque, Surface Error)** `cam-follower-force-analysis` | SURFACE ERROR DOMINATES THE ACCELERATION | Return spring; Guide friction; Surface accuracy; Contact stress; Model and application | 2301–2305 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction)** `bolt-torque-coefficient-yield` | TORQUE BELOW YIELD | Yield; Friction; Bearing face; Model and application | 1529–1531 | Automated + cross-check |
