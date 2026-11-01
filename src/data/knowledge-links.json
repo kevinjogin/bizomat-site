@@ -7867,6 +7867,76 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter covers helical gears on parallel shafts of opposite hand; crossed helical gears on non-parallel shafts are not discussed."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "centre-distance-and-contact-ratio",
+   "tool": "spur-gear-profile-checker",
+   "type": "complements",
+   "note": "Finds the highest and lowest points of single tooth contact this chapter describes, with the contact diameters, contact ratio and true involute form diameter on each gear.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains the single-contact zone and the highest point of single tooth contact used in bending ratings; tool applies the handbook formulas for LPSTC, HPSTC, contact diameters and contact ratio."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "undercut-and-profile-shift",
+   "tool": "spur-gear-profile-checker",
+   "type": "complements",
+   "note": "Checks a hobbed gear for the undercut and interference this chapter distinguishes, using the hob tip radius and the true involute form diameter.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter separates undercut by the cutting tool from interference in service; tool applies the handbook undercut limit (b − rc) ÷ sin φ + rc ≤ 0.5 n sin φ and compares the TIF diameter with the contact diameter."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "centre-distance-and-contact-ratio",
+   "tool": "spur-gears-for-given-centre-distance",
+   "type": "complements",
+   "note": "Designs the gears for an existing housing when no standard pitch fits the centre distance, as this chapter’s fixed-centre-distance section discusses.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets out fitting gears to a fixed centre distance; tool applies the handbook procedure for gears of standard pitch at a non-standard centre distance, with tooth thicknesses and blank diameters."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "undercut-and-profile-shift",
+   "tool": "spur-gears-for-given-centre-distance",
+   "type": "complements",
+   "note": "Gives the tooth thicknesses and diameters that the shifted gears in this chapter need to run at a chosen centre distance, worked from the hob addendum.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter relates added profile shift to a new centre distance; tool finds the operating pressure angle, tooth thicknesses by the involute function and root and outside diameters for a standard hob."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "undercut-and-profile-shift",
+   "tool": "enlarged-spur-pinion-mesh",
+   "type": "complements",
+   "note": "Works out the enlarged pinion and reduced gear this chapter’s profile shift produces, with the tight-mesh centre distance and the smallest gear without undercut.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives s = m (π ÷ 2 + 2 x tan α) and the minimum shift to avoid undercut; tool applies the handbook t = p ÷ 2 + e tan φ for an outside diameter enlargement e = 2 x m and the centre distance for no backlash."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "backlash-and-tooth-thickness",
+   "tool": "gear-shaving-stock-check",
+   "type": "complements",
+   "note": "Uses the link between centre distance and tooth thickness from this chapter to find the stock left on a preshaved gear.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives backlash from a centre distance increase as 2 Δa tan α; tool applies the same relation, the handbook’s t2 = 2 tan φ × d, to a preshaved gear meshed tight with a standard gear."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "measuring-and-specifying-a-gear",
+   "tool": "spur-gear-profile-checker",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers span measurement, identifying gears and accuracy grades; it does not set up profile inspection by roll angle or work out significant diameters."
   }
  ]
 }

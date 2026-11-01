@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 990 tools with unique ids and every previously published id kept', () => {
+test('register: 994 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 990);
+  assert.equal(ids.length, 994);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 796 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 800 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 796);
+  assert.equal(ids.length, 800);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6600,5 +6600,66 @@ test('sixty-ninth-pass tools give their verdicts and reject bad inputs', () => {
   assert.equal(engine.run('helical-hobbing-change-gears').text, 'LEAD WITHIN TOLERANCE');
   assert.equal(engine.run('helical-hobbing-change-gears', { errMax: 0.001 }).text, 'LEAD ERROR TOO LARGE');
   const cases: Array<[string, Inputs]> = [['crossed-helical-exact-centre-distance', { C: 200 }], ['crossed-helical-exact-centre-distance', { sigma: 40, alphaA: 50 }], ['enlarged-helical-pinion', { tnP: 0.5, tnG: 0.5 }], ['helical-hobbing-change-gears', { hand: 'opposite' }], ['helical-hobbing-change-gears', { F: 2000 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventieth handbook pass (handbook93): deep audit of the spur gearing section. Expected values are the handbook's
+// significant diameters example, gears for a given centre distance, enlarged pinion and tight-mesh examples.
+const IN93 = 25.4;
+
+test('spur gear profile checker settings reproduce the handbook example', () => {
+  const x = engine.run('spur-gear-profile-checker', { m: IN93 / 10, phi: 20, n: 23, dO: 2.5 * IN93, Nt: 31, DO: 3.3 * IN93, b: 1.25, rc: 0.3, mfMin: 1.4 });
+  const v = x.values;
+  near(v.A, 28.025, 0.001, 'A = 28°1′30″'); near(v.tb, 0.13713, 0.00002, 'tan b = 0.13713'); near(v.tB, 0.20267, 0.00002, 'tan B = 0.20267');
+  near(v.dc / IN93, 2.1815, 0.0001, 'dc = 2.1815 in'); near(v.Dc / IN93, 2.9725, 0.0005, 'Dc = 2.9725 in (cos B rounded)'); near(v.mf1, 1.626, 0.001, 'mf = 1.626'); near(v.mf2, 1.626, 0.001, 'mf = 1.626 (7b)'); near(v.mf3, v.mf1, 1e-6, '7c agrees');
+  near(v.dL / IN93, 2.2616, 0.0001, 'dL = 2.2616 in'); near(v.DL / IN93, 3.0672, 0.0001, 'DL = 3.0672 in'); near(v.rcMax, 0.4719, 0.0001, 'rc (max) = 0.4719'); near(v.uc, 3.0776, 0.0001, '3.0776'); near(v.limP, 3.9332, 0.0001, '3.9332');
+  near(v.dH / IN93, 2.3362, 0.0001, 'dH = 2.3362 in'); near(v.DH / IN93, 3.1433, 0.0001, 'DH = 3.1433 in'); near(v.te, 0.07917, 0.00002, 'tan e = 0.07917'); near(v.dTIF / IN93, 2.1681, 0.0001, 'dTIF = 2.1681 in'); near(v.tE, 0.15267, 0.00002, 'tan E = 0.15267'); near(v.DTIF / IN93, 2.9468, 0.0001, 'DTIF = 2.9468 in');
+  near(v.rollPb, 0.13713 * 57.2958, 0.002, 'roll angle at contact = tan b × 57.2958'); near(v.Rb / IN93, 23 * 0.93969 / 20, 0.00001, 'Rb = n cos φ ÷ 2P');
+  assert.equal(x.text, 'PROFILE CHECKS PASS');
+});
+
+test('spur gears for a given centre distance reproduce the handbook example', () => {
+  const v = engine.run('spur-gears-for-given-centre-distance', { m: IN93 / 8, phi: 20, Np: 28, Ng: 88, C1: 7.5 * IN93, bc: 0.169 * IN93, phiMin: 18, phiMax: 25 }).values;
+  near(v.P1in, 7.7333, 0.0001, 'P1 = 7.7333'); near(v.phi1, 24.719, 0.001, 'φ1 = 24.719°'); near(v.DP1 / IN93, 3.6207, 0.0001, 'DP1 = 3.6207 in'); near(v.DG1 / IN93, 11.3794, 0.0002, 'DG1 = 11.3794 in');
+  near(v.DPB / IN93, 3.2889, 0.0001, 'DPB1 = 3.2889 in'); near(v.DGB / IN93, 10.3367, 0.0002, 'DGB1 = 10.3367 in'); near(v.t1 / IN93, 0.20312, 0.00001, 't1 = 0.20312 in');
+  near(v.tP / IN93, 0.2454, 0.0001, 'tP = 0.2454 in'); near(v.tG / IN93, 0.3505, 0.0001, 'tG = 0.3505 in'); near(v.bP1 / IN93, 0.1016, 0.0001, 'bP1 = 0.1016 in'); near(v.bG1 / IN93, -0.0428, 0.0001, 'bG1 = −0.0428 in');
+  near(v.DPR / IN93, 3.2968, 0.0001, 'DPR1 = 3.2968 in'); near(v.DGR / IN93, 11.0856, 0.0001, 'DGR1 = 11.0856 in'); near(v.DPO / IN93, 3.8264, 0.0002, 'DPO = 3.8264 in'); near(v.DGO / IN93, 11.6152, 0.0001, 'DGO = 11.6152 in');
+});
+
+test('enlarged spur pinion mesh reproduces the handbook examples', () => {
+  const a = engine.run('enlarged-spur-pinion-mesh', { m: IN93 / 5, phi: 14.5, n: 10, Nt: 60, ePin: 0.2746 * IN93, eGear: 0.2746 * IN93 });
+  near(a.values.t / IN93, 0.3852, 0.0001, 't = 0.3852 in (enlarged)'); near(a.values.T / IN93, 0.2432, 0.0001, 't = 0.2432 in (reduced)'); near(a.values.C1, a.values.C, 1e-9, 'standard centre distance kept'); assert.equal(a.text, 'MESH AT THE STANDARD CENTRE DISTANCE');
+  const e = (0.01873 - 0.015708) / Math.tan(20 * Math.PI / 180) * IN93;
+  const b = engine.run('enlarged-spur-pinion-mesh', { m: IN93 / 100, phi: 20, n: 10, Nt: 30, ePin: e, eGear: 0 }).values;
+  near(b.t / IN93, 0.01873, 1e-7, 't = 0.01873 in'); near(b.invT, 0.014904, 0.000001, 'inv 20° = 0.014904'); near(b.invF, 0.022459, 0.000002, 'inv φ1 = 0.022459'); near(b.phi1, 22.8167, 0.01, 'φ1 = 22°49′');
+  near(b.C / IN93, 0.2, 1e-9, 'C = 0.2000 in'); near(b.C1 / IN93, 0.2039, 0.0001, 'C1 = 0.2039 in');
+  const c = engine.run('enlarged-spur-pinion-mesh', { m: IN93, phi: 14.5, n: 24, Nt: 40, ePin: 0.4954 * IN93, eGear: 0.4954 * IN93 }).values;
+  near(c.NgMin, 39.8, 0.05, 'N = 2 × 1.2477 × 15.95 = 39.8');
+  const d = engine.run('enlarged-spur-pinion-mesh', { m: IN93 / 6, phi: 20, n: 14, Nt: 60, ePin: (2.745 - 16 / 6) * IN93, eGear: (2.745 - 16 / 6) * IN93 }).values;
+  near(d.DOp / IN93, 2.745, 1e-9, 'Do (pinion) = 2.745 in'); near(d.DOg / IN93, 10.255, 0.001, 'Do (gear) = 10.255 in');
+  const s = engine.run('enlarged-spur-pinion-mesh', { m: 1, phi: 20, aH: 1, rt: 0 }).values;
+  near(s.NpMin, 2 / Math.sin(20 * Math.PI / 180) ** 2, 1e-9, 'Nmin = 2P csc² φ for aH = 1 ÷ P and a sharp hob');
+});
+
+test('gear shaving stock check applies the centre-distance method', () => {
+  const v = engine.run('gear-shaving-stock-check', { m: 3.175, phi: 20, n: 30, Nt: 40, d: 0.087 }).values;
+  near(v.t2, 2 * Math.tan(20 * Math.PI / 180) * 0.087, 1e-12, 't2 = 2 tan φ d'); near(v.side, v.t2 / 2, 1e-12, 'half on each side'); near(v.t2x, v.t2, 0.0005, 'exact involute relation agrees');
+});
+
+test('seventieth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('spur-gear-profile-checker').text, 'PROFILE CHECKS PASS');
+  assert.equal(engine.run('spur-gear-profile-checker', { rc: 0.5 }).text, 'HOB TIP RADIUS TOO LARGE');
+  assert.equal(engine.run('spur-gear-profile-checker', { mfMin: 2 }).text, 'CONTACT RATIO TOO LOW');
+  assert.equal(engine.run('spur-gear-profile-checker', { b: 1.6 }).text, 'INVOLUTE UNDERCUT');
+  assert.equal(engine.run('spur-gear-profile-checker', { DO: 86.36 }).text, 'FILLET INTERFERENCE');
+  assert.equal(engine.run('spur-gear-profile-checker', { DO: 88.9 }).text, 'CONTACT BELOW THE BASE CIRCLE');
+  assert.equal(engine.run('spur-gears-for-given-centre-distance').text, 'GEARS FIT THE CENTRE DISTANCE');
+  assert.equal(engine.run('spur-gears-for-given-centre-distance', { phiMax: 24 }).text, 'OPERATING PRESSURE ANGLE OUTSIDE RANGE');
+  assert.equal(engine.run('enlarged-spur-pinion-mesh').text, 'INCREASE THE CENTRE DISTANCE');
+  assert.equal(engine.run('enlarged-spur-pinion-mesh', { Nt: 12, eGear: 0.2 }).text, 'GEAR UNDERCUT: USE MORE TEETH');
+  assert.equal(engine.run('gear-shaving-stock-check').text, 'SHAVING STOCK WITHIN ALLOWANCE');
+  assert.equal(engine.run('gear-shaving-stock-check', { d: 0.03 }).text, 'TOO LITTLE STOCK FOR SHAVING');
+  assert.equal(engine.run('gear-shaving-stock-check', { d: 0.2 }).text, 'TOO MUCH STOCK FOR SHAVING');
+  const cases: Array<[string, Inputs]> = [['spur-gear-profile-checker', { dO: 50 }], ['spur-gears-for-given-centre-distance', { C1: 150 }], ['spur-gears-for-given-centre-distance', { phiMin: 26 }], ['enlarged-spur-pinion-mesh', { eGear: 2 }], ['gear-shaving-stock-check', { sMin: 0.1 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });
