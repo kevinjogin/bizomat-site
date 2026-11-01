@@ -46,7 +46,8 @@ test('the form asks only for name, email, category and message, and keeps its pr
   assert.match(form, /if \(result\.ok\) \{/, 'success is shown only when the endpoint confirms delivery');
 });
 
-test('the assistant section uses the live KEVOS® Assistant, labelled as AI-assisted', () => {
+test('the assistant section, when the assistant is switched on, uses the live KEVOS® Assistant, labelled as AI-assisted', () => {
+  assert.match(page, /\{SITE\.assistant\.enabled && \(/, 'the section is left out while the assistant is off');
   assert.equal(SITE.assistant.starters.length, 5);
   assert.match(page, /SITE\.assistant\.starters\.map/);
   assert.match(page, /data-assistant-ask=\{q\}[^>]*hidden/, 'starters stay hidden until the assistant script can run them');

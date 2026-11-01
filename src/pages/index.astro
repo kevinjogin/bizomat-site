@@ -7,11 +7,7 @@ import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
 import ServiceMap from '../components/ServiceMap.astro';
-import HomeResourceVisual from '../components/HomeResourceVisual.astro';
-import ReadOSAnimatedCover from '../components/ReadOSAnimatedCover.astro';
 import LibraryIcon from '../components/library/LibraryIcon.astro';
-import ToolCard from '../components/library/ToolCard.astro';
-import BookCard from '../components/library/BookCard.astro';
 import DiscoveryBox from '../components/discovery/DiscoveryBox.astro';
 import DiscoveryResults from '../components/discovery/DiscoveryResults.astro';
 import '../styles/discovery.css';
@@ -19,7 +15,7 @@ import '../styles/library.css';
 import { SITE } from '../config/site.ts';
 import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_ORBIT } from '../config/home.ts';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
-import { groupToolsByTopic, subcategoryLabel, subcategorySlug, topicForCategory } from '../utils/workos-topics.ts';
+import { groupToolsByTopic, subcategoryLabel } from '../utils/workos-topics.ts';
 import { buildReadosLibrary } from '../utils/reados-library.ts';
 import { knowledgeGraph, learningPathways } from '../utils/knowledge.ts';
 
@@ -50,12 +46,6 @@ const orbit = HOME_ORBIT.map((o) => {
   return { verb: o.verb, label: topic.name.replace('&', '&amp;'), tags: `${fmt(topic.items.length)} tools · ${fmt(subject.entries.length)} books`, href: `/tools/?topic=${topic.slug}` };
 });
 
-const sections = [
-  { id: 'workos', label: 'WORKOS' },
-  { id: 'reados', label: 'READOS' },
-  { id: 'connected', label: 'Learn, apply, improve' },
-  { id: 'about', label: 'About KEVOS®' },
-];
 const description = 'Describe a problem and KEVOS® finds the WORKOS engineering and business tools and READOS technical books that help you solve it.';
 const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
@@ -66,7 +56,7 @@ const schema = [{
   ],
 }];
 ---
-<BaseLayout description={description} imageAlt="KEVOS®: practical tools and technical knowledge with WORKOS and READOS" schema={schema} assistant={false}>
+<BaseLayout description={description} imageAlt="KEVOS®: practical tools and technical knowledge with WORKOS and READOS" schema={schema}>
   <section class="home-hero" id="overview" aria-labelledby="home-title">
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
@@ -90,105 +80,55 @@ const schema = [{
 
   <DiscoveryResults />
 
-  <nav class="section-navigation" aria-label="Homepage sections">
-    <Container>
-      <ul>{sections.map((item) => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ul>
-    </Container>
-  </nav>
-
-  <Section index="01" label="WORKOS" id="workos" labelledby="workos-title">
-    <div class="product">
-      <div class="product__intro">
-        <h2 id="workos-title">Practical tools. <em>Better decisions.</em></h2>
-        <p class="section-intro">Explore practical engineering and business tools designed to calculate, analyse, evaluate and solve real-world problems.</p>
-        <ul class="product__points">
-          <li>Engineering calculators, manufacturing and production tools, technical analysis and business decisions in one directory.</li>
-          <li>Every tool shows its method, checks feasibility and tests how sensitive the answer is.</li>
-          <li>Download, print or share a report of your result. No account needed; calculations run in your browser.</li>
+  <section class="home-libs" aria-label="WORKOS and READOS">
+    <Container class="home-libs__grid">
+      <div class="home-lib" id="workos" aria-labelledby="workos-title">
+        <p class="home-lib__index"><span>01</span> WORKOS</p>
+        <h2 id="workos-title">Practical tools for <em>better decisions.</em></h2>
+        <p class="home-lib__intro">Engineering, manufacturing and business calculators that show their method and run in your browser. No account needed.</p>
+        <h3 class="home-label" id="workos-topics">Browse by topic</h3>
+        <ul class="lib-topic-grid home-lib__topics" role="list" aria-labelledby="workos-topics">
+          {topics.map((t) => (
+            <li>
+              <a class="lib-topic" href={`/tools/?topic=${t.slug}`}>
+                <span class="lib-topic__icon"><LibraryIcon name={t.icon} /></span>
+                <span class="lib-topic__text"><span class="lib-topic__name">{t.name}</span></span>
+                <span class="lib-topic__count" aria-label={`${fmt(t.items.length)} tools`}>{fmt(t.items.length)}</span>
+              </a>
+            </li>
+          ))}
         </ul>
-        <form class="lib-search home-search" role="search" action="/tools/" method="get">
-          <label class="visually-hidden" for="home-workos-search">Search WORKOS tools</label>
-          <div class="lib-search__field">
-            <svg class="lib-search__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.3 15.3 20 20" /></svg>
-            <input id="home-workos-search" name="q" type="search" placeholder={`Search ${fmt(tools.length)} tools...`} autocomplete="off" spellcheck="false" enterkeyhint="search" />
-          </div>
-          <Button type="submit" variant="secondary">Search</Button>
-        </form>
-        <div class="product__cta"><Button href="/tools/" arrow data-cta="home-workos">Explore WORKOS</Button></div>
+        <h3 class="home-label" id="workos-featured">Featured tools</h3>
+        <ul class="home-lib__featured" role="list" aria-labelledby="workos-featured">
+          {featuredTools.map((t) => <li><a href={toolHref(t.id)}>{t.name}</a><span>{subcategoryLabel(t.category)}</span></li>)}
+        </ul>
+        <div class="home-lib__cta"><Button href="/tools/" arrow data-cta="home-workos">All {fmt(tools.length)} tools</Button></div>
       </div>
-      <div class="product__visual"><HomeResourceVisual kind="workos" /></div>
-    </div>
 
-    <h3 class="home-label" id="workos-topics">Browse by topic</h3>
-    <ul class="lib-topic-grid lib-topic-grid--3" role="list" aria-labelledby="workos-topics">
-      {topics.map((t) => (
-        <li>
-          <a class="lib-topic" href={`/tools/?topic=${t.slug}`}>
-            <span class="lib-topic__icon"><LibraryIcon name={t.icon} /></span>
-            <span class="lib-topic__text"><span class="lib-topic__name">{t.name}</span><span class="lib-topic__desc">{t.description}</span></span>
-            <span class="lib-topic__count" aria-label={`${fmt(t.items.length)} tools`}>{fmt(t.items.length)}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-
-    <h3 class="home-label" id="workos-featured">Featured tools</h3>
-    <div class="lib-grid" role="list" aria-labelledby="workos-featured">
-      {featuredTools.map((t) => (
-        <div role="listitem" class="home-card">
-          <ToolCard id={t.id} href={toolHref(t.id)} name={t.name} purpose={t.question} category={subcategoryLabel(t.category)} topic={topicForCategory(t.category).slug} sub={subcategorySlug(t.category)} collection={t.collection === 'MAKEOS' ? 'MAKEOS' : 'WORKOS'} tags="" body="" />
-        </div>
-      ))}
-    </div>
-  </Section>
-
-  <Section index="02" label="READOS" tone="alt" id="reados" labelledby="reados-title">
-    <div class="product">
-      <div class="product__intro">
+      <div class="home-lib" id="reados" aria-labelledby="reados-title">
+        <p class="home-lib__index"><span>02</span> READOS</p>
         <h2 id="reados-title">Knowledge worth <em>applying.</em></h2>
-        <p class="section-intro">Explore technical books, engineering references and structured learning resources that turn knowledge into practical understanding.</p>
-        <ul class="product__points">
-          <li>Engineering and technical subjects, manufacturing and operations, and technology and business knowledge.</li>
-          <li>Books are organised into chapters you can read in one sitting, with figures and worked numbers.</li>
-          <li>Many chapters link to the WORKOS tools that put the method to work.</li>
+        <p class="home-lib__intro">Technical books in short chapters with figures and worked numbers, many linked to the WORKOS tools that apply them.</p>
+        <h3 class="home-label" id="reados-subjects">Browse by subject</h3>
+        <ul class="lib-topic-grid home-lib__topics" role="list" aria-labelledby="reados-subjects">
+          {subjects.map((sub) => (
+            <li>
+              <a class="lib-topic" href={`/reados/?topic=${sub.slug}`}>
+                <span class="lib-topic__icon"><LibraryIcon name={sub.icon} /></span>
+                <span class="lib-topic__text"><span class="lib-topic__name">{sub.name}</span></span>
+                <span class="lib-topic__count" aria-label={`${fmt(sub.entries.length)} books`}>{fmt(sub.entries.length)}</span>
+              </a>
+            </li>
+          ))}
         </ul>
-        <form class="lib-search home-search" role="search" action="/reados/" method="get">
-          <label class="visually-hidden" for="home-reados-search">Search READOS books</label>
-          <div class="lib-search__field">
-            <svg class="lib-search__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.3 15.3 20 20" /></svg>
-            <input id="home-reados-search" name="q" type="search" placeholder={`Search ${fmt(bookTotal)} books...`} autocomplete="off" spellcheck="false" enterkeyhint="search" />
-          </div>
-          <Button type="submit" variant="secondary">Search</Button>
-        </form>
-        <div class="product__cta"><Button href="/reados/" arrow data-cta="home-reados">Explore READOS</Button></div>
+        <h3 class="home-label" id="reados-featured">Featured books</h3>
+        <ul class="home-lib__featured" role="list" aria-labelledby="reados-featured">
+          {featuredBooks.map((e) => <li><a href={e.href}>{e.title}</a><span>{e.subject.name} · {fmt(e.chapters.length)} chapters</span></li>)}
+        </ul>
+        <div class="home-lib__cta"><Button href="/reados/" arrow data-cta="home-reados">All {fmt(bookTotal)} books</Button></div>
       </div>
-      <div class="product__visual"><HomeResourceVisual kind="reados" /></div>
-    </div>
-
-    <h3 class="home-label" id="reados-subjects">Browse by subject</h3>
-    <ul class="lib-topic-grid lib-topic-grid--4" role="list" aria-labelledby="reados-subjects">
-      {subjects.map((s) => (
-        <li>
-          <a class="lib-topic" href={`/reados/?topic=${s.slug}`}>
-            <span class="lib-topic__icon"><LibraryIcon name={s.icon} /></span>
-            <span class="lib-topic__text"><span class="lib-topic__name">{s.name}</span><span class="lib-topic__desc">{s.description}</span></span>
-            <span class="lib-topic__count" aria-label={`${fmt(s.entries.length)} books`}>{fmt(s.entries.length)}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-
-    <h3 class="home-label" id="reados-featured">Featured books</h3>
-    <div class="lib-grid" role="list" aria-labelledby="reados-featured">
-      {featuredBooks.map((e) => (
-        <div role="listitem" class="home-card">
-          <BookCard id={e.id} href={e.href} startHref={e.startHref} title={e.title} summary={e.summary} subject={e.subject.name} chapters={e.chapters.length} topic={e.subject.slug} tags="" chapterTitles="">
-            <ReadOSAnimatedCover slot="cover" {...e.cover} chapters={e.chapters.length} compact />
-          </BookCard>
-        </div>
-      ))}
-    </div>
-  </Section>
+    </Container>
+  </section>
 
   <Section index="03" label="The connected KEVOS® ecosystem" id="connected" labelledby="connected-title">
     <div class="section-head">
@@ -265,7 +205,7 @@ const schema = [{
 </script>
 
 <style>
-  :global(#overview), :global(#workos), :global(#reados), :global(#connected), :global(#about) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
+  :global(#overview), :global(#connected), :global(#about) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
   .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
   :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr);gap:3rem 4rem;align-items:center}
   .home-hero__copy h1{margin:1rem 0 1rem;max-width:15ch;font-size:clamp(2.1rem,4.4vw,4.4rem);line-height:1.04}
@@ -275,26 +215,28 @@ const schema = [{
   .home-stats{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;margin:2.2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--line)}
   .home-stats dt{font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
   .home-stats dd{margin:.3rem 0 0;font-family:var(--font-display);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
-  .section-navigation{position:sticky;top:var(--header-h);z-index:19;background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line-strong)}
-  .section-navigation ul{display:flex;gap:clamp(1rem,2.5vw,2.2rem);align-items:center;overflow-x:auto;scrollbar-width:thin;list-style:none;padding:.85rem 0;margin:0}
-  .section-navigation a{white-space:nowrap;font-size:.83rem;font-weight:560;color:var(--ink-2);text-decoration:none}
-  .section-navigation a:hover{color:var(--accent)}
   .section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.2rem}
-  .section-head h2{max-width:24ch}
+  .section-head h2{max-width:28ch}
   .section-intro{margin:1rem 0 0;max-width:74ch;font-size:var(--step-1);color:var(--ink-2)}
   .fineprint{color:var(--muted);font-size:.88rem;margin:1.75rem 0 0}
   .fineprint a{color:var(--ink-2)}
-  .product{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2.5rem 4rem;align-items:center}
-  .product__intro{min-width:0}
-  .product__intro h2{max-width:18ch}
-  .product__points{display:grid;gap:.6rem;margin:1.5rem 0 0;padding:0;list-style:none;max-width:60ch}
-  .product__points li{border-left:2px solid var(--accent);padding-left:1rem;color:var(--ink-2);font-size:.95rem}
-  .home-search{margin-top:1.75rem;max-width:36rem}
-  .product__cta{margin-top:1.25rem}
-  .product__visual{min-width:0;border:1px solid var(--line)}
-  .home-label{margin:clamp(2.5rem,5vw,3.5rem) 0 1rem;font-family:var(--font-sans);font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .home-card{display:flex;min-width:0}
-  .home-card > :global(*){flex:1;min-width:0}
+  .home-libs{padding:0 0 clamp(3rem,6vw,5rem)}
+  :global(.home-libs__grid){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem}
+  .home-lib{display:flex;flex-direction:column;min-width:0;padding:clamp(1.3rem,2.5vw,2rem);border:1px solid var(--line);border-radius:16px;background:var(--surface);scroll-margin-top:calc(var(--header-h) + 1rem)}
+  .home-lib__index{margin:0 0 .8rem;font-size:.78rem;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+  .home-lib__index span{color:var(--accent);margin-right:.4rem;font-variant-numeric:tabular-nums}
+  .home-lib h2{font-size:clamp(1.5rem,2.4vw,2.1rem);max-width:20ch}
+  .home-lib__intro{margin:.75rem 0 0;color:var(--ink-2);max-width:56ch}
+  .home-lib__topics{gap:.5rem;grid-template-columns:1fr}
+  @media(min-width:1180px){.home-lib__topics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .home-lib__topics .lib-topic{padding:.6rem .75rem}
+  .home-lib__featured{display:grid;gap:.1rem;margin:0;padding:0;list-style:none}
+  .home-lib__featured li{display:flex;flex-direction:column;gap:.1rem;padding:.55rem 0;border-bottom:1px solid var(--line)}
+  .home-lib__featured a{color:var(--ink);font-weight:600;text-decoration:none}
+  .home-lib__featured a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+  .home-lib__featured span{color:var(--muted);font-size:.85rem}
+  .home-lib__cta{margin-top:auto;padding-top:1.5rem}
+  .home-label{margin:1.75rem 0 .75rem;font-family:var(--font-sans);font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
   .flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:0;padding:0;list-style:none;border:1px solid var(--line);background:var(--line);counter-reset:flow}
   .flow__step{background:var(--surface);padding:clamp(1.3rem,3vw,2rem);counter-increment:flow}
   .flow__step::before{content:counter(flow,decimal-leading-zero);display:block;margin-bottom:.9rem;color:var(--accent);font-size:.85rem;font-variant-numeric:tabular-nums}
@@ -321,6 +263,7 @@ const schema = [{
   .about-intro__link a{color:var(--accent);font-weight:600;text-decoration:none}
   .about-intro__link a:hover{text-decoration:underline;text-underline-offset:3px}
   @media(max-width:1050px){.pathways{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px}.product,.about-intro{grid-template-columns:1fr}.product__visual{max-width:640px}.flow{grid-template-columns:1fr}}
-  @media(max-width:640px){.pathways{grid-template-columns:1fr}.home-search{grid-template-columns:minmax(0,1fr) auto}}
+  @media(max-width:760px){:global(.home-libs__grid){grid-template-columns:1fr}}
+  @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px}.about-intro{grid-template-columns:1fr}.flow{grid-template-columns:1fr}}
+  @media(max-width:640px){.pathways{grid-template-columns:1fr}.section-head{flex-direction:column;align-items:flex-start}}
 </style>
