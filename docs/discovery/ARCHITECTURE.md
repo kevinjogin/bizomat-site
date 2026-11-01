@@ -25,32 +25,34 @@ Audit of the existing site (baseline commit `c2975d3`, 1 November 2026) and the 
 - **Workers Free CPU limit (about 10 ms of CPU per request).** Parsing and ranking a 3,500-item catalogue inside the Worker would risk exceeding it on every cold isolate. Retrieval therefore runs in the browser; the Worker only runs the AI step. Waiting on the AI model is I/O, not CPU.
 - **No new paid services.** Vectorize, Workers AI embeddings at index time and Analytics Engine all need new bindings or account setup (production infrastructure), so none is switched on without approval.
 - **Calculations stay in WORKOS.** The AI never computes engineering results.
-- **No invented resources.** Results are drawn only from the build-time index. The AI's output is used only as search terms and a one-line restatement of the question.
+- **No invented resources.** Results are drawn only from the build-time index. The AI's output is used only as search terms, a one-line restatement of the question and picks from a shortlist of catalogue entries, which the Worker accepts only as numbers in that list.
 
 ## 3. Design
 
 ```
-Visitor question (homepage)
+Visitor question (homepage box, or a plain-words search in the WORKOS directory)
    │
-   ├─► POST /api/discover  (Worker) ──► Workers AI: intent JSON {summary, terms, ambiguous, options}
-   │        validation · same-origin · edge + KV rate limit · 7 s timeout · model fallback · no catalogue access
+   1. /discovery-index.json (static, built with the site; fetched once per page, cached)
+   │     shortlist(): the ~20 catalogue entries closest to the question (keywords, synonyms, spelling)
    │
-   └─► /discovery-index.json (static, built with the site; fetched once, cached)
-            src/lib/discovery/search.ts in the browser:
-            1. exact keyword matching (BM25 over name, question, description, keywords, category)
-            2. synonym matching (src/lib/discovery/synonyms.ts, curated engineering and business vocabulary)
-            3. spelling correction against the catalogue's own vocabulary
-            4. category and topic matching
-            5. AI-assisted intent terms (when the Worker answers)
-            → ranked tools, chapters and books, related resources from knowledge-links,
-              and a clarification or no-match outcome
+   2. POST /api/discover {question, context, candidates}  (Worker) ──► Workers AI: JSON
+   │     {summary, terms, picks: [numbers from the shortlist], inScope, ambiguous, options}
+   │     validation · same-origin · edge + KV rate limit · 7 s timeout · model fallback
+   │     picks are positions in the shortlist, mapped back to ids by the Worker: the AI cannot add an entry
+   │
+   3. search() in the browser (src/lib/discovery/search.ts):
+         the AI's picks first (marked "chosen by KEVOS® AI"), then
+         BM25 over name, question, description, keywords, category; synonyms (synonyms.ts);
+         spelling correction; word pairs; the AI's search terms
+         → ranked tools, chapters and books, related resources from knowledge-links,
+           and a clarification or no-match outcome
 ```
 
 - **Index:** `src/utils/discovery-index.ts` builds `/discovery-index.json` (`src/pages/discovery-index.json.ts`) from the same sources as the site. That is every tool, book and published chapter, plus the knowledge links. A new tool or book is picked up by the next build, with no manual step.
-- **Intent:** `src/server/discover/handler.ts`. It reuses the chat Worker's models, rate limits, origin checks and bounded reads. The prompt asks only for search terms and a short restatement, never for answers, numbers or URLs.
+- **Intent and picks:** `src/server/discover/handler.ts`. It reuses the chat Worker's models, rate limits, origin checks and bounded reads. The prompt asks for search terms, a short restatement and the numbers of the shortlisted entries that fit, never for answers, calculations, names or URLs. The shared browser pipeline is `src/lib/discovery/client.ts`, used by the homepage (`src/scripts/discovery.ts`) and the WORKOS directory (`src/scripts/library-browser.ts`: a search of three or more words, or one with no match, moves the AI's picks to the top of the results).
 - **Fallback:** if the Worker or the model is unavailable, or slow, the browser searches with the question alone (keywords, synonyms and spelling correction). The visitor still gets grounded results.
 - **Analytics:** `/api/discover/event` records anonymous aggregate events (question terms, result clicks, no-result searches, device class) through an optional Analytics Engine binding, `DISCOVERY_EVENTS`. Until that binding is added, which needs approval, the endpoint accepts and discards events, and nothing is stored.
-- **Chatbot:** the floating KEVOS® Assistant stays on every page except the homepage, where the discovery box takes its place. `/chat/` and `/api/chat` are unchanged.
+- **Chatbot:** the floating KEVOS® Assistant is switched off everywhere (`SITE.assistant.enabled = false`, 1 Nov 2026); the discovery box replaces it, and the REACHOS page leaves out its assistant section. The code, `/chat/` (noindex, unlinked) and `/api/chat` stay, so it can be switched back on with that one setting.
 
 ## 4. Options not taken (need approval or cost)
 

@@ -12,7 +12,7 @@ The persistent record for the "What would you like to solve today?" discovery fe
 | 1 | Homepage asks "What would you like to solve today?" with a multi-line question box, examples, Enter to send and Shift+Enter for a new line | Done | `src/pages/index.astro`, `src/components/discovery/DiscoveryBox.astro` |
 | 2 | Uses the existing Cloudflare Workers AI binding only (no new paid AI service) | Done | `src/server/discover/handler.ts` (same models as the KEVOS® Assistant) |
 | 3 | One index of every WORKOS tool, READOS book and READOS chapter, rebuilt with the site | Done | `src/utils/discovery-index.ts` → `/discovery-index.json` |
-| 4 | Hybrid matching: keywords, synonyms, spelling correction, categories and topics, AI intent terms | Done | `src/lib/discovery/search.ts`, `synonyms.ts` |
+| 4 | Hybrid matching: keywords, synonyms, spelling correction, categories and topics, AI intent terms, and AI picks from a shortlist of real entries | Done | `src/lib/discovery/search.ts`, `synonyms.ts`, `client.ts` |
 | 5 | Results grouped as Recommended tools, Knowledge and references, Related resources; at most 5 strong matches each; a reason on every card | Done | `src/scripts/discovery.ts` |
 | 6 | Follow-up questions use the previous question as context; the last 5 exchanges stay on screen | Done | `src/scripts/discovery.ts` |
 | 7 | Clarifying question with choices when a question is too broad ("cost") | Done | `search.ts` clarify rule and the AI `ambiguous` reply |
@@ -20,7 +20,7 @@ The persistent record for the "What would you like to solve today?" discovery fe
 | 9 | Never invents a tool, book, chapter, URL or number | Done | Results come only from the index; the AI reply is filtered to plain search terms (`parseIntent`) |
 | 10 | Works without AI (fallback to keyword search) and without JavaScript (the box submits to `/search/`) | Done | `understand()` returns null on failure; `<form action="/search/">` |
 | 11 | WORKOS calculations unchanged | Done | No file under `public/tools/` changed; existing calculator tests and sweep pass |
-| 12 | Chatbot transition: the floating assistant is off on the homepage only; `/chat/` and `/api/chat` unchanged | Done | `BaseLayout.astro` `assistant` prop |
+| 12 | Chatbot transition: the floating assistant is switched off site-wide (owner's request, 1 Nov 2026); `/chat/` and `/api/chat` kept but unlinked | Done | `SITE.assistant.enabled` in `src/config/site.ts` |
 | 13 | Security: same-origin, JSON only, 4,000-byte body, 500-character question, rate limit (edge limiter: 10 questions a minute per IP, own counter; plus 60 an hour if the KV store `CONTACT_RATE_LIMIT` is bound), 7 s model timeout, prompt-injection filtering, no secrets in the browser | Done | `handler.ts`, `worker.ts` |
 | 14 | Privacy: calculator inputs are never sent; the question goes only to Workers AI and is not stored; analytics are anonymous terms and clicks, no IP, no question text | Done | `handleDiscoverEvent`; storage is off until a binding is approved |
 | 15 | Performance: the index (about 1.6 MB, compressed by Cloudflare) loads on first focus or first question and is cached; no extra script on other pages | Done | `loadEngine()` |
@@ -43,7 +43,7 @@ The persistent record for the "What would you like to solve today?" discovery fe
 
 New:
 - `src/utils/discovery-index.ts`, `src/pages/discovery-index.json.ts`
-- `src/lib/discovery/search.ts`, `src/lib/discovery/synonyms.ts`
+- `src/lib/discovery/search.ts`, `src/lib/discovery/synonyms.ts`, `src/lib/discovery/client.ts`
 - `src/server/discover/handler.ts`
 - `src/components/discovery/DiscoveryBox.astro`, `src/components/discovery/DiscoveryResults.astro`
 - `src/scripts/discovery.ts`, `src/styles/discovery.css`
@@ -52,12 +52,12 @@ New:
 
 Changed:
 - `src/worker.ts` (routes, rate-limit scopes)
-- `src/pages/index.astro`, `src/config/home.ts` (hero, examples)
-- `src/layouts/BaseLayout.astro` (`assistant` prop)
+- `src/pages/index.astro`, `src/config/home.ts` (one hero with the question box; WORKOS and READOS side by side below it, stacked on phones; examples). `src/components/HomeResourceVisual.astro` removed (no longer used)
+- `src/config/site.ts` (assistant off), `src/scripts/library-browser.ts`, `src/components/library/LibraryBrowser.astro`, `src/styles/library.css` (AI help in the WORKOS directory search), `src/pages/privacy.astro`
 - `src/components/SEO.astro` (SearchAction)
 - `tests/homepage.test.ts`
 
-Not changed: `wrangler.toml`, `public/tools/*`, logos, favicons, navigation, legal pages, `/chat/`, `/api/chat`.
+Not changed: `wrangler.toml`, `public/tools/*`, logos, favicons, navigation, `/chat/`, `/api/chat`.
 
 ## 4. Test results (1 Nov 2026, release candidate on the branch)
 
@@ -90,3 +90,4 @@ Not changed: `wrangler.toml`, `public/tools/*`, logos, favicons, navigation, leg
 
 - **1 Nov 2026**: audit, design, index, search engine, Worker endpoints, homepage and tests built. Tuning fixes during testing: false spelling corrections of -ing words ("sitting" → "setting"), noisy matches on "losing" (now a stop word with a loss synonym), off-topic related cards (now must match the question), out-of-scope questions returning loose matches (coverage rule plus the AI `inScope` flag), misspelt "brake even" (synonym), AI terms longer than a short phrase now dropped instead of cut, and an AI restatement must share a word with the visitor's question.
 - **1 Nov 2026 (browser checks)**: the clear (×) button showed on an empty box (its `display` rule overrode `hidden`), now fixed; the sentence above results listed stray expansion words ("cost, true, job"), now it uses the visitor's words and whole phrases ("cost, manufacturing, true cost").
+- **1 Nov 2026 (owner feedback on the live site)**: the AI now chooses the best entries from a shortlist of real catalogue entries (by number, validated in the Worker), and those lead the results; the WORKOS directory search uses the same pipeline for questions in plain words (for example "where is keyhole and how much", which matched nothing before); the floating "Ask KEVOS®" assistant is switched off; the homepage has one hero, with WORKOS and READOS side by side under it (stacked on phones). Checks: `npm run verify` 1,358/1,358 tests, 4,284 pages; browser check 54/54.
