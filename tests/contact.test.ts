@@ -52,23 +52,33 @@ test('valid enquiry is verified first and delivered with fixed addresses and esc
   assert.equal(sent.length, 1);
   const email = sent[0]; assert.equal(email.to, 'kevin@kevos.com'); assert.equal(email.from, 'contact-form@kevos.com'); assert.equal(email.replyTo, 'alex@example.com');
   assert.equal(email.subject, 'New KEVOS enquiry: Tooling <review>');
-  for (const label of ['Name', 'Visitor email', 'Company', 'Subject', 'Message', 'Submission time (UTC)', 'Request IP country']) { assert.ok(email.text.includes(label)); assert.ok(email.html.includes(label)); }
+  for (const label of ['Name', 'Visitor email', 'Organisation', 'Subject', 'Enquiry category', 'Message', 'Submission time (UTC)', 'Request IP country']) { assert.ok(email.text.includes(label)); assert.ok(email.html.includes(label)); }
   assert.ok(email.text.includes('<script>')); assert.ok(!email.html.includes('<script>')); assert.ok(email.html.includes('&lt;script&gt;')); assert.ok(email.html.includes('A &lt; B &amp; C'));
   assert.ok(email.text.includes('Name: Alex & Example')); assert.ok(email.text.includes('Request IP country: AU'));
   assert.match(email.text, /Submission time \(UTC\): \d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z/);
 });
 test('enquiries without an explicit subject use the required fallback', async () => {
   assert.equal((await post()).status, 200); assert.equal(sent[0].subject, 'New KEVOS website enquiry');
-  assert.ok(sent[0].text.includes('Service required: Factory Fix'));
+  assert.ok(sent[0].text.includes('Enquiry category: Factory Fix'));
   assert.ok(!sent[0].text.includes('Request IP country'), 'absent metadata is not invented');
 });
 test('missing required form values are rejected before verification or email', async () => {
-  for (const key of ['name', 'email', 'company', 'service', 'message', 'consent']) {
+  for (const key of ['name', 'email', 'service', 'message', 'consent']) {
     const response = await post({ ...valid, [key]: '' });
     assert.equal(response.status, 422, key); const body = await response.json() as any;
     assert.equal(body.success, false); assert.ok(body.errors[key], key);
   }
   assert.equal(verified.length, 0); assert.equal(sent.length, 0);
+});
+test('REACHOS treats organisation, website and related resource as optional and includes them when given', async () => {
+  assert.equal((await post({ ...valid, company: '' })).status, 200);
+  assert.ok(!sent[0].text.includes('Organisation:'), 'no empty organisation row');
+  assert.equal((await post({ ...valid, service: 'WORKOS – Tools and technical questions', website: 'example.com/team', resource: 'Bolt Tightening Torque and Preload' })).status, 200);
+  assert.ok(sent[1].text.includes('Enquiry category: WORKOS – Tools and technical questions'));
+  assert.ok(sent[1].text.includes('Website: example.com/team'));
+  assert.ok(sent[1].text.includes('Related WORKOS tool or READOS resource: Bolt Tightening Torque and Preload'));
+  const bad = await post({ ...valid, website: 'not a website' });
+  assert.equal(bad.status, 422); assert.ok(((await bad.json()) as any).errors.website);
 });
 test('invalid email, header injection and malformed contact preferences are rejected', async () => {
   for (const email of ['not-an-email', 'a@@example.com', '.a@example.com', 'a..b@example.com', 'a@-example.com', 'a@example..com', 'a@example.com\r\nBcc: b@example.com']) assert.equal((await post({ ...valid, email })).status, 422, email);
@@ -78,7 +88,7 @@ test('invalid email, header injection and malformed contact preferences are reje
   assert.equal(sent.length, 0);
 });
 test('each supported field has a server-enforced length limit without silent truncation', async () => {
-  for (const [key, length] of Object.entries({ name: 101, email: 201, company: 151, phone: 41, service: 61, subject: 161, message: 5001, source: 81, 'cf-turnstile-response': 2049 })) {
+  for (const [key, length] of Object.entries({ name: 101, email: 201, company: 151, phone: 41, service: 61, website: 201, resource: 151, subject: 161, message: 5001, source: 81, 'cf-turnstile-response': 2049 })) {
     assert.equal((await post({ ...valid, [key]: 'x'.repeat(length) })).status, 422, key);
   }
   assert.equal(sent.length, 0); assert.equal(verified.length, 0);

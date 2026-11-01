@@ -62,6 +62,8 @@ references:
     year: "1925, current edition"
     note: "Named as the basis of the annealed-copper resistivity of 0.017 241 Ω·mm²/m at 20 °C used in the cable voltage-drop calculation in Chapter 6."
 related:
+  - title: "Condensation Control by the Numbers"
+    href: "/reados/publications/condensation-control-by-the-numbers/"
   - title: "Accelerated Life Testing by the Numbers"
     href: "/reados/publications/accelerated-life-testing-by-the-numbers/"
   - title: "Design Simulation by the Numbers"

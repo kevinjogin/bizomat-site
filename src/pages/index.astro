@@ -1,196 +1,269 @@
 ---
+// KEVOS® homepage: the technology and knowledge platform, led by WORKOS (tools) and READOS (books).
+// Every count, topic, tool and book here is read from the WORKOS register and the READOS library at build time.
+// Services, pricing, the assessment and Factory Fix live on their own pages (/services/, /assessment/, /factory-fix/).
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
-import CallToAction from '../components/CallToAction.astro';
-import FactoryFixFeature from '../components/FactoryFixFeature.astro';
-import AssessmentFeature from '../components/assessment/AssessmentFeature.astro';
-import PackageGrid from '../components/PackageGrid.astro';
-import ProcessSteps from '../components/ProcessSteps.astro';
-import SoftwareNote from '../components/SoftwareNote.astro';
 import ServiceMap from '../components/ServiceMap.astro';
 import HomeResourceVisual from '../components/HomeResourceVisual.astro';
-import ProofOfWork from '../components/ProofOfWork.astro';
-import { PROJECTS } from '../data/projects.ts';
-import { SERVICE_GROUPS, ENGAGEMENT_MODELS, INDUSTRIES, SERVICE_AREA, PRICING_NOTE, FACTORY_FIX, PACKAGES } from '../data/services.ts';
-import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
+import ReadOSAnimatedCover from '../components/ReadOSAnimatedCover.astro';
+import LibraryIcon from '../components/library/LibraryIcon.astro';
+import ToolCard from '../components/library/ToolCard.astro';
+import BookCard from '../components/library/BookCard.astro';
+import '../styles/library.css';
 import { SITE } from '../config/site.ts';
-import { primaryGuide } from '../data/library.ts';
+import { HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_ORBIT } from '../config/home.ts';
+import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
+import { groupToolsByTopic, subcategoryLabel, subcategorySlug, topicForCategory } from '../utils/workos-topics.ts';
+import { buildReadosLibrary } from '../utils/reados-library.ts';
+import { knowledgeGraph, learningPathways } from '../utils/knowledge.ts';
 
-const problems=[
-  { title:'Documentation gaps',text:'Out-of-date or missing drawings that leave production relying on memory or constant clarification.' },
-  { title:'Unstable processes',text:'Jobs that run differently depending on who is working, leading to rework or inconsistent quality.' },
-  { title:'Production bottlenecks',text:'A single process, approval or machine holding up the rest of the operation.' },
-  { title:'Setup and handling waste',text:'Time lost to repeated setups, double handling or poor workholding.' },
-  { title:'Projects without bandwidth',text:'Technical improvements that matter but lack enough engineering time to get moving.' },
-  { title:'Knowledge held by one person',text:'Critical know-how that should be captured in clear procedures and work instructions.' },
+const { tools, guides } = loadWorkosTools();
+const topics = groupToolsByTopic(tools, 0);
+const subjects = await buildReadosLibrary();
+const entries = subjects.flatMap((s) => s.entries.map((e) => ({ ...e, subject: s })));
+const bookTotal = entries.length;
+const chapterTotal = entries.reduce((n, e) => n + e.chapters.length, 0);
+const pathways = learningPathways();
+const connections = knowledgeGraph().live.length;
+const fmt = (n: number) => n.toLocaleString('en-AU');
+
+const pick = <T,>(ids: string[], find: (id: string) => T | undefined, kind: string) => ids.map((id) => {
+  const item = find(id);
+  if (!item) throw new Error(`src/config/home.ts: no ${kind} "${id}"`);
+  return item;
+});
+const featuredTools = pick(HOME_FEATURED_TOOLS, (id) => tools.find((t) => t.id === id), 'WORKOS tool');
+const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id === id), 'READOS book');
+// Cards link to a tool's own page where one exists, as on /tools/.
+const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
+
+const orbit = HOME_ORBIT.map((o) => {
+  const topic = topics.find((t) => t.slug === o.topic);
+  const subject = subjects.find((s) => s.slug === o.subject);
+  if (!topic || !subject) throw new Error(`src/config/home.ts: orbit node ${o.verb} names an unknown topic or subject`);
+  return { verb: o.verb, label: topic.name.replace('&', '&amp;'), tags: `${fmt(topic.items.length)} tools · ${fmt(subject.entries.length)} books`, href: `/tools/?topic=${topic.slug}` };
+});
+
+const sections = [
+  { id: 'workos', label: 'WORKOS' },
+  { id: 'reados', label: 'READOS' },
+  { id: 'connected', label: 'Learn, apply, improve' },
+  { id: 'about', label: 'About KEVOS®' },
 ];
-const defined=[
-  {title:'Scope',text:'What is included and what is outside the agreed assignment.'},
-  {title:'Deliverables',text:'The models, drawings, documents or plans you will receive and their formats.'},
-  {title:'Assumptions',text:'The information, site access and decisions the work relies on.'},
-  {title:'Timing',text:'Starting points, check-ins and expected completion.'},
-  {title:'Commercial terms',text:'Price or rate, how variations are handled and invoicing arrangements.'},
-];
-const inquiry=[
-  'A short explanation of the problem or project and the result you want',
-  'Any available drawings, models, photos or relevant documents',
-  'Important deadlines, site constraints and access considerations',
-  'Whether the work is expected to need a site visit',
-  'Who will be the main point of contact',
-];
-const navigable=[
-  {id:'services',label:'Services'},
-  {id:'assessment',label:'A$195 Assessment'},
-  {id:'factory-fix',label:'Factory Fix'},
-  {id:'pricing',label:'Pricing'},
-  {id:'how-it-works',label:'How it works'},
-  {id:'industries',label:'Industries'},
-  {id:'about',label:'About'},
-  {id:'resources',label:'Resources'},
-  {id:'work',label:'Proof of work'},
-];
+const description = 'Explore KEVOS® WORKOS practical engineering and business tools, and READOS technical books and knowledge resources.';
+const schema = [{
+  '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
+  isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@id': `${SITE.url}/#organization` },
+  hasPart: [
+    { '@type': 'CollectionPage', name: 'WORKOS', url: `${SITE.url}/tools/`, description: 'Practical engineering, manufacturing and business tools.' },
+    { '@type': 'CollectionPage', name: 'READOS', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
+  ],
+}];
 ---
-<BaseLayout
-  description="Explore KEVOS® engineering, manufacturing and project support. Find services, indicative pricing, practical tools and books, and see how an engagement works."
->
+<BaseLayout description={description} imageAlt="KEVOS®: practical tools and technical knowledge with WORKOS and READOS" schema={schema}>
   <section class="home-hero" id="overview" aria-labelledby="home-title">
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
-        <p class="eyebrow">Engineering, manufacturing and operations</p>
-        <h1 id="home-title">Engineering support that gets manufacturing work <em>moving</em>.</h1>
-        <p class="home-hero__lead">Get help with CAD, tooling, manufacturing processes and engineering projects. See what KEVOS® can do, how an engagement works and what you can expect to receive.</p>
+        <p class="eyebrow">Technology, engineering and knowledge</p>
+        <h1 id="home-title">Knowledge. Tools. <em>Technology.</em></h1>
+        <p class="home-hero__lead">Practical tools and technical knowledge for people who design, build, operate and improve things.</p>
         <div class="home-hero__actions">
-          <Button href="/contact/" arrow data-cta="hero-quote">Discuss Your Requirements</Button>
-          <Button href="#services" variant="secondary">Explore KEVOS®</Button>
+          <Button href="/tools/" arrow data-cta="hero-workos">Explore WORKOS</Button>
+          <Button href="/reados/" variant="secondary" data-cta="hero-reados">Explore READOS</Button>
         </div>
-        <p class="hero-area">{SERVICE_AREA}</p>
+        <dl class="home-stats">
+          <div><dt>WORKOS tools</dt><dd>{fmt(tools.length)}</dd></div>
+          <div><dt>READOS books</dt><dd>{fmt(bookTotal)}</dd></div>
+          <div><dt>Chapters</dt><dd>{fmt(chapterTotal)}</dd></div>
+        </dl>
       </div>
-      <div class="home-hero__visual"><ServiceMap /></div>
+      <div class="home-hero__visual"><ServiceMap variant="platform" nodes={orbit} /></div>
     </Container>
   </section>
 
-  <nav class="section-navigation" aria-label="Explore KEVOS® page sections">
+  <nav class="section-navigation" aria-label="Homepage sections">
     <Container>
-      <ul>{navigable.map(item=><li><a href={`#${item.id}`}>{item.label}</a></li>)}</ul>
+      <ul>{sections.map((item) => <li><a href={`#${item.id}`}>{item.label}</a></li>)}</ul>
     </Container>
   </nav>
 
-  <Section index="01" label="Services" id="services" labelledby="services-title">
-    <div class="section-head">
-      <div>
-        <h2 id="services-title">One partner for practical engineering work.</h2>
-        <p class="section-intro">From design and technical documentation to production improvement and project delivery, services are tailored to the work rather than a rigid package.</p>
-      </div>
-    </div>
-    <div class="service-grid">
-      {SERVICE_GROUPS.map((g,i)=><article class="service-card" id={g.id}>
-        <div class="service-card__heading"><span>{String(i+1).padStart(2,'0')}</span><h3>{g.title}</h3></div>
-        <p class="service-card__summary">{g.summary}</p>
-        <details class="service-card__details">
-          <summary>See capabilities and deliverables <span aria-hidden="true">↗</span></summary>
-          <div class="service-card__expansion">
-            <h4>Typical work</h4>
-            <ul>{g.items.map(item=><li>{item}</li>)}</ul>
-            <h4>What you receive</h4>
-            <ul>{g.deliverables.map(item=><li>{item}</li>)}</ul>
+  <Section index="01" label="WORKOS" id="workos" labelledby="workos-title">
+    <div class="product">
+      <div class="product__intro">
+        <h2 id="workos-title">Practical tools. <em>Better decisions.</em></h2>
+        <p class="section-intro">Explore practical engineering and business tools designed to calculate, analyse, evaluate and solve real-world problems.</p>
+        <ul class="product__points">
+          <li>Engineering calculators, manufacturing and production tools, technical analysis and business decisions in one directory.</li>
+          <li>Every tool shows its method, checks feasibility and tests how sensitive the answer is.</li>
+          <li>Download, print or share a report of your result. No account needed; calculations run in your browser.</li>
+        </ul>
+        <form class="lib-search home-search" role="search" action="/tools/" method="get">
+          <label class="visually-hidden" for="home-workos-search">Search WORKOS tools</label>
+          <div class="lib-search__field">
+            <svg class="lib-search__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.3 15.3 20 20" /></svg>
+            <input id="home-workos-search" name="q" type="search" placeholder={`Search ${fmt(tools.length)} tools...`} autocomplete="off" spellcheck="false" enterkeyhint="search" />
           </div>
-        </details>
-        <a class="service-card__cta" href={`/contact/?service=${g.id}`}>Ask about this service <span aria-hidden="true">→</span></a>
-      </article>)}
+          <Button type="submit" variant="secondary">Search</Button>
+        </form>
+        <div class="product__cta"><Button href="/tools/" arrow data-cta="home-workos">Explore WORKOS</Button></div>
+      </div>
+      <div class="product__visual"><HomeResourceVisual kind="workos" /></div>
+    </div>
+
+    <h3 class="home-label" id="workos-topics">Browse by topic</h3>
+    <ul class="lib-topic-grid lib-topic-grid--3" role="list" aria-labelledby="workos-topics">
+      {topics.map((t) => (
+        <li>
+          <a class="lib-topic" href={`/tools/?topic=${t.slug}`}>
+            <span class="lib-topic__icon"><LibraryIcon name={t.icon} /></span>
+            <span class="lib-topic__text"><span class="lib-topic__name">{t.name}</span><span class="lib-topic__desc">{t.description}</span></span>
+            <span class="lib-topic__count" aria-label={`${fmt(t.items.length)} tools`}>{fmt(t.items.length)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="home-label" id="workos-featured">Featured tools</h3>
+    <div class="lib-grid" role="list" aria-labelledby="workos-featured">
+      {featuredTools.map((t) => (
+        <div role="listitem" class="home-card">
+          <ToolCard id={t.id} href={toolHref(t.id)} name={t.name} purpose={t.question} category={subcategoryLabel(t.category)} topic={topicForCategory(t.category).slug} sub={subcategorySlug(t.category)} collection={t.collection === 'MAKEOS' ? 'MAKEOS' : 'WORKOS'} tags="" body="" />
+        </div>
+      ))}
     </div>
   </Section>
 
-  <Section index="02" label="Fixed-scope offers" tone="alt" id="factory-fix" labelledby="factory-title">
-    <h2 id="factory-title" class="visually-hidden">KEVOS® Engineering Problem Assessment and Factory Fix</h2>
-    <AssessmentFeature headingLevel="h3" id="assessment"/>
-    <div class="offer-gap"><FactoryFixFeature headingLevel="h3"/></div>
+  <Section index="02" label="READOS" tone="alt" id="reados" labelledby="reados-title">
+    <div class="product">
+      <div class="product__intro">
+        <h2 id="reados-title">Knowledge worth <em>applying.</em></h2>
+        <p class="section-intro">Explore technical books, engineering references and structured learning resources that turn knowledge into practical understanding.</p>
+        <ul class="product__points">
+          <li>Engineering and technical subjects, manufacturing and operations, and technology and business knowledge.</li>
+          <li>Books are organised into chapters you can read in one sitting, with figures and worked numbers.</li>
+          <li>Many chapters link to the WORKOS tools that put the method to work.</li>
+        </ul>
+        <form class="lib-search home-search" role="search" action="/reados/" method="get">
+          <label class="visually-hidden" for="home-reados-search">Search READOS books</label>
+          <div class="lib-search__field">
+            <svg class="lib-search__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM15.3 15.3 20 20" /></svg>
+            <input id="home-reados-search" name="q" type="search" placeholder={`Search ${fmt(bookTotal)} books...`} autocomplete="off" spellcheck="false" enterkeyhint="search" />
+          </div>
+          <Button type="submit" variant="secondary">Search</Button>
+        </form>
+        <div class="product__cta"><Button href="/reados/" arrow data-cta="home-reados">Explore READOS</Button></div>
+      </div>
+      <div class="product__visual"><HomeResourceVisual kind="reados" /></div>
+    </div>
+
+    <h3 class="home-label" id="reados-subjects">Browse by subject</h3>
+    <ul class="lib-topic-grid lib-topic-grid--4" role="list" aria-labelledby="reados-subjects">
+      {subjects.map((s) => (
+        <li>
+          <a class="lib-topic" href={`/reados/?topic=${s.slug}`}>
+            <span class="lib-topic__icon"><LibraryIcon name={s.icon} /></span>
+            <span class="lib-topic__text"><span class="lib-topic__name">{s.name}</span><span class="lib-topic__desc">{s.description}</span></span>
+            <span class="lib-topic__count" aria-label={`${fmt(s.entries.length)} books`}>{fmt(s.entries.length)}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <h3 class="home-label" id="reados-featured">Featured books</h3>
+    <div class="lib-grid" role="list" aria-labelledby="reados-featured">
+      {featuredBooks.map((e) => (
+        <div role="listitem" class="home-card">
+          <BookCard id={e.id} href={e.href} startHref={e.startHref} title={e.title} summary={e.summary} subject={e.subject.name} chapters={e.chapters.length} topic={e.subject.slug} tags="" chapterTitles="">
+            <ReadOSAnimatedCover slot="cover" {...e.cover} chapters={e.chapters.length} compact />
+          </BookCard>
+        </div>
+      ))}
+    </div>
   </Section>
 
-  <Section index="03" label="Indicative pricing" id="pricing" labelledby="pricing-title">
-    <div class="section-head"><div><h2 id="pricing-title">Defined work, quoted clearly.</h2><p class="section-intro">Starting prices are a guide, not an online purchase. Scope and deliverables are agreed before work begins.</p></div></div>
-    <PackageGrid/>
-  </Section>
-
-  <Section index="04" label="How it works" tone="alt" id="how-it-works" labelledby="process-title">
+  <Section index="03" label="The connected KEVOS® ecosystem" id="connected" labelledby="connected-title">
     <div class="section-head">
-      <div><h2 id="process-title">Clear scope first. Then the work.</h2><p class="section-intro">Every engagement follows a straightforward process so the scope, timing and costs are discussed before substantial work begins.</p></div>
-    </div>
-    <ProcessSteps/>
-    <div class="subsection">
-      <h3>What is confirmed before work begins</h3>
-      <div class="information-grid">{defined.map(d=><div class="information-item"><h4>{d.title}</h4><p>{d.text}</p></div>)}</div>
-    </div>
-    <div class="subsection">
-      <h3>Ways to engage</h3>
-      <div class="information-grid">{ENGAGEMENT_MODELS.map(m=><div class="information-item"><h4>{m.title}</h4><p>{m.text}</p></div>)}</div>
-      <p class="fineprint">{PRICING_NOTE}</p>
-    </div>
-    <div class="subsection">
-      <div class="subsection__heading"><h3>What to send with an enquiry</h3><p>A short description is enough to start; only share material you have permission to provide.</p></div>
-      <ul class="enquiry-list">{inquiry.map(s=><li>{s}</li>)}</ul>
-      <Button href="/contact/" arrow>Discuss Your Requirements</Button>
-    </div>
-  </Section>
-
-  <Section index="05" label="Industries" id="industries" labelledby="industries-title">
-    <div class="section-head">
-      <div><h2 id="industries-title">For businesses that make things.</h2><p class="section-intro">KEVOS® starts with the manufacturing problem. Similar design, documentation and process challenges appear in many production environments.</p></div>
-    </div>
-    <div class="industry-grid">{INDUSTRIES.map(ind=><article class="industry-card"><h3>{ind.title}</h3><p>{ind.text}</p></article>)}</div>
-    <div class="subsection">
-      <h3>The problems matter more than the sector</h3>
-      <div class="information-grid">{problems.map(p=><div class="information-item"><h4>{p.title}</h4><p>{p.text}</p></div>)}</div>
-      <p class="fineprint">{SERVICE_AREA}</p>
-    </div>
-  </Section>
-
-  <Section index="06" label="About KEVOS®" tone="alt" id="about" labelledby="about-title">
-    <div class="about-grid">
       <div>
-        <h2 id="about-title">Practical expertise, from the floor up.</h2>
-        <p class="section-intro">KEVOS® is a small engineering-led business set up for defined technical assignments without the overhead of another permanent engineering position.</p>
-        <p class="muted">Its founder's background runs from making components through design, product development, operations improvement and project delivery. That helps connect drawings, tooling, processes, people and documentation.</p>
-        <ul class="background-list">{BACKGROUND.map(b=><li>{b}</li>)}</ul>
-        <a class="about-link" href="#work">See {PROJECTS.length} projects in the proof of work →</a>
-      </div>
-      <div class="principles">
-        {PRINCIPLES.map((p,i)=><div class="principle">
-          <span>{String(i+1).padStart(2,'0')}</span><div><h3>{p.title}</h3><p>{p.text}</p></div>
-        </div>)}
+        <h2 id="connected-title">Learn. Apply. <em>Improve.</em></h2>
+        <p class="section-intro">KEVOS® connects technical knowledge with practical tools, helping people move from understanding a concept to applying it in real-world situations.</p>
       </div>
     </div>
-    <div class="software"><SoftwareNote headingLevel="h3"/></div>
-    <p class="fineprint">Client drawings, data and information are used only for agreed work. Some statutory approvals or professional certification require appropriately qualified specialists. KEVOS® does not share confidential information from previous employers, clients or suppliers. <a href="/disclaimer/">Read the disclaimer</a>.</p>
+    <ol class="flow">
+      <li class="flow__step">
+        <p class="flow__name"><a href="/reados/">READOS</a></p>
+        <h3>Learn and understand</h3>
+        <p>Read the method, the reasoning and the worked numbers behind a decision.</p>
+      </li>
+      <li class="flow__step">
+        <p class="flow__name"><a href="/tools/">WORKOS</a></p>
+        <h3>Calculate, analyse and apply</h3>
+        <p>Enter your own figures, check the result and keep a report of what you decided.</p>
+      </li>
+      <li class="flow__step flow__step--planned">
+        <p class="flow__name">Planned <span class="flow__status">Not yet available</span></p>
+        <h3>Assist, explain and connect</h3>
+        <p>A later phase will help explain tools and suggest related chapters and calculations across READOS and WORKOS.</p>
+      </li>
+    </ol>
+    <p class="flow__note">Today, {fmt(connections)} reviewed links connect READOS books and chapters with the WORKOS tools that apply them. These learning pathways take you from a chapter to a tool:</p>
+    <ul class="pathways">
+      {pathways.map((p) => (
+        <li class="pathway">
+          <h3>{p.title}</h3>
+          <p class="pathway__summary">{p.summary}</p>
+          <dl>
+            <div><dt>Learn</dt><dd><a href={p.learn.href}>{p.learn.title}</a> <span>in {p.learn.book}</span></dd></div>
+            <div><dt>Apply</dt><dd><a href={p.apply.href}>{p.apply.name}</a></dd></div>
+          </dl>
+        </li>
+      ))}
+    </ul>
   </Section>
 
-  <Section index="07" label="READOS and WORKOS" id="resources" labelledby="resources-title">
-    <div class="section-head"><div><h2 id="resources-title">Read, learn and put ideas to work.</h2><p class="section-intro">Explore books and guides with READOS. Use WORKOS calculators and decision tools to work through costs, plans and practical choices.</p></div></div>
-    <div class="resource-grid">
-      <article class="resource"><HomeResourceVisual kind="reados" /><div class="resource__body"><p class="eyebrow">READOS · {primaryGuide.chapters.length} chapters</p><h3><a href="/reados/">{primaryGuide.title}</a></h3><p>{primaryGuide.description}</p><a href="/reados/">Explore READOS →</a></div></article>
-      <article class="resource"><HomeResourceVisual kind="workos" /><div class="resource__body"><p class="eyebrow">WORKOS</p><h3><a href="/tools/">Calculators and decision tools</a></h3><p>Practical browser-based tools for manufacturing, estimating, operations, engineering and other business decisions.</p><a href="/tools/">Explore WORKOS →</a></div></article>
+  <Section index="04" label="About KEVOS®" tone="alt" id="about" labelledby="about-title">
+    <div class="about-intro">
+      <h2 id="about-title">Building a connected ecosystem.</h2>
+      <div>
+        <p class="section-intro">KEVOS® is building a connected technology, engineering and knowledge ecosystem, bringing together practical digital tools and structured technical resources.</p>
+        <p class="about-intro__link"><a href="/about/">About KEVOS® <span aria-hidden="true">→</span></a></p>
+        <p class="fineprint">KEVOS® also takes on defined engineering assignments. See <a href="/services/">services</a> or get in touch through <a href="/contact/">REACHOS</a>.</p>
+      </div>
     </div>
   </Section>
-
-  <Section index="08" label="Proof of work" tone="alt" id="work" labelledby="work-title">
-    <div class="section-head"><div><h2 id="work-title">From steelworks to medical devices: {PROJECTS.length} Australian engineering projects worth sharing.</h2><p class="section-intro">The engineering record behind KEVOS®, built since 2010 on a career that started on the toolroom floor. Coke plants, mine-site trucks, production machinery, window and door hardware taken from 3D print to production, rail interiors, bridges, food plants and patient-specific devices, carried out by its founder in employed, contract and consulting roles. Each record shows where the work happened, the role, what was delivered and, honestly, how far it went.</p></div></div>
-    <ProofOfWork />
-  </Section>
-
-  <CallToAction title="Have work that needs moving forward?" text="Describe the drawing, project, manufacturing process or technical problem. KEVOS® can help define a practical scope and an appropriate next step." label="REACHOS"/>
 </BaseLayout>
 
+<script>
+  // The homepage used to hold the services, pricing and proof of work. Old links to those sections
+  // (for example /#pricing or /#case-<id>) are sent to the page that now holds them.
+  const moved: Record<string, string> = {
+    services: '/services/', 'engineering-cad': '/services/#engineering-cad', manufacturing: '/services/#manufacturing',
+    operations: '/services/#operations', 'project-support': '/services/#project-support', pricing: '/services/#pricing',
+    assessment: '/assessment/', 'factory-fix': '/factory-fix/', 'how-it-works': '/how-it-works/', industries: '/industries/',
+    work: '/about/#work', resources: '#workos',
+  };
+  const forward = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const to = id.startsWith('case-') ? `/about/#${id}` : moved[id];
+    if (to) location.replace(to);
+  };
+  forward();
+  window.addEventListener('hashchange', forward);
+</script>
+
 <style>
-  :global(#overview), :global(#assessment), :global(#services), :global(#how-it-works), :global(#industries), :global(#about), :global(#factory-fix), :global(#pricing), :global(#resources), :global(#work), :global(#engineering-cad), :global(#manufacturing), :global(#operations), :global(#project-support) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
-  .offer-gap{margin-top:1.25rem}
+  :global(#overview), :global(#workos), :global(#reados), :global(#connected), :global(#about) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
   .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
   :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr);gap:3rem 4rem;align-items:center}
   .home-hero__copy h1{margin:1rem 0 1.5rem;max-width:16ch;font-size:clamp(2.2rem,4.7vw,4.8rem);line-height:1.03}
   .home-hero__lead{font-size:var(--step-1);line-height:1.5;max-width:48ch;color:var(--ink-2)}
   .home-hero__actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:2rem}
   .home-hero__visual{min-width:0}
-  .hero-area{font-size:.89rem;color:var(--muted);margin:2rem 0 0}
+  .home-stats{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;margin:2.2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--line)}
+  .home-stats dt{font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .home-stats dd{margin:.3rem 0 0;font-family:var(--font-display);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
   .section-navigation{position:sticky;top:var(--header-h);z-index:19;background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line-strong)}
   .section-navigation ul{display:flex;gap:clamp(1rem,2.5vw,2.2rem);align-items:center;overflow-x:auto;scrollbar-width:thin;list-style:none;padding:.85rem 0;margin:0}
   .section-navigation a{white-space:nowrap;font-size:.83rem;font-weight:560;color:var(--ink-2);text-decoration:none}
@@ -198,41 +271,48 @@ const navigable=[
   .section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.2rem}
   .section-head h2{max-width:24ch}
   .section-intro{margin:1rem 0 0;max-width:74ch;font-size:var(--step-1);color:var(--ink-2)}
-  .service-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;border:1px solid var(--line);background:var(--line)}
-  .service-card{display:flex;flex-direction:column;gap:.75rem;background:var(--surface);padding:clamp(1.4rem,3vw,2.5rem)}
-  .service-card__heading{display:grid;gap:.9rem}.service-card__heading span{color:var(--accent);font-size:.85rem}
-  .service-card__heading h3{max-width:22ch}.service-card__summary{color:var(--ink-2);font-size:.97rem;max-width:64ch}
-  .service-card__details{border-top:1px solid var(--line);padding-top:.8rem;margin-top:auto}
-  .service-card__details summary{cursor:pointer;font-weight:570;color:var(--ink);font-size:.89rem}
-  .service-card__details summary span{color:var(--accent)}
-  .service-card__expansion{padding:1.2rem 0 .4rem}.service-card__expansion h4{font-size:1rem;margin:1.2rem 0 .5rem}
-  .service-card__expansion ul{columns:2;margin:0;padding-left:1.2rem;font-size:.9rem;color:var(--ink-2)}
-  .service-card__expansion li{break-inside:avoid;margin-bottom:.35rem}
-  .service-card__cta{color:var(--accent);font-size:.91rem;margin-top:.8rem;text-decoration:none}
-  .subsection{padding-top:3rem;margin-top:3.5rem;border-top:1px solid var(--line)}
-  .subsection h3{font-size:var(--step-2);margin-bottom:1.5rem}
-  .subsection__heading p{max-width:65ch;color:var(--muted)}
-  .information-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
-  .information-item{border-top:1px solid var(--line-strong);padding-top:1.2rem}
-  .information-item h4{font-size:1rem;margin-bottom:.55rem}.information-item p{color:var(--ink-2);font-size:.94rem}
-  .enquiry-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem 2rem;padding:0;list-style:none;margin:1.5rem 0}
-  .enquiry-list li{border-left:2px solid var(--accent);padding-left:1rem;color:var(--ink-2)}
   .fineprint{color:var(--muted);font-size:.88rem;margin:1.75rem 0 0}
-  .industry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-  .industry-card{background:var(--surface);padding:1.5rem}.industry-card h3{font-size:1.08rem}.industry-card p{font-size:.91rem;margin:.65rem 0 0;color:var(--ink-2)}
-  .about-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:3rem 5rem}
-  .about-grid h2{max-width:18ch}.background-list{display:flex;gap:.55rem;flex-wrap:wrap;list-style:none;padding:0;margin:1.5rem 0}
-  .background-list li{border:1px solid var(--line-strong);padding:.36rem .7rem;font-size:.84rem}
-  .about-link{color:var(--accent);font-weight:600;font-size:.92rem;text-decoration:none}.about-link:hover{text-decoration:underline}
-  .principles{border-top:1px solid var(--line-strong)}
-  .principle{display:grid;grid-template-columns:2rem 1fr;gap:1rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
-  .principle>span{color:var(--accent);font-size:.86rem}.principle h3{font-size:1.05rem}.principle p{font-size:.93rem;color:var(--ink-2);margin:.4rem 0 0}
-  .software{padding:2.5rem 0 0;border-top:1px solid var(--line);margin-top:3rem}
-  .resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
-  .resource{border:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
-  .resource__body{padding:1.5rem;display:flex;flex-direction:column;gap:.7rem;flex:1}
-  .resource h3{font-size:var(--step-1)}.resource h3 a{text-decoration:none}.resource p:not(.eyebrow){font-size:.94rem;color:var(--ink-2)}.resource__body>a{color:var(--accent);text-decoration:none;font-size:.9rem;margin-top:auto;padding-top:.6rem}
-  @media(max-width:1050px){.information-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.industry-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.about-grid{gap:2.5rem}}
-  @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px}.about-grid{grid-template-columns:1fr}}
-  @media(max-width:640px){.service-grid,.information-grid,.industry-grid,.enquiry-list,.resource-grid{grid-template-columns:1fr}.service-card__expansion ul{columns:1}.section-navigation{top:var(--header-h)}}
+  .fineprint a{color:var(--ink-2)}
+  .product{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2.5rem 4rem;align-items:center}
+  .product__intro{min-width:0}
+  .product__intro h2{max-width:18ch}
+  .product__points{display:grid;gap:.6rem;margin:1.5rem 0 0;padding:0;list-style:none;max-width:60ch}
+  .product__points li{border-left:2px solid var(--accent);padding-left:1rem;color:var(--ink-2);font-size:.95rem}
+  .home-search{margin-top:1.75rem;max-width:36rem}
+  .product__cta{margin-top:1.25rem}
+  .product__visual{min-width:0;border:1px solid var(--line)}
+  .home-label{margin:clamp(2.5rem,5vw,3.5rem) 0 1rem;font-family:var(--font-sans);font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .home-card{display:flex;min-width:0}
+  .home-card > :global(*){flex:1;min-width:0}
+  .flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:0;padding:0;list-style:none;border:1px solid var(--line);background:var(--line);counter-reset:flow}
+  .flow__step{background:var(--surface);padding:clamp(1.3rem,3vw,2rem);counter-increment:flow}
+  .flow__step::before{content:counter(flow,decimal-leading-zero);display:block;margin-bottom:.9rem;color:var(--accent);font-size:.85rem;font-variant-numeric:tabular-nums}
+  .flow__name{margin:0 0 .4rem;font-size:.78rem;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .flow__name a{color:inherit;text-decoration:none}
+  .flow__name a:hover{text-decoration:underline;text-underline-offset:3px}
+  .flow__step h3{font-size:var(--step-1)}
+  .flow__step p:not(.flow__name){margin:.6rem 0 0;color:var(--ink-2);font-size:.94rem}
+  .flow__step--planned{background:var(--paper)}
+  .flow__step--planned .flow__name, .flow__step--planned::before{color:var(--muted)}
+  .flow__status{display:inline-block;margin-left:.5rem;padding:.1rem .45rem;border:1px solid var(--line-strong);border-radius:999px;font-size:.68rem;font-weight:560;letter-spacing:.06em;color:var(--muted)}
+  .flow__note{margin:2.5rem 0 1.2rem;max-width:74ch;color:var(--ink-2)}
+  .pathways{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin:0;padding:0;list-style:none}
+  .pathway{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1.2rem 1.25rem;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--surface)}
+  .pathway h3{font-size:1.05rem}
+  .pathway__summary{margin:0;color:var(--ink-2);font-size:.9rem}
+  .pathway dl{display:grid;gap:.45rem;margin:auto 0 0;padding-top:.6rem;border-top:1px solid var(--line)}
+  .pathway dl div{display:grid;grid-template-columns:4rem minmax(0,1fr);gap:.5rem;font-size:.86rem}
+  .pathway dt{font-size:.72rem;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:.1rem}
+  .pathway dd{margin:0}
+  .pathway dd a{color:var(--accent);font-weight:600}
+  .pathway dd span{color:var(--muted)}
+  .about-intro{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:1.5rem 5rem}
+  .about-intro h2{max-width:16ch}
+  .about-intro .section-intro{margin-top:0}
+  .about-intro__link{margin:1.25rem 0 0}
+  .about-intro__link a{color:var(--accent);font-weight:600;text-decoration:none}
+  .about-intro__link a:hover{text-decoration:underline;text-underline-offset:3px}
+  @media(max-width:1050px){.pathways{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px}.product,.about-intro{grid-template-columns:1fr}.product__visual{max-width:640px}.flow{grid-template-columns:1fr}}
+  @media(max-width:640px){.pathways{grid-template-columns:1fr}.home-search{grid-template-columns:minmax(0,1fr) auto}}
 </style>

@@ -40,6 +40,8 @@ references:
     year: "current editions"
     note: "Named in Chapters 4 and 10 by number and scope. No content or values are reproduced; electrical installation work must be done by licensed electricians to these standards."
 related:
+  - title: "Combustion by the Numbers"
+    href: "/reados/publications/combustion-by-the-numbers/"
   - title: "Heating systems for commercial and industrial buildings"
     href: "/reados/collections/fluids-hvac-and-building-services/heating-systems-boilers-burners-and-controls/"
   - title: "Growth, decay and logarithms in engineering and business"

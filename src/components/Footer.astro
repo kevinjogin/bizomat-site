@@ -26,7 +26,7 @@ const year = new Date().getFullYear();
       <div class="site-footer__col">
         <h2 class="site-footer__heading">REACHOS</h2>
         <ul>
-          <li><a href={QUOTE_CTA.href}>Request a quote</a></li>
+          <li><a href={`${QUOTE_CTA.href}#enquiry`}>Start an enquiry</a></li>
           <li><a href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="footer-meeting">{SITE.booking.label}<span class="visually-hidden"> (opens in a new tab)</span></a></li>
           {SITE.email ? <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li> : <li><a href="/contact/">Send a message</a></li>}
           {SITE.social.map((s) => <li><a href={s.href} rel="noopener me">{s.label}</a></li>)}

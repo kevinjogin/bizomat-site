@@ -103,7 +103,7 @@ export async function handleContact(request: Request, env: ContactEnv): Promise<
   }
   if (String(fields[HONEYPOT_FIELD] || '').trim()) return respond(400, false, CONTACT_FAILURE);
   const input = normalise(fields);
-  const errors = validate(input, { requireCompany: true });
+  const errors = validate(input);
   if (!validEmail(input.email)) errors.email = 'Please enter a valid email address, for example name@example.com.';
   if (fields.contactMethod != null && !(CONTACT_METHODS as readonly string[]).includes(String(fields.contactMethod).trim())) errors.contactMethod = 'Please choose a listed contact method.';
   if (Object.keys(errors).length) return respond(422, false, 'Please check the highlighted fields.', errors);

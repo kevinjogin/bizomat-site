@@ -23,7 +23,7 @@ export async function submitContact(s: Submission, delivery: 'web3forms' | 'work
     try {
       const form = new FormData();
       for (const [key, value] of Object.entries({
-        name: s.name, email: s.email, company: s.company, phone: s.phone, service: s.service,
+        name: s.name, email: s.email, company: s.company, phone: s.phone, service: s.service, website: s.website, resource: s.resource,
         message: s.message, contactMethod: s.contactMethod, consent: s.consent ? 'on' : '',
         source: s.source, botcheck: s.honeypot || '', 'cf-turnstile-response': s.captcha || '',
       })) form.append(key, value);
@@ -54,6 +54,8 @@ export async function submitContact(s: Submission, delivery: 'web3forms' | 'work
           email: s.email,
           phone: s.phone || '—',
           service: s.service,
+          website: s.website || '—',
+          related_resource: s.resource || '—',
           preferred_contact: s.contactMethod,
           message: s.message,
           source: s.source,

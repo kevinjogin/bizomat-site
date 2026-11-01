@@ -1,4 +1,4 @@
-// Contact and quote-request contract shared by the browser form, the assistant's "Leave a message"
+// REACHOS enquiry contract shared by the browser form, the assistant's "Leave a message"
 // form and the Cloudflare function. Keep this file dependency-free so it runs in the browser,
 // Workers and Node tests alike.
 
@@ -8,10 +8,26 @@ export const CONTACT_LIMITS = {
   company: { max: 150 },
   phone: { max: 40 },
   service: { max: 60 },
+  website: { max: 200 },
+  resource: { max: 150 },
   message: { min: 20, max: 5000 },
 } as const;
 
-/** Values for the "Service required" field. Keep in step with SERVICE_OPTIONS in src/data/services.ts. */
+/**
+ * REACHOS enquiry categories (the `service` field). Each slug can be preselected with /contact/?service=<slug>.
+ * Engineering and technical projects keep the service values in SERVICE_OPTIONS (src/data/services.ts), so existing
+ * ?service= links from the services, Factory Fix and proof-of-work pages still preselect.
+ */
+export const ENQUIRY_CATEGORIES = [
+  { value: 'General enquiry', slug: 'general' },
+  { value: 'WORKOS – Tools and technical questions', slug: 'workos' },
+  { value: 'READOS – Books and knowledge resources', slug: 'reados' },
+  { value: 'Ideas and feedback', slug: 'feedback' },
+  { value: 'Collaboration and partnerships', slug: 'collaboration' },
+] as const;
+export const ENGINEERING_PROJECT = { value: 'Engineering or technical project', slug: 'engineering-project' } as const;
+
+/** Values for the former "Service required" field. Keep in step with SERVICE_OPTIONS in src/data/services.ts. */
 export const SERVICES = [
   'Engineering / CAD',
   'Manufacturing Support',
@@ -34,6 +50,10 @@ export interface ContactInput {
   company: string;
   phone: string;
   service: string;
+  /** Optional website of the visitor or their organisation. */
+  website: string;
+  /** Optional WORKOS tool or READOS resource the enquiry is about. */
+  resource: string;
   message: string;
   contactMethod: ContactMethod;
   consent: boolean;
@@ -52,6 +72,7 @@ export interface ContactResponse {
 
 const EMAIL = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[^\s@<>()[\]\\,;:"]{2,}$/;
 const PHONE = /^[+()0-9\s.-]+$/;
+const WEBSITE = /^(https?:\/\/)?[a-z0-9-]+(\.[a-z0-9-]+)+(:\d{1,5})?([/?#]\S*)?$/i;
 const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
 
 export const clean = (value: unknown, max: number) => String(value ?? '').replace(CONTROL, '').trim().slice(0, max);
@@ -65,6 +86,8 @@ export function normalise(data: Record<string, unknown>): ContactInput {
     company: clean(data.company ?? data.organisation, CONTACT_LIMITS.company.max),
     phone: clean(data.phone, CONTACT_LIMITS.phone.max),
     service: clean(data.service ?? data.subject, CONTACT_LIMITS.service.max),
+    website: clean(data.website, CONTACT_LIMITS.website.max),
+    resource: clean(data.resource, CONTACT_LIMITS.resource.max),
     message: clean(data.message, CONTACT_LIMITS.message.max),
     contactMethod: (CONTACT_METHODS as readonly string[]).includes(method) ? (method as ContactMethod) : 'Email',
     consent: data.consent === true || data.consent === 'on' || data.consent === 'true',
@@ -72,7 +95,7 @@ export function normalise(data: Record<string, unknown>): ContactInput {
 }
 
 export interface ValidateOptions {
-  /** The quote form asks for a company; the assistant's quick message form does not. */
+  /** Ask for a company. REACHOS and the assistant's quick message form both treat it as optional. */
   requireCompany?: boolean;
 }
 
@@ -86,9 +109,10 @@ export function validate(input: ContactInput, { requireCompany = false }: Valida
   } else if (input.contactMethod === 'Phone' && !input.phone) {
     errors.phone = 'Please add a phone number, or choose email as your preferred contact method.';
   }
-  if (!input.service) errors.service = 'Please choose the service you need, or “Other”.';
+  if (input.website && !WEBSITE.test(input.website)) errors.website = 'Please enter a website address such as example.com, or leave it blank.';
+  if (!input.service) errors.service = 'Please choose an enquiry category, or “Other”.';
   if (input.message.length < CONTACT_LIMITS.message.min)
-    errors.message = `Please describe the project or problem in a little more detail (at least ${CONTACT_LIMITS.message.min} characters).`;
+    errors.message = `Please tell us a little more about your enquiry (at least ${CONTACT_LIMITS.message.min} characters).`;
   else if ((input.message.match(/https?:\/\//gi) ?? []).length > 3) errors.message = 'Please include no more than three links.';
   if (!input.consent) errors.consent = 'Please confirm you have read the privacy notice.';
   return errors;

@@ -53,13 +53,15 @@ test('every case study is complete, written in the KEVOS voice and leads to an e
   assert.match(form, /get\('project'\)/, 'the contact form starts the enquiry from the project name');
 });
 
-test('the homepage shows the proof of work as a section with its own navigation link', () => {
+test('the About page shows the proof of work as a section, and old homepage links are forwarded to it', () => {
+  const about = read('src/pages/about.astro');
+  assert.match(about, /<Section index="06" label="Proof of work"[^>]*id="work"/);
+  assert.match(about, /<ProofOfWork \/>/);
+  assert.match(read('src/config/site.ts'), /\{ href: '\/about\/#work', label: 'Proof of Work' \}/);
   const home = read('src/pages/index.astro');
-  assert.match(home, /\{id:'resources',label:'Resources'\},\s*\{id:'work',label:'Proof of work'\}/, 'nav link follows Resources');
-  assert.match(home, /<Section index="08" label="Proof of work"[^>]*id="work"/);
-  assert.match(home, /<ProofOfWork \/>/);
-  assert.match(home, /href="#work"/, 'About links to the proof of work');
-  assert.match(read('src/config/site.ts'), /\{ href: '\/#work', label: 'Proof of Work' \}/);
+  assert.doesNotMatch(home, /<ProofOfWork/, 'the homepage leads with WORKOS and READOS');
+  assert.ok(home.includes("id.startsWith('case-') ? `/about/#${id}`"), 'old /#case-<id> links open the case study on About');
+  assert.ok(home.includes("work: '/about/#work'"), 'old /#work links open the proof of work on About');
   const component = read('src/components/ProofOfWork.astro');
   assert.doesNotMatch(component, /\sstyle=/);
   assert.match(component, /aria-pressed/);

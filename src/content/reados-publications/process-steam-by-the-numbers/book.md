@@ -45,6 +45,8 @@ references:
     year: "current editions"
     note: "Named by number and scope only, in Chapter 8. No requirements or values are quoted."
 related:
+  - title: "Combustion by the Numbers"
+    href: "/reados/publications/combustion-by-the-numbers/"
   - title: "Heat Transfer by the Numbers"
     href: "/reados/publications/heat-transfer-by-the-numbers/"
   - title: "Heating systems: boilers, burners and controls"

@@ -1,12 +1,15 @@
 ---
-// Existing contact UI; same-origin Worker delivery and Turnstile in the existing CAPTCHA slot.
-// A ?service=<slug> query string (e.g. from "Discuss a Factory Fix") preselects the service.
+// REACHOS enquiry form: same-origin Worker delivery (/api/contact) with Turnstile in the CAPTCHA slot.
+// ?service=<slug> preselects the enquiry category (REACHOS pathways, "Discuss a Factory Fix", service and
+// proof-of-work links); ?resource=<name> fills the related WORKOS tool or READOS resource.
 import { SITE } from '../config/site.ts';
-import { CONTACT_LIMITS, CONTACT_METHODS, HONEYPOT_FIELD } from '../lib/contact.ts';
+import { CONTACT_LIMITS, CONTACT_METHODS, ENGINEERING_PROJECT, ENQUIRY_CATEGORIES, HONEYPOT_FIELD } from '../lib/contact.ts';
 import { SERVICE_OPTIONS } from '../data/services.ts';
 import Button from './Button.astro';
 
 const L = CONTACT_LIMITS;
+const engineering = [ENGINEERING_PROJECT, ...SERVICE_OPTIONS.filter((o) => o.slug !== 'other')];
+const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
 ---
 
 <form class="contact-form" action="/api/contact" method="post" novalidate data-contact-form data-email={SITE.email}>
@@ -17,34 +20,26 @@ const L = CONTACT_LIMITS;
       <p class="field__error" id="cf-name-error" data-error-for="name"></p>
     </div>
     <div class="field">
-      <label for="cf-company">Company</label>
-      <input id="cf-company" name="company" type="text" autocomplete="organization" required maxlength={L.company.max} aria-describedby="cf-company-error" />
-      <p class="field__error" id="cf-company-error" data-error-for="company"></p>
-    </div>
-  </div>
-  <div class="contact-form__row">
-    <div class="field">
       <label for="cf-email">Email</label>
       <input id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength={L.email.max} aria-describedby="cf-email-error" />
       <p class="field__error" id="cf-email-error" data-error-for="email"></p>
     </div>
-    <div class="field">
-      <label for="cf-phone">Phone <span class="field__optional">(optional)</span></label>
-      <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength={L.phone.max} aria-describedby="cf-phone-error" />
-      <p class="field__error" id="cf-phone-error" data-error-for="phone"></p>
-    </div>
   </div>
   <div class="field">
-    <label for="cf-service">Service required</label>
+    <label for="cf-service">Enquiry category</label>
     <select id="cf-service" name="service" required aria-describedby="cf-service-hint cf-service-error" data-service-select>
-      <option value="">Choose a service</option>
-      {SERVICE_OPTIONS.map((o) => <option value={o.value} data-slug={o.slug}>{o.value}</option>)}
+      <option value="">Choose a category</option>
+      {ENQUIRY_CATEGORIES.map((o) => <option value={o.value} data-slug={o.slug}>{o.value}</option>)}
+      <optgroup label="Engineering and technical projects">
+        {engineering.map((o) => <option value={o.value} data-slug={o.slug}>{o.value}</option>)}
+      </optgroup>
+      <option value={other.value} data-slug={other.slug}>{other.value}</option>
     </select>
-    <p class="field__hint" id="cf-service-hint">Not sure which service you need? Choose “Other”, describe the problem, and KEVOS® can help define the scope.</p>
+    <p class="field__hint" id="cf-service-hint">Not sure which fits? Choose “General enquiry” and tell us what you need.</p>
     <p class="field__error" id="cf-service-error" data-error-for="service"></p>
   </div>
   <div class="field">
-    <label for="cf-message">Project description</label>
+    <label for="cf-message">Message</label>
     <textarea
       id="cf-message"
       name="message"
@@ -53,10 +48,39 @@ const L = CONTACT_LIMITS;
       minlength={L.message.min}
       maxlength={L.message.max}
       aria-describedby="cf-message-hint cf-message-error"
-      placeholder="What needs to be done, what is happening now, any deadlines, and whether a site visit may be needed."></textarea>
-    <p class="field__hint" id="cf-message-hint">Drawings, photos or documents can be shared after KEVOS® replies. Please don’t include confidential information here.</p>
+      placeholder="Your question, idea, feedback or requirement, and anything that would help us reply."></textarea>
+    <p class="field__hint" id="cf-message-hint">Files can be shared after KEVOS® replies. Please don’t include confidential information here.</p>
     <p class="field__error" id="cf-message-error" data-error-for="message"></p>
   </div>
+  <details class="contact-form__more" data-optional-fields>
+    <summary>Add optional details <span>organisation, website, related tool or resource, phone</span></summary>
+    <div class="contact-form__more-body">
+      <div class="contact-form__row">
+        <div class="field">
+          <label for="cf-company">Organisation <span class="field__optional">(optional)</span></label>
+          <input id="cf-company" name="company" type="text" autocomplete="organization" maxlength={L.company.max} aria-describedby="cf-company-error" />
+          <p class="field__error" id="cf-company-error" data-error-for="company"></p>
+        </div>
+        <div class="field">
+          <label for="cf-website">Website <span class="field__optional">(optional)</span></label>
+          <input id="cf-website" name="website" type="text" inputmode="url" autocomplete="url" spellcheck="false" maxlength={L.website.max} placeholder="example.com" aria-describedby="cf-website-error" />
+          <p class="field__error" id="cf-website-error" data-error-for="website"></p>
+        </div>
+      </div>
+      <div class="contact-form__row">
+        <div class="field">
+          <label for="cf-resource">Related WORKOS tool or READOS resource <span class="field__optional">(optional)</span></label>
+          <input id="cf-resource" name="resource" type="text" maxlength={L.resource.max} placeholder="Tool, book or chapter name" aria-describedby="cf-resource-error" />
+          <p class="field__error" id="cf-resource-error" data-error-for="resource"></p>
+        </div>
+        <div class="field">
+          <label for="cf-phone">Phone <span class="field__optional">(optional)</span></label>
+          <input id="cf-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength={L.phone.max} aria-describedby="cf-phone-error" />
+          <p class="field__error" id="cf-phone-error" data-error-for="phone"></p>
+        </div>
+      </div>
+    </div>
+  </details>
   <fieldset class="field field--radios" aria-describedby="cf-method-error">
     <legend>Preferred contact method</legend>
     <div class="radios">
@@ -95,7 +119,7 @@ const L = CONTACT_LIMITS;
   <div class="contact-form__status" role="status" aria-live="polite" tabindex="-1" data-status></div>
 
   <div class="contact-form__actions">
-    <Button type="submit" arrow data-submit data-cta="contact-submit">Send enquiry</Button>
+    <Button type="submit" arrow data-submit data-cta="contact-submit">Send Enquiry</Button>
   </div>
 </form>
 
@@ -129,16 +153,30 @@ const L = CONTACT_LIMITS;
       }, { rootMargin: '200px' });
       io.observe(captchaEl);
     }
-    const check = (input: ReturnType<typeof normalise>) => validate(input, { requireCompany: true });
+    const check = (input: ReturnType<typeof normalise>) => validate(input);
+    const more = form.querySelector<HTMLDetailsElement>('[data-optional-fields]');
 
-    // Preselect the service from ?service=<slug>, e.g. links from the Factory Fix page.
-    const wanted = new URLSearchParams(location.search).get('service');
-    if (select && wanted) {
-      const match = Array.from(select.options).find((o) => o.dataset.slug === wanted);
-      if (match) select.value = match.value;
+    // Preselect the category from ?service=<slug>, e.g. REACHOS pathways or the Factory Fix page.
+    const params = new URLSearchParams(location.search);
+    const choose = (slug: string | null) => {
+      const match = slug && select ? Array.from(select.options).find((o) => o.dataset.slug === slug) : undefined;
+      if (match && select) select.value = match.value;
+      return Boolean(match);
+    };
+    choose(params.get('service'));
+    // Pathway links on the REACHOS page choose their category in place, without reloading the page.
+    document.querySelectorAll<HTMLAnchorElement>('a[data-enquiry-category]').forEach((a) => a.addEventListener('click', () => {
+      if (choose(a.dataset.enquiryCategory ?? null)) history.replaceState(null, '', a.href);
+    }));
+    // Name the related tool or resource from ?resource=<name>.
+    const resource = params.get('resource')?.trim().slice(0, 150);
+    const resourceInput = form.querySelector<HTMLInputElement>('#cf-resource');
+    if (resource && resourceInput) {
+      resourceInput.value = resource;
+      if (more) more.open = true;
     }
     // Start the description from ?project=<title>, e.g. "Discuss a similar project" links in the proof of work.
-    const project = new URLSearchParams(location.search).get('project')?.trim().slice(0, 120);
+    const project = params.get('project')?.trim().slice(0, 120);
     const description = form.querySelector<HTMLTextAreaElement>('#cf-message');
     if (project && description && !description.value) description.value = `I am interested in support similar to the "${project}" project.\n\n`;
 
@@ -151,6 +189,8 @@ const L = CONTACT_LIMITS;
         if (input && 'setAttribute' in input) input.setAttribute('aria-invalid', message ? 'true' : 'false');
       });
       const first = Object.keys(errors)[0];
+      // Open the optional details when one of them has an error, so the message can be seen.
+      if (more && Object.keys(errors).some((k) => more.querySelector(`[data-error-for="${k}"]`))) more.open = true;
       if (first) {
         const el = form.elements.namedItem(first) as HTMLElement | RadioNodeList | null;
         (el instanceof RadioNodeList ? (el[0] as HTMLElement) : el)?.focus();
@@ -254,5 +294,10 @@ const L = CONTACT_LIMITS;
   .contact-form__status[data-kind='success'] { border-color: var(--success); color: var(--success); }
   .contact-form__status[data-kind='error'] { border-color: var(--danger); color: var(--danger); }
   .contact-form__actions { display: flex; justify-content: flex-start; }
+  .contact-form__more { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .contact-form__more summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.6rem; padding: 0.95rem 0; cursor: pointer; font-size: 0.92rem; font-weight: 540; color: var(--ink); }
+  .contact-form__more summary span { font-weight: 400; font-size: 0.84rem; color: var(--muted); }
+  .contact-form__more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .contact-form__more-body { display: grid; gap: 1.5rem; padding: 0.25rem 0 1.4rem; }
   @media (max-width: 640px) { .contact-form__row { grid-template-columns: 1fr; } }
 </style>

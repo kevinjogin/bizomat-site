@@ -2897,3 +2897,744 @@ A forty-second round of 9 integrated design checks in batch handbook67, combinin
 | Tool | Result with example inputs | Checks | Handbook pages | Tested |
 |---|---|---|---|---|
 | **Friction Wheel Drive Check (Tangential Force, Normal Force Needed, Contact Stress, Speed Ratio)** `friction-wheel-drive-check` | DRIVE ADEQUATE | Contact pressure; Bearings; Model and application | 2301–2309, 165–168 | Automated + cross-check |
+
+## Machinery’s Handbook topic tools, fifty-second pass: integrated design checks, forty-third round (added 29 October 2026)
+
+A forty-third round of 7 integrated design checks in batch handbook68, aimed at engineering business, fabrication, machining, maintenance, fluid power and quality: a machine economic life check (year-by-year EUAC, minimum-cost life, keep or replace), a butt weld quantity and cost check (groove area, weld metal, arc time, cost against quote), a cutting insert consumption and reorder plan (tool life, parts per edge, monthly use, reorder point), a bearing fleet spares plan (rating life, Weibull failures, spares for a service level), a hydraulic press cycle check (regenerative approach, pressing force, return, cycle time, motor power), a vacuum table workholding check (holding force, milling force, sliding safety factor) and a gauge repeatability and bias check (type 1 study: Cg, Cgk, bias t-test). Tests cross-check against the interest factors, EUAC comparison, weld cost, Taylor tool life, bearing life, Weibull reliability, hydraulic cylinder, hydraulic power, milling power and vacuum cup tools. WORKOS now holds 844 tools.
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Machine Economic Life Check (Year-by-Year EUAC, Minimum-Cost Life, Keep or Replace)** `machine-economic-life` | KEEP FOR ANOTHER YEAR | Existing machine against the new one; Range examined; Model and application | 134–143 | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Butt Weld Quantity and Cost Check (Groove Area, Weld Metal, Arc Time, Cost against Quote)** `groove-weld-cost-check` | QUOTE COVERS THE WELDING | Cost against quote; Preparation; Model and application | 1438–1441, 1476–1484 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Cutting Insert Consumption and Reorder Plan (Tool Life, Parts per Edge, Monthly Use, Reorder Point)** `insert-consumption-reorder-plan` | STOCK ABOVE REORDER POINT | Stock on hand; Parts per edge; Model and application | 1102–1106, 1132–1140 | Automated + cross-check |
+| **Vacuum Table Workholding Check (Holding Force, Milling Force, Sliding Safety Factor)** `vacuum-table-workholding-check` | PART HELD | Sliding; Lift-off and seal; Model and application | 1084–1101, 3032–3041 | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Bearing Fleet Spares Plan (Rating Life, Weibull Failures, Spares for a Service Level)** `bearing-fleet-spares-plan` | SPARES ENOUGH | Spares held; Chance of failure per bearing; Model and application | 2403–2415, 128–133 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Hydraulic Press Cycle Check (Regenerative Approach, Pressing Force, Return, Cycle Time, Motor Power)** `hydraulic-press-cycle-check` | PRESS CYCLE ADEQUATE | Pressing force; Approach pressure; Cycle time; Motor power; Stall at relief; Model and application | 365–368 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Gauge Repeatability and Bias Check (Type 1 Study: Cg, Cgk, Bias t-Test)** `gauge-repeatability-bias-check` | GAUGE CAPABLE | Repeatability (Cg); Repeatability with bias (Cgk); Resolution; Bias significance; Master value; Model and application | 128–129 | Automated + cross-check |
+
+## Thermodynamics tools from Fermi’s Thermodynamics, batch handbook69 (added 29 October 2026)
+
+Six tools in batch handbook69 that apply the laws set out in Enrico Fermi’s Thermodynamics (Dover, 1956; first published 1937) to plant problems, with every property, rating and limit entered by the user: a vapour pressure and boiling check (Clausius–Clapeyron, boiling point at pressure, margin), a real gas cylinder contents check (van der Waals, compressibility, ideal-gas error), a reverse osmosis pressure check (osmotic pressure, net driving pressure, permeate flow), a battery pack heat check (irreversible and reversible heat, temperature rise, cooling), a heat pump and chiller COP check (Carnot limit, second-law efficiency, running cost) and a waste heat recovery limit check (heat released, exergy, claimed power against the second-law limit). The page column below gives pages in Fermi, not Machinery’s Handbook. WORKOS now holds 850 tools.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Fermi pages | Tested |
+|---|---|---|---|---|
+| **Vapour Pressure and Boiling Check (Clausius–Clapeyron, Boiling Point at Pressure, Margin)** `vapour-pressure-boiling-check` | LIQUID STAYS BELOW BOILING | Margin to boiling; Distance from the reference point; Model and application | 63–68 | Automated + cross-check |
+| **Reverse Osmosis Pressure Check (Osmotic Pressure, Net Driving Pressure, Permeate Flow)** `ro-pressure-check` | PRESSURE ADEQUATE | Concentrate-end driving pressure; Permeate flow; Scaling and membrane limits; Model and application | 118–122 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Fermi pages | Tested |
+|---|---|---|---|---|
+| **Real Gas Cylinder Contents Check (Van der Waals, Compressibility, Ideal-Gas Error)** `real-gas-cylinder-contents` | CONTENTS SUFFICIENT | Mass held; Critical temperature; Pressure equipment; Model and application | 69–76 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Fermi pages | Tested |
+|---|---|---|---|---|
+| **Battery Pack Heat Check (Irreversible and Reversible Heat, Temperature Rise, Cooling)** `battery-heat-check` | TEMPERATURE RISE ACCEPTABLE | Temperature rise; Hot spots and limits; Model and application | 94–97 | Automated + cross-check |
+| **Heat Pump and Chiller COP Check (Carnot Limit, Second-Law Efficiency, Running Cost)** `heat-pump-cop-check` | COP PLAUSIBLE | Second law; Efficiency against your benchmark; Rating condition; Model and application | 31–45 | Automated + cross-check |
+| **Waste Heat Recovery Limit Check (Heat Released, Exergy, Claimed Power against the Second-Law Limit)** `waste-heat-recovery-limit` | CLAIM PLAUSIBLE | Second law; Realistic share; Net power; Model and application | 44, 48–58 | Automated + cross-check |
+
+## Polymer thermodynamics tools from Klenin, batch polymers (added 29 October 2026)
+
+Six tools in batch polymers that apply the methods set out in V. J. Klenin’s Thermodynamics of Systems Containing Flexible-Chain Polymers (Elsevier, 1999) and the original papers it cites, with every property, interaction parameter, constant and limit entered by the user: a Flory–Huggins phase check for polymer solutions and blends, a Hansen solvent attack and swelling screen, a Flory–Rehner rubber swelling test, a single-point intrinsic viscosity check with Mark–Houwink molar mass, a Flory melting-point depression check and a dynamic light scattering size check. The section column gives Klenin’s sections, not Machinery’s Handbook pages. WORKOS now holds 856 tools.
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Klenin sections | Tested |
+|---|---|---|---|---|
+| **Polymer Solution and Blend Phase Check (Flory–Huggins χ, Spinodal, Critical Point, Cloud Temperature)** `polymer-solution-phase-check` | ONE PHASE | Against the binodal (cloud point); Against the spinodal; Temperature margin; Polydispersity; Interaction parameter; Model and application | 3.1, 3.2.1 | Automated + cross-check |
+| **Solvent Attack and Swelling Screen for Plastics and Elastomers (Hansen Distance Ra and RED)** `hansen-solvent-compatibility` | LIKELY TO RESIST | Position against the solubility sphere; Blend of A and B; Immersion test; Stress cracking and crystallinity; Model and application | 3.1.1 | Automated + cross-check |
+| **Polymer Melting or Dissolution Temperature with a Diluent (Flory Melting-Point Depression)** `polymer-melting-point-depression` | CRYSTALS MELT AT THIS TEMPERATURE | Process temperature against the melting temperature; Liquid–liquid separation; Equilibrium melting point; Model and application | 6.1, 6.3 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Klenin sections | Tested |
+|---|---|---|---|---|
+| **Rubber Swelling Test: Crosslink Density, Chain Molar Mass and Network Modulus (Flory–Rehner)** `rubber-swelling-crosslink-density` | CROSSLINK DENSITY IN RANGE | Crosslink density against the range; Filler; Sensitivity to χ; Swelling equilibrium; Model and application | 3.5.1–3.5.2 | Automated + cross-check |
+| **Polymer Intrinsic Viscosity and Molar Mass from One Viscometer Reading (Single-Point [η], Mark–Houwink)** `polymer-intrinsic-viscosity` | IV WITHIN SPECIFICATION | Intrinsic viscosity against the specification; Agreement of the single-point relations; Mark–Houwink constants; Viscometer practice; Model and application | 5.3, chapter 4 | Automated + cross-check |
+| **Particle and Polymer Coil Size from Dynamic Light Scattering (Decay Rate, Diffusion Coefficient, Stokes–Einstein)** `dls-particle-size` | SIZE IN RANGE | Diameter against the specification; Internal motion (qRh); Viscosity and temperature; Polydispersity and concentration; Model and application | 3.3.2 | Automated + cross-check |
+
+## Thermodynamics first principles after Bryan (added 29 October 2026)
+
+Three tools in batch bryanthermo that apply results from G. H. Bryan’s Thermodynamics (Teubner, 1907; public domain) to plant problems, with every property, rating and limit entered by the user: a liquid adiabatic compression check (temperature rise, c_p − c_v, adiabatic bulk modulus, wave speed), a gas mixture property calculator (Dalton’s law, mixture R, c_p, γ, density, partial pressures, mixing entropy) and a thermoelectric cooler check (module constants from the datasheet, heat pumped, power, COP, hot-side heat). Tests cross-check against Bryan’s own forms of the results. WORKOS then held 859 tools. Two more were added later the same day, taking WORKOS to 925 tools: a heat engine Carnot limit check (ideal efficiency, second-law efficiency, most work, least heat rejected, entropy generated) and a least-work-to-chill check (second-law minimum power to cool a product below ambient, ideal COP, chiller claim check).
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Bryan sections | Tested |
+|---|---|---|---|---|
+| **Liquid Adiabatic Compression (Temperature Rise, cp − cv, Adiabatic Bulk Modulus, Wave Speed)** `liquid-adiabatic-compression` | TEMPERATURE RISE WITHIN LIMIT | Final temperature; Bulk modulus basis; Model and application | §33, §§113–116, §121 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Bryan sections | Tested |
+|---|---|---|---|---|
+| **Gas Mixture Properties (Dalton: Molar Mass, Gas Constant, Specific Heats, Density, Partial Pressures, Mixing Entropy)** `gas-mixture-properties` | PARTIAL PRESSURE WITHIN LIMIT | Partial pressure of the checked gas; Perfect-gas behaviour; Model and application | §§121, 124–128 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Bryan sections | Tested |
+|---|---|---|---|---|
+| **Thermoelectric Cooler Check (TEC Module Constants from the Datasheet, Heat Pumped, Power, COP, Hot-Side Heat)** `thermoelectric-cooler-check` | MODULES PUMP THE HEAT LOAD | Heat pumped against the load; Current rating; Voltage rating; Hot-side heat sink; Model and application | §§164–166 | Automated + cross-check |
+| **Heat Engine Carnot Limit Check (Ideal Efficiency, Second-Law Efficiency, Most Work, Least Heat Rejected)** `heat-engine-carnot-limit` | INSIDE THE CARNOT LIMIT | Stated efficiency against the Carnot limit; Second-law efficiency; Reservoir temperatures; Model and application | §§61–65, 74, 77 | Automated + cross-check |
+| **Least Work to Chill a Product Below Ambient (Second-Law Minimum Power, Ideal COP, Chiller Claim Check)** `chilling-least-work-check` | INSIDE THE SECOND-LAW LIMIT | Stated power against the least work; Second-law efficiency; Phase change; Model and application | §§90, 93 | Automated + cross-check |
+
+## Thermodynamics tools from Çengel and Boles, batch handbook72 (added 29 October 2026)
+
+Seven tools in batch handbook72 that apply the methods of Çengel and Boles, Thermodynamics: An Engineering Approach (5th edition, McGraw-Hill, 2006), with every gas property, refrigerant enthalpy, rating and limit entered by the user: an air-standard Otto and Diesel cycle check, a gas turbine (Brayton) cycle check with regenerator, a vapour-compression refrigeration or heat pump cycle check from state enthalpies, a moist air dew point and surface condensation check, a cooling coil load with dehumidification, a hydrocarbon combustion air and flue gas check, and a gas compressor or turbine isentropic efficiency check from measured temperatures. Saturation pressure of water uses the Hyland–Wexler equations (ASHRAE Handbook—Fundamentals, chapter 1). The section column below gives sections in Çengel and Boles, not Machinery’s Handbook. WORKOS now holds 866 tools.
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Çengel and Boles sections | Tested |
+|---|---|---|---|---|
+| **Air-Standard Otto and Diesel Cycle Check (Efficiency, Net Work, Mean Effective Pressure, Peak Pressure)** `otto-diesel-cycle-check` | PEAK PRESSURE WITHIN LIMIT | Peak cylinder pressure; Efficiency below the Carnot limit; Peak temperature; Model and application | 9-3 to 9-6 | Automated + cross-check |
+| **Gas Turbine (Brayton) Cycle Check with Regenerator (Net Power, Back-Work Ratio, Efficiency)** `brayton-regenerator-check` | NET POWER MEETS DEMAND | Net work; Power against demand; Regenerator; Model and application | 7-12, 9-8, 9-9 | Automated + cross-check |
+| **Vapour-Compression Refrigeration or Heat Pump Cycle Check (COP from State Enthalpies, Carnot Limit)** `vapour-compression-cycle-check` | COP MEETS TARGET | Second law; COP against target; Model and application | 6-12, 11-1 to 11-4 | Automated + cross-check |
+| **Moist Air Dew Point and Surface Condensation Check (Humidity Ratio, Enthalpy, Dew-Point Margin)** `surface-dew-point-check` | SURFACE STAYS DRY | Surface against the dew point; Model and application | 14-1 to 14-3 | Automated + cross-check |
+| **Cooling Coil Load with Dehumidification (Psychrometric Balance, Condensate, Sensible Heat Ratio)** `cooling-coil-dehumidification-check` | COIL CAN MEET THE LOAD | Coil capacity; Condensation; Coil surface; Model and application | 14-2, 14-7 | Automated + cross-check |
+| **Hydrocarbon Combustion Air and Flue Gas Check (Air–Fuel Ratio, Flue Analysis, Water Dew Point)** `combustion-air-flue-gas-check` | FLUE ABOVE DEW POINT | Lowest surface against the dew point; Excess air; Acid dew point; Model and application | 15-1, 15-2 | Automated + cross-check |
+| **Gas Compressor or Turbine Isentropic Efficiency from Measured Temperatures (Power, Entropy Generation)** `compressor-turbine-efficiency-check` | EFFICIENCY ACCEPTABLE | Physical limit; Efficiency against minimum; Model and application | 7-9, 7-12 | Automated + cross-check |
+
+## Thermodynamics tool from Callen’s Thermodynamics, batch callen (added 29 October 2026)
+
+One tool in batch callen applying the Joule–Thomson relation from Herbert B. Callen’s *Thermodynamics and an Introduction to Thermostatistics* (2nd edition, Wiley, 1985) to liquids: the temperature rise of oil, water or another liquid throttled across a relief valve, flow control, orifice or partly closed valve, with every property and limit entered by the user. Seven other tools built from the same source were withdrawn before release as duplicates of tools that are live or in progress elsewhere.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Callen sections | Tested |
+|---|---|---|---|---|
+| **Liquid Throttling Temperature Rise (Valve and Orifice Heating, Joule–Thomson for Liquids)** `liquid-throttling-temperature-rise` | VALVE HEATING ABOVE LIMIT | Throttling heating; Expansion term; Vapour pressure; Model and application | 3.9, 6.3 (pp. 84–86, 160–165) | Automated + cross-check |
+
+## Thermodynamics tools from Guggenheim’s Thermodynamics, batch handbook71 (added 29 October 2026)
+
+Seven tools in batch handbook71 that apply the methods of E. A. Guggenheim, *Thermodynamics: An Advanced Treatment for Chemists and Physicists* (5th revised edition, North-Holland, 1967), cited by section only, with every property, rating and limit entered by the user. Two of them sit beside tools from batch handbook69 with a similar subject: `clausius-boiling-margin-check` (beside `vapour-pressure-boiling-check`) and `ro-concentrate-pressure-check` (beside `ro-pressure-check`); the owner approved both under their own ids.
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **Trapped Liquid Thermal Pressure Check (Blocked-In Line Heating, Pipe Stretch, Relief Need)** `trapped-liquid-pressure-check` | PRESSURE WITHIN DESIGN | Final pressure; Wall model; Gas pockets; Model and application | 1.46 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **Reverse Osmosis Concentrate-End Check (Osmotic Coefficient, Concentrate Osmotic Pressure, Least Feed Pressure)** `ro-concentrate-pressure-check` | FEED PRESSURE ADEQUATE | Concentrate end; Concentration polarisation; Scaling; Model and application | 5.10, 5.16, 5.28, 7.06–7.08 | Automated + cross-check |
+| **Boiling Margin Check (Clausius–Clapeyron Vapour Pressure, Keep Liquid or Make It Boil)** `clausius-boiling-margin-check` | NO BOILING EXPECTED | Margin to boiling; Temperature range; Local pressure; Model and application | 3.37–3.39 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **pH Electrode Two-Buffer Calibration Check (Nernst Slope, Offset, Sample pH)** `ph-electrode-calibration-check` | ELECTRODE IN LIMITS | Slope; Offset; Sample within the buffers; Buffer values; Model and application | ch. 8 (8.03, 8.11, 8.12) | Automated + cross-check |
+| **Filter Membrane Bubble Point Check (Integrity Test, Largest Pore, Other Wetting Liquid)** `filter-bubble-point-check` | INTEGRITY TEST PASSED | Bubble point; Wetting; Surface tension; Model and application | 1.60, 1.61 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Guggenheim sections | Tested |
+|---|---|---|---|---|
+| **Gas Throttling Temperature Check (Joule–Thomson Cooling, Regulator Outlet, Preheat)** `gas-throttling-temperature-check` | PREHEAT NEEDED | Outlet temperature; Gas model; Moisture and hydrates; Model and application | 3.11, 3.20–3.22 | Automated + cross-check |
+| **Gas Separation Energy Check (Ideal Mixing, Least Work, Nitrogen Generator Efficiency)** `gas-separation-energy-check` | WITHIN TARGET ENERGY | Specific energy; Purity set point; Energy boundary; Model and application | 4.18–4.20 | Automated + cross-check |
+
+## Project, business, operations, maintenance, quality and machining tools, batch handbook73 (added 29 October 2026)
+
+Eight tools in batch handbook73 from public, checkable sources and Machinery’s Handbook topics, with every rate, limit and benchmark entered by the user: an earned value check (cost and schedule variance, CPI, SPI, estimate at completion, TCPI; GAO-20-195G), a PERT schedule check (three-point estimates, expected duration, chance of meeting the deadline; Malcolm et al. 1959), an early payment discount check (implied and effective annual rate; handbook pp. 134–136), an economic production quantity check (batch size with a finite production rate; Silver, Pyke and Thomas), a WIP and lead time check (Little’s law, flow efficiency, WIP limit), a critical spares plan (Poisson failures over the lead time; NIST e-Handbook), a capability confidence check (lower confidence bounds on Cp and Cpk; NIST e-Handbook 6.1.6) and a parting-off plan (spindle speed limit, cutting force and power, parting time; handbook pp. 1084–1101). The page column gives Machinery’s Handbook pages where a tool cites them. WORKOS now holds 882 tools.
+
+### Projects
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Earned Value Check (Cost and Schedule Variance, CPI, SPI, Estimate at Completion, TCPI)** `earned-value-check` | PROJECT ON TRACK | Cost performance; Schedule performance; Efficiency needed to finish on budget; Earned value measurement; Model and application |  | Automated + cross-check |
+| **PERT Schedule Check (Three-Point Estimates, Expected Duration, Chance of Meeting the Deadline)** `pert-schedule-check` | DEADLINE ACHIEVABLE | Chance of meeting the deadline; Other paths; Model and application | 128–133 | Automated + cross-check |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Early Payment Discount Check (Implied Interest Rate, Effective Annual Rate, Take or Pay Net)** `early-payment-discount-check` | TAKE THE DISCOUNT | Discount against your cost of funds; Cash available; Model and application | 134–136 | Automated + cross-check |
+
+### Inventory
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Economic Production Quantity Check (Batch Size, Run Length, Peak Stock, Cost against Current Batch)** `economic-production-quantity` | BATCH SIZE CLOSE TO OPTIMAL | Current batch size; Capacity; Model and application |  | Automated + cross-check |
+
+### Operations
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **WIP and Lead Time Check (Little’s Law, Flow Efficiency, WIP Limit for a Target Lead Time)** `wip-lead-time-check` | LEAD TIME WITHIN TARGET | Lead time; Stable system; Model and application |  | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Critical Spares Plan (Poisson Failures over the Lead Time, Spares for a Service Level)** `critical-spares-poisson-plan` | SPARES ENOUGH | Spares held; Failure pattern; Model and application | 128–133 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Capability Confidence Check (Cp, Cpk and Their Lower Confidence Bounds, Sample Size)** `capability-confidence-check` | CAPABILITY PROVEN | Cpk lower bound; Sample size; Stability and normality; Model and application | 128–133 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Parting-Off Plan (Spindle Speed Limit, Cutting Force and Power, Parting Time)** `parting-off-plan` | PARTING PLAN WORKS | Spindle power; Parting time; Centre of a solid bar; Model and application | 1084–1101 | Automated + cross-check |
+
+## Forty-fourth round of design checks, batch handbook74 (added 29 October 2026)
+
+Five integrated design checks in batch handbook74, built from Machinery’s Handbook topics and chaining existing tools, with every material property, allowable and limit entered by the user: a boring bar overhang check (deflection, diameter error, natural frequency, longest overhang, steel against carbide), a slender work turning check (work deflection between centres or in a chuck, steady rests needed), a reaming plan (pilot drill from the allowance, stock window, speeds, cycle time, holes per reamer), a dowel pin joint check (pin shear, bearing, fit from the limits, engagement) and a taper shank holding check (drilling torque against taper friction torque, self-holding condition). WORKOS now holds 887 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Boring Bar Overhang Check (Deflection, Diameter Error, Natural Frequency, Longest Overhang)** `boring-bar-overhang-check` | OVERHANG ACCEPTABLE | Diameter error; Overhang ratio; Chatter; Model and application | 197, 302, 762–790 | Automated + cross-check |
+| **Slender Work Turning Check (Work Deflection, Diameter Error, Steady Rest Spacing)** `slender-work-turning-check` | SUPPORT OR LIGHTER CUT NEEDED | Diameter error; Shape of the error; Chatter and heat; Model and application | 232–244, 762, 1093–1094 | Automated + cross-check |
+| **Reaming Plan (Drilled Size, Stock, Speeds, Cycle Time, Holes per Reamer)** `reaming-plan` | REAMING PLAN FEASIBLE | Stock for the reamer; Spindle speed; Pilot drill; Model and application | 853, 1059, 1084–1092 | Automated + cross-check |
+| **Taper Shank Holding Check (Drilling Torque, Thrust, Taper Friction Torque, Self-Holding)** `taper-shank-holding-check` | TANG OR DRAWBAR NEEDED | Holding torque; Self-holding; Condition of the taper; Model and application | 948–959, 1084–1092 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Dowel Pin Joint Check (Pin Shear, Bearing, Fit Interference, Engagement)** `dowel-pin-joint-check` | DOWELS ADEQUATE | Pin shear; Bearing in the softer part; Engagement; Fit; Model and application | 631–668, 1720–1735, 1747–1748 | Automated + cross-check |
+
+## Thermodynamics tools from Çengel and Boles, second batch cengel2 (added 29 October 2026)
+
+Six more tools applying the methods of Çengel and Boles, Thermodynamics: An Engineering Approach (5th edition, McGraw-Hill, 2006), with every steam-table value, efficiency, capacity and target entered by the user: a steam Rankine cycle check, wet steam dryness by throttling calorimeter, a cogeneration (CHP) utilisation and primary energy saving check, adiabatic mixing of two air streams, a direct evaporative cooler check, and heating with humidification. Moist-air saturation pressure uses the Hyland–Wexler equations (ASHRAE Handbook—Fundamentals, chapter 1); the primary energy saving follows the method of Directive 2012/27/EU, Annex II, with user-entered reference efficiencies. The section column gives sections in Çengel and Boles. WORKOS now holds 893 tools.
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Çengel and Boles sections | Tested |
+|---|---|---|---|---|
+| **Steam Rankine Cycle Check (Efficiency, Steam Flow, Heat Rate, Turbine Exhaust Dryness)** `rankine-cycle-check` | EXHAUST DRY ENOUGH | Turbine exhaust dryness; Energy balance; Model and application | 10-2 to 10-4 | Automated + cross-check |
+| **Wet Steam Dryness by Throttling Calorimeter (Dryness Fraction, Calorimeter Validity)** `steam-dryness-throttling-check` | STEAM DRY ENOUGH | Calorimeter superheat; Dryness against requirement; Model and application | 3-5, 5-4 | Automated + cross-check |
+| **Cogeneration (CHP) Utilisation and Primary Energy Saving Check** `cogeneration-saving-check` | CHP SAVES PRIMARY ENERGY | Primary energy saving; Energy balance; Useful heat; Model and application | 10-8 | Automated + cross-check |
+| **Adiabatic Mixing of Two Air Streams (Mixed Temperature, Humidity, Dew Point, Fog Risk)** `air-stream-mixing-check` | MIXED AIR CLEAR | Mixed relative humidity; Mixing calculation; Model and application | 14-2, 14-7 | Automated + cross-check |
+| **Direct Evaporative Cooler Check (Wet-Bulb, Supply Temperature, Water Use, Cooling Capacity)** `evaporative-cooler-check` | COOLER REACHES TARGET | Supply temperature; Target against the wet-bulb; Water and hygiene; Model and application | 14-4, 14-7 | Automated + cross-check |
+| **Heating with Humidification (Heater Load, Water or Steam Needed, Equipment Check)** `heating-humidification-check` | EQUIPMENT MEETS THE DUTY | Heater capacity; Humidifier capacity; Humidifier enthalpy; Model and application | 14-7 | Automated + cross-check |
+
+## Forty-fifth round of design checks, batch handbook75 (added 29 October 2026)
+
+Five integrated design checks in batch handbook75, built from Machinery’s Handbook topics and chaining existing tools, with every material property, allowable, rating and limit entered by the user: a trepanning plan (ring cut power, torque and time, core recovered, against a solid drill), a grinding wheel cost plan (wear from the grinding ratio, dressing loss, parts per wheel, cost per part), a drill bushing position check (clearance, drill tilt, hole position error, chip gap), a Woodruff key check (key shear, hub and shaft bearing, shaft torsion at the keyseat) and an eyebolt lift check (unequal leg tensions, capacity at the angle, thread engagement). WORKOS now holds 898 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Trepanning Plan (Ring Cut Power, Torque, Time and Core against Solid Drilling)** `trepanning-plan` | TREPANNING FEASIBLE | Spindle power, trepanning; Spindle power, solid drill; Starting and chips; Model and application | 1077–1081, 1084–1092 | Automated + cross-check |
+| **Grinding Wheel Cost Plan (Wear from G-Ratio, Dressing, Parts per Wheel, Cost per Part)** `grinding-wheel-cost-plan` | WITHIN TARGET COST | Cost per part; Dressing share; Grinding ratio; Model and application | 1196–1199, 1199–1268 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Drill Bushing Position Check (Clearance, Drill Tilt, Hole Position Error, Chip Gap)** `drill-bushing-position-check` | BUSHING HOLDS POSITION | Hole position; Chip gap; Jig accuracy; Model and application | 3121–3125, 3131–3134 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Woodruff Key Check (Key Shear, Hub and Shaft Bearing, Weakened Shaft Torsion)** `woodruff-key-check` | KEY AND SHAFT ADEQUATE | Key shear; Bearing; Shaft at the keyseat; Model and application | 2460–2486, 301 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Eyebolt Lift Check (Unequal Leg Tensions, Angled Capacity, Thread Engagement)** `eyebolt-lift-check` | EYEBOLTS ADEQUATE | Eyebolt 1; Eyebolt 2; Thread engagement; Seating and alignment; Model and application | 2613–2650, 3450 | Automated + cross-check |
+
+## Forty-sixth round of design checks, batch handbook77 (added 29 October 2026)
+
+Three integrated design checks in batch handbook77, built from Machinery’s Handbook topics and chaining existing tools, with every rating, factor, property and limit entered by the user: a countershaft bearing check (spur gear forces by mesh angle, bearing loads in two planes, L10 life, static factor, shaft stress), a carburizing case depth plan (total case for a ground effective case, time at temperature, cost, case against the section) and an induction hardening plan (reference depth at the generator frequency, frequency for the case, heating energy and power). WORKOS now holds 908 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Countershaft Bearing Check (Gear Forces, Bearing Loads in Two Planes, L10 Life, Shaft Stress)** `countershaft-bearing-check` | SHAFT AND BEARINGS ADEQUATE | Bearing life; Static safety; Shaft stress; Fatigue and stress raisers; Model and application | 2131–2160, 2404–2412, 257–277 | Automated + cross-check |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **Carburizing Case Depth Plan (Total Case for a Ground Effective Case, Time at Temperature, Furnace Cost)** `carburizing-case-depth-plan` | CASE PLAN SUITS THE SECTION | Case against the section; Case depth factor; Drawing callout; Model and application | 467–470, 484–487 | Automated + cross-check |
+| **Induction Hardening Plan (Reference Depth, Frequency for the Case, Heating Energy and Power)** `induction-hardening-plan` | FREQUENCY TOO LOW FOR THE CASE | Depth for the case; Bar size; Process trial; Model and application | 487–489, 467–470 | Automated + cross-check |
+
+## Thermodynamics tools after Linder, batch handbook70 (added 29 October 2026)
+
+Six tools in batch handbook70 that apply methods from Bruno Linder’s Thermodynamics and Introductory Statistical Mechanics (Wiley-Interscience, 2004), cited by section and printed page, with every property, rating and limit entered by the user: a heat engine and heat pump second-law check (Carnot limit, entropy generated, lost work), a gas pressure reduction cooling check (Joule–Thomson, van der Waals estimate, preheat), a boiling point under vacuum (Clausius–Clapeyron), a solvent vapour headspace check against the LEL (Raoult’s law), a reverse osmosis pressure check (van ’t Hoff with an osmotic coefficient and salt passage) and a hot and cold water blending check (mixing entropy, lost work). The owner approved all six knowing that four overlap tools already published (vapour-pressure-boiling-check, clausius-boiling-margin-check, ro-pressure-check, ro-concentrate-pressure-check, gas-throttling-temperature-check, heat-pump-cop-check, waste-heat-recovery-limit).
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Linder pages | Tested |
+|---|---|---|---|---|
+| **Heat Engine and Heat Pump Second-Law Check (Carnot Limit, Entropy Generated, Lost Work)** `heat-engine-second-law-check` | CLAIM WITHIN THE LIMIT | Second law; Credibility; Temperatures; Model and application | 32–41, 48 | Automated + cross-check |
+| **Boiling Point Under Vacuum (Clausius–Clapeyron Boiling Temperature, Pressure for a Temperature Limit)** `vacuum-boiling-point` | BOILS BELOW THE LIMIT | Temperature limit; Extrapolation; Liquid depth and solutes; Model and application | 96–97 | Automated + cross-check |
+| **Solvent Vapour Headspace Check (Raoult’s Law Partial Pressure, Saturated Concentration, Share of LEL)** `solvent-headspace-lel-check` | FLAMMABLE HEADSPACE POSSIBLE | Share of LEL; Screening only; Model and application | 97, 104–105 | Automated + cross-check |
+
+### Pneumatics
+
+| Tool | Result with example inputs | Checks | Linder pages | Tested |
+|---|---|---|---|---|
+| **Gas Pressure Reduction Cooling Check (Joule–Thomson Temperature Drop, Outlet Temperature, Preheat)** `gas-throttling-cooling-check` | PREHEAT NEEDED | Outlet temperature; Condensation and hydrates; Model range; Model and application | 29–31 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Linder pages | Tested |
+|---|---|---|---|---|
+| **Reverse Osmosis Pressure Check (van ’t Hoff Osmotic Pressure, Concentrate End, Net Driving Pressure)** `ro-osmotic-pressure-check` | FEED PRESSURE ENOUGH | Concentrate end; Scaling and fouling; Model and application | 112–113 | Automated + cross-check |
+| **Hot and Cold Water Blending Check (Flow Split, Hot Supply, Entropy Generated, Lost Work)** `hot-cold-water-blend-check` | HOT SUPPLY ENOUGH | Hot supply; Outlet temperature rules; Model and application | 48–51, 91–93 | Automated + cross-check |
+
+## Quality, reliability, maintenance, operations and fabrication tools, batch handbook76 (added 30 October 2026)
+
+Six tools in batch handbook76 from public, checkable sources, with every limit, target and price entered by the user: a bearing defect frequency check (BPFO, BPFI, ball spin and cage frequencies and their harmonics matched to a measured peak; MathWorks, Randall and Antoni 2011), an individuals control chart check (limits from the average moving range; NIST e-Handbook 6.3.2.2), a p-chart check (fraction defective limits for equal samples; NIST e-Handbook 6.3.3.2), a reliability demonstration test plan (chi-square test length for an MTBF objective; NIST e-Handbook 8.3.1.1), a queue wait check (M/M/c Erlang C and Little’s law; Kleinrock 1975, Little 1961) and a sheet nesting yield check (straight and two-block layouts, utilisation, sheets and cost per blank; Machinery’s Handbook pp. 1338–1339). The page column gives Machinery’s Handbook pages where a tool cites them. WORKOS now holds 920 tools.
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bearing Defect Frequency Check (BPFO, BPFI, Ball Spin, Cage, Match to a Measured Peak)** `bearing-defect-frequency-check` | PEAK MATCHES OUTER RACE DEFECT | Measured peak; Confirmation; Model and application |  | Automated + cross-check |
+| **Reliability Demonstration Test Plan (MTBF Objective, Confidence, Allowed Failures, Test Length)** `reliability-demonstration-test` | TEST FITS THE TIME AVAILABLE | Calendar time; Failure model; Model and application |  | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Individuals Control Chart Check (Moving Range, Control Limits, Points Out of Control)** `individuals-chart-check` | PROCESS IN CONTROL | Points beyond the limits; Number of readings; Model and application |  | Automated + cross-check |
+| **p-Chart Check (Fraction Defective, Control Limits, Samples Out of Control)** `p-chart-check` | PROCESS IN CONTROL | Samples beyond the limits; Lower limit; Model and application |  | Automated + cross-check |
+
+### Operations
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Queue Wait Check (Utilisation, Chance of Waiting, Average Wait and Queue, Servers Needed)** `queue-wait-check` | WAIT WITHIN TARGET | Average wait; Utilisation; Arrival pattern; Model and application |  | Automated + cross-check |
+
+### Fabrication
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Sheet Nesting Yield Check (Parts per Sheet, Material Utilisation, Sheets and Cost per Part)** `sheet-nesting-yield` | LAYOUT ACCEPTABLE | Material utilisation; Shape and process; Model and application | 1338–1339 | Automated + cross-check |
+
+## Forty-seventh round of design checks, batch handbook78 (added 30 October 2026)
+
+Three integrated design checks in batch handbook78, built from the electrical discharge machining and laser sections of Machinery’s Handbook, with every removal rate, gap, wear figure, beam property and limit entered by the user: an EDM sinker plan (roughing current, duty cycle, roughing and finishing time, electrode wear and count, electrode undersize, cost), a wire EDM cut plan (kerf, smallest inside corner, cutting and skim time, wire use, tension, cost) and a laser cutting plan (focused spot, power density, depth of focus, speed scaled by power and thickness, time and cost). WORKOS now holds 923 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages | Tested |
+|---|---|---|---|---|
+| **EDM Sinker Plan (Current for the Electrode, Duty Cycle, Roughing and Finishing Time, Electrode Wear and Sizes)** `edm-sinker-plan` | EDM PLAN WORKABLE | Machine current; Finishing stock; Settings; Model and application | 1394–1399 | Automated + cross-check |
+| **Wire EDM Cut Plan (Kerf, Wire Offset and Corner Radius, Cutting and Skim Time, Wire Use, Tension, Cost)** `wire-edm-cut-plan` | WIRE AND SETTINGS SUIT THE CUT | Inside corners; Wire tension; Settings; Model and application | 1394–1403 | Automated + cross-check |
+| **Laser Cutting Plan (Focused Spot, Power Density, Depth of Focus, Cutting Speed by Power and Thickness, Time and Cost)** `laser-cutting-plan` | BEAM SUITS THE CUT | Power density; Depth of focus; Cutting speed; Model and application | 1487–1494 | Automated + cross-check |
+
+## Quality statistics and forecasting tools, batch handbook80 (added 30 October 2026)
+
+Six tools in batch handbook80 from the NIST/SEMATECH e-Handbook of Statistical Methods, with every target, limit and tolerance entered by the user: an EWMA control chart check (weighted moving average and steady-state limits; 6.3.2.4), a CUSUM control chart check (tabular upper and lower sums against a decision interval; 6.3.2.3), a c-chart check (Poisson limits for defects per unit; 6.3.3.1), a Grubbs outlier check (G statistic and t-based critical value; 1.3.5.17), a linear calibration check (least-squares line, offset and gain tests, inverse prediction and calibration limits; 2.3.6.6, 4.5.2.1, 4.5.1.2) and an exponential smoothing forecast (next-period forecast, MSE and best smoothing constant; 6.4.3.1–6.4.3.2). Each tool reproduces the NIST worked example where one is printed. No tool cites Machinery’s Handbook. WORKOS now holds 931 tools.
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **EWMA Control Chart Check (Weighted Moving Average, Control Limits, Small Shifts)** `ewma-chart-check` | PROCESS IN CONTROL | EWMA beyond the limits; Historical data; Model and application |  | Automated + cross-check |
+| **CUSUM Control Chart Check (Tabular Upper and Lower Sums, Decision Interval, First Signal)** `cusum-chart-check` | UPWARD SHIFT SIGNALLED | Sums against the decision interval; Chart design; Model and application |  | Automated + cross-check |
+| **c-Chart Check (Defects per Unit, Poisson Control Limits, Counts Out of Control)** `c-chart-check` | PROCESS IN CONTROL | Units beyond the limits; Lower limit; Model and application |  | Automated + cross-check |
+| **Grubbs Outlier Check (Suspect Value, G Statistic, Critical Value, Significance)** `grubbs-outlier-check` | OUTLIER DETECTED | Suspect value; Normality; Model and application |  | Automated + cross-check |
+| **Linear Calibration Check (Straight-Line Fit, Calibrated Value, Calibration Interval)** `linear-calibration-check` | CALIBRATION INTERVAL WITHIN TOLERANCE | Calibration interval; Offset and gain; Straight line; Model and application |  | Automated + cross-check |
+
+### Planning
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Exponential Smoothing Forecast (Next-Period Demand, Forecast Error, Best Smoothing Constant)** `exponential-smoothing-forecast` | FORECAST ERROR WITHIN TARGET | Forecast error; Smoothing constant; Trend and season; Model and application |  | Automated + cross-check |
+
+## Statistics, forecasting and reliability tools, batch handbook81 (added 30 October 2026)
+
+Eight tools in batch handbook81 from the NIST/SEMATECH e-Handbook of Statistical Methods, with every specification, target, activation energy and requirement entered by the user: a normal tolerance interval check (Howe two-sided factor, exact non-central t one-sided factor, Natrella approximation; 7.2.6.3), a one-way ANOVA check (F test of group means; 7.4.3.3–7.4.3.4), a two-variance F test (1.3.5.9), a standard deviation chi-square check with a confidence interval for sigma (1.3.5.8), a Holt trend forecast (double exponential smoothing; 6.4.3.3–6.4.3.4), an Arrhenius acceleration check (8.1.5.1), MTBF confidence bounds for a constant failure rate (8.4.5.1) and a reliability growth check with the power-law (Duane) model (8.4.5.2). Each tool reproduces the NIST worked example. No tool cites Machinery’s Handbook. WORKOS now holds 939 tools.
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Normal Tolerance Interval Check (Coverage, Confidence, Tolerance Factor, Against Specification)** `normal-tolerance-interval-check` | TOLERANCE INTERVAL WITHIN SPEC | Interval against specification; Normal distribution; Model and application |  | Automated + cross-check |
+| **One-Way ANOVA Check (Group Means, F Test, Machines, Suppliers or Settings)** `one-way-anova-check` | GROUP MEANS DIFFER | Difference between group means; Equal spread and normality; Model and application |  | Automated + cross-check |
+| **Two-Variance F Test (Compare the Spread of Two Machines, Batches or Methods)** `two-variance-f-test` | NO EVIDENCE SPREADS DIFFER | Variance ratio; Normal data; Model and application |  | Automated + cross-check |
+| **Standard Deviation Chi-Square Check (Process Spread Against a Target Sigma, Confidence Interval)** `standard-deviation-chi-square-check` | SPREAD DIFFERS FROM TARGET | Spread against target; Normal data; Model and application |  | Automated + cross-check |
+
+### Planning
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Holt Trend Forecast (Double Exponential Smoothing, Level and Trend, Forecast Error)** `holt-trend-forecast` | FORECAST ERROR WITHIN TARGET | Forecast error; Smoothing constants; Trend and season; Model and application |  | Automated + cross-check |
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Arrhenius Acceleration Check (Temperature Acceleration Factor, Equivalent Hours, Test Length)** `arrhenius-acceleration-check` | TEST COVERS TARGET LIFE | Test length; Activation energy; Same failure mechanism; Model and application |  | Automated + cross-check |
+| **MTBF Confidence Bounds (Field or Test Failures, Chi-Square Limits, Requirement Check)** `mtbf-confidence-bounds` | MTBF REQUIREMENT DEMONSTRATED | Lower bound against requirement; Constant failure rate; Model and application |  | Automated + cross-check |
+| **Reliability Growth Check (Duane Power-Law Model, Growth Slope, MTBF at End of Test)** `reliability-growth-check` | MTBF GOAL DEMONSTRATED | Lower limit against goal; Reliability growth; Model fit; Model and application |  | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook82 (added 31 October 2026)
+
+Six tools in batch handbook82 from Machinery’s Handbook pages that no earlier tool cited, found by the page-by-page ledger (`mh-ledger.mjs` in the generator folder): a gear pitting geometry factor I for external spur and helical gears by the AGMA 908-B89 equations (pp. 3286–3289, checked against the I tables on pp. 3295–3300), fine-pitch worm and wormgear proportions to ANSI B6.9 (pp. 3321–3325, Examples 1 and 2), internal gear measurement between pins (pp. 2226–2230, Van Keuren tables), wire rope on sheaves and drums (pp. 3432–3435), shock stress in beams and springs (pp. 278–280) and a thin ring loaded across a diameter (pp. 219–220). Allowable stresses and pressures, rope constants and limits are entered by the user. WORKOS now holds 945 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Gear Pitting Geometry Factor I (Spur and Helical, Contact Ratios, Load Sharing)** `gear-pitting-geometry-factor` | GEOMETRY FACTOR SUPPORTS THE RATING | I against the rating; Contact ratio; Bending factor J; Model and application | 3286–3289, 3295–3300 | Automated + cross-check |
+| **Fine-Pitch Worm and Wormgear Design (ANSI B6.9 Proportions, Centre Distance, Face Width, Thread Length)** `fine-pitch-worm-design` | WORM SET MEETS THE CENTRE DISTANCE | Centre distance; Worm pitch diameter; Pressure angle; Model and application | 3321–3325 | Automated + cross-check |
+| **Internal Gear Measurement Between Pins (Even or Odd Teeth, Backlash Allowance, Space Width from a Reading)** `internal-gear-pin-measurement` | READING WITHIN LIMITS | Reading; Pin contact; Pin size; Model and application | 2226–2230 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Wire Rope on Sheaves and Drums (Radial Pressure, Bending Stress and Load, Drum Capacity)** `wire-rope-sheave-drum-check` | ROPE, SHEAVE AND DRUM SUIT THE DUTY | Sheave pressure; Factor against breaking; Drum capacity; Rope data; Model and application | 3432–3435 | Automated + cross-check |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Shock Stress in Beams and Springs (Dropped Weight or Moving Body, Impact Factor, Allowable)** `shock-stress-check` | SHOCK STRESS WITHIN ALLOWABLE | Peak stress; Energy absorbed; Model and application | 278–280 | Automated + cross-check |
+| **Thin Ring Loaded Across a Diameter (Bending Stress, Diameter Changes, Safe Load)** `thin-ring-load-check` | RING WITHIN LIMITS | Bending stress; Diameter change; Thin ring; Model and application | 219–220 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook83 (added 31 October 2026)
+
+Six tools in batch handbook83 from pages the page-by-page ledger had marked as candidates: the worm profile change with cutter or grinding wheel size (pp. 3329–3330, Example 3), industrial coarse-pitch worm gearing proportions (pp. 3331–3338, 3344), wormgear hob diameters, sharpening allowance and flutes (pp. 3345–3346), metric and Unified inch ground thread tap limits (pp. 904, 906–907, 909, 911–912) and the cost of slot against high-speed end milling (pp. 1167–1169). Friction coefficients, tap table allowances, tolerances, cutting data and costs are entered by the user. WORKOS now holds 951 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Worm Profile Change with Cutter or Grinding Wheel Size (Profile Deviation and Pressure Angle Correction)** `worm-cutter-profile-correction` | CORRECT THE CUTTER OR WHEEL | Profile curvature; Pressure angle; Wormgear hob; Model and application | 3329–3330 | Automated + cross-check |
+| **Industrial Worm Gearing Proportions (Coarse Pitch: Diameters, Lead Angle, Face Width, Thread Length, Efficiency)** `industrial-worm-gearing-design` | WORM SET FOLLOWS THE HANDBOOK RULES | Teeth plus threads; Pressure angle; Tooth depth basis; Hunting tooth; Worm diameter; Self-locking; Ratings; Model and application | 3331–3338, 3344 | Automated + cross-check |
+| **Wormgear Hob Design (Over-Size Diameters, Sharpening Allowance, Setting Angle, Flutes)** `worm-hob-design` | HOB LAYOUT FOLLOWS THE HANDBOOK RULES | Flutes and threads; Threads and wormgear teeth; Number of flutes; Model and application | 3345–3346 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Metric Ground Thread Tap Limits (M Profile: Pitch and Major Diameter, D and DU Limit Numbers)** `metric-tap-thread-limits` | TAP WITHIN ITS LIMITS | Pitch diameter; Major diameter; Table allowances; Lead and angle; Model and application | 904, 911–912 | Automated |
+| **Unified Inch Ground Thread Tap Limits (Pitch and Major Diameter, H and L Limit Numbers)** `unified-tap-thread-limits` | TAP WITHIN ITS LIMITS | Pitch diameter; Major diameter; Table allowances; Lead and angle; Model and application | 904, 906–907, 909 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Slot Milling against High-Speed End Milling (Feed Rate, Equivalent Tooling Time, Cost per Part)** `slot-vs-high-speed-milling-cost` | HIGH-SPEED MILLING COSTS LESS | Cost per part; Spindle speed (slot); Spindle speed (high-speed); Passes; Cutting data; Model and application | 1167–1169 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook84 (added 31 October 2026)
+
+Seven tools in batch handbook84 from pages the page-by-page ledger listed as open (formula lines not yet read): compound indexing with standard index plates (pp. 2079–2086), Unified inch thread gauge sizes from ANSI B1.2 Table 5 (pp. 2013–2014), the Heim lead cylinder test of a forging hammer (pp. 3234–3236), hydraulic press gauge pressure for a pressure on the work (p. 3224), permanent-magnet control motor constants and torsional resonance (pp. 3413–3414), silent chain sprocket tooth form, hub and hob diameters (pp. 3468–3473) and the helix angle of a helical pair for a fixed centre distance (p. 2078). Gauge tolerances, product thread limits, motor data, process pressures and accepted ranges are always user inputs. WORKOS now holds 958 tools.
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Compound Indexing on a Dividing Head (Exact and Approximate Movements, Error at the Work)** `compound-indexing` | APPROXIMATE INDEXING WITHIN TOLERANCE | Simple indexing; Exact compound indexing; Accuracy; Set-up; Model and application | 2079–2086 | Automated + cross-check |
+| **Unified Inch Thread Gauge Sizes (GO and NOT GO Plugs, Rings and Setting Gauges)** `unified-thread-gauge-limits` | GAUGE SIZES SET | External PD tolerance; Internal PD tolerance; Plain gauges; Full-form NOT GO setting plug; Lead and half-angle; Model and application | 2013–2014, 1808 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Forging Hammer Efficiency by the Heim Lead Cylinder Test (Work per Blow and Efficiency)** `forging-hammer-efficiency` | HAMMER TESTED | Cylinder proportions; Reduction in range; Efficiency; Lead; Model and application | 3234–3236 | Automated + cross-check |
+
+### Hydraulics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Hydraulic Press Gauge Pressure for a Pressure on the Work (Capacity and Pressure on the Material)** `press-gauge-pressure-for-work` | PRESS REACHES THE PRESSURE ON THE WORK | Gauge pressure needed; Gauge pressure set; Pressure at the setting; Tooling; Model and application | 3224 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Permanent-Magnet Control Motor Constants (Torque and Voltage Constants, Damping, Time Constant, Resonance)** `pm-dc-motor-constants` | RESONANCE ABOVE THE CONTROL BANDWIDTH | Torsional resonance; Current limit; Rated point; Peak torque; Model and application | 3413–3414 | Automated |
+| **Silent Chain Sprocket Tooth Form, Hub and Hob Diameters (ANSI B29.2M)** `silent-chain-sprocket-tooth-form` | SPROCKET FORM AND HUB FIT | Number of teeth; Tooth faces; Hub clearance; Pitch; Model and application | 3468–3473 | Automated |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Helical Gear Helix Angle and Leads for a Fixed Centre Distance** `helical-gear-helix-for-centre-distance` | HELIX ANGLE FITS THE CENTRE DISTANCE | Helix angle range; Centre distance; Hands; Model and application | 2078 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook85 (added 31 October 2026)
+
+Seven tools in batch handbook85 from open and candidate pages of the page-by-page ledger: milling cutter clearance grinding set-up and indicator-drop checks (pp. 838–843), the spline-shaft milling cutter (p. 836), top knurling cam rise on automatic screw machines (p. 1170), rubber pad (Guerin) forming pressure (pp. 1364–1365), angular backlash of a gear pair (pp. 2168–2169), Unified inch cut thread tap limits (ASME B94.9 Table 3, p. 910) and silent chain width for a power (pp. 3475–3476). Brinell hardness, land width, feeds, tap table tolerances, chain ratings, service factors and required pressures are always user inputs. WORKOS now holds 965 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Milling Cutter Clearance Grinding Set-up (Clearance Needed, Wheel and Tooth-Rest Offsets, Indicator Drops)** `cutter-clearance-grinding-setup` | CLEARANCE SUITS THE CUT | Clearance angle; Set-up; Land width; Burrs; Model and application | 838–843 | Automated + cross-check |
+| **Spline Shaft Milling Cutter (Cutter Angle and Chordal Width at the Root)** `spline-shaft-milling-cutter` | CUTTER PROPORTIONS SET | Space between splines; Spline width tolerance; Model and application | 836 | Automated + cross-check |
+| **Top Knurling on an Automatic Screw Machine (Cam Rise and Revolutions)** `top-knurling-cam-rise` | KNURLING CAM SET | Cam rise; Feed; Model and application | 1170 | Automated + cross-check |
+| **Rubber Pad (Guerin) Forming Pressure and Pad Thickness Check** `rubber-pad-forming-pressure` | PAD FORMS THE PART | Forming pressure; Pad thickness; Pad hardness; Model and application | 1364–1365 | Automated |
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Angular Backlash of a Gear Pair (and Backlash from a Centre Distance Change)** `gear-angular-backlash` | ANGULAR PLAY ACCEPTED | Play at the smaller gear; Binding; Measurement; Model and application | 2168–2169 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Unified Inch Cut Thread Tap Limits (Major and Pitch Diameter, ASME B94.9)** `unified-cut-thread-tap-limits` | TAP WITHIN ITS LIMITS | Pitch diameter; Major diameter; Lead; Half angle; Model and application | 910 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Silent Chain Width for a Power (Rating per Unit Width and Service Factor)** `silent-chain-width` | CHAIN WIDTH CARRIES THE POWER | Width; Lubrication; Rating; Model and application | 3475–3476 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook86 (added 31 October 2026)
+
+Six tools in batch handbook86 from open and candidate pages of the page-by-page ledger: areas and volumes of spherical sections (pp. 52–54), conic sections from their general equation (pp. 54–55), the four-arc oval that approximates an ellipse (p. 51), locating three holes by the disk method (pp. 3481–3482), a standard metal ball lot check with package marking and balls per kilogram (pp. 3355–3357, 3361–3362) and engine flywheel rim weight with arm proportions (pp. 3010–3011). Densities, ball grade tolerances, marking increments and the factor of energy excess are always user inputs. WORKOS now holds 971 tools.
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Spherical Sections: Areas and Volumes (Hollow Sphere, Sector, Segment, Zone, Ring)** `sphere-sections` | SECTION CALCULATED | Section; Model and application | 52–54 | Automated + cross-check |
+| **Four-Arc Oval Approximating an Ellipse (End and Side Radii and Their Centres)** `four-arc-oval` | OVAL LAID OUT | Arcs meet tangentially; Shape; Model and application | 51 | Automated + cross-check |
+
+### Mathematics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Conic Section from Its General Equation (Parabola, Ellipse, Hyperbola: Centre, Vertices, Foci, Directrix)** `conic-section-equation` | HYPERBOLA IDENTIFIED | Curve; Rotated curves; Model and application | 54–55 | Automated + cross-check |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Locating Three Holes by the Disk Method (Disk Diameters from Centre Distances)** `hole-location-disks` | DISK SIZES SET | Disks touch; Disk accuracy; Model and application | 3481–3482 | Automated + cross-check |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Standard Metal Ball Lot Check (Lot Mean Diameter, Ball Gauge, Specific Diameter, Balls per Kilogram)** `metal-ball-lot-check` | LOT ACCEPTED | Lot mean diameter; Lot diameter variation; Package marking; Individual balls; Model and application | 3355–3357, 3361–3362 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Engine Flywheel Rim Weight and Arm Proportions (Energy Excess Factor, Speed Variation)** `engine-flywheel-rim-and-arms` | RIM AND ARMS SIZED | Speed variation; Rim stress; Arms; Model and application | 3010–3011 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook87 (added 31 October 2026)
+
+Six tools in batch handbook87 from open and candidate pages of the page-by-page ledger: an area converter (square measure, pp. 2675–2677), a volume and capacity converter (cubic measure, pp. 2678–2681), a moment of inertia, section modulus and momentum converter (p. 2699), a silent chain sprocket inspection check (ANSI B29.2M, pp. 3458–3464), fuel oil heating value from the Baumé gravity (pp. 381, 2694, 3012) and surface roughness acceptance by the ISO 16 % and max rules (p. 750). Measurements, roughness readings, heat demand and appliance efficiency are always user inputs. WORKOS now holds 977 tools.
+
+### Units
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Area Converter** `area-converter` | CONVERTED | Conversion factors; Model and application | 2675–2677 | Automated + cross-check |
+| **Volume and Capacity Converter** `volume-converter` | CONVERTED | Conversion factors; Model and application | 2678–2681 | Automated |
+| **Moment of Inertia, Section Modulus and Momentum Converter** `inertia-converter` | CONVERTED | Conversion factors; Kind of quantity; Model and application | 2699 | Automated |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Silent Chain Sprocket Inspection (Over-Pin Diameter, Eccentricity and Guide Groove Tolerances)** `silent-chain-sprocket-inspection` | SPROCKET ACCEPTED | Over-pin diameter; Eccentricity; Guide groove; Gauge pins; Model and application | 3458–3464 | Automated + cross-check |
+
+### Engineering
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Fuel Oil Heating Value from Baumé Gravity (Specific Gravity, Heat per kg and per Litre, Fuel Use)** `fuel-oil-heating-value` | HEATING VALUE ESTIMATED | Range of the formula; Tested value; Model and application | 381, 2694, 3012 | Automated |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Surface Roughness Acceptance (ISO 16 % Rule and Max Rule, Evaluation Length)** `surface-roughness-acceptance` | SURFACE ACCEPTED | Upper limit (16 % rule); Evaluation length; Model and application | 750 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook88 (added 31 October 2026)
+
+One tool in batch handbook88, from the last buildable candidate of the page-by-page ledger: a bolt and screw grip length check using the thread length rules for socket head cap screws, metric bolts and screws, and heavy hex structural bolts (pp. 1572–1573, 1593–1594, 1682, 1696). Thread lengths, transition lengths, clamped thickness and the engagement needed are always user inputs. WORKOS now holds 978 tools.
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint)** `bolt-grip-thread-length` | LENGTH SUITS THE JOINT | Full thread within the joint; Thread engagement; Table values; Model and application | 1572–1573, 1593–1594, 1682, 1696 | Automated |
+
+## Machinery’s Handbook ledger tools, batch handbook89 (added 31 October 2026)
+
+Three tools in batch handbook89 from a deeper audit of pages that live tools cite only within wide page ranges: grinding wheel life and removal rate by the Taylor lines at a chosen equivalent chip thickness with shop calibration (pp. 1205–1214), relief and nose angles of single-point thread cutting tools (pp. 2040–2041), and mean and equivalent chip thickness in end and face milling (pp. 1162–1166). Taylor constants, wheel ratings, effective relief and target chip thickness are always user inputs. WORKOS now holds 981 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration)** `grinding-wheel-life-plan` | WHEEL SPEED WITHIN THE WHEEL RATING | Wheel rating; Chip thickness; Calibration; Model and application | 1205–1214 | Automated |
+| **Milling Mean Chip Thickness and Equivalent Chip Thickness (Feed per Tooth for Light Radial Cuts)** `milling-chip-thickness-ect` | CHIP THICK ENOUGH | Mean chip thickness; Cutter limits; Model and application | 1162–1166 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Single-Point Thread Cutting Tool Relief and Nose Angles (Leading and Trailing Flanks)** `thread-tool-relief-angles` | TOOL ANGLES SET | Trailing relief; Effective relief; Model and application | 2040–2041 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook90 (added 1 November 2026)
+
+Two tools in batch handbook90 from the deep audit of pages cited only within wide page ranges: the handbook’s full journal bearing lubrication analysis for pressure-fed bearings with the temperature-rise iteration (pp. 2328–2338), and flat plate thrust bearing design with pad layout, friction loss, oil flow and chamfer depth (pp. 2338–2344). Chart readings (eccentricity ratio, torque parameter, flow factor, friction loss, kinetic energy factor), oil properties and clearances are always user inputs. WORKOS now holds 983 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Journal Bearing Lubrication Analysis (Pressure Parameter, Friction, Oil Flow, Temperature Rise, Film Thickness)** `journal-bearing-lubrication-analysis` | ASSUMED TEMPERATURE RISE CONFIRMED | Temperature rise iteration; Minimum film thickness; Temperature rise; Flow; Model and application | 2328–2338 | Automated + cross-check |
+| **Flat Plate Thrust Bearing Design (Pad Layout, Unit Load, Friction Loss, Oil Flow, Chamfer Depth)** `flat-plate-thrust-bearing-design` | THRUST BEARING LAID OUT | Outside diameter; Unit load; Temperature rise; Chamfer flow; Outside to inside diameter; Model and application | 2338–2344 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook91 (added 1 November 2026)
+
+Three tools in batch handbook91 completing the deep audit of the thrust bearing section: step thrust bearing design with film thickness, step depth, friction, oil flow and temperature rise (pp. 2345–2347), tapered land thrust bearing design with the film factor, friction and film flow (pp. 2347–2352), and tilting pad (Kingsbury) thrust bearing design with the operating number, film, friction, oil flow and temperature rise (pp. 2352–2356). Chart readings, taper values, oil properties and accepted limits are always user inputs. WORKOS now holds 986 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise)** `step-thrust-bearing-design` | STEP BEARING LAID OUT | Temperature rise; Outside diameter; Pad shape; Model and application | 2339, 2345–2347 | Automated + cross-check |
+| **Tapered Land Thrust Bearing Design (Pad Layout, Film Factor, Friction, Oil Flow Required and Passed)** `tapered-land-thrust-bearing-design` | FILM FLOW CARRIES THE HEAT | Oil flow; Film thickness; Unit load; Model and application | 2339, 2347–2352 | Automated + cross-check |
+| **Tilting Pad (Kingsbury) Thrust Bearing Design (Operating Number, Film, Friction, Oil Flow, Temperature Rise)** `tilting-pad-thrust-bearing-design` | TILTING PAD BEARING SATISFACTORY | Temperature rise; Minimum film; Unit load; Model and application | 2339, 2352–2356 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook92 (added 1 November 2026)
+
+Four tools in batch handbook92 from the deep audit of the helical gearing section: crossed helical gears at an exact centre distance for any shaft angle, with the least centre distance and formed cutter numbers (pp. 2199–2205), selection of the cutter for milling a helical gear by the preferred formula (pp. 2204–2206), enlarged helical pinions of 20° normal pressure angle with their tight-mesh centre distance (pp. 2206–2207), and index and feed change gears for hobbing helical gears on a machine without a differential (pp. 2208–2209). Cutter sizes, tooth thicknesses from the handbook table, machine constants, gears fitted and accepted lead errors are always user inputs. WORKOS now holds 990 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Crossed Helical Gears at an Exact Centre Distance (Any Shaft Angle, Minimum Centre Distance, Cutter Numbers)** `crossed-helical-exact-centre-distance` | HELICAL PAIR FITS THE CENTRE DISTANCE | Pinion teeth; Centre distance; Cutter range; Hand of helix; Model and application | 2199–2205, 2150 | Automated + cross-check |
+| **Helical Gear Milling Cutter Selection (Preferred Formula with Cutter Diameter, Lead, Tooth Depth)** `helical-milling-cutter-selection` | USE CUTTER No. 3 | Cutter series; Approximate formula; Cutter diameter; Model and application | 2204–2206, 2150 | Automated |
+| **Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance** `enlarged-helical-pinion` | ENLARGE THE PINION | Enlargement; Mating gear; Tooth thickness; Model and application | 2206–2207, 2152 | Automated + cross-check |
+| **Helical Gear Hobbing Change Gears (Machine Without Differential, Feed Correction, Lead Error)** `helical-hobbing-change-gears` | LEAD WITHIN TOLERANCE | Lead error; Feed correction; Machine constants; Model and application | 2208–2209 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook93 (added 1 November 2026)
+
+Four tools in batch handbook93 from the deep audit of the spur gearing section: profile checker settings with every significant diameter (TIF, contact, LPSTC, HPSTC), the maximum hob tip radius and the hobbed undercut limit (pp. 2155–2160), spur gears cut with a standard hob for a given centre distance and ratio (pp. 2139–2140), enlarged pinions in the standard or enlarged centre-distance system with the tight-mesh centre distance and the smallest reduced gear (pp. 2142, 2154–2155), and shaving stock checked by the centre-distance method (p. 2141). Dedendum and hob constants, enlargements from the handbook tables, accepted contact ratios, pressure angle ranges and shaving allowances are always user inputs. WORKOS now holds 994 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Spur Gear Profile Checker Settings (Significant Diameters, Roll Angles, TIF, HPSTC, Undercut)** `spur-gear-profile-checker` | PROFILE CHECKS PASS | Contact above base circle; Fillet interference; Involute undercut; Hob tip radius; Contact ratio; Model and application | 2155–2160 | Automated + cross-check |
+| **Spur Gears Cut for a Given Centre Distance and Ratio (Operating Pitch, Tooth Thickness, Root and Outside Diameters)** `spur-gears-for-given-centre-distance` | GEARS FIT THE CENTRE DISTANCE | Operating pressure angle; Tip clearance; Backlash; Dedendums; Model and application | 2139–2140 | Automated + cross-check |
+| **Enlarged Spur Pinion Mesh (Long and Short Addendum or Enlarged Centre Distance, Tight-Mesh Centre Distance)** `enlarged-spur-pinion-mesh` | INCREASE THE CENTRE DISTANCE | Gear undercut; Pinion enlargement; Centre distance system; Backlash; Model and application | 2142, 2154–2155 | Automated + cross-check |
+| **Gear Shaving Stock Check (Centre Distance Method)** `gear-shaving-stock-check` | SHAVING STOCK WITHIN ALLOWANCE | Shaving allowance; Exact relation; Master gear; Model and application | 2141, 2155 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook94 (added 1 November 2026)
+
+Four tools in batch handbook94 from the deep audit of the bevel gearing, straight-sided spline and roller chain sprocket pages: the dimensions of milled bevel gears at any shaft angle with the blank, cutting angle, vertex distances and cutter tooth numbers (pp. 2181–2184, 2187), the cutter offset, dividing head angle and chordal caliper settings at both ends for milling bevel gears (pp. 2188–2189), S.A.E. straight-sided spline fittings with their torque capacity (pp. 2279–2281), and the ANSI B29.1M roller chain sprocket tooth form with the standard hob (pp. 2554–2555). Offset factors, side pressures and torques are always user inputs. WORKOS now holds 998 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Milled Bevel Gear Dimensions (Cone Angles, Blank, Cutting Angle, Vertex Distances)** `milled-bevel-gear-dimensions` | MILLED BEVEL GEAR DIMENSIONS | Formed cutter series; Face width; Cutter thickness; Model and application | 2181–2184, 2187 | Automated + cross-check |
+| **Bevel Gear Milling Offset and Caliper Settings (Cutter Setover, Cutting Angle, Chordal Thickness at Both Ends)** `bevel-gear-milling-offset` | OFFSET AND CALIPER SETTINGS | Offset; Factor table range; Trial cut; Model and application | 2188–2189 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **S.A.E. Straight-Sided Spline Fitting (Width, Depth, Minor Diameter, Torque Capacity)** `sae-straight-sided-spline` | SPLINE CARRIES THE TORQUE | Torque capacity; Table sizes; Corners and parallelism; Model and application | 2279–2281 | Automated + cross-check |
+| **Roller Chain Sprocket Tooth Form and Hob (ANSI B29.1M Seating Curve, Pressure Angles, Hob Diameter and Lead)** `roller-chain-sprocket-tooth-form` | SPROCKET TOOTH FORM | Tooth tip; Seating curve tolerance; Hob; Model and application | 2554–2555 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook95 (added 1 November 2026)
+
+Four tools in batch handbook95 from the deep audit of the ball and roller bearing rating pages, the disc spring pages and the exact three-wire formula: basic dynamic and static load ratings of ball bearings from their geometry with the L10 life (pp. 2405–2409, 2415–2418), the same for roller bearings with the handbook’s warnings for long rollers and heavy loads (pp. 2409–2413, 2416–2417), disc spring forces with the corrected outside diameter, the stresses at the critical points and the fatigue life equations (pp. 354–364), and measurement over wires by the Buckingham involute helicoid formula with the pitch diameter from a reading (pp. 1997–2001). The rating factors fc and fo, loads, required lives and stress limits are always user inputs. WORKOS now holds 1002 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Ball Bearing Load Ratings from Geometry (Basic Dynamic and Static Ratings, L10 Life, Static Safety)** `ball-bearing-load-ratings` | RATINGS AND LIFE | Rating life; Static safety; Factors fc and fo; Model and application | 2405–2409, 2415–2418 | Automated + cross-check |
+| **Roller Bearing Load Ratings from Geometry (Basic Dynamic and Static Ratings, L10 Life, Static Safety)** `roller-bearing-load-ratings` | RATINGS AND LIFE | Rating life; Static safety; Load range; Roller length; Model and application | 2409–2413, 2416–2417 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Disc Spring Forces, Stresses and Fatigue Life (Corrected Outside Diameter, Critical Points, Life Equations)** `disc-spring-fatigue-life` | DISC SPRINGS MEET THE LIFE | Compressive stress; Tensile stress; Fatigue life; Dimension ratios; Model and application | 354–364 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Thread Measurement over Wires by the Involute Helicoid Formula (Multi-Start Threads and Worms, Pitch Diameter from a Reading)** `thread-wire-involute-helicoid` | USE THE EXACT FORMULA | Simplified formula; Wire contact; Wire accuracy; Model and application | 1997–2001 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook96 (added 1 November 2026)
+
+Four tools in batch handbook96 from the deep audit of the cam design pages and the torque–tension pages for fasteners: the modified constant-velocity cam with parabolic matching (pp. 2288–2291), the smallest cam for a maximum pressure angle with the radius of curvature and the undercut and cutter checks (pp. 2297–2301), the force analysis of a translating roller follower with the return spring rate, guide friction, cam torque and surface error (pp. 2301–2305), and the JIS torque coefficient and yield clamping force of a metric bolt (pp. 1529–1531). Friction coefficients, limits, dynamic factors and loads are always user inputs. WORKOS now holds 1006 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Modified Constant-Velocity Cam with Parabolic Matching (Rise Angles, Displacement Table, Acceleration)** `modified-constant-velocity-cam` | MODIFIED CONSTANT VELOCITY RISE | Follower acceleration; Rise angle; Pressure angle and curvature; Model and application | 2288–2291 | Automated + cross-check |
+| **Cam Size for a Maximum Pressure Angle and Radius of Curvature (Smallest Base Radius, Undercut, Cutter Check)** `cam-size-and-curvature` | CAM SIZE AND CURVATURE | Pressure angle; Undercutting; Cutter radius; Return; Model and application | 2297–2301 | Automated |
+| **Cam Follower Force Analysis (Return Spring Rate, Normal Force with Guide Friction, Cam Torque, Surface Error)** `cam-follower-force-analysis` | SURFACE ERROR DOMINATES THE ACCELERATION | Return spring; Guide friction; Surface accuracy; Contact stress; Model and application | 2301–2305 | Automated + cross-check |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction)** `bolt-torque-coefficient-yield` | TORQUE BELOW YIELD | Yield; Friction; Bearing face; Model and application | 1529–1531 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook97 (added 1 November 2026)
+
+Seven tools in batch handbook97 from the deep audit of the belt drive section: power ratings and number of belts for narrow V-belts (pp. 2492–2494), classical V-belts (pp. 2499–2501), light duty V-belts (pp. 2510–2513), V-ribbed belts per rib (pp. 2513–2518) and variable-speed belts with their speed variation and rim speed (pp. 2518–2525) by the ANSI/RMA formulas the handbook gives, double V-belt drives by the allowable tight side tension method (pp. 2505–2510), and synchronous belt torque and power ratings with the teeth in mesh and width factors (pp. 2534–2536). Correction factors read from the handbook tables, service factors, loads and rim speed limits are always user inputs. WORKOS now holds 1013 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Narrow V-Belt Power Rating (3VX, 5VX, 5V, 8V) and Number of Belts** `narrow-v-belt-rating` | BELTS CARRY THE DESIGN POWER | Number of belts; Correction factors; Minimum sheave; Model and application | 2492–2494 | Automated + cross-check |
+| **Classical V-Belt Power Rating (A, AX, B, BX, C, CX, D) and Number of Belts** `classical-v-belt-rating` | BELTS CARRY THE DESIGN POWER | Number of belts; Correction factors; Minimum sheave; Model and application | 2499–2501 | Automated + cross-check |
+| **Double V-Belt Drive by Allowable Tight Side Tension (AA, BB, CC, DD)** `double-v-belt-tension` | BELTS CARRY THE DESIGN POWER | Number of belts; Factors; Model and application | 2505–2510 | Automated + cross-check |
+| **Light Duty V-Belt Power Rating (3L, 4L, 5L, Fractional Horsepower)** `light-duty-v-belt-rating` | ONE BELT CARRIES THE LOAD | Belt rating; Factors; Model and application | 2510–2513 | Automated + cross-check |
+| **V-Ribbed Belt Power Rating per Rib (J, L, M) and Number of Ribs** `v-ribbed-belt-rating` | RIBS CARRY THE DESIGN POWER | Number of ribs; Correction factors; Model and application | 2513–2518 | Automated |
+| **Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections** `variable-speed-belt-drive` | DRIVE CARRIES THE POWER | Number of belts; Rim speed; Pitch diameter range; Model and application | 2518–2525 | Automated + cross-check |
+| **Synchronous (Timing) Belt Rating — MXL Torque and XL to XXH Power, Teeth in Mesh, Width** `synchronous-belt-rating` | BELT CARRIES THE DESIGN POWER | Belt width; Belt speed; Width against pulley; Model and application | 2534–2536 | Automated + cross-check |

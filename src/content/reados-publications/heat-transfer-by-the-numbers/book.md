@@ -41,6 +41,10 @@ references:
     url: "https://physics.nist.gov/cgi-bin/cuu/Value?sigma"
     note: "Source for σ = 5.670 374 419 × 10⁻⁸ W/m²·K⁴, an exact value, used in Chapter 5."
 related:
+  - title: "Combustion by the Numbers"
+    href: "/reados/publications/combustion-by-the-numbers/"
+  - title: "Condensation Control by the Numbers"
+    href: "/reados/publications/condensation-control-by-the-numbers/"
   - title: "Thermal Expansion by the Numbers"
     href: "/reados/publications/thermal-expansion-by-the-numbers/"
   - title: "Industrial Electric Heating by the Numbers"

@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 837 tools with unique ids and every previously published id kept', () => {
+test('register: 1013 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 837);
+  assert.equal(ids.length, 1013);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 722 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 819 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 722);
+  assert.equal(ids.length, 819);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -4488,4 +4488,2439 @@ test('forty-second-round design checks: verdicts and guards', () => {
   assert.equal(engine.run('taper-bush-grip-check', { T: 100 }).text, 'SCREWS OVERLOADED');
   const cases: Array<[string, Inputs]> = [['cylinder-cushion-check', { rod: 70 }], ['jet-impact-force-check', { u: 40 }], ['spring-clamp-hydraulic-release', { stroke: 9 }], ['spring-clamp-hydraulic-release', { Lw: 50 }], ['spring-clamp-hydraulic-release', { Di: 90 }], ['torque-wrench-adapter-check', { phi: 180, E: 500 }]];
   for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-second handbook pass (handbook68): forty-third round of integrated design checks.
+// Expected values are independent hand calculations (closed forms, binomial sums and a Simpson integral of the t density).
+const HB52_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['machine-economic-life', {}, { nStar: 7, Emin: 42579.166435704436, MC: 40400 }, 1e-6],
+  ['machine-economic-life', { i: 0 }, { nStar: 5, Emin: 36230.295 }, 1e-6],
+  ['groove-weld-cost-check', {}, { At: 24 + 100 * Math.tan(Math.PI / 6) + 2 / 3 * (5 + 20 * Math.tan(Math.PI / 6)) * 2, total: 660.5314530152626 }, 1e-8],
+  ['groove-weld-cost-check', { prep: 'dv', caps: '2' }, { At: 81.59685397120464 }, 1e-9],
+  ['groove-weld-cost-check', { prep: 'sb', ang: 45 }, { At: 94 }, 1e-9],
+  ['groove-weld-cost-check', { prep: 'sq' }, { At: 24 + 2 / 3 * 5 * 2 }, 1e-9],
+  ['insert-consumption-reorder-plan', {}, { T: 16, tc: 0.7539822368615503, ppe: 16, im: 93.75, ROP: 51.60932659358612, cpp: 0.28125 }, 1e-9],
+  ['bearing-fleet-spares-plan', {}, { L10h: 1e9 / 87000, eta: 51526.283937896114, F: 0.021397273109916348, expF: 0.8558909243966539, s: 3, cover: 98.96249521303739 }, 1e-6],
+  ['hydraulic-press-cycle-check', {}, { cyc: 4.478921164768997, F: 157.07963267948963, pApp: 5.196896100959848, pNeed: 152.7887453682195, Psh: 11.983431009272119 }, 1e-9],
+  ['vacuum-table-workholding-check', {}, { Fh: 7680, R: 2318.709975, pk: 1086.4977448406723, sf: 2.1341139325972773, vfMax: 2134.113932597277 }, 1e-8],
+  ['gauge-repeatability-bias-check', {}, { Cg: 0.008 / 0.0048, Cgk: 0.0038 / 0.0024, t: 1.25, p: 0.22335147816560041, varRep: 12 }, 1e-6],
+];
+for (const [id, over, expected, tol] of HB52_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-third-round design checks agree with the tools they chain', () => {
+  const el = engine.run('machine-economic-life').values, f7 = engine.run('interest-factors', { rate: 8, n: 7, m: 1, amount: 1 }).values;
+  near(el.Emin, 120000 * f7.AP - el.Lstar * f7.AF + 15000 + 3000 * f7.AG, 1e-6, 'EUAC at the economic life from the interest factors');
+  near(engine.run('machine-economic-life', { G: 0, Nmax: 1 }).values.Emin, engine.run('euac-compare', { rate: 8, pA: 120000, aA: 15000, sA: 84000, nA: 1 }).values.eA, 1e-6, 'one-year life as the EUAC comparison');
+  const gw = engine.run('groove-weld-cost-check').values, wc = engine.run('weld-cost', { leg: Math.sqrt(2 * gw.At), excess: 0, rho: 7.85, dep: 3, of: 30, eff: 92, rate: 95, wire: 6, gasFlow: 15, gasPrice: 12 }).values;
+  near(gw.mpm, wc.mass, 1e-12, 'weld metal per metre'); near(gw.total, wc.total * 6 + 95, 1e-9, 'cost as the weld cost tool plus other time');
+  near(engine.run('insert-consumption-reorder-plan').values.T, engine.run('taylor-tool-life', { mode: 'nc', n: 0.25, C: 400, V: 200 }).values.T, 1e-12, 'Taylor life');
+  const bf = engine.run('bearing-fleet-spares-plan').values;
+  near(bf.L10h, engine.run('bearing-l10-life', { type: 'ball', C: 30, P: 3, rpm: 1450 }).values.hours, 1e-9, 'rating life');
+  near(bf.F, engine.run('weibull-reliability', { beta: 1.5, eta: bf.eta, t: 4000 }).values.F, 1e-12, 'Weibull probability of failure');
+  const a1 = (Math.log(100 / 95) / Math.log(1 / 0.9)) ** (2 / 3);
+  near(engine.run('bearing-fleet-spares-plan', { yrs: a1 * bf.L10h / 4000 }).values.F, 0.05, 1e-12, 'slope 1.5 matches the a1 reliability factor');
+  const hp = engine.run('hydraulic-press-cycle-check').values, hc = engine.run('hydraulic-cylinder', { bore: 100, rod: 70, pressure: 200, back: 0, flow: 40, stroke: 280 }).values;
+  near(hp.F * 1000, hc.extension, 1e-9, 'pressing force'); near(hp.vP, hc.extendSpeed, 1e-9, 'pressing speed'); near(hp.vR, hc.retractSpeed, 1e-9, 'return speed');
+  near(hp.Psh, engine.run('hydraulic-power', { pressure: hp.pNeed, flow: 40, efficiency: 85 }).values.shaft, 1e-12, 'motor power at the pressing load');
+  near(engine.run('hydraulic-press-cycle-check', { circuit: 'std' }).values.vA, hp.vP, 1e-12, 'standard approach at full-bore speed');
+  const vt = engine.run('vacuum-table-workholding-check').values, mp = engine.run('milling-power', { ae: 40, ap: 4, vf: 2000, D: 50, rpm: 3000, kc: 800 }).values;
+  near(vt.Pc, mp.Pc, 1e-12, 'cutting power'); near(vt.vc, mp.vc, 1e-12, 'cutting speed');
+  near(vt.Fh, 0.8 * engine.run('vacuum-cup', { D: Math.sqrt(4 * 120000 / Math.PI), n: 1, vac: 80 }).values.per, 1e-9, 'holding force as the vacuum cup tool');
+  near(engine.run('vacuum-table-workholding-check', { vf: vt.vfMax }).values.sf, 2, 1e-9, 'largest feed gives the required factor');
+});
+
+test('forty-third-round design checks: verdicts and guards', () => {
+  assert.equal(engine.run('machine-economic-life').text, 'KEEP FOR ANOTHER YEAR');
+  assert.equal(engine.run('machine-economic-life', { Ad: 40000 }).text, 'REPLACE NOW');
+  assert.equal(engine.run('groove-weld-cost-check').text, 'QUOTE COVERS THE WELDING');
+  assert.equal(engine.run('groove-weld-cost-check', { quote: 500 }).text, 'QUOTE TOO LOW');
+  assert.equal(engine.run('insert-consumption-reorder-plan').text, 'STOCK ABOVE REORDER POINT');
+  assert.equal(engine.run('insert-consumption-reorder-plan', { onHand: 40 }).text, 'ORDER NOW');
+  assert.equal(engine.run('bearing-fleet-spares-plan').text, 'SPARES ENOUGH');
+  assert.equal(engine.run('bearing-fleet-spares-plan', { Nb: 200 }).text, 'SPARES SHORT');
+  assert.equal(engine.run('bearing-fleet-spares-plan', { Nb: 200 }).values.s, 8);
+  assert.equal(engine.run('hydraulic-press-cycle-check').text, 'PRESS CYCLE ADEQUATE');
+  for (const over of [{ Freq: 200 }, { tMax: 4 }, { Pmot: 10 }, { Fapp: 100 }] as Inputs[]) assert.equal(engine.run('hydraulic-press-cycle-check', over).text, 'PRESS CYCLE NOT ADEQUATE', JSON.stringify(over));
+  assert.equal(engine.run('vacuum-table-workholding-check').text, 'PART HELD');
+  assert.equal(engine.run('vacuum-table-workholding-check', { vf: 3000 }).text, 'PART MAY SLIDE');
+  assert.equal(engine.run('gauge-repeatability-bias-check').text, 'GAUGE CAPABLE');
+  for (const over of [{ s: 0.001 }, { res: 0.01 }] as Inputs[]) assert.equal(engine.run('gauge-repeatability-bias-check', over).text, 'GAUGE NOT CAPABLE', JSON.stringify(over));
+  const cases: Array<[string, Inputs]> = [['machine-economic-life', { MV1: 40000 }], ['machine-economic-life', { s1: 150 }], ['groove-weld-cost-check', { c: 20 }], ['groove-weld-cost-check', { t: 500 }], ['groove-weld-cost-check', { prep: 'sb', ang: 85 }], ['insert-consumption-reorder-plan', { V: 1000 }], ['insert-consumption-reorder-plan', { use: 0 }], ['bearing-fleet-spares-plan', { P: 40 }], ['bearing-fleet-spares-plan', { tgt: 100 }], ['hydraulic-press-cycle-check', { rod: 120 }], ['vacuum-table-workholding-check', { ae: 60 }], ['vacuum-table-workholding-check', { vac: 150 }], ['gauge-repeatability-bias-check', { USL: 9.97 }], ['gauge-repeatability-bias-check', { n: 2 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook69: thermodynamics tools from Fermi's Thermodynamics. Expected values are independent hand calculations
+// (closed forms, a bisection solution of the van der Waals cubic and a Simpson integral of the Carnot efficiency).
+const TD_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['vapour-pressure-boiling-check', {}, { TbC: 58.8894570347307, pv: 10.514502532437835, slope: 0.5079915816397658, mar: 13.889457034730697 }, 1e-9],
+  ['real-gas-cylinder-contents', {}, { x: 0.00011928810112447864, mass: 11.742160255685116, Z: 1.000850018956593, mIdeal: 11.752141314493798, Tc: 126.15417851397955, pc: 3387933.466921776 }, 1e-8],
+  ['ro-pressure-check', {}, { pif: 1.527078252293655, CF: Math.log(4) / 0.75, NDP: 10.92736003980865, tail: 6.89168699082538, Qp: 7.277621786512562, Pneed: 10.078645966197355 }, 1e-9],
+  ['battery-heat-check', {}, { qcell: 5.4 - 60 * 298.15 * 0.0001, Q: 361.11, dT: 2.89998 }, 1e-9],
+  ['battery-heat-check', { mode: 'chg' }, { Q: 718.89 }, 1e-9],
+  ['heat-pump-cop-check', {}, { COPc: 323.15 / 48, COP: 50 / 15, eta2: 49.51261024292125, cost: 9000, Pmin: 18.567228841095467 }, 1e-9],
+  ['heat-pump-cop-check', { mode: 'cool' }, { COPc: 275.15 / 48 }, 1e-12],
+  ['waste-heat-recovery-limit', {}, { Q: 313.5, Ex: 41.22284650758613, ofEx: 36.38758909392536, value: 22500 }, 1e-6],
+];
+for (const [id, over, expected, tol] of TD_CASES) test(`thermodynamics: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics tools: identities and links to existing tools', () => {
+  const vp = engine.run('vapour-pressure-boiling-check').values;
+  near(engine.run('vapour-pressure-boiling-check', { p: vp.pv }).values.TbC, 45, 1e-9, 'boiling at the vapour pressure returns the liquid temperature');
+  near(engine.run('vapour-pressure-boiling-check', { p: 101.325 }).values.TbC, 100, 1e-9, 'reference point reproduced');
+  const ideal = engine.run('real-gas-cylinder-contents', { a: 0, b: 0 }).values;
+  near(ideal.mass, ideal.mIdeal, 1e-9, 'a = b = 0 reduces to the ideal gas'); near(ideal.Z, 1, 1e-12, 'ideal compressibility');
+  const co2 = engine.run('real-gas-cylinder-contents', { M: 44.01, a: 0.364, b: 42.67, pg: 40 });
+  assert.equal(co2.checks.find((c: any) => c.label === 'Critical temperature').status, 'warn', 'carbon dioxide at 15 °C is below its critical temperature');
+  const hp = engine.run('heat-pump-cop-check').values, hpc = engine.run('heat-pump-cop-check', { mode: 'cool' }).values;
+  near(hp.COPc - hpc.COPc, 1, 1e-12, 'heating Carnot COP is one more than cooling');
+  near(engine.run('heat-pump-cop-check', { P: 50 / hp.COPc }).values.eta2, 100, 1e-9, 'COP at the Carnot limit is 100 % efficient');
+  near(engine.run('waste-heat-recovery-limit', { T2: 89.999 }).values.etaC, (1 - 293.15 / 363.15) * 100, 1e-3, 'mean Carnot efficiency tends to the point value');
+  near(engine.run('ro-pressure-check', { Pf: engine.run('ro-pressure-check').values.Pneed }).values.Qp, 4, 1e-9, 'feed pressure needed gives the flow wanted');
+});
+
+test('thermodynamics tools: verdicts and guards', () => {
+  assert.equal(engine.run('vapour-pressure-boiling-check').text, 'LIQUID STAYS BELOW BOILING');
+  assert.equal(engine.run('vapour-pressure-boiling-check', { Tw: 55 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('vapour-pressure-boiling-check', { Tw: 65 }).text, 'LIQUID WILL BOIL');
+  assert.equal(engine.run('real-gas-cylinder-contents').text, 'CONTENTS SUFFICIENT');
+  assert.equal(engine.run('real-gas-cylinder-contents', { mreq: 20 }).text, 'CONTENTS SHORT');
+  assert.equal(engine.run('ro-pressure-check').text, 'PRESSURE ADEQUATE');
+  assert.equal(engine.run('ro-pressure-check', { Qreq: 10 }).text, 'PERMEATE FLOW SHORT');
+  assert.equal(engine.run('ro-pressure-check', { rec: 95 }).text, 'CONCENTRATE END STOPS PRODUCING');
+  assert.equal(engine.run('battery-heat-check').text, 'TEMPERATURE RISE ACCEPTABLE');
+  assert.equal(engine.run('battery-heat-check', { I: 100 }).text, 'PACK RUNS TOO HOT');
+  near(engine.run('battery-heat-check', { I: 100 }).values.dT, (100 * (15 - 100 * 298.15 * 0.0001) - 200) * 1800 / 100000, 1e-9, 'temperature rise at 100 A');
+  assert.equal(engine.run('heat-pump-cop-check').text, 'COP PLAUSIBLE');
+  assert.equal(engine.run('heat-pump-cop-check', { P: 5 }).text, 'COP EXCEEDS THE CARNOT LIMIT');
+  assert.equal(engine.run('heat-pump-cop-check', { P: 25 }).text, 'COP BELOW EXPECTATION');
+  assert.equal(engine.run('waste-heat-recovery-limit').text, 'CLAIM PLAUSIBLE');
+  assert.equal(engine.run('waste-heat-recovery-limit', { W: 25 }).text, 'CLAIM OPTIMISTIC');
+  assert.equal(engine.run('waste-heat-recovery-limit', { W: 50 }).text, 'EXCEEDS THE SECOND-LAW LIMIT');
+  const cases: Array<[string, Inputs]> = [['vapour-pressure-boiling-check', { M: 0.5 }], ['vapour-pressure-boiling-check', { p1: 0.001, p: 100000 }], ['real-gas-cylinder-contents', { pg: 2000 }], ['ro-pressure-check', { rec: 100 }], ['battery-heat-check', { Nc: 0 }], ['heat-pump-cop-check', { Tsrc: 50, Tsink: 40 }], ['heat-pump-cop-check', { etaMin: 0 }], ['waste-heat-recovery-limit', { T2: 10 }], ['waste-heat-recovery-limit', { T2: 95 }], ['waste-heat-recovery-limit', { share: 0 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Polymer thermodynamics (batch polymers): Flory–Huggins, Hansen, Flory–Rehner, single-point viscosity, Flory melting and DLS.
+// Expected values are independent hand calculations in node: closed forms, the exact regular-solution binodal and equal chemical potentials.
+const RG = 8.31446261815324;
+const POLY_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['polymer-solution-phase-check', {}, { Nw: (200000 / 1.05) / (92 / 0.87), chi: 0.34 + (92 / 0.87) * 4 / (RG * 298.15), chis: 0.5 * (1 / (1801.2422360248447 * 0.05) + 1 / 0.95), pc: 0.028048156150781343, chic: 0.5243255507299315, chib: 0.5273276043686248, Tb: -1.5732405913831826 }, 1e-7],
+  ['polymer-solution-phase-check', { M1: 100, rho1: 1, M2: 100, rho2: 1, PDz: 1, phi: 10 }, { Nw: 1, pc: 0.5, chic: 2, chib: Math.log(1 / 9) / (2 * 0.1 - 1), chis: 0.5 * (1 / 0.1 + 1 / 0.9) }, 1e-9], // regular solution
+  ['hansen-solvent-compatibility', {}, { Ra: Math.sqrt(4 * 9 + 4.5 ** 2 + 16.1 ** 2), RED: Math.sqrt(4 * 9 + 4.5 ** 2 + 16.1 ** 2) / 8.6, best: 337.45 / 370.25 }],
+  ['hansen-solvent-compatibility', { xB: 100 }, { Ra: Math.sqrt(4 * 0.25 + 9 + 0.81), dD: 18, dH: 2 }],
+  ['hansen-solvent-compatibility', { xB: 50 }, { dD: 16.75, dP: 5.25, dH: 10.5, Ra: Math.sqrt(4 * 1.75 ** 2 + 0.75 ** 2 + 7.6 ** 2) }],
+  ['rubber-swelling-crosslink-density', {}, { v2: (1.95 * 0.6 / 0.92) / (1.95 * 0.6 / 0.92 + 4.25 / 0.867), nu: 156.68428196613112, Mc: 5871.6802250711235, G: 156.68428196613112 * RG * 296.15, dV: 272.0098039215687, dm: 210, ext: 2.5 }, 1e-6],
+  ['rubber-swelling-crosslink-density', { f: 3 }, { nu: 168.55236405801892 }, 1e-6],
+  ['polymer-intrinsic-viscosity', {}, { er: 1.35, sc: Math.sqrt(2 * (0.35 - Math.log(1.35))) / 0.5, bm: 0.25 * (0.35 + 3 * Math.log(1.35)) / 0.5, hg: (Math.sqrt(1 + 4 * 0.35 * 0.35) - 1) / (2 * 0.35 * 0.5), Mv: (Math.sqrt(2 * (0.35 - Math.log(1.35))) / 0.5 / 5e-4) ** (1 / 0.7) }],
+  ['polymer-intrinsic-viscosity', { method: 'bm' }, { iv: 0.6251568886755072 }],
+  ['polymer-melting-point-depression', {}, { phi1: 17 / 35, Tm: 1 / (1 / 413.15 + RG / 8000 * 33 / 150 * (17 / 35 - 0.3 * (17 / 35) ** 2)) - 273.15, dT: 15.583618577018228 }, 1e-7],
+  ['polymer-melting-point-depression', { w1: 0 }, { phi1: 0, Tm: 140 }, 1e-9],
+  ['dls-particle-size', {}, { q: 4 * Math.PI * 1.332 * Math.SQRT1_2 / 632.8e-9, G1: 3000, D: 8.575432121651589e-12, d: 57.22699592593687, qR: 0.5351845574327894 }],
+  ['dls-particle-size', { corr: 'g1' }, { G1: 6000, d: 57.22699592593687 / 2 }],
+];
+for (const [id, over, expected, tol] of POLY_CASES) test(`polymer tool: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('polymer tools: the binodal has equal chemical potentials and the boundaries are ordered', () => {
+  for (const phi of [1, 5, 30]) {
+    const v = engine.run('polymer-solution-phase-check', { phi }).values, N = v.Nw, a = phi / 100, b = v.phib, c = v.chib;
+    const mu1 = (p: number) => Math.log1p(-p) + (1 - 1 / N) * p + c * p * p, mu2 = (p: number) => Math.log(p) - (N - 1) * (1 - p) + N * c * (1 - p) ** 2;
+    near(mu1(a) - mu1(b), 0, 1e-12, `solvent potential at ${phi} %`); near(mu2(a) - mu2(b), 0, 1e-9, `polymer potential at ${phi} %`);
+    assert.ok(v.chib <= v.chis + 1e-12 && v.Ts < v.Tb, `binodal before spinodal at ${phi} %`);
+  }
+  const mono = engine.run('polymer-solution-phase-check', { PDz: 1, phi: 100 / (1 + Math.sqrt(1801.2422360248447)) }).values;
+  near(mono.chib, mono.chic, 1e-9, 'binodal meets the critical point'); near(mono.chis, mono.chic, 1e-9, 'spinodal meets the critical point');
+  const sw = engine.run('rubber-swelling-crosslink-density').values;
+  near(sw.E, 3 * sw.G, 1e-6, 'E = 3G');
+});
+
+test('polymer tools: verdicts and guards', () => {
+  assert.equal(engine.run('polymer-solution-phase-check').text, 'ONE PHASE');
+  assert.equal(engine.run('polymer-solution-phase-check', { T: 0 }).text, 'ONE PHASE, SMALL MARGIN');
+  assert.equal(engine.run('polymer-solution-phase-check', { T: -5 }).text, 'METASTABLE: CAN SEPARATE');
+  assert.equal(engine.run('polymer-solution-phase-check', { T: -10 }).text, 'UNSTABLE: SEPARATES SPONTANEOUSLY');
+  assert.equal(engine.run('polymer-solution-phase-check', { d1: 19 }).text, 'ONE PHASE', 'equal solubility parameters: χ = χS at every temperature');
+  assert.equal(engine.run('hansen-solvent-compatibility').text, 'LIKELY TO RESIST');
+  assert.equal(engine.run('hansen-solvent-compatibility', { xB: 100 }).text, 'LIKELY TO DISSOLVE OR SWELL THE PART');
+  assert.equal(engine.run('hansen-solvent-compatibility', { R0: 17 }).text, 'BORDERLINE: TEST IT');
+  assert.equal(engine.run('hansen-solvent-compatibility', { purpose: 'dissolve', xB: 100 }).text, 'LIKELY TO DISSOLVE THE POLYMER');
+  assert.equal(engine.run('hansen-solvent-compatibility', { purpose: 'dissolve' }).text, 'UNLIKELY TO DISSOLVE THE POLYMER');
+  assert.equal(engine.run('rubber-swelling-crosslink-density').text, 'CROSSLINK DENSITY IN RANGE');
+  assert.equal(engine.run('rubber-swelling-crosslink-density', { numin: 200 }).text, 'CROSSLINK DENSITY BELOW RANGE');
+  assert.equal(engine.run('rubber-swelling-crosslink-density', { numax: 100 }).text, 'CROSSLINK DENSITY ABOVE RANGE');
+  assert.ok(engine.run('rubber-swelling-crosslink-density', { chi: 0.44 }).values.nu < sw0(), 'a higher χ gives a lower crosslink density');
+  assert.equal(engine.run('polymer-intrinsic-viscosity').text, 'IV WITHIN SPECIFICATION');
+  assert.equal(engine.run('polymer-intrinsic-viscosity', { t: 120 }).text, 'IV OUTSIDE SPECIFICATION');
+  assert.equal(engine.run('polymer-melting-point-depression').text, 'CRYSTALS MELT AT THIS TEMPERATURE');
+  assert.equal(engine.run('polymer-melting-point-depression', { Tp: 127 }).text, 'MELTS, SMALL MARGIN');
+  assert.equal(engine.run('polymer-melting-point-depression', { Tp: 115 }).text, 'CRYSTALS DO NOT MELT');
+  assert.equal(engine.run('polymer-melting-point-depression', { purpose: 'keep', Tp: 100 }).text, 'CRYSTALS SURVIVE AT THIS TEMPERATURE');
+  assert.equal(engine.run('polymer-melting-point-depression', { purpose: 'keep', Tp: 130 }).text, 'CRYSTALS MELT');
+  assert.ok(engine.run('polymer-melting-point-depression', { chi: 0.6 }).checks.some((c: any) => c.label === 'Liquid–liquid separation' && c.status === 'warn'));
+  assert.equal(engine.run('dls-particle-size').text, 'SIZE IN RANGE');
+  assert.equal(engine.run('dls-particle-size', { Gm: 2000 }).text, 'SIZE OUT OF RANGE');
+  assert.ok(engine.run('dls-particle-size', { Gm: 2000 }).checks.some((c: any) => c.label === 'Internal motion (qRh)' && c.status === 'warn'));
+  const cases: Array<[string, Inputs]> = [['polymer-solution-phase-check', { M1: 1, rho1: 25, M2: 100000000, rho2: 0.1 }], ['polymer-solution-phase-check', { phi: 100 }], ['hansen-solvent-compatibility', { band: 1 }], ['rubber-swelling-crosslink-density', { ms: 1.9 }], ['rubber-swelling-crosslink-density', { md: 2.1 }], ['rubber-swelling-crosslink-density', { chi: 1.2 }], ['rubber-swelling-crosslink-density', { numin: 400 }], ['polymer-intrinsic-viscosity', { t: 90 }], ['polymer-intrinsic-viscosity', { IVmin: 0.8 }], ['polymer-melting-point-depression', { w1: 100 }], ['dls-particle-size', { dmin: 90 }], ['dls-particle-size', { theta: 180 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+const sw0 = () => engine.run('rubber-swelling-crosslink-density').values.nu;
+
+// Thermodynamics first principles (bryanthermo), after Bryan, Thermodynamics (1907).
+// Expected values are independent closed forms; the Bryan cross-checks use his own forms of the same results.
+const BT_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['liquid-adiabatic-compression', {}, { dT: 313.15 * (Math.exp(700e-6 * 35e6 / (870 * 1900)) - 1), dTlin: 313.15 * 700e-6 * 35e6 / (870 * 1900), dcv: 313.15 * 4.9e-7 * 1.6e9 / 870, g: 1900 / (1900 - 313.15 * 4.9e-7 * 1.6e9 / 870) }],
+  ['gas-mixture-properties', {}, { Mm: 0.82 * 39.948 + 0.18 * 44.01, R: 8.314462618 / 40.67916, pc: 18.2385, ds: -(8.314462618 / 40.67916) * (0.82 * Math.log(0.82) + 0.18 * Math.log(0.18)) }],
+  ['thermoelectric-cooler-check', {}, { S: 15.4 / 300.15, R: 232.15 * 15.4 / (300.15 * 6), K: 232.15 * 15.4 * 6 / (2 * 300.15 * 68), Qc: 22.923306034891056, P: 29.705756843800323, V: 8.487359098228664 }, 1e-9],
+];
+for (const [id, over, expected, tol] of BT_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics checks agree with Bryan’s own forms', () => {
+  // (179) and (166): Bryan’s mixing constant and mixture gas constant in mass-fraction form.
+  const g = engine.run('gas-mixture-properties').values, R1 = 8.314462618 / 39.948, R2 = 8.314462618 / 44.01;
+  near(g.ds, g.x1 * R1 * Math.log(g.R / (g.x1 * R1)) + g.x2 * R2 * Math.log(g.R / (g.x2 * R2)), 1e-12, 'mixing entropy as Bryan (179)');
+  near(g.R, g.x1 * R1 + g.x2 * R2, 1e-12, 'gas constant as Bryan (166)');
+  const pure = engine.run('gas-mixture-properties', { y1: 100, y2: 0 }).values;
+  assert.equal(pure.ds, 0); near(pure.g, 0.5203 / (0.5203 - R1), 1e-12, 'pure argon γ');
+  near(pure.rho, engine.run('gas-mixture-properties', { y1: 100, y2: 0, p: 202.65 }).values.rho / 2, 1e-12, 'density proportional to pressure');
+  // (35): adiabatic and isothermal moduli are in the ratio of the specific heats; α = 0 gives no heating and γ = 1.
+  const lq = engine.run('liquid-adiabatic-compression').values; near(lq.Ks / 1600, lq.g, 1e-12, 'K_s ÷ K_T = γ');
+  const flat = engine.run('liquid-adiabatic-compression', { alpha: 0 }).values; assert.equal(flat.dT, 0); assert.equal(flat.g, 1);
+  near(engine.run('liquid-adiabatic-compression', { alpha: -60 }).values.dT, 313.15 * (Math.exp(-60e-6 * 35e6 / (870 * 1900)) - 1), 1e-12, 'negative expansion cools');
+  // Thermoelectric module fit: at the rated point (hot side at rating, ΔT = ΔT_max, I = I_max) no heat is pumped and V = V_max.
+  const rated = engine.run('thermoelectric-cooler-check', { Th: 27, Tc: 27 - 68, I: 6 }).values;
+  near(rated.Qc, 0, 1e-9, 'zero heat at the rated maximum'); near(rated.V, 15.4, 1e-9, 'rated voltage');
+  near(engine.run('thermoelectric-cooler-check', { I: engine.run('thermoelectric-cooler-check').values.Iopt }).values.Qc, engine.run('thermoelectric-cooler-check').values.QcMax, 1e-9, 'heat at the optimum current');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('liquid-adiabatic-compression').text, 'TEMPERATURE RISE WITHIN LIMIT');
+  assert.equal(engine.run('liquid-adiabatic-compression', { Tmax: 44 }).text, 'TEMPERATURE LIMIT EXCEEDED');
+  assert.equal(engine.run('gas-mixture-properties').text, 'PARTIAL PRESSURE WITHIN LIMIT');
+  assert.equal(engine.run('gas-mixture-properties', { lim: 15 }).text, 'PARTIAL PRESSURE OUTSIDE LIMIT');
+  assert.equal(engine.run('gas-mixture-properties', { kind: 'min' }).text, 'PARTIAL PRESSURE OUTSIDE LIMIT');
+  assert.equal(engine.run('thermoelectric-cooler-check').text, 'MODULES PUMP THE HEAT LOAD');
+  assert.equal(engine.run('thermoelectric-cooler-check', { Qreq: 60 }).text, 'MODULES TOO SMALL FOR THE LOAD');
+  assert.equal(engine.run('thermoelectric-cooler-check', { Th: 90 }).text, 'NO NET COOLING AT THIS TEMPERATURE DIFFERENCE');
+  assert.equal(engine.run('thermoelectric-cooler-check', { I: 6.5, Qreq: 10 }).text, 'OUTSIDE THE MODULE RATINGS');
+  const cases: Array<[string, Inputs]> = [
+    ['liquid-adiabatic-compression', { rho: 0 }], ['liquid-adiabatic-compression', { alpha: 20000, KT: 1000000 }],
+    ['gas-mixture-properties', { y1: 90, y2: 20 }], ['gas-mixture-properties', { cp1: 0.1, y1: 100, y2: 0 }],
+    ['thermoelectric-cooler-check', { Tc: 50 }], ['thermoelectric-cooler-check', { Thr: -100, dTmax: 200 }], ['thermoelectric-cooler-check', { n: 2.5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Engineering thermodynamics (handbook72): cycles, second-law limits, moist air, combustion and machine efficiency.
+// Expected values are independent hand calculations: closed forms, and Hyland–Wexler saturation pressures solved separately.
+const TH72 = 273.15;
+const TH72_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['otto-diesel-cycle-check', {}, { eta: 100 * (1 - 10 ** -0.4), P3: 9867.865837065985, wnet: 963.0285271144043, MEP: 1229.8642382668195 }, 1e-8],
+  ['otto-diesel-cycle-check', { cycle: 'diesel', r: 18, rc: 2 }, { eta: 100 * (1 - (2 ** 1.4 - 1) / (1.4 * 18 ** 0.4)), qin: 967.6460222919304, P3: 100 * 18 ** 1.4, MEP: 743.7505528745002 }, 1e-8],
+  ['brayton-regenerator-check', {}, { P: 1341.6360673018862, eta: 42.43040641949687, eta0: 34.69714333392603, rbw: 54.164324404357416, T5: 470.7525458047538 + TH72 }, 1e-8],
+  ['brayton-regenerator-check', { eps: 0 }, { eta: 34.69714333392603 }, 1e-8],
+  ['vapour-compression-cycle-check', {}, { COPR: 3.5, COPHP: 4.5, W: 20 / 7, mdot: 1 / 14, eta2: 3.5 / (263.15 / 50) * 100 }, 1e-9],
+  ['vapour-compression-cycle-check', { mode: 'heat' }, { mdot: 10 / 180, W: 10 / 180 * 40, eta2: 71.85055085422321 }, 1e-9],
+  ['surface-dew-point-check', {}, { Td: 16.701131854536442, w: 0.011896100440418013, h: 55.417230161480425, gap: 22 - 16.701131854536442 }, 1e-6],
+  ['surface-dew-point-check', { T: 5, RH: 50, Ts: -10 }, { Td: -4.033231092521106 }, 1e-6],
+  ['cooling-coil-dehumidification-check', {}, { Q: 37.21505750809022, mw: 0.0074675042911664935, SHR: 0.5048037978715498, w1: 0.016042321199132754, w2: 0.009464872956121062 }, 1e-9],
+  ['combustion-air-flue-gas-check', {}, { AFRs: 4.76 * 2 * 28.97 / 16.043, AFR: 1.15 * 4.76 * 2 * 28.97 / 16.043, O2d: 0.3 / 9.948 * 100, CO2d: 1 / 9.948 * 100, Td: 56.54141862056926 }, 1e-6],
+  ['combustion-air-flue-gas-check', { x: 3, y: 8, ex: 0 }, { AFRs: 15.63566682540762, O2d: 0 }, 1e-9],
+  ['compressor-turbine-efficiency-check', {}, { eta: 83.80542697676256, W: 85.425, Ws: 71.59078599489943, Sgen: 0.03079443067913218 }, 1e-9],
+  ['compressor-turbine-efficiency-check', { machine: 'turb', P1: 500, T1: 400, P2: 100, T2: 200 }, { eta: 80.60188220278407, W: 100.5 }, 1e-9],
+];
+for (const [id, over, expected, tol] of TH72_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics checks agree with closed forms and energy balances', () => {
+  const ot = engine.run('otto-diesel-cycle-check').values;
+  near(ot.eta, ot.etaClosed, 1e-9, 'Otto efficiency from the energy balance equals 1 − r^(1−k)');
+  const di = engine.run('otto-diesel-cycle-check', { cycle: 'diesel', r: 18, rc: 2 }).values;
+  near(di.eta, di.etaClosed, 1e-9, 'Diesel efficiency from the energy balance equals the closed form');
+  const vc = engine.run('vapour-compression-cycle-check').values;
+  near(vc.COPHP, vc.COPR + 1, 1e-12, 'heat-pump COP is the refrigerator COP plus one');
+  near(vc.QH, vc.QL + vc.W, 1e-12, 'heat rejected = heat absorbed + compressor power');
+  const cc = engine.run('cooling-coil-dehumidification-check').values;
+  near(cc.Q, cc.Qs + cc.Ql, 1e-12, 'sensible + latent = total');
+  const dp = engine.run('surface-dew-point-check').values;
+  near(engine.run('surface-dew-point-check', { T: dp.Td, RH: 100 }).values.Td, dp.Td, 1e-6, 'saturated air at the dew point has the same dew point');
+  const comb = engine.run('combustion-air-flue-gas-check').values;
+  near(comb.xCO2 + comb.xH2O + comb.xO2 + comb.xN2, 1, 1e-12, 'flue mole fractions sum to one');
+  near(comb.mflue, 10 * (1 + comb.AFR), 1e-9, 'flue gas = fuel + air');
+  const cp = engine.run('compressor-turbine-efficiency-check').values;
+  near(engine.run('compressor-turbine-efficiency-check', { T2: cp.T2s - TH72 }).values.eta, 100, 1e-9, 'an isentropic outlet temperature gives 100 %');
+  near(engine.run('compressor-turbine-efficiency-check', { T2: cp.T2s - TH72 }).values.ds, 0, 1e-12, 'and no entropy change');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('otto-diesel-cycle-check').text, 'PEAK PRESSURE WITHIN LIMIT');
+  assert.equal(engine.run('otto-diesel-cycle-check', { Pmax: 9000 }).text, 'PEAK PRESSURE OVER LIMIT');
+  assert.equal(engine.run('brayton-regenerator-check').text, 'NET POWER MEETS DEMAND');
+  assert.equal(engine.run('brayton-regenerator-check', { Preq: 1500 }).text, 'NET POWER SHORT OF DEMAND');
+  const hi = engine.run('brayton-regenerator-check', { rp: 30 });
+  assert.ok(hi.checks.some((c: any) => c.label === 'Regenerator' && c.status === 'warn'), 'a regenerator that would cool the air is left out');
+  near(hi.values.eta, hi.values.eta0, 1e-12, 'no regenerator gain when the exhaust is colder than the compressed air');
+  assert.equal(engine.run('vapour-compression-cycle-check').text, 'COP MEETS TARGET');
+  assert.equal(engine.run('vapour-compression-cycle-check', { COPreq: 4 }).text, 'COP BELOW TARGET');
+  assert.equal(engine.run('vapour-compression-cycle-check', { Tc: 70 }).text, 'INPUTS EXCEED THE CARNOT LIMIT');
+  assert.equal(engine.run('surface-dew-point-check').text, 'SURFACE STAYS DRY');
+  assert.equal(engine.run('surface-dew-point-check', { Ts: 18 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('surface-dew-point-check', { Ts: 12 }).text, 'SURFACE WILL SWEAT');
+  assert.equal(engine.run('surface-dew-point-check', { T: 5, RH: 50, Ts: -10 }).text, 'FROST WILL FORM');
+  assert.equal(engine.run('cooling-coil-dehumidification-check').text, 'COIL CAN MEET THE LOAD');
+  assert.equal(engine.run('cooling-coil-dehumidification-check', { Qcoil: 30 }).text, 'COIL UNDERSIZED');
+  assert.equal(engine.run('combustion-air-flue-gas-check').text, 'FLUE ABOVE DEW POINT');
+  assert.equal(engine.run('combustion-air-flue-gas-check', { Ts: 60 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('combustion-air-flue-gas-check', { Ts: 50 }).text, 'CONDENSATE WILL FORM');
+  assert.equal(engine.run('compressor-turbine-efficiency-check').text, 'EFFICIENCY ACCEPTABLE');
+  assert.equal(engine.run('compressor-turbine-efficiency-check', { etamin: 90 }).text, 'EFFICIENCY BELOW MINIMUM');
+  assert.equal(engine.run('compressor-turbine-efficiency-check', { T2: 150 }).text, 'CHECK THE MEASUREMENTS');
+  const cases: Array<[string, Inputs]> = [['otto-diesel-cycle-check', { r: 40 }], ['otto-diesel-cycle-check', { cycle: 'diesel', r: 5, rc: 6 }], ['otto-diesel-cycle-check', { cycle: 'stirling' }], ['brayton-regenerator-check', { T3: 200 }], ['brayton-regenerator-check', { etac: 0 }], ['vapour-compression-cycle-check', { h3: 400 }], ['vapour-compression-cycle-check', { h2s: 390 }], ['vapour-compression-cycle-check', { Tc: -20 }], ['surface-dew-point-check', { RH: 0 }], ['surface-dew-point-check', { T: -5 }], ['cooling-coil-dehumidification-check', { T2: 35 }], ['cooling-coil-dehumidification-check', { T2: 25, RH2: 100 }], ['combustion-air-flue-gas-check', { y: 0 }], ['combustion-air-flue-gas-check', { ex: -5 }], ['compressor-turbine-efficiency-check', { P2: 50 }], ['compressor-turbine-efficiency-check', { machine: 'turb' }], ['compressor-turbine-efficiency-check', { mdot: 'abc' }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// ---------------------------------------------------------------- Thermodynamics tool from Callen (batch callen)
+// Expected values come from an independent hand calculation (kelvin = °C + 273.15), not from the tool.
+
+test('callen liquid throttling: hand-calculated values', () => {
+  const lt = engine.run('liquid-throttling-temperature-rise').values; // oil 870 kg/m³, β 700e-6/K, cp 1.9 kJ/(kg·K), 40 °C, 300 bar dropped
+  near(lt.dT, 14.170508167, 1e-8, 'v (1 − T β) Δp ÷ cp (Callen eq. 6.41)');
+  near(lt.dTsimple, 18.1488203267, 1e-9, 'v Δp ÷ cp ignoring expansion'); near(lt.work, 34.4827586207, 1e-9, 'v Δp in kJ/kg');
+  near(lt.share, 21.9205, 1e-9, 'T β = 313.15 × 0.0007'); near(lt.Tout, 54.170508167, 1e-8, 'outlet temperature');
+  near(engine.run('liquid-throttling-temperature-rise', { rho: 998.2, beta: 207, cp: 4.182, T: 20, dp: 10 }).values.dT, 0.225014770729, 1e-11, 'water: about 0.23 K per 10 bar');
+  near(engine.run('liquid-throttling-temperature-rise', { beta: 0 }).values.dT, 300e5 / 870 / 1900, 1e-9, 'with no expansion the rise is Δp ÷ (ρ cp)');
+});
+
+test('callen liquid throttling: verdicts and guards', () => {
+  assert.equal(engine.run('liquid-throttling-temperature-rise', { limit: 15 }).text, 'VALVE HEATING WITHIN LIMIT');
+  assert.equal(engine.run('liquid-throttling-temperature-rise').text, 'VALVE HEATING ABOVE LIMIT');
+  const cases: Array<[string, Inputs]> = [
+    ['liquid-throttling-temperature-rise', { T: -300 }], ['liquid-throttling-temperature-rise', { rho: 0 }],
+    ['liquid-throttling-temperature-rise', { dp: 0 }], ['liquid-throttling-temperature-rise', { cp: 100 }], ['liquid-throttling-temperature-rise', { beta: -1 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-fifth handbook pass (handbook71): classical thermodynamics checks after Guggenheim’s methods.
+// Expected values are independent hand calculations (closed forms; the throttling case by fourth-order Runge–Kutta integration of dT/dp).
+const HB71_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['trapped-liquid-pressure-check', {}, { rate: 3.2990933303428744, dp: 9.897279991028624, pf: 14.897279991028624, dTa: 3.3342494129612184, V: 43.295073757284335, relief: 0 }, 1e-9],
+  ['trapped-liquid-pressure-check', { dT: 20 }, { pf: 70.9818666068575, relief: 123.38417805156563, sigma: 7.09818666068575 * 52.5 / (2 * 3.91) }, 1e-8],
+  ['trapped-liquid-pressure-check', { wall: 'rigid' }, { rate: 207e-6 * 2200 * 10, pf: 5 + 3 * 4.554 }, 1e-9],
+  ['ro-concentrate-pressure-check', {}, { cf: 35000 / 58.44, Pif: 27.317733180423303, Pic: 49.556851419576994, Pip: 0.13658866590211666, ndpIn: 32.318855485478814, ndpOut: 8.579737246325124, pmin: 54.420262753674876 }, 1e-8],
+  ['ph-electrode-calibration-check', {}, { Sth: 59.159349684782335, S: 171 / 2.99, pct: 96.67218412006355, off: -3, pHz: 7 - 3 / (171 / 2.99), pHs: 6.07327485380117 }, 1e-9],
+  ['ph-electrode-calibration-check', { Ts: 40 }, { Ss: 171 / 2.99 * 313.15 / 298.15, pHs: 6.115152660244469 }, 1e-9],
+  ['clausius-boiling-margin-check', {}, { pv: 21.006285197667232, Tbo: 68.28950253936489, margin: 8.28950253936489 }, 1e-9],
+  ['gas-throttling-temperature-check', {}, { mu1: 0.41779303722704747, Tinv: 1012.173590085374, T2: -13.048203651068434, T1r: 26.520077998604563, n: 11.747928716432623, heat: 4.831532868332002 }, 1e-6],
+  ['gas-throttling-temperature-check', { model: 'mu' }, { T2: 15 - 0.45 * 63, T1r: 0.45 * 63 }, 1e-9],
+  ['filter-bubble-point-check', {}, { pmt: 3.2, margin: 100 * (3.45 / 3.2 - 1), d: 4 * 0.072 / 345000 * 1e6, dmin: 4 * 0.072 / 320000 * 1e6 }, 1e-9],
+  ['filter-bubble-point-check', { gt: 21.7 }, { pmt: 3.2 * 21.7 / 72 }, 1e-12],
+  ['gas-separation-energy-check', {}, { xW: 69, rec: 100 * 0.99 / (3 * 0.79), W: 603.6601228909326, Emin: 0.007481199041202577, Wlim: 470.3422586911442, eff: 2.992479616481031, kWh: 100000, cost: 25000 }, 1e-8],
+];
+for (const [id, over, expected, tol] of HB71_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics checks agree with their limiting cases', () => {
+  const tl = engine.run('trapped-liquid-pressure-check').values;
+  near(engine.run('trapped-liquid-pressure-check', { dT: tl.dTa }).values.pf, 16, 1e-9, 'the largest rise reaches the design pressure exactly');
+  near(engine.run('trapped-liquid-pressure-check', { dT: 20, pd: 5 }).values.relief, tl.V * 1000 * (207e-6 - 36e-6) * 20, 1e-6, 'relief volume equals the free expansion when no rise is allowed');
+  const ro = engine.run('ro-concentrate-pressure-check').values;
+  near(engine.run('ro-concentrate-pressure-check', { pf: ro.pmin }).values.ndpOut, 3, 1e-9, 'the least feed pressure leaves exactly the required driving pressure');
+  near(engine.run('ro-concentrate-pressure-check', { rej: 100 }).values.Pic, ro.Pif / 0.55, 1e-9, 'full rejection concentrates by 1 ÷ (1 − recovery)');
+  near(engine.run('ph-electrode-calibration-check', { Tc: 0 }).values.Sth, Math.LN10 * 8.31446261815324 * 273.15 / 96485.33212331002 * 1000, 1e-9, 'ideal slope at 0 °C');
+  near(engine.run('ph-electrode-calibration-check', { Es: 168 }).values.pHs, 4.01, 1e-12, 'a sample reading like the second buffer reads its pH');
+  const vp = engine.run('clausius-boiling-margin-check').values;
+  near(engine.run('clausius-boiling-margin-check', { pop: vp.pReq }).values.margin, 5, 1e-9, 'the pressure for the margin gives the margin');
+  near(engine.run('clausius-boiling-margin-check', { Top: 100 }).values.pv, 101.325, 1e-9, 'the known point is reproduced');
+  const jt = engine.run('gas-throttling-temperature-check', { p2: 69.999 }).values;
+  near(jt.dT, -jt.mu1 * 0.001, 1e-8, 'a small drop cools by the coefficient times the drop');
+  const h2 = engine.run('gas-throttling-temperature-check', { a: 0.02452, b: 26.61, Cp: 28.8, Tmin: 30 }).values; // a gas above its model inversion temperature (−51.5 °C)
+  near(h2.T2, 16.35379173214119, 1e-6, 'it warms on throttling (hand RK4 integration)'); near(h2.T1r, 28.44608417914924, 1e-6, 'inlet temperature for the lowest outlet lies below it');
+  near(engine.run('gas-separation-energy-check', { AF: 1000 }).values.W, 470.6363220564003, 1e-6, 'a very large feed ratio approaches the least work for the purity');
+  near(engine.run('gas-separation-energy-check', { T: 40 }).values.W, 603.6601228909326 * 313.15 / 293.15, 1e-9, 'least work scales with absolute temperature');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('trapped-liquid-pressure-check').text, 'PRESSURE WITHIN DESIGN');
+  assert.equal(engine.run('trapped-liquid-pressure-check', { dT: 20 }).text, 'THERMAL RELIEF NEEDED');
+  assert.equal(engine.run('trapped-liquid-pressure-check', { wall: 'rigid' }).text, 'THERMAL RELIEF NEEDED');
+  assert.equal(engine.run('ro-concentrate-pressure-check').text, 'FEED PRESSURE ADEQUATE');
+  assert.equal(engine.run('ro-concentrate-pressure-check', { pf: 50 }).text, 'FEED PRESSURE TOO LOW');
+  assert.equal(engine.run('ph-electrode-calibration-check').text, 'ELECTRODE IN LIMITS');
+  for (const over of [{ E2: 150 }, { E1: -40, E2: 131 }, { E1: 168, E2: -3 }] as Inputs[]) assert.equal(engine.run('ph-electrode-calibration-check', over).text, 'ELECTRODE OUT OF LIMITS', JSON.stringify(over));
+  assert.equal(engine.run('clausius-boiling-margin-check').text, 'NO BOILING EXPECTED');
+  assert.equal(engine.run('clausius-boiling-margin-check', { pop: 25 }).text, 'BOILING MARGIN TOO SMALL');
+  assert.equal(engine.run('clausius-boiling-margin-check', { pop: 20 }).text, 'LIQUID WILL BOIL OR FLASH');
+  assert.equal(engine.run('clausius-boiling-margin-check', { goal: 'boil' }).text, 'BOILING NOT ASSURED');
+  assert.equal(engine.run('clausius-boiling-margin-check', { goal: 'boil', pop: 15 }).text, 'BOILING ASSURED');
+  assert.equal(engine.run('gas-throttling-temperature-check').text, 'PREHEAT NEEDED');
+  assert.equal(engine.run('gas-throttling-temperature-check', { Tmin: -20 }).text, 'OUTLET TEMPERATURE ACCEPTABLE');
+  assert.equal(engine.run('filter-bubble-point-check').text, 'INTEGRITY TEST PASSED');
+  assert.equal(engine.run('filter-bubble-point-check', { pb: 3 }).text, 'INTEGRITY TEST FAILED');
+  assert.equal(engine.run('gas-separation-energy-check').text, 'WITHIN TARGET ENERGY');
+  assert.equal(engine.run('gas-separation-energy-check', { Eact: 0.35 }).text, 'ABOVE TARGET ENERGY');
+  const cases: Array<[string, Inputs]> = [['trapped-liquid-pressure-check', { nu: 0.6 }], ['ro-concentrate-pressure-check', { rec: 99 }], ['ph-electrode-calibration-check', { pH2: 6.8 }], ['ph-electrode-calibration-check', { sMin: 105, sMax: 100 }], ['clausius-boiling-margin-check', { H: 1, pop: 200 }], ['gas-throttling-temperature-check', { p2: 80 }], ['gas-throttling-temperature-check', { model: 'mu', mu: 5, p1: 1000, p2: 1 }], ['filter-bubble-point-check', { k: 2 }], ['gas-separation-energy-check', { xP: 70 }], ['gas-separation-energy-check', { AF: 1.2 }], ['gas-separation-energy-check', { Eact: 0.001 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook73: project, business, operations, maintenance, quality and machining tools. Expected values are independent
+// hand calculations (closed forms, Simpson integration of the normal and chi-square densities, direct Poisson sums and a
+// numerical integration of the parting time).
+const PB_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['earned-value-check', {}, { CPI: 0.975, SPI: 0.975, EAC1: 512820.5128205128, EAC2: 520841.5516107824, VAC: -12820.512820512813, TCPI: 305000 / 300000, durF: 12 / 0.975 }, 1e-6],
+  ['pert-schedule-check', {}, { T: 109 / 3, sd: 2.8771127502720115, P: 89.87437200004945, Tc: 39.315269053053534 }, 1e-6],
+  ['early-payment-discount-check', {}, { nom: 37.24489795918367, eff: 44.585292731248515, save: 220 }, 1e-9],
+  ['economic-production-quantity', {}, { Qs: 3394.1125496954282, Cs: 6363.961030678927, Cn: 6847.5, extra: 7.598081870552997, peak: 2545.584412271571 }, 1e-8],
+  ['wip-lead-time-check', {}, { LT: 5, fe: 0.9375, wipLim: 720 }, 1e-12],
+  ['critical-spares-poisson-plan', {}, { lam: 1.08, s: 3, cov: 97.57095636978082 }, 1e-9],
+  ['critical-spares-poisson-plan', { held: 1 }, { cov: 70.63586933414734 }, 1e-9],
+  ['capability-confidence-check', {}, { Cp: 0.1 / 0.048, Cpk: 0.046 / 0.024, chi: 33.93030561852787, cpL: 1.7336227932193007, cpkL: 1.5888986779221228 }, 1e-6],
+  ['parting-off-plan', {}, { dlim: 15.915494309189535, F: 480, Pm: 1.5, Tq: 14.4, tsec: 15.131885335435372 }, 1e-6],
+  ['parting-off-plan', { di: 20 }, { tsec: Math.PI * (900 - 100) / 12000 * 60 }, 1e-9],
+];
+for (const [id, over, expected, tol] of PB_CASES) test(`business and operations: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('business and operations tools: identities', () => {
+  const epq = engine.run('economic-production-quantity').values;
+  near(epq.Cs, Math.sqrt(2 * 24000 * 450 * 2.5 * 0.75), 1e-9, 'minimum cost in closed form');
+  near(engine.run('economic-production-quantity', { Qnow: epq.Qs }).values.extra, 0, 1e-9, 'running at the optimum costs nothing extra');
+  near(engine.run('pert-schedule-check', { dl: 109 / 3 }).values.P, 50, 1e-6, 'deadline at the expected duration is a coin toss');
+  near(engine.run('wip-lead-time-check', { wip: 720 }).values.LT, 6, 1e-12, 'WIP limit gives the target lead time');
+  const cc = engine.run('capability-confidence-check', { n: 100000 }).values;
+  near(cc.cpkL, 0.046 / 0.024 - 1.6448536269514722 * Math.sqrt(1 / 900000 + (0.046 / 0.024) ** 2 / 199998), 1e-9, 'a very large sample has a bound close to the sample Cpk');
+  near(engine.run('early-payment-discount-check', { d: 2, nd: 0, N: 365 }).values.eff, 2 / 98 * 100, 1e-9, 'one period a year: effective equals nominal');
+});
+
+test('business and operations tools: verdicts and guards', () => {
+  assert.equal(engine.run('earned-value-check').text, 'PROJECT ON TRACK');
+  assert.equal(engine.run('earned-value-check', { AC: 230000 }).text, 'RECOVERY NEEDED');
+  assert.equal(engine.run('earned-value-check', { AC: 520000 }).text, 'RECOVERY NEEDED');
+  assert.equal(engine.run('pert-schedule-check').text, 'DEADLINE ACHIEVABLE');
+  assert.equal(engine.run('pert-schedule-check', { dl: 36 }).text, 'DEADLINE AT RISK');
+  assert.equal(engine.run('early-payment-discount-check').text, 'TAKE THE DISCOUNT');
+  assert.equal(engine.run('early-payment-discount-check', { i: 50 }).text, 'PAY ON NET TERMS');
+  assert.equal(engine.run('economic-production-quantity').text, 'BATCH SIZE CLOSE TO OPTIMAL');
+  assert.equal(engine.run('economic-production-quantity', { Qnow: 10000 }).text, 'BATCH SIZE COSTLY');
+  assert.equal(engine.run('wip-lead-time-check').text, 'LEAD TIME WITHIN TARGET');
+  assert.equal(engine.run('wip-lead-time-check', { target: 4 }).text, 'LEAD TIME TOO LONG');
+  assert.equal(engine.run('critical-spares-poisson-plan').text, 'SPARES ENOUGH');
+  assert.equal(engine.run('critical-spares-poisson-plan', { held: 1 }).text, 'SPARES SHORT');
+  assert.equal(engine.run('capability-confidence-check').text, 'CAPABILITY PROVEN');
+  assert.equal(engine.run('capability-confidence-check', { s: 0.0115 }).text, 'NOT YET PROVEN: MORE DATA NEEDED');
+  assert.equal(engine.run('capability-confidence-check', { s: 0.013 }).text, 'NOT CAPABLE');
+  assert.equal(engine.run('parting-off-plan').text, 'PARTING PLAN WORKS');
+  for (const over of [{ Pav: 1 }, { tMax: 10 }] as Inputs[]) assert.equal(engine.run('parting-off-plan', over).text, 'PARTING PLAN NOT ADEQUATE', JSON.stringify(over));
+  const cases: Array<[string, Inputs]> = [['earned-value-check', { EV: 600000 }], ['earned-value-check', { cpiMin: 3 }], ['pert-schedule-check', { m1: 20 }], ['pert-schedule-check', { conf: 100 }], ['early-payment-discount-check', { nd: 30 }], ['early-payment-discount-check', { d: 60 }], ['economic-production-quantity', { p: 90 }], ['economic-production-quantity', { wd: 0 }], ['wip-lead-time-check', { hpd: 30 }], ['critical-spares-poisson-plan', { Nu: 0 }], ['capability-confidence-check', { USL: 9.9 }], ['capability-confidence-check', { n: 4 }], ['parting-off-plan', { di: 70 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-fourth handbook pass (handbook74): forty-fourth round of integrated design checks.
+// Expected values are independent hand calculations (cantilever and simply supported beam formulas, drilling power and torque).
+const HB54_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['boring-bar-overhang-check', {}, { Fc: 300, Fr: 120, k: 12080.098704599422, err: 19.867387334229434, fn: 1808.9386398699503, Lmax: 100.22200318281597, fMax: 0.1510012338074928, errAlt: 6.953585566980302, LmaxAlt: 142.21336003085887 }, 1e-8],
+  ['boring-bar-overhang-check', { L: 150 }, { err: 67.05243225302436, LD: 6 }, 1e-8],
+  ['slender-work-turning-check', {}, { Fr: 240, delta: 0.03832443544411542, err: 76.64887088823085, Lmax: 292.59382452426576, rests: 1, fMax: 0.07827903960580426 }, 1e-8],
+  ['slender-work-turning-check', { hold: 'chuck' }, { delta: 0.6131909671058468, err: 1226.3819342116935, Lmax: 116.11593621230456, rests: 0 }, 1e-8],
+  ['reaming-plan', {}, { Dd: 9.75, stock: 0.125, nD: 816.179195343053, nR: 318.3098861837907, tD: 0.20362518149609066, tR: 0.34557519189487723, perHole: 0.6492003733909678, total: 32.46001866954839, perReamer: 1500, reamers: 1 }, 1e-9],
+  ['reaming-plan', { retract: 'rapid' }, { perHole: 0.4764127774435293 }, 1e-9],
+  ['dowel-pin-joint-check', {}, { tau: 59.683103659460755, sb: 31.25, iMax: 15, iMin: -9, e1: 1.5, e2: 2 }, 1e-9],
+  ['taper-shank-holding-check', {}, { n: 397.88735772973837, Pc: 1.0416666666666667, Tq: 25, thrust: 2142.9182517552804, Dm: 22.125, Nn: 17148.70247285567, Th: 18.97075211059659, ratio: 0.7588300844238635 }, 1e-8],
+];
+for (const [id, over, expected, tol] of HB54_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-fourth-round design checks agree with the tools they chain', () => {
+  const bb = engine.run('boring-bar-overhang-check').values;
+  near(bb.dr, engine.run('boring-bar-deflection', { D: 25, L: 100, E: 210, F: bb.Fr, allow: 1 }).values.defl, 1e-12, 'radial deflection as the boring bar deflection tool');
+  const sw = engine.run('slender-work-turning-check').values, I = Math.PI * 30 ** 4 / 64;
+  near(sw.delta, engine.run('beam-deflection', { case: 'simple-point', load: sw.Fr, length: 400, modulus: 210000, inertia: I }).values.deflection, 1e-12, 'mid-span deflection as the beam tool');
+  near(engine.run('slender-work-turning-check', { hold: 'chuck' }).values.delta, engine.run('beam-deflection', { case: 'cantilever-point', load: sw.Fr, length: 400, modulus: 210000, inertia: I }).values.deflection, 1e-12, 'free-end deflection as the beam tool');
+  const dw = engine.run('dowel-pin-joint-check').values, bs = engine.run('bolt-shear-bearing', { F: 6000, n: 2, planes: '1', d: 8, t: 12, tauAllow: 150, bAllow: 120 }).values;
+  near(dw.tau, bs.tau, 1e-12, 'pin shear as the shear and bearing tool'); near(dw.sb, bs.sb, 1e-12, 'bearing as the shear and bearing tool');
+  const tp = engine.run('taper-shank-holding-check').values, dc = engine.run('drilling-cycle-planner', { D: 20, vc: 25, f: 0.25, kc: 2000, point: 118 }).values;
+  near(tp.Tq, dc.Tq, 1e-12, 'drilling torque as the drilling cycle planner'); near(tp.thrust, dc.thrust, 1e-9, 'thrust as the drilling cycle planner');
+  const rp = engine.run('reaming-plan').values, dp = engine.run('drilling-cycle-planner', { D: 9.75, vc: 25, f: 0.15, point: 118, depth: 20, clear: 2, peck: 0, pos: 0, holes: 1 }).values;
+  near(rp.tD, dp.perHole, 1e-12, 'pilot drilling time as the drilling cycle planner');
+});
+
+test('forty-fourth-round design checks give pass and fail verdicts', () => {
+  assert.equal(engine.run('boring-bar-overhang-check').text, 'OVERHANG ACCEPTABLE');
+  assert.equal(engine.run('boring-bar-overhang-check', { L: 150 }).text, 'DEFLECTION TOO HIGH');
+  assert.equal(engine.run('boring-bar-overhang-check', { L: 125, allow: 100 }).text, 'OVERHANG RATIO TOO HIGH');
+  assert.equal(engine.run('slender-work-turning-check').text, 'SUPPORT OR LIGHTER CUT NEEDED');
+  assert.equal(engine.run('slender-work-turning-check', { L: 250 }).text, 'WORK STIFF ENOUGH');
+  assert.equal(engine.run('reaming-plan').text, 'REAMING PLAN FEASIBLE');
+  assert.equal(engine.run('reaming-plan', { allow: 0.6 }).text, 'STOCK OUTSIDE RANGE');
+  assert.equal(engine.run('reaming-plan', { Df: 2, allow: 0.2, nMax: 2000 }).text, 'SPINDLE SPEED TOO HIGH');
+  assert.equal(engine.run('dowel-pin-joint-check').text, 'DOWELS ADEQUATE');
+  assert.equal(engine.run('dowel-pin-joint-check', { F: 20000 }).text, 'PIN SHEAR TOO HIGH');
+  assert.equal(engine.run('dowel-pin-joint-check', { t1: 8 }).text, 'ENGAGEMENT TOO SHORT');
+  assert.equal(engine.run('taper-shank-holding-check').text, 'TANG OR DRAWBAR NEEDED');
+  assert.equal(engine.run('taper-shank-holding-check', { mu: 0.2, SF: 0.5 }).text, 'TAPER HOLDS THE DRILL');
+  assert.ok(engine.run('taper-shank-holding-check', { c: 0.2917 }).checks.some((c: any) => c.label === 'Self-holding' && c.status === 'warn'), 'a steep taper is self-releasing');
+  const cases: Array<[string, Inputs]> = [
+    ['reaming-plan', { allow: 10 }], ['reaming-plan', { sMin: 0.3, sMax: 0.2 }], ['reaming-plan', { lifeM: 0.01 }],
+    ['dowel-pin-joint-check', { pinLo: 20 }], ['dowel-pin-joint-check', { holeLo: 20 }],
+    ['taper-shank-holding-check', { Le: 1000 }], ['slender-work-turning-check', { rr: 0 }], ['boring-bar-overhang-check', { rr: 0 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Engineering thermodynamics, second Çengel batch (cengel2): steam cycle, steam dryness, CHP and air processes.
+// Expected values are independent hand calculations: closed forms, and Hyland–Wexler states with a secant wet-bulb solution.
+const CG2_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['rankine-cycle-check', {}, { eta: 29.069619249225802, mdot: 5.888954275526295, HR: 12384.06313180685, x4: 0.8660549308139293, Qb: 17200.08768306507, wp: 0.00101 * 2990 / 0.85 }, 1e-8],
+  ['steam-dryness-throttling-check', {}, { x: (2776.6 - 762.51) / 2014.6, sup: 50.39 }, 1e-9],
+  ['steam-dryness-throttling-check', { h2: 2700 }, { x: 0.9617244117939046 }, 1e-12],
+  ['cogeneration-saving-check', {}, { u: 80, Fsep: 900 / 0.4 + 1100 / 0.85, PES: 29.460580912863065, PHR: 900 / 1100 }, 1e-9],
+  ['cogeneration-saving-check', { Qh: 0 }, { PES: -100 / 9, PHR: 0 }, 1e-9],
+  ['air-stream-mixing-check', {}, { T3: 17.56067018944977, RH3: 57.732898813536316, w3: 0.0071984915235847454, share: 26.249035534777327 }, 1e-8],
+  ['air-stream-mixing-check', { T1: 0, RH1: 100, V1: 1, T2: 30, RH2: 95, V2: 1 }, { T3: 14.251004361637719, RH3: 137.4475155415736 }, 1e-8],
+  ['evaporative-cooler-check', {}, { Twb: 20.761082968498428, T2: 24.208866374798742, w2: 0.013972250576503862, mw: 69.20846565707711 / 3600, Qs: 47.257439930669854 }, 1e-6],
+  ['heating-humidification-check', {}, { Q: 20.805942563464097, Mh: 23.87446944060214, w1: 0.002149764974893166, w3: 0.007392694301167118 }, 1e-8],
+  ['heating-humidification-check', { kind: 'spray', hw: 62.7 }, { Q: 38.13018604115437 }, 1e-8],
+];
+for (const [id, over, expected, tol] of CG2_CASES) test(`thermodynamics (cengel2): ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('thermodynamics (cengel2): balances and limiting cases', () => {
+  const rk = engine.run('rankine-cycle-check').values;
+  near(rk.qin, rk.wnet + rk.qout, 1e-9, 'heat added = net work + heat rejected');
+  near(engine.run('rankine-cycle-check', { etat: 100, etap: 100 }).values.wt, 3116.1 - 2136.1, 1e-9, 'ideal turbine work is the isentropic drop');
+  const ev = engine.run('evaporative-cooler-check', { eps: 100 }).values;
+  near(ev.T2, ev.Twb, 1e-12, 'a perfect cooler reaches the wet-bulb');
+  near(ev.RH2, 100, 1e-6, 'and leaves the air saturated');
+  const mx = engine.run('air-stream-mixing-check', { V1: 0 }).values;
+  near(mx.T3, 22, 1e-9, 'one stream alone keeps its temperature');
+  near(mx.RH3, 50, 1e-9, 'and its humidity');
+  near(engine.run('heating-humidification-check', { kind: 'spray', hw: 62.7 }).values.Mh, 23.87446944060214, 1e-8, 'water added is unchanged by the humidifier type');
+  near(engine.run('cogeneration-saving-check', { etaE: 80, etaH: 80 }).values.PES, 0, 1e-9, 'separate production as efficient as the CHP utilisation factor gives no saving');
+});
+
+test('thermodynamics (cengel2): verdicts and guards', () => {
+  assert.equal(engine.run('rankine-cycle-check').text, 'EXHAUST DRY ENOUGH');
+  assert.equal(engine.run('rankine-cycle-check', { xmin: 0.9 }).text, 'EXHAUST TOO WET');
+  assert.equal(engine.run('steam-dryness-throttling-check').text, 'STEAM DRY ENOUGH');
+  assert.equal(engine.run('steam-dryness-throttling-check', { h2: 2700 }).text, 'STEAM TOO WET');
+  assert.equal(engine.run('steam-dryness-throttling-check', { T2: 102 }).text, 'READING NOT VALID');
+  assert.equal(engine.run('cogeneration-saving-check').text, 'CHP SAVES PRIMARY ENERGY');
+  assert.equal(engine.run('cogeneration-saving-check', { pesReq: 30 }).text, 'SAVING BELOW TARGET');
+  assert.ok(engine.run('cogeneration-saving-check', { Qf: 1500 }).checks.some((c: any) => c.label === 'Energy balance' && c.status === 'warn'), 'outputs above the fuel input are flagged');
+  assert.equal(engine.run('air-stream-mixing-check').text, 'MIXED AIR CLEAR');
+  assert.equal(engine.run('air-stream-mixing-check', { rhMax: 50 }).text, 'MIXED AIR NEAR SATURATION');
+  assert.equal(engine.run('air-stream-mixing-check', { T1: 0, RH1: 100, V1: 1, T2: 30, RH2: 95, V2: 1 }).text, 'FOG FORMS');
+  assert.equal(engine.run('evaporative-cooler-check').text, 'COOLER REACHES TARGET');
+  assert.equal(engine.run('evaporative-cooler-check', { Treq: 22 }).text, 'COOLER CANNOT REACH TARGET');
+  assert.ok(engine.run('evaporative-cooler-check', { Treq: 20 }).checks.some((c: any) => c.label === 'Target against the wet-bulb' && c.status === 'fail'), 'a target below the wet-bulb is unreachable');
+  assert.equal(engine.run('heating-humidification-check').text, 'EQUIPMENT MEETS THE DUTY');
+  assert.equal(engine.run('heating-humidification-check', { Qcap: 20 }).text, 'HEATER UNDERSIZED');
+  assert.equal(engine.run('heating-humidification-check', { Mcap: 20 }).text, 'HUMIDIFIER UNDERSIZED');
+  assert.equal(engine.run('heating-humidification-check', { Qcap: 20, Mcap: 20 }).text, 'HEATER AND HUMIDIFIER UNDERSIZED');
+  assert.ok(engine.run('heating-humidification-check', { kind: 'spray' }).checks.some((c: any) => c.label === 'Humidifier enthalpy' && c.status === 'warn'), 'steam enthalpy with a spray humidifier is flagged');
+  const cases: Array<[string, Inputs]> = [['rankine-cycle-check', { Pb: 5 }], ['rankine-cycle-check', { h4s: 3200 }], ['rankine-cycle-check', { h4s: 150 }], ['rankine-cycle-check', { etat: 10 }], ['steam-dryness-throttling-check', { P2: 1000 }], ['steam-dryness-throttling-check', { T2: 90 }], ['cogeneration-saving-check', { We: 0, Qh: 0 }], ['cogeneration-saving-check', { etaE: 0 }], ['air-stream-mixing-check', { V1: 0, V2: 0 }], ['air-stream-mixing-check', { T1: -5 }], ['evaporative-cooler-check', { T1: 2, RH1: 5 }], ['evaporative-cooler-check', { eps: 0 }], ['heating-humidification-check', { T3: 4 }], ['heating-humidification-check', { RH3: 10 }], ['heating-humidification-check', { kind: 'mist' }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-fifth handbook pass (handbook75): forty-fifth round of integrated design checks.
+// Expected values are independent hand calculations (unit power, annulus and core volumes, clearance geometry, key stresses, hook equilibrium).
+const HB55_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['trepanning-plan', {}, { n: 424.4131815783876, vm: 72, Pc: 1.728, Pm: 2.16, Tq: 38.88, t: 3.0041479749952393, Dc: 48, Vr: 152681.40296446395, core: 2.1307538013707417, value: 3.1961307020561125, PcS: 10, PmS: 12.5, tS: 1.6118803655888712 }, 1e-8],
+  ['grinding-wheel-cost-plan', {}, { Vw: 2349.125906721756, wear: 117.4562953360878, dress: 87.96459430051421, usable: 2199114.857512855, parts: 10705.41005543876, wheelPP: 0.04203482142857131, tg: 35.36407383402195, cpp: 1.2208372825626364 }, 1e-7],
+  ['drill-bushing-position-check', {}, { c: 0.024, tilt: 0.003, e: 0.042, err: 0.084, gr: 0.75 }, 1e-12],
+  ['woodruff-key-check', {}, { F: 4800, tau: 32, sh: 76.8, ss: 25.6, Ls: 13.333333333333334, Lb: 19.2, tauShaft: 39.1139188142642 }, 1e-9],
+  ['eyebolt-lift-check', {}, { T1: 517.6380902050414, T2: 732.0508075688772, V1: 366.0254037844386, V2: 633.9745962155613, H: 366.02540378443854, naive: 500 }, 1e-9],
+  ['eyebolt-lift-check', { a1: 60, a2: 10 }, { T1: 184.79253090409537, T2: 921.6049851068763 }, 1e-9],
+];
+for (const [id, over, expected, tol] of HB55_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-fifth-round design checks agree with the tools they chain', () => {
+  const tp = engine.run('trepanning-plan').values, dc = engine.run('drilling-cycle-planner', { D: 60, vc: 80, f: 0.25, kc: 2000, point: 118, eta: 80, depth: 150, clear: 3, peck: 0, pos: 0, holes: 1 }).values;
+  near(tp.PmS, dc.Pm, 1e-12, 'solid drill power as the drilling cycle planner'); near(tp.tS, dc.perHole, 1e-12, 'solid drill time as the drilling cycle planner');
+  const gw = engine.run('grinding-wheel-cost-plan').values;
+  near(engine.run('grinding-geometry', { Vw: gw.Vw, Vs: gw.wear }).values.G, 20, 1e-9, 'grinding ratio as the grinding geometry tool');
+  const wk = engine.run('woodruff-key-check').values, ks = engine.run('key-stress', { T: 60, d: 25, w: 6, h: 5, L: 25, tauA: 60, sigA: 100 }).values;
+  near(wk.tau, ks.tau, 1e-12, 'key shear as the parallel key tool'); near(wk.sh, ks.sigma, 1e-12, 'hub bearing as the parallel key tool with h ÷ 2 equal to the height in the hub');
+  const ey = engine.run('eyebolt-lift-check', { a1: 30, a2: 30 }).values, sl = engine.run('sling-tension', { mass: 1000, legs: 2, angle: 30, wll: 1500 }).values;
+  near(ey.T1, sl.kg, 1e-9, 'equal legs as the sling tension tool'); near(ey.T2, sl.kg, 1e-9, 'equal legs as the sling tension tool');
+});
+
+test('forty-fifth-round design checks give pass and fail verdicts', () => {
+  assert.equal(engine.run('trepanning-plan').text, 'TREPANNING FEASIBLE');
+  assert.equal(engine.run('trepanning-plan', { Pav: 2 }).text, 'NOT ENOUGH SPINDLE POWER');
+  assert.equal(engine.run('grinding-wheel-cost-plan').text, 'WITHIN TARGET COST');
+  assert.equal(engine.run('grinding-wheel-cost-plan', { target: 1 }).text, 'ABOVE TARGET COST');
+  assert.ok(engine.run('grinding-wheel-cost-plan', { pd: 2 }).checks.some((c: any) => c.label === 'Dressing share' && c.status === 'warn'), 'frequent dressing is flagged');
+  assert.equal(engine.run('drill-bushing-position-check').text, 'BUSHING HOLDS POSITION');
+  assert.equal(engine.run('drill-bushing-position-check', { g: 12 }).text, 'POSITION ERROR TOO LARGE');
+  assert.equal(engine.run('drill-bushing-position-check', { g: 2 }).text, 'CHIP GAP OUTSIDE RANGE');
+  assert.equal(engine.run('woodruff-key-check').text, 'KEY AND SHAFT ADEQUATE');
+  assert.equal(engine.run('woodruff-key-check', { T: 90 }).text, 'BEARING TOO HIGH');
+  assert.equal(engine.run('woodruff-key-check', { T: 90, sigA: 300, tauA: 300, tauS: 50 }).text, 'SHAFT OVERSTRESSED');
+  assert.equal(engine.run('eyebolt-lift-check').text, 'EYEBOLTS ADEQUATE');
+  assert.equal(engine.run('eyebolt-lift-check', { a1: 60, a2: 10 }).text, 'EYEBOLT OVERLOADED AT ITS ANGLE');
+  assert.equal(engine.run('eyebolt-lift-check', { Le: 20 }).text, 'THREAD ENGAGEMENT TOO SHORT');
+  const cases: Array<[string, Inputs]> = [
+    ['trepanning-plan', { w: 30 }], ['grinding-wheel-cost-plan', { Dmin: 400 }], ['grinding-wheel-cost-plan', { s: 50 }],
+    ['drill-bushing-position-check', { bushUp: -40 }], ['drill-bushing-position-check', { gMin: 2, gMax: 1 }],
+    ['woodruff-key-check', { t1: 10 }], ['woodruff-key-check', { d: 12, t1: 7 }], ['eyebolt-lift-check', { a1: 0, a2: 0 }], ['eyebolt-lift-check', { s1: 0 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// ---------------------------------------------------------------- Thermodynamics topic tools (greiner)
+// Greiner, Neise and Stöcker, Thermodynamics and Statistical Mechanics: expected values are independent hand calculations.
+
+const RGAS = 8.314462618;
+/** Largest real root of z³ + a2 z² + a1 z + a0 = 0 by Cardano (independent of the tools' Newton iteration). */
+const largestRoot = (a2: number, a1: number, a0: number) => {
+  const Q = (3 * a1 - a2 * a2) / 9, Rr = (9 * a2 * a1 - 27 * a0 - 2 * a2 ** 3) / 54, D = Q ** 3 + Rr ** 2;
+  if (D >= 0) return Math.cbrt(Rr + Math.sqrt(D)) + Math.cbrt(Rr - Math.sqrt(D)) - a2 / 3;
+  const th = Math.acos(Rr / Math.sqrt(-(Q ** 3)));
+  return Math.max(...[0, 1, 2].map((k) => 2 * Math.sqrt(-Q) * Math.cos((th + 2 * Math.PI * k) / 3) - a2 / 3));
+};
+const zVdw = (p: number, T: number, Tc: number, pc: number) => {
+  const a = 27 * RGAS ** 2 * Tc ** 2 / (64 * pc), b = RGAS * Tc / (8 * pc), A = a * p / (RGAS * T) ** 2, B = b * p / (RGAS * T);
+  return largestRoot(-(1 + B), A, -A * B);
+};
+const zPr = (p: number, T: number, Tc: number, pc: number, w: number) => {
+  const k = 0.37464 + 1.54226 * w - 0.26992 * w * w, a = 0.45724 * RGAS ** 2 * Tc ** 2 / pc * (1 + k * (1 - Math.sqrt(T / Tc))) ** 2, b = 0.0778 * RGAS * Tc / pc;
+  const A = a * p / (RGAS * T) ** 2, B = b * p / (RGAS * T);
+  return largestRoot(-(1 - B), A - 3 * B * B - 2 * B, -(A * B - B * B - B ** 3));
+};
+
+test('thermodynamics tools match independent hand calculations', () => {
+  // Blocked-in water in DN50 steel pipe, anchored: (210 − 36)×10⁻⁶ ÷ (1/2200 + 0.91 × 52.5 ÷ (200000 × 3.91)) MPa/K
+  const bl = engine.run('blocked-in-liquid-pressure-check').values;
+  near(bl.rate, 3.3744551, 1e-6, 'pressure rise per kelvin, bar/K'); near(bl.pF, 38.744551, 1e-5, 'final pressure'); near(bl.dTa, 3.2597855, 1e-6, 'warming to the limit'); near(bl.hoop, 26.011367, 1e-5, 'hoop stress');
+  near(engine.run('blocked-in-liquid-pressure-check', { wall: 'rigid' }).values.rate, 174e-6 * 2200 * 10, 1e-9, 'rigid container: (β − 3αₛ) K');
+  near(engine.run('blocked-in-liquid-pressure-check', { wall: 'joint' }).values.rate, 174e-6 / (1 / 2200 + 0.85 * 52.5 / (200000 * 3.91)) * 10, 1e-9, 'expansion joints: c₁ = 1 − ν/2');
+  near(engine.run('blocked-in-liquid-pressure-check', { wall: 'free' }).values.rate, 174e-6 / (1 / 2200 + 0.95 * 52.5 / (200000 * 3.91)) * 10, 1e-9, 'closed ends free: c₁ = 5/4 − ν');
+  // Nitrogen in a 50 L cylinder at 200 bar g and 20 °C, Peng–Robinson and van der Waals against Cardano roots
+  const T = 293.15, pF = 200e5 + 101325, pM = 10e5 + 101325, zf = zPr(pF, T, 126.2, 33.98e5, 0.037), zm = zPr(pM, T, 126.2, 33.98e5, 0.037);
+  const gc = engine.run('gas-cylinder-real-gas-duration').values, nUse = pF * 0.05 / (zf * RGAS * T) - pM * 0.05 / (zm * RGAS * T);
+  near(gc.zF, zf, 1e-9, 'Peng–Robinson Z at 200 bar g'); near(gc.zF, 1.0228, 5e-4, 'nitrogen Z by Peng–Robinson');
+  near(gc.mass, pF * 0.05 / (zf * RGAS * T) * 28.014 / 1000, 1e-9, 'contents now'); near(gc.massId, pF * 0.05 / (RGAS * T) * 28.014 / 1000, 1e-9, 'ideal contents');
+  near(gc.Vstd, nUse * RGAS * 288.15 / 101325 * 1000, 1e-6, 'usable standard litres at 15 °C'); near(gc.hours, nUse * RGAS * 288.15 / 101325 * 1000 / 15 / 60, 1e-9, 'running time');
+  near(engine.run('gas-cylinder-real-gas-duration', { eos: 'vdw' }).values.zF, zVdw(pF, T, 126.2, 33.98e5), 1e-9, 'van der Waals Z');
+  near(engine.run('gas-cylinder-real-gas-duration', { pFull: 1, pMin: 0 }).values.zF, 1, 2e-3, 'near-ideal at low pressure');
+  // Water: 100 °C at 101.325 kPa, 2257 kJ/kg, 18.015 g/mol → boils at 58.89 °C at 20 kPa abs (steam tables 60.06 °C)
+  const bp = engine.run('boiling-point-at-pressure').values;
+  near(bp.TbC, 58.889457, 1e-5, 'boiling point at 20 kPa'); near(bp.pv, 13.337571, 1e-5, 'vapour pressure at 50 °C'); near(bp.mg, 8.889457, 1e-5, 'margin');
+  near(engine.run('boiling-point-at-pressure', { p: 101.325 }).values.TbC, 100, 1e-9, 'reference point returned');
+  // Heat pump 12 kW from 3.5 kW between 7 °C and 55 °C: COP 3.4286 against 328.15 ÷ 48 = 6.8365
+  const cl = engine.run('carnot-limit-check').values;
+  near(cl.lim, 328.15 / 48, 1e-9, 'Carnot heating COP'); near(cl.eta2, 50.151281, 1e-5, 'second-law efficiency'); near(cl.cost, 2100, 1e-9, 'yearly cost'); near(cl.save, 5100, 1e-9, 'saving over resistance heating');
+  near(engine.run('carnot-limit-check', { mode: 'ch' }).values.lim, 280.15 / 48, 1e-9, 'Carnot cooling COP');
+  near(engine.run('carnot-limit-check', { mode: 'en', Th: 500, Tc: 30, out: 30, inp: 100 }).values.eta2, 0.3 / (1 - 303.15 / 773.15) * 100, 1e-9, 'engine second-law efficiency');
+  // 500 L receiver at 10 bar g: pV ln(p/p0) − (p − p0)V, isentropic and Brode energies
+  const se = engine.run('compressed-gas-stored-energy').values;
+  near(se.Xkj, 813.84554, 1e-4, 'exergy'); near(se.Eskj, 680.40067, 1e-4, 'isentropic energy'); near(se.Ebkj, 1250, 1e-9, 'Brode energy'); near(se.share, 42.288666, 1e-5, 'share kept'); near(se.pV, 500, 1e-9, 'pV product');
+  // Nitrogen generator, 1 % O₂ product at air factor 3 from 20.95 % O₂ air, 20 °C
+  const gs = engine.run('gas-generator-energy-check').values;
+  near(gs.xW, 0.30925, 1e-12, 'waste oxygen'); near(gs.Wmin, 0.0074574312, 1e-9, 'minimum work, kWh/m³'); near(gs.eta2, 2.4858104, 1e-6, 'second-law efficiency'); near(gs.cost, 15000, 1e-9, 'yearly cost');
+  near(gs.WminInf, 468.87362 * 101325 / (RGAS * 273.15) / 3.6e6, 1e-9, 'complete-recovery minimum');
+  // Pure oxygen, complete recovery: RT ln(1 ÷ 0.2095) per mole, as in Industrial Gases by the Numbers
+  near(engine.run('gas-generator-energy-check', { xP: 99.999, AF: 1000, T: 15, Tref: 15 }).values.WminInf, RGAS * 288.15 * Math.log(1 / 0.2095) * 101325 / (RGAS * 288.15) / 3.6e6, 2e-5, 'oxygen minimum');
+  near(engine.run('gas-generator-energy-check', { xP: 93, AF: 6 }).values.rec, 0.93 / (6 * 0.2095) * 100, 1e-9, 'oxygen recovery');
+  // Quench: 150 kg at 600 J/kg·K from 850 °C into 3000 L of oil (870 kg/m³, 2000 J/kg·K) at 60 °C
+  const qt = engine.run('quench-tank-temperature-check').values;
+  near(qt.Tf, 73.389831, 1e-5, 'mixture temperature'); near(qt.QMJ, 69.894915, 1e-5, 'heat per load'); near(qt.P, 38.830508, 1e-5, 'average heat input'); near(qt.dS, 99.863175, 1e-5, 'entropy generated, kJ/K'); assert.equal(qt.n, 1);
+});
+
+test('thermodynamics tools: verdicts and guards', () => {
+  assert.equal(engine.run('blocked-in-liquid-pressure-check').text, 'EXCEEDS THE LIMIT: PROVIDE THERMAL RELIEF');
+  assert.equal(engine.run('blocked-in-liquid-pressure-check', { dT: 2 }).text, 'WITHIN THE LIMIT');
+  assert.equal(engine.run('gas-cylinder-real-gas-duration').text, 'LASTS THE REQUIRED TIME');
+  assert.equal(engine.run('gas-cylinder-real-gas-duration', { need: 12 }).text, 'RUNS OUT TOO SOON');
+  assert.equal(engine.run('boiling-point-at-pressure').text, 'BELOW BOILING WITH MARGIN');
+  assert.equal(engine.run('boiling-point-at-pressure', { Tl: 56 }).text, 'MARGIN TOO SMALL');
+  assert.equal(engine.run('boiling-point-at-pressure', { Tl: 65 }).text, 'LIQUID WILL BOIL OR FLASH');
+  assert.equal(engine.run('carnot-limit-check').text, 'WITHIN THE LIMIT AND ACCEPTABLE');
+  assert.equal(engine.run('carnot-limit-check', { out: 30 }).text, 'CLAIM EXCEEDS THE CARNOT LIMIT');
+  assert.equal(engine.run('carnot-limit-check', { etaMin: 60 }).text, 'BELOW YOUR ACCEPTANCE LEVEL');
+  assert.equal(engine.run('compressed-gas-stored-energy').text, 'WITHIN YOUR pV LIMIT');
+  assert.equal(engine.run('compressed-gas-stored-energy', { pVlim: 400 }).text, 'ABOVE YOUR pV LIMIT');
+  assert.equal(engine.run('gas-generator-energy-check').text, 'ABOVE THE THERMODYNAMIC MINIMUM');
+  assert.equal(engine.run('gas-generator-energy-check', { SE: 0.005 }).text, 'BELOW THE THERMODYNAMIC MINIMUM: CLAIM NOT POSSIBLE');
+  assert.equal(engine.run('quench-tank-temperature-check').text, 'BATH STAYS WITHIN ITS LIMIT');
+  assert.equal(engine.run('quench-tank-temperature-check', { cool: 30 }).text, 'COOLER TOO SMALL FOR THE LOAD RATE');
+  assert.equal(engine.run('quench-tank-temperature-check', { Vq: 500 }).text, 'ONE LOAD OVERHEATS THE BATH');
+  const cases: Array<[string, Inputs]> = [['blocked-in-liquid-pressure-check', { p0: 20 }], ['blocked-in-liquid-pressure-check', { nu: 0.6 }], ['blocked-in-liquid-pressure-check', { beta: 30 }], ['gas-cylinder-real-gas-duration', { Tc: 300 }], ['gas-cylinder-real-gas-duration', { pMin: 250 }], ['gas-cylinder-real-gas-duration', { pFull: 2000 }], ['boiling-point-at-pressure', { p: 1e6 }], ['boiling-point-at-pressure', { p0: 0.001, p: 1000 }], ['carnot-limit-check', { Tc: 60 }], ['carnot-limit-check', { mode: 'en' }], ['carnot-limit-check', { Tc: -300 }], ['compressed-gas-stored-energy', { k: 2 }], ['gas-generator-energy-check', { AF: 1.1 }], ['gas-generator-energy-check', { xP: 20.95 }], ['quench-tank-temperature-check', { Tmax: 50 }], ['quench-tank-temperature-check', { Tl: 40 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-seventh handbook pass (handbook77): forty-sixth round of integrated design checks.
+// Expected values are independent hand calculations (two-plane reactions, rating life, parabolic case growth, reference depth).
+const HB57_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['countershaft-bearing-check', {}, { Ft1: 1500, Ft2: 3750, PA: 2063.6287337392832, PB: 3308.661371420991, LA: 102411.28383121315, LB: 24847.662881538523, s0A: 7.753332631208373, s0B: 4.835792546859633, Mmax: 165.43306857104957, vm: 49.97108141964413 }, 1e-6],
+  ['carburizing-case-depth-plan', {}, { removed: 0.15, before: 0.95, total: 1.3571428571428574, t: 5.11621315192744, cycle: 8.11621315192744, cpp: 5.748984315948603, share: 0.22619047619047625, t10: 6.190617913832204 }, 1e-9],
+  ['induction-hardening-plan', {}, { delta: 5.278654932840373, ratio: 2.6393274664201867, fT: 30.96021988888889, Dd: 7.577687973340689, mass: 0.27374267587054657, E: 144.5361328596486, Pw: 36.13403321491215, Pg: 51.620047449874505, dens: 0.2875455 }, 1e-6],
+  ['induction-hardening-plan', { f: 30 }, { delta: 3.047632846434535, ratio: 1.5238164232172675 }, 1e-9],
+];
+for (const [id, over, expected, tol] of HB57_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-sixth-round design checks agree with the tools they chain', () => {
+  const cs = engine.run('countershaft-bearing-check').values, kW = 150 * 500 / 9549.2966;
+  near(cs.Ft1, engine.run('gear-forces', { kW, rpm: 500, d: 200, alphan: 20, beta: 0 }).values.Ft, 1e-6, 'driven gear force as the gear forces tool');
+  near(cs.Fr2, engine.run('gear-forces', { kW, rpm: 500, d: 80, alphan: 20, beta: 0 }).values.Fr, 1e-6, 'driving gear radial force as the gear forces tool');
+  near(cs.LB, engine.run('bearing-l10-life', { type: 'ball', C: 30, P: cs.PB / 1000, rpm: 500 }).values.hours, 1e-6, 'life as the bearing L10 tool');
+  near(cs.s0B, engine.run('bearing-static-ratio', { C0: 16, P0: cs.PB / 1000 }).values.s0, 1e-12, 'static factor as the bearing static ratio tool');
+  const same = engine.run('countershaft-bearing-check', { th2: 0 }).values;
+  assert.ok(same.PB < cs.PB, 'meshes on the same side partly cancel at bearing B');
+});
+
+test('forty-sixth-round design checks give pass and fail verdicts', () => {
+  assert.equal(engine.run('countershaft-bearing-check').text, 'SHAFT AND BEARINGS ADEQUATE');
+  assert.equal(engine.run('countershaft-bearing-check', { C: 20 }).text, 'BEARING LIFE TOO SHORT');
+  assert.equal(engine.run('countershaft-bearing-check', { C0: 6 }).text, 'STATIC LOAD TOO HIGH');
+  assert.equal(engine.run('countershaft-bearing-check', { ds: 20 }).text, 'SHAFT OVERSTRESSED');
+  assert.equal(engine.run('carburizing-case-depth-plan').text, 'CASE PLAN SUITS THE SECTION');
+  assert.equal(engine.run('carburizing-case-depth-plan', { sect: 8 }).text, 'CASE TOO DEEP FOR THE SECTION');
+  assert.equal(engine.run('induction-hardening-plan').text, 'FREQUENCY TOO LOW FOR THE CASE');
+  assert.equal(engine.run('induction-hardening-plan', { f: 30 }).text, 'FREQUENCY SUITS THE CASE');
+  assert.equal(engine.run('induction-hardening-plan', { f: 500 }).text, 'FREQUENCY TOO HIGH FOR THE CASE');
+  assert.equal(engine.run('induction-hardening-plan', { f: 30, D: 10, case: 1, hf: 1.2, rMax: 4 }).text, 'BAR TOO SMALL FOR THE FREQUENCY');
+  const cases: Array<[string, Inputs]> = [
+    ['countershaft-bearing-check', { x1: 0, x2: 0 }], ['induction-hardening-plan', { rMin: 3, rMax: 2 }], ['induction-hardening-plan', { case: 10, hf: 2 }], ['induction-hardening-plan', { T1: 10 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Thermodynamics pass (handbook70): Carnot limits, Joule–Thomson throttling, Clausius–Clapeyron, Raoult’s law, van ’t Hoff and mixing entropy.
+// Expected values are independent closed forms; the van der Waals throttling case uses the exact separable integral, not the tool’s Runge–Kutta steps.
+{
+  const RG = 8.314462618, K0 = 273.15;
+  // dP = Cp T dT ÷ (A − bT), A = 2a ÷ R, integrated exactly; solved for the outlet temperature by bisection.
+  const vdwOutlet = (T1: number, P1: number, P2: number, a: number, b: number, Cp: number) => {
+    const A = 2 * a / RG, F = (T2: number) => Cp * (-(T2 - T1) / b - A / (b * b) * Math.log((A - b * T2) / (A - b * T1))) - (P2 - P1);
+    let lo = 1, hi = T1; for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2; if (F(mid) > 0) hi = mid; else lo = mid; } return (lo + hi) / 2;
+  };
+  const T2v = vdwOutlet(288.15, 70e5, 7e5, 0.1408, 0.03913e-3, 29.1);
+  let lo = 288.15, hi = 388.15; for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2; if (vdwOutlet(mid, 70e5, 7e5, 0.1408, 0.03913e-3, 29.1) < 273.15) lo = mid; else hi = mid; }
+  const Tneed = (lo + hi) / 2, ndot = 100 / 3600 / 0.028014;
+  const osm = (c: number) => 2 * c / 58.44 * 1000 * RG * 298.15 / 1e5, ccRO = (3 - 0.75 * 0.06) / 0.25;
+  const Pst = 3.8 * Math.exp(-38000 / RG * (1 / 308.15 - 1 / 298.15)), yHead = 100 * Pst / 101.325;
+  const Sblend = 4.18 * (0.25 * Math.log(313.15 / 338.15) + 0.25 * Math.log(313.15 / 288.15));
+  const HB70_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+    ['heat-engine-second-law-check', {}, { eff: 4, carnot: 318.15 / 40, share: 400 * 40 / 318.15, Qo: 7.5, Sgen: (10 / 318.15 - 7.5 / 278.15) * 1000, Wrev: 400 / 318.15, lost: 2.5 - 400 / 318.15 }],
+    ['heat-engine-second-law-check', { mode: 'engine', Q: 100, W: 30, Th: 400, Tc: 30 }, { carnot: 1 - 303.15 / 673.15, Qo: 70, Sgen: (70 / 303.15 - 100 / 673.15) * 1000, lost: 100 * (1 - 303.15 / 673.15) - 30 }],
+    ['heat-engine-second-law-check', { mode: 'fridge', Q: 50, W: 12, Th: 35, Tc: 7 }, { eff: 50 / 12, carnot: 280.15 / 28, Qo: 62, Sgen: (62 / 308.15 - 50 / 280.15) * 1000, lost: 12 - 50 * 28 / 280.15 }],
+    ['gas-throttling-cooling-check', {}, { muIn: (2 * 0.1408 / (RG * 288.15) - 0.03913e-3) / 29.1 * 1e5, drop: 288.15 - T2v, T2C: T2v - K0, TneedC: Tneed - K0, Qpre: ndot * 29.1 * (Tneed - 288.15) / 1000, TinvC: 2 * 0.1408 / (RG * 0.03913e-3) - K0 }, 1e-7],
+    ['gas-throttling-cooling-check', { model: 'mu' }, { T2C: 15 - 0.25 * 63, TneedC: 0.25 * 63, Qpre: ndot * 29.1 * (0.25 * 63 - 15) / 1000 }, 1e-9],
+    ['vacuum-boiling-point', {}, { TbC: 1 / (1 / 373.15 - RG * Math.log(20 / 101.325) / 40656) - K0, Pneed: 101.325 * Math.exp(-40656 / RG * (1 / 338.15 - 1 / 373.15)) }],
+    ['solvent-headspace-lel-check', {}, { Pstar: Pst, y: yHead, shareLEL: 100 * yHead / 1.1, TlimC: 1 / (1 / 298.15 - RG * Math.log(0.25 * 0.011 * 101.325 / 3.8) / 38000) - K0, TLELC: 1 / (1 / 298.15 - RG * Math.log(0.011 * 101.325 / 3.8) / 38000) - K0 }],
+    ['solvent-headspace-lel-check', { x: 0.1, T: 0 }, { Pi: 0.38 * Math.exp(-38000 / RG * (1 / 273.15 - 1 / 298.15)) }],
+    ['ro-osmotic-pressure-check', {}, { cp: 0.06, cc: ccRO, piF: osm(3), piC: osm(ccRO), piP: osm(0.06), ndpFeed: 14.5 - osm(3) + osm(0.06), ndpTail: 12.5 - osm(ccRO) + osm(0.06), pfMin: 3.5 + osm(ccRO) - osm(0.06) }],
+    ['hot-cold-water-blend-check', {}, { f: 50, Qh: 15, Qc: 15, P: 52.25, Sgen: Sblend * 1000, lost: 288.15 * Sblend }],
+  ];
+  for (const [id, over, expected, tol] of HB70_CASES) test(`thermodynamics check: ${id} ${JSON.stringify(over)}`, () => {
+    const r = engine.run(id, over);
+    assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+    for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-9), `${id}/${key}`);
+  });
+}
+
+test('thermodynamics checks agree with their sources and with each other', () => {
+  // Linder’s nitrogen constants (1.390 L²·atm/mol², 0.03913 L/mol) give an inversion temperature 2a ÷ Rb of about 866 K.
+  near(engine.run('gas-throttling-cooling-check', { a: 1.390 * 1.01325 }).values.TinvC + 273.15, 2 * 1.390 / (0.082057366 * 0.03913), 1e-3, 'van der Waals inversion temperature');
+  // An entered coefficient equal to the van der Waals value at the inlet gives the same drop for a small pressure step.
+  const vdw = engine.run('gas-throttling-cooling-check', { P1: 7.01 }).values, mu = engine.run('gas-throttling-cooling-check', { model: 'mu', mu: vdw.muIn, P1: 7.01 }).values;
+  near(vdw.drop, mu.drop, 1e-5, 'small step matches the coefficient');
+  // Lost work equals T × S_gen: the cold reservoir for a heat pump, the hot reservoir for a refrigerator.
+  const hp = engine.run('heat-engine-second-law-check').values, fr = engine.run('heat-engine-second-law-check', { mode: 'fridge', Q: 50, W: 12, Th: 35, Tc: 7 }).values;
+  near(hp.lost, 278.15 * hp.Sgen / 1000, 1e-12, 'heat pump lost work'); near(fr.lost, 308.15 * fr.Sgen / 1000, 1e-12, 'refrigerator lost work');
+  // At exactly the Carnot COP no entropy is generated.
+  near(engine.run('heat-engine-second-law-check', { W: 10 * 40 / 318.15 }).values.Sgen, 0, 1e-9, 'reversible heat pump');
+  // The pressure for the temperature limit gives back that limit as the boiling point; the headspace limit temperature gives back the limit.
+  const vb = engine.run('vacuum-boiling-point').values;
+  near(engine.run('vacuum-boiling-point', { P: vb.Pneed }).values.TbC, 65, 1e-9, 'Clausius–Clapeyron round trip');
+  const sh = engine.run('solvent-headspace-lel-check').values;
+  near(engine.run('solvent-headspace-lel-check', { T: sh.TlimC }).values.shareLEL, 25, 1e-9, 'temperature at the limit');
+  near(engine.run('solvent-headspace-lel-check', { T: 25 }).values.y, 100 * 3.8 / 101.325, 1e-12, 'Raoult at the reference temperature');
+  // The least feed pressure gives exactly the required tail pressure; a seawater-strength ideal feed follows van ’t Hoff.
+  const ro = engine.run('ro-osmotic-pressure-check').values;
+  near(engine.run('ro-osmotic-pressure-check', { pf: ro.pfMin }).values.ndpTail, 1, 1e-9, 'least feed pressure');
+  near(engine.run('ro-osmotic-pressure-check', { c: 35, pf: 80 }).values.piF, 2 * 35 / 58.44 * 1000 * 8.314462618 * 298.15 / 1e5, 1e-9, 'van ’t Hoff seawater strength');
+  // Blending: the energy balance closes and mixing always generates entropy.
+  const bl = engine.run('hot-cold-water-blend-check').values;
+  near(bl.Qh * 65 + bl.Qc * 15, 30 * 40, 1e-9, 'energy balance');
+  assert.ok(engine.run('hot-cold-water-blend-check', { Th: 40.001, Tt: 40 }).values.Sgen > 0, 'mixing always generates entropy');
+});
+
+test('thermodynamics checks: verdicts and guards', () => {
+  assert.equal(engine.run('heat-engine-second-law-check').text, 'CLAIM WITHIN THE LIMIT');
+  assert.equal(engine.run('heat-engine-second-law-check', { W: 1.6 }).text, 'CLAIM CLOSE TO THE CARNOT LIMIT');
+  assert.equal(engine.run('heat-engine-second-law-check', { W: 1 }).text, 'CLAIM BREAKS THE SECOND LAW');
+  assert.equal(engine.run('heat-engine-second-law-check', { mode: 'engine', Q: 100, W: 60, Th: 400, Tc: 30 }).text, 'CLAIM BREAKS THE SECOND LAW');
+  assert.equal(engine.run('gas-throttling-cooling-check', { P1: 30 }).text, 'OUTLET ABOVE THE LIMIT');
+  assert.equal(engine.run('gas-throttling-cooling-check').text, 'PREHEAT NEEDED');
+  assert.ok(engine.run('gas-throttling-cooling-check', { model: 'mu', mu: -0.05 }).values.drop < 0, 'a negative coefficient warms the gas');
+  assert.equal(engine.run('vacuum-boiling-point').text, 'BOILS BELOW THE LIMIT');
+  assert.equal(engine.run('vacuum-boiling-point', { P: 30 }).text, 'PRESSURE TOO HIGH');
+  assert.equal(engine.run('solvent-headspace-lel-check', { x: 0.001 }).text, 'BELOW THE LIMIT');
+  assert.equal(engine.run('solvent-headspace-lel-check', { x: 0.1 }).text, 'ABOVE THE LIMIT');
+  assert.equal(engine.run('solvent-headspace-lel-check').text, 'FLAMMABLE HEADSPACE POSSIBLE');
+  assert.equal(engine.run('solvent-headspace-lel-check', { T: 120 }).text, 'LIQUID BOILING');
+  assert.equal(engine.run('ro-osmotic-pressure-check').text, 'FEED PRESSURE ENOUGH');
+  assert.equal(engine.run('ro-osmotic-pressure-check', { r: 90 }).text, 'CONCENTRATE END STARVED');
+  assert.equal(engine.run('hot-cold-water-blend-check').text, 'HOT SUPPLY ENOUGH');
+  assert.equal(engine.run('hot-cold-water-blend-check', { hotCap: 10 }).text, 'HOT SUPPLY SHORT');
+  const cases: Array<[string, Inputs]> = [
+    ['heat-engine-second-law-check', { share: 101 }], ['heat-engine-second-law-check', { Q: 0 }], ['heat-engine-second-law-check', { Th: 5, Tc: 45 }], ['heat-engine-second-law-check', { W: 12 }], ['heat-engine-second-law-check', { mode: 'cooler' }],
+    ['gas-throttling-cooling-check', { mu: 6 }], ['gas-throttling-cooling-check', { P2: 80 }], ['gas-throttling-cooling-check', { T1: 700 }], ['gas-throttling-cooling-check', { model: 'mu', mu: 5, P1: 1000, P2: 1, T1: -150 }],
+    ['vacuum-boiling-point', { P: 0 }], ['vacuum-boiling-point', { dH: 0.05 }],
+    ['solvent-headspace-lel-check', { x: 0 }], ['solvent-headspace-lel-check', { x: 1.5 }], ['solvent-headspace-lel-check', { LEL: 0 }],
+    ['ro-osmotic-pressure-check', { r: 100 }], ['ro-osmotic-pressure-check', { dp: 15 }], ['ro-osmotic-pressure-check', { c: 500 }],
+    ['hot-cold-water-blend-check', { Tt: 70 }], ['hot-cold-water-blend-check', { Tt: 15 }], ['hot-cold-water-blend-check', { Th: 100 }], ['hot-cold-water-blend-check', { Q: 0 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook76: quality charts, reliability demonstration, bearing frequencies, queueing and nesting. Expected values are
+// independent hand calculations (closed forms, a Poisson-identity chi-square CDF, birth–death state probabilities for the
+// queue, a separate two-block count) and NIST's published reliability test examples.
+const QR_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['bearing-defect-frequency-check', {}, { bpfo: 88.42469262295081, bpfi: 133.5753073770492, ftf: 9.824965846994536, bsf: 58.13311026345129, err: 0.14101561368442167, match: 1 }, 1e-9],
+  ['individuals-chart-check', {}, { mean: 10.015, mrbar: 0.04454545454545424, ucl: 10.133471953578336, lcl: 9.896528046421665, nOut: 0 }, 1e-9],
+  ['p-chart-check', {}, { pbar: 0.025, ucl: 0.058119103248729424, lcl: 0, thr: 12, nOut: 0 }, 1e-12],
+  ['reliability-demonstration-test', {}, { factor: 7.9935895860526305, T: 1598.7179172105261, daysNeed: 49.95993491282894, more: 9.274673893351622, fewer: 6.680783068255863 }, 1e-6],
+  ['reliability-demonstration-test', { r: 0 }, { factor: Math.log(10) }, 1e-9], // NIST example: factor 2.3 for no failures at 90 %
+  ['reliability-demonstration-test', { M: 400, conf: 80, r: 1 }, { factor: 2.9943083470021215 }, 1e-6], // NIST example: 2.99 at 80 % with one failure
+  ['queue-wait-check', {}, { Pw: 0.2997601918465228, WqMin: 4.496402877697842, Lq: 0.3747002398081535, cNeed: 3 }, 1e-9],
+  ['queue-wait-check', { c: 2 }, { WqMin: 45.45454545454544 }, 1e-9],
+  ['sheet-nesting-yield', {}, { A: 42, B: 36, best: 45, util: 87.1875, sheets: 12, cpp: 4.32 }, 1e-9],
+];
+for (const [id, over, expected, tol] of QR_CASES) test(`quality and reliability: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('quality and reliability tools: identities', () => {
+  const b = engine.run('bearing-defect-frequency-check').values;
+  near(b.bpfo + b.bpfi, 9 * 1480 / 60, 1e-9, 'BPFO + BPFI = elements × shaft frequency');
+  near(b.ftf, b.bpfo / 9, 1e-12, 'cage frequency = BPFO ÷ elements');
+  assert.equal(engine.run('bearing-defect-frequency-check', { fm: 2 * b.bpfo }).text, 'PEAK MATCHES OUTER RACE DEFECT', 'second harmonic matched');
+  near(engine.run('reliability-demonstration-test', { units: 1 }).values.perUnit, engine.run('reliability-demonstration-test').values.T, 1e-9, 'one unit runs every hour');
+  near(engine.run('queue-wait-check', { c: 1, lam: 2, ts: 20 }).values.WqMin, (2 / 3) / (3 - 2) * 60, 1e-9, 'M/M/1: Wq = ρ ÷ (μ − λ)');
+});
+
+test('quality and reliability tools: verdicts and guards', () => {
+  assert.equal(engine.run('bearing-defect-frequency-check').text, 'PEAK MATCHES OUTER RACE DEFECT');
+  assert.equal(engine.run('bearing-defect-frequency-check', { fm: 133.5 }).text, 'PEAK MATCHES INNER RACE DEFECT');
+  assert.equal(engine.run('bearing-defect-frequency-check', { fm: 70 }).text, 'NO BEARING FREQUENCY MATCH');
+  assert.equal(engine.run('individuals-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('individuals-chart-check', { x5: 10.5 }).text, 'POINT OUT OF CONTROL');
+  assert.equal(engine.run('p-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('p-chart-check', { d10: 15 }).text, 'SAMPLE OUT OF CONTROL');
+  assert.equal(engine.run('reliability-demonstration-test').text, 'TEST FITS THE TIME AVAILABLE');
+  assert.equal(engine.run('reliability-demonstration-test', { days: 30 }).text, 'TEST TOO LONG FOR THE TIME AVAILABLE');
+  assert.equal(engine.run('queue-wait-check').text, 'WAIT WITHIN TARGET');
+  assert.equal(engine.run('queue-wait-check', { c: 2 }).text, 'WAIT TOO LONG');
+  assert.equal(engine.run('sheet-nesting-yield').text, 'LAYOUT ACCEPTABLE');
+  assert.equal(engine.run('sheet-nesting-yield', { umin: 90 }).text, 'UTILISATION TOO LOW');
+  const cases: Array<[string, Inputs]> = [['bearing-defect-frequency-check', { nb: 2 }], ['bearing-defect-frequency-check', { d: 50 }], ['individuals-chart-check', { k: 2 }], ['p-chart-check', { k: 1 }], ['p-chart-check', { d1: 300 }], ['reliability-demonstration-test', { conf: 40 }], ['queue-wait-check', { c: 0 }], ['queue-wait-check', { lam: 10 }], ['sheet-nesting-yield', { umin: 0 }], ['sheet-nesting-yield', { edge: 700 }], ['sheet-nesting-yield', { pl: 3000, pw: 3000 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-eighth handbook pass (handbook78): forty-seventh round of integrated design checks.
+// Expected values are independent hand calculations (cavity volumes and electrode wear, kerf and wire mass, Gaussian spot and depth of focus).
+const HB58_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['edm-sinker-plan', {}, { I: 48, duty: 0.4, freq: 10, Vc: 9, Vf: 0.42, Vr: 8.58, tR: 1.43, tF: 0.42, tT: 1.85, endR: 0.74, nR: 2, eachR: 0.37, uR: 0.45, uF: 0.05, cost: 616.5 }, 1e-9],
+  ['wire-edm-cut-plan', {}, { kerf: 0.31, offset: 0.155, rCorner: 0.135, feed: 4, tMain: 60, tSkim: 40, tTot: 104, wireL: 800, wireM: 333.79421944391555, wireC: 8.34485548609789, Fb: 44.178646691106465, u: 0.3395305452627101, vol: 2232, cost: 147.01152215276457 }, 1e-9],
+  ['wire-edm-cut-plan', { skims: 0 }, { rCorner: 0.155, tSkim: 0, tTot: 64 }, 1e-9],
+  ['laser-cutting-plan', {}, { d0: 0.1285526306341857, Fn: 6.35, H: 15409132.081866648, zR: 0.8163092045270792, dof: 0.522692925274687, v: 3, tCut: 30, tPierce: 3, tPart: 33, cost: 1.375 }, 1e-6],
+  ['laser-cutting-plan', { P: 1000 }, { H: 7704566.040933324, v: 1.5, tCut: 60 }, 1e-6],
+];
+for (const [id, over, expected, tol] of HB58_CASES) test(`design check: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('forty-seventh-round design checks follow their scaling laws', () => {
+  const base = engine.run('laser-cutting-plan').values, short = engine.run('laser-cutting-plan', { fl: 63.5 }).values;
+  near(short.d0, base.d0 / 2, 1e-12, 'half the focal length halves the spot');
+  near(short.H, base.H * 4, 1e-3, 'and quadruples the power density');
+  near(short.dof, base.dof / 4, 1e-12, 'and quarters the depth of focus');
+  near(engine.run('laser-cutting-plan', { lam: 1.06 }).values.d0, base.d0 / 10, 1e-12, 'a tenth of the wavelength gives a tenth of the spot');
+  near(engine.run('wire-edm-cut-plan', { t: 60 }).values.tMain, 120, 1e-9, 'twice the thickness doubles the main-cut time');
+  near(engine.run('edm-sinker-plan', { endMax: 0.2 }).values.nR, 4, 0, 'a smaller wear allowance needs more roughing electrodes');
+});
+
+test('forty-seventh-round design checks give pass and fail verdicts', () => {
+  assert.equal(engine.run('edm-sinker-plan').text, 'EDM PLAN WORKABLE');
+  assert.equal(engine.run('edm-sinker-plan', { J: 12 }).text, 'CURRENT ABOVE MACHINE LIMIT');
+  assert.equal(engine.run('edm-sinker-plan', { fin: 0.05 }).text, 'FINISHING STOCK TOO SMALL');
+  assert.equal(engine.run('wire-edm-cut-plan').text, 'WIRE AND SETTINGS SUIT THE CUT');
+  assert.equal(engine.run('wire-edm-cut-plan', { rMin: 0.1 }).text, 'WIRE TOO LARGE FOR THE CORNERS');
+  assert.equal(engine.run('wire-edm-cut-plan', { Tw: 30 }).text, 'WIRE TENSION TOO HIGH');
+  assert.equal(engine.run('laser-cutting-plan').text, 'BEAM SUITS THE CUT');
+  assert.equal(engine.run('laser-cutting-plan', { Hreq: 2e7 }).text, 'POWER DENSITY TOO LOW');
+  assert.equal(engine.run('laser-cutting-plan', { flat: 1 }).text, 'DEPTH OF FOCUS TOO SHORT');
+  const cases: Array<[string, Inputs]> = [
+    ['edm-sinker-plan', { fin: 15 }], ['edm-sinker-plan', { perim: 10000, fin: 1 }], ['wire-edm-cut-plan', { dw: 0 }], ['laser-cutting-plan', { M2: 0.5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Heat engine Carnot limit and least work to chill (bryanthermo), after Bryan, Thermodynamics (1907) §§63–65, 74, 77, 90 and 93.
+// Expected values are independent closed forms; the cross-checks integrate Bryan’s element of work dQ (T₀ ÷ T − 1) numerically.
+const BT2_CASES: Array<[string, Inputs, Record<string, number>]> = [
+  ['heat-engine-carnot-limit', {}, { etaC: 100 * 420 / 723.15, eta2: 35 / (100 * 420 / 723.15) * 100, Wmax: 1000 * 420 / 723.15, QrMin: 1000 * 303.15 / 723.15, W: 350, Qr: 650, Sgen: 650 / 303.15 - 1000 / 723.15 }],
+  ['chilling-least-work-check', {}, { Q: 54.6, Qa: 9.75, W: 1.95 * (298.15 * Math.log(298.15 / 275.15) - 23), cop: 2.73, Ew: 4000 * 1.95 * (298.15 * Math.log(298.15 / 275.15) - 23), Ep: 80000 }],
+  ['chilling-least-work-check', { T1: 10 }, { Q: 15.6, Qa: 0, W: 1.95 * (298.15 * Math.log(283.15 / 275.15) - 8) }],
+];
+for (const [id, over, expected] of BT2_CASES) test(`Carnot and chilling limit: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, Math.max(1e-9, Math.abs(value) * 1e-9), `${id}/${key}`);
+});
+
+test('Carnot and chilling limits agree with Bryan’s reversible-cycle forms', () => {
+  // Work lost equals T_C × entropy generated and equals the most work less the stated work; at the Carnot efficiency nothing is lost.
+  const e = engine.run('heat-engine-carnot-limit').values;
+  near(e.lost, e.Wmax - e.W, 1e-9, 'Gouy–Stodola: work lost'); near(e.Wmax + e.QrMin, 1000, 1e-9, 'first law at the limit');
+  const atLimit = engine.run('heat-engine-carnot-limit', { eff: e.etaC }).values;
+  near(atLimit.Sgen, 0, 1e-12, 'reversible engine generates no entropy'); near(atLimit.eta2, 100, 1e-9, 'second-law efficiency 100 %');
+  // Least work to chill: sum dQ (T₀ ÷ T − 1) over the cooling below ambient (Bryan §§90, 93) by the midpoint rule.
+  const c = engine.run('chilling-least-work-check').values, C = 0.5 * 3.9, n = 20000, a = 275.15, b = 298.15;
+  let sum = 0; for (let i = 0; i < n; i++) { const T = a + (i + 0.5) * (b - a) / n; sum += C * (b - a) / n * (298.15 / T - 1); }
+  near(c.W, sum, 1e-6, 'integral of the Carnot work'); near(c.copId, c.Q / c.W, 1e-12, 'ideal COP'); near(c.eta2, c.W / 20 * 100, 1e-12, 'second-law efficiency');
+  // A narrow chilling range near T matches the fixed-temperature Carnot refrigerator: W ≈ Q (T₀ − T) ÷ T.
+  const thin = engine.run('chilling-least-work-check', { T1: 5.001, T2: 4.999 }).values;
+  near(thin.W, thin.Q * (25 - 5) / 278.15, 1e-9, 'narrow range is a Carnot refrigerator');
+  // Starting above ambient adds heat but no work.
+  near(engine.run('chilling-least-work-check', { T1: 60 }).values.W, c.W, 1e-12, 'heat above ambient needs no work');
+});
+
+test('Carnot and chilling limits: verdicts and guards', () => {
+  assert.equal(engine.run('heat-engine-carnot-limit').text, 'INSIDE THE CARNOT LIMIT');
+  assert.equal(engine.run('heat-engine-carnot-limit', { eff: 50 }).text, 'INSIDE THE LIMIT: ASK FOR TEST EVIDENCE');
+  assert.equal(engine.run('heat-engine-carnot-limit', { eff: 60 }).text, 'IMPOSSIBLE: ABOVE THE CARNOT LIMIT');
+  assert.equal(engine.run('chilling-least-work-check').text, 'INSIDE THE SECOND-LAW LIMIT');
+  assert.equal(engine.run('chilling-least-work-check', { P: 2.5 }).text, 'INSIDE THE LIMIT: ASK FOR TEST EVIDENCE');
+  assert.equal(engine.run('chilling-least-work-check', { P: 1.8 }).text, 'IMPOSSIBLE: BELOW THE LEAST WORK');
+  const cases: Array<[string, Inputs]> = [
+    ['heat-engine-carnot-limit', { Th: 30 }], ['heat-engine-carnot-limit', { Th: 20 }], ['heat-engine-carnot-limit', { Tc: -274, Th: 100 }], ['heat-engine-carnot-limit', { eff: 0 }],
+    ['chilling-least-work-check', { T2: 30 }], ['chilling-least-work-check', { T2: 25 }], ['chilling-least-work-check', { T2: 40, T1: 50 }], ['chilling-least-work-check', { P: 0 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook80: EWMA, CUSUM and c charts, Grubbs outlier test, linear calibration and exponential smoothing. Expected
+// values are independent hand calculations (explicit EWMA weights, the max-of-partial-sums CUSUM identity, a t quantile from
+// Simpson integration of the density, normal equations with bisection of the calibration limits, explicit smoothing
+// weights) and NIST e-Handbook worked examples.
+const SQ_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['ewma-chart-check', {}, { sd: 0.8628105793755388, ucl: 52.588431738126616, lcl: 47.411568261873384, last: 51.988243258644616, nOut: 0 }, 1e-9],
+  ['cusum-chart-check', {}, { k: 0.3175, shi: 19.06, slo: 0, first: 14, start: 13 }, 1e-9],
+  ['c-chart-check', {}, { cbar: 16, ucl: 28, lcl: 4, thr: 29, nOut: 0 }, 1e-12],
+  ['grubbs-outlier-check', {}, { mean: 206.43375, s: 15.852564404987783, G: 2.468764611212452, t: 4.115170117554614, Gcrit: 2.126645087189912, out: 1 }, 1e-6],
+  ['grubbs-outlier-check', { test: 'max' }, { G: 2.468764611212452, Gcrit: 2.031652001546452 }, 1e-6], // NIST example: G 2.4687 against 2.032
+  ['linear-calibration-check', {}, { a: 0.3238095238095238, b: 1.0078571428571428, s: 0.24299715851758263, t: 2.7764451051922983, ta: 1.8412032276511978, tb: 2.7052815726087784, xstar: 49.288920387432086, lo: 48.56578537417677, hi: 50.01196435474368 }, 1e-6],
+  ['exponential-smoothing-forecast', {}, { mse: 16.49652420390736, rmse: 4.06159133886059, fc: 72.40185546875, bestA: 1, bestMse: 12.636363636363637, bestFc: 70 }, 1e-9],
+  ['exponential-smoothing-forecast', { alpha: 0.1 }, { mse: 18.98349179142248 }, 1e-9], // NIST example: MSE 19.0 at α = 0.1
+];
+for (const [id, over, expected, tol] of SQ_CASES) test(`quality statistics: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('quality statistics tools: NIST examples and identities', () => {
+  near(engine.run('cusum-chart-check').values.shi, 19.04, 0.03, 'NIST CUSUM table: upper sum 19.04 at group 20 (NIST used unrounded means)');
+  const c = engine.run('c-chart-check', { k: 2, c1: 12, c2: 20 }).values;
+  near(c.ucl, 28, 1e-12, 'NIST wafer example: UCL 28'); near(c.lcl, 4, 1e-12, 'NIST wafer example: LCL 4');
+  const e1 = engine.run('ewma-chart-check', { lam: 1 }).values;
+  near(e1.last, 52.1, 1e-12, 'λ = 1: EWMA is the last reading'); near(e1.sd, 2.0539, 1e-12, 'λ = 1: EWMA spread is s');
+  const cal = engine.run('linear-calibration-check').values;
+  near(cal.a + cal.b * cal.xstar, 50, 1e-9, 'calibrated value maps back to the reading');
+  assert.ok(cal.lo < cal.xstar && cal.xstar < cal.hi, 'calibrated value lies inside its interval');
+  near(engine.run('exponential-smoothing-forecast', { alpha: 1 }).values.fc, 70, 1e-12, 'α = 1: forecast is the last demand');
+});
+
+test('quality statistics tools: verdicts and guards', () => {
+  assert.equal(engine.run('ewma-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('ewma-chart-check', { s: 1 }).text, 'EWMA OUT OF CONTROL');
+  assert.equal(engine.run('cusum-chart-check').text, 'UPWARD SHIFT SIGNALLED');
+  assert.equal(engine.run('cusum-chart-check', { n: 12 }).text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('cusum-chart-check', { n: 12, mu0: 328 }).text, 'DOWNWARD SHIFT SIGNALLED');
+  assert.equal(engine.run('c-chart-check').text, 'PROCESS IN CONTROL');
+  assert.equal(engine.run('c-chart-check', { c5: 30 }).text, 'COUNT OUT OF CONTROL');
+  assert.equal(engine.run('grubbs-outlier-check').text, 'OUTLIER DETECTED');
+  assert.equal(engine.run('grubbs-outlier-check', { n: 7 }).text, 'NO OUTLIER DETECTED');
+  assert.equal(engine.run('linear-calibration-check').text, 'CALIBRATION INTERVAL WITHIN TOLERANCE');
+  assert.equal(engine.run('linear-calibration-check', { tol: 0.5 }).text, 'CALIBRATION INTERVAL TOO WIDE');
+  assert.equal(engine.run('exponential-smoothing-forecast').text, 'FORECAST ERROR WITHIN TARGET');
+  assert.equal(engine.run('exponential-smoothing-forecast', { target: 5 }).text, 'FORECAST ERROR TOO HIGH');
+  const cases: Array<[string, Inputs]> = [['ewma-chart-check', { n: 2 }], ['ewma-chart-check', { lam: 0 }], ['cusum-chart-check', { n: 2 }], ['cusum-chart-check', { h: 0 }], ['c-chart-check', { k: 2, c1: 0, c2: 0 }], ['grubbs-outlier-check', { n: 2 }], ['grubbs-outlier-check', { n: 3, x1: 5, x2: 5, x3: 5 }], ['linear-calibration-check', { n: 2 }], ['linear-calibration-check', { n: 3, r1: 10, r2: 10, r3: 10 }], ['linear-calibration-check', { n: 3, r1: 0, r2: 1, r3: 2, y1: 0, y2: 1, y3: 2 }], ['exponential-smoothing-forecast', { n: 2 }], ['exponential-smoothing-forecast', { n: 3, y1: 0, y2: 0, y3: 0 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Batch handbook81: tolerance intervals, one-way ANOVA, F and chi-square tests of spread, Holt trend forecast, Arrhenius
+// acceleration, MTBF confidence bounds and power-law reliability growth. Expected values are independent hand calculations
+// (closed-form chi-square tails for integer degrees of freedom, the closed-form F tail for 2 numerator degrees of freedom,
+// Simpson integration of the F and normal densities, raw-sum ANOVA, the MTBF as 1 ÷ m(T)) and NIST e-Handbook worked examples.
+const RS_CASES: Array<[string, Inputs, Record<string, number>, number?]> = [
+  ['normal-tolerance-interval-check', {}, { chi: 23.650094677826175, k2: 2.21731589665361, k1: 1.8739536058512567, k1nat: 1.8751895812770476, lo: 95.56536820669278, hi: 104.43463179330722 }, 1e-6],
+  ['normal-tolerance-interval-check', { side: 'lower', n: 6 }, { k1: 4.411080572399033 }, 1e-6], // NIST: 4.4111 (non-central t)
+  ['one-way-anova-check', {}, { sstot: 45.34933333333345, sst: 27.89733333333345, sse: 17.452, F: 9.591107036442855, Fcrit: 3.8852938346523933, p: 0.0032482226008592506 }, 1e-9],
+  ['two-variance-f-test', {}, { F: 1.1230374607443194, lo: 0.7755639034053803, hi: 1.2893844022516303, p: 0.3703831598772964 }, 1e-6],
+  ['standard-deviation-chi-square-check', {}, { T: 0.392931, lo: 73.36108019128417, hi: 128.42198864384108, ciLo: 0.005531443126044369, ciHi: 0.007318554108356088 }, 1e-6],
+  ['holt-trend-forecast', {}, { S: 22.815058506216722, b: 2.956837242775862, fc: 37.59924472009603, fc1: 25.771895748992584, mse: 3.674309454248838, rmse: 1.9168488344803922, b1: 0.8 }, 1e-9],
+  ['arrhenius-acceleration-check', {}, { AF: 132.6646146803523 }, 1e-6],
+  ['arrhenius-acceleration-check', { ea: 1 }, { AF: 17599.899988286343 }, 1e-4],
+  ['mtbf-confidence-bounds', {}, { mtbf: 400, lower: 127.06896827442839, upper: 2251.2286106257047, zero: 267.04656055626725 }, 1e-6],
+  ['reliability-growth-check', {}, { L: 18.61404074174158, b: 0.483505979430769, beta: 0.516494020569231, a: 0.2913002685663814, mtbf: 310.23401236235964, ML: 157.71383403939075, MU: 548.5565977314178, cum: 150 }, 1e-9],
+];
+for (const [id, over, expected, tol] of RS_CASES) test(`reliability statistics: ${id} ${JSON.stringify(over)}`, () => {
+  const r = engine.run(id, over);
+  assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
+  for (const [key, value] of Object.entries(expected)) near(r.values[key], value, tol ?? Math.max(1e-9, Math.abs(value) * 1e-8), `${id}/${key}`);
+});
+
+test('reliability statistics tools: NIST worked examples', () => {
+  const t = engine.run('normal-tolerance-interval-check').values;
+  near(t.chi, 23.650, 5e-4, 'NIST: chi-square 23.650'); near(t.k2, 2.217, 5e-4, 'NIST: k2 = 2.217'); near(t.k1, 1.8740, 5e-5, 'NIST: k1 = 1.8740 (non-central t)'); near(t.k1nat, 1.8752, 5e-5, 'NIST: k1 = 1.8752 (Natrella)');
+  near(engine.run('normal-tolerance-interval-check', { side: 'lower', n: 6 }).values.k1nat, 5.2808, 5e-5, 'NIST: Natrella k1 = 5.2808 for N = 6');
+  const a = engine.run('one-way-anova-check').values;
+  near(a.sst, 27.897, 5e-4, 'NIST: SST 27.897'); near(a.sse, 17.452, 5e-4, 'NIST: SSE 17.452'); near(a.F, 9.59, 5e-3, 'NIST: F 9.59'); near(a.Fcrit, 3.89, 5e-3, 'NIST: F(0.05; 2, 12) = 3.89');
+  const f = engine.run('two-variance-f-test').values;
+  near(f.F, 1.123037, 5e-7, 'NIST: F = 1.123037'); near(f.lo, 0.7756, 5e-5, 'NIST: lower critical 0.7756'); near(f.hi, 1.2894, 5e-5, 'NIST: upper critical 1.2894');
+  const c = engine.run('standard-deviation-chi-square-check').values;
+  near(c.lo, 73.361, 5e-4, 'NIST: 73.361'); near(c.hi, 128.422, 5e-4, 'NIST: 128.422');
+  const h = engine.run('holt-trend-forecast').values;
+  [25.8, 28.7, 31.7, 34.6, 37.6].forEach((x, k) => near(h.S + (k + 1) * h.b, x, 0.05, `NIST: Holt forecast for period ${11 + k} = ${x}`));
+  const g = engine.run('holt-trend-forecast', { alpha: 0.977, gamma: 0.01 }).values; assert.ok(Number.isFinite(g.mse));
+  near(engine.run('arrhenius-acceleration-check').values.AF, 133, 0.5, 'NIST: AF 133 from 25 to 125 °C at 0.5 eV');
+  near(engine.run('arrhenius-acceleration-check', { ea: 1 }).values.AF, 17597, 0.0005 * 17597, 'NIST: AF 17,597 at 1.0 eV (NIST uses 11605 and 273.16)');
+  const mt = engine.run('mtbf-confidence-bounds').values;
+  near(mt.lower, 127, 0.5, 'NIST: lower 127'); near(mt.upper, 2251, 0.5, 'NIST: upper 2251'); near(mt.zero, 267, 0.5, 'NIST: zero-failure bound 267');
+  near(engine.run('mtbf-confidence-bounds', { r: 0 }).values.lower, mt.zero, 1e-9, 'no failures: 2T ÷ χ²(C; 2) = T ÷ (−ln(1 − C))');
+  const gr = engine.run('reliability-growth-check').values;
+  near(gr.beta, 0.5165, 5e-5, 'NIST: β 0.5165'); near(gr.a, 0.2913, 5e-5, 'NIST: a 0.2913'); near(gr.mtbf, 310.234, 5e-4, 'NIST: MTBF 310.234'); near(gr.ML, 157.7139, 5e-4, 'NIST: 157.7139'); near(gr.MU, 548.5565, 5e-3, 'NIST: 548.5565');
+  near(gr.mtbf, 1 / (gr.a * gr.b * Math.pow(1500, gr.b - 1)), 1e-9, 'MTBF = 1 ÷ m(T)');
+});
+
+test('reliability statistics tools: verdicts and guards', () => {
+  assert.equal(engine.run('normal-tolerance-interval-check').text, 'TOLERANCE INTERVAL WITHIN SPEC');
+  assert.equal(engine.run('normal-tolerance-interval-check', { n: 6 }).text, 'TOLERANCE INTERVAL OUTSIDE SPEC');
+  assert.equal(engine.run('normal-tolerance-interval-check', { side: 'upper', usl: 103 }).text, 'TOLERANCE INTERVAL OUTSIDE SPEC');
+  assert.equal(engine.run('normal-tolerance-interval-check', { side: 'lower', usl: 101 }).text, 'TOLERANCE INTERVAL WITHIN SPEC');
+  assert.equal(engine.run('one-way-anova-check').text, 'GROUP MEANS DIFFER');
+  assert.equal(engine.run('one-way-anova-check', { k: 2, g2x1: 5.3, g2x2: 6.1, g2x3: 5.0, g2x4: 4.9, g2x5: 5.6 }).text, 'NO SIGNIFICANT DIFFERENCE');
+  assert.equal(engine.run('two-variance-f-test').text, 'NO EVIDENCE SPREADS DIFFER');
+  assert.equal(engine.run('two-variance-f-test', { s1: 80 }).text, 'SPREADS DIFFER');
+  assert.equal(engine.run('two-variance-f-test', { test: 'greater', s1: 80 }).text, 'SAMPLE 1 SPREAD LARGER');
+  assert.equal(engine.run('two-variance-f-test', { test: 'less', s1: 50 }).text, 'SAMPLE 1 SPREAD SMALLER');
+  assert.equal(engine.run('standard-deviation-chi-square-check').text, 'SPREAD DIFFERS FROM TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { test: 'upper', s: 0.12 }).text, 'SPREAD ABOVE TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { test: 'lower' }).text, 'SPREAD BELOW TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { test: 'lower', s: 0.1 }).text, 'SPREAD NOT SHOWN BELOW TARGET');
+  assert.equal(engine.run('standard-deviation-chi-square-check', { s: 0.1 }).text, 'SPREAD CONSISTENT WITH TARGET');
+  assert.equal(engine.run('holt-trend-forecast').text, 'FORECAST ERROR WITHIN TARGET');
+  assert.equal(engine.run('holt-trend-forecast', { target: 5 }).text, 'FORECAST ERROR TOO HIGH');
+  assert.equal(engine.run('arrhenius-acceleration-check').text, 'TEST COVERS TARGET LIFE');
+  assert.equal(engine.run('arrhenius-acceleration-check', { th: 500 }).text, 'TEST TOO SHORT FOR TARGET LIFE');
+  assert.equal(engine.run('mtbf-confidence-bounds').text, 'MTBF REQUIREMENT DEMONSTRATED');
+  assert.equal(engine.run('mtbf-confidence-bounds', { req: 200 }).text, 'MTBF REQUIREMENT NOT DEMONSTRATED');
+  near(engine.run('mtbf-confidence-bounds', { T: 800 + engine.run('mtbf-confidence-bounds', { req: 200 }).values.more, req: 200 }).values.lower, 200, 1e-6, 'further hours bring the lower bound to the requirement');
+  assert.equal(engine.run('reliability-growth-check').text, 'MTBF GOAL DEMONSTRATED');
+  assert.equal(engine.run('reliability-growth-check', { goal: 200 }).text, 'MTBF GOAL NOT DEMONSTRATED');
+  const cases: Array<[string, Inputs]> = [['one-way-anova-check', { k: 2, n1: 1, n2: 1 }], ['one-way-anova-check', { k: 2, n1: 2, n2: 2, g1x1: 5, g1x2: 5, g2x1: 7, g2x2: 7 }], ['holt-trend-forecast', { n: 4, y1: 0, y2: 0, y3: 0, y4: 0 }], ['arrhenius-acceleration-check', { ts: 20 }], ['reliability-growth-check', { t3: 30 }], ['reliability-growth-check', { T: 1400 }], ['reliability-growth-check', { r: 2, T: 40, t1: 40, t2: 40 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Fifty-ninth handbook pass (handbook82): tools from pages no earlier tool cited, found with the page ledger.
+// Expected values are the handbook's own tables and worked examples (AGMA I factors, ANSI B6.9 worm Examples 1 and 2, Van Keuren
+// internal-gear measurements, the rope bending and drum capacity examples) and independent closed forms and integrations.
+const IN82 = 25.4;
+const gearI = (n1: number, n2: number, phin: number, over: Inputs = {}) => engine.run('gear-pitting-geometry-factor', { mn: 1, n1, n2, phin, psi: 0, F: 10, Cr: (n1 + n2) / 2, do1: n1 + 2, do2: n2 + 2, Iused: 0.01, ...over });
+
+test('gear pitting geometry factor reproduces the handbook I tables (25°, equal addendum)', () => {
+  // Tables 6 and 7: rows are gear teeth, columns pinion teeth 14, 17, 21, 26, 35, 55, 135; printed to three decimals.
+  const P = [14, 17, 21, 26, 35, 55, 135];
+  const T25: Record<number, number[]> = { 14: [0.086], 17: [0.091, 0.090], 21: [0.095, 0.096, 0.092], 26: [0.100, 0.101, 0.099, 0.094], 35: [0.106, 0.109, 0.108, 0.104, 0.095], 55: [0.113, 0.119, 0.121, 0.119, 0.112, 0.095], 135: [0.123, 0.132, 0.139, 0.142, 0.141, 0.131, 0.096] };
+  let cells = 0;
+  for (const [g, row] of Object.entries(T25)) row.forEach((I, i) => { near(gearI(P[i], Number(g), 25).values.I, I, 0.0006, `I ${P[i]}/${g}`); cells++; });
+  assert.equal(cells, 28);
+  // Hand check of 14/14 by the handbook equations: C6 = 14 sin 25°, C2 = √(8² − 7² cos² 25°) − 2π·7 cos 25° ÷ 14, ρ2 = C6 − C2.
+  const rb = 7 * Math.cos(25 * Math.PI / 180), c2 = Math.sqrt(64 - rb * rb) - 2 * Math.PI * rb / 14, c6 = 14 * Math.sin(25 * Math.PI / 180);
+  near(gearI(14, 14, 25).values.I, Math.cos(25 * Math.PI / 180) / ((1 / c2 + 1 / (c6 - c2)) * 14), 1e-12, '14/14 by hand');
+});
+
+test('gear pitting geometry factor: module independence, helical load sharing and continuity with spur', () => {
+  const base = engine.run('gear-pitting-geometry-factor').values;
+  near(base.I, 0.121, 0.0006, 'default 21/55 at 25° is the table value');
+  near(engine.run('gear-pitting-geometry-factor', { mn: 8, F: 80, Cr: 304, do1: 184, do2: 456 }).values.I, base.I, 1e-12, 'doubling every length keeps I');
+  // Independent re-implementation of AGMA 908-B89 eqs (1)–(39) (scratch proto82.cjs): 21/55, 20°, 15° helix.
+  const h = (F: number) => gearI(21, 55, 20, { psi: 15, F, Cr: 76 / (2 * Math.cos(15 * Math.PI / 180)), do1: 21 / Math.cos(15 * Math.PI / 180) + 2, do2: 55 / Math.cos(15 * Math.PI / 180) + 2 }).values;
+  const lacr = h(3), conv = h(30);
+  near(lacr.mF, 3 * Math.sin(15 * Math.PI / 180) / Math.PI, 1e-12, 'axial contact ratio F sin ψ ÷ π');
+  near(lacr.mN, 1, 0, 'low axial contact ratio helicals have m_N = 1');
+  near(lacr.I, 0.12597581394939325, 1e-9, 'LACR helical I');
+  assert.ok(conv.mF > 1 && conv.mN < 1, 'conventional helical shares load');
+  const na = conv.mF % 1, nr = conv.mp % 1, px = Math.PI / Math.sin(15 * Math.PI / 180), cb = Math.cos(conv.psib * Math.PI / 180);
+  near(conv.Lmin, (na <= 1 - nr ? conv.mp * 30 - na * nr * px : conv.mp * 30 - (1 - na) * (1 - nr) * px) / cb, 1e-9, 'minimum contact length, case I or II');
+  near(conv.mN, 30 / conv.Lmin, 1e-12, 'm_N = F ÷ L_min');
+  near(gearI(21, 55, 20, { psi: 1e-6, F: 10 }).values.I, gearI(21, 55, 20).values.I, 1e-6, 'a vanishing helix angle gives the spur I');
+});
+
+test('fine-pitch worm design reproduces the handbook Examples 1 and 2 (ANSI B6.9)', () => {
+  const e1 = engine.run('fine-pitch-worm-design').values; // Px 0.160 in, 30°, 10 threads, 100 teeth, C ≈ 3 in
+  near(e1.l, 1.6 * IN82, 1e-9, 'lead 1.600 in');
+  near(e1.d, 0.8821 * IN82, 0.00006 * IN82, 'd = 0.8821 in');
+  near(e1.D, 5.0930 * IN82, 0.0001 * IN82, 'D = 5.0930 in');
+  near(e1.C, 2.9876 * IN82, 0.0001 * IN82, 'C = 2.9876 in');
+  near(e1.Pn, 0.1386 * IN82, 0.00006 * IN82, 'Pn = 0.1386 in');
+  near(e1.a, 0.0441 * IN82, 0.00006 * IN82, 'a = 0.0441 in');
+  near(e1.dO, 0.9703 * IN82, 0.0001 * IN82, 'do = 0.9703 in');
+  near(e1.FG, 0.6689 * IN82, 0.0005 * IN82, 'FG = 0.6689 in (handbook works from rounded dimensions)');
+  near(e1.FW, 0.9525 * IN82, 0.001 * IN82, 'FW = 0.9525 in');
+  near(e1.nEst, 2 * Math.PI * 3 / (0.16 * (Math.sqrt(3) + 10)), 1e-6, 'threads for 3 in: 10.04');
+  const e2 = engine.run('fine-pitch-worm-design', { Px: 0.05 * IN82, lam: 3, n: 1, N: 50, Ct: 0.55 * IN82, dmin: 1 }).values;
+  near(e2.d, 0.3037 * IN82, 0.0001 * IN82, 'd = 0.3037 in');
+  near(e2.D, 0.7958 * IN82, 0.0001 * IN82, 'D = 0.7958 in');
+  near(e2.C, 0.5498 * IN82, 0.0001 * IN82, 'C = 0.5498 in');
+  near(e2.FG, 0.2405 * IN82, 0.0003 * IN82, 'FG = 0.2405 in');
+  near(e2.FW, 0.2276 * IN82, 0.0005 * IN82, 'FW = 0.2276 in');
+  near(e2.lamT, Math.atan(1 / (2 * Math.PI * 0.55 / 0.05 - 50)) * 180 / Math.PI, 1e-9, 'cot λ = 19.1152');
+});
+
+test('internal gear measurement between pins reproduces the Van Keuren tables (1.44 pins)', () => {
+  // Tables 3 (even) and 4 (odd), measurements for 1 diametral pitch, which equal module-1 values in consistent units.
+  const rows: Array<[number, number, number]> = [[10, 20, 8.6617], [10, 14.5, 8.8337], [12, 17.5, 10.7404], [50, 25, 48.5212], [94, 14.5, 92.8749], [94, 30, 92.4003],
+    [7, 20, 5.4823], [21, 14.5, 19.7945], [45, 17.5, 43.7217], [61, 25, 59.5010], [111, 30, 109.3893]];
+  for (const [z, phi, M] of rows) near(engine.run('internal-gear-pin-measurement', { m: 1, z, phi, dp: 1.44, Di: z - 2, Dr: z + 2.5, eMin: 0, eMax: 0.1, Mmeas: z }).values.M0, M, 0.00011, `z ${z} at ${phi}°`);
+  const v = engine.run('internal-gear-pin-measurement').values;
+  near(v.M0, 2 * 58.6648, 0.0002, 'module 2 doubles the 60-tooth 20° table value');
+  // A reading made at a limit returns that limit's space-width increase.
+  near(engine.run('internal-gear-pin-measurement', { Mmeas: v.Mhi }).values.esM, 0.1, 1e-9, 'reading at the upper limit');
+  near(engine.run('internal-gear-pin-measurement', { Mmeas: v.M0 }).values.esM, 0, 1e-9, 'reading at the standard space');
+});
+
+test('wire rope sheave and drum check reproduces the handbook bending and drum examples', () => {
+  const PSI = 0.00689475729; // MPa per psi
+  const b = engine.run('wire-rope-sheave-drum-check', { d: 0.5 * IN82, Ds: 24 * IN82, E: 12e6 * PSI }).values; // 1/2 in 6 × 19 FC over a 24 in sheave
+  near(b.dw, 0.0315 * IN82, 1e-12, 'dw = 0.0315 in');
+  near(b.sb, 15750 * PSI, 1e-9, 'sb = 15 750 psi');
+  near(b.A, 0.10125 * IN82 * IN82, 1e-9, 'A = 0.101 in²');
+  near(b.Pb, 15750 * 0.10125 * 4.4482216152605, 1e-3, 'Pb ≈ 1 590 lb (7 094 N)');
+  const v = engine.run('wire-rope-sheave-drum-check').values; // drum B 24, D 18, H 30 in with K 0.741
+  near(v.L, (6 + 18) * 6 * 24 * 0.741 * 0.3048, 1e-9, 'L = (A + D) A B K = 2 560 ft');
+  near(v.p, 2 * 12000 / (609.6 * 14.2875), 1e-12, 'p = 2T ÷ (D d)');
+  near(v.SF, 150000 / (12000 + v.Pb), 1e-12, 'factor on tension plus bending load');
+  near(engine.run('wire-rope-sheave-drum-check', { Y: 25.4 }).values.depth, 127, 1e-9, 'unfilled depth comes off the winding depth');
+});
+
+test('shock stress check follows the handbook beam and spring formulas', () => {
+  const Q = 20 * 9.81, s = engine.run('shock-stress-check').values;
+  near(s.ps, Q * 50 * 1000 / (4 * 8.33e6), 1e-12, 'static stress QaL ÷ 4I');
+  near(s.y, Q * 1000 ** 3 / (48 * 200000 * 8.33e6), 1e-12, 'static deflection QL³ ÷ 48EI');
+  near(s.p, s.ps * (1 + Math.sqrt(1 + 2 * 50 / s.y)), 1e-9, 'p = ps(1 + √(1 + 2h ÷ y))');
+  near(s.approx, 50 * Math.sqrt(6 * Q * 50 * 200000 / (1000 * 8.33e6)), 1e-9, 'approximation a√(6QhE ÷ LI)');
+  near(engine.run('shock-stress-check', { h: 0 }).values.factor, 2, 1e-12, 'a sudden load doubles the static stress');
+  for (const member of ['cant', 'fixed']) {
+    const r = engine.run('shock-stress-check', { member, h: 1e6 }).values;
+    near(r.p / r.approx, 1, 0.01, `${member}: the approximation holds for a large drop`);
+  }
+  near(engine.run('shock-stress-check', { member: 'cant' }).values.y, Q * 1e9 / (3 * 200000 * 8.33e6), 1e-12, 'cantilever deflection QL³ ÷ 3EI');
+  near(engine.run('shock-stress-check', { member: 'fixed' }).values.y, Q * 1e9 / (192 * 200000 * 8.33e6), 1e-12, 'fixed-ended deflection QL³ ÷ 192EI');
+  const r = engine.run('shock-stress-check', { member: 'round' }).values, fsr = 8 * Q * 50 / (Math.PI * 216);
+  near(r.ps, fsr, 1e-12, 'round wire 8QD ÷ πd³');
+  near(r.p, fsr * (1 + Math.sqrt(1 + 79300 * 50 * 6 ** 4 / (4 * Q * 50 ** 3 * 8))), 1e-9, 'round wire table formula');
+  const sq = engine.run('shock-stress-check', { member: 'square' }).values;
+  near(sq.p, 9 * Q * 50 / (4 * 216) * (1 + Math.sqrt(1 + 79300 * 50 * 6 ** 4 / (0.9 * Math.PI * Q * 50 ** 3 * 8))), 1e-9, 'square wire table formula');
+  near(r.approx / (r.ps * Math.sqrt(2 * 50 / r.y)), 1.27 * Math.PI / 4, 1e-12, 'round spring: the approximation is f_s √(2h ÷ y) with 4 ÷ π printed as 1.27');
+  const mv = engine.run('shock-stress-check', { load: 'move', M: 20, vel: 2 }).values;
+  near(mv.E0, 0.5 * 20 * 4, 1e-12, 'kinetic energy ½Mv²');
+  near(mv.peak, 50 * Math.sqrt(6 * 40000 * 200000 / (1000 * 8.33e6)), 1e-9, 'moving body: ½Mv² in place of Qh');
+});
+
+test('thin ring check matches the handbook constants and a direct energy integration', () => {
+  const v = engine.run('thin-ring-load-check').values, P = 3000, D = 200, d = 20, E = 200000, I = Math.PI * d ** 4 / 64;
+  near(v.S, 1.621 * P * D / d ** 3, 0.0002 * v.S, 'S = 1.621 PD ÷ d³ for a round bar');
+  near(v.Pallow, 0.617 * 150 * d ** 3 / D, 0.001 * v.Pallow, 'P = 0.617 S d³ ÷ D');
+  near(v.dv, 0.0186 * P * D ** 3 / (E * I), 0.0003 * v.dv, 'increase = 0.0186 PD³ ÷ EI');
+  near(v.dh / v.dv, 0.92, 0.002, 'decrease about 92 % of the increase');
+  // Castigliano on a quarter ring: M(θ) = PR(1/π − sin θ ÷ 2); δ = 4 ∫ M (∂M/∂P) R dθ ÷ EI, by Simpson's rule.
+  const R = D / 2, n = 2000, h = Math.PI / 2 / n; let s = 0;
+  for (let i = 0; i <= n; i++) { const t = i * h, M = P * R * (1 / Math.PI - Math.sin(t) / 2); s += M * M / P * R * (i === 0 || i === n ? 1 : i % 2 ? 4 : 2); }
+  near(v.dv, 4 * s * h / 3 / (E * I), 1e-9, 'vertical diameter change by integration');
+  near(engine.run('thin-ring-load-check', { sec: 'rect', b: 10 }).values.I, 10 * 20 ** 3 / 12, 1e-9, 'rectangular section b d³ ÷ 12');
+  near(engine.run('thin-ring-load-check', { sec: 'user', Iu: I }).values.S, v.S, 1e-12, 'other section with the same I gives the same stress');
+});
+
+test('fifty-ninth-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('gear-pitting-geometry-factor').text, 'GEOMETRY FACTOR SUPPORTS THE RATING');
+  assert.equal(engine.run('gear-pitting-geometry-factor', { Iused: 0.13 }).text, 'GEOMETRY FACTOR BELOW THE VALUE USED');
+  assert.equal(engine.run('fine-pitch-worm-design').text, 'WORM SET MEETS THE CENTRE DISTANCE');
+  assert.equal(engine.run('fine-pitch-worm-design', { Ct: 80 }).text, 'CENTRE DISTANCE OFF TARGET');
+  assert.equal(engine.run('fine-pitch-worm-design', { dmax: 20 }).text, 'WORM DIAMETER OUTSIDE RANGE');
+  assert.equal(engine.run('internal-gear-pin-measurement').text, 'READING WITHIN LIMITS');
+  assert.equal(engine.run('internal-gear-pin-measurement', { Mmeas: 117.3 }).text, 'READING OUTSIDE LIMITS');
+  assert.equal(engine.run('wire-rope-sheave-drum-check').text, 'ROPE, SHEAVE AND DRUM SUIT THE DUTY');
+  assert.equal(engine.run('wire-rope-sheave-drum-check', { pAllow: 2 }).text, 'SHEAVE PRESSURE TOO HIGH');
+  assert.equal(engine.run('wire-rope-sheave-drum-check', { SFreq: 8 }).text, 'ROPE FACTOR TOO LOW WITH BENDING');
+  assert.equal(engine.run('wire-rope-sheave-drum-check', { Lreq: 900 }).text, 'DRUM TOO SMALL FOR THE ROPE');
+  assert.equal(engine.run('shock-stress-check').text, 'SHOCK STRESS WITHIN ALLOWABLE');
+  assert.equal(engine.run('shock-stress-check', { h: 2000 }).text, 'SHOCK STRESS ABOVE ALLOWABLE');
+  assert.equal(engine.run('thin-ring-load-check').text, 'RING WITHIN LIMITS');
+  assert.equal(engine.run('thin-ring-load-check', { P: 4000 }).text, 'RING OVERSTRESSED');
+  assert.equal(engine.run('thin-ring-load-check', { dMax: 0.1 }).text, 'RING DEFLECTS TOO MUCH');
+  const cases: Array<[string, Inputs]> = [
+    ['gear-pitting-geometry-factor', { n1: 60 }], ['gear-pitting-geometry-factor', { Cr: 100 }], ['gear-pitting-geometry-factor', { do1: 86 }], ['gear-pitting-geometry-factor', { do1: 110, do2: 245 }],
+    ['fine-pitch-worm-design', { dmin: 60 }], ['internal-gear-pin-measurement', { eMin: 0.2 }], ['internal-gear-pin-measurement', { Di: 125 }], ['internal-gear-pin-measurement', { dp: 20 }],
+    ['wire-rope-sheave-drum-check', { Hf: 400 }], ['shock-stress-check', { load: 'move', vel: 0 }], ['shock-stress-check', { member: 'round', dw: 60 }], ['thin-ring-load-check', { d: 250 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixtieth handbook pass (handbook83): tools from the page ledger's candidate pages.
+// Expected values are the handbook's own worked examples (worm Example 3, the industrial worm examples and commercial 29/4 series,
+// the tap marking examples, the slot and high-speed milling costs) and independent closed forms.
+const IN83 = 25.4;
+const D2R83 = Math.PI / 180;
+
+test('worm cutter profile correction reproduces the handbook Example 3 (2 in cutter, 20 in wheel)', () => {
+  // Worm of Example 1: r = 0.4410 in, λ = 30°, φn = 20°, 10 threads, addendum 0.0441 in.
+  const v = engine.run('worm-cutter-profile-correction', { d: 0.882 * IN83, a: 0.0441 * IN83, Dc: 2 * IN83, Dw: 20 * IN83 }).values;
+  near(v.rni / IN83, 0.6033, 0.00006, 'ρ_ni = 0.6033 in');
+  near(v.rnC / IN83, 0.9581, 0.0001, 'ρ_n cutter = 0.9581 in');
+  near(v.rnW / IN83, 0.6387, 0.0001, 'ρ_n wheel = 0.6387 in');
+  near(v.dphiC, 24.99, 0.01, 'Δφ cutter = 24.99 minutes');
+  near(v.dphiW, 3.749, 0.001, 'Δφ wheel = 3.749 minutes');
+  near(v.q / IN83, 0.0469, 0.00005, 'q = 0.0469 in');
+  near(v.yC / IN83, 0.00115, 0.000005, 'y cutter = 0.00115 in');
+  near(v.yW / IN83, 0.00172, 0.000005, 'y wheel = 0.00172 in');
+  near(v.sC / IN83, 0.000682, 0.000002, 's cutter = 0.000682 in');
+  near(v.sW / IN83, 0.000102, 0.000001, 's wheel = 0.000102 in');
+  near(v.dy / IN83, 0.00057, 0.000006, 'Δy = 0.00057 in');
+  near(v.ds / IN83, 0.00058, 0.000003, 'Δs = 0.000580 in');
+  // Lengths scale: Δφ is dimensionless and y, s grow with the scale.
+  const k = engine.run('worm-cutter-profile-correction', { d: 2 * 0.882 * IN83, a: 2 * 0.0441 * IN83, Dc: 4 * IN83, Dw: 40 * IN83 }).values;
+  near(k.dphiC, v.dphiC, 1e-9, 'pressure angle change is scale-free');
+  near(k.dy, 2 * v.dy, 1e-12, 'profile correction scales with size');
+  near(0.000582, 2 * Math.tan(Math.PI / 10800), 3e-7, '0.000582 is twice tan 1′');
+});
+
+test('industrial worm gearing reproduces the handbook examples and the commercial 29/4 series', () => {
+  const r = (over: Inputs) => engine.run('industrial-worm-gearing-design', over).values;
+  const fixed = r({ P: 0.5 * IN83, t: 6, T: 36, C: 3.6 * IN83 });
+  near(fixed.D / IN83, 5.729, 0.0006, '36/6 at 0.5 in: D = 5.729 in');
+  near(fixed.d / IN83, 1.471, 0.0007, 'd = 1.471 in');
+  near(fixed.lamDeg, 33, 0.05, 'lead angle about 33°');
+  // Commercial series, ratio 7¼ (29 teeth, 4 threads): C, P → d, D, lead angle (degrees and minutes).
+  const series: Array<[number, number, number, number, number]> = [[4, 0.6875, 1.654, 6.346, 27 + 54 / 60], [5, 0.875, 1.923, 8.077, 30 + 5 / 60], [6, 1.0625, 2.192, 9.808, 31 + 41 / 60], [7, 1.25, 2.461, 11.539, 32 + 53 / 60], [8.25, 1.4687, 2.942, 13.558, 32 + 27 / 60]];
+  for (const [C, P, d, D, lam] of series) {
+    const x = r({ P: P * IN83, t: 4, T: 29, C: C * IN83 });
+    near(x.d / IN83, d, 0.0006, `C ${C}: d`);
+    near(x.D / IN83, D, 0.0006, `C ${C}: D`);
+    near(x.lamDeg, lam, 1.2 / 60, `C ${C}: lead angle`);
+  }
+  // Choosing the worm instead gives C = (D + d) ÷ 2.
+  const chosen = r({ mode: 'd', dw: 40 });
+  near(chosen.C, (chosen.D + 40) / 2, 1e-12, 'centre distance from the chosen worm');
+  // AGMA proportions on axial pitch, single and double thread; dedendum and clearance.
+  const two = r({ t: 2, T: 41, depth: 'axial', mode: 'd', dw: 50 });
+  near(two.a, 0.318 * 12.7, 1e-12, 'a = 0.318 P');
+  near(two.W, 0.686 * 12.7, 1e-12, 'W = 0.686 P');
+  near(two.c, two.W - 2 * two.a, 1e-12, 'clearance');
+  near(two.F, 2.38 * 12.7 + 0.25 * IN83, 1e-9, 'face width 2.38 P + 0.25 in');
+  near(two.D0thr, two.Dt + 0.4775 * 12.7, 1e-9, 'D0 = Dt + 0.4775 P');
+  near(two.G, 12.7 * (4.5 + 0.02 * 41), 1e-9, 'thread length');
+  near(fixed.a, 0.286 * fixed.Pn, 1e-12, 'triple-and-over addendum on the normal pitch');
+  const integ = r({ mount: 'integral' });
+  near(integ.F / IN83, 3.6 ** 0.875 / 3, 1e-9, 'integral worm face width C^0.875 ÷ 3');
+  near(fixed.dEmp / IN83, 3.6 ** 0.75 + 2.2, 1e-9, 'empirical worm diameter');
+  // Rubbing speed against 0.262 d n sec λ ft/min; efficiency formulas.
+  near(fixed.V, 0.262 * (fixed.d / IN83) * 1450 / Math.cos(fixed.lamDeg * D2R83) * 0.3048 / 60, 0.002 * fixed.V, 'rubbing speed');
+  const lam = fixed.lamDeg * D2R83, pf = Math.atan(0.05);
+  near(fixed.Ew, 100 * Math.tan(lam) / Math.tan(lam + pf), 1e-9, 'worm driving efficiency');
+  near(fixed.Eg, 100 * Math.tan(lam - pf) / Math.tan(lam), 1e-9, 'wormgear driving efficiency');
+  near(fixed.EwEmp, 97, 1e-12, '100 − R ÷ 2');
+  near(fixed.EgEmp, 88, 1e-12, '100 − 2R');
+  assert.equal(r({ t: 1, T: 60, mode: 'd', dw: 80, f: 0.1 }).Eg, 0, 'self-locking at a lead angle below the friction angle');
+});
+
+test('worm hob design solves the AGMA sharpening allowance with the diameters and the flute rules', () => {
+  const v = engine.run('worm-hob-design').values, L = 2 * 12.7;
+  near(v.O, 50.8 + 2 * 4.04 + 2 * 0.84 + v.S, 1e-9, 'O = D + 2A + 2C + S');
+  near(v.Dh, v.O - 2 * 4.04 - 2 * 0.84, 1e-9, 'D_h = O − (2A + 2C)');
+  near(v.root, 50.8 - 2 * 4.04, 1e-12, 'root = D − 2A');
+  const H = Math.atan(Math.PI * v.Dh / L) / D2R83, h = Math.atan(Math.PI * v.O / L) / D2R83;
+  near(v.S, 0.075 * v.Pn * (16 - (h - H)) / 16 + 0.010 * IN83, 1e-9, 'S satisfies the AGMA formula at its own diameters');
+  near(v.setDeg, Math.atan(L / (Math.PI * 50.8)) / D2R83 - Math.atan(L / (Math.PI * v.Dh)) / D2R83, 1e-9, 'setting angle = worm − hob lead angle');
+  assert.ok(v.setDeg > 0, 'an over-size hob has a smaller lead angle');
+  near(v.Frule, 3 * v.O / (2 * 12.7), 1e-12, 'flutes ≈ 3 × diameter ÷ (2 × pitch)');
+  near(v.gash, 0.4 * Math.PI * v.O / 9, 1e-9, 'gash width 0.4 × flute pitch');
+  // Helical flutes: N = F ÷ cos² α (F = 7, α = 35° gives 10.432) and the modified flute lead L F ÷ (N − F).
+  near(7 / Math.cos(35 * D2R83) ** 2, 10.432, 0.0005, 'handbook N for F = 7, α = 35°');
+  const hel = engine.run('worm-hob-design', { Fl: 7, fl: 'helical', Nrel: 10 }).values;
+  near(hel.Nex, 7 / Math.cos(hel.lamHdeg * D2R83) ** 2, 1e-9, 'teeth per turn along the thread');
+  near(hel.Lf, L * 7 / 3, 1e-9, 'flute lead = hob lead × 7 ÷ 3 for N = 10');
+  near(engine.run('worm-hob-design', { Fl: 7, fl: 'helical', Nrel: 10.5 }).values.Lf, L * 7 / 3.5, 1e-9, 'flute lead for N = 10½');
+  near(hel.angF, Math.atan(Math.PI * hel.Dh / hel.Lf) / D2R83, 1e-9, 'flute angle from the axis');
+  // Common factors: 2 threads with 8 flutes, and 3 threads with 36 teeth (the handbook prefers 5 threads there).
+  const bad = engine.run('worm-hob-design', { Fl: 8 });
+  assert.equal(bad.text, 'CHANGE THE FLUTES OR THREADS');
+  assert.equal(bad.values.Fsug, 7, 'suggested flutes nearest the rule with no common factor');
+  assert.equal(engine.run('worm-hob-design', { t: 3, Tg: 36, Fl: 7 }).text, 'CHANGE THE FLUTES OR THREADS');
+  assert.equal(engine.run('worm-hob-design', { t: 3, Tg: 28, Fl: 7 }).text, 'HOB LAYOUT FOLLOWS THE HANDBOOK RULES');
+});
+
+test('metric and Unified tap thread limits reproduce the handbook marking examples', () => {
+  // M1.6 × 0.35 HS G D3: maximum 1.412, minimum 1.397 (Z = 0.015); M6 × 1 DU4: minimum 5.298, maximum 5.323 (Z = 0.025).
+  const d3 = engine.run('metric-tap-thread-limits', { D: 1.6, P: 0.35, lim: 'D', num: 3, X: 0.025, Y: 0.039, Z: 0.015, PDm: 1.405, Mm: 1.64 }).values;
+  near(d3.bPD, 1.3727, 0.00005, 'basic PD 1.3727');
+  near(d3.maxPD, 1.412, 0.0005, 'maximum tap PD');
+  near(d3.minPD, 1.397, 0.0005, 'minimum tap PD');
+  near(d3.limNo, 3, 1e-9, 'D3');
+  near(d3.minMaj, 1.6 + 0.08 * 0.35, 1e-8, 'standard-size tap: minimum major = basic + W');
+  const du4 = engine.run('metric-tap-thread-limits', { lim: 'DU', num: 4 }).values;
+  near(du4.minPD, 5.298, 0.0005, 'DU4 minimum');
+  near(du4.maxPD, 5.323, 0.0005, 'DU4 maximum');
+  const std = engine.run('metric-tap-thread-limits').values;
+  near(std.maxPD - std.bPD, 0.065, 1e-12, 'standard maximum = basic + Y');
+  near(std.limNo, 5, 1e-9, 'Y = 0.065 is D5');
+  near(std.maxMaj - std.minMaj, 0.041, 1e-12, 'major tolerance X');
+  const over = engine.run('metric-tap-thread-limits', { lim: 'D', num: 7 }).values;
+  near(over.minMaj - std.minMaj, 0.026, 1e-9, 'an oversize tap carries a larger major diameter');
+  // 3/8-16 NC HS H1: maximum 0.3349, minimum 0.3344; L2: minimum 0.3334, maximum 0.3339 (D = 0.0005).
+  const u = (o: Inputs) => engine.run('unified-tap-thread-limits', o).values;
+  const h1 = u({ lim: 'H', num: 1 });
+  near(h1.bPD, 0.3344, 0.00005, 'basic PD 0.3344');
+  near(h1.maxPD, 0.3349, 0.00005, 'H1 maximum');
+  near(h1.minPD, 0.3344, 0.00005, 'H1 minimum');
+  const l2 = u({ lim: 'L', num: 2 });
+  near(l2.minPD, 0.3334, 0.00005, 'L2 minimum');
+  near(l2.maxPD, 0.3339, 0.00005, 'L2 maximum');
+  near(l2.limNo, 2, 1e-9, 'L2 number');
+  const plus = u({ D: 7 / 16, n: 14, C: 0.0017 });
+  near(plus.minPD - plus.bPD, 0.0017, 1e-12, '7/16-14 plus 0.0017: minimum = basic + 0.0017');
+  near(plus.maxPD - plus.minPD, 0.0005, 1e-12, 'maximum = minimum + 0.0005');
+  // Table 2 constants by formula: A = 0.130 P, B by threads per inch.
+  for (const [n, A, B] of [[80, 0.0016, 0.0011], [48, 0.0027, 0.0018], [40, 0.0032, 0.0019], [16, 0.0081, 0.0041], [12, 0.0108, 0.0054], [4, 0.0325, 0.0162]]) {
+    const x = u({ n, D: 1, PDm: 0.9, Mm: 1 });
+    near(x.A, A, 0.00006, `A at ${n} TPI`);
+    near(x.B, B, 0.00006, `B at ${n} TPI`);
+  }
+  const s = u({});
+  near(s.maxMaj, 0.375 + 0.13 / 16, 1e-8, 'standard tap: maximum major = basic + A');
+});
+
+test('slot against high-speed milling reproduces the handbook cost examples', () => {
+  // HR = $50, Dist = 1000 mm, T = 45 min; T_V = 14 min (6 teeth) and 6 min (2 teeth).
+  const speed = (FR: number, z: number, fz: number) => FR * Math.PI * 25 / (1000 * z * fz);
+  const cost = (FR: number, z: number, fz: number, TV: number) => engine.run('slot-vs-high-speed-milling-cost', { VS: speed(FR, z, fz), zS: z, fzS: fz, trS: TV, ceS: 0 }).values;
+  near(cost(3230, 6, 0.17, 14).cS, 0.338, 0.0005, 'slot, 6 teeth, FR 3230');
+  near(cost(1480, 2, 0.17, 6).cS, 0.638, 0.0005, 'slot, 2 teeth, FR 1480');
+  const hs = (FR: number, z: number, TV: number) => engine.run('slot-vs-high-speed-milling-cost', { VH: speed(FR, z, 0.628), zH: z, trH: TV, ceH: 0 }).values.cH;
+  near(hs(18000, 6, 14), 0.0607, 0.0002, 'high-speed, 6 teeth, FR 18000 (printed 0.0606)');
+  near(hs(5250, 2, 6), 0.180, 0.0005, 'high-speed, 2 teeth, FR 5250');
+  const v = engine.run('slot-vs-high-speed-milling-cost').values;
+  near(v.TVS, 2 + 60 * 10 / 50, 1e-12, 'T_V = T_RPL + 60 C_E ÷ HR');
+  near(v.rpmH, 1000 * 375 / (Math.PI * 25), 1e-9, 'rpm = 1000 V ÷ (π D)');
+  near(v.FRH, 6 * 0.628 * v.rpmH, 1e-9, 'FR = z f_z rpm');
+  near(v.saveBatch, 100 * (v.cS - v.cH), 1e-9, 'saving per batch');
+  near(engine.run('slot-vs-high-speed-milling-cost', { pH: 4 }).values.cH, 4 * v.cH, 1e-12, 'cost grows with passes');
+});
+
+test('sixtieth-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('worm-cutter-profile-correction').text, 'CORRECT THE CUTTER OR WHEEL');
+  assert.equal(engine.run('worm-cutter-profile-correction', { tolY: 0.02, tolS: 0.02 }).text, 'WORMS ALIKE WITHIN TOLERANCE');
+  assert.equal(engine.run('industrial-worm-gearing-design').text, 'WORM SET FOLLOWS THE HANDBOOK RULES');
+  assert.equal(engine.run('industrial-worm-gearing-design', { phi: 14.5 }).text, 'REVIEW THE WORM SET PROPORTIONS');
+  assert.equal(engine.run('industrial-worm-gearing-design', { depth: 'axial' }).text, 'REVIEW THE WORM SET PROPORTIONS');
+  assert.equal(engine.run('industrial-worm-gearing-design', { T: 30, t: 5 }).text, 'REVIEW THE WORM SET PROPORTIONS');
+  assert.equal(engine.run('worm-hob-design').text, 'HOB LAYOUT FOLLOWS THE HANDBOOK RULES');
+  assert.equal(engine.run('metric-tap-thread-limits').text, 'TAP WITHIN ITS LIMITS');
+  assert.equal(engine.run('metric-tap-thread-limits', { PDm: 5.42 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('metric-tap-thread-limits', { Mm: 6.2 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('unified-tap-thread-limits').text, 'TAP WITHIN ITS LIMITS');
+  assert.equal(engine.run('unified-tap-thread-limits', { PDm: 0.334 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('slot-vs-high-speed-milling-cost').text, 'HIGH-SPEED MILLING COSTS LESS');
+  assert.equal(engine.run('slot-vs-high-speed-milling-cost', { pH: 10 }).text, 'SLOT MILLING COSTS LESS');
+  const slow = engine.run('slot-vs-high-speed-milling-cost', { nmax: 4000 });
+  assert.equal(slow.tone, 'bad');
+  assert.ok(slow.checks.some((c: { status: string }) => c.status === 'fail'), 'spindle speed above the machine fails');
+  const cases: Array<[string, Inputs]> = [
+    ['worm-cutter-profile-correction', { Dw: 40 }], ['industrial-worm-gearing-design', { C: 50 }], ['worm-hob-design', { A: 30 }], ['worm-hob-design', { fl: 'helical', Nrel: 9 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+// Sixty-first handbook pass (handbook84): tools from open pages of the page ledger.
+// Expected values are the handbook's own tables and examples (compound indexing Table 1b and the 127-division example, the
+// Heim factor table and hammer example, the hydraulic press capacity table, the silent chain hub and hob tables, the helical
+// gear example) and independent closed forms.
+const IN84 = 25.4;
+
+test('compound indexing reproduces the handbook Table 1b movements and the 127-division example', () => {
+  const chk = (N: number, w: number, a: number, A: number, b: number, B: number, R: number, sign = 'plus') =>
+    engine.run('compound-indexing', { mode: 'check', N, w, a, A, b, B, R, sign }).values;
+  // Approximate movements: [N, whole, a, A, b, B, revolutions, precise divisions, diameter at which error = 0.001]
+  const rows: Array<[number, number, number, number, number, number, number, number, number]> = [
+    [51, 7, 41, 47, 37, 49, 11, 51.00005, 322.55], [53, 0, 26, 29, 19, 31, 2, 52.99926, 22.89], [53, 5, 43, 47, 43, 49, 9, 53.00006, 263.9],
+    [167, 0, 6, 37, 39, 49, 4, 167.00058, 92.34], [199, 0, 26, 37, 13, 43, 5, 198.99937, 101.29], [209, 0, 9, 41, 8, 49, 2, 208.9987, 51.16],
+    [219, 0, 24, 39, 14, 47, 5, 218.99642, 19.45], [242, 0, 4, 37, 19, 49, 3, 242.00222, 34.63], [244, 0, 36, 39, 11, 49, 7, 243.99453, 14.19],
+  ];
+  for (const [N, w, a, A, b, B, R, Np, D] of rows) {
+    const x = chk(N, w, a, A, b, B, R);
+    near(x.Np, Np, 0.000006, `${N}: precise divisions`);
+    near(x.measure, D, 0.006, `${N}: diameter at which error = 0.001`);
+    assert.equal(x.exact, 0);
+  }
+  // Exact movements from the table.
+  for (const [N, a, A, b, B] of [[51, 10, 15, 2, 17], [52, 30, 39, 0, 15], [54, 20, 27, 0, 15], [152, 5, 19, 0, 15], [160, 4, 16, 0, 15]]) {
+    const x = chk(N, 0, a, A, b, B, 1);
+    assert.equal(x.exact, 1, `${N}: exact`);
+    near(x.Np, N, 1e-12, `${N}: divisions`);
+    near(x.err, 0, 1e-12, `${N}: no error`);
+  }
+  // Example: 127 teeth, 16 DP (about 7.9 in), first approximation 42/47 + 2/39 over 3 revolutions.
+  const ex = engine.run('compound-indexing', { mode: 'check', N: 127, w: 0, a: 42, A: 47, b: 2, B: 39, R: 3, dia: 7.9 * IN84 }).values;
+  near(ex.Np, 126.99769, 0.000006, '127: precise divisions 126.99769');
+  near(ex.measure, 17.5, 0.006, '127: diameter at which error = 0.001 is 17.50');
+  near(ex.err / IN84, 0.00045, 0.000005, '127: error at 7.9 in about 0.00045 in');
+  near(ex.err / IN84, (7.9 / ex.measure) * 0.001, 1e-12, 'error = (diameter ÷ measure) × 0.001');
+});
+
+test('compound indexing search finds simple, exact compound and the best approximate movements', () => {
+  const s35 = engine.run('compound-indexing', { N: 35 });
+  assert.equal(s35.text, 'SIMPLE INDEXING IS EXACT');
+  assert.deepEqual([s35.values.w, s35.values.a, s35.values.A], [1, 3, 21], '35 divisions: 1 turn and 3 holes in 21 (fewest holes)');
+  const s51 = engine.run('compound-indexing', { N: 51 });
+  assert.equal(s51.text, 'COMPOUND INDEXING IS EXACT');
+  const v = s51.values;
+  near(v.w + v.a / v.A + v.sign * v.b / v.B, 40 / 51, 1e-12, '51: movement = 40 ÷ 51 turns');
+  const cin = engine.run('compound-indexing', { N: 51, plates: 'cin' });
+  assert.equal(cin.text, 'SIMPLE INDEXING IS EXACT', 'Cincinnati side 2 has a 51-hole circle');
+  // 53 has no exact movement on the Brown & Sharpe plates; the search does at least as well as the table at each revolution count.
+  const b2 = engine.run('compound-indexing', { N: 53, Rmax: 2, tol: 0.000001 });
+  assert.equal(b2.text, 'NO MOVEMENT WITHIN TOLERANCE');
+  assert.ok(b2.values.measure >= 22.89 - 0.006, '53 within 2 revolutions: at least the table’s 22.89');
+  const b13 = engine.run('compound-indexing', { N: 53, Rmax: 13, tol: 0.000001 }).values;
+  assert.ok(b13.measure >= 263.9 - 0.006, '53 within 13 revolutions: at least the table’s 263.90');
+  const c127 = engine.run('compound-indexing', { N: 127, tol: 0.000001 }).values;
+  assert.ok(c127.measure >= 218.98 - 0.01, '127: at least the table’s best 218.98');
+  // The recommended approximation is the fewest revolutions within tolerance.
+  const loose = engine.run('compound-indexing', { N: 127, tol: 1 });
+  assert.equal(loose.text, 'APPROXIMATE INDEXING WITHIN TOLERANCE');
+  assert.ok(loose.values.err <= 1);
+  assert.equal(engine.run('compound-indexing', { mode: 'check', N: 52, w: 0, a: 30, A: 39, b: 0, B: 15, R: 2 }).text, 'MOVEMENT REPEATS DIVISIONS');
+});
+
+test('Unified thread gauge sizes follow the ANSI B1.2 Table 5 formulas', () => {
+  const v = engine.run('unified-thread-gauge-limits').values; // 1/4-20 UNC-2A/2B
+  const p = 1 / 20, Hs = 0.866025 * p;
+  near(v.H, Hs, 1e-12, 'H = 0.866025 p');
+  near(v.goRingPD, 0.2164, 1e-12, 'GO ring PD = max PD');
+  near(v.goRingMinor, 0.2164 - Hs / 2, 1e-12, 'GO ring minor = max PD − H/2');
+  near(v.ngRingMinor, 0.2127 - Hs / 4, 1e-12, 'NOT GO ring minor = min PD − H/4');
+  near(v.ngPlugMaj, 0.2224 + Hs / 2, 1e-12, 'NOT GO plug major = max PD + H/2');
+  near(v.trunc, 0.06 * Math.cbrt(p * p) + 0.017 * p, 1e-12, 'truncation 0.060 ∛p² + 0.017p');
+  near(v.trunc, 0.0089933, 0.0000001, '20 TPI truncation');
+  near(v.setGoTrunc, 0.2489 - v.trunc, 1e-12, 'GO setting plug truncated major');
+  near(v.setNgTrunc, 0.2127 + Hs / 2, 1e-12, 'NOT GO setting plug truncated major');
+  assert.equal(v.crest, 0, 'coarse pitch: full NOT GO setting plug major = max major');
+  near(v.setNgFull, 0.2489, 1e-12, 'full portion = max major');
+  // Fine pitch: the 0.001 in crest rule applies (sample limits for 80 TPI).
+  const f = engine.run('unified-thread-gauge-limits', { n: 80, eMaj: 0.0595, eMajMin: 0.0563, ePDmax: 0.0514, ePDmin: 0.0496, iMaj: 0.06, iPDmin: 0.0519, iPDmax: 0.0542, iMinMin: 0.0465, iMinMax: 0.0514, xPD: 0.0002, xMaj: 0.0003, plain: 0.00004 }).values;
+  assert.equal(f.crest, 1);
+  near(f.setNgFull, 0.0595 + 0.216506 / 80 - (0.0018 + 0.0017), 1e-12, 'max major + 0.216506p − (PD tol + 0.0017)');
+  // The rule is the diameter at which a 60° thread on the minimum pitch diameter has a 0.001 in crest (0.0017 ≈ 0.001 √3).
+  near(f.setNgFull, 0.0496 + 0.0595 - 0.0514 - 0.649519 / 80 + 0.866025 / 80 - 0.0017, 0.00001, 'crest-width geometry');
+  near(0.0017, 0.001 * Math.sqrt(3), 0.00004, '0.0017 ≈ 0.001 √3');
+});
+
+test('Heim hammer test reproduces Table 6 and the handbook example', () => {
+  const B = [[0.1, 1.01], [0.15, 1.63], [0.2, 2.31], [0.25, 3.08], [0.3, 3.94], [0.35, 4.9], [0.4, 5.97], [0.45, 7.17], [0.5, 8.52], [0.55, 10.03], [0.6, 11.73]];
+  for (const [A, b] of B) {
+    const x = engine.run('forging-hammer-efficiency', { D: 60, H0: 90, H1: 90 * (1 - A) }).values;
+    near(x.A, A, 1e-12, `A = ${A}`);
+    near(x.B, b, 0.0076, `Table 6: B at A = ${A}`);
+  }
+  // 100 kg (220 lb) hammer, 180 blows/min, 1.97 in × 2.95 in cylinder with A = 0.35, 10.3 hp supplied.
+  const ex = engine.run('forging-hammer-efficiency', { D: 1.97 * IN84, H0: 2.95 * IN84, H1: 2.95 * 0.65 * IN84, bpm: 180, Pin: 10.3 * 0.7456999 }).values;
+  near(ex.Wft, 1376, 1.5, 'work per blow 1376 ft·lb (handbook rounds B to 4.9)');
+  near(ex.PuFt, 4128, 5, '4128 ft·lb per second');
+  near(ex.eff, 4128 / (10.3 * 550) * 100, 0.1, 'efficiency 4128 ÷ 5665 (handbook: 72 per cent)');
+  near(ex.WJ, ex.Wft * 1.3558179483, 1e-9, 'joules');
+});
+
+test('hydraulic press capacity reproduces the handbook table and pressure rules', () => {
+  const PSI = 0.0689476; // bar per psi
+  const cases: Array<[number, number, number]> = [[10, 3100, 122], [10, 3200, 126], [10, 3900, 153], [10, 4000, 157], [20, 4000, 628]];
+  for (const [D, P, C] of cases) {
+    const x = engine.run('press-gauge-pressure-for-work', { D: D * IN84, P: P * PSI, Pmax: 300 }).values;
+    near(x.Fst, C, 0.55, `${D} in ram at ${P} psi: ${C} tons`);
+    near(x.Fst, 0.7854 * D * D * P / 2000, 0.0001 * C, 'C = 0.7854 D² P ÷ 2000 (printed rounded as 0.00039 D² P)');
+  }
+  const v = engine.run('press-gauge-pressure-for-work').values;
+  near(v.Pneed / 10, 20000 * 40 / (0.7854 * 250 * 250), 0.0002, 'P = A Pa ÷ (0.7854 D²)');
+  near(v.PaAt, v.FkN * 1000 / 20000, 1e-12, 'Pa = force ÷ area of work');
+  near(v.FneedkN, 800, 1e-12, 'force for the pressure wanted');
+});
+
+test('permanent-magnet motor constants follow the handbook definitions', () => {
+  const v = engine.run('pm-dc-motor-constants').values;
+  const w = 4580 * 2 * Math.PI / 60;
+  near(v.Ist, 48 / 1.2, 1e-12, 'I_STo = V ÷ R');
+  near(v.KT, 4 / 40, 1e-12, 'K_T = T_STo ÷ I_STo');
+  near(v.KE, 48 / w, 1e-12, 'K_E = V ÷ ω_NL');
+  near(v.KM, 0.1 / Math.sqrt(1.2), 1e-12, 'K_M = K_T ÷ √R');
+  near(v.DM, 4 / w, 1e-12, 'D_M = T_STo ÷ ω_NL');
+  near(v.TM, 0.00012 / v.DM, 1e-12, 'T_M = J_M ÷ D_M');
+  near(v.TL, 0.1 * 20, 1e-12, 'T_L = K_T × I_L');
+  near(v.nL, 4580 * (1 - 2 / 4), 1e-9, 'speed on the straight-line characteristic');
+  near(v.fn, Math.sqrt(2000 / 0.0004) / (2 * Math.PI), 1e-9, 'f_n = √(K ÷ J_L) ÷ 2π');
+  near(engine.run('pm-dc-motor-constants', { IL: 60 }).values.TL, 4, 1e-12, 'current limit above stall current: torque capped at stall');
+});
+
+test('silent chain sprocket reproduces the handbook hub and hob tables', () => {
+  const hob = [4.019, 4.341, 4.662, 4.983, 5.304, 5.626, 5.946, 6.265, 6.586, 6.905, 7.226, 7.546, 7.865, 8.185, 8.503];
+  hob.forEach((h, i) => {
+    const Nt = 17 + i;
+    near(engine.run('silent-chain-sprocket-tooth-form', { Nt, P: IN84 }).values.MHD / IN84, h, 0.001, `Table 5 hobbed, ${Nt} teeth`);
+    near(engine.run('silent-chain-sprocket-tooth-form', { Nt, P: IN84, cut: 'straddle' }).values.MHD / IN84, h + 0.08, 0.001, `Table 5 straddle, ${Nt} teeth`);
+  });
+  const hgd: Array<[number, number]> = [[20, 6.163], [28, 8.659], [38, 11.809], [51, 15.924], [69, 21.636], [95, 29.899], [130, 41.026]];
+  // Table 10 prints 41.026 in for 130 teeth where the formula gives 41.030 in (0.01 %); the other entries agree to the last digit.
+  for (const [Nt, d] of hgd) near(engine.run('silent-chain-sprocket-tooth-form', { Nt, P: IN84 }).values.HGD / IN84, d, Nt === 130 ? 0.005 : 0.0006, `Table 10, 1 in pitch, ${Nt} teeth`);
+  near(engine.run('silent-chain-sprocket-tooth-form', { Nt: 20, P: 9.525 }).values.HGD / IN84, 2.311, 0.0006, 'Table 10, 3/8 in pitch, 20 teeth');
+  near(engine.run('silent-chain-sprocket-tooth-form', { Nt: 28, P: 9.525 }).values.HGD / IN84, 3.247, 0.0006, 'Table 10, 3/8 in pitch, 28 teeth');
+  const v = engine.run('silent-chain-sprocket-tooth-form').values;
+  const t = Math.PI / 21, cot = 1 / Math.tan(t);
+  near(v.E, 25.4 * (cot - 0.22), 1e-9, 'E');
+  near(v.B, 25.4 * Math.sqrt(1.515213 + (cot - 1.1) ** 2), 1e-9, 'B');
+  near(v.face, 60 - 720 / 21, 1e-12, 'faces 60° − 720°/N apart');
+  near(engine.run('silent-chain-sprocket-tooth-form', { size: 'small', P: 4.7625 }).values.face, 70 - 720 / 21, 1e-12, '3/16 in: 70° − 720°/N');
+  near(engine.run('silent-chain-sprocket-tooth-form', { Nt: 12 }).values.face, 0, 1e-12, '12 teeth: faces parallel');
+});
+
+test('helical gear helix angle for a centre distance reproduces the handbook example', () => {
+  const v = engine.run('helical-gear-helix-for-centre-distance', { mn: IN84 / 6, z1: 18, z2: 30, C: 4.5 * IN84 }).values;
+  near(v.cos, 0.88889, 0.000005, 'cos ψ = 0.88889');
+  near(v.psi, 27.266, 0.0005, 'ψ = 27.266°');
+  near(v.L1 / IN84, 20.5728, 0.0003, 'L1 = 20.5728 in');
+  near(v.L2 / IN84, 34.288, 0.0004, 'L2 = 34.2880 in (the handbook rounds sin ψ to 0.45812)');
+  near(v.sumD, 2 * 4.5 * IN84, 1e-9, 'pitch diameters add up to 2C');
+  near(v.L1, 2 * Math.PI * (v.d1 / 2) / Math.tan(v.psi * Math.PI / 180), 1e-9, 'L = 2πR ÷ tan ψ');
+});
+
+test('sixty-first-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('compound-indexing').text, 'APPROXIMATE INDEXING WITHIN TOLERANCE');
+  assert.equal(engine.run('compound-indexing', { mode: 'check' }).text, 'MOVEMENT TOO COARSE');
+  assert.equal(engine.run('compound-indexing', { mode: 'check', tol: 0.02 }).text, 'MOVEMENT WITHIN TOLERANCE');
+  assert.equal(engine.run('unified-thread-gauge-limits').text, 'GAUGE SIZES SET');
+  assert.equal(engine.run('unified-thread-gauge-limits', { xPD: 0.002 }).text, 'GAUGE TOLERANCES OVERLAP');
+  assert.equal(engine.run('forging-hammer-efficiency').text, 'HAMMER TESTED');
+  assert.equal(engine.run('forging-hammer-efficiency', { Pin: 3 }).text, 'CHECK THE POWER MEASUREMENT');
+  assert.equal(engine.run('forging-hammer-efficiency', { H1: 70 }).tone, 'warn');
+  assert.equal(engine.run('press-gauge-pressure-for-work').text, 'PRESS REACHES THE PRESSURE ON THE WORK');
+  assert.equal(engine.run('press-gauge-pressure-for-work', { Pa: 80 }).text, 'PRESS CANNOT REACH THE PRESSURE');
+  assert.equal(engine.run('pm-dc-motor-constants').text, 'RESONANCE ABOVE THE CONTROL BANDWIDTH');
+  assert.equal(engine.run('pm-dc-motor-constants', { K: 10 }).text, 'RESONANCE INSIDE THE CONTROL BANDWIDTH');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form').text, 'SPROCKET FORM AND HUB FIT');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form', { hub: 150 }).text, 'CHANGE THE TEETH OR THE HUB');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form', { Nt: 15, hub: 50 }).text, 'CHANGE THE TEETH OR THE HUB');
+  assert.equal(engine.run('silent-chain-sprocket-tooth-form', { Nt: 19, hub: 100 }).tone, 'warn');
+  assert.equal(engine.run('helical-gear-helix-for-centre-distance').text, 'HELIX ANGLE FITS THE CENTRE DISTANCE');
+  assert.equal(engine.run('helical-gear-helix-for-centre-distance', { psiMax: 20 }).text, 'HELIX ANGLE OUTSIDE THE ACCEPTED RANGE');
+  const cases: Array<[string, Inputs]> = [
+    ['compound-indexing', { mode: 'check', a: 47 }], ['compound-indexing', { mode: 'check', a: 0, b: 2, sign: 'minus' }],
+    ['unified-thread-gauge-limits', { ePDmin: 0.22 }], ['unified-thread-gauge-limits', { iMinMax: 0.22 }],
+    ['forging-hammer-efficiency', { H1: 80 }], ['helical-gear-helix-for-centre-distance', { C: 96 }], ['helical-gear-helix-for-centre-distance', { psiMin: 50 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+// Sixty-second handbook pass (handbook85): tools from open and candidate pages of the page ledger.
+// Expected values are the handbook's own tables and examples (cutter grinding offset Tables and indicator drop Tables 3 and 4,
+// the top knurling example, ASME B94.9 Table 3 constant C) and independent closed forms.
+const IN85 = 25.4;
+
+test('cutter clearance grinding reproduces the handbook offset and indicator drop tables', () => {
+  const r = (over: Inputs) => engine.run('cutter-clearance-grinding-setup', over).values;
+  const above: Array<[number, number[]]> = [[3, [0.026, 0.052, 0.079, 0.105, 0.131, 0.157, 0.183, 0.209, 0.235, 0.26, 0.286, 0.312]], [10, [0.087, 0.175, 0.262, 0.349, 0.436, 0.523, 0.609, 0.696, 0.782, 0.868, 0.954, 1.04]]];
+  for (const [w, row] of above) row.forEach((o, i) => near(r({ Dw: w * IN85, cl: i + 1 }).offAbove / IN85, o, 0.0006, `wheel ${w} in above centre, ${i + 1}°`));
+  const below = [0.017, 0.035, 0.052, 0.07, 0.087, 0.105, 0.122, 0.139, 0.156, 0.174, 0.191, 0.208];
+  below.forEach((o, i) => near(r({ Dc: 2 * IN85, cl: i + 1, d: 1 }).offBelow / IN85, o, 0.0006, `cutter 2 in below centre, ${i + 1}°`));
+  const x = r({ Dc: 4 * IN85, Dw: 6 * IN85, cl: 6 });
+  near(x.offInline, (6 * IN85) * (4 * IN85) * Math.sin(3 * Math.PI / 180) / (10 * IN85), 1e-12, 'in-line: wheel × cutter × sin(½ clearance) ÷ (wheel + cutter)');
+  near(x.offCup, x.offBelow, 1e-12, 'cup wheel: same as the wheel-below table');
+  // Table 4 (face rake) and Table 3 (side and end relief): drop = distance × tan(angle).
+  const rake: Array<[number, number, number]> = [[1, 0.125, 0.0022], [10, 0.031, 0.0055], [15, 0.094, 0.0252], [20, 0.125, 0.0455], [12, 0.062, 0.0132]];
+  for (const [a, dist, drop] of rake) near(r({ rake: a, dist: dist * IN85 }).dropRake / IN85, drop, 0.00006, `Table 4: ${a}° over ${dist} in`);
+  const relief: Array<[number, number, number]> = [[1, 0.005, 0.00009], [1, 0.015, 0.00026], [9, 0.005, 0.0008], [9, 0.015, 0.0024]];
+  for (const [a, dist, drop] of relief) near(r({ cl: a, dist: dist * IN85 }).dropRelief / IN85, drop, 0.00005, `Table 3: ${a}° over ${dist} in`);
+  // Clearance needed, closed form in inches.
+  const D = 4, B = 200, L = 1 / 32, F = 0.04, d = 0.125;
+  near(r({ Dc: D * IN85, B, L: L * IN85, F: F * IN85, d: d * IN85 }).Cneed, 45860 / (D * B) * (1.5 * L + F / (Math.PI * D) * Math.sqrt(d * (D - d))), 1e-9, 'C = 45860 ÷ DB (1.5L + F ÷ πD √(d(D − d)))');
+});
+
+test('spline shaft milling cutter follows the handbook formulas', () => {
+  const v = engine.run('spline-shaft-milling-cutter', { Ns: 10, W: 5, d: 42 }).values;
+  const A = Math.asin(5 / 42);
+  near(v.Bdeg, 36, 1e-12, 'B = 360° ÷ N');
+  near(v.A, A * 180 / Math.PI, 1e-9, 'sin A = W ÷ d');
+  near(v.C, 42 * Math.sin(Math.PI / 10 - A), 1e-9, 'C = d sin(180°/N − A)');
+  // The chord plus the spline widths' chords add up around the root circle: N (C-arc + W-arc) = π d in angle.
+  near(10 * (2 * Math.asin(v.C / 42) + 2 * A), 2 * Math.PI, 1e-9, 'angles close around the root circle');
+});
+
+test('top knurling reproduces the handbook screw machine example', () => {
+  // 5/16 in brass stock, 0.3125 in knurl radius, 32 pitch 90° knurl (depth 0.0156 in), feed 0.005 and 0.008 in/rev.
+  const v = engine.run('top-knurling-cam-rise', { Dst: 0.3125 * IN85, Dk: 0.625 * IN85, pc: 0.03125 * IN85, ang: 90, f: 0.005 * IN85 }).values;
+  near(v.depth / IN85, 0.0156, 0.00005, 'depth 0.0156 in');
+  near(v.c / IN85, 0.12, 0.0005, 'cam rise 0.120 in');
+  near(v.revs, 24, 0.1, '24 revolutions at 0.005 in');
+  near(engine.run('top-knurling-cam-rise', { Dst: 0.3125 * IN85, Dk: 0.625 * IN85, pc: 0.03125 * IN85, ang: 90, f: 0.008 * IN85 }).values.revs, 15, 0.05, '15 revolutions at 0.008 in');
+  const g = engine.run('top-knurling-cam-rise', { depthFrom: 'given', dg: 0.5 }).values;
+  near(g.c, Math.sqrt((7.9375 / 2 + 15.875 / 2) ** 2 - (7.9375 / 2 + 15.875 / 2 - 0.5) ** 2), 1e-12, 'c = √((R + r)² − (R + r − d)²)');
+});
+
+test('rubber pad pressure matches the handbook inch formula', () => {
+  // 1000 tons on 400 sq in: p = 1000 × 2000 ÷ 400 = 5000 psi.
+  const v = engine.run('rubber-pad-forming-pressure', { F: 1000 * 8.896443, A: 400 * IN85 * IN85 }).values;
+  near(v.ppsi, 5000, 0.5, 'p = F × 2000 ÷ A');
+  near(engine.run('rubber-pad-forming-pressure').values.ratio, 3, 1e-12, 'pad thickness ÷ block height');
+});
+
+test('angular backlash follows the handbook formulas', () => {
+  const v = engine.run('gear-angular-backlash', { Bk: 0.004 * IN85, D: 8 * IN85, d: 2 * IN85, dC: 0, phi: 20 }).values;
+  near(v.thD, 6875 * 0.004 / 8, 1e-9, 'θ_D = 6875 B ÷ D');
+  near(v.thd, 6875 * 0.004 / 2, 1e-9, 'θ_d = 6875 B ÷ d');
+  near(6875, 2 * 180 * 60 / Math.PI, 0.5, '6875 ≈ 2 × 180 × 60 ÷ π');
+  near(engine.run('gear-angular-backlash', { dC: 0.05, phi: 20 }).values.dB, 2 * 0.05 * Math.tan(20 * Math.PI / 180), 1e-12, 'Δ backlash = 2 Δc tan φ');
+});
+
+test('Unified cut thread tap limits reproduce the ASME B94.9 Table 3 constant C', () => {
+  const C: Array<[number, number]> = [[2, 0.0217], [2.5, 0.0173], [3, 0.0144], [3.5, 0.0124], [4, 0.0108], [4.5, 0.0096], [5, 0.0087], [5.5, 0.0079], [7, 0.0077], [8, 0.0068], [9, 0.006], [10, 0.0054], [11, 0.0049], [12, 0.0045], [13, 0.0042], [14, 0.0039], [16, 0.0034], [18, 0.003], [20, 0.0027], [22, 0.0025], [24, 0.0023], [26, 0.0021], [27, 0.002], [28, 0.0019], [30, 0.0018], [32, 0.0017], [36, 0.0015], [40, 0.0014], [48, 0.0011], [50, 0.0011], [56, 0.001], [60, 0.0009], [64, 0.0008], [72, 0.0008], [80, 0.0007]];
+  for (const [n, c] of C) near(engine.run('unified-cut-thread-tap-limits', { n, Dn: 3 }).values.C, c, 0.00006, `C at ${n} TPI`);
+  // The table prints 0.0078 at 6 TPI; 25 % of the truncation gives 0.0090.
+  near(engine.run('unified-cut-thread-tap-limits', { n: 6, Dn: 3 }).values.C, 0.25 * 0.216506 / 6, 1e-12, '6 TPI by the formula');
+  const v = engine.run('unified-cut-thread-tap-limits').values; // 1/4-20, A 0.0025, B 0.0005, D 0.0020
+  near(v.PDb, 0.25 - 0.649519 / 20, 1e-12, 'basic PD');
+  near(v.Mmin, 0.25 + 0.0005 + 0.25 * 0.216506 / 20, 1e-12, 'min major = basic + B + C');
+  near(v.Mmax, v.Mmin + 0.0025, 1e-12, 'max major = min major + A');
+  near(v.PDmin, v.PDb + 0.0005, 1e-12, 'min PD = basic PD + B');
+  near(v.PDmax, v.PDmin + 0.002, 1e-12, 'max PD = min PD + D');
+});
+
+test('silent chain width follows the handbook capacity rules', () => {
+  const v = engine.run('silent-chain-width').values;
+  near(v.capIn, 9 / 1.4, 1e-12, 'capacity per inch = rating ÷ service factor');
+  near(v.wNeed / IN85, 30 * 1.4 / 9, 1e-12, 'width = power × SF ÷ rating per inch');
+  near(v.capChosen, 127 / IN85 * 9 / 1.4, 1e-12, 'capacity of the chosen width');
+});
+
+test('sixty-second-pass tools give pass and fail verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('cutter-clearance-grinding-setup').text, 'CLEARANCE SUITS THE CUT');
+  assert.equal(engine.run('cutter-clearance-grinding-setup', { cl: 2 }).text, 'GRIND MORE CLEARANCE');
+  assert.equal(engine.run('spline-shaft-milling-cutter').text, 'CUTTER PROPORTIONS SET');
+  assert.equal(engine.run('top-knurling-cam-rise').text, 'KNURLING CAM SET');
+  assert.equal(engine.run('rubber-pad-forming-pressure').text, 'PAD FORMS THE PART');
+  assert.equal(engine.run('rubber-pad-forming-pressure', { preq: 12 }).text, 'CHANGE THE PRESS, PAD OR PART');
+  assert.equal(engine.run('rubber-pad-forming-pressure', { t: 60 }).text, 'CHANGE THE PRESS, PAD OR PART');
+  assert.equal(engine.run('rubber-pad-forming-pressure', { t: 100 }).tone, 'warn');
+  assert.equal(engine.run('gear-angular-backlash').text, 'ANGULAR PLAY ACCEPTED');
+  assert.equal(engine.run('gear-angular-backlash', { maxSmall: 10 }).text, 'ANGULAR PLAY TOO LARGE');
+  assert.equal(engine.run('unified-cut-thread-tap-limits').text, 'TAP WITHIN ITS LIMITS');
+  assert.equal(engine.run('unified-cut-thread-tap-limits', { PDm: 0.2175 }).text, 'TAP OUTSIDE ITS LIMITS');
+  assert.equal(engine.run('silent-chain-width').text, 'CHAIN WIDTH CARRIES THE POWER');
+  assert.equal(engine.run('silent-chain-width', { wChosen: 101.6 }).text, 'WIDEN THE CHAIN OR IMPROVE LUBRICATION');
+  assert.equal(engine.run('silent-chain-width', { lubeHave: 'I' }).text, 'WIDEN THE CHAIN OR IMPROVE LUBRICATION');
+  const cases: Array<[string, Inputs]> = [
+    ['cutter-clearance-grinding-setup', { d: 120 }], ['spline-shaft-milling-cutter', { W: 30 }], ['spline-shaft-milling-cutter', { Ns: 12, W: 10 }],
+    ['top-knurling-cam-rise', { depthFrom: 'given', dg: 5 }], ['gear-angular-backlash', { D: 40 }], ['gear-angular-backlash', { dC: -0.5 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixty-third handbook pass (handbook86): tools from open and candidate pages of the page ledger.
+// Expected values are the handbook's own examples (spherical sections Examples 7 to 11, the parabola and hyperbola examples,
+// the disk method example, the metal ball marking examples and the engine flywheel Examples 1 and 2) and independent closed forms.
+const IN86 = 25.4;
+
+test('spherical sections reproduce the handbook examples', () => {
+  const r = (over: Inputs) => engine.run('sphere-sections', over).values;
+  // Example 7: wall G, R1 12.5 cm, R2 10 cm: 3220.13 cm² and 3992.44 cm³ (here in mm).
+  const g = r({ sec: 'G', R1: 125, R2: 100 });
+  near(g.area / 100, 3220.13, 0.01, 'Example 7 area');
+  near(g.vol / 1000, 3992.44, 0.01, 'Example 7 volume');
+  // Example 8: sector K, R 15 cm, φ 90°: area 414.07 cm²; the volume follows 2πR²F ÷ 3 with F = R(1 − cos ½φ).
+  const k = r({ sec: 'K', R: 150, phi: 90 });
+  near(k.area / 100, 414.07, 0.01, 'Example 8 area');
+  near(k.Fdep, 150 * (1 - Math.cos(Math.PI / 4)), 1e-9, 'depth of the sector');
+  near(k.vol, 2 * Math.PI * 150 ** 2 * k.Fdep / 3, 1e-6, 'Kv = 2πR²F ÷ 3');
+  // Example 9: segment S, E 20 cm, F 5 cm: 392.70 cm² and 850.85 cm³.
+  const s = r({ sec: 'S', E: 200, F: 50 });
+  near(s.area / 100, 392.7, 0.01, 'Example 9 area');
+  near(s.vol / 1000, 850.85, 0.01, 'Example 9 volume');
+  near(s.Rsph, 125, 1e-9, 'segment sphere radius');
+  // Example 10: hollow sector U, R1 5 in, R2 4 in, φ 30°: area 8.78 in². The printed volume 13.06 in³ is three times (2π/3)(R1³ − R2³)(1 − cos ½φ).
+  const u = r({ sec: 'U', R1: 5, R2: 4, phi: 30 });
+  near(u.area, 8.78, 0.005, 'Example 10 area');
+  near(3 * u.vol, 13.06, 0.005, 'printed Example 10 volume is 3 × the sector volume');
+  near(u.vol, r({ sec: 'K', R: 5, phi: 30 }).vol - r({ sec: 'K', R: 4, phi: 30 }).vol, 1e-9, 'U = K(R1) − K(R2)');
+  // Example 11: ring W, R1 5 in, R2 4 in: 789.56 in² and 1579.13 in³; part ring Z scales by φ ÷ 360.
+  const w = r({ sec: 'W', R1: 5, R2: 4 });
+  near(w.area, 789.56, 0.01, 'Example 11 area');
+  near(w.vol, 1579.13, 0.01, 'Example 11 volume');
+  near(r({ sec: 'Z', R1: 5, R2: 4, phi: 90 }).vol, w.vol / 4, 1e-9, 'quarter ring');
+  // Zone T cut 20 and 60 mm from the centre of a 100 mm sphere: radius 100, area 2πRH, volume π∫(R² − z²)dz.
+  const t = r({ sec: 'T', P: 2 * Math.sqrt(100 ** 2 - 20 ** 2), Q: 2 * Math.sqrt(100 ** 2 - 60 ** 2), H: 40 });
+  near(t.Rsph, 100, 1e-9, 'zone sphere radius');
+  near(t.area, 2 * Math.PI * 100 * 40, 1e-6, 'zone area');
+  near(t.vol, Math.PI * (100 ** 2 * 40 - (60 ** 3 - 20 ** 3) / 3), 1e-6, 'zone volume');
+  near(r({ sec: 'fromvol', Nv: 4 / 3 * Math.PI * 50 ** 3 / 1e6 }).Rsph, 50, 1e-9, 'radius from volume');
+});
+
+test('conic sections reproduce the handbook parabola and hyperbola examples', () => {
+  const c = (A: number, C: number, D: number, E: number, F: number) => engine.run('conic-section-equation', { A, C, D, E, F });
+  // 4y² − 8x − 12y + 1 = 0: vertex (−1, 3/2), p = 1/2, focus (1/2, 3/2), directrix x = −3/2.
+  const p = c(0, 4, -8, -12, 1);
+  assert.equal(p.text, 'PARABOLA IDENTIFIED');
+  near(p.values.h, -1, 1e-12, 'h'); near(p.values.k, 1.5, 1e-12, 'k'); near(p.values.p, 0.5, 1e-12, 'p');
+  // 9x² − 4y² − 36x + 8y − 4 = 0: h 2, k 1, a 2, b 3, c √13, e √13 ÷ 2.
+  const h = c(9, -4, -36, 8, -4);
+  assert.equal(h.text, 'HYPERBOLA IDENTIFIED');
+  near(h.values.h, 2, 1e-12, 'h'); near(h.values.k, 1, 1e-12, 'k'); near(h.values.a, 2, 1e-12, 'a'); near(h.values.b, 3, 1e-12, 'b');
+  near(h.values.c, Math.sqrt(13), 1e-12, 'c'); near(h.values.e, Math.sqrt(13) / 2, 1e-12, 'e');
+  const v = c(1, 0, 0, -4, 0); // x² = 4y
+  near(v.values.p, 1, 1e-12, 'vertical parabola p');
+  const e = c(9, 25, 0, 0, -225); // x²/25 + y²/9 = 1
+  assert.equal(e.text, 'ELLIPSE IDENTIFIED');
+  near(e.values.a, 5, 1e-12, 'a'); near(e.values.b, 3, 1e-12, 'b'); near(e.values.e, 0.8, 1e-12, 'e');
+  assert.equal(c(1, 1, 0, 0, -4).text, 'CIRCLE IDENTIFIED');
+  const vert = c(-4, 9, 0, 0, -36); // y²/4 − x²/9 = 1
+  near(vert.values.a, 2, 1e-12, 'vertical hyperbola a'); near(vert.values.b, 3, 1e-12, 'vertical hyperbola b');
+});
+
+test('four-arc oval follows the handbook equations and closes tangentially', () => {
+  const v = engine.run('four-arc-oval', { A: 400, B: 100 }).values;
+  near(v.r, 100 ** 2 / 800 * 4 ** 0.38, 1e-12, 'r = (B² ÷ 2A)(A ÷ B)^0.38');
+  near(v.X, (400 ** 2 / 4 - 400 * v.r + 100 * v.r - 100 ** 2 / 4) / (100 - 2 * v.r), 1e-9, 'equation (2)');
+  near(v.R, 50 + v.X, 1e-12, 'R = B/2 + X');
+  near(v.tang, 0, 1e-9, 'arcs meet tangentially');
+  near(v.area, 30631.7048, 0.001, 'area against a numerical integration of the outline');
+  near(v.aEll, Math.PI * 100 * 400 / 4, 1e-9, 'ellipse area');
+});
+
+test('disk method reproduces the handbook hole location example', () => {
+  // x = 0.930, y = 0.720, z = 0.860 in: disk A 1.070 in, radius B 0.395 in, radius C 0.325 in.
+  const v = engine.run('hole-location-disks', { x: 0.93 * IN86, y: 0.72 * IN86, z: 0.86 * IN86 }).values;
+  near(v.dA / IN86, 1.07, 1e-9, 'disk A diameter');
+  near(v.rB / IN86, 0.395, 1e-9, 'disk B radius');
+  near(v.rC / IN86, 0.325, 1e-9, 'disk C radius');
+  near(v.angA + v.angB + v.angC, 180, 1e-9, 'angles');
+  near(Math.hypot(v.Cx - 0.93 * IN86, v.Cy), 0.72 * IN86, 1e-9, 'hole C is y from hole B');
+});
+
+test('metal ball lot check reproduces the handbook marking examples', () => {
+  // 1/4 in, Grade 16, −0.0002 in ball gauge: accepted 0.249760 to 0.249850 in; measured 0.249823 marks −0.000180 in.
+  const D = 0.249823 * IN86;
+  const i = engine.run('metal-ball-lot-check', { Dw: 6.35, gage: -0.0002 * IN86 * 1000, devMinus: 0.00004 * IN86 * 1000, devPlus: 0.00005 * IN86 * 1000, inc: 0.00001 * IN86 * 1000, Dmax: D, Dmin: D });
+  near(i.values.lo / IN86, 0.24976, 1e-9, 'lower limit');
+  near(i.values.hi / IN86, 0.24985, 1e-9, 'upper limit');
+  near(i.values.spec / 1000 / IN86, -0.00018, 1e-9, 'specific diameter −0.000180 in');
+  assert.equal(i.text, 'LOT ACCEPTED');
+  // 6 mm, Grade 16, −4 µm: accepted 5.99500 to 5.99725 mm; measured 5.99627 mm marks −3.75 µm.
+  const mm = engine.run('metal-ball-lot-check').values;
+  near(mm.DwmL, 5.99627, 1e-9, 'lot mean diameter');
+  near(mm.lo, 5.995, 1e-12, 'lower limit'); near(mm.hi, 5.99725, 1e-12, 'upper limit');
+  near(mm.spec, -3.75, 1e-9, 'specific diameter −3.75 µm');
+  // Balls per kilogram: handbook 1,910,000 ÷ (D³ ρ) with D in mm and ρ in g/cm³.
+  near(mm.perKg, 1910000 / (6 ** 3 * 7.833), 0.2, 'balls per kilogram');
+});
+
+test('engine flywheel rim weight reproduces the handbook examples', () => {
+  // Example 1: 150 hp non-condensing engine, 200 rpm, 2 %, cut-off ¼ (c 0.209), 6 ft mean diameter: 2110 lb nearly.
+  const a = engine.run('engine-flywheel-rim-and-arms', { given: 'power', P: 150 * 0.745699872, N: 200, pct: 2, c: 0.209, Dm: 6 * 0.3048 }).values;
+  near(a.lb, 2110, 5, 'Example 1');
+  // Example 2: 158,340 ft·lb per revolution, c 0.163, 1 %, 18 ft, 75 rpm: 16,650 lb nearly (11,745 uses g = 32.2 ft/s²).
+  const b = engine.run('engine-flywheel-rim-and-arms', { given: 'work', Wrev: 158340 * 1.3558179483, N: 75, pct: 1, c: 0.163, Dm: 18 * 0.3048 }).values;
+  near(b.lb, 16650, 40, 'Example 2');
+  near(b.mass, 100 * b.E / (Math.PI * 18 * 0.3048 * 75 / 60) ** 2, 1e-9, 'm = nE ÷ v²');
+  near(engine.run('engine-flywheel-rim-and-arms', { arms: '6', ds: 100 }).values.Wa, 130, 1e-12, '6 arms: 1.3 D');
+  const e8 = engine.run('engine-flywheel-rim-and-arms', { arms: '8', ds: 100 }).values;
+  near(e8.Wa, 120, 1e-12, '8 arms: 1.2 D'); near(e8.ta, 60, 1e-12, 'thickness half the width'); near(e8.AtipMin, 2 / 3 * e8.Ahub, 1e-12, 'rim area two-thirds of hub area');
+});
+
+test('sixty-third-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('sphere-sections').text, 'SECTION CALCULATED');
+  assert.equal(engine.run('conic-section-equation').text, 'HYPERBOLA IDENTIFIED');
+  assert.equal(engine.run('four-arc-oval').text, 'OVAL LAID OUT');
+  assert.equal(engine.run('hole-location-disks').text, 'DISK SIZES SET');
+  assert.equal(engine.run('metal-ball-lot-check').text, 'LOT ACCEPTED');
+  assert.equal(engine.run('metal-ball-lot-check', { Dmax: 5.998, Dmin: 5.9979 }).text, 'LOT REJECTED');
+  assert.equal(engine.run('metal-ball-lot-check', { Dmax: 5.9975, Dmin: 5.995 }).text, 'LOT REJECTED');
+  assert.equal(engine.run('engine-flywheel-rim-and-arms').text, 'RIM AND ARMS SIZED');
+  const cases: Array<[string, Inputs]> = [
+    ['sphere-sections', { sec: 'G', R1: 100, R2: 120 }], ['sphere-sections', { sec: 'W', R1: 10, R2: 20 }],
+    ['conic-section-equation', { A: 0, C: 0 }], ['conic-section-equation', { A: 1, C: 1, D: 0, E: 0, F: 1 }], ['conic-section-equation', { A: 1, C: -1, D: 0, E: 0, F: 0 }], ['conic-section-equation', { A: 0, C: 1, D: 0 }],
+    ['four-arc-oval', { A: 100, B: 200 }], ['four-arc-oval', { rFrom: 'given', rg: 60 }],
+    ['hole-location-disks', { x: 50, y: 10, z: 10 }], ['metal-ball-lot-check', { Dmax: 5.99, Dmin: 5.995 }],
+  ];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+// Sixty-fourth handbook pass (handbook87): tools from open and candidate pages of the page ledger.
+// Expected values are the handbook's own conversion tables (Tables 16, 21, 57 and 58), the ANSI silent chain sprocket
+// Tables 3a and 4a, and the fuel oil heating value text, with independent closed forms.
+const IN87 = 25.4;
+
+test('area and volume converters reproduce the handbook square and cubic measure tables', () => {
+  const a = (value: number, from: string) => engine.run('area-converter', { value, from }).values.si;
+  near(a(1, 'acre'), 4046.856, 0.001, '1 acre = 4046.856 m²');
+  near(a(1, 'ha') / a(1, 'acre'), 2.471, 0.0005, '1 hectare = 2.471 acres');
+  near(1 / a(1, 'ft2'), 10.764, 0.0005, '1 m² = 10.764 ft²');
+  near(1 / a(1, 'yd2'), 1.196, 0.0005, '1 m² = 1.196 yd²');
+  near(a(1, 'mi2') / 1e6, 2.5899, 0.0001, '1 mile² = 2.5899 km²');
+  near(a(1, 'cm2') / a(1, 'in2'), 0.155, 0.00001, '1 cm² = 0.155 in²');
+  near(a(1, 'in2') / a(1, 'cmil'), 1273239, 1, '1 in² = 1,273,239 circular mils');
+  near(a(1, 'yd2'), 0.83612736, 1e-12, '1 yd² = 0.83612736 m² exactly');
+  const v = (value: number, from: string) => engine.run('volume-converter', { value, from }).values.si;
+  near(1 / v(1, 'yd3'), 1.30795, 0.00001, '1 m³ = 1.30795 yd³');
+  near(1 / v(1, 'ft3'), 35.314667, 0.000001, '1 m³ = 35.314667 ft³');
+  near(1 / v(1, 'in3'), 61023.74, 0.01, '1 m³ = 61,023.74 in³');
+  near(1 / v(1, 'usgal'), 264.17205, 0.00001, '1 m³ = 264.17205 US gal');
+  near(1 / v(1, 'ukgal'), 219.96925, 0.00001, '1 m³ = 219.96925 Imperial gal');
+  near(v(1, 'in3') / v(1, 'usfloz'), 0.55411256, 1e-8, '1 in³ = 0.55411256 US fl oz');
+  near(v(1, 'usfloz') * 1e6, 29.57353, 0.00001, '1 US fl oz = 29.57353 mL');
+  near(v(1, 'ukfloz') * 1e6, 28.41306, 0.00001, '1 Imperial fl oz = 28.41306 mL');
+  near(v(1, 'ft3') / v(1, 'usgal'), 7.4805, 0.00005, '1 ft³ = 7.4805 US gal');
+  near(v(1, 'yd3') / v(1, 'usgal'), 201.97403, 0.00001, '1 yd³ = 201.97403 US gal');
+  near(v(1, 'usbu') / v(1, 'ft3'), 1.2445, 0.00005, '1 US bushel = 1.2445 ft³');
+});
+
+test('inertia converter reproduces the handbook Tables 57 and 58', () => {
+  const c = (from: string, value = 1) => engine.run('inertia-converter', { value, from }).values.si;
+  near(1 / c('lbft2'), 23.73036, 0.00001, 'kg·m² to lb·ft²');
+  near(1 / c('lbin2'), 3417.171, 0.001, 'kg·m² to lb·in²');
+  near(c('lbft2'), 0.04214011, 1e-8, 'lb·ft² to kg·m²');
+  near(c('lbin2'), 0.0002926397, 1e-10, 'lb·in² to kg·m²');
+  near(c('ft4'), 0.008630975, 1e-9, 'ft⁴ to m⁴');
+  near(c('in4') / c('cm4'), 41.62314, 0.00001, 'in⁴ to cm⁴');
+  near(1 / c('ft4'), 115.8618, 0.0001, 'm⁴ to ft⁴');
+  near(c('cm4') / c('in4'), 0.0240251, 1e-7, 'cm⁴ to in⁴');
+  near(c('ft3'), 0.02831685, 1e-8, 'ft³ to m³');
+  near(c('in3'), 0.00001638706, 5e-12, 'in³ to m³');
+  near(1 / c('ft3'), 35.31466, 0.00001, 'm³ to ft³');
+  near(1 / c('in3'), 61023.76, 0.02, 'm³ to in³ (Table 57 prints 61,023.76; exact and Table 21 61,023.74)');
+  near(1 / c('lbfts'), 7.233011, 0.000005, 'kg·m/s to lb·ft/s');
+  near(1 / c('lbins'), 86.79614, 0.00005, 'kg·m/s to lb·in/s');
+  near(c('lbfts'), 0.138255, 0.000001, 'lb·ft/s to kg·m/s');
+  near(c('slugft2') / c('lbft2'), 9.80665 / 0.3048, 1e-9, 'slug·ft² = 32.174 lb·ft²');
+});
+
+test('silent chain sprocket inspection reproduces the handbook Tables 3a and 4a', () => {
+  const s = (Nt: number, P = IN87) => engine.run('silent-chain-sprocket-inspection', { Nt, P }).values;
+  // Table 3a, 1 in pitch: pitch, rounded-tooth outside and over-pin diameters.
+  const t3: Array<[number, number, number, number]> = [[96, 30.563, 30.627, 30.923], [124, 39.475, 39.542, 39.838], [125, 39.793, 39.86, 40.153], [150, 47.75, 47.82, 48.115]];
+  for (const [n, pd, od, opd] of t3) {
+    const x = s(n);
+    near(x.PD / IN87, pd, 0.0006, `PD ${n}`); near(x.OD / IN87, od, 0.0006, `OD ${n}`); near(x.OPD / IN87, opd, 0.0011, `OPD ${n}`);
+  }
+  // Table 4a tolerances (in) by tooth band, against (0.004 + 0.001 P √N) at each band's top tooth number; the printed table departs from its own formula by up to 0.0014 in.
+  const bands = [15, 24, 35, 48, 63, 80, 99, 120, 143, 144];
+  const t4: Array<[number, number[]]> = [[0.375, [0.005, 0.006, 0.006, 0.006, 0.007, 0.007, 0.008, 0.008, 0.008, 0.009]], [1, [0.008, 0.009, 0.01, 0.011, 0.012, 0.013, 0.014, 0.015, 0.016, 0.016]], [2, [0.012, 0.014, 0.017, 0.019, 0.021, 0.023, 0.025, 0.027, 0.028, 0.028]]];
+  for (const [p, row] of t4) row.forEach((tol, i) => { const n = Math.max(17, bands[i]); near(s(n, p * IN87).tolIn, 0.004 + 0.001 * p * Math.sqrt(n), 1e-12, 'formula'); near(0.004 + 0.001 * p * Math.sqrt(bands[i]), tol, 0.0015, `Table 4a ${p} in, ${bands[i]} teeth`); });
+  near(s(25).tir / IN87, 0.001 * s(25).PD / IN87, 1e-12, 'eccentricity 0.001 × PD');
+  near(s(17, 9.525).tir / IN87, 0.006, 1e-12, 'eccentricity not less than 0.006 in');
+  near(s(150, 2 * IN87).tir / IN87, 0.032, 1e-12, 'eccentricity not more than 0.032 in');
+  near(s(25).Gmin, s(25).G - 0.03 * IN87, 1e-12, 'guide groove +0, −0.030 in');
+});
+
+test('fuel oil heating value follows the handbook formula and Baumé scale', () => {
+  const v = engine.run('fuel-oil-heating-value', { from: 'be', be: 26.9 }).values;
+  near(v.sg, 140 / 156.9, 1e-12, 'SG = 140 ÷ (130 + °Bé)');
+  near(v.hv, 18650 + 40 * 16.9, 1e-9, 'BTU/lb = 18,650 + 40 (°Bé − 10)');
+  // The handbook gives 19,376 BTU/lb and 143,950 BTU per gallon for 26.9 °Bé mid-continent oil; the gallon figure follows from the pound figure and the gravity.
+  near(v.BTUgal / v.hv * 19376, 143950, 250, 'BTU per gallon from BTU per pound');
+  near(engine.run('fuel-oil-heating-value', { from: 'sg', sg: 140 / 156.9 }).values.be, 26.9, 1e-9, 'Baumé from specific gravity');
+  near(v.kgh, 100 * 3.6 / 0.8 / v.MJkg, 1e-9, 'oil burned = output ÷ (efficiency × heating value)');
+});
+
+test('sixty-fourth-pass tools give their verdicts and reject bad inputs', () => {
+  for (const id of ['area-converter', 'volume-converter', 'inertia-converter']) assert.equal(engine.run(id).text, 'CONVERTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection').text, 'SPROCKET ACCEPTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { OPDm: 209.7 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { OPDm: 210 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { TIRm: 0.3 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('silent-chain-sprocket-inspection', { Gm: 170 }).text, 'SPROCKET REJECTED');
+  assert.equal(engine.run('fuel-oil-heating-value').text, 'HEATING VALUE ESTIMATED');
+  assert.equal(engine.run('fuel-oil-heating-value', { be: 90 }).tone, 'warn');
+  const cases: Array<[string, Inputs]> = [['silent-chain-sprocket-inspection', { P: 9.51 }]];
+  for (const [id, over] of cases) { const r = engine.run(id, over); assert.equal(r.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(r.primary, undefined); }
+});
+
+test('surface roughness acceptance applies the 16 % and max rules', () => {
+  const r = (over: Inputs) => engine.run('surface-roughness-acceptance', over);
+  const d = r({});
+  assert.equal(d.text, 'SURFACE ACCEPTED');
+  near(d.values.shareAbove, 100 / 12, 1e-9, '1 of 12 above'); near(d.values.ln, 4, 1e-12, 'ln = 5 lr');
+  const exc = r({ nAbove: 2 }); // 16.7 % above, mean + σ = 0.73 within 0.8: the handbook exception
+  assert.equal(exc.text, 'SURFACE ACCEPTED'); assert.equal(exc.tone, 'warn');
+  assert.equal(r({ nAbove: 2, mean: 0.75, sd: 0.1 }).text, 'SURFACE REJECTED');
+  assert.equal(r({ nAbove: 1, n: 6, mean: 0.75, sd: 0.1 }).text, 'SURFACE REJECTED'); // 1 in 6 is 16.7 %
+  assert.equal(r({ rule: 'max' }).text, 'SURFACE REJECTED');
+  assert.equal(r({ rule: 'max', vmax: 0.79 }).text, 'SURFACE ACCEPTED');
+  assert.equal(r({ lower: 'yes', Lw: 0.6, nBelow: 3 }).text, 'SURFACE REJECTED');
+  assert.equal(r({ nAbove: 13 }).text, 'CHECK INPUTS');
+});
+
+// Sixty-fifth handbook pass (handbook88): the grip gauging length, body length and thread length rules of the fastener
+// standards as given in the handbook, checked by closed form.
+test('bolt grip and thread lengths follow the handbook rules', () => {
+  const r = (over: Inputs) => engine.run('bolt-grip-thread-length', over);
+  const s = r({}).values; // M10 × 1.5 socket head cap screw, L 40, LT 28
+  near(s.Lg, 12, 1e-12, 'LG = L − LT'); near(s.LTT, 35.5, 1e-12, 'LTT = LT + 5P'); near(s.Lb, 4.5, 1e-12, 'LB = L − LTT');
+  near(s.Lb, s.Lg - 5 * 1.5, 1e-12, 'BS 4168: Ls min = Lg max − 5P');
+  near(r({ std: 'metric', L: 60, Lt: 26 }).values.Lg, 34, 1e-12, 'metric: Lg max = L − B');
+  // Structural bolt, 3/4 in, 10 threads per inch: full length when LB min ≤ 2.5P; over 1 in diameter the limit is 3.5P.
+  const st = (L: number, d = 19.05, P = 2.54) => r({ std: 'structural', L, Lt: 35.052, Y: 8.636, d, P }).values;
+  near(st(101.6).Lb, 101.6 - 35.052 - 8.636, 1e-9, 'LB min = LG max − Y max');
+  assert.equal(st(101.6).full, 0); assert.equal(st(38.1).full, 1);
+  near(st(101.6).fullLim, 2.5 * 2.54, 1e-12, '2.5 P up to 1 in');
+  near(st(101.6, 31.75, 3.175).fullLim, 3.5 * 3.175, 1e-12, '3.5 P over 1 in');
+});
+
+test('sixty-fifth-pass tool gives its verdicts and rejects bad inputs', () => {
+  assert.equal(engine.run('bolt-grip-thread-length').text, 'LENGTH SUITS THE JOINT');
+  assert.equal(engine.run('bolt-grip-thread-length', { grip: 10 }).text, 'CHOOSE ANOTHER LENGTH');
+  assert.equal(engine.run('bolt-grip-thread-length', { need: 30 }).text, 'CHOOSE ANOTHER LENGTH');
+  assert.equal(engine.run('bolt-grip-thread-length', { std: 'structural', L: 38.1, Lt: 35.052, Y: 8.636, d: 19.05, P: 2.54, grip: 1, need: 1 }).text, 'LENGTH SUITS THE JOINT');
+  const bad = engine.run('bolt-grip-thread-length', { Lt: 50 });
+  assert.equal(bad.text, 'CHECK INPUTS'); assert.equal(bad.primary, undefined);
+});
+
+// Sixty-sixth handbook pass (handbook89): deep audit of pages cited only within wide ranges. Expected values are the
+// handbook's grinding Examples 6 and 7 and Tables 1 and 6, the double Acme thread tool example, and milling Tables 2a and 2b.
+test('grinding wheel life plan reproduces the handbook Taylor tables and Examples 6 and 7', () => {
+  const g = (over: Inputs) => engine.run('grinding-wheel-life-plan', over).values;
+  near(g({ C: 4690, T: 15 }).V, 2319, 1, 'Example 6: V15');
+  near(g({ C: 4690, T: 45 }).V, 1743, 1, 'Example 6: V45');
+  const t1 = g({ C: 6965, ECT: 0.00033, T: 10 }); // Table 1, group 1, ECT 0.00033
+  near(t1.V10, 3830, 3, 'Table 1 V10'); near(t1.V100, 2105, 3, 'Table 1 V100'); near(t1.SMRR, 1265, 2, 'Table 1 SMRR10');
+  // Example 7: shop VU 1800 m/min, TU 7 min at ECT 0.00017 on group 6 (standard C 5290).
+  const e7 = g({ cal: 'yes', VU: 1800, TU: 7, CshopStd: 5290, C: 5290, ECT: 0.00017, T: 1 });
+  near(e7.CU, 2985, 1, 'CU = VU TU^0.26'); near(e7.ratio, 0.564, 0.0005, 'ratio to the standard constant');
+  near(e7.V10, 1640, 1, 'V10U'); near(e7.V100, 900, 2, 'V100U (printed rounded to 900)'); near(e7.SMRR, 507, 1, 'SMRR1U');
+  const e33 = g({ cal: 'yes', VU: 1800, TU: 7, CshopStd: 5290, C: 4690, ECT: 0.00033, T: 10 });
+  near(e33.V10, 1455, 3, 'ECT 0.00033 V10U'); near(e33.V100, 800, 2, 'ECT 0.00033 V100U'); near(e33.SMRR, 480, 2, 'ECT 0.00033 SMRR10U');
+  const e50 = g({ cal: 'yes', VU: 1800, TU: 7, CshopStd: 5290, C: 3590, ECT: 0.0005, T: 9 });
+  near(e50.V, 1144, 1, 'V9 at ECT 0.00050'); near(e50.SMRR, 572, 1, 'SMRR at T = 9');
+  const d = g({});
+  near(d.Vw, d.SMRR / (1000 * 0.01), 1e-9, 'Vw = SMRR ÷ 1000 ar'); near(d.tc, 200 / d.FR + 0.05, 1e-12, 'time per pass');
+});
+
+test('thread tool relief angles reproduce the handbook double Acme example', () => {
+  // 1 in, 5 tpi double Acme: lead 0.400 in, K 0.780 in, 29°, effective relief 10°.
+  const v = engine.run('thread-tool-relief-angles', { lead: 0.4 * 25.4, Dmaj: 25.4, Kmin: 0.78 * 25.4, ang: 29, ae: 10 }).values;
+  near(v.psi, 9.27, 0.005, 'ψ'); near(v.phi, 7.26, 0.005, 'φ'); near(v.a, 19.27, 0.005, 'a'); near(v.at, 2.74, 0.005, "a′");
+  near(v.b, 18.70, 0.005, 'b'); near(v.bt, 2.65, 0.01, "b′"); near(v.n, 30.26, 0.01, 'n');
+});
+
+test('milling chip thickness reproduces the handbook Tables 2a and 2b', () => {
+  const r = (mode: string, ar: number, over: Inputs = {}) => engine.run('milling-chip-thickness-ect', { mode, D: 100, ar: ar * 100, ...over }).values;
+  const end: Array<[number, number, number, number]> = [[1, 180, 0.637, 1], [0.9, 143.13, 0.721, 0.884], [0.8, 126.87, 0.723, 0.881], [0.7355, 118.102, 0.714, 0.892], [0.6137, 103.144, 0.682, 0.934], [0.393, 77.643, 0.58, 1.098], [0.217, 55.528, 0.448, 1.422], [0.125, 41.41, 0.346, 1.84], [0.0625, 28.955, 0.247, 2.574], [0.03, 19.948, 0.172, 3.694], [0.01, 11.478, 0.1, 6.377]];
+  for (const [a, AE, hf, fr] of end) { const x = r('end', a); near(x.AE, AE, 0.01, `end AE ${a}`); near(x.hf, hf, 0.0011, `end hm/fz ${a}`); near(x.feedRatio, fr, 0.003, `end fz/fz0 ${a}`); }
+  const face: Array<[number, number, number, number]> = [[1, 180, 0.637, 1.398], [0.9, 128.316, 0.804, 1.107], [0.8, 106.26, 0.863, 1.032], [0.7355, 94.702, 0.89, 1], [0.6137, 75.715, 0.929, 0.958], [0.393, 46.282, 0.973, 0.915], [0.217, 25.066, 0.992, 0.897], [0.125, 14.361, 0.997, 0.892], [0.03, 3.438, 1, 0.89]];
+  for (const [a, AE, hf, fr] of face) { const x = r('face', a); near(x.AE, AE, 0.01, `face AE ${a}`); near(x.hf, hf, 0.0011, `face hm/fz ${a}`); near(x.feedRatio, fr, 0.003, `face fz/fz0 ${a}`); }
+  // Table 2b ECT at fz0 = 0.17 mm with aa/CEL = 0.95: end milling z = 2, face milling z = 8.
+  for (const [a, e] of [[1, 0.103], [0.9, 0.093], [0.125, 0.013], [0.0625, 0.006]]) near(r('end', a, { z: 2, fz: 0.17 }).ECT, e, 0.0006, `end ECT ${a}`);
+  for (const [a, e] of [[1, 0.411], [0.9, 0.37], [0.217, 0.089], [0.125, 0.051]]) near(r('face', a, { z: 8, fz: 0.17 }).ECT, e, 0.0006, `face ECT ${a}`);
+  near(r('end', 1, { fz: 0.17 }).hm, 0.108, 0.0005, 'hm = 0.108 mm at full slot and 0.17 mm/tooth');
+});
+
+test('sixty-sixth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('grinding-wheel-life-plan').text, 'WHEEL SPEED WITHIN THE WHEEL RATING');
+  assert.equal(engine.run('grinding-wheel-life-plan', { T: 2 }).text, 'WHEEL SPEED ABOVE THE WHEEL RATING');
+  assert.equal(engine.run('thread-tool-relief-angles').text, 'TOOL ANGLES SET');
+  assert.equal(engine.run('thread-tool-relief-angles', { ae: 5, lead: 30 }).text, 'TRAILING FLANK WOULD RUB');
+  assert.equal(engine.run('milling-chip-thickness-ect').text, 'CHIP THICK ENOUGH');
+  assert.equal(engine.run('milling-chip-thickness-ect', { ar: 0.25 }).text, 'RAISE THE FEED PER TOOTH');
+  const cases: Array<[string, Inputs]> = [['thread-tool-relief-angles', { Kmin: 30 }], ['milling-chip-thickness-ect', { ar: 30 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Sixty-seventh handbook pass (handbook90): deep audit of the journal and thrust bearing sections. Expected values are the
+// handbook's journal bearing example (2.3 in × 1.9 in, 6000 lb, 4800 rpm, both passes) and flat plate thrust bearing example.
+const IN90 = 25.4, LBF90 = 4.4482216152605, PSI90 = 6.894757293168;
+
+test('journal bearing lubrication analysis reproduces the handbook example', () => {
+  const base = { W: 6000 * LBF90, d: 2.3 * IN90, l: 1.9 * IN90, feed: 'hole', n: 4800, cd: 0.003 * IN90, ps: 30 * PSI90 };
+  const a = engine.run('journal-bearing-lubrication-analysis', { ...base, ta: 20 / 1.8, Z: 7.7, eps: 0.85, Tp: 1.46, qf: 1.43, X: 12 });
+  const x = a.values;
+  near(x.pb, 1372, 1, 'pb = 1372 psi'); near(x.P, 0.43, 0.01, 'P = 0.43 (printed with 1000 m rounded to 1.3)'); near(x.Cn, 0.027, 0.001, 'Cn = 0.027');
+  near(x.Tf, 7.96, 0.05, 'Tf = 7.96 in·lb/in'); near(x.Pf, 1.15, 0.01, 'Pf = 1.15 hp'); near(x.QR, 0.69, 0.005, 'QR = 0.69 gpm');
+  near(x.Q1, 0.306, 0.001, 'Q1 = 0.306 gpm'); near(x.Q2, 0.044, 0.001, 'Q2 = 0.044 gpm'); near(x.Q, 0.35, 0.001, 'Q = 0.350 gpm'); near(x.tF, 39.4, 0.2, 't = 39.4 °F');
+  assert.equal(a.text, 'REPEAT WITH THE NEW ASSUMED RISE'); near(x.tNewC * 1.8, (20 + x.tF) / 2, 1e-9, 'new assumed rise halfway');
+  const b = engine.run('journal-bearing-lubrication-analysis', { ...base, ta: 30 / 1.8, Z: 6.8, eps: 0.86, Tp: 1.53, qf: 1.48, X: 11.9 });
+  const y = b.values;
+  near(y.P, 0.49, 0.01, 'P = 0.49'); near(y.Tf, 7.36, 0.05, 'Tf = 7.36'); near(y.Pf, 1.07, 0.01, 'Pf = 1.07 hp'); near(y.Cn, 0.023, 0.001, 'Cn = 0.023');
+  near(y.Q1, 0.317, 0.001, 'Q1 = 0.317'); near(y.Q2, 0.05, 0.001, 'Q2 = 0.050'); near(y.Q, 0.367, 0.002, 'Q = 0.367'); near(y.tF, 34.4, 0.5, 't = 34.4 °F');
+  near(y.hoIn, 0.00021, 0.000005, 'ho = 0.00021 in'); assert.equal(b.text, 'ASSUMED TEMPERATURE RISE CONFIRMED');
+});
+
+test('flat plate thrust bearing design reproduces the handbook example', () => {
+  // 900 lb at 4000 rpm, D1 3 in, 75 psi, D2 5.5 in, 3/16 in grooves, 10 pads, M 0.19, c 3.5 Btu/gal °F, 40 °F rise, Z2 9.6 cP, 30 psi, l 1/8 in, κ 0.44.
+  const v = engine.run('flat-plate-thrust-bearing-design', { W: 900 * LBF90, D1: 3 * IN90, pDesign: 75 * PSI90, Kg: 0.8, D2: 5.5 * IN90, s: 0.1875 * IN90, i: 10, n: 4000, M: 0.19, dT: 40 / 1.8, Z2: 9.6, h: 0.002 * IN90, ps: 30 * PSI90, share: 1, lc: 0.125 * IN90, kappa: 0.44 }).values;
+  near(v.D2req / IN90, 5.3, 0.01, 'D2 required 5.30 in'); near(v.a / IN90, 1.25, 1e-9, 'a = 1.25 in'); near(v.B / IN90, 13.35, 0.01, 'B = 13.35 in'); near(v.iApp, 9.29, 0.01, 'about 9 pads');
+  near(v.b / IN90, 1.14, 0.01, 'b = 1.14 in'); near(v.pPsi, 63, 0.5, 'p = 63 psi'); near(v.U, 13.35 * 4000 / 12, 15, 'U = B N ÷ 12 (printed 4,430)'); near(v.Pf, 2.7, 0.05, 'Pf = 2.7 hp');
+  near(v.c, 3.5, 0.001, 'c = 3.5 Btu/gal °F'); near(v.Q, 0.82, 0.01, 'Q = 0.82 gpm'); near(v.Qc, 0.082, 0.001, 'Qc = 0.082 gpm'); near(v.Q0c, 0.186, 0.002, 'Q0c = 0.186 gpm'); near(v.gIn, 0.02, 0.0005, 'g = 0.02 in');
+  near(v.QF, 1.5e5 * 10 * (1.25 / (v.b / IN90)) * 0.002 ** 3 * 30 / 9.6, 1e-9, 'film flow with V = a ÷ b (handbook rounds V to 1: 0.038 gpm)');
+});
+
+test('sixty-seventh-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('journal-bearing-lubrication-analysis').text, 'ASSUMED TEMPERATURE RISE CONFIRMED');
+  assert.equal(engine.run('flat-plate-thrust-bearing-design').text, 'THRUST BEARING LAID OUT');
+  assert.equal(engine.run('flat-plate-thrust-bearing-design', { D2: 120 }).text, 'ENLARGE THE THRUST FACE');
+  const cases: Array<[string, Inputs]> = [['journal-bearing-lubrication-analysis', { cd: 60 }], ['flat-plate-thrust-bearing-design', { D2: 70 }], ['flat-plate-thrust-bearing-design', { i: 60, s: 20 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Sixty-eighth handbook pass (handbook91): deep audit of the thrust bearing section. Expected values are the handbook's
+// step (25 lb, 5000 rpm), tapered land (70,000 lb, 3600 rpm) and tilting pad (70,000 lb, 3600 rpm) examples.
+const IN91 = 25.4, LBF91 = 4.4482216152605, PSI91 = 6.894757293168;
+
+test('step thrust bearing design reproduces the handbook example', () => {
+  const v = engine.run('step-thrust-bearing-design', { W: 25 * LBF91, D1: 1 * IN91, D2: 3 * IN91, s: 0.062 * IN91, i: 6, n: 5000, Z: 25, rho: 880, cp: 1.9383 }).values;
+  near(v.aIn, 1, 1e-12, 'a = 1 in'); near(v.BIn, 6.28, 0.005, 'B = 6.28 in'); near(v.iApp, 5.9, 0.05, 'about 5.9 pads'); near(v.bIn, 0.985, 0.001, 'b = 0.985 in');
+  near(v.U, 2620, 3, 'U = 2620 fpm'); near(v.hIn, 0.0057, 0.0001, 'h = 0.0057 in'); near(v.eIn, 0.004, 0.0001, 'e = 0.004 in'); near(v.Pf, 0.133, 0.002, 'Pf = 0.133 hp');
+  near(v.b2In, 0.537, 0.001, 'b2 = 0.537 in'); near(v.c, 3.4, 0.001, 'c = 3.4 Btu/gal °F'); near(v.Q, 0.06, 0.001, 'Q = 0.060 gpm'); near(v.dtF, 28, 0.6, 'Δt = 28 °F');
+});
+
+test('tapered land thrust bearing design reproduces the handbook example', () => {
+  const v = engine.run('tapered-land-thrust-bearing-design', { W: 70000 * LBF91, D1: 7 * IN91, D2: 17 * IN91, pDesign: 400 * PSI91, Kg: 0.9, s: 0.5 * IN91, i: 6, n: 3600, d2: 0.005 * IN91, Z: 18, rho: 880, cp: 1.9953, dT: 50 / 1.8, h: 0.0022 * IN91, J: 260, YG: 0.61 }).values;
+  near(v.D2reqIn, 17.2, 0.05, 'D2 = 17.2 in'); near(v.aIn, 5, 1e-12, 'a = 5 in'); near(v.BIn, 37.7, 0.05, 'B = 37.7 in'); near(v.iApp, 6.85, 0.01, 'about 6.85 pads');
+  near(v.bIn, 5.78, 0.01, 'b = 5.78 in'); near(v.pPsi, 404, 1, 'p = 404 psi'); near(v.U, 11300, 15, 'U = 11,300 fpm'); near(v.YL, 2.75, 0.01, 'YL = 2.75 (read from Fig. 8 in the example)');
+  near(v.K, 4150, 15, 'K = 4150'); near(v.Pf, 91, 0.5, 'Pf = 91 hp'); near(v.Q, 22, 0.15, 'Q = 22.0 gpm'); near(v.YS, 0.963, 0.001, 'YS = 0.963'); near(v.ratio, 0.41, 0.005, 'D1/D2 = 0.41'); near(v.QF, 26.7, 0.1, 'QF = 26.7 gpm');
+});
+
+test('tilting pad thrust bearing design reproduces the handbook example', () => {
+  const v = engine.run('tilting-pad-thrust-bearing-design', { W: 70000 * LBF91, D1: 7 * IN91, D2: 15 * IN91, Kg: 0.8, i: 6, b: 4.75 * IN91, n: 3600, Z2: 18, rho: 880, cp: 1.9953, alpha: 0.3, f: 0.0036 }).values;
+  near(v.aIn, 4, 1e-12, 'a = 4 in'); near(v.BIn, 34.6, 0.05, 'B = 34.6 in'); near(v.iEst, 6.9, 0.05, 'about 6.9 pads'); near(v.bEstIn, 4.61, 0.01, 'b ≈ 4.61 in');
+  near(v.U, 10400, 40, 'U = 10,400 fpm'); near(v.pPsi, 614, 0.5, 'p = 614 psi'); near(v.O, 1.86e-6, 0.01e-6, 'O = 1.86 × 10⁻⁶'); near(v.hminIn, 0.0014, 0.00005, 'hmin = 0.0014 in');
+  near(v.Pf, 79.4, 0.4, 'Pf = 79.4 hp (printed with U = 10,400)'); near(v.Q, 21.02, 0.1, 'Q = 21.02 gpm'); near(v.dtF, 45.7, 0.1, 'Δt = 45.7 °F');
+});
+
+test('sixty-eighth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('step-thrust-bearing-design').text, 'STEP BEARING LAID OUT');
+  assert.equal(engine.run('step-thrust-bearing-design', { dTmax: 10 }).text, 'TEMPERATURE RISE TOO HIGH: ADD CHAMFERS');
+  assert.equal(engine.run('tapered-land-thrust-bearing-design').text, 'FILM FLOW CARRIES THE HEAT');
+  assert.equal(engine.run('tapered-land-thrust-bearing-design', { YG: 0.4 }).text, 'ADD CHAMFERS OR MORE TAPER');
+  assert.equal(engine.run('tilting-pad-thrust-bearing-design').text, 'TILTING PAD BEARING SATISFACTORY');
+  assert.equal(engine.run('tilting-pad-thrust-bearing-design', { dTmax: 20 }).text, 'TEMPERATURE RISE TOO HIGH');
+  const cases: Array<[string, Inputs]> = [['step-thrust-bearing-design', { D2: 20 }], ['tapered-land-thrust-bearing-design', { D2: 150 }], ['tilting-pad-thrust-bearing-design', { b: 200 }], ['step-thrust-bearing-design', { i: 60, s: 10 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Sixty-ninth handbook pass (handbook92): deep audit of the helical gearing section. Expected values are the handbook's
+// crossed helical (cases 4A, 4B and 5), cutter selection, enlarged pinion and hobbing change-gear examples.
+const IN92 = 25.4;
+
+test('crossed helical gears at an exact centre distance reproduce the handbook examples', () => {
+  const v = engine.run('crossed-helical-exact-centre-distance', { sigma: 90, C: 10 * IN92, mn: IN92 / 8, Nt: 84, n: 28, alphaA: 45, Dc: 2.61 * IN92 }).values;
+  near(v.nEst, 28.25, 0.05, 'n ≈ 28.25'); near(v.alpha, 46.1, 0.01, 'α = 46°6′'); near(v.beta, 43.9, 0.01, 'β = 43°54′');
+  near(v.D / IN92, 15.143, 0.002, 'D = 15.143 in'); near(v.d / IN92, 4.857, 0.002, 'd = 4.857 in'); near(v.O / IN92, 15.393, 0.002, 'O = 15.393 in'); near(v.o / IN92, 5.107, 0.002, 'o = 5.107 in');
+  near(v.L / IN92, 45.78, 0.01, 'L = 45.78 in'); near(v.l / IN92, 15.857, 0.005, 'l = 15.857 in'); near(v.Np, 275, 1, 'N′ = 275'); near(v.np, 94, 0.5, 'n′ = 94');
+  near(v.alphaMin, 34.733, 0.01, 'α = 34°44′ for least C'); near(v.Dmin / IN92, 12.777, 0.002, 'D = 12.777 in'); near(v.dmin / IN92, 6.143, 0.002, 'd = 6.143 in'); near(v.Cmin / IN92, 9.46, 0.002, 'C = 9.460 in');
+  const w = engine.run('crossed-helical-exact-centre-distance', { sigma: 60, C: 11.9075 * IN92, mn: IN92 / 8, Nt: 132, n: 33, alphaA: 30 }).values;
+  near(w.alpha, 30, 0.05, 'α = 30°'); near(w.beta, 30, 0.05, 'β = 30°'); near(w.D / IN92, 19.052, 0.01, 'D = 19.052 in'); near(w.d / IN92, 4.763, 0.003, 'd = 4.763 in');
+  near(w.L / IN92, 103.66, 0.3, 'L = 103.66 in'); near(w.l / IN92, 25.92, 0.1, 'l = 25.92 in'); near(w.Na, 203, 0.5, 'T = 203'); near(w.na, 51, 0.5, 't = 51');
+});
+
+test('helical milling cutter selection reproduces the handbook example', () => {
+  const x = engine.run('helical-milling-cutter-selection', { Nt: 15, helix: 30, mn: IN92 / 20, Dc: 1.89 * IN92 });
+  const v = x.values;
+  near(v.K, 1.54, 0.001, 'K = 1.540'); near(v.Kp, 0.333, 0.001, 'K′ = 0.333'); near(v.Q, 37.8, 1e-9, 'Q = 37.80'); near(v.Np, 35.7, 0.01, 'N′ = 35.70'); near(v.Na, 23.1, 0.01, 'N′ = 23 approx.');
+  assert.equal(v.cutNo, 3); assert.equal(v.cutA, 5); assert.equal(x.text, 'USE CUTTER No. 3');
+});
+
+test('enlarged helical pinion reproduces the handbook examples', () => {
+  const v = engine.run('enlarged-helical-pinion', { n: 12, mn: IN92 / 32, psi: 18, Nt: 24, tnP: 1.94703, tnG: 1.5708 }).values;
+  near(v.dIn, 0.3943, 0.0001, 'd = 0.3943 in'); near(v.Kh, 0.851, 0.01, 'Kh = 0.851 (graph)'); near(v.dOIn, 0.4834, 0.0005, 'do = 0.4834 in');
+  near(v.CIn, 0.5914, 0.0001, 'C = 0.5914 in'); near(v.ft, 20.9417, 0.001, 'φt = 20°56′30″'); near(v.invT, 0.017196, 0.00001, 'inv φt = 0.017196');
+  near(v.invF, 0.027647, 0.00001, 'inv φ = 0.027647'); near(v.phi, 24.3686, 0.002, 'φ = 24°22′7″'); near(v.CpIn, 0.606, 0.001, 'C′ = 0.606 in');
+});
+
+test('helical hobbing change gears reproduce the handbook example', () => {
+  const v = engine.run('helical-hobbing-change-gears', { Nt: 48, L: 44.0894 * IN92, F: 0.035 * IN92, K: 30, T: 1, M: 0.075 * IN92, hand: 'same', mode: 'conv', i1: 34, i2: 53, i3: 43, i4: 67, f1: 71, f2: 75, f3: 106, f4: 112 }).values;
+  near(v.R, 0.62549654, 1e-8, 'R = 0.62549654'); near(v.Ri, 0.625477264839, 1e-11, 'Ri = 0.625477264839'); near(v.iErr, 0.00001928, 1e-8, 'error 0.00001928');
+  near(v.Fmod / IN92, 0.0336417, 0.0000005, 'F = 0.0336417 in'); near(v.rReq, 0.448556, 0.000005, 'F ÷ M = 0.448556'); near(v.rAct, 0.448534, 0.000001, 'gears 0.448534');
+  near(v.Fact / IN92, 0.03364, 0.000001, 'F = 0.03364 in'); near(v.Lact / IN92, 44.087196, 0.001, 'L = 44.087196 in (sensitive to the rounded index ratio)'); near(v.err100 / 100, 0.00005, 0.00001, 'about 0.00005 in per in');
+});
+
+test('sixty-ninth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('crossed-helical-exact-centre-distance').text, 'HELICAL PAIR FITS THE CENTRE DISTANCE');
+  assert.equal(engine.run('helical-milling-cutter-selection', { Nt: 5, helix: 0 }).text, 'BELOW THE CUTTER SERIES');
+  assert.equal(engine.run('enlarged-helical-pinion').text, 'ENLARGE THE PINION');
+  assert.equal(engine.run('enlarged-helical-pinion', { n: 30 }).text, 'NO ENLARGEMENT NEEDED');
+  assert.equal(engine.run('helical-hobbing-change-gears').text, 'LEAD WITHIN TOLERANCE');
+  assert.equal(engine.run('helical-hobbing-change-gears', { errMax: 0.001 }).text, 'LEAD ERROR TOO LARGE');
+  const cases: Array<[string, Inputs]> = [['crossed-helical-exact-centre-distance', { C: 200 }], ['crossed-helical-exact-centre-distance', { sigma: 40, alphaA: 50 }], ['enlarged-helical-pinion', { tnP: 0.5, tnG: 0.5 }], ['helical-hobbing-change-gears', { hand: 'opposite' }], ['helical-hobbing-change-gears', { F: 2000 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventieth handbook pass (handbook93): deep audit of the spur gearing section. Expected values are the handbook's
+// significant diameters example, gears for a given centre distance, enlarged pinion and tight-mesh examples.
+const IN93 = 25.4;
+
+test('spur gear profile checker settings reproduce the handbook example', () => {
+  const x = engine.run('spur-gear-profile-checker', { m: IN93 / 10, phi: 20, n: 23, dO: 2.5 * IN93, Nt: 31, DO: 3.3 * IN93, b: 1.25, rc: 0.3, mfMin: 1.4 });
+  const v = x.values;
+  near(v.A, 28.025, 0.001, 'A = 28°1′30″'); near(v.tb, 0.13713, 0.00002, 'tan b = 0.13713'); near(v.tB, 0.20267, 0.00002, 'tan B = 0.20267');
+  near(v.dc / IN93, 2.1815, 0.0001, 'dc = 2.1815 in'); near(v.Dc / IN93, 2.9725, 0.0005, 'Dc = 2.9725 in (cos B rounded)'); near(v.mf1, 1.626, 0.001, 'mf = 1.626'); near(v.mf2, 1.626, 0.001, 'mf = 1.626 (7b)'); near(v.mf3, v.mf1, 1e-6, '7c agrees');
+  near(v.dL / IN93, 2.2616, 0.0001, 'dL = 2.2616 in'); near(v.DL / IN93, 3.0672, 0.0001, 'DL = 3.0672 in'); near(v.rcMax, 0.4719, 0.0001, 'rc (max) = 0.4719'); near(v.uc, 3.0776, 0.0001, '3.0776'); near(v.limP, 3.9332, 0.0001, '3.9332');
+  near(v.dH / IN93, 2.3362, 0.0001, 'dH = 2.3362 in'); near(v.DH / IN93, 3.1433, 0.0001, 'DH = 3.1433 in'); near(v.te, 0.07917, 0.00002, 'tan e = 0.07917'); near(v.dTIF / IN93, 2.1681, 0.0001, 'dTIF = 2.1681 in'); near(v.tE, 0.15267, 0.00002, 'tan E = 0.15267'); near(v.DTIF / IN93, 2.9468, 0.0001, 'DTIF = 2.9468 in');
+  near(v.rollPb, 0.13713 * 57.2958, 0.002, 'roll angle at contact = tan b × 57.2958'); near(v.Rb / IN93, 23 * 0.93969 / 20, 0.00001, 'Rb = n cos φ ÷ 2P');
+  assert.equal(x.text, 'PROFILE CHECKS PASS');
+});
+
+test('spur gears for a given centre distance reproduce the handbook example', () => {
+  const v = engine.run('spur-gears-for-given-centre-distance', { m: IN93 / 8, phi: 20, Np: 28, Ng: 88, C1: 7.5 * IN93, bc: 0.169 * IN93, phiMin: 18, phiMax: 25 }).values;
+  near(v.P1in, 7.7333, 0.0001, 'P1 = 7.7333'); near(v.phi1, 24.719, 0.001, 'φ1 = 24.719°'); near(v.DP1 / IN93, 3.6207, 0.0001, 'DP1 = 3.6207 in'); near(v.DG1 / IN93, 11.3794, 0.0002, 'DG1 = 11.3794 in');
+  near(v.DPB / IN93, 3.2889, 0.0001, 'DPB1 = 3.2889 in'); near(v.DGB / IN93, 10.3367, 0.0002, 'DGB1 = 10.3367 in'); near(v.t1 / IN93, 0.20312, 0.00001, 't1 = 0.20312 in');
+  near(v.tP / IN93, 0.2454, 0.0001, 'tP = 0.2454 in'); near(v.tG / IN93, 0.3505, 0.0001, 'tG = 0.3505 in'); near(v.bP1 / IN93, 0.1016, 0.0001, 'bP1 = 0.1016 in'); near(v.bG1 / IN93, -0.0428, 0.0001, 'bG1 = −0.0428 in');
+  near(v.DPR / IN93, 3.2968, 0.0001, 'DPR1 = 3.2968 in'); near(v.DGR / IN93, 11.0856, 0.0001, 'DGR1 = 11.0856 in'); near(v.DPO / IN93, 3.8264, 0.0002, 'DPO = 3.8264 in'); near(v.DGO / IN93, 11.6152, 0.0001, 'DGO = 11.6152 in');
+});
+
+test('enlarged spur pinion mesh reproduces the handbook examples', () => {
+  const a = engine.run('enlarged-spur-pinion-mesh', { m: IN93 / 5, phi: 14.5, n: 10, Nt: 60, ePin: 0.2746 * IN93, eGear: 0.2746 * IN93 });
+  near(a.values.t / IN93, 0.3852, 0.0001, 't = 0.3852 in (enlarged)'); near(a.values.T / IN93, 0.2432, 0.0001, 't = 0.2432 in (reduced)'); near(a.values.C1, a.values.C, 1e-9, 'standard centre distance kept'); assert.equal(a.text, 'MESH AT THE STANDARD CENTRE DISTANCE');
+  const e = (0.01873 - 0.015708) / Math.tan(20 * Math.PI / 180) * IN93;
+  const b = engine.run('enlarged-spur-pinion-mesh', { m: IN93 / 100, phi: 20, n: 10, Nt: 30, ePin: e, eGear: 0 }).values;
+  near(b.t / IN93, 0.01873, 1e-7, 't = 0.01873 in'); near(b.invT, 0.014904, 0.000001, 'inv 20° = 0.014904'); near(b.invF, 0.022459, 0.000002, 'inv φ1 = 0.022459'); near(b.phi1, 22.8167, 0.01, 'φ1 = 22°49′');
+  near(b.C / IN93, 0.2, 1e-9, 'C = 0.2000 in'); near(b.C1 / IN93, 0.2039, 0.0001, 'C1 = 0.2039 in');
+  const c = engine.run('enlarged-spur-pinion-mesh', { m: IN93, phi: 14.5, n: 24, Nt: 40, ePin: 0.4954 * IN93, eGear: 0.4954 * IN93 }).values;
+  near(c.NgMin, 39.8, 0.05, 'N = 2 × 1.2477 × 15.95 = 39.8');
+  const d = engine.run('enlarged-spur-pinion-mesh', { m: IN93 / 6, phi: 20, n: 14, Nt: 60, ePin: (2.745 - 16 / 6) * IN93, eGear: (2.745 - 16 / 6) * IN93 }).values;
+  near(d.DOp / IN93, 2.745, 1e-9, 'Do (pinion) = 2.745 in'); near(d.DOg / IN93, 10.255, 0.001, 'Do (gear) = 10.255 in');
+  const s = engine.run('enlarged-spur-pinion-mesh', { m: 1, phi: 20, aH: 1, rt: 0 }).values;
+  near(s.NpMin, 2 / Math.sin(20 * Math.PI / 180) ** 2, 1e-9, 'Nmin = 2P csc² φ for aH = 1 ÷ P and a sharp hob');
+});
+
+test('gear shaving stock check applies the centre-distance method', () => {
+  const v = engine.run('gear-shaving-stock-check', { m: 3.175, phi: 20, n: 30, Nt: 40, d: 0.087 }).values;
+  near(v.t2, 2 * Math.tan(20 * Math.PI / 180) * 0.087, 1e-12, 't2 = 2 tan φ d'); near(v.side, v.t2 / 2, 1e-12, 'half on each side'); near(v.t2x, v.t2, 0.0005, 'exact involute relation agrees');
+});
+
+test('seventieth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('spur-gear-profile-checker').text, 'PROFILE CHECKS PASS');
+  assert.equal(engine.run('spur-gear-profile-checker', { rc: 0.5 }).text, 'HOB TIP RADIUS TOO LARGE');
+  assert.equal(engine.run('spur-gear-profile-checker', { mfMin: 2 }).text, 'CONTACT RATIO TOO LOW');
+  assert.equal(engine.run('spur-gear-profile-checker', { b: 1.6 }).text, 'INVOLUTE UNDERCUT');
+  assert.equal(engine.run('spur-gear-profile-checker', { DO: 86.36 }).text, 'FILLET INTERFERENCE');
+  assert.equal(engine.run('spur-gear-profile-checker', { DO: 88.9 }).text, 'CONTACT BELOW THE BASE CIRCLE');
+  assert.equal(engine.run('spur-gears-for-given-centre-distance').text, 'GEARS FIT THE CENTRE DISTANCE');
+  assert.equal(engine.run('spur-gears-for-given-centre-distance', { phiMax: 24 }).text, 'OPERATING PRESSURE ANGLE OUTSIDE RANGE');
+  assert.equal(engine.run('enlarged-spur-pinion-mesh').text, 'INCREASE THE CENTRE DISTANCE');
+  assert.equal(engine.run('enlarged-spur-pinion-mesh', { Nt: 12, eGear: 0.2 }).text, 'GEAR UNDERCUT: USE MORE TEETH');
+  assert.equal(engine.run('gear-shaving-stock-check').text, 'SHAVING STOCK WITHIN ALLOWANCE');
+  assert.equal(engine.run('gear-shaving-stock-check', { d: 0.03 }).text, 'TOO LITTLE STOCK FOR SHAVING');
+  assert.equal(engine.run('gear-shaving-stock-check', { d: 0.2 }).text, 'TOO MUCH STOCK FOR SHAVING');
+  const cases: Array<[string, Inputs]> = [['spur-gear-profile-checker', { dO: 50 }], ['spur-gears-for-given-centre-distance', { C1: 150 }], ['spur-gears-for-given-centre-distance', { phiMin: 26 }], ['enlarged-spur-pinion-mesh', { eGear: 2 }], ['gear-shaving-stock-check', { sMin: 0.1 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-first handbook pass (handbook94): deep audit of the bevel gearing, straight-sided spline and roller chain sprocket
+// pages. Expected values are the handbook's milled bevel gear cutter examples and offset example, the S.A.E. spline tables
+// and the ANSI sprocket seating curve and hob tables.
+const IN94 = 25.4;
+const LBFIN94 = 8.8507458;
+
+test('milled bevel gear dimensions reproduce the handbook cutter examples', () => {
+  const a = engine.run('milled-bevel-gear-dimensions', { m: IN94 / 4, NP: 20, NG: 50, sigma: 70 }).values;
+  near(Math.tan(a.gP * Math.PI / 180), 0.33064, 0.00002, 'tan γP = 0.33064'); near(a.gP, 18.3, 0.005, 'γP = 18°18′'); near(a.gG, 51.7, 0.005, 'γG = 51°42′');
+  near(a.NcP, 21.1, 0.05, 'N′ pinion = 21.1'); near(a.NcG, 80.7, 0.05, 'N′ gear = 80.7');
+  const b = engine.run('milled-bevel-gear-dimensions', { m: IN94 / 4, NP: 12, NG: 24, sigma: 90, F: 10 }).values;
+  near(b.gP, 26.5667, 0.002, 'γP = 26°34′'); near(b.gG, 63.4333, 0.002, 'γG = 63°26′'); near(b.NcP, 13.4, 0.05, 'N′ pinion = 13.4'); near(b.NcG, 53.6, 0.1, 'N′ gear = 53.6');
+  const c = engine.run('milled-bevel-gear-dimensions').values, m = IN94 / 4, k = (c.C - 38.1) / c.C;
+  near(c.C, c.DG / (2 * Math.sin(c.gG * Math.PI / 180)), 1e-9, 'C is the same from either gear'); near(c.Sd, 1.157 * m, 1e-12, 'S + A = 1.157 ÷ P'); near(c.W, 2.157 * m, 1e-12, 'W = 2.157 ÷ P');
+  near(c.Fmax, Math.min(c.C / 3, 8 * m), 1e-12, 'F (max) = C ÷ 3 or 8 ÷ P'); near(c.s, m * k, 1e-12, 's = S (C − F) ÷ C'); near(c.t, 1.5708 * m * k, 0.0001, 't = T (C − F) ÷ C');
+  near(c.faceP, c.gP + c.al, 1e-9, 'face angle = γ + α'); near(c.restP, 90 - c.gP - c.al, 1e-9, 'compound rest = 90° − γ − α'); near(c.cutP, c.gP - c.de, 1e-9, 'cutting angle = γ − δ');
+  near(c.OP, c.DP + 2 * m * Math.cos(c.gP * Math.PI / 180), 1e-9, 'O = D + 2 S cos γ'); near(c.JP, c.OP / 2 / Math.tan(c.faceP * Math.PI / 180), 1e-9, 'J = (O ÷ 2) cot face angle'); near(c.jP, c.JP * k, 1e-9, 'j = J (C − F) ÷ C');
+  const u = engine.run('milled-bevel-gear-dimensions', { root: 'uniform' }).values;
+  near(u.cutG, u.gG - u.al, 1e-9, 'uniform clearance: cutting angle = γ − α');
+});
+
+test('bevel gear milling offset reproduces the handbook example', () => {
+  const v = engine.run('bevel-gear-milling-offset', { m: IN94 / 6, Nt: 24, gamma: 30, F: 1.25 * IN94, Tc: 0.1745 * IN94, factor: 0.28 }).values;
+  near(v.C / IN94, 4, 1e-9, 'C = 4 in'); near(v.r, 3.2, 1e-9, 'C ÷ F = 3.2'); near(v.depth / IN94, 0.1928, 0.00005, 'depth 1.157 ÷ 6 = 0.1928 in');
+  near(v.off / IN94, 0.0406, 0.00005, 'offset = 0.0406 in'); assert.ok(Math.round(v.Nc) >= 26 && Math.round(v.Nc) <= 34, 'No. 4 cutter range');
+  near(v.Tc1, v.T1 - v.T1 ** 3 / (6 * v.D ** 2), 1e-12, 'Tc = T − T³ ÷ 6D²'); near(v.Sc1, IN94 / 6 + v.T1 ** 2 * Math.cos(Math.PI / 6) / (4 * v.D), 1e-12, 'Sc = S + T² cos γ ÷ 4D');
+  near(v.Ds, v.D - 2 * 1.25 * IN94 * 0.5, 1e-9, 'D − 2F sin γ'); near(v.tc, v.t - v.t ** 3 / (6 * v.Ds ** 2), 1e-12, 'tc formula'); near(v.cut, 30 - v.al, 1e-9, 'cutting angle = γ − α');
+});
+
+test('S.A.E. straight-sided spline fittings reproduce the handbook tables', () => {
+  const run = (D: number, n: string, fit: string) => engine.run('sae-straight-sided-spline', { D: D * IN94, n, fit, L: IN94, p: 6.894757, Treq: 1 }).values;
+  const a = run(1, '6', 'A'); near(a.W / IN94, 0.25, 1e-9, '6-spline W = 0.250 in'); near(a.d / IN94, 0.9, 1e-9, '6A d = 0.900 in'); near(a.T * LBFIN94, 142.5, 0.05, '6A 1 in: T = 143');
+  const b = run(2, '10', 'B'); near(b.d / IN94, 1.72, 1e-9, '10B d = 1.720 in'); near(b.T * LBFIN94, 1302, 0.5, '10B 2 in: T = 1302');
+  const c = run(3, '16', 'C'); near(c.d / IN94, 2.43, 1e-9, '16C d = 2.430 in'); near(c.W / IN94, 0.294, 1e-9, '16-spline W = 0.294 in'); near(c.T * LBFIN94, 6190, 0.5, '16C 3 in: T = 6190');
+  const d = run(1, '4', 'B'); near(d.W / IN94, 0.241, 1e-9, '4-spline W = 0.241 in'); near(d.h / IN94, 0.125, 1e-9, '4B h = 0.125 in'); near(d.T * LBFIN94, 219, 0.5, '4B 1 in: T = 219');
+});
+
+test('roller chain sprocket tooth form reproduces the seating curve and hob tables', () => {
+  for (const [P, Dr, Ds] of [[0.375, 0.2, 0.204], [1, 0.625, 0.631], [1.25, 0.75, 0.757]]) near(engine.run('roller-chain-sprocket-tooth-form', { P: P * IN94, Dr: Dr * IN94 }).values.Ds / IN94, Ds, 0.0005, `Ds for Dr = ${Dr} in`);
+  const v = engine.run('roller-chain-sprocket-tooth-form').values;
+  near(v.R, v.Ds / 2, 1e-12, 'R = Ds ÷ 2'); near(v.A, 38, 1e-9, 'A = 35° + 60° ÷ 20'); near(v.B, 15.2, 1e-9, 'B = 18° − 56° ÷ 20');
+  near(v.paNew, 29, 1e-9, 'new chain 35° − 120° ÷ N'); near(v.paMin, 13.8, 1e-9, 'minimum 17° − 64° ÷ N'); near(v.paAvg, 21.4, 1e-9, 'average 26° − 92° ÷ N');
+  near(v.ODa, engine.run('sprocket-diameters', { p: 12.7, N: 20, Dr: 7.9248 }).values.od, 1e-9, 'approximate OD as the sprocket diameters tool');
+  near(v.H, Math.sqrt(v.F ** 2 - (1.4 * 7.9248 - 6.35) ** 2), 1e-12, 'H = √(F² − (1.4 Dr − 0.5 P)²)');
+  const h = engine.run('roller-chain-sprocket-tooth-form', { P: 0.25 * IN94, Dr: 0.13 * IN94, bore: 1.25 * IN94 }).values;
+  near(h.Pn / IN94, 0.2527, 0.0001, 'Pn = 0.2527 in'); near(h.hH / IN94, 0.0675, 1e-9, 'H = 0.0675 in'); near(h.hE / IN94, 0.0075, 1e-9, 'E = 0.0075 in');
+  near(h.hOD / IN94, 2.625, 0.02, 'hob OD about 2 5/8 in'); near(h.hW / IN94, 2.5, 1e-9, 'hob width 2 1/2 in');
+});
+
+test('seventy-first-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('milled-bevel-gear-dimensions').text, 'MILLED BEVEL GEAR DIMENSIONS');
+  assert.equal(engine.run('milled-bevel-gear-dimensions', { F: 60 }).text, 'FACE WIDTH OVER THE MAXIMUM');
+  assert.equal(engine.run('milled-bevel-gear-dimensions', { NP: 10, NG: 50, sigma: 90 }).text, 'BELOW THE FORMED CUTTER SERIES');
+  assert.equal(engine.run('bevel-gear-milling-offset').text, 'OFFSET AND CALIPER SETTINGS');
+  assert.equal(engine.run('bevel-gear-milling-offset', { Tc: 2 }).text, 'OFFSET NOT POSITIVE: CHECK THE CUTTER');
+  assert.equal(engine.run('bevel-gear-milling-offset', { F: 40 }).text, 'RATIO OUTSIDE THE FACTOR TABLE');
+  assert.equal(engine.run('sae-straight-sided-spline').text, 'SPLINE CARRIES THE TORQUE');
+  assert.equal(engine.run('sae-straight-sided-spline', { Treq: 20 }).text, 'TORQUE ABOVE THE SPLINE CAPACITY');
+  assert.equal(engine.run('sae-straight-sided-spline', { D: 12, Treq: 1 }).text, 'OUTSIDE THE S.A.E. TABLE SIZES');
+  assert.equal(engine.run('roller-chain-sprocket-tooth-form').text, 'SPROCKET TOOTH FORM');
+  assert.equal(engine.run('roller-chain-sprocket-tooth-form', { Dr: 4 }).text, 'TEETH POINTED BELOW THE OUTSIDE DIAMETER');
+  const cases: Array<[string, Inputs]> = [['milled-bevel-gear-dimensions', { NP: 50, NG: 20, sigma: 179 }], ['milled-bevel-gear-dimensions', { F: 250 }], ['bevel-gear-milling-offset', { F: 120 }], ['sae-straight-sided-spline', { n: '4', fit: 'C' }], ['roller-chain-sprocket-tooth-form', { Dr: 13 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-second handbook pass (handbook95): deep audit of the ball and roller bearing rating pages, the disc spring force,
+// stress and fatigue pages and the exact three-wire formula. Expected values are the handbook's disc spring example, its
+// involute helicoid and Buckingham examples, and the metric and inch columns of its fc and fo tables.
+const IN95 = 25.4;
+const LBF95 = 4.4482216;
+
+test('ball bearing load ratings follow the AFBMA formulas and agree between the metric and inch tables', () => {
+  const a = engine.run('ball-bearing-load-ratings').values;
+  near(a.C, 59.9 * 9 ** (2 / 3) * 12.7 ** 1.8, 1e-6, 'C = fc Z^(2/3) D^1.8'); near(a.Co, 12.1 * 9 * 12.7 ** 2, 1e-6, 'Co = fo i Z D²'); near(a.L10, (a.C / 2000) ** 3, 1e-6, 'L10 = (C ÷ P)³');
+  const met = engine.run('ball-bearing-load-ratings', { D: 10, dm: 200, fc: 46.7 }).values.C, inch = 3550 * 9 ** (2 / 3) * (10 / IN95) ** 1.8 * LBF95;
+  near(met / inch, 1, 0.005, 'Table 27: 46.7 metric and 3550 inch give the same rating');
+  const lo = engine.run('ball-bearing-load-ratings', { D: 25.4 }).values.C, hi = engine.run('ball-bearing-load-ratings', { D: 25.4001 }).values.C;
+  near(hi / lo, 1, 0.0001, 'formulas (2) and (3a) meet at 25.4 mm');
+  const ang = engine.run('ball-bearing-load-ratings', { i: 2, alpha: 40 }).values; near(ang.C, 59.9 * (2 * Math.cos(40 * Math.PI / 180)) ** 0.7 * 9 ** (2 / 3) * 12.7 ** 1.8, 1e-6, 'C = fc (i cos α)^0.7 Z^(2/3) D^1.8');
+  const t2 = engine.run('ball-bearing-load-ratings', { nb: 2 }).values; near(t2.C / a.C, 2 ** 0.7, 1e-9, 'tandem pair × 2^0.7'); near(t2.Co / a.Co, 2, 1e-9, 'tandem static × 2');
+  const th = engine.run('ball-bearing-load-ratings', { type: 'thrust', alpha: 90, fc: 36.7, fo: 51.9 }).values; near(th.C, 36.7 * 9 ** (2 / 3) * 12.7 ** 1.8, 1e-6, 'Ca = fc Z^(2/3) D^1.8 at 90°'); near(th.Co, 51.9 * 9 * 12.7 ** 2, 1e-6, 'Coa = fo Z D² at 90°');
+  const thInch = 2790 * 9 ** (2 / 3) * (10 / IN95) ** 1.8 * LBF95, thMet = engine.run('ball-bearing-load-ratings', { type: 'thrust', alpha: 90, D: 10, dm: 1000, fc: 36.7 }).values.C; near(thMet / thInch, 1, 0.005, 'Table 29: 36.7 metric and 2790 inch agree');
+  const t45 = engine.run('ball-bearing-load-ratings', { type: 'thrust', alpha: 45, i: 2 }).values; near(t45.C, 59.9 * Math.cos(Math.PI / 4) ** 0.7 * 9 ** (2 / 3) * 12.7 ** 1.8 * Math.tan(Math.PI / 4) * 2 ** 0.7, 1e-6, 'Ca with tan α and formula (10) for two equal rows');
+  near(12.7 * IN95 ** 2 / LBF95 / 1850, 1, 0.01, 'Table 35: fo 12.7 metric and 1850 inch agree');
+});
+
+test('roller bearing load ratings follow the AFBMA formulas and agree between the metric and inch tables', () => {
+  const r = engine.run('roller-bearing-load-ratings').values;
+  near(r.C, 87.7 * 10 ** (7 / 9) * 14 ** 0.75 * 10 ** (29 / 27), 1e-6, 'C = fc (i leff cos α)^(7/9) Z^(3/4) D^(29/27)'); near(r.Co, 44 * (1 - 10 / 70) * 14 * 10 * 10, 1e-9, 'Co = 44 (1 − D cos α ÷ dm) i Z leff D cos α'); near(r.L10, (r.C / 6000) ** (10 / 3), 1e-6, 'L10 = (C ÷ P)^(10/3)');
+  const met = engine.run('roller-bearing-load-ratings', { fc: 52.1 }).values.C, inch = 4680 * (10 / IN95) ** (7 / 9) * 14 ** 0.75 * (10 / IN95) ** (29 / 27) * LBF95;
+  near(met / inch, 1, 0.005, 'Table 31: 52.1 metric and 4680 inch give the same rating');
+  near(44 * IN95 ** 2 / LBF95 / 6430, 1, 0.01, 'static constants 44 metric and 6430 inch agree'); near(220 * IN95 ** 2 / LBF95 / 32150, 1, 0.01, 'thrust static 220 metric and 32150 inch agree');
+  const t = engine.run('roller-bearing-load-ratings', { nb: 3 }).values; near(t.C / r.C, 3 ** (7 / 9), 1e-9, 'tandem × n^(7/9)');
+  const th = engine.run('roller-bearing-load-ratings', { type: 'thrust', alpha: 90, fc: 105.4 }).values; near(th.C, 105.4 * 10 ** (7 / 9) * 14 ** 0.75 * 10 ** (29 / 27), 1e-6, 'Ca at 90°'); near(th.Co, 220 * (1 - 0) * 14 * 10 * 10, 1e-9, 'Coa = 220 (1 − D cos α ÷ dm) Z leff D sin α');
+  const th2 = engine.run('roller-bearing-load-ratings', { type: 'thrust', alpha: 90, fc: 105.4, i: 2 }).values; near(th2.C / th.C, 2 ** (7 / 9), 1e-9, 'formula (18) for two equal rows');
+  const thInch = 9500 * (10 / IN95) ** (7 / 9) * 14 ** 0.75 * (10 / IN95) ** (29 / 27) * LBF95; near(th.C / thInch, 1, 0.01, 'Table 32: 105.4 metric and 9500 inch agree');
+});
+
+test('disc spring forces, stresses and fatigue life reproduce the handbook example', () => {
+  const v = engine.run('disc-spring-fatigue-life').values;
+  near(v.th, 6.4, 0.05, 'θ = 6.4°'); near(v.Da, 77.78, 0.005, 'Da = 77.78 mm'); near(v.K1, 0.6841, 0.00005, 'K1 = 0.6841'); near(v.K2, 1.2086, 0.00005, 'K2 = 1.2086'); near(v.K3, 1.3589, 0.00005, 'K3 = 1.3589');
+  near(v.Fmin, 14390, 10, 'Fmin = 14390 N'); near(v.Fmax, 20050, 5, 'Fmax = 20050 N'); near(-v.s0, 1103, 0.5, 'σ0 = 1103');
+  near(v.s2min, 654, 0.5, 'σ2min = 654'); near(v.s2max, 1032, 0.5, 'σ2max = 1032'); near(v.s3min, 815, 0.5, 'σ3min = 815'); near(v.s3max, 1149, 0.5, 'σ3max = 1149');
+  near(v.r2, 705, 0.5, 'point 2: 705'); near(v.r3, 741.5, 0.5, 'point 3: 741.5'); assert.ok(v.r3 > v.r2, 'point 3 governs');
+  near(v.N / 1.321e6, 1, 0.01, 'N = 1,321,000 cycles'); near(10 ** (10.10734911 - 0.00537616 * (1149 - 0.5 * 815)), 1.321e6, 1000, 'equation (21) with the printed stresses');
+  near(engine.run('disc-spring-fatigue-life', { Nreq: 5e5 }).values.rAllow, 820, 0.5, 'equation (24): 1250 − 0.5 σmin = 820 at 5 × 10⁵ cycles'); near((1250 - 820) / 0.5, 860, 1e-9, 'σmin = 860');
+  near(10 ** (13.23985664 - 0.01084192 * 1176), 3, 0.2, 'equation (22) for Example 2 gives 3 cycles');
+});
+
+test('involute helicoid wire measurement reproduces the handbook examples', () => {
+  const a = engine.run('thread-wire-involute-helicoid').values;
+  near(a.B, 23.751, 0.001, 'B = 23.751°'); near(a.F, 42.104, 0.001, 'F = 42.104°'); near(a.Rb / IN95, 0.23185, 0.00001, 'Rb = 0.23185'); near(a.Ta / IN95, 0.16362, 0.00001, 'Ta = 0.16362'); near(a.Hb, 59.328, 0.001, 'Hb = 59.328°');
+  near(a.invG, 0.20351, 0.00002, 'inv G = 0.20351'); near(a.G, 44.35, 0.001, 'G = 44.350°'); near(a.M4 / IN95, 0.71859, 0.00002, 'M = 0.71859 in'); near(a.M3 / IN95, 0.71912, 0.00002, 'formula (3) M = 0.71912 in'); near(a.diff / IN95, 0.00053, 0.00002, 'difference 0.00053 in');
+  const b = engine.run('thread-wire-involute-helicoid', { E: 2.75 * IN95, P: 0.5 * IN95, S: 2, ang: 14.5, wire: 'best' }).values;
+  near(b.B, 6.6025, 0.0005, 'B = 6.6025°'); near(b.Wb / IN95, 0.25651, 0.00001, 'W = 0.25651 in'); near(b.M3 / IN95, 3.0707, 0.00005, 'M = 3.0707 in'); near((b.M3 - b.M4) / IN95, 0.0001, 0.00006, 'formula (4) about 0.0001 in less');
+  const c = engine.run('thread-wire-involute-helicoid', { E: 2.481 * IN95, P: 1.5 * IN95, S: 3, plane: 'axial', ang: 30, wire: 'best' }).values;
+  near(c.An, 26.565, 0.001, 'An = 26.565°'); near(c.Wb / IN95, 0.72618, 0.00002, 'W = 0.72618 in'); near(c.M3 / IN95, 3.532, 0.0005, 'formula (3) M = 3.532 in'); near(c.M4 / IN95, 3.515, 0.001, 'formula (4) M = 3.515 in');
+  const back = engine.run('thread-wire-involute-helicoid', { Mmeas: a.M4 }).values; near(back.Em, 15.875, 1e-6, 'pitch diameter recovered from the reading');
+});
+
+test('seventy-second-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('ball-bearing-load-ratings').text, 'RATINGS AND LIFE');
+  assert.equal(engine.run('ball-bearing-load-ratings', { P: 5000 }).text, 'LIFE BELOW REQUIRED');
+  assert.equal(engine.run('ball-bearing-load-ratings', { Po: 30000 }).text, 'STATIC LOAD TOO HIGH');
+  assert.equal(engine.run('roller-bearing-load-ratings').text, 'RATINGS AND LIFE');
+  assert.equal(engine.run('roller-bearing-load-ratings', { P: 12000, Lreq: 100 }).text, 'LOAD ABOVE C/4: CONSULT THE BEARING MAKER');
+  assert.equal(engine.run('roller-bearing-load-ratings', { leff: 30 }).text, 'LONG ROLLERS: fc WILL BE LOWER');
+  assert.equal(engine.run('roller-bearing-load-ratings', { P: 9000 }).text, 'LIFE BELOW REQUIRED');
+  assert.equal(engine.run('disc-spring-fatigue-life').text, 'DISC SPRINGS MEET THE LIFE');
+  assert.equal(engine.run('disc-spring-fatigue-life', { Nreq: 1500000 }).text, 'FATIGUE LIFE BELOW REQUIRED');
+  assert.equal(engine.run('disc-spring-fatigue-life', { s0Max: 1000 }).text, 'COMPRESSIVE STRESS TOO HIGH');
+  assert.equal(engine.run('disc-spring-fatigue-life', { sTMax: 1100 }).text, 'TENSILE STRESS TOO HIGH');
+  assert.equal(engine.run('disc-spring-fatigue-life', { h: 1.5, smin: 0.5, smax: 1, Nreq: 10000 }).text, 'DIMENSION RATIOS OUTSIDE THE RECOMMENDED RANGE');
+  assert.equal(engine.run('thread-wire-involute-helicoid').text, 'USE THE EXACT FORMULA');
+  assert.equal(engine.run('thread-wire-involute-helicoid', { tol: 0.02 }).text, 'SIMPLIFIED FORMULA ACCURATE ENOUGH');
+  const cases: Array<[string, Inputs]> = [['ball-bearing-load-ratings', { type: 'thrust', alpha: 0 }], ['ball-bearing-load-ratings', { alpha: 90 }], ['roller-bearing-load-ratings', { dm: 5 }], ['disc-spring-fatigue-life', { smax: 3 }], ['disc-spring-fatigue-life', { smin: 1.5 }], ['thread-wire-involute-helicoid', { Mmeas: 100 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-third handbook pass (handbook96): deep audit of the cam design and fastener torque–tension pages. Expected values
+// are the handbook's parabolic matching example and table, its cam size, curvature and force analysis examples, and its
+// yield clamping force example for an M10 × 1.5 bolt of class 8.8.
+const IN96 = 25.4;
+const LBF96 = 4.4482216;
+
+test('modified constant-velocity cam reproduces the handbook parabolic matching table', () => {
+  const v = engine.run('modified-constant-velocity-cam', { y1: 0.25 * IN96, y2: 1.25 * IN96, y3: 0.5 * IN96, b2: 50, step: 5 }).values;
+  near(v.b1, 20, 1e-9, 'β1 = 20°'); near(v.b3, 40, 1e-9, 'β3 = 40°'); near(v.bt, 110, 1e-9, 'total 110°'); near(v.y5 / IN96, 0.015625, 1e-9, 'y(5°) = 0.000625 × 5²');
+  const tbl: string = metric(engine.run('modified-constant-velocity-cam', { y1: 0.25 * IN96, y2: 1.25 * IN96, y3: 0.5 * IN96, b2: 50, step: 5 }), 'Displacement table (θ: y)');
+  const rows = new Map(tbl.split(' · ').map((x) => { const [t, y] = x.split(': '); return [parseFloat(t), parseFloat(y.replace(/,/g, ''))] as [number, number]; }));
+  for (const [th, y] of [[15, 0.141], [40, 0.75], [75, 1.617], [80, 1.719], [85, 1.805], [95, 1.93], [105, 1.992], [110, 2]]) near((rows.get(th) ?? NaN) / IN96, y, 0.0006, `table at ${th}°`);
+  const w = 6 * 100; near(v.a1, 2 * 0.25 * IN96 * w * w / 400 / 1000, 1e-9, 'a = 2 y1 ω² ÷ β1²'); near(v.vel, 1.25 * IN96 * w / 50 / 1000, 1e-12, 'v = y2 ω ÷ β2');
+});
+
+test('cam size and curvature reproduce the handbook pressure angle and radius of curvature examples', () => {
+  const u = engine.run('cam-size-and-curvature', { law: 'uniform', h: IN96, beta: 100, phiMax: 30 }).values; near(u.Rp, 180 * IN96 / (Math.PI * 100 * Math.tan(Math.PI / 6)), 0.001, 'formula (6c)');
+  const p = engine.run('cam-size-and-curvature', { law: 'parabolic', h: IN96, beta: 100, phiMax: 30 }).values; near(p.Rp, 360 * IN96 / (Math.PI * 100 * Math.tan(Math.PI / 6)) - IN96 / 2, 0.001, 'formula (7c)'); near(p.thPhi, 50, 0.2, 'parabolic φmax at θ = β ÷ 2');
+  const c = engine.run('cam-size-and-curvature').values; near(c.thPhi, 44.94, 0.15, 'cycloidal p = 44.94°'); near(c.Rphi / IN96, 1.935, 0.002, 'Rmax at p (formula 9c gives 1.935; printed 1.96)'); near(c.Rp / IN96, 1.535, 0.002, 'Rmin = Rmax − h (p ÷ β − sin(360 p ÷ β) ÷ 2π)');
+  const shm = engine.run('cam-size-and-curvature', { law: 'shm', h: IN96, beta: 60, Ruse: 2.9 * IN96, phiMax: 60, rf: 1 }).values; near(shm.rhoV / IN96, 1.8, 0.02, 'SHM ρmin = 1.8');
+  const cyc = engine.run('cam-size-and-curvature', { law: 'cycloidal', h: IN96, beta: 60, Ruse: 2.9 * IN96, phiMax: 60, rf: 1 }).values; near(cyc.rhoV / IN96, 1.6, 0.02, 'cycloidal ρmin = 1.6'); near(cyc.thV, 45, 1, 'near 0.75 β');
+  const par = engine.run('cam-size-and-curvature', { law: 'parabolic', h: IN96, beta: 60, Ruse: 2.9 * IN96, phiMax: 60, rf: 1 }).values; near(par.rhoV / IN96, 1.897, 0.002, 'parabolic ρ at β ÷ 2 on the deceleration curve = 1.897');
+});
+
+test('cam follower force analysis reproduces the handbook example', () => {
+  const v = engine.run('cam-follower-force-analysis').values;
+  near(v.aA * 1000 / IN96, -18300, 60, 'a = −18,300 in/s² at 75°'); near(v.thA, 75, 1e-9, 'θ = 0.75 β'); near(v.ya / IN96, 0.909, 0.0005, 'ya = 0.909 in');
+  near(v.Rin / LBF96, 95, 0.5, 'R = 95 lb'); near(v.Fs / LBF96, 88, 0.5, 'Fs = 1.05 R − Wf − Fe = 88 lb'); near(v.Ks * IN96 / LBF96, 57, 0.5, 'Ks = 57 lb/in');
+  near(v.a * 1000 / IN96, 5660, 10, 'a = 5660 in/s² at 45°'); near(v.y / IN96, 0.40, 0.001, 'y = 0.40 in'); near(v.phi, 29.69, 0.01, 'pressure angle at 45° (handbook takes 30°)');
+  const den = Math.cos(v.phi * Math.PI / 180) - 0.05 * Math.sin(v.phi * Math.PI / 180) * (2 * 1.5 + 4 - 0.05 * 0.75) / 4; near(v.Fn, v.P / den, 1e-9, 'formula (19a)');
+  near((0.9072 * 5660 * IN96 / 1000 + 0.4 * IN96 * v.Ks + 160.1 + 0.9072 * 9.80665) / LBF96 / 0.8225, 110, 2, 'Fn = 110 lb with the handbook’s P (which leaves out Fe)');
+  near(v.To, (39.624 + v.y) * v.Fn * Math.sin(v.phi * Math.PI / 180) / 1000, 1e-9, 'To = (Rmin + y) Fn sin φ'); near(1.96 * 110 * 0.5, 108, 0.5, 'printed To = 108 in·lb');
+  near(v.rho / IN96, 2.26, 0.005, 'ρ = 2.26 in at 45°'); near(v.da * 1000 / IN96, 58320, 1, 'Δa = 58,320 in/s²');
+});
+
+test('bolt torque coefficient and yield clamping force reproduce the handbook example', () => {
+  const v = engine.run('bolt-torque-coefficient-yield').values;
+  near(v.As, 57.99, 0.005, 'As = 57.99 mm²'); near(v.dA, 8.59, 0.01, 'dA = 8.6 mm'); near(v.d2, 9.026, 0.0005, 'd2 = 9.026 mm'); near(v.be, 2.73, 0.005, 'β = 2.73°'); near(v.ap, 29.97, 0.005, 'α′ = 29.97°');
+  near(v.Ffy, 30463, 15, 'Ffy = 30,463 N'); near(640 * 57.99 / Math.sqrt(1 + 3 * ((2 / 8.6) * (1.5 / Math.PI + 0.12 * 9.026 / Math.cos(29.97 * Math.PI / 180))) ** 2), 30463, 2, 'equation (17) with dA = 8.6');
+  near(0.164 * 30463 * 10 / 1000, 49.9, 0.07, 'Tfy = 0.164 × 30,463 × 10 = 49.9 N·m'); near(v.K, 0.164, 0.006, 'K close to the table average 0.164'); near(v.Tfy, v.K * v.Ffy * 10 / 1000, 1e-9, 'Tfy = K Ffy d');
+  near(v.Dw, 2 / 3 * (16.15 ** 3 - 11 ** 3) / (16.15 ** 2 - 11 ** 2), 1e-9, 'Dw formula (14)');
+  const k8 = engine.run('bolt-torque-coefficient-yield', { mus: 0.08, muw: 0.08 }).values.K, k2 = engine.run('bolt-torque-coefficient-yield', { mus: 0.2, muw: 0.2 }).values.K; assert.ok(k8 < v.K && v.K < k2, 'K rises with friction');
+});
+
+test('seventy-third-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('modified-constant-velocity-cam').text, 'MODIFIED CONSTANT VELOCITY RISE');
+  assert.equal(engine.run('modified-constant-velocity-cam', { N: 400 }).text, 'ACCELERATION ABOVE YOUR LIMIT');
+  assert.equal(engine.run('cam-size-and-curvature').text, 'CAM SIZE AND CURVATURE');
+  assert.equal(engine.run('cam-size-and-curvature', { Ruse: 30 }).text, 'PRESSURE ANGLE ABOVE THE LIMIT');
+  assert.equal(engine.run('cam-size-and-curvature', { rf: 40 }).text, 'CAM UNDERCUT: ROLLER TOO LARGE');
+  assert.equal(engine.run('cam-size-and-curvature', { rcut: 500 }).text, 'CUTTER TOO LARGE FOR THE CONCAVE PROFILE');
+  assert.equal(engine.run('cam-follower-force-analysis').text, 'SURFACE ERROR DOMINATES THE ACCELERATION');
+  assert.equal(engine.run('cam-follower-force-analysis', { e: 0.001 }).text, 'FORCES AND TORQUE');
+  assert.equal(engine.run('bolt-torque-coefficient-yield').text, 'TORQUE BELOW YIELD');
+  assert.equal(engine.run('bolt-torque-coefficient-yield', { Tapp: 60 }).text, 'TORQUE TAKES THE BOLT PAST YIELD');
+  const cases: Array<[string, Inputs]> = [['modified-constant-velocity-cam', { b2: 200 }], ['modified-constant-velocity-cam', { step: 1 }], ['cam-follower-force-analysis', { th: 120 }], ['cam-follower-force-analysis', { mu: 0.9, l2: 10 }], ['bolt-torque-coefficient-yield', { Di: 20 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-fourth handbook pass (handbook97): deep audit of the belt drive section. Expected values are the handbook's
+// double V-belt allowable tension tables (Tables 16 and 19) and MXL torque rating table (Table 47), which its formulas
+// reproduce, and the rating formulas themselves for the other sections.
+const IN97 = 25.4;
+const LBF97 = 4.4482216;
+
+test('narrow and classical V-belt ratings follow the RMA formulas', () => {
+  const a = engine.run('narrow-v-belt-rating', { sec: '5V', dp: 7.1 * IN97, Dp: 7.1 * IN97, C: 1000, n: 1750, KSR: 0 }).values;
+  const dr = 7.1 * 1.75; near(a.hp, dr * (3.314 - 10.123 / 7.1 - 5.8758e-4 * dr * dr - 0.46527 * Math.log10(dr)), 1e-9, '5V HP formula'); near(a.hp, 16.0, 0.1, '5V 7.1 in at 1750 rpm ≈ 16 hp');
+  const k = engine.run('narrow-v-belt-rating', { sec: '3VX', dp: 3 * IN97, Dp: 6 * IN97, C: 500, n: 1750, KSR: 0.1416 }).values; near(k.hp - 0.1416 * 1.75, 5.25 * (1.1691 - 1.5295 / 3 - 1.5229e-4 * 5.25 ** 2 - 0.1596 * Math.log10(5.25)), 1e-9, 'KSR r added');
+  near(k.arc, 2 * Math.acos((6 - 3) * IN97 / 1000) * 180 / Math.PI, 1e-9, 'exact arc of contact');
+  const c = engine.run('classical-v-belt-rating', { sec: 'A', dp: 3 * IN97, Dp: 3 * IN97, C: 500, n: 1750, KSR: 1 }).values; near(c.hp, 5.25 * (1.004 - 1.652 / 3 - 1.547e-4 * 5.25 ** 2 - 0.2126 * Math.log10(5.25)), 1e-9, 'A section formula');
+  const cb = engine.run('classical-v-belt-rating').values; near(cb.hp, (140 / IN97 * 1.45) * (1.769 - 4.372 / (140 / IN97) - 3.081e-4 * (140 / IN97 * 1.45) ** 2 - 0.3658 * Math.log10(140 / IN97 * 1.45)) + 4.372 * 1.45 * (1 - 1 / 1.1106), 1e-9, 'B with K2 r (1 − 1 ÷ KSR)');
+  near(cb.kWc, cb.hp * 0.7457 * 0.97, 1e-9, 'corrected by length and arc factors'); assert.equal(cb.need, Math.ceil(9 / cb.kWc));
+});
+
+test('double V-belt tension formulas reproduce the handbook allowable tension tables', () => {
+  const tr = (sec: string, din: number, fpm: number) => { const n = 3.82 * (fpm / 1000) / din * 1000; return engine.run('double-v-belt-tension', { sec, d: din * IN97, D: din * IN97, C: 2000, n }).values.TrS / LBF97; };
+  near(tr('AA', 3, 200), 30, 0.6, 'AA 3.0 in at 200 fpm = 30 lbf'); near(tr('AA', 4, 200), 57, 0.6, 'AA 4.0 in at 200 fpm = 57'); near(tr('AA', 4, 1000), 38, 0.6, 'AA 4.0 in at 1000 fpm = 38'); near(tr('AA', 6.5, 200), 88, 0.6, 'AA 6.5 in at 200 fpm = 88');
+  near(tr('DD', 12, 200), 243, 0.6, 'DD 12 in at 200 fpm = 243'); near(tr('DD', 20, 200), 503, 0.6, 'DD 20 in at 200 fpm = 503'); near(tr('DD', 16, 1000), 291, 0.6, 'DD 16 in at 1000 fpm = 291');
+  const v = engine.run('double-v-belt-tension').values; near(v.TT, v.Te * 1.22, 1e-9, 'TT = Te R ÷ (R − 1)'); near(v.TS, v.TT - v.Te, 1e-9, 'TS = TT − Te');
+  near(v.Te / LBF97, 33 * (14.3 / 0.7457) / v.S, 1e-9, 'Te = 33 Pd ÷ S'); near(v.S, 1.45 * (160 / IN97) / 3.82, 1e-12, 'S = r d ÷ 3.820');
+});
+
+test('light duty, V-ribbed and variable-speed belt ratings follow the RMA formulas', () => {
+  const l = engine.run('light-duty-v-belt-rating', { sec: '4L', d0: 2.8 * IN97 + 1.524, twoA: 1.524, n: 1750 }).values; near(l.hp, 1.75 * (0.4666 * 2.8 ** 0.91 / 1.75 ** 0.09 - 0.7231 - 0.0002286 * 1.75 ** 2 * 2.8 ** 3), 1e-9, '4L formula'); near(l.kWc, l.kW / 1.2, 1e-12, 'divided by the combined factor');
+  const r = engine.run('v-ribbed-belt-rating', { sec: 'M', dp: 6 * IN97, Dp: 6 * IN97, C: 1000, n: 1160, KSR: 1 }).values; const dr = 6 * 1.16; near(r.hp, dr * (1.975 / dr ** 0.09 - 6.597 / 6 - 3.922e-4 * dr * dr), 1e-9, 'M per rib');
+  const vs = engine.run('variable-speed-belt-drive', { sec: '1422V', dp: 4 * IN97, n: 1000, KSR: 1 }).values; near(vs.hp, 4 * (0.4907 * 4 ** -0.09 - 0.8378 / 4 - 0.000337 * 16), 1e-9, '1422V formula');
+  near(engine.run('variable-speed-belt-drive', { mode: 'dual' }).values.sv, 4, 1e-12, 'compound speed variation (DR DN) ÷ (dr dn)'); near(engine.run('variable-speed-belt-drive').values.rim, Math.PI * 0.21 * 1750 / 60, 1e-9, 'rim speed π Do n');
+  const v44 = engine.run('variable-speed-belt-drive', { sec: '4430V', dp: 10 * IN97, n: 1000, KSR: 1.1373 }).values; near(v44.hp, 10 * (3.454 * 10 ** -0.09 - 7.854 / 10 - 0.002196 * 100) + 9.818 * (1 - 1 / 1.1373), 1e-9, '4430V as printed');
+});
+
+test('synchronous belt ratings reproduce the handbook MXL torque table', () => {
+  const qr = (z: number, w: string) => engine.run('synchronous-belt-rating', { sec: 'MXL', z, mxlw: w, n: 1000, mesh: 6 }).values.Qr / 0.112985;
+  near(qr(10, '0.12'), 0.29, 0.005, '10MXL 0.12 in = 0.29 lbf·in'); near(qr(30, '0.12'), 0.86, 0.005, '30MXL 0.12 in = 0.86'); near(qr(10, '0.19'), 0.48, 0.005, '10MXL 0.19 in = 0.48'); near(qr(30, '0.19'), 1.44, 0.005, '30MXL 0.19 in = 1.44');
+  near(qr(10, '0.25'), 0.67, 0.005, '10MXL 0.25 in = 0.67'); near(qr(20, '0.25'), 1.34, 0.005, '20MXL 0.25 in = 1.34'); near(qr(30, '0.25'), 2.01, 0.005, '30MXL 0.25 in = 2.01');
+  const h = engine.run('synchronous-belt-rating').values, d = 24 * 0.5 / Math.PI, dr = d * 1.45; near(h.hp, dr * (3.73 - 1.41e-3 * dr * dr), 1e-9, 'H (3.00 in) formula'); near(h.d / IN97, d, 1e-12, 'd = z p ÷ π');
+  near(engine.run('synchronous-belt-rating', { mesh: 4 }).values.Kz, 0.6, 1e-12, 'Kz = 0.60 with four teeth in mesh'); near(engine.run('synchronous-belt-rating', { mesh: 2 }).values.Kz, 0.2, 1e-12, 'Kz = 0.20 with two');
+  near(h.wfReq, 7 / h.kWc, 1e-12, 'width factor needed = design ÷ corrected rating');
+});
+
+test('seventy-fourth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('narrow-v-belt-rating').text, 'BELTS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('narrow-v-belt-rating', { nb: 1 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('narrow-v-belt-rating', { sec: '8V', dp: 80, n: 3500 }).text, 'RATING NOT POSITIVE: SHEAVE TOO SMALL OR TOO FAST');
+  assert.equal(engine.run('classical-v-belt-rating').text, 'BELTS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('classical-v-belt-rating', { nb: 2 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('double-v-belt-tension').text, 'BELTS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('double-v-belt-tension', { nb: 5 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('light-duty-v-belt-rating').text, 'ONE BELT CARRIES THE LOAD');
+  assert.equal(engine.run('light-duty-v-belt-rating', { P: 1 }).text, 'LOAD ABOVE THE BELT RATING');
+  assert.equal(engine.run('v-ribbed-belt-rating').text, 'RIBS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('v-ribbed-belt-rating', { nr: 6 }).text, 'TOO FEW RIBS');
+  assert.equal(engine.run('variable-speed-belt-drive').text, 'DRIVE CARRIES THE POWER');
+  assert.equal(engine.run('variable-speed-belt-drive', { vmax: 15 }).text, 'RIM SPEED ABOVE THE SHEAVE LIMIT');
+  assert.equal(engine.run('variable-speed-belt-drive', { P: 10 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('synchronous-belt-rating').text, 'BELT CARRIES THE DESIGN POWER');
+  assert.equal(engine.run('synchronous-belt-rating', { wf: 0.29, mesh: 3 }).text, 'BELT TOO NARROW FOR THE POWER');
+  assert.equal(engine.run('synchronous-belt-rating', { sec: 'XL', z: 60, n: 7000 }).text, 'BELT SPEED ABOVE THE RATING LIMIT');
+  const cases: Array<[string, Inputs]> = [['narrow-v-belt-rating', { dp: 400 }], ['classical-v-belt-rating', { C: 50 }], ['double-v-belt-tension', { sec: 'DD', d: 150, D: 300 }], ['light-duty-v-belt-rating', { twoA: 80 }], ['variable-speed-belt-drive', { PDmin: 250 }], ['synchronous-belt-rating', { mesh: 30 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });

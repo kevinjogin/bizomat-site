@@ -23,9 +23,11 @@ export function composeContactEmail(input: ContactInput, subject: string, submit
   const safeSubject = subject.replace(/[\r\n\u0000-\u001f\u007f]+/g, ' ').trim().slice(0, 160);
   const rows: Array<[string, string]> = [
     ['Name', input.name], ['Visitor email', input.email],
-    ...(input.company ? [['Company', input.company] as [string, string]] : []),
+    ...(input.company ? [['Organisation', input.company] as [string, string]] : []),
     ...(safeSubject ? [['Subject', safeSubject] as [string, string]] : []),
-    ['Service required', input.service],
+    ['Enquiry category', input.service],
+    ...(input.website ? [['Website', input.website] as [string, string]] : []),
+    ...(input.resource ? [['Related WORKOS tool or READOS resource', input.resource] as [string, string]] : []),
     ...(input.phone ? [['Phone', input.phone] as [string, string]] : []),
     ['Preferred contact method', input.contactMethod], ['Submission time (UTC)', submittedAt],
     ...(country ? [['Request IP country', country] as [string, string]] : []),
