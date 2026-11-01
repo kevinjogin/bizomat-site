@@ -3550,3 +3550,16 @@ Four tools in batch handbook92 from the deep audit of the helical gearing sectio
 | **Helical Gear Milling Cutter Selection (Preferred Formula with Cutter Diameter, Lead, Tooth Depth)** `helical-milling-cutter-selection` | USE CUTTER No. 3 | Cutter series; Approximate formula; Cutter diameter; Model and application | 2204–2206, 2150 | Automated |
 | **Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance** `enlarged-helical-pinion` | ENLARGE THE PINION | Enlargement; Mating gear; Tooth thickness; Model and application | 2206–2207, 2152 | Automated + cross-check |
 | **Helical Gear Hobbing Change Gears (Machine Without Differential, Feed Correction, Lead Error)** `helical-hobbing-change-gears` | LEAD WITHIN TOLERANCE | Lead error; Feed correction; Machine constants; Model and application | 2208–2209 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook93 (added 1 November 2026)
+
+Four tools in batch handbook93 from the deep audit of the spur gearing section: profile checker settings with every significant diameter (TIF, contact, LPSTC, HPSTC), the maximum hob tip radius and the hobbed undercut limit (pp. 2155–2160), spur gears cut with a standard hob for a given centre distance and ratio (pp. 2139–2140), enlarged pinions in the standard or enlarged centre-distance system with the tight-mesh centre distance and the smallest reduced gear (pp. 2142, 2154–2155), and shaving stock checked by the centre-distance method (p. 2141). Dedendum and hob constants, enlargements from the handbook tables, accepted contact ratios, pressure angle ranges and shaving allowances are always user inputs. WORKOS now holds 994 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Spur Gear Profile Checker Settings (Significant Diameters, Roll Angles, TIF, HPSTC, Undercut)** `spur-gear-profile-checker` | PROFILE CHECKS PASS | Contact above base circle; Fillet interference; Involute undercut; Hob tip radius; Contact ratio; Model and application | 2155–2160 | Automated + cross-check |
+| **Spur Gears Cut for a Given Centre Distance and Ratio (Operating Pitch, Tooth Thickness, Root and Outside Diameters)** `spur-gears-for-given-centre-distance` | GEARS FIT THE CENTRE DISTANCE | Operating pressure angle; Tip clearance; Backlash; Dedendums; Model and application | 2139–2140 | Automated + cross-check |
+| **Enlarged Spur Pinion Mesh (Long and Short Addendum or Enlarged Centre Distance, Tight-Mesh Centre Distance)** `enlarged-spur-pinion-mesh` | INCREASE THE CENTRE DISTANCE | Gear undercut; Pinion enlargement; Centre distance system; Backlash; Model and application | 2142, 2154–2155 | Automated + cross-check |
+| **Gear Shaving Stock Check (Centre Distance Method)** `gear-shaving-stock-check` | SHAVING STOCK WITHIN ALLOWANCE | Shaving allowance; Exact relation; Master gear; Model and application | 2141, 2155 | Automated + cross-check |

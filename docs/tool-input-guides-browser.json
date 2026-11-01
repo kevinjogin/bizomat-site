@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-01",
- "base": "http://127.0.0.1:8827",
- "tools": 990,
- "passed": 990,
- "inputs": 8588,
- "figures": 8588,
+ "base": "http://127.0.0.1:8861",
+ "tools": 994,
+ "passed": 994,
+ "inputs": 8620,
+ "figures": 8620,
  "sample": [
   {
    "id": "make-buy",
@@ -6067,6 +6067,30 @@
    "ok": true,
    "inputs": 17,
    "figures": 17
+  },
+  {
+   "id": "spur-gear-profile-checker",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
+  },
+  {
+   "id": "spur-gears-for-given-centre-distance",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "enlarged-spur-pinion-mesh",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "gear-shaving-stock-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
   }
  ]
 }

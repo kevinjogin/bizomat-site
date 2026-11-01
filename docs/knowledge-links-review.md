@@ -2,7 +2,7 @@
 
 Generated 2026-11-01 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 714 relationships (442 from links authors wrote in the books, 272 from editorial review). Rejected: 118. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 720 relationships (442 from links authors wrote in the books, 278 from editorial review). Rejected: 119. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -282,6 +282,12 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Gears by the Numbers | Helical gears and axial thrust | Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance | complements | Chapter gives the minimum helical pinion teeth before undercut; tool applies the handbook enlargement Kh for 20° helical pinions and the outside diameter. |
 | Gears by the Numbers | Centre distance and contact ratio | Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance | complements | Chapter relates working pressure angle to centre distance, cos α′ = a cos α ÷ a′; tool finds the angle from the tooth thicknesses by the involute function and the tight-mesh centre distance C cos φt ÷ cos φ. |
 | Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Helical Gear Hobbing Change Gears (Machine Without Differential, Feed Correction, Lead Error) | complements | Chapter explains that the hob and blank turn together in a fixed ratio; tool applies the handbook index ratio, feed correction and lead check for hobbing helical gears. |
+| Gears by the Numbers | Centre distance and contact ratio | Spur Gear Profile Checker Settings (Significant Diameters, Roll Angles, TIF, HPSTC, Undercut) | complements | Chapter explains the single-contact zone and the highest point of single tooth contact used in bending ratings; tool applies the handbook formulas for LPSTC, HPSTC, contact diameters and contact ratio. |
+| Gears by the Numbers | Undercut and profile shift | Spur Gear Profile Checker Settings (Significant Diameters, Roll Angles, TIF, HPSTC, Undercut) | complements | Chapter separates undercut by the cutting tool from interference in service; tool applies the handbook undercut limit (b − rc) ÷ sin φ + rc ≤ 0.5 n sin φ and compares the TIF diameter with the contact diameter. |
+| Gears by the Numbers | Centre distance and contact ratio | Spur Gears Cut for a Given Centre Distance and Ratio (Operating Pitch, Tooth Thickness, Root and Outside Diameters) | complements | Chapter sets out fitting gears to a fixed centre distance; tool applies the handbook procedure for gears of standard pitch at a non-standard centre distance, with tooth thicknesses and blank diameters. |
+| Gears by the Numbers | Undercut and profile shift | Spur Gears Cut for a Given Centre Distance and Ratio (Operating Pitch, Tooth Thickness, Root and Outside Diameters) | complements | Chapter relates added profile shift to a new centre distance; tool finds the operating pressure angle, tooth thicknesses by the involute function and root and outside diameters for a standard hob. |
+| Gears by the Numbers | Undercut and profile shift | Enlarged Spur Pinion Mesh (Long and Short Addendum or Enlarged Centre Distance, Tight-Mesh Centre Distance) | complements | Chapter gives s = m (π ÷ 2 + 2 x tan α) and the minimum shift to avoid undercut; tool applies the handbook t = p ÷ 2 + e tan φ for an outside diameter enlargement e = 2 x m and the centre distance for no backlash. |
+| Gears by the Numbers | Backlash and tooth thickness | Gear Shaving Stock Check (Centre Distance Method) | complements | Chapter gives backlash from a centre distance increase as 2 Δa tan α; tool applies the same relation, the handbook’s t2 = 2 tan φ × d, to a preshaved gear meshed tight with a standard gear. |
 
 ## 2. Rejected
 
@@ -405,6 +411,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Magnetic Workholding by the Numbers | Grinding on a magnetic chuck | Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration) | Rejected: chapter covers holding work on a magnetic chuck against grinding forces; wheel life and Taylor constants are not discussed. |
 | Plain Bearings by the Numbers | Thrust bearings | Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise) | Rejected: chapter compares flat, tapered land and tilting pad thrust faces; step thrust bearings are not discussed. |
 | Gears by the Numbers | Helical gears and axial thrust | Crossed Helical Gears at an Exact Centre Distance (Any Shaft Angle, Minimum Centre Distance, Cutter Numbers) | Rejected: chapter covers helical gears on parallel shafts of opposite hand; crossed helical gears on non-parallel shafts are not discussed. |
+| Gears by the Numbers | Measuring and specifying a gear | Spur Gear Profile Checker Settings (Significant Diameters, Roll Angles, TIF, HPSTC, Undercut) | Rejected: chapter covers span measurement, identifying gears and accuracy grades; it does not set up profile inspection by roll angle or work out significant diameters. |
 
 ## 3. Published READOS books with no approved connection
 
