@@ -8375,6 +8375,66 @@
    "note": "Plans a bolt circle: hole coordinates, chord, ligament, edge distances and wrench clearance, and position tolerances at maximum material for floating or fixed fasteners with bonus.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-bearings-and-lubrication-for-reliable-machines",
+   "tool": "ball-bearing-load-ratings",
+   "type": "complements",
+   "note": "Shows where the catalogue rating C in this chapter’s life formula comes from: the ball bearing rating worked out from rows, contact angle and ball size and number.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains L10 = (C ÷ P)³ with C taken from the catalogue; tool applies the handbook AFBMA formulas C = fc (i cos α)^0.7 Z^(2/3) D^1.8 and Co = fo i Z D² cos α, then the same life formula."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-bearings-and-lubrication-for-reliable-machines",
+   "tool": "roller-bearing-load-ratings",
+   "type": "complements",
+   "note": "Works out the roller bearing rating this chapter takes from the catalogue, and applies its 10/3 life exponent with the handbook’s warnings for heavy loads.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives L10 = (C ÷ P)^(10/3) for roller bearings with C from the catalogue; tool applies the handbook formula C = fc (i leff cos α)^(7/9) Z^(3/4) D^(29/27) and the static rating."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "specifying-springs-that-are-easy-to-make-and-assemble",
+   "tool": "disc-spring-fatigue-life",
+   "type": "complements",
+   "note": "Checks the fatigue life of the disc springs this chapter lists beside helical springs, with the stresses at their critical points and the life for the stress range.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets out spring fatigue and service duty by cycles and names disc springs as a spring type; tool applies the handbook disc spring stress points and fatigue life equations for Groups 1 and 2."
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "disc-spring-stacks",
+   "tool": "disc-spring-fatigue-life",
+   "type": "complements",
+   "note": "Takes the disc spring stacks in this chapter on to fatigue: the corrected outside diameter, the stresses at the bottom edges and the cycles the stack will last.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sets out the Almen–László force and top inner-edge stress and series and parallel stacking; tool applies the handbook stresses at points 0 to 3, the critical-point rule and the fatigue life equations for Groups 1 and 2."
+  },
+  {
+   "reados": "publication/printed-mechanisms-that-run",
+   "chapter": "carry-shafts-in-real-bearings",
+   "tool": "ball-bearing-load-ratings",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter takes the catalogue ratings of a standard 608 bearing for a printed mechanism; working the rating out from ball geometry adds nothing a reader of that chapter needs."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-fasteners-and-threads",
+   "tool": "thread-wire-involute-helicoid",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter only names the three-wire method for fastener threads; the tool is for multi-start threads and worms where the lead angle matters, which the chapter does not cover."
   }
  ]
 }

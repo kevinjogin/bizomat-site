@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 998 tools with unique ids and every previously published id kept', () => {
+test('register: 1002 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 998);
+  assert.equal(ids.length, 1002);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 804 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 808 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 804);
+  assert.equal(ids.length, 808);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6726,5 +6726,79 @@ test('seventy-first-pass tools give their verdicts and reject bad inputs', () =>
   assert.equal(engine.run('roller-chain-sprocket-tooth-form').text, 'SPROCKET TOOTH FORM');
   assert.equal(engine.run('roller-chain-sprocket-tooth-form', { Dr: 4 }).text, 'TEETH POINTED BELOW THE OUTSIDE DIAMETER');
   const cases: Array<[string, Inputs]> = [['milled-bevel-gear-dimensions', { NP: 50, NG: 20, sigma: 179 }], ['milled-bevel-gear-dimensions', { F: 250 }], ['bevel-gear-milling-offset', { F: 120 }], ['sae-straight-sided-spline', { n: '4', fit: 'C' }], ['roller-chain-sprocket-tooth-form', { Dr: 13 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-second handbook pass (handbook95): deep audit of the ball and roller bearing rating pages, the disc spring force,
+// stress and fatigue pages and the exact three-wire formula. Expected values are the handbook's disc spring example, its
+// involute helicoid and Buckingham examples, and the metric and inch columns of its fc and fo tables.
+const IN95 = 25.4;
+const LBF95 = 4.4482216;
+
+test('ball bearing load ratings follow the AFBMA formulas and agree between the metric and inch tables', () => {
+  const a = engine.run('ball-bearing-load-ratings').values;
+  near(a.C, 59.9 * 9 ** (2 / 3) * 12.7 ** 1.8, 1e-6, 'C = fc Z^(2/3) D^1.8'); near(a.Co, 12.1 * 9 * 12.7 ** 2, 1e-6, 'Co = fo i Z D²'); near(a.L10, (a.C / 2000) ** 3, 1e-6, 'L10 = (C ÷ P)³');
+  const met = engine.run('ball-bearing-load-ratings', { D: 10, dm: 200, fc: 46.7 }).values.C, inch = 3550 * 9 ** (2 / 3) * (10 / IN95) ** 1.8 * LBF95;
+  near(met / inch, 1, 0.005, 'Table 27: 46.7 metric and 3550 inch give the same rating');
+  const lo = engine.run('ball-bearing-load-ratings', { D: 25.4 }).values.C, hi = engine.run('ball-bearing-load-ratings', { D: 25.4001 }).values.C;
+  near(hi / lo, 1, 0.0001, 'formulas (2) and (3a) meet at 25.4 mm');
+  const ang = engine.run('ball-bearing-load-ratings', { i: 2, alpha: 40 }).values; near(ang.C, 59.9 * (2 * Math.cos(40 * Math.PI / 180)) ** 0.7 * 9 ** (2 / 3) * 12.7 ** 1.8, 1e-6, 'C = fc (i cos α)^0.7 Z^(2/3) D^1.8');
+  const t2 = engine.run('ball-bearing-load-ratings', { nb: 2 }).values; near(t2.C / a.C, 2 ** 0.7, 1e-9, 'tandem pair × 2^0.7'); near(t2.Co / a.Co, 2, 1e-9, 'tandem static × 2');
+  const th = engine.run('ball-bearing-load-ratings', { type: 'thrust', alpha: 90, fc: 36.7, fo: 51.9 }).values; near(th.C, 36.7 * 9 ** (2 / 3) * 12.7 ** 1.8, 1e-6, 'Ca = fc Z^(2/3) D^1.8 at 90°'); near(th.Co, 51.9 * 9 * 12.7 ** 2, 1e-6, 'Coa = fo Z D² at 90°');
+  const thInch = 2790 * 9 ** (2 / 3) * (10 / IN95) ** 1.8 * LBF95, thMet = engine.run('ball-bearing-load-ratings', { type: 'thrust', alpha: 90, D: 10, dm: 1000, fc: 36.7 }).values.C; near(thMet / thInch, 1, 0.005, 'Table 29: 36.7 metric and 2790 inch agree');
+  const t45 = engine.run('ball-bearing-load-ratings', { type: 'thrust', alpha: 45, i: 2 }).values; near(t45.C, 59.9 * Math.cos(Math.PI / 4) ** 0.7 * 9 ** (2 / 3) * 12.7 ** 1.8 * Math.tan(Math.PI / 4) * 2 ** 0.7, 1e-6, 'Ca with tan α and formula (10) for two equal rows');
+  near(12.7 * IN95 ** 2 / LBF95 / 1850, 1, 0.01, 'Table 35: fo 12.7 metric and 1850 inch agree');
+});
+
+test('roller bearing load ratings follow the AFBMA formulas and agree between the metric and inch tables', () => {
+  const r = engine.run('roller-bearing-load-ratings').values;
+  near(r.C, 87.7 * 10 ** (7 / 9) * 14 ** 0.75 * 10 ** (29 / 27), 1e-6, 'C = fc (i leff cos α)^(7/9) Z^(3/4) D^(29/27)'); near(r.Co, 44 * (1 - 10 / 70) * 14 * 10 * 10, 1e-9, 'Co = 44 (1 − D cos α ÷ dm) i Z leff D cos α'); near(r.L10, (r.C / 6000) ** (10 / 3), 1e-6, 'L10 = (C ÷ P)^(10/3)');
+  const met = engine.run('roller-bearing-load-ratings', { fc: 52.1 }).values.C, inch = 4680 * (10 / IN95) ** (7 / 9) * 14 ** 0.75 * (10 / IN95) ** (29 / 27) * LBF95;
+  near(met / inch, 1, 0.005, 'Table 31: 52.1 metric and 4680 inch give the same rating');
+  near(44 * IN95 ** 2 / LBF95 / 6430, 1, 0.01, 'static constants 44 metric and 6430 inch agree'); near(220 * IN95 ** 2 / LBF95 / 32150, 1, 0.01, 'thrust static 220 metric and 32150 inch agree');
+  const t = engine.run('roller-bearing-load-ratings', { nb: 3 }).values; near(t.C / r.C, 3 ** (7 / 9), 1e-9, 'tandem × n^(7/9)');
+  const th = engine.run('roller-bearing-load-ratings', { type: 'thrust', alpha: 90, fc: 105.4 }).values; near(th.C, 105.4 * 10 ** (7 / 9) * 14 ** 0.75 * 10 ** (29 / 27), 1e-6, 'Ca at 90°'); near(th.Co, 220 * (1 - 0) * 14 * 10 * 10, 1e-9, 'Coa = 220 (1 − D cos α ÷ dm) Z leff D sin α');
+  const th2 = engine.run('roller-bearing-load-ratings', { type: 'thrust', alpha: 90, fc: 105.4, i: 2 }).values; near(th2.C / th.C, 2 ** (7 / 9), 1e-9, 'formula (18) for two equal rows');
+  const thInch = 9500 * (10 / IN95) ** (7 / 9) * 14 ** 0.75 * (10 / IN95) ** (29 / 27) * LBF95; near(th.C / thInch, 1, 0.01, 'Table 32: 105.4 metric and 9500 inch agree');
+});
+
+test('disc spring forces, stresses and fatigue life reproduce the handbook example', () => {
+  const v = engine.run('disc-spring-fatigue-life').values;
+  near(v.th, 6.4, 0.05, 'θ = 6.4°'); near(v.Da, 77.78, 0.005, 'Da = 77.78 mm'); near(v.K1, 0.6841, 0.00005, 'K1 = 0.6841'); near(v.K2, 1.2086, 0.00005, 'K2 = 1.2086'); near(v.K3, 1.3589, 0.00005, 'K3 = 1.3589');
+  near(v.Fmin, 14390, 10, 'Fmin = 14390 N'); near(v.Fmax, 20050, 5, 'Fmax = 20050 N'); near(-v.s0, 1103, 0.5, 'σ0 = 1103');
+  near(v.s2min, 654, 0.5, 'σ2min = 654'); near(v.s2max, 1032, 0.5, 'σ2max = 1032'); near(v.s3min, 815, 0.5, 'σ3min = 815'); near(v.s3max, 1149, 0.5, 'σ3max = 1149');
+  near(v.r2, 705, 0.5, 'point 2: 705'); near(v.r3, 741.5, 0.5, 'point 3: 741.5'); assert.ok(v.r3 > v.r2, 'point 3 governs');
+  near(v.N / 1.321e6, 1, 0.01, 'N = 1,321,000 cycles'); near(10 ** (10.10734911 - 0.00537616 * (1149 - 0.5 * 815)), 1.321e6, 1000, 'equation (21) with the printed stresses');
+  near(engine.run('disc-spring-fatigue-life', { Nreq: 5e5 }).values.rAllow, 820, 0.5, 'equation (24): 1250 − 0.5 σmin = 820 at 5 × 10⁵ cycles'); near((1250 - 820) / 0.5, 860, 1e-9, 'σmin = 860');
+  near(10 ** (13.23985664 - 0.01084192 * 1176), 3, 0.2, 'equation (22) for Example 2 gives 3 cycles');
+});
+
+test('involute helicoid wire measurement reproduces the handbook examples', () => {
+  const a = engine.run('thread-wire-involute-helicoid').values;
+  near(a.B, 23.751, 0.001, 'B = 23.751°'); near(a.F, 42.104, 0.001, 'F = 42.104°'); near(a.Rb / IN95, 0.23185, 0.00001, 'Rb = 0.23185'); near(a.Ta / IN95, 0.16362, 0.00001, 'Ta = 0.16362'); near(a.Hb, 59.328, 0.001, 'Hb = 59.328°');
+  near(a.invG, 0.20351, 0.00002, 'inv G = 0.20351'); near(a.G, 44.35, 0.001, 'G = 44.350°'); near(a.M4 / IN95, 0.71859, 0.00002, 'M = 0.71859 in'); near(a.M3 / IN95, 0.71912, 0.00002, 'formula (3) M = 0.71912 in'); near(a.diff / IN95, 0.00053, 0.00002, 'difference 0.00053 in');
+  const b = engine.run('thread-wire-involute-helicoid', { E: 2.75 * IN95, P: 0.5 * IN95, S: 2, ang: 14.5, wire: 'best' }).values;
+  near(b.B, 6.6025, 0.0005, 'B = 6.6025°'); near(b.Wb / IN95, 0.25651, 0.00001, 'W = 0.25651 in'); near(b.M3 / IN95, 3.0707, 0.00005, 'M = 3.0707 in'); near((b.M3 - b.M4) / IN95, 0.0001, 0.00006, 'formula (4) about 0.0001 in less');
+  const c = engine.run('thread-wire-involute-helicoid', { E: 2.481 * IN95, P: 1.5 * IN95, S: 3, plane: 'axial', ang: 30, wire: 'best' }).values;
+  near(c.An, 26.565, 0.001, 'An = 26.565°'); near(c.Wb / IN95, 0.72618, 0.00002, 'W = 0.72618 in'); near(c.M3 / IN95, 3.532, 0.0005, 'formula (3) M = 3.532 in'); near(c.M4 / IN95, 3.515, 0.001, 'formula (4) M = 3.515 in');
+  const back = engine.run('thread-wire-involute-helicoid', { Mmeas: a.M4 }).values; near(back.Em, 15.875, 1e-6, 'pitch diameter recovered from the reading');
+});
+
+test('seventy-second-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('ball-bearing-load-ratings').text, 'RATINGS AND LIFE');
+  assert.equal(engine.run('ball-bearing-load-ratings', { P: 5000 }).text, 'LIFE BELOW REQUIRED');
+  assert.equal(engine.run('ball-bearing-load-ratings', { Po: 30000 }).text, 'STATIC LOAD TOO HIGH');
+  assert.equal(engine.run('roller-bearing-load-ratings').text, 'RATINGS AND LIFE');
+  assert.equal(engine.run('roller-bearing-load-ratings', { P: 12000, Lreq: 100 }).text, 'LOAD ABOVE C/4: CONSULT THE BEARING MAKER');
+  assert.equal(engine.run('roller-bearing-load-ratings', { leff: 30 }).text, 'LONG ROLLERS: fc WILL BE LOWER');
+  assert.equal(engine.run('roller-bearing-load-ratings', { P: 9000 }).text, 'LIFE BELOW REQUIRED');
+  assert.equal(engine.run('disc-spring-fatigue-life').text, 'DISC SPRINGS MEET THE LIFE');
+  assert.equal(engine.run('disc-spring-fatigue-life', { Nreq: 1500000 }).text, 'FATIGUE LIFE BELOW REQUIRED');
+  assert.equal(engine.run('disc-spring-fatigue-life', { s0Max: 1000 }).text, 'COMPRESSIVE STRESS TOO HIGH');
+  assert.equal(engine.run('disc-spring-fatigue-life', { sTMax: 1100 }).text, 'TENSILE STRESS TOO HIGH');
+  assert.equal(engine.run('disc-spring-fatigue-life', { h: 1.5, smin: 0.5, smax: 1, Nreq: 10000 }).text, 'DIMENSION RATIOS OUTSIDE THE RECOMMENDED RANGE');
+  assert.equal(engine.run('thread-wire-involute-helicoid').text, 'USE THE EXACT FORMULA');
+  assert.equal(engine.run('thread-wire-involute-helicoid', { tol: 0.02 }).text, 'SIMPLIFIED FORMULA ACCURATE ENOUGH');
+  const cases: Array<[string, Inputs]> = [['ball-bearing-load-ratings', { type: 'thrust', alpha: 0 }], ['ball-bearing-load-ratings', { alpha: 90 }], ['roller-bearing-load-ratings', { dm: 5 }], ['disc-spring-fatigue-life', { smax: 3 }], ['disc-spring-fatigue-life', { smin: 1.5 }], ['thread-wire-involute-helicoid', { Mmeas: 100 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });
