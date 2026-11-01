@@ -74,6 +74,7 @@ try {
     check('six example chips', (await pg.locator('[data-discover-example]').count()) === 6);
     check('results hidden before asking', await pg.locator('[data-discover-results]').isHidden());
     check('no floating assistant on the homepage', (await pg.locator('.assistant__launcher').count()) === 0);
+    check('one hero: no second product hero below it', (await pg.locator('.product, #home-workos-search').count()) === 0 && (await pg.locator('h1').count()) === 1);
     check('dark theme by default', (await pg.getAttribute('html', 'data-theme')) === 'dark');
     check('clear button hidden while the box is empty', await pg.locator('[data-discover-clear]').isHidden());
     check('Explore WORKOS / READOS buttons kept', (await pg.locator('[data-cta="hero-workos"]').count()) === 1 && (await pg.locator('[data-cta="hero-reados"]').count()) === 1);
@@ -131,6 +132,18 @@ try {
     check('AI restatement shown', r.say.some((s) => /I understand you're trying to cut the cost of machine downtime/.test(s)), r.say[0]);
     check('AI terms help ranking (downtime tool found)', r.groups[0]?.links.some((h) => /downtime/.test(h)), JSON.stringify(r.groups[0]?.links));
     check('question sent, context empty on first ask', calls[0].question.startsWith('my machines') && !calls[0].context);
+    check('a shortlist of real catalogue entries is sent for the AI to pick from', Array.isArray(calls[0].candidates) && calls[0].candidates.length > 0 && calls[0].candidates.every((c) => c.id && c.name && ['tool', 'chapter', 'book'].includes(c.kind)), JSON.stringify(calls[0].candidates?.slice(0, 2)));
+    await ctx.close();
+  }
+  // 3b. AI picks lead the results
+  {
+    let sent;
+    const { ctx, pg } = await page({ api: (body) => { sent = body.candidates; const tool = body.candidates.filter((c) => c.kind === 'tool')[2]; return { status: 200, body: { ok: true, ai: true, intent: { terms: ['downtime'], ambiguous: false, picks: [tool.id] } } }; } });
+    await pg.goto(BASE + '/');
+    await ask(pg, 'How can I reduce machine downtime?');
+    const pickedId = sent.filter((c) => c.kind === 'tool')[2].id;
+    const first = await pg.locator('.dr-exchange .dr-group').first().locator('.dr-card').first();
+    check('the AI pick leads the tools and is marked', (await first.getAttribute('class')).includes('dr-card--ai') && (await first.locator('.dr-card__title a').getAttribute('href')).includes(pickedId), pickedId);
     await ctx.close();
   }
   // 4. Broad question -> clarify
@@ -212,9 +225,26 @@ try {
     await pg.waitForTimeout(900);
     await pg.screenshot({ path: SHOTS + '/discovery-desktop-light.png' });
     await pg.goto(BASE + '/tools/');
-    check('assistant still on other pages (/tools/)', (await pg.locator('.assistant__launcher').count()) === 1);
-    await pg.goto(BASE + '/reados/');
-    check('assistant still on /reados/', (await pg.locator('.assistant__launcher').count()) === 1);
+    check('no floating assistant on /tools/', (await pg.locator('.assistant__launcher').count()) === 0);
+    await pg.goto(BASE + '/contact/');
+    check('no floating assistant or assistant section on /contact/', (await pg.locator('.assistant__launcher, #assistant').count()) === 0);
+    await ctx.close();
+  }
+  // 8b. WORKOS directory search asks KEVOS AI for a question in plain words
+  {
+    let asked = 0;
+    const { ctx, pg, errors } = await page({ api: (body) => { asked++; return { status: 200, body: { ok: true, ai: true, intent: { terms: ['keyhole welding', 'laser welding'], ambiguous: false, picks: ['fillet-weld-strength'] } } }; } });
+    await pg.goto(BASE + '/tools/');
+    await pg.fill('[data-lib-input]', 'where is keyhole and how much');
+    await pg.waitForSelector('[data-ai-pick]', { timeout: 15000 });
+    const first = pg.locator('[data-lib-results-grid] > *').first();
+    check('/tools/: the AI pick appears first in the results', (await first.getAttribute('data-tool-id')) === 'fillet-weld-strength' || (await first.innerHTML()).includes('fillet-weld-strength'));
+    check('/tools/: the "no match" box is hidden once AI finds a tool', await pg.locator('[data-lib-empty]').isHidden());
+    check('/tools/: the note says the AI chose it', /chosen by KEVOS® AI/.test(await pg.textContent('[data-lib-ai-note]')));
+    await pg.fill('[data-lib-input]', 'oee');
+    await pg.waitForTimeout(1000);
+    check('/tools/: a short keyword search with matches does not call the AI', asked === 1 && (await pg.locator('[data-ai-pick]').count()) === 0, String(asked));
+    check('/tools/: no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
   // 9. No-JS fallback

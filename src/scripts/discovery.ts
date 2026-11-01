@@ -1,8 +1,8 @@
-// KEVOS® discovery on the homepage. A question goes to /api/discover for search terms (Workers AI) while the
-// catalogue (/discovery-index.json) loads; the browser then ranks real WORKOS tools and READOS chapters and books
-// with src/lib/discovery/search.ts. If the AI step fails or is slow, the search runs on the question alone.
-// Everything shown is a catalogue entry; nothing is stored in the browser.
-import { prepare, search, tokens, type Engine, type Hit, type Outcome } from '../lib/discovery/search.ts';
+// KEVOS® discovery on the homepage: the question box and its results. The pipeline (catalogue shortlist → Workers AI
+// terms and picks → ranking of real catalogue entries) is src/lib/discovery/client.ts. Everything shown is a catalogue
+// entry; nothing is stored in the browser.
+import { tokens, type Hit, type Outcome } from '../lib/discovery/search.ts';
+import { createDiscovery, VisitorError, type Intent } from '../lib/discovery/client.ts';
 
 const form = document.querySelector<HTMLFormElement>('[data-discover-form]');
 const input = document.querySelector<HTMLTextAreaElement>('[data-discover-input]');
@@ -12,18 +12,11 @@ const statusEl = document.querySelector<HTMLElement>('[data-discover-status]');
 const clearBtn = document.querySelector<HTMLButtonElement>('[data-discover-clear]');
 const submitBtn = document.querySelector<HTMLButtonElement>('[data-discover-submit]');
 const MAX_EXCHANGES = 5;
-const API_TIMEOUT_MS = 8000;
 
 if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
-  let engine: Promise<Engine> | null = null;
+  const discovery = createDiscovery();
   let previous = '';
   let busy = false;
-
-  const loadEngine = () =>
-    (engine ??= fetch('/discovery-index.json')
-      .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
-      .then(prepare)
-      .catch((err) => { engine = null; throw err; }));
 
   const device = () => (matchMedia('(max-width: 700px)').matches ? 'mobile' : 'desktop');
   /** Anonymous, aggregate statistics (search terms, not the question). Ignored unless the site enables them. */
@@ -32,22 +25,6 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       fetch('/api/discover/event', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...event, device: device() }) }).catch(() => {});
     } catch { /* statistics are optional */ }
   };
-
-  async function understand(question: string, context: string): Promise<{ summary?: string; terms: string[]; clarify?: string; options?: string[]; outOfScope?: boolean } | null> {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), API_TIMEOUT_MS);
-    try {
-      const res = await fetch('/api/discover', { method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question, context: context || undefined }) });
-      const data = await res.json().catch(() => null);
-      if (res.status === 429 || res.status === 413 || res.status === 422) throw Object.assign(new Error(data?.error || 'Please try again.'), { visitor: true });
-      return data?.ok && data.ai && data.intent ? data.intent : null;
-    } catch (err) {
-      if ((err as { visitor?: boolean }).visitor) throw err;
-      return null; // AI unavailable or slow: search on the question alone
-    } finally {
-      clearTimeout(timer);
-    }
-  }
 
   // ---------- Rendering (DOM nodes only; no HTML strings from data) ----------
   const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
@@ -64,7 +41,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   };
 
   function card(h: Hit, compact = false): HTMLElement {
-    const li = el('li', `dr-card dr-card--${h.kind}${compact ? ' dr-card--compact' : ''}`);
+    const li = el('li', `dr-card dr-card--${h.kind}${compact ? ' dr-card--compact' : ''}${h.ai ? ' dr-card--ai' : ''}`);
     li.append(el('p', 'dr-card__kind', h.kind === 'tool' ? `WORKOS tool${h.context ? ` · ${h.context}` : ''}` : h.kind === 'chapter' ? 'READOS chapter' : `READOS book${h.context ? ` · ${h.context}` : ''}`));
     const title = el('h4', 'dr-card__title');
     title.append(link(h.url, h.title, undefined, h));
@@ -104,7 +81,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     return ul;
   }
 
-  function render(question: string, outcome: Outcome, intent: Awaited<ReturnType<typeof understand>>) {
+  function render(question: string, outcome: Outcome, intent: Intent | null) {
     const block = el('article', 'dr-exchange');
     block.append(el('p', 'dr-exchange__q', question));
     const say = el('div', 'dr-exchange__a');
@@ -156,9 +133,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     if (question.length > 500) { statusEl!.textContent = 'Please keep your question under 500 characters.'; return; }
     setBusy(true, 'Finding the right tools and readings…');
     try {
-      const [intent, eng] = await Promise.all([understand(question, context), loadEngine()]);
-      // A question the AI marks as outside KEVOS's subjects gets an honest "not covered" rather than loose word matches.
-      const outcome = intent?.outOfScope ? { mode: 'none' as const, tools: [], readings: [], related: [], concepts: [], corrections: [] } : search(eng, { question, terms: intent?.terms, context });
+      const { outcome, intent } = await discovery.ask(question, context);
       results!.hidden = false;
       render(question, outcome, intent);
       previous = question;
@@ -171,7 +146,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       results!.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
       document.getElementById('discover-title')?.focus({ preventScroll: true });
     } catch (err) {
-      const msg = (err as { visitor?: boolean; message?: string }).visitor ? (err as Error).message : 'Sorry, the resource list could not be loaded. Please check your connection and try again.';
+      const msg = err instanceof VisitorError ? err.message : 'Sorry, the resource list could not be loaded. Please check your connection and try again.';
       setBusy(false, msg);
     }
   }
@@ -181,7 +156,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ask(input.value); }
   });
   input.addEventListener('input', () => { clearBtn.hidden = !input.value; if (statusEl.textContent && !busy) statusEl.textContent = ''; });
-  input.addEventListener('focus', () => { loadEngine().catch(() => {}); }, { once: true }); // warm the catalogue while the visitor types
+  input.addEventListener('focus', () => { discovery.loadEngine().catch(() => {}); }, { once: true }); // warm the catalogue while the visitor types
   clearBtn.addEventListener('click', () => { input.value = ''; clearBtn.hidden = true; input.focus(); });
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-discover-example]')) b.addEventListener('click', () => { input.value = b.textContent ?? ''; ask(input.value, ''); });
   document.querySelector('[data-discover-again]')?.addEventListener('click', () => { input.focus(); input.scrollIntoView({ block: 'center' }); });

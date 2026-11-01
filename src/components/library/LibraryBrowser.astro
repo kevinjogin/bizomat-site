@@ -35,6 +35,7 @@ const cols = topics.length % 4 === 0 ? 4 : topics.length % 3 === 0 ? 3 : 4;
         <h2 class="lib-results__title" id="lib-results-title" tabindex="-1" data-lib-results-title>Results</h2>
         <button class="lib-link-button" type="button" hidden data-lib-search-all>Search all of {name}</button>
       </div>
+      <p class="lib-ai-note" role="status" hidden data-lib-ai-note></p>
       <div class="lib-grid" data-lib-results-grid></div>
       <div class="lib-empty" hidden data-lib-empty>
         <p>Check the spelling, try a shorter or more general word, or browse a topic below.</p>

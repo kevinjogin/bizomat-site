@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildDiscoveryIndex } from '../src/utils/discovery-index.ts';
-import { prepare, search, toolHref, type Outcome } from '../src/lib/discovery/search.ts';
+import { prepare, search, shortlist, toolHref, type Outcome } from '../src/lib/discovery/search.ts';
 import { handleDiscover, handleDiscoverEvent, parseIntent, SYSTEM_PROMPT } from '../src/server/discover/handler.ts';
 import { readCatalogue } from '../src/utils/knowledge.ts';
 import worker from '../src/worker.ts';
@@ -225,4 +225,41 @@ test('the Worker routes /api/discover and keeps static pages and the assistant w
   assert.equal(await page.text(), '<!doctype html>home');
   const limited = { ...env, CHAT_LIMITER: { limit: async ({ key }: { key: string }) => ({ success: !key.startsWith('discover:') }) } };
   assert.equal((await worker.fetch(req({ question: 'bearing life' }), limited)).status, 429, 'edge rate limit applies to discovery');
+});
+
+test('the AI picks from a shortlist of real catalogue entries, by number only', async () => {
+  const candidates = [
+    { id: 'downtime-cost', kind: 'tool', name: 'Downtime Cost', about: 'What does an hour of stoppage cost?' },
+    { id: 'oee', kind: 'tool', name: 'OEE', about: 'Overall equipment effectiveness' },
+    { id: '/reados/x/y/', kind: 'chapter', name: 'Counting the cost of stoppages', about: 'in A book: why downtime costs more than it seems' },
+    { id: 'bad id with spaces', kind: 'tool', name: 'Dropped', about: '' },
+    { id: 'no-kind', name: 'Dropped too' },
+  ];
+  const ai = fakeAi({ response: '{"summary":"cut the cost of idle machines","terms":["downtime"],"picks":[3, 1, 1, 9, 0, "2", "x"],"inScope":true,"ambiguous":false}' });
+  const data = await (await handleDiscover(req({ question: 'How much money am I losing when my machine is sitting idle?', candidates }), { AI: ai })).json();
+  assert.deepEqual(data.intent.picks, ['/reados/x/y/', 'downtime-cost', 'oee'], 'numbers map to the shortlist in order; repeats and out-of-range numbers are dropped');
+  const prompt = ai.calls[0].input.messages[1].content as string;
+  assert.match(prompt, /1\. WORKOS tool: Downtime Cost \(What does an hour of stoppage cost\?\)/);
+  assert.match(prompt, /3\. READOS chapter: Counting the cost of stoppages/);
+  assert.doesNotMatch(prompt, /Dropped/, 'malformed candidates never reach the model');
+  assert.match(SYSTEM_PROMPT, /Use only numbers from the list/);
+  // Without a shortlist, numbers mean nothing.
+  const none = fakeAi({ response: '{"summary":"x","terms":["downtime"],"picks":[1,2]}' });
+  assert.equal((await (await handleDiscover(req({ question: 'machine downtime cost' }), { AI: none })).json()).intent.picks, undefined);
+});
+
+test('AI picks lead the results, are marked, and only ever name catalogue entries', () => {
+  const q = 'where is keyhole and how much';
+  const list = shortlist(engine, { question: q });
+  assert.ok(list.length > 0 && list.length <= 20);
+  for (const c of list) assert.ok(engine.byId.has(c.id), `shortlist entry ${c.id} is in the catalogue`);
+  assert.ok(list.some((c) => /keyhole|weld/i.test(`${c.name} ${c.about}`)), 'the shortlist reaches the welding readings that mention a keyhole');
+  const chapter = list.find((c) => c.kind === 'chapter')!;
+  const picked = search(engine, { question: q, terms: ['keyhole welding', 'laser welding'], picks: ['not-a-real-tool', chapter.id, 'break-even'] });
+  assert.equal(picked.readings[0].id, chapter.id, 'the AI’s first valid pick leads its group');
+  assert.equal(picked.readings[0].ai, true);
+  assert.match(picked.readings[0].reason, /chosen by KEVOS® AI/);
+  assert.equal(picked.tools[0].id, 'break-even');
+  assert.ok(![...picked.tools, ...picked.readings].some((h) => h.id === 'not-a-real-tool'), 'an unknown id is ignored');
+  assert.notEqual(picked.mode, 'clarify');
 });

@@ -25,6 +25,8 @@ export interface Hit {
   context?: string; // category, or the chapter's book
   reason: string;
   score: number; // 0–1, relative to the strongest result
+  /** Chosen by the AI step from the shortlist of catalogue entries it was shown. */
+  ai?: boolean;
 }
 export interface Outcome {
   mode: 'results' | 'clarify' | 'none';
@@ -42,7 +44,11 @@ export interface Query {
   terms?: string[];
   /** The previous question, used when the new one is a short follow-up. */
   context?: string;
+  /** Catalogue ids the AI step chose from the shortlist, best first. Unknown ids are ignored. */
+  picks?: string[];
 }
+/** A catalogue entry offered to the AI step to choose from (see shortlist()). */
+export interface Candidate { id: string; kind: 'tool' | 'chapter' | 'book'; name: string; about: string }
 
 // ---------- Text ----------
 const STOP = new Set(('a about above after again all also am an and any are as at be because been before being below between both but by can could did do does doing down during each few for from further had has have having he her here hers him his how i if in into is it its just me more most my no nor not now of off on once only or other our out over own same she should so some such than that the their them then there these they this those through to too under until up very was we were what when where which while who whom why will with would you your yours ' +
@@ -237,9 +243,13 @@ export function search(e: Engine, q: Query): Outcome {
   const empty: Outcome = { mode: 'none', tools: [], readings: [], related: [], concepts: [], corrections };
   if (!terms.length) return empty;
   const scores = scoreDocs(e, terms, bigrams);
-  const ranked = [...scores].map(([i, r]) => ({ d: e.docs[i], ...r })).sort((a, b) => b.s - a.s);
+  const ranked = [...scores].map(([i, r]) => ({ i, d: e.docs[i], ...r })).sort((a, b) => b.s - a.s);
   const top = ranked[0]?.s ?? 0;
-  if (top < MIN_SCORE) {
+  // The AI's choices (only real catalogue entries) lead; keyword matches follow.
+  const picked = [...new Set(q.picks ?? [])].map((id) => e.byId.get(id)).filter((i): i is number => i !== undefined).slice(0, 8)
+    .map((i) => ({ i, d: e.docs[i], s: Math.max(top, 1), matched: scores.get(i)?.matched ?? new Set<Term>() }));
+  const pickedIds = new Set(picked.map((x) => x.i));
+  if (!picked.length && top < MIN_SCORE) {
     // Nothing strong: offer up to three of the nearest resources as "related", clearly labelled.
     const near = ranked.slice(0, 3).filter((x) => x.s >= MIN_SCORE / 3).map((x) => hitOf(e, x.d, x.s / Math.max(top, 1), describe(x.matched, own)));
     return { ...empty, related: near, concepts: own.slice(0, 4) };
@@ -248,17 +258,22 @@ export function search(e: Engine, q: Query): Outcome {
   // a synonym of them). "weather forecast tomorrow" matches only "forecast", so it is not answered with forecasting tools.
   const meaningful = own.filter((t) => t.length > 2 && !/\d/.test(t));
   const covered = (x: (typeof ranked)[number]) => meaningful.filter((o) => [...x.matched].some((m) => m.t === o || tokens(m.from).includes(o))).length / Math.max(1, meaningful.length);
-  if (meaningful.length >= 3 && Math.max(...ranked.slice(0, 5).map(covered)) < 0.34) {
+  if (!picked.length && meaningful.length >= 3 && Math.max(...ranked.slice(0, 5).map(covered)) < 0.34) {
     return { ...empty, related: ranked.slice(0, 3).map((x) => hitOf(e, x.d, x.s / top, describe(x.matched, own))), concepts: meaningful.slice(0, 4) };
   }
-  const keep = ranked.filter((x) => x.s >= Math.max(MIN_SCORE, top * 0.32));
-  const tools = keep.filter((x) => x.d.kind === 'tool').slice(0, MAX_TOOLS);
+  const keep = ranked.filter((x) => x.s >= Math.max(MIN_SCORE, top * 0.32) && !pickedIds.has(x.i));
+  const tools = [...picked.filter((x) => x.d.kind === 'tool'), ...keep.filter((x) => x.d.kind === 'tool')].slice(0, MAX_TOOLS);
   // Readings: chapters first; a book appears when it matches as a whole, and a book is not repeated by its chapters' count.
   const perBook = new Map<string, number>();
   // A reading must match at least two different words, unless the question itself has only one.
   const distinct = (x: (typeof ranked)[number]) => new Set([...x.matched].map((m) => m.t)).size;
-  const readings = keep.filter((x) => x.d.kind !== 'tool' && (own.length <= 1 || distinct(x) >= 2)).filter((x) => { const n = perBook.get(x.d.group) ?? 0; perBook.set(x.d.group, n + 1); return n < 2; }).slice(0, MAX_READINGS);
-  const toHit = (x: (typeof ranked)[number]) => hitOf(e, x.d, Math.round((x.s / top) * 100) / 100, describe(x.matched, own));
+  const readings = [...picked.filter((x) => x.d.kind !== 'tool'), ...keep.filter((x) => x.d.kind !== 'tool' && (own.length <= 1 || distinct(x) >= 2))]
+    .filter((x) => { const n = perBook.get(x.d.group) ?? 0; perBook.set(x.d.group, n + 1); return n < 2; }).slice(0, MAX_READINGS);
+  const toHit = (x: { i: number; d: Doc; s: number; matched: Set<Term> }): Hit => {
+    if (!pickedIds.has(x.i)) return hitOf(e, x.d, Math.round((x.s / Math.max(top, 1)) * 100) / 100, describe(x.matched, own));
+    const why = describe(x.matched, own);
+    return { ...hitOf(e, x.d, 1, why === 'Related to your question' ? 'Best fit for your question, chosen by KEVOS® AI' : `Best fit, chosen by KEVOS® AI. ${why}`), ai: true };
+  };
   const out: Outcome = { mode: 'results', tools: tools.map(toHit), readings: readings.map(toHit), related: [], concepts: [], corrections };
 
   // Related: reviewed READOS ↔ WORKOS connections of the leading results that also match the question.
@@ -291,7 +306,7 @@ export function search(e: Engine, q: Query): Outcome {
   out.concepts = [...ownSeen, ...[...phrases].filter((p) => !tokens(p).every((t) => ownSeen.has(t)))].slice(0, 4);
 
   // Ambiguity: a one- or two-word question whose best tools are close in score but do different jobs.
-  if (own.length <= 2 && !q.context && !(q.terms?.length) && tools.length >= 3) {
+  if (own.length <= 2 && !q.context && !(q.terms?.length) && !picked.length && tools.length >= 3) {
     const lead3 = tools.slice(0, 3);
     const groups = new Set(lead3.map((x) => (x.d.ref as DTool).c));
     if (lead3[2].s >= top * 0.75 && (groups.size >= 2 || own.length === 1)) {
@@ -299,6 +314,28 @@ export function search(e: Engine, q: Query): Outcome {
       const options = lead3.map((x) => (x.d.ref as DTool).n);
       out.clarify = { question: `Your question could mean several things. Which is closest: ${options.slice(0, -1).join(', ')} or ${options.at(-1)}?`, options };
     }
+  }
+  return out;
+}
+
+/**
+ * The catalogue entries most related to a question, for the AI step to choose from: up to `tools` tools and
+ * `readings` chapters or books, by keyword, synonym and spelling match (no score threshold). Everything here is a real
+ * catalogue entry, so whatever the AI picks from it exists.
+ */
+export function shortlist(e: Engine, q: Query, tools = 14, readings = 6): Candidate[] {
+  const { terms, bigrams } = expand(e, q);
+  if (!terms.length) return [];
+  const ranked = [...scoreDocs(e, terms, bigrams)].sort((a, b) => b[1].s - a[1].s).map(([i]) => e.docs[i]);
+  const cut = (t: string, n: number) => (t.length > n ? `${t.slice(0, n - 1).trimEnd()}…` : t);
+  const out: Candidate[] = [];
+  let nt = 0, nr = 0;
+  for (const d of ranked) {
+    if (d.kind === 'tool' ? nt >= tools : nr >= readings) continue;
+    const h = hitOf(e, d, 0, '');
+    if (d.kind === 'tool') nt++; else nr++;
+    out.push({ id: h.id, kind: h.kind, name: cut(h.title, 90), about: cut(h.kind === 'chapter' ? `in ${h.context ?? ''}: ${h.description}` : h.description, 110) });
+    if (nt >= tools && nr >= readings) break;
   }
   return out;
 }
