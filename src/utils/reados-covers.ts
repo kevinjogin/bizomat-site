@@ -202,6 +202,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'inertia-and-flywheels-by-the-numbers': { motif: 'launch', tone: 'paper' },
   'springs-by-the-numbers': { motif: 'neural', tone: 'carbon' },
   'bolted-joints-by-the-numbers': { motif: 'locks', tone: 'graphite' },
+  'laser-processing-by-the-numbers': { motif: 'barcode', tone: 'graphite' },
+  'eddy-current-inspection-by-the-numbers': { motif: 'integration', tone: 'paper' },
   'buckling-by-the-numbers': { motif: 'pylon', tone: 'paper' },
   'whirling-shafts-by-the-numbers': { motif: 'scales', tone: 'ember' },
   'metal-casting-by-the-numbers': { motif: 'crane', tone: 'graphite' },

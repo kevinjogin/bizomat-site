@@ -8475,6 +8475,312 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter is about surge, the natural frequency inside a spring; the tool sizes the return spring rate from the follower inertia and does not check surge."
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "beam-quality-focus-and-power-density",
+   "tool": "laser-cutting-plan",
+   "type": "applies",
+   "note": "Calculates the focused spot, f-number, power density and depth of focus from wavelength, M², beam diameter and focal length, then scales a chart cutting speed and gives cut time and cost per part.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "heat-flow-and-hardened-cut-edges",
+   "tool": "carbon-equivalent",
+   "type": "applies",
+   "note": "Gives the IIW carbon equivalent and Pcm from a mill certificate, used here to flag a steel whose laser-cut edges will self-quench hard and whose laser welds need a CE limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "heat-flow-and-hardened-cut-edges",
+   "tool": "vickers-test-check",
+   "type": "applies",
+   "note": "Evaluates a Vickers indentation for hardness, edge distance, spacing and diagonal difference, used for the hardness traverse at a laser-cut hole edge and the laser weld's heat-affected zone.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "cutting-speed-kerf-and-cost",
+   "tool": "sheet-nesting-yield",
+   "type": "applies",
+   "note": "Finds blanks per sheet, layout, material utilisation and material cost per blank for rectangular door blanks on two sheet sizes, showing material outweighs cutting cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "assist-gases-oxygen-nitrogen-and-air",
+   "tool": "gas-cylinder-real-gas-duration",
+   "type": "applies",
+   "note": "Calculates the usable nitrogen in a 12-cylinder pack with the Peng–Robinson equation of state and how long it lasts at the cutting nozzle's flow.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "assist-gases-oxygen-nitrogen-and-air",
+   "tool": "gas-generator-energy-check",
+   "type": "applies",
+   "note": "Checks a nitrogen generator's specific energy against the minimum work of separation at two purities and gives its yearly energy cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "assist-gases-oxygen-nitrogen-and-air",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Compares a nitrogen generator with bulk liquid supply by NPV, IRR, payback and equivalent annual cost at two purities.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "assist-gases-oxygen-nitrogen-and-air",
+   "tool": "compressor-power",
+   "type": "applies",
+   "note": "Gives the isothermal, adiabatic and shaft power of a two-stage booster compressor supplying 16 bar air for air-assisted laser cutting.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "laser-welding-heat-input-and-fit-up",
+   "tool": "welding-heat-input",
+   "type": "applies",
+   "note": "Separates arc energy from efficiency-adjusted heat input for the TIG seam the laser weld replaced, so the two heat inputs can be compared.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "laser-welding-heat-input-and-fit-up",
+   "tool": "weld-preheat-check",
+   "type": "complements",
+   "note": "Screens an arc welding procedure for CE, preheat, heat input and t8/5; used for the MIG alternative, with the laser's much shorter cooling time worked by hand from the same thin-plate formula.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "pulsed-marking-and-engraving",
+   "tool": "cycle-time",
+   "type": "applies",
+   "note": "Compares the marking station's cycle with the line's takt time, showing which pulse setting keeps up with demand.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "pulsed-marking-and-engraving",
+   "tool": "machine-hour-rate",
+   "type": "applies",
+   "note": "Builds the hourly cost of the marking laser and, in Chapter 10, the laser cutting machine from capital recovery, space, power, maintenance, consumables and operator.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "safety-fume-cooling-and-the-hour-rate",
+   "tool": "extraction-duct-check",
+   "type": "applies",
+   "note": "Checks the cutting table's extraction duct for transport velocity, friction loss and fan pressure, showing why a larger duct would let fume dust settle.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "safety-fume-cooling-and-the-hour-rate",
+   "tool": "heat-pump-cop-check",
+   "type": "applies",
+   "note": "Checks the laser chiller's COP against the Carnot limit at two condenser air temperatures and gives its yearly electricity cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/laser-processing-by-the-numbers",
+   "chapter": "safety-fume-cooling-and-the-hour-rate",
+   "tool": "machine-rate-quote-check",
+   "type": "applies",
+   "note": "Combines the laser's hour rate with set-up, cycle time and material to find cost per part and margin on a quote, with and without loading time.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "standard-depth-of-penetration-and-frequency",
+   "tool": "induction-hardening-plan",
+   "type": "complements",
+   "note": "Its reference depth output is the standard depth of penetration from resistivity, permeability and frequency; only that output is used here, not the hardening energy or power.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "conductivity-and-what-it-reveals",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "Fits a calibration line to a conductivity meter's readings on five reference standards, tests offset and gain, and gives a calibrated value with its interval.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "conductivity-and-what-it-reveals",
+   "tool": "brinell-test-check",
+   "type": "applies",
+   "note": "Evaluates a Brinell test on aluminium bar for hardness and validity, used to confirm that a bar with high conductivity was annealed rather than T6.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "conductivity-and-what-it-reveals",
+   "tool": "two-sample-t",
+   "type": "applies",
+   "note": "Welch's t-test comparing mean conductivity of two bar suppliers and, in Chapter 7, the comparator output of shafts from two bar suppliers.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "measuring-conductivity-reliably",
+   "tool": "gauge-repeatability-bias-check",
+   "type": "applies",
+   "note": "Type 1 study of the conductivity meter on a reference standard: bias, Cg, Cgk, bias t-test and resolution against the acceptance band.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "measuring-conductivity-reliably",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Gives the number of conductivity readings needed to estimate a bar's mean within a chosen margin from the meter's repeatability.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "coating-thickness-by-lift-off",
+   "tool": "anodizing-time",
+   "type": "applies",
+   "note": "Gives anodising growth rate, time to thickness and build-up per surface by the 720 rule, separating the coating the gauge reads from the change in a bore's size.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "coating-thickness-by-lift-off",
+   "tool": "anodizing-plan",
+   "type": "applies",
+   "note": "Plans the housing anodising batch: time, current against the rectifier, bath heat against cooling, loads, line hours and cost per part.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "coating-thickness-by-lift-off",
+   "tool": "instrument-calibration-check",
+   "type": "applies",
+   "note": "Checks the coating gauge at zero and four foils against its accuracy class and corrects a service reading by interpolation.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "coating-thickness-by-lift-off",
+   "tool": "normal-tolerance-interval-check",
+   "type": "applies",
+   "note": "Turns 30 coating readings into limits containing 95% of housings with 95% confidence and compares them with the specification.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "finding-surface-cracks",
+   "tool": "p-chart-check",
+   "type": "applies",
+   "note": "Charts the daily fraction of shafts rejected for confirmed journal cracks against binomial control limits and flags a day with a special cause.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "sorting-steel-parts",
+   "tool": "vickers-test-check",
+   "type": "applies",
+   "note": "Evaluates a Vickers HV10 test on a sectioned journal, confirming that shafts rejected by the comparator were correctly hardened.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "sorting-steel-parts",
+   "tool": "two-variance-f-test",
+   "type": "applies",
+   "note": "F test showing that the comparator output of a new bar supplier's shafts scatters more than the original supplier's.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "testing-tubes-and-bars",
+   "tool": "sampling-oc",
+   "type": "applies",
+   "note": "Gives the probability that a tube audit plan accepts lots at several fractions defective, revealing how weakly a 50-tube plan protects.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "testing-tubes-and-bars",
+   "tool": "acceptance-sampling-plan",
+   "type": "applies",
+   "note": "Designs the smallest tube sampling plan meeting the producer's and consumer's risks and checks the supplier's proposed plan against them.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "thresholds-false-calls-and-acceptance",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Gives Cp and Cpk of the coating thickness with lower confidence bounds and the sample size needed to prove the required Cpk.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "thresholds-false-calls-and-acceptance",
+   "tool": "lot-acceptance-from-capability",
+   "type": "applies",
+   "note": "Links coating process capability to the customer's sampling plan: fraction outside specification, probability a batch passes and outgoing quality.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "thresholds-false-calls-and-acceptance",
+   "tool": "grubbs-outlier-check",
+   "type": "applies",
+   "note": "Tests a suspect coating reading as an outlier before its cause, an edge effect, was found and the reading replaced.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/eddy-current-inspection-by-the-numbers",
+   "chapter": "procedures-people-records-and-cost",
+   "tool": "machine-hour-rate",
+   "type": "applies",
+   "note": "Builds the eddy-current inspection station's hourly cost, giving the cost per housing, per shaft and per tube lot audit.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
