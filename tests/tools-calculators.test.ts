@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1002 tools with unique ids and every previously published id kept', () => {
+test('register: 1006 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1002);
+  assert.equal(ids.length, 1006);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 808 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 812 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 808);
+  assert.equal(ids.length, 812);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6800,5 +6800,64 @@ test('seventy-second-pass tools give their verdicts and reject bad inputs', () =
   assert.equal(engine.run('thread-wire-involute-helicoid').text, 'USE THE EXACT FORMULA');
   assert.equal(engine.run('thread-wire-involute-helicoid', { tol: 0.02 }).text, 'SIMPLIFIED FORMULA ACCURATE ENOUGH');
   const cases: Array<[string, Inputs]> = [['ball-bearing-load-ratings', { type: 'thrust', alpha: 0 }], ['ball-bearing-load-ratings', { alpha: 90 }], ['roller-bearing-load-ratings', { dm: 5 }], ['disc-spring-fatigue-life', { smax: 3 }], ['disc-spring-fatigue-life', { smin: 1.5 }], ['thread-wire-involute-helicoid', { Mmeas: 100 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-third handbook pass (handbook96): deep audit of the cam design and fastener torque–tension pages. Expected values
+// are the handbook's parabolic matching example and table, its cam size, curvature and force analysis examples, and its
+// yield clamping force example for an M10 × 1.5 bolt of class 8.8.
+const IN96 = 25.4;
+const LBF96 = 4.4482216;
+
+test('modified constant-velocity cam reproduces the handbook parabolic matching table', () => {
+  const v = engine.run('modified-constant-velocity-cam', { y1: 0.25 * IN96, y2: 1.25 * IN96, y3: 0.5 * IN96, b2: 50, step: 5 }).values;
+  near(v.b1, 20, 1e-9, 'β1 = 20°'); near(v.b3, 40, 1e-9, 'β3 = 40°'); near(v.bt, 110, 1e-9, 'total 110°'); near(v.y5 / IN96, 0.015625, 1e-9, 'y(5°) = 0.000625 × 5²');
+  const tbl: string = metric(engine.run('modified-constant-velocity-cam', { y1: 0.25 * IN96, y2: 1.25 * IN96, y3: 0.5 * IN96, b2: 50, step: 5 }), 'Displacement table (θ: y)');
+  const rows = new Map(tbl.split(' · ').map((x) => { const [t, y] = x.split(': '); return [parseFloat(t), parseFloat(y.replace(/,/g, ''))] as [number, number]; }));
+  for (const [th, y] of [[15, 0.141], [40, 0.75], [75, 1.617], [80, 1.719], [85, 1.805], [95, 1.93], [105, 1.992], [110, 2]]) near((rows.get(th) ?? NaN) / IN96, y, 0.0006, `table at ${th}°`);
+  const w = 6 * 100; near(v.a1, 2 * 0.25 * IN96 * w * w / 400 / 1000, 1e-9, 'a = 2 y1 ω² ÷ β1²'); near(v.vel, 1.25 * IN96 * w / 50 / 1000, 1e-12, 'v = y2 ω ÷ β2');
+});
+
+test('cam size and curvature reproduce the handbook pressure angle and radius of curvature examples', () => {
+  const u = engine.run('cam-size-and-curvature', { law: 'uniform', h: IN96, beta: 100, phiMax: 30 }).values; near(u.Rp, 180 * IN96 / (Math.PI * 100 * Math.tan(Math.PI / 6)), 0.001, 'formula (6c)');
+  const p = engine.run('cam-size-and-curvature', { law: 'parabolic', h: IN96, beta: 100, phiMax: 30 }).values; near(p.Rp, 360 * IN96 / (Math.PI * 100 * Math.tan(Math.PI / 6)) - IN96 / 2, 0.001, 'formula (7c)'); near(p.thPhi, 50, 0.2, 'parabolic φmax at θ = β ÷ 2');
+  const c = engine.run('cam-size-and-curvature').values; near(c.thPhi, 44.94, 0.15, 'cycloidal p = 44.94°'); near(c.Rphi / IN96, 1.935, 0.002, 'Rmax at p (formula 9c gives 1.935; printed 1.96)'); near(c.Rp / IN96, 1.535, 0.002, 'Rmin = Rmax − h (p ÷ β − sin(360 p ÷ β) ÷ 2π)');
+  const shm = engine.run('cam-size-and-curvature', { law: 'shm', h: IN96, beta: 60, Ruse: 2.9 * IN96, phiMax: 60, rf: 1 }).values; near(shm.rhoV / IN96, 1.8, 0.02, 'SHM ρmin = 1.8');
+  const cyc = engine.run('cam-size-and-curvature', { law: 'cycloidal', h: IN96, beta: 60, Ruse: 2.9 * IN96, phiMax: 60, rf: 1 }).values; near(cyc.rhoV / IN96, 1.6, 0.02, 'cycloidal ρmin = 1.6'); near(cyc.thV, 45, 1, 'near 0.75 β');
+  const par = engine.run('cam-size-and-curvature', { law: 'parabolic', h: IN96, beta: 60, Ruse: 2.9 * IN96, phiMax: 60, rf: 1 }).values; near(par.rhoV / IN96, 1.897, 0.002, 'parabolic ρ at β ÷ 2 on the deceleration curve = 1.897');
+});
+
+test('cam follower force analysis reproduces the handbook example', () => {
+  const v = engine.run('cam-follower-force-analysis').values;
+  near(v.aA * 1000 / IN96, -18300, 60, 'a = −18,300 in/s² at 75°'); near(v.thA, 75, 1e-9, 'θ = 0.75 β'); near(v.ya / IN96, 0.909, 0.0005, 'ya = 0.909 in');
+  near(v.Rin / LBF96, 95, 0.5, 'R = 95 lb'); near(v.Fs / LBF96, 88, 0.5, 'Fs = 1.05 R − Wf − Fe = 88 lb'); near(v.Ks * IN96 / LBF96, 57, 0.5, 'Ks = 57 lb/in');
+  near(v.a * 1000 / IN96, 5660, 10, 'a = 5660 in/s² at 45°'); near(v.y / IN96, 0.40, 0.001, 'y = 0.40 in'); near(v.phi, 29.69, 0.01, 'pressure angle at 45° (handbook takes 30°)');
+  const den = Math.cos(v.phi * Math.PI / 180) - 0.05 * Math.sin(v.phi * Math.PI / 180) * (2 * 1.5 + 4 - 0.05 * 0.75) / 4; near(v.Fn, v.P / den, 1e-9, 'formula (19a)');
+  near((0.9072 * 5660 * IN96 / 1000 + 0.4 * IN96 * v.Ks + 160.1 + 0.9072 * 9.80665) / LBF96 / 0.8225, 110, 2, 'Fn = 110 lb with the handbook’s P (which leaves out Fe)');
+  near(v.To, (39.624 + v.y) * v.Fn * Math.sin(v.phi * Math.PI / 180) / 1000, 1e-9, 'To = (Rmin + y) Fn sin φ'); near(1.96 * 110 * 0.5, 108, 0.5, 'printed To = 108 in·lb');
+  near(v.rho / IN96, 2.26, 0.005, 'ρ = 2.26 in at 45°'); near(v.da * 1000 / IN96, 58320, 1, 'Δa = 58,320 in/s²');
+});
+
+test('bolt torque coefficient and yield clamping force reproduce the handbook example', () => {
+  const v = engine.run('bolt-torque-coefficient-yield').values;
+  near(v.As, 57.99, 0.005, 'As = 57.99 mm²'); near(v.dA, 8.59, 0.01, 'dA = 8.6 mm'); near(v.d2, 9.026, 0.0005, 'd2 = 9.026 mm'); near(v.be, 2.73, 0.005, 'β = 2.73°'); near(v.ap, 29.97, 0.005, 'α′ = 29.97°');
+  near(v.Ffy, 30463, 15, 'Ffy = 30,463 N'); near(640 * 57.99 / Math.sqrt(1 + 3 * ((2 / 8.6) * (1.5 / Math.PI + 0.12 * 9.026 / Math.cos(29.97 * Math.PI / 180))) ** 2), 30463, 2, 'equation (17) with dA = 8.6');
+  near(0.164 * 30463 * 10 / 1000, 49.9, 0.07, 'Tfy = 0.164 × 30,463 × 10 = 49.9 N·m'); near(v.K, 0.164, 0.006, 'K close to the table average 0.164'); near(v.Tfy, v.K * v.Ffy * 10 / 1000, 1e-9, 'Tfy = K Ffy d');
+  near(v.Dw, 2 / 3 * (16.15 ** 3 - 11 ** 3) / (16.15 ** 2 - 11 ** 2), 1e-9, 'Dw formula (14)');
+  const k8 = engine.run('bolt-torque-coefficient-yield', { mus: 0.08, muw: 0.08 }).values.K, k2 = engine.run('bolt-torque-coefficient-yield', { mus: 0.2, muw: 0.2 }).values.K; assert.ok(k8 < v.K && v.K < k2, 'K rises with friction');
+});
+
+test('seventy-third-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('modified-constant-velocity-cam').text, 'MODIFIED CONSTANT VELOCITY RISE');
+  assert.equal(engine.run('modified-constant-velocity-cam', { N: 400 }).text, 'ACCELERATION ABOVE YOUR LIMIT');
+  assert.equal(engine.run('cam-size-and-curvature').text, 'CAM SIZE AND CURVATURE');
+  assert.equal(engine.run('cam-size-and-curvature', { Ruse: 30 }).text, 'PRESSURE ANGLE ABOVE THE LIMIT');
+  assert.equal(engine.run('cam-size-and-curvature', { rf: 40 }).text, 'CAM UNDERCUT: ROLLER TOO LARGE');
+  assert.equal(engine.run('cam-size-and-curvature', { rcut: 500 }).text, 'CUTTER TOO LARGE FOR THE CONCAVE PROFILE');
+  assert.equal(engine.run('cam-follower-force-analysis').text, 'SURFACE ERROR DOMINATES THE ACCELERATION');
+  assert.equal(engine.run('cam-follower-force-analysis', { e: 0.001 }).text, 'FORCES AND TORQUE');
+  assert.equal(engine.run('bolt-torque-coefficient-yield').text, 'TORQUE BELOW YIELD');
+  assert.equal(engine.run('bolt-torque-coefficient-yield', { Tapp: 60 }).text, 'TORQUE TAKES THE BOLT PAST YIELD');
+  const cases: Array<[string, Inputs]> = [['modified-constant-velocity-cam', { b2: 200 }], ['modified-constant-velocity-cam', { step: 1 }], ['cam-follower-force-analysis', { th: 120 }], ['cam-follower-force-analysis', { mu: 0.9, l2: 10 }], ['bolt-torque-coefficient-yield', { Di: 20 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });
