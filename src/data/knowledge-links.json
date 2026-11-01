@@ -7565,6 +7565,258 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter compares flat, tapered land and tilting pad thrust faces; step thrust bearings are not discussed."
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "loads-on-a-winch-drive",
+   "tool": "reflected-inertia",
+   "type": "applies",
+   "note": "Reflects the boat, cradle and drum through the winch's 450:1 drive to the motor and gives the inertia ratio and the peak motor torque to start a haul against the load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "loads-on-a-winch-drive",
+   "tool": "angular-acceleration-torque",
+   "type": "applies",
+   "note": "Gives the accelerating torque, total torque, turns and kinetic energy for bringing the winch drum and its load from rest to hauling speed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "friction-linings-and-measuring-torque",
+   "tool": "prony-brake",
+   "type": "applies",
+   "note": "Turns a brake arm's length, scale reading and zero reading at a measured speed into torque, power absorbed and the heat to remove, as used to test the winch's backup engine.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "plate-clutch-capacity",
+   "tool": "clutch-torque",
+   "type": "applies",
+   "note": "Gives a plate clutch's torque by the uniform-wear and uniform-pressure models, its peak lining pressure and its capacity against the required torque with a service factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "engaging-a-friction-clutch",
+   "tool": "clutch-engagement-design",
+   "type": "applies",
+   "note": "Sizes a clutch for an inertia start: design torque, clamp force, lining pressure, slip time, energy per engagement, plate temperature rise and average heat.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "cone-clutches",
+   "tool": "cone-clutch",
+   "type": "applies",
+   "note": "Gives a cone clutch's torque capacity by uniform wear, the higher axial force needed to engage it, and its capacity against the required torque, with a warning for small cone angles.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "cone-clutches",
+   "tool": "cone-clutch-engagement",
+   "type": "applies",
+   "note": "Checks a cone clutch starting a load: torque and engaging force, slip time, slip energy against the load's kinetic energy, and the cone's temperature rise per engagement.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "centrifugal-clutches",
+   "tool": "centrifugal-clutch-check",
+   "type": "applies",
+   "note": "Checks a shoe-type centrifugal clutch: centrifugal force per shoe, engagement speed against idle, net shoe force and torque at running speed against the torque needed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "shoe-brakes",
+   "tool": "shoe-brake",
+   "type": "applies",
+   "note": "Gives a short single-shoe brake's normal force, friction force, lever force and shoe pressure for either direction of rotation, and flags self-locking geometry.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "band-brakes-and-controlled-lowering",
+   "tool": "band-brake",
+   "type": "applies",
+   "note": "Gives a simple band brake's tight and slack tensions, lever force and peak lining pressure from the braking torque, drum size, wrap angle and friction coefficient.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "band-brakes-and-controlled-lowering",
+   "tool": "band-brake-stop-design",
+   "type": "applies",
+   "note": "Designs a band brake to stop an inertia against a resisting or overhauling load: design torque, band tensions, lever force, pressure, stop time, energy and drum heating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "disc-brakes",
+   "tool": "disc-brake-design",
+   "type": "applies",
+   "note": "Sizes a caliper disc brake to stop an inertia with a helping or overhauling load: braking torque, friction radius, clamp force, pad pressure, energy, heating and stop angle.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "motor-brakes-holding-and-proof",
+   "tool": "holding-brake-sizing",
+   "type": "applies",
+   "note": "Checks a spring-applied motor brake: net decelerating torque, slip and total stop time with the delay, stop angle, energy per stop and per hour, and the holding factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/clutches-and-brakes-by-the-numbers",
+   "chapter": "motor-brakes-holding-and-proof",
+   "tool": "winch-drum-brake-check",
+   "type": "complements",
+   "note": "Checks a geared winch's motor brake from the rope load, drum and ratio; it treats the load as a hanging mass, so on a slipway it is used to confirm torques beside the full-inertia check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "moments-of-inertia-of-machine-parts",
+   "tool": "mass-moment-inertia",
+   "type": "applies",
+   "note": "Gives the moment of inertia and radius of gyration of discs, hollow cylinders, blocks, spheres and rods, with a parallel-axis transfer to an offset rotation axis.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "moments-of-inertia-of-machine-parts",
+   "tool": "mass-inertia-more",
+   "type": "applies",
+   "note": "Gives the moment of inertia of thin-walled cylinders, cones, tori, ellipsoids, shells and rings, used here for a roller tube treated as a thin wall at its mean diameter.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "built-up-rotors-and-datasheet-units",
+   "tool": "composite-rotor-inertia",
+   "type": "applies",
+   "note": "Adds up to three bodies about a common axis into a rotor's inertia and radius of gyration, with its stored energy and the energy released for an allowed speed drop.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "built-up-rotors-and-datasheet-units",
+   "tool": "inertia-converter",
+   "type": "applies",
+   "note": "Converts motor and servo datasheet inertias between kg·m², kg·mm², g·cm², lb·ft², lb·in², oz·in² and slug·ft², keeping mass moment of inertia apart from second moment of area.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "torque-to-speed-up-and-slow-down",
+   "tool": "angular-acceleration-torque",
+   "type": "applies",
+   "note": "Gives the angular acceleration, accelerating and total torque, turns, energy change and peak power to start or stop a rotor such as a saw blade in a set time.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "torque-to-speed-up-and-slow-down",
+   "tool": "torque-power",
+   "type": "complements",
+   "note": "Converts a motor's rated power and speed into its rated torque, for comparison with the torque a start or stop needs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "inertia-through-gears-and-belts",
+   "tool": "reflected-inertia",
+   "type": "applies",
+   "note": "Reflects a load's inertia and torque through a reduction to the motor and gives the inertia ratio, motor speed, accelerating torque and peak motor torque for a move.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "choosing-the-ratio",
+   "tool": "inertia-matching-ratio",
+   "type": "applies",
+   "note": "Finds the gear ratio that minimises accelerating torque, the largest ratio within the motor's top speed, and checks a chosen ratio against the motor's speed and peak torque.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "move-profiles-and-rms-torque",
+   "tool": "motor-duty-cycle-check",
+   "type": "applies",
+   "note": "Builds a trapezoidal move's acceleration, run, deceleration and dwell torques and checks RMS torque, peak torque, inertia ratio and energy returned against a motor's ratings.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "move-profiles-and-rms-torque",
+   "tool": "rms-torque",
+   "type": "applies",
+   "note": "Gives the RMS and peak torque of a cycle of up to five segments against a motor's continuous and peak ratings, for cutting lists the trapezoid cannot describe.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "starting-a-heavy-rotor",
+   "tool": "rotor-run-up-time",
+   "type": "applies",
+   "note": "Gives a heavy rotor's run-up time, turns and stored energy on a direct-on-line start, and the energy dissipated in the motor's rotor per start and per hour against limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "flywheels-and-speed-fluctuation",
+   "tool": "flywheel-energy",
+   "type": "applies",
+   "note": "Gives a disc or ring flywheel's inertia, the energy released between two speeds, the stored energy, the coefficient of speed fluctuation and the rim speed against a limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "designing-a-flywheel",
+   "tool": "flywheel-rim-design",
+   "type": "applies",
+   "note": "Sizes an annular flywheel from an energy fluctuation and speed variation: inertia needed, bore, mass, speed range, rim speed and rotating stress against a safety factor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "spinning-safely",
+   "tool": "rotating-disc",
+   "type": "applies",
+   "note": "Gives the largest centrifugal stress in a solid or bored disc, its rim speed, its safety factor against yield and the speed at which yield is reached.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }

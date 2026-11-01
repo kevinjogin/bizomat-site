@@ -198,6 +198,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'yield-and-plastic-flow-by-the-numbers': { motif: 'ladder', tone: 'paper' },
   'stress-transformation-by-the-numbers': { motif: 'crane', tone: 'paper' },
   'shaft-alignment-by-the-numbers': { motif: 'integration', tone: 'graphite' },
+  'clutches-and-brakes-by-the-numbers': { motif: 'locks', tone: 'ember' },
+  'inertia-and-flywheels-by-the-numbers': { motif: 'launch', tone: 'paper' },
   'buckling-by-the-numbers': { motif: 'pylon', tone: 'paper' },
   'whirling-shafts-by-the-numbers': { motif: 'scales', tone: 'ember' },
   'metal-casting-by-the-numbers': { motif: 'crane', tone: 'graphite' },
