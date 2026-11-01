@@ -29,3 +29,13 @@ export const HOME_ORBIT = [
   { verb: 'Operate', topic: 'maintenance-reliability', subject: 'operations' },
   { verb: 'Improve', topic: 'projects-improvement', subject: 'projects' },
 ];
+
+/** Example questions under the homepage discovery box ("What would you like to solve today?"). */
+export const HOME_DISCOVERY_EXAMPLES = [
+  'How do I calculate manufacturing costs?',
+  'How can I reduce machine downtime?',
+  'Help me calculate CNC machining parameters.',
+  'Where can I find engineering tolerance references?',
+  'How can I improve business productivity?',
+  'Help me understand machine operating costs.',
+] as const;

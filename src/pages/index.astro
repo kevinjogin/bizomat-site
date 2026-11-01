@@ -12,9 +12,12 @@ import ReadOSAnimatedCover from '../components/ReadOSAnimatedCover.astro';
 import LibraryIcon from '../components/library/LibraryIcon.astro';
 import ToolCard from '../components/library/ToolCard.astro';
 import BookCard from '../components/library/BookCard.astro';
+import DiscoveryBox from '../components/discovery/DiscoveryBox.astro';
+import DiscoveryResults from '../components/discovery/DiscoveryResults.astro';
+import '../styles/discovery.css';
 import '../styles/library.css';
 import { SITE } from '../config/site.ts';
-import { HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_ORBIT } from '../config/home.ts';
+import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_ORBIT } from '../config/home.ts';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
 import { groupToolsByTopic, subcategoryLabel, subcategorySlug, topicForCategory } from '../utils/workos-topics.ts';
 import { buildReadosLibrary } from '../utils/reados-library.ts';
@@ -53,7 +56,7 @@ const sections = [
   { id: 'connected', label: 'Learn, apply, improve' },
   { id: 'about', label: 'About KEVOS®' },
 ];
-const description = 'Explore KEVOS® WORKOS practical engineering and business tools, and READOS technical books and knowledge resources.';
+const description = 'Describe a problem and KEVOS® finds the WORKOS engineering and business tools and READOS technical books that help you solve it.';
 const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
   isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@id': `${SITE.url}/#organization` },
@@ -63,13 +66,14 @@ const schema = [{
   ],
 }];
 ---
-<BaseLayout description={description} imageAlt="KEVOS®: practical tools and technical knowledge with WORKOS and READOS" schema={schema}>
+<BaseLayout description={description} imageAlt="KEVOS®: practical tools and technical knowledge with WORKOS and READOS" schema={schema} assistant={false}>
   <section class="home-hero" id="overview" aria-labelledby="home-title">
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
-        <p class="eyebrow">Technology, engineering and knowledge</p>
-        <h1 id="home-title">Knowledge. Tools. <em>Technology.</em></h1>
-        <p class="home-hero__lead">Practical tools and technical knowledge for people who design, build, operate and improve things.</p>
+        <p class="eyebrow">WORKOS tools · READOS knowledge</p>
+        <h1 id="home-title">What would you like to <em>solve</em> today?</h1>
+        <p class="home-hero__lead">Describe a problem, ask a question or tell us what you're trying to achieve. KEVOS® will help you discover the right tools, knowledge and practical solutions.</p>
+        <DiscoveryBox suggestions={HOME_DISCOVERY_EXAMPLES} />
         <div class="home-hero__actions">
           <Button href="/tools/" arrow data-cta="hero-workos">Explore WORKOS</Button>
           <Button href="/reados/" variant="secondary" data-cta="hero-reados">Explore READOS</Button>
@@ -83,6 +87,8 @@ const schema = [{
       <div class="home-hero__visual"><ServiceMap variant="platform" nodes={orbit} /></div>
     </Container>
   </section>
+
+  <DiscoveryResults />
 
   <nav class="section-navigation" aria-label="Homepage sections">
     <Container>
@@ -202,10 +208,10 @@ const schema = [{
         <h3>Calculate, analyse and apply</h3>
         <p>Enter your own figures, check the result and keep a report of what you decided.</p>
       </li>
-      <li class="flow__step flow__step--planned">
-        <p class="flow__name">Planned <span class="flow__status">Not yet available</span></p>
-        <h3>Assist, explain and connect</h3>
-        <p>A later phase will help explain tools and suggest related chapters and calculations across READOS and WORKOS.</p>
+      <li class="flow__step">
+        <p class="flow__name"><a href="#overview">Ask KEVOS®</a></p>
+        <h3>Describe it, discover it</h3>
+        <p>Describe a problem in your own words at the top of this page. KEVOS® suggests the WORKOS tools and READOS chapters that fit; the tools do the calculating.</p>
       </li>
     </ol>
     <p class="flow__note">Today, {fmt(connections)} reviewed links connect READOS books and chapters with the WORKOS tools that apply them. These learning pathways take you from a chapter to a tool:</p>
@@ -236,6 +242,11 @@ const schema = [{
 </BaseLayout>
 
 <script>
+  // "What would you like to solve today?": discovery over the WORKOS and READOS catalogue.
+  import '../scripts/discovery.ts';
+</script>
+
+<script>
   // The homepage used to hold the services, pricing and proof of work. Old links to those sections
   // (for example /#pricing or /#case-<id>) are sent to the page that now holds them.
   const moved: Record<string, string> = {
@@ -256,8 +267,8 @@ const schema = [{
 <style>
   :global(#overview), :global(#workos), :global(#reados), :global(#connected), :global(#about) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
   .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
-  :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr);gap:3rem 4rem;align-items:center}
-  .home-hero__copy h1{margin:1rem 0 1.5rem;max-width:16ch;font-size:clamp(2.2rem,4.7vw,4.8rem);line-height:1.03}
+  :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr);gap:3rem 4rem;align-items:center}
+  .home-hero__copy h1{margin:1rem 0 1rem;max-width:15ch;font-size:clamp(2.1rem,4.4vw,4.4rem);line-height:1.04}
   .home-hero__lead{font-size:var(--step-1);line-height:1.5;max-width:48ch;color:var(--ink-2)}
   .home-hero__actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:2rem}
   .home-hero__visual{min-width:0}
@@ -292,9 +303,6 @@ const schema = [{
   .flow__name a:hover{text-decoration:underline;text-underline-offset:3px}
   .flow__step h3{font-size:var(--step-1)}
   .flow__step p:not(.flow__name){margin:.6rem 0 0;color:var(--ink-2);font-size:.94rem}
-  .flow__step--planned{background:var(--paper)}
-  .flow__step--planned .flow__name, .flow__step--planned::before{color:var(--muted)}
-  .flow__status{display:inline-block;margin-left:.5rem;padding:.1rem .45rem;border:1px solid var(--line-strong);border-radius:999px;font-size:.68rem;font-weight:560;letter-spacing:.06em;color:var(--muted)}
   .flow__note{margin:2.5rem 0 1.2rem;max-width:74ch;color:var(--ink-2)}
   .pathways{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin:0;padding:0;list-style:none}
   .pathway{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1.2rem 1.25rem;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--surface)}

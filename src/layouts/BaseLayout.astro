@@ -10,8 +10,9 @@ import Footer from '../components/Footer.astro';
 import ChatWidget from '../components/ChatWidget.astro';
 import { SITE } from '../config/site.ts';
 
-type Props = SEOProps;
-const props = Astro.props;
+// assistant: false leaves out the floating KEVOS® Assistant (the homepage has its own discovery box instead).
+type Props = SEOProps & { assistant?: boolean };
+const { assistant = true, ...props } = Astro.props;
 ---
 
 <!doctype html>
@@ -55,7 +56,7 @@ const props = Astro.props;
       // Casual-copy deterrence shared by every page; see the file for what it does and never does.
       import '../scripts/content-guard.ts';
     </script>
-    {SITE.assistant.enabled && <ChatWidget />}
+    {SITE.assistant.enabled && assistant && <ChatWidget />}
   </body>
 </html>
 
