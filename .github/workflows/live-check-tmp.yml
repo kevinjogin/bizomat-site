@@ -1,0 +1,21 @@
+# Temporary: runs the post-release live check from GitHub (kevos.com is not reachable from the release session).
+# Removed once the check has run.
+name: Live check (temporary)
+on:
+  push:
+    branches: [claude/loving-mccarthy-oubwh2]
+    paths: ['.github/workflows/live-check-tmp.yml', 'scripts/discovery/live-check.mjs']
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - run: node scripts/discovery/live-check.mjs https://kevos.com
