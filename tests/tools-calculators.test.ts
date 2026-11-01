@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 994 tools with unique ids and every previously published id kept', () => {
+test('register: 998 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 994);
+  assert.equal(ids.length, 998);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 800 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 804 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 800);
+  assert.equal(ids.length, 804);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6661,5 +6661,70 @@ test('seventieth-pass tools give their verdicts and reject bad inputs', () => {
   assert.equal(engine.run('gear-shaving-stock-check', { d: 0.03 }).text, 'TOO LITTLE STOCK FOR SHAVING');
   assert.equal(engine.run('gear-shaving-stock-check', { d: 0.2 }).text, 'TOO MUCH STOCK FOR SHAVING');
   const cases: Array<[string, Inputs]> = [['spur-gear-profile-checker', { dO: 50 }], ['spur-gears-for-given-centre-distance', { C1: 150 }], ['spur-gears-for-given-centre-distance', { phiMin: 26 }], ['enlarged-spur-pinion-mesh', { eGear: 2 }], ['gear-shaving-stock-check', { sMin: 0.1 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-first handbook pass (handbook94): deep audit of the bevel gearing, straight-sided spline and roller chain sprocket
+// pages. Expected values are the handbook's milled bevel gear cutter examples and offset example, the S.A.E. spline tables
+// and the ANSI sprocket seating curve and hob tables.
+const IN94 = 25.4;
+const LBFIN94 = 8.8507458;
+
+test('milled bevel gear dimensions reproduce the handbook cutter examples', () => {
+  const a = engine.run('milled-bevel-gear-dimensions', { m: IN94 / 4, NP: 20, NG: 50, sigma: 70 }).values;
+  near(Math.tan(a.gP * Math.PI / 180), 0.33064, 0.00002, 'tan γP = 0.33064'); near(a.gP, 18.3, 0.005, 'γP = 18°18′'); near(a.gG, 51.7, 0.005, 'γG = 51°42′');
+  near(a.NcP, 21.1, 0.05, 'N′ pinion = 21.1'); near(a.NcG, 80.7, 0.05, 'N′ gear = 80.7');
+  const b = engine.run('milled-bevel-gear-dimensions', { m: IN94 / 4, NP: 12, NG: 24, sigma: 90, F: 10 }).values;
+  near(b.gP, 26.5667, 0.002, 'γP = 26°34′'); near(b.gG, 63.4333, 0.002, 'γG = 63°26′'); near(b.NcP, 13.4, 0.05, 'N′ pinion = 13.4'); near(b.NcG, 53.6, 0.1, 'N′ gear = 53.6');
+  const c = engine.run('milled-bevel-gear-dimensions').values, m = IN94 / 4, k = (c.C - 38.1) / c.C;
+  near(c.C, c.DG / (2 * Math.sin(c.gG * Math.PI / 180)), 1e-9, 'C is the same from either gear'); near(c.Sd, 1.157 * m, 1e-12, 'S + A = 1.157 ÷ P'); near(c.W, 2.157 * m, 1e-12, 'W = 2.157 ÷ P');
+  near(c.Fmax, Math.min(c.C / 3, 8 * m), 1e-12, 'F (max) = C ÷ 3 or 8 ÷ P'); near(c.s, m * k, 1e-12, 's = S (C − F) ÷ C'); near(c.t, 1.5708 * m * k, 0.0001, 't = T (C − F) ÷ C');
+  near(c.faceP, c.gP + c.al, 1e-9, 'face angle = γ + α'); near(c.restP, 90 - c.gP - c.al, 1e-9, 'compound rest = 90° − γ − α'); near(c.cutP, c.gP - c.de, 1e-9, 'cutting angle = γ − δ');
+  near(c.OP, c.DP + 2 * m * Math.cos(c.gP * Math.PI / 180), 1e-9, 'O = D + 2 S cos γ'); near(c.JP, c.OP / 2 / Math.tan(c.faceP * Math.PI / 180), 1e-9, 'J = (O ÷ 2) cot face angle'); near(c.jP, c.JP * k, 1e-9, 'j = J (C − F) ÷ C');
+  const u = engine.run('milled-bevel-gear-dimensions', { root: 'uniform' }).values;
+  near(u.cutG, u.gG - u.al, 1e-9, 'uniform clearance: cutting angle = γ − α');
+});
+
+test('bevel gear milling offset reproduces the handbook example', () => {
+  const v = engine.run('bevel-gear-milling-offset', { m: IN94 / 6, Nt: 24, gamma: 30, F: 1.25 * IN94, Tc: 0.1745 * IN94, factor: 0.28 }).values;
+  near(v.C / IN94, 4, 1e-9, 'C = 4 in'); near(v.r, 3.2, 1e-9, 'C ÷ F = 3.2'); near(v.depth / IN94, 0.1928, 0.00005, 'depth 1.157 ÷ 6 = 0.1928 in');
+  near(v.off / IN94, 0.0406, 0.00005, 'offset = 0.0406 in'); assert.ok(Math.round(v.Nc) >= 26 && Math.round(v.Nc) <= 34, 'No. 4 cutter range');
+  near(v.Tc1, v.T1 - v.T1 ** 3 / (6 * v.D ** 2), 1e-12, 'Tc = T − T³ ÷ 6D²'); near(v.Sc1, IN94 / 6 + v.T1 ** 2 * Math.cos(Math.PI / 6) / (4 * v.D), 1e-12, 'Sc = S + T² cos γ ÷ 4D');
+  near(v.Ds, v.D - 2 * 1.25 * IN94 * 0.5, 1e-9, 'D − 2F sin γ'); near(v.tc, v.t - v.t ** 3 / (6 * v.Ds ** 2), 1e-12, 'tc formula'); near(v.cut, 30 - v.al, 1e-9, 'cutting angle = γ − α');
+});
+
+test('S.A.E. straight-sided spline fittings reproduce the handbook tables', () => {
+  const run = (D: number, n: string, fit: string) => engine.run('sae-straight-sided-spline', { D: D * IN94, n, fit, L: IN94, p: 6.894757, Treq: 1 }).values;
+  const a = run(1, '6', 'A'); near(a.W / IN94, 0.25, 1e-9, '6-spline W = 0.250 in'); near(a.d / IN94, 0.9, 1e-9, '6A d = 0.900 in'); near(a.T * LBFIN94, 142.5, 0.05, '6A 1 in: T = 143');
+  const b = run(2, '10', 'B'); near(b.d / IN94, 1.72, 1e-9, '10B d = 1.720 in'); near(b.T * LBFIN94, 1302, 0.5, '10B 2 in: T = 1302');
+  const c = run(3, '16', 'C'); near(c.d / IN94, 2.43, 1e-9, '16C d = 2.430 in'); near(c.W / IN94, 0.294, 1e-9, '16-spline W = 0.294 in'); near(c.T * LBFIN94, 6190, 0.5, '16C 3 in: T = 6190');
+  const d = run(1, '4', 'B'); near(d.W / IN94, 0.241, 1e-9, '4-spline W = 0.241 in'); near(d.h / IN94, 0.125, 1e-9, '4B h = 0.125 in'); near(d.T * LBFIN94, 219, 0.5, '4B 1 in: T = 219');
+});
+
+test('roller chain sprocket tooth form reproduces the seating curve and hob tables', () => {
+  for (const [P, Dr, Ds] of [[0.375, 0.2, 0.204], [1, 0.625, 0.631], [1.25, 0.75, 0.757]]) near(engine.run('roller-chain-sprocket-tooth-form', { P: P * IN94, Dr: Dr * IN94 }).values.Ds / IN94, Ds, 0.0005, `Ds for Dr = ${Dr} in`);
+  const v = engine.run('roller-chain-sprocket-tooth-form').values;
+  near(v.R, v.Ds / 2, 1e-12, 'R = Ds ÷ 2'); near(v.A, 38, 1e-9, 'A = 35° + 60° ÷ 20'); near(v.B, 15.2, 1e-9, 'B = 18° − 56° ÷ 20');
+  near(v.paNew, 29, 1e-9, 'new chain 35° − 120° ÷ N'); near(v.paMin, 13.8, 1e-9, 'minimum 17° − 64° ÷ N'); near(v.paAvg, 21.4, 1e-9, 'average 26° − 92° ÷ N');
+  near(v.ODa, engine.run('sprocket-diameters', { p: 12.7, N: 20, Dr: 7.9248 }).values.od, 1e-9, 'approximate OD as the sprocket diameters tool');
+  near(v.H, Math.sqrt(v.F ** 2 - (1.4 * 7.9248 - 6.35) ** 2), 1e-12, 'H = √(F² − (1.4 Dr − 0.5 P)²)');
+  const h = engine.run('roller-chain-sprocket-tooth-form', { P: 0.25 * IN94, Dr: 0.13 * IN94, bore: 1.25 * IN94 }).values;
+  near(h.Pn / IN94, 0.2527, 0.0001, 'Pn = 0.2527 in'); near(h.hH / IN94, 0.0675, 1e-9, 'H = 0.0675 in'); near(h.hE / IN94, 0.0075, 1e-9, 'E = 0.0075 in');
+  near(h.hOD / IN94, 2.625, 0.02, 'hob OD about 2 5/8 in'); near(h.hW / IN94, 2.5, 1e-9, 'hob width 2 1/2 in');
+});
+
+test('seventy-first-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('milled-bevel-gear-dimensions').text, 'MILLED BEVEL GEAR DIMENSIONS');
+  assert.equal(engine.run('milled-bevel-gear-dimensions', { F: 60 }).text, 'FACE WIDTH OVER THE MAXIMUM');
+  assert.equal(engine.run('milled-bevel-gear-dimensions', { NP: 10, NG: 50, sigma: 90 }).text, 'BELOW THE FORMED CUTTER SERIES');
+  assert.equal(engine.run('bevel-gear-milling-offset').text, 'OFFSET AND CALIPER SETTINGS');
+  assert.equal(engine.run('bevel-gear-milling-offset', { Tc: 2 }).text, 'OFFSET NOT POSITIVE: CHECK THE CUTTER');
+  assert.equal(engine.run('bevel-gear-milling-offset', { F: 40 }).text, 'RATIO OUTSIDE THE FACTOR TABLE');
+  assert.equal(engine.run('sae-straight-sided-spline').text, 'SPLINE CARRIES THE TORQUE');
+  assert.equal(engine.run('sae-straight-sided-spline', { Treq: 20 }).text, 'TORQUE ABOVE THE SPLINE CAPACITY');
+  assert.equal(engine.run('sae-straight-sided-spline', { D: 12, Treq: 1 }).text, 'OUTSIDE THE S.A.E. TABLE SIZES');
+  assert.equal(engine.run('roller-chain-sprocket-tooth-form').text, 'SPROCKET TOOTH FORM');
+  assert.equal(engine.run('roller-chain-sprocket-tooth-form', { Dr: 4 }).text, 'TEETH POINTED BELOW THE OUTSIDE DIAMETER');
+  const cases: Array<[string, Inputs]> = [['milled-bevel-gear-dimensions', { NP: 50, NG: 20, sigma: 179 }], ['milled-bevel-gear-dimensions', { F: 250 }], ['bevel-gear-milling-offset', { F: 120 }], ['sae-straight-sided-spline', { n: '4', fit: 'C' }], ['roller-chain-sprocket-tooth-form', { Dr: 13 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });

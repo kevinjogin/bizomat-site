@@ -7937,6 +7937,66 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter covers span measurement, identifying gears and accuracy grades; it does not set up profile inspection by roll angle or work out significant diameters."
+  },
+  {
+   "reados": "publication/machine-part-repairs-by-the-numbers",
+   "chapter": "gears-and-sprockets",
+   "tool": "roller-chain-sprocket-tooth-form",
+   "type": "complements",
+   "note": "Gives the standard sprocket tooth form that this chapter says a rebuilt sprocket tooth must be restored to accurately, or the chain will ride badly.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers hooked sprocket teeth and says a weld-rebuilt profile must be restored accurately; tool applies the ANSI B29.1M tooth form formulas (seating curve, arcs, topping curve) for laying out or checking that profile."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-and-maintaining-belt-and-chain-drives",
+   "tool": "roller-chain-sprocket-tooth-form",
+   "type": "complements",
+   "note": "Shows the tooth form behind this chapter’s advice to replace hooked sprockets: the pressure angle falls from its new-chain value as the chain wears and rides higher.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter tells readers to replace sprockets when teeth become hooked and to use enough teeth; tool gives the standard tooth form and the pressure angles for new chain, minimum and average for the tooth count."
+  },
+  {
+   "reados": "publication/machine-part-repairs-by-the-numbers",
+   "chapter": "keyways-threads-and-splines",
+   "tool": "sae-straight-sided-spline",
+   "type": "complements",
+   "note": "Sizes the new splined section this chapter suggests fitting to a shaft with a worn spline, with the S.A.E. dimensions and the torque the fitting carries.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter suggests machining off a worn splined end and fitting a new splined section, a joint that needs careful design; tool applies the handbook S.A.E. spline proportions and T = 1000 N R h torque capacity."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "shafts-couplings-and-alignment",
+   "tool": "sae-straight-sided-spline",
+   "type": "complements",
+   "note": "Puts numbers on the splines in this chapter’s table of shaft and hub connections: dimensions for permanent and sliding fits and the torque they carry.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists splines as the high-torque connection that can allow axial sliding; tool gives the S.A.E. straight-sided spline width, depth and minor diameter for permanent and sliding fits and their torque capacity."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-gearboxes-and-geared-motors",
+   "tool": "milled-bevel-gear-dimensions",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers choosing and maintaining reducers and geared motors; bevel gears appear only as a gear type, and it does not cover cutting bevel gears or their blank dimensions."
+  },
+  {
+   "reados": "publication/machine-part-repairs-by-the-numbers",
+   "chapter": "gears-and-sprockets",
+   "tool": "bevel-gear-milling-offset",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers rebuilding a broken tooth by welding and restoring its profile by filing or milling; it does not cover milling a complete bevel gear with a formed cutter."
   }
  ]
 }
