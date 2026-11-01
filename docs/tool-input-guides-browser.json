@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-01",
  "base": "http://127.0.0.1:8861",
- "tools": 998,
- "passed": 998,
- "inputs": 8642,
- "figures": 8642,
+ "tools": 1002,
+ "passed": 1002,
+ "inputs": 8691,
+ "figures": 8691,
  "sample": [
   {
    "id": "make-buy",
@@ -6115,6 +6115,30 @@
    "ok": true,
    "inputs": 4,
    "figures": 4
+  },
+  {
+   "id": "ball-bearing-load-ratings",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "roller-bearing-load-ratings",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "disc-spring-fatigue-life",
+   "ok": true,
+   "inputs": 12,
+   "figures": 12
+  },
+  {
+   "id": "thread-wire-involute-helicoid",
+   "ok": true,
+   "inputs": 9,
+   "figures": 9
   }
  ]
 }

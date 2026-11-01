@@ -3581,3 +3581,26 @@ Four tools in batch handbook94 from the deep audit of the bevel gearing, straigh
 |---|---|---|---|---|
 | **S.A.E. Straight-Sided Spline Fitting (Width, Depth, Minor Diameter, Torque Capacity)** `sae-straight-sided-spline` | SPLINE CARRIES THE TORQUE | Torque capacity; Table sizes; Corners and parallelism; Model and application | 2279–2281 | Automated + cross-check |
 | **Roller Chain Sprocket Tooth Form and Hob (ANSI B29.1M Seating Curve, Pressure Angles, Hob Diameter and Lead)** `roller-chain-sprocket-tooth-form` | SPROCKET TOOTH FORM | Tooth tip; Seating curve tolerance; Hob; Model and application | 2554–2555 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook95 (added 1 November 2026)
+
+Four tools in batch handbook95 from the deep audit of the ball and roller bearing rating pages, the disc spring pages and the exact three-wire formula: basic dynamic and static load ratings of ball bearings from their geometry with the L10 life (pp. 2405–2409, 2415–2418), the same for roller bearings with the handbook’s warnings for long rollers and heavy loads (pp. 2409–2413, 2416–2417), disc spring forces with the corrected outside diameter, the stresses at the critical points and the fatigue life equations (pp. 354–364), and measurement over wires by the Buckingham involute helicoid formula with the pitch diameter from a reading (pp. 1997–2001). The rating factors fc and fo, loads, required lives and stress limits are always user inputs. WORKOS now holds 1002 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Ball Bearing Load Ratings from Geometry (Basic Dynamic and Static Ratings, L10 Life, Static Safety)** `ball-bearing-load-ratings` | RATINGS AND LIFE | Rating life; Static safety; Factors fc and fo; Model and application | 2405–2409, 2415–2418 | Automated + cross-check |
+| **Roller Bearing Load Ratings from Geometry (Basic Dynamic and Static Ratings, L10 Life, Static Safety)** `roller-bearing-load-ratings` | RATINGS AND LIFE | Rating life; Static safety; Load range; Roller length; Model and application | 2409–2413, 2416–2417 | Automated + cross-check |
+
+### Springs
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Disc Spring Forces, Stresses and Fatigue Life (Corrected Outside Diameter, Critical Points, Life Equations)** `disc-spring-fatigue-life` | DISC SPRINGS MEET THE LIFE | Compressive stress; Tensile stress; Fatigue life; Dimension ratios; Model and application | 354–364 | Automated + cross-check |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Thread Measurement over Wires by the Involute Helicoid Formula (Multi-Start Threads and Worms, Pitch Diameter from a Reading)** `thread-wire-involute-helicoid` | USE THE EXACT FORMULA | Simplified formula; Wire contact; Wire accuracy; Model and application | 1997–2001 | Automated + cross-check |
