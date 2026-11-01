@@ -3622,3 +3622,19 @@ Four tools in batch handbook96 from the deep audit of the cam design pages and t
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction)** `bolt-torque-coefficient-yield` | TORQUE BELOW YIELD | Yield; Friction; Bearing face; Model and application | 1529–1531 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook97 (added 1 November 2026)
+
+Seven tools in batch handbook97 from the deep audit of the belt drive section: power ratings and number of belts for narrow V-belts (pp. 2492–2494), classical V-belts (pp. 2499–2501), light duty V-belts (pp. 2510–2513), V-ribbed belts per rib (pp. 2513–2518) and variable-speed belts with their speed variation and rim speed (pp. 2518–2525) by the ANSI/RMA formulas the handbook gives, double V-belt drives by the allowable tight side tension method (pp. 2505–2510), and synchronous belt torque and power ratings with the teeth in mesh and width factors (pp. 2534–2536). Correction factors read from the handbook tables, service factors, loads and rim speed limits are always user inputs. WORKOS now holds 1013 tools.
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Narrow V-Belt Power Rating (3VX, 5VX, 5V, 8V) and Number of Belts** `narrow-v-belt-rating` | BELTS CARRY THE DESIGN POWER | Number of belts; Correction factors; Minimum sheave; Model and application | 2492–2494 | Automated + cross-check |
+| **Classical V-Belt Power Rating (A, AX, B, BX, C, CX, D) and Number of Belts** `classical-v-belt-rating` | BELTS CARRY THE DESIGN POWER | Number of belts; Correction factors; Minimum sheave; Model and application | 2499–2501 | Automated + cross-check |
+| **Double V-Belt Drive by Allowable Tight Side Tension (AA, BB, CC, DD)** `double-v-belt-tension` | BELTS CARRY THE DESIGN POWER | Number of belts; Factors; Model and application | 2505–2510 | Automated + cross-check |
+| **Light Duty V-Belt Power Rating (3L, 4L, 5L, Fractional Horsepower)** `light-duty-v-belt-rating` | ONE BELT CARRIES THE LOAD | Belt rating; Factors; Model and application | 2510–2513 | Automated + cross-check |
+| **V-Ribbed Belt Power Rating per Rib (J, L, M) and Number of Ribs** `v-ribbed-belt-rating` | RIBS CARRY THE DESIGN POWER | Number of ribs; Correction factors; Model and application | 2513–2518 | Automated |
+| **Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections** `variable-speed-belt-drive` | DRIVE CARRIES THE POWER | Number of belts; Rim speed; Pitch diameter range; Model and application | 2518–2525 | Automated + cross-check |
+| **Synchronous (Timing) Belt Rating — MXL Torque and XL to XXH Power, Teeth in Mesh, Width** `synchronous-belt-rating` | BELT CARRIES THE DESIGN POWER | Belt width; Belt speed; Width against pulley; Model and application | 2534–2536 | Automated + cross-check |

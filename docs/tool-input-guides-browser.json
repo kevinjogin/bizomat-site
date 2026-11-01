@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-01",
  "base": "http://127.0.0.1:8861",
- "tools": 1006,
- "passed": 1006,
- "inputs": 8733,
- "figures": 8733,
+ "tools": 1013,
+ "passed": 1013,
+ "inputs": 8807,
+ "figures": 8807,
  "sample": [
   {
    "id": "make-buy",
@@ -6163,6 +6163,48 @@
    "ok": true,
    "inputs": 9,
    "figures": 9
+  },
+  {
+   "id": "narrow-v-belt-rating",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "classical-v-belt-rating",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "double-v-belt-tension",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "light-duty-v-belt-rating",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "v-ribbed-belt-rating",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "variable-speed-belt-drive",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
+  },
+  {
+   "id": "synchronous-belt-rating",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
   }
  ]
 }

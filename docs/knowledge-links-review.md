@@ -2,7 +2,7 @@
 
 Generated 2026-11-01 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 772 relationships (484 from links authors wrote in the books, 288 from editorial review). Rejected: 125. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 809 relationships (518 from links authors wrote in the books, 291 from editorial review). Rejected: 127. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -298,6 +298,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Springs by the Numbers | Disc spring stacks: large forces in short spaces | Disc Spring Forces, Stresses and Fatigue Life (Corrected Outside Diameter, Critical Points, Life Equations) | complements | Chapter sets out the Almen–László force and top inner-edge stress and series and parallel stacking; tool applies the handbook stresses at points 0 to 3, the critical-point rule and the fatigue life equations for Groups 1 and 2. |
 | Bolted Joints by the Numbers | Tightening by torque: the nut factor and its scatter | Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction) | complements | Chapter explains that K bundles thread geometry, thread friction and bearing-face friction; tool applies the handbook JIS relation K = (P ÷ π + μs d2 sec α′ + μw Dw) ÷ 2d and the yield clamping force formula. |
 | Bolted Joints by the Numbers | Designing a tension joint for separation, proof load and scatter | Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction) | complements | Chapter sets preload as a share of proof load and allows for nut factor scatter; tool gives the yield clamping force Ffy = σy As ÷ √(1 + 3[(2 ÷ dA)(P ÷ π + μs d2 sec α′)]²) and the preload a torque gives against it. |
+| Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Classical V-Belt Power Rating (A, AX, B, BX, C, CX, D) and Number of Belts | complements | Chapter sizes a drive by design power ÷ power per belt and works an example with four classical vee belts; tool applies the handbook RMA rating formulas for A to D sections and the number of belts. |
+| Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Narrow V-Belt Power Rating (3VX, 5VX, 5V, 8V) and Number of Belts | complements | Chapter compares wedge and classical vee belts and sets out the number-of-belts step; tool applies the handbook RMA IP-22 formula for 3VX, 5VX, 5V and 8V narrow belts. |
+| Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Synchronous (Timing) Belt Rating — MXL Torque and XL to XXH Power, Teeth in Mesh, Width | complements | Chapter describes synchronous belts and when to choose them; tool applies the handbook RMA torque and power rating formulas for MXL to XXH sections with the teeth in mesh factor. |
 
 ## 2. Rejected
 
@@ -428,6 +431,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Elements and Mechanical Design | Choosing fasteners and threads: thread systems, grades, screws for sheet and plastics, inserts and pins | Thread Measurement over Wires by the Involute Helicoid Formula (Multi-Start Threads and Worms, Pitch Diameter from a Reading) | Rejected: chapter only names the three-wire method for fastener threads; the tool is for multi-start threads and worms where the lead angle matters, which the chapter does not cover. |
 | Bolted Joints by the Numbers | Stretch and angle: setting preload closer to the bolt, and checking it | Bolt Torque Coefficient and Yield Clamping Force (JIS Method from Thread and Bearing Friction) | Rejected: chapter covers setting and checking preload by stretch and turn angle; the tool works from friction coefficients and torque, which the chapter deliberately moves away from. |
 | Vibrating Machine Elements by the Numbers | Find the surge inside a spring | Cam Follower Force Analysis (Return Spring Rate, Normal Force with Guide Friction, Cam Torque, Surface Error) | Rejected: chapter is about surge, the natural frequency inside a spring; the tool sizes the return spring rate from the follower inertia and does not check surge. |
+| Vibrating Machine Elements by the Numbers | Set belt tension by its frequency | Double V-Belt Drive by Allowable Tight Side Tension (AA, BB, CC, DD) | Rejected: chapter sets the installed static tension by measuring span frequency; the tool sizes the number of double V-belts from working tensions and does not give an installation tension. |
+| Inertia and Flywheels by the Numbers | Inertia through gears and belts | Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections | Rejected: chapter reflects inertia through gear and belt ratios; the tool rates variable-speed belts and their speed range, not inertia. |
 
 ## 3. Published READOS books with no approved connection
 
