@@ -60,7 +60,8 @@ export const SITE = {
   },
   /** AI assistant (Cloudflare Workers AI). Set to false to remove the chat widget everywhere. */
   assistant: {
-    enabled: true,
+    // Off since 1 Nov 2026: the homepage question box (discovery) replaced the floating chat.
+    enabled: false,
     name: 'KEVOS® Assistant',
     endpoint: '/api/chat',
     /** Conversation starters in the assistant and on the REACHOS page. */

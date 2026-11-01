@@ -1,0 +1,32 @@
+---
+// "What would you like to solve today?": the question box. Without JavaScript the form is a plain site search
+// (/search/?q=); with it, src/scripts/discovery.ts asks /api/discover for search terms and ranks the WORKOS and READOS
+// catalogue (/discovery-index.json) in the browser, rendering results into DiscoveryResults.
+interface Props { suggestions: readonly string[] }
+const { suggestions } = Astro.props;
+---
+
+<form class="dq" role="search" action="/search/" method="get" data-discover-form novalidate>
+  <label class="visually-hidden" for="discover-question">Describe a problem or ask a question</label>
+  <div class="dq__field">
+    <textarea id="discover-question" name="q" rows="3" maxlength="500" autocomplete="off" spellcheck="true" enterkeyhint="search"
+      placeholder="Ask anything. Describe a problem or tell us what you want to achieve..." aria-describedby="discover-hint discover-status" data-discover-input></textarea>
+    <div class="dq__actions">
+      <button class="dq__clear" type="button" aria-label="Clear the question" data-discover-clear hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+      <button class="dq__submit" type="submit" data-discover-submit>
+        <span class="dq__submit-label">Find resources</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+      </button>
+    </div>
+  </div>
+  <p class="dq__hint" id="discover-hint">Press Enter to search, Shift + Enter for a new line. Your question is used only to find resources.</p>
+  <p class="dq__status" id="discover-status" role="status" aria-live="polite" data-discover-status></p>
+  <div class="dq__examples">
+    <p class="dq__examples-label" id="discover-examples">Try asking</p>
+    <ul aria-labelledby="discover-examples">
+      {suggestions.map((s) => <li><button type="button" class="dq__chip" data-discover-example>{s}</button></li>)}
+    </ul>
+  </div>
+</form>

@@ -1,7 +1,10 @@
 // Library browser for WORKOS and READOS (src/components/library/LibraryBrowser.astro).
 // Topic, subcategory and search state live in the URL (?topic=, ?sub=, ?q=; WORKOS also keeps ?collection=makeos),
-// so links, reloads and back/forward all work. Search runs over this page's own cards only.
+// so links, reloads and back/forward all work. Search runs over this page's own cards; on WORKOS, a question in plain
+// words (or a search with no match) is also sent through KEVOS® discovery (src/lib/discovery/client.ts), and the tools
+// the AI picks from the catalogue are moved to the top of the results.
 import { highlightParts, indexDoc, queryTokens, scoreDoc, search, type IndexedDoc } from '../utils/library-search.ts';
+import { createDiscovery } from '../lib/discovery/client.ts';
 
 interface Item {
   el: HTMLElement;
@@ -40,6 +43,7 @@ function init(root: HTMLElement) {
   const resultsTitle = $<HTMLElement>('[data-lib-results-title]', root);
   const searchAll = $<HTMLButtonElement>('[data-lib-search-all]', root);
   const empty = $<HTMLElement>('[data-lib-empty]', root);
+  const aiNote = $<HTMLElement>('[data-lib-ai-note]', root);
   if (!input || !results || !resultsGrid || !resultsTitle || !sectionsEl || !topicsEl) return;
 
   const topicNames = new Map<string, string>();
@@ -178,8 +182,10 @@ function init(root: HTMLElement) {
       if (searchAll) searchAll.hidden = !label;
       if (empty) empty.hidden = hits.length > 0;
       if (status) status.textContent = hits.length ? `${hits.length} found` : 'No matches';
+      assist(q, hits.length);
       return;
     }
+    assist('', 0);
     results!.hidden = true;
     sectionsEl!.hidden = false;
     topicsEl!.hidden = Boolean(label);
@@ -200,6 +206,62 @@ function init(root: HTMLElement) {
       visible += label ? shown : 0;
     }
     if (status) status.textContent = label ? plural(visible) : plural(items.length);
+  }
+
+  // ---------- AI assistance (WORKOS only) ----------
+  // A question of three or more words, or a search that matches nothing, is sent through discovery after a short pause.
+  // The AI only reorders this page's real tool cards: an id that is not a card here is ignored.
+  const discovery = name === 'WORKOS' && aiNote ? createDiscovery() : null;
+  const byId = new Map(items.map((i) => [i.id, i]));
+  const answers = new Map<string, string[]>();
+  let aiTimer = 0;
+  let aiAsked = '';
+  const wordCount = (q: string) => q.trim().split(/\s+/).filter(Boolean).length;
+  function applyAi(q: string, ids: string[]) {
+    const picks = ids.map((id) => byId.get(id)).filter((i): i is Item => Boolean(i) && inScope(i!));
+    if (!picks.length) {
+      const none = resultsGrid!.children.length === 0;
+      aiNote!.hidden = !none;
+      aiNote!.textContent = none ? 'KEVOS® AI found no tool for this question either. Try other words, or browse a topic below.' : '';
+      return;
+    }
+    for (const i of [...picks].reverse()) {
+      i.el.hidden = false;
+      i.el.dataset.aiPick = '';
+      resultsGrid!.prepend(i.el);
+    }
+    const total = resultsGrid!.children.length;
+    const where = scopeLabel() ? ` in ${scopeLabel()}` : '';
+    resultsTitle!.textContent = `${plural(total)} for “${q.trim()}”${where}`;
+    aiNote!.hidden = false;
+    aiNote!.textContent = `Best ${picks.length === 1 ? 'match' : `${picks.length} matches`} for your question first, chosen by KEVOS® AI from the WORKOS catalogue.`;
+    topicsEl!.hidden = true;
+    if (empty) empty.hidden = true;
+    if (status) status.textContent = `${total} found`;
+  }
+  function assist(q: string, hits: number) {
+    if (!discovery) return;
+    clearTimeout(aiTimer);
+    for (const i of items) delete i.el.dataset.aiPick;
+    const key = q.trim().toLowerCase();
+    if (!key || (wordCount(key) < 3 && hits > 0)) { aiNote!.hidden = true; return; }
+    const cached = answers.get(key);
+    if (cached) { applyAi(q, cached); return; }
+    aiNote!.hidden = false;
+    aiNote!.textContent = 'Asking KEVOS® AI for the best tools for your question…';
+    aiTimer = window.setTimeout(async () => {
+      if (aiAsked === key) return;
+      aiAsked = key;
+      try {
+        const { outcome } = await discovery.ask(q.trim());
+        answers.set(key, outcome.tools.map((t) => t.id));
+      } catch {
+        answers.set(key, []);
+      } finally {
+        aiAsked = '';
+      }
+      if (state.q.trim().toLowerCase() === key) applyAi(state.q, answers.get(key) ?? []);
+    }, 700);
   }
 
   // ---------- Navigation ----------
