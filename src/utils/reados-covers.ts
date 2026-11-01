@@ -200,6 +200,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'shaft-alignment-by-the-numbers': { motif: 'integration', tone: 'graphite' },
   'clutches-and-brakes-by-the-numbers': { motif: 'locks', tone: 'ember' },
   'inertia-and-flywheels-by-the-numbers': { motif: 'launch', tone: 'paper' },
+  'springs-by-the-numbers': { motif: 'neural', tone: 'carbon' },
+  'bolted-joints-by-the-numbers': { motif: 'locks', tone: 'graphite' },
   'buckling-by-the-numbers': { motif: 'pylon', tone: 'paper' },
   'whirling-shafts-by-the-numbers': { motif: 'scales', tone: 'ember' },
   'metal-casting-by-the-numbers': { motif: 'crane', tone: 'graphite' },

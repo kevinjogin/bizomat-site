@@ -7997,6 +7997,384 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter covers rebuilding a broken tooth by welding and restoring its profile by filing or milling; it does not cover milling a complete bevel gear with a formed cutter."
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "spring-rate-energy-and-combinations",
+   "tool": "spring-combination",
+   "type": "applies",
+   "note": "Gives the equivalent rate of up to four springs in series or parallel and each spring's load and deflection, used here for a plunger spring on a flexible bracket and for paired springs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "checking-a-compression-spring",
+   "tool": "compression-spring",
+   "type": "applies",
+   "note": "Checks a round-wire compression spring: rate, working load, Wahl-corrected stress at the working length and at solid, solid length, clash allowance, natural frequency and buckling ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "designing-a-compression-spring",
+   "tool": "compression-spring-designer",
+   "type": "applies",
+   "note": "Designs a compression spring from loads at two lengths: rate and free length, the wire size for an allowable stress, coils, solid length, clash allowance, stress at solid and buckling ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "compression-spring-fatigue",
+   "tool": "spring-fatigue-check",
+   "type": "applies",
+   "note": "Checks a compression spring cycling between two lengths: alternating and mean stresses with the Wahl factor, and Goodman, Soderberg and Gerber factors with first-cycle yield, for infinite life.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "square-wire-and-nested-springs",
+   "tool": "square-wire-spring",
+   "type": "applies",
+   "note": "Gives the rate, load at the working length and corrected torsional stress of a square-wire compression spring, for a pressure pad spring that must fit a shallow pocket.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "square-wire-and-nested-springs",
+   "tool": "square-round-spring-compare",
+   "type": "applies",
+   "note": "Compares square-wire and round-wire springs on the same coil and lengths: rates, loads, stresses, shared solid length and which one gives the load needed within the allowable.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "square-wire-and-nested-springs",
+   "tool": "nested-spring-check",
+   "type": "applies",
+   "note": "Checks two nested compression springs: each spring's rate, load and stress, the combined rate and load share, solid lengths, and the radial clearance between them against the load needed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "extension-springs-and-hooks",
+   "tool": "extension-spring",
+   "type": "applies",
+   "note": "Checks an extension spring's body: rate, load including initial tension, Wahl-corrected body stress and initial-tension stress, for the springs that pull a magazine shutter closed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "extension-springs-and-hooks",
+   "tool": "extension-spring-designer",
+   "type": "applies",
+   "note": "Checks an extension spring with loop hooks: body stress, hook bending and torsional stress at the bend radius, initial-tension stress against a range, and natural frequency.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "disc-spring-stacks",
+   "tool": "disc-spring",
+   "type": "applies",
+   "note": "Gives a disc spring's force, force at flat and top-edge stresses by the Almen–László method, with stack force and travel, used to check a drawbar stack at its released position.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "disc-spring-stacks",
+   "tool": "disc-spring-stack-design",
+   "type": "applies",
+   "note": "Designs a disc spring stack: groups in series for the stroke within a share of cone height, discs in parallel for the force, stack force, free and solid heights, and top inner-edge stress.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-springs-and-counterbalanced-lids",
+   "tool": "torsion-spring",
+   "type": "applies",
+   "note": "Checks a helical torsion spring's body: angular deflection, rate, bending stress with the curvature factor and wound inside diameter against the arbor, for a hatch counterbalance spring.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-springs-and-counterbalanced-lids",
+   "tool": "torsion-spring-designer",
+   "type": "applies",
+   "note": "Checks a torsion spring including its legs: equivalent coils, deflection, rate, bending stress, the largest safe angle, wound inside diameter and body length over the arbor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-springs-and-counterbalanced-lids",
+   "tool": "lid-counterbalance-spring",
+   "type": "applies",
+   "note": "Follows a hinged hatch balanced by torsion springs through its opening: out-of-balance torque shut, open and at its worst, largest handle force, and spring stress at full wind-up.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-bars-and-flat-springs",
+   "tool": "torsion-bar-design",
+   "type": "applies",
+   "note": "Sizes a solid torsion bar for stress and twist from a load and arm: governing diameter, and for the chosen bar its stress, twist, rate, arm-tip travel and energy stored.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-bars-and-flat-springs",
+   "tool": "torsion-bar",
+   "type": "applies",
+   "note": "Checks a solid round torsion bar under an arm load: torque, twist, torsional rate, arm-tip deflection and shear stress, used to compare a correct and a wrong replacement bar.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-bars-and-flat-springs",
+   "tool": "leaf-spring",
+   "type": "applies",
+   "note": "Gives the deflection, rate and bending stress of a flat cantilever, multi-leaf cantilever or semi-elliptic spring, used here for the flat strips that press way cover wipers.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-bars-and-flat-springs",
+   "tool": "leaf-spring-design",
+   "type": "complements",
+   "note": "Sizes the number of leaves of a semi-elliptic leaf spring for stress and deflection; mentioned as the related tool for vehicle-type leaf springs, which the case machine does not use.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "springs-that-set-a-force",
+   "tool": "ball-detent-check",
+   "type": "applies",
+   "note": "Checks a spring-loaded ball detent: preload and stress, release force from the notch angle and friction, and spring load and stress at full rise, against a release force range.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "springs-that-set-a-force",
+   "tool": "relief-valve-spring-check",
+   "type": "applies",
+   "note": "Checks a direct-acting relief valve's spring: cracking and full-lift pressures from the seat area, overpressure, spring stress at full lift, room before solid, and the length for a set pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "springs-that-set-a-force",
+   "tool": "spring-clamp-hydraulic-release",
+   "type": "applies",
+   "note": "Checks a spring-applied, hydraulically released clamp or brake: clamping force of the springs, load and pressure to release with seal friction, and spring stresses clamped and released.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "preload-and-joint-stiffness",
+   "tool": "bolted-joint",
+   "type": "applies",
+   "note": "Gives bolt and member stiffness, the joint constant, bolt load, remaining clamp force and separation load of a preloaded tension joint, used for a pressure test head's screws.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "torque-and-the-nut-factor",
+   "tool": "bolt-torque-preload",
+   "type": "applies",
+   "note": "Relates tightening torque and preload through the nut factor, with stress area, proof load and share of proof, working in either direction for a target preload or a set torque.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "torque-and-the-nut-factor",
+   "tool": "torque-wrench-adapter-check",
+   "type": "applies",
+   "note": "Corrects a torque wrench used with an extension or crowfoot: effective length, actual torque at the bolt, the setting for the target, and the resulting preload against its tolerance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "stretch-angle-and-checking-preload",
+   "tool": "bolt-stretch",
+   "type": "applies",
+   "note": "Gives a bolt's elongation, the members' compression and the nut turn from snug for a target preload, from bolt and frustum member stiffness.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "stretch-angle-and-checking-preload",
+   "tool": "turn-of-nut-preload",
+   "type": "applies",
+   "note": "Finds the turn angle from snug for a preload, or the preload from an angle, from the bolt's shank and thread lengths, the lead and an optional joint stiffness.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "stretch-angle-and-checking-preload",
+   "tool": "bolt-preload-verification",
+   "type": "applies",
+   "note": "Verifies tightening from measured bolt stretch: preload, deviation from target, the nut factor implied by the applied torque, and the turn angle that matches the measured preload.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "designing-for-separation-proof-and-scatter",
+   "tool": "bolted-joint-design-check",
+   "type": "applies",
+   "note": "Checks a preloaded tension joint with nut factor scatter: preload range and torque, and factors against separation at the lowest preload, proof at the highest, and Goodman fatigue.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "fatigue-of-bolted-joints",
+   "tool": "bolted-joint-fatigue",
+   "type": "applies",
+   "note": "Gives a bolt's alternating, mean and preload stresses under a load cycling from zero and the Goodman fatigue factor with its fully corrected endurance strength, for a closed joint.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "fatigue-of-bolted-joints",
+   "tool": "turn-of-nut-fatigue-check",
+   "type": "applies",
+   "note": "Checks an angle-tightened bolt: preload from the turn past snug and joint stiffness, share of proof, joint constant, and Goodman fatigue factor under a cyclic external load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "threads-tapped-holes-and-screw-lengths",
+   "tool": "thread-engagement",
+   "type": "applies",
+   "note": "Finds the length of thread engagement at which a screw breaks before its threads strip, with the strength ratio for a weaker tapped material, by the handbook's shear-area method.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "threads-tapped-holes-and-screw-lengths",
+   "tool": "tapped-hole-design",
+   "type": "applies",
+   "note": "Designs a blind tapped hole: tap drill for the percentage of thread and tap type, engagement needed for a weaker tapped material, full-thread depth and drill depth to the point.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "threads-tapped-holes-and-screw-lengths",
+   "tool": "bolt-grip-thread-length",
+   "type": "applies",
+   "note": "Checks a screw's length against its joint: grip length, body length and thread length by the fastener standards' rules, full thread within the joint and length beyond it for engagement.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "shear-joints-bearing-and-friction-grip",
+   "tool": "bolt-shear-bearing",
+   "type": "applies",
+   "note": "Gives bolt shear stress in single or double shear and plate bearing stress for a group sharing a load equally, used as the bearing backup for a beam splice.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "shear-joints-bearing-and-friction-grip",
+   "tool": "friction-grip-joint",
+   "type": "applies",
+   "note": "Checks a friction-grip joint: preload and torque, clamp after applied tension, slip resistance from the slip coefficient and faying surfaces with a safety factor, and the bearing backup.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "eccentric-loads-on-bolt-groups",
+   "tool": "bolt-group-eccentric",
+   "type": "applies",
+   "note": "Finds each bolt's shear force in a group of up to six under an in-plane eccentric load by the elastic method, with the centroid, moment and the critical bolt against its capacity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "eccentric-loads-on-bolt-groups",
+   "tool": "eccentric-bracket-bolt-check",
+   "type": "applies",
+   "note": "Checks a bracket with an in-plane eccentric load: bolt group forces by the elastic method, then the critical bolt's shear stress and the bearing stress it puts on the plate.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "eccentric-loads-on-bolt-groups",
+   "tool": "bracket-bolt-tension",
+   "type": "applies",
+   "note": "Checks bolts in a bracket loaded away from a face: tension by rows about the pivot edge, shear shared equally, stresses on stress area and shank, and the tension–shear interaction.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "gasketed-flanges",
+   "tool": "flange-bolt-load-check",
+   "type": "applies",
+   "note": "Sizes the bolting of a gasketed flange by the ASME approach: operating and seating bolt loads from gasket factors, required against provided bolt area, load per bolt and torque.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "gasketed-flanges",
+   "tool": "bolt-working-strength-packed",
+   "type": "complements",
+   "note": "Gives the handbook's empirical working strength of hand-tightened bolts in packed joints and the bolt count for a load, compared here with the code method as a historical cross-check.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "temperature-hole-patterns-and-records",
+   "tool": "bolted-joint-temperature",
+   "type": "applies",
+   "note": "Gives the preload change in a joint whose bolt and members expand differently, the preload at temperature, and checks against the least clamp needed and the bolt's proof load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "temperature-hole-patterns-and-records",
+   "tool": "bolt-pattern-hole-plan",
+   "type": "applies",
+   "note": "Plans a bolt circle: hole coordinates, chord, ligament, edge distances and wrench clearance, and position tolerances at maximum material for floating or fixed fasteners with bonus.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
