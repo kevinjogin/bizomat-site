@@ -5,8 +5,19 @@ import { SITE } from '../config/site.ts';
 
 interface Props {
   class?: string;
+  title?: string;
+  text?: string;
+  label?: string;
+  /** Heading id, so a surrounding section can be labelled by it. */
+  id?: string;
 }
-const { class: className } = Astro.props;
+const {
+  class: className,
+  title = 'Book a meeting',
+  text = 'Prefer to talk it through? Choose a time that suits you from KEVOS®’s calendar and discuss the job before sending details.',
+  label = 'Choose a time',
+  id,
+} = Astro.props;
 const { url } = SITE.booking;
 ---
 
@@ -19,10 +30,10 @@ const { url } = SITE.booking;
     </svg>
   </div>
   <div class="booking__body">
-    <h2 class="booking__title">Book a meeting</h2>
-    <p class="booking__text">Prefer to talk it through? Choose a time that suits you from KEVOS®’s calendar and discuss the job before sending details.</p>
+    <h2 class="booking__title" id={id}>{title}</h2>
+    <p class="booking__text">{text}</p>
     <a class="booking__button" href={url} target="_blank" rel="noopener noreferrer" data-cta="book-meeting">
-      Choose a time
+      {label}
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 16 16 8M10 8h6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       <span class="visually-hidden">(opens Proton Calendar booking in a new tab)</span>
     </a>

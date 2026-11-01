@@ -38,7 +38,8 @@ jobs:
           set -euo pipefail
           grep -q 'KEVOS' dist/index.html
           grep -q 'kevos-wordmark-orange-light.svg' dist/index.html
-          grep -q 'Discuss Your Requirements' dist/index.html
+          grep -q 'Explore WORKOS' dist/index.html
+          grep -q 'Explore READOS' dist/index.html
           if grep -qi '<title>GoCore\|GoCore Assistant\|GoCore Factory Fix' dist/index.html; then
             echo "::error::Old GoCore branding found in the compiled KEVOS homepage"
             exit 1

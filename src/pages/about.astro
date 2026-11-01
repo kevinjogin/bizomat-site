@@ -6,6 +6,8 @@ import Section from '../components/Section.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import CallToAction from '../components/CallToAction.astro';
 import SoftwareNote from '../components/SoftwareNote.astro';
+import ProofOfWork from '../components/ProofOfWork.astro';
+import { PROJECTS } from '../data/projects.ts';
 import { BACKGROUND, FUTURE, PRINCIPLES } from '../data/brand.ts';
 import { SERVICE_AREA } from '../data/services.ts';
 
@@ -91,7 +93,15 @@ const crumbs = [
     </div>
   </Section>
 
-  <Section index="06" label={FUTURE.title} tone="alt" labelledby="future-title">
+  <Section index="06" label="Proof of work" tone="alt" id="work" labelledby="work-title">
+    <div class="work-head">
+      <h2 id="work-title">From steelworks to medical devices: {PROJECTS.length} Australian engineering projects worth sharing.</h2>
+      <p class="work-intro">The engineering record behind KEVOS®, built since 2010 on a career that started on the toolroom floor. Coke plants, mine-site trucks, production machinery, window and door hardware taken from 3D print to production, rail interiors, bridges, food plants and patient-specific devices, carried out by its founder in employed, contract and consulting roles. Each record shows where the work happened, the role, what was delivered and, honestly, how far it went.</p>
+    </div>
+    <ProofOfWork />
+  </Section>
+
+  <Section index="07" label={FUTURE.title} labelledby="future-title">
     <div class="about-grid">
       <h2 id="future-title" class="about-grid__heading">Services first</h2>
       <div class="prose about-grid__body">
@@ -121,4 +131,8 @@ const crumbs = [
   .principle-row dt span { flex: none; width: 2.5rem; padding-top: 0.45rem; font-size: 0.85rem; font-weight: 400; letter-spacing: 0; color: var(--accent); font-variant-numeric: tabular-nums; }
   .principle-row dd { margin: 0; font-family: var(--font-serif); font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
   @media (max-width: 860px) { .principle-row { grid-template-columns: 1fr; } .principle-row dd { padding-left: 3.5rem; } }
+  :global(#work) { scroll-margin-top: calc(var(--header-h) + 1.5rem); }
+  .work-head { margin-bottom: 2.2rem; }
+  .work-head h2 { max-width: 24ch; }
+  .work-intro { margin: 1rem 0 0; max-width: 74ch; font-size: var(--step-1); color: var(--ink-2); }
 </style>

@@ -1,104 +1,190 @@
 ---
+// REACHOS: the KEVOS® connection gateway for enquiries, feedback, ideas and collaboration.
+// The form, spam check, booking link and assistant are the site's existing ones (ContactForm, BookingCard,
+// ChatWidget); this page arranges them. Pathway links preselect the form's category with ?service=<slug>.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import MotionVisual from '../../components/MotionVisual.astro';
-import Container from '../../components/Container.astro';
+import Section from '../../components/Section.astro';
+import Button from '../../components/Button.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import ContactForm from '../../components/ContactForm.astro';
 import BookingCard from '../../components/BookingCard.astro';
+import LibraryIcon from '../../components/library/LibraryIcon.astro';
+import type { LibraryIconName } from '../../components/library/icons.ts';
+import '../../styles/library.css';
 import { SITE } from '../../config/site.ts';
-import { SERVICE_AREA } from '../../data/services.ts';
-import { ASSESSMENT } from '../../config/assessment.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
   { label: 'REACHOS', href: '/contact/' },
 ];
-const next = [
-  'KEVOS® reviews your enquiry and replies as soon as possible.',
-  'A short conversation clarifies the problem, the deliverables and any site requirements.',
-  'You receive a written scope and price before substantial work begins.',
+const pathways: { slug: string; icon: LibraryIconName; name: string; title: string; text: string; examples: string[]; explore?: { href: string; label: string } }[] = [
+  {
+    slug: 'workos', icon: 'gear', name: 'WORKOS', title: 'Tools and technical support',
+    text: 'Have a question about a WORKOS tool, calculation, technical resource or functionality? Get in touch.',
+    examples: ['Tool-related questions', 'Technical feedback', 'Calculation or functionality issues', 'Feature suggestions', 'New tool requests'],
+    explore: { href: '/tools/', label: 'Explore WORKOS' },
+  },
+  {
+    slug: 'reados', icon: 'book', name: 'READOS', title: 'Knowledge and resources',
+    text: 'Questions, suggestions or feedback about technical books, reading resources and knowledge content.',
+    examples: ['Book and reading enquiries', 'Content corrections', 'Resource suggestions', 'Knowledge and learning opportunities', 'Requests for additional topics'],
+    explore: { href: '/reados/', label: 'Explore READOS' },
+  },
+  {
+    slug: 'feedback', icon: 'bulb', name: 'Ideas', title: 'Ideas and feedback',
+    text: 'Have an idea that could make KEVOS® better? Share your thoughts, suggestions and opportunities.',
+    examples: ['Platform improvements', 'New features', 'Product suggestions', 'General feedback', 'Future opportunities'],
+  },
+  {
+    slug: 'collaboration', icon: 'briefcase', name: 'Collaboration', title: 'Collaboration and business enquiries',
+    text: 'Interested in working together, exploring a partnership or discussing a technical or business opportunity?',
+    examples: ['Business collaboration', 'Technical projects', 'Partnerships', 'Development opportunities', 'Commercial enquiries'],
+  },
 ];
+const next = [
+  'KEVOS® reviews your enquiry.',
+  'You receive a reply through the contact details you provide.',
+  'Where it helps, a conversation is arranged to agree the next step.',
+];
+const description = 'Connect with KEVOS® for WORKOS tool enquiries, READOS knowledge resources, feedback, technical discussions and collaboration opportunities.';
 ---
 
 <BaseLayout
-  title="Contact KEVOS® through REACHOS"
-  description="Request a quote or discuss your project with KEVOS®. Get help with engineering and CAD, manufacturing, operations improvement, project delivery or Factory Fix."
+  exactTitle="REACHOS | Connect with KEVOS®"
+  description={description}
   breadcrumbs={crumbs}
   canonical="/contact/"
-  schema={[{ '@type': 'ContactPage', name: 'Contact KEVOS®', url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
+  schema={[{ '@type': 'ContactPage', name: 'REACHOS | Connect with KEVOS®', description, url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="REACHOS enquiries" title="Tell us about the <em>job</em>." lead="Send your project details using the form below, or book a meeting if you would like to talk it through first.">
+  <Hero eyebrow="REACHOS" title="Connect with <em>KEVOS.</em>" lead="Questions, ideas, feedback or opportunities. Start a conversation and discover how KEVOS® can help you take the next step.">
     <MotionVisual page="contact" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
-      <a class="path path--primary" href="#quote-form" data-cta="contact-path-form">
-        <span class="path__label">Send project details</span>
-        <span class="path__hint">Use the form below</span>
-      </a>
-      <a class="path" href={`${ASSESSMENT.path}#request`} data-cta="contact-path-assessment">
-        <span class="path__label">{ASSESSMENT.priceLabel} problem assessment</span>
-        <span class="path__hint">One defined problem, fixed price</span>
-      </a>
-      <a class="path" href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="contact-path-meeting">
-        <span class="path__label">{SITE.booking.label} <span aria-hidden="true">↗</span></span>
-        <span class="path__hint">Opens Proton Calendar in a new tab</span>
-      </a>
+      <Button href="#enquiry" arrow data-cta="contact-hero-enquiry">Start an Enquiry</Button>
+      <Button href={SITE.booking.url} variant="secondary" target="_blank" rel="noopener noreferrer" data-cta="contact-hero-meeting">Book a Meeting <span aria-hidden="true">↗</span><span class="visually-hidden"> (opens Proton Calendar in a new tab)</span></Button>
     </Fragment>
   </Hero>
-  <Container class="contact-layout">
-    <div class="contact-intro">
-      <p class="contact-intro__lead">Describe the problem, drawing or project. A short description is enough to start.</p>
-      <p class="contact-intro__note">Not sure which service you need? Describe the problem and KEVOS® can help define the scope.</p>
-      <p class="contact-intro__assessment">
-        <strong>One defined engineering problem?</strong> The <a href={ASSESSMENT.path}>{ASSESSMENT.shortName}</a> is a fixed {ASSESSMENT.priceLabel} remote review with a one-page written recommendation. Use its <a href={`${ASSESSMENT.path}#request`}>assessment enquiry form</a>.
-      </p>
-      <BookingCard class="contact-intro__booking" />
-      <h2 class="contact-intro__heading">What happens next</h2>
-      <ol class="contact-intro__list">{next.map((r) => <li>{r}</li>)}</ol>
-      <p class="contact-intro__area">{SERVICE_AREA}</p>
-      {
-        SITE.email && (
-          <p class="contact-intro__email">
-            Prefer email? <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-          </p>
-        )
-      }
+
+  <Section index="01" label="Enquiry pathways" id="pathways" labelledby="pathways-title">
+    <div class="reach-head">
+      <h2 id="pathways-title">How can we <em>help?</em></h2>
+      <div>
+        <p class="reach-intro">Have a question, an idea, feedback or something you want to build? Reach out to KEVOS® and find the right next step.</p>
+        <p class="reach-intro reach-intro--small">Whether you’re exploring WORKOS tools, discovering READOS resources, discussing a technical requirement or looking to collaborate, REACHOS is your connection point.</p>
+      </div>
     </div>
-    <div class="contact-form-wrap" id="quote-form">
-      <h2 class="contact-form-wrap__title">Request a quote</h2>
-      <ContactForm />
+    <ul class="pathways" role="list">
+      {pathways.map((p) => (
+        <li class="pathway">
+          <div class="pathway__head">
+            <span class="lib-topic__icon"><LibraryIcon name={p.icon} /></span>
+            <div>
+              <p class="pathway__name">{p.name}</p>
+              <h3>{p.title}</h3>
+            </div>
+          </div>
+          <p class="pathway__text">{p.text}</p>
+          <ul class="pathway__examples">{p.examples.map((e) => <li>{e}</li>)}</ul>
+          <div class="pathway__actions">
+            <a class="pathway__cta" href={`/contact/?service=${p.slug}#enquiry`} data-enquiry-category={p.slug} data-cta={`contact-pathway-${p.slug}`}>Start this enquiry<span class="visually-hidden">: {p.title}</span> <span aria-hidden="true">→</span></a>
+            {p.explore && <a class="pathway__link" href={p.explore.href}>{p.explore.label}</a>}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  {SITE.assistant.enabled && (
+    <Section index="02" label="KEVOS® Assistant" tone="alt" id="assistant" labelledby="assistant-title">
+      <div class="reach-assistant">
+        <div>
+          <h2 id="assistant-title">Not sure where to start?</h2>
+          <p class="reach-intro">The KEVOS® Assistant can help you explore the platform, understand WORKOS and READOS, and identify the right way to get in touch.</p>
+          <p class="reach-assistant__note"><span class="reach-badge">AI-assisted guidance</span> Answers come only from published KEVOS® information and may not cover everything. For anything specific, start an enquiry. Please don’t share sensitive information.</p>
+        </div>
+        <div class="reach-assistant__panel">
+          <p class="reach-assistant__label" id="assistant-starters">Try asking</p>
+          <ul class="reach-starters" role="list" aria-labelledby="assistant-starters">
+            {SITE.assistant.starters.map((q) => (
+              <li><button type="button" class="reach-starter" data-assistant-ask={q} data-cta="contact-assistant-starter" hidden>{q} <span aria-hidden="true">→</span></button></li>
+            ))}
+          </ul>
+          <Button type="button" variant="secondary" data-assistant-ask="" data-cta="contact-assistant-open" hidden>Open the KEVOS® Assistant</Button>
+          <noscript><p class="reach-assistant__fallback">The assistant needs JavaScript. You can still <a href="#enquiry">start an enquiry</a> or book a meeting.</p></noscript>
+        </div>
+      </div>
+    </Section>
+  )}
+
+  <Section index={SITE.assistant.enabled ? '03' : '02'} label="Enquiries" id="enquiry" labelledby="enquiry-title">
+    <div class="reach-layout">
+      <div class="reach-form">
+        <h2 id="enquiry-title">Start a conversation.</h2>
+        <p class="reach-intro reach-intro--small">Tell us a little about what you need. We’ll review your enquiry and respond through the contact details you provide.</p>
+        <div class="reach-form__card"><ContactForm /></div>
+      </div>
+      <aside class="reach-aside" aria-label="Other ways to connect">
+        <BookingCard id="meeting-title" title="Prefer to talk?" text="Arrange a conversation to discuss your requirements, ideas or potential opportunities." label="Book a Meeting" />
+        <div class="reach-card">
+          <h2 class="reach-card__title">What happens next</h2>
+          <ol class="reach-next">{next.map((r) => <li>{r}</li>)}</ol>
+        </div>
+        <div class="reach-card">
+          <h2 class="reach-card__title">Where KEVOS® is</h2>
+          <p>KEVOS® is based in New South Wales, Australia. Enquiries are welcome from anywhere, and suitable remote opportunities can be considered.</p>
+          {SITE.email && <p>Prefer email? <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
+        </div>
+      </aside>
     </div>
-  </Container>
+  </Section>
 </BaseLayout>
 
 <style>
-  :global(.contact-layout) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem 5rem; padding-bottom: var(--space-section); }
-  .contact-intro__lead { font-family: var(--font-serif); font-size: var(--step-2); line-height: 1.35; color: var(--ink); max-width: 24ch; }
-  .contact-intro__note { margin-top: 1.25rem; padding: 1rem 1.1rem; border-left: 3px solid var(--brand-orange); background: var(--paper-2); color: var(--ink-2); }
-  .contact-intro__assessment { margin-top: 1rem; padding: 1rem 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--radius); color: var(--ink-2); font-size: 0.95rem; }
-  .contact-intro__assessment a { color: var(--ink); text-decoration-color: var(--accent); }
-  .contact-intro__heading { margin: 2.5rem 0 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-  .contact-intro__list { margin: 0; padding: 0; list-style: none; counter-reset: next; border-top: 1px solid var(--line); }
-  .contact-intro__list li { counter-increment: next; display: grid; grid-template-columns: 2rem 1fr; padding: 0.85rem 0; border-bottom: 1px solid var(--line); color: var(--ink-2); }
-  .contact-intro__list li::before { content: counter(next, decimal-leading-zero); font-size: 0.85rem; color: var(--accent); padding-top: 0.15rem; }
-  .contact-intro__area { margin-top: 1.5rem; color: var(--muted); font-size: 0.92rem; }
-  .contact-intro__email { margin-top: 1rem; color: var(--muted); }
-  .contact-form-wrap { padding: clamp(1.5rem, 3.5vw, 2.75rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
-  .contact-form-wrap { scroll-margin-top: calc(var(--header-h) + 1rem); }
-  .contact-form-wrap__title { margin-bottom: 1.5rem; font-size: var(--step-2); font-weight: 560; letter-spacing: -0.025em; }
-  :global(.contact-intro__booking) { margin-top: 1.75rem; }
-  .path {
-    display: grid; gap: 0.15rem; min-width: 14rem; padding: 0.85rem 1.25rem;
-    border: 1px solid var(--line-strong); border-radius: 14px; color: var(--ink); text-decoration: none;
-    transition: border-color 0.2s var(--ease), background 0.2s var(--ease), color 0.2s var(--ease);
-  }
-  .path:hover { border-color: var(--ink); }
-  .path:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-  .path--primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .path--primary:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
-  .path__label { font-weight: 580; font-size: 1.02rem; }
-  .path__hint { font-size: 0.8rem; opacity: 0.72; }
-  @media (max-width: 520px) { .path { flex: 1 1 100%; min-width: 0; } }
-  @media (max-width: 900px) { :global(.contact-layout) { grid-template-columns: 1fr; } }
+  :global(#pathways), :global(#assistant), :global(#enquiry) { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .reach-head { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); gap: 1.5rem 5rem; margin-bottom: 2.2rem; }
+  .reach-head h2 { max-width: 14ch; }
+  .reach-intro { margin: 0; max-width: 64ch; font-size: var(--step-1); color: var(--ink-2); }
+  .reach-intro--small { margin-top: .9rem; font-size: 1rem; color: var(--muted); }
+  .pathways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
+  .pathway { display: flex; flex-direction: column; gap: .85rem; min-width: 0; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); transition: border-color .2s var(--ease); }
+  .pathway:hover { border-color: var(--line-strong); }
+  .pathway__head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .85rem; align-items: center; }
+  .pathway__name { margin: 0 0 .15rem; font-size: .72rem; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .pathway h3 { font-size: var(--step-1); }
+  .pathway__text { margin: 0; color: var(--ink-2); font-size: .95rem; }
+  .pathway__examples { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+  .pathway__examples li { padding: .28rem .65rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .8rem; color: var(--ink-2); }
+  .pathway__actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; margin-top: auto; padding-top: .9rem; border-top: 1px solid var(--line); }
+  .pathway__cta { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; color: var(--accent); font-weight: 600; text-decoration: none; }
+  .pathway__cta:hover, .pathway__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .pathway__link { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); font-size: .9rem; text-decoration: none; }
+  .reach-assistant { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem 5rem; align-items: start; }
+  .reach-assistant h2 { max-width: 16ch; margin-bottom: 1rem; }
+  .reach-assistant__note { margin: 1.25rem 0 0; max-width: 60ch; color: var(--muted); font-size: .88rem; }
+  .reach-badge { display: inline-block; margin-right: .4rem; padding: .12rem .55rem; border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); font-size: .72rem; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
+  .reach-assistant__panel { display: grid; gap: 1rem; justify-items: start; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .reach-assistant__label { margin: 0; font-size: .78rem; font-weight: 560; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .reach-starters { display: grid; gap: .5rem; width: 100%; margin: 0; padding: 0; list-style: none; }
+  .reach-starter { display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; min-height: 48px; padding: .7rem 1rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); color: var(--ink); font: inherit; font-size: .95rem; text-align: left; cursor: pointer; transition: border-color .2s var(--ease), color .2s var(--ease); }
+  .reach-starter[hidden], .reach-assistant__panel :global(.button[hidden]) { display: none; }
+  .reach-starter:hover { border-color: var(--accent); color: var(--accent); }
+  .reach-starter:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .reach-starter span { color: var(--accent); }
+  .reach-assistant__fallback { margin: 0; color: var(--ink-2); }
+  .reach-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 2.5rem 4rem; align-items: start; }
+  .reach-form h2 { margin-bottom: .25rem; }
+  .reach-form__card { margin-top: 1.75rem; padding: clamp(1.25rem, 3.5vw, 2.5rem); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  .reach-aside { display: grid; gap: 1rem; }
+  .reach-card { padding: clamp(1.25rem, 3vw, 1.6rem); border: 1px solid var(--line); border-radius: var(--radius); }
+  .reach-card__title { margin-bottom: .75rem; font-family: var(--font-sans); font-size: .78rem; font-weight: 560; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .reach-card p { margin: 0; color: var(--ink-2); font-size: .95rem; }
+  .reach-card p + p { margin-top: .6rem; }
+  .reach-next { margin: 0; padding: 0; list-style: none; counter-reset: next; }
+  .reach-next li { counter-increment: next; display: grid; grid-template-columns: 2rem 1fr; padding: .6rem 0; border-top: 1px solid var(--line); color: var(--ink-2); font-size: .95rem; }
+  .reach-next li::before { content: counter(next, decimal-leading-zero); padding-top: .1rem; color: var(--accent); font-size: .85rem; }
+  @media (max-width: 1000px) { .reach-layout { grid-template-columns: 1fr; } .reach-aside { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); } }
+  @media (max-width: 860px) { .reach-head, .reach-assistant { grid-template-columns: 1fr; } }
+  @media (max-width: 700px) { .pathways { grid-template-columns: 1fr; } }
 </style>

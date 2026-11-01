@@ -51,7 +51,7 @@ function formHarness(send: () => Promise<any>, captchaPromise?: Promise<any>) {
     reset: () => { stats.formResets++; },
   };
   class FormValues { [Symbol.iterator]() { return Object.entries(valid)[Symbol.iterator](); } }
-  const ctx = createContext({ document: { querySelector: () => form }, window: {}, location: { search: '' }, URLSearchParams, FormData: FormValues, RadioNodeList: class {}, normalise, validate, HONEYPOT_FIELD, CONTACT_FAILURE_MESSAGE: fallback,
+  const ctx = createContext({ document: { querySelector: () => form, querySelectorAll: () => [] }, window: {}, location: { search: '' }, URLSearchParams, FormData: FormValues, RadioNodeList: class {}, normalise, validate, HONEYPOT_FIELD, CONTACT_FAILURE_MESSAGE: fallback,
     mountTurnstile: async () => captchaPromise ? await captchaPromise : widget,
     submitContact: async () => { stats.requests++; return send(); },
   });

@@ -14,11 +14,11 @@ export const SITE = {
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'KEVOS® | Engineering, Manufacturing and Operations Support',
+  title: 'KEVOS® | Engineering Tools, Technical Knowledge & Technology',
   description:
     'KEVOS® provides practical CAD, manufacturing, process improvement and engineering project support for businesses in Sydney and across Australia.',
   /** One-line brand statement used in the footer and structured data. */
-  statement: 'Practical engineering, manufacturing, operations and project support for businesses with work to deliver.',
+  statement: 'Practical tools and technical knowledge for people who design, build, operate and improve things.',
   /** Short descriptor shown under the brand in places like the footer. */
   tagline: 'Practical help to design, make and improve.',
   /** Public contact email. Leave empty to hide it everywhere until it is set up. */
@@ -63,6 +63,8 @@ export const SITE = {
     enabled: true,
     name: 'KEVOS® Assistant',
     endpoint: '/api/chat',
+    /** Conversation starters in the assistant and on the REACHOS page. */
+    starters: ['Help me explore KEVOS®', 'I have a question about WORKOS', 'I have a question about READOS', 'I have an idea or suggestion', 'I want to discuss a collaboration'],
   },
   /** Jurisdiction stated in the Terms page. Confirm before launch. */
   jurisdiction: 'New South Wales, Australia',
@@ -71,6 +73,7 @@ export const SITE = {
 export const NAV = [
   { href: '/tools/', label: 'WORKOS' },
   { href: '/reados/', label: 'READOS' },
+  { href: '/about/', label: 'About' },
   { href: '/contact/', label: 'REACHOS' },
 ] as const;
 
@@ -80,21 +83,22 @@ export const QUOTE_CTA = { href: '/contact/', label: 'REACHOS' } as const;
 
 export const FOOTER_NAV = {
   services: [
-    { href: '/#engineering-cad', label: 'Engineering and CAD' },
-    { href: '/#manufacturing', label: 'Manufacturing Support' },
-    { href: '/#operations', label: 'Operations Improvement' },
-    { href: '/#project-support', label: 'Project Support' },
-    { href: '/assessment/', label: 'A$195 Problem Assessment' },
+    { href: '/services/#engineering-cad', label: 'Engineering and CAD' },
+    { href: '/services/#manufacturing', label: 'Manufacturing Support' },
+    { href: '/services/#operations', label: 'Operations Improvement' },
+    { href: '/services/#project-support', label: 'Project Support' },
+    { href: '/assessment/', label: 'Problem Assessment' },
     { href: '/factory-fix/', label: 'Factory Fix' },
   ],
   company: [
     { href: '/', label: 'KEVOS®' },
     { href: '/tools/', label: 'WORKOS' },
-    { href: '/#how-it-works', label: 'How It Works' },
-    { href: '/#industries', label: 'Industries' },
-    { href: '/#work', label: 'Proof of Work' },
-    { href: '/#about', label: 'About' },
     { href: '/reados/', label: 'READOS' },
+    { href: '/about/', label: 'About' },
+    { href: '/about/#work', label: 'Proof of Work' },
+    { href: '/services/', label: 'Services' },
+    { href: '/how-it-works/', label: 'How It Works' },
+    { href: '/industries/', label: 'Industries' },
     { href: '/contact/', label: 'REACHOS' },
   ],
   legal: [

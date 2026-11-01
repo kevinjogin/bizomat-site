@@ -64,7 +64,8 @@ test('home, services and about share the genuine four-square KEVOS orbit', () =>
   const home = read('src/pages/index.astro');
   const orbit = read('src/components/ServiceMap.astro');
   const motion = read('src/components/MotionVisual.astro');
-  assert.match(home, /<ServiceMap\s*\/>/);
+  assert.match(home, /<ServiceMap variant="platform" nodes=\{orbit\} \/>/);
+  assert.match(orbit, /variant === 'platform'/);
   assert.match(motion, /page === 'services' \|\| page === 'about'/);
   assert.match(orbit, /--cycle: 8s/);
   assert.match(orbit, /smap__spinner/);

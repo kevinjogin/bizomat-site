@@ -20,10 +20,12 @@ export function composeMessage(input: ContactInput) {
   const subject = oneLine(enquirySubject(input));
   const rows: Array<[string, string]> = [
     ['Name', input.name],
-    ['Company', input.company || '—'],
+    ['Organisation', input.company || '—'],
     ['Email', input.email],
     ['Phone', input.phone || '—'],
-    ['Service', input.service],
+    ['Enquiry category', input.service],
+    ['Website', input.website || '—'],
+    ['Related WORKOS tool or READOS resource', input.resource || '—'],
     ['Preferred contact', input.contactMethod],
   ];
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${input.message}\n`;

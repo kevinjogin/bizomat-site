@@ -1,7 +1,8 @@
 ---
-// Homepage proof of work: keyword search, featured and sector filters, and expandable case studies
+// Proof of work on the About page: keyword search, featured and sector filters, and expandable case studies
 // (data in src/data/projects.ts). Without JavaScript every project is listed; with it, the list starts at nine
-// and can be searched and filtered. Each case study opens from a deep link: /#case-<id>.
+// and can be searched and filtered. Each case study opens from a deep link: /about/#case-<id>
+// (old /#case-<id> links are forwarded there by the homepage).
 import WorkVisual from './WorkVisual.astro';
 import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, projectEnquiryHref } from '../data/projects.ts';
 const INITIAL = 9;
@@ -141,7 +142,7 @@ const latest = PROJECTS[0].years.slice(-4);
                   <p>This experience is directly relevant if:</p>
                   <ul>{p.relevantIf.map((r) => <li>{r}</li>)}</ul>
                   <a class="case__button" href={projectEnquiryHref(p)}>Discuss a similar project <span aria-hidden="true">→</span></a>
-                  <a class="case__service" href={`#${p.service}`}>Explore {PROJECT_SERVICES[p.service]} →</a>
+                  <a class="case__service" href={`/services/#${p.service}`}>Explore {PROJECT_SERVICES[p.service]} →</a>
                   <a class="case__service" href={`#case-${p.id}`}>Link to this case study</a>
                 </section>
               </aside>
@@ -197,7 +198,7 @@ const latest = PROJECTS[0].years.slice(-4);
       buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sector === sector)));
     };
     const reset = () => { sector = 'all'; query = ''; if (search) search.value = ''; };
-    // Deep links (/#case-<id>) reveal the card, open its case study and scroll to it: instantly on page load,
+    // Deep links (/about/#case-<id>) reveal the card, open its case study and scroll to it: instantly on page load,
     // and with the page's own scroll behaviour (which respects reduced motion) for in-page links.
     const openFromHash = (behavior: ScrollBehavior) => {
       const id = decodeURIComponent(location.hash.slice(1));

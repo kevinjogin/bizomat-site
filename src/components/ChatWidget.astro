@@ -11,7 +11,8 @@ const { mode = 'floating' } = Astro.props;
 const name = SITE.assistant.name;
 // Dedicated, crisp KEVOS® K mark for small assistant avatars (independent of favicon).
 const chatIcon = '/brand/kevos-chat-k-mark.svg?v=orange-1';
-const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD support', 'I need manufacturing support', 'I want to improve a process or operation'];
+// Conversation starters, shared with the REACHOS page's "Not sure where to start?" section.
+const prompts = SITE.assistant.starters;
 ---
 
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
@@ -29,7 +30,7 @@ const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD s
       <img class="assistant__avatar" src={chatIcon} alt="" width="46" height="46" decoding="async" />
       <div class="assistant__heading">
         {mode === 'page' ? <h1 id="assistant-title">{name}</h1> : <h2 id="assistant-title">{name}</h2>}
-        <p><span class="assistant__dot" aria-hidden="true"></span>Engineering and project enquiries</p>
+        <p><span class="assistant__dot" aria-hidden="true"></span>AI-assisted guidance</p>
       </div>
       <div class="assistant__actions">
         {
@@ -56,13 +57,13 @@ const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD s
 
     <div class="assistant__log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="Conversation" data-assistant-log>
       <div class="msg msg--assistant">
-        <p>Welcome to KEVOS®. I can help identify the most relevant engineering, manufacturing, operations or project support for your requirement, explain how engagement works, and guide you to the right next step.</p>
+        <p>Welcome to KEVOS®. I can help you explore the platform, understand WORKOS tools and READOS books, and find the right way to get in touch.</p>
       </div>
     </div>
 
     <div class="assistant__prompts" data-assistant-prompts>
       {prompts.map((p) => <button type="button" class="chip" data-prompt={p}>{p}</button>)}
-      <a class="chip chip--link" href="/contact/" data-cta="assistant-quote">Request a quote</a>
+      <a class="chip chip--link" href="/contact/#enquiry" data-cta="assistant-quote">Start an enquiry</a>
       <a class="chip" href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="assistant-meeting">Book a meeting</a>
       <button type="button" class="chip chip--accent" data-assistant-handoff>Leave a message</button>
     </div>
@@ -84,12 +85,12 @@ const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD s
 
     <form class="assistant__composer" data-assistant-form>
       <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS®</label>
-      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Describe your requirement or project" autocomplete="off" data-assistant-input></textarea>
+      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about KEVOS®, WORKOS or READOS" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
-    <p class="assistant__note">AI-assisted guidance based on published KEVOS® information. For project scope, pricing or availability, <a href="/contact/" data-cta="assistant-note-quote">request a quote</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
+    <p class="assistant__note">AI-assisted guidance based on published KEVOS® information. To reach the team, <a href="/contact/#enquiry" data-cta="assistant-note-quote">start an enquiry</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
   </section>
 </div>
 
@@ -284,6 +285,16 @@ const prompts = ['Can KEVOS® support my project?', 'I need engineering or CAD s
     input.addEventListener('input', () => {
       input.style.height = 'auto';
       input.style.height = `${Math.min(input.scrollHeight, 120)}px`;
+    });
+
+    // Buttons elsewhere on the page (the REACHOS "Not sure where to start?" section) open the assistant,
+    // optionally asking their question. They stay hidden until this script runs, so none is ever inert.
+    document.querySelectorAll<HTMLButtonElement>('[data-assistant-ask]').forEach((b) => {
+      b.hidden = false;
+      b.addEventListener('click', () => {
+        setOpen(true);
+        if (b.dataset.assistantAsk) ask(b.dataset.assistantAsk);
+      });
     });
 
     // ----- Leave a message (handoff to the team) -----

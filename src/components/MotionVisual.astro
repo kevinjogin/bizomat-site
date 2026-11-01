@@ -33,8 +33,8 @@ const toolStages = [
   { number: '03', name: 'Decide', note: 'Useful output' },
 ];
 const contactPaths = [
-  { number: '01', title: 'Describe the requirement', note: 'Share the problem, drawing or project' },
-  { number: '02', title: 'Book a discussion', note: 'Clarify scope with KEVOS®' },
+  { number: '01', title: 'Start an enquiry', note: 'Questions, ideas, feedback or projects' },
+  { number: '02', title: 'Book a meeting', note: 'Talk it through with KEVOS®' },
 ];
 const copy = {
   reados: {
@@ -58,8 +58,8 @@ const copy = {
     footer: 'INPUT  →  ANALYSE  →  DECIDE',
   },
   contact: {
-    eyebrow: 'START AN ENGINEERING ENQUIRY',
-    description: 'Two enquiry options, either share the requirements or book a discussion, leading to the next agreed step.',
+    eyebrow: 'CONNECT WITH KEVOS®',
+    description: 'Two ways to connect, sending an enquiry or booking a meeting, each leading to one clear next step.',
     footer: 'ONE CLEAR NEXT STEP',
   },
 } as const;
@@ -238,8 +238,8 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
           <div class="mv__contact-lines" aria-hidden="true"><span></span><span></span></div>
           <div class="mv__contact-outcome">
             <Logo label="" height={26} />
-            <span class="mv__contact-outcome-name">Defined next step</span>
-            <span class="mv__sub">Clear scope · Practical response</span>
+            <span class="mv__contact-outcome-name">The right next step</span>
+            <span class="mv__sub">Reviewed · Answered</span>
           </div>
         </div>
       )}
