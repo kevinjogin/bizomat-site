@@ -3537,3 +3537,16 @@ Three tools in batch handbook91 completing the deep audit of the thrust bearing 
 | **Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise)** `step-thrust-bearing-design` | STEP BEARING LAID OUT | Temperature rise; Outside diameter; Pad shape; Model and application | 2339, 2345–2347 | Automated + cross-check |
 | **Tapered Land Thrust Bearing Design (Pad Layout, Film Factor, Friction, Oil Flow Required and Passed)** `tapered-land-thrust-bearing-design` | FILM FLOW CARRIES THE HEAT | Oil flow; Film thickness; Unit load; Model and application | 2339, 2347–2352 | Automated + cross-check |
 | **Tilting Pad (Kingsbury) Thrust Bearing Design (Operating Number, Film, Friction, Oil Flow, Temperature Rise)** `tilting-pad-thrust-bearing-design` | TILTING PAD BEARING SATISFACTORY | Temperature rise; Minimum film; Unit load; Model and application | 2339, 2352–2356 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook92 (added 1 November 2026)
+
+Four tools in batch handbook92 from the deep audit of the helical gearing section: crossed helical gears at an exact centre distance for any shaft angle, with the least centre distance and formed cutter numbers (pp. 2199–2205), selection of the cutter for milling a helical gear by the preferred formula (pp. 2204–2206), enlarged helical pinions of 20° normal pressure angle with their tight-mesh centre distance (pp. 2206–2207), and index and feed change gears for hobbing helical gears on a machine without a differential (pp. 2208–2209). Cutter sizes, tooth thicknesses from the handbook table, machine constants, gears fitted and accepted lead errors are always user inputs. WORKOS now holds 990 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Crossed Helical Gears at an Exact Centre Distance (Any Shaft Angle, Minimum Centre Distance, Cutter Numbers)** `crossed-helical-exact-centre-distance` | HELICAL PAIR FITS THE CENTRE DISTANCE | Pinion teeth; Centre distance; Cutter range; Hand of helix; Model and application | 2199–2205, 2150 | Automated + cross-check |
+| **Helical Gear Milling Cutter Selection (Preferred Formula with Cutter Diameter, Lead, Tooth Depth)** `helical-milling-cutter-selection` | USE CUTTER No. 3 | Cutter series; Approximate formula; Cutter diameter; Model and application | 2204–2206, 2150 | Automated |
+| **Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance** `enlarged-helical-pinion` | ENLARGE THE PINION | Enlargement; Mating gear; Tooth thickness; Model and application | 2206–2207, 2152 | Automated + cross-check |
+| **Helical Gear Hobbing Change Gears (Machine Without Differential, Feed Correction, Lead Error)** `helical-hobbing-change-gears` | LEAD WITHIN TOLERANCE | Lead error; Feed correction; Machine constants; Model and application | 2208–2209 | Automated + cross-check |

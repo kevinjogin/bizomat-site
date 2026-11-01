@@ -1,8 +1,8 @@
 # READOS ↔ WORKOS connections: items for review
 
-Generated 2026-10-31 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
+Generated 2026-11-01 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 659 relationships (391 from links authors wrote in the books, 268 from editorial review). Rejected: 117. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 714 relationships (442 from links authors wrote in the books, 272 from editorial review). Rejected: 118. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -278,6 +278,10 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Plain Bearings by the Numbers | Thrust bearings | Flat Plate Thrust Bearing Design (Pad Layout, Unit Load, Friction Loss, Oil Flow, Chamfer Depth) | complements | Chapter checks a thrust face’s unit load and PV and explains why flat faces need pads and a wedge; tool applies the handbook flat plate design: pad layout, unit load, friction from the M chart, oil flow and chamfer depth. |
 | Plain Bearings by the Numbers | Thrust bearings | Tapered Land Thrust Bearing Design (Pad Layout, Film Factor, Friction, Oil Flow Required and Passed) | complements | Chapter explains how tapered lands give each pad a converging wedge and where they suit; tool applies the handbook tapered land procedure with leakage factor, film factor K, friction from J and the film flow. |
 | Plain Bearings by the Numbers | Thrust bearings | Tilting Pad (Kingsbury) Thrust Bearing Design (Operating Number, Film, Friction, Oil Flow, Temperature Rise) | complements | Chapter introduces Michell’s and Kingsbury’s pivoted pads and where they suit; tool applies the handbook tilting pad procedure with the operating number, film factor α, friction coefficient and temperature rise. |
+| Gears by the Numbers | Helical gears and axial thrust | Helical Gear Milling Cutter Selection (Preferred Formula with Cutter Diameter, Lead, Tooth Depth) | complements | Chapter derives the virtual number z ÷ cos³ β and the lead used to set up machines; tool applies the handbook’s preferred cutter formula N sec³ α + Pn Dc tan² α and gives the lead. |
+| Gears by the Numbers | Helical gears and axial thrust | Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance | complements | Chapter gives the minimum helical pinion teeth before undercut; tool applies the handbook enlargement Kh for 20° helical pinions and the outside diameter. |
+| Gears by the Numbers | Centre distance and contact ratio | Enlarged Helical Pinion (20° Normal Pressure Angle) and Tight-Mesh Centre Distance | complements | Chapter relates working pressure angle to centre distance, cos α′ = a cos α ÷ a′; tool finds the angle from the tooth thicknesses by the involute function and the tight-mesh centre distance C cos φt ÷ cos φ. |
+| Machining and Metal Parts | Specialised machining operations: broaching, keyways, splines, knurling and indexing | Helical Gear Hobbing Change Gears (Machine Without Differential, Feed Correction, Lead Error) | complements | Chapter explains that the hob and blank turn together in a fixed ratio; tool applies the handbook index ratio, feed correction and lead check for hobbing helical gears. |
 
 ## 2. Rejected
 
@@ -400,6 +404,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining and Metal Parts | Drilling, reaming and tapping: making holes that are the right size, in the right place | Bolt and Screw Grip Length Check (Grip Gauging Length, Body Length, Full Thread in the Joint) | Rejected: chapter specifies tapped hole depths and drill depths; the length and thread length of the screw are not discussed. |
 | Magnetic Workholding by the Numbers | Grinding on a magnetic chuck | Grinding Wheel Life and Removal Rate Plan (Taylor Line at an Equivalent Chip Thickness, Shop Calibration) | Rejected: chapter covers holding work on a magnetic chuck against grinding forces; wheel life and Taylor constants are not discussed. |
 | Plain Bearings by the Numbers | Thrust bearings | Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise) | Rejected: chapter compares flat, tapered land and tilting pad thrust faces; step thrust bearings are not discussed. |
+| Gears by the Numbers | Helical gears and axial thrust | Crossed Helical Gears at an Exact Centre Distance (Any Shaft Angle, Minimum Centre Distance, Cutter Numbers) | Rejected: chapter covers helical gears on parallel shafts of opposite hand; crossed helical gears on non-parallel shafts are not discussed. |
 
 ## 3. Published READOS books with no approved connection
 

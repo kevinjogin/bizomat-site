@@ -1,10 +1,10 @@
 {
- "generated": "2026-10-31",
- "base": "http://127.0.0.1:8851",
- "tools": 986,
- "passed": 986,
- "inputs": 8554,
- "figures": 8554,
+ "generated": "2026-11-01",
+ "base": "http://127.0.0.1:8827",
+ "tools": 990,
+ "passed": 990,
+ "inputs": 8588,
+ "figures": 8588,
  "sample": [
   {
    "id": "make-buy",
@@ -6043,6 +6043,30 @@
    "ok": true,
    "inputs": 15,
    "figures": 15
+  },
+  {
+   "id": "crossed-helical-exact-centre-distance",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "helical-milling-cutter-selection",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "enlarged-helical-pinion",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "helical-hobbing-change-gears",
+   "ok": true,
+   "inputs": 17,
+   "figures": 17
   }
  ]
 }
