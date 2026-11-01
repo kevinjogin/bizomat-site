@@ -2,7 +2,7 @@
 
 Generated 2026-11-01 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 720 relationships (442 from links authors wrote in the books, 278 from editorial review). Rejected: 119. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 724 relationships (442 from links authors wrote in the books, 282 from editorial review). Rejected: 121. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -288,6 +288,10 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Gears by the Numbers | Undercut and profile shift | Spur Gears Cut for a Given Centre Distance and Ratio (Operating Pitch, Tooth Thickness, Root and Outside Diameters) | complements | Chapter relates added profile shift to a new centre distance; tool finds the operating pressure angle, tooth thicknesses by the involute function and root and outside diameters for a standard hob. |
 | Gears by the Numbers | Undercut and profile shift | Enlarged Spur Pinion Mesh (Long and Short Addendum or Enlarged Centre Distance, Tight-Mesh Centre Distance) | complements | Chapter gives s = m (π ÷ 2 + 2 x tan α) and the minimum shift to avoid undercut; tool applies the handbook t = p ÷ 2 + e tan φ for an outside diameter enlargement e = 2 x m and the centre distance for no backlash. |
 | Gears by the Numbers | Backlash and tooth thickness | Gear Shaving Stock Check (Centre Distance Method) | complements | Chapter gives backlash from a centre distance increase as 2 Δa tan α; tool applies the same relation, the handbook’s t2 = 2 tan φ × d, to a preshaved gear meshed tight with a standard gear. |
+| Machine Part Repairs by the Numbers | Gears and sprockets | Roller Chain Sprocket Tooth Form and Hob (ANSI B29.1M Seating Curve, Pressure Angles, Hob Diameter and Lead) | complements | Chapter covers hooked sprocket teeth and says a weld-rebuilt profile must be restored accurately; tool applies the ANSI B29.1M tooth form formulas (seating curve, arcs, topping curve) for laying out or checking that profile. |
+| Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Roller Chain Sprocket Tooth Form and Hob (ANSI B29.1M Seating Curve, Pressure Angles, Hob Diameter and Lead) | complements | Chapter tells readers to replace sprockets when teeth become hooked and to use enough teeth; tool gives the standard tooth form and the pressure angles for new chain, minimum and average for the tooth count. |
+| Machine Part Repairs by the Numbers | Keyways, threads and splines | S.A.E. Straight-Sided Spline Fitting (Width, Depth, Minor Diameter, Torque Capacity) | complements | Chapter suggests machining off a worn splined end and fitting a new splined section, a joint that needs careful design; tool applies the handbook S.A.E. spline proportions and T = 1000 N R h torque capacity. |
+| Machine Elements and Mechanical Design | Shafts, keys, couplings and alignment: connecting rotating machinery reliably | S.A.E. Straight-Sided Spline Fitting (Width, Depth, Minor Diameter, Torque Capacity) | complements | Chapter lists splines as the high-torque connection that can allow axial sliding; tool gives the S.A.E. straight-sided spline width, depth and minor diameter for permanent and sliding fits and their torque capacity. |
 
 ## 2. Rejected
 
@@ -412,6 +416,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Plain Bearings by the Numbers | Thrust bearings | Step Thrust Bearing Design (Pad Layout, Film Thickness, Step Depth, Friction, Oil Flow, Temperature Rise) | Rejected: chapter compares flat, tapered land and tilting pad thrust faces; step thrust bearings are not discussed. |
 | Gears by the Numbers | Helical gears and axial thrust | Crossed Helical Gears at an Exact Centre Distance (Any Shaft Angle, Minimum Centre Distance, Cutter Numbers) | Rejected: chapter covers helical gears on parallel shafts of opposite hand; crossed helical gears on non-parallel shafts are not discussed. |
 | Gears by the Numbers | Measuring and specifying a gear | Spur Gear Profile Checker Settings (Significant Diameters, Roll Angles, TIF, HPSTC, Undercut) | Rejected: chapter covers span measurement, identifying gears and accuracy grades; it does not set up profile inspection by roll angle or work out significant diameters. |
+| Machine Elements and Mechanical Design | Gears and gearboxes: choosing reducers and geared motors that last | Milled Bevel Gear Dimensions (Cone Angles, Blank, Cutting Angle, Vertex Distances) | Rejected: chapter covers choosing and maintaining reducers and geared motors; bevel gears appear only as a gear type, and it does not cover cutting bevel gears or their blank dimensions. |
+| Machine Part Repairs by the Numbers | Gears and sprockets | Bevel Gear Milling Offset and Caliper Settings (Cutter Setover, Cutting Angle, Chordal Thickness at Both Ends) | Rejected: chapter covers rebuilding a broken tooth by welding and restoring its profile by filing or milling; it does not cover milling a complete bevel gear with a formed cutter. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -463,7 +469,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Layouts That Plot to Scale | publication | Engineering | Engineering & Design |
 | Leading People and Change | collection | business | Business & Commercial |
 | Louvres and Ventilators by the Numbers | publication | Engineering | Engineering & Design |
-| Machine Part Repairs by the Numbers | publication | Engineering | Engineering & Design |
 | Marketing, Brands and Customer Experience | collection | business | Business & Commercial |
 | Performance Solutions by the Numbers | publication | Engineering | Engineering & Design |
 | Pipe Flow by the Numbers | publication | Engineering | Engineering & Design |

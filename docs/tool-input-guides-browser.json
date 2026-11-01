@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-01",
  "base": "http://127.0.0.1:8861",
- "tools": 994,
- "passed": 994,
- "inputs": 8620,
- "figures": 8620,
+ "tools": 998,
+ "passed": 998,
+ "inputs": 8642,
+ "figures": 8642,
  "sample": [
   {
    "id": "make-buy",
@@ -6091,6 +6091,30 @@
    "ok": true,
    "inputs": 7,
    "figures": 7
+  },
+  {
+   "id": "milled-bevel-gear-dimensions",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "bevel-gear-milling-offset",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "sae-straight-sided-spline",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "roller-chain-sprocket-tooth-form",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
   }
  ]
 }

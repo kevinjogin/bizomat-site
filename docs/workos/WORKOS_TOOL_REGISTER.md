@@ -3563,3 +3563,21 @@ Four tools in batch handbook93 from the deep audit of the spur gearing section: 
 | **Spur Gears Cut for a Given Centre Distance and Ratio (Operating Pitch, Tooth Thickness, Root and Outside Diameters)** `spur-gears-for-given-centre-distance` | GEARS FIT THE CENTRE DISTANCE | Operating pressure angle; Tip clearance; Backlash; Dedendums; Model and application | 2139–2140 | Automated + cross-check |
 | **Enlarged Spur Pinion Mesh (Long and Short Addendum or Enlarged Centre Distance, Tight-Mesh Centre Distance)** `enlarged-spur-pinion-mesh` | INCREASE THE CENTRE DISTANCE | Gear undercut; Pinion enlargement; Centre distance system; Backlash; Model and application | 2142, 2154–2155 | Automated + cross-check |
 | **Gear Shaving Stock Check (Centre Distance Method)** `gear-shaving-stock-check` | SHAVING STOCK WITHIN ALLOWANCE | Shaving allowance; Exact relation; Master gear; Model and application | 2141, 2155 | Automated + cross-check |
+
+## Machinery’s Handbook ledger tools, batch handbook94 (added 1 November 2026)
+
+Four tools in batch handbook94 from the deep audit of the bevel gearing, straight-sided spline and roller chain sprocket pages: the dimensions of milled bevel gears at any shaft angle with the blank, cutting angle, vertex distances and cutter tooth numbers (pp. 2181–2184, 2187), the cutter offset, dividing head angle and chordal caliper settings at both ends for milling bevel gears (pp. 2188–2189), S.A.E. straight-sided spline fittings with their torque capacity (pp. 2279–2281), and the ANSI B29.1M roller chain sprocket tooth form with the standard hob (pp. 2554–2555). Offset factors, side pressures and torques are always user inputs. WORKOS now holds 998 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Milled Bevel Gear Dimensions (Cone Angles, Blank, Cutting Angle, Vertex Distances)** `milled-bevel-gear-dimensions` | MILLED BEVEL GEAR DIMENSIONS | Formed cutter series; Face width; Cutter thickness; Model and application | 2181–2184, 2187 | Automated + cross-check |
+| **Bevel Gear Milling Offset and Caliper Settings (Cutter Setover, Cutting Angle, Chordal Thickness at Both Ends)** `bevel-gear-milling-offset` | OFFSET AND CALIPER SETTINGS | Offset; Factor table range; Trial cut; Model and application | 2188–2189 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **S.A.E. Straight-Sided Spline Fitting (Width, Depth, Minor Diameter, Torque Capacity)** `sae-straight-sided-spline` | SPLINE CARRIES THE TORQUE | Torque capacity; Table sizes; Corners and parallelism; Model and application | 2279–2281 | Automated + cross-check |
+| **Roller Chain Sprocket Tooth Form and Hob (ANSI B29.1M Seating Curve, Pressure Angles, Hob Diameter and Lead)** `roller-chain-sprocket-tooth-form` | SPROCKET TOOTH FORM | Tooth tip; Seating curve tolerance; Hob; Model and application | 2554–2555 | Automated + cross-check |
