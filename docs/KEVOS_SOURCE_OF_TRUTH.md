@@ -62,7 +62,11 @@ The `/tools/` page loads only `core.js`, `input-guides.js`, `ui.js` and a tool-t
 
 ### Navigation (src/config/site.ts)
 
-Header: KEVOS® (home), WORKOS (`/tools/`) and READOS (`/reados/`), plus the **REACHOS** call to action → `/contact/`. Footer adds service anchors, the assessment, Factory Fix, WORKOS, the READOS RSS feed, and Privacy, Terms, Disclaimer.
+Header: KEVOS® (home), WORKOS (`/tools/`), READOS (`/reados/`) and About (`/about/`), plus the **REACHOS** call to action → `/contact/`. Footer adds the services (`/services/#…`), the assessment, Factory Fix, About, Proof of Work (`/about/#work`), How It Works, Industries, the READOS RSS feed, and Privacy, Terms, Disclaimer.
+
+### Homepage (src/pages/index.astro, since 2 Nov 2026)
+
+The homepage presents KEVOS® as a technology and knowledge platform led by WORKOS and READOS: hero ("Knowledge. Tools. Technology."), WORKOS (topics, search, featured tools), READOS (subjects, search, featured books), the connected ecosystem (Learn → Apply, the learning pathways, and AI assistance shown only as *planned*), and a short About. Every count, topic, tool and book is read from the WORKOS register and the READOS library at build time; the featured picks and the hero orbit nodes are in `src/config/home.ts` (the build stops on an unknown id). The READOS subject list is shared with `/reados/` through `src/utils/reados-library.ts`. Services, pricing, the assessment and Factory Fix are no longer on the homepage; they stay on `/services/`, `/assessment/` and `/factory-fix/`, and the proof of work is on `/about/#work`. A small script forwards old homepage anchors (`/#pricing`, `/#case-<id>`, …) to their new pages. `tests/homepage.test.ts` keeps pricing off the homepage and counts out of the source.
 
 ## 4. Brand system (frozen)
 
@@ -71,7 +75,7 @@ Header: KEVOS® (home), WORKOS (`/tools/`) and READOS (`/reados/`), plus the **R
 - **Colours:** `--brand-orange: #ff6a13`; light-theme accent `#c2410c`; dark-theme accent `#ff7a29` (`src/styles/global.css`). No blue brand accents.
 - **Typography:** KEVOS Display (Oxanium-based, self-hosted) for H1–H6; Inter Tight for body; Source Serif 4 for article prose.
 - **Themes (owner decision, 8 Oct 2026):** the site always opens in the **dark** theme (`<html data-theme="dark">` in `BaseLayout.astro` and `pages/chat.astro`, so it is dark even without JavaScript). The visitor can switch to light with `ThemeToggle.astro`; that choice is kept in `sessionStorage` key `kevos-theme` for the current browser session only, and any old `localStorage` value is removed. The operating-system preference is not followed. Covered by `tests/theme-default.test.ts`.
-- **Motion:** `ServiceMap.astro` is the shared four-square orbit with orange core on Home, Services and About. `MotionVisual.astro` holds the purpose-built Industries, How It Works, Tools and Contact diagrams. `FactoryFixArt.astro` (Factory Fix hero: bottleneck → review → rebalanced flow → action plan) and `assessment/AssessmentHeroArt.astro` (assessment hero) are SVG scenes in the same blueprint-panel style on a 16-second timeline, as is `LegalArt.astro` (one scene each for Privacy, Terms and Disclaimer, chosen by `LegalLayout`'s `scene` prop). All respect reduced-motion preferences; the SVG scenes then show every stage as one still.
+- **Motion:** `ServiceMap.astro` is the shared four-square orbit with orange core on Home (`platform` variant: design, build, operate, improve, each linking to its WORKOS topic), Services and About. `MotionVisual.astro` holds the purpose-built Industries, How It Works, Tools and Contact diagrams. `FactoryFixArt.astro` (Factory Fix hero: bottleneck → review → rebalanced flow → action plan) and `assessment/AssessmentHeroArt.astro` (assessment hero) are SVG scenes in the same blueprint-panel style on a 16-second timeline, as is `LegalArt.astro` (one scene each for Privacy, Terms and Disclaimer, chosen by `LegalLayout`'s `scene` prop). All respect reduced-motion preferences; the SVG scenes then show every stage as one still.
 - **Legal pages:** Privacy, Terms and Disclaimer use `LegalLayout` aligned to the shared full-width header container.
 
 Retired and not to be used: blue GoCore logo, GC favicon, `scripts/brand/build_brand.py`, `brand-source/generated/gocore-*`.
@@ -90,7 +94,9 @@ Per-page titles, descriptions and canonical URLs on `https://kevos.com`; Open Gr
 
 ## 7. Contact, booking and assistant
 
-- Contact and quotation forms post to Web3Forms (public access key in `site.ts`) with hCaptcha and spam checks; no-JS fallback to `/contact/sent/`.
+- **REACHOS (`/contact/`, redesigned 2 Nov 2026)** is the KEVOS® connection gateway: hero ("Connect with KEVOS."), four enquiry pathways (WORKOS, READOS, Ideas and feedback, Collaboration) that preselect the form category with `?service=<slug>#enquiry`, a "Not sure where to start?" section whose starter buttons (`data-assistant-ask`) open the live KEVOS® Assistant, the enquiry form, "Prefer to talk?" booking and location. No prices or packages.
+- REACHOS form (`ContactForm.astro`): posts to the Worker `/api/contact` with Turnstile, honeypot and rate limit. Required: name, email, enquiry category (`service` field), message, privacy consent. Optional: organisation, website, related WORKOS tool or READOS resource (`?resource=<name>` fills it), phone. Categories are `ENQUIRY_CATEGORIES` in `src/lib/contact.ts` plus the service values in `SERVICE_OPTIONS`, so older `?service=factory-fix` (and other service) links still preselect. No attachments (the Worker rejects file fields). Success is shown only when the Worker confirms delivery.
+- The assistant's "Leave a message" form still posts to Web3Forms with hCaptcha; no-JS fallback to `/contact/sent/`.
 - Booking link: Proton Calendar booking page (`SITE.booking`).
 - Engineering Problem Assessment (A$195, `/assessment/`, added 16 Oct 2026): content in `src/config/assessment.ts`; enquiries use the same provider as REACHOS (Web3Forms + hCaptcha); Worker endpoints `/api/assessment` (server-side validation, used when the provider is `worker`) and `/api/assessment/stripe-webhook` (signature-verified, disabled until `STRIPE_WEBHOOK_SECRET` is set). No payment is taken on the site. Operations, configuration and owner approvals: `docs/assessment/README.md`.
 - KEVOS Assistant: `ChatWidget.astro` + `/chat/` pop-out; answers only from `assistant-knowledge.json` (built from published content) via Workers AI binding `AI`.
