@@ -8781,6 +8781,56 @@
    "note": "Builds the eddy-current inspection station's hourly cost, giving the cost per housing, per shaft and per tube lot audit.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-and-maintaining-belt-and-chain-drives",
+   "tool": "classical-v-belt-rating",
+   "type": "complements",
+   "note": "Works out the power per belt this chapter divides into the design power, for classical and cogged vee belts, with the speed ratio, length and arc corrections.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes a drive by design power ÷ power per belt and works an example with four classical vee belts; tool applies the handbook RMA rating formulas for A to D sections and the number of belts."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-and-maintaining-belt-and-chain-drives",
+   "tool": "narrow-v-belt-rating",
+   "type": "complements",
+   "note": "Gives the rating per belt for the wedge (narrow) belts this chapter says carry more power than classical belts of the same width.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares wedge and classical vee belts and sets out the number-of-belts step; tool applies the handbook RMA IP-22 formula for 3VX, 5VX, 5V and 8V narrow belts."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-and-maintaining-belt-and-chain-drives",
+   "tool": "synchronous-belt-rating",
+   "type": "complements",
+   "note": "Rates the synchronous (toothed) belts this chapter recommends for precise speed, including the loss of rating with too few teeth in mesh.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes synchronous belts and when to choose them; tool applies the handbook RMA torque and power rating formulas for MXL to XXH sections with the teeth in mesh factor."
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "set-belt-tension-by-frequency",
+   "tool": "double-v-belt-tension",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sets the installed static tension by measuring span frequency; the tool sizes the number of double V-belts from working tensions and does not give an installation tension."
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "inertia-through-gears-and-belts",
+   "tool": "variable-speed-belt-drive",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter reflects inertia through gear and belt ratios; the tool rates variable-speed belts and their speed range, not inertia."
   }
  ]
 }

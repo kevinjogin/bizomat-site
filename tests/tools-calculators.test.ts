@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1006 tools with unique ids and every previously published id kept', () => {
+test('register: 1013 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1006);
+  assert.equal(ids.length, 1013);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 812 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 819 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 812);
+  assert.equal(ids.length, 819);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6859,5 +6859,68 @@ test('seventy-third-pass tools give their verdicts and reject bad inputs', () =>
   assert.equal(engine.run('bolt-torque-coefficient-yield').text, 'TORQUE BELOW YIELD');
   assert.equal(engine.run('bolt-torque-coefficient-yield', { Tapp: 60 }).text, 'TORQUE TAKES THE BOLT PAST YIELD');
   const cases: Array<[string, Inputs]> = [['modified-constant-velocity-cam', { b2: 200 }], ['modified-constant-velocity-cam', { step: 1 }], ['cam-follower-force-analysis', { th: 120 }], ['cam-follower-force-analysis', { mu: 0.9, l2: 10 }], ['bolt-torque-coefficient-yield', { Di: 20 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-fourth handbook pass (handbook97): deep audit of the belt drive section. Expected values are the handbook's
+// double V-belt allowable tension tables (Tables 16 and 19) and MXL torque rating table (Table 47), which its formulas
+// reproduce, and the rating formulas themselves for the other sections.
+const IN97 = 25.4;
+const LBF97 = 4.4482216;
+
+test('narrow and classical V-belt ratings follow the RMA formulas', () => {
+  const a = engine.run('narrow-v-belt-rating', { sec: '5V', dp: 7.1 * IN97, Dp: 7.1 * IN97, C: 1000, n: 1750, KSR: 0 }).values;
+  const dr = 7.1 * 1.75; near(a.hp, dr * (3.314 - 10.123 / 7.1 - 5.8758e-4 * dr * dr - 0.46527 * Math.log10(dr)), 1e-9, '5V HP formula'); near(a.hp, 16.0, 0.1, '5V 7.1 in at 1750 rpm ≈ 16 hp');
+  const k = engine.run('narrow-v-belt-rating', { sec: '3VX', dp: 3 * IN97, Dp: 6 * IN97, C: 500, n: 1750, KSR: 0.1416 }).values; near(k.hp - 0.1416 * 1.75, 5.25 * (1.1691 - 1.5295 / 3 - 1.5229e-4 * 5.25 ** 2 - 0.1596 * Math.log10(5.25)), 1e-9, 'KSR r added');
+  near(k.arc, 2 * Math.acos((6 - 3) * IN97 / 1000) * 180 / Math.PI, 1e-9, 'exact arc of contact');
+  const c = engine.run('classical-v-belt-rating', { sec: 'A', dp: 3 * IN97, Dp: 3 * IN97, C: 500, n: 1750, KSR: 1 }).values; near(c.hp, 5.25 * (1.004 - 1.652 / 3 - 1.547e-4 * 5.25 ** 2 - 0.2126 * Math.log10(5.25)), 1e-9, 'A section formula');
+  const cb = engine.run('classical-v-belt-rating').values; near(cb.hp, (140 / IN97 * 1.45) * (1.769 - 4.372 / (140 / IN97) - 3.081e-4 * (140 / IN97 * 1.45) ** 2 - 0.3658 * Math.log10(140 / IN97 * 1.45)) + 4.372 * 1.45 * (1 - 1 / 1.1106), 1e-9, 'B with K2 r (1 − 1 ÷ KSR)');
+  near(cb.kWc, cb.hp * 0.7457 * 0.97, 1e-9, 'corrected by length and arc factors'); assert.equal(cb.need, Math.ceil(9 / cb.kWc));
+});
+
+test('double V-belt tension formulas reproduce the handbook allowable tension tables', () => {
+  const tr = (sec: string, din: number, fpm: number) => { const n = 3.82 * (fpm / 1000) / din * 1000; return engine.run('double-v-belt-tension', { sec, d: din * IN97, D: din * IN97, C: 2000, n }).values.TrS / LBF97; };
+  near(tr('AA', 3, 200), 30, 0.6, 'AA 3.0 in at 200 fpm = 30 lbf'); near(tr('AA', 4, 200), 57, 0.6, 'AA 4.0 in at 200 fpm = 57'); near(tr('AA', 4, 1000), 38, 0.6, 'AA 4.0 in at 1000 fpm = 38'); near(tr('AA', 6.5, 200), 88, 0.6, 'AA 6.5 in at 200 fpm = 88');
+  near(tr('DD', 12, 200), 243, 0.6, 'DD 12 in at 200 fpm = 243'); near(tr('DD', 20, 200), 503, 0.6, 'DD 20 in at 200 fpm = 503'); near(tr('DD', 16, 1000), 291, 0.6, 'DD 16 in at 1000 fpm = 291');
+  const v = engine.run('double-v-belt-tension').values; near(v.TT, v.Te * 1.22, 1e-9, 'TT = Te R ÷ (R − 1)'); near(v.TS, v.TT - v.Te, 1e-9, 'TS = TT − Te');
+  near(v.Te / LBF97, 33 * (14.3 / 0.7457) / v.S, 1e-9, 'Te = 33 Pd ÷ S'); near(v.S, 1.45 * (160 / IN97) / 3.82, 1e-12, 'S = r d ÷ 3.820');
+});
+
+test('light duty, V-ribbed and variable-speed belt ratings follow the RMA formulas', () => {
+  const l = engine.run('light-duty-v-belt-rating', { sec: '4L', d0: 2.8 * IN97 + 1.524, twoA: 1.524, n: 1750 }).values; near(l.hp, 1.75 * (0.4666 * 2.8 ** 0.91 / 1.75 ** 0.09 - 0.7231 - 0.0002286 * 1.75 ** 2 * 2.8 ** 3), 1e-9, '4L formula'); near(l.kWc, l.kW / 1.2, 1e-12, 'divided by the combined factor');
+  const r = engine.run('v-ribbed-belt-rating', { sec: 'M', dp: 6 * IN97, Dp: 6 * IN97, C: 1000, n: 1160, KSR: 1 }).values; const dr = 6 * 1.16; near(r.hp, dr * (1.975 / dr ** 0.09 - 6.597 / 6 - 3.922e-4 * dr * dr), 1e-9, 'M per rib');
+  const vs = engine.run('variable-speed-belt-drive', { sec: '1422V', dp: 4 * IN97, n: 1000, KSR: 1 }).values; near(vs.hp, 4 * (0.4907 * 4 ** -0.09 - 0.8378 / 4 - 0.000337 * 16), 1e-9, '1422V formula');
+  near(engine.run('variable-speed-belt-drive', { mode: 'dual' }).values.sv, 4, 1e-12, 'compound speed variation (DR DN) ÷ (dr dn)'); near(engine.run('variable-speed-belt-drive').values.rim, Math.PI * 0.21 * 1750 / 60, 1e-9, 'rim speed π Do n');
+  const v44 = engine.run('variable-speed-belt-drive', { sec: '4430V', dp: 10 * IN97, n: 1000, KSR: 1.1373 }).values; near(v44.hp, 10 * (3.454 * 10 ** -0.09 - 7.854 / 10 - 0.002196 * 100) + 9.818 * (1 - 1 / 1.1373), 1e-9, '4430V as printed');
+});
+
+test('synchronous belt ratings reproduce the handbook MXL torque table', () => {
+  const qr = (z: number, w: string) => engine.run('synchronous-belt-rating', { sec: 'MXL', z, mxlw: w, n: 1000, mesh: 6 }).values.Qr / 0.112985;
+  near(qr(10, '0.12'), 0.29, 0.005, '10MXL 0.12 in = 0.29 lbf·in'); near(qr(30, '0.12'), 0.86, 0.005, '30MXL 0.12 in = 0.86'); near(qr(10, '0.19'), 0.48, 0.005, '10MXL 0.19 in = 0.48'); near(qr(30, '0.19'), 1.44, 0.005, '30MXL 0.19 in = 1.44');
+  near(qr(10, '0.25'), 0.67, 0.005, '10MXL 0.25 in = 0.67'); near(qr(20, '0.25'), 1.34, 0.005, '20MXL 0.25 in = 1.34'); near(qr(30, '0.25'), 2.01, 0.005, '30MXL 0.25 in = 2.01');
+  const h = engine.run('synchronous-belt-rating').values, d = 24 * 0.5 / Math.PI, dr = d * 1.45; near(h.hp, dr * (3.73 - 1.41e-3 * dr * dr), 1e-9, 'H (3.00 in) formula'); near(h.d / IN97, d, 1e-12, 'd = z p ÷ π');
+  near(engine.run('synchronous-belt-rating', { mesh: 4 }).values.Kz, 0.6, 1e-12, 'Kz = 0.60 with four teeth in mesh'); near(engine.run('synchronous-belt-rating', { mesh: 2 }).values.Kz, 0.2, 1e-12, 'Kz = 0.20 with two');
+  near(h.wfReq, 7 / h.kWc, 1e-12, 'width factor needed = design ÷ corrected rating');
+});
+
+test('seventy-fourth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('narrow-v-belt-rating').text, 'BELTS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('narrow-v-belt-rating', { nb: 1 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('narrow-v-belt-rating', { sec: '8V', dp: 80, n: 3500 }).text, 'RATING NOT POSITIVE: SHEAVE TOO SMALL OR TOO FAST');
+  assert.equal(engine.run('classical-v-belt-rating').text, 'BELTS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('classical-v-belt-rating', { nb: 2 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('double-v-belt-tension').text, 'BELTS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('double-v-belt-tension', { nb: 5 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('light-duty-v-belt-rating').text, 'ONE BELT CARRIES THE LOAD');
+  assert.equal(engine.run('light-duty-v-belt-rating', { P: 1 }).text, 'LOAD ABOVE THE BELT RATING');
+  assert.equal(engine.run('v-ribbed-belt-rating').text, 'RIBS CARRY THE DESIGN POWER');
+  assert.equal(engine.run('v-ribbed-belt-rating', { nr: 6 }).text, 'TOO FEW RIBS');
+  assert.equal(engine.run('variable-speed-belt-drive').text, 'DRIVE CARRIES THE POWER');
+  assert.equal(engine.run('variable-speed-belt-drive', { vmax: 15 }).text, 'RIM SPEED ABOVE THE SHEAVE LIMIT');
+  assert.equal(engine.run('variable-speed-belt-drive', { P: 10 }).text, 'TOO FEW BELTS');
+  assert.equal(engine.run('synchronous-belt-rating').text, 'BELT CARRIES THE DESIGN POWER');
+  assert.equal(engine.run('synchronous-belt-rating', { wf: 0.29, mesh: 3 }).text, 'BELT TOO NARROW FOR THE POWER');
+  assert.equal(engine.run('synchronous-belt-rating', { sec: 'XL', z: 60, n: 7000 }).text, 'BELT SPEED ABOVE THE RATING LIMIT');
+  const cases: Array<[string, Inputs]> = [['narrow-v-belt-rating', { dp: 400 }], ['classical-v-belt-rating', { C: 50 }], ['double-v-belt-tension', { sec: 'DD', d: 150, D: 300 }], ['light-duty-v-belt-rating', { twoA: 80 }], ['variable-speed-belt-drive', { PDmin: 250 }], ['synchronous-belt-rating', { mesh: 30 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });
