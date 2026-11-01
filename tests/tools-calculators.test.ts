@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 986 tools with unique ids and every previously published id kept', () => {
+test('register: 990 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 986);
+  assert.equal(ids.length, 990);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 792 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 796 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 792);
+  assert.equal(ids.length, 796);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6553,5 +6553,52 @@ test('sixty-eighth-pass tools give their verdicts and reject bad inputs', () => 
   assert.equal(engine.run('tilting-pad-thrust-bearing-design').text, 'TILTING PAD BEARING SATISFACTORY');
   assert.equal(engine.run('tilting-pad-thrust-bearing-design', { dTmax: 20 }).text, 'TEMPERATURE RISE TOO HIGH');
   const cases: Array<[string, Inputs]> = [['step-thrust-bearing-design', { D2: 20 }], ['tapered-land-thrust-bearing-design', { D2: 150 }], ['tilting-pad-thrust-bearing-design', { b: 200 }], ['step-thrust-bearing-design', { i: 60, s: 10 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Sixty-ninth handbook pass (handbook92): deep audit of the helical gearing section. Expected values are the handbook's
+// crossed helical (cases 4A, 4B and 5), cutter selection, enlarged pinion and hobbing change-gear examples.
+const IN92 = 25.4;
+
+test('crossed helical gears at an exact centre distance reproduce the handbook examples', () => {
+  const v = engine.run('crossed-helical-exact-centre-distance', { sigma: 90, C: 10 * IN92, mn: IN92 / 8, Nt: 84, n: 28, alphaA: 45, Dc: 2.61 * IN92 }).values;
+  near(v.nEst, 28.25, 0.05, 'n ≈ 28.25'); near(v.alpha, 46.1, 0.01, 'α = 46°6′'); near(v.beta, 43.9, 0.01, 'β = 43°54′');
+  near(v.D / IN92, 15.143, 0.002, 'D = 15.143 in'); near(v.d / IN92, 4.857, 0.002, 'd = 4.857 in'); near(v.O / IN92, 15.393, 0.002, 'O = 15.393 in'); near(v.o / IN92, 5.107, 0.002, 'o = 5.107 in');
+  near(v.L / IN92, 45.78, 0.01, 'L = 45.78 in'); near(v.l / IN92, 15.857, 0.005, 'l = 15.857 in'); near(v.Np, 275, 1, 'N′ = 275'); near(v.np, 94, 0.5, 'n′ = 94');
+  near(v.alphaMin, 34.733, 0.01, 'α = 34°44′ for least C'); near(v.Dmin / IN92, 12.777, 0.002, 'D = 12.777 in'); near(v.dmin / IN92, 6.143, 0.002, 'd = 6.143 in'); near(v.Cmin / IN92, 9.46, 0.002, 'C = 9.460 in');
+  const w = engine.run('crossed-helical-exact-centre-distance', { sigma: 60, C: 11.9075 * IN92, mn: IN92 / 8, Nt: 132, n: 33, alphaA: 30 }).values;
+  near(w.alpha, 30, 0.05, 'α = 30°'); near(w.beta, 30, 0.05, 'β = 30°'); near(w.D / IN92, 19.052, 0.01, 'D = 19.052 in'); near(w.d / IN92, 4.763, 0.003, 'd = 4.763 in');
+  near(w.L / IN92, 103.66, 0.3, 'L = 103.66 in'); near(w.l / IN92, 25.92, 0.1, 'l = 25.92 in'); near(w.Na, 203, 0.5, 'T = 203'); near(w.na, 51, 0.5, 't = 51');
+});
+
+test('helical milling cutter selection reproduces the handbook example', () => {
+  const x = engine.run('helical-milling-cutter-selection', { Nt: 15, helix: 30, mn: IN92 / 20, Dc: 1.89 * IN92 });
+  const v = x.values;
+  near(v.K, 1.54, 0.001, 'K = 1.540'); near(v.Kp, 0.333, 0.001, 'K′ = 0.333'); near(v.Q, 37.8, 1e-9, 'Q = 37.80'); near(v.Np, 35.7, 0.01, 'N′ = 35.70'); near(v.Na, 23.1, 0.01, 'N′ = 23 approx.');
+  assert.equal(v.cutNo, 3); assert.equal(v.cutA, 5); assert.equal(x.text, 'USE CUTTER No. 3');
+});
+
+test('enlarged helical pinion reproduces the handbook examples', () => {
+  const v = engine.run('enlarged-helical-pinion', { n: 12, mn: IN92 / 32, psi: 18, Nt: 24, tnP: 1.94703, tnG: 1.5708 }).values;
+  near(v.dIn, 0.3943, 0.0001, 'd = 0.3943 in'); near(v.Kh, 0.851, 0.01, 'Kh = 0.851 (graph)'); near(v.dOIn, 0.4834, 0.0005, 'do = 0.4834 in');
+  near(v.CIn, 0.5914, 0.0001, 'C = 0.5914 in'); near(v.ft, 20.9417, 0.001, 'φt = 20°56′30″'); near(v.invT, 0.017196, 0.00001, 'inv φt = 0.017196');
+  near(v.invF, 0.027647, 0.00001, 'inv φ = 0.027647'); near(v.phi, 24.3686, 0.002, 'φ = 24°22′7″'); near(v.CpIn, 0.606, 0.001, 'C′ = 0.606 in');
+});
+
+test('helical hobbing change gears reproduce the handbook example', () => {
+  const v = engine.run('helical-hobbing-change-gears', { Nt: 48, L: 44.0894 * IN92, F: 0.035 * IN92, K: 30, T: 1, M: 0.075 * IN92, hand: 'same', mode: 'conv', i1: 34, i2: 53, i3: 43, i4: 67, f1: 71, f2: 75, f3: 106, f4: 112 }).values;
+  near(v.R, 0.62549654, 1e-8, 'R = 0.62549654'); near(v.Ri, 0.625477264839, 1e-11, 'Ri = 0.625477264839'); near(v.iErr, 0.00001928, 1e-8, 'error 0.00001928');
+  near(v.Fmod / IN92, 0.0336417, 0.0000005, 'F = 0.0336417 in'); near(v.rReq, 0.448556, 0.000005, 'F ÷ M = 0.448556'); near(v.rAct, 0.448534, 0.000001, 'gears 0.448534');
+  near(v.Fact / IN92, 0.03364, 0.000001, 'F = 0.03364 in'); near(v.Lact / IN92, 44.087196, 0.001, 'L = 44.087196 in (sensitive to the rounded index ratio)'); near(v.err100 / 100, 0.00005, 0.00001, 'about 0.00005 in per in');
+});
+
+test('sixty-ninth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('crossed-helical-exact-centre-distance').text, 'HELICAL PAIR FITS THE CENTRE DISTANCE');
+  assert.equal(engine.run('helical-milling-cutter-selection', { Nt: 5, helix: 0 }).text, 'BELOW THE CUTTER SERIES');
+  assert.equal(engine.run('enlarged-helical-pinion').text, 'ENLARGE THE PINION');
+  assert.equal(engine.run('enlarged-helical-pinion', { n: 30 }).text, 'NO ENLARGEMENT NEEDED');
+  assert.equal(engine.run('helical-hobbing-change-gears').text, 'LEAD WITHIN TOLERANCE');
+  assert.equal(engine.run('helical-hobbing-change-gears', { errMax: 0.001 }).text, 'LEAD ERROR TOO LARGE');
+  const cases: Array<[string, Inputs]> = [['crossed-helical-exact-centre-distance', { C: 200 }], ['crossed-helical-exact-centre-distance', { sigma: 40, alphaA: 50 }], ['enlarged-helical-pinion', { tnP: 0.5, tnG: 0.5 }], ['helical-hobbing-change-gears', { hand: 'opposite' }], ['helical-hobbing-change-gears', { F: 2000 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });

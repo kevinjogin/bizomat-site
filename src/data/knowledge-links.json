@@ -7817,6 +7817,56 @@
    "note": "Gives the largest centrifugal stress in a solid or bored disc, its rim speed, its safety factor against yield and the speed at which yield is reached.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "helical-gears-and-axial-thrust",
+   "tool": "helical-milling-cutter-selection",
+   "type": "complements",
+   "note": "Picks the formed cutter for milling a helical gear from the virtual tooth number this chapter derives, corrected for cutter size, with the lead to set up.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter derives the virtual number z ÷ cos³ β and the lead used to set up machines; tool applies the handbook’s preferred cutter formula N sec³ α + Pn Dc tan² α and gives the lead."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "helical-gears-and-axial-thrust",
+   "tool": "enlarged-helical-pinion",
+   "type": "complements",
+   "note": "Works out how much to enlarge a helical pinion with too few teeth to avoid the undercut this chapter describes, and its outside diameter.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter gives the minimum helical pinion teeth before undercut; tool applies the handbook enlargement Kh for 20° helical pinions and the outside diameter."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "centre-distance-and-contact-ratio",
+   "tool": "enlarged-helical-pinion",
+   "type": "complements",
+   "note": "Finds the larger centre distance and working pressure angle at which an enlarged helical pinion meshes tight with its gear.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter relates working pressure angle to centre distance, cos α′ = a cos α ÷ a′; tool finds the angle from the tooth thicknesses by the involute function and the tight-mesh centre distance C cos φt ÷ cos φ."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "broaching-knurling-and-indexing",
+   "tool": "helical-hobbing-change-gears",
+   "type": "complements",
+   "note": "Works out the index and feed change gears for the fixed hob-to-blank ratio this chapter describes, for helical gears on a machine without a differential.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that the hob and blank turn together in a fixed ratio; tool applies the handbook index ratio, feed correction and lead check for hobbing helical gears."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "helical-gears-and-axial-thrust",
+   "tool": "crossed-helical-exact-centre-distance",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers helical gears on parallel shafts of opposite hand; crossed helical gears on non-parallel shafts are not discussed."
   }
  ]
 }
