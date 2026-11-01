@@ -8831,6 +8831,231 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter reflects inertia through gear and belt ratios; the tool rates variable-speed belts and their speed range, not inertia."
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "roof-loads-fixings-and-wind",
+   "tool": "wind-pressure",
+   "type": "applies",
+   "note": "Gives the dynamic pressure, net pressure and wind force on a flush-mounted solar module in the general and edge zones of a roof, used to find the uplift on its clamps and brackets.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "roof-loads-fixings-and-wind",
+   "tool": "outdoor-cabinet-wind-tipping",
+   "type": "applies",
+   "note": "Checks a stacked pallet of solar modules on a flat roof during installation against wind tipping and sliding, showing it would slide in a storm and must be strapped and restrained.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "inverter-heat-reliability-and-spares",
+   "tool": "enclosure-cooling-airflow",
+   "type": "applies",
+   "note": "Works out the wall loss, the heat the fan must remove and the airflow needed to keep a solar inverter room within the inverters' full-output temperature on a hot day.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "inverter-heat-reliability-and-spares",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the MTBF estimate and chi-square confidence bounds for a fleet of solar inverters from their operating hours and failures, showing how little two failures can prove.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "inverter-heat-reliability-and-spares",
+   "tool": "critical-spares-poisson-plan",
+   "type": "applies",
+   "note": "Decides whether a spare solar inverter is worth holding for one site or a regional fleet, from the MTBF lower bound, daylight running hours and the replacement lead time.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "monitoring-soiling-and-degradation",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "Fits a site irradiance sensor's readings against a travelling reference cell, finds its gain error and gives corrected readings for the array's performance ratio.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "monitoring-soiling-and-degradation",
+   "tool": "two-sample-t",
+   "type": "applies",
+   "note": "Compares the daily performance ratio of cleaned and uncleaned strings with Welch's t-test to measure the array's soiling loss and its confidence interval.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "self-consumption-tariffs-and-the-business-case",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises a factory solar array with uniform yearly savings from self-consumption and export: NPV, IRR, payback and benefit–cost ratio, tested at a P90 yield.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "self-consumption-tariffs-and-the-business-case",
+   "tool": "irr-uneven",
+   "type": "applies",
+   "note": "Tests the solar array's case if the business moves after eight years, with savings falling with degradation and a residual value in the final year.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/rooftop-solar-for-factories-by-the-numbers",
+   "chapter": "self-consumption-tariffs-and-the-business-case",
+   "tool": "equipment-finance-plan",
+   "type": "applies",
+   "note": "Plans the loan for the solar array year by year, with interest, depreciation and tax, showing a 7-year loan runs cash-short while a 10-year loan pays its way.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "what-a-drive-does-to-an-induction-motor",
+   "tool": "motor-slip",
+   "type": "applies",
+   "note": "Estimates an induction motor's load from its measured speed and rated slip on the mains, used to find a damper-controlled fan's load before its drive was fitted.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "what-a-drive-does-to-an-induction-motor",
+   "tool": "motor-power",
+   "type": "applies",
+   "note": "Gives a three-phase motor's rated line current, input power, torque and apparent power from its nameplate, compared later with the supply current of its drive.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "junction-temperature-and-cabinet-cooling",
+   "tool": "enclosure-cooling-airflow",
+   "type": "applies",
+   "note": "Sizes the filter-fan airflow for a cabinet of three variable-speed drives in a warm, dusty hall, and shows how loaded filters or through-panel heatsinks change it.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "drive-life-capacitors-fans-and-power-cycling",
+   "tool": "arrhenius-acceleration-check",
+   "type": "applies",
+   "note": "Turns a DC link capacitor's 105 °C endurance rating into an estimated service life at the cabinet's core temperatures, with the sensitivity to activation energy.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "drive-life-capacitors-fans-and-power-cycling",
+   "tool": "weibull-reliability",
+   "type": "applies",
+   "note": "Gives a drive cooling fan's reliability and hazard rate at five and ten years from its L10 life with a wear-out Weibull model, supporting planned fan replacement.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "drive-life-capacitors-fans-and-power-cycling",
+   "tool": "system-reliability",
+   "type": "applies",
+   "note": "Combines a drive's capacitors, fan and electronics as Weibull blocks in series to find its reliability over five and ten years and its weakest part.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "the-motor-at-low-and-high-speed",
+   "tool": "conveyor-drive-sizing",
+   "type": "applies",
+   "note": "Works out an inclined belt conveyor's tension, pulley power and torque at full and reduced belt speed, showing the motor torque rising as material piles up at low speed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "the-motor-at-low-and-high-speed",
+   "tool": "rms-torque",
+   "type": "applies",
+   "note": "Checks a conveyor motor's RMS torque over a slow and fast duty cycle, and shows why a torque-only check misses a self-cooled motor's heating at low speed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "fans-pumps-and-energy-savings",
+   "tool": "fan-drive-sizing",
+   "type": "applies",
+   "note": "Applies the fan laws to slow an extraction fan from damper control to the airflow needed, giving the new speed, pressure and shaft power saved.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "fans-pumps-and-energy-savings",
+   "tool": "motor-load-assessment",
+   "type": "applies",
+   "note": "Estimates a cooling-water pump motor's load, output, input and yearly energy cost from its measured speed before a variable-speed drive was fitted.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "fans-pumps-and-energy-savings",
+   "tool": "pump-operating-point",
+   "type": "applies",
+   "note": "Finds a cooling-water pump's operating point and the speed needed for a reduced flow on a system with an 8 m static lift to a cooling tower.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "fans-pumps-and-energy-savings",
+   "tool": "pump-affinity",
+   "type": "applies",
+   "note": "Gives the affinity-law flow, head and power at reduced pump speed, shown to overstate the saving on a system with static head.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "fans-pumps-and-energy-savings",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises variable-speed drives on a fan and a pump from their measured energy savings: NPV, IRR and payback over a 12-year life.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "starting-stopping-and-braking",
+   "tool": "rotor-run-up-time",
+   "type": "applies",
+   "note": "Works out a high-inertia fan's run-up time, stored energy and rotor heating for a direct-on-line start, and its run-up time at a drive's current limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/variable-speed-drives-by-the-numbers",
+   "chapter": "specifying-commissioning-and-maintaining-drives",
+   "tool": "critical-spares-poisson-plan",
+   "type": "applies",
+   "note": "Decides how many spare drives to hold for a fleet of 14 drives from their random failure rate, running hours, lead time and a 99% cover target.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
