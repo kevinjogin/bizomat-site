@@ -9615,6 +9615,168 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter is about forces from misaligned connected piping on machine casings; the tool gives pipe mass per metre, not pipe strain."
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "how-sound-travels-in-steel",
+   "tool": "liquid-adiabatic-compression",
+   "type": "applies",
+   "note": "Its wave-speed output, √(adiabatic bulk modulus ÷ density), gives the sound speed in water or oil couplant; the chapter uses it for water at 20 °C (1,486 m/s) to set immersion water paths.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "thickness-gauging-and-calibration",
+   "tool": "gauge-repeatability-bias-check",
+   "type": "applies",
+   "note": "Works the Type 1 study of a thickness gauge on a step block: bias, its t-test, Cg and Cgk from 25 repeated readings, judged against the band of wall change the survey must resolve.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "thickness-gauging-and-calibration",
+   "tool": "measurement-uncertainty-budget",
+   "type": "applies",
+   "note": "Combines the step block's certificate, display resolution and repeatability into an expanded uncertainty for one wall reading; its Abbe and expansion terms are set to zero for ultrasonic use.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "corrosion-surveys-that-find-the-worst-wall",
+   "tool": "corrosion-rate",
+   "type": "complements",
+   "note": "Gives the general corrosion rate from a coupon's mass loss, which the chapter compares with ultrasonic rates on straight pipe and uses to judge an inhibitor within weeks rather than years.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "remaining-life-and-inspection-intervals",
+   "tool": "corrosion-remaining-life",
+   "type": "applies",
+   "note": "Takes two wall readings, Barlow's pressure thickness and a structural minimum to give the corrosion rate, remaining life and next inspection date, as worked for the juice line's worst elbow.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "remaining-life-and-inspection-intervals",
+   "tool": "vessel-shell-plan",
+   "type": "applies",
+   "note": "Gives the required shell and 2:1 head thickness and the MAWP of the plate by vessel code formulas, the minimum against which the flash vessel's surveyed wall and remaining life are judged.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "remaining-life-and-inspection-intervals",
+   "tool": "pressure-vessel-thickness",
+   "type": "explains",
+   "note": "Compares required thickness of a shell with hemispherical, ellipsoidal and torispherical heads for the same pressure, showing which part of a vessel has least margin and should be surveyed closest.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "procedures-people-sampling-and-cost",
+   "tool": "sampling-oc",
+   "type": "applies",
+   "note": "Shows the probability that a 10% weld sample with no rejects allowed accepts a lot at a given defective share, the calculation behind the chapter's warning that small samples protect weakly.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/ultrasonic-testing-by-the-numbers",
+   "chapter": "procedures-people-sampling-and-cost",
+   "tool": "acceptance-sampling-plan",
+   "type": "applies",
+   "note": "Designs the sample size and acceptance number for stated producer and consumer risks and checks a proposed weld sample against them, as done for the 120-weld juice heater bypass.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "materials-and-the-figure-of-merit",
+   "tool": "heat-engine-carnot-limit",
+   "type": "applies",
+   "note": "Checks a thermoelectric generator's stated efficiency against the Carnot limit between its hot and cold sides; the chapter confirms a 3.5% figure for a module on a 120 °C pipe as credible.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "reading-a-module-datasheet",
+   "tool": "thermoelectric-cooler-check",
+   "type": "applies",
+   "note": "Derives a module's Seebeck coefficient, resistance and conductance from Imax, Vmax and ΔTmax, then gives heat pumped, voltage, power, COP and hot-side heat at the cabinet cooler's operating point.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "the-cabinet-heat-load",
+   "tool": "enclosure-cooling-airflow",
+   "type": "explains",
+   "note": "Sizes fan ventilation from the internal heat and wall losses and refuses when the cabinet limit is below the outside air, which shows why a sealed cabinet at 45 °C needs a refrigerating cooler.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "condensation-and-the-cold-side",
+   "tool": "surface-dew-point-check",
+   "type": "applies",
+   "note": "Gives the cabinet air's dew point and humidity ratio and checks the cold-side fins against it with a margin, showing why a 25 °C setpoint made the cooler sweat and 32 °C kept it dry.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "reliability-and-life",
+   "tool": "weibull-reliability",
+   "type": "applies",
+   "note": "Turns a fan's L10 life and wear-out shape into its reliability, B10 life and mean life over five years of continuous running in the cabinet cooler.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "reliability-and-life",
+   "tool": "system-reliability",
+   "type": "applies",
+   "note": "Combines the cooler's fans, module string and controller as Weibull blocks in series to give its five-year reliability and weakest block, the basis for the fan replacement interval.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "reliability-and-life",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the fleet's MTBF from cooler-hours and failures with chi-square confidence bounds, showing that three failures in 490,560 hours do not yet demonstrate a 100,000 h target.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "reliability-and-life",
+   "tool": "critical-spares-poisson-plan",
+   "type": "complements",
+   "note": "Sets the number of spare coolers for a fleet from the MTBF and workshop turnaround with a Poisson model; the chapter notes that fans wear out, so the random-failure model needs care.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/thermoelectric-cooling-by-the-numbers",
+   "chapter": "thermoelectric-compressor-or-ventilation",
+   "tool": "heat-pump-cop-check",
+   "type": "applies",
+   "note": "Compares the thermoelectric and compressor coolers' COP with the Carnot limit at their face or refrigerant temperatures, giving second-law efficiencies of about 9% and 20% on the design day.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
