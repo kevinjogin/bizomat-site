@@ -9807,6 +9807,177 @@
    "status": "approved",
    "evidence": "review",
    "reason": "Chapter models tool life with the Taylor equation; tool applies the handbook Colding relation T = (FH ÷ a FC)^(LF/L) between tool life and force ratio."
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "leak-rates-and-units",
+   "tool": "pressure-converter",
+   "type": "applies",
+   "note": "Converts the pressure part of leak rate units between pascals, millibar, bar, atmospheres and torr, the step behind converting Pa·m³/s, mbar·L/s and atm·cm³/s for a leak specification.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "how-gas-flows-through-a-leak",
+   "tool": "air-leak-cost",
+   "type": "applies",
+   "note": "Its choked-flow leak rate from a hole's diameter and line pressure gives the gross leak a pressure decay screen sees: a 0.1 mm hole at 6 bar passes about 7 mbar·L/s of air.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "the-pressure-decay-test",
+   "tool": "gas-law",
+   "type": "applies",
+   "note": "Converts the test volume filled at 6 bar gauge to free air, giving the air used per pressure decay test, and the helium fill at 10 bar gauge to the 9.24 L of free gas each part consumes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "temperature-the-hidden-leak",
+   "tool": "gas-vessel-temperature-check",
+   "type": "applies",
+   "note": "Gives the pressure change of a sealed volume of gas with temperature: 0.2 K in a cooler at 6 bar gauge moves the pressure by 0.068%, about 4.8 mbar, ten times a pressure decay reject limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "tracer-gas-methods",
+   "tool": "gas-mixture-properties",
+   "type": "applies",
+   "note": "Works the partial pressures of a helium fill left mixed with the air in an unevacuated part by Dalton's law, showing the 90.8% helium fraction that would make every reading 9% low.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "setting-the-reject-limit",
+   "tool": "measurement-uncertainty-budget",
+   "type": "explains",
+   "note": "Shows the root-sum-square uncertainty budget and guard-banded acceptance for a dimensional gauge; the chapter applies the same method in percentages to set a helium station's reject threshold.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "capability-and-control",
+   "tool": "process-capability-check",
+   "type": "explains",
+   "note": "Computes Cpk from subgroup data; on log leak readings it gives 2.83 against the threshold, which the chapter uses to show why a capability index misleads for a mixture of sound and defective parts.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "capability-and-control",
+   "tool": "p-chart-check",
+   "type": "applies",
+   "note": "Charts the share of parts rejected per shift with binomial control limits, flagging the shift with 11 helium rejects in 600 that traced to a brazing furnace door seal.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "capability-and-control",
+   "tool": "sampling-oc",
+   "type": "applies",
+   "note": "Gives the probability that a customer's 50-part audit with no failures allowed accepts a delivery at a given defective share, showing what such an audit can and cannot verify after 100% testing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/production-leak-testing-by-the-numbers",
+   "chapter": "choosing-a-method-cycle-time-and-cost",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises a helium recovery system from its cost, yearly gas saving, running cost and life, giving NPV, IRR and payback at two helium prices to test the purchase.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "what-a-flowmeter-measures",
+   "tool": "pipe-flow-velocity",
+   "type": "applies",
+   "note": "Gives the mean velocity from a flow and the internal bore, the first check on any meter reading: 200 L/min of wort in a 47.8 mm bore moves at 1.858 m/s.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "what-a-flowmeter-measures",
+   "tool": "pipe-flow",
+   "type": "applies",
+   "note": "Gives mean velocity and Reynolds number for a liquid in a full pipe, which decide the velocity profile a meter sees; used for mains water and for glycol in a clamp-on audit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "what-a-flowmeter-measures",
+   "tool": "density-converter",
+   "type": "applies",
+   "note": "Converts a wort's specific gravity to density in kg/m³, the factor that turns a volume flow into the mass flow that extract and yield calculations need.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "orifice-plates-and-differential-pressure",
+   "tool": "orifice-flow",
+   "type": "applies",
+   "note": "Calculates flow through an orifice from its coefficient, bore, pressure drop and density; with the coefficient entered as C × E it checks a hot water orifice plate at 162 mbar and 15 m³/h.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "gas-flow-and-vortex-meters",
+   "tool": "gas-law",
+   "type": "applies",
+   "note": "Converts gas flows between pressures and temperatures, turning a compressor's free air rating into the actual volume a vortex meter senses at 7 bar gauge, and back.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "uncertainty-and-calibration",
+   "tool": "measurement-uncertainty-budget",
+   "type": "explains",
+   "note": "Shows the root-sum-square uncertainty method for a gauge; the chapter applies the same steps in percentages to an orifice meter's coefficient, bore, differential and density.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "totals-batches-and-mass-balances",
+   "tool": "individuals-chart-check",
+   "type": "applies",
+   "note": "Charts a daily water balance residual with moving-range control limits; two days outside the limits revealed a buried leak of about 2 m³ a day.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "choosing-a-meter-and-the-cost-of-error",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises meter decisions from cost, yearly benefit, life and hurdle rate: replacing an orifice plate does not pay, while a low-flow meter that reveals air leaks pays back in under two years.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/flow-measurement-by-the-numbers",
+   "chapter": "choosing-a-meter-and-the-cost-of-error",
+   "tool": "air-leak-cost",
+   "type": "applies",
+   "note": "Values compressed-air leakage from a measured leak flow, compressor specific power, hours and electricity price: 10 L/s of free air costs about A$10,200 a year.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }

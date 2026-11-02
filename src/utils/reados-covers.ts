@@ -163,6 +163,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'plasma-surface-engineering-by-the-numbers': { motif: 'database', tone: 'ember' },
   'ultrasonic-testing-by-the-numbers': { motif: 'dialogue', tone: 'paper' },
   'thermoelectric-cooling-by-the-numbers': { motif: 'breakeven', tone: 'ember' },
+  'production-leak-testing-by-the-numbers': { motif: 'locks', tone: 'paper' },
+  'flow-measurement-by-the-numbers': { motif: 'workflow', tone: 'carbon' },
   'electrostatics-in-the-factory-by-the-numbers': { motif: 'megaphone', tone: 'graphite' },
   'distribution-transformers-by-the-numbers': { motif: 'neural', tone: 'ember' },
   'engineering-software-you-can-sell': { motif: 'launch', tone: 'carbon' },
