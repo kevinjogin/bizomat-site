@@ -85,7 +85,7 @@ Businesses run on logic: numbers, revenue, costs and profit. People, though, are
 
 Engage people's heads and hearts, and their hands will follow. Share the purpose, involve people in decisions, show genuine care for their wellbeing and support them in difficult times.
 
-## 9. Set clear milestones toward the outcomes
+## 9. Set clear milestones towards the outcomes
 
 An annual goal is too distant to guide weekly effort. Break outcomes into milestones: monthly, then weekly. If the annual revenue target is $1.2 million, the monthly milestone might be $100,000 and the weekly milestone about $25,000. Agree milestones with the people who will deliver them, rather than imposing them, and consult key people before settling them.
 

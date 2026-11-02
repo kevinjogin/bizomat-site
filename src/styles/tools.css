@@ -62,6 +62,8 @@
 #tool-workspace.is-loading > :not(.tool-loading) { display:none; }
 /* Before ui.js runs on a ?tool= link: the workspace in its loading state instead of the directory. */
 .workos-tool-link #tool-directory, .workos-tool-link [data-library-intro] { display:none !important; }
+/* A course from the header's learning-path box stays on the page but steps aside while a tool is open. */
+body:has(#tool-workspace:not([hidden])) [data-discover-results], .workos-tool-link [data-discover-results] { display:none !important; }
 .workos-tool-link #tool-workspace { display:block !important; }
 .workos-tool-link #tool-workspace > :not(#tool-loading) { display:none; }
 .workos-tool-link #tool-workspace #tool-loading { display:block; }

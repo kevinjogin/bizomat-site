@@ -42,9 +42,9 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
     ]
   },
   "anodizing-time": {
-    "purpose": "Anodic coating thickness from current density and time by the common “720 rule” for sulfuric acid anodizing of aluminium, the time for a target thickness, the build-up and penetration split, and the rectifier current.",
+    "purpose": "Anodic coating thickness from current density and time by the common “720 rule” for sulfuric acid anodising of aluminium, the time for a target thickness, the build-up and penetration split, and the rectifier current.",
     "uses": [
-      "Set anodizing time for a specified coating",
+      "Set anodising time for a specified coating",
       "Size rectifier current for a rack",
       "Allow for dimensional build-up on toleranced parts"
     ],
@@ -54,9 +54,9 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "Design engineers"
     ],
     "inputs": {
-      "J": "Anodizing current density (typically 1.2–2 A/dm² for sulfuric acid, higher for hard anodizing).",
+      "J": "Anodising current density (typically 1.2–2 A/dm² for sulfuric acid, higher for hard anodising).",
       "thick": "Required total coating thickness.",
-      "area": "Total area being anodized.",
+      "area": "Total area being anodised.",
       "eff": "Correction from your own process records (100% = textbook rule; alloys, temperature and bath age change it)."
     },
     "outputs": [
@@ -71,7 +71,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "Example: 20 µm at 1.5 A/dm² takes about 40.682 min."
     ],
     "limitations": [
-      "Rule of thumb for Type II sulfuric acid anodizing; hard anodizing and other electrolytes differ.",
+      "Rule of thumb for Type II sulfuric acid anodising; hard anodising and other electrolytes differ.",
       "High-silicon and high-copper alloys grow coatings more slowly.",
       "Example values are illustrations. Replace them with values for your actual task."
     ],

@@ -49,13 +49,13 @@ caption: Being close to the next level or reward is a powerful reason to return.
 
 ### 1. Points or badges for actions and purchases
 
-Award points or badges when customers buy, visit, refer friends, write reviews or complete other desired actions. Points accumulate toward rewards, and badges recognise achievements. A grocery store might award points per dollar spent, with bonus points for reaching spending thresholds. A customer who knows that spending above a set amount next visit will unlock a reward is likely to do so.
+Award points or badges when customers buy, visit, refer friends, write reviews or complete other desired actions. Points accumulate towards rewards, and badges recognise achievements. A grocery store might award points per dollar spent, with bonus points for reaching spending thresholds. A customer who knows that spending above a set amount next visit will unlock a reward is likely to do so.
 
 You can also create a simple ranking or tier system, with customers at higher levels receiving better benefits, and occasional surprises such as scratch-card coupons to add interest.
 
 ### 2. Personal or team scorecards
 
-Scorecards show individuals or teams their progress toward goals. For customers, this might be a points balance, a tier status or a progress bar. For employees, it might be a dashboard showing sales, quality or safety performance against targets, with recognition and incentives at regular intervals.
+Scorecards show individuals or teams their progress towards goals. For customers, this might be a points balance, a tier status or a progress bar. For employees, it might be a dashboard showing sales, quality or safety performance against targets, with recognition and incentives at regular intervals.
 
 ### 3. Challenges, competitions and contests
 

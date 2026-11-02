@@ -28,7 +28,7 @@ It helps to separate four ideas that are often blurred together:
 - **Economic capacity**: what it should deliver once energy, quality, maintenance, labour and risk are considered.
 - **Strategic capacity**: what the business needs to support its future plans.
 
-A business can have spare physical capacity and still lack effective capacity. It can have enough effective capacity today and not enough strategic capacity for the future. These are different problems needing different responses. Improving control and scheduling raises effective capacity toward physical capacity. Only when that gap is small does new equipment become the obvious answer.
+A business can have spare physical capacity and still lack effective capacity. It can have enough effective capacity today and not enough strategic capacity for the future. These are different problems needing different responses. Improving control and scheduling raises effective capacity towards physical capacity. Only when that gap is small does new equipment become the obvious answer.
 
 ## What engineering research shows
 

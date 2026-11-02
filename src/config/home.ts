@@ -22,20 +22,27 @@ export const HOME_FEATURED_BOOKS = [
   'collection-investment-appraisal-and-business-cases',
 ];
 
-/** The four hero orbit nodes: what people do, the KEVOS® topic it opens and the Library subject counted beside it. */
-export const HOME_ORBIT = [
-  { verb: 'Design', topic: 'engineering-design', subject: 'engineering' },
-  { verb: 'Build', topic: 'manufacturing-production', subject: 'manufacturing' },
-  { verb: 'Operate', topic: 'maintenance-reliability', subject: 'operations' },
-  { verb: 'Improve', topic: 'projects-improvement', subject: 'projects' },
-];
-
-/** Example questions under the homepage discovery box ("What would you like to solve today?"). */
+/** Example requests under the homepage box ("What would you like to learn or achieve?"). */
 export const HOME_DISCOVERY_EXAMPLES = [
-  'How do I calculate manufacturing costs?',
-  'How can I reduce machine downtime?',
-  'Help me calculate CNC machining parameters.',
-  'Where can I find engineering tolerance references?',
-  'How can I improve business productivity?',
-  'Help me understand machine operating costs.',
+  'Teach me mechanical engineering from beginner to advanced.',
+  'I want to become better at manufacturing management.',
+  'Teach me how to develop an engineering business case.',
+  'Help me understand CNC machining and manufacturing processes.',
+  'I want to learn AI, software and automation for business.',
+  'Teach me project management from fundamentals to professional application.',
+  'How can I improve factory productivity and reduce manufacturing costs?',
 ] as const;
+
+/** Example requests for the learning-path box in the Tools and Library page headers (LearningPlanner.astro). */
+export const PLANNER_EXAMPLES = {
+  tools: [
+    'Teach me how to calculate manufacturing costs.',
+    'Help me understand bolted joint design and the calculations behind it.',
+    'I want to learn how to size motors and variable-speed drives.',
+  ],
+  library: [
+    'Teach me mechanical engineering from beginner to advanced.',
+    'I want to learn engineering project management.',
+    'Help me understand lean manufacturing and continuous improvement.',
+  ],
+} as const;

@@ -59,9 +59,9 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
     ]
   },
   "carburizing-case-depth-plan": {
-    "purpose": "Plan for gas or pack carburizing: the total case depth needed for a finished effective case after grinding stock is removed and the effective case is converted to total case with your ratio, the time at temperature from the parabolic growth of case depth with the square root of time and the case depth factor for the temperature, the total furnace cycle with the heating, diffusion and quench time you enter, the cost per part for a furnace rate and load, and the total case as a share of the half-section against your limit.",
+    "purpose": "Plan for gas or pack carburising: the total case depth needed for a finished effective case after grinding stock is removed and the effective case is converted to total case with your ratio, the time at temperature from the parabolic growth of case depth with the square root of time and the case depth factor for the temperature, the total furnace cycle with the heating, diffusion and quench time you enter, the cost per part for a furnace rate and load, and the total case as a share of the half-section against your limit.",
     "uses": [
-      "Specify the carburizing case depth for a part that is ground after hardening",
+      "Specify the carburising case depth for a part that is ground after hardening",
       "Estimate time at temperature and furnace cost",
       "Check that the case is not too deep for a thin section"
     ],
@@ -74,10 +74,10 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "eff": "Effective case depth the drawing requires on the finished part, measured to the hardness the drawing specifies.",
       "stock": "Material removed on the diameter by grinding after heat treatment (half of it comes off each side).",
       "ratio": "Effective case depth as a share of the total case depth for this steel and process, from the heat treater's records.",
-      "sect": "Thinnest wall or smallest diameter of the carburized section.",
+      "sect": "Thinnest wall or smallest diameter of the carburised section.",
       "shareMax": "Largest share of the half-section the total case may occupy before the core is too small, from your design practice.",
-      "K": "Case depth factor: total case depth reached after one hour at the carburizing temperature, from the heat treater for this steel, atmosphere and temperature.",
-      "extra": "Time per cycle outside the carburizing time itself: heating up, diffusion, cooling to the hardening temperature and quench.",
+      "K": "Case depth factor: total case depth reached after one hour at the carburising temperature, from the heat treater for this steel, atmosphere and temperature.",
+      "extra": "Time per cycle outside the carburising time itself: heating up, diffusion, cooling to the hardening temperature and quench.",
       "rate": "Cost of an hour of furnace time, including labour and atmosphere.",
       "parts": "Number of parts in one furnace load."
     },

@@ -72,9 +72,9 @@
     },
     "anodizing-time": (v) => {
       const rate = 25.4 * 9.290304 / 720 * v.J * v.eff / 100, minutes = v.thick / rate, build = v.thick / 3;
-      return output({ rate, minutes, build, I: v.J * v.area }, 'Anodizing time (min)', minutes,
+      return output({ rate, minutes, build, I: v.J * v.area }, 'Anodising time (min)', minutes,
         [m('Growth rate', q(rate, 'µm/min', 3)), m('Time to target thickness', q(minutes, 'min', 1)), m('Build-up per surface', q(build, 'µm', 1)), m('Diameter growth (both sides)', q(2 * build, 'µm', 1)), m('Rectifier current', q(v.J * v.area, 'A', 0))],
-        'Anodizing time by the 720 rule.', 'Sulfuric acid anodizing rule of thumb.', { checks: [check('Thickness measurement', 'verify', 'Measure coating thickness and adjust the efficiency factor.')] });
+        'Anodising time by the 720 rule.', 'Sulfuric acid anodising rule of thumb.', { checks: [check('Thickness measurement', 'verify', 'Measure coating thickness and adjust the efficiency factor.')] });
     },
     "gating-choke-area": (v) => {
       const vel = Math.sqrt(2 * 9.80665 * v.h / 1000), A = v.W / (v.rho * v.t * v.Cd * vel) * 1e6, dia = Math.sqrt(4 * A / PI);

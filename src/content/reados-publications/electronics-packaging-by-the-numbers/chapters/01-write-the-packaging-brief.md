@@ -13,7 +13,7 @@ This chapter writes the packaging brief for the gearbox monitor that runs throug
 
 ## Why the brief comes before the enclosure
 
-A product with electronics has two design teams with different rhythms. The electronics designer works from a schematic toward a board layout, and the board outline is often one of the last things fixed. The mechanical designer works from the outside in: mounting, envelope, sealing, then the space left inside. If both wait for the other, the board is drawn to whatever space happens to remain, and the enclosure is drawn around a board that does not exist yet.
+A product with electronics has two design teams with different rhythms. The electronics designer works from a schematic towards a board layout, and the board outline is often one of the last things fixed. The mechanical designer works from the outside in: mounting, envelope, sealing, then the space left inside. If both wait for the other, the board is drawn to whatever space happens to remain, and the enclosure is drawn around a board that does not exist yet.
 
 The brief breaks that deadlock by fixing the shared constraints first. The board does not need to be finished for the mechanical designer to know its maximum outline, its tallest component zone, its heat output, its connectors and where its antenna must sit. The enclosure does not need to be modelled for the electronics designer to know the space available, the mounting points and the temperature the board will see. Each side can then work in parallel within agreed limits.
 

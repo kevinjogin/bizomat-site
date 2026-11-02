@@ -80,7 +80,7 @@ Trends are shifts in what customers want or how they buy. Spotting them early cr
 
 Speak regularly to customers, suppliers, distributors, partners and industry contacts. Ask what is changing, what they are struggling with and what they are starting to do differently. Become a genuine expert in your market.
 
-Simple observations can reveal big shifts. One founder noticed milk packets with delivery codes hanging on apartment door handles and realised that people were increasingly buying daily essentials through subscriptions and delivery because they lacked time to queue in shops. That observation pointed to a broader trend toward online grocery ordering and home delivery.
+Simple observations can reveal big shifts. One founder noticed milk packets with delivery codes hanging on apartment door handles and realised that people were increasingly buying daily essentials through subscriptions and delivery because they lacked time to queue in shops. That observation pointed to a broader trend towards online grocery ordering and home delivery.
 
 Another example comes from a deodorant company. Its field researchers routinely asked shopkeepers "what's selling?", and the shopkeepers' answers, naming the brand itself as what was selling, became the basis of a memorable advertising line. Listening carefully to how the market talks can produce both insight and marketing.
 

@@ -38,7 +38,7 @@ This is an illustration. If the tractor's inner front wheel can turn to **55°**
 
 Makers usually quote turning circles as a diameter, and they may measure it at the outer wheel or at the outermost point of the body. The two differ by 0.6 m in this case. For planning aisles, the body figure is the one that matters, because it is the body that strikes a rack or a column.
 
-There is a second, smaller effect at the back. Any part of the body behind the rear axle swings outward when the vehicle turns, because it sits on a radius larger than the rear axle's offset alone. This is an illustration. If the tractor's body extends 0.6 m behind its rear axle, its outer rear corner runs at **√((1.43 + 0.5)² + 0.6²) = 2.02 m** on the tightest turn, 0.09 m outside the line of its side. That tail swing is small on a short tractor, but it surprises people standing beside a vehicle that starts to turn away from them: the rear corner moves toward them. On long vehicles and forklifts with rear-wheel steering it is much larger, and it is one reason pedestrians are kept well clear of a vehicle that is about to move off.
+There is a second, smaller effect at the back. Any part of the body behind the rear axle swings outward when the vehicle turns, because it sits on a radius larger than the rear axle's offset alone. This is an illustration. If the tractor's body extends 0.6 m behind its rear axle, its outer rear corner runs at **√((1.43 + 0.5)² + 0.6²) = 2.02 m** on the tightest turn, 0.09 m outside the line of its side. That tail swing is small on a short tractor, but it surprises people standing beside a vehicle that starts to turn away from them: the rear corner moves towards them. On long vehicles and forklifts with rear-wheel steering it is much larger, and it is one reason pedestrians are kept well clear of a vehicle that is about to move off.
 
 ## Trailers cut inside
 
@@ -104,7 +104,7 @@ caption: A practical method for the running case. Run it with the longest and wi
 - Record | mark the agreed lane on the route drawing with the train length and trailer type it was measured for
 ```
 
-This is an illustration. When the site ran the trial on the 4 m corner, the chalk lines were 2.25 m apart at their widest, slightly less than the calculated 2.31 m, because the 90° corner was too short for the third trailer to settle fully onto its steady path. The calculated value was kept for marking, as the safer of the two. The trial also showed that drivers began their turn about half a metre later than the drawing assumed, which moved the swept path slightly outward, toward the racks on the outside of the corner. The outer clearance was checked again and found adequate.
+This is an illustration. When the site ran the trial on the 4 m corner, the chalk lines were 2.25 m apart at their widest, slightly less than the calculated 2.31 m, because the 90° corner was too short for the third trailer to settle fully onto its steady path. The calculated value was kept for marking, as the safer of the two. The trial also showed that drivers began their turn about half a metre later than the drawing assumed, which moved the swept path slightly outward, towards the racks on the outside of the corner. The outer clearance was checked again and found adequate.
 
 ## The error: walkway lines from the tractor's turning circle
 

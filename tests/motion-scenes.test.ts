@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 
-test('all seven KEVOS pages use a purpose-built responsive motion scene', () => {
+test('the KEVOS service pages use a purpose-built responsive motion scene', () => {
   const motion = read('src/components/MotionVisual.astro');
   const orbit = read('src/components/ServiceMap.astro');
   assert.match(motion, /<ServiceMap variant=/);
@@ -21,14 +21,15 @@ test('all seven KEVOS pages use a purpose-built responsive motion scene', () => 
     industries: 'src/pages/industries.astro',
     about: 'src/pages/about.astro',
     contact: 'src/pages/contact/index.astro',
-    tools: 'src/pages/tools/index.astro',
-    reados: 'src/pages/reados/index.astro',
   };
   for (const [name, path] of Object.entries(pages)) {
     assert.ok(read(path).includes('<MotionVisual page="' + name + '"'), path + ' uses the ' + name + ' scene');
   }
-  // The WORKOS and READOS libraries use the compact banner version, so search and topics stay above the fold.
-  for (const path of ['src/pages/tools/index.astro', 'src/pages/reados/index.astro']) assert.match(read(path), /<MotionVisual page="(tools|reados)" slot="visual" compact/, path);
+  // Since 2 Nov 2026 the Tools and Library headers hold the learning-path box instead of an animation.
+  for (const path of ['src/pages/tools/index.astro', 'src/pages/reados/index.astro']) {
+    assert.match(read(path), /<LearningPlanner slot="planner"/, path);
+    assert.doesNotMatch(read(path), /<MotionVisual/, path);
+  }
   assert.match(motion, /prefers-reduced-motion: reduce\)\{\s*\.mv--compact \*/, 'compact scenes stop for reduced motion');
 });
 
@@ -60,11 +61,11 @@ test('the footer trade mark record opens in a new tab safely', () => {
   assert.match(footer, /opens in a new tab/);
 });
 
-test('home, services and about share the genuine four-square KEVOS orbit', () => {
+test('services and about share the genuine four-square KEVOS orbit (the homepage hero has none since 2 Nov 2026)', () => {
   const home = read('src/pages/index.astro');
   const orbit = read('src/components/ServiceMap.astro');
   const motion = read('src/components/MotionVisual.astro');
-  assert.match(home, /<ServiceMap variant="platform" nodes=\{orbit\} \/>/);
+  assert.doesNotMatch(home, /<ServiceMap/);
   assert.match(orbit, /variant === 'platform'/);
   assert.match(motion, /page === 'services' \|\| page === 'about'/);
   assert.match(orbit, /--cycle: 8s/);

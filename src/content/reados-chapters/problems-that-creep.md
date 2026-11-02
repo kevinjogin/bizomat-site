@@ -94,7 +94,7 @@ Where people cannot reliably see or feel a change, use measurement. That might b
 | Equipment wear | Vibration, temperature, noise, cycle time | Handheld instruments, sensor readings, operator logs |
 | Fatigue and overload | Overtime hours, leave not taken, error rates | Payroll and rostering data, rolling averages |
 | Maintenance backlog | Number of overdue tasks; age of oldest | Maintenance schedule or simple list |
-| Quality drift | Measurements trending toward limits, rework rates | Inspection records, control charts |
+| Quality drift | Measurements trending towards limits, rework rates | Inspection records, control charts |
 | Supplier dependence | Share of spend or critical parts from one source | Purchasing data, reviewed quarterly |
 | Spreadsheet and system sprawl | Number of critical files with one owner | A simple register |
 

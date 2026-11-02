@@ -1,5 +1,5 @@
 // Browser checks for the homepage discovery feature on a built dist/ (docs/discovery/DEVLOG.md).
-// A local static server serves dist/; /api/discover is mocked per scenario (AI answer, no AI, failure, 429, out of scope).
+// A local static server serves dist/; /api/discover and /api/learn/* are mocked per scenario (AI answer, no AI, failure, 429, out of scope).
 //   npm run build && node scripts/discovery/browser-check.mjs [dist-dir] [screenshot-dir]
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
@@ -28,7 +28,7 @@ const results = [];
 const check = (name, ok, extra = '') => { results.push({ name, ok }); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${extra ? '  — ' + extra : ''}`); };
 
 const browser = await chromium.launch();
-async function page({ width = 1280, height = 900, api = (q) => ({ status: 200, body: { ok: true, ai: false } }) } = {}) {
+async function page({ width = 1280, height = 900, api = (q) => ({ status: 200, body: { ok: true, ai: false } }), learn = () => ({ status: 200, body: { ok: true, ai: false } }) } = {}) {
   const ctx = await browser.newContext({ viewport: { width, height }, hasTouch: width < 700, isMobile: width < 700 });
   const pg = await ctx.newPage();
   const errors = [];
@@ -42,9 +42,20 @@ async function page({ width = 1280, height = 900, api = (q) => ({ status: 200, b
     if (r.abort) return route.abort();
     await route.fulfill({ status: r.status, contentType: 'application/json', body: JSON.stringify(r.body) });
   });
+  // Learning paths: /api/learn/{intent,plan,lesson,ask}, mocked per scenario (default: no AI, as without the binding).
+  const learnCalls = [];
+  await pg.route('**/api/learn/*', async (route) => {
+    const step = new URL(route.request().url()).pathname.split('/').pop();
+    const raw = route.request().postData() || '{}';
+    const body = JSON.parse(raw);
+    learnCalls.push({ step, body, size: raw.length });
+    const r = await learn(step, body);
+    if (r.abort) return route.abort();
+    await route.fulfill({ status: r.status, contentType: 'application/json', body: JSON.stringify(r.body) });
+  });
   const events = [];
   await pg.route('**/api/discover/event', async (route) => { events.push(JSON.parse(route.request().postData() || '{}')); await route.fulfill({ status: 204 }); });
-  return { ctx, pg, errors, calls, events };
+  return { ctx, pg, errors, calls, events, learnCalls };
 }
 const ask = async (pg, q, how = 'enter') => {
   await pg.fill('#discover-question', q);
@@ -69,9 +80,9 @@ try {
   {
     const { ctx, pg, errors } = await page();
     await pg.goto(BASE + '/');
-    check('hero H1 asks the question', (await pg.textContent('#home-title')).trim() === 'What would you like to solve today?');
+    check('hero H1 asks the question', (await pg.textContent('#home-title')).trim() === 'What would you like to learn or achieve?');
     check('question box visible', await pg.isVisible('#discover-question'));
-    check('six example chips', (await pg.locator('[data-discover-example]').count()) === 6);
+    check('seven example prompts', (await pg.locator('[data-discover-example]').count()) === 7);
     check('results hidden before asking', await pg.locator('[data-discover-results]').isHidden());
     check('no floating assistant on the homepage', (await pg.locator('.assistant__launcher').count()) === 0);
     check('one hero: no second product hero below it', (await pg.locator('.product, #home-workos-search').count()) === 0 && (await pg.locator('h1').count()) === 1);
@@ -89,7 +100,7 @@ try {
     check('clear empties the box and hides itself', (await pg.inputValue('#discover-question')) === '' && await pg.locator('[data-discover-clear]').isHidden());
     // empty submit
     await pg.click('[data-discover-submit]');
-    check('empty question gives a message', /type a question/i.test(await pg.textContent('[data-discover-status]')));
+    check('empty question gives a message', /describe what you would like to learn/i.test(await pg.textContent('[data-discover-status]')));
     check('no console errors on the homepage', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
@@ -212,7 +223,7 @@ try {
     let r = await latest(pg);
     check('no-match is honest, with suggestion link', r.say.some((s) => /could not find/.test(s)) && r.suggest && !r.groups.some((g) => g.title === 'Recommended tools'), JSON.stringify(r));
     await ctx.close();
-    const b = await page({ api: () => ({ status: 200, body: { ok: true, ai: true, intent: { terms: [], ambiguous: false, outOfScope: true } } }) });
+    const b = await page({ api: () => ({ status: 200, body: { ok: true, ai: true, intent: { terms: [], ambiguous: false, outOfScope: true } } }), learn: (step) => (step === 'intent' ? { status: 200, body: { ok: true, ai: true, intent: { subject: 'a wedding', objective: '', outcome: '', level: 'mixed', depth: 'structured', topics: [], outOfScope: true } } } : { status: 200, body: { ok: true, ai: false } }) });
     await b.pg.goto(BASE + '/');
     await ask(b.pg, 'plan my wedding');
     r = await latest(b.pg);
@@ -240,9 +251,10 @@ try {
     const { ctx, pg, errors } = await page({ width: 390, height: 844 });
     await pg.goto(BASE + '/');
     check('mobile: no sideways scroll before asking', await noSideScroll(pg));
-    await pg.locator('[data-discover-example]').first().click();
+    await pg.fill('#discover-question', 'How much money am I losing when my machine is sitting idle?');
+    await pg.click('[data-discover-submit]');
     await pg.waitForFunction(() => document.querySelectorAll('.dr-exchange').length === 1, null, { timeout: 15000 });
-    check('mobile: example chip runs a question', true);
+    check('mobile: a question runs from the button', true);
     check('mobile: no sideways scroll with results', await noSideScroll(pg));
     const small = await pg.evaluate(() => [...document.querySelectorAll('.dq__submit, .dq__clear, .dr-card__cta, .dr__new')].filter((n) => n.offsetParent).map((n) => n.getBoundingClientRect().height).filter((h) => h < 43.5).length);
     check('mobile: touch targets at least 44 px', small === 0, String(small));
@@ -292,6 +304,189 @@ try {
     check('/tools/: a short keyword search with matches does not call the AI', asked === 1 && (await pg.locator('[data-ai-pick]').count()) === 0, String(asked));
     check('/tools/: no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
+  }
+  // 10. Learning paths ("Build My Learning Path"), with KEVOS® AI mocked
+  {
+    const plan = (body) => {
+      // A plan over the numbered candidates the browser sent: three modules of two lessons.
+      const n = body.readings.length;
+      const lesson = (i, t) => ({ title: `Lesson on ${body.readings[i % n].title}`, objective: 'Explain the idea and apply it to your own site.', reads: [(i % n) + 1], tools: t });
+      return { ok: true, ai: true, course: { title: 'Manufacturing process improvement, step by step', description: 'From losses to lasting improvement.', level: 'mixed', objectives: ['Find the biggest losses', 'Run an improvement trial'], outcomes: ['A measured improvement'], gaps: ['Statistical process control in depth'],
+        modules: [{ title: 'Foundations', summary: 'What improvement means.', lessons: [lesson(0, body.tools.length ? [body.tools[0].id] : []), lesson(1, [])] }, { title: 'Methods', summary: '', lessons: [lesson(2, []), lesson(3, [])] }, { title: 'Application', summary: '', lessons: [lesson(4, []), lesson(5, [])] }].map((m) => ({ ...m, lessons: m.lessons.map((l) => ({ ...l, reads: [body.readings[l.reads[0] - 1].id], tools: l.tools })) })) } };
+    };
+    const lessonReply = { ok: true, ai: true, lesson: { explanation: 'Improvement starts with seeing where time and material are lost.', why: 'You fix the biggest loss first.', concepts: ['Losses', 'Standard work'],
+      key: { principle: 'Measure the loss before you change the process.', essential: 'A baseline.', why: 'Without one you cannot tell if a change helped.', misunderstandings: ['Busy machines are not productive machines.'], implications: 'Record stops for a week first.', remember: ['Measure first', 'Change one thing at a time', 'Standardise what works'], basis: 'source' },
+      example: 'A press line records every stop for a week before changing anything.', exercises: [{ task: 'Enter your own shift data in the tool.', tool: 1 }],
+      checks: [{ q: 'What comes first?', options: ['Change the process', 'Measure the loss'], answer: 1, explain: 'A baseline shows whether a change helped.' }],
+      verify: ['I can name my biggest loss.'], completion: ['Knowledge check answered'], readingNotes: [{ n: 1, why: 'It explains the losses.', understand: 'How losses are classified.' }], toolNotes: [], assumptions: ['Your site records stops.'] } };
+    const learn = (step, body) => step === 'intent'
+      ? { status: 200, body: { ok: true, ai: true, intent: { subject: 'manufacturing process improvement', objective: 'Improve a process', outcome: 'Less waste', level: 'mixed', depth: 'complete', topics: [{ name: 'Lean and continuous improvement', terms: ['continuous improvement', 'lean'] }, { name: 'Downtime and OEE', terms: ['oee', 'downtime'] }] } } }
+      : step === 'plan' ? { status: 200, body: plan(body) }
+      : step === 'lesson' ? { status: 200, body: lessonReply }
+      : { status: 200, body: { ok: true, ai: true, answer: { answer: 'Start with the line that loses the most time.', basis: 'source', refs: [1] } } };
+    const { ctx, pg, errors, learnCalls } = await page({ learn });
+    await pg.goto(BASE + '/');
+    // Example prompts fill the box; they do not send.
+    await pg.locator('[data-discover-example]').nth(1).click();
+    check('learn: an example fills the box without sending', (await pg.inputValue('#discover-question')) === 'I want to become better at manufacturing management.' && await pg.locator('[data-discover-results]').isHidden() && learnCalls.length === 0);
+    check('learn: the button says Build My Learning Path', /Build My Learning Path/.test(await pg.textContent('[data-discover-submit]')));
+    await ask(pg, 'I want to learn manufacturing process improvement.', 'click');
+    await pg.waitForSelector('.lc', { timeout: 15000 });
+    await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
+    check('learn: the AI course replaces the Library draft in place', (await pg.locator('.lc').count()) === 1 && (await pg.textContent('.lc__title')) === 'Manufacturing process improvement, step by step');
+    check('learn: results titled "Your learning path"', (await pg.textContent('#discover-title')).trim() === 'Your learning path');
+    const facts = await pg.locator('.lc__facts dt').allTextContents();
+    check('learn: overview shows level, depth, modules, lessons and study time', ['Level', 'Learning depth', 'Modules', 'Lessons', 'Estimated study time'].every((f) => facts.includes(f)), facts.join(' | '));
+    check('learn: Complete Course is the selected depth', (await pg.locator('.lc-chip[aria-pressed="true"]').first().textContent()) === 'Complete Course');
+    check('learn: 3 modules, 6 lessons in the contents', (await pg.locator('.lc-mod').count()) === 3 && (await pg.locator('.lc-mod__lessons .lc-navlink').count()) === 6);
+    check('learn: missing coverage is named', /Statistical process control/.test(await pg.textContent('.lc-gap')));
+    const planCall = learnCalls.find((c) => c.step === 'plan');
+    check('learn: the plan gets real catalogue entries only, by id', planCall && planCall.body.readings.length >= 6 && planCall.body.readings.every((r) => /^\/reados\//.test(r.id)) && planCall.body.depth === 'complete');
+    await pg.click('.lc-primary');
+    await pg.waitForSelector('.lc-key .lc-key__label', { timeout: 15000 });
+    await pg.waitForFunction(() => document.activeElement?.classList.contains('lc-lesson__title'), null, { timeout: 5000 }).catch(() => {});
+    check('learn: opening a lesson moves focus to its title', await pg.evaluate(() => document.activeElement?.classList.contains('lc-lesson__title')));
+    const keyLabels = await pg.locator('.lc-key__label').allTextContents();
+    await pg.locator('.lc__main').screenshot({ path: SHOTS + '/learning-lesson-desktop.png' });
+    check('learn: THE KEY THINGS TO UNDERSTAND box with principle, misunderstandings and what to remember', (await pg.textContent('.lc-key__title')) === 'THE KEY THINGS TO UNDERSTAND' && ['Central principle', 'Common misunderstandings', 'What to remember'].every((l) => keyLabels.includes(l)), keyLabels.join(' | '));
+    check('learn: the key things say they summarise the Library readings', /summary of the Library readings/.test(await pg.textContent('.lc-key')));
+    const secs = await pg.locator('.lc-sec__title').allTextContents();
+    check('learn: Learn, Read, Apply, Practise and Verify sections', ['Learn', 'Read', 'Apply', 'Practise', 'Verify'].every((t) => secs.some((x) => x.startsWith(t))), secs.join(' | '));
+    const lessonCall = learnCalls.find((c) => c.step === 'lesson');
+    check('learn: a lesson sends short Library excerpts, not whole chapters', lessonCall && lessonCall.size < 24000 && lessonCall.body.sources.length >= 1 && typeof lessonCall.body.sources[0].outline.s === 'string', String(lessonCall?.size));
+    const hrefs = await pg.locator('.lc a').evaluateAll((as) => as.map((x) => x.getAttribute('href')));
+    const bad = []; for (const h of new Set(hrefs)) if (!(await exists(h))) bad.push(h);
+    check('learn: every course link opens a real page', hrefs.length >= 3 && bad.length === 0, bad.join(', '));
+    // Knowledge check and retake
+    await pg.locator('.lc-quiz input[value="1"]').check();
+    await pg.click('.lc-quiz button[type="submit"]');
+    check('learn: knowledge check marks the answer', (await pg.textContent('.lc-quiz__result')) === '1 of 1 correct.' && (await pg.locator('.lc-quiz__fb.is-right').count()) === 1);
+    await pg.click('.lc-quiz button:has-text("Retake")');
+    check('learn: retake clears the check', (await pg.textContent('.lc-quiz__result')) === '' && !(await pg.locator('.lc-quiz input:checked').count()));
+    // Follow-up question in the lesson's context
+    await pg.fill('.lc-ask__form input', 'Where should I start?');
+    await pg.click('.lc-ask__form button');
+    await pg.waitForFunction(() => /Start with the line/.test(document.querySelector('.lc-ask__a')?.textContent ?? ''), null, { timeout: 10000 });
+    const askCall = learnCalls.find((c) => c.step === 'ask');
+    check('learn: a follow-up is answered in the lesson context', askCall?.body.lesson.title.startsWith('Lesson on') && /Based on the lesson’s readings/.test(await pg.textContent('.lc-ask__item')));
+    // Simpler explanation
+    await pg.click('.lc-actions button:has-text("Explain more simply")');
+    await pg.waitForFunction(() => document.querySelector('.lc-actions button[aria-pressed="true"]')?.textContent === 'Explain more simply', null, { timeout: 10000 });
+    check('learn: "Explain more simply" asks for a simpler lesson', learnCalls.some((c) => c.step === 'lesson' && c.body.style === 'simpler'));
+    // Complete, next, previous, progress
+    await pg.click('.lc-lessonnav button:has-text("Mark lesson complete")');
+    await pg.waitForFunction(() => /1 of 6 lessons complete/.test(document.querySelector('.lc__progress-text')?.textContent ?? ''), null, { timeout: 5000 }).catch(() => {});
+    check('learn: completing a lesson opens the next and updates progress', /1 of 6 lessons complete \(17%\)/.test(await pg.textContent('.lc__progress-text')) && /Lesson 1\.2/.test(await pg.textContent('.lc-crumb')));
+    check('learn: progress says it stays in this tab', /kept in this browser tab only/.test(await pg.textContent('.lc__progress-text')));
+    await pg.click('.lc-lessonnav button:has-text("Previous lesson")');
+    await pg.waitForFunction(() => /Lesson 1\.1/.test(document.querySelector('.lc-crumb')?.textContent ?? ''), null, { timeout: 5000 });
+    check('learn: Previous goes back; the done lesson is ticked in the contents', (await pg.locator('.lc-navlink--done').count()) === 1 && (await pg.locator('.lc-lessonnav button:has-text("Completed ✓")').count()) === 1);
+    await pg.click('.lc-lessonnav button:has-text("Course contents")');
+    check('learn: Course contents moves focus to the contents', await pg.evaluate(() => !!document.activeElement?.closest('.lc__nav')));
+    await pg.click('.lc-lessonnav button:has-text("Back to course")');
+    check('learn: Back to course shows the overview', (await pg.textContent('.lc__h')) === 'Course overview' && /Continue the course/.test(await pg.textContent('.lc-primary')));
+    check('learn: progress is in sessionStorage only', await pg.evaluate(() => Object.keys(sessionStorage).some((k) => k.startsWith('kevos-learn-')) && !Object.keys(localStorage).some((k) => k.startsWith('kevos-learn-'))));
+    check('learn: no sideways scroll on desktop', await noSideScroll(pg));
+    await pg.locator('.lc').screenshot({ path: SHOTS + '/learning-desktop.png' });
+    // Depth: Structured Learning re-plans; Quick Understanding gives the solution path
+    await pg.click('.lc__depth button:has-text("Structured Learning")');
+    await pg.waitForFunction(() => document.querySelector('.lc__depth [aria-pressed="true"]')?.textContent === 'Structured Learning', null, { timeout: 15000 });
+    check('learn: changing depth re-plans the same course view', (await pg.locator('.lc').count()) === 1 && learnCalls.filter((c) => c.step === 'plan').at(-1).body.depth === 'structured');
+    await pg.click('.lc__depth button:has-text("Quick Understanding")');
+    await pg.waitForSelector('.dr-exchange .dr-group, .dr-exchange .sp', { timeout: 15000 });
+    check('learn: Quick Understanding shows the quick answer', (await pg.locator('.dr-exchange').count()) >= 1);
+    // Repeated question: same course, progress kept for the tab
+    await ask(pg, 'I want to learn manufacturing process improvement.');
+    await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc .lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
+    check('learn: asking the same again keeps this tab’s progress', /1 of 6 lessons complete/.test(await pg.locator('.lc').first().locator('.lc__progress-text').textContent()));
+    check('learn: no console errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+  }
+  // 11. Learning paths without AI, with failures, clarification and out-of-scope requests
+  {
+    const { ctx, pg, errors } = await page({ learn: () => ({ abort: true }) });
+    await pg.goto(BASE + '/');
+    await ask(pg, 'Teach me electrical engineering fundamentals.');
+    await pg.waitForSelector('.lc', { timeout: 15000 });
+    await pg.waitForFunction(() => !/planning your personalised course/.test(document.querySelector('.lc__status')?.textContent ?? ''), null, { timeout: 15000 });
+    check('learn (AI down): the Library course stays, with a note', /Arranged from the Library/.test(await pg.textContent('.lc__eyebrow')) && /could not plan a course/.test(await pg.textContent('.lc__status')));
+    await pg.click('.lc-primary');
+    await pg.waitForFunction(() => /could not write this lesson/.test(document.querySelector('.lc-lesson__status')?.textContent ?? ''), null, { timeout: 15000 });
+    check('learn (AI down): the key things come from the Library text, labelled', /From the Library/.test(await pg.textContent('.lc-key')) && (await pg.locator('.lc-key .lc-key__row').count()) >= 1);
+    check('learn (AI down): readings and tools are still listed', (await pg.locator('.lc-card').count()) >= 1);
+    check('learn (AI down): no console errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+  }
+  {
+    const clarify = (step) => step === 'intent' ? { status: 200, body: { ok: true, ai: true, intent: { subject: 'engineering', objective: '', outcome: '', level: 'mixed', depth: 'complete', topics: [{ name: 'Engineering', terms: ['engineering design'] }], clarify: 'Which branch of engineering?', options: ['Mechanical engineering', 'Electrical engineering'] } } } : { status: 200, body: { ok: true, ai: false } };
+    const { ctx, pg } = await page({ learn: clarify });
+    await pg.goto(BASE + '/');
+    await ask(pg, 'learn engineering');
+    check('learn: a broad request asks one question with options', /Which branch of engineering/.test(await pg.textContent('.dr-exchange .dr-say')) && (await pg.locator('.dr-options button').count()) === 3);
+    await ctx.close();
+    const out = (step) => step === 'intent' ? { status: 200, body: { ok: true, ai: true, intent: { subject: 'sourdough', objective: '', outcome: '', level: 'mixed', depth: 'complete', topics: [], outOfScope: true } } } : { status: 200, body: { ok: true, ai: false } };
+    const o = await page({ learn: out });
+    await o.pg.goto(BASE + '/');
+    await ask(o.pg, 'teach me how to bake sourdough bread');
+    check('learn: an unsupported subject is declined, no course', (await o.pg.locator('.lc').count()) === 0 && /outside what KEVOS® covers/.test(await o.pg.textContent('[data-discover-status]')));
+    await o.ctx.close();
+    const busy = await page({ learn: () => ({ status: 429, body: { ok: false, error: 'You have made a lot of requests in a short time. Please wait a little and try again.' } }) });
+    await busy.pg.goto(BASE + '/');
+    await ask(busy.pg, 'Teach me mechanical engineering from beginner to advanced.');
+    check('learn: 429 shows the rate-limit message', /a lot of requests/.test(await busy.pg.textContent('[data-discover-status]')));
+    await busy.pg.evaluate(() => { const t = document.querySelector('#discover-question'); t.removeAttribute('maxlength'); t.value = 'x'.repeat(1200); });
+    await busy.pg.click('[data-discover-submit]');
+    check('learn: a very long request is refused with a message', /under 1,000 characters/.test(await busy.pg.textContent('[data-discover-status]')));
+    await busy.ctx.close();
+  }
+  // 12. Learning paths on a phone
+  {
+    const learn = (step, body) => step === 'plan' ? { status: 200, body: { ok: true, ai: true, course: { title: 'Mechanical engineering from the ground up', description: '', level: 'mixed', objectives: [], outcomes: [], gaps: [], modules: [{ title: 'Machine elements', summary: '', lessons: body.readings.slice(0, 3).map((r) => ({ title: r.title, objective: 'Understand it.', reads: [r.id], tools: body.tools.slice(0, 1).map((t) => t.id) })) }] } } } : { status: 200, body: { ok: true, ai: false } };
+    const { ctx, pg, errors } = await page({ width: 390, height: 844, learn });
+    await pg.goto(BASE + '/');
+    await ask(pg, 'Teach me mechanical engineering from beginner to advanced.');
+    await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
+    check('learn (mobile): no sideways scroll with a course', await noSideScroll(pg));
+    check('learn (mobile): contents stack above the lesson', await pg.evaluate(() => { const n = document.querySelector('.lc__nav').getBoundingClientRect(); const m = document.querySelector('.lc__main').getBoundingClientRect(); return n.bottom <= m.top + 1; }));
+    await pg.click('.lc-primary');
+    await pg.waitForSelector('.lc-lessonnav', { timeout: 15000 });
+    await pg.waitForTimeout(400);
+    check('learn (mobile): no sideways scroll in a lesson', await noSideScroll(pg));
+    const small = await pg.evaluate(() => [...document.querySelectorAll('.lc-nb, .lc-chip, .lc-navlink, .lc-card__cta, .lc-primary')].filter((n) => n.offsetParent).map((n) => n.getBoundingClientRect().height).filter((h) => h < 39.5).length);
+    check('learn (mobile): course controls at least 40 px tall', small === 0, String(small));
+    await pg.screenshot({ path: SHOTS + '/learning-mobile.png', fullPage: false });
+    check('learn (mobile): no console errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+  }
+  // 13. The learning-path box in the Tools and Library headers (no animation there since 2 Nov 2026)
+  {
+    const { ctx, pg, errors, learnCalls } = await page();
+    for (const [path, label] of [['/reados/', 'Library'], ['/tools/', 'Tools']]) {
+      await pg.goto(BASE + path);
+      check(`${label}: the header holds the learning-path box, not an animation`, (await pg.locator('.lib-hero .lp #discover-question').count()) === 1 && (await pg.locator('.lib-hero .mv').count()) === 0);
+      check(`${label}: three example prompts`, (await pg.locator('.lp [data-discover-example]').count()) === 3);
+      check(`${label}: directory search still there`, (await pg.locator('[data-lib-input]').count()) === 1);
+    }
+    await pg.goto(BASE + '/reados/');
+    await ask(pg, 'Teach me mechanical engineering from beginner to advanced.');
+    await pg.waitForSelector('.lc', { timeout: 15000 });
+    check('Library: a course appears under the header, above the directory', await pg.evaluate(() => { const r = document.querySelector('[data-discover-results]'); const d = document.querySelector('.lib-hero'); return !r.hidden && (d.compareDocumentPosition(r) & Node.DOCUMENT_POSITION_FOLLOWING) > 0; }));
+    const before = learnCalls.length;
+    await pg.goto(BASE + '/tools/?q=bolt%20torque');
+    await pg.waitForTimeout(1500);
+    check('Tools: ?q= stays a directory search and does not start a learning path', learnCalls.length === before && await pg.locator('[data-discover-results]').isHidden());
+    await pg.goto(BASE + '/tools/');
+    await ask(pg, 'Teach me how to calculate manufacturing costs.');
+    await pg.waitForSelector('.lc', { timeout: 15000 });
+    await pg.goto(BASE + '/tools/?tool=downtime-cost');
+    await pg.waitForTimeout(800);
+    check('Tools: the course area is hidden while a tool is open', await pg.locator('[data-discover-results]').isHidden());
+    check('Tools / Library box: no console errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+    const m = await page({ width: 390, height: 844 });
+    await m.pg.goto(BASE + '/reados/');
+    check('Library (mobile): the box comes before the examples and nothing scrolls sideways', await noSideScroll(m.pg) && await m.pg.evaluate(() => document.querySelector('.lp__ask').getBoundingClientRect().top < document.querySelector('.lp .dq__examples').getBoundingClientRect().top));
+    await m.ctx.close();
   }
   // 9. No-JS fallback
   {

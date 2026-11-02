@@ -94,7 +94,7 @@ Air quality is specified using the purity classes of **ISO 8573-1**, which set s
 
 Liquid water that does form must be drained from the system. Drains are fitted at the compressor, the dryer, the receiver and every low point in the main. **Timed drains** open at intervals whether or not there is water to remove, wasting compressed air each time. **Zero-loss drains** open only when a float or sensor detects liquid. The factory replaced its two timed drains with zero-loss drains when they were next due for service.
 
-Branch take-offs are made from the **top** of the main, so that any water running along the bottom of the pipe does not fall into the drop. The main slopes slightly toward its drains. Each machine's filter-regulator has a bowl that catches any remaining water and dirt, with a drain the operators check at each shift start.
+Branch take-offs are made from the **top** of the main, so that any water running along the bottom of the pipe does not fall into the drop. The main slopes slightly towards its drains. Each machine's filter-regulator has a bowl that catches any remaining water and dirt, with a drain the operators check at each shift start.
 
 The factory runs its cylinders and valves **without added lubrication**. Modern components are greased at assembly and designed to run on dry, unlubricated air. Once a lubricator is added, though, the factory grease is washed out and the component depends on lubricated air for the rest of its life. The business standardised on unlubricated air, which also keeps oil mist out of the exhaust near the food lines.
 

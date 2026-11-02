@@ -362,7 +362,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "aH": "Sideways acceleration as a share of gravity (seismic coefficient, transport or braking; your value from the code or duty).",
       "Fh": "Extra horizontal push (wind, operator, hose pull).",
       "hF": "Height at which that push acts.",
-      "tilt": "Floor slope that leans the machine toward the tipping edge.",
+      "tilt": "Floor slope that leans the machine towards the tipping edge.",
       "req": "Safety factor against tipping you require.",
       "nA": "Number of anchors on the side that lifts.",
       "La": "Distance from the tipping edge to the line of those anchors.",

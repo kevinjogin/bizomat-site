@@ -63,7 +63,7 @@ caption: Most activities provide one or two; the most effective combine all thre
 | Practice | What it mainly develops | Provides |
 |---|---|---|
 | **360-degree feedback** | Self-awareness | Assessment |
-| **Coaching** | Individual behaviour change toward specific goals | Assessment, challenge and support |
+| **Coaching** | Individual behaviour change towards specific goals | Assessment, challenge and support |
 | **Mentoring** | Judgement, organisational understanding, career direction | Support and some challenge |
 | **Networking** | Relationships across the business and beyond | Support and social capital |
 | **Developmental assignments** | Capability in new and harder situations | Challenge |

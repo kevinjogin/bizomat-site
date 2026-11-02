@@ -81,11 +81,11 @@ window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   },
   {
     "id": "anodizing-time",
-    "name": "Anodizing Time and Coating Thickness",
+    "name": "Anodising Time and Coating Thickness",
     "category": "Manufacturing",
     "collection": "MAKEOS",
-    "question": "How long must this part anodize to reach the coating thickness, and how much current is needed?",
-    "description": "Anodic coating thickness from current density and time by the common “720 rule” for sulfuric acid anodizing of aluminium, the time for a target thickness, the build-up and penetration split, and the rectifier current.",
+    "question": "How long must this part anodise to reach the coating thickness, and how much current is needed?",
+    "description": "Anodic coating thickness from current density and time by the common “720 rule” for sulfuric acid anodising of aluminium, the time for a target thickness, the build-up and penetration split, and the rectifier current.",
     "keywords": [
       "MAKEOS",
       "anodizing",

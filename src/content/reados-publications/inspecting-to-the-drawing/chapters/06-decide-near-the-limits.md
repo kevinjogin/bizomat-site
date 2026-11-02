@@ -125,7 +125,7 @@ A result near a limit is only interpretable with its uncertainty and the rule be
 
 A held part is a decision problem; a run of readings near a limit is a process problem. If the bracket's bores read 10.0110, 10.0118, 10.0125 and 10.0131 on consecutive sampled parts, none needs a decision rule yet, but the next few will. The inspector's record should reach the machinist before they do.
 
-The simplest tool is a run chart at the machine: the sampled bore readings plotted in order, with the drawing limits and the acceptance zone drawn on it. A machinist who sees four points climbing toward the upper edge of the acceptance zone adjusts the boring bar without waiting for a held part. That use of inspection data, to steer the process rather than to sort its output, is cheaper than any concession and needs nothing more than a pencil and the readings the plan already collects.
+The simplest tool is a run chart at the machine: the sampled bore readings plotted in order, with the drawing limits and the acceptance zone drawn on it. A machinist who sees four points climbing towards the upper edge of the acceptance zone adjusts the boring bar without waiting for a held part. That use of inspection data, to steer the process rather than to sort its output, is cheaper than any concession and needs nothing more than a pencil and the readings the plan already collects.
 
 ## Proportion
 

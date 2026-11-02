@@ -61,7 +61,7 @@ If you cannot state the purpose of a discount in one sentence, reconsider it.
 
 **Early-payment (cash) discounts.** A small discount for paying invoices quickly, for example 2% if paid within 10 days. This is common in business-to-business trade. It improves cash flow and reduces collection effort. Calculate the effective cost carefully, because these discounts can be an expensive form of finance.
 
-**Store or account credit.** Credit toward future purchases rather than an immediate price cut. It brings customers back and keeps the value inside your business.
+**Store or account credit.** Credit towards future purchases rather than an immediate price cut. It brings customers back and keeps the value inside your business.
 
 **Exclusive memberships.** Premium tiers for your best customers, with special benefits such as priority service, extra sessions, early access or exclusive products. These recognise value both ways.
 

@@ -95,7 +95,9 @@ test('WORKOS and READOS share the same hero, search, topic grid and sections', (
   for (const page of [workos, reados]) {
     for (const part of ['<LibraryHero', '<LibraryBrowser', '<LibrarySection', "import '../../styles/library.css'", '<details class="lib-about"']) assert.ok(page.includes(part), part);
     assert.doesNotMatch(page, /<Hero\b|tools-pill|class="chips"/, 'no large hero, badge row or tag cloud');
-    assert.match(page, /<MotionVisual page="\w+" slot="visual" compact/, 'the brand animation is the compact banner');
+    assert.match(page, /<LearningPlanner slot="planner"/, 'the header holds the learning-path box (no animation since 2 Nov 2026)');
+    assert.match(page, /<DiscoveryResults \/>/);
+    assert.match(page, /import '\.\.\/\.\.\/scripts\/discovery\.ts';/);
   }
   assert.match(workos, /title="Tools"\s+description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions\."/);
   assert.match(workos, /placeholder="Search KEVOS® tools\.\.\."/);

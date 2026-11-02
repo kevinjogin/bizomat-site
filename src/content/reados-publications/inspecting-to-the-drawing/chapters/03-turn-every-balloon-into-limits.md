@@ -58,7 +58,7 @@ step: Deviation = 37 × 0.00873 = 0.323 mm
 step: The upright face may lean up to 0.32 mm from square over its 37 mm exposed height
 ```
 
-The result is rounded down to 0.32 mm for the limits table, not up, so that the conversion never accepts a part the angle would reject. Rounding a limit always moves it inward, toward the tighter side.
+The result is rounded down to 0.32 mm for the limits table, not up, so that the conversion never accepts a part the angle would reject. Rounding a limit always moves it inward, towards the tighter side.
 
 ## Geometric tolerances as limits
 

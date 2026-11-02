@@ -79,9 +79,9 @@
     },
     "carburizing-case-depth-plan": (v) => {
       const removed = v.stock / 2, before = v.eff + removed, total = before / v.ratio, t = (total / v.K) ** 2, cycle = t + v.extra, cpp = cycle * v.rate / v.parts, share = total / (v.sect / 2), t10 = (total * 1.1 / v.K) ** 2, ok = share <= v.shareMax + 1e-9;
-      return output({ removed, before, total, t, cycle, cpp, share, t10 }, 'Time at carburizing temperature (h)', t,
+      return output({ removed, before, total, t, cycle, cpp, share, t10 }, 'Time at carburising temperature (h)', t,
         [m('Case removed by grinding (each side)', q(removed, 'mm', 3)), m('Effective case before grinding', q(before, 'mm', 3)), m('Total case to specify', q(total, 'mm', 3)), m('Time at temperature', q(t, 'h', 2)), m('Time for a 10 % deeper case', q(t10, 'h', 2)), m('Furnace cycle', q(cycle, 'h', 2)), m('Cost per part', money(cpp, 2)), m('Case as a share of the half-section', q(100 * share, '%', 0))],
-        'Carburizing case depth plan.', 'Parabolic case growth at constant temperature.', {
+        'Carburising case depth plan.', 'Parabolic case growth at constant temperature.', {
           text: ok ? 'CASE PLAN SUITS THE SECTION' : 'CASE TOO DEEP FOR THE SECTION', tone: ok ? 'good' : 'bad',
           checks: [check('Case against the section', ok ? 'pass' : 'fail', `${q(100 * share, '%', 0)} of the half-section against ${q(100 * v.shareMax, '%', 0)}${ok ? '.' : ': reduce the grinding stock, specify a shallower case, or thicken the section.'}`), check('Case depth factor', 'verify', 'Confirm the factor with the heat treater for this steel, temperature and atmosphere, and check the first loads by sectioning.'), check('Drawing callout', 'verify', 'State effective case, the hardness that defines it and where it is measured, after grinding.')],
         });

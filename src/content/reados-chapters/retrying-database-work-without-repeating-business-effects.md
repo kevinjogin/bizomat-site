@@ -146,7 +146,7 @@ Record a logical operation identifier and an attempt number, together with the r
 
 Measure first-attempt success, eventual success, retry volume, exhausted deadlines and unresolved outcomes. These measures answer different questions. A high eventual success rate may still be unacceptable if most users wait through repeated delays.
 
-Examine concentrations by operation type and dependency. Frequent serialization retries may indicate a contested decision or transaction scope that needs review. Frequent connection failures may point to pool or network behaviour. The retry mechanism should reveal the underlying issue rather than permanently conceal it.
+Examine concentrations by operation type and dependency. Frequent serialisation retries may indicate a contested decision or transaction scope that needs review. Frequent connection failures may point to pool or network behaviour. The retry mechanism should reveal the underlying issue rather than permanently conceal it.
 
 Give unresolved outcomes an operational owner. A request that might have committed is not adequately handled by a generic error counter. The organisation needs a way to establish the business result and communicate it to the caller without creating another independent request.
 

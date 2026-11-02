@@ -1220,7 +1220,7 @@ window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
       },
       {
         "key": "tilt",
-        "label": "Floor slope toward the tipping edge",
+        "label": "Floor slope towards the tipping edge",
         "type": "number",
         "default": 0,
         "unit": "°",

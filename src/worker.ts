@@ -5,12 +5,14 @@
 // dashboard drag-and-drop (which does not compile a functions/ folder):
 //   /api/chat     → KEVOS® Assistant (Workers AI)
 //   /api/discover → homepage discovery: question → search terms (Workers AI); /api/discover/event → anonymous statistics
+//   /api/learn/{intent,plan,lesson,ask} → learning paths built from the Library and Tools (src/server/learn/handler.ts)
 //   /api/contact  → optional contact-form backend
 //   /api/assessment                → Engineering Problem Assessment enquiries (server-side validation)
 //   /api/assessment/stripe-webhook → optional Stripe payment verification (signature-checked)
 //   everything else → the static site from dist/ (env.ASSETS)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
+import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
 import { handleContact, type ContactEnv } from './server/contact/handler.ts';
 import { handleAssessment } from './server/assessment/handler.ts';
 import { handleStripeWebhook, type StripeEnv } from './server/assessment/stripe.ts';
@@ -19,7 +21,7 @@ import { API_HEADERS, BASELINE_HEADERS, withinEdgeLimit, type RateLimiter } from
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
 }
-export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv {
+export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnEnv {
   ASSETS: AssetsBinding;
   /** Per-IP burst limits (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
   CHAT_LIMITER?: RateLimiter;
@@ -62,7 +64,7 @@ export default {
     }
     let response: Response;
     // Discovery shares the assistant's per-IP limiter, with its own counter (scope).
-    const scope = url.pathname.startsWith('/api/chat') ? 'chat' : url.pathname === '/api/discover' || url.pathname === '/api/discover/' ? 'discover' : url.pathname === '/api/discover/event' ? 'discover-event' : /^\/api\/(contact|assessment)\/?$/.test(url.pathname) ? 'form' : '';
+    const scope = url.pathname.startsWith('/api/chat') ? 'chat' : url.pathname === '/api/discover' || url.pathname === '/api/discover/' ? 'discover' : url.pathname === '/api/discover/event' ? 'discover-event' : url.pathname.startsWith('/api/learn/') ? 'learn' : /^\/api\/(contact|assessment)\/?$/.test(url.pathname) ? 'form' : '';
     if (scope && request.method === 'POST' && !(await withinEdgeLimit(scope === 'form' ? env.FORM_LIMITER : env.CHAT_LIMITER, scope, request))) {
       const body = JSON.stringify({ ok: false, success: false, error: 'Too many requests. Please wait a minute and try again.', message: 'Too many requests. Please wait a minute and try again.' });
       return withHeaders(new Response(body, { status: 429, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': '60' } }), url);
@@ -70,6 +72,10 @@ export default {
     if (url.pathname === '/api/chat' || url.pathname === '/api/chat/') response = await handleChat(request, env);
     else if (url.pathname === '/api/discover' || url.pathname === '/api/discover/') response = await handleDiscover(request, env);
     else if (url.pathname === '/api/discover/event') response = await handleDiscoverEvent(request, env);
+    else if (url.pathname === '/api/learn/intent') response = await handleLearnIntent(request, env);
+    else if (url.pathname === '/api/learn/plan') response = await handleLearnPlan(request, env);
+    else if (url.pathname === '/api/learn/lesson') response = await handleLearnLesson(request, env);
+    else if (url.pathname === '/api/learn/ask') response = await handleLearnAsk(request, env);
     else if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);
     else if (url.pathname === '/api/assessment' || url.pathname === '/api/assessment/') response = await handleAssessment(request, env);
     else if (url.pathname === '/api/assessment/stripe-webhook') response = await handleStripeWebhook(request, env);

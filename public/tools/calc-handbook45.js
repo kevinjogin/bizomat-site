@@ -77,9 +77,9 @@
     "anodizing-plan": (v) => {
       const rate = 25.4 * 9.290304 / 720 * v.J * v.eff / 100, minutes = v.thick / rate, build = v.thick / 3, I = v.J * v.ap * v.np, heat = v.V * I / 1000, loads = Math.ceil(v.batch / v.np - 1e-9), hours = loads * (minutes + v.handle) / 60, kWh = heat * minutes / 60 * loads, cost = (kWh * v.pE + hours * v.rate) / v.batch;
       const okI = I <= v.rect, okC = heat <= v.chill, ok = okI && okC;
-      return output({ rate, minutes, build, I, heat, loads, hours, kWh, cost }, 'Anodizing time (min)', minutes,
+      return output({ rate, minutes, build, I, heat, loads, hours, kWh, cost }, 'Anodising time (min)', minutes,
         [m('Growth rate', q(rate, 'µm/min', 3)), m('Time to thickness', q(minutes, 'min', 1)), m('Build-up per surface', q(build, 'µm', 1)), m('Current per load', q(I, 'A', 0)), m('Heat into the bath', q(heat, 'kW', 2)), m('Loads / line hours', `${q(loads, '', 0)} / ${q(hours, 'h', 1)}`), m('Energy for the batch', q(kWh, 'kWh', 1)), m('Cost per part', money(cost))],
-        'Anodizing plan.', '720 rule; Type II sulfuric acid.', {
+        'Anodising plan.', '720 rule; Type II sulfuric acid.', {
           text: ok ? 'PLAN FEASIBLE' : 'PLAN NOT FEASIBLE', tone: ok ? 'good' : 'bad',
           checks: [check('Rectifier', okI ? 'pass' : 'fail', `${q(I, 'A', 0)} against ${q(v.rect, 'A', 0)}.`), check('Bath cooling', okC ? 'pass' : 'fail', `${q(heat, 'kW', 2)} of heat against ${q(v.chill, 'kW', 1)} cooling.`), check('Thickness', 'verify', 'Measure coating thickness and adjust the efficiency factor.')],
         });

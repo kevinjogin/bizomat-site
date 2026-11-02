@@ -1,4 +1,4 @@
-// KEVOS® discovery: the AI step behind "What would you like to solve today?".
+// KEVOS® discovery: the AI step behind Quick Understanding answers in the homepage box.
 //
 // POST /api/discover { question, context?, candidates? } → { ok, ai, intent? }
 //   Workers AI turns a plain-language question into search terms and a one-line restatement and, when the browser
@@ -11,8 +11,8 @@
 //   (see docs/discovery/ARCHITECTURE.md); otherwise accepted and discarded.
 import { checkRateLimit, type RateLimitEnv } from '../contact/rate-limit.ts';
 import { isSameOrigin, readBoundedText } from '../security.ts';
+import { completeJson, DEFAULT_MODELS, workersAi, type AiBinding } from '../ai/provider.ts';
 
-interface AiBinding { run(model: string, input: Record<string, unknown>): Promise<unknown> }
 interface AnalyticsDataset { writeDataPoint(point: { blobs?: string[]; doubles?: number[]; indexes?: string[] }): void }
 
 export interface DiscoverEnv extends RateLimitEnv {
@@ -35,9 +35,7 @@ const TYPES = new Set<QuestionType>(['calculation', 'troubleshooting', 'design',
 interface Candidate { id: string; kind: string; name: string; about: string }
 export interface DiscoverReply { ok: boolean; ai?: boolean; intent?: Intent; error?: string }
 
-// Same Workers AI models as the KEVOS® Assistant (src/server/chat/handler.ts).
-const DEFAULT_MODEL = '@cf/meta/llama-4-scout-17b-16e-instruct';
-const DEFAULT_FALLBACK = '@cf/meta/llama-3.1-8b-instruct-fp8';
+// Models: DISCOVER_MODEL / CHAT_MODEL, then CHAT_FALLBACK_MODEL, else the defaults in src/server/ai/provider.ts.
 export const MAX_QUESTION = 500;
 const AI_TIMEOUT_MS = 15000; // a solution path is a longer reply; the browser shows a keyword path meanwhile
 
@@ -156,13 +154,6 @@ export function parseIntent(raw: string, question: string, candidates: Candidate
   };
 }
 
-function extractText(result: unknown): string {
-  const r = result as { response?: unknown; choices?: Array<{ message?: { content?: string } }> };
-  if (typeof r?.response === 'string') return r.response;
-  if (r?.response && typeof r.response === 'object') return JSON.stringify(r.response);
-  return r?.choices?.[0]?.message?.content ?? '';
-}
-const withTimeout = <T,>(p: Promise<T>, ms: number) => Promise.race([p, new Promise<never>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))]);
 
 async function readJson(request: Request, max: number): Promise<Record<string, unknown> | Response> {
   if (request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
@@ -219,18 +210,16 @@ export async function handleDiscover(request: Request, env: DiscoverEnv): Promis
     max_tokens: 900,
     temperature: 0.1,
   };
-  for (const model of [env.DISCOVER_MODEL || env.CHAT_MODEL || DEFAULT_MODEL, env.CHAT_FALLBACK_MODEL || DEFAULT_FALLBACK]) {
-    try {
-      const intent = parseIntent(extractText(await withTimeout(env.AI.run(model, input), Number(env.DISCOVER_TIMEOUT_MS) || AI_TIMEOUT_MS)), question, candidates);
-      if (intent) {
-        console.log(JSON.stringify({ discover: 'intent', model, terms: intent.terms.length, picks: intent.picks?.length ?? 0 }));
-        return json({ ok: true, ai: true, intent });
-      }
-    } catch (err) {
-      console.log(JSON.stringify({ discover: 'model_failed', model, error: String(err).slice(0, 160) }));
-    }
-  }
-  return json({ ok: true, ai: false });
+  // One budget for both models (src/server/ai/provider.ts), so a slow primary cannot hold the visitor twice.
+  const done = await completeJson({
+    provider: workersAi(env.AI),
+    models: [env.DISCOVER_MODEL || env.CHAT_MODEL || DEFAULT_MODELS[0], env.CHAT_FALLBACK_MODEL || DEFAULT_MODELS[1]],
+    request: { messages: input.messages as never, maxTokens: input.max_tokens, temperature: input.temperature },
+    budgetMs: Number(env.DISCOVER_TIMEOUT_MS) || AI_TIMEOUT_MS,
+    parse: (raw) => parseIntent(raw, question, candidates),
+    label: 'discover',
+  });
+  return done ? json({ ok: true, ai: true, intent: done.value }) : json({ ok: true, ai: false });
 }
 
 const EVENT_TYPES = new Set(['search', 'click', 'none', 'clarify']);
