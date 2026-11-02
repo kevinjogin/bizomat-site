@@ -3791,3 +3791,15 @@ Five tools in batch norton1 from Robert L. Norton, Design of Machinery, 2nd edit
 | **Fourbar Crank-Rocker Quick-Return Time Ratio** `fourbar-time-ratio` | CALCULATED | Quick return; Practical range; Model and application | 97–99 | Automated |
 | **Fourbar Linkage Position, Velocity and Acceleration (Analytical)** `fourbar-kinematics` | CALCULATED | Transmission angle; Circuit; Model and application | 156–159, 169–170, 271–274, 309–311 | Automated |
 | **Offset Slider-Crank Position, Velocity and Acceleration (Analytical)** `slider-crank-kinematics` | CALCULATED | Rod ratio; Circuit; Model and application | 159–161, 274–276, 311–313 | Automated |
+## Norton engine dynamics tools, batch norton2 (added 3 November 2026)
+
+Four tools in batch norton2 from Robert L. Norton, Design of Machinery, 2nd edition, chapters 13 and 14: exact and Fourier-approximate piston position, velocity and acceleration (pp. 605–610), gas force and gas torque (pp. 605–613), the lumped-mass engine model with the shaking forces and inertia torque (pp. 614–622), and the inline multicylinder balance sums for shaking forces, inertia torques and shaking moments with the even firing interval (pp. 645–653). Dimensions, masses, pressures and phase angles are always user inputs. WORKOS now holds 1049 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Engine Piston Position, Velocity and Acceleration (Exact and Fourier Approximation)** `engine-piston-motion` | CALCULATED | Crank-conrod ratio; Approximation; Model and application | 605–610 | Automated |
+| **Engine Gas Force and Gas Torque at a Crank Angle** `engine-gas-torque` | CALCULATED | Approximation; Pressure; Model and application | 605–613 | Automated |
+| **Engine Lumped Masses, Shaking Force and Inertia Torque** `engine-inertia-forces` | CALCULATED | Lumped mass placement; Balance; Model and application | 614–622 | Automated |
+| **Inline Multicylinder Engine Balance (Shaking Force, Inertia Torque, Shaking Moment, Firing)** `inline-engine-balance` | FORCES BALANCED, MOMENTS NOT | Shaking forces (1st, 2nd); Inertia torque (1st–3rd); Shaking moments (1st, 2nd); Model and application | 645–653 | Automated |

@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1045,
- "passed": 1045,
- "inputs": 9039,
- "figures": 9039,
+ "tools": 1049,
+ "passed": 1049,
+ "inputs": 9073,
+ "figures": 9073,
  "sample": [
   {
    "id": "make-buy",
@@ -6404,6 +6404,30 @@
    "ok": true,
    "inputs": 7,
    "figures": 7
+  },
+  {
+   "id": "engine-piston-motion",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "engine-gas-torque",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "engine-inertia-forces",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "inline-engine-balance",
+   "ok": true,
+   "inputs": 15,
+   "figures": 15
   }
  ]
 }

@@ -2,7 +2,7 @@
 
 Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 929 relationships (611 from links authors wrote in the books, 319 from editorial review). Rejected: 133. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 932 relationships (611 from links authors wrote in the books, 322 from editorial review). Rejected: 134. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -329,6 +329,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining by the Numbers | Tool life and the Taylor equation | Tool Life from the Force Ratio FH ÷ FC (Colding) | complements | Chapter models tool life with the Taylor equation; tool applies the handbook Colding relation T = (FH ÷ a FC)^(LF/L) between tool life and force ratio. |
 | Power Presses by the Numbers | The crank press and its force curve | Offset Slider-Crank Position, Velocity and Acceleration (Analytical) | complements | Chapter builds the crank press curve from the crank radius and connecting rod length; tool applies Norton’s slider-crank position, velocity and acceleration solution. |
 | Louvres and Ventilators by the Numbers | Movable louvres: blades, linkages and actuators | Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles | complements | Chapter lays out a louvre blade linkage and its travel; tool applies the Grashof condition, linkage classification and transmission angles from Norton. |
+| Inertia and Flywheels by the Numbers | Flywheels and speed fluctuation | Engine Gas Force and Gas Torque at a Crank Angle | complements | Chapter explains that an engine flywheel smooths the torque pulses of its cylinders; tool gives Norton’s gas force and gas torque at a crank angle. |
+| Vibrating Machine Elements by the Numbers | Waves, modes and the forces that excite them | Engine Lumped Masses, Shaking Force and Inertia Torque | complements | Chapter describes excitations that repeat once per revolution such as unbalance; tool gives Norton’s primary and secondary shaking forces of a single-cylinder engine. |
+| Power Presses by the Numbers | The crank press and its force curve | Engine Piston Position, Velocity and Acceleration (Exact and Fourier Approximation) | complements | Chapter builds the crank press curve from the crank and connecting rod; tool applies Norton’s exact and Fourier-approximate slider-crank motion. |
 
 ## 2. Rejected
 
@@ -467,6 +470,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Checking Drawings by the Numbers | Limits and fits, recalculated from the drawings | Inch Involute Spline Measurement Between or Over Pins | Rejected: chapter checks limits and fits of plain holes and shafts on drawings; spline pin measurement is a gear inspection method, not a drawing check. |
 | Shaft Alignment by the Numbers | Pipe strain | Wrought Steel Pipe Plain-End Mass (ASME B36.10M) | Rejected: chapter is about forces from misaligned connected piping on machine casings; the tool gives pipe mass per metre, not pipe strain. |
 | Fixtures That Repeat | Choose clamping force that reaches the part | Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles | Rejected: chapter treats toggle clamps as bought-in clamping devices and their force; the tool classifies fourbar linkages and does not size clamps. |
+| Vibrating Machine Elements by the Numbers | Isolate the fan on springs | Inline Multicylinder Engine Balance (Shaking Force, Inertia Torque, Shaking Moment, Firing) | Rejected: chapter isolates a fan from its frame on springs; the tool checks the phase-angle balance of inline engines and does not size isolators. |
 
 ## 3. Published READOS books with no approved connection
 
