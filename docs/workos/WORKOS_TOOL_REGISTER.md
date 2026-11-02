@@ -3663,3 +3663,31 @@ Seven tools in batch handbook98 from the deep audit of the screw thread standard
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Rail Width and Track Wheel Diameter for a Wheel Load** `rail-and-track-wheel-size` | RAIL AND WHEEL CARRY THE LOAD | Head width; Wheel diameter; AREA contact length; Model and application | 277–278 | Automated |
+## Machinery’s Handbook ledger tools, batch handbook99 (added 2 November 2026)
+
+Five tools in batch handbook99 from the deep audit of the shaft alignment pages: rim and face alignment moves for any of the handbook’s sixteen dial indicator arrangements, with motors on more than four feet and the indicator bracket sag correction (pp. 2627–2650), and jackbolt turns and flats for the side-to-side moves (pp. 2631–2632); from the riveted joint pages, the resistances, efficiency and safe seam load of six lap, cover plate and butt joint types (pp. 1731–1734); from the beam pages, beams of uniform strength solved for load, depth or width with the outline at a point (pp. 271–272); and from machining econometrics, the Colding rule for the change in surface finish with tool nose radius (pp. 1143–1144). Allowable stresses, safe stresses, alignment tolerances and measured finishes are always user inputs. WORKOS now holds 1025 tools.
+
+### Maintenance
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Rim and Face Alignment for Any of the 16 Indicator Arrangements** `rim-face-arrangement-shims` | CHANGE THE SHIMS | Tolerance; Arrangement; Model and application | 2627–2650 | Automated |
+| **Jackbolt Turns and Flats for an Alignment Move** `jackbolt-alignment-turns` | CALCULATED | Resolution; Final readings; Model and application | 2631–2632 | Automated |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Riveted Joint Strength by Joint Type (Lap, Cover Plate and Butt Joints)** `riveted-joint-strength-by-type` | JOINT CARRIES THE LOAD | Required load; Edge distance; Model and application | 1731–1734 | Automated |
+
+### Strength
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Beam of Uniform Strength: Safe Load, Size and Outline** `uniform-strength-beam` | WITHIN THE SAFE LOAD | Load; End section; Model and application | 271–272 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Surface Finish Change with Tool Nose Radius (Colding Rule)** `nose-radius-finish-change` | CALCULATED | Target; Same ECT and speed; Model and application | 1143–1144 | Automated |

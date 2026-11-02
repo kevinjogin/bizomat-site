@@ -2,7 +2,7 @@
 
 Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 838 relationships (543 from links authors wrote in the books, 295 from editorial review). Rejected: 128. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 844 relationships (543 from links authors wrote in the books, 301 from editorial review). Rejected: 129. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -305,6 +305,12 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Elements and Mechanical Design | Choosing fasteners and threads: thread systems, grades, screws for sheet and plastics, inserts and pins | Whitworth Thread Limits to BS 84 (BSW, BSF) | complements | Chapter lists British Standard Whitworth and Fine threads for older machinery and explains tolerance classes; tool applies the BS 84 tolerance formulas for close, medium, free and normal classes. |
 | Practical Mathematics for Engineering and Manufacturing | Inch and metric conversion on legacy drawings: tolerances, threads, pipe sizes and other traps | Whitworth Thread Limits to BS 84 (BSW, BSF) | complements | Chapter says legacy threads such as BSW and BSF must keep their own designation and not be converted numerically; tool gives BS 84 limits for the Whitworth thread itself, with the limits shown in millimetres. |
 | Machine Elements and Mechanical Design | Selecting bearings and lubrication for reliable machines: types, life, fits, sealing and failure causes | Rolling Bearing Static Equivalent Load and Static Safety Factor | complements | Chapter combines radial and axial loads into an equivalent load for rating life; tool gives the AFBMA static equivalent load Po = Xo Fr + Yo Fa (or Poa for thrust bearings) and the static safety factor Co ÷ Po. |
+| Shaft Alignment by the Numbers | The rim and face method | Rim and Face Alignment for Any of the 16 Indicator Arrangements | complements | Chapter teaches the rim and face method with one indicator layout; tool applies the handbook formulas for all sixteen arrangements with signed foot distances. |
+| Shaft Alignment by the Numbers | Dial indicators, brackets and sag | Rim and Face Alignment for Any of the 16 Indicator Arrangements | complements | Chapter explains measuring and correcting bracket sag; tool adds or subtracts the measured sag from the rim reading by where the indicator was zeroed. |
+| Shaft Alignment by the Numbers | Making the moves | Jackbolt Turns and Flats for an Alignment Move | complements | Chapter covers moving the machine with jacking bolts and foot indicators; tool converts each move to turns and flats from the bolt pitch and head. |
+| Machine Elements and Mechanical Design | Choosing a joining method: bolting, welding, riveting, adhesives and brazing compared | Riveted Joint Strength by Joint Type (Lap, Cover Plate and Butt Joints) | complements | Chapter says solid rivets carry load in shear and bearing; tool applies the handbook resistance formulas for six riveted joint types. |
+| Springs by the Numbers | Torsion bars and flat springs | Beam of Uniform Strength: Safe Load, Size and Outline | complements | Chapter notes a tapered leaf spring approaches a beam of uniform strength; tool applies the handbook formulas for beams of uniform strength. |
+| Machining by the Numbers | Turning: feed, depth of cut, removal rate and surface finish | Surface Finish Change with Tool Nose Radius (Colding Rule) | complements | Chapter says a larger nose radius improves finish in direct proportion (geometric rule); tool applies the handbook Colding rule Ra1/Ra2 = (r2/r1)^0.5 and compares the two. |
 
 ## 2. Rejected
 
@@ -438,6 +444,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Vibrating Machine Elements by the Numbers | Set belt tension by its frequency | Double V-Belt Drive by Allowable Tight Side Tension (AA, BB, CC, DD) | Rejected: chapter sets the installed static tension by measuring span frequency; the tool sizes the number of double V-belts from working tensions and does not give an installation tension. |
 | Inertia and Flywheels by the Numbers | Inertia through gears and belts | Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections | Rejected: chapter reflects inertia through gear and belt ratios; the tool rates variable-speed belts and their speed range, not inertia. |
 | Railway Track Geometry by the Numbers | The track as a structure | Rail Width and Track Wheel Diameter for a Wheel Load | Rejected: chapter follows a railway wheel load down through rail, sleepers and ballast; the tool applies empirical rail head and track wheel rules for handling equipment and the AREA roller load, not railway track design. |
+| Gears by the Numbers | Tooth bending strength | Beam of Uniform Strength: Safe Load, Size and Outline | Rejected: chapter treats the gear tooth as a cantilever in the Lewis bending equation; the tool sizes tapered beams and levers, not gear teeth. |
 
 ## 3. Published READOS books with no approved connection
 
