@@ -2,7 +2,7 @@
 
 Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 908 relationships (592 from links authors wrote in the books, 317 from editorial review). Rejected: 132. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 929 relationships (611 from links authors wrote in the books, 319 from editorial review). Rejected: 133. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -327,6 +327,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Gears by the Numbers | Ratios, speeds and gear trains | Planetary and Epicyclic Gearing Ratios for the 24 Handbook Arrangements | complements | Chapter covers gear ratios, trains and internal gears as the basis of planetary gearboxes; tool applies the handbook formula of each planetary arrangement. |
 | Machining and Metal Parts | EDM, micromachining and other non-traditional processes: when cutting tools are not the answer | Micro-Droplet Adhesion on a Rotating Micro Tool (MQL) | complements | Chapter covers micro milling and drilling with sub-millimetre tools at high spindle speed; tool applies the handbook micro-droplet adhesion condition, Equation (18b). |
 | Machining by the Numbers | Tool life and the Taylor equation | Tool Life from the Force Ratio FH ÷ FC (Colding) | complements | Chapter models tool life with the Taylor equation; tool applies the handbook Colding relation T = (FH ÷ a FC)^(LF/L) between tool life and force ratio. |
+| Power Presses by the Numbers | The crank press and its force curve | Offset Slider-Crank Position, Velocity and Acceleration (Analytical) | complements | Chapter builds the crank press curve from the crank radius and connecting rod length; tool applies Norton’s slider-crank position, velocity and acceleration solution. |
+| Louvres and Ventilators by the Numbers | Movable louvres: blades, linkages and actuators | Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles | complements | Chapter lays out a louvre blade linkage and its travel; tool applies the Grashof condition, linkage classification and transmission angles from Norton. |
 
 ## 2. Rejected
 
@@ -464,6 +466,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Bolted Joints by the Numbers | Threads, tapped holes and screw lengths | Square, Modified Square and 60° Stub Thread Basic Sizes | Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads. |
 | Checking Drawings by the Numbers | Limits and fits, recalculated from the drawings | Inch Involute Spline Measurement Between or Over Pins | Rejected: chapter checks limits and fits of plain holes and shafts on drawings; spline pin measurement is a gear inspection method, not a drawing check. |
 | Shaft Alignment by the Numbers | Pipe strain | Wrought Steel Pipe Plain-End Mass (ASME B36.10M) | Rejected: chapter is about forces from misaligned connected piping on machine casings; the tool gives pipe mass per metre, not pipe strain. |
+| Fixtures That Repeat | Choose clamping force that reaches the part | Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles | Rejected: chapter treats toggle clamps as bought-in clamping devices and their force; the tool classifies fourbar linkages and does not size clamps. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -513,7 +516,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | Judgement, Markets and Learning | collection | ideas | nothing |
 | Layouts That Plot to Scale | publication | Engineering | Engineering & Design |
 | Leading People and Change | collection | business | Business & Commercial |
-| Louvres and Ventilators by the Numbers | publication | Engineering | Engineering & Design |
 | Marketing, Brands and Customer Experience | collection | business | Business & Commercial |
 | Performance Solutions by the Numbers | publication | Engineering | Engineering & Design |
 | Pipe Flow by the Numbers | publication | Engineering | Engineering & Design |

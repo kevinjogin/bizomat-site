@@ -3778,3 +3778,16 @@ Three tools in batch handbook103 from pages read from the handbook’s page imag
 |---|---|---|---|---|
 | **Micro-Droplet Adhesion on a Rotating Micro Tool (MQL)** `microdroplet-adhesion-check` | DROPLET ADHERES | Force balance; Reaching the tool; Model and application | 1118–1119 | Automated |
 | **Tool Life from the Force Ratio FH ÷ FC (Colding)** `force-ratio-tool-life` | CALCULATED | Target life; Constants; Model and application | 1140–1143 | Automated |
+## Norton linkage kinematics tools, batch norton1 (added 3 November 2026)
+
+Five tools in batch norton1 from Robert L. Norton, Design of Machinery, 2nd edition (McGraw-Hill, 1999), the first source after the Machinery’s Handbook audit: linkage degree of freedom by the Gruebler and Kutzbach equations (pp. 29–33), the fourbar Grashof condition and classification with the extreme transmission angles and non-Grashof toggle angles (pp. 46–49, 169–172), the crank-rocker quick-return time ratio (pp. 97–99), and the analytical position, velocity and acceleration of the pin-jointed fourbar with a coupler point (pp. 156–159, 169–170, 271–274, 309–311) and of the offset slider-crank (pp. 159–161, 274–276, 311–313). Link lengths, angles and input motions are always user inputs. WORKOS now holds 1045 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Linkage Degree of Freedom (Gruebler and Kutzbach)** `linkage-mobility` | MECHANISM | Mobility; Joint count; Model and application | 29–33 | Automated |
+| **Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles** `fourbar-grashof-check` | CRANK-ROCKER | Full rotation; Transmission angle; Model and application | 46–49, 169–172 | Automated |
+| **Fourbar Crank-Rocker Quick-Return Time Ratio** `fourbar-time-ratio` | CALCULATED | Quick return; Practical range; Model and application | 97–99 | Automated |
+| **Fourbar Linkage Position, Velocity and Acceleration (Analytical)** `fourbar-kinematics` | CALCULATED | Transmission angle; Circuit; Model and application | 156–159, 169–170, 271–274, 309–311 | Automated |
+| **Offset Slider-Crank Position, Velocity and Acceleration (Analytical)** `slider-crank-kinematics` | CALCULATED | Rod ratio; Circuit; Model and application | 159–161, 274–276, 311–313 | Automated |

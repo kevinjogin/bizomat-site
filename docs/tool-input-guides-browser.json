@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1040,
- "passed": 1040,
- "inputs": 9005,
- "figures": 9005,
+ "tools": 1045,
+ "passed": 1045,
+ "inputs": 9039,
+ "figures": 9039,
  "sample": [
   {
    "id": "make-buy",
@@ -6371,6 +6371,36 @@
   },
   {
    "id": "force-ratio-tool-life",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "linkage-mobility",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "fourbar-grashof-check",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "fourbar-time-ratio",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "fourbar-kinematics",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "slider-crank-kinematics",
    "ok": true,
    "inputs": 7,
    "figures": 7
