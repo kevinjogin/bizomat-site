@@ -3762,3 +3762,19 @@ Three tools in batch handbook102 from the deep audit at lower thresholds: Britis
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Ductile-Regime Critical Depth of Cut for Brittle Materials** `ductile-regime-critical-depth` | DUCTILE-REGIME CUT | Critical depth; Edge radius; Model and application | 1109–1110 | Automated |
+## Machinery’s Handbook ledger tools, batch handbook103 (added 3 November 2026)
+
+Three tools in batch handbook103 from pages read from the handbook’s page images, where the text extraction loses the figures and formulas: the speed ratios of the 24 planetary and epicyclic gearing arrangements by the formula printed with each figure (pp. 2212–2214), the micro-droplet adhesion condition for mist lubrication of micro tools, Equation (18b) (pp. 1118–1119), and the Colding relation between tool life and the force ratio FH ÷ FC (pp. 1140–1143). Gear sizes, speeds, lubricant properties and the constants a and LF ÷ L are always user inputs. WORKOS now holds 1040 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Planetary and Epicyclic Gearing Ratios for the 24 Handbook Arrangements** `planetary-arrangement-ratio` | CALCULATED | Arrangement; Direction; Model and application | 2212–2214 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Micro-Droplet Adhesion on a Rotating Micro Tool (MQL)** `microdroplet-adhesion-check` | DROPLET ADHERES | Force balance; Reaching the tool; Model and application | 1118–1119 | Automated |
+| **Tool Life from the Force Ratio FH ÷ FC (Colding)** `force-ratio-tool-life` | CALCULATED | Target life; Constants; Model and application | 1140–1143 | Automated |

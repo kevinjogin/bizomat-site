@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1037,
- "passed": 1037,
- "inputs": 8981,
- "figures": 8981,
+ "tools": 1040,
+ "passed": 1040,
+ "inputs": 9005,
+ "figures": 9005,
  "sample": [
   {
    "id": "make-buy",
@@ -6356,6 +6356,24 @@
    "ok": true,
    "inputs": 6,
    "figures": 6
+  },
+  {
+   "id": "planetary-arrangement-ratio",
+   "ok": true,
+   "inputs": 10,
+   "figures": 10
+  },
+  {
+   "id": "microdroplet-adhesion-check",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "force-ratio-tool-life",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
   }
  ]
 }

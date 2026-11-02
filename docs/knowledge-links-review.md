@@ -2,7 +2,7 @@
 
 Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 887 relationships (574 from links authors wrote in the books, 314 from editorial review). Rejected: 132. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 908 relationships (592 from links authors wrote in the books, 317 from editorial review). Rejected: 132. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -324,6 +324,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Pipe Welding by the Numbers | Pipe sizes, wall thickness and pressure | Wrought Steel Pipe Plain-End Mass (ASME B36.10M) | complements | Chapter explains pipe outside diameters, wall schedules and the weight the pipe and its welds carry; tool applies the B36.10M plain-end mass formula with contents. |
 | Machine Elements and Mechanical Design | Choosing fasteners and threads: thread systems, grades, screws for sheet and plastics, inserts and pins | British Association (BA) Thread Basic Sizes and Limits (BS 93) | complements | Chapter lists the thread systems met on older British machinery; tool gives the BA thread form and BS 93 bolt and nut tolerances. |
 | Machining and Metal Parts | EDM, micromachining and other non-traditional processes: when cutting tools are not the answer | Ductile-Regime Critical Depth of Cut for Brittle Materials | complements | Chapter covers micromachining and processes for brittle materials; tool applies the handbook ductile-regime critical depth dc = A (E/H)(Kc/H)². |
+| Gears by the Numbers | Ratios, speeds and gear trains | Planetary and Epicyclic Gearing Ratios for the 24 Handbook Arrangements | complements | Chapter covers gear ratios, trains and internal gears as the basis of planetary gearboxes; tool applies the handbook formula of each planetary arrangement. |
+| Machining and Metal Parts | EDM, micromachining and other non-traditional processes: when cutting tools are not the answer | Micro-Droplet Adhesion on a Rotating Micro Tool (MQL) | complements | Chapter covers micro milling and drilling with sub-millimetre tools at high spindle speed; tool applies the handbook micro-droplet adhesion condition, Equation (18b). |
+| Machining by the Numbers | Tool life and the Taylor equation | Tool Life from the Force Ratio FH ÷ FC (Colding) | complements | Chapter models tool life with the Taylor equation; tool applies the handbook Colding relation T = (FH ÷ a FC)^(LF/L) between tool life and force ratio. |
 
 ## 2. Rejected
 
