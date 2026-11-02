@@ -2,7 +2,11 @@
 import { CRUMB } from '../../config/site.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
-import MotionVisual from '../../components/MotionVisual.astro';
+import LearningPlanner from '../../components/discovery/LearningPlanner.astro';
+import DiscoveryResults from '../../components/discovery/DiscoveryResults.astro';
+import { PLANNER_EXAMPLES } from '../../config/home.ts';
+import '../../styles/discovery.css';
+import '../../styles/learning.css';
 import LibraryHero from '../../components/library/LibraryHero.astro';
 import LibraryBrowser from '../../components/library/LibraryBrowser.astro';
 import LibrarySection from '../../components/library/LibrarySection.astro';
@@ -40,8 +44,9 @@ const description =
     total={tools.length}
     noun="tool"
   >
-    <MotionVisual page="tools" slot="visual" compact priority />
+    <LearningPlanner slot="planner" title="Not sure which tool you need?" lead="Describe what you want to learn or work out. KEVOS® builds a step-by-step path: what to read first, which tools to use and in what order." placeholder="e.g. I need to understand machine hour rates and use the right tools to cost a job." examples={PLANNER_EXAMPLES.tools} />
   </LibraryHero>
+  <DiscoveryResults />
   <LibraryBrowser id="tool-directory" name="WORKOS" label={CRUMB.tools} searchAll="Search all tools" base="/tools/" noun="tool" preview={PREVIEW} topics={topics.map((t) => ({ slug: t.slug, name: t.name, description: t.description, icon: t.icon, count: t.items.length }))}>
     {topics.map((topic) => (
       <LibrarySection slug={topic.slug} name={topic.name} description={topic.description} count={topic.items.length} noun="tool" base="/tools/" preview={PREVIEW} subs={topic.subs}>
@@ -95,3 +100,8 @@ const description =
   <script is:inline src="/tools/input-guides.js"></script>
   <script is:inline src="/tools/ui.js"></script>
 </BaseLayout>
+
+<script>
+  // The learning-path box in the header (LearningPlanner.astro): same pipeline as the homepage question box.
+  import '../../scripts/discovery.ts';
+</script>

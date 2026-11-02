@@ -12,6 +12,7 @@
 /* The brand animation sits beside the title on wider screens; small screens go straight to search. */
 @media (min-width: 900px) { .lib-hero__top--visual { grid-template-columns: minmax(0, 1fr) minmax(320px, 470px); } }
 @media (max-width: 899px) { .lib-hero__visual { display: none; } }
+.lib-hero__planner { min-width: 0; margin-top: clamp(1rem, 2.2vw, 1.5rem); }
 .lib-hero__lead { max-width: 60ch; margin: 0.75rem 0 0; font-size: clamp(1.02rem, 0.98rem + 0.25vw, 1.2rem); line-height: 1.5; color: var(--ink-2); }
 
 .lib-search { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.5rem 1rem; margin-top: clamp(1.1rem, 2vw, 1.5rem); }

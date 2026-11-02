@@ -1,4 +1,4 @@
-// KEVOS® discovery on the homepage: the question box and its results. The pipeline (catalogue shortlist → Workers AI
+// KEVOS® discovery (homepage, Tools and Library headers): the question box and its results. The pipeline (catalogue shortlist → Workers AI
 // terms and picks → ranking of real catalogue entries) is src/lib/discovery/client.ts. Everything shown is a catalogue
 // entry; nothing is stored in the browser.
 import { tokens, type Hit, type Outcome } from '../lib/discovery/search.ts';
@@ -334,6 +334,6 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   });
   document.querySelector('[data-discover-again]')?.addEventListener('click', () => { input.focus(); input.scrollIntoView({ block: 'center' }); });
   // A link such as /?q=... (or the site search's fallback) runs the question straight away.
-  const initial = new URLSearchParams(location.search).get('q');
+  const initial = form.hasAttribute('data-discover-autorun') ? new URLSearchParams(location.search).get('q') : null;
   if (initial) { input.value = initial.slice(0, 1000); ask(input.value, ''); }
 }

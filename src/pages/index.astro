@@ -6,7 +6,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
-import ServiceMap from '../components/ServiceMap.astro';
 import LibraryIcon from '../components/library/LibraryIcon.astro';
 import DiscoveryBox from '../components/discovery/DiscoveryBox.astro';
 import DiscoveryExamples from '../components/discovery/DiscoveryExamples.astro';
@@ -15,7 +14,7 @@ import '../styles/discovery.css';
 import '../styles/learning.css';
 import '../styles/library.css';
 import { SITE } from '../config/site.ts';
-import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_ORBIT } from '../config/home.ts';
+import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS } from '../config/home.ts';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
 import { groupToolsByTopic, subcategoryLabel } from '../utils/workos-topics.ts';
 import { buildReadosLibrary } from '../utils/reados-library.ts';
@@ -41,13 +40,6 @@ const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id
 // Cards link to a tool's own page where one exists, as on /tools/.
 const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
 
-const orbit = HOME_ORBIT.map((o) => {
-  const topic = topics.find((t) => t.slug === o.topic);
-  const subject = subjects.find((s) => s.slug === o.subject);
-  if (!topic || !subject) throw new Error(`src/config/home.ts: orbit node ${o.verb} names an unknown topic or subject`);
-  return { verb: o.verb, label: topic.name.replace('&', '&amp;'), tags: `${fmt(topic.items.length)} tools · ${fmt(subject.entries.length)} books`, href: `/tools/?topic=${topic.slug}` };
-});
-
 const description = 'Describe a problem and KEVOS® finds the engineering and business tools and the technical books in its Library that help you solve it.';
 const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
@@ -65,9 +57,8 @@ const schema = [{
         <p class="eyebrow">Tools · Library</p>
         <h1 id="home-title">What would you like to <em>learn</em> or achieve?</h1>
         <p class="home-hero__lead">Describe a subject, ask a question or tell us what you're trying to accomplish. KEVOS will bring together relevant knowledge, practical tools and structured learning materials to create a pathway around your goals.</p>
-        <DiscoveryBox />
       </div>
-      <div class="home-hero__visual"><ServiceMap variant="platform" nodes={orbit} /></div>
+      <div class="home-hero__ask"><DiscoveryBox size="large" autorun /></div>
       <div class="home-hero__wide">
         <DiscoveryExamples suggestions={HOME_DISCOVERY_EXAMPLES} />
         <div class="home-hero__actions">
@@ -212,13 +203,16 @@ const schema = [{
 <style>
   :global(#overview), :global(#connected), :global(#about) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
   .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
-  :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr);gap:1.5rem 4rem;align-items:start}
-  .home-hero__copy h1{margin:1rem 0 1rem;max-width:15ch;font-size:clamp(2.1rem,4.4vw,4.4rem);line-height:1.04}
-  .home-hero__lead{font-size:var(--step-1);line-height:1.5;max-width:48ch;color:var(--ink-2)}
-  .home-hero__actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:2rem}
-  .home-hero__visual{min-width:0;padding-top:.35rem}
-  .home-hero__wide{grid-column:1/-1;min-width:0}
-  .home-stats{display:flex;flex-wrap:wrap;gap:1rem 2.5rem;margin:2.2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--line)}
+    /* One column: the question, then a large question box across the hero (no picture beside it). */
+  :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1fr);gap:0;justify-items:center;text-align:center}
+  .home-hero__copy{display:flex;flex-direction:column;align-items:center;max-width:60rem}
+  .home-hero__copy h1{margin:1rem 0 1rem;max-width:18ch;font-size:clamp(2.1rem,4.6vw,4.6rem);line-height:1.04}
+  .home-hero__lead{font-size:var(--step-1);line-height:1.5;max-width:58ch;color:var(--ink-2)}
+  .home-hero__ask{width:100%;max-width:62rem;text-align:left}
+  .home-hero__actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:2rem}
+  .home-hero__wide{width:100%;max-width:62rem;min-width:0}
+  .home-hero__wide :global(.dq__examples ul){justify-content:center}
+  .home-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem 2.5rem;margin:2.2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--line)}
   .home-stats dt{font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
   .home-stats dd{margin:.3rem 0 0;font-family:var(--font-display);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
   .section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.2rem}
@@ -270,6 +264,7 @@ const schema = [{
   .about-intro__link a:hover{text-decoration:underline;text-underline-offset:3px}
   @media(max-width:1050px){.pathways{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:760px){:global(.home-libs__grid){grid-template-columns:1fr}}
-  @media(max-width:860px){:global(.home-hero__inner){grid-template-columns:1fr}.home-hero__visual{max-width:580px;order:3;padding-top:0}.home-hero__wide{order:2}.about-intro{grid-template-columns:1fr}.flow{grid-template-columns:1fr}}
+  @media(max-width:860px){.about-intro{grid-template-columns:1fr}.flow{grid-template-columns:1fr}}
+  @media(max-width:640px){:global(.home-hero__inner){justify-items:stretch;text-align:left}.home-hero__copy{align-items:flex-start}.home-hero__wide :global(.dq__examples ul),.home-hero__actions,.home-stats{justify-content:flex-start}}
   @media(max-width:640px){.pathways{grid-template-columns:1fr}.section-head{flex-direction:column;align-items:flex-start}}
 </style>

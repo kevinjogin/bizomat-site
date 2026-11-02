@@ -22,14 +22,6 @@ export const HOME_FEATURED_BOOKS = [
   'collection-investment-appraisal-and-business-cases',
 ];
 
-/** The four hero orbit nodes: what people do, the KEVOS® topic it opens and the Library subject counted beside it. */
-export const HOME_ORBIT = [
-  { verb: 'Design', topic: 'engineering-design', subject: 'engineering' },
-  { verb: 'Build', topic: 'manufacturing-production', subject: 'manufacturing' },
-  { verb: 'Operate', topic: 'maintenance-reliability', subject: 'operations' },
-  { verb: 'Improve', topic: 'projects-improvement', subject: 'projects' },
-];
-
 /** Example requests under the homepage box ("What would you like to learn or achieve?"). */
 export const HOME_DISCOVERY_EXAMPLES = [
   'Teach me mechanical engineering from beginner to advanced.',
@@ -40,3 +32,17 @@ export const HOME_DISCOVERY_EXAMPLES = [
   'Teach me project management from fundamentals to professional application.',
   'How can I improve factory productivity and reduce manufacturing costs?',
 ] as const;
+
+/** Example requests for the learning-path box in the Tools and Library page headers (LearningPlanner.astro). */
+export const PLANNER_EXAMPLES = {
+  tools: [
+    'Teach me how to calculate manufacturing costs.',
+    'Help me understand bolted joint design and the calculations behind it.',
+    'I want to learn how to size motors and variable-speed drives.',
+  ],
+  library: [
+    'Teach me mechanical engineering from beginner to advanced.',
+    'I want to learn engineering project management.',
+    'Help me understand lean manufacturing and continuous improvement.',
+  ],
+} as const;

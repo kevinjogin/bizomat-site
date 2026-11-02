@@ -102,3 +102,33 @@
   .dq.is-busy .dq__submit svg { animation: none; }
 }
 @media print { .dq__examples, .dq__actions, .dr__new { display: none; } }
+
+/* Sizes. Large: the homepage hero, the main thing on the page. Compact: the Tools and Library page headers. */
+.dq--large { max-width: none; margin-top: clamp(1.6rem, 3.5vw, 2.4rem); }
+.dq--large .dq__field { border-width: 1.5px; border-color: color-mix(in srgb, var(--accent) 45%, var(--line-strong)); border-radius: 22px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 7%, transparent), 0 24px 70px rgb(0 0 0 / .24); }
+.dq--large .dq__field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 6px var(--accent-soft), 0 24px 70px rgb(0 0 0 / .26); }
+.dq--large textarea { min-height: 9.5rem; padding: 1.4rem 1.5rem .5rem; border-radius: 22px 22px 0 0; font-size: clamp(1.05rem, 1rem + .35vw, 1.25rem); }
+.dq--large .dq__actions { padding: .6rem .8rem .8rem; }
+.dq--large .dq__submit { min-height: 52px; padding: 0 1.5rem; font-size: 1.04rem; }
+.dq--large .dq__support, .dq--large .dq__hint, .dq--large .dq__status { text-align: center; }
+.dq--compact { max-width: none; margin-top: 0; }
+.dq--compact textarea { min-height: 5.8rem; font-size: 1rem; }
+.dq--compact .dq__hint { display: none; }
+@media (max-width: 640px) {
+  .dq--large .dq__support, .dq--large .dq__hint, .dq--large .dq__status { text-align: left; }
+  .dq--large textarea { min-height: 8rem; padding: 1.1rem 1.1rem .4rem; }
+  .dq--large .dq__submit { flex: 1 1 auto; }
+}
+
+/* The learning-path box in the Tools and Library headers (LearningPlanner.astro). */
+.lp { display: grid; gap: 1rem 2rem; align-items: start; padding: clamp(1rem, 2vw, 1.5rem); border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line-strong)); border-radius: 18px; background: var(--surface); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 6%, transparent); }
+.lp__eyebrow { margin: 0; color: var(--accent); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.lp__title { margin: .35rem 0 .3rem; font-size: clamp(1.15rem, 1.05rem + .5vw, 1.45rem); line-height: 1.2; }
+.lp__lead { margin: 0 0 .8rem; color: var(--ink-2); font-size: .92rem; line-height: 1.45; }
+.lp .dq__support { margin-top: .5rem; font-size: .86rem; }
+.lp .dq__examples { margin-top: .4rem; }
+.lp__intro, .lp__ask { min-width: 0; }
+@media (min-width: 900px) { .lp { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); } }
+/* Phones: heading, then the box, then the examples. */
+@media (max-width: 899px) { .lp { gap: .2rem; } .lp__intro { display: contents; } .lp__ask { order: 1; } .lp__intro .dq__examples { order: 2; margin-top: .6rem; } }
+.lp .dq__chip { font-size: .8rem; min-height: 38px; }

@@ -458,6 +458,36 @@ try {
     check('learn (mobile): no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
+  // 13. The learning-path box in the Tools and Library headers (no animation there since 2 Nov 2026)
+  {
+    const { ctx, pg, errors, learnCalls } = await page();
+    for (const [path, label] of [['/reados/', 'Library'], ['/tools/', 'Tools']]) {
+      await pg.goto(BASE + path);
+      check(`${label}: the header holds the learning-path box, not an animation`, (await pg.locator('.lib-hero .lp #discover-question').count()) === 1 && (await pg.locator('.lib-hero .mv').count()) === 0);
+      check(`${label}: three example prompts`, (await pg.locator('.lp [data-discover-example]').count()) === 3);
+      check(`${label}: directory search still there`, (await pg.locator('[data-lib-input]').count()) === 1);
+    }
+    await pg.goto(BASE + '/reados/');
+    await ask(pg, 'Teach me mechanical engineering from beginner to advanced.');
+    await pg.waitForSelector('.lc', { timeout: 15000 });
+    check('Library: a course appears under the header, above the directory', await pg.evaluate(() => { const r = document.querySelector('[data-discover-results]'); const d = document.querySelector('.lib-hero'); return !r.hidden && (d.compareDocumentPosition(r) & Node.DOCUMENT_POSITION_FOLLOWING) > 0; }));
+    const before = learnCalls.length;
+    await pg.goto(BASE + '/tools/?q=bolt%20torque');
+    await pg.waitForTimeout(1500);
+    check('Tools: ?q= stays a directory search and does not start a learning path', learnCalls.length === before && await pg.locator('[data-discover-results]').isHidden());
+    await pg.goto(BASE + '/tools/');
+    await ask(pg, 'Teach me how to calculate manufacturing costs.');
+    await pg.waitForSelector('.lc', { timeout: 15000 });
+    await pg.goto(BASE + '/tools/?tool=downtime-cost');
+    await pg.waitForTimeout(800);
+    check('Tools: the course area is hidden while a tool is open', await pg.locator('[data-discover-results]').isHidden());
+    check('Tools / Library box: no console errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+    const m = await page({ width: 390, height: 844 });
+    await m.pg.goto(BASE + '/reados/');
+    check('Library (mobile): the box comes before the examples and nothing scrolls sideways', await noSideScroll(m.pg) && await m.pg.evaluate(() => document.querySelector('.lp__ask').getBoundingClientRect().top < document.querySelector('.lp .dq__examples').getBoundingClientRect().top));
+    await m.ctx.close();
+  }
   // 9. No-JS fallback
   {
     const ctx = await browser.newContext({ javaScriptEnabled: false });

@@ -1,6 +1,7 @@
 ---
-// Shared compact header for the KEVOS® and the Library libraries: one title, one sentence, the library's compact
-// brand animation (the "visual" slot) beside them, then the library search across the full width.
+// Shared compact header for the KEVOS® Tools and Library directories: one title, one sentence, the learning-path box
+// (the "planner" slot, LearningPlanner.astro) or another visual beside them, then the directory search across the full
+// width.
 import Container from '../Container.astro';
 import LibrarySearch from './LibrarySearch.astro';
 
@@ -16,18 +17,20 @@ interface Props {
   noun: string;
 }
 const { title, description, ...search } = Astro.props;
-const visual = Astro.slots.has('visual');
+const planner = Astro.slots.has('planner');
+const visual = planner || Astro.slots.has('visual');
 ---
 
 <header class="lib-hero" data-library-intro>
   <Container>
-    <div class:list={['lib-hero__top', visual && 'lib-hero__top--visual']}>
+    <div class:list={['lib-hero__top', visual && !planner && 'lib-hero__top--visual']}>
       <div class="lib-hero__copy">
         <h1 class="lib-hero__title">{title}</h1>
         <p class="lib-hero__lead">{description}</p>
       </div>
-      {visual && <div class="lib-hero__visual"><slot name="visual" /></div>}
+      {!planner && visual && <div class="lib-hero__visual"><slot name="visual" /></div>}
     </div>
+    {planner && <div class="lib-hero__planner"><slot name="planner" /></div>}
     <LibrarySearch {...search} />
   </Container>
 </header>

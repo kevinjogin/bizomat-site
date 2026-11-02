@@ -2,14 +2,26 @@
 // "What would you like to learn or achieve?": the question box (learning paths and Ask KEVOS). Without JavaScript the form is a plain site search
 // (/search/?q=); with it, src/scripts/discovery.ts asks /api/discover for search terms and ranks the KEVOS® and the Library
 // catalogue (/discovery-index.json) in the browser, rendering results into DiscoveryResults. The example questions are
-// DiscoveryExamples.astro, placed by the page (on the homepage, full width under the hero).
+// DiscoveryExamples.astro, placed by the page (on the homepage, full width under the hero). The same box sits in the
+// Tools and Library page headers (size "compact"); only the homepage runs a question from its address (?q=, `autorun`),
+// because on those pages ?q= belongs to the directory search.
+interface Props {
+  size?: 'large' | 'compact';
+  autorun?: boolean;
+  placeholder?: string;
+}
+const {
+  size = 'large',
+  autorun = false,
+  placeholder = 'e.g. I want to learn manufacturing process improvement from beginner to advanced, including OEE, production capacity, downtime analysis and cost reduction.',
+} = Astro.props;
 ---
 
-<form class="dq" role="search" action="/search/" method="get" data-discover-form novalidate>
+<form class:list={['dq', `dq--${size}`]} role="search" action="/search/" method="get" data-discover-form data-discover-autorun={autorun ? '' : undefined} novalidate>
   <label class="visually-hidden" for="discover-question">Describe what you would like to learn or achieve</label>
   <div class="dq__field">
-    <textarea id="discover-question" name="q" rows="3" maxlength="1000" autocomplete="off" spellcheck="true" enterkeyhint="search"
-      placeholder="e.g. I want to learn manufacturing process improvement from beginner to advanced, including OEE, production capacity, downtime analysis and cost reduction." aria-describedby="discover-hint discover-status" data-discover-input></textarea>
+    <textarea id="discover-question" name="q" rows={size === 'large' ? 4 : 3} maxlength="1000" autocomplete="off" spellcheck="true" enterkeyhint="search"
+      placeholder={placeholder} aria-describedby="discover-hint discover-status" data-discover-input></textarea>
     <div class="dq__actions">
       <button class="dq__clear" type="button" aria-label="Clear the question" data-discover-clear hidden>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
