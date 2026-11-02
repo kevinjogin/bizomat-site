@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1025 tools with unique ids and every previously published id kept', () => {
+test('register: 1030 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1025);
+  assert.equal(ids.length, 1030);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 831 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 836 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 831);
+  assert.equal(ids.length, 836);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -7058,4 +7058,50 @@ test('nose radius finish rule reproduces the handbook examples', () => {
   const b = engine.run('nose-radius-finish-change', { Ra1: 1, r1: 0.8, r2: 1.2, Rat: 0 }).values; near(b.ratio, 1.224, 1e-3, '(1.2/0.8)^0.5'); near(b.Ra2, 0.82, 0.005, '0.82 Ra1'); near(b.rough, 1.23, 0.01, 'roughing 1.23 Ra1');
   near(engine.run('nose-radius-finish-change', { Ra1: 1.6, r1: 0.8, r2: 1.6, Rat: 0.8 }).values.rT, 3.2, 1e-12, 'radius for half the finish is four times larger');
   assert.equal(engine.run('nose-radius-finish-change', { Rat: 1.2 }).text, 'TARGET FINISH REACHED'); assert.equal(engine.run('nose-radius-finish-change', { Rat: 1 }).text, 'FINISH ABOVE THE TARGET');
+});
+
+// Seventy-seventh handbook pass (handbook100): deep audit of the speed table adjustment method, the grinding force and
+// economic wheel life pages, the bolt torque friction equations and the alternative power thread forms. Expected values
+// are the handbook's worked examples; table speeds in ft/min entered as m/min scale through the linear formulas.
+test('cutting speed table adjustment reproduces the turning and milling examples', () => {
+  const a = (o: Inputs) => engine.run('cutting-speed-table-adjustment', { Fd: 1, Far: 1, D: 50, z: 1, ...o });
+  near(a({ op: 'turn', fopt: 0.017, Vopt: 615, Vavg: 815, f: 0.015, Ff: 1.07 }).values.V, 658, 0.5, 'turning Example 1: 658 fpm'); near(a({ op: 'turn', fopt: 0.017, Vopt: 615, Vavg: 815, f: 0.015, Ff: 1.07 }).values.vr, 1.325, 1e-3, 'speed ratio about 1.35');
+  near(a({ op: 'turn', Vopt: 615, Ff: 1.07, Fd: 1.03 }).values.V, 615 * 1.07 * 1.03, 1e-9, 'Example 2 (printed 676)');
+  near(a({ op: 'face', fopt: 0.008, Vopt: 2320, Vavg: 4755, f: 0.006, Ff: 1.34 }).values.V, 3108.8, 0.1, 'face milling 3109 fpm'); near(a({ op: 'face', fopt: 0.008, Vopt: 2320, Vavg: 4755, f: 0.006, Ff: 1.34 }).values.fr, 0.75, 1e-12, 'feed ratio 0.75');
+  near(a({ op: 'face', Vopt: 2320 * 0.3048, Ff: 1.34, D: 101.6 }).values.n, 2970, 5, '2970 rpm on a 4 in cutter');
+  near(a({ op: 'slot', Vopt: 80, Ff: 6.86 }).values.V, 548.8, 1e-9, 'full slot 548.8 fpm');
+  const s = a({ op: 'side', fopt: 0.015, Vopt: 80, Vavg: 240, f: 0.05, kmax: 4.5, kmin: 3.1, Ff1: 7.9, Ff2: 7.01, Fd: 0.93 });
+  near(s.values.fmax, 0.0675, 1e-12, 'fmax = 4.5 × 0.015'); near(s.values.fmin, 0.0465, 1e-12, 'fmin = 3.1 × 0.015'); near(s.values.fRatioMax, 0.74, 0.005, 'f ÷ fmax 0.74'); near(s.values.Ff, 7.01 + 3.5 / 21 * 0.89, 1e-9, 'Table 15c interpolation from Ff2 at fmin'); assert.equal(s.text, 'FEED IN THE RECOMMENDED RANGE');
+  const t = a({ op: 'side', fopt: 0.007, Vopt: 15, Vavg: 45, f: 0.012, kmax: 2, kmin: 10 / 7, Ff1: 6.77, Ff2: 7.76, Fd: 0.73 }).values;
+  near(t.Ff, 7.265, 1e-9, 'Table 15c note: Ff = 7.27'); near(t.V, 80, 0.5, 'V = 15 × 7.27 × 0.73 = 80 fpm'); near(t.fRatioMax, 0.857, 1e-3, 'feed ratio 0.86');
+  assert.equal(a({ op: 'side', fopt: 0.015, f: 0.08, kmax: 4.5, kmin: 3.1 }).text, 'FEED OUTSIDE THE RECOMMENDED RANGE');
+  const fr = a({ op: 'slot', Vopt: 85 * 0.3048, Ff: 1, D: 76.2, z: 8, f: 0.008 * 25.4 }).values; near(fr.n, 108, 0.5, '12 × 85 ÷ (3.14 × 3) = 108 rpm'); near(fr.vf / 25.4, 7, 0.1, 'about 7 in/min');
+  near(a({ op: 'slit1', Vopt: 100, Ff: 1.2, Far: 1.1, Fd: 5 }).values.V, 132, 1e-9, 'slit milling fed in: Fd not used'); near(a({ op: 'hss', Vopt: 100, Ff: 1.1, Fd: 0.9 }).values.V, 99, 1e-9, 'HSS V = VHSS Ff Fd');
+});
+
+test('grinding force and economic wheel life follow the handbook', () => {
+  const g = engine.run('grinding-force-and-power', { ECT: 0.00017, CEL: 10, Kc: 150000, ratio: 3, V: 1800, Dw: 400, Pav: 0 });
+  near(g.values.A, 0.0017, 1e-12, 'chip area 0.0017 mm²'); near(g.values.Fc, 255, 1e-9, 'Example 5: 255 N'); near(g.values.FH, 765, 1e-9, 'FH = 3 Fc'); near(g.values.P, 255 * 1800 / 60000, 1e-12, 'power'); near(g.values.Tq, 51, 1e-9, 'torque Fc D ÷ 2');
+  assert.equal(engine.run('grinding-force-and-power', { Pav: 50 }).text, 'WITHIN THE SPINDLE POWER'); assert.equal(engine.run('grinding-force-and-power', { Pav: 0.1 }).text, 'OVER THE SPINDLE POWER');
+  const e = (o: Inputs) => engine.run('grinding-economic-wheel-life', { HR: 60, Cd: 0, ...o }).values;
+  near(e({ TRPL: 1, Cw: 1 }).TE, 6, 1e-12, 'TV 2 min gives TE 6 min'); near(e({ TRPL: 1, Cw: 4 }).TE, 15, 1e-12, 'TV 5 min gives TE 15 min'); near(e({ TRPL: 0.5, Cw: 1, Cd: 1.5 }).TV, 0.5 + 60 * 2.5 / 60, 1e-12, 'CE = wheel + dressing');
+  const v = e({ TRPL: 1, Cw: 1, C: 1500 * 6 ** 0.26, ECT: 0.00067, ar: 0.01 }); near(v.V, 1500, 1e-9, 'Taylor line at TE'); near(v.SMRR, 1005, 1e-9, 'SMRR 1000 × 1500 × 67 × 10⁻⁵ ≈ 1000'); near(v.Vw, 100, 1, 'Vw about 100 m/min at ar = 0.01');
+  near(e({ TRPL: 1, Cw: 1, C: 1100 * 6 ** 0.26, ECT: 0.00067, ar: 0.005 }).Vw, 150, 3, 'about 150 m/min at ar = 0.005 for 1100 m/min');
+});
+
+test('bolt torque friction equations reproduce the 1/2-13 grade 8 example', () => {
+  const b = engine.run('bolt-torque-thread-friction', { d: 0.5, P: 1 / 13, starts: 1, alpha: 30, pre: 'pct', Sut: 150, pct: 55, mu1: 0.15, mu2: 0.15, b: 0 }).values; // inches and ksi, so loads in kips
+  near(b.As, 0.1419, 5e-5, 'stress area 0.1419 in²'); near(b.PB, 11.707, 0.003, 'preload 11,707 lbf'); near(b.T24, 1.158, 0.002, 'Equation (24): 1158 lb-in'); near(b.T23, b.T24, 1e-12, 'equal coefficients: (23) = (24)');
+  near(b.T22, b.PB * (1 / (13 * 2 * Math.PI) + (0.5 - 0.6495 / 13) * 0.15 / (2 * Math.cos(Math.PI / 6)) + 1.25 * 0.15 / 4), 1e-12, 'Equation (22) with d2 and b = 1.5 d');
+  near(b.share, b.T1 / b.T22 * 100, 1e-12, 'share that stretches the bolt');
+  const d = engine.run('bolt-torque-thread-friction', { pre: 'direct', PB: 20, mu1: 0.1, mu2: 0.2, d: 10, P: 1.5, b: 16 }).values; near(d.PB, 20000, 1e-9, 'direct preload'); near(d.T3, 20000 * 26 * 0.2 / 4, 1e-9, 'T3 = PB (d + b) μ2 ÷ 4');
+  assert.equal(engine.run('bolt-torque-thread-friction', { b: 10 }).text, 'CHECK INPUTS');
+});
+
+test('power thread basic sizes follow the alternative thread formulas', () => {
+  const p = (form: string, o: Inputs = {}) => engine.run('power-thread-basic-sizes', { form, D: 40, p: 6, starts: 1, C: 0.15, ...o }).values;
+  const m = p('ms'); near(m.E, 37, 1e-12, 'E = D − 0.5p'); near(m.K, 34, 1e-12, 'K = D − p'); near(m.F, 0.4563 * 6, 1e-12, 'F = 0.4563p'); near(m.G, 0.4563 * 6 - 0.17 * 0.15, 1e-12, 'G = 0.4563p − 0.17C'); near(m.hc, 3.15, 1e-12, 'h + C');
+  const s = p('st'); near(s.h, 0.433 * 6, 1e-12, 'stub h = 0.433p'); near(s.E, 40 - 0.433 * 6, 1e-12, 'E = D − 0.433p'); near(s.K, 40 - 0.866 * 6, 1e-12, 'K = D − 0.866p'); near(s.F, 1.5, 1e-12, 'F = 0.25p'); near(s.G, 0.227 * 6, 1e-12, 'G = 0.227p');
+  near(p('sq').h, 3, 1e-12, 'square h = 0.5p'); near(p('ms', { starts: 2 }).la, Math.atan(12 / (Math.PI * 37)) * 180 / Math.PI, 1e-9, 'lead angle of two starts');
+  assert.equal(engine.run('power-thread-basic-sizes', { form: 'st', C: 0.1 }).checks.find((c: any) => c.label === 'Clearance').status, 'fail');
 });

@@ -3691,3 +3691,26 @@ Five tools in batch handbook99 from the deep audit of the shaft alignment pages:
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Surface Finish Change with Tool Nose Radius (Colding Rule)** `nose-radius-finish-change` | CALCULATED | Target; Same ECT and speed; Model and application | 1143–1144 | Automated |
+## Machinery’s Handbook ledger tools, batch handbook100 (added 2 November 2026)
+
+Five tools in batch handbook100 from the deep audit of the speeds and feeds adjustment method: the cutting speed adjusted from the optimum and average table pair by the feed, depth and radial depth factors, with the side milling feed range and interpolated feed factor (pp. 1025, 1034–1035, 1040–1042, 1055–1057); from the grinding pages, grinding force, torque and power from the equivalent chip thickness (pp. 1203–1204) and the economic wheel life TE = 3 TV with the wheel speed on the Taylor line (pp. 1200, 1205, 1215); from the fastener pages, the tightening torque with separate thread and bearing friction by Equations (21) to (24) (pp. 1529–1534); and from the thread pages, the basic sizes of square, 10° modified square and 60° stub power threads (p. 1944). Table factors, specific grinding forces, costs, rates, friction coefficients and bolt strengths are always user inputs. WORKOS now holds 1030 tools.
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Cutting Speed Adjusted from the Feed and Speed Tables (Turning, Milling, Drilling)** `cutting-speed-table-adjustment` | CALCULATED | Feed range; Table speeds; Model and application | 1025, 1034–1035, 1040–1042, 1055–1057 | Automated |
+| **Grinding Force, Torque and Power from Equivalent Chip Thickness** `grinding-force-and-power` | WITHIN THE SPINDLE POWER | Spindle power; Force data; Model and application | 1203–1204 | Automated |
+| **Grinding Economic Wheel Life and Wheel Speed** `grinding-economic-wheel-life` | CALCULATED | Wheel speed; Tooling-cost time; Model and application | 1200, 1205, 1215 | Automated |
+
+### Fasteners
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Bolt Tightening Torque with Separate Thread and Bearing Friction** `bolt-torque-thread-friction` | CALCULATED | Friction coefficients; Simplified forms; Model and application | 1529–1534 | Automated |
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Square, Modified Square and 60° Stub Thread Basic Sizes** `power-thread-basic-sizes` | CALCULATED | Clearance; Tolerances; Model and application | 1944 | Automated |
