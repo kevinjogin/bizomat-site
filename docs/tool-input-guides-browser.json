@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1030,
- "passed": 1030,
- "inputs": 8933,
- "figures": 8933,
+ "tools": 1034,
+ "passed": 1034,
+ "inputs": 8967,
+ "figures": 8967,
  "sample": [
   {
    "id": "make-buy",
@@ -6314,6 +6314,30 @@
    "ok": true,
    "inputs": 5,
    "figures": 5
+  },
+  {
+   "id": "spline-pin-measurement",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "iso-fit-limits-from-deviations",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "cylinder-portion-volume",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "after-tax-npv-comparison",
+   "ok": true,
+   "inputs": 13,
+   "figures": 13
   }
  ]
 }

@@ -2,7 +2,7 @@
 
 Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 867 relationships (561 from links authors wrote in the books, 306 from editorial review). Rejected: 130. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 871 relationships (561 from links authors wrote in the books, 311 from editorial review). Rejected: 131. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -316,6 +316,11 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machining by the Numbers | Machining economics: choosing a cutting speed | Grinding Economic Wheel Life and Wheel Speed | complements | Chapter finds minimum-cost speed from machine rate and tool change cost; tool applies the handbook economic wheel life TE = 3 TV with TV = TRPL + 60 CE ÷ HR. |
 | Bolted Joints by the Numbers | Tightening by torque: the nut factor and its scatter | Bolt Tightening Torque with Separate Thread and Bearing Friction | complements | Chapter explains torque going to stretch, thread friction and underhead friction; tool applies handbook Equations (21) to (24) with separate thread and bearing friction. |
 | Machine Elements and Mechanical Design | Power screws and linear motion: leadscrews, ball screws, linear guides and cams | Square, Modified Square and 60° Stub Thread Basic Sizes | complements | Chapter compares trapezoidal and Acme power screws with ball screws; tool gives basic dimensions of the square, 10° modified square and 60° stub power threads. |
+| Tolerances That Work | Choosing and calculating fits | ISO Limits of Size and Fit from the Fundamental Deviations | complements | Chapter teaches choosing and calculating ISO fits; tool applies the handbook procedure es/ei, ES/EI ± IT with the delta value and gives the clearance range. |
+| Checking Drawings by the Numbers | Limits and fits, recalculated from the drawings | ISO Limits of Size and Fit from the Fundamental Deviations | complements | Chapter checks limits and fits on drawings; tool calculates the limits of both parts and the fit type from the table deviations. |
+| Practical Mathematics for Engineering and Manufacturing | Areas, volumes and masses for the workshop: estimating material, weight, coatings and lifts | Volume and Surface of a Cylinder Cut by a Plane (Ungula and Truncated Cylinder) | complements | Chapter covers workshop areas, volumes and masses of common solids; tool gives the handbook portion-of-cylinder (ungula and cut-off cylinder) formulas. |
+| Investment Appraisal and Business Cases | NPV, IRR and payback answer different questions: reading investment measures when they disagree | After-Tax Net Present Value of Two Alternatives with Depreciation Recovery | complements | Chapter explains NPV against IRR and payback; tool applies the handbook after-tax present worth with ATDR for straight-line depreciation and gradient expenses. |
+| Gears by the Numbers | Measuring and specifying a gear | Inch Involute Spline Measurement Between or Over Pins | complements | Chapter uses measurement over pins or balls for gear tooth thickness; tool gives the handbook two-pin measurements for internal and external involute splines. |
 
 ## 2. Rejected
 
@@ -451,6 +456,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Railway Track Geometry by the Numbers | The track as a structure | Rail Width and Track Wheel Diameter for a Wheel Load | Rejected: chapter follows a railway wheel load down through rail, sleepers and ballast; the tool applies empirical rail head and track wheel rules for handling equipment and the AREA roller load, not railway track design. |
 | Gears by the Numbers | Tooth bending strength | Beam of Uniform Strength: Safe Load, Size and Outline | Rejected: chapter treats the gear tooth as a cantilever in the Lewis bending equation; the tool sizes tapered beams and levers, not gear teeth. |
 | Bolted Joints by the Numbers | Threads, tapped holes and screw lengths | Square, Modified Square and 60° Stub Thread Basic Sizes | Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads. |
+| Checking Drawings by the Numbers | Limits and fits, recalculated from the drawings | Inch Involute Spline Measurement Between or Over Pins | Rejected: chapter checks limits and fits of plain holes and shafts on drawings; spline pin measurement is a gear inspection method, not a drawing check. |
 
 ## 3. Published READOS books with no approved connection
 
@@ -474,7 +480,6 @@ Their pages show a WORKOS topic to browse where the category maps to one, and no
 | CAD Automation That Pays | publication | Engineering | Engineering & Design |
 | CAD Drafting and Drawing Standards | collection | technology | nothing |
 | Careers, Confidence and Personal Effectiveness | collection | business | Business & Commercial |
-| Checking Drawings by the Numbers | publication | Engineering | Engineering & Design |
 | Commercial Law, Contracts and Disputes | collection | business | Business & Commercial |
 | Commissioning Custom Software | publication | Projects | Projects & Improvement |
 | Communication and Professional Presence | collection | business | Business & Commercial |

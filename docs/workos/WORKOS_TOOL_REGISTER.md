@@ -3714,3 +3714,30 @@ Five tools in batch handbook100 from the deep audit of the speeds and feeds adju
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **Square, Modified Square and 60° Stub Thread Basic Sizes** `power-thread-basic-sizes` | CALCULATED | Clearance; Tolerances; Model and application | 1944 | Automated |
+## Machinery’s Handbook ledger tools, batch handbook101 (added 2 November 2026)
+
+Four tools in batch handbook101 from the deep audit: the two-pin measurement between or over pins of inch involute splines (pp. 2271–2272), the limits of size and fit from the fundamental deviations, IT values and delta values of the BS ISO limits procedure (pp. 662–664), the volume and curved surface of a cylinder cut by a plane through a chord of its base or across its whole section (pp. 83–84), and the after-tax net present value of two alternatives with straight-line depreciation recovery and gradient expenses (pp. 136–141). Table deviations, IT and delta values, rates, tax and cash flows are always user inputs. WORKOS now holds 1034 tools.
+
+### Gears
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Inch Involute Spline Measurement Between or Over Pins** `spline-pin-measurement` | CALCULATED | Pin size; Use of the result; Model and application | 2271–2272 | Automated |
+
+### Quality
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **ISO Limits of Size and Fit from the Fundamental Deviations** `iso-fit-limits-from-deviations` | INTERFERENCE FIT | Delta value; Table values; Model and application | 662–664 | Automated |
+
+### Geometry
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Volume and Surface of a Cylinder Cut by a Plane (Ungula and Truncated Cylinder)** `cylinder-portion-volume` | CALCULATED | Base side; Model and application | 83–84 | Automated |
+
+### Money
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **After-Tax Net Present Value of Two Alternatives with Depreciation Recovery** `after-tax-npv-comparison` | CHOOSE ALTERNATIVE B | Return; Depreciation; Model and application | 136–141 | Automated |
