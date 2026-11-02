@@ -9,7 +9,7 @@ draft: false
 
 A narrow rotor, one whose length along the shaft is small compared with its diameter, can usually be balanced in a single plane. A fan wheel, a pulley, a grinding wheel or a flywheel behaves almost as if all its mass lay in one plane, so any unbalance it has is effectively static: its centre of mass is off the axis, and one correction weight opposite the heavy side puts it back.
 
-This chapter balances the HM-30's discharge fan wheel. It shows how known unbalances add as vectors, how a WORKOS tool works out the correction and the residual left by practical weights and placement, how to balance in place on the machine with a trial weight when the unbalance is not known, and how a correction placed at a mirror-image angle made the vibration worse.
+This chapter balances the HM-30's discharge fan wheel. It shows how known unbalances add as vectors, how a KEVOS® tool works out the correction and the residual left by practical weights and placement, how to balance in place on the machine with a trial weight when the unbalance is not known, and how a correction placed at a mirror-image angle made the vibration worse.
 
 ## The discharge fan
 
@@ -65,7 +65,7 @@ body:
 
 The correction is a mass m_c placed at a chosen radius r_c, opposite the resultant, with m_c × r_c equal to the resultant unbalance. In practice there are two limitations. Weights come in steps, say 1 g washers or 5 g clips, so the exact mass must be rounded. And a weight is never placed at exactly the right angle; a few degrees' error is normal. Both leave a residual unbalance.
 
-The WORKOS [Single-plane balance correction check](/tools/balance-correction-check/) tool does the whole calculation. From up to four known unbalance masses, each with its radius and angle, it gives the resultant unbalance and its angle, the centrifugal force it produces at the rotor's speed, the exact correction mass at your correction radius and its angle opposite, and the correction rounded to your weight step. It then works out the residual unbalance left by the rounded weight placed with your angle error, and compares it with the permissible residual for the rotor's mass, maximum speed and balance grade.
+The KEVOS® [Single-plane balance correction check](/tools/balance-correction-check/) tool does the whole calculation. From up to four known unbalance masses, each with its radius and angle, it gives the resultant unbalance and its angle, the centrifugal force it produces at the rotor's speed, the exact correction mass at your correction radius and its angle opposite, and the correction rounded to your weight step. It then works out the residual unbalance left by the rounded weight placed with your angle error, and compares it with the permissible residual for the rotor's mass, maximum speed and balance grade.
 
 ```figure
 type: steps

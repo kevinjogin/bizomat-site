@@ -5,7 +5,7 @@ description: "Plan a small welding and fabrication shop with numbers: the work, 
 category: Business
 tags: [startups, operations, finance, manufacturing, sales]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -83,4 +83,4 @@ This book is educational. Electrical installation work must be done by licensed 
 
 ## An original treatment
 
-READOS covers the welding processes themselves in Arc Welding by the Numbers and Oxy-Fuel by the Numbers, and the gases in Industrial Gases by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers the welding processes themselves in Arc Welding by the Numbers and Oxy-Fuel by the Numbers, and the gases in Industrial Gases by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.

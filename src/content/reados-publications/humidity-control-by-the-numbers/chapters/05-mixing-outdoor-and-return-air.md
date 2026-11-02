@@ -9,7 +9,7 @@ draft: false
 
 Nearly every air-handling unit starts with a mixing box, where outdoor air meets air returned from the space. Recirculating return air saves energy, because it has already been heated, cooled and humidified; outdoor air is needed for the people in the space, to replace air that is exhausted and to keep the building slightly pressurised. The proportions are set by dampers, and the state of the mixture they produce is the starting point for every coil and humidifier downstream.
 
-This chapter sets out the three balances that govern mixing, applies them to the press hall's four design states with the WORKOS mixing tool, explains why the outdoor-air share should be counted by mass, and looks at what sets the minimum outdoor air and when bringing in more of it saves energy. It ends with a heat-recovery proposal that would have filled the air-handling unit's filters with fog on cold mornings.
+This chapter sets out the three balances that govern mixing, applies them to the press hall's four design states with the KEVOS® mixing tool, explains why the outdoor-air share should be counted by mass, and looks at what sets the minimum outdoor air and when bringing in more of it saves energy. It ends with a heat-recovery proposal that would have filled the air-handling unit's filters with fog on cold mornings.
 
 ## Three balances
 

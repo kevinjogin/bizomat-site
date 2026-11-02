@@ -9,7 +9,7 @@ draft: false
 
 A plate clutch is the simplest friction device to analyse and the most common in machinery. Flat annular linings are pressed together by springs, and the torque they carry is the friction force times the radius at which it acts, added up over every face that slips. The design questions are how much force, how many faces and what size of lining, and the answers depend on one modelling choice that this chapter explains: whether the pressure is spread evenly or the wear is.
 
-The chapter sizes the SW-25's clutch on the gearbox output shaft with the WORKOS plate clutch and disc brake torque tool, checks it against the friction range from Chapter 2, and follows its capacity as the plates wear. Its mistake is a miscount of friction faces in a supplier's quotation.
+The chapter sizes the SW-25's clutch on the gearbox output shaft with the KEVOS® plate clutch and disc brake torque tool, checks it against the friction range from Chapter 2, and follows its capacity as the plates wear. Its mistake is a miscount of friction faces in a supplier's quotation.
 
 ## Torque from a ring of friction
 

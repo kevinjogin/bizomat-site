@@ -5,7 +5,7 @@ description: "Track geometry with numbers: curves and versines, cant and equilib
 category: Engineering
 tags: [design, projects, quality, operations, systems]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -62,4 +62,4 @@ This book is educational. Track design and construction on a railway network are
 
 ## An original treatment
 
-READOS covers the clearances affected by track geometry in Railway Clearances by the Numbers; this book links to it rather than repeating it. The explanations, the cooperative case, the derivations, figures and exercises are original KEVOS® writing, built from geometry and mechanics. The ARTC documents are copyright; a small number of their values are quoted with citation for teaching, and none of their text, tables or drawings is reproduced.
+The Library covers the clearances affected by track geometry in Railway Clearances by the Numbers; this book links to it rather than repeating it. The explanations, the cooperative case, the derivations, figures and exercises are original KEVOS® writing, built from geometry and mechanics. The ARTC documents are copyright; a small number of their values are quoted with citation for teaching, and none of their text, tables or drawings is reproduced.

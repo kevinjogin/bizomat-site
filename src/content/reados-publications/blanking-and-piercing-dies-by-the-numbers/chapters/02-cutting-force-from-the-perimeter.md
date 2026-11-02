@@ -17,7 +17,7 @@ When a punch cuts, the metal resisting it is a band around the punch's whole out
 
 F = L × t × τ
 
-where L is the total length of all edges cut in the same stroke, in millimetres, t is the sheet thickness in millimetres, and τ is the shear strength in megapascals. Since one megapascal is one newton per square millimetre, the result is in newtons. Hodgson used the same relationship in 1903, in inches and tons, and every punch maker publishes a version of it today. READOS's Sheet Metal Parts by the Numbers applies it to single holes in [its chapter on press brake and punching force](/reados/publications/sheet-metal-parts-by-the-numbers/press-brake-and-punching-force/), and WORKOS's [punching force calculator](/tools/punching-force/) does the arithmetic.
+where L is the total length of all edges cut in the same stroke, in millimetres, t is the sheet thickness in millimetres, and τ is the shear strength in megapascals. Since one megapascal is one newton per square millimetre, the result is in newtons. Hodgson used the same relationship in 1903, in inches and tons, and every punch maker publishes a version of it today. The Library’s Sheet Metal Parts by the Numbers applies it to single holes in [its chapter on press brake and punching force](/reados/publications/sheet-metal-parts-by-the-numbers/press-brake-and-punching-force/), and the KEVOS® [punching force calculator](/tools/punching-force/) does the arithmetic.
 
 The estimate deliberately ignores several things: the friction of the punch in the sheet, the extra force of blunt edges, the effect of clearance, and the stripper springs, which press down on the strip at the same time. Chapter 5 adds the springs. The others are covered by the margin a press is chosen with, and they are why a force estimate is a starting point, not a press rating.
 
@@ -110,7 +110,7 @@ Stepping works best when the stations are close in force. MP-40's outline domina
 
 ## Shear on the cutting edges
 
-A guillotine's blade is set at an angle, its rake, so that it cuts progressively along the sheet instead of all at once. Hodgson noted shearing machines with a dip on one blade of 5 to 15 degrees, for exactly that reason, and WORKOS's [shearing blade force calculator](/tools/shearing-blade-force/) estimates the force on a raked blade. A die can do the same by grinding **shear** into a cutting face: the face is ground in a shallow V or a wave, so that only part of the outline cuts at a time.
+A guillotine's blade is set at an angle, its rake, so that it cuts progressively along the sheet instead of all at once. Hodgson noted shearing machines with a dip on one blade of 5 to 15 degrees, for exactly that reason, and the KEVOS® [shearing blade force calculator](/tools/shearing-blade-force/) estimates the force on a raked blade. A die can do the same by grinding **shear** into a cutting face: the face is ground in a shallow V or a wave, so that only part of the outline cuts at a time.
 
 Shear has a cost in flatness. Whichever piece sits against the sheared tool is bent as it is cut. The rule follows from which piece is kept:
 

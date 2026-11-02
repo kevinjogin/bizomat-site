@@ -28,7 +28,7 @@ With sharp corners, a 75 × 75 × 6 angle is a vertical leg of 75 × 6 mm and a 
 - the vertical leg's area is 450 mm², its centroid 3 mm out;
 - the horizontal leg's area is 414 mm², its centroid 6 + 69 ÷ 2 = 40.5 mm out.
 
-The section's centroid is (450 × 3 + 414 × 40.5) ÷ 864 = **20.97 mm** from the back. A real rolled angle has a radius at its root and rounded toes, and published section tables give its centroid allowing for them; the value differs a little from the sharp-corner figure. The shop uses its supplier's table value for production and the sharp-corner figure for teaching and checking. The WORKOS [section properties calculator](/tools/section-properties/) gives the centroid of any built-up section.
+The section's centroid is (450 × 3 + 414 × 40.5) ÷ 864 = **20.97 mm** from the back. A real rolled angle has a radius at its root and rounded toes, and published section tables give its centroid allowing for them; the value differs a little from the sharp-corner figure. The shop uses its supplier's table value for production and the sharp-corner figure for teaching and checking. The KEVOS® [section properties calculator](/tools/section-properties/) gives the centroid of any built-up section.
 
 ```figure
 type: formula
@@ -94,7 +94,7 @@ A rolled ring can be the right length and still be wrong in three ways, and each
 
 The ring is checked before the splice is welded, while its ends can still be adjusted, and again after welding, because the splice weld's shrinkage pulls the ring tighter around the shell, often helpfully.
 
-The WORKOS [ring length calculator for angle or bar](/tools/angle-ring-length/) repeats this chapter's arithmetic for other sections and radii, and is a quick independent check on a hand calculation before any section is cut.
+The KEVOS® [ring length calculator for angle or bar](/tools/angle-ring-length/) repeats this chapter's arithmetic for other sections and radii, and is a quick independent check on a hand calculation before any section is cut.
 
 ## The outlet flange and its bolt circle
 
@@ -102,7 +102,7 @@ The hopper's outlet is a Ø400 opening in the 8 mm cone, which the conveyor or s
 
 Its inside diameter must clear the cone's outside at the outlet. The cone's outside surface lies 8 ÷ cos 30° = 9.24 mm outside its inside surface horizontally, so at the outlet its outside diameter is 2 × (200 + 9.24) = 418.5 mm, and the flange's bore is made 420 mm to slip over it.
 
-The 12 holes are 30° apart. Set out with dividers, their spacing is the chord 500 × sin 15° = **129.41 mm**, and the WORKOS [bolt circle calculator](/tools/bolt-circle/) gives each hole's coordinates. The holes straddle the flange's centre lines, as is usual practice, so that no hole sits on a centre line; the matching flange on the equipment below must follow the same convention, and the shop checks the mating drawing before drilling.
+The 12 holes are 30° apart. Set out with dividers, their spacing is the chord 500 × sin 15° = **129.41 mm**, and the KEVOS® [bolt circle calculator](/tools/bolt-circle/) gives each hole's coordinates. The holes straddle the flange's centre lines, as is usual practice, so that no hole sits on a centre line; the matching flange on the equipment below must follow the same convention, and the shop checks the mating drawing before drilling.
 
 The flange weighs π ÷ 4 × (0.560² − 0.420²) × 0.008 × 7,850 = **6.8 kg**. Its 560 mm outside diameter does not fit in the 345 mm strip left beside the cone segments on their 8 mm sheet, which Chapter 8 deals with.
 

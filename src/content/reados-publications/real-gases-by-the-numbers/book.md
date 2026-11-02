@@ -5,7 +5,7 @@ description: "Size, fill, draw and check high-pressure gas supplies with real-ga
 category: Engineering
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

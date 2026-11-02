@@ -69,7 +69,7 @@ For the chosen 205 mm tray, filled to 185 mm, the three formulas give:
 - frustum: 36.525 litres, 0.009 litres low, because the rectangles are not similar;
 - average end area: 36.703 litres, 0.169 litres high.
 
-The frustum formula's error is negligible here, because the top and bottom are nearly similar. The average end area method's error is half a percent, small in itself but the same size as a sensible design margin. A designer who sizes a tray to a minimum capacity by average end areas has used up the margin without knowing it. The WORKOS [prismoidal volume calculator](/tools/prismoidal-volume/) gives the exact value from the three areas and the height.
+The frustum formula's error is negligible here, because the top and bottom are nearly similar. The average end area method's error is half a percent, small in itself but the same size as a sensible design margin. A designer who sizes a tray to a minimum capacity by average end areas has used up the margin without knowing it. The KEVOS® [prismoidal volume calculator](/tools/prismoidal-volume/) gives the exact value from the three areas and the height.
 
 ```figure
 type: compare

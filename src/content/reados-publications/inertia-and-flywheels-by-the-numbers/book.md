@@ -5,7 +5,7 @@ description: "How to work with rotating inertia: moments of inertia, reflection 
 category: Engineering
 tags: [design, automation, systems]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -65,7 +65,7 @@ Inertia is the property that makes rotating machinery hard to start, hard to sto
 
 This book shows how to work with inertia by the numbers. It starts with the moments of inertia of machine parts and built-up rotors and the units they are quoted in, then the torque to change speed, the reflection of inertia through drives, the choice of a gear ratio, and the move profiles and RMS torque that size a servo. It then covers heavy starts, flywheels and their design, and finishes with the stresses and energies of spinning parts.
 
-It is for mechanical, machine design, automation and maintenance engineers. It assumes engineering training and comfort with torque, speed and energy; the formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical, machine design, automation and maintenance engineers. It assumes engineering training and comfort with torque, speed and energy; the formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -82,7 +82,7 @@ Masses, dimensions, speeds, motor data, limits and loads are the case mill's wor
 
 Chapters 1 and 2 build the inertias the rest of the book uses. Chapters 3 to 6 cover accelerating loads and sizing drives, ending with servo duty cycles. Chapter 7 covers heavy starts. Chapters 8 and 9 cover flywheels, and Chapter 10 covers the stresses, speeds and energies of spinning parts. Readers interested only in servo sizing can read Chapters 1 to 6; those interested in flywheels and heavy rotors can read Chapters 1 to 3 and 7 to 10.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform.
 
 ## Source limits and professional responsibility
 

@@ -90,7 +90,7 @@ The workshop rehearses the push cold, without heating, to check the alignment an
 
 ## How much the fit grips
 
-The temperature calculation says how to assemble the fit. How firmly it then grips is a separate calculation, from the interference, the diameters of shaft and hub and the materials' stiffness, giving the contact pressure and from that the torque and axial force the fit can carry. *Fits That Work* explains how interference is chosen for the load, and the WORKOS [shrink fit design](/tools/shrink-fit-design/) calculator estimates both the grip and the assembly temperature. The two calculations belong together: a fit with too little interference slips in service; one with too much can overstress a thin hub, or need a temperature the parts cannot tolerate.
+The temperature calculation says how to assemble the fit. How firmly it then grips is a separate calculation, from the interference, the diameters of shaft and hub and the materials' stiffness, giving the contact pressure and from that the torque and axial force the fit can carry. *Fits That Work* explains how interference is chosen for the load, and the KEVOS® [shrink fit design](/tools/shrink-fit-design/) calculator estimates both the grip and the assembly temperature. The two calculations belong together: a fit with too little interference slips in service; one with too much can overstress a thin hub, or need a temperature the parts cannot tolerate.
 
 ## Check the fit after assembly
 

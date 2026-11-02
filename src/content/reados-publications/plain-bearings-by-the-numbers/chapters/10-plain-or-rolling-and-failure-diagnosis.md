@@ -3,13 +3,13 @@ book: plain-bearings-by-the-numbers
 chapterSlug: plain-or-rolling-and-failure-diagnosis
 order: 10
 title: "Plain or rolling, and diagnosing failures"
-description: "Compare plain and rolling bearings on friction with the WORKOS rolling bearing friction tool and on life, damping and dirt, then diagnose wiping, fatigue, scoring, electrical damage and oil whirl."
+description: "Compare plain and rolling bearings on friction with the KEVOS® rolling bearing friction tool and on life, damping and dirt, then diagnose wiping, fatigue, scoring, electrical damage and oil whirl."
 draft: false
 ---
 
 Every fan, pump and motor designer eventually faces the same choice: a plain bearing or a rolling bearing. Rolling bearings are compact, cheap, start under load with little friction and come from a catalogue with a calculated life. Plain bearings run quietly, damp vibration, tolerate dirt, can be split for assembly and, kept supplied with clean oil, last almost indefinitely. Neither is better in general, and the comparison is clearer with numbers.
 
-This final chapter compares FB-75's sleeve bearings with rolling bearings of the same bore using the WORKOS rolling bearing friction tool, sets out the other differences that usually decide the choice, and then turns to the failures plain bearings suffer and how each is recognised. It ends with a vibration on cold mornings that was treated as unbalance when it was the oil film itself.
+This final chapter compares FB-75's sleeve bearings with rolling bearings of the same bore using the KEVOS® rolling bearing friction tool, sets out the other differences that usually decide the choice, and then turns to the failures plain bearings suffer and how each is recognised. It ends with a vibration on cold mornings that was treated as unbalance when it was the oil film itself.
 
 ## Friction: plain against rolling
 

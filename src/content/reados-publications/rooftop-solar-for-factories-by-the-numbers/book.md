@@ -5,7 +5,7 @@ description: "How solar cells turn sunlight into power and how to size, check, m
 category: Engineering
 tags: [design, operations, finance, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -72,7 +72,7 @@ A solar module on a factory roof is a large, flat semiconductor device. It turns
 
 It starts inside the cell, with photons, the bandgap and recombination, because those set the limits on efficiency and explain why output falls as the cell heats. It then works from the module datasheet to the yearly yield of a roof, through strings, voltage limits and the inverter, shading and bypass diodes, roof loads and wind, inverter heat and reliability, and monitoring, soiling and degradation. It finishes with the business case: self-consumption, tariffs, certificates, finance and depreciation.
 
-It is for manufacturing, facilities and maintenance engineers, operations managers and owners. It assumes engineering or trade training and comfort with power, energy and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for manufacturing, facilities and maintenance engineers, operations managers and owners. It assumes engineering or trade training and comfort with power, energy and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -91,7 +91,7 @@ Irradiation, prices, tariffs, test results and failure records are the business'
 
 Read Chapters 1 to 3 first if the physics is new; they explain the module datasheet. Chapters 4 to 7 deal with designing and checking an array, Chapters 8 and 9 with running it, and Chapter 10 with paying for it. Chapters stand on their own once the case is familiar.
 
-Each chapter links the WORKOS calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

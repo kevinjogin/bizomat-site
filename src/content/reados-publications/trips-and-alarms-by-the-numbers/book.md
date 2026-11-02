@@ -5,7 +5,7 @@ description: "How to set trip and alarm thresholds on noisy signals: predict nui
 category: Engineering
 tags: [automation, systems, design, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -102,7 +102,7 @@ The plant, its equipment and every pressure, rate, time and cost are invented. N
 
 Read Chapters 1 to 3 first: they set up the measurements and the crossing-rate formula that everything else uses. Chapters 4 to 6 deal with the three classic remedies, filters, hysteresis and on-delays, one at a time. Chapter 7 deals with a mean that drifts towards the threshold, and Chapter 8 with the cases where noise helps a threshold rather than hinders it. Chapter 9 covers voting between redundant sensors, and Chapter 10 the testing and records that prove the settings.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

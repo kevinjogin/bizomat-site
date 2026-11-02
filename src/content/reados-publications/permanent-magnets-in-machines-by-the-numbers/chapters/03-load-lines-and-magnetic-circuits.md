@@ -9,7 +9,7 @@ draft: false
 
 A magnet on its own does nothing useful. It is always part of a circuit: steel pieces that carry its flux, air gaps where the flux does its work, and leakage paths where some of it escapes. The circuit decides where on its demagnetisation curve the magnet works, and so how much flux it delivers and how close it sits to its knee. Change the circuit, by opening a gap, removing a steel part or taking the magnet out altogether, and the working point moves.
 
-This chapter derives the load line that fixes a magnet's working point, shows what leakage and keepers do to it, explains the classic failure of AlNiCo magnets removed from their circuits, and compares a magnetic catch with a spring-loaded ball detent for the case's hopper lid, using the WORKOS ball detent check. The error is an old tachogenerator taken apart for cleaning.
+This chapter derives the load line that fixes a magnet's working point, shows what leakage and keepers do to it, explains the classic failure of AlNiCo magnets removed from their circuits, and compares a magnetic catch with a spring-loaded ball detent for the case's hopper lid, using the KEVOS® ball detent check. The error is an old tachogenerator taken apart for cleaning.
 
 ## The load line
 
@@ -104,7 +104,7 @@ At contact, 160 N is far more than an operator should need to pull. A deliberate
 
 ### The ball detent
 
-The WORKOS [ball detent check](/tools/ball-detent-check/) checks a spring-loaded ball or plunger detent: it calculates the spring's rate, preload and stress at the fitted length as a compression spring, the force along the sliding direction needed to push the ball out of a vee notch from the preload, the flank angle and the friction on one face, the spring load and stress when the ball has risen out of the notch, and the clearance to solid, against the release force range wanted and an allowable stress.
+The KEVOS® [ball detent check](/tools/ball-detent-check/) checks a spring-loaded ball or plunger detent: it calculates the spring's rate, preload and stress at the fitted length as a compression spring, the force along the sliding direction needed to push the ball out of a vee notch from the preload, the flank angle and the friction on one face, the spring load and stress when the ball has risen out of the notch, and the clearance to solid, against the release force range wanted and an allowable stress.
 
 This is an illustration. The detent proposed uses a 1 mm wire spring, 6 mm mean diameter, 8 active coils, closed and ground ends, 15 mm free length, fitted at 12 mm, pressing a ball into a 45° notch with a friction coefficient of 0.15, and 1 mm of rise to clear the notch.
 

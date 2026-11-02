@@ -5,7 +5,7 @@ description: "Build one team from many organisations: lump sum, cost-plus and ta
 category: Projects
 tags: [projects, people, leadership, finance, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -125,7 +125,7 @@ A capital project of any size is delivered by several organisations at once: an 
 
 This book works through that problem with numbers. It starts by mapping the organisations, people and interfaces on one project, then shows how a contract shapes behaviour by moving savings and overruns between the parties. It works lump sum, cost-plus and target-cost contracts in turn, with pain and gain share calculations, bands, caps and target adjustments, then treats alliances and other collaborative contracts. The second half turns from contracts to people: team size and communication paths, staffing ramp-up and the cost of turnover and late additions, and shared goals, co-location and decision rights. The last chapter compares the delivery models by simulation and chooses one. Each chapter follows one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for owners and sponsors, project and procurement managers, and the project leads of contractors and suppliers. It assumes spreadsheet arithmetic. Where an idea is already covered in the READOS collections, such as how an alliance selects partners or how a delivery model is chosen, the book links to it and adds the numbers.
+It is for owners and sponsors, project and procurement managers, and the project leads of contractors and suppliers. It assumes spreadsheet arithmetic. Where an idea is already covered in the Library collections, such as how an alliance selects partners or how a delivery model is chosen, the book links to it and adds the numbers.
 
 ## The running case
 
@@ -139,7 +139,7 @@ The business, its people, its contractors and every number in the case are inven
 
 Read Chapters 1 and 2 first: the map of organisations and the way a contract moves money underlie everything else. Chapters 3 to 6 take the contract models in order of increasing sharing, from lump sum to alliance, and are best read in sequence. Chapters 7 to 9 cover the team itself and can be read in any order after Chapter 2. Chapter 10 brings the commercial and team results together into one choice. Every calculation was checked by running it, and the behaviour assumptions behind the comparison are stated where they are used, so readers can replace them with their own.
 
-The book is one of a series of nine KEVOS® READOS books on project delivery, each worked through its own case. The most closely related are *Reference Class Forecasting by the Numbers*, which sets the budgets and contingencies that this book's contracts have to live within; *Modular Projects by the Numbers*, which covers learning curves and keeping an experienced team together across repeated work; *Front-End Planning by the Numbers*, which covers the definition work that makes a lump sum or a target realistic; and *Stage Gates and Stopping Rules by the Numbers*, which covers the approval decisions that the sponsor and leadership group in this book have to make.
+The book is one of a series of nine KEVOS® Library books on project delivery, each worked through its own case. The most closely related are *Reference Class Forecasting by the Numbers*, which sets the budgets and contingencies that this book's contracts have to live within; *Modular Projects by the Numbers*, which covers learning curves and keeping an experienced team together across repeated work; *Front-End Planning by the Numbers*, which covers the definition work that makes a lump sum or a target realistic; and *Stage Gates and Stopping Rules by the Numbers*, which covers the approval decisions that the sponsor and leadership group in this book have to make.
 
 ## Source limits and professional responsibility
 

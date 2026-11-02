@@ -131,7 +131,7 @@ Every refrigerant has its own saturation curve, and the curve decides much about
 - A refrigerant with **lower pressures** needs a larger compressor and larger suction pipes for the same duty, and at very low evaporating temperatures may run below atmospheric pressure on the suction side, which lets air in through any leak.
 - The **critical temperature**, above which the refrigerant cannot be condensed at any pressure, must be comfortably above the condensing temperature, or the cycle's efficiency suffers badly.
 
-R-134a sits in the middle of the range, which suits a process chiller condensing at 45 °C. The other properties that matter in choosing a refrigerant, flammability, toxicity and environmental effect, and the rules that follow from them, are set out in READOS's chapter on [refrigerants, rules and safety](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/refrigerants-rules-and-safety/).
+R-134a sits in the middle of the range, which suits a process chiller condensing at 45 °C. The other properties that matter in choosing a refrigerant, flammability, toxicity and environmental effect, and the rules that follow from them, are set out in the Library’s chapter on [refrigerants, rules and safety](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/refrigerants-rules-and-safety/).
 
 ## The error: air in the condenser
 

@@ -9,7 +9,7 @@ draft: false
 
 A reverse osmosis membrane is far more sensitive to temperature than the osmotic pressure it works against. Between BW-12's coldest and warmest feed, 18 °C and 30 °C, the osmotic pressure changes by 4%, but the membrane's water permeability changes by almost half. A plant whose pump is set on a summer afternoon will be short of water on a winter morning, and a plant set in winter will push its lead elements hard in summer while its salt passage creeps up. Most of the "mystery" changes in a reverse osmosis plant's output turn out to be temperature.
 
-This chapter sets out the membrane maker's temperature correction, recalculates BW-12's feed pressure and permeate flow through the seasons with the WORKOS pressure tool, shows how salt passage and permeate quality move with temperature, and sets out a control strategy that holds the plant steady. It ends with a pump set at commissioning in summer and a set of membranes cleaned in winter that did not need cleaning.
+This chapter sets out the membrane maker's temperature correction, recalculates BW-12's feed pressure and permeate flow through the seasons with the KEVOS® pressure tool, shows how salt passage and permeate quality move with temperature, and sets out a control strategy that holds the plant steady. It ends with a pump set at commissioning in summer and a set of membranes cleaned in winter that did not need cleaning.
 
 ## The temperature correction factor
 

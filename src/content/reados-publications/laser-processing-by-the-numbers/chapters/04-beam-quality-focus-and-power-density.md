@@ -9,7 +9,7 @@ draft: false
 
 Power alone does not cut metal; power concentrated into a small spot does. A 4 kW beam spread over a square centimetre is a gentle heater. The same beam focused to a 0.2 mm spot delivers more than ten million watts per square centimetre, enough to melt and blow out steel faster than heat can conduct away. How small the spot can be, and how far it stays small, depends on the quality of the beam and the optics that focus it, and the two pull against each other: a smaller spot comes with a shorter depth of focus.
 
-This chapter sets out the relations for a focused laser beam, works them for the LC-4 with the WORKOS laser cutting plan tool, compares lenses and the old CO₂ machine, and ends with a focus error that cost the cell a morning.
+This chapter sets out the relations for a focused laser beam, works them for the LC-4 with the KEVOS® laser cutting plan tool, compares lenses and the old CO₂ machine, and ends with a focus error that cost the cell a morning.
 
 ## How a laser beam focuses
 

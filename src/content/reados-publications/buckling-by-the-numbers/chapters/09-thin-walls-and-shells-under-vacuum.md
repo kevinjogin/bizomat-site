@@ -53,7 +53,7 @@ caption: The cube of the thickness ratio makes thin tubes extremely sensitive: h
 - S_y | yield or proof stress, MPa
 ```
 
-The WORKOS [Tube or shell under external pressure](/tools/vacuum-tube-design/) tool applies these two formulas to a long, unstiffened tube. From the outside diameter, wall thickness, corrosion allowance, modulus, Poisson's ratio, yield strength, net external pressure, required factor and density, it gives the elastic collapse pressure and the yield-limited pressure for the wall left after the corrosion allowance, the governing mode, the factor of safety, the least wall that gives your factor, the diameter-to-thickness ratio and the mass per metre. Its guide says plainly that it covers long tubes without stiffening rings, that short shells between stiffeners are stronger, and that out-of-roundness lowers the collapse pressure sharply.
+The KEVOS® [Tube or shell under external pressure](/tools/vacuum-tube-design/) tool applies these two formulas to a long, unstiffened tube. From the outside diameter, wall thickness, corrosion allowance, modulus, Poisson's ratio, yield strength, net external pressure, required factor and density, it gives the elastic collapse pressure and the yield-limited pressure for the wall left after the corrosion allowance, the governing mode, the factor of safety, the least wall that gives your factor, the diameter-to-thickness ratio and the mass per metre. Its guide says plainly that it covers long tubes without stiffening rings, that short shells between stiffeners are stronger, and that out-of-roundness lowers the collapse pressure sharply.
 
 ### HT-8's tank as a long tube
 
@@ -72,7 +72,7 @@ type: compare
 title: Collapse pressure of HT-8's shell by three estimates
 cols: Collapse pressure, kPa | Vacuum as a share of one atmosphere
 rowhead: Model
-- Long tube, no end support (WORKOS tool) | 1.07 | 1.1%
+- Long tube, no end support (KEVOS® tool) | 1.07 | 1.1%
 - * Short shell held round at both ends, Windenburg–Trilling approximation | 36.6 | 36%
 - Short shell, a second published approximation | 33.9 | 33%
 caption: This is an illustration. D = 2,206 mm, t = 3 mm, L = 2,100 mm, E = 193 GPa, ν = 0.3. The short-shell figures are for a perfect shell; real shells with dents, weld distortion and out-of-roundness collapse at lower pressures, and design rules for vacuum vessels apply reduction factors and require a margin.
@@ -146,7 +146,7 @@ The cheapest protection, by far, is not to let the vacuum form.
 This is an illustration.
 
 1. If HT-8's shell were 4 mm instead of 3 mm, what would the Windenburg–Trilling estimate give, and by what factor does it change?
-2. What does the WORKOS long-tube tool give for the 4 mm shell, and why is it so much lower?
+2. What does the KEVOS® long-tube tool give for the 4 mm shell, and why is it so much lower?
 3. A 600 mm diameter, 1.6 mm wall stainless extraction duct, 12 m long with no stiffening rings, is connected to a fan that can pull 3 kPa if its inlet damper shuts. Using E = 193 GPa and ν = 0.3, is the duct at risk?
 
 **Worked answer.**

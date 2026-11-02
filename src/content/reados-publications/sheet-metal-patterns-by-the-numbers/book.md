@@ -5,7 +5,7 @@ description: "Develop sheet metal patterns with numbers: girth, slant cuts, segm
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

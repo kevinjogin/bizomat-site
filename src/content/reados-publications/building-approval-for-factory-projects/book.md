@@ -5,7 +5,7 @@ description: "Work through the NCC questions behind a factory fit-out: classific
 category: Projects
 tags: [projects, manufacturing, quality, operations, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25

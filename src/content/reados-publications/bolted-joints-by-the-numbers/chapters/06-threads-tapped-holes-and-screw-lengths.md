@@ -9,7 +9,7 @@ draft: false
 
 A screw in a tapped hole can fail in two ways: the screw breaks across its stress area, or the threads strip, the screw's or the hole's, by shearing along the cylinder where they engage. Designers want the first, if anything, because a broken screw is obvious and its replacement restores the joint, while a stripped thread in a tapped hole damages the part that holds it and may let go without warning while being tightened. The rule is to engage enough thread that the screw would break first.
 
-This chapter works out the engagement for the CT-1 test head's M20 screws in their steel block and for the valve screws in the aluminium manifold, designs the tapped holes, and checks that the screws' lengths put full thread where the joint needs it. It uses three WORKOS tools: thread length of engagement, tapped hole design, and bolt and screw grip length. Its mistake is a box of screws 5 mm too short.
+This chapter works out the engagement for the CT-1 test head's M20 screws in their steel block and for the valve screws in the aluminium manifold, designs the tapped holes, and checks that the screws' lengths put full thread where the joint needs it. It uses three KEVOS® tools: thread length of engagement, tapped hole design, and bolt and screw grip length. Its mistake is a box of screws 5 mm too short.
 
 ## Shear areas and the strength ratio
 
@@ -95,7 +95,7 @@ A blind tapped hole has three practical problems that a calculation does not sho
 
 ## Thread inserts
 
-A helical wire thread insert is a coil of diamond-section wire, usually stainless steel, that screws into an oversize tapped hole and presents a standard internal thread to the screw. Because the insert's outer thread is on a larger diameter, it spreads the screw's load over a larger shear area in the parent material, and its hard wire resists wear from repeated assembly. Inserts are the usual repair for a stripped hole in a casting or an aluminium part, and are often designed in from the start where screws will be removed many times. They need their own tap, and the insert maker's tables give the hole sizes and the engagement lengths for each parent material. The WORKOS thread tools calculate solid threads; they are not used to size an insert.
+A helical wire thread insert is a coil of diamond-section wire, usually stainless steel, that screws into an oversize tapped hole and presents a standard internal thread to the screw. Because the insert's outer thread is on a larger diameter, it spreads the screw's load over a larger shear area in the parent material, and its hard wire resists wear from repeated assembly. Inserts are the usual repair for a stripped hole in a casting or an aluminium part, and are often designed in from the start where screws will be removed many times. They need their own tap, and the insert maker's tables give the hole sizes and the engagement lengths for each parent material. The KEVOS® thread tools calculate solid threads; they are not used to size an insert.
 
 ## Screw lengths
 

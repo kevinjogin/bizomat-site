@@ -5,7 +5,7 @@ description: "Cut and gouge metal with numbers: carbon arc, air carbon arc gougi
 category: Manufacturing
 tags: [manufacturing, process-improvement, operations, quality, finance]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -83,4 +83,4 @@ This book is educational. Its speeds, rates and costs are illustrations; real va
 
 ## An original treatment
 
-READOS covers oxygen cutting in Oxy-Fuel by the Numbers, weld repair in Weld Repairs That Hold, and arc welding equipment in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the business case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers oxygen cutting in Oxy-Fuel by the Numbers, weld repair in Weld Repairs That Hold, and arc welding equipment in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the business case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or illustrations is reproduced.

@@ -62,7 +62,7 @@ caption: This is an illustration. Sections 3 to 6 hold the rules; everything els
 
 Sections 1, 2 and 7 serve the new starter and are read once. Sections 3 to 6 serve the daily reader and are written as numbered rules that can be cited. The appendix holds reference material that changes occasionally.
 
-Section 6 is deliberately thin. Drawing conventions belong to the drawing standard the office's work calls up, normally AS 1100 in Australia. The CAD standard says which standard applies, points to the templates that implement it and lists only the office's own additions, such as which general tolerance note to use. It does not restate line types or projection rules; READOS's [Drawings That Make Parts](/reados/publications/drawings-that-make-parts/) covers those conventions, and the standard itself is the authority.
+Section 6 is deliberately thin. Drawing conventions belong to the drawing standard the office's work calls up, normally AS 1100 in Australia. The CAD standard says which standard applies, points to the templates that implement it and lists only the office's own additions, such as which general tolerance note to use. It does not restate line types or projection rules; the Library’s [Drawings That Make Parts](/reados/publications/drawings-that-make-parts/) covers those conventions, and the standard itself is the authority.
 
 ## Write rules that can be checked
 

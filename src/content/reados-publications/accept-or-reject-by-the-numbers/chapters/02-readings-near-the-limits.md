@@ -9,7 +9,7 @@ draft: false
 
 Most measured parts are nowhere near their limits, and for them the gauge's uncertainty makes no difference: a bush reading 25.010 mm is inside a 25.000 to 25.021 mm tolerance however the gauge errs. The decisions that matter are the few readings close to a limit, where the gauge's error could put a good part's reading outside or a bad part's inside. For those readings, the question is not "is the reading in tolerance?" but "how likely is the true size to be in tolerance, given this reading?"
 
-This chapter answers that question for BU-25's bore. It builds the air gauge's uncertainty budget with the WORKOS measurement uncertainty budget tool, shows how the reading combines with what the process distribution already says, tabulates the probability that a bush is truly oversize for readings near the upper limit, and counts how many bushes a shift the simple rule "accept if the reading is in tolerance" gets wrong. The error is a test uncertainty ratio taken as proof that the gauge's error does not matter.
+This chapter answers that question for BU-25's bore. It builds the air gauge's uncertainty budget with the KEVOS® measurement uncertainty budget tool, shows how the reading combines with what the process distribution already says, tabulates the probability that a bush is truly oversize for readings near the upper limit, and counts how many bushes a shift the simple rule "accept if the reading is in tolerance" gets wrong. The error is a test uncertainty ratio taken as proof that the gauge's error does not matter.
 
 ## The gauge's uncertainty budget
 
@@ -19,7 +19,7 @@ This is an illustration. The air gauge's calibration certificate gives an expand
 
 ```figure
 type: compare
-title: The air gauge's uncertainty budget, from the WORKOS tool
+title: The air gauge's uncertainty budget, from the KEVOS® tool
 cols: Standard uncertainty, µm | How it is derived
 rowhead: Contributor
 - Calibration | 0.500 | certificate's 1.0 µm at k = 2, divided by 2

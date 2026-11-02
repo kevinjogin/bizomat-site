@@ -139,7 +139,7 @@ The minor diameter of an internal thread is produced by the drill, not the tap. 
 
 where D is the nominal diameter and P the pitch. For M8 × 1.25: 8 − 1.25 = 6.75 mm, and the standard tap drill is 6.8 mm. By the usual workshop definition of percentage thread, that gives roughly a 75% to 80% thread, which in practice gives nearly full thread strength while greatly reducing tapping torque and the risk of tap breakage compared with a smaller hole.
 
-Thread strength also depends on the length of engagement. As a rule of thumb, an engagement of about one to one and a half times the nominal diameter in steel lets the screw fail before the internal thread strips. Softer materials, such as aluminium, need more. The READOS chapter on [bolted joints that stay tight](/reados/collections/machine-elements-and-mechanical-design/bolted-joints-that-stay-tight/) discusses the wider joint design.
+Thread strength also depends on the length of engagement. As a rule of thumb, an engagement of about one to one and a half times the nominal diameter in steel lets the screw fail before the internal thread strips. Softer materials, such as aluminium, need more. The Library chapter on [bolted joints that stay tight](/reados/collections/machine-elements-and-mechanical-design/bolted-joints-that-stay-tight/) discusses the wider joint design.
 
 For the flange's two M8 holes, with 14 mm of usable thread, Harbourline drills Ø6.8 to 18 mm, allowing for the tap's lead chamfer, which cannot cut a full thread. With a 118° point (2.0 mm long) and a 2 mm approach, the feed length is 22 mm. At 80 m/min and 0.15 mm/rev, the drill runs at 3,745 rev/min and 562 mm/min, taking 0.039 min per hole, or **0.078 min** for both.
 
@@ -184,7 +184,7 @@ The flange's Ø40 H7 bore is finished by single-point boring on the lathe instea
 
 ## Deep holes
 
-Holes deeper than about three to five diameters need care with chip evacuation. Peck drilling, in which the drill retracts periodically to clear chips, adds considerable time and should be estimated from the number and length of retractions. Drills with through-tool coolant at adequate pressure can often drill much deeper holes without pecking. The READOS chapter on [drilling, reaming and tapping](/reados/collections/machining-and-metal-parts/drilling-reaming-and-tapping-holes/) covers the practical techniques.
+Holes deeper than about three to five diameters need care with chip evacuation. Peck drilling, in which the drill retracts periodically to clear chips, adds considerable time and should be estimated from the number and length of retractions. Drills with through-tool coolant at adequate pressure can often drill much deeper holes without pecking. The Library chapter on [drilling, reaming and tapping](/reados/collections/machining-and-metal-parts/drilling-reaming-and-tapping-holes/) covers the practical techniques.
 
 ## Count all the hole-making steps
 

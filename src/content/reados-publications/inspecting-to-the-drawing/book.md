@@ -5,7 +5,7 @@ description: "Turn a detail drawing into an inspection plan: balloon every requi
 category: Manufacturing
 tags: [quality, manufacturing, validation, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

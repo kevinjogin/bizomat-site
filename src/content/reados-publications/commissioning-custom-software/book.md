@@ -5,7 +5,7 @@ description: "Commission custom software from a developer: decide build or buy, 
 category: Projects
 tags: [projects, systems, validation, finance, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

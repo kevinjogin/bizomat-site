@@ -5,7 +5,7 @@ description: "Prove a product's life without waiting years: the Boltzmann factor
 category: Products
 tags: [validation, quality, product-development, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-28

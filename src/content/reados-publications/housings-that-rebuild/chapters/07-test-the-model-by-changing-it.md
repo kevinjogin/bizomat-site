@@ -144,7 +144,7 @@ caption: This is an illustration. Every change now rebuilds cleanly and passes t
 - x Setback 10 → 7 mm | clean, fillet uses a tangent chain
 ```
 
-Keep the flex test with the model, as a short table in the notes or as a set of configurations that apply each change. Run it again after any substantial edit and before every release. The edited READOS chapter on [editing CAD geometry without losing design intent](/reados/collections/cad-modelling-and-design-intent/editing-cad-geometry-without-losing-design-intent/) covers the wider habits that keep edits safe.
+Keep the flex test with the model, as a short table in the notes or as a set of configurations that apply each change. Run it again after any substantial edit and before every release. The edited Library chapter on [editing CAD geometry without losing design intent](/reados/collections/cad-modelling-and-design-intent/editing-cad-geometry-without-losing-design-intent/) covers the wider habits that keep edits safe.
 
 ## Exercise: design a flex test for a new feature
 

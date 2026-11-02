@@ -5,7 +5,7 @@ description: "Plan, size and check a blanking and piercing die with numbers: cut
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -58,7 +58,7 @@ A blanking and piercing die is a pair of matched cutting edges that a press driv
 
 This book works through a die with numbers. It starts with what happens when a punch cuts, then estimates the cutting force, chooses the clearance and sizes the punches and die openings, checks small punches for crushing and buckling, sizes the stripper springs, lays out the strip, chooses between die types and finds the centre of load, sets the die in the press, and finishes with wear, sharpening and the cost of the tool against laser cutting. Each chapter follows one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for toolmakers, press setters and apprentices, for production engineers who buy and run dies, and for designers who want to draw parts that dies make well. It assumes school algebra and some familiarity with sheet metal. The press itself, its force curve, flywheel energy, frame, feeding and guarding, is the subject of READOS's companion book, Power Presses by the Numbers.
+It is for toolmakers, press setters and apprentices, for production engineers who buy and run dies, and for designers who want to draw parts that dies make well. It assumes school algebra and some familiarity with sheet metal. The press itself, its force curve, flywheel energy, frame, feeding and guarding, is the subject of the Library’s companion book, Power Presses by the Numbers.
 
 ## The running case
 

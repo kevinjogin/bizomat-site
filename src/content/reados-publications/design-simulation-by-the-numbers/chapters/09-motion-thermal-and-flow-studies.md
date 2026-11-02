@@ -105,7 +105,7 @@ The bracket's arm is a cantilever with a free end, so it simply grows by about 0
 
 Now suppose the guard designer adds a rigid stay from the end plate back to the frame, to stop the guard rattling. The arm can no longer grow freely. If the stay were truly rigid, the arm would carry a compressive stress of about 96 MPa from temperature alone, more than six times the stress from all the mechanical loads at that section. In reality the stay and its fixings would flex and the stress would be lower, but the point stands: a harmless-looking addition changed a stress-free thermal case into the governing one.
 
-The WORKOS [thermal stress calculator](/tools/thermal-stress/) and [thermal growth calculator](/tools/thermal-growth/) give both results for other materials and temperature changes.
+The KEVOS® [thermal stress calculator](/tools/thermal-stress/) and [thermal growth calculator](/tools/thermal-growth/) give both results for other materials and temperature changes.
 
 ## Model thermal cases with the same care as mechanical ones
 

@@ -5,7 +5,7 @@ description: "Design and draw folded sheet metal parts with numbers: bend radius
 category: Manufacturing
 tags: [manufacturing, design, quality, product-development]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -72,7 +72,7 @@ A folded sheet metal part starts life flat. It is cut from a sheet by laser, pun
 
 This book works through the numbers in the order a part is designed: the bend radius and what limits it, the neutral axis and K-factor, the flat pattern, springback, features near bends, flanges and hems, the forces the press brake and punch must supply, tolerances that a folded part can hold, and the detail drawing that brings them together. Each chapter calculates with one part and shows a plausible mistake and how it was found.
 
-It suits mechanical designers and drafters who design sheet metal parts, fabrication engineers who prepare flat patterns, and buyers who must judge a supplier's queries. It assumes school algebra and trigonometry and a working knowledge of engineering drawing. READOS's collection chapter on designing sheet metal parts for economical manufacture gives a shorter overview; this book goes into the calculations behind it.
+It suits mechanical designers and drafters who design sheet metal parts, fabrication engineers who prepare flat patterns, and buyers who must judge a supplier's queries. It assumes school algebra and trigonometry and a working knowledge of engineering drawing. The Library’s collection chapter on designing sheet metal parts for economical manufacture gives a shorter overview; this book goes into the calculations behind it.
 
 ## The running case
 

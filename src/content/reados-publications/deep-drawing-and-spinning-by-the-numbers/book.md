@@ -5,7 +5,7 @@ description: "Work out drawn and spun sheet metal parts with numbers: blank size
 category: Manufacturing
 tags: [manufacturing, design, quality, product-development]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

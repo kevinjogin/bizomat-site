@@ -130,7 +130,7 @@ caption: This is an illustration. The 12 mm beams cracked during repeated-use te
 - *16 mm beam | 0.94
 ```
 
-The 12 mm beam's strain, about **1.5 × 1.0 × 1.6 ÷ 12² ≈ 1.67%**, was too much for the PLA cover: in a repeated-use test, beams started cracking after five clip-on cycles. The 16 mm beam's strain, about **0.94%**, survived fifty cycles without visible damage. The allowable strain of a printed material depends heavily on its orientation and settings, so the designer established it by test rather than quoting a value. The [snap fit](/tools/snap-fit/) tool in WORKOS runs the same calculation for other geometries.
+The 12 mm beam's strain, about **1.5 × 1.0 × 1.6 ÷ 12² ≈ 1.67%**, was too much for the PLA cover: in a repeated-use test, beams started cracking after five clip-on cycles. The 16 mm beam's strain, about **0.94%**, survived fifty cycles without visible damage. The allowable strain of a printed material depends heavily on its orientation and settings, so the designer established it by test rather than quoting a value. The [snap fit](/tools/snap-fit/) tool in KEVOS® Tools runs the same calculation for other geometries.
 
 Orientation matters even more for snap fits than for most parts. The beam must bend in the layer plane, so it should be printed with its length and thickness both in XY. A snap beam printed with its thickness in Z bends across its layers and snaps off at the root.
 

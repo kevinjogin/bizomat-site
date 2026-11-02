@@ -5,7 +5,7 @@ description: "Plan a sheet metal production run with numbers: capacity and fill 
 category: Manufacturing
 tags: [manufacturing, operations, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -61,7 +61,7 @@ A sheet metal shop that makes one-off parts thinks in jobs; one that makes produ
 
 This book works through those numbers for one product, from the customer's requirement to the run record. It starts with capacity and specification, develops the product's blank and its corners, nests the blank, builds a routing, works out setups, batch size and learning, costs the run, and ends with first-article inspection and the records that make the next run easier.
 
-It is for production engineers, shop supervisors, estimators and product designers in sheet metal manufacturing. It assumes school algebra, a little geometry and a working knowledge of laser cutting and press brake folding. READOS's Sheet Metal Parts by the Numbers covers bend allowances, springback and press brake force in more depth; this book uses them where a production run needs them. Setting prices and writing quotations are separate subjects, and this book stops at cost.
+It is for production engineers, shop supervisors, estimators and product designers in sheet metal manufacturing. It assumes school algebra, a little geometry and a working knowledge of laser cutting and press brake folding. The Library’s Sheet Metal Parts by the Numbers covers bend allowances, springback and press brake force in more depth; this book uses them where a production run needs them. Setting prices and writing quotations are separate subjects, and this book stops at cost.
 
 ## The running case
 

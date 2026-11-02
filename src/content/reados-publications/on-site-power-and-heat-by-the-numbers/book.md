@@ -5,7 +5,7 @@ description: "Judge on-site power and heat with engineering thermodynamics: Carn
 category: Engineering
 tags: [design, systems, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -96,7 +96,7 @@ Every proposal for on-site power arrives with a set of efficiencies: an electric
 
 It starts with the first law and the Carnot limit, then analyses the machines one at a time: compressors and turbines in steady flow, the Otto and Diesel cycles behind gas engines and standby generators, the Brayton cycle behind gas turbines and microturbines, and the Rankine cycle behind steam turbines. It then follows the heat that every engine rejects, finds how much of it is worth recovering, and finishes with cogeneration, where power and heat are judged together and turned into a business case.
 
-It is for mechanical, process and energy engineers, plant managers, energy auditors and students who know the first law and the idea of specific heat and want to apply them to real equipment. It assumes algebra, powers and natural logarithms. Each chapter works one running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that performs the chapter's main calculation, and ends with an exercise and its worked answer.
+It is for mechanical, process and energy engineers, plant managers, energy auditors and students who know the first law and the idea of specific heat and want to apply them to real equipment. It assumes algebra, powers and natural logarithms. Each chapter works one running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's main calculation, and ends with an exercise and its worked answer.
 
 ## The running case
 

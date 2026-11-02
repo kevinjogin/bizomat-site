@@ -5,7 +5,7 @@ description: "Set up CAD layouts that print true to scale: viewport factors, tex
 category: Engineering
 tags: [design, quality, systems, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -54,7 +54,7 @@ references:
     creator: "Standards Australia"
     year: "1992, reconfirmed"
     url: "https://store.standards.org.au/product/as-1100-101-1992"
-    note: "Named by number and scope for sheet sizes, scales and lettering. No values are quoted from it; READOS's Drawings That Make Parts covers its provisions, and the running case's text heights and line weights are the fictional office's own standard."
+    note: "Named by number and scope for sheet sizes, scales and lettering. No values are quoted from it; the Library’s Drawings That Make Parts covers its provisions, and the running case's text heights and line weights are the fictional office's own standard."
 related:
   - title: "Drawings That Make Parts"
     href: "/reados/publications/drawings-that-make-parts/"
@@ -70,7 +70,7 @@ Every CAD drawing lives in two places at once. The model is drawn at full size, 
 
 When those settings are right, nobody notices them. When one is wrong, the drawing still looks plausible on screen and fails on paper: 3.5 mm notes print at 0.35 mm, hidden lines print solid, a view labelled 1:10 is really 1:9.73, a PDF prints at 97%. This book sets out the arithmetic behind each setting so that every one can be calculated, set deliberately and checked with a ruler.
 
-It is written for drafters and CAD users who set up layouts, for designers who issue drawings, and for checkers who sign them. It assumes you can draw in a 2D CAD program. The method is software-neutral, but where a setting needs a name, the book uses AutoCAD's as one widely used example and says so; other programs have equivalents under other names. What a finished mechanical drawing must show, its views, dimensions and tolerances to AS 1100, is the subject of READOS's *Drawings That Make Parts*. How to construct exact geometry is in *Drafting Geometry by the Numbers*.
+It is written for drafters and CAD users who set up layouts, for designers who issue drawings, and for checkers who sign them. It assumes you can draw in a 2D CAD program. The method is software-neutral, but where a setting needs a name, the book uses AutoCAD's as one widely used example and says so; other programs have equivalents under other names. What a finished mechanical drawing must show, its views, dimensions and tolerances to AS 1100, is the subject of the Library’s *Drawings That Make Parts*. How to construct exact geometry is in *Drafting Geometry by the Numbers*.
 
 ## The running case
 

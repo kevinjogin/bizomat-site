@@ -5,7 +5,7 @@ description: "Forge welding with numbers: how solid-state welds form, the fire a
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, people, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -83,4 +83,4 @@ This book is educational. Forge fires, hot metal and hammering bring hazards of 
 
 ## An original treatment
 
-READOS covers resistance and flash butt welding in Resistance Welding by the Numbers, large repair welds in Thermit Welding by the Numbers, and solid-state joining in general in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers resistance and flash butt welding in Resistance Welding by the Numbers, large repair welds in Thermit Welding by the Numbers, and solid-state joining in general in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.

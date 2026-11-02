@@ -5,7 +5,7 @@ description: "Design in-house engineering tools people use correctly: observe us
 category: Technology
 tags: [design, systems, validation, people, product-development]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

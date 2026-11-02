@@ -9,7 +9,7 @@ draft: false
 
 The order in which a casting freezes decides where its shrinkage ends up. Chapter 1 made the point qualitatively: thin parts freeze first, thick parts last, and whatever freezes last must be fed with liquid or it will contain a cavity. This chapter puts numbers on it. A single, simple rule, published by Nicolas Chvorinov in 1940, gives the freezing time of any part of a casting from its shape, and it is still the foundation of everyday riser design.
 
-The chapter explains the casting modulus, applies Chvorinov's rule to GB-12's walls, boss and risers with a WORKOS tool, shows how a foundry measures its own mould constant, and works through a riser that looked big enough but froze before the boss it was meant to feed. None of the arithmetic needs more than a calculator; what it needs is the habit of working out the freezing order before the pattern is made, rather than discovering it in the first sections.
+The chapter explains the casting modulus, applies Chvorinov's rule to GB-12's walls, boss and risers with a KEVOS® tool, shows how a foundry measures its own mould constant, and works through a riser that looked big enough but froze before the boss it was meant to feed. None of the arithmetic needs more than a calculator; what it needs is the habit of working out the freezing order before the pattern is made, rather than discovering it in the first sections.
 
 ## The casting modulus
 
@@ -55,7 +55,7 @@ GB-12 has many such junctions, where its ribs meet its walls and its walls meet 
 
 ## Freezing times for GB-12
 
-The WORKOS [Casting solidification time and riser check](/tools/casting-solidification/) tool applies Chvorinov's rule to a casting section and a cylindrical riser. From the section's volume and cooling area, the riser's diameter and height, the mould constant and the required ratio of riser to casting modulus, it gives both moduli, both solidification times and the modulus ratio, and checks the ratio. It treats the riser as a cylinder cooling on its side and top. It also gives a pattern dimension from a shrinkage allowance, as a convenience. Its guide notes that Chvorinov's rule is an approximation, that feeding volume and feeding distance must also be checked, and that exothermic or insulating sleeves change a riser's modulus.
+The KEVOS® [Casting solidification time and riser check](/tools/casting-solidification/) tool applies Chvorinov's rule to a casting section and a cylindrical riser. From the section's volume and cooling area, the riser's diameter and height, the mould constant and the required ratio of riser to casting modulus, it gives both moduli, both solidification times and the modulus ratio, and checks the ratio. It treats the riser as a cylinder cooling on its side and top. It also gives a pattern dimension from a shrinkage allowance, as a convenience. Its guide notes that Chvorinov's rule is an approximation, that feeding volume and feeding distance must also be checked, and that exothermic or insulating sleeves change a riser's modulus.
 
 This is an illustration. GB-12's heavy section is its bearing boss. Modelled as a block of 600 cm³ with 380 cm² of its surface against the mould (the rest of its surface joins the walls and does not count), it has a modulus of 1.579 cm. Its walls, 6 mm thick, have a modulus of about 0.3 cm. The foundry's mould constant for this alloy, poured at 720 °C into its resin-bonded sand, is 1.6 min/cm².
 

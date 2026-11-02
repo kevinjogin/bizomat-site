@@ -5,7 +5,7 @@ description: "Size, run and check an industrial vacuum system with numbers: gas 
 category: Engineering
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

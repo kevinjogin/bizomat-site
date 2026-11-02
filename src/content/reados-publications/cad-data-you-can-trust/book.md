@@ -5,7 +5,7 @@ description: "Move engineering files from shared folders to controlled data: num
 category: Engineering
 tags: [systems, design, quality, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

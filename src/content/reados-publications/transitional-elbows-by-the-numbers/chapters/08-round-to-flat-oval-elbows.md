@@ -19,7 +19,7 @@ The flat oval is 350 mm wide and 150 mm deep on the mean line. Its ends are semi
 
 perimeter = 2 × 200 + π × 150 = **871.2 mm**,
 
-and its area is a 200 × 150 rectangle plus a 150 mm circle, 30,000 + 17,671 = **47,671 mm²**. The Ø250 round duct's area is 49,087 mm², so the flat oval's is within 3%, and the air speed through it is almost unchanged. READOS's [Oval Sheet Metal Work by the Numbers](/reados/publications/oval-sheet-metal-work-by-the-numbers/flat-ovals/) covers flat ovals as vessels and ducts in more detail.
+and its area is a 200 × 150 rectangle plus a 150 mm circle, 30,000 + 17,671 = **47,671 mm²**. The Ø250 round duct's area is 49,087 mm², so the flat oval's is within 3%, and the air speed through it is almost unchanged. The Library’s [Oval Sheet Metal Work by the Numbers](/reados/publications/oval-sheet-metal-work-by-the-numbers/flat-ovals/) covers flat ovals as vessels and ducts in more detail.
 
 ## F5 in coordinates
 

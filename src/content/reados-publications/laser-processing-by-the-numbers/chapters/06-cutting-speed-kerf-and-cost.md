@@ -9,7 +9,7 @@ draft: false
 
 An estimator quoting laser-cut parts needs a cutting speed for every material and thickness, a time for every part and a material cost for every blank. The laser maker's cutting chart gives the speeds the machine can achieve, but only for the thicknesses tested, and estimators are constantly asked about the ones in between. An energy balance explains why speed falls with thickness, why the simple rule for scaling between chart values works near the chart and fails far from it, and how much of a part's cost is cutting at all.
 
-This chapter sets out the energy balance for a laser cut, uses the WORKOS laser cutting plan and sheet nesting yield tools to cost the cell's stainless steel doors, and follows a quote for 6 mm stainless steel that went wrong because a speed was scaled too far.
+This chapter sets out the energy balance for a laser cut, uses the KEVOS® laser cutting plan and sheet nesting yield tools to cost the cell's stainless steel doors, and follows a quote for 6 mm stainless steel that went wrong because a speed was scaled too far.
 
 ## An energy balance for the cut
 

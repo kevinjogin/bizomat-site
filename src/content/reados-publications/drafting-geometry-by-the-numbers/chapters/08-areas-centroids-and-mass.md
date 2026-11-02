@@ -17,7 +17,7 @@ For any closed polygon whose corners (x₁, y₁) … (xₙ, yₙ) are listed in
 
 A = ½ × |Σ (xᵢ × yᵢ₊₁ − xᵢ₊₁ × yᵢ)|
 
-with the last corner wrapping round to the first. The name comes from the criss-cross pattern of the products when the coordinates are written in two columns. Listed anticlockwise, the sum is positive; clockwise, negative. Its magnitude is the area either way. The WORKOS [polygon area calculator](/tools/polygon-area/) applies the formula to a pasted list of corners.
+with the last corner wrapping round to the first. The name comes from the criss-cross pattern of the products when the coordinates are written in two columns. Listed anticlockwise, the sum is positive; clockwise, negative. Its magnitude is the area either way. The KEVOS® [polygon area calculator](/tools/polygon-area/) applies the formula to a pasted list of corners.
 
 For the plate's outline without its R40 corner, the five corners A (0, 0), B (220, 0), C (220, 95), D (175, 140) and the original top left corner (0, 140) give products of 0, 20,900, 30,800 − 16,625 = 14,175, 24,500 and 0, which sum to 59,575, so the area is **29,787.5 mm²**. That is the 220 × 140 = 30,800 mm² rectangle less the 1,012.5 mm² chamfer triangle, as it should be.
 

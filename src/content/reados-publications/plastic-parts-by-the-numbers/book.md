@@ -5,7 +5,7 @@ description: "Design an injection-moulded part with numbers: wall, draft, ribs, 
 category: Manufacturing
 tags: [manufacturing, design, product-development, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

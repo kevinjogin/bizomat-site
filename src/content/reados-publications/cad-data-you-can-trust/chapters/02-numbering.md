@@ -63,7 +63,7 @@ The team considered starting at 000001 instead and rejected it. Leading zeros ar
 
 A check digit is an extra digit calculated from the others, so that most typing errors produce an invalid number. If someone types 210471 instead of 210417, a scheme with a check digit can usually reject it rather than finding a different, valid part.
 
-The team discussed check digits and decided against them for now. Most of its numbers are copied electronically, from the vault into the business system, rather than typed. Where numbers are typed, in the stores and on the workshop floor, the business system shows the description beside the number, which catches most errors. The decision was recorded with its reasons so it can be revisited if typed entry increases. READOS's chapter on [designing identifiers and check digits](/reados/collections/operational-data-records-and-controls/designing-identifiers-and-check-digits/) explains how check digits work and when they are worth adding.
+The team discussed check digits and decided against them for now. Most of its numbers are copied electronically, from the vault into the business system, rather than typed. Where numbers are typed, in the stores and on the workshop floor, the business system shows the description beside the number, which catches most errors. The decision was recorded with its reasons so it can be revisited if typed entry increases. The Library’s chapter on [designing identifiers and check digits](/reados/collections/operational-data-records-and-controls/designing-identifiers-and-check-digits/) explains how check digits work and when they are worth adding.
 
 ## Put meaning in properties
 

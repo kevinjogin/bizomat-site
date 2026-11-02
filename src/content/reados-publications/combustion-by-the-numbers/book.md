@@ -5,7 +5,7 @@ description: "Burn gas well with numbers: stoichiometric air, excess air from fl
 category: Engineering
 tags: [operations, design, process-improvement, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29

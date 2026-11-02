@@ -22,7 +22,7 @@ It is tempting to treat custom properties as a list of labels to fill in. They a
 - **an owner**, the role that is responsible for the value being right;
 - **a destination**, the places where the value is used, such as the title block, bill of materials or business system.
 
-Writing this down for every property produces a data dictionary. READOS's chapter on [writing a data dictionary](/reados/collections/operational-data-records-and-controls/writing-a-data-dictionary/) explains the general idea; the CAD property schema is one small, important application of it.
+Writing this down for every property produces a data dictionary. The Library’s chapter on [writing a data dictionary](/reados/collections/operational-data-records-and-controls/writing-a-data-dictionary/) explains the general idea; the CAD property schema is one small, important application of it.
 
 ## What the office had before
 

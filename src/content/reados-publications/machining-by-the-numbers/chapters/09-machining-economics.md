@@ -168,7 +168,7 @@ Practical reductions include quick-change toolholders that return to a repeatabl
 
 The model above values machine time at its cost rate. If the machine is a bottleneck, and every extra part it produces can be sold, an hour of its time is worth more than its cost: it is worth the contribution of the extra parts it could make. In that case the effective rate R is higher, the equivalent tooling-cost time falls, and the optimum speed moves towards the maximum-output speed.
 
-Conversely, if the machine has spare capacity, speeding up saves no real money beyond the variable costs of running it, and a lower speed with longer tool life is economically sensible. The right speed therefore depends on the state of the shop, not only on the tool and material. The READOS chapter on [measuring productivity and equipment effectiveness](/reados/collections/lean-and-continuous-improvement/measuring-productivity-and-equipment-effectiveness/) discusses identifying bottlenecks.
+Conversely, if the machine has spare capacity, speeding up saves no real money beyond the variable costs of running it, and a lower speed with longer tool life is economically sensible. The right speed therefore depends on the state of the shop, not only on the tool and material. The Library chapter on [measuring productivity and equipment effectiveness](/reados/collections/lean-and-continuous-improvement/measuring-productivity-and-equipment-effectiveness/) discusses identifying bottlenecks.
 
 ```figure
 type: balance

@@ -116,7 +116,7 @@ caption: A flow figure without its basis cannot be added to others or compared w
 - ? Does it include leaks and blow-offs | a meter on the main sees them; a list of machines does not
 ```
 
-The pneumatics side of this conversion, cylinder volumes, cycle rates and air use per stroke, is covered in READOS's [Pneumatics by the Numbers](/reados/publications/pneumatics-by-the-numbers/), and the [pneumatic cylinder sizing tool](/tools/pneumatic-cylinder-sizing/) converts a cylinder's stroke volume to free air.
+The pneumatics side of this conversion, cylinder volumes, cycle rates and air use per stroke, is covered in the Library’s [Pneumatics by the Numbers](/reados/publications/pneumatics-by-the-numbers/), and the [pneumatic cylinder sizing tool](/tools/pneumatic-cylinder-sizing/) converts a cylinder's stroke volume to free air.
 
 ## A failure case: actual litres added as free air
 

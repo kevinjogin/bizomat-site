@@ -9,7 +9,7 @@ draft: false
 
 The shoe brake is the oldest brake in machinery: a block pressed against a turning wheel by a lever. It is simple to make and easy to understand, and it has one property that makes it worth a chapter even where it is not the right choice. The friction on the shoe produces a moment about the lever's pivot, and depending on the direction of rotation, that moment either helps press the shoe on or pushes it off. A shoe brake can therefore be much stronger one way than the other, and with the wrong geometry it can lock itself on.
 
-This chapter examines the single-shoe brake the SW-25 had when the yard bought it, using the WORKOS single-shoe brake tool. It works out why the yard replaced it, shows how self-energising works and when it becomes self-locking, and covers the double-shoe brake that solves the old brake's worst problem. Its mistake is a refit proposal that cured a heavy lever by making the brake grab.
+This chapter examines the single-shoe brake the SW-25 had when the yard bought it, using the KEVOS® single-shoe brake tool. It works out why the yard replaced it, shows how self-energising works and when it becomes self-locking, and covers the double-shoe brake that solves the old brake's worst problem. Its mistake is a refit proposal that cured a heavy lever by making the brake grab.
 
 ## The old drum brake
 

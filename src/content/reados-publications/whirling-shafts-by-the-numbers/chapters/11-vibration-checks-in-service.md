@@ -7,7 +7,7 @@ description: "Reading a rotating machine's vibration: levels, trends and spectra
 draft: false
 ---
 
-A rotating machine reports its own condition through its vibration. Unbalance, a soft foundation, misalignment, looseness, a failing bearing and a resonance each leave a recognisable signature, and most can be read with a portable meter and a little arithmetic long before they cause a failure. The earlier chapters of this book used vibration readings to diagnose a near-critical prototype, a soft mezzanine, a mirror-image balance weight and a static-only balance. This chapter sets out how the HM-30's maker and its customers measure and read vibration in service, uses a WORKOS tool to identify a bearing defect, and describes how the wrong bearing data nearly hid one.
+A rotating machine reports its own condition through its vibration. Unbalance, a soft foundation, misalignment, looseness, a failing bearing and a resonance each leave a recognisable signature, and most can be read with a portable meter and a little arithmetic long before they cause a failure. The earlier chapters of this book used vibration readings to diagnose a near-critical prototype, a soft mezzanine, a mirror-image balance weight and a static-only balance. This chapter sets out how the HM-30's maker and its customers measure and read vibration in service, uses a KEVOS® tool to identify a bearing defect, and describes how the wrong bearing data nearly hid one.
 
 ## What to measure
 
@@ -82,7 +82,7 @@ caption: These are kinematic frequencies assuming pure rolling with no slip. Rea
 - φ | contact angle
 ```
 
-The WORKOS [Bearing defect frequency check](/tools/bearing-defect-frequency-check/) tool calculates the four frequencies from the shaft speed, number of rolling elements, element diameter, pitch diameter and contact angle, in hertz, cycles per minute and orders of shaft speed, with their first three harmonics. Given a measured peak and a matching tolerance, it reports which defect frequency or harmonic the peak matches, if any, and how closely. Its check reminds the user to confirm with the envelope spectrum, sidebands, the trend and physical inspection before replacing a bearing.
+The KEVOS® [Bearing defect frequency check](/tools/bearing-defect-frequency-check/) tool calculates the four frequencies from the shaft speed, number of rolling elements, element diameter, pitch diameter and contact angle, in hertz, cycles per minute and orders of shaft speed, with their first three harmonics. Given a measured peak and a matching tolerance, it reports which defect frequency or harmonic the peak matches, if any, and how closely. Its check reminds the user to confirm with the envelope spectrum, sidebands, the trend and physical inspection before replacing a bearing.
 
 ### A peak at 348.9 Hz
 

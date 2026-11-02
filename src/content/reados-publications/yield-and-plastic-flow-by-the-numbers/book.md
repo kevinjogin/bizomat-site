@@ -5,7 +5,7 @@ description: "How metals yield and flow and how to use it: elastic constants, te
 category: Engineering
 tags: [design, manufacturing, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -48,11 +48,11 @@ references:
   - title: "ISO 6506-1 Metallic materials — Brinell hardness test — Part 1: Test method"
     creator: "International Organization for Standardization"
     year: "2014"
-    note: "Named by number and scope only in Chapter 4, as the method behind the Brinell validity rules that the WORKOS tool applies."
+    note: "Named by number and scope only in Chapter 4, as the method behind the Brinell validity rules that the KEVOS® tool applies."
   - title: "ASTM E112 Standard Test Methods for Determining Average Grain Size"
     creator: "ASTM International"
     year: "2013"
-    note: "Named by number and scope only in Chapter 4, as the definition of the grain size number that the WORKOS tool calculates."
+    note: "Named by number and scope only in Chapter 4, as the definition of the grain size number that the KEVOS® tool calculates."
   - title: "Model Code of Practice: Managing the risks of plant in the workplace"
     creator: "Safe Work Australia"
     year: "2022"
@@ -75,7 +75,7 @@ Every metal part is designed around one number more than any other: its yield st
 
 This book explains yield and plastic flow from the crystal up and turns them into numbers that engineers use every day. It starts with the elastic constants and the dislocations that make metals yield at a tiny fraction of their theoretical strength, then reads a tensile test, converts it to true stress and strain, and describes work hardening. It relates hardness and grain size to strength, checks parts under combined stresses, finds the pressures at which a thick tube first yields and finally collapses, and then turns to deliberate plastic flow in bending, tube bending and thread rolling. It ends with thermal restraint, residual stress and annealing.
 
-It is for mechanical and manufacturing engineers, designers, fabricators, and test and quality staff. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical and manufacturing engineers, designers, fabricators, and test and quality staff. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -93,7 +93,7 @@ Strengths, test results, loads, pressures, prices and times are the case builder
 
 Read Chapters 1 to 3 first: they set out the elastic and plastic behaviour that every later chapter uses. Chapter 4 relates hardness and grain size to strength. Chapters 5 and 6 deal with yield under combined stress and the behaviour of a pressurised tube up to collapse. Chapters 7 to 9 cover deliberate plastic flow in bending, tube bending and thread rolling, and Chapter 10 covers thermal restraint, residual stress and annealing.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The formulas are sound first estimates for ductile steels; mill certificates, tests and trial pieces are the final word on real material.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The formulas are sound first estimates for ductile steels; mill certificates, tests and trial pieces are the final word on real material.
 
 ## Source limits and professional responsibility
 

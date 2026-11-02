@@ -33,7 +33,7 @@ The metal beside a weld, the **heat-affected zone**, is heated above the tempera
 
 Hydrogen cracking in steel needs three things together: a susceptible hard microstructure, hydrogen in the weld, and tensile stress. It often appears hours after welding, in the heat-affected zone beneath the weld bead, where it cannot be seen until the part is machined or inspected. Hydrogen comes from moisture in consumables and fluxes, from oil, paint and condensation on the joint, and from humid air.
 
-Each of the three can be controlled. A slower cooling rate, achieved by preheat and adequate heat input, reduces the hard microstructure. Low-hydrogen consumables kept dry, and a clean, dry joint, reduce the hydrogen. Preheat and slow cooling also give hydrogen time to diffuse out before the steel cools to the temperature where it cracks. Reducing restraint reduces the stress. The READOS chapter on [preheat, hydrogen and cooling](/reados/publications/weld-repairs-that-hold/preheat-hydrogen-and-cooling/) treats this in detail for steel plate repairs.
+Each of the three can be controlled. A slower cooling rate, achieved by preheat and adequate heat input, reduces the hard microstructure. Low-hydrogen consumables kept dry, and a clean, dry joint, reduce the hydrogen. Preheat and slow cooling also give hydrogen time to diffuse out before the steel cools to the temperature where it cracks. Reducing restraint reduces the stress. The Library chapter on [preheat, hydrogen and cooling](/reados/publications/weld-repairs-that-hold/preheat-hydrogen-and-cooling/) treats this in detail for steel plate repairs.
 
 ## Cooling rate
 

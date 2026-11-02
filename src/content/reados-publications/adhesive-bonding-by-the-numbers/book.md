@@ -5,7 +5,7 @@ description: "How to design, prepare, cure, test and prove bonded joints in meta
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -114,7 +114,7 @@ The plant, its products, its suppliers, its adhesives and every measured value a
 
 Read Chapters 1 to 3 in order: they set out why bonding works and how to measure a surface's readiness for it. Chapters 4 and 5 cover preparation and cure, the process steps where most production faults arise. Chapters 6 to 8 treat the joint as a structure. Chapter 9 covers durability, Chapter 10 testing and Chapter 11 production control and proof.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

@@ -47,7 +47,7 @@ A plasma, oxy-fuel or laser cut removes a strip of metal, the **kerf**, whose wi
 
 A marked line is a boundary between the part and the scrap, so the cut must run on the scrap side of it. On a CNC table, that is set by **kerf compensation**: the torch path is offset by half the kerf, 1.5 mm, to the scrap side of every profile. On a hand-guided cut, the operator follows the line with the torch on the scrap side. Either way, the part keeps its full size, and the nesting must leave the kerf between parts. Two parts placed edge to edge with no gap would each lose half the kerf, 1.5 mm, along their shared edge.
 
-The running case's nests allow at least 10 mm between parts and 10 mm from each sheet's edge, enough for the kerf, for a little heat distortion near the cut, and for squaring the mill edges where needed. READOS's chapter on [offsets, clearances and kerf](/reados/publications/drafting-geometry-by-the-numbers/offsets-clearances-and-kerf/) works through kerf compensation for profiles in detail.
+The running case's nests allow at least 10 mm between parts and 10 mm from each sheet's edge, enough for the kerf, for a little heat distortion near the cut, and for squaring the mill edges where needed. The Library’s chapter on [offsets, clearances and kerf](/reados/publications/drafting-geometry-by-the-numbers/offsets-clearances-and-kerf/) works through kerf compensation for profiles in detail.
 
 ## Nesting the 6 mm plate
 

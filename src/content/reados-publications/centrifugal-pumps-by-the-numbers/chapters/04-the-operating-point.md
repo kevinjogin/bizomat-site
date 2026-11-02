@@ -15,7 +15,7 @@ This chapter builds TP-3's system curve, finds its operating point, follows how 
 
 TP-3's system has a large static head and modest friction. With the sump at its low level, 2.0 m below the pump's centreline, the water must be lifted 2.0 m to the pump and 18.0 m from there to the free discharge above the header tank: a static head of **20.0 m** before any water moves. With the sump at its high level, 0.5 m below the pump, the static head is 18.5 m.
 
-The dynamic head comes from the suction pipe, 6 m of 105.3 mm bore with its foot valve and strainer and an elbow, and the discharge pipe, 120 m of the same bore with six elbows, a check valve, a gate valve and the exit. READOS's [Pipe Flow by the Numbers](/reados/publications/pipe-flow-by-the-numbers/the-system-curve/) builds such curves step by step; for TP-3, at 12 L/s and a velocity of 1.378 m/s, the suction loses 0.425 m and the discharge 2.586 m, so the system needs 20.0 + 3.01 = **23.01 m** with the sump low.
+The dynamic head comes from the suction pipe, 6 m of 105.3 mm bore with its foot valve and strainer and an elbow, and the discharge pipe, 120 m of the same bore with six elbows, a check valve, a gate valve and the exit. The Library’s [Pipe Flow by the Numbers](/reados/publications/pipe-flow-by-the-numbers/the-system-curve/) builds such curves step by step; for TP-3, at 12 L/s and a velocity of 1.378 m/s, the suction loses 0.425 m and the discharge 2.586 m, so the system needs 20.0 + 3.01 = **23.01 m** with the sump low.
 
 ```figure
 type: compare

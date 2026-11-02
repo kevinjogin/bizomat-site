@@ -43,7 +43,7 @@ The error also compounds. A bin is a stack of parts that must meet: the lower co
 
 When plate is bent, its outer fibres stretch, its inner fibres compress, and a surface between them keeps its length: the neutral surface. Trade texts have taught for more than a century that for plate rolled to a large radius, the neutral surface lies at the middle of the thickness, and the arithmetic agrees. The running case's shell is rolled to a mean radius of 1,203 mm, two hundred times its thickness. The strain at its outer surface is only t ÷ (2R) = 6 ÷ 2,406 = **0.25%**, the material barely yields, and the neutral surface stays at mid-thickness.
 
-Tight bends are different. When plate is pressed to an inside radius of a few thicknesses, as at the folded corner of a hopper, the neutral surface moves towards the inside of the bend, and the bend allowance is calculated with a K-factor rather than the mean line. READOS's [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/neutral-axis-k-factor-and-bend-allowance/) works through that calculation; the same method applies to plate pressed on a brake.
+Tight bends are different. When plate is pressed to an inside radius of a few thicknesses, as at the folded corner of a hopper, the neutral surface moves towards the inside of the bend, and the bend allowance is calculated with a K-factor rather than the mean line. The Library’s [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/neutral-axis-k-factor-and-bend-allowance/) works through that calculation; the same method applies to plate pressed on a brake.
 
 So the convention for this book is: **rolled plate is developed on the mean line; pressed corners use a bend allowance.**
 

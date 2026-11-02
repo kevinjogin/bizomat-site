@@ -15,7 +15,7 @@ This chapter develops F4, the rectangular elbow at the DX-3 fan inlet box. It sh
 
 A rectangular elbow has two dimensions at each section: its **depth**, measured in the plane of the bend from throat to heel, and its **width**, measured across the bend between the cheeks.
 
-- If the **depth** changes and the width stays constant, the cheeks are flat and parallel, and their shape is whatever the elevation shows: the throat and heel curves need not be concentric arcs. The wrappers are bent in one direction only and stretch out to the lengths of the throat and heel curves. Every piece is exact. READOS's [Rectangular Duct Fittings by the Numbers](/reados/publications/rectangular-duct-fittings-by-the-numbers/) covers elbows of this kind.
+- If the **depth** changes and the width stays constant, the cheeks are flat and parallel, and their shape is whatever the elevation shows: the throat and heel curves need not be concentric arcs. The wrappers are bent in one direction only and stretch out to the lengths of the throat and heel curves. Every piece is exact. The Library’s [Rectangular Duct Fittings by the Numbers](/reados/publications/rectangular-duct-fittings-by-the-numbers/) covers elbows of this kind.
 - If the **width** changes, the cheeks cannot both stay in parallel planes. At least one cheek must move sideways as it goes round the bend, and a cheek that moves sideways while its edges follow the throat and heel curves is a warped surface. It needs triangulating.
 
 F4 is the second kind. This is an illustration. The fan's inlet box needs a 300 mm wide connection, the duct arriving at it is 400 mm wide, and there is no room for a separate transition, so the elbow does the narrowing as it turns.

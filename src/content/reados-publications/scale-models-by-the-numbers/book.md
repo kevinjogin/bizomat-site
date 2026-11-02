@@ -5,7 +5,7 @@ description: "Use dimensions, dimensionless groups and similarity laws to plan a
 category: Engineering
 tags: [design, experimentation, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -99,7 +99,7 @@ The station, its dimensions, the lab and every measurement are invented. None de
 
 Read Chapters 1 to 4 in order: they set out dimensions, dimensionless groups, similarity and Froude scaling, which every later chapter uses. Chapters 5 and 6 deal with the scale effects that limit a small model, and Chapters 7 and 8 with turning test data into scaling laws without being misled by a change of regime. Chapter 9 applies the same ideas to pumps and fans, and Chapter 10 brings everything together in a test plan and report.
 
-Water properties come from the NIST Chemistry WebBook and are carried to more figures than a model test could justify, so that a reader can follow each step. WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
+Water properties come from the NIST Chemistry WebBook and are carried to more figures than a model test could justify, so that a reader can follow each step. KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
 
 ## Source limits and professional responsibility
 

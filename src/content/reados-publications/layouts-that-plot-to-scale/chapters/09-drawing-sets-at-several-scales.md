@@ -13,7 +13,7 @@ This chapter covers the conventions that make a mixed-scale set readable and the
 
 ## Stating the scale
 
-Each sheet states its scales in two places. The title block carries the main scale, and the views that use another scale carry their own. READOS's *Drawings That Make Parts* sets out the AS 1100.101 conventions: where one scale predominates, it goes in the title block followed by "OR AS SHOWN", and each other scale is written beside its view; where none predominates, the title block says "SCALES AS SHOWN" and every view is labelled.
+Each sheet states its scales in two places. The title block carries the main scale, and the views that use another scale carry their own. The Library’s *Drawings That Make Parts* sets out the AS 1100.101 conventions: where one scale predominates, it goes in the title block followed by "OR AS SHOWN", and each other scale is written beside its view; where none predominates, the title block says "SCALES AS SHOWN" and every view is labelled.
 
 This is an illustration. The take-up frame set uses:
 

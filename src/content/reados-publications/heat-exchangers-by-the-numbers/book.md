@@ -5,7 +5,7 @@ description: "Size and rate heat exchangers with numbers: energy balances, LMTD 
 category: Engineering
 tags: [design, systems, operations, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

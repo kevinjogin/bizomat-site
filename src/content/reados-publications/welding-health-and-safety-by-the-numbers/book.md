@@ -5,7 +5,7 @@ description: "Welding safety with numbers: risk management, fume and its measure
 category: Operations
 tags: [operations, people, quality, manufacturing, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -83,4 +83,4 @@ This book is educational and does not replace the work health and safety laws, r
 
 ## An original treatment
 
-READOS covers welding equipment in Arc Welding by the Numbers, shop layout in Setting Up a Welding Shop by the Numbers, and the training of welders in Welder Training by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers welding equipment in Arc Welding by the Numbers, shop layout in Setting Up a Welding Shop by the Numbers, and the training of welders in Welder Training by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.

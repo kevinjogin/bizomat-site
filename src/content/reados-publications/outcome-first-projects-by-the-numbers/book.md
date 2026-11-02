@@ -5,7 +5,7 @@ description: "Start a project from its outcome: write the purpose, define measur
 category: Business
 tags: [projects, strategy, operations, finance]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -147,9 +147,9 @@ The business, its customers, its people and every number in the case are invente
 
 ## How to use the book
 
-Read Chapters 1 and 2 first: the outcome and its value are the yardstick for everything after them. Chapters 3 to 5 turn the outcome into measures, baselines and targets, and are best read in order. Chapters 6 and 7 work back from the gap to causes and to the changes that would close it. Chapters 8 to 10 derive the options, test the scope and requirements, and carry the measures into acceptance and benefit tracking. Every calculation was checked by running it, and the WORKOS tools linked in the chapters reproduce the capacity and option arithmetic.
+Read Chapters 1 and 2 first: the outcome and its value are the yardstick for everything after them. Chapters 3 to 5 turn the outcome into measures, baselines and targets, and are best read in order. Chapters 6 and 7 work back from the gap to causes and to the changes that would close it. Chapters 8 to 10 derive the options, test the scope and requirements, and carry the measures into acceptance and benefit tracking. Every calculation was checked by running it, and the KEVOS® tools linked in the chapters reproduce the capacity and option arithmetic.
 
-This book is one of a series of KEVOS® READOS books on how projects are defined, decided and delivered, and it links to the others where their subjects meet. *Demand and Benefit Forecasts by the Numbers* covers how large and how certain the benefits defined here are likely to be. *Front-End Planning by the Numbers* places outcome definition within the wider planning done before a project is committed. *Stage Gates and Stopping Rules by the Numbers* covers the decision points, such as the case's later gate on a tunnel washer, at which the outcome is used to continue, change or stop. *Reference Class Forecasting by the Numbers* corrects the cost, schedule and benefit estimates that the options in this book rely on.
+This book is one of a series of KEVOS® Library books on how projects are defined, decided and delivered, and it links to the others where their subjects meet. *Demand and Benefit Forecasts by the Numbers* covers how large and how certain the benefits defined here are likely to be. *Front-End Planning by the Numbers* places outcome definition within the wider planning done before a project is committed. *Stage Gates and Stopping Rules by the Numbers* covers the decision points, such as the case's later gate on a tunnel washer, at which the outcome is used to continue, change or stop. *Reference Class Forecasting by the Numbers* corrects the cost, schedule and benefit estimates that the options in this book rely on.
 
 ## Source limits and professional responsibility
 

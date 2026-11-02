@@ -9,7 +9,7 @@ draft: false
 
 Some springs are designed by their force and some by their space. When a spring must give a large force in a short, narrow pocket, a round-wire design runs out of room: the wire that would carry the force at an acceptable stress needs so many coils for the rate that the spring is solid before it reaches its working length. There are two common ways to put more spring into the same space. One is to wind the spring from square or rectangular wire, which packs more steel into each coil. The other is to put a second spring inside the first.
 
-This chapter compares both on the VM-8's first production job, a fixture whose pressure pads are pushed by springs in shallow pockets. It uses three WORKOS tools: one for square-wire springs, one that compares square and round wire on the same coil, and one that checks a nested pair. Its mistake is a nested pair that jammed because both springs were wound the same way.
+This chapter compares both on the VM-8's first production job, a fixture whose pressure pads are pushed by springs in shallow pockets. It uses three KEVOS® tools: one for square-wire springs, one that compares square and round wire on the same coil, and one that checks a nested pair. Its mistake is a nested pair that jammed because both springs were wound the same way.
 
 ## The fixture and its pads
 

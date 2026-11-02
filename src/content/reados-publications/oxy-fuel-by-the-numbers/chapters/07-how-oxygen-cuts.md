@@ -20,7 +20,7 @@ TWI sets out four conditions a metal must meet for oxygen cutting to work.
 3. The heat released by the oxidation must be enough to keep the cut going.
 4. The reaction should produce few gaseous products that would dilute the cutting oxygen.
 
-Carbon and low-alloy steels meet all four. Stainless steels, cast irons and most non-ferrous metals do not, mainly because they form oxides that melt at higher temperatures than the metal and stay in the way. TWI notes that they can be cut only by injecting powder into the flame to form a fluid slag, which is a specialised process. The everyday consequence is the familiar rule: oxy-fuel cutting is for carbon and low-alloy steels. READOS's [process selection chapter](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/) places it beside the alternatives for other materials.
+Carbon and low-alloy steels meet all four. Stainless steels, cast irons and most non-ferrous metals do not, mainly because they form oxides that melt at higher temperatures than the metal and stay in the way. TWI notes that they can be cut only by injecting powder into the flame to form a fluid slag, which is a specialised process. The everyday consequence is the familiar rule: oxy-fuel cutting is for carbon and low-alloy steels. The Library’s [process selection chapter](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/) places it beside the alternatives for other materials.
 
 ## The oxygen a cut needs
 

@@ -21,14 +21,14 @@ Strain is the change in a length divided by a length. **Engineering strain** div
 type: compare
 title: Engineering and true strain for a 10 mm line
 cols: Engineering strain | True strain
-caption: The two agree for small strains and diverge as strain grows. In shrinking they diverge the other way. The WORKOS true stress and strain calculator converts between them.
+caption: The two agree for small strains and diverge as strain grows. In shrinking they diverge the other way. The KEVOS® true stress and strain calculator converts between them.
 - 10 mm to 11 mm | 10.0% | 9.5%
 - 10 mm to 12 mm | 20.0% | 18.2%
 - 10 mm to 12.5 mm | 25.0% | 22.3%
 - 10 mm to 9 mm | −10.0% | −10.5%
 ```
 
-The [true stress and strain calculator](/tools/true-stress-strain/) in WORKOS converts between the two and between engineering and true stress, for anyone who wants to check the logarithms.
+The [true stress and strain calculator](/tools/true-stress-strain/) in KEVOS® Tools converts between the two and between engineering and true stress, for anyone who wants to check the logarithms.
 
 ## Constant volume
 

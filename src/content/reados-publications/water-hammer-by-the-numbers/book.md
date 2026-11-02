@@ -5,7 +5,7 @@ description: "Size pressure surges in a pumped water main from wave speed and ve
 category: Engineering
 tags: [design, validation, projects]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

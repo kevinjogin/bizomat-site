@@ -5,7 +5,7 @@ description: "Use the second law to find where a plant's energy loses its value:
 category: Engineering
 tags: [design, systems, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

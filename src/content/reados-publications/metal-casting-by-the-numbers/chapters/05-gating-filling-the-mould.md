@@ -9,7 +9,7 @@ draft: false
 
 The gating system is the plumbing of a mould: the pouring basin, the sprue that carries metal down, the runner that carries it along, and the gates through which it enters the casting. It has two jobs that pull against each other. It must fill the mould fast enough that the metal does not freeze in the thin walls before the cavity is full. And it must fill it gently enough that the metal does not splash, fold over on itself and trap its own oxide skin and air. Aluminium is especially unforgiving of the second, because its oxide film forms instantly and does not float out.
 
-This chapter sizes GB-12's gating with a WORKOS tool, explains why the area at one point, the choke, controls the flow, shows how gating ratios set the velocity at the gates, and works through a gating system copied from an iron job that filled GB-12's castings with oxide.
+This chapter sizes GB-12's gating with a KEVOS® tool, explains why the area at one point, the choke, controls the flow, shows how gating ratios set the velocity at the gates, and works through a gating system copied from an iron job that filled GB-12's castings with oxide.
 
 ## Velocity from height
 
@@ -29,7 +29,7 @@ caption: The choke is the smallest cross-section in the system, which controls t
 - C_d | flow efficiency, 0.8 is a common working value
 ```
 
-The WORKOS [Casting gating system choke area](/tools/gating-choke-area/) tool applies these. From the poured mass, liquid density, effective head, pouring time, flow efficiency and the runner and total gate areas as ratios of the choke, it reports the velocity at the choke, the choke area, the equivalent round sprue diameter, the runner area and the total gate area. Its single check compares the velocity at the gates, the choke velocity divided by the gate ratio, with about 0.5 m/s, a level aluminium foundries commonly try to stay below at the gates. Its guide notes that pouring time rules and gating ratios depend on the alloy and casting and should come from foundry practice.
+The KEVOS® [Casting gating system choke area](/tools/gating-choke-area/) tool applies these. From the poured mass, liquid density, effective head, pouring time, flow efficiency and the runner and total gate areas as ratios of the choke, it reports the velocity at the choke, the choke area, the equivalent round sprue diameter, the runner area and the total gate area. Its single check compares the velocity at the gates, the choke velocity divided by the gate ratio, with about 0.5 m/s, a level aluminium foundries commonly try to stay below at the gates. Its guide notes that pouring time rules and gating ratios depend on the alloy and casting and should come from foundry practice.
 
 ## GB-12's gating
 

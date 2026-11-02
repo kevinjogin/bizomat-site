@@ -23,7 +23,7 @@ For the running case's Ø250 duct in 0.8 mm sheet, the three candidate girths ar
 
 The difference between inside and mean is π × 0.8 = 2.5 mm. That looks small, but it is the same size as the clearance in a slip joint, and a duct made on the inside girth would be 0.8 mm small in diameter and a tight fit on the next spigot. For plate the difference grows with thickness: a 6 mm plate shell loses π × 6 = 18.8 mm of girth if laid out on the inside, which is why [Plate Work by the Numbers](/reados/publications/plate-work-by-the-numbers/when-thickness-changes-the-pattern/) treats the thickness as part of every pattern.
 
-When the neutral surface moves inward, which happens in tight bends where the radius is only a few thicknesses, folded corners need a K-factor rather than the mean line. READOS's [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/neutral-axis-k-factor-and-bend-allowance/) covers that case. For rolled pipe and duct, where the radius is hundreds of thicknesses, the mean line is accurate to well within the tolerance of the work.
+When the neutral surface moves inward, which happens in tight bends where the radius is only a few thicknesses, folded corners need a K-factor rather than the mean line. The Library’s [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/neutral-axis-k-factor-and-bend-allowance/) covers that case. For rolled pipe and duct, where the radius is hundreds of thicknesses, the mean line is accurate to well within the tolerance of the work.
 
 ```figure
 type: formula

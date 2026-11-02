@@ -9,7 +9,7 @@ draft: false
 
 Every part of a cryostat shrinks as it cools, and no two materials shrink by the same amount. A spigot that locates an aluminium coil former in a copper plate fits snugly at room temperature and rattles at 40 K. A stainless steel bolt that clamps an aluminium flange tightly on the bench loses most of its grip when cold. Two dowels that hold parts of different materials in register try to pull apart. None of this is visible when the cryostat is assembled, and all of it happens inside a vacuum vessel where nobody can see it.
 
-This chapter tabulates the contraction of CT-40's materials from NIST's data, shows how to turn them into the mean coefficients that the WORKOS thermal growth and differential expansion tools need, and works through CT-40's fits, bolted joints and supports. It ends with a pair of dowels that sheared on the first cooldown.
+This chapter tabulates the contraction of CT-40's materials from NIST's data, shows how to turn them into the mean coefficients that the KEVOS® thermal growth and differential expansion tools need, and works through CT-40's fits, bolted joints and supports. It ends with a pair of dowels that sheared on the first cooldown.
 
 ## How much each material shrinks
 
@@ -36,7 +36,7 @@ What matters in an assembly is not each contraction but the differences between 
 
 ## Mean coefficients for constant-property tools
 
-WORKOS's expansion tools take a constant coefficient. As in Cryogenic Liquids by the Numbers, they give exact answers if they are given the mean coefficient over the actual range: the total contraction divided by the temperature change.
+The KEVOS® expansion tools take a constant coefficient. As in Cryogenic Liquids by the Numbers, they give exact answers if they are given the mean coefficient over the actual range: the total contraction divided by the temperature change.
 
 ```figure
 type: compare

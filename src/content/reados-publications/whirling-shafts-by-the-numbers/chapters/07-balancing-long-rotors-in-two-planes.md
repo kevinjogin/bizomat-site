@@ -9,7 +9,7 @@ draft: false
 
 A long rotor can be perfectly balanced statically, sitting still in any position on knife edges, and still shake its bearings violently when it spins. The reason is couple unbalance: two unbalances at opposite ends of the rotor, on opposite sides, which cancel each other's pull on the centre of mass but together try to tilt the rotor's axis. A tilting rotor drives its two bearings in opposite directions. No single weight can cure it, because a single weight cannot produce a couple. Two weights, in two planes, can cure any unbalance of a rigid rotor.
 
-This chapter shows how to calculate the two corrections, applies two WORKOS tools to the HM-30's rotor after a hammer change, explains how weighing and sorting hammers keeps the rotor in balance, and describes the static rebalance that left the rotor shaking.
+This chapter shows how to calculate the two corrections, applies two KEVOS® tools to the HM-30's rotor after a hammer change, explains how weighing and sorting hammers keeps the rotor in balance, and describes the static rebalance that left the rotor shaking.
 
 ## Two planes are always enough
 
@@ -49,7 +49,7 @@ caption: This is an illustration. Each excess mass is the difference between the
 
 Working the moments by hand: the unbalances sum to (13,800, −5,750) g·mm in x and y; their moments about plane A sum to (1,518,000, −1,897,500) g·mm². Plane B's correction is minus the moment divided by 400: (−3,795, 4,744) g·mm, a magnitude of 6,075 g·mm. Plane A's is minus the sum less plane B's: (−10,005, 1,006) g·mm, a magnitude of 10,055 g·mm.
 
-The WORKOS [Two-plane (dynamic) balance corrections](/tools/two-plane-balance/) tool does that arithmetic: from up to three masses, each with its radius, angle and axial position from plane A, the distance between the planes and the correction radius in each, it gives the correction mass and angle in each plane and the static unbalance. The WORKOS [Rotor balancing check](/tools/rotor-balancing-check/) tool does the same resolution and adds the balance grade: from the rotor's mass, speed and grade it works out the permissible unbalance per plane, compares each plane's unbalance with it, gives the rotating force each plane's unbalance puts on the bearings, and checks that the corrections fit within the largest weight you can practically fit.
+The KEVOS® [Two-plane (dynamic) balance corrections](/tools/two-plane-balance/) tool does that arithmetic: from up to three masses, each with its radius, angle and axial position from plane A, the distance between the planes and the correction radius in each, it gives the correction mass and angle in each plane and the static unbalance. The KEVOS® [Rotor balancing check](/tools/rotor-balancing-check/) tool does the same resolution and adds the balance grade: from the rotor's mass, speed and grade it works out the permissible unbalance per plane, compares each plane's unbalance with it, gives the rotating force each plane's unbalance puts on the bearings, and checks that the corrections fit within the largest weight you can practically fit.
 
 ```figure
 type: compare

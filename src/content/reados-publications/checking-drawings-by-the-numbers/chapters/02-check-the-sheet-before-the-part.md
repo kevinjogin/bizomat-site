@@ -28,7 +28,7 @@ A detail drawing must carry enough information around the views for someone who 
 - a reference to the **assembly** on which the part is used;
 - the **signatures and dates** for drawn, checked, approved and issued.
 
-READOS's *Drawings That Make Parts* explains what AS 1100 says about each field. The checker's question is narrower: is each field present, filled in, correct, and the same as on every other sheet where it should be the same?
+The Library’s *Drawings That Make Parts* explains what AS 1100 says about each field. The checker's question is narrower: is each field present, filled in, correct, and the same as on every other sheet where it should be the same?
 
 ## Title and number: one is a name, the other an identity
 

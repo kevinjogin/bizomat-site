@@ -111,7 +111,7 @@ For the bracket, the base's flatness matters, because the drive's four feet sit 
 
 ## Geometric tolerances on sheet metal
 
-Geometric tolerancing suits folded parts better than many designers expect. A **position** tolerance on the base's four holes, at maximum material condition, relative to the base face and centreline, says exactly what the drive's screws need and gives the folder the bonus tolerance that larger holes allow. A **profile** tolerance on the folded section, relative to the base as datum, can replace a cluster of linear dimensions and their stacked tolerances with a single zone that the part's outline must lie within, which is how many sheet metal shops inspect folded sections anyway. READOS's *Fits That Work* and *Inspecting to the Drawing* explain both in more depth.
+Geometric tolerancing suits folded parts better than many designers expect. A **position** tolerance on the base's four holes, at maximum material condition, relative to the base face and centreline, says exactly what the drive's screws need and gives the folder the bonus tolerance that larger holes allow. A **profile** tolerance on the folded section, relative to the base as datum, can replace a cluster of linear dimensions and their stacked tolerances with a single zone that the part's outline must lie within, which is how many sheet metal shops inspect folded sections anyway. The Library’s *Fits That Work* and *Inspecting to the Drawing* explain both in more depth.
 
 The caution is the same as for any tolerance: a geometric tolerance copied from a machined-part drawing will be just as unachievable as the base width's ±0.1 mm was. The zone sizes must come from the folder's capability, as the linear scheme's did.
 

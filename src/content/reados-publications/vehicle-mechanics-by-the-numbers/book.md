@@ -5,7 +5,7 @@ description: "Calculate what a site vehicle needs to climb, pull, stop, turn and
 category: Engineering
 tags: [design, operations, manufacturing, validation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

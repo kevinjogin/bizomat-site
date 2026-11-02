@@ -57,7 +57,7 @@ caption: Changing the part or the specification is usually cheaper than changing
 - Purchaser | Is a longer cycle acceptable? | pay for the time and zinc
 ```
 
-**Change the part.** A recess that is deep for its width is hard to plate. Opening a channel, adding a radius to an inside corner, adding holes so solution circulates, or shortening a blind feature all move the recess's share of current up. The READOS chapter on [designing sheet metal parts for manufacture](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-sheet-metal-parts-for-manufacture/) covers the forming side of such choices.
+**Change the part.** A recess that is deep for its width is hard to plate. Opening a channel, adding a radius to an inside corner, adding holes so solution circulates, or shortening a blind feature all move the recess's share of current up. The Library chapter on [designing sheet metal parts for manufacture](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-sheet-metal-parts-for-manufacture/) covers the forming side of such choices.
 
 **Change the specification.** If the recess does not matter for service or appearance, the drawing can show it as a non-significant surface, and the minimum then applies to the surfaces that do matter. That is not a loophole; it is the purpose of marking significant surfaces.
 

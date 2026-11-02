@@ -5,7 +5,7 @@ description: "Design with nickel-titanium shape memory wire and superelastic par
 category: Engineering
 tags: [design, product-development, automation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

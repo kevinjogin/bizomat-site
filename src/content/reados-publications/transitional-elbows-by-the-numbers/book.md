@@ -5,7 +5,7 @@ description: "Develop sheet metal fittings whose ends are not parallel by triang
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -65,7 +65,7 @@ Most sheet metal fittings join two ends that face the same way: a reducer, a squ
 
 The book treats every such fitting the same way. It puts the fitting on three axes, gives every point on its two ends a coordinate, finds the true length of every line from three differences, and lays the triangles out flat. That is triangulation, the method sheet metal workers have used for more than a century, written so that every line can be calculated and checked rather than drawn and measured. Each chapter develops a fitting from one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for sheet metal workers, ductwork fabricators, apprentices and drafters, and for engineers who check their patterns. It assumes school algebra and trigonometry and the basics of pattern development. READOS's Sheet Metal Patterns by the Numbers covers triangulation of fittings with parallel ends, the eccentric reducer and the rectangle-to-round transition; this book starts where that one stops.
+It is for sheet metal workers, ductwork fabricators, apprentices and drafters, and for engineers who check their patterns. It assumes school algebra and trigonometry and the basics of pattern development. The Library’s Sheet Metal Patterns by the Numbers covers triangulation of fittings with parallel ends, the eccentric reducer and the rectangle-to-round transition; this book starts where that one stops.
 
 ## The running case
 

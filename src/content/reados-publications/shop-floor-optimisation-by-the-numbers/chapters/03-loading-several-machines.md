@@ -9,7 +9,7 @@ draft: false
 
 With more than two machines, splitting work becomes loading: each job goes to one of several identical machines, and the aim is again to finish the whole list as early as possible. Three weld bays, four CNC mills, five inspectors or six operators on a kitting bench all pose the same problem. The count of possible plans grows faster, as the number of machines raised to the number of jobs, and the differencing trick of Chapter 2 no longer applies in its simple form. The longest-first rule does, and with it come two bounds that frequently prove its plan the best possible.
 
-This chapter loads the shop's three weld bays, proves the result optimal with a bound, shows the rule's worst case, deals with jobs that arrive during the day, and checks the bays' capacity over a week with the WORKOS capacity tool. Its error is a loading made in order of arrival.
+This chapter loads the shop's three weld bays, proves the result optimal with a bound, shows the rule's worst case, deals with jobs that arrive during the day, and checks the bays' capacity over a week with the KEVOS® capacity tool. Its error is a loading made in order of arrival.
 
 ## The weld queue
 

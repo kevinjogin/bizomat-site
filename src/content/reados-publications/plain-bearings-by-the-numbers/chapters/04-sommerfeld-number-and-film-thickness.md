@@ -3,13 +3,13 @@ book: plain-bearings-by-the-numbers
 chapterSlug: sommerfeld-number-and-film-thickness
 order: 4
 title: "The Sommerfeld number and film thickness"
-description: "Combine a journal bearing's variables into the Sommerfeld number, then find its eccentricity, thinnest film, attitude angle and peak pressure with the short-bearing solution and the WORKOS tool."
+description: "Combine a journal bearing's variables into the Sommerfeld number, then find its eccentricity, thinnest film, attitude angle and peak pressure with the short-bearing solution and the KEVOS® tool."
 draft: false
 ---
 
 Chapter 1 explained that a loaded journal moves off centre until its wedge generates enough pressure to carry the load. Where exactly it settles decides almost everything about the bearing: the thinnest film, on which its safety depends; the friction, through the correction Chapter 3 introduced; the oil that leaks from its ends; and the peak pressure its lining must bear. Finding that position is the central calculation of hydrodynamic bearing design.
 
-This chapter combines the bearing's variables into a single dimensionless group, the Sommerfeld number, uses the short-bearing solution published by DuBois and Ocvirk in NACA Report 1157 to turn it into the eccentricity ratio, and from that finds FB-75's minimum film thickness, attitude angle and peak film pressure. It applies the WORKOS journal bearing design tool, looks at how the film responds to load, and ends with a dial indicator reading that was taken as a sign of a worn bearing when it showed the film doing its job.
+This chapter combines the bearing's variables into a single dimensionless group, the Sommerfeld number, uses the short-bearing solution published by DuBois and Ocvirk in NACA Report 1157 to turn it into the eccentricity ratio, and from that finds FB-75's minimum film thickness, attitude angle and peak film pressure. It applies the KEVOS® journal bearing design tool, looks at how the film responds to load, and ends with a dial indicator reading that was taken as a sign of a worn bearing when it showed the film doing its job.
 
 ## One number for the whole bearing
 

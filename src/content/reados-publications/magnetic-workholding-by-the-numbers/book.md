@@ -5,7 +5,7 @@ description: "How magnets hold steel and how to prove they will: pull from flux 
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -84,7 +84,7 @@ A magnetic chuck holds a steel plate with no clamps in the way of the cutter, an
 
 This book shows how. It starts from the flux density at the contact face, which sets the pull per unit area, and follows that pull through everything that reduces it: air gaps from scale, paint and chips, material that saturates or will not magnetise, plates too thin to carry the flux, parts too small to bridge the poles, and heat. It then compares the holding force with the forces that try to move the part, from milling and grinding, and with the weight and stiffness of plates on lifting magnets. The last chapters deal with distortion, residual magnetism and how to prove a set-up works.
 
-It is for machinists, toolmakers, tooling and manufacturing engineers, fabrication supervisors and the people who plan lifts in a plate shop. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for machinists, toolmakers, tooling and manufacturing engineers, fabrication supervisors and the people who plan lifts in a plate shop. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 

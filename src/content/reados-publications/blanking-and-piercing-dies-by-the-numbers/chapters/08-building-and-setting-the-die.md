@@ -28,7 +28,7 @@ Screws hold parts together; **dowels** locate them. A die plate held only by scr
 
 ## Steels and hardening
 
-The cutting parts are made of hardened tool steel, chosen for the balance between wear resistance, which keeps edges sharp, and toughness, which stops them chipping. READOS's chapter on [choosing tool steels](/reados/collections/machining-and-metal-parts/choosing-tool-steels/) sets out the families and how they are matched to blanking dies, and the steel supplier's data and the heat treater's advice govern the grade, hardness and treatment for a specific die.
+The cutting parts are made of hardened tool steel, chosen for the balance between wear resistance, which keeps edges sharp, and toughness, which stops them chipping. The Library’s chapter on [choosing tool steels](/reados/collections/machining-and-metal-parts/choosing-tool-steels/) sets out the families and how they are matched to blanking dies, and the steel supplier's data and the heat treater's advice govern the grade, hardness and treatment for a specific die.
 
 Hodgson's 1903 book describes a very different practice, where dies of carbon steel were hardened by quenching and then tempered by reheating until the surface showed a particular oxide colour, a straw colour for the lower die of tools cutting thin brass and tin, with a table of colours for different tools. The principle is the same today: hardening makes the steel hard and brittle, and tempering trades a little hardness for toughness. What has changed is the control. Modern tool steels are hardened in controlled atmospheres or vacuum to specified temperatures and tempered, often more than once, to a specified hardness, which is then checked with a hardness tester rather than judged by colour.
 

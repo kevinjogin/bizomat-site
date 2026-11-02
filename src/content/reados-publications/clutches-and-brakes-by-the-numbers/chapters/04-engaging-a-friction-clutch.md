@@ -9,7 +9,7 @@ draft: false
 
 Chapter 3 sized the SW-25's clutch to carry its load once engaged. This chapter is about the moment of engagement, when the driving side is turning and the driven side is not, and the clutch slips until they match. During that slip three things happen at once: the load is accelerated, energy is turned into heat in the plates, and the torque the clutch transmits jerks everything downstream of it.
 
-The chapter works the SW-25's engagement with the WORKOS friction clutch engagement design tool, shows the energy balance that makes half the input energy heat, and uses the result to choose how fast the clutch should engage. Its mistake is a speed taken from the wrong shaft, which multiplied the calculated engagement heat by two hundred.
+The chapter works the SW-25's engagement with the KEVOS® friction clutch engagement design tool, shows the energy balance that makes half the input energy heat, and uses the result to choose how fast the clutch should engage. Its mistake is a speed taken from the wrong shaft, which multiplied the calculated engagement heat by two hundred.
 
 ## The physics of a slipping engagement
 

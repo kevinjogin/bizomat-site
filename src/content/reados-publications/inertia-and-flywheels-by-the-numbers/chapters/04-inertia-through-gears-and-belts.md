@@ -9,7 +9,7 @@ draft: false
 
 A motor rarely drives its load directly. Gears, belts, chains and screws sit between them, changing speed and torque, and they change how heavy the load feels to the motor. Seen through a reduction of i to 1, a load's torque looks i times smaller and its inertia i² times smaller. That square is the reason a gearbox can let a small motor accelerate a large load, and the reason a mistake in a radius or ratio is so costly in an inertia calculation.
 
-This chapter reflects the DL-3's length pusher to its servo motor with the WORKOS reflected inertia tool, explains the inertia ratio that servo makers ask about, and compares the pusher with the chipper's belt drive, where the same arithmetic gives a very different answer. Its mistake is a pulley's diameter used as its radius, which made the pusher look four times heavier than it is.
+This chapter reflects the DL-3's length pusher to its servo motor with the KEVOS® reflected inertia tool, explains the inertia ratio that servo makers ask about, and compares the pusher with the chipper's belt drive, where the same arithmetic gives a very different answer. Its mistake is a pulley's diameter used as its radius, which made the pusher look four times heavier than it is.
 
 ## Why the ratio is squared
 

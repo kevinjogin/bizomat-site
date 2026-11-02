@@ -18,7 +18,7 @@ type: formula
 title: The estimated S-N line for steel
 formula: S = a N^b,  between N = 10³ and N = 10⁶
 formula: a = (f Su)² ÷ Se,   b = −log₁₀(f Su ÷ Se) ÷ 3,   N = (S ÷ a)^(1 ÷ b)
-caption: f is the fraction of the tensile strength reached at 10³ cycles, about 0.9 for steels up to about 500 MPa and somewhat lower for stronger steels in some texts; the WORKOS tools take 0.9 by default. Below 10³ cycles, strain-life methods are needed.
+caption: f is the fraction of the tensile strength reached at 10³ cycles, about 0.9 for steels up to about 500 MPa and somewhat lower for stronger steels in some texts; the KEVOS® tools take 0.9 by default. Below 10³ cycles, strain-life methods are needed.
 - S | fully reversed alternating stress, or the equivalent fully reversed stress (Chapter 5)
 - N | cycles to failure
 - a, b | constants of the line; b is negative

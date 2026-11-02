@@ -5,7 +5,7 @@ description: "Develop a connected product with numbers: requirements and archite
 category: Products
 tags: [product-development, systems, validation, design, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

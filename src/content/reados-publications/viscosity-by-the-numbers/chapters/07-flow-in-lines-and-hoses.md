@@ -3,13 +3,13 @@ book: viscosity-by-the-numbers
 chapterSlug: flow-in-lines-and-hoses
 order: 7
 title: "Flow in lines, hoses and filters"
-description: "Calculate laminar and transitional pressure drop in oil lines with the Hagen–Poiseuille law and the WORKOS line sizing tool, and see how a cold start multiplies losses in lines, strainers and filters."
+description: "Calculate laminar and transitional pressure drop in oil lines with the Hagen–Poiseuille law and the KEVOS® line sizing tool, and see how a cold start multiplies losses in lines, strainers and filters."
 draft: false
 ---
 
 Water in a building's pipes flows turbulently, and its pressure drop depends mostly on velocity and pipe roughness. Oil in a hydraulic line usually flows in smooth, orderly layers, and its pressure drop depends directly on its viscosity. That single difference means an oil line's losses can change tenfold between a cold morning and a warm afternoon, while the same line full of water would barely notice.
 
-This chapter applies the laminar flow law named after Hagen and Poiseuille to HPU-40's pressure, return and suction lines, uses the WORKOS hydraulic line sizing tool to check velocity, Reynolds number, pressure drop and tube rating at four oil temperatures, and follows the effect of a cold start through the suction strainer and the return filter. It ends with a slow ram return that had been dismissed because the line losses were calculated at the data sheet's 40 °C.
+This chapter applies the laminar flow law named after Hagen and Poiseuille to HPU-40's pressure, return and suction lines, uses the KEVOS® hydraulic line sizing tool to check velocity, Reynolds number, pressure drop and tube rating at four oil temperatures, and follows the effect of a cold start through the suction strainer and the return filter. It ends with a slow ram return that had been dismissed because the line losses were calculated at the data sheet's 40 °C.
 
 ## Laminar flow and the Reynolds number
 

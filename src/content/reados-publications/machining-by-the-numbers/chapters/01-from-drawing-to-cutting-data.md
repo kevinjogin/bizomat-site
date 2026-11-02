@@ -91,7 +91,7 @@ Most mistakes in cutting data are unit mistakes. Three precautions prevent most 
 2. **Use diameter, not radius, in speed formulas.** Turning programs often work in diameter on the X axis. Cutting speed depends on circumference, πD.
 3. **Convert imperial data carefully.** Older handbooks and some suppliers use surface feet per minute and inches per revolution. Multiply surface feet per minute by 0.3048 for metres per minute, and inches by 25.4 for millimetres.
 
-Writing the units next to every number in a calculation, and checking that they cancel properly, is the simplest and most effective error check. The READOS chapter on [SI units and calculation checking](/reados/collections/engineering-design-practice/si-units-and-calculation-checking/) covers the habit in more detail.
+Writing the units next to every number in a calculation, and checking that they cancel properly, is the simplest and most effective error check. The Library chapter on [SI units and calculation checking](/reados/collections/engineering-design-practice/si-units-and-calculation-checking/) covers the habit in more detail.
 
 ## The Harbourline pump flange
 

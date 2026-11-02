@@ -5,7 +5,7 @@ description: "Set, check and cost resistance welds from first principles: Joule 
 category: Manufacturing
 tags: [manufacturing, quality, design, validation, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -115,4 +115,4 @@ This book is educational. Resistance welds in load-bearing, pressure-containing,
 
 ## An original treatment
 
-READOS covers how metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/) and repair of steel plate in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/). This book concentrates on the resistance processes. The explanations, the cabinet case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers how metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/) and repair of steel plate in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/). This book concentrates on the resistance processes. The explanations, the cabinet case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.

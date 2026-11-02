@@ -5,7 +5,7 @@ description: "Weld pipe with numbers: welded against threaded joints, wall thick
 category: Manufacturing
 tags: [manufacturing, quality, projects, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -79,4 +79,4 @@ This book is educational. Pressure piping in Australia is designed, fabricated, 
 
 ## An original treatment
 
-READOS covers arc welding generally in Arc Welding by the Numbers, testing in Testing Welded Joints by the Numbers, and the metallurgy of welding steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the contractor case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers arc welding generally in Arc Welding by the Numbers, testing in Testing Welded Joints by the Numbers, and the metallurgy of welding steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the contractor case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.

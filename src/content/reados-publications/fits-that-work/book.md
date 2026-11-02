@@ -5,7 +5,7 @@ description: "Follow a mechanical assembly from functional limits to tolerance b
 category: Engineering
 tags: [design, manufacturing, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-20

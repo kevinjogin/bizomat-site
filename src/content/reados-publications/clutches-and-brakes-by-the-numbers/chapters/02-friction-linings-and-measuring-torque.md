@@ -9,7 +9,7 @@ draft: false
 
 Every friction device in this book rests on one number, the coefficient of friction between the lining and the surface it rubs on, and that number is the least certain in the whole calculation. A bolt's strength or a shaft's diameter is known to a percent or two. A lining's friction coefficient can move by a quarter with temperature, speed, wear, moisture and a film of grease, and it is never quite the same in a test as in service.
 
-This chapter covers what friction linings are, how their friction behaves, and how a designer chooses the friction coefficient to put into a calculation. It then covers the oldest and simplest way to measure torque, the brake arm, using the WORKOS Prony brake tool to test the SW-25's backup engine. Its mistake is a test reading taken without its zero.
+This chapter covers what friction linings are, how their friction behaves, and how a designer chooses the friction coefficient to put into a calculation. It then covers the oldest and simplest way to measure torque, the brake arm, using the KEVOS® Prony brake tool to test the SW-25's backup engine. Its mistake is a test reading taken without its zero.
 
 ## Friction in a lining
 

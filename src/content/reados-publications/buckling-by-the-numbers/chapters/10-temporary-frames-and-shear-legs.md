@@ -9,7 +9,7 @@ draft: false
 
 Temporary works are where buckling and instability catch people most often. A lifting frame, a set of props or a pair of shear legs is put up in an afternoon from whatever is on hand, used for a day and taken down. It gets less design attention than the permanent structure it serves, it is often loaded closer to its limit, and its members are long, light and easily bent. Above all, temporary frames are frequently unbraced in at least one direction, and Chapter 2 showed what that does.
 
-This chapter works through a set of shear legs used to lift a pump set out of a pit beside HT-8. It applies the leg checks with a WORKOS tool, explains the out-of-plane instability that makes shear legs dangerous, and describes a lift that swung.
+This chapter works through a set of shear legs used to lift a pump set out of a pit beside HT-8. It applies the leg checks with a KEVOS® tool, explains the out-of-plane instability that makes shear legs dangerous, and describes a lift that swung.
 
 ## Shear legs
 
@@ -55,7 +55,7 @@ F_leg = W ÷ (2 × cos θ) and H_foot = W × tan θ ÷ 2
 
 With feet 2,600 mm apart and legs 5,000 mm long, sin θ = 1,300 ÷ 5,000 = 0.26, so θ = 15.07°. The head is √(5,000² − 1,300²) = 4,828 mm above the floor.
 
-The WORKOS [Shear legs (A-frame) check](/tools/shear-legs-check/) tool does the geometry and the leg check together. From the leg length, the spread between the feet, the load at the head, the tube's outside diameter and wall, its modulus and yield, the effective length factor, the required factor on buckling and the capacity of the foot tie or anchors, it gives the apex angle, head height, force in each leg, outward thrust at each foot, the leg's slenderness and buckling load by Euler or Johnson, the buckling factor and a check of the tie. Its checks include a reminder to guy the head fore and aft, because shear legs are unstable out of their plane, and its guide notes that the load is taken as hanging centrally at the apex in the plane of the legs.
+The KEVOS® [Shear legs (A-frame) check](/tools/shear-legs-check/) tool does the geometry and the leg check together. From the leg length, the spread between the feet, the load at the head, the tube's outside diameter and wall, its modulus and yield, the effective length factor, the required factor on buckling and the capacity of the foot tie or anchors, it gives the apex angle, head height, force in each leg, outward thrust at each foot, the leg's slenderness and buckling load by Euler or Johnson, the buckling factor and a check of the tie. Its checks include a reminder to guy the head fore and aft, because shear legs are unstable out of their plane, and its guide notes that the load is taken as hanging centrally at the apex in the plane of the legs.
 
 ```figure
 type: steps

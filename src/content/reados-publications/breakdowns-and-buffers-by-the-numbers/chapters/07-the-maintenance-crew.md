@@ -9,7 +9,7 @@ draft: false
 
 Chapter 6 modelled one fitter and four machines exactly, state by state. A site's maintenance crew serves many more: the ovens, fryers, seasoning drums, conveyors, palletisers and compressors as well as the packing lines. With dozens of machines, a breakdown on one barely changes the chance of a breakdown on another, and the calls on the crew begin to look like a steady random stream. That is the setting for the most widely used model in queueing theory, the multi-server queue with random arrivals and random service times, and for its central result, the Erlang C formula.
 
-This chapter applies that model to the site's crew with the WORKOS queue tool, explains what the Erlang C formula calculates and why waiting rises so steeply as utilisation rises, and compares the queue model with the exact finite-source model of Chapter 6 for the same site. It ends with a request for a sixth fitter that rested on the wrong call rate.
+This chapter applies that model to the site's crew with the KEVOS® queue tool, explains what the Erlang C formula calculates and why waiting rises so steeply as utilisation rises, and compares the queue model with the exact finite-source model of Chapter 6 for the same site. It ends with a request for a sixth fitter that rested on the wrong call rate.
 
 ## The crew and its calls
 

@@ -105,7 +105,7 @@ The square root in the expression means contact stress responds more gently than
 
 ## Hardening and materials
 
-Because contact stress is concentrated close to the surface, surface hardness has a strong influence on pitting resistance. Gear teeth are often surface hardened by carburising, nitriding or induction hardening, so the surface resists contact fatigue while the core keeps its toughness for bending. The case depth must be deep enough to carry the subsurface stress, which peaks a short distance below the surface. The READOS chapter on [heat treatment and surface hardening](/reados/collections/machine-elements-and-mechanical-design/heat-treatment-and-surface-hardening-explained/) explains those processes for designers and buyers.
+Because contact stress is concentrated close to the surface, surface hardness has a strong influence on pitting resistance. Gear teeth are often surface hardened by carburising, nitriding or induction hardening, so the surface resists contact fatigue while the core keeps its toughness for bending. The case depth must be deep enough to carry the subsurface stress, which peaks a short distance below the surface. The Library chapter on [heat treatment and surface hardening](/reados/collections/machine-elements-and-mechanical-design/heat-treatment-and-surface-hardening-explained/) explains those processes for designers and buyers.
 
 Allowable contact stresses come from tested material data at a stated number of cycles and reliability, published in rating standards and by suppliers. This book does not give allowable values; take them from the method and material you will actually use.
 

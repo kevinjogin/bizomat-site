@@ -9,7 +9,7 @@ draft: false
 
 Chapter 1 ended with two records of the same bagger that disagreed, and Chapter 2 found that the bagger's repair times were far more variable than a single exponential allows. Both point to the same fix. The bagger does not have one kind of stop; it has at least two: short jams that the operator clears in a few minutes, and breakdowns that need a fitter for about an hour. A model with one stopped state averages them into a 15-minute stop that almost never happens. A model with two stopped states describes what actually happens, and answers questions that the average cannot.
 
-This chapter builds the three-state model, solves its balance equations, shows why the long-run availability is unchanged while almost everything else changes, and follows the model through the hour after a restart. It links the result to overall equipment effectiveness with the WORKOS OEE tool, and ends with a scrap estimate for long stops that was four times too low because it used the two-state average.
+This chapter builds the three-state model, solves its balance equations, shows why the long-run availability is unchanged while almost everything else changes, and follows the model through the hour after a restart. It links the result to overall equipment effectiveness with the KEVOS® OEE tool, and ends with a scrap estimate for long stops that was four times too low because it used the two-state average.
 
 ## Three states
 

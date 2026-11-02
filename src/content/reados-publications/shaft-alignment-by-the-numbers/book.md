@@ -5,7 +5,7 @@ description: "How to align coupled machines and prove it: misalignment, foundati
 category: Engineering
 tags: [operations, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -63,7 +63,7 @@ Two shafts joined by a coupling should run as one: their centrelines continuing 
 
 This book shows how to get two shafts into line and prove they are there. It starts with what misalignment is and how it is measured, then prepares the machine: foundation, baseplate, levelling, soft foot and pipe strain. It covers dial indicators and their sag, the rim and face and reverse indicator methods, thermal growth, the moves that correct the alignment, and the coupling and records that close the job.
 
-It is for maintenance fitters, millwrights, reliability engineers and installation supervisors. It assumes trade or engineering training and familiarity with dial indicators and hand tools; it explains the geometry as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for maintenance fitters, millwrights, reliability engineers and installation supervisors. It assumes trade or engineering training and familiarity with dial indicators and hand tools; it explains the geometry as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -80,7 +80,7 @@ Dimensions, readings, temperatures, ratings, tolerances, masses and times are th
 
 Read Chapter 1 first. Chapters 2 to 4 prepare the machine and can be read in order before any alignment. Chapter 5 covers the measuring tools on which every later chapter depends. Chapters 6 and 7 present the two main dial indicator methods, and either can be used alone. Chapter 8 adds thermal growth, Chapter 9 the moves and Chapter 10 the coupling, acceptance and records.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. Laser alignment systems do the same geometry electronically; the book uses dial indicators because their numbers show the geometry, and because a laser system's results are best understood, and checked, in the same terms.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Laser alignment systems do the same geometry electronically; the book uses dial indicators because their numbers show the geometry, and because a laser system's results are best understood, and checked, in the same terms.
 
 ## Source limits and professional responsibility
 

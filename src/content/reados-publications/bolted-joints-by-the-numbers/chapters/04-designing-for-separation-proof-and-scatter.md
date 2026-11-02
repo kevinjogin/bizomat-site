@@ -9,7 +9,7 @@ draft: false
 
 Chapter 1 showed how a joint behaves at one preload. Chapters 2 and 3 showed that no tightening method delivers one preload: torque gives a band about ± 25% wide, torque-angle a band about ± 5% wide. A joint design has to work across the whole band. The lowest preload the method can give must still keep the joint from separating under the highest external load. The highest preload, plus the bolt's share of the external load, must stay below the bolt's proof strength. And the bolt must survive the cyclic load in fatigue.
 
-This chapter puts those three checks together with the WORKOS bolted joint design check, which builds the preload scatter in, and uses it to choose the CT-1 test head's target preload and tightening method. Its mistake is a rule of thumb, 75% of proof, applied with a tightening method too loose to support it.
+This chapter puts those three checks together with the KEVOS® bolted joint design check, which builds the preload scatter in, and uses it to choose the CT-1 test head's target preload and tightening method. Its mistake is a rule of thumb, 75% of proof, applied with a tightening method too loose to support it.
 
 ## Three limits on preload
 

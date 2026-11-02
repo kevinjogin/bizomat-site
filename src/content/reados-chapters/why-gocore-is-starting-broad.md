@@ -31,7 +31,7 @@ The areas that hold up under that scrutiny get more attention. The ones that do 
 
 ### The four areas
 
-Four of the READOS categories also describe the areas being explored:
+Four of the Library categories also describe the areas being explored:
 
 - **Ideas:** ways of thinking about problems, strategy and opportunity, some of which may become products or systems.
 - **Products:** physical or digital things that could solve a specific problem for specific people.
@@ -64,7 +64,7 @@ Good strategies usually explore more at the beginning, when little is known, and
 
 Exploring broadly only works if every idea is held to clear, consistent standards. Otherwise, the most exciting idea wins, rather than the best one.
 
-KEVOS®'s READOS chapters set out several of the lenses being used.
+KEVOS®'s Library chapters set out several of the lenses being used.
 
 **Is the problem real and worth solving?** The questions in [What makes a useful product worth building?](/reados/collections/product-development-and-launch/what-makes-a-useful-product-worth-building/) cover frequency, severity, current workarounds and willingness to change, and they emphasise evidence over enthusiasm.
 
@@ -135,7 +135,7 @@ When several of these signals appear together, the case for narrowing focus arou
 
 Starting broad also means being clear about what KEVOS® is not doing.
 
-KEVOS® is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. KEVOS® only presents real initiatives as real, and its READOS chapters distinguish between summaries of established knowledge and KEVOS®'s own observations.
+KEVOS® is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. KEVOS® only presents real initiatives as real, and its Library chapters distinguish between summaries of established knowledge and KEVOS®'s own observations.
 
 This restraint is deliberate. A young business can be tempted to look larger and more certain than it is. But credibility built on claims that later prove hollow is fragile, while credibility built on an honest record grows stronger with time.
 
@@ -147,7 +147,7 @@ Starting broad has its own risks, and they deserve honesty.
 
 **Never committing.** Exploration can become a comfortable place to stay, because it postpones the hard work and risk of building. The response is to set decision points: specific moments when each initiative must move forward, pause or stop.
 
-**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what KEVOS® actually does. The honest answer, for now, is that it is exploring, and the READOS chapters explain what that exploration looks like.
+**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what KEVOS® actually does. The honest answer, for now, is that it is exploring, and the Library chapters explain what that exploration looks like.
 
 **Shallow expertise.** Depth often comes from focus. The response is to go deep on the specific initiatives that progress, even while the overall business remains broad.
 
@@ -155,7 +155,7 @@ None of these risks is a reason not to explore. Each is a reason to explore with
 
 ## Writing it down
 
-A distinctive part of KEVOS®'s approach is that the reasoning is recorded and, where appropriate, published. These READOS chapters serve several purposes:
+A distinctive part of KEVOS®'s approach is that the reasoning is recorded and, where appropriate, published. These Library chapters serve several purposes:
 
 - **They clarify thinking.** Writing an argument down exposes gaps that remain hidden in conversation.
 - **They create a record.** Decisions can be revisited later with the original reasoning in view.
@@ -189,9 +189,9 @@ But for founders who are genuinely uncertain about where their best opportunity 
 
 For anyone following KEVOS®, starting broad means a few things in practice.
 
-READOS covers a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some chapters summarise established knowledge, such as the series on financial statements and on sales practice. Others describe KEVOS®'s own reasoning and, as work progresses, its own experiments.
+The Library covers a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some chapters summarise established knowledge, such as the series on financial statements and on sales practice. Others describe KEVOS®'s own reasoning and, as work progresses, its own experiments.
 
-Where useful, READOS will document initiatives and lessons as they develop.
+Where useful, the Library will document initiatives and lessons as they develop.
 
 And KEVOS® welcomes conversations. If you face a problem that might be worth solving, or you see a flaw in the reasoning here, the [contact page](/contact/) is the place to say so.
 

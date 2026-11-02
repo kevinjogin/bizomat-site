@@ -5,7 +5,7 @@ description: "Why powders and pellets behave unlike liquids, and how to size and
 category: Engineering
 tags: [design, manufacturing, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -142,7 +142,7 @@ The plant, its equipment and every measurement and test result are invented. Non
 
 Read Chapters 1 to 5 in order: they set out the properties every later chapter uses, and the pressures in a silo. Chapters 6 to 9 cover flow: the two flow patterns, arching, ratholes and flow aids, and discharge rates. Chapter 10 deals with segregation and Chapter 11 with the inspection and safe running of bins and silos.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

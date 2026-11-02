@@ -5,7 +5,7 @@ description: "Design, read and trust control charts: subgroup statistics, false 
 category: Manufacturing
 tags: [quality, manufacturing, operations, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -77,7 +77,7 @@ A control chart is a simple picture with a demanding job. It plots a measurement
 
 This book works through those ideas one chart at a time. It starts with variation itself and the X̄–R chart, moves to individuals charts and to the run lengths that measure every chart's performance, then to the CUSUM and EWMA charts that catch small sustained shifts. It covers charts for defect counts and proportions, the autocorrelation and tool-wear drift that break the textbook assumptions, and finishes with capability, quoted honestly with its confidence bound.
 
-It is for quality, manufacturing and process engineers, setters and supervisors, and students who measure parts and want to act on the numbers correctly. It assumes averages, standard deviations and a first acquaintance with the normal distribution. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that performs the chapter's calculation, and ends with an exercise and its worked answer.
+It is for quality, manufacturing and process engineers, setters and supervisors, and students who measure parts and want to act on the numbers correctly. It assumes averages, standard deviations and a first acquaintance with the normal distribution. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's calculation, and ends with an exercise and its worked answer.
 
 ## The running case
 

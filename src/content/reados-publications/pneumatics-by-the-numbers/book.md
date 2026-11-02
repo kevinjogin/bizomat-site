@@ -5,7 +5,7 @@ description: "Size a pneumatic cylinder, time and cushion its stroke, choose val
 category: Engineering
 tags: [automation, design, manufacturing, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -74,7 +74,7 @@ All quantities, prices, pressures, timings and results are invented for teaching
 
 ## How to use the book
 
-Chapters 1 to 4 design the reject station: the job, the cylinder, the timing and the valves. Chapters 5 and 6 look outward to the air it uses and the system that supplies it. Chapters 7 and 8 cover making it safe and keeping it working. Calculators for several of the steps are in the WORKOS tools, including [pneumatic cylinder force](/tools/pneumatic-cylinder-force/), [pneumatic consumption](/tools/pneumatic-consumption/) and [air leak cost](/tools/air-leak-cost/).
+Chapters 1 to 4 design the reject station: the job, the cylinder, the timing and the valves. Chapters 5 and 6 look outward to the air it uses and the system that supplies it. Chapters 7 and 8 cover making it safe and keeping it working. Calculators for several of the steps are in the KEVOS® tools, including [pneumatic cylinder force](/tools/pneumatic-cylinder-force/), [pneumatic consumption](/tools/pneumatic-consumption/) and [air leak cost](/tools/air-leak-cost/).
 
 ## Source limits and professional responsibility
 

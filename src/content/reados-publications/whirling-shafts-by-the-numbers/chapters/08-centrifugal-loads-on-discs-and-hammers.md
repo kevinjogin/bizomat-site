@@ -9,7 +9,7 @@ draft: false
 
 A rotor does not need any outside load to be highly stressed. Every part of it is pulled outwards by its own rotation, and the pull grows with the square of the speed. In a slow machine the effect is negligible. In a hammer mill, whose hammer tips travel at over 80 m/s, it is the largest load in the machine: each 0.75 kg hammer pulls on its pin with a force that would lift a small car.
 
-This chapter calculates those loads for the HM-30 with two WORKOS tools: the centrifugal force on the hammers and the stress in the rotating discs that carry them. It then describes a customer who ran a 50 Hz mill at 60 Hz on a variable-speed drive, and what a 20% increase in speed did.
+This chapter calculates those loads for the HM-30 with two KEVOS® tools: the centrifugal force on the hammers and the stress in the rotating discs that carry them. It then describes a customer who ran a 50 Hz mill at 60 Hz on a variable-speed drive, and what a 20% increase in speed did.
 
 ## Centrifugal force
 
@@ -27,7 +27,7 @@ caption: Doubling the speed quadruples the force. A 20% increase in speed raises
 - n | speed, rpm
 ```
 
-The WORKOS [Centrifugal force on a rotating mass](/tools/centrifugal-force/) tool gives the force, the acceleration in g and the tangential speed of a mass at a radius and speed, for checking clamps, counterweights and attachments. It treats the mass as a rigid body at a steady speed, and its check reminds the user to compare the force with the holding capacity of whatever retains the mass.
+The KEVOS® [Centrifugal force on a rotating mass](/tools/centrifugal-force/) tool gives the force, the acceleration in g and the tangential speed of a mass at a radius and speed, for checking clamps, counterweights and attachments. It treats the mass as a rigid body at a steady speed, and its check reminds the user to compare the force with the holding capacity of whatever retains the mass.
 
 ### HM-30's hammers
 
@@ -77,7 +77,7 @@ caption: A bore, however small, roughly doubles the maximum stress compared with
 - ν | Poisson's ratio, about 0.3 for steel
 ```
 
-The WORKOS [Rotating disc stress and burst margin](/tools/rotating-disc/) tool applies these formulas to a flat, uniform disc, solid or bored. From the outside and bore diameters, speed, density, Poisson's ratio and yield strength, it reports the maximum stress and where it is, the rim speed, the factor of safety against yield and the speed at which yield would be reached. Its guide notes that holes, keyways and blades add stress concentrations that it does not include, and that the burst margin of a ductile disc above yield depends on its ductility.
+The KEVOS® [Rotating disc stress and burst margin](/tools/rotating-disc/) tool applies these formulas to a flat, uniform disc, solid or bored. From the outside and bore diameters, speed, density, Poisson's ratio and yield strength, it reports the maximum stress and where it is, the rim speed, the factor of safety against yield and the speed at which yield would be reached. Its guide notes that holes, keyways and blades add stress concentrations that it does not include, and that the burst margin of a ductile disc above yield depends on its ductility.
 
 This is an illustration. The HM-30's discs are 520 mm in outside diameter with a 90 mm bore, in steel with a 250 MPa yield. At 2,950 rpm the tool gives a hoop stress at the bore of 42.0 MPa, a rim speed of 80.3 m/s, a factor of 5.95 against yield, and a speed of 7,193 rpm at which the bore would reach yield.
 

@@ -119,7 +119,7 @@ Both details repeat the chapter's lesson. Any part that meets a sloping plate mu
 
 ## Mass and capacity
 
-The four sides of the running case's loading hopper are each 0.5625 m² on the inside face, the trapezoid's area (1,200 + 300) ÷ 2 × 750. Together they weigh 4 × 0.5625 × 0.006 × 7,850 = **106 kg**, before the top flange and the outlet's connection. The hopper holds, as a frustum of a square pyramid, 600 ÷ 3 × (1.2² + 0.3² + 1.2 × 0.3) = **0.378 m³**, which the WORKOS [prismoidal volume calculator](/tools/prismoidal-volume/) confirms from the end areas and the mid-section. Neither number affects the pattern, but both belong on the plate list: the mass for lifting and the volume as a check that the hopper drawn is the hopper ordered.
+The four sides of the running case's loading hopper are each 0.5625 m² on the inside face, the trapezoid's area (1,200 + 300) ÷ 2 × 750. Together they weigh 4 × 0.5625 × 0.006 × 7,850 = **106 kg**, before the top flange and the outlet's connection. The hopper holds, as a frustum of a square pyramid, 600 ÷ 3 × (1.2² + 0.3² + 1.2 × 0.3) = **0.378 m³**, which the KEVOS® [prismoidal volume calculator](/tools/prismoidal-volume/) confirms from the end areas and the mid-section. Neither number affects the pattern, but both belong on the plate list: the mass for lifting and the volume as a check that the hopper drawn is the hopper ordered.
 
 ## The error: a 60° hopper with 50.8° valleys
 

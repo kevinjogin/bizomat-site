@@ -5,7 +5,7 @@ description: "Check detail and assembly drawings with a method and numbers: titl
 category: Engineering
 tags: [design, quality, validation, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -29,7 +29,7 @@ references:
     creator: "Standards Australia"
     year: "1992, reconfirmed"
     url: "https://store.standards.org.au/product/as-1100-101-1992"
-    note: "Named by number and scope as the Australian drawing standards a checked drawing should follow. No values are quoted from them; READOS's Drawings That Make Parts covers their provisions in detail."
+    note: "Named by number and scope as the Australian drawing standards a checked drawing should follow. No values are quoted from them; the Library’s Drawings That Make Parts covers their provisions in detail."
   - title: "ISO 286-1 Geometrical product specifications, ISO code system for tolerances on linear sizes"
     creator: "International Organization for Standardization"
     year: "edition as called up"
@@ -49,7 +49,7 @@ A drawing checker is the last person to read a drawing before strangers act on i
 
 This book is a method for that look. It works through a drawing in the order a checker should: the sheet and its title block, the views, the dimensions, the limits and fits, the stacks across an assembly, the notes on material, surface texture and treatment, and the assembly drawing and parts list that tie the set together. Each chapter gives a procedure, the numbers that test it, a fault a real drawing office could plausibly miss and how it was caught. The last chapter turns to the checking process itself: how to record findings, measure what checking catches and decide where effort pays.
 
-It is written for drafters who check their own and others' work, design engineers who sign drawings, and leads who run a small drawing office. It assumes you can read a mechanical drawing to AS 1100 and do the arithmetic of limits and fits. What the conventions on a drawing mean is the subject of READOS's *Drawings That Make Parts*; how to set tolerances and budget a stack is covered in *Fits That Work*. This book is about finding where a drawing falls short of them.
+It is written for drafters who check their own and others' work, design engineers who sign drawings, and leads who run a small drawing office. It assumes you can read a mechanical drawing to AS 1100 and do the arithmetic of limits and fits. What the conventions on a drawing mean is the subject of the Library’s *Drawings That Make Parts*; how to set tolerances and budget a stack is covered in *Fits That Work*. This book is about finding where a drawing falls short of them.
 
 ## The running case
 

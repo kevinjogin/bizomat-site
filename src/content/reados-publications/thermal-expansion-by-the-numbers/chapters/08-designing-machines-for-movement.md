@@ -34,7 +34,7 @@ step: difference ≈ 0.169 − 0.032 ≈ 0.137 mm, the pump's shaft rising above
 step: so set the motor about 0.14 mm high when cold, to be level when hot
 ```
 
-Aligned perfectly cold, the pump's shaft would sit about **0.14 mm** above the motor's at operating temperature, enough to load the coupling and the bearings on both machines. The installer therefore sets a **cold offset**: the motor is shimmed about 0.14 mm higher than true alignment when cold, so that the pump rises to meet it as the system warms. The WORKOS [alignment thermal growth](/tools/alignment-thermal-growth/) calculator works out such offsets, and pump makers often state the expected thermal rise for their machines at given temperatures, which is better than an estimate.
+Aligned perfectly cold, the pump's shaft would sit about **0.14 mm** above the motor's at operating temperature, enough to load the coupling and the bearings on both machines. The installer therefore sets a **cold offset**: the motor is shimmed about 0.14 mm higher than true alignment when cold, so that the pump rises to meet it as the system warms. The KEVOS® [alignment thermal growth](/tools/alignment-thermal-growth/) calculator works out such offsets, and pump makers often state the expected thermal rise for their machines at given temperatures, which is better than an estimate.
 
 The alignment is checked hot, after the system has run for some hours, with the coupling still in place or with a laser alignment tool, and the cold offset adjusted if needed. The hot reading is the one that matters.
 

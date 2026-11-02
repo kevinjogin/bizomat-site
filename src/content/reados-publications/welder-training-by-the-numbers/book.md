@@ -5,7 +5,7 @@ description: "Train welders with numbers: how skill grows with practice, what an
 category: Manufacturing
 tags: [people, manufacturing, quality, operations, leadership]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -79,4 +79,4 @@ This book is educational. Welder qualification for structural, pressure and othe
 
 ## An original treatment
 
-READOS covers workforce capability in general in [Building workforce capability in manufacturing](/reados/collections/operational-data-records-and-controls/building-workforce-capability-in-manufacturing/), and why training fades in [The forgetting curve and why training fades](/reados/collections/judgement-markets-and-learning/the-forgetting-curve-and-why-training-fades/). This book applies those ideas to welding, with the numbers a welding supervisor needs. The explanations, the fabricator's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers workforce capability in general in [Building workforce capability in manufacturing](/reados/collections/operational-data-records-and-controls/building-workforce-capability-in-manufacturing/), and why training fades in [The forgetting curve and why training fades](/reados/collections/judgement-markets-and-learning/the-forgetting-curve-and-why-training-fades/). This book applies those ideas to welding, with the numbers a welding supervisor needs. The explanations, the fabricator's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.

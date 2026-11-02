@@ -5,7 +5,7 @@ description: "Use the second law to judge heat pumps and refrigeration: Carnot l
 category: Engineering
 tags: [operations, design, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

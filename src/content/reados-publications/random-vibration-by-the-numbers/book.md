@@ -5,7 +5,7 @@ description: "Specify, analyse and test equipment for random vibration: power sp
 category: Engineering
 tags: [design, validation, quality, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -77,7 +77,7 @@ A machine on a truck, a box on a vibrating screen, a product in a delivery van: 
 
 This book works through that chain of ideas. It starts with random vibration as a random variable and with the spectrum that describes it, shows how a spectrum is measured and how uncertain the measurement is, and then follows the vibration into a resonant part, through isolators and into the boards and brackets inside a box. It finishes with peaks, fatigue under random loading, and the shaker tests that compress years of service into hours.
 
-It is for mechanical, electrical and product engineers, test engineers, technicians and students who meet vibration requirements and want to understand and check them. It assumes the idea of a natural frequency, basic statistics and logarithms. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, electrical and product engineers, test engineers, technicians and students who meet vibration requirements and want to understand and check them. It assumes the idea of a natural frequency, basic statistics and logarithms. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 

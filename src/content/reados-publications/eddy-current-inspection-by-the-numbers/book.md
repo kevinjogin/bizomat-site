@@ -5,7 +5,7 @@ description: "How eddy-current testing works and how to use it with numbers: pen
 category: Manufacturing
 tags: [quality, manufacturing, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -37,7 +37,7 @@ references:
     creator: "National Institute of Standards and Technology"
     year: "2012"
     url: "https://www.itl.nist.gov/div898/handbook/"
-    note: "Background for the calibration, gauge, tolerance interval, capability, outlier and sampling methods used in Chapters 3 to 9 and in the WORKOS tools linked from them."
+    note: "Background for the calibration, gauge, tolerance interval, capability, outlier and sampling methods used in Chapters 3 to 9 and in the KEVOS® tools linked from them."
 related:
   - title: "Induction Hardening by the Numbers"
     href: "/reados/publications/induction-hardening-by-the-numbers/"
@@ -57,7 +57,7 @@ Pass an alternating current through a coil and hold it near a metal, and the coi
 
 This book shows how to use eddy-current testing with numbers. It starts with what the coil sees and how deep the currents reach, then works through conductivity and what it reveals about a metal, measuring it reliably, coating thickness, surface cracks, sorting steel parts and testing tubes. It finishes with the decisions: thresholds, false calls and missed defects, acceptance sampling and capability, and the procedure, people and records that make a test result trustworthy.
 
-It is for quality engineers, inspection technicians, manufacturing engineers and supplier quality staff. It assumes engineering or trade training and comfort with basic electricity and statistics; the electromagnetism and the statistical methods are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for quality engineers, inspection technicians, manufacturing engineers and supplier quality staff. It assumes engineering or trade training and comfort with basic electricity and statistics; the electromagnetism and the statistical methods are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -73,7 +73,7 @@ Conductivity bands, readings, signal amplitudes, noise levels, prices and test r
 
 Read Chapters 1 and 2 first: they explain the coil's response and the depth of penetration, which every later chapter uses. Chapters 3 and 4 go together on conductivity. Chapters 5 to 8 can then be read in any order. Chapter 9 brings the statistical decisions together, and Chapter 10 the procedure, records and cost.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the induction hardening plan's reference depth, the chapter says which output is used and which are not.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the induction hardening plan's reference depth, the chapter says which output is used and which are not.
 
 ## Source limits and professional responsibility
 

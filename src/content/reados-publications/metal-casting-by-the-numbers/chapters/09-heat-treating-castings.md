@@ -9,7 +9,7 @@ draft: false
 
 GB-12's alloy is chosen because it can be hardened by heat treatment. As cast, it is soft and relatively weak. After the three-step treatment known as T6, solution treatment, quenching and artificial ageing, its strength and hardness roughly double. The treatment depends on magnesium and silicon forming fine particles inside the aluminium grains, and those particles form only if each step is done at the right temperature, for the right time, and with a fast enough quench in between.
 
-This chapter explains what each step does, plans the solution and ageing furnace loads with one WORKOS tool, checks the quench tank's heat balance with another, and works through a quench tank that was too small for the load and quietly took the castings out of specification.
+This chapter explains what each step does, plans the solution and ageing furnace loads with one KEVOS® tool, checks the quench tank's heat balance with another, and works through a quench tank that was too small for the load and quietly took the castings out of specification.
 
 ## What T6 does
 
@@ -33,7 +33,7 @@ Ageing is a race between forming fine particles and coarsening them. At a given 
 
 ## Planning a furnace load
 
-The WORKOS [Heat-treatment furnace load plan](/tools/furnace-heat-treat-plan/) tool estimates the energy and time for a furnace cycle. From the work's mass and its fixtures' and basket's mass, a mean specific heat over the temperature range, the start and set temperatures, the furnace's input power, the share of that power reaching the load while it heats, the furnace's standing heat loss at temperature, the soak time and the energy price, it gives the heat into the load, the heat-up time, the cycle time, the energy and cost per load, the cost per kilogram of work and the fixture's share of the heat. Its guide notes that the real heat-up slows as the load approaches the set temperature, and that the soak time must come from the heat-treatment specification for the section size.
+The KEVOS® [Heat-treatment furnace load plan](/tools/furnace-heat-treat-plan/) tool estimates the energy and time for a furnace cycle. From the work's mass and its fixtures' and basket's mass, a mean specific heat over the temperature range, the start and set temperatures, the furnace's input power, the share of that power reaching the load while it heats, the furnace's standing heat loss at temperature, the soak time and the energy price, it gives the heat into the load, the heat-up time, the cycle time, the energy and cost per load, the cost per kilogram of work and the fixture's share of the heat. Its guide notes that the real heat-up slows as the load approaches the set temperature, and that the soak time must come from the heat-treatment specification for the section size.
 
 This is an illustration. GB-12's solution furnace is an electric air-circulation furnace of 45 kW. A load is 40 castings, 267.2 kg, in a steel basket of 60 kg. The foundry uses a mean specific heat of 0.96 kJ/(kg·K) for both over the range, a heating efficiency of 55%, a standing loss of 4 kW at 540 °C and a soak of 6 hours.
 
@@ -71,7 +71,7 @@ A basket of castings at 540 °C weighing a third of a tonne, lowered quickly int
 
 When a solution-treated load leaves the furnace, it must be in the quench within a few seconds: aluminium alloys begin to lose their supersaturation quickly as they cool in air, and the foundry's procedure sets a short, timed maximum transfer delay. The load drops into a tank of water held at about 65 °C. Hot water quenches more gently than cold, which reduces distortion and residual stress in a casting with walls and a boss of very different thickness, while still cooling fast enough for full hardening in GB-12's sections.
 
-The quench water absorbs the load's heat. A tank too small for its loads warms up with each one, and as the water gets hotter the quench gets slower and gentler, until the castings no longer harden fully. The WORKOS [Quench tank temperature check](/tools/quench-tank-temperature-check/) tool works out the heat balance. From the load's mass, mean specific heat and temperature, the quenchant's volume, density, specific heat and starting temperature, and its highest allowed temperature, it gives the bath's temperature after one load, the rise per load, the heat released, the number of loads in a row before the bath passes its limit with no cooling, and the average heat input at your loads per hour against the cooler's capacity. It assumes a well-mixed bath with no losses.
+The quench water absorbs the load's heat. A tank too small for its loads warms up with each one, and as the water gets hotter the quench gets slower and gentler, until the castings no longer harden fully. The KEVOS® [Quench tank temperature check](/tools/quench-tank-temperature-check/) tool works out the heat balance. From the load's mass, mean specific heat and temperature, the quenchant's volume, density, specific heat and starting temperature, and its highest allowed temperature, it gives the bath's temperature after one load, the rise per load, the heat released, the number of loads in a row before the bath passes its limit with no cooling, and the average heat input at your loads per hour against the cooler's capacity. It assumes a well-mixed bath with no losses.
 
 ```figure
 type: steps

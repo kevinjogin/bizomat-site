@@ -9,7 +9,7 @@ draft: false
 
 Before a cryostat can test anything, its cold mass has to be cooled, and afterwards it has to be warmed before it can be opened. Both take hours, and both are easy to estimate badly. The heat to be removed is not mass times a room-temperature specific heat times the temperature drop; Chapter 1 showed why. And the rate at which it comes out is not the cryocooler's rated capacity, which is quoted at the operating temperature and is a small fraction of what the cooler removes at the start.
 
-This chapter calculates the heat CT-40's cold mass gives up, integrates the cooldown against the cryocooler's capacity curve and the heat leaks to find the time to 40 K, sizes a warm-up heater with the WORKOS heating energy tool, and ends with a cryostat that was let up to air too soon.
+This chapter calculates the heat CT-40's cold mass gives up, integrates the cooldown against the cryocooler's capacity curve and the heat leaks to find the time to 40 K, sizes a warm-up heater with the KEVOS® heating energy tool, and ends with a cryostat that was let up to air too soon.
 
 ## The heat in the cold mass
 

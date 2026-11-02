@@ -52,7 +52,7 @@ At 3 and 9 o'clock the bracket is sideways and sags by half as much relative to 
 
 ### Correcting for sag
 
-The vertical reading is corrected by subtracting the sag reading from it, with its sign: corrected = measured − sag. For the HW-3, the rim read +0.42 mm at 6 o'clock, so the corrected reading is 0.42 − (−0.08) = +0.50 mm, and the vertical offset is 0.25 mm. Without the correction, the offset would have been taken as 0.21 mm, 16% too small. The WORKOS rim and face tool's own limitations note that it does not include bracket sag, so the correction must be made before the readings go in.
+The vertical reading is corrected by subtracting the sag reading from it, with its sign: corrected = measured − sag. For the HW-3, the rim read +0.42 mm at 6 o'clock, so the corrected reading is 0.42 − (−0.08) = +0.50 mm, and the vertical offset is 0.25 mm. Without the correction, the offset would have been taken as 0.21 mm, 16% too small. The KEVOS® rim and face tool's own limitations note that it does not include bracket sag, so the correction must be made before the readings go in.
 
 ## The HW-3 readings
 

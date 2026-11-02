@@ -21,7 +21,7 @@ For n equally spaced holes, the angle between neighbours is 360° ÷ n. The stra
 
 The running case's motor holes sit on a 100 mm pitch circle about O (110, 70) at 45°, 135°, 225° and 315°. Their coordinates are (145.355, 105.355), (74.645, 105.355), (74.645, 34.645) and (145.355, 34.645). The chord between neighbours is 100 × sin 45° = **70.711 mm**, which is also the side of the square the four holes form, and the diagonal is **100.000 mm**.
 
-Those two numbers are the quickest check on any four-hole pattern. For other patterns, the WORKOS [bolt circle calculator](/tools/bolt-circle/) lists every hole coordinate from the pitch circle, hole count and start angle. If the measured neighbour spacing is 70.711 mm and both diagonals are 100.000 mm, the holes are on the pitch circle and equally spaced. If one diagonal is 100.000 mm and the other is not, one pair of holes is rotated. If both are equal but not 100 mm, the pitch circle is the wrong size.
+Those two numbers are the quickest check on any four-hole pattern. For other patterns, the KEVOS® [bolt circle calculator](/tools/bolt-circle/) lists every hole coordinate from the pitch circle, hole count and start angle. If the measured neighbour spacing is 70.711 mm and both diagonals are 100.000 mm, the holes are on the pitch circle and equally spaced. If one diagonal is 100.000 mm and the other is not, one pair of holes is rotated. If both are equal but not 100 mm, the pitch circle is the wrong size.
 
 ```figure
 type: compare

@@ -5,7 +5,7 @@ description: "How metal parts fail under repeated stress and how to design them 
 category: Engineering
 tags: [design, validation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -75,7 +75,7 @@ Most broken machine parts were never overloaded. They carried a load well below 
 
 This book explains fatigue from the crystal up and then turns it into design numbers. It starts with how cracks start and grow, then describes stress cycles, the endurance limit and what lowers it, notches, the effect of mean stress and finite lives under mixed loading. It then applies the method to the three parts that fail most often in machines, shafts, bolted joints and springs, and closes with the surface finish, scatter and evidence that decide whether a part really lives as long as its calculation says.
 
-It is for mechanical design engineers, machine builders, maintenance and reliability engineers and technicians. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design engineers, machine builders, maintenance and reliability engineers and technicians. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -92,7 +92,7 @@ Loads, strengths, factors, failure records, prices and times are the case builde
 
 Read Chapters 1 to 5 in order: they build the method that every later chapter uses. Chapter 6 deals with finite life and mixed loading. Chapters 7, 8 and 9 apply the method to shafts, bolted joints and springs and can be read in any order. Chapter 10 covers surfaces, scatter and the evidence that proves a design.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The methods are the standard textbook estimates for steels. They are good enough to compare designs and to find the weak point, but real fatigue strengths scatter widely, and the final word on a critical part is a test.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The methods are the standard textbook estimates for steels. They are good enough to compare designs and to find the weak point, but real fatigue strengths scatter widely, and the final word on a critical part is a test.
 
 ## Source limits and professional responsibility
 

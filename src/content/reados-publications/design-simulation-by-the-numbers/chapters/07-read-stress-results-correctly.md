@@ -40,7 +40,7 @@ For a normal stress σ and a shear stress τ, the principal stresses are **σ/2 
 - **Tresca = σ₁ − σ₃ ≈ 24.9 MPa**
 - **Von Mises = √(σ² + 3τ²) ≈ 24.2 MPa**
 
-Tresca is about 3% higher than von Mises here, which is typical of the difference between the two. The WORKOS [principal stress calculator](/tools/principal-stress/) reproduces these figures. Doing this once by hand makes the plots legible: the analyst knows roughly what each measure should show at a point where beam theory holds, and can spot when the model disagrees.
+Tresca is about 3% higher than von Mises here, which is typical of the difference between the two. The KEVOS® [principal stress calculator](/tools/principal-stress/) reproduces these figures. Doing this once by hand makes the plots legible: the analyst knows roughly what each measure should show at a point where beam theory holds, and can spot when the model disagrees.
 
 ## Benchmark the solver before trusting it
 
@@ -123,7 +123,7 @@ The deformed shape needs the same care. Displacements are usually exaggerated so
 
 The bracket's loads reverse. Each start applies the torque in one direction, and some drives reverse in service. The belt pull may change direction if the drive arrangement changes. A von Mises plot shows the size of the stress but not whether it alternates, so it cannot support a fatigue judgement on its own.
 
-For fatigue, read the component or principal stresses at the critical points under each load case, and form the stress range between the extreme states. At the drain hole, the bending stress from the motor's weight is compressive and steady, while the torque at start-up adds a shear that appears and disappears with each start. If the conveyor starts 20 times a day, 300 days a year, for ten years, that is **20 × 300 × 10 = 60,000** start cycles. Fatigue is assessed with the stress range, the number of cycles and the detail's fatigue category, using the methods discussed in the READOS chapter on [designing against fatigue](/reados/collections/machine-elements-and-mechanical-design/designing-against-fatigue/). The welds at the root, in particular, need assessment by a recognised weld fatigue method using the nominal or structural stress from the model.
+For fatigue, read the component or principal stresses at the critical points under each load case, and form the stress range between the extreme states. At the drain hole, the bending stress from the motor's weight is compressive and steady, while the torque at start-up adds a shear that appears and disappears with each start. If the conveyor starts 20 times a day, 300 days a year, for ten years, that is **20 × 300 × 10 = 60,000** start cycles. Fatigue is assessed with the stress range, the number of cycles and the detail's fatigue category, using the methods discussed in the Library chapter on [designing against fatigue](/reados/collections/machine-elements-and-mechanical-design/designing-against-fatigue/). The welds at the root, in particular, need assessment by a recognised weld fatigue method using the nominal or structural stress from the model.
 
 ## State margins in the terms of the criteria
 

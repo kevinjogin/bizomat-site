@@ -9,7 +9,7 @@ draft: false
 
 Every clutch and brake calculation starts with the same four numbers: the torque the device must carry, the speed of the shaft it sits on, the inertia it must accelerate or stop, and the energy it must turn into heat. Get those right and the rest of this book is arithmetic. Get one wrong, usually by taking it from the wrong shaft or the wrong direction of travel, and a well-made brake can be too weak by a factor of two.
 
-This chapter sets out those numbers for the SW-25 slipway winch. It works out the rope pull hauling up and letting down, carries it through the gear train to the drum, the clutch shaft and the motor, finds the inertia the drive sees, and estimates the energy of a haul and a lowering. It uses two WORKOS tools: the torque to accelerate a rotating load and the reflected inertia tool. Its mistake is one that appears in many brake calculations: counting a resistance that may not be there.
+This chapter sets out those numbers for the SW-25 slipway winch. It works out the rope pull hauling up and letting down, carries it through the gear train to the drum, the clutch shaft and the motor, finds the inertia the drive sees, and estimates the energy of a haul and a lowering. It uses two KEVOS® tools: the torque to accelerate a rotating load and the reflected inertia tool. Its mistake is one that appears in many brake calculations: counting a resistance that may not be there.
 
 ## The slipway and its forces
 

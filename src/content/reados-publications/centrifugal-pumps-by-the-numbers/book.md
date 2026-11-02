@@ -5,7 +5,7 @@ description: "Select, run and fault-find centrifugal pumps with numbers: head an
 category: Engineering
 tags: [design, operations, systems]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -53,7 +53,7 @@ The centrifugal pump is the most common machine in industry after the electric m
 
 This book works through centrifugal pumps with one running case. It sets out what a pump does to the water, how head, flow, power and efficiency relate, how to read a pump's curves, and where a pump will run on a system. It then deals with net positive suction head and cavitation, the affinity laws and speed control, throttling, bypass and impeller trimming, pumps in series and parallel, starting and protecting pumps, and finally selecting a pump on its life-cycle cost. Each chapter calculates with the running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for mechanical and maintenance engineers, technicians and operators. It assumes school algebra and a calculator or spreadsheet, and the ideas of head, friction and the system curve; READOS's Pipe Flow by the Numbers sets those out from the beginning, and Water Hammer by the Numbers deals with the surges that pump starts and trips cause.
+It is for mechanical and maintenance engineers, technicians and operators. It assumes school algebra and a calculator or spreadsheet, and the ideas of head, friction and the system curve; the Library’s Pipe Flow by the Numbers sets those out from the beginning, and Water Hammer by the Numbers deals with the surges that pump starts and trips cause.
 
 ## The running case
 

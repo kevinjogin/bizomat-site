@@ -5,7 +5,7 @@ description: "Calculate cutting data, power, deflection, tool life, cycle time a
 category: Manufacturing
 tags: [manufacturing, process-improvement, finance]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-23
@@ -92,6 +92,6 @@ Calculations use metric units: millimetres, metres per minute, newtons, kilowatt
 
 ## An independent treatment
 
-READOS already covers machining in a set of overview chapters, including [milling cutters and milling strategies](/reados/collections/machining-and-metal-parts/milling-cutters-and-milling-strategies/) and [designing parts that are economical to machine](/reados/collections/machining-and-metal-parts/designing-parts-that-are-economical-to-machine/). This book is the quantitative companion: it works through the formulas, shows every step of each calculation and connects them to time and cost.
+The Library already covers machining in a set of overview chapters, including [milling cutters and milling strategies](/reados/collections/machining-and-metal-parts/milling-cutters-and-milling-strategies/) and [designing parts that are economical to machine](/reados/collections/machining-and-metal-parts/designing-parts-that-are-economical-to-machine/). This book is the quantitative companion: it works through the formulas, shows every step of each calculation and connects them to time and cost.
 
 The explanations, the Harbourline case and all worked examples are original KEVOS® writing. Machinery's Handbook was consulted to cross-check relationships and models; no tables, figures or text from it are reproduced. Where tool supplier conventions are mentioned, readers should use the supplier's current published data.

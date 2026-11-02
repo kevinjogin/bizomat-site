@@ -5,7 +5,7 @@ description: "Understand and control welding distortion with numbers: shrinkage,
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, design, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -74,4 +74,4 @@ This book is educational. The shrinkage estimates in it are illustrations based 
 
 ## An original treatment
 
-READOS covers shrinkage and welding sequence in plate repairs in Weld Repairs That Hold, and straightening of shafts in Machine Part Repairs by the Numbers; this book covers distortion in new fabrication and links to them. The explanations, the fabrication case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or figures is reproduced.
+The Library covers shrinkage and welding sequence in plate repairs in Weld Repairs That Hold, and straightening of shafts in Machine Part Repairs by the Numbers; this book covers distortion in new fabrication and links to them. The explanations, the fabrication case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or figures is reproduced.

@@ -5,7 +5,7 @@ description: "Use the physics of long chains to judge resin grades, regrind, sol
 category: Engineering
 tags: [design, manufacturing, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -50,7 +50,7 @@ references:
   - title: "Thermodynamics of Systems Containing Flexible-Chain Polymers"
     creator: "V. J. Klenin, Elsevier, Amsterdam"
     year: "1999"
-    note: "Named as the source behind the WORKOS polymer tools linked in Chapters 4, 7, 8, 9 and 10. Not quoted."
+    note: "Named as the source behind the KEVOS® polymer tools linked in Chapters 4, 7, 8, 9 and 10. Not quoted."
   - title: "Thermophysical Properties of Fluid Systems, NIST Chemistry WebBook, SRD 69"
     creator: "National Institute of Standards and Technology"
     year: "2026"
@@ -107,7 +107,7 @@ The workshop, its resin, its measurements and every specification are invented. 
 
 Read Chapters 1 to 3 in order: they describe a single chain, a real resin's mix of chains, and the effect of the solvent on coil size. Chapters 4 to 6 deal with viscosity in dilute solution, in concentrated solution and in the melt. Chapters 7 to 9 deal with mixing: phase separation, solvent selection and the melting of crystals in a solvent. Chapter 10 brings the measurements together into a check that a workshop can actually run.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
 
 ## Source limits and professional responsibility
 

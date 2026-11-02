@@ -9,7 +9,7 @@ draft: false
 
 When a spring must give thousands of newtons in a space a few centimetres across, coil springs stop being practical. The VM-8's spindle needs about 10 kN to pull a tool holder into its taper, from a spring that fits inside a hollow spindle about 32 mm across. A coil spring of that size carrying 10 kN would be stressed far beyond any wire's strength. Machine tool spindles use disc springs instead: shallow coned washers that flatten under load, stacked by the dozen on the drawbar.
 
-This chapter explains how a disc spring works, how stacking discs face to face and nested together sets a stack's travel and force, and how the VM-8's drawbar stack was designed with the WORKOS disc spring tools. Its mistake is a stack designed at its clamped position with no room left for the travel that releases the tool.
+This chapter explains how a disc spring works, how stacking discs face to face and nested together sets a stack's travel and force, and how the VM-8's drawbar stack was designed with the KEVOS® disc spring tools. Its mistake is a stack designed at its clamped position with no room left for the travel that releases the tool.
 
 ## How a disc spring works
 
@@ -78,7 +78,7 @@ In a stack of ns groups in series, each of np discs nested in parallel, the forc
 
 ### Standard discs
 
-Disc springs are bought, not made to order. Makers sell them in standard sizes, commonly grouped into series by the ratio of outside diameter to thickness, and the European standard EN 16983, which replaced the earlier DIN 2093, sets dimensions, tolerances and quality requirements for them. A designer normally chooses a stocked disc whose outside diameter fits the bore and whose inside diameter clears the guide rod, then designs the stack around it, as the shop did. Larger discs over about 6 mm thick often have small flats ground at their contact edges, which changes the force calculation; the WORKOS tools assume discs without contact flats.
+Disc springs are bought, not made to order. Makers sell them in standard sizes, commonly grouped into series by the ratio of outside diameter to thickness, and the European standard EN 16983, which replaced the earlier DIN 2093, sets dimensions, tolerances and quality requirements for them. A designer normally chooses a stocked disc whose outside diameter fits the bore and whose inside diameter clears the guide rod, then designs the stack around it, as the shop did. Larger discs over about 6 mm thick often have small flats ground at their contact edges, which changes the force calculation; the KEVOS® tools assume discs without contact flats.
 
 ### Friction in the stack
 
@@ -125,7 +125,7 @@ The unclamp cylinder must therefore push at least 11.6 kN, plus friction in the 
 
 ### Stress and fatigue
 
-The largest stress, at the top inner edge, is −2,038 MPa at release: compressive, and within the 2,400 MPa static allowable the shop uses for these discs. This is an illustration. Disc spring steels are very hard, and a compressive stress of that size at the top edge does not crack them. Fatigue is decided elsewhere, by the tensile stresses at the lower inner and outer edges, which the WORKOS tools do not calculate.
+The largest stress, at the top inner edge, is −2,038 MPa at release: compressive, and within the 2,400 MPa static allowable the shop uses for these discs. This is an illustration. Disc spring steels are very hard, and a compressive stress of that size at the top edge does not crack them. Fatigue is decided elsewhere, by the tensile stresses at the lower inner and outer edges, which the KEVOS® tools do not calculate.
 
 The drawbar cycles every tool change, about 160,000 times a year. Its stress range is small, because the discs only move from 0.45 to 0.525 mm each cycle, and they never unload, because they are preloaded to 64% of h0. Disc makers recommend a preload of at least about 15 to 20% of h0 in cyclic duty to avoid cracking at the top inner edge, and publish fatigue diagrams for their discs that the shop used to confirm the life. This is an illustration.
 

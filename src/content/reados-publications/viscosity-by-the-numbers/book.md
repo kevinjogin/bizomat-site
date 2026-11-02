@@ -5,7 +5,7 @@ description: "Understand and use viscosity: units, gases and liquids, temperatur
 category: Engineering
 tags: [design, operations, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -51,7 +51,7 @@ references:
   - title: "ASTM D341, Standard Practice for Viscosity–Temperature Equations and Charts for Liquid Petroleum or Hydrocarbon Products"
     creator: "ASTM International"
     year: "current edition"
-    note: "Named by number and scope only. Chapter 3 uses the double-logarithmic Walther relation the practice is built on, as implemented in the WORKOS tools; no values or charts from the standard are reproduced."
+    note: "Named by number and scope only. Chapter 3 uses the double-logarithmic Walther relation the practice is built on, as implemented in the KEVOS® tools; no values or charts from the standard are reproduced."
   - title: "ISO 3448, Industrial liquid lubricants: ISO viscosity classification"
     creator: "International Organization for Standardization"
     year: "current edition"
@@ -92,7 +92,7 @@ Viscosity is the property that decides whether an oil film holds two surfaces ap
 
 This book explains where viscosity comes from, using the kinetic picture of gases and the activated flow of liquids, and then follows it through the practical work of choosing, measuring and using oil. It covers units, the temperature relation used by every oil data sheet, grades and operating windows, pressure and shear, measurement, flow in lines and hoses, leakage through clearances, viscous heating and the use of viscosity to judge an oil's condition. A companion book, Plain Bearings by the Numbers, applies the same property to hydrodynamic bearings.
 
-It is for mechanical, maintenance and reliability engineers, hydraulic and lubrication technicians, designers and students who know basic fluid mechanics and heat. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the WORKOS tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, maintenance and reliability engineers, hydraulic and lubrication technicians, designers and students who know basic fluid mechanics and heat. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -110,7 +110,7 @@ The press shop, its power unit and its oil are invented and do not describe KEVO
 
 Read Chapters 1 and 3 first: every later chapter uses their units and their temperature relation. Chapter 2 explains why gases and liquids differ and can be skipped by readers who only handle oil. Chapters 4 to 6 are about the oil itself: choosing it, the effects of pressure and shear, and measuring it. Chapters 7 to 9 follow the oil through the machine, and Chapter 10 uses viscosity to watch the oil age.
 
-Numbers are carried to more digits than a measurement would justify so that a reader can follow each step. Every calculation in the book was checked by running it, and the WORKOS tools linked from the chapters perform the same calculations with the reader's own data.
+Numbers are carried to more digits than a measurement would justify so that a reader can follow each step. Every calculation in the book was checked by running it, and the KEVOS® tools linked from the chapters perform the same calculations with the reader's own data.
 
 ## Source limits and professional responsibility
 

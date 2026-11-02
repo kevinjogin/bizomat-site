@@ -123,7 +123,7 @@ Making the end pieces cylinders and triangulating the middle avoids the fudge. E
 
 A tapering elbow can be made in any number of pieces. The two end collars stay mitred cylinders, cut at half the angle of the middle pieces; for a five-piece 90° elbow, the collars are cut at 11.25° and the three middle pieces each turn 22.5°. Each middle piece is then a transition between two ellipses, and each is triangulated as above.
 
-The ellipses at the intermediate joints must be chosen: they are the sections of a duct of the intermediate diameter, cut by the joint plane. A common rule makes the diameter change in equal steps from joint to joint, so a five-piece Ø315 to Ø250 elbow would have joints for diameters of 315, 293.3, 271.7 and 250 mm, with each ellipse's major axis equal to its diameter divided by the cosine of the joint's half-angle. More pieces make a smoother elbow with lower pressure loss, at the cost of more joints to make and seal; the ductwork side of that choice is in READOS's [Ductwork by the Numbers](/reados/publications/ductwork-by-the-numbers/).
+The ellipses at the intermediate joints must be chosen: they are the sections of a duct of the intermediate diameter, cut by the joint plane. A common rule makes the diameter change in equal steps from joint to joint, so a five-piece Ø315 to Ø250 elbow would have joints for diameters of 315, 293.3, 271.7 and 250 mm, with each ellipse's major axis equal to its diameter divided by the cosine of the joint's half-angle. More pieces make a smoother elbow with lower pressure loss, at the cost of more joints to make and seal; the ductwork side of that choice is in the Library’s [Ductwork by the Numbers](/reados/publications/ductwork-by-the-numbers/).
 
 ```figure
 type: steps

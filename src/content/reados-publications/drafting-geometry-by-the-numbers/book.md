@@ -5,7 +5,7 @@ description: "Build exact 2D drafting geometry with numbers: datums, coordinates
 category: Engineering
 tags: [design, manufacturing, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -37,7 +37,7 @@ references:
     creator: "Standards Australia"
     year: "1992, reconfirmed"
     url: "https://store.standards.org.au/product/as-1100-101-1992"
-    note: "Named by number and scope as the Australian drawing standards that govern how the geometry in this book is presented and dimensioned. No values are quoted from them; READOS's Drawings That Make Parts covers their provisions."
+    note: "Named by number and scope as the Australian drawing standards that govern how the geometry in this book is presented and dimensioned. No values are quoted from them; the Library’s Drawings That Make Parts covers their provisions."
 related:
   - title: "Drawings That Make Parts"
     href: "/reados/publications/drawings-that-make-parts/"
@@ -53,7 +53,7 @@ A detail drawing is only as good as the geometry under it. A dimension can be ty
 
 This book is about producing that exact geometry. It works through the calculations a drafter needs to place every point deliberately: choosing a datum, entering coordinates, solving triangles, constructing tangents and fillets, laying out bolt circles and slots, drawing polygons and inclined circles, offsetting profiles, calculating area and mass, checking the result and preparing a profile for cutting. Each method is shown with the arithmetic, checked by an independent route and applied to one part.
 
-It suits drafters and CAD users moving beyond basic commands, designers who prepare profiles for fabrication, and engineers who check other people's drawings. You need school trigonometry and a scientific calculator or spreadsheet. The methods are software-neutral: every CAD package offers coordinate entry, object snaps and inquiry tools under its own names, and the book explains what to calculate rather than which buttons to press. How the finished geometry is presented on the sheet, with views, dimensions and tolerances, belongs to READOS's *Drawings That Make Parts*.
+It suits drafters and CAD users moving beyond basic commands, designers who prepare profiles for fabrication, and engineers who check other people's drawings. You need school trigonometry and a scientific calculator or spreadsheet. The methods are software-neutral: every CAD package offers coordinate entry, object snaps and inquiry tools under its own names, and the book explains what to calculate rather than which buttons to press. How the finished geometry is presented on the sheet, with views, dimensions and tolerances, belongs to the Library’s *Drawings That Make Parts*.
 
 ## The running case
 

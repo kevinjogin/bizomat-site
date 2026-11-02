@@ -7,7 +7,7 @@ description: "Find where G7, a Ø150 pipe, meets G1's oblique cone from its circ
 draft: false
 ---
 
-Not every branch is a breeches. Often a small pipe simply joins the side of a larger fitting, as a tee joins a main. When the larger fitting is a cylinder, the joint is a cylinder-to-cylinder intersection, covered in READOS's Sheet Metal Patterns by the Numbers. When it is an oblique cone, the joint is harder to picture: the cone's surface curves differently in every direction, and its elements lean at different angles all round. But an oblique cone has one property that makes the joint easy to calculate. Every section parallel to its base is a circle, and with that, the meeting line can be found point by point with nothing more than Pythagoras.
+Not every branch is a breeches. Often a small pipe simply joins the side of a larger fitting, as a tee joins a main. When the larger fitting is a cylinder, the joint is a cylinder-to-cylinder intersection, covered in the Library’s Sheet Metal Patterns by the Numbers. When it is an oblique cone, the joint is harder to picture: the cone's surface curves differently in every direction, and its elements lean at different angles all round. But an oblique cone has one property that makes the joint easy to calculate. Every section parallel to its base is a circle, and with that, the meeting line can be found point by point with nothing more than Pythagoras.
 
 This chapter develops G7, a Ø150 pipe joining G1's wall hood. It uses the cone's circular sections to find the line where the pipe meets the hood, develops the pipe's cut end, places the hole in the hood's pattern, and ends with a pipe cut square to a back that looked flat.
 

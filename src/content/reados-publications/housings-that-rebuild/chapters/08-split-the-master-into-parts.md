@@ -145,7 +145,7 @@ Before the housing leaves the design team, for a quotation, a prototype or tooli
 
 Give the master and both parts the same revision letter at each release, even if one part did not change. The three files form one design, and a cover at revision C paired with a base at revision B invites someone to assume they were checked together when they were not. If the toolmaker later asks for a change to one part, make it in the master where it affects the shared form, rerun the checks on both parts, and release all three files again under the next revision. The extra minutes are small compared with a mould cut to the wrong version of its partner.
 
-The edited READOS chapter on [designing plastic parts for injection moulding](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-plastic-parts-for-injection-moulding/) covers the moulding constraints that the toolmaker will test this release against, and [Drawings That Make Parts](/reados/publications/drawings-that-make-parts/the-drawing-as-a-contract/) covers the drawing that usually accompanies it.
+The edited Library chapter on [designing plastic parts for injection moulding](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-plastic-parts-for-injection-moulding/) covers the moulding constraints that the toolmaker will test this release against, and [Drawings That Make Parts](/reados/publications/drawings-that-make-parts/the-drawing-as-a-contract/) covers the drawing that usually accompanies it.
 
 ## Exercise: add a third part
 

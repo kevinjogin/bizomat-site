@@ -9,7 +9,7 @@ draft: false
 
 An isolator is a deliberate resonance. Putting an enclosure on soft mounts creates a mass-spring system with a low natural frequency, and above about 1.4 times that frequency the mounts transmit less vibration than they receive. Below it they transmit all of it, and near it they amplify. Isolation therefore works only if the natural frequency sits well below everything the enclosure needs protecting from, and it fails badly if it lands on top of a strong excitation. Random vibration, spread over a broad band, is forgiving of the exact choice; a machine tone, concentrated at one frequency, is not.
 
-This chapter tells the story of CB-7's mounts. It starts with the field failures that followed from mounts resonating at the engine's frequency, uses the WORKOS isolator selection tool to choose mounts that isolate the tone, checks the enclosure's random response and sway on the softer mounts with Miles' equation, and sets out what damping, rocking modes and engine run-up add to the picture.
+This chapter tells the story of CB-7's mounts. It starts with the field failures that followed from mounts resonating at the engine's frequency, uses the KEVOS® isolator selection tool to choose mounts that isolate the tone, checks the enclosure's random response and sway on the softer mounts with Miles' equation, and sets out what damping, rocking modes and engine run-up add to the picture.
 
 ## The error: mounts tuned to the engine
 

@@ -9,11 +9,11 @@ draft: false
 
 A magnetic chuck pulls a part down. A cutter pushes it sideways. The part stays put only while friction between the part and the chuck face, which depends on the magnet's pull, exceeds the cutter's sideways push, or while something else, such as a stop, takes that push. This is the comparison that decides whether a magnetic set-up is safe for a given cut, and it is the one that the large numbers in the previous chapters tempt people to skip.
 
-This chapter works the comparison for BP-600's two milling operations. It finds the cutting force from the cutting power, as the WORKOS face milling power tool calculates it, compares it with the friction the chuck provides in each contact condition, and then looks at stops, lighter cuts, and how a vacuum table and conventional clamps would do on the same job. The error is a change of coolant that halved the friction.
+This chapter works the comparison for BP-600's two milling operations. It finds the cutting force from the cutting power, as the KEVOS® face milling power tool calculates it, compares it with the friction the chuck provides in each contact condition, and then looks at stops, lighter cuts, and how a vacuum table and conventional clamps would do on the same job. The error is a change of coolant that halved the friction.
 
 ## The cutting force from the cutting power
 
-The cutter does work on the chip, and the rate at which it does that work is the cutting power. The mean tangential force at the cutter's edge is that power divided by the cutting speed. For milling, the WORKOS [face milling power plan tool](/tools/face-milling-power-plan/) calculates the cutting power from the cut's geometry: it finds the engagement angle and mean chip thickness for the cutter diameter and width of cut, corrects the specific cutting force for that chip thickness from the material's kc1.1 and exponent, and multiplies by the metal removal rate. It also gives the spindle speed, table feed, torque and motor power, and checks the power against the spindle's.
+The cutter does work on the chip, and the rate at which it does that work is the cutting power. The mean tangential force at the cutter's edge is that power divided by the cutting speed. For milling, the KEVOS® [face milling power plan tool](/tools/face-milling-power-plan/) calculates the cutting power from the cut's geometry: it finds the engagement angle and mean chip thickness for the cutter diameter and width of cut, corrects the specific cutting force for that chip thickness from the material's kc1.1 and exponent, and multiplies by the metal removal rate. It also gives the spindle speed, table feed, torque and motor power, and checks the power against the spindle's.
 
 This is an illustration. BP-600's faces are milled with a 125 mm face mill with 10 inserts, taking an 80 mm wide, 3 mm deep cut at 200 m/min and 0.15 mm per tooth. For the plate's steel the shop uses kc1.1 = 1,700 N/mm² and an exponent of 0.25.
 
@@ -57,7 +57,7 @@ It is worth seeing the requirement the other way round. To hold a 5.50 kN peak f
 
 A stop is a hardened bar or a set of pins fixed to the chuck face, or to the machine table beside the chuck, against which the part sits so that the cutting force pushes the part into the stop. With a stop, the cutting force along that direction is carried by the stop, not by friction, and the magnet's job becomes holding the part down against lift and against the moment that tries to tip it over the stop. Magnets are very good at that job.
 
-The WORKOS [fixture clamping force tool](/tools/fixture-clamp-force/) makes the difference plain for mechanical clamps. With the cutting force taken by friction alone, at the same 5.50 kN peak, a safety factor of 2 and friction coefficients of 0.2 at both the clamp and the locating face, it asks for 27.5 kN of total clamping force; with the cutting force taken by a positive stop and only a 1.5 kN lifting force to resist, it asks for 3.0 kN. The same logic applies to the magnet: a stop reduces the force it must provide by an order of magnitude.
+The KEVOS® [fixture clamping force tool](/tools/fixture-clamp-force/) makes the difference plain for mechanical clamps. With the cutting force taken by friction alone, at the same 5.50 kN peak, a safety factor of 2 and friction coefficients of 0.2 at both the clamp and the locating face, it asks for 27.5 kN of total clamping force; with the cutting force taken by a positive stop and only a 1.5 kN lifting force to resist, it asks for 3.0 kN. The same logic applies to the magnet: a stop reduces the force it must provide by an order of magnitude.
 
 Stops need three checks of their own:
 
@@ -71,7 +71,7 @@ Where a stop cannot be used, for example when a part must be milled all round it
 
 ## Vacuum and clamps compared
 
-The same plate could be held on a vacuum table or with clamps. The WORKOS [vacuum table workholding check](/tools/vacuum-table-workholding-check/) makes the comparison for vacuum. It calculates the holding force from the vacuum and the sealed area, with an allowance for leakage, adds the part's weight, applies the friction coefficient, takes the mean cutting force from the cutting power and speed as the face milling tool does, applies a peak factor, and gives the sliding safety factor and the largest feed that meets a required factor.
+The same plate could be held on a vacuum table or with clamps. The KEVOS® [vacuum table workholding check](/tools/vacuum-table-workholding-check/) makes the comparison for vacuum. It calculates the holding force from the vacuum and the sealed area, with an allowance for leakage, adds the part's weight, applies the friction coefficient, takes the mean cutting force from the cutting power and speed as the face milling tool does, applies a peak factor, and gives the sliding safety factor and the largest feed that meets a required factor.
 
 ```figure
 type: compare

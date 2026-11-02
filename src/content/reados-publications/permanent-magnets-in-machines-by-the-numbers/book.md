@@ -5,7 +5,7 @@ description: "How to choose and use permanent magnets in machines: materials, lo
 category: Engineering
 tags: [design, systems, automation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -76,7 +76,7 @@ Permanent magnets are now in most machines, often where nobody notices them: in 
 
 This book explains how permanent magnets behave in machines and how to design, specify and check them with numbers. It starts with what a permanent magnet is and how to read its demagnetisation curve, chooses between the main magnet materials, and finds a magnet's working point from the load line of its circuit. It then deals with temperature and demagnetisation, which cause most magnet failures, before working through the main applications: magnetic couplings, eddy currents and brakes, servo motors, tramp-metal separation and sensing. The last chapter covers handling, storage, shipping and incoming inspection.
 
-It is for machine designers, maintenance and reliability engineers, automation engineers and technicians. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for machine designers, maintenance and reliability engineers, automation engineers and technicians. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 

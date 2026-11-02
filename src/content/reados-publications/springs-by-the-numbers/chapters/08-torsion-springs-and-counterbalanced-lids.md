@@ -9,7 +9,7 @@ draft: false
 
 A helical torsion spring looks like a compression spring with its ends bent out into straight legs. It is loaded by a moment that twists its legs round the coil's axis, and it is the spring used wherever something pivots: clothes pegs, mousetraps, hinged covers, ratchet pawls and the counterbalances on machine hatches. Despite the name, its wire is not in torsion. Turning the legs bends each coil a little tighter, so the stress in the wire is a bending stress, and the formulas use the elastic modulus E, not the shear modulus.
 
-This chapter checks the two torsion springs that balance the VM-8's hinged top hatch, using three WORKOS tools: the torsion spring check, the torsion spring designer, and the lid counterbalance check that follows the hatch's balance through its whole opening. Its mistake is a hinge sleeve made a little too large, on which the springs bound as they wound up.
+This chapter checks the two torsion springs that balance the VM-8's hinged top hatch, using three KEVOS® tools: the torsion spring check, the torsion spring designer, and the lid counterbalance check that follows the hatch's balance through its whole opening. Its mistake is a hinge sleeve made a little too large, on which the springs bound as they wound up.
 
 ## The hatch
 

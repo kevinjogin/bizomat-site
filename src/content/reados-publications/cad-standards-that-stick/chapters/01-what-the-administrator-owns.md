@@ -159,7 +159,7 @@ The aim is not a perfect environment. It is a stable one in which every seat giv
 
 Each of these can be counted, and the following chapters show how. Report them monthly in a few lines, alongside the hours actually spent. A short, regular report keeps the role visible to the engineering manager, shows where the time goes and makes it much easier to defend the budget when a busy project tempts everyone to borrow it. If none of them improves after a year, the time budget is being spent on the wrong things, and the charter should be revisited. If they all improve, the budget can be defended and perhaps reduced, because a stable environment needs less attention than a drifting one.
 
-READOS's chapter on [governing a CAD environment](/reados/collections/engineering-design-practice/governing-a-cad-environment/) gives a broader overview of the same governance ideas. This book goes further into each element, using one office throughout.
+The Library’s chapter on [governing a CAD environment](/reados/collections/engineering-design-practice/governing-a-cad-environment/) gives a broader overview of the same governance ideas. This book goes further into each element, using one office throughout.
 
 ## Exercise: size the budget again
 

@@ -58,7 +58,7 @@ Choosing between 1.0 mm and 1.2 mm sheet shows how one decision runs through the
 
 - **Stiffness.** A wall's resistance to bending rises with the cube of its thickness, so 1.2 mm is (1.2 ÷ 1.0)³ = **1.73 times** as stiff as 1.0 mm, for the same shape. That is what keeps the long walls from bowing when the tray is lifted full.
 - **Mass and material cost.** The tray's blank, about 0.579 m², weighs **4.54 kg** in 1.0 mm sheet and **5.45 kg** in 1.2 mm. Material is priced by mass, so 1.2 mm costs about 20% more per tray.
-- **Folding.** Thicker sheet needs more press brake force and a wider die, and springs back differently, which READOS's [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/press-brake-and-punching-force/) covers.
+- **Folding.** Thicker sheet needs more press brake force and a wider die, and springs back differently, which the Library’s [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/press-brake-and-punching-force/) covers.
 
 The shop chooses 1.2 mm because the full tray is carried by hand and a bowed wall would let the rim twist out of the shelf. The first article's load test in Chapter 10 checks the choice; if 1.0 mm with a stiffer rim passes the same test, a later run can change.
 

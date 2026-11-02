@@ -22,7 +22,7 @@ formula: σ³ − I1 σ² + I2 σ − I3 = 0
 formula: I1 = σx + σy + σz
 formula: I2 = σxσy + σyσz + σzσx − τxy² − τyz² − τzx²
 formula: I3 = σxσyσz + 2τxyτyzτzx − σxτyz² − σyτzx² − σzτxy²
-caption: The three roots of the cubic are the principal stresses. A cubic with real coefficients from a symmetric stress state always has three real roots, which can be found in closed form with trigonometry, as the WORKOS tools do.
+caption: The three roots of the cubic are the principal stresses. A cubic with real coefficients from a symmetric stress state always has three real roots, which can be found in closed form with trigonometry, as the KEVOS® tools do.
 - I1 | the sum of the normal stresses: three times the mean stress
 - I2 | the second invariant, the three-dimensional form of σxσy − τxy²
 - I3 | the determinant of the stress matrix

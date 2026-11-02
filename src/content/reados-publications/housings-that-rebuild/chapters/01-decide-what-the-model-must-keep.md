@@ -86,7 +86,7 @@ Where no clean geometry exists, place the image itself on a sketch plane. Most s
 
 The reason for rebuilding rather than tracing directly is curve quality. An imported outline is often made of dozens of short arcs and lines, joined with tiny gaps. Surfaces built on that outline inherit every join. Chapter 2 shows how to replace such chains with a few well-controlled splines.
 
-The edited READOS chapter on [rebuilding CAD geometry from scans and PDFs](/reados/collections/cad-modelling-and-design-intent/rebuilding-cad-geometry-from-scans-and-pdfs/) covers the wider problem of imported references and their accuracy.
+The edited Library chapter on [rebuilding CAD geometry from scans and PDFs](/reados/collections/cad-modelling-and-design-intent/rebuilding-cad-geometry-from-scans-and-pdfs/) covers the wider problem of imported references and their accuracy.
 
 ## Choose a solid-first or surface-first strategy
 
@@ -175,7 +175,7 @@ Before adding a variant, check that each difference can be expressed as a parame
 
 A model that only its author can change is a liability. Rename key features in the tree, such as `Crown surface`, `Side walls`, `Nose patch`, `Shell 2.0`, rather than leaving `Surface-Loft3` and `Shell1`. Group them in folders that follow the planned order. Add a short note to any feature that uses a non-obvious technique, such as an over-extended surface or a temporary split, explaining why.
 
-The edited READOS chapter on [design intent in parametric CAD](/reados/collections/cad-modelling-and-design-intent/design-intent-in-parametric-cad-and-large-assemblies/) discusses intent across large assemblies. The aim here is narrower: one part that a colleague can open, read and change with confidence.
+The edited Library chapter on [design intent in parametric CAD](/reados/collections/cad-modelling-and-design-intent/design-intent-in-parametric-cad-and-large-assemblies/) discusses intent across large assemblies. The aim here is narrower: one part that a colleague can open, read and change with confidence.
 
 ## Exercise: write the intent statements for a change
 

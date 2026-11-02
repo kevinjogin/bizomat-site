@@ -64,7 +64,7 @@ caption: This is an illustration calculated from the formula above. The current 
 - 1.6 mm at 6 m/min | 5.4
 ```
 
-The calculation turns a weld's metal into an arc time. A 6 mm fillet weld holds roughly 150 to 160 g of weld metal per metre including a little reinforcement; at 4 kg/h, a metre takes about 2.3 minutes of arc time. A machine programmed with the feed speed and the travel speed lays the same weld metal per metre every time, which is where automation's consistency begins. The [WORKOS fillet weld quantity calculator](/tools/fillet-weld-quantity/) works out weld metal for fillet welds.
+The calculation turns a weld's metal into an arc time. A 6 mm fillet weld holds roughly 150 to 160 g of weld metal per metre including a little reinforcement; at 4 kg/h, a metre takes about 2.3 minutes of arc time. A machine programmed with the feed speed and the travel speed lays the same weld metal per metre every time, which is where automation's consistency begins. The [KEVOS® fillet weld quantity calculator](/tools/fillet-weld-quantity/) works out weld metal for fillet welds.
 
 ## Constant current and voltage sensing
 

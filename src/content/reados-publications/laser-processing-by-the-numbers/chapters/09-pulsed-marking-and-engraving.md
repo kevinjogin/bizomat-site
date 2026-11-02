@@ -9,7 +9,7 @@ draft: false
 
 A marking laser does not melt through anything. It delivers its energy in short pulses, each heating a tiny spot for a fraction of a microsecond, and builds a mark out of tens of thousands of overlapping spots. Whether the mark is a dark oxide, a bleached spot in anodising or a groove engraved into the metal depends on how much energy each pulse puts into how small an area, and how closely the spots are packed. A mark that looks fine to the eye may still be unreadable to a code scanner, which is what happened to the first batch of codes on the cell's cabinet doors.
 
-This chapter works through the M-20 marking laser's pulse energy, peak power and fluence, shows how spot overlap is set by speed and pulse frequency, times a two-dimensional code, and checks the marking station against the line's takt time with WORKOS tools.
+This chapter works through the M-20 marking laser's pulse energy, peak power and fluence, shows how spot overlap is set by speed and pulse frequency, times a two-dimensional code, and checks the marking station against the line's takt time with KEVOS® tools.
 
 ## Pulse energy, peak power and fluence
 

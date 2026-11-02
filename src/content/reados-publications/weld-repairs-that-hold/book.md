@@ -5,7 +5,7 @@ description: "Plan weld repairs to steel plate around damage assessment, shrinka
 category: Manufacturing
 tags: [manufacturing, quality, design, validation, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-23
@@ -80,4 +80,4 @@ Calculations use metric units, with the booklet's imperial dimensions converted 
 
 ## An original treatment
 
-READOS already introduces welded joints, pressure vessels and corrosion protection in overview chapters, including [welded joints for fabricators](/reados/collections/manufacturing-operations-and-design-for-manufacture/welded-joints-for-fabricators/). This book concentrates on repair: assessing damage, controlling shrinkage, sequencing, patching and documenting. The explanations, the tank case and all worked examples are original KEVOS® writing. The 1919 booklet is a public historical document; its procedures are summarised and analysed in new words, and none of its text or drawings is reproduced.
+The Library already introduces welded joints, pressure vessels and corrosion protection in overview chapters, including [welded joints for fabricators](/reados/collections/manufacturing-operations-and-design-for-manufacture/welded-joints-for-fabricators/). This book concentrates on repair: assessing damage, controlling shrinkage, sequencing, patching and documenting. The explanations, the tank case and all worked examples are original KEVOS® writing. The 1919 booklet is a public historical document; its procedures are summarised and analysed in new words, and none of its text or drawings is reproduced.

@@ -5,7 +5,7 @@ description: "Keep water out of electrical enclosures and off cold pipes with nu
 category: Engineering
 tags: [design, operations, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29

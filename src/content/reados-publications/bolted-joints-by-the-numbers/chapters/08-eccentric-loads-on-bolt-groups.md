@@ -9,7 +9,7 @@ draft: false
 
 When a load passes through the centre of a bolt group, the bolts share it equally. Loads rarely do. A bracket that holds something out from a column, a plate that carries a load at its far end, a support arm: each puts its load to one side of its bolts, and the offset turns part of the load into a moment that the bolts must also resist. The moment loads the bolts unequally, and the bolt furthest from the group's centre can carry several times the share that simple division would give it.
 
-This chapter checks the CT-1 rig's two brackets. The rod-end support plate is loaded in the plane of its bolts, so they resist the moment in shear; it uses the WORKOS eccentric bolt group tool and the eccentric bracket bolt check. The load cell bracket sticks out from the face it is bolted to, so its bolts resist the moment in tension; it uses the bracket bolts in tension and shear tool. The chapter's mistake is a bracket whose bolts were sized by dividing the load by four.
+This chapter checks the CT-1 rig's two brackets. The rod-end support plate is loaded in the plane of its bolts, so they resist the moment in shear; it uses the KEVOS® eccentric bolt group tool and the eccentric bracket bolt check. The load cell bracket sticks out from the face it is bolted to, so its bolts resist the moment in tension; it uses the bracket bolts in tension and shear tool. The chapter's mistake is a bracket whose bolts were sized by dividing the load by four.
 
 ## The rod-end support plate
 
@@ -113,7 +113,7 @@ The eccentric bolt group tool shows it directly. Moving the four bolts out to a 
 
 ## Elastic or instantaneous centre
 
-The elastic method assumes the bolts stay elastic and the plate rotates about the group's centroid. Tests on bolt groups loaded to failure show that real groups rotate about a point that moves away from the centroid as the load rises, and that ductile bolts share the load more evenly than the elastic method says, because the most loaded bolt yields a little and passes load to its neighbours. The instantaneous-centre method, used in structural steel design, follows that behaviour and gives a higher capacity for the same group. The elastic method is the simpler and the more conservative of the two, which is why the WORKOS tools use it and why it suits machine brackets, where the shop wants the bolts to stay elastic in service, not to reach their ultimate strength.
+The elastic method assumes the bolts stay elastic and the plate rotates about the group's centroid. Tests on bolt groups loaded to failure show that real groups rotate about a point that moves away from the centroid as the load rises, and that ductile bolts share the load more evenly than the elastic method says, because the most loaded bolt yields a little and passes load to its neighbours. The instantaneous-centre method, used in structural steel design, follows that behaviour and gives a higher capacity for the same group. The elastic method is the simpler and the more conservative of the two, which is why the KEVOS® tools use it and why it suits machine brackets, where the shop wants the bolts to stay elastic in service, not to reach their ultimate strength.
 
 ## Friction or bearing in an eccentric group
 

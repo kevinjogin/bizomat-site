@@ -9,7 +9,7 @@ draft: false
 
 A foundry's furnace sets the pace of everything else. However many moulds the moulders can make, the shift can pour only as much metal as the furnace can melt, and every kilogram melted costs energy, whether it ends up in a casting or goes back into the furnace as gates and risers. Knowing how long a melt takes and what it costs is the first piece of arithmetic in planning any casting job.
 
-This chapter works through the heat balance of a melt for GB-12, turns it into a melting time and an energy cost with one WORKOS tool, builds the furnace's cycle and its output per shift with another, and works through a planning error that promised a customer more metal than the furnace could deliver.
+This chapter works through the heat balance of a melt for GB-12, turns it into a melting time and an energy cost with one KEVOS® tool, builds the furnace's cycle and its output per shift with another, and works through a planning error that promised a customer more metal than the furnace could deliver.
 
 ## The furnace and the charge
 
@@ -21,7 +21,7 @@ Each melt is a charge of 150 kg made up of new ingot and the foundry's own retur
 
 Chapter 1 set out the three-part heat balance: warm the solid to the liquidus, supply the latent heat, superheat the liquid to pouring temperature. Multiplied by the charge mass and divided by the efficiency, it gives the energy drawn from the supply.
 
-The WORKOS [Energy and time to melt metal](/tools/melting-energy/) tool does this for one charge. From the charge mass, starting, melting and pouring temperatures, solid and liquid specific heats, latent heat, furnace power and efficiency and energy price, it reports the energy into the metal, the share of it that is latent heat, the energy drawn, the melting time, the energy cost per melt and the specific energy in kilowatt-hours per tonne.
+The KEVOS® [Energy and time to melt metal](/tools/melting-energy/) tool does this for one charge. From the charge mass, starting, melting and pouring temperatures, solid and liquid specific heats, latent heat, furnace power and efficiency and energy price, it reports the energy into the metal, the share of it that is latent heat, the energy drawn, the melting time, the energy cost per melt and the specific energy in kilowatt-hours per tonne.
 
 ```figure
 type: steps
@@ -77,7 +77,7 @@ GB-12's foundry melts in an electric resistance crucible furnace, which is simpl
 
 A melt is not just the time to heat the metal. The furnace must be charged, the metal skimmed, sampled, degassed and treated, the crucible tapped or the metal ladled out, and the furnace recharged. Those steps take time whatever the furnace's power.
 
-The WORKOS [Melting furnace batch plan](/tools/melt-furnace-batch-plan/) tool adds them. With the same heat balance as the melting energy tool, it takes a charging and tapping time per melt, the hours in a shift and the metal needed per shift, and reports the cycle per melt, the number of complete melts per shift, the metal per shift against the demand, the energy per tonne and the energy cost per kilogram.
+The KEVOS® [Melting furnace batch plan](/tools/melt-furnace-batch-plan/) tool adds them. With the same heat balance as the melting energy tool, it takes a charging and tapping time per melt, the hours in a shift and the metal needed per shift, and reports the cycle per melt, the number of complete melts per shift, the metal per shift against the demand, the energy per tonne and the energy cost per kilogram.
 
 ```figure
 type: steps

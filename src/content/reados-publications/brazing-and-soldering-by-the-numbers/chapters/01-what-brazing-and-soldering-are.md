@@ -70,7 +70,7 @@ They also have limits. The filler is usually weaker than the parts, so joints ar
 type: compare
 title: Brazing, soldering and welding compared
 cols: Soldering | Brazing | Fusion welding
-caption: General characteristics. Strength depends on the filler, the joint design and the parts; READOS compares joining methods more broadly in Choosing a joining method.
+caption: General characteristics. Strength depends on the filler, the joint design and the parts; the Library compares joining methods more broadly in Choosing a joining method.
 - Filler melts | below 450 °C | above 450 °C, below the parts | parts melt, with or without filler
 - How it fills | capillary | capillary | deposited into a groove or fused
 - Typical joint | lap, socket, through-hole | lap, socket, sleeve | butt, fillet, groove

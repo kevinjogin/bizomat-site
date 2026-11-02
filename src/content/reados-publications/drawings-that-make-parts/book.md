@@ -5,7 +5,7 @@ description: "Make and read mechanical drawings that suppliers can quote, make a
 category: Engineering
 tags: [design, manufacturing, quality, validation, product-development]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -52,7 +52,7 @@ related:
 
 A mechanical drawing is an instruction to strangers. The machinist, the inspector, the buyer and the supplier's estimator will read it without you in the room, often years after it was drawn, sometimes after it has been printed at the wrong size or copied from a copy. Everything they need must be on the sheet, and every mark must mean one thing. The conventions in the Australian drawing standards exist to make that possible.
 
-This book works through those conventions in the order a drawing is built: sheet and title block, lines and lettering, views and sections, dimensions, tolerances, surface texture, conventional representation of standard features, and the final check before release. It is written for people who make drawings and for people who must act on them. It assumes you can read a simple orthographic drawing and do basic arithmetic. It does not teach a CAD package; READOS's CAD drafting collection covers software practice, and this book explains what the resulting sheet must say.
+This book works through those conventions in the order a drawing is built: sheet and title block, lines and lettering, views and sections, dimensions, tolerances, surface texture, conventional representation of standard features, and the final check before release. It is written for people who make drawings and for people who must act on them. It assumes you can read a simple orthographic drawing and do basic arithmetic. It does not teach a CAD package; the Library’s CAD drafting collection covers software practice, and this book explains what the resulting sheet must say.
 
 ## The running case
 

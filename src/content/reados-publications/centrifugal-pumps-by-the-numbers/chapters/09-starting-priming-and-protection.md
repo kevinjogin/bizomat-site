@@ -81,7 +81,7 @@ After maintenance, TP-3's discharge pipe may be partly or wholly empty, and the 
 
 ## Stopping TP-3
 
-When TP-3 stops, the flow in the discharge pipe decelerates, reverses briefly, and the check valve closes. If it closes slowly, after the flow has reversed and gathered speed, it slams, sending a pressure surge up and down the pipe. READOS's [Water Hammer by the Numbers](/reados/publications/water-hammer-by-the-numbers/pump-trip-and-check-valve-slam/) deals with that in detail. TP-3's discharge pipe is short, and its check valve is a type that closes quickly, so its stop is quiet. A long, high discharge would need a slower stop, a soft-stopping drive, or a check valve with a damper.
+When TP-3 stops, the flow in the discharge pipe decelerates, reverses briefly, and the check valve closes. If it closes slowly, after the flow has reversed and gathered speed, it slams, sending a pressure surge up and down the pipe. The Library’s [Water Hammer by the Numbers](/reados/publications/water-hammer-by-the-numbers/pump-trip-and-check-valve-slam/) deals with that in detail. TP-3's discharge pipe is short, and its check valve is a type that closes quickly, so its stop is quiet. A long, high discharge would need a slower stop, a soft-stopping drive, or a check valve with a damper.
 
 ## Direction of rotation
 

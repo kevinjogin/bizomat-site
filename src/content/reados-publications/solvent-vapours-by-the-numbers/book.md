@@ -5,7 +5,7 @@ description: "How solvents evaporate, mix, burn and condense in a workshop, and 
 category: Operations
 tags: [operations, manufacturing, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -95,7 +95,7 @@ The plant, its products, its recipes, its suppliers and its measurements are inv
 
 Read Chapters 1 to 3 in order: they cover where solvent goes, vapour pressure and blends, which every later chapter uses. Chapter 4 deals with flammable headspaces, Chapter 5 with evaporation and Chapter 6 with evaporative cooling and blush. Chapters 7 to 9 cover ventilation of rooms, local exhaust and ovens. Chapter 10 covers recovery and Chapter 11 substitution and proving a reduction.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

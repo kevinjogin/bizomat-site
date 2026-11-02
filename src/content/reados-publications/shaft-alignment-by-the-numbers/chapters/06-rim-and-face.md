@@ -9,7 +9,7 @@ draft: false
 
 The rim and face method measures the movable shaft's position with two indicators mounted on the stationary shaft: one on the rim of the movable coupling hub, which reads offset, and one on its face, which reads angle. From those two numbers and three distances, simple geometry gives how much each pair of the movable machine's feet must be raised or lowered, or moved sideways, to bring its shaft into line.
 
-This chapter works the method through on the HW-3 in both planes, using the WORKOS rim and face alignment tool, and draws the geometry the tool uses so that its answers can be checked by hand. Its mistake is a reversed face indicator, which would have doubled the angle instead of removing it.
+This chapter works the method through on the HW-3 in both planes, using the KEVOS® rim and face alignment tool, and draws the geometry the tool uses so that its answers can be checked by hand. Its mistake is a reversed face indicator, which would have doubled the angle instead of removing it.
 
 ## What the two readings give
 
@@ -21,7 +21,7 @@ title: The rim and face method
 formula: offset at the reading plane = rim reading ÷ 2
 formula: slope = face reading ÷ face circle diameter
 formula: correction at a foot = offset + slope × distance from the reading plane to the foot
-caption: Readings are taken at 6 o'clock with zero at 12 for the vertical plane, and at 9 o'clock with zero at 3 for the horizontal plane, after sag correction. In the WORKOS tool's convention, a positive correction means add shims, or move towards the side where the indicator was zeroed.
+caption: Readings are taken at 6 o'clock with zero at 12 for the vertical plane, and at 9 o'clock with zero at 3 for the horizontal plane, after sag correction. In the KEVOS® tool's convention, a positive correction means add shims, or move towards the side where the indicator was zeroed.
 - Front distance | reading plane to the movable machine's front feet
 - Back distance | reading plane to its back feet
 ```
@@ -109,7 +109,7 @@ question: Before entering readings, confirm:
 - Face indicator reads the front of the movable hub | a positive face reading at 6 means the shaft slopes down away from the coupling
 - * Face indicator reads the back of a flange | reverse the sign, or remount it
 - Indicators on the movable shaft, reading the stationary hub | reverse both signs, or use a tool built for that convention
-caption: The WORKOS rim and face tool states its convention: indicators on the stationary shaft, readings on the movable coupling. A set-up that differs must be converted before the readings go in.
+caption: The KEVOS® rim and face tool states its convention: indicators on the stationary shaft, readings on the movable coupling. A set-up that differs must be converted before the readings go in.
 ```
 
 ## Offset and angle in the corrections
@@ -136,7 +136,7 @@ A useful property of the method is that it needs to turn only the two shafts tog
 
 ### Reading the other way round
 
-Sometimes the bracket can only be clamped to the movable shaft, with the indicators reading the stationary hub. The geometry is the same, but the readings describe the stationary shaft's position relative to the movable one, so both signs reverse, and the distances to the feet are measured from a reading plane that is now on the stationary hub, so they become longer by the distance between the hub faces. The WORKOS tool is built for indicators on the stationary shaft. With the other set-up, the safe course is to convert the readings and distances explicitly on the sheet before entering them, and to check the result against a plot, rather than relying on remembering to flip signs in the head.
+Sometimes the bracket can only be clamped to the movable shaft, with the indicators reading the stationary hub. The geometry is the same, but the readings describe the stationary shaft's position relative to the movable one, so both signs reverse, and the distances to the feet are measured from a reading plane that is now on the stationary hub, so they become longer by the distance between the hub faces. The KEVOS® tool is built for indicators on the stationary shaft. With the other set-up, the safe course is to convert the readings and distances explicitly on the sheet before entering them, and to check the result against a plot, rather than relying on remembering to flip signs in the head.
 
 ### Plotting as a check
 

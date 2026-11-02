@@ -5,7 +5,7 @@ description: "Plan, run and read weld tests with numbers: joint efficiency, meas
 category: Manufacturing
 tags: [manufacturing, quality, validation, process-improvement, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -98,4 +98,4 @@ This book is educational. Testing for qualification, certification or acceptance
 
 ## An original treatment
 
-READOS covers welding procedures and inspection for repairs in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/procedures-welders-and-inspection/) and arc welding practice in [Arc Welding by the Numbers](/reados/publications/arc-welding-by-the-numbers/). This book concentrates on testing. The explanations, the hopper case, the calculations, figures and exercises are original KEVOS® writing. The historical works are public-domain works in the United States; their results are summarised and analysed in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers welding procedures and inspection for repairs in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/procedures-welders-and-inspection/) and arc welding practice in [Arc Welding by the Numbers](/reados/publications/arc-welding-by-the-numbers/). This book concentrates on testing. The explanations, the hopper case, the calculations, figures and exercises are original KEVOS® writing. The historical works are public-domain works in the United States; their results are summarised and analysed in new words, and none of their text, tables or illustrations is reproduced.

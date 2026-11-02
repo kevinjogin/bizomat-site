@@ -52,7 +52,7 @@ step: q (copper) = 401 × 0.0006 × 12,000
 step: q (copper) ≈ 2,887 W
 ```
 
-For carbon steel the same path carries about 389 W, and for aluminium about 1,700 W. Compare those with the heat a flame delivers. The READOS book *Oxy-Fuel by the Numbers* estimates that a cutting preheat flame burning 0.50 m³/h of acetylene releases about 2.6 kW in its primary flame. A flame of that size on a steel joint has power to spare; on a copper joint, one direction of heat flow alone could take more than it supplies. That is why copper welds that start well can freeze as soon as the torch moves, and why copper and aluminium need larger heat sources, preheat, or both.
+For carbon steel the same path carries about 389 W, and for aluminium about 1,700 W. Compare those with the heat a flame delivers. The Library book *Oxy-Fuel by the Numbers* estimates that a cutting preheat flame burning 0.50 m³/h of acetylene releases about 2.6 kW in its primary flame. A flame of that size on a steel joint has power to spare; on a copper joint, one direction of heat flow alone could take more than it supplies. That is why copper welds that start well can freeze as soon as the torch moves, and why copper and aluminium need larger heat sources, preheat, or both.
 
 ## Preheat: quantity of heat
 

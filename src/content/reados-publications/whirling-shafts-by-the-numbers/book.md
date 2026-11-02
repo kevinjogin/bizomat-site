@@ -5,7 +5,7 @@ description: "How rotors behave at speed: critical speeds by Dunkerley and Rayle
 category: Engineering
 tags: [design, validation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -77,7 +77,7 @@ A spinning shaft is a spring, and every rotor carries a little unbalance that pu
 
 This book shows how to calculate and control them. It starts with the single-disc rotor and the critical speed, then estimates real critical speeds by Dunkerley's and Rayleigh's methods, sizes a shaft for strength, twist and whirl together, and adds the flexibility of bearings, frames and foundations. It then turns to unbalance: balance grades, balancing in one plane and in two, from known masses or with trial weights. It finishes with the loads that speed creates, centrifugal and gyroscopic, the start of a heavy rotor, and how to read a machine's vibration in service.
 
-It is for mechanical designers, machinery and reliability engineers, service technicians and fitters. It assumes school physics, algebra and some familiarity with vectors. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical designers, machinery and reliability engineers, service technicians and fitters. It assumes school physics, algebra and some familiarity with vectors. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -93,7 +93,7 @@ Masses, dimensions, stiffnesses, vibration readings, motor and bearing data, pri
 
 Read Chapters 1 and 2 first: the critical speed and its estimates are used throughout. Chapters 3 and 4 complete the design of the shaft and its supports. Chapters 5 to 7 cover unbalance and balancing and are best read in order. Chapters 8 to 10 cover centrifugal loads, gyroscopic loads and starting, and can be read in any order. Chapter 11 brings the book together in service.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The hand methods used are the classical ones; they show which changes matter and give sound first estimates, but they assume rigid rotors and simple supports, and each chapter says where they stop being reliable.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The hand methods used are the classical ones; they show which changes matter and give sound first estimates, but they assume rigid rotors and simple supports, and each chapter says where they stop being reliable.
 
 ## Source limits and professional responsibility
 

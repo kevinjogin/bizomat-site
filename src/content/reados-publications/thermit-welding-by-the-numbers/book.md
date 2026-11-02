@@ -5,7 +5,7 @@ description: "Understand aluminothermic welding from first principles: the react
 category: Manufacturing
 tags: [manufacturing, quality, operations, validation, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -94,4 +94,4 @@ This book is educational. Thermit welding involves molten metal at well over 2,0
 
 ## An original treatment
 
-READOS covers steel repair in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), how metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/) and electric arc welding in [Arc Welding by the Numbers](/reados/publications/arc-welding-by-the-numbers/). This book covers the aluminothermic process. The explanations, the crusher case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers steel repair in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), how metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/) and electric arc welding in [Arc Welding by the Numbers](/reados/publications/arc-welding-by-the-numbers/). This book covers the aluminothermic process. The explanations, the crusher case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

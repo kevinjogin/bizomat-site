@@ -122,7 +122,7 @@ Once the legs are braced at mid-height, it is easy to forget the other members i
 
 ## The tank stand tool
 
-The WORKOS [Tank stand leg check](/tools/tank-stand-leg-check/) tool brings the steps together for a stand of this kind. From the tank's inside diameter, full-level height, contents density and empty mass, it works out the full volume, the full weight and the load on each of the legs you enter. From the leg's outside diameter and wall thickness it calculates the area and second moment of area of the tube, then the slenderness, the Euler or Johnson critical stress, the buckling load and the factor against your required value, using the effective length factor you give it.
+The KEVOS® [Tank stand leg check](/tools/tank-stand-leg-check/) tool brings the steps together for a stand of this kind. From the tank's inside diameter, full-level height, contents density and empty mass, it works out the full volume, the full weight and the load on each of the legs you enter. From the leg's outside diameter and wall thickness it calculates the area and second moment of area of the tube, then the slenderness, the Euler or Johnson critical stress, the buckling load and the factor against your required value, using the effective length factor you give it.
 
 This is an illustration. With HT-8's figures (2,200 mm diameter, 2,000 mm full level, 1,000 kg/m³ water, 420 kg empty, four legs of 76.1 × 3.6 mm, 2,000 mm unsupported length, K = 1.0, E = 200 GPa, yield 350 MPa, required factor 2.5) it reports a full volume of 7,603 L, a full mass of 8,023 kg, a load per leg of 19,669 N, Johnson buckling at 209,730 N, and a factor of 10.66.
 

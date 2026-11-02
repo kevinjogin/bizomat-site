@@ -5,7 +5,7 @@ description: "Specify, run and check an industrial cooling tower with numbers: w
 category: Operations
 tags: [operations, systems, quality, people]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

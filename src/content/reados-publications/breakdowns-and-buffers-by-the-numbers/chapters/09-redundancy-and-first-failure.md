@@ -9,7 +9,7 @@ draft: false
 
 Some machines are so important that a site installs two where one would do. The packing hall's compressed air is one: every bagger and case packer uses it, and if it fails, all four lines stop. Two compressors, either able to carry the load, should make a total loss of air very rare. How rare depends on three things the word "redundant" hides: whether the second machine is running or waiting, how quickly a failed one is repaired, and whether anything can take out both at once.
 
-This chapter calculates the mean time until the hall loses its air, the mean first passage time of a Markov chain to its failed state, for the two compressors running together and for one running with the other on standby. It compares the result with redundancy without repair from the WORKOS system reliability tool, adds a standby that sometimes fails to start, and ends with a pair whose expected decade between losses of air shrank to about three years once a shared cause of failure was counted.
+This chapter calculates the mean time until the hall loses its air, the mean first passage time of a Markov chain to its failed state, for the two compressors running together and for one running with the other on standby. It compares the result with redundancy without repair from the KEVOS® system reliability tool, adds a standby that sometimes fails to start, and ends with a pair whose expected decade between losses of air shrank to about three years once a shared cause of failure was counted.
 
 ## Two compressors, one repair crew
 

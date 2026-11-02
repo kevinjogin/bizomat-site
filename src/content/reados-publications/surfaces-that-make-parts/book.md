@@ -5,7 +5,7 @@ description: "Build complex CAD shapes from surfaces and turn them into parts th
 category: Engineering
 tags: [design, manufacturing, product-development, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -76,7 +76,7 @@ Most mechanical parts are modelled as solids: sketch a profile, extrude it, cut 
 
 This book teaches surface modelling as an engineering method, not as a list of buttons. Each chapter adds one family of operations to a single part and asks the questions a toolmaker, an analyst or an inspector will ask later: is the section area right, does the surface close, will it offset, can it be pulled from a mould, and what does it weigh? It assumes you can build ordinary solid models in a parametric CAD system and read a simple drawing. It is software-neutral. Where a command name helps, it gives the name used in one mainstream modeller and notes that other systems use different words for the same operation.
 
-Read the chapters in order the first time; each one builds on the model left by the previous chapter. Each chapter ends with an exercise and a worked answer. READOS's chapter [Building CAD surfaces with clear dependencies](/reados/collections/cad-modelling-and-design-intent/building-cad-surfaces-with-clear-dependencies/) is a short companion on dependency chains; this book goes further into building, checking and releasing a whole part.
+Read the chapters in order the first time; each one builds on the model left by the previous chapter. Each chapter ends with an exercise and a worked answer. The Library’s chapter [Building CAD surfaces with clear dependencies](/reados/collections/cad-modelling-and-design-intent/building-cad-surfaces-with-clear-dependencies/) is a short companion on dependency chains; this book goes further into building, checking and releasing a whole part.
 
 ## The running case
 

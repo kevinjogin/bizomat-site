@@ -5,7 +5,7 @@ description: "A complete working handbook for Australian small-business owners t
 category: Business
 tags: [operations, finance, leadership, ai, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-22

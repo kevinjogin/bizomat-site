@@ -5,7 +5,7 @@ description: "How compression members buckle and how to check them: Euler, effec
 category: Engineering
 tags: [design, validation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -91,7 +91,7 @@ A straight member in compression does not fail the way intuition expects. Long b
 
 This book shows how to calculate buckling loads and how to keep them. It starts from Euler's load for a perfect pin-ended strut and the energy picture of buckling as a fork in the road, then adds, one chapter at a time, the things that real members have: end conditions and bracing, sections with weak axes, yielding, crookedness and offset loads. It applies them to bracing, cylinder rods and screws, heated members, thin shells under vacuum and temporary lifting frames, and finishes with how to prove and inspect what was built.
 
-It is for mechanical and structural engineers, designers, fabrication and maintenance supervisors and technicians who design, check, build or inspect members in compression. It assumes school physics, algebra and the idea of a second moment of area. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical and structural engineers, designers, fabrication and maintenance supervisors and technicians who design, check, build or inspect members in compression. It assumes school physics, algebra and the idea of a second moment of area. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -108,7 +108,7 @@ Loads, dimensions, tolerances, test results, prices and times are invented for t
 
 Read Chapters 1 and 2 first: Euler's load and the effective length are used in every later chapter. Chapters 3 to 5 complete the check of a single member: its section, its slenderness range and its imperfections. Chapter 6 deals with bracing. Chapters 7 to 10 apply the same ideas to machines, heat, thin shells and temporary works, and can be read in any order. Chapter 11 covers proving, inspection and records.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The formulas used are the classical ones: they explain behaviour, show which changes matter and give sound first checks. They are not a substitute for the governing design standard.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The formulas used are the classical ones: they explain behaviour, show which changes matter and give sound first checks. They are not a substitute for the governing design standard.
 
 ## Source limits and professional responsibility
 

@@ -5,7 +5,7 @@ description: "Quote configurable engineered products quickly and correctly: mode
 category: Products
 tags: [sales, product-development, systems, finance, automation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

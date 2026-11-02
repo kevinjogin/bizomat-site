@@ -5,7 +5,7 @@ description: "How to size and check friction clutches and brakes: loads and iner
 category: Engineering
 tags: [design, operations, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -65,7 +65,7 @@ A clutch connects a load to its drive and a brake connects a load to the ground.
 
 This book shows how to size and check friction clutches and brakes with numbers. It starts with the loads a device must handle, measured on the shaft where it sits, and the friction linings that carry them. It then covers plate, cone and centrifugal clutches, shoe, band and disc brakes, and the spring-applied brakes built into motors, finishing with proof tests and records.
 
-It is for mechanical design and maintenance engineers, fitters and machine builders. It assumes engineering or trade training and comfort with torque, speed and energy; the friction models are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design and maintenance engineers, fitters and machine builders. It assumes engineering or trade training and comfort with torque, speed and energy; the friction models are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -82,7 +82,7 @@ Masses, dimensions, speeds, friction coefficients, ratings, limits and test figu
 
 Read Chapter 1 first: it sets out the loads that every later chapter uses. Chapter 2 covers friction linings and measuring torque. Chapters 3 to 6 cover clutches, and Chapters 7 to 10 cover brakes; the brake chapters can be read without the clutch chapters. Chapter 10 also covers proof testing and records.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. Friction coefficients and lining limits in the book are typical figures for illustration; a real design uses the lining maker's values.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Friction coefficients and lining limits in the book are typical figures for illustration; a real design uses the lining maker's values.
 
 ## Source limits and professional responsibility
 

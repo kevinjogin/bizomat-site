@@ -123,7 +123,7 @@ The review is also when the team checks its licence terms. Some licences restric
 
 ## Plan workstation refresh from measurements
 
-Workstations are the second half of the cost picture. CAD performance depends heavily on processor clock speed, graphics cards supported by the CAD vendor, enough memory for the largest assemblies and fast local storage. READOS's chapter on [specifying a CAD workstation](/reados/collections/cad-modelling-and-design-intent/specifying-a-cad-workstation/) explains how CAD software uses hardware.
+Workstations are the second half of the cost picture. CAD performance depends heavily on processor clock speed, graphics cards supported by the CAD vendor, enough memory for the largest assemblies and fast local storage. The Library’s chapter on [specifying a CAD workstation](/reados/collections/cad-modelling-and-design-intent/specifying-a-cad-workstation/) explains how CAD software uses hardware.
 
 The team plans to replace its nine CAD workstations on a cycle of about four years, which means two or three a year rather than all nine at once. Spreading the cost smooths the budget, and it means the team always has recent machines to compare with older ones.
 

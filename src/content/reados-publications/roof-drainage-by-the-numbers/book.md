@@ -5,7 +5,7 @@ description: "Size roof drainage from the design storm: catchment flows, eaves a
 category: Engineering
 tags: [design, quality, projects, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

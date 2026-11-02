@@ -56,7 +56,7 @@ step: Bell-mouth: A = 2π × 63.634 × 15.708 = 6,280.4 mm²
 
 The centroid of a circular arc lies on its bisector at a distance R × sin(θ/2) ÷ (θ/2) from the centre, where θ is the arc angle. For a quarter arc of 10 mm radius, that is 10 × sin 45° ÷ (π/4) = 9.003 mm. The arc's centre sits at 70 mm radius and the centroid lies towards the axis at 45°, so its radius is 70 − 9.003 ÷ √2 = 63.634 mm.
 
-The CAD system's area measurement of the two revolved faces should agree with 11,309.7 mm² and 6,280.4 mm² to the displayed precision. If it does not, the profile is not what you think it is: a tangent relation missing, the arc centre in the wrong place, or the revolve axis offset from the duct axis. The WORKOS tool [Surface and Volume of Revolution (Pappus–Guldinus)](/tools/pappus-revolution/) runs the same calculation for other profiles.
+The CAD system's area measurement of the two revolved faces should agree with 11,309.7 mm² and 6,280.4 mm² to the displayed precision. If it does not, the profile is not what you think it is: a tangent relation missing, the arc centre in the wrong place, or the revolve axis offset from the duct axis. The KEVOS® tool [Surface and Volume of Revolution (Pappus–Guldinus)](/tools/pappus-revolution/) runs the same calculation for other profiles.
 
 ## Swept surfaces
 

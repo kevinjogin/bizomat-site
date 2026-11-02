@@ -5,7 +5,7 @@ description: "Build CAD automation that pays: measure the work, choose the level
 category: Engineering
 tags: [design, automation, systems, process-improvement, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

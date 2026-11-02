@@ -9,7 +9,7 @@ draft: false
 
 Chapter 1 explained that a cryogenic liquid sits at its boiling point. This chapter adds the second half of the idea: the boiling point is not fixed. It rises with the pressure above the liquid, just as water in a pressure cooker boils above 100 °C. Liquid nitrogen in SF-180's cylinder, held at 100 kPa gauge, is about six kelvins warmer than liquid nitrogen in the open bath, and it is lighter and holds less latent heat per kilogram.
 
-That difference matters every time liquid moves from a pressurised vessel into an open one. Some of it flashes to gas the instant the pressure falls, and that gas is a loss the user pays for. This chapter finds the saturation temperature at any pressure from NIST's tables, checks the Clausius–Clapeyron estimate that the WORKOS boiling point tool uses, calculates SF-180's flash loss and ends with a regulator setting that made the cylinder vent its contents.
+That difference matters every time liquid moves from a pressurised vessel into an open one. Some of it flashes to gas the instant the pressure falls, and that gas is a loss the user pays for. This chapter finds the saturation temperature at any pressure from NIST's tables, checks the Clausius–Clapeyron estimate that the KEVOS® boiling point tool uses, calculates SF-180's flash loss and ends with a regulator setting that made the cylinder vent its contents.
 
 ## Liquid and vapour in a closed vessel
 

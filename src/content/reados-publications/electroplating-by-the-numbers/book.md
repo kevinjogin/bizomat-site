@@ -5,7 +5,7 @@ description: "Specify, check and cost electroplated finishes: Faraday's laws, cu
 category: Manufacturing
 tags: [manufacturing, quality, design, process-improvement, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-24
@@ -105,4 +105,4 @@ This book is educational. Electroplating uses corrosive, toxic and in some cases
 
 ## An original treatment
 
-READOS already compares coating systems in [Protecting metals from corrosion and wear](/reados/collections/machine-elements-and-mechanical-design/protecting-metals-from-corrosion-and-wear/), which places electroplating beside galvanising, paint and other treatments. This book goes inside the electroplating process itself. The explanations, the bracket case, the calculations, figures and exercises are original KEVOS® writing. The 1917 treatise is a public-domain historical work; its ideas are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.
+The Library already compares coating systems in [Protecting metals from corrosion and wear](/reados/collections/machine-elements-and-mechanical-design/protecting-metals-from-corrosion-and-wear/), which places electroplating beside galvanising, paint and other treatments. This book goes inside the electroplating process itself. The explanations, the bracket case, the calculations, figures and exercises are original KEVOS® writing. The 1917 treatise is a public-domain historical work; its ideas are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.

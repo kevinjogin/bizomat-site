@@ -9,7 +9,7 @@ draft: false
 
 Between the cylinder and the bath, liquid nitrogen travels about a metre and a half through a stainless steel hose. That short trip costs nitrogen in three ways. The hose must be cooled from room temperature before liquid can pass through it; heat leaks into it while liquid flows; and, as Chapter 2 showed, the liquid flashes as its pressure falls. Which of the three matters most depends on how the transfer is done, and the answer is not what most people expect.
 
-This chapter calculates each loss for SF-180's hose with the WORKOS insulated pipe tool and NIST data, shows that the hose's cooldown and the flash outweigh its steady heat gain during a normal fill, describes phase separators and the rules that keep hoses safe, and ends with a slow top-up through a long bare hose that delivered more gas than liquid.
+This chapter calculates each loss for SF-180's hose with the KEVOS® insulated pipe tool and NIST data, shows that the hose's cooldown and the flash outweigh its steady heat gain during a normal fill, describes phase separators and the rules that keep hoses safe, and ends with a slow top-up through a long bare hose that delivered more gas than liquid.
 
 ## Cooling the hose
 

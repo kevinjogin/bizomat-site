@@ -136,7 +136,7 @@ The chart makes one more winter fact visible. The mixed point MW is well below t
 
 ## Pressure, altitude and software
 
-A chart printed for sea level is wrong at altitude, and the error is systematic. At 600 m the standard barometric pressure is about 94.3 kPa, and the same dry bulb and relative humidity give a humidity ratio and a specific volume about 7.5% larger. For a site more than a few hundred metres up, use a chart printed for the site's pressure or calculate with the equations, entering the pressure. The WORKOS tools in this book all take the barometric pressure as an input.
+A chart printed for sea level is wrong at altitude, and the error is systematic. At 600 m the standard barometric pressure is about 94.3 kPa, and the same dry bulb and relative humidity give a humidity ratio and a specific volume about 7.5% larger. For a site more than a few hundred metres up, use a chart printed for the site's pressure or calculate with the equations, entering the pressure. The KEVOS® tools in this book all take the barometric pressure as an input.
 
 Psychrometric software and spreadsheets have largely replaced reading values off a chart, and they should, because they read to more figures than any eye. The chart remains the best way to check that the software's answer is sensible. A process drawn the wrong way, a mixed point off its line or a coil leaving state above the saturation curve is obvious on paper and invisible in a column of numbers.
 

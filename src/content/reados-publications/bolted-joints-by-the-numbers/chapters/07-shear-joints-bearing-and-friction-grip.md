@@ -9,7 +9,7 @@ draft: false
 
 Many bolted joints are loaded across the bolts rather than along them. A splice in a beam, a bracket on a column, a gusset in a frame: the load tries to slide one plate over another. There are two ways such a joint can carry it. In a bearing-type joint the plates slip until the bolts touch the sides of their holes, and the bolts then carry the load in shear while the plates carry it in bearing. In a friction-grip joint, also called slip-critical or slip-resistant, the bolts' preload clamps the plates so hard that friction between them carries the load and nothing slips at all.
 
-This chapter checks the CT-1 frame's beam splice both ways, with the WORKOS bolt and pin shear and bearing tool and the friction-grip joint tool. Its mistake is a coat of paint in the one place a friction joint cannot have it.
+This chapter checks the CT-1 frame's beam splice both ways, with the KEVOS® bolt and pin shear and bearing tool and the friction-grip joint tool. Its mistake is a coat of paint in the one place a friction joint cannot have it.
 
 ## The frame splice
 
@@ -114,7 +114,7 @@ A bearing-type joint is fine for a load that always acts one way: it slips once,
 
 ## Tightening structural bolts
 
-Structural bolts in friction-grip joints are tightened by the methods the steel structures standard and the structural bolting standard set out, commonly a part-turn method from snug or a load-indicating device, and their minimum tensions come from those standards. The friction-grip tool's torque figure, from the nut factor, is useful for understanding the joint but is not the method a structural engineer would accept on its own. For the CT-1's frame, the fabricator tightened the splice bolts by its procedure under the steel structures standard and gave the shop a record; the WORKOS figures above are the shop's own check of the joint's behaviour. This is an illustration.
+Structural bolts in friction-grip joints are tightened by the methods the steel structures standard and the structural bolting standard set out, commonly a part-turn method from snug or a load-indicating device, and their minimum tensions come from those standards. The friction-grip tool's torque figure, from the nut factor, is useful for understanding the joint but is not the method a structural engineer would accept on its own. For the CT-1's frame, the fabricator tightened the splice bolts by its procedure under the steel structures standard and gave the shop a record; the KEVOS® figures above are the shop's own check of the joint's behaviour. This is an illustration.
 
 ## Preparing faying surfaces
 

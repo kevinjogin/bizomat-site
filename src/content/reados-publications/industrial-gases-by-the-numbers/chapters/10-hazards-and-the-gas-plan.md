@@ -65,7 +65,7 @@ A container that has held a flammable liquid or gas can explode when it is cut o
 
 ## Combustion products and fume
 
-Gas flames and arcs also produce hazardous gases of their own. Oxy-fuel flames produce carbon dioxide and, if starved of air, carbon monoxide, which is toxic and has no smell; heating or cutting in a poorly ventilated space can build up carbon monoxide to dangerous levels. Arcs produce ozone and nitrogen oxides from the surrounding air, and both arcs and flames produce metal fume from the work. READOS covers fume and ventilation for arc welding in Arc Welding by the Numbers, in its chapter on [fume, radiation and electrical safety](/reados/publications/arc-welding-by-the-numbers/fume-radiation-and-electrical-safety/), and the same principles apply to flame processes.
+Gas flames and arcs also produce hazardous gases of their own. Oxy-fuel flames produce carbon dioxide and, if starved of air, carbon monoxide, which is toxic and has no smell; heating or cutting in a poorly ventilated space can build up carbon monoxide to dangerous levels. Arcs produce ozone and nitrogen oxides from the surrounding air, and both arcs and flames produce metal fume from the work. The Library covers fume and ventilation for arc welding in Arc Welding by the Numbers, in its chapter on [fume, radiation and electrical safety](/reados/publications/arc-welding-by-the-numbers/fume-radiation-and-electrical-safety/), and the same principles apply to flame processes.
 
 ## Pressure and handling
 

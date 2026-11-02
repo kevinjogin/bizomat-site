@@ -5,7 +5,7 @@ description: "Railway clearances with numbers: rolling stock outlines, centre an
 category: Engineering
 tags: [design, projects, quality, systems, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
