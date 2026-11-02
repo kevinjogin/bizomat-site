@@ -9176,6 +9176,168 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter treats the gear tooth as a cantilever in the Lewis bending equation; the tool sizes tapered beams and levers, not gear teeth."
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "stress-strain-and-why-steel-springs-back",
+   "tool": "axial-stress",
+   "type": "applies",
+   "note": "Gives the stress, strain and shortening of a hopper's support leg under its share of a full batch, compared with the much larger strain in a load cell's spring element.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "temperature-alloys-and-apparent-strain",
+   "tool": "thermal-stress",
+   "type": "example",
+   "note": "Works out the stress and restraint force in a warmed support leg that cannot expand, showing what a temperature-matched strain gauge reads on a free and on a restrained member.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "spring-elements-inside-a-load-cell",
+   "tool": "beam-deflection",
+   "type": "applies",
+   "note": "Gives the bending stress and deflection of a cantilever bending-beam load cell, and the stiffness of a rigid pipe that carries weight past a weighing hopper's cells.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "shear-torque-and-rosettes",
+   "tool": "principal-stress",
+   "type": "applies",
+   "note": "Resolves the stresses in a load cell's shear web and from a three-gauge rosette on a hopper lug into principal stresses, their direction and the von Mises stress.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "shear-torque-and-rosettes",
+   "tool": "shaft-torsion",
+   "type": "applies",
+   "note": "Gives the shear stress and twist of a screw feeder shaft under its motor's torque, from which the strain and output of a torque bridge on the shaft are worked out.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "installing-a-weighing-vessel",
+   "tool": "tank-volume",
+   "type": "applies",
+   "note": "Gives the volume of the cylindrical part of a batch weigh hopper, used with its cone volume to find how much of each ingredient mix the hopper can hold.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "installing-a-weighing-vessel",
+   "tool": "frustum-volume",
+   "type": "applies",
+   "note": "Gives the volume and side angle of a weigh hopper's cone, added to its cylinder to check the batch it holds and the largest load its cells must carry.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "calibrating-with-weights-and-substitution",
+   "tool": "linear-calibration-check",
+   "type": "applies",
+   "note": "Fits a straight line to a weigh hopper's substitution test readings, tests its gain and offset, and gives a reading's calibrated value with its confidence interval.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "accuracy-classes-and-whether-a-scale-is-good-enough",
+   "tool": "gauge-repeatability-bias-check",
+   "type": "applies",
+   "note": "Analyses repeated test-weight readings on a batch scale as a Type 1 study, giving Cg, Cgk, bias significance and resolution against an ingredient's tolerance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "drift-moisture-overload-and-fatigue",
+   "tool": "ewma-chart-check",
+   "type": "applies",
+   "note": "Charts a weigh hopper's daily test-weight readings as an EWMA and finds the day a slow drift from a damp load cell crosses the control limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/strain-gauges-and-load-cells-by-the-numbers",
+   "chapter": "drift-moisture-overload-and-fatigue",
+   "tool": "goodman-fatigue",
+   "type": "applies",
+   "note": "Checks the fatigue safety factor of a load cell's shear web under the stress cycle of each batch, using equivalent alternating and mean stresses.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "windings-load-loss-and-voltage-regulation",
+   "tool": "motor-power",
+   "type": "applies",
+   "note": "Gives the line current, input power and apparent power of a freezing tunnel's compressor and fan motors, added in kVA to find the new peak load on the transformer.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "heat-cooling-and-the-hot-spot",
+   "tool": "enclosure-cooling-airflow",
+   "type": "applies",
+   "note": "Sizes the extraction airflow that keeps a transformer room within its allowed temperature rise, from the transformer and switchboard losses and the heat lost through the walls.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "paper-oil-and-the-life-of-insulation",
+   "tool": "arrhenius-acceleration-check",
+   "type": "applies",
+   "note": "Gives the rate at which transformer paper ages at a hot-spot temperature relative to a reference temperature, compared with the doubling rule used in loading guides.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "efficiency-load-profile-and-the-cost-of-losses",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Values the extra price of a low-loss transformer against its yearly energy saving: NPV, IRR, payback and benefit–cost ratio over a 30-year life.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "efficiency-load-profile-and-the-cost-of-losses",
+   "tool": "benefit-cost-ratio",
+   "type": "applies",
+   "note": "Gives the present value of a low-loss transformer's yearly loss savings against its extra price, as a benefit–cost ratio and net present benefit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "harmonics-hum-and-magnetostriction",
+   "tool": "sound-level",
+   "type": "applies",
+   "note": "Works out a transformer's hum level at a neighbour's distance and combined with a ventilation fan, by free-field spreading and logarithmic addition.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/distribution-transformers-by-the-numbers",
+   "chapter": "harmonics-hum-and-magnetostriction",
+   "tool": "machine-noise-acceptance",
+   "type": "applies",
+   "note": "Checks a new transformer's noise against its specified limit from running and background readings, and shows why a test with too loud a background is not valid.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
