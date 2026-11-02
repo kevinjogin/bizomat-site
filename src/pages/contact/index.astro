@@ -17,20 +17,20 @@ import { SITE } from '../../config/site.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
-  { label: 'REACHOS', href: '/contact/' },
+  { label: 'Contact', href: '/contact/' },
 ];
 const pathways: { slug: string; icon: LibraryIconName; name: string; title: string; text: string; examples: string[]; explore?: { href: string; label: string } }[] = [
   {
-    slug: 'workos', icon: 'gear', name: 'WORKOS', title: 'Tools and technical support',
-    text: 'Have a question about a WORKOS tool, calculation, technical resource or functionality? Get in touch.',
+    slug: 'workos', icon: 'gear', name: 'Tools', title: 'Tools and technical support',
+    text: 'Have a question about a tool, calculation, technical resource or functionality? Get in touch.',
     examples: ['Tool-related questions', 'Technical feedback', 'Calculation or functionality issues', 'Feature suggestions', 'New tool requests'],
-    explore: { href: '/tools/', label: 'Explore WORKOS' },
+    explore: { href: '/tools/', label: 'Explore Tools' },
   },
   {
-    slug: 'reados', icon: 'book', name: 'READOS', title: 'Knowledge and resources',
+    slug: 'reados', icon: 'book', name: 'Library', title: 'Knowledge and resources',
     text: 'Questions, suggestions or feedback about technical books, reading resources and knowledge content.',
     examples: ['Book and reading enquiries', 'Content corrections', 'Resource suggestions', 'Knowledge and learning opportunities', 'Requests for additional topics'],
-    explore: { href: '/reados/', label: 'Explore READOS' },
+    explore: { href: '/reados/', label: 'Explore Library' },
   },
   {
     slug: 'feedback', icon: 'bulb', name: 'Ideas', title: 'Ideas and feedback',
@@ -48,7 +48,7 @@ const next = [
   'You receive a reply through the contact details you provide.',
   'Where it helps, a conversation is arranged to agree the next step.',
 ];
-const description = 'Connect with KEVOS® for WORKOS tool enquiries, READOS knowledge resources, feedback, technical discussions and collaboration opportunities.';
+const description = 'Connect with KEVOS® for tool enquiries, Library knowledge resources, feedback, technical discussions and collaboration opportunities.';
 ---
 
 <BaseLayout
@@ -72,7 +72,7 @@ const description = 'Connect with KEVOS® for WORKOS tool enquiries, READOS know
       <h2 id="pathways-title">How can we <em>help?</em></h2>
       <div>
         <p class="reach-intro">Have a question, an idea, feedback or something you want to build? Reach out to KEVOS® and find the right next step.</p>
-        <p class="reach-intro reach-intro--small">Whether you’re exploring WORKOS tools, discovering READOS resources, discussing a technical requirement or looking to collaborate, REACHOS is your connection point.</p>
+        <p class="reach-intro reach-intro--small">Whether you’re exploring the tools, discovering Library resources, discussing a technical requirement or looking to collaborate, REACHOS is your connection point.</p>
       </div>
     </div>
     <ul class="pathways" role="list">

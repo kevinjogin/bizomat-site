@@ -46,31 +46,31 @@ const orbit = HOME_ORBIT.map((o) => {
   return { verb: o.verb, label: topic.name.replace('&', '&amp;'), tags: `${fmt(topic.items.length)} tools · ${fmt(subject.entries.length)} books`, href: `/tools/?topic=${topic.slug}` };
 });
 
-const description = 'Describe a problem and KEVOS® finds the WORKOS engineering and business tools and READOS technical books that help you solve it.';
+const description = 'Describe a problem and KEVOS® finds the engineering and business tools and the technical books in its Library that help you solve it.';
 const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
   isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@id': `${SITE.url}/#organization` },
   hasPart: [
-    { '@type': 'CollectionPage', name: 'WORKOS', url: `${SITE.url}/tools/`, description: 'Practical engineering, manufacturing and business tools.' },
-    { '@type': 'CollectionPage', name: 'READOS', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
+    { '@type': 'CollectionPage', name: 'KEVOS® Tools', url: `${SITE.url}/tools/`, description: 'Practical engineering, manufacturing and business tools.' },
+    { '@type': 'CollectionPage', name: 'KEVOS® Library', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
   ],
 }];
 ---
-<BaseLayout description={description} imageAlt="KEVOS®: practical tools and technical knowledge with WORKOS and READOS" schema={schema}>
+<BaseLayout description={description} imageAlt="KEVOS®: practical tools and a library of technical knowledge" schema={schema}>
   <section class="home-hero" id="overview" aria-labelledby="home-title">
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
-        <p class="eyebrow">WORKOS tools · READOS knowledge</p>
+        <p class="eyebrow">Tools · Library</p>
         <h1 id="home-title">What would you like to <em>solve</em> today?</h1>
         <p class="home-hero__lead">Describe a problem, ask a question or tell us what you're trying to achieve. KEVOS® will help you discover the right tools, knowledge and practical solutions.</p>
         <DiscoveryBox suggestions={HOME_DISCOVERY_EXAMPLES} />
         <div class="home-hero__actions">
-          <Button href="/tools/" arrow data-cta="hero-workos">Explore WORKOS</Button>
-          <Button href="/reados/" variant="secondary" data-cta="hero-reados">Explore READOS</Button>
+          <Button href="/tools/" arrow data-cta="hero-workos">Explore Tools</Button>
+          <Button href="/reados/" variant="secondary" data-cta="hero-reados">Explore Library</Button>
         </div>
         <dl class="home-stats">
-          <div><dt>WORKOS tools</dt><dd>{fmt(tools.length)}</dd></div>
-          <div><dt>READOS books</dt><dd>{fmt(bookTotal)}</dd></div>
+          <div><dt>Tools</dt><dd>{fmt(tools.length)}</dd></div>
+          <div><dt>Books</dt><dd>{fmt(bookTotal)}</dd></div>
           <div><dt>Chapters</dt><dd>{fmt(chapterTotal)}</dd></div>
         </dl>
       </div>
@@ -80,10 +80,10 @@ const schema = [{
 
   <DiscoveryResults />
 
-  <section class="home-libs" aria-label="WORKOS and READOS">
+  <section class="home-libs" aria-label="Tools and Library">
     <Container class="home-libs__grid">
       <div class="home-lib" id="workos" aria-labelledby="workos-title">
-        <p class="home-lib__index"><span>01</span> WORKOS</p>
+        <p class="home-lib__index"><span>01</span> Tools</p>
         <h2 id="workos-title">Practical tools for <em>better decisions.</em></h2>
         <p class="home-lib__intro">Engineering, manufacturing and business calculators that show their method and run in your browser. No account needed.</p>
         <h3 class="home-label" id="workos-topics">Browse by topic</h3>
@@ -106,9 +106,9 @@ const schema = [{
       </div>
 
       <div class="home-lib" id="reados" aria-labelledby="reados-title">
-        <p class="home-lib__index"><span>02</span> READOS</p>
+        <p class="home-lib__index"><span>02</span> Library</p>
         <h2 id="reados-title">Knowledge worth <em>applying.</em></h2>
-        <p class="home-lib__intro">Technical books in short chapters with figures and worked numbers, many linked to the WORKOS tools that apply them.</p>
+        <p class="home-lib__intro">Technical books in short chapters with figures and worked numbers, many linked to the tools that apply them.</p>
         <h3 class="home-label" id="reados-subjects">Browse by subject</h3>
         <ul class="lib-topic-grid home-lib__topics" role="list" aria-labelledby="reados-subjects">
           {subjects.map((sub) => (
@@ -139,22 +139,22 @@ const schema = [{
     </div>
     <ol class="flow">
       <li class="flow__step">
-        <p class="flow__name"><a href="/reados/">READOS</a></p>
+        <p class="flow__name"><a href="/reados/">Library</a></p>
         <h3>Learn and understand</h3>
         <p>Read the method, the reasoning and the worked numbers behind a decision.</p>
       </li>
       <li class="flow__step">
-        <p class="flow__name"><a href="/tools/">WORKOS</a></p>
+        <p class="flow__name"><a href="/tools/">Tools</a></p>
         <h3>Calculate, analyse and apply</h3>
         <p>Enter your own figures, check the result and keep a report of what you decided.</p>
       </li>
       <li class="flow__step">
         <p class="flow__name"><a href="#overview">Ask KEVOS®</a></p>
         <h3>Describe it, discover it</h3>
-        <p>Describe a problem in your own words at the top of this page. KEVOS® suggests the WORKOS tools and READOS chapters that fit; the tools do the calculating.</p>
+        <p>Describe a problem in your own words at the top of this page. KEVOS® suggests the tools and Library chapters that fit; the tools do the calculating.</p>
       </li>
     </ol>
-    <p class="flow__note">Today, {fmt(connections)} reviewed links connect READOS books and chapters with the WORKOS tools that apply them. These learning pathways take you from a chapter to a tool:</p>
+    <p class="flow__note">Today, {fmt(connections)} reviewed links connect Library books and chapters with the tools that apply them. These learning pathways take you from a chapter to a tool:</p>
     <ul class="pathways">
       {pathways.map((p) => (
         <li class="pathway">
@@ -175,7 +175,7 @@ const schema = [{
       <div>
         <p class="section-intro">KEVOS® is building a connected technology, engineering and knowledge ecosystem, bringing together practical digital tools and structured technical resources.</p>
         <p class="about-intro__link"><a href="/about/">About KEVOS® <span aria-hidden="true">→</span></a></p>
-        <p class="fineprint">KEVOS® also takes on defined engineering assignments. See <a href="/services/">services</a> or get in touch through <a href="/contact/">REACHOS</a>.</p>
+        <p class="fineprint">KEVOS® also takes on defined engineering assignments. See <a href="/services/">services</a> or <a href="/contact/">get in touch</a>.</p>
       </div>
     </div>
   </Section>

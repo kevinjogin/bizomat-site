@@ -201,7 +201,7 @@ export function buildGraph(links: KnowledgeLink[], catalogue = readCatalogue()) 
         continue;
       }
       out.set(l.reados, {
-        book: { title: book.title, href: book.href, kind: book.kind === 'publication' ? 'KEVOS® original book' : 'READOS collection' },
+        book: { title: book.title, href: book.href, kind: book.kind === 'publication' ? 'KEVOS® original book' : 'Library collection' },
         type: l.type, label: TYPE_LABELS[l.type].forTool,
         learn: l.learn ?? c?.description ?? book.description,
         chapters: c ? [{ title: c.title, href: c.href }] : [], order: l.order ?? 100,

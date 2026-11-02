@@ -20,8 +20,8 @@ export const CONTACT_LIMITS = {
  */
 export const ENQUIRY_CATEGORIES = [
   { value: 'General enquiry', slug: 'general' },
-  { value: 'WORKOS – Tools and technical questions', slug: 'workos' },
-  { value: 'READOS – Books and knowledge resources', slug: 'reados' },
+  { value: 'Tools – technical questions', slug: 'workos' },
+  { value: 'Library – books and knowledge resources', slug: 'reados' },
   { value: 'Ideas and feedback', slug: 'feedback' },
   { value: 'Collaboration and partnerships', slug: 'collaboration' },
 ] as const;

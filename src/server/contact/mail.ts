@@ -25,7 +25,7 @@ export function composeMessage(input: ContactInput) {
     ['Phone', input.phone || '—'],
     ['Enquiry category', input.service],
     ['Website', input.website || '—'],
-    ['Related WORKOS tool or READOS resource', input.resource || '—'],
+    ['Related tool or Library resource', input.resource || '—'],
     ['Preferred contact', input.contactMethod],
   ];
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\n${input.message}\n`;
