@@ -201,6 +201,13 @@ test('the plan validator resolves numbers to the ids sent, uses each reading onc
   assert.ok(s.modules.length <= 4 && s.modules.every((m) => m.lessons.length <= 3));
   assert.equal(parseCoursePlan({ modules: [{ title: 'M', lessons: [lesson([])] }] }, readings, tools, 'complete'), null, 'a plan without readings is rejected');
   assert.equal(parseCoursePlan({ modules: 'nope' }, readings, tools, 'complete'), null);
+  // The compact form the prompt asks for (short replies arrive in time): {t, s, l: [[title, objective, reads, tools]]}
+  const compact = parseCoursePlan({ title: 'T', modules: [{ t: 'Basics', s: 'Start here', l: [['What OEE is', 'Define OEE', [1], [1]], ['Losses', 'Find losses', [2, 9], []]] }] }, readings, tools, 'complete')!;
+  assert.deepEqual(compact.modules[0], { title: 'Basics', summary: 'Start here', lessons: [{ title: 'What OEE is', objective: 'Define OEE', reads: ['/r/1/'], tools: ['t1'] }, { title: 'Losses', objective: 'Find losses', reads: ['/r/2/'], tools: [] }] });
+  const big = { title: 'T', modules: Array.from({ length: 9 }, (_, i) => ({ t: `M${i}`, l: Array.from({ length: 5 }, () => ['L', 'O', [1], []]) })) };
+  const c = parseCoursePlan(big, readings, tools, 'complete')!;
+  assert.ok(c.modules.length <= 6 && c.modules.every((m) => m.lessons.length <= 3), 'a complete course is at most 6 modules of 3 lessons');
+  assert.match(planPrompt('complete'), /"l": \[\["lesson title", "objective", \[1\], \[\]\]\]/, 'the prompt asks for the compact form');
 });
 
 test('the lesson validator needs the key things, valid checks and real source numbers', () => {

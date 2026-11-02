@@ -27,7 +27,7 @@ export interface PlanFromWorker {
 
 export const DEPTH_LABEL: Record<Depth, string> = { quick: 'Quick Understanding', structured: 'Structured Learning', complete: 'Complete Course', professional: 'Professional / Advanced' };
 export const LEVEL_LABEL: Record<Level, string> = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced', mixed: 'Beginner to advanced' };
-const SHAPE: Record<Exclude<Depth, 'quick'>, [number, number]> = { structured: [3, 3], complete: [6, 4], professional: [6, 4] };
+const SHAPE: Record<Exclude<Depth, 'quick'>, [number, number]> = { structured: [3, 3], complete: [6, 3], professional: [6, 3] };
 
 const firstSentence = (s: string) => (s.match(/^.*?[.!?](\s|$)/)?.[0] ?? s).trim();
 const hash = (s: string) => { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h.toString(36); };

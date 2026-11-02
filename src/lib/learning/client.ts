@@ -34,12 +34,12 @@ async function post<T>(path: string, body: unknown, timeoutMs: number): Promise<
 }
 
 export async function learnIntent(question: string, context = ''): Promise<Omit<Intent, 'source'> | null> {
-  const r = await post<{ intent: Omit<Intent, 'source'> }>('/api/learn/intent', { question, context: context || undefined }, 14000);
+  const r = await post<{ intent: Omit<Intent, 'source'> }>('/api/learn/intent', { question, context: context || undefined }, 16000);
   return r?.intent ?? null;
 }
 
 export async function learnPlan(question: string, intent: Intent, depth: Exclude<Depth, 'quick'>, readings: { id: string; title: string; book: string; topic: string; about: string }[], tools: { id: string; name: string; about: string; linked: string[] }[]): Promise<PlanFromWorker | null> {
-  const r = await post<{ course: PlanFromWorker }>('/api/learn/plan', { question, depth, intent: { subject: intent.subject, objective: intent.objective, outcome: intent.outcome, level: intent.level }, readings, tools }, 45000);
+  const r = await post<{ course: PlanFromWorker }>('/api/learn/plan', { question, depth, intent: { subject: intent.subject, objective: intent.objective, outcome: intent.outcome, level: intent.level }, readings, tools }, 75000);
   return r?.course ?? null;
 }
 
@@ -64,7 +64,7 @@ export async function learnLesson(course: Course, module: string, lesson: Lesson
     lesson: { title: lesson.title, objective: lesson.objective },
     sources: sources.map((s) => ({ title: s.title, book: s.book, outline: s.outline ?? {} })),
     tools: lesson.tools.slice(0, 2).map((t) => ({ name: t.name, about: t.about, inputs: t.inputs, outputs: t.outputs })),
-  }, 45000);
+  }, 70000);
   return r?.lesson ?? null;
 }
 
@@ -73,7 +73,7 @@ export async function learnAsk(course: Course, lesson: Lesson, summary: string, 
   const r = await post<{ answer: { answer: string; basis: 'source' | 'general'; refs: number[] } }>('/api/learn/ask', {
     course: { title: course.title }, lesson: { title: lesson.title, objective: lesson.objective, summary },
     sources: sources.map((s) => ({ title: s.title, book: s.book, outline: s.outline ?? {} })), question,
-  }, 30000);
+  }, 35000);
   return r?.answer ?? null;
 }
 

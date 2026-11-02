@@ -75,7 +75,19 @@ export function parseLearnIntent(o: Record<string, unknown>): LearnIntent | null
 }
 
 /** Course size by depth: [max modules, max lessons per module]. */
-export const SHAPE: Record<Exclude<Depth, 'quick'>, [number, number]> = { structured: [4, 3], complete: [7, 4], professional: [7, 4] };
+export const SHAPE: Record<Exclude<Depth, 'quick'>, [number, number]> = { structured: [4, 3], complete: [6, 3], professional: [6, 3] };
+
+/**
+ * The plan's compact form, which keeps the reply short enough to arrive in time (about 30 tokens a second):
+ * {"t": title, "s": summary, "l": [[lesson title, objective, [reads], [tools]], ...]} for each module.
+ * The long form ({title, summary, lessons: [{title, objective, reads, tools}]}) is still accepted.
+ */
+function expandModule(raw: unknown): Record<string, unknown> {
+  const m = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  if (!('l' in m) && !('t' in m)) return m;
+  const lessons = (Array.isArray(m.l) ? m.l : []).map((l) => (Array.isArray(l) ? { title: l[0], objective: l[1], reads: l[2], tools: l[3] } : l));
+  return { title: m.t ?? m.title, summary: m.s ?? m.summary, lessons };
+}
 
 /** The plan, with readings and tools resolved from list numbers (R1.., T1..) to the ids the browser sent. */
 export function parseCoursePlan(o: Record<string, unknown>, readings: string[], tools: string[], depth: Exclude<Depth, 'quick'>): CoursePlan | null {
@@ -83,7 +95,7 @@ export function parseCoursePlan(o: Record<string, unknown>, readings: string[], 
   const modules: CoursePlan['modules'] = [];
   const used = new Set<string>();
   for (const raw of (Array.isArray(o.modules) ? o.modules : []).slice(0, maxModules)) {
-    const m = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+    const m = expandModule(raw);
     const title = text(m.title, 70);
     if (!title) continue;
     const lessons: PlanLesson[] = [];

@@ -53,7 +53,7 @@ class CourseView {
     this.course = course;
     this.pendingPlan = pending;
     this.progress = readProgress(course.id);
-    this.statusLine.textContent = pending ? 'KEVOS® AI is planning your personalised course from these resources…' : note;
+    this.statusLine.textContent = pending ? 'KEVOS® AI is planning your personalised course from these resources (this can take up to a minute). You can start with the course below.' : note;
     this.renderHead();
     this.renderNav();
     const keep = this.current && lessons(course).some((l) => l.id === this.current) ? this.current : null;
@@ -183,7 +183,7 @@ class CourseView {
   private async loadLesson(lesson: Lesson & { module: string }, style: Style) {
     const key = `${this.course.id}:${lesson.id}`;
     this.contents.set(key, { style, content: null });
-    this.lessonStatus('KEVOS® AI is writing this lesson from the Library readings…');
+    this.lessonStatus('KEVOS® AI is writing this lesson from the Library readings (this can take up to a minute)…');
     let content: LessonContent | null = null;
     try { content = await learnLesson(this.course, lesson.module, lesson, style); } catch (err) { if (err instanceof VisitorError) this.lessonStatus(err.message); }
     this.contents.set(key, { style, content });
@@ -207,7 +207,7 @@ class CourseView {
     m.append(el('p', 'lc-crumb', `Module ${pad(lesson.moduleIndex + 1)}: ${lesson.module} · Lesson ${lesson.id}`));
     const h = el('h4', 'lc-lesson__title', lesson.title); h.tabIndex = -1; m.append(h);
     if (lesson.objective) { const p = el('p', 'lc-objective'); p.append(el('strong', undefined, 'Learning objective: '), lesson.objective); m.append(p); }
-    const status = el('p', 'lc-lesson__status'); status.setAttribute('role', 'status'); status.textContent = note || (entry && !content && !note ? 'KEVOS® AI is writing this lesson from the Library readings…' : ''); m.append(status);
+    const status = el('p', 'lc-lesson__status'); status.setAttribute('role', 'status'); status.textContent = note || (entry && !content && !note ? 'KEVOS® AI is writing this lesson from the Library readings (this can take up to a minute)…' : ''); m.append(status);
     // Lesson actions (AI)
     const actions = el('div', 'lc-actions');
     actions.setAttribute('role', 'group'); actions.setAttribute('aria-label', 'Change this lesson');
