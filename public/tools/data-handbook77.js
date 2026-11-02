@@ -244,11 +244,11 @@ window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   },
   {
     "id": "carburizing-case-depth-plan",
-    "name": "Carburizing Case Depth Plan (Total Case for a Ground Effective Case, Time at Temperature, Furnace Cost)",
+    "name": "Carburising Case Depth Plan (Total Case for a Ground Effective Case, Time at Temperature, Furnace Cost)",
     "category": "Materials",
     "collection": "MAKEOS",
-    "question": "How deep must a part be carburized so that, after grinding, the effective case it needs remains, how long does that take at temperature, and is the case sensible for the section?",
-    "description": "Plan for gas or pack carburizing: the total case depth needed for a finished effective case after grinding stock is removed and the effective case is converted to total case with your ratio, the time at temperature from the parabolic growth of case depth with the square root of time and the case depth factor for the temperature, the total furnace cycle with the heating, diffusion and quench time you enter, the cost per part for a furnace rate and load, and the total case as a share of the half-section against your limit.",
+    "question": "How deep must a part be carburised so that, after grinding, the effective case it needs remains, how long does that take at temperature, and is the case sensible for the section?",
+    "description": "Plan for gas or pack carburising: the total case depth needed for a finished effective case after grinding stock is removed and the effective case is converted to total case with your ratio, the time at temperature from the parabolic growth of case depth with the square root of time and the case depth factor for the temperature, the total furnace cycle with the heating, diffusion and quench time you enter, the cost per part for a furnace rate and load, and the total case as a share of the half-section against your limit.",
     "keywords": [
       "MAKEOS",
       "carburizing",
@@ -331,7 +331,7 @@ window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
       },
       {
         "key": "K",
-        "label": "Case depth factor at the carburizing temperature",
+        "label": "Case depth factor at the carburising temperature",
         "type": "number",
         "default": 0.6,
         "unit": "mm/√h",

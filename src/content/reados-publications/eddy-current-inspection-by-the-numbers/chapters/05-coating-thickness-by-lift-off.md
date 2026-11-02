@@ -30,7 +30,7 @@ The housings' sulfuric acid anodising is a non-conductive aluminium oxide on a n
 
 ## How anodising grows
 
-Anodising does not lay a coating on the surface the way paint does. It converts the aluminium surface into oxide, so the coating grows partly into the metal and partly out from the original surface. The KEVOS® [anodizing time tool](/tools/anodizing-time/) and anodizing plan tool use the common rule of thumb for sulfuric acid anodising that a third of the thickness is build-up above the original surface and two-thirds is penetration into it, and the "720 rule" for the growth rate: in the tools' metric form, a growth of about 0.328 µm per minute for each A/dm² of current density, at the efficiency factor entered.
+Anodising does not lay a coating on the surface the way paint does. It converts the aluminium surface into oxide, so the coating grows partly into the metal and partly out from the original surface. The KEVOS® [anodising time tool](/tools/anodizing-time/) and anodising plan tool use the common rule of thumb for sulfuric acid anodising that a third of the thickness is build-up above the original surface and two-thirds is penetration into it, and the "720 rule" for the growth rate: in the tools' metric form, a growth of about 0.328 µm per minute for each A/dm² of current density, at the efficiency factor entered.
 
 ```figure
 type: steps
@@ -45,7 +45,7 @@ caption: This is an illustration. 1.5 A/dm², 20 µm target, efficiency factor 1
 
 The gauge sits on the coating's outer surface and senses the metal beneath, so it reads the full 20 µm of oxide. The part's dimensions change by only the build-up, 6.7 µm per surface. A bore machined at 22.000 mm comes out of anodising at about 22.000 − 0.013 = 21.987 mm, not 22.000 − 0.040. Machinists who confuse the two make bores 27 µm too large. The pump maker's drawings therefore state the coating thickness for the gauge and, separately, the machined size before anodising for the critical bores, with the build-up allowance already applied.
 
-The [anodizing plan tool](/tools/anodizing-plan/) extends the same calculation to the whole batch. For 480 housings, 24 to a load, at 16 V across the bath, it gives 86 A per load against a 100 A rectifier, 1.38 kW of heat into the bath against 2 kW of cooling, 20 loads and 18.6 line hours with 15 minutes of handling per load, 18.7 kWh of energy and A$3.30 a housing at A$0.28 a kilowatt-hour and A$85 an hour of line time, excluding GST: PLAN FEASIBLE. Its check, like the time tool's, is a reminder to measure the coating and adjust the efficiency factor, because the 720 rule is a rule of thumb, and the gauge is how the line learns its real efficiency.
+The [anodising plan tool](/tools/anodizing-plan/) extends the same calculation to the whole batch. For 480 housings, 24 to a load, at 16 V across the bath, it gives 86 A per load against a 100 A rectifier, 1.38 kW of heat into the bath against 2 kW of cooling, 20 loads and 18.6 line hours with 15 minutes of handling per load, 18.7 kWh of energy and A$3.30 a housing at A$0.28 a kilowatt-hour and A$85 an hour of line time, excluding GST: PLAN FEASIBLE. Its check, like the time tool's, is a reminder to measure the coating and adjust the efficiency factor, because the 720 rule is a rule of thumb, and the gauge is how the line learns its real efficiency.
 
 ## Calibrating the gauge
 
@@ -120,10 +120,10 @@ A tolerance interval answers the question the customer actually asks, which is a
 
 ## Exercise: a thinner coating
 
-A customer asks for a version of the housing with an 18 µm coating at a lower current density of 1.2 A/dm². Using the anodizing time tool, find the growth rate, the time, the build-up per surface and the change in a bore's diameter. What will the coating gauge read on a correctly anodised housing, and what machined size should a 22.000 mm finished bore have before anodising?
+A customer asks for a version of the housing with an 18 µm coating at a lower current density of 1.2 A/dm². Using the anodising time tool, find the growth rate, the time, the build-up per surface and the change in a bore's diameter. What will the coating gauge read on a correctly anodised housing, and what machined size should a 22.000 mm finished bore have before anodising?
 
 ### Answer
 
-The anodizing time tool gives a growth rate of 0.393 µm/min, a time of 45.8 minutes to reach 18 µm, a build-up of 6.0 µm per surface and a diameter change of 12.0 µm across both sides.
+The anodising time tool gives a growth rate of 0.393 µm/min, a time of 45.8 minutes to reach 18 µm, a build-up of 6.0 µm per surface and a diameter change of 12.0 µm across both sides.
 
 A correctly zeroed gauge will read the full coating, 18 µm, because it senses the metal beneath the oxide. The bore shrinks by twice the build-up, 12.0 µm, so to finish at 22.000 mm it should be machined to 22.012 mm before anodising. Using the coating thickness instead of the build-up would give 22.036 mm, 24 µm too large. Because the gauge and the bore gauge measure different things, the inspection record for the new version shows both: the coating reading from the eddy-current gauge and the finished bore diameter measured after sealing.

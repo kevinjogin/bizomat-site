@@ -131,7 +131,7 @@ The [writing tender responses buyers can evaluate](/reados/collections/selling-a
 
 This is an illustration. A facilities management business looks after maintenance for a dozen commercial buildings on behalf of their owners. It keeps an approved contractor list created six years ago for general maintenance, requiring $20 million public liability insurance, a certified quality management system and five years of trading.
 
-Over the past two years, its clients' spending has shifted toward energy efficiency work, especially tuning building management systems, now about $120,000 a year. None of the approved contractors specialises in this. In practice, the approved electrical contractor wins the work and subcontracts it to a two-person specialist firm, adding a margin of around 15%, roughly $18,000 a year.
+Over the past two years, its clients' spending has shifted towards energy efficiency work, especially tuning building management systems, now about $120,000 a year. None of the approved contractors specialises in this. In practice, the approved electrical contractor wins the work and subcontracts it to a two-person specialist firm, adding a margin of around 15%, roughly $18,000 a year.
 
 ```figure
 type: stack

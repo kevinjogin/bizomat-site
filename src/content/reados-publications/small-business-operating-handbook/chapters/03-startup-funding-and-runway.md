@@ -68,7 +68,7 @@ Start with a dated procurement list, not a single round number. Each line should
 
 ### Cash deficit versus total spending
 
-Funding needed is not necessarily equal to the sum of every expense. Some spending is covered by receipts arriving before or during the period, while deposits may restrict how those receipts can be used. Build a weekly cash schedule and find the deepest negative cumulative balance before external financing. That minimum point reveals the liquidity bridge required under the assumptions. For instance, if cumulative forecast balances after paying setup costs reach minus $8,000 in week three, minus $17,000 in week seven and positive $2,000 in week thirteen, the greatest modeled deficit is $17,000 before any reserve. A funding plan should cover timing and risk, not just eventual profitability.
+Funding needed is not necessarily equal to the sum of every expense. Some spending is covered by receipts arriving before or during the period, while deposits may restrict how those receipts can be used. Build a weekly cash schedule and find the deepest negative cumulative balance before external financing. That minimum point reveals the liquidity bridge required under the assumptions. For instance, if cumulative forecast balances after paying setup costs reach minus $8,000 in week three, minus $17,000 in week seven and positive $2,000 in week thirteen, the greatest modelled deficit is $17,000 before any reserve. A funding plan should cover timing and risk, not just eventual profitability.
 
 ### Working capital in plain language
 

@@ -50,24 +50,24 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
     ]
   },
   "anodizing-plan": {
-    "purpose": "Plan of a sulfuric acid anodizing job: growth rate and time to thickness by the 720 rule with your efficiency factor, build-up per surface (as the anodizing time tool), current for the load against the rectifier capacity, the electrical heat the tank cooling must remove at the bath voltage, loads and line hours for the batch, energy, and cost per part from energy and line time.",
+    "purpose": "Plan of a sulfuric acid anodising job: growth rate and time to thickness by the 720 rule with your efficiency factor, build-up per surface (as the anodising time tool), current for the load against the rectifier capacity, the electrical heat the tank cooling must remove at the bath voltage, loads and line hours for the batch, energy, and cost per part from energy and line time.",
     "uses": [
-      "Plan an anodizing batch",
+      "Plan an anodising batch",
       "Size the bath chiller for a bigger load",
-      "Quote anodizing per part"
+      "Quote anodising per part"
     ],
     "users": [
-      "Platers and anodizers",
+      "Platers and anodisers",
       "Process engineers",
       "Estimators"
     ],
     "inputs": {
-      "J": "Anodic current density (about 1.2–2 A/dm² for sulfuric acid anodizing).",
+      "J": "Anodic current density (about 1.2–2 A/dm² for sulfuric acid anodising).",
       "thick": "Total coating thickness wanted.",
       "eff": "Factor on the 720 rule for alloy and bath (100% for the rule as written; calibrate from thickness checks).",
-      "ap": "Anodized area of one part.",
+      "ap": "Anodised area of one part.",
       "np": "Parts on one jig load.",
-      "batch": "Parts to anodize.",
+      "batch": "Parts to anodise.",
       "rect": "Largest current the rectifier supplies.",
       "V": "Voltage across the bath at this current density.",
       "chill": "Heat the bath chiller or cooling coil can remove.",
@@ -81,13 +81,13 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
       "Loads, hours and cost per part"
     ],
     "method": [
-      "720 rule: thickness (mil) = A/ft² × minutes ÷ 720, giving growth rate (µm/min) = 25.4 × 9.290 ÷ 720 × J × efficiency (as the anodizing time tool); build-up per surface ≈ thickness ÷ 3.",
+      "720 rule: thickness (mil) = A/ft² × minutes ÷ 720, giving growth rate (µm/min) = 25.4 × 9.290 ÷ 720 × J × efficiency (as the anodising time tool); build-up per surface ≈ thickness ÷ 3.",
       "Current = J × area per part × parts per load; bath heat ≈ V × I.",
       "Loads = batch ÷ parts per load (rounded up); hours = loads × (time + handling) ÷ 60; cost per part = (energy × price + hours × rate) ÷ batch.",
       "Example: 20 µm takes 40.682 min at 75 A per load, putting 1.35 kW into the bath; each part costs about 1.1182."
     ],
     "limitations": [
-      "Rule of thumb for Type II sulfuric acid anodizing; hard anodizing and other baths differ.",
+      "Rule of thumb for Type II sulfuric acid anodising; hard anodising and other baths differ.",
       "Costs exclude chemicals, dyes, sealing and waste treatment.",
       "Example values are illustrations. Replace them with values for your actual task."
     ],

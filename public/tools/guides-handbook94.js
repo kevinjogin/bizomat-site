@@ -196,7 +196,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
     ],
     "interpret": [
       "The approximate outside diameter must be smaller than the pointed-tooth diameter, or the teeth come to a point.",
-      "The pressure angle falls from the new-chain value toward the minimum as the chain wears and rides higher on the teeth."
+      "The pressure angle falls from the new-chain value towards the minimum as the chain wears and rides higher on the teeth."
     ],
     "refs": [
       "Machinery’s Handbook, 29th edition (Industrial Press, 2012), printed pp. 2554–2555. Topic reference; no source tables or recommended settings are reproduced."

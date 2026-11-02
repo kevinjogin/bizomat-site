@@ -13,7 +13,7 @@ This chapter calculates that point for the tow tractor and for a loaded trailer,
 
 ## The static tipping threshold
 
-When a vehicle turns, a sideways inertia force, m × a_y, acts at its centre of gravity, pushing it toward the outside of the turn. The vehicle's weight, acting at the same point, holds it down. Taking moments about the outer wheels' contact line, the vehicle begins to lift its inner wheels when the inertia moment equals the weight moment.
+When a vehicle turns, a sideways inertia force, m × a_y, acts at its centre of gravity, pushing it towards the outside of the turn. The vehicle's weight, acting at the same point, holds it down. Taking moments about the outer wheels' contact line, the vehicle begins to lift its inner wheels when the inertia moment equals the weight moment.
 
 ```figure
 type: formula
@@ -64,9 +64,9 @@ The bar chart also shows how steeply the risk rises with speed. Sideways acceler
 
 ## Cross-slope erodes the margin
 
-A floor that falls sideways, such as the edge of a dock plate, a drainage fall or a ramp that is crossed at an angle, tilts the vehicle toward one side and moves its CG closer to the downhill wheels. The vehicle tips at a lower sideways acceleration, and on a steep enough cross-slope it tips standing still.
+A floor that falls sideways, such as the edge of a dock plate, a drainage fall or a ramp that is crossed at an angle, tilts the vehicle towards one side and moves its CG closer to the downhill wheels. The vehicle tips at a lower sideways acceleration, and on a steep enough cross-slope it tips standing still.
 
-This is an illustration. Standing on a cross-slope, the loaded trailer would tip at an angle of **atan(0.4 ÷ 1.0) = 21.8°**, far steeper than any floor on site. But a modest cross-slope combined with a turn toward the downhill side is another matter. On a 3° cross-fall, the threshold for a turn toward the low side falls approximately to **9.81 × (0.4 − 1.0 × tan 3°) ÷ 1.0 = 3.41 m/s²**, a reduction of 13%. Dock plates and ramp edges are where tipping incidents tend to happen, and they are where the site's route avoids turning.
+This is an illustration. Standing on a cross-slope, the loaded trailer would tip at an angle of **atan(0.4 ÷ 1.0) = 21.8°**, far steeper than any floor on site. But a modest cross-slope combined with a turn towards the downhill side is another matter. On a 3° cross-fall, the threshold for a turn towards the low side falls approximately to **9.81 × (0.4 − 1.0 × tan 3°) ÷ 1.0 = 3.41 m/s²**, a reduction of 13%. Dock plates and ramp edges are where tipping incidents tend to happen, and they are where the site's route avoids turning.
 
 ## Loads can tip too
 

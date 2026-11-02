@@ -149,7 +149,7 @@
         [m('Process σ', q(sigma, '', 6)), m('X̄ limits', `${q(lcl, '', 5)} – ${q(ucl, '', 5)}`), m('R limits', `${q(rlcl, '', 5)} – ${q(rucl, '', 5)}`), m('Cp / Cpk', `${q(Cp, '', 3)} / ${q(Cpk, '', 3)}`), m('Predicted out of tolerance', q(ppm, 'ppm', 0))],
         'Process capability check.', 'Stable, normal process.', {
           text: ok ? 'PROCESS CAPABLE' : 'PROCESS NOT CAPABLE', tone: ok ? 'good' : 'bad',
-          checks: [check('Cpk', ok ? 'pass' : 'fail', `${q(Cpk, '', 2)} against ${q(v.cpkMin, '', 2)}.`), check('Centring', Cp - Cpk <= 0.2 ? 'pass' : 'warn', Cp - Cpk <= 0.2 ? 'Process well centred.' : 'Off-centre: centring the process would raise Cpk toward Cp.'), check('Stability', 'verify', 'Confirm the chart shows no out-of-control signals before quoting capability.')],
+          checks: [check('Cpk', ok ? 'pass' : 'fail', `${q(Cpk, '', 2)} against ${q(v.cpkMin, '', 2)}.`), check('Centring', Cp - Cpk <= 0.2 ? 'pass' : 'warn', Cp - Cpk <= 0.2 ? 'Process well centred.' : 'Off-centre: centring the process would raise Cpk towards Cp.'), check('Stability', 'verify', 'Confirm the chart shows no out-of-control signals before quoting capability.')],
         });
     },
     "corrosion-remaining-life": (v) => {

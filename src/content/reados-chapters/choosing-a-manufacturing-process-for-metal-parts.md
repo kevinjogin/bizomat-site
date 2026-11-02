@@ -25,7 +25,7 @@ Start from what the part must do and how many are needed:
 - **Quantity**: total over the product's life and per batch. Tooling-intensive processes need volume to pay back.
 - **Size and weight**: some processes have hard size limits, such as die casting machines or powder compaction presses.
 - **Geometry**: internal passages, undercuts, thin walls and free-form surfaces favour casting or additive manufacturing; simple prismatic shapes favour machining or fabrication.
-- **Material**: some alloys cast well, some machine well, some can only be formed or ground. Hard-to-machine alloys push toward near-net-shape processes.
+- **Material**: some alloys cast well, some machine well, some can only be formed or ground. Hard-to-machine alloys push towards near-net-shape processes.
 - **Properties**: strength, fatigue resistance, toughness, pressure tightness, wear resistance and weldability differ by process, not only by alloy.
 - **Tolerances and finish**: the process sets what is achievable directly and what needs machining afterwards.
 - **Lead time**: patterns, dies and moulds take weeks or months; machining and fabrication can start immediately.

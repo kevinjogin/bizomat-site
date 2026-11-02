@@ -111,7 +111,7 @@ A useful quality plan links five things: the outcome and what drives its quality
 
 This is an illustration. A small manufacturer is moving to a larger building and fitting it out for production. A builder will carry out the works to drawings prepared by a designer. In the first version of events, the owner approves a layout drawn from the old factory, the builder builds exactly to the drawings, every inspection passes and the move happens on time.
 
-Within months, problems appear. The forklift route crosses the main pedestrian path at the dispatch door. The wash bay drains toward the wrong side, so water runs under a workbench. The new delivery supplier's trucks are taller than the roller door. Power outlets sit where benches cannot go. Fixing them costs about $68,000 and weeks of disruption. None of these was a conformance failure.
+Within months, problems appear. The forklift route crosses the main pedestrian path at the dispatch door. The wash bay drains towards the wrong side, so water runs under a workbench. The new delivery supplier's trucks are taller than the roller door. Power outlets sit where benches cannot go. Fixing them costs about $68,000 and weeks of disruption. None of these was a conformance failure.
 
 In a better version, the owner sets up a simple review register before the design is finalised:
 

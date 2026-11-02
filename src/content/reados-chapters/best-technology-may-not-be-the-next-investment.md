@@ -31,7 +31,7 @@ A published modelling study of energy conservation options for a large steel pro
 
 Within their model, the electric route was the strongest long-term option for energy and cost. But it depended on scrap, and much of the steel in buildings and infrastructure would not return as scrap for decades. The best destination was therefore not the most feasible immediate move. The intermediate approach offered real improvement without the full dependency. And outsourcing improved the plant's own figures while largely moving energy use and cost to another business, rather than removing them.
 
-The scale is very different from a small business, but the logic applies directly: identify the destination, find the constraint that limits it, invest in a sequence that improves today while building toward tomorrow, and be honest about whether a measure reduces a burden or just moves it.
+The scale is very different from a small business, but the logic applies directly: identify the destination, find the constraint that limits it, invest in a sequence that improves today while building towards tomorrow, and be honest about whether a measure reduces a burden or just moves it.
 
 ## Constraints set the sequence
 

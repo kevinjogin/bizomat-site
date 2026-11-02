@@ -32,7 +32,7 @@ caption: Storing a character correctly says nothing about how it will be compare
 - Decides what can be stored | Decides what counts as equal
 ```
 
-Consider an imported file containing a person's name. Reading its bytes with the wrong encoding can produce visibly incorrect text. Choosing a different sort order afterward does not recover the original characters. The error occurred at the decoding boundary and must be investigated there.
+Consider an imported file containing a person's name. Reading its bytes with the wrong encoding can produce visibly incorrect text. Choosing a different sort order afterwards does not recover the original characters. The error occurred at the decoding boundary and must be investigated there.
 
 Conversely, a database can store both uppercase and lowercase letters perfectly while treating them as equal for a particular comparison. That may be desirable for a name search and inappropriate for a case-sensitive external identifier. Storage capability and matching policy answer different questions.
 

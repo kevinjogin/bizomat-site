@@ -124,7 +124,7 @@ caption: Goals that do not matter to you rarely survive the first obstacle.
 
 ### Create a laundry list
 
-Brainstorm every possible way to move toward the goal, without judging them yet. For a weight-loss goal, that might include changing diet, cycling to work, joining a sports club, cooking at home, tracking food and so on. For a revenue goal, it might include contacting past customers, launching a new service, improving quotes, raising prices, partnering with complementary businesses and hiring a salesperson.
+Brainstorm every possible way to move towards the goal, without judging them yet. For a weight-loss goal, that might include changing diet, cycling to work, joining a sports club, cooking at home, tracking food and so on. For a revenue goal, it might include contacting past customers, launching a new service, improving quotes, raising prices, partnering with complementary businesses and hiring a salesperson.
 
 ### Choose the top five drivers
 

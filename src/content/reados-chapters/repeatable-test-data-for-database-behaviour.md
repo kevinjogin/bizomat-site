@@ -82,7 +82,7 @@ Then add a second accepted dispatch for order 104. The expected result should re
 
 ## Separate fixture setup from expected outcomes
 
-Setup data describes the world before the operation. Expected data describes the relevant result afterward. Keeping those roles distinct helps reviewers see whether the test is actually checking a change rather than recreating the same value on both sides of an assertion.
+Setup data describes the world before the operation. Expected data describes the relevant result afterwards. Keeping those roles distinct helps reviewers see whether the test is actually checking a change rather than recreating the same value on both sides of an assertion.
 
 Do not calculate the expected answer by calling the same helper or query being tested. If both paths contain the same mistake, the test can agree with itself while being wrong. Work out a small expected answer independently from the stated business rule.
 
@@ -104,7 +104,7 @@ Also test that valid exceptions remain possible. Overly restrictive constraints 
 
 A repeatable test should not depend on the order in which other tests execute. If one test creates a customer that another silently expects, running the second test alone can fail. Worse, the dependency can conceal missing setup and make failures difficult to reproduce.
 
-Choose an isolation strategy suited to the environment. Some tests can start from a fresh database or schema. Others can load a controlled dataset and remove it afterward. Transaction rollback can be useful when the behaviour under test stays inside that transaction and no independent process must observe a committed result.
+Choose an isolation strategy suited to the environment. Some tests can start from a fresh database or schema. Others can load a controlled dataset and remove it afterwards. Transaction rollback can be useful when the behaviour under test stays inside that transaction and no independent process must observe a committed result.
 
 Do not assume rollback contains everything. A background worker using another connection, an external message or a database feature with different transactional semantics may outlive the test's transaction. Tests of commit visibility need a different arrangement from tests of a simple calculation within one connection.
 

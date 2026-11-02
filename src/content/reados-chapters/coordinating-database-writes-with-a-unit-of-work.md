@@ -117,7 +117,7 @@ caption: External effects, such as emails, are separate commitments made after t
 
 ## Treat external effects as separate commitments
 
-An email, payment request or machine instruction normally does not roll back just because the database transaction does. Sending such an effect before database acceptance can tell somebody an order exists when its records are later discarded. Sending it afterward introduces a different gap if the process fails between commit and dispatch.
+An email, payment request or machine instruction normally does not roll back just because the database transaction does. Sending such an effect before database acceptance can tell somebody an order exists when its records are later discarded. Sending it afterwards introduces a different gap if the process fails between commit and dispatch.
 
 A common design records the intention to send an external message in the same transaction as the business change. A separate delivery process then reads that intention and attempts dispatch. This still requires duplicate handling and delivery monitoring, but it gives the application a durable account of what remains to be done.
 

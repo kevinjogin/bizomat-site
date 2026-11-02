@@ -88,7 +88,7 @@ This pattern is commonly called **write skew**. It demonstrates why “the trans
 
 A stable snapshot can make reporting easier by keeping a transaction's view consistent over several reads. That does not necessarily ensure that several concurrent decisions based on their own snapshots can all be accepted together.
 
-PostgreSQL provides a concrete example: its Repeatable Read implementation uses snapshot isolation and can permit serialization anomalies, while Serializable adds protection against those anomalies. Its documentation also requires applications to handle transaction retries where serialization failures occur. See the [transaction isolation reference](https://www.postgresql.org/docs/current/transaction-iso.html) for the product's specific guarantees.
+PostgreSQL provides a concrete example: its Repeatable Read implementation uses snapshot isolation and can permit serialisation anomalies, while Serializable adds protection against those anomalies. Its documentation also requires applications to handle transaction retries where serialisation failures occur. See the [transaction isolation reference](https://www.postgresql.org/docs/current/transaction-iso.html) for the product's specific guarantees.
 
 The distinction is between seeing a coherent view and participating in a jointly valid history of decisions. Both properties can matter, but they answer different questions.
 
@@ -128,7 +128,7 @@ Locks provide a useful mechanism, but an undocumented convention is fragile. Inc
 
 ## Make retries part of the operation
 
-Some concurrency mechanisms preserve correctness by rejecting an attempted execution. A transaction may need to retry after a serialization conflict or deadlock. This is expected control flow under those conditions, not necessarily evidence of a broken database.
+Some concurrency mechanisms preserve correctness by rejecting an attempted execution. A transaction may need to retry after a serialisation conflict or deadlock. This is expected control flow under those conditions, not necessarily evidence of a broken database.
 
 A retry must reconsider the decision using the new state. Replaying only the last write with values calculated from the earlier attempt can repeat the original mistake. The relevant reads, validation and choice of action belong to the retried unit.
 

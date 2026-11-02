@@ -36,6 +36,9 @@ export const SYNONYMS: Synonym[] = [
   { when: ['manufacturing cost', 'manufacturing costs', 'production cost', 'production costs', 'cost to make', 'each part costs', 'each component costs', 'what each part costs', 'what each manufactured component costs', 'cost per part', 'cost per unit', 'unit cost', 'part cost', 'component cost'], add: ['unit cost', 'true cost', 'job cost', 'machine hour rate', 'material cost', 'labour cost'] },
   { when: ['machine operating cost', 'machine operating costs', 'running cost', 'running costs', 'operating cost', 'operating costs', 'machine cost', 'hourly rate of a machine', 'machine rate'], add: ['machine hour rate', 'operating cost', 'running cost'] },
   { when: ['labour', 'labor', 'wages', 'staff cost', 'people cost'], add: ['labour', 'labour cost', 'loaded rate'] },
+  // US spellings of Australian terms used in tool names (the site is in Australian English)
+  { when: ['anodizing', 'anodize', 'anodized'], add: ['anodising', 'anodise'] },
+  { when: ['carburizing', 'carburize', 'carburized'], add: ['carburising', 'case depth'] },
   { when: ['material', 'materials', 'stock', 'raw material'], add: ['material', 'material cost'] },
   { when: ['quote', 'quoting', 'price a job', 'pricing a job', 'estimate a job', 'tender price'], add: ['quote', 'job cost', 'price', 'margin'] },
   { when: ['profit', 'margin', 'markup', 'mark up', 'mark-up'], add: ['margin', 'markup', 'profit'] },

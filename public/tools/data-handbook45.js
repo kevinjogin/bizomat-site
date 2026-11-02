@@ -170,11 +170,11 @@ window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   },
   {
     "id": "anodizing-plan",
-    "name": "Anodizing Plan (Time, Current, Tank Heat, Loads and Cost per Part)",
+    "name": "Anodising Plan (Time, Current, Tank Heat, Loads and Cost per Part)",
     "category": "Manufacturing",
     "collection": "MAKEOS",
-    "question": "How long does this anodizing load take to reach thickness, can the rectifier supply it, how much heat must the tank cooling remove, and what does each part cost?",
-    "description": "Plan of a sulfuric acid anodizing job: growth rate and time to thickness by the 720 rule with your efficiency factor, build-up per surface (as the anodizing time tool), current for the load against the rectifier capacity, the electrical heat the tank cooling must remove at the bath voltage, loads and line hours for the batch, energy, and cost per part from energy and line time.",
+    "question": "How long does this anodising load take to reach thickness, can the rectifier supply it, how much heat must the tank cooling remove, and what does each part cost?",
+    "description": "Plan of a sulfuric acid anodising job: growth rate and time to thickness by the 720 rule with your efficiency factor, build-up per surface (as the anodising time tool), current for the load against the rectifier capacity, the electrical heat the tank cooling must remove at the bath voltage, loads and line hours for the batch, energy, and cost per part from energy and line time.",
     "keywords": [
       "MAKEOS",
       "anodizing plan",

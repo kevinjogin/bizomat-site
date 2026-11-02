@@ -42,7 +42,7 @@ Everything starts with a real problem worth solving, ideally a **burning** probl
 
 Understanding the problem deeply tells you whether the market needs **radical innovation**, a fundamentally new solution, or **incremental innovation**, a better version of what exists. It also points to opportunities others miss, especially if you understand how your customer makes money and how your customer's customers grow. In business-to-business markets, the best opportunities often lie in improving the customer's own money-making model.
 
-Steve Jobs put the principle memorably at a 1997 developers' conference: "You've got to start with the customer experience and work back toward the technology." Customer needs come first, and technology and resources follow.
+Steve Jobs put the principle memorably at a 1997 developers' conference: "You've got to start with the customer experience and work back towards the technology." Customer needs come first, and technology and resources follow.
 
 Many founders do the opposite. They start with a product idea, a technology or a price point, and look for customers afterwards. If your business is stuck today, the first question to ask is whether you are solving a problem customers actually care about.
 

@@ -5,7 +5,7 @@ window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
     "uses": [
       "Check whether a plastics gear can replace a metal one",
       "Size face width or module for a plastics gear train",
-      "Rate a molded gear at a new speed"
+      "Rate a moulded gear at a new speed"
     ],
     "users": [
       "Design engineers",
