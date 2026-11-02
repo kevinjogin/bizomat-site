@@ -4,6 +4,7 @@
 export interface Synonym { when: string[]; add: string[] }
 
 export const SYNONYMS: Synonym[] = [
+  { when: ['failing', 'fails', 'failed', 'failure', 'failures', 'broke', 'breaking', 'wearing out'], add: ['failure', 'life', 'wear', 'fatigue', 'reliability'] },
   // Time lost and machine use
   { when: ['idle', 'sitting idle', 'standing idle', 'not running', 'stopped', 'stoppage', 'breakdown', 'breakdowns', 'down time'], add: ['downtime', 'utilisation', 'availability', 'loss'] },
   { when: ['losing money', 'lose money', 'money lost', 'wasting money', 'cost me', 'costing me', 'costing'], add: ['cost', 'loss', 'downtime cost'] },

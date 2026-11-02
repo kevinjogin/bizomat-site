@@ -253,7 +253,7 @@ function init(root: HTMLElement) {
       if (aiAsked === key) return;
       aiAsked = key;
       try {
-        const { outcome } = await discovery.ask(q.trim());
+        const { outcome } = await discovery.ask(q.trim(), '', false);
         answers.set(key, outcome.tools.map((t) => t.id));
       } catch {
         answers.set(key, []);
