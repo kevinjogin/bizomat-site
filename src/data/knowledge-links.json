@@ -9338,6 +9338,66 @@
    "note": "Checks a new transformer's noise against its specified limit from running and background readings, and shows why a test with too loud a background is not valid.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "cutting-speed-and-spindle-speed",
+   "tool": "cutting-speed-table-adjustment",
+   "type": "complements",
+   "note": "Adjusts a tabulated feed and speed pair to your own feed, depth and width of cut before the spindle speed is worked out as this chapter shows.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter starts from recommended surface speeds and converts them to spindle speed; tool applies the handbook speed table adjustment factors and gives spindle speed and feed rate."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "cutting-force-power-and-torque",
+   "tool": "grinding-force-and-power",
+   "type": "complements",
+   "note": "Applies the specific cutting force method of this chapter to grinding, where the chip is far thinner and the specific force far higher.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter estimates force and power from the specific cutting force; tool gives grinding force Kc × ECT × CEL, normal force, torque and power."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "machining-economics-and-cutting-speed",
+   "tool": "grinding-economic-wheel-life",
+   "type": "complements",
+   "note": "Carries the minimum-cost tool life idea of this chapter over to grinding wheels, from the dressing cost and the time to replace the wheel.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter finds minimum-cost speed from machine rate and tool change cost; tool applies the handbook economic wheel life TE = 3 TV with TV = TRPL + 60 CE ÷ HR."
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "torque-and-the-nut-factor",
+   "tool": "bolt-torque-thread-friction",
+   "type": "complements",
+   "note": "Splits the tightening torque this chapter describes into stretching, thread friction and bearing friction with separate coefficients.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains torque going to stretch, thread friction and underhead friction; tool applies handbook Equations (21) to (24) with separate thread and bearing friction."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "power-screws-and-linear-motion",
+   "tool": "power-thread-basic-sizes",
+   "type": "complements",
+   "note": "Gives the basic sizes of the square, modified square and 60° stub forms, alternatives to the trapezoidal and Acme screws this chapter compares.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter compares trapezoidal and Acme power screws with ball screws; tool gives basic dimensions of the square, 10° modified square and 60° stub power threads."
+  },
+  {
+   "reados": "publication/bolted-joints-by-the-numbers",
+   "chapter": "threads-tapped-holes-and-screw-lengths",
+   "tool": "power-thread-basic-sizes",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads."
   }
  ]
 }
