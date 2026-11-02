@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1037 tools with unique ids and every previously published id kept', () => {
+test('register: 1040 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1037);
+  assert.equal(ids.length, 1040);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 843 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 846 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 843);
+  assert.equal(ids.length, 846);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -7169,4 +7169,33 @@ test('ductile-regime critical depth follows the threshold equation', () => {
   near(d.values.dc, 0.15 * 16.8 * (0.6e6 / 10e9) ** 2 * 1e6, 1e-12, 'dc = A (E/H)(Kc/H)² in µm'); assert.equal(d.text, 'DUCTILE-REGIME CUT');
   assert.equal(engine.run('ductile-regime-critical-depth', { ap: 0.5 }).text, 'DEPTH ABOVE THE CRITICAL DEPTH'); assert.equal(engine.run('ductile-regime-critical-depth', { ap: 0.002, re: 0.008 }).text, 'DEPTH BELOW HALF THE EDGE RADIUS');
   near(engine.run('ductile-regime-critical-depth', { A: 0.6 }).values.dc, 4 * d.values.dc, 1e-12, 'dc in proportion to A');
+});
+
+// Eightieth handbook pass (handbook103): pages read from the handbook's page images — the 24 planetary arrangements, the
+// micro-droplet adhesion condition and the Colding force-ratio tool life. Expected values are the printed formulas, the
+// Willis relation for the simple trains, the Fig. 12 lines and the Fig. 25 finding for 1 to 10 µm droplets.
+test('planetary arrangements apply the formula of each figure', () => {
+  const p = (fig: string, o: Inputs = {}) => engine.run('planetary-arrangement-ratio', { fig, A: 20, B: 30, C: 80, x: 18, y: 24, z: 60, S: 0.5, E: 60, n: 1000, ...o }).values;
+  near(p('1').F, 1 + 80 / 30, 1e-12, 'Fig. 1'); near(p('2').F, 1 - 80 / 30, 1e-12, 'Fig. 2'); near(p('3').F, 80 / 30, 1e-12, 'Fig. 3'); near(p('4').F, 0.5 + 80 / 30, 1e-12, 'Fig. 4 cos 60°');
+  near(p('5').F, 1 + 18 * 80 / (24 * 30), 1e-12, 'Fig. 5'); near(p('6').F, 1 + 24 * 80 / (18 * 30), 1e-12, 'Fig. 6'); near(p('7').D, 1 + 18 * 80 / (24 * 20), 1e-12, 'Fig. 7'); near(p('8').D, 1 + 24 * 80 / (18 * 20), 1e-12, 'Fig. 8');
+  near(p('13').F, 1 - 80 * 18 / (24 * 30), 1e-12, 'Fig. 13'); near(p('14').D, (1 + 4) / (1 - 80 * 18 / (24 * 30)), 1e-12, 'Fig. 14'); near(p('15').D, 5 / (1 - 80 * 24 / (18 * 30)), 1e-12, 'Fig. 15'); near(p('24').D, p('15').D, 1e-12, 'Fig. 24 = Fig. 15 form');
+  near(p('16').D, 1 - 80 * 18 / (24 * 20), 1e-12, 'Fig. 16'); near(p('19').F, 1 + 60 * 0.5 / 30, 1e-12, 'Fig. 19'); near(p('20').D, 80 / (20 + 30), 1e-12, 'Fig. 20'); near(p('20', { S: -1 }).D, 80 / (20 - 60), 1e-12, 'opposite secondary driver');
+  // Willis check of the simple sun, ring and arm trains: arm speed = sun speed × A ÷ (A + C) with the ring held (Fig. 10).
+  const w = p('10', { A: 24, C: 72 }); near(w.F, 24 / 96, 1e-12, 'Fig. 10 arm turns A/(A + C)'); near(w.nf, 250, 1e-9, 'follower 250 rpm');
+  near(p('9', { B: 24, C: 72 }).F, 4, 1e-12, 'Fig. 9: sun driven by the arm turns (1 + C/B)'); assert.equal(engine.run('planetary-arrangement-ratio', { fig: '13', C: 30, x: 24, y: 24, B: 30 }).text, 'CHECK INPUTS');
+});
+
+test('micro-droplet adhesion follows Equation (18b)', () => {
+  const d = engine.run('microdroplet-adhesion-check', { Dd: 10, rho: 900, P: 10, theta: 18, sig: 0.03, Dt: 1, n: 50000 });
+  const mass = 900 * Math.PI * 1e-15 / 6, Vc = Math.PI * 0.001 * 50000 / 60; near(d.values.cent, 2 * mass * Vc * Vc / 0.001, 1e-18, '2 m Vc² ÷ Dt'); near(d.values.adh, 10e-6 * (1 + Math.cos(Math.PI / 10)) * 0.03, 1e-18, 'P (1 + cos θ) σL');
+  near(d.values.Vc * 60, 157.08, 0.01, 'Ø1 mm at 50,000 rpm is about 150 m/min'); assert.equal(d.text, 'DROPLET ADHERES', 'Fig. 25: 1–10 µm droplets adhere at all speeds of the tested machine');
+  near(engine.run('microdroplet-adhesion-check', { n: d.values.nmax }).values.cent, d.values.adh, 1e-15, 'limit speed balances the two terms');
+  assert.equal(engine.run('microdroplet-adhesion-check', { Dd: 500, P: 500, n: 50000 }).text, 'DROPLET THROWN OFF');
+});
+
+test('force-ratio tool life reproduces the Fig. 12 lines', () => {
+  const t = (r: number, k: number) => engine.run('force-ratio-tool-life', { mode: 'ratio', r, a: 0.5, k, Tt: 0 }).values.T;
+  near(t(0.5, 5), 1, 1e-12, 'all lines meet at FH/FC = 0.5, T = 1'); near(t(1, 5), 32, 1e-9, 'LF/L = 5 reaches about 30 min'); near(t(1, 10), 1024, 1e-6, 'LF/L = 10 reaches about 1000 min');
+  const f = engine.run('force-ratio-tool-life', { mode: 'forces', FH: 1500, FC: 3000, a: 0.5, k: 10, Tt: 15 }); near(f.values.r, 0.5, 1e-12, 'roughing example 1500 ÷ 3000'); near(f.values.rT, 0.5 * 15 ** 0.1, 1e-12, 'ratio for 15 min');
+  assert.equal(f.text, 'TOOL LIFE BELOW THE TARGET'); assert.equal(engine.run('force-ratio-tool-life', { mode: 'ratio', r: 0.7, Tt: 15 }).text, 'TOOL LIFE MEETS THE TARGET');
 });

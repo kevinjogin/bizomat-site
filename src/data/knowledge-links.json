@@ -9777,6 +9777,36 @@
    "note": "Compares the thermoelectric and compressor coolers' COP with the Carnot limit at their face or refrigerant temperatures, giving second-law efficiencies of about 9% and 20% on the design day.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "ratios-speeds-and-gear-trains",
+   "tool": "planetary-arrangement-ratio",
+   "type": "complements",
+   "note": "Gives the ratios of the planetary and epicyclic trains this chapter introduces, for each of the handbook’s 24 arrangements.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers gear ratios, trains and internal gears as the basis of planetary gearboxes; tool applies the handbook formula of each planetary arrangement."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "edm-and-micromachining",
+   "tool": "microdroplet-adhesion-check",
+   "type": "complements",
+   "note": "Checks whether mist lubricant will stay on the small, fast-spinning micro mills and drills this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers micro milling and drilling with sub-millimetre tools at high spindle speed; tool applies the handbook micro-droplet adhesion condition, Equation (18b)."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "tool-life-and-the-taylor-equation",
+   "tool": "force-ratio-tool-life",
+   "type": "complements",
+   "note": "Links the tool life this chapter models with the Taylor equation to the measured force ratio, for tool-change monitoring.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter models tool life with the Taylor equation; tool applies the handbook Colding relation T = (FH ÷ a FC)^(LF/L) between tool life and force ratio."
   }
  ]
 }
