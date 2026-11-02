@@ -1,8 +1,8 @@
 # READOS ↔ WORKOS connections: items for review
 
-Generated 2026-11-01 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
+Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 809 relationships (518 from links authors wrote in the books, 291 from editorial review). Rejected: 127. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 838 relationships (543 from links authors wrote in the books, 295 from editorial review). Rejected: 128. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -301,6 +301,10 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Classical V-Belt Power Rating (A, AX, B, BX, C, CX, D) and Number of Belts | complements | Chapter sizes a drive by design power ÷ power per belt and works an example with four classical vee belts; tool applies the handbook RMA rating formulas for A to D sections and the number of belts. |
 | Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Narrow V-Belt Power Rating (3VX, 5VX, 5V, 8V) and Number of Belts | complements | Chapter compares wedge and classical vee belts and sets out the number-of-belts step; tool applies the handbook RMA IP-22 formula for 3VX, 5VX, 5V and 8V narrow belts. |
 | Machine Elements and Mechanical Design | Belt or chain drive: selecting, installing and maintaining flexible power transmission | Synchronous (Timing) Belt Rating — MXL Torque and XL to XXH Power, Teeth in Mesh, Width | complements | Chapter describes synchronous belts and when to choose them; tool applies the handbook RMA torque and power rating formulas for MXL to XXH sections with the teeth in mesh factor. |
+| Machine Elements and Mechanical Design | Power screws and linear motion: leadscrews, ball screws, linear guides and cams | General Purpose Acme Thread Limits (Classes 2G, 3G, 4G) | complements | Chapter names Acme threads (29°) as the inch power screw thread for leadscrews; tool applies the ASME/ANSI B1.5 general purpose Acme limit formulas, stress and shear areas and the multi-start allowance. |
+| Machine Elements and Mechanical Design | Choosing fasteners and threads: thread systems, grades, screws for sheet and plastics, inserts and pins | Whitworth Thread Limits to BS 84 (BSW, BSF) | complements | Chapter lists British Standard Whitworth and Fine threads for older machinery and explains tolerance classes; tool applies the BS 84 tolerance formulas for close, medium, free and normal classes. |
+| Practical Mathematics for Engineering and Manufacturing | Inch and metric conversion on legacy drawings: tolerances, threads, pipe sizes and other traps | Whitworth Thread Limits to BS 84 (BSW, BSF) | complements | Chapter says legacy threads such as BSW and BSF must keep their own designation and not be converted numerically; tool gives BS 84 limits for the Whitworth thread itself, with the limits shown in millimetres. |
+| Machine Elements and Mechanical Design | Selecting bearings and lubrication for reliable machines: types, life, fits, sealing and failure causes | Rolling Bearing Static Equivalent Load and Static Safety Factor | complements | Chapter combines radial and axial loads into an equivalent load for rating life; tool gives the AFBMA static equivalent load Po = Xo Fr + Yo Fa (or Poa for thrust bearings) and the static safety factor Co ÷ Po. |
 
 ## 2. Rejected
 
@@ -433,6 +437,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Vibrating Machine Elements by the Numbers | Find the surge inside a spring | Cam Follower Force Analysis (Return Spring Rate, Normal Force with Guide Friction, Cam Torque, Surface Error) | Rejected: chapter is about surge, the natural frequency inside a spring; the tool sizes the return spring rate from the follower inertia and does not check surge. |
 | Vibrating Machine Elements by the Numbers | Set belt tension by its frequency | Double V-Belt Drive by Allowable Tight Side Tension (AA, BB, CC, DD) | Rejected: chapter sets the installed static tension by measuring span frequency; the tool sizes the number of double V-belts from working tensions and does not give an installation tension. |
 | Inertia and Flywheels by the Numbers | Inertia through gears and belts | Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections | Rejected: chapter reflects inertia through gear and belt ratios; the tool rates variable-speed belts and their speed range, not inertia. |
+| Railway Track Geometry by the Numbers | The track as a structure | Rail Width and Track Wheel Diameter for a Wheel Load | Rejected: chapter follows a railway wheel load down through rail, sleepers and ballast; the tool applies empirical rail head and track wheel rules for handling equipment and the AREA roller load, not railway track design. |
 
 ## 3. Published READOS books with no approved connection
 

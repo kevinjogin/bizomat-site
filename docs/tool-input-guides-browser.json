@@ -1,10 +1,10 @@
 {
- "generated": "2026-11-01",
+ "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1013,
- "passed": 1013,
- "inputs": 8807,
- "figures": 8807,
+ "tools": 1020,
+ "passed": 1020,
+ "inputs": 8843,
+ "figures": 8843,
  "sample": [
   {
    "id": "make-buy",
@@ -6205,6 +6205,48 @@
    "ok": true,
    "inputs": 8,
    "figures": 8
+  },
+  {
+   "id": "general-purpose-acme-limits",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "centralizing-acme-limits",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "stub-acme-limits",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
+  },
+  {
+   "id": "whitworth-thread-limits",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
+  },
+  {
+   "id": "unified-miniature-thread-limits",
+   "ok": true,
+   "inputs": 2,
+   "figures": 2
+  },
+  {
+   "id": "bearing-static-equivalent-load",
+   "ok": true,
+   "inputs": 8,
+   "figures": 8
+  },
+  {
+   "id": "rail-and-track-wheel-size",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
   }
  ]
 }

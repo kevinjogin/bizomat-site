@@ -3638,3 +3638,28 @@ Seven tools in batch handbook97 from the deep audit of the belt drive section: p
 | **V-Ribbed Belt Power Rating per Rib (J, L, M) and Number of Ribs** `v-ribbed-belt-rating` | RIBS CARRY THE DESIGN POWER | Number of ribs; Correction factors; Model and application | 2513–2518 | Automated |
 | **Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections** `variable-speed-belt-drive` | DRIVE CARRIES THE POWER | Number of belts; Rim speed; Pitch diameter range; Model and application | 2518–2525 | Automated + cross-check |
 | **Synchronous (Timing) Belt Rating — MXL Torque and XL to XXH Power, Teeth in Mesh, Width** `synchronous-belt-rating` | BELT CARRIES THE DESIGN POWER | Belt width; Belt speed; Width against pulley; Model and application | 2534–2536 | Automated + cross-check |
+## Machinery’s Handbook ledger tools, batch handbook98 (added 2 November 2026)
+
+Seven tools in batch handbook98 from the deep audit of the screw thread standards whose limits the handbook gives as formulas: general purpose Acme limits in classes 2G, 3G and 4G with the multi-start and long engagement allowances and the stress and shear areas (pp. 1921–1929), centralizing Acme limits in classes 2C, 3C and 4C with the centralizing fit requirement (pp. 1928–1938), Stub Acme limits in the standard and modified forms (pp. 1939–1943), Whitworth (BSW, BSF) limits by the BS 84 tolerance formulas (pp. 1953–1954) and unified miniature (UNM) limits (pp. 1858–1861); and from the bearing and rail pages, rolling bearing static equivalent loads with the static safety factor (pp. 2417–2419) and the rail width and track wheel diameter rules with the AREA roller load (pp. 277–278). Static load ratings, required safety factors, material factors and yield strengths are always user inputs. WORKOS now holds 1020 tools.
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **General Purpose Acme Thread Limits (Classes 2G, 3G, 4G)** `general-purpose-acme-limits` | CALCULATED | Multi-start allowance; Recommended series; Model and application | 1921–1929 | Automated + cross-check |
+| **Centralizing Acme Thread Limits and Fit (Classes 2C, 3C, 4C)** `centralizing-acme-limits` | CENTRALIZING FIT MET | Major diameter requirement; Classes; Model and application | 1928–1938 | Automated + cross-check |
+| **Stub Acme Thread Limits (Standard, Modified Form 1 and 2)** `stub-acme-limits` | CALCULATED | Fit class; Model and application | 1921–1929, 1939–1943 | Automated + cross-check |
+| **Whitworth Thread Limits to BS 84 (BSW, BSF)** `whitworth-thread-limits` | CALCULATED | Stainless steel bolts; Nut class; Model and application | 1953–1954 | Automated + cross-check |
+| **Unified Miniature Screw Thread (UNM) Limits** `unified-miniature-thread-limits` | CALCULATED | Standard size range; Tool limits; Model and application | 1858–1861 | Automated + cross-check |
+
+### Power Transmission
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Rolling Bearing Static Equivalent Load and Static Safety Factor** `bearing-static-equivalent-load` | STATIC SAFETY FACTOR MET | Static safety factor; Formula; Model and application | 2417–2419 | Automated + cross-check |
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Rail Width and Track Wheel Diameter for a Wheel Load** `rail-and-track-wheel-size` | RAIL AND WHEEL CARRY THE LOAD | Head width; Wheel diameter; AREA contact length; Model and application | 277–278 | Automated |
