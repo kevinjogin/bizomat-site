@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1034,
- "passed": 1034,
- "inputs": 8967,
- "figures": 8967,
+ "tools": 1037,
+ "passed": 1037,
+ "inputs": 8981,
+ "figures": 8981,
  "sample": [
   {
    "id": "make-buy",
@@ -6338,6 +6338,24 @@
    "ok": true,
    "inputs": 13,
    "figures": 13
+  },
+  {
+   "id": "ba-thread-limits",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "steel-pipe-mass",
+   "ok": true,
+   "inputs": 4,
+   "figures": 4
+  },
+  {
+   "id": "ductile-regime-critical-depth",
+   "ok": true,
+   "inputs": 6,
+   "figures": 6
   }
  ]
 }

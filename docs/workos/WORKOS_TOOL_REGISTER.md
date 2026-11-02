@@ -3741,3 +3741,24 @@ Four tools in batch handbook101 from the deep audit: the two-pin measurement bet
 | Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
 |---|---|---|---|---|
 | **After-Tax Net Present Value of Two Alternatives with Depreciation Recovery** `after-tax-npv-comparison` | CHOOSE ALTERNATIVE B | Return; Depreciation; Model and application | 136–141 | Automated |
+## Machinery’s Handbook ledger tools, batch handbook102 (added 2 November 2026)
+
+Three tools in batch handbook102 from the deep audit at lower thresholds: British Association (BA) thread form dimensions with the BS 93 bolt and nut tolerance formulas (pp. 1981–1982), the ANSI/ASME B36.10M plain-end mass of wrought steel pipe with a length and its contents (p. 3392), and the ductile-regime critical depth of cut for brittle materials with the edge radius check (pp. 1109–1110). Pitches, diameters, wall thicknesses, densities, material properties and the constant A are always user inputs. WORKOS now holds 1037 tools.
+
+### Threads
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **British Association (BA) Thread Basic Sizes and Limits (BS 93)** `ba-thread-limits` | CALCULATED | Size pair; Standard; Model and application | 1981–1982 | Automated |
+
+### Materials
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Wrought Steel Pipe Plain-End Mass (ASME B36.10M)** `steel-pipe-mass` | CALCULATED | Material; Wall for pressure; Model and application | 3392 | Automated |
+
+### Manufacturing
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Ductile-Regime Critical Depth of Cut for Brittle Materials** `ductile-regime-critical-depth` | DUCTILE-REGIME CUT | Critical depth; Edge radius; Model and application | 1109–1110 | Automated |
