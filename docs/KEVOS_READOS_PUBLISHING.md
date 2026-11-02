@@ -1,6 +1,6 @@
-# KEVOS READOS chapter publishing
+# KEVOS Library chapter publishing
 
-The permanent, content-only workflow for publishing READOS chapters on https://kevos.com. It never changes the website design. Read `CLAUDE.md` first.
+The permanent, content-only workflow for publishing Library chapters (formerly READOS) on https://kevos.com. It never changes the website design. Read `CLAUDE.md` first.
 
 The former Insights section was retired on 17 October 2026: all 750 articles became chapters of the 53 edited READOS books, their files moved from `src/content/insights/` to `src/content/reados-chapters/`, and every `/insights/` URL redirects permanently to its chapter (`public/_redirects`, plus a fallback in `src/worker.ts`). Do not recreate `/insights/`.
 
@@ -53,7 +53,8 @@ draft: false
 - Never expose confidential employer, client or supplier information. Never name the founder.
 - Avoid "dive in", "game changer", "unlock", "leverage" (verb), "in today's fast-paced world", "revolutionary" and question headings. At most one quote under 15 words.
 - Check every calculation in examples.
-- A link to a WORKOS tool (`[Bend allowance](/tools/bend-allowance/)`) needs a matching `book-link` entry in `src/data/knowledge-links.json` (see `docs/knowledge-links.md`); `npm run verify` fails until it is added. Describe only what the tool actually calculates.
+- **Names in text:** write "the Library" and "KEVOS® tool(s)", never READOS or WORKOS (retired 2 Nov 2026; `tests/navigation.test.ts` fails on them). Book front matter uses `publisher: KEVOS® Library`.
+- A link to a KEVOS® tool (`[Bend allowance](/tools/bend-allowance/)`) needs a matching `book-link` entry in `src/data/knowledge-links.json` (see `docs/knowledge-links.md`); `npm run verify` fails until it is added. Describe only what the tool actually calculates.
 
 ## Pre-release checklist
 
