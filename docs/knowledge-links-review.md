@@ -2,7 +2,7 @@
 
 Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 844 relationships (543 from links authors wrote in the books, 301 from editorial review). Rejected: 129. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 867 relationships (561 from links authors wrote in the books, 306 from editorial review). Rejected: 130. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -311,6 +311,11 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Machine Elements and Mechanical Design | Choosing a joining method: bolting, welding, riveting, adhesives and brazing compared | Riveted Joint Strength by Joint Type (Lap, Cover Plate and Butt Joints) | complements | Chapter says solid rivets carry load in shear and bearing; tool applies the handbook resistance formulas for six riveted joint types. |
 | Springs by the Numbers | Torsion bars and flat springs | Beam of Uniform Strength: Safe Load, Size and Outline | complements | Chapter notes a tapered leaf spring approaches a beam of uniform strength; tool applies the handbook formulas for beams of uniform strength. |
 | Machining by the Numbers | Turning: feed, depth of cut, removal rate and surface finish | Surface Finish Change with Tool Nose Radius (Colding Rule) | complements | Chapter says a larger nose radius improves finish in direct proportion (geometric rule); tool applies the handbook Colding rule Ra1/Ra2 = (r2/r1)^0.5 and compares the two. |
+| Machining by the Numbers | Cutting speed and spindle speed | Cutting Speed Adjusted from the Feed and Speed Tables (Turning, Milling, Drilling) | complements | Chapter starts from recommended surface speeds and converts them to spindle speed; tool applies the handbook speed table adjustment factors and gives spindle speed and feed rate. |
+| Machining by the Numbers | Cutting force, power and torque | Grinding Force, Torque and Power from Equivalent Chip Thickness | complements | Chapter estimates force and power from the specific cutting force; tool gives grinding force Kc × ECT × CEL, normal force, torque and power. |
+| Machining by the Numbers | Machining economics: choosing a cutting speed | Grinding Economic Wheel Life and Wheel Speed | complements | Chapter finds minimum-cost speed from machine rate and tool change cost; tool applies the handbook economic wheel life TE = 3 TV with TV = TRPL + 60 CE ÷ HR. |
+| Bolted Joints by the Numbers | Tightening by torque: the nut factor and its scatter | Bolt Tightening Torque with Separate Thread and Bearing Friction | complements | Chapter explains torque going to stretch, thread friction and underhead friction; tool applies handbook Equations (21) to (24) with separate thread and bearing friction. |
+| Machine Elements and Mechanical Design | Power screws and linear motion: leadscrews, ball screws, linear guides and cams | Square, Modified Square and 60° Stub Thread Basic Sizes | complements | Chapter compares trapezoidal and Acme power screws with ball screws; tool gives basic dimensions of the square, 10° modified square and 60° stub power threads. |
 
 ## 2. Rejected
 
@@ -445,6 +450,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Inertia and Flywheels by the Numbers | Inertia through gears and belts | Variable-Speed Belt Drive (Speed Variation, Power Rating, Rim Speed) — RMA IP-25 Sections | Rejected: chapter reflects inertia through gear and belt ratios; the tool rates variable-speed belts and their speed range, not inertia. |
 | Railway Track Geometry by the Numbers | The track as a structure | Rail Width and Track Wheel Diameter for a Wheel Load | Rejected: chapter follows a railway wheel load down through rail, sleepers and ballast; the tool applies empirical rail head and track wheel rules for handling equipment and the AREA roller load, not railway track design. |
 | Gears by the Numbers | Tooth bending strength | Beam of Uniform Strength: Safe Load, Size and Outline | Rejected: chapter treats the gear tooth as a cantilever in the Lewis bending equation; the tool sizes tapered beams and levers, not gear teeth. |
+| Bolted Joints by the Numbers | Threads, tapped holes and screw lengths | Square, Modified Square and 60° Stub Thread Basic Sizes | Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads. |
 
 ## 3. Published READOS books with no approved connection
 

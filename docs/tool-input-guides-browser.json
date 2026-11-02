@@ -1,10 +1,10 @@
 {
  "generated": "2026-11-02",
  "base": "http://127.0.0.1:8861",
- "tools": 1025,
- "passed": 1025,
- "inputs": 8889,
- "figures": 8889,
+ "tools": 1030,
+ "passed": 1030,
+ "inputs": 8933,
+ "figures": 8933,
  "sample": [
   {
    "id": "make-buy",
@@ -6284,6 +6284,36 @@
    "ok": true,
    "inputs": 4,
    "figures": 4
+  },
+  {
+   "id": "cutting-speed-table-adjustment",
+   "ok": true,
+   "inputs": 14,
+   "figures": 14
+  },
+  {
+   "id": "grinding-force-and-power",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "grinding-economic-wheel-life",
+   "ok": true,
+   "inputs": 7,
+   "figures": 7
+  },
+  {
+   "id": "bolt-torque-thread-friction",
+   "ok": true,
+   "inputs": 11,
+   "figures": 11
+  },
+  {
+   "id": "power-thread-basic-sizes",
+   "ok": true,
+   "inputs": 5,
+   "figures": 5
   }
  ]
 }
