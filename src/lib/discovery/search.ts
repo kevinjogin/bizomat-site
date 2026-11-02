@@ -235,7 +235,7 @@ function hitOf(e: Engine, d: Doc, score: number, reason: string): Hit {
     return { kind: 'chapter', id: c.u, title: c.n, description: c.d, url: c.u, secondary: b ? { label: b.n, url: b.u } : undefined, context: b?.n, reason, score };
   }
   const b = d.ref as DBook;
-  return { kind: 'book', id: b.id, title: b.n, description: b.d, url: b.u, context: `${b.c} · ${b.kind === 'publication' ? 'KEVOS® original book' : 'READOS collection'}`, reason, score };
+  return { kind: 'book', id: b.id, title: b.n, description: b.d, url: b.u, context: `${b.c} · ${b.kind === 'publication' ? 'KEVOS® original book' : 'Library collection'}`, reason, score };
 }
 
 export function search(e: Engine, q: Query): Outcome {

@@ -14,8 +14,8 @@ test('the homepage leads with discovery, then WORKOS and READOS', () => {
   assert.match(home, /<h1 id="home-title">What would you like to <em>solve<\/em> today\?<\/h1>/);
   assert.match(home, /<DiscoveryBox suggestions=\{HOME_DISCOVERY_EXAMPLES\} \/>/);
   assert.ok(home.indexOf('<DiscoveryBox') < home.indexOf('data-cta="hero-workos"'), 'the question box comes first in the hero');
-  assert.match(home, /<Button href="\/tools\/" arrow data-cta="hero-workos">Explore WORKOS<\/Button>/);
-  assert.match(home, /<Button href="\/reados\/" variant="secondary" data-cta="hero-reados">Explore READOS<\/Button>/);
+  assert.match(home, /<Button href="\/tools\/" arrow data-cta="hero-workos">Explore Tools<\/Button>/);
+  assert.match(home, /<Button href="\/reados\/" variant="secondary" data-cta="hero-reados">Explore Library<\/Button>/);
   for (const id of ['workos', 'reados']) assert.match(home, new RegExp(`<div class="home-lib" id="${id}"`), `${id} sits in the side-by-side block under the hero`);
   assert.ok(home.indexOf('id="workos"') < home.indexOf('id="reados"') && home.indexOf('class="home-libs"') > home.indexOf('<DiscoveryResults />'));
   assert.match(home, /\.home-libs__grid\)\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/, 'side by side on larger screens');

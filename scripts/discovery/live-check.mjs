@@ -25,7 +25,8 @@ for (const p of ['/', '/tools/', '/reados/', '/about/', '/services/', '/contact/
 }
 const h = home.text;
 check('hero asks the question', /What would you like to <em[^>]*>solve<\/em> today\?/.test(h));
-check('Explore WORKOS and Explore READOS buttons', h.includes('data-cta="hero-workos"') && h.includes('data-cta="hero-reados"'));
+check('Explore Tools and Explore Library buttons', />Explore Tools</.test(h) && />Explore Library</.test(h));
+check('homepage labels say Tools and Library, not WORKOS / READOS', /<span[^>]*>01<\/span> Tools</.test(h) && /<span[^>]*>02<\/span> Library</.test(h) && !/>\s*(WORKOS|READOS)\s*</.test(h));
 check('WORKOS and READOS side by side block', /class="home-lib"[^>]*id="workos"/.test(h) && /class="home-lib"[^>]*id="reados"/.test(h));
 check('orange KEVOS wordmark and K favicon', h.includes('kevos-wordmark-orange') && h.includes('kevos-favicon-k-orange'));
 check('navigation: Tools, Library, About, Contact', [/href="\/tools\/"[^>]*>Tools<\/a>/, /href="\/reados\/"[^>]*>Library<\/a>/, /href="\/about\/"[^>]*>About<\/a>/, /href="\/contact\/"[^>]*>Contact<\/a>/].every((r) => r.test(h)));

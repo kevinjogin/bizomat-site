@@ -22,7 +22,7 @@ const related = items.filter((x) => x.type === 'complements');
   <section class="ka" aria-labelledby={id} data-pagefind-ignore>
     {primary.length > 0 && <>
       <h2 id={id}>Apply This in Practice</h2>
-      <p class="ka__lead">Use these KEVOS® WORKOS tools to try the method from this reading with your own numbers.</p>
+      <p class="ka__lead">Use these KEVOS® tools to try the method from this reading with your own numbers.</p>
       <ul class="ka__list">
         {primary.map((x) => (
           <li class="ka__card">
@@ -53,7 +53,7 @@ const related = items.filter((x) => x.type === 'complements');
 ) : discover ? (
   <section class="ka ka--discover" aria-labelledby={id} data-pagefind-ignore>
     <h2 id={id}>Apply This in Practice</h2>
-    <p class="ka__lead">No WORKOS tool has been matched to this book yet. Browse the related tools: <a href={`/tools/?topic=${discover.slug}`}>{discover.name} in WORKOS <span aria-hidden="true">→</span></a></p>
+    <p class="ka__lead">No tool has been matched to this book yet. Browse the related tools: <a href={`/tools/?topic=${discover.slug}`}>{discover.name} tools <span aria-hidden="true">→</span></a></p>
   </section>
 ) : null}
 

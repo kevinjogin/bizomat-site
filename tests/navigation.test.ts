@@ -35,3 +35,18 @@ test('the Library page has its SEO title, and READOS stays the platform name on 
   assert.match(page, /exactTitle="Engineering, Manufacturing & Business Knowledge Library \| KEVOS"/);
   assert.match(page, /READOS is the KEVOS® knowledge library/);
 });
+
+test('outside their own pages, the libraries are called Tools and Library (no stray WORKOS / READOS / REACHOS labels)', () => {
+  const home = read('src/pages/index.astro');
+  assert.match(home, /<span>01<\/span> Tools<\/p>/);
+  assert.match(home, /<span>02<\/span> Library<\/p>/);
+  assert.match(home, />Explore Tools<\/Button>/);
+  assert.match(home, />Explore Library<\/Button>/);
+  const markup = home.slice(home.indexOf('<BaseLayout'), home.indexOf('</BaseLayout>'));
+  assert.doesNotMatch(markup, /WORKOS|READOS|REACHOS/, 'homepage markup uses the plain names');
+  assert.match(read('src/components/Footer.astro'), />Library RSS feed</);
+  assert.match(read('src/pages/contact/index.astro'), /\{ label: 'Contact', href: '\/contact\/' \}/);
+  for (const f of ['src/components/discovery/DiscoveryResults.astro', 'src/components/knowledge/ApplyInPractice.astro', 'src/components/knowledge/LearnConcepts.astro', 'src/components/ContactForm.astro', 'src/pages/about.astro', 'src/pages/search.astro', 'src/pages/contact/sent.astro']) {
+    assert.doesNotMatch(read(f).replace(/\/\*[\s\S]*?\*\/|\/\/.*$|<!--[\s\S]*?-->/gm, ''), /WORKOS|READOS|REACHOS/, `${f} uses the plain names`);
+  }
+});

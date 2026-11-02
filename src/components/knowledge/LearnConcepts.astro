@@ -9,7 +9,7 @@ const { items, id = 'learn-concepts' } = Astro.props;
 {items.length > 0 && (
   <section class="kl" aria-labelledby={id} data-pagefind-ignore>
     <h2 id={id}>Learn the Concepts Behind This Tool</h2>
-    <p class="kl__lead">These KEVOS® READOS readings explain the method this tool uses, with worked examples.</p>
+    <p class="kl__lead">These KEVOS® Library readings explain the method this tool uses, with worked examples.</p>
     <ul class="kl__list">
       {items.map((x) => (
         <li class="kl__card">

@@ -73,10 +73,10 @@ test('missing required form values are rejected before verification or email', a
 test('REACHOS treats organisation, website and related resource as optional and includes them when given', async () => {
   assert.equal((await post({ ...valid, company: '' })).status, 200);
   assert.ok(!sent[0].text.includes('Organisation:'), 'no empty organisation row');
-  assert.equal((await post({ ...valid, service: 'WORKOS – Tools and technical questions', website: 'example.com/team', resource: 'Bolt Tightening Torque and Preload' })).status, 200);
-  assert.ok(sent[1].text.includes('Enquiry category: WORKOS – Tools and technical questions'));
+  assert.equal((await post({ ...valid, service: 'Tools – technical questions', website: 'example.com/team', resource: 'Bolt Tightening Torque and Preload' })).status, 200);
+  assert.ok(sent[1].text.includes('Enquiry category: Tools – technical questions'));
   assert.ok(sent[1].text.includes('Website: example.com/team'));
-  assert.ok(sent[1].text.includes('Related WORKOS tool or READOS resource: Bolt Tightening Torque and Preload'));
+  assert.ok(sent[1].text.includes('Related tool or Library resource: Bolt Tightening Torque and Preload'));
   const bad = await post({ ...valid, website: 'not a website' });
   assert.equal(bad.status, 422); assert.ok(((await bad.json()) as any).errors.website);
 });

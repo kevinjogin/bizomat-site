@@ -77,7 +77,7 @@ try {
     check('one hero: no second product hero below it', (await pg.locator('.product, #home-workos-search').count()) === 0 && (await pg.locator('h1').count()) === 1);
     check('dark theme by default', (await pg.getAttribute('html', 'data-theme')) === 'dark');
     check('clear button hidden while the box is empty', await pg.locator('[data-discover-clear]').isHidden());
-    check('Explore WORKOS / READOS buttons kept', (await pg.locator('[data-cta="hero-workos"]').count()) === 1 && (await pg.locator('[data-cta="hero-reados"]').count()) === 1);
+    check('Explore Tools / Library buttons kept', (await pg.locator('[data-cta="hero-workos"]').count()) === 1 && (await pg.locator('[data-cta="hero-reados"]').count()) === 1);
     // Shift+Enter adds a line, does not submit
     await pg.fill('#discover-question', 'line one');
     await pg.press('#discover-question', 'Shift+Enter');

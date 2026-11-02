@@ -27,7 +27,7 @@ export function composeContactEmail(input: ContactInput, subject: string, submit
     ...(safeSubject ? [['Subject', safeSubject] as [string, string]] : []),
     ['Enquiry category', input.service],
     ...(input.website ? [['Website', input.website] as [string, string]] : []),
-    ...(input.resource ? [['Related WORKOS tool or READOS resource', input.resource] as [string, string]] : []),
+    ...(input.resource ? [['Related tool or Library resource', input.resource] as [string, string]] : []),
     ...(input.phone ? [['Phone', input.phone] as [string, string]] : []),
     ['Preferred contact method', input.contactMethod], ['Submission time (UTC)', submittedAt],
     ...(country ? [['Request IP country', country] as [string, string]] : []),

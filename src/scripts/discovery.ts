@@ -42,7 +42,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
 
   function card(h: Hit, compact = false): HTMLElement {
     const li = el('li', `dr-card dr-card--${h.kind}${compact ? ' dr-card--compact' : ''}${h.ai ? ' dr-card--ai' : ''}`);
-    li.append(el('p', 'dr-card__kind', h.kind === 'tool' ? `WORKOS tool${h.context ? ` · ${h.context}` : ''}` : h.kind === 'chapter' ? 'READOS chapter' : `READOS book${h.context ? ` · ${h.context}` : ''}`));
+    li.append(el('p', 'dr-card__kind', h.kind === 'tool' ? `Tool${h.context ? ` · ${h.context}` : ''}` : h.kind === 'chapter' ? 'Library chapter' : `Library book${h.context ? ` · ${h.context}` : ''}`));
     const title = el('h4', 'dr-card__title');
     title.append(link(h.url, h.title, undefined, h));
     li.append(title);
