@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1', 'norton2'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1045 tools with unique ids and every previously published id kept', () => {
+test('register: 1049 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1045);
+  assert.equal(ids.length, 1049);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -7252,4 +7252,44 @@ test('slider-crank kinematics matches finite differences', () => {
   }
   assert.ok(run({}).d > 0, 'the default slider is on the +X side'); const i = run({ c: 0, t2: 0 }); near(i.d, 160, 1e-9, 'in-line, crank along the slide: d = a + b'); near(i.ad, -(100 ** 2) * 40 * (1 + 40 / 120), 1e-6, 'top dead centre acceleration aω²(1 + a/b)');
   assert.equal(engine.run('slider-crank-kinematics', { a: 100, b: 50, c: 0, t2: 90 }).text, 'CHECK INPUTS');
+});
+
+// Norton batch 2 (norton2): engine dynamics from Norton, Design of Machinery, 2nd edition, chapters 13 and 14. Expected
+// values are Norton's example engine (Fig. 13-8: 3.54 in stroke, L/R 3.5, 3400 rpm), Tables 14-1 and 14-2, and identities.
+test('engine piston motion reproduces Norton’s example engine', () => {
+  const e = (o: Inputs) => engine.run('engine-piston-motion', { r: 1.77, l: 1.77 * 3.5, rpm: 3400, wt: 0, ...o }).values; // inches, so accelerations in in/s²
+  near(e({}).aTDC, 288228, 300, 'peak acceleration about 288,228 in/s² (Fig. 13-8c)'); near(e({}).aTDC / 386.09, 747, 0.5, 'about 747 g');
+  let vmax = 0; for (let a = 0; a < 360; a += 0.5) vmax = Math.max(vmax, Math.abs(e({ wt: a }).vEx)); near(vmax, 653, 4, 'peak velocity about 653 in/s (Fig. 13-8b)');
+  const x = e({ wt: 37 }); near(x.x, 1.77 * Math.cos(37 * Math.PI / 180) + 6.195 * Math.sqrt(1 - (Math.sin(37 * Math.PI / 180) / 3.5) ** 2), 1e-9, 'eq. 13.1d'); near(x.aAp, x.aEx, 0.01 * e({}).aTDC, 'approximation within 1 % of the peak');
+  const h = 1e-4, w = 3400 * 2 * Math.PI / 60, d = (t: number) => e({ wt: t }).x; near(x.vEx, (d(37 + h) - d(37 - h)) / (2 * h * Math.PI / 180) * w, 1e-3, 'exact velocity = dx/dt');
+  near(x.aEx, (e({ wt: 37 + h }).vEx - e({ wt: 37 - h }).vEx) / (2 * h * Math.PI / 180) * w, 1e-1, 'exact acceleration = dv/dt');
+});
+
+test('engine gas torque follows equations 13.4 to 13.8', () => {
+  const g = engine.run('engine-gas-torque', { B: 76.2, Pg: 3, r: 45, l: 157.5, wt: 30 }).values, t = Math.PI / 6, sphi = Math.sin(t) / 3.5, cphi = Math.sqrt(1 - sphi * sphi);
+  near(g.Fg, 3 * Math.PI * 76.2 ** 2 / 4, 1e-9, 'Fg = Pg π B²/4'); near(g.Tex, g.Fg * sphi / cphi * (45 * Math.cos(t) + 157.5 * cphi) / 1000, 1e-9, 'Tg = Fg tan φ x');
+  near(g.Tap, g.Fg * 45 * Math.sin(t) * (1 + Math.cos(t) / 3.5) / 1000, 1e-9, 'eq. 13.8b'); near(g.Tap, g.Tex, 0.01 * g.Tex, 'approximation within 1 %');
+  near(engine.run('engine-gas-torque', { wt: 0 }).values.Tex, 0, 1e-9, 'no torque at TDC');
+});
+
+test('engine lumped masses and inertia forces follow equations 13.9 to 13.15', () => {
+  const v = engine.run('engine-inertia-forces', { r: 45, l: 150, rpm: 3000, wt: 40, m2: 0.4, rG2: 15, m3: 0.6, la: 50, IG3: 0, m4: 0.5 }).values;
+  near(v.m3a, 0.6 * 100 / 150, 1e-12, 'm3a = m3 lb/(la + lb)'); near(v.m3b, 0.6 * 50 / 150, 1e-12, 'm3b'); near(v.m2a, 0.4 * 15 / 45, 1e-12, 'm2a = m2 rG2/r'); near(v.mA, 0.4 + 0.4 / 3, 1e-12, 'mA'); near(v.mB, 0.7, 1e-12, 'mB');
+  const w = 3000 * 2 * Math.PI / 60, rw2 = 0.045 * w * w, t = 40 * Math.PI / 180, k = 0.3;
+  near(v.Fx, v.mA * rw2 * Math.cos(t) + v.mB * rw2 * (Math.cos(t) + k * Math.cos(2 * t)), 1e-9, 'eq. 13.14d'); near(v.Fy, v.mA * rw2 * Math.sin(t), 1e-9, 'Fy');
+  near(v.Ti, 0.5 * v.mB * 0.045 ** 2 * w * w * (k / 2 * Math.sin(t) - Math.sin(2 * t) - 1.5 * k * Math.sin(3 * t)), 1e-9, 'eq. 13.15e');
+  // The inertia torque equals −F_i14 · x (eq. 13.15a) to the order kept: compare with mB ẍ tan φ x from the exact motion.
+  const ex = engine.run('engine-piston-motion', { r: 45, l: 150, rpm: 3000, wt: 40 }).values, phi = Math.asin(k * Math.sin(t));
+  near(v.Ti, 0.7 * (ex.aEx / 1000) * Math.tan(phi) * (ex.x / 1000), 0.06 * Math.abs(v.Ti), 'within 6 % of mB ẍ tan φ x from the exact motion (eq. 13.15b)');
+  near(engine.run('engine-inertia-forces', { m3: 1, la: 40, l: 160, IG3: 0.002 }).values.lp, 0.002 / (1 * 0.12) * 1000, 1e-9, 'lp = IG3/(m3 lb)');
+});
+
+test('inline engine balance reproduces Norton’s Tables 14-1 and 14-2', () => {
+  const b = engine.run('inline-engine-balance', { n: 4, cycle: '2', p2: 90, p3: 180, p4: 270, z1: 0, sp: 1, mB: 0 }), s = b.values;
+  for (const k of ['c1', 's1', 'c2', 's2', 's4', 'c6', 's6']) near(s[k], 0, 1e-9, `Table 14-1 ${k} = 0`); near(s.c4, 4, 1e-9, 'Σ cos 4φ = 4');
+  for (const k of ['c3', 's3']) near(s[k], 0, 1e-9, `inertia torque ${k} = 0`);
+  near(s.zs1, -2, 1e-9, 'Table 14-2 Σ z sin φ = −2'); near(s.zc1, -2, 1e-9, 'Σ z cos φ = −2'); near(s.zs2, 0, 1e-9, 'Σ z sin 2φ = 0'); near(s.zc2, -2, 1e-9, 'Σ z cos 2φ = −2'); near(s.zc4, 6, 1e-9, 'Σ z cos 4φ = 6'); near(s.zc6, -2, 1e-9, 'Σ z cos 6φ = −2');
+  assert.equal(b.text, 'FORCES BALANCED, MOMENTS NOT'); near(s.fire, 90, 1e-12, 'two-stroke 360/4');
+  const six = engine.run('inline-engine-balance', { n: 6, cycle: '4', p2: 240, p3: 120, p4: 120, p5: 240, p6: 0, z1: 0, sp: 100, mB: 0 }); assert.equal(six.text, 'FORCES AND MOMENTS BALANCED', 'mirror-symmetric inline six'); near(six.values.fire, 120, 1e-12, '720/6');
+  const one = engine.run('inline-engine-balance', { n: 1, mB: 0.5, r: 45, l: 150, rpm: 3000 }).values, w = 100 * Math.PI; near(one.F1, 0.5 * 0.045 * w * w, 1e-9, 'single cylinder primary mB rω²'); near(one.F2, 0.5 * 0.045 * w * w * 0.3, 1e-9, 'secondary × r/l');
 });

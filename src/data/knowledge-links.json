@@ -10008,6 +10008,46 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter treats toggle clamps as bought-in clamping devices and their force; the tool classifies fourbar linkages and does not size clamps."
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "flywheels-and-speed-fluctuation",
+   "tool": "engine-gas-torque",
+   "type": "complements",
+   "note": "Gives the torque pulse from each cylinder firing that this chapter says an engine’s flywheel must smooth.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains that an engine flywheel smooths the torque pulses of its cylinders; tool gives Norton’s gas force and gas torque at a crank angle."
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "waves-modes-and-excitations",
+   "tool": "engine-inertia-forces",
+   "type": "complements",
+   "note": "Sizes the once- and twice-per-revolution shaking forces of a reciprocating machine, the kind of excitation this chapter describes.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes excitations that repeat once per revolution such as unbalance; tool gives Norton’s primary and secondary shaking forces of a single-cylinder engine."
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "the-crank-press-force-curve",
+   "tool": "engine-piston-motion",
+   "type": "complements",
+   "note": "Gives the ram position, velocity and acceleration of the crank press drive by the exact and two-harmonic equations.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter builds the crank press curve from the crank and connecting rod; tool applies Norton’s exact and Fourier-approximate slider-crank motion."
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "isolate-the-fan-on-springs",
+   "tool": "inline-engine-balance",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter isolates a fan from its frame on springs; the tool checks the phase-angle balance of inline engines and does not size isolators."
   }
  ]
 }
