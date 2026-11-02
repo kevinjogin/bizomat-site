@@ -9575,6 +9575,46 @@
    "note": "Appraises a static control programme's equipment cost against measured powder and rework savings and an estimated ESD saving: NPV and payback.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/pipe-welding-by-the-numbers",
+   "chapter": "sizes-walls-and-pressure",
+   "tool": "steel-pipe-mass",
+   "type": "complements",
+   "note": "Gives the plain-end mass per metre of the pipe sizes and walls this chapter explains, and the mass of a length full of its contents.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains pipe outside diameters, wall schedules and the weight the pipe and its welds carry; tool applies the B36.10M plain-end mass formula with contents."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-fasteners-and-threads",
+   "tool": "ba-thread-limits",
+   "type": "complements",
+   "note": "Gives the sizes and BS 93 limits of the British Association threads found on instruments and older British equipment, beside the threads this chapter lists.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists the thread systems met on older British machinery; tool gives the BA thread form and BS 93 bolt and nut tolerances."
+  },
+  {
+   "reados": "collection/machining-and-metal-parts",
+   "chapter": "edm-and-micromachining",
+   "tool": "ductile-regime-critical-depth",
+   "type": "complements",
+   "note": "Adds the depth of cut below which brittle materials such as silicon and glass machine without fracture, for the micromachining this chapter covers.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers micromachining and processes for brittle materials; tool applies the handbook ductile-regime critical depth dc = A (E/H)(Kc/H)²."
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "pipe-strain",
+   "tool": "steel-pipe-mass",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter is about forces from misaligned connected piping on machine casings; the tool gives pipe mass per metre, not pipe strain."
   }
  ]
 }
