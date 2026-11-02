@@ -22,8 +22,8 @@ The persistent record for the "What would you like to solve today?" discovery fe
 | 11 | WORKOS calculations unchanged | Done | No file under `public/tools/` changed; existing calculator tests and sweep pass |
 | 12 | Chatbot transition: the floating assistant is switched off site-wide (owner's request, 1 Nov 2026); `/chat/` and `/api/chat` kept but unlinked | Done | `SITE.assistant.enabled` in `src/config/site.ts` |
 | 13 | Security: same-origin, JSON only, 4,000-byte body, 500-character question, rate limit (edge limiter: 10 questions a minute per IP, own counter; plus 60 an hour if the KV store `CONTACT_RATE_LIMIT` is bound), 7 s model timeout, prompt-injection filtering, no secrets in the browser | Done | `handler.ts`, `worker.ts` |
-| 14 | Privacy: calculator inputs are never sent; the question goes only to Workers AI and is not stored; analytics are anonymous terms and clicks, no IP, no question text | Done | `handleDiscoverEvent`; storage is off until a binding is approved |
-| 15 | Performance: the index (about 1.6 MB, compressed by Cloudflare) loads on first focus or first question and is cached; no extra script on other pages | Done | `loadEngine()` |
+| 14 | Privacy: calculator inputs are never sent; the question goes only to Workers AI and is not stored; analytics are anonymous terms and clicks, no IP, no question text | Done | `handleDiscoverEvent`; Analytics Engine dataset `kevos_discovery` (binding `DISCOVERY_EVENTS` in `wrangler.toml`); privacy page section "Questions on the homepage" |
+| 15 | Performance: the index (about 1.6 MB, compressed by Cloudflare) loads on first focus or first question and is cached; on `/tools/` it loads only when a plain-words search asks the AI; other pages load nothing extra | Done | `loadEngine()` in `client.ts` |
 | 16 | SEO: homepage title, description and H1 updated; WebSite SearchAction points at `/search/?q=`; `/?q=` runs a question | Done | `SEO.astro`, `index.astro` |
 | 17 | Accessibility: labelled form, `role=status` messages, focus moves to the results heading, 44 px targets, reduced-motion respected, keyboard only works | Done | `discovery.css`, browser checks |
 | 18 | Tests with at least 30 natural-language questions | Done (34 questions plus ambiguous, unsupported and misspelt cases) | `tests/discovery.test.ts` |
@@ -77,17 +77,17 @@ Not changed: `wrangler.toml`, `public/tools/*`, logos, favicons, navigation, `/c
 - **Tuning:** `MIN_SCORE`, the field weights and the clarify and coverage thresholds are at the top of `search.ts`; re-run `node --test tests/discovery.test.ts` after any change.
 - **Configuration (Worker variables, optional):** `DISCOVER_MODEL`, `DISCOVER_RATE_LIMIT_MAX` (hourly KV limit, default 60; used only when the KV store is bound), `DISCOVER_TIMEOUT_MS` (default 7000). Without them the chat models and defaults are used.
 
-## 6. External dependencies needing approval
+## 6. External dependencies still needing approval
 
 | Item | Why | Cost and change |
 |---|---|---|
-| Production release (merge to `main`) | The homepage changes for every visitor | Workers Builds deploys automatically |
-| Analytics Engine dataset `DISCOVERY_EVENTS` (optional) | Store anonymous search and click counts | `wrangler.toml` binding; free tier has limits; reading the data needs a dashboard or API token |
 | Vectorize semantic search (optional, later) | Better matching for unusual wording | New index resource and an embedding job |
-| Privacy page note (recommended if analytics are enabled) | Say that homepage questions are processed by Cloudflare Workers AI and not stored | A legal-page edit, so the owner decides the wording |
 
 ## 7. Log
 
 - **1 Nov 2026**: audit, design, index, search engine, Worker endpoints, homepage and tests built. Tuning fixes during testing: false spelling corrections of -ing words ("sitting" → "setting"), noisy matches on "losing" (now a stop word with a loss synonym), off-topic related cards (now must match the question), out-of-scope questions returning loose matches (coverage rule plus the AI `inScope` flag), misspelt "brake even" (synonym), AI terms longer than a short phrase now dropped instead of cut, and an AI restatement must share a word with the visitor's question.
 - **1 Nov 2026 (browser checks)**: the clear (×) button showed on an empty box (its `display` rule overrode `hidden`), now fixed; the sentence above results listed stray expansion words ("cost, true, job"), now it uses the visitor's words and whole phrases ("cost, manufacturing, true cost").
 - **1 Nov 2026 (owner feedback on the live site)**: the AI now chooses the best entries from a shortlist of real catalogue entries (by number, validated in the Worker), and those lead the results; the WORKOS directory search uses the same pipeline for questions in plain words (for example "where is keyhole and how much", which matched nothing before); the floating "Ask KEVOS®" assistant is switched off; the homepage has one hero, with WORKOS and READOS side by side under it (stacked on phones). Checks: `npm run verify` 1,358/1,358 tests, 4,284 pages; browser check 54/54.
+- **2 Nov 2026 (statistics)**: owner approved the usage statistics and the privacy update. `wrangler.toml` binds Analytics Engine (`DISCOVERY_EVENTS` → dataset `kevos_discovery`); the privacy page says what is recorded (up to eight keywords, outcome, opened resource, phone or computer; no IP, cookie or identifier; deleted by Cloudflare after about three months). `scripts/discovery/analytics-report.mjs` reads it with an API token (Account Analytics: Read). Released separately from the homepage so a refused binding could not hold back the main release.
+- **2 Nov 2026 (live)**: release `12dc213` checked on kevos.com with `scripts/discovery/live-check.mjs` from GitHub Actions: 38/38, Workers AI answered 4/4 (idle machine → Downtime Cost, Machine Hour Rate, OEE; M12 bolt → Bolt Tightening Torque and Preload; weather → out of scope). Found: the model turned "where" and "how much" into "location" and "quantity", which matched unrelated tools; the prompt now forbids that and the Worker drops such generic terms. The check is now a manual workflow (Actions → Live check).
+
