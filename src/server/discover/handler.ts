@@ -46,7 +46,7 @@ Reply with ONE JSON object and nothing else:
 {"summary": "...", "terms": ["..."], "picks": [], "inScope": true, "ambiguous": false, "clarify": "", "options": []}
 
 - summary: what the visitor is trying to do, starting with a verb, at most 12 words, no full stop (e.g. "reduce the cost of machine downtime").
-- terms: 4 to 10 short search terms in Australian English that a technical catalogue would use for this need: the technical names of the quantities, methods, calculations and topics involved, including likely synonyms (e.g. for "what speed should I run my cutter": "cutting speed", "spindle speed", "rpm", "feed per tooth", "milling", "turning").
+- terms: 4 to 10 short search terms in Australian English that a technical catalogue would use for this need: the technical names of the quantities, methods, calculations and topics involved, including likely synonyms (e.g. for "what speed should I run my cutter": "cutting speed", "spindle speed", "rpm", "feed per tooth", "milling", "turning"). Never turn question words into generic terms: "where", "how much" and "what" are not "location", "quantity" or "amount".
 - picks: when a numbered list of catalogue entries is given, the numbers of up to 5 entries that directly help with this question, best first: first the tools that calculate or check what the visitor needs, then the readings that explain it. Judge by meaning, not shared words (a "keyhole" in welding is not a door lock). Use only numbers from the list; [] if none fits or no list is given.
 - inScope: false when the question has nothing to do with engineering, manufacturing, operations, maintenance, quality, projects, business, technology or learning these subjects (for example weather, sport, recipes, fashion, celebrities). Otherwise true.
 - ambiguous: true only if the question could mean clearly different things and the terms would differ a lot.
@@ -60,6 +60,9 @@ function json(body: DiscoverReply, status = 200): Response {
 const clean = (s: string) => s.replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim();
 const contentWords = (s: string) => new Set((s.toLowerCase().match(/[a-z0-9]{3,}/g) ?? []).map((w) => w.replace(/s$/, '')));
 
+/** Words a model makes out of "where", "how much" or "what": they match unrelated tools, so they are not search terms. */
+const GENERIC_TERMS = new Set(['location', 'locations', 'place', 'position', 'quantity', 'quantities', 'amount', 'number', 'value', 'information', 'details', 'question', 'answer', 'help', 'guide', 'calculation', 'calculator', 'tool', 'tools']);
+
 /** Parse and restrict the model's reply. Anything that is not short, plain search text is dropped. */
 export function parseIntent(raw: string, question: string, candidates: Candidate[] = []): Intent | null {
   const m = raw.match(/\{[\s\S]*\}/);
@@ -71,6 +74,7 @@ export function parseIntent(raw: string, question: string, candidates: Candidate
   const safe = (s: string): boolean => !!s && !/https?:|www\.|[<>{}\[\]\\`]|\/\//i.test(s);
   const terms = (Array.isArray(o.terms) ? o.terms : [])
     .map((t) => (typeof t === 'string' ? clean(t).toLowerCase() : ''))
+    .filter((t) => !GENERIC_TERMS.has(t))
     // A term is a short phrase. Longer text is dropped rather than cut, so an instruction cannot survive as a fragment.
     .filter((t) => t.length <= 40 && t.split(' ').length <= 5 && safe(t) && /^[a-z0-9 .,'’&+\-/%]+$/i.test(t))
     .slice(0, 12);

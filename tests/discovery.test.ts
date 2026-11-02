@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { buildDiscoveryIndex } from '../src/utils/discovery-index.ts';
 import { prepare, search, shortlist, toolHref, type Outcome } from '../src/lib/discovery/search.ts';
 import { handleDiscover, handleDiscoverEvent, parseIntent, SYSTEM_PROMPT } from '../src/server/discover/handler.ts';
@@ -262,4 +264,20 @@ test('AI picks lead the results, are marked, and only ever name catalogue entrie
   assert.equal(picked.tools[0].id, 'break-even');
   assert.ok(![...picked.tools, ...picked.readings].some((h) => h.id === 'not-a-real-tool'), 'an unknown id is ignored');
   assert.notEqual(picked.mode, 'clarify');
+});
+
+test('the statistics binding, the handler and the privacy page agree', () => {
+  const wrangler = readFileSync(join(process.cwd(), 'wrangler.toml'), 'utf8');
+  assert.match(wrangler, /\[\[analytics_engine_datasets\]\]\s*\nbinding = "DISCOVERY_EVENTS"\s*\ndataset = "kevos_discovery"/);
+  assert.match(readFileSync(join(process.cwd(), 'scripts/discovery/analytics-report.mjs'), 'utf8'), /const DATASET = 'kevos_discovery'/);
+  const privacy = readFileSync(join(process.cwd(), 'src/pages/privacy.astro'), 'utf8');
+  assert.match(privacy, /Questions on the homepage/);
+  assert.match(privacy, /up to eight keywords from the question/, 'the privacy page says what is recorded');
+  assert.match(privacy, /without your IP address, cookies or any account or identifier/);
+});
+
+test('generic words made from question words are not search terms', () => {
+  const r = parseIntent('{"summary":"find keyhole welding costs","terms":["keyhole","laser welding","location","quantity","Amount","weld cost"],"ambiguous":false}', 'where is keyhole and how much')!;
+  assert.deepEqual(r.terms, ['keyhole', 'laser welding', 'weld cost']);
+  assert.match(SYSTEM_PROMPT, /are not "location", "quantity" or "amount"/);
 });

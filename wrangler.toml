@@ -54,6 +54,15 @@ name = "FORM_LIMITER"
 namespace_id = "41002"
 simple = { limit = 5, period = 60 }
 
+# Anonymous homepage discovery statistics (src/server/discover/handler.ts, POST /api/discover/event):
+# event type, result kind and id, up to 8 search keywords and phone/desktop. No IP address, cookie or
+# full question. Workers Analytics Engine creates the dataset on the first write. Read it with
+# `node scripts/discovery/analytics-report.mjs` (needs an API token with Account Analytics: Read).
+# Without this binding the endpoint still answers 204 and stores nothing.
+[[analytics_engine_datasets]]
+binding = "DISCOVERY_EVENTS"
+dataset = "kevos_discovery"
+
 # Optional rate limiting for the contact endpoint and the assistant.
 # Create a KV namespace (Storage & Databases → KV), then uncomment and paste its id:
 # [[kv_namespaces]]
