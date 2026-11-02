@@ -9458,6 +9458,123 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter checks limits and fits of plain holes and shafts on drawings; spline pin measurement is a gear inspection method, not a drawing check."
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "what-a-processing-plasma-is",
+   "tool": "pressure-converter",
+   "type": "applies",
+   "note": "Converts plasma nitriding and sputtering pressures between pascals, millibar and torr, the mixed units found on plasma machines, gauges and coating data sheets.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "plasma-cleaning-and-activation",
+   "tool": "gas-mixture-properties",
+   "type": "applies",
+   "note": "Gives the molar mass, density and partial pressures of argon–hydrogen and nitrogen–hydrogen mixtures used for plasma cleaning and nitriding at chamber pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "plasma-nitriding-gas-heat-and-time",
+   "tool": "gas-law",
+   "type": "applies",
+   "note": "Converts a nitriding vessel's standard gas flows to the actual volume flow at 300 Pa and 520 °C, from which the gas residence time in the chamber follows.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "testing-a-nitrided-layer",
+   "tool": "vickers-knoop-hardness",
+   "type": "applies",
+   "note": "Turns indentation diagonals from a nitrided layer's microhardness traverse into Vickers or Knoop hardness and checks the indentation depth against the layer thickness.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "thickness-uniformity-and-measurement",
+   "tool": "process-capability-check",
+   "type": "applies",
+   "note": "Judges PVD coating thickness capability from ball-crater readings on witness coupons and on parts, giving the process sigma, control limits, Cp and Cpk.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "what-plasma-treatments-are-worth",
+   "tool": "taylor-tool-life",
+   "type": "applies",
+   "note": "Fits Taylor tool life to uncoated and PVD-coated end mill tests and compares their minimum-cost and maximum-production cutting speeds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/plasma-surface-engineering-by-the-numbers",
+   "chapter": "what-plasma-treatments-are-worth",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises a surface treatment shop's purchase of a PVD coater from its price, coating income and running costs: NPV, IRR and payback over ten years.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electrostatics-in-the-factory-by-the-numbers",
+   "chapter": "how-things-charge-and-how-long-charge-lasts",
+   "tool": "heating-humidification-check",
+   "type": "applies",
+   "note": "Works out the heater load and steam needed to keep winter air in an electronics assembly area at the relative humidity chosen to limit static charging.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electrostatics-in-the-factory-by-the-numbers",
+   "chapter": "when-a-discharge-can-ignite",
+   "tool": "extraction-duct-check",
+   "type": "applies",
+   "note": "Checks the local exhaust from solvent cleaning benches and from welding hoods to a precipitator: total airflow, duct velocity, duct loss and fan pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electrostatics-in-the-factory-by-the-numbers",
+   "chapter": "electrostatic-powder-coating",
+   "tool": "coating-coverage",
+   "type": "applies",
+   "note": "Gives the powder needed per enclosure and its cost at a dry film thickness and transfer efficiency, showing what better electrostatic transfer saves.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electrostatics-in-the-factory-by-the-numbers",
+   "chapter": "electrostatic-powder-coating",
+   "tool": "coating-job-estimate",
+   "type": "complements",
+   "note": "Adds labour at an application rate to the powder quantity to give a powder coating job's total cost per square metre at two transfer efficiencies.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electrostatics-in-the-factory-by-the-numbers",
+   "chapter": "electrostatic-powder-coating",
+   "tool": "process-capability-check",
+   "type": "applies",
+   "note": "Judges powder film thickness capability from five readings per enclosure, before and after a change to how inside corners are coated.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/electrostatics-in-the-factory-by-the-numbers",
+   "chapter": "running-a-static-control-programme",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Appraises a static control programme's equipment cost against measured powder and rework savings and an estimated ESD saving: NPV and payback.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
