@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1013 tools with unique ids and every previously published id kept', () => {
+test('register: 1020 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1013);
+  assert.equal(ids.length, 1020);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 819 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 826 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 819);
+  assert.equal(ids.length, 826);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -6922,5 +6922,82 @@ test('seventy-fourth-pass tools give their verdicts and reject bad inputs', () =
   assert.equal(engine.run('synchronous-belt-rating', { wf: 0.29, mesh: 3 }).text, 'BELT TOO NARROW FOR THE POWER');
   assert.equal(engine.run('synchronous-belt-rating', { sec: 'XL', z: 60, n: 7000 }).text, 'BELT SPEED ABOVE THE RATING LIMIT');
   const cases: Array<[string, Inputs]> = [['narrow-v-belt-rating', { dp: 400 }], ['classical-v-belt-rating', { C: 50 }], ['double-v-belt-tension', { sec: 'DD', d: 150, D: 300 }], ['light-duty-v-belt-rating', { twoA: 80 }], ['variable-speed-belt-drive', { PDmin: 250 }], ['synchronous-belt-rating', { mesh: 30 }]];
+  for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-fifth handbook pass (handbook98): deep audit of the thread standards with formula limits (Acme, Stub Acme,
+// Whitworth, unified miniature), bearing static equivalent loads and the rail size formulas. Expected values are the
+// handbook's limit tables (Acme Tables 2b, 3, 5 and 8b, Stub Acme Table 14b, UNM Table 5) and its worked examples.
+test('general purpose Acme limits reproduce the handbook tables', () => {
+  const g = (cls: string, D: number, n: number, over: Inputs = {}) => engine.run('general-purpose-acme-limits', { D, n, cls, starts: 1, LE: D, ...over }).values;
+  const a = g('2G', 0.5, 10); near(a.dmin, 0.495, 5e-5, '1/2-10 major min'); near(a.d1max, 0.38, 5e-5, 'minor max'); near(a.d1min, 0.3594, 5e-5, '2G minor min'); near(a.d2max, 0.4443, 5e-5, '2G pitch max'); near(a.d2min, 0.4306, 5e-5, '2G pitch min');
+  const b = g('3G', 0.5, 10); near(b.d1min, 0.3704, 5e-5, '3G minor min'); near(b.d2max, 0.4458, 5e-5, '3G pitch max'); near(b.d2min, 0.4394, 5e-5, '3G pitch min');
+  const c = g('4G', 0.5, 10); near(c.d1min, 0.3731, 5e-5, '4G minor min'); near(c.d2max, 0.4472, 5e-5, '4G pitch max'); near(c.d2min, 0.4426, 5e-5, '4G pitch min');
+  const e = g('2G', 1, 5); near(e.dmin, 0.99, 5e-5, '1-5 major min'); near(e.d2max, 0.892, 5e-5, '1-5 2G pitch max'); near(e.d2min, 0.8726, 5e-5, '1-5 2G pitch min'); near(e.d1min, 0.7509, 5e-5, '1-5 2G minor min');
+  near(g('2G', 0.25, 16).tol, 0.0105, 1e-6, 'Table 5 example: 1/4-16 2G tolerance 0.00300 + 0.00750');
+  near(g('3G', 0.25, 16).As, 0.0285, 5e-5, 'Table 3 stress area 1/4-16'); near(g('3G', 0.3125, 14).As, 0.0474, 5e-5, '5/16-14 (in the 3/16 to 5/16 range)'); near(g('3G', 0.5, 10).As, 0.1287, 5e-5, '1/2-10'); near(g('3G', 0.5, 10).Ash, 0.749, 0.001, 'shear area 1/2-10');
+  const s1 = g('2G', 0.25, 16).D2min; near(g('2G', 0.25, 16, { starts: 2 }).D2min - s1, 0.002, 1e-6, 'two starts +0.002'); near(g('2G', 0.25, 16, { starts: 3 }).D2min - s1, 0.003, 1e-6, 'three starts +0.003'); near(g('2G', 0.25, 16, { starts: 4 }).D2min - s1, 0.004, 1e-6, 'four starts +0.004');
+  near(g('2G', 1, 5, { LE: 3.5 }).a, 0.008 * 1.2, 1e-12, 'two inches or part beyond 2D add 20 %');
+});
+
+test('centralizing Acme limits reproduce Table 8b and the fit rules', () => {
+  const c = (ce: string, ci: string) => engine.run('centralizing-acme-limits', { D: 0.5, n: 10, ce, ci, LE: 0.5 });
+  const a = c('2C', '2C').values; near(a.dmin, 0.4975, 5e-5, '2C major min'); near(a.d1max, 0.38, 5e-5, 'minor max'); near(a.d1min, 0.3594, 5e-5, '2C minor min'); near(a.d2max, 0.4443, 5e-5, '2C pitch max'); near(a.d2min, 0.4306, 5e-5, '2C pitch min');
+  near(a.Dmin, 0.5007, 5e-5, 'nut major min'); near(a.Dmax, 0.5032, 5e-5, '2C nut major max'); near(a.D1min, 0.41, 5e-5, 'nut minor min'); near(a.D1max, 0.415, 5e-5, 'nut minor max'); near(a.D2max, 0.4637, 5e-5, '2C nut pitch max');
+  const b = c('3C', '3C').values; near(b.dmin, 0.4989, 5e-5, '3C major min'); near(b.d1min, 0.3704, 5e-5, '3C minor min'); near(b.d2min, 0.4394, 5e-5, '3C pitch min'); near(b.Dmax, 0.5032, 5e-5, '3C nut major max'); near(b.D2max, 0.4564, 5e-5, '3C nut pitch max');
+  const d = c('4C', '4C').values; near(d.dmin, 0.4993, 5e-5, '4C major min'); near(d.d1min, 0.3731, 5e-5, '4C minor min'); near(d.d2max, 0.4472, 5e-5, '4C pitch max'); near(d.Dmax, 0.5021, 5e-5, '4C nut major max'); near(d.D2max, 0.4546, 5e-5, '4C nut pitch max');
+  near(a.sum, a.allow, 1e-12, '2C: 0.0035 + 0.001 + 0.0035 = 0.008 √D');
+  assert.equal(c('2C', '4C').text, 'CENTRALIZING FIT MET'); assert.equal(c('3C', '4C').text, 'CENTRALIZING FIT MET'); assert.equal(c('4C', '2C').text, 'NOT A CENTRALIZING FIT'); assert.equal(c('3C', '2C').text, 'NOT A CENTRALIZING FIT');
+  near(engine.run('centralizing-acme-limits', { D: 0.25, n: 16, ce: '2C', ci: '2C', LE: 0.25 }).values.clrMin, 0.01 + 0.00625, 1e-12, 'minor clearance = columns 3 + 5 of Table 12');
+});
+
+test('Stub Acme limits reproduce Table 14b', () => {
+  const s = engine.run('stub-acme-limits', { D: 0.25, n: 16, form: 'std', cls: '2G', LE: 0.25 }).values;
+  near(s.dmin, 0.2469, 5e-5, '1/4-16 major min'); near(s.d2max, 0.2272, 5e-5, 'pitch max'); near(s.d2min, 0.2167, 5e-5, 'pitch min'); near(s.Dmin, 0.26, 5e-5, 'nut major min'); near(s.Dmax, 0.2705, 5e-5, 'nut major max'); near(s.D1min, 0.2125, 5e-5, 'nut minor min');
+  near(engine.run('stub-acme-limits', { D: 0.3125, n: 14, form: 'std', cls: '2G', LE: 0.3 }).values.dmin, 0.3089, 5e-5, '5/16-14 major min');
+  const m1 = engine.run('stub-acme-limits', { form: 'M1' }).values, m2 = engine.run('stub-acme-limits', { form: 'M2' }).values; near(m1.D2, 0.5 - 0.375 * 0.1, 1e-12, 'Form 1 D2 = D − 0.375P'); near(m2.D1, 0.5 - 0.5 * 0.1, 1e-12, 'Form 2 D1 = D − 0.5P');
+  near(s.F, 0.4224 * 0.0625, 1e-12, 'crest flat 0.4224P'); near(s.d1min, s.d1max - s.tol, 1e-12, 'screw minor tolerance = 2G pitch tolerance');
+});
+
+test('Whitworth limits follow the BS 84 tolerance formulas', () => {
+  const w = engine.run('whitworth-thread-limits', { D: 0.5, n: 12, L: 0.5, bc: 'medium', nc: 'normal', ss: 'no' }).values, p = 1 / 12;
+  near(w.h, 0.053361, 1e-6, 'Table 2: depth 0.053361 at 12 TPI'); const T = 0.002 * Math.cbrt(0.5) + 0.003 * Math.sqrt(0.5) + 0.005 * Math.sqrt(p); near(w.Tu, T, 1e-12, 'T = 0.002 ∛D + 0.003 √L + 0.005 √p');
+  near(w.tE, T, 1e-12, 'medium bolt effective tolerance T'); near(w.tMaj, T + 0.01 * Math.sqrt(p), 1e-12, 'major T + 0.01 √p'); near(w.tMin, T + 0.02 * Math.sqrt(p), 1e-12, 'minor T + 0.02 √p'); near(w.NEmax - w.NEmin, 1.5 * T, 1e-12, 'normal nut 3/2 T'); near(w.N1max - w.N1min, 0.2 * p + 0.007, 1e-12, '20 TPI and coarser');
+  const cl = engine.run('whitworth-thread-limits', { bc: 'close', nc: 'close', n: 26, D: 0.25, L: 0.25 }).values; near(cl.tMin, cl.Tu * 2 / 3 + 0.013 * Math.sqrt(1 / 26), 1e-12, 'close minor 2/3 T + 0.013 √p'); near(cl.N1max - cl.N1min, 0.2 / 26 + 0.004, 1e-12, '26 TPI and finer');
+  near(engine.run('whitworth-thread-limits', { n: 22, D: 0.5 }).values.N1max - engine.run('whitworth-thread-limits', { n: 22, D: 0.5 }).values.N1min, 0.2 / 22 + 0.005, 1e-12, '22 TPI');
+  near(engine.run('whitworth-thread-limits', { D: 1, n: 8, L: 1, ss: 'yes' }).values.Emax, 1 - 0.640327 / 8 - 0.001, 1e-12, 'stainless above 3/4 in: 0.001 smaller');
+});
+
+test('unified miniature limits reproduce Table 5', () => {
+  const u = engine.run('unified-miniature-thread-limits', { D: 1, p: 0.25 }).values;
+  const want: Array<[string, number]> = [['dmin', 0.964], ['Emax', 0.838], ['Emin', 0.81], ['d1max', 0.7], ['d1min', 0.652], ['D1min', 0.74], ['D1max', 0.832], ['E2max', 0.866], ['Dnmin', 1.018], ['Dnmax', 1.068]];
+  for (const [k, x] of want) near(u[k], x, 5e-4, `1.00 UNM ${k}`);
+  near(u.la, 5 + 26 / 60, 0.01, 'lead angle 5° 26′'); near(u.A, 0.363, 5e-4, 'sectional area 0.363 mm²');
+  const s = engine.run('unified-miniature-thread-limits', { D: 0.3, p: 0.08 }).values; near(s.dmin, 0.284, 5e-4, '0.30 UNM major min'); near(s.Emin, 0.234, 5e-4, 'pitch min'); near(s.d1min, 0.183, 5e-4, 'minor min'); near(s.D1max, 0.254, 5e-4, 'internal minor max'); near(s.Dnmax, 0.327, 5e-4, 'internal major max'); near(s.A, 0.0307, 5e-5, 'area 0.0307');
+});
+
+test('bearing static equivalent loads follow the AFBMA formulas', () => {
+  const b = (over: Inputs) => engine.run('bearing-static-equivalent-load', over).values;
+  near(b({ type: 'angular', alpha: 25, rows: 'single', Fr: 2000, Fa: 4000 }).P0, 0.5 * 2000 + 0.38 * 4000, 1e-9, '25° single row'); near(b({ type: 'angular', alpha: 25, rows: 'double', Fr: 2000, Fa: 4000 }).Y, 0.76, 1e-12, 'double row Yo twice');
+  near(b({ type: 'angular', alpha: 22.5, rows: 'single' }).Y, 0.4, 1e-12, 'linear between 20° and 25°'); near(b({ type: 'radial', Fr: 1000, Fa: 100 }).P0, 1000, 1e-9, 'Po not less than Fr');
+  near(b({ type: 'radial', Fr: 1000, Fa: 2000 }).P0, 0.6 * 1000 + 0.5 * 2000, 1e-9, 'radial contact 0.6 / 0.5'); near(b({ type: 'roller', alpha: 12, rows: 'double', Fr: 1000, Fa: 3000 }).P0, 1000 + 0.44 / Math.tan(12 * Math.PI / 180) * 3000, 1e-9, 'double row roller 0.44 cot α');
+  near(b({ type: 'thrustball', alpha: 60, Fr: 500, Fa: 4000 }).P0, 4000 + 2.3 * 500 * Math.tan(Math.PI / 3), 1e-9, 'Poa = Fa + 2.3 Fr tan α');
+});
+
+test('rail and track wheel size reproduce the handbook examples', () => {
+  const r = engine.run('rail-and-track-wheel-size', { C: 10000 * 4.4482216 / 1000, D: 508, A: 1.025 * 25.4, K: 600 * 0.0068947573, ys: 32000 * 0.0068947573 }).values;
+  near(r.B / 25.4, 0.4, 1e-9, 'B = 10,000 ÷ (1250 × 20) = 0.4 in'); near(r.Areq / 25.4, 1.025, 1e-9, 'A = 0.4 + 5/8'); near(r.Dmin / 25.4, 16.26, 0.01, 'smallest wheel 16¼ in');
+  const a = engine.run('rail-and-track-wheel-size', { C: 10000 * 4.4482216 / 1000, D: 254, A: 50, K: 600 * 0.0068947573, ys: 32000 * 0.0068947573 }).values; near(a.p * 25.4 / 4.4482216, 5700, 1e-6, 'AREA: 5700 lb per inch for a 10 in roller'); near(a.Lc / 25.4, 10000 / 5700, 1e-9, '1.75 in wide');
+});
+
+test('seventy-fifth-pass tools give their verdicts and reject bad inputs', () => {
+  assert.equal(engine.run('centralizing-acme-limits').text, 'CENTRALIZING FIT MET');
+  assert.equal(engine.run('bearing-static-equivalent-load').text, 'STATIC SAFETY FACTOR MET');
+  assert.equal(engine.run('bearing-static-equivalent-load', { Co: 2 }).text, 'BELOW THE REQUIRED STATIC SAFETY FACTOR');
+  assert.equal(engine.run('bearing-static-equivalent-load', { type: 'thrustball', alpha: 90, Fr: 100 }).text, 'LOADS OUTSIDE THE FORMULA');
+  assert.equal(engine.run('rail-and-track-wheel-size').text, 'RAIL AND WHEEL CARRY THE LOAD');
+  assert.equal(engine.run('rail-and-track-wheel-size', { A: 20 }).text, 'RAIL HEAD TOO NARROW');
+  assert.equal(engine.run('rail-and-track-wheel-size', { K: 2 }).text, 'WHEEL TOO SMALL FOR THE LOAD');
+  const cases: Array<[string, Inputs]> = [['general-purpose-acme-limits', { D: 0.25, n: 1 }], ['centralizing-acme-limits', { D: 0.25, n: 1 }], ['stub-acme-limits', { D: 0.25, n: 1 }], ['whitworth-thread-limits', { D: 0.0625, n: 2 }], ['unified-miniature-thread-limits', { D: 0.3, p: 0.4 }], ['bearing-static-equivalent-load', { type: 'angular', alpha: 10 }], ['bearing-static-equivalent-load', { Fr: 0, Fa: 0 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
 });

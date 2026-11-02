@@ -9056,6 +9056,56 @@
    "note": "Decides how many spare drives to hold for a fleet of 14 drives from their random failure rate, running hours, lead time and a 99% cover target.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "power-screws-and-linear-motion",
+   "tool": "general-purpose-acme-limits",
+   "type": "complements",
+   "note": "Gives the screw and nut limits of size for the Acme threads this chapter offers as the inch power screw form, with the extra nut allowance for multi-start leadscrews.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter names Acme threads (29°) as the inch power screw thread for leadscrews; tool applies the ASME/ANSI B1.5 general purpose Acme limit formulas, stress and shear areas and the multi-start allowance."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-fasteners-and-threads",
+   "tool": "whitworth-thread-limits",
+   "type": "complements",
+   "note": "Works out the BS 84 bolt and nut limits for the BSW and BSF threads this chapter lists on older Australian and British machinery.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lists British Standard Whitworth and Fine threads for older machinery and explains tolerance classes; tool applies the BS 84 tolerance formulas for close, medium, free and normal classes."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "inch-and-metric-conversion-on-legacy-drawings",
+   "tool": "whitworth-thread-limits",
+   "type": "complements",
+   "note": "Gives the limits of a BSW or BSF thread by its own standard, in inches with millimetre equivalents, as this chapter advises instead of converting the thread.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says legacy threads such as BSW and BSF must keep their own designation and not be converted numerically; tool gives BS 84 limits for the Whitworth thread itself, with the limits shown in millimetres."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "selecting-bearings-and-lubrication-for-reliable-machines",
+   "tool": "bearing-static-equivalent-load",
+   "type": "complements",
+   "note": "Adds the static check for bearings that stand under load or turn slowly, alongside the equivalent load and life method this chapter sets out.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter combines radial and axial loads into an equivalent load for rating life; tool gives the AFBMA static equivalent load Po = Xo Fr + Yo Fa (or Poa for thrust bearings) and the static safety factor Co ÷ Po."
+  },
+  {
+   "reados": "publication/railway-track-geometry-by-the-numbers",
+   "chapter": "the-track-as-a-structure",
+   "tool": "rail-and-track-wheel-size",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter follows a railway wheel load down through rail, sleepers and ballast; the tool applies empirical rail head and track wheel rules for handling equipment and the AREA roller load, not railway track design."
   }
  ]
 }
