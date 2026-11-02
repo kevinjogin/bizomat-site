@@ -9398,6 +9398,66 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads."
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "choosing-and-calculating-fits",
+   "tool": "iso-fit-limits-from-deviations",
+   "type": "complements",
+   "note": "Turns the fit designations this chapter teaches into limits of size from the tabulated deviations, IT values and delta values.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter teaches choosing and calculating ISO fits; tool applies the handbook procedure es/ei, ES/EI ± IT with the delta value and gives the clearance range."
+  },
+  {
+   "reados": "publication/checking-drawings-by-the-numbers",
+   "chapter": "limits-and-fits-from-the-drawings",
+   "tool": "iso-fit-limits-from-deviations",
+   "type": "complements",
+   "note": "Lets a checker confirm the limits of a hole and shaft fit on a drawing from the ISO table values.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter checks limits and fits on drawings; tool calculates the limits of both parts and the fit type from the table deviations."
+  },
+  {
+   "reados": "collection/practical-mathematics-for-engineering",
+   "chapter": "areas-volumes-and-masses-for-the-workshop",
+   "tool": "cylinder-portion-volume",
+   "type": "complements",
+   "note": "Adds the volume and surface of a cylinder cut by a sloping plane to the workshop areas and volumes in this chapter.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers workshop areas, volumes and masses of common solids; tool gives the handbook portion-of-cylinder (ungula and cut-off cylinder) formulas."
+  },
+  {
+   "reados": "collection/investment-appraisal-and-business-cases",
+   "chapter": "npv-irr-and-payback-answer-different-questions",
+   "tool": "after-tax-npv-comparison",
+   "type": "complements",
+   "note": "Works the after-tax NPV of two alternatives with the depreciation tax saving that this chapter’s NPV method leaves to the analyst.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains NPV against IRR and payback; tool applies the handbook after-tax present worth with ATDR for straight-line depreciation and gradient expenses."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "measuring-and-specifying-a-gear",
+   "tool": "spline-pin-measurement",
+   "type": "complements",
+   "note": "Applies the measurement over and between pins this chapter describes for gears to inch involute splines.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter uses measurement over pins or balls for gear tooth thickness; tool gives the handbook two-pin measurements for internal and external involute splines."
+  },
+  {
+   "reados": "publication/checking-drawings-by-the-numbers",
+   "chapter": "limits-and-fits-from-the-drawings",
+   "tool": "spline-pin-measurement",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter checks limits and fits of plain holes and shafts on drawings; spline pin measurement is a gear inspection method, not a drawing check."
   }
  ]
 }

@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1030 tools with unique ids and every previously published id kept', () => {
+test('register: 1034 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1030);
+  assert.equal(ids.length, 1034);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 836 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 840 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 836);
+  assert.equal(ids.length, 840);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -7104,4 +7104,41 @@ test('power thread basic sizes follow the alternative thread formulas', () => {
   const s = p('st'); near(s.h, 0.433 * 6, 1e-12, 'stub h = 0.433p'); near(s.E, 40 - 0.433 * 6, 1e-12, 'E = D − 0.433p'); near(s.K, 40 - 0.866 * 6, 1e-12, 'K = D − 0.866p'); near(s.F, 1.5, 1e-12, 'F = 0.25p'); near(s.G, 0.227 * 6, 1e-12, 'G = 0.227p');
   near(p('sq').h, 3, 1e-12, 'square h = 0.5p'); near(p('ms', { starts: 2 }).la, Math.atan(12 / (Math.PI * 37)) * 180 / Math.PI, 1e-9, 'lead angle of two starts');
   assert.equal(engine.run('power-thread-basic-sizes', { form: 'st', C: 0.1 }).checks.find((c: any) => c.label === 'Clearance').status, 'fail');
+});
+
+// Seventy-eighth handbook pass (handbook101): deep audit of the spline two-pin measurements, the BS ISO limits procedure,
+// the portion-of-cylinder volumes and the after-tax present worth comparison. Expected values are the handbook's examples.
+test('spline pin measurement reproduces the internal spline example', () => {
+  const s = engine.run('spline-pin-measurement', { kind: 'int', P: 3, N: 20, pa: '30', w: 0.52677, dp: 0 }).values;
+  near(s.D, 6.66667, 1e-5, 'D = 20 ÷ 3'); near(s.Db, 5.77350, 5e-5, 'Db = 5.77353'); near(s.dpin, 0.576, 1e-12, 'di = 1.7280 ÷ 3'); near(s.invA, 0.033, 5e-6, 'inv φi = 0.03300');
+  near(s.a, 25 + 46.18 / 60, 0.002, 'φi = 25° 46.18′'); near(s.sec, 1.11044, 2e-5, 'sec φi'); near(s.M, 5.8352, 2e-4, 'Mi = 5.8352 in');
+  near(engine.run('spline-pin-measurement', { pa: '45' }).values.dpin, 0.64, 1e-12, '45° internal pin 1.92 ÷ P'); near(engine.run('spline-pin-measurement', { kind: 'ext', pa: '30' }).values.dpin, 0.64, 1e-12, 'external pin 1.92 ÷ P');
+  const e = engine.run('spline-pin-measurement', { kind: 'ext', P: 3, N: 21, pa: '30', w: 0.52, dp: 0 }).values, ph = Math.PI / 6, inv = (x: number) => Math.tan(x) - x, D = 7, Db = D * Math.cos(ph);
+  near(e.invA, 0.52 / D + inv(ph) + 0.64 / Db - Math.PI / 21, 1e-12, 'external: t/D + inv φ + de/Db − π/N'); near(e.M, Db * Math.cos(Math.PI / 42) / Math.cos(e.a * Math.PI / 180) + 0.64, 1e-9, 'odd teeth over pins');
+});
+
+test('ISO limits from deviations reproduce Examples 1 to 5', () => {
+  const f = (o: Inputs) => engine.run('iso-fit-limits-from-deviations', { hk: 'H', hdev: 0, hIT: 25, hdelta: 0, sk: 'h', sdev: 0, sIT: 16, ...o }).values;
+  const e1 = f({ size: 133, sk: 'es', sdev: -14, sIT: 100 }); near(e1.Smax, 132.986, 1e-9, 'g9 upper'); near(e1.Smin, 132.886, 1e-9, 'g9 lower');
+  const e2 = f({ size: 20, hk: 'EI', hdev: 65, hIT: 4 }); near(e2.Hmax, 20.069, 1e-9, 'D3 upper'); near(e2.Hmin, 20.065, 1e-9, 'D3 lower');
+  const e3 = f({ size: 32, hk: 'ES', hdev: -9, hIT: 11, hdelta: 4 }); near(e3.ES, -5, 1e-12, 'ES = −9 + Δ4'); near(e3.Hmax, 31.995, 1e-9, 'M5 upper'); near(e3.Hmin, 31.984, 1e-9, 'M5 lower');
+  const e4 = f({ size: 40, sk: 'h', sIT: 39 }); near(e4.Smax, 40, 1e-12, 'h8 upper'); near(e4.Smin, 39.961, 1e-9, 'h8 lower');
+  const e5 = f({ size: 60, sk: 'js', sIT: 30, hk: 'Js', hIT: 30 }); near(e5.Smax, 60.015, 1e-9, 'js7 upper'); near(e5.Smin, 59.985, 1e-9, 'js7 lower'); near(e5.Hmax, 60.015, 1e-9, 'Js7 upper');
+  assert.equal(engine.run('iso-fit-limits-from-deviations', {}).text, 'INTERFERENCE FIT'); assert.equal(engine.run('iso-fit-limits-from-deviations', { sk: 'es', sdev: -25 }).text, 'CLEARANCE FIT'); assert.equal(engine.run('iso-fit-limits-from-deviations', { sk: 'js' }).text, 'TRANSITION FIT');
+});
+
+test('portion of cylinder volumes reproduce the handbook examples', () => {
+  const u = engine.run('cylinder-portion-volume', { mode: 'hoof', d: 5, h: 2, b: 0, side: 'small' }).values; near(u.V, 8.33, 0.005, 'half-circle base: 8.33 in³'); near(u.area, 9.82, 0.005, 'area ABC 9.82'); near(u.S, 10, 1e-9, 'S = 2 r h');
+  const t = engine.run('cylinder-portion-volume', { mode: 'trunc', d: 125, h1: 150, h2: 100 }).values; near(t.V / 1000, 1534, 0.5, '1534 cm³'); near(t.S / 100, 490.9, 0.05, '490.9 cm²');
+  const r = 5, b = 3, a = 4, th = Math.acos(0.6), seg = r * r * th - a * b, small = engine.run('cylinder-portion-volume', { mode: 'hoof', d: 10, h: 3, b, side: 'small' }).values;
+  near(small.V, (2 / 3 * 64 - b * seg) * 3 / (r - b), 1e-9, 'minus signs below half'); const big = engine.run('cylinder-portion-volume', { mode: 'hoof', d: 10, h: 3, b, side: 'large' }).values; near(big.V, (2 / 3 * 64 + b * (Math.PI * 25 - seg)) * 3 / (r + b), 1e-9, 'plus signs above half');
+  assert.equal(engine.run('cylinder-portion-volume', { mode: 'hoof', d: 10, b: 6 }).text, 'CHECK INPUTS');
+});
+
+test('after-tax NPV reproduces the continuous and batch process example', () => {
+  const x = engine.run('after-tax-npv-comparison', { i: 15, n: 10, TR: 40, PA: 75000, LA: 0, ARA: 25000, AEA: 5000, GA: 0, PB: 35000, LB: 0, ARB: 20000, AEB: 8000, GB: 0 });
+  near(x.values.preA, -14775, 1, 'continuous before depreciation −14,775'); near(x.values.atdrA, 15056, 1, 'ATDR 15,056'); near(x.values.NA, 281, 1, 'NPV 281');
+  near(x.values.preB, 1135, 1, 'batch 1,135'); near(x.values.atdrB, 7026, 1, 'ATDR 7,026'); near(x.values.NB, 8161, 1, 'NPV 8,161'); assert.equal(x.text, 'CHOOSE ALTERNATIVE B');
+  const g = engine.run('after-tax-npv-comparison', { GA: 100 }).values, i = 0.15, n = 10, ag = 1 / i - n / ((1 + i) ** n - 1); near(x.values.NA - g.NA, ag * 100 * 0.6 * x.values.PA, 1e-6, 'gradient through (A/G)');
+  assert.equal(engine.run('after-tax-npv-comparison', { ARA: 0, ARB: 0 }).text, 'NEITHER EARNS THE RATE');
 });
