@@ -8,7 +8,8 @@ import { SYNONYMS } from './synonyms.ts';
 export interface DTool { id: string; n: string; d: string; q: string; c: string; tp: string; k: string; p: 0 | 1 }
 export interface DBook { id: string; n: string; d: string; c: string; u: string; kind: 'publication' | 'collection' }
 /** A chapter: its URL is its id; b is the index of its book in DiscoveryIndex.books. */
-export interface DChapter { n: string; d: string; b: number; u: string }
+/** m: reading minutes; k: key terms and section headings from the chapter's text. */
+export interface DChapter { n: string; d: string; b: number; u: string; m?: number; k?: string }
 /** links: reviewed Library ↔ Tools connections as [tool id, chapter URL or book id]. */
 export interface DiscoveryIndex { v: 1; tools: DTool[]; books: DBook[]; chapters: DChapter[]; links: [string, string][] }
 export const toolHref = (t: DTool) => (t.p ? `/tools/${t.id}/` : `/tools/?tool=${t.id}`);
@@ -91,7 +92,7 @@ export function prepare(index: DiscoveryIndex): Engine {
   }
   for (const c of index.chapters) {
     const b = index.books[c.b];
-    docs.push({ kind: 'chapter', ref: c, id: c.u, group: `book:${b.id}`, bigrams: pairs(tokens(c.n)), fields: [field(c.n, FIELD_WEIGHTS.name * 0.9), field(c.d, FIELD_WEIGHTS.description), field(b.n, FIELD_WEIGHTS.book)] });
+    docs.push({ kind: 'chapter', ref: c, id: c.u, group: `book:${b.id}`, bigrams: pairs(tokens(c.n)), fields: [field(c.n, FIELD_WEIGHTS.name * 0.9), field(c.d, FIELD_WEIGHTS.description), field(b.n, FIELD_WEIGHTS.book), field(c.k ?? '', FIELD_WEIGHTS.keywords * 0.8)] });
   }
   for (const b of index.books) {
     docs.push({ kind: 'book', ref: b, id: b.id, group: `book:${b.id}`, bigrams: pairs(tokens(b.n)), fields: [field(b.n, FIELD_WEIGHTS.name), field(b.d, FIELD_WEIGHTS.description), field(b.c, FIELD_WEIGHTS.category)] });

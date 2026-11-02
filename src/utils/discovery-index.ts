@@ -5,6 +5,7 @@ import { loadWorkosTools, hasStandaloneGuide } from './workos-tools.ts';
 import { knowledgeGraph, readCatalogue } from './knowledge.ts';
 import { subcategoryLabel, topicForCategory } from './workos-topics.ts';
 import type { DiscoveryIndex } from '../lib/discovery/search.ts';
+import { outlineForUrl } from './learning-outlines.ts';
 import type { DiscoveryDetails } from '../lib/discovery/plan.ts';
 
 const clip = (s: string | undefined, n: number) => {
@@ -33,7 +34,12 @@ export function buildDiscoveryIndex(): DiscoveryIndex {
   for (const b of books.values()) {
     if (!b.published) continue;
     const bi = index.books.push({ id: b.key, n: b.title, d: clip(b.description, 200), c: b.category.charAt(0).toUpperCase() + b.category.slice(1), u: b.href, kind: b.kind }) - 1;
-    for (const c of b.chapters.values()) if (c.published) index.chapters.push({ n: c.title, d: clip(c.description, 200), b: bi, u: c.href });
+    for (const c of b.chapters.values()) {
+      if (!c.published) continue;
+      // m: reading minutes; k: the chapter's key terms and section headings, so search reaches its content.
+      const o = outlineForUrl(c.href);
+      index.chapters.push({ n: c.title, d: clip(c.description, 200), b: bi, u: c.href, ...(o ? { m: o.m, k: clip([...o.t, ...o.h].join('; '), 140) } : {}) });
+    }
   }
   // Reviewed Library ↔ Tools connections (approved, published), for "Related resources": [tool id, chapter URL or book id].
   const { books: catalogueBooks } = readCatalogue();

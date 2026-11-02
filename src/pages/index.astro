@@ -12,6 +12,7 @@ import DiscoveryBox from '../components/discovery/DiscoveryBox.astro';
 import DiscoveryExamples from '../components/discovery/DiscoveryExamples.astro';
 import DiscoveryResults from '../components/discovery/DiscoveryResults.astro';
 import '../styles/discovery.css';
+import '../styles/learning.css';
 import '../styles/library.css';
 import { SITE } from '../config/site.ts';
 import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_ORBIT } from '../config/home.ts';
@@ -62,8 +63,8 @@ const schema = [{
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
         <p class="eyebrow">Tools · Library</p>
-        <h1 id="home-title">What would you like to <em>solve</em> today?</h1>
-        <p class="home-hero__lead">Describe a problem, ask a question or tell us what you're trying to achieve. KEVOS® will help you discover the right tools, knowledge and practical solutions.</p>
+        <h1 id="home-title">What would you like to <em>learn</em> or achieve?</h1>
+        <p class="home-hero__lead">Describe a subject, ask a question or tell us what you're trying to accomplish. KEVOS will bring together relevant knowledge, practical tools and structured learning materials to create a pathway around your goals.</p>
         <DiscoveryBox />
       </div>
       <div class="home-hero__visual"><ServiceMap variant="platform" nodes={orbit} /></div>
@@ -186,7 +187,7 @@ const schema = [{
 </BaseLayout>
 
 <script>
-  // "What would you like to solve today?": discovery over the KEVOS® and the Library catalogue.
+  // "What would you like to learn or achieve?": learning paths and Ask KEVOS over the Library and Tools.
   import '../scripts/discovery.ts';
 </script>
 

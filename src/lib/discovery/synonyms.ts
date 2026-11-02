@@ -4,6 +4,11 @@
 export interface Synonym { when: string[]; add: string[] }
 
 export const SYNONYMS: Synonym[] = [
+  // Broad subjects (learning paths): the words the Library uses for them
+  { when: ['electrical engineering', 'electrical', 'electronics'], add: ['voltage', 'current', 'electric motor', 'transformer', 'power factor', 'circuit'] },
+  { when: ['mechanical engineering'], add: ['stress', 'strain', 'machine elements', 'bearing', 'shaft', 'gear'] },
+  { when: ['software development', 'software', 'programming', 'coding'], add: ['software', 'devops', 'version control', 'testing', 'cloud'] },
+  { when: ['automation', 'automate'], add: ['automation', 'robot', 'control system', 'plc'] },
   { when: ['failing', 'fails', 'failed', 'failure', 'failures', 'broke', 'breaking', 'wearing out'], add: ['failure', 'life', 'wear', 'fatigue', 'reliability'] },
   // Time lost and machine use
   { when: ['idle', 'sitting idle', 'standing idle', 'not running', 'stopped', 'stoppage', 'breakdown', 'breakdowns', 'down time'], add: ['downtime', 'utilisation', 'availability', 'loss'] },

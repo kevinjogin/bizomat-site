@@ -1,9 +1,11 @@
 // Post-release check of homepage discovery on the live site (CLAUDE.md: "check the public site, not just the build").
 //   node scripts/discovery/live-check.mjs [base-url]      (default https://kevos.com; Node 22.18+ for the .ts import)
 // Waits (up to 15 minutes) for the new homepage, then checks the key pages and markup, and asks the real
-// /api/discover a few questions with a shortlist built from the live catalogue. Prints what the AI returned.
+// /api/discover a few questions with a shortlist built from the live catalogue, then plans one learning path through
+// /api/learn/intent and /api/learn/plan. Prints what the AI returned.
 import { prepare, search, shortlist } from '../../src/lib/discovery/search.ts';
 import { buildPath } from '../../src/lib/discovery/plan.ts';
+import { gatherCandidates, localIntent } from '../../src/lib/learning/retrieve.ts';
 
 const BASE = (process.argv[2] || 'https://kevos.com').replace(/\/$/, '');
 const results = [];
@@ -15,7 +17,7 @@ const until = Date.now() + 15 * 60_000;
 let home;
 for (;;) {
   home = await get(`/?live-check=${Date.now()}`);
-  if (home.text.includes('class="home-libs"') || Date.now() > until) break;
+  if ((home.text.includes('class="home-libs"') && home.text.includes('Build My Learning Path')) || Date.now() > until) break;
   await new Promise((r) => setTimeout(r, 20_000));
 }
 check('the new homepage is live', home.status === 200 && home.text.includes('class="home-libs"'));
@@ -25,7 +27,8 @@ for (const p of ['/', '/tools/', '/reados/', '/about/', '/services/', '/contact/
   check(`${p} answers 200`, (await fetch(BASE + p)).status === 200);
 }
 const h = home.text;
-check('hero asks the question', /What would you like to <em[^>]*>solve<\/em> today\?/.test(h));
+check('hero asks the question', /What would you like to <em[^>]*>learn<\/em> or achieve\?/.test(h));
+check('Build My Learning Path button and seven example prompts', h.includes('Build My Learning Path') && (h.match(/data-discover-example/g) ?? []).length === 7);
 check('Explore Tools and Explore Library buttons', />Explore Tools</.test(h) && />Explore Library</.test(h));
 check('homepage labels say Tools and Library, not WORKOS / READOS', /<span[^>]*>01<\/span> Tools</.test(h) && /<span[^>]*>02<\/span> Library</.test(h) && !/>\s*(WORKOS|READOS)\s*</.test(h));
 check('WORKOS and READOS side by side block', /class="home-lib"[^>]*id="workos"/.test(h) && /class="home-lib"[^>]*id="reados"/.test(h));
@@ -70,6 +73,30 @@ for (const question of QUESTIONS) {
 }
 check('Workers AI answered at least one question', aiAnswers > 0, `${aiAnswers}/${QUESTIONS.length}`);
 check('Workers AI returned a usable solution path for at least half the in-scope questions', aiPaths >= Math.ceil((QUESTIONS.length - 1) / 2), `${aiPaths}/${QUESTIONS.length - 1}`);
+
+// 3. A learning path: intent, then a plan over candidates from the live catalogue (all by id, all real).
+{
+  const question = 'I want to learn manufacturing process improvement.';
+  const shard = await fetch(`${BASE}/learning/0.json`);
+  check('chapter outlines are served (/learning/0.json)', shard.status === 200 && Object.keys((await shard.json()).chapters ?? {}).length > 0);
+  const ir = await fetch(`${BASE}/api/learn/intent`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: BASE }, body: JSON.stringify({ question }) });
+  const idata = await ir.json().catch(() => ({}));
+  check('/api/learn/intent answers', ir.status === 200 && idata.ok === true, `ai=${idata.ai} subject=${idata.intent?.subject ?? ''} depth=${idata.intent?.depth ?? ''} topics=${(idata.intent?.topics ?? []).map((t) => t.name).join(' / ')}`);
+  const local = localIntent(question, engine);
+  const intent = idata.intent ? { ...idata.intent, source: 'ai', topics: idata.intent.topics?.length ? idata.intent.topics : local.topics } : local;
+  const c = gatherCandidates(engine, question, intent);
+  check('the live catalogue gives readings for the course', c.readings.length >= 6, `${c.readings.length} readings, ${c.tools.length} tools`);
+  const pr = await fetch(`${BASE}/api/learn/plan`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: BASE }, body: JSON.stringify({
+    question, depth: 'complete', intent: { subject: intent.subject, objective: intent.objective, outcome: intent.outcome, level: intent.level },
+    readings: c.readings.map((r) => ({ id: r.url, title: r.title, book: r.book, topic: r.topic, about: r.about.slice(0, 200) })),
+    tools: c.tools.map((t) => ({ id: t.id, name: t.name, about: t.about.slice(0, 180), linked: [] })),
+  }) });
+  const pdata = await pr.json().catch(() => ({}));
+  check('/api/learn/plan answers', pr.status === 200 && pdata.ok === true, `ai=${pdata.ai} title=${pdata.course?.title ?? ''} modules=${pdata.course?.modules?.length ?? 0}`);
+  const ids = new Set([...c.readings.map((r) => r.url), ...c.tools.map((t) => t.id)]);
+  const used = (pdata.course?.modules ?? []).flatMap((m) => m.lessons.flatMap((l) => [...l.reads, ...l.tools]));
+  if (pdata.ai) check('  every planned reading and tool was in the list sent', used.length > 0 && used.every((id) => ids.has(id)), `${used.length} references`);
+}
 
 const failed = results.filter((ok) => !ok).length;
 console.log(`\n${results.length - failed}/${results.length} live checks passed`);

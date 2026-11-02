@@ -30,12 +30,13 @@ export const HOME_ORBIT = [
   { verb: 'Improve', topic: 'projects-improvement', subject: 'projects' },
 ];
 
-/** Example questions under the homepage discovery box ("What would you like to solve today?"). */
+/** Example requests under the homepage box ("What would you like to learn or achieve?"). */
 export const HOME_DISCOVERY_EXAMPLES = [
-  'How do I calculate manufacturing costs?',
-  'How can I reduce machine downtime?',
-  'Help me calculate CNC machining parameters.',
-  'Where can I find engineering tolerance references?',
-  'How can I improve business productivity?',
-  'Help me understand machine operating costs.',
+  'Teach me mechanical engineering from beginner to advanced.',
+  'I want to become better at manufacturing management.',
+  'Teach me how to develop an engineering business case.',
+  'Help me understand CNC machining and manufacturing processes.',
+  'I want to learn AI, software and automation for business.',
+  'Teach me project management from fundamentals to professional application.',
+  'How can I improve factory productivity and reduce manufacturing costs?',
 ] as const;

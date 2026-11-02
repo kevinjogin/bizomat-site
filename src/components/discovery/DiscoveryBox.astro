@@ -1,25 +1,26 @@
 ---
-// "What would you like to solve today?": the question box. Without JavaScript the form is a plain site search
+// "What would you like to learn or achieve?": the question box (learning paths and Ask KEVOS). Without JavaScript the form is a plain site search
 // (/search/?q=); with it, src/scripts/discovery.ts asks /api/discover for search terms and ranks the KEVOS® and the Library
 // catalogue (/discovery-index.json) in the browser, rendering results into DiscoveryResults. The example questions are
 // DiscoveryExamples.astro, placed by the page (on the homepage, full width under the hero).
 ---
 
 <form class="dq" role="search" action="/search/" method="get" data-discover-form novalidate>
-  <label class="visually-hidden" for="discover-question">Describe a problem or ask a question</label>
+  <label class="visually-hidden" for="discover-question">Describe what you would like to learn or achieve</label>
   <div class="dq__field">
-    <textarea id="discover-question" name="q" rows="3" maxlength="500" autocomplete="off" spellcheck="true" enterkeyhint="search"
-      placeholder="Ask anything. Describe a problem or tell us what you want to achieve..." aria-describedby="discover-hint discover-status" data-discover-input></textarea>
+    <textarea id="discover-question" name="q" rows="3" maxlength="1000" autocomplete="off" spellcheck="true" enterkeyhint="search"
+      placeholder="e.g. I want to learn manufacturing process improvement from beginner to advanced, including OEE, production capacity, downtime analysis and cost reduction." aria-describedby="discover-hint discover-status" data-discover-input></textarea>
     <div class="dq__actions">
       <button class="dq__clear" type="button" aria-label="Clear the question" data-discover-clear hidden>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
       </button>
       <button class="dq__submit" type="submit" data-discover-submit>
-        <span class="dq__submit-label">Find resources</span>
+        <span class="dq__submit-label">Build My Learning Path</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
       </button>
     </div>
   </div>
-  <p class="dq__hint" id="discover-hint">Press Enter to search, Shift + Enter for a new line. Your question is used only to find resources.</p>
+  <p class="dq__support">One question. A structured pathway. Knowledge you can put into practice.</p>
+  <p class="dq__hint" id="discover-hint">Press Enter to build your path, Shift + Enter for a new line. Your question is used only to build your learning path.</p>
   <p class="dq__status" id="discover-status" role="status" aria-live="polite" data-discover-status></p>
 </form>

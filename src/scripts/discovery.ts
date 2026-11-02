@@ -4,6 +4,9 @@
 import { tokens, type Hit, type Outcome } from '../lib/discovery/search.ts';
 import { createDiscovery, VisitorError, type Intent } from '../lib/discovery/client.ts';
 import type { PathLink, SolutionPath } from '../lib/discovery/plan.ts';
+import { localIntent, type Depth, type Intent as LearnIntent } from '../lib/learning/retrieve.ts';
+import { learnIntent, VisitorError as LearnVisitorError } from '../lib/learning/client.ts';
+import { DEPTH_LABEL } from '../lib/learning/course.ts';
 
 const form = document.querySelector<HTMLFormElement>('[data-discover-form]');
 const input = document.querySelector<HTMLTextAreaElement>('[data-discover-input]');
@@ -202,29 +205,98 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     statusEl!.textContent = message;
   }
 
-  async function ask(raw: string, context = previous) {
+  // ---------- Learning paths (src/scripts/learning-ui.ts, loaded on first use) ----------
+  const title = document.getElementById('discover-title');
+  const reveal = () => {
+    results!.hidden = false;
+    results!.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+    title?.focus({ preventScroll: true });
+  };
+  const done = () => { input!.value = ''; clearBtn!.hidden = true; input!.placeholder = 'Ask a follow-up, or describe something else you want to learn...'; };
+
+  /** One concise question when essential information is missing, with the choice to build anyway. */
+  function clarifyCard(question: string, intent: LearnIntent) {
+    const block = el('article', 'dr-exchange');
+    block.append(el('p', 'dr-exchange__q', question));
+    block.append(el('p', 'dr-say', intent.clarify!));
+    const opts = el('ul', 'dr-options');
+    for (const o of intent.options ?? []) { const li = el('li'); const b = el('button', 'dq__chip', o); b.type = 'button'; b.addEventListener('click', () => ask(`${question} (${o})`, '', { skipClarify: true })); li.append(b); opts.append(li); }
+    const anyway = el('li'); const b = el('button', 'dq__chip', 'Build it anyway →'); b.type = 'button'; b.addEventListener('click', () => ask(question, '', { skipClarify: true })); anyway.append(b); opts.append(anyway);
+    block.append(opts);
+    thread!.prepend(block);
+    while (thread!.children.length > MAX_EXCHANGES) thread!.lastElementChild?.remove();
+  }
+
+  async function ask(raw: string, context = previous, opts: { skipClarify?: boolean; depth?: Depth } = {}) {
     const question = raw.replace(/\s+/g, ' ').trim();
     if (busy) return;
-    if (!question) { statusEl!.textContent = 'Please type a question or choose an example.'; input!.focus(); return; }
-    if (question.length > 500) { statusEl!.textContent = 'Please keep your question under 500 characters.'; return; }
+    if (!question) { statusEl!.textContent = 'Please describe what you would like to learn or achieve, or choose an example.'; input!.focus(); return; }
+    if (question.length > 1000) { statusEl!.textContent = 'Please keep it under 1,000 characters.'; return; }
+    setBusy(true, 'Understanding what you want to learn or achieve…');
+    let intent: LearnIntent;
+    let engine;
+    try {
+      engine = await discovery.loadEngine();
+      const local = localIntent(question, engine);
+      const ai = await learnIntent(question, context);
+      intent = ai ? { ...ai, source: 'ai', topics: ai.topics.length ? ai.topics : local.topics } : local;
+    } catch (err) {
+      setBusy(false, err instanceof LearnVisitorError ? err.message : 'Sorry, KEVOS® could not load its catalogue. Please check your connection and try again.');
+      return;
+    }
+    if (opts.depth) intent.depth = opts.depth;
+    previous = question;
+    if (intent.outOfScope) {
+      results!.hidden = false;
+      render(question, { mode: 'none', tools: [], readings: [], related: [], concepts: [], corrections: [] }, { terms: [], outOfScope: true });
+      reveal(); done();
+      setBusy(false, 'That subject is outside what KEVOS® covers.');
+      return;
+    }
+    if (intent.clarify && intent.options?.length && !opts.skipClarify) {
+      results!.hidden = false;
+      if (title) title.textContent = 'Your learning path';
+      clarifyCard(question, intent);
+      reveal(); done();
+      setBusy(false, 'One question before KEVOS® builds your path.');
+      return;
+    }
+    if (intent.depth === 'quick') { busy = false; await askQuick(question, context); return; }
+    try {
+      const [{ startCourse }, details] = await Promise.all([import('./learning-ui.ts'), discovery.loadDetails()]);
+      if (title) title.textContent = 'Your learning path';
+      const view = startCourse({
+        engine, details, track,
+        onQuick: (q) => { void askQuick(q, ''); },
+        status: (m) => { if (!busy) statusEl!.textContent = m; },
+        mount: (node) => { thread!.prepend(node); while (thread!.children.length > MAX_EXCHANGES) thread!.lastElementChild?.remove(); reveal(); },
+      }, question, intent, null);
+      done();
+      setBusy(false, view ? `Building your ${DEPTH_LABEL[intent.depth].toLowerCase()}…` : 'KEVOS® could not find Library material for this yet.');
+      if (!view) { busy = false; await askQuick(question, context); }
+    } catch {
+      setBusy(false, 'Sorry, the learning path could not be loaded. Please try again.');
+    }
+  }
+
+  /** Quick Understanding: the solution path and matching resources (the original Ask KEVOS answer). */
+  async function askQuick(raw: string, context = previous) {
+    const question = raw.replace(/\s+/g, ' ').trim().slice(0, 500);
+    if (busy) return;
+    if (title) title.textContent = 'Your resources';
     setBusy(true, 'Finding the right tools and readings…');
     // A keyword-based path appears at once; the AI-guided path replaces it when it arrives.
     let shown: HTMLElement | null = null;
-    let done = false;
-    const reveal = () => {
-      results!.hidden = false;
-      results!.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-      document.getElementById('discover-title')?.focus({ preventScroll: true });
-    };
+    let finished = false;
     const early = discovery.draft(question, context).then((d) => {
-      if (done || !d.path) return;
+      if (finished || !d.path) return;
       shown = render(question, d.outcome, null, d.path, true);
       reveal();
       statusEl!.textContent = 'Showing a first path. KEVOS® AI is tailoring the steps…';
     }).catch(() => {});
     try {
       const { outcome, intent, path } = await discovery.ask(question, context);
-      done = true;
+      finished = true;
       await early;
       const first = !shown;
       render(question, outcome, intent, path, false, shown ?? undefined);
@@ -233,11 +305,9 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       const n = outcome.tools.length + outcome.readings.length;
       setBusy(false, n ? `Found ${n} resource${n === 1 ? '' : 's'}.` : 'No matching resource found.');
       track({ type: outcome.mode === 'results' && n ? 'search' : outcome.mode === 'clarify' ? 'clarify' : 'none', terms: tokens(question).slice(0, 8) });
-      input!.value = '';
-      clearBtn!.hidden = true;
-      input!.placeholder = 'Ask a follow-up or a new question...';
+      done();
     } catch (err) {
-      done = true;
+      finished = true;
       // The first path stays on screen if the AI step is refused (rate limit) after it appeared.
       if (shown) { const p = (shown as HTMLElement).querySelector('.sp__pending'); p?.remove(); }
       const msg = err instanceof VisitorError ? err.message : 'Sorry, the resource list could not be loaded. Please check your connection and try again.';
@@ -252,9 +322,18 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   input.addEventListener('input', () => { clearBtn.hidden = !input.value; if (statusEl.textContent && !busy) statusEl.textContent = ''; });
   input.addEventListener('focus', () => { discovery.loadEngine().catch(() => {}); }, { once: true }); // warm the catalogue while the visitor types
   clearBtn.addEventListener('click', () => { input.value = ''; clearBtn.hidden = true; input.focus(); });
-  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-discover-example]')) b.addEventListener('click', () => { input.value = b.textContent ?? ''; ask(input.value, ''); });
+  // An example fills the box (it can be edited before building the path).
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-discover-example]')) b.addEventListener('click', () => {
+    input.value = b.textContent?.trim() ?? '';
+    clearBtn.hidden = !input.value;
+    previous = '';
+    input.focus();
+    input.setSelectionRange(input.value.length, input.value.length);
+    if (!busy) statusEl.textContent = 'Edit it if you like, then choose Build My Learning Path.';
+    discovery.loadEngine().catch(() => {});
+  });
   document.querySelector('[data-discover-again]')?.addEventListener('click', () => { input.focus(); input.scrollIntoView({ block: 'center' }); });
   // A link such as /?q=... (or the site search's fallback) runs the question straight away.
   const initial = new URLSearchParams(location.search).get('q');
-  if (initial) { input.value = initial.slice(0, 500); ask(input.value, ''); }
+  if (initial) { input.value = initial.slice(0, 1000); ask(input.value, ''); }
 }

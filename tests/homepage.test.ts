@@ -11,7 +11,7 @@ const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const home = read('src/pages/index.astro');
 
 test('the homepage leads with discovery, then WORKOS and READOS', () => {
-  assert.match(home, /<h1 id="home-title">What would you like to <em>solve<\/em> today\?<\/h1>/);
+  assert.match(home, /<h1 id="home-title">What would you like to <em>learn<\/em> or achieve\?<\/h1>/);
   assert.match(home, /<DiscoveryBox \/>/);
   assert.match(home, /<div class="home-hero__wide">\s*<DiscoveryExamples suggestions=\{HOME_DISCOVERY_EXAMPLES\} \/>/, 'the example questions run the full width under the hero');
   assert.ok(home.indexOf('<DiscoveryBox') < home.indexOf('data-cta="hero-workos"'), 'the question box comes first in the hero');
@@ -66,5 +66,5 @@ test('discovery is a working feature with a no-JavaScript fallback, and no plann
   assert.doesNotMatch(home, /flow__step--planned|Not yet available/);
   assert.equal(SITE.assistant.enabled, false, 'the floating assistant is retired; the discovery box replaces it');
   assert.doesNotMatch(home, /class="product"|HomeResourceVisual|home-workos-search/, 'one hero: no second product hero under it');
-  assert.equal(HOME_DISCOVERY_EXAMPLES.length, 6);
+  assert.equal(HOME_DISCOVERY_EXAMPLES.length, 7);
 });
