@@ -88,7 +88,7 @@ The individual readings show something else, which Chapter 7 explains: the machi
 
 Not every pipe runs full. CW-2's return header discharges into the open tank above the water level, and the tank's overflow and drain lines run by gravity, partly full, with air above the water. Continuity still holds, but the area in Q = A × v is the **wetted area**, the part of the bore that the water actually occupies, not the whole bore.
 
-A part-full pipe's wetted area depends on its depth of flow, and its velocity depends on its slope and roughness, not on a pump. Gravity drains are sized differently from pumped lines, and READOS's Roof Drainage by the Numbers deals with that kind of flow. In this book, every pipe runs full unless it says otherwise, and the area is the bore's.
+A part-full pipe's wetted area depends on its depth of flow, and its velocity depends on its slope and roughness, not on a pump. Gravity drains are sized differently from pumped lines, and the Library’s Roof Drainage by the Numbers deals with that kind of flow. In this book, every pipe runs full unless it says otherwise, and the area is the bore's.
 
 ## How long the water takes
 

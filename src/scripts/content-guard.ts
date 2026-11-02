@@ -14,7 +14,7 @@ const INTERACTIVE = [
   'pre', 'code', 'kbd', 'samp', 'form', 'dialog', 'output', '[aria-live]', '[data-allow-copy]',
 ].join(',');
 
-// WORKOS tools are working instruments: their inputs and results stay fully usable, menus included.
+// KEVOS® tools are working instruments: their inputs and results stay fully usable, menus included.
 const UNGUARDED_PATHS = ['/tools/'];
 
 const MEDIA = 'img, picture, svg, canvas, video, figure';

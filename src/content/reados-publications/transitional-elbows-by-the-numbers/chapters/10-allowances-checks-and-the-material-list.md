@@ -13,7 +13,7 @@ It sets out the allowances and how to add them to curved edges, gives each fitti
 
 ## Allowances
 
-Every allowance in this section is an illustration, to be replaced by the shop's own figures for its own seams, sheet and machines. READOS's [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/seams-edges-and-notches/) covers seam allowances in general; here the concern is how they are added to the patterns in this book.
+Every allowance in this section is an illustration, to be replaced by the shop's own figures for its own seams, sheet and machines. The Library’s [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/seams-edges-and-notches/) covers seam allowances in general; here the concern is how they are added to the patterns in this book.
 
 ```figure
 type: compare

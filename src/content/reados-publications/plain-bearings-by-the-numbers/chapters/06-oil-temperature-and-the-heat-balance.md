@@ -3,13 +3,13 @@ book: plain-bearings-by-the-numbers
 chapterSlug: oil-temperature-and-the-heat-balance
 order: 6
 title: "Oil temperature and the heat balance"
-description: "Find a journal bearing's running temperature where the heat its film makes equals the heat its housing sheds, check the oil there with the WORKOS tool, and compare grades."
+description: "Find a journal bearing's running temperature where the heat its film makes equals the heat its housing sheds, check the oil there with the KEVOS® tool, and compare grades."
 draft: false
 ---
 
 Every calculation in Chapters 3 to 5 needed one number before it could start: the oil's viscosity in the film. That viscosity depends on the film's temperature, and the film's temperature depends on how much heat the film makes, which depends on the viscosity. A journal bearing is a small thermal system that finds its own operating point, and the designer's job is to find it too.
 
-This chapter sets out the heat balance of FB-75's oil-ring bearings, solves it by plotting the heat made and the heat shed against temperature, checks the result with the WORKOS journal bearing oil check, compares oil grades and air temperatures, looks at how long the bearing takes to reach its balance and what alarm limits mean, and ends with a load increase that was checked at the data sheet's 40 °C instead of at the temperature the bearing would actually reach.
+This chapter sets out the heat balance of FB-75's oil-ring bearings, solves it by plotting the heat made and the heat shed against temperature, checks the result with the KEVOS® journal bearing oil check, compares oil grades and air temperatures, looks at how long the bearing takes to reach its balance and what alarm limits mean, and ends with a load increase that was checked at the data sheet's 40 °C instead of at the temperature the bearing would actually reach.
 
 ## Heat made, heat shed
 

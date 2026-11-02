@@ -27,7 +27,7 @@ Pressure and demand interact in both directions. Lower pressure reduces the air 
 
 A leak is an orifice, and air escaping through it from 750 kPa gauge is choked: its flow is proportional to the absolute pressure upstream, as the [escaping air tool](/tools/escaping-air-velocity/) shows. Lowering the system from 851.3 to 751.3 kPa absolute therefore lowers the leakage by about 11.75 per cent.
 
-This is an illustration. A leak survey on CA-1's site, using the load-time method described in READOS's [Pneumatics by the Numbers](/reados/publications/pneumatics-by-the-numbers/), estimated leakage at about 1.05 m³/min, a quarter of the plant's average 4.2 m³/min. At CA-1's average specific power of about 7.57 kW per m³/min, that is about 7.9 kW of compressor input, roughly **A$11,900 a year**, for air that does nothing.
+This is an illustration. A leak survey on CA-1's site, using the load-time method described in the Library’s [Pneumatics by the Numbers](/reados/publications/pneumatics-by-the-numbers/), estimated leakage at about 1.05 m³/min, a quarter of the plant's average 4.2 m³/min. At CA-1's average specific power of about 7.57 kW per m³/min, that is about 7.9 kW of compressor input, roughly **A$11,900 a year**, for air that does nothing.
 
 ```figure
 type: bars
@@ -42,7 +42,7 @@ caption: This is an illustration, excluding GST, at A$0.25 per kWh and CA-1's av
 - Lowering the set point 100 kPa, effect on leaks | 1401
 ```
 
-Lowering the pressure is not a substitute for fixing leaks: it trims about 12 per cent off them, while a repair programme can remove two thirds or more. The [compressed-air leak audit tool](/tools/air-leak-audit/) converts measured or estimated leaks into power and cost, and READOS's pneumatics book covers finding and tagging them.
+Lowering the pressure is not a substitute for fixing leaks: it trims about 12 per cent off them, while a repair programme can remove two thirds or more. The [compressed-air leak audit tool](/tools/air-leak-audit/) converts measured or estimated leaks into power and cost, and the Library’s pneumatics book covers finding and tagging them.
 
 ## The open blowpipe
 

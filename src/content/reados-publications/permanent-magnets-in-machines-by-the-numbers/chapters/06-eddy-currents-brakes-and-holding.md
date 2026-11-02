@@ -9,7 +9,7 @@ draft: false
 
 Wherever a magnetic field moves relative to a conductor, it induces currents in the conductor. Those eddy currents dissipate energy and push back against the motion that causes them. In a magnetic coupling's metal shell, as Chapter 5 showed, they are a loss. In an eddy-current brake they are the point: a magnet moving past a copper or aluminium plate is slowed smoothly, with no contact and no wear. And in a permanent-magnet holding brake, a magnet does a different job altogether, holding a servo axis still when the power is off.
 
-This chapter explains eddy-current drag and where it is used, works an eddy-current speed controller on a gravity conveyor, and then checks the permanent-magnet holding brake on the bagger's film-reel lift with the WORKOS holding brake sizing tool. The error is a brake used for every stop.
+This chapter explains eddy-current drag and where it is used, works an eddy-current speed controller on a gravity conveyor, and then checks the permanent-magnet holding brake on the bagger's film-reel lift with the KEVOS® holding brake sizing tool. The error is a brake used for every stop.
 
 ## Eddy currents and drag
 
@@ -71,7 +71,7 @@ For holding brakes, energy is the limit that matters most, because their frictio
 
 This is an illustration. The bagger's film reel, up to 70 kg, sits on a 15 kg carriage raised by a ball screw with a 10 mm lead, driven by a servo motor with a permanent-magnet holding brake. The load's weight, 833.6 N, produces a torque at the motor of 833.6 × 0.010 ÷ 2π = 1.33 N·m, reduced to about 1.2 N·m by the ball screw's efficiency when the load drives it backwards. The motor runs at up to 3,000 rpm; the inertia at the motor shaft, including the screw, carriage and reel, is 0.0008 kg·m². The brake is rated at 4.5 N·m, engages 0.03 s after power is removed, and its maker allows 0.2 kJ per emergency stop and 5 kJ an hour.
 
-The WORKOS [holding brake sizing tool](/tools/holding-brake-sizing/) checks a spring-applied holding brake: the kinetic energy at the motor shaft, the net decelerating torque with the load overhauling or assisting, the slip time and total stop time with the engagement delay, the stopping angle, the friction energy per stop and per hour against the brake's permissible values, the brake torque needed for a required stop time, and the holding factor on the static load torque. Its calculation is the same for a permanent-magnet brake, which also applies a torque and absorbs the energy in friction.
+The KEVOS® [holding brake sizing tool](/tools/holding-brake-sizing/) checks a spring-applied holding brake: the kinetic energy at the motor shaft, the net decelerating torque with the load overhauling or assisting, the slip time and total stop time with the engagement delay, the stopping angle, the friction energy per stop and per hour against the brake's permissible values, the brake torque needed for a required stop time, and the holding factor on the static load torque. Its calculation is the same for a permanent-magnet brake, which also applies a torque and absorbs the energy in friction.
 
 ```figure
 type: stats

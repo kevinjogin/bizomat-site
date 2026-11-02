@@ -5,7 +5,7 @@ description: "Calculate how parts, pipes, liquids and gases change with temperat
 category: Engineering
 tags: [design, manufacturing, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -76,7 +76,7 @@ All dimensions, temperatures, pressures, costs and results are invented for teac
 
 ## How to use the book
 
-Chapters 1 and 2 cover growth and its effect on measurement. Chapters 3 to 5 deal with solids that are restrained or fitted together. Chapters 6 and 7 cover liquids and gases in closed systems, and Chapter 8 machines. WORKOS calculators for several steps include [thermal growth](/tools/thermal-growth/), [thermal stress](/tools/thermal-stress/), [pipe expansion loop](/tools/pipe-expansion-loop/) and [shrink fit design](/tools/shrink-fit-design/).
+Chapters 1 and 2 cover growth and its effect on measurement. Chapters 3 to 5 deal with solids that are restrained or fitted together. Chapters 6 and 7 cover liquids and gases in closed systems, and Chapter 8 machines. KEVOS® calculators for several steps include [thermal growth](/tools/thermal-growth/), [thermal stress](/tools/thermal-stress/), [pipe expansion loop](/tools/pipe-expansion-loop/) and [shrink fit design](/tools/shrink-fit-design/).
 
 ## Source limits and professional responsibility
 

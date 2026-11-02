@@ -9,7 +9,7 @@ draft: false
 
 Chapters 5 to 8 each counted one way heat gets into CT-40. This chapter adds them up and sets the total against what the cryocooler can remove. The meeting point of the two, where the cooler's capacity equals the heat load, is the temperature the cold stage will run at, and everything else, the strap's drop, the joints, the plate's temperature and the margin for a test coil, follows from it.
 
-The chapter assembles CT-40's heat budget, finds its operating point on the cooler's curve, checks the cooler's efficiency against the Carnot limit with the WORKOS heat pump and chiller claim tool, tells how the budget was checked by measurement during commissioning, and ends with a cooler offered for a future 4 K insert whose data sheet claimed more than physics allows.
+The chapter assembles CT-40's heat budget, finds its operating point on the cooler's curve, checks the cooler's efficiency against the Carnot limit with the KEVOS® heat pump and chiller claim tool, tells how the budget was checked by measurement during commissioning, and ends with a cooler offered for a future 4 K insert whose data sheet claimed more than physics allows.
 
 ## CT-40's heat budget
 

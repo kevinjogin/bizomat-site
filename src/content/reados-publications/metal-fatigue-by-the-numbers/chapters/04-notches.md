@@ -53,7 +53,7 @@ type: formula
 title: Peterson's notch sensitivity and the fatigue notch factor
 formula: q = 1 ÷ (1 + a ÷ r)      Kf = 1 + q (Kt − 1)
 formula: for steel: a ≈ 0.0254 × (2,070 ÷ Su)^1.8 mm, with Su in MPa
-caption: q runs from 0 (no notch effect) to 1 (the full Kt). The material constant a is a characteristic length; the estimate for steel shown is the one used in the WORKOS tools. For aluminium and other alloys, use a value from data for the material.
+caption: q runs from 0 (no notch effect) to 1 (the full Kt). The material constant a is a characteristic length; the estimate for steel shown is the one used in the KEVOS® tools. For aluminium and other alloys, use a value from data for the material.
 - a | Peterson's material constant, mm
 - r | notch root radius, mm
 - q | notch sensitivity
@@ -105,7 +105,7 @@ caption: This is an illustration. Two methods that agree are much more convincin
 
 A notch also changes how the mean stress should be treated. When the peak local stress, Kf times the nominal maximum, exceeds the yield strength, the notch root yields on the first cycle. After that it unloads elastically, and the yielding leaves a compressive residual stress that lowers the local mean stress. A ductile part with a high mean stress at a notch can therefore be better off than a calculation that multiplies the mean by Kf suggests.
 
-The WORKOS tools take the simpler, conservative route: they apply Kf to both the alternating and the mean stress. For the PK-20's parts the peak local stress is well below yield, so the question does not arise, but for a highly preloaded part with a sharp notch it can, and texts such as Shigley's describe how to reduce the mean stress factor in that case. What must never be reduced is the factor on the alternating stress: yielding does not shrink the cycle.
+The KEVOS® tools take the simpler, conservative route: they apply Kf to both the alternating and the mean stress. For the PK-20's parts the peak local stress is well below yield, so the question does not arise, but for a highly preloaded part with a sharp notch it can, and texts such as Shigley's describe how to reduce the mean stress factor in that case. What must never be reduced is the factor on the alternating stress: yielding does not shrink the cycle.
 
 ## The PK-20 shoulder, radius by radius
 

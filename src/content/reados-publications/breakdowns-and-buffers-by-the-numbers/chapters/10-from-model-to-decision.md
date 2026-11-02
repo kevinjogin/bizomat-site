@@ -9,7 +9,7 @@ draft: false
 
 The models in this book exist to answer one question well: of all the things that could be done to a line, which buys the most output for the money? The answer is rarely obvious. The machine that stops most often may not be the one that costs most, a buffer may absorb exactly the stops an improvement programme targets, and a person may be worth less than a box of spare parts. A model that has been built from the line's own records and checked against its output can rank the options before any money is spent, and then check afterwards whether the chosen one delivered.
 
-This chapter prices a line-hour with the WORKOS downtime cost tool, ranks six options for the packing lines on the buffered line model, sets a replacement interval for the bagger's wear-out heaters with the preventive replacement tool, and sets out how to check predictions against results. It ends with an improvement project chosen from a Pareto chart of stop counts, which the model showed would add almost nothing.
+This chapter prices a line-hour with the KEVOS® downtime cost tool, ranks six options for the packing lines on the buffered line model, sets a replacement interval for the bagger's wear-out heaters with the preventive replacement tool, and sets out how to check predictions against results. It ends with an improvement project chosen from a Pareto chart of stop counts, which the model showed would add almost nothing.
 
 ## The price of a line-hour
 

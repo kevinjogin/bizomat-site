@@ -155,7 +155,7 @@ This is an illustration. An earlier teaching model in the same workshop, a print
 
 The cause was two unstated conditions: sustained load and heat. A scope would have asked both questions, and the answers, steel axles and a display away from the window, cost almost nothing. The lesson is that **the scope's job is to ask the questions that the workshop environment does not**, because a mechanism that works on the bench has passed only the bench test.
 
-The edited READOS chapter on [notes on prototyping](/reados/collections/product-development-and-launch/notes-on-prototyping/) discusses what a prototype is meant to learn, which is a useful frame for deciding how much scope a printed mechanism needs.
+The edited Library chapter on [notes on prototyping](/reados/collections/product-development-and-launch/notes-on-prototyping/) discusses what a prototype is meant to learn, which is a useful frame for deciding how much scope a printed mechanism needs.
 
 ## Exercise: scope a faster table
 

@@ -1,5 +1,5 @@
 /**
- * KEVOS® figure system for READOS reading pages.
+ * KEVOS® figure system for Library reading pages.
  *
  * Authors write a fenced ```figure block in Markdown; remark-kevos-figures.ts passes it here and the
  * returned HTML replaces the block at build time. Every figure is plain HTML and inline SVG styled only

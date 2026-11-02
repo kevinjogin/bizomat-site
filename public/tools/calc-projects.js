@@ -1,4 +1,4 @@
-// KEVOS® WORKOS calculations: Projects.
+// KEVOS® calculations: Projects.
 window.GOCORE_CALC_PARTS = window.GOCORE_CALC_PARTS || [];
 window.GOCORE_CALC_PARTS.push(function (id) {
   switch (id) {

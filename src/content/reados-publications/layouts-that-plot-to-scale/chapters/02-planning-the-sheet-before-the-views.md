@@ -83,7 +83,7 @@ The details go in the 123 mm column to the right of the main views. Detail A nee
 
 ## Scales a reader can use
 
-The fit test can produce any scale: the frame's views would just fit the clear area at about 1:6.8. That is not a scale anyone should use. Drawings use a short list of preferred scales, set out in AS 1100.101 and covered in READOS's *Drawings That Make Parts*, so that a reader can tell the scale at a glance, a scale rule exists for it, and views on different sheets compare directly.
+The fit test can produce any scale: the frame's views would just fit the clear area at about 1:6.8. That is not a scale anyone should use. Drawings use a short list of preferred scales, set out in AS 1100.101 and covered in the Library’s *Drawings That Make Parts*, so that a reader can tell the scale at a glance, a scale rule exists for it, and views on different sheets compare directly.
 
 The practical consequence for planning is that the fit test is run only at preferred scales. Try the largest preferred scale that might work, and step down to the next one if it does not. For the frame, 1:5 failed and 1:10 passed, so 1:10 it is, even though it leaves space unused. Unused space is not a fault on a drawing; it is room for the notes, revisions and queries that every drawing collects during its life.
 

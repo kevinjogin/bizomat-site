@@ -37,7 +37,7 @@ Suppose the tractor's motor is rated at 8 kW for short periods. The highest stea
 
 That is why tow tractors slow down on ramps, and why a site speed limit of 5 km/h on the ramp suits this tractor: it keeps the motor within its short-time rating with a little margin.
 
-Electric motors have more than one rating. A continuous rating is what the motor can deliver indefinitely without overheating; a short-time rating, such as a 60-minute or 5-minute rating, is higher. The ramp climb takes about **40 ÷ 1.389 = 28.8 s** at 5 km/h, well within any short-time rating, but a route with long or repeated climbs needs the continuous rating checked against the average power over a cycle. The motor and controller makers' rating curves govern, and the READOS chapter on [selecting electric motors and drives](/reados/collections/machine-elements-and-mechanical-design/selecting-electric-motors-and-drives/) covers duty ratings in more detail.
+Electric motors have more than one rating. A continuous rating is what the motor can deliver indefinitely without overheating; a short-time rating, such as a 60-minute or 5-minute rating, is higher. The ramp climb takes about **40 ÷ 1.389 = 28.8 s** at 5 km/h, well within any short-time rating, but a route with long or repeated climbs needs the continuous rating checked against the average power over a cycle. The motor and controller makers' rating curves govern, and the Library chapter on [selecting electric motors and drives](/reados/collections/machine-elements-and-mechanical-design/selecting-electric-motors-and-drives/) covers duty ratings in more detail.
 
 ```figure
 type: bars

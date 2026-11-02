@@ -149,7 +149,7 @@ For a fixture like the bracket's, stiffness is usually the first lever. Damping 
 
 ## Temperature moves the fixture too
 
-Deflection under load is not the only way a fixture changes shape. A fixture plate warms with the workshop through the day, with coolant temperature and with heat from the cut. Steel expands by roughly 12 millionths of its length per degree Celsius, using the same teaching coefficient as other READOS books.
+Deflection under load is not the only way a fixture changes shape. A fixture plate warms with the workshop through the day, with coolant temperature and with heat from the cut. Steel expands by roughly 12 millionths of its length per degree Celsius, using the same teaching coefficient as other Library books.
 
 This is an illustration. If the end stop sits 150 mm from the fixture's reference on the machine table, and the fixture warms by 5 °C between the first part of the morning and mid-afternoon, the stop moves by about **150 × 12 × 10⁻⁶ × 5 ≈ 0.009 mm** relative to that reference. That is almost the whole 0.010 mm deflection allocation, from temperature alone.
 

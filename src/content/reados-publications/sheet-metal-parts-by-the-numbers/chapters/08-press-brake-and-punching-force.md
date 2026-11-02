@@ -19,7 +19,7 @@ Converting each quantity to SI, with thicknesses, die opening and length in mill
 
 F ≈ 1.597 × UTS × L × t² ÷ V × method factor
 
-The constant 1.597 comes from the conversion: 575 ÷ 12 tons per inch-unit, the inch-to-millimetre factors, 60,000 psi as 413.7 MPa, and 8.896 kN per US ton. Other published metric forms of the same relationship use constants nearer 1.33; KEVOS's WORKOS [press brake force calculator](/tools/press-brake-force/) uses 1.33 by default and lets the constant be changed. The difference, about 20%, is a reminder that these are estimates of an average forming force, and that the folder's own tonnage chart for its dies is the figure to plan with.
+The constant 1.597 comes from the conversion: 575 ÷ 12 tons per inch-unit, the inch-to-millimetre factors, 60,000 psi as 413.7 MPa, and 8.896 kN per US ton. Other published metric forms of the same relationship use constants nearer 1.33; KEVOS’s [press brake force calculator](/tools/press-brake-force/) uses 1.33 by default and lets the constant be changed. The difference, about 20%, is a reminder that these are estimates of an average forming force, and that the folder's own tonnage chart for its dies is the figure to plan with.
 
 ```figure
 type: formula
@@ -77,7 +77,7 @@ It was not. The folder's smaller press brake measured and corrected bend angles 
 
 ## Punching force
 
-A turret punch or a punching die cuts a hole by shearing the sheet around the hole's whole perimeter at once. Mate Precision Technologies, a punch tooling manufacturer, publishes the standard estimate: force equals the cut perimeter times the sheet thickness times the material's shear strength. KEVOS's WORKOS [punching force calculator](/tools/punching-force/) applies the same relationship.
+A turret punch or a punching die cuts a hole by shearing the sheet around the hole's whole perimeter at once. Mate Precision Technologies, a punch tooling manufacturer, publishes the standard estimate: force equals the cut perimeter times the sheet thickness times the material's shear strength. KEVOS’s [punching force calculator](/tools/punching-force/) applies the same relationship.
 
 This is an illustration, taking the bracket's sheet to have a shear strength of 320 MPa:
 

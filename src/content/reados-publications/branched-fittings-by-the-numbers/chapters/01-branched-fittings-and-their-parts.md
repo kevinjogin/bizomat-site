@@ -20,14 +20,14 @@ Branched fittings range from the simplest to make to the smoothest to the flow.
 - A **breeches** divides the main gradually into two prongs, each of which shrinks and turns towards its own duct. The two prongs meet each other along a **crotch**, a curved line running up the middle of the fitting from the main's edge. The flow divides smoothly.
 - A **manifold** or **multi-way fitting** divides the main into three or more prongs in the same way, with a crotch between each pair of neighbours.
 
-READOS's [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/tees-and-branches/) covers tees and laterals on round pipe. This book deals with breeches and manifolds, where the prongs are not cylinders and their meeting line is not obvious.
+The Library’s [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/tees-and-branches/) covers tees and laterals on round pipe. This book deals with breeches and manifolds, where the prongs are not cylinders and their meeting line is not obvious.
 
 ```figure
 type: compare
 title: Branched fittings compared
 rowhead: Fitting
 cols: How it divides | Pattern method | Where it suits
-caption: Qualitative comparison. The ductwork effect of each is a matter for the system's design; see READOS's Ductwork by the Numbers.
+caption: Qualitative comparison. The ductwork effect of each is a matter for the system's design; see the Library’s Ductwork by the Numbers.
 - Tee | branch square on the main | cylinder intersections | low-velocity systems, tight spaces
 - Lateral or wye | branch at an angle | cylinder intersections | general ductwork
 - * Breeches | main divides into two prongs | oblique cones or triangulation | extraction and conveying, where flow should divide smoothly
@@ -47,7 +47,7 @@ The crotch is what makes branched fittings hard. Each prong's pattern ends at th
 
 ## The area rule
 
-A breeches in an extraction system is usually sized so that the air speed is about the same in the main and in the prongs, which means that the prongs' areas together roughly equal the main's. For two equal prongs, each prong's diameter is the main's divided by √2; for three, by √3. The ductwork reasoning behind the rule, and when it is broken deliberately, is in READOS's [Ductwork by the Numbers](/reados/publications/ductwork-by-the-numbers/branches-and-the-main/).
+A breeches in an extraction system is usually sized so that the air speed is about the same in the main and in the prongs, which means that the prongs' areas together roughly equal the main's. For two equal prongs, each prong's diameter is the main's divided by √2; for three, by √3. The ductwork reasoning behind the rule, and when it is broken deliberately, is in the Library’s [Ductwork by the Numbers](/reados/publications/ductwork-by-the-numbers/branches-and-the-main/).
 
 For FX-4, a Ø355 main divided into two equal prongs would need prongs of 355 ÷ √2 = 251.0 mm; the nearest standard size, Ø250, gives a combined area of 98,175 mm² against the main's 98,980 mm², 0.8% less. A Ø400 duct divided into three would need prongs of 230.9 mm; three Ø230 prongs give 124,643 mm² against 125,664 mm², again 0.8% less.
 
@@ -86,7 +86,7 @@ The **crotch** itself faces the flow differently. In a dividing fitting, the cro
 
 ## Breeches beyond ductwork
 
-The same fittings are made for gravity chutes carrying grain, stock feed, sawdust or crushed rock, where a breeches with a flap at its crotch diverts the flow to one bin or another. Chute fittings are usually heavier, in 1.6 to 3 mm sheet or plate, and their prongs are steeper so that material slides rather than piles, but their geometry is the same as a duct's. On heavy work the patterns are developed on the mean line, as READOS's Plate Work by the Numbers explains, and the crotch is often lined against wear.
+The same fittings are made for gravity chutes carrying grain, stock feed, sawdust or crushed rock, where a breeches with a flap at its crotch diverts the flow to one bin or another. Chute fittings are usually heavier, in 1.6 to 3 mm sheet or plate, and their prongs are steeper so that material slides rather than piles, but their geometry is the same as a duct's. On heavy work the patterns are developed on the mean line, as the Library’s Plate Work by the Numbers explains, and the crotch is often lined against wear.
 
 ## A tee or a breeches?
 

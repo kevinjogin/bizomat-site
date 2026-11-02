@@ -5,7 +5,7 @@ description: "Quote sheet metal jobs with numbers: scope, blanks and nesting, la
 category: Manufacturing
 tags: [manufacturing, operations, finance, sales]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

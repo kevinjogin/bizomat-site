@@ -1,7 +1,7 @@
 {
  "generated": "2026-10-29",
  "generator": "node scripts/knowledge/suggest.mjs",
- "method": "TF-IDF cosine similarity of READOS book and WORKOS tool metadata; up to 6 tools per book with score ≥ 0.12; \"weak match\" below 0.22. Suggestions are leads for review, not approved relationships.",
+ "method": "TF-IDF cosine similarity of Library book and KEVOS® tool metadata; up to 6 tools per book with score ≥ 0.12; \"weak match\" below 0.22. Suggestions are leads for review, not approved relationships.",
  "counts": {
   "books": 166,
   "tools": 837,

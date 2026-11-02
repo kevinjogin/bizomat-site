@@ -5,7 +5,7 @@ description: "Design and check oil-lubricated plain bearings: film formation, PV
 category: Engineering
 tags: [design, operations, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -76,7 +76,7 @@ A plain bearing is a shaft turning in a hole. Done well, it carries large loads 
 
 This book explains how that film forms and what it needs, and turns the explanation into the calculations used to choose and check real bearings. It covers unit load and PV, Petroff's friction, the Sommerfeld number and the film thickness it implies, clearance, the heat balance that sets the running temperature, the oil supply, thrust pads, starting and stopping, bearing materials, and the failures and vibrations that plain bearings are prone to. The physics of viscosity behind it all is the subject of a companion book, Viscosity by the Numbers.
 
-It is for mechanical, reliability and maintenance engineers, machine designers, fitters and students who know basic mechanics and fluid flow. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the WORKOS tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer. Readers who want the full theory will find it in Hamrock's public-domain NASA text, Fundamentals of Fluid Film Lubrication.
+It is for mechanical, reliability and maintenance engineers, machine designers, fitters and students who know basic mechanics and fluid flow. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer. Readers who want the full theory will find it in Hamrock's public-domain NASA text, Fundamentals of Fluid Film Lubrication.
 
 ## The running case
 

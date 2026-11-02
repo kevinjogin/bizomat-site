@@ -5,7 +5,7 @@ description: "Set up, measure and cost oxy-acetylene cutting and heating: flame 
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, finance, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-24
@@ -111,4 +111,4 @@ This book is educational. Oxy-fuel equipment stores and burns flammable and oxid
 
 ## An original treatment
 
-READOS already compares cutting processes in [Choosing a cutting process for plate and sheet](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/), which places oxy-fuel beside laser, plasma and waterjet. This book goes inside the oxy-fuel process itself. The explanations, the base-plate case, the calculations, figures and exercises are original KEVOS® writing. The 1921 paper is a public United States Government document; its methods and findings are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.
+The Library already compares cutting processes in [Choosing a cutting process for plate and sheet](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/), which places oxy-fuel beside laser, plasma and waterjet. This book goes inside the oxy-fuel process itself. The explanations, the base-plate case, the calculations, figures and exercises are original KEVOS® writing. The 1921 paper is a public United States Government document; its methods and findings are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.

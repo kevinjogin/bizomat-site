@@ -9,7 +9,7 @@ draft: false
 
 The decisions so far were about single parts. Many quality decisions are about lots: a customer receives 2,000 bushes, inspects a sample, and accepts or rejects the whole delivery on the result. Sampling inspection is cheaper than inspecting every part, and for a customer who knows little about a supplier's process, it is a sensible defence. But a sampling plan answers a narrower question than most people think it does, and both supplier and customer can draw the wrong conclusion from a lot that passes.
 
-This chapter looks at the cylinder maker's incoming inspection of BU-25 from both sides. It designs the plan with the WORKOS acceptance sampling plan tool, reads its operating characteristic with the sampling probability tool, links it to the shop's process capability with the lot acceptance tool, and asks what a sample actually tells either party when the process is already well known. The error is a supplier that let the customer's sampling plan do its inspection.
+This chapter looks at the cylinder maker's incoming inspection of BU-25 from both sides. It designs the plan with the KEVOS® acceptance sampling plan tool, reads its operating characteristic with the sampling probability tool, links it to the shop's process capability with the lot acceptance tool, and asks what a sample actually tells either party when the process is already well known. The error is a supplier that let the customer's sampling plan do its inspection.
 
 ## The customer's plan
 
@@ -30,7 +30,7 @@ x: Lot fraction defective, %
 y: Probability the lot is accepted, %
 ymin: 0
 ymax: 100
-caption: This is an illustration, from the binomial distribution, as the WORKOS sampling probability tool calculates it. The plan accepts 95.6% of lots at 1% defective and 9.9% at 5%.
+caption: This is an illustration, from the binomial distribution, as the KEVOS® sampling probability tool calculates it. The plan accepts 95.6% of lots at 1% defective and 9.9% at 5%.
 - 0.1 | 100.0
 - 0.5 | 99.5
 - 1 | 95.6
@@ -55,7 +55,7 @@ cols: Fraction defective in the lot | Probability the lot is accepted | Defectiv
 rowhead: What the shop ships
 - Lots straight from the lathe, no inspection | 0.776%, from capability | 98.0% | about 15.2
 - * Lots after the shop's 100% inspection | about 0.055%, gauge and camera escapes | more than 99.99% | about 1.1
-caption: This is an illustration. The first row is from the WORKOS lot acceptance tool with mean 25.0125 mm, standard deviation 0.0035 mm and limits 25.000 to 25.021 mm. The second uses Chapter 3's 0.34 bore escapes and Chapter 7's 0.76 chatter escapes per 2,000.
+caption: This is an illustration. The first row is from the KEVOS® lot acceptance tool with mean 25.0125 mm, standard deviation 0.0035 mm and limits 25.000 to 25.021 mm. The second uses Chapter 3's 0.34 bore escapes and Chapter 7's 0.76 chatter escapes per 2,000.
 ```
 
 The first row is the striking one. Uninspected bushes, with 0.78% out of tolerance, would pass the customer's plan 98% of the time. The tool reports that such lots will pass, since 98% exceeds a required 95%. The plan was designed to accept lots at up to 1% defective, and 0.78% is within that. Passing the customer's sampling does not mean the bushes are good; it means they are not much worse than 1%.

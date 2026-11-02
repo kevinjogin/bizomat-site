@@ -5,7 +5,7 @@ description: "Fight wear with weld deposits: how surfaces wear, building up vers
 category: Manufacturing
 tags: [manufacturing, operations, quality, process-improvement, finance]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -74,4 +74,4 @@ This book is educational. Hardfacing alloys, preheats and procedures must follow
 
 ## An original treatment
 
-READOS covers rebuilding worn shafts and gears in Machine Part Repairs by the Numbers, and the weldability of steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the workshop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers rebuilding worn shafts and gears in Machine Part Repairs by the Numbers, and the weldability of steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the workshop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.

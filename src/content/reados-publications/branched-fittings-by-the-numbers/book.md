@@ -5,7 +5,7 @@ description: "Develop branched sheet metal fittings with numbers: oblique cones 
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -65,7 +65,7 @@ A duct that must serve two machines, a chute that must feed two bins, a manifold
 
 This book develops them with numbers. It starts with the oblique cone, which is the building block of most branched fittings, and its frustum. It then develops two-pronged fittings with parallel ends, prongs at an angle, unequal prongs, prongs at different angles and fittings with three prongs, and ends with a round pipe joining an oblique cone and with making and checking the set. Along the way it proves a useful result: when every prong of a fitting is a cone standing on the main's circle, every crotch lies in a plane, and the hardest line in the fitting can be found exactly. Each chapter calculates with one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for sheet metal workers, ductwork and chute fabricators, apprentices and drafters, and for engineers who check branched fittings. It assumes school algebra and trigonometry and the basics of pattern development. READOS's Sheet Metal Patterns by the Numbers covers tees and branches on round pipe, and Transitional Elbows by the Numbers covers the coordinate method and true lengths in more detail.
+It is for sheet metal workers, ductwork and chute fabricators, apprentices and drafters, and for engineers who check branched fittings. It assumes school algebra and trigonometry and the basics of pattern development. The Library’s Sheet Metal Patterns by the Numbers covers tees and branches on round pipe, and Transitional Elbows by the Numbers covers the coordinate method and true lengths in more detail.
 
 ## The running case
 

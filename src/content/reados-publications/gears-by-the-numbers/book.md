@@ -5,7 +5,7 @@ description: "Work through one spur gear pair from ratio and geometry to contact
 category: Engineering
 tags: [design, manufacturing, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-23
@@ -69,6 +69,6 @@ Every calculation is shown in full and was checked independently. The strength c
 
 ## An original quantitative companion
 
-READOS already covers selecting gearboxes and geared motors, bearings, shafts and couplings in the [Machine Elements and Mechanical Design](/reados/collections/machine-elements-and-mechanical-design/) collection. This book is the geometry and calculation companion for anyone who needs to work inside the gear rather than choose the box around it.
+The Library already covers selecting gearboxes and geared motors, bearings, shafts and couplings in the [Machine Elements and Mechanical Design](/reados/collections/machine-elements-and-mechanical-design/) collection. This book is the geometry and calculation companion for anyone who needs to work inside the gear rather than choose the box around it.
 
 The explanations, the conveyor case and all worked examples are original KEVOS® writing, derived from standard involute relationships. Machinery's Handbook's gearing coverage helped identify the gap, and published references are cited for the strength and measurement methods. No tables, figures or text from any source are reproduced. Use your gear supplier's data and the applicable standards for real designs.

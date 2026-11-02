@@ -3,6 +3,7 @@
 // entry; nothing is stored in the browser.
 import { tokens, type Hit, type Outcome } from '../lib/discovery/search.ts';
 import { createDiscovery, VisitorError, type Intent } from '../lib/discovery/client.ts';
+import type { PathLink, SolutionPath } from '../lib/discovery/plan.ts';
 
 const form = document.querySelector<HTMLFormElement>('[data-discover-form]');
 const input = document.querySelector<HTMLTextAreaElement>('[data-discover-input]');
@@ -81,7 +82,78 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     return ul;
   }
 
-  function render(question: string, outcome: Outcome, intent: Intent | null) {
+  // ---------- Your Solution Path ----------
+  const pathLink = (l: PathLink) => {
+    const a = link(l.url, l.title);
+    a.addEventListener('click', () => track({ type: 'click', kind: l.kind, id: l.kind === 'tool' ? (l.app ?? '').replace('/tools/?tool=', '') : l.url }));
+    return a;
+  };
+  function row(dl: HTMLElement, label: string, body: Node | string, source?: string) {
+    dl.append(el('dt', 'sp__label', label));
+    const dd = el('dd', 'sp__value');
+    dd.append(body);
+    if (source) dd.append(el('span', 'sp__src', source));
+    dl.append(dd);
+  }
+  function linkList(links: PathLink[], tools = false): HTMLElement {
+    const ul = el('ul', 'sp__links');
+    for (const l of links) {
+      const li = el('li');
+      li.append(pathLink(l));
+      if (l.context) li.append(el('span', 'sp__ctx', ` · ${l.context}`));
+      if (l.verified) li.append(el('span', 'sp__tag', 'verified link to this tool'));
+      if (tools && l.app) { const open = link(l.app, 'Open tool →', 'sp__open'); open.addEventListener('click', () => track({ type: 'click', kind: 'tool', id: (l.app ?? '').replace('/tools/?tool=', '') })); li.append(' ', open); }
+      ul.append(li);
+    }
+    return ul;
+  }
+  const plainList = (items: string[]) => { const ul = el('ul', 'sp__items'); for (const t of items) ul.append(el('li', undefined, t)); return ul; };
+
+  function pathSection(path: SolutionPath, objective: string | undefined, pending: boolean): HTMLElement {
+    const sec = el('section', 'sp');
+    sec.setAttribute('aria-label', 'Your Solution Path');
+    const head = el('div', 'sp__head');
+    head.append(el('h3', 'sp__title', 'Your Solution Path'));
+    const meta = el('p', 'sp__meta');
+    meta.append(el('span', 'sp__type', path.typeLabel), ' ', el('span', 'sp__by', path.source === 'ai' ? 'Steps suggested by KEVOS® AI' : 'Steps from the KEVOS® workflow for this type of question'));
+    head.append(meta);
+    sec.append(head);
+    if (objective) { const p = el('p', 'sp__objective'); p.append(el('strong', undefined, 'Your objective: '), objective.charAt(0).toUpperCase() + objective.slice(1) + '.'); sec.append(p); }
+    if (pending) sec.append(el('p', 'sp__pending', 'KEVOS® AI is tailoring these steps to your question…'));
+    if (path.missing.length) {
+      const box = el('div', 'sp__missing');
+      box.append(el('p', 'sp__boxtitle', 'To tailor this path, it would help to know:'), plainList(path.missing));
+      box.append(el('p', 'sp__hint', 'Add these details in a follow-up question.'));
+      sec.append(box);
+    }
+    const ol = el('ol', 'sp__steps');
+    path.steps.forEach((s, i) => {
+      const li = el('li', 'sp__step');
+      li.append(el('h4', 'sp__do', `Step ${i + 1}: ${s.do}`));
+      const dl = el('dl', 'sp__grid');
+      if (s.why) row(dl, 'Why it matters', s.why);
+      if (s.reads.length) row(dl, 'What to read', linkList(s.reads));
+      if (s.tools.length) row(dl, 'Which tool to use', linkList(s.tools, true));
+      if (s.inputs.length) row(dl, s.inputsFrom === 'tool' ? 'Required inputs' : 'Information to gather', s.inputsMore ? (() => { const ul = plainList(s.inputs); ul.append(el('li', 'sp__more', `and ${s.inputsMore} more in the tool`)); return ul; })() : plainList(s.inputs), s.inputsFrom === 'tool' ? 'from the tool' : 'suggested');
+      if (s.output.length) row(dl, 'Expected output', plainList(s.output), 'from the tool');
+      if (s.checkFact || s.checkTip) {
+        const box = el('div');
+        if (s.checkFact) { const p = el('p', 'sp__check'); p.append(s.checkFact, el('span', 'sp__src', 'from the tool guide')); box.append(p); }
+        if (s.checkTip) { const p = el('p', 'sp__check'); p.append(s.checkTip, el('span', 'sp__src', 'suggested')); box.append(p); }
+        row(dl, 'How to check the result', box);
+      }
+      li.append(dl);
+      if (s.gap) li.append(el('p', 'sp__gap', s.gap));
+      ol.append(li);
+    });
+    sec.append(ol);
+    if (path.assumptions.length) { const box = el('div', 'sp__assume'); box.append(el('p', 'sp__boxtitle', 'Assumptions (check these apply to you)'), plainList(path.assumptions)); sec.append(box); }
+    const out = el('p', 'sp__outcome'); out.append(el('strong', undefined, 'Expected outcome: '), path.outcome); sec.append(out);
+    sec.append(el('p', 'sp__legend', 'Inputs, outputs and checks marked “from the tool” come from the tools themselves; the steps and their order are recommendations. KEVOS® AI never calculates: every number comes from a tool when you run it.'));
+    return sec;
+  }
+
+  function render(question: string, outcome: Outcome, intent: Intent | null, path: SolutionPath | null = null, pending = false, replace?: HTMLElement): HTMLElement {
     const block = el('article', 'dr-exchange');
     block.append(el('p', 'dr-exchange__q', question));
     const say = el('div', 'dr-exchange__a');
@@ -106,6 +178,8 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     }
     if (outcome.corrections.length) say.append(el('p', 'dr-say dr-say--sub', `Searched for ${outcome.corrections.map((c) => `“${c.to}” (you typed “${c.from}”)`).join(', ')}.`));
     block.append(say);
+    if (path) block.append(pathSection(path, intent?.summary, pending));
+    if (path) block.append(el('h3', 'dr-all', 'All matching resources'));
     const limit = outcome.mode === 'clarify' || intent?.clarify ? 3 : 5;
     for (const g of [group('Recommended tools', outcome.tools.slice(0, limit)), group('Knowledge and references', outcome.readings.slice(0, limit)), group(hasResults ? 'Related resources' : 'Closest resources', outcome.related, true)]) if (g) block.append(g);
     if (outcome.mode === 'none' || !hasResults) {
@@ -113,8 +187,10 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       suggest.append(link('/contact/', 'Suggest a new tool or topic →'));
       block.append(suggest);
     }
-    thread!.prepend(block);
+    if (replace?.isConnected) replace.replaceWith(block);
+    else thread!.prepend(block);
     while (thread!.children.length > MAX_EXCHANGES) thread!.lastElementChild?.remove();
+    return block;
   }
 
   // ---------- Asking ----------
@@ -132,10 +208,27 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     if (!question) { statusEl!.textContent = 'Please type a question or choose an example.'; input!.focus(); return; }
     if (question.length > 500) { statusEl!.textContent = 'Please keep your question under 500 characters.'; return; }
     setBusy(true, 'Finding the right tools and readings…');
-    try {
-      const { outcome, intent } = await discovery.ask(question, context);
+    // A keyword-based path appears at once; the AI-guided path replaces it when it arrives.
+    let shown: HTMLElement | null = null;
+    let done = false;
+    const reveal = () => {
       results!.hidden = false;
-      render(question, outcome, intent);
+      results!.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+      document.getElementById('discover-title')?.focus({ preventScroll: true });
+    };
+    const early = discovery.draft(question, context).then((d) => {
+      if (done || !d.path) return;
+      shown = render(question, d.outcome, null, d.path, true);
+      reveal();
+      statusEl!.textContent = 'Showing a first path. KEVOS® AI is tailoring the steps…';
+    }).catch(() => {});
+    try {
+      const { outcome, intent, path } = await discovery.ask(question, context);
+      done = true;
+      await early;
+      const first = !shown;
+      render(question, outcome, intent, path, false, shown ?? undefined);
+      if (first) reveal();
       previous = question;
       const n = outcome.tools.length + outcome.readings.length;
       setBusy(false, n ? `Found ${n} resource${n === 1 ? '' : 's'}.` : 'No matching resource found.');
@@ -143,9 +236,10 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       input!.value = '';
       clearBtn!.hidden = true;
       input!.placeholder = 'Ask a follow-up or a new question...';
-      results!.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
-      document.getElementById('discover-title')?.focus({ preventScroll: true });
     } catch (err) {
+      done = true;
+      // The first path stays on screen if the AI step is refused (rate limit) after it appeared.
+      if (shown) { const p = (shown as HTMLElement).querySelector('.sp__pending'); p?.remove(); }
       const msg = err instanceof VisitorError ? err.message : 'Sorry, the resource list could not be loaded. Please check your connection and try again.';
       setBusy(false, msg);
     }

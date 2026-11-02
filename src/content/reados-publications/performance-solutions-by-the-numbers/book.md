@@ -5,7 +5,7 @@ description: "Follow one mezzanine stair through the NCC's Performance Solution 
 category: Engineering
 tags: [design, validation, quality, projects, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -68,7 +68,7 @@ This is an illustration. A precision-engineering business is fitting out a singl
 
 With shelving on the mezzanine, the farthest point is about 28 m from the top of that stair, measured along the aisles. The Deemed-to-Satisfy limit is 20 m. Moving the stair to the middle of the mezzanine's south edge complies, at about 18.5 m. The owner asks whether the east-end stair can be kept with a Performance Solution. The chapters follow that question from the first reading of the Performance Requirement to a final report with conditions.
 
-The same building is the running case of the companion READOS book on building approval for factory projects, where the Deemed-to-Satisfy answer was chosen. This book shows what the other path involves.
+The same building is the running case of the companion Library book on building approval for factory projects, where the Deemed-to-Satisfy answer was chosen. This book shows what the other path involves.
 
 ## Source limits and professional responsibility
 

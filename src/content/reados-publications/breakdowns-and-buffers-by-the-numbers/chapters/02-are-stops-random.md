@@ -9,7 +9,7 @@ draft: false
 
 Chapter 1 assumed that the bagger stops at a constant rate and restarts at a constant rate. That assumption is what makes the model Markov, and everything later in this book rests on it. It is also testable. A machine whose stops arrive at random produces stop counts per shift that follow a Poisson distribution, intervals between stops that follow an exponential distribution, and no pattern linked to the time of day, the operator or the age of a part. A log can be checked against each of those in an afternoon.
 
-This chapter sets out what randomness looks like in a stoppage log, checks the bagger's counts per shift against the Poisson distribution and with the WORKOS c chart tool, looks at its intervals and repair times, and shows how a part that wears out breaks the assumption. It ends with a rate inflated by one bad shift that would have overstated every later calculation by 18%.
+This chapter sets out what randomness looks like in a stoppage log, checks the bagger's counts per shift against the Poisson distribution and with the KEVOS® c chart tool, looks at its intervals and repair times, and shows how a part that wears out breaks the assumption. It ends with a rate inflated by one bad shift that would have overstated every later calculation by 18%.
 
 ## What a random stream looks like
 

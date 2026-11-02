@@ -5,7 +5,7 @@ description: "Repair machine parts with numbers: repair or replace, reading the 
 category: Engineering
 tags: [manufacturing, design, quality, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -75,4 +75,4 @@ This book is educational. Repairs to parts whose failure could injure people, in
 
 ## An original treatment
 
-READOS covers weld repairs to steel plate and pressure equipment in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), gear geometry and strength in Gears by the Numbers, and the weldability of cast iron and steels in Weldability by the Numbers; this book applies them to machine parts and links to them rather than repeating them. The explanations, the repairer's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their methods are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers weld repairs to steel plate and pressure equipment in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), gear geometry and strength in Gears by the Numbers, and the weldability of cast iron and steels in Weldability by the Numbers; this book applies them to machine parts and links to them rather than repeating them. The explanations, the repairer's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their methods are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

@@ -107,7 +107,7 @@ Readings taken at other conditions are compared with the expected figures for th
 
 ## CH-30's fault signatures
 
-The earlier chapters each found a fault through its numbers. Gathered together, they form a diagnostic table for CH-30. READOS's Heat Pumps and Refrigeration by the Numbers gives a general table of [common refrigeration faults and their signs](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/the-vapour-compression-cycle/); the figures below are the specific values this book calculated for CH-30.
+The earlier chapters each found a fault through its numbers. Gathered together, they form a diagnostic table for CH-30. The Library’s Heat Pumps and Refrigeration by the Numbers gives a general table of [common refrigeration faults and their signs](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/the-vapour-compression-cycle/); the figures below are the specific values this book calculated for CH-30.
 
 ```figure
 type: compare
@@ -136,7 +136,7 @@ Most faults on a chiller of CH-30's size are found this way, by an owner who kno
 
 ## Who may work on the refrigerant circuit
 
-Reading gauges that are permanently fitted, and logging temperatures and power, are owner's tasks. Connecting service gauges, adding or recovering refrigerant, and opening the circuit are work on a refrigerant circuit, and in Australia that work is done by people holding a refrigerant handling licence, working for a business with a refrigerant trading authorisation, under the scheme the Australian Refrigeration Council administers. READOS's chapter on [refrigerants, rules and safety](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/refrigerants-rules-and-safety/) sets out the owner's obligations and the safety classes of refrigerants. The owner's part is to know what normal looks like, to notice when the numbers drift, and to call a licensed technician with the readings in hand.
+Reading gauges that are permanently fitted, and logging temperatures and power, are owner's tasks. Connecting service gauges, adding or recovering refrigerant, and opening the circuit are work on a refrigerant circuit, and in Australia that work is done by people holding a refrigerant handling licence, working for a business with a refrigerant trading authorisation, under the scheme the Australian Refrigeration Council administers. The Library’s chapter on [refrigerants, rules and safety](/reados/publications/heat-pumps-and-refrigeration-by-the-numbers/refrigerants-rules-and-safety/) sets out the owner's obligations and the safety classes of refrigerants. The owner's part is to know what normal looks like, to notice when the numbers drift, and to call a licensed technician with the readings in hand.
 
 ## The error: a cool-day test
 

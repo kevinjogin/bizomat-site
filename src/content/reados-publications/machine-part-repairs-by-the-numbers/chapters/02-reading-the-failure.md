@@ -79,7 +79,7 @@ Worn parts tell their own story.
 - **Corrosion** leaves pits and general metal loss, and corrosion pits make excellent starting points for fatigue cracks.
 - **Spun bearings**, where a bearing's inner or outer ring has rotated on its seat, leave a polished, worn and often discoloured journal or bore; the causes include a fit that was too loose, a seized bearing or overheating.
 
-Each kind of wear has a cause, and the repair should remove it as well as restoring the worn surface. READOS explains how bearings and their fits on shafts and in housings are chosen in [Selecting bearings and lubrication for reliable machines](/reados/collections/machine-elements-and-mechanical-design/selecting-bearings-and-lubrication-for-reliable-machines/).
+Each kind of wear has a cause, and the repair should remove it as well as restoring the worn surface. The Library explains how bearings and their fits on shafts and in housings are chosen in [Selecting bearings and lubrication for reliable machines](/reados/collections/machine-elements-and-mechanical-design/selecting-bearings-and-lubrication-for-reliable-machines/).
 
 ## The running case: the auger drive shaft
 

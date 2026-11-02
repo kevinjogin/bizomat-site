@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: callen. What each input means, how to get it right and which figure explains it.
+// KEVOS® Tools input guides: callen. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-callen.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   'liquid-throttling-temperature-rise': {

@@ -65,7 +65,7 @@ This is an illustration only, with round numbers rather than data for any partic
 
 ## Pipe gains
 
-The 1.0 kW of heat gained by CH-30's pipework is worth a moment, because it is the one part of the load that can be cut cheaply. Heat leaks into chilled-water pipes through their walls in proportion to the difference between the factory air and the water, and to the pipes' surface area, and inversely to the thermal resistance of their insulation. READOS's Heat Transfer by the Numbers works through pipe insulation in detail. For CH-30, insulating the uninsulated return runs halved the measured pipe gains, and the same insulation also stopped condensation dripping from the cold pipes on humid days, which had been rusting the steel above the moulding machines.
+The 1.0 kW of heat gained by CH-30's pipework is worth a moment, because it is the one part of the load that can be cut cheaply. Heat leaks into chilled-water pipes through their walls in proportion to the difference between the factory air and the water, and to the pipes' surface area, and inversely to the thermal resistance of their insulation. The Library’s Heat Transfer by the Numbers works through pipe insulation in detail. For CH-30, insulating the uninsulated return runs halved the measured pipe gains, and the same insulation also stopped condensation dripping from the cold pipes on humid days, which had been rusting the steel above the moulding machines.
 
 ## Water, glycol and freezing
 

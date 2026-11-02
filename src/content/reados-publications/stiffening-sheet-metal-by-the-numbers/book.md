@@ -5,7 +5,7 @@ description: "Make thin sheet metal panels stiff, flat and quiet with numbers: p
 category: Engineering
 tags: [design, manufacturing, product-development, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

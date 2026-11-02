@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: handbook47. What each input means, how to get it right and which figure explains it.
+// KEVOS® Tools input guides: handbook47. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-handbook47.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   'melt-furnace-batch-plan': {

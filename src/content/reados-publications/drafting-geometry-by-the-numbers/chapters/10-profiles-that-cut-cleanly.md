@@ -27,7 +27,7 @@ s = R × (1 − cos(θ ÷ 2)) ≈ c² ÷ (8R)
 
 where θ is the angle each chord subtends and c is its length. Turned round, the longest chord that keeps within a tolerance t is c = 2√(2Rt − t²), and the largest angle per chord is 2 × arccos(1 − t ÷ R).
 
-Two consequences follow. Small radii need many more segments per degree than large ones, because the sagitta grows as the radius shrinks. And for a given tolerance, the number of segments in a full circle depends on the radius: a Ø9 hole held to 0.01 mm needs 48 chords, the Ø60 bore 122. The cutting software's export or import tolerance decides which. The WORKOS [CNC chord error calculator](/tools/cnc-chord-error/) gives the same relationship for toolpaths.
+Two consequences follow. Small radii need many more segments per degree than large ones, because the sagitta grows as the radius shrinks. And for a given tolerance, the number of segments in a full circle depends on the radius: a Ø9 hole held to 0.01 mm needs 48 chords, the Ø60 bore 122. The cutting software's export or import tolerance decides which. The KEVOS® [CNC chord error calculator](/tools/cnc-chord-error/) gives the same relationship for toolpaths.
 
 ```figure
 type: formula

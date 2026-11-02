@@ -9,7 +9,7 @@ draft: false
 
 The test head in Chapter 1 seals with an O-ring and clamps metal to metal, so its bolts only have to keep two steel faces together. A gasketed joint is different. Its seal is a soft layer between the faces, and the bolts must first squeeze that layer hard enough to make it flow into the faces' roughness, and then keep enough squeeze on it, with pressure trying to push the faces apart, that it stays sealed. The bolts' job is to the gasket as much as to the joint, and the gasket's properties, not the pressure alone, often decide how many bolts are needed.
 
-This chapter checks the bolting of the CT-1's return-line filter housing cover with the WORKOS gasketed flange bolt load check, which follows the widely used ASME approach, and compares it with an old empirical rule for bolts in packed joints from the handbook. Its mistake is a gasket upgrade that the bolts could not seat.
+This chapter checks the bolting of the CT-1's return-line filter housing cover with the KEVOS® gasketed flange bolt load check, which follows the widely used ASME approach, and compares it with an old empirical rule for bolts in packed joints from the handbook. Its mistake is a gasket upgrade that the bolts could not seat.
 
 ## The filter housing
 

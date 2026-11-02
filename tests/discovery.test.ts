@@ -241,8 +241,8 @@ test('the AI picks from a shortlist of real catalogue entries, by number only', 
   const data = await (await handleDiscover(req({ question: 'How much money am I losing when my machine is sitting idle?', candidates }), { AI: ai })).json();
   assert.deepEqual(data.intent.picks, ['/reados/x/y/', 'downtime-cost', 'oee'], 'numbers map to the shortlist in order; repeats and out-of-range numbers are dropped');
   const prompt = ai.calls[0].input.messages[1].content as string;
-  assert.match(prompt, /1\. WORKOS tool: Downtime Cost \(What does an hour of stoppage cost\?\)/);
-  assert.match(prompt, /3\. READOS chapter: Counting the cost of stoppages/);
+  assert.match(prompt, /1\. KEVOS® tool: Downtime Cost \(What does an hour of stoppage cost\?\)/);
+  assert.match(prompt, /3\. Library chapter: Counting the cost of stoppages/);
   assert.doesNotMatch(prompt, /Dropped/, 'malformed candidates never reach the model');
   assert.match(SYSTEM_PROMPT, /Use only numbers from the list/);
   // Without a shortlist, numbers mean nothing.

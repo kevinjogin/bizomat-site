@@ -1,0 +1,13 @@
+---
+// Example questions for the discovery box (DiscoveryBox.astro). src/scripts/discovery.ts runs one when it is chosen
+// ([data-discover-example]), wherever the page places this list.
+interface Props { suggestions: readonly string[] }
+const { suggestions } = Astro.props;
+---
+
+<div class="dq__examples">
+  <p class="dq__examples-label" id="discover-examples">Try asking</p>
+  <ul aria-labelledby="discover-examples">
+    {suggestions.map((s) => <li><button type="button" class="dq__chip" data-discover-example>{s}</button></li>)}
+  </ul>
+</div>

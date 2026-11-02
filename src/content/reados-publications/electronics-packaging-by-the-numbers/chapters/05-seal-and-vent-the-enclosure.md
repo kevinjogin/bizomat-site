@@ -102,7 +102,7 @@ Blind holes in the casting, such as the tapped holes for the board standoffs, mu
 
 The lid and base expand at different rates. Polycarbonate's coefficient of linear expansion is roughly three times aluminium's, taken here as **65 × 10⁻⁶ /K** and **23 × 10⁻⁶ /K**, both typical values. Over the 110 mm length and a temperature change of 60 K, from a cold morning to a hot afternoon, the difference in growth is **110 × 60 × (65 − 23) × 10⁻⁶ ≈ 0.28 mm**.
 
-The screw holes in the lid must allow that movement without forcing the lid to buckle, and the gasket must tolerate the lid sliding slightly across it. The gearbox monitor's lid holes are 0.5 mm larger in diameter than the screws, and the screws are shouldered so that their torque clamps against a metal shoulder rather than crushing the polycarbonate. The WORKOS [Thermal Stress and Movement in Plastic–Metal Assemblies](/tools/plastic-thermal-mismatch/) calculator checks the same effect for other materials and lengths.
+The screw holes in the lid must allow that movement without forcing the lid to buckle, and the gasket must tolerate the lid sliding slightly across it. The gearbox monitor's lid holes are 0.5 mm larger in diameter than the screws, and the screws are shouldered so that their torque clamps against a metal shoulder rather than crushing the polycarbonate. The KEVOS® [Thermal Stress and Movement in Plastic–Metal Assemblies](/tools/plastic-thermal-mismatch/) calculator checks the same effect for other materials and lengths.
 
 ## A failure case: the box that passed and then leaked
 

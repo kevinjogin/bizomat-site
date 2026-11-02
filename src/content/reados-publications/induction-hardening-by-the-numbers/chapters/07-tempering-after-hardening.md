@@ -9,7 +9,7 @@ draft: false
 
 Fresh martensite is hard, but it is also brittle and highly stressed. Left as quenched, an induction-hardened case can crack under a modest impact, and in some steels and shapes it can crack by itself, hours after the quench, as stresses redistribute. Tempering, a gentle reheat to a low temperature, relieves part of those stresses and makes the martensite tougher at the cost of a little hardness. For the IH-40, tempering is a short, cheap step, but it must be done, done promptly and done in an oven big enough to keep up with the induction machine.
 
-This chapter explains what tempering does, how time and temperature can be traded against each other, plans the tempering oven's load and throughput with a WORKOS tool, and works through a batch of shafts left untempered over a weekend.
+This chapter explains what tempering does, how time and temperature can be traded against each other, plans the tempering oven's load and throughput with a KEVOS® tool, and works through a batch of shafts left untempered over a weekend.
 
 ## What tempering does
 
@@ -68,7 +68,7 @@ Cracks in a hardened case are usually too fine to see. Magnetic particle testing
 
 ## Planning the tempering oven
 
-The WORKOS [Heat-treatment furnace load plan](/tools/furnace-heat-treat-plan/) tool estimates a furnace or oven cycle. From the work mass and the basket's mass, a mean specific heat, the start and set temperatures, the input power, the share of it reaching the load while heating, the standing heat loss at temperature, the soak time and the energy price, it gives the heat into the load, the heat-up time, the cycle time, the energy and cost per load and per kilogram of work, and the basket's share of the heat. Its guide notes that the real heat-up slows as the load approaches set temperature, and that soak times come from the specification for the section size.
+The KEVOS® [Heat-treatment furnace load plan](/tools/furnace-heat-treat-plan/) tool estimates a furnace or oven cycle. From the work mass and the basket's mass, a mean specific heat, the start and set temperatures, the input power, the share of it reaching the load while heating, the standing heat loss at temperature, the soak time and the energy price, it gives the heat into the load, the heat-up time, the cycle time, the energy and cost per load and per kilogram of work, and the basket's share of the heat. Its guide notes that the real heat-up slows as the load approaches set temperature, and that soak times come from the specification for the section size.
 
 This is an illustration. The IH-40's tempering oven is a 30 kW electric air-circulation oven. A basket holds 100 shafts, 395 kg, and weighs 80 kg itself. Over the range from 20 to 180 °C the manufacturer uses a mean specific heat of 0.48 kJ/(kg·K) for steel, a heating efficiency of 60% and a standing loss of 2 kW.
 

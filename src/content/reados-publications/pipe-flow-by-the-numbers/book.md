@@ -5,7 +5,7 @@ description: "Size and check liquid piping with numbers: continuity, head and th
 category: Engineering
 tags: [design, operations, systems]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -59,7 +59,7 @@ Every factory has pipes full of moving liquid: cooling water to moulding machine
 
 This book works through liquid pipe flow with one running case. It starts with flow, velocity and the energy equation, moves through laminar and turbulent flow, friction in straight pipe and the losses in fittings, builds a system curve, divides the flow between parallel branches and balances them, and then deals with natural circulation, air and two-phase flow, and measuring what the system actually does. Each chapter calculates with the running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for mechanical and maintenance engineers, technicians, plumbers and designers. It assumes school algebra and a calculator or spreadsheet. READOS's Centrifugal Pumps by the Numbers takes the system curve from this book and matches pumps to it; Water Hammer by the Numbers deals with the pressure surges that sudden changes in flow cause; Ductwork by the Numbers applies the same ideas to air.
+It is for mechanical and maintenance engineers, technicians, plumbers and designers. It assumes school algebra and a calculator or spreadsheet. The Library’s Centrifugal Pumps by the Numbers takes the system curve from this book and matches pumps to it; Water Hammer by the Numbers deals with the pressure surges that sudden changes in flow cause; Ductwork by the Numbers applies the same ideas to air.
 
 ## The running case
 

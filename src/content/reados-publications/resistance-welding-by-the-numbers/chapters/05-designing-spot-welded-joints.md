@@ -85,7 +85,7 @@ A spot weld needs room around it. Three requirements set its position on a flang
 
 This is an illustration. The cabinet side-seam flange is 16 mm wide, measured from the outside of the wall. The 1.2 mm sheet is bent with a 1.5 mm inside radius, so the bend occupies about t + r = 2.7 mm of the flange width, leaving about 13.3 mm of flat land. The shop's own design rule for 1.2 mm sheet puts the spot centre on the middle of the flat land and requires at least 4 mm of flat metal between the edge of the 6 mm electrode face and both the sheet edge and the start of the bend. With the spot centred on the land, there is (13.3 − 6) ÷ 2 ≈ 3.65 mm on each side, which is less than the rule. The engineer widened the flange to 18 mm, giving 15.3 mm of flat land and (15.3 − 6) ÷ 2 ≈ 4.65 mm each side.
 
-Standards and customer specifications often state minimum flange widths, edge distances and pitches for each sheet thickness. Where they exist, they govern; the shop's rule is only for its own products where no other rule applies. The READOS chapter on [designing sheet metal parts for manufacture](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-sheet-metal-parts-for-manufacture/) covers bend radii and flange proportions more generally.
+Standards and customer specifications often state minimum flange widths, edge distances and pitches for each sheet thickness. Where they exist, they govern; the shop's rule is only for its own products where no other rule applies. The Library chapter on [designing sheet metal parts for manufacture](/reados/collections/manufacturing-operations-and-design-for-manufacture/designing-sheet-metal-parts-for-manufacture/) covers bend radii and flange proportions more generally.
 
 ```figure
 type: checklist

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: thermodynamics first-principles tools after Bryan’s Thermodynamics (1907) (batch bryanthermo) within the WORKOS directory.
+// KEVOS® MAKEOS: thermodynamics first-principles tools after Bryan’s Thermodynamics (1907) (batch bryanthermo) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "liquid-adiabatic-compression",

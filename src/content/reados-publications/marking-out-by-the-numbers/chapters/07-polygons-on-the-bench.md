@@ -28,7 +28,7 @@ caption: Exact values. The octagon's corner triangles, cut from a 600 mm square,
 - Hexagon (n = 6) | 346.41 mm | 692.82 mm | 346.41 mm | 120°
 ```
 
-[Polygons, ellipses and inclined views](/reados/publications/drafting-geometry-by-the-numbers/polygons-ellipses-and-inclined-views/) covers these relationships in detail for drawings, and the WORKOS [Regular Polygon and Hexagon Sizes](/tools/regular-polygon/) tool gives them for any polygon as a quick check. On the bench, the question is not the formula but which construction gives the most accurate shape with the least to go wrong.
+[Polygons, ellipses and inclined views](/reados/publications/drafting-geometry-by-the-numbers/polygons-ellipses-and-inclined-views/) covers these relationships in detail for drawings, and the KEVOS® [Regular Polygon and Hexagon Sizes](/tools/regular-polygon/) tool gives them for any polygon as a quick check. On the bench, the question is not the formula but which construction gives the most accurate shape with the least to go wrong.
 
 ## The hexagon corrects itself
 

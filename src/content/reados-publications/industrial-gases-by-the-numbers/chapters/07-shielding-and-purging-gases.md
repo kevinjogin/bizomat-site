@@ -95,7 +95,7 @@ The flow a weld needs depends on more than the flowmeter. A nozzle clogged with 
 
 When stainless steel pipe is welded from one side, the inside of the root is exposed to whatever is inside the pipe. In air, the hot root oxidises, forming a heavy coloured scale that weakens its corrosion resistance and may be unacceptable. The cure is to replace the air inside the pipe with an inert gas, argon or nitrogen or, for some steels, a nitrogen and hydrogen mixture, before and during welding. The procedure usually sets a maximum residual oxygen, measured with an analyser at the vent, before the root is welded.
 
-A simple model gives the purge time. If the incoming gas mixes completely with the gas already in the pipe, each volume of purge gas that flows through reduces the oxygen concentration by a factor of e, about 2.72. After N volume changes, the oxygen concentration is C₀ × e^(−N). This is the same exponential decay that READOS explains in its chapter on [growth, decay and logarithms](/reados/collections/practical-mathematics-for-engineering/growth-decay-and-logarithms/).
+A simple model gives the purge time. If the incoming gas mixes completely with the gas already in the pipe, each volume of purge gas that flows through reduces the oxygen concentration by a factor of e, about 2.72. After N volume changes, the oxygen concentration is C₀ × e^(−N). This is the same exponential decay that the Library explains in its chapter on [growth, decay and logarithms](/reados/collections/practical-mathematics-for-engineering/growth-decay-and-logarithms/).
 
 ```figure
 type: line

@@ -46,7 +46,7 @@ caption: λ = K × L ÷ r. At λ = C_c both formulas give S_y ÷ 2, and their sl
 - C_c | transition slenderness, 106.2 for E = 200,000 MPa and S_y = 350 MPa
 ```
 
-The Johnson parabola is the method used by the WORKOS [Column buckling](/tools/column-buckling/) tool and the other WORKOS buckling tools in this book whenever the slenderness is below the transition value. It is simple, smooth and widely used in machine design. It does not represent any particular steel's residual stresses or any particular fabrication tolerance; it is a sensible engineering curve, not a code curve.
+The Johnson parabola is the method used by the KEVOS® [Column buckling](/tools/column-buckling/) tool and the other KEVOS® buckling tools in this book whenever the slenderness is below the transition value. It is simple, smooth and widely used in machine design. It does not represent any particular steel's residual stresses or any particular fabrication tolerance; it is a sensible engineering curve, not a code curve.
 
 ### The Rankine–Gordon formula
 
@@ -56,13 +56,13 @@ P_cr = S_c × A ÷ (1 + a × λ²)
 
 where S_c is the crushing strength and a is a constant. With a = S_c ÷ (π² × E), the formula approaches the squash load for stocky members and the Euler load for slender ones. In between it gives lower values than either. Historically, a was also fitted to tests for particular materials and end conditions.
 
-The WORKOS [Column strength by Rankine–Gordon](/tools/rankine-column/) tool calculates the crippling load from the crushing strength, modulus, area, least second moment of area, length and effective length factor, using the theoretical constant unless you enter an empirical one, and gives the factor against your applied load. It reports the crushing load of a short column alongside, which is a useful sense check.
+The KEVOS® [Column strength by Rankine–Gordon](/tools/rankine-column/) tool calculates the crippling load from the crushing strength, modulus, area, least second moment of area, length and effective length factor, using the theoretical constant unless you enter an empirical one, and gives the factor against your applied load. It reports the crushing load of a short column alongside, which is a useful sense check.
 
 ### Classic and modern code curves
 
 Steel design codes go further. They use column curves fitted to large test programmes, with different curves for different section types and manufacturing methods, because residual stresses differ between, say, a hot-rolled I-section and a cold-formed tube. Australia's steel structures standard, AS 4100, takes this approach, with member section constants that depend on the section and how it was made. For any structure that must comply with the Building Code or a client's specification, the code's curve, not any of the formulas here, is the one to use.
 
-Before limit-state codes, working-stress formulas gave an allowable stress directly, with a factor of safety built in. One historic set, the classic American formulas reproduced in engineering handbooks, gives a parabola in pounds per square inch up to a slenderness of 120 and a secant-type formula above it, reduced for main members. The WORKOS [Column formula comparison](/tools/column-formula-compare/) tool puts the Euler load, the Rankine–Gordon crippling load and that classic safe load side by side for one member, from its area, least radius of gyration, length, effective length factor, crushing strength and modulus. Its guide notes, correctly, that the classic formula is a historic working-stress method and that new designs should use the current steel code.
+Before limit-state codes, working-stress formulas gave an allowable stress directly, with a factor of safety built in. One historic set, the classic American formulas reproduced in engineering handbooks, gives a parabola in pounds per square inch up to a slenderness of 120 and a secant-type formula above it, reduced for main members. The KEVOS® [Column formula comparison](/tools/column-formula-compare/) tool puts the Euler load, the Rankine–Gordon crippling load and that classic safe load side by side for one member, from its area, least radius of gyration, length, effective length factor, crushing strength and modulus. Its guide notes, correctly, that the classic formula is a historic working-stress method and that new designs should use the current steel code.
 
 ## Comparing the curves
 
@@ -159,7 +159,7 @@ What matters instead are the local checks: the bearing stress under the base pla
 
 ## Which method to use
 
-For checking machine members, temporary works and first estimates, the Johnson parabola with a suitable factor of safety, as the WORKOS buckling tools use, gives sensible answers. The Rankine–Gordon formula is more conservative at intermediate slenderness and is a useful second opinion. For steel structures that must comply with a standard, the code's member capacity is the answer, and the simple formulas are for checking it is roughly right. And for any method, the inputs matter more than the formula: an effective length factor that is too low or a radius of gyration about the wrong axis will defeat the best curve.
+For checking machine members, temporary works and first estimates, the Johnson parabola with a suitable factor of safety, as the KEVOS® buckling tools use, gives sensible answers. The Rankine–Gordon formula is more conservative at intermediate slenderness and is a useful second opinion. For steel structures that must comply with a standard, the code's member capacity is the answer, and the simple formulas are for checking it is roughly right. And for any method, the inputs matter more than the formula: an effective length factor that is too low or a radius of gyration about the wrong axis will defeat the best curve.
 
 ## Exercise: a grade 250 leg
 

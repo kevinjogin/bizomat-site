@@ -5,7 +5,7 @@ description: "Plan, build, check and report design simulations with hand calcula
 category: Engineering
 tags: [design, validation, quality, product-development]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

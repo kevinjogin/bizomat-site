@@ -125,7 +125,7 @@ The 1921 comparison of hand and machine cutting found the machine about 25% fast
 
 This is an illustration. Before the base-plate job, an estimator priced a similar order of 60 plates by calculating the gas at setting B, A$2.62 a plate or A$157.20 in all, and adding the cutting time, A$7.33 a plate. The quote came to about A$597 for cutting. The job's actual cost, with handling included, was about A$1,257. The missing A$660 was the handling, more than half the true cost, which the estimate had left out in the same way the 1921 costing did, but for a very different purpose.
 
-The error was found when the job's recorded hours were compared with the quote. The workshop's estimating sheet was changed to build each cut part from three lines, handling time, cutting time and gas, with the cutting speed and flows taken from the settings sheet rather than from a nozzle chart. Building the cost from separate lines in this way is the approach of a job cost estimate; the KEVOS® WORKOS [Job Cost Estimate](/tools/job-cost/) tool sets out the same structure for a whole job.
+The error was found when the job's recorded hours were compared with the quote. The workshop's estimating sheet was changed to build each cut part from three lines, handling time, cutting time and gas, with the cutting speed and flows taken from the settings sheet rather than from a nozzle chart. Building the cost from separate lines in this way is the approach of a job cost estimate; the KEVOS® [Job Cost Estimate](/tools/job-cost/) tool sets out the same structure for a whole job.
 
 ## Other costs to remember
 

@@ -5,7 +5,7 @@ description: "Calculate diffusion in steel parts by numbers: Fick's laws, error-
 category: Manufacturing
 tags: [manufacturing, quality, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

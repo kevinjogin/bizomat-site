@@ -9,7 +9,7 @@ draft: false
 
 Torque equals moment of inertia times angular acceleration. That one relation, the rotational form of Newton's second law, answers most of the questions a machine designer asks about starting and stopping: how much torque the motor needs to reach speed in time, how much a brake needs to stop it, how many turns the rotor makes on the way and how much energy is stored or must be removed.
 
-This chapter applies it to the DL-3's docking saw with the WORKOS torque to accelerate a rotating load tool and the torque, power and speed tool. It covers starting the saw, comparing the result with the motor's rating, and stopping it, which turns out to be the harder problem. Its mistake is the most basic of all rotational slips: a speed in revolutions per minute used where the formula wants radians per second.
+This chapter applies it to the DL-3's docking saw with the KEVOS® torque to accelerate a rotating load tool and the torque, power and speed tool. It covers starting the saw, comparing the result with the motor's rating, and stopping it, which turns out to be the harder problem. Its mistake is the most basic of all rotational slips: a speed in revolutions per minute used where the formula wants radians per second.
 
 ## The rotational second law
 

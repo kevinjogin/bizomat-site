@@ -95,7 +95,7 @@ Three habits keep text values clean:
 
 ## The running case: a mass property
 
-This is an illustration. The office wanted each released drawing's title block to show the part's mass, filled from the model. The release pack reads the model's mass from the API, which reports it in kilograms for this product, as the help confirms. For the 2 mm steel bracket of an earlier READOS case, with 87,873.5 mm² of blank after holes, the API reports a volume of 87,873.5 × 2 = 175,747 mm³, which it gives as 0.000175747 m³, and with the material's density of 7,850 kg/m³, a mass of **1.380 kg**.
+This is an illustration. The office wanted each released drawing's title block to show the part's mass, filled from the model. The release pack reads the model's mass from the API, which reports it in kilograms for this product, as the help confirms. For the 2 mm steel bracket of an earlier Library case, with 87,873.5 mm² of blank after holes, the API reports a volume of 87,873.5 × 2 = 175,747 mm³, which it gives as 0.000175747 m³, and with the material's density of 7,850 kg/m³, a mass of **1.380 kg**.
 
 The tool rounds to two decimal places, formats with a point, and writes "1.38" to a property named "Mass (kg)". It range-checks first: any mass below 0.001 kg or above 5,000 kg is reported rather than written, which catches a part with no material assigned, whose mass the API reports as zero or as based on a default density.
 

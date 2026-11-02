@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool definitions: Money. Generated from the tool register; edit with care and keep tests passing.
+// KEVOS® tool definitions: Money. Generated from the tool register; edit with care and keep tests passing.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
  {
   "id": "roi",

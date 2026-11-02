@@ -9,7 +9,7 @@ draft: false
 
 A reverse osmosis unit splits one stream into two. Permeate leaves through the membrane, nearly salt-free; concentrate leaves at the far end of the pressure vessels, carrying almost all of the salt that came in with the feed. The share of the feed that becomes permeate is the recovery, and it is the single most important operating choice on the plant. It decides how much bore water must be pumped, how much salty water must be disposed of, how strong the concentrate becomes, and therefore how much pressure the last membranes need to keep making water.
 
-This chapter sets out the two mass balances that govern a stage, applies them to BW-12 with the WORKOS osmotic-pressure tool, and shows why recovery and feed pressure cannot be chosen separately. It also derives the log-mean concentration factor that Chapter 3 needs, shows how to measure recovery on a running plant, and ends with an operator who turned the concentrate valve to save bore water and stopped the second stage making water.
+This chapter sets out the two mass balances that govern a stage, applies them to BW-12 with the KEVOS® osmotic-pressure tool, and shows why recovery and feed pressure cannot be chosen separately. It also derives the log-mean concentration factor that Chapter 3 needs, shows how to measure recovery on a running plant, and ends with an operator who turned the concentrate valve to save bore water and stopped the second stage making water.
 
 ## Two balances
 

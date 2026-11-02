@@ -7,7 +7,7 @@ description: "Edge distance, curvature, lift-off and probe condition in conducti
 draft: false
 ---
 
-A conductivity meter gives a reading to two decimal places in two seconds, and that precision invites trust. Whether the reading means anything depends on where and how the probe was placed, the temperature, the surface under it and the state of the probe and the standards. The meter cannot tell the operator that the probe was too near an edge or rocking on a curved surface; it simply reports a different number. This chapter works through the influences on a reading, measures the meter's repeatability and bias with a Type 1 gauge study in the WORKOS gauge tool, and builds the uncertainty budget that Chapter 9 uses to set guard bands. Its mistake is three good bars rejected because they were measured too close to their edges.
+A conductivity meter gives a reading to two decimal places in two seconds, and that precision invites trust. Whether the reading means anything depends on where and how the probe was placed, the temperature, the surface under it and the state of the probe and the standards. The meter cannot tell the operator that the probe was too near an edge or rocking on a curved surface; it simply reports a different number. This chapter works through the influences on a reading, measures the meter's repeatability and bias with a Type 1 gauge study in the KEVOS® gauge tool, and builds the uncertainty budget that Chapter 9 uses to set guard bands. Its mistake is three good bars rejected because they were measured too close to their edges.
 
 ## What changes a reading
 

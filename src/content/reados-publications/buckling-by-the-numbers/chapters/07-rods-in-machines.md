@@ -9,7 +9,7 @@ draft: false
 
 Machines are full of slender members in compression that nobody thinks of as columns. A hydraulic cylinder pushing a load is a strut: its rod, fully extended, is a long, slender bar with a load on its end. A screw jack, a ball screw driving a table against a load, and a push rod in a linkage are all struts. They buckle by exactly the rules of the earlier chapters, with two twists. Their length changes as they move, so the worst case is usually fully extended. And the force on them is often set not by the job they are doing but by what the machine's power source can deliver if something jams.
 
-This chapter applies the rules to the hydraulic tipping cradle that stands HT-8's tank upright, uses two WORKOS hydraulic tools, shows why the first cylinder chosen would have buckled at its relief pressure, and finishes with the same check for screws.
+This chapter applies the rules to the hydraulic tipping cradle that stands HT-8's tank upright, uses two KEVOS® hydraulic tools, shows why the first cylinder chosen would have buckled at its relief pressure, and finishes with the same check for screws.
 
 ## The tipping cradle
 
@@ -19,7 +19,7 @@ The first cylinder proposed for the cradle was a stock item: 63 mm bore, 36 mm r
 
 ## A cylinder as a strut
 
-A cylinder pinned at both ends acts as a pin-ended strut whose length is the distance between its pins. The barrel is much stiffer than the rod, so the usual simplification, and the one used by the WORKOS tools, treats the rod as if it ran the whole distance from the mounting to the rod end. That is conservative: the real buckling load is somewhat higher, because the stiff barrel occupies part of the length. The worst position is fully extended, when the length is greatest and the rod has least support from its bearing in the cylinder's head.
+A cylinder pinned at both ends acts as a pin-ended strut whose length is the distance between its pins. The barrel is much stiffer than the rod, so the usual simplification, and the one used by the KEVOS® tools, treats the rod as if it ran the whole distance from the mounting to the rod end. That is conservative: the real buckling load is somewhat higher, because the stiff barrel occupies part of the length. The worst position is fully extended, when the length is greatest and the rod has least support from its bearing in the cylinder's head.
 
 The mounting sets the effective length factor. For a cylinder pinned at both ends and guided by nothing else, K = 1.0 on the pin-to-pin length. A cylinder rigidly flanged to a frame at one end, pushing a load that is free to move sideways at the other, is a flagpole, K = 2.0. A cylinder rigidly mounted at one end with its rod end guided in line by a slide is braced, with K between 0.5 and 0.7. Cylinder makers publish tables of these factors for each mounting style. The essential question is the same as for HT-8's legs: can the rod end move sideways relative to the mounting?
 
@@ -37,7 +37,7 @@ caption: Theoretical values; makers' tables give values for their own mountings.
 
 ## Sizing the rod for the duty
 
-The WORKOS [Hydraulic cylinder sizing](/tools/hydraulic-cylinder-sizing/) tool works from the duty. From the push and pull forces, the system pressure at the cylinder and the speeds and stroke, it gives the minimum bore for the push, the minimum rod diameter for Euler buckling at the buckling length and mounting factor you enter with your safety factor, the largest rod that still leaves enough annulus area for the pull, the flows, pump power and pipe bores. Its rod check uses the push force you enter, Euler's formula and a solid rod.
+The KEVOS® [Hydraulic cylinder sizing](/tools/hydraulic-cylinder-sizing/) tool works from the duty. From the push and pull forces, the system pressure at the cylinder and the speeds and stroke, it gives the minimum bore for the push, the minimum rod diameter for Euler buckling at the buckling length and mounting factor you enter with your safety factor, the largest rod that still leaves enough annulus area for the pull, the flows, pump power and pipe bores. Its rod check uses the push force you enter, Euler's formula and a solid rod.
 
 This is an illustration. Entering the cradle's duty, a push of 18 kN, a pull of 5 kN, 160 bar, a 63 mm bore, a buckling length of 2,150 mm, a mounting factor of 1.0, a safety factor on buckling of 3.5 and a rod modulus of 206 GPa, the tool reports a minimum bore of 37.8 mm for the push, a minimum rod of 41.3 mm for buckling, and a largest rod of 59.8 mm for the pull.
 
@@ -51,7 +51,7 @@ F = 16 MPa × π × 63² ÷ 4 = 49.9 kN
 
 That is 2.8 times the duty force, and 1.4 times the Euler load of the 36 mm rod. At 116 bar the rod would reach its Euler load and buckle.
 
-The WORKOS [Hydraulic cylinder structure](/tools/hydraulic-cylinder-structure/) tool checks a cylinder at its working pressure. From the bore, barrel wall, pressure and materials it checks the barrel by the thick-wall equations and the end cap as a clamped plate, and it checks the fully extended rod for buckling, by Euler or Johnson, under the full push force that the pressure produces on the bore. That last point is the important one: it uses the pressure, not a duty force.
+The KEVOS® [Hydraulic cylinder structure](/tools/hydraulic-cylinder-structure/) tool checks a cylinder at its working pressure. From the bore, barrel wall, pressure and materials it checks the barrel by the thick-wall equations and the end cap as a clamped plate, and it checks the fully extended rod for buckling, by Euler or Johnson, under the full push force that the pressure produces on the bore. That last point is the important one: it uses the pressure, not a duty force.
 
 ```figure
 type: compare
@@ -102,7 +102,7 @@ None of these is large in a well-designed, well-maintained cradle, which is why 
 
 A lead screw or ball screw that pushes a load is a strut whose section, for buckling, is its root diameter: the threads add little stiffness. Its effective length depends on how its bearings hold it: a screw with a fixed (paired, angular contact) bearing at one end and a simple support at the other is close to K = 0.7; with fixed bearings at both ends it approaches 0.5; with one end fixed and the nut end unsupported it is a flagpole, K = 2.0.
 
-The WORKOS [Ball screw critical speed and buckling](/tools/ballscrew-limits/) tool checks a screw from its root diameter, unsupported length, end mounting, modulus and density against your maximum speed and maximum compressive load. It applies Euler's formula with K = 0.5, 0.7, 1.0 or 2.0 for the four mounting options, reports the buckling load and an allowed load at the share you choose, and also gives the screw's critical (whirling) speed, which is a separate limit: a spinning screw whirls like any other long, slender shaft. It treats the screw as a uniform shaft at its root diameter and ignores the stiffness of the nut and supports.
+The KEVOS® [Ball screw critical speed and buckling](/tools/ballscrew-limits/) tool checks a screw from its root diameter, unsupported length, end mounting, modulus and density against your maximum speed and maximum compressive load. It applies Euler's formula with K = 0.5, 0.7, 1.0 or 2.0 for the four mounting options, reports the buckling load and an allowed load at the share you choose, and also gives the screw's critical (whirling) speed, which is a separate limit: a spinning screw whirls like any other long, slender shaft. It treats the screw as a uniform shaft at its root diameter and ignores the stiffness of the nut and supports.
 
 This is an illustration. A screw jack the shop uses to fine-level tanks on their stands has a 21 mm root diameter and 1,200 mm between its fixed bearing and its supported end. Its root section has I = π × 21⁴ ÷ 64 = 9,547 mm⁴, and with K = 0.7 its Euler load is π² × 206,000 × 9,547 ÷ (0.7 × 1,200)² = 27.5 kN. At the tool's default allowed share of 50%, the jack should not push more than about 13.8 kN at full extension. The same jack is good for much more when its nut is close to the fixed bearing, because the unsupported length is then shorter.
 

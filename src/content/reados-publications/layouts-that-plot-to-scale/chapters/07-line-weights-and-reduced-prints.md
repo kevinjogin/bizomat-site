@@ -17,7 +17,7 @@ A plotted line's width is decided by one of two routes, depending on how the dra
 
 **Object or layer line weights.** Each layer, or each object, carries a line weight in millimetres, and the plot uses it directly. This is the most transparent route: a layer called "visible" with a weight of 0.5 mm plots at 0.5 mm.
 
-**Plot styles.** A plot style table maps properties to output. A colour-dependent table maps each object colour to a width, colour and screening, so that, for example, everything red plots black at 0.5 mm. A named plot style table assigns named styles to layers or objects. Either can override the line weight set on the layer, or pass it through. READOS's chapter [Controlling CAD output with plot style tables](/reados/collections/cad-drafting-and-drawing-standards/controlling-cad-output-with-plot-style-tables/) covers the choice in detail.
+**Plot styles.** A plot style table maps properties to output. A colour-dependent table maps each object colour to a width, colour and screening, so that, for example, everything red plots black at 0.5 mm. A named plot style table assigns named styles to layers or objects. Either can override the line weight set on the layer, or pass it through. The Library’s chapter [Controlling CAD output with plot style tables](/reados/collections/cad-drafting-and-drawing-standards/controlling-cad-output-with-plot-style-tables/) covers the choice in detail.
 
 The trap is that the two routes combine. A layer with a 0.5 mm weight on a sheet whose plot style table maps its colour to 0.25 mm plots at 0.25 mm. On screen, with line weight display on, it shows 0.5 mm. Only a print, or a plot preview, tells the truth.
 
@@ -32,7 +32,7 @@ This is an illustration. The running case office's A3 standard assigns:
 - **0.25 mm** to dimensions, extension lines, leaders, centrelines and hatching;
 - **0.5 mm** to the border and title block frame, and 0.25 mm to its internal lines.
 
-The ratio of 2 to 1 between outline and thin lines is the important part; the absolute widths follow from the sheet size and how it will be printed. READOS's *Drawings That Make Parts* sets out the line groups that AS ISO 128.24 recommends, and a real office should take its widths from the standard its contracts call up.
+The ratio of 2 to 1 between outline and thin lines is the important part; the absolute widths follow from the sheet size and how it will be printed. The Library’s *Drawings That Make Parts* sets out the line groups that AS ISO 128.24 recommends, and a real office should take its widths from the standard its contracts call up.
 
 ```figure
 type: compare

@@ -9,7 +9,7 @@ draft: false
 
 A breakdown can be repaired in an hour only if the part is on the shelf. For parts that fail at random and are repaired or replaced from far away, the spares holding decides whether a failure costs an hour or a week. Too few spares and the line waits for a courier; too many and money sits in a cupboard. The right number follows from the same mathematics as the rest of this book: failures arrive as a Poisson stream, the parts away for repair form a birth–death population, and the chance of running out is a tail probability that can be set against its cost.
 
-This chapter sizes the spares holding for the packing lines' servo drives with the WORKOS critical spares tool, explains Palm's theorem, the result that makes repairable spares easy to calculate, and sets the service level from the cost of a stock-out rather than by habit. It ends with a holding that was one drive short because the failure rate was counted in production hours while the drives were powered all day.
+This chapter sizes the spares holding for the packing lines' servo drives with the KEVOS® critical spares tool, explains Palm's theorem, the result that makes repairable spares easy to calculate, and sets the service level from the cost of a stock-out rather than by habit. It ends with a holding that was one drive short because the failure rate was counted in production hours while the drives were powered all day.
 
 ## The drives and their pipeline
 
@@ -86,7 +86,7 @@ The register also shows whether repaired units are as reliable as new ones. If r
 
 ## Wear-out parts and new lines
 
-Palm's theorem and the critical spares plan assume random failures. Parts that wear out, the heaters of Chapter 2, cutting knives, belts and bearings, fail more often as they age, and their demand depends on how many are installed at each age. For them, the spares holding should follow the replacement plan: if heaters are replaced on a schedule, the spares needed are mostly the scheduled replacements, which are known in advance, plus a small allowance for those that fail early. The WORKOS directory includes Weibull-based tools for such fleets; the Poisson model is the right one only for random failures.
+Palm's theorem and the critical spares plan assume random failures. Parts that wear out, the heaters of Chapter 2, cutting knives, belts and bearings, fail more often as they age, and their demand depends on how many are installed at each age. For them, the spares holding should follow the replacement plan: if heaters are replaced on a schedule, the spares needed are mostly the scheduled replacements, which are known in advance, plus a small allowance for those that fail early. The Tools directory includes Weibull-based tools for such fleets; the Poisson model is the right one only for random failures.
 
 A new line has no history at all. Its first spares plan must use the makers' reliability figures, which are often optimistic for a particular duty, and should allow for the early failures that follow installation. A practical approach is to plan the first year's holding with the makers' rates and a margin, record every failure, and rerun the plan at the end of the year with the plant's own rates. One year of data on 24 drives, about four failures, is not much, but it is enough to show whether the makers' figure is roughly right or badly wrong.
 

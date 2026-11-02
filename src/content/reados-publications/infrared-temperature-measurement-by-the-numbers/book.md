@@ -5,7 +5,7 @@ description: "Measure hot parts and running plant without contact, with numbers:
 category: Manufacturing
 tags: [manufacturing, quality, automation, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

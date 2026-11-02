@@ -9,7 +9,7 @@ draft: false
 
 A case cannot be seen from outside. Its depth, its hardness profile and its structure are found by cutting a part in two and measuring across the cut. Every induction hardening recipe is proved this way, and every production run is checked this way at intervals. The measurement is simple in principle, a row of small hardness indentations from the surface inwards, but every step from cutting the part to reading the last indentation can distort the answer, and the rules for a valid indentation matter as much as the hardness tester's calibration.
 
-This chapter describes how the IH-40's journal is sectioned and traversed, checks individual indentations with a WORKOS Vickers tool, finds the effective case depth by interpolation with another, explains why the traverse pattern changes with depth, and works through a first indentation placed so close to the surface that it reported a soft case that was not there.
+This chapter describes how the IH-40's journal is sectioned and traversed, checks individual indentations with a KEVOS® Vickers tool, finds the effective case depth by interpolation with another, explains why the traverse pattern changes with depth, and works through a first indentation placed so close to the surface that it reported a soft case that was not there.
 
 ## Defining case depth
 
@@ -42,7 +42,7 @@ A traverse is a row of Vickers indentations from just below the surface into the
 
 Each indentation must be far enough from the surface and from its neighbours that the material around it is free to deform normally. Near a free edge or another indentation, the steel is less constrained, the indenter sinks further, and the reading is low. The rules are expressed as multiples of the indentation's diagonal.
 
-The WORKOS [Vickers hardness test check](/tools/vickers-test-check/) tool evaluates one indentation. From the test force and the two diagonals it gives the mean diagonal, the hardness, the depth of the indentation and the least specimen thickness, and it checks the specimen or layer thickness, the distance from the centre to the edge, the spacing to the next indentation and the difference between the two diagonals against the rules you set, and the hardness against your specification. Its guide notes that diagonal measurement dominates the accuracy at low loads and that the rules differ between standards and materials.
+The KEVOS® [Vickers hardness test check](/tools/vickers-test-check/) tool evaluates one indentation. From the test force and the two diagonals it gives the mean diagonal, the hardness, the depth of the indentation and the least specimen thickness, and it checks the specimen or layer thickness, the distance from the centre to the edge, the spacing to the next indentation and the difference between the two diagonals against the rules you set, and the hardness against your specification. Its guide notes that diagonal measurement dominates the accuracy at low loads and that the rules differ between standards and materials.
 
 This is an illustration. The manufacturer's rules for traverses are an edge distance of at least 2.5 diagonals, a spacing of at least 3 diagonals and a difference between diagonals of no more than 5%.
 
@@ -89,7 +89,7 @@ caption: This is an illustration. Readings at 0.25 mm steps after the first at 0
 - 5.0 | 215
 ```
 
-The effective case depth lies between the readings at 2.25 mm (520 HV1) and 2.5 mm (470 HV1). Linear interpolation between them gives the depth at which the hardness is 500 HV1. The WORKOS [Linear interpolation](/tools/linear-interpolation/) tool does this in either direction: given two points and a known y, it returns the x that matches, and it warns if the answer lies outside the two points.
+The effective case depth lies between the readings at 2.25 mm (520 HV1) and 2.5 mm (470 HV1). Linear interpolation between them gives the depth at which the hardness is 500 HV1. The KEVOS® [Linear interpolation](/tools/linear-interpolation/) tool does this in either direction: given two points and a known y, it returns the x that matches, and it warns if the answer lies outside the two points.
 
 ```figure
 type: formula

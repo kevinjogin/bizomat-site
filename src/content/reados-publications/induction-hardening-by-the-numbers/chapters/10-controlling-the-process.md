@@ -9,7 +9,7 @@ draft: false
 
 An induction hardening recipe, once proved, is only as good as the machine's ability to repeat it on every part. The heat lasts seconds and cannot be watched; the case cannot be seen without destroying the part; and the things that change it, a coil knocked out of position, a warming quench bath, a different delivery of steel, change it quietly. Control therefore rests on two kinds of evidence: what the machine measures on every part as it heats, and what the laboratory measures on a sample of parts afterwards. Each catches what the other misses, and neither is enough without the start-of-shift checks that look at the coil and the quench directly.
 
-This chapter describes how the IH-40 line monitors every heat, charts the laboratory's case depth results with a WORKOS control chart tool, judges the process's capability with another, and works through a chart that hid a real change by recalculating its limits with the change included.
+This chapter describes how the IH-40 line monitors every heat, charts the laboratory's case depth results with a KEVOS® control chart tool, judges the process's capability with another, and works through a chart that hid a real change by recalculating its limits with the change included.
 
 ## Monitoring every heat
 
@@ -49,7 +49,7 @@ The people on the line are part of the process. Operators are trained in what ea
 
 The laboratory sections one shaft per shift (Chapter 8). A list of case depths, all inside 2.0 to 3.0 mm, says little; the same numbers plotted in time order on a control chart show whether the process is steady. Because there is one result per shift, the right chart is an individuals chart, which estimates the process's short-term variation from the differences between consecutive results, the moving ranges.
 
-The WORKOS [Individuals control chart check](/tools/individuals-chart-check/) tool takes up to twelve readings in time order and gives their mean, the moving ranges and their average, the standard deviation estimated from the average moving range, the upper and lower control limits at three standard deviations from the mean, and which readings fall outside them. Its check notes that limits from few readings are rough and should be recalculated from 20 to 25, and that run rules should be applied too.
+The KEVOS® [Individuals control chart check](/tools/individuals-chart-check/) tool takes up to twelve readings in time order and gives their mean, the moving ranges and their average, the standard deviation estimated from the average moving range, the upper and lower control limits at three standard deviations from the mean, and which readings fall outside them. Its check notes that limits from few readings are rough and should be recalculated from 20 to 25, and that run rules should be applied too.
 
 This is an illustration. The IH-40's first twelve shifts after the recipe was proved gave these effective case depths, in millimetres: 2.35, 2.40, 2.33, 2.38, 2.42, 2.36, 2.31, 2.39, 2.37, 2.44, 2.34 and 2.38.
 
@@ -78,7 +78,7 @@ A control chart signal is a reason to look, not automatically a reason to stop. 
 
 With a stable process and an estimate of its variation, the process's capability against the specification can be expressed as indices. Cp compares the width of the specification with six standard deviations of the process; Cpk does the same for the nearer limit, so it also reflects how well the process is centred.
 
-The WORKOS [Process capability from summary data](/tools/process-capability/) tool calculates Cp and Cpk, and the two one-sided indices, from the specification limits, the process mean and the within-process standard deviation. It deliberately reports them only as arithmetic unless you confirm that stability and a suitable distribution have been established separately, and it infers no acceptance threshold.
+The KEVOS® [Process capability from summary data](/tools/process-capability/) tool calculates Cp and Cpk, and the two one-sided indices, from the specification limits, the process mean and the within-process standard deviation. It deliberately reports them only as arithmetic unless you confirm that stability and a suitable distribution have been established separately, and it infers no acceptance threshold.
 
 ```figure
 type: compare

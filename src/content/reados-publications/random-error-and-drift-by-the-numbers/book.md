@@ -5,7 +5,7 @@ description: "Separate noise, random walk and drift in production measurements b
 category: Engineering
 tags: [quality, manufacturing, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

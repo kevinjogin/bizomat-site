@@ -99,11 +99,11 @@ This is an illustration. A square extraction hood tapers from a 400 × 400 mm mo
 
 Extended, the edges meet 400 mm above the mouth, so each full edge from the apex is √(400² + 282.8²) = 489.9 mm and each neck corner 122.5 mm from the apex. The pattern is drawn by swinging arcs of 489.9 and 122.5 mm from one apex, stepping the four mouth sides of 400 mm as chords around the outer arc, and joining each step to the apex. The four trapezoids between the arcs are the hood's faces. Folded along the three inner radial lines and seamed along the fourth, they make the hood.
 
-A pyramid's corners are folded, not rolled, so the bend allowance of each fold comes into the pattern as it does for any folded part. READOS's [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/flat-patterns-and-bend-deductions/) covers that calculation. For thin sheet folded to a small inside radius, the correction is a fraction of a millimetre per fold.
+A pyramid's corners are folded, not rolled, so the bend allowance of each fold comes into the pattern as it does for any folded part. The Library’s [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/flat-patterns-and-bend-deductions/) covers that calculation. For thin sheet folded to a small inside radius, the correction is a fraction of a millimetre per fold.
 
 ## Area, mass and checking
 
-The surface area of a frustum is π × (R₁ + R₂) × slant length, here π × 225.8 × 201.6 = 0.143 m², and in 0.8 mm steel it weighs about 0.9 kg before seams and collars. The WORKOS [Pappus revolution calculator](/tools/pappus-revolution/) gives the same area from the outline generator and its centroid, a useful independent check.
+The surface area of a frustum is π × (R₁ + R₂) × slant length, here π × 225.8 × 201.6 = 0.143 m², and in 0.8 mm steel it weighs about 0.9 kg before seams and collars. The KEVOS® [Pappus revolution calculator](/tools/pappus-revolution/) gives the same area from the outline generator and its centroid, a useful independent check.
 
 Once rolled and seamed, the reducer is checked at both ends with a girth tape: the large end's outside girth should be π × 251.6 = 790.4 mm and the small end's π × 201.6 = 633.3 mm. If both are right, the pattern was right. If the large end is right and the small end wrong, the inner radius or the angle was misplotted.
 

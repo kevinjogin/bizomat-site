@@ -20,7 +20,7 @@ A sheet metal detail drawing carries everything a detail drawing needs, the titl
 - a **bend table**, listing each bend's identifier, direction, angle, inside radius and, where it matters, sequence;
 - **notes** for the process-specific requirements this book has covered.
 
-READOS's *Drawings That Make Parts* covers the general content; *Checking Drawings by the Numbers* covers how to check it. This chapter covers what sheet metal adds.
+The Library’s *Drawings That Make Parts* covers the general content; *Checking Drawings by the Numbers* covers how to check it. This chapter covers what sheet metal adds.
 
 ## The folded views
 

@@ -123,7 +123,7 @@ The consultant's advice had a reasonable motive, but it confused convenience wit
 
 ## Audit trails are part of the record
 
-A vault's history is not just a debugging aid. It is the evidence that the design process was followed: who created a file, who checked it, who approved it and when. For a business working to a quality management system, or supplying customers who audit their suppliers, that evidence is often what an auditor asks for. READOS's chapter on [controlled document management systems](/reados/collections/operational-data-records-and-controls/controlled-document-management-systems/) describes the wider requirements for controlled documents and records.
+A vault's history is not just a debugging aid. It is the evidence that the design process was followed: who created a file, who checked it, who approved it and when. For a business working to a quality management system, or supplying customers who audit their suppliers, that evidence is often what an auditor asks for. The Library’s chapter on [controlled document management systems](/reados/collections/operational-data-records-and-controls/controlled-document-management-systems/) describes the wider requirements for controlled documents and records.
 
 Protect the history accordingly. It should be included in backups, as Chapter 7 requires, and it should not be editable by daily users. When people leave, their accounts should be disabled rather than deleted, so that the history still shows their name against their work.
 

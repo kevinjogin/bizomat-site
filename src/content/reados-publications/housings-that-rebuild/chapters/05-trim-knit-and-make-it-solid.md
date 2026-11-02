@@ -122,7 +122,7 @@ Hybrid models accumulate surface bodies: reference surfaces, construction surfac
 
 Hide surfaces that remain as references, and put them in a clearly named folder. Delete surfaces that no longer serve any feature, after checking that nothing references them. Most systems can show what depends on a feature before you delete it. At the end of this stage the housing model should contain one solid body and a short, named list of reference surfaces kept for later edits.
 
-The edited READOS chapter on [editing solid faces with clear design checks](/reados/collections/cad-modelling-and-design-intent/editing-solid-faces-with-clear-design-checks/) covers the checks that should follow any direct change to solid faces, including those made with delete and replace face.
+The edited Library chapter on [editing solid faces with clear design checks](/reados/collections/cad-modelling-and-design-intent/editing-solid-faces-with-clear-design-checks/) covers the checks that should follow any direct change to solid faces, including those made with delete and replace face.
 
 ## Exercise: restyle the crown late in the project
 

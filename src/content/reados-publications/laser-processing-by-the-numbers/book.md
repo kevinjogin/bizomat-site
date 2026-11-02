@@ -5,7 +5,7 @@ description: "How metals absorb laser light and how to plan laser cutting, weldi
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -61,7 +61,7 @@ A laser puts a great deal of power into a very small spot, but only the part of 
 
 This book shows how to plan and check laser processing with numbers. It starts with where a laser's energy goes and why metals reflect so much of it, then works through angle and polarisation, beam quality and focusing, heat flow and hardened cut edges, cutting speed and cost, assist gases, welding and pulsed marking. It finishes with the parts of a laser cell that are easy to overlook until they fail: guarding, fume extraction, the chiller and the hour rate that pays for it all.
 
-It is for manufacturing and production engineers, laser operators moving into process planning, estimators and sheet-metal designers. It assumes engineering or trade training and comfort with power, energy and heat; the optics and electromagnetism are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for manufacturing and production engineers, laser operators moving into process planning, estimators and sheet-metal designers. It assumes engineering or trade training and comfort with power, energy and heat; the optics and electromagnetism are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -80,7 +80,7 @@ Powers, speeds, absorptivities, prices and test results are the cell's working f
 
 Read Chapters 1 to 4 in order: they set out absorption, angle and focusing, which every later chapter uses. Chapters 5 to 9 can then be read in any order. Chapter 10 brings together safety, fume, cooling and cost, and the cell's process record.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. Optical constants, absorptivities and cutting chart speeds are assumed values for illustration: real values depend on the alloy, the surface and the machine, and come from measurements and the laser maker's process data.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Optical constants, absorptivities and cutting chart speeds are assumed values for illustration: real values depend on the alloy, the surface and the machine, and come from measurements and the laser maker's process data.
 
 ## Source limits and professional responsibility
 

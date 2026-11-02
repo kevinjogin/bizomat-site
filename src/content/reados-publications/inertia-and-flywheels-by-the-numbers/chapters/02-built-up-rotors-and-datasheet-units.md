@@ -9,7 +9,7 @@ draft: false
 
 Real rotors are assemblies: a shell with lagging and end plates, a disc with a hub and knives, a pulley on a shaft. Their inertia is the sum of the parts, each about the rotor's axis, and Chapter 1 showed how to find each part. This chapter puts them together, with the energy the assembly stores at speed, and then turns to the other source of inertia figures in any drive calculation: the makers' datasheets, which quote them in half a dozen units and two quite different conventions.
 
-The chapter builds the DL-3's infeed roller with the WORKOS composite rotor inertia tool and converts the chipper motor's and the pusher servo's datasheet inertias with the moment of inertia converter. Its mistake is a European motor datasheet's GD², taken as the moment of inertia and four times too large.
+The chapter builds the DL-3's infeed roller with the KEVOS® composite rotor inertia tool and converts the chipper motor's and the pusher servo's datasheet inertias with the moment of inertia converter. Its mistake is a European motor datasheet's GD², taken as the moment of inertia and four times too large.
 
 ## The infeed roller as an assembly
 

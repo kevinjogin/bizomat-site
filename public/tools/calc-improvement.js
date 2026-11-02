@@ -1,4 +1,4 @@
-// KEVOS® WORKOS calculations: Improvement.
+// KEVOS® calculations: Improvement.
 window.GOCORE_CALC_PARTS = window.GOCORE_CALC_PARTS || [];
 window.GOCORE_CALC_PARTS.push(function (id) {
   switch (id) {

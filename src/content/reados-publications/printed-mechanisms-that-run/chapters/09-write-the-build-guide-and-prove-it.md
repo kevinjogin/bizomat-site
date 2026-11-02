@@ -162,7 +162,7 @@ A teaching mechanism will be dropped, jammed and handled by many people. The pac
 
 Every change to the mechanism, the guide or the program gets a new revision number and a one-line note saying what changed and why. A builder holding revision 1.1 of the guide should be able to tell at a glance that it matches revision 1.1 of the CAD files and the program. When a part changes, such as a profile-shifted sun gear after a future wear check, the guide's affected steps, the print schedule and the bill of materials are updated in the same revision.
 
-The READOS chapter on [proving a process is ready for production](/reados/collections/product-development-and-launch/proving-a-process-is-ready-for-production/) takes the same idea further, for products moving from prototype to repeatable manufacture.
+The Library chapter on [proving a process is ready for production](/reados/collections/product-development-and-launch/proving-a-process-is-ready-for-production/) takes the same idea further, for products moving from prototype to repeatable manufacture.
 
 ## Exercise: plan a classroom batch
 

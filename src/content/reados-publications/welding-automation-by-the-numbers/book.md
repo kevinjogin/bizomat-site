@@ -5,7 +5,7 @@ description: "Automate welding with numbers: levels of automation, the self-regu
 category: Manufacturing
 tags: [automation, manufacturing, process-improvement, quality, finance]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -79,4 +79,4 @@ This book is educational. Its prices, rates and paybacks are illustrations; real
 
 ## An original treatment
 
-READOS covers arc welding in Arc Welding by the Numbers, fixture design in Fixtures That Repeat, and resistance welding machines in Resistance Welding by the Numbers; this book links to them rather than repeating them. The explanations, the fabricator case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers arc welding in Arc Welding by the Numbers, fixture design in Fixtures That Repeat, and resistance welding machines in Resistance Welding by the Numbers; this book links to them rather than repeating them. The explanations, the fabricator case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.

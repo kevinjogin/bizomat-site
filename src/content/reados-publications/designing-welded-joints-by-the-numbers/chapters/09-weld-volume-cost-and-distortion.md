@@ -28,7 +28,7 @@ caption: Calculated as s² ÷ 2 × 1 m × 7,850 kg/m³. Real welds carry some re
 - 10 mm | 0.392
 ```
 
-An 8 mm fillet holds about 1.78 times the weld metal of a 6 mm fillet, and a 10 mm fillet about 2.8 times, while their strengths rise by only 1.33 and 1.67 times. Arc Welding by the Numbers works through the weld metal in fillet welds, including reinforcement and root gaps, in its chapter on [weld metal in fillet welds](/reados/publications/arc-welding-by-the-numbers/weld-metal-in-fillet-welds/), and the WORKOS [fillet weld quantity calculator](/tools/fillet-weld-quantity/) does the arithmetic for a whole job.
+An 8 mm fillet holds about 1.78 times the weld metal of a 6 mm fillet, and a 10 mm fillet about 2.8 times, while their strengths rise by only 1.33 and 1.67 times. Arc Welding by the Numbers works through the weld metal in fillet welds, including reinforcement and root gaps, in its chapter on [weld metal in fillet welds](/reados/publications/arc-welding-by-the-numbers/weld-metal-in-fillet-welds/), and the KEVOS® [fillet weld quantity calculator](/tools/fillet-weld-quantity/) does the arithmetic for a whole job.
 
 ## From kilograms to dollars
 
@@ -71,7 +71,7 @@ The deposition arithmetic covers only the time the arc is on, and it understates
 
 ## Fit-up and its cost
 
-Poorly fitting parts cost twice: once in the time spent forcing them together or filling the gap, and again in the extra weld metal a gap demands, as Chapter 4 showed. Parts cut accurately, with edges that meet without gaps, let welds be made to their nominal size quickly. Designers can help by specifying cutting tolerances that suit the welds, by using jigs and fixtures for repeated frames, and by avoiding joints that stack tolerances so that the last part never fits. READOS covers the design of fixtures for repeatable fabrication in [Fixtures That Repeat](/reados/publications/fixtures-that-repeat/), and a well-designed fixture often pays for itself on a short run of frames by removing fit-up time and gaps.
+Poorly fitting parts cost twice: once in the time spent forcing them together or filling the gap, and again in the extra weld metal a gap demands, as Chapter 4 showed. Parts cut accurately, with edges that meet without gaps, let welds be made to their nominal size quickly. Designers can help by specifying cutting tolerances that suit the welds, by using jigs and fixtures for repeated frames, and by avoiding joints that stack tolerances so that the last part never fits. The Library covers the design of fixtures for repeatable fabrication in [Fixtures That Repeat](/reados/publications/fixtures-that-repeat/), and a well-designed fixture often pays for itself on a short run of frames by removing fit-up time and gaps.
 
 ## Plate thickness and weld size
 

@@ -9,7 +9,7 @@ draft: false
 
 In most of this book a spring's force has been something to keep within limits. In this chapter the force is the product. A detent's spring sets how hard a part must be pushed to move it. A relief valve's spring sets the highest pressure a hydraulic system can reach. A brake's springs set how much torque it holds when the power is off. Get the spring wrong and the machine still runs, but its forces are wrong, sometimes dangerously so.
 
-This chapter checks three such springs on the VM-8 with three WORKOS tools: the ball detent check, the relief valve spring check and the spring clamp hydraulic release check. Each section has its own mistake, because springs that set forces are the ones most often adjusted by people who do not know what they set. The chapter ends with the inspection routine and records that the rebuild left behind for every spring in the machine.
+This chapter checks three such springs on the VM-8 with three KEVOS® tools: the ball detent check, the relief valve spring check and the spring clamp hydraulic release check. Each section has its own mistake, because springs that set forces are the ones most often adjusted by people who do not know what they set. The chapter ends with the inspection routine and records that the rebuild left behind for every spring in the machine.
 
 ## Ball detents in the tool magazine
 
@@ -155,7 +155,7 @@ The shop's maintenance plan measures the brake's air gap at each annual service 
 
 ## The rebuild's spring records
 
-By the end of the rebuild every spring in the VM-8 had a line in a register: what it does, its specification, the WORKOS check that confirmed it, the figure that shows it is healthy, and how often that figure is checked.
+By the end of the rebuild every spring in the VM-8 had a line in a register: what it does, its specification, the KEVOS® check that confirmed it, the figure that shows it is healthy, and how often that figure is checked.
 
 ```figure
 type: compare

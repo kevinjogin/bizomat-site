@@ -5,7 +5,7 @@ description: "Understand why each metal welds differently: heat flow, expansion,
 category: Manufacturing
 tags: [manufacturing, quality, design, validation, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-24
@@ -105,7 +105,7 @@ This book is for the people who make those decisions: maintenance and manufactur
 
 ## A 1915 handbook as the starting point
 
-*Autogenous Welding and Cutting*, by Theodor Kautny of Nürnberg, was published in English by McGraw-Hill in 1915, translated by the author and James F. Whiteford. Kautny was closely involved with the welding schools then attached to Germany's technical high schools, and his pocket book was written for works engineers, foremen and welders. Its first half covers gases, generators, burners and cutting, ground that READOS covers in [Oxy-Fuel by the Numbers](/reados/publications/oxy-fuel-by-the-numbers/). Its second half takes each important metal in turn and explains how its nature governs welding.
+*Autogenous Welding and Cutting*, by Theodor Kautny of Nürnberg, was published in English by McGraw-Hill in 1915, translated by the author and James F. Whiteford. Kautny was closely involved with the welding schools then attached to Germany's technical high schools, and his pocket book was written for works engineers, foremen and welders. Its first half covers gases, generators, burners and cutting, ground that the Library covers in [Oxy-Fuel by the Numbers](/reados/publications/oxy-fuel-by-the-numbers/). Its second half takes each important metal in turn and explains how its nature governs welding.
 
 Those chapters are the starting point here. Many of their insights still hold: carbon decides the character of iron; grey cast iron turns white and brittle if it loses silicon; aluminium's oxide must be destroyed because it will not melt with the metal; copper absorbs gas and oxygen and is rescued by phosphorus; nickel has a dangerous affinity for sulphur. Some of the book's figures are wrong by modern measurement, and some of its methods have been replaced. Kautny's closing prediction, that joining metals below their melting point would transform many industries, came true seventy-six years later. Each chapter of this book restates one of his themes in modern terms, corrects it where needed and works it through a modern case.
 
@@ -131,4 +131,4 @@ This book is educational. Welding and repair of load-bearing, pressure-containin
 
 ## An original treatment
 
-READOS already covers steel plate repair in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/) and the oxy-fuel process in Oxy-Fuel by the Numbers. This book concentrates on the metals themselves. The explanations, the pump-set case, the calculations, figures and exercises are original KEVOS® writing. The 1915 handbook is a public-domain historical work in the United States; its ideas are summarised, discussed and corrected in new words, and none of its text, tables or illustrations is reproduced.
+The Library already covers steel plate repair in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/) and the oxy-fuel process in Oxy-Fuel by the Numbers. This book concentrates on the metals themselves. The explanations, the pump-set case, the calculations, figures and exercises are original KEVOS® writing. The 1915 handbook is a public-domain historical work in the United States; its ideas are summarised, discussed and corrected in new words, and none of its text, tables or illustrations is reproduced.

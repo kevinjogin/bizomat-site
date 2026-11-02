@@ -5,7 +5,7 @@ description: "Plan hand-formed sheet metal work with numbers: strain and thickne
 category: Manufacturing
 tags: [manufacturing, prototyping, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

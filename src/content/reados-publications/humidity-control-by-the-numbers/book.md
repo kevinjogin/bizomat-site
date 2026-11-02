@@ -5,7 +5,7 @@ description: "Size and check air-handling processes with moist-air balances: pro
 category: Engineering
 tags: [design, operations, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -24,7 +24,7 @@ references:
   - title: "ASHRAE Handbook—Fundamentals, Chapter 1: Psychrometrics"
     creator: "ASHRAE"
     year: "current edition"
-    note: "Named as the reference for the Hyland–Wexler saturation-pressure equations and the moist-air relations that the book and the linked WORKOS tools use. Paywalled; no tables, figures or text are reproduced."
+    note: "Named as the reference for the Hyland–Wexler saturation-pressure equations and the moist-air relations that the book and the linked KEVOS® tools use. Paywalled; no tables, figures or text are reproduced."
   - title: "Formulations for the thermodynamic properties of the saturated phases of H2O from 173.15 K to 473.15 K"
     creator: "R. W. Hyland and A. Wexler, ASHRAE Transactions 89(2A)"
     year: "1983"
@@ -79,7 +79,7 @@ An air-handling unit is a row of simple processes: two airstreams mix, a coil he
 
 This book works through the processes one at a time. It sets out the properties of moist air and the chart that maps them, shows how to measure humidity well enough to trust, and turns a room's sensible and latent loads into the air the unit must supply. It then calculates mixing, winter heating and humidifying, summer cooling and dehumidifying, reheat and humidity control, and evaporative cooling, and finishes with condensation, commissioning and the checks that keep a system honest through the seasons.
 
-It is for mechanical and building services engineers, HVAC and process technicians, facility and production managers and students who know what relative humidity is and want to calculate with it. It assumes algebra and the idea of specific heat. Each chapter works one running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical and building services engineers, HVAC and process technicians, facility and production managers and students who know what relative humidity is and want to calculate with it. It assumes algebra and the idea of specific heat. Each chapter works one running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -97,7 +97,7 @@ The plant, its loads, the weather figures and any prices are invented. None desc
 
 Read Chapters 1 to 4 in order: they set out the properties, the chart, measurement and the room balance that every later chapter uses. Chapters 5 to 9 each take one process and can be read in any order once the supply air state of Chapter 4 is understood. Chapter 10 brings the processes together for commissioning and the seasons.
 
-Every property is calculated on the basis of one kilogram of dry air, with the same formulas the linked WORKOS tools use: the Hyland–Wexler saturation pressure, the ideal-gas humidity ratio and the standard moist-air enthalpy. Values are given to more figures than a measurement could justify, so that a reader can follow each step.
+Every property is calculated on the basis of one kilogram of dry air, with the same formulas the linked KEVOS® tools use: the Hyland–Wexler saturation pressure, the ideal-gas humidity ratio and the standard moist-air enthalpy. Values are given to more figures than a measurement could justify, so that a reader can follow each step.
 
 ## Source limits and professional responsibility
 

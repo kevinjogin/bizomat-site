@@ -160,7 +160,7 @@ The practical habits are simple:
 
 Good curves do not guarantee good surfaces. A surface can still twist, bulge or pinch between well-behaved boundaries, especially if the boundary curves have very different parameterisation, meaning their points are spaced differently along their lengths. They also cannot repair intent errors: a smooth curve placed in the wrong position is still wrong. Treat the curve check as necessary, not sufficient, and repeat the analysis on the surfaces in Chapter 3.
 
-The edited READOS chapter on [choosing and checking curves in CAD](/reados/collections/cad-modelling-and-design-intent/choosing-and-checking-curves-in-cad/) covers curve representations and conversion more generally.
+The edited Library chapter on [choosing and checking curves in CAD](/reados/collections/cad-modelling-and-design-intent/choosing-and-checking-curves-in-cad/) covers curve representations and conversion more generally.
 
 ## Exercise: raise the crown
 

@@ -5,7 +5,7 @@ description: "Turn an in-house engineering tool into a software product: test th
 category: Business
 tags: [product-development, strategy, sales, finance, startups]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

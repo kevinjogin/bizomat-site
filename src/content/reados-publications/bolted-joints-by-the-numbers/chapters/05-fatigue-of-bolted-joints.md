@@ -9,7 +9,7 @@ draft: false
 
 The CT-1 rig exists to cycle hydraulic cylinders, thousands of times a day, from zero to 25 MPa and back. Every cycle pulls the test head's screws a little further and lets them back. A bolt is a poor shape for fatigue: its thread is a ring of sharp notches, and the first engaged thread, where the load passes from bolt to nut or tapped hole, carries a large share of the load at the worst notch. Bolts survive cyclic loads only because a preloaded joint hides most of the load from them.
 
-This chapter checks the test head screws in fatigue with the WORKOS bolted joint fatigue tool, and checks the torque-angle tightening of Chapter 3 with the turn-of-nut fatigue tool. Metal Fatigue by the Numbers explains the background, the thread's notch, rolled threads and the Goodman line for bolts, in its [chapter on bolted joints](/reados/publications/metal-fatigue-by-the-numbers/bolted-joints/); this chapter applies it to a pressure joint. Its mistake is a fibre gasket, proposed to cure a weep, that would have tripled the screws' alternating stress.
+This chapter checks the test head screws in fatigue with the KEVOS® bolted joint fatigue tool, and checks the torque-angle tightening of Chapter 3 with the turn-of-nut fatigue tool. Metal Fatigue by the Numbers explains the background, the thread's notch, rolled threads and the Goodman line for bolts, in its [chapter on bolted joints](/reados/publications/metal-fatigue-by-the-numbers/bolted-joints/); this chapter applies it to a pressure joint. Its mistake is a fibre gasket, proposed to cure a weep, that would have tripled the screws' alternating stress.
 
 ## How preload protects a bolt
 

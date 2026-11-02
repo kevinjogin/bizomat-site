@@ -5,7 +5,7 @@ description: "Design and make weather louvres by numbers: airflow and free area,
 category: Engineering
 tags: [design, manufacturing, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

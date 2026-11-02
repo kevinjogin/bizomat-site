@@ -5,7 +5,7 @@ description: "How to map where defects fall on parts, test whether they are rand
 category: Manufacturing
 tags: [quality, manufacturing, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -71,7 +71,7 @@ references:
   - title: "ISO 2859-1 (sampling procedures for inspection by attributes), SAE J2277 (shot peening coverage determination) and ISO 8501-1 (visual assessment of surface cleanliness before painting)"
     creator: "International Organization for Standardization; SAE International"
     year: "current editions"
-    note: "Named by number and scope only in Chapters 9 and 10. Nothing is quoted; the sampling plans in the book are designed from first principles with the WORKOS tools."
+    note: "Named by number and scope only in Chapters 9 and 10. Nothing is quoted; the sampling plans in the book are designed from first principles with the KEVOS® tools."
 related:
   - title: "Microstructures by the Numbers"
     href: "/reados/publications/microstructures-by-the-numbers/"
@@ -105,7 +105,7 @@ The plant, its line and every count, position and cost are invented. None descri
 
 Read Chapters 1 and 2 first: they set up the counts, densities and Poisson model that everything else uses. Chapters 3 to 6 ask whether defects are random or clustered, in increasing depth. Chapters 7 to 9 deal with the consequences: yield, uneven density and overlapping defects. Chapters 10 and 11 turn the analysis into charts, inspection plans and a proven improvement.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

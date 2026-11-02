@@ -5,7 +5,7 @@ description: "Model breakdowns, repairs, buffers, maintenance crews, spares and 
 category: Operations
 tags: [operations, manufacturing, systems, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -77,7 +77,7 @@ Machines stop. A packing line, a press, a compressor or a pump runs for a while,
 
 This book builds the models one step at a time. It starts with a single machine that is either running or stopped, tests whether real stoppage data are random enough for the model, and adds states for minor and major stops. It then joins machines in series, with and without a buffer between them, and turns to the people and parts that repairs need: the fitter, the maintenance crew and the spares shelf. It finishes with standby machines and the time until both are down, and with the decision that all of this serves: which improvement buys the most output for the money.
 
-It is for production, maintenance and reliability engineers, operations managers, planners and students who keep or analyse stoppage records. It assumes algebra, averages and the idea of probability; the exponential function is explained where it appears. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for production, maintenance and reliability engineers, operations managers, planners and students who keep or analyse stoppage records. It assumes algebra, averages and the idea of probability; the exponential function is explained where it appears. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 

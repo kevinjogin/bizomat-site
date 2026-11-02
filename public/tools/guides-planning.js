@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool guides: Planning.
+// KEVOS® tool guides: Planning.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'demand-capacity': {
     purpose: 'Compares demand with practical capacity to show utilisation and buffer.',

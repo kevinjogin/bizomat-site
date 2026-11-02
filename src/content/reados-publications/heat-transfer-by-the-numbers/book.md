@@ -5,7 +5,7 @@ description: "Calculate heat flows in plant: energy and power, conduction throug
 category: Engineering
 tags: [design, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -73,7 +73,7 @@ All quantities, prices, coefficients chosen for the case and results are invente
 
 ## How to use the book
 
-Chapters 1 to 5 build the tools: energy and power, conduction, convection and radiation. Chapter 6 uses them to choose insulation, Chapter 7 to size a heat exchanger, and Chapter 8 to estimate warm-up and cool-down times. Calculators for several steps are in the WORKOS tools, including [insulated pipe heat loss](/tools/insulated-pipe/), [radiant heat](/tools/radiant-heat/) and [LMTD heat exchanger](/tools/lmtd-exchanger/). The companion book *Thermal Expansion by the Numbers* follows the same system through the movement and stress that heat causes.
+Chapters 1 to 5 build the tools: energy and power, conduction, convection and radiation. Chapter 6 uses them to choose insulation, Chapter 7 to size a heat exchanger, and Chapter 8 to estimate warm-up and cool-down times. Calculators for several steps are in the KEVOS® tools, including [insulated pipe heat loss](/tools/insulated-pipe/), [radiant heat](/tools/radiant-heat/) and [LMTD heat exchanger](/tools/lmtd-exchanger/). The companion book *Thermal Expansion by the Numbers* follows the same system through the movement and stress that heat causes.
 
 ## Source limits and professional responsibility
 

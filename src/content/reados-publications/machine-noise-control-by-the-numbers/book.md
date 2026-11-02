@@ -5,7 +5,7 @@ description: "Control machine noise with numbers: decibel arithmetic, sound powe
 category: Engineering
 tags: [design, operations, quality, people]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

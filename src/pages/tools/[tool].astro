@@ -1,5 +1,5 @@
 ---
-// A crawlable page for each WORKOS tool whose guide stands on its own. All content comes from the tool's
+// A crawlable page for each KEVOS® tool whose guide stands on its own. All content comes from the tool's
 // existing guide (public/tools/guides-*.js); nothing is written here. The working calculator stays at
 // /tools/?tool=<id>, so bookmarked and shared links keep working unchanged.
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -19,15 +19,16 @@ export function getStaticPaths() {
 const { tool } = Astro.props as { tool: Tool };
 const { tools, guides, inputs, inputGuide } = loadWorkosTools();
 const g = guides[tool.id]!;
-const collection = tool.collection || 'WORKOS';
+const collection = tool.collection || 'WORKOS'; // internal collection id
+const collectionLabel = collection === 'MAKEOS' ? 'MAKEOS' : 'Tools';
 const kind = /calculator/i.test(tool.name) ? '' : collection === 'MAKEOS' || tool.category === 'Engineering' ? ' calculator' : ' tool';
 const title = `${tool.name}${kind}`;
 const description = (() => {
-  const base = `${tool.description} Free ${collection} ${kind.trim() || 'calculator'} from KEVOS®: runs in your browser, no account.`;
+  const base = `${tool.description} Free ${collection === 'MAKEOS' ? 'MAKEOS ' : ''}${kind.trim() || 'calculator'} from KEVOS®: runs in your browser, no account.`;
   return base.length <= 200 ? base : `${tool.description.slice(0, 196 - 3).replace(/\s+\S*$/, '')}…`;
 })();
 const href = toolPageHref(tool.id);
-// READOS readings connected to this tool (src/data/knowledge-links.json) and pathways that apply it.
+// Library readings connected to this tool (src/data/knowledge-links.json) and pathways that apply it.
 const readings = knowledgeGraph().readingsFor(tool.id);
 const pathways = pathwaysForTool(tool.id);
 
@@ -66,7 +67,7 @@ const sections: [string, string[] | undefined][] = [
     <Container>
       <nav class="tool-page__crumbs" aria-label="Breadcrumb"><a href="/tools/">← All tools</a></nav>
       <header class="tool-page__head">
-        <p class="eyebrow">KEVOS® {collection} · {tool.category}</p>
+        <p class="eyebrow">KEVOS® {collectionLabel} · {tool.category}</p>
         <h1>{tool.name}</h1>
         <p class="lead">{tool.question}</p>
         <p>{g.purpose}</p>
@@ -100,7 +101,7 @@ const sections: [string, string[] | undefined][] = [
       <LearnConcepts items={readings} />
       {pathways.map((p) => <LearningPathway pathway={p} />)}
 
-      <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
+      <p class="formula-note">KEVOS® tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
       <p class="tool-page__open"><a class="btn" href={toolAppHref(tool.id)}>Open the {tool.name} calculator</a></p>
 
       {related.length > 0 && <section class="tool-page__related" aria-labelledby="related-tools">

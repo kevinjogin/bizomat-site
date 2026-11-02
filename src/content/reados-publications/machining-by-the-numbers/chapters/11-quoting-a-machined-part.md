@@ -175,7 +175,7 @@ Each is small per part, but together they can add a dollar or two to a part cost
 
 Cost is what the job is expected to consume. Price is a business decision that also reflects the value to the customer, the market, competition, the shop's capacity, the payment terms and the risk. Harbourline's policy in this fictional example adds 15% to estimated cost to cover profit and general risk. On a cost of A$48.32, that gives a price of about A$55.57 per part for 120 flanges.
 
-Be careful with terms. A 15% **markup** on cost is not a 15% **margin** on price. Here the margin is 15 ÷ 115, about 13% of the price. Mixing the two is a common way to underprice work. The READOS chapter on [pricing your product or service](/reados/collections/pricing-margins-and-profitability/pricing-your-product-or-service/) discusses cost floors and value-based pricing in more depth.
+Be careful with terms. A 15% **markup** on cost is not a 15% **margin** on price. Here the margin is 15 ÷ 115, about 13% of the price. Mixing the two is a common way to underprice work. The Library chapter on [pricing your product or service](/reados/collections/pricing-margins-and-profitability/pricing-your-product-or-service/) discusses cost floors and value-based pricing in more depth.
 
 ```figure
 type: formula

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: polymer thermodynamics tools (batch polymers) within the WORKOS directory.
+// KEVOS® MAKEOS: polymer thermodynamics tools (batch polymers) within the Tools directory.
 // Methods follow V. J. Klenin, Thermodynamics of Systems Containing Flexible-Chain Polymers (Elsevier, 1999) and the papers cited in each guide.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {

@@ -5,7 +5,7 @@ description: "Predict how dust, fume and mist behave by numbers: Stokes settling
 category: Engineering
 tags: [design, operations, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

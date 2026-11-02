@@ -5,7 +5,7 @@ description: "Specify, analyse and verify dimensional variation in mechanical pa
 category: Engineering
 tags: [design, quality, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: draft
 publishDate: 2026-10-18
@@ -114,6 +114,6 @@ Calculations use millimetres and degrees Celsius. Where a table value from a sta
 
 ## An independent treatment
 
-READOS already includes a single chapter on [specifying tolerances, fits and surface finish](/reados/collections/engineering-design-practice/specifying-tolerances-fits-and-surface-finish/). This book goes much further into datums, geometric tolerancing, stack-up calculation and verification, with one assembly carried through every chapter.
+The Library already includes a single chapter on [specifying tolerances, fits and surface finish](/reados/collections/engineering-design-practice/specifying-tolerances-fits-and-surface-finish/). This book goes much further into datums, geometric tolerancing, stack-up calculation and verification, with one assembly carried through every chapter.
 
 The explanations, the guide roller case and all worked examples are original KEVOS® writing. Machinery's Handbook was consulted to cross-check published fit limits; no tables, figures or text from it or from any standard are reproduced. Standards are cited so readers can obtain the authoritative wording.

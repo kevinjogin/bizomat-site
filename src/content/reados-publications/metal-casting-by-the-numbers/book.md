@@ -5,7 +5,7 @@ description: "How a sand casting is made right: melt energy and cycle, charge bl
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -44,7 +44,7 @@ references:
   - title: "ISO 6506-1 Metallic materials — Brinell hardness test — Part 1: Test method"
     creator: "International Organization for Standardization"
     year: "2014"
-    note: "Named by number and scope only in Chapter 10 as the test method standard behind the Brinell validity rules. The rule values in the case are the case foundry's settings in the WORKOS tool, not quotations from the standard."
+    note: "Named by number and scope only in Chapter 10 as the test method standard behind the Brinell validity rules. The rule values in the case are the case foundry's settings in the KEVOS® tool, not quotations from the standard."
   - title: "Model Code of Practice: Managing the risks of plant in the workplace"
     creator: "Safe Work Australia"
     year: "2022"
@@ -65,7 +65,7 @@ A casting is decided in the few minutes it takes metal to fill a mould and freez
 
 This book works through those numbers, stage by stage, for one aluminium sand casting. It starts with the physics of freezing: latent heat, freezing range and the three stages of shrinkage. It then follows the casting from the furnace, through charge blending, patternmaking, gating, solidification and feeding, to the melt-quality problems that feeding cannot cure, heat treatment and final inspection.
 
-It is for foundry engineers and supervisors, patternmakers, manufacturing and quality engineers, and the designers and buyers who specify castings. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for foundry engineers and supervisors, patternmakers, manufacturing and quality engineers, and the designers and buyers who specify castings. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -83,7 +83,7 @@ Temperatures, properties, constants, efficiencies, prices, test results and time
 
 Read Chapter 1 first: freezing, latent heat and shrinkage underlie every later chapter. Chapters 2 and 3 cover the melt; Chapters 4 to 7 the mould, from pattern to risers, and are best read in order; Chapter 8 covers the defects that come from the melt; Chapters 9 and 10 cover heat treatment and inspection.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The methods are the classical ones of foundry practice: Bernoulli for gating, Chvorinov for freezing time, feed-volume and modulus checks for risers. They are sound first estimates and teaching tools; trial castings, sections and simulation decide the real design.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The methods are the classical ones of foundry practice: Bernoulli for gating, Chvorinov for freezing time, feed-volume and modulus checks for risers. They are sound first estimates and teaching tools; trial castings, sections and simulation decide the real design.
 
 ## Source limits and professional responsibility
 

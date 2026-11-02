@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: engineering thermodynamics tools (batch handbook72) within the WORKOS directory.
+// KEVOS® MAKEOS: engineering thermodynamics tools (batch handbook72) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "otto-diesel-cycle-check",

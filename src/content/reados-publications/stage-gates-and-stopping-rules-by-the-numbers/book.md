@@ -5,7 +5,7 @@ description: "Avoid committing too early and continuing too long: decision trees
 category: Projects
 tags: [projects, product-development, finance, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -140,7 +140,7 @@ The business, its people, its products, its records and every number in the case
 
 Read Chapters 1 and 2 first: the distinction between spending and committing, and the decision tree built at the development gate, are used in every later chapter. Chapters 3 to 5 value flexibility (the right to stop, information and waiting) and are best read in order. Chapters 6 to 8 deal with the behaviour that keeps projects going and the rules that counter it, and Chapters 9 and 10 cover the launch-gate decision and the review that follows. Every calculation in the book was checked by running it, and the figures are rounded only for display.
 
-The book is one of a series of READOS books on delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside-view estimates of cost and time that the trees in this book need as inputs. *Front-End Planning by the Numbers* covers the work done before the first gate that decides what the options are. *Demand and Benefit Forecasts by the Numbers* deals with the market estimates behind the payoffs at each branch, and *Prototypes and Simulation by the Numbers* with designing the tests whose value this book calculates.
+The book is one of a series of Library books on delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside-view estimates of cost and time that the trees in this book need as inputs. *Front-End Planning by the Numbers* covers the work done before the first gate that decides what the options are. *Demand and Benefit Forecasts by the Numbers* deals with the market estimates behind the payoffs at each branch, and *Prototypes and Simulation by the Numbers* with designing the tests whose value this book calculates.
 
 ## Source limits and professional responsibility
 

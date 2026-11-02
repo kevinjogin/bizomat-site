@@ -5,7 +5,7 @@ description: "Build a small business pipeline around evidence, viable pricing an
 category: Business
 tags: [sales, customers, operations, finance, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-13

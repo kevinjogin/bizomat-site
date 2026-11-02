@@ -5,7 +5,7 @@ description: "Calculate tanks and hoppers with numbers: capacity and freeboard, 
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -45,7 +45,7 @@ Tanks, bins and hoppers are among the most common things a fabrication shop make
 
 This book works through those calculations in the order a tank is designed, drawn and made. It starts with capacity and what "full" means, then covers prisms and cylinders, cones and frustums, the prismoidal formula, partly filled tanks and calibration tables, mass and support loads, sheet area, and the patterns for cones, frustums and pyramid hoppers. It ends with the checks a tank should pass before it is cut.
 
-It suits designers, drafters, fabricators and process engineers. It assumes school geometry and a calculator or spreadsheet. READOS's collection chapter on areas, volumes and masses for the workshop gives a broad introduction; this book goes deep on one family of products.
+It suits designers, drafters, fabricators and process engineers. It assumes school geometry and a calculator or spreadsheet. The Library’s collection chapter on areas, volumes and masses for the workshop gives a broad introduction; this book goes deep on one family of products.
 
 ## The running case
 

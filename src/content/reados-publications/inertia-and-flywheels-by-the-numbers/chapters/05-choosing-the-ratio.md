@@ -9,7 +9,7 @@ draft: false
 
 Chapter 4 reflected the pusher's load through a 5:1 gearbox and found the servo needed 7.6 N·m. Without the gearbox it would have needed 27.1 N·m. That raises the obvious question: if 5:1 is so much better than 1:1, would 10:1 be better still? The answer is no, and the reason is one of the neatest results in drive design. Past a certain ratio, the motor spends more torque accelerating its own rotor, which must now spin faster, than it saves on the load.
 
-This chapter finds that ratio for the DL-3's pusher with the WORKOS inertia matching ratio tool, shows why the best theoretical ratio is not always the best practical one, and sets out how the mill chose 5:1. Its mistake is a ratio chosen for least torque that would have run the servo past its top speed.
+This chapter finds that ratio for the DL-3's pusher with the KEVOS® inertia matching ratio tool, shows why the best theoretical ratio is not always the best practical one, and sets out how the mill chose 5:1. Its mistake is a ratio chosen for least torque that would have run the servo past its top speed.
 
 ## Two inertias, one acceleration
 

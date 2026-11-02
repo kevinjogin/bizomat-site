@@ -5,7 +5,7 @@ description: "Lay out and make oval sheet metal work with numbers: four-centre o
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -49,7 +49,7 @@ An oval is the shape a round vessel takes when it must be longer than it is wide
 
 This book works through oval work with numbers. It starts with the shapes and how to construct a four-centre oval exactly, then calculates girths, areas and capacities, develops a flared oval vessel as a set of part cones, places its seams and makes its bottom and rim, deals with flat ovals, and finishes with material, nesting and checks. Each chapter calculates with one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for sheet metal workers, fabricators, apprentices and drafters, and for engineers who check oval vessels and ducts. It assumes school algebra and trigonometry and some familiarity with round pattern development; READOS's Sheet Metal Patterns by the Numbers covers radial line development of cones, which this book builds on.
+It is for sheet metal workers, fabricators, apprentices and drafters, and for engineers who check oval vessels and ducts. It assumes school algebra and trigonometry and some familiarity with round pattern development; the Library’s Sheet Metal Patterns by the Numbers covers radial line development of cones, which this book builds on.
 
 ## The running case
 

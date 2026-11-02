@@ -5,7 +5,7 @@ description: "Automate CAD work that pays: payback, recorded and written macros,
 category: Engineering
 tags: [automation, design, systems, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -57,7 +57,7 @@ Most CAD offices have a handful of macros. Someone recorded one to save drawings
 
 This book is a method for that. It starts with deciding what to automate, from a time study and an error count, and works through the practical problems every CAD automation meets: what a recorded macro gets wrong, how a CAD program's objects are organised, the internal units its programming interface uses, working with what the user has selected, walking through assemblies, reading and writing custom properties, automating drawings and batch exports, giving tools a user interface, and testing and maintaining them through upgrades.
 
-It suits CAD administrators and engineers who write macros, and managers who commission or approve them. Some programming experience helps, at the level of variables, conditions and loops; the code examples are short, original and written as language-neutral pseudocode, so that they translate into whichever language the reader's CAD system supports. Where a programming interface behaves in a particular way, the book uses SOLIDWORKS as its example, cites the vendor's own API help, and says so. READOS's collection chapter on automating CAD with macros and APIs gives a shorter overview; this book goes into the numbers and the failure modes.
+It suits CAD administrators and engineers who write macros, and managers who commission or approve them. Some programming experience helps, at the level of variables, conditions and loops; the code examples are short, original and written as language-neutral pseudocode, so that they translate into whichever language the reader's CAD system supports. Where a programming interface behaves in a particular way, the book uses SOLIDWORKS as its example, cites the vendor's own API help, and says so. The Library’s collection chapter on automating CAD with macros and APIs gives a shorter overview; this book goes into the numbers and the failure modes.
 
 ## The running case
 

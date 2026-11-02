@@ -5,7 +5,7 @@ description: "Design and make brazed and soldered joints with numbers: capillary
 category: Manufacturing
 tags: [manufacturing, design, quality, process-improvement, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -95,4 +95,4 @@ This book is educational. Brazing and soldering involve heat, flame, fume and ch
 
 ## An original treatment
 
-READOS introduces brazing and soldering briefly in [Choosing a joining method](/reados/collections/machine-elements-and-mechanical-design/choosing-a-joining-method/), and discusses brazing for copper, cast iron and dissimilar metals in Weldability by the Numbers. This book goes further into the processes themselves. The explanations, the manufacturer's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library introduces brazing and soldering briefly in [Choosing a joining method](/reados/collections/machine-elements-and-mechanical-design/choosing-a-joining-method/), and discusses brazing for copper, cast iron and dissimilar metals in Weldability by the Numbers. This book goes further into the processes themselves. The explanations, the manufacturer's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

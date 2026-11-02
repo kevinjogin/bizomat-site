@@ -96,7 +96,7 @@ The pool is the most immediate feedback, but the beginner cannot yet read it, so
 
 ## Spacing and fatigue
 
-Practice is more effective spread out than crammed together. Several sessions of two or three hours, separated by production work or rest, generally build skill more durably than a single long session, because concentration and fine control fall with fatigue, and because skill consolidates between sessions. Welding is tiring: the posture, the heat, the concentration and the dark filter all take their toll, and runs at the end of a long session are often worse than runs in the middle. READOS explains the general case for spaced practice in [The forgetting curve and why training fades](/reados/collections/judgement-markets-and-learning/the-forgetting-curve-and-why-training-fades/).
+Practice is more effective spread out than crammed together. Several sessions of two or three hours, separated by production work or rest, generally build skill more durably than a single long session, because concentration and fine control fall with fatigue, and because skill consolidates between sessions. Welding is tiring: the posture, the heat, the concentration and the dark filter all take their toll, and runs at the end of a long session are often worse than runs in the middle. The Library explains the general case for spaced practice in [The forgetting curve and why training fades](/reados/collections/judgement-markets-and-learning/the-forgetting-curve-and-why-training-fades/).
 
 ## Variety
 

@@ -134,7 +134,7 @@ caption: This is an illustration. Applied to every supplier simulation since.
 - ? Back-of-module temperatures logged in the first summer confirm the coefficient (Chapter 9)
 ```
 
-Back-of-module sensors read a degree or two below the cells, and a sensor taped near the frame reads lower still because the aluminium frame conducts heat away. The sensors were bonded near the centre of a cell, between the junction box and the frame, and shaded from direct sun. An infrared camera can map module temperatures from above, but its reading depends on the emissivity of the glass and the angle of view; READOS's [Infrared Temperature Measurement by the Numbers](/reados/publications/infrared-temperature-measurement-by-the-numbers/) explains the corrections.
+Back-of-module sensors read a degree or two below the cells, and a sensor taped near the frame reads lower still because the aluminium frame conducts heat away. The sensors were bonded near the centre of a cell, between the junction box and the frame, and shaded from direct sun. An infrared camera can map module temperatures from above, but its reading depends on the emissivity of the glass and the angle of view; the Library’s [Infrared Temperature Measurement by the Numbers](/reados/publications/infrared-temperature-measurement-by-the-numbers/) explains the corrections.
 
 ## Exercise: a warm, bright spring day
 

@@ -5,7 +5,7 @@ description: "Size, check and run a process-water chiller with numbers: cooling 
 category: Engineering
 tags: [manufacturing, operations, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -54,7 +54,7 @@ A process chiller is the refrigeration plant most factories own: a packaged mach
 
 This book works through one process chiller with numbers. It sets out what the chiller is asked to do and the second law's limit on it, calculates the cooling load, works the vapour-compression cycle point by point from NIST's refrigerant data, and then looks in turn at saturation pressure and temperature, throttling and flash gas, compressor work and discharge temperature, the effect of temperature lift, running cost, and commissioning and fault-finding. Each chapter follows one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is written as a companion to READOS's Heat Pumps and Refrigeration by the Numbers, which sets out the second law, the cycle, heat pump water heating, cold rooms and refrigerant rules for a food factory. This book does not repeat that ground. It goes deeper into one kind of machine, calculating its state points from published property data and showing how to read and diagnose it in service. It assumes school algebra and physics; READOS's Heat Transfer by the Numbers covers the heat flows that evaporators and condensers rely on.
+It is written as a companion to the Library’s Heat Pumps and Refrigeration by the Numbers, which sets out the second law, the cycle, heat pump water heating, cold rooms and refrigerant rules for a food factory. This book does not repeat that ground. It goes deeper into one kind of machine, calculating its state points from published property data and showing how to read and diagnose it in service. It assumes school algebra and physics; the Library’s Heat Transfer by the Numbers covers the heat flows that evaporators and condensers rely on.
 
 ## The running case
 

@@ -72,7 +72,7 @@ A difference of that size is not a rounding matter; it is more than half the A$4
 
 The practical danger is a quote on one model read as the other. Suppose an integrator quotes "an 85% curve from 1,600 hours" meaning Wright's cumulative average, and the buyer's budget uses the unit model. The integrator expects cell 7 to take about 790 hours; the buyer's budget allows 1,014. If the crew takes 1,000 hours, the integrator sees an overrun of about 210 hours and the buyer sees a cell that came in under budget. Neither is wrong on their own model, and both will argue from it. The remedy is to write the model into the contract or the plan: the form, the first unit, the rate and what counts as an assembly hour.
 
-The WORKOS [Learning Curve Unit Time and Cost calculator](/tools/learning-curve/) uses the unit form, Tₙ = T₁ n^b, and reports unit, cumulative and average hours, so its results match the case's planning curve. *Welder Training by the Numbers* applies the same law to a trainee's falling time per coupon in [The learning curve](/reados/publications/welder-training-by-the-numbers/the-learning-curve/).
+The KEVOS® [Learning Curve Unit Time and Cost calculator](/tools/learning-curve/) uses the unit form, Tₙ = T₁ n^b, and reports unit, cumulative and average hours, so its results match the case's planning curve. *Welder Training by the Numbers* applies the same law to a trainee's falling time per coupon in [The learning curve](/reados/publications/welder-training-by-the-numbers/the-learning-curve/).
 
 ## What the learning is worth
 

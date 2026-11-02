@@ -19,7 +19,7 @@ The three steels differed in carbon content, and the effect differed with them. 
 
 They concluded that the altered surface was not carburised. It was the result of the cold mass of the block chilling the thin layer of hot metal at the cut face once the flame moved on, a self-quench that hardens higher-carbon steel more than lower-carbon steel. That, they noted, explained the hard surface metal machinists often met when working up flame-cut steel.
 
-The modern description is the same in substance. Thermal cutting leaves a narrow heat-affected zone along the edge, and in hardenable steels that zone can be hard and brittle. READOS's chapter on [heat treatment and surface hardening](/reados/collections/machine-elements-and-mechanical-design/heat-treatment-and-surface-hardening-explained/) explains why rapid cooling from high temperature hardens steels with enough carbon. A hard edge can crack when bent, break drills and taps, resist machining and crack when welded.
+The modern description is the same in substance. Thermal cutting leaves a narrow heat-affected zone along the edge, and in hardenable steels that zone can be hard and brittle. The Library’s chapter on [heat treatment and surface hardening](/reados/collections/machine-elements-and-mechanical-design/heat-treatment-and-surface-hardening-explained/) explains why rapid cooling from high temperature hardens steels with enough carbon. A hard edge can crack when bent, break drills and taps, resist machining and crack when welded.
 
 ## Judging how hardenable a steel is
 

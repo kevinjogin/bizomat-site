@@ -9,7 +9,7 @@ draft: false
 
 An inspection does not tell us whether a part is good. It gives us a piece of evidence about whether the part is good, and the evidence can be wrong. A gauge reads a little high or low, a camera mistakes a reflection for a scratch, an inspector misses a burr at the end of a long shift. The decision to accept or reject is an inference: a judgement about the part's true state, made from imperfect evidence and from whatever else is known about the part.
 
-This chapter sets up the two kinds of inspection error, works out how likely a BU-25 bush is to be bad before anyone looks at it, using the process's capability and the WORKOS out-of-tolerance tool, and applies Bayes' rule to the vision system's verdicts. Its central result surprises most people the first time: at the shop's defect rate, more than three-quarters of the bushes the camera rejects are good. The error is a monthly report built on that misunderstanding.
+This chapter sets up the two kinds of inspection error, works out how likely a BU-25 bush is to be bad before anyone looks at it, using the process's capability and the KEVOS® out-of-tolerance tool, and applies Bayes' rule to the vision system's verdicts. Its central result surprises most people the first time: at the shop's defect rate, more than three-quarters of the bushes the camera rejects are good. The error is a monthly report built on that misunderstanding.
 
 ## Two kinds of error
 

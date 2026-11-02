@@ -5,7 +5,7 @@ description: "Design rubber parts that stretch, inflate and grip with numbers: h
 category: Engineering
 tags: [design, product-development, quality, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

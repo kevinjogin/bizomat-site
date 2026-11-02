@@ -1,4 +1,4 @@
-// KEVOS discovery search: ranks WORKOS tools and READOS books and chapters for a question in plain language.
+// KEVOS discovery search: ranks KEVOS® tools and Library books and chapters for a question in plain language.
 // Runs in the browser over /discovery-index.json (and in the tests), so every result is a real catalogue entry.
 // Hybrid ranking: the visitor's own words (BM25 over weighted fields), curated synonyms, spelling correction against
 // the catalogue's vocabulary, word pairs, and, when available, search terms from the AI intent step.
@@ -9,7 +9,7 @@ export interface DTool { id: string; n: string; d: string; q: string; c: string;
 export interface DBook { id: string; n: string; d: string; c: string; u: string; kind: 'publication' | 'collection' }
 /** A chapter: its URL is its id; b is the index of its book in DiscoveryIndex.books. */
 export interface DChapter { n: string; d: string; b: number; u: string }
-/** links: reviewed READOS ↔ WORKOS connections as [tool id, chapter URL or book id]. */
+/** links: reviewed Library ↔ Tools connections as [tool id, chapter URL or book id]. */
 export interface DiscoveryIndex { v: 1; tools: DTool[]; books: DBook[]; chapters: DChapter[]; links: [string, string][] }
 export const toolHref = (t: DTool) => (t.p ? `/tools/${t.id}/` : `/tools/?tool=${t.id}`);
 export const toolAppHref = (t: DTool) => `/tools/?tool=${t.id}`;
@@ -53,7 +53,7 @@ export interface Candidate { id: string; kind: 'tool' | 'chapter' | 'book'; name
 // ---------- Text ----------
 const STOP = new Set(('a about above after again all also am an and any are as at be because been before being below between both but by can could did do does doing down during each few for from further had has have having he her here hers him his how i if in into is it its just me more most my no nor not now of off on once only or other our out over own same she should so some such than that the their them then there these they this those through to too under until up very was we were what when where which while who whom why will with would you your yours ' +
   'want need help please tell show find work know get make let like trying try use using best good way ways much many able anything something someone kevos workos reados tool tools calculator calculators book books chapter chapters ' +
-  'lose losing lost sitting standing run running thing things').split(' '));
+  'lose losing lost sitting standing run running thing things keep keeps kept').split(' '));
 
 /** Light stemmer shared by documents and questions, so "machines", "machine" and "machining" stay distinct enough. */
 export function stem(w: string): string {
@@ -276,7 +276,7 @@ export function search(e: Engine, q: Query): Outcome {
   };
   const out: Outcome = { mode: 'results', tools: tools.map(toHit), readings: readings.map(toHit), related: [], concepts: [], corrections };
 
-  // Related: reviewed READOS ↔ WORKOS connections of the leading results that also match the question.
+  // Related: reviewed Library ↔ Tools connections of the leading results that also match the question.
   const shown = new Set([...out.tools, ...out.readings].map((h) => h.id));
   const related: Hit[] = [];
   const lead = [...out.tools.slice(0, 2), ...out.readings.slice(0, 2)];
@@ -306,7 +306,9 @@ export function search(e: Engine, q: Query): Outcome {
   out.concepts = [...ownSeen, ...[...phrases].filter((p) => !tokens(p).every((t) => ownSeen.has(t)))].slice(0, 4);
 
   // Ambiguity: a one- or two-word question whose best tools are close in score but do different jobs.
-  if (own.length <= 2 && !q.context && !(q.terms?.length) && !picked.length && tools.length >= 3) {
+  // One meaningful word ("cost", "how many samples do I need"), or two in a very short query. A full sentence with two
+  // ("why does my bearing keep failing") is answered, with a solution path.
+  if ((own.length === 1 || (own.length === 2 && words(q.question).length <= 3)) && !q.context && !(q.terms?.length) && !picked.length && tools.length >= 3) {
     const lead3 = tools.slice(0, 3);
     const groups = new Set(lead3.map((x) => (x.d.ref as DTool).c));
     if (lead3[2].s >= top * 0.75 && (groups.size >= 2 || own.length === 1)) {
@@ -338,4 +340,15 @@ export function shortlist(e: Engine, q: Query, tools = 14, readings = 6): Candid
     if (nt >= tools && nr >= readings) break;
   }
   return out;
+}
+
+/** A catalogue entry (tool id, chapter URL or book id) as a result card, or undefined when it is not in the catalogue. */
+export function entryById(e: Engine, id: string): Hit | undefined {
+  const i = e.byId.get(id);
+  return i === undefined ? undefined : hitOf(e, e.docs[i], 0, '');
+}
+/** Readings joined to a tool by a reviewed knowledge link (src/data/knowledge-links.json), chapters first. */
+export function verifiedReadings(e: Engine, toolId: string): Hit[] {
+  const out = e.index.links.filter(([t]) => t === toolId).map(([, r]) => entryById(e, r)).filter((h): h is Hit => Boolean(h));
+  return out.sort((a, b) => (a.kind === 'chapter' ? 0 : 1) - (b.kind === 'chapter' ? 0 : 1));
 }

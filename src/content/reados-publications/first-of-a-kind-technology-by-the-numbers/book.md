@@ -5,7 +5,7 @@ description: "Measure what novelty costs: readiness levels, pioneer-plant eviden
 category: Engineering
 tags: [projects, validation, manufacturing, process-improvement, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -151,9 +151,9 @@ The business, its suppliers, its plant, its people and every number in the case 
 
 ## How to use the book
 
-Read Chapter 1 first, because it sets out the two options and the paper comparison that the rest of the book corrects. Chapters 2 to 4 measure novelty and experience, Chapters 5 to 7 follow the technology from pilot to steady operation, and Chapters 8 to 10 turn the findings into allowances, risk reduction and a decision. The corrected yield found in Chapter 6 is used in every later chapter. Every calculation was checked by running it, and the WORKOS tools linked in the chapters reproduce the learning-curve, contingency and schedule arithmetic.
+Read Chapter 1 first, because it sets out the two options and the paper comparison that the rest of the book corrects. Chapters 2 to 4 measure novelty and experience, Chapters 5 to 7 follow the technology from pilot to steady operation, and Chapters 8 to 10 turn the findings into allowances, risk reduction and a decision. The corrected yield found in Chapter 6 is used in every later chapter. Every calculation was checked by running it, and the KEVOS® tools linked in the chapters reproduce the learning-curve, contingency and schedule arithmetic.
 
-The book is one of a series of KEVOS® READOS books on how projects are planned and delivered. *Reference Class Forecasting by the Numbers* supplies the outside view and the percentile and simulation methods that Chapter 8 relies on. *Front-End Planning by the Numbers* covers project definition and estimate classes, one of the drivers of cost growth in Chapter 3. *Stage Gates and Stopping Rules by the Numbers* develops the value of information and real options behind Chapter 9, and *Project Teams and Contracts by the Numbers* covers the contracts through which guarantees and risk are allocated.
+The book is one of a series of KEVOS® Library books on how projects are planned and delivered. *Reference Class Forecasting by the Numbers* supplies the outside view and the percentile and simulation methods that Chapter 8 relies on. *Front-End Planning by the Numbers* covers project definition and estimate classes, one of the drivers of cost growth in Chapter 3. *Stage Gates and Stopping Rules by the Numbers* develops the value of information and real options behind Chapter 9, and *Project Teams and Contracts by the Numbers* covers the contracts through which guarantees and risk are allocated.
 
 ## Source limits and professional responsibility
 

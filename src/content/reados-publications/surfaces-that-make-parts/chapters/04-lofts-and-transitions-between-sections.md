@@ -142,7 +142,7 @@ The enclosed volume of the transition is useful later for the fluid model and as
 
 **V = L ÷ 6 × (A₀ + 4Aₘ + A₁)**
 
-With L = 200 mm, A₀ = 11,309.7, Aₘ = 11,838.1 and A₁ = 10,606.9 mm², V = 33.333 × (11,309.7 + 47,352.5 + 10,606.9) = **2,308,970 mm³**, about 2.31 litres. The uncorrected loft would have held about 2.37 litres. The WORKOS [Prismoidal Formula Volume](/tools/prismoidal-volume/) tool runs the same calculation.
+With L = 200 mm, A₀ = 11,309.7, Aₘ = 11,838.1 and A₁ = 10,606.9 mm², V = 33.333 × (11,309.7 + 47,352.5 + 10,606.9) = **2,308,970 mm³**, about 2.31 litres. The uncorrected loft would have held about 2.37 litres. The KEVOS® [Prismoidal Formula Volume](/tools/prismoidal-volume/) tool runs the same calculation.
 
 ## Set the end conditions
 

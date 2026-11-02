@@ -5,7 +5,7 @@ description: "How induction hardening works and how to control it: frequency and
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -44,7 +44,7 @@ references:
   - title: "ISO 6507-1 Metallic materials — Vickers hardness test — Part 1: Test method"
     creator: "International Organization for Standardization"
     year: "2018"
-    note: "Named by number and scope as the test method behind the Vickers validity rules in Chapters 1 and 8. The rule values used are the case laboratory's settings in the WORKOS tool, not quotations from the standard."
+    note: "Named by number and scope as the test method behind the Vickers validity rules in Chapters 1 and 8. The rule values used are the case laboratory's settings in the KEVOS® tool, not quotations from the standard."
   - title: "Model Code of Practice: Managing the risks of plant in the workplace"
     creator: "Safe Work Australia"
     year: "2022"
@@ -67,7 +67,7 @@ Induction hardening puts a hard, wear-resistant case on a steel part in seconds,
 
 This book follows one induction-hardened journal through every stage. It starts with the electromagnetics, the reference depth and its jump at the steel's Curie point, then sets the power and heating time, the coil and its coupling, the steel's response, the quench and the temper. It then covers how the case is measured, why hardened parts distort and crack and how to prevent it, and how the whole process is held steady in production.
 
-It is for manufacturing, process and quality engineers, heat treatment supervisors, laboratory technicians and the designers and buyers of induction-hardened parts. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for manufacturing, process and quality engineers, heat treatment supervisors, laboratory technicians and the designers and buyers of induction-hardened parts. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -84,7 +84,7 @@ Resistivities, permeabilities, efficiencies, energies, test results, prices and 
 
 Read Chapters 1 to 3 first: they set out the process, the reference depth and the energy that every later chapter uses. Chapters 4 to 7 cover the coil, the steel, the quench and the temper and can be read in any order. Chapter 8 covers measurement, Chapter 9 distortion and cracking, and Chapter 10 control in production.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The formulas, reference depth, layer heat balances, interpolation and control chart arithmetic, are sound starting points; sectioned parts are the final word on every recipe.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The formulas, reference depth, layer heat balances, interpolation and control chart arithmetic, are sound starting points; sectioned parts are the final word on every recipe.
 
 ## Source limits and professional responsibility
 

@@ -1,5 +1,5 @@
 /**
- * READOS cover system. Every book, guide and volume gets a deterministic, purpose-drawn cover:
+ * Library cover system. Every book, guide and volume gets a deterministic, purpose-drawn cover:
  * a subject illustration (motif), a KEVOS colourway (tone) and a seed that varies the composition,
  * so parts of one series share a visual family but no two covers are the same.
  * The data here is rendered by ReadOSAnimatedCover.astro; animation and colour live in its CSS.
@@ -35,7 +35,7 @@ type Look = { motif: CoverMotif; tone: CoverTone };
 /** Tones rotate in this order through the parts of a series, so neighbouring parts never share a colourway. */
 export const COVER_TONES: readonly CoverTone[] = ['graphite', 'ember', 'paper', 'carbon'];
 
-/** One illustration per READOS subject (keys match the subject slugs in reados-collections.ts). */
+/** One illustration per Library subject (keys match the subject slugs in reados-collections.ts). */
 export const TOPIC_COVERS: Record<string, Look> = {
   'reading-financial-statements': { motif: 'ledger', tone: 'paper' },
   'acquisitions-groups-and-investment-accounting': { motif: 'holdings', tone: 'graphite' },
@@ -1318,7 +1318,7 @@ function compassRoute({ r }: Ctx): Shape[] {
   return s;
 }
 
-/* ---------- Edited-book illustrations (one per READOS book subject) ---------- */
+/* ---------- Edited-book illustrations (one per Library book subject) ---------- */
 
 const arrowHead = (x: number, y: number, dir: 'r' | 'u' | 'd', c = 'la'): Shape =>
   path(dir === 'r' ? `M${x - 5} ${y - 5}L${x} ${y}L${x - 5} ${y + 5}` : dir === 'u' ? `M${x - 5} ${y + 5}L${x} ${y}L${x + 5} ${y + 5}` : `M${x - 5} ${y - 5}L${x} ${y}L${x + 5} ${y - 5}`, c);

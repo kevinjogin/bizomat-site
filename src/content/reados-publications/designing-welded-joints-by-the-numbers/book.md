@@ -5,7 +5,7 @@ description: "Design welded joints with numbers: load paths, butt and fillet wel
 category: Engineering
 tags: [design, manufacturing, quality, product-development, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -72,4 +72,4 @@ This book is educational. The design strengths, factors and allowances in it are
 
 ## An original treatment
 
-READOS introduces welded joints for fabricators in a collection chapter, covers weld testing in Testing Welded Joints by the Numbers, and weld metal volume in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the conveyor drive case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their findings are summarised in new words, and none of their text, tables or figures is reproduced.
+The Library introduces welded joints for fabricators in a collection chapter, covers weld testing in Testing Welded Joints by the Numbers, and weld metal volume in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the conveyor drive case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their findings are summarised in new words, and none of their text, tables or figures is reproduced.

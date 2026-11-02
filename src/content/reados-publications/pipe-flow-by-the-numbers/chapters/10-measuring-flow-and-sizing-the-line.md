@@ -94,7 +94,7 @@ caption: This is an illustration, with the assumptions in the table above. Most 
 Whole-of-life cost is not the only limit on a pipe's size. Velocity sets others.
 
 - **Noise and erosion.** Water moving fast through small pipes can be noisy, and it erodes softer pipe materials and fittings where it turns or accelerates. The pipe or fitting maker's velocity limits for its product govern here.
-- **Water hammer.** The surge from a sudden stop is proportional to the velocity that is stopped, as READOS's Water Hammer by the Numbers explains; a faster line must close its valves more slowly or be protected.
+- **Water hammer.** The surge from a sudden stop is proportional to the velocity that is stopped, as the Library’s Water Hammer by the Numbers explains; a faster line must close its valves more slowly or be protected.
 - **Air and sediment.** At very low velocities, below a few tenths of a metre per second, air bubbles are not swept along and sediment settles. CW-2's far header, at 0.29 m/s, is already in that range.
 
 A size chosen on cost must also pass these tests. The 102.3 mm header that the cost comparison favours runs at 1.10 m/s at the design flow, comfortably inside every limit, and its far end would run at 0.18 m/s, slow enough to need the twice-yearly flush that the far end of the existing header already gets.

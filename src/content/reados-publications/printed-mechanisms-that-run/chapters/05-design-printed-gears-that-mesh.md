@@ -9,7 +9,7 @@ draft: false
 
 Printed gears have a reputation for being noisy, loose and short-lived. Much of that reputation comes from gears that were drawn rather than designed: a gear-shaped outline downloaded or sketched, printed at whatever size fitted, and meshed at the theoretical centre distance with no allowance for how printed teeth actually come out. Designed properly, printed gears are quiet enough, accurate enough and strong enough for light-duty mechanisms like the indexing table.
 
-This chapter designs the table's 5:1 planetary stage. It covers module and tooth count, the layout rules that make a planetary assemble, a tooth-bending check against strength measured on the same printer, and the backlash and assembly marks that printed gears need. It assumes the involute basics covered in the READOS book [Gears by the Numbers](/reados/publications/gears-by-the-numbers/module-pitch-and-gear-sizes/).
+This chapter designs the table's 5:1 planetary stage. It covers module and tooth count, the layout rules that make a planetary assemble, a tooth-bending check against strength measured on the same printer, and the backlash and assembly marks that printed gears need. It assumes the involute basics covered in the Library book [Gears by the Numbers](/reados/publications/gears-by-the-numbers/module-pitch-and-gear-sizes/).
 
 ## Choose a module the printer can make
 
@@ -51,13 +51,13 @@ The first rule makes the planets fit between sun and ring: the ring's tooth coun
 
 The sun-to-planet centre distance is m × (12 + 18) ÷ 2 = 15 mm. With three planets, their centres are 120° apart on that 15 mm radius, so neighbouring centres are about 25.98 mm apart. Each planet's tip diameter is (18 + 2) × 1 = 20 mm, leaving nearly 6 mm between neighbours, plenty of room for the carrier's pins and for printing tolerance.
 
-The [planetary gear](/tools/planetary-gear/) tool in WORKOS checks ratios and assembly conditions for other tooth counts.
+The [planetary gear](/tools/planetary-gear/) tool in KEVOS® Tools checks ratios and assembly conditions for other tooth counts.
 
 ## Face the undercut honestly
 
 A 12-tooth sun is smaller than ideal. For standard full-depth teeth at a 20° pressure angle, the cutting process used to define the involute profile removes material from the tooth root of any gear with fewer than about 17 teeth, a condition called undercut. The theoretical limit is 2 ÷ sin²(20°) ≈ 17.1 teeth. An undercut tooth has a thinner root and is weaker in bending, and part of its flank is not a true involute.
 
-There are standard remedies. The most common is a positive profile shift on the small gear, which moves its teeth outwards and thickens the root, with matching adjustments elsewhere in the train. The READOS chapter on [undercut and profile shift](/reados/publications/gears-by-the-numbers/undercut-and-profile-shift/) covers the method. Another is simply to use more teeth on the sun, which changes the ratio.
+There are standard remedies. The most common is a positive profile shift on the small gear, which moves its teeth outwards and thickens the root, with matching adjustments elsewhere in the train. The Library chapter on [undercut and profile shift](/reados/publications/gears-by-the-numbers/undercut-and-profile-shift/) covers the method. Another is simply to use more teeth on the sun, which changes the ratio.
 
 This is an illustration. The designer accepted a standard 12-tooth sun with its generated undercut, because the gearbox is lightly loaded and the stress check below uses a form factor for 12 teeth that reflects the weak root. The decision is recorded in the design notes with the remedy, should the soak test show sun-tooth wear: a profile-shifted sun or a 15-tooth sun with a revised train.
 
@@ -97,7 +97,7 @@ caption: This is an illustration. Rated running sits well inside the working lim
 - Single-break coupon strength | 68.3
 ```
 
-Rated running, at 6.4 MPa, is well within the working limit. The stall case, at 19.1 MPa, exceeds it a little but remains less than a third of the single-break strength. Because a stall is rare and brief, especially once Chapter 8 adds a current limit and a jam detector, the designer accepted it. The [Lewis bending](/tools/lewis-bending/) and [plastic gear power](/tools/plastic-gear-power/) tools in WORKOS run the same kind of check for other cases.
+Rated running, at 6.4 MPa, is well within the working limit. The stall case, at 19.1 MPa, exceeds it a little but remains less than a third of the single-break strength. Because a stall is rare and brief, especially once Chapter 8 adds a current limit and a jam detector, the designer accepted it. The [Lewis bending](/tools/lewis-bending/) and [plastic gear power](/tools/plastic-gear-power/) tools in KEVOS® Tools run the same kind of check for other cases.
 
 Be clear about what this check is. The Lewis equation ignores stress concentration at the root, dynamic effects, the undercut's exact shape and the true load distribution across an imperfectly printed face. The coupon strength is from a crude rig. The working limit is an assumption. Together they give a reasonable screening of whether the gears are in the right range, which the soak test in Chapter 9 then confirms or refutes.
 

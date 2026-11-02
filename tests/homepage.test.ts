@@ -12,7 +12,8 @@ const home = read('src/pages/index.astro');
 
 test('the homepage leads with discovery, then WORKOS and READOS', () => {
   assert.match(home, /<h1 id="home-title">What would you like to <em>solve<\/em> today\?<\/h1>/);
-  assert.match(home, /<DiscoveryBox suggestions=\{HOME_DISCOVERY_EXAMPLES\} \/>/);
+  assert.match(home, /<DiscoveryBox \/>/);
+  assert.match(home, /<div class="home-hero__wide">\s*<DiscoveryExamples suggestions=\{HOME_DISCOVERY_EXAMPLES\} \/>/, 'the example questions run the full width under the hero');
   assert.ok(home.indexOf('<DiscoveryBox') < home.indexOf('data-cta="hero-workos"'), 'the question box comes first in the hero');
   assert.match(home, /<Button href="\/tools\/" arrow data-cta="hero-workos">Explore Tools<\/Button>/);
   assert.match(home, /<Button href="\/reados\/" variant="secondary" data-cta="hero-reados">Explore Library<\/Button>/);

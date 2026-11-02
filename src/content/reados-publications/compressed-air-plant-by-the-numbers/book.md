@@ -5,7 +5,7 @@ description: "Calculate what a compressor room really does: the work of compress
 category: Engineering
 tags: [design, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -65,7 +65,7 @@ Compressed air is often called a factory's most expensive utility, and the reaso
 
 This book follows the energy and the water through one compressor room. It begins with what "a cubic metre of air" means, calculates the ideal work of compression and compares a real compressor against it, then follows the heat the compressor makes, the water the air carries, the dryers that remove it, the pressure the system runs at, the storage and controls that decide part-load power, and the pipes that take the air to the plant. The last chapter turns the numbers into an assessment.
 
-It serves mechanical and maintenance engineers, energy managers and plant managers who run, audit or extend compressed air plant. You need comfortable algebra, SI units and a spreadsheet. The thermodynamics is introduced as it is used. READOS's Pneumatics by the Numbers covers the point-of-use side, cylinders, valves and leak hunting; this book stays in the compressor room and the mains.
+It serves mechanical and maintenance engineers, energy managers and plant managers who run, audit or extend compressed air plant. You need comfortable algebra, SI units and a spreadsheet. The thermodynamics is introduced as it is used. The Library’s Pneumatics by the Numbers covers the point-of-use side, cylinders, valves and leak hunting; this book stays in the compressor room and the mains.
 
 ## The running case
 

@@ -5,7 +5,7 @@ description: "Choose, wire, install and calibrate thermocouples, Pt100s and ther
 category: Manufacturing
 tags: [manufacturing, quality, automation, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-28

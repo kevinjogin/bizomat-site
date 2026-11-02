@@ -52,7 +52,7 @@ caption: This is an illustration. The cost is of re-doing lost work only; delay 
 - *Nightly plus two-hourly captures in working hours | up to 18 hours | about A$1,710
 ```
 
-The two-hourly captures cost little extra, because most modern backup tools can take frequent incremental snapshots and the vault's daily change is small. The team chose them. The WORKOS [downtime cost](/tools/downtime-cost/) tool can help frame the same calculation for other systems where lost time, rather than lost data, is the main cost.
+The two-hourly captures cost little extra, because most modern backup tools can take frequent incremental snapshots and the vault's daily change is small. The team chose them. The KEVOS® [downtime cost](/tools/downtime-cost/) tool can help frame the same calculation for other systems where lost time, rather than lost data, is the main cost.
 
 ## Keep copies in more than one place
 

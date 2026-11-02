@@ -9,7 +9,7 @@ draft: false
 
 A vacuum stops convection and gas conduction, but it does nothing to stop radiation. Every surface of CT-40's warm vacuum vessel radiates heat across the vacuum onto the cold mass, and at room temperature a black surface radiates about 420 W/m². Even with clean metal surfaces, which radiate and absorb only a small fraction of that, the radiation onto CT-40's cold mass would be about half of the cooler's capacity at 40 K. Radiation is the heat leak that needs the most careful treatment, and multilayer insulation is the tool that tames it.
 
-This chapter calculates the radiation from CT-40's vessel onto its cold mass with bare surfaces, using the effective emissivity of two enclosed surfaces and the WORKOS radiant heat tool, explains multilayer insulation with the engineering formula that CERN derived from tests on the Large Hadron Collider's cryostats, sets out the practical rules for installing it, and ends with a cooldown run without it.
+This chapter calculates the radiation from CT-40's vessel onto its cold mass with bare surfaces, using the effective emissivity of two enclosed surfaces and the KEVOS® radiant heat tool, explains multilayer insulation with the engineering formula that CERN derived from tests on the Large Hadron Collider's cryostats, sets out the practical rules for installing it, and ends with a cooldown run without it.
 
 ## Radiation between a warm vessel and a cold mass
 

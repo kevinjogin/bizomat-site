@@ -138,7 +138,7 @@ Fourteen rules for parts and assemblies are enough for a six-seat office. Longer
 
 The reasons matter more than the wording. When a designer understands why faces make poor references, they will apply the idea to situations the rule never mentions. When they know only the rule, they will follow it literally and miss its point.
 
-READOS's chapter on [design intent in parametric CAD and large assemblies](/reados/collections/cad-modelling-and-design-intent/design-intent-in-parametric-cad-and-large-assemblies/) discusses the wider ideas behind these rules.
+The Library’s chapter on [design intent in parametric CAD and large assemblies](/reados/collections/cad-modelling-and-design-intent/design-intent-in-parametric-cad-and-large-assemblies/) discusses the wider ideas behind these rules.
 
 ## Exercise: test a proposed shortcut
 

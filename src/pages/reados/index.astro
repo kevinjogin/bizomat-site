@@ -10,7 +10,7 @@ import BookCard from '../../components/library/BookCard.astro';
 import '../../styles/library.css';
 import { buildReadosLibrary } from '../../utils/reados-library.ts';
 
-// One list of READOS books per subject, in the existing order: authored books, featured guides, then collections.
+// One list of Library books per subject, in the existing order: authored books, featured guides, then collections.
 const subjects = await buildReadosLibrary();
 
 const PREVIEW = 6;
@@ -18,13 +18,13 @@ const total = subjects.reduce((n, s) => n + s.entries.length, 0);
 // Chapter titles and links for search, keyed by card id (read by src/scripts/library-browser.ts).
 const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s.entries.map((e) => [e.id, e.chapters])))).replace(/</g, '\\u003c');
 ---
-<BaseLayout exactTitle="Engineering, Manufacturing & Business Knowledge Library | KEVOS" breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.library, href: '/reados/' }]} description="Browse KEVOS® READOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
+<BaseLayout exactTitle="Engineering, Manufacturing & Business Knowledge Library | KEVOS" breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.library, href: '/reados/' }]} description="Browse KEVOS® Library books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
   <LibraryHero
-    title="READOS"
+    title="Library"
     description="Practical books and guides covering engineering, manufacturing, operations, projects and business."
     action="/reados/"
-    placeholder="Search READOS books..."
-    label="Search READOS books"
+    placeholder="Search Library books..."
+    label="Search Library books"
     total={total}
     noun="book"
   >
@@ -41,10 +41,10 @@ const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s
       </LibrarySection>
     ))}
     <details class="lib-about" slot="after">
-      <summary>About READOS</summary>
+      <summary>About Library</summary>
       <div class="lib-about__body">
-        <p>READOS is the KEVOS® knowledge library: structured, practitioner-written guidance on engineering, manufacturing, operations, projects, technology and business, published to help organisations make sound technical and commercial decisions.</p>
-        <p>Every title is written to be applied. Read the method in READOS, run the numbers with the matching <a href="/tools/">tools</a>, and when your organisation needs the work delivered, <a href="/contact/">discuss your requirements with KEVOS®</a>.</p>
+        <p>The KEVOS® Library brings together structured, practitioner-written guidance on engineering, manufacturing, operations, projects, technology and business, published to help organisations make sound technical and commercial decisions.</p>
+        <p>Every title is written to be applied. Read the method in the Library, run the numbers with the matching <a href="/tools/">tools</a>, and when your organisation needs the work delivered, <a href="/contact/">discuss your requirements with KEVOS®</a>.</p>
         <p>Search covers titles, summaries, subjects and chapter headings. It does not search the full text of each chapter.</p>
       </div>
     </details>

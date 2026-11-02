@@ -25,18 +25,18 @@ const collectionOf = (t: Record<string, any>) => (t.collection === 'MAKEOS' ? 'M
 const tagsOf = (t: Record<string, any>, topicName: string) => [t.category, subcategoryLabel(t.category), topicName, collectionOf(t), ...(t.keywords || [])].join(' ');
 const bodyOf = (t: Record<string, any>) => [t.description, ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ');
 const description =
-  'KEVOS® WORKOS engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
+  'KEVOS® Tools engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
 ---
 
-<BaseLayout title="WORKOS calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.tools, href: '/tools/' }]}>
+<BaseLayout title="Engineering and business calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.tools, href: '/tools/' }]}>
   {/* A calculator link (?tool=) shows the loading workspace, not the directory, before any tool script arrives. */}
   <script is:inline>if (/[?&]tool=/.test(location.search)) document.documentElement.classList.add('workos-tool-link');</script>
   <LibraryHero
-    title="WORKOS"
+    title="Tools"
     description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions."
     action="/tools/"
-    placeholder="Search WORKOS tools..."
-    label="Search WORKOS tools"
+    placeholder="Search KEVOS® tools..."
+    label="Search KEVOS® tools"
     total={tools.length}
     noun="tool"
   >
@@ -51,10 +51,10 @@ const description =
       </LibrarySection>
     ))}
     <details class="lib-about" slot="after">
-      <summary>About WORKOS</summary>
+      <summary>About Tools</summary>
       <div class="lib-about__body">
-        <p>WORKOS covers the engineering, manufacturing, operations and commercial decisions a team makes every day. Each tool shows its method, checks what could go wrong, tests how sensitive the answer is and gives you a report you can share with confidence.</p>
-        <p><strong>MAKEOS engineering toolkit</strong> is the WORKOS collection of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it. <a href="/tools/?collection=makeos">Browse the MAKEOS toolkit →</a></p>
+        <p>Tools covers the engineering, manufacturing, operations and commercial decisions a team makes every day. Each tool shows its method, checks what could go wrong, tests how sensitive the answer is and gives you a report you can share with confidence.</p>
+        <p><strong>MAKEOS engineering toolkit</strong> is the KEVOS® collection of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it. <a href="/tools/?collection=makeos">Browse the MAKEOS toolkit →</a></p>
         <ul>
           <li>Methods shown in full, with feasibility and verification checks.</li>
           <li>Sensitivity analysis and decision reports you can download, print or share.</li>
@@ -67,7 +67,7 @@ const description =
     <section class="workspace" id="tool-workspace" hidden>
       <p class="tool-loading" id="tool-loading" role="status">Loading the calculator…</p>
       <div class="tool-loading tool-loading--failed" id="tool-loading-failed" role="alert" hidden><p>This calculator could not load. Check your connection and try again.</p><p><button class="btn" type="button" id="tool-loading-retry">Try again</button> <a class="btn secondary" href="/tools/">Back to all tools</a></p></div>
-      <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® WORKOS</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
+      <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® Tools</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
       <div class="tool-layout">
         <form id="tool-form" class="panel" autocomplete="off"></form>
         <div class="panel sticky">
@@ -79,7 +79,7 @@ const description =
             <button class="btn secondary" id="share-tool" type="button">Share with inputs</button>
           </div>
           <p class="tool-flash" id="tool-flash" role="status"></p>
-          <p class="formula-note">WORKOS tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
+          <p class="formula-note">KEVOS® tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
         </div>
       </div>
       <div class="tool-analysis" id="tool-analysis"></div>

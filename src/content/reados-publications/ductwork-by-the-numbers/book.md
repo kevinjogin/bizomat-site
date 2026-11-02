@@ -5,7 +5,7 @@ description: "Size and check ductwork with numbers: flow and velocity, round and
 category: Engineering
 tags: [design, manufacturing, systems, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -54,7 +54,7 @@ Ductwork moves air: fresh air into a building, fume and dust out of a workshop, 
 
 This book works through those numbers in the order a ducted system is designed and made. It covers flow, area and velocity; round and rectangular equivalents; branches and the main; friction in straight duct; fittings and velocity pressure; adding the losses to a fan duty; transitions treated for their effect on the air; fans, system curves and the fan laws; sheet, mass, supports and cost; and measuring and balancing the finished system. Flat-pattern development of duct fittings is a sheet metal topic in its own right and is not covered here.
 
-It suits mechanical designers, drafters, fabricators and maintenance engineers. It assumes school algebra and a spreadsheet. READOS's *Tanks and Hoppers by the Numbers* applies the same mensuration to vessels and is a natural companion.
+It suits mechanical designers, drafters, fabricators and maintenance engineers. It assumes school algebra and a spreadsheet. The Library’s *Tanks and Hoppers by the Numbers* applies the same mensuration to vessels and is a natural companion.
 
 ## The running case
 

@@ -52,7 +52,7 @@ export interface ContactInput {
   service: string;
   /** Optional website of the visitor or their organisation. */
   website: string;
-  /** Optional WORKOS tool or READOS resource the enquiry is about. */
+  /** Optional KEVOS® tool or Library resource the enquiry is about. */
   resource: string;
   message: string;
   contactMethod: ContactMethod;

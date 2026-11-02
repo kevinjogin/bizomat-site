@@ -60,7 +60,7 @@ For the drive assembly, each record is one line of about a dozen fields, and the
 
 Each visit is one instance. If a sub-assembly appears twice in the top assembly, its children are visited twice, once under each instance, and a bolt that appears four times in the sub-assembly is visited eight times. That is usually what a quantity count wants: eight bolts are needed. The recursion handles it naturally, because each instance of the sub-assembly is walked separately.
 
-Some tools prefer to walk each unique sub-assembly once and multiply. That is faster for very large assemblies and gives the same totals, provided every multiplication is done correctly: the quantity of a part is the product of the quantities of every assembly above it on its path. Bills of materials work this way, and READOS's *Bills of Materials by the Numbers* develops the arithmetic.
+Some tools prefer to walk each unique sub-assembly once and multiply. That is faster for very large assemblies and gives the same totals, provided every multiplication is done correctly: the quantity of a part is the product of the quantities of every assembly above it on its path. Bills of materials work this way, and the Library’s *Bills of Materials by the Numbers* develops the arithmetic.
 
 ```figure
 type: formula

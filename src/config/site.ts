@@ -65,13 +65,13 @@ export const SITE = {
     name: 'KEVOS® Assistant',
     endpoint: '/api/chat',
     /** Conversation starters in the assistant and on the REACHOS page. */
-    starters: ['Help me explore KEVOS®', 'I have a question about WORKOS', 'I have a question about READOS', 'I have an idea or suggestion', 'I want to discuss a collaboration'],
+    starters: ['Help me explore KEVOS®', 'I have a question about Tools', 'I have a question about Library', 'I have an idea or suggestion', 'I want to discuss a collaboration'],
   },
   /** Jurisdiction stated in the Terms page. Confirm before launch. */
   jurisdiction: 'New South Wales, Australia',
 } as const;
 
-/** Main navigation (header on every screen size). The labels are plain words; WORKOS, READOS and REACHOS stay as the
+/** Main navigation (header on every screen size). The labels are plain words; Tools, Library and REACHOS stay as the
  *  names of the platforms on their own pages. */
 export const NAV = [
   { href: '/tools/', label: 'Tools' },
@@ -113,7 +113,7 @@ export const FOOTER_NAV = {
   ],
 } as const;
 
-/** Reading-time estimate for READOS chapters. */
+/** Reading-time estimate for Library chapters. */
 export const READING = {
   wordsPerMinute: 220,
 } as const;

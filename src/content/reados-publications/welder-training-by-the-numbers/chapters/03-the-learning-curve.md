@@ -17,7 +17,7 @@ Wright's observation can be written as a power law. If y is the time or cost of 
 
 y = a × x^b
 
-where b is a negative number. The constant percentage per doubling, called the learning rate r, is related to b by r = 2^b, or b = log₂ r. An 80% learning curve means each doubling of cumulative output brings the time per unit to 80% of what it was. READOS explains power laws and logarithms in [Growth, decay and logarithms](/reados/collections/practical-mathematics-for-engineering/growth-decay-and-logarithms/), including how a power law becomes a straight line on log-log axes.
+where b is a negative number. The constant percentage per doubling, called the learning rate r, is related to b by r = 2^b, or b = log₂ r. An 80% learning curve means each doubling of cumulative output brings the time per unit to 80% of what it was. The Library explains power laws and logarithms in [Growth, decay and logarithms](/reados/collections/practical-mathematics-for-engineering/growth-decay-and-logarithms/), including how a power law becomes a straight line on log-log axes.
 
 ```figure
 type: formula

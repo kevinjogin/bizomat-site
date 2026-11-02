@@ -42,7 +42,7 @@ This is an illustration. If the torch delivers about 1.5 kW into the manifold jo
 
 ## Flame chemistry for brazing
 
-Both Hart and Cravens warned that the fuel and flame for brazing should be free of sulphur and soot, and the flame non-oxidising, and that coal or coke fires must not touch the parts. A reducing or neutral flame avoids oxidising the parts under the flux; an oxidising flame grows oxide faster than the flux can remove it. Modern fuel gases are clean, but the flame setting still matters: a slightly reducing flame is the usual choice for silver brazing. READOS covers flame chemistry and the neutral flame in Oxy-Fuel by the Numbers, in its chapter on [flame chemistry and the neutral flame](/reados/publications/oxy-fuel-by-the-numbers/flame-chemistry-and-the-neutral-flame/).
+Both Hart and Cravens warned that the fuel and flame for brazing should be free of sulphur and soot, and the flame non-oxidising, and that coal or coke fires must not touch the parts. A reducing or neutral flame avoids oxidising the parts under the flux; an oxidising flame grows oxide faster than the flux can remove it. Modern fuel gases are clean, but the flame setting still matters: a slightly reducing flame is the usual choice for silver brazing. The Library covers flame chemistry and the neutral flame in Oxy-Fuel by the Numbers, in its chapter on [flame chemistry and the neutral flame](/reados/publications/oxy-fuel-by-the-numbers/flame-chemistry-and-the-neutral-flame/).
 
 ## Furnace heating
 

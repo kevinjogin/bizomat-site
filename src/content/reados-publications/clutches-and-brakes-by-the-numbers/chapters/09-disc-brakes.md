@@ -9,7 +9,7 @@ draft: false
 
 A caliper disc brake clamps a rotating disc between two pads. It is the plate clutch of Chapter 3 turned into a brake: the same friction radius, the same faces, the same clamp force. What it adds is a disc that stays exposed to the air on both sides, a short pad that leaves most of the disc cooling at any moment, and a caliper that can be applied by springs, hydraulics or air. Disc brakes are now the usual choice for emergency and holding brakes on hoists, winches, conveyors and wind turbines.
 
-This chapter sizes the SW-25's second drum brake, an independent caliper disc brake on the drum flange, with the WORKOS caliper disc brake design tool. It shows why the direction of the load during the stop dominates the design, what happens when the brake must stop a drum that is already running too fast, and how the brake's capacity is set. Its mistake is a load direction chosen from the wrong case.
+This chapter sizes the SW-25's second drum brake, an independent caliper disc brake on the drum flange, with the KEVOS® caliper disc brake design tool. It shows why the direction of the load during the stop dominates the design, what happens when the brake must stop a drum that is already running too fast, and how the brake's capacity is set. Its mistake is a load direction chosen from the wrong case.
 
 ## Why a second brake
 

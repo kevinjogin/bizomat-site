@@ -30,7 +30,7 @@ Visual inspection checks that the filler appears all round the joint, ideally on
 
 ## Sampling
 
-Destructive tests can only be done on samples. The manufacturer sections one 15 mm outlet joint from each day's induction production and one hand-brazed joint from each brazer each week, and records the percentage of the socket length filled. A sample cannot prove that every joint is sound, but a trend in the sample, such as fill falling from about 95% to 80% over a fortnight, warns of a change in clearance, flux, heating or filler before it causes leaks. READOS explains the logic of sampling, and what a sample can and cannot prove, in Testing Welded Joints by the Numbers, in its chapter on [non-destructive testing and sampling](/reados/publications/testing-welded-joints-by-the-numbers/non-destructive-testing-and-sampling/).
+Destructive tests can only be done on samples. The manufacturer sections one 15 mm outlet joint from each day's induction production and one hand-brazed joint from each brazer each week, and records the percentage of the socket length filled. A sample cannot prove that every joint is sound, but a trend in the sample, such as fill falling from about 95% to 80% over a fortnight, warns of a change in clearance, flux, heating or filler before it causes leaks. The Library explains the logic of sampling, and what a sample can and cannot prove, in Testing Welded Joints by the Numbers, in its chapter on [non-destructive testing and sampling](/reados/publications/testing-welded-joints-by-the-numbers/non-destructive-testing-and-sampling/).
 
 ## The pressure test
 

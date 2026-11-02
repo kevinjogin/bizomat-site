@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: an expandable explanation under every tool input, with a small animated SVG figure.
+// KEVOS® Tools input guides: an expandable explanation under every tool input, with a small animated SVG figure.
 // The words for each field live in inputs-*.js (window.WORKOS_INPUTS[toolId][fieldKey] = { what, tip, effect, fig, sym }).
 // Units, accepted range and the worked example come from the tool definition itself, so they cannot drift from the form.
 // Runs unchanged in the browser (ui.js) and at build time in Node (src/utils/workos-tools.ts). It never reads or writes

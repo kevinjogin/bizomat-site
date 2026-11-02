@@ -103,7 +103,7 @@ The approver chose the third, after the bush supplier confirmed that a 0.029 mm 
 
 ## Worst case, or likely case?
 
-A designer faced with a worst-case interference of 0.016 mm may argue that it will never happen: it needs the smallest bush bore, the tightest press fit and the largest pin together, and each is unlikely on its own. Statistical methods, covered in READOS's *Fits That Work*, can estimate how often such combinations occur, and for large volumes with capable processes they can justify tolerances that the worst case would reject.
+A designer faced with a worst-case interference of 0.016 mm may argue that it will never happen: it needs the smallest bush bore, the tightest press fit and the largest pin together, and each is unlikely on its own. Statistical methods, covered in the Library’s *Fits That Work*, can estimate how often such combinations occur, and for large volumes with capable processes they can justify tolerances that the worst case would reject.
 
 The checker's position should be simpler. The checker reports the worst case that the drawings allow, because that is what the drawings permit a supplier to make and an inspector to accept. Whether a statistical argument justifies accepting it is a design decision for the approver, made with evidence about the processes, and recorded. For a tensioner made in batches of 40, by a supplier whose capability nobody has measured, the worst case is the honest basis, and the approver chose to fix it rather than argue it.
 

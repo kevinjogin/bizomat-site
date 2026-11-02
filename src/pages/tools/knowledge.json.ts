@@ -1,4 +1,4 @@
-// READOS readings for each WORKOS tool, for the calculator at /tools/?tool=<id> (ui.js fetches this once).
+// Library readings for each KEVOS® tool, for the calculator at /tools/?tool=<id> (ui.js fetches this once).
 // Built from src/data/knowledge-links.json: approved links between published pages only, the same data as the
 // "Learn the Concepts Behind This Tool" section on the static tool pages.
 import { knowledgeGraph } from '../../utils/knowledge.ts';

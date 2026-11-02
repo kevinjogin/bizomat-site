@@ -3,13 +3,13 @@ book: shop-floor-optimisation-by-the-numbers
 chapterSlug: cutting-bars-with-least-waste
 order: 6
 title: "Cutting bars with least waste"
-description: "Cut a list of tube or bar lengths from stock with the fewest bars: the material lower bound, the first-fit decreasing rule in the WORKOS stock cut planner, cutting patterns, offcuts and stock length."
+description: "Cut a list of tube or bar lengths from stock with the fewest bars: the material lower bound, the first-fit decreasing rule in the KEVOS® stock cut planner, cutting patterns, offcuts and stock length."
 draft: false
 ---
 
 Cutting tube, bar, extrusion or timber to length is the most common optimisation problem in a fabrication shop, and the one where waste is most visible: it ends up in the scrap bin at the end of the saw. The task is to cut a list of required pieces from stock lengths, allowing for the saw kerf and the trimmed ends, using as few stock lengths as possible. It is a cousin of the loading problems of Chapters 2 and 3, with bars in place of machines and lengths in place of times, but the aim is different: not to balance the bars, but to fill as few of them as possible.
 
-This chapter cuts the stand frames for EC-600 floor stands with the WORKOS stock cut planner, proves the result best with the material bound, shows a case where the rule falls one bar short of the best and how cutting patterns find it, and ends with a batch cut stand by stand.
+This chapter cuts the stand frames for EC-600 floor stands with the KEVOS® stock cut planner, proves the result best with the material bound, shows a case where the rule falls one bar short of the best and how cutting patterns find it, and ends with a batch cut stand by stand.
 
 ## The cut list
 
@@ -57,7 +57,7 @@ rowhead: Bar
 - 2 | 2 × 1,460 and 4 × 880 | 22
 - 3 | 5 × 880 and 3 × 620 | 196
 - 4 | 8 × 620 | 1,496
-caption: This is an illustration from the WORKOS stock cut planner. 4 bars, equal to the material lower bound, so the minimum is proved. 2 bars to buy. Finished length 24,120 mm, kerf 81 mm, end trim 80 mm, offcut 1,719 mm, gross 26,000 mm, yield 92.8%.
+caption: This is an illustration from the KEVOS® stock cut planner. 4 bars, equal to the material lower bound, so the minimum is proved. 2 bars to buy. Finished length 24,120 mm, kerf 81 mm, end trim 80 mm, offcut 1,719 mm, gross 26,000 mm, yield 92.8%.
 ```
 
 The plan uses four bars, equal to the bound, so no plan can do better. The first two bars are almost perfectly used, the third has a short offcut, and the fourth carries the leftover cross members with a 1,496 mm offcut. That offcut is long enough to be useful, a point taken up below. The shop needs to buy two lengths to add to the two in the rack.

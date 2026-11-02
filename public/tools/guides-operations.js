@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool guides: Operations.
+// KEVOS® tool guides: Operations.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   capacity: {
     purpose: 'Calculates practical capacity from available hours, parallel stations, cycle time and efficiency, and compares it with demand.',

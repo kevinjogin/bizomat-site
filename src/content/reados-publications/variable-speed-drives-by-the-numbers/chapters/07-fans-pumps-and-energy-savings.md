@@ -9,7 +9,7 @@ draft: false
 
 The biggest single reason factories fit drives is energy. A centrifugal fan or pump throttled by a damper or valve runs at full speed and burns off the pressure it does not need; the same machine slowed to deliver just the flow required draws a fraction of the power. Because the power of a fan or pump falls roughly with the cube of its speed, modest speed reductions save a lot. But "roughly" is doing work in that sentence, and the size of the saving depends on the system the machine serves.
 
-This chapter works the fan laws for DP-4's extraction fan with the WORKOS fan drive tool, measures the pump's load before its drive with the motor load assessment tool, shows why the pump's cooling tower lift cuts its saving below the cube law, and appraises both drives as investments. It ends with a pump saving estimated by the cube law alone.
+This chapter works the fan laws for DP-4's extraction fan with the KEVOS® fan drive tool, measures the pump's load before its drive with the motor load assessment tool, shows why the pump's cooling tower lift cuts its saving below the cube law, and appraises both drives as investments. It ends with a pump saving estimated by the cube law alone.
 
 ## The fan and affinity laws
 
@@ -98,7 +98,7 @@ caption: This is an illustration. Full speed with the valve open 16.38 kW; cube 
 - * With the 8 m lift | 8.15
 ```
 
-In electrical terms the real saving is about 17.61 − 9.06 = 8.55 kW, worth about A$10,780 a year. READOS's [Centrifugal Pumps by the Numbers](/reados/publications/centrifugal-pumps-by-the-numbers/) works through speed control on a system dominated by lift, where the effect is far larger: with a high static head, slowing the pump can save almost nothing per cubic metre pumped, or stop the flow altogether.
+In electrical terms the real saving is about 17.61 − 9.06 = 8.55 kW, worth about A$10,780 a year. The Library’s [Centrifugal Pumps by the Numbers](/reados/publications/centrifugal-pumps-by-the-numbers/) works through speed control on a system dominated by lift, where the effect is far larger: with a high static head, slowing the pump can save almost nothing per cubic metre pumped, or stop the flow altogether.
 
 ## Control decides the saving
 
@@ -112,7 +112,7 @@ P-3 is controlled on the temperature of the water returning from the extruder. W
 
 Fans and pumps give the largest savings because of the cube law. Other loads save less, or in other ways:
 
-- **Air compressors.** A screw compressor with a drive can follow the plant's air demand instead of cycling between loaded and unloaded running, when an unloaded compressor still draws a quarter or more of its full power doing nothing. READOS's [Compressed Air Plant by the Numbers](/reados/publications/compressed-air-plant-by-the-numbers/) covers the plant side.
+- **Air compressors.** A screw compressor with a drive can follow the plant's air demand instead of cycling between loaded and unloaded running, when an unloaded compressor still draws a quarter or more of its full power doing nothing. The Library’s [Compressed Air Plant by the Numbers](/reados/publications/compressed-air-plant-by-the-numbers/) covers the plant side.
 - **Conveyors and other constant-torque loads.** Power is proportional to speed, so running slower saves only in proportion, and the energy per tonne moved barely changes. The saving comes from not running empty: stopping or slowing the belt when nothing is on it.
 - **Cooling-tower fans.** Like extraction fans, they follow the fan laws, and slowing them on cool days saves a lot.
 - **Oversized motors on the mains.** A motor running at light load wastes little energy by running too fast, because an induction motor's speed hardly changes with load; fitting a drive to it saves nothing unless the machine's output can be reduced.

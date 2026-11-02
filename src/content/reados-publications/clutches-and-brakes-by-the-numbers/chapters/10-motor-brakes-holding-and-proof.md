@@ -9,7 +9,7 @@ draft: false
 
 Every electric winch, hoist and many conveyors carry a brake on the motor itself: a disc pressed by springs whenever the power is off and pulled free by an electromagnet whenever it is on. It is the brake that holds the load when the operator stops, catches it when the power fails, and keeps it still while someone works on the machine. Because it sits on the fastest shaft, it is small; because it acts at every stop, its energy per hour matters as much as its torque.
 
-This chapter checks the SW-25's spring-applied motor brake with the WORKOS holding brake sizing tool for both directions of travel, then compares the result with the winch drum brake check tool and explains why that tool, designed for hoists, gives a different answer on a slipway. It closes with proof tests and the records that show all the book's devices are fit for their duty. Its mistake is a brake rating read from the wrong column of a catalogue.
+This chapter checks the SW-25's spring-applied motor brake with the KEVOS® holding brake sizing tool for both directions of travel, then compares the result with the winch drum brake check tool and explains why that tool, designed for hoists, gives a different answer on a slipway. It closes with proof tests and the records that show all the book's devices are fit for their duty. Its mistake is a brake rating read from the wrong column of a catalogue.
 
 ## The brake and its duty
 

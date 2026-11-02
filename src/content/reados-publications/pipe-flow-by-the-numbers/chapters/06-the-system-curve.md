@@ -60,7 +60,7 @@ A plant's system curve is therefore a family of curves, not one. The design curv
 
 CW-2's static lift is small, 1.2 m against 9.6 m of losses, so its curve is mostly dynamic. As a closed loop, with the same pipework but no open tank, it would have no static head at all, and its curve would start at zero. The table's last column shows that curve.
 
-The distinction matters more for systems where the static head is large. A transfer pump lifting water 18 m to a header tank has a curve that starts at 18 m and rises from there; a chilled-water loop in a tall building has none, however tall the building, because every metre the water rises it falls again. READOS's Centrifugal Pumps by the Numbers develops a system dominated by static lift, and shows how differently a pump behaves on it.
+The distinction matters more for systems where the static head is large. A transfer pump lifting water 18 m to a header tank has a curve that starts at 18 m and rises from there; a chilled-water loop in a tall building has none, however tall the building, because every metre the water rises it falls again. The Library’s Centrifugal Pumps by the Numbers develops a system dominated by static lift, and shows how differently a pump behaves on it.
 
 ## Building the curve
 

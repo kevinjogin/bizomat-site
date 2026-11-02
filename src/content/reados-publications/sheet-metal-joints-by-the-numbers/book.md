@@ -5,7 +5,7 @@ description: "Design mechanical joints in sheet with numbers: rivet shear, beari
 category: Engineering
 tags: [design, manufacturing, quality, product-development]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -47,7 +47,7 @@ Most sheet metal products are held together by joints that involve no heat: rive
 
 This book works through those joints with numbers. It starts with what each joint in a product must do, then covers how riveted joints fail and how to check them, blind and solid rivets, pitch and edge distance, clinching and self-piercing rivets, self-clinching fasteners, screws and threads in thin sheet, folded lock seams, galvanic corrosion and sealing, and testing and costing joints.
 
-It suits mechanical designers, drafters and fabrication engineers. It assumes basic statics and stress, and some familiarity with sheet metal parts; *Sheet Metal Parts by the Numbers* covers the folded parts themselves, *Brazing and Soldering by the Numbers* the joints made with filler metal, and READOS's resistance welding book the spot weld. This book stays with the mechanical joints.
+It suits mechanical designers, drafters and fabrication engineers. It assumes basic statics and stress, and some familiarity with sheet metal parts; *Sheet Metal Parts by the Numbers* covers the folded parts themselves, *Brazing and Soldering by the Numbers* the joints made with filler metal, and the Library’s resistance welding book the spot weld. This book stays with the mechanical joints.
 
 ## The running case
 

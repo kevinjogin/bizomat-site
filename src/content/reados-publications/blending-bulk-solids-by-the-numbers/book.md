@@ -5,7 +5,7 @@ description: "How well a blend can be mixed, how to measure it, why it unmixes, 
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -64,7 +64,7 @@ references:
     creator: "National Institute of Standards and Technology"
     year: "2012"
     url: "https://www.itl.nist.gov/div898/handbook/"
-    note: "Reference for the confidence interval of a variance, the F test for two variances, EWMA control charts and capability indices used in Chapters 3, 8 and 11, and by the WORKOS tools linked there."
+    note: "Reference for the confidence interval of a variance, the F test for two variances, EWMA control charts and capability indices used in Chapters 3, 8 and 11, and by the KEVOS® tools linked there."
   - title: "ISO 3451-1, Plastics: Determination of ash, Part 1: General methods"
     creator: "International Organization for Standardization"
     year: "Current edition"
@@ -110,7 +110,7 @@ The plant, its equipment, materials, specifications and every measurement are in
 
 Read Chapters 1 to 4 in order: they define mixedness, its random limit, how to measure it and how mixing proceeds. Chapters 5 to 7 cover batch blenders, segregation and what happens to a blend after it leaves the blender. Chapters 8 and 9 deal with continuous feeding and minor ingredients, and Chapters 10 and 11 with sampling and proving a blend.
 
-WORKOS tools are linked where they perform a step of the method, with a note of exactly what each calculates. The statistical tools follow the methods in the NIST/SEMATECH e-Handbook of Statistical Methods.
+KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each calculates. The statistical tools follow the methods in the NIST/SEMATECH e-Handbook of Statistical Methods.
 
 ## Source limits and professional responsibility
 

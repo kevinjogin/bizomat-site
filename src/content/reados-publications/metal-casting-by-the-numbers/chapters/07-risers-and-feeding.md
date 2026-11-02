@@ -9,7 +9,7 @@ draft: false
 
 A riser has two jobs. It must stay liquid longer than the section it feeds, which Chapter 6 checked with the modulus. And it must hold enough spare liquid to make up all the shrinkage of that section as it freezes, while keeping enough metal in itself that its own cavity does not reach down into the casting. A riser can pass the first test and fail the second: it freezes last, as it should, but runs out of metal before the casting has finished drawing on it.
 
-This chapter checks GB-12's risers for volume with a WORKOS tool that brings the whole pour together: moduli, feed volume, metal poured, casting yield and gating. It explains feeding efficiency and feeding distance, shows why GB-12 needs two risers, and works through a riser that passed the modulus check but piped into the casting.
+This chapter checks GB-12's risers for volume with a KEVOS® tool that brings the whole pour together: moduli, feed volume, metal poured, casting yield and gating. It explains feeding efficiency and feeding distance, shows why GB-12 needs two risers, and works through a riser that passed the modulus check but piped into the casting.
 
 ## How much metal a riser can give
 
@@ -31,7 +31,7 @@ The figures for shrinkage and efficiency are the foundry's working values, found
 
 ## The whole pour in one tool
 
-The WORKOS [Casting pour plan](/tools/casting-pour-plan/) tool brings the casting's freezing, feeding, gating and pattern together for a gravity sand casting. From the casting's volume, cooling area and density, the mould constant and volumetric shrinkage, it works out the casting modulus and freezing time. From a cylindrical riser's diameter and height, the required modulus ratio and the riser's feeding efficiency, it gives the riser modulus and freezing time, the riser volume and the feed volume the casting needs. From the gating's share of the casting mass, it gives the metal poured and the casting yield. From the pouring time, sprue height and flow efficiency, it gives the choke area and sprue diameter, and finally the pattern dimension and a check of the metal against the ladle capacity. Its three checks are the modulus ratio, the feed volume and the ladle.
+The KEVOS® [Casting pour plan](/tools/casting-pour-plan/) tool brings the casting's freezing, feeding, gating and pattern together for a gravity sand casting. From the casting's volume, cooling area and density, the mould constant and volumetric shrinkage, it works out the casting modulus and freezing time. From a cylindrical riser's diameter and height, the required modulus ratio and the riser's feeding efficiency, it gives the riser modulus and freezing time, the riser volume and the feed volume the casting needs. From the gating's share of the casting mass, it gives the metal poured and the casting yield. From the pouring time, sprue height and flow efficiency, it gives the choke area and sprue diameter, and finally the pattern dimension and a check of the metal against the ladle capacity. Its three checks are the modulus ratio, the feed volume and the ladle.
 
 ```figure
 type: compare

@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: polymers. What each input means, how to get it right and which figure explains it.
+// KEVOS® Tools input guides: polymers. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-polymers.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   'polymer-solution-phase-check': {

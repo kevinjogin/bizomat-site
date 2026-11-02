@@ -76,7 +76,7 @@ caption: This is an illustration. Sizes are on the mean line of 0.8 mm galvanise
 - * F6 twisted transition and helical elbow | 300 × 200 rotated 30°; Ø200 climbing | 30° twist; 79.3° | folded triangles; twisted mitres | 9
 ```
 
-The sizes are not arbitrary. The F1 hood's rectangle has an area of 0.080 m² against the round duct's 0.049 m², so the air speeds up through the fitting, which suits a hood. The F5 flat oval's area, 47,671 mm², is within 3% of the Ø250 duct's 49,087 mm², so the flat oval passes between the purlins without a noticeable change in air speed. The ductwork side of those choices is covered in READOS's [Ductwork by the Numbers](/reados/publications/ductwork-by-the-numbers/transitions-expansions-and-contractions/).
+The sizes are not arbitrary. The F1 hood's rectangle has an area of 0.080 m² against the round duct's 0.049 m², so the air speeds up through the fitting, which suits a hood. The F5 flat oval's area, 47,671 mm², is within 3% of the Ø250 duct's 49,087 mm², so the flat oval passes between the purlins without a noticeable change in air speed. The ductwork side of those choices is covered in the Library’s [Ductwork by the Numbers](/reados/publications/ductwork-by-the-numbers/transitions-expansions-and-contractions/).
 
 ## Choosing the triangles
 

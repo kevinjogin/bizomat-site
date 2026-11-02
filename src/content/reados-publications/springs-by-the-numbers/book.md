@@ -5,7 +5,7 @@ description: "How to check and specify mechanical springs: rate and energy, comp
 category: Engineering
 tags: [design, manufacturing, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -61,7 +61,7 @@ A spring is a part designed to deflect. Most machine parts are made stiff so tha
 
 This book shows how to check and specify mechanical springs with numbers. It starts with rate, energy and springs acting together, then works through helical compression springs, from checking one to designing one and checking it for fatigue, then square-wire and nested springs, extension springs and their hooks, disc spring stacks, torsion springs, torsion bars and flat springs. It finishes with the springs that set forces and pressures: detents, relief valves and spring-applied clamps.
 
-It is for mechanical design and maintenance engineers, machine builders and fitters. It assumes engineering or trade training and comfort with force, stress and stiffness; the spring formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design and maintenance engineers, machine builders and fitters. It assumes engineering or trade training and comfort with force, stress and stiffness; the spring formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -80,7 +80,7 @@ Loads, dimensions, materials, allowable stresses and test figures are the shop's
 
 Read Chapter 1 first: it sets out rate, energy and how springs combine, which every later chapter uses. Chapters 2 to 4 cover helical compression springs and should be read in order. The later chapters can be read in any order once Chapter 2 is familiar. Chapter 10 also covers the inspection routine and records the shop adopted.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. Wire strengths, allowable stresses and friction values are typical figures for illustration; a real design uses the spring maker's data for the actual wire and process.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Wire strengths, allowable stresses and friction values are typical figures for illustration; a real design uses the spring maker's data for the actual wire and process.
 
 ## Source limits and professional responsibility
 

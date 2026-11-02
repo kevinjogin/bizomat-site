@@ -5,7 +5,7 @@ description: "Set up a parametric CAD office so every seat, template, property, 
 category: Engineering
 tags: [design, systems, quality, process-improvement, automation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -34,7 +34,7 @@ references:
     creator: "Standards Australia, Committee ME/72"
     year: "1992"
     url: "https://store.standards.org.au/product/as-1100-101-1992"
-    note: "Named as the drawing standard that templates and the written CAD standard must follow in Australia. No values are quoted; READOS's Drawings That Make Parts explains the conventions themselves."
+    note: "Named as the drawing standard that templates and the written CAD standard must follow in Australia. No values are quoted; the Library’s Drawings That Make Parts explains the conventions themselves."
   - title: "ISO 7200 Technical product documentation: Data fields in title blocks and document headers"
     creator: "International Organization for Standardization"
     year: "edition as called up by the contract"

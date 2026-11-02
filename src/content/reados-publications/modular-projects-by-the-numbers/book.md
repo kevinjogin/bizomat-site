@@ -5,7 +5,7 @@ description: "Plan and deliver a rollout as repeatable modules: outcome first, m
 category: Projects
 tags: [projects, automation, manufacturing, operations, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-28
@@ -107,9 +107,9 @@ The business, its sites, its lines and every number in the case are invented. No
 
 ## How to use the book
 
-Read Chapter 1 first, because the outcome it defines is the yardstick for every later decision. Chapters 2 to 4 cover design and proving, Chapters 5 and 6 learning and people, Chapters 7 and 8 the rollout, and Chapters 9 and 10 the comparison and the long-run discipline. Every calculation was checked by running it, and the WORKOS tools linked in the chapters reproduce the learning-curve and cost arithmetic.
+Read Chapter 1 first, because the outcome it defines is the yardstick for every later decision. Chapters 2 to 4 cover design and proving, Chapters 5 and 6 learning and people, Chapters 7 and 8 the rollout, and Chapters 9 and 10 the comparison and the long-run discipline. Every calculation was checked by running it, and the KEVOS® tools linked in the chapters reproduce the learning-curve and cost arithmetic.
 
-The book is one of a series of nine KEVOS® READOS books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside view used here to judge each option's risk, and *Prototypes and Simulation by the Numbers* goes further into models, prototypes and test sizes. *First-of-a-Kind Technology by the Numbers* covers the cost of being first, which a standard module avoids, and *Project Teams and Contracts by the Numbers* the contracts and teams that deliver a rollout. *Front-End Planning by the Numbers*, *Stage Gates and Stopping Rules by the Numbers*, *Outcome-First Projects by the Numbers* and *Demand and Benefit Forecasts by the Numbers* complete the series.
+The book is one of a series of nine KEVOS® Library books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside view used here to judge each option's risk, and *Prototypes and Simulation by the Numbers* goes further into models, prototypes and test sizes. *First-of-a-Kind Technology by the Numbers* covers the cost of being first, which a standard module avoids, and *Project Teams and Contracts by the Numbers* the contracts and teams that deliver a rollout. *Front-End Planning by the Numbers*, *Stage Gates and Stopping Rules by the Numbers*, *Outcome-First Projects by the Numbers* and *Demand and Benefit Forecasts by the Numbers* complete the series.
 
 ## Source limits and professional responsibility
 

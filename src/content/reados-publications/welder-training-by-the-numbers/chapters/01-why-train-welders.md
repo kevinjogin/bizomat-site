@@ -29,7 +29,7 @@ Hiring is fastest when welders are available, but in a tight market a business m
 
 ## What training must achieve
 
-"Train a welder" is too vague to plan, cost or measure. Training needs a target that can be observed: what the trained person must be able to do, under what conditions, to what standard. READOS sets out the general method in [Building workforce capability in manufacturing](/reados/collections/operational-data-records-and-controls/building-workforce-capability-in-manufacturing/); for a welder, the target typically covers:
+"Train a welder" is too vague to plan, cost or measure. Training needs a target that can be observed: what the trained person must be able to do, under what conditions, to what standard. The Library sets out the general method in [Building workforce capability in manufacturing](/reados/collections/operational-data-records-and-controls/building-workforce-capability-in-manufacturing/); for a welder, the target typically covers:
 
 - **the processes**, such as flux-cored, solid-wire or manual metal arc welding, and the equipment for each;
 - **the joints and positions**, such as fillet and butt welds, flat, horizontal, vertical and overhead;

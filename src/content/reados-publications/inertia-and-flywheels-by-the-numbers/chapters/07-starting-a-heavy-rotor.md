@@ -9,7 +9,7 @@ draft: false
 
 Some machines are almost all inertia. A chipper, a large fan, a centrifuge or a crusher's flywheel takes little torque to keep turning but a great deal of energy to bring up to speed, and the motor that starts it spends that whole time drawing several times its rated current. The question is not whether the motor can turn the load, but whether it can get it to speed before it overheats, and how often it can do so.
 
-This chapter checks the DL-3 chipper's direct-on-line start with the WORKOS rotor run-up time tool. It explains why an induction motor heats its own rotor by about as much energy as it gives the load, how the motor's limits on start time and starts per hour come in, and what a star-delta start would do. Its mistake is a motor torque entered on the wrong side of the belt, which made a good start look impossible.
+This chapter checks the DL-3 chipper's direct-on-line start with the KEVOS® rotor run-up time tool. It explains why an induction motor heats its own rotor by about as much energy as it gives the load, how the motor's limits on start time and starts per hour come in, and what a star-delta start would do. Its mistake is a motor torque entered on the wrong side of the belt, which made a good start look impossible.
 
 ## The chipper's start
 

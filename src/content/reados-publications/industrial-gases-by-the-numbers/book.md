@@ -5,7 +5,7 @@ description: "Understand workshop gases from first principles: carbide and acety
 category: Manufacturing
 tags: [manufacturing, operations, quality, process-improvement, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -109,4 +109,4 @@ This book is educational. Industrial gases can cause fires, explosions, asphyxia
 
 ## An original treatment
 
-READOS covers the oxy-fuel process itself, including cylinder contents and withdrawal, regulators, hoses and flashback, in [Oxy-Fuel by the Numbers](/reados/publications/oxy-fuel-by-the-numbers/), and this book links to it rather than repeating it. It concentrates on the gases: how they are made, purified, stored, distributed and controlled. The explanations, the workshop case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers the oxy-fuel process itself, including cylinder contents and withdrawal, regulators, hoses and flashback, in [Oxy-Fuel by the Numbers](/reados/publications/oxy-fuel-by-the-numbers/), and this book links to it rather than repeating it. It concentrates on the gases: how they are made, purified, stored, distributed and controlled. The explanations, the workshop case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

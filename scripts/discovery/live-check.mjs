@@ -3,6 +3,7 @@
 // Waits (up to 15 minutes) for the new homepage, then checks the key pages and markup, and asks the real
 // /api/discover a few questions with a shortlist built from the live catalogue. Prints what the AI returned.
 import { prepare, search, shortlist } from '../../src/lib/discovery/search.ts';
+import { buildPath } from '../../src/lib/discovery/plan.ts';
 
 const BASE = (process.argv[2] || 'https://kevos.com').replace(/\/$/, '');
 const results = [];
@@ -44,8 +45,12 @@ const index = await (await fetch(`${BASE}/discovery-index.json`)).json();
 check('the live catalogue lists 1,000+ tools', index.tools.length >= 1000, String(index.tools.length));
 const engine = prepare(index);
 let aiAnswers = 0;
-for (const question of ['where is keyhole and how much', 'How much money am I losing when my machine is sitting idle?', 'what torque should I tighten an M12 bolt to', 'weather forecast tomorrow']) {
-  const candidates = shortlist(engine, { question });
+const details = await (await fetch(`${BASE}/discovery-details.json`)).json().catch(() => null);
+check('the live tool details list every tool', details && Object.keys(details.tools).length === index.tools.length);
+const QUESTIONS = ['where is keyhole and how much', 'How much money am I losing when my machine is sitting idle?', 'what torque should I tighten an M12 bolt to', 'why does my bearing keep failing', 'should I buy or lease equipment', 'What speed should I run my cutter?', 'weather forecast tomorrow'];
+let aiPaths = 0;
+for (const question of QUESTIONS) {
+  const candidates = shortlist(engine, { question }, 14, 8);
   const r = await fetch(`${BASE}/api/discover`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: BASE }, body: JSON.stringify({ question, candidates }) });
   const data = await r.json().catch(() => ({}));
   const intent = data.intent;
@@ -54,8 +59,17 @@ for (const question of ['where is keyhole and how much', 'How much money am I lo
   check(`/api/discover answers “${question}”`, r.status === 200 && data.ok === true, `ai=${data.ai} terms=${JSON.stringify(intent?.terms ?? [])} picks=${JSON.stringify(intent?.picks ?? [])} outOfScope=${Boolean(intent?.outOfScope)}`);
   console.log(`      → ${outcome.mode}: ${[...outcome.tools, ...outcome.readings].slice(0, 5).map((x) => `${x.ai ? '[AI] ' : ''}${x.title}`).join(' | ') || '(nothing)'}`);
   for (const id of intent?.picks ?? []) check(`  pick ${id} is in the catalogue`, engine.byId.has(id));
+  // Your Solution Path, as the homepage builds it: the AI's steps when usable, otherwise the workflow.
+  const path = outcome.mode === 'results' && !intent?.clarify ? buildPath(engine, question, outcome, details, intent?.plan) : null;
+  if (path?.source === 'ai') aiPaths++;
+  if (path) {
+    console.log(`      path (${path.source}, ${path.typeLabel}): ${path.steps.map((st, i) => `${i + 1}. ${st.do}${st.tools.length ? ` [${st.tools.map((t) => t.title).join(', ')}]` : ''}${st.reads.length ? ` {${st.reads.length} reading}` : ''}`).join(' → ')}`);
+    if (path.missing.length) console.log(`      missing: ${path.missing.join('; ')}`);
+    for (const st of path.steps) for (const l of [...st.tools, ...st.reads]) check(`  path link ${l.url} is in the catalogue`, engine.byId.has(l.kind === 'tool' ? l.app.replace('/tools/?tool=', '') : l.url) || index.books.some((b) => b.u === l.url));
+  }
 }
-check('Workers AI answered at least one question', aiAnswers > 0, `${aiAnswers}/4`);
+check('Workers AI answered at least one question', aiAnswers > 0, `${aiAnswers}/${QUESTIONS.length}`);
+check('Workers AI returned a usable solution path for at least half the in-scope questions', aiPaths >= Math.ceil((QUESTIONS.length - 1) / 2), `${aiPaths}/${QUESTIONS.length - 1}`);
 
 const failed = results.filter((ok) => !ok).length;
 console.log(`\n${results.length - failed}/${results.length} live checks passed`);

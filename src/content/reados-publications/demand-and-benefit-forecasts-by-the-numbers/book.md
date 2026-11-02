@@ -5,7 +5,7 @@ description: "Build a volume forecast from drivers, test it against the record, 
 category: Business
 tags: [finance, strategy, customers, projects, operations]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -134,9 +134,9 @@ The business, its customers, its records and every number in the case are invent
 
 ## How to use the book
 
-Read Chapter 1 first: it sets out the Hiding Hand argument and the evidence that the rest of the book tests on the case. Chapters 2 to 4 build the forecast from drivers, test the drivers and model the ramp-up, and are best read in order. Chapters 5 to 7 cover forecast error, the corrected forecast range and the scenarios that decide the case. Chapters 8 to 10 follow the plant into operation: benefit tracking, an upside surprise and the post-completion review. Every calculation in the book was checked by running it, and the WORKOS tools linked in the chapters reproduce the appraisal arithmetic.
+Read Chapter 1 first: it sets out the Hiding Hand argument and the evidence that the rest of the book tests on the case. Chapters 2 to 4 build the forecast from drivers, test the drivers and model the ramp-up, and are best read in order. Chapters 5 to 7 cover forecast error, the corrected forecast range and the scenarios that decide the case. Chapters 8 to 10 follow the plant into operation: benefit tracking, an upside surprise and the post-completion review. Every calculation in the book was checked by running it, and the KEVOS® tools linked in the chapters reproduce the appraisal arithmetic.
 
-The book is one of a series of KEVOS® READOS books on planning and delivering projects, written to be read alongside each other. *Reference Class Forecasting by the Numbers* corrects cost and schedule estimates with the outcomes of similar past projects, and this book applies the same outside view to volumes and benefits. *Front-End Planning by the Numbers* covers the work done before approval that a reliable forecast depends on, *Stage Gates and Stopping Rules by the Numbers* covers how to set the conditions under which a business case is revisited or stopped, and *Outcome-First Projects by the Numbers* covers defining the result a project must deliver before deciding how to deliver it.
+The book is one of a series of KEVOS® Library books on planning and delivering projects, written to be read alongside each other. *Reference Class Forecasting by the Numbers* corrects cost and schedule estimates with the outcomes of similar past projects, and this book applies the same outside view to volumes and benefits. *Front-End Planning by the Numbers* covers the work done before approval that a reliable forecast depends on, *Stage Gates and Stopping Rules by the Numbers* covers how to set the conditions under which a business case is revisited or stopped, and *Outcome-First Projects by the Numbers* covers defining the result a project must deliver before deciding how to deliver it.
 
 ## Source limits and professional responsibility
 

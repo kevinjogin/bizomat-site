@@ -62,7 +62,7 @@ Chapter 3 calculated that a 500 mm length of 316 stainless steel heated by 300 Â
 
 ## Galvanic action
 
-Two metals in electrical contact, wet with an electrolyte, form a cell in which the more active metal corrodes faster. Stainless steel is more noble than carbon steel, so at a wet stainless-to-steel joint the carbon steel corrodes preferentially, concentrated near the joint. The effect is strongest when the noble metal's area is large and the active metal's small. READOS discusses the same mechanism for zinc coatings in the electroplating chapter on [how zinc protects](/reados/publications/electroplating-by-the-numbers/how-zinc-protects-and-for-how-long/).
+Two metals in electrical contact, wet with an electrolyte, form a cell in which the more active metal corrodes faster. Stainless steel is more noble than carbon steel, so at a wet stainless-to-steel joint the carbon steel corrodes preferentially, concentrated near the joint. The effect is strongest when the noble metal's area is large and the active metal's small. The Library discusses the same mechanism for zinc coatings in the electroplating chapter on [how zinc protects](/reados/publications/electroplating-by-the-numbers/how-zinc-protects-and-for-how-long/).
 
 Kautny met a version of this in aluminium: a soldered joint that leaves an oxide film between the parts forms a galvanic chain that eventually destroys the joint. The general rule is to expect galvanic action wherever different metals meet in moisture and to design for it: coat the active metal, keep the joint dry and drained, or avoid the couple by choosing compatible metals or isolating them.
 

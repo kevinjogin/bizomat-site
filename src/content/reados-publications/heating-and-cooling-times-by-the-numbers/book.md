@@ -5,7 +5,7 @@ description: "Estimate how long parts take to heat through and cool down: Biot a
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

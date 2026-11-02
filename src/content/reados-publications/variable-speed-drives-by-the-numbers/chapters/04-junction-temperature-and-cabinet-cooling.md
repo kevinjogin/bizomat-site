@@ -43,7 +43,7 @@ caption: This is an illustration. Losses from Chapter 3: IGBT 42.8 W (31.0 condu
 
 At 103 °C the IGBTs are well inside their 150 °C limit for continuous operation. That margin is deliberate. It covers the losses rising with junction temperature, which the estimate has already partly allowed for by using 125 °C datasheet values, overloads during starting or jams, dust on the heatsink fins and, most importantly for life, the size of temperature swings the junction goes through (Chapter 5).
 
-The heatsink is the largest single drop, 36.5 K of the 58 K from air to junction. That is typical: the chip-level resistances are small because the chips are thin and well bonded, but the heatsink must hand the whole drive's heat to air, a poor conductor. READOS's [Fins and Heat Sinks by the Numbers](/reados/publications/fins-and-heat-sinks-by-the-numbers/) explains how a heatsink's resistance follows from its fins and airflow.
+The heatsink is the largest single drop, 36.5 K of the 58 K from air to junction. That is typical: the chip-level resistances are small because the chips are thin and well bonded, but the heatsink must hand the whole drive's heat to air, a poor conductor. The Library’s [Fins and Heat Sinks by the Numbers](/reados/publications/fins-and-heat-sinks-by-the-numbers/) explains how a heatsink's resistance follows from its fins and airflow.
 
 ```figure
 type: compare
@@ -98,7 +98,7 @@ Filtered fans are cheap and work well in clean air, but they bring hall air into
 
 - **Through-panel mounting.** Many drives can be mounted with their heatsinks projecting through a cut-out in the cabinet's back panel, sealed with a gasket, so that the heatsink's fan blows hall air across the fins outside while the electronics stay inside a sealed cabinet. Most of each drive's loss, the inverter and rectifier, then leaves directly into the hall. For DP-4, that would take about 880 W out of the cabinet and leave 340 W inside, which the walls and a small fan could carry; the cabinet could be sealed to a high ingress protection rating. The heatsink fins outside still collect dust and need cleaning.
 - **Air-to-air heat exchangers**, which pass cabinet air and hall air on opposite sides of a plate or heat pipe without mixing them. They keep the cabinet sealed, but can only cool it to above the hall's temperature.
-- **Cabinet air conditioners**, which can cool below the hall's temperature and keep the cabinet sealed, at the cost of power, maintenance and condensate to be drained. A thermoelectric cooler, which has no moving refrigerant, suits only small loads of tens of watts, such as a sensor box; WORKOS's thermoelectric cooler check shows how quickly its efficiency falls as the load and temperature lift rise.
+- **Cabinet air conditioners**, which can cool below the hall's temperature and keep the cabinet sealed, at the cost of power, maintenance and condensate to be drained. A thermoelectric cooler, which has no moving refrigerant, suits only small loads of tens of watts, such as a sensor box; the KEVOS® thermoelectric cooler check shows how quickly its efficiency falls as the load and temperature lift rise.
 - **Locating the panel elsewhere**, in a clean, cool electrical room, with longer motor cables. Long cables bring their own issues (Chapter 9).
 
 ## Measuring rather than estimating

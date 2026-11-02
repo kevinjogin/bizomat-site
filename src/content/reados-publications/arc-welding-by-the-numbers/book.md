@@ -5,7 +5,7 @@ description: "Plan and cost arc welding from first principles: arc power, power 
 category: Manufacturing
 tags: [manufacturing, quality, operations, process-improvement, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -107,4 +107,4 @@ This book is educational. Structural, pressure-containing and other safety-criti
 
 ## An original treatment
 
-READOS covers weld repair of steel plate, including heat input, groove volume, preheat and procedure qualification, in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), and the way metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/). This book links to those topics rather than repeating them and concentrates on the arc process itself. The explanations, the conveyor-frame case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers weld repair of steel plate, including heat input, groove volume, preheat and procedure qualification, in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), and the way metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/). This book links to those topics rather than repeating them and concentrates on the arc process itself. The explanations, the conveyor-frame case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.

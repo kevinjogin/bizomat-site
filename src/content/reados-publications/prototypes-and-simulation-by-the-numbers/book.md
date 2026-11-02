@@ -5,7 +5,7 @@ description: "Find design problems while they are cheap: cost of change, prototy
 category: Products
 tags: [product-development, prototyping, experimentation, validation, projects]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -143,9 +143,9 @@ The business, its products, its records, its people and every number in the case
 
 ## How to use the book
 
-Read Chapter 1 first, because the cost of a problem by stage and the cost of delay are used throughout. Chapters 2 to 4 cover what to build and when to stop iterating, Chapters 5 and 6 test sample sizes, Chapters 7 to 9 simulation and queueing models, and Chapter 10 reviews and release. Chapters 5 to 9 can be read in any order after Chapter 1. Every calculation was checked by running it, simulation results state their random seed and number of runs, and the WORKOS tools linked in the chapters reproduce the sample-size arithmetic.
+Read Chapter 1 first, because the cost of a problem by stage and the cost of delay are used throughout. Chapters 2 to 4 cover what to build and when to stop iterating, Chapters 5 and 6 test sample sizes, Chapters 7 to 9 simulation and queueing models, and Chapter 10 reviews and release. Chapters 5 to 9 can be read in any order after Chapter 1. Every calculation was checked by running it, simulation results state their random seed and number of runs, and the KEVOS® tools linked in the chapters reproduce the sample-size arithmetic.
 
-The book is one of a series of KEVOS® READOS books on planning and delivering projects. The most relevant companions are *Modular Projects by the Numbers*, which applies models, pilots and acceptance tests to a rollout of identical units; *Stage Gates and Stopping Rules by the Numbers*, which treats the gate decisions that this book's evidence feeds; *First-of-a-Kind Technology by the Numbers*, which deals with the extra risk of technology that has not been used at scale; and *Reference Class Forecasting by the Numbers*, which corrects cost and schedule estimates with the outcomes of similar past projects.
+The book is one of a series of KEVOS® Library books on planning and delivering projects. The most relevant companions are *Modular Projects by the Numbers*, which applies models, pilots and acceptance tests to a rollout of identical units; *Stage Gates and Stopping Rules by the Numbers*, which treats the gate decisions that this book's evidence feeds; *First-of-a-Kind Technology by the Numbers*, which deals with the extra risk of technology that has not been used at scale; and *Reference Class Forecasting by the Numbers*, which corrects cost and schedule estimates with the outcomes of similar past projects.
 
 ## Source limits and professional responsibility
 

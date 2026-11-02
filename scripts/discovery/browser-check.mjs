@@ -146,6 +146,52 @@ try {
     check('the AI pick leads the tools and is marked', (await first.getAttribute('class')).includes('dr-card--ai') && (await first.locator('.dr-card__title a').getAttribute('href')).includes(pickedId), pickedId);
     await ctx.close();
   }
+  // 3c. Your Solution Path: a keyword path first, then the AI path in its place
+  {
+    let release;
+    const gate = new Promise((r) => { release = r; });
+    let sent;
+    const { ctx, pg, errors } = await page({ api: (body) => { sent = body.candidates; return { status: 200, body: { ok: true, ai: true, intent: (() => {
+      const n = (pred) => body.candidates.findIndex(pred) + 1;
+      return { summary: 'tighten an M12 bolt to the right torque', terms: ['bolt torque'], ambiguous: false, plan: { type: 'calculation', missing: ['the bolt property class'], assumptions: ['A steel joint'], outcome: 'A tightening torque for your bolt, checked against proof load',
+        steps: [
+          { do: 'Read how torque becomes preload', why: 'Friction takes most of the torque', reads: [body.candidates[n((c) => c.kind === 'chapter') - 1].id] },
+          { do: 'Calculate the tightening torque', why: 'The tool applies the nut factor method', tools: ['bolt-torque-preload'], check: 'Compare with the fastener supplier table' },
+        ] } };
+    })() } }; } });
+    // Hold the AI answer so the first (keyword) path can be seen.
+    await pg.route('**/api/discover', async (route) => { const b = JSON.parse(route.request().postData() || '{}'); await gate; const n = (pred) => b.candidates.findIndex(pred) + 1; const ch = b.candidates[n((c) => c.kind === 'chapter') - 1]; await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true, ai: true, intent: { summary: 'tighten an M12 bolt to the right torque', terms: ['bolt torque'], ambiguous: false, plan: { type: 'calculation', missing: ['the bolt property class'], assumptions: ['A steel joint'], outcome: 'A tightening torque for your bolt, checked against proof load', steps: [{ do: 'Read how torque becomes preload', why: 'Friction takes most of the torque', reads: ch ? [ch.id] : [] }, { do: 'Calculate the tightening torque', why: 'The tool applies the nut factor method', tools: ['bolt-torque-preload'], check: 'Compare with the fastener supplier table' }] } } }) }); });
+    await pg.goto(BASE + '/');
+    await pg.fill('#discover-question', 'what torque should I tighten an M12 bolt to');
+    await pg.press('#discover-question', 'Enter');
+    await pg.waitForSelector('.sp', { timeout: 15000 });
+    check('path: a first path appears before the AI answers', (await pg.locator('.sp__pending').count()) === 1 && /workflow/.test(await pg.textContent('.sp__by')));
+    check('path: titled "Your Solution Path" with numbered steps', (await pg.textContent('.sp__title')) === 'Your Solution Path' && (await pg.locator('.sp__step').count()) >= 2);
+    release();
+    await pg.waitForFunction(() => document.querySelector('.sp__by')?.textContent?.includes('KEVOS® AI') && !document.querySelector('.sp__pending'), null, { timeout: 15000 });
+    check('path: the AI path replaces the first one in place', (await pg.locator('.dr-exchange').count()) === 1 && (await pg.locator('.sp').count()) === 1);
+    const labels = await pg.$$eval('.sp__step:nth-child(2) .sp__label', (n) => n.map((x) => x.textContent));
+    check('path: a tool step shows why, tool, inputs, output and check', ['Why it matters', 'Which tool to use', 'Required inputs', 'Expected output', 'How to check the result'].every((l) => labels.includes(l)), labels.join(' | '));
+    check('path: inputs come from the tool', /Nominal diameter \(mm\)/.test(await pg.textContent('.sp__step:nth-child(2)')) && (await pg.locator('.sp__step:nth-child(2) .sp__src', { hasText: 'from the tool' }).count()) >= 2);
+    check('path: missing information, assumptions and outcome shown', /bolt property class/.test(await pg.textContent('.sp__missing')) && /steel joint/.test(await pg.textContent('.sp__assume')) && /tightening torque/.test(await pg.textContent('.sp__outcome')));
+    const hrefs = await pg.$$eval('.sp a', (as) => as.map((a) => a.getAttribute('href')));
+    const bad = []; for (const h of hrefs) if (!(await exists(h))) bad.push(h);
+    check('path: every path link opens a real page', hrefs.length >= 3 && bad.length === 0, bad.join(', '));
+    check('path: existing resource groups are kept below', (await pg.locator('.dr-all').count()) === 1 && (await pg.locator('.dr-group__title', { hasText: 'Recommended tools' }).count()) === 1);
+    check('path: no console errors', errors.length === 0, errors.join(' | '));
+    await ctx.close();
+  }
+  // 3d. Path on a phone, and without AI
+  {
+    const { ctx, pg } = await page({ width: 390, height: 844 });
+    await pg.goto(BASE + '/');
+    await ask(pg, 'why does my bearing keep failing');
+    check('path (no AI): troubleshooting workflow path shown', /Troubleshooting/.test(await pg.textContent('.sp__type')) && !(await pg.locator('.sp__pending').count()));
+    check('path (no AI): first step lists the information to gather', /Information to gather/.test(await pg.textContent('.sp__step:first-child')));
+    check('path: no sideways scroll on a phone', await noSideScroll(pg));
+    await pg.locator('.sp').screenshot({ path: SHOTS + '/solution-path-mobile.png' });
+    await ctx.close();
+  }
   // 4. Broad question -> clarify
   {
     const { ctx, pg } = await page();

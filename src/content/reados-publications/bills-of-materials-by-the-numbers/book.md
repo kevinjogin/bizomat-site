@@ -5,7 +5,7 @@ description: "Build bills of materials that order the right parts: levels, quant
 category: Manufacturing
 tags: [manufacturing, operations, systems, quality, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -54,7 +54,7 @@ A bill of materials is a list of what goes into a product, and it is the documen
 
 This book is about getting the numbers in a bill of materials right. It starts with what a BOM is for and how its levels are structured, then works through the arithmetic that most BOM errors come from: quantities that multiply down the levels, units of measure that differ between buying and using, scrap and cutting yield, phantoms and kits that are counted once or twice, variants that share most of their parts, costed roll-ups, and the revisions and effectivity dates that decide which version of a part a build uses. It ends with BOMs generated from CAD assemblies and how to keep them accurate.
 
-It suits design and manufacturing engineers, CAD administrators, planners and buyers. It assumes no particular software. READOS's collection chapter on modelling bills of materials and hierarchies covers how business systems store BOMs; this book covers what the numbers in them must be.
+It suits design and manufacturing engineers, CAD administrators, planners and buyers. It assumes no particular software. The Library’s collection chapter on modelling bills of materials and hierarchies covers how business systems store BOMs; this book covers what the numbers in them must be.
 
 ## The running case
 

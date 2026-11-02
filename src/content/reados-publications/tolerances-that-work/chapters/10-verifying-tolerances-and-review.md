@@ -62,7 +62,7 @@ caption: Workshop convention favours about 10:1, with 4:1 often accepted as a pr
 
 ## Measurement system capability
 
-Uncertainty from the instrument alone is only part of the story. Repeated measurements of the same part by different operators reveal the variation of the whole measurement system. Gauge repeatability and reproducibility studies quantify this and express it as a percentage of the tolerance. Widely used automotive industry guidance treats less than 10% as acceptable, 10% to 30% as possibly acceptable depending on the application, and more than 30% as unacceptable. The READOS chapter on [measurement system analysis](/reados/collections/manufacturing-quality/measurement-system-analysis-for-manufacturers/) explains how to run such a study.
+Uncertainty from the instrument alone is only part of the story. Repeated measurements of the same part by different operators reveal the variation of the whole measurement system. Gauge repeatability and reproducibility studies quantify this and express it as a percentage of the tolerance. Widely used automotive industry guidance treats less than 10% as acceptable, 10% to 30% as possibly acceptable depending on the application, and more than 30% as unacceptable. The Library chapter on [measurement system analysis](/reados/collections/manufacturing-quality/measurement-system-analysis-for-manufacturers/) explains how to run such a study.
 
 For the housing bore, a hand-held bore gauge used by several inspectors might show variation large enough to matter against 0.025 mm. A fixed air gauge or a coordinate measuring machine in a temperature-controlled room may be needed for reliable decisions. That is part of the true cost of the tolerance, and it belongs in the design decision.
 

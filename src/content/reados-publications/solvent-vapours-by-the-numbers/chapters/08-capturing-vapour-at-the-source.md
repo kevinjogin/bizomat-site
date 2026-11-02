@@ -9,7 +9,7 @@ draft: false
 
 Chapter 7 showed that general ventilation cannot protect a person standing over a source of vapour, because the air at their face is much richer than the room average. Local exhaust ventilation solves this by catching the vapour close to where it is released, before it reaches the worker or mixes into the room. A hood draws air towards it, and if the air speed at the source is high enough to overcome the draughts and movements around it, the vapour goes into the hood instead of into the room.
 
-This chapter sets out capture velocity and the steep fall of air speed in front of a hood, sizes hoods for Plant S's wiping bench, gun-washing station and mixing bench, checks the duct and fan with a WORKOS tool, and describes commissioning. Its error is a hood mounted too far from the work.
+This chapter sets out capture velocity and the steep fall of air speed in front of a hood, sizes hoods for Plant S's wiping bench, gun-washing station and mixing bench, checks the duct and fan with a KEVOS® tool, and describes commissioning. Its error is a hood mounted too far from the work.
 
 ## How a hood captures
 

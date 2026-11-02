@@ -22,10 +22,10 @@ const inThisPart = new Set(book.chapters.map((c) => c.id));
 const tools = knowledgeGraph().toolsFor(`collection/${book.topic}`).filter((x) => x.chapters.length === 0 || x.chapters.some((c) => [...inThisPart].some((id) => c.href.endsWith(`/${id}/`))));
 const pathways = book.volume === 1 ? pathwaysForBook(`collection/${book.topic}`) : [];
 ---
-<BaseLayout title={`${book.title} (READOS)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
+<BaseLayout title={`${book.title} (Library)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
   breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:book.title,href}]}>
   <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
-    eyebrow={`READOS / ${book.category}`} title={book.title} description={book.description}
+    eyebrow={`Library / ${book.category}`} title={book.title} description={book.description}
     meta={[`${book.chapters.length} chapters`,`About ${book.minutes} minutes`,'Free to read']}
     startHref={readosCollectionChapterHref(book,book.chapters[0])} cover={{title:book.title,category:book.category,slug:book.slug,chapters:book.chapters.length}} />
   <section class="contents"><Container>
@@ -34,7 +34,7 @@ const pathways = book.volume === 1 ? pathwaysForBook(`collection/${book.topic}`)
     </ReadOSChapterList>
     <ApplyInPractice items={tools} showChapters discover={DISCOVERY_TOPIC[book.category.toLowerCase()]} />
     {pathways.map((p) => <LearningPathway pathway={p} />)}
-    <a class="back" href="/reados/">← All READOS books</a>
+    <a class="back" href="/reados/">← All Library books</a>
   </Container></section>
 </BaseLayout>
 <style>

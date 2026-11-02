@@ -99,7 +99,7 @@ A pattern drawn on a computer and cut by a laser, plasma or a CNC notcher is sti
 
 The **scale** can be wrong. A file exported in inches and read in millimetres, or drawn at 1:5 and cut at full size, produces a perfect shape at the wrong size. Every cutting file in the shop carries a 100 mm reference square on a separate layer, which the operator measures on the first part.
 
-The **curves** can be coarsened. Some programs export arcs and splines as many short straight segments, and a cut curve made of chords is short, for the same reason as the stepped girths of Chapters 2 and 7. Setting the export's chord tolerance to a few hundredths of a millimetre keeps the error negligible; READOS's chapter on [profiles that cut cleanly](/reados/publications/drafting-geometry-by-the-numbers/profiles-that-cut-cleanly/) works through the arithmetic.
+The **curves** can be coarsened. Some programs export arcs and splines as many short straight segments, and a cut curve made of chords is short, for the same reason as the stepped girths of Chapters 2 and 7. Setting the export's chord tolerance to a few hundredths of a millimetre keeps the error negligible; the Library’s chapter on [profiles that cut cleanly](/reados/publications/drafting-geometry-by-the-numbers/profiles-that-cut-cleanly/) works through the arithmetic.
 
 The **allowances** can be on the wrong layer or missing. The shop's files keep the net pattern and the allowances on separate layers, with the net outline as a reference line that is not cut. The checker can then compare the net shape with the hand calculation and the allowance with the job sheet, one at a time.
 

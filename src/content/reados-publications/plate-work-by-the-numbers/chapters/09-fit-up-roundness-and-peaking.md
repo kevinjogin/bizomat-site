@@ -85,7 +85,7 @@ Temporary fit-up attachments, such as dogs and strongbacks, are welded to the sh
 
 A course that is round at fit-up does not stay round while its seams are welded. The heat and shrinkage of each pass pull the plate, and a thin shell has little stiffness to resist. The shop holds the course with an internal **spider**, a set of adjustable struts radiating from a central hub and bearing on the shell at eight or more points, set to the inside diameter at each level.
 
-The spider stays in until the vertical seams are welded and the course has cooled. The course is measured again after the spider is removed, because some of the welding distortion appears only then. A course that moves out of tolerance when the spider comes out has been held, not corrected, and the cause is usually in the welding sequence. READOS's [Welding Distortion by the Numbers](/reados/publications/welding-distortion-by-the-numbers/welding-sequence/) covers balancing a sequence to reduce it.
+The spider stays in until the vertical seams are welded and the course has cooled. The course is measured again after the spider is removed, because some of the welding distortion appears only then. A course that moves out of tolerance when the spider comes out has been held, not corrected, and the cause is usually in the welding sequence. The Library’s [Welding Distortion by the Numbers](/reados/publications/welding-distortion-by-the-numbers/welding-sequence/) covers balancing a sequence to reduce it.
 
 ## Plumb, level and height
 

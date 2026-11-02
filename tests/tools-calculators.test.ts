@@ -438,7 +438,7 @@ test('shared links reopen a tool with valid inputs and ignore invalid ones', () 
   const { ui, inputs, document } = loadUi('?tool=roi&discountRate=10&years=abc&bogus=1');
   const { t, r } = ui.state();
   assert.equal(t.id, 'roi');
-  assert.equal(document.title, 'Return on Investment and NPV | KEVOS® WORKOS');
+  assert.equal(document.title, 'Return on Investment and NPV | KEVOS® Tools');
   assert.equal(inputs.get('discountRate')?.value, '10');
   assert.equal(inputs.get('years')?.value, '3', 'non-numeric value ignored');
   near(r.primary.value, 15000 * ((1 - Math.pow(1.1, -3)) / 0.1) - 25000, 0.01, 'NPV at the shared 10 % rate');
@@ -448,7 +448,7 @@ test('shared links reopen a tool with valid inputs and ignore invalid ones', () 
   assert.equal(url.searchParams.get('discountRate'), '10');
   assert.ok(!url.searchParams.has('investment') && !url.searchParams.has('bogus'), 'only changed inputs are shared');
   const summary: string = ui.summaryText(t, r);
-  assert.match(summary, /^Return on Investment and NPV \(KEVOS® WORKOS\)\nDecision: POSITIVE NPV/);
+  assert.match(summary, /^Return on Investment and NPV \(KEVOS® Tools\)\nDecision: POSITIVE NPV/);
   assert.ok(summary.includes(url.href));
 });
 

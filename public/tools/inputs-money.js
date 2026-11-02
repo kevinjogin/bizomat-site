@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: Money. What each input means, how to get it right and which figure explains it.
+// KEVOS® Tools input guides: Money. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-money.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   roi: {

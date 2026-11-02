@@ -129,7 +129,7 @@ body:
 
 Each explicit tolerance overrides the general note for that feature only. Everything else on the drawing stays under the general note. In the end, four tolerances are written on the drawing instead of thirty, and those four are the ones the inspector must check carefully.
 
-The bore and spigot limits are written as limits, upper above lower, which is unambiguous and easy to inspect. The bearing seat depth is written as a symmetrical plus or minus tolerance. The runout is a geometric tolerance, written in a feature control frame on the bore, referring to the spigot as datum A. The datum is identified on the spigot with a datum feature symbol. The READOS book [Fits That Work](/reados/publications/fits-that-work/) covers how to choose the size limits for a fit; this chapter is about how they appear on the sheet.
+The bore and spigot limits are written as limits, upper above lower, which is unambiguous and easy to inspect. The bearing seat depth is written as a symmetrical plus or minus tolerance. The runout is a geometric tolerance, written in a feature control frame on the bore, referring to the spigot as datum A. The datum is identified on the spigot with a datum feature symbol. The Library book [Fits That Work](/reados/publications/fits-that-work/) covers how to choose the size limits for a fit; this chapter is about how they appear on the sheet.
 
 ## Writing tolerances on the sheet
 

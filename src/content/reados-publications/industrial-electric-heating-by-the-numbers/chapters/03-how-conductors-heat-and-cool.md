@@ -79,7 +79,7 @@ For a conductor with mass m, specific heat c, surface A and heat transfer coeffi
 
 **ΔT(t) = ΔT_final × (1 − e^(−t/τ)),  with τ = m × c ÷ (h × A)**
 
-The time constant τ is the time to reach about 63% of the final rise; after three time constants, the rise is about 95% complete. The same exponential appears in many engineering processes, as the READOS chapter on [growth, decay and logarithms](/reados/collections/practical-mathematics-for-engineering/growth-decay-and-logarithms/) explains.
+The time constant τ is the time to reach about 63% of the final rise; after three time constants, the rise is about 95% complete. The same exponential appears in many engineering processes, as the Library chapter on [growth, decay and logarithms](/reados/collections/practical-mathematics-for-engineering/growth-decay-and-logarithms/) explains.
 
 This is an illustration. One metre of the busbar weighs about 8,960 kg/m³ × 300 × 10⁻⁶ m² ≈ 2.69 kg. With copper's specific heat of about 385 J/kg·°C and convection alone at 10 W/m²·°C on 0.112 m², the time constant is about 2.69 × 385 ÷ (10 × 0.112) ≈ **924 s**, about 15 minutes. The bar takes about three-quarters of an hour to reach steady temperature after the load is applied, which is why short overloads that would overheat it if sustained may do no harm, and why cable and busbar ratings distinguish between continuous, cyclic and short-time currents.
 

@@ -97,10 +97,10 @@ test('WORKOS and READOS share the same hero, search, topic grid and sections', (
     assert.doesNotMatch(page, /<Hero\b|tools-pill|class="chips"/, 'no large hero, badge row or tag cloud');
     assert.match(page, /<MotionVisual page="\w+" slot="visual" compact/, 'the brand animation is the compact banner');
   }
-  assert.match(workos, /title="WORKOS"\s+description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions\."/);
-  assert.match(workos, /placeholder="Search WORKOS tools\.\.\."/);
-  assert.match(reados, /title="READOS"\s+description="Practical books and guides covering engineering, manufacturing, operations, projects and business\."/);
-  assert.match(reados, /placeholder="Search READOS books\.\.\."/);
+  assert.match(workos, /title="Tools"\s+description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions\."/);
+  assert.match(workos, /placeholder="Search KEVOS® tools\.\.\."/);
+  assert.match(reados, /title="Library"\s+description="Practical books and guides covering engineering, manufacturing, operations, projects and business\."/);
+  assert.match(reados, /placeholder="Search Library books\.\.\."/);
   // Counts are derived at build time, never typed into copy.
   for (const page of [workos, reados]) assert.doesNotMatch(page, /\b\d{2,} (tools|books)\b/);
   assert.match(workos, /total=\{tools\.length\}/);

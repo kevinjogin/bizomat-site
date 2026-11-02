@@ -5,7 +5,7 @@ description: "Size and check heat sinks with numbers: thermal budgets, interface
 category: Engineering
 tags: [design, product-development, validation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

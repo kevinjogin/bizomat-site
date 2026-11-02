@@ -5,7 +5,7 @@ description: "Develop rectangular duct fittings with numbers: radius and mitred 
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -54,7 +54,7 @@ Rectangular duct is made of flat panels folded at the corners, and its fittings 
 
 This book develops those fittings with numbers. Each chapter shows the traditional drawing method and calculates the same lines, so that a pattern can be marked on the bench, generated in a spreadsheet or checked against a CAD unfold. It starts with straight duct and its seams, works through elbows, offsets, transitions and branches, then covers joints and stiffening and ends with the take-off that turns a drawing into a cutting list.
 
-It is for sheet metal workers, ductwork fabricators, apprentices and drafters, and for engineers who check fabrication drawings. It assumes school algebra and trigonometry. Readers who want round fittings should start with READOS's Sheet Metal Patterns by the Numbers; readers who want airflow, pressure loss and fan duty should read Ductwork by the Numbers. This book is about making the rectangular pieces fit.
+It is for sheet metal workers, ductwork fabricators, apprentices and drafters, and for engineers who check fabrication drawings. It assumes school algebra and trigonometry. Readers who want round fittings should start with the Library’s Sheet Metal Patterns by the Numbers; readers who want airflow, pressure loss and fan duty should read Ductwork by the Numbers. This book is about making the rectangular pieces fit.
 
 ## The running case
 

@@ -9,7 +9,7 @@ draft: false
 
 Hollow shafts, hydraulic tubes, drill rods, torque tubes and pressure lines all share a stress pattern. Internal pressure pulls the wall around its circumference and along its length, an axial load adds to the length direction, and torque shears it. The three combine into a plane stress state on the wall that can be checked in a few lines, as long as the assumptions behind the formulas still hold.
 
-This chapter puts the RH-40 spindle through the WORKOS pressurised tube tool, then shows what that tool does not include, and how a first answer that looked comfortable turned out to be 20% light. It also uses the thin tube torsion tool to compare the thin-wall torsion formula with the exact one.
+This chapter puts the RH-40 spindle through the KEVOS® pressurised tube tool, then shows what that tool does not include, and how a first answer that looked comfortable turned out to be 20% light. It also uses the thin tube torsion tool to compare the thin-wall torsion formula with the exact one.
 
 ## The thin-walled tube
 

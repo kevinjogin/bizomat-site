@@ -135,7 +135,7 @@ The radio draws about 2 W for a few seconds while it transmits. Over five second
 
 ## How this applies to a small Australian business
 
-Australian sites combine high shade temperatures, strong sun and hot machinery, and northern sites add humidity. Overseas reference designs are often rated against milder conditions. A one-page thermal network with each assumption written down is enough to show whether a design is close to its limits, and it tells the test laboratory which conditions to reproduce. The WORKOS [Gearbox or Hydraulic Unit Heat Balance and Cooling](/tools/gearbox-heat-balance/) calculator is a useful companion when the question is how hot the machine itself will run.
+Australian sites combine high shade temperatures, strong sun and hot machinery, and northern sites add humidity. Overseas reference designs are often rated against milder conditions. A one-page thermal network with each assumption written down is enough to show whether a design is close to its limits, and it tells the test laboratory which conditions to reproduce. The KEVOS® [Gearbox or Hydraulic Unit Heat Balance and Cooling](/tools/gearbox-heat-balance/) calculator is a useful companion when the question is how hot the machine itself will run.
 
 ## Exercise: a hotter gearbox
 

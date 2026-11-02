@@ -5,7 +5,7 @@ description: "Mark out sheet and plate by hand with known accuracy: datums, squa
 category: Manufacturing
 tags: [manufacturing, quality, design]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

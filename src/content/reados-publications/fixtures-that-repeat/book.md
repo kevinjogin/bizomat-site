@@ -5,7 +5,7 @@ description: "Design and qualify a repeatable fixture using explicit constraints
 category: Manufacturing
 tags: [manufacturing, design, quality, process-improvement, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-20
@@ -70,7 +70,7 @@ The ten chapters produce connected outputs: a fixture brief, a contact map, load
 
 ## An original application of established mechanics
 
-READOS already introduces jigs, fixtures, workholding and manufacturing quality. This book concentrates on how to qualify one fixture through a continuous technical case. Its value is in the connections between decisions, including the results that require a design to be changed or a claim to be narrowed.
+The Library already introduces jigs, fixtures, workholding and manufacturing quality. This book concentrates on how to qualify one fixture through a continuous technical case. Its value is in the connections between decisions, including the results that require a design to be changed or a claim to be narrowed.
 
 The supplied handbook informed the topic review. Primary references are cited for the limited principles and equations used. No source drawings, catalogue tables, distinctive examples or chapter structures have been copied. No manufacturer endorses the teaching fixture, and no catalogue part is implicitly approved by appearing in a discussion.
 

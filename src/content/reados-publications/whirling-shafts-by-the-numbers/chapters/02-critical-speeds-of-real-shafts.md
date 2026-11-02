@@ -9,7 +9,7 @@ draft: false
 
 Chapter 1's single disc at mid-span is the easiest rotor to analyse and the least like a real one. Real rotors spread their mass along the shaft: a disc pack, an impeller and a coupling hub, a row of fan blades, a set of rolls. The shaft has mass of its own. And the masses do not all sit where they bend the shaft most. A better estimate needs a way of combining all of these.
 
-This chapter presents the two classic hand methods, Dunkerley's and Rayleigh's, applies them to the HM-30 rotor with a WORKOS tool, compares them with a near-exact answer, and works through an error in which the wrong estimate and a loosely worded margin approved a shaft that was too slender for its speed.
+This chapter presents the two classic hand methods, Dunkerley's and Rayleigh's, applies them to the HM-30 rotor with a KEVOS® tool, compares them with a near-exact answer, and works through an error in which the wrong estimate and a loosely worded margin approved a shaft that was too slender for its speed.
 
 ## Dunkerley's method
 
@@ -77,7 +77,7 @@ There are two sensible ways to deal with that. The quick, safe one is to use the
 
 This is an illustration. The HM-30's 180 kg rotor is spread over the middle 400 mm of the 1,000 mm span. For a hand estimate, the maker split it into three equal masses of 60 kg, at 300, 500 and 700 mm from the drive-end bearing.
 
-The WORKOS [Shaft critical speed with several masses](/tools/shaft-critical-speed-check/) tool takes a uniform shaft on simple supports, with up to three concentrated masses between the bearings. From the shaft diameter, bearing span, modulus and density, and each mass and its distance from the left bearing, it works out the shaft's own critical speed, the critical speed of each mass alone from its static deflection, Dunkerley's combination, and a Rayleigh estimate for the masses from their static deflection curve. It compares the running speed with the Dunkerley value and your margin. The tool's Rayleigh estimate uses the masses only, not the shaft's own mass, a point that matters later in this chapter.
+The KEVOS® [Shaft critical speed with several masses](/tools/shaft-critical-speed-check/) tool takes a uniform shaft on simple supports, with up to three concentrated masses between the bearings. From the shaft diameter, bearing span, modulus and density, and each mass and its distance from the left bearing, it works out the shaft's own critical speed, the critical speed of each mass alone from its static deflection, Dunkerley's combination, and a Rayleigh estimate for the masses from their static deflection curve. It compares the running speed with the Dunkerley value and your margin. The tool's Rayleigh estimate uses the masses only, not the shaft's own mass, a point that matters later in this chapter.
 
 ```figure
 type: compare
@@ -129,7 +129,7 @@ A critical speed margin can be written in two ways, and they are not the same.
 - **Running speed at least X% below critical:** n_run ≤ (1 − X) × n_c. A 25% margin means running at no more than 75% of critical; the critical speed must be at least 1.33 times running speed.
 - **Critical speed at least X% above running:** n_c ≥ (1 + X) × n_run. A 20% margin means the critical speed must be at least 1.2 times running speed; running at no more than 83.3% of critical.
 
-The WORKOS critical speed tools use the first form: they ask for a margin and report the running speed as a percentage of critical, flagging anything within the margin on either side as "near critical". The HM-30's maker adopted the same form, with 25%, and wrote it into its design standard so that nobody could quote a different one.
+The KEVOS® critical speed tools use the first form: they ask for a margin and report the running speed as a percentage of critical, flagging anything within the margin on either side as "near critical". The HM-30's maker adopted the same form, with 25%, and wrote it into its design standard so that nobody could quote a different one.
 
 ## The error: the export variant approved on the wrong numbers
 

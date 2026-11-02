@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: classical thermodynamics tools (batch handbook71) within the WORKOS directory.
+// KEVOS® MAKEOS: classical thermodynamics tools (batch handbook71) within the Tools directory.
 // Methods follow E. A. Guggenheim, Thermodynamics (North-Holland); no text, tables or examples are reproduced.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {

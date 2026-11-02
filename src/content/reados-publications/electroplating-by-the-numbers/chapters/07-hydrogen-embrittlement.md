@@ -45,7 +45,7 @@ The controls follow the steps in the figure. ISO 9587 deals with pretreatment of
 
 **After plating.** The principal defence is **baking**: heating the plated parts at a stated temperature for a stated time, starting within a stated period after plating, so that hydrogen diffuses out of the steel or into harmless sites before it can do damage. The coating itself slows the escape of hydrogen, which is one reason the start time matters: the longer a part waits at room temperature, the more hydrogen can move to where it causes cracks. Some passivates are damaged by baking temperatures, so the order of baking and passivating must suit the coating system and the specification.
 
-**Avoid it altogether.** Where the risk is high and the coating's thickness can be met another way, a non-electrolytic coating may be chosen instead. The READOS chapter on [protecting metals from corrosion and wear](/reados/collections/machine-elements-and-mechanical-design/protecting-metals-from-corrosion-and-wear/) notes that zinc flake coatings are applied without electrolysis and so introduce no hydrogen from the coating process, which is why they are widely used on high-strength fasteners.
+**Avoid it altogether.** Where the risk is high and the coating's thickness can be met another way, a non-electrolytic coating may be chosen instead. The Library chapter on [protecting metals from corrosion and wear](/reados/collections/machine-elements-and-mechanical-design/protecting-metals-from-corrosion-and-wear/) notes that zinc flake coatings are applied without electrolysis and so introduce no hydrogen from the coating process, which is why they are widely used on high-strength fasteners.
 
 ```figure
 type: decision

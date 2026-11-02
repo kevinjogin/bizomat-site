@@ -71,7 +71,7 @@ where z = 1.96 for 95% two-sided. The only spread available before DVT came from
 
 Because the standard deviation will itself be estimated from the sample, the handbook's method then replaces z with t and repeats the calculation until it settles. Here it settles at **13** units. A DVT build of 12 sits between the two answers, which is close enough for the decision the test supports. With hindsight, the observed standard deviation of 0.0626 kWh would have given (1.96 × 0.0626 ÷ 0.05)² = 6.0, so **7** units by the first approximation and 9 with the t correction. A cautious planning value costs units; an optimistic one gives an interval wider than promised.
 
-The arithmetic is quick, and the WORKOS [Sample Size to Estimate a Mean calculator](/tools/sample-size-mean/) reproduces it for any precision and confidence.
+The arithmetic is quick, and the KEVOS® [Sample Size to Estimate a Mean calculator](/tools/sample-size-mean/) reproduces it for any precision and confidence.
 
 ## Comparing two suppliers
 
@@ -115,7 +115,7 @@ The same arithmetic run forward shows why. With σ = 0.08 kWh and three packs pe
 
 The correction was the comparison the formula called for: **14 packs per supplier**, each tested by the same method on the same bay. The means were **4.41 kWh for A and 4.44 kWh for B**, a difference of **0.03 kWh**. With a standard deviation near the DVT value, the 95% interval on a difference from 14 packs each is about ±0.05 kWh, so the true advantage could be anything from nothing to about 0.08 kWh. At its observed value, 0.03 kWh is 0.7% of the pack's energy, for a price increase equal to 1.9% of the target unit cost of A$4,400. The business stayed with supplier A.
 
-The comparison took 28 pack tests, run off the critical path. It saved a decision worth A$85,000 a year that rested on six numbers. The WORKOS [Process Change Trial calculator](/tools/process-change-trial/) carries out both halves of this work: the sample size per group for the smallest worthwhile difference, and the Welch test on the results.
+The comparison took 28 pack tests, run off the critical path. It saved a decision worth A$85,000 a year that rested on six numbers. The KEVOS® [Process Change Trial calculator](/tools/process-change-trial/) carries out both halves of this work: the sample size per group for the smallest worthwhile difference, and the Welch test on the results.
 
 ```figure
 type: compare

@@ -64,7 +64,7 @@ caption: The same duct, three constructions. The running case uses two L-shaped 
 
 ## How much a fold changes the blank
 
-A folded corner is a bend of 90° to a small inside radius, typically about one sheet thickness. As READOS's [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/neutral-axis-k-factor-and-bend-allowance/) explains, the length a bend consumes is its bend allowance, calculated with a K-factor that places the neutral line inside the mid-thickness for tight bends.
+A folded corner is a bend of 90° to a small inside radius, typically about one sheet thickness. As the Library’s [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/neutral-axis-k-factor-and-bend-allowance/) explains, the length a bend consumes is its bend allowance, calculated with a K-factor that places the neutral line inside the mid-thickness for tight bends.
 
 This is an illustration. For 0.8 mm sheet folded to an inside radius of 0.8 mm with a K-factor of 0.44, the bend allowance of a 90° fold is π ÷ 2 × (0.8 + 0.44 × 0.8) = 1.81 mm. Dimensioning to the inside, each flat face is its inside dimension less 0.8 mm at each folded end, so each fold adds 1.81 − 1.6 = **0.21 mm** to the blank compared with simply adding the inside dimensions.
 

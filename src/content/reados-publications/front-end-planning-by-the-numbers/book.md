@@ -5,7 +5,7 @@ description: "Plan slowly, deliver quickly: score project definition, read estim
 category: Projects
 tags: [projects, operations, finance, strategy]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -131,7 +131,7 @@ The business, its people, its projects and every number in the case are invented
 
 Read Chapter 1 first: it sets out the two paths and the numbers that later chapters build on. Chapters 2 to 5 cover the front end itself: stages and gates, scoring definition, estimate classes and the scope a front end finds. Chapter 6 asks how much front-end work is enough. Chapters 7 and 8 cover delivery, its exposure window and the deadline, and Chapters 9 and 10 cover approval, delivery control and the review afterwards. Every calculation in the book was checked by running it, and the schedule simulation uses a fixed random seed so that its results can be reproduced.
 
-The book is one of a series of KEVOS® READOS books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* adds the outside view: how projects like this one have actually turned out, and how to set a budget and contingency from that record. *Stage Gates and Stopping Rules by the Numbers* covers the decisions made at each gate, including when to stop, where this book covers what must be defined before a gate. *Modular Projects by the Numbers* applies short exposure windows to repeated installations on working sites, and *Project Teams and Contracts by the Numbers* covers the people and contract forms that carry a plan into delivery.
+The book is one of a series of KEVOS® Library books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* adds the outside view: how projects like this one have actually turned out, and how to set a budget and contingency from that record. *Stage Gates and Stopping Rules by the Numbers* covers the decisions made at each gate, including when to stop, where this book covers what must be defined before a gate. *Modular Projects by the Numbers* applies short exposure windows to repeated installations on working sites, and *Project Teams and Contracts by the Numbers* covers the people and contract forms that carry a plan into delivery.
 
 ## Source limits and professional responsibility
 

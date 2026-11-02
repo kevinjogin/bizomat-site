@@ -87,7 +87,7 @@ Chapter 2 deals with transverse shrinkage and the rotational distortion that Whi
 
 ## Heat input decides how much
 
-The amount of distortion depends on how much metal is heated enough to yield, which depends mainly on how much heat is put into the joint per unit length, the heat input, and how quickly the surrounding metal carries it away. More heat input, from larger welds, more passes or slower travel, heats a wider band of metal past the yield temperature and produces more shrinkage. Thicker plate carries heat away faster and resists distortion more, but needs larger welds. Weld Repairs That Hold calculates heat input for two travel speeds in its chapter on [heat, expansion and shrinkage](/reados/publications/weld-repairs-that-hold/heat-expansion-and-shrinkage/), and the KEVOS® WORKOS [welding heat input calculator](/tools/welding-heat-input/) does the arithmetic.
+The amount of distortion depends on how much metal is heated enough to yield, which depends mainly on how much heat is put into the joint per unit length, the heat input, and how quickly the surrounding metal carries it away. More heat input, from larger welds, more passes or slower travel, heats a wider band of metal past the yield temperature and produces more shrinkage. Thicker plate carries heat away faster and resists distortion more, but needs larger welds. Weld Repairs That Hold calculates heat input for two travel speeds in its chapter on [heat, expansion and shrinkage](/reados/publications/weld-repairs-that-hold/heat-expansion-and-shrinkage/), and the KEVOS® [welding heat input calculator](/tools/welding-heat-input/) does the arithmetic.
 
 ## Weld volume
 

@@ -5,11 +5,11 @@ import { getChapters, chapterAuthor } from '../utils/content.ts';
 import { buildReadOSCollections, readosCollectionChapterHref } from '../utils/reados-collections.ts';
 
 export async function GET(context: APIContext) {
-  // READOS chapters, newest first, each linked at its edited-book address.
+  // Library chapters, newest first, each linked at its edited-book address.
   const posts = await getChapters();
   const hrefs = new Map(buildReadOSCollections(posts).flatMap((b) => b.chapters.map((c) => [c.id, readosCollectionChapterHref(b, c)] as const)));
   return rss({
-    title: `${SITE.name} READOS`,
+    title: `${SITE.name} Library`,
     description: SITE.description,
     site: context.site ?? SITE.url,
     trailingSlash: true,

@@ -44,7 +44,7 @@ The third side of every triangle is a step along one of the ends. The pattern's 
 - **bottom**: 785.4 ÷ 12 = **65.4 mm** per step, against a chord of 64.7 mm;
 - **top**: 628.3 ÷ 12 = **52.4 mm** per step, against a chord of 51.8 mm.
 
-Laying the pattern out with the arc steps makes its edges the right length; using the chords would leave the bottom edge 8.9 mm short and the top 7.1 mm short. READOS's [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/triangulation-and-true-lengths/) sets out why at length, with an eccentric reducer as its example.
+Laying the pattern out with the arc steps makes its edges the right length; using the chords would leave the bottom edge 8.9 mm short and the top 7.1 mm short. The Library’s [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/triangulation-and-true-lengths/) sets out why at length, with an eccentric reducer as its example.
 
 ## Laying out the half pattern
 

@@ -5,7 +5,7 @@ description: "Package electronics in a mechanical product with numbers: board mo
 category: Engineering
 tags: [design, product-development, systems, validation, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

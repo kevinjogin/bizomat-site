@@ -5,7 +5,7 @@ description: "How stress changes with direction and where it peaks: transformati
 category: Engineering
 tags: [design, validation, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -40,7 +40,7 @@ references:
   - title: "Roark's Formulas for Stress and Strain, eighth edition"
     creator: "W. C. Young, R. G. Budynas and A. M. Sadegh, McGraw-Hill"
     year: "2012"
-    note: "Background for torsion of tubes and rectangular sections and for the thick cylinder formulas, used to cross-check the WORKOS tools in Chapters 1, 4 and 5."
+    note: "Background for torsion of tubes and rectangular sections and for the thick cylinder formulas, used to cross-check the KEVOS® tools in Chapters 1, 4 and 5."
   - title: "AS 1210 Pressure vessels"
     creator: "Standards Australia"
     year: "2010"
@@ -71,7 +71,7 @@ A stress is not a single number. At any point in a loaded part, the push, pull a
 
 This book teaches that job with numbers. It starts with the stress at a point and the small element used to describe it, then shows how stresses change as the element turns, where they reach their largest and smallest values, and how Mohr's circle draws the whole picture. It then applies the method to tubes under pressure, thrust and torque, to thick walls, to three-dimensional states, to strains and strain gauge rosettes, and finally to interference fits and thermal restraint, where the parts must fit together as well as balance their loads.
 
-It is for mechanical design engineers, machine builders, test engineers and technicians. It assumes school physics, algebra and a first course in statics; it explains trigonometry where it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design engineers, machine builders, test engineers and technicians. It assumes school physics, algebra and a first course in statics; it explains trigonometry where it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -88,7 +88,7 @@ Loads, strengths, dimensions, readings and times are the case builder's working 
 
 Read Chapters 1 to 3 in order: they build the method that every later chapter uses. Chapters 4 and 5 apply it to tubes and cylinders, and Chapter 6 extends it to three dimensions. Chapters 7 and 8 deal with strain and with strain gauge rosettes, and can be read as a pair. Chapters 9 and 10 cover fits and thermal restraint, where compatibility joins equilibrium.
 
-Every calculation in the book was checked by running it, and the WORKOS tools linked from each chapter were checked against the calculations they perform. The methods are elastic and assume isotropic metals. They find the stress state at a point; whether that state is acceptable is a question for the yield, fatigue and code checks that follow.
+Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The methods are elastic and assume isotropic metals. They find the stress state at a point; whether that state is acceptable is a question for the yield, fatigue and code checks that follow.
 
 ## Source limits and professional responsibility
 

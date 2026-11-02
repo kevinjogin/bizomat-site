@@ -9,7 +9,7 @@ draft: false
 
 A drive changes the two moments in a machine's life that cause the most stress: starting and stopping. A direct-on-line start slams a motor from standstill to full speed with six or seven times its rated current and a burst of torque; a drive can bring it up smoothly at little more than its running current. Stopping is the other way round. A motor disconnected from the mains simply coasts, but a drive asked to stop a machine quickly has to take the machine's kinetic energy from somewhere, and the motor turns it back into electricity that flows into the drive's DC link with nowhere to go.
 
-This chapter works F-1's start with the WORKOS rotor run-up tool, both direct-on-line and on the drive, then follows the fan's kinetic energy through a stop. It explains overvoltage trips and braking resistors, and ends with a stop ramp shortened for convenience.
+This chapter works F-1's start with the KEVOS® rotor run-up tool, both direct-on-line and on the drive, then follows the fan's kinetic energy through a stop. It explains overvoltage trips and braking resistors, and ends with a stop ramp shortened for convenience.
 
 ## The fan's inertia
 

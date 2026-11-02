@@ -5,7 +5,7 @@ description: "Choose, set and check a power press with numbers: tonnage curves, 
 category: Manufacturing
 tags: [manufacturing, operations, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -70,7 +70,7 @@ A power press is a machine for delivering a large force over a short distance, q
 
 This book works through presses with numbers. It starts with what a press must deliver, then looks at energy machines through Hodgson's 1903 examples, the crank press's force curve, flywheel energy, frames and their deflection, hydraulic and servo drives, fitting a die, feeding the strip, stopping the press and guarding it, and finally choosing a press on its whole cost. Each chapter follows one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for production engineers, press shop supervisors, toolmakers, maintenance staff and the people who buy presses. It assumes school algebra and physics. The dies themselves, their cutting force, clearance, stripping and wear, are the subject of READOS's companion book, Blanking and Piercing Dies by the Numbers, whose MP-40 die is one of the two jobs in this book's case.
+It is for production engineers, press shop supervisors, toolmakers, maintenance staff and the people who buy presses. It assumes school algebra and physics. The dies themselves, their cutting force, clearance, stripping and wear, are the subject of the Library’s companion book, Blanking and Piercing Dies by the Numbers, whose MP-40 die is one of the two jobs in this book's case.
 
 ## The running case
 

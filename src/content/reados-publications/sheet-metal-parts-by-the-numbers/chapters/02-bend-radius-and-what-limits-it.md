@@ -46,7 +46,7 @@ This is an illustration, with reduction-of-area values chosen to show the range 
 - a high-strength steel with 35%: R_min = **0.86 mm**;
 - a hard-temper aluminium alloy with 25%: R_min = 2.0 mm, equal to the thickness.
 
-The relationship is an estimate. Edge condition, surface finish, grain direction and the bend's width all affect cracking, and a bend across the rolling direction usually tolerates a tighter radius than one along it. Treat R_min as a lower bound to stay well above, and use the material supplier's published bend radius guidance where it exists. The WORKOS [bend radius limits calculator](/tools/bend-radius-limits/) applies the same relationship.
+The relationship is an estimate. Edge condition, surface finish, grain direction and the bend's width all affect cracking, and a bend across the rolling direction usually tolerates a tighter radius than one along it. Treat R_min as a lower bound to stay well above, and use the material supplier's published bend radius guidance where it exists. The KEVOS® [bend radius limits calculator](/tools/bend-radius-limits/) applies the same relationship.
 
 ```figure
 type: formula

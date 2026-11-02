@@ -76,7 +76,7 @@ where E is the steel's modulus, about 210,000 MPa, I is the second moment of are
 - a punch held in its punch plate and **free** at the cutting end until it touches the strip: fixed at one end, free at the other, **K = 2**;
 - a punch **guided** close to its tip by a bushed stripper plate: fixed at one end and held in line at the other, K of about **0.7**.
 
-Real punches are not ideal columns, so the result is used with a generous margin: a punch should not work above about a third of its buckling load. WORKOS's [column buckling calculator](/tools/column-buckling/) does the arithmetic for other end conditions.
+Real punches are not ideal columns, so the result is used with a generous margin: a punch should not work above about a third of its buckling load. The KEVOS® [column buckling calculator](/tools/column-buckling/) does the arithmetic for other end conditions.
 
 **The Ø8.58 mm hole punches.** I = π × 8.58⁴ ÷ 64 = 266 mm⁴. With 30 mm unsupported and the free-end factor, P_cr = π² × 210,000 × 266 ÷ 60² = about 153 kN, ten times the 15.1 kN they carry. No concern.
 
@@ -121,7 +121,7 @@ Crushing and buckling are the failures that arithmetic predicts. Most punches th
 - **Breakage at breakthrough.** At the instant the slug separates, the load drops and the press frame springs back, and a punch that was aligned under load can be flicked sideways. Slender punches feel it most.
 - **Pulling out of the punch plate.** On the upstroke the stripper pulls the strip off the punch, and the punch is pulled the other way. A punch held only by a press fit can creep out of its plate; most are held by a head or shoulder, a ball lock or a retaining screw.
 - **Fatigue at a section change.** A stepped punch that changes diameter at a sharp shoulder can crack there after a few hundred thousand strokes. A generous fillet at the step, ground smooth, spreads the stress.
-- **Cracking from heat treatment.** Sharp internal corners and abrupt section changes crack in hardening, or are left with stresses that open in service. Choosing the steel and designing for hardening are covered in READOS's chapter on [choosing tool steels](/reados/collections/machining-and-metal-parts/choosing-tool-steels/).
+- **Cracking from heat treatment.** Sharp internal corners and abrupt section changes crack in hardening, or are left with stresses that open in service. Choosing the steel and designing for hardening are covered in the Library’s chapter on [choosing tool steels](/reados/collections/machining-and-metal-parts/choosing-tool-steels/).
 
 Each of these leaves a recognisable fracture face, and a broken punch is worth keeping and looking at under a magnifier before it is thrown away. A clean, flat break across a slender punch at roughly mid-length suggests buckling; a shell-shaped break starting at a shoulder suggests fatigue; a chipped corner with smeared metal on the punch's side suggests rubbing against the die.
 

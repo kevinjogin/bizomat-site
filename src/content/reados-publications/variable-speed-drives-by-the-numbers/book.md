@@ -5,7 +5,7 @@ description: "How variable-speed drives control induction motors and how to size
 category: Engineering
 tags: [automation, design, operations, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -63,7 +63,7 @@ Most of the electricity a factory buys is turned into motion by induction motors
 
 This book explains drives from the semiconductor up and the machine down. It starts with what a drive does to a motor, then explains how its diodes and transistors block voltage and carry current, where their losses come from, how hot they get and how long they last. It then turns to the machines: the motor at low and high speed, the energy saved on fans and pumps, starting, stopping and braking, harmonics, earth leakage and interference, and finally how to specify, commission and maintain a drive.
 
-It is for mechanical, electrical and maintenance engineers, technicians and plant managers. It assumes engineering or trade training and comfort with power, torque and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the WORKOS tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical, electrical and maintenance engineers, technicians and plant managers. It assumes engineering or trade training and comfort with power, torque and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -79,7 +79,7 @@ Ratings, losses, temperatures, prices and failure records are the plant's workin
 
 ## How to use the book
 
-Chapters 1 to 5 are about the drive itself, and Chapters 6 to 10 about applying and keeping it. Read Chapter 1 first; the others stand on their own once the case is familiar. Each chapter links the WORKOS calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Chapters 1 to 5 are about the drive itself, and Chapters 6 to 10 about applying and keeping it. Read Chapter 1 first; the others stand on their own once the case is familiar. Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

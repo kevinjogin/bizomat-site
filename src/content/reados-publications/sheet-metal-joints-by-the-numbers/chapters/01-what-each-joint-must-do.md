@@ -75,7 +75,7 @@ This is an illustration. The first EN-700 prototype joined its corner seams with
 
 Each spot weld burns off the zinc on both faces around the weld, in this illustration a ring about 8 mm across, roughly 50 mm² per weld face. Over 193 welds that is about **97 cm²** of bare steel on each face, scattered along the seams where water collects. After a short salt-spray test, every weld showed red rust staining.
 
-The fix was to change the seams to clinched joints at 50 mm pitch, about 116 clinches, which form an interlock from the sheet itself without heat and leave the zinc intact, with a bead of sealant in the seam to keep water out. The general lesson is that a method should be chosen from what the joint must do, here survive outdoors with its coating, and not from which machine is free. Spot welding remains a good method for coated steel when the product is painted afterwards or the welds are protected, which READOS's resistance welding book covers; it was the wrong choice for a seam left bare.
+The fix was to change the seams to clinched joints at 50 mm pitch, about 116 clinches, which form an interlock from the sheet itself without heat and leave the zinc intact, with a bead of sealant in the seam to keep water out. The general lesson is that a method should be chosen from what the joint must do, here survive outdoors with its coating, and not from which machine is free. Spot welding remains a good method for coated steel when the product is painted afterwards or the welds are protected, which the Library’s resistance welding book covers; it was the wrong choice for a seam left bare.
 
 ## Joint counts and cost
 

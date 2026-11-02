@@ -5,7 +5,7 @@ description: "Design, size and run electric process heating from first principle
 category: Engineering
 tags: [design, manufacturing, operations, process-improvement, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -78,4 +78,4 @@ This book is educational. Electrical installation and repair work must be done b
 
 ## An original treatment
 
-READOS covers heating of buildings in its HVAC collection and resistance welding in [Resistance Welding by the Numbers](/reados/publications/resistance-welding-by-the-numbers/). This book covers electric heating of materials and processes. The explanations, the oven and furnace case, the calculations, figures and exercises are original KEVOS® writing. The 1895 handbook is a public-domain work in the United States; its facts are summarised, checked and corrected in new words, and none of its text, tables or illustrations is reproduced.
+The Library covers heating of buildings in its HVAC collection and resistance welding in [Resistance Welding by the Numbers](/reados/publications/resistance-welding-by-the-numbers/). This book covers electric heating of materials and processes. The explanations, the oven and furnace case, the calculations, figures and exercises are original KEVOS® writing. The 1895 handbook is a public-domain work in the United States; its facts are summarised, checked and corrected in new words, and none of its text, tables or illustrations is reproduced.

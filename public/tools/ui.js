@@ -1,5 +1,5 @@
-// KEVOS® WORKOS interface: directory, search, workspace, results, analysis, guide and decision reports.
-// Every tool is part of one KEVOS® WORKOS collection with the same features. Calculations run in the browser only.
+// KEVOS® Tools interface: directory, search, workspace, results, analysis, guide and decision reports.
+// Every tool is part of one KEVOS® Tools collection with the same features. Calculations run in the browser only.
 (function () {
   // Tool files load on demand. The page carries a map of tool id → file name (#workos-tool-files) and a tool's
   // data-, guides-, inputs- and calc-<file>.js are fetched the first time it opens, so a phone downloads one
@@ -23,7 +23,7 @@
     }).join('')}</ul>`;
   }
   const STATUS = { pass: 'PASS', warn: 'REVIEW', fail: 'FAIL', verify: 'VERIFY' };
-  const collection = (t) => t.collection === 'MAKEOS' ? 'MAKEOS' : 'WORKOS';
+  const collection = (t) => t.collection === 'MAKEOS' ? 'MAKEOS' : 'Tools'; // shown in results, reports and file names
   let current = null; // { t, r, sens }
   let timer = 0;
 
@@ -162,7 +162,7 @@ ${r.actions.length ? `<section><h2>Next actions</h2><ol>${r.actions.map((a) => `
 ${verify.length ? `<section><h2>Verification required</h2>${list(verify)}</section>` : ''}
 ${g.refs?.length ? `<section><h2>References</h2>${refsHtml(g.refs)}</section>` : ''}
 ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</section>` : ''}
-<footer class="wr-foot"><p>WORKOS tools are screening and decision-support utilities. Results depend entirely on the inputs and assumptions above. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p><p>KEVOS® | kevos.com/tools/</p></footer>
+<footer class="wr-foot"><p>KEVOS® tools are screening and decision-support utilities. Results depend entirely on the inputs and assumptions above. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p><p>KEVOS® | kevos.com/tools/</p></footer>
 </article>`;
   }
   const REPORT_CSS = `body{margin:0;background:#f6f5f1;color:#121211;font:15px/1.55 'Segoe UI',Arial,sans-serif}.wr{max-width:880px;margin:24px auto;padding:36px 40px;background:#fff;border-top:8px solid #ff6a13}.wr h1{margin:.2em 0;font-size:28px}.wr h2{margin:28px 0 8px;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#c2410c}.wr-brand{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#c2410c;font-weight:700}.wr-meta{color:#67645d;font-size:13px;word-break:break-all}.wr-decision{font-size:24px;font-weight:700;margin:4px 0}.wr-good{color:#1f6b45}.wr-warn{color:#c2410c}.wr-bad{color:#b3261e}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid #e3e0d8}thead th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#67645d}.wr-group{padding-top:14px;color:#c2410c;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.wr-st{font-weight:700}.wr-st-pass{color:#1f6b45}.wr-st-warn{color:#c2410c}.wr-st-fail{color:#b3261e}.wr-st-verify{color:#7a4b00}.wr-foot{margin-top:32px;padding-top:12px;border-top:1px solid #e3e0d8;color:#67645d;font-size:12.5px}@media print{body{background:#fff}.wr{margin:0;max-width:none;padding:0;border-top:6px solid #ff6a13}}`;
@@ -310,7 +310,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     renderLearn(t);
     analyse(t);
   }
-  // ---------- READOS readings for the open tool ----------
+  // ---------- Library readings for the open tool ----------
   // /tools/knowledge.json is built from src/data/knowledge-links.json (approved links only) and fetched once.
   let knowledge = null;
   const loadKnowledge = () => knowledge || (knowledge = fetch('/tools/knowledge.json').then((r) => (r.ok ? r.json() : {})).catch(() => ({})));
@@ -322,7 +322,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     loadKnowledge().then((map) => {
       const items = (map && map[t.id]) || [];
       if (current?.t.id !== t.id || !items.length) return; // another tool was opened meanwhile, or nothing to show
-      box.innerHTML = `<h2 class="guide-title">Learn the Concepts Behind This Tool</h2><p class="learn-lead">These KEVOS® READOS readings explain the method this tool uses, with worked examples.</p><ul class="learn-list">${items
+      box.innerHTML = `<h2 class="guide-title">Learn the Concepts Behind This Tool</h2><p class="learn-lead">These KEVOS® Library readings explain the method this tool uses, with worked examples.</p><ul class="learn-list">${items
         .map((x) => `<li class="learn-card"><p class="learn-label">${esc(x.label)} · ${esc(x.kind)}</p><h3><a href="${esc(x.href)}">${esc(x.title)}</a></h3>${x.href !== x.bookHref ? `<p class="learn-book">In <a href="${esc(x.bookHref)}">${esc(x.book)}</a></p>` : ''}<p class="learn-what"><strong>What it covers:</strong> ${esc(x.learn)}</p></li>`)
         .join('')}</ul>`;
     });
@@ -411,7 +411,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       u.search = '';
       history.pushState({}, '', u);
     }
-    document.title = 'WORKOS calculators and decision tools | KEVOS®';
+    document.title = 'Engineering and business calculators and decision tools | KEVOS®';
     if (openedInPage) window.scrollTo(0, directoryScroll);
     else directory.scrollIntoView({ block: 'start' });
     openedInPage = false;

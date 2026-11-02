@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: Machinery’s Handbook topic tools (batch handbook40) within the WORKOS directory.
+// KEVOS® MAKEOS: Machinery’s Handbook topic tools (batch handbook40) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "drop-impact-design",

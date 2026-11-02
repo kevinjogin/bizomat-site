@@ -5,7 +5,7 @@ description: "Design the sound of a product with numbers: acoustic circuits, por
 category: Products
 tags: [product-development, design, prototyping, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

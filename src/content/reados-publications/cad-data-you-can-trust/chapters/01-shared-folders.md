@@ -128,7 +128,7 @@ A vault is not a cure for poor data. It stores whatever it is given. If part num
 
 A vault also brings its own costs. It must be bought or subscribed to, installed, configured, backed up and upgraded. People must learn to check files in and out. Someone must administer it. For a team of nine, these costs are real, and they should be weighed against the losses the team actually measures rather than against a vendor's description of the benefits.
 
-The following chapters deal with the work that makes a vault worth having: settling numbering and naming, understanding references, defining revisions and release, designing states and permissions, migrating carefully, backing up properly and keeping the system working through licences and upgrades. READOS's chapter on [product data management for small teams](/reados/collections/engineering-design-practice/product-data-management-for-small-teams/) gives a shorter overview of the same ground.
+The following chapters deal with the work that makes a vault worth having: settling numbering and naming, understanding references, defining revisions and release, designing states and permissions, migrating carefully, backing up properly and keeping the system working through licences and upgrades. The Library’s chapter on [product data management for small teams](/reados/collections/engineering-design-practice/product-data-management-for-small-teams/) gives a shorter overview of the same ground.
 
 ## Count the losses before deciding
 

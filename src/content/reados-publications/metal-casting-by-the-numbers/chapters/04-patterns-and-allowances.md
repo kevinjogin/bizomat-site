@@ -9,7 +9,7 @@ draft: false
 
 A sand casting is a copy of a pattern, made in reverse twice: the pattern makes a cavity in sand, and the metal fills the cavity. But the casting is not the same size as the pattern. The metal shrinks as it cools from its freezing temperature to room temperature, so the pattern must be made larger than the casting by exactly the amount the metal will shrink. The casting itself must be larger than the finished part wherever it will be machined. Getting those allowances right is the patternmaker's first job, and getting them wrong is expensive, because a pattern is made once and used for every casting.
 
-This chapter works out GB-12's pattern dimensions, casting mass and metal poured with two WORKOS tools, explains why real shrinkage varies across a casting, covers draft, cores and core prints, and works through a pattern made to the wrong shrinkage rule.
+This chapter works out GB-12's pattern dimensions, casting mass and metal poured with two KEVOS® tools, explains why real shrinkage varies across a casting, covers draft, cores and core prints, and works through a pattern made to the wrong shrinkage rule.
 
 ## Allowances, in order
 
@@ -42,7 +42,7 @@ The allowance is a working figure, not a material constant. A casting that is fr
 
 ## Sizing GB-12's pattern
 
-The WORKOS [Casting pattern plan](/tools/casting-pattern-plan/) tool treats a casting as a rectangular block. From the finished length, width and height, the number of machined faces across each, the machining allowance per face and the shrinkage allowance, it gives the casting and pattern dimensions. From the metal density and the volume of cored-out spaces it gives the casting volume and mass, and from the casting yield (the casting's share of the metal poured) the metal to pour, checked against the ladle or furnace capacity. Its guide notes that draft, fillets and core prints are added by the patternmaker and that real castings with hindered contraction shrink less.
+The KEVOS® [Casting pattern plan](/tools/casting-pattern-plan/) tool treats a casting as a rectangular block. From the finished length, width and height, the number of machined faces across each, the machining allowance per face and the shrinkage allowance, it gives the casting and pattern dimensions. From the metal density and the volume of cored-out spaces it gives the casting volume and mass, and from the casting yield (the casting's share of the metal poured) the metal to pour, checked against the ladle or furnace capacity. Its guide notes that draft, fillets and core prints are added by the patternmaker and that real castings with hindered contraction shrink less.
 
 This is an illustration. GB-12's finished envelope is 300 × 200 × 100 mm. Both ends and both sides are machined, and the joint face, one of the two 300 × 200 faces, is machined. The hollow inside of the cover is formed by a sand core with a volume of 4.0 L. The alloy's density as a solid is 2,680 kg/m³. The foundry plans for a casting yield of 55% (Chapter 7) and pours from a 20 kg hand ladle.
 
@@ -72,7 +72,7 @@ The block model is crude for a casting with ribs, bosses and flanges, but it giv
 
 ### Single dimensions and weight from the pattern
 
-The WORKOS [Pattern size for shrinkage and casting weight from pattern](/tools/pattern-shrinkage/) tool works on one dimension at a time: finished dimension, machining allowance and number of machined faces across it, and shrinkage allowance, giving the casting dimension, pattern dimension and the shrinkage added. It also estimates the casting weight from the pattern's weight and the densities of the pattern material and the metal, less the cored-out volume, a quick check that patternmakers have used for generations. Its guide notes that the weight method assumes a solid pattern of uniform density without core prints.
+The KEVOS® [Pattern size for shrinkage and casting weight from pattern](/tools/pattern-shrinkage/) tool works on one dimension at a time: finished dimension, machining allowance and number of machined faces across it, and shrinkage allowance, giving the casting dimension, pattern dimension and the shrinkage added. It also estimates the casting weight from the pattern's weight and the densities of the pattern material and the metal, less the cored-out volume, a quick check that patternmakers have used for generations. Its guide notes that the weight method assumes a solid pattern of uniform density without core prints.
 
 This is an illustration. GB-12's four bolt holes on the joint face are cored, not drilled, and lie on 260 mm centres along the length. Their centre distance is not machined, so no machining allowance applies, and the pattern's core prints must be 260 × 1.013 = 263.38 mm apart. And GB-12's pattern, made of a timber of about 500 kg/m³, weighs 3.2 kg: the weight method gives 3.2 × 2,680 ÷ 500 − 4.0 × 2.68 = 6.43 kg, within 4% of the block estimate. The difference comes from the pattern's core prints, fillets and draft, which the simple method cannot separate out.
 

@@ -9,7 +9,7 @@ draft: false
 
 Torque is an indirect way of setting preload, filtered through friction. A bolt's stretch is a direct one: within its elastic range, a bolt's elongation is its preload divided by its stiffness, whatever the friction did on the way. And the angle a nut turns is nearly as direct, because each turn of the nut advances it by one pitch, shared between stretching the bolt and squeezing the members. Both methods take the nut factor out of the result, and both introduce their own uncertainties.
 
-This chapter works out the CT-1 test head screws' stretch and turn angle for their target preload with the WORKOS bolt stretch and turn-of-nut tools, shows why the snug point ruins a simple angle method on a stiff joint and how torque-angle tightening fixes it, and uses the preload verification tool to check the tightened screws by their measured stretch. Its mistake is a stretch reading taken on a warm screw.
+This chapter works out the CT-1 test head screws' stretch and turn angle for their target preload with the KEVOS® bolt stretch and turn-of-nut tools, shows why the snug point ruins a simple angle method on a stiff joint and how torque-angle tightening fixes it, and uses the preload verification tool to check the tightened screws by their measured stretch. Its mistake is a stretch reading taken on a warm screw.
 
 ## Stretch and preload
 

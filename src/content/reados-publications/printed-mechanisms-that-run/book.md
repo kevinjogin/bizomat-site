@@ -5,7 +5,7 @@ description: "Design an FDM-printed working mechanism: orientation, measured fit
 category: Products
 tags: [prototyping, design, product-development, validation, manufacturing]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -79,6 +79,6 @@ Every load, measurement, cost, print time and test result in the case is invente
 
 ## Source limits and professional responsibility
 
-READOS already introduces additive manufacturing for production parts and has a full book on gear geometry. This book concentrates on one printed mechanism and the decisions that make it work. A supplied commercial build guide for a different printed model informed the topic review only; nothing from it is reproduced, and its publisher does not endorse this book.
+The Library already introduces additive manufacturing for production parts and has a full book on gear geometry. This book concentrates on one printed mechanism and the decisions that make it work. A supplied commercial build guide for a different printed model informed the topic review only; nothing from it is reproduced, and its publisher does not endorse this book.
 
 Printed mechanisms in this book are teaching and demonstration devices at low speed and low power. The stress checks use simple models with stated assumptions and do not qualify a part for a product, a load-bearing use or anything that could injure someone if it failed. Mains electricity is outside scope: use a purchased, compliant power supply, and leave any mains work to a licensed electrician. Real products need qualified review, supplier data and their own testing.

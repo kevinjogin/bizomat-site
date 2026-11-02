@@ -5,7 +5,7 @@ description: "Design apparatus that works at 40 K and below: heat capacity and c
 category: Engineering
 tags: [design, product-development, validation, prototyping]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -85,7 +85,7 @@ Below about 100 K, the material properties an engineer learns to treat as consta
 
 This book is about designing apparatus that works in that world: test cryostats, cryocooled sensors, sample stages and the mechanical and electrical parts that hold and feed them. It starts with why the properties change, which the physics of phonons and electrons in solids explains, then follows a cold assembly through its cooldown, its contraction and the choice of its materials. Five chapters then count the heat that leaks in, through supports, straps and joints, radiation, wiring and current leads, and the last two set that heat against what a cryocooler can remove and look at the superconducting coils such apparatus is often built to test.
 
-It is for mechanical, electrical and instrumentation engineers, technicians and students who know basic heat transfer and electrical circuits. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the WORKOS tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, electrical and instrumentation engineers, technicians and students who know basic heat transfer and electrical circuits. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -105,7 +105,7 @@ The laboratory, its cryostat, the cryocooler's curve and the coil are invented a
 
 Read Chapter 1 first: it explains why the rest of the book integrates properties over temperature instead of using constants. Chapters 2 to 4 cover the cold mass itself: its heat, its contraction and its materials. Chapters 5 to 8 each take one path by which heat leaks in and can be read in any order. Chapter 9 assembles the heat budget and sets it against the cryocooler, and Chapter 10 turns to the coils CT-40 exists to test.
 
-All solid properties come from NIST's cryogenic material fits, integrated numerically over temperature. Figures are given to more digits than a measurement would justify, so that a reader can follow each step. The linked WORKOS tools use constant properties; the chapters show how to give them the right mean values.
+All solid properties come from NIST's cryogenic material fits, integrated numerically over temperature. Figures are given to more digits than a measurement would justify, so that a reader can follow each step. The linked KEVOS® tools use constant properties; the chapters show how to give them the right mean values.
 
 ## Source limits and professional responsibility
 

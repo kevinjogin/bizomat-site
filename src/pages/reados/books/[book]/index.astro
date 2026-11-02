@@ -20,20 +20,20 @@ const volumeDescription = (b: typeof book) => {
   const last = b.chapters[b.chapters.length - 1]?.data.title ?? '';
   const span = ` Volume ${b.volume}: ${b.chapters.length} chapters, from “${first}” to “${last}”.`;
   const text = `${b.description}${span}`;
-  return text.length <= 200 ? text : `${b.description} Volume ${b.volume} of the KEVOS® READOS ${b.category} collection, in ${b.chapters.length} chapters.`;
+  return text.length <= 200 ? text : `${b.description} Volume ${b.volume} of the KEVOS® Library ${b.category} collection, in ${b.chapters.length} chapters.`;
 };
 ---
-<BaseLayout title={`${book.title} (READOS)`} description={volumeDescription(book)}
+<BaseLayout title={`${book.title} (Library)`} description={volumeDescription(book)}
   breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:book.title,href}]}>
   <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
-    eyebrow={`READOS / ${book.category}`} title={book.title} description={book.description}
+    eyebrow={`Library / ${book.category}`} title={book.title} description={book.description}
     meta={[`${book.chapters.length} chapters`,`About ${book.minutes} minutes`,'Free to read']}
-    startHref={readosChapterHref(book,book.chapters[0])} cover={{title:book.title,category:book.category,slug:book.slug,publicationLabel:'READOS VOLUME',chapters:book.chapters.length}} />
+    startHref={readosChapterHref(book,book.chapters[0])} cover={{title:book.title,category:book.category,slug:book.slug,publicationLabel:'LIBRARY VOLUME',chapters:book.chapters.length}} />
   <section class="contents"><Container>
     <ReadOSChapterList items={book.chapters.map((chapter,index)=>({href:readosChapterHref(book,chapter),number:index+1,title:chapter.data.title,description:chapter.data.description,body:chapter.body,id:chapter.id}))}>
       <p class="note">The reading collection is grouped by subject and presented in alphabetical order; chapter order does not imply a prerequisite learning sequence.</p>
     </ReadOSChapterList>
-    <a class="back" href="/reados/">← All READOS books</a>
+    <a class="back" href="/reados/">← All Library books</a>
   </Container></section>
 </BaseLayout>
 <style>

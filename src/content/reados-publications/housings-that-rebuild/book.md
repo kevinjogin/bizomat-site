@@ -5,7 +5,7 @@ description: "Model a two-part plastic housing with hybrid surface and solid met
 category: Engineering
 tags: [design, product-development, quality, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -71,6 +71,6 @@ Every dimension, mass, failure and test result in the case is invented for teach
 
 ## Source limits and professional responsibility
 
-READOS already introduces curves, surfaces, face editing and design intent in its edited CAD collection. This book goes deeper on one connected case and on the failure modes that the overview chapters only mention. The supplied slide deck informed the topic review only; nothing from it is reproduced.
+The Library already introduces curves, surfaces, face editing and design intent in its edited CAD collection. This book goes deeper on one connected case and on the failure modes that the overview chapters only mention. The supplied slide deck informed the topic review only; nothing from it is reproduced.
 
 The book teaches modelling method. It does not certify a part for moulding, impact, ingress protection, electrical safety or any regulated use. Draft, wall, boss and joint dimensions in the case are starting points for discussion with a moulder and resin supplier, not design values. A real product needs qualified review, supplier confirmation and its own testing.

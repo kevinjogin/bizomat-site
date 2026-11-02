@@ -5,7 +5,7 @@ description: "Lay out and fit steel plate with numbers: mean diameters, rolled s
 category: Manufacturing
 tags: [manufacturing, design, quality]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -68,7 +68,7 @@ Plate is sheet that has become thick enough to matter. In thin sheet, a pattern 
 
 This book works through those numbers in the order a plated structure is made: why thickness changes the pattern, rolled shells and their seams, rolling and springback, conical shells, flat-sided hoppers, openings, rings and flanges, marking out and nesting, fit-up and roundness, and finally the plate list, mass and lifting. Each chapter calculates with one running case, includes a plausible mistake and how it was found, and ends with an exercise and its worked answer.
 
-It is for platers, boilermakers and their apprentices, fabrication drafters, and engineers who specify plate structures or check a fabricator's drawings and plate lists. It assumes school algebra and trigonometry and some familiarity with pattern development; READOS's [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/) covers the folded-part side of the subject, and [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/) develops the same patterns for thin sheet.
+It is for platers, boilermakers and their apprentices, fabrication drafters, and engineers who specify plate structures or check a fabricator's drawings and plate lists. It assumes school algebra and trigonometry and some familiarity with pattern development; the Library’s [Sheet Metal Parts by the Numbers](/reados/publications/sheet-metal-parts-by-the-numbers/) covers the folded-part side of the subject, and [Sheet Metal Patterns by the Numbers](/reados/publications/sheet-metal-patterns-by-the-numbers/) develops the same patterns for thin sheet.
 
 ## The running case
 

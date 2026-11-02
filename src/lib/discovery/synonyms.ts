@@ -1,9 +1,10 @@
-// Everyday words → the terms the WORKOS and READOS catalogues use. Matched as whole words or phrases in the
+// Everyday words → the terms the KEVOS® and the Library catalogues use. Matched as whole words or phrases in the
 // visitor's question (after lower-casing); each `add` term is searched with a lower weight than the visitor's own
 // words. Keep entries factual and general: a synonym widens the search, it never names a resource.
 export interface Synonym { when: string[]; add: string[] }
 
 export const SYNONYMS: Synonym[] = [
+  { when: ['failing', 'fails', 'failed', 'failure', 'failures', 'broke', 'breaking', 'wearing out'], add: ['failure', 'life', 'wear', 'fatigue', 'reliability'] },
   // Time lost and machine use
   { when: ['idle', 'sitting idle', 'standing idle', 'not running', 'stopped', 'stoppage', 'breakdown', 'breakdowns', 'down time'], add: ['downtime', 'utilisation', 'availability', 'loss'] },
   { when: ['losing money', 'lose money', 'money lost', 'wasting money', 'cost me', 'costing me', 'costing'], add: ['cost', 'loss', 'downtime cost'] },

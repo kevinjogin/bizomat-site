@@ -9,7 +9,7 @@ draft: false
 
 Chapter 2 showed that bracing is the most powerful tool against buckling. A strut at mid-height halves the length that can buckle and, for an elastic member, quadruples the buckling load. But a brace only does that if it actually holds the point it is attached to. A brace that is too flexible lets the point move, and the column buckles in a longer shape than intended. A brace that is too weak, or attached by a connection that slips, fails when the column leans on it.
 
-This chapter works out how stiff and how strong HT-8's bracing needs to be, explains why diagonal rods are allowed to work in tension only, sizes the mid-height struts with a WORKOS tool, and deals with an error found at erection: bracing installed slack.
+This chapter works out how stiff and how strong HT-8's bracing needs to be, explains why diagonal rods are allowed to work in tension only, sizes the mid-height struts with a KEVOS® tool, and deals with an error found at erection: bracing installed slack.
 
 ## What a brace has to do
 
@@ -85,7 +85,7 @@ The struts are different. They are compression members in their own right: when 
 
 This is an illustration. Each strut carries 1.76 kN from the wind, plus up to 0.2 kN of brace force from the two legs at its ends at their working load: about 2.0 kN in all. The strut is 2,200 mm long between leg centres and is treated as pinned at both ends.
 
-The WORKOS [Compression strut sizing](/tools/compression-strut-sizing/) tool sizes a pin-ended or end-restrained strut in solid round bar or round tube. From the load, length, effective length factor, modulus, yield and required factor, and for a tube the ratio of outside diameter to wall thickness, it searches for the least outside diameter that gives the required factor, using Euler or Johnson as appropriate. It then reports the slenderness, buckling mode, critical stress, working stress, factor and mass per metre for the size you choose.
+The KEVOS® [Compression strut sizing](/tools/compression-strut-sizing/) tool sizes a pin-ended or end-restrained strut in solid round bar or round tube. From the load, length, effective length factor, modulus, yield and required factor, and for a tube the ratio of outside diameter to wall thickness, it searches for the least outside diameter that gives the required factor, using Euler or Johnson as appropriate. It then reports the slenderness, buckling mode, critical stress, working stress, factor and mass per metre for the size you choose.
 
 ```figure
 type: steps

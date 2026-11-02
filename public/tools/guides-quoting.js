@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool guides: Quoting.
+// KEVOS® tool guides: Quoting.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'quote-check': {
     purpose: 'Checks a quoted price against its cost build-up and your target gross margin, and gives the price needed to hit the target.',

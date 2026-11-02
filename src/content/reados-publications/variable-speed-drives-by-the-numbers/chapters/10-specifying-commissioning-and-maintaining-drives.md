@@ -9,7 +9,7 @@ draft: false
 
 The earlier chapters each dealt with one aspect of a drive: its switches, losses, heat, life, motor, load, stopping and wiring. A drive that works well for fifteen years is one where all of those were thought about before it was bought, set correctly when it was installed, and looked after afterwards. Most drive problems in factories are not failures of the drive at all but gaps between those stages: a specification that left out the ambient temperature, a commissioning that accepted the defaults, a replacement fitted without the old one's settings.
 
-This chapter turns the book into a specification, a commissioning procedure and a maintenance and spares plan for DP-4, uses the WORKOS critical spares tool to decide how many spare drives the plant should hold, and ends with a replacement drive that started without its predecessor's settings.
+This chapter turns the book into a specification, a commissioning procedure and a maintenance and spares plan for DP-4, uses the KEVOS® critical spares tool to decide how many spare drives the plant should hold, and ends with a replacement drive that started without its predecessor's settings.
 
 ## Writing the specification
 
@@ -47,7 +47,7 @@ Commissioning is where the specification becomes settings. DP-4's drives were co
 9. **Run under load.** Watch current, power, DC link voltage and heatsink temperature through starts, stops and the full speed range.
 10. **Record and back up.** Save every parameter to a file and to the drive's removable keypad or memory module, and file a printed list of every non-default setting with the reason for it.
 
-Skip frequencies deserve a word. During F-1's commissioning, a run through its speed range showed the fan's support frame resonating at about 37 Hz, where the fan's running speed excited a natural frequency of the frame. A skip band from 35 Hz to 39 Hz was set, so that the drive passes through that range on its ramps but never dwells in it; READOS's [Vibrating Machine Elements by the Numbers](/reados/publications/vibrating-machine-elements-by-the-numbers/) explains how such resonances are found and avoided.
+Skip frequencies deserve a word. During F-1's commissioning, a run through its speed range showed the fan's support frame resonating at about 37 Hz, where the fan's running speed excited a natural frequency of the frame. A skip band from 35 Hz to 39 Hz was set, so that the drive passes through that range on its ramps but never dwells in it; the Library’s [Vibrating Machine Elements by the Numbers](/reados/publications/vibrating-machine-elements-by-the-numbers/) explains how such resonances are found and avoided.
 
 ## Keeping drives running
 

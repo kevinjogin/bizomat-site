@@ -5,7 +5,7 @@ description: "Use steam tables to size and run a plant steam system: boiler outp
 category: Engineering
 tags: [operations, design, process-improvement]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-27

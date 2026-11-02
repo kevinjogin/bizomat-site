@@ -20,7 +20,7 @@ Pressure is measured from one of two zeros.
 - **Absolute pressure** is measured from a perfect vacuum. It can never be negative.
 - **Gauge pressure** is measured from the atmosphere's pressure where the gauge is. It is what an ordinary pressure gauge reads, and it is negative wherever the pressure is below atmospheric, as it can be on a pump's suction or at the top of a siphon.
 
-Atmospheric pressure at sea level is about 101.3 kPa absolute, and it falls with altitude and changes with the weather. Every pressure in this book is gauge unless it says otherwise. Absolute pressure matters in two places: where liquid may boil or air may come out of solution, which Chapter 9 deals with, and on a pump's suction, which READOS's Centrifugal Pumps by the Numbers deals with.
+Atmospheric pressure at sea level is about 101.3 kPa absolute, and it falls with altitude and changes with the weather. Every pressure in this book is gauge unless it says otherwise. Absolute pressure matters in two places: where liquid may boil or air may come out of solution, which Chapter 9 deals with, and on a pump's suction, which the Library’s Centrifugal Pumps by the Numbers deals with.
 
 ## Head: pressure as height
 

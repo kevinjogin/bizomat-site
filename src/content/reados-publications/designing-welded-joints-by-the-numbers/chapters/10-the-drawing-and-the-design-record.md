@@ -66,7 +66,7 @@ Engineering drawings are often detailed further into shop drawings by the fabric
 
 ## Tolerances on the drawing
 
-Weld sizes, fit-up gaps, flatness of machined faces and the positions of mounting holes all need tolerances, stated on the drawing, so that the fabricator knows what is acceptable and the inspector knows what to check. A fillet weld size with no tolerance invites argument over a weld a millimetre undersize; a mounting face with no flatness tolerance invites a gearbox that rocks. READOS covers the setting of tolerances in Fits That Work; for welded frames, the useful habit is to tolerance what matters to the function and leave the rest to the welding standard's general requirements.
+Weld sizes, fit-up gaps, flatness of machined faces and the positions of mounting holes all need tolerances, stated on the drawing, so that the fabricator knows what is acceptable and the inspector knows what to check. A fillet weld size with no tolerance invites argument over a weld a millimetre undersize; a mounting face with no flatness tolerance invites a gearbox that rocks. The Library covers the setting of tolerances in Fits That Work; for welded frames, the useful habit is to tolerance what matters to the function and leave the rest to the welding standard's general requirements.
 
 ## Communicating with the welder
 

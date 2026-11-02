@@ -138,7 +138,7 @@ The fix was to build the side walls and corners as one drafted surface from the 
 
 The general lesson is that **continuity can change along a join**. A check at one height or one section proves only that section. Check several sections, especially where another operation, such as draft, a split or a trim, has acted on the faces after they were created.
 
-The edited READOS chapter on [building CAD surfaces with clear dependencies](/reados/collections/cad-modelling-and-design-intent/building-cad-surfaces-with-clear-dependencies/) discusses specifying continuity at surface joins alongside trimming and NURBS control.
+The edited Library chapter on [building CAD surfaces with clear dependencies](/reados/collections/cad-modelling-and-design-intent/building-cad-surfaces-with-clear-dependencies/) discusses specifying continuity at surface joins alongside trimming and NURBS control.
 
 ## Plan for the join you cannot make perfect
 

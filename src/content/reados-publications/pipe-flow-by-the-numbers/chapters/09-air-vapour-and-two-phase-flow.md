@@ -87,7 +87,7 @@ An **air separator** removes dissolved and entrained air continuously. It is a v
 
 Water can turn to vapour as well as release air. It boils wherever its pressure falls to its **vapour pressure**, which rises steeply with temperature: about 3.2 kPa absolute at 25 °C, 19.9 kPa at 60 °C and 47.4 kPa at 80 °C. CW-2's water at 32 °C, with a vapour pressure of about 4.8 kPa, is nowhere near boiling at its high point's 76 kPa absolute.
 
-A hot-water loop at 80 °C with the same high point would be closer, but its 76 kPa absolute is still above 47.4 kPa. Pushed further, by a higher run, a hotter temperature or a pump suction at low pressure, hot water **flashes**: part of it turns to steam where the pressure falls, and the steam bubbles collapse violently where the pressure rises again. That collapse is cavitation, and at a pump's impeller it erodes metal and destroys performance; READOS's Centrifugal Pumps by the Numbers deals with it in detail.
+A hot-water loop at 80 °C with the same high point would be closer, but its 76 kPa absolute is still above 47.4 kPa. Pushed further, by a higher run, a hotter temperature or a pump suction at low pressure, hot water **flashes**: part of it turns to steam where the pressure falls, and the steam bubbles collapse violently where the pressure rises again. That collapse is cavitation, and at a pump's impeller it erodes metal and destroys performance; the Library’s Centrifugal Pumps by the Numbers deals with it in detail.
 
 ## Filling and venting after maintenance
 
@@ -109,7 +109,7 @@ Two-phase flows lose more head than the same liquid flow alone, often by a large
 
 ## Steam and condensate lines
 
-The most violent two-phase effects occur in steam systems. Condensate collecting in a steam line can be picked up by the steam as a slug, driven at high speed, and stopped at a bend or a closed valve, with a blow that can split fittings. Steam meeting cold condensate can collapse suddenly, drawing the liquid into the void with a bang. These are forms of **water hammer** and **steam hammer**, and they are among the reasons steam lines are sloped, drained at low points through steam traps, and warmed up slowly. READOS's [Water Hammer by the Numbers](/reados/publications/water-hammer-by-the-numbers/column-separation-and-the-profile/) deals with the pressure surges of liquid systems, including the column separation that forms when a pipeline's pressure falls to its vapour pressure.
+The most violent two-phase effects occur in steam systems. Condensate collecting in a steam line can be picked up by the steam as a slug, driven at high speed, and stopped at a bend or a closed valve, with a blow that can split fittings. Steam meeting cold condensate can collapse suddenly, drawing the liquid into the void with a bang. These are forms of **water hammer** and **steam hammer**, and they are among the reasons steam lines are sloped, drained at low points through steam traps, and warmed up slowly. The Library’s [Water Hammer by the Numbers](/reados/publications/water-hammer-by-the-numbers/column-separation-and-the-profile/) deals with the pressure surges of liquid systems, including the column separation that forms when a pipeline's pressure falls to its vapour pressure.
 
 ## The error: an air vent that let air in
 

@@ -70,7 +70,7 @@ Fixtures hold parts in position for welding, and well designed, they are also am
 - **cool** the work with chill bars or water-cooled surfaces near the welds;
 - **turn** the work, so welds are made in the flat position and balanced sides alternated quickly.
 
-READOS covers fixture design for repeatable fabrication in [Fixtures That Repeat](/reados/publications/fixtures-that-repeat/), including location and clamping principles.
+The Library covers fixture design for repeatable fabrication in [Fixtures That Repeat](/reados/publications/fixtures-that-repeat/), including location and clamping principles.
 
 ## Fixtures and restraint
 

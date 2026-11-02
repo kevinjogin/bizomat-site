@@ -43,7 +43,7 @@ Not every slow task is worth automating. The office scores candidates on five qu
 2. **Time per instance.** How long does it take by hand? Eight minutes matters; ten seconds rarely does.
 3. **Error cost.** How often do people get it wrong, and what does a mistake cost? A task whose errors reach suppliers is worth automating for its consistency alone.
 4. **Stability.** Will the task be the same next year? A process the office is about to change is a poor candidate, because the tool will need rewriting.
-5. **Data readiness.** Is the information the tool needs reliably in the files? A tool that fills a title block from custom properties is only as good as the properties, and READOS's *CAD Standards That Stick* deals with getting them right first.
+5. **Data readiness.** Is the information the tool needs reliably in the files? A tool that fills a title block from custom properties is only as good as the properties, and the Library’s *CAD Standards That Stick* deals with getting them right first.
 
 ```figure
 type: matrix

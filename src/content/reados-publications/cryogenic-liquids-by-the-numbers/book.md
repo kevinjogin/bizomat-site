@@ -5,7 +5,7 @@ description: "Store, move and use liquid nitrogen safely and economically: press
 category: Engineering
 tags: [manufacturing, operations, design, validation]
 author: KEVOS®
-publisher: KEVOS® READOS
+publisher: KEVOS® Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -79,7 +79,7 @@ Liquid nitrogen is the cheapest deep cold a workshop can buy. It shrinks shafts 
 
 This book works through those numbers. It starts with why a cryogenic liquid sits at its boiling point and how the pressure above it sets that temperature. It then calculates the losses that every user pays for, from flash and standing boil-off to the nitrogen spent cooling hoses, and the nitrogen and time a steel part needs to reach −196 °C. It designs a liquid nitrogen shrink fit from measured contraction data, and finishes with the hazards: trapped liquid, self-pressurising vessels, oxygen deficiency and the materials that break when cold.
 
-It is for mechanical, maintenance and manufacturing engineers, workshop supervisors, fitters and safety officers. It assumes algebra, the idea of energy and power, and familiarity with gauge and absolute pressure. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the WORKOS tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, maintenance and manufacturing engineers, workshop supervisors, fitters and safety officers. It assumes algebra, the idea of energy and power, and familiarity with gauge and absolute pressure. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -97,7 +97,7 @@ The station, its equipment, the parts and their numbers are invented and do not 
 
 Read Chapters 1 to 3 in order: they set out boiling, pressure and heat leak, which every later chapter uses. Chapters 4 to 6 follow a part from the bath to its carrier. Chapter 7 deals with moving the liquid, Chapters 8 and 9 with its two main hazards, and Chapter 10 pulls the station together into materials rules, a procedure and a monthly nitrogen budget.
 
-All fluid properties come from NIST's tables, and all solid properties from NIST's cryogenic material fits, integrated over temperature. Figures are given to more digits than a measurement would justify, so that a reader can follow each step. The linked WORKOS tools use constant properties; the chapters show how to give them the right average values.
+All fluid properties come from NIST's tables, and all solid properties from NIST's cryogenic material fits, integrated over temperature. Figures are given to more digits than a measurement would justify, so that a reader can follow each step. The linked KEVOS® tools use constant properties; the chapters show how to give them the right average values.
 
 ## Source limits and professional responsibility
 
