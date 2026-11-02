@@ -59,9 +59,12 @@ simple = { limit = 5, period = 60 }
 # full question. Workers Analytics Engine creates the dataset on the first write. Read it with
 # `node scripts/discovery/analytics-report.mjs` (needs an API token with Account Analytics: Read).
 # Without this binding the endpoint still answers 204 and stores nothing.
-[[analytics_engine_datasets]]
-binding = "DISCOVERY_EVENTS"
-dataset = "kevos_discovery"
+# OFF: with this binding the production deploy failed on 2 Nov 2026 (Workers Builds, releases #33 and #34;
+# previews do not apply it). Switch Analytics Engine on for the account in the Cloudflare dashboard, then
+# uncomment these three lines and restore the statistics paragraph on the privacy page (tests/discovery.test.ts).
+# [[analytics_engine_datasets]]
+# binding = "DISCOVERY_EVENTS"
+# dataset = "kevos_discovery"
 
 # Optional rate limiting for the contact endpoint and the assistant.
 # Create a KV namespace (Storage & Databases → KV), then uncomment and paste its id:

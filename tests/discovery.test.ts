@@ -266,14 +266,19 @@ test('AI picks lead the results, are marked, and only ever name catalogue entrie
   assert.notEqual(picked.mode, 'clarify');
 });
 
-test('the statistics binding, the handler and the privacy page agree', () => {
+test('the privacy page describes statistics exactly when the statistics binding is on', () => {
   const wrangler = readFileSync(join(process.cwd(), 'wrangler.toml'), 'utf8');
-  assert.match(wrangler, /\[\[analytics_engine_datasets\]\]\s*\nbinding = "DISCOVERY_EVENTS"\s*\ndataset = "kevos_discovery"/);
+  const bound = /^\[\[analytics_engine_datasets\]\]\s*\nbinding = "DISCOVERY_EVENTS"\s*\ndataset = "kevos_discovery"/m.test(wrangler);
   assert.match(readFileSync(join(process.cwd(), 'scripts/discovery/analytics-report.mjs'), 'utf8'), /const DATASET = 'kevos_discovery'/);
   const privacy = readFileSync(join(process.cwd(), 'src/pages/privacy.astro'), 'utf8');
   assert.match(privacy, /Questions on the homepage/);
-  assert.match(privacy, /up to eight keywords from the question/, 'the privacy page says what is recorded');
-  assert.match(privacy, /without your IP address, cookies or any account or identifier/);
+  if (bound) {
+    assert.match(privacy, /up to eight keywords from the question/, 'the privacy page says what is recorded');
+    assert.match(privacy, /without your IP address, cookies or any account or identifier/);
+  } else {
+    assert.doesNotMatch(privacy, /usage statistics|Analytics Engine/, 'no statistics are described while none are collected');
+    assert.match(privacy, /KEVOS® does not store your question\./);
+  }
 });
 
 test('generic words made from question words are not search terms', () => {
