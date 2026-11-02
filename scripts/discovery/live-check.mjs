@@ -79,20 +79,22 @@ check('Workers AI returned a usable solution path for at least half the in-scope
   const question = 'I want to learn manufacturing process improvement.';
   const shard = await fetch(`${BASE}/learning/0.json`);
   check('chapter outlines are served (/learning/0.json)', shard.status === 200 && Object.keys((await shard.json()).chapters ?? {}).length > 0);
+  let t0 = Date.now();
   const ir = await fetch(`${BASE}/api/learn/intent`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: BASE }, body: JSON.stringify({ question }) });
   const idata = await ir.json().catch(() => ({}));
-  check('/api/learn/intent answers', ir.status === 200 && idata.ok === true, `ai=${idata.ai} subject=${idata.intent?.subject ?? ''} depth=${idata.intent?.depth ?? ''} topics=${(idata.intent?.topics ?? []).map((t) => t.name).join(' / ')}`);
+  check('/api/learn/intent answers', ir.status === 200 && idata.ok === true, `ai=${idata.ai} ${Date.now() - t0} ms subject=${idata.intent?.subject ?? ''} depth=${idata.intent?.depth ?? ''} topics=${(idata.intent?.topics ?? []).map((t) => t.name).join(' / ')}`);
   const local = localIntent(question, engine);
   const intent = idata.intent ? { ...idata.intent, source: 'ai', topics: idata.intent.topics?.length ? idata.intent.topics : local.topics } : local;
   const c = gatherCandidates(engine, question, intent);
   check('the live catalogue gives readings for the course', c.readings.length >= 6, `${c.readings.length} readings, ${c.tools.length} tools`);
+  t0 = Date.now();
   const pr = await fetch(`${BASE}/api/learn/plan`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: BASE }, body: JSON.stringify({
     question, depth: 'complete', intent: { subject: intent.subject, objective: intent.objective, outcome: intent.outcome, level: intent.level },
     readings: c.readings.map((r) => ({ id: r.url, title: r.title, book: r.book, topic: r.topic, about: r.about.slice(0, 200) })),
     tools: c.tools.map((t) => ({ id: t.id, name: t.name, about: t.about.slice(0, 180), linked: [] })),
   }) });
   const pdata = await pr.json().catch(() => ({}));
-  check('/api/learn/plan answers', pr.status === 200 && pdata.ok === true, `ai=${pdata.ai} title=${pdata.course?.title ?? ''} modules=${pdata.course?.modules?.length ?? 0}`);
+  check('/api/learn/plan answers', pr.status === 200 && pdata.ok === true, `ai=${pdata.ai} ${Date.now() - t0} ms title=${pdata.course?.title ?? ''} modules=${pdata.course?.modules?.length ?? 0}`);
   const ids = new Set([...c.readings.map((r) => r.url), ...c.tools.map((t) => t.id)]);
   const used = (pdata.course?.modules ?? []).flatMap((m) => m.lessons.flatMap((l) => [...l.reads, ...l.tools]));
   if (pdata.ai) check('  every planned reading and tool was in the list sent', used.length > 0 && used.every((id) => ids.has(id)), `${used.length} references`);
