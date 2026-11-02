@@ -62,7 +62,7 @@ The `/tools/` page loads only `core.js`, `input-guides.js`, `ui.js` and a tool-t
 
 ### Navigation (src/config/site.ts)
 
-Header: KEVOS® (home), WORKOS (`/tools/`), READOS (`/reados/`) and About (`/about/`), plus the **REACHOS** call to action → `/contact/`. Footer adds the services (`/services/#…`), the assessment, Factory Fix, About, Proof of Work (`/about/#work`), How It Works, Industries, the READOS RSS feed, and Privacy, Terms, Disclaimer.
+Labels since 2 Nov 2026 (owner's decision; "Guides" was considered and rejected): **Tools** (`/tools/`), **Library** (`/reados/`), **About** (`/about/`), **Contact** (`/contact/`), the same in the header on every screen size (`NAV`), the footer (`FOOTER_NAV`, the "Contact" column and call to action) and breadcrumbs (`CRUMB`: Tools, Library; the library browsers' trails too). URLs did not change. WORKOS, READOS and REACHOS remain the platform names on their own pages (headings, intros, the homepage "Explore WORKOS" / "Explore READOS" buttons, "← All READOS books", the READOS RSS feed). The Library page title is exactly "Engineering, Manufacturing & Business Knowledge Library | KEVOS". The older guide section `/library/` sits under Library in breadcrumbs: Home › Library › Practical guides. Header and footer show labels in capitals (site style). Footer adds the services (`/services/#…`), the assessment, Factory Fix, Proof of Work (`/about/#work`), How It Works, Industries, the READOS RSS feed, and Privacy, Terms, Disclaimer. `tests/navigation.test.ts` keeps the labels in place.
 
 ### Homepage (src/pages/index.astro, since 2 Nov 2026)
 

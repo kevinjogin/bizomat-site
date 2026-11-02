@@ -1,4 +1,5 @@
 ---
+import { CRUMB } from '../../../../config/site.ts';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Container from '../../../../components/Container.astro';
 import ReadOSBookHero from '../../../../components/ReadOSBookHero.astro';
@@ -22,8 +23,8 @@ const tools = knowledgeGraph().toolsFor(`collection/${book.topic}`).filter((x) =
 const pathways = book.volume === 1 ? pathwaysForBook(`collection/${book.topic}`) : [];
 ---
 <BaseLayout title={`${book.title} (READOS)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
-  breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href}]}>
-  <ReadOSBookHero crumbs={[{label:'READOS',href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
+  breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:book.title,href}]}>
+  <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
     eyebrow={`READOS / ${book.category}`} title={book.title} description={book.description}
     meta={[`${book.chapters.length} chapters`,`About ${book.minutes} minutes`,'Free to read']}
     startHref={readosCollectionChapterHref(book,book.chapters[0])} cover={{title:book.title,category:book.category,slug:book.slug,chapters:book.chapters.length}} />

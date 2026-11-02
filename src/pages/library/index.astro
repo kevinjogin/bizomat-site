@@ -1,10 +1,11 @@
 ---
+import { CRUMB } from '../../config/site.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
 import { LIBRARY_GUIDES } from '../../data/library.ts';
 ---
-<BaseLayout title="KEVOS® Library of practical books and guides" description="Read original KEVOS® guides with clear chapters, worked examples and quick references. Choose a book and work through it at your own pace." breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'}]}>
+<BaseLayout title="KEVOS® Library of practical books and guides" description="Read original KEVOS® guides with clear chapters, worked examples and quick references. Choose a book and work through it at your own pace." breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'}]}>
   <section class="library-heading">
     <Container>
       <p class="eyebrow">KEVOS® Library</p>

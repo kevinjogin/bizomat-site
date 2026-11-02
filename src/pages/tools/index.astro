@@ -1,4 +1,5 @@
 ---
+import { CRUMB } from '../../config/site.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import MotionVisual from '../../components/MotionVisual.astro';
@@ -27,7 +28,7 @@ const description =
   'KEVOS® WORKOS engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
 ---
 
-<BaseLayout title="WORKOS calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'WORKOS', href: '/tools/' }]}>
+<BaseLayout title="WORKOS calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.tools, href: '/tools/' }]}>
   {/* A calculator link (?tool=) shows the loading workspace, not the directory, before any tool script arrives. */}
   <script is:inline>if (/[?&]tool=/.test(location.search)) document.documentElement.classList.add('workos-tool-link');</script>
   <LibraryHero
@@ -41,7 +42,7 @@ const description =
   >
     <MotionVisual page="tools" slot="visual" compact priority />
   </LibraryHero>
-  <LibraryBrowser id="tool-directory" name="WORKOS" base="/tools/" noun="tool" preview={PREVIEW} topics={topics.map((t) => ({ slug: t.slug, name: t.name, description: t.description, icon: t.icon, count: t.items.length }))}>
+  <LibraryBrowser id="tool-directory" name="WORKOS" label={CRUMB.tools} searchAll="Search all tools" base="/tools/" noun="tool" preview={PREVIEW} topics={topics.map((t) => ({ slug: t.slug, name: t.name, description: t.description, icon: t.icon, count: t.items.length }))}>
     {topics.map((topic) => (
       <LibrarySection slug={topic.slug} name={topic.name} description={topic.description} count={topic.items.length} noun="tool" base="/tools/" preview={PREVIEW} subs={topic.subs}>
         {topic.items.map((t: Record<string, any>) => (
