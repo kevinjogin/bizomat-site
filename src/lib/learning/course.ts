@@ -21,7 +21,7 @@ export interface Course {
 }
 export interface PlanFromWorker {
   title: string; description: string; level: Level; objectives: string[]; outcomes: string[];
-  modules: { title: string; summary: string; lessons: { title: string; objective: string; reads: string[]; tools: string[] }[] }[];
+  modules: { title: string; summary: string; lessons: { title: string; objective: string; reads: string[]; tools: string[] }[]; tools?: string[] }[];
   gaps: string[];
 }
 
@@ -76,19 +76,30 @@ export function draftCourse(question: string, intent: Intent, c: Candidates, det
 export function courseFromPlan(question: string, intent: Intent, plan: PlanFromWorker, c: Candidates, details: DiscoveryDetails | null, depth: Exclude<Depth, 'quick'>): Course | null {
   const readings = new Map(c.readings.map((r) => [r.url, r]));
   const tools = new Map(c.tools.map((t) => [t.id, t]));
-  const modules: Module[] = plan.modules.map((m, mi) => ({
-    title: m.title, summary: m.summary,
-    lessons: m.lessons.map((l, li) => {
+  const modules: Module[] = plan.modules.map((m, mi) => {
+    const moduleTools = (m.tools ?? []).map((id) => tools.get(id)).filter((t): t is ToolCandidate => Boolean(t));
+    const placed = new Set<string>();
+    const lessons = m.lessons.map((l, li) => {
       const rs = l.reads.map((id) => readings.get(id)).filter((r): r is ReadingCandidate => Boolean(r));
-      const ts = l.tools.map((id) => tools.get(id)).filter((t): t is ToolCandidate => Boolean(t));
+      // The lesson's own tools, else the module's tools (or any candidate) joined to its chapter by a reviewed link.
+      let ts = l.tools.map((id) => tools.get(id)).filter((t): t is ToolCandidate => Boolean(t));
+      if (!ts.length) ts = [...moduleTools, ...c.tools].filter((t, i, all) => all.indexOf(t) === i && t.linkedTo.some((u) => rs.some((r) => r.url === u))).slice(0, 2);
+      ts.forEach((t) => placed.add(t.id));
       const linkedTools = new Set(ts.filter((t) => t.linkedTo.some((u) => rs.some((r) => r.url === u))).map((t) => t.id));
       return {
-        id: `${mi + 1}.${li + 1}`, title: l.title, objective: l.objective,
+        id: `${mi + 1}.${li + 1}`,
+        // Without an AI title or objective, the lesson takes its chapter's title and first sentence.
+        title: l.title || rs[0]?.title || '', objective: l.objective || (rs[0] ? firstSentence(rs[0].about) : ''),
         readings: rs.map((r) => readingRef(r, ts.some((t) => t.linkedTo.includes(r.url)))),
         tools: ts.map((t) => toolRef(t, details, linkedTools.has(t.id))),
       };
-    }),
-  })).filter((m) => m.lessons.length);
+    }).filter((l) => l.title);
+    // A module tool the AI chose that no lesson took goes to the module's last lesson.
+    const rest = moduleTools.filter((t) => !placed.has(t.id));
+    const last = lessons[lessons.length - 1];
+    if (last && rest.length && last.tools.length < 2) last.tools.push(...rest.slice(0, 2 - last.tools.length).map((t) => toolRef(t, details, false)));
+    return { title: m.title, summary: m.summary, lessons };
+  }).filter((m) => m.lessons.length);
   if (!modules.length) return null;
   return {
     id: hash(`${question}|${depth}|ai`), question, subject: intent.subject, depth, level: plan.level, source: 'ai',

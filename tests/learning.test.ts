@@ -163,6 +163,13 @@ test('an AI plan becomes a course of real readings and tools only', () => {
   assert.deepEqual(course.modules[0].lessons[0].readings.map((r) => r.url), [c.readings[0].url], 'an unknown chapter is dropped');
   assert.deepEqual(course.modules[0].lessons[0].tools.map((t) => t.id), [c.tools[0].id], 'an unknown tool is dropped');
   assert.equal(course.modules[0].lessons[0].id, '1.1');
+  // A lesson planned by chapter number only takes the chapter's title and first sentence; linked tools are attached.
+  const linkedReading = c.readings.find((r) => c.tools.some((t) => t.linkedTo.includes(r.url)))!;
+  const byNumber = courseFromPlan(q, intent, { ...plan, modules: [{ title: 'M', summary: '', lessons: [{ title: '', objective: '', reads: [linkedReading.url], tools: [] }, { title: '', objective: '', reads: [c.readings.find((r) => r !== linkedReading)!.url], tools: [] }] }] }, c, null, 'structured')!;
+  const first = byNumber.modules[0].lessons[0];
+  assert.equal(first.title, linkedReading.title);
+  assert.ok(first.objective.length > 0 && linkedReading.about.startsWith(first.objective.replace(/…$/, '').slice(0, 20)));
+  assert.ok(first.tools.length >= 1 && first.tools.every((t) => t.linked), 'tools joined by reviewed links');
   assert.match(formatDuration(45), /minutes/);
   assert.match(formatDuration(300), /hours/);
 });
@@ -207,7 +214,11 @@ test('the plan validator resolves numbers to the ids sent, uses each reading onc
   const big = { title: 'T', modules: Array.from({ length: 9 }, (_, i) => ({ t: `M${i}`, l: Array.from({ length: 5 }, () => ['L', 'O', [1], []]) })) };
   const c = parseCoursePlan(big, readings, tools, 'complete')!;
   assert.ok(c.modules.length <= 6 && c.modules.every((m) => m.lessons.length <= 3), 'a complete course is at most 6 modules of 3 lessons');
-  assert.match(planPrompt('complete'), /"l": \[\["lesson title", "objective", \[1\], \[\]\]\]/, 'the prompt asks for the compact form');
+  // The shortest form, which the prompt asks for: chapter numbers per module ("R3" labels accepted too).
+  const short = parseCoursePlan({ title: 'T', modules: [{ t: 'Basics', s: 'Start', r: ['R1', 2, 2], k: ['T2'] }, { t: 'More', r: [3, 1] }] }, readings, tools, 'complete')!;
+  assert.deepEqual(short.modules[0], { title: 'Basics', summary: 'Start', lessons: [{ title: '', objective: '', reads: ['/r/1/'], tools: [] }, { title: '', objective: '', reads: ['/r/2/'], tools: [] }], tools: ['t2'] });
+  assert.deepEqual(short.modules[1].lessons.map((l) => l.reads), [['/r/3/']], 'a chapter is used once');
+  assert.match(planPrompt('complete'), /"r": \[1, 2, 3\], "k": \[1\]/, 'the prompt asks for chapter numbers per module');
 });
 
 test('the lesson validator needs the key things, valid checks and real source numbers', () => {

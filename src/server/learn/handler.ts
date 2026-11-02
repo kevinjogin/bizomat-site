@@ -42,17 +42,18 @@ Reply with ONE JSON object and nothing else:
 Never answer the request itself. ${RULES}`;
 
 const SHAPES: Record<Exclude<Depth, 'quick'>, string> = {
-  structured: '2 to 4 modules, each with 2 or 3 lessons, focused on the stated goal',
-  complete: '4 to 6 modules, each with 2 or 3 lessons, from fundamentals through methods and analysis to practical application',
-  professional: '4 to 6 modules, each with 2 or 3 lessons, emphasising advanced methods, limits, verification and professional application',
+  structured: '2 to 4 modules of 2 or 3 chapters each, focused on the stated goal',
+  complete: '4 to 6 modules of 2 or 3 chapters each, from fundamentals through methods and analysis to practical application',
+  professional: '4 to 6 modules of 2 or 3 chapters each, emphasising advanced methods, limits, verification and professional application',
 };
 export const planPrompt = (depth: Exclude<Depth, 'quick'>) => `You design a personalised course from KEVOS resources. You are given the learner's goal and numbered lists of real Library chapters (R1, R2, ...) and Tools (T1, T2, ...). Build the course only from these.
 Reply with ONE JSON object and nothing else:
-{"title": "...", "description": "...", "level": "mixed", "objectives": ["..."], "outcomes": ["..."], "modules": [{"t": "module title", "s": "one-line summary", "l": [["lesson title", "objective", [1], []]]}], "gaps": []}
+{"title": "...", "description": "...", "level": "mixed", "objectives": ["..."], "outcomes": ["..."], "modules": [{"t": "module title", "s": "one-line summary", "r": [1, 2, 3], "k": [1]}], "gaps": []}
 - Shape: ${SHAPES[depth]}. Order modules from fundamentals to core concepts, methods, analysis, advanced topics and practical implementation, as this subject needs; do not pad.
-- Each lesson is a list: [title, objective, R numbers, T numbers]. Title: at most 8 words. Objective: at most 12 words, what the learner will be able to do. R numbers: 1 to 3 chapters that teach it. T numbers: 0 to 2 tools, only when the tool lets the learner apply the lesson (prefer tools marked "linked" to the lesson's chapters). Use each R number at most once.
-- Use only resources that fit. When an important part of the subject has no fitting resource, name it in "gaps" instead of using a weak match.
-- Keep it short: title at most 10 words; description one sentence; objectives 3 or 4; outcomes 2 or 3; module summary at most 12 words.
+- "r": the chapter numbers (R numbers, as plain numbers) that form the module's lessons, in learning order, one lesson per chapter. Use each chapter at most once, and only chapters that fit.
+- "k": 0 to 2 tool numbers (T numbers, as plain numbers) that let the learner apply the module; prefer tools marked "linked".
+- When an important part of the subject has no fitting chapter, name it in "gaps" instead of using a weak match.
+- Keep it short: title at most 10 words; description one sentence; objectives 3 or 4; outcomes 2 or 3; module title at most 6 words; summary at most 12 words.
 ${RULES}`;
 
 const STYLE_NOTE: Record<Style, string> = {
@@ -157,7 +158,7 @@ export async function handleLearnPlan(request: Request, env: LearnEnv): Promise<
     '', 'Tools:',
     ...tools.map((t, i) => `T${i + 1}. ${str(t.name, 140)} ${str(t.about, 180)}${strs(t.linked, 6, 6).length ? ` (linked to ${strs(t.linked, 6, 6).join(', ')})` : ''}`),
   ].join('\n');
-  const done = await ask(env, 'learn_plan', planPrompt(depth), user, 1000, BUDGET.plan, (o) => parseCoursePlan(o, readings.map((r) => r.id as string), tools.map((t) => t.id as string), depth));
+  const done = await ask(env, 'learn_plan', planPrompt(depth), user, 600, BUDGET.plan, (o) => parseCoursePlan(o, readings.map((r) => r.id as string), tools.map((t) => t.id as string), depth));
   return done ? json({ ok: true, ai: true, course: done.value }) : json({ ok: true, ai: false });
 }
 

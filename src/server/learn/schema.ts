@@ -18,7 +18,7 @@ export interface LearnIntent {
 export interface PlanLesson { title: string; objective: string; reads: string[]; tools: string[] }
 export interface CoursePlan {
   title: string; description: string; level: Level; objectives: string[]; outcomes: string[];
-  modules: { title: string; summary: string; lessons: PlanLesson[] }[];
+  modules: { title: string; summary: string; lessons: PlanLesson[]; tools?: string[] }[];
   gaps: string[];
 }
 export interface KeyThings { principle: string; essential: string; why: string; misunderstandings: string[]; implications: string; remember: string[]; basis: 'source' | 'general' }
@@ -49,8 +49,9 @@ export function text(v: unknown, max: number): string {
 }
 export const list = (v: unknown, n: number, max: number) => (Array.isArray(v) ? v.map((x) => text(x, max)).filter(Boolean).slice(0, n) : []);
 const pick = <T extends string>(v: unknown, allowed: readonly T[], fallback: T): T => (typeof v === 'string' && (allowed as readonly string[]).includes(v) ? (v as T) : fallback);
-/** Numbers 1..count, unique, at most n. */
-export const nums = (v: unknown, count: number, n: number) => (Array.isArray(v) ? [...new Set(v.map(Number))].filter((x) => Number.isInteger(x) && x >= 1 && x <= count).slice(0, n) : []);
+/** Numbers 1..count, unique, at most n. Models often write the list labels ("R3", "T2"), so those count too. */
+const num = (x: unknown) => (typeof x === 'string' ? Number(x.trim().replace(/^[RT]\s*/i, '')) : Number(x));
+export const nums = (v: unknown, count: number, n: number) => (Array.isArray(v) ? [...new Set(v.map(num))].filter((x) => Number.isInteger(x) && x >= 1 && x <= count).slice(0, n) : []);
 
 export function parseLearnIntent(o: Record<string, unknown>): LearnIntent | null {
   const subject = text(o.subject, 80);
@@ -78,12 +79,14 @@ export function parseLearnIntent(o: Record<string, unknown>): LearnIntent | null
 export const SHAPE: Record<Exclude<Depth, 'quick'>, [number, number]> = { structured: [4, 3], complete: [6, 3], professional: [6, 3] };
 
 /**
- * The plan's compact form, which keeps the reply short enough to arrive in time (about 30 tokens a second):
- * {"t": title, "s": summary, "l": [[lesson title, objective, [reads], [tools]], ...]} for each module.
- * The long form ({title, summary, lessons: [{title, objective, reads, tools}]}) is still accepted.
+ * Plan forms, shortest first (live Workers AI writes about 30 tokens a second, so the reply must be short):
+ *   {"t": title, "s": summary, "r": [chapter numbers], "k": [tool numbers]}: one lesson per chapter, in order; the
+ *     lesson title and objective come from the chapter itself (filled in by the browser).
+ *   {"t", "s", "l": [[lesson title, objective, [reads], [tools]], ...]}   and the long form {title, summary, lessons}.
  */
 function expandModule(raw: unknown): Record<string, unknown> {
   const m = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+  if (Array.isArray(m.r)) return { title: m.t ?? m.title, summary: m.s ?? m.summary, lessons: m.r.map((n) => ({ title: '', objective: '', reads: [n], tools: [] })), tools: m.k };
   if (!('l' in m) && !('t' in m)) return m;
   const lessons = (Array.isArray(m.l) ? m.l : []).map((l) => (Array.isArray(l) ? { title: l[0], objective: l[1], reads: l[2], tools: l[3] } : l));
   return { title: m.t ?? m.title, summary: m.s ?? m.summary, lessons };
@@ -102,13 +105,15 @@ export function parseCoursePlan(o: Record<string, unknown>, readings: string[], 
     for (const rawL of (Array.isArray(m.lessons) ? m.lessons : []).slice(0, maxLessons)) {
       const l = (rawL && typeof rawL === 'object' ? rawL : {}) as Record<string, unknown>;
       const lt = text(l.title, 80);
-      if (!lt) continue;
       // A reading is used once in the course; a tool may return in later lessons.
       const reads = nums(l.reads, readings.length, 3).map((n) => readings[n - 1]).filter((id) => !used.has(id));
+      // A lesson needs a title, or a chapter whose title it takes.
+      if (!lt && !reads.length) continue;
       reads.forEach((id) => used.add(id));
       lessons.push({ title: lt, objective: text(l.objective, 160), reads, tools: nums(l.tools, tools.length, 2).map((n) => tools[n - 1]) });
     }
-    if (lessons.length) modules.push({ title, summary: text(m.summary, 200), lessons });
+    const moduleTools = nums(m.tools, tools.length, 3).map((n) => tools[n - 1]);
+    if (lessons.length) modules.push({ title, summary: text(m.summary, 200), lessons, ...(moduleTools.length ? { tools: moduleTools } : {}) });
   }
   const lessonCount = modules.reduce((n, m) => n + m.lessons.length, 0);
   if (!modules.length || lessonCount < 2 || !modules.some((m) => m.lessons.some((l) => l.reads.length))) return null;

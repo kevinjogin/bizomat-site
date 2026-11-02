@@ -98,6 +98,16 @@ check('Workers AI returned a usable solution path for at least half the in-scope
   const ids = new Set([...c.readings.map((r) => r.url), ...c.tools.map((t) => t.id)]);
   const used = (pdata.course?.modules ?? []).flatMap((m) => m.lessons.flatMap((l) => [...l.reads, ...l.tools]));
   if (pdata.ai) check('  every planned reading and tool was in the list sent', used.length > 0 && used.every((id) => ids.has(id)), `${used.length} references`);
+  // One lesson, written from the first chapter's outline (as the browser sends it).
+  const first = c.readings[0];
+  const outline = (await (await fetch(`${BASE}/learning/${first.shard}.json`)).json()).chapters?.[first.url] ?? {};
+  t0 = Date.now();
+  const lr = await fetch(`${BASE}/api/learn/lesson`, { method: 'POST', headers: { 'Content-Type': 'application/json', Origin: BASE }, body: JSON.stringify({
+    course: { title: 'Manufacturing process improvement', level: intent.level, depth: 'complete' }, module: first.topic, style: 'standard',
+    lesson: { title: first.title, objective: first.about.slice(0, 160) }, sources: [{ title: first.title, book: first.book, outline }], tools: [],
+  }) });
+  const ldata = await lr.json().catch(() => ({}));
+  check('/api/learn/lesson answers', lr.status === 200 && ldata.ok === true, `ai=${ldata.ai} ${Date.now() - t0} ms principle=${ldata.lesson?.key?.principle ?? ''} checks=${ldata.lesson?.checks?.length ?? 0}`);
 }
 
 const failed = results.filter((ok) => !ok).length;
