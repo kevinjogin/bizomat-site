@@ -1,4 +1,5 @@
 ---
+import { CRUMB } from '../../config/site.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ReadOSAnimatedCover from '../../components/ReadOSAnimatedCover.astro';
 import MotionVisual from '../../components/MotionVisual.astro';
@@ -17,7 +18,7 @@ const total = subjects.reduce((n, s) => n + s.entries.length, 0);
 // Chapter titles and links for search, keyed by card id (read by src/scripts/library-browser.ts).
 const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s.entries.map((e) => [e.id, e.chapters])))).replace(/</g, '\\u003c');
 ---
-<BaseLayout title="READOS books and guides by topic" description="Browse KEVOS® READOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
+<BaseLayout exactTitle="Engineering, Manufacturing & Business Knowledge Library | KEVOS" breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.library, href: '/reados/' }]} description="Browse KEVOS® READOS books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
   <LibraryHero
     title="READOS"
     description="Practical books and guides covering engineering, manufacturing, operations, projects and business."
@@ -29,7 +30,7 @@ const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s
   >
     <MotionVisual page="reados" slot="visual" compact priority />
   </LibraryHero>
-  <LibraryBrowser name="READOS" base="/reados/" noun="book" preview={PREVIEW} topics={subjects.map((s) => ({ slug: s.slug, name: s.name, description: s.description, icon: s.icon, count: s.entries.length }))}>
+  <LibraryBrowser name="READOS" label={CRUMB.library} searchAll="Search the whole Library" base="/reados/" noun="book" preview={PREVIEW} topics={subjects.map((s) => ({ slug: s.slug, name: s.name, description: s.description, icon: s.icon, count: s.entries.length }))}>
     {subjects.map((s) => (
       <LibrarySection slug={s.slug} name={s.name} description={s.description} count={s.entries.length} noun="book" base="/reados/" preview={PREVIEW}>
         {s.entries.map((e, n) => (

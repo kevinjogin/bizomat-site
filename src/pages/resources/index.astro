@@ -1,4 +1,5 @@
 ---
+import { CRUMB } from '../../config/site.ts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
 import { primaryGuide } from '../../data/library.ts';
@@ -6,7 +7,7 @@ import { primaryGuide } from '../../data/library.ts';
 <BaseLayout
   title="KEVOS® books and tools"
   description="Read KEVOS® books by topic and use practical tools for engineering, operations and business decisions."
-  breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'READOS', href: '/reados/' }]}
+  breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.library, href: '/reados/' }]}
 >
   <section class="resources-hero">
     <Container>

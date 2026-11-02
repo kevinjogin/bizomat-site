@@ -5,7 +5,7 @@ import Container from '../../../../components/Container.astro';
 import ReadOSBookHero from '../../../../components/ReadOSBookHero.astro';
 import ReadOSChapterList from '../../../../components/ReadOSChapterList.astro';
 import { getPublications, publicationHref, publicationChapterHref } from '../../../../utils/publications.ts';
-import { SITE } from '../../../../config/site.ts';
+import { CRUMB, SITE } from '../../../../config/site.ts';
 import ApplyInPractice from '../../../../components/knowledge/ApplyInPractice.astro';
 import LearningPathway from '../../../../components/knowledge/LearningPathway.astro';
 import { knowledgeGraph, pathwaysForBook, DISCOVERY_TOPIC } from '../../../../utils/knowledge.ts';
@@ -26,8 +26,8 @@ const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book',
   hasPart: chapters.map(ch => ({ '@type': 'Chapter', name: ch.data.title, position: ch.data.order, url: new URL(publicationChapterHref(book.id, ch.data.chapterSlug), SITE.url).href })) };
 ---
 <BaseLayout title={`${book.data.title} (READOS)`} description={book.data.description} canonical={href} schema={[schema]}
-  breadcrumbs={[{label:'READOS',href:'/reados/'},{label:book.data.title,href}]}>
-  <ReadOSBookHero crumbs={[{label:'READOS',href:'/reados/'},{label:book.data.category,href:`/reados/#${book.data.category.toLowerCase()}`}]}
+  breadcrumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.title,href}]}>
+  <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.category,href:`/reados/#${book.data.category.toLowerCase()}`}]}
     eyebrow={`READOS / ${book.data.category} / KEVOS® original book`} title={book.data.title} subtitle={book.data.subtitle} description={book.data.description}
     meta={[`${chapters.length} chapters`,`About ${minutes} minutes`,'Free to read',book.data.level]} draft={book.data.status==='draft'}
     startHref={publicationChapterHref(book.id,chapters[0].data.chapterSlug)} cover={{title:book.data.title,category:book.data.category,slug:book.id,motif:book.data.coverVariant,publicationLabel:'KEVOS® ORIGINAL BOOK',chapters:chapters.length}} />

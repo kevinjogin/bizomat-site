@@ -1,4 +1,5 @@
 ---
+import { CRUMB } from '../../../config/site.ts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import ReadOSBookHero from '../../../components/ReadOSBookHero.astro';
@@ -23,8 +24,8 @@ const schema=[{
 }];
 ---
 <BaseLayout title={guide.title} description={guide.description} image={guide.cover} imageAlt={`Original KEVOS® Books cover for ${guide.title}`} canonical={canonical}
-  breadcrumbs={[{label:'Home',href:'/'},{label:'Library',href:'/library/'},{label:guide.title,href:canonical}]} schema={schema}>
-  <ReadOSBookHero crumbs={[{label:'READOS',href:'/reados/'},{label:'Library',href:'/library/'}]}
+  breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'},{label:guide.title,href:canonical}]} schema={schema}>
+  <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'}]}
     eyebrow={`READOS / ${guide.category} / Guide`} title={guide.title} subtitle={guide.subtitle} description={guide.description}
     meta={[`${guide.chapters.length} chapters`,`About ${guide.minutes} minutes`,'Free to read']}
     startHref={chapterHref(guide.chapters[0].slug)} cover={{title:guide.title,category:guide.category,slug:guide.slug,publicationLabel:'READOS GUIDE',chapters:guide.chapters.length}} />

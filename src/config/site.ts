@@ -71,16 +71,20 @@ export const SITE = {
   jurisdiction: 'New South Wales, Australia',
 } as const;
 
+/** Main navigation (header on every screen size). The labels are plain words; WORKOS, READOS and REACHOS stay as the
+ *  names of the platforms on their own pages. */
 export const NAV = [
-  { href: '/tools/', label: 'WORKOS' },
-  { href: '/reados/', label: 'READOS' },
+  { href: '/tools/', label: 'Tools' },
+  { href: '/reados/', label: 'Library' },
   { href: '/about/', label: 'About' },
-  { href: '/contact/', label: 'REACHOS' },
+  { href: '/contact/', label: 'Contact' },
 ] as const;
+/** Breadcrumb labels for the two libraries, matching NAV. */
+export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
 
 
 /** Primary call to action in the header and across the site. */
-export const QUOTE_CTA = { href: '/contact/', label: 'REACHOS' } as const;
+export const QUOTE_CTA = { href: '/contact/', label: 'Contact' } as const;
 
 export const FOOTER_NAV = {
   services: [
@@ -93,14 +97,14 @@ export const FOOTER_NAV = {
   ],
   company: [
     { href: '/', label: 'KEVOS®' },
-    { href: '/tools/', label: 'WORKOS' },
-    { href: '/reados/', label: 'READOS' },
+    { href: '/tools/', label: 'Tools' },
+    { href: '/reados/', label: 'Library' },
     { href: '/about/', label: 'About' },
     { href: '/about/#work', label: 'Proof of Work' },
     { href: '/services/', label: 'Services' },
     { href: '/how-it-works/', label: 'How It Works' },
     { href: '/industries/', label: 'Industries' },
-    { href: '/contact/', label: 'REACHOS' },
+    { href: '/contact/', label: 'Contact' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },

@@ -1,4 +1,5 @@
 ---
+import { CRUMB } from '../../../../config/site.ts';
 import { render } from 'astro:content';
 import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import ReadOSChapterReader from '../../../../components/ReadOSChapterReader.astro';
@@ -21,8 +22,8 @@ const href=readosCollectionChapterHref(book,chapter);
 const tools=knowledgeGraph().toolsFor(`collection/${book.topic}`,chapter.id);
 ---
 <BaseLayout title={`${chapter.data.title} (${book.title}) | READOS`} description={chapter.data.description}
-  breadcrumbs={[{label:'Home',href:'/'},{label:'READOS',href:'/reados/'},{label:book.title,href:readosCollectionHref(book)},{label:chapter.data.title,href}]}>
-  <ReadOSChapterReader bookTitle={book.title} bookHref={readosCollectionHref(book)} home={{label:'READOS',href:'/reados/'}}
+  breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:book.title,href:readosCollectionHref(book)},{label:chapter.data.title,href}]}>
+  <ReadOSChapterReader bookTitle={book.title} bookHref={readosCollectionHref(book)} home={{label:CRUMB.library,href:'/reados/'}}
     chapters={book.chapters.map(ch=>({href:readosCollectionChapterHref(book,ch),title:ch.data.title}))} index={index}
     title={chapter.data.title} description={chapter.data.description} minutes={readingTime(chapter.body)} searchable>
     <Content />

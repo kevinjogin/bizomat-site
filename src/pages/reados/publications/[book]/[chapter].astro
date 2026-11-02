@@ -4,7 +4,7 @@ import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import ReadOSChapterReader from '../../../../components/ReadOSChapterReader.astro';
 import { getPublications, publicationHref, publicationChapterHref } from '../../../../utils/publications.ts';
 import { readingTime } from '../../../../utils/content.ts';
-import { SITE } from '../../../../config/site.ts';
+import { CRUMB, SITE } from '../../../../config/site.ts';
 import ApplyInPractice from '../../../../components/knowledge/ApplyInPractice.astro';
 import { knowledgeGraph } from '../../../../utils/knowledge.ts';
 export async function getStaticPaths() {
@@ -16,9 +16,9 @@ const href=publicationChapterHref(book.id,chapter.data.chapterSlug);
 const tools=knowledgeGraph().toolsFor(`publication/${book.id}`,chapter.data.chapterSlug);
 ---
 <BaseLayout title={`${chapter.data.title} (${book.data.title})`} description={chapter.data.description} canonical={href}
- breadcrumbs={[{label:'READOS',href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
+ breadcrumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.title,href:publicationHref(book.id)},{label:chapter.data.title,href}]}
  schema={[{'@type':'Chapter',name:chapter.data.title,position:chapter.data.order,description:chapter.data.description,inLanguage:book.data.language,url:new URL(href,SITE.url).href,isPartOf:{'@type':'Book','@id':new URL(publicationHref(book.id),SITE.url).href+'#book',name:book.data.title},author:{'@id':SITE.url+'/#organization'}}]}>
- <ReadOSChapterReader bookTitle={book.data.title} bookHref={publicationHref(book.id)} home={{label:'READOS',href:'/reados/'}}
+ <ReadOSChapterReader bookTitle={book.data.title} bookHref={publicationHref(book.id)} home={{label:CRUMB.library,href:'/reados/'}}
   chapters={chapters.map(ch=>({href:publicationChapterHref(book.id,ch.data.chapterSlug),title:ch.data.title}))} index={index}
   title={chapter.data.title} description={chapter.data.description} minutes={readingTime(chapter.body)}
   note={(book.data.status==='draft'||chapter.data.draft)?'Draft preview · not published':undefined}

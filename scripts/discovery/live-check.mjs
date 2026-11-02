@@ -28,7 +28,8 @@ check('hero asks the question', /What would you like to <em[^>]*>solve<\/em> tod
 check('Explore WORKOS and Explore READOS buttons', h.includes('data-cta="hero-workos"') && h.includes('data-cta="hero-reados"'));
 check('WORKOS and READOS side by side block', /class="home-lib"[^>]*id="workos"/.test(h) && /class="home-lib"[^>]*id="reados"/.test(h));
 check('orange KEVOS wordmark and K favicon', h.includes('kevos-wordmark-orange') && h.includes('kevos-favicon-k-orange'));
-check('navigation: WORKOS, READOS, About, REACHOS', ['href="/tools/"', 'href="/reados/"', 'href="/about/"', 'href="/contact/"', 'REACHOS'].every((s) => h.includes(s)));
+check('navigation: Tools, Library, About, Contact', [/href="\/tools\/"[^>]*>Tools<\/a>/, /href="\/reados\/"[^>]*>Library<\/a>/, /href="\/about\/"[^>]*>About<\/a>/, /href="\/contact\/"[^>]*>Contact<\/a>/].every((r) => r.test(h)));
+check('Library page title', (await get('/reados/')).text.includes('<title>Engineering, Manufacturing &amp; Business Knowledge Library | KEVOS</title>'));
 check('dark theme by default', h.includes('data-theme="dark"'));
 check('no floating assistant on the homepage', !h.includes('assistant__launcher'));
 const tools = (await get('/tools/')).text;
