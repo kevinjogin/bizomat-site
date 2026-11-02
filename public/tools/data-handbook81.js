@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: quality statistics, forecasting and reliability tools (batch handbook81) within the WORKOS directory.
+// KEVOS® MAKEOS: quality statistics, forecasting and reliability tools (batch handbook81) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "normal-tolerance-interval-check",

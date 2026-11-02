@@ -41,10 +41,10 @@ const DEFAULT_FALLBACK = '@cf/meta/llama-3.1-8b-instruct-fp8';
 export const MAX_QUESTION = 500;
 const AI_TIMEOUT_MS = 15000; // a solution path is a longer reply; the browser shows a keyword path meanwhile
 
-/** The catalogue's areas, so the model can phrase search terms the way WORKOS and READOS do. */
-const AREAS = 'WORKOS tool topics: Engineering & Design; Manufacturing & Production; Machinery & Power Transmission; Hydraulics & Pneumatics; Quality & Materials; Maintenance & Reliability; Projects & Improvement; Business & Commercial; Reference & Utilities. READOS book categories: Engineering, Manufacturing, Operations, Projects, Products, Technology, Business, Ideas.';
+/** The catalogue's areas, so the model can phrase search terms the way Tools and the Library do. */
+const AREAS = 'KEVOS® tool topics: Engineering & Design; Manufacturing & Production; Machinery & Power Transmission; Hydraulics & Pneumatics; Quality & Materials; Maintenance & Reliability; Projects & Improvement; Business & Commercial; Reference & Utilities. Library book categories: Engineering, Manufacturing, Operations, Projects, Products, Technology, Business, Ideas.';
 
-export const SYSTEM_PROMPT = `You turn a visitor's question into search terms and a step-by-step solution path over the KEVOS catalogue of engineering, manufacturing and business tools (WORKOS) and technical books (READOS). ${AREAS}
+export const SYSTEM_PROMPT = `You turn a visitor's question into search terms and a step-by-step solution path over the KEVOS catalogue of engineering, manufacturing and business tools (Tools) and technical books (Library). ${AREAS}
 
 Reply with ONE JSON object and nothing else:
 {"summary": "...", "type": "calculation", "terms": ["..."], "picks": [], "inScope": true, "ambiguous": false, "clarify": "", "options": [], "missing": [], "assumptions": [], "steps": [{"do": "...", "why": "...", "tools": [], "reads": [], "need": [], "check": "..."}], "outcome": "..."}
@@ -214,7 +214,7 @@ export async function handleDiscover(request: Request, env: DiscoverEnv): Promis
   const input = {
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `${context ? `Earlier question: ${context}\n` : ''}Question: ${question}${candidates.length ? `\n\nCatalogue entries found for this question (pick only from these, by number):\n${candidates.map((c, i) => `${i + 1}. ${c.kind === 'tool' ? 'WORKOS tool' : c.kind === 'chapter' ? 'READOS chapter' : 'READOS book'}: ${c.name} (${c.about})`).join('\n')}` : ''}` },
+      { role: 'user', content: `${context ? `Earlier question: ${context}\n` : ''}Question: ${question}${candidates.length ? `\n\nCatalogue entries found for this question (pick only from these, by number):\n${candidates.map((c, i) => `${i + 1}. ${c.kind === 'tool' ? 'KEVOS® tool' : c.kind === 'chapter' ? 'Library chapter' : 'Library book'}: ${c.name} (${c.about})`).join('\n')}` : ''}` },
     ],
     max_tokens: 900,
     temperature: 0.1,

@@ -1,4 +1,4 @@
-// KEVOS® WORKOS calculations: Engineering. Retention Method Selector.
+// KEVOS® calculations: Engineering. Retention Method Selector.
 //
 // Rules, in order of authority:
 //   1. Technical rejection (REJECT) always overrides cost and scoring.

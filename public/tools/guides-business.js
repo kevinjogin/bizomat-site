@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool guides: Business.
+// KEVOS® tool guides: Business.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'hire-outsource': {
     purpose: 'Compares the first-year cost of employing someone with buying the same hours from a contractor.',

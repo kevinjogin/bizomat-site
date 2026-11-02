@@ -8,8 +8,8 @@ import { WORK_STATUSES, WORK_TYPES } from './config/work.ts';
 const optional = <T extends z.ZodType>(schema: T) => z.preprocess((v) => (v === '' || v === null ? undefined : v), schema.optional());
 
 /**
- * READOS chapters: src/content/reados-chapters/<slug>.md or .mdx
- * The file name is the chapter's permanent slug. Each chapter belongs to one edited READOS book
+ * Library chapters: src/content/reados-chapters/<slug>.md or .mdx
+ * The file name is the chapter's permanent slug. Each chapter belongs to one edited Library book
  * (src/utils/reados-collections.ts) and is read at /reados/collections/<book>/<slug>/.
  */
 const chapters = defineCollection({
@@ -69,7 +69,7 @@ const publications = defineCollection({
     title: z.string().min(5).max(100), subtitle: z.string().min(10).max(160),
     description: z.string().min(50).max(200), category: z.enum(CATEGORY_NAMES),
     tags: z.array(z.enum(TAG_SLUGS)).min(1).max(5),
-    author: z.literal('KEVOS®'), publisher: z.literal('KEVOS® READOS'), language: z.literal('en-AU'),
+    author: z.literal('KEVOS®'), publisher: z.literal('KEVOS® Library'), language: z.literal('en-AU'),
     status: z.enum(['draft', 'published']).default('draft'), publishDate: z.coerce.date(),
     edition: z.string().min(1), level: z.string().min(3), audience: z.string().min(30), referencesChecked: z.coerce.date(),
     outcomes: z.array(z.string().min(15)).min(3),

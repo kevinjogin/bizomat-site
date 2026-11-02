@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: thermodynamics topic tools (batch greiner) within the WORKOS directory.
+// KEVOS® MAKEOS: thermodynamics topic tools (batch greiner) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "blocked-in-liquid-pressure-check",

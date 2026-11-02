@@ -1,4 +1,4 @@
-// KEVOS® WORKOS shared calculation engine.
+// KEVOS® Tools shared calculation engine.
 // Each tool is defined in data-*.js (window.GOCORE_TOOLS), calculated in calc-*.js (window.GOCORE_CALC_PARTS)
 // and explained in guides-*.js (window.WORKOS_GUIDES). A calculation reads inputs with val()/sel() and returns
 // result(...). This file makes no DOM writes, so the same code runs in the browser and in the Node tests.

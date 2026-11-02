@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { CRUMB, FOOTER_NAV, NAV, QUOTE_CTA } from '../src/config/site.ts';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
-const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : /\.(astro|ts)$/.test(f) ? [p] : []; });
+const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : /\.(astro|ts|md|mdx)$/.test(f) ? [p] : []; });
 
 test('the main navigation reads Tools, Library, About, Contact, on the same URLs', () => {
   assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Tools', '/tools/'], ['Library', '/reados/'], ['About', '/about/'], ['Contact', '/contact/']]);
@@ -30,10 +30,12 @@ test('breadcrumbs say Tools and Library, never WORKOS or READOS', () => {
   for (const page of ['src/pages/tools/index.astro', 'src/pages/reados/index.astro']) assert.match(read(page), /label=\{CRUMB\.(tools|library)\}/, `${page}: the library browser trail uses the nav label`);
 });
 
-test('the Library page has its SEO title, and READOS stays the platform name on its pages', () => {
+test('the Library page has its SEO title, and the names WORKOS and READOS are retired from visible text', () => {
   const page = read('src/pages/reados/index.astro');
   assert.match(page, /exactTitle="Engineering, Manufacturing & Business Knowledge Library \| KEVOS"/);
-  assert.match(page, /READOS is the KEVOS® knowledge library/);
+  assert.match(page, /The KEVOS® Library brings together/);
+  assert.match(page, /title="Library"/);
+  assert.match(read('src/pages/tools/index.astro'), /title="Tools"/);
 });
 
 test('outside their own pages, the libraries are called Tools and Library (no stray WORKOS / READOS / REACHOS labels)', () => {
@@ -49,4 +51,14 @@ test('outside their own pages, the libraries are called Tools and Library (no st
   for (const f of ['src/components/discovery/DiscoveryResults.astro', 'src/components/knowledge/ApplyInPractice.astro', 'src/components/knowledge/LearnConcepts.astro', 'src/components/ContactForm.astro', 'src/pages/about.astro', 'src/pages/search.astro', 'src/pages/contact/sent.astro']) {
     assert.doesNotMatch(read(f).replace(/\/\*[\s\S]*?\*\/|\/\/.*$|<!--[\s\S]*?-->/gm, ''), /WORKOS|READOS|REACHOS/, `${f} uses the plain names`);
   }
+});
+
+test('the names WORKOS and READOS no longer appear in visible text (books, chapters, tool texts, pages)', () => {
+  const files = [...walk(join(process.cwd(), 'src/content')), ...walk(join(process.cwd(), 'src/pages')), ...walk(join(process.cwd(), 'src/components')),
+    ...readdirSync(join(process.cwd(), 'public/tools')).filter((f) => /\.js$/.test(f)).map((f) => join(process.cwd(), 'public/tools', f))];
+  // Allowed: internal identifiers such as window.WORKOS_GUIDES, name="WORKOS" or the collection value 'WORKOS'.
+  const quoted = new RegExp(`(["'])(WORKOS|READOS)\\1`, 'g');
+  const name = new RegExp('\\b(WORKOS|READOS)\\b(?!_)');
+  const stray = files.filter((f) => name.test(readFileSync(f, 'utf8').replace(quoted, ''))).map((f) => f.replace(process.cwd() + '/', ''));
+  assert.deepEqual(stray, []);
 });

@@ -76,23 +76,23 @@ export async function GET() {
     id: 'brand-registration',
     title: `${SITE.name} brand and Australian trade mark`,
     url: '/terms/',
-    text: `${SITE.name} is Australian word trade mark ${SITE.tradeMark.number}, registered in class ${SITE.tradeMark.class} for the services listed by IP Australia. Registered from ${SITE.tradeMark.registeredFrom}; entered on the register ${SITE.tradeMark.enteredOnRegister}. This is brand registration, not an engineering licence or government endorsement. READOS is the books and guides area at /reados/. WORKOS contains calculators at /tools/. REACHOS is the enquiry and booking area at /contact/. No separate registrations are claimed for these area names.`,
+    text: `${SITE.name} is Australian word trade mark ${SITE.tradeMark.number}, registered in class ${SITE.tradeMark.class} for the services listed by IP Australia. Registered from ${SITE.tradeMark.registeredFrom}; entered on the register ${SITE.tradeMark.enteredOnRegister}. This is brand registration, not an engineering licence or government endorsement. The Library is the books and guides area at /reados/. Tools contains calculators at /tools/. REACHOS is the enquiry and booking area at /contact/. No separate registrations are claimed for these area names.`,
   });
 
-  // WORKOS and REACHOS, counted from the same register and categories the pages use.
+  // Tools and REACHOS, counted from the same register and categories the pages use.
   const { tools } = loadWorkosTools();
   const topics = groupToolsByTopic(tools, 0);
   chunks.push({
     id: 'workos',
-    title: 'WORKOS engineering and business tools',
+    title: 'Tools engineering and business tools',
     url: '/tools/',
-    text: `WORKOS at /tools/ has ${tools.length} practical engineering, manufacturing and business tools that run in the browser with no account. Each tool shows its method, checks feasibility, tests how sensitive the answer is, and gives a report you can download, print or share. Search the directory at /tools/ or browse by topic: ${topics.map((t) => `${t.name} (${t.items.length} tools, /tools/?topic=${t.slug}): ${t.description}`).join(' ')} MAKEOS is the WORKOS collection of calculators built on established engineering methods. Many tools link to the READOS chapters that explain them. To ask about a tool, report a calculation or functionality issue, or suggest a new tool, use REACHOS at /contact/?service=workos.`,
+    text: `Tools at /tools/ has ${tools.length} practical engineering, manufacturing and business tools that run in the browser with no account. Each tool shows its method, checks feasibility, tests how sensitive the answer is, and gives a report you can download, print or share. Search the directory at /tools/ or browse by topic: ${topics.map((t) => `${t.name} (${t.items.length} tools, /tools/?topic=${t.slug}): ${t.description}`).join(' ')} MAKEOS is the KEVOS® collection of calculators built on established engineering methods. Many tools link to the Library chapters that explain them. To ask about a tool, report a calculation or functionality issue, or suggest a new tool, use REACHOS at /contact/?service=workos.`,
   });
   chunks.push({
     id: 'reachos',
     title: 'REACHOS: connect with KEVOS®',
     url: '/contact/',
-    text: `REACHOS at /contact/ is how to connect with KEVOS®: questions, ideas, feedback, technical requirements and collaboration. Enquiry categories: ${[...ENQUIRY_CATEGORIES.map((c) => c.value), ENGINEERING_PROJECT.value, 'Other'].join(', ')}. Links: WORKOS tool questions /contact/?service=workos, READOS book and content questions or corrections /contact/?service=reados, ideas and feedback /contact/?service=feedback, collaboration and business enquiries /contact/?service=collaboration. The form asks for a name, email, category and message; organisation, website, a related WORKOS tool or READOS resource and phone are optional. It is protected by a spam check, and KEVOS® replies using the contact details provided. Visitors who prefer to talk can book a meeting through the Book a meeting option, which opens the KEVOS® Proton Calendar booking page. KEVOS® is based in Australia and can consider suitable remote opportunities.`,
+    text: `REACHOS at /contact/ is how to connect with KEVOS®: questions, ideas, feedback, technical requirements and collaboration. Enquiry categories: ${[...ENQUIRY_CATEGORIES.map((c) => c.value), ENGINEERING_PROJECT.value, 'Other'].join(', ')}. Links: KEVOS® tool questions /contact/?service=workos, Library book and content questions or corrections /contact/?service=reados, ideas and feedback /contact/?service=feedback, collaboration and business enquiries /contact/?service=collaboration. The form asks for a name, email, category and message; organisation, website, a related KEVOS® tool or Library resource and phone are optional. It is protected by a spam check, and KEVOS® replies using the contact details provided. Visitors who prefer to talk can book a meeting through the Book a meeting option, which opens the KEVOS® Proton Calendar booking page. KEVOS® is based in Australia and can consider suitable remote opportunities.`,
   });
 
   // Services, pricing and process: the receptionist's most important facts, boosted in retrieval (svc- ids).
@@ -157,7 +157,7 @@ export async function GET() {
   });
   chunks.push({
     id: 'categories',
-    title: 'READOS categories',
+    title: 'Library categories',
     url: '/reados/',
     text: Object.values(CATEGORIES).map((c) => `${c.name}: ${c.description}`).join(' '),
   });
@@ -183,11 +183,11 @@ export async function GET() {
     sections(w.body).forEach((s, i) => chunks.push({ id: `work-${w.id}-${i}`, title: `${w.data.title}: ${s.heading}`, url, text: s.text }));
   }
 
-  // READOS chapters, linked at their edited-book address.
+  // Library chapters, linked at their edited-book address.
   for (const book of buildReadOSCollections(await getChapters())) {
     for (const post of book.chapters) {
       const url = readosCollectionChapterHref(book, post);
-      chunks.push({ id: `chapter-${post.id}`, title: `READOS: ${post.data.title}`, url, text: `${post.data.title}. ${post.data.description} Book: ${book.title}. Category: ${post.data.category}.` });
+      chunks.push({ id: `chapter-${post.id}`, title: `Library: ${post.data.title}`, url, text: `${post.data.title}. ${post.data.description} Book: ${book.title}. Category: ${post.data.category}.` });
       sections(post.body).forEach((s, i) =>
         chunks.push({ id: `chapter-${post.id}-${i}`, title: `${post.data.title}${s.heading ? `: ${s.heading}` : ''}`, url, text: s.text.slice(0, 1400) }),
       );

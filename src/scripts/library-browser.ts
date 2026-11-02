@@ -1,6 +1,6 @@
-// Library browser for WORKOS and READOS (src/components/library/LibraryBrowser.astro).
-// Topic, subcategory and search state live in the URL (?topic=, ?sub=, ?q=; WORKOS also keeps ?collection=makeos),
-// so links, reloads and back/forward all work. Search runs over this page's own cards; on WORKOS, a question in plain
+// Library browser for KEVOS® Tools and the Library (src/components/library/LibraryBrowser.astro).
+// Topic, subcategory and search state live in the URL (?topic=, ?sub=, ?q=; Tools also keeps ?collection=makeos),
+// so links, reloads and back/forward all work. Search runs over this page's own cards; on KEVOS® Tools, a question in plain
 // words (or a search with no match) is also sent through KEVOS® discovery (src/lib/discovery/client.ts), and the tools
 // the AI picks from the catalogue are moved to the top of the results.
 import { highlightParts, indexDoc, queryTokens, scoreDoc, search, type IndexedDoc } from '../utils/library-search.ts';
@@ -208,7 +208,7 @@ function init(root: HTMLElement) {
     if (status) status.textContent = label ? plural(visible) : plural(items.length);
   }
 
-  // ---------- AI assistance (WORKOS only) ----------
+  // ---------- AI assistance (Tools only) ----------
   // A question of three or more words, or a search that matches nothing, is sent through discovery after a short pause.
   // The AI only reorders this page's real tool cards: an id that is not a card here is ignored.
   const discovery = name === 'WORKOS' && aiNote ? createDiscovery() : null;
@@ -234,7 +234,7 @@ function init(root: HTMLElement) {
     const where = scopeLabel() ? ` in ${scopeLabel()}` : '';
     resultsTitle!.textContent = `${plural(total)} for “${q.trim()}”${where}`;
     aiNote!.hidden = false;
-    aiNote!.textContent = `Best ${picks.length === 1 ? 'match' : `${picks.length} matches`} for your question first, chosen by KEVOS® AI from the WORKOS catalogue.`;
+    aiNote!.textContent = `Best ${picks.length === 1 ? 'match' : `${picks.length} matches`} for your question first, chosen by KEVOS® AI from the KEVOS® catalogue.`;
     topicsEl!.hidden = true;
     if (empty) empty.hidden = true;
     if (status) status.textContent = `${total} found`;

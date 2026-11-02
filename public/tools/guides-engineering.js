@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool guides: Engineering.
+// KEVOS® tool guides: Engineering.
 (function () {
   const candidate = {};
   for (const L of ['A', 'B', 'C']) {

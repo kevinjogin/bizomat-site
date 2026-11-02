@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: greiner. What each input means, how to get it right and which figure explains it.
+// KEVOS® Tools input guides: greiner. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-greiner.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   'blocked-in-liquid-pressure-check': {

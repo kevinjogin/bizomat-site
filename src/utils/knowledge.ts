@@ -1,6 +1,6 @@
-// READOS ↔ WORKOS knowledge connections. Each relationship between a READOS book (a publication or an edited
-// collection, optionally one chapter) and a WORKOS tool is stored once, in src/data/knowledge-links.json, and shown in
-// both directions: "Apply This in Practice" on READOS pages and "Learn the Concepts Behind This Tool" on WORKOS pages.
+// Library ↔ Tools knowledge connections. Each relationship between a Library book (a publication or an edited
+// collection, optionally one chapter) and a KEVOS® tool is stored once, in src/data/knowledge-links.json, and shown in
+// both directions: "Apply This in Practice" on Library pages and "Learn the Concepts Behind This Tool" on KEVOS® Tools pages.
 // Only entries with status "approved" are published. The catalogues are read from the source files themselves (not
 // astro:content), so the build, the tests and scripts/knowledge/*.mjs share one validator.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -17,10 +17,10 @@ export const LINK_EVIDENCE = ['book-link', 'review'] as const;
 export interface KnowledgeLink {
   reados: string; // "publication/<book slug>" or "collection/<book slug>"
   chapter?: string; // a publication chapterSlug, or a collection chapter's file slug
-  tool: string; // WORKOS tool id
+  tool: string; // KEVOS® tool id
   type: LinkType;
-  note: string; // why the tool is relevant, shown on READOS pages
-  learn?: string; // what the reader learns, shown on WORKOS pages (defaults to the chapter's or book's description)
+  note: string; // why the tool is relevant, shown on Library pages
+  learn?: string; // what the reader learns, shown on KEVOS® Tools pages (defaults to the chapter's or book's description)
   status: LinkStatus;
   evidence: (typeof LINK_EVIDENCE)[number];
   reason?: string; // for review evidence and rejections: what was checked
@@ -69,13 +69,13 @@ export function readCollectionSubjects() {
     ids: [...m[5].matchAll(/'([^']+)'/g)].map((x) => x[1]),
   }));
   const declared = (src.match(/\{slug:'/g) ?? []).length;
-  if (subjects.length !== declared) throw new Error(`knowledge: read ${subjects.length} of ${declared} READOS collections from reados-collections.ts`);
+  if (subjects.length !== declared) throw new Error(`knowledge: read ${subjects.length} of ${declared} Library collections from reados-collections.ts`);
   return subjects;
 }
 
 let catalogueCache: { books: Map<string, ReadosBook>; tools: Map<string, { id: string; name: string; question: string; category: string; href: string; appHref: string }> } | null = null;
 
-/** Every READOS book (published or not) and every WORKOS tool, with the routes the site builds for them. */
+/** Every Library book (published or not) and every KEVOS® tool, with the routes the site builds for them. */
 export function readCatalogue() {
   if (catalogueCache) return catalogueCache;
   const books = new Map<string, ReadosBook>();
@@ -130,9 +130,9 @@ export function validateLinks(links: KnowledgeLink[], catalogue = readCatalogue(
     const at = `link ${i + 1} (${l.reados}${l.chapter ? `#${l.chapter}` : ''} → ${l.tool})`;
     const book = catalogue.books.get(l.reados);
     if (!/^(publication|collection)\/[a-z0-9-]+$/.test(l.reados ?? '')) problems.push(`${at}: reados must be "publication/<slug>" or "collection/<slug>"`);
-    else if (!book) problems.push(`${at}: no READOS book ${l.reados}`);
+    else if (!book) problems.push(`${at}: no Library book ${l.reados}`);
     else if (l.chapter && !book.chapters.has(l.chapter)) problems.push(`${at}: ${l.reados} has no chapter ${l.chapter}`);
-    if (!catalogue.tools.has(l.tool)) problems.push(`${at}: no WORKOS tool ${l.tool}`);
+    if (!catalogue.tools.has(l.tool)) problems.push(`${at}: no KEVOS® tool ${l.tool}`);
     if (!LINK_TYPES.includes(l.type)) problems.push(`${at}: type must be one of ${LINK_TYPES.join(', ')}`);
     if (!LINK_STATUSES.includes(l.status)) problems.push(`${at}: status must be one of ${LINK_STATUSES.join(', ')}`);
     if (!LINK_EVIDENCE.includes(l.evidence)) problems.push(`${at}: evidence must be one of ${LINK_EVIDENCE.join(', ')}`);
@@ -170,7 +170,7 @@ export function buildGraph(links: KnowledgeLink[], catalogue = readCatalogue()) 
   });
   const chapterOf = (l: KnowledgeLink) => (l.chapter ? catalogue.books.get(l.reados)!.chapters.get(l.chapter)! : null);
 
-  /** Tools for a READOS book (all its links) or for one chapter, one entry per tool. */
+  /** Tools for a Library book (all its links) or for one chapter, one entry per tool. */
   function toolsFor(reados: string, chapter?: string): ToolConnection[] {
     const out = new Map<string, ToolConnection>();
     for (const l of live.filter((x) => x.reados === reados && (chapter === undefined || x.chapter === chapter))) {
@@ -187,7 +187,7 @@ export function buildGraph(links: KnowledgeLink[], catalogue = readCatalogue()) 
     }
     return [...out.values()].sort(byOrder((x) => x.tool.name));
   }
-  /** READOS books for a tool, one entry per book, with the chapters that cover it. */
+  /** Library books for a tool, one entry per book, with the chapters that cover it. */
   function readingsFor(toolId: string): ReadingConnection[] {
     const out = new Map<string, ReadingConnection>();
     for (const l of live.filter((x) => x.tool === toolId)) {
@@ -212,7 +212,7 @@ export function buildGraph(links: KnowledgeLink[], catalogue = readCatalogue()) 
   return { live, toolsFor, readingsFor, catalogue };
 }
 
-/** WORKOS topic to browse when a READOS category has no approved connections yet (null where no topic fits well). */
+/** Tools topic to browse when a Library category has no approved connections yet (null where no topic fits well). */
 export const DISCOVERY_TOPIC: Record<string, { slug: string; name: string } | null> = {
   engineering: { slug: 'engineering-design', name: 'Engineering & Design' },
   manufacturing: { slug: 'manufacturing-production', name: 'Manufacturing & Production' },
@@ -251,7 +251,7 @@ export function validatePathways(pathways: PathwayData[], links: KnowledgeLink[]
     ids.add(p.id);
     if (!p.title || p.title.length < 10 || !p.summary || p.summary.length < 30) problems.push(`${at}: needs a title and a summary`);
     if (!chapterOk(p.learn)) problems.push(`${at}: learn must name a published chapter (${p.learn?.reados}#${p.learn?.chapter})`);
-    if (!catalogue.tools.has(p.apply?.tool)) problems.push(`${at}: no WORKOS tool ${p.apply?.tool}`);
+    if (!catalogue.tools.has(p.apply?.tool)) problems.push(`${at}: no KEVOS® tool ${p.apply?.tool}`);
     if (p.next && !chapterOk(p.next)) problems.push(`${at}: next must name a published chapter`);
     const approved = links.some((l) => l.status === 'approved' && l.reados === p.learn?.reados && l.chapter === p.learn?.chapter && l.tool === p.apply?.tool);
     if (!approved) problems.push(`${at}: learn → apply is not an approved relationship in knowledge-links.json`);
@@ -285,6 +285,6 @@ export function learningPathways(): Pathway[] {
   });
   return pathwayCache;
 }
-/** Pathways that start from a READOS book, or that apply a given tool. */
+/** Pathways that start from a Library book, or that apply a given tool. */
 export const pathwaysForBook = (reados: string) => learningPathways().filter((p) => readPathways().find((d) => d.id === p.id)!.learn.reados === reados);
 export const pathwaysForTool = (toolId: string) => learningPathways().filter((p) => p.apply.id === toolId);

@@ -1,4 +1,4 @@
-// KEVOS discovery search: ranks WORKOS tools and READOS books and chapters for a question in plain language.
+// KEVOS discovery search: ranks KEVOS® tools and Library books and chapters for a question in plain language.
 // Runs in the browser over /discovery-index.json (and in the tests), so every result is a real catalogue entry.
 // Hybrid ranking: the visitor's own words (BM25 over weighted fields), curated synonyms, spelling correction against
 // the catalogue's vocabulary, word pairs, and, when available, search terms from the AI intent step.
@@ -9,7 +9,7 @@ export interface DTool { id: string; n: string; d: string; q: string; c: string;
 export interface DBook { id: string; n: string; d: string; c: string; u: string; kind: 'publication' | 'collection' }
 /** A chapter: its URL is its id; b is the index of its book in DiscoveryIndex.books. */
 export interface DChapter { n: string; d: string; b: number; u: string }
-/** links: reviewed READOS ↔ WORKOS connections as [tool id, chapter URL or book id]. */
+/** links: reviewed Library ↔ Tools connections as [tool id, chapter URL or book id]. */
 export interface DiscoveryIndex { v: 1; tools: DTool[]; books: DBook[]; chapters: DChapter[]; links: [string, string][] }
 export const toolHref = (t: DTool) => (t.p ? `/tools/${t.id}/` : `/tools/?tool=${t.id}`);
 export const toolAppHref = (t: DTool) => `/tools/?tool=${t.id}`;
@@ -276,7 +276,7 @@ export function search(e: Engine, q: Query): Outcome {
   };
   const out: Outcome = { mode: 'results', tools: tools.map(toHit), readings: readings.map(toHit), related: [], concepts: [], corrections };
 
-  // Related: reviewed READOS ↔ WORKOS connections of the leading results that also match the question.
+  // Related: reviewed Library ↔ Tools connections of the leading results that also match the question.
   const shown = new Set([...out.tools, ...out.readings].map((h) => h.id));
   const related: Hit[] = [];
   const lead = [...out.tools.slice(0, 2), ...out.readings.slice(0, 2)];

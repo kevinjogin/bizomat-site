@@ -19,7 +19,7 @@ import { LIBRARY_GUIDES } from '../../data/library.ts';
       <div class="books-grid">
         {LIBRARY_GUIDES.map((guide) => <article class="book-card">
           <a class="book-cover" href={`/library/${guide.slug}/`} aria-label={`Read ${guide.title}`}>
-            <ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} publicationLabel="READOS GUIDE" chapters={guide.chapters.length} />
+            <ReadOSAnimatedCover title={guide.title} category={guide.category} slug={guide.slug} publicationLabel="LIBRARY GUIDE" chapters={guide.chapters.length} />
           </a>
           <div class="book-details">
             <p class="book-category">{guide.category} · {guide.minutes} min read</p>

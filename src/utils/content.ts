@@ -11,7 +11,7 @@ const todayInSydney = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Austra
 const isVisible = (draft: boolean, date?: Date) =>
   import.meta.env.DEV || (!draft && (!date || date.toISOString().slice(0, 10) <= todayInSydney()));
 
-/** Published READOS chapters, newest first. */
+/** Published Library chapters, newest first. */
 export async function getChapters(): Promise<Chapter[]> {
   const all = await getCollection('chapters', ({ data }) => isVisible(data.draft, data.publishDate));
   return all.sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());

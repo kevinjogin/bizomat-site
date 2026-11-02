@@ -16,7 +16,7 @@ const { publication } = Astro.props;
 const { book, chapters, minutes } = publication;
 const { Content } = await render(book);
 const href = publicationHref(book.id);
-// WORKOS tools connected to this book (src/data/knowledge-links.json) and any learning pathways that start here.
+// KEVOS® tools connected to this book (src/data/knowledge-links.json) and any learning pathways that start here.
 const tools = knowledgeGraph().toolsFor(`publication/${book.id}`);
 const pathways = pathwaysForBook(`publication/${book.id}`);
 const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book', name: book.data.title, description: book.data.description,
@@ -25,10 +25,10 @@ const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book',
   url: new URL(href, SITE.url).href, isAccessibleForFree: true,
   hasPart: chapters.map(ch => ({ '@type': 'Chapter', name: ch.data.title, position: ch.data.order, url: new URL(publicationChapterHref(book.id, ch.data.chapterSlug), SITE.url).href })) };
 ---
-<BaseLayout title={`${book.data.title} (READOS)`} description={book.data.description} canonical={href} schema={[schema]}
+<BaseLayout title={`${book.data.title} (Library)`} description={book.data.description} canonical={href} schema={[schema]}
   breadcrumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.title,href}]}>
   <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.category,href:`/reados/#${book.data.category.toLowerCase()}`}]}
-    eyebrow={`READOS / ${book.data.category} / KEVOS® original book`} title={book.data.title} subtitle={book.data.subtitle} description={book.data.description}
+    eyebrow={`Library / ${book.data.category} / KEVOS® original book`} title={book.data.title} subtitle={book.data.subtitle} description={book.data.description}
     meta={[`${chapters.length} chapters`,`About ${minutes} minutes`,'Free to read',book.data.level]} draft={book.data.status==='draft'}
     startHref={publicationChapterHref(book.id,chapters[0].data.chapterSlug)} cover={{title:book.data.title,category:book.data.category,slug:book.id,motif:book.data.coverVariant,publicationLabel:'KEVOS® ORIGINAL BOOK',chapters:chapters.length}} />
   <Container>
@@ -39,7 +39,7 @@ const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book',
     {pathways.map((p) => <LearningPathway pathway={p} />)}
     <section class="book-references" aria-labelledby="references"><h2 id="references">References and source notes</h2><p>The manuscript and worked examples are original KEVOS® writing. References inform particular concepts; their authors do not endorse this book. Web references were consulted on {book.data.referencesChecked.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric',timeZone:'Australia/Sydney'})}.</p><ul>{book.data.references.map(ref=><li><strong>{ref.creator}.</strong> {ref.url?<a href={ref.url}>{ref.title}</a>:<em>{ref.title}</em>} ({ref.year}). <span>{ref.note}</span></li>)}</ul></section>
     {book.data.related.length>0&&<section class="book-related"><h2>Continue exploring</h2><ul>{book.data.related.map(item=><li><a href={item.href}>{item.title}</a></li>)}</ul></section>}
-    <a class="back" href="/reados/">← All READOS books</a>
+    <a class="back" href="/reados/">← All Library books</a>
   </Container>
 </BaseLayout>
 <style>

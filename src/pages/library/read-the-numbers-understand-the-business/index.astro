@@ -26,15 +26,15 @@ const schema=[{
 <BaseLayout title={guide.title} description={guide.description} image={guide.cover} imageAlt={`Original KEVOS® Books cover for ${guide.title}`} canonical={canonical}
   breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'},{label:guide.title,href:canonical}]} schema={schema}>
   <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'}]}
-    eyebrow={`READOS / ${guide.category} / Guide`} title={guide.title} subtitle={guide.subtitle} description={guide.description}
+    eyebrow={`Library / ${guide.category} / Guide`} title={guide.title} subtitle={guide.subtitle} description={guide.description}
     meta={[`${guide.chapters.length} chapters`,`About ${guide.minutes} minutes`,'Free to read']}
-    startHref={chapterHref(guide.chapters[0].slug)} cover={{title:guide.title,category:guide.category,slug:guide.slug,publicationLabel:'READOS GUIDE',chapters:guide.chapters.length}} />
+    startHref={chapterHref(guide.chapters[0].slug)} cover={{title:guide.title,category:guide.category,slug:guide.slug,publicationLabel:'LIBRARY GUIDE',chapters:guide.chapters.length}} />
   <section class="chapter-section">
     <Container>
       <ReadOSChapterList items={items}>
         <aside class="notice"><strong>About this publication.</strong> An original KEVOS® educational guide using fictional examples, developed to help readers understand company financial statements. It is not an authorised adaptation or endorsement by the authors of any book consulted as background research. General education only, not financial advice.</aside>
       </ReadOSChapterList>
-      <a class="back" href="/reados/">← All READOS books</a>
+      <a class="back" href="/reados/">← All Library books</a>
     </Container>
   </section>
 </BaseLayout>

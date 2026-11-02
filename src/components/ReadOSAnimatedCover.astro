@@ -1,10 +1,10 @@
 ---
-// READOS book cover: KEVOS colourway, subject illustration and typeset title, drawn as animated SVG.
+// Library book cover: KEVOS colourway, subject illustration and typeset title, drawn as animated SVG.
 // Cover data (motif, tone, composition) comes from src/utils/reados-covers.ts.
 import ReadOSCoverShapes from './ReadOSCoverShapes.astro';
 import { coverArt, coverLayout, coverSpec } from '../utils/reados-covers.ts';
 interface Props { title: string; category: string; slug: string; subtitle?: string; compact?: boolean; motif?: string; publicationLabel?: string; chapters?: number }
-const { title, category, slug, motif, publicationLabel = 'READOS COLLECTION', chapters } = Astro.props;
+const { title, category, slug, motif, publicationLabel = 'LIBRARY COLLECTION', chapters } = Astro.props;
 const spec = coverSpec({ slug, title, category, motif });
 const uid = `rc-${slug.replace(/[^a-z0-9-]/gi, '-')}`;
 const art = coverArt(spec, uid);
@@ -23,7 +23,7 @@ const marks = `M28 70V60H38M322 60H332V70M28 ${panelBottom - 10}V${panelBottom}H
     <rect width="360" height="490" fill={`url(#${uid}-bg)`} />
     <rect width="10" height="490" class="rc-spine" />
     <path d="M10.5 0V490" class="rc-edge" />
-    <text x="28" y="34" class="rc-brand">KEVOS® READOS</text>
+    <text x="28" y="34" class="rc-brand">KEVOS® Library</text>
     <text x="332" y="34" text-anchor="end" class="rc-cat">{category.toUpperCase()}</text>
     <path d="M28 46H332" class="rc-rule" />
     <rect x="28" y="44.5" width="38" height="3" class="fa" />

@@ -1,4 +1,4 @@
-// WORKOS browsing topics. Each tool category (the `category` field in public/tools/data-*.js) belongs to exactly
+// Tools browsing topics. Each tool category (the `category` field in public/tools/data-*.js) belongs to exactly
 // one topic and becomes a subcategory inside it, so every published tool is reachable from the topic grid.
 // Categories stay as search metadata; MAKEOS stays a collection label, not a separate browsing system.
 import type { Tool } from './workos-tools.ts';
@@ -26,7 +26,7 @@ export const subcategorySlug = (category: string) => category.toLowerCase().repl
 
 export function topicForCategory(category: string): WorkosTopic {
   const topic = WORKOS_TOPICS.find((t) => t.categories.includes(category));
-  if (!topic) throw new Error(`WORKOS category "${category}" has no topic in src/utils/workos-topics.ts`);
+  if (!topic) throw new Error(`Tools category "${category}" has no topic in src/utils/workos-topics.ts`);
   return topic;
 }
 

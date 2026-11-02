@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: engineering tools within the WORKOS directory.
+// KEVOS® MAKEOS: engineering tools within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "cutting-speed",

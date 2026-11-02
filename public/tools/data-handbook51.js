@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: Machinery’s Handbook topic tools (batch handbook51) within the WORKOS directory.
+// KEVOS® MAKEOS: Machinery’s Handbook topic tools (batch handbook51) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "c-frame-throat-check",

@@ -63,8 +63,8 @@ test('duplicates, unknown ids and bad fields are reported', () => {
   const ok = graph.live[0];
   const probe = (extra: Partial<KnowledgeLink>[]) => validateLinks([ok, ...extra.map((e) => ({ ...ok, ...e }) as KnowledgeLink)], catalogue);
   assert.ok(probe([{}]).some((p) => p.includes('duplicates')), 'duplicate');
-  assert.ok(probe([{ tool: 'no-such-tool' }]).some((p) => p.includes('no WORKOS tool')), 'unknown tool');
-  assert.ok(probe([{ reados: 'publication/no-such-book' }]).some((p) => p.includes('no READOS book')), 'unknown book');
+  assert.ok(probe([{ tool: 'no-such-tool' }]).some((p) => p.includes('no KEVOS® tool')), 'unknown tool');
+  assert.ok(probe([{ reados: 'publication/no-such-book' }]).some((p) => p.includes('no Library book')), 'unknown book');
   assert.ok(probe([{ chapter: 'no-such-chapter' }]).some((p) => p.includes('has no chapter')), 'unknown chapter');
   assert.ok(probe([{ reados: 'Some Book Title' }]).some((p) => p.includes('must be "publication/<slug>"')), 'titles are not ids');
   assert.ok(probe([{ tool: 'roi', type: 'related' as any }]).some((p) => p.includes('type must be')), 'type');

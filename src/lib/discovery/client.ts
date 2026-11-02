@@ -1,4 +1,4 @@
-// Browser side of KEVOS® discovery, shared by the homepage question box (src/scripts/discovery.ts) and the WORKOS
+// Browser side of KEVOS® discovery, shared by the homepage question box (src/scripts/discovery.ts) and the Tools
 // directory search (src/scripts/library-browser.ts).
 //   1. Load the catalogue (/discovery-index.json, once per page) and shortlist the entries related to the question.
 //   2. Ask /api/discover (Workers AI) for search terms, its picks from that shortlist and an ordered solution path.

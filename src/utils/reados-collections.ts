@@ -7,7 +7,7 @@ export type ReadOSCollection = {
   chapters:Chapter[]; minutes:number; topic:string; volume:number;
 };
 type Subject = { slug:string; title:string; description:string; category:string; ids:string[] };
-/** Edited READOS books. Each book lists its chapters (file slugs in src/content/reados-chapters/) in reading order; a book stays
+/** Edited Library books. Each book lists its chapters (file slugs in src/content/reados-chapters/) in reading order; a book stays
  *  within one category. A newly published chapter appears in its category's "Further Reading" book until it is added to a book here.
  *  Book slugs are permanent URLs: when a book is renamed or chapters move, add the old URLs to public/_redirects. */
 const SUBJECTS:Subject[] = [

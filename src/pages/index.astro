@@ -1,6 +1,6 @@
 ---
-// KEVOS® homepage: the technology and knowledge platform, led by WORKOS (tools) and READOS (books).
-// Every count, topic, tool and book here is read from the WORKOS register and the READOS library at build time.
+// KEVOS® homepage: the technology and knowledge platform, led by KEVOS® Tools (tools) and the Library (books).
+// Every count, topic, tool and book here is read from the KEVOS® register and the Library at build time.
 // Services, pricing, the assessment and Factory Fix live on their own pages (/services/, /assessment/, /factory-fix/).
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
@@ -35,8 +35,8 @@ const pick = <T,>(ids: string[], find: (id: string) => T | undefined, kind: stri
   if (!item) throw new Error(`src/config/home.ts: no ${kind} "${id}"`);
   return item;
 });
-const featuredTools = pick(HOME_FEATURED_TOOLS, (id) => tools.find((t) => t.id === id), 'WORKOS tool');
-const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id === id), 'READOS book');
+const featuredTools = pick(HOME_FEATURED_TOOLS, (id) => tools.find((t) => t.id === id), 'KEVOS® tool');
+const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id === id), 'Library book');
 // Cards link to a tool's own page where one exists, as on /tools/.
 const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
 
@@ -186,7 +186,7 @@ const schema = [{
 </BaseLayout>
 
 <script>
-  // "What would you like to solve today?": discovery over the WORKOS and READOS catalogue.
+  // "What would you like to solve today?": discovery over the KEVOS® and the Library catalogue.
   import '../scripts/discovery.ts';
 </script>
 

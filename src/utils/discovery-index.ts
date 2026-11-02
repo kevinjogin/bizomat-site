@@ -1,4 +1,4 @@
-// The discovery catalogue: every WORKOS tool, every published READOS book and chapter, and the reviewed links
+// The discovery catalogue: every KEVOS® tool, every published Library book and chapter, and the reviewed links
 // between them, read from the same sources as the site at build time. Served as /discovery-index.json and
 // searched in the browser by src/lib/discovery/search.ts. New tools and books are included by the next build.
 import { loadWorkosTools, hasStandaloneGuide } from './workos-tools.ts';
@@ -35,7 +35,7 @@ export function buildDiscoveryIndex(): DiscoveryIndex {
     const bi = index.books.push({ id: b.key, n: b.title, d: clip(b.description, 200), c: b.category.charAt(0).toUpperCase() + b.category.slice(1), u: b.href, kind: b.kind }) - 1;
     for (const c of b.chapters.values()) if (c.published) index.chapters.push({ n: c.title, d: clip(c.description, 200), b: bi, u: c.href });
   }
-  // Reviewed READOS ↔ WORKOS connections (approved, published), for "Related resources": [tool id, chapter URL or book id].
+  // Reviewed Library ↔ Tools connections (approved, published), for "Related resources": [tool id, chapter URL or book id].
   const { books: catalogueBooks } = readCatalogue();
   for (const l of knowledgeGraph().live) {
     const book = catalogueBooks.get(l.reados)!;

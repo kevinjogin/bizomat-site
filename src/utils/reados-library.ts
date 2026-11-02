@@ -1,5 +1,5 @@
-// The READOS library: every published book grouped by subject, in the order the /reados/ page lists them
-// (authored books, featured guides, then collections). Shared by the READOS page and the homepage so both
+// The Library: every published book grouped by subject, in the order the /reados/ page lists them
+// (authored books, featured guides, then collections). Shared by the Library page and the homepage so both
 // count and show the same records.
 import type { LibraryIconName } from '../components/library/icons.ts';
 import { LIBRARY_GUIDES } from '../data/library.ts';
@@ -43,14 +43,14 @@ export async function buildReadosLibrary() {
       ...(c.name === 'Business' ? LIBRARY_GUIDES : []).map((guide): ReadosEntry => ({
         id: `guide-${guide.slug}`, title: guide.title, summary: guide.description, href: `/library/${guide.slug}/`,
         startHref: `/library/${guide.slug}/${guide.chapters[0].slug}/`,
-        tags: [c.name, guide.category, 'READOS guide', guide.subtitle].join(' '),
-        cover: { title: guide.title, category: guide.category, slug: guide.slug, publicationLabel: 'READOS GUIDE' },
+        tags: [c.name, guide.category, 'Library guide', guide.subtitle].join(' '),
+        cover: { title: guide.title, category: guide.category, slug: guide.slug, publicationLabel: 'LIBRARY GUIDE' },
         chapters: guide.chapters.map((ch): [string, string] => [ch.title, `/library/${guide.slug}/${ch.slug}/`]),
       })),
       ...books.filter((book) => book.category === c.name).map((book): ReadosEntry => ({
         id: `collection-${book.slug}`, title: book.title, summary: book.description, href: readosCollectionHref(book),
         startHref: readosCollectionChapterHref(book, book.chapters[0]),
-        tags: [c.name, 'READOS collection'].join(' '),
+        tags: [c.name, 'Library collection'].join(' '),
         cover: { title: book.title, category: book.category, slug: book.slug },
         chapters: book.chapters.map((ch): [string, string] => [ch.data.title, readosCollectionChapterHref(book, ch)]),
       })),

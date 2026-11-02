@@ -8,7 +8,7 @@
 //   - The objective, the order of the steps, "what to do" and "why" are recommendations, from the AI step when it
 //     answers (src/server/discover/handler.ts) or from the workflow for the question type below when it does not.
 //   - Assumptions and missing information come only from the AI step and are labelled as such.
-// Nothing is calculated here: every number comes from a WORKOS tool when the visitor runs it.
+// Nothing is calculated here: every number comes from a KEVOS® tool when the visitor runs it.
 import { entryById, verifiedReadings, type Engine, type Hit, type Outcome } from './search.ts';
 
 export type QuestionType = 'calculation' | 'troubleshooting' | 'design' | 'manufacturing' | 'business' | 'learning';

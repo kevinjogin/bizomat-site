@@ -1,8 +1,8 @@
-// Homepage picks. Every id must exist: tool ids in the WORKOS register (public/tools/data-*.js) and book ids as the
-// READOS library names them (publication-<book>, collection-<book> or guide-<slug>). The build stops if one is missing.
+// Homepage picks. Every id must exist: tool ids in the KEVOS® register (public/tools/data-*.js) and book ids as the
+// Library names them (publication-<book>, collection-<book> or guide-<slug>). The build stops if one is missing.
 // Counts on the homepage are never written here; they are read from the catalogues at build time.
 
-/** WORKOS tools shown under "Featured tools", one from each of several topics. */
+/** KEVOS® tools shown under "Featured tools", one from each of several topics. */
 export const HOME_FEATURED_TOOLS = [
   'bolt-torque-preload',
   'bearing-l10-life',
@@ -12,7 +12,7 @@ export const HOME_FEATURED_TOOLS = [
   'investment-appraisal',
 ];
 
-/** READOS books shown under "Featured books", one from each of several subjects. */
+/** Library books shown under "Featured books", one from each of several subjects. */
 export const HOME_FEATURED_BOOKS = [
   'publication-bolted-joints-by-the-numbers',
   'publication-sheet-metal-parts-by-the-numbers',
@@ -22,7 +22,7 @@ export const HOME_FEATURED_BOOKS = [
   'collection-investment-appraisal-and-business-cases',
 ];
 
-/** The four hero orbit nodes: what people do, the WORKOS topic it opens and the READOS subject counted beside it. */
+/** The four hero orbit nodes: what people do, the KEVOS® topic it opens and the Library subject counted beside it. */
 export const HOME_ORBIT = [
   { verb: 'Design', topic: 'engineering-design', subject: 'engineering' },
   { verb: 'Build', topic: 'manufacturing-production', subject: 'manufacturing' },

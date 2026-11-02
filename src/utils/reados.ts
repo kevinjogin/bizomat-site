@@ -12,7 +12,7 @@ export type ReadOSBook = {
   chapters: Chapter[];
   minutes: number;
 };
-/** Deterministic category volumes, generated from all published READOS chapters without dropping any. */
+/** Deterministic category volumes, generated from all published Library chapters without dropping any. */
 export function buildReadOSBooks(posts: Chapter[]): ReadOSBook[] {
   const books: ReadOSBook[] = [];
   for (const slug of CATEGORY_SLUGS) {

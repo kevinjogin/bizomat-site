@@ -1,7 +1,7 @@
 ---
-// READOS → WORKOS: the tools connected to a book or chapter (src/data/knowledge-links.json, approved links only).
+// Library → Tools: the tools connected to a book or chapter (src/data/knowledge-links.json, approved links only).
 // "Apply This in Practice" lists tools that apply or illustrate the reading; "Related Tools and Examples" lists the
-// ones that are useful alongside it. With no connections, a book page may offer a WORKOS topic to browse instead.
+// ones that are useful alongside it. With no connections, a book page may offer a KEVOS® topic to browse instead.
 import type { ToolConnection } from '../../utils/knowledge.ts';
 import { toolAppHref } from '../../utils/workos-tools.ts';
 
@@ -9,7 +9,7 @@ interface Props {
   items: ToolConnection[];
   /** Show the chapters each tool is used in (book pages), or not (a chapter page). */
   showChapters?: boolean;
-  /** WORKOS topic to suggest when there are no connections (book pages only). */
+  /** Tools topic to suggest when there are no connections (book pages only). */
   discover?: { slug: string; name: string } | null;
   id?: string;
 }

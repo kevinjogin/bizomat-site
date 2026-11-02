@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: engineering thermodynamics tools, second Çengel batch (cengel2) within the WORKOS directory.
+// KEVOS® MAKEOS: engineering thermodynamics tools, second Çengel batch (cengel2) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "rankine-cycle-check",

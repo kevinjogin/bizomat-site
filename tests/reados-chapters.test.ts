@@ -100,7 +100,7 @@ test('feed, byline and dates use the READOS chapters and the current identity', 
   const feed = read('src/pages/rss.xml.ts');
   assert.match(read('src/content.config.ts'), /author: z\.string\(\)\.default\('KEVOS®'\)/);
   assert.match(read('src/utils/content.ts'), /export const chapterAuthor/);
-  assert.match(feed, /title: `\$\{SITE\.name\} READOS`/);
+  assert.match(feed, /title: `\$\{SITE\.name\} Library`/);
   assert.match(feed, /pubDate: post\.data\.publishDate/);
   assert.match(feed, /author: chapterAuthor\(post\.data\.author\)/);
   assert.match(feed, /readosCollectionChapterHref/);

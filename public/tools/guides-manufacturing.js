@@ -1,4 +1,4 @@
-// KEVOS® WORKOS tool guides: Manufacturing.
+// KEVOS® tool guides: Manufacturing.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'batch-fit': {
     purpose: 'Calculates how many rectangular parts fit on a rack or panel with a set clearance, in both orientations.',

@@ -1,4 +1,4 @@
-// KEVOS® WORKOS input guides: handbook87. What each input means, how to get it right and which figure explains it.
+// KEVOS® Tools input guides: handbook87. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-handbook87.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   "area-converter": {
