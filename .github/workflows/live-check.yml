@@ -1,0 +1,25 @@
+# Post-release check of the public site (CLAUDE.md: "check the public site, not just the build").
+# Run it from the Actions tab after a release reaches kevos.com. Read-only: no secrets, no deploy.
+name: Live check
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: Site to check
+        default: https://kevos.com
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '22'
+      - run: node scripts/discovery/live-check.mjs "$BASE"
+        env:
+          BASE: ${{ inputs.base }}
