@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1040 tools with unique ids and every previously published id kept', () => {
+test('register: 1045 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1040);
+  assert.equal(ids.length, 1045);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -7198,4 +7198,58 @@ test('force-ratio tool life reproduces the Fig. 12 lines', () => {
   near(t(0.5, 5), 1, 1e-12, 'all lines meet at FH/FC = 0.5, T = 1'); near(t(1, 5), 32, 1e-9, 'LF/L = 5 reaches about 30 min'); near(t(1, 10), 1024, 1e-6, 'LF/L = 10 reaches about 1000 min');
   const f = engine.run('force-ratio-tool-life', { mode: 'forces', FH: 1500, FC: 3000, a: 0.5, k: 10, Tt: 15 }); near(f.values.r, 0.5, 1e-12, 'roughing example 1500 ÷ 3000'); near(f.values.rT, 0.5 * 15 ** 0.1, 1e-12, 'ratio for 15 min');
   assert.equal(f.text, 'TOOL LIFE BELOW THE TARGET'); assert.equal(engine.run('force-ratio-tool-life', { mode: 'ratio', r: 0.7, Tt: 15 }).text, 'TOOL LIFE MEETS THE TARGET');
+});
+
+// Norton batch 1 (norton1): planar linkage kinematics from Norton, Design of Machinery, 2nd edition. Expected values are
+// Norton's mobility figures, Example 3-9 and identities: the position solution must close the vector loop, and the
+// velocities and accelerations must equal finite differences of the positions.
+test('linkage mobility reproduces Norton’s Figures 2-6 and 2-7', () => {
+  const mob = (o: Inputs) => engine.run('linkage-mobility', { space: 'planar', J2: 0, J3: 0, J4: 0, J5: 0, ...o });
+  assert.equal(mob({ L: 8, J1: 10 }).values.M, 1, 'Fig. 2-6a: L = 8, J = 10, DOF = 1'); assert.equal(mob({ L: 6, J1: 7, J2: 1 }).values.M, 0, 'Fig. 2-6b: L = 6, J = 7.5, DOF = 0');
+  assert.equal(mob({ L: 4, J1: 4 }).text, 'MECHANISM'); assert.equal(mob({ L: 3, J1: 3 }).text, 'STRUCTURE'); assert.equal(mob({ L: 2, J1: 2 }).text, 'PRELOADED STRUCTURE');
+  assert.equal(engine.run('linkage-mobility', { space: 'spatial', L: 4, J1: 3, J2: 0, J3: 1, J4: 0, J5: 0 }).values.M, 6 * 3 - 15 - 3, 'spatial Kutzbach');
+});
+
+test('Grashof condition, transmission and toggle angles follow Norton', () => {
+  const g = (o: Inputs) => engine.run('fourbar-grashof-check', { d: 100, a: 40, b: 120, c: 80, ...o });
+  assert.equal(g({}).text, 'CRANK-ROCKER'); assert.equal(g({ d: 40, a: 100 }).text, 'DOUBLE-CRANK'); assert.equal(g({ b: 40, a: 120 }).text, 'GRASHOF DOUBLE-ROCKER');
+  assert.equal(g({ d: 100, a: 60, b: 70, c: 50 }).text, 'TRIPLE-ROCKER (NON-GRASHOF)'); assert.equal(g({ d: 100, a: 40, b: 100, c: 40 }).text, 'SPECIAL-CASE GRASHOF (CHANGE POINTS)');
+  const c = g({}).values, acosd = (x: number) => Math.acos(x) * 180 / Math.PI; near(c.mu1, acosd((120 ** 2 + 80 ** 2 - 140 ** 2) / (2 * 120 * 80)), 1e-9, 'eq. 4.29a'); near(c.mu2, acosd((120 ** 2 + 80 ** 2 - 60 ** 2) / (2 * 120 * 80)), 1e-9, 'eq. 4.29b');
+  // The extreme transmission angles must equal the transmission angle of the position solution at θ2 = 0° and 180°.
+  const k = (t2: number) => engine.run('fourbar-kinematics', { a: 40, b: 120, c: 80, d: 100, t2, w2: 1, a2: 0, circ: 'open', p: 0, d3: 0 }).values.mu;
+  near(Math.min(k(0), k(180)), c.muMin, 1e-6, 'smallest transmission angle at a crank–ground colinear position');
+  const tr = g({ d: 100, a: 60, b: 70, c: 50 }).values, t = tr.toggle;
+  assert.equal(engine.run('fourbar-kinematics', { a: 60, b: 70, c: 50, d: 100, t2: t + 0.01, w2: 1, a2: 0, circ: 'open', p: 0, d3: 0 }).text, 'CHECK INPUTS', 'no assembly just beyond the toggle angle');
+  assert.notEqual(engine.run('fourbar-kinematics', { a: 60, b: 70, c: 50, d: 100, t2: t - 0.01, w2: 1, a2: 0, circ: 'open', p: 0, d3: 0 }).text, 'CHECK INPUTS', 'assembles just inside it');
+});
+
+test('fourbar time ratio reproduces Example 3-9', () => {
+  const dz = engine.run('fourbar-time-ratio', { mode: 'design', TR: 1.25 }).values; near(dz.small, 160, 1e-9, 'α = 160°'); near(dz.big, 200, 1e-9, 'β = 200°'); near(dz.delta, 20, 1e-9, 'δ = 20°');
+  const an = engine.run('fourbar-time-ratio', { mode: 'analyse', d: 100, a: 30, b: 90, c: 70 }).values; near(an.big + an.small, 360, 1e-9, 'α + β = 360°'); near(an.big - 180, an.delta, 1e-9, 'δ = |180° − β|');
+  const ex = (t2: number) => engine.run('fourbar-kinematics', { a: 30, b: 90, c: 70, d: 100, t2, w2: 1, a2: 0, circ: 'open', p: 0, d3: 0 }).values.t4;
+  let lo = 1e9, hi = -1e9; for (let t2 = 0; t2 < 360; t2 += 0.05) { const t4 = ex(t2); lo = Math.min(lo, t4); hi = Math.max(hi, t4); } near(hi - lo, an.swing, 1e-3, 'rocker swing equals the range of θ4 over a crank turn');
+  assert.equal(engine.run('fourbar-time-ratio', { mode: 'analyse', d: 40, a: 100 }).text, 'CHECK INPUTS');
+});
+
+test('fourbar kinematics closes the loop and matches finite differences', () => {
+  const run = (o: Inputs) => engine.run('fourbar-kinematics', { a: 40, b: 120, c: 80, d: 100, t2: 40, w2: 10, a2: 0, circ: 'open', p: 50, d3: 30, ...o }).values, rad = Math.PI / 180, h = 1e-4;
+  for (const circ of ['open', 'crossed']) {
+    const r = run({ circ }); near(40 * Math.cos(40 * rad) + 120 * Math.cos(r.t3 * rad) - 80 * Math.cos(r.t4 * rad) - 100, 0, 1e-9, `${circ} x closure`); near(40 * Math.sin(40 * rad) + 120 * Math.sin(r.t3 * rad) - 80 * Math.sin(r.t4 * rad), 0, 1e-9, `${circ} y closure`);
+    const p = run({ circ, t2: 40 + h }), q = run({ circ, t2: 40 - h }); near(r.w4, (p.t4 - q.t4) / (2 * h) * 10, 1e-5, `${circ} ω4 = dθ4/dθ2 × ω2`); near(r.w3, (p.t3 - q.t3) / (2 * h) * 10, 1e-5, `${circ} ω3`);
+    near(r.a4, (p.w4 - q.w4) / (2 * h * rad) * 10, 1e-3, `${circ} α4 = dω4/dt`); near(r.a3, (p.w3 - q.w3) / (2 * h * rad) * 10, 1e-3, `${circ} α3`);
+    near(r.VP, Math.hypot((p.Px - q.Px) / (2 * h * rad) * 10, (p.Py - q.Py) / (2 * h * rad) * 10), 1e-3, `${circ} coupler point speed`);
+  }
+  const al = run({ a2: 5 }), z = run({ a2: 0 }); near(al.a4 - z.a4, 5 * (run({ t2: 40, w2: 1 }).w4), 1e-9, 'α2 adds α2 × dθ4/dθ2'); near(run({}).VA, 400, 1e-9, 'VA = a ω2');
+  assert.equal(engine.run('fourbar-kinematics', { a: 60, b: 70, c: 50, d: 100, t2: 180 }).text, 'CHECK INPUTS');
+});
+
+test('slider-crank kinematics matches finite differences', () => {
+  const run = (o: Inputs) => engine.run('slider-crank-kinematics', { a: 40, b: 120, c: 10, t2: 45, w2: 100, a2: 0, circ: '2', ...o }).values, rad = Math.PI / 180, h = 1e-4;
+  for (const circ of ['1', '2']) {
+    const r = run({ circ }), p = run({ circ, t2: 45 + h }), q = run({ circ, t2: 45 - h });
+    near(40 * Math.sin(45 * rad) - 120 * Math.sin(r.t3 * rad) - 10, 0, 1e-9, `${circ} y closure (eq. 4.15b)`); near(r.vd, (p.d - q.d) / (2 * h * rad) * 100, 1e-3, `${circ} slider velocity`);
+    near(r.ad, (p.vd - q.vd) / (2 * h * rad) * 100, 1e-1, `${circ} slider acceleration`); near(r.w3, (p.t3 - q.t3) / (2 * h) * 100, 1e-5, `${circ} ω3`);
+  }
+  assert.ok(run({}).d > 0, 'the default slider is on the +X side'); const i = run({ c: 0, t2: 0 }); near(i.d, 160, 1e-9, 'in-line, crank along the slide: d = a + b'); near(i.ad, -(100 ** 2) * 40 * (1 + 40 / 120), 1e-6, 'top dead centre acceleration aω²(1 + a/b)');
+  assert.equal(engine.run('slider-crank-kinematics', { a: 100, b: 50, c: 0, t2: 90 }).text, 'CHECK INPUTS');
 });

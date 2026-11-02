@@ -9978,6 +9978,36 @@
    "note": "Values compressed-air leakage from a measured leak flow, compressor specific power, hours and electricity price: 10 L/s of free air costs about A$10,200 a year.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/power-presses-by-the-numbers",
+   "chapter": "the-crank-press-force-curve",
+   "tool": "slider-crank-kinematics",
+   "type": "complements",
+   "note": "Gives the ram position, velocity and acceleration of the crank and connecting rod drive this chapter uses for the press force curve.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter builds the crank press curve from the crank radius and connecting rod length; tool applies Norton’s slider-crank position, velocity and acceleration solution."
+  },
+  {
+   "reados": "publication/louvres-and-ventilators-by-the-numbers",
+   "chapter": "movable-louvres",
+   "tool": "fourbar-grashof-check",
+   "type": "complements",
+   "note": "Checks how the blade linkage this chapter lays out will move, whether its links turn or rock, and its transmission angles.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter lays out a louvre blade linkage and its travel; tool applies the Grashof condition, linkage classification and transmission angles from Norton."
+  },
+  {
+   "reados": "publication/fixtures-that-repeat",
+   "chapter": "choose-clamping-force-that-reaches-the-part",
+   "tool": "fourbar-grashof-check",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter treats toggle clamps as bought-in clamping devices and their force; the tool classifies fourbar linkages and does not size clamps."
   }
  ]
 }
