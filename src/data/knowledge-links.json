@@ -9106,6 +9106,76 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter follows a railway wheel load down through rail, sleepers and ballast; the tool applies empirical rail head and track wheel rules for handling equipment and the AREA roller load, not railway track design."
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "rim-and-face",
+   "tool": "rim-face-arrangement-shims",
+   "type": "complements",
+   "note": "Works out the shims and moves for any of the sixteen ways the rim and face indicators can be mounted, and for motors with extra feet.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter teaches the rim and face method with one indicator layout; tool applies the handbook formulas for all sixteen arrangements with signed foot distances."
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "indicators-brackets-and-sag",
+   "tool": "rim-face-arrangement-shims",
+   "type": "complements",
+   "note": "Applies the bracket sag this chapter shows how to measure to a vertical rim reading before the shims are worked out.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter explains measuring and correcting bracket sag; tool adds or subtracts the measured sag from the rim reading by where the indicator was zeroed."
+  },
+  {
+   "reados": "publication/shaft-alignment-by-the-numbers",
+   "chapter": "making-the-moves",
+   "tool": "jackbolt-alignment-turns",
+   "type": "complements",
+   "note": "Turns the side-to-side moves from this chapter into jackbolt turns and head flats at the front and rear of the machine.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter covers moving the machine with jacking bolts and foot indicators; tool converts each move to turns and flats from the bolt pitch and head."
+  },
+  {
+   "reados": "collection/machine-elements-and-mechanical-design",
+   "chapter": "choosing-a-joining-method",
+   "tool": "riveted-joint-strength-by-type",
+   "type": "complements",
+   "note": "Gives the shear, tearing and crushing strength and the efficiency of the riveted lap and butt joints this chapter compares with other joints.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says solid rivets carry load in shear and bearing; tool applies the handbook resistance formulas for six riveted joint types."
+  },
+  {
+   "reados": "publication/springs-by-the-numbers",
+   "chapter": "torsion-bars-and-flat-springs",
+   "tool": "uniform-strength-beam",
+   "type": "complements",
+   "note": "Sizes the tapered cantilevers of uniform strength that this chapter says a leaf spring approaches.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter notes a tapered leaf spring approaches a beam of uniform strength; tool applies the handbook formulas for beams of uniform strength."
+  },
+  {
+   "reados": "publication/machining-by-the-numbers",
+   "chapter": "turning-feed-depth-and-finish",
+   "tool": "nose-radius-finish-change",
+   "type": "complements",
+   "note": "Sets the empirical nose radius rule beside the geometric finish rule this chapter uses, which overstates the gain from a larger radius.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter says a larger nose radius improves finish in direct proportion (geometric rule); tool applies the handbook Colding rule Ra1/Ra2 = (r2/r1)^0.5 and compares the two."
+  },
+  {
+   "reados": "publication/gears-by-the-numbers",
+   "chapter": "tooth-bending-strength",
+   "tool": "uniform-strength-beam",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter treats the gear tooth as a cantilever in the Lewis bending equation; the tool sizes tapered beams and levers, not gear teeth."
   }
  ]
 }

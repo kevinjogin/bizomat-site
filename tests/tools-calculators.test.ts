@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1020 tools with unique ids and every previously published id kept', () => {
+test('register: 1025 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1020);
+  assert.equal(ids.length, 1025);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -839,16 +839,16 @@ test('all workshop shared URLs render finite results and export inputs, methods,
 
 // ---------------------------------------------------------------- Machinery's Handbook topic tools (handbook4–8)
 
-const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98'];
+const HB_FILES = ['handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook74', 'handbook75', 'handbook77', 'handbook78', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99'];
 const hbIds = () => {
   const sandbox: any = createContext({ window: {} });
   for (const f of HB_FILES) runInContext(read(`data-${f}.js`), sandbox);
   return sandbox.window.GOCORE_TOOLS.map((t: any) => t.id) as string[];
 };
 
-test('handbook batches: 826 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
+test('handbook batches: 831 MAKEOS tools, each with bounds, a worked example and a handbook reference', () => {
   const ids = hbIds();
-  assert.equal(ids.length, 826);
+  assert.equal(ids.length, 831);
   for (const id of ids) {
     const t = engine.tool(id), g = engine.guides[id];
     assert.equal(t.collection, 'MAKEOS');
@@ -7000,4 +7000,62 @@ test('seventy-fifth-pass tools give their verdicts and reject bad inputs', () =>
   assert.equal(engine.run('rail-and-track-wheel-size', { K: 2 }).text, 'WHEEL TOO SMALL FOR THE LOAD');
   const cases: Array<[string, Inputs]> = [['general-purpose-acme-limits', { D: 0.25, n: 1 }], ['centralizing-acme-limits', { D: 0.25, n: 1 }], ['stub-acme-limits', { D: 0.25, n: 1 }], ['whitworth-thread-limits', { D: 0.0625, n: 2 }], ['unified-miniature-thread-limits', { D: 0.3, p: 0.4 }], ['bearing-static-equivalent-load', { type: 'angular', alpha: 10 }], ['bearing-static-equivalent-load', { Fr: 0, Fa: 0 }]];
   for (const [id, over] of cases) { const x = engine.run(id, over); assert.equal(x.text, 'CHECK INPUTS', `${id}/${JSON.stringify(over)}`); assert.equal(x.primary, undefined); }
+});
+
+// Seventy-sixth handbook pass (handbook99): deep audit of the shaft alignment pages (sixteen rim and face arrangements,
+// extra feet, bracket sag, jackbolts), the riveted joint formulas, beams of uniform strength and the Colding nose radius
+// rule. Expected values are the handbook's worked examples; inches entered as millimetres scale through the linear formulas.
+test('rim and face arrangements reproduce all sixteen handbook examples', () => {
+  const ex: [number, number, number, number, number, number, number, number][] = [
+    [1, 4, 6.5, 18, -0.014, 0.021, 0.041, 0.102], [2, 4.75, 7.75, 17.25, 0.004, -0.022, 0.034, 0.078], [3, 4.25, 8.875, 28.75, 0.042, -0.036, 0.096, 0.265], [4, 3.5, 8.25, 19.25, -0.011, -0.019, -0.05, -0.11],
+    [5, 4, 5.5, 17, 0.042, -0.036, -0.0705, -0.174], [6, 4.75, 6.25, 31.75, -0.024, 0.005, 0.005, -0.021], [7, 12.375, 14.875, 47.75, -0.002, 0.001, -0.002, -0.005], [8, 12.375, 14.875, 47.75, -0.042, -0.002, -0.023, -0.029],
+    [9, 10.375, 22, 48, 0, 0.017, 0.036, 0.079], [10, 5.5, 14, 35, 0.03, 0.022, -0.071, -0.155], [11, 6.5, 16.625, 42, 0, -0.026, 0.0665, 0.168], [12, 23, 41, 96, 0.004, -0.003, -0.003, -0.011],
+    [13, 23, 20, 75, 0.004, -0.003, -0.005, -0.012], [14, 4.625, 10.75, 32.5, -0.014, 0.036, -0.077, -0.246], [15, 6, 38, 84, -0.002, 0.003, -0.02, -0.043], [16, 16, 26, 54, -0.002, -0.006, -0.011, -0.021],
+  ];
+  for (const [arr, A, B, C, r, f, F, R] of ex) {
+    const x = engine.run('rim-face-arrangement-shims', { arr: String(arr), plane: 'v', r, f, A, B, C, nx: 0, sag: 0, tol: 0 }).values;
+    near(x.F, F, 5e-4, `arrangement ${arr} front`); near(x.R, R, 5e-4, `arrangement ${arr} rear`);
+  }
+  const e = engine.run('rim-face-arrangement-shims', { arr: '14', r: -0.054, f: 0.032, A: 4.5, B: -22, C: 46, nx: 3, E1: -10, E2: 8, E3: 24, sag: 0, tol: 0 }).values;
+  near(e.F, 0.183, 5e-4, 'ten feet: SF'); near(e.E1, 0.098, 5e-4, 'SF1'); near(e.E2, -0.03, 5e-4, 'SF2'); near(e.E3, -0.144, 5e-4, 'SF3'); near(e.R, -0.3, 5e-4, 'SR');
+  const s = (zero: string, plane = 'v') => engine.run('rim-face-arrangement-shims', { arr: '1', r: -0.014, f: 0.021, A: 4, B: 6.5, C: 18, sag: 0.006, zero, plane }).values.rc;
+  near(s('12'), -0.008, 1e-12, 'zeroed at 12: sag added'); near(s('6'), -0.02, 1e-12, 'zeroed at 6: sag subtracted'); near(s('12', 'h'), -0.014, 1e-12, 'no sag on horizontal readings');
+  assert.equal(engine.run('rim-face-arrangement-shims', { tol: 0.01 }).text, 'CHANGE THE SHIMS'); assert.equal(engine.run('rim-face-arrangement-shims', { tol: 3 }).text, 'ALIGNED WITHIN TOLERANCE');
+});
+
+test('jackbolt turns reproduce the handbook examples', () => {
+  const a = engine.run('jackbolt-alignment-turns', { thr: 'inch', tpi: 11, head: '4', mF: 0.064 * 25.4, mR: 0.091 * 25.4 }).values;
+  near(a.p / 25.4, 0.0909, 5e-5, '5/8-11: one turn 0.0909 in'); near(a.tF, 0.704, 5e-4, 'front 0.7040 turn'); near(a.tR, 1.0011, 5e-4, 'rear 1.0011 turn'); assert.equal(a.nF, 3, 'front 3 flats'); assert.equal(a.nR, 4, 'rear 4 flats');
+  const b = engine.run('jackbolt-alignment-turns', { thr: 'inch', tpi: 13, head: '4' }).values, c = engine.run('jackbolt-alignment-turns', { thr: 'inch', tpi: 13, head: '6' }).values;
+  near(b.p / 25.4, 0.0769, 5e-5, '1/2-13 per turn'); near(b.pf / 25.4, 0.0192, 5e-5, 'square head per flat'); near(c.pf / 25.4, 0.0128, 5e-5, 'hex head per flat');
+  near(engine.run('jackbolt-alignment-turns', { thr: 'metric', pitch: 2, head: '6', mF: -1, mR: 1 }).values.nF, -3, 1e-12, 'metric M16 hex: −1 mm is three flats back');
+});
+
+test('riveted joint strength reproduces the single-riveted lap joint example', () => {
+  const j = engine.run('riveted-joint-strength-by-type', { type: 'lap1', d: 0.625, Dh: 0.6875, t: 0.25, p: 2, Ss: 8.5, St: 10, Sc: 20, Ls: 12, Lreq: 0, e: 1 }); // stresses in ksi, so loads come out in kips
+  near(j.values.m1 * 6, 15.647, 1e-3, 'shear of six rivets 15,647 lb'); near(j.values.m3 * 6, 18.75, 1e-9, 'bearing 18,750 lb'); near(j.values.m2 * 6, 19.688, 1e-3, 'tearing 19,688 lb'); near(j.values.Lseam, 15.647, 1e-3, 'safe load'); near(j.values.eff, 52.2, 0.05, 'efficiency 52.2 %');
+  const v = { d: 20, Dh: 21.5, t: 10, tc: 8, p: 60, P: 120, Ss: 60, St: 70, Sc: 140, Ls: 120, Lreq: 0, e: 30 }, Ar = Math.PI * 400 / 4;
+  const b2 = engine.run('riveted-joint-strength-by-type', { ...v, type: 'butt2' }).values; near(b2.m2, 5 * Ar * 60, 1e-9, 'two double and one single shear'); near(b2.m3, (120 - 43) * 10 * 70 + Ar * 60, 1e-9, 'inner row + one rivet');
+  const b3 = engine.run('riveted-joint-strength-by-type', { ...v, type: 'butt3' }).values; near(b3.m2, 9 * Ar * 60, 1e-9, 'four double and one single shear'); near(b3.m5, 4 * 20 * 10 * 140 + 20 * 8 * 140, 1e-9, 'crushing in front of five rivets');
+  const c2 = engine.run('riveted-joint-strength-by-type', { ...v, type: 'lapc2' }).values; near(c2.m3, (120 - 1.5 * 21.5) * 10 * 70 + Ar * 60, 1e-9, 'P − 1½D');
+  near(b2.eff, Math.min(b2.m1, b2.m2, b2.m3, b2.m4, b2.m5) / (120 * 10 * 70) * 100, 1e-9, 'efficiency against the solid plate over P');
+  assert.equal(engine.run('riveted-joint-strength-by-type', { type: 'lap1', p: 15 }).text, 'CHECK INPUTS');
+  assert.equal(engine.run('riveted-joint-strength-by-type', {}).text, 'JOINT CARRIES THE LOAD'); assert.equal(engine.run('riveted-joint-strength-by-type', { Lreq: 100 }).text, 'JOINT TOO WEAK FOR THE LOAD');
+});
+
+test('beams of uniform strength follow Tables 3a and 3b', () => {
+  const u = (cs: string, over: Inputs = {}) => engine.run('uniform-strength-beam', { cs, mode: 'load', S: 100, b: 50, h: 100, l: 1000, a: 500, P: 5, x: 500, ...over }).values;
+  const sbh = 100 * 50 * 100 ** 2;
+  near(u('ce-depth').Pa, sbh / 6000, 1e-9, 'Sbh² ÷ 6l'); near(u('ce-width').Pa, sbh / 6000, 1e-9, 'triangular width'); near(u('cu-depth').Pa, sbh / 3000, 1e-9, 'Sbh² ÷ 3l'); near(u('cu-width').Pa, sbh / 3000, 1e-9, 'parabolic width');
+  near(u('sp-width').Pa, 2 * sbh / 3000, 1e-9, 'centre load 2Sbh² ÷ 3l'); near(u('sp-depth', { a: 250 }).Pa, sbh * 1000 / (6 * 250 * 750), 1e-9, 'Sbh²l ÷ 6ac'); near(u('su-width').Pa, 4 * sbh / 3000, 1e-9, '4Sbh² ÷ 3l'); near(u('su-depth').Pa, 4 * sbh / 3000, 1e-9, 'half ellipse');
+  near(engine.run('uniform-strength-beam', { cs: 'ce-depth', mode: 'depth', P: 10 }).values.h, Math.sqrt(12000), 1e-9, 'depth for 10 kN'); near(engine.run('uniform-strength-beam', { cs: 'ce-width', mode: 'width', P: 10 }).values.b, 60, 1e-9, 'width for 10 kN');
+  near(u('ce-depth', { x: 250 }).hx, 50, 1e-9, 'parabolic depth at a quarter'); near(u('cu-width', { x: 500 }).bx, 12.5, 1e-9, 'width ∝ x²'); near(u('su-depth', { x: 250 }).hx, 100 * Math.sqrt(0.75), 1e-9, 'ellipse'); near(u('sp-width', { x: 750 }).bx, 25, 1e-9, 'triangle beyond the load');
+  assert.equal(engine.run('uniform-strength-beam', {}).text, 'WITHIN THE SAFE LOAD'); assert.equal(engine.run('uniform-strength-beam', { P: 10 }).text, 'OVER THE SAFE LOAD'); assert.equal(engine.run('uniform-strength-beam', { cs: 'sp-width', a: 1000 }).text, 'CHECK INPUTS');
+});
+
+test('nose radius finish rule reproduces the handbook examples', () => {
+  const a = engine.run('nose-radius-finish-change', { Ra1: 1, r1: 0.8, r2: 1.6, Rat: 0 }).values; near(a.ratio, 1.414, 5e-4, 'Ra1/Ra2 = (1.6/0.8)^0.5'); near(a.Ra2, 0.7, 0.01, '0.7 Ra1'); near(a.rough, 1.05, 0.015, 'roughing 1.05 Ra1 (from the rounded 0.7)');
+  const b = engine.run('nose-radius-finish-change', { Ra1: 1, r1: 0.8, r2: 1.2, Rat: 0 }).values; near(b.ratio, 1.224, 1e-3, '(1.2/0.8)^0.5'); near(b.Ra2, 0.82, 0.005, '0.82 Ra1'); near(b.rough, 1.23, 0.01, 'roughing 1.23 Ra1');
+  near(engine.run('nose-radius-finish-change', { Ra1: 1.6, r1: 0.8, r2: 1.6, Rat: 0.8 }).values.rT, 3.2, 1e-12, 'radius for half the finish is four times larger');
+  assert.equal(engine.run('nose-radius-finish-change', { Rat: 1.2 }).text, 'TARGET FINISH REACHED'); assert.equal(engine.run('nose-radius-finish-change', { Rat: 1 }).text, 'FINISH ABOVE THE TARGET');
 });
