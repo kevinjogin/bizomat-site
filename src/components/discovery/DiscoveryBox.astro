@@ -1,9 +1,8 @@
 ---
 // "What would you like to solve today?": the question box. Without JavaScript the form is a plain site search
 // (/search/?q=); with it, src/scripts/discovery.ts asks /api/discover for search terms and ranks the WORKOS and READOS
-// catalogue (/discovery-index.json) in the browser, rendering results into DiscoveryResults.
-interface Props { suggestions: readonly string[] }
-const { suggestions } = Astro.props;
+// catalogue (/discovery-index.json) in the browser, rendering results into DiscoveryResults. The example questions are
+// DiscoveryExamples.astro, placed by the page (on the homepage, full width under the hero).
 ---
 
 <form class="dq" role="search" action="/search/" method="get" data-discover-form novalidate>
@@ -23,10 +22,4 @@ const { suggestions } = Astro.props;
   </div>
   <p class="dq__hint" id="discover-hint">Press Enter to search, Shift + Enter for a new line. Your question is used only to find resources.</p>
   <p class="dq__status" id="discover-status" role="status" aria-live="polite" data-discover-status></p>
-  <div class="dq__examples">
-    <p class="dq__examples-label" id="discover-examples">Try asking</p>
-    <ul aria-labelledby="discover-examples">
-      {suggestions.map((s) => <li><button type="button" class="dq__chip" data-discover-example>{s}</button></li>)}
-    </ul>
-  </div>
 </form>
