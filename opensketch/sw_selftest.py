@@ -344,7 +344,29 @@ async def stage_plate(rep: _Report) -> list[str]:
     await _op(rep, "export STEP", "export", {"doc": doc, "format": "step"},
               check=lambda r, f: None if f.get(r.get("file") or "") else "no file came back")
     await _op(rep, "save", "save", {"doc": doc})
+    # a drawing of the saved plate: standard views, scale, model dimensions, title block, then a PDF of it
+    drw = await _op(rep, "drawing of the plate (A3, third angle, model dimensions, title block)", "create_drawing",
+                    {"doc": doc, "sheet": "A3", "projection": "third", "dimensions": True,
+                     "properties": {"Title": "OpenSketch self test plate", "DrawingNo": "SELFTEST-1", "Revision": "A"}},
+                    timeout=300, check=lambda r, f: _drawing_problem(r))
+    if drw and drw.get("doc"):
+        files.append(drw["doc"])
+        await _op(rep, "export the drawing as PDF", "export", {"doc": drw["doc"], "format": "pdf"},
+                  check=lambda r, f: None if f.get(r.get("file") or "") else "no file came back")
     return files
+
+
+def _drawing_problem(res: dict) -> str | None:
+    """What is missing from a new drawing, or None: a saved file, four views (three standard and the isometric),
+    and model dimensions in them."""
+    if not res.get("doc"):
+        return "no drawing path came back"
+    views = res.get("views") or []
+    if len(views) < 4:
+        return f"{len(views)} views on the sheet, expected 4 (front, top, right, isometric)"
+    if not res.get("dimensions"):
+        return "no model dimensions in the views"
+    return None
 
 
 async def stage_shapes(rep: _Report) -> list[str]:

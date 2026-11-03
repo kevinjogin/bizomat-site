@@ -149,13 +149,22 @@ namespace OpenSketch.Sw
                 case "x_t": ext = ".x_t"; break;
                 case "igs": ext = ".igs"; break;
                 case "pdf": ext = ".pdf"; break;
+                case "dwg":
+                case "dxf":
+                    if (Kind(m) != "drawing") throw new UserError("DWG and DXF are made from a drawing: make one with sw_create_drawing, then export that.");
+                    ext = "." + fmt;
+                    break;
                 case "sldprt":
                 case "sldasm":
-                    ext = Kind(m) == "assembly" ? ".sldasm" : ".sldprt";
+                case "slddrw":
+                    ext = Kind(m) == "assembly" ? ".sldasm" : Kind(m) == "drawing" ? ".slddrw" : ".sldprt";
+                    fmt = ext.Substring(1);   // what the file is, whatever was asked for
                     break;
-                default: throw new UserError("Formats: step, stl, x_t, igs, sldprt, sldasm, pdf.");
+                default: throw new UserError("Formats: step, stl, x_t, igs, sldprt, sldasm, slddrw, pdf, dwg, dxf.");
             }
-            if (ext == ".sldprt" || ext == ".sldasm")
+            if (Kind(m) == "drawing" && ext != ".pdf" && ext != ".dwg" && ext != ".dxf" && ext != ".slddrw")
+                throw new UserError("A drawing exports as pdf, dwg, dxf or slddrw. For STEP or STL, export the part or assembly it shows.");
+            if (ext == ".sldprt" || ext == ".sldasm" || ext == ".slddrw")
             {
                 var p = m.GetPathName();
                 if (!string.IsNullOrEmpty(p) && File.Exists(p) && !m.GetSaveFlag()) raw = File.ReadAllBytes(p);
@@ -210,11 +219,13 @@ namespace OpenSketch.Sw
                 ["front"] = swStandardViews_e.swFrontView, ["right"] = swStandardViews_e.swRightView
             };
             var v = J.Str(a, "view");
+            if (Kind(m) == "drawing") v = null;   // a drawing is shown as it is: the whole sheet
             if (v != null && views.TryGetValue(v, out var id))
             {
                 m.ShowNamedView2("", (int)id);
                 m.ViewZoomtofit2();
             }
+            if (Kind(m) == "drawing") m.ViewZoomtofit2();
             m.GraphicsRedraw2();
             var raw = SaveCopy(m, ".png");
             io.Upload("view.png", raw);

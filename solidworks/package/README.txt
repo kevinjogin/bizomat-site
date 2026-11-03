@@ -46,6 +46,7 @@ sw_status, sw_create_document, sw_open_document, sw_get_document, sw_add_feature
 sw_body_topology, sw_measure_items, sw_inspect_design, sw_preview, sw_insert_component,
 sw_add_mate, sw_find_mate_candidates, sw_check_interference, sw_set_parameter,
 sw_set_equation, sw_delete_items, sw_undo, sw_save, sw_export, sw_import, sw_standard_part,
+sw_create_drawing (drawings with views, scale, dimensions and title block; PDF, DWG, DXF),
 sw_selftest.
 
 Each feature is checked after SOLIDWORKS makes it: OpenSketch builds the same feature on the

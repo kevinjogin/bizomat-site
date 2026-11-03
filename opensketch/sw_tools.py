@@ -22,6 +22,7 @@ import base64
 import binascii
 import copy
 import json
+import re
 from collections import OrderedDict
 from typing import Annotated, Any, Literal
 
@@ -75,6 +76,11 @@ Workflow:
   sw_check_interference at the end.
 - Global variables and equations are SOLIDWORKS' own (Tools > Equations): sw_set_parameter, sw_set_equation.
 - Standard fasteners and bearings: sw_standard_part (ISO sizes) saves them as parts you can insert.
+- Drawings: sw_create_drawing makes a native .SLDDRW of a saved part or assembly (sheet A4 to A0, third or first
+  angle projection, the standard views plus an isometric or the views you name, a sheet scale that fits, the
+  model's dimensions, title block fields as custom properties). Dimensions come from the model's sketches and
+  features, so build fully defined sketches with sensible dimensions first. Look at the result with sw_preview
+  (doc = the drawing, screenshot=true) and export it with sw_export (pdf, dwg or dxf).
 - sw_selftest (stages plate, shapes, assembly) checks the add-in on a new PC in scratch files; run it when the
   user asks to test the add-in, and pass on its report.
 - sw_undo takes back the last change; sw_save saves (new documents are saved when made, later changes are not
@@ -656,20 +662,63 @@ async def sw_find_mate_candidates(doc: _DOC = None) -> CallToolResult:
     return _text({"candidates": res})
 
 
+# ----------------------------------------------------------------------------- drawings
+
+DRAWING_VIEWS = Literal["front", "top", "right", "left", "bottom", "back", "isometric"]
+_SCALE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*$")
+
+
+@mcp.tool()
+async def sw_create_drawing(
+        doc: Annotated[str | None, Field(description="The part or assembly to draw (path or window title); omit for the active document. It must have been saved.")] = None,
+        sheet: Annotated[Literal["A4", "A3", "A2", "A1", "A0"], Field(description="Sheet size, landscape")] = "A3",
+        projection: Annotated[Literal["third", "first"], Field(description="Third angle (AS 1100, ASME) or first angle (ISO in Europe)")] = "third",
+        views: Annotated[list[DRAWING_VIEWS] | None, Field(description="Omit for the standard set: front, top and right in the chosen projection, plus an isometric. Or name the views you want.")] = None,
+        scale: Annotated[str | None, Field(description='Sheet scale such as "1:2" or "2:1"; omit to choose the largest standard scale that fits the sheet')] = None,
+        dimensions: Annotated[bool, Field(description="Insert the model's own dimensions (those marked for drawing) into the views")] = True,
+        properties: Annotated[dict[str, str] | None, Field(description='Title block fields, set as the drawing\'s custom properties, e.g. {"Title": "Mounting plate", "DrawingNo": "KV-1001", "Revision": "A", "DrawnBy": "KJ", "Material": "6061-T6"}')] = None,
+        name: Annotated[str | None, Field(description="File name without extension; default the model's name")] = None,
+        folder: Annotated[str | None, Field(description="Windows folder; default the model's own folder")] = None) -> CallToolResult:
+    """A native SOLIDWORKS drawing (.SLDDRW) of a part or assembly, from the user's default drawing template: the
+    views on one sheet, the sheet scale, the model's dimensions and the title block properties. It is saved next to
+    the model. Look at it with sw_preview (doc = the drawing, screenshot=true); export it with sw_export (pdf, dwg
+    or dxf)."""
+    m = _SCALE.match(scale) if scale else None
+    if scale and (not m or float(m.group(1)) <= 0 or float(m.group(2)) <= 0):
+        return _text({"error": 'scale is "a:b" with two positive numbers, for example "1:2" or "2:1".'}, True)
+    props = {}
+    for k, v in (properties or {}).items():
+        k, v = str(k).strip(), str(v).strip()
+        if not k or len(k) > 40 or len(v) > 200 or any(c in k for c in '"$@'):
+            return _text({"error": f"Title block property {k[:40]!r}: names up to 40 characters (no quotes, $ or @), values up to 200."}, True)
+        props[k] = v
+    if len(props) > 30:
+        return _text({"error": "At most 30 title block properties."}, True)
+    if views is not None and not views:
+        return _text({"error": "views: name at least one view, or leave it out for the standard set."}, True)
+    args = {"doc": doc, "sheet": sheet, "projection": projection, "views": list(dict.fromkeys(views)) if views else None,
+            "scale": [float(m.group(1)), float(m.group(2))] if m else None, "dimensions": dimensions,
+            "properties": props or None, "name": name, "folder": folder}
+    return await _simple("create_drawing", args, timeout=600)
+
+
 # ----------------------------------------------------------------------------- files in and out
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "sldasm", "pdf"], doc: _DOC = None,
-                    component: _COMP = None) -> CallToolResult:
-    """Export from SOLIDWORKS (STEP, STL, Parasolid, IGES, a copy of the native file, or a PDF of the view) and
-    return a download_url valid for one hour."""
+async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "sldasm", "slddrw", "pdf", "dwg", "dxf"],
+                    doc: _DOC = None, component: _COMP = None) -> CallToolResult:
+    """Export from SOLIDWORKS and return a download_url valid for one hour. Parts and assemblies: STEP, STL,
+    Parasolid, IGES, a copy of the native file, or a PDF of the view. Drawings: PDF (every sheet), DWG or DXF (the
+    active sheet), or a copy of the .SLDDRW."""
     res, files, err = await _run("export", {"doc": doc, "component": component, "format": format}, timeout=600)
     raw = files.get((res or {}).get("file") or "")
     if err or not raw:
         return _text({"error": err or "SOLIDWORKS sent no file."}, True)
     rec = {"id": "solidworks", "version": 0, "name": "SOLIDWORKS"}
     try:
-        info = await _thread(artifacts.publish, rec, raw, format, (res or {}).get("title") or "SOLIDWORKS")
+        # a native copy is named for what it is (a drawing asked for as sldprt is still an .slddrw)
+        fmt = (res or {}).get("format") if (res or {}).get("format") in artifacts.FORMATS else format
+        info = await _thread(artifacts.publish, rec, raw, fmt, (res or {}).get("title") or "SOLIDWORKS")
     except artifacts.ArtifactError as exc:
         return _text({"error": str(exc)}, True)
     return _text(dict(res, **info))

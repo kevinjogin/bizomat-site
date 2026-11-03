@@ -34,7 +34,9 @@ PERSON_BYTES = 128 * 1024 * 1024
 FORMATS = {"osk": "application/json", "step": "model/step", "stl": "model/stl", "png": "image/png",
            # files from SOLIDWORKS (sw_export): Parasolid, IGES, native files, PDF
            "x_t": "model/x-parasolid", "igs": "model/iges", "sldprt": "application/octet-stream",
-           "sldasm": "application/octet-stream", "pdf": "application/pdf"}
+           "sldasm": "application/octet-stream", "pdf": "application/pdf",
+           # drawings (sw_create_drawing): the native file, and its sheets as AutoCAD DWG / DXF
+           "slddrw": "application/octet-stream", "dwg": "image/vnd.dwg", "dxf": "image/vnd.dxf"}
 _MISSING = object()
 
 

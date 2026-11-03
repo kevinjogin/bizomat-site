@@ -39,6 +39,8 @@ sketches with relations and dimensions, extrudes, revolves, holes, fillets, patt
   sw_measure_items and sw_preview; assemblies with sw_check_interference.
 - To bring in a file over about 100 KB: request_upload, send the file with an HTTP PUT, then sw_import(upload_id).
 - New documents are saved when made; later changes are saved with sw_save (or by the user).
+- For a drawing of a saved part or assembly, sw_create_drawing (views, scale, dimensions, title block); export it
+  with sw_export (pdf, dwg, dxf).
 - When the user asks to test the setup, run sw_selftest (stages plate, shapes, assembly) and pass on its report."""
 
 StdKind = Literal["socket_head_cap_screw", "hex_head_screw", "counter_sunk_screw", "button_head_screw",

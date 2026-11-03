@@ -196,6 +196,19 @@ class SimSW:
             results.append(res)
         return {"ok": True, "completed": len(results), "results": results}, {}
 
+    def op_create_drawing(self, a):
+        model = self._doc(a)
+        if model["kind"] not in ("part", "assembly"):
+            raise SimRefusal(f"{model['title']} is a {model['kind']}: a drawing is made of a part or an assembly.")
+        stem = model["title"].rsplit(".", 1)[0]
+        path = a["doc"].rsplit("\\", 1)[0] + "\\" + (a.get("name") or stem) + ".SLDDRW"
+        self.docs[path] = {"kind": "drawing", "title": stem + ".SLDDRW", "features": [], "names": {}, "count": {},
+                           "components": [], "mates": [], "params": {}, "stamp": 0}
+        views = [{"name": f"Drawing View{i}", "orientation": o} for i, o in enumerate(("*Front", "*Top", "*Right", "*Isometric"), 1)]
+        return {"doc": path, "title": stem + ".SLDDRW", "kind": "drawing", "model": a["doc"],
+                "sheet": {"size": a.get("sheet", "A3"), "scale": "1:1", "projection": "third angle"},
+                "views": views, "dimensions": 6, "properties": sorted(a.get("properties") or {})}, {}
+
     def op_export(self, a):
         d = self._doc(a)
         return {"file": "out.step", "title": d["title"]}, {"out.step": b"ISO-10303-21;"}
@@ -310,7 +323,8 @@ def test_selftest_stage_passes_against_a_simulated_solidworks(sim, stage):
     assert not res.is_error and out["failed"] == 0 and out["passed"] == len(out["steps"])
     assert out["files"]
     if stage == "plate":
-        assert "batch" in sim.ops and "export" in sim.ops
+        assert "batch" in sim.ops and "export" in sim.ops and "create_drawing" in sim.ops
+        assert any(f.endswith(".SLDDRW") for f in out["files"])
         # every feature carried a prediction that matched the simulated build
         rows = [f for r in out["steps"] for f in r.get("features", [])]
         solid = [f for f in rows if f["type"] not in ("sketch", "plane")]

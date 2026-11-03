@@ -150,6 +150,8 @@ class FakeAddin:
             assert r.status_code == 200
             return {"doc": "C:\\OS\\" + a["filename"].rsplit(".", 1)[0] + ".SLDPRT", "bytes": len(r.content),
                     "head": r.content[:20].decode("latin-1")}
+        if op == "create_drawing":
+            return {"doc": "C:\\OS\\Box.SLDDRW", "kind": "drawing", "args": a}
         if op in ("add_mate", "batch", "insert_component", "read", "set_parameter"):
             return {"echo": a}
         raise ValueError(f"unknown op {op}")
@@ -282,6 +284,37 @@ def test_round_trip_through_a_fake_addin(base, fake):
     assert fake.gone and "new SOLIDWORKS key" in fake.gone
     res, out = _mcp(base, "sw_status", {})
     assert out["connected"] is False
+
+
+def test_drawings_are_checked_here_and_made_by_the_addin(base, fake):
+    res, out = _mcp(base, "sw_create_drawing", {"doc": "C:\\OS\\Box.SLDPRT", "sheet": "A2", "projection": "first",
+                                                "views": ["front", "isometric", "front"], "scale": " 1 : 2.5 ",
+                                                "properties": {"Title": "Box", "DrawingNo": "KV-1"}})
+    assert not res.get("isError"), out
+    sent = [c for c in fake.got if c["op"] == "create_drawing"][-1]["args"]
+    assert sent == {"doc": "C:\\OS\\Box.SLDPRT", "sheet": "A2", "projection": "first", "views": ["front", "isometric"],
+                    "scale": [1.0, 2.5], "dimensions": True, "properties": {"Title": "Box", "DrawingNo": "KV-1"}}
+    res, out = _mcp(base, "sw_create_drawing", {})
+    sent = [c for c in fake.got if c["op"] == "create_drawing"][-1]["args"]
+    assert sent == {"sheet": "A3", "projection": "third", "dimensions": True}, "defaults: A3, third angle, standard views"
+
+    # bad input never reaches SOLIDWORKS
+    n = len(fake.got)
+    for bad in ({"scale": "half"}, {"scale": "0:1"}, {"views": []}, {"properties": {"$PRP": "x"}},
+                {"properties": {"Title": "x" * 201}}, {"properties": {f"F{i}": "x" for i in range(31)}}):
+        res, out = _mcp(base, "sw_create_drawing", bad)
+        assert res["isError"], bad
+    # a sheet outside the list is refused by the tool's schema (a plain-text error)
+    r = httpx.post(f"{base}/mcp/{auth.mcp_token()}", json={"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {
+        "name": "sw_create_drawing", "arguments": {"sheet": "Letter"}}}, headers={"Accept": "application/json, text/event-stream"}, timeout=60)
+    assert r.json()["result"]["isError"]
+    assert len(fake.got) == n
+
+    # a drawing's own formats come back as downloads named for what they are
+    for fmt in ("dxf", "dwg", "pdf", "slddrw"):
+        res, out = _mcp(base, "sw_export", {"format": fmt, "doc": "C:\\OS\\Box.SLDDRW"})
+        assert not res.get("isError"), out
+        assert out["filename"].endswith("." + fmt) and httpx.get(out["download_url"]).status_code == 200
 
 
 def test_a_command_nobody_takes_times_out(base, monkeypatch):

@@ -32,7 +32,7 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 
 ## Current state (v0.8)
 
-- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 25 tools: every `sw_`
+- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 26 tools: every `sw_`
   tool (`sw_tools.py`, `sw_selftest.py`, registered on `mcp` at import) plus `request_upload`. `Endpoint` serves it
   at each path in `PATHS` = ("/mcp", "/solidworks/mcp"): the path itself takes a Bearer token (`_BearerGate`, 401
   with the protected-resource pointer for that path), `path/<key>` the private address (`_TokenGate`,
@@ -69,7 +69,17 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   `expect` {dv, bbox, tool_bbox, plane, range} per feature; the add-in remakes a feature flipped when SOLIDWORKS read
   the direction the other way. Reading tools run on a STEP of the body, cached per person and part by SOLIDWORKS'
   update stamp. `sw_get_guide` = SW_GUIDE + docformat.GUIDE.
-- `sw_selftest.py`: stages plate / shapes / assembly in `Documents\OpenSketch\selftest`, each step ok / check /
+- Drawings (`sw_create_drawing` in `sw_tools.py`, `solidworks/src/Addin/Drawings.cs`): a native .SLDDRW of a saved
+  part or assembly from the user's default drawing template, saved next to the model. Sheet A4 to A0 (the
+  template's own sheet wins; a note says so), third angle (default, AS 1100) or first angle; the standard views
+  (Create3rdAngleViews2 / Create1stAngleViews2) plus an isometric in the free upper right, or named views on a grid;
+  the largest preferred scale that fits (from the model's box) unless given; SOLIDWORKS' automatic view scaling is
+  turned off while placing views and put back; model dimensions marked for drawing (InsertModelAnnotations3);
+  title block fields as the drawing's custom properties. The result lists each view's outline and notes (views off
+  the sheet, no dimensions, unsaved model). A half-made drawing is closed. sw_export takes pdf (all sheets), dwg and
+  dxf (active sheet) and slddrw from a drawing; sw_preview of a drawing needs screenshot=true. The API calls were
+  checked against the SOLIDWORKS 2022 interop (30.5.1); not yet run in a real SOLIDWORKS.
+- `sw_selftest.py`: stages plate / shapes / assembly in `Documents\OpenSketch\selftest` (the plate stage ends with its drawing and a PDF of it), each step ok / check /
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
 - Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded): Core (Json, Geom, SketchPlan,
