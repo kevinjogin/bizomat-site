@@ -3814,3 +3814,14 @@ Three tools in batch norton3 from Robert L. Norton, Design of Machinery, 2nd edi
 | **Inverted Slider-Crank Position, Velocity and Acceleration (Inversion 3)** `inverted-slider-crank-kinematics` | CALCULATED | Coriolis term; Circuit; Model and application | 161–163, 276–278, 315–318 | Automated |
 | **Cam Follower Displacement, Velocity, Acceleration and Jerk (Double-Dwell Functions)** `cam-svaj-functions` | CALCULATED | Fundamental law; Dynamic force; Model and application | 357–370, 380–382 | Automated |
 | **Fourbar Linkage Complete Force Balance (Counterweights on Crank and Rocker)** `fourbar-force-balance` | CALCULATED | Shaking moment; Counterweight size; Model and application | 580–583 | Automated |
+## Norton vee engine, geared fivebar and synthesis tools, batch norton4 (added 3 November 2026)
+
+Three tools in batch norton4 from Robert L. Norton, Design of Machinery, 2nd edition: vee engine shaking forces, shaking moments and inertia torque with shared crank throws (pp. 664–669), the geared fivebar position, velocity and acceleration solution (pp. 164–166, 277–278, 319–320), and three-position analytical motion synthesis of a fourbar by the dyad method (pp. 155–157, 191, 201–209, 258). Lengths, angles, masses, speeds and the free choices of the synthesis are always user inputs. WORKOS now holds 1055 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Vee Engine Shaking Force, Shaking Moment and Inertia Torque (Shared Crank Throws)** `vee-engine-balance` | FORCES BALANCED, MOMENTS NOT | Primary shaking force; Secondary shaking force; Shaking moments; Model and application | 664–669 | Automated |
+| **Geared Fivebar Linkage Position, Velocity and Acceleration** `geared-fivebar-kinematics` | CALCULATED | Transmission angle; Assembly over one crank turn; Assembly; Model and application | 164–166, 277–278, 319–320 | Automated |
+| **Fourbar Three-Position Motion Synthesis (Analytical Dyad Method)** `fourbar-three-position-synthesis` | LINKAGE SYNTHESISED | Same circuit at all positions; Transmission angle; Branch and order; Model and application | 155–157, 191, 201–209, 258 | Automated |

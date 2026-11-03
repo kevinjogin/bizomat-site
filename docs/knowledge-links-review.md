@@ -2,7 +2,7 @@
 
 Generated 2026-11-03 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 935 relationships (611 from links authors wrote in the books, 325 from editorial review). Rejected: 135. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 952 relationships (627 from links authors wrote in the books, 326 from editorial review). Rejected: 137. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -335,6 +335,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Inertia and Flywheels by the Numbers | Move profiles and RMS torque | Cam Follower Displacement, Velocity, Acceleration and Jerk (Double-Dwell Functions) | complements | Chapter sizes servo motors for trapezoidal and S-curve move profiles; tool gives Norton’s cycloidal, modified trapezoid, modified sine and polynomial motion laws with jerk. |
 | Buckling by the Numbers | Rods in machines: cylinders and screws | Inverted Slider-Crank Position, Velocity and Acceleration (Inversion 3) | complements | Chapter checks a clevis-mounted cylinder that rotates a cradle; tool applies Norton’s inverted slider-crank kinematics, the linkage of a pivoting cylinder. |
 | Vibrating Machine Elements by the Numbers | Waves, modes and the forces that excite them | Fourbar Linkage Complete Force Balance (Counterweights on Crank and Rocker) | complements | Chapter describes excitations that repeat each revolution; tool gives Norton’s complete force balance of a fourbar so the shaking force vanishes. |
+| Vibration Monitoring by the Numbers | Unbalance and balancing in place | Vee Engine Shaking Force, Shaking Moment and Inertia Torque (Shared Crank Throws) | complements | Chapter treats 1× unbalance as a rotating force cancelled by balance weights; tool gives Norton’s vee engine shaking forces and says whether each rotates at constant magnitude. |
 
 ## 2. Rejected
 
@@ -475,6 +476,8 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Fixtures That Repeat | Choose clamping force that reaches the part | Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles | Rejected: chapter treats toggle clamps as bought-in clamping devices and their force; the tool classifies fourbar linkages and does not size clamps. |
 | Vibrating Machine Elements by the Numbers | Isolate the fan on springs | Inline Multicylinder Engine Balance (Shaking Force, Inertia Torque, Shaking Moment, Firing) | Rejected: chapter isolates a fan from its frame on springs; the tool checks the phase-angle balance of inline engines and does not size isolators. |
 | Metal Fatigue by the Numbers | Springs: high stress, every cycle | Cam Follower Displacement, Velocity, Acceleration and Jerk (Double-Dwell Functions) | Rejected: chapter covers fatigue of springs; the tool gives cam follower motion and does not check spring fatigue. |
+| Louvres and Ventilators by the Numbers | Movable louvres: blades, linkages and actuators | Geared Fivebar Linkage Position, Velocity and Acceleration | Rejected: chapter lays out a parallel-blade crank and link bar; the tool analyses a geared fivebar, which the louvre does not use. |
+| Fixtures That Repeat | Choose clamping force that reaches the part | Fourbar Three-Position Motion Synthesis (Analytical Dyad Method) | Rejected: chapter sets clamping force and clamp choice; the tool designs a linkage for three positions and does not size clamps. |
 
 ## 3. Published READOS books with no approved connection
 
