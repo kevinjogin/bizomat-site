@@ -10232,6 +10232,36 @@
    "note": "Compares rewinding an old, less efficient fan motor with replacing it by equivalent annual cost: A$811 a year to keep against A$357 for a new motor at 8%.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/vibration-monitoring-by-the-numbers",
+   "chapter": "unbalance-and-balancing",
+   "tool": "vee-engine-balance",
+   "type": "complements",
+   "note": "Shows which shaking forces of a vee engine or compressor rotate at constant size, like the unbalance this chapter corrects with weights, and which 2× forces no weight can cancel.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter treats 1× unbalance as a rotating force cancelled by balance weights; tool gives Norton’s vee engine shaking forces and says whether each rotates at constant magnitude."
+  },
+  {
+   "reados": "publication/louvres-and-ventilators-by-the-numbers",
+   "chapter": "movable-louvres",
+   "tool": "geared-fivebar-kinematics",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter lays out a parallel-blade crank and link bar; the tool analyses a geared fivebar, which the louvre does not use."
+  },
+  {
+   "reados": "publication/fixtures-that-repeat",
+   "chapter": "choose-clamping-force-that-reaches-the-part",
+   "tool": "fourbar-three-position-synthesis",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter sets clamping force and clamp choice; the tool designs a linkage for three positions and does not size clamps."
   }
  ]
 }

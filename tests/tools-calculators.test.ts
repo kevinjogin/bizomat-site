@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1', 'norton2', 'norton3'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1', 'norton2', 'norton3', 'norton4'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1052 tools with unique ids and every previously published id kept', () => {
+test('register: 1055 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1052);
+  assert.equal(ids.length, 1055);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -7330,4 +7330,57 @@ test('fourbar force balance keeps the global mass centre still', () => {
     const y = f.req2x * Math.sin(q2) + f.req2y * Math.cos(q2) + m3 * l2 * Math.sin(q2) + m3 * b3 * Math.sin(t3 + p3 * rad) + f.req4x * Math.sin(t4) + f.req4y * Math.cos(t4); return [x, y]; };
   const s0 = sum(0); for (const t2 of [45, 120, 200, 300]) { const s = sum(t2); near(s[0], s0[0], 1e-6, `mass moment x constant at ${t2}°`); near(s[1], s0[1], 1e-6, `y constant at ${t2}°`); }
   const g = engine.run('fourbar-force-balance', { l2, l3, l4, m3, b3, p3, m2b2: 100, p2: 180, m4b4: 0, p4: 0 }).values; near(g.add2, Math.hypot(f.req2x + 100, f.req2y), 1e-9, 'existing unbalance subtracted');
+});
+
+// Norton batch 4 (norton4): vee engine balance, geared fivebar kinematics and three-position fourbar synthesis from Norton,
+// Design of Machinery, 2nd edition. Expected values are Example 5-2 and identities: inline-engine sums for a 0° vee, loop
+// closure, finite differences, the fourbar as a geared fivebar with link 5 held, and the coupler point passing through
+// the three precision points.
+test('vee engine balance matches the known layouts and twice the inline sums at a 0° vee', () => {
+  const vee = (o: Inputs) => engine.run('vee-engine-balance', o).values, k = 45 / 157.5;
+  const v8 = engine.run('vee-engine-balance', {}); assert.equal(v8.text, 'FORCES BALANCED, MOMENTS NOT');
+  near(v8.values.F1pk, 0, 1e-12, 'cross-plane V8 primary force'); near(v8.values.F2pk, 0, 1e-12, 'secondary force'); near(v8.values.M2pk, 0, 1e-12, 'secondary moment');
+  near(v8.values.M1pk, Math.sqrt(10) * 100, 1e-9, 'primary moment √10 × spacing'); near(v8.values.M1min, v8.values.M1pk, 1e-9, 'primary moment rotates at constant size');
+  const tw = vee({ n: 1, vee: 90 }); near(tw.F1pk, 1, 1e-9, '90° V-twin primary mB rω²'); near(tw.F1min, 1, 1e-9, 'constant magnitude'); near(tw.F2pk, Math.SQRT2 * k, 1e-6, 'secondary √2 (r/l)');
+  const ph = { p2: 90, p3: 200 }, z = vee({ n: 3, vee: 0, ...ph, z1: 50, sp: 80 }), il = engine.run('inline-engine-balance', { n: 3, p2: 90, p3: 200, z1: 50, sp: 80, mB: 0, r: 45, l: 157.5 }).values;
+  near(z.F1pk, 2 * Math.hypot(il.c1, il.s1), 1e-4, 'primary twice inline'); near(z.F2pk, 2 * k * Math.hypot(il.c2, il.s2), 1e-4, 'secondary twice inline'); near(z.M1pk, 2 * Math.hypot(il.zc1, il.zs1), 5e-3, 'primary moment twice inline');
+  const t = vee({ n: 1, vee: 0, th: 30 }); near(t.Ti, 2 * (k / 2 * 0.5 - Math.sin(Math.PI / 3) - 1.5 * k), 1e-9, 'inertia torque eq. 14.12 / 13.15e');
+  const d = vee({ mB: 0.5, n: 1, vee: 60 }), w = 3400 * 2 * Math.PI / 60; near(d.FpkN, 0.5 * 0.045 * w * w * d.Fpk, 1e-6, 'force in newtons');
+});
+
+test('geared fivebar closes its loop, matches finite differences and reduces to the fourbar', () => {
+  const run = (o: Inputs) => engine.run('geared-fivebar-kinematics', { a: 40, b: 120, c: 100, d: 40, f: 80, lam: -1.5, phi: 20, t2: 30, w2: 10, a2: 0, circ: 'minus', p: 0, d3: 0, ...o }).values, rad = Math.PI / 180, h = 1e-4;
+  for (const circ of ['minus', 'plus']) {
+    const r = run({ circ }), p = run({ circ, t2: 30 + h }), q = run({ circ, t2: 30 - h }), [t3, t4, t5] = [r.t3 * rad, r.t4 * rad, r.t5 * rad];
+    near(40 * Math.cos(30 * rad) + 120 * Math.cos(t3) - 100 * Math.cos(t4) - 40 * Math.cos(t5) - 80, 0, 1e-9, `${circ} x closure (eq. 4.24c)`); near(40 * Math.sin(30 * rad) + 120 * Math.sin(t3) - 100 * Math.sin(t4) - 40 * Math.sin(t5), 0, 1e-9, 'y closure (eq. 4.24d)');
+    near(r.t5, ((-1.5 * 30 + 20) % 360 + 360) % 360, 1e-9, 'θ5 = λθ2 + φ');
+    const df = (a: number, b: number) => ((((a - b) % 360) + 540) % 360) - 180;
+    near(r.w3, df(p.t3, q.t3) / (2 * h) * 10, 1e-5, `${circ} ω3`); near(r.w4, df(p.t4, q.t4) / (2 * h) * 10, 1e-5, `${circ} ω4`);
+    near(r.a3, (p.w3 - q.w3) / (2 * h * rad) * 10, 1e-3, `${circ} α3`); near(r.a4, (p.w4 - q.w4) / (2 * h * rad) * 10, 1e-3, `${circ} α4`);
+    const s = run({ circ, a2: 5 }); near(s.a3, r.a3 + 5 * r.w3 / 10, 1e-6, 'α2 term'); near(s.a5, -7.5, 1e-12, 'α5 = λα2');
+  }
+  const fb = (circ: string) => engine.run('fourbar-kinematics', { a: 40, b: 120, c: 100, d: 120, t2: 30, w2: 10, a2: 3, circ, p: 0, d3: 0 }).values;
+  const gs = ['minus', 'plus'].map((circ) => run({ lam: 0, phi: 0, a2: 3, circ })), fs = ['open', 'crossed'].map(fb);
+  const pair = Math.abs(gs[0].t4 - fs[0].t4) < 1e-6 ? [0, 1] : [1, 0];
+  for (const i of [0, 1]) { const g = gs[i], f = fs[pair[i]]; for (const key of ['t3', 't4', 'w3', 'w4', 'a3', 'a4']) near(g[key], f[key], 1e-6, `held link 5 gives the fourbar ${key}`); }
+  assert.equal(engine.run('geared-fivebar-kinematics', { a: 40, b: 30, c: 30, d: 40, f: 300 }).text, 'CHECK INPUTS');
+});
+
+test('three-position synthesis reproduces Example 5-2 and passes through the precision points', () => {
+  const ex = { p21: 2.798, d2: -31.19, p31: 3.919, d3: -16.34, a2: -45, a3: 9.3, b2: 342.3, b3: 324.8, g2: 30.9, g3: 80.6 };
+  const r = engine.run('fourbar-three-position-synthesis', ex), v = r.values;
+  for (const [key, want] of [['Wx', 0.055], ['Wy', 6.832], ['Zx', 1.179], ['Zy', 0.94], ['Ux', -2.628], ['Uy', -1.825], ['Sx', -0.109], ['Sy', 1.487], ['Vx', 1.288], ['Vy', -0.547], ['Gx', 3.971], ['Gy', 8.11], ['O2x', -1.234], ['O2y', -7.772], ['O4x', 2.737], ['O4y', 0.338]] as const) near(v[key], want, 0.003, `Example 5-2 ${key}`);
+  for (const [key, want] of [['l1', 9.03], ['l2', 6.83], ['l3', 1.4], ['l4', 3.2]] as const) near(v[key], want, 0.006, `Table 5-1 ${key}`);
+  assert.equal(v.cross1 + v.cross2 + v.cross3, 3, 'crossed circuit, as Table 5-1'); near(v.pz, 1.51, 0.005, 'coupler point 1.51 from A');
+  for (const free of [{}, { b2: 300, b3: 270, g2: 40, g3: 95 }]) {
+    const s = engine.run('fourbar-three-position-synthesis', { ...ex, ...free }).values, rad = Math.PI / 180, tG = Math.atan2(s.Gy, s.Gx);
+    const want = [[0, 0], [2.798 * Math.cos(-31.19 * rad), 2.798 * Math.sin(-31.19 * rad)], [3.919 * Math.cos(-16.34 * rad), 3.919 * Math.sin(-16.34 * rad)]];
+    [s.t21, s.t22, s.t23].forEach((t2, i) => {
+      const k = engine.run('fourbar-kinematics', { a: s.l2, b: s.l3, c: s.l4, d: s.l1, t2, w2: 1, a2: 0, circ: [s.cross1, s.cross2, s.cross3][i] ? 'crossed' : 'open', p: s.pz, d3: s.pa }).values;
+      near(k.t4, [s.t41, s.t42, s.t43][i], 1e-6, `fourbar gives the rocker angle at position ${i + 1}`);
+      const gx = s.O2x + k.Px * Math.cos(tG) - k.Py * Math.sin(tG), gy = s.O2y + k.Px * Math.sin(tG) + k.Py * Math.cos(tG);
+      near(gx, want[i][0], 1e-6, `coupler point x at precision point ${i + 1}`); near(gy, want[i][1], 1e-6, `coupler point y at precision point ${i + 1}`);
+    });
+  }
+  assert.equal(engine.run('fourbar-three-position-synthesis', { ...ex, b2: 0, b3: 0 }).text, 'CHECK INPUTS');
 });
