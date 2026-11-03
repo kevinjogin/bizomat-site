@@ -165,6 +165,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'thermoelectric-cooling-by-the-numbers': { motif: 'breakeven', tone: 'ember' },
   'production-leak-testing-by-the-numbers': { motif: 'locks', tone: 'paper' },
   'flow-measurement-by-the-numbers': { motif: 'workflow', tone: 'carbon' },
+  'vibration-monitoring-by-the-numbers': { motif: 'summit', tone: 'graphite' },
+  'insulation-testing-by-the-numbers': { motif: 'barcode', tone: 'carbon' },
   'electrostatics-in-the-factory-by-the-numbers': { motif: 'megaphone', tone: 'graphite' },
   'distribution-transformers-by-the-numbers': { motif: 'neural', tone: 'ember' },
   'engineering-software-you-can-sell': { motif: 'launch', tone: 'carbon' },
