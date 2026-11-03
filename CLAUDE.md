@@ -91,8 +91,9 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 
 - One Windows PC (`windows/`): `setup.ps1` (Python 3.12 venv, pinned packages, copies the add-in zip from
   Downloads), `start.ps1` (asks for the server password, kept only in that window, and an optional public https
-  address for a tunnel; runs on port 8000), `README.md` (steps: add-in from the Actions artifact, the macro, Cloudflare
-  Tunnel for AI apps). The add-in's default address is `http://127.0.0.1:8000` (`Settings.DefaultServer`).
+  address for a tunnel; runs on port 8000), `connect-claude.ps1` (adds the private address to Claude Desktop's config through
+  `cmd /c npx mcp-remote`, with a backup, and restarts it), `README.md` (steps: add-in from the Actions artifact, the
+  macro, Claude Desktop, Cloudflare Tunnel for web AI apps). The add-in's default address is `http://127.0.0.1:8000` (`Settings.DefaultServer`).
 
 ## Known limits
 

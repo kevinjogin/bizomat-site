@@ -84,7 +84,22 @@ To start it with one click, add a toolbar button: **Tools > Customize > Commands
 The key is saved for your Windows user in `HKEY_CURRENT_USER\Software\OpenSketch`. Treat it like a password.
 **New key** on the home page replaces it.
 
-## 7. Connect your AI app (needs a public https address)
+## 7. Connect Claude Desktop on this PC (no tunnel)
+
+With the server running, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File windows\connect-claude.ps1
+```
+
+It asks for the private address from the home page (under "Your app cannot sign in?"). It adds OpenSketch to
+Claude Desktop's settings (`%APPDATA%\Claude\claude_desktop_config.json`, with a backup) and restarts Claude Desktop.
+The private address works like a password: keep it to yourself.
+
+## 7b. Connect claude.ai or ChatGPT (needs a public https address)
+
+`http://127.0.0.1:8000/mcp` does not work as a connector: these apps connect from the internet, so they need an
+https address that reaches your PC.
 
 AI apps reach the server over the internet, so it needs an https address. Cloudflare Tunnel provides one without
 opening any port on your PC.
