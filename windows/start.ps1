@@ -26,6 +26,11 @@ Remove-Variable password
 
 $public = Read-Host 'Public https address for AI apps (for example https://opensketch.example.com), or Enter for this PC only'
 $public = $public.Trim().TrimEnd('/')
+# The address on this PC is not a public one: treat it as "none" rather than stopping.
+if ($public -match '^(https?://)?(127\.0\.0\.1|localhost)(:\d+)?$') {
+  Write-Host 'That is the address on this PC (for the browser and SOLIDWORKS), not a public one. Carrying on without a public address.'
+  $public = ''
+}
 if ($public) {
   if ($public -notmatch '^https://') { Write-Host 'The public address must start with https://' -ForegroundColor Yellow; exit 1 }
   $env:OPENSKETCH_PUBLIC_URL = $public
