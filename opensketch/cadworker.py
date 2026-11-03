@@ -135,8 +135,12 @@ def _init(nice: int, oom: int = 500) -> None:
     oom_score(oom)
     if nice:
         try:
-            os.nice(nice)
-        except OSError:
+            if hasattr(os, "nice"):
+                os.nice(nice)
+            else:  # Windows has no nice(): below-normal priority does the same job
+                import psutil
+                psutil.Process().nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+        except (OSError, ImportError, AttributeError):
             pass
 
 

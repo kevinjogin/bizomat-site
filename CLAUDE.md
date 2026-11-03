@@ -94,6 +94,7 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   address for a tunnel; runs on port 8000), `connect-claude.ps1` (adds the private address to Claude Desktop's config through
   `cmd /c npx mcp-remote`, with a backup, and restarts it), `README.md` (steps: add-in from the Actions artifact, the
   macro, Claude Desktop, Cloudflare Tunnel for web AI apps). The add-in's default address is `http://127.0.0.1:8000` (`Settings.DefaultServer`).
+  On Windows the CAD workers lower their priority with psutil (there is no `os.nice`).
 
 ## Known limits
 
