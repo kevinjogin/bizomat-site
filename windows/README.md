@@ -53,6 +53,11 @@ GitHub builds it on every change and keeps the newest one on one page:
    **Run anyway**: the program is not signed.
 5. Reopen SOLIDWORKS and connect.
 
+Or let a script do steps 1 and 3 to 5 and prove the result: download the zip into Downloads, then run
+`powershell -ExecutionPolicy Bypass -File windows\update-addin.ps1`. It closes SOLIDWORKS (after asking), checks the
+zip is 0.9.0 or newer, installs it into `%LOCALAPPDATA%\OpenSketch\AddIn` (always the same folder, not on OneDrive),
+registers it and prints the add-in Windows will load.
+
 To check which add-in SOLIDWORKS loaded, ask Claude for the SOLIDWORKS status. It shows the add-in `version` and its
 `path`. If it says `update_needed`, the old add-in is still the one loaded: repeat the steps above.
 
