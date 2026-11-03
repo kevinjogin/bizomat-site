@@ -9,8 +9,14 @@ $ErrorActionPreference = 'Stop'
 function Stop-With($message) { Write-Host $message -ForegroundColor Yellow; exit 1 }
 
 # The server must be running, and Node.js installed (Claude Desktop starts the link with npx)
-try { Invoke-WebRequest -UseBasicParsing -TimeoutSec 5 'http://127.0.0.1:8000/healthz' | Out-Null }
-catch { Stop-With 'The OpenSketch server is not running. Start it first: powershell -ExecutionPolicy Bypass -File windows\start.ps1' }
+# A plain connection to port 8000 (no web proxy involved), so the check cannot be fooled by proxy settings.
+$listening = $false
+try { $tcp = New-Object System.Net.Sockets.TcpClient; $tcp.Connect('127.0.0.1', 8000); $listening = $tcp.Connected; $tcp.Close() } catch { }
+if (-not $listening) {
+  Write-Host 'Nothing is answering on http://127.0.0.1:8000, so the OpenSketch server does not seem to be running.' -ForegroundColor Yellow
+  Write-Host 'Start it in another window first (and keep that window open): powershell -ExecutionPolicy Bypass -File windows\start.ps1'
+  if ((Read-Host 'Continue anyway? (y/N)') -notmatch '^[yY]') { exit 1 }
+}
 if (-not (Get-Command npx -ErrorAction SilentlyContinue)) { Stop-With 'Node.js is needed: winget install OpenJS.NodeJS.LTS' }
 
 Write-Host 'On the OpenSketch home page (http://127.0.0.1:8000), open "Your app cannot sign in?" and copy the private address.'
