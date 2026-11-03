@@ -81,6 +81,25 @@ Workflow:
   model's dimensions, title block fields as custom properties). Dimensions come from the model's sketches and
   features, so build fully defined sketches with sensible dimensions first. Look at the result with sw_preview
   (doc = the drawing, screenshot=true) and export it with sw_export (pdf, dwg or dxf).
+Drafting practice (AS 1100.101 and 201, ISO 128, ISO 129-1), for drawings a workshop can make the part from:
+- The drawing's dimensions are the model's sketch dimensions, so dimension sketches the way the part is made and
+  checked: from functional datums (the faces that locate, seat or mate), each size and position once, no closed
+  chains, diameters on round features, hole positions from the datums rather than from each other.
+- Views: the front view shows the most characteristic shape, in the part's working or machining position. Use the
+  fewest views that define the part: a plate needs a front and one edge view, a turned part one view with
+  diameters (plus an end view only for flats, holes or keyways). Leave out views that repeat information. The
+  isometric is for understanding only and carries no dimensions.
+- Projection: third angle (AS 1100) unless the user works to first angle. Scale: a preferred scale (1:1, 1:2,
+  1:5, 1:10, 2:1, 5:1) at which the views fill the area without crowding; leave the scale out to get one.
+- Dimensions sit outside the outline, between views where two views share them, never to hidden lines, smaller
+  inside larger, grouped by feature. Shape and size of a feature in the view that shows it true; no duplicates.
+- Notes: units, do not scale, deburr, general tolerance (ISO 2768-m unless the user gives one). Tolerances that
+  matter for fit or function go on the dimension itself (add them in the model or tell the user). Title block:
+  title, drawing number, revision, material, finish, drawn by and date when known.
+- Check every drawing: take a screenshot, read the result's notes, and fix what a checker would reject (views off
+  the sheet or crowded, dimensions crossing or missing, a needed view absent) by changing the views, scale, sheet
+  or the model's sketch dimensions, then make it again with overwrite=true. Tell the user what still needs a
+  human: tolerances, surface finish and anything not in the model.
 - sw_selftest (stages plate, shapes, assembly) checks the add-in on a new PC in scratch files; run it when the
   user asks to test the add-in, and pass on its report.
 - sw_undo takes back the last change; sw_save saves (new documents are saved when made, later changes are not
@@ -668,7 +687,10 @@ async def sw_find_mate_candidates(doc: _DOC = None) -> CallToolResult:
 
 # ----------------------------------------------------------------------------- drawings
 
-DRAWINGS_FROM = "0.9.0"   # the first add-in that knows create_drawing and the drawing export formats
+DRAWINGS_FROM = "0.9.1"   # create_drawing with view layout, centre marks, notes and overwrite; 0.9.0 misplaced views
+# General notes (AS 1100.101 / ISO 128 practice): what a workshop needs that no view shows. Replace with `notes`.
+DEFAULT_NOTES = ["NOTES:", "1. ALL DIMENSIONS IN MILLIMETRES.", "2. DO NOT SCALE DRAWING.",
+                 "3. REMOVE BURRS AND SHARP EDGES.", "4. GENERAL TOLERANCES: ISO 2768-m."]
 DRAWING_VIEWS = Literal["front", "top", "right", "left", "bottom", "back", "isometric"]
 _SCALE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*$")
 
@@ -683,11 +705,15 @@ async def sw_create_drawing(
         dimensions: Annotated[bool, Field(description="Insert the model's own dimensions (those marked for drawing) into the views")] = True,
         properties: Annotated[dict[str, str] | None, Field(description='Title block fields, set as the drawing\'s custom properties, e.g. {"Title": "Mounting plate", "DrawingNo": "KV-1001", "Revision": "A", "DrawnBy": "KJ", "Material": "6061-T6"}')] = None,
         name: Annotated[str | None, Field(description="File name without extension; default the model's name")] = None,
-        folder: Annotated[str | None, Field(description="Windows folder; default the model's own folder")] = None) -> CallToolResult:
-    """A native SOLIDWORKS drawing (.SLDDRW) of a part or assembly, from the user's default drawing template: the
-    views on one sheet, the sheet scale, the model's dimensions and the title block properties. It is saved next to
-    the model. Look at it with sw_preview (doc = the drawing, screenshot=true); export it with sw_export (pdf, dwg
-    or dxf)."""
+        folder: Annotated[str | None, Field(description="Windows folder; default the model's own folder")] = None,
+        notes: Annotated[list[str] | None, Field(description="General notes, one line each, placed bottom left. Omit for the standard set (units, do not scale, deburr, ISO 2768-m general tolerances); [] for none")] = None,
+        centre_marks: Annotated[bool, Field(description="Centre marks on holes and slots, centre lines on cylinders")] = True,
+        overwrite: Annotated[bool, Field(description="Replace a drawing of the same name (closing it if open) instead of making Name_2")] = False) -> CallToolResult:
+    """A native SOLIDWORKS drawing (.SLDDRW) of a part or assembly, from the user's default drawing template, set out
+    as a drafter would: the views a fixed gap apart and centred above the title block, the isometric beside them,
+    centre marks and lines, the model's dimensions auto-arranged, general notes, the sheet scale and the title block
+    properties. It is saved next to the model. Follow the drafting practice in sw_get_guide. Always look at the result
+    with sw_preview (doc = the drawing, screenshot=true) and read its notes; export with sw_export (pdf, dwg, dxf)."""
     m = _SCALE.match(scale) if scale else None
     if scale and (not m or float(m.group(1)) <= 0 or float(m.group(2)) <= 0):
         return _text({"error": 'scale is "a:b" with two positive numbers, for example "1:2" or "2:1".'}, True)
@@ -699,6 +725,9 @@ async def sw_create_drawing(
         props[k] = v
     if len(props) > 30:
         return _text({"error": "At most 30 title block properties."}, True)
+    lines = DEFAULT_NOTES if notes is None else [str(n).strip() for n in notes if str(n).strip()]
+    if len(lines) > 12 or any(len(n) > 90 for n in lines):
+        return _text({"error": "notes: at most 12 lines of up to 90 characters."}, True)
     if views is not None and not views:
         return _text({"error": "views: name at least one view, or leave it out for the standard set."}, True)
     old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings")
@@ -706,7 +735,8 @@ async def sw_create_drawing(
         return _text({"error": old}, True)
     args = {"doc": doc, "sheet": sheet, "projection": projection, "views": list(dict.fromkeys(views)) if views else None,
             "scale": [float(m.group(1)), float(m.group(2))] if m else None, "dimensions": dimensions,
-            "properties": props or None, "name": name, "folder": folder}
+            "properties": props or None, "name": name, "folder": folder, "notes": lines or None,
+            "centre_marks": centre_marks, "overwrite": overwrite}
     return await _simple("create_drawing", args, timeout=600)
 
 

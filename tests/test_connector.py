@@ -67,6 +67,7 @@ def test_only_the_solidworks_tools_on_both_addresses(app):
     guide = _rpc(app, "/mcp", "tools/call", {"name": "sw_get_guide", "arguments": {}}).json()["result"]["content"][0]["text"]
     assert "sw_status first" in guide and '"type":"sketch"' in guide and "Mate references" in guide
     assert "viewport" not in guide  # only the SOLIDWORKS workflow
+    assert "Drafting practice" in guide and "overwrite=true" in guide  # how a drawing is set out and checked
 
 
 def test_one_sign_in_works_on_both_addresses(app):

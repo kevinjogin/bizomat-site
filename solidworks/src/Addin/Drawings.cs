@@ -111,14 +111,32 @@ namespace OpenSketch.Sw
                 else
                     notes.Add("Could not read the sheet's properties: the scale and projection are the template's.");
 
+                // centre marks on holes and slots, centre lines on cylinders: SOLIDWORKS adds them as each view is made
+                if (J.Bool(a, "centre_marks", true))
+                    foreach (var t in new[]
+                             {
+                                 swUserPreferenceToggle_e.swDetailingAutoInsertCenterMarksForHoles, swUserPreferenceToggle_e.swDetailingAutoInsertCenterMarksForSlots,
+                                 swUserPreferenceToggle_e.swDetailingAutoInsertCenterMarksForHolesAsm, swUserPreferenceToggle_e.swDetailingAutoInsertCenterMarksForSlotsAsm,
+                                 swUserPreferenceToggle_e.swDetailingAutoInsertCenterLines,
+                             })
+                    {
+                        try
+                        {
+                            m.Extension.SetUserPreferenceToggle((int)t, (int)swUserPreferenceOption_e.swDetailingNoOptionSpecified, true);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+
                 // views
                 if (standard)
                 {
                     var made = third ? drw.Create3rdAngleViews2(modelPath) : drw.Create1stAngleViews2(modelPath);
                     if (!made) throw new UserError("SOLIDWORKS could not place the standard views of " + model.GetTitle() + ".");
-                    // the corner the standard views leave free, clear of a title block in the lower right
-                    if (drw.CreateDrawViewFromModelView3(modelPath, "*Isometric", sw * 0.78 / 1000, sh * 0.70 / 1000, 0) == null)
-                        notes.Add("The isometric view could not be placed.");
+                    var iso = drw.CreateDrawViewFromModelView3(modelPath, "*Isometric", sw * 0.83 / 1000, sh * 0.70 / 1000, 0) as IView;
+                    if (iso == null) notes.Add("The isometric view could not be placed.");
+                    ArrangeStandard(drw, iso, sw, sh, notes);
                 }
                 else
                 {
@@ -144,6 +162,8 @@ namespace OpenSketch.Sw
                         dims = (r as object[])?.Length ?? 0;
                         if (dims == 0)
                             notes.Add("No model dimensions came in: none are marked for drawing, or the views do not show the faces they belong to.");
+                        else
+                            ArrangeDimensions(m, drw);
                     }
                     catch (Exception ex)
                     {
@@ -163,6 +183,17 @@ namespace OpenSketch.Sw
                         var res = cpm.Add3(kv.Key, (int)swCustomInfoType_e.swCustomInfoText, value, (int)swCustomPropertyAddOption_e.swCustomPropertyReplaceValue);
                         if (res == (int)swCustomInfoAddResult_e.swCustomInfoAddResult_AddedOrChanged) set.Add(kv.Key);
                         else notes.Add($"Title block property {kv.Key} was not set (SOLIDWORKS returned {res}).");
+                    }
+                }
+
+                var noteLines = J.Strs(a, "notes");
+                if (noteLines.Count > 0)
+                {
+                    var y = Math.Min(60.0, 15 + 5.5 * noteLines.Count);   // the lowest band, left of a title block
+                    foreach (var line in noteLines)
+                    {
+                        if (drw.CreateText2(line, 17 / 1000.0, y / 1000, 0, 0.0035, 0) == null) notes.Add("A general note could not be placed: " + line);
+                        y -= 5.5;
                     }
                 }
 
@@ -188,7 +219,15 @@ namespace OpenSketch.Sw
                     notes.Add("Off the sheet: " + string.Join(", ", outside) + ". Use a larger sheet or a smaller scale.");
 
                 var folder = string.IsNullOrWhiteSpace(J.Str(a, "folder")) ? Path.GetDirectoryName(modelPath) : Folder(a);
-                var path = FreePath(folder, SafeName(J.Str(a, "name") ?? Path.GetFileNameWithoutExtension(modelPath)), ".SLDDRW");
+                var stem = SafeName(J.Str(a, "name") ?? Path.GetFileNameWithoutExtension(modelPath));
+                string path;
+                if (J.Bool(a, "overwrite"))
+                {
+                    path = Path.Combine(folder, stem + ".SLDDRW");
+                    if (app.GetOpenDocumentByName(path) is IModelDoc2 open && !ReferenceEquals(open, m))
+                        app.CloseDoc(open.GetTitle());   // the earlier drawing is replaced, as asked
+                }
+                else path = FreePath(folder, stem, ".SLDDRW");
                 int err = 0, warn = 0;
                 if (!m.Extension.SaveAs(path, (int)swSaveAsVersion_e.swSaveAsCurrentVersion, (int)swSaveAsOptions_e.swSaveAsOptions_Silent, null, ref err, ref warn))
                     throw new UserError($"SOLIDWORKS made the drawing but could not save it as {path} (error {err}).");
@@ -221,6 +260,110 @@ namespace OpenSketch.Sw
             }
         }
 
+        const double Margin = 15, TitleBand = 65, Gap = 25;   // mm: border, the band a title block and notes take, room between views
+
+        /// <summary>Where the standard views go [x0, y0, x1, y1] in mm: the left two thirds above the title block band.</summary>
+        static double[] GroupArea(double sw, double sh) => new[] { Margin, TitleBand, sw * 0.66, sh - Margin };
+        static double[] IsoArea(double sw, double sh) => new[] { sw * 0.66, TitleBand, sw - Margin, sh - Margin };
+
+        static double[] Box(IView v)
+        {
+            var o = v?.GetOutline() as double[];
+            return o == null || o.Length < 4 ? null : new[] { o[0] * 1000, o[1] * 1000, o[2] * 1000, o[3] * 1000 };
+        }
+
+        static void MoveBy(IView v, double dx, double dy)
+        {
+            if (Math.Abs(dx) < 0.01 && Math.Abs(dy) < 0.01) return;
+            if (v.Position is double[] p && p.Length >= 2) v.Position = new[] { p[0] + dx / 1000, p[1] + dy / 1000 };
+        }
+
+        /// <summary>Moves the front view by (dx, dy), and any projected view that did not follow it by the same amount.</summary>
+        static void MoveGroup(IView front, List<IView> children, double dx, double dy)
+        {
+            var before = children.Select(Box).ToList();
+            MoveBy(front, dx, dy);
+            for (var i = 0; i < children.Count; i++)
+            {
+                var now = Box(children[i]);
+                if (before[i] == null || now == null) continue;
+                MoveBy(children[i], dx - (now[0] - before[i][0]), dy - (now[1] - before[i][1]));
+            }
+        }
+
+        /// <summary>The standard views as a drafter sets them out: the projected views a fixed gap from the front view
+        /// (room for dimensions between them), the group centred in the drawing area above the title block band, and the
+        /// isometric centred in its own area to the right. Notes say when they do not fit.</summary>
+        void ArrangeStandard(IDrawingDoc drw, IView iso, double sw, double sh, List<object> notes)
+        {
+            var views = new List<IView>();
+            var first = drw.GetFirstView() as IView;   // the sheet
+            for (var v = first?.GetNextView() as IView; v != null; v = v.GetNextView() as IView)
+                if (!ReferenceEquals(v, iso) && v.Name != iso?.Name) views.Add(v);
+            if (views.Count == 0) return;
+            var front = views[0];
+            var children = views.Skip(1).ToList();
+            try
+            {
+                // 1. a fixed gap between the front view and each projected view
+                foreach (var c in children)
+                {
+                    var f = Box(front);
+                    var b = Box(c);
+                    if (f == null || b == null) continue;
+                    double fx = (f[0] + f[2]) / 2, fy = (f[1] + f[3]) / 2, cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+                    if (Math.Abs(cy - fy) > Math.Abs(cx - fx))
+                        MoveBy(c, 0, cy > fy ? f[3] + Gap - b[1] : f[1] - Gap - b[3]);   // above or below the front view
+                    else
+                        MoveBy(c, cx > fx ? f[2] + Gap - b[0] : f[0] - Gap - b[2], 0);   // right or left of it
+                }
+                // 2. the group centred in its area
+                var all = views.Select(Box).Where(x => x != null).ToList();
+                if (all.Count > 0)
+                {
+                    double gx0 = all.Min(x => x[0]), gy0 = all.Min(x => x[1]), gx1 = all.Max(x => x[2]), gy1 = all.Max(x => x[3]);
+                    var area = GroupArea(sw, sh);
+                    MoveGroup(front, children, (area[0] + area[2]) / 2 - (gx0 + gx1) / 2, (area[1] + area[3]) / 2 - (gy0 + gy1) / 2);
+                    if (gx1 - gx0 > area[2] - area[0] || gy1 - gy0 > area[3] - area[1])
+                        notes.Add($"The views need {Num(gx1 - gx0)} x {Num(gy1 - gy0)} mm at this scale; the drawing area is {Num(area[2] - area[0])} x {Num(area[3] - area[1])} mm. Use a smaller scale or a larger sheet.");
+                }
+                // 3. the isometric in its own area
+                var ib = Box(iso);
+                if (ib != null)
+                {
+                    var ia = IsoArea(sw, sh);
+                    MoveBy(iso, (ia[0] + ia[2]) / 2 - (ib[0] + ib[2]) / 2, (ia[1] + ia[3]) / 2 - (ib[1] + ib[3]) / 2);
+                    if (ib[2] - ib[0] > ia[2] - ia[0] || ib[3] - ib[1] > ia[3] - ia[1])
+                        notes.Add("The isometric is larger than the space beside the views: leave it out (views without isometric) or use a larger sheet.");
+                }
+            }
+            catch (Exception ex)
+            {
+                notes.Add("Arranging the views failed part-way: " + ex.Message);
+            }
+        }
+
+        /// <summary>SOLIDWORKS' Auto Arrange on each view's dimensions: spaced off the outline, smaller inside larger.</summary>
+        static void ArrangeDimensions(IModelDoc2 m, IDrawingDoc drw)
+        {
+            var first = drw.GetFirstView() as IView;
+            for (var v = first?.GetNextView() as IView; v != null; v = v.GetNextView() as IView)
+            {
+                try
+                {
+                    m.ClearSelection2(true);
+                    var n = 0;
+                    for (var dd = v.GetFirstDisplayDimension5(); dd != null; dd = dd.GetNext5())
+                        if (dd.GetAnnotation() is IAnnotation an && an.Select3(true, null)) n++;
+                    if (n > 0) m.Extension.AlignDimensions((int)swAlignDimensionType_e.swAlignDimensionType_AutoArrange, 0.006);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            m.ClearSelection2(true);
+        }
+
         /// <summary>The model's size in mm along X, Y and Z (front view: X across, Y up; top view: X and Z).</summary>
         static double[] Extents(IModelDoc2 model)
         {
@@ -244,10 +387,11 @@ namespace OpenSketch.Sw
             double needW, needH, roomW, roomH;
             if (custom == null)
             {
-                needW = (ext[0] + ext[2]) * 1.35;   // front + right side by side, with a gap
-                needH = (ext[1] + ext[2]) * 1.35;   // front + top one above the other
-                roomW = (sheetW - 40) * 0.62;
-                roomH = (sheetH - 40) * 0.80;
+                var area = GroupArea(sheetW, sheetH);
+                needW = ext[0] + ext[2];   // front + side view side by side
+                needH = ext[1] + ext[2];   // front + top one above the other
+                roomW = area[2] - area[0] - Gap;
+                roomH = area[3] - area[1] - Gap;
             }
             else
             {

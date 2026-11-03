@@ -75,7 +75,7 @@ def _box_step(x=40, y=20, z=10):
 class FakeAddin:
     """Answers commands the way the C# add-in does, from canned geometry."""
 
-    def __init__(self, base: str, key: str, version: str = "0.9.0"):
+    def __init__(self, base: str, key: str, version: str = "0.9.1"):
         self.base, self.key, self.version = base, key, version
         self.h = {"Authorization": f"Bearer {key}"}
         self.got: list[dict] = []
@@ -292,16 +292,21 @@ def test_drawings_are_checked_here_and_made_by_the_addin(base, fake):
                                                 "properties": {"Title": "Box", "DrawingNo": "KV-1"}})
     assert not res.get("isError"), out
     sent = [c for c in fake.got if c["op"] == "create_drawing"][-1]["args"]
+    from opensketch.sw_tools import DEFAULT_NOTES
     assert sent == {"doc": "C:\\OS\\Box.SLDPRT", "sheet": "A2", "projection": "first", "views": ["front", "isometric"],
-                    "scale": [1.0, 2.5], "dimensions": True, "properties": {"Title": "Box", "DrawingNo": "KV-1"}}
-    res, out = _mcp(base, "sw_create_drawing", {})
+                    "scale": [1.0, 2.5], "dimensions": True, "properties": {"Title": "Box", "DrawingNo": "KV-1"},
+                    "notes": DEFAULT_NOTES, "centre_marks": True, "overwrite": False}
+    res, out = _mcp(base, "sw_create_drawing", {"notes": [], "overwrite": True, "centre_marks": False})
     sent = [c for c in fake.got if c["op"] == "create_drawing"][-1]["args"]
-    assert sent == {"sheet": "A3", "projection": "third", "dimensions": True}, "defaults: A3, third angle, standard views"
+    assert sent == {"sheet": "A3", "projection": "third", "dimensions": True, "centre_marks": False, "overwrite": True}, \
+        "defaults: A3, third angle, standard views; no notes when asked for none"
+    assert any("ISO 2768" in n for n in DEFAULT_NOTES) and any("MILLIMETRES" in n for n in DEFAULT_NOTES)
 
     # bad input never reaches SOLIDWORKS
     n = len(fake.got)
     for bad in ({"scale": "half"}, {"scale": "0:1"}, {"views": []}, {"properties": {"$PRP": "x"}},
-                {"properties": {"Title": "x" * 201}}, {"properties": {f"F{i}": "x" for i in range(31)}}):
+                {"properties": {"Title": "x" * 201}}, {"properties": {f"F{i}": "x" for i in range(31)}},
+                {"notes": ["x" * 91]}, {"notes": [f"{i}." for i in range(13)]}):
         res, out = _mcp(base, "sw_create_drawing", bad)
         assert res["isError"], bad
     # a sheet outside the list is refused by the tool's schema (a plain-text error)
@@ -322,12 +327,12 @@ def test_an_add_in_too_old_for_drawings_is_told_how_to_update(base):
     try:
         n = len(old.got)
         res, out = _mcp(base, "sw_create_drawing", {})
-        assert res["isError"] and "needs the OpenSketch add-in 0.9.0" in out["error"] and "releases/tag/addin-latest" in out["error"]
+        assert res["isError"] and "needs the OpenSketch add-in 0.9.1" in out["error"] and "releases/tag/addin-latest" in out["error"]
         res, out = _mcp(base, "sw_export", {"format": "dxf"})
         assert res["isError"] and "Exporting DXF needs" in out["error"]
         assert len(old.got) == n, "nothing was sent to the old add-in"
         res, out = _mcp(base, "sw_status", {})
-        assert out["version"] == "0.1.0" and "needs the OpenSketch add-in 0.9.0" in out["update_needed"]
+        assert out["version"] == "0.1.0" and "needs the OpenSketch add-in 0.9.1" in out["update_needed"]
     finally:
         old.stop = True
     assert swbridge.version_tuple("0.10.0") > swbridge.version_tuple("0.9.0") and swbridge.version_tuple(None) == (0,)

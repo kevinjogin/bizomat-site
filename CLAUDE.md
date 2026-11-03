@@ -78,7 +78,15 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   title block fields as the drawing's custom properties. The result lists each view's outline and notes (views off
   the sheet, no dimensions, unsaved model). A half-made drawing is closed. sw_export takes pdf (all sheets), dwg and
   dxf (active sheet) and slddrw from a drawing; sw_preview of a drawing needs screenshot=true. The API calls were
-  checked against the SOLIDWORKS 2022 interop (30.5.1); not yet run in a real SOLIDWORKS. The add-in is 0.9.0
+  checked against the SOLIDWORKS 2022 interop (30.5.1). First real run (0.9.0): views placed by SOLIDWORKS fell off
+  the sheet at 2:1, and a drawing sheet counted as an open sketch for NotWhileTheUserEdits (now skipped for
+  drawings). 0.9.1 sets the views out itself (`ArrangeStandard`: a 25 mm gap from the front view, the group centred
+  in the left two thirds above a 65 mm title band, the isometric centred to the right; notes when they do not fit),
+  turns on SOLIDWORKS' automatic centre marks and centre lines, auto-arranges each view's dimensions, writes the
+  general notes it is sent (`DEFAULT_NOTES`: units, do not scale, deburr, ISO 2768-m) bottom left, and replaces a
+  drawing of the same name with overwrite=true. SW_GUIDE has the drafting practice (AS 1100.101/201, ISO 128,
+  ISO 129-1) the AI follows: dimension sketches from datums, fewest views, preferred scales, check by screenshot and
+  remake. The add-in is 0.9.1
   (`solidworks/Directory.Build.props`; bump it whenever the add-in learns a command). Its hello sends its version and
   the DLL's path; `swbridge.addin_too_old` makes sw_create_drawing, the dwg/dxf/slddrw exports and sw_status
   (`update_needed`) say which add-in is loaded and how to update, before anything is sent. `solidworks.yml` replaces

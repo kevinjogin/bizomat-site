@@ -75,7 +75,7 @@ namespace OpenSketch.Sw
             {
                 return;
             }
-            if (ad == null) return;
+            if (ad == null || Kind(ad) == "drawing") return;   // a drawing sheet is itself an open sketch in the API, not the user's edit
             ISketch open = null;
             try
             {

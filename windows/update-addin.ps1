@@ -46,7 +46,7 @@ $src = Get-ChildItem $stage -Recurse -Filter 'OpenSketch.Sw.dll' | Select-Object
 if (-not $src) { Stop-With 'That zip has no OpenSketch.Sw.dll. Download the zip again.' }
 $newVersion = [version]$src.VersionInfo.FileVersion
 Write-Host "The zip holds add-in $newVersion"
-if ($newVersion -lt [version]'0.9.0') {
+if ($newVersion -lt [version]'0.9.1') {
   Stop-With "That zip is add-in $newVersion, too old for drawings. Download the newest from Releases > OpenSketch for SOLIDWORKS (latest), then run this again."
 }
 
@@ -66,7 +66,7 @@ Write-Host 'Registered now (what SOLIDWORKS loads):'
 Show-Registered
 $cb = (Get-ItemProperty "HKCU:\Software\Classes\CLSID\{$Launcher}\InprocServer32").CodeBase
 $loaded = [version](Get-Item ([Uri]$cb).LocalPath).VersionInfo.FileVersion
-if ($loaded -ge [version]'0.9.0') {
+if ($loaded -ge [version]'0.9.1') {
   Write-Host "Done: SOLIDWORKS will load add-in $loaded from $target" -ForegroundColor Green
   Write-Host 'Open SOLIDWORKS and connect (the OpenSketch menu, or Tools > Macro > Run > Documents\OpenSketch\OpenSketch.swb).'
 } else {
