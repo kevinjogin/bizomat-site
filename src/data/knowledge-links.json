@@ -10048,6 +10048,46 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter isolates a fan from its frame on springs; the tool checks the phase-angle balance of inline engines and does not size isolators."
+  },
+  {
+   "reados": "publication/inertia-and-flywheels-by-the-numbers",
+   "chapter": "move-profiles-and-rms-torque",
+   "tool": "cam-svaj-functions",
+   "type": "complements",
+   "note": "Gives the cam-style motion laws, with velocity, acceleration and jerk, that round off the trapezoidal and S-curve moves this chapter sizes motors for.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter sizes servo motors for trapezoidal and S-curve move profiles; tool gives Norton’s cycloidal, modified trapezoid, modified sine and polynomial motion laws with jerk."
+  },
+  {
+   "reados": "publication/buckling-by-the-numbers",
+   "chapter": "rods-in-machines",
+   "tool": "inverted-slider-crank-kinematics",
+   "type": "complements",
+   "note": "Gives the angles, stroke rate and accelerations of a clevis-mounted cylinder that swings as it pushes a pivoted arm, the linkage this chapter checks for buckling.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter checks a clevis-mounted cylinder that rotates a cradle; tool applies Norton’s inverted slider-crank kinematics, the linkage of a pivoting cylinder."
+  },
+  {
+   "reados": "publication/vibrating-machine-elements-by-the-numbers",
+   "chapter": "waves-modes-and-excitations",
+   "tool": "fourbar-force-balance",
+   "type": "complements",
+   "note": "Removes the once-per-revolution shaking force of a fourbar linkage, one of the excitations this chapter describes, with counterweights on the crank and rocker.",
+   "status": "approved",
+   "evidence": "review",
+   "reason": "Chapter describes excitations that repeat each revolution; tool gives Norton’s complete force balance of a fourbar so the shaking force vanishes."
+  },
+  {
+   "reados": "publication/metal-fatigue-by-the-numbers",
+   "chapter": "springs",
+   "tool": "cam-svaj-functions",
+   "type": "complements",
+   "note": "Rejected pairing kept so it is not suggested again.",
+   "status": "rejected",
+   "evidence": "review",
+   "reason": "Rejected: chapter covers fatigue of springs; the tool gives cam follower motion and does not check spring fatigue."
   }
  ]
 }

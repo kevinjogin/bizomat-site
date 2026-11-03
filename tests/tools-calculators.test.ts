@@ -8,7 +8,7 @@ import { createContext, runInContext } from 'node:vm';
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
-const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1', 'norton2'];
+const FILES = ['decide', 'money', 'projects', 'operations', 'manufacturing', 'engineering', 'quoting', 'inventory', 'improvement', 'planning', 'business', 'makeos', 'workshop', 'handbook3', 'handbook4', 'handbook5', 'handbook6', 'handbook7', 'handbook8', 'handbook9', 'handbook10', 'handbook11', 'handbook12', 'handbook13', 'handbook14', 'handbook15', 'handbook16', 'handbook17', 'handbook18', 'handbook19', 'handbook20', 'handbook21', 'handbook22', 'handbook23', 'handbook24', 'handbook25', 'handbook26', 'handbook27', 'handbook28', 'handbook29', 'handbook30', 'handbook31', 'handbook32', 'handbook33', 'handbook34', 'handbook35', 'handbook36', 'handbook37', 'handbook38', 'handbook39', 'handbook40', 'handbook41', 'handbook42', 'handbook43', 'handbook44', 'handbook45', 'handbook46', 'handbook47', 'handbook48', 'handbook49', 'handbook50', 'handbook51', 'handbook52', 'handbook53', 'handbook54', 'handbook55', 'handbook56', 'handbook57', 'handbook58', 'handbook59', 'handbook60', 'handbook61', 'handbook62', 'handbook63', 'handbook64', 'handbook65', 'handbook66', 'handbook67', 'handbook68', 'handbook69', 'polymers', 'bryanthermo', 'handbook72', 'callen', 'handbook71', 'handbook73', 'handbook74', 'cengel2', 'handbook75', 'greiner', 'handbook77', 'handbook70', 'handbook76', 'handbook78', 'handbook80', 'handbook81', 'handbook82', 'handbook83', 'handbook84', 'handbook85', 'handbook86', 'handbook87', 'handbook88', 'handbook89', 'handbook90', 'handbook91', 'handbook92', 'handbook93', 'handbook94', 'handbook95', 'handbook96', 'handbook97', 'handbook98', 'handbook99', 'handbook100', 'handbook101', 'handbook102', 'handbook103', 'norton1', 'norton2', 'norton3'];
 const read = (name: string) => readFileSync(join(DIR, name), 'utf8');
 
 // Tool ids published before the upgrade; their /tools/?tool=<id> links must keep working.
@@ -92,9 +92,9 @@ test('the tools page loads its engine up front and each tool\'s data, guide, inp
   assert.match(page, /hasStandaloneGuide\(guides\[id\]\) \? toolPageHref\(id\) : toolAppHref\(id\)/);
 });
 
-test('register: 1049 tools with unique ids and every previously published id kept', () => {
+test('register: 1052 tools with unique ids and every previously published id kept', () => {
   const ids = engine.tools.map((t) => t.id);
-  assert.equal(ids.length, 1049);
+  assert.equal(ids.length, 1052);
   assert.equal(new Set(ids).size, ids.length, 'ids are unique');
   for (const id of LEGACY_IDS) assert.ok(ids.includes(id), `${id} still exists`);
   assert.ok(ids.includes('retention-selector'));
@@ -7292,4 +7292,42 @@ test('inline engine balance reproduces Norton’s Tables 14-1 and 14-2', () => {
   assert.equal(b.text, 'FORCES BALANCED, MOMENTS NOT'); near(s.fire, 90, 1e-12, 'two-stroke 360/4');
   const six = engine.run('inline-engine-balance', { n: 6, cycle: '4', p2: 240, p3: 120, p4: 120, p5: 240, p6: 0, z1: 0, sp: 100, mB: 0 }); assert.equal(six.text, 'FORCES AND MOMENTS BALANCED', 'mirror-symmetric inline six'); near(six.values.fire, 120, 1e-12, '720/6');
   const one = engine.run('inline-engine-balance', { n: 1, mB: 0.5, r: 45, l: 150, rpm: 3000 }).values, w = 100 * Math.PI; near(one.F1, 0.5 * 0.045 * w * w, 1e-9, 'single cylinder primary mB rω²'); near(one.F2, 0.5 * 0.045 * w * w * 0.3, 1e-9, 'secondary × r/l');
+});
+
+// Norton batch 3 (norton3): inverted slider-crank, double-dwell cam functions and fourbar force balance from Norton,
+// Design of Machinery, 2nd edition. Expected values are Table 8-2, Examples 8-2 and 8-3, and identities: loop closure,
+// finite differences, and a stationary global mass centre after force balancing.
+test('inverted slider-crank closes the loop and matches finite differences', () => {
+  const run = (o: Inputs) => engine.run('inverted-slider-crank-kinematics', { a: 40, c: 30, d: 100, g: 90, t2: 30, w2: 10, a2: 0, circ: 'open', ...o }).values, rad = Math.PI / 180, h = 1e-4;
+  for (const [circ, g] of [['open', 90], ['crossed', 90], ['open', 70]] as const) {
+    const r = run({ circ, g }), p = run({ circ, g, t2: 30 + h }), q = run({ circ, g, t2: 30 - h });
+    near(40 * Math.cos(30 * rad) - r.b * Math.cos(r.t3 * rad) - 30 * Math.cos(r.t4 * rad) - 100, 0, 1e-9, `${circ} ${g} x closure (eq. 4.19a)`); near(40 * Math.sin(30 * rad) - r.b * Math.sin(r.t3 * rad) - 30 * Math.sin(r.t4 * rad), 0, 1e-9, 'y closure');
+    near(r.w4, (((p.t4 - q.t4 + 540) % 360) - 180) / (2 * h) * 10, 1e-5, `${circ} ω4`); near(r.bd, (p.b - q.b) / (2 * h * rad) * 10, 1e-3, `${circ} slip velocity`);
+    near(r.a4, (p.w4 - q.w4) / (2 * h * rad) * 10, 1e-3, `${circ} α4`); near(r.bdd, (p.bd - q.bd) / (2 * h * rad) * 10, 1e-1, `${circ} slip acceleration`); near(r.cor, 2 * r.bd * r.w4, 1e-9, 'Coriolis 2ḃω');
+    assert.ok(r.b > 0, 'slider between A and the block');
+  }
+});
+
+test('cam functions reproduce Table 8-2 and Examples 8-2 and 8-3', () => {
+  const c = (law: string, o: Inputs = {}) => engine.run('cam-svaj-functions', { law, dir: 'rise', h: 25, beta: 90, th: 45, rpm: 60, ...o }).values;
+  const T82: [string, number, number, number][] = [['cyc', 2, 6.283, 40], ['mtrap', 2, 4.888, 61], ['msine', 1.76, 5.528, 69], ['p345', 1.875, 5.777, 60], ['p4567', 2.188, 7.526, 52]];
+  for (const [law, cv, ca, cj] of T82) { const v = c(law); near(v.Cv, cv, 0.002, `${law} peak velocity factor`); near(v.Ca, ca, 0.015, `${law} peak acceleration factor`); near(v.Cj, cj, 0.6, `${law} peak jerk factor`); }
+  near(c('shm').Cv, 1.571, 0.001, 'harmonic velocity factor'); near(c('shm').Ca, Math.PI ** 2 / 2, 1e-3, 'harmonic acceleration π²/2 (table prints 4.945)');
+  const s = c('shm', { h: 1, rpm: 60 }); near(s.vPk, 6.28, 0.01, 'Example 8-2: 6.28 in/s'); near(s.aPk, 78.8, 0.2, 'about 78.8 in/s²');
+  const y = c('cyc', { h: 1, rpm: 60 }); near(y.vPk, 8, 1e-6, 'Example 8-3: 8 in/s'); near(y.aPk, 100.4, 0.2, '100.4 in/s²'); near(y.jPk, 2523, 5, 'about 2523 in/s³');
+  for (const law of ['shm', 'cyc', 'mtrap', 'msine', 'p345', 'p4567']) { near(c(law, { th: 0 }).s, 0, 1e-4, `${law} starts at 0`); near(c(law, { th: 90 }).s, 25, 1e-4, `${law} ends at h`); near(c(law, { th: 90, dir: 'fall' }).s, 0, 1e-4, `${law} fall ends at 0`); }
+  for (const law of ['mtrap', 'msine']) for (const x of [1 / 8, 3 / 8, 5 / 8, 7 / 8]) { const a = c(law, { th: x * 90 - 1e-7 }), b = c(law, { th: x * 90 + 1e-7 }); near(a.s, b.s, 1e-3, `${law} s continuous at ${x}`); near(a.ar, b.ar, 0.05, `${law} a continuous at ${x}`); }
+  const d = c('p345', { th: 30 }), h = 1e-4, e = (t: number) => c('p345', { th: t }); near(d.vr, (e(30 + h).s - e(30 - h).s) / (2 * h * Math.PI / 180), 1e-4, 'v = ds/dθ'); near(d.ar, (e(30 + h).vr - e(30 - h).vr) / (2 * h * Math.PI / 180), 1e-3, 'a = dv/dθ');
+  assert.equal(engine.run('cam-svaj-functions', { th: 100 }).text, 'CHECK INPUTS');
+});
+
+test('fourbar force balance keeps the global mass centre still', () => {
+  const l1 = 482.6, l2 = 127, l3 = 381, l4 = 254, m3 = 2, b3 = 190, p3 = 30, rad = Math.PI / 180;
+  const f = engine.run('fourbar-force-balance', { l2, l3, l4, m3, b3, p3, m2b2: 0, p2: 0, m4b4: 0, p4: 0 }).values;
+  near(f.req2x, m3 * (b3 * l2 / l3 * Math.cos(p3 * rad) - l2), 1e-9, 'eq. 12.8c x'); near(f.req4y, -m3 * b3 * l4 / l3 * Math.sin(p3 * rad), 1e-9, 'eq. 12.8d y');
+  const sum = (t2: number) => { const k = engine.run('fourbar-kinematics', { a: l2, b: l3, c: l4, d: l1, t2, w2: 1, a2: 0, circ: 'open', p: 0, d3: 0 }).values, t3 = k.t3 * rad, t4 = k.t4 * rad, q2 = t2 * rad;
+    const x = f.req2x * Math.cos(q2) - f.req2y * Math.sin(q2) + m3 * l2 * Math.cos(q2) + m3 * b3 * Math.cos(t3 + p3 * rad) + f.req4x * Math.cos(t4) - f.req4y * Math.sin(t4);
+    const y = f.req2x * Math.sin(q2) + f.req2y * Math.cos(q2) + m3 * l2 * Math.sin(q2) + m3 * b3 * Math.sin(t3 + p3 * rad) + f.req4x * Math.sin(t4) + f.req4y * Math.cos(t4); return [x, y]; };
+  const s0 = sum(0); for (const t2 of [45, 120, 200, 300]) { const s = sum(t2); near(s[0], s0[0], 1e-6, `mass moment x constant at ${t2}°`); near(s[1], s0[1], 1e-6, `y constant at ${t2}°`); }
+  const g = engine.run('fourbar-force-balance', { l2, l3, l4, m3, b3, p3, m2b2: 100, p2: 180, m4b4: 0, p4: 0 }).values; near(g.add2, Math.hypot(f.req2x + 100, f.req2y), 1e-9, 'existing unbalance subtracted');
 });
