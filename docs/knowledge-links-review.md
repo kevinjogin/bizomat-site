@@ -1,8 +1,8 @@
 # READOS ↔ WORKOS connections: items for review
 
-Generated 2026-11-02 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
+Generated 2026-11-03 by `npm run knowledge:check -- --report` from `src/data/knowledge-links.json` and `src/data/knowledge-link-suggestions.json`. Do not edit by hand.
 
-Published: 932 relationships (611 from links authors wrote in the books, 322 from editorial review). Rejected: 134. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
+Published: 935 relationships (611 from links authors wrote in the books, 325 from editorial review). Rejected: 135. Suggestions awaiting review: 944 (557 flagged as weak or without a clear chapter).
 
 ## 1. Approved by editorial review: please confirm
 
@@ -332,6 +332,9 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Inertia and Flywheels by the Numbers | Flywheels and speed fluctuation | Engine Gas Force and Gas Torque at a Crank Angle | complements | Chapter explains that an engine flywheel smooths the torque pulses of its cylinders; tool gives Norton’s gas force and gas torque at a crank angle. |
 | Vibrating Machine Elements by the Numbers | Waves, modes and the forces that excite them | Engine Lumped Masses, Shaking Force and Inertia Torque | complements | Chapter describes excitations that repeat once per revolution such as unbalance; tool gives Norton’s primary and secondary shaking forces of a single-cylinder engine. |
 | Power Presses by the Numbers | The crank press and its force curve | Engine Piston Position, Velocity and Acceleration (Exact and Fourier Approximation) | complements | Chapter builds the crank press curve from the crank and connecting rod; tool applies Norton’s exact and Fourier-approximate slider-crank motion. |
+| Inertia and Flywheels by the Numbers | Move profiles and RMS torque | Cam Follower Displacement, Velocity, Acceleration and Jerk (Double-Dwell Functions) | complements | Chapter sizes servo motors for trapezoidal and S-curve move profiles; tool gives Norton’s cycloidal, modified trapezoid, modified sine and polynomial motion laws with jerk. |
+| Buckling by the Numbers | Rods in machines: cylinders and screws | Inverted Slider-Crank Position, Velocity and Acceleration (Inversion 3) | complements | Chapter checks a clevis-mounted cylinder that rotates a cradle; tool applies Norton’s inverted slider-crank kinematics, the linkage of a pivoting cylinder. |
+| Vibrating Machine Elements by the Numbers | Waves, modes and the forces that excite them | Fourbar Linkage Complete Force Balance (Counterweights on Crank and Rocker) | complements | Chapter describes excitations that repeat each revolution; tool gives Norton’s complete force balance of a fourbar so the shaking force vanishes. |
 
 ## 2. Rejected
 
@@ -471,6 +474,7 @@ These were approved by reading the chapter text and the tool definition (the rea
 | Shaft Alignment by the Numbers | Pipe strain | Wrought Steel Pipe Plain-End Mass (ASME B36.10M) | Rejected: chapter is about forces from misaligned connected piping on machine casings; the tool gives pipe mass per metre, not pipe strain. |
 | Fixtures That Repeat | Choose clamping force that reaches the part | Fourbar Linkage Grashof Condition, Type, Transmission and Toggle Angles | Rejected: chapter treats toggle clamps as bought-in clamping devices and their force; the tool classifies fourbar linkages and does not size clamps. |
 | Vibrating Machine Elements by the Numbers | Isolate the fan on springs | Inline Multicylinder Engine Balance (Shaking Force, Inertia Torque, Shaking Moment, Firing) | Rejected: chapter isolates a fan from its frame on springs; the tool checks the phase-angle balance of inline engines and does not size isolators. |
+| Metal Fatigue by the Numbers | Springs: high stress, every cycle | Cam Follower Displacement, Velocity, Acceleration and Jerk (Double-Dwell Functions) | Rejected: chapter covers fatigue of springs; the tool gives cam follower motion and does not check spring fatigue. |
 
 ## 3. Published READOS books with no approved connection
 

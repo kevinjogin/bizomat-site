@@ -3803,3 +3803,14 @@ Four tools in batch norton2 from Robert L. Norton, Design of Machinery, 2nd edit
 | **Engine Gas Force and Gas Torque at a Crank Angle** `engine-gas-torque` | CALCULATED | Approximation; Pressure; Model and application | 605–613 | Automated |
 | **Engine Lumped Masses, Shaking Force and Inertia Torque** `engine-inertia-forces` | CALCULATED | Lumped mass placement; Balance; Model and application | 614–622 | Automated |
 | **Inline Multicylinder Engine Balance (Shaking Force, Inertia Torque, Shaking Moment, Firing)** `inline-engine-balance` | FORCES BALANCED, MOMENTS NOT | Shaking forces (1st, 2nd); Inertia torque (1st–3rd); Shaking moments (1st, 2nd); Model and application | 645–653 | Automated |
+## Norton linkage, cam and balance tools, batch norton3 (added 3 November 2026)
+
+Three tools in batch norton3 from Robert L. Norton, Design of Machinery, 2nd edition: the inverted slider-crank position, velocity and acceleration with the Coriolis term (pp. 161–163, 276–278, 315–318), the double-dwell cam functions with displacement, velocity, acceleration and jerk at any cam angle (pp. 357–370, 380–382), and the complete force balance of a fourbar linkage by counterweights on the crank and rocker (pp. 580–583). Lengths, angles, masses and speeds are always user inputs. WORKOS now holds 1052 tools.
+
+### Mechanics
+
+| Tool | Result with example inputs | Checks | Handbook pages (where cited) | Tested |
+|---|---|---|---|---|
+| **Inverted Slider-Crank Position, Velocity and Acceleration (Inversion 3)** `inverted-slider-crank-kinematics` | CALCULATED | Coriolis term; Circuit; Model and application | 161–163, 276–278, 315–318 | Automated |
+| **Cam Follower Displacement, Velocity, Acceleration and Jerk (Double-Dwell Functions)** `cam-svaj-functions` | CALCULATED | Fundamental law; Dynamic force; Model and application | 357–370, 380–382 | Automated |
+| **Fourbar Linkage Complete Force Balance (Counterweights on Crank and Rocker)** `fourbar-force-balance` | CALCULATED | Shaking moment; Counterweight size; Model and application | 580–583 | Automated |
