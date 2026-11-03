@@ -25,7 +25,7 @@ $env:OPENSKETCH_PASSWORD = $password   # this window only
 Remove-Variable password
 
 $public = Read-Host 'Public https address for AI apps (for example https://opensketch.example.com), or Enter for this PC only'
-$public = $public.Trim().TrimEnd('/')
+$public = $public.Trim().TrimEnd('/', '.')   # a full stop copied from a sentence would make a different address
 # The address on this PC is not a public one: treat it as "none" rather than stopping.
 if ($public -match '^(https?://)?(127\.0\.0\.1|localhost)(:\d+)?$') {
   Write-Host 'That is the address on this PC (for the browser and SOLIDWORKS), not a public one. Carrying on without a public address.'
