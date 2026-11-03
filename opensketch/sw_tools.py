@@ -96,6 +96,14 @@ Drafting practice (AS 1100.101 and 201, ISO 128, ISO 129-1), for drawings a work
 - Notes: units, do not scale, deburr, general tolerance (ISO 2768-m unless the user gives one). Tolerances that
   matter for fit or function go on the dimension itself (add them in the model or tell the user). Title block:
   title, drawing number, revision, material, finish, drawn by and date when known.
+- Build a drawing as a drafter does: sw_create_drawing for the base views, then sw_edit_drawing for the rest. A
+  section (direction and a model point "through" the feature) shows bores, counterbores, pockets and walls a view
+  would only show as hidden lines; a detail view (2:1 or 5:1) shows small features (grooves, undercuts, threads,
+  small radii) that are too small to dimension at the sheet scale; add an auxiliary-style model view only when a
+  face is not parallel to a standard view. Move views so related views line up, with room for dimensions. Read
+  the layout with sw_get_drawing (outlines in sheet mm) and look at it with a screenshot after each step.
+- Assembly drawings: views of the assembly, a parts list (bom) with balloons, no detail dimensions except overall
+  sizes and those needed to assemble.
 - Check every drawing: take a screenshot, read the result's notes, and fix what a checker would reject (views off
   the sheet or crowded, dimensions crossing or missing, a needed view absent) by changing the views, scale, sheet
   or the model's sketch dimensions, then make it again with overwrite=true. Tell the user what still needs a
@@ -738,6 +746,129 @@ async def sw_create_drawing(
             "properties": props or None, "name": name, "folder": folder, "notes": lines or None,
             "centre_marks": centre_marks, "overwrite": overwrite}
     return await _simple("create_drawing", args, timeout=600)
+
+
+DRAWING_API_FROM = "0.10.0"   # read_drawing and edit_drawing
+_POINT = Annotated[list[float], Field(min_length=2, max_length=2)]
+
+# What each sw_edit_drawing action takes: required keys, optional keys. Checked here so a mistake never reaches SOLIDWORKS.
+DRAWING_ACTIONS: dict[str, tuple[set[str], set[str]]] = {
+    "view": ({"orientation", "at"}, {"model"}),
+    "projected": ({"from", "at"}, set()),
+    "section": ({"view", "place"}, {"direction", "label", "flip", "through", "sheet_point", "fraction"}),
+    "detail": ({"view", "place"}, {"radius", "scale", "label", "through", "sheet_point", "fraction"}),
+    "move": ({"view", "to"}, set()),
+    "scale": ({"view", "scale"}, set()),
+    "display": ({"view", "style"}, set()),
+    "delete": ({"view"}, set()),
+    "rename": ({"view", "name"}, set()),
+    "dimensions": (set(), {"view"}),
+    "arrange_dimensions": (set(), set()),
+    "centre_marks": (set(), {"view"}),
+    "note": ({"text", "at"}, {"height"}),
+    "properties": ({"set"}, set()),
+    "sheet": (set(), {"scale", "projection"}),
+    "bom": ({"view", "at"}, {"type", "balloons"}),
+}
+_CHOICES = {"orientation": {"front", "top", "right", "left", "bottom", "back", "isometric"}, "direction": {"horizontal", "vertical"},
+            "style": {"hidden_removed", "hidden_visible", "wireframe", "shaded", "shaded_edges"},
+            "projection": {"third", "first"}, "type": {"top", "parts", "indented"}}
+
+
+def _drawing_action(i: int, a: Any) -> tuple[dict | None, str | None]:
+    """One action checked and normalised (scales "1:2" -> [1, 2]); or the problem with it."""
+    if not isinstance(a, dict) or a.get("do") not in DRAWING_ACTIONS:
+        return None, f"action {i + 1}: do must be one of {', '.join(DRAWING_ACTIONS)}"
+    need, may = DRAWING_ACTIONS[a["do"]]
+    keys = set(a) - {"do"}
+    if need - keys:
+        return None, f"action {i + 1} ({a['do']}): needs {', '.join(sorted(need - keys))}"
+    if keys - need - may:
+        return None, f"action {i + 1} ({a['do']}): unknown {', '.join(sorted(keys - need - may))}"
+    out = dict(a)
+    for k in ("at", "to", "place", "sheet_point", "fraction"):
+        if k in out and not (isinstance(out[k], list) and len(out[k]) == 2 and all(isinstance(x, (int, float)) for x in out[k])):
+            return None, f"action {i + 1} ({a['do']}): {k} is [x, y]" + (" (fractions of the view's outline, 0..1)" if k == "fraction" else " in sheet mm from the lower left corner")
+    if "through" in out and not (isinstance(out["through"], list) and len(out["through"]) == 3 and all(isinstance(x, (int, float)) for x in out["through"])):
+        return None, f"action {i + 1} ({a['do']}): through is a model point [x, y, z] in mm"
+    for k, allowed in _CHOICES.items():
+        if k in out and out[k] not in allowed:
+            return None, f"action {i + 1} ({a['do']}): {k} is one of {', '.join(sorted(allowed))}"
+    if "scale" in out:
+        if a["do"] == "scale" and out["scale"] == "sheet":
+            out["scale"] = None   # back to the sheet's scale
+        else:
+            m = _SCALE.match(str(out["scale"]))
+            if not m or float(m.group(1)) <= 0 or float(m.group(2)) <= 0:
+                return None, f'action {i + 1} ({a["do"]}): scale is "a:b", e.g. "2:1"' + (' or "sheet"' if a["do"] == "scale" else "")
+            out["scale"] = [float(m.group(1)), float(m.group(2))]
+    for k, limit in (("text", 400), ("label", 3), ("name", 60), ("view", 80), ("from", 80), ("model", 260)):
+        if k in out and (not isinstance(out[k], str) or not out[k].strip() or len(out[k]) > limit):
+            return None, f"action {i + 1} ({a['do']}): {k} is text of up to {limit} characters"
+    if "radius" in out and not (isinstance(out["radius"], (int, float)) and 1 <= out["radius"] <= 200):
+        return None, f"action {i + 1} ({a['do']}): radius is 1..200 sheet mm"
+    if "height" in out and not (isinstance(out["height"], (int, float)) and 1.8 <= out["height"] <= 20):
+        return None, f"action {i + 1} ({a['do']}): height is 1.8..20 mm (3.5 for notes, 5 or 7 for headings)"
+    if a["do"] == "properties":
+        props = out["set"]
+        if not isinstance(props, dict) or not props or len(props) > 30 or any(
+                not str(k).strip() or len(str(k)) > 40 or len(str(v)) > 200 or any(c in str(k) for c in '"$@') for k, v in props.items()):
+            return None, f"action {i + 1} (properties): set is up to 30 fields, names up to 40 characters (no quotes, $ or @), values up to 200"
+    return out, None
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def sw_get_drawing(doc: Annotated[str | None, Field(description="The drawing (path or window title); omit for the active document")] = None) -> CallToolResult:
+    """Read a SOLIDWORKS drawing: the sheet (size, scale, projection), every view (name, type, orientation, scale,
+    outline on the sheet in mm, display style, how many dimensions it shows, the model it shows) and the title
+    block fields. Read it before sw_edit_drawing, and after, to check the layout."""
+    old = swbridge.addin_too_old(_who(), DRAWING_API_FROM, "Reading drawings")
+    if old:
+        return _text({"error": old}, True)
+    return await _simple("read_drawing", {"doc": doc}, timeout=180)
+
+
+@mcp.tool()
+async def sw_edit_drawing(
+        actions: Annotated[list[dict], Field(description=(
+            'Drawing actions, run in order. Sheet positions are [x, y] mm from the lower left corner; views go by '
+            'name (sw_get_drawing). '
+            '{"do":"view","orientation":"front|top|right|left|bottom|back|isometric","at":[x,y]} a view of the model; '
+            '{"do":"projected","from":"Drawing View1","at":[x,y]} a projected view (its side of the parent decides which); '
+            '{"do":"section","view":"Drawing View1","direction":"horizontal|vertical","through":[x,y,z] (a model point, mm) '
+            'or "fraction":[0.5,0.5] (of the view outline),"label":"A","place":[x,y],"flip":false} a section view; '
+            '{"do":"detail","view":"...","through":[x,y,z] or "fraction":[fx,fy],"radius":12 (sheet mm),"scale":"2:1",'
+            '"label":"B","place":[x,y]} a detail view; '
+            '{"do":"move","view":"...","to":[x,y]} the view\'s centre; {"do":"scale","view":"...","scale":"1:2" or "sheet"}; '
+            '{"do":"display","view":"...","style":"hidden_removed|hidden_visible|wireframe|shaded|shaded_edges"}; '
+            '{"do":"delete","view":"..."}; {"do":"rename","view":"...","name":"..."}; '
+            '{"do":"dimensions","view":"..." (omit for all views)} the model\'s dimensions, auto-arranged; '
+            '{"do":"arrange_dimensions"}; {"do":"centre_marks","view":"..." (optional)}; '
+            '{"do":"note","text":"...","at":[x,y],"height":3.5}; {"do":"properties","set":{"Title":"..."}}; '
+            '{"do":"sheet","scale":"1:2","projection":"third|first"}; '
+            '{"do":"bom","view":"...","at":[x,y] (its top right corner),"type":"top|parts|indented","balloons":true} '
+            'a parts list for an assembly drawing'))],
+        doc: Annotated[str | None, Field(description="The drawing (path or window title); omit for the active document")] = None) -> CallToolResult:
+    """Change a SOLIDWORKS drawing step by step, the way a drafter does: add model, projected, section and detail
+    views, move and scale views, set their display, bring in the model's dimensions, add centre marks, notes, title
+    block fields and a parts list with balloons. Actions run in order; if one fails, the ones before it stay and the
+    result says which failed. Every result lists the views with their outlines. Not saved until sw_save. Check with
+    sw_preview (screenshot=true)."""
+    if not actions or len(actions) > 40:
+        return _text({"error": "actions: 1 to 40 drawing actions."}, True)
+    checked, problems = [], []
+    for i, a in enumerate(actions):
+        out, problem = _drawing_action(i, a)
+        if problem:
+            problems.append(problem)
+        else:
+            checked.append(out)
+    if problems:
+        return _text({"error": "Nothing was sent to SOLIDWORKS.", "input_problems": problems}, True)
+    old = swbridge.addin_too_old(_who(), DRAWING_API_FROM, "Editing drawings")
+    if old:
+        return _text({"error": old}, True)
+    return await _simple("edit_drawing", {"doc": doc, "actions": checked}, timeout=600)
 
 
 # ----------------------------------------------------------------------------- files in and out

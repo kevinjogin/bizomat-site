@@ -32,7 +32,7 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 
 ## Current state (v0.8)
 
-- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 26 tools: every `sw_`
+- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 28 tools: every `sw_`
   tool (`sw_tools.py`, `sw_selftest.py`, registered on `mcp` at import) plus `request_upload`. `Endpoint` serves it
   at each path in `PATHS` = ("/mcp", "/solidworks/mcp"): the path itself takes a Bearer token (`_BearerGate`, 401
   with the protected-resource pointer for that path), `path/<key>` the private address (`_TokenGate`,
@@ -86,11 +86,21 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   general notes it is sent (`DEFAULT_NOTES`: units, do not scale, deburr, ISO 2768-m) bottom left, and replaces a
   drawing of the same name with overwrite=true. SW_GUIDE has the drafting practice (AS 1100.101/201, ISO 128,
   ISO 129-1) the AI follows: dimension sketches from datums, fewest views, preferred scales, check by screenshot and
-  remake. The add-in is 0.9.1
+  remake. The add-in is 0.10.0
   (`solidworks/Directory.Build.props`; bump it whenever the add-in learns a command). Its hello sends its version and
   the DLL's path; `swbridge.addin_too_old` makes sw_create_drawing, the dwg/dxf/slddrw exports and sw_status
   (`update_needed`) say which add-in is loaded and how to update, before anything is sent. `solidworks.yml` replaces
   the `addin-latest` GitHub release with every main build (`swbridge.ADDIN_DOWNLOAD`, `OPENSKETCH_ADDIN_URL`).
+- Drawing API (0.10.0; `sw_get_drawing`, `sw_edit_drawing` in `sw_tools.py`, `solidworks/src/Addin/DrawingEdits.cs`):
+  read the sheet, views (type, orientation, scale, outline in sheet mm, display, dimension count, model) and title
+  block fields; change a drawing with up to 40 actions run in order (`DRAWING_ACTIONS` lists each one's keys and is
+  checked on the server before anything is sent): view, projected (CreateUnfoldedViewAt3), section (a cutting line
+  drawn in the view through a model point via ModelToViewTransform, or a fraction of the outline, then
+  CreateSectionViewAt5), detail (a circle, then CreateDetailViewAt4), move, scale (or back to the sheet's), display,
+  delete, rename, dimensions (InsertModelAnnotations3 on one view or all), arrange_dimensions, centre_marks
+  (AutoInsertCenterMarks2), note (CreateText2), properties, sheet (scale, projection), bom (InsertBomTable4 with the
+  first BOM template in SOLIDWORKS' file locations, then AutoBalloon5). A failing action stops the list; the result
+  says which, with what was done before it. Not run in a real SOLIDWORKS yet.
 - `sw_selftest.py`: stages plate / shapes / assembly in `Documents\OpenSketch\selftest` (the plate stage ends with its drawing and a PDF of it), each step ok / check /
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
@@ -113,7 +123,7 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 
 - One Windows PC (`windows/`): `setup.ps1` (Python 3.12 venv, pinned packages, copies the add-in zip from
   Downloads), `start.ps1` (asks for the server password, kept only in that window, and an optional public https
-  address for a tunnel; runs on port 8000), `update-addin.ps1` (newest add-in zip from Downloads, checked >= 0.9.0, into `%LOCALAPPDATA%\OpenSketch\AddIn`,
+  address for a tunnel; runs on port 8000), `update-addin.ps1` (newest add-in zip from Downloads, checked >= 0.10.0, into `%LOCALAPPDATA%\OpenSketch\AddIn`,
   `OpenSketchSW.exe --install`, prints the registered CodeBase and its version), `connect-claude.ps1` (adds the private address to Claude Desktop's config through
   `cmd /c npx mcp-remote`, with a backup, and restarts it), `README.md` (steps: add-in from the Actions artifact, the
   macro, Claude Desktop, Cloudflare Tunnel for web AI apps). The add-in's default address is `http://127.0.0.1:8000` (`Settings.DefaultServer`).

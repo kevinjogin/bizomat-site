@@ -75,7 +75,7 @@ def _box_step(x=40, y=20, z=10):
 class FakeAddin:
     """Answers commands the way the C# add-in does, from canned geometry."""
 
-    def __init__(self, base: str, key: str, version: str = "0.9.1"):
+    def __init__(self, base: str, key: str, version: str = "0.10.0"):
         self.base, self.key, self.version = base, key, version
         self.h = {"Authorization": f"Bearer {key}"}
         self.got: list[dict] = []
@@ -150,6 +150,10 @@ class FakeAddin:
             assert r.status_code == 200
             return {"doc": "C:\\OS\\" + a["filename"].rsplit(".", 1)[0] + ".SLDPRT", "bytes": len(r.content),
                     "head": r.content[:20].decode("latin-1")}
+        if op == "read_drawing":
+            return {"doc": a.get("doc"), "views": [{"name": "Drawing View1", "outline_mm": [20, 80, 120, 160]}]}
+        if op == "edit_drawing":
+            return {"results": [dict(x, ok=True) for x in a["actions"]]}
         if op == "create_drawing":
             return {"doc": "C:\\OS\\Box.SLDDRW", "kind": "drawing", "args": a}
         if op in ("add_mate", "batch", "insert_component", "read", "set_parameter"):
@@ -322,6 +326,34 @@ def test_drawings_are_checked_here_and_made_by_the_addin(base, fake):
         assert out["filename"].endswith("." + fmt) and httpx.get(out["download_url"]).status_code == 200
 
 
+def test_drawing_actions_are_checked_here_then_run_in_solidworks(base, fake):
+    res, out = _mcp(base, "sw_get_drawing", {"doc": "C:\\OS\\Box.SLDDRW"})
+    assert not res.get("isError") and out["views"][0]["name"] == "Drawing View1"
+    acts = [{"do": "section", "view": "Drawing View1", "through": [20, 10, 5], "direction": "vertical", "label": "A", "place": [300, 150]},
+            {"do": "detail", "view": "Drawing View1", "fraction": [0.2, 0.8], "radius": 10, "scale": "5:1", "label": "B", "place": [330, 90]},
+            {"do": "scale", "view": "Drawing View2", "scale": "sheet"},
+            {"do": "display", "view": "Drawing View4", "style": "shaded_edges"},
+            {"do": "note", "text": "BREAK ALL EDGES 0.5", "at": [20, 40]},
+            {"do": "bom", "view": "Drawing View1", "at": [400, 280], "type": "parts"},
+            {"do": "arrange_dimensions"}]
+    res, out = _mcp(base, "sw_edit_drawing", {"actions": acts})
+    assert not res.get("isError"), out
+    sent = [c for c in fake.got if c["op"] == "edit_drawing"][-1]["args"]["actions"]
+    assert sent[1]["scale"] == [5.0, 1.0] and sent[2]["scale"] is None and sent[0]["through"] == [20, 10, 5]
+    n = len(fake.got)
+    for bad, why in (({"do": "frobnicate"}, "do must be one of"), ({"do": "section", "view": "V"}, "needs place"),
+                     ({"do": "move", "view": "V", "to": [1]}, "to is [x, y]"), ({"do": "display", "view": "V", "style": "pink"}, "style is one of"),
+                     ({"do": "detail", "view": "V", "place": [1, 2], "scale": "big"}, 'scale is "a:b"'),
+                     ({"do": "note", "text": "x", "at": [1, 2], "colour": "red"}, "unknown colour"),
+                     ({"do": "section", "view": "V", "place": [1, 2], "through": [1, 2]}, "through is a model point"),
+                     ({"do": "properties", "set": {"$PRP": "x"}}, "set is up to 30 fields")):
+        res, out = _mcp(base, "sw_edit_drawing", {"actions": [bad]})
+        assert res["isError"] and why in out["input_problems"][0], (bad, out)
+    res, out = _mcp(base, "sw_edit_drawing", {"actions": []})
+    assert res["isError"]
+    assert len(fake.got) == n, "nothing invalid reached SOLIDWORKS"
+
+
 def test_an_add_in_too_old_for_drawings_is_told_how_to_update(base):
     old = FakeAddin(base, swbridge.key_for(None), version="0.1.0")
     try:
@@ -330,6 +362,8 @@ def test_an_add_in_too_old_for_drawings_is_told_how_to_update(base):
         assert res["isError"] and "needs the OpenSketch add-in 0.9.1" in out["error"] and "releases/tag/addin-latest" in out["error"]
         res, out = _mcp(base, "sw_export", {"format": "dxf"})
         assert res["isError"] and "Exporting DXF needs" in out["error"]
+        res, out = _mcp(base, "sw_edit_drawing", {"actions": [{"do": "arrange_dimensions"}]})
+        assert res["isError"] and "Editing drawings needs the OpenSketch add-in 0.10.0" in out["error"]
         assert len(old.got) == n, "nothing was sent to the old add-in"
         res, out = _mcp(base, "sw_status", {})
         assert out["version"] == "0.1.0" and "needs the OpenSketch add-in 0.9.1" in out["update_needed"]

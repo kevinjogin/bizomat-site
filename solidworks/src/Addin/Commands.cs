@@ -27,7 +27,7 @@ namespace OpenSketch.Sw
         static readonly HashSet<string> Writes = new HashSet<string>
         {
             "add_features", "batch", "insert_component", "add_mate", "delete", "set_parameter", "set_equation", "undo",
-            "create_drawing"
+            "create_drawing", "edit_drawing"
         };
 
         public Dictionary<string, object> Run(string op, Dictionary<string, object> a, ICommandIO io)
@@ -56,6 +56,8 @@ namespace OpenSketch.Sw
                     case "set_parameter": return SetParameter(a, null);
                     case "set_equation": return SetEquation(a, null);
                     case "create_drawing": return CreateDrawing(a);
+                    case "read_drawing": return ReadDrawing(a);
+                    case "edit_drawing": return EditDrawing(a);
                     default:
                         throw new UserError($"This add-in does not know the command '{op}'. Update it: download it again from the OpenSketch home page.");
                 }

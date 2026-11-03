@@ -38,6 +38,7 @@ AI app (Claude, ChatGPT)  --MCP-->  OpenSketch server  <--HTTPS long poll--  add
 | `sw_insert_component`, `sw_add_mate`, `sw_find_mate_candidates` | Assemblies |
 | `sw_body_topology`, `sw_measure_items`, `sw_inspect_design`, `sw_preview`, `sw_check_interference` | Look, measure and check |
 | `sw_create_drawing` | A SOLIDWORKS drawing of a part or assembly: standard views (third or first angle) and an isometric, a scale that fits, the model's dimensions, title block fields |
+| `sw_get_drawing`, `sw_edit_drawing` | Read a drawing, and change it step by step: model, projected, section and detail views, move, scale and display style, model dimensions, centre marks, notes, title block, sheet, parts list with balloons |
 | `sw_export`, `sw_import`, `request_upload` | STEP, STL, Parasolid, IGES, SOLIDWORKS files, PDF out; drawings as PDF, DWG or DXF; files in |
 | `sw_standard_part` | ISO screws, nuts, washers and ball bearings, made to size |
 | `sw_selftest` | Checks a new install, step by step |
