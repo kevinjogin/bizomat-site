@@ -177,7 +177,7 @@ def hello(user: dict | None, info: dict) -> dict:
     old = _sessions.get(pid)
     if old is not None:
         _close(old, "SOLIDWORKS connected again (another window or PC took over).")
-    s = Session(pid, {k: info.get(k) for k in ("client", "version", "sw_version", "machine", "user", "protocol")
+    s = Session(pid, {k: info.get(k) for k in ("client", "version", "sw_version", "machine", "user", "protocol", "path")
                       if info.get(k) is not None})
     _sessions[pid] = s
     return {"session": s.id, "protocol": PROTOCOL, "wait": WAIT,
@@ -294,6 +294,34 @@ def status(user: dict | None) -> dict:
     if s.late:
         out["finished_late"] = list(s.late)
     return out
+
+
+# Where people get a newer add-in (the GitHub release that solidworks.yml keeps up to date). Overridable for forks.
+ADDIN_DOWNLOAD = os.environ.get("OPENSKETCH_ADDIN_URL", "https://github.com/jogkev-creator/opensketchyz/releases/tag/addin-latest")
+
+
+def version_tuple(v: str | None) -> tuple[int, ...]:
+    """'0.9.0' -> (0, 9, 0); anything unreadable -> (0,)."""
+    try:
+        return tuple(int(x) for x in str(v).split(".")[:3])
+    except (TypeError, ValueError):
+        return (0,)
+
+
+def addin_too_old(user: dict | None, needed: str, what: str) -> str | None:
+    """A message when the connected add-in is older than `needed` (None when it is new enough or not connected)."""
+    s = _sessions.get(person_id(user))
+    if s is None or not s.alive():
+        return None
+    have = s.info.get("version")
+    if version_tuple(have) >= version_tuple(needed):
+        return None
+    where = s.info.get("path")
+    return (f"{what} needs the OpenSketch add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
+            + (f" from {where}" if where else "") + ". To update: close SOLIDWORKS (check Task Manager for SLDWORKS.exe), "
+            f"download OpenSketch-SOLIDWORKS.zip from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
+            "all files), run OpenSketchSW.exe from that folder and click Install for me, then reopen SOLIDWORKS and "
+            "connect again.")
 
 
 NOT_CONNECTED = ("SOLIDWORKS is not connected. On the PC: open SOLIDWORKS, then Tools > OpenSketch > Connect to "

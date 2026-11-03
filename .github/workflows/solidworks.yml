@@ -1,5 +1,6 @@
 # Builds and tests the SOLIDWORKS add-in (solidworks/) on every push or pull request that touches it, and keeps
-# the zip as a build artifact (Actions > the run > Artifacts > OpenSketch-SOLIDWORKS).
+# the zip as a build artifact (Actions > the run > Artifacts > OpenSketch-SOLIDWORKS). On main it also replaces the
+# "addin-latest" release, so the newest add-in is always at Releases > OpenSketch for SOLIDWORKS (latest).
 name: SOLIDWORKS add-in
 
 on:
@@ -15,6 +16,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # the addin-latest release on main
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -28,3 +31,14 @@ jobs:
         with:
           name: OpenSketch-SOLIDWORKS
           path: solidworks/dist/OpenSketch-SOLIDWORKS
+      - name: Publish the add-in as the addin-latest release (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd solidworks/dist && zip -qr ../../OpenSketch-SOLIDWORKS.zip OpenSketch-SOLIDWORKS && cd ../..
+          version=$(grep -o '<Version>[^<]*' solidworks/Directory.Build.props | cut -d'>' -f2)
+          gh release delete addin-latest --yes --cleanup-tag || true
+          gh release create addin-latest OpenSketch-SOLIDWORKS.zip --target "$GITHUB_SHA" \
+            --title "OpenSketch for SOLIDWORKS (latest)" \
+            --notes "Add-in $version, built from ${GITHUB_SHA::7}. Close SOLIDWORKS, unzip into your add-in folder (replace all files), run OpenSketchSW.exe and click Install for me, then reopen SOLIDWORKS and connect."

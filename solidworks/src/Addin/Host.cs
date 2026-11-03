@@ -35,6 +35,18 @@ namespace OpenSketch.Sw
 
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
 
+        static string SafeLocation()
+        {
+            try
+            {
+                return Assembly.GetExecutingAssembly().Location;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         Host(ISldWorks app, string mode)
         {
             App = app;
@@ -54,7 +66,7 @@ namespace OpenSketch.Sw
                 Current.Stop();
             }
             Current = new Host(app, mode);
-            Log.Write($"OpenSketch for SOLIDWORKS {Version} started as {mode}; SOLIDWORKS {SafeRevision(app)}");
+            Log.Write($"OpenSketch for SOLIDWORKS {Version} started as {mode} from {SafeLocation()}; SOLIDWORKS {SafeRevision(app)}");
             return Current;
         }
 
@@ -78,7 +90,8 @@ namespace OpenSketch.Sw
             var hello = new Dictionary<string, object>
             {
                 ["client"] = Mode, ["version"] = Version, ["sw_version"] = SafeRevision(App), ["machine"] = Environment.MachineName,
-                ["user"] = Environment.UserName, ["protocol"] = 1
+                ["user"] = Environment.UserName, ["protocol"] = 1,
+                ["path"] = SafeLocation()   // which OpenSketch.Sw.dll SOLIDWORKS loaded (an old copy is the usual update problem)
             };
             client = new BridgeClient(server, key, hello, RunOnSolidWorks, Log.Write);
             client.StateChanged += (s, c) => Changed();

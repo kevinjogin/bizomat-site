@@ -75,14 +75,14 @@ def _box_step(x=40, y=20, z=10):
 class FakeAddin:
     """Answers commands the way the C# add-in does, from canned geometry."""
 
-    def __init__(self, base: str, key: str):
-        self.base, self.key = base, key
+    def __init__(self, base: str, key: str, version: str = "0.9.0"):
+        self.base, self.key, self.version = base, key, version
         self.h = {"Authorization": f"Bearer {key}"}
         self.got: list[dict] = []
         self.stamp = 3
         self.stop = False
         self.gone = None
-        r = httpx.post(base + "/mcp/sw/hello", json={"client": "addin", "version": "0.1.0", "sw_version": "30.5.0",
+        r = httpx.post(base + "/mcp/sw/hello", json={"client": "addin", "version": self.version, "sw_version": "30.5.0",
                                                      "machine": "TESTPC", "protocol": 1}, headers=self.h)
         assert r.status_code == 200, r.text
         self.session = r.json()["session"]
@@ -315,6 +315,22 @@ def test_drawings_are_checked_here_and_made_by_the_addin(base, fake):
         res, out = _mcp(base, "sw_export", {"format": fmt, "doc": "C:\\OS\\Box.SLDDRW"})
         assert not res.get("isError"), out
         assert out["filename"].endswith("." + fmt) and httpx.get(out["download_url"]).status_code == 200
+
+
+def test_an_add_in_too_old_for_drawings_is_told_how_to_update(base):
+    old = FakeAddin(base, swbridge.key_for(None), version="0.1.0")
+    try:
+        n = len(old.got)
+        res, out = _mcp(base, "sw_create_drawing", {})
+        assert res["isError"] and "needs the OpenSketch add-in 0.9.0" in out["error"] and "releases/tag/addin-latest" in out["error"]
+        res, out = _mcp(base, "sw_export", {"format": "dxf"})
+        assert res["isError"] and "Exporting DXF needs" in out["error"]
+        assert len(old.got) == n, "nothing was sent to the old add-in"
+        res, out = _mcp(base, "sw_status", {})
+        assert out["version"] == "0.1.0" and "needs the OpenSketch add-in 0.9.0" in out["update_needed"]
+    finally:
+        old.stop = True
+    assert swbridge.version_tuple("0.10.0") > swbridge.version_tuple("0.9.0") and swbridge.version_tuple(None) == (0,)
 
 
 def test_a_command_nobody_takes_times_out(base, monkeypatch):

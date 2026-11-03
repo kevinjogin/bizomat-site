@@ -142,7 +142,11 @@ async def sw_status() -> CallToolResult:
     res, _, err = await _run("status", {}, timeout=30)
     if err:
         return _text(dict(st, error=err), True)
-    return _text(dict(st, **(res or {})))
+    out = dict(st, **(res or {}))
+    old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings")
+    if old:
+        out["update_needed"] = old
+    return _text(out)
 
 
 @mcp.tool()
@@ -664,6 +668,7 @@ async def sw_find_mate_candidates(doc: _DOC = None) -> CallToolResult:
 
 # ----------------------------------------------------------------------------- drawings
 
+DRAWINGS_FROM = "0.9.0"   # the first add-in that knows create_drawing and the drawing export formats
 DRAWING_VIEWS = Literal["front", "top", "right", "left", "bottom", "back", "isometric"]
 _SCALE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*$")
 
@@ -696,6 +701,9 @@ async def sw_create_drawing(
         return _text({"error": "At most 30 title block properties."}, True)
     if views is not None and not views:
         return _text({"error": "views: name at least one view, or leave it out for the standard set."}, True)
+    old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings")
+    if old:
+        return _text({"error": old}, True)
     args = {"doc": doc, "sheet": sheet, "projection": projection, "views": list(dict.fromkeys(views)) if views else None,
             "scale": [float(m.group(1)), float(m.group(2))] if m else None, "dimensions": dimensions,
             "properties": props or None, "name": name, "folder": folder}
@@ -710,6 +718,10 @@ async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "slda
     """Export from SOLIDWORKS and return a download_url valid for one hour. Parts and assemblies: STEP, STL,
     Parasolid, IGES, a copy of the native file, or a PDF of the view. Drawings: PDF (every sheet), DWG or DXF (the
     active sheet), or a copy of the .SLDDRW."""
+    if format in ("dwg", "dxf", "slddrw"):
+        old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, f"Exporting {format.upper()}")
+        if old:
+            return _text({"error": old}, True)
     res, files, err = await _run("export", {"doc": doc, "component": component, "format": format}, timeout=600)
     raw = files.get((res or {}).get("file") or "")
     if err or not raw:

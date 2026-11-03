@@ -39,18 +39,24 @@ powershell -ExecutionPolicy Bypass -File windows\setup.ps1
 
 This creates `.venv` in the folder and installs the pinned Python packages.
 
-## 4. Get the SOLIDWORKS add-in
+## 4. Get the SOLIDWORKS add-in (and update it)
 
-GitHub builds it for you:
+GitHub builds it on every change and keeps the newest one on one page:
 
-1. Open the repository on github.com and click **Actions**, then **SOLIDWORKS add-in**.
-2. Open the latest successful run. If there is none, click **Run workflow** and wait about two minutes.
-3. Under **Artifacts**, download **OpenSketch-SOLIDWORKS**. It saves as a zip in Downloads.
-4. Unzip it into a folder of your own, for example `Documents\OpenSketch-SOLIDWORKS`.
-5. Run `OpenSketchSW.exe` and click **Install for me**. If SmartScreen warns, click **More info**, then
+1. Close SOLIDWORKS. In Task Manager, end any `SLDWORKS.exe` that is still running.
+2. Open the repository on github.com, then **Releases > OpenSketch for SOLIDWORKS (latest)**
+   (`https://github.com/jogkev-creator/opensketchyz/releases/tag/addin-latest`), and download
+   **OpenSketch-SOLIDWORKS.zip**. The release notes show the add-in version.
+3. Unzip it into `Documents` so the files land in `Documents\OpenSketch-SOLIDWORKS`. Choose **Replace** for every file.
+   Always use the same folder.
+4. Run `OpenSketchSW.exe` from that folder and click **Install for me**. If SmartScreen warns, click **More info**, then
    **Run anyway**: the program is not signed.
+5. Reopen SOLIDWORKS and connect.
 
-Run `windows\setup.ps1` again afterwards and it copies the zip, so the home page can offer it too.
+To check which add-in SOLIDWORKS loaded, ask Claude for the SOLIDWORKS status. It shows the add-in `version` and its
+`path`. If it says `update_needed`, the old add-in is still the one loaded: repeat the steps above.
+
+Run `windows\setup.ps1` again afterwards and it copies the zip from Downloads, so the home page offers it too.
 
 ## 5. Start the server
 

@@ -78,7 +78,11 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   title block fields as the drawing's custom properties. The result lists each view's outline and notes (views off
   the sheet, no dimensions, unsaved model). A half-made drawing is closed. sw_export takes pdf (all sheets), dwg and
   dxf (active sheet) and slddrw from a drawing; sw_preview of a drawing needs screenshot=true. The API calls were
-  checked against the SOLIDWORKS 2022 interop (30.5.1); not yet run in a real SOLIDWORKS.
+  checked against the SOLIDWORKS 2022 interop (30.5.1); not yet run in a real SOLIDWORKS. The add-in is 0.9.0
+  (`solidworks/Directory.Build.props`; bump it whenever the add-in learns a command). Its hello sends its version and
+  the DLL's path; `swbridge.addin_too_old` makes sw_create_drawing, the dwg/dxf/slddrw exports and sw_status
+  (`update_needed`) say which add-in is loaded and how to update, before anything is sent. `solidworks.yml` replaces
+  the `addin-latest` GitHub release with every main build (`swbridge.ADDIN_DOWNLOAD`, `OPENSKETCH_ADDIN_URL`).
 - `sw_selftest.py`: stages plate / shapes / assembly in `Documents\OpenSketch\selftest` (the plate stage ends with its drawing and a PDF of it), each step ok / check /
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
