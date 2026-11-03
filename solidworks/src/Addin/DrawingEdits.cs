@@ -97,9 +97,7 @@ namespace OpenSketch.Sw
                 if (cpm.GetNames() is object[] names)
                     foreach (var n in names.OfType<string>())
                     {
-                        string val = null, resolved = null;
-                        bool wasResolved = false, linked = false;
-                        cpm.Get6(n, false, ref val, ref resolved, ref wasResolved, ref linked);
+                        cpm.Get6(n, false, out var val, out var resolved, out _, out _);
                         props[n] = resolved ?? val;
                     }
             }
