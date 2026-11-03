@@ -11,7 +11,7 @@ namespace OpenSketch.Sw
     public static class Settings
     {
         const string KeyPath = @"Software\OpenSketch\SolidWorks";
-        public const string DefaultServer = "https://opensketch-yz.fly.dev";
+        public const string DefaultServer = "http://127.0.0.1:8000"; // the server on this PC (windows/start.ps1)
 
         static RegistryKey Open(bool write) =>
             write ? Registry.CurrentUser.CreateSubKey(KeyPath) : Registry.CurrentUser.OpenSubKey(KeyPath);

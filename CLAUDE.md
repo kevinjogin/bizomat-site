@@ -89,6 +89,11 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   kept for the owner, idle ones stop after 15 min, workers over 800 MB replaced. `OPENSKETCH_CAD_WORKERS=0` runs in
   threads (tests/conftest.py sets it).
 
+- One Windows PC (`windows/`): `setup.ps1` (Python 3.12 venv, pinned packages, copies the add-in zip from
+  Downloads), `start.ps1` (asks for the server password, kept only in that window, and an optional public https
+  address for a tunnel; runs on port 8000), `README.md` (steps: add-in from the Actions artifact, the macro, Cloudflare
+  Tunnel for AI apps). The add-in's default address is `http://127.0.0.1:8000` (`Settings.DefaultServer`).
+
 ## Known limits
 
 - The add-in has been compiled against the SOLIDWORKS 2022 interop and its link tested against a real server; it has
