@@ -2,8 +2,9 @@
 # when idle (woken by the next request). A dedicated core because on shared CPU, heavy CAD work uses up the burst
 # allowance. Billed only while it runs; a linked add-in's long poll keeps it awake. Inside, `--supervise`
 # (Dockerfile) restarts the server when it stops answering.
-# Deployed by .github/workflows/deploy.yml on every push to main (tests first) once the repository has the
-# FLY_API_TOKEN and OPENSKETCH_PASSWORD secrets. Without OPENSKETCH_PASSWORD the public site would be open.
+# Deployed by Fly itself: the app is linked to this repository and builds every push to main. Keep the
+# OPENSKETCH_PASSWORD secret set on the app (without it the public site is open), and do not also give
+# .github/workflows/deploy.yml a FLY_API_TOKEN, or two deploys race on each push.
 # Settings: https://fly.io/docs/reference/configuration/
 
 app = 'cados'

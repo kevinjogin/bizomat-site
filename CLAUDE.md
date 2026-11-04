@@ -114,9 +114,10 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 ## Hosting
 
 - Live at https://cados.fly.dev (Fly app `cados`, Sydney, first made with Fly Launch from GitHub on 4 Nov 2026).
-  One deploy source: `deploy.yml` (tests, then `flyctl deploy`, then /healthz must show the new commit); it needs the
-  repository secrets FLY_API_TOKEN and OPENSKETCH_PASSWORD. Fly's own GitHub auto-deploy should stay off so the two
-  never race. The Windows PC server (`windows/`) is the other way to run it.
+  One deploy source: the app is linked to this repository in Fly (Fly builds and deploys every push to main itself;
+  /healthz then reports version "dev", as no commit is passed in). So the repository has no FLY_API_TOKEN secret and
+  `deploy.yml` only runs the tests: adding that secret would make both deploy each push and race. The
+  OPENSKETCH_PASSWORD secret is set on the Fly app. The Windows PC server (`windows/`) is the other way to run it.
 - fly.toml: app `cados`, performance-1x (one dedicated core, 2 GB), `auto_stop_machines = "suspend"`, kill_timeout 15, volume
   `opensketch_data` at /data. The add-in's long poll keeps the machine awake while SOLIDWORKS is linked.
 - `supervisor.py` (`python -m opensketch --supervise`, the image's CMD): asks /healthz every 5 s, restarts the server
