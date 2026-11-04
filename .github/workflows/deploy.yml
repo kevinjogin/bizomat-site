@@ -28,7 +28,7 @@ permissions:
   contents: read
 
 env:
-  APP: ${{ vars.FLY_APP || 'opensketch-yz' }}
+  APP: ${{ vars.FLY_APP || 'cados' }}
 
 jobs:
   plan:
