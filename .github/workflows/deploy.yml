@@ -146,6 +146,11 @@ jobs:
           if [ "$(flyctl volumes list --app "$APP" --json | jq 'map(select(.name == "opensketch_data")) | length')" = "0" ]; then
             flyctl volumes create opensketch_data --app "$APP" --region "$REGION" --size 1 --yes
           fi
+          # without public addresses <app>.fly.dev does not exist in DNS (an app made outside flyctl can have none)
+          if [ "$(flyctl ips list --app "$APP" --json | jq 'length')" = "0" ]; then
+            flyctl ips allocate-v6 --app "$APP"
+            flyctl ips allocate-v4 --shared --app "$APP"
+          fi
 
       - name: Pass secrets to Fly
         if: steps.setup.outputs.go == 'yes'
