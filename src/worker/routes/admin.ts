@@ -436,17 +436,35 @@ const activityQuery = z.object({
 function activityWhere(f: z.infer<typeof activityQuery>) {
   const where: string[] = [];
   const args: unknown[] = [];
-  if (f.userId) (where.push('e.user_id = ?'), args.push(f.userId));
+  if (f.userId) {
+    where.push('e.user_id = ?');
+    args.push(f.userId);
+  }
   if (f.type) {
     if (!(EVENT_TYPES as string[]).includes(f.type)) throw badRequest('Unknown event type');
     where.push('e.event_type = ?');
     args.push(f.type);
   }
-  if (f.workspaceId) (where.push('e.workspace_id = ?'), args.push(f.workspaceId));
-  if (f.boardId) (where.push('e.board_id = ?'), args.push(f.boardId));
-  if (f.from) (where.push('e.created_at >= ?'), args.push(Date.parse(f.from + 'T00:00:00Z')));
-  if (f.to) (where.push('e.created_at < ?'), args.push(Date.parse(f.to + 'T00:00:00Z') + DAY));
-  if (f.before) (where.push('e.created_at < ?'), args.push(f.before));
+  if (f.workspaceId) {
+    where.push('e.workspace_id = ?');
+    args.push(f.workspaceId);
+  }
+  if (f.boardId) {
+    where.push('e.board_id = ?');
+    args.push(f.boardId);
+  }
+  if (f.from) {
+    where.push('e.created_at >= ?');
+    args.push(Date.parse(f.from + 'T00:00:00Z'));
+  }
+  if (f.to) {
+    where.push('e.created_at < ?');
+    args.push(Date.parse(f.to + 'T00:00:00Z') + DAY);
+  }
+  if (f.before) {
+    where.push('e.created_at < ?');
+    args.push(f.before);
+  }
   return { sql: where.length ? 'WHERE ' + where.join(' AND ') : '', args };
 }
 
