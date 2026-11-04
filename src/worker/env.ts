@@ -1,0 +1,36 @@
+export interface Env {
+  DB: D1Database;
+  FILES: R2Bucket;
+  CACHE: KVNamespace;
+  ASSETS: Fetcher;
+  BOARD_ROOMS: DurableObjectNamespace;
+  ENVIRONMENT: string;
+  APP_NAME: string;
+  APP_URL: string;
+  ALLOW_SIGNUP: string;
+  SESSION_TTL_HOURS: string;
+  // Secrets (set with `wrangler secret put`), all optional:
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+}
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export interface SessionInfo {
+  id: string;
+  csrfToken: string;
+  provider: string;
+  expiresAt: number;
+}
+
+export type AppVariables = {
+  user: AuthUser;
+  session: SessionInfo | null;
+  authKind: 'session' | 'token';
+};
+
+export type AppEnv = { Bindings: Env; Variables: AppVariables };
