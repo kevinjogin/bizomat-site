@@ -8,6 +8,10 @@
 # A new app needs the app and its volume once: `fly apps create <app>` and
 # `fly volumes create opensketch_data -a <app> -r syd -s 1` (with an org token this workflow still makes them).
 #
+# Pushes: the Fly app (cados) is linked to this repository and Fly deploys every push to main itself, so a push runs
+# only the tests here, unless the repository variable DEPLOY_ON_PUSH is "true" (then unlink the repo in Fly).
+# Run by hand, it deploys from here (and makes the volume and passes the password secret if they are missing).
+#
 # What deploys: a push to main whose changes since the live version (the site's /healthz names its commit) touch
 # more than notes and tests (root *.md, docs/, tests/, solidworks/tests/): each deploy restarts the one server
 # (~15 s offline). Afterwards the live /healthz must answer with the new version within 3 minutes, else the run fails.
@@ -101,10 +105,15 @@ jobs:
           HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
           HAS_PASSWORD: ${{ secrets.OPENSKETCH_PASSWORD != '' }}
           EVENT: ${{ github.event_name }}
+          DEPLOY_ON_PUSH: ${{ vars.DEPLOY_ON_PUSH }}
           GH_TOKEN: ${{ github.token }}
         run: |
           if [ "$HAS_TOKEN" != "true" ]; then
             echo "No FLY_API_TOKEN secret yet: not deploying."
+            echo "go=no" >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT" = "push" ] && [ "$DEPLOY_ON_PUSH" != "true" ]; then
+            # the Fly app is linked to this repository and deploys each push itself; deploying here too would race it
+            echo "Fly deploys pushes itself (repository variable DEPLOY_ON_PUSH is not true): tests only." | tee -a "$GITHUB_STEP_SUMMARY"
             echo "go=no" >> "$GITHUB_OUTPUT"
           elif [ "$HAS_PASSWORD" != "true" ]; then
             echo "::error::Add the OPENSKETCH_PASSWORD secret first, so the public site is not open to everyone."

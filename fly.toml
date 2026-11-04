@@ -3,8 +3,8 @@
 # allowance. Billed only while it runs; a linked add-in's long poll keeps it awake. Inside, `--supervise`
 # (Dockerfile) restarts the server when it stops answering.
 # Deployed by Fly itself: the app is linked to this repository and builds every push to main. Keep the
-# OPENSKETCH_PASSWORD secret set on the app (without it the public site is open), and do not also give
-# .github/workflows/deploy.yml a FLY_API_TOKEN, or two deploys race on each push.
+# OPENSKETCH_PASSWORD secret set on the app (without it the public site is open). GitHub Actions deploys only when
+# run by hand (deploy.yml), and fly-status.yml reads the app's state and logs.
 # Settings: https://fly.io/docs/reference/configuration/
 
 app = 'cados'
