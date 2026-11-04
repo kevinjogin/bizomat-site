@@ -45,10 +45,12 @@ jobs:
       - name: Apply migrations
         run: npx wrangler d1 migrations apply DB --remote --env production
       - name: Deploy
-        run: npx wrangler deploy --env production --message "${GITHUB_SHA::7} ${{ github.event.head_commit.message || 'manual' }}"
+        run: npx wrangler deploy --env production --message "${GITHUB_SHA::7} production"
       - name: Smoke test production
         id: smoke
-        run: node scripts/smoke.mjs "${{ vars.PRODUCTION_URL }}"
+        env:
+          PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+        run: node scripts/smoke.mjs "$PRODUCTION_URL"
       - name: Roll back on failed smoke test
         if: failure() && steps.smoke.outcome == 'failure'
         run: npx wrangler rollback --env production --message "Automatic rollback after failed smoke test" -y

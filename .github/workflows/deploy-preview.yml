@@ -43,6 +43,11 @@ jobs:
           echo "url=$URL" >> "$GITHUB_OUTPUT"
       - name: Smoke test preview
         if: steps.upload.outputs.url != ''
-        run: node scripts/smoke.mjs "${{ steps.upload.outputs.url }}"
+        env:
+          PREVIEW_URL: ${{ steps.upload.outputs.url }}
+        run: node scripts/smoke.mjs "$PREVIEW_URL"
       - name: Summary
-        run: echo "Preview URL: ${{ steps.upload.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          PREVIEW_URL: ${{ steps.upload.outputs.url }}
+        run: |
+          echo "Preview URL: $PREVIEW_URL" >> "$GITHUB_STEP_SUMMARY"
