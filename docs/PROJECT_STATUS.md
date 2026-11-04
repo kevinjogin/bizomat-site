@@ -86,4 +86,5 @@ Legend: ✅ implemented and covered by automated tests · 🟢 implemented and v
 | Date | Environment | Version | Result |
 | --- | --- | --- | --- |
 | 2026-11-04 | preview | `96d83588-d62d-4d21-b5c2-b6fe02f794ae` (commit 9caec2e) | Success — new Worker `workos-platform-preview`, D1 `workos-platform-preview-db` (36733ff4-5842-4274-a7f9-a0cdd8de2f3b), KV `workos-platform-preview-cache` (129d5d6f69784d91bb67088713ed8364), R2 `workos-platform-preview-files`; migrations applied; 10/10 smoke checks passed |
+| 2026-11-04 | preview (serves work.kevos.com) | `1a97c9f6-58c6-434a-b09d-e91b67b94064` (commit 905f174) | Founder console + analytics. Live DB backed up, migration 0004 rehearsed on a copy of live data (row counts unchanged), applied, deployed; 14/14 smoke checks passed; audit confirmed 2 users / 2 workspaces / 2 boards / 2 items preserved and kevin@kevos.com = founder |
 | — | production | — | Not deployed: awaiting preview validation |
