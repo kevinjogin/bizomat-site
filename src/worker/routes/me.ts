@@ -10,6 +10,7 @@ import { HttpError, badRequest, body, clientIp, newId, notFound, now, parseJson,
 import { hashPassword, passwordProblems, verifyPassword } from '../auth/password';
 import { rateLimit } from '../auth/rate-limit';
 import { audit } from '../services/audit';
+import { dailyActivityStmt, trackEvent } from '../services/analytics';
 import { columnDTO, itemDTO, type ColumnRow } from '../services/mappers';
 import { accessibleBoardIds, requireItem, requireWorkspace, type ItemRow } from '../services/permissions';
 import { userDTO, type UserRow } from './helpers';
@@ -41,6 +42,7 @@ meRoutes.patch('/me', async (c) => {
   await c.env.DB.prepare('UPDATE users SET name = ?, timezone = ?, locale = ?, theme = ?, preferences_json = ?, updated_at = ? WHERE id = ?')
     .bind(input.name ?? cur!.name, input.timezone ?? cur!.timezone, input.locale ?? cur!.locale, input.theme ?? cur!.theme, JSON.stringify(prefs), now(), user.id)
     .run();
+  await trackEvent(c.env.DB, { type: 'settings.changed', userId: user.id, entityType: 'user', entityId: user.id, metadata: { section: 'profile' } });
   const row = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(user.id).first<UserRow>();
   return c.json(userDTO(row!));
 });
@@ -57,9 +59,10 @@ meRoutes.post('/me/password', async (c) => {
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?').bind(await hashPassword(input.newPassword), now(), user.id),
     // Revoke every other session after a password change.
-    c.env.DB.prepare('UPDATE sessions SET revoked_at = ? WHERE user_id = ? AND id != ? AND revoked_at IS NULL').bind(now(), user.id, session?.id ?? ''),
+    c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'password_change' WHERE user_id = ?2 AND id != ?3 AND revoked_at IS NULL").bind(now(), user.id, session?.id ?? ''),
   ]);
   await audit(c.env.DB, { actorId: user.id, action: 'auth.password_changed', ip: clientIp(c) });
+  await trackEvent(c.env.DB, { type: 'settings.changed', userId: user.id, entityType: 'user', entityId: user.id, metadata: { section: 'password' } });
   return c.json({ ok: true });
 });
 
@@ -74,7 +77,7 @@ meRoutes.get('/me/sessions', async (c) => {
 
 meRoutes.delete('/me/sessions/:id', async (c) => {
   const user = c.get('user');
-  const r = await c.env.DB.prepare('UPDATE sessions SET revoked_at = ? WHERE id = ? AND user_id = ? AND revoked_at IS NULL').bind(now(), c.req.param('id'), user.id).run();
+  const r = await c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'revoked' WHERE id = ?2 AND user_id = ?3 AND revoked_at IS NULL").bind(now(), c.req.param('id'), user.id).run();
   if (!r.meta.changes) throw notFound('Session');
   await audit(c.env.DB, { actorId: user.id, action: 'auth.session_revoked', targetId: c.req.param('id'), ip: clientIp(c) });
   return c.json({ ok: true });
@@ -82,7 +85,7 @@ meRoutes.delete('/me/sessions/:id', async (c) => {
 
 meRoutes.post('/me/sessions/revoke-others', async (c) => {
   const user = c.get('user');
-  const r = await c.env.DB.prepare('UPDATE sessions SET revoked_at = ? WHERE user_id = ? AND id != ? AND revoked_at IS NULL').bind(now(), user.id, c.get('session')?.id ?? '').run();
+  const r = await c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'revoked' WHERE user_id = ?2 AND id != ?3 AND revoked_at IS NULL").bind(now(), user.id, c.get('session')?.id ?? '').run();
   return c.json({ revoked: r.meta.changes });
 });
 
@@ -149,6 +152,7 @@ meRoutes.put('/me/notification-preferences', async (c) => {
       c.env.DB.prepare('INSERT INTO notification_preferences (user_id, type, in_app, email) VALUES (?, ?, ?, ?) ON CONFLICT(user_id, type) DO UPDATE SET in_app = excluded.in_app, email = excluded.email').bind(user.id, p.type, p.inApp ? 1 : 0, p.email ? 1 : 0),
     ),
   );
+  await trackEvent(c.env.DB, { type: 'settings.changed', userId: user.id, entityType: 'user', entityId: user.id, metadata: { section: 'notifications' } });
   return c.json({ ok: true, emailDelivery: 'not_configured' });
 });
 
@@ -354,4 +358,31 @@ meRoutes.get('/me/timer', async (c) => {
     .bind(c.get('user').id)
     .first();
   return c.json(row ?? null);
+});
+
+// ------------------------------------------------------------- heartbeat
+
+export const HEARTBEAT_INTERVAL_MS = 60_000;
+export const ACTIVE_WINDOW_MS = 5 * 60_000;
+
+/**
+ * Sent by an open, visible tab that the user has interacted with recently.
+ * This (not merely an unexpired cookie) is what marks a session as "active".
+ * Throttled server-side to one write per 30 s per session.
+ */
+meRoutes.post('/heartbeat', async (c) => {
+  const session = c.get('session');
+  const user = c.get('user');
+  if (!session) return c.json({ ok: true, tracked: false });
+  const t = now();
+  const r = await c.env.DB.prepare('UPDATE sessions SET last_activity_at = ?1, last_seen_at = ?1 WHERE id = ?2 AND ended_at IS NULL AND (last_activity_at IS NULL OR last_activity_at < ?3)')
+    .bind(t, session.id, t - 30_000)
+    .run();
+  if (r.meta.changes) {
+    await c.env.DB.batch([
+      c.env.DB.prepare('UPDATE users SET last_active_at = ? WHERE id = ?').bind(t, user.id),
+      dailyActivityStmt(c.env.DB, user.id, t, true),
+    ]);
+  }
+  return c.json({ ok: true, tracked: true, intervalMs: HEARTBEAT_INTERVAL_MS });
 });

@@ -13,6 +13,7 @@ import { loadColumns } from './mappers';
 import type { BoardRow, ItemRow } from './permissions';
 import { itemLink, notify } from './notify';
 import { dispatchEvent } from './automations';
+import { eventStmt } from './analytics';
 
 const MAX_NAME = 500;
 
@@ -242,6 +243,7 @@ export async function createItem(svc: Svc, board: BoardRow, input: CreateItemInp
       newValue: { id, name },
     }),
     svc.db.prepare('UPDATE boards SET updated_at = ? WHERE id = ?').bind(t, board.id),
+    eventStmt(svc.db, { type: 'task.created', userId: actorId(svc), workspaceId: board.workspace_id, boardId: board.id, entityType: 'item', entityId: id, metadata: { subitem: !!parent, automation: !!svc.automationName }, at: t }),
   ]);
   await notifyAssignmentChanges(svc, board, item, {}, values, cols);
   emitRealtime(svc, board.id, 'item_created', { itemId: id });
@@ -306,6 +308,8 @@ export async function updateItem(svc: Svc, board: BoardRow, item: ItemRow, patch
   }
   if (!stmts.length) return item;
   const searchText = buildSearchText(name, description, after, cols);
+  if (svc.actor) stmts.push(eventStmt(svc.db, { type: 'task.updated', userId: svc.actor.id, workspaceId: board.workspace_id, boardId: board.id, entityType: 'item', entityId: item.id, metadata: { fields: changedCols.length + (name !== item.name ? 1 : 0) + (description !== item.description ? 1 : 0) }, at: t }));
+  if (!wasDone && nowDone) stmts.push(eventStmt(svc.db, { type: 'task.completed', userId: actorId(svc), workspaceId: board.workspace_id, boardId: board.id, entityType: 'item', entityId: item.id, metadata: { automation: !!svc.automationName }, at: t }));
   stmts.unshift(
     svc.db
       .prepare(`UPDATE items SET values_json = ${setExpr}, name = ?, description = ?, search_text = ?, updated_at = ?, completed_at = ? WHERE id = ?`)

@@ -19,6 +19,9 @@ import { integrationRoutes } from './routes/integrations';
 import { templateRoutes } from './routes/templates';
 import { realtimeRoutes } from './routes/realtime';
 import { folderRoutes } from './routes/folders';
+import { adminRoutes } from './routes/admin';
+import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
+import { bumpMetric, recordError } from './services/analytics';
 
 export const CSP = [
   "default-src 'self'",
@@ -56,6 +59,13 @@ export function createApp() {
       return res;
     }
     console.error('Unhandled error', err);
+    const url = new URL(c.req.url);
+    const p = recordError(c.env.DB, { method: c.req.method, path: url.pathname, status: 500, error: err });
+    try {
+      c.executionCtx.waitUntil(p);
+    } catch {
+      void p;
+    }
     return c.json({ error: 'Internal server error' }, 500);
   });
 
@@ -91,6 +101,11 @@ export function createApp() {
   api.route('/', integrationRoutes);
   api.route('/', templateRoutes);
   api.route('/', folderRoutes);
+  // Founder admin API: authenticated session + platform-admin role, enforced server-side.
+  const admin = new Hono<AppEnv>();
+  admin.use('*', requirePlatformAdmin);
+  admin.route('/', adminRoutes);
+  api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
 
@@ -101,14 +116,26 @@ export function createApp() {
   app.get('*', async (c) => {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
-    const publicPaths = ['/login', '/signup', '/invite/'];
+    const publicPaths = ['/login', '/signup', '/invite/', '/privacy'];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
-    if (isNavigation && !isPublic) {
+    if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));
       const auth = hasCookie ? await resolveAuth(c) : null;
-      if (!auth) {
+      // Aggregate page-view counters only (no identifiers, no cookies).
+      const pv = bumpMetric(c.env.DB, auth ? 'pageview_authenticated' : 'pageview_anonymous');
+      try {
+        c.executionCtx.waitUntil(pv);
+      } catch {
+        void pv;
+      }
+      if (!auth && !isPublic) {
         const next = url.pathname + url.search;
         return c.redirect(`/login${next && next !== '/' ? `?next=${encodeURIComponent(next)}` : ''}`, 302);
+      }
+      // The admin area is not even served to non-admins.
+      if (auth && (url.pathname === '/admin' || url.pathname.startsWith('/admin/'))) {
+        const role = auth.kind === 'session' ? await getPlatformRole(c.env.DB, auth.user.id) : null;
+        if (!role) return c.text('Not found', 404);
       }
     }
     const res = await c.env.ASSETS.fetch(new Request(new URL(url.pathname, url.origin).toString(), { headers: c.req.raw.headers }));
@@ -119,6 +146,18 @@ export function createApp() {
   });
 
   return app;
+}
+
+/** Count failing API responses per day (aggregate only). */
+export function apiFailureMetric(req: Request, status: number): string | null {
+  const path = new URL(req.url).pathname;
+  if (!path.startsWith('/api/') || status < 400) return null;
+  if (status === 401 && (path === '/api/auth/me' || path === '/api/heartbeat')) return null; // signed-out page loads, not failures
+  if (status >= 500) return 'api_5xx';
+  if (status === 429) return 'api_429';
+  if (status === 401) return 'api_401';
+  if (status === 403) return 'api_403';
+  return 'api_4xx';
 }
 
 export async function withSecurityHeaders(res: Response, req: Request): Promise<Response> {

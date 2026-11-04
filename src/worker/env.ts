@@ -12,6 +12,7 @@ export interface Env {
   // Secrets (set with `wrangler secret put`), all optional:
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  CF_VERSION_METADATA?: { id: string; tag: string; timestamp: string };
 }
 
 export interface AuthUser {
@@ -31,6 +32,7 @@ export type AppVariables = {
   user: AuthUser;
   session: SessionInfo | null;
   authKind: 'session' | 'token';
+  platformRole?: 'founder' | 'admin';
 };
 
 export type AppEnv = { Bindings: Env; Variables: AppVariables };

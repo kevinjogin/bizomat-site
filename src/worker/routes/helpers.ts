@@ -2,6 +2,7 @@ import type { UserDTO, WorkspaceDTO, WorkspaceRole } from '../../shared/types';
 import { newId, now, parseJson } from '../lib/util';
 import { avatarUrl } from '../services/mappers';
 import { defaultStatusLabels, defaultPriorityLabels } from '../../shared/columns';
+import { eventStmt } from '../services/analytics';
 
 export interface UserRow {
   id: string;
@@ -64,6 +65,7 @@ export function createWorkspaceStmts(db: D1Database, opts: { id?: string; name: 
         .prepare('INSERT INTO workspaces (id, name, description, color, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
         .bind(id, opts.name, opts.description ?? '', opts.color ?? '#F97316', opts.ownerId, t, t),
       db.prepare("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, 'owner', ?)").bind(id, opts.ownerId, t),
+      eventStmt(db, { type: 'workspace.created', userId: opts.ownerId, workspaceId: id, entityType: 'workspace', entityId: id, at: t }),
     ],
   };
 }
@@ -79,6 +81,7 @@ export async function acceptPendingInvitations(db: D1Database, userId: string, e
   const stmts = invites.results.flatMap((i) => [
     db.prepare('INSERT OR IGNORE INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)').bind(i.workspace_id, userId, i.role, t),
     db.prepare('UPDATE invitations SET accepted_at = ? WHERE id = ?').bind(t, i.id),
+    eventStmt(db, { type: 'member.joined', userId, workspaceId: i.workspace_id, entityType: 'workspace', entityId: i.workspace_id, metadata: { role: i.role }, at: t }),
   ]);
   await db.batch(stmts);
   return invites.results.length;

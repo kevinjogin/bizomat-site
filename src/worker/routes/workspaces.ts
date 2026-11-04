@@ -4,6 +4,7 @@ import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, notFound, now, parseJson, randomToken, sha256Hex } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { audit, auditStmt } from '../services/audit';
+import { eventStmt } from '../services/analytics';
 import { svcFromContext } from '../services/context';
 import { workspaceMembers } from '../services/mappers';
 import { notify } from '../services/notify';
@@ -173,6 +174,7 @@ workspaceRoutes.post('/workspaces/:ws/invitations', async (c) => {
       t + 7 * 86_400_000,
     ),
     auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'invitation.created', targetType: 'invitation', targetId: id, metadata: { email: input.email, role: input.role }, ip: clientIp(c) }),
+    eventStmt(c.env.DB, { type: 'member.invited', userId: user.id, workspaceId: wsId, entityType: 'invitation', entityId: id, metadata: { role: input.role }, at: t }),
   ]);
   // Existing users get an in-app notification in their other workspaces' inbox.
   const existingUser = await c.env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(input.email).first<{ id: string }>();

@@ -14,6 +14,7 @@ import { boardDTO, columnDTO, groupDTO, itemDTO, viewDTO, workspaceMembers, type
 import { computeBoardAccess, requireBoard, requireWorkspace, type BoardRow, type ItemRow } from '../services/permissions';
 import { buildSearchText } from '../services/item-ops';
 import { assertFolder } from './folders';
+import { eventStmt } from '../services/analytics';
 
 export const boardRoutes = new Hono<AppEnv>();
 
@@ -81,7 +82,10 @@ boardRoutes.post('/workspaces/:ws/boards', async (c) => {
     await assertFolder(c.env.DB, wsId, 'boards', input.folderId);
     await c.env.DB.prepare('UPDATE boards SET folder_id = ? WHERE id = ?').bind(input.folderId, boardId).run();
   }
-  await auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'board.created', targetType: 'board', targetId: boardId, ip: clientIp(c) }).run();
+  await c.env.DB.batch([
+    auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'board.created', targetType: 'board', targetId: boardId, ip: clientIp(c) }),
+    eventStmt(c.env.DB, { type: 'project.created', userId: user.id, workspaceId: wsId, boardId, entityType: 'board', entityId: boardId, metadata: { template: input.templateId ?? 'blank', kind: input.kind } }),
+  ]);
   const row = await c.env.DB.prepare('SELECT * FROM boards WHERE id = ?').bind(boardId).first<BoardRow>();
   return c.json({ ...boardDTO(row!), access: 'admin' }, 201);
 });
@@ -159,6 +163,9 @@ boardRoutes.patch('/boards/:id', async (c) => {
       now(),
       board.id,
     ),
+    ...(input.name !== undefined || input.description !== undefined || input.visibility !== undefined || input.settings !== undefined
+      ? [eventStmt(c.env.DB, { type: 'project.updated', userId: user.id, workspaceId: board.workspace_id, boardId: board.id, entityType: 'board', entityId: board.id })]
+      : []),
     ...(input.visibility && input.visibility !== board.visibility
       ? [auditStmt(c.env.DB, { workspaceId: board.workspace_id, actorId: user.id, action: 'board.visibility_changed', targetType: 'board', targetId: board.id, metadata: { to: input.visibility }, ip: clientIp(c) })]
       : []),
@@ -190,6 +197,7 @@ boardRoutes.post('/boards/:id/archive', async (c) => {
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE boards SET archived_at = ?, updated_at = ? WHERE id = ?').bind(now(), now(), board.id),
     auditStmt(c.env.DB, { workspaceId: board.workspace_id, actorId: user.id, action: 'board.archived', targetType: 'board', targetId: board.id, ip: clientIp(c) }),
+    eventStmt(c.env.DB, { type: 'project.archived', userId: user.id, workspaceId: board.workspace_id, boardId: board.id, entityType: 'board', entityId: board.id }),
   ]);
   rt(c, board.id, 'board_updated');
   return c.json({ ok: true });
@@ -222,6 +230,7 @@ boardRoutes.delete('/boards/:id', async (c) => {
     c.env.DB.prepare('DELETE FROM items WHERE board_id = ? AND parent_item_id IS NOT NULL').bind(board.id),
     c.env.DB.prepare('DELETE FROM boards WHERE id = ?').bind(board.id),
     auditStmt(c.env.DB, { workspaceId: board.workspace_id, actorId: user.id, action: 'board.deleted', targetType: 'board', targetId: board.id, metadata: { name: board.name }, ip: clientIp(c) }),
+    eventStmt(c.env.DB, { type: 'project.deleted', userId: user.id, workspaceId: board.workspace_id, boardId: board.id, entityType: 'board', entityId: board.id }),
   ]);
   for (let i = 0; i < files.results.length; i += 1000) await c.env.FILES.delete(files.results.slice(i, i + 1000).map((f) => f.r2_key));
   rt(c, board.id, 'board_deleted');

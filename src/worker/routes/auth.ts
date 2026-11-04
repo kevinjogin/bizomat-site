@@ -9,6 +9,7 @@ import { rateLimit, resetRateLimit } from '../auth/rate-limit';
 import { checkOrigin, createSession, destroySession, isSecureEnv, requireAuth, resolveAuth } from '../auth/session';
 import { getProvider, pkceChallenge, providers } from '../auth/providers';
 import { audit } from '../services/audit';
+import { bumpMetric, eventStmt } from '../services/analytics';
 import { acceptPendingInvitations, createWorkspaceStmts, listWorkspaces, userDTO, type UserRow } from './helpers';
 
 export const authRoutes = new Hono<AppEnv>();
@@ -58,6 +59,7 @@ authRoutes.post('/signup', async (c) => {
       t,
     ),
   ];
+  stmts.push(eventStmt(c.env.DB, { type: 'user.registered', userId, entityType: 'user', entityId: userId, metadata: { provider: 'password', invited: !!hasInvite }, at: t }));
   if (!hasInvite) stmts.push(...createWorkspaceStmts(c.env.DB, { name: `${input.name.split(' ')[0]}'s workspace`, ownerId: userId }).stmts);
   await c.env.DB.batch(stmts);
   await acceptPendingInvitations(c.env.DB, userId, input.email);
@@ -87,6 +89,7 @@ authRoutes.post('/login', async (c) => {
         .run();
       await audit(c.env.DB, { actorId: user.id, action: 'auth.login_failed', ip });
     }
+    await bumpMetric(c.env.DB, 'auth_login_failed');
     throw new HttpError(401, 'Invalid email or password');
   }
   await c.env.DB.prepare('UPDATE users SET failed_logins = 0, locked_until = NULL WHERE id = ?').bind(user.id).run();
@@ -106,7 +109,9 @@ authRoutes.get('/me', async (c) => {
   const auth = await resolveAuth(c);
   if (!auth) throw new HttpError(401, 'Authentication required');
   const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(auth.user.id).first<UserRow>();
-  return c.json({ user: userDTO(user!), csrfToken: auth.session?.csrfToken ?? null, workspaces: await listWorkspaces(c.env.DB, auth.user.id) });
+  const { getPlatformRole } = await import('../services/platform-admin');
+  const platformRole = auth.kind === 'session' ? await getPlatformRole(c.env.DB, auth.user.id) : null;
+  return c.json({ user: userDTO(user!), csrfToken: auth.session?.csrfToken ?? null, workspaces: await listWorkspaces(c.env.DB, auth.user.id), platformRole });
 });
 
 // ------------------------------------------------------------------ OAuth
@@ -173,7 +178,10 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
       const invited = await db.prepare('SELECT 1 FROM invitations WHERE email = ? AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > ?').bind(profile.email, t).first();
       if (!signupAllowed(c.env) && !invited) return fail('signup_disabled');
       userId = newId();
-      const stmts = [db.prepare('INSERT INTO users (id, email, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?)').bind(userId, profile.email, profile.name.slice(0, 100), t, t)];
+      const stmts = [
+        db.prepare('INSERT INTO users (id, email, name, created_at, updated_at) VALUES (?, ?, ?, ?, ?)').bind(userId, profile.email, profile.name.slice(0, 100), t, t),
+        eventStmt(db, { type: 'user.registered', userId, entityType: 'user', entityId: userId, metadata: { provider: provider.id, invited: !!invited }, at: t }),
+      ];
       if (!invited) stmts.push(...createWorkspaceStmts(db, { name: `${profile.name.split(' ')[0]}'s workspace`, ownerId: userId }).stmts);
       await db.batch(stmts);
     }
@@ -214,6 +222,7 @@ authRoutes.post('/invitations/:token/accept', requireAuth, async (c) => {
   await c.env.DB.batch([
     c.env.DB.prepare('INSERT OR IGNORE INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)').bind(inv.workspace_id, user.id, inv.role, t),
     c.env.DB.prepare('UPDATE invitations SET accepted_at = COALESCE(accepted_at, ?) WHERE id = ?').bind(t, inv.id),
+    eventStmt(c.env.DB, { type: 'member.joined', userId: user.id, workspaceId: inv.workspace_id, entityType: 'workspace', entityId: inv.workspace_id, metadata: { role: inv.role }, at: t }),
   ]);
   await audit(c.env.DB, { workspaceId: inv.workspace_id, actorId: user.id, action: 'member.joined', targetType: 'user', targetId: user.id });
   return c.json({ workspaceId: inv.workspace_id });

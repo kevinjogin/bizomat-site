@@ -2,6 +2,8 @@ import type { Context, MiddlewareHandler } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import type { AppEnv, AuthUser, Env, SessionInfo } from '../env';
 import { HttpError, clientIp, newId, now, randomToken, sha256Hex, timingSafeEqual } from '../lib/util';
+import { dailyActivityStmt, eventStmt } from '../services/analytics';
+import { parseUserAgent } from '../../shared/ua';
 
 const TOUCH_INTERVAL_MS = 5 * 60_000;
 
@@ -25,12 +27,20 @@ export async function createSession(c: Context<AppEnv>, userId: string, provider
   const t = now();
   const expiresAt = t + ttlMs(c.env);
   const id = newId();
-  await c.env.DB.prepare(
-    `INSERT INTO sessions (id, token_hash, user_id, csrf_token, provider, user_agent, ip, created_at, last_seen_at, expires_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-  )
-    .bind(id, await sha256Hex(token), userId, csrf, provider, (c.req.header('User-Agent') ?? '').slice(0, 300), clientIp(c), t, t, expiresAt)
-    .run();
+  const ua = (c.req.header('User-Agent') ?? '').slice(0, 300);
+  const device = parseUserAgent(ua);
+  const db = c.env.DB;
+  await db.batch([
+    db
+      .prepare(
+        `INSERT INTO sessions (id, token_hash, user_id, csrf_token, provider, user_agent, ip, created_at, last_seen_at, last_activity_at, expires_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .bind(id, await sha256Hex(token), userId, csrf, provider, ua, clientIp(c), t, t, t, expiresAt),
+    db.prepare('UPDATE users SET last_login_at = ?1, last_active_at = ?1, login_count = login_count + 1 WHERE id = ?2').bind(t, userId),
+    eventStmt(db, { type: 'user.login', userId, entityType: 'session', entityId: id, metadata: { provider, device: device.device }, at: t }),
+    dailyActivityStmt(db, userId, t, false),
+  ]);
   setCookie(c, sessionCookieName(c.env), token, {
     httpOnly: true,
     secure: isSecureEnv(c.env),
@@ -44,9 +54,11 @@ export async function createSession(c: Context<AppEnv>, userId: string, provider
 export async function destroySession(c: Context<AppEnv>) {
   const token = getCookie(c, sessionCookieName(c.env));
   if (token) {
-    await c.env.DB.prepare('UPDATE sessions SET revoked_at = ? WHERE token_hash = ? AND revoked_at IS NULL')
-      .bind(now(), await sha256Hex(token))
-      .run();
+    const t = now();
+    const row = await c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'logout' WHERE token_hash = ?2 AND revoked_at IS NULL RETURNING id, user_id")
+      .bind(t, await sha256Hex(token))
+      .first<{ id: string; user_id: string }>();
+    if (row) await eventStmt(c.env.DB, { type: 'user.logout', userId: row.user_id, entityType: 'session', entityId: row.id, at: t }).run().catch(() => {});
   }
   deleteCookie(c, sessionCookieName(c.env), { path: '/', secure: isSecureEnv(c.env) });
 }
@@ -91,7 +103,12 @@ export async function resolveAuth(c: Context<AppEnv>): Promise<Resolved | null> 
     .first<{ sid: string; csrf_token: string; provider: string; expires_at: number; last_seen_at: number; id: string; email: string; name: string }>();
   if (!row) return null;
   if (t - row.last_seen_at > TOUCH_INTERVAL_MS) {
-    const p = db.prepare('UPDATE sessions SET last_seen_at = ? WHERE id = ?').bind(t, row.sid).run();
+    // Any authenticated use counts toward daily activity (coarse, every 5 min).
+    const p = db.batch([
+      db.prepare('UPDATE sessions SET last_seen_at = ? WHERE id = ?').bind(t, row.sid),
+      db.prepare('UPDATE users SET last_active_at = ? WHERE id = ?').bind(t, row.id),
+      dailyActivityStmt(db, row.id, t, false),
+    ]);
     try {
       c.executionCtx.waitUntil(p);
     } catch {
