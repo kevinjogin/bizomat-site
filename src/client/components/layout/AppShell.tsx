@@ -9,7 +9,8 @@ import { BrandMark, Icon, Wordmark } from '../ui/Icon';
 import { Avatar, Spinner } from '../ui/ui';
 import { Dropdown, MenuItem, MenuSep, Modal, Popover, useToast } from '../ui/overlays';
 import { CreateBoardDialog, CreateDashboardDialog, CreateWorkspaceDialog, useBoards, useCreateDocument } from './CreateDialogs';
-import type { NotificationDTO } from '../../../shared/types';
+import type { BoardDTO, NotificationDTO } from '../../../shared/types';
+import { FolderIcon, buildTree, useFolders } from '../folders/Folders';
 
 const NAV: { to: string; label: string; icon: string; key?: string }[] = [
   { to: 'home', label: 'Home', icon: 'home', key: 'g h' },
@@ -126,15 +127,64 @@ function Sidebar({ onNewBoard }: { onNewBoard: () => void }) {
         ) : null}
       </div>
       {boards.isLoading ? <div className="nav-item"><Spinner /></div> : null}
-      {(boards.data ?? []).slice(0, 30).map((b) => (
-        <NavLink key={b.id} to={`${base}/boards/${b.id}`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-          <Icon name={b.visibility === 'private' ? 'lock' : b.kind === 'personal' ? 'user' : 'grid'} />
-          <span className="ellipsis">{b.name}</span>
-        </NavLink>
-      ))}
+      <SidebarBoards wsId={ws.id} base={base} boards={boards.data ?? []} />
       {boards.data && boards.data.length === 0 ? <div className="muted small" style={{ padding: '4px 10px' }}>No boards yet.</div> : null}
       <div className="brand-foot"><BrandMark size={16} /> WorkOS is part of <strong>KEVOS</strong></div>
     </nav>
+  );
+}
+
+function SidebarBoards({ wsId, base, boards }: { wsId: string; base: string; boards: BoardDTO[] }) {
+  const folders = useFolders(wsId, 'boards');
+  const [closed, setClosed] = useState<Set<string>>(() => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem('workos:sidebar-closed-folders') ?? '[]'));
+    } catch {
+      return new Set();
+    }
+  });
+  const toggle = (id: string) => {
+    const n = new Set(closed);
+    if (n.has(id)) n.delete(id);
+    else n.add(id);
+    setClosed(n);
+    try {
+      localStorage.setItem('workos:sidebar-closed-folders', JSON.stringify(Array.from(n)));
+    } catch {
+      /* storage unavailable */
+    }
+  };
+  const ids = new Set((folders.data ?? []).map((f) => f.id));
+  const boardLink = (b: BoardDTO, depth: number) => (
+    <NavLink key={b.id} to={`${base}/boards/${b.id}`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`} style={{ paddingLeft: 10 + depth * 14 }}>
+      <Icon name={b.visibility === 'private' ? 'lock' : b.kind === 'personal' ? 'user' : 'grid'} />
+      <span className="ellipsis">{b.name}</span>
+    </NavLink>
+  );
+  const renderFolder = (n: ReturnType<typeof buildTree>[number]): ReactNode => {
+    const inside = boards.filter((b) => b.folderId === n.folder.id);
+    const open = !closed.has(n.folder.id);
+    return (
+      <div key={n.folder.id}>
+        <button className="nav-item" style={{ paddingLeft: 10 + n.depth * 14 }} aria-expanded={open} onClick={() => toggle(n.folder.id)}>
+          <FolderIcon color={n.folder.color} open={open} />
+          <span className="ellipsis grow">{n.folder.name}</span>
+          <Icon name={open ? 'chevronDown' : 'chevronRight'} size={12} />
+        </button>
+        {open ? (
+          <>
+            {n.children.map(renderFolder)}
+            {inside.map((b) => boardLink(b, n.depth + 1))}
+          </>
+        ) : null}
+      </div>
+    );
+  };
+  return (
+    <>
+      {buildTree(folders.data ?? []).map(renderFolder)}
+      {boards.filter((b) => !b.folderId || !ids.has(b.folderId)).slice(0, 40).map((b) => boardLink(b, 0))}
+    </>
   );
 }
 

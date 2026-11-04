@@ -49,6 +49,7 @@ export interface BoardRow {
   created_at: number;
   updated_at: number;
   archived_at: number | null;
+  folder_id?: string | null;
 }
 
 export function computeBoardAccess(

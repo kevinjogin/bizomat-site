@@ -57,6 +57,7 @@ export const boardDTO = (b: BoardRow): BoardDTO => ({
   createdAt: b.created_at,
   updatedAt: b.updated_at,
   archivedAt: b.archived_at,
+  folderId: b.folder_id ?? null,
 });
 
 export const groupDTO = (g: GroupRow): GroupDTO => ({

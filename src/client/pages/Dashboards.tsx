@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { del, errorMessage, get, post } from '../lib/api';
+import { del, errorMessage, get, patch, post } from '../lib/api';
 import { canEdit, isAdmin, useUser, useWorkspace } from '../lib/session';
 import { timeAgo, plural } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, useConfirm, useToast } from '../components/ui/overlays';
 import { CreateDashboardDialog } from '../components/layout/CreateDialogs';
+import { FolderHeader, FolderIcon, FolderPanel, MoveToFolderItems, entityDragProps, useFolderFilter, useFolderSelection, useFolders } from '../components/folders/Folders';
 import '../styles/content.css';
 
 export interface DashboardDTO {
@@ -20,6 +21,7 @@ export interface DashboardDTO {
   createdAt: number;
   updatedAt: number;
   archivedAt: number | null;
+  folderId?: string | null;
 }
 
 export default function Dashboards() {
@@ -45,6 +47,15 @@ export default function Dashboards() {
     }
   };
   const editable = canEdit(ws.role);
+  const [folder, setFolder] = useFolderSelection();
+  const folders = useFolders(ws.id, 'dashboards');
+  const { visible, counts } = useFolderFilter(q.data ?? [], folders.data ?? [], folder);
+  const folderById = new Map((folders.data ?? []).map((f) => [f.id, f]));
+  const fileInto = (id: string, folderId: string | null) => {
+    const name = folderId ? folderById.get(folderId)?.name : null;
+    void act(() => patch(`/dashboards/${id}`, { folderId }), name ? `Moved to "${name}"` : 'Removed from folder');
+  };
+  const newFolder = folder !== 'all' && folder !== 'unfiled' ? folder : null;
   return (
     <div className="page">
       <PageHeader
@@ -57,18 +68,22 @@ export default function Dashboards() {
         <button role="tab" aria-selected={tab === 'active'} className={`tab${tab === 'active' ? ' active' : ''}`} onClick={() => setTab('active')}>Active</button>
         <button role="tab" aria-selected={tab === 'archived'} className={`tab${tab === 'archived' ? ' active' : ''}`} onClick={() => setTab('archived')}>Archived</button>
       </div>
-      {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : !q.data?.length ? (
+      <div className="folder-layout">
+      <FolderPanel wsId={ws.id} scope="dashboards" label="Dashboards" selected={folder} onSelect={setFolder} counts={counts} canEdit={editable} onFile={fileInto} />
+      <div style={{ minWidth: 0 }}>
+      <FolderHeader folders={folders.data ?? []} selected={folder} onSelect={setFolder} counts={counts.byFolder} />
+      {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : !visible.length ? (
         <EmptyState
           icon="chart"
-          title={tab === 'archived' ? 'No archived dashboards' : 'No dashboards yet'}
+          title={q.data?.length ? 'This folder is empty' : tab === 'archived' ? 'No archived dashboards' : 'No dashboards yet'}
           action={tab === 'active' && editable ? <button className="btn primary" onClick={() => setCreating(true)}>Create a dashboard</button> : null}
         >
           {tab === 'active' ? 'Combine status, workload, deadlines and progress from multiple boards in one place.' : null}
         </EmptyState>
       ) : (
         <div className="grid-cards">
-          {q.data.map((d) => (
-            <div key={d.id} className="tile" style={{ cursor: 'default' }}>
+          {visible.map((d) => (
+            <div key={d.id} className="tile" {...(editable ? entityDragProps(d.id) : { style: { cursor: 'default' } })}>
               <div className="row">
                 <Icon name="chart" />
                 <Link to={`/w/${ws.id}/dashboards/${d.id}`} className="grow ellipsis" style={{ fontWeight: 650, color: 'var(--text)' }}>{d.name}</Link>
@@ -82,6 +97,7 @@ export default function Dashboards() {
                     {(close) => (
                       <>
                         <MenuItem icon="copy" onClick={() => { close(); act(() => post(`/dashboards/${d.id}/duplicate`), 'Dashboard duplicated'); }}>Duplicate</MenuItem>
+                        <MoveToFolderItems folders={folders.data ?? []} current={d.folderId} onPick={(f) => { close(); fileInto(d.id, f); }} />
                         {d.archivedAt ? (
                           <MenuItem icon="restore" onClick={() => { close(); act(() => post(`/dashboards/${d.id}/archive`, { archived: false }), 'Dashboard restored'); }}>Restore</MenuItem>
                         ) : (
@@ -109,6 +125,7 @@ export default function Dashboards() {
                   </Dropdown>
                 ) : null}
               </div>
+              {folder === 'all' && d.folderId && folderById.get(d.folderId) ? <span className="badge" style={{ gap: 5, alignSelf: 'flex-start' }}><FolderIcon color={folderById.get(d.folderId)!.color} size={13} /> {folderById.get(d.folderId)!.name}</span> : null}
               {d.description ? <div className="muted small">{d.description}</div> : null}
               <div className="muted small">
                 {d.boardIds.length ? plural(d.boardIds.length, 'source board') : 'All accessible boards'} · updated {timeAgo(d.updatedAt)}
@@ -117,7 +134,9 @@ export default function Dashboards() {
           ))}
         </div>
       )}
-      {creating ? <CreateDashboardDialog wsId={ws.id} onClose={() => setCreating(false)} /> : null}
+      </div>
+      </div>
+      {creating ? <CreateDashboardDialog wsId={ws.id} folderId={newFolder} onClose={() => setCreating(false)} /> : null}
     </div>
   );
 }

@@ -451,3 +451,28 @@ tr:hover .name-cell .open-btn { opacity: 1; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* ---------------------------------------------------------------- folders */
+.folder-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 20px; align-items: start; }
+.folder-panel { padding-bottom: 6px; position: sticky; top: 12px; max-height: calc(100vh - 120px); overflow: auto; }
+.folder-row { display: flex; align-items: center; gap: 4px; padding: 2px 6px; margin: 0 4px; border-radius: var(--radius-sm); min-height: 32px; }
+.folder-row:hover { background: var(--surface-2); }
+.folder-row.active { background: var(--accent-soft); }
+.folder-row.active .folder-name { color: var(--accent); font-weight: 600; }
+.folder-row.drop { background: var(--accent-soft); outline: 2px dashed var(--brand); outline-offset: -2px; }
+.folder-name { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; border: 0; background: none; padding: 4px 2px; cursor: pointer; color: var(--text); text-align: left; font-size: 13.5px; }
+.folder-count { font-size: 11px; color: var(--text-3); min-width: 18px; text-align: right; }
+.folder-more { opacity: 0; }
+.folder-row:hover .folder-more, .folder-more:focus-visible { opacity: 1; }
+.folder-swatch { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+.folder-swatch:hover { background: var(--surface-2); }
+.folder-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; }
+.folder-tile { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); cursor: pointer; text-align: left; color: var(--text); min-width: 0; }
+.folder-tile:hover { border-color: var(--brand); }
+.folder-tile > .ellipsis { flex: 1; }
+[draggable='true'].list-row, [draggable='true'].tile { cursor: grab; }
+@media (max-width: 760px) {
+  .folder-layout { grid-template-columns: 1fr; }
+  .folder-panel { position: static; max-height: none; }
+  .folder-more { opacity: 1; }
+}

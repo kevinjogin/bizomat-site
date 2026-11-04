@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { canEdit, useWorkspace } from '../lib/session';
-import { del, errorMessage, post } from '../lib/api';
+import { del, errorMessage, patch, post } from '../lib/api';
 import { timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, useConfirm, useToast } from '../components/ui/overlays';
 import { CreateBoardDialog, useBoards } from '../components/layout/CreateDialogs';
-import type { BoardDTO } from '../../shared/types';
+import type { BoardDTO, FolderDTO } from '../../shared/types';
+import { FolderHeader, FolderIcon, FolderPanel, MoveToFolderItems, entityDragProps, useFolderFilter, useFolderSelection, useFolders } from '../components/folders/Folders';
 
 type Tab = 'all' | 'personal' | 'archived';
 
@@ -32,7 +33,16 @@ export default function Boards() {
       toast(errorMessage(e), 'error');
     }
   };
-  const list = (q.data ?? []).filter((b) => (tab === 'personal' ? b.kind === 'personal' : true) && (!filter || b.name.toLowerCase().includes(filter.toLowerCase())));
+  const [folder, setFolder] = useFolderSelection();
+  const folders = useFolders(ws.id, 'boards');
+  const matching = (q.data ?? []).filter((b) => (tab === 'personal' ? b.kind === 'personal' : true) && (!filter || b.name.toLowerCase().includes(filter.toLowerCase())));
+  const { visible: list, counts } = useFolderFilter(matching, folders.data ?? [], folder);
+  const folderById = new Map((folders.data ?? []).map((f) => [f.id, f]));
+  const fileInto = (boardId: string, folderId: string | null) => {
+    const name = folderId ? folderById.get(folderId)?.name : null;
+    void act(patch(`/boards/${boardId}`, { folderId }), name ? `Moved to "${name}"` : 'Removed from folder');
+  };
+  const newFolder = folder !== 'all' && folder !== 'unfiled' ? folder : null;
   return (
     <div className="page">
       <PageHeader
@@ -56,6 +66,10 @@ export default function Boards() {
         </div>
         <input className="input" style={{ width: 220 }} placeholder="Filter boards" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter boards" />
       </div>
+      <div className="folder-layout">
+      <FolderPanel wsId={ws.id} scope="boards" label="Boards" selected={folder} onSelect={setFolder} counts={counts} canEdit={canEdit(ws.role)} onFile={fileInto} />
+      <div style={{ minWidth: 0 }}>
+      <FolderHeader folders={folders.data ?? []} selected={folder} onSelect={setFolder} counts={counts.byFolder} />
       {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : list.length === 0 ? (
         <EmptyState icon="grid" title={tab === 'archived' ? 'No archived boards' : 'No boards yet'} action={tab !== 'archived' && canEdit(ws.role) ? <button className="btn primary" onClick={() => setCreate('board')}>Create your first board</button> : undefined}>
           {tab === 'archived' ? 'Archived boards appear here and can be restored.' : 'Boards organise work into groups, items and columns. Start blank or from a template.'}
@@ -63,7 +77,7 @@ export default function Boards() {
       ) : (
         <div className="grid-cards">
           {list.map((b) => (
-            <BoardTile key={b.id} board={b} wsId={ws.id} onAction={(a) => {
+            <BoardTile key={b.id} board={b} wsId={ws.id} folders={folders.data ?? []} folder={folder === 'all' && b.folderId ? folderById.get(b.folderId) : undefined} draggable={b.access !== 'view'} onMove={(f) => fileInto(b.id, f)} onAction={(a) => {
               if (a === 'open') navigate(`/w/${ws.id}/boards/${b.id}`);
               if (a === 'duplicate') act(post(`/boards/${b.id}/duplicate`, { withItems: true }), 'Board duplicated');
               if (a === 'archive') act(post(`/boards/${b.id}/archive`), 'Board archived');
@@ -75,14 +89,16 @@ export default function Boards() {
           ))}
         </div>
       )}
-      {create ? <CreateBoardDialog wsId={ws.id} kind={create === 'personal' ? 'personal' : 'board'} onClose={() => setCreate(null)} /> : null}
+      </div>
+      </div>
+      {create ? <CreateBoardDialog wsId={ws.id} kind={create === 'personal' ? 'personal' : 'board'} folderId={newFolder} onClose={() => setCreate(null)} /> : null}
     </div>
   );
 }
 
-function BoardTile({ board: b, wsId, onAction }: { board: BoardDTO; wsId: string; onAction: (a: 'open' | 'duplicate' | 'archive' | 'restore' | 'delete') => void }) {
+function BoardTile({ board: b, wsId, onAction, folders, folder, draggable, onMove }: { board: BoardDTO; wsId: string; onAction: (a: 'open' | 'duplicate' | 'archive' | 'restore' | 'delete') => void; folders: FolderDTO[]; folder?: FolderDTO; draggable: boolean; onMove: (folderId: string | null) => void }) {
   return (
-    <div className="tile" style={{ position: 'relative' }}>
+    <div className="tile" style={{ position: 'relative' }} {...(draggable ? entityDragProps(b.id) : {})}>
       <Link to={`/w/${wsId}/boards/${b.id}`} style={{ color: 'inherit', textDecoration: 'none' }} className="col">
         <div className="row">
           <span className="empty-icon" style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -94,6 +110,7 @@ function BoardTile({ board: b, wsId, onAction }: { board: BoardDTO; wsId: string
         <div className="row small muted">
           {b.visibility === 'private' ? <span className="badge"><Icon name="lock" size={11} /> Private</span> : <span className="badge"><Icon name="globe" size={11} /> Workspace</span>}
           <span className="badge">{b.access}</span>
+          {folder ? <span className="badge" style={{ gap: 5 }}><FolderIcon color={folder.color} size={13} /> {folder.name}</span> : null}
           <span className="spacer" />
           <span>{timeAgo(b.updatedAt)}</span>
         </div>
@@ -104,6 +121,7 @@ function BoardTile({ board: b, wsId, onAction }: { board: BoardDTO; wsId: string
             <>
               <MenuItem icon="chevronRight" onClick={() => { close(); onAction('open'); }}>Open</MenuItem>
               <MenuItem icon="copy" onClick={() => { close(); onAction('duplicate'); }}>Duplicate</MenuItem>
+              {draggable ? <MoveToFolderItems folders={folders} current={b.folderId} onPick={(f) => { close(); onMove(f); }} /> : null}
               {b.access === 'admin' ? (
                 <>
                   {b.archivedAt ? <MenuItem icon="restore" onClick={() => { close(); onAction('restore'); }}>Restore</MenuItem> : <MenuItem icon="archive" onClick={() => { close(); onAction('archive'); }}>Archive</MenuItem>}

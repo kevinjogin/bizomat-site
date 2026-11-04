@@ -18,6 +18,7 @@ import { automationRoutes } from './routes/automations';
 import { integrationRoutes } from './routes/integrations';
 import { templateRoutes } from './routes/templates';
 import { realtimeRoutes } from './routes/realtime';
+import { folderRoutes } from './routes/folders';
 
 export const CSP = [
   "default-src 'self'",
@@ -89,6 +90,7 @@ export function createApp() {
   api.route('/', automationRoutes);
   api.route('/', integrationRoutes);
   api.route('/', templateRoutes);
+  api.route('/', folderRoutes);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
 

@@ -6,6 +6,7 @@ import { badRequest, body, forbidden, newId, notFound, now, parseJson } from '..
 import { workspaceMembers } from '../services/mappers';
 import { accessibleBoardIds, requireWorkspace, wsAtLeast } from '../services/permissions';
 import { computeWidget, loadBoardData, makeCtx, type WidgetConfig } from '../services/stats';
+import { assertFolder } from './folders';
 
 export const dashboardRoutes = new Hono<AppEnv>();
 
@@ -22,6 +23,7 @@ interface DashboardRow {
   created_at: number;
   updated_at: number;
   archived_at: number | null;
+  folder_id?: string | null;
 }
 interface WidgetRow {
   id: string;
@@ -45,6 +47,7 @@ const dashDTO = (d: DashboardRow) => ({
   createdAt: d.created_at,
   updatedAt: d.updated_at,
   archivedAt: d.archived_at,
+  folderId: d.folder_id ?? null,
 });
 const widgetDTO = (w: WidgetRow) => ({ id: w.id, dashboardId: w.dashboard_id, type: w.type, title: w.title, config: parseJson(w.config_json, {}), position: w.position, w: w.w, h: w.h });
 
@@ -87,13 +90,14 @@ dashboardRoutes.post('/workspaces/:ws/dashboards', async (c) => {
   const user = c.get('user');
   const wsId = c.req.param('ws');
   await requireWorkspace(c.env.DB, wsId, user.id, 'member');
-  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200), description: z.string().max(2000).optional(), boardIds: z.array(z.string()).max(50).default([]), withDefaultWidgets: z.boolean().default(true) }));
+  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200), description: z.string().max(2000).optional(), boardIds: z.array(z.string()).max(50).default([]), withDefaultWidgets: z.boolean().default(true), folderId: z.string().nullable().optional() }));
+  await assertFolder(c.env.DB, wsId, 'dashboards', input.folderId);
   const allowed = new Set(await accessibleBoardIds(c.env.DB, wsId, user.id));
   const boardIds = input.boardIds.filter((b) => allowed.has(b));
   const id = newId();
   const t = now();
   const stmts = [
-    c.env.DB.prepare('INSERT INTO dashboards (id, workspace_id, name, description, board_ids_json, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, wsId, input.name, input.description ?? '', JSON.stringify(boardIds), user.id, t, t),
+    c.env.DB.prepare('INSERT INTO dashboards (id, workspace_id, name, description, board_ids_json, created_by, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(id, wsId, input.name, input.description ?? '', JSON.stringify(boardIds), user.id, t, t, input.folderId ?? null),
   ];
   if (input.withDefaultWidgets) {
     DEFAULT_WIDGETS.forEach((w, i) =>
@@ -119,14 +123,15 @@ dashboardRoutes.get('/dashboards/:id', async (c) => {
 dashboardRoutes.patch('/dashboards/:id', async (c) => {
   const user = c.get('user');
   const { dashboard } = await loadDashboard(c, true);
-  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200).optional(), description: z.string().max(2000).optional(), boardIds: z.array(z.string()).max(50).optional(), settings: z.record(z.string(), z.unknown()).optional() }));
+  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200).optional(), description: z.string().max(2000).optional(), boardIds: z.array(z.string()).max(50).optional(), settings: z.record(z.string(), z.unknown()).optional(), folderId: z.string().nullable().optional() }));
+  if (input.folderId) await assertFolder(c.env.DB, dashboard.workspace_id, 'dashboards', input.folderId);
   let boardIds = parseJson<string[]>(dashboard.board_ids_json, []);
   if (input.boardIds) {
     const allowed = new Set(await accessibleBoardIds(c.env.DB, dashboard.workspace_id, user.id));
     boardIds = input.boardIds.filter((b) => allowed.has(b));
   }
-  await c.env.DB.prepare('UPDATE dashboards SET name = ?, description = ?, board_ids_json = ?, settings_json = ?, updated_at = ? WHERE id = ?')
-    .bind(input.name ?? dashboard.name, input.description ?? dashboard.description, JSON.stringify(boardIds), input.settings ? JSON.stringify(input.settings) : dashboard.settings_json, now(), dashboard.id)
+  await c.env.DB.prepare('UPDATE dashboards SET name = ?, description = ?, board_ids_json = ?, settings_json = ?, folder_id = ?, updated_at = ? WHERE id = ?')
+    .bind(input.name ?? dashboard.name, input.description ?? dashboard.description, JSON.stringify(boardIds), input.settings ? JSON.stringify(input.settings) : dashboard.settings_json, input.folderId !== undefined ? input.folderId : dashboard.folder_id ?? null, now(), dashboard.id)
     .run();
   return c.json({ ok: true });
 });

@@ -7,6 +7,7 @@ import { rateLimit } from '../auth/rate-limit';
 import { svcFromContext } from '../services/context';
 import { extractMentions, notify } from '../services/notify';
 import { requireBoard, requireDocument, requireItem, requireWorkspace, wsAtLeast, type DocumentRow } from '../services/permissions';
+import { assertFolder } from './folders';
 
 export const documentRoutes = new Hono<AppEnv>();
 
@@ -100,6 +101,7 @@ const docDTO = (d: DocumentRow, access?: string) => ({
   createdAt: d.created_at,
   updatedAt: d.updated_at,
   archivedAt: d.archived_at,
+  folderId: (d as any).folder_id ?? null,
   access,
 });
 
@@ -111,7 +113,7 @@ documentRoutes.get('/workspaces/:ws/documents', async (c) => {
   const boardId = c.req.query('boardId');
   const itemId = c.req.query('itemId');
   const rows = await c.env.DB.prepare(
-    `SELECT d.id, d.workspace_id, d.title, d.board_id, d.item_id, d.visibility, d.version, d.created_by, d.updated_by, d.created_at, d.updated_at, d.archived_at,
+    `SELECT d.id, d.workspace_id, d.title, d.board_id, d.item_id, d.visibility, d.version, d.created_by, d.updated_by, d.created_at, d.updated_at, d.archived_at, d.folder_id,
             substr(d.search_text, 1, 200) AS excerpt, u.name AS created_by_name, dm.role AS doc_role
      FROM documents d JOIN users u ON u.id = d.created_by
      LEFT JOIN document_members dm ON dm.document_id = d.id AND dm.user_id = ?
@@ -122,10 +124,10 @@ documentRoutes.get('/workspaces/:ws/documents', async (c) => {
     .bind(user.id, wsId, ...(boardId ? [boardId] : []), ...(itemId ? [itemId] : []))
     .all<any>();
   const visible = rows.results.filter((d) => wsAtLeast(role, 'admin') || d.visibility === 'workspace' || d.created_by === user.id || d.doc_role);
-  return c.json(visible.map((d) => ({ id: d.id, title: d.title, boardId: d.board_id, itemId: d.item_id, visibility: d.visibility, excerpt: d.excerpt, createdBy: d.created_by, createdByName: d.created_by_name, updatedAt: d.updated_at, createdAt: d.created_at, archivedAt: d.archived_at })));
+  return c.json(visible.map((d) => ({ id: d.id, title: d.title, boardId: d.board_id, itemId: d.item_id, visibility: d.visibility, excerpt: d.excerpt, createdBy: d.created_by, createdByName: d.created_by_name, updatedAt: d.updated_at, createdAt: d.created_at, archivedAt: d.archived_at, folderId: d.folder_id ?? null })));
 });
 
-const linkSchema = z.object({ boardId: z.string().nullable().optional(), itemId: z.string().nullable().optional() });
+const linkSchema = z.object({ boardId: z.string().nullable().optional(), itemId: z.string().nullable().optional(), folderId: z.string().nullable().optional() });
 
 async function validateLinks(c: any, wsId: string, input: { boardId?: string | null; itemId?: string | null }) {
   const userId = c.get('user').id;
@@ -145,14 +147,15 @@ documentRoutes.post('/workspaces/:ws/documents', async (c) => {
   await requireWorkspace(c.env.DB, wsId, user.id, 'member');
   const input = await body(c, linkSchema.extend({ title: z.string().trim().min(1).max(300).default('Untitled'), content: z.unknown().optional(), visibility: z.enum(['workspace', 'private']).default('workspace') }));
   await validateLinks(c, wsId, input);
+  await assertFolder(c.env.DB, wsId, 'documents', input.folderId);
   const content = sanitizeDoc(input.content ?? { type: 'doc', content: [{ type: 'paragraph' }] }) ?? { type: 'doc', content: [] };
   const json = JSON.stringify(content);
   if (json.length > MAX_DOC_BYTES) throw new HttpError(413, 'Document is too large');
   const id = newId();
   const t = now();
   await c.env.DB.batch([
-    c.env.DB.prepare('INSERT INTO documents (id, workspace_id, title, content_json, search_text, board_id, item_id, visibility, created_by, updated_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(
-      id, wsId, input.title, json, `${input.title}\n${docText(content)}`.toLowerCase().slice(0, 20000), input.boardId ?? null, input.itemId ?? null, input.visibility, user.id, user.id, t, t,
+    c.env.DB.prepare('INSERT INTO documents (id, workspace_id, title, content_json, search_text, board_id, item_id, visibility, created_by, updated_by, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(
+      id, wsId, input.title, json, `${input.title}\n${docText(content)}`.toLowerCase().slice(0, 20000), input.boardId ?? null, input.itemId ?? null, input.visibility, user.id, user.id, t, t, input.folderId ?? null,
     ),
     c.env.DB.prepare('INSERT INTO document_versions (id, document_id, workspace_id, version, title, content_json, created_by, created_at) VALUES (?, ?, ?, 1, ?, ?, ?, ?)').bind(newId(), id, wsId, input.title, json, user.id, t),
   ]);
@@ -197,6 +200,7 @@ documentRoutes.patch('/documents/:id', async (c) => {
     return c.json({ error: 'This document was changed by someone else. Reload to see the latest version.', latest: docDTO(doc) }, 409);
   }
   if (input.boardId !== undefined || input.itemId !== undefined) await validateLinks(c, doc.workspace_id, input);
+  if (input.folderId) await assertFolder(c.env.DB, doc.workspace_id, 'documents', input.folderId);
   let contentJson = doc.content_json;
   let content = parseJson<any>(doc.content_json, null);
   if (input.content !== undefined) {
@@ -209,13 +213,14 @@ documentRoutes.patch('/documents/:id', async (c) => {
   const version = changed ? doc.version + 1 : doc.version;
   const t = now();
   const stmts = [
-    c.env.DB.prepare('UPDATE documents SET title = ?, content_json = ?, search_text = ?, board_id = ?, item_id = ?, visibility = ?, version = ?, updated_by = ?, updated_at = ? WHERE id = ?').bind(
+    c.env.DB.prepare('UPDATE documents SET title = ?, content_json = ?, search_text = ?, board_id = ?, item_id = ?, visibility = ?, folder_id = ?, version = ?, updated_by = ?, updated_at = ? WHERE id = ?').bind(
       title,
       contentJson,
       `${title}\n${docText(content)}`.toLowerCase().slice(0, 20000),
       input.boardId !== undefined ? input.boardId : doc.board_id,
       input.itemId !== undefined ? input.itemId : doc.item_id,
       input.visibility ?? doc.visibility,
+      input.folderId !== undefined ? input.folderId : (doc as any).folder_id ?? null,
       version,
       user.id,
       t,
@@ -253,8 +258,8 @@ documentRoutes.post('/documents/:id/duplicate', async (c) => {
   await requireWorkspace(c.env.DB, doc.workspace_id, user.id, 'member');
   const id = newId();
   const t = now();
-  await c.env.DB.prepare('INSERT INTO documents (id, workspace_id, title, content_json, search_text, board_id, item_id, visibility, created_by, updated_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(id, doc.workspace_id, `${doc.title} (copy)`, doc.content_json, doc.search_text, doc.board_id, doc.item_id, doc.visibility, user.id, user.id, t, t)
+  await c.env.DB.prepare('INSERT INTO documents (id, workspace_id, title, content_json, search_text, board_id, item_id, visibility, created_by, updated_by, created_at, updated_at, folder_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id, doc.workspace_id, `${doc.title} (copy)`, doc.content_json, doc.search_text, doc.board_id, doc.item_id, doc.visibility, user.id, user.id, t, t, (doc as any).folder_id ?? null)
     .run();
   return c.json({ id }, 201);
 });

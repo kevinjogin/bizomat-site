@@ -13,6 +13,7 @@ import { BLANK_TEMPLATE, builtinTemplates, cloneBoard, instantiateTemplate } fro
 import { boardDTO, columnDTO, groupDTO, itemDTO, viewDTO, workspaceMembers, type ColumnRow, type GroupRow, type ViewRow } from '../services/mappers';
 import { computeBoardAccess, requireBoard, requireWorkspace, type BoardRow, type ItemRow } from '../services/permissions';
 import { buildSearchText } from '../services/item-ops';
+import { assertFolder } from './folders';
 
 export const boardRoutes = new Hono<AppEnv>();
 
@@ -58,6 +59,7 @@ boardRoutes.post('/workspaces/:ws/boards', async (c) => {
       kind: z.enum(['board', 'personal']).default('board'),
       templateId: z.string().max(64).optional(),
       withSampleItems: z.boolean().default(true),
+      folderId: z.string().nullable().optional(),
     }),
   );
   await requireWorkspace(c.env.DB, wsId, user.id, input.kind === 'personal' ? 'viewer' : 'member');
@@ -74,6 +76,10 @@ boardRoutes.post('/workspaces/:ws/boards', async (c) => {
     }
   } else {
     boardId = await instantiateTemplate(c.env.DB, { ...BLANK_TEMPLATE, description: '' }, { workspaceId: wsId, name: input.name, createdBy: user.id, kind: input.kind, visibility: input.kind === 'personal' ? 'private' : input.visibility });
+  }
+  if (input.folderId) {
+    await assertFolder(c.env.DB, wsId, 'boards', input.folderId);
+    await c.env.DB.prepare('UPDATE boards SET folder_id = ? WHERE id = ?').bind(input.folderId, boardId).run();
   }
   await auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'board.created', targetType: 'board', targetId: boardId, ip: clientIp(c) }).run();
   const row = await c.env.DB.prepare('SELECT * FROM boards WHERE id = ?').bind(boardId).first<BoardRow>();
@@ -123,11 +129,13 @@ boardRoutes.patch('/boards/:id', async (c) => {
       icon: z.string().max(32).optional(),
       visibility: z.enum(['workspace', 'private']).optional(),
       position: z.number().optional(),
+      folderId: z.string().nullable().optional(),
       settings: z.record(z.string(), z.unknown()).optional(),
     }),
   );
   const need = input.visibility || input.settings ? 'admin' : 'edit';
   const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, need);
+  if (input.folderId) await assertFolder(c.env.DB, board.workspace_id, 'boards', input.folderId);
   let settings = parseJson<Record<string, unknown>>(board.settings_json, {});
   if (input.settings) {
     settings = { ...settings, ...input.settings };
@@ -140,13 +148,14 @@ boardRoutes.patch('/boards/:id', async (c) => {
     if (JSON.stringify(settings).length > 20000) throw badRequest('Board settings too large');
   }
   await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE boards SET name = ?, description = ?, icon = ?, visibility = ?, position = ?, settings_json = ?, updated_at = ? WHERE id = ?').bind(
+    c.env.DB.prepare('UPDATE boards SET name = ?, description = ?, icon = ?, visibility = ?, position = ?, settings_json = ?, folder_id = ?, updated_at = ? WHERE id = ?').bind(
       input.name ?? board.name,
       input.description ?? board.description,
       input.icon ?? board.icon,
       board.kind === 'personal' ? 'private' : input.visibility ?? board.visibility,
       input.position ?? board.position,
       JSON.stringify(settings),
+      input.folderId !== undefined ? input.folderId : board.folder_id ?? null,
       now(),
       board.id,
     ),

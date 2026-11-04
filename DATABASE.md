@@ -35,6 +35,7 @@ Highlights:
 | `automation_runs.event_key` | `UNIQUE` — the duplicate-prevention guarantee for automations. |
 | `notifications.dedupe_key` | `UNIQUE` — due/overdue reminders are sent at most once per item/date/user. |
 | `sessions.token_hash`, `api_tokens.token_hash`, `invitations.token_hash` | Only SHA-256 hashes of bearer secrets are stored. |
+| `folders` | Nestable, colourable folders per workspace and scope (`documents` / `boards` / `dashboards`); entities reference them via `folder_id`. Deleting a folder moves its content up a level — nothing is deleted. |
 | `document_versions` | Snapshot on title change, explicit snapshot, author change or ≥5 min since the last snapshot. |
 
 ## Migrations

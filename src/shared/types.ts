@@ -47,6 +47,7 @@ export interface BoardDTO {
   createdAt: number;
   updatedAt: number;
   archivedAt: number | null;
+  folderId: string | null;
   access?: BoardAccess;
   itemCount?: number;
 }
@@ -225,4 +226,16 @@ export interface AppConfigDTO {
   environment: string;
   allowSignup: boolean;
   providers: { id: string; name: string; enabled: boolean }[];
+}
+
+export interface FolderDTO {
+  id: string;
+  scope: 'documents' | 'boards' | 'dashboards';
+  parentId: string | null;
+  name: string;
+  color: string;
+  position: number;
+  createdBy: string;
+  createdAt: number;
+  updatedAt: number;
 }

@@ -15,7 +15,7 @@ export function useBoards(wsId: string, opts: { archived?: boolean; kind?: strin
   return useQuery({ queryKey: ['boards', wsId, opts], queryFn: () => get<BoardDTO[]>(`/workspaces/${wsId}/boards?${qs}`) });
 }
 
-export function CreateBoardDialog({ wsId, onClose, templateId: initialTemplate, kind = 'board' }: { wsId: string; onClose: () => void; templateId?: string; kind?: 'board' | 'personal' }) {
+export function CreateBoardDialog({ wsId, onClose, templateId: initialTemplate, kind = 'board', folderId }: { wsId: string; onClose: () => void; templateId?: string; kind?: 'board' | 'personal'; folderId?: string | null }) {
   const [name, setName] = useState('');
   const [templateId, setTemplateId] = useState(initialTemplate ?? 'blank');
   const [visibility, setVisibility] = useState<'workspace' | 'private'>(kind === 'personal' ? 'private' : 'workspace');
@@ -30,7 +30,7 @@ export function CreateBoardDialog({ wsId, onClose, templateId: initialTemplate, 
     setBusy(true);
     setError(null);
     try {
-      const b = await post<BoardDTO>(`/workspaces/${wsId}/boards`, { name: name.trim() || 'Untitled board', templateId: templateId === 'blank' ? undefined : templateId, visibility, kind, withSampleItems: withSample });
+      const b = await post<BoardDTO>(`/workspaces/${wsId}/boards`, { name: name.trim() || 'Untitled board', templateId: templateId === 'blank' ? undefined : templateId, visibility, kind, withSampleItems: withSample, folderId: folderId ?? undefined });
       await qc.invalidateQueries({ queryKey: ['boards', wsId] });
       onClose();
       navigate(`/w/${wsId}/boards/${b.id}`);
@@ -125,9 +125,9 @@ export function useCreateDocument(wsId: string) {
   const navigate = useNavigate();
   const toast = useToast();
   const qc = useQueryClient();
-  return async (opts: { title?: string; boardId?: string; itemId?: string } = {}) => {
+  return async (opts: { title?: string; boardId?: string; itemId?: string; folderId?: string | null } = {}) => {
     try {
-      const d = await post(`/workspaces/${wsId}/documents`, { title: opts.title ?? 'Untitled document', boardId: opts.boardId, itemId: opts.itemId });
+      const d = await post(`/workspaces/${wsId}/documents`, { title: opts.title ?? 'Untitled document', boardId: opts.boardId, itemId: opts.itemId, folderId: opts.folderId ?? undefined });
       qc.invalidateQueries({ queryKey: ['documents', wsId] });
       navigate(`/w/${wsId}/docs/${d.id}`);
     } catch (e) {
@@ -136,7 +136,7 @@ export function useCreateDocument(wsId: string) {
   };
 }
 
-export function CreateDashboardDialog({ wsId, onClose }: { wsId: string; onClose: () => void }) {
+export function CreateDashboardDialog({ wsId, onClose, folderId }: { wsId: string; onClose: () => void; folderId?: string | null }) {
   const [name, setName] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -146,7 +146,7 @@ export function CreateDashboardDialog({ wsId, onClose }: { wsId: string; onClose
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const d = await post(`/workspaces/${wsId}/dashboards`, { name: name.trim() || 'Untitled dashboard', boardIds: selected });
+      const d = await post(`/workspaces/${wsId}/dashboards`, { name: name.trim() || 'Untitled dashboard', boardIds: selected, folderId: folderId ?? undefined });
       qc.invalidateQueries({ queryKey: ['dashboards', wsId] });
       onClose();
       navigate(`/w/${wsId}/dashboards/${d.id}`);
