@@ -11,7 +11,7 @@ _Last updated: 2026-11-04_
 | 2. Backend | Done and tested (168 tests in the Workers runtime). |
 | 3. Frontend | Done; typechecked, built, driven by Playwright e2e and visual QA (light, dark, phone). |
 | 4. CI/CD | Workflows written (CI, preview, gated production with backup, smoke test, auto-rollback). Inert until Cloudflare is configured. |
-| 5. Cloudflare provisioning & deployment | **Blocked — requires user action** (see "Required from the owner"). |
+| 5. Cloudflare provisioning & deployment | **Preview live** at https://workos-platform-preview.kevinjogincom.workers.dev (provisioned and published by the `publish-cloudflare.yml` workflow). Production not yet provisioned. |
 
 ## Required from the owner
 
@@ -47,7 +47,7 @@ Legend: ✅ implemented and covered by automated tests · 🟢 implemented and v
 | Integrations: Google Drive/Calendar/Gmail, GitHub | ⛔ shown as "requires setup" by design |
 | Realtime board updates (Durable Object) | ⚠️ connection auth tested; live fan-out verified manually ("Live" badge), not asserted |
 | Email delivery | ⛔ no provider configured |
-| Cloudflare deployment (preview/production) | ⛔ blocked on credentials/network |
+| Cloudflare deployment | 🟢 preview published + smoke-tested; ⛔ production pending |
 
 ## Backlog (next)
 
@@ -83,5 +83,5 @@ Legend: ✅ implemented and covered by automated tests · 🟢 implemented and v
 
 | Date | Environment | Version | Result |
 | --- | --- | --- | --- |
-| — | preview | — | Not deployed: Cloudflare access unavailable from the build environment |
-| — | production | — | Not deployed: awaiting provisioning and preview validation |
+| 2026-11-04 | preview | `96d83588-d62d-4d21-b5c2-b6fe02f794ae` (commit 9caec2e) | Success — new Worker `workos-platform-preview`, D1 `workos-platform-preview-db` (36733ff4-5842-4274-a7f9-a0cdd8de2f3b), KV `workos-platform-preview-cache` (129d5d6f69784d91bb67088713ed8364), R2 `workos-platform-preview-files`; migrations applied; 10/10 smoke checks passed |
+| — | production | — | Not deployed: awaiting preview validation |

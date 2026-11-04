@@ -59,7 +59,7 @@
       "vars": {
         "ENVIRONMENT": "preview",
         "APP_NAME": "WorkOS (Preview)",
-        "APP_URL": "https://workos-platform-preview.REPLACE_WITH_SUBDOMAIN.workers.dev",
+        "APP_URL": "https://workos-platform-preview.kevinjogincom.workers.dev",
         "ALLOW_SIGNUP": "true",
         "SESSION_TTL_HOURS": "72"
       },
@@ -67,12 +67,12 @@
         {
           "binding": "DB",
           "database_name": "workos-platform-preview-db",
-          "database_id": "REPLACE_WITH_PREVIEW_D1_ID",
+          "database_id": "36733ff4-5842-4274-a7f9-a0cdd8de2f3b",
           "migrations_dir": "migrations"
         }
       ],
       "r2_buckets": [{ "binding": "FILES", "bucket_name": "workos-platform-preview-files" }],
-      "kv_namespaces": [{ "binding": "CACHE", "id": "REPLACE_WITH_PREVIEW_KV_ID" }],
+      "kv_namespaces": [{ "binding": "CACHE", "id": "129d5d6f69784d91bb67088713ed8364" }],
       "durable_objects": {
         "bindings": [{ "name": "BOARD_ROOMS", "class_name": "BoardRoom" }]
       },
@@ -86,7 +86,7 @@
       "vars": {
         "ENVIRONMENT": "production",
         "APP_NAME": "WorkOS",
-        "APP_URL": "https://workos-platform-production.REPLACE_WITH_SUBDOMAIN.workers.dev",
+        "APP_URL": "https://workos-platform-production.kevinjogincom.workers.dev",
         "ALLOW_SIGNUP": "false",
         "SESSION_TTL_HOURS": "336"
       },
