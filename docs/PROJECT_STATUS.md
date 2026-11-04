@@ -43,6 +43,7 @@ Legend: ✅ implemented and covered by automated tests · 🟢 implemented and v
 | Documents (rich text, autosave, conflicts, history, comments, sharing, links) | ✅ 🟢 |
 | Goals, My Work, My Day, weekly planning, favourites, recent, saved views | ✅ 🟢 |
 | Folders (documents, boards, dashboards): nested, colourable, drag-to-file, sidebar grouping | ✅ 🟢 |
+| Founder admin console (/admin): overview, users, live sessions, activity, projects, adoption, health, settings, CSV exports — see docs/ADMIN.md | ✅ 🟢 |
 | Global search + saved filters | ✅ 🟢 |
 | Integrations: webhook, Slack, Teams | ✅ ⚠️ (delivery bookkeeping tested; no real external endpoint used) |
 | Integrations: Google Drive/Calendar/Gmail, GitHub | ⛔ shown as "requires setup" by design |

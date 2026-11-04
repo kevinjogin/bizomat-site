@@ -153,6 +153,7 @@ export function apiFailureMetric(req: Request, status: number): string | null {
   const path = new URL(req.url).pathname;
   if (!path.startsWith('/api/') || status < 400) return null;
   if (status === 401 && (path === '/api/auth/me' || path === '/api/heartbeat')) return null; // signed-out page loads, not failures
+  if (status === 401 && path === '/api/auth/login') return null; // counted once as auth_login_failed
   if (status >= 500) return 'api_5xx';
   if (status === 429) return 'api_429';
   if (status === 401) return 'api_401';
