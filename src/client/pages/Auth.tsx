@@ -36,7 +36,9 @@ function AuthLayout({ title, subtitle, children }: { title: string; subtitle?: s
         <h1>{title}</h1>
         {subtitle ? <p className="muted">{subtitle}</p> : null}
         <div style={{ marginTop: 16 }}>{children}</div>
-        <p className="muted small" style={{ marginTop: 20, textAlign: 'center' }}>{BRAND.product} is part of <strong style={{ color: 'var(--brand)', letterSpacing: '.06em' }}>{BRAND.company}</strong></p>
+        <p className="muted small" style={{ marginTop: 20, textAlign: 'center' }}>
+          {BRAND.product} is part of <strong style={{ color: 'var(--brand)', letterSpacing: '.06em' }}>{BRAND.company}</strong> · <Link to="/privacy">Privacy</Link>
+        </p>
       </div>
     </div>
   );

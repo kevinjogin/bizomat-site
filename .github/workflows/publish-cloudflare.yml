@@ -52,6 +52,26 @@ jobs:
       - name: Provision isolated resources
         id: provision
         run: node scripts/cf-provision.mjs "$TARGET_ENV" $([ "$REUSE" = "true" ] && echo --reuse)
+      - name: Back up the live database (before any migration)
+        run: |
+          npx wrangler d1 export "workos-platform-$TARGET_ENV-db" --remote --env "$TARGET_ENV" --output "backup-$TARGET_ENV-${GITHUB_SHA::7}.sql"
+          ls -la backup-*.sql
+      - uses: actions/upload-artifact@v4
+        with:
+          name: d1-backup-${{ inputs.environment }}-${{ github.run_id }}
+          path: backup-*.sql
+          retention-days: 30
+      - name: Rehearse pending migrations on a copy of the live data
+        run: |
+          set -e
+          echo "Pending migrations:"; npx wrangler d1 migrations list DB --remote --env "$TARGET_ENV" || true
+          rm -rf .wrangler/rehearsal
+          npx wrangler d1 execute DB --local --env "$TARGET_ENV" --persist-to .wrangler/rehearsal --file backup-*.sql --yes > /dev/null
+          count() { npx wrangler d1 execute DB --local --env "$TARGET_ENV" --persist-to .wrangler/rehearsal --json --command "SELECT (SELECT COUNT(*) FROM users) AS u, (SELECT COUNT(*) FROM boards) AS b, (SELECT COUNT(*) FROM items) AS i, (SELECT COUNT(*) FROM workspaces) AS w" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const r=JSON.parse(s)[0].results[0];console.log(JSON.stringify(r))})"; }
+          BEFORE=$(count); echo "Rows before: $BEFORE"
+          npx wrangler d1 migrations apply DB --local --env "$TARGET_ENV" --persist-to .wrangler/rehearsal
+          AFTER=$(count); echo "Rows after:  $AFTER"
+          if [ "$BEFORE" != "$AFTER" ]; then echo "::error::Rehearsal changed core row counts — aborting before touching the live database"; exit 1; fi
       - name: Apply database migrations
         run: npx wrangler d1 migrations apply DB --remote --env "$TARGET_ENV"
       - name: Publish Worker

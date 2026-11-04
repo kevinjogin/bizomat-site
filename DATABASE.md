@@ -36,6 +36,12 @@ Highlights:
 | `notifications.dedupe_key` | `UNIQUE` — due/overdue reminders are sent at most once per item/date/user. |
 | `sessions.token_hash`, `api_tokens.token_hash`, `invitations.token_hash` | Only SHA-256 hashes of bearer secrets are stored. |
 | `folders` | Nestable, colourable folders per workspace and scope (`documents` / `boards` / `dashboards`); entities reference them via `folder_id`. Deleting a folder moves its content up a level — nothing is deleted. |
+| `platform_admins` | Founder/admin rights for the founder console (separate from workspace roles). |
+| `user_activity_events` | Persistent product events (IDs only, no content); indexed by time, user, type, workspace and board. |
+| `user_daily_activity` | One row per user per UTC day of activity — DAU/WAU/MAU history. |
+| `analytics_daily` | Aggregate daily counters (anonymous page views, API failures). No identifiers. |
+| `app_errors` / `system_kv` | Sanitised server errors (90 days) and small system state (last maintenance run). |
+| `sessions` (+ `last_activity_at`, `ended_at`, `end_reason`) | Login history retained 365 days after ending; heartbeat-based activity. See docs/ADMIN.md. |
 | `document_versions` | Snapshot on title change, explicit snapshot, author change or ≥5 min since the last snapshot. |
 
 ## Migrations

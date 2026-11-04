@@ -56,6 +56,26 @@ await check('private page redirects to /login', async () => {
   assert(r.status === 302 && (r.headers.get('location') || '').startsWith('/login'), `status ${r.status} ${r.headers.get('location')}`);
 });
 
+await check('admin API requires authentication', async () => {
+  const r = await fetch(`${base}/api/admin/overview`);
+  assert(r.status === 401, `status ${r.status}`);
+});
+
+await check('admin page redirects signed-out visitors to /login', async () => {
+  const r = await fetch(`${base}/admin`, { headers: { Accept: 'text/html' }, redirect: 'manual' });
+  assert(r.status === 302 && (r.headers.get('location') || '').startsWith('/login'), `status ${r.status}`);
+});
+
+await check('privacy notice is public', async () => {
+  const r = await fetch(`${base}/privacy`, { headers: { Accept: 'text/html' }, redirect: 'manual' });
+  assert(r.status === 200, `status ${r.status}`);
+});
+
+await check('heartbeat requires authentication', async () => {
+  const r = await fetch(`${base}/api/heartbeat`, { method: 'POST' });
+  assert(r.status === 401 || r.status === 403, `status ${r.status}`);
+});
+
 await check('CORS preflight refused', async () => {
   const r = await fetch(`${base}/api/workspaces`, { method: 'OPTIONS', headers: { Origin: 'https://evil.example', 'Access-Control-Request-Method': 'POST' } });
   assert(!r.headers.get('access-control-allow-origin'), 'CORS header present');

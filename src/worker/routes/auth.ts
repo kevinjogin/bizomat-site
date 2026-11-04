@@ -97,7 +97,8 @@ authRoutes.post('/login', async (c) => {
   await acceptPendingInvitations(c.env.DB, user.id, user.email);
   const session = await createSession(c, user.id, 'password');
   await audit(c.env.DB, { actorId: user.id, action: 'auth.login', ip });
-  return c.json({ user: userDTO(user), csrfToken: session.csrfToken, workspaces: await listWorkspaces(c.env.DB, user.id) });
+  const { getPlatformRole } = await import('../services/platform-admin');
+  return c.json({ user: userDTO(user), csrfToken: session.csrfToken, workspaces: await listWorkspaces(c.env.DB, user.id), platformRole: await getPlatformRole(c.env.DB, user.id) });
 });
 
 authRoutes.post('/logout', requireAuth, async (c) => {

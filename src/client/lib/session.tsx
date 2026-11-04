@@ -8,6 +8,8 @@ export interface Session {
   user: UserDTO;
   csrfToken: string | null;
   workspaces: WorkspaceDTO[];
+  /** Present only for platform administrators (server-verified). */
+  platformRole?: 'founder' | 'admin' | null;
 }
 
 const SessionCtx = createContext<{ session: Session | null; loading: boolean; error: unknown; refresh: () => Promise<unknown> }>({

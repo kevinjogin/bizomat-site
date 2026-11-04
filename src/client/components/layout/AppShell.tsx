@@ -377,6 +377,12 @@ function ProfileMenu() {
           <MenuItem icon="user" onClick={() => { close(); navigate(`/w/${ws.id}/settings/profile`); }}>Profile</MenuItem>
           <MenuItem icon="bell" onClick={() => { close(); navigate(`/w/${ws.id}/settings/notifications`); }}>Notification settings</MenuItem>
           <MenuItem icon="shield" onClick={() => { close(); navigate(`/w/${ws.id}/settings/security`); }}>Security</MenuItem>
+          {session?.platformRole ? (
+            <>
+              <MenuSep />
+              <MenuItem icon="chart" onClick={() => { close(); navigate('/admin'); }}>Founder console</MenuItem>
+            </>
+          ) : null}
           <MenuSep />
           <MenuItem icon="logout" onClick={() => { close(); logout(); }}>Log out</MenuItem>
         </>

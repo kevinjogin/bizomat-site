@@ -24,6 +24,9 @@ Report vulnerabilities privately to the repository owner. Do not open public iss
 
 Cloudflare administrative credentials (`CLOUDFLARE_API_TOKEN`) exist only in GitHub Actions secrets; they are never bundled into the Worker or sent to the browser.
 
+| Founder console | Platform-admin role in `platform_admins`, enforced server-side on every `/api/admin/*` route and on the `/admin` page (404 for everyone else, API tokens refused), admin rate limits, audited views/exports/grants, sanitised error display. Details in docs/ADMIN.md | `services/platform-admin.ts`, `routes/admin.ts` |
+| Analytics privacy | No tracking cookies; anonymous visitors counted as daily totals only; events store IDs not content; IPs dropped after 30 days; token hashes cleared when sessions end; public privacy notice at `/privacy` | `services/analytics.ts`, `index.ts` |
+
 ## Audit results (automated, `npm test`)
 
 The `test/security.test.ts`, `test/isolation.test.ts`, `test/auth.test.ts`, `test/files.test.ts` and `test/settings-permissions.test.ts` suites verify: unauthenticated access to every major route is 401; cross-workspace access to boards, items, columns, groups, views, updates, files, documents, dashboards, goals, automations, integrations and notifications is denied; CSRF token and Origin enforcement; CORS preflight refusal; session expiry, logout and revocation; login rate limits and lockout; password policy; API token lifecycle; injection-style input is inert; the document sanitiser strips scripts/unsafe links/images; upload type and content validation; secrets absent from responses; role/permission enforcement for settings.

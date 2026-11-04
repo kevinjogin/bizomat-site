@@ -6,6 +6,7 @@ import { Loading, ErrorBox } from './components/ui/ui';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage, SignupPage, InvitePage } from './pages/Auth';
 import { applyTheme } from './lib/hooks';
+import { useHeartbeat } from './lib/heartbeat';
 
 const Home = lazy(() => import('./pages/Home'));
 const MyWork = lazy(() => import('./pages/MyWork'));
@@ -26,6 +27,8 @@ const Integrations = lazy(() => import('./pages/Integrations'));
 const Search = lazy(() => import('./pages/Search'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Workspaces = lazy(() => import('./pages/Workspaces'));
+const AdminApp = lazy(() => import('./admin/AdminApp'));
+const Privacy = lazy(() => import('./pages/Privacy'));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, error, refresh } = useSession();
@@ -73,6 +76,8 @@ export function App() {
     if (session?.user.theme) applyTheme(session.user.theme);
   }, [session?.user.theme]);
 
+  useHeartbeat(!!session);
+
   useEffect(() => {
     document.title = 'KEVOS WorkOS';
   }, []);
@@ -84,6 +89,8 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/invite/:token" element={<InvitePage />} />
+      <Route path="/privacy" element={page(<Privacy />)} />
+      <Route path="/admin/*" element={<RequireAuth>{page(<AdminApp />)}</RequireAuth>} />
       <Route path="/" element={<RequireAuth><RootRedirect /></RequireAuth>} />
       <Route path="/welcome" element={<RequireAuth>{page(<Workspaces standalone />)}</RequireAuth>} />
       <Route
