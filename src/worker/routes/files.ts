@@ -159,15 +159,18 @@ async function loadAttachment(c: any, need: 'view' | 'edit') {
   const userId = c.get('user').id;
   let access: string;
   if (a.scope === 'item') {
-    const r = await requireItem(c.env.DB, a.item_id, userId, need).catch(() => {
+    // Resolve visibility first (404 hides existence), then enforce edit (403).
+    const r = await requireItem(c.env.DB, a.item_id, userId, 'view').catch(() => {
       throw notFound('File');
     });
+    if (need === 'edit') await requireItem(c.env.DB, a.item_id, userId, 'edit');
     if (r.item.workspace_id !== a.workspace_id) throw notFound('File');
     access = r.access;
   } else if (a.scope === 'document') {
-    const r = await requireDocument(c.env.DB, a.document_id, userId, need).catch(() => {
+    const r = await requireDocument(c.env.DB, a.document_id, userId, 'view').catch(() => {
       throw notFound('File');
     });
+    if (need === 'edit') await requireDocument(c.env.DB, a.document_id, userId, 'edit');
     access = r.access;
   } else throw notFound('File');
   return { attachment: a, access };

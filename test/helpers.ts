@@ -8,6 +8,11 @@ export function uniqueEmail(prefix = 'user') {
   return `${prefix}.${Date.now().toString(36)}${counter}${Math.random().toString(36).slice(2, 6)}@example.com`;
 }
 
+export function randomIp() {
+  const r = () => Math.floor(Math.random() * 250) + 1;
+  return `10.${r()}.${r()}.${r()}`;
+}
+
 export const PASSWORD = 'correct-horse-42!';
 
 export interface Client {
@@ -30,7 +35,7 @@ function cookieFrom(res: Response): string {
 }
 
 export async function raw(method: string, path: string, opts: { body?: unknown; cookie?: string; csrf?: string; headers?: Record<string, string> } = {}) {
-  const headers: Record<string, string> = { Origin: ORIGIN, ...(opts.headers ?? {}) };
+  const headers: Record<string, string> = { Origin: ORIGIN, 'CF-Connecting-IP': randomIp(), ...(opts.headers ?? {}) };
   if (opts.cookie) headers.Cookie = opts.cookie;
   if (opts.csrf) headers['X-CSRF-Token'] = opts.csrf;
   let body: BodyInit | undefined;

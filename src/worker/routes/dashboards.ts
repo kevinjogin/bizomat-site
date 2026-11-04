@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import { sanitizeFilter } from '../../shared/filters';
 import type { AppEnv } from '../env';
-import { badRequest, body, newId, notFound, now, parseJson } from '../lib/util';
+import { badRequest, body, forbidden, newId, notFound, now, parseJson } from '../lib/util';
 import { workspaceMembers } from '../services/mappers';
 import { accessibleBoardIds, requireWorkspace, wsAtLeast } from '../services/permissions';
 import { computeWidget, loadBoardData, makeCtx, type WidgetConfig } from '../services/stats';
@@ -61,7 +61,7 @@ async function loadDashboard(c: any, needEdit: boolean) {
   const d = (await c.env.DB.prepare('SELECT * FROM dashboards WHERE id = ?').bind(c.req.param('id')).first()) as DashboardRow | null;
   if (!d) throw notFound('Dashboard');
   const role = await requireWorkspace(c.env.DB, d.workspace_id, c.get('user').id);
-  if (needEdit && !(wsAtLeast(role, 'member'))) throw badRequest('Viewers cannot edit dashboards');
+  if (needEdit && !(wsAtLeast(role, 'member'))) throw forbidden('Viewers cannot edit dashboards');
   return { dashboard: d, role };
 }
 
@@ -153,7 +153,7 @@ dashboardRoutes.post('/dashboards/:id/archive', async (c) => {
 
 dashboardRoutes.delete('/dashboards/:id', async (c) => {
   const { dashboard, role } = await loadDashboard(c, true);
-  if (dashboard.created_by !== c.get('user').id && !wsAtLeast(role, 'admin')) throw badRequest('Only the creator or an admin can delete this dashboard');
+  if (dashboard.created_by !== c.get('user').id && !wsAtLeast(role, 'admin')) throw forbidden('Only the creator or an admin can delete this dashboard');
   await c.env.DB.prepare('DELETE FROM dashboards WHERE id = ?').bind(dashboard.id).run();
   return c.json({ ok: true });
 });
@@ -177,7 +177,7 @@ async function loadWidget(c: any) {
   const w = (await c.env.DB.prepare('SELECT * FROM dashboard_widgets WHERE id = ?').bind(c.req.param('widgetId')).first()) as (WidgetRow & { workspace_id: string }) | null;
   if (!w) throw notFound('Widget');
   const role = await requireWorkspace(c.env.DB, w.workspace_id, c.get('user').id);
-  if (!wsAtLeast(role, 'member')) throw badRequest('Viewers cannot edit dashboards');
+  if (!wsAtLeast(role, 'member')) throw forbidden('Viewers cannot edit dashboards');
   return w;
 }
 

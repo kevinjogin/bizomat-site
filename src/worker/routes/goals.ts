@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { badRequest, body, newId, notFound, now, parseJson } from '../lib/util';
+import { badRequest, body, forbidden, newId, notFound, now, parseJson } from '../lib/util';
 import { accessibleBoardIds, requireWorkspace, wsAtLeast } from '../services/permissions';
 import { boardsCompletion, loadBoardData } from '../services/stats';
 
@@ -130,7 +130,7 @@ goalRoutes.patch('/goals/:id', async (c) => {
   const g = await c.env.DB.prepare('SELECT * FROM goals WHERE id = ?').bind(c.req.param('id')).first<GoalRow>();
   if (!g) throw notFound('Goal');
   const role = await requireWorkspace(c.env.DB, g.workspace_id, user.id, 'member');
-  if (g.owner_id !== user.id && g.created_by !== user.id && !wsAtLeast(role, 'admin') && role !== 'member') throw badRequest('Not allowed');
+  if (g.owner_id !== user.id && g.created_by !== user.id && !wsAtLeast(role, 'admin') && role !== 'member') throw forbidden();
   const input = await body(c, goalSchema.partial().extend({ archived: z.boolean().optional() }));
   await validate(c.env.DB, g.workspace_id, user.id, input, g.id);
   await c.env.DB.prepare(
@@ -163,7 +163,7 @@ goalRoutes.delete('/goals/:id', async (c) => {
   const g = await c.env.DB.prepare('SELECT * FROM goals WHERE id = ?').bind(c.req.param('id')).first<GoalRow>();
   if (!g) throw notFound('Goal');
   const role = await requireWorkspace(c.env.DB, g.workspace_id, user.id, 'member');
-  if (g.created_by !== user.id && !wsAtLeast(role, 'admin')) throw badRequest('Only the creator or an admin can delete a goal');
+  if (g.created_by !== user.id && !wsAtLeast(role, 'admin')) throw forbidden('Only the creator or an admin can delete a goal');
   await c.env.DB.batch([c.env.DB.prepare('UPDATE goals SET parent_goal_id = NULL WHERE parent_goal_id = ?').bind(g.id), c.env.DB.prepare('DELETE FROM goals WHERE id = ?').bind(g.id)]);
   return c.json({ ok: true });
 });

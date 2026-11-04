@@ -42,7 +42,8 @@ export async function runSearch(db: D1Database, wsId: string, userId: string, in
     const want = new Set(input.boardIds);
     boards = boards.filter((b) => want.has(b));
   }
-  const results: Record<string, unknown[]> = {};
+  // Every requested type is always present (empty when nothing matches or no boards are accessible).
+  const results: Record<string, unknown[]> = Object.fromEntries(Array.from(types).map((t) => [t, []]));
   const members = await workspaceMembers(db, wsId);
   const nameOf = new Map(members.map((m) => [m.id, m.name]));
 
