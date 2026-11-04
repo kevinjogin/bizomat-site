@@ -1,47 +1,34 @@
-# Fly.io: OpenSketch in Sydney on one dedicated CPU core with 2 GB, suspended when idle (woken by the next request).
-# A dedicated core because on shared CPU, heavy CAD work uses up the burst allowance and the machine drops to ~6% of
-# a core. The sw_ tools still run OpenCascade here (checking each feature, measuring SOLIDWORKS' STEP).
-# Billed only while it runs (about US$0.06 an hour in Sydney); a linked add-in's long poll keeps it awake. Inside,
-# `--supervise` (Dockerfile) restarts the server when it stops answering, since Fly only restarts a machine whose
-# process exits.
-# Deployed by .github/workflows/deploy.yml on every push to main once FLY_API_TOKEN is set in the repo's
-# secrets; the app name can be changed with the repository variable FLY_APP (it must be unique on Fly).
+# fly.toml app configuration file generated for cados on 2026-11-04T00:03:37Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-app = "opensketch-yz"
-primary_region = "syd"
-# the supervisor gives the server 8 s to finish open requests before killing it; Fly waits this long for both
-kill_timeout = 15
+app = 'cados'
+primary_region = 'syd'
+kill_timeout = '15s'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  OPENSKETCH_DATA = "/data"
+  OPENSKETCH_DATA = '/data'
+
+[[mounts]]
+  source = 'opensketch_data'
+  destination = '/data'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  # suspend, not stop: an idle machine is frozen with its memory and wakes in a few hundred ms with its caches
-  # (a stopped one boots in ~10 s with nothing cached). Needs 2 GB or less and no swap. The
-  # supervisor tells a pause from a hang (supervisor.py). A deploy still starts it cold.
-  auto_stop_machines = "suspend"
+  auto_stop_machines = 'suspend'
   auto_start_machines = true
   min_machines_running = 0
 
-  # Past hard_limit requests in flight, Fly's proxy stops sending the machine new ones (they wait at the proxy), while
-  # /healthz, asked inside the machine, still looks fine. Many requests here stay open on purpose: the SOLIDWORKS
-  # add-in's 25 s long polls and MCP tool calls (minutes). The server is async and limits the heavy work itself (CAD
-  # worker lanes), so the proxy's limit is only a flood guard.
   [http_service.concurrency]
-    type = "requests"
-    soft_limit = 200
+    type = 'requests'
     hard_limit = 1000
+    soft_limit = 200
 
 [[vm]]
-  size = "performance-1x"
-  memory = "2gb"
-
-# accounts, connections, keys and short-lived uploads; one machine, since a volume belongs to one machine
-[mounts]
-  source = "opensketch_data"
-  destination = "/data"
+  size = 'performance-1x'
+  memory = '2gb'
