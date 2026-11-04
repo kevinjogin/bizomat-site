@@ -39,7 +39,7 @@ export default function BoardPage() {
   const itemId = params.get('item');
 
   useEffect(() => {
-    if (bundle) document.title = `${bundle.board.name} · WorkOS`;
+    if (bundle) document.title = `${bundle.board.name} · KEVOS WorkOS`;
   }, [bundle]);
 
   const canEdit = !!bundle && bundle.board.access !== 'view' && !bundle.board.archivedAt;

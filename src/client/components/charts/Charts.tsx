@@ -9,7 +9,7 @@ export interface ChartDatum {
   count?: number;
 }
 
-const FALLBACK = ['#5b5bd6', '#00a36c', '#f5a524', '#e5484d', '#0ea5e9', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#64748b', '#334155'];
+const FALLBACK = ['#f97316', '#5b5bd6', '#00a36c', '#f5a524', '#e5484d', '#0ea5e9', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#64748b', '#334155'];
 
 function colorOf(d: ChartDatum, i: number) {
   return d.color || FALLBACK[i % FALLBACK.length];

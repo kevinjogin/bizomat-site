@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { errorMessage, get, post, setCsrfToken } from '../lib/api';
 import { useConfig, useSession } from '../lib/session';
-import { BrandMark, Icon } from '../components/ui/Icon';
+import { BrandMark, Icon, Wordmark } from '../components/ui/Icon';
+import { BRAND, pageTitle } from '../lib/brand';
 import { Field, Loading } from '../components/ui/ui';
 
 const OAUTH_ERRORS: Record<string, string> = {
@@ -23,18 +24,19 @@ function safeNext(next: string | null) {
 function AuthLayout({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   const config = useConfig();
   useEffect(() => {
-    document.title = `${title} · ${config.data?.appName ?? 'WorkOS'}`;
+    document.title = pageTitle(title);
   }, [title, config.data?.appName]);
   return (
     <div className="auth-wrap">
       <div className="card auth-card">
         <div className="row" style={{ marginBottom: 20 }}>
-          <BrandMark size={32} /> <strong style={{ fontSize: 18 }}>{config.data?.appName ?? 'WorkOS'}</strong>
+          <BrandMark size={34} /> <Wordmark size={19} />
           {config.data && config.data.environment !== 'production' ? <span className="badge warning">{config.data.environment}</span> : null}
         </div>
         <h1>{title}</h1>
         {subtitle ? <p className="muted">{subtitle}</p> : null}
         <div style={{ marginTop: 16 }}>{children}</div>
+        <p className="muted small" style={{ marginTop: 20, textAlign: 'center' }}>{BRAND.product} is part of <strong style={{ color: 'var(--brand)', letterSpacing: '.06em' }}>{BRAND.company}</strong></p>
       </div>
     </div>
   );

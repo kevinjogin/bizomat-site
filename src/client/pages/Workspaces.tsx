@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, post } from '../lib/api';
 import { useSession } from '../lib/session';
-import { BrandMark, Icon } from '../components/ui/Icon';
+import { BrandMark, Wordmark, Icon } from '../components/ui/Icon';
 import { EmptyState, Field, PageHeader } from '../components/ui/ui';
 import { useConfirm, useToast } from '../components/ui/overlays';
 import { CreateWorkspaceDialog } from '../components/layout/CreateDialogs';
@@ -94,7 +94,7 @@ export default function Workspaces({ standalone }: { standalone?: boolean }) {
       <div className="auth-wrap">
         <div style={{ width: '100%', maxWidth: 520 }} className="col">
           <div className="row" style={{ marginBottom: 8 }}>
-            <BrandMark size={32} /> <strong style={{ fontSize: 18 }}>WorkOS</strong>
+            <BrandMark size={32} /> <Wordmark size={18} />
           </div>
           <h1>Welcome{session ? `, ${session.user.name.split(' ')[0]}` : ''}</h1>
           <p className="muted">

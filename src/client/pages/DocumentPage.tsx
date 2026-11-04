@@ -132,7 +132,7 @@ function DocumentEditor({ doc, reload }: { doc: DocDetail; reload: () => Promise
   }, [doc.id, qc, ws.id]);
 
   useEffect(() => {
-    document.title = `${title || 'Untitled'} · WorkOS`;
+    document.title = `${title || 'Untitled'} · KEVOS WorkOS`;
   }, [title]);
 
   const isFavQ = useQuery({ queryKey: ['favourites', ws.id], queryFn: () => get<any[]>(`/workspaces/${ws.id}/favourites`) });

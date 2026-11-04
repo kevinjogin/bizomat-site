@@ -5,7 +5,7 @@ import { get, patch, post, errorMessage } from '../../lib/api';
 import { canEdit, useSession, useWorkspace } from '../../lib/session';
 import { applyTheme, storedTheme, useShortcut, useDebounced, type ThemePref } from '../../lib/hooks';
 import { timeAgo } from '../../lib/format';
-import { BrandMark, Icon } from '../ui/Icon';
+import { BrandMark, Icon, Wordmark } from '../ui/Icon';
 import { Avatar, Spinner } from '../ui/ui';
 import { Dropdown, MenuItem, MenuSep, Modal, Popover, useToast } from '../ui/overlays';
 import { CreateBoardDialog, CreateDashboardDialog, CreateWorkspaceDialog, useBoards, useCreateDocument } from './CreateDialogs';
@@ -63,8 +63,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />
         </button>
-        <Link to={`${base}/home`} className="brand" aria-label="WorkOS home">
-          <BrandMark /> <span className="desktop-only">WorkOS</span>
+        <Link to={`${base}/home`} className="brand" aria-label="KEVOS WorkOS home">
+          <BrandMark /> <span className="desktop-only"><Wordmark /></span>
         </Link>
         <WorkspaceSwitcher onCreate={() => setCreate('workspace')} />
         <button className="search-trigger" onClick={() => setSearchOpen(true)} aria-label="Search (Ctrl+K)">
@@ -133,6 +133,7 @@ function Sidebar({ onNewBoard }: { onNewBoard: () => void }) {
         </NavLink>
       ))}
       {boards.data && boards.data.length === 0 ? <div className="muted small" style={{ padding: '4px 10px' }}>No boards yet.</div> : null}
+      <div className="brand-foot"><BrandMark size={16} /> WorkOS is part of <strong>KEVOS</strong></div>
     </nav>
   );
 }

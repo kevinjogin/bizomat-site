@@ -1,8 +1,8 @@
-# WorkOS — work management platform
+# KEVOS WorkOS — work management platform
 
-WorkOS is an original, self-hosted work management platform (boards, items, automations, dashboards, docs, goals) built entirely on Cloudflare: **Workers** (API + static app), **D1** (relational data), **R2** (files), **KV** (cache/config), **Durable Objects** (realtime) and **Cron Triggers** (scheduled jobs).
+WorkOS is part of **KEVOS**: an original, self-hosted work management platform (boards, items, automations, dashboards, docs, goals) built entirely on Cloudflare: **Workers** (API + static app), **D1** (relational data), **R2** (files), **KV** (cache/config), **Durable Objects** (realtime) and **Cron Triggers** (scheduled jobs).
 
-> Working name "WorkOS". Branding is configurable via the `APP_NAME` variable (wrangler.jsonc) and the brand mark in `src/client/components/ui/Icon.tsx`. No third-party branding or assets are used.
+> Branded as **KEVOS WorkOS** (KEVOS orange `#F97316`). Brand constants live in `src/client/lib/brand.ts`, the mark and wordmark in `src/client/components/ui/Icon.tsx`, colour tokens in `src/client/styles/app.css`, and the server-side name in the `APP_NAME` variable (wrangler.jsonc).
 
 ## Features
 

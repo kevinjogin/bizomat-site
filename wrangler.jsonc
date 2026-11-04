@@ -30,7 +30,7 @@
   "triggers": { "crons": ["*/15 * * * *"] },
   "vars": {
     "ENVIRONMENT": "development",
-    "APP_NAME": "WorkOS",
+    "APP_NAME": "KEVOS WorkOS",
     "APP_URL": "http://localhost:8787",
     "ALLOW_SIGNUP": "true",
     "SESSION_TTL_HOURS": "336"
@@ -58,7 +58,7 @@
       "triggers": { "crons": ["*/15 * * * *"] },
       "vars": {
         "ENVIRONMENT": "preview",
-        "APP_NAME": "WorkOS (Preview)",
+        "APP_NAME": "KEVOS WorkOS (Preview)",
         "APP_URL": "https://workos-platform-preview.kevinjogincom.workers.dev",
         "ALLOW_SIGNUP": "true",
         "SESSION_TTL_HOURS": "72"
@@ -85,7 +85,7 @@
       "triggers": { "crons": ["*/15 * * * *"] },
       "vars": {
         "ENVIRONMENT": "production",
-        "APP_NAME": "WorkOS",
+        "APP_NAME": "KEVOS WorkOS",
         "APP_URL": "https://workos-platform-production.kevinjogincom.workers.dev",
         "ALLOW_SIGNUP": "false",
         "SESSION_TTL_HOURS": "336"

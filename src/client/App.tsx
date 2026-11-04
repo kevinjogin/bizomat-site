@@ -74,7 +74,7 @@ export function App() {
   }, [session?.user.theme]);
 
   useEffect(() => {
-    document.title = 'WorkOS';
+    document.title = 'KEVOS WorkOS';
   }, []);
 
   const page = (el: ReactNode) => <Suspense fallback={<Loading />}>{el}</Suspense>;

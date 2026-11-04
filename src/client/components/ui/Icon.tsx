@@ -112,10 +112,18 @@ export function Icon({ name, size = 16, className, title }: { name: IconName | s
 export function BrandMark({ size = 26 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden className="brand-mark">
-      <rect width="32" height="32" rx="8" fill="var(--accent)" />
-      <rect x="7" y="8" width="5" height="16" rx="2.5" fill="#fff" />
-      <rect x="14" y="8" width="5" height="11" rx="2.5" fill="#fff" opacity=".85" />
-      <rect x="21" y="8" width="5" height="7" rx="2.5" fill="#fff" opacity=".7" />
+      <rect width="32" height="32" rx="8" fill="#F97316" />
+      <rect x="8.5" y="7" width="4.6" height="18" rx="2.3" fill="#fff" />
+      <path d="M13.4 16 22 7.6M13.4 16l8.9 8.6" stroke="#fff" strokeWidth="4.6" strokeLinecap="round" fill="none" />
     </svg>
+  );
+}
+
+/** "KEVOS WorkOS" wordmark. */
+export function Wordmark({ size = 16 }: { size?: number }) {
+  return (
+    <span className="wordmark" style={{ fontSize: size }}>
+      <span className="wordmark-company">KEVOS</span> <span className="wordmark-product">WorkOS</span>
+    </span>
   );
 }

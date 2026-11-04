@@ -20,7 +20,7 @@ const signupAllowed = (env: AppEnv['Bindings']) => env.ALLOW_SIGNUP === 'true';
 
 authRoutes.get('/config', (c) => {
   const cfg: AppConfigDTO = {
-    appName: c.env.APP_NAME || 'WorkOS',
+    appName: c.env.APP_NAME || 'KEVOS WorkOS',
     environment: c.env.ENVIRONMENT,
     allowSignup: signupAllowed(c.env),
     providers: [
