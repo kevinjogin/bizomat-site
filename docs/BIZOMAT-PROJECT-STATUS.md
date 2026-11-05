@@ -10,9 +10,10 @@ Project Management (formerly KEVOS Work), one brand and design system, one Fly.i
 four process groups, data migration tooling with dry runs, and the documentation set. Everything that could be built
 and verified without production credentials is done and tested.
 
-**Nothing is deployed yet and no production data has moved.** This session had no Fly.io token, no Cloudflare token
-and no network access to fly.io, Cloudflare or bizomat.ai. Section 6 lists the exact remaining actions; each one is
-the owner's, in order, with its checks and rollback.
+**The platform is not deployed yet and no production data has moved.** This session had no Fly.io or Cloudflare
+token. bizomat.ai is live since 5 Nov, but served by the old `cados` Fly app (the owner's change). The security
+remediation, the address move and the readiness review are in `BIZOMAT-PRODUCTION-READINESS.md`. Section 6 lists the
+exact remaining actions; each one is the owner's, in order, with its checks and rollback.
 
 ## 2. Completion criteria (brief, section 20)
 
@@ -98,10 +99,11 @@ deploy to Fly.io (6PN addresses, Fly's checks, certificates); the live D1 and R2
 
 | # | Action (owner) | Why it is not done here | Then |
 | --- | --- | --- | --- |
-| 1 | **Delete the two D1 backup artifacts in `jogkev-creator/PMO`** (Actions, the runs that made `d1-backup-preview-41797102620` and `d1-backup-preview-41797783441`, Artifacts, delete) and make that repository private or stop its dump uploads | No tool in this session can delete artifacts; they hold personal data in a public repository (F1) | Ask both Project Management users to change their passwords |
-| 2 | Confirm the registration and DNS provider of `bizomat.ai` | Not reachable from this session | Section 6 of `BIZOMAT-DEPLOYMENT.md` |
+| 1 | **Delete the two D1 backup artifacts in `jogkev-creator/PMO`** (Actions, the runs that made `d1-backup-preview-41797102620` and `d1-backup-preview-41797783441`, Artifacts, delete) and merge jogkev-creator/PMO#1 (no more dump uploads; deploys nothing) | No tool in this session can delete artifacts; the session's permission rules stopped the merge as a production action (F1) | Ask both Project Management users to change their passwords (`BIZOMAT-PRODUCTION-READINESS.md`, sections 3 and 4) |
+| 2 | Merge jogkev-creator/CADOS#12 (bizomat.ai becomes the CAD app's address; old hosts redirect pages, programs keep working); then jogkev-creator/CADOS#11 (no server password) | Merging deploys the live CAD app (Fly deploys `main`) | Check the OAuth metadata on both hosts (`BIZOMAT-PRODUCTION-READINESS.md`, section 7) |
+| 2a | Decide the host split now that bizomat.ai serves CAD Automation: (a) bizomat.ai stays CAD and the website takes another host, or (b) the platform proxy keeps CAD's program paths on bizomat.ai | The platform plan put the website on bizomat.ai | Adjust `infrastructure/proxy` routes and `BIZOMAT-DEPLOYMENT.md` before cutover |
 | 3 | Create a Fly.io org token and store it as `FLY_API_TOKEN` in `jogkev-creator/gocore-website` | No Fly credentials | Run "BIZOMAT deploy" (creates the app and volumes) |
-| 4 | Set `OPENSKETCH_PASSWORD` on `bizomat` to the same value as on `cados` | Secret values cannot be read back from Fly | Run "BIZOMAT deploy" again; smoke test |
+| 4 | Set `OPENSKETCH_PASSWORD` on `bizomat` to the same value as on `cados`, unless CADOS#11 (which removes it) is taken into `apps/cad` first | Secret values cannot be read back from Fly | Run "BIZOMAT deploy" again; smoke test |
 | 5 | Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (D1 read, R2 read) | No Cloudflare credentials | "BIZOMAT migrate work data", dry run, then apply |
 | 6 | CAD data move (`infrastructure/migrate/cad/README.md`) | Needs Fly access to both apps | Smoke test, then DNS for `cados.kevos.com` |
 | 7 | DNS changes, one host at a time (`BIZOMAT-DEPLOYMENT.md`, section 6) | Production DNS needs the owner's approval | Rollback window starts |
@@ -138,4 +140,5 @@ exists.
 | Date | Change |
 | --- | --- |
 | 5 Nov 2026 | Repositories consolidated with history; BIZOMAT brand system; website rebuilt as the platform site; CAD Automation and Project Management rebranded; Project Management Node runtime and migration tooling; single Fly app infrastructure; security review; documentation; layout-shift fixes (Lighthouse mobile CLS 0) |
+| 5 Nov 2026 | Security remediation and readiness review (`BIZOMAT-PRODUCTION-READINESS.md`): the two PMO database artifacts found and documented (deletion is the owner's); no workflow may upload a database, dump, backup or secrets file (PMO#1, `tests/artifact-policy.test.ts`); forced new password and founder security reset in Project Management; secret scan of all three repositories' trees and histories (test fixtures only); OPENSKETCH_PASSWORD analysed (removal in CADOS#11); bizomat.ai made the CAD app's address with old hosts redirecting pages (CADOS#12) |
 | 5 Nov 2026 | Owner request: About and Proof of Work joined as **The Engine Room** (`/engine-room/`); the old addresses redirect (301) and their in-page links land on the matching sections; navigation reads CAD Automation, Project Management, Resources, Engine Room |

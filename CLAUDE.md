@@ -52,6 +52,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `main` publishes the BIZOMAT website at kevos.com**. Merge only when that is intended (or disconnect the integration
   after bizomat.ai is live). Manual `npm run deploy` only from a clean checkout whose `HEAD` equals `origin/main`,
   right after `npm run verify`.
+- **bizomat.ai today (owner's change, 5 Nov 2026):** bizomat.ai points at the old `cados` Fly app and serves CAD
+  Automation (CADOS) at its root. jogkev-creator/CADOS#12 makes it that app's public address (old hosts redirect
+  pages, programs keep working on them). The platform plan above put the website there: the owner decides the host
+  split before cutover (`docs/BIZOMAT-PRODUCTION-READINESS.md`, section 7).
 - **Incident, 8 Oct 2026:** a manual `wrangler deploy` from a stale checkout (145 commits behind) replaced the site
   with the old GoCore design. That is why manual deploys are restricted as above.
 - Keep the old deployments (the kevos.com Worker, the `workos-platform-preview` Worker behind work.kevos.com, the
