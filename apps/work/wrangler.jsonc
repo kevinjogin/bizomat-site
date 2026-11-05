@@ -1,0 +1,112 @@
+// WorkOS — Cloudflare Workers configuration.
+//
+// Three fully separate environments. Each has its OWN Worker, D1 database,
+// R2 bucket, KV namespace and Durable Object namespace. No binding is ever
+// shared between environments, so development and preview code can never
+// write to production data.
+//
+//   development (top level, local only by default) -> workos-platform-dev
+//   preview     (--env preview)                     -> workos-platform-preview
+//   production  (--env production)                  -> workos-platform-production
+//
+// The database_id / KV id values below are PLACEHOLDERS. Run
+// `scripts/provision.sh <env>` (see DEPLOYMENT.md) to create the resources
+// and paste the returned IDs. Local development (`wrangler dev --local`) works
+// with the placeholders because Miniflare simulates every binding.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "workos-platform-dev",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": true
+  },
+  "observability": { "enabled": true },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "vars": {
+    "ENVIRONMENT": "development",
+    "APP_NAME": "KEVOS WorkOS",
+    "APP_URL": "http://localhost:8787",
+    "ALLOW_SIGNUP": "true",
+    "SESSION_TTL_HOURS": "336"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "workos-platform-dev-db",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [{ "binding": "FILES", "bucket_name": "workos-platform-dev-files" }],
+  "kv_namespaces": [{ "binding": "CACHE", "id": "00000000000000000000000000000001" }],
+  "durable_objects": {
+    "bindings": [{ "name": "BOARD_ROOMS", "class_name": "BoardRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BoardRoom"] }],
+
+  "env": {
+    "preview": {
+      "name": "workos-platform-preview",
+      "workers_dev": true,
+      "preview_urls": true,
+      "version_metadata": { "binding": "CF_VERSION_METADATA" },
+      "triggers": { "crons": ["*/15 * * * *"] },
+      "vars": {
+        "ENVIRONMENT": "preview",
+        "APP_NAME": "KEVOS WorkOS (Preview)",
+        "APP_URL": "https://workos-platform-preview.kevinjogincom.workers.dev",
+        "ALLOW_SIGNUP": "true",
+        "SESSION_TTL_HOURS": "72"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "workos-platform-preview-db",
+          "database_id": "36733ff4-5842-4274-a7f9-a0cdd8de2f3b",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "workos-platform-preview-files" }],
+      "kv_namespaces": [{ "binding": "CACHE", "id": "129d5d6f69784d91bb67088713ed8364" }],
+      "durable_objects": {
+        "bindings": [{ "name": "BOARD_ROOMS", "class_name": "BoardRoom" }]
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BoardRoom"] }]
+    },
+    "production": {
+      "name": "workos-platform-production",
+      "workers_dev": true,
+      "preview_urls": false,
+      "version_metadata": { "binding": "CF_VERSION_METADATA" },
+      "triggers": { "crons": ["*/15 * * * *"] },
+      "vars": {
+        "ENVIRONMENT": "production",
+        "APP_NAME": "KEVOS WorkOS",
+        "APP_URL": "https://workos-platform-production.kevinjogincom.workers.dev",
+        "ALLOW_SIGNUP": "false",
+        "SESSION_TTL_HOURS": "336"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "workos-platform-production-db",
+          "database_id": "REPLACE_WITH_PRODUCTION_D1_ID",
+          "migrations_dir": "migrations"
+        }
+      ],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "workos-platform-production-files" }],
+      "kv_namespaces": [{ "binding": "CACHE", "id": "REPLACE_WITH_PRODUCTION_KV_ID" }],
+      "durable_objects": {
+        "bindings": [{ "name": "BOARD_ROOMS", "class_name": "BoardRoom" }]
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BoardRoom"] }]
+    }
+  }
+}
