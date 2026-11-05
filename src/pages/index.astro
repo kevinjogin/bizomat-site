@@ -141,7 +141,7 @@ const schema = [{
         <p>Every number here is read from the products themselves when this site is built.</p>
       </div>
       <dl class="proof-stats">
-        {proof.map((x) => <a class="bz-stat" href={x.href}><dt>{x.t}</dt><dd>{x.n}</dd></a>)}
+        {proof.map((x) => <div class="bz-stat proof-stat"><dt><a href={x.href}>{x.t}</a></dt><dd>{x.n}</dd></div>)}
       </dl>
       <p class="home-more"><a href="/proof-of-work/">See how it is built and how it works <span aria-hidden="true">→</span></a></p>
     </Container>
@@ -273,8 +273,11 @@ const schema = [{
   .home-ai__visual { padding-top: .5rem; }
 
   .proof-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; }
-  .proof-stats :global(.bz-stat) { text-decoration: none; color: inherit; transition: border-color .15s var(--ease); }
-  .proof-stats :global(.bz-stat:hover) { border-color: var(--accent); }
+  /* The whole tile is the link's target (a stretched link), so the list stays a valid description list. */
+  .proof-stat { position: relative; transition: border-color .15s var(--ease); }
+  .proof-stat:hover, .proof-stat:focus-within { border-color: var(--accent); }
+  .proof-stat a { color: inherit; text-decoration: none; }
+  .proof-stat a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   .proof-stats :global(dd) { order: -1; }
 
   :global(.home-split) { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
