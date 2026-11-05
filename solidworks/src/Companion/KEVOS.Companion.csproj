@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- KEVOS.Companion.exe: the per-user background app (tray icon) that starts with Windows, registers the computer,
+       keeps the signed link to the KEVOS gateway and hands commands to SOLIDWORKS over the local pipe. It never calls the
+       SOLIDWORKS API (the add-in does, inside SOLIDWORKS): it compiles the shared Core sources and has no SOLIDWORKS
+       interop reference. .NET Framework 4.8 (part of Windows 10/11): nothing extra to install. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>KEVOS.Companion</AssemblyName>
+    <RootNamespace>Kevos.Companion</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../Core/**/*.cs" LinkBase="Core" />
+    <Compile Include="*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+</Project>

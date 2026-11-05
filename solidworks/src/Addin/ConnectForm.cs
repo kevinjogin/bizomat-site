@@ -3,17 +3,20 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using OpenSketch.Sw.Core;
 using SolidWorks.Interop.sldworks;
 
 namespace OpenSketch.Sw
 {
-    /// <summary>The small window: OpenSketch address, SOLIDWORKS key, Connect / Disconnect, and what is happening.</summary>
+    /// <summary>The KEVOS window: the Companion link and this computer's registration, the confirmation setting, the
+    /// optional direct link (address and key), Connect / Disconnect, and what is happening.</summary>
     public sealed class ConnectForm : Form
     {
         readonly Host host;
         readonly TextBox server = new TextBox();
         readonly TextBox key = new TextBox();
         readonly CheckBox auto = new CheckBox();
+        readonly CheckBox confirm = new CheckBox();
         readonly Label status = new Label();
         readonly Panel dot = new Panel();
         readonly Button connect = new Button();
@@ -23,7 +26,7 @@ namespace OpenSketch.Sw
         public ConnectForm(Host host)
         {
             this.host = host;
-            Text = "OpenSketch for SOLIDWORKS";
+            Text = "KEVOS for SOLIDWORKS";
             Font = new Font("Segoe UI", 9f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -33,10 +36,10 @@ namespace OpenSketch.Sw
             ClientSize = new Size(520, 430);
             BackColor = Color.White;
 
-            var title = new Label { Text = "Claude builds in this SOLIDWORKS", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
+            var title = new Label { Text = "AI apps build in this SOLIDWORKS", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
             dot.SetBounds(18, 50, 10, 10);
-            status.SetBounds(34, 45, 470, 34);
-            var l1 = new Label { Text = "OpenSketch address", AutoSize = true, Location = new Point(16, 88) };
+            status.SetBounds(34, 45, 470, 40);
+            var l1 = new Label { Text = "Direct link (optional, without the Companion): OpenSketch address", AutoSize = true, Location = new Point(16, 88) };
             server.SetBounds(16, 106, 488, 24);
             var l2 = new Label { Text = "SOLIDWORKS key (from the OpenSketch home page)", AutoSize = true, Location = new Point(16, 138) };
             key.SetBounds(16, 156, 400, 24);
@@ -53,7 +56,15 @@ namespace OpenSketch.Sw
                 }
             };
             auto.Text = "Connect when SOLIDWORKS starts";
-            auto.SetBounds(16, 188, 300, 22);
+            auto.SetBounds(16, 188, 250, 22);
+            confirm.Text = "Ask me before destructive changes";
+            confirm.SetBounds(270, 188, 240, 22);
+            confirm.Checked = Settings.ConfirmDestructive;
+            confirm.CheckedChanged += (s, e) =>
+            {
+                Settings.ConfirmDestructive = confirm.Checked;   // only the person here changes it, never a command
+                Log.Write("confirm destructive changes: " + (confirm.Checked ? "on" : "off"));
+            };
             connect.Text = "Connect";
             connect.SetBounds(16, 218, 110, 30);
             connect.Click += (s, e) => DoConnect();
@@ -86,7 +97,7 @@ namespace OpenSketch.Sw
             activity.SetBounds(16, 276, 488, 138);
             activity.Font = new Font("Consolas", 8.25f);
             activity.HorizontalScrollbar = true;
-            Controls.AddRange(new Control[] { title, dot, status, l1, server, l2, key, paste, auto, connect, disconnect, copy, folder, l3, activity });
+            Controls.AddRange(new Control[] { title, dot, status, l1, server, l2, key, paste, auto, confirm, connect, disconnect, copy, folder, l3, activity });
 
             server.Text = Settings.Server;
             key.Text = Settings.Key;
@@ -147,7 +158,16 @@ namespace OpenSketch.Sw
 
         void Refresh2()
         {
-            status.Text = host.State;
+            var c = host.CompanionState;
+            string companion;
+            if (!host.PipeConnected) companion = "KEVOS Companion: " + host.PipeState;
+            else
+            {
+                var device = J.Str(c, "device_name");
+                companion = device == null ? "KEVOS Companion connected; this computer is not registered yet (open the Companion to pair it)"
+                    : $"Computer {device}: {J.Str(c, "cloud") ?? "connecting"}" + (J.Bool(c, "paused") ? " (paused)" : "") + $"; {host.CompanionCommands} commands run";
+            }
+            status.Text = companion + "\r\nDirect link: " + host.State;
             dot.BackColor = host.Connected ? Color.FromArgb(34, 160, 90) : Color.FromArgb(200, 200, 200);
             connect.Text = host.Connected ? "Reconnect" : "Connect";
         }

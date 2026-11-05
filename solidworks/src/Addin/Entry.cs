@@ -8,8 +8,8 @@ using SolidWorks.Interop.swpublished;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The SOLIDWORKS add-in (Tools > Add-Ins > OpenSketch). Adds an OpenSketch menu with Connect to Claude and the
-    /// window, and connects by itself when SOLIDWORKS starts if the key is saved.
+    /// The SOLIDWORKS add-in (Tools > Add-Ins > KEVOS), loaded when SOLIDWORKS starts. Adds the KEVOS menu, toolbar and
+    /// CommandManager tab, connects to the KEVOS Companion by itself, and (when a key is saved) to the direct link.
     /// </summary>
     [ComVisible(true)]
     [Guid(SwAddin.ClassId)]
@@ -19,11 +19,20 @@ namespace OpenSketch.Sw
     {
         public const string ClassId = "275256ff-b73a-4e4f-9ea8-842b6626d471";
         public const string ProgIdName = "OpenSketch.Sw.SwAddin";
-        public const string Title = "OpenSketch";
-        public const string Description = "Claude builds parts and assemblies in SOLIDWORKS (OpenSketch link)";
+        public const string Title = "KEVOS";
+        public const string Description = "KEVOS Bridge: AI apps (Claude, ChatGPT...) build parts, assemblies and drawings in SOLIDWORKS";
 
         ISldWorks app;
         int cookie;
+        KevosUi ui;
+        const string MenuName = "KEVOS";
+        static readonly (string name, string callback, string hint)[] Menu =
+        {
+            ("KEVOS status...", "OsWindow", "Connection, computer, confirmations and activity"),
+            ("Connect now", "OsConnect", "Connect this SOLIDWORKS to KEVOS (it also connects by itself)"),
+            ("Disconnect", "OsDisconnect", "Stop taking commands from AI apps until Connect"),
+            ("Open KEVOS Companion", "OsCompanion", "Pairing, pause, logs"),
+        };
         static readonly int[] DocTypes =
         {
             (int)swDocumentTypes_e.swDocNONE, (int)swDocumentTypes_e.swDocPART, (int)swDocumentTypes_e.swDocASSEMBLY,
@@ -38,13 +47,20 @@ namespace OpenSketch.Sw
                 cookie = Cookie;
                 app.SetAddinCallbackInfo2(0, this, cookie);
                 foreach (var t in DocTypes)
-                {
-                    app.AddMenuItem5(t, cookie, "Connect to Claude@OpenSketch", -1, "OsConnect", "OsEnable", "Connect this SOLIDWORKS to Claude through OpenSketch", null);
-                    app.AddMenuItem5(t, cookie, "Disconnect@OpenSketch", -1, "OsDisconnect", "OsEnable", "Stop the link to Claude", null);
-                    app.AddMenuItem5(t, cookie, "OpenSketch window...@OpenSketch", -1, "OsWindow", "OsEnable", "Address, key, status and activity", null);
-                }
+                    foreach (var (name, cb, hint) in Menu)
+                        app.AddMenuItem5(t, cookie, name + "@" + MenuName, -1, cb, "OsEnable", hint, null);
+                // the KEVOS Companion link starts here by itself; the direct link only when its key is saved (as before)
                 var host = Host.Start(app, "add-in");
                 if (Settings.AutoConnect && Settings.Key.StartsWith("oss_") && !host.Running) host.Connect();
+                try
+                {
+                    ui = new KevosUi(app);
+                    ui.Install(cookie);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("KEVOS toolbar not made: " + ex.Message);   // the menu still works
+                }
                 return true;
             }
             catch (Exception ex)
@@ -58,12 +74,17 @@ namespace OpenSketch.Sw
         {
             try
             {
-                foreach (var t in DocTypes)
+                try
                 {
-                    app?.RemoveMenu(t, "Connect to Claude@OpenSketch", "");
-                    app?.RemoveMenu(t, "Disconnect@OpenSketch", "");
-                    app?.RemoveMenu(t, "OpenSketch window...@OpenSketch", "");
+                    ui?.Remove();
                 }
+                catch (Exception)
+                {
+                }
+                ui = null;
+                foreach (var t in DocTypes)
+                    foreach (var (name, _, _) in Menu)
+                        app?.RemoveMenu(t, name + "@" + MenuName, "");
                 Host.Current?.Stop();
             }
             catch (Exception ex)
@@ -76,20 +97,34 @@ namespace OpenSketch.Sw
             return true;
         }
 
-        // menu callbacks (SOLIDWORKS calls them by name)
+        // menu and toolbar callbacks (SOLIDWORKS calls them by name, on its own thread)
         public void OsConnect()
         {
             var h = Host.Current ?? Host.Start(app, "add-in");
-            if (!Settings.Key.StartsWith("oss_"))
-            {
-                h.ShowWindow();
-                return;
-            }
-            h.Connect();
+            Settings.UseCompanion = true;
+            h.StartPipe();
+            if (Settings.Key.StartsWith("oss_")) h.Connect();
             h.ShowWindow();
         }
 
-        public void OsDisconnect() => Host.Current?.Disconnect();
+        public void OsDisconnect()
+        {
+            Host.Current?.Disconnect();
+            Host.Current?.StopPipe();
+        }
+
+        public void OsCompanion()
+        {
+            try
+            {
+                if (!CompanionPipe.StartCompanion())
+                    System.Windows.Forms.MessageBox.Show("The KEVOS Companion is not installed on this computer. Install KEVOS Bridge.", "KEVOS");
+            }
+            catch (Exception ex)
+            {
+                Log.Write("open companion: " + ex.Message);
+            }
+        }
 
         public void OsWindow() => (Host.Current ?? Host.Start(app, "add-in")).ShowWindow();
 

@@ -37,11 +37,18 @@ namespace OpenSketch.Sw
             var rows = new List<object>();
             var summary = J.Str(a, "summary");
             var stopped = (string)null;
+            var cancelled = false;
             m.Extension.StartRecordingUndoObject();
             try
             {
                 foreach (var o in feats)
                 {
+                    if (Bridge.CommandContext.Current?.CancelRequested == true)
+                    {
+                        cancelled = true;
+                        break;
+                    }
+                    Bridge.CommandContext.Progress(rows.Count, feats.Count, J.Str(J.Obj(o), "id"));
                     var f = J.Obj(o) ?? throw new UserError("Each feature must be an object.");
                     var row = J.O("id", J.Str(f, "id"), "type", J.Str(f, "type"));
                     rows.Add(row);
@@ -91,6 +98,8 @@ namespace OpenSketch.Sw
                 res["stopped_at"] = stopped;
                 throw new UserError("Stopped at " + stopped + ". The features before it were made and kept.", res);
             }
+            if (cancelled)
+                throw new UserError($"Cancelled at the AI app's request after {rows.Count} of {feats.Count} features; the ones made were kept.", "CANCELLED", res);
             return res;
         }
 

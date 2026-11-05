@@ -59,7 +59,7 @@ namespace OpenSketch.Sw
                     case "read_drawing": return ReadDrawing(a);
                     case "edit_drawing": return EditDrawing(a);
                     default:
-                        throw new UserError($"This add-in does not know the command '{op}'. Update it: download it again from the OpenSketch home page.");
+                        throw new UserError($"This add-in does not know the command '{op}'. Update it: install the latest KEVOS Bridge (or download the add-in again from the OpenSketch home page).", "UNKNOWN_OP");
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace OpenSketch.Sw
             {
             }
             if (open != null)
-                throw new UserError($"A sketch is open for editing in {ad.GetTitle()}. Close it in SOLIDWORKS (exit the sketch), then ask again.");
+                throw new UserError($"A sketch is open for editing in {ad.GetTitle()}. Close it in SOLIDWORKS (exit the sketch), then ask again.", "USER_EDITING");
         }
 
         /// <summary>No dialog boxes that wait for an answer while Claude works (put back afterwards): no Modify box

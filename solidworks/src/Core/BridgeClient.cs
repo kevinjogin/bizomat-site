@@ -333,10 +333,18 @@ namespace OpenSketch.Sw.Core
     public sealed class UserError : Exception
     {
         public Dictionary<string, object> Detail;
+        /// <summary>Optional machine-readable reason (protocol 2 error codes, e.g. USER_EDITING, APPROVAL_DENIED).</summary>
+        public string Code;
 
         public UserError(string message, Dictionary<string, object> detail = null) : base(message)
         {
             Detail = detail;
+        }
+
+        public UserError(string message, string code, Dictionary<string, object> detail = null) : base(message)
+        {
+            Detail = detail;
+            Code = code;
         }
     }
 }
