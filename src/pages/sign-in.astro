@@ -8,10 +8,10 @@ import Button from '../components/Button.astro';
 import '../styles/product.css';
 import { APP_LINKS, APP_URLS } from '../config/platform.ts';
 
-const host = (u: string) => new URL(u).host;
+const host = (u: string) => { const x = new URL(u); return x.host + x.pathname.replace(/\/$/, ''); };
 const apps = [
   { name: 'Project Management', text: 'Projects, tasks, boards, documents and your team workspace.', signIn: APP_LINKS.work.signIn, home: APP_LINKS.work.dashboard, page: '/work/', host: host(APP_URLS.work) },
-  { name: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/cad/', host: host(APP_URLS.cad) },
+  { name: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/cad-automation/', host: host(APP_URLS.cad) },
 ];
 ---
 <BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management or BIZOMAT CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>

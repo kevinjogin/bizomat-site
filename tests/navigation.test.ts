@@ -11,13 +11,14 @@ const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const 
 // Sign in menu (one entry per application) on the right. The Engine Room joins what were About and Proof of Work
 // (owner request, 5 Nov 2026).
 test('the main navigation reads CAD Automation, Project Management, Resources, Engine Room', () => {
-  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
+  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('Engine Room'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests'], ['Products', '/products/'], ['Contact', '/contact/']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
   assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation']);
-  for (const s of SIGN_IN) assert.match(s.href, /^https:\/\/[a-z0-9.-]+\/login$/, `${s.label} signs in on its own application`);
+  for (const s of SIGN_IN) assert.match(s.href, /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/login$/, `${s.label} signs in on its own application`);
+  assert.deepEqual(SIGN_IN.map((s) => s.href), ['https://bizomat.ai/tasks/login', 'https://bizomat.ai/cad/login'], 'both under bizomat.ai');
   assert.deepEqual(CRUMB, { tools: 'Tools', library: 'Library' });
   assert.deepEqual(QUOTE_CTA, { href: '/contact/', label: 'Contact' });
   // One list serves desktop, tablet and mobile; menus work without JavaScript (<details>).
@@ -27,12 +28,12 @@ test('the main navigation reads CAD Automation, Project Management, Resources, E
   assert.match(header, /<details class="nav-menu signin-menu" data-nav-menu>/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
-  for (const page of ['cad.astro', 'work.astro', 'engine-room.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  for (const page of ['cad-automation.astro', 'work.astro', 'engine-room.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
 });
 
 test('the footer covers products, resources, company and the applications, with the legal pages on every page', () => {
   const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.apps, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
-  for (const pair of [['CAD Automation', '/cad/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['The Engine Room', '/engine-room/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
+  for (const pair of [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['The Engine Room', '/engine-room/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
   const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);

@@ -1,13 +1,12 @@
 // BIZOMAT platform: where each product application lives, and the facts the website states about them.
 //
-// The website (bizomat.ai) is public. The two applications sit on their own hosts and need sign-in:
-//   CAD Automation      (formerly CADOS)          today https://cados.kevos.com, target https://cad.bizomat.ai
-//   Project Management  (formerly KEVOS Work)     today https://work.kevos.com,  target https://work.bizomat.ai
-// The old hosts keep working after the move (the platform proxy serves both), so they are the safe defaults until the
-// new hosts have valid certificates. Switch with PUBLIC_CAD_APP_URL and PUBLIC_WORK_APP_URL at build time
-// (docs/BIZOMAT-DEPLOYMENT.md, "DNS cutover").
+// Everything lives under the website's own address (the owner's decision, 5 Nov 2026), and the applications need sign-in:
+//   CAD Automation      (formerly CADOS)          https://bizomat.ai/cad    (the Worker passes /cad to the CAD app)
+//   Project Management  (formerly KEVOS Work)     https://bizomat.ai/tasks  (the Worker sends /tasks on to the app)
+// The old addresses (cados.kevos.com, work.kevos.com) keep working for programs set up with them. Override with
+// PUBLIC_CAD_APP_URL and PUBLIC_WORK_APP_URL at build time (docs/BIZOMAT-DEPLOYMENT.md, section 6a).
 const env = (import.meta as { env?: Record<string, string | undefined> }).env ?? {};
-const clean = (value: string | undefined, fallback: string) => (value && /^https:\/\/[a-z0-9.-]+$/i.test(value.trim()) ? value.trim().replace(/\/$/, '') : fallback);
+const clean = (value: string | undefined, fallback: string) => (value && /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i.test(value.trim()) ? value.trim().replace(/\/$/, '') : fallback);
 
 export const PLATFORM = {
   name: 'BIZOMAT',
@@ -26,8 +25,8 @@ export const PLATFORM = {
 } as const;
 
 export const APP_URLS = {
-  cad: clean(env.PUBLIC_CAD_APP_URL, 'https://cados.kevos.com'),
-  work: clean(env.PUBLIC_WORK_APP_URL, 'https://work.kevos.com'),
+  cad: clean(env.PUBLIC_CAD_APP_URL, 'https://bizomat.ai/cad'),
+  work: clean(env.PUBLIC_WORK_APP_URL, 'https://bizomat.ai/tasks'),
 } as const;
 
 /** Links into the applications. Both send a visitor who is not signed in to their sign-in page. */

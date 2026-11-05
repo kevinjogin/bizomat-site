@@ -1,5 +1,5 @@
 ---
-// /cad/: BIZOMAT CAD Automation (formerly CADOS). What it does, how it connects, every tool, how to install it, how
+// /cad-automation/: BIZOMAT CAD Automation (formerly CADOS). What it does, how it connects, every tool, how to install it, how
 // it is secured and how far it has been tested. Facts come from src/data/platform-catalog.ts and src/data/cad-tools.ts,
 // which record their sources in apps/cad. The application itself runs at APP_LINKS.cad (sign-in required).
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -27,8 +27,8 @@ const security = [
   { t: 'Outgoing connections only', x: 'The Companion reaches BIZOMAT over HTTPS; nothing on your network has to accept incoming connections.' },
 ];
 ---
-<BaseLayout title="CAD Automation" description={description} image="/brand/bizomat-social-cad.png" imageAlt="BIZOMAT CAD Automation: your AI assistant, working in SOLIDWORKS on your own computer" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'CAD Automation', href: '/cad/' }]}
-  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', alternateName: 'CADOS', url: `${SITE.url}/cad/`, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
+<BaseLayout title="CAD Automation" description={description} image="/brand/bizomat-social-cad.png" imageAlt="BIZOMAT CAD Automation: your AI assistant, working in SOLIDWORKS on your own computer" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'CAD Automation', href: '/cad-automation/' }]}
+  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', alternateName: 'CADOS', url: `${SITE.url}/cad-automation/`, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
   <section class="pp-hero" aria-labelledby="cad-title">
     <Container class="pp-hero__inner">
       <div>

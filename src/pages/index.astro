@@ -54,7 +54,7 @@ const highlights: Record<string, string[]> = {
   resources: [`${fmt(tools.length)} tools and calculators`, `${fmt(bookTotal)} books, ${fmt(chapterTotal)} chapters`, 'No account needed'],
 };
 const proof = [
-  { n: String(CAD.toolCount), t: 'CAD tools an AI assistant can call', href: '/cad/#tools' },
+  { n: String(CAD.toolCount), t: 'CAD tools an AI assistant can call', href: '/cad-automation/#tools' },
   { n: String(WORK.views.length), t: 'views of the same project data', href: '/work/#views' },
   { n: fmt(tools.length), t: 'tools that show their method', href: '/tools/' },
   { n: fmt(chapterTotal), t: 'Library chapters to read free', href: '/reados/' },
@@ -65,7 +65,7 @@ const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
   isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@id': `${SITE.url}/#organization` },
   hasPart: [
-    { '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', url: `${SITE.url}/cad/`, description: CAD.headline, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', publisher: { '@id': `${SITE.url}/#organization` } },
+    { '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', url: `${SITE.url}/cad-automation/`, description: CAD.headline, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'SoftwareApplication', name: 'BIZOMAT Project Management', url: `${SITE.url}/work/`, description: WORK.headline, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'CollectionPage', name: 'BIZOMAT Tools', url: `${SITE.url}/tools/`, description: 'Engineering, manufacturing and business tools.' },
     { '@type': 'CollectionPage', name: 'BIZOMAT Library', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
@@ -205,7 +205,7 @@ const schema = [{
       <p>Open a product, search the resources, or tell us what you need.</p>
       <div class="home-close__actions">
         <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="home-close-work">Start Managing Projects</Button>
-        <Button href="/cad/" variant="secondary" data-cta="home-close-cad">Explore CAD Automation</Button>
+        <Button href="/cad-automation/" variant="secondary" data-cta="home-close-cad">Explore CAD Automation</Button>
         <Button href="/contact/" variant="secondary" data-cta="home-close-contact">Contact BIZOMAT</Button>
       </div>
     </Container>

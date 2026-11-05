@@ -31,7 +31,6 @@ test('Project Management facts match the application', () => {
 
 test('every catalogue entry is public and points at a real page or an application\'s public documentation', () => {
   const ids = new Set<string>();
-  const appHosts = new Set(Object.values(APP_URLS).map((u) => new URL(u).host));
   for (const e of PLATFORM_CATALOG) {
     assert.ok(!ids.has(e.id), `${e.id} is unique`);
     ids.add(e.id);
@@ -43,7 +42,7 @@ test('every catalogue entry is public and points at a real page or an applicatio
       assert.ok(page.some((p) => existsSync(join(process.cwd(), p))), `${e.id}: ${e.url} has a page`);
     } else {
       const u = new URL(e.url);
-      assert.ok(appHosts.has(u.host) && /^\/docs$/.test(u.pathname), `${e.id}: external links go only to an application's public docs`);
+      assert.ok(Object.values(APP_URLS).some((a) => `${u.origin}${u.pathname}` === `${a}/docs`), `${e.id}: external links go only to an application's public docs`);
     }
     assert.doesNotMatch(`${e.title} ${e.summary}`, /@[a-z0-9-]+\.|password:|token:|\b\d{3}-\d{3}\b/i, `${e.id} holds no personal or secret data`);
   }
@@ -65,7 +64,7 @@ test('the example searches return relevant products, tools and readings, each wi
   assert.equal(tools.platform[0]?.url, '/tools/');
   assert.ok(tools.tools.length >= 3);
   const cad = ask('How can I automate SolidWorks?');
-  assert.ok(cad.platform.some((h) => h.url === '/cad/'), 'the CAD Automation page');
+  assert.ok(cad.platform.some((h) => h.url === '/cad-automation/'), 'the CAD Automation page');
   const work = ask('Show me project management capabilities.');
   assert.equal(work.platform[0]?.url, '/work/');
   const guides = ask('Find guides about business automation.');

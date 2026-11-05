@@ -77,7 +77,7 @@ export type NavChild = { label: string; href?: string; description?: string; sta
 export type NavItem = { label: string; href: string; children?: readonly NavChild[] };
 
 export const NAV: readonly NavItem[] = [
-  { label: 'CAD Automation', href: '/cad/' },
+  { label: 'CAD Automation', href: '/cad-automation/' },
   { label: 'Project Management', href: '/work/' },
   {
     label: 'Resources', href: '/resources/', children: [
@@ -117,7 +117,7 @@ export const QUOTE_CTA = { href: '/contact/', label: 'Contact' } as const;
 
 export const FOOTER_NAV = {
   products: [
-    { href: '/cad/', label: 'CAD Automation' },
+    { href: '/cad-automation/', label: 'CAD Automation' },
     { href: '/work/', label: 'Project Management' },
     { href: '/resources/', label: 'Resources' },
     { href: '/products/', label: 'All products' },

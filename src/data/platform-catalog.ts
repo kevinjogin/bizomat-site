@@ -1,6 +1,6 @@
 // The BIZOMAT platform catalogue: public facts about the two applications and the website's own sections.
 //
-// One source for the product pages (/cad/, /work/), the homepage cards, the Engine Room (/engine-room/) and the AI search index
+// One source for the product pages (/cad-automation/, /work/), the homepage cards, the Engine Room (/engine-room/) and the AI search index
 // (/discovery-index.json "pages"). Every entry is PUBLIC: product descriptions, documentation and page addresses.
 // Nothing here comes from, or points into, a customer's projects, files or account, so search over it cannot reveal
 // private data. Every capability is taken from the applications' own code and documentation in this repository:
@@ -87,23 +87,23 @@ const P = 'BIZOMAT';
 
 export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
   // CAD Automation
-  { id: 'page:cad', title: 'BIZOMAT CAD Automation', summary: CAD.summary, url: '/cad/', area: C, kind: 'Product',
+  { id: 'page:cad', title: 'BIZOMAT CAD Automation', summary: CAD.summary, url: '/cad-automation/', area: C, kind: 'Product',
     keywords: 'solidworks automation automate cad design engineering automation ai assistant claude chatgpt mcp connector parts assemblies drawings model modelling 3d cados' },
-  { id: 'page:cad-how', title: 'How CAD Automation connects your AI assistant to SOLIDWORKS', summary: 'Your assistant calls the MCP tools; BIZOMAT checks each step and sends it over an outgoing HTTPS link to the Companion and add-in on your computer, where SOLIDWORKS does the work.', url: '/cad/#how', area: C, kind: 'Capability',
+  { id: 'page:cad-how', title: 'How CAD Automation connects your AI assistant to SOLIDWORKS', summary: 'Your assistant calls the MCP tools; BIZOMAT checks each step and sends it over an outgoing HTTPS link to the Companion and add-in on your computer, where SOLIDWORKS does the work.', url: '/cad-automation/#how', area: C, kind: 'Capability',
     keywords: 'mcp model context protocol connector add-in addin companion windows local execution outbound https pairing architecture how it works connect' },
-  { id: 'page:cad-capabilities', title: 'CAD Automation capabilities: parts, assemblies and drawings', summary: 'Sketches, extrudes, revolves, holes, fillets, patterns, mates, interference checks, native drawings with section and detail views, a bill of materials, STEP, IGES and Parasolid import, and STEP, STL, PDF, DWG and DXF export.', url: '/cad/#capabilities', area: C, kind: 'Capability',
+  { id: 'page:cad-capabilities', title: 'CAD Automation capabilities: parts, assemblies and drawings', summary: 'Sketches, extrudes, revolves, holes, fillets, patterns, mates, interference checks, native drawings with section and detail views, a bill of materials, STEP, IGES and Parasolid import, and STEP, STL, PDF, DWG and DXF export.', url: '/cad-automation/#capabilities', area: C, kind: 'Capability',
     keywords: 'sketch extrude revolve sweep loft fillet chamfer hole pattern mirror shell draft mate interference drawing slddrw section view detail view bill of materials bom pdf dwg dxf step stl iges parasolid import export equations parameters dimensions fasteners screws bearings' },
-  { id: 'page:cad-install', title: 'Install CAD Automation for SOLIDWORKS', summary: 'One Windows installer adds the add-in and the Companion. Pair the computer, add the connector to your assistant, then run the self test.', url: '/cad/#install', area: C, kind: 'Documentation',
+  { id: 'page:cad-install', title: 'Install CAD Automation for SOLIDWORKS', summary: 'One Windows installer adds the add-in and the Companion. Pair the computer, add the connector to your assistant, then run the self test.', url: '/cad-automation/#install', area: C, kind: 'Documentation',
     keywords: 'install installation setup msi installer download windows pair pairing computer self test getting started configure configuration' },
-  { id: 'page:cad-tools', title: 'The CAD Automation tool list', summary: `All ${CAD.toolCount} tools an assistant can call, from sw_status and sw_batch to sw_create_drawing and sw_check_interference.`, url: '/cad/#tools', area: C, kind: 'Documentation',
+  { id: 'page:cad-tools', title: 'The CAD Automation tool list', summary: `All ${CAD.toolCount} tools an assistant can call, from sw_status and sw_batch to sw_create_drawing and sw_check_interference.`, url: '/cad-automation/#tools', area: C, kind: 'Documentation',
     keywords: 'tools commands operations sw_status sw_batch sw_add_features sw_create_drawing sw_export sw_import sw_selftest api list supported commands' },
-  { id: 'page:cad-security', title: 'CAD Automation security', summary: 'Signed commands, a key per computer, sign-in for every AI app, confirmation before deletions, and your model files stay on your computer.', url: '/cad/#security', area: C, kind: 'Capability',
+  { id: 'page:cad-security', title: 'CAD Automation security', summary: 'Signed commands, a key per computer, sign-in for every AI app, confirmation before deletions, and your model files stay on your computer.', url: '/cad-automation/#security', area: C, kind: 'Capability',
     keywords: 'security signed commands device key oauth sign-in privacy local files confirmation permissions' },
   { id: 'doc:cad', title: 'CAD Automation documentation', summary: 'Set-up, connection, sign-in for AI apps, the self test, troubleshooting and security, in the application itself.', url: APP_LINKS.cad.docs, area: C, kind: 'Documentation',
     keywords: 'documentation docs guide help troubleshooting connector address oauth self test faq manual' },
-  { id: 'int:mcp', title: 'Integrations: Claude, ChatGPT and other MCP apps', summary: 'CAD Automation works with any assistant that supports remote MCP servers over Streamable HTTP: add the connector address and sign in.', url: '/cad/#how', area: C, kind: 'Integration',
+  { id: 'int:mcp', title: 'Integrations: Claude, ChatGPT and other MCP apps', summary: 'CAD Automation works with any assistant that supports remote MCP servers over Streamable HTTP: add the connector address and sign in.', url: '/cad-automation/#how', area: C, kind: 'Integration',
     keywords: 'integration integrations claude chatgpt mcp clients streamable http connector oauth ai apps assistant cursor' },
-  { id: 'int:solidworks', title: 'Integration: SOLIDWORKS', summary: 'A native SOLIDWORKS add-in (Tools > Add-Ins) with a tab, menu and task pane, built against the SOLIDWORKS 2022 API.', url: '/cad/#how', area: C, kind: 'Integration',
+  { id: 'int:solidworks', title: 'Integration: SOLIDWORKS', summary: 'A native SOLIDWORKS add-in (Tools > Add-Ins) with a tab, menu and task pane, built against the SOLIDWORKS 2022 API.', url: '/cad-automation/#how', area: C, kind: 'Integration',
     keywords: 'solidworks integration add-in addin api 2022 dassault native features task pane' },
 
   // Project Management

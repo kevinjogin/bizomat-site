@@ -10,6 +10,10 @@
 //   /api/assessment                → Engineering Problem Assessment enquiries (server-side validation)
 //   /api/assessment/stripe-webhook → optional Stripe payment verification (signature-checked)
 //   everything else → the static site from dist/ (env.ASSETS)
+//
+// On bizomat.ai the applications live under the website's address (routeApps below):
+//   /cad/...   → CAD Automation, the CAD app on Fly (the origin of the bizomat.ai record)
+//   /tasks/... → Project Management (the TASKS service binding once that app serves /tasks; until then a redirect)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -21,8 +25,13 @@ import { API_HEADERS, BASELINE_HEADERS, withinEdgeLimit, type RateLimiter } from
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
 }
+interface ServiceBinding {
+  fetch(request: Request): Promise<Response>;
+}
 export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnEnv {
   ASSETS: AssetsBinding;
+  /** Project Management's Worker (wrangler.toml [[services]]), bound once it serves its pages under /tasks. */
+  TASKS?: ServiceBinding;
   /** Per-IP burst limits (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
   CHAT_LIMITER?: RateLimiter;
   FORM_LIMITER?: RateLimiter;
@@ -30,6 +39,45 @@ export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnE
 
 /** Production hosts of the website: bizomat.ai, and kevos.com while it still serves during the move. */
 const PRODUCTION_HOSTS = new Set(['bizomat.ai', 'www.bizomat.ai', 'kevos.com', 'www.kevos.com']);
+
+/** The BIZOMAT platform's address: the website at the root, each application under a path of its own. */
+export const PLATFORM_HOST = 'bizomat.ai';
+
+/**
+ * Paths of bizomat.ai that belong to CAD Automation. The CAD app on Fly is the origin of the bizomat.ai record, so
+ * fetch(request) reaches it, and it answers with its own headers. Besides /cad/... it owns:
+ * - the OAuth metadata, which RFC 9728 and RFC 8414 put at the root of the host
+ *   (/.well-known/oauth-protected-resource/cad/mcp, /.well-known/oauth-authorization-server/cad);
+ * - the addresses programs call at the root, kept for connectors and computers set up while CAD answered there:
+ *   the MCP endpoints and the add-in's link (/mcp, /mcp/..., /solidworks/mcp), OAuth (/oauth/...), the Companion's
+ *   API (/v2/...) and /healthz;
+ * - /.well-known/acme-challenge/..., so Fly can renew the certificate that Cloudflare checks when it connects.
+ * The website has none of these paths. The CAD app's list: apps/cad/opensketch/canonical.py (KEEP_PREFIXES).
+ */
+export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/oauth\/|^\/v2\/|^\/healthz$|^\/\.well-known\/(?:oauth-protected-resource|oauth-authorization-server|openid-configuration|acme-challenge)(?:\/|$)/;
+
+/** Project Management's current address, where /tasks/... is sent until that app serves the path itself. */
+export const TASKS_FALLBACK = 'https://work.kevos.com';
+
+const redirect = (location: string, status: number, cache = 'public, max-age=86400'): Response =>
+  new Response(null, { status, headers: { Location: location, 'Cache-Control': cache } });
+
+/** The applications under bizomat.ai, or null when the request is for the website. */
+async function routeApps(request: Request, url: URL, env: Env): Promise<Response | null> {
+  const read = request.method === 'GET' || request.method === 'HEAD';
+  // /CAD, /Tasks/...: one address per page, in lowercase (other methods are left alone and find nothing)
+  const app = /^\/(cad|tasks)(?=\/|$)/i.exec(url.pathname);
+  if (app && app[1] !== app[1].toLowerCase() && read) {
+    return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
+  }
+  if (CAD_PATHS.test(url.pathname)) return fetch(request);
+  if (/^\/tasks(?:\/|$)/.test(url.pathname)) {
+    if (env.TASKS) return env.TASKS.fetch(request);
+    const rest = url.pathname.slice('/tasks'.length) || '/';
+    return redirect(`${TASKS_FALLBACK}${rest}${url.search}`, 302, 'no-store');
+  }
+  return null;
+}
 
 // Injected at build time from the same values written to dist/_headers.
 declare const __SECURITY_HEADERS__: Record<string, string>;
@@ -53,10 +101,25 @@ export function withHeaders(response: Response, url: URL): Response {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+    const read = request.method === 'GET' || request.method === 'HEAD';
+    // Certificate checks for the CAD app's origin are answered there, over either scheme.
+    if (url.hostname === PLATFORM_HOST && url.pathname.startsWith('/.well-known/acme-challenge/')) return fetch(request);
+    // www.bizomat.ai is another name for bizomat.ai (308 keeps a POST's method and body).
+    if (url.hostname === `www.${PLATFORM_HOST}`) {
+      return redirect(`https://${PLATFORM_HOST}${url.pathname}${url.search}`, read ? 301 : 308);
+    }
     // Upgrade plain-HTTP page requests on the production domains (HSTS then keeps browsers on HTTPS).
-    if (url.protocol === 'http:' && PRODUCTION_HOSTS.has(url.hostname) && (request.method === 'GET' || request.method === 'HEAD')) {
+    if (url.protocol === 'http:' && PRODUCTION_HOSTS.has(url.hostname) && read) {
       url.protocol = 'https:';
       return new Response(null, { status: 301, headers: { Location: url.href, 'Cache-Control': 'public, max-age=3600' } });
+    }
+    if (url.hostname === PLATFORM_HOST) {
+      const app = await routeApps(request, url, env);
+      if (app) return app;
+    }
+    // The CAD Automation page was /cad/; on bizomat.ai that address is the application itself.
+    if ((url.pathname === '/cad' || url.pathname === '/cad/') && read) {
+      return withHeaders(redirect(`/cad-automation/${url.search}`, 301), url);
     }
     // The Insights section is retired. public/_redirects sends each /insights/<slug>/ to its Library chapter;
     // anything those rules cannot match exactly reaches the Worker: add the missing trailing slash so the

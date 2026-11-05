@@ -26,19 +26,19 @@ test('the homepage leads with the BIZOMAT message, then products, AI search, pro
   assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
   assert.equal(SITE.title, 'BIZOMAT | Intelligent Business Automation Platform');
   assert.deepEqual(NAV.map((n) => n.label), ['CAD Automation', 'Project Management', 'Resources', 'Engine Room']);
-  assert.deepEqual(NAV.map((n) => n.href), ['/cad/', '/work/', '/resources/', '/engine-room/']);
+  assert.deepEqual(NAV.map((n) => n.href), ['/cad-automation/', '/work/', '/resources/', '/engine-room/']);
 });
 
 test('products are described from the catalogue, and every product action leads to a real page', () => {
   assert.deepEqual(PRODUCTS.map((p) => [p.id, p.name, p.status, p.url, p.signIn]), [
-    ['cad', 'CAD Automation', 'available', '/cad/', true],
+    ['cad', 'CAD Automation', 'available', '/cad-automation/', true],
     ['work', 'Project Management', 'available', '/work/', true],
     ['resources', 'Resources', 'available', '/resources/', false],
   ]);
   assert.deepEqual(PRODUCTS.map((p) => p.formerly), ['CADOS', 'KEVOS Work', undefined], 'former names are stated for people who know them');
   for (const p of PRODUCTS) assert.ok(read(`src/pages/${p.url!.replace(/^\/|\/$/g, '')}${p.id === 'resources' ? '/index' : ''}.astro`).length > 0, `${p.url} exists`);
   for (const s of SOLUTIONS) for (const path of s.paths) {
-    assert.ok(/^\/(tools|reados|contact|cad|work)\//.test(path.href), `${s.id}: ${path.href} is a real page`);
+    assert.ok(/^\/(tools|reados|contact|cad-automation|work)\//.test(path.href), `${s.id}: ${path.href} is a real page`);
   }
   const text = JSON.stringify([PRODUCTS, SOLUTIONS]);
   assert.doesNotMatch(text, /\d+\s*%|customers? (say|love)|testimonial|trusted by/i, 'no invented statistics or testimonials');

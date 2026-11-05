@@ -37,7 +37,7 @@ export const PRODUCTS: readonly Product[] = [
     tagline: CAD.headline,
     summary: CAD.summary,
     status: 'available',
-    url: '/cad/',
+    url: '/cad-automation/',
     signIn: true,
     action: 'Explore CAD Automation',
   },
@@ -116,7 +116,7 @@ export const SOLUTIONS: readonly Solution[] = [
       'The method you need is buried in a textbook you do not have to hand.',
     ],
     paths: [
-      { label: 'CAD Automation', href: '/cad/', note: 'Your AI assistant, working in SOLIDWORKS.' },
+      { label: 'CAD Automation', href: '/cad-automation/', note: 'Your AI assistant, working in SOLIDWORKS.' },
       { label: 'Engineering tools', href: '/tools/?topic=engineering-design', note: 'Design checks that show their method.' },
       { label: 'Engineering books', href: '/reados/?topic=engineering', note: 'Practical methods with worked numbers.' },
     ],
@@ -131,7 +131,7 @@ export const SOLUTIONS: readonly Solution[] = [
       'It is not clear which processes are worth automating first.',
     ],
     paths: [
-      { label: 'CAD Automation', href: '/cad/', note: 'Automation for engineering and CAD work.' },
+      { label: 'CAD Automation', href: '/cad-automation/', note: 'Automation for engineering and CAD work.' },
       { label: 'Technology books', href: '/reados/?topic=technology', note: 'AI, software and digital systems in practice.' },
       { label: 'Project Management automations', href: '/work/#automations', note: 'Let status changes and dates move routine work forward.' },
       { label: 'Talk to BIZOMAT', href: '/contact/', note: 'Turn a repeated spreadsheet or manual process into a focused tool.' },
