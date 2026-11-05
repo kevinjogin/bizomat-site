@@ -66,7 +66,7 @@ class _BodyTooBig(HTTPException):
 
 BODY_MAX = 68 * 2**20                 # an MCP call with a 32 MiB file as base64, or a file from the add-in
 BODY_SMALL = 64 * 1024                # sign-in forms, OAuth, everything that is not /api/ or /mcp/
-OWN_BODY_LIMIT = ("/mcp/uploads/", "/mcp/sw/file")  # streamed to their own, larger caps
+OWN_BODY_LIMIT = ("/mcp/uploads/", "/mcp/sw/file", "/v2/device/file")  # streamed to their own, larger caps
 
 
 class BodyLimit:
@@ -81,7 +81,7 @@ class BodyLimit:
     def cap(path: str) -> int | None:
         if path.startswith(OWN_BODY_LIMIT):
             return None
-        return BODY_MAX if path.startswith(("/api/", "/mcp", "/solidworks/mcp")) else BODY_SMALL
+        return BODY_MAX if path.startswith(("/api/", "/mcp", "/solidworks/mcp", "/v2/device/")) else BODY_SMALL
 
     async def __call__(self, scope, receive, send):
         cap = self.cap(scope.get("path", "")) if scope["type"] == "http" else None
@@ -632,6 +632,14 @@ def api_sw_download():
         raise HTTPException(404, "The SOLIDWORKS add-in is not on this server.")
     return FileResponse(SW_DOWNLOAD, filename="OpenSketch-SOLIDWORKS.zip", media_type="application/zip",
                         headers={"Cache-Control": "no-cache"})
+
+
+# ----------------------------------------------------------------------------- registered computers (KEVOS)
+# devicebridge.py: pairing, the KEVOS Companion's signed link (/v2/...), the person's computers (/api/devices)
+
+from . import devicebridge  # noqa: E402
+
+app.include_router(devicebridge.router)
 
 
 # ----------------------------------------------------------------------------- the home page

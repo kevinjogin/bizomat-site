@@ -100,11 +100,16 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 <a class="btn pill" id="download" href="/api/sw/download"><span>Download</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v12M7 12l5 5 5-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
 <p class="err" id="no-download" style="display:none">The add-in download is not on this server yet.</p></article>
 <article class="step" id="s-connect"><h2>Connect SOLIDWORKS</h2>
-<p>In SOLIDWORKS: <b>Tools &gt; OpenSketch &gt; Connect to Claude</b>. Paste these two.</p>
+<p>In SOLIDWORKS: <b>Tools &gt; KEVOS &gt; KEVOS status</b>. Paste these two. Not needed with KEVOS Bridge (below).</p>
 <div class="row"><label for="server">Address</label><input id="server" readonly><button class="btn" data-copy="server">Copy</button></div>
 <div class="row"><label for="key">Key</label><input id="key" type="password" readonly autocomplete="off"><button class="btn" id="show">Show</button><button class="btn" data-copy="key">Copy</button></div>
 <div class="links"><button id="newkey">New key</button></div>
 <p class="hint">No menu? Tools &gt; Macro &gt; Run &gt; Documents\\OpenSketch\\OpenSketch.swb</p></article>
+<article class="step" id="s-pcs"><h2>Your computers</h2>
+<p>Install <b>KEVOS Bridge</b> once on each SOLIDWORKS computer. Its Companion opens this site to add the computer, then connects by itself.</p>
+<a class="btn pill" id="bridge-dl" href="https://github.com/jogkev-creator/opensketchyz/releases/tag/bridge-latest" rel="noopener"><span>Get KEVOS Bridge</span></a>
+<ul class="apps" id="pcs" aria-label="Your computers"></ul>
+<p class="hint" id="no-pcs">No computer added yet. The steps above connect one SOLIDWORKS without the installer.</p></article>
 <article class="step" id="s-ai"><h2>Add the connector</h2>
 <p>In Claude or ChatGPT, add a custom connector with this address and sign in.</p>
 <div class="row"><label for="url">Connector</label><input id="url" readonly><button class="btn" data-copy="url">Copy</button></div>
@@ -135,7 +140,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
     const on = !!(st && st.connected);
     $('state').className = 'state ' + (on ? 'on' : 'off');
     $('state-t').textContent = on
-      ? 'Connected: ' + swYear(st.sw_version) + (st.machine ? ' on ' + st.machine : '') + (st.working_on ? ', working' : '')
+      ? (st.ambiguous ? 'Connected: ' + st.machine : 'Connected: ' + swYear(st.sw_version) + (st.machine ? ' on ' + st.machine : '') + (st.working_on ? ', working' : ''))
       : 'SOLIDWORKS not connected';
     $('s-connect').classList.toggle('done', on);
     if (on) $('s-install').classList.add('done');
@@ -157,6 +162,36 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
     }
     $('s-ai').classList.toggle('done', list.length > 0);
   }
+  let pcsShown = '';
+  function pcs(list) {
+    const now = JSON.stringify(list);
+    if (now === pcsShown) return;
+    pcsShown = now;
+    const ul = $('pcs'); ul.textContent = '';
+    $('no-pcs').style.display = list.length ? 'none' : '';
+    for (const d of list) {
+      const li = document.createElement('li');
+      const b = document.createElement('b'); b.textContent = d.name + (d.default ? ' (default)' : '');
+      const s = document.createElement('span');
+      const sw = (d.solidworks || []).map((i) => i.solidworks + (i.busy ? ', working' : '')).join(', ');
+      s.textContent = d.online ? (sw || 'online, SOLIDWORKS closed') : 'offline';
+      li.append(b, s);
+      if (!d.default) {
+        const m = document.createElement('button'); m.textContent = 'Make default';
+        m.onclick = async () => { try { await api('/api/devices/' + encodeURIComponent(d.id), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ default: true }) }); pcsShown = ''; loadPcs(); } catch (e) { err(e.message); } };
+        li.append(m);
+      }
+      const x = document.createElement('button'); x.textContent = 'Remove';
+      x.setAttribute('aria-label', 'Remove ' + d.name);
+      x.onclick = async () => {
+        if (!confirm('Remove ' + d.name + '? It stops taking commands at once. To use it again, pair it again from its KEVOS Companion.')) return;
+        try { await api('/api/devices/' + encodeURIComponent(d.id), { method: 'DELETE' }); pcsShown = ''; loadPcs(); } catch (e) { err(e.message); }
+      };
+      li.append(x); ul.appendChild(li);
+    }
+    $('s-pcs').classList.toggle('done', list.some((d) => d.online));
+  }
+  async function loadPcs() { try { pcs((await api('/api/devices')).devices || []); } catch (_) { /* shown on the next tick */ } }
   async function load() {
     try {
       const d = await api('/api/solidworks');
@@ -165,7 +200,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
       $('server').value = d.server; $('key').value = d.key; $('url').value = d.url; $('purl').value = d.private_url;
       $('private').style.display = d.private_url ? '' : 'none';
       if (!d.download) { $('download').setAttribute('aria-disabled', 'true'); $('no-download').style.display = 'block'; }
-      paint(d.status); apps(d.apps || []); err('');
+      paint(d.status); apps(d.apps || []); pcs(d.status.devices || []); err('');
     } catch (e) { err(e.message); }
   }
   async function copy(text, btn) {
@@ -189,7 +224,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
     try { $('purl').value = (await api('/api/connect/new_address', { method: 'POST' })).mcp_url; } catch (e) { err(e.message); }
   };
   let timer = null;
-  const tick = async () => { try { const d = await api('/api/solidworks'); paint(d.status); apps(d.apps || []); } catch (_) { /* offline: try again */ } };
+  const tick = async () => { try { const d = await api('/api/solidworks'); paint(d.status); apps(d.apps || []); pcs(d.status.devices || []); } catch (_) { /* offline: try again */ } };
   const run = () => { clearInterval(timer); timer = document.hidden ? null : setInterval(tick, 3000); };
   document.addEventListener('visibilitychange', () => { run(); if (!document.hidden) tick(); });
   load(); run();

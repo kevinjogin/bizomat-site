@@ -58,7 +58,8 @@ def test_only_the_solidworks_tools_on_both_addresses(app):
         names = {t["name"] for t in r.json()["result"]["tools"]}
         assert names == {n for n in names if n.startswith("sw_")} | {"request_upload"}
         assert {"sw_status", "sw_get_guide", "sw_add_features", "sw_batch", "sw_add_mate", "sw_selftest"} <= names
-        assert len(names) == 28 and {"sw_create_drawing", "sw_get_drawing", "sw_edit_drawing"} <= names
+        assert len(names) == 31 and {"sw_create_drawing", "sw_get_drawing", "sw_edit_drawing"} <= names
+        assert {"sw_list_devices", "sw_command_status", "sw_cancel_command"} <= names  # KEVOS registered computers
     init = _rpc(app, "/mcp", "initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
                                             "clientInfo": {"name": "t", "version": "1"}}).json()["result"]
     assert init["serverInfo"]["name"] == "OpenSketch" and "sw_status first" in init["instructions"]

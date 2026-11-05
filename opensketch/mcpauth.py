@@ -631,6 +631,17 @@ def user_for_access(tok: str) -> tuple[bool, dict | None]:
     return True, user
 
 
+def grant_info(tok: str) -> dict | None:
+    """{id, name} of the AI app connection a valid access token belongs to (for audit and the confirmation shown at
+    the SOLIDWORKS computer). Never the token itself."""
+    if not tok or not tok.startswith("osa_") or len(tok) > 100:
+        return None
+    d = _view()
+    a = d["access"].get(_h(tok))
+    g = d["grants"].get(a["grant"]) if a else None
+    return {"id": a["grant"], "name": g.get("name") or "AI app"} if g else None
+
+
 # ----------------------------------------------------------------------------- the person's own list
 
 def grants_for(user_id: str) -> list[dict]:

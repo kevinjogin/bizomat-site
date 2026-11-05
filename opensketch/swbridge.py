@@ -44,7 +44,12 @@ _lock = threading.Lock()
 
 
 class BridgeError(Exception):
-    """A command that did not reach SOLIDWORKS or did not come back (not a SOLIDWORKS error)."""
+    """A command that did not reach SOLIDWORKS or did not come back (not a SOLIDWORKS error). `code` is the
+    machine-readable reason (docs/BRIDGE-PROTOCOL.md, error codes) when there is one."""
+
+    def __init__(self, message: str = "", code: str | None = None):
+        super().__init__(message)
+        self.code = code
 
 
 class Gone(Exception):
@@ -278,7 +283,38 @@ def blob(user: dict | None, bid: str) -> tuple[bytes, str]:
     return b["data"], b["filename"]
 
 
-def status(user: dict | None) -> dict:
+def status(user: dict | None, device: str | None = None) -> dict:
+    """Is SOLIDWORKS reachable for this person: through a registered computer (KEVOS Companion, devicebridge.py)
+    when one is online, else through a v1 add-in link. Without registered computers the answer is exactly the v1 one."""
+    from . import devicebridge
+    try:
+        d = devicebridge.status_for(user, device)
+    except Exception:  # a damaged device store must not take the v1 link down with it
+        d = {"devices": []}
+    sel = d.get("selected")
+    if sel:
+        inst = devicebridge.instance_for(user, device) or {}
+        out = {"connected": True, "via": "companion", "device": sel["name"], "device_id": sel["id"],
+               "machine": sel["name"], "version": inst.get("addin_version"), "sw_version": inst.get("sw_revision"),
+               "solidworks": sel.get("solidworks") or [], "devices": d["devices"]}
+        if not sel.get("solidworks"):
+            out["note"] = (f"SOLIDWORKS is not running on {sel['name']} (or the KEVOS add-in is not loaded). Open "
+                           "SOLIDWORKS there; KEVOS connects by itself.")
+        if sel.get("paused"):
+            out["note"] = f"KEVOS is paused on {sel['name']} by the person at that computer."
+        return out
+    if d.get("code") == "DEVICE_AMBIGUOUS":
+        return {"connected": True, "via": "companion", "ambiguous": True, "note": d["error"], "devices": d["devices"],
+                "machine": f"{sum(1 for x in d['devices'] if x['online'])} computers"}
+    out = _v1_status(user)
+    if d.get("devices"):
+        out["devices"] = d["devices"]
+        if d.get("error"):
+            out["device_error"] = d["error"]
+    return out
+
+
+def _v1_status(user: dict | None) -> dict:
     s = _sessions.get(person_id(user))
     if s is None or not s.alive():
         out = {"connected": False}
@@ -308,8 +344,20 @@ def version_tuple(v: str | None) -> tuple[int, ...]:
         return (0,)
 
 
-def addin_too_old(user: dict | None, needed: str, what: str) -> str | None:
+def addin_too_old(user: dict | None, needed: str, what: str, device: str | None = None) -> str | None:
     """A message when the connected add-in is older than `needed` (None when it is new enough or not connected)."""
+    from . import devicebridge
+    try:
+        target = devicebridge.pick(user, device)
+    except BridgeError:
+        target = None
+    if target is not None:
+        inst = devicebridge.instance_for(user, device)
+        have = (inst or {}).get("addin_version")
+        if inst is None or version_tuple(have) >= version_tuple(needed):
+            return None
+        return (f"{what} needs the KEVOS add-in {needed} or newer; SOLIDWORKS on {target['name']} runs {have}. Install the "
+                "latest KEVOS Bridge on that computer (it updates the add-in), then reopen SOLIDWORKS.")
     s = _sessions.get(person_id(user))
     if s is None or not s.alive():
         return None
@@ -329,13 +377,35 @@ NOT_CONNECTED = ("SOLIDWORKS is not connected. On the PC: open SOLIDWORKS, then 
                  "are on the OpenSketch site's home page.")
 
 
+def target_key(user: dict | None, device: str | None = None) -> str:
+    """Where commands for this person go now ("dev_..." for a registered computer, "v1" for the add-in link): the
+    geometry cache is kept per target, so two computers with the same file path never share a cached body."""
+    from . import devicebridge
+    try:
+        t = devicebridge.pick(user, device)
+    except BridgeError:
+        return "none"
+    return t["id"] if t else "v1"
+
+
 async def call(user: dict | None, op: str, args: dict | None = None, timeout: float = DEFAULT_TIMEOUT,
-               blobs: dict[str, str] | None = None) -> tuple[dict, dict[str, bytes]]:
+               blobs: dict[str, str] | None = None, device: str | None = None,
+               tool: str | None = None) -> tuple[dict, dict[str, bytes]]:
     """Run one command in SOLIDWORKS. Returns (result, files). Raises BridgeError if it cannot be delivered or
-    does not come back in time; a command SOLIDWORKS ran but failed comes back as {"ok": false, "error": ...}."""
+    does not come back in time; a command SOLIDWORKS ran but failed comes back as {"ok": false, "error": ...}.
+    A registered computer that is online (or the one `device` names) takes it; otherwise the v1 add-in link."""
+    from . import devicebridge
+    target = devicebridge.pick(user, device)
+    if target is not None:
+        return await devicebridge.call(user, target, op, args or {}, timeout, blobs, tool=tool)
     s = _sessions.get(person_id(user))
     if s is None or not s.alive():
-        raise BridgeError(NOT_CONNECTED)
+        mine = devicebridge.devices_for(user)
+        if mine:
+            names = ", ".join(r["name"] for r in mine)
+            raise BridgeError(f"None of your computers is online ({names}). Turn the computer on and sign in to Windows: the "
+                              "KEVOS Companion connects by itself. Then open SOLIDWORKS.", code="DEVICE_OFFLINE")
+        raise BridgeError(NOT_CONNECTED, code="NOT_CONNECTED")
     cid = f"c{next(_ids)}"
     fut = asyncio.get_running_loop().create_future()
     s.pending[cid] = fut
@@ -362,6 +432,8 @@ async def call(user: dict | None, op: str, args: dict | None = None, timeout: fl
 
 
 def reset_for_tests() -> None:
+    from . import devicebridge
+    devicebridge.reset_for_tests()
     for s in list(_sessions.values()):
         _close(s, "reset")
     _sessions.clear()

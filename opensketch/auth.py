@@ -591,7 +591,8 @@ def _machine_path(path: str) -> bool:
     same-site check (consent at /oauth/authorize is not one of them)."""
     return (path in ("/mcp", "/mcp/") or path.startswith("/mcp/") or path in OAUTH_PUBLIC
             or path in ("/solidworks/mcp", "/solidworks/mcp/") or path.startswith("/solidworks/mcp/")
-            or path.startswith("/.well-known/oauth-"))
+            or path.startswith("/.well-known/oauth-")
+            or path.startswith(("/v2/device/", "/v2/devices/")) or path == "/v2/keys")
 
 
 def _same_origin(scope) -> bool:

@@ -26,6 +26,7 @@ from pydantic import Field
 
 from . import sw_tools as T
 from .mcp_server import mcp
+from .sw_tools import _DEV, _routed
 
 
 def _pt(i, x, y):
@@ -436,15 +437,16 @@ STAGES = {"plate": stage_plate, "shapes": stage_shapes, "assembly": stage_assemb
 
 
 @mcp.tool()
+@_routed
 async def sw_selftest(stage: Annotated[Literal["plate", "shapes", "assembly"], Field(description=(
         "plate: every part feature on one part, reading back, variables, a batch rollback, export, save. "
         "shapes: draft, shell, sweep, loft. assembly: components, mates, interference, export."))] = "plate"
-                      ) -> CallToolResult:
+, device: _DEV = None) -> CallToolResult:
     """Check the SOLIDWORKS add-in on this PC: make new test files in Documents\\OpenSketch\\selftest and try every
     kind of thing the add-in does, one step at a time, each checked against what OpenSketch's own kernel makes of
     it. Run the three stages in turn (plate, shapes, assembly) when the user asks to test the add-in or after
     installing it. Reports each step as ok, check (made, but not as predicted) or failed, with SOLIDWORKS' reason."""
-    st = T.swbridge.status(T._who())
+    st = T._status(T._who())
     if not st.get("connected"):
         return T._text(dict(st, how=T.swbridge.NOT_CONNECTED), True)
     rep = _Report(stage)
