@@ -77,11 +77,11 @@ Every result below is from a run in this session on 5 Nov 2026; commands are in 
 | CAD Automation | Python (`pytest`) | 294 passed, 2 skipped (no IPv6 and no .NET SDK on this host; the .NET end-to-end test passed in the CAD engineer's run with the SDK) |
 | CAD Automation | Add-in and Companion (`bash solidworks/build.sh test`, .NET 8 SDK container) | Build with 0 warnings, 32 of 32 tests |
 | CAD Automation | Sketch solver (`npm test`) | 9 of 9 |
-| Platform | Edge proxy (`node --test infrastructure/proxy/test/*.test.mjs`) | 59 of 59 |
+| Platform | Edge proxy (`node --test infrastructure/proxy/test/*.test.mjs`) | 60 of 60 |
 | Platform | Shell scripts and workflows (shellcheck, actionlint) | Clean |
 | Platform | CAD server started as the platform starts it (`--host ::`) | Answers on loopback and the host address |
-| Platform | Production image from the unmodified Dockerfile (GitHub Actions, `BIZOMAT CI`) | Built: 2.59 GB, all four roles. The first run's entrypoint test then failed on a test fixture (fixed in `e837020`); the entrypoint, migration round trip, compose stack, smoke test and isolation check run again on the next push |
-| Platform | GitHub Actions on the first push | CAD pytest (both parts) and solver, proxy and platform files: passed. Website (brand check) and Project Management (tsconfig resolution) failed on a clean checkout: both fixed in `3c45901` and checked locally the way CI runs |
+| Platform | GitHub Actions `BIZOMAT CI` on `a930c6f` (run 42075594794): website, Project Management, CAD Automation (pytest in two parts and the solver), proxy and platform files, and the image job | **All 7 jobs passed.** Image from the unmodified Dockerfile (all four roles, about 2.6 GB); entrypoint tests (secret isolation, volumes, secret files, maintenance mode, refusals); migration round trip in the image; the four services started from the same image; smoke test through the proxy **39 of 39** (every host and path family, redirects, security headers, CAD MCP refusing unauthenticated calls with 401, Project Management APIs and WebSockets refusing without a session); isolation check: each service holds only its own settings, runs as its own user with no capabilities and cannot read init's environment |
+| Platform | Earlier CI runs | They found five problems that local runs could not, all fixed: the brand check compared git-ignored build output, Project Management tests resolved the website's tsconfig on a clean checkout, the entrypoint test made secret fixtures as the runner's user, the local stack had no HTTPS in front (the website correctly redirected), and the smoke test still listed the two pages that became the Engine Room |
 
 Not run anywhere yet, because they need the real environment: the MSI and the add-in in SOLIDWORKS on Windows; a
 deploy to Fly.io (6PN addresses, Fly's checks, certificates); the live D1 and R2 export.
