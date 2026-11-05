@@ -21,6 +21,8 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   const discovery = createDiscovery();
   let previous = '';
   let busy = false;
+  /** The button's own wording ("Ask KEVOS" on the homepage, "Build My Learning Path" elsewhere). */
+  const submitLabel = submitBtn.querySelector('.dq__submit-label')?.textContent?.trim() || 'the button';
 
   const device = () => (matchMedia('(max-width: 700px)').matches ? 'mobile' : 'desktop');
   /** Anonymous, aggregate statistics (search terms, not the question). Ignored unless the site enables them. */
@@ -230,9 +232,9 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   async function ask(raw: string, context = previous, opts: { skipClarify?: boolean; depth?: Depth } = {}) {
     const question = raw.replace(/\s+/g, ' ').trim();
     if (busy) return;
-    if (!question) { statusEl!.textContent = 'Please describe what you would like to learn or achieve, or choose an example.'; input!.focus(); return; }
+    if (!question) { statusEl!.textContent = 'Please describe what you would like to do, or choose an example.'; input!.focus(); return; }
     if (question.length > 1000) { statusEl!.textContent = 'Please keep it under 1,000 characters.'; return; }
-    setBusy(true, 'Understanding what you want to learn or achieve…');
+    setBusy(true, 'Understanding what you need…');
     let intent: LearnIntent;
     let engine;
     try {
@@ -324,12 +326,12 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   clearBtn.addEventListener('click', () => { input.value = ''; clearBtn.hidden = true; input.focus(); });
   // An example fills the box (it can be edited before building the path).
   for (const b of document.querySelectorAll<HTMLButtonElement>('[data-discover-example]')) b.addEventListener('click', () => {
-    input.value = b.textContent?.trim() ?? '';
+    input.value = (b.dataset.discoverQuery || b.textContent || '').trim();
     clearBtn.hidden = !input.value;
     previous = '';
     input.focus();
     input.setSelectionRange(input.value.length, input.value.length);
-    if (!busy) statusEl.textContent = 'Edit it if you like, then choose Build My Learning Path.';
+    if (!busy) statusEl.textContent = `Edit it if you like, then choose ${submitLabel}.`;
     discovery.loadEngine().catch(() => {});
   });
   document.querySelector('[data-discover-again]')?.addEventListener('click', () => { input.focus(); input.scrollIntoView({ block: 'center' }); });

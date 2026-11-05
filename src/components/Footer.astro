@@ -1,72 +1,80 @@
 ---
+// Global footer: the KEVOS® identity, then Products, Solutions, Resources and Company columns, then legal links.
+// Product links come from src/config/products.ts; a product that is not available yet is shown as text, not a link.
 import { FOOTER_NAV, QUOTE_CTA, SITE } from '../config/site.ts';
+import { PRODUCTS } from '../config/products.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 
 const year = new Date().getFullYear();
+const upcoming = PRODUCTS.filter((p) => p.status === 'soon');
 ---
 
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <Container>
     <div class="site-footer__grid">
       <div class="site-footer__brand">
-        <a href="/" class="site-footer__logo"><SiteWordmark height={44} /></a>
+        <a href="/" class="site-footer__logo" aria-label="KEVOS® home"><SiteWordmark height={28} label="" /></a>
         <p class="site-footer__tagline">{SITE.tagline}</p>
         <p>{SITE.statement}</p>
-        <a class="site-footer__cta" href={QUOTE_CTA.href} data-cta="footer-quote">{QUOTE_CTA.label} <span aria-hidden="true">→</span></a>
+        <a class="site-footer__cta" href={QUOTE_CTA.href} data-cta="footer-quote">Tell us what you need <span aria-hidden="true">→</span></a>
       </div>
-      <nav class="site-footer__col" aria-label="Services">
-        <h2 class="site-footer__heading">Services</h2>
-        <ul>{FOOTER_NAV.services.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+      <nav class="site-footer__col" aria-label="Products">
+        <h2 class="site-footer__heading">Products</h2>
+        <ul>
+          {FOOTER_NAV.products.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+          {upcoming.map((p) => <li class="site-footer__soon">{p.name} <span>Coming soon</span></li>)}
+        </ul>
+      </nav>
+      <nav class="site-footer__col" aria-label="Solutions">
+        <h2 class="site-footer__heading">Solutions</h2>
+        <ul>{FOOTER_NAV.solutions.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+      </nav>
+      <nav class="site-footer__col" aria-label="Resources">
+        <h2 class="site-footer__heading">Resources</h2>
+        <ul>{FOOTER_NAV.resources.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
       </nav>
       <nav class="site-footer__col" aria-label="Company">
         <h2 class="site-footer__heading">Company</h2>
-        <ul>{FOOTER_NAV.company.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
-      </nav>
-      <div class="site-footer__col">
-        <h2 class="site-footer__heading">Contact</h2>
         <ul>
-          <li><a href={`${QUOTE_CTA.href}#enquiry`}>Start an enquiry</a></li>
+          {FOOTER_NAV.company.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
           <li><a href={SITE.booking.url} target="_blank" rel="noopener noreferrer" data-cta="footer-meeting">{SITE.booking.label}<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-          {SITE.email ? <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li> : <li><a href="/contact/">Send a message</a></li>}
+          {SITE.email && <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>}
           {SITE.social.map((s) => <li><a href={s.href} rel="noopener me">{s.label}</a></li>)}
-          <li><a href="/rss.xml">Library RSS feed</a></li>
         </ul>
-      </div>
+      </nav>
     </div>
     <div class="site-footer__base">
-      <p>© {year} {SITE.name}. All rights reserved.</p>
-      <p>{SITE.name} is a registered Australian trade mark. <a href={SITE.tradeMark.record} target="_blank" rel="noopener noreferrer" data-cta="footer-trade-mark">No. {SITE.tradeMark.number}<span class="visually-hidden"> (IP Australia record, opens in a new tab)</span></a>.</p>
+      <p>© {year} {SITE.name}. All rights reserved. {SITE.name} is a registered Australian trade mark, <a href={SITE.tradeMark.record} target="_blank" rel="noopener noreferrer" data-cta="footer-trade-mark">No. {SITE.tradeMark.number}<span class="visually-hidden"> (IP Australia record, opens in a new tab)</span></a>.</p>
       <nav aria-label="Legal">
         <ul class="site-footer__legal">{FOOTER_NAV.legal.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
       </nav>
-      <p>Serving Sydney and NSW, with remote support across Australia</p>
     </div>
   </Container>
 </footer>
 
 <style>
-  .site-footer :is(ul a, .site-footer__cta) { text-transform: uppercase; }
-  .site-footer { border-top: 1px solid var(--line); padding-top: clamp(3.5rem, 6vw, 5.5rem); font-size: 0.95rem; }
-  .site-footer__grid { display: grid; grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, 1fr)); gap: 2.5rem; padding-bottom: clamp(3rem, 5vw, 4.5rem); }
-  .site-footer__logo { display: inline-flex; align-items: center; text-decoration: none; border-radius: 4px; overflow: visible; max-width: 100%; }
-  .site-footer__tagline { margin: 0.9rem 0 0; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
-  .site-footer__brand p:not(.site-footer__tagline) { max-width: 34ch; margin-top: 0.75rem; color: var(--muted); }
-  .site-footer__cta { display: inline-flex; gap: 0.4rem; margin-top: 1.25rem; font-weight: 560; color: var(--ink); text-decoration: none; }
-  .site-footer__cta:hover { color: var(--accent); }
-  .site-footer__heading { font-family: var(--font-sans); margin-bottom: 1rem; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
-  .site-footer ul { display: grid; gap: 0.55rem; margin: 0; padding: 0; list-style: none; }
+  .site-footer { margin-top: auto; border-top: 1px solid var(--line); background: var(--paper); padding-top: clamp(3rem, 5vw, 4.5rem); font-size: .93rem; }
+  .site-footer__grid { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); gap: 2.5rem 2rem; padding-bottom: clamp(2.5rem, 4vw, 3.5rem); }
+  .site-footer__logo { display: inline-flex; align-items: center; text-decoration: none; border-radius: 4px; }
+  .site-footer__logo :global(.site-wordmark) { --wordmark-h: 24px; }
+  .site-footer__tagline { margin: 1rem 0 0; font-weight: 600; color: var(--ink); }
+  .site-footer__brand p:not(.site-footer__tagline) { max-width: 32ch; margin: .4rem 0 0; color: var(--muted); }
+  .site-footer__cta { display: inline-flex; gap: .4rem; margin-top: 1.1rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+  .site-footer__cta:hover { color: var(--accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+  .site-footer__heading { margin-bottom: .9rem; font-size: .78rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .site-footer ul { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
   .site-footer ul a { color: var(--ink-2); text-decoration: none; }
-  .site-footer ul a:hover { color: var(--accent); }
-  .site-footer__base {
-    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem 1.5rem;
-    padding-block: 1.5rem 2rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.86rem;
-  }
-  .site-footer__base p { margin: 0; }
-  .site-footer .site-footer__legal { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+  .site-footer ul a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+  .site-footer__soon { color: var(--muted); }
+  .site-footer__soon span { margin-left: .3rem; padding: .05rem .4rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .7rem; font-weight: 600; }
+  .site-footer__base { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1.5rem; padding-block: 1.25rem 1.75rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; }
+  .site-footer__base p { margin: 0; max-width: 80ch; }
+  .site-footer__base a { color: inherit; }
+  .site-footer .site-footer__legal { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
   .site-footer .site-footer__legal a { color: var(--muted); }
-  @media (max-width: 900px) {
-    .site-footer__grid { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 1000px) {
+    .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .site-footer__brand { grid-column: 1 / -1; }
   }
 </style>

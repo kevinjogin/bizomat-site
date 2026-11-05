@@ -1,10 +1,11 @@
 ---
-// KEVOS® homepage: the technology and knowledge platform, led by KEVOS® Tools (tools) and the Library (books).
-// Every count, topic, tool and book here is read from the KEVOS® register and the Library at build time.
-// Services, pricing, the assessment and Factory Fix live on their own pages (/services/, /assessment/, /factory-fix/).
+// KEVOS® homepage (redesign, 5 Nov 2026): "Make difficult work simple."
+// 1. Hero with the Ask KEVOS box (the existing discovery and learning-path pipeline: /api/discover, /api/learn/*).
+// 2. Explore KEVOS: the products (src/config/products.ts). A product that is not available has no link.
+// 3. Solutions, 4. Tools, 5. Resources (Library). Every count, tool and book is read from the catalogues at build time.
+// Services, pricing, the assessment and Factory Fix stay on their own pages (/services/, /assessment/, /factory-fix/).
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
-import Section from '../components/Section.astro';
 import Button from '../components/Button.astro';
 import LibraryIcon from '../components/library/LibraryIcon.astro';
 import DiscoveryBox from '../components/discovery/DiscoveryBox.astro';
@@ -14,11 +15,12 @@ import '../styles/discovery.css';
 import '../styles/learning.css';
 import '../styles/library.css';
 import { SITE } from '../config/site.ts';
+import { PRODUCTS, SOLUTIONS, AVAILABLE_PRODUCTS } from '../config/products.ts';
 import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS } from '../config/home.ts';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
 import { groupToolsByTopic, subcategoryLabel } from '../utils/workos-topics.ts';
 import { buildReadosLibrary } from '../utils/reados-library.ts';
-import { knowledgeGraph, learningPathways } from '../utils/knowledge.ts';
+import { knowledgeGraph } from '../utils/knowledge.ts';
 
 const { tools, guides } = loadWorkosTools();
 const topics = groupToolsByTopic(tools, 0);
@@ -26,7 +28,6 @@ const subjects = await buildReadosLibrary();
 const entries = subjects.flatMap((s) => s.entries.map((e) => ({ ...e, subject: s })));
 const bookTotal = entries.length;
 const chapterTotal = entries.reduce((n, e) => n + e.chapters.length, 0);
-const pathways = learningPathways();
 const connections = knowledgeGraph().live.length;
 const fmt = (n: number) => n.toLocaleString('en-AU');
 
@@ -35,150 +36,158 @@ const pick = <T,>(ids: string[], find: (id: string) => T | undefined, kind: stri
   if (!item) throw new Error(`src/config/home.ts: no ${kind} "${id}"`);
   return item;
 });
-const featuredTools = pick(HOME_FEATURED_TOOLS, (id) => tools.find((t) => t.id === id), 'KEVOS® tool');
-const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id === id), 'Library book');
+const featuredTools = pick(HOME_FEATURED_TOOLS, (id) => tools.find((t) => t.id === id), 'KEVOS® tool').slice(0, 4);
+const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id === id), 'Library book').slice(0, 4);
 // Cards link to a tool's own page where one exists, as on /tools/.
 const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
+const external = (href: string) => /^https?:/.test(href);
 
-const description = 'Describe a problem and KEVOS® finds the engineering and business tools and the technical books in its Library that help you solve it.';
+const description = 'KEVOS® makes difficult work simple. Tell us what you need: Work and CADOS, practical engineering and business tools, and a technical Library help you get it done.';
 const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
   isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@id': `${SITE.url}/#organization` },
   hasPart: [
+    ...AVAILABLE_PRODUCTS.map((p) => ({ '@type': 'SoftwareApplication', name: p.fullName, url: p.url, description: p.tagline, applicationCategory: 'BusinessApplication', publisher: { '@id': `${SITE.url}/#organization` } })),
     { '@type': 'CollectionPage', name: 'KEVOS® Tools', url: `${SITE.url}/tools/`, description: 'Practical engineering, manufacturing and business tools.' },
     { '@type': 'CollectionPage', name: 'KEVOS® Library', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
   ],
 }];
 ---
-<BaseLayout description={description} imageAlt="KEVOS®: practical tools and a library of technical knowledge" schema={schema}>
-  <section class="home-hero" id="overview" aria-labelledby="home-title">
+<BaseLayout description={description} imageAlt="KEVOS®: make difficult work simple" schema={schema}>
+  <section class="home-hero" id="ask" aria-labelledby="home-title">
     <Container class="home-hero__inner">
-      <div class="home-hero__copy">
-        <p class="eyebrow">Tools · Library</p>
-        <h1 id="home-title">What would you like to <em>learn</em> or achieve?</h1>
-        <p class="home-hero__lead">Describe a subject, ask a question or tell us what you're trying to accomplish. KEVOS will bring together relevant knowledge, practical tools and structured learning materials to create a pathway around your goals.</p>
-      </div>
-      <div class="home-hero__ask"><DiscoveryBox size="large" autorun /></div>
+      <p class="eyebrow home-hero__label">Intelligence by KEVOS</p>
+      <h1 id="home-title">Make difficult work simple.</h1>
+      <p class="home-hero__lead">Tell us what you need. We'll help you get it done.</p>
+      <div class="home-hero__ask"><DiscoveryBox size="large" autorun rows={2}
+        placeholder="What would you like to accomplish today?"
+        label="What would you like to accomplish today?"
+        submitLabel="Ask KEVOS"
+        support=""
+        hint="Ask KEVOS finds the KEVOS® tools, Library chapters and steps that fit your task, or builds a learning path. It does not open your files or do the work for you. Please leave out personal or confidential details." /></div>
       <div class="home-hero__wide">
-        <DiscoveryExamples suggestions={HOME_DISCOVERY_EXAMPLES} />
-        <div class="home-hero__actions">
-          <Button href="/tools/" arrow data-cta="hero-workos">Explore Tools</Button>
-          <Button href="/reados/" variant="secondary" data-cta="hero-reados">Explore Library</Button>
-        </div>
-        <dl class="home-stats">
-          <div><dt>Tools</dt><dd>{fmt(tools.length)}</dd></div>
-          <div><dt>Books</dt><dd>{fmt(bookTotal)}</dd></div>
-          <div><dt>Chapters</dt><dd>{fmt(chapterTotal)}</dd></div>
-        </dl>
+        <DiscoveryExamples suggestions={HOME_DISCOVERY_EXAMPLES} heading="For example" />
       </div>
     </Container>
   </section>
 
   <DiscoveryResults />
 
-  <section class="home-libs" aria-label="Tools and Library">
-    <Container class="home-libs__grid">
-      <div class="home-lib" id="workos" aria-labelledby="workos-title">
-        <p class="home-lib__index"><span>01</span> Tools</p>
-        <h2 id="workos-title">Practical tools for <em>better decisions.</em></h2>
-        <p class="home-lib__intro">Engineering, manufacturing and business calculators that show their method and run in your browser. No account needed.</p>
-        <h3 class="home-label" id="workos-topics">Browse by topic</h3>
-        <ul class="lib-topic-grid home-lib__topics" role="list" aria-labelledby="workos-topics">
+  <section class="home-section" id="products" aria-labelledby="products-title">
+    <Container>
+      <div class="home-head">
+        <p class="eyebrow">Products</p>
+        <h2 id="products-title">Explore KEVOS</h2>
+        <p>Software built for a specific kind of work. Open a product and start.</p>
+      </div>
+      <ul class="product-grid" role="list">
+        {PRODUCTS.map((p) => (
+          <li class:list={['product-card', `product-card--${p.status}`]} id={`product-${p.id}`}>
+            <p class:list={['status', `status--${p.status}`]}>{p.status === 'available' ? 'Available' : 'Coming soon'}</p>
+            <h3 class="product-card__name"><span>KEVOS</span> {p.name}</h3>
+            <p class="product-card__tagline">{p.tagline}</p>
+            <p class="product-card__summary">{p.summary}</p>
+            <div class="product-card__action">
+              {p.url
+                ? <Button href={p.url} size="small" rel="noopener" data-cta={`home-product-${p.id}`}>{p.action} <span aria-hidden="true">↗</span></Button>
+                : <p class="product-card__soon">Not available yet. <a href="/contact/?service=feedback#enquiry">Tell us what you would use it for</a>.</p>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="home-more"><a href="/products/">Compare the products <span aria-hidden="true">→</span></a></p>
+    </Container>
+  </section>
+
+  <section class="home-section home-section--alt" id="solutions" aria-labelledby="solutions-title">
+    <Container>
+      <div class="home-head">
+        <p class="eyebrow">Solutions</p>
+        <h2 id="solutions-title">Start from the problem.</h2>
+        <p>Three kinds of work KEVOS® helps with, and where to begin on each.</p>
+      </div>
+      <ol class="solution-grid" role="list">
+        {SOLUTIONS.map((s) => (
+          <li class="solution">
+            <h3><a href={`/solutions/#${s.id}`}>{s.name}</a></h3>
+            <p class="solution__short">{s.short}</p>
+            <ul class="solution__problems">{s.problems.slice(0, 2).map((pr) => <li>{pr}</li>)}</ul>
+            <ul class="solution__paths" aria-label={`Where to start: ${s.name}`}>
+              {s.paths.map((path) => <li><a href={path.href} rel={external(path.href) ? 'noopener' : undefined}>{path.label}{external(path.href) && <span aria-hidden="true"> ↗</span>}</a></li>)}
+            </ul>
+          </li>
+        ))}
+      </ol>
+      <p class="home-more"><a href="/solutions/">See all solutions <span aria-hidden="true">→</span></a></p>
+    </Container>
+  </section>
+
+  <section class="home-section" id="tools" aria-labelledby="tools-title">
+    <Container class="home-split">
+      <div class="home-split__copy">
+        <p class="eyebrow">Tools</p>
+        <h2 id="tools-title">Useful tools. Less complexity.</h2>
+        <p>{fmt(tools.length)} engineering, manufacturing and business tools that show their method and run in your browser. No account needed.</p>
+        <form class="home-search" role="search" action="/tools/" method="get">
+          <label class="visually-hidden" for="home-tool-search">Search KEVOS® tools</label>
+          <input id="home-tool-search" name="q" type="search" placeholder="Search tools, e.g. bolt torque" autocomplete="off" />
+          <button type="submit">Search</button>
+        </form>
+        <div class="home-split__actions"><Button href="/tools/" arrow data-cta="home-tools">Explore Tools</Button></div>
+      </div>
+      <div class="home-split__list">
+        <h3 class="home-label" id="tools-topics">Browse by topic</h3>
+        <ul class="topic-list" role="list" aria-labelledby="tools-topics">
           {topics.map((t) => (
-            <li>
-              <a class="lib-topic" href={`/tools/?topic=${t.slug}`}>
-                <span class="lib-topic__icon"><LibraryIcon name={t.icon} /></span>
-                <span class="lib-topic__text"><span class="lib-topic__name">{t.name}</span></span>
-                <span class="lib-topic__count" aria-label={`${fmt(t.items.length)} tools`}>{fmt(t.items.length)}</span>
-              </a>
-            </li>
+            <li><a href={`/tools/?topic=${t.slug}`}><span class="topic-list__icon"><LibraryIcon name={t.icon} /></span><span class="topic-list__name">{t.name}</span><span class="topic-list__count" aria-label={`${fmt(t.items.length)} tools`}>{fmt(t.items.length)}</span></a></li>
           ))}
         </ul>
-        <h3 class="home-label" id="workos-featured">Featured tools</h3>
-        <ul class="home-lib__featured" role="list" aria-labelledby="workos-featured">
+        <h3 class="home-label" id="tools-featured">Popular starting points</h3>
+        <ul class="featured-list" role="list" aria-labelledby="tools-featured">
           {featuredTools.map((t) => <li><a href={toolHref(t.id)}>{t.name}</a><span>{subcategoryLabel(t.category)}</span></li>)}
         </ul>
-        <div class="home-lib__cta"><Button href="/tools/" arrow data-cta="home-workos">All {fmt(tools.length)} tools</Button></div>
-      </div>
-
-      <div class="home-lib" id="reados" aria-labelledby="reados-title">
-        <p class="home-lib__index"><span>02</span> Library</p>
-        <h2 id="reados-title">Knowledge worth <em>applying.</em></h2>
-        <p class="home-lib__intro">Technical books in short chapters with figures and worked numbers, many linked to the tools that apply them.</p>
-        <h3 class="home-label" id="reados-subjects">Browse by subject</h3>
-        <ul class="lib-topic-grid home-lib__topics" role="list" aria-labelledby="reados-subjects">
-          {subjects.map((sub) => (
-            <li>
-              <a class="lib-topic" href={`/reados/?topic=${sub.slug}`}>
-                <span class="lib-topic__icon"><LibraryIcon name={sub.icon} /></span>
-                <span class="lib-topic__text"><span class="lib-topic__name">{sub.name}</span></span>
-                <span class="lib-topic__count" aria-label={`${fmt(sub.entries.length)} books`}>{fmt(sub.entries.length)}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-        <h3 class="home-label" id="reados-featured">Featured books</h3>
-        <ul class="home-lib__featured" role="list" aria-labelledby="reados-featured">
-          {featuredBooks.map((e) => <li><a href={e.href}>{e.title}</a><span>{e.subject.name} · {fmt(e.chapters.length)} chapters</span></li>)}
-        </ul>
-        <div class="home-lib__cta"><Button href="/reados/" arrow data-cta="home-reados">All {fmt(bookTotal)} books</Button></div>
       </div>
     </Container>
   </section>
 
-  <Section index="03" label="The connected KEVOS® ecosystem" id="connected" labelledby="connected-title">
-    <div class="section-head">
-      <div>
-        <h2 id="connected-title">Learn. Apply. <em>Improve.</em></h2>
-        <p class="section-intro">KEVOS® connects technical knowledge with practical tools, helping people move from understanding a concept to applying it in real-world situations.</p>
+  <section class="home-section home-section--alt" id="resources" aria-labelledby="resources-title">
+    <Container class="home-split">
+      <div class="home-split__copy">
+        <p class="eyebrow">Resources</p>
+        <h2 id="resources-title">Knowledge that moves you forward.</h2>
+        <p>The KEVOS® Library: {fmt(bookTotal)} technical books in {fmt(chapterTotal)} short chapters, with figures and worked numbers. {fmt(connections)} reviewed links connect chapters to the tools that apply them.</p>
+        <div class="home-split__actions">
+          <Button href="/reados/" arrow data-cta="home-library">Explore Library</Button>
+          <Button href="/library/" variant="secondary" data-cta="home-guides">Guides and articles</Button>
+        </div>
       </div>
-    </div>
-    <ol class="flow">
-      <li class="flow__step">
-        <p class="flow__name"><a href="/reados/">Library</a></p>
-        <h3>Learn and understand</h3>
-        <p>Read the method, the reasoning and the worked numbers behind a decision.</p>
-      </li>
-      <li class="flow__step">
-        <p class="flow__name"><a href="/tools/">Tools</a></p>
-        <h3>Calculate, analyse and apply</h3>
-        <p>Enter your own figures, check the result and keep a report of what you decided.</p>
-      </li>
-      <li class="flow__step">
-        <p class="flow__name"><a href="#overview">Ask KEVOS®</a></p>
-        <h3>Describe it, discover it</h3>
-        <p>Describe a problem in your own words at the top of this page. KEVOS® suggests the tools and Library chapters that fit; the tools do the calculating.</p>
-      </li>
-    </ol>
-    <p class="flow__note">Today, {fmt(connections)} reviewed links connect Library books and chapters with the tools that apply them. These learning pathways take you from a chapter to a tool:</p>
-    <ul class="pathways">
-      {pathways.map((p) => (
-        <li class="pathway">
-          <h3>{p.title}</h3>
-          <p class="pathway__summary">{p.summary}</p>
-          <dl>
-            <div><dt>Learn</dt><dd><a href={p.learn.href}>{p.learn.title}</a> <span>in {p.learn.book}</span></dd></div>
-            <div><dt>Apply</dt><dd><a href={p.apply.href}>{p.apply.name}</a></dd></div>
-          </dl>
-        </li>
-      ))}
-    </ul>
-  </Section>
+      <div class="home-split__list">
+        <h3 class="home-label" id="library-subjects">Subjects</h3>
+        <ul class="subject-list" role="list" aria-labelledby="library-subjects">
+          {subjects.map((sub) => <li><a href={`/reados/?topic=${sub.slug}`}>{sub.name}</a></li>)}
+        </ul>
+        <h3 class="home-label" id="library-featured">Featured books</h3>
+        <ul class="featured-list" role="list" aria-labelledby="library-featured">
+          {featuredBooks.map((e) => <li><a href={e.href}>{e.title}</a><span>{e.subject.name} · {fmt(e.chapters.length)} chapters</span></li>)}
+        </ul>
+      </div>
+    </Container>
+  </section>
 
-  <Section index="04" label="About KEVOS®" tone="alt" id="about" labelledby="about-title">
-    <div class="about-intro">
-      <h2 id="about-title">Building a connected ecosystem.</h2>
-      <div>
-        <p class="section-intro">KEVOS® is building a connected technology, engineering and knowledge ecosystem, bringing together practical digital tools and structured technical resources.</p>
-        <p class="about-intro__link"><a href="/about/">About KEVOS® <span aria-hidden="true">→</span></a></p>
-        <p class="fineprint">KEVOS® also takes on defined engineering assignments. See <a href="/services/">services</a> or <a href="/contact/">get in touch</a>.</p>
+  <section class="home-close" aria-labelledby="close-title">
+    <Container class="home-close__inner">
+      <h2 id="close-title">Not sure where to start?</h2>
+      <p>Tell us what you need. We'll help you get it done.</p>
+      <div class="home-close__actions">
+        <Button href="#ask" variant="accent" data-cta="home-close-ask">Ask KEVOS</Button>
+        <Button href="/contact/" variant="secondary" data-cta="home-close-contact">Contact KEVOS®</Button>
       </div>
-    </div>
-  </Section>
+    </Container>
+  </section>
 </BaseLayout>
 
 <script>
-  // "What would you like to learn or achieve?": learning paths and Ask KEVOS over the Library and Tools.
+  // "Ask KEVOS": quick answers (Your Solution Path) and learning paths over the Library and Tools.
   import '../scripts/discovery.ts';
 </script>
 
@@ -189,7 +198,8 @@ const schema = [{
     services: '/services/', 'engineering-cad': '/services/#engineering-cad', manufacturing: '/services/#manufacturing',
     operations: '/services/#operations', 'project-support': '/services/#project-support', pricing: '/services/#pricing',
     assessment: '/assessment/', 'factory-fix': '/factory-fix/', 'how-it-works': '/how-it-works/', industries: '/industries/',
-    work: '/about/#work', resources: '#workos',
+    work: '/about/#work', resources: '/resources/', overview: '#ask',
+    workos: '/tools/', reados: '/reados/', connected: '/resources/#pathways', about: '/about/',
   };
   const forward = () => {
     const id = decodeURIComponent(location.hash.slice(1));
@@ -201,70 +211,101 @@ const schema = [{
 </script>
 
 <style>
-  :global(#overview), :global(#connected), :global(#about) { scroll-margin-top:calc(var(--header-h) + 4.2rem); }
-  .home-hero{padding:clamp(3rem,6vw,6.5rem) 0}
-    /* One column: the question, then a large question box across the hero (no picture beside it). */
-  :global(.home-hero__inner){display:grid;grid-template-columns:minmax(0,1fr);gap:0;justify-items:center;text-align:center}
-  .home-hero__copy{display:flex;flex-direction:column;align-items:center;max-width:60rem}
-  .home-hero__copy h1{margin:1rem 0 1rem;max-width:18ch;font-size:clamp(2.1rem,4.6vw,4.6rem);line-height:1.04}
-  .home-hero__lead{font-size:var(--step-1);line-height:1.5;max-width:58ch;color:var(--ink-2)}
-  .home-hero__ask{width:100%;max-width:62rem;text-align:left}
-  .home-hero__actions{display:flex;gap:.7rem;flex-wrap:wrap;justify-content:center;margin-top:2rem}
-  .home-hero__wide{width:100%;max-width:62rem;min-width:0}
-  .home-hero__wide :global(.dq__examples ul){justify-content:center}
-  .home-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:1rem 2.5rem;margin:2.2rem 0 0;padding-top:1.2rem;border-top:1px solid var(--line)}
-  .home-stats dt{font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .home-stats dd{margin:.3rem 0 0;font-family:var(--font-display);font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums}
-  .section-head{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-bottom:2.2rem}
-  .section-head h2{max-width:28ch}
-  .section-intro{margin:1rem 0 0;max-width:74ch;font-size:var(--step-1);color:var(--ink-2)}
-  .fineprint{color:var(--muted);font-size:.88rem;margin:1.75rem 0 0}
-  .fineprint a{color:var(--ink-2)}
-  .home-libs{padding:0 0 clamp(3rem,6vw,5rem)}
-  :global(.home-libs__grid){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem}
-  .home-lib{display:flex;flex-direction:column;min-width:0;padding:clamp(1.3rem,2.5vw,2rem);border:1px solid var(--line);border-radius:16px;background:var(--surface);scroll-margin-top:calc(var(--header-h) + 1rem)}
-  .home-lib__index{margin:0 0 .8rem;font-size:.78rem;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
-  .home-lib__index span{color:var(--accent);margin-right:.4rem;font-variant-numeric:tabular-nums}
-  .home-lib h2{font-size:clamp(1.5rem,2.4vw,2.1rem);max-width:20ch}
-  .home-lib__intro{margin:.75rem 0 0;color:var(--ink-2);max-width:56ch}
-  .home-lib__topics{gap:.5rem;grid-template-columns:1fr}
-  @media(min-width:1180px){.home-lib__topics{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  .home-lib__topics .lib-topic{padding:.6rem .75rem}
-  .home-lib__featured{display:grid;gap:.1rem;margin:0;padding:0;list-style:none}
-  .home-lib__featured li{display:flex;flex-direction:column;gap:.1rem;padding:.55rem 0;border-bottom:1px solid var(--line)}
-  .home-lib__featured a{color:var(--ink);font-weight:600;text-decoration:none}
-  .home-lib__featured a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
-  .home-lib__featured span{color:var(--muted);font-size:.85rem}
-  .home-lib__cta{margin-top:auto;padding-top:1.5rem}
-  .home-label{margin:1.75rem 0 .75rem;font-family:var(--font-sans);font-size:.78rem;font-weight:560;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-  .flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;margin:0;padding:0;list-style:none;border:1px solid var(--line);background:var(--line);counter-reset:flow}
-  .flow__step{background:var(--surface);padding:clamp(1.3rem,3vw,2rem);counter-increment:flow}
-  .flow__step::before{content:counter(flow,decimal-leading-zero);display:block;margin-bottom:.9rem;color:var(--accent);font-size:.85rem;font-variant-numeric:tabular-nums}
-  .flow__name{margin:0 0 .4rem;font-size:.78rem;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
-  .flow__name a{color:inherit;text-decoration:none}
-  .flow__name a:hover{text-decoration:underline;text-underline-offset:3px}
-  .flow__step h3{font-size:var(--step-1)}
-  .flow__step p:not(.flow__name){margin:.6rem 0 0;color:var(--ink-2);font-size:.94rem}
-  .flow__note{margin:2.5rem 0 1.2rem;max-width:74ch;color:var(--ink-2)}
-  .pathways{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin:0;padding:0;list-style:none}
-  .pathway{display:flex;flex-direction:column;gap:.6rem;min-width:0;padding:1.2rem 1.25rem;border:1px solid var(--line);border-left:3px solid var(--accent);background:var(--surface)}
-  .pathway h3{font-size:1.05rem}
-  .pathway__summary{margin:0;color:var(--ink-2);font-size:.9rem}
-  .pathway dl{display:grid;gap:.45rem;margin:auto 0 0;padding-top:.6rem;border-top:1px solid var(--line)}
-  .pathway dl div{display:grid;grid-template-columns:4rem minmax(0,1fr);gap:.5rem;font-size:.86rem}
-  .pathway dt{font-size:.72rem;font-weight:650;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:.1rem}
-  .pathway dd{margin:0}
-  .pathway dd a{color:var(--accent);font-weight:600}
-  .pathway dd span{color:var(--muted)}
-  .about-intro{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:1.5rem 5rem}
-  .about-intro h2{max-width:16ch}
-  .about-intro .section-intro{margin-top:0}
-  .about-intro__link{margin:1.25rem 0 0}
-  .about-intro__link a{color:var(--accent);font-weight:600;text-decoration:none}
-  .about-intro__link a:hover{text-decoration:underline;text-underline-offset:3px}
-  @media(max-width:1050px){.pathways{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:760px){:global(.home-libs__grid){grid-template-columns:1fr}}
-  @media(max-width:860px){.about-intro{grid-template-columns:1fr}.flow{grid-template-columns:1fr}}
-  @media(max-width:640px){:global(.home-hero__inner){justify-items:stretch;text-align:left}.home-hero__copy{align-items:flex-start}.home-hero__wide :global(.dq__examples ul),.home-hero__actions,.home-stats{justify-content:flex-start}}
-  @media(max-width:640px){.pathways{grid-template-columns:1fr}.section-head{flex-direction:column;align-items:flex-start}}
+  :global(#ask), .home-section { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  /* Hero: one centred column. The question box is the focus; nothing animates beside it. */
+  .home-hero { padding: clamp(3.5rem, 8vw, 7rem) 0 clamp(3rem, 6vw, 5rem); }
+  :global(.home-hero__inner) { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .home-hero__label { margin: 0 0 1.25rem; color: var(--accent); }
+  .home-hero__label::before { display: none; }
+  .home-hero h1 { max-width: 16ch; font-size: var(--step-5); letter-spacing: -0.035em; line-height: 1.02; }
+  .home-hero__lead { margin: 1.1rem 0 0; max-width: 40ch; font-size: var(--step-1); line-height: 1.45; color: var(--ink-2); }
+  .home-hero__ask { width: 100%; max-width: 46rem; margin-top: clamp(2rem, 4vw, 2.75rem); text-align: left; }
+  .home-hero__wide { width: 100%; max-width: 46rem; min-width: 0; }
+  .home-hero__wide :global(.dq__examples) { margin-top: 1rem; }
+  .home-hero__wide :global(.dq__examples ul) { justify-content: center; }
+
+  /* Sections share one rhythm: an eyebrow, a heading and one sentence, then the content. */
+  .home-section { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+  .home-section--alt { background: var(--paper-2); }
+  .home-head { max-width: 40rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .home-head h2 { margin-top: .9rem; }
+  .home-head > p:last-child { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .home-more { margin: 2rem 0 0; }
+  .home-more a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .home-more a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .product-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.4rem, 2.5vw, 2rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+  .product-card--soon { background: transparent; box-shadow: none; border-style: dashed; }
+  .status { display: inline-flex; align-items: center; gap: .4rem; align-self: flex-start; margin: 0 0 1.5rem; font-size: .76rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+  .status--available { color: var(--success); }
+  .status--available::before { background: var(--success); }
+  .product-card__name { font-size: var(--step-2); }
+  .product-card__name span { color: var(--muted); font-weight: 500; }
+  .product-card__tagline { margin: .5rem 0 0; font-size: 1.05rem; font-weight: 560; color: var(--ink); }
+  .product-card__summary { margin: .75rem 0 0; color: var(--muted); font-size: .95rem; }
+  .product-card__action { margin-top: auto; padding-top: 1.75rem; }
+  .product-card__soon { margin: 0; color: var(--muted); font-size: .9rem; }
+  .product-card__soon a { color: var(--ink-2); }
+
+  .solution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.5rem, 3vw, 3rem); margin: 0; padding: 0; list-style: none; }
+  .solution { display: flex; flex-direction: column; min-width: 0; padding-top: 1.25rem; border-top: 2px solid var(--ink); }
+  .solution h3 { font-size: var(--step-2); }
+  .solution h3 a { color: inherit; text-decoration: none; }
+  .solution h3 a:hover { color: var(--accent); }
+  .solution__short { margin: .5rem 0 0; color: var(--ink-2); font-weight: 520; }
+  .solution__problems { margin: 1rem 0 0; padding: 0; list-style: none; display: grid; gap: .55rem; }
+  .solution__problems li { position: relative; padding-left: 1.1rem; color: var(--muted); font-size: .94rem; }
+  .solution__problems li::before { content: ''; position: absolute; left: 0; top: .6em; width: 6px; height: 2px; background: var(--brand-orange); }
+  .solution__paths { display: flex; flex-wrap: wrap; gap: .4rem; margin: auto 0 0; padding: 1.25rem 0 0; list-style: none; }
+  .solution__paths a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 .75rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: .86rem; font-weight: 560; text-decoration: none; }
+  .solution__paths a:hover { border-color: var(--ink-2); }
+
+  :global(.home-split) { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
+  .home-split__copy h2 { margin-top: .9rem; max-width: 16ch; }
+  .home-split__copy > p:not(.eyebrow) { margin: 1rem 0 0; max-width: 46ch; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .home-split__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.75rem; }
+  .home-search { display: flex; gap: .4rem; max-width: 30rem; margin-top: 1.75rem; padding: .3rem; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; }
+  .home-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .home-search input { flex: 1; min-width: 0; padding: 0 .7rem; border: 0; background: transparent; outline: none; font-size: 1rem; }
+  .home-search button { min-height: 40px; padding: 0 1rem; border: 0; border-radius: 7px; background: var(--ink); color: var(--paper); font-weight: 600; }
+  .home-search button:hover { background: var(--ink-2); }
+  .home-label { margin: 0 0 .75rem; font-size: .76rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .home-split__list .home-label:not(:first-child) { margin-top: 2rem; }
+  .topic-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .topic-list a { display: flex; align-items: center; gap: .65rem; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: .95rem; font-weight: 520; }
+  .topic-list a:hover .topic-list__name { color: var(--accent); }
+  .topic-list__icon { display: inline-grid; place-items: center; width: 20px; color: var(--muted); }
+  .topic-list__icon :global(svg) { width: 18px; height: 18px; }
+  .topic-list__name { flex: 1; min-width: 0; }
+  .topic-list__count { color: var(--muted); font-size: .84rem; font-variant-numeric: tabular-nums; }
+  .subject-list { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
+  .subject-list a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 .85rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: .9rem; font-weight: 540; text-decoration: none; }
+  .subject-list a:hover { border-color: var(--ink-2); }
+  .featured-list { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .featured-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; padding: .8rem 0; border-bottom: 1px solid var(--line); }
+  .featured-list a { color: var(--ink); font-weight: 580; text-decoration: none; }
+  .featured-list a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .featured-list span { color: var(--muted); font-size: .86rem; }
+
+  .home-close { padding-block: clamp(4rem, 8vw, 6.5rem); border-top: 1px solid var(--line); }
+  :global(.home-close__inner) { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .home-close h2 { font-size: var(--step-3); }
+  .home-close p { margin: .8rem 0 0; font-size: var(--step-1); color: var(--ink-2); }
+  .home-close__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1.75rem; }
+
+  @media (max-width: 1000px) {
+    .product-grid, .solution-grid { grid-template-columns: 1fr; }
+    .product-card__action { padding-top: 1.25rem; }
+    :global(.home-split) { grid-template-columns: 1fr; }
+  }
+  @media (min-width: 640px) and (max-width: 1000px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) {
+    :global(.home-hero__inner) { align-items: stretch; text-align: left; }
+    .home-hero__wide :global(.dq__examples ul) { justify-content: flex-start; }
+    .topic-list { grid-template-columns: 1fr; }
+    :global(.home-close__inner) { align-items: flex-start; text-align: left; }
+    .home-close__actions { justify-content: flex-start; }
+  }
 </style>

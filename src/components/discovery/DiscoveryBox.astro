@@ -5,34 +5,45 @@
 // DiscoveryExamples.astro, placed by the page (on the homepage, full width under the hero). The same box sits in the
 // Tools and Library page headers (size "compact"); only the homepage runs a question from its address (?q=, `autorun`),
 // because on those pages ?q= belongs to the directory search.
+// The homepage passes its own wording ("Ask KEVOS"); the defaults are the learning-path wording.
 interface Props {
   size?: 'large' | 'compact';
   autorun?: boolean;
   placeholder?: string;
+  label?: string;
+  submitLabel?: string;
+  support?: string;
+  hint?: string;
+  rows?: number;
 }
 const {
   size = 'large',
   autorun = false,
   placeholder = 'e.g. I want to learn manufacturing process improvement from beginner to advanced, including OEE, production capacity, downtime analysis and cost reduction.',
+  label = 'Describe what you would like to learn or achieve',
+  submitLabel = 'Build My Learning Path',
+  support = 'One question. A structured pathway. Knowledge you can put into practice.',
+  hint = 'Press Enter to build your path, Shift + Enter for a new line. Your question is used only to build your learning path.',
+  rows,
 } = Astro.props;
 ---
 
 <form class:list={['dq', `dq--${size}`]} role="search" action="/search/" method="get" data-discover-form data-discover-autorun={autorun ? '' : undefined} novalidate>
-  <label class="visually-hidden" for="discover-question">Describe what you would like to learn or achieve</label>
+  <label class="visually-hidden" for="discover-question">{label}</label>
   <div class="dq__field">
-    <textarea id="discover-question" name="q" rows={size === 'large' ? 4 : 3} maxlength="1000" autocomplete="off" spellcheck="true" enterkeyhint="search"
+    <textarea id="discover-question" name="q" rows={rows ?? (size === 'large' ? 4 : 3)} maxlength="1000" autocomplete="off" spellcheck="true" enterkeyhint="search"
       placeholder={placeholder} aria-describedby="discover-hint discover-status" data-discover-input></textarea>
     <div class="dq__actions">
       <button class="dq__clear" type="button" aria-label="Clear the question" data-discover-clear hidden>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
       </button>
       <button class="dq__submit" type="submit" data-discover-submit>
-        <span class="dq__submit-label">Build My Learning Path</span>
+        <span class="dq__submit-label">{submitLabel}</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
       </button>
     </div>
   </div>
-  <p class="dq__support">One question. A structured pathway. Knowledge you can put into practice.</p>
-  <p class="dq__hint" id="discover-hint">Press Enter to build your path, Shift + Enter for a new line. Your question is used only to build your learning path.</p>
+  {support && <p class="dq__support">{support}</p>}
+  <p class="dq__hint" id="discover-hint">{hint}</p>
   <p class="dq__status" id="discover-status" role="status" aria-live="polite" data-discover-status></p>
 </form>

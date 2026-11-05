@@ -1,13 +1,17 @@
 ---
 // Example questions for the discovery box (DiscoveryBox.astro). src/scripts/discovery.ts runs one when it is chosen
 // ([data-discover-example]), wherever the page places this list.
-interface Props { suggestions: readonly string[] }
-const { suggestions } = Astro.props;
+// A suggestion is either the question itself, or a short label with the fuller question it puts in the box.
+type Suggestion = string | { label: string; question: string };
+interface Props { suggestions: readonly Suggestion[]; heading?: string }
+const { suggestions, heading = 'Try asking' } = Astro.props;
 ---
 
 <div class="dq__examples">
-  <p class="dq__examples-label" id="discover-examples">Try asking</p>
+  <p class="dq__examples-label" id="discover-examples">{heading}</p>
   <ul aria-labelledby="discover-examples">
-    {suggestions.map((s) => <li><button type="button" class="dq__chip" data-discover-example>{s}</button></li>)}
+    {suggestions.map((s) => typeof s === 'string'
+      ? <li><button type="button" class="dq__chip" data-discover-example>{s}</button></li>
+      : <li><button type="button" class="dq__chip" data-discover-example data-discover-query={s.question} title={s.question}>{s.label}</button></li>)}
   </ul>
 </div>

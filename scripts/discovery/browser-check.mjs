@@ -80,13 +80,13 @@ try {
   {
     const { ctx, pg, errors } = await page();
     await pg.goto(BASE + '/');
-    check('hero H1 asks the question', (await pg.textContent('#home-title')).trim() === 'What would you like to learn or achieve?');
+    check('hero H1 states the message', (await pg.textContent('#home-title')).trim() === 'Make difficult work simple.');
     check('question box visible', await pg.isVisible('#discover-question'));
-    check('seven example prompts', (await pg.locator('[data-discover-example]').count()) === 7);
+    check('four example prompts', (await pg.locator('[data-discover-example]').count()) === 4);
     check('results hidden before asking', await pg.locator('[data-discover-results]').isHidden());
     check('no floating assistant on the homepage', (await pg.locator('.assistant__launcher').count()) === 0);
-    check('one hero: no second product hero below it', (await pg.locator('.product, #home-workos-search').count()) === 0 && (await pg.locator('h1').count()) === 1);
-    check('dark theme by default', (await pg.getAttribute('html', 'data-theme')) === 'dark');
+    check('one hero: no second hero below it', (await pg.locator('#home-workos-search').count()) === 0 && (await pg.locator('h1').count()) === 1);
+    check('light theme by default', (await pg.getAttribute('html', 'data-theme')) === 'light');
     check('clear button hidden while the box is empty', await pg.locator('[data-discover-clear]').isHidden());
     check('Explore Tools / Library buttons kept', (await pg.locator('[data-cta="hero-workos"]').count()) === 1 && (await pg.locator('[data-cta="hero-reados"]').count()) === 1);
     // Shift+Enter adds a line, does not submit
@@ -266,13 +266,13 @@ try {
     check('mobile: no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
-  // 8. Light theme (session), keyboard only, other pages keep the assistant
+  // 8. Dark theme (session), keyboard only, other pages keep the assistant
   {
     const { ctx, pg } = await page();
     await pg.goto(BASE + '/');
-    await pg.evaluate(() => { sessionStorage.setItem('kevos-theme', 'light'); });
+    await pg.evaluate(() => { sessionStorage.setItem('kevos-theme', 'dark'); });
     await pg.reload();
-    check('light theme applies for the session', (await pg.getAttribute('html', 'data-theme')) === 'light');
+    check('dark theme applies for the session', (await pg.getAttribute('html', 'data-theme')) === 'dark');
     await pg.focus('#discover-question');
     await pg.keyboard.type('pressure vessel wall thickness');
     await pg.keyboard.press('Enter');
@@ -281,7 +281,7 @@ try {
     const tag = await pg.evaluate(() => document.activeElement?.tagName + ' ' + (document.activeElement?.className || ''));
     check('keyboard: Tab from results heading reaches a control', /BUTTON|A /.test(tag), tag);
     await pg.waitForTimeout(900);
-    await pg.screenshot({ path: SHOTS + '/discovery-desktop-light.png' });
+    await pg.screenshot({ path: SHOTS + '/discovery-desktop-dark.png' });
     await pg.goto(BASE + '/tools/');
     check('no floating assistant on /tools/', (await pg.locator('.assistant__launcher').count()) === 0);
     await pg.goto(BASE + '/contact/');
@@ -305,7 +305,7 @@ try {
     check('/tools/: no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
-  // 10. Learning paths ("Build My Learning Path"), with KEVOS® AI mocked
+  // 10. Learning paths (the homepage "Ask KEVOS" box), with KEVOS® AI mocked
   {
     const plan = (body) => {
       // A plan over the numbered candidates the browser sent: three modules of two lessons.
@@ -328,8 +328,8 @@ try {
     await pg.goto(BASE + '/');
     // Example prompts fill the box; they do not send.
     await pg.locator('[data-discover-example]').nth(1).click();
-    check('learn: an example fills the box without sending', (await pg.inputValue('#discover-question')) === 'I want to become better at manufacturing management.' && await pg.locator('[data-discover-results]').isHidden() && learnCalls.length === 0);
-    check('learn: the button says Build My Learning Path', /Build My Learning Path/.test(await pg.textContent('[data-discover-submit]')));
+    check('learn: an example fills the box without sending', (await pg.inputValue('#discover-question')) === 'My bearings keep failing early. How do I find the cause and check their life?' && await pg.locator('[data-discover-results]').isHidden() && learnCalls.length === 0);
+    check('learn: the homepage button says Ask KEVOS', /Ask KEVOS/.test(await pg.textContent('[data-discover-submit]')));
     await ask(pg, 'I want to learn manufacturing process improvement.', 'click');
     await pg.waitForSelector('.lc', { timeout: 15000 });
     await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });

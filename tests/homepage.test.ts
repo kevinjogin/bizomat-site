@@ -5,25 +5,45 @@ import { join } from 'node:path';
 import { loadWorkosTools } from '../src/utils/workos-tools.ts';
 import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS } from '../src/config/home.ts';
 import { NAV, SITE } from '../src/config/site.ts';
+import { PRODUCTS, SOLUTIONS } from '../src/config/products.ts';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const home = read('src/pages/index.astro');
 
-test('the homepage leads with discovery, then WORKOS and READOS', () => {
-  assert.match(home, /<h1 id="home-title">What would you like to <em>learn<\/em> or achieve\?<\/h1>/);
-  assert.match(home, /<div class="home-hero__ask"><DiscoveryBox size="large" autorun \/><\/div>/, 'a large question box across the hero');
-  assert.doesNotMatch(home, /ServiceMap|home-hero__visual/, 'no animated picture beside the question (2 Nov 2026)');
-  assert.match(home, /<div class="home-hero__wide">\s*<DiscoveryExamples suggestions=\{HOME_DISCOVERY_EXAMPLES\} \/>/, 'the example questions run the full width under the hero');
-  assert.ok(home.indexOf('<DiscoveryBox') < home.indexOf('data-cta="hero-workos"'), 'the question box comes first in the hero');
-  assert.match(home, /<Button href="\/tools\/" arrow data-cta="hero-workos">Explore Tools<\/Button>/);
-  assert.match(home, /<Button href="\/reados\/" variant="secondary" data-cta="hero-reados">Explore Library<\/Button>/);
-  for (const id of ['workos', 'reados']) assert.match(home, new RegExp(`<div class="home-lib" id="${id}"`), `${id} sits in the side-by-side block under the hero`);
-  assert.ok(home.indexOf('id="workos"') < home.indexOf('id="reados"') && home.indexOf('class="home-libs"') > home.indexOf('<DiscoveryResults />'));
-  assert.match(home, /\.home-libs__grid\)\{display:grid;grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/, 'side by side on larger screens');
-  assert.match(home, /@media\(max-width:760px\)\{:global\(\.home-libs__grid\)\{grid-template-columns:1fr\}\}/, 'stacked on phones');
-  for (const id of ['connected', 'about']) assert.match(home, new RegExp(`<Section [^>]*id="${id}"`));
-  assert.equal(SITE.title, 'KEVOS® | Engineering Tools, Technical Knowledge & Technology');
-  assert.deepEqual(NAV.map((n) => n.href), ['/tools/', '/reados/', '/about/', '/contact/']);
+// KEVOS 2.0 redesign (owner brief, 5 Nov 2026): "Make difficult work simple." Hero with Ask KEVOS, then products,
+// solutions, tools and resources.
+test('the homepage leads with the KEVOS message and the Ask KEVOS box, then products, solutions, tools and resources', () => {
+  assert.match(home, /<p class="eyebrow home-hero__label">Intelligence by KEVOS<\/p>/);
+  assert.match(home, /<h1 id="home-title">Make difficult work simple\.<\/h1>/);
+  assert.match(home, /Tell us what you need\. We'll help you get it done\./);
+  assert.match(home, /placeholder="What would you like to accomplish today\?"/);
+  assert.match(home, /submitLabel="Ask KEVOS"/);
+  assert.match(home, /<DiscoveryExamples suggestions=\{HOME_DISCOVERY_EXAMPLES\}/);
+  assert.doesNotMatch(home, /ServiceMap|home-hero__visual/, 'no animated picture beside the question');
+  const order = ['id="ask"', '<DiscoveryResults />', 'id="products"', 'id="solutions"', 'id="tools"', 'id="resources"'].map((m) => home.indexOf(m));
+  assert.ok(order.every((n, i) => n > 0 && (i === 0 || n > order[i - 1])), 'sections in the agreed order');
+  assert.match(home, /<h2 id="products-title">Explore KEVOS<\/h2>/);
+  assert.match(home, /<h2 id="tools-title">Useful tools\. Less complexity\.<\/h2>/);
+  assert.match(home, /<h2 id="resources-title">Knowledge that moves you forward\.<\/h2>/);
+  assert.match(home, /<Button href="\/tools\/" arrow data-cta="home-tools">Explore Tools<\/Button>/);
+  assert.match(home, /<Button href="\/reados\/" arrow data-cta="home-library">Explore Library<\/Button>/);
+  assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
+  assert.equal(SITE.title, 'KEVOS® | Make Difficult Work Simple');
+  assert.deepEqual(NAV.map((n) => n.href), ['/products/', '/solutions/', '/tools/', '/resources/', '/about/']);
+});
+
+test('products are described only as stated, and a product that is not available is never linked', () => {
+  assert.deepEqual(PRODUCTS.map((p) => [p.name, p.tagline, p.status, p.url]), [
+    ['Work', 'Get more done. Work smarter.', 'available', 'https://work.kevos.com/'],
+    ['CADOS', 'Engineering and CAD intelligence.', 'available', 'https://cados.kevos.com/'],
+    ['Desk', 'Your desktop, working smarter.', 'soon', undefined],
+  ]);
+  assert.match(home, /\{p\.url\s*\?\s*<Button href=\{p\.url\}/, 'only a product with an address gets a launch button');
+  for (const s of SOLUTIONS) for (const path of s.paths) {
+    assert.ok(/^https:\/\/(work|cados)\.kevos\.com\/$/.test(path.href) || /^\/(tools|reados|contact)\//.test(path.href), `${s.id}: ${path.href} is a real page or an available product`);
+  }
+  const text = JSON.stringify([PRODUCTS, SOLUTIONS]);
+  assert.doesNotMatch(text, /\d+\s*%|customers? (say|love)|testimonial|trusted by/i, 'no invented statistics or testimonials');
 });
 
 test('the homepage carries no service packages, pricing or fixed-scope offers', () => {
@@ -40,6 +60,7 @@ test('homepage counts come from the catalogues, never from fixed numbers', () =>
   assert.match(home, /fmt\(bookTotal\)/);
   assert.match(home, /fmt\(chapterTotal\)/);
   assert.match(home, /knowledgeGraph\(\)\.live\.length/);
+  assert.match(home, /fmt\(connections\)/);
   const markup = home.slice(home.indexOf('<BaseLayout'), home.indexOf('<script>'));
   assert.doesNotMatch(markup, />\s*\d{2,}\s*(tools|books|chapters)\b/i, 'no hand-typed catalogue counts');
 });
@@ -64,6 +85,9 @@ test('discovery is a working feature with a no-JavaScript fallback, and no plann
   assert.match(home, /<DiscoveryResults \/>/);
   assert.doesNotMatch(home, /flow__step--planned|Not yet available/);
   assert.equal(SITE.assistant.enabled, false, 'the floating assistant is retired; the discovery box replaces it');
-  assert.doesNotMatch(home, /class="product"|HomeResourceVisual|home-workos-search/, 'one hero: no second product hero under it');
-  assert.equal(HOME_DISCOVERY_EXAMPLES.length, 7);
+  assert.doesNotMatch(home, /HomeResourceVisual|home-workos-search/, 'one hero: no second product hero under it');
+  assert.deepEqual(HOME_DISCOVERY_EXAMPLES.map((e) => e.label), ['Analyse a document', 'Solve an engineering problem', 'Work with data', 'Automate a task']);
+  assert.match(home, /It does not open your files or do the work for you\./, 'the box says plainly what it does not do');
+  assert.match(read('src/components/discovery/DiscoveryExamples.astro'), /data-discover-query=\{s\.question\}/);
+  assert.match(read('src/scripts/discovery.ts'), /b\.dataset\.discoverQuery/);
 });

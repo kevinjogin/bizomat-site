@@ -1,0 +1,89 @@
+---
+// KEVOS® products overview. Content: src/config/products.ts (only what the owner has stated about each product).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import { SITE } from '../config/site.ts';
+import { PRODUCTS, AVAILABLE_PRODUCTS } from '../config/products.ts';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products/' }];
+const schema = [{
+  '@type': 'ItemList', name: 'KEVOS® products', url: `${SITE.url}/products/`,
+  itemListElement: AVAILABLE_PRODUCTS.map((p, i) => ({
+    '@type': 'ListItem', position: i + 1,
+    item: { '@type': 'SoftwareApplication', name: p.fullName, url: p.url, description: p.summary, applicationCategory: 'BusinessApplication', publisher: { '@id': `${SITE.url}/#organization` } },
+  })),
+}];
+---
+<BaseLayout title="Products: Work, CADOS and Desk" description="KEVOS® products: Work for everyday productivity, CADOS for engineering and CAD intelligence, and Desk, a desktop product that is coming soon." breadcrumbs={crumbs} schema={schema}>
+  <Hero eyebrow="Products" title="Software that makes difficult work <em>simple.</em>" lead="Each KEVOS® product is built for one kind of work. Open the one that fits, or start with a question on the homepage.">
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+
+  <section class="products" aria-label="KEVOS® products">
+    <Container>
+      <ol class="product-rows" role="list">
+        {PRODUCTS.map((p) => (
+          <li class:list={['product-row', `product-row--${p.status}`]} id={p.id}>
+            <div class="product-row__head">
+              <p class:list={['status', `status--${p.status}`]}>{p.status === 'available' ? 'Available' : 'Coming soon'}</p>
+              <h2><span>KEVOS</span> {p.name}</h2>
+            </div>
+            <div class="product-row__body">
+              <p class="product-row__tagline">{p.tagline}</p>
+              <p>{p.summary}</p>
+              {p.url ? (
+                <div class="product-row__actions">
+                  <Button href={p.url} rel="noopener" data-cta={`products-${p.id}`}>{p.action} <span aria-hidden="true">↗</span></Button>
+                  <span class="product-row__url">{p.url.replace(/^https:\/\/|\/$/g, '')}</span>
+                </div>
+              ) : (
+                <p class="product-row__soon">{p.name} is not available yet, so there is nothing to sign up for or download. <a href="/contact/?service=feedback#enquiry">Tell us what you would use it for</a>.</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+      <div class="products-also">
+        <h2>Also from KEVOS®</h2>
+        <ul role="list">
+          <li><a href="/tools/"><strong>Tools</strong><span>Engineering, manufacturing and business tools that run in your browser.</span></a></li>
+          <li><a href="/reados/"><strong>Library</strong><span>Technical books in short, practical chapters.</span></a></li>
+          <li><a href="/services/"><strong>Engineering services</strong><span>Defined engineering, CAD and improvement assignments.</span></a></li>
+        </ul>
+      </div>
+      <p class="products-note">SOLIDWORKS® is a registered trade mark of Dassault Systèmes SolidWorks Corporation. KEVOS® is not affiliated with or endorsed by Dassault Systèmes.</p>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .products { padding-bottom: var(--space-section); }
+  .product-rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .product-row { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 1rem 4rem; padding: clamp(2rem, 4vw, 3rem) 0; border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .product-row h2 { font-size: var(--step-3); }
+  .product-row h2 span { color: var(--muted); font-weight: 500; }
+  .product-row__tagline { margin: 0 0 .6rem; font-size: var(--step-1); font-weight: 580; color: var(--ink); }
+  .product-row__body > p:not(.product-row__tagline) { color: var(--ink-2); max-width: 54ch; }
+  .product-row__actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; margin-top: 1.5rem; }
+  .product-row__url { color: var(--muted); font-size: .9rem; }
+  .product-row__soon { margin-top: 1rem; color: var(--muted) !important; }
+  .product-row__soon a { color: var(--ink-2); }
+  .status { display: inline-flex; align-items: center; gap: .4rem; margin: 0 0 .9rem; font-size: .76rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+  .status--available { color: var(--success); }
+  .status--available::before { background: var(--success); }
+  .products-also { margin-top: clamp(3rem, 6vw, 4.5rem); }
+  .products-also h2 { font-size: var(--step-2); margin-bottom: 1.25rem; }
+  .products-also ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .products-also a { display: grid; gap: .3rem; height: 100%; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-decoration: none; }
+  .products-also a:hover { border-color: var(--line-strong); }
+  .products-also span { color: var(--muted); font-size: .92rem; }
+  .products-note { margin: 2.5rem 0 0; color: var(--muted); font-size: .82rem; max-width: 80ch; }
+  @media (max-width: 860px) {
+    .product-row { grid-template-columns: 1fr; }
+    .products-also ul { grid-template-columns: 1fr; }
+  }
+</style>

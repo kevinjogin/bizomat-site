@@ -1,92 +1,196 @@
 ---
-import { NAV } from '../config/site.ts';
+// Global header: KEVOS® wordmark (home), five top-level items with short menus, the theme switch and one action.
+// Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
+// Escape and outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the
+// links as a wrapped row instead of a collapsed menu.
+import { NAV, GET_STARTED } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
-const isCurrent = (href: string) => path === href;
-
+const internal = (href?: string) => Boolean(href && href.startsWith('/') && !href.includes('#'));
+const isCurrent = (href?: string) => internal(href) && path === href;
+const inSection = (item: (typeof NAV)[number]) =>
+  (item.href !== '/' && path.startsWith(item.href)) || Boolean(item.children?.some((c) => internal(c.href) && path.startsWith(c.href as string)));
 ---
 <header class="site-header" data-header>
   <Container class="site-header__inner">
     <a class="site-header__brand" href="/" aria-label="KEVOS® home">
-      <SiteWordmark class="site-header__logo" height={36} />
+      <SiteWordmark class="site-header__logo" height={28} />
     </a>
 
-    <nav class="site-nav" aria-label="Main">
+    <nav class="site-nav" id="site-nav" aria-label="Main" data-site-nav>
       <ul class="site-nav__list">
-        {NAV.map((item) => (
-          <li><a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        {NAV.map((item) => item.children ? (
+          <li class="site-nav__item">
+            <details class="nav-menu" data-nav-menu>
+              <summary class:list={['site-nav__link', { 'is-current': inSection(item) }]}>
+                {item.label}
+                <svg class="nav-menu__chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
+              </summary>
+              <div class="nav-menu__panel">
+                <ul class="nav-menu__list">
+                  {item.children.map((child) => (
+                    <li>
+                      {child.href ? (
+                        <a class="nav-menu__link" href={child.href} aria-current={isCurrent(child.href) ? 'page' : undefined} rel={child.external ? 'noopener' : undefined}>
+                          <span class="nav-menu__title">{child.label}{child.external && <span class="nav-menu__ext" aria-hidden="true">↗</span>}</span>
+                          {child.description && <span class="nav-menu__description">{child.description}</span>}
+                        </a>
+                      ) : (
+                        <span class="nav-menu__link nav-menu__link--disabled">
+                          <span class="nav-menu__title">{child.label}{child.status && <span class="nav-menu__status">{child.status}</span>}</span>
+                          {child.description && <span class="nav-menu__description">{child.description}</span>}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          </li>
+        ) : (
+          <li class="site-nav__item">
+            <a class:list={['site-nav__link', { 'is-current': inSection(item) }]} href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
         ))}
       </ul>
+      <p class="site-nav__mobile-action"><a class="site-nav__cta" href={GET_STARTED.href} data-cta="header-get-started-mobile">{GET_STARTED.label}</a></p>
     </nav>
 
     <div class="site-header__tools">
       <ThemeToggle />
+      <a class="site-header__cta" href={GET_STARTED.href} data-cta="header-get-started">{GET_STARTED.label}</a>
+      <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false" data-nav-toggle hidden>
+        <span class="visually-hidden">Menu</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-open" d="M4 7h16M4 12h16M4 17h16" /><path class="i-close" d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
     </div>
   </Container>
 </header>
 <script>
   const header = document.querySelector<HTMLElement>('[data-header]');
-  const update = () => header?.classList.toggle('is-scrolled', window.scrollY > 8);
-  window.addEventListener('scroll', update, { passive: true });
-  update();
+  if (header) {
+    header.classList.add('has-js');
+    const update = () => header.classList.toggle('is-scrolled', window.scrollY > 4);
+    window.addEventListener('scroll', update, { passive: true });
+    update();
 
+    const menus = [...header.querySelectorAll<HTMLDetailsElement>('[data-nav-menu]')];
+    const toggle = header.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+    const closeMenus = (except?: HTMLDetailsElement) => menus.forEach((m) => { if (m !== except) m.open = false; });
+    const setPanel = (open: boolean) => {
+      header.classList.toggle('is-open', open);
+      toggle?.setAttribute('aria-expanded', String(open));
+      toggle?.querySelector('.visually-hidden')?.replaceChildren(open ? 'Close menu' : 'Menu');
+      if (!open) closeMenus();
+    };
+    menus.forEach((m) => {
+      // Close the others as soon as a menu is chosen (the toggle event alone arrives a moment later).
+      m.querySelector('summary')?.addEventListener('click', () => { if (!m.open) closeMenus(m); });
+      m.addEventListener('toggle', () => { if (m.open) closeMenus(m); });
+    });
+    if (toggle) {
+      toggle.hidden = false;
+      toggle.addEventListener('click', () => setPanel(!header.classList.contains('is-open')));
+    }
+    document.addEventListener('click', (e) => {
+      if (!header.contains(e.target as Node)) { closeMenus(); setPanel(false); }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const open = menus.find((m) => m.open);
+      if (open) { open.open = false; open.querySelector('summary')?.focus(); return; }
+      if (header.classList.contains('is-open')) { setPanel(false); toggle?.focus(); }
+    });
+    // A menu link to a place on the current page (for example /#ask on the homepage) closes the menus.
+    header.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => a.addEventListener('click', () => setPanel(false)));
+    // Back to the wide layout: the phone menu state no longer applies.
+    matchMedia('(min-width: 1001px)').addEventListener('change', (e) => { if (e.matches) setPanel(false); });
+  }
 </script>
 <style>
-  .site-header :is(.site-nav a, .resources-toggle) { text-transform: uppercase; }
-  .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .25s var(--ease); }
-  .site-header.is-scrolled { border-bottom-color: var(--line); }
-  :global(.site-header__inner) { display: flex; align-items: center; gap: clamp(.45rem, 1.8vw, 1.5rem); min-height: var(--header-h); }
-  .site-header__brand { display: inline-flex; align-items: center; margin-right: auto; min-width: 0; max-width: 100%; overflow: visible; text-decoration: none; }
-  .site-header__brand:hover { color: inherit; }
-  .site-nav__list { display: flex; align-items: center; gap: .2rem; list-style: none; padding: 0; margin: 0; }
-  .site-nav__list > li > a, .resources-toggle { display: flex; align-items: center; gap: .35rem; padding: .5rem .7rem; text-decoration: none; font-size: .95rem; font-weight: 560; color: var(--ink-2); }
-  .site-nav__list > li > a:hover, .site-nav__list > li > a[aria-current='page'], .resources-toggle:hover, .resources-toggle.is-current { color: var(--accent); }
-  .resources-dropdown { position: relative; }
-  .resources-toggle { list-style: none; cursor: pointer; user-select: none; }
-  .resources-toggle::-webkit-details-marker { display: none; }
-  .resources-chevron { display: inline-block; font-size: 1.1em; line-height: 1; transition: transform .16s var(--ease); }
-  .resources-dropdown[open] .resources-chevron { transform: rotate(180deg); }
-  .resources-dropdown__menu { position: absolute; right: 0; top: calc(100% + .65rem); width: min(290px, calc(100vw - 2rem)); padding: .5rem; margin: 0; list-style: none; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 6px; box-shadow: 0 18px 40px rgb(0 0 0 / .17); z-index: 60; }
-  .resources-dropdown__menu::before { content: ''; position: absolute; inset: -.7rem 0 auto; height: .7rem; }
-  .resources-dropdown__menu a { display: grid; gap: .1rem; padding: .78rem .9rem; text-decoration: none; color: var(--ink); border-radius: 3px; }
-  .resources-dropdown__menu a:hover, .resources-dropdown__menu a:focus-visible, .resources-dropdown__menu a[aria-current='page'] { background: var(--accent-soft); color: var(--accent); }
-  .resources-item__title { font-weight: 650; font-size: .94rem; }
-  .resources-item__description { color: var(--muted); font-size: .8rem; }
-  .site-header__tools { display: flex; align-items: center; gap: .5rem; }
-  /* Keep the orange wordmark prominent on tablet widths without reducing menu legibility. */
-  @media (max-width: 900px) {
-    :global(.site-header__inner) { gap: clamp(.35rem, 1vw, .75rem); }
-    .site-header__brand { flex: 0 0 auto; margin-right: auto; }
-    .site-header__brand :global(.site-wordmark) { --wordmark-h: 34px; }
-    .site-nav__list { gap: 0; }
-    .site-nav__list > li > a { padding: .55rem .35rem; font-size: .83rem; white-space: nowrap; }
-    .site-header__tools { gap: .2rem; }
+  .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid transparent; transition: border-color .2s var(--ease); }
+  .site-header.is-scrolled, .site-header.is-open { border-bottom-color: var(--line); }
+  :global(.site-header__inner) { display: flex; align-items: center; gap: 1.25rem; min-height: var(--header-h); }
+  .site-header__brand { display: inline-flex; align-items: center; flex: none; text-decoration: none; border-radius: 4px; }
+  .site-header__brand :global(.site-wordmark) { --wordmark-h: 24px; }
+
+  .site-nav { display: flex; align-items: center; flex: 1; min-width: 0; margin-left: 1rem; }
+  .site-nav__list { display: flex; align-items: center; gap: .15rem; margin: 0; padding: 0; list-style: none; }
+  .site-nav__item { position: relative; }
+  .site-nav__link {
+    display: inline-flex; align-items: center; gap: .3rem; min-height: 40px; padding: 0 .75rem; border-radius: 8px;
+    color: var(--ink-2); font-size: .94rem; font-weight: 540; text-decoration: none; cursor: pointer; list-style: none; user-select: none;
+    transition: color .15s var(--ease), background .15s var(--ease);
   }
-  /* On phones, give the logo a full-size first row rather than shrinking it
-     to fit four competing items on one line. Navigation stays visible below. */
-  @media (max-width: 600px) {
-    :global(.site-header__inner) {
-      display: flex;
-      flex-wrap: wrap;
-      align-content: center;
-      justify-content: space-between;
-      column-gap: .5rem;
-      row-gap: 0;
-      padding-top: .45rem;
-      padding-bottom: .2rem;
+  .site-nav__link::-webkit-details-marker { display: none; }
+  .site-nav__link:hover, details[open] > .site-nav__link { color: var(--ink); background: var(--paper-2); }
+  .site-nav__link.is-current { color: var(--ink); }
+  .site-nav__link.is-current::after { content: ''; position: absolute; left: .75rem; right: .75rem; bottom: 2px; height: 2px; border-radius: 2px; background: var(--brand-orange); }
+  .nav-menu__chevron { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s var(--ease); }
+  details[open] .nav-menu__chevron { transform: rotate(180deg); }
+
+  .nav-menu__panel {
+    position: absolute; left: 0; top: calc(100% + .5rem); z-index: 60; width: 320px; padding: .45rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-menu);
+  }
+  .nav-menu__list { display: grid; gap: .1rem; margin: 0; padding: 0; list-style: none; }
+  .nav-menu__link { display: grid; gap: .15rem; padding: .7rem .8rem; border-radius: 8px; color: var(--ink); text-decoration: none; }
+  a.nav-menu__link:hover, a.nav-menu__link:focus-visible, a.nav-menu__link[aria-current='page'] { background: var(--paper-2); color: var(--ink); }
+  .nav-menu__title { display: inline-flex; align-items: center; gap: .45rem; font-size: .94rem; font-weight: 600; }
+  .nav-menu__ext { color: var(--muted); font-size: .8rem; font-weight: 400; }
+  .nav-menu__description { color: var(--muted); font-size: .84rem; line-height: 1.4; }
+  .nav-menu__link--disabled { cursor: default; }
+  .nav-menu__link--disabled .nav-menu__title { color: var(--ink-2); }
+  .nav-menu__status { padding: .1rem .45rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--muted); font-size: .7rem; font-weight: 600; letter-spacing: .04em; }
+  /* The last entry of a menu ("All products") is the overview link: set apart by a rule. */
+  .nav-menu__list > li:last-child:not(:first-child) .nav-menu__link:not(:has(.nav-menu__description)) { margin-top: .25rem; border-top: 1px solid var(--line); border-radius: 0 0 8px 8px; padding-block: .65rem; color: var(--accent); }
+  .nav-menu__list > li:last-child:not(:first-child) .nav-menu__link:not(:has(.nav-menu__description)) .nav-menu__title { font-size: .88rem; }
+
+  .site-header__tools { display: flex; align-items: center; gap: .5rem; margin-left: auto; flex: none; }
+  .site-header__cta, .site-nav__cta {
+    display: inline-flex; align-items: center; min-height: 38px; padding: 0 1rem; border-radius: 8px;
+    background: var(--accent); color: var(--on-accent); font-size: .92rem; font-weight: 600; text-decoration: none; white-space: nowrap;
+    transition: background .15s var(--ease);
+  }
+  .site-header__cta:hover, .site-nav__cta:hover { background: var(--accent-strong); color: var(--on-accent); }
+  .site-nav__mobile-action { display: none; }
+  .site-header__toggle { display: none; place-items: center; width: 40px; height: 40px; padding: 0; background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; }
+  .site-header__toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+  .site-header__toggle .i-close { display: none; }
+  .is-open .site-header__toggle .i-open { display: none; }
+  .is-open .site-header__toggle .i-close { display: inline; }
+
+  /* Tablet and phone: the links move into a panel under the header, opened by the menu button. */
+  @media (max-width: 1000px) {
+    .site-header.has-js .site-header__toggle:not([hidden]) { display: inline-grid; }
+    .site-header.has-js .site-nav {
+      display: none; position: absolute; left: 0; right: 0; top: 100%; margin: 0;
+      max-height: calc(100dvh - var(--header-h)); overflow-y: auto; overscroll-behavior: contain;
+      padding: .75rem var(--gutter) 1.5rem; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-menu);
     }
-    .site-header__brand { order: 1; max-width: min(78vw, calc(100vw - 76px), 350px); flex: 0 1 auto; }
-    .site-header__brand :global(.site-wordmark) { --wordmark-h: clamp(46px, 12vw, 56px); }
-    .site-header__tools { order: 2; margin-left: auto; flex-shrink: 0; }
-    .site-nav { order: 3; flex: 1 0 100%; min-width: 0; }
-    .site-nav__list { display: flex; width: 100%; justify-content: space-around; gap: .25rem; }
-    .site-nav__list > li > a { font-size: clamp(.82rem, 3.5vw, .95rem); padding: .4rem .65rem; }
+    .site-header.has-js.is-open .site-nav { display: block; }
+    .site-header.has-js .site-nav__list { flex-direction: column; align-items: stretch; gap: 0; }
+    .site-header.has-js .site-nav__item { border-bottom: 1px solid var(--line); }
+    .site-header.has-js .site-nav__link { display: flex; justify-content: space-between; width: 100%; min-height: 52px; padding: 0 .25rem; font-size: 1.02rem; border-radius: 0; background: none; }
+    .site-header.has-js .site-nav__link.is-current::after { display: none; }
+    .site-header.has-js .site-nav__link.is-current { color: var(--accent); }
+    .site-header.has-js .nav-menu__panel { position: static; width: auto; padding: 0 0 .6rem; border: 0; border-radius: 0; box-shadow: none; background: none; }
+    .site-header.has-js .nav-menu__link { padding: .6rem .25rem; }
+    .site-header.has-js .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
+    .site-header.has-js .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
   }
-  @media (max-width: 360px) {
-    .site-nav__list > li > a { font-size: .79rem; padding: .4rem .3rem; }
+  @media (max-width: 560px) {
+    .site-header.has-js .site-header__cta { display: none; }
   }
-  @media (prefers-reduced-motion: reduce) { .resources-chevron { transition: none; } }
+  /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
+  @media (max-width: 1000px) {
+    .site-header:not(.has-js) :global(.site-header__inner) { flex-wrap: wrap; padding-block: .5rem; }
+    .site-header:not(.has-js) .site-nav { order: 3; flex: 1 0 100%; margin: 0; }
+    .site-header:not(.has-js) .site-nav__list { flex-wrap: wrap; }
+    .site-header:not(.has-js) .site-nav__link { padding: 0 .5rem; font-size: .9rem; }
+  }
+  @media (prefers-reduced-motion: reduce) { .nav-menu__chevron { transition: none; } }
 </style>

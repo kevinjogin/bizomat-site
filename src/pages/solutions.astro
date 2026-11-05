@@ -1,0 +1,88 @@
+---
+// KEVOS® solution areas: the everyday problems each addresses and where to start. Content: src/config/products.ts.
+// Every link goes to a page on kevos.com or to an available product. No outcomes, figures or customers are claimed.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import { SOLUTIONS } from '../config/products.ts';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Solutions', href: '/solutions/' }];
+const external = (href: string) => /^https?:/.test(href);
+---
+<BaseLayout title="Solutions: productivity, engineering and automation" description="How KEVOS® helps with business productivity, engineering and design, and automation and workflows, and where to start with each." breadcrumbs={crumbs}>
+  <Hero eyebrow="Solutions" title="Start from the problem, <em>not the software.</em>" lead="Three kinds of work KEVOS® helps with. Find the problem that sounds like yours, then start in the right place.">
+    <Breadcrumb items={crumbs} slot="before" />
+  </Hero>
+
+  <nav class="sol-jump" aria-label="Solution areas">
+    <Container>
+      <ul role="list">{SOLUTIONS.map((s) => <li><a href={`#${s.id}`}>{s.name}</a></li>)}</ul>
+    </Container>
+  </nav>
+
+  {SOLUTIONS.map((s, i) => (
+    <section class:list={['sol', i % 2 === 1 && 'sol--alt']} id={s.id} aria-labelledby={`${s.id}-title`}>
+      <Container class="sol__grid">
+        <div>
+          <p class="sol__index">{String(i + 1).padStart(2, '0')}</p>
+          <h2 id={`${s.id}-title`}>{s.name}</h2>
+          <p class="sol__short">{s.short}</p>
+        </div>
+        <div>
+          <h3 class="sol__label">Sounds familiar?</h3>
+          <ul class="sol__problems">{s.problems.map((p) => <li>{p}</li>)}</ul>
+          <h3 class="sol__label">Where to start</h3>
+          <ul class="sol__paths" role="list">
+            {s.paths.map((path) => (
+              <li>
+                <a href={path.href} rel={external(path.href) ? 'noopener' : undefined}>
+                  <strong>{path.label}{external(path.href) && <span aria-hidden="true"> ↗</span>}</strong>
+                  <span>{path.note}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Container>
+    </section>
+  ))}
+
+  <section class="sol-close" aria-labelledby="sol-close-title">
+    <Container>
+      <h2 id="sol-close-title">Something else?</h2>
+      <p>Describe it in your own words and KEVOS® will point you to the right place.</p>
+      <div class="sol-close__actions">
+        <Button href="/#ask" variant="accent">Ask KEVOS</Button>
+        <Button href="/contact/" variant="secondary">Contact KEVOS®</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .sol-jump { border-block: 1px solid var(--line); }
+  .sol-jump ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin: 0; padding: .85rem 0; list-style: none; }
+  .sol-jump a { color: var(--ink-2); font-weight: 560; text-decoration: none; }
+  .sol-jump a:hover { color: var(--accent); }
+  .sol { padding-block: clamp(3.5rem, 7vw, 6rem); border-bottom: 1px solid var(--line); scroll-margin-top: var(--header-h); }
+  .sol--alt { background: var(--paper-2); }
+  :global(.sol__grid) { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 2rem 5rem; }
+  .sol__index { margin: 0 0 .75rem; color: var(--accent); font-size: .85rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .sol h2 { font-size: var(--step-3); max-width: 14ch; }
+  .sol__short { margin: .75rem 0 0; font-size: var(--step-1); color: var(--ink-2); }
+  .sol__label { margin: 0 0 .8rem; font-size: .76rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .sol__problems { display: grid; gap: .6rem; margin: 0 0 2.25rem; padding: 0; list-style: none; }
+  .sol__problems li { position: relative; padding-left: 1.25rem; color: var(--ink-2); }
+  .sol__problems li::before { content: ''; position: absolute; left: 0; top: .7em; width: 8px; height: 2px; background: var(--brand-orange); }
+  .sol__paths { display: grid; gap: .6rem; margin: 0; padding: 0; list-style: none; }
+  .sol__paths a { display: grid; gap: .2rem; padding: 1rem 1.15rem; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); text-decoration: none; }
+  .sol__paths a:hover { border-color: var(--line-strong); }
+  .sol__paths span { color: var(--muted); font-size: .92rem; }
+  .sol-close { padding-block: clamp(3.5rem, 7vw, 6rem); text-align: center; }
+  .sol-close h2 { font-size: var(--step-3); }
+  .sol-close p { margin: .75rem 0 0; color: var(--ink-2); font-size: var(--step-1); }
+  .sol-close__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin-top: 1.5rem; }
+  @media (max-width: 860px) { :global(.sol__grid) { grid-template-columns: 1fr; } }
+</style>

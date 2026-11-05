@@ -42,5 +42,5 @@ export const BACKGROUND = [
 /** Longer-term direction. Deliberately secondary to services on the current site. */
 export const FUTURE = {
   title: 'Looking ahead',
-  text: 'Services come first. Over time, KEVOS® may also develop its own products, software, AI tools and industrial solutions, built on the same practical, problem-first approach. Any such work will be announced when it is ready, not before.',
+  text: 'KEVOS® Work and KEVOS® CADOS are available now. KEVOS® Desk, a desktop productivity and automation product, is planned. Each is built on the same practical, problem-first approach, and new products are announced when they are ready, not before.',
 } as const;

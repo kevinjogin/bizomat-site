@@ -22,15 +22,16 @@ export const HOME_FEATURED_BOOKS = [
   'collection-investment-appraisal-and-business-cases',
 ];
 
-/** Example requests under the homepage box ("What would you like to learn or achieve?"). */
+/**
+ * Examples under the homepage "Ask KEVOS" box. The short label is what the visitor sees; the question is what it puts
+ * in the box (they can edit it before asking). Each question is chosen so the answer leads to real KEVOS® tools and
+ * Library chapters: Ask KEVOS recommends resources and steps, it does not open files or carry out the task.
+ */
 export const HOME_DISCOVERY_EXAMPLES = [
-  'Teach me mechanical engineering from beginner to advanced.',
-  'I want to become better at manufacturing management.',
-  'Teach me how to develop an engineering business case.',
-  'Help me understand CNC machining and manufacturing processes.',
-  'I want to learn AI, software and automation for business.',
-  'Teach me project management from fundamentals to professional application.',
-  'How can I improve factory productivity and reduce manufacturing costs?',
+  { label: 'Analyse a document', question: 'Help me analyse a company\'s financial statements and annual report.' },
+  { label: 'Solve an engineering problem', question: 'My bearings keep failing early. How do I find the cause and check their life?' },
+  { label: 'Work with data', question: 'Help me use production data to find downtime and improve OEE.' },
+  { label: 'Automate a task', question: 'I want to automate a repetitive manual process in my business. Where do I start?' },
 ] as const;
 
 /** Example requests for the learning-path box in the Tools and Library page headers (LearningPlanner.astro). */

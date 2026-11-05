@@ -1,6 +1,6 @@
 ---
-// Light/dark switch. The site opens in the dark theme (set in BaseLayout before first paint). Switching to light
-// lasts only for the current browser session (sessionStorage); a new session opens in dark again.
+// Light/dark switch. The site opens in the light theme (set in BaseLayout before first paint). Switching to dark
+// lasts only for the current browser session (sessionStorage); a new session opens in light again.
 ---
 
 <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
@@ -31,7 +31,7 @@
       } catch {
         /* storage unavailable; the choice lasts for this page only */
       }
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0f0f0e' : '#f6f5f1');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0f0f0e' : '#fbfaf7');
       label();
     }),
   );
@@ -40,11 +40,11 @@
 
 <style>
   .theme-toggle {
-    display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0;
-    background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 50%;
+    display: inline-grid; place-items: center; width: 38px; height: 38px; padding: 0;
+    background: transparent; color: var(--ink-2); border: 1px solid transparent; border-radius: 8px;
     transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
-  .theme-toggle:hover { border-color: var(--line-strong); color: var(--accent); }
+  .theme-toggle:hover { border-color: var(--line); color: var(--ink); background: var(--paper-2); }
   .theme-toggle__icon { width: 18px; height: 18px; }
   .theme-toggle__icon--sun { display: none; }
   :global(:root[data-theme='dark']) .theme-toggle__icon--sun { display: block; }

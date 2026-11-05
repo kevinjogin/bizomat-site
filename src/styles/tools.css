@@ -27,10 +27,10 @@
 .range-value { display:inline-flex; align-items:center; justify-content:center; min-height:36px; border:1px solid var(--line); border-radius:6px; background:var(--paper-2); font-variant-numeric:tabular-nums; font-size:.9rem; }
 .hint { margin-top:.35rem; color:var(--muted); font-size:.82rem; }
 .form-actions,.tool-actions { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.35rem; }
-.btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:.65rem 1rem; border:1px solid var(--ink); border-radius:999px; background:var(--ink); color:var(--paper); font-weight:600; font-size:.9rem; text-decoration:none; }
-.btn:hover { background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+.btn { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:.65rem 1rem; border:1px solid var(--ink); border-radius:8px; background:var(--ink); color:var(--paper); font-weight:600; font-size:.9rem; text-decoration:none; }
+.btn:hover { background:var(--ink-2); border-color:var(--ink-2); color:var(--paper); }
 .btn.secondary { background:transparent; color:var(--ink); border-color:var(--line-strong); }
-.btn.secondary:hover { background:var(--accent-soft); color:var(--accent); border-color:var(--accent); }
+.btn.secondary:hover { background:var(--paper-2); color:var(--ink); border-color:var(--ink-2); }
 .privacy-note,.formula-note { margin-top:1rem; color:var(--muted); font-size:.82rem; line-height:1.55; }
 .result-kicker { font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
 .result-status { margin-top:.45rem; font-family:var(--font-display); font-size:clamp(1.8rem,4vw,3rem); line-height:1.05; }

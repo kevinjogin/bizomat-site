@@ -17,25 +17,25 @@ const until = Date.now() + 15 * 60_000;
 let home;
 for (;;) {
   home = await get(`/?live-check=${Date.now()}`);
-  if ((home.text.includes('class="home-libs"') && home.text.includes('Build My Learning Path')) || Date.now() > until) break;
+  if ((home.text.includes('id="products"') && home.text.includes('Ask KEVOS')) || Date.now() > until) break;
   await new Promise((r) => setTimeout(r, 20_000));
 }
-check('the new homepage is live', home.status === 200 && home.text.includes('class="home-libs"'));
+check('the new homepage is live', home.status === 200 && home.text.includes('id="products"'));
 
 // 2. Pages and markup.
-for (const p of ['/', '/tools/', '/reados/', '/about/', '/services/', '/contact/', '/privacy/', '/brand/kevos-favicon-k-orange.svg', '/discovery-index.json']) {
+for (const p of ['/', '/products/', '/solutions/', '/resources/', '/tools/', '/reados/', '/library/', '/about/', '/services/', '/contact/', '/privacy/', '/terms/', '/brand/kevos-favicon-k-orange.svg', '/discovery-index.json']) {
   check(`${p} answers 200`, (await fetch(BASE + p)).status === 200);
 }
 const h = home.text;
-check('hero asks the question', /What would you like to <em[^>]*>learn<\/em> or achieve\?/.test(h));
-check('Build My Learning Path button and seven example prompts', h.includes('Build My Learning Path') && (h.match(/data-discover-example/g) ?? []).length === 7);
+check('hero: Make difficult work simple.', />Make difficult work simple\.</.test(h));
+check('Ask KEVOS box and four example prompts', h.includes('What would you like to accomplish today?') && />Ask KEVOS</.test(h) && (h.match(/data-discover-example/g) ?? []).length === 4);
 check('Explore Tools and Explore Library buttons', />Explore Tools</.test(h) && />Explore Library</.test(h));
-check('homepage labels say Tools and Library, not WORKOS / READOS', /<span[^>]*>01<\/span> Tools</.test(h) && /<span[^>]*>02<\/span> Library</.test(h) && !/>\s*(WORKOS|READOS)\s*</.test(h));
-check('WORKOS and READOS side by side block', /class="home-lib"[^>]*id="workos"/.test(h) && /class="home-lib"[^>]*id="reados"/.test(h));
+check('homepage says Tools and Library, not WORKOS / READOS', !/>\s*(WORKOS|READOS)\s*</.test(h));
+check('product cards: Work and CADOS link out, Desk is coming soon', h.includes('href="https://work.kevos.com/"') && h.includes('href="https://cados.kevos.com/"') && /Coming soon/.test(h));
 check('orange KEVOS wordmark and K favicon', h.includes('kevos-wordmark-orange') && h.includes('kevos-favicon-k-orange'));
-check('navigation: Tools, Library, About, Contact', [/href="\/tools\/"[^>]*>Tools<\/a>/, /href="\/reados\/"[^>]*>Library<\/a>/, /href="\/about\/"[^>]*>About<\/a>/, /href="\/contact\/"[^>]*>Contact<\/a>/].every((r) => r.test(h)));
+check('navigation: Products, Solutions, Tools, Resources, About, Get Started', ['Products', 'Solutions', 'Resources', 'About'].every((l) => new RegExp(`<summary[^>]*>\\s*${l}`).test(h)) && /href="\/tools\/"[^>]*>Tools<\/a>/.test(h) && /href="\/#ask"[^>]*>Get Started<\/a>/.test(h));
 check('Library page title', (await get('/reados/')).text.includes('<title>Engineering, Manufacturing &amp; Business Knowledge Library | KEVOS</title>'));
-check('dark theme by default', h.includes('data-theme="dark"'));
+check('light theme by default', h.includes('data-theme="light"'));
 check('no floating assistant on the homepage', !h.includes('assistant__launcher'));
 const tools = (await get('/tools/')).text;
 check('no floating assistant on /tools/', !tools.includes('assistant__launcher'));

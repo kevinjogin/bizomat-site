@@ -7,19 +7,19 @@ import ChatWidget from '../components/ChatWidget.astro';
 ---
 
 <!doctype html>
-<html lang="en-AU" data-theme="dark">
+<html lang="en-AU" data-theme="light">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script is:inline>
       (function () {
-        // Same rule as the main site: dark unless light was chosen in this browser session.
-        var d = document.documentElement, t = 'dark';
-        try { if (sessionStorage.getItem('kevos-theme') === 'light') t = 'light'; } catch (e) {}
+        // Same rule as the main site: light unless dark was chosen in this browser session.
+        var d = document.documentElement, t = 'light';
+        try { if (sessionStorage.getItem('kevos-theme') === 'dark') t = 'dark'; } catch (e) {}
         d.dataset.theme = t;
       })();
     </script>
-    <meta name="color-scheme" content="dark light" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

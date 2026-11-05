@@ -2,21 +2,24 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
+// Owner decision, 5 Nov 2026 (KEVOS 2.0 redesign): pages open in the light (warm white) theme. Dark is the visitor's
+// choice for the current browser session only. Replaces the 8 Oct 2026 dark-by-default rule.
 const read = (path: string) => readFileSync(path, 'utf8');
 
-test('pages open in the dark theme, even before JavaScript runs', () => {
+test('pages open in the light theme, even before JavaScript runs', () => {
   for (const file of ['src/layouts/BaseLayout.astro', 'src/pages/chat.astro']) {
     const source = read(file);
-    assert.match(source, /<html lang="en-AU" data-theme="dark">/, `${file} should render data-theme="dark"`);
+    assert.match(source, /<html lang="en-AU" data-theme="light">/, `${file} should render data-theme="light"`);
     assert.doesNotMatch(source, /prefers-color-scheme: dark\)'\)\.matches/, `${file} must not follow the OS preference`);
     assert.doesNotMatch(source, /gocore-theme/, `${file} must not use the retired theme key`);
   }
+  assert.doesNotMatch(read('src/styles/global.css'), /prefers-color-scheme: dark/, 'the stylesheet does not switch to dark on its own');
 });
 
-test('light theme is remembered only for the current browser session', () => {
+test('dark theme is remembered only for the current browser session', () => {
   const layout = read('src/layouts/BaseLayout.astro');
   const toggle = read('src/components/ThemeToggle.astro');
-  assert.match(layout, /sessionStorage\.getItem\('kevos-theme'\) === 'light'/);
+  assert.match(layout, /sessionStorage\.getItem\('kevos-theme'\) === 'dark'/);
   assert.match(toggle, /sessionStorage\.setItem\('kevos-theme', next\)/);
   assert.doesNotMatch(toggle, /localStorage\.setItem/);
   assert.doesNotMatch(layout, /localStorage\.getItem\('kevos-theme'\)/);
