@@ -64,6 +64,10 @@ when `KEVOS_SIGN_PFX` and `KEVOS_SIGN_PASSWORD` are set (SHA-256, RFC 3161 times
 
 ## Signing
 
+See [KEVOS-SIGNING.md](KEVOS-SIGNING.md) for the options (SignPath Foundation, Azure Artifact Signing, a commercial
+certificate with cloud signing). Certificates are no longer issued as exportable `.pfx` files, so the `KEVOS_SIGN_PFX`
+path in `build.ps1` is for test certificates; production signing is wired to the chosen service.
+
 Use an OV or EV code-signing certificate. Every release must be signed: an unsigned add-in cannot be checked by the
 Companion's publisher test, and Companions refuse to update to an unsigned MSI. Keep the certificate's thumbprint
 stable across releases (the update check compares publishers); when it changes, ship one release signed by the old

@@ -5,9 +5,9 @@ Date: 5 Nov 2026. Branch `claude/sharp-bardeen-m2yi9w`.
 ## Verdict
 
 **Not production-ready yet.** Everything from the AI app to the add-in's command dispatcher is built and tested,
-including the real C# Companion and add-in link against the real server. Three things were not available in the
-build environment and are still untested: a real SOLIDWORKS, Windows itself (the tray app, the pipe's Windows
-security, the CNG key, Authenticode checks), and the MSI (WiX builds only on Windows; CI builds it). Run the checklist
+including the real C# Companion and add-in link against the real server. The MSI builds on Windows in CI (unsigned).
+Still untested: a real SOLIDWORKS, and the installed product on Windows (installing the MSI, the tray app, the pipe's
+Windows security, the CNG key, Authenticode checks). Run the checklist
 in section 4 on a Windows computer with SOLIDWORKS 2022 before relying on it.
 
 ## 1. Environment
@@ -25,14 +25,14 @@ passed, 9 npm passed.
 | `pytest -m slow` | 2 passed, including `tests/test_bridge_e2e.py` (C# Companion and add-in link against the real server) |
 | `bash solidworks/build.sh test` | add-in, Companion and legacy installer build for .NET Framework 4.8; 29 .NET tests passed (17 before) |
 | `npm test` | 9 passed |
-| `wix build installer/KEVOS-Bridge.wxs` (Linux, unsupported) | the WiX compiler accepted the elements, attributes, registry, components, custom action and extensions; it stops on directory names because of Linux path handling. The MSI itself is built by CI on Windows. |
+| MSI on Windows (GitHub Actions `windows-latest`, `installer` job, run 41967247367 in jogkev-creator/CADOS) | built: `KEVOS-Bridge-0.11.0-x64-UNSIGNED.msi`, 1,171,456 bytes, SHA-256 `a1dd6752d93e009237d7cd77732d7c9d1a79a4dc19eaba2afa75f80a982c1f9d`; the 29 .NET tests also passed on Windows (real Windows named pipes) |
 | Home page and pairing page in Chromium | 1280 x 900 and 390 x 844: no horizontal scroll; computers listed; pairing form usable |
 
 ## 3. The requested scenarios
 
 | # | Scenario | Status | How |
 |---|---|---|---|
-| 1 | Install on a fresh Windows computer | Not tested | Needs Windows and the MSI (CI artifact `KEVOS-Bridge-MSI`). |
+| 1 | Install on a fresh Windows computer | Not tested | The MSI is built (CI artifact `KEVOS-Bridge-MSI`); installing it needs a Windows computer. |
 | 2 | Sign in to Windows | Not tested | |
 | 3 | Companion starts automatically | Not tested on Windows | HKLM Run from the MSI, HKCU Run for unpackaged copies; per-user opt-out logic is in place. |
 | 4 | Open SOLIDWORKS | Not tested | |

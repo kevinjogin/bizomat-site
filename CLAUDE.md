@@ -12,7 +12,8 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 KEVOS Bridge (0.11.0) builds on it: the server is the KEVOS gateway; each Windows computer runs the KEVOS Companion
 (tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the gateway and hands
 commands to the add-in over a local named pipe; an MSI installs both. Docs: `docs/BRIDGE-PROTOCOL.md` (the contract),
-`docs/KEVOS-*.md` (install, Cloudflare, security, versions, troubleshooting, build, test report, release notes).
+`docs/KEVOS-*.md` (install, Cloudflare, security, versions, troubleshooting, build, signing, test report, release
+notes). The MSI builds unsigned on Windows in CI (`installer` job); signing waits for a signing service.
 
 ## Rules
 
