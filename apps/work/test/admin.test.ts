@@ -126,6 +126,66 @@ describe('account recovery by the founder', () => {
   });
 });
 
+describe('forced new password and security reset', () => {
+  const TEMP = 'temporary-pass-77!';
+  const MINE = 'my-own-choice-88!';
+
+  it('a temporary password from the founder must be replaced before anything else works', async () => {
+    const f = await makeFounder();
+    const target = await signup('Exposed');
+    expect((await f.req('POST', `/api/admin/users/${target.userId}/password`, { password: TEMP })).status).toBe(200);
+    const s = await login(target.email, TEMP);
+    const me = await (await s.req('GET', '/api/auth/me')).json<any>();
+    expect(me.user.passwordResetRequired).toBe(true);
+    const blocked = await s.req('GET', '/api/workspaces');
+    expect(blocked.status).toBe(403);
+    expect((await blocked.json<any>()).details.code).toBe('PASSWORD_RESET_REQUIRED');
+    const live = await s.req('GET', '/api/live/boards/any-board', undefined, { Upgrade: 'websocket' });
+    expect(live.status, 'no live board updates either').toBe(403);
+    expect((await s.req('POST', '/api/me/password', { currentPassword: TEMP, newPassword: TEMP })).status, 'must really change').toBe(400);
+    expect((await s.req('POST', '/api/me/password', { currentPassword: 'wrong-pass-99!', newPassword: MINE })).status).toBe(403);
+    expect((await s.req('POST', '/api/me/password', { currentPassword: TEMP, newPassword: MINE })).status).toBe(200);
+    expect((await s.req('GET', '/api/workspaces')).status).toBe(200);
+    const again = await login(target.email, MINE);
+    expect((await (await again.req('GET', '/api/auth/me')).json<any>()).user.passwordResetRequired).toBe(false);
+  });
+
+  it('a flagged account can still sign out, and its personal API tokens are refused too', async () => {
+    const f = await makeFounder();
+    const target = await signup('Token Holder');
+    const tok = await (await target.req('POST', '/api/me/tokens', { name: 'script' })).json<any>();
+    expect((await f.req('POST', `/api/admin/users/${target.userId}/password`, { password: TEMP })).status).toBe(200);
+    const viaToken = await raw('GET', '/api/workspaces', { headers: { Authorization: `Bearer ${tok.token}` } });
+    expect(viaToken.status).toBe(403);
+    const s = await login(target.email, TEMP);
+    expect((await s.req('POST', '/api/auth/logout')).status).toBe(200);
+  });
+
+  it('only the founder can end every session; the founder keeps their own', async () => {
+    const f = await makeFounder();
+    const a = await signup('Member A');
+    const b = await signup('Member B');
+    const admin = await signup('Other Admin');
+    expect((await f.req('POST', '/api/admin/admins', { email: admin.email })).status).toBe(201);
+    expect((await admin.req('POST', '/api/admin/security-reset', { requirePasswordReset: true })).status).toBe(403);
+    expect((await a.req('POST', '/api/admin/security-reset', {})).status).toBe(404);
+    const r = await f.req('POST', '/api/admin/security-reset', { requirePasswordReset: true });
+    expect(r.status).toBe(200);
+    const out = await r.json<any>();
+    expect(out.sessionsEnded).toBeGreaterThanOrEqual(3);
+    expect(out.accountsToChoosePassword).toBeGreaterThanOrEqual(3);
+    expect((await a.req('GET', '/api/auth/me')).status).toBe(401);
+    expect((await b.req('GET', '/api/auth/me')).status).toBe(401);
+    expect((await f.req('GET', '/api/auth/me')).status, 'the founder stays signed in').toBe(200);
+    const founderMe = await (await f.req('GET', '/api/auth/me')).json<any>();
+    expect(founderMe.user.passwordResetRequired).toBe(false);
+    const again = await login(a.email);
+    expect((await again.req('GET', '/api/workspaces')).status).toBe(403);
+    const row = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'admin.security_reset' AND actor_id = ?").bind(f.userId).first<{ n: number }>();
+    expect(row!.n).toBe(1);
+  });
+});
+
 describe('tracking', () => {
   it('records registration and login', async () => {
     const email = uniqueEmail('track');

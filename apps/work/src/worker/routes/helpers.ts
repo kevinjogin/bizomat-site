@@ -20,6 +20,7 @@ export interface UserRow {
   disabled_at: number | null;
   created_at: number;
   updated_at: number;
+  password_reset_required?: number;
 }
 
 export function userDTO(u: UserRow): UserDTO {
@@ -32,6 +33,7 @@ export function userDTO(u: UserRow): UserDTO {
     locale: u.locale,
     theme: u.theme,
     preferences: parseJson(u.preferences_json, {}),
+    passwordResetRequired: !!u.password_reset_required,
   };
 }
 

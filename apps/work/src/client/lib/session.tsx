@@ -38,6 +38,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     staleTime: 60_000,
     retry: 1,
   });
+  const refetch = q.refetch;
+  useEffect(() => {
+    const onReset = () => void refetch();
+    window.addEventListener('workos:password-reset-required', onReset);
+    return () => window.removeEventListener('workos:password-reset-required', onReset);
+  }, [refetch]);
   return <SessionCtx.Provider value={{ session: q.data ?? null, loading: q.isLoading, error: q.error, refresh: q.refetch }}>{children}</SessionCtx.Provider>;
 }
 

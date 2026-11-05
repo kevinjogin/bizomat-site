@@ -30,7 +30,7 @@ function PasswordReset({ userId, name }: { userId: string; name: string }) {
     setState({ kind: 'busy' });
     try {
       await api(`/admin/users/${userId}/password`, { body: { password } });
-      setState({ kind: 'done', message: `Done. ${name} is signed out everywhere and can sign in with the new password. Give it to them by a channel you trust, and ask them to choose their own in Settings.` });
+      setState({ kind: 'done', message: `Done. ${name} is signed out everywhere. Give them this temporary password by a channel you trust: when they sign in with it, they must choose their own before anything else.` });
     } catch (err) {
       setState({ kind: 'error', message: err instanceof ApiError ? err.message : 'The password could not be set.' });
     }
@@ -38,7 +38,7 @@ function PasswordReset({ userId, name }: { userId: string; name: string }) {
   return (
     <Card title="Account recovery">
       <form className="ac-stack" onSubmit={submit}>
-        <p className="muted small">Set a new password for {name} if they have lost theirs. Confirm who is asking before you do: this signs them out of every device.</p>
+        <p className="muted small">Set a temporary password for {name} if they have lost theirs, or if their password may have been exposed. Confirm who is asking before you do: this signs them out of every device, their old password stops working at once, and they must choose their own when they next sign in.</p>
         <div className="row" style={{ flexWrap: 'wrap', gap: 8 }}>
           <input className="input grow" type={show ? 'text' : 'password'} autoComplete="new-password" aria-label="New password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={10} maxLength={256} required />
           <button type="button" className="btn sm" onClick={() => setShow((v) => !v)}>{show ? 'Hide' : 'Show'}</button>

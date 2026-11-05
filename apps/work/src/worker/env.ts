@@ -21,6 +21,8 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
+  /** Set by the founder's password reset or a security reset: only changing the password is allowed until then. */
+  passwordResetRequired?: boolean;
 }
 
 export interface SessionInfo {

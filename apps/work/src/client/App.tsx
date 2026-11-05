@@ -5,6 +5,7 @@ import { lastWorkspace, useSession } from './lib/session';
 import { Loading, ErrorBox } from './components/ui/ui';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage, SignupPage, InvitePage } from './pages/Auth';
+import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
 import { BRAND } from './lib/brand';
@@ -37,6 +38,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
   if (loading) return <Loading label={`Loading ${BRAND.product}…`} />;
   if (error && !session) return <div className="page"><ErrorBox error={error} retry={() => refresh()} /></div>;
   if (!session) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
+  if (session.user.passwordResetRequired) return <ChoosePasswordPage />;
   return <>{children}</>;
 }
 

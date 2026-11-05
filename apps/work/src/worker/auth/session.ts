@@ -80,14 +80,14 @@ export async function resolveAuth(c: Context<AppEnv>): Promise<Resolved | null> 
     if (!raw.startsWith('wos_')) return null;
     const row = await db
       .prepare(
-        `SELECT t.id AS token_id, u.id, u.email, u.name FROM api_tokens t JOIN users u ON u.id = t.user_id
+        `SELECT t.id AS token_id, u.id, u.email, u.name, u.password_reset_required FROM api_tokens t JOIN users u ON u.id = t.user_id
          WHERE t.token_hash = ? AND t.revoked_at IS NULL AND (t.expires_at IS NULL OR t.expires_at > ?) AND u.disabled_at IS NULL`,
       )
       .bind(await sha256Hex(raw), t)
-      .first<{ token_id: string; id: string; email: string; name: string }>();
+      .first<{ token_id: string; id: string; email: string; name: string; password_reset_required: number }>();
     if (!row) return null;
     c.executionCtx?.waitUntil?.(db.prepare('UPDATE api_tokens SET last_used_at = ? WHERE id = ?').bind(t, row.token_id).run());
-    return { user: { id: row.id, email: row.email, name: row.name }, session: null, kind: 'token' };
+    return { user: { id: row.id, email: row.email, name: row.name, passwordResetRequired: !!row.password_reset_required }, session: null, kind: 'token' };
   }
 
   // 2. Session cookie.
@@ -95,12 +95,12 @@ export async function resolveAuth(c: Context<AppEnv>): Promise<Resolved | null> 
   if (!token || token.length > 100) return null;
   const row = await db
     .prepare(
-      `SELECT s.id AS sid, s.csrf_token, s.provider, s.expires_at, s.last_seen_at, u.id, u.email, u.name
+      `SELECT s.id AS sid, s.csrf_token, s.provider, s.expires_at, s.last_seen_at, u.id, u.email, u.name, u.password_reset_required
        FROM sessions s JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = ? AND s.revoked_at IS NULL AND s.expires_at > ? AND u.disabled_at IS NULL`,
     )
     .bind(await sha256Hex(token), t)
-    .first<{ sid: string; csrf_token: string; provider: string; expires_at: number; last_seen_at: number; id: string; email: string; name: string }>();
+    .first<{ sid: string; csrf_token: string; provider: string; expires_at: number; last_seen_at: number; id: string; email: string; name: string; password_reset_required: number }>();
   if (!row) return null;
   if (t - row.last_seen_at > TOUCH_INTERVAL_MS) {
     // Any authenticated use counts toward daily activity (coarse, every 5 min).
@@ -116,10 +116,20 @@ export async function resolveAuth(c: Context<AppEnv>): Promise<Resolved | null> 
     }
   }
   return {
-    user: { id: row.id, email: row.email, name: row.name },
+    user: { id: row.id, email: row.email, name: row.name, passwordResetRequired: !!row.password_reset_required },
     session: { id: row.sid, csrfToken: row.csrf_token, provider: row.provider, expiresAt: row.expires_at },
     kind: 'session',
   };
+}
+
+/** What an account that must choose a new password may still do (everything else answers 403). */
+const RESET_ALLOWED = new Set(['POST /api/me/password', 'POST /api/auth/logout']);
+
+/** 403 PASSWORD_RESET_REQUIRED unless the request is one a flagged account may make. */
+export function enforcePasswordReset(c: Context<AppEnv>, user: AuthUser) {
+  if (user.passwordResetRequired && !RESET_ALLOWED.has(`${c.req.method} ${new URL(c.req.url).pathname}`)) {
+    throw new HttpError(403, 'Choose a new password to continue', { code: 'PASSWORD_RESET_REQUIRED' });
+  }
 }
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
@@ -150,6 +160,7 @@ export const requireAuth: MiddlewareHandler<AppEnv> = async (c, next) => {
       throw new HttpError(403, 'Invalid or missing CSRF token');
     }
   }
+  enforcePasswordReset(c, auth.user);
   c.set('user', auth.user);
   c.set('session', auth.session);
   c.set('authKind', auth.kind);

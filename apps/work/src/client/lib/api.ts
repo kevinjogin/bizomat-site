@@ -46,6 +46,9 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   }
   if (!res.ok && !opts.allowStatuses?.includes(res.status)) {
     if (res.status === 401 && !path.includes('/auth/')) window.dispatchEvent(new CustomEvent('workos:unauthorized'));
+    // The account must choose a new password (founder reset or security reset): the session reloads and the app shows
+    // the Choose a new password page.
+    if (res.status === 403 && data?.details?.code === 'PASSWORD_RESET_REQUIRED') window.dispatchEvent(new CustomEvent('workos:password-reset-required'));
     throw new ApiError(res.status, (data && data.error) || `Request failed (${res.status})`, data?.details, data);
   }
   return data as T;

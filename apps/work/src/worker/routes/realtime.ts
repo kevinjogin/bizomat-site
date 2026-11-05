@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError } from '../lib/util';
-import { checkOrigin, resolveAuth } from '../auth/session';
+import { checkOrigin, enforcePasswordReset, resolveAuth } from '../auth/session';
 import { loadBoardAuth } from '../services/permissions';
 
 export const realtimeRoutes = new Hono<AppEnv>();
@@ -12,6 +12,7 @@ realtimeRoutes.get('/boards/:id', async (c) => {
   checkOrigin(c); // blocks cross-site WebSocket hijacking
   const auth = await resolveAuth(c);
   if (!auth) throw new HttpError(401, 'Authentication required');
+  enforcePasswordReset(c, auth.user); // no live board data until a required new password is chosen
   const board = await loadBoardAuth(c.env.DB, c.req.param('id'), auth.user.id);
   if (!board) throw new HttpError(404, 'Board not found');
   const stub = c.env.BOARD_ROOMS.get(c.env.BOARD_ROOMS.idFromName(board.board.id));

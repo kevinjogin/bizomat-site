@@ -22,7 +22,7 @@ function safeNext(next: string | null) {
   return next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
 }
 
-function AuthLayout({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
+export function AuthLayout({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   const config = useConfig();
   useEffect(() => {
     document.title = pageTitle(title);

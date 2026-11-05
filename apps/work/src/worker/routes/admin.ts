@@ -734,11 +734,33 @@ adminRoutes.post('/users/:id/password', async (c) => {
   if (problem) throw badRequest(problem);
   const t = now();
   await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE users SET password_hash = ?, failed_logins = 0, locked_until = NULL, updated_at = ? WHERE id = ?').bind(await hashPassword(input.password), t, target.id),
+    // A password someone else chose is temporary: the person must choose their own when they next sign in.
+    c.env.DB.prepare('UPDATE users SET password_hash = ?, password_reset_required = 1, failed_logins = 0, locked_until = NULL, updated_at = ? WHERE id = ?').bind(await hashPassword(input.password), t, target.id),
     c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'password_reset' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, target.id),
     auditStmt(c.env.DB, { actorId: actor.id, action: 'admin.password_reset', targetType: 'user', targetId: target.id, ip: clientIp(c) }),
   ]);
   return c.json({ ok: true });
+});
+
+// Security reset (founder only): end every session but the founder's own, everywhere, at once; optionally require
+// everyone who signs in with a password to choose a new one first. For a suspected exposure of sessions or password
+// hashes. People keep their accounts and data; they sign in again (with their current password, then a new one).
+adminRoutes.post('/security-reset', async (c) => {
+  if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can end every session');
+  const actor = c.get('user');
+  await rateLimit(c.env.DB, `admin-security-reset:${actor.id}`, 5, 60 * 60_000);
+  const input = await body(c, z.object({ requirePasswordReset: z.boolean().default(false) }));
+  const keep = c.get('session')?.id ?? '';
+  const t = now();
+  const ended = await c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'security_reset' WHERE revoked_at IS NULL AND id != ?2").bind(t, keep).run();
+  let flagged = 0;
+  if (input.requirePasswordReset) {
+    const r = await c.env.DB.prepare('UPDATE users SET password_reset_required = 1, updated_at = ?1 WHERE id != ?2 AND password_hash IS NOT NULL AND disabled_at IS NULL').bind(t, actor.id).run();
+    flagged = r.meta.changes ?? 0;
+  }
+  const sessionsEnded = ended.meta.changes ?? 0;
+  await auditStmt(c.env.DB, { actorId: actor.id, action: 'admin.security_reset', metadata: { sessionsEnded, passwordResetRequired: input.requirePasswordReset, accounts: flagged }, ip: clientIp(c) }).run();
+  return c.json({ sessionsEnded, accountsToChoosePassword: flagged });
 });
 
 // ----------------------------------------------------------------- exports

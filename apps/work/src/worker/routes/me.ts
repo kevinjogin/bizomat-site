@@ -55,9 +55,11 @@ meRoutes.post('/me/password', async (c) => {
   if (row?.password_hash && !(await verifyPassword(input.currentPassword ?? '', row.password_hash))) throw new HttpError(403, 'Current password is incorrect');
   const problem = passwordProblems(input.newPassword, row?.email);
   if (problem) throw badRequest(problem);
+  // A password someone else chose (founder reset) or one that may have been exposed must really change.
+  if (user.passwordResetRequired && input.newPassword === input.currentPassword) throw badRequest('Choose a password different from the one you signed in with');
   const session = c.get('session');
   await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE users SET password_hash = ?, updated_at = ? WHERE id = ?').bind(await hashPassword(input.newPassword), now(), user.id),
+    c.env.DB.prepare('UPDATE users SET password_hash = ?, password_reset_required = 0, updated_at = ? WHERE id = ?').bind(await hashPassword(input.newPassword), now(), user.id),
     // Revoke every other session after a password change.
     c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'password_change' WHERE user_id = ?2 AND id != ?3 AND revoked_at IS NULL").bind(now(), user.id, session?.id ?? ''),
   ]);

@@ -13,6 +13,8 @@ export interface UserDTO {
   locale: string;
   theme: 'light' | 'dark' | 'system';
   preferences: Record<string, unknown>;
+  /** The account must choose a new password before anything else (founder reset or security reset). */
+  passwordResetRequired?: boolean;
 }
 
 export interface MemberDTO {
