@@ -38,7 +38,9 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - CI: `.github/workflows/tests.yml` (pytest in two jobs: main and `-m slow`; npm test) on pull requests and
   non-main pushes; `deploy.yml` deploys main to Fly after the same tests, skipping pushes that only touch notes,
   docs or tests, and fails if the live /healthz does not show the new version within 3 minutes; `solidworks.yml`
-  builds and tests the add-in and keeps the zip as an artifact. Python pins live in requirements.txt (image) and
+  builds and tests the add-in and keeps the zip as an artifact. `domain.yml` (run by hand, `.github/scripts/kevos-domain.sh`) gives the Fly app
+  its own address on a Cloudflare domain: DNS record, Fly certificate and validation record, OPENSKETCH_PUBLIC_URL
+  (secrets CLOUDFLARE_API_TOKEN, FLY_API_TOKEN). Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
 ## Current state (v0.8 server, KEVOS Bridge 0.11.0)

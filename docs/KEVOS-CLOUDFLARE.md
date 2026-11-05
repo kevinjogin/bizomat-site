@@ -20,6 +20,15 @@ Use one of these.
 
 ### A. Gateway hosted on Fly (or any host) with a domain on Cloudflare (recommended)
 
+**One click:** the workflow `.github/workflows/domain.yml` does steps 1, 2 and 3 below. Add two repository secrets
+(GitHub > the repository > Settings > Secrets and variables > Actions): `CLOUDFLARE_API_TOKEN` (Cloudflare > My
+Profile > API Tokens > Create Token > template "Edit zone DNS", zone resources: only your domain) and
+`FLY_API_TOKEN` (Fly dashboard > app `cados` > Tokens, or `fly tokens create deploy -a cados`). Then Actions > Domain >
+Run workflow, host name `bridge.<your-domain>`. It adds the DNS record (DNS only), asks Fly for the certificate, adds
+the validation record Fly asks for, sets the app's `OPENSKETCH_PUBLIC_URL`, and waits until `https://bridge.<your-domain>`
+answers. It never replaces another record unless you tick replace_existing. Afterwards set the repository variable
+`PUBLIC_URL` to the same address, so later deploys keep it. By hand:
+
 1. DNS: a CNAME `bridge.<your-domain>` to the gateway host (for Fly: `cados.fly.dev`, then `fly certs add
    bridge.<your-domain>` and the DNS check record Fly asks for).
 2. Proxy on (orange cloud) or off. With the proxy on:
