@@ -358,6 +358,8 @@ namespace Kevos.Companion
         readonly Label info = new Label();
         readonly Button go = new Button { Text = "Pair" };
         readonly LinkLabel open = new LinkLabel { Text = "Open CADOS in the browser", Visible = false };
+        readonly TextBox email = new TextBox();
+        readonly TextBox password = new TextBox { UseSystemPasswordChar = true };
         CancellationTokenSource cts;
         string url;
 
@@ -369,26 +371,31 @@ namespace Kevos.Companion
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(480, 330);
+            ClientSize = new Size(480, 450);
             BackColor = Color.White;
             var title = new Label { Text = "Add this computer to your CADOS account", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
             var l1 = new Label { Text = "CADOS address", AutoSize = true, Location = new Point(16, 54) };
             gateway.SetBounds(16, 74, 448, 26);
             var l2 = new Label { Text = "Name for this computer", AutoSize = true, Location = new Point(16, 108) };
-            name.SetBounds(16, 128, 300, 26);
-            go.SetBounds(324, 126, 140, 30);
-            code.SetBounds(16, 172, 448, 50);
+            name.SetBounds(16, 128, 448, 26);
+            var l3 = new Label { Text = "Your CADOS email (optional: or sign in in the browser)", AutoSize = true, Location = new Point(16, 162) };
+            email.SetBounds(16, 182, 448, 26);
+            var l4 = new Label { Text = "Your CADOS password", AutoSize = true, Location = new Point(16, 214) };
+            password.SetBounds(16, 234, 300, 26);
+            go.SetBounds(324, 232, 140, 30);
+            code.SetBounds(16, 274, 448, 50);
             code.Font = new Font("Consolas", 26f, FontStyle.Bold);
             code.TextAlign = ContentAlignment.MiddleCenter;
-            info.SetBounds(16, 226, 448, 60);
-            open.SetBounds(16, 292, 300, 22);
+            info.SetBounds(16, 328, 448, 76);
+            open.SetBounds(16, 410, 300, 22);
             open.LinkClicked += (s, e) => Browse();
-            Controls.AddRange(new Control[] { title, l1, gateway, l2, name, go, code, info, open });
+            AcceptButton = go;
+            Controls.AddRange(new Control[] { title, l1, gateway, l2, name, l3, email, l4, password, go, code, info, open });
             var cfg = app.Engine.Config;
             gateway.Text = cfg.GatewayUrl ?? Config.GatewayUrl ?? Config.DefaultGateway;
             name.Text = cfg.DeviceName ?? Environment.MachineName;
             info.Text = cfg.Paired ? $"This computer is {cfg.DeviceName} on {cfg.Account}. Pairing again gives it a new identity; the old one stops working." :
-                        "You will sign in to CADOS in your browser and confirm the code shown here. No password is stored on this computer.";
+                        "Enter the email and password of your CADOS account, or leave them empty to sign in in your browser. No password is kept on this computer.";
             go.Click += (s, e) => Start();
             FormClosed += (s, e) => cts?.Cancel();
         }
@@ -409,12 +416,16 @@ namespace Kevos.Companion
             var g = gateway.Text.Trim().TrimEnd('/');
             if (!g.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !CloudLink.IsLoopback(g))
             {
-                info.Text = "The address must start with https:// (for example https://bridge.example.com).";
+                info.Text = "The address must start with https:// (for example https://cados.kevos.com).";
                 return;
             }
             go.Enabled = false;
             info.Text = "Contacting " + g + "...";
             var n = name.Text.Trim();
+            var em = email.Text.Trim();
+            var pw = password.Text;
+            password.Text = "";   // sent once, kept nowhere
+            var withPassword = em.Length > 0 && pw.Length > 0;
             cts = new CancellationTokenSource();
             var token = cts.Token;
             ThreadPool.QueueUserWorkItem(_ =>
@@ -425,6 +436,18 @@ namespace Kevos.Companion
                     var t = app.Engine.BeginPairing(g, n);
                     Config.GatewayUrl = g;
                     url = t.Url;
+                    if (withPassword)
+                    {
+                        app.Engine.PairWithPassword(t, em, pw);
+                        pw = null;
+                        BeginInvoke((MethodInvoker)(() =>
+                        {
+                            code.Text = "Done";
+                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CADOS connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
+                            open.Visible = false;
+                        }));
+                        return;
+                    }
                     BeginInvoke((MethodInvoker)(() =>
                     {
                         code.Text = t.UserCode;

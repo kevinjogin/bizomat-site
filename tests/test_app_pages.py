@@ -113,3 +113,25 @@ def test_the_owner_adds_people_with_a_password_and_resets_it():
     assert owner.post(f"/api/account/users/{me['id']}/password", json={"password": "anything-123"}).status_code == 400
     assert owner.delete(f"/api/account/users/{pat_id}").status_code == 200
     assert {p["email"] for p in owner.get("/api/admin/people").json()["people"]} == {"owner@example.com"}
+
+
+def test_a_computer_pairs_with_the_persons_own_password(base, companions):
+    """The Companion's pairing window can take the CADOS email and password instead of the browser step: the same
+    password the person signs in with (for example the one the owner set on the Admin page)."""
+    from opensketch import accounts
+    from opensketch import devicebridge as db
+    accounts.create_owner("owner@example.com", "Owner", "owner-pass-1")
+    pat = accounts.create_member("pat@example.com", "Pat", "given-pass-1")
+    pc = FakeCompanion(base, Canned(), name="PAT-PC", approve=False)
+    companions.append(pc)
+    bad = pc.post("/v2/devices/pair/password", {"email": "pat@example.com", "password": "wrong-pass"})
+    assert bad.status_code == 401 and bad.json()["error"]["code"] == "INVALID_CREDENTIALS"
+    unsigned = httpx.post(base + "/v2/devices/pair/password", json={"email": "pat@example.com", "password": "given-pass-1"})
+    assert unsigned.status_code == 401  # only the computer that started this pairing can finish it
+    ok = pc.post("/v2/devices/pair/password", {"email": "Pat@Example.com", "password": "given-pass-1", "name": "PAT-DESK"})
+    assert ok.status_code == 200, ok.text
+    out = ok.json()
+    assert out["status"] == "approved" and out["device_name"] == "PAT-DESK" and out["account"] == "Pat" and out["gateway_jwk"]
+    assert [d["name"] for d in db.list_devices({"id": pat["id"]})] == ["PAT-DESK"]
+    again = pc.post("/v2/devices/pair/password", {"email": "pat@example.com", "password": "given-pass-1"})
+    assert again.status_code == 410  # a pairing is decided once

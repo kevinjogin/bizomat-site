@@ -1,5 +1,12 @@
 # CADOS for SOLIDWORKS release notes (KEVOS Bridge up to 0.11)
 
+## 0.12.2 (CADOS for SOLIDWORKS; test build)
+
+- Pair with your CADOS email and password: the pairing window takes the same email and password you sign in to
+  CADOS with, and adds the computer at once (the password is sent once and kept nowhere). Leaving them empty keeps the
+  browser step.
+- The Companion speaks of your CADOS account ("CADOS address", "Pause CADOS").
+
 ## 0.12.1 (CADOS for SOLIDWORKS; test build)
 
 - The task pane, toolbar icons and links use the KEVOS colours of kevos.com (accent #c2410c, ink #1c1b19, paper

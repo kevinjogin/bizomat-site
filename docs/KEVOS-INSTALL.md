@@ -34,7 +34,8 @@ msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL=https://cados.kevos.com
 Right after an interactive install the KEVOS Companion opens its pairing window. (After a silent install it shows a
 notification at the next sign-in; or use Start > KEVOS > Pair this computer with KEVOS.)
 
-1. Check the server address and the computer's name, then click **Pair**.
+1. Check the server address and the computer's name. Enter your CADOS email and password (the same ones you sign in
+   to CADOS with) and click **Pair**: the computer is added at once. Or leave them empty and continue below.
 2. Your browser opens CADOS. Sign in with the email and password your administrator gave you.
 3. Check that the site shows the same code as the Companion (for example `KQ7M-4RTD`), then click
    **Add this computer**.

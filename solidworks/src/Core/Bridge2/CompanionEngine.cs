@@ -386,19 +386,7 @@ namespace OpenSketch.Sw.Bridge
                     var st = J.Str(r.Json, "status");
                     if (st == "approved")
                     {
-                        var jwk = J.Obj(r.Json, "gateway_jwk");
-                        Jwk.ToVerifier(jwk).Dispose(); // valid key
-                        Config.DeviceId = J.Str(r.Json, "device_id");
-                        Config.DeviceName = J.Str(r.Json, "device_name");
-                        Config.Account = J.Str(r.Json, "account");
-                        Config.GatewayJwk = jwk;
-                        Config.PairedAt = Times.Now();
-                        Config.Revoked = false;
-                        Config.Save(cfgPath);
-                        log("paired as " + Config.DeviceName + " (" + Config.DeviceId + ")");
-                        statusDirty = true;
-                        kick.Set();
-                        Fire();
+                        Accept(r.Json);
                         return true;
                     }
                     if (st != "pending") throw new IOException("Pairing " + (st ?? "failed") + ". Start again.");
@@ -406,6 +394,36 @@ namespace OpenSketch.Sw.Bridge
                 }
             }
             return false;
+        }
+
+        /// <summary>Pairs with the person's CADOS email and password instead of the browser (POST /v2/devices/pair/password,
+        /// signed with the pairing key). The password is sent once over HTTPS and kept nowhere, not even in the log.</summary>
+        public void PairWithPassword(PairingTicket t, string email, string password)
+        {
+            using (var c = new CloudLink(Config.GatewayUrl, key, t.PairId, log, o.HttpHandler?.Invoke()))
+            {
+                var r = c.PostJson("/v2/devices/pair/password", J.O("email", email ?? "", "password", password ?? ""), 30);
+                if (r.Status != 200 || J.Str(r.Json, "status") != "approved")
+                    throw new IOException(r.Status == 200 ? "Pairing was not approved. Start again." : r.ErrorMessage);
+                Accept(r.Json);
+            }
+        }
+
+        void Accept(Dictionary<string, object> approved)
+        {
+            var jwk = J.Obj(approved, "gateway_jwk");
+            Jwk.ToVerifier(jwk).Dispose(); // valid key
+            Config.DeviceId = J.Str(approved, "device_id");
+            Config.DeviceName = J.Str(approved, "device_name");
+            Config.Account = J.Str(approved, "account");
+            Config.GatewayJwk = jwk;
+            Config.PairedAt = Times.Now();
+            Config.Revoked = false;
+            Config.Save(cfgPath);
+            log("paired as " + Config.DeviceName + " (" + Config.DeviceId + ")");
+            statusDirty = true;
+            kick.Set();
+            Fire();
         }
 
         /// <summary>Forgets the registration here and tells the server (best effort). The key stays: the caller
