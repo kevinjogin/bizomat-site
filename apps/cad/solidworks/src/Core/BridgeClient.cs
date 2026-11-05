@@ -95,7 +95,7 @@ namespace OpenSketch.Sw.Core
             }
             if (!key.StartsWith("oss_"))
             {
-                Set("The key must start with oss_ (copy it from CADOS: Settings > Add-in key).", false);
+                Set("The key must start with oss_ (copy it from CAD Automation: Settings > Add-in key).", false);
                 return;
             }
             var backoff = 2;
@@ -151,9 +151,9 @@ namespace OpenSketch.Sw.Core
             {
                 var text = r.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                 if (r.StatusCode == HttpStatusCode.Unauthorized)
-                    throw new Fatal(J.Str(SafeParse(text), "detail") ?? "The server did not accept this key. Copy it again from CADOS: Settings > Add-in key.");
+                    throw new Fatal(J.Str(SafeParse(text), "detail") ?? "The server did not accept this key. Copy it again from CAD Automation: Settings > Add-in key.");
                 if (r.StatusCode == HttpStatusCode.NotFound)
-                    throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the CADOS site, e.g. https://cados.kevos.com).");
+                    throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the CAD Automation site, e.g. https://cados.kevos.com).");
                 if (!r.IsSuccessStatusCode) throw new IOException("hello: HTTP " + (int)r.StatusCode + " " + Trim(text));
                 var d = Json.ParseObject(text);
                 session = J.Str(d, "session");
@@ -245,7 +245,7 @@ namespace OpenSketch.Sw.Core
                     using (var r = c.http.SendAsync(req).GetAwaiter().GetResult())
                     {
                         if (!r.IsSuccessStatusCode)
-                            throw new IOException("Could not send " + name + " to CADOS: HTTP " + (int)r.StatusCode + " " +
+                            throw new IOException("Could not send " + name + " to CAD Automation: HTTP " + (int)r.StatusCode + " " +
                                                   Trim(r.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
                     }
                 }

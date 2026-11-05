@@ -1,14 +1,16 @@
-# KEVOS Bridge security
+# CAD Automation security (the device bridge, and the server behind a proxy)
+
+(The bridge was built as KEVOS Bridge; this file keeps its earlier name. The KEVOS names in the protocol are ids.)
 
 ## What is protected, and from whom
 
-KEVOS lets an AI app that the person signed in to change CAD files on that person's own computers. The aim: only
+BIZOMAT CAD Automation lets an AI app that the person signed in to change CAD files on that person's own computers. The aim: only
 the person's own AI app connections can send commands, only to the person's own registered computers, only commands
 the person can see and stop, and nothing on the way (network, other users of the computer, a forged server) can
 change a command or run one twice.
 
 Out of scope: malware already running as the same Windows user (it could drive SOLIDWORKS directly), an
-administrator of the computer, and a compromised KEVOS server (it is the trusted party that signs commands).
+administrator of the computer, and a compromised CAD Automation server (it is the trusted party that signs commands).
 
 ## Trust boundaries and controls
 
@@ -27,15 +29,15 @@ administrator of the computer, and a compromised KEVOS server (it is the trusted
 | Authorize the device that receives it | The gateway routes only to the signed-in person's own, not-removed computers (`devices.owner`), and the command names its one `device_id`; a Companion refuses a command for another computer (`WRONG_DEVICE`). Removing a computer on the home page ends its session at once and refuses its key from then on. |
 | Validate all parameters | Three times: the MCP tool (types, ranges, the feature registry, the sketch solver, drawing actions) before anything is sent; the gateway (known op, at most 1 MiB, no credentials); the Companion and add-in (signature, expiry, known op, parameters object, spool paths), then each SOLIDWORKS handler's own checks. |
 | Prevent replay | Device requests: one-time `jti` (kept 6 minutes), time window of 120 s, body hash. Commands: unique id, expiry (at most 15 minutes after creation), executed at most once (ids kept on disk by the Companion until a day after they expire, and in memory by the add-in); a repeat is answered `duplicate`, never run. A captured command is useless on another computer (it names its device) and after it expires. |
-| Prevent unauthorized local IPC | See the pipe controls above. A process that is not SOLIDWORKS with the installed KEVOS add-in is refused (`pipe.bye` `peer_rejected`, logged); the add-in refuses a pipe not owned by the installed KEVOS Companion. |
+| Prevent unauthorized local IPC | See the pipe controls above. A process that is not SOLIDWORKS with the installed add-in is refused (`pipe.bye` `peer_rejected`, logged); the add-in refuses a pipe not owned by the installed BIZOMAT Companion (`KEVOS.Companion.exe`). |
 | No passwords or secrets in commands | Commands carry identifiers only (`usr_`, `grt_`, the app's name). The gateway refuses parameters that look like credentials (`INPUT_FORBIDDEN_FIELD`). The device key never leaves the key store; there is no device password or token to leak. |
-| Safe approval for destructive operations | The add-in asks the person in SOLIDWORKS before deleting, undoing, Save As (which may replace a file), remaking a drawing over one (closing an open copy), removing a global variable or deleting drawing views. The question names the AI app and the exact items; Deny is the default button and the answer after two minutes; the AI cannot answer it; only the person can turn it off (KEVOS window). Declined commands come back as `APPROVAL_DENIED`. |
+| Safe approval for destructive operations | The add-in asks the person in SOLIDWORKS before deleting, undoing, Save As (which may replace a file), remaking a drawing over one (closing an open copy), removing a global variable or deleting drawing views. The question names the AI app and the exact items; Deny is the default button and the answer after two minutes; the AI cannot answer it; only the person can turn it off (the BIZOMAT task pane or status window). Declined commands come back as `APPROVAL_DENIED`. |
 
 ## Credentials and where they live
 
 | Secret | Where | Notes |
 |---|---|---|
-| Device private key | Windows key store for the user (TPM via the Platform Crypto Provider when present, else the software KSP), not exportable | Deleted by "Remove this computer from KEVOS"; a new one is made for pairing again. |
+| Device private key | Windows key store for the user (TPM via the Platform Crypto Provider when present, else the software KSP), not exportable | Deleted by "Remove this computer from CAD Automation"; a new one is made for pairing again. |
 | Gateway command key | `bridge-signing-key.pem` in the server's data folder (0600) | Back up the data folder. Replacing it makes every Companion stop (`GATEWAY_KEY_CHANGED`) until paired again: rotate deliberately. |
 | OAuth tokens | Hashed in the server's data folder | Existing. |
 | Legacy add-in key (`oss_`) | HKCU, encrypted with DPAPI | Only for the direct link (fallback). |
@@ -49,6 +51,35 @@ Results go to the gateway, as with the earlier link. Read tools (topology, measu
 STEP of the current body to the gateway, where the kernel reads it; exports send the exported file. Both are held
 only as long as the command (exports: one hour, for the download link). Keep the gateway on infrastructure you trust
 (your own Fly app, or your own server behind a named tunnel).
+
+## Behind a proxy: what is believed
+
+The server may run on its own, on Fly.io behind Fly's edge, or behind the BIZOMAT platform proxy on the same machine
+(which sets X-Forwarded-For to the one client address, X-Forwarded-Proto and X-Forwarded-Host, and passes Fly's
+Fly-Client-IP on). `opensketch/proxy.py`, the outermost middleware, decides once per request, and uvicorn's own
+X-Forwarded-* handling is off (`python -m opensketch` turns it off; run it that way, or give uvicorn
+`--no-proxy-headers`).
+
+| What | Believed from | Otherwise |
+|---|---|---|
+| Client address (sign-in, registration, token and pairing limits; the problem log) | `Fly-Client-IP` on Fly.io (`FLY_APP_NAME` set): Fly's edge sets it on every request it accepts. Else, on a connection from a trusted proxy, the right-most `X-Forwarded-For` address that is not itself a trusted proxy. | The connection's own address. A client that reaches the server directly cannot get a fresh count by sending these headers. |
+| Host name (OAuth and MCP metadata, links, the same-origin check, the canonical redirect) | `X-Forwarded-Host` from a trusted proxy (right-most value, a plain host[:port]) | `Host` as sent; anyone else's `X-Forwarded-Host` is removed. |
+| Scheme (Secure cookies, addresses) | `X-Forwarded-Proto` from a trusted proxy or Fly's edge | Removed. |
+
+Trusted proxies: `OPENSKETCH_TRUSTED_PROXIES` (default `127.0.0.0/8,::1`, a proxy on the same machine; `none`
+trusts none). An open server (no password, no accounts) takes pairing only from its own machine, and a visitor
+through the proxy counts as remote. Inside one Fly organisation a machine that reaches the server over the private
+network directly could send its own Fly-Client-IP; that network is the operator's own.
+
+## Two host names for one server
+
+During the move to cad.bizomat.ai the same server answers on cados.kevos.com too (`OPENSKETCH_ALIAS_HOSTS`). Each host
+gets protected-resource and authorization-server metadata naming itself (OAuth clients check that the issuer and the
+resource match the address they used). Access and refresh tokens are looked up by their SHA-256, with no host in
+them, so a token from either host works on both; a refresh may name either host's resource. An authorization
+request may name either host's resource, and the `iss` sent back is the issuer of the host that resource belongs to.
+A resource on any other server is refused (`invalid_target`). Neither host is redirected unless it is listed in
+`OPENSKETCH_REDIRECT_HOSTS`.
 
 ## Audit
 

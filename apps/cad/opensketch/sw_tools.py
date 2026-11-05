@@ -51,20 +51,21 @@ async def _thread(fn, *args):
 # Errors a geometry tool reports as a plain error result (anything else is a bug and is raised).
 GEOM_ERRORS = (ValueError, importer.ImportError_, cadworker.CadUnavailable, cadworker.CadJobError)
 
-SW_GUIDE = """You are building in SOLIDWORKS 2022 on the user's computer through the CADOS add-in. Everything you
+SW_GUIDE = """You are building in SOLIDWORKS 2022 on the user's computer through the BIZOMAT CAD Automation add-in.
+Everything you
 make is a native SOLIDWORKS feature in the user's own file, and the user may change the file by hand between
 your calls, so read before you write (sw_get_document).
 
 Workflow:
 - sw_status first: is SOLIDWORKS connected, which documents are open. If not connected, tell the user what the
   status says and stop.
-- Several registered computers (CADOS for SOLIDWORKS): sw_status lists them; pass device="<name>" to every tool when more
+- Several registered computers (CAD Automation for SOLIDWORKS): sw_status lists them; pass device="<name>" to every tool when more
   than one is online. Deleting, Save As, overwriting a drawing and undo are confirmed by the person at that computer:
   if they decline, say so and do not retry.
 - sw_create_document makes a new part or assembly from the user's default template and saves it in
   Documents\\OpenSketch (or `folder`). Every other tool takes `doc`: its path or window title from sw_status;
   leave it out for the active document.
-- sw_add_features writes features in the CADOS feature format (below): sketches with entities, relations and
+- sw_add_features writes features in the CAD Automation feature format (below): sketches with entities, relations and
   dimensions, then extrudes, revolves, sweeps, lofts, holes, fillets, chamfers, shells, drafts, mirrors,
   patterns and planes. Feature ids are yours for that call; to point at features already in the file, use their
   SOLIDWORKS names ("Sketch3", "Boss-Extrude1", "Plane1"). Every sketch is checked and solved here first; give
@@ -201,7 +202,7 @@ async def _simple(op: str, args: dict, timeout: float = swbridge.DEFAULT_TIMEOUT
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
 @_routed
 async def sw_status(device: _DEV = None) -> CallToolResult:
-    """Is SOLIDWORKS connected through the CADOS add-in, which version, and which documents are open
+    """Is SOLIDWORKS connected through the BIZOMAT CAD Automation add-in, which version, and which documents are open
     (path, title, part or assembly, active, unsaved changes). Call it first."""
     st = _status(_who())
     if not st.get("connected"):
@@ -354,7 +355,7 @@ def expectations(st, skip: set = frozenset()) -> dict:
 
 @mcp.tool()
 @_routed
-async def sw_add_features(features: Annotated[list[dict], Field(description="Features in the CADOS feature format, in tree order (sw_get_guide)")],
+async def sw_add_features(features: Annotated[list[dict], Field(description="Features in the CAD Automation feature format, in tree order (sw_get_guide)")],
                           doc: _DOC = None, component: _COMP = None,
                           summary: str = "",
                           predict: Annotated[bool, Field(description="Build the same features here on the current body first and check SOLIDWORKS against it")] = True, device: _DEV = None) -> CallToolResult:
@@ -1043,11 +1044,11 @@ def _standard_step(kind: str, size: str, length: float | None) -> tuple[dict, by
         return pdoc, p.read_bytes()
 
 
-# ----------------------------------------------------------------------------- registered computers (KEVOS)
+# ----------------------------------------------------------------------------- registered computers (the Companion)
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
 async def sw_list_devices() -> CallToolResult:
-    """The user's paired computers (CADOS for SOLIDWORKS): name, online, the default one, and per computer the
+    """The user's paired computers (CAD Automation for SOLIDWORKS): name, online, the default one, and per computer the
     SOLIDWORKS sessions running there (version, add-in version, documents open, busy, ready). Pass a computer's
     name as `device` to any sw_ tool when more than one is online."""
     from . import devicebridge
@@ -1056,7 +1057,7 @@ async def sw_list_devices() -> CallToolResult:
     if v1.get("connected"):
         out["direct_addin"] = {k: v1.get(k) for k in ("machine", "version", "sw_version")}
     if not out["devices"]:
-        out["note"] = ("No computer is registered yet. Install CADOS for SOLIDWORKS on the SOLIDWORKS computer; its Companion "
+        out["note"] = ("No computer is registered yet. Install CAD Automation for SOLIDWORKS on the SOLIDWORKS computer; its Companion "
                        "opens this site to add the computer.")
     return _text(out)
 

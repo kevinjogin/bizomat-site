@@ -1,4 +1,4 @@
-# Deploys CADOS by KEVOS (the server in opensketch/) to Fly.io from main, only after the tests pass (tests.yml, called below).
+# Deploys BIZOMAT CAD Automation (the server in opensketch/; called CADOS by KEVOS until November 2026) to Fly.io from main, only after the tests pass (tests.yml, called below).
 #
 # Repository secrets (Settings > Secrets and variables > Actions):
 # - FLY_API_TOKEN: a deploy token for this app only: `fly tokens create deploy -a <app>` (or the Fly dashboard:
@@ -186,7 +186,7 @@ jobs:
           for _ in $(seq 1 36); do
             got=$(curl -fsS --max-time 10 "https://$APP.fly.dev/healthz" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)
             if [ "$got" = "$want" ]; then
-              echo "CADOS $want is live at ${PUBLIC_URL:-https://$APP.fly.dev}" >> "$GITHUB_STEP_SUMMARY"
+              echo "CAD Automation $want is live at ${PUBLIC_URL:-https://$APP.fly.dev}" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
             sleep 5

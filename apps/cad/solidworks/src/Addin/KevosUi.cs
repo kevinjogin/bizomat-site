@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
+using OpenSketch.Sw.Core;
 using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using Environment = System.Environment;
@@ -11,24 +12,24 @@ using Environment = System.Environment;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The CADOS command group (a toolbar and a "CADOS" tab on the CommandManager for parts, assemblies and drawings):
-    /// CADOS panel, Status, Connect, Disconnect, Companion. Buttons call the add-in's public callbacks by name
-    /// (SwAddin.Os*), on SOLIDWORKS' own thread. Icons (KEVOS orange) are drawn once into %LOCALAPPDATA%\KEVOS\icons in
-    /// every size SOLIDWORKS asks for.
+    /// The BIZOMAT command group (a toolbar and a "BIZOMAT" tab on the CommandManager for parts, assemblies and
+    /// drawings): BIZOMAT panel, Status, Connect, Disconnect, Companion. Buttons call the add-in's public callbacks by
+    /// name (SwAddin.Os*), on SOLIDWORKS' own thread. Icons (the BIZOMAT mark, teal buttons) are drawn once into
+    /// %LOCALAPPDATA%\KEVOS\icons\&lt;version&gt; (the folder keeps its earlier name) in every size SOLIDWORKS asks for.
     /// </summary>
     public sealed class KevosUi
     {
         public const int GroupId = 0x4B45;   // "KE": stable, so SOLIDWORKS keeps the user's toolbar placement
-        public const string TabName = "CADOS";
-        const string OldTabName = "KEVOS";   // 0.11 and earlier: removed when found
+        public const string TabName = BrandArt.TabName;   // "BIZOMAT"; the old "KEVOS" and "CADOS" tabs are removed (BrandArt)
+        const string MarkGlyph = "B";        // drawn as the BIZOMAT mark, not as a letter
         static readonly int[] Sizes = { 20, 32, 40, 64, 96, 128 };
         static readonly (string name, string tip, string glyph, string callback)[] Buttons =
         {
-            ("CADOS panel", "CADOS: status, prompts for your AI assistant, activity and help", "C", "OsPanel"),
+            ("BIZOMAT panel", BrandArt.Product + ": status, prompts for your AI assistant, activity and help", MarkGlyph, "OsPanel"),
             ("Status", "Connection details, the direct link and the log", "i", "OsWindow"),
-            ("Connect", "Connect this SOLIDWORKS to CADOS now", "+", "OsConnect"),
+            ("Connect", "Connect this SOLIDWORKS to CAD Automation now", "+", "OsConnect"),
             ("Disconnect", "Stop taking commands from your AI assistant", "\u2013", "OsDisconnect"),
-            ("KEVOS Companion", "Open the KEVOS Companion (pairing, pause, logs)", "K", "OsCompanion"),
+            (BrandArt.Companion, "Open the BIZOMAT Companion (pairing, pause, logs)", "C", "OsCompanion"),
         };
         static readonly int[] DocTypes = { (int)swDocumentTypes_e.swDocPART, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swDocumentTypes_e.swDocDRAWING };
 
@@ -45,7 +46,7 @@ namespace OpenSketch.Sw
             mgr = app.GetCommandManager(cookie) as ICommandManager;
             if (mgr == null) return;
             var err = 0;
-            var group = mgr.CreateCommandGroup2(GroupId, "CADOS", "CADOS by KEVOS: your AI assistant working in SOLIDWORKS", "CADOS by KEVOS", -1, true, ref err) as ICommandGroup;
+            var group = mgr.CreateCommandGroup2(GroupId, BrandArt.Platform, BrandArt.Product + ": your AI assistant working in SOLIDWORKS", BrandArt.Product, -1, true, ref err) as ICommandGroup;
             if (group == null)
             {
                 Log.Write("CommandManager group not made (error " + err + ")");
@@ -81,7 +82,7 @@ namespace OpenSketch.Sw
             {
                 try
                 {
-                    foreach (var name in new[] { OldTabName, TabName })
+                    foreach (var name in BrandArt.TabsToReplace())
                     {
                         var old = mgr.GetCommandTab(t, name) as ICommandTab;
                         if (old != null) mgr.RemoveCommandTab((CommandTab)old);
@@ -131,7 +132,7 @@ namespace OpenSketch.Sw
             }
         }
 
-        /// <summary>The CADOS icon in every size (the group's icon, and the task pane tab's).</summary>
+        /// <summary>The BIZOMAT mark in every size (the group's icon, and the task pane tab's).</summary>
         public static string[] MainIcons() => Strips(true);
 
         /// <summary>One PNG strip per size: every button's icon side by side (or the group's own icon).</summary>
@@ -141,10 +142,10 @@ namespace OpenSketch.Sw
             for (var k = 0; k < Sizes.Length; k++)
             {
                 var s = Sizes[k];
-                var path = Path.Combine(IconDir, (main ? "cados2_main_" : "cados2_buttons_") + s + ".png");
+                var path = Path.Combine(IconDir, (main ? "bizomat_main_" : "bizomat_buttons_") + s + ".png");
                 if (!File.Exists(path))
                 {
-                    var glyphs = main ? new[] { "C" } : Array.ConvertAll(Buttons, b => b.glyph);
+                    var glyphs = main ? new[] { MarkGlyph } : Array.ConvertAll(Buttons, b => b.glyph);
                     using (var bmp = new Bitmap(s * glyphs.Length, s, PixelFormat.Format32bppArgb))
                     using (var g = Graphics.FromImage(bmp))
                     {
@@ -154,7 +155,12 @@ namespace OpenSketch.Sw
                         for (var i = 0; i < glyphs.Length; i++)
                         {
                             var r = new RectangleF(i * s + s * 0.06f, s * 0.06f, s * 0.88f, s * 0.88f);
-                            using (var bg = new SolidBrush(Color.FromArgb(194, 65, 12)))   // KEVOS accent #c2410c (white glyphs readable on it)
+                            if (glyphs[i] == MarkGlyph)
+                            {
+                                BrandDraw.Mark(g, r);
+                                continue;
+                            }
+                            using (var bg = new SolidBrush(BrandDraw.C(BrandArt.Teal)))   // BIZOMAT teal #0f766e (white on it: 5.5:1)
                             using (var path2 = Rounded(r, s * 0.2f))
                                 g.FillPath(bg, path2);
                             using (var f = new Font("Segoe UI", s * 0.5f, FontStyle.Bold, GraphicsUnit.Pixel))
@@ -170,7 +176,7 @@ namespace OpenSketch.Sw
             return o;
         }
 
-        static GraphicsPath Rounded(RectangleF r, float rad)
+        internal static GraphicsPath Rounded(RectangleF r, float rad)
         {
             var p = new GraphicsPath();
             var d = rad * 2;

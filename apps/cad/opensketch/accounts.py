@@ -153,7 +153,7 @@ def public(u: dict) -> dict:
     return {"id": u["id"], "email": u["email"], "name": u["name"], "role": u["role"], "created": u.get("created"),
             "google": bool(u.get("google")), "has_password": bool(u.get("hash")), "tester": u["role"] == "tester",
             # who chose the password (never the password itself: only its one-way hash is kept): "self" (the person),
-            # "suggested" (the person kept the one CADOS filled in), "owner" (set on the Admin page); None if unrecorded
+            # "suggested" (the person kept the one the form filled in), "owner" (set on the Admin page); None if unrecorded
             "password_by": u.get("pw_by") if u.get("hash") else None, "password_at": u.get("pw_at") if u.get("hash") else None}
 
 
@@ -220,7 +220,7 @@ def create_owner(email: str, name: str, password: str, by: str = "self") -> dict
     with _lock:
         data = _edit()
         if data["users"]:
-            raise AccountError("CADOS is already set up. Sign in instead.")
+            raise AccountError("CAD Automation is already set up. Sign in instead.")
         email, name = _check_new(email, name, password, data)
         u = _new_user(email, name, password, "owner", verified=True, by=by)
         data["users"].append(u)
@@ -519,7 +519,7 @@ def keep_tester(user_id: str, email: str, name: str, password: str | None, googl
         if u.get("hash") or u.get("google"):  # changing it needs the current password
             raise AccountError("Your account is kept already. Change your password instead.")
         if google and any(x.get("google") == google and x["id"] != user_id for x in data["users"]):
-            raise AccountError("That Google account already has a CADOS account.")
+            raise AccountError("That Google account already has an account here.")
         email, name = _check_new(email, name or u["name"], None if google else (password or ""), data, me=user_id)
         u["email"], u["name"] = email, name
         if google:

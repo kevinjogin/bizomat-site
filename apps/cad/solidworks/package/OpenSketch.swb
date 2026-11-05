@@ -1,4 +1,4 @@
-' OpenSketch for SOLIDWORKS: starts the link to Claude inside SOLIDWORKS.
+' BIZOMAT CAD Automation for SOLIDWORKS: starts the add-in inside SOLIDWORKS (it is not the add-in itself).
 ' Tools > Macro > Run this file, or give it a button (Tools > Customize > Commands > Macro).
 ' It needs OpenSketchSW.exe > Install for me once (no admin rights).
 Dim gOpenSketch As Object
@@ -9,5 +9,5 @@ Sub main()
     gOpenSketch.Start Application.SldWorks
     Exit Sub
 failed:
-    MsgBox "OpenSketch is not installed for this Windows user. Run OpenSketchSW.exe and click Install for me." & vbCrLf & Err.Description, vbExclamation, "OpenSketch"
+    MsgBox "BIZOMAT CAD Automation is not installed for this Windows user. Install BIZOMAT CAD Automation for SOLIDWORKS, or run OpenSketchSW.exe and click Install for me." & vbCrLf & Err.Description, vbExclamation, "BIZOMAT CAD Automation"
 End Sub

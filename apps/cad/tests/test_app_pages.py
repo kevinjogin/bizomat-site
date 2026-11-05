@@ -1,5 +1,6 @@
-"""The signed-in CADOS app (app_pages.py): six sections behind sign-in, the KEVOS brand on each, no old product name,
-a Tools list that matches exactly what the AI assistant can call, and a History backed by the real command record."""
+"""The signed-in BIZOMAT CAD Automation app (app_pages.py): six sections behind sign-in, the BIZOMAT brand on each (the
+wordmark, the platform menu, the legal links), no old product name, a Tools list that matches exactly what the AI
+assistant can call, and a History backed by the real command record."""
 import asyncio
 
 import httpx
@@ -13,7 +14,7 @@ SECTIONS = {
     "/dashboard": "Engineering, made intelligent.",
     "/assistant": "Work in SOLIDWORKS by asking.",
     "/solidworks": "Your SOLIDWORKS connection.",
-    "/tools": "Everything CADOS can do.",
+    "/tools": "Everything CAD Automation can do.",
     "/history": "What your assistant has done.",
     "/settings": "Account and access.",
 }
@@ -40,22 +41,31 @@ def test_every_section_needs_sign_in_and_carries_the_brand():
         page = owner.get(path)
         assert page.status_code == 200 and heading in page.text, path
         t = page.text
-        assert "/ui/app.js" in t and "https://kevos.com/" in t and "https://work.kevos.com/" in t, path
-        assert "OpenSketch" not in t and "oss_" not in t, path  # no old name, and no key in the page source
+        assert "/ui/app.js" in t and "https://bizomat.ai/" in t and "https://work.bizomat.ai/" in t, path
+        assert "BIZOMAT CAD Automation" in t and 'class="product"' in t and "Project Management" in t, path
+        for legal in ('href="/privacy"', "https://bizomat.ai/privacy/", "https://bizomat.ai/terms/", "https://bizomat.ai/disclaimer/"):
+            assert legal in t, (path, legal)
+        assert "<title>" in t and " | BIZOMAT CAD Automation</title>" in t, path
+        # no old name (the repository's address and the stylesheet's file name are not names people read)
+        visible = t.replace("jogkev-creator/CADOS", "").replace("cados.css", "")
+        assert "OpenSketch" not in t and "oss_" not in t and "CADOS" not in visible and "KEVOS" not in visible, path
         for href, label, _ in [(h, lbl, k) for h, lbl, k in __import__("opensketch.brand", fromlist=["APP_NAV"]).APP_NAV]:
             assert f'href="{href}"' in t and label in t, (path, label)
-    assert "Automation" not in owner.get("/dashboard").text  # no section without a real feature behind it
+    # no section without a real feature behind it (there are no stored automations to show)
+    assert not any("Automation" in label for _, label, _ in __import__("opensketch.brand", fromlist=["APP_NAV"]).APP_NAV)
+    assert 'href="/automation' not in owner.get("/dashboard").text
     # the signed-in home page is the app's Home
     assert "Engineering, made intelligent." in owner.get("/").text
-    # the app script and the official KEVOS marks are public files with no data
-    for f in ("/ui/app.js", "/ui/kevos-wordmark.svg", "/favicon.svg", "/favicon.ico"):
+    # the app script, the design tokens and the BIZOMAT marks are public files with no data; the retired KEVOS mark is gone
+    for f in ("/ui/app.js", "/ui/bizomat-tokens.css", "/ui/bizomat-logo-light.svg", "/favicon.svg", "/favicon.ico"):
         assert anon.get(f).status_code == 200, f
+    assert anon.get("/ui/kevos-wordmark.svg").status_code == 404
 
 
 def test_a_missing_page_is_branded_for_browsers_and_json_for_programs():
     owner = _owner()
     r = owner.get("/no-such-page", headers={"Accept": "text/html"})
-    assert r.status_code == 404 and "This page does not exist." in r.text and "CADOS" in r.text
+    assert r.status_code == 404 and "This page does not exist." in r.text and "BIZOMAT CAD Automation" in r.text
     j = owner.get("/api/no-such-thing", headers={"Accept": "text/html"})
     assert j.status_code == 404 and j.headers["content-type"].startswith("application/json")
 
@@ -80,7 +90,7 @@ def test_history_shows_the_real_command_record(base, companions):
 def test_the_owner_adds_people_with_a_password_and_resets_it():
     owner = _owner()
     page = owner.get("/admin")
-    assert page.status_code == 200 and "People on this CADOS server." in page.text and 'href="/admin"' in page.text
+    assert page.status_code == 200 and "People on this CAD Automation server." in page.text and 'href="/admin"' in page.text
     r = owner.post("/api/account/users", json={"email": "Pat@Example.com", "name": "Pat", "password": "given-pass-1"})
     assert r.status_code == 200 and r.json()["user"]["role"] == "member" and r.json()["user"]["email"] == "pat@example.com"
     assert owner.post("/api/account/users", json={"email": "pat@example.com", "password": "given-pass-1"}).status_code == 400
@@ -116,7 +126,7 @@ def test_the_owner_adds_people_with_a_password_and_resets_it():
 
 
 def test_a_computer_pairs_with_the_persons_own_password(base, companions):
-    """The Companion's pairing window can take the CADOS email and password instead of the browser step: the same
+    """The Companion's pairing window can take the person's email and password instead of the browser step: the same
     password the person signs in with (for example the one the owner set on the Admin page)."""
     from opensketch import accounts
     from opensketch import devicebridge as db
@@ -137,20 +147,22 @@ def test_a_computer_pairs_with_the_persons_own_password(base, companions):
     assert again.status_code == 410  # a pairing is decided once
 
 
-def test_sign_in_pages_say_cados_and_returning_people_go_straight_back(monkeypatch):
+def test_sign_in_pages_say_bizomat_and_returning_people_go_straight_back(monkeypatch):
     """No internal name on the setup or sign-in pages, and a person already signed in on this browser who opens
     /login is sent on to where they were going (sessions last 90 days)."""
     monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret")
     anon = TestClient(server.app)
     setup = anon.get("/login").text
-    assert "Set up CADOS" in setup and "shows only once" in setup
+    assert "Set up CAD Automation" in setup and "shows only once" in setup
     owner = TestClient(server.app)
     owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse",
                                "server_password": "server-secret", "next": "/"})
     login = anon.get("/login").text
-    assert "Welcome back" in login and "Set up CADOS" not in login  # every later visit gets Sign in
+    assert "Welcome back" in login and "Set up CAD Automation" not in login  # every later visit gets Sign in
+    assert "<h1>Sign in to BIZOMAT</h1>" in login and ">CAD Automation</span>" in login  # the product they sign in to
+    assert "<title>Sign in | BIZOMAT CAD Automation</title>" in login
     for page in (setup, login):
-        assert "OpenSketch" not in page and "OPENSKETCH" not in page
+        assert "OpenSketch" not in page and "OPENSKETCH" not in page and "CADOS" not in page and "KEVOS" not in page
     r = owner.get("/login?next=/history", follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"] == "/history"
     owner.get("/logout")
@@ -259,3 +271,19 @@ def test_only_the_owner_sees_the_server_password_after_sign_in(monkeypatch):
     assert accounts.find_by_email("ann@example.com") is not None
     assert ann.get("/api/admin/server-password").status_code == 403
     assert "server-secret-77" not in ann.get("/dashboard").text
+
+
+def test_the_platform_links_follow_the_settings(monkeypatch):
+    """The BIZOMAT website and Project Management are settings (their domains go live separately); anything that is not
+    an http(s) address falls back to the default."""
+    monkeypatch.setenv("BIZOMAT_SITE_URL", "https://staging.bizomat.example/")
+    monkeypatch.setenv("BIZOMAT_WORK_URL", "https://work.staging.bizomat.example")
+    owner = _owner()
+    for page in (owner.get("/dashboard").text, TestClient(server.app).get("/overview").text):
+        assert "https://staging.bizomat.example/terms/" in page and "https://staging.bizomat.example/disclaimer/" in page
+        assert "https://work.staging.bizomat.example/" in page and "https://bizomat.ai/" not in page
+    login = TestClient(server.app).get("/login").text
+    assert 'href="https://staging.bizomat.example/"' in login and "https://staging.bizomat.example/terms/" in login
+    monkeypatch.setenv("BIZOMAT_SITE_URL", "javascript:alert(1)")
+    page = owner.get("/dashboard").text
+    assert "javascript:" not in page and "https://bizomat.ai/terms/" in page

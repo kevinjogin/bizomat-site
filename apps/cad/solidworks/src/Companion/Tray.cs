@@ -23,7 +23,7 @@ namespace Kevos.Companion
         readonly ContextMenuStrip menu = new ContextMenuStrip();
         readonly ToolStripMenuItem header = new ToolStripMenuItem { Enabled = false };
         readonly ToolStripMenuItem pairItem = new ToolStripMenuItem("Pair this computer...");
-        readonly ToolStripMenuItem pauseItem = new ToolStripMenuItem("Pause CADOS");
+        readonly ToolStripMenuItem pauseItem = new ToolStripMenuItem("Pause CAD Automation");
         readonly ToolStripMenuItem startupItem = new ToolStripMenuItem("Start with Windows");
         readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer { Interval = 3000 };
         readonly SynchronizationContext ui;
@@ -55,7 +55,7 @@ namespace Kevos.Companion
             catch (Exception ex)
             {
                 Log.Write("could not start: " + ex);
-                MessageBox.Show("The KEVOS Companion could not start: " + ex.Message, "KEVOS Companion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The BIZOMAT Companion could not start: " + ex.Message, BrandArt.Companion, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ExitThread();
                 return;
             }
@@ -76,7 +76,7 @@ namespace Kevos.Companion
             }
             BuildMenu();
             icon.Icon = off;
-            icon.Text = "KEVOS Companion for CADOS";
+            icon.Text = BrandArt.Companion;
             icon.Visible = true;
             icon.DoubleClick += (s, e) => ShowStatus();
             icon.BalloonTipClicked += (s, e) =>
@@ -171,12 +171,12 @@ namespace Kevos.Companion
             var diag = new ToolStripMenuItem("Copy diagnostics", null, (s, e) =>
             {
                 Clipboard.SetText(Diagnostics.Report(engine, key));
-                icon.ShowBalloonTip(3000, "KEVOS Companion", "Diagnostics copied. Paste them into your support request.", ToolTipIcon.Info);
+                icon.ShowBalloonTip(3000, BrandArt.Companion, "Diagnostics copied. Paste them into your support request.", ToolTipIcon.Info);
             });
             var exit = new ToolStripMenuItem("Exit", null, (s, e) =>
             {
-                if (MessageBox.Show("Stop the KEVOS Companion? Your AI assistant cannot reach SOLIDWORKS on this computer until it starts again (next sign-in, or from the Start menu).",
-                                    "KEVOS Companion", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK) Quit();
+                if (MessageBox.Show("Stop the BIZOMAT Companion? Your AI assistant cannot reach SOLIDWORKS on this computer until it starts again (next sign-in, or from the Start menu).",
+                                    BrandArt.Companion, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK) Quit();
             });
             menu.Items.AddRange(new ToolStripItem[] { header, new ToolStripSeparator(), statusItem, pairItem, pauseItem, new ToolStripSeparator(), startupItem, update, logs, diag, new ToolStripSeparator(), exit });
             icon.ContextMenuStrip = menu;
@@ -196,7 +196,7 @@ namespace Kevos.Companion
                 if (!toldToPair)
                 {
                     toldToPair = true;
-                    icon.ShowBalloonTip(8000, "CADOS", "Pair this computer with your CADOS account to use it from your AI assistant. Click here.", ToolTipIcon.Info);
+                    icon.ShowBalloonTip(8000, BrandArt.Companion, "Pair this computer with your CAD Automation account to use it from your AI assistant. Click here.", ToolTipIcon.Info);
                 }
             }
             else if (st.Paused)
@@ -216,11 +216,11 @@ namespace Kevos.Companion
             }
             else
             {
-                line = name + ": connected" + (st.SolidWorksProcesses > 0 ? ", waiting for the CADOS add-in" : ", SOLIDWORKS closed");
+                line = name + ": connected" + (st.SolidWorksProcesses > 0 ? ", waiting for the add-in" : ", SOLIDWORKS closed");
                 ic = on;
             }
             header.Text = line.Length > 60 ? line.Substring(0, 60) : line;
-            var tip = "CADOS: " + line;
+            var tip = BrandArt.Platform + ": " + line;
             if (tip.Length > 63) tip = tip.Substring(0, 63);
             if (tip != lastTip)
             {
@@ -229,14 +229,14 @@ namespace Kevos.Companion
                 icon.Icon = ic;
             }
             pairItem.Text = st.Paired ? "Pair again..." : "Pair this computer...";
-            pauseItem.Text = st.Paused ? "Resume CADOS" : "Pause CADOS";
+            pauseItem.Text = st.Paused ? "Resume CAD Automation" : "Pause CAD Automation";
             pauseItem.Enabled = st.Paired;
             startupItem.Checked = Startup.Enabled;
             FallbackAttach(st);
             status?.Refresh2();
         }
 
-        /// <summary>SOLIDWORKS runs but its KEVOS add-in did not connect within 30 s (some per-user installs): ask that
+        /// <summary>SOLIDWORKS runs but its add-in did not connect within 30 s (some per-user installs): ask that
         /// SOLIDWORKS once to load it. Turn off with AutoLoadAddin=0.</summary>
         void FallbackAttach(CompanionStatus st)
         {
@@ -255,7 +255,7 @@ namespace Kevos.Companion
             {
                 try
                 {
-                    Log.Write("SOLIDWORKS runs without the CADOS add-in: asking it to load " + dll + ": " + SolidWorks.LoadAddin());
+                    Log.Write("SOLIDWORKS runs without the add-in: asking it to load " + dll + ": " + SolidWorks.LoadAddin());
                 }
                 catch (Exception ex)
                 {
@@ -297,12 +297,12 @@ namespace Kevos.Companion
                 {
                     if (offer == null)
                     {
-                        if (asked) MessageBox.Show(why, "CADOS updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (asked) MessageBox.Show(why, BrandArt.Product + " updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
-                    var q = $"CADOS for SOLIDWORKS {offer.Version} is ready (verified: signed by the same publisher, hash checked).\r\n\r\n{offer.Notes}\r\n\r\n" +
+                    var q = $"{BrandArt.Package} {offer.Version} is ready (verified: signed by the same publisher, hash checked).\r\n\r\n{offer.Notes}\r\n\r\n" +
                             "Install it now? Save your work in SOLIDWORKS first: it restarts SOLIDWORKS' add-in at its next start.";
-                    if (MessageBox.Show(q, "CADOS update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) Updater.Install(offer);
+                    if (MessageBox.Show(q, BrandArt.Product + " update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) Updater.Install(offer);
                 }, null);
             });
         }
@@ -325,18 +325,22 @@ namespace Kevos.Companion
             ExitThread();
         }
 
+        /// <summary>The tray icon: the BIZOMAT mark (white B, teal bar, navy tile) with a status dot.</summary>
         static Icon MakeIcon(Color dot)
         {
             using (var bmp = new Bitmap(32, 32))
             using (var g = Graphics.FromImage(bmp))
             {
                 g.SmoothingMode = SmoothingMode.AntiAlias;
-                using (var bg = new LinearGradientBrush(new Rectangle(0, 0, 32, 32), Color.FromArgb(74, 81, 194), Color.FromArgb(192, 86, 156), 45f))
-                    g.FillEllipse(bg, 1, 1, 30, 30);
-                using (var f = new Font("Segoe UI", 15f, FontStyle.Bold, GraphicsUnit.Pixel))
-                using (var w = new SolidBrush(Color.White))
-                using (var fmt = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
-                    g.DrawString("K", f, w, new RectangleF(0, 0, 32, 32), fmt);
+                try
+                {
+                    BrandDraw.Mark(g, new RectangleF(1, 1, 30, 30));
+                }
+                catch (Exception)
+                {
+                    using (var navy = new SolidBrush(BrandDraw.C(BrandArt.Navy)))   // the plain tile is enough to start
+                        g.FillEllipse(navy, 1, 1, 30, 30);
+                }
                 using (var d = new SolidBrush(dot))
                 using (var edge = new Pen(Color.White, 2))
                 {
@@ -348,7 +352,8 @@ namespace Kevos.Companion
         }
     }
 
-    /// <summary>Pairing: the person signs in on the KEVOS site and approves the short code shown here.</summary>
+    /// <summary>Pairing: the person signs in on the CAD Automation site and approves the short code shown here, or types
+    /// their email and password here.</summary>
     sealed class PairForm : Form
     {
         readonly TrayApp app;
@@ -357,7 +362,7 @@ namespace Kevos.Companion
         readonly Label code = new Label();
         readonly Label info = new Label();
         readonly Button go = new Button { Text = "Pair" };
-        readonly LinkLabel open = new LinkLabel { Text = "Open CADOS in the browser", Visible = false };
+        readonly LinkLabel open = new LinkLabel { Text = "Open CAD Automation in the browser", Visible = false };
         readonly TextBox email = new TextBox();
         readonly TextBox password = new TextBox { UseSystemPasswordChar = true };
         CancellationTokenSource cts;
@@ -366,21 +371,21 @@ namespace Kevos.Companion
         public PairForm(TrayApp app)
         {
             this.app = app;
-            Text = "CADOS: pair this computer";
+            Text = BrandArt.Companion + ": pair this computer";
             Font = new Font("Segoe UI", 9.5f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = new Size(480, 450);
             BackColor = Color.White;
-            var title = new Label { Text = "Add this computer to your CADOS account", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
-            var l1 = new Label { Text = "CADOS address", AutoSize = true, Location = new Point(16, 54) };
+            var title = new Label { Text = "Add this computer to your CAD Automation account", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
+            var l1 = new Label { Text = "CAD Automation address", AutoSize = true, Location = new Point(16, 54) };
             gateway.SetBounds(16, 74, 448, 26);
             var l2 = new Label { Text = "Name for this computer", AutoSize = true, Location = new Point(16, 108) };
             name.SetBounds(16, 128, 448, 26);
-            var l3 = new Label { Text = "Your CADOS email (optional: or sign in in the browser)", AutoSize = true, Location = new Point(16, 162) };
+            var l3 = new Label { Text = "Your email (optional: or sign in in the browser)", AutoSize = true, Location = new Point(16, 162) };
             email.SetBounds(16, 182, 448, 26);
-            var l4 = new Label { Text = "Your CADOS password", AutoSize = true, Location = new Point(16, 214) };
+            var l4 = new Label { Text = "Your password", AutoSize = true, Location = new Point(16, 214) };
             password.SetBounds(16, 234, 300, 26);
             go.SetBounds(324, 232, 140, 30);
             code.SetBounds(16, 274, 448, 50);
@@ -395,7 +400,7 @@ namespace Kevos.Companion
             gateway.Text = cfg.GatewayUrl ?? Config.GatewayUrl ?? Config.DefaultGateway;
             name.Text = cfg.DeviceName ?? Environment.MachineName;
             info.Text = cfg.Paired ? $"This computer is {cfg.DeviceName} on {cfg.Account}. Pairing again gives it a new identity; the old one stops working." :
-                        "Enter the email and password of your CADOS account, or leave them empty to sign in in your browser. No password is kept on this computer.";
+                        "Enter the email and password of your CAD Automation account, or leave them empty to sign in in your browser. No password is kept on this computer.";
             go.Click += (s, e) => Start();
             FormClosed += (s, e) => cts?.Cancel();
         }
@@ -443,7 +448,7 @@ namespace Kevos.Companion
                         BeginInvoke((MethodInvoker)(() =>
                         {
                             code.Text = "Done";
-                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CADOS connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
+                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CAD Automation connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
                             open.Visible = false;
                         }));
                         return;
@@ -451,7 +456,7 @@ namespace Kevos.Companion
                     BeginInvoke((MethodInvoker)(() =>
                     {
                         code.Text = t.UserCode;
-                        info.Text = "Your browser opens CADOS. Sign in and check that it shows this code, then click Add this computer. This window waits.";
+                        info.Text = "Your browser opens CAD Automation. Sign in and check that it shows this code, then click Add this computer. This window waits.";
                         open.Visible = true;
                         Browse();
                     }));
@@ -461,7 +466,7 @@ namespace Kevos.Companion
                         if (ok)
                         {
                             code.Text = "Done";
-                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CADOS connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
+                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CAD Automation connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
                             open.Visible = false;
                         }
                         else
@@ -500,13 +505,13 @@ namespace Kevos.Companion
         public StatusForm(TrayApp app)
         {
             this.app = app;
-            Text = "KEVOS";
+            Text = BrandArt.Companion;
             Font = new Font("Segoe UI", 9.5f);
             StartPosition = FormStartPosition.CenterScreen;
             ClientSize = new Size(560, 470);
             MinimumSize = new Size(480, 400);
             BackColor = Color.White;
-            var title = new Label { Text = "CADOS for SOLIDWORKS", Font = new Font("Segoe UI Semibold", 13f), AutoSize = true, Location = new Point(16, 12) };
+            var title = new Label { Text = BrandArt.Package, Font = new Font("Segoe UI Semibold", 13f), AutoSize = true, Location = new Point(16, 12) };
             body.SetBounds(16, 46, 528, 170);
             body.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pause.SetBounds(16, 222, 120, 30);
@@ -554,7 +559,7 @@ namespace Kevos.Companion
             sb.AppendLine(st.Paired ? $"Computer: {st.DeviceName}   Account: {st.Account}" : "Computer: not registered yet (Pair...)");
             sb.AppendLine("Server: " + (st.Gateway ?? "(none)"));
             sb.AppendLine("Link: " + st.Cloud + (st.Paused ? "   PAUSED: commands are refused" : ""));
-            sb.AppendLine($"SOLIDWORKS running: {st.SolidWorksProcesses}   with the CADOS add-in: {st.Instances.Count}");
+            sb.AppendLine($"SOLIDWORKS running: {st.SolidWorksProcesses}   with the add-in: {st.Instances.Count}");
             foreach (var i in st.Instances)
                 sb.AppendLine($"  SOLIDWORKS {J.Str(i, "sw_revision")} (pid {J.Num(i, "pid")}), add-in {J.Str(i, "addin_version")}, {J.Num(i, "docs")} documents" +
                               (J.Str(i, "active") != null ? ", active " + J.Str(i, "active") : "") +
@@ -604,7 +609,7 @@ namespace Kevos.Companion
             var cfg = engine.Config;
             var clsid = Startup.AddinClsid;
             var sb = new StringBuilder();
-            sb.AppendLine("CADOS for SOLIDWORKS diagnostics " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            sb.AppendLine(BrandArt.Package + " diagnostics " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             sb.AppendLine("Companion " + Updater.Current + " at " + Paths.Exe + (Authenticode.Signer(Paths.Exe) is string s ? " (signed " + s + ")" : " (unsigned build)"));
             sb.AppendLine("Windows: " + OsName() + "; .NET " + Environment.Version + "; user " + Environment.UserName + "; machine " + Environment.MachineName);
             sb.AppendLine("Registered: " + (cfg.Paired ? $"{cfg.DeviceName} ({cfg.DeviceId}) on {cfg.Account}, since {cfg.PairedAt}" : cfg.Revoked ? "removed from the account" : "no"));

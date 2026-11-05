@@ -43,10 +43,10 @@ jobs:
           version=$(grep -o '<Version>[^<]*' solidworks/Directory.Build.props | cut -d'>' -f2)
           gh release delete addin-latest --yes --cleanup-tag || true
           gh release create addin-latest OpenSketch-SOLIDWORKS.zip --target "$GITHUB_SHA" \
-            --title "CADOS for SOLIDWORKS: manual add-in package (latest)" \
-            --notes "CADOS add-in $version (by KEVOS) for manual installation, built from ${GITHUB_SHA::7}. Most people should use the installer instead: https://cados.kevos.com/download/solidworks. Manual route: close SOLIDWORKS, unzip into your add-in folder (replace all files), run OpenSketchSW.exe and click Install for me, then reopen SOLIDWORKS."
+            --title "BIZOMAT CAD Automation for SOLIDWORKS: manual add-in package (latest)" \
+            --notes "BIZOMAT CAD Automation add-in $version for manual installation, built from ${GITHUB_SHA::7}. Most people should use the installer instead: https://cados.kevos.com/download/solidworks. Manual route: close SOLIDWORKS, unzip into your add-in folder (replace all files), run OpenSketchSW.exe and click Install for me, then reopen SOLIDWORKS."
 
-  # CADOS for SOLIDWORKS installer (installer/): the MSI needs Windows (WiX Toolset 5). Signed when the repository has the
+  # BIZOMAT CAD Automation for SOLIDWORKS installer (installer/; the MSI keeps its CADOS-for-SOLIDWORKS file names): the MSI needs Windows (WiX Toolset 5). Signed when the repository has the
   # secrets KEVOS_SIGN_PFX_BASE64 (a code-signing .pfx, base64) and KEVOS_SIGN_PASSWORD; otherwise an UNSIGNED test MSI.
   # Every run keeps it as an artifact; main replaces the bridge-latest release; a tag bridge-v<version> makes a release.
   installer:
@@ -98,5 +98,5 @@ jobs:
           case "$GITHUB_REF" in refs/tags/bridge-v*) tag=${GITHUB_REF#refs/tags/};; esac
           if [ "$tag" = bridge-latest ]; then gh release delete bridge-latest --yes --cleanup-tag || true; fi
           gh release create "$tag" installer/out/*.msi installer/out/*.sha256 installer/out/release.json --target "$GITHUB_SHA" \
-            --title "CADOS for SOLIDWORKS $version" $( [ "$tag" = bridge-latest ] && echo --prerelease ) \
-            --notes "CADOS for SOLIDWORKS $version (by KEVOS), built from ${GITHUB_SHA::7}. Install once per Windows computer that runs SOLIDWORKS; see https://cados.kevos.com/docs#install. Check the SHA-256 against the .sha256 file. A file named UNSIGNED is an unsigned test build."
+            --title "BIZOMAT CAD Automation for SOLIDWORKS $version" $( [ "$tag" = bridge-latest ] && echo --prerelease ) \
+            --notes "BIZOMAT CAD Automation for SOLIDWORKS $version, built from ${GITHUB_SHA::7}. Install once per Windows computer that runs SOLIDWORKS; see https://cados.kevos.com/docs#install. Check the SHA-256 against the .sha256 file. A file named UNSIGNED is an unsigned test build."

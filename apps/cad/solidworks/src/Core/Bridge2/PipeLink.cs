@@ -73,7 +73,7 @@ namespace OpenSketch.Sw.Bridge
     }
 
     /// <summary>
-    /// The add-in's side of the local link to the KEVOS Companion (named pipe, protocol 2). Connects by itself and
+    /// The add-in's side of the local link to the BIZOMAT Companion (named pipe, protocol 2). Connects by itself and
     /// again after the companion restarts; never blocks SOLIDWORKS: a reader thread answers pings and cancels while a
     /// worker thread hands one command at a time to the host (which runs it on SOLIDWORKS' UI thread). Results made
     /// while the pipe is down wait in an outbox and go out after the next hello.
@@ -171,7 +171,7 @@ namespace OpenSketch.Sw.Bridge
                 Stream s;
                 try
                 {
-                    Set(attempt == 0 ? "Connecting to the KEVOS Companion" : "Waiting for the KEVOS Companion", false);
+                    Set(attempt == 0 ? "Connecting to the BIZOMAT Companion" : "Waiting for the BIZOMAT Companion", false);
                     s = connect(stop);
                 }
                 catch (Exception ex)
@@ -191,7 +191,7 @@ namespace OpenSketch.Sw.Bridge
                             log("could not start the companion: " + e2.Message);
                         }
                     }
-                    Set("KEVOS Companion not running", false);
+                    Set("BIZOMAT Companion not running", false);
                     stop.WaitHandle.WaitOne(Backoff[Math.Min(attempt++, Backoff.Length - 1)]);
                     continue;
                 }
@@ -219,7 +219,7 @@ namespace OpenSketch.Sw.Bridge
                     catch (Exception)
                     {
                     }
-                    Set("KEVOS Companion disconnected", false);
+                    Set("BIZOMAT Companion disconnected", false);
                 }
                 if (!stop.IsCancellationRequested) stop.WaitHandle.WaitOne(Backoff[0]);
             }
@@ -242,7 +242,7 @@ namespace OpenSketch.Sw.Bridge
             Companion = welcome;
             lock (writeLock) stream = s;
             lastHeard = DateTime.UtcNow;
-            Set("Connected to the KEVOS Companion", true);
+            Set("Connected to the BIZOMAT Companion", true);
             log("pipe connected, instance " + InstanceId);
             // results that waited while the pipe was down
             while (true)
@@ -416,7 +416,7 @@ namespace OpenSketch.Sw.Bridge
             }
             Dictionary<string, object> problem = null;
             if (!Protocol.Ops.Contains(op))
-                problem = Msg.Error("UNKNOWN_OP", "input", $"This add-in does not know the command '{op}'. Update CADOS for SOLIDWORKS on this computer.", false, "addin");
+                problem = Msg.Error("UNKNOWN_OP", "input", $"This add-in does not know the command '{op}'. Update {BrandArt.Package} on this computer.", false, "addin");
             else if (!Times.TryParse(J.Str(cmd, "expires_at"), out var exp) || exp.AddSeconds(300) < DateTime.UtcNow)
                 problem = Msg.Error("EXPIRED", "transport", "The command expired before it reached SOLIDWORKS.", false, "addin");
             else if (J.Obj(cmd, "params") == null)
@@ -516,7 +516,7 @@ namespace OpenSketch.Sw.Bridge
             {
                 if (string.IsNullOrEmpty(name) || name.IndexOfAny(new[] { '/', '\\', ':' }) >= 0 || name == "." || name == "..")
                     throw new UserError("Bad file name " + name + ".");
-                if (dir == null) throw new UserError("No spool folder for files (update the KEVOS Companion).");
+                if (dir == null) throw new UserError("No spool folder for files (update the BIZOMAT Companion).");
                 Directory.CreateDirectory(dir);
                 var path = Path.Combine(dir, name);
                 File.WriteAllBytes(path, data);

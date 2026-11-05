@@ -35,7 +35,7 @@ namespace OpenSketch.Sw.Bridge
         /// <summary>Installed SOLIDWORKS versions: [{year, revision, path}].</summary>
         public Func<List<object>> Installations = () => new List<object>();
         /// <summary>Null when the peer may connect, else why not (the Windows companion checks the process is
-        /// SLDWORKS.exe with the signed KEVOS add-in loaded).</summary>
+        /// SLDWORKS.exe with the signed add-in loaded).</summary>
         public Func<PeerInfo, string> VerifyPeer = _ => null;
         /// <summary>Is a SOLIDWORKS process running at all (with or without the add-in).</summary>
         public Func<int> SolidWorksProcesses = () => 0;
@@ -57,7 +57,7 @@ namespace OpenSketch.Sw.Bridge
         };
     }
 
-    /// <summary>One SOLIDWORKS with the KEVOS add-in, connected over the pipe.</summary>
+    /// <summary>One SOLIDWORKS with the add-in, connected over the pipe.</summary>
     public sealed class SwInstance
     {
         public string Id;
@@ -134,7 +134,7 @@ namespace OpenSketch.Sw.Bridge
     }
 
     /// <summary>
-    /// The KEVOS Companion's core: holds the computer's registration, keeps the signed long poll to the gateway alive
+    /// The BIZOMAT Companion's core (KEVOS.Companion.exe): holds the computer's registration, keeps the signed long poll to the gateway alive
     /// (heartbeat, backoff, reconnect), accepts SOLIDWORKS add-ins on the local pipe, and moves each command from the
     /// gateway to the right SOLIDWORKS and its acknowledgment, progress and result back. Every command is checked
     /// here before it reaches SOLIDWORKS: the gateway's signature (key pinned at pairing), that it is for this
@@ -354,7 +354,7 @@ namespace OpenSketch.Sw.Bridge
             using (var c = new CloudLink(gateway, key, "pairing", log, o.HttpHandler?.Invoke()))
             {
                 var r = c.PairStart(name, o.MachineName, o.OsName, o.Version);
-                if (r.Status != 200) throw new IOException("The CADOS server refused pairing: " + r.ErrorMessage);
+                if (r.Status != 200) throw new IOException("The CAD Automation server refused pairing: " + r.ErrorMessage);
                 var t = new PairingTicket
                 {
                     PairId = J.Str(r.Json, "pair_id"), UserCode = J.Str(r.Json, "user_code"), Url = J.Str(r.Json, "verification_uri_complete"),
@@ -396,7 +396,7 @@ namespace OpenSketch.Sw.Bridge
             return false;
         }
 
-        /// <summary>Pairs with the person's CADOS email and password instead of the browser (POST /v2/devices/pair/password,
+        /// <summary>Pairs with the person's own email and password instead of the browser (POST /v2/devices/pair/password,
         /// signed with the pairing key). The password is sent once over HTTPS and kept nowhere, not even in the log.</summary>
         public void PairWithPassword(PairingTicket t, string email, string password)
         {
@@ -480,7 +480,7 @@ namespace OpenSketch.Sw.Bridge
             {
                 if (!Config.Paired)
                 {
-                    SetCloud(Config.Revoked ? "Removed from your CADOS account: pair again" : "Not registered: pair this computer", false);
+                    SetCloud(Config.Revoked ? "Removed from your CAD Automation account: pair again" : "Not registered: pair this computer", false);
                     kick.WaitOne(TimeSpan.FromSeconds(5));
                     continue;
                 }
@@ -546,7 +546,7 @@ namespace OpenSketch.Sw.Bridge
             Config.Revoked = true;
             Config.Save(cfgPath);
             session = null;
-            SetCloud("Removed from your CADOS account: pair again", false);
+            SetCloud("Removed from your CAD Automation account: pair again", false);
         }
 
         void Hello(CloudLink c, CancellationToken stop)
@@ -563,7 +563,7 @@ namespace OpenSketch.Sw.Bridge
                                 "os", o.OsName, "installations", o.Installations(), "instances", inst, "paused", Paused, "inflight", infl);
             var r = c.PostJson("/v2/device/hello", hello, 30, stop);
             if (r.Status == 401) throw new UnauthorizedAccessException(r.ErrorCode + ": " + r.ErrorMessage);
-            if (r.Status == 426) throw new IOException("This KEVOS Companion is too old for the server: update CADOS for SOLIDWORKS.");
+            if (r.Status == 426) throw new IOException("This BIZOMAT Companion is too old for the server: update " + BrandArt.Package + ".");
             if (r.Status != 200) throw new IOException("hello: HTTP " + r.Status + " " + r.ErrorMessage);
             var kids = J.Strs(J.Obj(r.Json, "keys"), "command_kids") ?? new List<string>();
             if (!kids.Contains(gatewayKid))
@@ -720,7 +720,7 @@ namespace OpenSketch.Sw.Bridge
             }
             if (!Protocol.Ops.Contains(op))
             {
-                Reject(cid, "UNKNOWN_OP", $"This computer does not know the operation '{op}'. Update CADOS for SOLIDWORKS.", "input");
+                Reject(cid, "UNKNOWN_OP", $"This computer does not know the operation '{op}'. Update {BrandArt.Package}.", "input");
                 return;
             }
             if (J.Obj(cmd, "params") == null)
@@ -730,7 +730,7 @@ namespace OpenSketch.Sw.Bridge
             }
             if (Paused)
             {
-                Reject(cid, "PAUSED", $"CADOS is paused on {Config.DeviceName} by the person at that computer.", "policy");
+                Reject(cid, "PAUSED", $"CAD Automation is paused on {Config.DeviceName} by the person at that computer.", "policy");
                 return;
             }
             var inst = Choose(cmd);
@@ -751,8 +751,8 @@ namespace OpenSketch.Sw.Bridge
             {
                 var running = o.SolidWorksProcesses() > 0;
                 Reject(cid, "INSTANCE_NOT_RUNNING", running
-                           ? $"SOLIDWORKS is running on {Config.DeviceName} but the CADOS add-in is not loaded. In SOLIDWORKS: Tools > Add-Ins, tick CADOS (Active and Start Up)."
-                           : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; CADOS connects by itself.");
+                           ? $"SOLIDWORKS is running on {Config.DeviceName} but the add-in is not loaded. In SOLIDWORKS: Tools > Add-Ins, tick {BrandArt.Product} (Active and Start Up)."
+                           : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; CAD Automation connects by itself.");
                 return;
             }
             Ack(cid, "accepted");

@@ -1,27 +1,30 @@
-# CADOS for SOLIDWORKS: the native add-in, its installer and its release
+# BIZOMAT CAD Automation for SOLIDWORKS: the native add-in, its installer and its release
+
+(Called CADOS for SOLIDWORKS in 0.12.0 to 0.12.2; renamed in 0.12.3, when only the names people read changed. The
+gap report below is the record of the 0.12.0 work and keeps the names of its time.)
 
 ## 1. Architecture (as of 0.12.0)
 
 ```
 AI assistant (Claude, ChatGPT, MCP clients)
    |  HTTPS, OAuth 2.1 (MCP Streamable HTTP)
-CADOS gateway (this server, https://cados.kevos.com): sign-in, devices, checks, command routing
+CAD Automation gateway (this server, https://cad.bizomat.ai and https://cados.kevos.com): sign-in, devices, checks, command routing
    |  outbound HTTPS from the computer, signed both ways (docs/BRIDGE-PROTOCOL.md)
-KEVOS Companion (KEVOS.Companion.exe, tray, per Windows user)
+BIZOMAT Companion (KEVOS.Companion.exe, tray, per Windows user)
    |  local named pipe, this Windows user only
-CADOS add-in (OpenSketch.Sw.dll, COM, inside SOLIDWORKS) -> SOLIDWORKS API on SOLIDWORKS' UI thread
+BIZOMAT CAD Automation add-in (OpenSketch.Sw.dll, COM, inside SOLIDWORKS) -> SOLIDWORKS API on SOLIDWORKS' UI thread
 ```
 
 | Part | Source | What it is |
 |---|---|---|
-| CADOS add-in | `solidworks/src/Addin` (+ `src/Core`) | A COM class implementing `ISwAddin` (`OpenSketch.Sw.SwAddin`, CLSID `275256ff-...`), .NET Framework 4.8 x64, built against the SOLIDWORKS 2022 interop (30.5.1, types embedded). Listed in Tools > Add-Ins as **CADOS**. Adds the CADOS CommandManager tab and toolbar (`KevosUi`), the CADOS menu, the **CADOS task pane** (`CadosPane`), the status window (`ConnectForm`) and the **CADOS: confirm** window (`Safety`). Runs every command (sketches, features, assemblies, drawings, exports) through the SOLIDWORKS API. |
-| KEVOS Companion | `solidworks/src/Companion` | Tray app: pairing, the device key (Windows key store, TPM first), the signed link to the gateway, SOLIDWORKS detection, verified updates, diagnostics. |
-| Installer | `installer/KEVOS-Bridge.wxs`, `installer/build.ps1` | **CADOS for SOLIDWORKS**, a per-machine x64 MSI (WiX 5). Installs both into `C:\Program Files\KEVOS\Bridge`, registers the COM classes and the add-in for every SOLIDWORKS version (HKLM), starts the Companion at sign-in, Start menu entries, upgrade, repair, uninstall. Same UpgradeCode as KEVOS Bridge 0.11, so it upgrades it in place. |
+| The add-in | `solidworks/src/Addin` (+ `src/Core`, `src/Shared`) | A COM class implementing `ISwAddin` (`OpenSketch.Sw.SwAddin`, CLSID `275256ff-...`), .NET Framework 4.8 x64, built against the SOLIDWORKS 2022 interop (30.5.1, types embedded). Listed in Tools > Add-Ins as **CADOS**. Adds the CADOS CommandManager tab and toolbar (`KevosUi`), the CADOS menu, the **CADOS task pane** (`CadosPane`), the status window (`ConnectForm`) and the **CADOS: confirm** window (`Safety`). Runs every command (sketches, features, assemblies, drawings, exports) through the SOLIDWORKS API. |
+| BIZOMAT Companion | `solidworks/src/Companion` | Tray app: pairing, the device key (Windows key store, TPM first), the signed link to the gateway, SOLIDWORKS detection, verified updates, diagnostics. |
+| Installer | `installer/KEVOS-Bridge.wxs`, `installer/build.ps1` | **BIZOMAT CAD Automation for SOLIDWORKS**, a per-machine x64 MSI (WiX 5). Installs both into `C:\Program Files\KEVOS\Bridge`, registers the COM classes and the add-in for every SOLIDWORKS version (HKLM), starts the Companion at sign-in, Start menu entries, upgrade, repair, uninstall. Same UpgradeCode as KEVOS Bridge 0.11, so it upgrades it in place. |
 | Manual package | `solidworks/build.sh` -> `OpenSketch-SOLIDWORKS.zip` | The same add-in DLL plus `OpenSketchSW.exe`, a per-user installer (no administrator rights; HKCU registration). For development and locked-down computers. |
 | Launcher macro | written by `OpenSketchSW.exe` into `Documents\OpenSketch\OpenSketch.swb` | Only starts the installed add-in (`OpenSketch.Sw.Launcher`) where SOLIDWORKS does not list per-user add-ins. Not the add-in, never offered as a download. |
-| Website | `opensketch/site.py`, `opensketch/sw_page.py` | Product page, documentation and dashboard. **Download CADOS for SOLIDWORKS** goes to `/download/solidworks`, which redirects to the published MSI. |
+| Website | `opensketch/site.py`, `opensketch/sw_page.py` | Product page, documentation and dashboard. **Download for SOLIDWORKS** goes to `/download/solidworks`, which redirects to the published MSI. |
 
-The AI work is done by the person's own AI assistant through the MCP tools (`opensketch/sw_tools.py`); CADOS runs no AI
+The AI work is done by the person's own AI assistant through the MCP tools (`opensketch/sw_tools.py`); CAD Automation runs no AI
 of its own. The add-in's job inside SOLIDWORKS is to run the commands, ask before destructive ones, and show what is
 happening (task pane, status window, log).
 
@@ -56,9 +59,9 @@ the MCP tools, the API and the device protocol are unchanged.
 1. Bump `<Version>` in `solidworks/Directory.Build.props` (add-in, Companion and MSI share it; an MSI upgrade needs a
    higher version). Add the release notes to `docs/KEVOS-RELEASE-NOTES.md`.
 2. Merge to `main`. `solidworks.yml` replaces the `bridge-latest` pre-release with the new MSI (versioned and stable
-   names, SHA-256 files, `release.json`). The website's **Download CADOS for SOLIDWORKS** serves it at once.
+   names, SHA-256 files, `release.json`). The website's **Download for SOLIDWORKS** serves it at once.
 3. Run the checklist in `docs/KEVOS-TEST-REPORT.md` section 4 on a clean Windows computer with SOLIDWORKS 2022 (and
-   each newer version you support): install, Tools > Add-Ins lists CADOS, the CADOS tab and task pane appear, pairing,
+   each newer version you support): install, Tools > Add-Ins lists BIZOMAT CAD Automation, the BIZOMAT tab and task pane appear, pairing,
    the self test, a destructive change asks, uninstall leaves CAD files.
 4. Tag `bridge-v<version>` and push the tag: CI publishes the versioned release.
 5. To offer the update to paired computers, copy that release's `release.json` to the server's data folder as

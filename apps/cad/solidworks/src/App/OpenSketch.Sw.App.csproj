@@ -5,6 +5,7 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
     <AssemblyName>OpenSketchSW</AssemblyName>
+    <AssemblyTitle>BIZOMAT CAD Automation for SOLIDWORKS, manual installation</AssemblyTitle>
     <RootNamespace>OpenSketch.Sw.App</RootNamespace>
     <PlatformTarget>x64</PlatformTarget>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>

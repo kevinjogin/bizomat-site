@@ -102,14 +102,15 @@ namespace OpenSketch.Sw
             set => SetKevosInt("ConfirmDestructive", value ? 1 : 0);
         }
 
-        /// <summary>Take commands from the KEVOS Companion on this computer (the default; the direct link above is the fallback).</summary>
+        /// <summary>Take commands from the BIZOMAT Companion on this computer (the default; the direct link above is the fallback).</summary>
         public static bool UseCompanion
         {
             get => KevosInt("UseCompanion", 1) != 0;
             set => SetKevosInt("UseCompanion", value ? 1 : 0);
         }
 
-        /// <summary>Where KEVOS Bridge is installed (written by the installer: HKLM for everyone, else HKCU).</summary>
+        /// <summary>Where the installer put the add-in and the Companion (HKLM for everyone, else HKCU; the key keeps the
+        /// KEVOS Bridge name).</summary>
         public static string InstallDir
         {
             get

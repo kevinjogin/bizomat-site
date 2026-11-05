@@ -186,7 +186,7 @@ namespace Kevos.Companion
                 {
                     var err = Marshal.GetLastWin32Error();
                     if (first && (err == 5 || err == 231))
-                        throw new UnauthorizedAccessException($"Another process already holds the KEVOS pipe {name} (error {err}). KEVOS will not share it. Restart Windows; if this stays, check for malware.");
+                        throw new UnauthorizedAccessException($"Another process already holds the Companion's pipe {name} (error {err}). The BIZOMAT Companion will not share it. Restart Windows; if this stays, check for malware.");
                     throw new Win32Exception(err);
                 }
                 first = false;
@@ -236,7 +236,7 @@ namespace Kevos.Companion
         }
     }
 
-    /// <summary>Is this pipe client SOLIDWORKS with the KEVOS add-in loaded (from our install, signed like us)?</summary>
+    /// <summary>Is this pipe client SOLIDWORKS with the add-in loaded (from our install, signed like us)?</summary>
     static class PeerCheck
     {
         public static string Verify(PeerInfo p)
@@ -251,9 +251,9 @@ namespace Kevos.Companion
                 using (var proc = Process.GetProcessById(p.Pid))
                 {
                     var addin = proc.Modules.Cast<ProcessModule>().FirstOrDefault(m => string.Equals(Path.GetFileName(m.FileName), "OpenSketch.Sw.dll", StringComparison.OrdinalIgnoreCase));
-                    if (addin == null) return "the CADOS add-in is not loaded in that SOLIDWORKS";
+                    if (addin == null) return "the add-in is not loaded in that SOLIDWORKS";
                     if (!string.Equals(Path.GetFullPath(addin.FileName), Path.GetFullPath(Paths.AddinDll), StringComparison.OrdinalIgnoreCase))
-                        return "it loaded the add-in from " + addin.FileName + ", not from this CADOS install (" + Paths.AddinDll + ")";
+                        return "it loaded the add-in from " + addin.FileName + ", not from this installation (" + Paths.AddinDll + ")";
                     var mine = Authenticode.Signer(Paths.Exe);
                     if (mine != null && mine != Authenticode.Signer(addin.FileName)) return "its add-in is not signed by the same publisher";
                 }
@@ -577,7 +577,7 @@ namespace Kevos.Companion
                     {
                         var cb = k?.GetValue("CodeBase") as string;
                         if (cb == null) continue;
-                        Log.Write("removing the old per-user registration of " + progid + " (" + cb + ") so SOLIDWORKS loads the installed CADOS add-in");
+                        Log.Write("removing the old per-user registration of " + progid + " (" + cb + ") so SOLIDWORKS loads the installed add-in");
                     }
                     Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\CLSID\" + clsid, false);
                     Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\" + progid, false);
@@ -589,7 +589,7 @@ namespace Kevos.Companion
             }
         }
 
-        /// <summary>Once per user: SOLIDWORKS loads the KEVOS add-in at start-up (the per-machine installer cannot write
+        /// <summary>Once per user: SOLIDWORKS loads the add-in at start-up (the per-machine installer cannot write
         /// this for every user). Afterwards the person's own choice in Tools > Add-Ins wins.</summary>
         public static void EnsureAddinStartsOnce()
         {
@@ -599,7 +599,7 @@ namespace Kevos.Companion
                 using (var k = Registry.CurrentUser.CreateSubKey(@"Software\SolidWorks\AddInsStartup\" + AddinClsid))
                     k.SetValue(null, 1, RegistryValueKind.DWord);
                 Config.SetFlag("AddinStartupSet", true);
-                Log.Write("SOLIDWORKS will load the CADOS add-in at start-up for this user");
+                Log.Write("SOLIDWORKS will load the add-in at start-up for this user");
             }
             catch (Exception ex)
             {

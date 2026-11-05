@@ -18,7 +18,7 @@ namespace OpenSketch.Sw
     /// <summary>
     /// One running link per SOLIDWORKS: the add-in, the launcher macro and the stand-alone program all start it here.
     /// Two ways in, both optional and both ending in the same place:
-    /// - the KEVOS Companion on this computer, over the local pipe (PipeLink), started automatically;
+    /// - the BIZOMAT Companion on this computer, over the local pipe (PipeLink), started automatically;
     /// - the direct link to an OpenSketch server (BridgeClient, the v1 address and key), when one is saved.
     /// The network and pipe run on their own threads; every command is handed to SOLIDWORKS' own thread (through a
     /// hidden window) because SOLIDWORKS may only be called from there. Nothing here blocks SOLIDWORKS while waiting
@@ -36,7 +36,7 @@ namespace OpenSketch.Sw
         Thread thread;
         CancellationTokenSource cts;
         ConnectForm form;
-        // the KEVOS Companion link
+        // the Companion link
         PipeLink pipe;
         CancellationTokenSource pipeCts;
         readonly System.Windows.Forms.Timer uiTimer;
@@ -121,7 +121,7 @@ namespace OpenSketch.Sw
                 Current.Stop();
             }
             Current = new Host(app, mode);
-            Log.Write($"CADOS for SOLIDWORKS {Version} started as {mode} from {SafeLocation()}; SOLIDWORKS {Current.swRevision}");
+            Log.Write($"BIZOMAT CAD Automation for SOLIDWORKS {Version} started as {mode} from {SafeLocation()}; SOLIDWORKS {Current.swRevision}");
             if (mode != "program" && Settings.UseCompanion) Current.StartPipe();
             return Current;
         }
@@ -138,7 +138,7 @@ namespace OpenSketch.Sw
             }
         }
 
-        // ----------------------------------------------------------------- the KEVOS Companion link
+        // ----------------------------------------------------------------- the Companion link
 
         public void StartPipe()
         {
@@ -198,7 +198,7 @@ namespace OpenSketch.Sw
 
         void IAddinHost.CompanionMissing()
         {
-            if (!CompanionPipe.StartCompanion()) Log.Write("the KEVOS Companion is not installed next to the add-in; only the direct link can be used");
+            if (!CompanionPipe.StartCompanion()) Log.Write("the BIZOMAT Companion is not installed next to the add-in; only the direct link can be used");
         }
 
         /// <summary>A modal dialog in SOLIDWORKS disables its main window: no command may run inside it. Win32 only, no COM,
@@ -481,7 +481,7 @@ namespace OpenSketch.Sw
             public IntPtr Handle { get; }
         }
 
-        /// <summary>The CADOS status window, once shown.</summary>
+        /// <summary>The status window, once shown.</summary>
         public Form Window => form;
 
         public void ShowWindow()

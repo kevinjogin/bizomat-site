@@ -168,11 +168,19 @@ class Supervisor:
                 pass
 
 
+def probe_url(host: str, port: int) -> str:
+    """Where the supervisor asks for /healthz: 127.0.0.1 for a server on every address (0.0.0.0, or :: which
+    __main__.listen_sockets also opens on IPv4), an IPv6 address in brackets, any other host as it is."""
+    h = (host or "").strip().strip("[]")
+    if h in ("", "0.0.0.0", "::"):
+        h = "127.0.0.1"
+    return f"http://[{h}]:{port}/healthz" if ":" in h else f"http://{h}:{port}/healthz"
+
+
 def main(host: str, port: int) -> int:
     """Entry point for `python -m opensketch --supervise`: the server runs as a child on the same host and port."""
     cmd = [sys.executable, "-m", "opensketch", "--host", host, "--port", str(port), "--no-browser"]
-    probe = "127.0.0.1" if host in ("0.0.0.0", "", "::") else host
-    sup = Supervisor(cmd, f"http://{probe}:{port}/healthz",
+    sup = Supervisor(cmd, probe_url(host, port),
                      hang=float(os.environ.get("OPENSKETCH_HANG_SECONDS", HANG_SECONDS)),
                      boot=float(os.environ.get("OPENSKETCH_BOOT_SECONDS", BOOT_SECONDS)))
 

@@ -1,12 +1,12 @@
-# Building and releasing KEVOS Bridge
+# Building and releasing CAD Automation for SOLIDWORKS (formerly KEVOS Bridge)
 
 ## Parts
 
 | Part | Source | Built with |
 |---|---|---|
-| KEVOS gateway (MCP server, device API) | `opensketch/` (`devicebridge.py` for devices) | Python 3.12, `requirements.txt` (hash-pinned) |
-| KEVOS add-in (`OpenSketch.Sw.dll`) | `solidworks/src/Addin`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded |
-| KEVOS Companion (`KEVOS.Companion.exe`) | `solidworks/src/Companion`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64 (no SOLIDWORKS reference) |
+| CAD Automation gateway (MCP server, device API) | `opensketch/` (`devicebridge.py` for devices) | Python 3.12, `requirements.txt` (hash-pinned) |
+| The add-in (`OpenSketch.Sw.dll`) | `solidworks/src/Addin`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded |
+| BIZOMAT Companion (`KEVOS.Companion.exe`) | `solidworks/src/Companion`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64 (no SOLIDWORKS reference) |
 | Protocol core (shared) | `solidworks/src/Core/Bridge2` | compiled into both, and into the .NET 8 tests |
 | Installer | `installer/KEVOS-Bridge.wxs`, `installer/build.ps1` | WiX Toolset 5 (Windows only) |
 
@@ -28,7 +28,7 @@ npm test
 bash solidworks/build.sh test
 ```
 
-`pytest -q` includes the KEVOS end-to-end test (`tests/test_bridge_e2e.py`, marked slow) when the .NET SDK is
+`pytest -q` includes the bridge end-to-end test (`tests/test_bridge_e2e.py`, marked slow) when the .NET SDK is
 installed: it builds `solidworks/tests/BridgeProbe` and runs the real C# Companion engine and add-in link against the
 real server. `solidworks/build.sh` puts the add-in, Companion, legacy installer, macro and README in
 `solidworks/dist/OpenSketch-SOLIDWORKS`.

@@ -8,7 +8,7 @@ using SolidWorks.Interop.sldworks;
 
 namespace OpenSketch.Sw
 {
-    /// <summary>The CADOS status window: the Companion link and this computer's registration, the confirmation setting, the
+    /// <summary>The BIZOMAT CAD Automation status window: the Companion link and this computer's registration, the confirmation setting, the
     /// optional direct link (address and key), Connect / Disconnect, and what is happening.</summary>
     public sealed class ConnectForm : Form
     {
@@ -26,7 +26,7 @@ namespace OpenSketch.Sw
         public ConnectForm(Host host)
         {
             this.host = host;
-            Text = "CADOS for SOLIDWORKS: status";
+            Text = "BIZOMAT CAD Automation: status";
             Font = new Font("Segoe UI", 9f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -39,9 +39,9 @@ namespace OpenSketch.Sw
             var title = new Label { Text = "Your AI assistant works in this SOLIDWORKS", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
             dot.SetBounds(18, 50, 10, 10);
             status.SetBounds(34, 45, 470, 40);
-            var l1 = new Label { Text = "Direct link (optional, without the Companion): CADOS address", AutoSize = true, Location = new Point(16, 88) };
+            var l1 = new Label { Text = "Direct link (optional, without the Companion): service address", AutoSize = true, Location = new Point(16, 88) };
             server.SetBounds(16, 106, 488, 24);
-            var l2 = new Label { Text = "Add-in key (from your CADOS dashboard)", AutoSize = true, Location = new Point(16, 138) };
+            var l2 = new Label { Text = "Add-in key (from your CAD Automation dashboard)", AutoSize = true, Location = new Point(16, 138) };
             key.SetBounds(16, 156, 400, 24);
             key.UseSystemPasswordChar = true;
             var paste = new Button { Text = "Paste", Bounds = new Rectangle(424, 155, 80, 26) };
@@ -160,11 +160,11 @@ namespace OpenSketch.Sw
         {
             var c = host.CompanionState;
             string companion;
-            if (!host.PipeConnected) companion = "KEVOS Companion: " + host.PipeState;
+            if (!host.PipeConnected) companion = "BIZOMAT Companion: " + host.PipeState;
             else
             {
                 var device = J.Str(c, "device_name");
-                companion = device == null ? "KEVOS Companion connected; this computer is not registered yet (open the Companion to pair it)"
+                companion = device == null ? "BIZOMAT Companion connected; this computer is not registered yet (open the Companion to pair it)"
                     : $"Computer {device}: {J.Str(c, "cloud") ?? "connecting"}" + (J.Bool(c, "paused") ? " (paused)" : "") + $"; {host.CompanionCommands} commands run";
             }
             status.Text = companion + "\r\nDirect link: " + host.State;

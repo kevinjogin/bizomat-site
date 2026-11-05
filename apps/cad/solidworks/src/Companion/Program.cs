@@ -5,17 +5,18 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
+using OpenSketch.Sw.Core;
 
 namespace Kevos.Companion
 {
     /// <summary>
-    /// KEVOS.Companion.exe. Normally started by Windows at logon ("--background": tray icon only). One per Windows user:
+    /// KEVOS.Companion.exe, the BIZOMAT Companion. Normally started by Windows at logon ("--background": tray icon only). One per Windows user:
     /// a second start brings the first one's window up instead. Command line (installer and support):
     ///   --background   start quietly (no window unless the computer still needs pairing)
     ///   --pair         open the pairing window
     ///   --diagnose     write a diagnostics report and open it
     ///   --startup on|off   start with Windows for this user
-    ///   --unpair       remove this computer from the CADOS account and delete its key (Start menu, before reinstalling)
+    ///   --unpair       remove this computer from the account and delete its key (Start menu, before reinstalling)
     ///   --exit         stop a running companion
     /// </summary>
     static class Program
@@ -56,7 +57,7 @@ namespace Kevos.Companion
                 Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
                 Application.ThreadException += (s, e) => Fatal(e.Exception, args);
                 AppDomain.CurrentDomain.UnhandledException += (s, e) => Fatal(e.ExceptionObject as Exception, args);
-                Log.Write($"KEVOS Companion {Updater.Current.ToString(3)} starting ({string.Join(" ", args)}) from {Paths.Exe}");
+                Log.Write($"BIZOMAT Companion {Updater.Current.ToString(3)} starting ({string.Join(" ", args)}) from {Paths.Exe}");
                 if (a.Contains("--diagnose"))
                 {
                     Application.Run(new TrayApp(sid, background: true, pair: false, diagnose: true));
@@ -83,13 +84,13 @@ namespace Kevos.Companion
                     Log.Write("unpaired " + name + " from the command line");
                 }
                 CngDeviceKey.Delete();
-                if (!quiet) MessageBox.Show("This computer was removed from KEVOS and its key was deleted. To use it again, open the KEVOS Companion and pair it.", "KEVOS");
+                if (!quiet) MessageBox.Show("This computer was removed from CAD Automation and its key was deleted. To use it again, open the BIZOMAT Companion and pair it.", BrandArt.Companion);
                 return 0;
             }
             catch (Exception ex)
             {
                 Log.Write("unpair: " + ex);
-                if (!quiet) MessageBox.Show("Could not remove this computer: " + ex.Message, "KEVOS Companion", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!quiet) MessageBox.Show("Could not remove this computer: " + ex.Message, BrandArt.Companion, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
         }

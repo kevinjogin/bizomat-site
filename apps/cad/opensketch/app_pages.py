@@ -1,9 +1,9 @@
-"""The signed-in CADOS app: Home, CAD Assistant, SOLIDWORKS, Tools, History and Settings (brand.APP_NAV).
+"""The signed-in BIZOMAT CAD Automation app: Home, CAD Assistant, SOLIDWORKS, Tools, History and Settings (brand.APP_NAV).
 
 Server-rendered shells on the shared design system (brand.py, static/ui/cados.css); one script, static/ui/app.js,
 fills them from the same API the earlier single dashboard used (/api/solidworks, /api/devices, /api/sw/key,
 /api/connect/new_address, /api/account/apps/<id>) plus /api/commands for History. Only real features are shown:
-there is no Automation section because CADOS keeps no stored automations (the assistant runs multi-step changes as
+there is no stored-automation section because the app keeps no stored automations (the assistant runs multi-step changes as
 one checked step with sw_batch, listed under Tools).
 """
 
@@ -47,11 +47,11 @@ def _copy_field(id_: str, label: str, secret: bool = False, hint: str = "") -> s
 def home(base: str = "", admin: bool = False) -> bytes:
     chips = "".join(f'<button class="chip" type="button" data-example="{escape(examples[0], quote=True)}">{escape(group)}</button>'
                     for group, examples in catalog.EXAMPLES)
-    body = f"""<div class="app-title home-hero"><div><span class="eyebrow">CADOS by KEVOS</span><h1>Engineering, made intelligent.</h1>
+    body = f"""<div class="app-title home-hero"><div><span class="eyebrow">{brand.FULL}</span><h1>Engineering, made intelligent.</h1>
 <p>CAD automation and AI-powered engineering workflows, connected to SOLIDWORKS.</p></div>{_status_pill()}</div>
 <div class="callout callout-warn" id="update" hidden style="margin-bottom:var(--s-5)"></div>
-<section class="panel" id="newpw" hidden aria-labelledby="newpw-h" style="margin-bottom:var(--s-5)"><div class="panel-head"><h2 id="newpw-h">Your CADOS password</h2>
-<p>The password CADOS made for you. Save it now: it is shown only this once. Use it to sign in and in the KEVOS Companion's pairing window.</p></div>
+<section class="panel" id="newpw" hidden aria-labelledby="newpw-h" style="margin-bottom:var(--s-5)"><div class="panel-head"><h2 id="newpw-h">Your password</h2>
+<p>The password made for you when you signed up. Save it now: it is shown only this once. Use it to sign in and in the BIZOMAT Companion's pairing window.</p></div>
 <div class="panel-body">{_copy_field("newpw-v", "Password", secret=True)}
 <div class="actions"><button class="btn btn-primary btn-sm" type="button" id="newpw-ok">I saved it</button>
 <a class="small" href="/settings#password">Change it in Settings</a></div></div></section>
@@ -59,8 +59,8 @@ def home(base: str = "", admin: bool = False) -> bytes:
 <a href="/settings#password">Choose your own in Settings</a>.</div>
 <div class="two-col"><div class="stack">
 <section class="panel task" aria-labelledby="task-h"><div class="panel-head"><h2 id="task-h">Start an engineering task</h2>
-<p>Describe what you need. CADOS works through your AI assistant: copy the task, paste it into an assistant connected to CADOS,
-and follow the work in SOLIDWORKS.</p></div>
+<p>Describe what you need. CAD Automation works through your AI assistant: copy the task, paste it into a connected
+assistant, and follow the work in SOLIDWORKS.</p></div>
 <div class="panel-body"><label class="sr-only" for="task">Your task</label>
 <textarea id="task" placeholder="For example: Make a 60 x 40 x 8 mm mounting plate with four M5 clearance holes, 6 mm in from each corner."></textarea>
 <div class="chips" aria-label="Examples">{chips}</div>
@@ -82,7 +82,7 @@ and follow the work in SOLIDWORKS.</p></div>
 <div class="kv-row"><span class="k">Activity</span><span class="v" id="t-work">Idle</span></div></div></section>
 <section class="panel" id="setup" aria-labelledby="setup-h"><div class="panel-head"><h2 id="setup-h">Get set up</h2><span class="small muted" id="setup-n"></span></div>
 <div class="panel-body"><ol class="checklist">
-<li id="ck-install"><span class="tick">1</span><span class="lbl">Install CADOS for SOLIDWORKS</span><a href="/solidworks#install">Install</a></li>
+<li id="ck-install"><span class="tick">1</span><span class="lbl">Install CAD Automation for SOLIDWORKS</span><a href="/solidworks#install">Install</a></li>
 <li id="ck-connect"><span class="tick">2</span><span class="lbl">Open SOLIDWORKS on a paired computer</span><a href="/solidworks#computers">Computers</a></li>
 <li id="ck-ai"><span class="tick">3</span><span class="lbl">Connect your AI assistant</span><a href="/assistant#connect">Connect</a></li>
 <li id="ck-test"><span class="tick">4</span><span class="lbl">Run the guided self test</span><button class="link-btn small" type="button" id="tried">Mark done</button></li>
@@ -91,7 +91,7 @@ and follow the work in SOLIDWORKS.</p></div>
 <div class="tiles" style="margin-top:var(--s-5)">
 <a class="tile" href="/assistant"><span class="tile-k">CAD Assistant</span><strong>Ask for engineering work</strong><span>Connect your assistant and see what you can ask.</span><span class="go">Open</span></a>
 <a class="tile" href="/solidworks"><span class="tile-k">SOLIDWORKS</span><strong>Your computers and the add-in</strong><span>Install, pair and check the link.</span><span class="go">Open</span></a>
-<a class="tile" href="/tools"><span class="tile-k">Tools</span><strong>Everything CADOS can do</strong><span>Parts, assemblies, drawings, checks and files.</span><span class="go">Open</span></a></div>"""
+<a class="tile" href="/tools"><span class="tile-k">Tools</span><strong>Everything CAD Automation can do</strong><span>Parts, assemblies, drawings, checks and files.</span><span class="go">Open</span></a></div>"""
     return _shell("home", body, base, admin)
 
 
@@ -105,22 +105,22 @@ def assistant(base: str = "", admin: bool = False) -> bytes:
                   for j, t in enumerate(items))
         + "</div>" for i, (g, items) in enumerate(catalog.EXAMPLES))
     body = f"""<div class="app-title"><div><span class="eyebrow">CAD Assistant</span><h1>Work in SOLIDWORKS by asking.</h1>
-<p>Use Claude, ChatGPT or another AI assistant. CADOS gives it the SOLIDWORKS tools, checks every sketch and feature, and runs
-the work on your computer. CADOS runs no AI of its own.</p></div></div>
+<p>Use Claude, ChatGPT or another AI assistant. CAD Automation gives it the SOLIDWORKS tools, checks every sketch and feature,
+and runs the work on your computer. It runs no AI of its own.</p></div></div>
 <div class="stack">
 <section class="panel" id="connect" aria-labelledby="connect-h"><div class="panel-head"><h2 id="connect-h">Connect your assistant</h2>
-<p>Add this address to your assistant once, then sign in to CADOS when it asks.</p></div><div class="panel-body">
+<p>Add this address to your assistant once, then sign in when it asks.</p></div><div class="panel-body">
 {_copy_field("url", "Connector address")}
 <div><div class="tabs" role="tablist" aria-label="Instructions for your assistant">
 <button type="button" role="tab" id="t-claude" aria-selected="true" aria-controls="p-claude">Claude</button>
 <button type="button" role="tab" id="t-chatgpt" aria-selected="false" aria-controls="p-chatgpt" tabindex="-1">ChatGPT</button>
 <button type="button" role="tab" id="t-other" aria-selected="false" aria-controls="p-other" tabindex="-1">Other assistants</button></div>
 <div class="tab-panel small" role="tabpanel" id="p-claude" aria-labelledby="t-claude" style="margin-top:var(--s-3)"><ol>
-<li>Open Settings &gt; Connectors and choose <b>Add custom connector</b>.</li><li>Name it CADOS and paste the connector address.</li>
-<li>Choose Connect, sign in to CADOS and choose <b>Allow</b>.</li></ol></div>
+<li>Open Settings &gt; Connectors and choose <b>Add custom connector</b>.</li><li>Name it BIZOMAT CAD Automation and paste the connector address.</li>
+<li>Choose Connect, sign in and choose <b>Allow</b>.</li></ol></div>
 <div class="tab-panel small" role="tabpanel" id="p-chatgpt" aria-labelledby="t-chatgpt" hidden style="margin-top:var(--s-3)"><ol>
 <li>Where your plan allows custom connectors, add a new connector.</li><li>Paste the connector address.</li>
-<li>Sign in to CADOS when asked and choose <b>Allow</b>. Your workspace administrator may need to allow custom connectors first.</li></ol></div>
+<li>Sign in when asked and choose <b>Allow</b>. Your workspace administrator may need to allow custom connectors first.</li></ol></div>
 <div class="tab-panel small" role="tabpanel" id="p-other" aria-labelledby="t-other" hidden style="margin-top:var(--s-3)">
 <p>Any app that supports remote MCP servers over Streamable HTTP can use the connector address. If it cannot sign in, use the
 private address in <a href="/settings#private">Settings</a>.</p></div></div>
@@ -130,7 +130,7 @@ private address in <a href="/settings#private">Settings</a>.</p></div></div>
 <p>Plain requests work. Copy one to try it, or describe your own task on <a href="/dashboard">Home</a>. The full list is under <a href="/tools">Tools</a>.</p></div>
 <div class="panel-body"><div class="examples">{groups}</div></div></section>
 <section class="panel" aria-labelledby="first-h"><div class="panel-head"><h2 id="first-h">Check it works</h2></div><div class="panel-body">
-<div class="prompt"><span id="verify-prompt">Check the CADOS connection to SOLIDWORKS.</span><button class="btn btn-secondary btn-sm" type="button" data-copy-text="verify-prompt">Copy</button></div>
+<div class="prompt"><span id="verify-prompt">Check the CAD Automation connection to SOLIDWORKS.</span><button class="btn btn-secondary btn-sm" type="button" data-copy-text="verify-prompt">Copy</button></div>
 <div class="prompt"><span id="selftest-prompt">Run the SOLIDWORKS self test, all three stages.</span><button class="btn btn-secondary btn-sm" type="button" data-copy-text="selftest-prompt">Copy</button></div>
 <ul class="small" style="margin:0"><li>The assistant builds in small checked steps and reads your file before it changes it.</li>
 <li>Deleting, undoing and overwriting ask you in SOLIDWORKS first (on by default).</li>
@@ -143,30 +143,30 @@ private address in <a href="/settings#private">Settings</a>.</p></div></div>
 
 def solidworks(base: str = "", admin: bool = False) -> bytes:
     body = f"""<div class="app-title"><div><span class="eyebrow">SOLIDWORKS</span><h1>Your SOLIDWORKS connection.</h1>
-<p>CADOS runs your assistant's work in your own SOLIDWORKS, through a native add-in. Nothing connects in to your computer.</p></div>{_status_pill()}</div>
+<p>CAD Automation runs your assistant's work in your own SOLIDWORKS, through a native add-in. Nothing connects in to your computer.</p></div>{_status_pill()}</div>
 <div class="callout callout-warn" id="update" hidden style="margin-bottom:var(--s-5)"></div>
 <div class="stack">
-<section class="panel" id="install" aria-labelledby="install-h"><div class="panel-head"><h2 id="install-h">Install CADOS for SOLIDWORKS</h2>
-<p>One Windows installer adds the CADOS add-in to SOLIDWORKS and the KEVOS Companion, which keeps the secure link.</p></div><div class="panel-body">
-<div class="actions"><a class="btn btn-primary" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a>
+<section class="panel" id="install" aria-labelledby="install-h"><div class="panel-head"><h2 id="install-h">Install CAD Automation for SOLIDWORKS</h2>
+<p>One Windows installer adds the add-in to SOLIDWORKS and the BIZOMAT Companion, which keeps the secure link.</p></div><div class="panel-body">
+<div class="actions"><a class="btn btn-primary" href="/download/solidworks">{icon("download")}Download for SOLIDWORKS</a>
 <a class="small" href="/docs#install">Installation guide</a><a class="small" href="/docs#requirements">System requirements</a><a class="small" href="/docs#versions">Supported versions</a></div>
 <p class="small muted">Windows 10 or 11, 64-bit. SOLIDWORKS 2022 or later. Early access: the installer is not code-signed yet, so Windows may ask you to confirm it.</p></div></section>
 <section class="panel" id="computers" aria-labelledby="pcs-h"><div class="panel-head"><h2 id="pcs-h">Your computers</h2>
-<p>After installing, the KEVOS Companion opens a pairing window. Confirm its code here when the browser opens. Then open SOLIDWORKS.</p></div>
+<p>After installing, the BIZOMAT Companion opens a pairing window. Confirm its code here when the browser opens. Then open SOLIDWORKS.</p></div>
 <div class="panel-body"><ul class="rows" id="pcs" aria-label="Your computers"></ul><p class="empty" id="no-pcs" hidden>No computer paired yet.</p></div></section>
-<section class="panel" aria-labelledby="how-h"><div class="panel-head"><h2 id="how-h">How CADOS connects</h2></div><div class="panel-body">
+<section class="panel" aria-labelledby="how-h"><div class="panel-head"><h2 id="how-h">How CAD Automation connects</h2></div><div class="panel-body">
 <div class="table-wrap"><table class="connect-table"><thead><tr><th>Part</th><th>What it is</th></tr></thead><tbody>
-<tr><td>CADOS add-in</td><td>A native SOLIDWORKS add-in, listed in Tools &gt; Add-Ins as CADOS, with a CADOS tab, menu and task pane. It runs each command and asks you before destructive changes.</td></tr>
-<tr><td>KEVOS Companion</td><td>A small Windows tray app. It pairs the computer with your account and keeps an outbound, signed link to CADOS.</td></tr>
-<tr><td>Cloud connection (MCP)</td><td>Your assistant connects to CADOS at the connector address on the <a href="/assistant#connect">CAD Assistant</a> page.</td></tr>
-<tr><td>Self-hosted (local MCP)</td><td>Advanced: run the CADOS server on your own Windows computer and connect your assistant to it there. See the <code>windows/</code> folder in the source code.</td></tr>
+<tr><td>The add-in</td><td>A native SOLIDWORKS add-in, listed in Tools &gt; Add-Ins as BIZOMAT CAD Automation, with a BIZOMAT tab, menu and task pane. It runs each command and asks you before destructive changes.</td></tr>
+<tr><td>BIZOMAT Companion</td><td>A small Windows tray app. It pairs the computer with your account and keeps an outbound, signed link to CAD Automation.</td></tr>
+<tr><td>Cloud connection (MCP)</td><td>Your assistant connects to CAD Automation at the connector address on the <a href="/assistant#connect">CAD Assistant</a> page.</td></tr>
+<tr><td>Self-hosted (local MCP)</td><td>Advanced: run the CAD Automation server on your own Windows computer and connect your assistant to it there. See the <code>windows/</code> folder in the source code.</td></tr>
 <tr><td>Direct link</td><td>Without the Companion: one SOLIDWORKS session linked with the service address and your add-in key (below).</td></tr>
-<tr><td>Launcher macro</td><td>Not an add-in. It only starts the installed CADOS add-in where SOLIDWORKS does not list add-ins installed without administrator rights.</td></tr>
+<tr><td>Launcher macro</td><td>Not an add-in. It only starts the installed add-in where SOLIDWORKS does not list add-ins installed without administrator rights.</td></tr>
 </tbody></table></div></div></section>
 <section class="panel" aria-labelledby="direct-h"><div class="panel-head"><h2 id="direct-h">Direct link and manual installation</h2>
 <p>For development or locked-down computers. Most people use the installer above.</p></div><div class="panel-body">
 {_copy_field("server", "Service address")}
-<p class="small">Your add-in key is in <a href="/settings#addin-key">Settings</a>. In SOLIDWORKS, open <b>CADOS &gt; Status</b> and paste both.</p>
+<p class="small">Your add-in key is in <a href="/settings#addin-key">Settings</a>. In SOLIDWORKS, open <b>BIZOMAT &gt; Status</b> and paste both.</p>
 <div class="actions"><a class="btn btn-secondary btn-sm" id="download" href="/api/sw/download">Download the add-in package (.zip)</a>
 <span class="small" id="no-download" hidden style="color:var(--err)">The add-in package is not on this server yet.</span></div></div></section>
 <p class="small muted">Problems? See <a href="/docs#troubleshooting">Troubleshooting</a>.</p>
@@ -183,7 +183,7 @@ def tools(base: str = "", admin: bool = False) -> bytes:
                   f'<code>{escape(n)}</code><p>{escape(d)}</p></div>' for n, t, d in items)
         + "</div></section>" for i, (g, items) in enumerate(catalog.GROUPS))
     count = sum(len(items) for _, items in catalog.GROUPS)
-    body = f"""<div class="app-title"><div><span class="eyebrow">Tools</span><h1>Everything CADOS can do.</h1>
+    body = f"""<div class="app-title"><div><span class="eyebrow">Tools</span><h1>Everything CAD Automation can do.</h1>
 <p>These are the {count} tools your assistant can use in SOLIDWORKS. You do not call them yourself: describe the work, and the
 assistant picks the tools.</p></div></div>
 <div class="field" style="max-width:420px;margin-bottom:var(--s-6)"><label class="field-label" for="tool-q">Find a tool</label>
@@ -204,7 +204,7 @@ def history(base: str = "", admin: bool = False) -> bytes:
 <div class="table-wrap" id="h-wrap" hidden><table class="history-table"><thead><tr><th>When</th><th>What</th><th>Computer</th><th>Assistant</th><th>Result</th></tr></thead>
 <tbody id="h-rows"></tbody></table></div>
 <p class="empty" id="h-empty" hidden>No commands yet. When your assistant works on a paired computer, each command appears here.
-Commands over the direct link (without the KEVOS Companion) are not recorded.</p></div></section>"""
+Commands over the direct link (without the BIZOMAT Companion) are not recorded.</p></div></section>"""
     return _shell("history", body, base, admin)
 
 
@@ -230,11 +230,11 @@ def settings(base: str = "", admin: bool = False) -> bytes:
 {_copy_field("purl", "Private address", secret=True)}
 <div class="actions"><button class="link-btn danger small" type="button" id="newaddr">Make a new private address</button></div></div></section>
 <section class="panel" id="addin-key" aria-labelledby="key-h"><div class="panel-head"><h2 id="key-h">Add-in key</h2>
-<p>Used only by the direct link (SOLIDWORKS without the KEVOS Companion).</p></div><div class="panel-body">
+<p>Used only by the direct link (SOLIDWORKS without the BIZOMAT Companion).</p></div><div class="panel-body">
 {_copy_field("key", "Add-in key", secret=True, hint="Making a new key disconnects the direct link until you paste the new one.")}
 <div class="actions"><button class="link-btn danger small" type="button" id="newkey">Make a new key</button></div></div></section>
 <p class="small muted">Connected assistants are on the <a href="/assistant#connect">CAD Assistant</a> page, your computers on the
-<a href="/solidworks#computers">SOLIDWORKS</a> page. How CADOS handles your data: <a href="/privacy">Privacy</a>.</p>
+<a href="/solidworks#computers">SOLIDWORKS</a> page. How CAD Automation handles your data: <a href="/privacy">Privacy</a>.</p>
 </div>"""
     return _shell("settings", body, base, admin)
 
@@ -242,12 +242,12 @@ def settings(base: str = "", admin: bool = False) -> bytes:
 # ----------------------------------------------------------------------------- Admin (the owner only)
 
 def admin(base: str = "", admin: bool = True) -> bytes:
-    body = f"""<div class="app-title"><div><span class="eyebrow">Admin</span><h1>People on this CADOS server.</h1>
+    body = f"""<div class="app-title"><div><span class="eyebrow">Admin</span><h1>People on this CAD Automation server.</h1>
 <p>Add people, reset passwords, and see who chose their own password and who has computers and AI assistants
 connected. Only you see this page.</p></div></div>
 <div class="stack">
 <section class="panel" aria-labelledby="add-h"><div class="panel-head"><h2 id="add-h">Add a person</h2>
-<p>CADOS fills in a strong password. Keep it or type one, then give it to them with this address. They sign in when
+<p>A strong password is filled in. Keep it or type one, then give it to them with this address. They sign in when
 the installer's pairing step opens the browser, and can choose their own password in Settings. Or send an invite link
 below, so they choose it from the start.</p></div>
 <form class="panel-body" id="add-form" autocomplete="off">

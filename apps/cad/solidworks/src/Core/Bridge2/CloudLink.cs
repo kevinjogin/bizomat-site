@@ -62,7 +62,7 @@ namespace OpenSketch.Sw.Bridge
     }
 
     /// <summary>
-    /// The companion's signed HTTPS link to the KEVOS gateway (devicebridge.py). Every request carries a device proof:
+    /// The companion's signed HTTPS link to the CAD Automation gateway (devicebridge.py). Every request carries a device proof:
     /// a JWS by this computer's key over the method, path and query, the time, a one-time id and the body's SHA-256,
     /// so no password, token or key is ever sent. The server's clock (KEVOS-Server-Time) corrects ours.
     /// </summary>
@@ -96,7 +96,7 @@ namespace OpenSketch.Sw.Bridge
         public HttpReply Send(string method, string pathQs, byte[] body, string contentType, TimeSpan timeout, CancellationToken stop = default(CancellationToken))
         {
             if (!Gateway.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !IsLoopback(Gateway))
-                throw new IOException("The KEVOS gateway address must start with https:// (plain http only on this computer).");
+                throw new IOException("The CAD Automation service address must start with https:// (plain http only on this computer).");
             body = body ?? new byte[0];
             using (var cts = CancellationTokenSource.CreateLinkedTokenSource(stop))
             using (var req = new HttpRequestMessage(new HttpMethod(method), Gateway + pathQs))

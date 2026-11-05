@@ -195,7 +195,7 @@ def _session(user: dict | None, sid: str) -> Session:
         ended = _ended.get(person_id(user))
         if ended and time.time() - ended[1] < 300:  # a poll that raced the close: say why, not "restarted"
             raise Gone(ended[0], "closed")
-        raise Gone("The CADOS server restarted; connecting again.", "restarted")
+        raise Gone("The CAD Automation server restarted; connecting again.", "restarted")
     if s.id != sid:
         raise Gone("Another SOLIDWORKS connected with this key, so this one stopped.", "replaced")
     if s.closed:
@@ -284,7 +284,7 @@ def blob(user: dict | None, bid: str) -> tuple[bytes, str]:
 
 
 def status(user: dict | None, device: str | None = None) -> dict:
-    """Is SOLIDWORKS reachable for this person: through a registered computer (KEVOS Companion, devicebridge.py)
+    """Is SOLIDWORKS reachable for this person: through a registered computer (BIZOMAT Companion, devicebridge.py)
     when one is online, else through a v1 add-in link. Without registered computers the answer is exactly the v1 one."""
     from . import devicebridge
     try:
@@ -298,10 +298,10 @@ def status(user: dict | None, device: str | None = None) -> dict:
                "machine": sel["name"], "version": inst.get("addin_version"), "sw_version": inst.get("sw_revision"),
                "solidworks": sel.get("solidworks") or [], "devices": d["devices"]}
         if not sel.get("solidworks"):
-            out["note"] = (f"SOLIDWORKS is not running on {sel['name']} (or the CADOS add-in is not loaded). Open "
-                           "SOLIDWORKS there; CADOS connects by itself.")
+            out["note"] = (f"SOLIDWORKS is not running on {sel['name']} (or the add-in is not loaded). Open "
+                           "SOLIDWORKS there; CAD Automation connects by itself.")
         if sel.get("paused"):
-            out["note"] = f"CADOS is paused on {sel['name']} by the person at that computer."
+            out["note"] = f"CAD Automation is paused on {sel['name']} by the person at that computer."
         return out
     if d.get("code") == "DEVICE_AMBIGUOUS":
         return {"connected": True, "via": "companion", "ambiguous": True, "note": d["error"], "devices": d["devices"],
@@ -356,8 +356,9 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
         have = (inst or {}).get("addin_version")
         if inst is None or version_tuple(have) >= version_tuple(needed):
             return None
-        return (f"{what} needs the CADOS add-in {needed} or newer; SOLIDWORKS on {target['name']} runs {have}. Install the "
-                "latest CADOS for SOLIDWORKS on that computer (it updates the add-in), then reopen SOLIDWORKS.")
+        return (f"{what} needs the CAD Automation add-in {needed} or newer; SOLIDWORKS on {target['name']} runs {have}. "
+                "Install the latest CAD Automation for SOLIDWORKS on that computer (it updates the add-in), then reopen "
+                "SOLIDWORKS.")
     s = _sessions.get(person_id(user))
     if s is None or not s.alive():
         return None
@@ -365,16 +366,16 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
     if version_tuple(have) >= version_tuple(needed):
         return None
     where = s.info.get("path")
-    return (f"{what} needs the CADOS add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
+    return (f"{what} needs the CAD Automation add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
             + (f" from {where}" if where else "") + ". To update: close SOLIDWORKS (check Task Manager for SLDWORKS.exe), "
-            f"download the CADOS add-in package from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
+            f"download the add-in package from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
             "all files), run the setup program in that folder and click Install for me, then reopen SOLIDWORKS and "
             "connect again.")
 
 
-NOT_CONNECTED = ("SOLIDWORKS is not connected. On the computer: check that the KEVOS Companion is running and that "
-                 "SOLIDWORKS is open with the CADOS add-in loaded (the CADOS tab and task pane). Without the Companion, "
-                 "open CADOS > Status in SOLIDWORKS and connect. The setup steps are on the CADOS dashboard.")
+NOT_CONNECTED = ("SOLIDWORKS is not connected. On the computer: check that the BIZOMAT Companion is running and that "
+                 "SOLIDWORKS is open with the add-in loaded (the BIZOMAT tab and task pane). Without the Companion, "
+                 "open BIZOMAT > Status in SOLIDWORKS and connect. The setup steps are on the CAD Automation dashboard.")
 
 
 def target_key(user: dict | None, device: str | None = None) -> str:
@@ -404,7 +405,7 @@ async def call(user: dict | None, op: str, args: dict | None = None, timeout: fl
         if mine:
             names = ", ".join(r["name"] for r in mine)
             raise BridgeError(f"None of your computers is online ({names}). Turn the computer on and sign in to Windows: the "
-                              "KEVOS Companion connects by itself. Then open SOLIDWORKS.", code="DEVICE_OFFLINE")
+                              "BIZOMAT Companion connects by itself. Then open SOLIDWORKS.", code="DEVICE_OFFLINE")
         raise BridgeError(NOT_CONNECTED, code="NOT_CONNECTED")
     cid = f"c{next(_ids)}"
     fut = asyncio.get_running_loop().create_future()

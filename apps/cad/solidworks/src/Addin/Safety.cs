@@ -13,7 +13,7 @@ namespace OpenSketch.Sw
     /// components or mates; undo; Save As (which may replace a file); remaking a drawing over an existing one (an open
     /// copy is closed without saving); removing a global variable; deleting drawing views. The question names the AI
     /// app that asked and exactly what will happen; Deny is the default and the answer after two minutes. Only the
-    /// person can switch this off (KEVOS window), never a command.
+    /// person can switch this off (the BIZOMAT task pane or status window), never a command.
     /// </summary>
     public static class Safety
     {
@@ -39,7 +39,7 @@ namespace OpenSketch.Sw
             public ConfirmForm(string client, string what, string doc, int timeoutS)
             {
                 left = timeoutS;
-                Text = "CADOS: confirm";
+                Text = "BIZOMAT: confirm";
                 Font = new Font("Segoe UI", 9.5f);
                 FormBorderStyle = FormBorderStyle.FixedDialog;
                 MaximizeBox = MinimizeBox = false;

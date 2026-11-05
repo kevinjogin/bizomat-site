@@ -1,140 +1,174 @@
-"""CADOS by KEVOS: the names, links and shared page parts (head, header, footer, logos) every page uses, so the site
-reads as one product. The look itself is in static/ui/cados.css (design tokens and components).
+"""BIZOMAT CAD Automation: the names, links and shared page parts (head, header, footer, logo) every page uses, so the
+site reads as one product of the BIZOMAT platform. The look itself is in static/ui/bizomat-tokens.css (the platform's
+design tokens, generated from shared/brand/) and static/ui/cados.css (this app's components, mapped to those tokens).
 
-Internal names stay as they were for compatibility (the Python package, OPENSKETCH_* settings, cookies, the add-in's
-COM ids and file names, the MCP tool names): only what people read changed.
+The product was called CADOS by KEVOS until November 2026. Internal names stay as they were for compatibility (the
+Python package, OPENSKETCH_* settings, cookies, the add-in's COM ids and file names, the MCP tool names, cados.css):
+only what people read changed.
+
+Links to the platform are settings, because its domains go live separately: BIZOMAT_SITE_URL (default
+https://bizomat.ai) and BIZOMAT_WORK_URL (default https://work.bizomat.ai).
 """
 
 from __future__ import annotations
 
+import os
 from html import escape
 
-PRODUCT = "CADOS"
-PARENT = "KEVOS"
-FULL = "CADOS by KEVOS"
+from . import bizomat_brand as bz
+
+PLATFORM = "BIZOMAT"
+PRODUCT = "CAD Automation"
+FULL = "BIZOMAT CAD Automation"
 TAGLINE = "AI-powered CAD automation"
 HEADLINE = "Turn engineering intent into CAD."
-DESCRIPTION = ("CADOS connects your AI assistant to SOLIDWORKS on your own computer. Create, change and check native "
-               "parts, assemblies and drawings in plain language.")
-KEVOS_URL = "https://kevos.com/"
-WORK_URL = "https://work.kevos.com/"
+DESCRIPTION = ("BIZOMAT CAD Automation connects your AI assistant to SOLIDWORKS on your own computer. Create, change and "
+               "check native parts, assemblies and drawings in plain language.")
+WORK_NAME = "Project Management"
 REPO_URL = "https://github.com/jogkev-creator/CADOS"
 RELEASES_URL = REPO_URL + "/releases"
 SUPPORT_URL = REPO_URL + "/issues"
 
-# The two wordmarks as paths (no font needed). KEVOS: the official wordmark. CADOS: built from the same letterforms
-# (its C is the KEVOS E without the bar; O and S are the KEVOS O and S).
-# The official KEVOS wordmark (kevos.com: public/brand/kevos-wordmark-orange-light.svg, also /ui/kevos-wordmark.svg).
-KEVOS_PATH = 'M222 199 L222 201 L276 254 L340 254 L254 169 L252 169Z M486 109 L486 155 L725 155 L724 108Z M390 57 L390 197 L447 253 L749 253 L749 207 L444 206 L443 57Z M11 209 L76 272 L85 272 L343 14 L275 14 L66 223 L65 15 L11 15Z M1600 13 L1600 99 L1642 140 L1659 154 L1885 155 L1884 205 L1666 205 L1652 209 L1638 216 L1623 227 L1600 252 L1938 252 L1937 161 L1882 107 L1875 105 L1653 105 L1652 61 L1654 59 L1870 59 L1892 53 L1908 45 L1924 34 L1944 13Z M1193 57 L1193 197 L1243 246 L1251 252 L1537 252 L1537 67 L1485 15 L1477 12 L1228 12 L1230 16 L1249 35 L1260 43 L1280 53 L1301 59 L1484 60 L1485 205 L1483 207 L1247 207 L1245 57Z M1175 13 L1124 13 L1111 16 L1094 38 L982 200 L997 201 L1020 197 L1032 193 L1054 180 L1072 161Z M795 12 L941 272 L1000 273 L854 13 L848 12Z M425 12 L425 14 L439 29 L457 43 L469 50 L497 59 L749 59 L748 12Z M2000 10 L1980 18 L1968 30 L1962 40 L1959 50 L1959 71 L1966 89 L1981 104 L2000 112 L2017 112 L2035 105 L2049 92 L2057 75 L2058 53 L2052 34 L2038 19 L2027 13 L2017 10Z M2008 19 L2020 21 L2032 27 L2042 38 L2048 54 L2048 68 L2042 84 L2030 96 L2015 102 L1998 101 L1986 95 L1974 82 L1969 68 L1970 49 L1978 34 L1990 24Z M1989 35 L1988 87 L2000 87 L2000 70 L2002 68 L2008 68 L2021 88 L2033 88 L2021 67 L2029 60 L2031 55 L2031 47 L2029 42 L2025 38 L2016 35Z M2000 45 L2013 44 L2018 48 L2019 53 L2014 59 L2001 60Z'
-CADOS_PATH = ("M33 4L345 4L346 49L104 49L76 40L63 33L48 21ZM0 48L50 48L51 192L346 193L346 237L54 237L0 183ZM396 237L452 237"
-              "L582 4L526 4ZM594 4L650 4L780 237L724 237ZM488 142L688 142L688 186L488 186ZM834 4L1110 4L1166 58L1166 183"
-              "L1112 237L834 237ZM883 49L883 192L1117 192L1117 49ZM1250 4L1491 4L1548 58L1548 236L1272 236L1216 183L1216 48"
-              "L1265 48L1268 193L1497 193L1497 50L1321 49L1281 34ZM1598 5L1930 5L1910 27L1882 43L1860 49L1649 49L1649 94"
-              "L1864 94L1923 148L1924 236L1598 236L1620 212L1642 196L1662 191L1873 191L1874 142L1655 141L1598 88Z")
+
+def _url(name: str, default: str) -> str:
+    """An https (or http, for a local test) address from a setting; anything else falls back to the default."""
+    v = (os.environ.get(name) or "").strip().rstrip("/")
+    return v if v.startswith(("https://", "http://")) and " " not in v else default
 
 
-def kevos_svg(cls: str = "", label: str = "KEVOS") -> str:
+def site_url() -> str:
+    """The BIZOMAT platform website (BIZOMAT_SITE_URL)."""
+    return _url("BIZOMAT_SITE_URL", "https://bizomat.ai")
+
+
+def work_url() -> str:
+    """BIZOMAT Project Management (BIZOMAT_WORK_URL)."""
+    return _url("BIZOMAT_WORK_URL", "https://work.bizomat.ai")
+
+
+def site_page(path: str) -> str:
+    """A page of the platform website, e.g. site_page("terms") -> https://bizomat.ai/terms/."""
+    return site_url() + "/" + (path.strip("/") + "/" if path.strip("/") else "")
+
+
+def bizomat_svg(cls: str = "bz-wordmark", label: str = "BIZOMAT") -> str:
+    """The BIZOMAT wordmark drawn inline (no font needed): navy word, teal connector bar in the B (full colour, for
+    light backgrounds). CSS can recolour both parts (.bz-word, .bz-bar)."""
     aria = f'role="img" aria-label="{label}"' if label else 'aria-hidden="true"'
-    return (f'<svg class="{cls}" viewBox="0 0 2069 284" fill-rule="evenodd" {aria} focusable="false">'
-            f'<path d="{KEVOS_PATH}"/></svg>')
-
-
-def cados_svg(cls: str = "cados", label: str = "CADOS") -> str:
-    aria = f'role="img" aria-label="{label}"' if label else 'aria-hidden="true"'
-    return (f'<svg class="{cls}" viewBox="0 0 1930 241" fill-rule="evenodd" {aria} focusable="false">'
-            f'<path d="{CADOS_PATH}"/></svg>')
+    return (f'<svg class="{cls}" viewBox="{bz.WORDMARK_VIEWBOX}" {aria} focusable="false">'
+            f'<path class="bz-word" fill="{bz.NAVY}" fill-rule="evenodd" d="{bz.WORDMARK_PATH}"/>'
+            f'<path class="bz-bar" fill="{bz.TEAL}" d="{bz.BAR_PATH}"/></svg>')
 
 
 def wordmark(href: str = "/") -> str:
-    """The CADOS wordmark with its "by KEVOS" endorsement. One link: the product home."""
-    return (f'<a class="wordmark" href="{href}" aria-label="CADOS by KEVOS, home">{cados_svg(label="")}'
-            f'<span class="by" aria-hidden="true">by {kevos_svg(label="")}</span></a>')
+    """The BIZOMAT wordmark with the product label "CAD Automation". One link: the product home."""
+    return (f'<a class="wordmark" href="{href}" aria-label="{FULL}, home">{bizomat_svg(label="")}'
+            f'<span class="product" aria-hidden="true">{PRODUCT}</span></a>')
 
 
 def head(title: str, description: str = DESCRIPTION, *, path: str = "/", index: bool = False, extra: str = "", base: str = "") -> str:
-    """<head> for every page: title, description, sharing cards (absolute when the site address is known), icon,
-    fonts and the design system."""
-    base = (base or "").rstrip("/")
+    """<head> for every page: title ("<Page> | BIZOMAT CAD Automation"), description, sharing cards (absolute when the
+    site address is known), icon, fonts and the design system. The canonical address is OPENSKETCH_PUBLIC_URL when it is
+    set, so a page served on two host names (OPENSKETCH_ALIAS_HOSTS) names one of them to search engines."""
+    base = (os.environ.get("OPENSKETCH_PUBLIC_URL", "").strip() or base or "").rstrip("/")
     img = escape(base + "/ui/og.png")
-    full = title if title.startswith(PRODUCT) else f"{title} | {FULL}"
+    full = title if title == FULL or title.endswith("| " + FULL) else f"{title} | {FULL}"
     t, d = escape(full), escape(description)
     robots = "index, follow" if index else "noindex"
     canon = f'<link rel="canonical" href="{escape(base + path)}">' if base and index else ""
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>{t}</title>
-<meta name="description" content="{d}"><meta name="robots" content="{robots}"><meta name="theme-color" content="#FFFFFF">
-<meta name="application-name" content="{FULL}"><meta name="author" content="{PARENT}">
+<meta name="description" content="{d}"><meta name="robots" content="{robots}"><meta name="theme-color" content="#f7f9fb">
+<meta name="application-name" content="{FULL}"><meta name="author" content="{PLATFORM}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="{FULL}"><meta property="og:title" content="{t}">
 <meta property="og:description" content="{d}"><meta property="og:url" content="{escape(base + path)}"><meta property="og:image" content="{img}">
-<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CADOS by KEVOS: {escape(HEADLINE)}">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="{FULL}: {escape(HEADLINE)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{t}"><meta name="twitter:description" content="{d}">
 <meta name="twitter:image" content="{img}">
 <link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/ui/icon-32.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/ui/icon-180.png">
-<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/fonts/fonts.css"><link rel="stylesheet" href="/ui/cados.css">{canon}{extra}</head>"""
+<link rel="preload" href="/fonts/inter-tight-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/oxanium-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css"><link rel="stylesheet" href="/ui/bizomat-tokens.css"><link rel="stylesheet" href="/ui/cados.css">{canon}{extra}</head>"""
 
 
 _MENU_ICON = ('<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14" '
               'stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>')
 
 
-# The CADOS app's sections: only sections backed by real features (no Automation section: CADOS has no stored
-# automations; the assistant runs multi-step changes with sw_batch).
+# The app's sections: only sections backed by real features (no stored automations: the assistant runs multi-step
+# changes with sw_batch).
 APP_NAV = [("/dashboard", "Home", "home"), ("/assistant", "CAD Assistant", "assistant"), ("/solidworks", "SOLIDWORKS", "solidworks"),
            ("/tools", "Tools", "tools"), ("/history", "History", "history"), ("/settings", "Settings", "settings")]
 
 
+def _ecosystem(here: str) -> list[tuple[str, str, bool]]:
+    """The BIZOMAT products: (address, name, is this one)."""
+    return [(site_url() + "/", "BIZOMAT platform", False), (work_url() + "/", WORK_NAME, False), (here, PRODUCT, True)]
+
+
+def _eco_menu(here: str) -> str:
+    items = "".join(f'<a href="{escape(h)}"' + (' aria-current="true"' if cur else ' rel="noopener"') + f">{name}</a>"
+                    for h, name, cur in _ecosystem(here))
+    return (f'<details class="menu-eco hide-sm"><summary>{PLATFORM}</summary><div class="menu-panel" role="group" '
+            f'aria-label="{PLATFORM} products">{items}</div></details>')
+
+
 def header(active: str = "", signed_in: bool = False, *, app: bool = False, user: str = "", sign_out: bool = True,
            admin: bool = False) -> str:
-    """The site header. Marketing pages: product links, KEVOS, Sign in or Dashboard. App pages: the CADOS sections,
-    the KEVOS ecosystem (kevos.com, Work), the person and Sign out."""
-    def a(href, label, key="", ext=False):
+    """The site header. Product pages: product links, the BIZOMAT menu, Sign in or Dashboard. App pages: the sections,
+    the BIZOMAT menu (the platform, Project Management, CAD Automation), the person and Sign out."""
+    def a(href, label, key=""):
         cur = ' aria-current="page"' if key and key == active else ""
-        extra = ' class="ext" rel="noopener" target="_blank"' if ext else ""
-        return f'<a href="{href}"{cur}{extra}>{label}</a>'
+        return f'<a href="{href}"{cur}>{label}</a>'
 
+    others = "".join(f'<a href="{escape(h)}" rel="noopener">{name}</a>' for h, name, cur in _ecosystem("/") if not cur)
     if app:
         links = [a(h, label, key) for h, label, key in APP_NAV] + ([a("/admin", "Admin", "admin")] if admin else [])
-        eco = (f'<details class="menu-eco hide-sm"><summary>KEVOS</summary><div class="menu-panel">'
-               f'<a href="{KEVOS_URL}" rel="noopener">KEVOS home</a><a href="{WORK_URL}" rel="noopener">KEVOS Work</a>'
-               f'<a href="/dashboard" aria-current="true">KEVOS CADOS</a></div></details>')
-        end = (eco + f'<span class="nav-user hide-sm" id="who">{escape(user)}</span>'
+        end = (_eco_menu("/dashboard") + f'<span class="nav-user hide-sm" id="who">{escape(user)}</span>'
                + ('<a class="btn btn-secondary btn-sm hide-sm" href="/logout" id="signout">Sign out</a>' if sign_out else ""))
-        menu_end = (f'<a href="{KEVOS_URL}" rel="noopener">KEVOS home</a><a href="{WORK_URL}" rel="noopener">KEVOS Work</a>'
-                    + ('<a class="btn btn-secondary btn-block" href="/logout">Sign out</a>' if sign_out else ""))
+        menu_end = others + ('<a class="btn btn-secondary btn-block" href="/logout">Sign out</a>' if sign_out else "")
     else:
         links = [a("/overview#product", "Product", "product"), a("/overview#how", "How it works"), a("/overview#integrations", "Integrations"),
-                 a("/overview#download", "Download"), a("/docs", "Documentation", "docs"), a(KEVOS_URL, "KEVOS", ext=True)]
-        end = ('<a class="btn btn-primary btn-sm" href="/dashboard">Dashboard</a>' if signed_in else
-               '<a class="btn btn-ghost btn-sm hide-sm" href="/login">Sign in</a>'
-               '<a class="btn btn-primary btn-sm" href="/dashboard">Get started</a>')
-        menu_end = ("" if signed_in else '<a class="btn btn-secondary btn-block" href="/login">Sign in</a>')
+                 a("/overview#download", "Download"), a("/docs", "Documentation", "docs")]
+        end = _eco_menu("/") + ('<a class="btn btn-primary btn-sm" href="/dashboard">Dashboard</a>' if signed_in else
+                                '<a class="btn btn-ghost btn-sm hide-sm" href="/login">Sign in</a>'
+                                '<a class="btn btn-primary btn-sm" href="/dashboard">Get started</a>')
+        menu_end = others + ("" if signed_in else '<a class="btn btn-secondary btn-block" href="/login">Sign in</a>')
     menu = (f'<details class="menu"><summary aria-label="Menu">{_MENU_ICON}</summary><nav class="menu-panel" aria-label="Menu">'
             + "".join(links) + menu_end + "</nav></details>")
     return (f'<a class="skip" href="#main">Skip to content</a><header class="site-header{" app-header" if app else ""}"><div class="container">'
-            f'{wordmark("/dashboard" if app else "/")}<nav class="nav" aria-label="{"CADOS" if app else "Main"}">{"".join(links)}</nav>'
+            f'{wordmark("/dashboard" if app else "/")}<nav class="nav" aria-label="{PRODUCT if app else "Main"}">{"".join(links)}</nav>'
             f'<div class="nav-end">{end}{menu}</div></div></header>')
 
 
+def legal_links() -> str:
+    """This app's own privacy notice and the platform's privacy, terms and disclaimer."""
+    return (f'<a href="/privacy">Privacy</a><a href="{escape(site_page("privacy"))}" rel="noopener">Platform privacy</a>'
+            f'<a href="{escape(site_page("terms"))}" rel="noopener">Terms</a>'
+            f'<a href="{escape(site_page("disclaimer"))}" rel="noopener">Disclaimer</a>')
+
+
 def app_footer() -> str:
-    """The app's short footer: CADOS within the KEVOS ecosystem."""
-    return (f'<footer class="app-footer"><div class="container"><span>CADOS by KEVOS</span>'
-            f'<nav aria-label="KEVOS"><a href="{KEVOS_URL}" rel="noopener">kevos.com</a><a href="{WORK_URL}" rel="noopener">KEVOS Work</a>'
-            f'<a href="/docs">Documentation</a><a href="/privacy">Privacy</a><a href="{SUPPORT_URL}" rel="noopener">Support</a></nav></div></footer>')
+    """The app's short footer: CAD Automation within the BIZOMAT platform, and the legal pages."""
+    return (f'<footer class="app-footer"><div class="container"><span>{FULL}</span>'
+            f'<nav aria-label="{PLATFORM}"><a href="{escape(site_url())}/" rel="noopener">bizomat.ai</a>'
+            f'<a href="{escape(work_url())}/" rel="noopener">{WORK_NAME}</a><a href="/docs">Documentation</a>'
+            f'{legal_links()}<a href="{SUPPORT_URL}" rel="noopener">Support</a></nav></div></footer>')
 
 
 def footer() -> str:
+    site = escape(site_url())
     return f"""<footer class="site-footer"><div class="container"><div class="footer-grid">
-<div class="footer-brand">{wordmark()}<p>{escape(DESCRIPTION)} A product from KEVOS.</p></div>
+<div class="footer-brand">{wordmark()}<p>{escape(DESCRIPTION)} Part of the {PLATFORM} platform.</p></div>
 <div><h4>Product</h4><ul><li><a href="/overview#product">Overview</a></li><li><a href="/overview#how">How it works</a></li>
 <li><a href="/overview#integrations">Integrations</a></li><li><a href="/overview#security">Security</a></li></ul></div>
 <div><h4>Resources</h4><ul><li><a href="/docs">Documentation</a></li><li><a href="/docs#troubleshooting">Troubleshooting</a></li>
 <li><a href="/download/solidworks">Download for SOLIDWORKS</a></li><li><a href="{RELEASES_URL}" rel="noopener">All releases</a></li><li><a href="{SUPPORT_URL}" rel="noopener">Support</a></li></ul></div>
-<div><h4>KEVOS</h4><ul><li><a href="{KEVOS_URL}" rel="noopener">kevos.com</a></li><li><a href="{WORK_URL}" rel="noopener">KEVOS Work</a></li><li><a href="/privacy">Privacy</a></li>
-<li><a href="{REPO_URL}" rel="noopener">Source code</a></li></ul></div></div>
-<div class="footer-base"><span>CADOS by KEVOS. A product from KEVOS.</span>
-<a href="{KEVOS_URL}" rel="noopener" aria-label="KEVOS website">{kevos_svg("", label="")}<span>kevos.com</span></a></div></div></footer>"""
+<div><h4>{PLATFORM}</h4><ul><li><a href="{site}/" rel="noopener">bizomat.ai</a></li><li><a href="{escape(work_url())}/" rel="noopener">{WORK_NAME}</a></li>
+<li><a href="{escape(site_page("proof-of-work"))}" rel="noopener">Proof of work</a></li><li><a href="{REPO_URL}" rel="noopener">Source code</a></li></ul></div></div>
+<div class="footer-base"><span>{FULL}. Part of the {PLATFORM} platform.</span>
+<nav class="footer-legal" aria-label="Legal">{legal_links()}</nav></div></div></footer>"""
 
 
 MENU_SCRIPT = """<script>

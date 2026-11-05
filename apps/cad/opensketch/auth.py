@@ -141,8 +141,52 @@ def resolve_mcp(token: str) -> tuple[bool, dict | None]:
     return False, None
 
 
+def _bare_host(value: str) -> str:
+    """'Cad.Bizomat.AI:443' or 'https://cad.bizomat.ai/' -> 'cad.bizomat.ai'."""
+    from urllib.parse import urlsplit
+    from .canonical import _host_only
+    v = (value or "").strip()
+    if "://" in v:
+        v = urlsplit(v).netloc
+    return _host_only(v.split("/")[0])
+
+
+def alias_hosts() -> list[str]:
+    """OPENSKETCH_ALIAS_HOSTS: the public host names that serve this same app, comma separated, for example
+    "cad.bizomat.ai,cados.kevos.com" while the app moves to a new domain and keeps the old one for existing
+    connectors, add-ins and Companions."""
+    out: list[str] = []
+    for x in os.environ.get("OPENSKETCH_ALIAS_HOSTS", "").split(","):
+        h = _bare_host(x)
+        if h and h not in out:
+            out.append(h)
+    return out
+
+
+def request_alias(headers: dict | None) -> str:
+    """The alias host this request was made to, or "". Behind a trusted proxy its X-Forwarded-Host is the host (proxy.py
+    put it in Host and removed X-Forwarded-Host from anyone else, so both can be read here)."""
+    if not headers:
+        return ""
+    h = _bare_host(headers.get("x-forwarded-host") or headers.get("host") or "")
+    return h if h and h in alias_hosts() else ""
+
+
+def known_bases() -> list[str]:
+    """This app's public addresses from its settings: https://<each alias host>, then OPENSKETCH_PUBLIC_URL."""
+    out = ["https://" + h for h in alias_hosts()]
+    env = os.environ.get("OPENSKETCH_PUBLIC_URL", "").strip().rstrip("/")
+    if env and env not in out:
+        out.append(env)
+    return out
+
+
 def public_url(headers: dict | None = None) -> str:
-    """Address the server is reached at: OPENSKETCH_PUBLIC_URL, or the request's own host."""
+    """Address the server is reached at: https://<host> when the request was made to one of OPENSKETCH_ALIAS_HOSTS (so the
+    OAuth and MCP metadata name the address the client used), else OPENSKETCH_PUBLIC_URL, else the request's own host."""
+    alias = request_alias(headers)
+    if alias:
+        return "https://" + alias
     env = os.environ.get("OPENSKETCH_PUBLIC_URL", "").rstrip("/")
     if env:
         return env
@@ -204,28 +248,42 @@ def logged_in(scope) -> bool:
 
 # ---------------------------------------------------------------- pages
 
-# Sign-in pages: the CADOS design system (static/ui/cados.css): a product panel on the left, the form on the right.
+# Sign-in pages: the BIZOMAT design system (static/ui/bizomat-tokens.css, static/ui/cados.css): a product panel on the
+# left, the form on the right, with "CAD Automation" over each form so people know which BIZOMAT product they sign in to.
 def _auth_html(form: str) -> str:
-    """The page around a sign-in form; a str.format template ({title}, {pitch} and the form's own fields)."""
+    """The page around a sign-in form; a str.format template ({doctitle}, {title}, {pitch} and the form's own fields)."""
     from . import brand
+    site = brand.site_url()
     aside = (f'<aside class="auth-aside">{brand.wordmark()}<div class="auth-pitch"><h2>{{pitch}}</h2>'
              '<p>Connect your AI assistant to SOLIDWORKS on your own computer.</p><ul class="auth-points">'
              '<li>Native, editable SOLIDWORKS features</li><li>Every sketch solved and every feature checked before it is built</li>'
              '<li>You approve each assistant and each computer</li></ul></div>'
-             f'<div class="fine"><span>A product from <a href="{brand.KEVOS_URL}" rel="noopener">KEVOS</a></span>'
-             '<a href="/docs">Documentation</a><a href="/privacy">Privacy</a></div></aside>')
+             f'<div class="fine"><span>Part of the <a href="{_esc(site)}/" rel="noopener">{brand.PLATFORM}</a> platform</span>'
+             '<a href="/docs">Documentation</a><a href="/privacy">Privacy</a>'
+             f'<a href="{_esc(brand.site_page("terms"))}" rel="noopener">Terms</a></div></aside>')
     top = f'<div class="auth-top">{brand.wordmark()}<a class="small" href="/docs">Help</a></div>'
-    head = brand.head("__TITLE__").replace("{", "{{").replace("}", "}}").replace("__TITLE__", "{title}")
+    head = brand.head("__TITLE__").replace("{", "{{").replace("}", "}}").replace("__TITLE__", "{doctitle}")
     return f'{head}<body><div class="auth">{aside}{top}<main class="auth-main" id="main">{form}</main></div></body></html>'
 
 
-PAGE = _auth_html('<form class="auth-card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1>'
-                  '<p class="sub">{sub}</p>{top}<input type="hidden" name="next" value="{next}">{fields}{error}'
-                  '<button type="submit">{button}</button>{links}</form>')
+FORM = ('<form class="auth-card" method="post" action="{action}" autocomplete="on"><span class="eyebrow">CAD Automation</span>'
+        '<h1>{title}</h1><p class="sub">{sub}</p>{top}<input type="hidden" name="next" value="{next}">{fields}{error}'
+        '<button type="submit">{button}</button>{links}</form>')
+_templates: dict[tuple, str] = {}  # (BIZOMAT_SITE_URL, OPENSKETCH_PUBLIC_URL) -> the page template
+
+
+def page_template() -> str:
+    """The sign-in page template, made once for each pair of the settings it shows (read when a page is made)."""
+    from . import brand
+    key = (brand.site_url(), os.environ.get("OPENSKETCH_PUBLIC_URL", ""))
+    t = _templates.get(key)
+    if t is None:
+        t = _templates[key] = _auth_html(FORM)
+    return t
 
 
 def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "") -> bytes:
-    """Allow / Cancel for an AI app that wants to use this person's CADOS (mcpauth.py)."""
+    """Allow / Cancel for an AI app that wants to use this person's CAD Automation (mcpauth.py)."""
     from urllib.parse import urlsplit
     u = urlsplit(redirect_uri)
     host = u.hostname or (u.scheme + "://")
@@ -233,7 +291,7 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
     name = _esc(app_name)
     who = (f'<b>{_esc(user.get("name") or "")}</b> ({_esc(user.get("email") or "")})' if user and not user.get("legacy")
            else "<b>this server</b>")
-    can = ('Work in SOLIDWORKS on your computers through CADOS', 'Create and change parts, assemblies and drawings',
+    can = ('Work in SOLIDWORKS on your computers through CAD Automation', 'Create and change parts, assemblies and drawings',
            'Import, measure, preview and export your models')
     top = (f'<ul class="can">{"".join(f"<li>{c}</li>" for c in can)}</ul>'
            f'<div class="note">Signed in as {who}. Not you? <a href="/logout">Sign out</a></div>'
@@ -242,13 +300,13 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
            + '</div>')
     fields = [f'<input type="hidden" name="req" value="{_esc(req)}">']
     links = ('<button type="submit" name="action" value="deny" class="ghost">Cancel</button>'
-             '<div class="note center">You can disconnect it at any time on your CADOS dashboard.</div>')
-    sub = f"{name} wants to use CADOS to work in SOLIDWORKS for you." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
+             '<div class="note center">You can disconnect it at any time on your CAD Automation dashboard.</div>')
+    sub = f"{name} wants to use BIZOMAT CAD Automation to work in SOLIDWORKS for you." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
     return _page(f"Connect {name}", sub, "/oauth/authorize", fields,
                  "Allow", "/", "", links, top)
 
 
-def notice_page(title: str, sub: str, message: str = "", button: str = "Go to CADOS", href: str = "/") -> bytes:
+def notice_page(title: str, sub: str, message: str = "", button: str = "Go to CAD Automation", href: str = "/") -> bytes:
     """A page with one message and a way on (no form to fill)."""
     page = _page(title, sub, "/", [], button, "/", message)
     return page.replace(b'method="post" action="/"', f'method="get" action="{_esc(href)}"'.encode()).replace(
@@ -256,22 +314,24 @@ def notice_page(title: str, sub: str, message: str = "", button: str = "Go to CA
 
 
 def oauth_problem_page(message: str) -> bytes:
-    page = _page("Could not connect", "Your AI assistant sent a sign-in request that CADOS cannot accept.", "/", [],
-                 "Go to CADOS", "/", message)
+    page = _page("Could not connect", "Your AI assistant sent a sign-in request that CAD Automation cannot accept.", "/", [],
+                 "Go to CAD Automation", "/", message)
     return page.replace(b'method="post" action="/"', b'method="get" action="/"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
 # Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this service.
 PRIVACY_BODY = """<main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Legal</span><h1>Privacy</h1>
-<p>What CADOS keeps about you, why, and who else sees it. Last updated 5 November 2026.</p></div></div>
+<p>What BIZOMAT CAD Automation keeps about you, why, and who else sees it. Last updated 5 November 2026.</p></div></div>
 <div class="container doc-layout"><nav class="toc" aria-label="On this page"><h4>On this page</h4><ol>
 <li><a href="#summary">Summary</a></li><li><a href="#kept">What is kept</a></li><li><a href="#google">Sign in with Google</a></li>
 <li><a href="#ai">AI assistants</a></li><li><a href="#who">Who can see your work</a></li><li><a href="#delete">Deleting your data</a></li>
 <li><a href="#changes">Changes</a></li></ol></nav><article class="prose">
 <section id="summary"><h2>Summary</h2>
-<p>CADOS by KEVOS connects your AI assistant (Claude, ChatGPT and others) to SOLIDWORKS on your own computer, through the
-CADOS add-in and the KEVOS Companion. This service keeps only what it needs to sign you in, know your computers and pass
-work between your assistant and SOLIDWORKS. Nothing is sold, used for advertising or tracked across other sites.</p></section>
+<p>BIZOMAT CAD Automation (called CADOS until November 2026) connects your AI assistant (Claude, ChatGPT and others) to
+SOLIDWORKS on your own computer, through its add-in and the BIZOMAT Companion. This service keeps only what it needs to sign
+you in, know your computers and pass work between your assistant and SOLIDWORKS. Nothing is sold, used for advertising or
+tracked across other sites. This notice covers this service only; the BIZOMAT website has its own
+<a href="__PLATFORM_PRIVACY__" rel="noopener">privacy notice</a>.</p></section>
 <section id="kept"><h2>What is kept</h2><ul>
 <li><b>Your account:</b> your name, your email address, and either a password (stored only as a one-way hash) or the ID of
 the Google account you sign in with.</li>
@@ -286,18 +346,20 @@ Google sign-in step and is removed after it.</li>
 <li><b>Work in passing:</b> while your assistant works, the commands it sends and the shapes SOLIDWORKS sends back (for
 example a STEP copy of a part, to measure and check it) pass through this service. They are held in memory or for a short
 time to do that work, then dropped. Files you upload for import are deleted once imported, or after 30 minutes. Your
-SOLIDWORKS files are saved on your computer.</li></ul>
-<p>CADOS pages load nothing from other sites: the fonts and pictures come from this service, so opening CADOS tells no one
+SOLIDWORKS files are saved on your computer.</li>
+<li><b>A problem log:</b> when a request fails or takes unusually long, the server's log notes when, which page (without
+any key in it), the account and the address the request came from, so the problem can be found.</li></ul>
+<p>These pages load nothing from other sites: the fonts and pictures come from this service, so opening them tells no one
 else that you visited.</p></section>
 <section id="google"><h2>Sign in with Google</h2>
-<p>If you choose Continue with Google, Google tells CADOS your name, your email address, whether that address is verified,
-your Google account ID and, for work accounts, your organisation's domain. CADOS asks for nothing else: no access to your
-Gmail, Drive, contacts or anything else in your Google account.</p>
-<p>This information is used only to sign you in and to link the sign-in to your CADOS account. It is stored with your
+<p>If you choose Continue with Google, Google tells this service your name, your email address, whether that address is
+verified, your Google account ID and, for work accounts, your organisation's domain. It asks for nothing else: no access to
+your Gmail, Drive, contacts or anything else in your Google account.</p>
+<p>This information is used only to sign you in and to link the sign-in to your account. It is stored with your
 account. It is not sold, not shared, not used for advertising and not used to train AI models. You can remove the link at any time in
 your Google account settings (Security, Third-party connections).</p></section>
 <section id="ai"><h2>AI assistants</h2>
-<p>CADOS runs no AI of its own. The assistant you connect sees what the CADOS tools return to it (feature lists,
+<p>CAD Automation runs no AI of its own. The assistant you connect sees what its tools return to it (feature lists,
 measurements, preview images of your SOLIDWORKS model), under that assistant's own privacy terms. It can only do what the
 tools allow, only while you keep it connected, and only with the computers paired to your account.</p></section>
 <section id="who"><h2>Who can see your work</h2>
@@ -305,16 +367,17 @@ tools allow, only while you keep it connected, and only with the computers paire
 as with any online service.</p></section>
 <section id="delete"><h2>Deleting your data</h2>
 <p>Disconnect assistants, remove computers or make a new add-in key on your dashboard. To close your account and remove
-your sign-in details, ask your CADOS administrator or the person who invited you.</p></section>
+your sign-in details, ask your administrator or the person who invited you.</p></section>
 <section id="changes"><h2>Changes</h2><p>If this notice changes, the date at the top changes with it.</p></section>
 </article></div></main>"""
 
 
 def privacy_page(signed_in: bool = False, base: str = "") -> bytes:
     from . import brand
-    return (brand.head("Privacy", "How CADOS by KEVOS handles your account, your computers and your work.", path="/privacy",
-                       index=True, base=base)
-            + "<body>" + brand.header("", signed_in) + PRIVACY_BODY + brand.footer() + brand.MENU_SCRIPT + "</body></html>").encode()
+    body = PRIVACY_BODY.replace("__PLATFORM_PRIVACY__", _esc(brand.site_page("privacy")))
+    return (brand.head("Privacy", "How BIZOMAT CAD Automation handles your account, your computers and your work.",
+                       path="/privacy", index=True, base=base)
+            + "<body>" + brand.header("", signed_in) + body + brand.footer() + brand.MENU_SCRIPT + "</body></html>").encode()
 
 
 def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: bool = False, value: str = "", note: str = "",
@@ -345,9 +408,9 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
 PITCH = "Turn engineering intent into CAD."
 
 
-def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="", pitch=PITCH) -> bytes:
-    return PAGE.format(title=title, sub=sub, action=action, fields="".join(fields), button=button, next=_esc(nxt), top=top,
-                       pitch=pitch,
+def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="", pitch=PITCH, doctitle="") -> bytes:
+    return page_template().format(doctitle=doctitle or title, title=title, sub=sub, action=action, fields="".join(fields),
+                                  button=button, next=_esc(nxt), top=top, pitch=pitch,
                        error=f'<div class="err" id="err" role="alert">{_esc(error)}</div>' if error else "", links=links).encode()
 
 
@@ -355,21 +418,21 @@ def _login_page(nxt, error="", email=""):
     from . import accounts
     forgot = ('<span class="note">Forgot your password? Ask the person who invited you. '
               '<a href="/reset">Administrator?</a></span>' if password() else
-              '<span class="note">Forgot your password? Ask your CADOS administrator.</span>')
+              '<span class="note">Forgot your password? Ask your administrator.</span>')
     signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
     links = f'<div class="links">{forgot}{signup}</div>'
     if accounts.access_code():  # keeps `next`, so an AI app's sign-in (/oauth/authorize) carries on after the code
         q = "?" + urlencode({"next": nxt}) if nxt and nxt != "/" else ""
         links += f'<div class="links"><a href="/access{_esc(q)}">Have an early access code?</a></div>'
-    return _page("Sign in", "Welcome back. Sign in to your CADOS account.", "/login",
+    return _page("Sign in to BIZOMAT", "Welcome back. Sign in to CAD Automation with your email and password.", "/login",
                  [_field("email", "Email", "email", "username", not email, email),
                   _field("password", "Password", "password", "current-password", bool(email), invalid=bool(error))],
-                 "Sign in", nxt, error, links, _google_block(nxt))
+                 "Sign in", nxt, error, links, _google_block(nxt), doctitle="Sign in")
 
 
 def _access_page(nxt="/", error="", code=""):
     """Early access: type the owner's code, skip sign-up, work as an Internal tester (accounts.create_tester)."""
-    return _page("Early access", "Enter your access code to try CADOS. No account needed.", "/access",
+    return _page("Early access", "Enter your access code to try CAD Automation. No account needed.", "/access",
                  [_field("code", "Access code", "text", "off", True, code, invalid=bool(error)).replace(
                      'autocomplete="off"', 'autocomplete="off" spellcheck="false" autocapitalize="off"')], "Start", nxt, error,
                  f'<div class="links"><a href="/login{_esc("?" + urlencode({"next": nxt}) if nxt and nxt != "/" else "")}">I have an account</a></div>')
@@ -381,7 +444,7 @@ def _access_closed_page() -> bytes:
     return page.replace(b'method="post" action="/login"', b'method="get" action="/login"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
-# A new account's password: CADOS fills in a strong one (shown as dots, with Show), the person keeps it or types
+# A new account's password: the form fills in a strong one (shown as dots, with Show), the person keeps it or types
 # their own. A kept one is shown to them once more after sign-in (hold_new_password), as only its hash is stored.
 _ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"
 SHOW_SCRIPT = ("<script>document.querySelectorAll('.pw-show').forEach(function(b){b.addEventListener('click',function(){"
@@ -402,11 +465,11 @@ def _new_password_field() -> str:
             '<button class="pw-show" type="button" aria-controls="new_password" aria-pressed="false">Show</button></div>'
             f'<input type="hidden" name="suggested" value="{pw}">'
             '<div class="note" id="new_password-note">We filled in a strong password for you. Keep it, or type your own '
-            '(at least 8 characters). If you keep it, CADOS shows it to you once after you sign in.</div>')
+            '(at least 8 characters). If you keep it, it is shown to you once after you sign in.</div>')
 
 
 def _password_by(form: dict) -> str:
-    """"suggested" when the person kept the password CADOS filled in, else "self"."""
+    """"suggested" when the person kept the password the form filled in, else "self"."""
     given, offered = form.get("new_password", ""), form.get("suggested", "")
     return "suggested" if given and offered and hmac.compare_digest(given.encode(), offered.encode()) else "self"
 
@@ -442,7 +505,7 @@ def new_password_for(scope, drop: bool = False) -> str | None:
 
 def _signup_page(nxt="/", error="", form=None):
     form = form or {}
-    return _page("Create an account", "Create your CADOS account.", "/signup",
+    return _page("Create an account", "Create your account for BIZOMAT CAD Automation.", "/signup",
                  [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                   _field("email", "Email", "email", "username", False, form.get("email", "")),
                   _new_password_field()],
@@ -457,20 +520,20 @@ def _setup_page(nxt, error="", form=None):
          _new_password_field()]
     if password():
         f.append(_field("server_password", "Server password", "password", "off",
-                        note="The password set on the server when CADOS was installed. It proves you run this server. "
+                        note="The password set on the server when CAD Automation was installed. It proves you run this server. "
                              "Needed only this once."))
     on = form.get("open_signup", "on" if not form else "") == "on"
     f.append('<label class="check"><input type="checkbox" name="open_signup" value="on"' + (" checked" if on else "")
              + '> Anyone can create their own account. You can change this on the Admin page.</label>')
-    return _page("Set up CADOS", "Create the administrator account. This page shows only once: after this, everyone signs in with their email and password.", "/setup", f,
+    return _page("Set up CAD Automation", "Create the administrator account. This page shows only once: after this, everyone signs in with their email and password.", "/setup", f,
                  "Create account", nxt, error,
-                 '<div class="note center">Not the administrator? CADOS is not set up here yet. Ask the person who runs it, '
+                 '<div class="note center">Not the administrator? CAD Automation is not set up here yet. Ask the person who runs it, '
                  'then come back to create your account.</div>' + SHOW_SCRIPT)
 
 
 def _join_page(token, error="", form=None):
     form = form or {}
-    return _page("Join CADOS", "You were invited to CADOS. Create your account.",
+    return _page("Join CAD Automation", "You were invited to BIZOMAT CAD Automation. Create your account.",
                  f"/join/{quote(token)}", [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                                            _field("email", "Email", "email", "username", False, form.get("email", "")),
                                            _new_password_field()],
@@ -562,9 +625,10 @@ def _net(ip: str) -> str:
 
 
 def _client(scope) -> str:
-    h = _headers(scope)
-    ip = h.get("fly-client-ip") or (h.get("x-forwarded-for") or "").split(",")[0].strip()
-    return _net(ip or (scope.get("client") or ("?",))[0])
+    """The client, as the rate limits count it: its address as proxy.py decides it (Fly-Client-IP on Fly.io, a trusted
+    proxy's X-Forwarded-For, else the connection), an IPv6 address as its /64."""
+    from . import proxy
+    return _net(proxy.client_ip(scope))
 
 
 def _window(key: str) -> float:
@@ -674,7 +738,7 @@ class PasswordGate:
             return await self.app(scope, receive, send)
         path = scope.get("path", "")
         if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not _machine_path(path) and not _same_origin(scope):
-            return await _send(send, 403, b'{"error":"This request did not come from a CADOS page."}', [(b"content-type", b"application/json")])
+            return await _send(send, 403, b'{"error":"This request did not come from a CAD Automation page."}', [(b"content-type", b"application/json")])
         if path == "/healthz" and scope.get("method") in ("GET", "HEAD"):  # the supervisor's check: no data, no sign-in
             return await self.app(scope, receive, send)
         if path == "/privacy" and scope.get("method") in ("GET", "HEAD"):
@@ -704,7 +768,7 @@ class PasswordGate:
         if scope.get("method") == "GET" and not path.startswith("/api/"):
             nxt = path + ("?" + scope["query_string"].decode() if scope.get("query_string") else "")
             return await _send(send, 303, b"", [(b"location", f"/login?next={quote(nxt)}".encode())])
-        return await _send(send, 401, b'{"error":"Sign in to CADOS first."}', [(b"content-type", b"application/json")])
+        return await _send(send, 401, b'{"error":"Sign in to CAD Automation first."}', [(b"content-type", b"application/json")])
 
     async def _google(self, path, scope, q, go, send):
         return await _google_flow(path, scope, q, go, send)
@@ -896,7 +960,7 @@ async def _google_flow(path, scope, q, go, send):
         me = current_user(scope)
         back = _safe_next(st.get("n") or "/")
         if not me or me["id"] != st["k"]:
-            return await _send(send, 403, notice_page("Could not keep your account", "Open CADOS in the browser you "
+            return await _send(send, 403, notice_page("Could not keep your account", "Open CAD Automation in the browser you "
                                                       "used with the access code, then try again.", "This browser is signed in "
                                                       "to a different account.", href=back), HTML + [(b"set-cookie", clear)])
         try:
@@ -905,7 +969,7 @@ async def _google_flow(path, scope, q, go, send):
             await asyncio.to_thread(accounts.keep_tester, me["id"], info["email"], info.get("name") or "", None, info["sub"])
         except accounts.AccountError as e:
             return await _send(send, 409, notice_page("Could not keep your account", "You are still signed in, in this "
-                                                      "browser.", str(e), "Back to CADOS", back), HTML + [(b"set-cookie", clear)])
+                                                      "browser.", str(e), "Back to CAD Automation", back), HTML + [(b"set-cookie", clear)])
         return await go(back, clear)
     domain = (info.get("email") or "").rsplit("@", 1)[-1].lower()
     managed = domain in ("gmail.com", "googlemail.com") or (info.get("hd") or "").lower() == domain

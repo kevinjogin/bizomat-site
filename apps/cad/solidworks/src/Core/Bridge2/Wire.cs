@@ -7,7 +7,7 @@ using OpenSketch.Sw.Core;
 
 namespace OpenSketch.Sw.Bridge
 {
-    /// <summary>KEVOS bridge protocol 2 constants (docs/BRIDGE-PROTOCOL.md).</summary>
+    /// <summary>Bridge protocol 2 constants (docs/BRIDGE-PROTOCOL.md). The KEVOS names in it are the protocol's own ids.</summary>
     public static class Protocol
     {
         public const string Version = "2.0";

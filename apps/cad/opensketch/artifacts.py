@@ -206,7 +206,7 @@ def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None, ow
     if full():
         raise ArtifactError("The download store is full. Retry after older links expire (at most 65 minutes).")
     artifact_id = uuid.uuid4().hex
-    stem = re.sub(r"[^A-Za-z0-9_-]+", "_", name).strip("_")[:80] or "CADOS"
+    stem = re.sub(r"[^A-Za-z0-9_-]+", "_", name).strip("_")[:80] or "export"
     filename = f"{stem}_v{rec['version']}.{fmt}"
     now = time.time()
     expires = int(now) + int(lifetime)
