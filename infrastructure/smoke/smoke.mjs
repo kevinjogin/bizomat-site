@@ -24,7 +24,7 @@ import https from 'node:https';
 import net from 'node:net';
 import tls from 'node:tls';
 
-const PAGES = ['/', '/cad/', '/work/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+const PAGES = ['/', '/cad-automation/', '/work/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room).
 const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/']];
 const HSTS = /max-age=\d{7,}/;
