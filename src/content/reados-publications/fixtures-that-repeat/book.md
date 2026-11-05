@@ -4,8 +4,8 @@ subtitle: "From locating decisions and load paths to a qualified production meth
 description: "Design and qualify a repeatable fixture using explicit constraints, force and stiffness checks, machining access, trial data and controlled maintenance."
 category: Manufacturing
 tags: [manufacturing, design, quality, process-improvement, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-20
@@ -64,7 +64,7 @@ A fixture is a physical agreement about where the workpiece belongs, which loads
 
 This book follows a fictional **machined inspection bracket** through fixture development. The blank is nominally 150 mm by 80 mm by 16 mm. A primary support face, a long side and an end provide its starting references. The exercise is to machine a repeatable feature pattern while leaving a method that another competent person can understand and verify.
 
-All dimensions, loads, test results, quantities and financial values are invented for teaching. They are not KEVOS® projects or performance claims. The force examples are simplified static models with explicit assumptions; they do not establish a safe clamp selection, machine program or production approval for a real installation. Manufacturer ratings, actual load envelopes, machine instructions and a competent application review remain necessary.
+All dimensions, loads, test results, quantities and financial values are invented for teaching. They are not BIZOMAT projects or performance claims. The force examples are simplified static models with explicit assumptions; they do not establish a safe clamp selection, machine program or production approval for a real installation. Manufacturer ratings, actual load envelopes, machine instructions and a competent application review remain necessary.
 
 The ten chapters produce connected outputs: a fixture brief, a contact map, load and deflection checks, an access review, a trial record, an operating method and a maintenance decision. Each exercise includes an answer or an explicit basis for assessing it. Money examples use Australian dollars and exclude GST.
 

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations from mechanism kinematics topics (batch norton3). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations from mechanism kinematics topics (batch norton3). SI units are explicit at each boundary.
 // Methods are standard kinematic relations; no source tables, figures or recommended settings are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

@@ -11,11 +11,11 @@
  "note": "Search demand, existing impressions and competitive feasibility are UNKNOWN until an authorised data source is connected. Scores use only known components and are provisional.",
  "keywords": [
   {
-   "keyword": "KEVOS",
+   "keyword": "BIZOMAT",
    "cluster": "branded",
    "intent": "navigational",
    "target": "https://kevos.com/",
-   "targetTitle": "KEVOS® | Engineering, Manufacturing and Operations Support",
+   "targetTitle": "BIZOMAT | Engineering, Manufacturing and Operations Support",
    "components": {
     "relevance": 10,
     "demand": "UNKNOWN",
@@ -37,11 +37,11 @@
    ]
   },
   {
-   "keyword": "KEVOS engineering",
+   "keyword": "BIZOMAT engineering",
    "cluster": "branded",
    "intent": "navigational",
    "target": "https://kevos.com/",
-   "targetTitle": "KEVOS® | Engineering, Manufacturing and Operations Support",
+   "targetTitle": "BIZOMAT | Engineering, Manufacturing and Operations Support",
    "components": {
     "relevance": 10,
     "demand": "UNKNOWN",
@@ -67,7 +67,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/assessment/",
-   "targetTitle": "Engineering Problem Assessment Australia | KEVOS®",
+   "targetTitle": "Engineering Problem Assessment Australia | BIZOMAT",
    "components": {
     "relevance": 10,
     "demand": "UNKNOWN",
@@ -93,7 +93,7 @@
    "cluster": "educational",
    "intent": "informational",
    "target": "https://kevos.com/reados/publications/fixtures-that-repeat/",
-   "targetTitle": "Fixtures That Repeat (READOS) | KEVOS®",
+   "targetTitle": "Fixtures That Repeat (READOS) | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -119,7 +119,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/jig-fixture-roi/",
-   "targetTitle": "Jig and Fixture Return on Investment tool | KEVOS®",
+   "targetTitle": "Jig and Fixture Return on Investment tool | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -145,7 +145,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 10,
     "demand": "UNKNOWN",
@@ -171,7 +171,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 10,
     "demand": "UNKNOWN",
@@ -197,7 +197,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/assessment/",
-   "targetTitle": "Engineering Problem Assessment Australia | KEVOS®",
+   "targetTitle": "Engineering Problem Assessment Australia | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -223,7 +223,7 @@
    "cluster": "educational",
    "intent": "informational",
    "target": "https://kevos.com/reados/publications/machining-by-the-numbers/estimating-cycle-time/",
-   "targetTitle": "Estimating cycle time (Machining by the Numbers) | KEVOS®",
+   "targetTitle": "Estimating cycle time (Machining by the Numbers) | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -245,11 +245,11 @@
    ]
   },
   {
-   "keyword": "KEVOS WORKOS",
+   "keyword": "BIZOMAT WORKOS",
    "cluster": "branded",
    "intent": "navigational",
    "target": "https://kevos.com/tools/",
-   "targetTitle": "WORKOS calculators and decision tools | KEVOS®",
+   "targetTitle": "WORKOS calculators and decision tools | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -271,11 +271,11 @@
    ]
   },
   {
-   "keyword": "KEVOS READOS",
+   "keyword": "BIZOMAT READOS",
    "cluster": "branded",
    "intent": "navigational",
    "target": "https://kevos.com/reados/",
-   "targetTitle": "READOS books and guides by topic | KEVOS®",
+   "targetTitle": "READOS books and guides by topic | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -301,7 +301,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 10,
     "demand": "UNKNOWN",
@@ -327,7 +327,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/factory-fix/",
-   "targetTitle": "Factory Fix | KEVOS®",
+   "targetTitle": "Factory Fix | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -349,11 +349,11 @@
    ]
   },
   {
-   "keyword": "KEVOS engineering calculators",
+   "keyword": "BIZOMAT engineering calculators",
    "cluster": "branded",
    "intent": "navigational",
    "target": "https://kevos.com/tools/",
-   "targetTitle": "WORKOS calculators and decision tools | KEVOS®",
+   "targetTitle": "WORKOS calculators and decision tools | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -379,7 +379,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -405,7 +405,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -431,7 +431,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -457,7 +457,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -483,7 +483,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -509,7 +509,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/oee-downtime-pro/",
-   "targetTitle": "OEE and Downtime Analysis tool | KEVOS®",
+   "targetTitle": "OEE and Downtime Analysis tool | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -535,7 +535,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/capacity-planner-pro/",
-   "targetTitle": "Production Capacity Planner tool | KEVOS®",
+   "targetTitle": "Production Capacity Planner tool | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -561,7 +561,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/true-cost/",
-   "targetTitle": "True Unit Cost tool | KEVOS®",
+   "targetTitle": "True Unit Cost tool | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -587,7 +587,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/make-vs-buy-pro/",
-   "targetTitle": "Make or Buy (detailed cost comparison) tool | KEVOS®",
+   "targetTitle": "Make or Buy (detailed cost comparison) tool | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -613,7 +613,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/improvement-value/",
-   "targetTitle": "Improvement Value tool | KEVOS®",
+   "targetTitle": "Improvement Value tool | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -639,7 +639,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/downtime-cost/",
-   "targetTitle": "Downtime Cost tool | KEVOS®",
+   "targetTitle": "Downtime Cost tool | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -665,7 +665,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -691,7 +691,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 9,
     "demand": "UNKNOWN",
@@ -717,7 +717,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/cutting-speed/",
-   "targetTitle": "Cutting Speed and Spindle RPM calculator | KEVOS®",
+   "targetTitle": "Cutting Speed and Spindle RPM calculator | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -743,7 +743,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/cutting-speed/",
-   "targetTitle": "Cutting Speed and Spindle RPM calculator | KEVOS®",
+   "targetTitle": "Cutting Speed and Spindle RPM calculator | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -769,7 +769,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/milling-feed-time/",
-   "targetTitle": "Milling Feed, Removal Rate and Time calculator | KEVOS®",
+   "targetTitle": "Milling Feed, Removal Rate and Time calculator | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -795,7 +795,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/signed-tolerance-stack/",
-   "targetTitle": "Signed Three-Term Tolerance Stack calculator | KEVOS®",
+   "targetTitle": "Signed Three-Term Tolerance Stack calculator | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -821,7 +821,7 @@
    "cluster": "educational",
    "intent": "informational",
    "target": "https://kevos.com/reados/publications/fixtures-that-repeat/make-correct-loading-and-changeover-repeatable/",
-   "targetTitle": "Make correct loading and changeover repeatable (Fixtures That Repeat) | KEVOS®",
+   "targetTitle": "Make correct loading and changeover repeatable (Fixtures That Repeat) | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -847,7 +847,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -873,7 +873,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/cycle-time/",
-   "targetTitle": "Cycle Time vs Takt tool | KEVOS®",
+   "targetTitle": "Cycle Time vs Takt tool | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -899,7 +899,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/bottleneck/",
-   "targetTitle": "Bottleneck and Line Balance tool | KEVOS®",
+   "targetTitle": "Bottleneck and Line Balance tool | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -925,7 +925,7 @@
    "cluster": "educational",
    "intent": "informational",
    "target": "https://kevos.com/reados/collections/lean-and-continuous-improvement/measuring-productivity-and-equipment-effectiveness/",
-   "targetTitle": "Measuring productivity: output per input, labour measures and overall equipment effectiveness (Lean, Maintenance and Continuous Improvement) | READOS | KEVOS®",
+   "targetTitle": "Measuring productivity: output per input, labour measures and overall equipment effectiveness (Lean, Maintenance and Continuous Improvement) | READOS | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -951,7 +951,7 @@
    "cluster": "educational",
    "intent": "informational",
    "target": "https://kevos.com/reados/collections/lean-and-continuous-improvement/measuring-productivity-and-equipment-effectiveness/",
-   "targetTitle": "Measuring productivity: output per input, labour measures and overall equipment effectiveness (Lean, Maintenance and Continuous Improvement) | READOS | KEVOS®",
+   "targetTitle": "Measuring productivity: output per input, labour measures and overall equipment effectiveness (Lean, Maintenance and Continuous Improvement) | READOS | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -973,11 +973,11 @@
    ]
   },
   {
-   "keyword": "KEVOS MAKEOS",
+   "keyword": "BIZOMAT MAKEOS",
    "cluster": "branded",
    "intent": "navigational",
    "target": "https://kevos.com/tools/",
-   "targetTitle": "WORKOS calculators and decision tools | KEVOS®",
+   "targetTitle": "WORKOS calculators and decision tools | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -1003,7 +1003,7 @@
    "cluster": "commercial",
    "intent": "commercial-local",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -1029,7 +1029,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 8,
     "demand": "UNKNOWN",
@@ -1055,7 +1055,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/",
-   "targetTitle": "WORKOS calculators and decision tools | KEVOS®",
+   "targetTitle": "WORKOS calculators and decision tools | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1081,7 +1081,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/",
-   "targetTitle": "WORKOS calculators and decision tools | KEVOS®",
+   "targetTitle": "WORKOS calculators and decision tools | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1107,7 +1107,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/drilling-time/",
-   "targetTitle": "Drilling Travel and Time calculator | KEVOS®",
+   "targetTitle": "Drilling Travel and Time calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1133,7 +1133,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/bolt-circle/",
-   "targetTitle": "Bolt Circle Coordinates calculator | KEVOS®",
+   "targetTitle": "Bolt Circle Coordinates calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1159,7 +1159,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/beam-deflection/",
-   "targetTitle": "Beam Stress and Deflection calculator | KEVOS®",
+   "targetTitle": "Beam Stress and Deflection calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1185,7 +1185,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/hydraulic-cylinder/",
-   "targetTitle": "Hydraulic Cylinder Force and Speed calculator | KEVOS®",
+   "targetTitle": "Hydraulic Cylinder Force and Speed calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1211,7 +1211,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/darcy-pipe-drop/",
-   "targetTitle": "Darcy Pipe Pressure Drop calculator | KEVOS®",
+   "targetTitle": "Darcy Pipe Pressure Drop calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1237,7 +1237,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/pneumatic-consumption/",
-   "targetTitle": "Pneumatic Cylinder Air Demand calculator | KEVOS®",
+   "targetTitle": "Pneumatic Cylinder Air Demand calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1263,7 +1263,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/bend-allowance/",
-   "targetTitle": "Sheet Bend Allowance and Deduction calculator | KEVOS®",
+   "targetTitle": "Sheet Bend Allowance and Deduction calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1289,7 +1289,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/bearing-l10-life/",
-   "targetTitle": "Bearing L10 Life calculator | KEVOS®",
+   "targetTitle": "Bearing L10 Life calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1315,7 +1315,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/welding-heat-input/",
-   "targetTitle": "Welding Arc Energy and Heat Input calculator | KEVOS®",
+   "targetTitle": "Welding Arc Energy and Heat Input calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1341,7 +1341,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/safety-stock/",
-   "targetTitle": "Safety Stock tool | KEVOS®",
+   "targetTitle": "Safety Stock tool | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1367,7 +1367,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/order-quantity/",
-   "targetTitle": "Economic Order Quantity (EOQ) tool | KEVOS®",
+   "targetTitle": "Economic Order Quantity (EOQ) tool | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1393,7 +1393,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/stock-mass/",
-   "targetTitle": "Stock Volume and Mass calculator | KEVOS®",
+   "targetTitle": "Stock Volume and Mass calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1419,7 +1419,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/risk-score/",
-   "targetTitle": "Risk Rating (5 × 5 matrix) tool | KEVOS®",
+   "targetTitle": "Risk Rating (5 × 5 matrix) tool | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1445,7 +1445,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/contingency/",
-   "targetTitle": "Contingency Allowance tool | KEVOS®",
+   "targetTitle": "Contingency Allowance tool | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1471,7 +1471,7 @@
    "cluster": "calculators",
    "intent": "calculator",
    "target": "https://kevos.com/tools/gear-pair/",
-   "targetTitle": "Spur Gear Pair Geometry calculator | KEVOS®",
+   "targetTitle": "Spur Gear Pair Geometry calculator | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1497,7 +1497,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/cycle-time/",
-   "targetTitle": "Cycle Time vs Takt tool | KEVOS®",
+   "targetTitle": "Cycle Time vs Takt tool | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -1523,7 +1523,7 @@
    "cluster": "commercial",
    "intent": "commercial",
    "target": "https://kevos.com/services/",
-   "targetTitle": "Services | KEVOS®",
+   "targetTitle": "Services | BIZOMAT",
    "components": {
     "relevance": 7,
     "demand": "UNKNOWN",
@@ -1549,7 +1549,7 @@
    "cluster": "operations",
    "intent": "calculator",
    "target": "https://kevos.com/tools/safety-stock/",
-   "targetTitle": "Safety Stock tool | KEVOS®",
+   "targetTitle": "Safety Stock tool | BIZOMAT",
    "components": {
     "relevance": 6,
     "demand": "UNKNOWN",
@@ -1647,9 +1647,9 @@
   "https://kevos.com/tools/": [
    "engineering calculators online",
    "manufacturing calculators",
-   "KEVOS WORKOS",
-   "KEVOS MAKEOS",
-   "KEVOS engineering calculators"
+   "BIZOMAT WORKOS",
+   "BIZOMAT MAKEOS",
+   "BIZOMAT engineering calculators"
   ],
   "https://kevos.com/tools/cutting-speed/": [
    "cutting speed calculator",
@@ -1668,8 +1668,8 @@
    "what is overall equipment effectiveness"
   ],
   "https://kevos.com/": [
-   "KEVOS",
-   "KEVOS engineering"
+   "BIZOMAT",
+   "BIZOMAT engineering"
   ]
  }
 }

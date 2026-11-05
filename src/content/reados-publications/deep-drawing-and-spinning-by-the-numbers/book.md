@@ -4,8 +4,8 @@ subtitle: "Cups, shells and covers from flat sheet: blank sizes, draw ratios, fo
 description: "Work out drawn and spun sheet metal parts with numbers: blank size, draw ratios and redraws, press force, blank holding, die clearance, trim, ironing, spinning and draw-or-spin costs."
 category: Manufacturing
 tags: [manufacturing, design, quality, product-development]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -50,4 +50,4 @@ It suits product designers, manufacturing engineers, toolmakers, press shop supe
 
 Every chapter follows one fictional part. This is an illustration. SC-100 is a stainless steel sensor cover: a flat-bottomed cup with a mean diameter of 100 mm, a finished height of 70 mm and a bottom corner radius of 4 mm, drawn from 0.8 mm 304 stainless steel sheet. It protects an instrument on outdoor equipment, it must be seamless so that it seals against its base, and it is wanted in quantities that might be hundreds or tens of thousands a year. The material properties, limits and process figures used are illustrations chosen to show the method; a real part uses the supplier's certified properties, the toolmaker's experience and trials.
 
-The part and its numbers are invented; none describes KEVOS® work or a real product. Prices, where they appear, are illustrations in Australian dollars excluding GST.
+The part and its numbers are invented; none describes BIZOMAT work or a real product. Prices, where they appear, are illustrations in Australian dollars excluding GST.

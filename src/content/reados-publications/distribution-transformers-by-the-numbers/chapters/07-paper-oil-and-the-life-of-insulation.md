@@ -9,7 +9,7 @@ draft: false
 
 A transformer has no moving parts to wear out. Its core steel and copper last practically for ever. What ages is the insulation: the paper wrapped around the conductors and the pressboard spacers between the windings, soaked in oil. Oil can be filtered, dried, regenerated or replaced; paper cannot be reached without taking the transformer apart. When the paper becomes so weak that the vibration of a short circuit or the movement of a few decades of load cycles cracks it, the transformer has reached the end of its life, whatever its age in years.
 
-This chapter explains what paper is and how it ages, why temperature dominates the rate of ageing, and how to turn the hot-spot temperatures of Chapter 6 into a rate of ageing for the plant's daily load cycle, using the KEVOS® Arrhenius tool alongside the doubling rule common in transformer practice. It then looks at water and oxygen, at what oil tests reveal about the paper, and ends with an ageing calculation that said TX-1 was young and an oil test that said otherwise.
+This chapter explains what paper is and how it ages, why temperature dominates the rate of ageing, and how to turn the hot-spot temperatures of Chapter 6 into a rate of ageing for the plant's daily load cycle, using the BIZOMAT Arrhenius tool alongside the doubling rule common in transformer practice. It then looks at water and oxygen, at what oil tests reveal about the paper, and ends with an ageing calculation that said TX-1 was young and an oil test that said otherwise.
 
 ## Cellulose and what ageing does to it
 

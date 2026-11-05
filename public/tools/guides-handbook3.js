@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS handbook tool guides. References are topic references; no protected tables or text are reproduced.
+// BIZOMAT MAKEOS handbook tool guides. References are topic references; no protected tables or text are reproduced.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   "bearing-l10-life": {
     "purpose": "Calculate the basic rating life of a rolling bearing from its catalogue dynamic load rating, the equivalent dynamic load and a constant speed.",

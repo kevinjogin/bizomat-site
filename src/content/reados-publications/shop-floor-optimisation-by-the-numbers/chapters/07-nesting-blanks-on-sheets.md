@@ -3,13 +3,13 @@ book: shop-floor-optimisation-by-the-numbers
 chapterSlug: nesting-blanks-on-sheets
 order: 7
 title: "Nesting blanks on sheets"
-description: "Lay rectangular blanks on stock sheets for least waste: grid and two-block layouts in the KEVOS® sheet nesting tool, the area bound, sheet size choice, mixed nesting and what utilisation hides."
+description: "Lay rectangular blanks on stock sheets for least waste: grid and two-block layouts in the BIZOMAT sheet nesting tool, the area bound, sheet size choice, mixed nesting and what utilisation hides."
 draft: false
 ---
 
 Cutting blanks from sheet is the two-dimensional version of Chapter 6's bar cutting, and it is harder in every way. Blanks can be placed in two orientations, they must not overlap, they need a gap between them for the cut and a margin at the sheet's edge, and the number of possible layouts is enormous even for simple rectangles. Nesting software for lasers and punches handles irregular shapes with sophisticated search, but most of the money in a sheet-metal shop is spent on rectangular or near-rectangular blanks, and for those a few simple layouts and a little arithmetic go a long way.
 
-This chapter nests the EC-600's door, back and side blanks with the KEVOS® sheet nesting tool, compares two sheet sizes, mixes blanks on one sheet, and explains the bound that judges any layout. Its error is a sheet size chosen by habit.
+This chapter nests the EC-600's door, back and side blanks with the BIZOMAT sheet nesting tool, compares two sheet sizes, mixes blanks on one sheet, and explains the bound that judges any layout. Its error is a sheet size chosen by habit.
 
 ## The blanks
 
@@ -47,7 +47,7 @@ rowhead: Blank on sheet
 - * 690 × 690 on 3,000 × 1,500 | 8 | 8 | 8 | 8 | 84.6% | 15 | 18.75
 - 640 × 330 on 2,400 × 1,200 | 9 | 7 | 10 | 10 | 73.3% | 24 | 9.60
 - * 640 × 330 on 3,000 × 1,500 | 16 | 16 | 18 | 18 | 84.5% | 14 | 8.75
-caption: This is an illustration from the KEVOS® sheet nesting tool, with a 10 mm gap and 10 mm edge margin. The square blank on the smaller sheet fails the tool's 70% utilisation check. On the larger sheet, 14 sheets give 252 side blanks, 12 spare.
+caption: This is an illustration from the BIZOMAT sheet nesting tool, with a 10 mm gap and 10 mm edge margin. The square blank on the smaller sheet fails the tool's 70% utilisation check. On the larger sheet, 14 sheets give 252 side blanks, 12 spare.
 ```
 
 The side blanks show the value of the two-block layout. On the 2,400 × 1,200 sheet, a straight grid fits 9 blanks lengthways, three by three. The two-block layout puts one row of three blanks lengthways across one edge, using 340 mm of the sheet's usable 1,180 mm width, and fills the remaining 840 mm strip with seven blanks turned the other way, 10 in all. On the larger sheet, the best layout runs three bands of four blanks with their short sides along the sheet's 1,500 mm width, and fills the remaining 1,030 mm with six turned blanks, 18 in all against a grid's 16.

@@ -7,7 +7,7 @@ tags:
   - strategy
   - experimentation
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -222,4 +222,4 @@ Risk management should make a business wiser about uncertainty, not simply more 
 
 ---
 
-*Source: KEVOS® notes, drawing on M. Martinsuo, T. Korhonen and T. Laine, "Identifying, framing and managing uncertainties in project portfolios", International Journal of Project Management (2014), and on guidance on risk appetite published by the Committee of Sponsoring Organizations of the Treadway Commission. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on M. Martinsuo, T. Korhonen and T. Laine, "Identifying, framing and managing uncertainties in project portfolios", International Journal of Project Management (2014), and on guidance on risk appetite published by the Committee of Sponsoring Organizations of the Treadway Commission. Examples and figures in this article are illustrations.*

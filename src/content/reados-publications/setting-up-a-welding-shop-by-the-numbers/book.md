@@ -4,8 +4,8 @@ subtitle: "Work mix, floor layout, power, gas, fume extraction, equipment, fire 
 description: "Plan a small welding and fabrication shop with numbers: the work, the floor, the power and gas supply, fume extraction, equipment, fire safety, the hourly cost, pricing and cash flow."
 category: Business
 tags: [startups, operations, finance, manufacturing, sales]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -71,7 +71,7 @@ Their advice about overhead, cost cards and practice before taking customers' mo
 
 This is an illustration. A qualified welder with fifteen years' experience in a fabrication shop plans to set up her own business with one employee, doing jobbing fabrication and repair: trailers, gates, brackets, machinery repairs, site work for farms and local industry, and small structural jobs. She has found a rented industrial unit and savings to equip it, and wants to plan the shop, its services, its equipment and its prices before signing the lease.
 
-The business, its building, costs and prices are invented for teaching. They are not KEVOS® work. Real shops must meet planning, building, electrical, gas, fire and work health and safety requirements, and the advice of licensed electricians, gas suppliers, accountants and insurers governs.
+The business, its building, costs and prices are invented for teaching. They are not BIZOMAT work. Real shops must meet planning, building, electrical, gas, fire and work health and safety requirements, and the advice of licensed electricians, gas suppliers, accountants and insurers governs.
 
 ## How to use the book
 
@@ -83,4 +83,4 @@ This book is educational. Electrical installation work must be done by licensed 
 
 ## An original treatment
 
-The Library covers the welding processes themselves in Arc Welding by the Numbers and Oxy-Fuel by the Numbers, and the gases in Industrial Gases by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers the welding processes themselves in Arc Welding by the Numbers and Oxy-Fuel by the Numbers, and the gases in Industrial Gases by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original BIZOMAT writing. The historical manuals are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.

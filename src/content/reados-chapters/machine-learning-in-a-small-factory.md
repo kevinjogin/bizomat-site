@@ -7,7 +7,7 @@ tags:
   - ai
   - manufacturing
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ Machine learning can bring real gains in a small factory, particularly for visua
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® handbooks on machine learning methods for business, training and validating AI models, and AI for internal operations and quality management. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT handbooks on machine learning methods for business, training and validating AI models, and AI for internal operations and quality management. The worked example is illustrative. This article is general information.*

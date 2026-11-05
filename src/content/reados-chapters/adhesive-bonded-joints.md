@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ Adhesive bonding joins dissimilar and thin materials, spreads load and seals, bu
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations. Always follow adhesive manufacturers' technical data and safety data sheets.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations. Always follow adhesive manufacturers' technical data and safety data sheets.*

@@ -9,7 +9,7 @@ draft: false
 
 Not every quality characteristic is a measurement. Some are verdicts: a spool has a burr or it does not, a weld passes or fails, an invoice is right or wrong. Others are counts: scratches on a tray of parts, defects in a metre of coated sheet, faults in a printed circuit board. Verdicts and counts follow different random laws from measurements, and their charts use those laws to set limits. The p chart plots the proportion of defective items in each sample, using the binomial distribution; the c chart plots the count of defects in each inspection unit, using the Poisson distribution.
 
-This chapter sets up both for SP-12's visual inspection with the KEVOS® p and c chart tools, explains why their limits sit asymmetrically and what that does to false alarms, shows how the limits must change with sample size, and ends with a day when half a sample was charted against limits for a full one.
+This chapter sets up both for SP-12's visual inspection with the BIZOMAT p and c chart tools, explains why their limits sit asymmetrically and what that does to false alarms, shows how the limits must change with sample size, and ends with a day when half a sample was charted against limits for a full one.
 
 ## Two random laws
 
@@ -92,7 +92,7 @@ A chart with no lower limit can still confirm an improvement, but slowly and onl
 
 ## When the unit changes size
 
-Both charts assume samples or inspection units of the same size. When they vary, the limits must vary with them. For the p chart, the standard deviation √(p̄(1 − p̄) ÷ n) depends on each sample's n, so each sample gets its own limits: wider for small samples, narrower for large. For counts, the u chart divides each count by the size of its unit, giving defects per spool, per metre or per tray-equivalent, and draws limits at ū ± 3√(ū ÷ nᵢ), where nᵢ is the size of each unit in the chosen measure. The KEVOS® tools work with equal sizes; varying sizes need the formulas applied sample by sample.
+Both charts assume samples or inspection units of the same size. When they vary, the limits must vary with them. For the p chart, the standard deviation √(p̄(1 − p̄) ÷ n) depends on each sample's n, so each sample gets its own limits: wider for small samples, narrower for large. For counts, the u chart divides each count by the size of its unit, giving defects per spool, per metre or per tray-equivalent, and draws limits at ū ± 3√(ū ÷ nᵢ), where nᵢ is the size of each unit in the chosen measure. The BIZOMAT tools work with equal sizes; varying sizes need the formulas applied sample by sample.
 
 ## The error: limits for 200 on a sample of 80
 

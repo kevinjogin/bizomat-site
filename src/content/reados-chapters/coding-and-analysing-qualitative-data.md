@@ -7,7 +7,7 @@ tags:
   - validation
   - customers
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -216,4 +216,4 @@ Qualitative data explains the why behind numbers, but only systematic analysis t
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

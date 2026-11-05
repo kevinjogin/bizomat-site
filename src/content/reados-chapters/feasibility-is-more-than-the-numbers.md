@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -234,4 +234,4 @@ Feasibility is not an obstacle to ambition. It is the discipline that separates 
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on feasibility assessment across technical, operational, commercial, financial, strategic and ethical dimensions. Examples and figures in this article are illustrations. This article is general information, not financial or safety advice.*
+*Source: BIZOMAT notes, drawing on teaching material on feasibility assessment across technical, operational, commercial, financial, strategic and ethical dimensions. Examples and figures in this article are illustrations. This article is general information, not financial or safety advice.*

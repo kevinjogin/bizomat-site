@@ -26,7 +26,7 @@ type: compare
 title: Dry bulb, wet bulb and dew point for the press hall's design states
 cols: Dry bulb | Wet bulb | Dew point | Depression, dry minus wet
 rowhead: State
-caption: This is an illustration. Wet bulbs calculated from the adiabatic saturation balance at 101.325 kPa, the method the KEVOS® evaporative cooler tool uses. The wet-bulb depression is largest for the hot, dry afternoon.
+caption: This is an illustration. Wet bulbs calculated from the adiabatic saturation balance at 101.325 kPa, the method the BIZOMAT evaporative cooler tool uses. The wet-bulb depression is largest for the hot, dry afternoon.
 - * Room, 50% | 22.0 °C | 15.42 °C | 11.11 °C | 6.58 K
 - Summer humid, 70% | 29.0 °C | 24.59 °C | 22.97 °C | 4.41 K
 - Summer hot-dry, 20% | 38.0 °C | 20.76 °C | 11.15 °C | 17.24 K

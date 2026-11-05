@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -170,4 +170,4 @@ Heating systems combine a heat source, distribution, terminal units and controls
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified mechanical engineer, licensed gasfitter or regulator.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified mechanical engineer, licensed gasfitter or regulator.*

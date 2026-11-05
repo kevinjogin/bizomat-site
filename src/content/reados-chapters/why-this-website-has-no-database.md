@@ -177,7 +177,7 @@ A few principles follow, for websites and for systems in general:
 - **Check automatically.** Validation in the build catches errors before they reach anyone.
 - **Add complexity deliberately.** Each new component should solve a specific, real problem.
 
-These principles echo themes elsewhere in KEVOS® Library: the cost of standing still, the value of systems that belong to the organisation rather than to individuals, and the advantage of choices that remain useful for a long time.
+These principles echo themes elsewhere in BIZOMAT Library: the cost of standing still, the value of systems that belong to the organisation rather than to individuals, and the advantage of choices that remain useful for a long time.
 
 ## Bringing it together
 

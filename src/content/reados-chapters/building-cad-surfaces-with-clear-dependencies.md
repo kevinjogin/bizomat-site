@@ -7,7 +7,7 @@ tags:
   - design
   - product-development
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

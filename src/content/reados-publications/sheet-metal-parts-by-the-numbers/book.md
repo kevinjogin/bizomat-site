@@ -4,8 +4,8 @@ subtitle: "Designing and drawing folded sheet metal parts: bend radius, K-factor
 description: "Design and draw folded sheet metal parts with numbers: bend radius, K-factor, bend allowance, flat patterns, springback, features near bends, forces and tolerances."
 category: Manufacturing
 tags: [manufacturing, design, quality, product-development]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -78,7 +78,7 @@ It suits mechanical designers and drafters who design sheet metal parts, fabrica
 
 Every chapter follows one fictional part. This is an illustration. A machinery builder needs a bracket to mount a variable speed drive on a conveyor frame. It is a C-shaped channel folded from 2.0 mm cold-rolled mild steel: a base 160 mm wide, two legs 60 mm high and two return flanges 15 mm wide, all as outside dimensions, and 300 mm long along the bends. Four Ø7 holes in the base take the drive's M6 screws, and each leg has two 9 × 20 mm slots for M8 bolts to the frame. All four bends are 90° with an inside radius of 2 mm, and the part is powder coated after folding. Its folding supplier has a press brake and a turret punch, and its first K-factor for this material and tooling, from trial strips, is 0.40.
 
-The business, the supplier and the mistakes are invented, and the material properties are illustrations rather than a grade's specified values. None describes KEVOS® work or a real supplier.
+The business, the supplier and the mistakes are invented, and the material properties are illustrations rather than a grade's specified values. None describes BIZOMAT work or a real supplier.
 
 ## Source limits and professional responsibility
 

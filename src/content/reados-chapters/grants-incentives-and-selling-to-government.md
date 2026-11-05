@@ -7,7 +7,7 @@ tags:
   - finance
   - sales
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -224,4 +224,4 @@ Public support and government customers can help a small business, but only when
 
 ---
 
-*Source: KEVOS® notes, drawing on an earlier KEVOS® handbook on Australian start-up support and government procurement, and guidance published by business.gov.au, the ATO, Austrade, IP Australia and the Department of Finance. Examples in this article are illustrations. This article is general information, not financial, tax or legal advice; check current program guidelines before relying on them.*
+*Source: BIZOMAT notes, drawing on an earlier BIZOMAT handbook on Australian start-up support and government procurement, and guidance published by business.gov.au, the ATO, Austrade, IP Australia and the Department of Finance. Examples in this article are illustrations. This article is general information, not financial, tax or legal advice; check current program guidelines before relying on them.*

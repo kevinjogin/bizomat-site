@@ -9,7 +9,7 @@ draft: false
 
 The HW-3 is aligned cold, on a still morning, with the pump room at 20 °C. It runs with water at 85 °C passing through the pump. The pump's casing and feet warm, the steel between its feet and its shaft expands, and the shaft rises. The motor warms too, but less. An alignment that is perfect cold is wrong hot, by the difference between the two machines' growth. Since bearings and seals spend their lives hot, it is the hot alignment that matters.
 
-This chapter estimates the HW-3's thermal growth with the KEVOS® thermal growth tool, turns it into a cold target, and covers how to check the result with the machines running. Its mistake is the easiest one in alignment to make: setting the target the wrong way.
+This chapter estimates the HW-3's thermal growth with the BIZOMAT thermal growth tool, turns it into a cold target, and covers how to check the result with the machines running. Its mistake is the easiest one in alignment to make: setting the target the wrong way.
 
 ## Why machines grow
 

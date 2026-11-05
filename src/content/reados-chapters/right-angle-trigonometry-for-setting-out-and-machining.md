@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Right-angled triangles solve a remarkable range of practical problems. Pythagora
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information; check accessibility and building requirements with the relevant authority.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information; check accessibility and building requirements with the relevant authority.*

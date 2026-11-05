@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - systems
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -181,4 +181,4 @@ The chemical industry moved from polluting batch processes such as Leblanc's to 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute safety or regulatory advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute safety or regulatory advice.*

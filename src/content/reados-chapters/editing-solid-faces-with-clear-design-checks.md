@@ -7,7 +7,7 @@ tags:
   - design
   - validation
   - prototyping
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

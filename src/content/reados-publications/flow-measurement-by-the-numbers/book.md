@@ -4,8 +4,8 @@ subtitle: "Volume, mass and standard flow, velocity profiles, orifice plates, ma
 description: "How industrial flowmeters work and how to choose, install, read and trust them, from Reynolds number and orifice plates to magnetic, Coriolis, ultrasonic and vortex meters, worked with numbers."
 category: Engineering
 tags: [operations, systems, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-03
@@ -24,7 +24,7 @@ references:
   - title: "Introduction to Plasma Physics: A Graduate Level Course"
     creator: "R. Fitzpatrick, University of Texas at Austin, lecture notes"
     year: "2006"
-    note: "Copyright work, used only as a map of ideas: the electromotive force induced in a conductor moving through a magnetic field, as in the homopolar generator and magnetohydrodynamics, and the propagation of waves in moving media. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: the electromotive force induced in a conductor moving through a magnetic field, as in the homopolar generator and magnetohydrodynamics, and the propagation of waves in moving media. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Flow Measurement Engineering Handbook"
     creator: "R. W. Miller, McGraw-Hill"
     year: "1996"
@@ -62,7 +62,7 @@ Almost every process plant runs on flows it cannot see. Water arrives through a 
 
 This book shows how flowmeters work and how to use them with numbers. It starts with what a meter measures, volume, mass or standard volume, and with the velocity profile in the pipe, which every meter depends on. It then works through the main meter types: the orifice plate, the electromagnetic meter, whose principle is the electromotive force induced in a conductor moving through a magnetic field, the Coriolis mass meter, the ultrasonic transit-time meter and the vortex meter for gases. It finishes with uncertainty, totals and mass balances, and choosing a meter on accuracy, pressure loss and cost.
 
-It is for process, mechanical, instrument and maintenance engineers, technicians, energy managers and production staff. It assumes engineering or trade training and comfort with basic fluid mechanics; the physics of each meter is explained as it is used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for process, mechanical, instrument and maintenance engineers, technicians, energy managers and production staff. It assumes engineering or trade training and comfort with basic fluid mechanics; the physics of each meter is explained as it is used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -74,13 +74,13 @@ Every chapter follows one plant. This is an illustration. A brewery in Bendigo, 
 - **FT-401, compressed air:** a vortex meter in the DN50 compressed-air main at 7 bar gauge.
 - **FT-501, glycol:** a clamp-on ultrasonic meter used to audit the DN100 glycol cooling loop to the fermenter jackets.
 
-Pipe sizes, flows, properties, readings, prices and results are the brewery's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real brewery, instrument maker or supplier. Fluid properties are typical values for illustration. Prices are in Australian dollars excluding GST.
+Pipe sizes, flows, properties, readings, prices and results are the brewery's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real brewery, instrument maker or supplier. Fluid properties are typical values for illustration. Prices are in Australian dollars excluding GST.
 
 ## How to use the book
 
 Read Chapters 1 and 2 first: they define what is measured and explain the velocity profile and installation effects that every meter depends on. Chapters 3 to 7 cover the meter types and can be read in any order. Chapters 8 to 10 bring uncertainty, totals and the choice of meter together.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the orifice flow tool's discharge equation, the chapter says which output is used.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the orifice flow tool's discharge equation, the chapter says which output is used.
 
 ## Source limits and professional responsibility
 

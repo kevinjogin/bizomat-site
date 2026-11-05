@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - product-development
   - prototyping
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Additive manufacturing has moved beyond prototyping into production for the righ
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

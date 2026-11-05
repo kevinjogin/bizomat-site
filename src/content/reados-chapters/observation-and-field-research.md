@@ -7,7 +7,7 @@ tags:
   - validation
   - operations
   - customers
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ Observation shows what people actually do, closing the gap between official proc
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute legal advice on privacy or workplace surveillance.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute legal advice on privacy or workplace surveillance.*

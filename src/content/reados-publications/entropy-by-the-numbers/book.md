@@ -4,8 +4,8 @@ subtitle: "The second law for engineers: absolute temperature, Carnot limits, he
 description: "Use the second law to find where a plant's energy loses its value: Carnot limits, heat pump and cool room COPs, entropy changes, lost work, exergy, throttling and compressors."
 category: Engineering
 tags: [design, systems, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -90,7 +90,7 @@ Every chapter follows one fictional plant. This is an illustration. A small Aust
 - **Compressed air:** a compressor taking 22 kW delivers 0.06 kg/s of air at 8 bar absolute, which regulators reduce to 5 bar absolute for a packaging line.
 - **Cooking kettle:** a jacketed kettle condensing 0.02 kg/s of low-pressure steam at 102.5 °C.
 
-The plant, its equipment, the measurements and every price are invented. None describes KEVOS® work or a real business.
+The plant, its equipment, the measurements and every price are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

@@ -98,7 +98,7 @@ The member stiffness is four times the bolt's because the compressed cone of ste
 
 ### Where the load goes in
 
-The simple model assumes the external load is applied at the bolt's head and nut, pulling the two outer faces of the joint apart. In the test head that is close to true: the pressure acts on the inside face of the head, near the screw heads' line, and pulls the whole head away from the block. In many joints the load enters partway into the clamped parts instead, for example through a bracket welded to the middle of a flange. Then only part of each member is unloaded by it, the bolt sees a smaller share than C, and the simple model is conservative for the bolt but optimistic for separation. The German guideline VDI 2230 handles this with a load introduction factor; the KEVOS® tools use the simple model, and the shop treats their joint constant as an upper bound on the bolt's share.
+The simple model assumes the external load is applied at the bolt's head and nut, pulling the two outer faces of the joint apart. In the test head that is close to true: the pressure acts on the inside face of the head, near the screw heads' line, and pulls the whole head away from the block. In many joints the load enters partway into the clamped parts instead, for example through a bracket welded to the middle of a flange. Then only part of each member is unloaded by it, the bolt sees a smaller share than C, and the simple model is conservative for the bolt but optimistic for separation. The German guideline VDI 2230 handles this with a load introduction factor; the BIZOMAT tools use the simple model, and the shop treats their joint constant as an upper bound on the bolt's share.
 
 ### Washers, embedding and relaxation
 

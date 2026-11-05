@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -223,4 +223,4 @@ Damages compensate a lost bargain; they do not punish. Reconstruct what the brea
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on contractual remedies, damages and mitigation, and on T. Ma and P. Lam's 1999 research on assessing liquidated damages for different types of project. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on contractual remedies, damages and mitigation, and on T. Ma and P. Lam's 1999 research on assessing liquidated damages for different types of project. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

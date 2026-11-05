@@ -1,4 +1,4 @@
-// KEVOS® Tools input guides: handbook90. What each input means, how to get it right and which figure explains it.
+// BIZOMAT Tools input guides: handbook90. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-handbook90.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   "journal-bearing-lubrication-analysis": {

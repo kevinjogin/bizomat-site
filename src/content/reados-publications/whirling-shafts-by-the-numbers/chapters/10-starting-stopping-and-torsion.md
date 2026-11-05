@@ -9,7 +9,7 @@ draft: false
 
 A rotor that runs smoothly at speed still has to get there, and stop again. A heavy rotor stores a great deal of kinetic energy at full speed, and all of it has to come through the motor and the coupling while the rotor accelerates. A direct-on-line induction motor delivers that energy at the cost of an equal amount of heat in its own rotor, and a motor that is asked to start a large inertia too often, or for too long, overheats. On the way up, the rotor also passes through any natural frequency of the drive that lies below its running speed.
 
-This chapter calculates the HM-30's run-up with a KEVOS® tool, shows why its first motor kept tripping on start, compares ways of starting a high-inertia rotor, and checks the drive's torsional natural frequency.
+This chapter calculates the HM-30's run-up with a BIZOMAT tool, shows why its first motor kept tripping on start, compares ways of starting a high-inertia rotor, and checks the drive's torsional natural frequency.
 
 ## Inertia and run-up time
 
@@ -32,7 +32,7 @@ The third formula is the one that surprises people. An induction motor starting 
 
 ## The HM-30's run-up
 
-The KEVOS® [Rotor run-up time](/tools/rotor-run-up-time/) tool does the calculation for a rotor made of up to two discs and a ring, plus the motor's rotor. From their masses and diameters, the motor's inertia, the final speed and the average motor and load torques during run-up, it gives the inertia of each part and the total, the run-up time, the revolutions to speed, the stored energy, the energy dissipated in the motor's rotor per start and per hour, and compares the start time and the energy per hour with the motor's allowances. Its guide notes that it uses average torques and assumes a direct-on-line induction motor start.
+The BIZOMAT [Rotor run-up time](/tools/rotor-run-up-time/) tool does the calculation for a rotor made of up to two discs and a ring, plus the motor's rotor. From their masses and diameters, the motor's inertia, the final speed and the average motor and load torques during run-up, it gives the inertia of each part and the total, the run-up time, the revolutions to speed, the stored energy, the energy dissipated in the motor's rotor per start and per hour, and compares the start time and the energy per hour with the motor's allowances. Its guide notes that it uses average torques and assumes a direct-on-line induction motor start.
 
 This is an illustration. The HM-30's discs are entered as one 140 kg disc of 520 mm, the hub as a 4 kg disc of 150 mm, and the hammers as a 36 kg ring from 360 to 560 mm. The motor's data sheet for the original 30 kW motor gave a rotor inertia of 0.25 kg·m², an average accelerating torque from its torque–speed curve of about 175 N·m, an allowed direct-on-line start time of 10 s with this kind of load, and a thermal capacity for rotor heating equivalent to about 1,000 kJ per hour. The empty mill's windage and fan load average about 20 N·m during run-up.
 
@@ -88,7 +88,7 @@ A rotor that accelerates from rest to its running speed passes through every nat
 
 The motor, coupling, shaft and rotor also form a torsional system: two inertias, the motor's and the rotor's, joined by a torsional spring, the coupling and shaft in series. Its natural frequency must be kept away from the torque fluctuations of running speed and its harmonics.
 
-The KEVOS® [Drive shaft torsional check](/tools/drive-torsional-check/) tool treats a two-inertia drive joined by a shaft. From the shaft's diameter, bore and length, its shear modulus, the two inertias, the speed range, the number of running-speed orders to check, a separation margin, the drive torque and an allowable shear stress, it gives the shaft's torsional stiffness, the effective inertia, the natural frequency, each order's excitation band and whether the natural frequency is clear of it, the speed at which each order would excite it, and the shaft's stress and twist. Its checks remind the user to add the coupling's and any gear's stiffness in series for an accurate frequency.
+The BIZOMAT [Drive shaft torsional check](/tools/drive-torsional-check/) tool treats a two-inertia drive joined by a shaft. From the shaft's diameter, bore and length, its shear modulus, the two inertias, the speed range, the number of running-speed orders to check, a separation margin, the drive torque and an allowable shear stress, it gives the shaft's torsional stiffness, the effective inertia, the natural frequency, each order's excitation band and whether the natural frequency is clear of it, the speed at which each order would excite it, and the shaft's stress and twist. Its checks remind the user to add the coupling's and any gear's stiffness in series for an accurate frequency.
 
 This is an illustration. For the HM-30's 90 mm shaft, 600 mm from the coupling to the middle of the rotor, with the motor at 0.25 kg·m² and the rotor at 6.6 kg·m², the tool gives a stiffness of 851,000 N·m/rad and a natural frequency of 299 Hz, far above anything at running speed. But the shaft is not the soft part of this drive. The flexible coupling, with a torsional stiffness of about 8,000 N·m/rad from its maker's catalogue, is a hundred times softer. Combining the two in series by hand:
 

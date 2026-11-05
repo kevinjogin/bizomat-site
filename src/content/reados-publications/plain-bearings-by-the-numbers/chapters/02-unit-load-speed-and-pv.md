@@ -3,13 +3,13 @@ book: plain-bearings-by-the-numbers
 chapterSlug: unit-load-speed-and-pv
 order: 2
 title: "Unit load, sliding speed and PV"
-description: "Calculate a bearing's unit load, sliding speed and PV, check a bush against its material limits with the KEVOS® PV tool, handle oscillating motion, and see why PV does not rate a full-film bearing."
+description: "Calculate a bearing's unit load, sliding speed and PV, check a bush against its material limits with the BIZOMAT PV tool, handle oscillating motion, and see why PV does not rate a full-film bearing."
 draft: false
 ---
 
 Not every plain bearing runs on a full oil film. Bushes in pivots, linkages, hinges and slow shafts spend all their lives in boundary or mixed lubrication, with their surfaces in contact through a thin layer of grease, oil or solid lubricant. For these bearings there is no film to calculate. They are chosen instead by three numbers that every bush catalogue uses: the unit load on the projected area, the sliding speed, and the product of the two, PV.
 
-This chapter defines the three numbers, explains why their product is really a limit on heat, checks the bushes in FB-75's inlet damper with the KEVOS® plain bearing PV tool, deals with oscillating motion, and shows why a PV check cannot rate a full-film bearing like FB-75's main journals. It ends with a proposal to replace those journals' white metal shells with sintered bronze bushes "rated for 6 kN".
+This chapter defines the three numbers, explains why their product is really a limit on heat, checks the bushes in FB-75's inlet damper with the BIZOMAT plain bearing PV tool, deals with oscillating motion, and shows why a PV check cannot rate a full-film bearing like FB-75's main journals. It ends with a proposal to replace those journals' white metal shells with sintered bronze bushes "rated for 6 kN".
 
 ## Unit load and sliding speed
 

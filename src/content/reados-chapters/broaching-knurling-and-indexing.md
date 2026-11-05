@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -181,4 +181,4 @@ Keyways, splines, polygon holes, knurls and indexed features are small parts of 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow tooling suppliers' guidance for specific tools and set-ups.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow tooling suppliers' guidance for specific tools and set-ups.*

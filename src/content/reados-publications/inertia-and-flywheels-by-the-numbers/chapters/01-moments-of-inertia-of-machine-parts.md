@@ -9,7 +9,7 @@ draft: false
 
 Mass resists being pushed; moment of inertia resists being turned. For a body turning about an axis, every particle of it must be swung round a circle, and the further a particle is from the axis, the faster it moves and the harder it is to start and stop. The moment of inertia adds up each particle's mass times the square of its distance from the axis, and that square is the reason a thin saw blade can be harder to spin up than the heavy motor that drives it.
 
-This chapter works out the moments of inertia of the DL-3 line's main rotating parts with the KEVOS® mass moment of inertia tool and its companion for more shapes. It introduces the radius of gyration, the parallel-axis transfer and the thin-walled approximation, and shows how much each part of a rotor contributes. Its mistake is the most common error in inertia calculations: a diameter used where the formula wants a radius.
+This chapter works out the moments of inertia of the DL-3 line's main rotating parts with the BIZOMAT mass moment of inertia tool and its companion for more shapes. It introduces the radius of gyration, the parallel-axis transfer and the thin-walled approximation, and shows how much each part of a rotor contributes. Its mistake is the most common error in inertia calculations: a diameter used where the formula wants a radius.
 
 ## What the moment of inertia measures
 

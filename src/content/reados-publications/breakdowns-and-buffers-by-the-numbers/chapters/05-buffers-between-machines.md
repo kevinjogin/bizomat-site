@@ -9,7 +9,7 @@ draft: false
 
 Chapter 4 showed that two machines coupled directly lose each other's stops. A buffer between them, an accumulation conveyor, a table or a tank, breaks that coupling. While the downstream machine is stopped, the upstream one keeps working and fills the buffer; while the upstream one is stopped, the downstream one keeps working and empties it. Each stop that the buffer absorbs is a stop the other machine never feels. The question is how much buffer is worth having, and the answer depends on three things: the buffer's size, the speed margin of the downstream machine, and the lengths of the stops it must absorb.
 
-This chapter explains how a buffer works on the packing line, builds a model that combines the machines' Markov stops with the buffer's level, checks it against the exact results at the two extremes, and charts output against buffer size. It links the buffer to Little's law with the KEVOS® lead-time tool, and ends with a buffer extension whose expected gain was nearly halved when the case packer's real stop lengths were used.
+This chapter explains how a buffer works on the packing line, builds a model that combines the machines' Markov stops with the buffer's level, checks it against the exact results at the two extremes, and charts output against buffer size. It links the buffer to Little's law with the BIZOMAT lead-time tool, and ends with a buffer extension whose expected gain was nearly halved when the case packer's real stop lengths were used.
 
 ## Filling and draining
 

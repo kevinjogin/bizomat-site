@@ -4,7 +4,7 @@
 //
 //   CF_API_TOKEN=<token with Account Analytics: Read> node scripts/discovery/analytics-report.mjs [days]
 //
-// CLOUDFLARE_ACCOUNT_ID overrides the KEVOS account. Nothing here identifies a visitor: the dataset holds no IP
+// CLOUDFLARE_ACCOUNT_ID overrides the BIZOMAT account. Nothing here identifies a visitor: the dataset holds no IP
 // address, cookie or full question.
 const token = process.env.CF_API_TOKEN || process.env.CLOUDFLARE_API_TOKEN;
 const account = process.env.CLOUDFLARE_ACCOUNT_ID || '21a5414f507ae268302531c39e888f95';
@@ -42,7 +42,7 @@ const [byType, missed, asked, opened, devices] = await Promise.all([
   sql(`SELECT blob5 AS device, SUM(_sample_interval) AS n FROM ${DATASET} WHERE ${since} AND blob1 != 'click' GROUP BY device ORDER BY n DESC`),
 ]);
 
-console.log(`KEVOS discovery statistics, last ${days} day(s)`);
+console.log(`BIZOMAT discovery statistics, last ${days} day(s)`);
 table('Questions by outcome', byType, ['type', 'n']);
 table('No result found (candidates for new tools, readings or synonyms)', missed, ['n', 'keywords']);
 table('Most asked', asked, ['n', 'keywords']);

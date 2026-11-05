@@ -4,8 +4,8 @@ subtitle: "How an engineering or manufacturing business buys bespoke software fr
 description: "Commission custom software from a developer: decide build or buy, write a brief, choose a pricing model, contract for ownership, run increments, test, go live and support it."
 category: Projects
 tags: [projects, systems, validation, finance, strategy]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -70,7 +70,7 @@ It assumes no software background. Where a technical idea matters, the chapter e
 
 The book follows a fictional **precision machining business** of about 40 people with 18 CNC machines, running about 350 jobs a month. Jobs are tracked on paper travellers and a supervisor's spreadsheet. Nobody knows, without walking the floor, which jobs are late, how long each operation really took or how much material was scrapped. The owner decides to commission a shop-floor job-tracking app, used on tablets at the machines and connected to the business's existing accounting and job system, from a local software developer.
 
-All quantities, prices, hours and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Money is in Australian dollars, excluding GST unless stated.
+All quantities, prices, hours and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Money is in Australian dollars, excluding GST unless stated.
 
 ## How to use the book
 

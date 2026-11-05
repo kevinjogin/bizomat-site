@@ -30,7 +30,7 @@ The housings' sulfuric acid anodising is a non-conductive aluminium oxide on a n
 
 ## How anodising grows
 
-Anodising does not lay a coating on the surface the way paint does. It converts the aluminium surface into oxide, so the coating grows partly into the metal and partly out from the original surface. The KEVOS® [anodising time tool](/tools/anodizing-time/) and anodising plan tool use the common rule of thumb for sulfuric acid anodising that a third of the thickness is build-up above the original surface and two-thirds is penetration into it, and the "720 rule" for the growth rate: in the tools' metric form, a growth of about 0.328 µm per minute for each A/dm² of current density, at the efficiency factor entered.
+Anodising does not lay a coating on the surface the way paint does. It converts the aluminium surface into oxide, so the coating grows partly into the metal and partly out from the original surface. The BIZOMAT [anodising time tool](/tools/anodizing-time/) and anodising plan tool use the common rule of thumb for sulfuric acid anodising that a third of the thickness is build-up above the original surface and two-thirds is penetration into it, and the "720 rule" for the growth rate: in the tools' metric form, a growth of about 0.328 µm per minute for each A/dm² of current density, at the efficiency factor entered.
 
 ```figure
 type: steps

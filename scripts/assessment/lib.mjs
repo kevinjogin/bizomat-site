@@ -37,11 +37,11 @@ const read = (rel) => fs.readFileSync(path.join(ROOT, rel), 'utf8');
 
 /** @font-face rules with the site's own typefaces embedded (Oxanium display, Inter Tight body). */
 export const FONT_CSS = `
-@font-face { font-family: 'KEVOS Display'; src: url(data:font/ttf;base64,${b64(path.join(ROOT, 'public/fonts/oxanium-variable.ttf'))}) format('truetype'); font-weight: 200 800; }
+@font-face { font-family: 'BIZOMAT Display'; src: url(data:font/ttf;base64,${b64(path.join(ROOT, 'public/fonts/oxanium-variable.ttf'))}) format('truetype'); font-weight: 200 800; }
 @font-face { font-family: 'Inter Tight'; src: url(data:font/woff2;base64,${b64(path.join(ROOT, 'node_modules/@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2'))}) format('woff2'); font-weight: 100 900; }
 `;
 
-/** Approved KEVOS® orange wordmark, inline. `variant` 'light' suits white paper, 'dark' suits graphite. */
+/** Approved BIZOMAT orange wordmark, inline. `variant` 'light' suits white paper, 'dark' suits graphite. */
 export const wordmark = (variant = 'light', height = 28) =>
   read(`public/brand/kevos-wordmark-orange-${variant}.svg`).replace('<svg ', `<svg height="${height}" width="${Math.round((height * 2069) / 284)}" `);
 
@@ -149,6 +149,6 @@ export function illustration({ ink, muted, orange, card, panel, soft }) {
   ${[[163, 110], [171, 84], [195, 104], [203, 92], [231, 80], [242, 92], [253, 70]].map(([y, w], i) => `<rect x="${i > 3 ? 350 : 338}" y="${y}" width="${w}" height="4" fill="${i === 5 ? orange : muted}" opacity="${i === 5 ? 1 : 0.55}"/>`).join('')}
   <rect x="338" y="268" width="114" height="36" rx="3" fill="${soft}" stroke="${orange}" stroke-width="1.1"/><path d="M345 287 350 292 359 281" fill="none" stroke="${orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="366" y="284" font-size="7.4" fill="${ink}" font-weight="700">NEXT STEP</text><text x="366" y="296" font-size="7" fill="${muted}">MEASURE, THEN B</text>
-  <text x="338" y="338" font-size="7" fill="${muted}">KEVOS · kevos.com</text>
+  <text x="338" y="338" font-size="7" fill="${muted}">BIZOMAT · kevos.com</text>
 </svg>`;
 }

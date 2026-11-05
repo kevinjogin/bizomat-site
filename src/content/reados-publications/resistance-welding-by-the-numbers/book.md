@@ -4,8 +4,8 @@ subtitle: "Current, time, force and heat for spot, seam, projection and flash we
 description: "Set, check and cost resistance welds from first principles: Joule heating, the welding window, transformers, electrodes, joint design, seam, projection and flash welds, and testing."
 category: Manufacturing
 tags: [manufacturing, quality, design, validation, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -103,7 +103,7 @@ This is an illustration. A sheet-metal shop builds 40 steel electrical cabinets 
 - a **seam-welded drip tray**, 600 × 400 mm, that must not leak;
 - a **flash-welded base ring** of 40 × 5 mm flat bar.
 
-Through the book the shop sets its schedules, sizes its machines, designs its joints, tests its welds and works out what each weld costs. The shop, the cabinet, its dimensions, settings, test results and costs are invented for teaching. They are not KEVOS® work, and the settings are not recommended values for any material or machine. Real schedules come from the equipment and electrode makers, the applicable standard and the shop's own weld trials.
+Through the book the shop sets its schedules, sizes its machines, designs its joints, tests its welds and works out what each weld costs. The shop, the cabinet, its dimensions, settings, test results and costs are invented for teaching. They are not BIZOMAT work, and the settings are not recommended values for any material or machine. Real schedules come from the equipment and electrode makers, the applicable standard and the shop's own weld trials.
 
 ## How to use the book
 
@@ -115,4 +115,4 @@ This book is educational. Resistance welds in load-bearing, pressure-containing,
 
 ## An original treatment
 
-The Library covers how metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/) and repair of steel plate in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/). This book concentrates on the resistance processes. The explanations, the cabinet case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers how metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/) and repair of steel plate in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/). This book concentrates on the resistance processes. The explanations, the cabinet case, the calculations, figures and exercises are original BIZOMAT writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.

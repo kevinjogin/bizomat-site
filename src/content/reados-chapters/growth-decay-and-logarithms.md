@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Exponential growth and decay change by a constant percentage each period, which 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute tax or accounting advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute tax or accounting advice.*

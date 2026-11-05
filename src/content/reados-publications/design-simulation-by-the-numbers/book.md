@@ -4,8 +4,8 @@ subtitle: "Planning, checking and reporting finite element and motion studies th
 description: "Plan, build, check and report design simulations with hand calculations, restraint and mesh studies, frequency checks, test comparison and a clear release scope."
 category: Engineering
 tags: [design, validation, quality, product-development]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -63,7 +63,7 @@ It is written for designers and engineers who already build models in a parametr
 
 The book follows a fictional **gearmotor mounting bracket** for a belt conveyor. A 32 kg gearmotor hangs at the end of a steel arm, 250 mm from the face of a base plate bolted to the conveyor frame. The first proposal uses a 12 × 50 mm flat bar; hand calculations in Chapter 2 reject it, and the rest of the book analyses a 50 × 50 × 5 mm square hollow section welded to a 10 mm base plate. The loads are the motor's weight with a dynamic allowance, a sideways belt pull and the reaction torque at start-up. The acceptance criteria limit stress, deflection at the motor flange and the first natural frequency.
 
-All dimensions, loads, criteria, software results, test readings and costs are invented for teaching. This is an illustration. They are not KEVOS® projects, measured data or performance claims, and the simulation results quoted are worked teaching values, not output from a named product.
+All dimensions, loads, criteria, software results, test readings and costs are invented for teaching. This is an illustration. They are not BIZOMAT projects, measured data or performance claims, and the simulation results quoted are worked teaching values, not output from a named product.
 
 ## Source limits and professional responsibility
 

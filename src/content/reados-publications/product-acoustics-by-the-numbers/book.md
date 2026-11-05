@@ -4,8 +4,8 @@ subtitle: "Acoustic circuits, resonators, small enclosures, drivers, microphone 
 description: "Design the sound of a product with numbers: acoustic circuits, ports and resonators, small speaker enclosures, drivers, air paths, microphone ports, directivity, fan noise and declared levels."
 category: Products
 tags: [product-development, design, prototyping, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -58,7 +58,7 @@ It suits product designers, mechanical and electronics engineers and product man
 
 Every chapter follows one fictional product. This is an illustration. AP-40 is a floor-standing room air purifier, a cabinet about 250 × 380 mm in plan and 600 mm high, with a backward-curved fan that runs from 500 rpm on its night setting to 1,200 rpm at maximum, a 40 mm loudspeaker for voice prompts, and a microphone near its top for voice commands. Its sound powers, driver parameters and every level in the book are illustrations chosen to show the method.
 
-The product and its numbers are invented; none describes KEVOS® work or a real product. Prices, where they appear, are illustrations in Australian dollars excluding GST.
+The product and its numbers are invented; none describes BIZOMAT work or a real product. Prices, where they appear, are illustrations in Australian dollars excluding GST.
 
 ## Source limits and professional responsibility
 

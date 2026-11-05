@@ -1,4 +1,4 @@
-// KEVOS® tool guides: Projects.
+// BIZOMAT tool guides: Projects.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'project-health': {
     purpose: 'Combines schedule and cost variance with scope, risk and resource ratings into a project health score, and points to the weakest area.',

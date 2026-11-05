@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Stakeholders are not resources to be managed but participants with different aut
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on program stakeholder engagement and on The Stakeholder Engagement Manual (AccountAbility, UNEP and Stakeholder Research Associates, 2005). Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on teaching material on program stakeholder engagement and on The Stakeholder Engagement Manual (AccountAbility, UNEP and Stakeholder Research Associates, 2005). Examples and figures in this article are illustrations.*

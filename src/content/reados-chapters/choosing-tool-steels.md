@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ Tool steels trade wear resistance against toughness, with hot hardness, stabilit
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Hardness values are indicative; always follow steel suppliers' datasheets and heat treaters' advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Hardness values are indicative; always follow steel suppliers' datasheets and heat treaters' advice.*

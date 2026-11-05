@@ -9,7 +9,7 @@ draft: false
 
 Every watt of a transformer's losses ends up as heat in its core and windings, and it must find its way out through the oil, the tank and the radiators to the air. The temperatures along that path decide how much load the transformer can carry and, as Chapter 7 shows, how quickly its insulation ages. The temperature that matters most is the hottest point in the windings, the hot spot, which nobody can see in an ordinary distribution transformer and which must therefore be estimated.
 
-This chapter follows TX-1's heat from the windings to the air. It explains natural oil cooling, sets out a simple model of the top-oil and hot-spot temperatures that follows from the physics of natural convection, and applies it to the plant's loads with and without the freezing tunnel. It then sizes the ventilation of TX-1's substation room with the KEVOS® enclosure cooling tool, and ends with a set of clogged filters that turned a cool room into a warm one.
+This chapter follows TX-1's heat from the windings to the air. It explains natural oil cooling, sets out a simple model of the top-oil and hot-spot temperatures that follows from the physics of natural convection, and applies it to the plant's loads with and without the freezing tunnel. It then sizes the ventilation of TX-1's substation room with the BIZOMAT enclosure cooling tool, and ends with a set of clogged filters that turned a cool room into a warm one.
 
 ## How an ONAN transformer cools
 

@@ -100,7 +100,7 @@ Combine it with the two bending stresses at the worst corner using the von Mises
 
 **σ_vm = √(21.9² + 3 × 5.93²) ≈ 24.2 MPa.**
 
-That is about a sixth of the 150 MPa criterion. The bracket is governed by stiffness and frequency, not by strength, which is common for machine brackets carrying modest loads at a distance. The KEVOS® [thin-walled tube torsion calculator](/tools/thin-tube-torsion/) and [section properties calculator](/tools/section-properties/) repeat these calculations.
+That is about a sixth of the 150 MPa criterion. The bracket is governed by stiffness and frequency, not by strength, which is common for machine brackets carrying modest loads at a distance. The BIZOMAT [thin-walled tube torsion calculator](/tools/thin-tube-torsion/) and [section properties calculator](/tools/section-properties/) repeat these calculations.
 
 An open flat bar is a different matter. Its torsional stiffness and stress depend on a shape coefficient that must be taken from a reference table, and they are far worse than for a closed tube of similar area. That is a second reason to prefer the hollow section, but it was not needed to reject Revision A.
 

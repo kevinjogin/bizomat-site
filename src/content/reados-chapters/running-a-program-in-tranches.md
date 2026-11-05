@@ -7,7 +7,7 @@ tags:
   - projects
   - strategy
   - leadership
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ A program is the right structure when several related projects and business chan
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

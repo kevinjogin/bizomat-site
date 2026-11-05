@@ -40,7 +40,7 @@ For a normal stress σ and a shear stress τ, the principal stresses are **σ/2 
 - **Tresca = σ₁ − σ₃ ≈ 24.9 MPa**
 - **Von Mises = √(σ² + 3τ²) ≈ 24.2 MPa**
 
-Tresca is about 3% higher than von Mises here, which is typical of the difference between the two. The KEVOS® [principal stress calculator](/tools/principal-stress/) reproduces these figures. Doing this once by hand makes the plots legible: the analyst knows roughly what each measure should show at a point where beam theory holds, and can spot when the model disagrees.
+Tresca is about 3% higher than von Mises here, which is typical of the difference between the two. The BIZOMAT [principal stress calculator](/tools/principal-stress/) reproduces these figures. Doing this once by hand makes the plots legible: the analyst knows roughly what each measure should show at a point where beam theory holds, and can spot when the model disagrees.
 
 ## Benchmark the solver before trusting it
 

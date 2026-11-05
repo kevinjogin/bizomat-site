@@ -4,8 +4,8 @@ subtitle: "Axle loads, resistances, traction, gearing, braking and stability, wo
 description: "Calculate what a site vehicle needs to climb, pull, stop, turn and stay upright, using one battery-electric tow tractor and its trailers as a worked case."
 category: Engineering
 tags: [design, operations, manufacturing, validation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26

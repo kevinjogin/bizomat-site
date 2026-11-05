@@ -9,7 +9,7 @@ draft: false
 
 Most bolts in the world are tightened by torque, because a torque wrench is cheap, quick and needs no access to the bolt's far end. But a torque wrench measures how hard the nut was turned, not how hard the bolt pulls. Between the two lies friction, in the threads and under the head, which takes most of the torque and varies from one bolt to the next. Tightening by torque is therefore a way of getting a preload that is roughly right, and knowing how roughly is as important as the torque figure itself.
 
-This chapter turns the CT-1 test head's target preload into a tightening torque with the KEVOS® bolt torque and preload tool, looks at what changes the nut factor, and corrects the torque for the crowfoot adapter the fitters need to reach the screws. Its mistake is a wrench set to the right torque that tightened every screw too far.
+This chapter turns the CT-1 test head's target preload into a tightening torque with the BIZOMAT bolt torque and preload tool, looks at what changes the nut factor, and corrects the torque for the crowfoot adapter the fitters need to reach the screws. Its mistake is a wrench set to the right torque that tightened every screw too far.
 
 ## The nut factor
 

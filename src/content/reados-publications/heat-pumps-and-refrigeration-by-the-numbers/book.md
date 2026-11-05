@@ -4,8 +4,8 @@ subtitle: "The second law, COP, the vapour-compression cycle, heat pump water he
 description: "Use the second law to judge heat pumps and refrigeration: Carnot limits, COP, the vapour-compression cycle, heat pump water heating, cold room loads, compressor energy and refrigerant rules."
 category: Engineering
 tags: [operations, design, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -67,7 +67,7 @@ This book works these machines through by numbers. It starts with the second law
 
 The book follows two pieces of plant at a fictional **food factory**, the same factory whose hot water and steam systems appear in *Heat Transfer by the Numbers* and *Process Steam by the Numbers*. The first is a proposal to supply part of the wash-down hot water system's heat, about **150,000 kWh** a year at up to 85 °C, from a heat pump instead of gas. The second is **CS-1**, a chilled store held at **2 °C**, 6 m by 5 m by 3 m, receiving about **2,000 kg** of product a day.
 
-All quantities, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Heat from gas is costed at about **A$0.093** per kWh delivered, as in the companion books, and electricity at an assumed **A$0.25** per kWh. Money is in Australian dollars, excluding GST. Real machines' performance comes from their makers' data at the actual operating conditions; this book's ratio of real to ideal performance, 0.5, is a teaching value.
+All quantities, prices and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Heat from gas is costed at about **A$0.093** per kWh delivered, as in the companion books, and electricity at an assumed **A$0.25** per kWh. Money is in Australian dollars, excluding GST. Real machines' performance comes from their makers' data at the actual operating conditions; this book's ratio of real to ideal performance, 0.5, is a teaching value.
 
 ## How to use the book
 

@@ -4,8 +4,8 @@ subtitle: "Rebuilding and protecting worn parts with weld deposits: wear, diluti
 description: "Fight wear with weld deposits: how surfaces wear, building up versus hardfacing, dilution, choosing alloys, manganese and carbide deposits, processes, preheat and cracking, patterns and cost."
 category: Manufacturing
 tags: [manufacturing, operations, quality, process-improvement, finance]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -62,7 +62,7 @@ Their methods are the ancestors of modern hardfacing. Each chapter takes up one 
 
 This is an illustration. A maintenance workshop serves a regional quarry and the farms around it. It rebuilds and hardfaces the quarry's crusher hammers and loader bucket edges, the farms' tillage points and auger flights, and the conveyor chutes and pump parts of a nearby grain terminal. Its manager wants to choose deposits and processes on evidence, cut the cost per tonne of the quarry's wearing parts, and stop the cracking and spalling that have spoiled some jobs.
 
-The workshop, its customers, parts, costs and results are invented for teaching. They are not KEVOS® work. Hardfacing of parts whose failure could injure people, and of parts under warranty, must follow the equipment maker's instructions.
+The workshop, its customers, parts, costs and results are invented for teaching. They are not BIZOMAT work. Hardfacing of parts whose failure could injure people, and of parts under warranty, must follow the equipment maker's instructions.
 
 ## How to use the book
 
@@ -74,4 +74,4 @@ This book is educational. Hardfacing alloys, preheats and procedures must follow
 
 ## An original treatment
 
-The Library covers rebuilding worn shafts and gears in Machine Part Repairs by the Numbers, and the weldability of steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the workshop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers rebuilding worn shafts and gears in Machine Part Repairs by the Numbers, and the weldability of steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the workshop case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations for project, business, operations, maintenance, quality and machining tools (batch handbook73). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations for project, business, operations, maintenance, quality and machining tools (batch handbook73). SI units are explicit at each boundary.
 // Methods are standard engineering relations; no source tables, ratings or recommended settings are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

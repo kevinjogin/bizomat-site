@@ -4,8 +4,8 @@ subtitle: "Biot and Fourier numbers, lumped and one-term solutions, surfaces, co
 description: "Estimate how long parts take to heat through and cool down: Biot and Fourier numbers, lumped and one-term solutions, semi-infinite surfaces, product solutions and finite differences."
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -80,7 +80,7 @@ Read Chapters 1 and 2 first: they decide which model a problem needs. Chapters 3
 
 Every chapter follows one fictional part. This is an illustration. DS-100 is a drive shaft in AISI 4140 (42CrMo4) chromium-molybdenum steel: a plain body 100 mm in diameter and 500 mm long, with an integral flange 220 mm in diameter and 40 mm thick at one end. The body weighs about 30.8 kg and the flange about 11.9 kg. A heat-treatment shop hardens the shafts by heating them to 850 °C in an electric box furnace, holding them, quenching them in oil at 60 °C, and then tempering them at 550 °C. The shop wants to know how long each stage really takes, because its present cycle was written for a different part.
 
-For the calculations, the steel is given a density of 7,850 kg/m³, a mean thermal conductivity of 33 W/m·K and a mean specific heat of 650 J/kg·K over the hardening heat, which includes an allowance for the heat the steel absorbs as it transforms. Those are stated assumptions, chosen to fit the published trend for this steel, which conducts less heat and stores more as it gets hotter. Furnace, quench and price figures are illustrations too. The part, the shop and its numbers are invented; none describes KEVOS® work or a real installation. Prices are illustrations in Australian dollars including GST.
+For the calculations, the steel is given a density of 7,850 kg/m³, a mean thermal conductivity of 33 W/m·K and a mean specific heat of 650 J/kg·K over the hardening heat, which includes an allowance for the heat the steel absorbs as it transforms. Those are stated assumptions, chosen to fit the published trend for this steel, which conducts less heat and stores more as it gets hotter. Furnace, quench and price figures are illustrations too. The part, the shop and its numbers are invented; none describes BIZOMAT work or a real installation. Prices are illustrations in Australian dollars including GST.
 
 ## Source limits and professional responsibility
 

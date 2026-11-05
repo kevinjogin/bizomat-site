@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - automation
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ CNC machining is only as reliable as the information behind it. Programs, coordi
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Program syntax varies between controls; always follow the machine and control manufacturer's documentation.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Program syntax varies between controls; always follow the machine and control manufacturer's documentation.*

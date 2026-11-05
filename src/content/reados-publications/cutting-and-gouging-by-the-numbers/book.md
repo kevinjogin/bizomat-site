@@ -4,8 +4,8 @@ subtitle: "Removing metal by arc, plasma, laser, water, lance and flame: carbon 
 description: "Cut and gouge metal with numbers: carbon arc, air carbon arc gouging and back-gouging, plasma and its cost per metre, lasers, waterjets and saws, oxygen and thermic lances, fume, noise and choice."
 category: Manufacturing
 tags: [manufacturing, process-improvement, operations, quality, finance]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -71,7 +71,7 @@ Those observations, on what each method is good for, how wide and rough its cut 
 
 This is an illustration. A steel service and fabrication business in a mining region supplies cut plate and profiles to local fabricators and repairs heavy mining and earthmoving equipment. It has a CNC plasma table with an oxy-fuel torch, air carbon arc gouging and plasma gouging in its repair bay, band saws, and access to a subcontractor's waterjet. Its manager is deciding whether to buy a fibre laser, wants to cut the cost and time of gouging in repairs, and needs better fume and noise controls in the repair bay.
 
-The business, its customers, jobs, prices and results are invented for teaching. They are not KEVOS® work. Cutting and gouging equipment must be used under the makers' instructions and the work health and safety laws.
+The business, its customers, jobs, prices and results are invented for teaching. They are not BIZOMAT work. Cutting and gouging equipment must be used under the makers' instructions and the work health and safety laws.
 
 ## How to use the book
 
@@ -83,4 +83,4 @@ This book is educational. Its speeds, rates and costs are illustrations; real va
 
 ## An original treatment
 
-The Library covers oxygen cutting in Oxy-Fuel by the Numbers, weld repair in Weld Repairs That Hold, and arc welding equipment in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the business case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers oxygen cutting in Oxy-Fuel by the Numbers, weld repair in Weld Repairs That Hold, and arc welding equipment in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the business case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or illustrations is reproduced.

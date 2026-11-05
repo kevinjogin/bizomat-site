@@ -7,7 +7,7 @@ tags:
   - ai
   - projects
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -226,4 +226,4 @@ Moving AI from pilot to production is mostly about delivery discipline. Name a b
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on the AI project delivery lifecycle, implementation roadmaps and adoption, risk registers and governance plans, executive communication and trade-offs, solution architecture deliverables, and machine learning and language model operations, together with established delivery practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT AI academy lessons on the AI project delivery lifecycle, implementation roadmaps and adoption, risk registers and governance plans, executive communication and trade-offs, solution architecture deliverables, and machine learning and language model operations, together with established delivery practice. The worked example is illustrative. This article is general information.*

@@ -4,8 +4,8 @@ subtitle: "Planning, costing and measuring welder training: learning curves, pra
 description: "Train welders with numbers: how skill grows with practice, what an hour of practice costs, how to assess and qualify fairly, how skill fades, and when training pays back."
 category: Manufacturing
 tags: [people, manufacturing, quality, operations, leadership]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -67,7 +67,7 @@ Their problems were the same as a modern fabricator's: too few welders, too litt
 
 This is an illustration. A structural steel fabricator with twenty-two staff makes portal frames, platforms and stairs, welding mainly with flux-cored and solid-wire processes in the shop and manual metal arc on site. It cannot hire enough qualified welders, so it has taken on four trainees: two apprentices, a boilermaker's labourer moving up, and a career changer from the automotive trade. The workshop manager wants to plan their training, cost it, measure their progress and know when each will be ready to weld production work.
 
-The fabricator, its people, costs and results are invented for teaching. They are not KEVOS® work. Real training must meet the applicable qualification standards, apprenticeship arrangements and work health and safety requirements.
+The fabricator, its people, costs and results are invented for teaching. They are not BIZOMAT work. Real training must meet the applicable qualification standards, apprenticeship arrangements and work health and safety requirements.
 
 ## How to use the book
 
@@ -79,4 +79,4 @@ This book is educational. Welder qualification for structural, pressure and othe
 
 ## An original treatment
 
-The Library covers workforce capability in general in [Building workforce capability in manufacturing](/reados/collections/operational-data-records-and-controls/building-workforce-capability-in-manufacturing/), and why training fades in [The forgetting curve and why training fades](/reados/collections/judgement-markets-and-learning/the-forgetting-curve-and-why-training-fades/). This book applies those ideas to welding, with the numbers a welding supervisor needs. The explanations, the fabricator's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers workforce capability in general in [Building workforce capability in manufacturing](/reados/collections/operational-data-records-and-controls/building-workforce-capability-in-manufacturing/), and why training fades in [The forgetting curve and why training fades](/reados/collections/judgement-markets-and-learning/the-forgetting-curve-and-why-training-fades/). This book applies those ideas to welding, with the numbers a welding supervisor needs. The explanations, the fabricator's case, the calculations, figures and exercises are original BIZOMAT writing. The historical manuals are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.

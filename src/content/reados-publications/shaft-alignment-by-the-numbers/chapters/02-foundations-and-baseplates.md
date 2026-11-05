@@ -9,7 +9,7 @@ draft: false
 
 An alignment is a relationship between two machines, and the foundation is what keeps that relationship. A perfect alignment on a baseplate that rocks, twists or settles will not last the week. A modest one on a stiff, well-grouted base will hold for years. That is why fitters who have chased an alignment for a day on a poor base speak of the foundation with feeling, and why this book starts there.
 
-This chapter follows the HW-3 pump set from its foundation block to its baseplate. It uses the KEVOS® machine foundation block tool for a first estimate of the block, shows how that estimate found a resonance problem in the first sketch, and sets out the checks on baseplate, grout and bolts that must pass before any alignment reading means anything. The final foundation design belongs to a structural engineer; the purpose here is to understand what that design must achieve.
+This chapter follows the HW-3 pump set from its foundation block to its baseplate. It uses the BIZOMAT machine foundation block tool for a first estimate of the block, shows how that estimate found a resonance problem in the first sketch, and sets out the checks on baseplate, grout and bolts that must pass before any alignment reading means anything. The final foundation design belongs to a structural engineer; the purpose here is to understand what that design must achieve.
 
 ## What a foundation must do for alignment
 

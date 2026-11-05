@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ A well-designed jig or fixture makes the right way the easy way. Locate parts on
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on reducing assembly time with simple jigs, poka-yoke mistake-proofing and the DMAIC improve phase, together with established fixture design practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT manufacturing handbooks on reducing assembly time with simple jigs, poka-yoke mistake-proofing and the DMAIC improve phase, together with established fixture design practice. The worked example is illustrative. This article is general information.*

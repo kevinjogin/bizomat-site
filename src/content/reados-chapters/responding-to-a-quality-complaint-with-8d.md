@@ -7,7 +7,7 @@ tags:
   - quality
   - customers
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -224,4 +224,4 @@ A customer complaint tests the whole quality system: how fast you protect the cu
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on structured root-cause problem solving, fishbone diagrams, Pareto analysis and the DMAIC analyse and improve phases. The worked example is illustrative. This article is general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT manufacturing handbooks on structured root-cause problem solving, fishbone diagrams, Pareto analysis and the DMAIC analyse and improve phases. The worked example is illustrative. This article is general information and does not constitute legal advice.*

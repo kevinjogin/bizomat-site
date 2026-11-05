@@ -4,8 +4,8 @@ subtitle: "Fick's laws, the error function, temperature, carburising, decarburis
 description: "Calculate diffusion in steel parts by numbers: Fick's laws, error-function profiles, Arrhenius temperature effects, carburised case depth, decarburisation, scale and hydrogen bake-out."
 category: Manufacturing
 tags: [manufacturing, quality, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -75,7 +75,7 @@ It assumes algebra, exponentials and logarithms, and a general idea of how steel
 
 The book follows **DS-40**, a fictional drive shaft 40 mm in diameter, made from a low-carbon alloy case-hardening steel with about **0.20%** carbon. Its bearing and spline surfaces must be hard and wear-resistant while its core stays tough, so it is gas carburised at **925 °C**, hardened and tempered, ground, and then zinc plated at one end for corrosion protection. The drawing calls for an effective case depth of **0.8 mm**, with a tolerance of **0.7 to 1.0 mm**, and this book takes the effective case as the depth at which the carbon content falls to **0.40%**, a teaching stand-in for the hardness-based definition used in practice.
 
-Diffusion data for carbon in austenite are the widely quoted values for iron, D₀ ≈ 2.3 × 10⁻⁵ m²/s and Q ≈ 148 kJ/mol; real alloy steels differ somewhat, and heat treaters use data and experience for their grades. All dimensions, carbon levels, times and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or product.
+Diffusion data for carbon in austenite are the widely quoted values for iron, D₀ ≈ 2.3 × 10⁻⁵ m²/s and Q ≈ 148 kJ/mol; real alloy steels differ somewhat, and heat treaters use data and experience for their grades. All dimensions, carbon levels, times and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or product.
 
 ## Source limits and professional responsibility
 

@@ -7,7 +7,7 @@ tags:
   - systems
   - projects
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -242,4 +242,4 @@ Software is built through a cycle of requirements, design, building, testing, re
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

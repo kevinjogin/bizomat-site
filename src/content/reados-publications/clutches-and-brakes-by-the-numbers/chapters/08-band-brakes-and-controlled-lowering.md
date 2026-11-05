@@ -9,7 +9,7 @@ draft: false
 
 A band brake is a flexible steel band, lined with friction material, wrapped most of the way round a drum. One end is anchored to the frame; the other is pulled by a lever. Friction round the wrap makes the tension at one end several times the tension at the other, and the brake's torque comes from the difference. A lever force of a few hundred newtons can therefore hold a torque of thousands of newton metres, which is why band brakes are found on winches, capstans, cranes and hoists that must be controlled by hand.
 
-This chapter designs the SW-25's new drum band brake with the KEVOS® band brake tool and the band brake stopping design tool. It shows how the friction multiplication works, why the band must be anchored at the right end, how a weighted lever gives a brake that applies itself, and how much heat a controlled lowering produces. Its mistake is a band drawn anchored at the wrong end, which would have let a boat run away.
+This chapter designs the SW-25's new drum band brake with the BIZOMAT band brake tool and the band brake stopping design tool. It shows how the friction multiplication works, why the band must be anchored at the right end, how a weighted lever gives a brake that applies itself, and how much heat a controlled lowering produces. Its mistake is a band drawn anchored at the wrong end, which would have let a boat run away.
 
 ## Friction round a drum
 

@@ -7,7 +7,7 @@ tags:
   - design
   - people
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -187,4 +187,4 @@ Engineering learned to use science during the nineteenth century, most dramatica
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on applied science and engineering education, together with established histories of engineering. Professional registration and accreditation arrangements are summarised for orientation only and should be checked against current requirements. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on applied science and engineering education, together with established histories of engineering. Professional registration and accreditation arrangements are summarised for orientation only and should be checked against current requirements. The worked example is illustrative. This article is general information.*

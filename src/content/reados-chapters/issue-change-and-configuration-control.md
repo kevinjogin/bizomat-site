@@ -7,7 +7,7 @@ tags:
   - projects
   - quality
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ Projects change; the danger is change that nobody decided. Protect approved base
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management handbooks on issue, change and configuration control, the PRINCE2 change theme and change request practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project management handbooks on issue, change and configuration control, the PRINCE2 change theme and change request practice. The worked example is illustrative. This article is general information.*

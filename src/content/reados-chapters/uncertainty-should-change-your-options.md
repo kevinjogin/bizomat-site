@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -229,4 +229,4 @@ Outside uncertainty sometimes changes the numbers and sometimes changes the opti
 
 ---
 
-*Source: KEVOS® notes, drawing on B. Laker and T. Roulet, "How Companies Can Adapt During Times of Political Uncertainty", Harvard Business Review (2019), and teaching material on inflation, financing and enterprise environmental factors. Examples and figures in this article are illustrations. This article is general information, not financial advice.*
+*Source: BIZOMAT notes, drawing on B. Laker and T. Roulet, "How Companies Can Adapt During Times of Political Uncertainty", Harvard Business Review (2019), and teaching material on inflation, financing and enterprise environmental factors. Examples and figures in this article are illustrations. This article is general information, not financial advice.*

@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -218,4 +218,4 @@ The value of an investment is the difference it makes, not everything that happe
 
 ---
 
-*Source: KEVOS® notes, drawing on D. Coates and B. R. Humphreys' research on professional sports facilities and urban economic development, and on G. Davison and colleagues (2020) on stakeholder perspectives in measuring returns. Examples and figures in this article are illustrations. This article is general information, not financial advice.*
+*Source: BIZOMAT notes, drawing on D. Coates and B. R. Humphreys' research on professional sports facilities and urban economic development, and on G. Davison and colleagues (2020) on stakeholder perspectives in measuring returns. Examples and figures in this article are illustrations. This article is general information, not financial advice.*

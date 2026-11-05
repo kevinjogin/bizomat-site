@@ -4,8 +4,8 @@ subtitle: "A checker's method for detail and assembly drawings: completeness, vi
 description: "Check detail and assembly drawings with a method and numbers: title blocks, views, dimension counts, limits and fits, stacks, notes, parts lists and checking records."
 category: Engineering
 tags: [design, quality, validation, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -55,7 +55,7 @@ It is written for drafters who check their own and others' work, design engineer
 
 Every chapter checks one fictional drawing set. This is an illustration. A small machinery builder has designed a belt tensioner for a conveyor drive, drawing TA-200. Its arm, TA-201, is a ductile iron casting with a machined pivot boss 30 mm long, a bore Ø16.000 to 16.018 mm for a bush, and a pulley spindle hole 120 mm from the pivot. A sintered bronze bush, TA-203, is pressed into the boss, and the arm turns on a zinc-plated steel pivot pin, TA-202, of Ø11.973 to 11.984 mm, held axially between two washers and a retaining ring. The assembly drawing lists seven items, three made and four bought out.
 
-The drafter has finished the set and passed it to the checker. Each chapter checks part of it, with real numbers, and most find a fault that would otherwise have reached the workshop. The business, the drawings and the faults are invented; none describes KEVOS® work or a real supplier, and supplier data in the case is illustrative.
+The drafter has finished the set and passed it to the checker. Each chapter checks part of it, with real numbers, and most find a fault that would otherwise have reached the workshop. The business, the drawings and the faults are invented; none describes BIZOMAT work or a real supplier, and supplier data in the case is illustrative.
 
 ## Source limits and professional responsibility
 

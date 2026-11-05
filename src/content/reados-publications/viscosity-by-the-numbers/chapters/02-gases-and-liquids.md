@@ -60,7 +60,7 @@ The square-root rule gets the direction right but not the size of the change. Re
 type: formula
 title: Sutherland's formula for the viscosity of a dilute gas
 formula: μ = μ₀ × (T ÷ T₀)^1.5 × (T₀ + S) ÷ (T + S)
-caption: For nitrogen, fitted by KEVOS® to NIST's data at 0.1 MPa from −40 °C to 200 °C: μ₀ = 16.629 µPa·s at T₀ = 273.15 K and S = 114.8 K, with a largest error of 0.20%.
+caption: For nitrogen, fitted by BIZOMAT to NIST's data at 0.1 MPa from −40 °C to 200 °C: μ₀ = 16.629 µPa·s at T₀ = 273.15 K and S = 114.8 K, with a largest error of 0.20%.
 - T, T₀ | absolute temperatures, K
 - μ₀ | viscosity at T₀
 - S | Sutherland constant, K, fitted for each gas

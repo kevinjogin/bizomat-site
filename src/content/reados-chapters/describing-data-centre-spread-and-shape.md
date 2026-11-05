@@ -7,7 +7,7 @@ tags:
   - validation
   - operations
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Describing data well means looking at its centre, spread and shape. Means, media
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

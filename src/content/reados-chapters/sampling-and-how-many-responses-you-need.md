@@ -7,7 +7,7 @@ tags:
   - validation
   - customers
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Sampling determines whether results from some can be applied to all. Define the 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

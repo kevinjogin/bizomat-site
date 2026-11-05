@@ -7,7 +7,7 @@ tags:
   - operations
   - customers
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -225,4 +225,4 @@ A scope that lists only what is included is read by everyone else as a sample. W
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project scope statements, exclusions, statements of work, requirements and acceptance criteria. Examples in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on project scope statements, exclusions, statements of work, requirements and acceptance criteria. Examples in this article are illustrations. This article is general information.*

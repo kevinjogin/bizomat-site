@@ -4,8 +4,8 @@ subtitle: "Prototype fidelity, the value of a test, sample sizes, Monte Carlo an
 description: "Find design problems while they are cheap: cost of change, prototype fidelity, value of information, test sample sizes, Monte Carlo, queues, discrete-event simulation and reviews."
 category: Products
 tags: [product-development, prototyping, experimentation, validation, projects]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -139,13 +139,13 @@ Every chapter follows one fictional development programme. This is an illustrati
 
 The programme runs from concept approval to production release in **72 weeks**, with a development budget of **A$1.45 million**, through a concept stage, an engineering validation build of 4 units, a design validation build of 12 units and a production pilot of 30 units, each followed by a formal review. The unit sells for **A$6,900**, and the business estimates that each week of later release costs about **A$25,000** of contribution. The business's records from its previous new product, a lighting tower, show where that product's design problems were found and what each cost to fix.
 
-The business, its products, its records, its people and every number in the case are invented. None describes KEVOS® work, a real business or a real product. All amounts are Australian dollars excluding GST.
+The business, its products, its records, its people and every number in the case are invented. None describes BIZOMAT work, a real business or a real product. All amounts are Australian dollars excluding GST.
 
 ## How to use the book
 
-Read Chapter 1 first, because the cost of a problem by stage and the cost of delay are used throughout. Chapters 2 to 4 cover what to build and when to stop iterating, Chapters 5 and 6 test sample sizes, Chapters 7 to 9 simulation and queueing models, and Chapter 10 reviews and release. Chapters 5 to 9 can be read in any order after Chapter 1. Every calculation was checked by running it, simulation results state their random seed and number of runs, and the KEVOS® tools linked in the chapters reproduce the sample-size arithmetic.
+Read Chapter 1 first, because the cost of a problem by stage and the cost of delay are used throughout. Chapters 2 to 4 cover what to build and when to stop iterating, Chapters 5 and 6 test sample sizes, Chapters 7 to 9 simulation and queueing models, and Chapter 10 reviews and release. Chapters 5 to 9 can be read in any order after Chapter 1. Every calculation was checked by running it, simulation results state their random seed and number of runs, and the BIZOMAT tools linked in the chapters reproduce the sample-size arithmetic.
 
-The book is one of a series of KEVOS® Library books on planning and delivering projects. The most relevant companions are *Modular Projects by the Numbers*, which applies models, pilots and acceptance tests to a rollout of identical units; *Stage Gates and Stopping Rules by the Numbers*, which treats the gate decisions that this book's evidence feeds; *First-of-a-Kind Technology by the Numbers*, which deals with the extra risk of technology that has not been used at scale; and *Reference Class Forecasting by the Numbers*, which corrects cost and schedule estimates with the outcomes of similar past projects.
+The book is one of a series of BIZOMAT Library books on planning and delivering projects. The most relevant companions are *Modular Projects by the Numbers*, which applies models, pilots and acceptance tests to a rollout of identical units; *Stage Gates and Stopping Rules by the Numbers*, which treats the gate decisions that this book's evidence feeds; *First-of-a-Kind Technology by the Numbers*, which deals with the extra risk of technology that has not been used at scale; and *Reference Class Forecasting by the Numbers*, which corrects cost and schedule estimates with the outcomes of similar past projects.
 
 ## Source limits and professional responsibility
 

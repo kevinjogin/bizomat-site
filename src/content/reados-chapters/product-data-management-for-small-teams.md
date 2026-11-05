@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - product-development
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -222,4 +222,4 @@ Shared folders break down as engineering teams and product ranges grow, because 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

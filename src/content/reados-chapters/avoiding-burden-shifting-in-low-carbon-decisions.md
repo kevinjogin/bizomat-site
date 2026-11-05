@@ -8,7 +8,7 @@ tags:
   - validation
   - design
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ A lower-carbon result is not automatically a better result if it is bought by sh
 
 ---
 
-*Source: KEVOS® notes, drawing on published engineering research on concrete, alternative binders, fuel additives and separation membranes. Figures in this article are illustrations, not data. This article is general information, not environmental, food safety or legal advice.*
+*Source: BIZOMAT notes, drawing on published engineering research on concrete, alternative binders, fuel additives and separation membranes. Figures in this article are illustrations, not data. This article is general information, not environmental, food safety or legal advice.*

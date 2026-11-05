@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ A gearbox selection is more than a ratio and a torque rating. Define the duty fu
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on gearboxes and geared motors, worm gearbox selection, gear geometry, types, rating and selection, spur, helical, bevel and worm gearing, and gear trains, together with established power transmission practice. The worked example is illustrative. This article is general information; use manufacturers' selection data for specific designs.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on gearboxes and geared motors, worm gearbox selection, gear geometry, types, rating and selection, spur, helical, bevel and worm gearing, and gear trains, together with established power transmission practice. The worked example is illustrative. This article is general information; use manufacturers' selection data for specific designs.*

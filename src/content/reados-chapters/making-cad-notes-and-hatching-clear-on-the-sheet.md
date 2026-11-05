@@ -7,7 +7,7 @@ tags:
   - design
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

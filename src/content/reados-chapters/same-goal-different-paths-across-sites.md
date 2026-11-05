@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -228,4 +228,4 @@ A shared goal does not require identical action. Keep the goal, the decision rul
 
 ---
 
-*Source: KEVOS® notes, drawing on published research including Xu and colleagues (2017) on regional variation in manufacturing emissions and Lee, Han and Wang (2017) on landfill gas emissions, Journal of Cleaner Production. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on published research including Xu and colleagues (2017) on regional variation in manufacturing emissions and Lee, Han and Wang (2017) on landfill gas emissions, Journal of Cleaner Production. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -177,4 +177,4 @@ Pumping systems obey a few clear principles. Head combines static lift, friction
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Pumping systems for critical or hazardous duties should be designed by qualified engineers using manufacturers' data.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Pumping systems for critical or hazardous duties should be designed by qualified engineers using manufacturers' data.*

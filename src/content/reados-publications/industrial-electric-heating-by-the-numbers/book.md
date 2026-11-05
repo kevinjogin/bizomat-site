@@ -4,8 +4,8 @@ subtitle: "Joule heating, conductors, cables and fuses, heating elements, ovens,
 description: "Design, size and run electric process heating from first principles: Joule heating, conductor and cable temperatures, fuses, elements, ovens, furnaces, induction, control and cost."
 category: Engineering
 tags: [design, manufacturing, operations, process-improvement, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -66,7 +66,7 @@ Their numbers can be checked, and most of them hold. Their resistivity for coppe
 
 This is an illustration. A fabrication and coating business is installing an electric batch oven to cure powder coating on steel frames and brackets, and a small electric furnace for tempering springs and tool steel parts. Through the book, its engineer works out the oven's heaters, supply, warm-up and running costs, checks its cables and protection, designs a heating element, sizes the tempering furnace, looks at induction and infrared alternatives, sets up the control, and compares electric heat with gas.
 
-The business, the oven, the furnace, their dimensions, settings and costs are invented for teaching. They are not KEVOS® work, and they are not designs for any equipment. Real equipment is designed by its makers to the applicable standards and installed by licensed electricians.
+The business, the oven, the furnace, their dimensions, settings and costs are invented for teaching. They are not BIZOMAT work, and they are not designs for any equipment. Real equipment is designed by its makers to the applicable standards and installed by licensed electricians.
 
 ## How to use the book
 
@@ -78,4 +78,4 @@ This book is educational. Electrical installation and repair work must be done b
 
 ## An original treatment
 
-The Library covers heating of buildings in its HVAC collection and resistance welding in [Resistance Welding by the Numbers](/reados/publications/resistance-welding-by-the-numbers/). This book covers electric heating of materials and processes. The explanations, the oven and furnace case, the calculations, figures and exercises are original KEVOS® writing. The 1895 handbook is a public-domain work in the United States; its facts are summarised, checked and corrected in new words, and none of its text, tables or illustrations is reproduced.
+The Library covers heating of buildings in its HVAC collection and resistance welding in [Resistance Welding by the Numbers](/reados/publications/resistance-welding-by-the-numbers/). This book covers electric heating of materials and processes. The explanations, the oven and furnace case, the calculations, figures and exercises are original BIZOMAT writing. The 1895 handbook is a public-domain work in the United States; its facts are summarised, checked and corrected in new words, and none of its text, tables or illustrations is reproduced.

@@ -9,7 +9,7 @@ draft: false
 
 Everything that turns pulls itself apart. Each particle of a rotating disc needs a force towards the centre to keep it on its circle, and the material supplies that force as tension. The tension grows with the square of the speed, so a modest overspeed raises it sharply, and a disc that is comfortable at its working speed has a definite speed at which it yields and, above that, bursts. A rotor that bursts releases the energy this book has been calculating, and it releases it as fragments.
 
-This chapter checks the DL-3's three fast rotors, the saw blade, the chipper's disc and the new flywheel, with the KEVOS® rotating disc stress and burst margin tool. It explains why the stress is highest at the bore, what an overspeed does to stress and rim speed, and how much energy the guards must be designed to contain. Its mistake is a drive frequency raised to speed up the chipper without rechecking the flywheel's rim speed.
+This chapter checks the DL-3's three fast rotors, the saw blade, the chipper's disc and the new flywheel, with the BIZOMAT rotating disc stress and burst margin tool. It explains why the stress is highest at the bore, what an overspeed does to stress and rim speed, and how much energy the guards must be designed to contain. Its mistake is a drive frequency raised to speed up the chipper without rechecking the flywheel's rim speed.
 
 ## Stress in a rotating disc
 

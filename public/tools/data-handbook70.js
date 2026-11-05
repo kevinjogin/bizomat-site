@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: thermodynamics topic tools after Linder, Thermodynamics and Introductory Statistical Mechanics (batch handbook70), within the Tools directory.
+// BIZOMAT MAKEOS: thermodynamics topic tools after Linder, Thermodynamics and Introductory Statistical Mechanics (batch handbook70), within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "heat-engine-second-law-check",

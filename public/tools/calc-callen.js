@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS thermodynamics calculation from Callen, Thermodynamics and an Introduction to Thermostatistics (batch callen). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS thermodynamics calculation from Callen, Thermodynamics and an Introduction to Thermostatistics (batch callen). SI units are explicit at each boundary.
 // Methods are standard thermodynamic relations; no text, worked examples, problems or tables from the book are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

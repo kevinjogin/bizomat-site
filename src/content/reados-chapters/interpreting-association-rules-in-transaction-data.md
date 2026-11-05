@@ -7,7 +7,7 @@ tags:
   - systems
   - experimentation
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

@@ -1,4 +1,4 @@
-// KEVOS AutoSEO command runner, used by the scheduled GitHub Actions workflows.
+// BIZOMAT AutoSEO command runner, used by the scheduled GitHub Actions workflows.
 //   node scripts/seo/run.mjs collect                 fetch Search Console, Bing and Cloudflare data (each optional)
 //   node scripts/seo/run.mjs live-check              check production robots.txt, sitemaps and key pages
 //   node scripts/seo/run.mjs report --period weekly  write a report (daily | weekly | monthly)
@@ -50,7 +50,7 @@ async function collect() {
 
 async function liveCheck() {
   const failures = [];
-  const get = async (p, init) => fetch(SITE + p, { redirect: 'manual', signal: AbortSignal.timeout(30_000), headers: { 'User-Agent': 'KEVOS-AutoSEO-check/1.0 (+https://kevos.com/)' }, ...init });
+  const get = async (p, init) => fetch(SITE + p, { redirect: 'manual', signal: AbortSignal.timeout(30_000), headers: { 'User-Agent': 'BIZOMAT-AutoSEO-check/1.0 (+https://kevos.com/)' }, ...init });
   const robots = await get('/robots.txt').then((r) => (r.ok ? r.text() : `HTTP ${r.status}`)).catch((e) => `error ${e.name}`);
   if (!/^Sitemap: https:\/\/kevos\.com\/sitemap-index\.xml$/m.test(robots)) failures.push('robots.txt is missing or does not list the sitemap');
   if (/^User-agent:\s*\*\s*\n(?:.*\n)*?Disallow:\s*\/\s*$/im.test(robots)) failures.push('robots.txt blocks the whole site');
@@ -107,7 +107,7 @@ function report() {
   const statusRow = (name, s) => `| ${name} | ${s?.status ?? 'NOT RUN'} | ${s?.status === 'OK' ? s.fetchedAt : (s?.reason ?? 'no snapshot yet')} |`;
   const cfDays = cf?.status === 'OK' ? cf.daily : [];
   const md = [
-    `# KEVOS SEO ${period} report, ${today} (Australia/Sydney)`,
+    `# BIZOMAT SEO ${period} report, ${today} (Australia/Sydney)`,
     '',
     'Figures come only from the sources marked OK. Anything unavailable is shown as UNKNOWN, never as zero. Average position is Search Console\'s impression-weighted average, not a fixed rank.',
     '',

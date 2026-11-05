@@ -4,8 +4,8 @@ subtitle: "Chain size, molar mass, solutions and melts for people who mould, joi
 description: "Use the physics of long chains to judge resin grades, regrind, solvent cements, cleaners and storage: molar mass averages, coil size, viscosity, phase separation and solvent attack."
 category: Engineering
 tags: [design, manufacturing, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -50,7 +50,7 @@ references:
   - title: "Thermodynamics of Systems Containing Flexible-Chain Polymers"
     creator: "V. J. Klenin, Elsevier, Amsterdam"
     year: "1999"
-    note: "Named as the source behind the KEVOS® polymer tools linked in Chapters 4, 7, 8, 9 and 10. Not quoted."
+    note: "Named as the source behind the BIZOMAT polymer tools linked in Chapters 4, 7, 8, 9 and 10. Not quoted."
   - title: "Thermophysical Properties of Fluid Systems, NIST Chemistry WebBook, SRD 69"
     creator: "National Institute of Standards and Technology"
     year: "2026"
@@ -101,13 +101,13 @@ Every chapter follows one fictional workshop. This is an illustration. The works
 - **Solvent cement:** 16% polystyrene by mass in a 50:50 by volume blend of ethyl acetate and d-limonene, which replaced an older toluene-based cement; target viscosity 1,000 to 1,500 mPa·s at 20 °C.
 - **Storage and cleaning:** solvents kept in high-density polyethylene containers in a shed that reaches 5 °C in winter and 40 °C in summer; housings wiped with isopropanol before assembly.
 
-The workshop, its resin, its measurements and every specification are invented. The polymer constants used, such as Mark–Houwink and solubility parameters, are teaching values of a realistic size, chosen so that the arithmetic can be followed; they must be replaced by measured or tabulated values for real work. None of this describes KEVOS® work or a real business.
+The workshop, its resin, its measurements and every specification are invented. The polymer constants used, such as Mark–Houwink and solubility parameters, are teaching values of a realistic size, chosen so that the arithmetic can be followed; they must be replaced by measured or tabulated values for real work. None of this describes BIZOMAT work or a real business.
 
 ## How to use the book
 
 Read Chapters 1 to 3 in order: they describe a single chain, a real resin's mix of chains, and the effect of the solvent on coil size. Chapters 4 to 6 deal with viscosity in dilute solution, in concentrated solution and in the melt. Chapters 7 to 9 deal with mixing: phase separation, solvent selection and the melting of crystals in a solvent. Chapter 10 brings the measurements together into a check that a workshop can actually run.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
 
 ## Source limits and professional responsibility
 

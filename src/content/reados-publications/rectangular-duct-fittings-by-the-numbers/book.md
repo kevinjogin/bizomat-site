@@ -4,8 +4,8 @@ subtitle: "Patterns for rectangular elbows, offsets, transitions and branches, w
 description: "Develop rectangular duct fittings with numbers: radius and mitred elbows, single and diagonal offsets, transitions, shoe branches, seams, cleats, cross-breaking and the take-off."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -67,7 +67,7 @@ Every chapter follows one fictional job. This is an illustration. A small manufa
 - a **diagonal offset** moving it 300 mm sideways and 250 mm down at once over 1,000 mm, to clear a beam and a sprinkler main;
 - a **45° shoe branch**, 300 × 200 mm, off the side of the main to a second zone.
 
-The manufacturer, the shop, the dimensions, the seam allowances and the mistakes are invented. None describes KEVOS® work or a real business.
+The manufacturer, the shop, the dimensions, the seam allowances and the mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

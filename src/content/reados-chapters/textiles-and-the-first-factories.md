@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - operations
   - people
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ Textile machinery created the factory system. The flying shuttle, spinning jenny
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

@@ -4,8 +4,8 @@ subtitle: "Commercial incentives, target-cost and alliance contracts, team size 
 description: "Build one team from many organisations: lump sum, cost-plus and target-cost share calculations, alliances, team size, staffing, decision rights and how contracts shape behaviour."
 category: Projects
 tags: [projects, people, leadership, finance, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -133,13 +133,13 @@ Every chapter follows one fictional project. This is an illustration. A family-o
 
 Six organisations deliver it: the owner, a designer, a builder, a racking supplier-installer, a conveyor and controls integrator, and a software vendor, with a core team of about twenty people among them. The book follows the choice of contract for the works, the commercial arithmetic of each option, and the team that has to make the chosen option work.
 
-The business, its people, its contractors and every number in the case are invented. None describes KEVOS® work, a real business or a real project.
+The business, its people, its contractors and every number in the case are invented. None describes BIZOMAT work, a real business or a real project.
 
 ## How to use the book
 
 Read Chapters 1 and 2 first: the map of organisations and the way a contract moves money underlie everything else. Chapters 3 to 6 take the contract models in order of increasing sharing, from lump sum to alliance, and are best read in sequence. Chapters 7 to 9 cover the team itself and can be read in any order after Chapter 2. Chapter 10 brings the commercial and team results together into one choice. Every calculation was checked by running it, and the behaviour assumptions behind the comparison are stated where they are used, so readers can replace them with their own.
 
-The book is one of a series of nine KEVOS® Library books on project delivery, each worked through its own case. The most closely related are *Reference Class Forecasting by the Numbers*, which sets the budgets and contingencies that this book's contracts have to live within; *Modular Projects by the Numbers*, which covers learning curves and keeping an experienced team together across repeated work; *Front-End Planning by the Numbers*, which covers the definition work that makes a lump sum or a target realistic; and *Stage Gates and Stopping Rules by the Numbers*, which covers the approval decisions that the sponsor and leadership group in this book have to make.
+The book is one of a series of nine BIZOMAT Library books on project delivery, each worked through its own case. The most closely related are *Reference Class Forecasting by the Numbers*, which sets the budgets and contingencies that this book's contracts have to live within; *Modular Projects by the Numbers*, which covers learning curves and keeping an experienced team together across repeated work; *Front-End Planning by the Numbers*, which covers the definition work that makes a lump sum or a target realistic; and *Stage Gates and Stopping Rules by the Numbers*, which covers the approval decisions that the sponsor and leadership group in this book have to make.
 
 ## Source limits and professional responsibility
 

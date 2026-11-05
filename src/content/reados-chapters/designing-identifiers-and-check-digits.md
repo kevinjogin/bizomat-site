@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - manufacturing
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ Identifiers are the threads that tie records together across systems, documents 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general information management, manufacturing systems and data quality practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general information management, manufacturing systems and data quality practice. The worked example is illustrative. This article is general information.*

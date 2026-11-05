@@ -7,7 +7,7 @@ tags:
   - strategy
   - systems
   - manufacturing
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -239,4 +239,4 @@ Solar cells, wind turbines and lithium-ion batteries became central to electrici
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on photovoltaics, wind turbines, lithium-ion cells, hybrid drives and grid-scale storage, together with established histories of technology. Tariff and cost figures in the worked example are illustrative assumptions. This article is general information, not advice on any particular energy investment; electrical and battery work must be designed and installed by appropriately licensed and qualified people.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on photovoltaics, wind turbines, lithium-ion cells, hybrid drives and grid-scale storage, together with established histories of technology. Tariff and cost figures in the worked example are illustrative assumptions. This article is general information, not advice on any particular energy investment; electrical and battery work must be designed and installed by appropriately licensed and qualified people.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ Exploring an idea, testing whether it can work, deciding to invest and authorisi
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project initiation, proposals, feasibility studies, business cases, project charters and project boundaries. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on project initiation, proposals, feasibility studies, business cases, project charters and project boundaries. Examples and figures in this article are illustrations. This article is general information.*

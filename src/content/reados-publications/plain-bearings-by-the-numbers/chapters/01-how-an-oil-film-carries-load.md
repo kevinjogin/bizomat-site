@@ -142,7 +142,7 @@ caption: This is an illustration. Unit load is the load divided by the projected
 - 0.75 | Length ÷ diameter | 60 ÷ 80
 ```
 
-The film is thick compared with the surfaces it separates. The journal is ground to a roughness average (Ra) of 0.4 µm and the white metal bore is fine-bored to 0.8 µm Ra. Converting each to a root-mean-square roughness, about 1.25 times the average for typical machined surfaces, and combining them as the square root of the sum of squares gives a composite roughness of about 1.12 µm. The film is 28.6 ÷ 1.12 = about 26 times thicker: a full film with a wide margin. That ratio, the film thickness ratio, appears again in Chapter 9, where the KEVOS® film thickness ratio tool calculates it.
+The film is thick compared with the surfaces it separates. The journal is ground to a roughness average (Ra) of 0.4 µm and the white metal bore is fine-bored to 0.8 µm Ra. Converting each to a root-mean-square roughness, about 1.25 times the average for typical machined surfaces, and combining them as the square root of the sum of squares gives a composite roughness of about 1.12 µm. The film is 28.6 ÷ 1.12 = about 26 times thicker: a full film with a wide margin. That ratio, the film thickness ratio, appears again in Chapter 9, where the BIZOMAT film thickness ratio tool calculates it.
 
 ## The error: a heavier oil to cut friction
 

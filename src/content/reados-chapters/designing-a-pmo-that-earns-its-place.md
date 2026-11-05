@@ -7,7 +7,7 @@ tags:
   - projects
   - leadership
   - systems
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ A project management office is a means, not an end. It earns its place by solvin
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

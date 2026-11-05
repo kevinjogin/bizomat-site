@@ -7,7 +7,7 @@ tags:
   - product-development
   - quality
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Quality is easiest and cheapest to build in at the start, when customer needs ar
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® quality handbooks on translating the voice of the customer into critical-to-quality requirements, DMADV and design for Six Sigma, and the DMAIC define phase. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT quality handbooks on translating the voice of the customer into critical-to-quality requirements, DMADV and design for Six Sigma, and the DMAIC define phase. The worked example is illustrative. This article is general information.*

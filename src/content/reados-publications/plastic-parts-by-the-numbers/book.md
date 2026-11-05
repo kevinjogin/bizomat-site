@@ -4,8 +4,8 @@ subtitle: "Designing an injection-moulded part and briefing its tool, from wall 
 description: "Design an injection-moulded part with numbers: wall, draft, ribs, bosses, snap fits, shrinkage, gating, clamp force, cycle time, tool cost and first-off approval."
 category: Manufacturing
 tags: [manufacturing, design, product-development, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -69,7 +69,7 @@ This book is for designers and engineers who model plastic parts in CAD and need
 
 The book follows a fictional **polycarbonate access cover** for a small steel control box on a conveyor. The cover is 160 mm long, 100 mm wide and 20 mm deep, with a nominal wall of 2.5 mm. Two cantilever snap hooks hold one end; two screw bosses take thread-cutting screws at the other. A grid of ribs on the underside keeps the large flat top from flexing or warping. Annual demand is about 8,000 covers. The material is an unreinforced, easy-flow polycarbonate, and the book uses one published grade's typical data sheet values as its reference properties.
 
-All dimensions, quantities, process settings, prices and results are invented for teaching. This is an illustration. They are not KEVOS® projects, quotations or measured data. Money is in Australian dollars, and each example states whether GST is included.
+All dimensions, quantities, process settings, prices and results are invented for teaching. This is an illustration. They are not BIZOMAT projects, quotations or measured data. Money is in Australian dollars, and each example states whether GST is included.
 
 ## Source limits and professional responsibility
 

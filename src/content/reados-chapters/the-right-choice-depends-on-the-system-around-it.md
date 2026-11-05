@@ -8,7 +8,7 @@ tags:
   - strategy
   - manufacturing
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -211,4 +211,4 @@ No technology or scale is best in the abstract. Its performance depends on the e
 
 ---
 
-*Source: KEVOS® notes, drawing on published research including Bharathan, Sasmito and Ghoreishi-Madiseh (2017) on mine haulage, Lee and Won on building glazing, and Manandhar and Shah (2017) on feedstock logistics, Journal of Cleaner Production. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on published research including Bharathan, Sasmito and Ghoreishi-Madiseh (2017) on mine haulage, Lee and Won on building glazing, and Manandhar and Shah (2017) on feedstock logistics, Journal of Cleaner Production. Examples and figures in this article are illustrations.*

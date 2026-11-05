@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ People learn to lead and to handle complex work mainly by doing it. Make assignm
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on experiential learning, developmental assignments, action learning, project-based capability development and capability management, and D. Day's review of leadership development. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on experiential learning, developmental assignments, action learning, project-based capability development and capability management, and D. Day's review of leadership development. Examples and figures in this article are illustrations. This article is general information.*

@@ -4,8 +4,8 @@ subtitle: "Stress cycles, endurance limits, notches, mean stress, finite life, s
 description: "How metal parts fail under repeated stress and how to design them not to: cycles, endurance limits, notches, Goodman lines, S-N lives, Miner's rule, shafts, bolts, springs and surfaces."
 category: Engineering
 tags: [design, validation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Gauge Fields in Condensed Matter, Volume II: Stresses and Defects (Differential Geometry, Crystal Melting)"
     creator: "H. Kleinert, World Scientific, Singapore"
     year: "1989"
-    note: "In copyright. Used only as a map for the physics behind Chapter 1: crystals as ordered arrays, dislocation lines as the line-like defects that carry plastic deformation, and how their movement on slip planes disturbs the order of the lattice. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the physics behind Chapter 1: crystals as ordered arrays, dislocation lines as the line-like defects that carry plastic deformation, and how their movement on slip planes disturbs the order of the lattice. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Shigley's Mechanical Engineering Design, tenth edition"
     creator: "R. G. Budynas and J. K. Nisbett, McGraw-Hill Education"
     year: "2015"
@@ -75,7 +75,7 @@ Most broken machine parts were never overloaded. They carried a load well below 
 
 This book explains fatigue from the crystal up and then turns it into design numbers. It starts with how cracks start and grow, then describes stress cycles, the endurance limit and what lowers it, notches, the effect of mean stress and finite lives under mixed loading. It then applies the method to the three parts that fail most often in machines, shafts, bolted joints and springs, and closes with the surface finish, scatter and evidence that decide whether a part really lives as long as its calculation says.
 
-It is for mechanical design engineers, machine builders, maintenance and reliability engineers and technicians. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design engineers, machine builders, maintenance and reliability engineers and technicians. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -86,13 +86,13 @@ Every chapter follows one machine. This is an illustration. A packaging machiner
 - **Rocker lever:** a 16 × 40 mm section of normalised 0.45% carbon steel, 620 MPa tensile and 410 MPa yield, loaded by the cam follower between 300 N and 2,400 N at 150 mm.
 - **Return spring and bolts:** a 3 mm music wire compression spring on the follower, and the bolts that hold the cam housing to the frame, carrying 0 to 12 kN each as the cam turns.
 
-Loads, strengths, factors, failure records, prices and times are the case builder's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, machine or supplier's data.
+Loads, strengths, factors, failure records, prices and times are the case builder's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, machine or supplier's data.
 
 ## How to use the book
 
 Read Chapters 1 to 5 in order: they build the method that every later chapter uses. Chapter 6 deals with finite life and mixed loading. Chapters 7, 8 and 9 apply the method to shafts, bolted joints and springs and can be read in any order. Chapter 10 covers surfaces, scatter and the evidence that proves a design.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The methods are the standard textbook estimates for steels. They are good enough to compare designs and to find the weak point, but real fatigue strengths scatter widely, and the final word on a critical part is a test.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. The methods are the standard textbook estimates for steels. They are good enough to compare designs and to find the weak point, but real fatigue strengths scatter widely, and the final word on a critical part is a test.
 
 ## Source limits and professional responsibility
 

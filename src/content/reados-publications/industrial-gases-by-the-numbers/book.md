@@ -4,8 +4,8 @@ subtitle: "Making, purifying, storing, piping and using acetylene, oxygen, hydro
 description: "Understand workshop gases from first principles: carbide and acetylene, generators, purity, oxygen and hydrogen production, shielding gases, liquid storage, piping, leaks and hazards."
 category: Manufacturing
 tags: [manufacturing, operations, quality, process-improvement, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -97,7 +97,7 @@ Those workshops dealt directly with gas production, its chemistry, heat and haza
 
 This is an illustration. A regional fabrication and repair workshop uses oxygen and acetylene for cutting and heating, an argon and carbon dioxide mixture for wire welding, pure argon for tungsten arc welding, nitrogen for purging stainless steel pipe welds, and propane for a heating torch. Its gas bills have risen, it has had a near miss with a leaking cylinder, and its manager wants to review the whole gas system: what is used, what it costs, whether to move from cylinders to bulk supply, and whether storage, piping and controls are safe.
 
-The workshop, its consumption, prices and incidents are invented for teaching. They are not KEVOS® work. Real gas systems are designed with the gas supplier and installed and maintained by competent people to the applicable standards.
+The workshop, its consumption, prices and incidents are invented for teaching. They are not BIZOMAT work. Real gas systems are designed with the gas supplier and installed and maintained by competent people to the applicable standards.
 
 ## How to use the book
 
@@ -109,4 +109,4 @@ This book is educational. Industrial gases can cause fires, explosions, asphyxia
 
 ## An original treatment
 
-The Library covers the oxy-fuel process itself, including cylinder contents and withdrawal, regulators, hoses and flashback, in [Oxy-Fuel by the Numbers](/reados/publications/oxy-fuel-by-the-numbers/), and this book links to it rather than repeating it. It concentrates on the gases: how they are made, purified, stored, distributed and controlled. The explanations, the workshop case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers the oxy-fuel process itself, including cylinder contents and withdrawal, regulators, hoses and flashback, in [Oxy-Fuel by the Numbers](/reados/publications/oxy-fuel-by-the-numbers/), and this book links to it rather than repeating it. It concentrates on the gases: how they are made, purified, stored, distributed and controlled. The explanations, the workshop case, the calculations, figures and exercises are original BIZOMAT writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

@@ -9,7 +9,7 @@ draft: false
 
 A centrifugal clutch needs no operator. Its shoes are held in by springs and thrown outward against a drum by their own spinning, so it stays disengaged while its engine idles and engages by itself as the engine speeds up. That makes it the natural partner for small engines, which must start and idle without load, and it is why chainsaws, mowers, go-karts and small engine-driven pumps and winches use one.
 
-This chapter checks the centrifugal clutch on the SW-25's backup petrol engine with the KEVOS® centrifugal clutch check tool. It shows how torque grows with the square of speed above the engagement point, why that makes the clutch a crude but useful overload device, and why it overheats if the engine is held at part throttle. Its mistake is a spring chosen so soft that the clutch engaged at idle.
+This chapter checks the centrifugal clutch on the SW-25's backup petrol engine with the BIZOMAT centrifugal clutch check tool. It shows how torque grows with the square of speed above the engagement point, why that makes the clutch a crude but useful overload device, and why it overheats if the engine is held at part throttle. Its mistake is a spring chosen so soft that the clutch engaged at idle.
 
 ## The backup drive
 

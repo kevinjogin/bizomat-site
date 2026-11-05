@@ -4,8 +4,8 @@ subtitle: "Seebeck and Peltier effects, module datasheets, operating points, hea
 description: "How thermoelectric coolers pump heat with no moving parts, and how to size, sink, power, control and judge one for a sealed cabinet or small chiller, worked with numbers."
 category: Engineering
 tags: [design, product-development, systems]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-03
@@ -24,7 +24,7 @@ references:
   - title: "Introduction to Modern Solid State Physics"
     creator: "Y. M. Galperin, lecture notes for course FYS 448, Department of Physics, University of Oslo"
     year: "2001"
-    note: "Copyright work, used only as a map of ideas: transport of charge and heat by electrons, the thermoelectric (Seebeck) and Peltier coefficients and their relation, the Wiedemann–Franz law, and the lattice's share of heat conduction. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: transport of charge and heat by electrons, the thermoelectric (Seebeck) and Peltier coefficients and their relation, the Wiedemann–Franz law, and the lattice's share of heat conduction. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Introduction to Thermoelectricity"
     creator: "H. J. Goldsmid, Springer"
     year: "2016"
@@ -41,7 +41,7 @@ references:
     creator: "National Institute of Standards and Technology"
     year: "2012"
     url: "https://www.itl.nist.gov/div898/handbook/"
-    note: "Background for the Weibull, exponential and confidence-bound methods used in Chapter 9 and in the KEVOS® tools linked from it."
+    note: "Background for the Weibull, exponential and confidence-bound methods used in Chapter 9 and in the BIZOMAT tools linked from it."
 related:
   - title: "Fins and Heat Sinks by the Numbers"
     href: "/reados/publications/fins-and-heat-sinks-by-the-numbers/"
@@ -61,7 +61,7 @@ Pass a direct current through a junction of two different conductors and the jun
 
 It also has a low coefficient of performance, a hard limit on the temperature difference it can make, and a hot side that must reject both the heat pumped and all the electrical power supplied. Thermoelectric coolers are excellent for small, sealed, quiet or precise jobs and poor for large ones. This book shows how to tell which a job is and how to design for it with numbers: the physics of the effects and the materials, the module's datasheet and the model behind it, the operating point, the heat sinks, the heat load, condensation, power and control, reliability, and the choice between thermoelectric, compressor and ventilation cooling.
 
-It is for mechanical, electrical, controls and product engineers, maintenance planners and buyers. It assumes engineering training and comfort with basic heat transfer and electricity; the solid-state physics is explained from the start as it is used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical, electrical, controls and product engineers, maintenance planners and buyers. It assumes engineering training and comfort with basic heat transfer and electricity; the solid-state physics is explained from the start as it is used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -72,13 +72,13 @@ Every chapter follows one installation. This is an illustration. An irrigation t
 - **The cooler:** a thermoelectric air-to-air cooler, CC-1, with three modules on a 24 V supply, a finned hot-side heat sink and fan outside the cabinet and a finned cold-side exchanger and fan inside.
 - **A second job:** the station's water-quality autosampler has a small insulated sample box, SC-1, that must hold its samples at 4 °C, cooled by a single module.
 
-The modules are a generic 127-couple bismuth telluride type rated 6.0 A, 15.4 V and a maximum temperature difference of 68 K at a 27 °C hot side. Dimensions, loads, temperatures, prices and results are the trust's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real trust, manufacturer, supplier or customer. Prices are in Australian dollars, including GST where stated.
+The modules are a generic 127-couple bismuth telluride type rated 6.0 A, 15.4 V and a maximum temperature difference of 68 K at a 27 °C hot side. Dimensions, loads, temperatures, prices and results are the trust's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real trust, manufacturer, supplier or customer. Prices are in Australian dollars, including GST where stated.
 
 ## How to use the book
 
 Read Chapters 1 to 4 in order: they build the physics and the module model that the rest uses. Chapters 5 and 6 go together on the heat sinks and the heat load, and Chapter 7 on condensation follows from them. Chapters 8 and 9 can be read in either order, and Chapter 10 brings the choice of cooling method and its cost together.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but answers one question in a chapter, such as the enclosure cooling tool's refusal to cool below ambient, the chapter says what is used and what is not.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but answers one question in a chapter, such as the enclosure cooling tool's refusal to cool below ambient, the chapter says what is used and what is not.
 
 ## Source limits and professional responsibility
 

@@ -4,8 +4,8 @@ subtitle: "Requirements, sensing, power, data, firmware, security and service fo
 description: "Develop a connected product with numbers: requirements and architecture, sensing, battery and data budgets, testable firmware, security rules, pilot fleets and service models."
 category: Products
 tags: [product-development, systems, validation, design, strategy]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -90,7 +90,7 @@ It assumes basic engineering arithmetic and some familiarity with product develo
 
 The book follows a fictional **tank monitor**, a battery-powered ultrasonic level sensor for a 22,500 L rainwater tank on a rural property. It mounts in the tank roof, measures the air gap to the water surface, and reports the level over the LTE-M cellular network to an app. It alerts the owner when the tank is low, when it is falling unusually fast and when the sensor needs attention. The tank is 3.60 m in diameter and holds 22,500 L at a water depth of 2.21 m. The product is made by a small fictional Australian company and sold to households and farms with a monthly service subscription.
 
-All dimensions, currents, prices, quantities and results are invented for teaching. This is an illustration. None of it describes a KEVOS® project, product or measured result. Money is in Australian dollars, and each example says whether GST is included.
+All dimensions, currents, prices, quantities and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT project, product or measured result. Money is in Australian dollars, and each example says whether GST is included.
 
 ## How to use the book
 

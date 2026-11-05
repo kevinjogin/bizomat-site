@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - process-improvement
   - design
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Workholding and toolholding decide whether a machine's accuracy and power reach 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow machine, chuck and toolholder manufacturers' instructions.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow machine, chuck and toolholder manufacturers' instructions.*

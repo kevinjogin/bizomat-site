@@ -61,7 +61,7 @@ Because that value already includes the threads, no further notch factor is appl
 
 ### Goodman for a preloaded bolt
 
-A preloaded bolt does not move along a load line from the origin as its loads rise. Its mean stress starts at the preload stress σi and rises only with the alternating stress. The Goodman safety factor for that path, as given in Shigley's and used by the KEVOS® tools, is:
+A preloaded bolt does not move along a load line from the origin as its loads rise. Its mean stress starts at the preload stress σi and rises only with the alternating stress. The Goodman safety factor for that path, as given in Shigley's and used by the BIZOMAT tools, is:
 
 ```figure
 type: formula

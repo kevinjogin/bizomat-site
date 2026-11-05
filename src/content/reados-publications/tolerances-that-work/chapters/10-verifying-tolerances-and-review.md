@@ -152,4 +152,4 @@ Run the ten-point review on a drawing that is about to be released or revised. F
 
 ---
 
-*Source: KEVOS® notes drawing on ISO 286, ISO 1101, ISO 5459, ISO 8015, ISO 2692 and ISO 14253-1, ASME Y14.5, standard mechanical design texts and Machinery's Handbook as listed in the book references. The guide roller case is fictional. This book is general engineering information.*
+*Source: BIZOMAT notes drawing on ISO 286, ISO 1101, ISO 5459, ISO 8015, ISO 2692 and ISO 14253-1, ASME Y14.5, standard mechanical design texts and Machinery's Handbook as listed in the book references. The guide roller case is fictional. This book is general engineering information.*

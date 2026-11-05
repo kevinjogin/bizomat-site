@@ -7,7 +7,7 @@ tags:
   - design
   - prototyping
   - product-development
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

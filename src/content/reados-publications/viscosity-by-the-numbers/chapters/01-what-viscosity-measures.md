@@ -93,7 +93,7 @@ rowhead: Unit
 - SUS | Instrument reading | approximately 4.63 × cSt for thicker oils only
 ```
 
-The KEVOS® [oil viscosity unit conversion tool](/tools/viscosity-units/) converts between centistokes, centipoise, pascal-seconds, reyns and Saybolt seconds from the oil's specific gravity, which is its density in grams per cubic centimetre. This is an illustration. Entering 46 cSt with a specific gravity of 0.8548, HPU-40's oil at 40 °C, the tool returns 39.32 cP, 0.03932 Pa·s, 5.70 × 10⁻⁶ reyn and 213.1 SUS on the 40 °C basis.
+The BIZOMAT [oil viscosity unit conversion tool](/tools/viscosity-units/) converts between centistokes, centipoise, pascal-seconds, reyns and Saybolt seconds from the oil's specific gravity, which is its density in grams per cubic centimetre. This is an illustration. Entering 46 cSt with a specific gravity of 0.8548, HPU-40's oil at 40 °C, the tool returns 39.32 cP, 0.03932 Pa·s, 5.70 × 10⁻⁶ reyn and 213.1 SUS on the 40 °C basis.
 
 Two cautions apply to that tool and to any conversion. The specific gravity must be at the same temperature as the viscosity; using the data sheet's 15 °C density of 0.870 with a 40 °C viscosity overstates the dynamic viscosity by about 2%. And the tool's Saybolt figures use fixed factors of 4.632 and 4.664, which are the high-viscosity forms of the conversion. For thinner oils, below roughly 75 cSt, the true relation is not a simple ratio and the conversion tables of the relevant ASTM standard should be used instead. HPU-40's oil at 46 cSt is in that range, so its 213.1 SUS is an approximation.
 

@@ -7,7 +7,7 @@ tags:
   - ai
   - automation
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -214,4 +214,4 @@ AI agents let models decide what to do next, which makes them powerful for ambig
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on chatbots, workflows and agents, tools and function calling, planning, state machines, retries and recovery, human approval gates, orchestration patterns, memory, termination conditions, tool connection protocols and when not to use an agent, together with established AI practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT AI academy lessons on chatbots, workflows and agents, tools and function calling, planning, state machines, retries and recovery, human approval gates, orchestration patterns, memory, termination conditions, tool connection protocols and when not to use an agent, together with established AI practice. The worked example is illustrative. This article is general information.*

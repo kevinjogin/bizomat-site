@@ -4,8 +4,8 @@ subtitle: "From the wire feeder to the robot cell: self-regulating arcs, travel 
 description: "Automate welding with numbers: levels of automation, the self-regulating arc, travel speed and heat input, fixtures and fit-up, robot cell payback, programming, sensing, monitoring, safety and skills."
 category: Manufacturing
 tags: [automation, manufacturing, process-improvement, quality, finance]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -67,7 +67,7 @@ Their observations, on equilibrium between wire feed and burn-off, on the effect
 
 This is an illustration. A fabricator in a regional manufacturing town makes trailer chassis, agricultural implement frames and a range of brackets and small weldments for local manufacturers, with about twenty welders on manual and semi-automatic gas metal arc welding. Its owner is considering mechanised carriages for long seams, positioners for the larger frames, and a robot welding cell for the brackets, and wants to know which will pay, what they will demand of the shop, and how to bring the welders along.
 
-The fabricator, its products, customers, prices and results are invented for teaching. They are not KEVOS® work. Robot cells must be designed, installed and guarded to the robot standards and the work health and safety laws, by people competent to do so.
+The fabricator, its products, customers, prices and results are invented for teaching. They are not BIZOMAT work. Robot cells must be designed, installed and guarded to the robot standards and the work health and safety laws, by people competent to do so.
 
 ## How to use the book
 
@@ -79,4 +79,4 @@ This book is educational. Its prices, rates and paybacks are illustrations; real
 
 ## An original treatment
 
-The Library covers arc welding in Arc Welding by the Numbers, fixture design in Fixtures That Repeat, and resistance welding machines in Resistance Welding by the Numbers; this book links to them rather than repeating them. The explanations, the fabricator case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers arc welding in Arc Welding by the Numbers, fixture design in Fixtures That Repeat, and resistance welding machines in Resistance Welding by the Numbers; this book links to them rather than repeating them. The explanations, the fabricator case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their ideas are summarised in new words, and none of their text, tables or illustrations is reproduced.

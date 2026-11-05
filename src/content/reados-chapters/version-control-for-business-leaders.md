@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -225,4 +225,4 @@ Version control records every change to software, with its author, date and reas
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations.*

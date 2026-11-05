@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

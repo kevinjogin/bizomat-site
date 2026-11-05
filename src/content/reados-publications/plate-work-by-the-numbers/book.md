@@ -4,8 +4,8 @@ subtitle: "Laying out, rolling and fitting steel plate: shells, cones, hoppers, 
 description: "Lay out and fit steel plate with numbers: mean diameters, rolled shells, springback, cones and hoppers in thick plate, openings, rings, nesting, roundness and mass."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -74,7 +74,7 @@ It is for platers, boilermakers and their apprentices, fabrication drafters, and
 
 Every chapter follows one fictional job. This is an illustration. A stockfeed business has ordered a storage bin from a plate fabrication shop. The bin is a vertical cylinder of 2,400 mm inside diameter and 4,800 mm high, made from two 2,400 mm courses of 6 mm mild steel plate, standing on a conical hopper of 8 mm plate whose walls slope at 60° to the horizontal and which discharges through a Ø400 outlet. A 75 × 75 × 6 angle ring stiffens the top of the shell, a flat 5 mm plate forms the roof, a Ø500 manway is set into the lower course, and a separate square loading hopper, 1,200 mm square at the top and 300 mm square at the bottom, feeds the roof inlet. The shop buys plate in 2,400 × 6,000 mm sheets and rolls on a three-roll machine.
 
-The business, the shop, the dimensions, the yield strengths, the prices and the mistakes are invented. None describes KEVOS® work or a real business.
+The business, the shop, the dimensions, the yield strengths, the prices and the mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

@@ -161,7 +161,7 @@ The last column is the important one. Each assumption is something that can be s
 A buckling check that nobody else can follow cannot be checked, and an unchecked buckling check is a guess. The shop's design note for HT-8 runs to a few pages, and every compression member's check in it states:
 
 - the load and where it comes from, including every load case combined, with the reference used for wind;
-- the section and its properties, with their source (a calculation, a KEVOS® tool's output with its inputs, or a maker's table);
+- the section and its properties, with their source (a calculation, a BIZOMAT tool's output with its inputs, or a maker's table);
 - the effective length in each direction and the reason for each K;
 - the method (Euler, Johnson, Rankine–Gordon, secant or a code curve) and why it applies at that slenderness;
 - the imperfection and offset assumed, and the fabrication tolerance that will make them true;

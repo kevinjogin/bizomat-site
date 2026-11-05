@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -240,4 +240,4 @@ Visual Basic 6 applications have served many businesses well for decades, and Mi
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on a Visual Basic 6 programming reference and Microsoft's published [Support Statement for Visual Basic 6.0](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-basic-6/visual-basic-6-support-policy), together with established software maintenance practice. The worked example is illustrative. Support arrangements change, so check the current statement. This article is general information, not professional IT or engineering advice.*
+*Source: BIZOMAT editorial notes, drawing on a Visual Basic 6 programming reference and Microsoft's published [Support Statement for Visual Basic 6.0](https://learn.microsoft.com/en-us/previous-versions/visualstudio/visual-basic-6/visual-basic-6-support-policy), together with established software maintenance practice. The worked example is illustrative. Support arrangements change, so check the current statement. This article is general information, not professional IT or engineering advice.*

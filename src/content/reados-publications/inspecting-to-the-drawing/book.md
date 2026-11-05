@@ -4,8 +4,8 @@ subtitle: "From ballooned drawing and acceptance limits to measurement decisions
 description: "Turn a detail drawing into an inspection plan: balloon every requirement, set limits, choose instruments, decide near the limits and report a first article."
 category: Manufacturing
 tags: [quality, manufacturing, validation, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -80,7 +80,7 @@ It assumes you can read a simple orthographic drawing and use a caliper and a mi
 
 Every chapter follows one fictional part. This is an illustration. A small machine shop receives an order for 40 sensor brackets from a machine builder. The bracket is an L-shaped part machined from 6061-T6 aluminium alloy plate and clear anodised. The base is 80 mm long, 50 mm wide and 8 mm thick and carries two Ø6.6 mm mounting holes. An upright 8 mm thick rises to an overall height of 45 mm and carries a Ø10 mm sensor bore with tight limits, a 0.8 µm Ra finish and a perpendicularity tolerance, plus two M4 tapped holes for a cover. The underside of the base is datum A, the long side face is datum B and the outside face of the upright is datum C. The drawing is SB-2041, revision C, with a general tolerance note of ±0.1 mm.
 
-The shop, the customer, the drawing and every measured value are invented. None describes KEVOS® work, a real supplier or a real customer. Each chapter adds to the bracket's inspection record, and most include a mistake that an inspection room could plausibly make, how it was found and how it was put right.
+The shop, the customer, the drawing and every measured value are invented. None describes BIZOMAT work, a real supplier or a real customer. Each chapter adds to the bracket's inspection record, and most include a mistake that an inspection room could plausibly make, how it was found and how it was put right.
 
 ## How to use the book
 

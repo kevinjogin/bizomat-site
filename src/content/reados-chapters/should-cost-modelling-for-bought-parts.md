@@ -8,7 +8,7 @@ tags:
   - strategy
   - manufacturing
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -227,4 +227,4 @@ The price on an invoice is a negotiating outcome. The cost behind it is the econ
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations, not market prices. This article is general information, not financial advice.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations, not market prices. This article is general information, not financial advice.*

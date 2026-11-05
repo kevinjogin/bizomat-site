@@ -7,7 +7,7 @@ tags:
   - quality
   - systems
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ Clean water became reliable through engineering that separated waste from supply
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on urban water engineering, sanitary engineering and seawater desalination, together with established histories of public health and engineering. Historical figures are widely cited approximations. The worked example is illustrative. This article is general information; water treatment, plumbing and drinking water systems must be designed and maintained by qualified people in line with applicable requirements.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on urban water engineering, sanitary engineering and seawater desalination, together with established histories of public health and engineering. Historical figures are widely cited approximations. The worked example is illustrative. This article is general information; water treatment, plumbing and drinking water systems must be designed and maintained by qualified people in line with applicable requirements.*

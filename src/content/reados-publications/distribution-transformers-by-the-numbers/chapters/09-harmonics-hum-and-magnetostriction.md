@@ -9,7 +9,7 @@ draft: false
 
 Stand beside an energised transformer and you hear a steady hum, pitched a little below the lowest note of a guitar. It is the core changing shape a hundred times a second. Most of the time nobody minds, but a transformer near a boundary, an office or a house can become the subject of complaints, and an amorphous-core transformer, for reasons that go back to its atoms, is noisier than a conventional one. Meanwhile, inside the windings, the distorted currents drawn by variable-speed drives and other electronic loads are adding losses that the nameplate does not show.
 
-This chapter explains magnetostriction and why it makes a transformer hum at 100 Hz, how transformer noise is specified and measured, and how the replacement's noise was checked with the KEVOS® noise tools. It then turns to harmonics: why they add disproportionately to winding losses, how much they add for the plant's drives, and how the replacement's higher impedance, chosen in Chapter 5 to protect the switchboard, increases the voltage distortion they cause. It ends with a noise test that was declared a failure because it was done at the wrong time of day.
+This chapter explains magnetostriction and why it makes a transformer hum at 100 Hz, how transformer noise is specified and measured, and how the replacement's noise was checked with the BIZOMAT noise tools. It then turns to harmonics: why they add disproportionately to winding losses, how much they add for the plant's drives, and how the replacement's higher impedance, chosen in Chapter 5 to protect the switchboard, increases the voltage distortion they cause. It ends with a noise test that was declared a failure because it was done at the wrong time of day.
 
 ## Magnetostriction
 

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS thermodynamics calculations (batch handbook69). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS thermodynamics calculations (batch handbook69). SI units are explicit at each boundary.
 // Methods are standard engineering relations; no book tables, ratings or recommended settings are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

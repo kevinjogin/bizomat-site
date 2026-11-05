@@ -4,8 +4,8 @@ subtitle: "Macros, scripts and add-ins for a CAD office: choosing what to automa
 description: "Automate CAD work that pays: payback, recorded and written macros, the object model, units, selections, assembly traversal, properties, batch export, add-ins and upkeep."
 category: Engineering
 tags: [automation, design, systems, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -63,7 +63,7 @@ It suits CAD administrators and engineers who write macros, and managers who com
 
 Every chapter follows one fictional project. This is an illustration. A machinery builder's drawing office has nine CAD seats and releases about 40 drawings a week. Each release is done by hand: check the title block properties, save a PDF of the drawing, save a DXF of any sheet metal flat, save a STEP of the model, copy the files to the release folder with the right names, and record the release in the register. The office's CAD administrator proposes a "release pack" tool to do it, and the chapters follow the tool from the first time study to its third year in service.
 
-The business, the tool and its faults are invented; none describes KEVOS® work, a real office or a real product.
+The business, the tool and its faults are invented; none describes BIZOMAT work, a real office or a real product.
 
 ## Source limits and professional responsibility
 

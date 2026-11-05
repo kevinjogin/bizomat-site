@@ -7,7 +7,7 @@ tags:
   - validation
   - product-development
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -195,4 +195,4 @@ Where no external standard covers your product or service, your own specificatio
 
 ---
 
-*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal or engineering advice.*
+*Source: BIZOMAT notes. Examples in this article are illustrations. This article is general information, not legal or engineering advice.*

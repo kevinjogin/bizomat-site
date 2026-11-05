@@ -9,7 +9,7 @@ draft: false
 
 Chapter 8 found that the DL-3 chipper needs about 237.6 kg·m² more inertia, seen from its own shaft, to keep its speed above 570 rpm through a large offcut. This chapter designs the flywheel that supplies it. The design starts from the energy the flywheel must give up and the speed variation allowed, finds the inertia, chooses an outer diameter and width, and works back to the bore, the mass, the rim speed and the stress. It then checks what the larger rotor does to the motor's start.
 
-The chapter uses the KEVOS® flywheel rim design tool, compares a flywheel on the motor's shaft with one on the chipper's, and steel with cast iron. Its mistake is a cast-iron flywheel chosen from a catalogue for a shaft too fast for it.
+The chapter uses the BIZOMAT flywheel rim design tool, compares a flywheel on the motor's shaft with one on the chipper's, and steel with cast iron. Its mistake is a cast-iron flywheel chosen from a catalogue for a shaft too fast for it.
 
 ## The energy the flywheel must supply
 

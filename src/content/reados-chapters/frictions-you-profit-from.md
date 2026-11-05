@@ -7,7 +7,7 @@ tags:
   - customers
   - strategy
   - sales
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Friction is not wrong in itself. Businesses that solve hard problems deserve to 
 
 ---
 
-*Source: KEVOS® notes, drawing on Clayton Christensen's work on how established businesses respond to new competitors. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on Clayton Christensen's work on how established businesses respond to new competitors. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

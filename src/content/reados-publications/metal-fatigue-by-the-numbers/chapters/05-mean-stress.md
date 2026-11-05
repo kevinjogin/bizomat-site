@@ -36,7 +36,7 @@ formula: Goodman:  σa ÷ Se + σm ÷ Su = 1 ÷ n
 formula: Soderberg:  σa ÷ Se + σm ÷ Sy = 1 ÷ n
 formula: Gerber:  n σa ÷ Se + (n σm ÷ Su)² = 1
 formula: First-cycle yield:  n = Sy ÷ (σa + σm)
-caption: σa and σm are the local alternating and mean stresses, after the fatigue notch factor. Se is the corrected endurance limit, Su the tensile strength and Sy the yield strength. For a compressive mean stress, the KEVOS® tools use n = Se ÷ σa, ignoring the mean.
+caption: σa and σm are the local alternating and mean stresses, after the fatigue notch factor. Se is the corrected endurance limit, Su the tensile strength and Sy the yield strength. For a compressive mean stress, the BIZOMAT tools use n = Se ÷ σa, ignoring the mean.
 - Goodman | a straight line from Se to Su; the usual design choice
 - Soderberg | a straight line from Se to Sy; more conservative
 - Gerber | a parabola from Se to Su; closer to the average of test data for ductile steels

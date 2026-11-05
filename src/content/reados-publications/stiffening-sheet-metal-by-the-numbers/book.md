@@ -4,8 +4,8 @@ subtitle: "Making thin panels stiff, quiet and flat: plate deflection, buckling,
 description: "Make thin sheet metal panels stiff, flat and quiet with numbers: plate deflection, thermal buckling, flanges, wired edges, beads, hat stiffeners and drumming."
 category: Engineering
 tags: [design, manufacturing, product-development, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -73,7 +73,7 @@ It suits mechanical designers and drafters who design enclosures, guards, covers
 
 Every chapter follows one fictional panel. This is an illustration. A small machinery builder makes an enclosure for a dust-producing machine. The enclosure's side panel, called SP-90 here, is 900 mm high and 600 mm wide, cut from 1.2 mm zinc-coated steel sheet and screwed at 150 mm pitch to a light frame. An extraction fan holds the inside of the enclosure about 250 Pa below the workshop. The fan runs at 1,450 rpm and the machine's main motor at 2,880 rpm.
 
-Customers have complained that the side panel bows inwards when the extraction runs, oil-cans with a bang when leaned on, and hums. The builder sets three targets for a redesign: a deflection of no more than 3 mm under 250 Pa, no panel mode within 25% of the fan or motor frequency, and no visible bowing when the enclosure stands in the sun. The business, the customers, the complaints and the mistakes are invented, and the material properties are illustrations, not a grade's specified values. None describes KEVOS® work or a real product.
+Customers have complained that the side panel bows inwards when the extraction runs, oil-cans with a bang when leaned on, and hums. The builder sets three targets for a redesign: a deflection of no more than 3 mm under 250 Pa, no panel mode within 25% of the fan or motor frequency, and no visible bowing when the enclosure stands in the sun. The business, the customers, the complaints and the mistakes are invented, and the material properties are illustrations, not a grade's specified values. None describes BIZOMAT work or a real product.
 
 ## Source limits and professional responsibility
 

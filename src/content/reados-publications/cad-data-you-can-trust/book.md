@@ -4,8 +4,8 @@ subtitle: "Numbering, references, revisions, vaults, backups, licences and upgra
 description: "Move engineering files from shared folders to controlled data: numbering, references, revisions, permissions, migration, tested backups, licences, upgrades and supplier exchange."
 category: Engineering
 tags: [systems, design, quality, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -69,7 +69,7 @@ It assumes working knowledge of a parametric CAD system and of how drawings are 
 
 Every chapter follows one fictional engineering team. This is an illustration. A small Australian manufacturer of stainless-steel pump skids has nine CAD users: two engineers, five designers and two drafters. Fourteen other staff in production, purchasing and quality view drawings but do not model. For years the team has kept its CAD data on a shared drive, where a scan finds about 41,600 files occupying 186 GB. Each skid combines a pump, a motor, a baseframe, pipework, valves and instruments, so a single change to a common part can reach dozens of assemblies.
 
-The team decides to move its data into a product data management vault. The chapters follow that decision from measurement to migration and on into daily operation. Money is in Australian dollars at an internal cost rate of A$95 an hour; internal labour carries no GST, and bought items are shown excluding GST. The business, its people, files, times and costs are invented. None of them describes KEVOS® work, a real company or the performance of a real software product.
+The team decides to move its data into a product data management vault. The chapters follow that decision from measurement to migration and on into daily operation. Money is in Australian dollars at an internal cost rate of A$95 an hour; internal labour carries no GST, and bought items are shown excluding GST. The business, its people, files, times and costs are invented. None of them describes BIZOMAT work, a real company or the performance of a real software product.
 
 ## Source limits and professional responsibility
 

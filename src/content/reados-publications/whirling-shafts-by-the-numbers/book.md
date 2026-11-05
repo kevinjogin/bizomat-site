@@ -4,8 +4,8 @@ subtitle: "Critical speeds, supports, unbalance and balancing, centrifugal and g
 description: "How rotors behave at speed: critical speeds by Dunkerley and Rayleigh, foundation stiffness, balance grades, one- and two-plane balancing, centrifugal and gyroscopic loads, starts and spectra."
 category: Engineering
 tags: [design, validation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Gauge Fields in Condensed Matter, Volume I: Superflow and Vortex Lines (Disorder Fields, Phase Transitions)"
     creator: "H. Kleinert, World Scientific, Singapore"
     year: "1989"
-    note: "In copyright. Used only as a map for the idea, in Chapter 2, of reading a system's behaviour from the expansion of its energy about a minimum, which underlies Rayleigh's method. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the idea, in Chapter 2, of reading a system's behaviour from the expansion of its energy about a minimum, which underlies Rayleigh's method. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "The lateral vibration of loaded shafts in the neighbourhood of a whirling speed: the effect of want of balance"
     creator: "H. H. Jeffcott, Philosophical Magazine, Series 6, volume 37"
     year: "1919"
@@ -77,7 +77,7 @@ A spinning shaft is a spring, and every rotor carries a little unbalance that pu
 
 This book shows how to calculate and control them. It starts with the single-disc rotor and the critical speed, then estimates real critical speeds by Dunkerley's and Rayleigh's methods, sizes a shaft for strength, twist and whirl together, and adds the flexibility of bearings, frames and foundations. It then turns to unbalance: balance grades, balancing in one plane and in two, from known masses or with trial weights. It finishes with the loads that speed creates, centrifugal and gyroscopic, the start of a heavy rotor, and how to read a machine's vibration in service.
 
-It is for mechanical designers, machinery and reliability engineers, service technicians and fitters. It assumes school physics, algebra and some familiarity with vectors. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical designers, machinery and reliability engineers, service technicians and fitters. It assumes school physics, algebra and some familiarity with vectors. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -87,13 +87,13 @@ Every chapter follows one machine. This is an illustration. An agricultural equi
 - **Shaft:** 80 mm on the prototype, 90 mm in production, 100 mm on the 60 Hz export variant at 3,550 rpm.
 - **Around it:** a narrow discharge fan wheel, balanced in one plane; a truck-mounted variant used in feedlots; and the mill's customers, foundations and maintenance crews.
 
-Masses, dimensions, stiffnesses, vibration readings, motor and bearing data, prices and times are invented for the case or calculated from stated assumptions. None of it describes KEVOS® work or any real business, product or manufacturer's rating.
+Masses, dimensions, stiffnesses, vibration readings, motor and bearing data, prices and times are invented for the case or calculated from stated assumptions. None of it describes BIZOMAT work or any real business, product or manufacturer's rating.
 
 ## How to use the book
 
 Read Chapters 1 and 2 first: the critical speed and its estimates are used throughout. Chapters 3 and 4 complete the design of the shaft and its supports. Chapters 5 to 7 cover unbalance and balancing and are best read in order. Chapters 8 to 10 cover centrifugal loads, gyroscopic loads and starting, and can be read in any order. Chapter 11 brings the book together in service.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The hand methods used are the classical ones; they show which changes matter and give sound first estimates, but they assume rigid rotors and simple supports, and each chapter says where they stop being reliable.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. The hand methods used are the classical ones; they show which changes matter and give sound first estimates, but they assume rigid rotors and simple supports, and each chapter says where they stop being reliable.
 
 ## Source limits and professional responsibility
 

@@ -45,7 +45,7 @@ From relative to polar:
 
 And from relative to absolute, add the offsets to the previous point's coordinates.
 
-The quadrant warning matters. The ordinary inverse tangent function, written tan⁻¹ on a calculator or ATAN in a spreadsheet, returns an angle between −90° and +90° only. It cannot tell the difference between a point up and to the right and a point down and to the left, because dy ÷ dx has the same sign for both. The two-argument function, ATAN2 in spreadsheets and most programming languages, takes dx and dy separately and returns the angle in the right quadrant, between −180° and +180°. Use it, or check the signs of dx and dy by hand and add 180° when dx is negative. The KEVOS® [polar coordinates calculator](/tools/polar-coordinates/) converts in both directions and is a quick independent check.
+The quadrant warning matters. The ordinary inverse tangent function, written tan⁻¹ on a calculator or ATAN in a spreadsheet, returns an angle between −90° and +90° only. It cannot tell the difference between a point up and to the right and a point down and to the left, because dy ÷ dx has the same sign for both. The two-argument function, ATAN2 in spreadsheets and most programming languages, takes dx and dy separately and returns the angle in the right quadrant, between −180° and +180°. Use it, or check the signs of dx and dy by hand and add 180° when dx is negative. The BIZOMAT [polar coordinates calculator](/tools/polar-coordinates/) converts in both directions and is a quick independent check.
 
 ```figure
 type: formula

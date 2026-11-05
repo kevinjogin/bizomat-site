@@ -9,7 +9,7 @@ draft: false
 
 A spinning rotor resists having its axis turned. Try to swing a bicycle wheel spinning on its axle, holding the ends of the axle, and the wheel twists in your hands at right angles to the way you are turning it. The effect is gyroscopic, and in a machine it appears as a pair of equal and opposite forces on the rotor's bearings whenever the machine carrying the rotor turns, pitches or rolls while the rotor spins.
 
-For a machine bolted to a floor, gyroscopic loads are usually zero, because its axis never turns. For a machine on a vehicle, a ship, a crane or a swinging boom they can be large. This chapter works out the rotor's angular momentum, applies a KEVOS® tool to the truck-mounted version of the HM-30, and describes how tight turns in a feedlot lifted one of its bearings.
+For a machine bolted to a floor, gyroscopic loads are usually zero, because its axis never turns. For a machine on a vehicle, a ship, a crane or a swinging boom they can be large. This chapter works out the rotor's angular momentum, applies a BIZOMAT tool to the truck-mounted version of the HM-30, and describes how tight turns in a feedlot lifted one of its bearings.
 
 ## Angular momentum and the gyroscopic couple
 
@@ -59,7 +59,7 @@ At 2,950 rpm, 308.9 rad/s, the rotor's angular momentum is 6.6 × 308.9 = 2,039 
 
 This is an illustration. The HM-30T variant mounts the mill on a truck that drives along the feed alleys of a feedlot, grinding grain and blowing it into the bunks as it goes. The rotor's axis is horizontal and across the truck, and its bearings are 1,000 mm apart. In the feedlot the truck drives at up to 15 km/h, and turns at the ends of the alleys on a radius of about 12 m.
 
-The KEVOS® [Gyroscopic bearing load on a turning rotor](/tools/gyroscopic-bearing-load/) tool works out these loads. From the rotor, a solid disc, a thin ring or an entered inertia, its mass, spin speed and the precession, given either as a vehicle speed and turn radius or as a turning speed of the axis, it gives the inertia, the angular momentum, the precession rate, the gyroscopic couple and the equal and opposite reaction at each bearing over the span. It adds the rotor's weight shared equally between the bearings, reports the largest and smallest bearing loads, compares the largest with your allowable, and warns if the smaller load reverses, which would lift the rotor in that bearing. Its guide notes that it assumes steady precession at right angles to the spin, and that unbalance and shock loads must be added separately.
+The BIZOMAT [Gyroscopic bearing load on a turning rotor](/tools/gyroscopic-bearing-load/) tool works out these loads. From the rotor, a solid disc, a thin ring or an entered inertia, its mass, spin speed and the precession, given either as a vehicle speed and turn radius or as a turning speed of the axis, it gives the inertia, the angular momentum, the precession rate, the gyroscopic couple and the equal and opposite reaction at each bearing over the span. It adds the rotor's weight shared equally between the bearings, reports the largest and smallest bearing loads, compares the largest with your allowable, and warns if the smaller load reverses, which would lift the rotor in that bearing. Its guide notes that it assumes steady precession at right angles to the spin, and that unbalance and shock loads must be added separately.
 
 ```figure
 type: compare

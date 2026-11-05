@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -211,4 +211,4 @@ A business pays for waiting on its decisions every day, at a rate nobody set and
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations.*

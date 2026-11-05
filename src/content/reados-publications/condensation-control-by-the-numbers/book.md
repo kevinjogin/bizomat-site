@@ -4,8 +4,8 @@ subtitle: "Dew point, cold surfaces, breathing, heaters, desiccants and insulati
 description: "Keep water out of electrical enclosures and off cold pipes with numbers: dew point, night-sky cooling, breathing, heater sizing, desiccants, insulation and humidity logging."
 category: Engineering
 tags: [design, operations, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -92,7 +92,7 @@ Every chapter follows one fictional site. This is an illustration. A water utili
 
 The cabinet holds a variable-speed drive for the duty pump, which dissipates about **280 W** while the pump runs, plus a controller, power supplies and a telemetry modem that dissipate about **30 W** all the time. In summer the pump runs about **8 hours** a day, in daylight. A separate polycarbonate telemetry box on the same pole holds a radio and a battery. Beside the cabinet, a small block-wall pump room houses the pumps and a **DN100** steel delivery main that carries bore water at about **17 °C**.
 
-The utility, its site and its records are invented. None describes KEVOS® work or a real organisation. Weather conditions in the case are typical values chosen for the illustration, not records for any location.
+The utility, its site and its records are invented. None describes BIZOMAT work or a real organisation. Weather conditions in the case are typical values chosen for the illustration, not records for any location.
 
 ## How to use the book
 

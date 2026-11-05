@@ -4,8 +4,8 @@ subtitle: "Vapour pressure, mixtures, flammable headspaces, evaporation, blush, 
 description: "How solvents evaporate, mix, burn and condense in a workshop, and how to calculate headspaces, evaporation, ventilation, oven exhaust and recovery to control them."
 category: Operations
 tags: [operations, manufacturing, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -89,13 +89,13 @@ Every chapter follows one fictional workshop. This is an illustration. Plant S m
 
 The story begins with three events in one summer: a fire-service inspection that asked how the plant knew its oven was safe, a near miss when a worker began to cut an "empty" drum, and a batch of frames whose gloss finish came out milky. The plant's operations engineer is asked to put numbers on the plant's solvents and to cut their use.
 
-The plant, its products, its recipes, its suppliers and its measurements are invented. None describes KEVOS® work or a real company. Solvent properties are real values from the NIST Chemistry WebBook and the NIOSH Pocket Guide, cited where used; the thinner's composition is illustrative.
+The plant, its products, its recipes, its suppliers and its measurements are invented. None describes BIZOMAT work or a real company. Solvent properties are real values from the NIST Chemistry WebBook and the NIOSH Pocket Guide, cited where used; the thinner's composition is illustrative.
 
 ## How to use the book
 
 Read Chapters 1 to 3 in order: they cover where solvent goes, vapour pressure and blends, which every later chapter uses. Chapter 4 deals with flammable headspaces, Chapter 5 with evaporation and Chapter 6 with evaporative cooling and blush. Chapters 7 to 9 cover ventilation of rooms, local exhaust and ovens. Chapter 10 covers recovery and Chapter 11 substitution and proving a reduction.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

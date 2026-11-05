@@ -79,7 +79,7 @@ Notice that in a Diesel cycle the peak pressure is simply the end-of-compression
 
 ### The dual cycle
 
-The dual cycle splits the heat: part is added at constant volume at the top of the stroke, raising the pressure, and the rest at constant pressure as the piston moves away. The KEVOS® cycle check models only the pure Otto and Diesel cases, but the dual cycle is simple to work by hand and sits between them.
+The dual cycle splits the heat: part is added at constant volume at the top of the stroke, raising the pressure, and the rest at constant pressure as the piston moves away. The BIZOMAT cycle check models only the pure Otto and Diesel cases, but the dual cycle is simple to work by hand and sits between them.
 
 This is an illustration. Suppose the standby set's combustion raises the pressure from 5,720 kPa to a limit of 8,000 kPa at constant volume, and the rest of the same 999.6 kJ/kg is added at constant pressure. The constant-volume part takes the temperature from 995.1 K to 995.1 × 8,000 ÷ 5,720 = 1,391.8 K and adds 0.7175 × 396.7 = 284.6 kJ/kg. The remaining 715.0 kJ/kg at constant pressure takes it to 1,391.8 + 715.0 ÷ 1.0045 = 2,103.5 K, a cutoff ratio of 2,103.5 ÷ 1,391.8 = 1.51. Expansion to the bottom of the stroke ends at 2,103.5 × (1.51 ÷ 18)^0.4 = 780.9 K, so 0.7175 × (780.9 − 313.15) = 335.6 kJ/kg is rejected and the net work is 664.0 kJ/kg, an efficiency of **66.43%**.
 

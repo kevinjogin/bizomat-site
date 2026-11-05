@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ A sponsor is the person with the authority to start and stop a project and the e
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching and practitioner material on project sponsorship, G. J. Rankins' comparison of two project management methods and their board structures, P. Morris and A. Jamieson on programme and benefits management, and teaching material on benefits realisation. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching and practitioner material on project sponsorship, G. J. Rankins' comparison of two project management methods and their board structures, P. Morris and A. Jamieson on programme and benefits management, and teaching material on benefits realisation. Examples and figures in this article are illustrations. This article is general information.*

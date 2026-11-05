@@ -4,8 +4,8 @@ subtitle: "From a customer's requirement to a costed, inspected batch of sheet m
 description: "Plan a sheet metal production run with numbers: capacity and fill lines, flared blanks and corners, nesting yield, routing times, setups, batch size, learning, unit cost and first-article inspection."
 category: Manufacturing
 tags: [manufacturing, operations, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -69,7 +69,7 @@ Every chapter follows one fictional product. This is an illustration. An equipme
 
 The shop's design is a flared tray of 1.2 mm cold-rolled steel, 600 × 400 mm at the top and 205 mm deep, with walls flaring at 11.31° from vertical, a hemmed rim, riveted corners, handle slots in the short walls and pressed denesting lugs. It cuts blanks on a fibre laser from 2,400 × 1,200 mm sheet, folds on a press brake, rivets on a bench jig and sends the trays out for powder coating.
 
-The distributor, the shop, the dimensions, the times, the rates, the prices and the mistakes are invented. None describes KEVOS® work or a real business. Money is in Australian dollars, and each figure states whether GST is included.
+The distributor, the shop, the dimensions, the times, the rates, the prices and the mistakes are invented. None describes BIZOMAT work or a real business. Money is in Australian dollars, and each figure states whether GST is included.
 
 ## How to use the book
 

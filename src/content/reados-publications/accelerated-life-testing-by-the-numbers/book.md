@@ -4,8 +4,8 @@ subtitle: "Arrhenius, humidity and thermal-cycling models, Weibull analysis and 
 description: "Prove a product's life without waiting years: the Boltzmann factor and Arrhenius model, capacitor life, humidity and thermal cycling, Weibull analysis, sample sizes and HALT."
 category: Products
 tags: [validation, quality, product-development, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-28
@@ -92,7 +92,7 @@ Every chapter follows one fictional product. This is an illustration. A small Au
 
 FL-60 is designed to run **12 hours a night**, 4,380 hours a year, for a design life of **10 years**, or **43,800 operating hours**, outdoors in Australian conditions. The reliability target is that at least **90%** of drivers survive the design life, demonstrated with **90% confidence**. The business offers a 5-year warranty. Its test budget is a few months of chamber time, not years.
 
-The manufacturer, the floodlight, its parts, test results and field returns are invented. None describes KEVOS® work or a real business.
+The manufacturer, the floodlight, its parts, test results and field returns are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

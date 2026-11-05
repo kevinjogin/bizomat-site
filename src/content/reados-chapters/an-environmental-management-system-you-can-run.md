@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ An environmental management system earns its place by changing everyday decision
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on environmental management systems and the plan-do-check-act cycle, R. Hillary (ed.), ISO 14001: Case Studies and Practical Experiences, a European Commission EMAS case study of a micro-enterprise, and R. Burritt, S. Schaltegger and D. Zvezdov (2011) on carbon management accounting. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on environmental management systems and the plan-do-check-act cycle, R. Hillary (ed.), ISO 14001: Case Studies and Practical Experiences, a European Commission EMAS case study of a micro-enterprise, and R. Burritt, S. Schaltegger and D. Zvezdov (2011) on carbon management accounting. Examples and figures in this article are illustrations. This article is general information.*

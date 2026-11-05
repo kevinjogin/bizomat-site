@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Navigators and surveyors turned position into something that could be measured, 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute surveying or legal advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute surveying or legal advice.*

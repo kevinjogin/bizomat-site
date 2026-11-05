@@ -9,7 +9,7 @@ draft: false
 
 A cold mass has to be held in place, and whatever holds it connects it to the warm vessel. Every support is therefore a heat leak, and the art of supporting a cold mass is to carry the loads, stiffly enough for the job, through as little heat-conducting material as possible. Long, thin, low-conductivity parts do it best; short, fat, metal ones worst.
 
-This chapter calculates the heat that CT-40's three G-10 support tubes conduct, from the conductivity integral of Chapter 4, and shows how to get the same answer from the KEVOS® layered wall tool by giving it the right mean conductivity. It follows the temperature along a support, compares other materials and shapes, explains thermal intercepts, and ends with an estimate that used the conductivity at the cold end and came out at less than half the real leak.
+This chapter calculates the heat that CT-40's three G-10 support tubes conduct, from the conductivity integral of Chapter 4, and shows how to get the same answer from the BIZOMAT layered wall tool by giving it the right mean conductivity. It follows the temperature along a support, compares other materials and shapes, explains thermal intercepts, and ends with an estimate that used the conductivity at the cold end and came out at less than half the real leak.
 
 ## Heat through a support
 

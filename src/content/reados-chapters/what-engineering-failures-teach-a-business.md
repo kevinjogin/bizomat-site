@@ -7,7 +7,7 @@ tags:
   - quality
   - leadership
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -184,4 +184,4 @@ The major engineering failures of recent decades were rarely caused by physics n
 
 ---
 
-*Source: KEVOS® notes, drawing on earlier KEVOS® engineering history handbooks covering major accident investigations from 1979 to 2010, long-span bridges and the railway air brake. Accounts of each event are brief summaries of published investigation findings. The worked example is an illustration. This article is general information and does not constitute professional engineering or safety advice.*
+*Source: BIZOMAT notes, drawing on earlier BIZOMAT engineering history handbooks covering major accident investigations from 1979 to 2010, long-span bridges and the railway air brake. Accounts of each event are brief summaries of published investigation findings. The worked example is an illustration. This article is general information and does not constitute professional engineering or safety advice.*

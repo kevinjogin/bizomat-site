@@ -7,7 +7,7 @@ tags:
   - validation
   - strategy
   - customers
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -204,4 +204,4 @@ Desk research gathers existing information from internal records and external so
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

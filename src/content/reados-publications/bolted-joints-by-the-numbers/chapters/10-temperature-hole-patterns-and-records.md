@@ -9,7 +9,7 @@ draft: false
 
 Two things change a bolted joint after it has been designed and tightened, without anyone touching it. Temperature changes it, when the bolt and the parts it clamps expand by different amounts. And the parts themselves, as they were actually made, decide whether the bolts go in at all: a bolt circle whose holes are drilled out of position in two parts can leave a screw that will not start, or one that is bent as it is forced home. This chapter deals with both, and then with the record that ties all the CT-1's joints together.
 
-It uses the KEVOS® bolted joint at temperature tool on the rig's aluminium valve manifold, and the bolt pattern hole plan tool on the test head. Its mistake is a manifold whose screws were tightened so close to proof that a hot afternoon took them past it.
+It uses the BIZOMAT bolted joint at temperature tool on the rig's aluminium valve manifold, and the bolt pattern hole plan tool on the test head. Its mistake is a manifold whose screws were tightened so close to proof that a hot afternoon took them past it.
 
 ## Preload and temperature
 

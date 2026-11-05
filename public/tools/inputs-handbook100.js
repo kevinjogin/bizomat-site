@@ -1,4 +1,4 @@
-// KEVOS® Tools input guides: handbook100. What each input means, how to get it right and which figure explains it.
+// BIZOMAT Tools input guides: handbook100. What each input means, how to get it right and which figure explains it.
 // Read with public/tools/input-guides.js; units, accepted ranges and examples come from data-handbook100.js.
 window.WORKOS_INPUTS = Object.assign(window.WORKOS_INPUTS || {}, {
   "cutting-speed-table-adjustment": {

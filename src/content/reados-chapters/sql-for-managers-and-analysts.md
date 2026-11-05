@@ -6,7 +6,7 @@ category: "Technology"
 tags:
   - systems
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -257,4 +257,4 @@ SQL is the standard language for asking questions of business databases, and a m
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general relational database and SQL practice. Syntax varies between database products; check the documentation for your system. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general relational database and SQL practice. Syntax varies between database products; check the documentation for your system. The worked example is illustrative. This article is general information.*

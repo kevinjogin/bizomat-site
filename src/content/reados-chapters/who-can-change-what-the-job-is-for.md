@@ -7,7 +7,7 @@ tags:
   - customers
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -230,4 +230,4 @@ Scope does not creep by itself; people move it. Decide who may redefine the job,
 
 ---
 
-*Source: KEVOS® notes, drawing on S. Portny's classification of project drivers, supporters and observers, E. Baker (2012) on stakeholder expectations, teaching material on program and portfolio stakeholder engagement, and C. Beringer, D. Jonas and A. Kock, "Behavior of internal stakeholders in project portfolio management and its impact on success", International Journal of Project Management (2013). Examples in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on S. Portny's classification of project drivers, supporters and observers, E. Baker (2012) on stakeholder expectations, teaching material on program and portfolio stakeholder engagement, and C. Beringer, D. Jonas and A. Kock, "Behavior of internal stakeholders in project portfolio management and its impact on success", International Journal of Project Management (2013). Examples in this article are illustrations. This article is general information.*

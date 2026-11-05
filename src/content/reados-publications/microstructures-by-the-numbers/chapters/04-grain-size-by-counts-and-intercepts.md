@@ -21,7 +21,7 @@ Prior austenite boundaries are not visible after a nital etch, which shows the m
 
 The ASTM grain size number G, defined in ASTM E112, is a logarithmic scale. Its original definition is that at a magnification of 100×, one square inch of image contains 2^(G−1) grains. Each step of one in G therefore halves the area of an average grain. G = 1 corresponds to one grain per square inch at 100×, a coarse structure; G = 8 corresponds to 128 grains per square inch at 100×, a fine one.
 
-The same scale is written in metric quantities: the number of grains per square millimetre of actual specimen, N_A, and the mean lineal intercept length, ℓ̄, the average distance between boundaries along a straight test line. ASTM E112 gives the conversions, which the KEVOS® grain size tools use.
+The same scale is written in metric quantities: the number of grains per square millimetre of actual specimen, N_A, and the mean lineal intercept length, ℓ̄, the average distance between boundaries along a straight test line. ASTM E112 gives the conversions, which the BIZOMAT grain size tools use.
 
 ```figure
 type: formula

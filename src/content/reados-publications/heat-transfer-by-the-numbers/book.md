@@ -4,8 +4,8 @@ subtitle: "Conduction, insulation, convection, radiation, heat exchangers and wa
 description: "Calculate heat flows in plant: energy and power, conduction through walls and pipe insulation, convection, radiation, economic insulation, heat exchangers and heating and cooling times."
 category: Engineering
 tags: [design, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -69,11 +69,11 @@ It assumes school algebra and a calculator. The physics is explained from the st
 
 The book follows **HW-60**, the wash-down hot water system at a fictional food factory. A gas-fired water heater supplies **85 °C** water to a **3,000 L** stainless steel storage tank, 1.5 m in diameter and 1.8 m tall, and from the tank along **60 m** of stainless steel pipe, 60.3 mm in outside diameter, to hose stations on the production floor. The plant room and the floor are at about **20 °C**. The hot water runs about **6,000 hours** a year.
 
-All quantities, prices, coefficients chosen for the case and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Heat is costed at an assumed gas price of **A$22 per gigajoule** and a heater efficiency of 85%, about **A$0.093** per kilowatt-hour of heat delivered. Money is in Australian dollars, excluding GST.
+All quantities, prices, coefficients chosen for the case and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Heat is costed at an assumed gas price of **A$22 per gigajoule** and a heater efficiency of 85%, about **A$0.093** per kilowatt-hour of heat delivered. Money is in Australian dollars, excluding GST.
 
 ## How to use the book
 
-Chapters 1 to 5 build the tools: energy and power, conduction, convection and radiation. Chapter 6 uses them to choose insulation, Chapter 7 to size a heat exchanger, and Chapter 8 to estimate warm-up and cool-down times. Calculators for several steps are in the KEVOS® tools, including [insulated pipe heat loss](/tools/insulated-pipe/), [radiant heat](/tools/radiant-heat/) and [LMTD heat exchanger](/tools/lmtd-exchanger/). The companion book *Thermal Expansion by the Numbers* follows the same system through the movement and stress that heat causes.
+Chapters 1 to 5 build the tools: energy and power, conduction, convection and radiation. Chapter 6 uses them to choose insulation, Chapter 7 to size a heat exchanger, and Chapter 8 to estimate warm-up and cool-down times. Calculators for several steps are in the BIZOMAT tools, including [insulated pipe heat loss](/tools/insulated-pipe/), [radiant heat](/tools/radiant-heat/) and [LMTD heat exchanger](/tools/lmtd-exchanger/). The companion book *Thermal Expansion by the Numbers* follows the same system through the movement and stress that heat causes.
 
 ## Source limits and professional responsibility
 

@@ -9,7 +9,7 @@ draft: false
 
 The thin-wall formulas of Chapter 4 assume that the hoop stress is the same right through the wall. For the RH-40 spindle, with a wall a tenth of its diameter and only 7 MPa inside, that assumption costs almost nothing. For a hydraulic cylinder at 21 MPa with a wall of 20 mm on a 140 mm bore, or a high-pressure pump body, it hides the fact that the bore works much harder than the outside, and it misses a third stress altogether: the pressure pressing directly on the bore surface.
 
-This chapter sets out the thick-wall solution published by Gabriel Lamé in the 1850s, applies it with the KEVOS® pressure cylinder tool to the RH-40's hydraulic chuck cylinder, and shows why adding wall thickness gives less and less benefit until it gives none.
+This chapter sets out the thick-wall solution published by Gabriel Lamé in the 1850s, applies it with the BIZOMAT pressure cylinder tool to the RH-40's hydraulic chuck cylinder, and shows why adding wall thickness gives less and less benefit until it gives none.
 
 ## Stress through the wall
 

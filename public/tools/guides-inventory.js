@@ -1,4 +1,4 @@
-// KEVOS® tool guides: Inventory.
+// BIZOMAT tool guides: Inventory.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'reorder-point': {
     purpose: 'Calculates the stock level at which to reorder so the order arrives before stock runs out.',

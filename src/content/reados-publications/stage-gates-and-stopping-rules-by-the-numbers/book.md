@@ -4,8 +4,8 @@ subtitle: "Expected value, the value of information, real options, sunk costs an
 description: "Avoid committing too early and continuing too long: decision trees at each gate, the value of tests and of waiting, sunk costs, escalation, kill criteria and a pivot."
 category: Projects
 tags: [projects, product-development, finance, strategy]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -134,7 +134,7 @@ Every chapter follows one fictional programme. This is an illustration. **Corell
 
 The programme meets most of the problems the book describes. A tooling order is placed too early. The development stage runs over through a series of small top-ups. The field season returns a weak result, and at the launch gate the team must choose between launching anyway, waiting a season, pivoting to a cheaper retrofit kit for growers' existing booms, or stopping, while a robotic welding cell for the chaser-bin line competes for the same capital.
 
-The business, its people, its products, its records and every number in the case are invented. None describes KEVOS® work, a real business or a real product.
+The business, its people, its products, its records and every number in the case are invented. None describes BIZOMAT work, a real business or a real product.
 
 ## How to use the book
 

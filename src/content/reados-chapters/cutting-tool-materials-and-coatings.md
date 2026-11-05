@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - process-improvement
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -209,4 +209,4 @@ Cutting tool materials span a range from tough high-speed steel to extremely har
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow tool suppliers' recommendations for specific materials, operations and machines.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow tool suppliers' recommendations for specific materials, operations and machines.*

@@ -9,13 +9,13 @@ draft: false
 
 Frequency decides where the heat is generated; power and time decide how much heat goes in and how far it spreads. The two are tied together by the energy the heated layer needs. Heat it quickly with high power, and the heat stays near the surface where it was generated, giving a shallow, sharp case. Heat it slowly with less power, and conduction carries the heat inwards during the heating, giving a deeper, more gradual case and a hotter core. For a given frequency, time is the main control of case depth.
 
-This chapter calculates the energy and power for the IH-40 journal with the KEVOS® tool introduced in Chapter 2, shows how heating time trades against power and power density, estimates how far heat conducts in the seconds of heating, explains single-shot and scanning power, and works through an operator's longer heat that overheated the surface.
+This chapter calculates the energy and power for the IH-40 journal with the BIZOMAT tool introduced in Chapter 2, shows how heating time trades against power and power density, estimates how far heat conducts in the seconds of heating, explains single-shot and scanning power, and works through an operator's longer heat that overheated the surface.
 
 ## The energy the layer needs
 
 To harden, the layer that will become the case, plus a transition zone beneath it, must be heated above its hardening temperature. The energy is the layer's mass times its mean specific heat times its temperature rise. Everything beyond that, heat conducted deeper into the core, radiated and convected from the surface, and lost in the coil and its leads, is extra.
 
-The KEVOS® [Induction hardening plan](/tools/induction-hardening-plan/) tool estimates the energy to heat the layer and the power that implies. From the bar diameter, the heated length, the case depth and the heated depth as a multiple of it, the hardening and starting temperatures, the mean specific heat, the steel's density, the heating time and the generator-to-work efficiency, it gives the heated layer's mass, the energy to heat it, the power at the work, the power from the generator, and the surface power density over the heated area. It treats the heat as going into the layer only.
+The BIZOMAT [Induction hardening plan](/tools/induction-hardening-plan/) tool estimates the energy to heat the layer and the power that implies. From the bar diameter, the heated length, the case depth and the heated depth as a multiple of it, the hardening and starting temperatures, the mean specific heat, the steel's density, the heating time and the generator-to-work efficiency, it gives the heated layer's mass, the energy to heat it, the power at the work, the power from the generator, and the surface power density over the heated area. It treats the heat as going into the layer only.
 
 ```figure
 type: steps

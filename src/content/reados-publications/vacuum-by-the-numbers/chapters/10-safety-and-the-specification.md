@@ -87,7 +87,7 @@ The vacuum is not the only hazard.
 
 ## Vacuum lifting
 
-The same pressure-times-area arithmetic governs vacuum lifting cups and grippers, which are common in sheet handling and packaging. A cup of 100 mm diameter at 60 kPa absolute, with 101.3 kPa outside, holds with a force of (101,325 − 60,000) × π × 0.05² = about **325 N**, before any allowance for the cup's effective area, the surface's porosity, acceleration or the angle of the load. The KEVOS® [vacuum cup calculator](/tools/vacuum-cup/) does the sum. The safety questions are the same as for a chamber: what happens when the vacuum is lost, through a leak, a power failure or a damaged cup, and whether the load can fall on anyone. Lifting devices are designed with safety factors, reservoirs or check valves that hold vacuum for a time if the supply fails, and warnings of low vacuum, as their standards and makers require.
+The same pressure-times-area arithmetic governs vacuum lifting cups and grippers, which are common in sheet handling and packaging. A cup of 100 mm diameter at 60 kPa absolute, with 101.3 kPa outside, holds with a force of (101,325 − 60,000) × π × 0.05² = about **325 N**, before any allowance for the cup's effective area, the surface's porosity, acceleration or the angle of the load. The BIZOMAT [vacuum cup calculator](/tools/vacuum-cup/) does the sum. The safety questions are the same as for a chamber: what happens when the vacuum is lost, through a leak, a power failure or a damaged cup, and whether the load can fall on anyone. Lifting devices are designed with safety factors, reservoirs or check valves that hold vacuum for a time if the supply fails, and warnings of low vacuum, as their standards and makers require.
 
 ## VC-200's specification
 

@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

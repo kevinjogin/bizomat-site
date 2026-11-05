@@ -9,7 +9,7 @@ draft: false
 
 Chapters 1 to 4 kept the rotor away from its critical speed so that its unbalance would not be amplified. This chapter turns to the unbalance itself: what it is, how big a rotating force it makes, and how much of it a rotor may be allowed to keep. The answer to the last question is a balance quality grade, a single number that lets a designer, a balancing shop and a maintenance technician agree on what "balanced" means for a particular rotor at a particular speed.
 
-The chapter applies a KEVOS® tool to the HM-30's rotor, shows why the export variant needs a tighter tolerance in grams even at the same grade, and describes the day an HM-30 lost a hammer.
+The chapter applies a BIZOMAT tool to the HM-30's rotor, shows why the export variant needs a tighter tolerance in grams even at the same grade, and describes the day an HM-30 lost a hammer.
 
 ## Unbalance
 
@@ -59,7 +59,7 @@ The grade has a useful property. Because the permissible eccentricity falls in p
 
 ## The HM-30 rotor's tolerance
 
-The KEVOS® [Permissible residual unbalance (balance grade)](/tools/balance-grade/) tool calculates the permissible residual unbalance and specific unbalance of a rigid rotor from its mass, maximum service speed and balance quality grade, for one correction plane or two with an equal share. It also gives the correction mass that the permissible unbalance per plane represents at a radius of 100 mm, and it compares a measured residual unbalance with the tolerance if you enter one. Its guide notes that it applies to rigid rotors only, and that the equal share between two planes applies only when the centre of mass is midway between them.
+The BIZOMAT [Permissible residual unbalance (balance grade)](/tools/balance-grade/) tool calculates the permissible residual unbalance and specific unbalance of a rigid rotor from its mass, maximum service speed and balance quality grade, for one correction plane or two with an equal share. It also gives the correction mass that the permissible unbalance per plane represents at a radius of 100 mm, and it compares a measured residual unbalance with the tolerance if you enter one. Its guide notes that it applies to rigid rotors only, and that the equal share between two planes applies only when the centre of mass is midway between them.
 
 This is an illustration. For the HM-30's 180 kg rotor at 2,950 rpm, 308.9 rad/s, balanced in two planes:
 

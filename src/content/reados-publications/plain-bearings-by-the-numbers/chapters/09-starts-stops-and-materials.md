@@ -9,7 +9,7 @@ draft: false
 
 Everything in Chapters 3 to 8 described a bearing turning at full speed on a full film. For most of a fan's life that is true, and its bearing barely wears. The exceptions are the moments when it is not: the first revolutions after a start, when the journal is lifting off the bottom of its bore, and the last ones before it stops, when the film is collapsing. Almost all of a hydrodynamic bearing's wear happens in those moments, and the lining material is chosen largely for how well it survives them.
 
-This chapter estimates how FB-75's film thickness grows with speed, using the short-bearing solution down to low speeds, judges the lubrication regime with the KEVOS® film thickness ratio tool, and shows why a hot stop is harder on the bearing than a cold start. It then describes the main lining materials and what each offers, and ends with an energy-saving change that multiplied the bearing's starts.
+This chapter estimates how FB-75's film thickness grows with speed, using the short-bearing solution down to low speeds, judges the lubrication regime with the BIZOMAT film thickness ratio tool, and shows why a hot stop is harder on the bearing than a cold start. It then describes the main lining materials and what each offers, and ends with an energy-saving change that multiplied the bearing's starts.
 
 ## The film at low speed
 

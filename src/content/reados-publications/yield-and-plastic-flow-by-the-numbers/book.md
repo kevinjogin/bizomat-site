@@ -4,8 +4,8 @@ subtitle: "Dislocations, tensile tests, work hardening, yield criteria, proof te
 description: "How metals yield and flow and how to use it: elastic constants, tensile tests, true stress and work hardening, hardness, von Mises and Tresca, proof tests, bending, rolling and residual stress."
 category: Engineering
 tags: [design, manufacturing, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Gauge Fields in Condensed Matter, Volume II: Stresses and Defects (Differential Geometry, Crystal Melting)"
     creator: "H. Kleinert, World Scientific, Singapore"
     year: "1989"
-    note: "In copyright. Used only as a map for the physics behind Chapters 1, 3 and 10: crystals as ordered lattices, displacement and strain, dislocations as the line defects that carry plastic flow, their interactions, and the extension of elasticity to defects. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the physics behind Chapters 1, 3 and 10: crystals as ordered lattices, displacement and strain, dislocations as the line defects that carry plastic flow, their interactions, and the extension of elasticity to defects. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Introduction to Dislocations, fifth edition"
     creator: "D. Hull and D. J. Bacon, Butterworth-Heinemann"
     year: "2011"
@@ -48,11 +48,11 @@ references:
   - title: "ISO 6506-1 Metallic materials — Brinell hardness test — Part 1: Test method"
     creator: "International Organization for Standardization"
     year: "2014"
-    note: "Named by number and scope only in Chapter 4, as the method behind the Brinell validity rules that the KEVOS® tool applies."
+    note: "Named by number and scope only in Chapter 4, as the method behind the Brinell validity rules that the BIZOMAT tool applies."
   - title: "ASTM E112 Standard Test Methods for Determining Average Grain Size"
     creator: "ASTM International"
     year: "2013"
-    note: "Named by number and scope only in Chapter 4, as the definition of the grain size number that the KEVOS® tool calculates."
+    note: "Named by number and scope only in Chapter 4, as the definition of the grain size number that the BIZOMAT tool calculates."
   - title: "Model Code of Practice: Managing the risks of plant in the workplace"
     creator: "Safe Work Australia"
     year: "2022"
@@ -75,7 +75,7 @@ Every metal part is designed around one number more than any other: its yield st
 
 This book explains yield and plastic flow from the crystal up and turns them into numbers that engineers use every day. It starts with the elastic constants and the dislocations that make metals yield at a tiny fraction of their theoretical strength, then reads a tensile test, converts it to true stress and strain, and describes work hardening. It relates hardness and grain size to strength, checks parts under combined stresses, finds the pressures at which a thick tube first yields and finally collapses, and then turns to deliberate plastic flow in bending, tube bending and thread rolling. It ends with thermal restraint, residual stress and annealing.
 
-It is for mechanical and manufacturing engineers, designers, fabricators, and test and quality staff. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical and manufacturing engineers, designers, fabricators, and test and quality staff. It assumes school physics, algebra and a first course in stress analysis. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -87,13 +87,13 @@ Every chapter follows one product. This is an illustration. A hydraulic cylinder
 - **Fabricated parts:** 10 mm grade 350 steel plate mounting brackets bent on a press brake, and 16 × 2 mm cold-drawn seamless steel tube for the hydraulic lines.
 - **Test bench:** a pressure test bench with an intensifier, an oil heater and a frame tied by 25 mm steel bars.
 
-Strengths, test results, loads, pressures, prices and times are the case builder's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, product or supplier's data.
+Strengths, test results, loads, pressures, prices and times are the case builder's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, product or supplier's data.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first: they set out the elastic and plastic behaviour that every later chapter uses. Chapter 4 relates hardness and grain size to strength. Chapters 5 and 6 deal with yield under combined stress and the behaviour of a pressurised tube up to collapse. Chapters 7 to 9 cover deliberate plastic flow in bending, tube bending and thread rolling, and Chapter 10 covers thermal restraint, residual stress and annealing.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The formulas are sound first estimates for ductile steels; mill certificates, tests and trial pieces are the final word on real material.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. The formulas are sound first estimates for ductile steels; mill certificates, tests and trial pieces are the final word on real material.
 
 ## Source limits and professional responsibility
 

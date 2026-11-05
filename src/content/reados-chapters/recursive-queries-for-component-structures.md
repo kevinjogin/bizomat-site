@@ -7,7 +7,7 @@ tags:
   - systems
   - manufacturing
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Recursive SQL is a method for following relationships. Reliable component planni
 
 ---
 
-*Source basis: original KEVOS® editorial explanation drawing on unary and recursive relationship discussions in the supplied Designing Effective Database Systems (2005) and Beginning Relational Data Modeling, second edition (2005). Current SQL documentation is linked for recursive-query behaviour. Component structures and calculations are illustrative, not approved engineering designs.*
+*Source basis: original BIZOMAT editorial explanation drawing on unary and recursive relationship discussions in the supplied Designing Effective Database Systems (2005) and Beginning Relational Data Modeling, second edition (2005). Current SQL documentation is linked for recursive-query behaviour. Component structures and calculations are illustrative, not approved engineering designs.*

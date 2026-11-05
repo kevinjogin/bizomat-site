@@ -4,8 +4,8 @@ subtitle: "Dimensional analysis, similitude and model testing for engineers, wor
 description: "Use dimensions, dimensionless groups and similarity laws to plan a scale model, scale its results to full size, fit power laws to test data and know when the model stops telling the truth."
 category: Engineering
 tags: [design, experimentation, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -93,13 +93,13 @@ Every chapter follows one fictional project. This is an illustration. A designer
 - **Storage:** a 6.0 m diameter circular storage tank that empties back into the wet well through a 300 mm outlet.
 - **Model:** a 1:6 geometric scale model in a hydraulics laboratory, with the pumps replaced by suction pipes of 100 mm bore, each with a flow meter, and the lab's water at about 20 °C.
 
-The station, its dimensions, the lab and every measurement are invented. None describes KEVOS® work, a real station or a real laboratory.
+The station, its dimensions, the lab and every measurement are invented. None describes BIZOMAT work, a real station or a real laboratory.
 
 ## How to use the book
 
 Read Chapters 1 to 4 in order: they set out dimensions, dimensionless groups, similarity and Froude scaling, which every later chapter uses. Chapters 5 and 6 deal with the scale effects that limit a small model, and Chapters 7 and 8 with turning test data into scaling laws without being misled by a change of regime. Chapter 9 applies the same ideas to pumps and fans, and Chapter 10 brings everything together in a test plan and report.
 
-Water properties come from the NIST Chemistry WebBook and are carried to more figures than a model test could justify, so that a reader can follow each step. KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
+Water properties come from the NIST Chemistry WebBook and are carried to more figures than a model test could justify, so that a reader can follow each step. BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates.
 
 ## Source limits and professional responsibility
 

@@ -27,7 +27,7 @@ The **bend allowance** is the length of the neutral axis through the bend, which
 
 BA = θ × (R + K × t)
 
-For the bracket's 90° bends, θ = π ÷ 2 = 1.5708, R = 2 mm, t = 2 mm and K = 0.40, so BA = 1.5708 × (2 + 0.8) = **4.398 mm**. A 45° bend in the same material takes half of that, 2.199 mm; a 135° bend takes one and a half times, 6.597 mm. The KEVOS® [bend allowance calculator](/tools/bend-allowance/) gives the allowance, setback and deduction for any bend from a supplied K-factor.
+For the bracket's 90° bends, θ = π ÷ 2 = 1.5708, R = 2 mm, t = 2 mm and K = 0.40, so BA = 1.5708 × (2 + 0.8) = **4.398 mm**. A 45° bend in the same material takes half of that, 2.199 mm; a 135° bend takes one and a half times, 6.597 mm. The BIZOMAT [bend allowance calculator](/tools/bend-allowance/) gives the allowance, setback and deduction for any bend from a supplied K-factor.
 
 The angle in the formula is the angle the sheet turns through, not the angle between the flanges. A right-angle bracket's bend is 90° by either measure, but a flange bent up to make a 60° included angle with its neighbour has turned through 120°. Mixing the two is a common source of flat pattern errors on non-right-angled parts.
 

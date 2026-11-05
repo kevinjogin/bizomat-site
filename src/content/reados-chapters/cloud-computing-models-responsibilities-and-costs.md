@@ -7,7 +7,7 @@ tags:
   - systems
   - finance
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -214,4 +214,4 @@ Cloud computing delivers computing resources as metered, on-demand services. Inf
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information; seek advice on privacy and contractual obligations for specific situations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information; seek advice on privacy and contractual obligations for specific situations.*

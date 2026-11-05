@@ -40,7 +40,7 @@ Three of the four losses were fixable at modest cost. The main filter's element 
 
 Raising the compressor's pressure would have pushed more air through the same restrictions, and line 2 would have seen more pressure at peak times. It would also have raised the pressure, and so the energy use and the leak flow, across the whole factory, every hour of every day, to cure a few minutes' shortfall at one machine.
 
-Instead, the maintenance lead fixed the restrictions. The main filter element was replaced and its gauge moved to where it could be seen, with a replacement point marked on the dial. The branch to line 2 was replaced with a larger pipe, sized using the KEVOS® [air pipe pressure drop](/tools/air-pipe-drop/) calculator for the line's measured peak flow with a margin for growth. The drop's hose and coupling were replaced with a larger-bore hose and a high-flow coupling.
+Instead, the maintenance lead fixed the restrictions. The main filter element was replaced and its gauge moved to where it could be seen, with a replacement point marked on the dial. The branch to line 2 was replaced with a larger pipe, sized using the BIZOMAT [air pipe pressure drop](/tools/air-pipe-drop/) calculator for the line's measured peak flow with a margin for growth. The drop's hose and coupling were replaced with a larger-bore hose and a high-flow coupling.
 
 ```figure
 type: compare
@@ -78,7 +78,7 @@ step: time = 0.5 × 1.0 ÷ (1.013 × 0.5)
 step: time ≈ 0.99 minutes, about 59 seconds
 ```
 
-The factory's worst peaks lasted about 20 to 30 seconds, well within what the receiver could cover. Before the restrictions were fixed, the receiver had been irrelevant to line 2's problem: the air was in the receiver, but could not get to the line fast enough. The KEVOS® [air receiver](/tools/air-receiver/) calculator does this calculation in reverse, giving the volume needed for a stated shortfall and time.
+The factory's worst peaks lasted about 20 to 30 seconds, well within what the receiver could cover. Before the restrictions were fixed, the receiver had been irrelevant to line 2's problem: the air was in the receiver, but could not get to the line fast enough. The BIZOMAT [air receiver](/tools/air-receiver/) calculator does this calculation in reverse, giving the volume needed for a stated shortfall and time.
 
 A receiver is pressure equipment and stores a large amount of energy. Its design, registration where required, safety valve and periodic inspection are covered by work health and safety law and the relevant standards, and are outside this book's scope. The [Pressure vessels and thin-walled cylinders](/reados/collections/machine-elements-and-mechanical-design/pressure-vessels-and-thin-walled-cylinders/) chapter explains why stored gas is so much more hazardous than stored liquid.
 

@@ -9,11 +9,11 @@ draft: false
 
 A magnetic coupling transmits torque without any shaft passing through the wall between driver and driven. An outer rotor of magnets on the motor shaft turns an inner rotor of magnets on the pump shaft, and between them sits a thin containment shell, sealed to the pump casing, that keeps the pumped liquid in. There is no shaft seal to leak, wear or need flushing, which is why sealless magnetic-drive pumps are used for hazardous, hot, expensive or simply messy liquids.
 
-The coupling brings its own limits. It can transmit only up to its slip torque, after which the rotors slip and the pump stops pumping while the motor runs on. A metal containment shell turns some of the power into heat by eddy currents. And the pump's bearings and magnets depend on the pumped liquid to cool and lubricate them. This chapter sizes Line 4's coupling with the KEVOS® pump system design, torque and flexible coupling tools, estimates its shell losses, and shows what dead-heading does. The error is a valve sequence that dead-headed the pump.
+The coupling brings its own limits. It can transmit only up to its slip torque, after which the rotors slip and the pump stops pumping while the motor runs on. A metal containment shell turns some of the power into heat by eddy currents. And the pump's bearings and magnets depend on the pumped liquid to cool and lubricate them. This chapter sizes Line 4's coupling with the BIZOMAT pump system design, torque and flexible coupling tools, estimates its shell losses, and shows what dead-heading does. The error is a valve sequence that dead-headed the pump.
 
 ## The duty
 
-The KEVOS® [pump system design tool](/tools/pump-system-design/) calculates a simple pumping system: pipe velocity, Reynolds number and the Darcy friction factor from the Colebrook–White equation, friction and fitting losses, the total head from static lift, pressure difference and losses, the hydraulic, shaft and motor power, and the net positive suction head available from the suction conditions, against the pump's requirement.
+The BIZOMAT [pump system design tool](/tools/pump-system-design/) calculates a simple pumping system: pipe velocity, Reynolds number and the Darcy friction factor from the Colebrook–White equation, friction and fitting losses, the total head from static lift, pressure difference and losses, the hydraulic, shaft and motor power, and the net positive suction head available from the suction conditions, against the pump's requirement.
 
 This is an illustration. Line 4's clean-in-place supply pump draws 1.5% caustic solution at 75 °C from a vented tank whose level is 1 m above the pump, and delivers 250 L/min through 60 m of 50 mm bore stainless pipe, with fittings totalling a loss coefficient of 12, to spray devices 6 m above the pump that need 2 bar at their inlets. The solution's density is about 990 kg/m³ and its kinematic viscosity about 0.4 mm²/s; its vapour pressure is taken as that of water at 75 °C, 0.386 bar. The pump's efficiency at the duty point is 55%, and it needs 2.5 m of net positive suction head.
 
@@ -29,7 +29,7 @@ caption: This is an illustration. Suction: 4 m of pipe with a fitting loss coeff
 - 6.4 m | net positive suction head available, against 2.5 m required
 ```
 
-A 4 kW, two-pole motor running at about 2,900 rpm drives the pump. The KEVOS® [torque, power and speed tool](/tools/torque-power/) converts the shaft power into the steady running torque: 2.57 kW at 2,900 rpm is 8.46 N·m. The motor's rated torque, 4 kW at the same speed, is 13.17 N·m.
+A 4 kW, two-pole motor running at about 2,900 rpm drives the pump. The BIZOMAT [torque, power and speed tool](/tools/torque-power/) converts the shaft power into the steady running torque: 2.57 kW at 2,900 rpm is 8.46 N·m. The motor's rated torque, 4 kW at the same speed, is 13.17 N·m.
 
 ## How a coupling transmits torque
 
@@ -39,7 +39,7 @@ The maximum is the coupling's slip torque, also called its decoupling or pull-ou
 
 ## Sizing against running and peak torque
 
-The KEVOS® [flexible coupling selection tool](/tools/flexible-coupling-selection/) checks a conventional flexible coupling: the running torque from power and speed, the torque with a service factor against the coupling's nominal rating, the starting or peak torque against its maximum rating, speed, misalignment, bore and key. A magnetic coupling has no misalignment allowance or key in the same sense, but the tool's torque checks are a useful first screen.
+The BIZOMAT [flexible coupling selection tool](/tools/flexible-coupling-selection/) checks a conventional flexible coupling: the running torque from power and speed, the torque with a service factor against the coupling's nominal rating, the starting or peak torque against its maximum rating, speed, misalignment, bore and key. A magnetic coupling has no misalignment allowance or key in the same sense, but the tool's torque checks are a useful first screen.
 
 ```figure
 type: compare

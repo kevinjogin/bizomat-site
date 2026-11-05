@@ -9,7 +9,7 @@ draft: false
 
 A nitrided part looks almost exactly as it did before treatment: perhaps a matt grey surface, perhaps a faint colour, no visible case. Nothing about it shows whether the diffusion zone is 0.12 mm deep or 0.05 mm, whether a compound layer formed, or whether the core kept its hardness. The only way to know is to test, and the test usually destroys what it tests, so it is done on coupons that travel with the load or, for critical work, on a sacrificial part.
 
-This chapter describes how the shop proves order 27's nitriding: the test coupons, the metallographic section, and the microhardness traverse from which the nitriding depth is read. It uses the KEVOS® Vickers and Knoop hardness tool to turn indentation diagonals into hardness and to check that each indentation is shallow enough for the layer being measured. It ends with a toolmaker's inspector who rejected nitrided inserts as too soft, measured with a Rockwell C tester that pushed right through the case.
+This chapter describes how the shop proves order 27's nitriding: the test coupons, the metallographic section, and the microhardness traverse from which the nitriding depth is read. It uses the BIZOMAT Vickers and Knoop hardness tool to turn indentation diagonals into hardness and to check that each indentation is shallow enough for the layer being measured. It ends with a toolmaker's inspector who rejected nitrided inserts as too soft, measured with a Rockwell C tester that pushed right through the case.
 
 ## Test coupons
 

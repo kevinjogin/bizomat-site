@@ -9,7 +9,7 @@ draft: false
 
 Nitriding hardens steel without quenching it. Nitrogen diffuses a fraction of a millimetre into the surface at 480 to 580 °C, well below the temperature at which a hardened tool steel would lose its hardness, and combines with chromium, molybdenum, vanadium and aluminium in the steel to form very fine nitride particles that make the surface layer hard and wear-resistant, and put it into compression, which improves fatigue strength. Because nothing is quenched, nitrided parts distort very little, which is why moulds, dies, gears, crankshafts and hydraulic parts are nitrided after final machining. Only the steels that contain nitride-forming alloying elements respond strongly; a plain carbon steel forms a compound layer but gains little hardness beneath it.
 
-Plasma nitriding does this with the glow discharge of Chapters 2 and 3. This chapter explains the layers nitriding forms and how the plasma's gas mixture controls them, works out the gas flows and power that order 27's load needs with the KEVOS® gas law and gas mixture tools, and shows how case depth grows with the square root of time. It ends with a thermocouple in the wrong kind of part, which made the first trial load's case too shallow.
+Plasma nitriding does this with the glow discharge of Chapters 2 and 3. This chapter explains the layers nitriding forms and how the plasma's gas mixture controls them, works out the gas flows and power that order 27's load needs with the BIZOMAT gas law and gas mixture tools, and shows how case depth grows with the square root of time. It ends with a thermocouple in the wrong kind of part, which made the first trial load's case too shallow.
 
 ## The compound layer and the diffusion zone
 

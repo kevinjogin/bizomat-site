@@ -9,7 +9,7 @@ draft: false
 
 A thermoelectric module's datasheet gives four headline numbers and a page of curves. The numbers look like limits, and two of them are, but their real value is that they define the module completely. From the maximum current, maximum voltage and maximum temperature difference at a stated hot-side temperature, three constants follow, and with them the heat pumped, the voltage, the power and the COP at any current and any pair of face temperatures. Every later chapter's design rests on those three constants.
 
-This chapter explains what each rating means, derives the trust's module constants, checks them against the datasheet's other figures, works the cabinet cooler's design point with the KEVOS® tool that does the same calculation, and finishes with ratings read at the wrong temperature, which nearly bought a fourth module the cooler did not need.
+This chapter explains what each rating means, derives the trust's module constants, checks them against the datasheet's other figures, works the cabinet cooler's design point with the BIZOMAT tool that does the same calculation, and finishes with ratings read at the wrong temperature, which nearly bought a fourth module the cooler did not need.
 
 ## The four ratings
 

@@ -7,7 +7,7 @@ tags:
   - design
   - systems
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ Good database forms make the structure of the work understandable. They show whi
 
 ---
 
-*Source basis: original KEVOS® analysis of Representing Entities in Form Design in the supplied Designing Effective Database Systems. The linked W3C guidance supports the accessibility discussion. The supplier-allocation scenario is illustrative and is not a KEVOS® client case study.*
+*Source basis: original BIZOMAT analysis of Representing Entities in Form Design in the supplied Designing Effective Database Systems. The linked W3C guidance supports the accessibility discussion. The supplier-allocation scenario is illustrative and is not a BIZOMAT client case study.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - manufacturing
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ The motor car changed the world only when a system grew up around it: roads, fue
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

@@ -30,7 +30,7 @@ Vacuum equipment is sold with ratings in several units, and conversions are a da
 - **Kilopascal gauge**, kPa(g): pressure relative to the local atmosphere, negative for vacuum.
 - **Percent vacuum** and **inches of mercury vacuum**: gauge-based units still seen on lifting equipment and old gauges.
 
-VC-200's working pressure of 200 Pa is 2 mbar, or about 1.50 torr. The KEVOS® [pressure converter](/tools/pressure-converter/) does these conversions.
+VC-200's working pressure of 200 Pa is 2 mbar, or about 1.50 torr. The BIZOMAT [pressure converter](/tools/pressure-converter/) does these conversions.
 
 ```figure
 type: compare
@@ -102,7 +102,7 @@ This is an illustration. VC-200's door is 400 × 400 mm, 0.16 m²:
 - at 200 Pa inside, the difference is 101,325 − 200 = 101,125 Pa;
 - the force on the door is 101,125 × 0.16 = **16.2 kN**, about the weight of a 1.6 tonne car.
 
-That force is almost the same whether the chamber is at 200 Pa or at 1 Pa: the last 99.8% of the pressure difference is reached long before the gas is gone, so a rough vacuum loads a chamber almost as much as a perfect one. The door's seal sees that load, the door's hinges and clamps must not let it bend, and a glass viewport in the door sees it on a small area. Chapter 10 returns to it, and the KEVOS® [vacuum cup calculator](/tools/vacuum-cup/) applies the same pressure-times-area relationship to vacuum lifting.
+That force is almost the same whether the chamber is at 200 Pa or at 1 Pa: the last 99.8% of the pressure difference is reached long before the gas is gone, so a rough vacuum loads a chamber almost as much as a perfect one. The door's seal sees that load, the door's hinges and clamps must not let it bend, and a glass viewport in the door sees it on a small area. Chapter 10 returns to it, and the BIZOMAT [vacuum cup calculator](/tools/vacuum-cup/) applies the same pressure-times-area relationship to vacuum lifting.
 
 ```figure
 type: bars

@@ -65,7 +65,7 @@ This is an illustration. The toolmaker chooses **ten die springs**, each rated a
 - force at the bottom after 3.0 mm of regrinds, if not re-shimmed: 3,000 × (9.5 + 3.0) = **37.5 kN**;
 - greatest deflection of each spring: 9.5 + 3.0 = **12.5 mm**.
 
-The springs chosen have a free length of 64 mm, and their maker rates them for long life at deflections up to 16 mm. The 12.5 mm worst case is within that, with some margin. Die springs are colour-coded by duty, and their makers publish rates, free lengths and deflection limits for different lives; a spring worked beyond its long-life deflection fails early, often by breaking into pieces inside its pocket. The KEVOS® [compression spring calculator](/tools/compression-spring/) checks a spring's rate and stress from its dimensions.
+The springs chosen have a free length of 64 mm, and their maker rates them for long life at deflections up to 16 mm. The 12.5 mm worst case is within that, with some margin. Die springs are colour-coded by duty, and their makers publish rates, free lengths and deflection limits for different lives; a spring worked beyond its long-life deflection fails early, often by breaking into pieces inside its pocket. The BIZOMAT [compression spring calculator](/tools/compression-spring/) checks a spring's rate and stress from its dimensions.
 
 Ten springs are spread symmetrically around the punches, so that the stripper stays square as it moves. An odd number, or an uneven layout, tilts the stripper, which then bends guided punches.
 

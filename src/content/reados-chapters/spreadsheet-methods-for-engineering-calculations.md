@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ Spreadsheets are powerful engineering tools when they are built like engineering
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

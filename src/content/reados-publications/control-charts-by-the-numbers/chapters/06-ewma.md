@@ -9,7 +9,7 @@ draft: false
 
 The CUSUM of Chapter 5 remembers everything since its last reset. The exponentially weighted moving average, or EWMA, remembers everything too, but with a memory that fades: each new point is blended with the running average, so recent points count for more and old ones for less, in a geometric decline. The result is a smooth line that follows the process mean, filters out much of the point-to-point noise, and drifts towards any sustained shift. S. W. Roberts proposed it as a control chart in 1959, and it has since become the most widely used chart for small shifts, partly because it is easy to compute and to read.
 
-This chapter sets out how the EWMA is built and what its weighting factor does, links it to the mean-reverting random processes of physics, calculates its limits and run lengths for SP-12, runs it on Thursday's data with the KEVOS® EWMA tool, and compares it with the CUSUM. It ends with an EWMA whose limits were drawn from the wrong standard deviation and never signalled at all.
+This chapter sets out how the EWMA is built and what its weighting factor does, links it to the mean-reverting random processes of physics, calculates its limits and run lengths for SP-12, runs it on Thursday's data with the BIZOMAT EWMA tool, and compares it with the CUSUM. It ends with an EWMA whose limits were drawn from the wrong standard deviation and never signalled at all.
 
 ## A blended average
 

@@ -7,7 +7,7 @@ tags:
   - ai
   - finance
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ The cost of running AI follows design choices: how much text is sent, how much i
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on cost per request and per user, inference, embedding and retrieval costs, build versus buy, cloud versus local inference, latency and throughput, concurrency, caching and batching, and hardware and quantisation, together with established practice. Prices and the worked example are illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT AI academy lessons on cost per request and per user, inference, embedding and retrieval costs, build versus buy, cloud versus local inference, latency and throughput, concurrency, caching and batching, and hardware and quantisation, together with established practice. Prices and the worked example are illustrative. This article is general information.*

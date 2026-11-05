@@ -64,7 +64,7 @@ This is an illustration. A worker on HF-01 spends a day on 1.5 hours of sinking 
 - wheeling: 2 / 25.4 = about 8%;
 - other work: about 4%.
 
-The total is about 4.6 times the allowed dose, an LAeq,8h of 85 + 10 × log₁₀(4.62) = **91.6 dB(A)**, well over the exposure standard. Nearly all of it comes from the hammering, and nearly all of that from the raising. The KEVOS® [noise exposure check](/tools/noise-exposure-check/) does the same arithmetic for any mix of sources and times.
+The total is about 4.6 times the allowed dose, an LAeq,8h of 85 + 10 × log₁₀(4.62) = **91.6 dB(A)**, well over the exposure standard. Nearly all of it comes from the hammering, and nearly all of that from the raising. The BIZOMAT [noise exposure check](/tools/noise-exposure-check/) does the same arithmetic for any mix of sources and times.
 
 ### Controls
 

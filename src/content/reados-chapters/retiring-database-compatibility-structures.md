@@ -7,7 +7,7 @@ tags:
   - systems
   - projects
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ For a small business, a short consumer register and a realistic rehearsal often 
 
 ---
 
-*Source basis: original KEVOS® analysis of Removing Deprecated Schema, Choose a Sufficient Transition Period and related testing sections in the supplied Refactoring Databases: Evolutionary Database Design. Dependency limitations were checked against the linked PostgreSQL documentation. The consumer register is illustrative.*
+*Source basis: original BIZOMAT analysis of Removing Deprecated Schema, Choose a Sufficient Transition Period and related testing sections in the supplied Refactoring Databases: Evolutionary Database Design. Dependency limitations were checked against the linked PostgreSQL documentation. The consumer register is illustrative.*

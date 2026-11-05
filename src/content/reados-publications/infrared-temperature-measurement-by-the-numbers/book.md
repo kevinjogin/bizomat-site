@@ -4,8 +4,8 @@ subtitle: "Planck's law, emissivity, wavelength, ratio pyrometers, reflections, 
 description: "Measure hot parts and running plant without contact, with numbers: thermal radiation, emissivity errors, wavelength choice, ratio pyrometers, reflections, spot size, thermography and uncertainty."
 category: Manufacturing
 tags: [manufacturing, quality, automation, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -75,7 +75,7 @@ Every chapter follows one fictional installation. This is an illustration. A for
 
 The exit temperature is read by a single-wavelength pyrometer working at **1.0 µm**, mounted **0.6 m** from the billets' path, looking through a protective window, with its emissivity set to **0.85**. The forge is considering a ratio pyrometer. Its maintenance team also uses an 8 to 14 µm thermal imaging camera to survey the heater's power cabinet and the press's motor.
 
-The forge, its heater, its instruments and its problems are invented. None describes KEVOS® work or a real business.
+The forge, its heater, its instruments and its problems are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

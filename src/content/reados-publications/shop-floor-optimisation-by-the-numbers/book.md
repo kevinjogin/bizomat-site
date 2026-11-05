@@ -4,8 +4,8 @@ subtitle: "Splitting, loading, balancing, choosing, cutting, nesting, sequencing
 description: "Solve the hard choices of a job shop: machine loading, line balancing, project selection, bar cutting, sheet nesting, sequencing, cells and simulated annealing."
 category: Operations
 tags: [operations, manufacturing, process-improvement, systems]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Statistical Physics of Spin Glasses and Information Processing: An Introduction"
     creator: "H. Nishimori, Oxford University Press (International Series of Monographs on Physics 111)"
     year: "2001"
-    note: "In copyright. Used only as a map of the ideas behind Chapters 1, 2, 5, 9 and 10: number partitioning, graph partitioning, the knapsack problem and simulated annealing treated as problems of finding the lowest-energy state of a many-variable system. No text, structure, figures, tables or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map of the ideas behind Chapters 1, 2, 5, 9 and 10: number partitioning, graph partitioning, the knapsack problem and simulated annealing treated as problems of finding the lowest-energy state of a many-variable system. No text, structure, figures, tables or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Computers and Intractability: A Guide to the Theory of NP-Completeness"
     creator: "M. R. Garey and D. S. Johnson, W. H. Freeman, San Francisco"
     year: "1979"
@@ -96,7 +96,7 @@ Every day a shop makes choices that look simple and are not: which press brake g
 
 This book shows how to make these choices well with arithmetic a planner can check. It counts the possibilities, uses simple rules that are known to work, calculates bounds that show how far a plan could still be from the best, and, when the problem is too large to check, uses local search and simulated annealing. The ideas come from operations research and from the statistical physics of disordered systems, which treats a plan as a configuration and its cost as an energy to be minimised.
 
-It is for production engineers, planners, supervisors, estimators and owners of fabrication, machining and assembly shops. It assumes school algebra and comfort with a spreadsheet. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for production engineers, planners, supervisors, estimators and owners of fabrication, machining and assembly shops. It assumes school algebra and comfort with a spreadsheet. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the BIZOMAT tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -107,13 +107,13 @@ Every chapter follows one fictional shop. This is an illustration. A sheet-metal
 - **Assembly:** a three-station final assembly line for EC-600, with 420 minutes of net working time a shift and demand for 60 cabinets a day.
 - **Improvement budget:** A$60,000 excluding GST for the year's capital projects.
 
-Times, prices, demands and savings in the book are invented for the case and do not describe KEVOS® work, any real business or any real product.
+Times, prices, demands and savings in the book are invented for the case and do not describe BIZOMAT work, any real business or any real product.
 
 ## How to use the book
 
 Read Chapter 1 first: it introduces the counting, the bounds and the vocabulary every later chapter uses. Chapters 2 to 4 split work between machines and stations, Chapters 5 to 7 choose and cut within limits, Chapter 8 orders work on one machine, Chapter 9 groups machines, and Chapter 10 gives a general method for problems too large for the others. Each chapter can be read alone after Chapter 1.
 
-Every calculation in the book was checked by running it, including the exhaustive searches that prove which plans are best. The KEVOS® tools linked from the chapters perform the same calculations with the reader's own data.
+Every calculation in the book was checked by running it, including the exhaustive searches that prove which plans are best. The BIZOMAT tools linked from the chapters perform the same calculations with the reader's own data.
 
 ## Source limits and professional responsibility
 

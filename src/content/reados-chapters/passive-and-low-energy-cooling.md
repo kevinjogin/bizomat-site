@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ Low-energy cooling starts with reducing heat: external shading, insulated and re
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Building work must comply with the National Construction Code and relevant approvals.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Building work must comply with the National Construction Code and relevant approvals.*

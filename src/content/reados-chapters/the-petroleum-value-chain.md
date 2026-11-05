@@ -7,7 +7,7 @@ tags:
   - strategy
   - manufacturing
   - systems
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ The petroleum value chain grew from lamp oil wells into a global system of produ
 
 ---
 
-*Source: KEVOS editorial notes. This article is a general historical overview and does not constitute investment or policy advice.*
+*Source: BIZOMAT editorial notes. This article is a general historical overview and does not constitute investment or policy advice.*

@@ -8,7 +8,7 @@ tags:
   - experimentation
   - process-improvement
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -220,4 +220,4 @@ Changing one setting at a time feels controlled, but it can miss the interaction
 
 ---
 
-*Source: KEVOS® notes. Figures in this article are illustrations, not data.*
+*Source: BIZOMAT notes. Figures in this article are illustrations, not data.*

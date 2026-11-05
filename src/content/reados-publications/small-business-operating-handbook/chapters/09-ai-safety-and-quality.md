@@ -51,7 +51,7 @@ Assess five dimensions from 1 to 5: factual accuracy, completeness, clarity, pri
 ## Exercise
 Pick three common uses of AI. Classify data sensitivity, approval level, verification method and stop rule. Share the one-page policy with anyone who may use AI on the business's behalf and revisit it as providers or workflows change.
 
-*KEVOS educational guidance. Review actual provider data handling and current laws before using business information.*
+*BIZOMAT educational guidance. Review actual provider data handling and current laws before using business information.*
 
 
 ## Extended study: professional practice

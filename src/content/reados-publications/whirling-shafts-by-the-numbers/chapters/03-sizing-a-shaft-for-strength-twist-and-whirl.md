@@ -9,7 +9,7 @@ draft: false
 
 A rotating shaft has three jobs that set its size. It must be strong enough to carry its bending and twisting loads, including the shocks that real machines deliver, without breaking or fatiguing. It must be stiff enough in torsion that it does not wind up too far between its ends. And it must be stiff enough in bending that its critical speed stays well away from the running speed. A designer who checks only the first, the one most textbooks start with, can produce a shaft that is perfectly strong and completely unusable.
 
-This chapter checks the HM-30's shaft against all three with a KEVOS® tool, shows that the critical speed sets the diameter by a wide margin, works through an error in which a tool input did not match the maker's own rule, and looks at a load that no shock factor can cover: a jam.
+This chapter checks the HM-30's shaft against all three with a BIZOMAT tool, shows that the critical speed sets the diameter by a wide margin, works through an error in which a tool input did not match the maker's own rule, and looks at a load that no shock factor can cover: a jam.
 
 ## Strength: bending, torsion and shock
 
@@ -46,7 +46,7 @@ Chapters 1 and 2 dealt with the third criterion. For the sizing tool below, the 
 
 ## All three at once
 
-The KEVOS® [Shaft design: strength, twist and critical speed](/tools/shaft-design-check/) tool sizes a shaft against the three criteria together. From the power, speed, maximum bending moment and shock factors, the allowable shear stress and whether there is a keyway, it gives the diameter for strength by the maximum shear theory. From the twist limit and shear modulus it gives the diameter for twist. And from the bearing span, a central mass, the modulus and density, and the required ratio of critical speed to running speed, it searches for the diameter whose critical speed meets the ratio. It reports which criterion governs and the critical speed at the governing diameter. Its guide notes that it assumes a simply supported span with one central mass, and that overhung loads and several masses need a fuller analysis.
+The BIZOMAT [Shaft design: strength, twist and critical speed](/tools/shaft-design-check/) tool sizes a shaft against the three criteria together. From the power, speed, maximum bending moment and shock factors, the allowable shear stress and whether there is a keyway, it gives the diameter for strength by the maximum shear theory. From the twist limit and shear modulus it gives the diameter for twist. And from the bearing span, a central mass, the modulus and density, and the required ratio of critical speed to running speed, it searches for the diameter whose critical speed meets the ratio. It reports which criterion governs and the critical speed at the governing diameter. Its guide notes that it assumes a simply supported span with one central mass, and that overhung loads and several masses need a fuller analysis.
 
 ```figure
 type: compare

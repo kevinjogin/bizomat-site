@@ -4,8 +4,8 @@ subtitle: "Exact 2D construction for detail drawings: coordinates, triangles, ta
 description: "Build exact 2D drafting geometry with numbers: datums, coordinates, triangles, tangent arcs, bolt circles, slots, ellipses, offsets, mass and cut-ready profiles."
 category: Engineering
 tags: [design, manufacturing, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -59,7 +59,7 @@ It suits drafters and CAD users moving beyond basic commands, designers who prep
 
 Every chapter works on one fictional part. This is an illustration. A small machinery builder needs a motor mounting plate for a belt-driven conveyor. The plate is 10 mm mild steel, laser cut, 220 mm long and 140 mm high, with a 45 × 45 mm chamfer at the top right corner and an R40 radius at the top left. A Ø60 bore at (110, 70) takes the motor spigot, and four Ø9 holes on a 100 mm pitch circle hold the motor flange. The plate pivots on an M10 bolt through a Ø11 hole at (20, 20), and a second M10 bolt locks it through an 11 mm wide arc slot, centred on the pivot at a radius of 180 mm and running from 5° to 20°. Turning the plate through the slot raises or lowers the motor to tension the belt.
 
-The drafter draws the plate with its bottom left corner at the origin. Each chapter adds geometry, checks it, and usually finds one plausible mistake and shows how it was detected and corrected. The business, the part and the mistakes are invented; none describes KEVOS® work or a real supplier.
+The drafter draws the plate with its bottom left corner at the origin. Each chapter adds geometry, checks it, and usually finds one plausible mistake and shows how it was detected and corrected. The business, the part and the mistakes are invented; none describes BIZOMAT work or a real supplier.
 
 ## Source limits and professional responsibility
 

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - leadership
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -217,4 +217,4 @@ A business does not need to master this system, but a clear map helps it ask the
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations. This article provides general information and does not constitute legal advice.*

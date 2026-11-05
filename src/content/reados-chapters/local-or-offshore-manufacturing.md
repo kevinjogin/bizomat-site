@@ -8,7 +8,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -277,4 +277,4 @@ Where and how you manufacture is a design decision for the whole business, not a
 
 ---
 
-*Source: KEVOS® notes. Figures in this article are illustrations, not data. This article is general information, not financial or legal advice.*
+*Source: BIZOMAT notes. Figures in this article are illustrations, not data. This article is general information, not financial or legal advice.*

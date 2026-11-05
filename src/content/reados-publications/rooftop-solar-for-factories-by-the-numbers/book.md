@@ -4,8 +4,8 @@ subtitle: "Cells, modules, strings, inverters, roofs, monitoring and the busines
 description: "How solar cells turn sunlight into power and how to size, check, mount, monitor and pay for a factory rooftop array with numbers: yield, strings, shading, wind and cost."
 category: Engineering
 tags: [design, operations, finance, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Electronic and Optoelectronic Properties of Semiconductor Structures"
     creator: "J. Singh, Cambridge University Press"
     year: "2003"
-    note: "Copyright work, used only as a map of ideas: bandgaps and why direct and indirect gaps absorb light differently, carrier generation and recombination, radiative and nonradiative recombination, the temperature dependence of intrinsic carriers and charge injection across a junction. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: bandgaps and why direct and indirect gaps absorb light differently, carrier generation and recombination, radiative and nonradiative recombination, the temperature dependence of intrinsic carriers and charge injection across a junction. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Detailed balance limit of efficiency of p–n junction solar cells"
     creator: "W. Shockley and H. J. Queisser, Journal of Applied Physics 32, 510–519"
     year: "1961"
@@ -72,7 +72,7 @@ A solar module on a factory roof is a large, flat semiconductor device. It turns
 
 It starts inside the cell, with photons, the bandgap and recombination, because those set the limits on efficiency and explain why output falls as the cell heats. It then works from the module datasheet to the yearly yield of a roof, through strings, voltage limits and the inverter, shading and bypass diodes, roof loads and wind, inverter heat and reliability, and monitoring, soiling and degradation. It finishes with the business case: self-consumption, tariffs, certificates, finance and depreciation.
 
-It is for manufacturing, facilities and maintenance engineers, operations managers and owners. It assumes engineering or trade training and comfort with power, energy and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for manufacturing, facilities and maintenance engineers, operations managers and owners. It assumes engineering or trade training and comfort with power, energy and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -85,13 +85,13 @@ The array, called SF-90 in this book, is:
 - **Strings:** 12 strings of 18 modules.
 - **Inverters:** two 40 kW three-phase inverters, each with three maximum power point trackers taking two strings, in a ventilated room beside the main switchboard.
 
-Irradiation, prices, tariffs, test results and failure records are the business's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, installer, module maker, inverter maker, network or retailer. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs; where a price includes GST, the text says so.
+Irradiation, prices, tariffs, test results and failure records are the business's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, installer, module maker, inverter maker, network or retailer. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs; where a price includes GST, the text says so.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first if the physics is new; they explain the module datasheet. Chapters 4 to 7 deal with designing and checking an array, Chapters 8 and 9 with running it, and Chapter 10 with paying for it. Chapters stand on their own once the case is familiar.
 
-Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Each chapter links the BIZOMAT calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

@@ -3,13 +3,13 @@ book: accept-or-reject-by-the-numbers
 chapterSlug: guard-bands-and-the-cost-of-errors
 order: 3
 title: "Guard bands and the cost of errors"
-description: "Set acceptance limits inside the tolerance: the one-uncertainty guard band in the KEVOS® tool, cost-based limits from the costs of each error, sensitivity to costs, and contract rules."
+description: "Set acceptance limits inside the tolerance: the one-uncertainty guard band in the BIZOMAT tool, cost-based limits from the costs of each error, sensitivity to costs, and contract rules."
 draft: false
 ---
 
 Chapter 2 showed that accepting every reading inside the tolerance lets about 3.5 oversize BU-25 bushes through each shift, at a cost far greater than the false rejects it avoids. The usual remedy is a guard band: an acceptance zone inside the tolerance, narrower by an allowance for measurement uncertainty, so that a part is accepted only if its reading is far enough inside the limit to be confidently good. The question is how wide the guard band should be.
 
-This chapter answers it two ways. The conventional way, a guard band of one expanded uncertainty, is calculated with the KEVOS® guard-banded acceptance tool. The economic way chooses the limit that minimises the expected cost of wrong decisions, using the process prior of Chapter 2 and the costs of each kind of error. The two give quite different limits for BU-25, and the difference is worth A$96 a shift. The error is a guard band applied by rule, which turned an escape problem into a scrap problem.
+This chapter answers it two ways. The conventional way, a guard band of one expanded uncertainty, is calculated with the BIZOMAT guard-banded acceptance tool. The economic way chooses the limit that minimises the expected cost of wrong decisions, using the process prior of Chapter 2 and the costs of each kind of error. The two give quite different limits for BU-25, and the difference is worth A$96 a shift. The error is a guard band applied by rule, which turned an escape problem into a scrap problem.
 
 ## The one-uncertainty guard band
 

@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ A move is rarely just a move. When a new site changes customer access, costs, wo
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on relocation as operating-model change, transition planning and dual running. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on relocation as operating-model change, transition planning and dual running. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

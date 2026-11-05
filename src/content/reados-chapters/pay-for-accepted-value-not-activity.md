@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - manufacturing
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -242,4 +242,4 @@ Payments for significant work are control points. Structure them around verifiab
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on progress certification, stage payments, divisible obligations and early procurement, including examination questions on materials delivered before installation and the progress-claim provisions of a historical edition of AS 4000. Examples and figures in this article are illustrations. This article is general information, not legal advice; check state security of payment laws and seek advice on ownership of goods held by others.*
+*Source: BIZOMAT notes, drawing on teaching material on progress certification, stage payments, divisible obligations and early procurement, including examination questions on materials delivered before installation and the progress-claim provisions of a historical edition of AS 4000. Examples and figures in this article are illustrations. This article is general information, not legal advice; check state security of payment laws and seek advice on ownership of goods held by others.*

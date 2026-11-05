@@ -7,7 +7,7 @@ tags:
   - projects
   - quality
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Treating the end of a project as a structured transition protects both parties. 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*

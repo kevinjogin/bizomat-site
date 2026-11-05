@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -223,4 +223,4 @@ Businesses are designed as collections of teams and experienced by customers as 
 
 ---
 
-*Source: KEVOS® notes, drawing on practitioner writing on interface management in project delivery. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on practitioner writing on interface management in project delivery. Examples and figures in this article are illustrations.*

@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ A priority label is a promise about what can move. Calling a project critical fi
 
 ---
 
-*Source: KEVOS® notes, drawing on D. Lidow (1999) on project priorities in the Project Management Journal, and teaching material on resource planning and responsibility assignment. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on D. Lidow (1999) on project priorities in the Project Management Journal, and teaching material on resource planning and responsibility assignment. Examples and figures in this article are illustrations. This article is general information.*

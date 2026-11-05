@@ -7,7 +7,7 @@ tags:
   - finance
   - sales
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -236,4 +236,4 @@ Pricing data combines list prices, contracts, discounts, surcharges, rebates, co
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general pricing, sales operations and business systems practice. Tax and consumer law points are summarised for orientation; seek professional advice for specific situations. Figures in the worked example are illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general pricing, sales operations and business systems practice. Tax and consumer law points are summarised for orientation; seek professional advice for specific situations. Figures in the worked example are illustrative. This article is general information.*

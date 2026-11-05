@@ -4,8 +4,8 @@ subtitle: "Sizing, reading and running a process-water chiller from real refrige
 description: "Size, check and run a process-water chiller with numbers: cooling load, the cycle from NIST R-134a data, saturation, flash gas, compressor work, temperature lift, cost and faults."
 category: Engineering
 tags: [manufacturing, operations, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -60,7 +60,7 @@ It is written as a companion to the Library’s Heat Pumps and Refrigeration by 
 
 Every chapter follows one fictional machine. This is an illustration. A plastics moulder cools its injection-mould circuits with a process-water chiller, called CH-30 here, rated at **30 kW** of cooling. Water leaves the chiller at **12 °C** and returns from the moulds at **17 °C**, a flow of about 1.43 kg/s. The chiller uses **R-134a** in a single vapour-compression circuit with an air-cooled condenser, sized to work in ambient air up to 35 °C. At its design point it evaporates at **2 °C** with **5 K** of superheat at the compressor's inlet, condenses at **45 °C** with **5 K** of subcooling, and its compressor has an isentropic efficiency of **0.70**.
 
-All refrigerant properties are NIST's, in the ASHRAE reference state. The moulder, the chiller's ratings, its prices and its problems are invented. None describes KEVOS® work or a real business.
+All refrigerant properties are NIST's, in the ASHRAE reference state. The moulder, the chiller's ratings, its prices and its problems are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

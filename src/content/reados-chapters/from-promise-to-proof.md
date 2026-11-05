@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -233,4 +233,4 @@ A commitment becomes credible when it can be traced from the promise through dec
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on corporate environmental policy, the distinction between corporate responsibility and accountability, greenwashing risk and the purposes of environmental auditing. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on corporate environmental policy, the distinction between corporate responsibility and accountability, greenwashing risk and the purposes of environmental auditing. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

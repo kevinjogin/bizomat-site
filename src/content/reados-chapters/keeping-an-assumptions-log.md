@@ -7,7 +7,7 @@ tags:
   - projects
   - strategy
   - validation
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ Plans fail most often not because of unforeseeable events but because they reste
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

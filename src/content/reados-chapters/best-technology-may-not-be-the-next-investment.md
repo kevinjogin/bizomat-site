@@ -8,7 +8,7 @@ tags:
   - finance
   - operations
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ The best long-term technology can be the wrong investment today and the right on
 
 ---
 
-*Source: KEVOS® notes, drawing on a published modelling study of energy conservation strategies in steel production. Figures in this article are illustrations, not quotes or data. This article is general information, not financial or electrical advice.*
+*Source: BIZOMAT notes, drawing on a published modelling study of energy conservation strategies in steel production. Figures in this article are illustrations, not quotes or data. This article is general information, not financial or electrical advice.*

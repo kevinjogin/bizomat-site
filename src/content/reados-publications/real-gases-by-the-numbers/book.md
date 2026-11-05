@@ -4,8 +4,8 @@ subtitle: "Compressibility, van der Waals, corresponding states, cylinder conten
 description: "Size, fill, draw and check high-pressure gas supplies with real-gas numbers: compressibility, contents, temperature, throttling, vapour pressure, critical points and line flow."
 category: Engineering
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -79,7 +79,7 @@ It is for production, process and maintenance engineers, equipment buyers and te
 
 Every chapter follows one fictional gas supply. This is an illustration. A sheet metal shop runs a fibre-laser cutting cell that cuts stainless steel with nitrogen as the assist gas. Its supply, LN-1, is a manifolded pack of **15 cylinders of 50 litres water capacity each**, 0.75 m³ in total, filled to **30.0 MPa gauge (30.1 MPa absolute) at 15 °C**. A regulator on the pack drops the pressure to **1.8 MPa gauge** for the line to the machine, and the laser's own valve sets **1.6 MPa absolute** behind its **2.0 mm cutting nozzle**, which then passes about **36 kg of nitrogen an hour** while the beam is on. The pack is changed when it falls to **2.5 MPa absolute**, below which the regulator can no longer hold the line pressure. The shop cuts for about six beam-on hours a day.
 
-All property values come from the NIST Chemistry WebBook. The shop, its machine, its supply and its problems are invented. None describes KEVOS® work or a real business.
+All property values come from the NIST Chemistry WebBook. The shop, its machine, its supply and its problems are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

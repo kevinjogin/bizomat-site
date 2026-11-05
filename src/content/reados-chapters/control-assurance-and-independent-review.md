@@ -7,7 +7,7 @@ tags:
   - operations
   - validation
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -211,4 +211,4 @@ Quality control, quality assurance and independent review answer different quest
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on quality control, quality assurance and project assurance, guidance on project audits, and the UK Government's 2018 functional standard for project delivery (GovS 002) on assurance and decision points. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on quality control, quality assurance and project assurance, guidance on project audits, and the UK Government's 2018 functional standard for project delivery (GovS 002) on assurance and decision points. Examples and figures in this article are illustrations. This article is general information.*

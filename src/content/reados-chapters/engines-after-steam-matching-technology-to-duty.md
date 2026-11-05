@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Internal combustion engines transformed transport, industry and power generation
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on the internal combustion engine, compression ignition, diesel-electric traction and the gas turbine, together with established histories of technology. The worked example uses assumed figures and is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on the internal combustion engine, compression ignition, diesel-electric traction and the gas turbine, together with established histories of technology. The worked example uses assumed figures and is illustrative. This article is general information.*

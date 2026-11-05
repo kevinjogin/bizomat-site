@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - product-development
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ Casting produces complex parts economically when the design respects how metal s
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

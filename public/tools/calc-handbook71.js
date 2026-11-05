@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations for classical thermodynamics topics (batch handbook71). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations for classical thermodynamics topics (batch handbook71). SI units are explicit at each boundary.
 // Methods are standard thermodynamic relations (Guggenheim, Thermodynamics); no book tables or examples are reproduced.
 // Material properties, gas constants, ratings and limits are always entered by the user.
 (() => {

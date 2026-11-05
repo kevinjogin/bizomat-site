@@ -3,13 +3,13 @@ book: accept-or-reject-by-the-numbers
 chapterSlug: learning-the-defect-rate
 order: 8
 title: "Learning the defect rate"
-description: "Estimate and update a defect rate from audits: a p-chart with the KEVOS® tool, Bayesian updating with a beta prior, separating special causes, and correcting an imperfect reject rate."
+description: "Estimate and update a defect rate from audits: a p-chart with the BIZOMAT tool, Bayesian updating with a beta prior, separating special causes, and correcting an imperfect reject rate."
 draft: false
 ---
 
 Every decision in the first seven chapters used a base rate: 0.78% of bushes with an out-of-tolerance bore, 0.6% with chatter. Chapter 7 showed that a threshold tuned to the wrong rate costs hundreds of dollars a shift. Base rates are not constants. They drift as tools wear, change when a supplier changes, and jump when something breaks. A shop that makes decisions with base rates must keep learning them, from data collected for the purpose, and must be able to tell a real change from the noise in small samples.
 
-This chapter sets up a daily audit of BU-25 bushes, charts it with the KEVOS® p-chart tool, updates the defect rate from each day's result by Bayes' rule, separates a special cause from the steady rate, and shows how to recover a true defect rate from an inspection's reject rate when the inspection is imperfect. The error is a bad day averaged into the base rate.
+This chapter sets up a daily audit of BU-25 bushes, charts it with the BIZOMAT p-chart tool, updates the defect rate from each day's result by Bayes' rule, separates a special cause from the steady rate, and shows how to recover a true defect rate from an inspection's reject rate when the inspection is imperfect. The error is a bad day averaged into the base rate.
 
 ## The daily audit
 
@@ -43,7 +43,7 @@ This is an illustration. With samples of 200 and the ten daily counts, the tool 
 
 ```figure
 type: stats
-title: The audit's p-chart, from the KEVOS® p-chart tool
+title: The audit's p-chart, from the BIZOMAT p-chart tool
 caption: This is an illustration. With only 200 bushes a sample and a rate under 1%, the chart's lower limit is zero and its upper limit is about three times the average.
 - 0.900% | average fraction defective, all ten days
 - 0.668% | standard deviation of a day's fraction

@@ -1,4 +1,4 @@
-// KEVOS® tool guides: Money.
+// BIZOMAT tool guides: Money.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   roi: {
     purpose: 'Evaluates an investment with simple return and payback, then discounts the cash flows to give net present value and discounted payback.',

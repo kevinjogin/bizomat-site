@@ -4,8 +4,8 @@ subtitle: "Arc power, power sources, duty cycle, electrodes, weld metal, arc tim
 description: "Plan and cost arc welding from first principles: arc power, power sources, duty cycle and cables, electrodes and deposition, weld metal, arc time, arc blow, fume and cost per metre."
 category: Manufacturing
 tags: [manufacturing, quality, operations, process-improvement, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -95,7 +95,7 @@ These books recorded careful measurements. Wanamaker and Pennington calculated h
 
 This is an illustration. A fabrication shop builds belt-conveyor frames for quarries and recycling plants. Each frame has two 150 mm parallel-flange channel side rails 6 m long, joined by angle cross-members and fitted with legs and brackets, with about **20 m of 6 mm fillet weld** in total. The shop welds them by manual metal arc with low-hydrogen electrodes, mostly 4.0 mm at 170 A, and is considering a change to gas metal arc welding. Some frames need repairs and modifications on site.
 
-Through the book the shop works out its arc power, checks its machines and cables, estimates weld metal and arc time, deals with arc blow and stray current, controls fume and other hazards, and costs a metre of weld by both processes. The shop, the frames, settings, measurements and costs are invented for teaching. They are not KEVOS® work, and the settings are not recommended values for any electrode, machine or joint. Real settings come from qualified welding procedures and the consumable and equipment makers' data.
+Through the book the shop works out its arc power, checks its machines and cables, estimates weld metal and arc time, deals with arc blow and stray current, controls fume and other hazards, and costs a metre of weld by both processes. The shop, the frames, settings, measurements and costs are invented for teaching. They are not BIZOMAT work, and the settings are not recommended values for any electrode, machine or joint. Real settings come from qualified welding procedures and the consumable and equipment makers' data.
 
 ## How to use the book
 
@@ -107,4 +107,4 @@ This book is educational. Structural, pressure-containing and other safety-criti
 
 ## An original treatment
 
-The Library covers weld repair of steel plate, including heat input, groove volume, preheat and procedure qualification, in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), and the way metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/). This book links to those topics rather than repeating them and concentrates on the arc process itself. The explanations, the conveyor-frame case, the calculations, figures and exercises are original KEVOS® writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers weld repair of steel plate, including heat input, groove volume, preheat and procedure qualification, in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), and the way metals behave in welding in [Weldability by the Numbers](/reados/publications/weldability-by-the-numbers/). This book links to those topics rather than repeating them and concentrates on the arc process itself. The explanations, the conveyor-frame case, the calculations, figures and exercises are original BIZOMAT writing. The historical books are public-domain works in the United States; their facts are summarised, discussed and corrected in new words, and none of their text, tables or illustrations is reproduced.

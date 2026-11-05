@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -158,4 +158,4 @@ An identity map is most valuable when it makes ordinary operations easier to rea
 
 ---
 
-*Source basis: original KEVOS® editorial explanation drawing on the Demand Cache, domain-object mapping and Transaction discussions in the supplied Data Access Patterns (2003), with the linked pattern catalogue and persistence documentation used for terminology and implementation checks. Examples are hypothetical.*
+*Source basis: original BIZOMAT editorial explanation drawing on the Demand Cache, domain-object mapping and Transaction discussions in the supplied Data Access Patterns (2003), with the linked pattern catalogue and persistence documentation used for terminology and implementation checks. Examples are hypothetical.*

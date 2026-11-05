@@ -4,8 +4,8 @@ subtitle: "Head, flow, power and efficiency, pump curves and operating points, N
 description: "Select, run and fault-find centrifugal pumps with numbers: head and power, curves and operating points, NPSH and cavitation, affinity laws, throttling, series and parallel, and life-cycle cost."
 category: Engineering
 tags: [design, operations, systems]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -59,7 +59,7 @@ It is for mechanical and maintenance engineers, technicians and operators. It as
 
 Every chapter follows one fictional pump. This is an illustration. A food processing plant collects washwater in a concrete sump and pumps it, as TP-3 on its drawings, to a header tank on the roof, from which it feeds the plant's wash-down hoses by gravity. The pump is an end-suction centrifugal pump on a plinth beside the sump, lifting from a water level 0.5 to 2.0 m below its centreline, through a foot valve and 6 m of suction pipe, and delivering through 120 m of steel pipe of 105.3 mm bore to a free discharge 18.0 m above its centreline. The plant needs at least 12 L/s. The water is at about 20 °C.
 
-The plant, its pump, the pump's curves, prices and mistakes are invented. None describes KEVOS® work, a real business or any manufacturer's product.
+The plant, its pump, the pump's curves, prices and mistakes are invented. None describes BIZOMAT work, a real business or any manufacturer's product.
 
 ## How to use the book
 

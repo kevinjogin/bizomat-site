@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

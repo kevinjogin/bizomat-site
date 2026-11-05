@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ Total productive maintenance makes equipment reliability a shared responsibility
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow equipment manufacturers' instructions and work health and safety requirements.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow equipment manufacturers' instructions and work health and safety requirements.*

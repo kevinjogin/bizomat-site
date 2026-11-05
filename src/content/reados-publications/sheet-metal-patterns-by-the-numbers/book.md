@@ -4,8 +4,8 @@ subtitle: "Developing flat patterns for pipes, elbows, branches, cones and trans
 description: "Develop sheet metal patterns with numbers: girth, slant cuts, segmented elbows, branches, cones, triangulation, rectangle-to-round transitions, seams, wired edges and nesting."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -74,7 +74,7 @@ Every chapter follows one fictional job. This is an illustration. A joinery work
 - A **concentric reducer** from Ø250 to Ø200, 200 mm long, and an **eccentric reducer** from Ø200 to Ø150, 250 mm long, flat along one side.
 - A **conical hood** for a sander, Ø450 at the mouth and Ø150 at the neck, with its mouth cut on a 20° slant to sit against the machine's guard.
 
-The workshop, the shop, the mistakes and the dimensions are invented. None describes KEVOS® work or a real business.
+The workshop, the shop, the mistakes and the dimensions are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

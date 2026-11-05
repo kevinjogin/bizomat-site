@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Outsourcing should be judged by the economics of the whole arrangement, not the 
 
 ---
 
-*Source: KEVOS® notes, drawing on general practice in outsourcing and procurement management. Examples and figures in this article are illustrations. This article is general information, not legal or employment advice.*
+*Source: BIZOMAT notes, drawing on general practice in outsourcing and procurement management. Examples and figures in this article are illustrations. This article is general information, not legal or employment advice.*

@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - design
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -174,4 +174,4 @@ Events describe occurrences, observations describe state, and workflow summaries
 
 ---
 
-*Source basis: original KEVOS® editorial analysis drawing on fact-table and dimensional-design discussions in the supplied Designing Effective Database Systems (2005), with the linked Kimball Group reference used to verify the three table-type definitions. The repair workflow, reconciliation and examples are hypothetical.*
+*Source basis: original BIZOMAT editorial analysis drawing on fact-table and dimensional-design discussions in the supplied Designing Effective Database Systems (2005), with the linked Kimball Group reference used to verify the three table-type definitions. The repair workflow, reconciliation and examples are hypothetical.*

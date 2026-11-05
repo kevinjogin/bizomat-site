@@ -1,4 +1,4 @@
-// KEVOS® tool guides: Improvement.
+// BIZOMAT tool guides: Improvement.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'improvement-value': {
     purpose: 'Values the labour time released by an improvement and its payback.',

@@ -4,8 +4,8 @@ subtitle: "Fitting boards, sensors, cables and antennas into a mechanical produc
 description: "Package electronics in a mechanical product with numbers: board mounting and vibration, heat paths, sealing and venting, cables, antennas, compliance, testing and release."
 category: Engineering
 tags: [design, product-development, systems, validation, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -86,7 +86,7 @@ It assumes basic mechanics, heat transfer at the level of a first engineering co
 
 The book follows a fictional **gearbox monitor**: a sensor node that bolts to the housing of the drive gearbox on an outdoor conveyor at a quarry in regional Australia. It measures housing vibration and temperature and sends summaries over the LTE-M cellular network. It has a die-cast aluminium base, a polycarbonate lid, a 4-layer circuit board 80 mm by 50 mm and an M12 connector bringing 24 V d.c. from the conveyor's control cabinet 25 m away. The enclosure is 110 mm by 70 mm by 45 mm. It must be rated IP66 and IP67, and it must work with the gearbox housing at up to 75 °C and the air at up to 40 °C.
 
-All dimensions, loads, temperatures, test results, quantities and money values are invented for teaching. This is an illustration. None of it describes a KEVOS® project, product or measured result. Money is in Australian dollars, and each example says whether GST is included.
+All dimensions, loads, temperatures, test results, quantities and money values are invented for teaching. This is an illustration. None of it describes a BIZOMAT project, product or measured result. Money is in Australian dollars, and each example says whether GST is included.
 
 ## How to use the book
 

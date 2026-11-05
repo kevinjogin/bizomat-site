@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -166,4 +166,4 @@ A dependent record is well modelled when its references are complete, its owner 
 
 ---
 
-*Source basis: original KEVOS® analysis of the weak-entity and identifying-owner sections in the supplied Database Design Using Entity-Relationship Diagrams, with implementation terminology checked against the linked SQLite documentation. The workshop records and quantities are illustrative.*
+*Source basis: original BIZOMAT analysis of the weak-entity and identifying-owner sections in the supplied Database Design Using Entity-Relationship Diagrams, with implementation terminology checked against the linked SQLite documentation. The workshop records and quantities are illustrative.*

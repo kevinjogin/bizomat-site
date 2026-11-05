@@ -9,7 +9,7 @@ draft: false
 
 A lifting magnet is a magnetic chuck turned upside down and hung from a crane. The physics is the same: pull from flux density at the contact, reduced by gaps, thin material and poor materials. What changes is the consequence of getting it wrong. A part that slides on a chuck is scrapped; a plate that drops from a lifting magnet can kill someone. Lifting magnets are lifting equipment, and they come with ratings, derating tables, inspection requirements and rules of use that exist because the physics of the earlier chapters has caught people out.
 
-This chapter plans the case's routine lift: a full 2,400 × 1,200 × 25 mm sheet moved from the rack to the cutting table with two permanent lifting magnets on a lifting beam. It uses the KEVOS® plate lift plan for the sheet's mass and the load on each magnet, derates the magnets for the real sheet, checks the lifting beam with the KEVOS® lifting beam tool, and looks at plate flex and power failure. The error is a rusty sheet.
+This chapter plans the case's routine lift: a full 2,400 × 1,200 × 25 mm sheet moved from the rack to the cutting table with two permanent lifting magnets on a lifting beam. It uses the BIZOMAT plate lift plan for the sheet's mass and the load on each magnet, derates the magnets for the real sheet, checks the lifting beam with the BIZOMAT lifting beam tool, and looks at plate flex and power failure. The error is a rusty sheet.
 
 ## What a lifting magnet's rating means
 
@@ -19,7 +19,7 @@ Anything that departs from the rating conditions reduces the capacity. Makers pu
 
 ## The sheet and its centre of gravity
 
-The KEVOS® [plate lift plan](/tools/plate-lift-plan/) calculates a flat plate's area, perimeter and centroid from its corner coordinates, its mass from its thickness and density, and the load on each of two lift points from where the centre of gravity falls along the line between them, with the sideways offset that makes the plate hang tilted, checked against the working load limit of each lift point.
+The BIZOMAT [plate lift plan](/tools/plate-lift-plan/) calculates a flat plate's area, perimeter and centroid from its corner coordinates, its mass from its thickness and density, and the load on each of two lift points from where the centre of gravity falls along the line between them, with the sideways offset that makes the plate hang tilted, checked against the working load limit of each lift point.
 
 This is an illustration. The sheet is 2,400 × 1,200 × 25 mm grade 250 steel at 7,850 kg/m³. The two magnets are placed 600 mm in from each end, on the sheet's centreline.
 
@@ -58,7 +58,7 @@ The plate lift plan shows what happens when the magnets are not where the plan s
 
 ## The lifting beam
 
-The two magnets hang from a lifting beam, which hangs from the crane hook. The KEVOS® [lifting beam design tool](/tools/lifting-beam-design/) checks a below-the-hook beam: for a lifting beam with one top lug and the load hung from two points, the bending stress and deflection with a dynamic factor on the load; for a spreader beam, the compression from the sling angle and Euler buckling.
+The two magnets hang from a lifting beam, which hangs from the crane hook. The BIZOMAT [lifting beam design tool](/tools/lifting-beam-design/) checks a below-the-hook beam: for a lifting beam with one top lug and the load hung from two points, the bending stress and deflection with a dynamic factor on the load; for a spreader beam, the compression from the sling angle and Euler buckling.
 
 This is an illustration. The beam is a 150 × 100 × 6 mm rectangular hollow section with its load points 1,200 mm apart. Its elastic section modulus is about 118,000 mm³ and second moment of area about 8.85 × 10⁶ mm⁴, calculated from its outer and inner dimensions without corner radii. The load is the sheet plus two magnets of 35 kg each, 635.2 kg, with a dynamic factor of 1.25.
 

@@ -27,7 +27,7 @@ step: free air ≈ (0.147 + 0.124 + 0.013) × 6.92
 step: free air ≈ 1.96 litres per cycle
 ```
 
-Small spaces inside the cylinder's end caps and the valve add a little more, which this estimate leaves out. Makers' consumption figures, and the KEVOS® [pneumatic consumption](/tools/pneumatic-consumption/) calculator, follow the same method.
+Small spaces inside the cylinder's end caps and the valve add a little more, which this estimate leaves out. Makers' consumption figures, and the BIZOMAT [pneumatic consumption](/tools/pneumatic-consumption/) calculator, follow the same method.
 
 ## Air per year
 
@@ -61,7 +61,7 @@ The same arithmetic applied to air that does no useful work gives very different
 - **1.5 mm**: about **95 L/min**;
 - **3 mm**: about **379 L/min**.
 
-Flow rises with the square of the diameter, so a hole twice as wide leaks four times as much. The KEVOS® [air leak cost](/tools/air-leak-cost/) calculator applies the same method to other sizes and pressures.
+Flow rises with the square of the diameter, so a hole twice as wide leaks four times as much. The BIZOMAT [air leak cost](/tools/air-leak-cost/) calculator applies the same method to other sizes and pressures.
 
 ```figure
 type: bars
@@ -113,7 +113,7 @@ This is an illustration. Line 1's carton erector picks flat carton blanks from a
 
 The erector's ejector was switched on when the machine started and stayed on all shift. During the air walk-through, the maintenance lead noticed that it hissed continuously, including during the long pauses when the magazine was being reloaded or the line was waiting for product. The maker's data gave its consumption at the supply pressure as about **150 L/min**. Over 4,000 hours, that is about **36,000 m³** of free air and about **A$1,260** a year in electricity.
 
-The cups only needed vacuum for about 30% of the time, while picking and placing a blank. The correction was an ejector with an on-demand valve, switched on by the erector's controller only for each pick, and a vacuum switch confirming a good grip before the arm moved. Consumption fell to about 30% of the original, saving about **A$880** a year, and the erector became quieter. The vacuum cups and ejector were also checked against the KEVOS® [vacuum gripper sizing](/tools/vacuum-gripper-sizing/) method to confirm the holding force was still adequate.
+The cups only needed vacuum for about 30% of the time, while picking and placing a blank. The correction was an ejector with an on-demand valve, switched on by the erector's controller only for each pick, and a vacuum switch confirming a good grip before the arm moved. Consumption fell to about 30% of the original, saving about **A$880** a year, and the erector became quieter. The vacuum cups and ejector were also checked against the BIZOMAT [vacuum gripper sizing](/tools/vacuum-gripper-sizing/) method to confirm the holding force was still adequate.
 
 The detection came from listening during a walk-through, a method that costs nothing. Continuous hissing from a machine that works intermittently is always worth a question.
 

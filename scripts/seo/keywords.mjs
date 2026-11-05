@@ -1,4 +1,4 @@
-// Builds seo/keyword-registry.json: seed keywords mapped to one canonical KEVOS page each, with a transparent
+// Builds seo/keyword-registry.json: seed keywords mapped to one canonical BIZOMAT page each, with a transparent
 // score. Only two components are judged here (business relevance, content readiness). Search demand, existing
 // impressions and competitive feasibility stay UNKNOWN until Search Console, Bing or another authorised source
 // supplies them. Scores are therefore provisional, and every component is shown.
@@ -66,12 +66,12 @@ export const SEEDS = [
   ['how to calculate manufacturing cycle time', 'educational', 'informational', '/reados/publications/machining-by-the-numbers/estimating-cycle-time/', 8, 9, 'Dedicated chapter with worked example'],
   ['how to prepare an engineering RFQ', 'educational', 'informational', null, 8, 0, 'GAP: no guide exists; editorial brief only, needs review before publishing'],
   ['engineering project commissioning checklist', 'educational', 'informational', null, 7, 0, 'GAP: only an HVAC commissioning chapter exists; editorial brief only'],
-  ['KEVOS', 'branded', 'navigational', '/', 10, 9, 'Home page'],
-  ['KEVOS engineering', 'branded', 'navigational', '/', 10, 9, 'Home page'],
-  ['KEVOS WORKOS', 'branded', 'navigational', '/tools/', 8, 9, 'WORKOS directory'],
-  ['KEVOS READOS', 'branded', 'navigational', '/reados/', 8, 9, 'READOS library'],
-  ['KEVOS MAKEOS', 'branded', 'navigational', '/tools/', 7, 7, 'MAKEOS is a collection inside WORKOS with no page of its own'],
-  ['KEVOS engineering calculators', 'branded', 'navigational', '/tools/', 8, 8, 'WORKOS directory'],
+  ['BIZOMAT', 'branded', 'navigational', '/', 10, 9, 'Home page'],
+  ['BIZOMAT engineering', 'branded', 'navigational', '/', 10, 9, 'Home page'],
+  ['BIZOMAT WORKOS', 'branded', 'navigational', '/tools/', 8, 9, 'WORKOS directory'],
+  ['BIZOMAT READOS', 'branded', 'navigational', '/reados/', 8, 9, 'READOS library'],
+  ['BIZOMAT MAKEOS', 'branded', 'navigational', '/tools/', 7, 7, 'MAKEOS is a collection inside WORKOS with no page of its own'],
+  ['BIZOMAT engineering calculators', 'branded', 'navigational', '/tools/', 8, 8, 'WORKOS directory'],
 ];
 
 /** Weighted score over the components that are known; unknown components are excluded, not counted as zero. */

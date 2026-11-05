@@ -7,7 +7,7 @@ tags:
   - projects
   - strategy
   - finance
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Early contractor involvement, managing contractor and construction management mo
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal or professional advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal or professional advice.*

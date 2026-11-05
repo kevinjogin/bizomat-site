@@ -9,7 +9,7 @@ draft: false
 
 Shrink fitting is the reason SF-180 exists. An interference fit holds a shaft in a carrier by the pressure between them, and assembling it means making the shaft smaller than the bore, or the bore bigger than the shaft, for long enough to slide one into the other. Heating the carrier is the usual way, but SF-180's carriers are heavy steel castings of about 280 kg that already carry their bearings, and they cannot be heated evenly in the workshop. So the shafts are cooled instead.
 
-This chapter checks that the fit's interference holds the torque, using the KEVOS® shrink fit design tool, then finds how much the shaft really contracts in liquid nitrogen from NIST's measured contraction data. It finds the temperature the shaft must reach and the time the fitters have to get it home, and ends with a calculation that used a room-temperature expansion coefficient and predicted contraction the shaft never had.
+This chapter checks that the fit's interference holds the torque, using the BIZOMAT shrink fit design tool, then finds how much the shaft really contracts in liquid nitrogen from NIST's measured contraction data. It finds the temperature the shaft must reach and the time the fitters have to get it home, and ends with a calculation that used a room-temperature expansion coefficient and predicted contraction the shaft never had.
 
 ## The fit and its duty
 

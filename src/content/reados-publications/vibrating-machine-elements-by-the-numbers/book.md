@@ -4,8 +4,8 @@ subtitle: "Wave speed, natural frequency and resonance in belts, cables, bars, s
 description: "Find the natural frequencies of belts, guy ropes, shafts, isolator springs and panels from wave speed, then keep them clear of what drives the machine."
 category: Engineering
 tags: [design, validation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -81,7 +81,7 @@ It serves mechanical designers, maintenance and reliability engineers and techni
 
 Every chapter works on one fictional machine: **RF-3, a belt-driven rooftop exhaust fan** on a variable speed drive. A 4-pole motor running at 1,450 rpm at full speed drives an eight-blade impeller through two wedge belts, with a 160 mm motor pulley, a 250 mm fan pulley and a 600 mm centre distance. The fan runs at 928 rpm at full speed and down to 60 per cent of that at the drive's 30 Hz minimum. The unit sits on four spring isolators, its discharge stack is braced by four guy ropes, and its housing is folded from 1.6 mm steel sheet.
 
-This is an illustration. All dimensions, masses, tensions, test readings and frequencies are invented for teaching and checked by calculation. They are not KEVOS® work, a product, or a measured machine. Where a value would normally come from a manufacturer, such as a belt's mass per metre, the book says it is an assumed teaching value.
+This is an illustration. All dimensions, masses, tensions, test readings and frequencies are invented for teaching and checked by calculation. They are not BIZOMAT work, a product, or a measured machine. Where a value would normally come from a manufacturer, such as a belt's mass per metre, the book says it is an assumed teaching value.
 
 ## Source limits and professional responsibility
 

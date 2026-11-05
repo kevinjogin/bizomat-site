@@ -51,7 +51,7 @@ The first rule makes the planets fit between sun and ring: the ring's tooth coun
 
 The sun-to-planet centre distance is m × (12 + 18) ÷ 2 = 15 mm. With three planets, their centres are 120° apart on that 15 mm radius, so neighbouring centres are about 25.98 mm apart. Each planet's tip diameter is (18 + 2) × 1 = 20 mm, leaving nearly 6 mm between neighbours, plenty of room for the carrier's pins and for printing tolerance.
 
-The [planetary gear](/tools/planetary-gear/) tool in KEVOS® Tools checks ratios and assembly conditions for other tooth counts.
+The [planetary gear](/tools/planetary-gear/) tool in BIZOMAT Tools checks ratios and assembly conditions for other tooth counts.
 
 ## Face the undercut honestly
 
@@ -97,7 +97,7 @@ caption: This is an illustration. Rated running sits well inside the working lim
 - Single-break coupon strength | 68.3
 ```
 
-Rated running, at 6.4 MPa, is well within the working limit. The stall case, at 19.1 MPa, exceeds it a little but remains less than a third of the single-break strength. Because a stall is rare and brief, especially once Chapter 8 adds a current limit and a jam detector, the designer accepted it. The [Lewis bending](/tools/lewis-bending/) and [plastic gear power](/tools/plastic-gear-power/) tools in KEVOS® Tools run the same kind of check for other cases.
+Rated running, at 6.4 MPa, is well within the working limit. The stall case, at 19.1 MPa, exceeds it a little but remains less than a third of the single-break strength. Because a stall is rare and brief, especially once Chapter 8 adds a current limit and a jam detector, the designer accepted it. The [Lewis bending](/tools/lewis-bending/) and [plastic gear power](/tools/plastic-gear-power/) tools in BIZOMAT Tools run the same kind of check for other cases.
 
 Be clear about what this check is. The Lewis equation ignores stress concentration at the root, dynamic effects, the undercut's exact shape and the true load distribution across an imperfectly printed face. The coupon strength is from a crude rig. The working limit is an assumption. Together they give a reasonable screening of whether the gears are in the right range, which the soak test in Chapter 9 then confirms or refutes.
 

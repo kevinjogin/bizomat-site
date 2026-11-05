@@ -9,7 +9,7 @@ draft: false
 
 A breakdown can be repaired in an hour only if the part is on the shelf. For parts that fail at random and are repaired or replaced from far away, the spares holding decides whether a failure costs an hour or a week. Too few spares and the line waits for a courier; too many and money sits in a cupboard. The right number follows from the same mathematics as the rest of this book: failures arrive as a Poisson stream, the parts away for repair form a birth–death population, and the chance of running out is a tail probability that can be set against its cost.
 
-This chapter sizes the spares holding for the packing lines' servo drives with the KEVOS® critical spares tool, explains Palm's theorem, the result that makes repairable spares easy to calculate, and sets the service level from the cost of a stock-out rather than by habit. It ends with a holding that was one drive short because the failure rate was counted in production hours while the drives were powered all day.
+This chapter sizes the spares holding for the packing lines' servo drives with the BIZOMAT critical spares tool, explains Palm's theorem, the result that makes repairable spares easy to calculate, and sets the service level from the cost of a stock-out rather than by habit. It ends with a holding that was one drive short because the failure rate was counted in production hours while the drives were powered all day.
 
 ## The drives and their pipeline
 

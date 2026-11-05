@@ -7,7 +7,7 @@ tags:
   - design
   - projects
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Building up and boring down became practical through combinations of technologie
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on tall buildings, foundations, lifts, tunnelling machines and modern civil works, together with established histories of engineering. The worked example is illustrative. This article is general information, not design guidance; buildings, lifts, foundations and tunnels must be designed by appropriately qualified engineers in line with applicable standards and laws.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on tall buildings, foundations, lifts, tunnelling machines and modern civil works, together with established histories of engineering. The worked example is illustrative. This article is general information, not design guidance; buildings, lifts, foundations and tunnels must be designed by appropriately qualified engineers in line with applicable standards and laws.*

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: Machinery’s Handbook topic tools (batch handbook48) within the Tools directory.
+// BIZOMAT MAKEOS: Machinery’s Handbook topic tools (batch handbook48) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "water-line-design-check",

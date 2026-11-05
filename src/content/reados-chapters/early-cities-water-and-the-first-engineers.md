@@ -7,7 +7,7 @@ tags:
   - systems
   - projects
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ The first engineers managed water before they built machines. Mesopotamian canal
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

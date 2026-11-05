@@ -27,7 +27,7 @@ where σ_y is the yield stress and E the modulus. Because the neutral axis keeps
 
 (Rᵢ + t ÷ 2) × θᵢ = (R_f + t ÷ 2) × θ_f
 
-so the folder must bend to θᵢ = θ_f × (R_f + t ÷ 2) ÷ (Rᵢ + t ÷ 2) to finish at θ_f. The KEVOS® [springback calculator](/tools/bending-springback/) applies the same estimate.
+so the folder must bend to θᵢ = θ_f × (R_f + t ÷ 2) ÷ (Rᵢ + t ÷ 2) to finish at θ_f. The BIZOMAT [springback calculator](/tools/bending-springback/) applies the same estimate.
 
 ```figure
 type: formula

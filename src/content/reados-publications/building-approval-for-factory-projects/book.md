@@ -4,8 +4,8 @@ subtitle: "Classifying, sizing and equipping an industrial building against the 
 description: "Work through the NCC questions behind a factory fit-out: classification, storeys, fire compartments, occupants, exits, fire equipment, amenities and approval."
 category: Projects
 tags: [projects, manufacturing, quality, operations, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -70,7 +70,7 @@ You need no previous building experience. You do need to be comfortable with are
 
 Every chapter follows the same fictional project. This is an illustration. A precision-engineering business has bought a single-storey steel portal-frame building on a regional New South Wales industrial estate. The building is 60 m long and 30 m wide, a floor area of 1,800 m². The walls are 6.0 m high at the eaves and the roof rises to 7.5 m at the ridge. The owner wants a 300 m² office at the front, a 1,500 m² workshop containing a machine shop and a fabrication and assembly area, and a storage mezzanine inside the workshop. The first sketch shows that mezzanine at 240 m².
 
-The case is invented. Its numbers were chosen to land near real code limits so that the checks matter. It is not a KEVOS® project, and none of its outcomes describe a real building, certifier or council.
+The case is invented. Its numbers were chosen to land near real code limits so that the checks matter. It is not a BIZOMAT project, and none of its outcomes describe a real building, certifier or council.
 
 ## Source limits and professional responsibility
 

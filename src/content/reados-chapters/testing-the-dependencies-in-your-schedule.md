@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ The most important numbers in a schedule are not the ones the software calculate
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations.*

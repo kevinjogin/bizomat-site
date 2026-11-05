@@ -8,7 +8,7 @@ tags:
   - systems
   - process-improvement
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -220,4 +220,4 @@ Standardisation is valuable because a business should not solve the same adminis
 
 ---
 
-*Source: KEVOS® notes, drawing on practitioner guidance on project management offices from Accenture (2017) and the Boston Consulting Group with the Project Management Institute (2013). Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on practitioner guidance on project management offices from Accenture (2017) and the Boston Consulting Group with the Project Management Institute (2013). Examples and figures in this article are illustrations.*

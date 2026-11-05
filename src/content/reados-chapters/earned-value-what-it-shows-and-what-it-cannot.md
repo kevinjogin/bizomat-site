@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -259,4 +259,4 @@ Earned value adds the missing number to a cost report: the budgeted value of wor
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on earned value management, performance baselines, progress measurement and project controls, and Standards Australia's AS 4817 on earned value performance measurement. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on earned value management, performance baselines, progress measurement and project controls, and Standards Australia's AS 4817 on earned value performance measurement. Examples and figures in this article are illustrations. This article is general information.*

@@ -9,7 +9,7 @@ draft: false
 
 A Shewhart chart judges each point on its own. That makes it quick to see a large jump and slow to see a small, sustained shift, because a small shift moves each point only a little, rarely enough to cross a limit. The cumulative sum, or CUSUM, chart takes the opposite approach. It adds up the deviations of successive points from the target, so that a small shift, repeated point after point, accumulates into a large sum. Proposed by E. S. Page in 1954, it is the most efficient simple chart for detecting a sustained shift of a chosen size.
 
-This chapter explains the tabular CUSUM as a random walk with a drift that changes sign when the process shifts, designs one for SP-12's subgroup averages, calculates its run lengths, and runs it with the KEVOS® CUSUM tool on twenty subgroups in which a small shift is hidden. It ends with a CUSUM that was not reset after an adjustment and signalled for the wrong reason.
+This chapter explains the tabular CUSUM as a random walk with a drift that changes sign when the process shifts, designs one for SP-12's subgroup averages, calculates its run lengths, and runs it with the BIZOMAT CUSUM tool on twenty subgroups in which a small shift is hidden. It ends with a CUSUM that was not reset after an adjustment and signalled for the wrong reason.
 
 ## Adding up the evidence
 

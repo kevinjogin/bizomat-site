@@ -7,7 +7,7 @@ tags:
   - projects
   - strategy
   - leadership
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -159,4 +159,4 @@ Great infrastructure projects show that success depends on framing, investigatio
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on canals, roads, the Panama Canal, Hoover Dam and prestressed concrete, together with established histories of engineering and Australian infrastructure. Figures for historical projects are widely cited approximations. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on canals, roads, the Panama Canal, Hoover Dam and prestressed concrete, together with established histories of engineering and Australian infrastructure. Figures for historical projects are widely cited approximations. The worked example is illustrative. This article is general information.*

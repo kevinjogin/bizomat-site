@@ -1,5 +1,5 @@
-// KEVOS® Tools interface: directory, search, workspace, results, analysis, guide and decision reports.
-// Every tool is part of one KEVOS® Tools collection with the same features. Calculations run in the browser only.
+// BIZOMAT Tools interface: directory, search, workspace, results, analysis, guide and decision reports.
+// Every tool is part of one BIZOMAT Tools collection with the same features. Calculations run in the browser only.
 (function () {
   // Tool files load on demand. The page carries a map of tool id → file name (#workos-tool-files) and a tool's
   // data-, guides-, inputs- and calc-<file>.js are fetched the first time it opens, so a phone downloads one
@@ -147,7 +147,7 @@
     const list = (items) => `<ul>${items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>`;
     const verify = [...r.verify, ...(g.verify || [])];
     return `<article class="wr">
-<header class="wr-head"><p class="wr-brand">KEVOS® ${collection(t)} · Decision report</p><h1>${esc(t.name)}</h1><p class="wr-meta">${esc(t.question)} · Generated ${esc(stamp)} · ${esc(shareUrl(t))}</p></header>
+<header class="wr-head"><p class="wr-brand">BIZOMAT ${collection(t)} · Decision report</p><h1>${esc(t.name)}</h1><p class="wr-meta">${esc(t.question)} · Generated ${esc(stamp)} · ${esc(shareUrl(t))}</p></header>
 <section><h2>Decision</h2><p class="wr-decision wr-${esc(r.tone)}">${esc(r.text)}</p><p>${esc(r.summary)}</p>${r.recommendation ? `<p><strong>Recommendation:</strong> ${esc(r.recommendation)}</p>` : ''}</section>
 ${g.purpose ? `<section><h2>Purpose</h2><p>${esc(g.purpose)}</p></section>` : ''}
 <section><h2>Inputs and assumptions</h2><table><thead><tr><th>Input</th><th>Value</th><th>Source to confirm</th></tr></thead><tbody>${rows}</tbody></table></section>
@@ -162,10 +162,10 @@ ${r.actions.length ? `<section><h2>Next actions</h2><ol>${r.actions.map((a) => `
 ${verify.length ? `<section><h2>Verification required</h2>${list(verify)}</section>` : ''}
 ${g.refs?.length ? `<section><h2>References</h2>${refsHtml(g.refs)}</section>` : ''}
 ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</section>` : ''}
-<footer class="wr-foot"><p>KEVOS® tools are screening and decision-support utilities. Results depend entirely on the inputs and assumptions above. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p><p>KEVOS® | kevos.com/tools/</p></footer>
+<footer class="wr-foot"><p>BIZOMAT tools are screening and decision-support utilities. Results depend entirely on the inputs and assumptions above. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p><p>BIZOMAT | kevos.com/tools/</p></footer>
 </article>`;
   }
-  const REPORT_CSS = `body{margin:0;background:#f6f5f1;color:#121211;font:15px/1.55 'Segoe UI',Arial,sans-serif}.wr{max-width:880px;margin:24px auto;padding:36px 40px;background:#fff;border-top:8px solid #ff6a13}.wr h1{margin:.2em 0;font-size:28px}.wr h2{margin:28px 0 8px;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#c2410c}.wr-brand{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#c2410c;font-weight:700}.wr-meta{color:#67645d;font-size:13px;word-break:break-all}.wr-decision{font-size:24px;font-weight:700;margin:4px 0}.wr-good{color:#1f6b45}.wr-warn{color:#c2410c}.wr-bad{color:#b3261e}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid #e3e0d8}thead th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#67645d}.wr-group{padding-top:14px;color:#c2410c;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.wr-st{font-weight:700}.wr-st-pass{color:#1f6b45}.wr-st-warn{color:#c2410c}.wr-st-fail{color:#b3261e}.wr-st-verify{color:#7a4b00}.wr-foot{margin-top:32px;padding-top:12px;border-top:1px solid #e3e0d8;color:#67645d;font-size:12.5px}@media print{body{background:#fff}.wr{margin:0;max-width:none;padding:0;border-top:6px solid #ff6a13}}`;
+  const REPORT_CSS = `body{margin:0;background:#f6f5f1;color:#121211;font:15px/1.55 'Segoe UI',Arial,sans-serif}.wr{max-width:880px;margin:24px auto;padding:36px 40px;background:#fff;border-top:8px solid #14b8a6}.wr h1{margin:.2em 0;font-size:28px}.wr h2{margin:28px 0 8px;font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#0f766e}.wr-brand{margin:0;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#0f766e;font-weight:700}.wr-meta{color:#67645d;font-size:13px;word-break:break-all}.wr-decision{font-size:24px;font-weight:700;margin:4px 0}.wr-good{color:#1f6b45}.wr-warn{color:#b45309}.wr-bad{color:#b3261e}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid #e3e0d8}thead th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#67645d}.wr-group{padding-top:14px;color:#0f766e;font-size:12px;letter-spacing:.08em;text-transform:uppercase}.wr-st{font-weight:700}.wr-st-pass{color:#1f6b45}.wr-st-warn{color:#b45309}.wr-st-fail{color:#b3261e}.wr-st-verify{color:#7a4b00}.wr-foot{margin-top:32px;padding-top:12px;border-top:1px solid #e3e0d8;color:#67645d;font-size:12.5px}@media print{body{background:#fff}.wr{margin:0;max-width:none;padding:0;border-top:6px solid #14b8a6}}`;
 
   function downloadReport() {
     if (!current) return;
@@ -173,7 +173,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     const { t, r, sens } = current;
     const now = new Date();
     const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; // local date, not UTC
-    const html = `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.name)} · KEVOS® ${collection(t)} decision report</title><style>${REPORT_CSS}</style></head><body>${reportBody(t, r, sens)}</body></html>`;
+    const html = `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.name)} · BIZOMAT ${collection(t)} decision report</title><style>${REPORT_CSS}</style></head><body>${reportBody(t, r, sens)}</body></html>`;
     const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
     const a = document.createElement('a');
     a.href = url;
@@ -212,7 +212,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     return u.href;
   }
   function summaryText(t, r) {
-    return [`${t.name} (KEVOS® ${collection(t)})`, `Decision: ${r.text}`, r.summary, ...r.metrics.map((x) => `${x.label}: ${x.value}`), ...r.checks.filter((c) => c.status !== 'pass').map((c) => `${STATUS[c.status]}: ${c.label}${c.detail ? ` (${c.detail})` : ''}`), shareUrl(t)].join('\n');
+    return [`${t.name} (BIZOMAT ${collection(t)})`, `Decision: ${r.text}`, r.summary, ...r.metrics.map((x) => `${x.label}: ${x.value}`), ...r.checks.filter((c) => c.status !== 'pass').map((c) => `${STATUS[c.status]}: ${c.label}${c.detail ? ` (${c.detail})` : ''}`), shareUrl(t)].join('\n');
   }
   function flash(text) {
     const el = $('#tool-flash');
@@ -248,12 +248,12 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     }
   }
   function buildTool(t) {
-    $('#tool-category').textContent = `${t.category} · KEVOS® ${collection(t)}`;
+    $('#tool-category').textContent = `${t.category} · BIZOMAT ${collection(t)}`;
     $('#tool-name').textContent = t.name;
     $('#tool-question').textContent = t.question;
     $('#tool-description').textContent = t.description;
     const form = $('#tool-form');
-    form.innerHTML = `${t.fields.map((f) => fieldHtml(t, f)).join('')}<div class="form-actions"><button class="btn" type="submit">Analyse</button><button class="btn secondary" type="button" id="reset">Reset to examples</button></div><div class="privacy-note">Your inputs stay in this browser. KEVOS® does not send these calculations to a server. The example values are illustrations, not recommendations.</div>`;
+    form.innerHTML = `${t.fields.map((f) => fieldHtml(t, f)).join('')}<div class="form-actions"><button class="btn" type="submit">Analyse</button><button class="btn secondary" type="button" id="reset">Reset to examples</button></div><div class="privacy-note">Your inputs stay in this browser. BIZOMAT does not send these calculations to a server. The example values are illustrations, not recommendations.</div>`;
     applyParams(t);
     const syncGuides = inputGuide ? inputGuide.bind(form, t) : () => {};
     form.onsubmit = (e) => {
@@ -297,7 +297,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     $('#share-tool').onclick = async () => {
       const url = shareUrl(t);
       try {
-        if (navigator.share) await navigator.share({ title: `${t.name} (KEVOS® ${collection(t)})`, text: t.question, url });
+        if (navigator.share) await navigator.share({ title: `${t.name} (BIZOMAT ${collection(t)})`, text: t.question, url });
         else {
           await navigator.clipboard.writeText(url);
           flash('Link with your inputs copied.');
@@ -322,7 +322,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     loadKnowledge().then((map) => {
       const items = (map && map[t.id]) || [];
       if (current?.t.id !== t.id || !items.length) return; // another tool was opened meanwhile, or nothing to show
-      box.innerHTML = `<h2 class="guide-title">Learn the Concepts Behind This Tool</h2><p class="learn-lead">These KEVOS® Library readings explain the method this tool uses, with worked examples.</p><ul class="learn-list">${items
+      box.innerHTML = `<h2 class="guide-title">Learn the Concepts Behind This Tool</h2><p class="learn-lead">These BIZOMAT Library readings explain the method this tool uses, with worked examples.</p><ul class="learn-list">${items
         .map((x) => `<li class="learn-card"><p class="learn-label">${esc(x.label)} · ${esc(x.kind)}</p><h3><a href="${esc(x.href)}">${esc(x.title)}</a></h3>${x.href !== x.bookHref ? `<p class="learn-book">In <a href="${esc(x.bookHref)}">${esc(x.book)}</a></p>` : ''}<p class="learn-what"><strong>What it covers:</strong> ${esc(x.learn)}</p></li>`)
         .join('')}</ul>`;
     });
@@ -396,7 +396,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
     directory.hidden = true;
     if (intro) intro.hidden = true;
     workspace.hidden = false;
-    document.title = `${t.name} | KEVOS® ${collection(t)}`;
+    document.title = `${t.name} | BIZOMAT ${collection(t)}`;
     workspace.scrollIntoView({ block: 'start' });
   }
   function closeTool(push = true) {
@@ -411,7 +411,7 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
       u.search = '';
       history.pushState({}, '', u);
     }
-    document.title = 'Engineering and business calculators and decision tools | KEVOS®';
+    document.title = 'Engineering and business calculators and decision tools | BIZOMAT';
     if (openedInPage) window.scrollTo(0, directoryScroll);
     else directory.scrollIntoView({ block: 'start' });
     openedInPage = false;

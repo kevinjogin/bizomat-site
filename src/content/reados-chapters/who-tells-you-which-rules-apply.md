@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -215,4 +215,4 @@ Compliance knowledge has a source, an author and an age. Behind every claim to c
 
 ---
 
-*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal advice. Confirm your obligations with the relevant authorities and qualified advisers.*
+*Source: BIZOMAT notes. Examples in this article are illustrations. This article is general information, not legal advice. Confirm your obligations with the relevant authorities and qualified advisers.*

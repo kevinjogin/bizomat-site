@@ -1,4 +1,4 @@
-// KEVOS® calculations: Business.
+// BIZOMAT calculations: Business.
 window.GOCORE_CALC_PARTS = window.GOCORE_CALC_PARTS || [];
 window.GOCORE_CALC_PARTS.push(function (id) {
   switch (id) {

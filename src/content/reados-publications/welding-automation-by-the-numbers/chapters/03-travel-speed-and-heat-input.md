@@ -28,7 +28,7 @@ step: about 0.43 kJ/mm
 step: at 600 mm/min the same arc gives about 0.50 kJ/mm, 17% more
 ```
 
-Heat input matters for the steel's properties, especially toughness and hardness in the heat-affected zone, and for distortion, and welding procedures often set a range for it. With voltage and current held steady by the power source, travel speed is what moves the heat input up and down. The [KEVOS® welding heat input calculator](/tools/welding-heat-input/) does the arithmetic for any set of parameters.
+Heat input matters for the steel's properties, especially toughness and hardness in the heat-affected zone, and for distortion, and welding procedures often set a range for it. With voltage and current held steady by the power source, travel speed is what moves the heat input up and down. The [BIZOMAT welding heat input calculator](/tools/welding-heat-input/) does the arithmetic for any set of parameters.
 
 ## Travel speed and weld size
 

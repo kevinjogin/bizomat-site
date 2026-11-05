@@ -7,7 +7,7 @@ tags:
   - validation
   - experimentation
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -195,4 +195,4 @@ A successful pilot shows that something can work. Before it justifies a larger c
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on pilot evaluation and transformation evidence, including a 2005 Purchasing trade-journal account of a development bank's procurement system rollout using volunteer departments. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on pilot evaluation and transformation evidence, including a 2005 Purchasing trade-journal account of a development bank's procurement system rollout using volunteer departments. Examples and figures in this article are illustrations. This article is general information.*

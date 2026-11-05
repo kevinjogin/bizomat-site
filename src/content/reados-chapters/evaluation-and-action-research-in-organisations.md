@@ -7,7 +7,7 @@ tags:
   - validation
   - process-improvement
   - leadership
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -219,4 +219,4 @@ Evaluation applies research methods to judge whether initiatives achieve their p
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

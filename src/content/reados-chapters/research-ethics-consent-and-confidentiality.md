@@ -7,7 +7,7 @@ tags:
   - validation
   - people
   - customers
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ Ethical research respects the people behind the data. Informed, voluntary consen
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations. This article is general information and does not constitute legal advice; seek advice on privacy, workplace surveillance and other legal obligations for specific situations.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations. This article is general information and does not constitute legal advice; seek advice on privacy, workplace surveillance and other legal obligations for specific situations.*

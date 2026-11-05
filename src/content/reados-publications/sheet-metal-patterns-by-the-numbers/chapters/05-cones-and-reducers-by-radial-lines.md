@@ -103,7 +103,7 @@ A pyramid's corners are folded, not rolled, so the bend allowance of each fold c
 
 ## Area, mass and checking
 
-The surface area of a frustum is π × (R₁ + R₂) × slant length, here π × 225.8 × 201.6 = 0.143 m², and in 0.8 mm steel it weighs about 0.9 kg before seams and collars. The KEVOS® [Pappus revolution calculator](/tools/pappus-revolution/) gives the same area from the outline generator and its centroid, a useful independent check.
+The surface area of a frustum is π × (R₁ + R₂) × slant length, here π × 225.8 × 201.6 = 0.143 m², and in 0.8 mm steel it weighs about 0.9 kg before seams and collars. The BIZOMAT [Pappus revolution calculator](/tools/pappus-revolution/) gives the same area from the outline generator and its centroid, a useful independent check.
 
 Once rolled and seamed, the reducer is checked at both ends with a girth tape: the large end's outside girth should be π × 251.6 = 790.4 mm and the small end's π × 201.6 = 633.3 mm. If both are right, the pattern was right. If the large end is right and the small end wrong, the inner radius or the angle was misplotted.
 

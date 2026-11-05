@@ -7,7 +7,7 @@ tags:
   - projects
   - people
   - communication
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -213,4 +213,4 @@ Virtual and global project teams give access to talent and capacity that no sing
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project leadership study material on global virtual project teams, implementing virtual teams, self-managed and virtual teams, and cultural fluency, together with established project leadership practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project leadership study material on global virtual project teams, implementing virtual teams, self-managed and virtual teams, and cultural fluency, together with established project leadership practice. The worked example is illustrative. This article is general information.*

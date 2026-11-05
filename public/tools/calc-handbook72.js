@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations for engineering thermodynamics (batch handbook72). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations for engineering thermodynamics (batch handbook72). SI units are explicit at each boundary.
 // Methods are standard ideal-gas, cycle, psychrometric and combustion relations; no textbook tables or examples are reproduced.
 // Gas properties, refrigerant enthalpies, limits and targets are always entered by the user.
 (() => {

@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -223,4 +223,4 @@ Holes look simple, but making them well requires matching each process to the pr
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow tool manufacturers' recommendations for a specific tool and material.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow tool manufacturers' recommendations for a specific tool and material.*

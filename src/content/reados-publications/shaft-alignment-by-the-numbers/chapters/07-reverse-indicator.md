@@ -9,7 +9,7 @@ draft: false
 
 The rim and face method measures offset at one plane and angle from the face. The reverse indicator method measures offset at two planes, one on each coupling hub, and gets the angle from the difference between them. It needs two brackets, one on each shaft reaching across to the other's hub, and two rim readings. In exchange it ignores axial float completely, resolves the angle well whenever the two planes are far apart, and suits couplings with spacers, where a face reading would be impractical.
 
-This chapter works the method on the HW-3, cross-checks it against Chapter 6's rim and face result, and expresses the angle between the shafts with the KEVOS® shaft angular offset tool. Its mistake is the classic one of the method: forgetting that one of the two readings changes sign.
+This chapter works the method on the HW-3, cross-checks it against Chapter 6's rim and face result, and expresses the angle between the shafts with the BIZOMAT shaft angular offset tool. Its mistake is the classic one of the method: forgetting that one of the two readings changes sign.
 
 ## Two rims, two planes
 

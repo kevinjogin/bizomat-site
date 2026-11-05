@@ -7,7 +7,7 @@ tags:
   - strategy
   - product-development
   - manufacturing
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ The steam engine became world-changing through a century of improvement by peopl
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on the development of steam power, together with established histories of technology. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on the development of steam power, together with established histories of technology. The worked example is illustrative. This article is general information.*

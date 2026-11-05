@@ -7,7 +7,7 @@ tags:
   - strategy
   - customers
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -254,4 +254,4 @@ A list of strengths is really a set of claims about where money should go and wh
 
 ---
 
-*Source: KEVOS® notes, drawing on Michael Porter's distinction between operational effectiveness and strategy, Philip Crosby's definition of quality as conformance to requirements and Clayton Christensen's jobs-to-be-done framing. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on Michael Porter's distinction between operational effectiveness and strategy, Philip Crosby's definition of quality as conformance to requirements and Clayton Christensen's jobs-to-be-done framing. Examples and figures in this article are illustrations.*

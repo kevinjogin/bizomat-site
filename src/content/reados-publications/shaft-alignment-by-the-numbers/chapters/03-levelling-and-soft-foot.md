@@ -9,7 +9,7 @@ draft: false
 
 A machine with four feet on a base is held by four bolts, and it would be pleasant to think that the four feet always sit flat on four pads at the same height. They rarely do. One foot sits a little high, or a pad a little low, or a foot is bent, and when that foot's bolt is tightened, it pulls the foot down and distorts the machine's frame to make it touch. That is soft foot, and it is the reason an alignment reading can change when nobody has touched the machine except to tighten a bolt.
 
-This chapter covers the two adjustments that come before any alignment: setting the base's height and level on its levelling wedges, checked with the KEVOS® levelling wedge tool, and finding and correcting soft foot on the HW-3's motor and pump. It shows the readings that were taken on the HW-3 before the soft foot was found, and why they could not be trusted.
+This chapter covers the two adjustments that come before any alignment: setting the base's height and level on its levelling wedges, checked with the BIZOMAT levelling wedge tool, and finding and correcting soft foot on the HW-3's motor and pump. It shows the readings that were taken on the HW-3 before the soft foot was found, and why they could not be trusted.
 
 ## Levelling wedges
 

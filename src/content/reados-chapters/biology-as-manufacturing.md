@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - quality
   - product-development
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -195,4 +195,4 @@ Biology became a manufacturing technology through a series of breakthroughs: the
 
 ---
 
-*Source: KEVOS editorial notes. This article is a general historical overview and does not constitute medical or regulatory advice.*
+*Source: BIZOMAT editorial notes. This article is a general historical overview and does not constitute medical or regulatory advice.*

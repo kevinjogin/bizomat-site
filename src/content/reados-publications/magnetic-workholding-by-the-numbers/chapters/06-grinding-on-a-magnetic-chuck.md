@@ -9,11 +9,11 @@ draft: false
 
 The magnetic chuck and the surface grinder grew up together. Grinding forces are small, the chuck face is ground flat in place on the machine it serves, and a part can be loaded, ground, turned over and ground again in a few seconds. Holding force is rarely the problem on a grinder. Flatness is. A chuck that holds a part firmly also pulls it flat, and a part that is ground flat while it is held flat may not be flat once it is released.
 
-This chapter checks the grinding forces on BP-600's rail seats with the KEVOS® surface grinding planner, then deals with the three things that spoil flatness on a magnetic chuck: spring-back of a bowed part, thermal bow from grinding heat, and the temperature at which the part is measured. The error is a batch of rail seats that measured flat on the machine and not flat the next morning.
+This chapter checks the grinding forces on BP-600's rail seats with the BIZOMAT surface grinding planner, then deals with the three things that spoil flatness on a magnetic chuck: spring-back of a bowed part, thermal bow from grinding heat, and the temperature at which the part is measured. The error is a batch of rail seats that measured flat on the machine and not flat the next morning.
 
 ## Grinding forces and the chuck
 
-The KEVOS® [surface grinding planner](/tools/surface-grinding-planner/) plans a reciprocating surface grinding operation with the wheel covering the width ground. It checks the wheel's surface speed against its marked maximum, calculates the contact length and equivalent chip thickness, the removal rate, and the grinding power from the specific grinding energy entered, against the spindle's power, and counts passes and time, including spark-out passes.
+The BIZOMAT [surface grinding planner](/tools/surface-grinding-planner/) plans a reciprocating surface grinding operation with the wheel covering the width ground. It checks the wheel's surface speed against its marked maximum, calculates the contact length and equivalent chip thickness, the removal rate, and the grinding power from the specific grinding energy entered, against the spindle's power, and counts passes and time, including spark-out passes.
 
 This is an illustration. BP-600's two rail seats are each 80 mm wide and 600 mm long, ground with a 350 mm wheel at 1,750 rpm, a table speed of 15 m/min and 0.008 mm per pass, removing 0.1 mm of stock with two spark-out passes. The shop uses a specific grinding energy of 30 J/mm³ for this steel and wheel. The spindle motor is 7.5 kW at 80% efficiency.
 
@@ -90,7 +90,7 @@ Two practices control this. The first is to leave the chuck and coolant running 
 
 ## Measuring at the right temperature
 
-A part measured warm reads large. The KEVOS® [measurement temperature error tool](/tools/measurement-temperature-error/) calculates the apparent size error when the part and the gauge are at temperatures other than the 20 °C reference: the difference of their expansions, the size corrected to 20 °C, the share of the tolerance the error uses, and the temperature difference that would keep the error within a chosen share.
+A part measured warm reads large. The BIZOMAT [measurement temperature error tool](/tools/measurement-temperature-error/) calculates the apparent size error when the part and the gauge are at temperatures other than the 20 °C reference: the difference of their expansions, the size corrected to 20 °C, the share of the tolerance the error uses, and the temperature difference that would keep the error within a chosen share.
 
 This is an illustration. The distance between the two rail seats' reference edges is 300 mm with a tolerance of 0.02 mm. Measured straight off the grinder, the plate is at 26 °C and the steel gauge at 20 °C.
 

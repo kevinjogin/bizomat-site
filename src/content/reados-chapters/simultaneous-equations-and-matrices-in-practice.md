@@ -7,7 +7,7 @@ tags:
   - process-improvement
   - operations
   - design
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Simultaneous equations describe problems where several conditions must hold toge
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

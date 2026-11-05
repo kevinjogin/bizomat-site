@@ -111,7 +111,7 @@ Ten years is a cautious life for pipe insulation with a sound jacket indoors; it
 
 HW-60's pipe was insulated with **40 mm**. The business recorded its reasons: 40 and 50 mm were within about A$100 of each other on every basis tested; 40 mm sections fitted between the pipe and the wall where the run passes close to the plant room's wall; and the money saved was put into removable valve jackets, which Chapter 3 showed were worth far more than the step from 40 to 50 mm. The tank, which is easier to insulate thickly and has no space limits, was given 50 mm. The decision, its numbers and the quotations were filed together.
 
-The KEVOS® [pipe insulation design](/tools/pipe-insulation-design/) calculator runs the same comparison for other pipe sizes, temperatures and prices.
+The BIZOMAT [pipe insulation design](/tools/pipe-insulation-design/) calculator runs the same comparison for other pipe sizes, temperatures and prices.
 
 ## A failure case: chosen on price per metre
 

@@ -4,8 +4,8 @@ subtitle: "Oil films, unit load, friction, film thickness, clearance, heat, oil 
 description: "Design and check oil-lubricated plain bearings: film formation, PV, Petroff friction, Sommerfeld number and film thickness, clearance, heat balance, oil supply, thrust pads and failures."
 category: Engineering
 tags: [design, operations, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -34,7 +34,7 @@ references:
     creator: "G. B. DuBois and F. W. Ocvirk, National Advisory Committee for Aeronautics"
     year: "1953"
     url: "https://ntrs.nasa.gov/citations/19930092184"
-    note: "Public domain. Source of the short-bearing relations used in Chapters 3 to 9: the capacity number, eccentricity ratio, attitude angle, friction ratio to the Petroff value, required side flow and peak film pressure, and of the authors' statement that the approximation suits bearings with length-to-diameter ratios up to about 1. All case values were calculated by KEVOS® from these relations; no charts or data are reproduced."
+    note: "Public domain. Source of the short-bearing relations used in Chapters 3 to 9: the capacity number, eccentricity ratio, attitude angle, friction ratio to the Petroff value, required side flow and peak film pressure, and of the authors' statement that the approximation suits bearings with length-to-diameter ratios up to about 1. All case values were calculated by BIZOMAT from these relations; no charts or data are reproduced."
   - title: "Fundamentals of Fluid Film Lubrication (NASA Reference Publication 1255)"
     creator: "B. J. Hamrock, National Aeronautics and Space Administration"
     year: "1991"
@@ -76,7 +76,7 @@ A plain bearing is a shaft turning in a hole. Done well, it carries large loads 
 
 This book explains how that film forms and what it needs, and turns the explanation into the calculations used to choose and check real bearings. It covers unit load and PV, Petroff's friction, the Sommerfeld number and the film thickness it implies, clearance, the heat balance that sets the running temperature, the oil supply, thrust pads, starting and stopping, bearing materials, and the failures and vibrations that plain bearings are prone to. The physics of viscosity behind it all is the subject of a companion book, Viscosity by the Numbers.
 
-It is for mechanical, reliability and maintenance engineers, machine designers, fitters and students who know basic mechanics and fluid flow. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer. Readers who want the full theory will find it in Hamrock's public-domain NASA text, Fundamentals of Fluid Film Lubrication.
+It is for mechanical, reliability and maintenance engineers, machine designers, fitters and students who know basic mechanics and fluid flow. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the BIZOMAT tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer. Readers who want the full theory will find it in Hamrock's public-domain NASA text, Fundamentals of Fluid Film Lubrication.
 
 ## The running case
 
@@ -88,7 +88,7 @@ Every chapter follows one fictional fan. This is an illustration. A timber proce
 - **Oil:** an ISO VG 68 turbine-type mineral oil, 68.0 mm²/s at 40 °C and 8.6 mm²/s at 100 °C, with a density of 870 kg/m³ at 15 °C falling by 0.07% per kelvin and a specific heat of 1.9 kJ/(kg·K).
 - **Housing:** each bearing housing sheds heat to the fan house air at 6.0 W per kelvin of difference between its oil and the air. The fan house reaches 30 °C on summer afternoons.
 
-The plant, its fan and its bearings are invented and do not describe KEVOS® work or any real product or business. Equipment and oil data are of the kind makers publish, not the data of any product.
+The plant, its fan and its bearings are invented and do not describe BIZOMAT work or any real product or business. Equipment and oil data are of the kind makers publish, not the data of any product.
 
 ## How to use the book
 

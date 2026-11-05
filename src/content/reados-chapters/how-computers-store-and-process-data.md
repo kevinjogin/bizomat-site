@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ Computers represent all data as bits, interpreted as integers of fixed size, flo
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

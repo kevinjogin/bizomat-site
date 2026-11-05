@@ -9,7 +9,7 @@ draft: false
 
 The core sets a transformer's voltages; the windings carry its current. At TX-1's rating of 1,500 kVA its low-voltage winding carries 2,000 A in each phase, and every ampere of it heats the copper, sets up a magnetic field that spills out between the windings, and drops a little voltage on the way to the switchboard. Those three effects are the load loss, the leakage reactance and the voltage regulation. Unlike the core loss, they all grow with the load, so they decide how much load a transformer can carry and how well it holds its voltage while doing so.
 
-This chapter works out TX-1's currents, splits its 16.5 kW load loss into its parts, explains what its 5% impedance means, and calculates how far the voltage at the switchboard falls under load. It then sizes the new freezing tunnel's load with the KEVOS® motor power tool, shows how adding the tunnel in kilowatts instead of kilovolt-amperes made TX-1 look comfortably large enough, and ends with what power factor correction does to both the loading and the voltage.
+This chapter works out TX-1's currents, splits its 16.5 kW load loss into its parts, explains what its 5% impedance means, and calculates how far the voltage at the switchboard falls under load. It then sizes the new freezing tunnel's load with the BIZOMAT motor power tool, shows how adding the tunnel in kilowatts instead of kilovolt-amperes made TX-1 look comfortably large enough, and ends with what power factor correction does to both the loading and the voltage.
 
 ## Currents
 

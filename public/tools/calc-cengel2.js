@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations for engineering thermodynamics, second Çengel batch (cengel2). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations for engineering thermodynamics, second Çengel batch (cengel2). SI units are explicit at each boundary.
 // Methods are standard steam-cycle, cogeneration and psychrometric relations; no textbook tables or examples are reproduced.
 // Steam-table values, efficiencies, capacities, limits and targets are always entered by the user.
 (() => {

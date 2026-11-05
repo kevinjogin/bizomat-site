@@ -7,7 +7,7 @@ tags:
   - quality
   - manufacturing
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Measuring instruments range from rules and callipers to micrometers, indicators,
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow instrument manufacturers' instructions.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow instrument manufacturers' instructions.*

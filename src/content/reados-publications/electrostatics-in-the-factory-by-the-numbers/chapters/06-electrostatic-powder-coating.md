@@ -9,7 +9,7 @@ draft: false
 
 Powder coating is static electricity put to work. A corona gun fills the air in front of it with ions, the powder passing through picks up their charge, and the electric field between the gun and the earthed part pulls the charged powder onto the part, round its edges and onto surfaces the gun cannot see. The powder holds itself on the part by its own charge until the oven melts and cures it into a continuous film. Every part of that process is governed by the physics of the previous chapters, and most of the common faults on a powder line, poor wrap, thin inside corners, orange peel and pinholes, starry craters and wasted powder, are electrostatic faults.
 
-This chapter explains how the gun charges powder and how much charge a particle can carry, why the electric force so outweighs gravity, how free ions both help and hurt, and why the film limits itself. It works the enclosure's powder use with the KEVOS® coating coverage and coating job tools, judges the line's film thickness capability with the process capability tool, and ends with the inside corners that stayed thin however high the operators turned the voltage.
+This chapter explains how the gun charges powder and how much charge a particle can carry, why the electric force so outweighs gravity, how free ions both help and hurt, and why the film limits itself. It works the enclosure's powder use with the BIZOMAT coating coverage and coating job tools, judges the line's film thickness capability with the process capability tool, and ends with the inside corners that stayed thin however high the operators turned the voltage.
 
 ## How the gun charges powder
 

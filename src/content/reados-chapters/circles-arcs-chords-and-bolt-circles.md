@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Circumference, arc length, chords and sagitta solve a wide range of practical pr
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

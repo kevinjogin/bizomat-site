@@ -4,8 +4,8 @@ subtitle: "Designing with nickel-titanium wire actuators and superelastic parts:
 description: "Design with nickel-titanium shape memory wire and superelastic parts using numbers: transformation temperatures, stress shifts, stroke, bias springs, current, cooling and fatigue."
 category: Engineering
 tags: [design, product-development, automation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -70,7 +70,7 @@ It suits mechanical and mechatronic designers and automation engineers. It assum
 
 Every chapter follows one fictional product. This is an illustration. A maker of electrical enclosures designs VL-25, a latch release for a pressure-relief vent flap on an outdoor control cabinet. A spring-loaded latch pin holds the flap shut. To open the vent remotely, a controller passes current through a 150 mm length of 0.25 mm (0.010 in) nickel-titanium actuator wire, which contracts and pulls the latch pin back 4.0 mm. A steel bias spring stretches the wire again when it cools. The cabinet's interior can reach 60 °C in summer sun. A superelastic nickel-titanium wire clip, introduced in Chapter 9, holds the flap against its seal.
 
-The enclosure maker, the latch and every mistake are invented and do not describe KEVOS® work or a real product. Wire data are taken from manufacturers' published sheets and identified in the references; the case's transformation temperatures and test results are illustrations.
+The enclosure maker, the latch and every mistake are invented and do not describe BIZOMAT work or a real product. Wire data are taken from manufacturers' published sheets and identified in the references; the case's transformation temperatures and test results are illustrations.
 
 ## Source limits and professional responsibility
 

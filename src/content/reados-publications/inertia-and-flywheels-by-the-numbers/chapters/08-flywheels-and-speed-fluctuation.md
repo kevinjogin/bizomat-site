@@ -9,7 +9,7 @@ draft: false
 
 A flywheel is a store of energy that charges and discharges by changing speed. When a machine's load briefly exceeds what its motor can supply, the flywheel slows a little and gives up energy to make up the difference; when the load falls, the motor speeds it up again. A punch press, a shear, an engine, a crusher and a chipper all depend on this, and the design question is always the same: how much inertia is needed to keep the speed within limits while the peak passes.
 
-This chapter examines the DL-3 chipper's disc as a flywheel with the KEVOS® flywheel energy and speed fluctuation tool. It derives the energy released between two speeds, introduces the coefficient of speed fluctuation, and finds that the disc alone cannot carry the mill's largest offcuts. Its mistake is an energy calculated from the change of speed instead of the change of speed squared, which understated the flywheel's contribution forty-fold.
+This chapter examines the DL-3 chipper's disc as a flywheel with the BIZOMAT flywheel energy and speed fluctuation tool. It derives the energy released between two speeds, introduces the coefficient of speed fluctuation, and finds that the disc alone cannot carry the mill's largest offcuts. Its mistake is an energy calculated from the change of speed instead of the change of speed squared, which understated the flywheel's contribution forty-fold.
 
 ## Energy released by slowing
 

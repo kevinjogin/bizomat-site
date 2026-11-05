@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations from thermodynamics topics after Linder, Thermodynamics and Introductory Statistical Mechanics (batch handbook70).
+// BIZOMAT MAKEOS calculations from thermodynamics topics after Linder, Thermodynamics and Introductory Statistical Mechanics (batch handbook70).
 // SI units are explicit at each boundary. Methods are standard thermodynamic relations; no source tables, examples or data are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

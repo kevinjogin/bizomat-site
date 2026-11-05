@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ Encoding preserves characters, normalisation addresses defined sequence equivale
 
 ---
 
-*Source basis: original KEVOS® editorial explanation prompted by character-set, collation and re-indexing discussions in the supplied Advantage Database Server: The Official Guide (2003). Current Unicode and PostgreSQL references are linked for technical definitions. Historical product instructions are not presented as current operating procedures.*
+*Source basis: original BIZOMAT editorial explanation prompted by character-set, collation and re-indexing discussions in the supplied Advantage Database Server: The Official Guide (2003). Current Unicode and PostgreSQL references are linked for technical definitions. Historical product instructions are not presented as current operating procedures.*

@@ -4,8 +4,8 @@ subtitle: "Turning an in-house CAD tool into a product: market, ownership, packa
 description: "Turn an in-house engineering tool into a software product: test the market, secure ownership, package and license it, price with GST, meet consumer law and support it."
 category: Business
 tags: [product-development, strategy, sales, finance, startups]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -81,7 +81,7 @@ It assumes the reader understands their own engineering work and the tool they h
 
 The book follows a fictional 12-person structural and mechanical design office that built a **drawing-checking add-in** for its own CAD system. The add-in checks each drawing before release for missing title-block properties, inconsistent revision tables, untoleranced dimensions and layer and style breaches. Inside the office it saves about a quarter of an hour on each of about 2,400 drawings a year. Several clients and two peer firms have asked whether they can buy it.
 
-All quantities, prices, costs and results are invented for teaching. This is an illustration. None of it describes a KEVOS® product, client or result. Money is in Australian dollars, and each example says whether GST is included.
+All quantities, prices, costs and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT product, client or result. Money is in Australian dollars, and each example says whether GST is included.
 
 ## How to use the book
 

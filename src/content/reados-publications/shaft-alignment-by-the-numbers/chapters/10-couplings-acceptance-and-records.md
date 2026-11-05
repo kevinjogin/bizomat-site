@@ -7,7 +7,7 @@ description: "How to check a flexible coupling's torque, speed, misalignment and
 draft: false
 ---
 
-The alignment is done; the job is not. The coupling that joins the shafts must suit the duty, the machine must be accepted against stated criteria, and the result must be recorded so that the next person can see what was done and whether anything has changed. This chapter closes the HW-3 installation: it checks the coupling with the KEVOS® flexible coupling selection tool, explains why the coupling's misalignment allowance is not an alignment tolerance, sets out the acceptance checks at commissioning, and describes the record that makes the next alignment faster and more reliable.
+The alignment is done; the job is not. The coupling that joins the shafts must suit the duty, the machine must be accepted against stated criteria, and the result must be recorded so that the next person can see what was done and whether anything has changed. This chapter closes the HW-3 installation: it checks the coupling with the BIZOMAT flexible coupling selection tool, explains why the coupling's misalignment allowance is not an alignment tolerance, sets out the acceptance checks at commissioning, and describes the record that makes the next alignment faster and more reliable.
 
 ## Checking the coupling
 

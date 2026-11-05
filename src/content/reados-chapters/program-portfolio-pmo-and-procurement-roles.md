@@ -7,7 +7,7 @@ tags:
   - projects
   - leadership
   - people
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ Program, portfolio, project office and strategic procurement roles each answer d
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® corporate articles on program management, portfolio management, strategic project management offices and strategic procurement roles. Research referred to includes work by Sergio Pellegrinelli and colleagues on program management and by Mark Young and Kieran Conboy on an Australian competency standard for project portfolio management. The worked example is illustrative.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT corporate articles on program management, portfolio management, strategic project management offices and strategic procurement roles. Research referred to includes work by Sergio Pellegrinelli and colleagues on program management and by Mark Young and Kieran Conboy on an Australian competency standard for project portfolio management. The worked example is illustrative.*

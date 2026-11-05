@@ -55,7 +55,7 @@ caption: Values from L_total = 10 × log₁₀(10^(L₁÷10) + 10^(L₂÷10)), r
 - Fifteen apart | 15 dB | 0.1 dB
 ```
 
-The table is worth knowing by heart, because it answers the most important question in noise control without a calculator: which source matters? For more than two sources, or for subtracting a background, the KEVOS® [Machinery Noise calculator](/tools/sound-level/) does the arithmetic. A source well below the loudest is not worth treating until the loudest has been dealt with.
+The table is worth knowing by heart, because it answers the most important question in noise control without a calculator: which source matters? For more than two sources, or for subtracting a background, the BIZOMAT [Machinery Noise calculator](/tools/sound-level/) does the arithmetic. A source well below the loudest is not worth treating until the loudest has been dealt with.
 
 ## Subtracting a background
 

@@ -4,8 +4,8 @@ subtitle: "Readiness levels, pioneer plants, scale-up, qualification, ramp-up an
 description: "Measure what novelty costs: readiness levels, pioneer-plant evidence, scale-up, qualification tests, ramp-up curves, contingency graded by novelty, and ways to buy the risk down."
 category: Engineering
 tags: [projects, validation, manufacturing, process-improvement, strategy]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -147,13 +147,13 @@ Every chapter follows one fictional decision. This is an illustration. A family-
 
 On paper the novel process is far better: about **A$2.4 million a year** more contribution for A$1.5 million more capital. The chapters test that claim one element at a time, through readiness, scale-up, qualification, ramp-up and contingency, and follow the board to its decision and the first months of operation.
 
-The business, its suppliers, its plant, its people and every number in the case are invented. None describes KEVOS® work, a real business, a real supplier or a real technology. All amounts are Australian dollars excluding GST.
+The business, its suppliers, its plant, its people and every number in the case are invented. None describes BIZOMAT work, a real business, a real supplier or a real technology. All amounts are Australian dollars excluding GST.
 
 ## How to use the book
 
-Read Chapter 1 first, because it sets out the two options and the paper comparison that the rest of the book corrects. Chapters 2 to 4 measure novelty and experience, Chapters 5 to 7 follow the technology from pilot to steady operation, and Chapters 8 to 10 turn the findings into allowances, risk reduction and a decision. The corrected yield found in Chapter 6 is used in every later chapter. Every calculation was checked by running it, and the KEVOS® tools linked in the chapters reproduce the learning-curve, contingency and schedule arithmetic.
+Read Chapter 1 first, because it sets out the two options and the paper comparison that the rest of the book corrects. Chapters 2 to 4 measure novelty and experience, Chapters 5 to 7 follow the technology from pilot to steady operation, and Chapters 8 to 10 turn the findings into allowances, risk reduction and a decision. The corrected yield found in Chapter 6 is used in every later chapter. Every calculation was checked by running it, and the BIZOMAT tools linked in the chapters reproduce the learning-curve, contingency and schedule arithmetic.
 
-The book is one of a series of KEVOS® Library books on how projects are planned and delivered. *Reference Class Forecasting by the Numbers* supplies the outside view and the percentile and simulation methods that Chapter 8 relies on. *Front-End Planning by the Numbers* covers project definition and estimate classes, one of the drivers of cost growth in Chapter 3. *Stage Gates and Stopping Rules by the Numbers* develops the value of information and real options behind Chapter 9, and *Project Teams and Contracts by the Numbers* covers the contracts through which guarantees and risk are allocated.
+The book is one of a series of BIZOMAT Library books on how projects are planned and delivered. *Reference Class Forecasting by the Numbers* supplies the outside view and the percentile and simulation methods that Chapter 8 relies on. *Front-End Planning by the Numbers* covers project definition and estimate classes, one of the drivers of cost growth in Chapter 3. *Stage Gates and Stopping Rules by the Numbers* develops the value of information and real options behind Chapter 9, and *Project Teams and Contracts by the Numbers* covers the contracts through which guarantees and risk are allocated.
 
 ## Source limits and professional responsibility
 

@@ -7,7 +7,7 @@ tags:
   - design
   - product-development
   - validation
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ Simulation lets designers explore stresses, deflections, frequencies and motion 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Simulation does not replace engineering judgement, applicable standards or certification by qualified engineers.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Simulation does not replace engineering judgement, applicable standards or certification by qualified engineers.*

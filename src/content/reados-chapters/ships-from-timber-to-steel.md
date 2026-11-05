@@ -7,7 +7,7 @@ tags:
   - design
   - strategy
   - manufacturing
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ Between the 1820s and the 1920s, ships changed from timber and sail to iron and 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

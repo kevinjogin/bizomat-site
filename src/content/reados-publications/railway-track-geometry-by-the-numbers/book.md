@@ -4,8 +4,8 @@ subtitle: "Laying out track that trains can run on: curves and versines, cant an
 description: "Track geometry with numbers: curves and versines, cant and equilibrium speed, cant deficiency, transitions, grades and vertical curves, turnouts, balloon loops, tolerances and handover."
 category: Engineering
 tags: [design, projects, quality, operations, systems]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -50,7 +50,7 @@ The book draws on two Australian Rail Track Corporation engineering standards fo
 
 This is an illustration. A regional grain cooperative is building a balloon loop and loading bin beside a single standard gauge main line, so that whole trains can be loaded without uncoupling. The main line curves near the junction, carrying both fast passenger trains and slower freight. The cooperative's engineers must lay out the loop and its junction turnout, choose the grades through the loading bin, check the effect on the main line's curve, build the track to tolerance, and hand it over to the infrastructure manager.
 
-The cooperative, its engineers, the trains and all the numbers are invented for teaching. They are not KEVOS® work.
+The cooperative, its engineers, the trains and all the numbers are invented for teaching. They are not BIZOMAT work.
 
 ## How to use the book
 
@@ -62,4 +62,4 @@ This book is educational. Track design and construction on a railway network are
 
 ## An original treatment
 
-The Library covers the clearances affected by track geometry in Railway Clearances by the Numbers; this book links to it rather than repeating it. The explanations, the cooperative case, the derivations, figures and exercises are original KEVOS® writing, built from geometry and mechanics. The ARTC documents are copyright; a small number of their values are quoted with citation for teaching, and none of their text, tables or drawings is reproduced.
+The Library covers the clearances affected by track geometry in Railway Clearances by the Numbers; this book links to it rather than repeating it. The explanations, the cooperative case, the derivations, figures and exercises are original BIZOMAT writing, built from geometry and mechanics. The ARTC documents are copyright; a small number of their values are quoted with citation for teaching, and none of their text, tables or drawings is reproduced.

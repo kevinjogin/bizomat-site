@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -225,4 +225,4 @@ Long-term record keeping protects a business in tax reviews, claims, recalls and
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general records management and information systems practice. Retention requirements are summarised for orientation only and should be confirmed with your advisers and the relevant authorities. The worked example is illustrative. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes, drawing on general records management and information systems practice. Retention requirements are summarised for orientation only and should be confirmed with your advisers and the relevant authorities. The worked example is illustrative. This article provides general information and does not constitute legal advice.*

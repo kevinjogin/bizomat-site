@@ -4,8 +4,8 @@ subtitle: "Riveted, clinched, screwed, self-clinching and seamed joints in sheet
 description: "Design mechanical joints in sheet with numbers: rivet shear, bearing and tear-out, pitch and edge distance, clinches, threads in thin sheet, lock seams, galvanic pairs, testing and cost."
 category: Engineering
 tags: [design, manufacturing, quality, product-development]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -53,7 +53,7 @@ It suits mechanical designers, drafters and fabrication engineers. It assumes ba
 
 Every chapter follows one fictional product. This is an illustration. A fabricator makes EN-700, an outdoor equipment enclosure 700 mm high, 500 mm wide and 250 mm deep. Its body is 1.2 mm galvanised steel, folded and joined; its door is 2.0 mm aluminium sheet on a riveted hinge; inside, a 25 kg equipment plate hangs from two brackets fixed to the back wall. The enclosure is built in batches and travels to site by road.
 
-The product, the fabricator and the numbers are invented; none describes KEVOS® work or a real product. Material strengths and fastener ratings are labelled illustrations: real values come from the material's certificate and the fastener maker's published data. Prices are in Australian dollars, excluding GST.
+The product, the fabricator and the numbers are invented; none describes BIZOMAT work or a real product. Material strengths and fastener ratings are labelled illustrations: real values come from the material's certificate and the fastener maker's published data. Prices are in Australian dollars, excluding GST.
 
 ## Source limits and professional responsibility
 

@@ -8,7 +8,7 @@ tags:
   - operations
   - manufacturing
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -240,4 +240,4 @@ Confidence is useful, but it is not evidence. Design supplier work so that it pr
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal advice. Check contract terms and regulatory inspection requirements with an adviser or the relevant regulator.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations. This article is general information, not legal advice. Check contract terms and regulatory inspection requirements with an adviser or the relevant regulator.*

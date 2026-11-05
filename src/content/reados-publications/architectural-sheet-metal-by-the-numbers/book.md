@@ -4,8 +4,8 @@ subtitle: "Profiles, mitres, raking mitres, flashings, copings and curved work f
 description: "Develop building sheet metal by numbers: profile girth, square, angled and raking mitres, penetration and wall flashings, copings with movement and wind, and curved and gored work."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -64,7 +64,7 @@ It assumes basic trigonometry and some folding experience. *Sheet Metal Patterns
 
 The book follows the street front of a fictional **light industrial warehouse, W-40**. Its 40 m front parapet, 200 mm thick, carries a folded steel coping. Over the entrance, a canopy 6 m wide projects from the facade, finished with a profiled fascia that turns the canopy's front corners and rises up the canopy's 15° gable ends as a raking barge. A 900 mm square roof hatch and a 150 mm flue pass through the main roof, and the canopy roof meets the facade wall under an apron flashing. A domed finial, 300 mm in diameter, caps a flagpole base on the parapet, and a curved version of the canopy is considered in the last chapter.
 
-All dimensions, profiles, loads, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Material is 0.55 mm prepainted metallic-coated steel unless stated, and money is in Australian dollars, excluding GST.
+All dimensions, profiles, loads, prices and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Material is 0.55 mm prepainted metallic-coated steel unless stated, and money is in Australian dollars, excluding GST.
 
 ## How to use the book
 

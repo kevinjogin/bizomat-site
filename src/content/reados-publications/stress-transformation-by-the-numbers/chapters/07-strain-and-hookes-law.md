@@ -9,7 +9,7 @@ draft: false
 
 Stress cannot be measured directly. What can be measured is how a part deforms: a strain gauge's resistance changes as its grid stretches, an extensometer reads a change of length, a dial indicator reads a change of diameter. To get from those readings to the stresses of the earlier chapters, two things are needed: the rules for how strain behaves at a point, which turn out to be the same as for stress, and Hooke's law, which links the two.
 
-This chapter sets out both and works them on the RH-40 spindle under the prototype test condition used in Chapter 8. It uses the KEVOS® 3 × 3 matrix tool to invert Hooke's law, and it shows the most common mistake in turning a strain reading into a stress.
+This chapter sets out both and works them on the RH-40 spindle under the prototype test condition used in Chapter 8. It uses the BIZOMAT 3 × 3 matrix tool to invert Hooke's law, and it shows the most common mistake in turning a strain reading into a stress.
 
 ## Normal and shear strain
 

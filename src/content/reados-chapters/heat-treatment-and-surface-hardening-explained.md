@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -194,4 +194,4 @@ Heat treatment can make the same steel soft and machinable, hard and wear resist
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on hardening, tempering and annealing, tool steels and standard steels, together with established heat treatment practice. The worked example is illustrative. This article is general information; seek qualified metallurgical advice for critical parts.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on hardening, tempering and annealing, tool steels and standard steels, together with established heat treatment practice. The worked example is illustrative. This article is general information; seek qualified metallurgical advice for critical parts.*

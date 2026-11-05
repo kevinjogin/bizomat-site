@@ -7,7 +7,7 @@ tags:
   - process-improvement
   - operations
   - finance
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ The practical core of calculus is reading slopes and areas. Slopes give rates of
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

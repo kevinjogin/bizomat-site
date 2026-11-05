@@ -4,8 +4,8 @@ subtitle: "Liquids in pipes: velocity, head, the energy equation, laminar and tu
 description: "Size and check liquid piping with numbers: continuity, head and the energy equation, Reynolds number, Darcy friction, fittings, system curves, balancing and natural circulation."
 category: Engineering
 tags: [design, operations, systems]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -65,7 +65,7 @@ It is for mechanical and maintenance engineers, technicians, plumbers and design
 
 Every chapter follows one fictional system. This is an illustration. A plastics moulding plant cools six injection moulding machines with a water loop called CW-2. Water at 25 °C is pumped from an open 20 m³ tank through a steel supply header of 80.9 mm bore, overhead at 4 m, to the six machines, each taking 1.5 L/s through its mould and oil coolers. It returns through a matching header to the tank, where a separate cooler removes the heat. The design flow is 9.0 L/s, and the water returns at about 32 °C.
 
-The plant, its dimensions, its equipment and its mistakes are invented. None describes KEVOS® work or a real business.
+The plant, its dimensions, its equipment and its mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

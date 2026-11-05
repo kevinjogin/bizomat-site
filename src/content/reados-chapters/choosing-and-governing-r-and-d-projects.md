@@ -7,7 +7,7 @@ tags:
   - product-development
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -223,4 +223,4 @@ R&D buys information under uncertainty, so manage it that way. Frame each projec
 
 ---
 
-*Source: KEVOS® notes, drawing on earlier KEVOS® research handbooks on R&D project selection, decision quality, financial techniques for project selection, portfolio displays, R&D governance and post-project reviews. Examples and figures in this article are illustrations. This article is general information and does not constitute financial or accounting advice.*
+*Source: BIZOMAT notes, drawing on earlier BIZOMAT research handbooks on R&D project selection, decision quality, financial techniques for project selection, portfolio displays, R&D governance and post-project reviews. Examples and figures in this article are illustrations. This article is general information and does not constitute financial or accounting advice.*

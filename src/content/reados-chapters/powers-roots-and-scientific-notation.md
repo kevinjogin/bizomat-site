@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -179,4 +179,4 @@ Powers and roots compress large and small numbers and govern some of the most im
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

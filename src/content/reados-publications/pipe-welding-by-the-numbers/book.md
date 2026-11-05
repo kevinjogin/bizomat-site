@@ -4,8 +4,8 @@ subtitle: "Joining pipe that holds pressure: joint choice, wall thickness, fit-u
 description: "Weld pipe with numbers: welded against threaded joints, wall thickness and pressure, fit-up, positions, root passes and purging, filling passes, stainless, preheat, testing and estimating."
 category: Manufacturing
 tags: [manufacturing, quality, projects, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -67,7 +67,7 @@ Their arithmetic, joints per hour and cost per joint by size, is still how pipin
 
 This is an illustration. A mechanical contractor is building the piping for a dairy factory's new processing hall: carbon steel steam and condensate lines, compressed air, cooling water, and stainless product and cleaning lines, together with about 4 km of DN 200 steel raw water main from a bore field to the site. Its piping supervisor wants to estimate the work honestly, plan fabrication and field welding, keep the repair rate down, and hand the client a weld record that traces every joint.
 
-The contractor, its client, the pipes, prices and results are invented for teaching. They are not KEVOS® work. Piping that holds pressure must be designed, welded, examined and tested to the code that applies, by people qualified under it.
+The contractor, its client, the pipes, prices and results are invented for teaching. They are not BIZOMAT work. Piping that holds pressure must be designed, welded, examined and tested to the code that applies, by people qualified under it.
 
 ## How to use the book
 
@@ -79,4 +79,4 @@ This book is educational. Pressure piping in Australia is designed, fabricated, 
 
 ## An original treatment
 
-The Library covers arc welding generally in Arc Welding by the Numbers, testing in Testing Welded Joints by the Numbers, and the metallurgy of welding steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the contractor case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers arc welding generally in Arc Welding by the Numbers, testing in Testing Welded Joints by the Numbers, and the metallurgy of welding steels in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the contractor case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.

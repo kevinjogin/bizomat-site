@@ -9,7 +9,7 @@ draft: false
 
 Chapters 1 and 2 found the pressure a membrane must overcome. This chapter finds what the pressure above that buys. Water crosses a reverse osmosis membrane at a rate proportional to the net driving pressure, the applied pressure difference minus the osmotic pressure difference, and the constant of proportionality is the membrane's water permeability. Salt crosses at a rate proportional to the concentration difference and almost independent of pressure. Those two statements, with an area and a temperature, are enough to size a plant and to explain most of what an operator sees.
 
-The chapter sets out both equations, shows how to get the permeability constants from an element data sheet, chooses the number of elements for BW-12 from a design flux, and calculates its permeate flow and feed pressure with the KEVOS® reverse osmosis pressure tool. It ends with a design that treated the data sheet's flow as a rating and specified fewer than half the elements the plant needed.
+The chapter sets out both equations, shows how to get the permeability constants from an element data sheet, chooses the number of elements for BW-12 from a design flux, and calculates its permeate flow and feed pressure with the BIZOMAT reverse osmosis pressure tool. It ends with a design that treated the data sheet's flow as a rating and specified fewer than half the elements the plant needed.
 
 ## Two fluxes
 

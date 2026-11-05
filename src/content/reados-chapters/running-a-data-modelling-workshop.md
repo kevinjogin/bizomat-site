@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - communication
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -220,4 +220,4 @@ A data model decides what a business system can record and report, and it is far
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general business analysis and data modelling practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general business analysis and data modelling practice. The worked example is illustrative. This article is general information.*

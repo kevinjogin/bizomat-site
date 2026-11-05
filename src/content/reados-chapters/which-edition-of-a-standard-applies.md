@@ -7,7 +7,7 @@ tags:
   - systems
   - validation
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ Laws, codes and contracts often adopt technical standards by reference, and many
 
 ---
 
-*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal or engineering advice. Confirm current requirements with the relevant authority or an adviser.*
+*Source: BIZOMAT notes. Examples in this article are illustrations. This article is general information, not legal or engineering advice. Confirm current requirements with the relevant authority or an adviser.*

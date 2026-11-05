@@ -4,8 +4,8 @@ subtitle: "Tolerance budgets, measurement decisions and evidence for assembly re
 description: "Follow a mechanical assembly from functional limits to tolerance budgets, temperature checks, measurement uncertainty and a defensible release decision."
 category: Engineering
 tags: [design, manufacturing, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-20
@@ -64,7 +64,7 @@ A component can satisfy its drawing and still contribute to an assembly that bin
 
 This book develops that connection through ten chapters. It follows a fictional **stop-cartridge assembly**: a housing contains a cartridge and a spacer, leaving a controlled axial gap. The model starts with three dimensions, then encounters temperature, geometry, imperfect measurement, production variation and a proposed design change. Each complication changes what the original calculation can legitimately claim.
 
-Every case value, dataset, cost and exercise is invented for education. None describes a KEVOS® customer, product or result. Dimensions are in millimetres unless another unit is stated. The cases are deliberately simple enough to reproduce by hand or with the included Python examples. They are not instructions to release a particular real assembly.
+Every case value, dataset, cost and exercise is invented for education. None describes a BIZOMAT customer, product or result. Dimensions are in millimetres unless another unit is stated. The cases are deliberately simple enough to reproduce by hand or with the included Python examples. They are not instructions to release a particular real assembly.
 
 The reader should be comfortable with basic algebra and engineering drawings. Read sequentially to develop a complete decision record; use individual chapters when reviewing a specific assumption. Exercises include a worked answer or a review criterion so the reasoning can be checked independently.
 

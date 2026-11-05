@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -222,4 +222,4 @@ Collaboration is something parties do, not something a contract form delivers. A
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on relationship contracting, project culture and procurement, including South Australian case research on collaborative contracting and D. Walker and S. Rowlinson's systems view of culture. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on relationship contracting, project culture and procurement, including South Australian case research on collaborative contracting and D. Walker and S. Rowlinson's systems view of culture. Examples and figures in this article are illustrations. This article is general information.*

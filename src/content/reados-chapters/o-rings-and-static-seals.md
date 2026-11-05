@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - manufacturing
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -193,4 +193,4 @@ O-rings seal through controlled squeeze in a well-designed groove, assisted by s
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always use seal manufacturers' design guides for specific applications.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always use seal manufacturers' design guides for specific applications.*

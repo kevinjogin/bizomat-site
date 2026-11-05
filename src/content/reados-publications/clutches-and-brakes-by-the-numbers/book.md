@@ -4,8 +4,8 @@ subtitle: "Loads, linings, plate, cone and centrifugal clutches, shoe, band, dis
 description: "How to size and check friction clutches and brakes: loads and inertia, linings, plate, cone and centrifugal clutches, shoe, band and disc brakes, and spring-applied motor brakes."
 category: Engineering
 tags: [design, operations, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Bose–Einstein Condensation in Dilute Gases"
     creator: "C. J. Pethick and H. Smith, Cambridge University Press"
     year: "2002"
-    note: "In copyright. Used only as a map of ideas: rotation and angular momentum, energy held in motion, and the dissipation and relaxation that bring a moving system to rest, which this book applies to friction clutches and brakes. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map of ideas: rotation and angular momentum, energy held in motion, and the dissipation and relaxation that bring a moving system to rest, which this book applies to friction clutches and brakes. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Shigley's Mechanical Engineering Design, tenth edition"
     creator: "R. G. Budynas and J. K. Nisbett, McGraw-Hill Education"
     year: "2015"
@@ -65,7 +65,7 @@ A clutch connects a load to its drive and a brake connects a load to the ground.
 
 This book shows how to size and check friction clutches and brakes with numbers. It starts with the loads a device must handle, measured on the shaft where it sits, and the friction linings that carry them. It then covers plate, cone and centrifugal clutches, shoe, band and disc brakes, and the spring-applied brakes built into motors, finishing with proof tests and records.
 
-It is for mechanical design and maintenance engineers, fitters and machine builders. It assumes engineering or trade training and comfort with torque, speed and energy; the friction models are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design and maintenance engineers, fitters and machine builders. It assumes engineering or trade training and comfort with torque, speed and energy; the friction models are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -76,13 +76,13 @@ Every chapter follows one machine. This is an illustration. A boatyard in Cairns
 - **Drum and brakes:** a rope drum of 600 mm diameter to the rope centre, a 700 mm brake rim carrying a band brake for lowering, and a caliper disc brake on the drum flange as an independent second brake.
 - **Auxiliaries:** a warping capstan engaged by a cone clutch, and a petrol engine with a centrifugal clutch that can drive the winch through a belt when the power is off.
 
-Masses, dimensions, speeds, friction coefficients, ratings, limits and test figures are the case yard's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, vessel or supplier's data.
+Masses, dimensions, speeds, friction coefficients, ratings, limits and test figures are the case yard's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, vessel or supplier's data.
 
 ## How to use the book
 
 Read Chapter 1 first: it sets out the loads that every later chapter uses. Chapter 2 covers friction linings and measuring torque. Chapters 3 to 6 cover clutches, and Chapters 7 to 10 cover brakes; the brake chapters can be read without the clutch chapters. Chapter 10 also covers proof testing and records.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Friction coefficients and lining limits in the book are typical figures for illustration; a real design uses the lining maker's values.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Friction coefficients and lining limits in the book are typical figures for illustration; a real design uses the lining maker's values.
 
 ## Source limits and professional responsibility
 

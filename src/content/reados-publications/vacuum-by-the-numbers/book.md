@@ -4,8 +4,8 @@ subtitle: "Molecules, mean free path, conductance, pumps, pump-down, vapour, lea
 description: "Size, run and check an industrial vacuum system with numbers: gas quantity, molecular flux, flow regimes, conductance, pumping speed, pump-down time, gas loads, leaks and gauges."
 category: Engineering
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -60,7 +60,7 @@ It is for production and process engineers, maintenance technicians, equipment b
 
 Every chapter follows one fictional chamber. This is an illustration. A maker of outdoor electronic sensors pots its circuit boards in two-part epoxy, and the mixed resin must be degassed before it is poured, or trapped air leaves voids that let moisture in. The shop's degassing chamber, VC-200, is a stainless steel vessel of **200 litres**, 0.2 m³, with a 400 × 400 mm hinged door carrying a glass viewport. It is pumped by a two-stage oil-sealed rotary vane pump rated at **16 m³/h** through **1.5 m of 25 mm bore hose**. The process degasses each batch of about 6 kg of mixed resin at **200 Pa**, absolute, for ten minutes, and the whole cycle must fit in twenty minutes.
 
-The gas is treated as nitrogen at 20 °C for the molecular calculations, which is how vacuum gauges and pump ratings are usually stated, and close to air. The sensor maker, the chamber, its pump and its problems are invented. None describes KEVOS® work or a real business.
+The gas is treated as nitrogen at 20 °C for the molecular calculations, which is how vacuum gauges and pump ratings are usually stated, and close to air. The sensor maker, the chamber, its pump and its problems are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

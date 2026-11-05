@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - manufacturing
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -176,4 +176,4 @@ Converting inches to millimetres is exact, but converting drawings safely requir
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

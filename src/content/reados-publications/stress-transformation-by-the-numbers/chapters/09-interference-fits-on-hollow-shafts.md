@@ -9,7 +9,7 @@ draft: false
 
 A gear, pulley or coupling hub can be fixed to a shaft by making its bore slightly smaller than the shaft and forcing the two together, by pressing or by heating the hub until it slides on and letting it shrink. The squeeze between them, the interference, produces a contact pressure, and friction at that pressure carries torque and thrust with no key, spline or fastener. It is a clean, strong joint, and it is a pure application of this book's methods: Lamé's thick cylinders from Chapter 5, joined by the condition that the two parts fit together.
 
-This chapter designs the shrink fit for the RH-40's drive gear on its hollow spindle, using three KEVOS® tools. The tools check the hub; the chapter's mistake shows what happens when nobody checks the shaft.
+This chapter designs the shrink fit for the RH-40's drive gear on its hollow spindle, using three BIZOMAT tools. The tools check the hub; the chapter's mistake shows what happens when nobody checks the shaft.
 
 ## Pressure from interference
 

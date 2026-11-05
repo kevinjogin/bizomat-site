@@ -8,7 +8,7 @@ tags:
   - manufacturing
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -180,4 +180,4 @@ Performance evidence describes the assembly that was tested or verified, not eac
 
 ---
 
-*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal or engineering advice. Confirm the requirements that apply to your product with the relevant authority, certifier or a qualified engineer.*
+*Source: BIZOMAT notes. Examples in this article are illustrations. This article is general information, not legal or engineering advice. Confirm the requirements that apply to your product with the relevant authority, certifier or a qualified engineer.*

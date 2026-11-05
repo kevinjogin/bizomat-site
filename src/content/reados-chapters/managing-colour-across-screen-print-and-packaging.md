@@ -7,7 +7,7 @@ tags:
   - marketing
   - quality
   - design
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -212,4 +212,4 @@ Colours drift between screens, print, packaging and products because each device
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on established colour management, print production and product finishing practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on established colour management, print production and product finishing practice. The worked example is illustrative. This article is general information.*

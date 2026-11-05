@@ -9,7 +9,7 @@ draft: false
 
 An extension spring is a compression spring turned inside out. Its coils are wound tight against each other, it is pulled instead of pushed, and instead of seating on flat ground ends it hangs from hooks or loops formed from its own wire. Two of those differences change the design. The coils can be wound with an initial tension, a force that must be overcome before they start to separate, so the spring gives a useful force from the moment it is fitted. And the hooks, which carry the whole load through a tight bend in the wire, are almost always where an extension spring breaks.
 
-This chapter checks the extension springs that pull the VM-8's magazine shutter closed. It uses the KEVOS® extension spring check for the body and the extension spring designer for the hooks, and its mistake is a hook bent so tightly that it doubled the stress in the wire.
+This chapter checks the extension springs that pull the VM-8's magazine shutter closed. It uses the BIZOMAT extension spring check for the body and the extension spring designer for the hooks, and its mistake is a hook bent so tightly that it doubled the stress in the wire.
 
 ## The shutter and its springs
 
@@ -33,7 +33,7 @@ caption: x is the extension beyond the point where the coils begin to open. All 
 - τi | initial-tension stress
 ```
 
-Initial tension is useful because it gives a spring a substantial force at a small extension, which is what the shutter needs: enough pull to close it firmly from a short stretch, without a large extra force when it is fully open. But it can only be wound within limits. Too little and the coils are loose; too much and the maker cannot coil it. The limits depend on the spring index, and makers express them as a range of initial-tension stress. The shop uses 40 to 120 MPa for an index near 8, as the KEVOS® designer does by default. This is an illustration; the maker's own range governs.
+Initial tension is useful because it gives a spring a substantial force at a small extension, which is what the shutter needs: enough pull to close it firmly from a short stretch, without a large extra force when it is fully open. But it can only be wound within limits. Too little and the coils are loose; too much and the maker cannot coil it. The limits depend on the spring index, and makers express them as a range of initial-tension stress. The shop uses 40 to 120 MPa for an index near 8, as the BIZOMAT designer does by default. This is an illustration; the maker's own range governs.
 
 ## The body
 
@@ -144,7 +144,7 @@ The two springs on the shutter are fitted as a matched pair, within 1 N of each 
 
 The designer checks static stresses, and the shutter springs cycle. For a cycling extension spring, the stress range matters as much at the hooks as it does in the body, and the hooks have less margin. With the 3.6 mm bend, the torsional stress at the bend swings from 164 MPa with the shutter closed to 526 MPa with it open: an alternating part of 181 MPa about a mean of 345 MPa. The hook's bending stress swings from 299 to 958 MPa.
 
-Spring makers hold fatigue data for extension spring ends that the KEVOS® designer does not, and the shop sent its proposed design to the maker with the cycle count and both extensions. The reply confirmed that the design, with stress-relieved hooks of that bend radius, was within the maker's data for the expected number of cycles. The static check is the screen; the maker's fatigue data is the decision. This is an illustration.
+Spring makers hold fatigue data for extension spring ends that the BIZOMAT designer does not, and the shop sent its proposed design to the maker with the cycle count and both extensions. The reply confirmed that the design, with stress-relieved hooks of that bend radius, was within the maker's data for the expected number of cycles. The static check is the screen; the maker's fatigue data is the decision. This is an illustration.
 
 ## When an extension spring breaks
 

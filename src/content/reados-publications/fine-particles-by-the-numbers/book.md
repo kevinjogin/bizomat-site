@@ -4,8 +4,8 @@ subtitle: "Drag, settling, slip, Brownian diffusion, filter capture and duct dep
 description: "Predict how dust, fume and mist behave by numbers: Stokes settling, slip, relaxation time, Brownian diffusion, impaction, filter capture, duct deposition and measurement."
 category: Engineering
 tags: [design, operations, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -98,7 +98,7 @@ The book follows **LX-3**, a fictional extraction system for a 3 kW fibre laser 
 
 The process produces three families of particle: molten **spatter** and dross from 30 µm to well over 100 µm, coarse **dust** from slag and scale of a few micrometres, and **fume**, condensed metal oxide particles from about 0.01 µm to about 1 µm, much of it in loose chains of tiny primary particles. The fume particles are taken as metal oxide with a density of about **5,000 kg/m³**. Air is at **20 °C** and atmospheric pressure, with a viscosity of about **1.81 × 10⁻⁵ Pa·s** and a density of about **1.20 kg/m³**.
 
-All dimensions, flows, particle data and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project.
+All dimensions, flows, particle data and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project.
 
 ## Source limits and professional responsibility
 

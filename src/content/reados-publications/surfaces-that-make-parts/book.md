@@ -4,8 +4,8 @@ subtitle: "Surface modelling for manufacturable CAD parts: curves, lofts, patche
 description: "Build complex CAD shapes from surfaces and turn them into parts that can be checked, moulded and made: curves, lofts, patches, trimming, knitting, continuity and draft."
 category: Engineering
 tags: [design, manufacturing, product-development, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -82,7 +82,7 @@ Read the chapters in order the first time; each one builds on the model left by 
 
 Every chapter follows one fictional part. This is an illustration. A small Australian manufacturer of compressor enclosures needs an air-inlet duct between a filter chamber and the compressor's intake. The flow surface starts with a bell-mouth of 10 mm radius at the open inlet, runs as a round section of 120 mm inside diameter for 30 mm, then changes over 200 mm into a rectangle 180 mm wide and 60 mm high with 15 mm corner radii. The outlet centre sits 30 mm below the inlet centre so the duct clears a frame rail, and the outlet ends in a flat mounting flange 230 mm by 110 mm. A flat pad on the left side wall carries a pressure switch. The duct is moulded in polypropylene with a 2.5 mm wall, as two half-shells split on the vertical plane of symmetry.
 
-The numbers are invented but they are worked properly: areas, volumes, curvatures, offsets, draft and mass are all calculated and checked, and most chapters include a modelling mistake, how it was detected and how it was corrected. The part, the business and the mistakes are fictional; none describes KEVOS® work, a client or a supplier.
+The numbers are invented but they are worked properly: areas, volumes, curvatures, offsets, draft and mass are all calculated and checked, and most chapters include a modelling mistake, how it was detected and how it was corrected. The part, the business and the mistakes are fictional; none describes BIZOMAT work, a client or a supplier.
 
 ## Source limits and professional responsibility
 

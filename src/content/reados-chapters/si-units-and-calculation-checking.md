@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - systems
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -230,4 +230,4 @@ The SI provides a coherent system of units, and using it consistently removes mo
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

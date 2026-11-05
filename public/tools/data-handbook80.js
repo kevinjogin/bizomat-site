@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: quality statistics and forecasting tools (batch handbook80) within the Tools directory.
+// BIZOMAT MAKEOS: quality statistics and forecasting tools (batch handbook80) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "ewma-chart-check",

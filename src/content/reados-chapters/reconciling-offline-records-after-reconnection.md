@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

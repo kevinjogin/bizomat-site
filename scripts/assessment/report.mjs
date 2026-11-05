@@ -1,11 +1,11 @@
-// KEVOS®-branded one-page A4 PDF for an Engineering Problem Assessment.
+// BIZOMAT-branded one-page A4 PDF for an Engineering Problem Assessment.
 //
 //   node scripts/assessment/report.mjs                       → public/assessment/kevos-sample-assessment-report.pdf (fictional sample)
 //   node scripts/assessment/report.mjs report.json out.pdf   → a real report from your own data file
 //
 // Keep real report data and PDFs OUTSIDE this repository (or in the git-ignored assessment-private/ folder):
 // they contain customer information. Final technical findings must be prepared or reviewed by the
-// responsible KEVOS® professional before a report is sent. Data file fields (all strings unless noted):
+// responsible BIZOMAT professional before a report is sent. Data file fields (all strings unless noted):
 //   reference, customer, date, problem, supplied[], observations[], factors[], options[{ title, text }],
 //   nextStep, verification[], assumptions[], followOn, preparedBy, reviewedBy, reviewedOn, sample (boolean)
 import fs from 'node:fs';
@@ -27,14 +27,14 @@ body { width: 210mm; height: 297mm; font-family: 'Inter Tight', 'Segoe UI', Aria
 .page { position: relative; height: 297mm; padding: 12mm 13mm 11mm; display: flex; flex-direction: column; overflow: hidden; }
 .bar { position: absolute; inset: 0 0 auto 0; height: 4mm; background: ${T.orange}; }
 .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 8mm; padding-bottom: 4mm; border-bottom: 1.2pt solid ${T.ink}; }
-.title { margin: 2.5mm 0 0; font-family: 'KEVOS Display', sans-serif; font-weight: 700; font-size: 17pt; letter-spacing: .02em; text-transform: uppercase; line-height: 1.05; }
+.title { margin: 2.5mm 0 0; font-family: 'BIZOMAT Display', sans-serif; font-weight: 700; font-size: 17pt; letter-spacing: .02em; text-transform: uppercase; line-height: 1.05; }
 .sub { margin: 1mm 0 0; color: ${T.muted}; font-size: 8.2pt; }
 .meta { display: grid; grid-template-columns: auto auto; gap: .6mm 4mm; font-size: 8pt; text-align: left; }
 .meta dt { color: ${T.muted}; text-transform: uppercase; letter-spacing: .08em; font-size: 6.6pt; padding-top: .6mm; }
 .meta dd { margin: 0; font-weight: 650; }
 .sample { margin-top: 3mm; padding: 2mm 3mm; background: rgba(255,106,19,.1); border-left: 1.2mm solid ${T.accent}; font-size: 8pt; color: ${T.ink}; }
 .sample strong { color: ${T.accent}; letter-spacing: .06em; }
-.watermark { position: absolute; top: 120mm; left: -20mm; right: -20mm; transform: rotate(-28deg); text-align: center; font-family: 'KEVOS Display', sans-serif; font-weight: 800; font-size: 64pt; letter-spacing: .12em; color: rgba(194,65,12,.07); pointer-events: none; }
+.watermark { position: absolute; top: 120mm; left: -20mm; right: -20mm; transform: rotate(-28deg); text-align: center; font-family: 'BIZOMAT Display', sans-serif; font-weight: 800; font-size: 64pt; letter-spacing: .12em; color: rgba(194,65,12,.07); pointer-events: none; }
 .body { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 0 7mm; margin-top: 5mm; }
 section { margin-bottom: 3.8mm; break-inside: avoid; }
 h2 { margin: 0 0 1.3mm; font-family: 'Inter Tight', sans-serif; font-size: 7pt; font-weight: 750; letter-spacing: .14em; text-transform: uppercase; color: ${T.accent}; }
@@ -77,18 +77,18 @@ ${sample ? '<div class="sample"><strong>SAMPLE REPORT</strong> · A fictional ex
   </div>
 </main>
 <div class="review">
-  <div><strong>Professional review</strong><span>${r.reviewedBy ? esc(r.reviewedBy) : sample ? 'Not applicable: sample only' : 'Name of responsible KEVOS® professional'}</span></div>
+  <div><strong>Professional review</strong><span>${r.reviewedBy ? esc(r.reviewedBy) : sample ? 'Not applicable: sample only' : 'Name of responsible BIZOMAT professional'}</span></div>
   <div><strong>Signature</strong><span>${sample ? '—' : '&nbsp;'}</span></div>
   <div><strong>Date</strong><span>${r.reviewedOn ? esc(r.reviewedOn) : sample ? '—' : '&nbsp;'}</span></div>
 </div>
-<footer class="foot"><span><b>KEVOS® | kevos.com</b></span><span>Preliminary desktop assessment based on the information supplied. Not certification or design sign-off.</span></footer>
+<footer class="foot"><span><b>BIZOMAT | kevos.com</b></span><span>Preliminary desktop assessment based on the information supplied. Not certification or design sign-off.</span></footer>
 </div></body></html>`;
 }
 
 const [, , input, output] = process.argv;
 const isMain = import.meta.url === `file:///${process.argv[1]?.replace(/\\/g, '/').replace(/^\//, '')}`;
 if (isMain) {
-  const data = input ? JSON.parse(fs.readFileSync(input, 'utf8')) : { ...SAMPLE_REPORT, preparedBy: 'KEVOS® (sample)', sample: true };
+  const data = input ? JSON.parse(fs.readFileSync(input, 'utf8')) : { ...SAMPLE_REPORT, preparedBy: 'BIZOMAT (sample)', sample: true };
   const out = output ?? path.join(OUT, 'kevos-sample-assessment-report.pdf');
   fs.mkdirSync(path.dirname(out), { recursive: true });
   renderPdf(reportHtml(data), out);

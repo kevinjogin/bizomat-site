@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -194,4 +194,4 @@ Non-traditional processes extend machining beyond the limits of cutting tools. W
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

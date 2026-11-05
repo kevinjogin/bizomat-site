@@ -4,8 +4,8 @@ subtitle: "Spectra, RMS levels, Miles' equation, isolation, peaks, fatigue and s
 description: "Specify, analyse and test equipment for random vibration: power spectral density, RMS and peaks, single-degree-of-freedom response, isolation, fatigue under random loading and test time compression."
 category: Engineering
 tags: [design, validation, quality, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -77,7 +77,7 @@ A machine on a truck, a box on a vibrating screen, a product in a delivery van: 
 
 This book works through that chain of ideas. It starts with random vibration as a random variable and with the spectrum that describes it, shows how a spectrum is measured and how uncertain the measurement is, and then follows the vibration into a resonant part, through isolators and into the boards and brackets inside a box. It finishes with peaks, fatigue under random loading, and the shaker tests that compress years of service into hours.
 
-It is for mechanical, electrical and product engineers, test engineers, technicians and students who meet vibration requirements and want to understand and check them. It assumes the idea of a natural frequency, basic statistics and logarithms. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, electrical and product engineers, test engineers, technicians and students who meet vibration requirements and want to understand and check them. It assumes the idea of a natural frequency, basic statistics and logarithms. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -88,7 +88,7 @@ Every chapter follows one fictional installation. This is an illustration. A mob
 - **A sensor bracket:** a steel bracket carrying a proximity sensor and junction box, bolted directly to the screen frame, with a natural frequency of about 120 Hz.
 - **Service:** about 2,000 operating hours a year for ten years.
 
-The plant, its profile, its frequencies and any material data are invented. None describes KEVOS® work or a real product. Accelerations are in g, where 1 g = 9.807 m/s².
+The plant, its profile, its frequencies and any material data are invented. None describes BIZOMAT work or a real product. Accelerations are in g, where 1 g = 9.807 m/s².
 
 ## How to use the book
 

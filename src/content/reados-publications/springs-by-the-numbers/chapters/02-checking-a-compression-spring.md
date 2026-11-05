@@ -48,7 +48,7 @@ rowhead: End type
 - Plain and ground | Na + 1 | (Na + 1) d | Fair
 - Closed, not ground | Na + 2 | (Na + 3) d | Good
 - * Closed and ground | Na + 2 | (Na + 2) d | Best: square ends, even load
-caption: The relations used by the KEVOS® compression spring tools. Spring makers' own rules differ slightly; when the solid length is close to the working length, the maker's figure governs.
+caption: The relations used by the BIZOMAT compression spring tools. Spring makers' own rules differ slightly; when the solid length is close to the working length, the maker's figure governs.
 ```
 
 ## The plunger spring in the tool

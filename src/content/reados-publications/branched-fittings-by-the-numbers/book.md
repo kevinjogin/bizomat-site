@@ -4,8 +4,8 @@ subtitle: "Oblique cones, breeches, unequal and angled prongs, multi-way manifol
 description: "Develop branched sheet metal fittings with numbers: oblique cones and frustums, breeches with equal, unequal and angled prongs, three-way manifolds, and a pipe joining a cone."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -79,7 +79,7 @@ Every chapter follows one fictional job. This is an illustration. A ductwork fab
 - **G6**, a three-way manifold from a Ø400 duct to three Ø230 branches;
 - **G7**, a Ø150 pipe joining the side of G1's hood.
 
-The fittings are made in 0.8 mm galvanised steel sheet. The fabricator, the shop, the dimensions and the mistakes are invented. None describes KEVOS® work or a real business.
+The fittings are made in 0.8 mm galvanised steel sheet. The fabricator, the shop, the dimensions and the mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

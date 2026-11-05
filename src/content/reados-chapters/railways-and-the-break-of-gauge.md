@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ Railways grew from colliery wagonways into national networks that reshaped econo
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

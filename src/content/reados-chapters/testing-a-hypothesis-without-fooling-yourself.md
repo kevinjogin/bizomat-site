@@ -7,7 +7,7 @@ tags:
   - validation
   - experimentation
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Hypothesis testing protects against self-deception, but only when used honestly.
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

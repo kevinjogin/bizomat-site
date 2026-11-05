@@ -4,8 +4,8 @@ subtitle: "Thermocouples, platinum resistance thermometers and thermistors: how 
 description: "Choose, wire, install and calibrate thermocouples, Pt100s and thermistors with numbers: Seebeck voltages, cold junctions, lead errors, immersion, response time and uncertainty."
 category: Manufacturing
 tags: [manufacturing, quality, automation, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-28
@@ -92,7 +92,7 @@ Every chapter follows one fictional installation. This is an illustration. A sma
 
 The oven has four kinds of contact sensor. A **Pt100** in the supply air duct feeds the temperature controller. A **type K thermocouple** feeds a separate over-temperature limit controller set at **230 °C**. A six-channel **data logger** with trailing type K thermocouples is used to profile parts through a cure. A **10 kΩ thermistor** measures the logger's terminal temperature for cold-junction compensation, and another watches the control cabinet.
 
-The business, its oven, its powder and its problems are invented. None describes KEVOS® work or a real business.
+The business, its oven, its powder and its problems are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

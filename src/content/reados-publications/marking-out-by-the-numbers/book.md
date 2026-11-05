@@ -4,8 +4,8 @@ subtitle: "Hand layout on sheet and plate with rule, square, dividers and tramme
 description: "Mark out sheet and plate by hand with known accuracy: datums, squareness, lengths, divisions, angles, polygons, large arcs, ellipses and old shop rules tested."
 category: Manufacturing
 tags: [manufacturing, quality, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -90,7 +90,7 @@ Every chapter follows one fictional job. This is an illustration. A small region
 - A **hood**: a curved weather hood rolled to an arc 700 mm across its chord with a 120 mm rise.
 - A **louvre panel**: a side panel 900 mm long with seven louvre slots at equal pitch.
 
-The drawing allows ±1.0 mm on general dimensions and ±0.5 mm on hole positions relative to one another. The shop's rule is that marking out may use no more than half of a tolerance, leaving the rest for cutting, drilling and forming. The shop, the drawing, the mistakes and the numbers are invented. None describes KEVOS® work or a real business.
+The drawing allows ±1.0 mm on general dimensions and ±0.5 mm on hole positions relative to one another. The shop's rule is that marking out may use no more than half of a tolerance, leaving the rest for cutting, drilling and forming. The shop, the drawing, the mistakes and the numbers are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

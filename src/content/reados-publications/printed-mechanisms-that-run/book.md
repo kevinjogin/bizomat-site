@@ -4,8 +4,8 @@ subtitle: "Designing 3D-printed working assemblies with gears, bearings, fits an
 description: "Design an FDM-printed working mechanism: orientation, measured fits, bearings, printed gears, a Geneva index, fasteners, low-voltage drive and a tested build guide."
 category: Products
 tags: [prototyping, design, product-development, validation, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -75,7 +75,7 @@ This book is for people who can model parts in CAD and run a desktop material-ex
 
 This is an illustration. The book follows a fictional **six-station rotary indexing table**, a desktop teaching model printed in PLA and PETG. A 12 V DC gearmotor drives a printed planetary stage with a 5:1 ratio, which turns a six-slot Geneva mechanism. The 140 mm dial steps 60° at a time, about ten times a minute, pausing at each station. Standard 608 ball bearings, 8 mm steel shafts, M3 screws and heat-set inserts make up the bought hardware, and a small microcontroller board sets the speed and the dwell.
 
-Every load, measurement, cost, print time and test result in the case is invented for teaching. None of it describes a KEVOS® project, product or client. Prices are illustrative Australian dollars including GST. Calculations were checked by running them, and figures carry the same numbers as the text.
+Every load, measurement, cost, print time and test result in the case is invented for teaching. None of it describes a BIZOMAT project, product or client. Prices are illustrative Australian dollars including GST. Calculations were checked by running them, and figures carry the same numbers as the text.
 
 ## Source limits and professional responsibility
 

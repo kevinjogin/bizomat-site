@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - manufacturing
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -184,4 +184,4 @@ Structural steel designations encode the section type, size, mass, grade and sta
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations. Structural design must be carried out by appropriately qualified engineers in accordance with the National Construction Code and applicable standards.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations. Structural design must be carried out by appropriately qualified engineers in accordance with the National Construction Code and applicable standards.*

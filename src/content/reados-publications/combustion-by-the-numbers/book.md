@@ -4,8 +4,8 @@ subtitle: "Fuel and air, flue gas analysis, available heat, metering, burners, c
 description: "Burn gas well with numbers: stoichiometric air, excess air from flue oxygen, available heat, flame temperature, meter corrections, turndown, flue dew point, CO and cost per useful GJ."
 category: Engineering
 tags: [operations, design, process-improvement, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -93,7 +93,7 @@ Every chapter follows one fictional furnace. This is an illustration. A heat-tre
 
 Gas is supplied through a sub-meter at **35 kPa** gauge. For the illustration, the network's heating value is taken as **38.6 MJ/m³** and the gas price as **A$30 per GJ including GST**. The furnace runs about **500 loads a year**.
 
-The job shop, its furnace and its figures are invented. None describes KEVOS® work or a real business.
+The job shop, its furnace and its figures are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

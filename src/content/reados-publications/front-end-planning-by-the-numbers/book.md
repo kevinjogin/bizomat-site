@@ -4,8 +4,8 @@ subtitle: "Project definition, estimate classes, gates and exposure windows: pla
 description: "Plan slowly, deliver quickly: score project definition, read estimate classes, size the front end, and price exposure and a harvest deadline, worked through one packhouse upgrade."
 category: Projects
 tags: [projects, operations, finance, strategy]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-29
@@ -125,13 +125,13 @@ Every chapter follows one fictional decision. This is an illustration. **Northba
 
 In November 2026 the concept estimate is **A$5.41 million** excluding GST, and the managing director proposes approving a budget of **A$5.95 million** at once and starting work, to give the project as much time as possible. The book follows the other path: 22 weeks and **A$248,000** of front-end planning, which raises the estimate to **A$6.43 million**, finds the scope the concept missed, orders the long-lead equipment at approval, and delivers in 36 planned weeks. The chapters compare the two paths on cost, time and the chance of missing the harvest.
 
-The business, its people, its projects and every number in the case are invented. None describes KEVOS® work, a real business or a real project. All amounts are Australian dollars excluding GST.
+The business, its people, its projects and every number in the case are invented. None describes BIZOMAT work, a real business or a real project. All amounts are Australian dollars excluding GST.
 
 ## How to use the book
 
 Read Chapter 1 first: it sets out the two paths and the numbers that later chapters build on. Chapters 2 to 5 cover the front end itself: stages and gates, scoring definition, estimate classes and the scope a front end finds. Chapter 6 asks how much front-end work is enough. Chapters 7 and 8 cover delivery, its exposure window and the deadline, and Chapters 9 and 10 cover approval, delivery control and the review afterwards. Every calculation in the book was checked by running it, and the schedule simulation uses a fixed random seed so that its results can be reproduced.
 
-The book is one of a series of KEVOS® Library books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* adds the outside view: how projects like this one have actually turned out, and how to set a budget and contingency from that record. *Stage Gates and Stopping Rules by the Numbers* covers the decisions made at each gate, including when to stop, where this book covers what must be defined before a gate. *Modular Projects by the Numbers* applies short exposure windows to repeated installations on working sites, and *Project Teams and Contracts by the Numbers* covers the people and contract forms that carry a plan into delivery.
+The book is one of a series of BIZOMAT Library books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* adds the outside view: how projects like this one have actually turned out, and how to set a budget and contingency from that record. *Stage Gates and Stopping Rules by the Numbers* covers the decisions made at each gate, including when to stop, where this book covers what must be defined before a gate. *Modular Projects by the Numbers* applies short exposure windows to repeated installations on working sites, and *Project Teams and Contracts by the Numbers* covers the people and contract forms that carry a plan into delivery.
 
 ## Source limits and professional responsibility
 

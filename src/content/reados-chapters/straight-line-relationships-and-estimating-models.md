@@ -7,7 +7,7 @@ tags:
   - finance
   - quality
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ The straight line y = m × x + c underlies cost models, break-even, sensor calib
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

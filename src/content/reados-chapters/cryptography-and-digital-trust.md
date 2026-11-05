@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -177,4 +177,4 @@ Cryptography grew from simple ciphers and codebooks to wartime machines, open st
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute security advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute security advice.*

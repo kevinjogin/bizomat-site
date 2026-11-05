@@ -119,7 +119,7 @@ The general lesson is that a scale's capability is relative to the tolerance of 
 
 ## An error budget for a batch
 
-Even a capable scale is only one source of error in the mass of an ingredient that reaches the mixer. The mill built an error budget for a major ingredient in BH-2, combining independent contributions as standard uncertainties, root-sum-square. The KEVOS® measurement uncertainty tools are set up for dimensional measurements in micrometres, so this budget was worked by hand with the same method.
+Even a capable scale is only one source of error in the mass of an ingredient that reaches the mixer. The mill built an error budget for a major ingredient in BH-2, combining independent contributions as standard uncertainties, root-sum-square. The BIZOMAT measurement uncertainty tools are set up for dimensional measurements in micrometres, so this budget was worked by hand with the same method.
 
 ```figure
 type: compare

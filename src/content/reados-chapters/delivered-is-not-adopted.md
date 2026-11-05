@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -226,4 +226,4 @@ A change is complete when the business consistently works in the new way, not wh
 
 ---
 
-*Source: KEVOS® notes, drawing on practitioner material on transformation roadmaps and leadership behaviours, the UK Government's project delivery functional standard on change management, and N. Wakeford and colleagues (2017) on barriers to innovation adoption. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on practitioner material on transformation roadmaps and leadership behaviours, the UK Government's project delivery functional standard on change management, and N. Wakeford and colleagues (2017) on barriers to innovation adoption. Examples and figures in this article are illustrations. This article is general information.*

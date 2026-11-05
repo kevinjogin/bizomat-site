@@ -7,7 +7,7 @@ tags:
   - automation
   - systems
   - design
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ CAD automation ranges from recorded macros and scripts to API add-ins and rules-
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and not a programming guide for any specific CAD product.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and not a programming guide for any specific CAD product.*

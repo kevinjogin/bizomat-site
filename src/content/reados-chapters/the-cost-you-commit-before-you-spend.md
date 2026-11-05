@@ -8,7 +8,7 @@ tags:
   - design
   - manufacturing
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -216,4 +216,4 @@ Most product cost is committed in design, long before it is spent. Cost-reductio
 
 ---
 
-*Source: KEVOS® notes. The proportion of cost committed in design is a general rule of thumb, not a measured constant. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes. The proportion of cost committed in design is a general rule of thumb, not a measured constant. Examples and figures in this article are illustrations.*

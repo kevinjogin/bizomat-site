@@ -55,7 +55,7 @@ The peak limit addresses a different mechanism: a single very high pressure, fro
 
 ## Dose
 
-Exposure is often expressed as a **dose**, the percentage of the exposure standard's daily energy received. Each period contributes (t ÷ 8) × 10^((L − 85) ÷ 10) × 100%. This is an illustration. The fitter's six hours at 87.3 dB(A) contribute about **127%**, the two hours at 75 dB(A) about 2.5%, a total of about **130%**, equivalent to 85 + 10 × log₁₀(1.30) ≈ 86.1 dB(A). The KEVOS® [Noise Exposure Check](/tools/noise-exposure-check/) combines sources and works out a daily dose from levels and times. Personal noise dosimeters, worn by the worker, measure the dose directly over a whole shift, which captures the real pattern of movement around a workshop better than a set of fixed measurements.
+Exposure is often expressed as a **dose**, the percentage of the exposure standard's daily energy received. Each period contributes (t ÷ 8) × 10^((L − 85) ÷ 10) × 100%. This is an illustration. The fitter's six hours at 87.3 dB(A) contribute about **127%**, the two hours at 75 dB(A) about 2.5%, a total of about **130%**, equivalent to 85 + 10 × log₁₀(1.30) ≈ 86.1 dB(A). The BIZOMAT [Noise Exposure Check](/tools/noise-exposure-check/) combines sources and works out a daily dose from levels and times. Personal noise dosimeters, worn by the worker, measure the dose directly over a whole shift, which captures the real pattern of movement around a workshop better than a set of fixed measurements.
 
 ## The error: averaging decibels
 

@@ -1,4 +1,4 @@
-// KEVOS® tool guides: Engineering.
+// BIZOMAT tool guides: Engineering.
 (function () {
   const candidate = {};
   for (const L of ['A', 'B', 'C']) {

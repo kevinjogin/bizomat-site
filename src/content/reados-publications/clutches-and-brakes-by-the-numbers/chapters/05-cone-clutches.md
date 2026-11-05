@@ -9,7 +9,7 @@ draft: false
 
 A cone clutch is a plate clutch folded into a cone. Its friction surfaces are the outside of one cone and the inside of another, pushed together along the shaft. The wedge does something a flat plate cannot: a modest axial force produces a much larger force square to the cone's surface, and that normal force is what makes friction. The same wedge that multiplies the force also makes the clutch harder to engage than to hold, and, if the cone is too steep, can lock it so firmly that it must be pulled apart.
 
-This chapter sizes the cone clutch that engages the SW-25's warping capstan, with the KEVOS® cone clutch tool and the cone clutch engagement check. It explains the engaging force, the half-angle and sticking. Its mistake is an angle read from a drawing: the included angle entered where the tool asks for the half-angle.
+This chapter sizes the cone clutch that engages the SW-25's warping capstan, with the BIZOMAT cone clutch tool and the cone clutch engagement check. It explains the engaging force, the half-angle and sticking. Its mistake is an angle read from a drawing: the included angle entered where the tool asks for the half-angle.
 
 ## The capstan and its duty
 

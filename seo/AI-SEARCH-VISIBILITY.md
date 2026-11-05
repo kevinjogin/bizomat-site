@@ -1,6 +1,6 @@
 # AI search visibility
 
-Covers Google AI Overviews and AI Mode, Bing and Copilot, ChatGPT search, Perplexity and similar systems. None of them guarantees inclusion or citation, and none publishes a ranking formula. This plan only makes KEVOS content accessible, clear and accurate. It never makes promises about outcomes.
+Covers Google AI Overviews and AI Mode, Bing and Copilot, ChatGPT search, Perplexity and similar systems. None of them guarantees inclusion or citation, and none publishes a ranking formula. This plan only makes BIZOMAT content accessible, clear and accurate. It never makes promises about outcomes.
 
 ## Current state
 
@@ -10,7 +10,7 @@ Covers Google AI Overviews and AI Mode, Bing and Copilot, ChatGPT search, Perple
   - Organization JSON-LD on every page (published facts only).
   - Chapter and Book types on READOS.
   - WebApplication on tool pages.
-  - Books carry a KEVOS® author line and reference lists.
+  - Books carry a BIZOMAT author line and reference lists.
   - Tool pages show their references and limitations.
 
 ## Search crawlers versus training crawlers
@@ -21,7 +21,7 @@ Some operators run separate user agents for search and for model training. Examp
 - OpenAI uses OAI-SearchBot for search and GPTBot for training.
 - Perplexity uses PerplexityBot.
 
-Today KEVOS allows all of them. Blocking training crawlers while allowing search crawlers is a content-protection decision, already listed as an owner decision in `docs/security/CLOUDFLARE-SECURITY-CONFIGURATION.md`. This work does not change it. If the decision is made, add named `User-agent` groups to `src/pages/robots.txt.ts`. The SEO gate keeps checking that search crawlers and key sections remain allowed.
+Today BIZOMAT allows all of them. Blocking training crawlers while allowing search crawlers is a content-protection decision, already listed as an owner decision in `docs/security/CLOUDFLARE-SECURITY-CONFIGURATION.md`. This work does not change it. If the decision is made, add named `User-agent` groups to `src/pages/robots.txt.ts`. The SEO gate keeps checking that search crawlers and key sections remain allowed.
 
 ## What helps, in order
 
@@ -38,7 +38,7 @@ Today KEVOS allows all of them. Blocking training crawlers while allowing search
 
 ## A manual check that is allowed
 
-Once a quarter, a person can ask a short, fixed list of questions in each assistant's normal interface. Record the date, product, exact question, whether KEVOS was cited and which URL. Keep the record in `seo/ai-visibility-checks.md`. Suggested questions:
+Once a quarter, a person can ask a short, fixed list of questions in each assistant's normal interface. Record the date, product, exact question, whether BIZOMAT was cited and which URL. Keep the record in `seo/ai-visibility-checks.md`. Suggested questions:
 
 - "How do I calculate spindle RPM from cutting speed?"
 - "What does a jig and fixture designer in Sydney do?"

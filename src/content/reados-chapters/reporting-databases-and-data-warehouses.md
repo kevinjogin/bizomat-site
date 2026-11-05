@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -240,4 +240,4 @@ Transaction systems are designed to record business events, not to analyse them.
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general business intelligence and data warehousing practice. Costs in the worked example are illustrative assumptions. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general business intelligence and data warehousing practice. Costs in the worked example are illustrative assumptions. This article is general information.*

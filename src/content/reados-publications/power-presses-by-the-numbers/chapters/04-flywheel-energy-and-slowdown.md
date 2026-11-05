@@ -59,7 +59,7 @@ where E₁ = ½ × I × ω₁² is the flywheel's stored energy at full speed.
 
 Slowdown is limited for two reasons. The motor drives the flywheel through belts and, on most presses, an induction motor whose torque rises as its speed falls; a large slowdown overloads the motor and makes it take a long time to recover. And a press that slows a great deal on each stroke changes the speed at which the die works, which matters for forming and for feed timing. Press makers state an allowable slowdown, typically lower for continuous running than for single strokes. This book uses **20%** as an illustrative limit for continuous running.
 
-Since slowdown of 20% means ω₂ = 0.8 ω₁, the energy available at that slowdown is E₁ × (1 − 0.8²) = **0.36 E₁**: about a third of what the flywheel stores. The KEVOS® [flywheel energy calculator](/tools/flywheel-energy/) and [press flywheel sizing tool](/tools/press-flywheel-sizing/) do these sums.
+Since slowdown of 20% means ω₂ = 0.8 ω₁, the energy available at that slowdown is E₁ × (1 − 0.8²) = **0.36 E₁**: about a third of what the flywheel stores. The BIZOMAT [flywheel energy calculator](/tools/flywheel-energy/) and [press flywheel sizing tool](/tools/press-flywheel-sizing/) do these sums.
 
 ```figure
 type: formula

@@ -128,7 +128,7 @@ caption: The open item is the one the customer skipped: nobody asked how stiff t
 
 ## Overhung components
 
-Some rotors carry parts outside their bearings: a pulley, a fan impeller, a coupling half. An overhung mass has its own critical speed, set by the stiffness of the overhang, which acts as a cantilever from the nearer bearing. The KEVOS® [Shaft critical (whirling) speed](/tools/critical-speed/) tool covers this case with its fixed–free support option: it treats the overhang as a cantilever fixed at the bearing, with an optional disc at its free end, and combines the shaft's own critical speed with the disc's by Dunkerley's method.
+Some rotors carry parts outside their bearings: a pulley, a fan impeller, a coupling half. An overhung mass has its own critical speed, set by the stiffness of the overhang, which acts as a cantilever from the nearer bearing. The BIZOMAT [Shaft critical (whirling) speed](/tools/critical-speed/) tool covers this case with its fixed–free support option: it treats the overhang as a cantilever fixed at the bearing, with an optional disc at its free end, and combines the shaft's own critical speed with the disc's by Dunkerley's method.
 
 This is an illustration. A belt-driven version of the HM-30 was considered, with a 30 kg pulley overhung on the shaft.
 

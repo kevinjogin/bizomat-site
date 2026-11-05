@@ -7,7 +7,7 @@ tags:
   - design
   - systems
   - projects
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ BIM turns building design and construction into a coordinated information proces
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® study material on building information modelling, BIM authoring workflows, green BIM for sustainable design and performance analysis and green building design, together with established building design practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT study material on building information modelling, BIM authoring workflows, green BIM for sustainable design and performance analysis and green building design, together with established building design practice. The worked example is illustrative. This article is general information.*

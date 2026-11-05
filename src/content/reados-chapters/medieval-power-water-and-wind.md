@@ -7,7 +7,7 @@ tags:
   - strategy
   - manufacturing
   - systems
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -173,4 +173,4 @@ Long before steam, water and wind power transformed medieval economies. Watermil
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

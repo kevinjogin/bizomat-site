@@ -7,7 +7,7 @@ tags:
   - quality
   - finance
   - manufacturing
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ Fractions, decimals and percentages underpin tolerances, conversions, yields, pr
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute tax or accounting advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute tax or accounting advice.*

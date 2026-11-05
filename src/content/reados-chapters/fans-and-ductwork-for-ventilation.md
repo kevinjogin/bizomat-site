@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -170,4 +170,4 @@ Fans deliver whatever flow their curve and the system's resistance allow. Fan ty
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified ventilation engineer or occupational hygienist.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified ventilation engineer or occupational hygienist.*
