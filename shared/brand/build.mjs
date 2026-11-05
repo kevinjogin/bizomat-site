@@ -1,0 +1,160 @@
+#!/usr/bin/env node
+// Builds every BIZOMAT brand asset from shared/brand/glyphs.mjs and copies them into the three apps.
+//
+//   node shared/brand/build.mjs           write shared/brand/dist/ and copy into the website, apps/cad and apps/work
+//   node shared/brand/build.mjs --check   fail (exit 1) when any copy differs from what this script would write
+//
+// Run from the repository root (it uses the website's sharp for PNG rendering). Output is deterministic, so the
+// --check mode can run in CI. The social images (og-*.png) are rendered separately by shared/brand/og.mjs (Chromium).
+import fs from 'node:fs';
+import path from 'node:path';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import { CAP, COLORS, GLYPHS, WORDMARK_WIDTH, wordmarkPath } from './glyphs.mjs';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(here, '..', '..');
+const require = createRequire(path.join(root, 'package.json'));
+const sharp = require('sharp');
+const check = process.argv.includes('--check');
+
+const W = WORDMARK_WIDTH;
+const H = CAP.height;
+const WORD = wordmarkPath();
+const BAR = GLYPHS.B.bar;
+const B = GLYPHS.B.d;
+
+// ---------- SVG sources ----------
+const svg = {
+  // One colour, follows CSS `color` (header, footer, apps). The connector bar is drawn in the same colour.
+  'bizomat-wordmark.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BIZOMAT"><path fill="currentColor" fill-rule="evenodd" d="${WORD}"/></svg>\n`,
+  // Full colour on light backgrounds: navy word, teal connector in the B.
+  'bizomat-logo-light.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BIZOMAT"><path fill="${COLORS.navy}" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.teal}" d="${BAR}"/></svg>\n`,
+  // Full colour on dark backgrounds: white word, bright teal connector.
+  'bizomat-logo-dark.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BIZOMAT"><path fill="#ffffff" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.tealBright}" d="${BAR}"/></svg>\n`,
+};
+
+// The mark: the B of the wordmark, centred on a navy tile, with the teal connector bar. `inset` leaves the safe zone
+// a maskable icon needs (the platform may crop to a circle).
+function markSvg({ size = 512, inset = 0, radius = 112, label = true } = {}) {
+  const box = size - inset * 2;
+  const s = (box * 0.586) / 332; // the B fills 58.6 % of the tile width
+  const tx = size / 2 - 166 * s;
+  const ty = size / 2 - 120.5 * s;
+  const aria = label ? ' role="img" aria-label="BIZOMAT"' : ' aria-hidden="true"';
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"${aria}><rect width="${size}" height="${size}" rx="${radius}" fill="${COLORS.navy}"/><g transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${s.toFixed(5)})"><path fill="#ffffff" fill-rule="evenodd" d="${B}"/><path fill="${COLORS.tealMark}" d="${BAR}"/></g></svg>\n`;
+}
+svg['bizomat-mark.svg'] = markSvg();
+svg['bizomat-mark-maskable.svg'] = markSvg({ inset: 0, radius: 0, label: false });
+// The B alone in one colour (for UI where the tile is not wanted).
+svg['bizomat-b.svg'] = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 332 241" role="img" aria-label="BIZOMAT"><path fill="currentColor" fill-rule="evenodd" d="${B}"/></svg>\n`;
+
+// ---------- Raster ----------
+async function png(source, size) {
+  return sharp(Buffer.from(source), { density: 384 }).resize(size, size).png({ compressionLevel: 9, palette: false }).toBuffer();
+}
+async function ico(source, sizes = [16, 32, 48]) {
+  const images = await Promise.all(sizes.map((s) => png(source, s)));
+  const header = Buffer.alloc(6 + 16 * images.length);
+  header.writeUInt16LE(0, 0);
+  header.writeUInt16LE(1, 2);
+  header.writeUInt16LE(images.length, 4);
+  let offset = header.length;
+  images.forEach((img, i) => {
+    const pos = 6 + 16 * i;
+    header.writeUInt8(sizes[i], pos);
+    header.writeUInt8(sizes[i], pos + 1);
+    header.writeUInt16LE(1, pos + 4);
+    header.writeUInt16LE(32, pos + 6);
+    header.writeUInt32LE(img.length, pos + 8);
+    header.writeUInt32LE(offset, pos + 12);
+    offset += img.length;
+  });
+  return Buffer.concat([header, ...images]);
+}
+
+const files = new Map(); // name in dist -> Buffer
+for (const [name, text] of Object.entries(svg)) files.set(name, Buffer.from(text));
+const mark = svg['bizomat-mark.svg'];
+for (const size of [16, 32, 48, 180, 192, 512]) files.set(`bizomat-icon-${size}.png`, await png(mark, size));
+files.set('bizomat-maskable-512.png', await png(markSvg({ inset: 64, radius: 0, label: false }).replace(/<rect [^>]+>/, `<rect width="512" height="512" fill="${COLORS.navy}"/>`), 512));
+files.set('favicon.ico', await ico(mark));
+
+// ---------- Generated modules for apps that draw the logo inline ----------
+const header = 'Generated by shared/brand/build.mjs from shared/brand/glyphs.mjs. Do not edit by hand.';
+files.set('bizomat_brand.py', Buffer.from(`"""${header}"""\n\nWORDMARK_VIEWBOX = "0 0 ${W} ${H}"\nWORDMARK_PATH = "${WORD}"\nB_VIEWBOX = "0 0 332 241"\nB_PATH = "${B}"\nBAR_PATH = "${BAR}"\nNAVY = "${COLORS.navy}"\nTEAL = "${COLORS.teal}"\nTEAL_BRIGHT = "${COLORS.tealBright}"\nTEAL_MARK = "${COLORS.tealMark}"\n`));
+files.set('bizomat-brand.ts', Buffer.from(`// ${header}\nexport const WORDMARK_VIEWBOX = '0 0 ${W} ${H}';\nexport const WORDMARK_PATH = '${WORD}';\nexport const B_VIEWBOX = '0 0 332 241';\nexport const B_PATH = '${B}';\nexport const BAR_PATH = '${BAR}';\nexport const BRAND_COLORS = ${JSON.stringify({ navy: COLORS.navy, teal: COLORS.teal, tealBright: COLORS.tealBright, tealMark: COLORS.tealMark })} as const;\n`));
+files.set('brand.json', Buffer.from(JSON.stringify({ name: 'BIZOMAT', tagline: 'Intelligent Business Automation Platform', statement: 'Automate work. Connect systems. Get business done.', wordmark: { viewBox: `0 0 ${W} ${H}`, path: WORD }, b: { viewBox: '0 0 332 241', path: B, bar: BAR }, colors: COLORS }, null, 2) + '\n'));
+
+// Copies kept beside the sources: tokens, components and the heading font.
+const copyFrom = (rel) => fs.readFileSync(path.join(here, rel));
+files.set('tokens.css', copyFrom('tokens.css'));
+files.set('components.css', copyFrom('components.css'));
+files.set('oxanium-latin.woff2', copyFrom('fonts/oxanium-latin.woff2'));
+files.set('OFL-Oxanium.txt', fs.readFileSync(path.join(root, 'public/fonts/OFL-Oxanium.txt')));
+
+// ---------- Where each app keeps its copy ----------
+const T = (from, to) => ({ from, to });
+const targets = [
+  // Website (repository root)
+  T('bizomat-wordmark.svg', 'public/brand/bizomat-wordmark.svg'),
+  T('bizomat-logo-light.svg', 'public/brand/bizomat-logo-light.svg'),
+  T('bizomat-logo-dark.svg', 'public/brand/bizomat-logo-dark.svg'),
+  T('bizomat-mark.svg', 'public/brand/bizomat-mark.svg'),
+  T('bizomat-b.svg', 'public/brand/bizomat-b.svg'),
+  T('bizomat-icon-32.png', 'public/brand/bizomat-icon-32.png'),
+  T('bizomat-icon-180.png', 'public/brand/bizomat-icon-180.png'),
+  T('bizomat-icon-192.png', 'public/brand/bizomat-icon-192.png'),
+  T('bizomat-icon-512.png', 'public/brand/bizomat-icon-512.png'),
+  T('bizomat-maskable-512.png', 'public/brand/bizomat-maskable-512.png'),
+  T('bizomat-mark.svg', 'public/favicon.svg'),
+  T('favicon.ico', 'public/favicon.ico'),
+  T('bizomat-icon-32.png', 'public/favicon-32.png'),
+  T('bizomat-icon-180.png', 'public/apple-touch-icon.png'),
+  T('bizomat-icon-192.png', 'public/icon-192.png'),
+  T('bizomat-icon-512.png', 'public/icon-512.png'),
+  T('oxanium-latin.woff2', 'public/fonts/oxanium-latin.woff2'),
+  T('tokens.css', 'src/styles/bizomat/tokens.css'),
+  T('components.css', 'src/styles/bizomat/components.css'),
+  T('bizomat-brand.ts', 'src/data/bizomat-brand.ts'),
+  // CAD Automation (apps/cad, Python server)
+  T('bizomat-mark.svg', 'apps/cad/opensketch/static/favicon.svg'),
+  T('favicon.ico', 'apps/cad/opensketch/static/favicon.ico'),
+  T('bizomat-icon-32.png', 'apps/cad/opensketch/static/ui/icon-32.png'),
+  T('bizomat-icon-180.png', 'apps/cad/opensketch/static/ui/icon-180.png'),
+  T('bizomat-logo-light.svg', 'apps/cad/opensketch/static/ui/bizomat-logo-light.svg'),
+  T('tokens.css', 'apps/cad/opensketch/static/ui/bizomat-tokens.css'),
+  T('oxanium-latin.woff2', 'apps/cad/opensketch/static/fonts/oxanium-latin.woff2'),
+  T('OFL-Oxanium.txt', 'apps/cad/opensketch/static/fonts/OFL-Oxanium.txt'),
+  T('bizomat_brand.py', 'apps/cad/opensketch/bizomat_brand.py'),
+  // Project Management (apps/work, React + Worker)
+  T('bizomat-mark.svg', 'apps/work/public/favicon.svg'),
+  T('bizomat-icon-180.png', 'apps/work/public/apple-touch-icon.png'),
+  T('oxanium-latin.woff2', 'apps/work/public/fonts/oxanium-latin.woff2'),
+  T('OFL-Oxanium.txt', 'apps/work/public/fonts/OFL-Oxanium.txt'),
+  T('tokens.css', 'apps/work/src/client/styles/bizomat-tokens.css'),
+  T('bizomat-brand.ts', 'apps/work/src/client/lib/bizomat-brand.ts'),
+];
+
+let problems = 0;
+const dist = path.join(here, 'dist');
+if (!check) fs.mkdirSync(dist, { recursive: true });
+for (const [name, buf] of files) {
+  const p = path.join(dist, name);
+  if (check) {
+    if (!fs.existsSync(p) || !fs.readFileSync(p).equals(buf)) { console.error(`out of date: shared/brand/dist/${name}`); problems++; }
+  } else fs.writeFileSync(p, buf);
+}
+for (const { from, to } of targets) {
+  const buf = files.get(from);
+  if (!buf) throw new Error(`no such brand file: ${from}`);
+  const p = path.join(root, to);
+  if (check) {
+    if (!fs.existsSync(p) || !fs.readFileSync(p).equals(buf)) { console.error(`out of date: ${to} (run node shared/brand/build.mjs)`); problems++; }
+  } else {
+    fs.mkdirSync(path.dirname(p), { recursive: true });
+    if (!fs.existsSync(p) || !fs.readFileSync(p).equals(buf)) fs.writeFileSync(p, buf);
+  }
+}
+if (check && problems) process.exit(1);
+console.log(check ? `BIZOMAT brand assets in step (${targets.length} copies).` : `BIZOMAT brand assets written: ${files.size} files, ${targets.length} copies.`);

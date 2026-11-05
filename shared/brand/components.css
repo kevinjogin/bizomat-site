@@ -1,0 +1,158 @@
+/* BIZOMAT components: plain CSS classes (bz-*) built only on the tokens in tokens.css, so the website, CAD Automation
+   and Project Management share one look. Load tokens.css first. Every interactive component has a visible focus ring,
+   and motion stops under prefers-reduced-motion. */
+
+/* ---------- Type ---------- */
+.bz-display, .bz h1, .bz h2, .bz h3, .bz h4 {
+  font-family: var(--bz-font-display);
+  font-weight: var(--bz-heading-weight);
+  letter-spacing: var(--bz-heading-tracking);
+  line-height: 1.1;
+  text-wrap: balance;
+  margin: 0;
+}
+.bz h1 { font-size: var(--bz-step-4); }
+.bz h2 { font-size: var(--bz-step-3); }
+.bz h3 { font-size: var(--bz-step-1); line-height: 1.25; }
+.bz h4 { font-size: var(--bz-step-0); line-height: 1.3; }
+.bz-eyebrow {
+  font-family: var(--bz-font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bz-teal);
+  margin: 0 0 0.75rem;
+}
+.bz-lead { font-size: var(--bz-step-1); color: var(--bz-ink-2); max-width: 62ch; line-height: 1.55; }
+.bz-muted { color: var(--bz-muted); }
+.bz-mono { font-family: var(--bz-font-mono); font-size: 0.92em; }
+
+/* ---------- Layout ---------- */
+.bz-container { width: min(100% - 2 * var(--bz-gutter), var(--bz-max)); margin-inline: auto; }
+.bz-section { padding-block: var(--bz-space-section); }
+.bz-section--tint { background: var(--bz-paper-2); }
+.bz-section--inverse { background: var(--bz-inverse-bg); color: var(--bz-inverse-ink); }
+.bz-section-head { max-width: 760px; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.bz-section-head p { color: var(--bz-muted); margin: 0.9rem 0 0; font-size: var(--bz-step-1); }
+.bz-grid { display: grid; gap: clamp(1rem, 2.4vw, 1.5rem); }
+.bz-grid--2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
+.bz-grid--3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.bz-grid--4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+.bz-stack > * + * { margin-top: var(--bz-stack, 1rem); }
+.bz-cluster { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+/* ---------- Buttons ---------- */
+.bz-btn {
+  --_bg: var(--bz-ink); --_fg: var(--bz-surface); --_bd: transparent;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.65rem 1.15rem;
+  border-radius: var(--bz-radius); border: 1px solid var(--_bd);
+  background: var(--_bg); color: var(--_fg);
+  font: 600 0.98rem/1.2 var(--bz-font-sans); text-decoration: none; cursor: pointer;
+  transition: background-color 160ms var(--bz-ease), border-color 160ms var(--bz-ease), color 160ms var(--bz-ease);
+}
+.bz-btn:hover { --_bg: var(--bz-ink-2); }
+.bz-btn--accent { --_bg: var(--bz-teal); --_fg: var(--bz-on-accent); }
+.bz-btn--accent:hover { --_bg: var(--bz-teal-hover); }
+.bz-btn--secondary { --_bg: transparent; --_fg: var(--bz-ink); --_bd: var(--bz-line-strong); }
+.bz-btn--secondary:hover { --_bg: var(--bz-paper-2); --_bd: var(--bz-ink-2); }
+.bz-btn--ghost { --_bg: transparent; --_fg: var(--bz-teal); padding-inline: 0.4rem; }
+.bz-btn--ghost:hover { --_bg: var(--bz-teal-soft); }
+.bz-btn--inverse { --_bg: var(--bz-inverse-ink); --_fg: var(--bz-inverse-bg); }
+.bz-btn--sm { min-height: 36px; padding: 0.45rem 0.85rem; font-size: 0.9rem; }
+.bz-btn--block { width: 100%; }
+.bz-btn[disabled], .bz-btn[aria-disabled='true'] { opacity: 0.55; cursor: not-allowed; }
+
+/* ---------- Focus ---------- */
+.bz :focus-visible, .bz-btn:focus-visible, .bz-input:focus-visible {
+  outline: 2px solid var(--bz-focus); outline-offset: 2px;
+}
+
+/* ---------- Forms ---------- */
+.bz-field { display: grid; gap: 0.4rem; }
+.bz-label { font-weight: 600; font-size: 0.92rem; color: var(--bz-ink); }
+.bz-help { font-size: 0.85rem; color: var(--bz-muted); }
+.bz-input, .bz-select, .bz-textarea {
+  width: 100%; min-height: 44px; padding: 0.6rem 0.8rem;
+  border: 1px solid var(--bz-line-strong); border-radius: var(--bz-radius);
+  background: var(--bz-surface); color: var(--bz-ink); font: inherit;
+}
+.bz-textarea { min-height: 7rem; resize: vertical; }
+.bz-input:focus, .bz-select:focus, .bz-textarea:focus { border-color: var(--bz-teal); outline: none; box-shadow: 0 0 0 3px var(--bz-teal-soft); }
+.bz-input[aria-invalid='true'] { border-color: var(--bz-danger); }
+.bz-error-text { color: var(--bz-danger); font-size: 0.86rem; }
+
+/* ---------- Cards and panels ---------- */
+.bz-card {
+  background: var(--bz-surface); border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg);
+  padding: clamp(1.25rem, 2.4vw, 1.75rem); box-shadow: var(--bz-shadow-1);
+}
+.bz-card h3 { margin-bottom: 0.5rem; }
+.bz-card p { color: var(--bz-ink-2); margin: 0; }
+.bz-card--link { text-decoration: none; color: inherit; display: block; transition: border-color 160ms var(--bz-ease), transform 160ms var(--bz-ease); }
+.bz-card--link:hover { border-color: var(--bz-teal); }
+.bz-panel { background: var(--bz-paper-2); border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg); padding: 1.25rem; }
+
+/* ---------- Badges and status ---------- */
+.bz-badge {
+  display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.18rem 0.55rem; border-radius: 999px;
+  font: 600 0.74rem/1.4 var(--bz-font-mono); letter-spacing: 0.04em; text-transform: uppercase;
+  background: var(--bz-paper-2); color: var(--bz-ink-2); border: 1px solid var(--bz-line);
+}
+.bz-badge--live { background: var(--bz-success-soft); color: var(--bz-success); border-color: transparent; }
+.bz-badge--demo { background: var(--bz-info-soft); color: var(--bz-info); border-color: transparent; }
+.bz-badge--concept { background: var(--bz-warning-soft); color: var(--bz-warning); border-color: transparent; }
+
+/* ---------- Alerts ---------- */
+.bz-alert { display: grid; gap: 0.25rem; padding: 0.9rem 1rem; border-radius: var(--bz-radius); border: 1px solid; }
+.bz-alert--info { background: var(--bz-info-soft); border-color: color-mix(in srgb, var(--bz-info) 30%, transparent); color: var(--bz-ink); }
+.bz-alert--success { background: var(--bz-success-soft); border-color: color-mix(in srgb, var(--bz-success) 30%, transparent); }
+.bz-alert--warning { background: var(--bz-warning-soft); border-color: color-mix(in srgb, var(--bz-warning) 30%, transparent); }
+.bz-alert--danger { background: var(--bz-danger-soft); border-color: color-mix(in srgb, var(--bz-danger) 30%, transparent); }
+.bz-alert strong { font-weight: 650; }
+
+/* ---------- Tables ---------- */
+.bz-table-wrap { overflow-x: auto; border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg); background: var(--bz-surface); }
+.bz-table { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+.bz-table th, .bz-table td { text-align: left; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--bz-line); vertical-align: top; }
+.bz-table th { font-weight: 650; color: var(--bz-ink-2); background: var(--bz-paper-2); }
+.bz-table tr:last-child td { border-bottom: 0; }
+
+/* ---------- Modal (native <dialog>) ---------- */
+.bz-modal { border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg); padding: 0; width: min(560px, calc(100% - 2rem)); background: var(--bz-surface); color: var(--bz-ink); box-shadow: var(--bz-shadow-2); }
+.bz-modal::backdrop { background: rgb(10 17 28 / 0.55); }
+.bz-modal__head, .bz-modal__body, .bz-modal__foot { padding: 1.1rem 1.25rem; }
+.bz-modal__head { border-bottom: 1px solid var(--bz-line); }
+.bz-modal__foot { border-top: 1px solid var(--bz-line); display: flex; justify-content: flex-end; gap: 0.6rem; }
+
+/* ---------- Dashboard tiles ---------- */
+.bz-stat { display: grid; gap: 0.2rem; padding: 1.1rem 1.2rem; border: 1px solid var(--bz-line); border-radius: var(--bz-radius-lg); background: var(--bz-surface); }
+.bz-stat dt { font-size: 0.85rem; color: var(--bz-muted); }
+.bz-stat dd { margin: 0; font: 650 var(--bz-step-2)/1.1 var(--bz-font-display); letter-spacing: var(--bz-heading-tracking); }
+
+/* ---------- Loading, empty and error states ---------- */
+.bz-skeleton { position: relative; overflow: hidden; background: var(--bz-paper-2); border-radius: var(--bz-radius-sm); min-height: 1em; }
+.bz-skeleton::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent); animation: bz-shimmer 1.4s infinite; }
+:root[data-theme='dark'] .bz-skeleton::after { background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.06), transparent); }
+@keyframes bz-shimmer { to { transform: translateX(100%); } }
+.bz-spinner { width: 1.25rem; height: 1.25rem; border-radius: 50%; border: 2px solid var(--bz-line-strong); border-top-color: var(--bz-teal); animation: bz-spin 0.8s linear infinite; }
+@keyframes bz-spin { to { transform: rotate(360deg); } }
+.bz-empty, .bz-error-state { display: grid; justify-items: center; gap: 0.6rem; text-align: center; padding: clamp(2rem, 5vw, 3.5rem) 1rem; border: 1px dashed var(--bz-line-strong); border-radius: var(--bz-radius-lg); color: var(--bz-muted); }
+.bz-empty h3, .bz-error-state h3 { color: var(--bz-ink); }
+.bz-error-state { border-color: color-mix(in srgb, var(--bz-danger) 40%, transparent); background: var(--bz-danger-soft); }
+
+/* ---------- Application header and footer (for the product apps) ---------- */
+.bz-app-header { position: sticky; top: 0; z-index: 40; height: var(--bz-header-h); display: flex; align-items: center; gap: 1rem; padding-inline: var(--bz-gutter); background: color-mix(in srgb, var(--bz-paper) 92%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bz-line); }
+.bz-app-header .bz-logo { height: 18px; width: auto; color: var(--bz-navy); }
+:root[data-theme='dark'] .bz-app-header .bz-logo { color: #fff; }
+.bz-product { font: 600 0.82rem/1 var(--bz-font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--bz-muted); padding-left: 0.85rem; border-left: 1px solid var(--bz-line-strong); }
+.bz-footer { border-top: 1px solid var(--bz-line); padding-block: 1.5rem; color: var(--bz-muted); font-size: 0.9rem; }
+.bz-footer nav { display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; }
+.bz-footer a { color: inherit; text-decoration: none; }
+.bz-footer a:hover { color: var(--bz-teal); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bz-skeleton::after, .bz-spinner { animation: none; }
+  .bz-btn, .bz-card--link { transition: none; }
+}
