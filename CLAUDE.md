@@ -9,18 +9,28 @@ calls the `sw_` MCP tools; the server checks each sketch and feature with OpenSk
 kernel, queues the work, and the OpenSketch add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS
 and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-only.
 
+KEVOS Bridge (0.11.0) builds on it: the server is the KEVOS gateway; each Windows computer runs the KEVOS Companion
+(tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the gateway and hands
+commands to the add-in over a local named pipe; an MSI installs both. Docs: `docs/BRIDGE-PROTOCOL.md` (the contract),
+`docs/KEVOS-*.md` (install, Cloudflare, security, versions, troubleshooting, build, test report, release notes).
+
 ## Rules
 
 - After completing any phase or significant change, update this file to reflect the current state before committing.
-- Test before committing: `pytest -q` (needs node for the sketch solver) and `npm test` (the solver alone); the
-  add-in with `bash solidworks/build.sh test` (.NET 8 SDK). For page changes, check the page in Chromium with
+- Test before committing: `pytest -q` (needs node for the sketch solver; the slow KEVOS end-to-end test needs the .NET
+  8 SDK) and `npm test` (the solver alone); the add-in and Companion with `bash solidworks/build.sh test` (.NET 8 SDK). For page changes, check the page in Chromium with
   Playwright at desktop and phone width.
 - No emojis anywhere. Plain language, short sentences, little text on pages.
 - Brand: the text wordmark "OpenSketch" (Inter Tight 800, tight tracking) as the logo, "for SOLIDWORKS" beside it on
   the home page; the sign-in pages' look (dark, the angled indigo-to-pink band, raised cards, pill calls to action);
   fonts served from `opensketch/static/fonts` (no third-party requests: the privacy page says so).
 - The feature format (`docs/DOCUMENT.md`, the registry in `opensketch/features/`) is the contract between the AI,
-  the kernel and the add-in. Change it there first, then the kernel, then the add-in.
+  the kernel and the add-in. Change it there first, then the kernel, then the add-in. The bridge protocol
+  (`docs/BRIDGE-PROTOCOL.md`) is the contract between gateway, Companion and add-in: change it there first, then
+  `devicebridge.py`, then `solidworks/src/Core/Bridge2`, and keep `tests/bridge_fakes.py` and BridgeProbe in step.
+- SOLIDWORKS API calls only on SOLIDWORKS' UI thread (Host marshals); never from the Companion (it may only start
+  SOLIDWORKS or ask it once to LoadAddIn) and never from a service. Code that runs inside SOLIDWORKS (the add-in, the
+  pipe link) must never let an exception escape a thread: it would close SOLIDWORKS.
 - Heavy work never runs on the web server's event loop: OpenCascade goes through the person's "agent" CAD worker
   (`cadworker.lane_for(person, "agent")`), node and big file writes through threads.
 - No personal, client or confidential details in code, comments, tests or docs: the repository is public.
@@ -30,10 +40,26 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   builds and tests the add-in and keeps the zip as an artifact. Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
-## Current state (v0.8)
+## Current state (v0.8 server, KEVOS Bridge 0.11.0)
 
-- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 28 tools: every `sw_`
-  tool (`sw_tools.py`, `sw_selftest.py`, registered on `mcp` at import) plus `request_upload`. `Endpoint` serves it
+- KEVOS registered computers (`devicebridge.py`, router included in `server.py`): pairing (`/v2/devices/pair/*`, the
+  signed-in page `/devices/pair`), device proofs (`Authorization: KEVOS-Device <JWS>`, ES256 by the computer's
+  key: method, path, time, one-time id, body hash), the gateway's command key (`bridge-signing-key.pem` in the data
+  folder; commands and cancels are JWS the Companion verifies), SQLite `bridge.sqlite` (devices, pairings, every
+  command with its history and result), live sessions in memory, `/v2/device/*` (hello, long-poll next, ack,
+  progress, status, chunked file, result, blob, unpair), `/v2/bridge/update.json` (signed release manifest from
+  `bridge-release.json`), `/api/devices` (list, default, remove). `swbridge.call(..., device=)` routes to a computer
+  when one is online (`devicebridge.pick`: by name, the only one, the only one with SOLIDWORKS, the default, else
+  `DEVICE_AMBIGUOUS`), else to the v1 add-in link; `swbridge.status` adds the computers. On an open server (no
+  password, no accounts) pairing is taken only from the server's own machine. Tests: `tests/test_devicebridge.py`
+  with the stand-in Companion `tests/bridge_fakes.py` (every SOLIDWORKS tool and the self test run through a
+  computer), `tests/test_bridge_e2e.py` (slow: the C# Companion and add-in link, `solidworks/tests/BridgeProbe`).
+- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 31 tools: every `sw_`
+  tool (`sw_tools.py`, `sw_selftest.py`, registered on `mcp` at import) plus `request_upload`. Every tool that reaches
+  SOLIDWORKS takes an optional `device` (the `_routed` decorator sets `_DEVICE`/`_TOOL` for `_run`, `_geometry`, whose
+  cache is per person and computer, and the status checks); `sw_list_devices`, `sw_command_status`,
+  `sw_cancel_command` are new. The gates record the AI app's grant ({id, name}, no token) and a correlation id for
+  commands. `Endpoint` serves it
   at each path in `PATHS` = ("/mcp", "/solidworks/mcp"): the path itself takes a Bearer token (`_BearerGate`, 401
   with the protected-resource pointer for that path), `path/<key>` the private address (`_TokenGate`,
   `auth.resolve_mcp`). /solidworks/mcp is a second address early connectors used. Stateless Streamable HTTP, JSON
@@ -104,12 +130,28 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
 - `sw_selftest.py`: stages plate / shapes / assembly in `Documents\OpenSketch\selftest` (the plate stage ends with its drawing and a PDF of it), each step ok / check /
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
-- Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded): Core (Json, Geom, SketchPlan,
-  BridgeClient), Addin (Entry, Host, ConnectForm, Settings in HKCU\Software\OpenSketch, Log in
-  %LOCALAPPDATA%\OpenSketch\SolidWorks, Commands, Files, Pick, Sketches, Features, Edits with Journal rollback,
+- Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded; version in
+  `Directory.Build.props`, 0.11.0): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
+  Wire (ids, times, 4-byte-length frames), ReplayGuard, PipeLink (the add-in's pipe client: reader thread for pings and
+  cancels, one worker for commands, outbox across reconnects, at-most-once by command id), CloudLink and
+  CompanionEngine (the Companion's core: signed long poll, verification, routing to a SOLIDWORKS session, spool,
+  persistent outbox, heartbeats), Destructive), Addin (Entry: KEVOS menu, KevosUi CommandManager group and tab; Host:
+  the direct link and the Companion link, UI-thread snapshot of documents, document events, modal-dialog check,
+  Safety confirmation of destructive ops; CompanionPipe: the pipe client that checks its server is the installed
+  Companion; ConnectForm; Settings in HKCU\Software\OpenSketch and HKCU\Software\KEVOS\Bridge; Log in
+  %LOCALAPPDATA%\OpenSketch\SolidWorks; Commands, Files, Pick, Sketches, Features, Edits with Journal rollback,
   Assembly), App `OpenSketchSW.exe` (Install for me = per-user COM registration + the launcher macro
-  `Documents\OpenSketch\OpenSketch.swb`; Remove; "Connect to the open SOLIDWORKS" from outside). Three ways to start
-  because IT may block per-user add-ins.
+  `Documents\OpenSketch\OpenSketch.swb`; Remove; "Connect to the open SOLIDWORKS" from outside, direct link only).
+  The COM ids are unchanged (existing registrations and the macro keep working); the add-in's title is KEVOS.
+- KEVOS Companion (`solidworks/src/Companion`, `KEVOS.Companion.exe`, net48, compiles Core, no SOLIDWORKS reference):
+  tray app, one per Windows user, starts at sign-in (HKLM Run from the MSI; per-user opt-out flag), pairing window,
+  device key in CNG (TPM first, not exportable), the pipe `\\.\pipe\KEVOS.Bridge.<SID>` (first instance, user-only
+  DACL, remote clients rejected, clients must be SLDWORKS.exe with the installed add-in), SOLIDWORKS detection and the
+  LoadAddIn fallback, removal of old per-user OpenSketch registrations, crash restart, logs in
+  %LOCALAPPDATA%\KEVOS\Bridge\logs, diagnostics, updater (gateway-signed manifest, hash, Authenticode, same publisher,
+  the person asked). `--pair`, `--diagnose`, `--unpair`, `--startup on|off`, `--exit`.
+- Installer (`installer/KEVOS-Bridge.wxs`, `installer/build.ps1`): WiX 5 per-machine x64 MSI; built and (with secrets)
+  signed by the `installer` job in `solidworks.yml` on Windows; releases `bridge-latest` and `bridge-v<version>`.
 
 ## Hosting
 
@@ -148,11 +190,16 @@ and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-
   registration. Plain numbers in equations are in the document's unit.
 - Large assemblies are slow to read: each read exports a STEP of the bodies that changed.
 - No page for account admin (invites, people, early access, Google setup): the `/api/account*` routes remain.
+- KEVOS: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
+  (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
+  process (SQLite, live sessions in memory).
 - App sign-in (OAuth) is tested with the MCP Python SDK client; not yet with every AI app's connector.
 - The `ai` extra in pyproject.toml (anthropic) is no longer used; drop it the next time the pins are regenerated.
 
 ## Next
 
+1. Run the KEVOS checklist (`docs/KEVOS-TEST-REPORT.md` section 4) on Windows with SOLIDWORKS 2022: the MSI, the
+   Companion, the add-in's new UI, events, confirmation and modal check have only been compiled, not run.
 1. Run the self test on real SOLIDWORKS installs and fix from the reports.
 2. Tune SW_GUIDE from what the AI gets wrong on real work.
 3. An account admin page.

@@ -47,6 +47,11 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "20"
+      # .NET runs the C# companion and add-in link in the KEVOS end-to-end test (tests/test_bridge_e2e.py, slow job)
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        if: matrix.part == 'worker processes'
+        with:
+          dotnet-version: "8.0.x"
       - name: Libraries OpenCascade needs
         run: |
           sudo apt-get update -qq

@@ -26,6 +26,16 @@ AI app (Claude, ChatGPT)  --MCP-->  OpenSketch server  <--HTTPS long poll--  add
 - SOLIDWORKS is the master copy. You can edit the same file by hand between the AI's steps; the AI reads the
   file again before it writes.
 
+## KEVOS Bridge: install once per computer
+
+For everyday use on Windows: install **KEVOS Bridge** (one MSI) on each SOLIDWORKS computer and pair it once with
+your account. The KEVOS Companion starts with Windows and connects by itself; the add-in loads with SOLIDWORKS. No
+command prompt, no macro, no address or key to paste. Several computers per account; destructive changes are
+confirmed in SOLIDWORKS. See [docs/KEVOS-INSTALL.md](docs/KEVOS-INSTALL.md), and for the server side
+[docs/KEVOS-CLOUDFLARE.md](docs/KEVOS-CLOUDFLARE.md), [docs/KEVOS-SECURITY.md](docs/KEVOS-SECURITY.md),
+[docs/BRIDGE-PROTOCOL.md](docs/BRIDGE-PROTOCOL.md). Status: built and tested up to the add-in's command dispatcher;
+not yet run in a real SOLIDWORKS ([test report](docs/KEVOS-TEST-REPORT.md)).
+
 ## What the AI can do
 
 | Tool | What it does |
@@ -42,6 +52,7 @@ AI app (Claude, ChatGPT)  --MCP-->  OpenSketch server  <--HTTPS long poll--  add
 | `sw_export`, `sw_import`, `request_upload` | STEP, STL, Parasolid, IGES, SOLIDWORKS files, PDF out; drawings as PDF, DWG or DXF; files in |
 | `sw_standard_part` | ISO screws, nuts, washers and ball bearings, made to size |
 | `sw_selftest` | Checks a new install, step by step |
+| `sw_list_devices`, `sw_command_status`, `sw_cancel_command` | Registered computers (KEVOS); a long command's state and late result; cancel |
 
 The feature format is in [docs/DOCUMENT.md](docs/DOCUMENT.md).
 
