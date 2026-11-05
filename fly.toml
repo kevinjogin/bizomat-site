@@ -1,0 +1,201 @@
+# BIZOMAT platform on Fly.io: one app, four process groups, one image (infrastructure/fly/Dockerfile).
+#
+#   visitor --TLS--> Fly edge --> proxy :8080  (the only public service; routes by Host header)
+#                                   |--6PN--> web  :8003   bizomat.ai (+ kevos.com form posts to /api)
+#                                   |--6PN--> work :8002   work.bizomat.ai, work.kevos.com     volume work_data
+#                                   '--6PN--> cad  :8001   cad.bizomat.ai, cados.kevos.com     volume cad_data
+#
+# Deploy: .github/workflows/bizomat-deploy.yml (run by hand), or from the repository root:
+#   flyctl deploy --remote-only --config fly.toml --ha=false --build-arg BIZOMAT_VERSION=$(git rev-parse --short HEAD)
+# Secrets are app-wide environment variables on EVERY Machine; the entrypoint (infrastructure/fly/entrypoint.sh)
+# passes each role only its own. Which secret goes where, rollback and DNS cutover: infrastructure/README.md.
+# Reference: https://fly.io/docs/reference/configuration/
+
+app = "bizomat"
+primary_region = "syd"
+
+# Every role stops cleanly on SIGTERM: the proxy drains open requests for up to 10 s, the CAD supervisor stops
+# uvicorn (3 s for open long polls), the Node servers close their listeners.
+kill_signal = "SIGTERM"
+# The proxy's 10 s drain plus margin; the old cados app used 15 s too.
+kill_timeout = 15
+
+[build]
+  # A path relative to this file. The build context stays this directory (the repository root), filtered by
+  # the root .dockerignore.
+  dockerfile = "infrastructure/fly/Dockerfile"
+  ignorefile = ".dockerignore"
+
+[deploy]
+  # rolling is the only strategy for Machines with volumes (bluegreen and canary cannot be used with them).
+  # One Machine per group: work and cad are offline while their Machine is replaced (about 10-60 s); the proxy
+  # answers 502 meanwhile, and the CAD add-ins, Companions and work's WebSockets reconnect.
+  strategy = "rolling"
+  max_unavailable = 1
+  # the image is large (OpenCascade): the first pull onto a new host can take several minutes
+  wait_timeout = "10m"
+
+# Each group runs the same image with its role. No ENTRYPOINT in the image, so these are the whole command.
+[processes]
+  proxy = "/usr/local/bin/bizomat-entrypoint proxy"
+  web = "/usr/local/bin/bizomat-entrypoint web"
+  work = "/usr/local/bin/bizomat-entrypoint work"
+  cad = "/usr/local/bin/bizomat-entrypoint cad"
+
+# [env] is app-wide (every Machine sees every value): only non-secret settings here. Each role gets only its own
+# names from the entrypoint's allow-list.
+[env]
+  # proxy: the backends, by process group, over the private network (AAAA records of the group's started Machines)
+  UPSTREAM_WEB = "http://web.process.bizomat.internal:8003"
+  UPSTREAM_WORK = "http://work.process.bizomat.internal:8002"
+  UPSTREAM_CAD = "http://cad.process.bizomat.internal:8001"
+  # https://bizomat.fly.dev/__preview/{cad,work,web,clear} routes one browser to a backend before DNS moves.
+  # Set to "0" once the real hosts are live.
+  BIZOMAT_PREVIEW_ROUTING = "1"
+  # work: passed to the work role as APP_URL, APP_NAME, ENVIRONMENT, ALLOW_SIGNUP, SESSION_TTL_HOURS
+  WORK_APP_URL = "https://work.bizomat.ai"
+  WORK_APP_NAME = "BIZOMAT Project Management"
+  WORK_ENVIRONMENT = "production"
+  WORK_ALLOW_SIGNUP = "false"
+  WORK_SESSION_TTL_HOURS = "336"
+  # cad: cados.kevos.com stays the canonical address (OAuth metadata, links) until cad.bizomat.ai is verified;
+  # both names are served. No host is redirected (the proxy keeps every path on both hosts).
+  OPENSKETCH_PUBLIC_URL = "https://cados.kevos.com"
+  OPENSKETCH_ALIAS_HOSTS = "cad.bizomat.ai,cados.kevos.com"
+  OPENSKETCH_REDIRECT_HOSTS = ""
+
+# The ONLY service, and only on the proxy group. A [[services]] or [http_service] on web, work or cad would be
+# exposed on the app's public IPs (services are not private per group); they are reached only over 6PN.
+[http_service]
+  processes = ["proxy"]
+  internal_port = 8080
+  force_https = true
+  # "off" and at least one Machine always running: web, work and cad have no service, so Fly Proxy could never
+  # wake them; the platform is always on anyway, and stopping or suspending the proxy would only add wake-up
+  # latency and cut the CAD add-ins' long polls and work's WebSockets. (min_machines_running only applies to
+  # auto-stop; kept at 1 to document the intent if auto-stop is ever turned on.)
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  # requests, not connections: Fly Proxy pools connections to the proxy. A long poll or WebSocket holds one
+  # request for its whole life, so the limits are high; the proxy needs little memory per idle connection.
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 800
+    hard_limit = 1500
+
+  # Fly's idle timeout for connections to the proxy. 600 s covers 25-60 s long polls, MCP tool calls that wait up
+  # to 240 s and quiet WebSockets; the proxy's own idle timeout (PROXY_IDLE_TIMEOUT_MS, 620 s) is just longer.
+  [http_service.http_options]
+    idle_timeout = 600
+
+# Top-level checks: each process group on its own port and path. They need the port open on 0.0.0.0: every
+# role listens on all interfaces (Node on '::', dual-stack; uvicorn on '' = one socket per address family).
+# They show health and gate deploys; they never restart a Machine (the CAD supervisor does that inside) and
+# never change routing. With two or more proxy Machines, add [[http_service.checks]] too.
+[checks]
+  [checks.proxy]
+    processes = ["proxy"]
+    type = "http"
+    port = 8080
+    method = "get"
+    path = "/__proxy/health"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "10s"
+
+  [checks.web]
+    processes = ["web"]
+    type = "http"
+    port = 8003
+    method = "get"
+    path = "/healthz"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "20s"
+
+  [checks.work]
+    processes = ["work"]
+    type = "http"
+    port = 8002
+    method = "get"
+    path = "/api/health"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "30s"
+
+  [checks.cad]
+    processes = ["cad"]
+    type = "http"
+    port = 8001
+    method = "get"
+    path = "/healthz"
+    interval = "15s"
+    timeout = "8s"
+    # OpenCascade loads slowly and the supervisor starts the server as a child
+    grace_period = "90s"
+
+# Volumes are per Machine and never shared: work and cad each run exactly ONE Machine (never scale them past 1:
+# a second Machine would get an empty volume of its own). Daily snapshots, kept 30 days (first 10 GB free).
+[[mounts]]
+  source = "cad_data"
+  destination = "/data"
+  processes = ["cad"]
+  initial_size = "3gb"
+  snapshot_retention = 30
+  scheduled_snapshots = true
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = "1GB"
+  auto_extend_size_limit = "20GB"
+
+[[mounts]]
+  source = "work_data"
+  destination = "/data"
+  processes = ["work"]
+  initial_size = "3gb"
+  snapshot_retention = 30
+  scheduled_snapshots = true
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = "1GB"
+  auto_extend_size_limit = "20GB"
+
+# Machine sizes per group. cad keeps the dedicated core it has today: heavy CAD work on a shared CPU uses up the
+# burst allowance.
+[[vm]]
+  processes = ["proxy"]
+  size = "shared-cpu-1x"
+  memory = "256mb"
+
+[[vm]]
+  processes = ["web"]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[[vm]]
+  processes = ["work"]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+[[vm]]
+  processes = ["cad"]
+  size = "performance-1x"
+  memory = "2gb"
+
+# Restart a Machine whose main process exits, whatever the exit code. (The entrypoint exits non-zero on a missing
+# volume or a missing CAD password: the loop then shows in `fly logs` until it is fixed.)
+[[restart]]
+  policy = "always"
+  processes = ["proxy"]
+
+[[restart]]
+  policy = "always"
+  processes = ["web"]
+
+[[restart]]
+  policy = "always"
+  processes = ["work"]
+
+[[restart]]
+  policy = "always"
+  processes = ["cad"]

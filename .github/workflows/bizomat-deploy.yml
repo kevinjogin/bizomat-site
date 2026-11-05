@@ -1,0 +1,130 @@
+# Deploy the BIZOMAT platform to its Fly app `bizomat` (Sydney). Run by hand only: Actions > BIZOMAT deploy.
+#
+# Needs the repository secret FLY_API_TOKEN: an ORGANIZATION token (`fly tokens create org -o <org>`), because the
+# first run creates the app. The repository variable FLY_ORG names the organization (default "personal").
+#
+# First run: creates the app, its two volumes (cad_data, work_data in syd, 3 GB, snapshots kept 30 days) and its
+# public addresses, then stops: the owner sets the secrets with flyctl (infrastructure/README.md, "Secrets"); this
+# workflow sets no secret itself. Later runs: check that the required secret names exist (never their values),
+# deploy with the rolling strategy, wait for the new version on /__proxy/health, then run the smoke test against
+# https://bizomat.fly.dev through the preview cookie (cad and work have no public host before DNS moves).
+#
+# It only ever uses --app bizomat: it never touches the cados app, DNS or Cloudflare.
+name: BIZOMAT deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      smoke:
+        description: Smoke test https://bizomat.fly.dev afterwards
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bizomat-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      APP: bizomat
+      REGION: syd
+      ORG: ${{ vars.FLY_ORG || 'personal' }}
+    steps:
+      - name: Check the token
+        env:
+          HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::Add the repository secret FLY_API_TOKEN (an organization token: fly tokens create org -o $ORG). Nothing was deployed."
+            exit 1
+          fi
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+
+      - name: This configuration is for the bizomat app only
+        run: |
+          grep -qx "app = \"$APP\"" fly.toml || { echo "::error::fly.toml is not the configuration of app $APP"; exit 1; }
+
+      - name: Create the app, its volumes and its addresses (first run only)
+        id: create
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          created=no
+          if ! flyctl status --app "$APP" >/dev/null 2>&1; then
+            flyctl apps create "$APP" --org "$ORG"
+            created=yes
+          fi
+          for vol in cad_data work_data; do
+            have="$(flyctl volumes list --app "$APP" --json | jq --arg v "$vol" '[.[] | select(.name == $v)] | length')"
+            if [ "$have" = "0" ]; then
+              flyctl volumes create "$vol" --app "$APP" --region "$REGION" --size 3 --snapshot-retention 30 --yes
+            fi
+          done
+          # without public addresses bizomat.fly.dev does not resolve (flyctl deploy also allocates them for a new app)
+          if [ "$(flyctl ips list --app "$APP" --json | jq 'length')" = "0" ]; then
+            flyctl ips allocate-v6 --app "$APP"
+            flyctl ips allocate-v4 --shared --app "$APP"
+          fi
+          echo "created=$created" >> "$GITHUB_OUTPUT"
+
+      - name: The required secrets are set (names only, never values)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          names="$(flyctl secrets list --app "$APP" --json | jq -r '.[] | (.Name // .name)')"
+          if ! grep -qx OPENSKETCH_PASSWORD <<<"$names"; then
+            echo "::error::Set OPENSKETCH_PASSWORD on $APP first, with the SAME value as the cados app (the owner's private connector address is derived from it): flyctl secrets set --stage --app $APP OPENSKETCH_PASSWORD=... (see infrastructure/README.md). Nothing was deployed."
+            exit 1
+          fi
+          for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET \
+                   CAD_GOOGLE_CLIENT_ID CAD_GOOGLE_CLIENT_SECRET OPENSKETCH_ACCESS_CODE; do
+            grep -qx "$s" <<<"$names" || echo "::notice::Optional secret $s is not set"
+          done
+
+      - name: Deploy (rolling, one Machine per process group)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl deploy --app "$APP" --config fly.toml --remote-only --ha=false \
+            --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}" --wait-timeout 10m
+
+      # flyctl reports success once the Machines run; ask the proxy itself which version it serves
+      - name: The proxy serves the new version
+        run: |
+          want="${GITHUB_SHA::7}"
+          got=""
+          for _ in $(seq 1 60); do
+            got="$(curl -fsS --max-time 10 "https://$APP.fly.dev/__proxy/health" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)"
+            if [ "$got" = "$want" ]; then
+              echo "BIZOMAT $want is running on https://$APP.fly.dev" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::https://$APP.fly.dev/__proxy/health did not show version $want within 5 minutes (last: ${got:-none}). See 'flyctl logs -a $APP'; to go back: infrastructure/README.md, Rollback."
+          exit 1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        if: inputs.smoke
+        with:
+          node-version: "22"
+
+      - name: Smoke test through https://bizomat.fly.dev (preview cookie for cad and work)
+        if: inputs.smoke
+        run: |
+          status=0
+          node infrastructure/smoke/smoke.mjs "https://$APP.fly.dev" --mode preview --wait 180 >smoke.txt || status=$?
+          cat smoke.txt
+          { echo '```'; cat smoke.txt; echo '```'; } >>"$GITHUB_STEP_SUMMARY"
+          exit "$status"
