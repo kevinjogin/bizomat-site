@@ -23,7 +23,14 @@
     "test:node": "vitest run --config vitest.node.config.ts",
     "test:e2e": "playwright test",
     "test:e2e:node": "playwright test --config playwright.node.config.ts",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run test:node && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run test && npm run test:node && npm run build",
+    "migrate:import": "node scripts/migrate/import-d1-dump.mjs",
+    "migrate:copy-r2": "node scripts/migrate/copy-r2-objects.mjs",
+    "migrate:repair-text": "node scripts/migrate/repair-text-from-d1.mjs",
+    "migrate:verify": "node scripts/migrate/verify-data-dir.mjs",
+    "migrate:export": "node scripts/migrate/export-for-d1.mjs",
+    "migrate:backup": "node scripts/migrate/backup-data-dir.mjs",
+    "migrate:dry-run": "node scripts/migrate/dry-run.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.105.3",
