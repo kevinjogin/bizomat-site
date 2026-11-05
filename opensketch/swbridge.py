@@ -356,8 +356,8 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
         have = (inst or {}).get("addin_version")
         if inst is None or version_tuple(have) >= version_tuple(needed):
             return None
-        return (f"{what} needs the KEVOS add-in {needed} or newer; SOLIDWORKS on {target['name']} runs {have}. Install the "
-                "latest KEVOS Bridge on that computer (it updates the add-in), then reopen SOLIDWORKS.")
+        return (f"{what} needs the CADOS add-in {needed} or newer; SOLIDWORKS on {target['name']} runs {have}. Install the "
+                "latest CADOS for SOLIDWORKS on that computer (it updates the add-in), then reopen SOLIDWORKS.")
     s = _sessions.get(person_id(user))
     if s is None or not s.alive():
         return None
@@ -367,8 +367,8 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
     where = s.info.get("path")
     return (f"{what} needs the CADOS add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
             + (f" from {where}" if where else "") + ". To update: close SOLIDWORKS (check Task Manager for SLDWORKS.exe), "
-            f"download OpenSketch-SOLIDWORKS.zip from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
-            "all files), run OpenSketchSW.exe from that folder and click Install for me, then reopen SOLIDWORKS and "
+            f"download the CADOS add-in package from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
+            "all files), run the setup program in that folder and click Install for me, then reopen SOLIDWORKS and "
             "connect again.")
 
 

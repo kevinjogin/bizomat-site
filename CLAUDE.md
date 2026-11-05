@@ -84,7 +84,9 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   `safefetch.py`: public https only, pinned address), PKCE S256, refresh rotation, revoke.
 - Sign-in (`auth.py`, `accounts.py`, `oauth.py`): accounts with scrypt passwords, invites, Google sign-in (secret
   encrypted with `secretbox.py`), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
-  makes "Internal tester" accounts. Account admin is API only (`/api/account*`), no page yet.
+  makes "Internal tester" accounts. The setup page shows only until the first account exists; after that `/login` is
+  Sign in ("Welcome back"), and a person already signed in on that browser (90-day session) goes straight to `next`.
+  Sign-in pages and messages never name the OPENSKETCH_* settings.
 - Pages: `/` is the product page for visitors (`site.landing`) and the app's Home for a signed-in person (and on an
   open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
   security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,

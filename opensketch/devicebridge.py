@@ -1229,7 +1229,7 @@ async def pair_start(request: Request):
     try:
         raw, body = await _json(request)
         if _open_and_remote(request):
-            raise BridgeAuthError(403, "FORBIDDEN", "This CADOS server has no sign-in yet: set a server password (OPENSKETCH_PASSWORD) "
+            raise BridgeAuthError(403, "FORBIDDEN", "This CADOS server has no sign-in yet: set a server password "
                                                     "before computers pair with it over the network.")
         if not mcpauth._rate_ok("pair:" + _client_ip(request), PAIR_LIMIT, 3600, _pair_hits):
             raise BridgeAuthError(429, "RATE_LIMITED", "Too many pairing attempts from this network. Try again in an hour.")

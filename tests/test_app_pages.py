@@ -135,3 +135,26 @@ def test_a_computer_pairs_with_the_persons_own_password(base, companions):
     assert [d["name"] for d in db.list_devices({"id": pat["id"]})] == ["PAT-DESK"]
     again = pc.post("/v2/devices/pair/password", {"email": "pat@example.com", "password": "given-pass-1"})
     assert again.status_code == 410  # a pairing is decided once
+
+
+def test_sign_in_pages_say_cados_and_returning_people_go_straight_back(monkeypatch):
+    """No internal name on the setup or sign-in pages, and a person already signed in on this browser who opens
+    /login is sent on to where they were going (sessions last 90 days)."""
+    monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret")
+    anon = TestClient(server.app)
+    setup = anon.get("/login").text
+    assert "Set up CADOS" in setup and "shows only once" in setup
+    owner = TestClient(server.app)
+    owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse",
+                               "server_password": "server-secret", "next": "/"})
+    login = anon.get("/login").text
+    assert "Welcome back" in login and "Set up CADOS" not in login  # every later visit gets Sign in
+    for page in (setup, login):
+        assert "OpenSketch" not in page and "OPENSKETCH" not in page
+    r = owner.get("/login?next=/history", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/history"
+    owner.get("/logout")
+    assert "Welcome back" in owner.get("/login").text
+    r = owner.post("/login", data={"email": "owner@example.com", "password": "correct horse", "next": "/dashboard"},
+                   follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/dashboard"

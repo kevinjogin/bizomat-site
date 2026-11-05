@@ -361,7 +361,7 @@ def _login_page(nxt, error="", email=""):
     if accounts.access_code():  # keeps `next`, so an AI app's sign-in (/oauth/authorize) carries on after the code
         q = "?" + urlencode({"next": nxt}) if nxt and nxt != "/" else ""
         links += f'<div class="links"><a href="/access{_esc(q)}">Have an early access code?</a></div>'
-    return _page("Sign in", "Sign in to your CADOS account.", "/login",
+    return _page("Sign in", "Welcome back. Sign in to your CADOS account.", "/login",
                  [_field("email", "Email", "email", "username", not email, email),
                   _field("password", "Password", "password", "current-password", bool(email), invalid=bool(error))],
                  "Sign in", nxt, error, links, _google_block(nxt))
@@ -398,8 +398,8 @@ def _setup_page(nxt, error="", form=None):
          _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")]
     if password():
         f.append(_field("server_password", "Server password", "password", "off",
-                        note="The server password (OPENSKETCH_PASSWORD) this service was started with. It proves you run it."))
-    return _page("Set up CADOS", "Create the administrator account. You can invite people afterwards.", "/setup", f,
+                        note="The password set on the server when CADOS was installed. It proves you run this server."))
+    return _page("Set up CADOS", "Create the administrator account. This page shows only once: after this, everyone signs in with their email and password.", "/setup", f,
                  "Create account", nxt, error)
 
 
@@ -745,6 +745,8 @@ class PasswordGate:
                 return await _send(send, 401, _setup_page(nxt, "Wrong password."), HTML)
             return await _send(send, 200, _setup_page(nxt), HTML)
         if not post:
+            if current_user(scope, m) is not None:
+                return await go(nxt)  # already signed in on this browser: straight back to work
             return await _send(send, 200, _login_page(nxt), HTML)
         keys = ("ip:" + _client(scope), "email:" + form.get("email", "").strip().lower())
         if _limited(*keys):
