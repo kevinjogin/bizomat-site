@@ -94,7 +94,13 @@ def test_csharp_companion_and_addin_link_end_to_end(base, probe_dll, tmp_path): 
         cfg = json.loads((pdir / "device.json").read_text())
         assert cfg["device_id"] == out["device_id"] and "d" not in cfg["gateway_jwk"]
 
-        res, st = _mcp(base, "sw_status", {})
+        # the Companion reports the SOLIDWORKS instances in its next status push, a moment after READY
+        deadline = time.time() + 15
+        while True:
+            res, st = _mcp(base, "sw_status", {})
+            if st.get("solidworks") or time.time() > deadline:
+                break
+            time.sleep(0.25)
         assert st["via"] == "companion" and st["device"] == "PROBE-PC" and st["solidworks"], st
         assert st["docs"][0]["title"] == "Box"
         res, out = _mcp(base, "sw_body_topology", {"doc": "C:\\OS\\Box.SLDPRT", "kind": "faces"})
