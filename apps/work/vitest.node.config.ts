@@ -21,6 +21,8 @@ export default defineConfig(async () => {
   const wrangler = unstable_readConfig({ config: here('./wrangler.jsonc') });
   const vars = { ...(wrangler.vars as Record<string, string>), ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com' };
   return {
+    // This app's own tsconfig for every transform (see vitest.config.ts).
+    tsconfig: './tsconfig.node.json',
     resolve: {
       alias: [
         { find: /^cloudflare:test$/, replacement: here('./test-node/shims/cloudflare-test.ts') },

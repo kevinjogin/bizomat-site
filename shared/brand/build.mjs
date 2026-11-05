@@ -144,12 +144,9 @@ const targets = [
 let problems = 0;
 const dist = path.join(here, 'dist');
 if (!check) fs.mkdirSync(dist, { recursive: true });
-for (const [name, buf] of files) {
-  const p = path.join(dist, name);
-  if (check) {
-    if (!fs.existsSync(p) || !fs.readFileSync(p).equals(buf)) { console.error(`out of date: shared/brand/dist/${name}`); problems++; }
-  } else fs.writeFileSync(p, buf);
-}
+// shared/brand/dist/ is build output (git-ignored), absent on a fresh checkout: --check compares only the committed
+// copies below.
+if (!check) for (const [name, buf] of files) fs.writeFileSync(path.join(dist, name), buf);
 for (const { from, to } of targets) {
   const buf = files.get(from);
   if (!buf) throw new Error(`no such brand file: ${from}`);

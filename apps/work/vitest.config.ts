@@ -12,6 +12,9 @@ if (!existsSync('dist/client/index.html')) {
 export default defineConfig(async () => {
   const migrations = await readD1Migrations('migrations');
   return {
+    // This app's own tsconfig for every transform: in the BIZOMAT monorepo, Vite would otherwise walk up to the
+    // website's tsconfig.json (which extends Astro's) for files this app's tsconfig.json does not include.
+    tsconfig: './tsconfig.worker.json',
     plugins: [
       cloudflareTest({
         main: './src/worker/index.ts',
