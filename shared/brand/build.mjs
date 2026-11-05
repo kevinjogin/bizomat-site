@@ -91,6 +91,8 @@ const copyFrom = (rel) => fs.readFileSync(path.join(here, rel));
 files.set('tokens.css', copyFrom('tokens.css'));
 files.set('components.css', copyFrom('components.css'));
 files.set('oxanium-latin.woff2', copyFrom('fonts/oxanium-latin.woff2'));
+files.set('inter-tight-latin.woff2', copyFrom('fonts/inter-tight-latin.woff2'));
+files.set('OFL-InterTight.txt', copyFrom('fonts/OFL-InterTight.txt'));
 files.set('OFL-Oxanium.txt', fs.readFileSync(path.join(root, 'public/fonts/OFL-Oxanium.txt')));
 
 // ---------- Where each app keeps its copy ----------
@@ -114,6 +116,7 @@ const targets = [
   T('bizomat-icon-192.png', 'public/icon-192.png'),
   T('bizomat-icon-512.png', 'public/icon-512.png'),
   T('oxanium-latin.woff2', 'public/fonts/oxanium-latin.woff2'),
+  T('inter-tight-latin.woff2', 'public/fonts/inter-tight-latin.woff2'),
   T('tokens.css', 'src/styles/bizomat/tokens.css'),
   T('components.css', 'src/styles/bizomat/components.css'),
   T('bizomat-brand.ts', 'src/data/bizomat-brand.ts'),
@@ -132,6 +135,8 @@ const targets = [
   T('bizomat-icon-180.png', 'apps/work/public/apple-touch-icon.png'),
   T('oxanium-latin.woff2', 'apps/work/public/fonts/oxanium-latin.woff2'),
   T('OFL-Oxanium.txt', 'apps/work/public/fonts/OFL-Oxanium.txt'),
+  T('inter-tight-latin.woff2', 'apps/work/public/fonts/inter-tight-latin.woff2'),
+  T('OFL-InterTight.txt', 'apps/work/public/fonts/OFL-InterTight.txt'),
   T('tokens.css', 'apps/work/src/client/styles/bizomat-tokens.css'),
   T('bizomat-brand.ts', 'apps/work/src/client/lib/bizomat-brand.ts'),
 ];
