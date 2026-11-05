@@ -10,10 +10,11 @@ using SolidWorks.Interop.sldworks;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The CADOS task pane in SOLIDWORKS (a tab in the Task Pane, next to Design Library and File Explorer): the
-    /// connection state (KEVOS Companion, this computer, the direct link), Connect / Disconnect, the prompts to give the
-    /// AI assistant, the confirmation setting, live activity, and links to the dashboard, documentation and logs.
-    /// CADOS runs no AI of its own: the assistant (Claude, ChatGPT...) does the work and this pane shows what happens.
+    /// The BIZOMAT CAD Automation task pane in SOLIDWORKS (a tab in the Task Pane, next to Design Library and File
+    /// Explorer): the connection state (BIZOMAT Companion, this computer, the direct link), Connect / Disconnect, the
+    /// prompts to give the AI assistant, the confirmation setting, live activity, and links to the dashboard,
+    /// documentation and logs. CAD Automation runs no AI of its own: the assistant (Claude, ChatGPT...) does the work and
+    /// this pane shows what happens.
     /// Made and used only on SOLIDWORKS' UI thread; every event from other threads comes in through BeginInvoke, and no
     /// exception leaves a handler (it would close SOLIDWORKS).
     /// </summary>
@@ -35,16 +36,16 @@ namespace OpenSketch.Sw
             view = null;
             try
             {
-                view = app.CreateTaskpaneView3(KevosUi.MainIcons(), "CADOS by KEVOS") as TaskpaneView;   // SOLIDWORKS 2017 and later
+                view = app.CreateTaskpaneView3(KevosUi.MainIcons(), BrandArt.Product) as TaskpaneView;   // SOLIDWORKS 2017 and later
             }
             catch (Exception ex)
             {
                 Log.Write("task pane (icon list): " + ex.Message);
             }
-            if (view == null) view = app.CreateTaskpaneView2(KevosUi.MainIcons()[0], "CADOS by KEVOS") as TaskpaneView;
+            if (view == null) view = app.CreateTaskpaneView2(KevosUi.MainIcons()[0], BrandArt.Product) as TaskpaneView;
             if (view == null) throw new InvalidOperationException("SOLIDWORKS did not make the task pane");
             if (!view.DisplayWindowFromHandlex64(control.Handle.ToInt64()))
-                Log.Write("task pane: SOLIDWORKS did not take the CADOS panel");
+                Log.Write("task pane: SOLIDWORKS did not take the BIZOMAT panel");
         }
 
         public void Show()
@@ -80,22 +81,23 @@ namespace OpenSketch.Sw
         }
     }
 
-    /// <summary>The panel itself (WinForms), in the KEVOS look: white, charcoal text, KEVOS orange for the one action.</summary>
+    /// <summary>The panel itself (WinForms), in the BIZOMAT look: white, navy and ink text, BIZOMAT teal for the one
+    /// action, amber for a state that needs the person.</summary>
     public sealed class CadosPaneControl : UserControl
     {
-        public const string DefaultGateway = "https://cados.kevos.com";
-        public const string VerifyPrompt = "Check the CADOS connection to SOLIDWORKS.";
+        public const string DefaultGateway = "https://cados.kevos.com";   // the hosted service; existing installs keep it
+        public const string VerifyPrompt = "Check the CAD Automation connection to SOLIDWORKS.";
         public const string SelfTestPrompt = "Run the SOLIDWORKS self test, all three stages.";
 
-        static readonly Color Ink = Color.FromArgb(28, 27, 25);          // KEVOS ink #1c1b19
-        static readonly Color Ink2 = Color.FromArgb(63, 61, 57);
-        static readonly Color Ink3 = Color.FromArgb(105, 102, 95);       // KEVOS muted #69665f
-        static readonly Color Line = Color.FromArgb(232, 231, 228);
-        static readonly Color Warm = Color.FromArgb(251, 250, 247);       // KEVOS paper #fbfaf7
-        static readonly Color Orange = Color.FromArgb(255, 106, 19);     // KEVOS logo orange #ff6a13
-        static readonly Color OrangeButton = Color.FromArgb(194, 65, 12); // KEVOS accent #c2410c
-        static readonly Color Ok = Color.FromArgb(31, 107, 69);
-        static readonly Color Idle = Color.FromArgb(138, 144, 154);
+        static readonly Color Ink = BrandDraw.C(BrandArt.Ink);            // #0e1726
+        static readonly Color Ink2 = BrandDraw.C(BrandArt.Ink2);          // #334155
+        static readonly Color Ink3 = BrandDraw.C(BrandArt.Muted);         // #56657a
+        static readonly Color Line = BrandDraw.C(BrandArt.Line);
+        static readonly Color Warm = BrandDraw.C(BrandArt.Paper);         // BIZOMAT paper #f7f9fb
+        static readonly Color Attention = BrandDraw.C(BrandArt.Amber);    // #f59e0b, a dot only (never text)
+        static readonly Color TealButton = BrandDraw.C(BrandArt.Teal);    // #0f766e, white text on it 5.5:1
+        static readonly Color Ok = Color.FromArgb(6, 118, 71);            // #067647
+        static readonly Color Idle = Color.FromArgb(135, 148, 166);
 
         readonly Host host;
         readonly Label stateTitle = new Label();
@@ -154,7 +156,7 @@ namespace OpenSketch.Sw
             Add(buttons, 0, 14);
 
             Add(Section("Ask your AI assistant"), 0, 4);
-            Add(Hint("Copy a prompt, then paste it into Claude, ChatGPT or another assistant connected to CADOS."), 0, 6);
+            Add(Hint("Copy a prompt, then paste it into Claude, ChatGPT or another assistant connected to CAD Automation."), 0, 6);
             Add(PromptButton("Check the connection", VerifyPrompt), 0, 4);
             Add(PromptButton("Run the self test", SelfTestPrompt), 0, 14);
 
@@ -180,18 +182,18 @@ namespace OpenSketch.Sw
             Add(activity, 0, 14);
 
             Add(Section("Help"), 0, 2);
-            Add(Link("Open your CADOS dashboard", () => Open(Gateway() + "/dashboard")));
+            Add(Link("Open your CAD Automation dashboard", () => Open(Gateway() + "/dashboard")));
             Add(Link("Documentation", () => Open(Gateway() + "/docs")));
             Add(Link("Troubleshooting", () => Open(Gateway() + "/docs#troubleshooting")));
             Add(Link("Connection details and direct link", () => host.ShowWindow()));
-            Add(Link("Open the KEVOS Companion", () =>
+            Add(Link("Open the BIZOMAT Companion", () =>
             {
                 if (!CompanionPipe.StartCompanion())
-                    MessageBox.Show("The KEVOS Companion is not installed on this computer. Install CADOS for SOLIDWORKS.", "CADOS");
+                    MessageBox.Show("The BIZOMAT Companion is not installed on this computer. Install " + BrandArt.Package + ".", BrandArt.Product);
             }));
             Add(Link("Copy the add-in log", () => Clipboard.SetText(File.Exists(Log.FilePath) ? File.ReadAllText(Log.FilePath) : "(no log yet)")), 0, 12);
-            Add(new Label { Text = "CADOS for SOLIDWORKS " + Host.Version + "  ·  A product from KEVOS", ForeColor = Ink3, AutoSize = true });
-            Add(Link("kevos.com", () => Open("https://kevos.com/")));
+            Add(new Label { Text = "CAD Automation for SOLIDWORKS " + Host.Version + "  ·  Part of the BIZOMAT platform", ForeColor = Ink3, AutoSize = true, MaximumSize = new Size(260, 0) });
+            Add(Link("bizomat.ai", () => Open(BrandArt.PlatformUrl)));
 
             Controls.Add(col);
             foreach (var line in Log.Last(40)) activity.Items.Add(line);
@@ -223,7 +225,7 @@ namespace OpenSketch.Sw
             Refresh2();
         }
 
-        /// <summary>The CADOS address this computer uses: the Companion's (from pairing), the direct link's, or the default.</summary>
+        /// <summary>The service address this computer uses: the Companion's (from pairing), the direct link's, or the default.</summary>
         string Gateway()
         {
             var g = J.Str(host.CompanionState, "gateway");
@@ -246,7 +248,7 @@ namespace OpenSketch.Sw
             else if (host.PipeConnected)
             {
                 title = "Pair this computer";
-                detail = "Open the KEVOS Companion and pair this computer with your CADOS account.";
+                detail = "Open the BIZOMAT Companion and pair this computer with your CAD Automation account.";
             }
             else if (host.Connected)
             {
@@ -256,11 +258,11 @@ namespace OpenSketch.Sw
             else
             {
                 title = "Not connected";
-                detail = "KEVOS Companion: " + host.PipeState + ". Direct link: " + host.State + ".";
+                detail = "BIZOMAT Companion: " + host.PipeState + ". Direct link: " + host.State + ".";
             }
             stateTitle.Text = title;
             stateDetail.Text = detail;
-            dot.Color = title == "Connected" ? Ok : title == "Paused" || title == "Pair this computer" ? Orange : Idle;
+            dot.Color = title == "Connected" ? Ok : title == "Paused" || title == "Pair this computer" ? Attention : Idle;
             dot.Invalidate();
             connect.Text = host.Connected ? "Reconnect" : "Connect";
         }
@@ -307,7 +309,7 @@ namespace OpenSketch.Sw
             }
             catch (Exception ex)
             {
-                Log.Write("CADOS panel: " + ex.Message);
+                Log.Write("BIZOMAT panel: " + ex.Message);
             }
         }
 
@@ -324,10 +326,10 @@ namespace OpenSketch.Sw
             b.FlatStyle = FlatStyle.Flat;
             b.Font = new Font("Segoe UI Semibold", 9f);
             b.Cursor = Cursors.Hand;
-            b.BackColor = primary ? OrangeButton : Color.White;
+            b.BackColor = primary ? TealButton : Color.White;
             b.ForeColor = primary ? Color.White : Ink;
-            b.FlatAppearance.BorderColor = primary ? OrangeButton : Color.FromArgb(217, 212, 204);
-            b.FlatAppearance.MouseOverBackColor = primary ? Color.FromArgb(154, 52, 18) : Warm;
+            b.FlatAppearance.BorderColor = primary ? TealButton : Color.FromArgb(184, 194, 207);
+            b.FlatAppearance.MouseOverBackColor = primary ? BrandDraw.C(BrandArt.TealHover) : Warm;
         }
 
         static Label Section(string text) => new Label
@@ -358,12 +360,12 @@ namespace OpenSketch.Sw
 
         static LinkLabel Link(string text, Action go)
         {
-            var l = new LinkLabel { Text = text, AutoSize = true, LinkColor = Color.FromArgb(194, 65, 12), ActiveLinkColor = Ink, LinkBehavior = LinkBehavior.HoverUnderline };
+            var l = new LinkLabel { Text = text, AutoSize = true, LinkColor = TealButton, ActiveLinkColor = Ink, LinkBehavior = LinkBehavior.HoverUnderline };
             l.LinkClicked += (s, e) => Safe(go);
             return l;
         }
 
-        /// <summary>"CADOS" and "by KEVOS", drawn (no image files to ship).</summary>
+        /// <summary>The BIZOMAT wordmark (drawn from its paths: no image files to ship) and "CAD Automation" beside it.</summary>
         sealed class Brand : Control
         {
             public Brand()
@@ -378,20 +380,14 @@ namespace OpenSketch.Sw
                 {
                     var g = e.Graphics;
                     g.Clear(Color.White);
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
                     g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
-                    using (var f = new Font("Segoe UI", 15f, FontStyle.Bold, GraphicsUnit.Pixel))
-                    using (var by = new Font("Segoe UI", 11f, GraphicsUnit.Pixel))
-                    using (var ink = new SolidBrush(Ink))
-                    using (var grey = new SolidBrush(Ink3))
-                    using (var accent = new SolidBrush(OrangeButton))
-                    {
-                        var w = g.MeasureString("CADOS", f).Width;
-                        g.DrawString("CADOS", f, ink, 0, 4);
-                        var x = w + 6;
-                        g.DrawString("by", by, grey, x, 8);
-                        using (var bold = new Font(by, FontStyle.Bold))
-                            g.DrawString("KEVOS", bold, accent, x + g.MeasureString("by", by).Width - 2, 8);
-                    }
+                    var w = BrandDraw.Wordmark(g, 0, 8, 14);
+                    using (var line = new Pen(Line))
+                        g.DrawLine(line, w + 9, 7, w + 9, 23);
+                    using (var f = new Font("Segoe UI Semibold", 11f, GraphicsUnit.Pixel))
+                    using (var ink = new SolidBrush(Ink2))
+                        g.DrawString(BrandArt.ShortProduct, f, ink, w + 16, 7);
                 }
                 catch (Exception)
                 {
@@ -415,7 +411,7 @@ namespace OpenSketch.Sw
             public Dot()
             {
                 DoubleBuffered = true;
-                BackColor = Color.FromArgb(251, 250, 247);
+                BackColor = BrandDraw.C(BrandArt.Paper);
             }
 
             protected override void OnPaint(PaintEventArgs e)

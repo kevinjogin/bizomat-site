@@ -1,5 +1,6 @@
-# Builds CADOS-for-SOLIDWORKS-<version>-x64.msi (and the same file as CADOS-for-SOLIDWORKS-x64.msi, the stable name the
-# website links to) from solidworks/dist/OpenSketch-SOLIDWORKS (run `bash solidworks/build.sh test`
+# Builds the BIZOMAT CAD Automation for SOLIDWORKS installer, CADOS-for-SOLIDWORKS-<version>-x64.msi (and the same file as
+# CADOS-for-SOLIDWORKS-x64.msi, the stable name the website links to; the file names keep the earlier product name so
+# download links and update manifests keep working) from solidworks/dist/OpenSketch-SOLIDWORKS (run `bash solidworks/build.sh test`
 # first). Windows only (WiX Toolset 5 needs Windows). Repeatable: the same sources give the same MSI contents.
 #
 #   powershell -ExecutionPolicy Bypass -File installer\build.ps1 [-Version 0.11.0]
@@ -9,7 +10,7 @@
 # MSI is built unsigned and named *-UNSIGNED.msi: fine for testing, never for release (the companion refuses to update
 # itself to an unsigned MSI, and an unsigned add-in cannot be checked by the companion's publisher test).
 #
-# Output in installer\out: the MSI, its SHA-256, and release.json (the record a KEVOS server publishes as
+# Output in installer\out: the MSI, its SHA-256, and release.json (the record a CAD Automation server publishes as
 # bridge-release.json once msi_url points at where the MSI is hosted).
 param([string]$Version = "", [string]$Timestamp = "http://timestamp.digicert.com")
 $ErrorActionPreference = 'Stop'
@@ -26,7 +27,7 @@ if (-not (Test-Path (Join-Path $src 'KEVOS.Companion.exe'))) { throw "Build firs
 # the licence (AGPL-3.0: the text goes with the program, and where the source is)
 Copy-Item 'LICENSE' (Join-Path $src 'LICENSE.txt') -Force
 @"
-KEVOS Bridge $Version is free software under the GNU Affero General Public License v3.0 (LICENSE.txt).
+BIZOMAT CAD Automation for SOLIDWORKS $Version is free software under the GNU Affero General Public License v3.0 (LICENSE.txt).
 Its complete source code is at https://github.com/jogkev-creator/CADOS (this version: tag bridge-v$Version).
 "@ | Set-Content (Join-Path $src 'SOURCE.txt') -Encoding UTF8
 $lic = (Get-Content 'LICENSE' -Raw) -replace '\\', '\\' -replace '\{', '\{' -replace '\}', '\}' -replace "`r?`n", "\par`r`n"
@@ -35,7 +36,7 @@ $lic = (Get-Content 'LICENSE' -Raw) -replace '\\', '\\' -replace '\{', '\{' -rep
 $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1
 $sign = $env:KEVOS_SIGN_PFX -and (Test-Path $env:KEVOS_SIGN_PFX) -and $signtool
 function Sign($file) {
-  & $signtool.FullName sign /fd sha256 /td sha256 /tr $Timestamp /f $env:KEVOS_SIGN_PFX /p $env:KEVOS_SIGN_PASSWORD /d "CADOS for SOLIDWORKS" $file
+  & $signtool.FullName sign /fd sha256 /td sha256 /tr $Timestamp /f $env:KEVOS_SIGN_PFX /p $env:KEVOS_SIGN_PASSWORD /d "BIZOMAT CAD Automation for SOLIDWORKS" $file
   if ($LASTEXITCODE -ne 0) { throw "signing $file failed" }
 }
 if ($sign) {
@@ -60,7 +61,7 @@ $thumb = $null
 if ($sign) { $thumb = (Get-AuthenticodeSignature $msi).SignerCertificate.Thumbprint }
 "$hash  $name" | Set-Content (Join-Path $out "$name.sha256") -Encoding ASCII
 @{ version = $Version; msi_url = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v$Version/$name";
-   sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "CADOS for SOLIDWORKS $Version";
+   sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "BIZOMAT CAD Automation for SOLIDWORKS $Version";
    published_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ') } | ConvertTo-Json | Set-Content (Join-Path $out 'release.json') -Encoding UTF8
 # the stable name (bridge-latest): what https://cados.kevos.com/download/solidworks points at
 $stable = Join-Path $out 'CADOS-for-SOLIDWORKS-x64.msi'

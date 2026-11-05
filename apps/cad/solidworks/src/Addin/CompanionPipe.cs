@@ -11,7 +11,7 @@ using OpenSketch.Sw.Bridge;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The add-in's end of the local pipe to the KEVOS Companion. The pipe is per Windows user
+    /// The add-in's end of the local pipe to the BIZOMAT Companion (KEVOS.Companion.exe). The pipe is per Windows user
     /// (\\.\pipe\KEVOS.Bridge.&lt;SID&gt;, the companion creates it with an ACL for this user only and refuses remote
     /// clients). Before anything is sent, the server end is checked: it must be KEVOS.Companion.exe from the KEVOS
     /// install folder (or this add-in's own folder), and when this add-in is signed, signed by the same publisher. A
@@ -81,7 +81,7 @@ namespace OpenSketch.Sw
             if (image == null || !string.Equals(Path.GetFileName(image), ExeName, StringComparison.OrdinalIgnoreCase)) return "it is " + image + ", not " + ExeName;
             var trusted = CompanionPath;
             if (trusted == null || !string.Equals(Path.GetFullPath(image), Path.GetFullPath(trusted), StringComparison.OrdinalIgnoreCase))
-                return image + " is not the installed KEVOS Companion (" + (trusted ?? "none found") + ")";
+                return image + " is not the installed BIZOMAT Companion (" + (trusted ?? "none found") + ")";
             var mine = Signer(typeof(CompanionPipe).Assembly.Location);
             if (mine != null && mine != Signer(image)) return "it is not signed by the same publisher as this add-in";
             return null;

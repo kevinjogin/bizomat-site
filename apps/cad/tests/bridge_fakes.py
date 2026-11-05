@@ -150,7 +150,7 @@ class FakeCompanion:
             self._ackmsg(cid, "duplicate", status="running")
             return
         elif not self.instances:
-            problem = ("INSTANCE_NOT_RUNNING", f"SOLIDWORKS is not running on {self.name}. Open SOLIDWORKS there; KEVOS "
+            problem = ("INSTANCE_NOT_RUNNING", f"SOLIDWORKS is not running on {self.name}. Open SOLIDWORKS there; CAD Automation "
                                                "connects by itself.")
         if problem:
             self.rejected.append((cid, problem[0]))

@@ -5,6 +5,7 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyName>OpenSketch.Sw</AssemblyName>
+    <AssemblyTitle>BIZOMAT CAD Automation add-in for SOLIDWORKS</AssemblyTitle>
     <RootNamespace>OpenSketch.Sw</RootNamespace>
     <PlatformTarget>x64</PlatformTarget>
     <ComVisible>false</ComVisible>
@@ -14,6 +15,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../Core/**/*.cs" LinkBase="Core" />
+    <Compile Include="../Shared/**/*.cs" LinkBase="Shared" />
     <Compile Include="**/*.cs" Exclude="obj/**;bin/**" />
   </ItemGroup>
   <ItemGroup>

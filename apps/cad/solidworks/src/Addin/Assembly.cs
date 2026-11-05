@@ -279,7 +279,7 @@ namespace OpenSketch.Sw
                     ang = (angLo + angHi) / 2;
                     break;
                 default:
-                    throw new UserError($"{type} mates are not made in SOLIDWORKS by this add-in (coupler and contact are checked by CADOS only).");
+                    throw new UserError($"{type} mates are not made in SOLIDWORKS by this add-in (coupler and contact are checked by CAD Automation only).");
             }
             var aligns = new List<string> { align };
             foreach (var x in new[] { "anti", "aligned", "auto" })

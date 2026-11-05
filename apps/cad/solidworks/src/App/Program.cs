@@ -41,7 +41,7 @@ namespace OpenSketch.Sw.App
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "CADOS for SOLIDWORKS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "BIZOMAT CAD Automation for SOLIDWORKS", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
         }
@@ -124,10 +124,10 @@ namespace OpenSketch.Sw.App
             Log.Write($"installed for {Environment.UserName} from {Folder}; add-in list (needs admin): {(listed ? "yes" : "no")}; macro {macro}");
             return "Installed for " + Environment.UserName + ".\r\n\r\n" +
                    (listed
-                       ? "Restart SOLIDWORKS: CADOS is in Tools > Add-Ins, on the CADOS menu and the CADOS tab.\r\n"
+                       ? "Restart SOLIDWORKS: BIZOMAT CAD Automation is in Tools > Add-Ins, on the BIZOMAT menu and the BIZOMAT tab.\r\n"
                        : "Without admin rights SOLIDWORKS may not list the add-in. Then start it with the launcher macro (no admin needed):\r\n" +
                          "Tools > Macro > Run > " + macro + "\r\n(or Tools > Customize > Commands > Macro to give it a button).\r\n") +
-                   "\r\nThe launcher macro only starts the CADOS add-in inside SOLIDWORKS. Paste your add-in key in the window it opens.";
+                   "\r\nThe launcher macro only starts the add-in inside SOLIDWORKS. Paste your add-in key in the window it opens.";
         }
 
         /// <summary>The add-in list SOLIDWORKS shows is under HKEY_LOCAL_MACHINE: written only if this account may.</summary>
@@ -151,7 +151,7 @@ namespace OpenSketch.Sw.App
         }
 
         public const string MacroText =
-            "' CADOS for SOLIDWORKS: starts the CADOS add-in inside SOLIDWORKS (it is not the add-in itself).\r\n" +
+            "' BIZOMAT CAD Automation for SOLIDWORKS: starts the add-in inside SOLIDWORKS (it is not the add-in itself).\r\n" +
             "' Tools > Macro > Run this file, or give it a button (Tools > Customize > Commands > Macro).\r\n" +
             "' It needs OpenSketchSW.exe > Install for me once (no admin rights).\r\n" +
             "Dim gOpenSketch As Object\r\n" +
@@ -162,7 +162,7 @@ namespace OpenSketch.Sw.App
             "    gOpenSketch.Start Application.SldWorks\r\n" +
             "    Exit Sub\r\n" +
             "failed:\r\n" +
-            "    MsgBox \"CADOS is not installed for this Windows user. Install CADOS for SOLIDWORKS, or run OpenSketchSW.exe and click Install for me.\" & vbCrLf & Err.Description, vbExclamation, \"CADOS\"\r\n" +
+            "    MsgBox \"BIZOMAT CAD Automation is not installed for this Windows user. Install BIZOMAT CAD Automation for SOLIDWORKS, or run OpenSketchSW.exe and click Install for me.\" & vbCrLf & Err.Description, vbExclamation, \"BIZOMAT CAD Automation\"\r\n" +
             "End Sub\r\n";
 
         /// <summary>The launcher macro as text (.swb runs from Tools > Macro > Run like a .swp) in Documents\OpenSketch.</summary>
@@ -234,7 +234,7 @@ namespace OpenSketch.Sw.App
             var sw = Find();
             if (sw == null)
             {
-                MessageBox.Show("Open SOLIDWORKS first, then connect.", "CADOS for SOLIDWORKS", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Open SOLIDWORKS first, then connect.", "BIZOMAT CAD Automation for SOLIDWORKS", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return false;
             }
             MessageFilter.Register();
@@ -288,14 +288,14 @@ namespace OpenSketch.Sw.App
 
         public MainForm()
         {
-            Text = "CADOS for SOLIDWORKS " + Host.Version + " (manual installation)";
+            Text = "BIZOMAT CAD Automation for SOLIDWORKS " + Host.Version + " (manual installation)";
             Font = new Font("Segoe UI", 9f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             ClientSize = new Size(520, 330);
             BackColor = Color.White;
             StartPosition = FormStartPosition.CenterScreen;
-            var title = new Label { Text = "CADOS for SOLIDWORKS, for this Windows user", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
+            var title = new Label { Text = "BIZOMAT CAD Automation, for this Windows user", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
             var l1 = new Label
             {
                 Text = "1. Install for me: sets up the add-in and the launcher macro for this Windows user (no admin rights).",
@@ -305,7 +305,7 @@ namespace OpenSketch.Sw.App
             var remove = new Button { Text = "Remove", Bounds = new Rectangle(164, 86, 90, 30) };
             var l2 = new Label
             {
-                Text = "2. In SOLIDWORKS: CADOS > Status (the add-in), or start it with Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb. Paste your add-in key from your CADOS dashboard.",
+                Text = "2. In SOLIDWORKS: BIZOMAT > Status (the add-in), or start it with Tools > Macro > Run > Documents\\OpenSketch\\OpenSketch.swb. Paste your add-in key from your CAD Automation dashboard.",
                 Location = new Point(16, 128), Size = new Size(488, 50)
             };
             var copy = new Button { Text = "Copy the macro text", Bounds = new Rectangle(16, 180, 160, 30) };
@@ -327,7 +327,7 @@ namespace OpenSketch.Sw.App
             });
             attach.Click += (s, e) => Do(() =>
             {
-                if (Attach.Run(false)) state.Text = "Connected from outside SOLIDWORKS. Keep this program open while Claude works.";
+                if (Attach.Run(false)) state.Text = "Connected from outside SOLIDWORKS. Keep this program open while your AI assistant works.";
             });
             Refresh2();
         }
@@ -340,7 +340,7 @@ namespace OpenSketch.Sw.App
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "CADOS for SOLIDWORKS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "BIZOMAT CAD Automation for SOLIDWORKS", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             Refresh2();
         }

@@ -82,7 +82,7 @@ namespace OpenSketch.Sw
             }
             finally
             {
-                m.Extension.FinishRecordingUndoObject2("CADOS: " + (string.IsNullOrEmpty(summary) ? feats.Count + " features" : summary), false);
+                m.Extension.FinishRecordingUndoObject2("BIZOMAT: " + (string.IsNullOrEmpty(summary) ? feats.Count + " features" : summary), false);
             }
             m.EditRebuild3();
             if (owner != null)
@@ -187,7 +187,7 @@ namespace OpenSketch.Sw
                     if (!SameVolume(v1 - v0, want, v1, type))
                     {
                         row["state"] = J.Str(row, "state") == "error" ? "error" : "warning";
-                        Note(row, $"volume change {v1 - v0:0.###} mm3, CADOS predicted {want:0.###} mm3: check it");
+                        Note(row, $"volume change {v1 - v0:0.###} mm3, CAD Automation predicted {want:0.###} mm3: check it");
                     }
                 }
             }
@@ -537,7 +537,7 @@ namespace OpenSketch.Sw
                 {
                     row["name"] = feat.Name;
                     row["state"] = "warning";
-                    Note(row, $"no way matched the CADOS prediction; kept the closest:{tried}");
+                    Note(row, $"no way matched the CAD Automation prediction; kept the closest:{tried}");
                     WarnIfAny(feat, row);
                     return;
                 }

@@ -11,7 +11,7 @@ namespace Kevos.Companion
 {
     /// <summary>
     /// Updates, never silent and never unverified:
-    /// 1. the release manifest comes from the KEVOS gateway, signed with the gateway key this computer pinned at pairing
+    /// 1. the release manifest comes from the CAD Automation gateway, signed with the gateway key this computer pinned at pairing
     ///    (a manifest from anywhere else does not verify);
     /// 2. the MSI is downloaded over https and must match the manifest's size and SHA-256;
     /// 3. Windows must trust its Authenticode signature, and its signer must be one the manifest names and the same
@@ -50,7 +50,7 @@ namespace Kevos.Companion
             var mine = Authenticode.Signer(Paths.Exe);
             if (mine == null)
             {
-                why = "This CADOS build is not signed, so it does not update itself. Install new versions by hand.";
+                why = "This build is not signed, so it does not update itself. Install new versions by hand.";
                 return null;
             }
             Dictionary<string, object> m;
@@ -59,7 +59,7 @@ namespace Kevos.Companion
                 var r = c.Get("/v2/bridge/update.json", 30);
                 if (r.Status == 404)
                 {
-                    why = "No release is published on this CADOS server.";
+                    why = "No release is published on this CAD Automation server.";
                     return null;
                 }
                 if (r.Status != 200)
@@ -75,7 +75,7 @@ namespace Kevos.Companion
             }
             if (!System.Version.TryParse(J.Str(m, "version"), out var ver) || ver <= Current)
             {
-                why = "CADOS for SOLIDWORKS " + Current.ToString(3) + " is up to date.";
+                why = BrandArt.Package + " " + Current.ToString(3) + " is up to date.";
                 return null;
             }
             var url = J.Str(m, "msi_url") ?? "";
@@ -83,7 +83,7 @@ namespace Kevos.Companion
             var signers = J.Strs(m, "signer_thumbprints") ?? new List<string>();
             var dir = Path.Combine(Paths.Data, "updates");
             Directory.CreateDirectory(dir);
-            var path = Path.Combine(dir, "CADOS-for-SOLIDWORKS-" + ver.ToString(3) + ".msi");
+            var path = Path.Combine(dir, "CADOS-for-SOLIDWORKS-" + ver.ToString(3) + ".msi");   // the MSI's file name (unchanged)
             using (var http = new HttpClient(BridgeClient.DefaultHandler(), true) { Timeout = TimeSpan.FromMinutes(10) })
                 File.WriteAllBytes(path, http.GetByteArrayAsync(url).GetAwaiter().GetResult());
             var data = File.ReadAllBytes(path);
@@ -111,7 +111,7 @@ namespace Kevos.Companion
         /// <summary>Runs the verified MSI (it keeps settings and this computer's registration).</summary>
         public static void Install(Offer o)
         {
-            Log.Write("installing CADOS for SOLIDWORKS " + o.Version);
+            Log.Write("installing " + BrandArt.Package + " " + o.Version);
             Process.Start(new ProcessStartInfo("msiexec.exe", $"/i \"{o.MsiPath}\" /passive /norestart") { UseShellExecute = true })?.Dispose();
         }
     }

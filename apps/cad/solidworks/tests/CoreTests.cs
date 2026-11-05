@@ -301,4 +301,46 @@ namespace OpenSketch.Sw.Tests
             Assert.Null(fake.Auth);
         }
     }
+
+    /// <summary>The BIZOMAT names and logo the add-in and the Companion show (Core/BrandArt.cs).</summary>
+    public class BrandArtTests
+    {
+        [Fact]
+        public void TheLogoPathsAreClosedPolygonsInsideTheirBoxes()
+        {
+            var word = BrandArt.Polygons(BrandArt.WordmarkPath);
+            var b = BrandArt.Polygons(BrandArt.BPath);
+            var bar = BrandArt.Polygons(BrandArt.BarPath);
+            Assert.Equal(2, b.Count);            // the B and its lower counter
+            Assert.Single(bar);                  // the connector bar
+            Assert.True(word.Count > 8);         // B, I, Z, O and its counter, M, A and its bar, T
+            foreach (var poly in word)
+            {
+                Assert.True(poly.Length % 2 == 0 && poly.Length >= 6);
+                for (var i = 0; i < poly.Length; i += 2)
+                {
+                    Assert.InRange(poly[i], 0f, BrandArt.WordmarkWidth);
+                    Assert.InRange(poly[i + 1], 0f, BrandArt.Height);
+                }
+            }
+            Assert.Equal(b[0], word[0]);         // the wordmark starts with the same B
+        }
+
+        [Fact]
+        public void OnlyStraightLinesAreDrawn()
+        {
+            Assert.Throws<FormatException>(() => BrandArt.Polygons("M0 0C1 1 2 2 3 3Z"));
+            Assert.Throws<FormatException>(() => BrandArt.Polygons("M0 0L"));
+        }
+
+        [Fact]
+        public void TheTabIsBizomatAndTheOldTabsGo()
+        {
+            Assert.Equal("BIZOMAT", BrandArt.TabName);
+            Assert.Equal(new[] { "KEVOS", "CADOS", "BIZOMAT" }, BrandArt.TabsToReplace());
+            Assert.Equal("BIZOMAT CAD Automation", BrandArt.Product);
+            Assert.Equal("BIZOMAT Companion", BrandArt.Companion);
+            Assert.DoesNotContain("KEVOS", BrandArt.Package + BrandArt.Product + BrandArt.Companion);
+        }
+    }
 }
