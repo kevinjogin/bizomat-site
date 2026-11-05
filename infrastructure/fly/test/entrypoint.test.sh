@@ -9,7 +9,12 @@ IMAGE="${1:?usage: entrypoint.test.sh <image>}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 FAKE="$HERE/fake-server.mjs"
 tmp="$(mktemp -d)"
-trap 'docker rm -f bz-ep-maint >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
+# A shell command as root in a throwaway container with $tmp at /t. Volume fixtures are made and inspected the way an
+# operator makes them (as root, through fly ssh console), whoever runs this test: CI runs it as an unprivileged user,
+# whose files the entrypoint rightly refuses as secrets, and who cannot look inside the role's 0700 folders.
+as_root() { docker run --rm --network none -v "$tmp:/t" --entrypoint /bin/sh "$IMAGE" -c "$1"; }
+rstat() { as_root "stat -c '$1' '/t/${2#"$tmp"/}'"; }
+trap 'docker rm -f bz-ep-maint >/dev/null 2>&1 || true; as_root "rm -rf /t/*" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
 passed=0
 ok() {
   passed=$((passed + 1))
@@ -84,13 +89,13 @@ done
 ok "web: PORT 8003, its own secrets only, uid 10002"
 
 # work: mapped names, the work Google client (never the app-wide or cad one), a secret file, its volume
-mkdir -p "$tmp/workvol/work/.secrets" "$tmp/workvol/work/files"
-echo "from-the-volume" >"$tmp/workvol/work/.secrets/WORK_EXTRA_SECRET"
-chmod 0644 "$tmp/workvol/work/.secrets/WORK_EXTRA_SECRET"
-echo "not-for-work" >"$tmp/workvol/work/.secrets/OPENSKETCH_PASSWORD"
-echo "x" >"$tmp/workvol/work/.secrets/LD_PRELOAD"
-ln -s /etc/shadow "$tmp/workvol/work/.secrets/GOOGLE_CLIENT_ID"
-touch "$tmp/workvol/work/files/old-file"
+as_root 'mkdir -p /t/workvol/work/.secrets /t/workvol/work/files
+  echo from-the-volume >/t/workvol/work/.secrets/WORK_EXTRA_SECRET
+  chmod 0644 /t/workvol/work/.secrets/WORK_EXTRA_SECRET
+  echo not-for-work >/t/workvol/work/.secrets/OPENSKETCH_PASSWORD
+  echo x >/t/workvol/work/.secrets/LD_PRELOAD
+  ln -s /etc/shadow /t/workvol/work/.secrets/GOOGLE_CLIENT_ID
+  touch /t/workvol/work/files/old-file'
 run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work.json"
 [ "$(uid "$tmp/work.json")" = 10003 ] || bad "work uid"
 [ "$(val "$tmp/work.json" APP_URL)" = https://work.example.test ] || bad "APP_URL from WORK_APP_URL"
@@ -103,10 +108,10 @@ run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work
 for n in OPENSKETCH_PASSWORD CAD_GOOGLE_CLIENT_SECRET CF_AI_TOKEN LD_PRELOAD NODE_OPTIONS UPSTREAM_CAD; do
   if has "$tmp/work.json" "$n"; then bad "work holds $n"; fi
 done
-[ "$(stat -c %u "$tmp/workvol/work")" = 10003 ] && [ "$(stat -c %a "$tmp/workvol/work")" = 700 ] || bad "/data/work owner or mode"
-[ "$(stat -c %u "$tmp/workvol/work/files/old-file")" = 10003 ] || bad "files in /data/work given to bzwork"
-[ "$(stat -c %u "$tmp/workvol/work/.secrets")" = 0 ] && [ "$(stat -c %a "$tmp/workvol/work/.secrets")" = 700 ] || bad ".secrets must stay root 0700"
-[ "$(stat -c %a "$tmp/workvol/work/.secrets/WORK_EXTRA_SECRET")" = 600 ] || bad "secret file mode not fixed to 0600"
+[ "$(rstat %u "$tmp/workvol/work")" = 10003 ] && [ "$(rstat %a "$tmp/workvol/work")" = 700 ] || bad "/data/work owner or mode"
+[ "$(rstat %u "$tmp/workvol/work/files/old-file")" = 10003 ] || bad "files in /data/work given to bzwork"
+[ "$(rstat %u "$tmp/workvol/work/.secrets")" = 0 ] && [ "$(rstat %a "$tmp/workvol/work/.secrets")" = 700 ] || bad ".secrets must stay root 0700"
+[ "$(rstat %a "$tmp/workvol/work/.secrets/WORK_EXTRA_SECRET")" = 600 ] || bad "secret file mode not fixed to 0600"
 grep -q "secret file OPENSKETCH_PASSWORD skipped" "$tmp/stderr" || bad "another role's setting in a secret file must be skipped"
 grep -q "secret file GOOGLE_CLIENT_ID skipped: not a regular file" "$tmp/stderr" || bad "link not reported"
 if grep -q "throwaway\|from-the-volume\|not-for-work" "$tmp/stderr"; then bad "a value reached the log"; fi
