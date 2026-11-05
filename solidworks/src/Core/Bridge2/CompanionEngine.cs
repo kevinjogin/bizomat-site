@@ -354,7 +354,7 @@ namespace OpenSketch.Sw.Bridge
             using (var c = new CloudLink(gateway, key, "pairing", log, o.HttpHandler?.Invoke()))
             {
                 var r = c.PairStart(name, o.MachineName, o.OsName, o.Version);
-                if (r.Status != 200) throw new IOException("The KEVOS server refused pairing: " + r.ErrorMessage);
+                if (r.Status != 200) throw new IOException("The CADOS server refused pairing: " + r.ErrorMessage);
                 var t = new PairingTicket
                 {
                     PairId = J.Str(r.Json, "pair_id"), UserCode = J.Str(r.Json, "user_code"), Url = J.Str(r.Json, "verification_uri_complete"),
@@ -462,7 +462,7 @@ namespace OpenSketch.Sw.Bridge
             {
                 if (!Config.Paired)
                 {
-                    SetCloud(Config.Revoked ? "Removed from the KEVOS account: pair again" : "Not registered: pair this computer", false);
+                    SetCloud(Config.Revoked ? "Removed from your CADOS account: pair again" : "Not registered: pair this computer", false);
                     kick.WaitOne(TimeSpan.FromSeconds(5));
                     continue;
                 }
@@ -528,7 +528,7 @@ namespace OpenSketch.Sw.Bridge
             Config.Revoked = true;
             Config.Save(cfgPath);
             session = null;
-            SetCloud("Removed from the KEVOS account: pair again", false);
+            SetCloud("Removed from your CADOS account: pair again", false);
         }
 
         void Hello(CloudLink c, CancellationToken stop)
@@ -712,7 +712,7 @@ namespace OpenSketch.Sw.Bridge
             }
             if (Paused)
             {
-                Reject(cid, "PAUSED", $"KEVOS is paused on {Config.DeviceName} by the person at that computer.", "policy");
+                Reject(cid, "PAUSED", $"CADOS is paused on {Config.DeviceName} by the person at that computer.", "policy");
                 return;
             }
             var inst = Choose(cmd);
@@ -734,7 +734,7 @@ namespace OpenSketch.Sw.Bridge
                 var running = o.SolidWorksProcesses() > 0;
                 Reject(cid, "INSTANCE_NOT_RUNNING", running
                            ? $"SOLIDWORKS is running on {Config.DeviceName} but the CADOS add-in is not loaded. In SOLIDWORKS: Tools > Add-Ins, tick CADOS (Active and Start Up)."
-                           : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; KEVOS connects by itself.");
+                           : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; CADOS connects by itself.");
                 return;
             }
             Ack(cid, "accepted");

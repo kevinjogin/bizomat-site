@@ -141,7 +141,7 @@ def test_only_connector_routes():
     owner = _owner()
     allowed = ("/healthz", "/api/account", "/api/sw", "/api/solidworks", "/api/connect/", "/mcp", "/solidworks",
                "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/dashboard", "/overview", "/download/",
-               "/assistant", "/tools", "/history", "/settings")
+               "/assistant", "/tools", "/history", "/settings", "/admin", "/api/admin/")
     paths = [getattr(r, "path", "") for r in server.app.routes]
     assert [p for p in paths if p not in ("/", "") and not p.startswith(allowed)] == []
     for path in ("/api/docs", "/api/features", "/api/version", "/sw.js", "/manifest.webmanifest", "/js/app.js",

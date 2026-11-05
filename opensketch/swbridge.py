@@ -299,9 +299,9 @@ def status(user: dict | None, device: str | None = None) -> dict:
                "solidworks": sel.get("solidworks") or [], "devices": d["devices"]}
         if not sel.get("solidworks"):
             out["note"] = (f"SOLIDWORKS is not running on {sel['name']} (or the CADOS add-in is not loaded). Open "
-                           "SOLIDWORKS there; KEVOS connects by itself.")
+                           "SOLIDWORKS there; CADOS connects by itself.")
         if sel.get("paused"):
-            out["note"] = f"KEVOS is paused on {sel['name']} by the person at that computer."
+            out["note"] = f"CADOS is paused on {sel['name']} by the person at that computer."
         return out
     if d.get("code") == "DEVICE_AMBIGUOUS":
         return {"connected": True, "via": "companion", "ambiguous": True, "note": d["error"], "devices": d["devices"],

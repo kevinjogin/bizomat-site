@@ -85,7 +85,8 @@ APP_NAV = [("/dashboard", "Home", "home"), ("/assistant", "CAD Assistant", "assi
            ("/tools", "Tools", "tools"), ("/history", "History", "history"), ("/settings", "Settings", "settings")]
 
 
-def header(active: str = "", signed_in: bool = False, *, app: bool = False, user: str = "", sign_out: bool = True) -> str:
+def header(active: str = "", signed_in: bool = False, *, app: bool = False, user: str = "", sign_out: bool = True,
+           admin: bool = False) -> str:
     """The site header. Marketing pages: product links, KEVOS, Sign in or Dashboard. App pages: the CADOS sections,
     the KEVOS ecosystem (kevos.com, Work), the person and Sign out."""
     def a(href, label, key="", ext=False):
@@ -94,7 +95,7 @@ def header(active: str = "", signed_in: bool = False, *, app: bool = False, user
         return f'<a href="{href}"{cur}{extra}>{label}</a>'
 
     if app:
-        links = [a(h, label, key) for h, label, key in APP_NAV]
+        links = [a(h, label, key) for h, label, key in APP_NAV] + ([a("/admin", "Admin", "admin")] if admin else [])
         eco = (f'<details class="menu-eco hide-sm"><summary>KEVOS</summary><div class="menu-panel">'
                f'<a href="{KEVOS_URL}" rel="noopener">KEVOS home</a><a href="{WORK_URL}" rel="noopener">KEVOS Work</a>'
                f'<a href="/dashboard" aria-current="true">KEVOS CADOS</a></div></details>')

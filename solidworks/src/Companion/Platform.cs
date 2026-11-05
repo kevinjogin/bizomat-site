@@ -253,7 +253,7 @@ namespace Kevos.Companion
                     var addin = proc.Modules.Cast<ProcessModule>().FirstOrDefault(m => string.Equals(Path.GetFileName(m.FileName), "OpenSketch.Sw.dll", StringComparison.OrdinalIgnoreCase));
                     if (addin == null) return "the CADOS add-in is not loaded in that SOLIDWORKS";
                     if (!string.Equals(Path.GetFullPath(addin.FileName), Path.GetFullPath(Paths.AddinDll), StringComparison.OrdinalIgnoreCase))
-                        return "it loaded the add-in from " + addin.FileName + ", not from this KEVOS install (" + Paths.AddinDll + ")";
+                        return "it loaded the add-in from " + addin.FileName + ", not from this CADOS install (" + Paths.AddinDll + ")";
                     var mine = Authenticode.Signer(Paths.Exe);
                     if (mine != null && mine != Authenticode.Signer(addin.FileName)) return "its add-in is not signed by the same publisher";
                 }

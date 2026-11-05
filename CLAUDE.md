@@ -99,7 +99,12 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   (`/tools`: every MCP tool in plain words from `catalog.GROUPS`, searchable; `tests/test_app_pages.py` keeps it equal
   to the registered tools), History (`/history`: `GET /api/commands`, the person's commands to paired computers from
   bridge.sqlite; direct-link commands are not recorded), Settings (`/settings`: account, private address and add-in
-  key with Show / Copy / New, sign out). No Automation section: CADOS keeps no stored automations. Live status
+  key with Show / Copy / New, change password, sign out), Admin (`/admin`, the owner only; anyone else is sent to
+  Home: add a person with a password the owner sets (`POST /api/account/users`, role member), set someone's password
+  (`POST /api/account/users/<id>/password`: signs them out everywhere and ends their AI apps' sign-ins), remove a
+  person (also revokes their paired computers), people with their computers and AI apps (`GET /api/admin/people`),
+  invite links, open sign-up). People sign in with that password when the installer's pairing step opens the
+  browser (the Companion never holds a password). No Automation section: CADOS keeps no stored automations. Live status
   states: Connected, Disconnected, Checking connection, Authentication required, Installation required, Connection
   error. App header: the sections, a KEVOS menu (kevos.com, Work, CADOS), the person, Sign out; app footer links
   kevos.com and Work. `GET /api/solidworks` still gives the pages everything in one call. Sign-in, consent, notice and
@@ -233,7 +238,8 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   shows a modal dialog (only an open sketch is detected). SOLIDWORKS run as administrator ignores the per-user
   registration. Plain numbers in equations are in the document's unit.
 - Large assemblies are slow to read: each read exports a STEP of the bodies that changed.
-- No page for account admin (invites, people, early access, Google setup): the `/api/account*` routes remain.
+- Account admin page (`/admin`) covers people, passwords, invites and open sign-up; early access codes and Google
+  sign-in setup are still API only (`/api/account/settings`, `/api/account/google`).
 - KEVOS: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
   (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
   process (SQLite, live sessions in memory).
@@ -246,4 +252,4 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
    Companion, the add-in's new UI, events, confirmation and modal check have only been compiled, not run.
 1. Run the self test on real SOLIDWORKS installs and fix from the reports.
 2. Tune SW_GUIDE from what the AI gets wrong on real work.
-3. An account admin page.
+3. Early access and Google sign-in settings on the Admin page.

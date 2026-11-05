@@ -75,3 +75,41 @@ def test_history_shows_the_real_command_record(base, companions):
     assert older["status"] == "succeeded" and older["device"] == pc.name and "error" not in older
     assert all(set(c) >= {"id", "tool", "title", "status", "created_at", "device", "app"} for c in got)
     assert len(httpx.get(base + "/api/commands", params={"limit": 1}).json()["commands"]) == 1
+
+
+def test_the_owner_adds_people_with_a_password_and_resets_it():
+    owner = _owner()
+    page = owner.get("/admin")
+    assert page.status_code == 200 and "People on this CADOS server." in page.text and 'href="/admin"' in page.text
+    r = owner.post("/api/account/users", json={"email": "Pat@Example.com", "name": "Pat", "password": "given-pass-1"})
+    assert r.status_code == 200 and r.json()["user"]["role"] == "member" and r.json()["user"]["email"] == "pat@example.com"
+    assert owner.post("/api/account/users", json={"email": "pat@example.com", "password": "given-pass-1"}).status_code == 400
+    assert owner.post("/api/account/users", json={"email": "sam@example.com", "password": "short"}).status_code == 400
+    pat_id = r.json()["user"]["id"]
+    people = owner.get("/api/admin/people").json()["people"]
+    assert {p["email"] for p in people} == {"owner@example.com", "pat@example.com"}
+    assert all({"computers", "online", "apps"} <= set(p) for p in people)
+
+    # Pat signs in with the password the owner set (as when the installer's pairing step opens the browser)
+    pat = TestClient(server.app)
+    assert pat.post("/login", data={"email": "pat@example.com", "password": "given-pass-1", "next": "/"}, follow_redirects=False).status_code == 303
+    assert "Engineering, made intelligent." in pat.get("/dashboard").text
+    assert 'href="/admin"' not in pat.get("/dashboard").text  # only the owner sees Admin
+    assert pat.get("/admin", follow_redirects=False).headers["location"] == "/dashboard"
+    for method, path in (("GET", "/api/admin/people"), ("POST", "/api/account/users"), ("POST", f"/api/account/users/{pat_id}/password")):
+        assert pat.request(method, path, json={"email": "x@example.com", "password": "whatever-1"}).status_code == 403, path
+
+    # the owner sets a new password: the old one stops working and Pat is signed out everywhere
+    assert owner.post(f"/api/account/users/{pat_id}/password", json={"password": "new-pass-22"}).status_code == 200
+    assert pat.get("/api/solidworks").status_code == 401
+    again = TestClient(server.app)
+    assert again.post("/login", data={"email": "pat@example.com", "password": "given-pass-1", "next": "/"}).status_code == 401
+    assert again.post("/login", data={"email": "pat@example.com", "password": "new-pass-22", "next": "/"}, follow_redirects=False).status_code == 303
+    # Pat changes it in Settings to one only they know
+    r = again.post("/api/account", json={"current_password": "new-pass-22", "new_password": "pats-own-pass"})
+    assert r.status_code == 200 and r.json()["signed_out"] is True
+    # the owner cannot reset their own password here, and removes Pat
+    me = next(p for p in people if p["role"] == "owner")
+    assert owner.post(f"/api/account/users/{me['id']}/password", json={"password": "anything-123"}).status_code == 400
+    assert owner.delete(f"/api/account/users/{pat_id}").status_code == 200
+    assert {p["email"] for p in owner.get("/api/admin/people").json()["people"]} == {"owner@example.com"}

@@ -519,7 +519,7 @@ def set_device(user: dict | None, device_id: str, name: str | None = None, defau
     return _device_out(_q("SELECT * FROM devices WHERE id=?", (device_id,), one=True))
 
 
-def revoke_device(user: dict | None, device_id: str, why: str = "This computer was removed from the KEVOS account.") -> bool:
+def revoke_device(user: dict | None, device_id: str, why: str = "This computer was removed from your CADOS account.") -> bool:
     n = _exec("UPDATE devices SET revoked=? WHERE id=? AND owner=? AND revoked IS NULL", (time.time(), device_id, person_id(user)))
     if not n:
         return False
@@ -665,7 +665,7 @@ def authenticate(request: Request, body: bytes, pairing: bool = False) -> dict:
         if not rec:
             raise BridgeAuthError(401, "DEVICE_UNKNOWN", "This computer is not registered. Pair it again in the KEVOS Companion.")
         if rec["revoked"]:
-            raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from the KEVOS account. Pair it again.")
+            raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from your CADOS account. Pair it again.")
     try:
         _, payload = jws_verify(compact, jwk_public_key(json.loads(rec["jwk"])))
         claims = json.loads(payload)
@@ -777,7 +777,7 @@ async def call(user: dict | None, device: dict, op: str, args: dict, timeout: fl
         raise BridgeError(f"The command carries what looks like a password, key or token ({bad}); it was not sent. "
                           "SOLIDWORKS commands never need credentials.", code="INPUT_FORBIDDEN_FIELD")
     if s.paused:
-        raise BridgeError(f"KEVOS is paused on {device['name']} (by the person at that computer). Ask them to resume it "
+        raise BridgeError(f"CADOS is paused on {device['name']} (by the person at that computer). Ask them to resume it "
                           "from the KEVOS icon in the Windows taskbar.", code="PAUSED")
     try:
         files_in = [dict(_blob_ref(bid), name=name) for name, bid in (blobs or {}).items()]

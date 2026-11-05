@@ -15,7 +15,7 @@ namespace Kevos.Companion
     ///   --pair         open the pairing window
     ///   --diagnose     write a diagnostics report and open it
     ///   --startup on|off   start with Windows for this user
-    ///   --unpair       remove this computer from the KEVOS account and delete its key (Start menu, before reinstalling)
+    ///   --unpair       remove this computer from the CADOS account and delete its key (Start menu, before reinstalling)
     ///   --exit         stop a running companion
     /// </summary>
     static class Program
@@ -89,7 +89,7 @@ namespace Kevos.Companion
             catch (Exception ex)
             {
                 Log.Write("unpair: " + ex);
-                if (!quiet) MessageBox.Show("Could not remove this computer: " + ex.Message, "KEVOS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!quiet) MessageBox.Show("Could not remove this computer: " + ex.Message, "KEVOS Companion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 1;
             }
         }

@@ -15,14 +15,14 @@ from . import brand, catalog
 from .brand import icon
 
 TITLES = {"home": "Home", "assistant": "CAD Assistant", "solidworks": "SOLIDWORKS", "tools": "Tools", "history": "History",
-          "settings": "Settings"}
+          "settings": "Settings", "admin": "Admin"}
 PATHS = {"home": "/dashboard", "assistant": "/assistant", "solidworks": "/solidworks", "tools": "/tools", "history": "/history",
-         "settings": "/settings"}
+         "settings": "/settings", "admin": "/admin"}
 
 
-def _shell(page: str, body: str, base: str = "") -> bytes:
+def _shell(page: str, body: str, base: str = "", admin: bool = False) -> bytes:
     title = "Dashboard" if page == "home" else TITLES[page]
-    return (brand.head(title, path=PATHS[page], base=base) + f'<body data-page="{page}">' + brand.header(page, app=True)
+    return (brand.head(title, path=PATHS[page], base=base) + f'<body data-page="{page}">' + brand.header(page, app=True, admin=admin)
             + f'<main class="app-page" id="main"><div class="container">{body}'
             + '<div class="callout callout-err" id="err" role="alert" hidden style="margin-top:var(--s-5)"></div></div></main>'
             + brand.app_footer() + '<script src="/ui/app.js" defer></script>' + brand.MENU_SCRIPT + "</body></html>").encode()
@@ -44,7 +44,7 @@ def _copy_field(id_: str, label: str, secret: bool = False, hint: str = "") -> s
 
 # ----------------------------------------------------------------------------- Home
 
-def home(base: str = "") -> bytes:
+def home(base: str = "", admin: bool = False) -> bytes:
     chips = "".join(f'<button class="chip" type="button" data-example="{escape(examples[0], quote=True)}">{escape(group)}</button>'
                     for group, examples in catalog.EXAMPLES)
     body = f"""<div class="app-title home-hero"><div><span class="eyebrow">CADOS by KEVOS</span><h1>Engineering, made intelligent.</h1>
@@ -85,12 +85,12 @@ and follow the work in SOLIDWORKS.</p></div>
 <a class="tile" href="/assistant"><span class="tile-k">CAD Assistant</span><strong>Ask for engineering work</strong><span>Connect your assistant and see what you can ask.</span><span class="go">Open</span></a>
 <a class="tile" href="/solidworks"><span class="tile-k">SOLIDWORKS</span><strong>Your computers and the add-in</strong><span>Install, pair and check the link.</span><span class="go">Open</span></a>
 <a class="tile" href="/tools"><span class="tile-k">Tools</span><strong>Everything CADOS can do</strong><span>Parts, assemblies, drawings, checks and files.</span><span class="go">Open</span></a></div>"""
-    return _shell("home", body, base)
+    return _shell("home", body, base, admin)
 
 
 # ----------------------------------------------------------------------------- CAD Assistant
 
-def assistant(base: str = "") -> bytes:
+def assistant(base: str = "", admin: bool = False) -> bytes:
     groups = "".join(
         f'<div class="example-group"><h3>{escape(g)}</h3>'
         + "".join(f'<div class="example"><span id="ex-{i}-{j}">{escape(t)}</span>'
@@ -129,12 +129,12 @@ private address in <a href="/settings#private">Settings</a>.</p></div></div>
 <li>Deleting, undoing and overwriting ask you in SOLIDWORKS first (on by default).</li>
 <li>Your model files stay on your computer.</li></ul></div></section>
 </div>"""
-    return _shell("assistant", body, base)
+    return _shell("assistant", body, base, admin)
 
 
 # ----------------------------------------------------------------------------- SOLIDWORKS
 
-def solidworks(base: str = "") -> bytes:
+def solidworks(base: str = "", admin: bool = False) -> bytes:
     body = f"""<div class="app-title"><div><span class="eyebrow">SOLIDWORKS</span><h1>Your SOLIDWORKS connection.</h1>
 <p>CADOS runs your assistant's work in your own SOLIDWORKS, through a native add-in. Nothing connects in to your computer.</p></div>{_status_pill()}</div>
 <div class="callout callout-warn" id="update" hidden style="margin-bottom:var(--s-5)"></div>
@@ -164,12 +164,12 @@ def solidworks(base: str = "") -> bytes:
 <span class="small" id="no-download" hidden style="color:var(--err)">The add-in package is not on this server yet.</span></div></div></section>
 <p class="small muted">Problems? See <a href="/docs#troubleshooting">Troubleshooting</a>.</p>
 </div>"""
-    return _shell("solidworks", body, base)
+    return _shell("solidworks", body, base, admin)
 
 
 # ----------------------------------------------------------------------------- Tools
 
-def tools(base: str = "") -> bytes:
+def tools(base: str = "", admin: bool = False) -> bytes:
     groups = "".join(
         f'<section class="tool-group" aria-labelledby="tg-{i}"><h2 id="tg-{i}">{escape(g)}</h2><div class="tool-grid">'
         + "".join(f'<div class="tool-card" data-text="{escape((t + " " + n + " " + d).lower(), quote=True)}"><strong>{escape(t)}</strong>'
@@ -183,12 +183,12 @@ assistant picks the tools.</p></div></div>
 <input class="input" id="tool-q" type="search" placeholder="For example: drawing, mate, export" autocomplete="off"></div>
 <p class="empty" id="tool-none" hidden>No tool matches. Try a simpler word.</p>
 <div class="tool-groups" id="tool-groups">{groups}</div>"""
-    return _shell("tools", body, base)
+    return _shell("tools", body, base, admin)
 
 
 # ----------------------------------------------------------------------------- History
 
-def history(base: str = "") -> bytes:
+def history(base: str = "", admin: bool = False) -> bytes:
     body = """<div class="app-title"><div><span class="eyebrow">History</span><h1>What your assistant has done.</h1>
 <p>Commands sent to your paired computers, newest first: which tool, which computer, which assistant and how it ended.</p></div>
 <button class="btn btn-secondary btn-sm" type="button" id="h-refresh">Refresh</button></div>
@@ -198,12 +198,12 @@ def history(base: str = "") -> bytes:
 <tbody id="h-rows"></tbody></table></div>
 <p class="empty" id="h-empty" hidden>No commands yet. When your assistant works on a paired computer, each command appears here.
 Commands over the direct link (without the KEVOS Companion) are not recorded.</p></div></section>"""
-    return _shell("history", body, base)
+    return _shell("history", body, base, admin)
 
 
 # ----------------------------------------------------------------------------- Settings
 
-def settings(base: str = "") -> bytes:
+def settings(base: str = "", admin: bool = False) -> bytes:
     body = f"""<div class="app-title"><div><span class="eyebrow">Settings</span><h1>Account and access.</h1>
 <p>Your account, and the two private keys that give access to your CAD connection. Keep both to yourself.</p></div></div>
 <div class="stack">
@@ -211,6 +211,13 @@ def settings(base: str = "") -> bytes:
 <div class="kv-row"><span class="k">Name</span><span class="v" id="acc-name">-</span></div>
 <div class="kv-row"><span class="k">Email</span><span class="v" id="acc-email">-</span></div>
 <div class="actions"><a class="btn btn-secondary btn-sm" href="/logout" id="acc-signout">Sign out</a></div></div></section>
+<section class="panel" id="password" aria-labelledby="pw-h"><div class="panel-head"><h2 id="pw-h">Change password</h2>
+<p>If your administrator set your password, change it to one only you know. You are signed out everywhere afterwards.</p></div>
+<form class="panel-body" id="pw-form" autocomplete="on"><div class="field"><label class="field-label" for="pw-current">Current password</label>
+<input class="input" id="pw-current" type="password" autocomplete="current-password" required></div>
+<div class="field"><label class="field-label" for="pw-new">New password</label>
+<input class="input" id="pw-new" type="password" autocomplete="new-password" minlength="8" required><span class="field-hint">At least 8 characters.</span></div>
+<div class="actions"><button class="btn btn-primary btn-sm" type="submit">Change password</button><span class="small" id="pw-msg" role="status"></span></div></form></section>
 <section class="panel" id="private" aria-labelledby="priv-h"><div class="panel-head"><h2 id="priv-h">Private connector address</h2>
 <p>For assistants that cannot sign in. It works without sign-in, so anyone who has it can use your CAD connection.</p></div><div class="panel-body">
 {_copy_field("purl", "Private address", secret=True)}
@@ -222,7 +229,44 @@ def settings(base: str = "") -> bytes:
 <p class="small muted">Connected assistants are on the <a href="/assistant#connect">CAD Assistant</a> page, your computers on the
 <a href="/solidworks#computers">SOLIDWORKS</a> page. How CADOS handles your data: <a href="/privacy">Privacy</a>.</p>
 </div>"""
-    return _shell("settings", body, base)
+    return _shell("settings", body, base, admin)
 
 
-PAGES = {"home": home, "assistant": assistant, "solidworks": solidworks, "tools": tools, "history": history, "settings": settings}
+# ----------------------------------------------------------------------------- Admin (the owner only)
+
+def admin(base: str = "", admin: bool = True) -> bytes:
+    body = """<div class="app-title"><div><span class="eyebrow">Admin</span><h1>People on this CADOS server.</h1>
+<p>Add people with a password you choose, reset passwords, and see who has computers and AI assistants connected.
+Only you see this page.</p></div></div>
+<div class="stack">
+<section class="panel" aria-labelledby="add-h"><div class="panel-head"><h2 id="add-h">Add a person</h2>
+<p>Give them the password and this address. They sign in when the installer's pairing step opens the browser,
+and can change the password in Settings.</p></div>
+<form class="panel-body" id="add-form" autocomplete="off">
+<div class="two-col" style="gap:var(--s-4)"><div class="field"><label class="field-label" for="add-name">Name</label><input class="input" id="add-name"></div>
+<div class="field"><label class="field-label" for="add-email">Email</label><input class="input" id="add-email" type="email" required></div></div>
+<div class="field"><label class="field-label" for="add-pw">Password</label><div class="input-group">
+<input class="input" id="add-pw" type="text" minlength="8" required autocomplete="new-password" spellcheck="false">
+<button class="btn" type="button" id="add-gen">Generate</button><button class="btn" type="button" data-copy="add-pw">Copy</button></div>
+<span class="field-hint">At least 8 characters. Generate makes a strong one.</span></div>
+<div class="actions"><button class="btn btn-primary" type="submit">Add person</button><span class="small" id="add-msg" role="status"></span></div>
+<div class="callout callout-ok" id="add-done" hidden></div></form></section>
+<section class="panel" aria-labelledby="people-h"><div class="panel-head"><h2 id="people-h">People</h2><span class="small muted" id="people-n"></span></div>
+<div class="panel-body"><div class="table-wrap"><table class="history-table"><thead><tr><th>Person</th><th>Role</th><th>Computers</th><th>AI assistants</th><th></th></tr></thead>
+<tbody id="people"></tbody></table></div></div></section>
+<section class="panel" aria-labelledby="inv-h"><div class="panel-head"><h2 id="inv-h">Invite links</h2>
+<p>Or send a link: the person chooses their own password. A link works once, for 7 days.</p></div><div class="panel-body">
+<div class="actions"><input class="input" id="inv-note" placeholder="Who it is for (optional)" style="max-width:320px">
+<button class="btn btn-secondary btn-sm" type="button" id="inv-new">Make an invite link</button></div>
+<div class="field" id="inv-out" hidden><label class="field-label" for="inv-url">Invite link</label><div class="input-group">
+<input class="input" id="inv-url" readonly><button class="btn" type="button" data-copy="inv-url">Copy</button></div></div>
+<ul class="list" id="invites" aria-label="Unused invite links"></ul></div></section>
+<section class="panel" aria-labelledby="signup-h"><div class="panel-head"><h2 id="signup-h">Sign-up</h2></div><div class="panel-body">
+<label class="small" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="open-signup">
+Anyone with the address can create an account (off: only people you add or invite)</label></div></section>
+</div>"""
+    return _shell("admin", body, base, True)
+
+
+PAGES = {"home": home, "assistant": assistant, "solidworks": solidworks, "tools": tools, "history": history, "settings": settings,
+         "admin": admin}

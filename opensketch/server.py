@@ -409,7 +409,61 @@ def api_remove_user(user_id: str, request: Request):
     from . import mcpauth
     mcpauth.drop_user(user_id)  # their connected AI apps stop working too
     _forget(user_id)
+    for d in devicebridge.devices_for({"id": user_id}):  # and their paired computers are cut off at once
+        devicebridge.revoke_device({"id": user_id}, d["id"], "This computer's account was removed from CADOS.")
     return {"removed": user_id}
+
+
+class NewPerson(BaseModel):
+    email: str
+    name: str | None = None
+    password: str
+
+
+@app.post("/api/account/users")
+def api_add_user(req: NewPerson, request: Request):
+    """Owner (Admin page): add a person with a password the owner chose."""
+    from . import accounts
+    _owner(request)
+    try:
+        return {"user": accounts.create_member(req.email, req.name or "", req.password)}
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+
+
+class NewPassword(BaseModel):
+    password: str
+
+
+@app.post("/api/account/users/{user_id}/password")
+def api_set_user_password(user_id: str, req: NewPassword, request: Request):
+    """Owner (Admin page): set someone's password. They are signed out everywhere and their connected AI apps must
+    sign in again. The owner changes their own password in Settings (it needs the current one)."""
+    from . import accounts
+    me = _owner(request)
+    target = accounts.get(user_id)
+    if target is None:
+        raise HTTPException(404, "No such account.")
+    if target["role"] == "owner" or user_id == me["id"]:
+        return JSONResponse({"error": "Change your own password in Settings."}, status_code=400)
+    try:
+        accounts.set_password(user_id, req.password)
+    except accounts.AccountError as e:
+        return JSONResponse({"error": str(e)}, status_code=400)
+    return {"ok": True}
+
+
+@app.get("/api/admin/people")
+def api_admin_people(request: Request):
+    """Owner (Admin page): everyone with an account, their computers and connected AI apps; invites and sign-up settings."""
+    from . import accounts, mcpauth
+    _owner(request)
+    people = []
+    for u in accounts.list_users():
+        devs = devicebridge.list_devices({"id": u["id"]})
+        people.append(dict(u, computers=len(devs), online=sum(1 for d in devs if d["online"]),
+                           apps=[g["name"] for g in mcpauth.grants_for(u["id"])]))
+    return {"people": people, "invites": accounts.list_invites(), "settings": accounts.settings(), "min_password": accounts.MIN_PASSWORD}
 
 
 
@@ -702,10 +756,25 @@ PAGE_HEADERS = {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referre
 PUBLIC_HEADERS = {"Cache-Control": "no-cache", "X-Frame-Options": "DENY", "Referrer-Policy": "strict-origin-when-cross-origin"}
 
 
+def _is_owner(request: Request) -> bool:
+    u = _user(request)
+    return bool(u and u.get("role") == "owner" and not u.get("legacy"))
+
+
 async def _app_page(request: Request, name: str) -> Response:
-    """One section of the signed-in app (app_pages.py); the sign-in gate sends visitors to /login first."""
+    """One section of the signed-in app (app_pages.py); the sign-in gate sends visitors to /login first. The owner
+    also sees the Admin section."""
     from . import app_pages
-    return await _text_page(request.scope, app_pages.PAGES[name](_base(request)), "text/html; charset=utf-8", PAGE_HEADERS)
+    return await _text_page(request.scope, app_pages.PAGES[name](_base(request), _is_owner(request)), "text/html; charset=utf-8",
+                            PAGE_HEADERS)
+
+
+@app.get("/admin")
+async def admin_page(request: Request):
+    """The owner's Admin page; anyone else is sent to their Home."""
+    if not _is_owner(request):
+        return RedirectResponse("/dashboard", status_code=303)
+    return await _app_page(request, "admin")
 
 
 @app.get("/dashboard")

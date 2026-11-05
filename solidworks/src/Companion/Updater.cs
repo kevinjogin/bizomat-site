@@ -50,7 +50,7 @@ namespace Kevos.Companion
             var mine = Authenticode.Signer(Paths.Exe);
             if (mine == null)
             {
-                why = "This KEVOS build is not signed, so it does not update itself. Install new versions by hand.";
+                why = "This CADOS build is not signed, so it does not update itself. Install new versions by hand.";
                 return null;
             }
             Dictionary<string, object> m;
@@ -59,7 +59,7 @@ namespace Kevos.Companion
                 var r = c.Get("/v2/bridge/update.json", 30);
                 if (r.Status == 404)
                 {
-                    why = "No release is published on this KEVOS server.";
+                    why = "No release is published on this CADOS server.";
                     return null;
                 }
                 if (r.Status != 200)
@@ -83,7 +83,7 @@ namespace Kevos.Companion
             var signers = J.Strs(m, "signer_thumbprints") ?? new List<string>();
             var dir = Path.Combine(Paths.Data, "updates");
             Directory.CreateDirectory(dir);
-            var path = Path.Combine(dir, "KEVOS-Bridge-" + ver.ToString(3) + ".msi");
+            var path = Path.Combine(dir, "CADOS-for-SOLIDWORKS-" + ver.ToString(3) + ".msi");
             using (var http = new HttpClient(BridgeClient.DefaultHandler(), true) { Timeout = TimeSpan.FromMinutes(10) })
                 File.WriteAllBytes(path, http.GetByteArrayAsync(url).GetAwaiter().GetResult());
             var data = File.ReadAllBytes(path);
@@ -95,7 +95,7 @@ namespace Kevos.Companion
             {
                 var signer = Authenticode.Signer(path);
                 if (signer == null || !signers.Contains(signer)) problem = "it is signed by a publisher the release does not name";
-                else if (signer != mine) problem = "it is not signed by the same publisher as this KEVOS";
+                else if (signer != mine) problem = "it is not signed by the same publisher as this installation";
             }
             if (problem != null)
             {

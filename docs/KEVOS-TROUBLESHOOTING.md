@@ -8,7 +8,7 @@ Neither holds passwords or keys.
 |---|---|---|
 | No KEVOS icon after signing in to Windows | The Companion did not start | Start > KEVOS > KEVOS Companion. Tray > Start with Windows must be ticked. |
 | "Not registered: pair this computer" | Not paired yet, or paired again elsewhere | Tray > Pair this computer. |
-| "Removed from the KEVOS account: pair again" | The computer was removed on the home page | Pair again (it gets a new key). |
+| "Removed from your CADOS account: pair again" | The computer was removed on the home page | Pair again (it gets a new key). |
 | "Offline (...); retrying" | No network to the KEVOS server, a proxy blocking it, or the server down | Check the server address opens in a browser. Behind a company proxy, allow `https://<your KEVOS server>` (the Companion uses the Windows proxy settings). It retries by itself. |
 | "Signed request refused (TOKEN_EXPIRED ...)" | The computer's clock is far off | Turn on Windows' automatic time (Settings > Time). |
 | "GATEWAY_KEY_CHANGED" | The server's command key changed (restored or replaced data folder) | Pair again. If you did not change the server, ask its administrator first. |
@@ -22,7 +22,7 @@ Neither holds passwords or keys.
 | AI app: "A sketch is open for editing" | You are editing a sketch | Exit the sketch. |
 | AI app: "The person at this computer declined" | You (or the timeout) said no to a destructive change | Ask again if you meant it, and click Allow once. |
 | AI app: "still working after N s" | A long operation | It finishes by itself; the AI can check with sw_command_status. |
-| AI app: "KEVOS is paused" | Paused from the tray | Tray > Resume KEVOS. |
+| AI app: "CADOS is paused" | Paused from the tray | Tray > Resume CADOS. |
 | An update was refused | Its hash, signature or publisher did not match | Nothing was installed. Download the MSI from the release page and check its SHA-256; tell your administrator. |
 | "This KEVOS build is not signed, so it does not update itself" | A test build | Install new versions by hand. |
 | Installer: "Please close SOLIDWORKS" | Files in use | Save, close SOLIDWORKS, Retry. |

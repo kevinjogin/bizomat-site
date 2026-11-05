@@ -167,7 +167,7 @@ A refusal and a result:
 ```json
 {"v": "2.0", "type": "command.ack", "command_id": "cmd_...", "device_id": "dev_...", "hop": "companion", "ack": "rejected",
  "error": {"code": "INSTANCE_NOT_RUNNING", "category": "device", "retryable": false, "hop": "companion",
-           "message": "SOLIDWORKS is not running on DESK. Open SOLIDWORKS there; KEVOS connects by itself."}}
+           "message": "SOLIDWORKS is not running on DESK. Open SOLIDWORKS there; CADOS connects by itself."}}
 {"v": "2.0", "type": "command.result", "msg_id": "msg_...", "sent_at": "...", "command_id": "cmd_...", "device_id": "dev_...",
  "instance_id": "swi_...", "status": "failed", "params_sha256": "sha256:9b2f...", "started_at": "...", "finished_at": "...",
  "duration_ms": 4210, "result": {"features": ["..."], "stopped_at": "f3 (fillet): ..."},
