@@ -1,4 +1,4 @@
-# KEVOS Bridge and Cloudflare
+# CAD Automation and Cloudflare (written for KEVOS Bridge)
 
 ## What was inspected
 
@@ -11,7 +11,7 @@
 
 ## The design, and where Cloudflare fits
 
-The KEVOS gateway (this server) holds the MCP endpoint, sign-in, the device registry, routing, acknowledgments and
+The CAD Automation gateway (this server) holds the MCP endpoint, sign-in, the device registry, routing, acknowledgments and
 results. Each computer's Companion connects out to it over HTTPS; nothing connects in to a computer, and SOLIDWORKS
 always runs on the computer itself. So Cloudflare is not in the command path as a service: no Worker, D1 table or
 Durable Object is needed, and none is used. Cloudflare's job is the front door of the gateway.
@@ -20,7 +20,7 @@ Use one of these.
 
 ### A. Gateway hosted on Fly (or any host) with a domain on Cloudflare (recommended)
 
-CADOS by KEVOS uses `cados.kevos.com` (a CNAME to `cados.fly.dev`). Run the Domain workflow with that host name
+The hosted service uses `cados.kevos.com` (a CNAME to `cados.fly.dev`; the BIZOMAT platform adds `cad.bizomat.ai`). Run the Domain workflow with that host name
 (its default) once `kevos.com` is in the Cloudflare account; `deploy.yml` sets `OPENSKETCH_PUBLIC_URL` to it unless the
 repository variable `PUBLIC_URL` says otherwise. If `kevos.com` is managed elsewhere, add the same two records there by
 hand (step 1 below: the CNAME and the check record Fly asks for after `fly certs add cados.kevos.com -a cados`).
@@ -80,13 +80,13 @@ the network.
    identity provider for people, and a second application on the same hostname with a **Bypass** policy for the
    paths `/mcp`, `/mcp/*`, `/solidworks/mcp*`, `/oauth/*`, `/.well-known/*`, `/v2/*`. Those paths have their own
    authentication (OAuth for AI apps, signed device proofs for computers) and are called by programs that cannot sign
-   in to Access. Everything else (home page, pairing page) then needs Access and the KEVOS sign-in.
+   in to Access. Everything else (home page, pairing page) then needs Access and the CAD Automation sign-in.
 4. Do not use quick tunnels (`trycloudflare.com`): the address changes at every start and breaks every AI connector
    and every paired computer.
 
 ### The earlier setup (server on the SOLIDWORKS computer behind a tunnel)
 
-Still works for one computer, but it needs a server running on that PC and a tunnel per PC. With KEVOS Bridge, keep
+Still works for one computer, but it needs a server running on that PC and a tunnel per PC. With CAD Automation for SOLIDWORKS, keep
 one gateway (A or B) for all computers and retire per-PC tunnels.
 
 ## Never
