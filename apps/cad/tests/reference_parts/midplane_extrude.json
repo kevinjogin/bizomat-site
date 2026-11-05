@@ -1,0 +1,93 @@
+{
+ "name": "midplane_extrude",
+ "description": "Rectangle 20x10 extruded 30 mid plane.",
+ "derivation": "V = 20*10*30, symmetric about the sketch plane.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": -10,
+     "y": -5
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 10,
+     "y": -5
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 10,
+     "y": 5
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": -10,
+     "y": 5
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "end": "midplane",
+   "depth": 30
+  }
+ ],
+ "expect": {
+  "volume_mm3": 6000,
+  "center_of_mass": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "bbox": {
+   "min": [
+    -10,
+    -5,
+    -15
+   ],
+   "max": [
+    10,
+    5,
+    15
+   ]
+  }
+ }
+}

@@ -1,0 +1,98 @@
+{
+ "name": "circular_pattern_holes",
+ "description": "Disc r 30 x 10 (Top Plane) with six r 3 holes on a 20 mm radius.",
+ "derivation": "V = pi 30^2 10 - 6 pi 3^2 10; six equal holes keep the centre on the axis.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Top Plane"
+   },
+   "entities": [
+    {
+     "id": "s1cp",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "circle",
+     "center": "s1cp",
+     "r": 30
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 10
+  },
+  {
+   "id": "s2",
+   "type": "sketch",
+   "name": "s2",
+   "plane": {
+    "ref": "Top Plane"
+   },
+   "entities": [
+    {
+     "id": "s2cp",
+     "type": "point",
+     "x": 20,
+     "y": 0
+    },
+    {
+     "id": "s2c",
+     "type": "circle",
+     "center": "s2cp",
+     "r": 3
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e2",
+   "type": "extrude",
+   "sketch": "s2",
+   "op": "cut",
+   "end": "through_all",
+   "dir2": {
+    "end": "through_all"
+   }
+  },
+  {
+   "id": "cp",
+   "type": "circular_pattern",
+   "features": [
+    "e2"
+   ],
+   "axis": "Y",
+   "count": 6
+  }
+ ],
+ "expect": {
+  "volume_mm3": 26577.873849,
+  "center_of_mass": [
+   0.0,
+   5.0,
+   0.0
+  ],
+  "bbox": {
+   "min": [
+    -30,
+    0,
+    -30
+   ],
+   "max": [
+    30,
+    10,
+    30
+   ]
+  }
+ }
+}

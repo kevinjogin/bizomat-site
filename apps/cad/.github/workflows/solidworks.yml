@@ -1,0 +1,102 @@
+# Builds and tests the SOLIDWORKS add-in (solidworks/) on every push or pull request that touches it, and keeps
+# the zip as a build artifact (Actions > the run > Artifacts > OpenSketch-SOLIDWORKS). On main it also replaces the
+# "addin-latest" release, so the newest add-in is always at Releases > OpenSketch for SOLIDWORKS (latest).
+name: SOLIDWORKS add-in
+
+on:
+  push:
+    # branches as well as tags: with only a tags filter, GitHub skips branch pushes altogether
+    branches: ["**"]
+    paths: ["solidworks/**", "installer/**", ".github/workflows/solidworks.yml"]
+    tags: ["bridge-v*"]
+  pull_request:
+    paths: ["solidworks/**", "installer/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # the addin-latest release on main
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build and test
+        run: bash solidworks/build.sh test
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: OpenSketch-SOLIDWORKS
+          path: solidworks/dist/OpenSketch-SOLIDWORKS
+      - name: Publish the add-in as the addin-latest release (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd solidworks/dist && zip -qr ../../OpenSketch-SOLIDWORKS.zip OpenSketch-SOLIDWORKS && cd ../..
+          version=$(grep -o '<Version>[^<]*' solidworks/Directory.Build.props | cut -d'>' -f2)
+          gh release delete addin-latest --yes --cleanup-tag || true
+          gh release create addin-latest OpenSketch-SOLIDWORKS.zip --target "$GITHUB_SHA" \
+            --title "CADOS for SOLIDWORKS: manual add-in package (latest)" \
+            --notes "CADOS add-in $version (by KEVOS) for manual installation, built from ${GITHUB_SHA::7}. Most people should use the installer instead: https://cados.kevos.com/download/solidworks. Manual route: close SOLIDWORKS, unzip into your add-in folder (replace all files), run OpenSketchSW.exe and click Install for me, then reopen SOLIDWORKS."
+
+  # CADOS for SOLIDWORKS installer (installer/): the MSI needs Windows (WiX Toolset 5). Signed when the repository has the
+  # secrets KEVOS_SIGN_PFX_BASE64 (a code-signing .pfx, base64) and KEVOS_SIGN_PASSWORD; otherwise an UNSIGNED test MSI.
+  # Every run keeps it as an artifact; main replaces the bridge-latest release; a tag bridge-v<version> makes a release.
+  installer:
+    runs-on: windows-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build and test the add-in and companion
+        shell: bash
+        run: bash solidworks/build.sh test
+      - name: Signing certificate (if the repository has one)
+        shell: pwsh
+        env:
+          PFX: ${{ secrets.KEVOS_SIGN_PFX_BASE64 }}
+        run: |
+          if ($env:PFX) {
+            $p = Join-Path $env:RUNNER_TEMP 'kevos-sign.pfx'
+            [IO.File]::WriteAllBytes($p, [Convert]::FromBase64String($env:PFX))
+            "KEVOS_SIGN_PFX=$p" | Out-File -FilePath $env:GITHUB_ENV -Append
+          }
+      - name: Build the MSI
+        shell: pwsh
+        env:
+          KEVOS_SIGN_PASSWORD: ${{ secrets.KEVOS_SIGN_PASSWORD }}
+        run: powershell -ExecutionPolicy Bypass -File installer\build.ps1
+      - name: Remove the certificate
+        if: always()
+        shell: pwsh
+        run: if ($env:KEVOS_SIGN_PFX) { Remove-Item $env:KEVOS_SIGN_PFX -Force -ErrorAction SilentlyContinue }
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: CADOS-for-SOLIDWORKS-MSI
+          path: installer/out
+      - name: Publish (bridge-latest on main, bridge-v<version> on a tag)
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/bridge-v'))
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(grep -o '<Version>[^<]*' solidworks/Directory.Build.props | cut -d'>' -f2)
+          tag=bridge-latest
+          case "$GITHUB_REF" in refs/tags/bridge-v*) tag=${GITHUB_REF#refs/tags/};; esac
+          if [ "$tag" = bridge-latest ]; then gh release delete bridge-latest --yes --cleanup-tag || true; fi
+          gh release create "$tag" installer/out/*.msi installer/out/*.sha256 installer/out/release.json --target "$GITHUB_SHA" \
+            --title "CADOS for SOLIDWORKS $version" $( [ "$tag" = bridge-latest ] && echo --prerelease ) \
+            --notes "CADOS for SOLIDWORKS $version (by KEVOS), built from ${GITHUB_SHA::7}. Install once per Windows computer that runs SOLIDWORKS; see https://cados.kevos.com/docs#install. Check the SHA-256 against the .sha256 file. A file named UNSIGNED is an unsigned test build."

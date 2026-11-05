@@ -1,0 +1,102 @@
+{
+ "name": "mirror_about_right_plane",
+ "description": "Block x 10..30 mirrored about the Right Plane (two bodies).",
+ "derivation": "V = 2 * 20*10*5; the pair is symmetric about X = 0.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 10,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 30,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 30,
+     "y": 10
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 10,
+     "y": 10
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 5
+  },
+  {
+   "id": "m1",
+   "type": "mirror",
+   "plane": {
+    "ref": "Right Plane"
+   },
+   "features": [
+    "e1"
+   ]
+  }
+ ],
+ "expect": {
+  "volume_mm3": 2000,
+  "center_of_mass": [
+   0.0,
+   5.0,
+   2.5
+  ],
+  "bbox": {
+   "min": [
+    -30,
+    0,
+    0
+   ],
+   "max": [
+    30,
+    10,
+    5
+   ]
+  }
+ }
+}

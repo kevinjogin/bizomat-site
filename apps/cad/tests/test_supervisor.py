@@ -1,0 +1,165 @@
+"""The hosted server restarts itself when it hangs or exits (Fly only restarts a machine whose process exits)."""
+import sys
+import textwrap
+import threading
+import time
+
+from fastapi.testclient import TestClient
+
+from opensketch import server, supervisor
+
+# A stand-in server: notes each start in a file, answers /healthz, then hangs (stops answering but keeps running)
+# after HANG_AFTER seconds, or exits with code 3 when EXIT is set.
+FAKE = textwrap.dedent("""
+    import http.server, os, socketserver, sys, threading, time
+    port, starts, mode = int(sys.argv[1]), sys.argv[2], sys.argv[3]
+    with open(starts, "a") as f:
+        f.write("start\\n")
+    if mode == "exit":
+        time.sleep(0.3)
+        sys.exit(3)
+    if mode == "crash-leaving-workers":  # a CAD worker in the server's group, then the server dies
+        import subprocess
+        w = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
+        with open(starts + ".workers", "a") as f:
+            f.write(f"{w.pid}\\n")
+        time.sleep(0.3)
+        os._exit(9)
+    born = time.monotonic()
+    hung = threading.Event()
+    class H(http.server.BaseHTTPRequestHandler):
+        def do_GET(self):
+            if mode == "hang" and time.monotonic() - born > 1.0:
+                hung.wait()  # never answers again, like a server stuck in a CAD call
+            self.send_response(200); self.end_headers(); self.wfile.write(b"ok")
+        def log_message(self, *a):
+            pass
+    socketserver.ThreadingTCPServer.allow_reuse_address = True
+    srv = socketserver.ThreadingTCPServer(("127.0.0.1", port), H)
+    srv.daemon_threads = True
+    srv.serve_forever()
+""")
+
+
+def _free_port():
+    import socket
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+def _run(tmp_path, mode, until, timeout=20, **kw):
+    script = tmp_path / "fake.py"
+    script.write_text(FAKE)
+    starts = tmp_path / "starts.txt"
+    port = _free_port()
+    logs = []
+    opts = dict(interval=0.2, timeout=0.5, hang=1.0, boot=3.0, stop_wait=2.0, backoff_max=0.3, log=logs.append)
+    sup = supervisor.Supervisor([sys.executable, str(script), str(port), str(starts), mode],
+                                f"http://127.0.0.1:{port}/healthz", **{**opts, **kw})
+    t = threading.Thread(target=sup.run, daemon=True)
+    t.start()
+    end = time.monotonic() + timeout
+    count = lambda: starts.read_text().count("start") if starts.exists() else 0
+    while time.monotonic() < end and t.is_alive() and not until(count()):
+        time.sleep(0.1)
+    child = sup.child
+    sup.stop()
+    t.join(10)
+    assert not t.is_alive(), "the supervisor did not stop"
+    assert child.poll() is not None, "the server was left running"
+    return starts.read_text().count("start"), logs, sup
+
+
+def test_a_hung_server_is_restarted(tmp_path):
+    n, logs, sup = _run(tmp_path, "hang", lambda n: n >= 2)
+    assert n >= 2 and sup.restarts >= 1
+    assert any("stopped answering" in m for m in logs), logs
+
+
+def test_a_server_that_exits_is_restarted_with_backoff(tmp_path):
+    n, logs, sup = _run(tmp_path, "exit", lambda n: n >= 3)
+    assert n >= 3
+    assert any("exited (code 3)" in m for m in logs), logs
+
+
+def test_a_healthy_server_is_left_alone(tmp_path):
+    # watched for 2.5 times the hang limit; the check timeout leaves room for a slow answer on a busy machine
+    t0 = time.monotonic()
+    n, logs, sup = _run(tmp_path, "ok", lambda n: n >= 1 and time.monotonic() - t0 > 5.0,
+                        timeout=1.0, hang=2.0, boot=6.0)
+    assert n == 1 and sup.restarts == 0 and logs == []
+
+
+def test_a_server_that_never_starts_ends_the_supervisor(tmp_path):
+    """A crash loop (a broken release) must not look alive: after max_fails starts in a row without an answer the
+    supervisor exits 1, so Fly shows a failed machine, and the log says how many times it tried."""
+    script = tmp_path / "fake.py"
+    script.write_text(FAKE)
+    starts = tmp_path / "starts.txt"
+    logs = []
+    sup = supervisor.Supervisor([sys.executable, str(script), str(_free_port()), str(starts), "exit"],
+                                "http://127.0.0.1:9/healthz", interval=0.2, timeout=0.5, hang=1.0, boot=3.0,
+                                stop_wait=2.0, backoff_max=0.3, max_fails=3, log=logs.append)
+    out = {}
+    t = threading.Thread(target=lambda: out.setdefault("code", sup.run()), daemon=True)
+    t.start()
+    t.join(30)
+    assert not t.is_alive() and out["code"] == 1
+    assert starts.read_text().count("start") == 3 and sup.child.poll() is not None
+    assert any("2 in a row without an answer" in m for m in logs), logs
+    assert "giving up" in logs[-1] and "3 in a row" in logs[-1], logs
+
+
+def test_healthz_answers_without_sign_in(tmp_path, monkeypatch):
+    monkeypatch.setenv("OPENSKETCH_DATA", str(tmp_path / "data"))
+    monkeypatch.setenv("OPENSKETCH_PASSWORD", "a server password")
+    c = TestClient(server.app)
+    r = c.get("/healthz")
+    assert r.status_code == 200 and r.json()["ok"] is True
+    assert c.get("/api/docs").status_code == 401  # everything else still needs signing in
+
+
+def test_a_paused_machine_is_not_taken_for_a_hang(tmp_path, monkeypatch):
+    """Fly can suspend an idle machine: the clock jumps on waking, but the server is fine."""
+    clock = {"skew": 0.0}
+    real = time.monotonic
+    monkeypatch.setattr(supervisor.time, "monotonic", lambda: real() + clock["skew"])
+    script = tmp_path / "fake.py"
+    script.write_text(FAKE)
+    starts = tmp_path / "starts.txt"
+    port = _free_port()
+    logs = []
+    sup = supervisor.Supervisor([sys.executable, str(script), str(port), str(starts), "ok"],
+                                f"http://127.0.0.1:{port}/healthz", interval=0.2, timeout=1.0, hang=2.0, boot=6.0,
+                                stop_wait=2.0, log=logs.append)
+    t = threading.Thread(target=sup.run, daemon=True)
+    t.start()
+    time.sleep(2.5)
+    clock["skew"] = 3600.0  # an hour "passes" in one step
+    time.sleep(2.5)  # longer than the hang limit, so a restart would have happened by now
+    sup.stop()
+    t.join(10)
+    assert sup.restarts == 0 and starts.read_text().count("start") == 1
+    assert any("paused" in m for m in logs), logs
+
+
+def test_a_crashed_servers_workers_are_ended_before_the_next_start(tmp_path):
+    """A server that crashed or was killed for memory leaves its worker processes behind: the supervisor ends its
+    whole process group before it starts the next server (before, they piled up and memory ran out again)."""
+    import os
+    n, logs, sup = _run(tmp_path, "crash-leaving-workers", lambda n: n >= 2)
+    pids = [int(x) for x in (tmp_path / "starts.txt.workers").read_text().split()]
+    first = pids[0]
+    time.sleep(0.5)
+    try:
+        os.kill(first, 0)
+        state = open(f"/proc/{first}/stat").read().split(")")[1].split()[0]
+    except (OSError, FileNotFoundError):
+        state = "gone"
+    for pid in pids:  # tidy up whatever is left
+        try:
+            os.kill(pid, 9)
+        except OSError:
+            pass
+    assert state in ("gone", "Z"), state

@@ -1,0 +1,158 @@
+{
+ "name": "right_plane_boss",
+ "description": "Front plate plus a Right Plane boss extruded mid plane through it.",
+ "derivation": "Plate x -30..30, y 0..10, z 0..40; boss sketch on Right Plane: sketch (x, y) -> world (-Z, Y), rect x -40..0 (z 0..40), y -5..5, mid plane 30 -> X -15..15; overlap y 0..5 counted once.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": -30,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 30,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 30,
+     "y": 10
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": -30,
+     "y": 10
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 40
+  },
+  {
+   "id": "s2",
+   "type": "sketch",
+   "name": "s2",
+   "plane": {
+    "ref": "Right Plane"
+   },
+   "entities": [
+    {
+     "id": "s2a",
+     "type": "point",
+     "x": -40,
+     "y": -5
+    },
+    {
+     "id": "s2b",
+     "type": "point",
+     "x": 0,
+     "y": -5
+    },
+    {
+     "id": "s2c",
+     "type": "point",
+     "x": 0,
+     "y": 5
+    },
+    {
+     "id": "s2d",
+     "type": "point",
+     "x": -40,
+     "y": 5
+    },
+    {
+     "id": "s2L0",
+     "type": "line",
+     "p1": "s2a",
+     "p2": "s2b"
+    },
+    {
+     "id": "s2L1",
+     "type": "line",
+     "p1": "s2b",
+     "p2": "s2c"
+    },
+    {
+     "id": "s2L2",
+     "type": "line",
+     "p1": "s2c",
+     "p2": "s2d"
+    },
+    {
+     "id": "s2L3",
+     "type": "line",
+     "p1": "s2d",
+     "p2": "s2a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e2",
+   "type": "extrude",
+   "sketch": "s2",
+   "end": "midplane",
+   "depth": 30
+  }
+ ],
+ "expect": {
+  "volume_mm3": 30000,
+  "center_of_mass": [
+   0.0,
+   3.5,
+   20.0
+  ],
+  "bbox": {
+   "min": [
+    -30,
+    -5,
+    0
+   ],
+   "max": [
+    30,
+    10,
+    40
+   ]
+  }
+ }
+}

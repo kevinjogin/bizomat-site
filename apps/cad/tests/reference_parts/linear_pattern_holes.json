@@ -1,0 +1,135 @@
+{
+ "name": "linear_pattern_holes",
+ "description": "Plate 100x40x10 with a hole r 4 patterned 5 times at 20 mm along X.",
+ "derivation": "V = 100*40*10 - 5 pi 16 10; holes at x 10..90 are centred on the plate, so the centre stays.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 100,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 100,
+     "y": 40
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 0,
+     "y": 40
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 10
+  },
+  {
+   "id": "s2",
+   "type": "sketch",
+   "name": "s2",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s2cp",
+     "type": "point",
+     "x": 10,
+     "y": 20
+    },
+    {
+     "id": "s2c",
+     "type": "circle",
+     "center": "s2cp",
+     "r": 4
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e2",
+   "type": "extrude",
+   "sketch": "s2",
+   "op": "cut",
+   "end": "through_all",
+   "dir2": {
+    "end": "through_all"
+   }
+  },
+  {
+   "id": "lp",
+   "type": "linear_pattern",
+   "features": [
+    "e2"
+   ],
+   "direction": "X",
+   "count": 5,
+   "spacing": 20
+  }
+ ],
+ "expect": {
+  "volume_mm3": 37486.725877,
+  "center_of_mass": [
+   50.0,
+   20.0,
+   5.0
+  ],
+  "bbox": {
+   "min": [
+    0,
+    0,
+    0
+   ],
+   "max": [
+    100,
+    40,
+    10
+   ]
+  }
+ }
+}

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  CADOS for SOLIDWORKS (by KEVOS; called KEVOS Bridge up to 0.11): one MSI (WiX Toolset 5, per machine, x64) for each
+  Windows computer that runs SOLIDWORKS. The UpgradeCode is unchanged, so it upgrades KEVOS Bridge in place.
+
+  Installs into C:\Program Files\KEVOS\Bridge:
+    OpenSketch.Sw.dll          the CADOS SOLIDWORKS add-in (COM; Tools > Add-Ins > CADOS; loaded at start-up)
+    KEVOS.Companion.exe        the per-user background app (tray), started at every Windows sign-in
+    OpenSketchSW.exe, OpenSketch.swb   the earlier per-user installer and launcher macro (fallback during migration)
+  Registers (HKLM, 64-bit view): the two COM classes as regasm /codebase would, the SOLIDWORKS add-in entry (one entry
+  serves every SOLIDWORKS version installed), the KEVOS install record, and the companion in Run for every user.
+
+  Upgrades: a newer MSI replaces the older one (MajorUpgrade); the companion is closed and the person is asked to close
+  SOLIDWORKS while files are replaced. Settings and each user's registration live outside the install folder
+  (HKCU\Software\KEVOS, %LOCALAPPDATA%\KEVOS, the Windows key store) and are kept across upgrades, repairs and
+  uninstalls. CAD files are never touched. Repair: msiexec /fa <the .msi> (or Apps > CADOS for SOLIDWORKS > Modify > Repair).
+
+  Properties: GATEWAY_URL=https://cados.kevos.com (the CADOS server the companion pairs with; optional, the pairing
+  window suggests https://cados.kevos.com otherwise).
+  Build: installer/build.ps1 (Windows, after solidworks/build.sh). Variables: Version, Source (the built files).
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="CADOS for SOLIDWORKS" Manufacturer="KEVOS" Version="$(var.Version)" UpgradeCode="cef90528-e91b-42ae-9556-f70a612cb58f"
+           Scope="perMachine" Compressed="yes" InstallerVersion="500" Language="1033">
+    <SummaryInformation Description="CADOS for SOLIDWORKS: your AI assistant works in SOLIDWORKS on this computer" Manufacturer="KEVOS" />
+    <MajorUpgrade DowngradeErrorMessage="A newer CADOS for SOLIDWORKS is already installed. To go back to an older one, uninstall the newer one first (your settings and this computer's registration are kept)."
+                  Schedule="afterInstallInitialize" AllowSameVersionUpgrades="no" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Launch Condition="Installed OR VersionNT64" Message="CADOS for SOLIDWORKS needs 64-bit Windows 10 or 11." />
+    <Launch Condition="Installed OR NETFRAMEWORK48" Message="CADOS for SOLIDWORKS needs .NET Framework 4.8 (part of Windows 10 version 1903 and later, and Windows 11). Install it from Microsoft, then run this again." />
+    <!-- any .NET Framework 4.x Release value passes here; Windows 10 1903+ and Windows 11 have 4.8, older ones fail at start with a clear message -->
+    <Property Id="NETFRAMEWORK48">
+      <RegistrySearch Id="NetFx48" Root="HKLM" Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" Name="Release" Type="raw" Bitness="always64" />
+    </Property>
+
+    <Property Id="GATEWAY_URL" Secure="yes" />
+    <Property Id="ARPPRODUCTICON" Value="KevosIcon" />
+    <Property Id="ARPHELPLINK" Value="https://cados.kevos.com/docs" />
+    <Property Id="ARPURLINFOABOUT" Value="https://kevos.com/" />
+    <Property Id="ARPCOMMENTS" Value="Settings and this computer's CADOS registration are kept when it is removed. Use the Start menu entry Remove this computer from CADOS first if the computer leaves your account." />
+    <Icon Id="KevosIcon" SourceFile="$(var.Source)/KEVOS.Companion.exe" />
+
+    <util:CloseApplication Id="CloseCompanion" Target="KEVOS.Companion.exe" CloseMessage="yes" TerminateProcess="1" RebootPrompt="no" />
+    <util:CloseApplication Id="AskToCloseSolidWorks" Target="SLDWORKS.exe" PromptToContinue="yes" RebootPrompt="no"
+                           Description="Please close SOLIDWORKS (save your work first) so the CADOS add-in can be installed, then click Retry." />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="KevosDir" Name="KEVOS">
+        <Directory Id="INSTALLFOLDER" Name="Bridge" />
+      </Directory>
+    </StandardDirectory>
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="KevosMenu" Name="KEVOS" />
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="CADOS for SOLIDWORKS" Level="1">
+      <ComponentGroupRef Id="Files" />
+      <ComponentGroupRef Id="Registration" />
+      <ComponentRef Id="MenuShortcuts" />
+    </Feature>
+
+    <ComponentGroup Id="Files" Directory="INSTALLFOLDER">
+      <Component Id="AddinDll" Bitness="always64">
+        <File Id="AddinDll" Source="$(var.Source)/OpenSketch.Sw.dll" KeyPath="yes" Assembly=".net" AssemblyApplication="AddinDll" />
+      </Component>
+      <Component Id="CompanionExe" Bitness="always64">
+        <File Id="CompanionExe" Source="$(var.Source)/KEVOS.Companion.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="CompanionConfig" Bitness="always64">
+        <File Id="CompanionConfig" Source="$(var.Source)/KEVOS.Companion.exe.config" KeyPath="yes" />
+      </Component>
+      <Component Id="LegacyExe" Bitness="always64">
+        <File Id="LegacyExe" Source="$(var.Source)/OpenSketchSW.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="LegacyConfig" Bitness="always64">
+        <File Id="LegacyConfig" Source="$(var.Source)/OpenSketchSW.exe.config" KeyPath="yes" />
+      </Component>
+      <Component Id="Macro" Bitness="always64">
+        <File Id="Macro" Source="$(var.Source)/OpenSketch.swb" KeyPath="yes" />
+      </Component>
+      <Component Id="Readme" Bitness="always64">
+        <File Id="Readme" Source="$(var.Source)/README.txt" KeyPath="yes" />
+      </Component>
+      <Component Id="License" Bitness="always64">
+        <File Id="License" Source="$(var.Source)/LICENSE.txt" KeyPath="yes" />
+      </Component>
+      <Component Id="SourceNotice" Bitness="always64">
+        <File Id="SourceNotice" Source="$(var.Source)/SOURCE.txt" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="Registration" Directory="INSTALLFOLDER">
+      <!-- COM: the add-in class (SOLIDWORKS creates it) and the launcher class (the fallback macro), as regasm writes them -->
+      <Component Id="ComAddin" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{275256ff-b73a-4e4f-9ea8-842b6626d471}">
+          <RegistryValue Type="string" Value="OpenSketch.Sw.SwAddin" KeyPath="yes" />
+          <RegistryKey Key="InprocServer32">
+            <RegistryValue Type="string" Value="mscoree.dll" />
+            <RegistryValue Name="ThreadingModel" Type="string" Value="Both" />
+            <RegistryValue Name="Class" Type="string" Value="OpenSketch.Sw.SwAddin" />
+            <RegistryValue Name="Assembly" Type="string" Value="!(bind.assemblyFullName.AddinDll)" />
+            <RegistryValue Name="RuntimeVersion" Type="string" Value="v4.0.30319" />
+            <RegistryValue Name="CodeBase" Type="string" Value="file:///[#AddinDll]" />
+            <RegistryKey Key="!(bind.assemblyVersion.AddinDll)">
+              <RegistryValue Name="Class" Type="string" Value="OpenSketch.Sw.SwAddin" />
+              <RegistryValue Name="Assembly" Type="string" Value="!(bind.assemblyFullName.AddinDll)" />
+              <RegistryValue Name="RuntimeVersion" Type="string" Value="v4.0.30319" />
+              <RegistryValue Name="CodeBase" Type="string" Value="file:///[#AddinDll]" />
+            </RegistryKey>
+          </RegistryKey>
+          <RegistryKey Key="ProgId"><RegistryValue Type="string" Value="OpenSketch.Sw.SwAddin" /></RegistryKey>
+          <RegistryKey Key="Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}" ForceCreateOnInstall="yes" />
+        </RegistryKey>
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\OpenSketch.Sw.SwAddin">
+          <RegistryValue Type="string" Value="OpenSketch.Sw.SwAddin" />
+          <RegistryKey Key="CLSID"><RegistryValue Type="string" Value="{275256ff-b73a-4e4f-9ea8-842b6626d471}" /></RegistryKey>
+        </RegistryKey>
+      </Component>
+      <Component Id="ComLauncher" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{ed25919a-7e4a-4a08-a2db-4c69ae22b1ea}">
+          <RegistryValue Type="string" Value="OpenSketch.Sw.Launcher" KeyPath="yes" />
+          <RegistryKey Key="InprocServer32">
+            <RegistryValue Type="string" Value="mscoree.dll" />
+            <RegistryValue Name="ThreadingModel" Type="string" Value="Both" />
+            <RegistryValue Name="Class" Type="string" Value="OpenSketch.Sw.Launcher" />
+            <RegistryValue Name="Assembly" Type="string" Value="!(bind.assemblyFullName.AddinDll)" />
+            <RegistryValue Name="RuntimeVersion" Type="string" Value="v4.0.30319" />
+            <RegistryValue Name="CodeBase" Type="string" Value="file:///[#AddinDll]" />
+          </RegistryKey>
+          <RegistryKey Key="ProgId"><RegistryValue Type="string" Value="OpenSketch.Sw.Launcher" /></RegistryKey>
+          <RegistryKey Key="Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}" ForceCreateOnInstall="yes" />
+        </RegistryKey>
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\OpenSketch.Sw.Launcher">
+          <RegistryValue Type="string" Value="OpenSketch.Sw.Launcher" />
+          <RegistryKey Key="CLSID"><RegistryValue Type="string" Value="{ed25919a-7e4a-4a08-a2db-4c69ae22b1ea}" /></RegistryKey>
+        </RegistryKey>
+      </Component>
+      <!-- SOLIDWORKS: listed in Tools > Add-Ins for every version, loaded at start-up (each user's AddInsStartup flag is
+           set once by the companion; the person's own choice in Tools > Add-Ins wins after that) -->
+      <Component Id="SolidWorksAddin" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\SolidWorks\Addins\{275256ff-b73a-4e4f-9ea8-842b6626d471}">
+          <RegistryValue Type="integer" Value="1" KeyPath="yes" />
+          <RegistryValue Name="Title" Type="string" Value="CADOS" />
+          <RegistryValue Name="Description" Type="string" Value="CADOS by KEVOS: your AI assistant (Claude, ChatGPT...) builds parts, assemblies and drawings in SOLIDWORKS" />
+        </RegistryKey>
+      </Component>
+      <Component Id="InstallRecord" Bitness="always64">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\KEVOS\Bridge">
+          <RegistryValue Name="InstallDir" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+          <RegistryValue Name="Version" Type="string" Value="$(var.Version)" />
+        </RegistryKey>
+      </Component>
+      <Component Id="GatewayUrl" Bitness="always64" Condition="GATEWAY_URL">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\KEVOS\Bridge" Name="GatewayUrl" Type="string" Value="[GATEWAY_URL]" KeyPath="yes" />
+      </Component>
+      <Component Id="AutoStart" Bitness="always64">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Run" Name="KEVOS Companion" Type="string"
+                       Value="&quot;[#CompanionExe]&quot; --background" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <Component Id="MenuShortcuts" Directory="KevosMenu" Bitness="always64">
+      <Shortcut Id="StartCompanion" Name="KEVOS Companion" Target="[#CompanionExe]" WorkingDirectory="INSTALLFOLDER" Description="Status, pairing, pause" />
+      <Shortcut Id="PairComputer" Name="Pair this computer with CADOS" Target="[#CompanionExe]" Arguments="--pair" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="Diagnostics" Name="CADOS diagnostics" Target="[#CompanionExe]" Arguments="--diagnose" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="Unpair" Name="Remove this computer from CADOS" Target="[#CompanionExe]" Arguments="--unpair" WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="RemoveKevosMenu" On="uninstall" />
+      <RegistryValue Root="HKLM" Key="SOFTWARE\KEVOS\Bridge" Name="StartMenu" Type="integer" Value="1" KeyPath="yes" />
+    </Component>
+
+    <!-- after an interactive install: start the companion for the person installing (it opens the pairing window when this
+         computer is not registered yet). Silent installs (Intune, SCCM: UILevel 2) leave it to the next sign-in. -->
+    <CustomAction Id="StartCompanionNow" FileRef="CompanionExe" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
+    <InstallExecuteSequence>
+      <Custom Action="StartCompanionNow" After="InstallFinalize" Condition="NOT REMOVE AND UILevel &gt; 2" />
+    </InstallExecuteSequence>
+
+    <ui:WixUI Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.Source)/License.rtf" />
+  </Package>
+</Wix>

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opensketch"
+version = "0.8.0"
+description = "Connects AI apps (Claude, ChatGPT) to SOLIDWORKS on your PC, with a build123d kernel that checks every feature"
+readme = "README.md"
+license = "AGPL-3.0-only"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+keywords = ["solidworks", "cad", "mcp", "ai", "build123d"]
+# Ranges here. The exact versions CI tests and the server image runs are pinned with hashes in requirements.txt
+# (and requirements-dev.txt for tests). To move one, in a pull request so CI runs the whole suite on it:
+#   uv pip compile pyproject.toml --extra ai --universal --python-version 3.12 --generate-hashes -o requirements.txt --upgrade-package <name>
+#   uv pip compile pyproject.toml --extra ai --extra dev --universal --python-version 3.12 --generate-hashes -c requirements.txt -o requirements-dev.txt
+dependencies = ["build123d>=0.9", "fastapi>=0.110", "uvicorn>=0.29", "pydantic>=2", "numpy>=1.24", "bd_warehouse>=0.4", "mcp>=2.2,<3", "httpx>=0.27", "cryptography>=42"]
+
+[project.optional-dependencies]
+ai = ["anthropic>=1.0"]
+dev = ["pytest>=8", "httpx>=0.27", "pytest-timeout>=2.3"]
+
+[project.urls]
+Repository = "https://github.com/jogkev-creator/CADOS"
+Issues = "https://github.com/jogkev-creator/CADOS/issues"
+
+[project.scripts]
+opensketch = "opensketch.__main__:main"
+
+[tool.setuptools]
+packages = ["opensketch", "opensketch.features"]
+
+[tool.setuptools.package-data]
+opensketch = ["static/*.svg", "static/*.ico", "static/fonts/*", "static/ui/*", "solver/*.js", "solver/*.mjs"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: end-to-end tests with real worker processes and servers (their own CI job; skip with -m 'not slow')"]

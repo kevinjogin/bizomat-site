@@ -1,0 +1,111 @@
+{
+ "name": "shell_open_top",
+ "description": "Block 40x30x20 shelled 2 mm inward with the +Z face removed.",
+ "derivation": "Outer box minus the 36x26x18 cavity from z 2 to 20.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 40,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 40,
+     "y": 30
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 0,
+     "y": 30
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 20
+  },
+  {
+   "id": "sh",
+   "type": "shell",
+   "thickness": 2,
+   "faces": [
+    {
+     "center": [
+      20,
+      15,
+      20
+     ],
+     "normal": [
+      0,
+      0,
+      1
+     ]
+    }
+   ]
+  }
+ ],
+ "expect": {
+  "volume_mm3": 7152,
+  "center_of_mass": [
+   20.0,
+   15.0,
+   7.644295
+  ],
+  "bbox": {
+   "min": [
+    0,
+    0,
+    0
+   ],
+   "max": [
+    40,
+    30,
+    20
+   ]
+  }
+ }
+}

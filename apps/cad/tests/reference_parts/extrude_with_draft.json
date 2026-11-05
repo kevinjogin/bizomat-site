@@ -1,0 +1,93 @@
+{
+ "name": "extrude_with_draft",
+ "description": "Square 20 x 20 extruded 20 with 5 deg inward draft (a square frustum).",
+ "derivation": "Top side = 20 - 2*20*tan 5 deg; frustum V = h/3 (A1 + A2 + sqrt(A1 A2)); centroid z = h (A1 + 2 sqrt(A1 A2) + 3 A2) / (4 (A1 + sqrt(A1 A2) + A2)).",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": -10,
+     "y": -10
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 10,
+     "y": -10
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 10,
+     "y": 10
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": -10,
+     "y": 10
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 20,
+   "draft": 5
+  }
+ ],
+ "expect": {
+  "volume_mm3": 6681.82689,
+  "center_of_mass": [
+   0.0,
+   0.0,
+   9.362774
+  ],
+  "bbox": {
+   "min": [
+    -10,
+    -10,
+    0
+   ],
+   "max": [
+    10,
+    10,
+    20
+   ]
+  }
+ }
+}

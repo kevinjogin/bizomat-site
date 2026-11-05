@@ -1,0 +1,112 @@
+{
+ "name": "revolved_tube",
+ "description": "Rectangle r 5..15, height 30, revolved 360 deg about a centerline on Y.",
+ "derivation": "V = pi (15^2 - 5^2) 30; centre on the axis at mid height.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1p0",
+     "type": "point",
+     "x": 5,
+     "y": 0
+    },
+    {
+     "id": "s1p1",
+     "type": "point",
+     "x": 15,
+     "y": 0
+    },
+    {
+     "id": "s1p2",
+     "type": "point",
+     "x": 15,
+     "y": 30
+    },
+    {
+     "id": "s1p3",
+     "type": "point",
+     "x": 5,
+     "y": 30
+    },
+    {
+     "id": "s1l0",
+     "type": "line",
+     "p1": "s1p0",
+     "p2": "s1p1"
+    },
+    {
+     "id": "s1l1",
+     "type": "line",
+     "p1": "s1p1",
+     "p2": "s1p2"
+    },
+    {
+     "id": "s1l2",
+     "type": "line",
+     "p1": "s1p2",
+     "p2": "s1p3"
+    },
+    {
+     "id": "s1l3",
+     "type": "line",
+     "p1": "s1p3",
+     "p2": "s1p0"
+    },
+    {
+     "id": "s1o",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1t",
+     "type": "point",
+     "x": 0,
+     "y": 30
+    },
+    {
+     "id": "s1ax",
+     "type": "line",
+     "p1": "s1o",
+     "p2": "s1t",
+     "construction": true
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "r1",
+   "type": "revolve",
+   "sketch": "s1",
+   "axis": "s1ax",
+   "angle": 360
+  }
+ ],
+ "expect": {
+  "volume_mm3": 18849.555922,
+  "center_of_mass": [
+   0.0,
+   15.0,
+   0.0
+  ],
+  "bbox": {
+   "min": [
+    -15,
+    0,
+    -15
+   ],
+   "max": [
+    15,
+    30,
+    15
+   ]
+  }
+ }
+}

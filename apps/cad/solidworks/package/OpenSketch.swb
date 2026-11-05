@@ -1,0 +1,13 @@
+' OpenSketch for SOLIDWORKS: starts the link to Claude inside SOLIDWORKS.
+' Tools > Macro > Run this file, or give it a button (Tools > Customize > Commands > Macro).
+' It needs OpenSketchSW.exe > Install for me once (no admin rights).
+Dim gOpenSketch As Object
+
+Sub main()
+    On Error GoTo failed
+    Set gOpenSketch = CreateObject("OpenSketch.Sw.Launcher")
+    gOpenSketch.Start Application.SldWorks
+    Exit Sub
+failed:
+    MsgBox "OpenSketch is not installed for this Windows user. Run OpenSketchSW.exe and click Install for me." & vbCrLf & Err.Description, vbExclamation, "OpenSketch"
+End Sub
