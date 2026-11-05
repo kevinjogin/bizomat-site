@@ -24,6 +24,10 @@ One Worker serves both the API and the built SPA (`run_worker_first: true`) so e
 | `test/` | Vitest suites executed inside workerd (`@cloudflare/vitest-plugin`) |
 | `e2e/` | Playwright specs |
 
+## Brand and naming
+
+The product is **BIZOMAT Project Management** (short: Project Management), one of the products of the BIZOMAT platform; it was KEVOS WorkOS until 5 November 2026. The brand comes from `shared/brand/` at the repository root: `node shared/brand/build.mjs` generates the logo geometry module (`src/client/lib/bizomat-brand.ts`), the design tokens with the Oxanium and Inter Tight `@font-face` rules (`src/client/styles/bizomat-tokens.css`), the fonts, favicon, touch icon and social image in `public/`; these copies are never edited by hand. `src/client/styles/app.css` imports the tokens first and sets every app variable (surfaces, text, accent, focus, status colours, radii) from the `--bz-*` tokens, so light and dark follow the platform while the app keeps its own layout, density and components. `src/client/lib/brand.ts` holds the names, colours and every platform address (bizomat.ai, its Privacy, Terms and Disclaimer pages, CAD Automation); `src/shared/brand.ts` holds what the Worker also needs (the product name and BIZOMAT teal, the colour of new workspaces and folders). People only see the new name; identifiers stay as they were so live data keeps working: Cloudflare resources `workos-platform-*`, the session cookie `workos_sid`, the OAuth state cookie, the `X-WorkOS-*` webhook headers and the internal `X-WorkOS-User` header, the `workos-export-v1` export format, `workos:*` browser storage keys and drag-and-drop MIME types, and the migration history (including `0002_kevos_brand.sql`). Existing workspaces keep the colour their owners chose; no migration rewrites it.
+
 ## Key design decisions (ADRs)
 
 1. **Single Worker + Static Assets** instead of Pages + separate API: one deployable unit per environment, same-origin API (no CORS surface), atomic versions for preview aliases and rollback.
