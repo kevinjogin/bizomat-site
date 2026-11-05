@@ -14,7 +14,7 @@ const home = read('src/pages/index.astro');
 // Explore AI Tools, then the three products, AI Search, proof, tools and the Library.
 test('the homepage leads with the BIZOMAT message, then products, AI search, proof, tools and resources', () => {
   assert.match(home, /<p class="bz-eyebrow">Intelligent Business Automation Platform<\/p>/);
-  assert.match(home, /<h1 id="home-title">Automate work\. Connect systems\. Get business done\.<\/h1>/);
+  assert.match(home, /<h1 id="home-title"><span class="home-hero__line">Automate work\.<\/span> <span class="home-hero__line">Connect systems\.<\/span> <span class="home-hero__line">Get business done\.<\/span><\/h1>/);
   assert.match(home, />Explore Products<\/Button>/);
   assert.match(home, />Explore AI Tools<\/Button>/);
   assert.match(home, /<ConnectedOps id="hero-ops" \/>/, 'the hero shows connected operations');

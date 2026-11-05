@@ -23,6 +23,49 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Fallback faces: the visitor's own Arial (or its metric twin Liberation Sans), scaled to the width and vertical
+   metrics of each brand face, so text keeps its line breaks and position when the web fonts arrive (no layout
+   shift). size-adjust is the brand face's width over Arial's for the same English text, measured in Chromium on
+   5 Nov 2026 (Inter Tight 400 / Arial 400 = 95.93 %, Inter Tight 600 / Arial Bold = 93.80 %, Oxanium 400 / Arial
+   400 = 102.80 %, Oxanium 650 / Arial Bold = 98.18 %). The overrides are each face's own metrics divided by its
+   size-adjust (Inter Tight: ascent 1984, descent 494, gap 0 of 2048; Oxanium: 790, 210, 250 of 1000). */
+@font-face {
+  font-family: 'Inter Tight Fallback';
+  font-weight: 100 549;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  size-adjust: 95.93%;
+  ascent-override: 100.98%;
+  descent-override: 25.14%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Tight Fallback';
+  font-weight: 550 900;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold');
+  size-adjust: 93.8%;
+  ascent-override: 103.28%;
+  descent-override: 25.72%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Oxanium Fallback';
+  font-weight: 100 549;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  size-adjust: 102.8%;
+  ascent-override: 76.85%;
+  descent-override: 20.43%;
+  line-gap-override: 24.32%;
+}
+@font-face {
+  font-family: 'Oxanium Fallback';
+  font-weight: 550 900;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold');
+  size-adjust: 98.18%;
+  ascent-override: 80.46%;
+  descent-override: 21.39%;
+  line-gap-override: 25.46%;
+}
+
 :root {
   /* Brand */
   --bz-navy: #0a1f33;          /* wordmark, inverse panels */
@@ -60,8 +103,8 @@
   --bz-info-soft: #eff8ff;
 
   /* Type */
-  --bz-font-display: 'Oxanium', 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
-  --bz-font-sans: 'Inter Tight Variable', 'Inter Tight', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bz-font-display: 'Oxanium', 'Oxanium Fallback', 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --bz-font-sans: 'Inter Tight Variable', 'Inter Tight', 'Inter Tight Fallback', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --bz-font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, monospace;
   --bz-heading-weight: 650;
   --bz-heading-tracking: -0.012em;

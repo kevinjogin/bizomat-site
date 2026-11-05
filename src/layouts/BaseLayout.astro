@@ -28,6 +28,7 @@ const props = Astro.props;
       // and only for the current browser session (sessionStorage), never permanently. The OS preference is not followed.
       (function () {
         var d = document.documentElement, t = 'light';
+        d.classList.add('js'); // scripts run: the header starts in its phone layout (Header.astro)
         try { if (sessionStorage.getItem('bizomat-theme') === 'dark') t = 'dark'; sessionStorage.removeItem('kevos-theme'); } catch (e) {}
         try { localStorage.removeItem('kevos-theme'); localStorage.removeItem('bizomat-theme'); } catch (e) {}
         d.dataset.theme = t;

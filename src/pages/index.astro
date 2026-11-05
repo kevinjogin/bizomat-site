@@ -77,7 +77,7 @@ const schema = [{
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
         <p class="bz-eyebrow">Intelligent Business Automation Platform</p>
-        <h1 id="home-title">Automate work. Connect systems. Get business done.</h1>
+        <h1 id="home-title"><span class="home-hero__line">Automate work.</span> <span class="home-hero__line">Connect systems.</span> <span class="home-hero__line">Get business done.</span></h1>
         <p class="home-hero__lead">BIZOMAT connects engineering automation, project management, practical tools and intelligent search in one platform, so your team spends its time on decisions, not on repetition.</p>
         <div class="home-hero__actions">
           <Button href="#products" variant="accent" data-cta="home-explore-products">Explore Products</Button>
@@ -240,7 +240,12 @@ const schema = [{
   /* Hero: the message on the left, the connected-operations scene on the right. */
   .home-hero { padding: clamp(3rem, 7vw, 6rem) 0 clamp(2.5rem, 5vw, 4.5rem); background: radial-gradient(80% 60% at 85% 20%, var(--accent-soft), transparent 70%); }
   :global(.home-hero__inner) { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-  .home-hero h1 { max-width: 15ch; font-size: var(--step-5); line-height: 1.04; }
+  /* The statement is three sentences on three lines at every width. The size follows the copy column (11 % of
+     it: the longest line, "Get business done.", is 8.65 em in Oxanium and 8.78 em in its fallback face), so the
+     lines never wrap differently before and after the web font arrives. */
+  .home-hero__copy { container-type: inline-size; }
+  .home-hero h1 { font-size: var(--step-5); font-size: min(var(--step-5), 11cqi); line-height: 1.04; }
+  .home-hero__line { display: block; }
   .home-hero__lead { margin: 1.2rem 0 0; max-width: 46ch; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
   .home-hero__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.9rem; }
   .home-hero__facts { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1.6rem 0 0; padding: 0; list-style: none; color: var(--muted); font-size: .92rem; }

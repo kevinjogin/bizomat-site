@@ -6,6 +6,42 @@
    Type: Oxanium for H1 to H4 (it matches the chamfered BIZOMAT wordmark), Inter Tight for body text, labels and
    buttons, Source Serif 4 for long-form Library reading (.prose). */
 
+/* Fallback for Library prose: the visitor's Times New Roman (or its metric twin Liberation Serif) scaled to Source Serif
+   4, so a chapter keeps its line breaks when the web font arrives (no layout shift). Width ratios measured in Chromium
+   on 5 Nov 2026 (Source Serif 4 400 / Times 400 = 116.34 %, 600 / Times Bold = 111.70 %, italic / Times Italic =
+   108.27 %); overrides are Source Serif 4's ascent 1036 and descent 335 (of 1000) divided by each size-adjust. The
+   sans and display fallbacks are in the shared tokens. */
+@font-face {
+  font-family: 'Source Serif Fallback';
+  font-style: normal;
+  font-weight: 100 549;
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('LiberationSerif');
+  size-adjust: 116.34%;
+  ascent-override: 89.05%;
+  descent-override: 28.79%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Serif Fallback';
+  font-style: normal;
+  font-weight: 550 900;
+  src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'), local('Liberation Serif Bold'), local('LiberationSerif-Bold');
+  size-adjust: 111.7%;
+  ascent-override: 92.75%;
+  descent-override: 29.99%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Serif Fallback';
+  font-style: italic;
+  font-weight: 100 900;
+  src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'), local('Liberation Serif Italic'), local('LiberationSerif-Italic');
+  size-adjust: 108.27%;
+  ascent-override: 95.69%;
+  descent-override: 30.94%;
+  line-gap-override: 0%;
+}
+
 /* ---------- Tokens ---------- */
 :root {
   --paper: var(--bz-paper);
@@ -34,9 +70,9 @@
   --danger: var(--bz-danger);
   --success: var(--bz-success);
 
-  --font-sans: 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter Tight Variable', 'Inter Tight', 'Inter Tight Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --font-display: var(--bz-font-display);
-  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
   --font-mono: var(--bz-font-mono);
 
   /* Type scale: labels (--step--1), body (0), subheadings (1), section headings (2–3), page titles (4), hero (5). */

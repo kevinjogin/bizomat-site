@@ -199,40 +199,42 @@ const inSection = (item: (typeof NAV)[number]) =>
   .is-open .site-header__toggle .i-open { display: none; }
   .is-open .site-header__toggle .i-close { display: inline; }
 
-  /* Tablet and phone: the links move into a panel under the header, opened by the menu button. */
+  /* Tablet and phone: the links move into a panel under the header, opened by the menu button. The `js` class is set on
+     <html> by the inline script in BaseLayout's head, before the first paint, so the header never renders expanded and
+     then collapses when this component's script runs (that was a layout shift of the whole page on slow phones). */
   @media (max-width: 1000px) {
-    .site-header.has-js .site-header__toggle:not([hidden]) { display: inline-grid; }
-    .site-header.has-js .site-nav {
+    :global(.js) .site-header .site-header__toggle { display: inline-grid; }
+    :global(.js) .site-header .site-nav {
       display: none; position: absolute; left: 0; right: 0; top: 100%; margin: 0;
       max-height: calc(100dvh - var(--header-h)); overflow-y: auto; overscroll-behavior: contain;
       padding: .75rem var(--gutter) 1.5rem; background: var(--paper); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-menu);
     }
-    .site-header.has-js.is-open .site-nav { display: block; }
-    .site-header.has-js .site-nav__list { flex-direction: column; align-items: stretch; gap: 0; }
-    .site-header.has-js .site-nav__item { border-bottom: 1px solid var(--line); }
-    .site-header.has-js .site-nav__link { display: flex; justify-content: space-between; width: 100%; min-height: 52px; padding: 0 .25rem; font-size: 1.02rem; border-radius: 0; background: none; }
-    .site-header.has-js .site-nav__link.is-current::after { display: none; }
-    .site-header.has-js .site-nav__link.is-current { color: var(--accent); }
-    .site-header.has-js .nav-menu__panel { position: static; width: auto; padding: 0 0 .6rem; border: 0; border-radius: 0; box-shadow: none; background: none; }
-    .site-header.has-js .nav-menu__link { padding: .6rem .25rem; }
-    .site-header.has-js .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
-    .site-header.has-js .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
+    :global(.js) .site-header.is-open .site-nav { display: block; }
+    :global(.js) .site-header .site-nav__list { flex-direction: column; align-items: stretch; gap: 0; }
+    :global(.js) .site-header .site-nav__item { border-bottom: 1px solid var(--line); }
+    :global(.js) .site-header .site-nav__link { display: flex; justify-content: space-between; width: 100%; min-height: 52px; padding: 0 .25rem; font-size: 1.02rem; border-radius: 0; background: none; }
+    :global(.js) .site-header .site-nav__link.is-current::after { display: none; }
+    :global(.js) .site-header .site-nav__link.is-current { color: var(--accent); }
+    :global(.js) .site-header .nav-menu__panel { position: static; width: auto; padding: 0 0 .6rem; border: 0; border-radius: 0; box-shadow: none; background: none; }
+    :global(.js) .site-header .nav-menu__link { padding: .6rem .25rem; }
+    :global(.js) .site-header .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
+    :global(.js) .site-header .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
   }
   @media (max-width: 1180px) and (min-width: 1001px) {
     .site-header__search span { display: none; }
   }
   @media (max-width: 1000px) {
-    .site-header.has-js .site-header__search { display: none; }
+    :global(.js) .site-header .site-header__search { display: none; }
   }
   @media (max-width: 560px) {
-    .site-header.has-js .signin-menu { display: none; }
+    :global(.js) .site-header .signin-menu { display: none; }
   }
   /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
   @media (max-width: 1000px) {
-    .site-header:not(.has-js) :global(.site-header__inner) { flex-wrap: wrap; padding-block: .5rem; }
-    .site-header:not(.has-js) .site-nav { order: 3; flex: 1 0 100%; margin: 0; }
-    .site-header:not(.has-js) .site-nav__list { flex-wrap: wrap; }
-    .site-header:not(.has-js) .site-nav__link { padding: 0 .5rem; font-size: .9rem; }
+    :global(html:not(.js)) .site-header :global(.site-header__inner) { flex-wrap: wrap; padding-block: .5rem; }
+    :global(html:not(.js)) .site-header .site-nav { order: 3; flex: 1 0 100%; margin: 0; }
+    :global(html:not(.js)) .site-header .site-nav__list { flex-wrap: wrap; }
+    :global(html:not(.js)) .site-header .site-nav__link { padding: 0 .5rem; font-size: .9rem; }
   }
   @media (prefers-reduced-motion: reduce) { .nav-menu__chevron { transition: none; } }
 </style>
