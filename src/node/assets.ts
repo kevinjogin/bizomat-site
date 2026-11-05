@@ -147,7 +147,9 @@ export function createAssets({ dir, cacheBytes = 64 * 2 ** 20 }: AssetsOptions) 
       headers.set('Content-Encoding', encoding);
       headers.set('Vary', 'Accept-Encoding');
       headers.set('Content-Length', String(body.length));
-      return new Response(head ? null : body, { status, headers });
+      // A Buffer is a Uint8Array over an ArrayBuffer: this view satisfies the DOM BodyInit typing without a copy.
+      const bytes = new Uint8Array(body.buffer as ArrayBuffer, body.byteOffset, body.byteLength);
+      return new Response(head ? null : bytes, { status, headers });
     }
     headers.set('Accept-Ranges', 'bytes');
     const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get('Range') ?? '');
