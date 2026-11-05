@@ -457,7 +457,11 @@ def _setup_page(nxt, error="", form=None):
          _new_password_field()]
     if password():
         f.append(_field("server_password", "Server password", "password", "off",
-                        note="The password set on the server when CADOS was installed. It proves you run this server."))
+                        note="The password set on the server when CADOS was installed. It proves you run this server. "
+                             "Needed only this once."))
+    on = form.get("open_signup", "on" if not form else "") == "on"
+    f.append('<label class="check"><input type="checkbox" name="open_signup" value="on"' + (" checked" if on else "")
+             + '> Anyone can create their own account. You can change this on the Admin page.</label>')
     return _page("Set up CADOS", "Create the administrator account. This page shows only once: after this, everyone signs in with their email and password.", "/setup", f,
                  "Create account", nxt, error, SHOW_SCRIPT)
 
@@ -640,8 +644,20 @@ def _same_origin(scope) -> bool:
     return origin != "null"
 
 
+def _loose(v: str) -> str:
+    """A pasted or typed server password: no spaces around it, and no one pair of quotes around it (a secret set from
+    Windows cmd with 'single quotes' keeps them)."""
+    v = (v or "").strip()
+    if len(v) >= 2 and v[0] == v[-1] and v[0] in "'\"":
+        v = v[1:-1].strip()
+    return v
+
+
 def _server_password_ok(given: str) -> bool:
-    return bool(password()) and hmac.compare_digest((given or "").encode(), password().encode())
+    if not password():
+        return False
+    return (hmac.compare_digest((given or "").encode(), password().encode())
+            or (bool(_loose(given)) and hmac.compare_digest(_loose(given).encode(), _loose(password()).encode())))
 
 
 class PasswordGate:
@@ -774,12 +790,15 @@ class PasswordGate:
             if password() and not _server_password_ok(form.get("server_password", "")):
                 _failed(ip)
                 await asyncio.sleep(1)
-                return await _send(send, 401, _setup_page(nxt, "The server password is wrong.", form), HTML)
+                return await _send(send, 401, _setup_page(nxt, "The server password is wrong. If you lost it, set a new one on the "
+                                                                "server, then try again.", form), HTML)
             try:
                 u = await asyncio.to_thread(accounts.create_owner, form.get("email", ""), form.get("name", ""), form.get("new_password", ""),
                                             by=_password_by(form))
             except accounts.AccountError as e:
                 return await _send(send, 400, _setup_page(nxt, str(e), form), HTML)
+            if form.get("open_signup") == "on":
+                await asyncio.to_thread(accounts.set_open_signup, True)
             return await go(nxt, await _new_account_cookie(scope, u, form), _clear(COOKIE))
 
         if path == "/reset":

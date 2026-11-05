@@ -206,3 +206,32 @@ def test_a_new_account_gets_a_suggested_password_or_its_own_and_the_owner_sees_w
     sam.post(f"/join/{token}", data={"name": "Sam", "email": "sam@example.com", "new_password": "sams-own-pass", "suggested": offered})
     assert sam.get("/api/account/new-password").json()["password"] is None
     assert {p["email"]: p for p in owner.get("/api/admin/people").json()["people"]}["sam@example.com"]["password_by"] == "self"
+
+
+def test_setup_forgives_spaces_and_quotes_and_can_open_sign_up_for_everyone(monkeypatch):
+    """The server password is needed once, for the owner. Spaces or one pair of quotes around it (copied, or set from
+    Windows cmd with 'quotes') do not fail it. The owner can let anyone create their own account right there."""
+    from opensketch import accounts
+    monkeypatch.setenv("OPENSKETCH_PASSWORD", "'Server-Secret-1'")
+    c = TestClient(server.app)
+    page = c.get("/setup").text
+    assert 'name="open_signup" value="on" checked' in page and "Needed only this once." in page
+    bad = c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1",
+                                 "server_password": "wrong", "open_signup": "on"})
+    assert bad.status_code == 401 and "If you lost it, set a new one" in bad.text and 'value="on" checked' in bad.text
+    ok = c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1",
+                                "server_password": "  Server-Secret-1 \n", "open_signup": "on"}, follow_redirects=False)
+    assert ok.status_code == 303 and accounts.settings()["open_signup"] is True
+    anyone = TestClient(server.app)
+    assert 'href="/signup"' in anyone.get("/login").text
+    r = anyone.post("/signup", data={"name": "Ann", "email": "ann@example.com", "new_password": "anns-pass-1"},
+                    follow_redirects=False)
+    assert r.status_code == 303 and anyone.get("/dashboard").status_code == 200
+
+
+def test_setup_can_stay_invite_only(monkeypatch):
+    from opensketch import accounts
+    monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret")
+    c = TestClient(server.app)
+    c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1", "server_password": "server-secret"})
+    assert accounts.any_users() and accounts.settings()["open_signup"] is False
