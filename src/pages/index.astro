@@ -4,7 +4,7 @@
 // 2. Products: CAD Automation, Project Management and Resources (src/config/products.ts, facts from
 //    src/data/platform-catalog.ts).
 // 3. AI Search: the discovery pipeline (/api/discover, /discovery-index.json) over public products, docs, tools and books.
-// 4. Proof: counts read from the code and the catalogues at build time, and a link to /proof-of-work/.
+// 4. Proof: counts read from the code and the catalogues at build time, and a link to the Engine Room (/engine-room/).
 // 5. Tools and 6. Library, then a short close. Every count is computed here; none is typed in.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
@@ -136,14 +136,14 @@ const schema = [{
   <section class="home-section home-proof" aria-labelledby="proof-title">
     <Container>
       <div class="home-head">
-        <p class="bz-eyebrow">Proof of Work</p>
+        <p class="bz-eyebrow">From the Engine Room</p>
         <h2 id="proof-title">Working software, not slideware</h2>
         <p>Every number here is read from the products themselves when this site is built.</p>
       </div>
       <dl class="proof-stats">
         {proof.map((x) => <div class="bz-stat proof-stat"><dt><a href={x.href}>{x.t}</a></dt><dd>{x.n}</dd></div>)}
       </dl>
-      <p class="home-more"><a href="/proof-of-work/">See how it is built and how it works <span aria-hidden="true">→</span></a></p>
+      <p class="home-more"><a href="/engine-room/">Inside the Engine Room: how it is built and how it works <span aria-hidden="true">→</span></a></p>
     </Container>
   </section>
 
@@ -223,12 +223,12 @@ const schema = [{
     services: '/services/', 'engineering-cad': '/services/#engineering-cad', manufacturing: '/services/#manufacturing',
     operations: '/services/#operations', 'project-support': '/services/#project-support', pricing: '/services/#pricing',
     assessment: '/assessment/', 'factory-fix': '/factory-fix/', 'how-it-works': '/how-it-works/', industries: '/industries/',
-    work: '/proof-of-work/#engineering-record', resources: '/resources/', overview: '#ai-search', ask: '#ai-search',
-    workos: '/tools/', reados: '/reados/', connected: '/resources/#pathways', about: '/about/', solutions: '/solutions/',
+    work: '/engine-room/#engineering-record', resources: '/resources/', overview: '#ai-search', ask: '#ai-search',
+    workos: '/tools/', reados: '/reados/', connected: '/resources/#pathways', about: '/engine-room/', solutions: '/solutions/',
   };
   const forward = () => {
     const id = decodeURIComponent(location.hash.slice(1));
-    const to = id.startsWith('case-') ? `/proof-of-work/#${id}` : moved[id];
+    const to = id.startsWith('case-') ? `/engine-room/#${id}` : moved[id];
     if (to) location.replace(to);
   };
   forward();

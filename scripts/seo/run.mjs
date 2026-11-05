@@ -17,7 +17,7 @@ const ROOT = process.cwd();
 const DATA = path.join(ROOT, '.seo-data');
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'seo', 'config.json'), 'utf8'));
 const SITE = CONFIG.site;
-const KEY_PAGES = ['/', '/services/', '/factory-fix/', '/assessment/', '/contact/', '/tools/', '/tools/cutting-speed/', '/reados/', '/library/', '/about/'];
+const KEY_PAGES = ['/', '/services/', '/factory-fix/', '/assessment/', '/contact/', '/tools/', '/tools/cutting-speed/', '/reados/', '/library/', '/engine-room/'];
 const args = process.argv.slice(3);
 const flag = (name) => args.includes(`--${name}`);
 const opt = (name, fallback) => (args.includes(`--${name}`) ? args[args.indexOf(`--${name}`) + 1] : fallback);

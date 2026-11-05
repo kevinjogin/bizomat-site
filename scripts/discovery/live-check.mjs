@@ -23,7 +23,7 @@ for (;;) {
 check('the new homepage is live', home.status === 200 && home.text.includes('id="products"'));
 
 // 2. Pages and markup.
-for (const p of ['/', '/products/', '/solutions/', '/resources/', '/tools/', '/reados/', '/library/', '/about/', '/services/', '/contact/', '/privacy/', '/terms/', '/brand/kevos-favicon-k-orange.svg', '/discovery-index.json']) {
+for (const p of ['/', '/products/', '/solutions/', '/resources/', '/tools/', '/reados/', '/library/', '/engine-room/', '/services/', '/contact/', '/privacy/', '/terms/', '/brand/kevos-favicon-k-orange.svg', '/discovery-index.json']) {
   check(`${p} answers 200`, (await fetch(BASE + p)).status === 200);
 }
 const h = home.text;

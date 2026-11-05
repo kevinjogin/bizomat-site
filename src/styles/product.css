@@ -1,4 +1,4 @@
-/* BIZOMAT product and platform pages (/cad/, /work/, /proof-of-work/, /about/, /sign-in/): one layout vocabulary on
+/* BIZOMAT product and platform pages (/cad/, /work/, /engine-room/, /sign-in/): one layout vocabulary on
    the shared tokens, so the product pages read as one company. */
 
 .pp-hero { padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem); background: radial-gradient(70% 55% at 90% 15%, var(--accent-soft), transparent 70%); }

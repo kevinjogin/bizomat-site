@@ -25,8 +25,8 @@ test('the homepage leads with the BIZOMAT message, then products, AI search, pro
   assert.match(home, /<Button href="\/reados\/" arrow data-cta="home-library">Explore Library<\/Button>/);
   assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
   assert.equal(SITE.title, 'BIZOMAT | Intelligent Business Automation Platform');
-  assert.deepEqual(NAV.map((n) => n.label), ['CAD Automation', 'Project Management', 'Resources', 'Proof of Work', 'About']);
-  assert.deepEqual(NAV.map((n) => n.href), ['/cad/', '/work/', '/resources/', '/proof-of-work/', '/about/']);
+  assert.deepEqual(NAV.map((n) => n.label), ['CAD Automation', 'Project Management', 'Resources', 'Engine Room']);
+  assert.deepEqual(NAV.map((n) => n.href), ['/cad/', '/work/', '/resources/', '/engine-room/']);
 });
 
 test('products are described from the catalogue, and every product action leads to a real page', () => {

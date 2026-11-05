@@ -1,4 +1,4 @@
-// Real product screens for /proof-of-work/, /cad/ and /work/. Each was captured from the running application (a
+// Real product screens for the Engine Room (/engine-room/), /cad/ and /work/. Each was captured from the running application (a
 // local instance with example data, never a customer's), in Chromium at 1440 x 900. A screen whose file is not in
 // public/ is skipped at build time, so a page never links a missing image.
 import { existsSync } from 'node:fs';

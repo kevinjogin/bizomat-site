@@ -7,13 +7,14 @@ import { AI_SEARCH, CRUMB, FOOTER_NAV, NAV, QUOTE_CTA, SIGN_IN } from '../src/co
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : /\.(astro|ts|md|mdx)$/.test(f) ? [p] : []; });
 
-// BIZOMAT navigation (5 Nov 2026): CAD Automation | Project Management | Resources | Proof of Work | About, with AI Search
-// and a Sign in menu (one entry per application) on the right.
-test('the main navigation reads CAD Automation, Project Management, Resources, Proof of Work, About', () => {
-  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Proof of Work', '/proof-of-work/'], ['About', '/about/']]);
+// BIZOMAT navigation (5 Nov 2026): CAD Automation | Project Management | Resources | Engine Room, with AI Search and a
+// Sign in menu (one entry per application) on the right. The Engine Room joins what were About and Proof of Work
+// (owner request, 5 Nov 2026).
+test('the main navigation reads CAD Automation, Project Management, Resources, Engine Room', () => {
+  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
-  assert.deepEqual(menu('About'), [['About BIZOMAT', '/about/'], ['Products', '/products/'], ['Contact', '/contact/']]);
+  assert.deepEqual(menu('Engine Room'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests'], ['Products', '/products/'], ['Contact', '/contact/']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
   assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation']);
   for (const s of SIGN_IN) assert.match(s.href, /^https:\/\/[a-z0-9.-]+\/login$/, `${s.label} signs in on its own application`);
@@ -26,12 +27,12 @@ test('the main navigation reads CAD Automation, Project Management, Resources, P
   assert.match(header, /<details class="nav-menu signin-menu" data-nav-menu>/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
-  for (const page of ['cad.astro', 'work.astro', 'proof-of-work.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'about.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  for (const page of ['cad.astro', 'work.astro', 'engine-room.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
 });
 
 test('the footer covers products, resources, company and the applications, with the legal pages on every page', () => {
   const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.apps, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
-  for (const pair of [['CAD Automation', '/cad/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['About', '/about/'], ['Proof of Work', '/proof-of-work/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
+  for (const pair of [['CAD Automation', '/cad/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['The Engine Room', '/engine-room/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
   const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);
@@ -66,7 +67,7 @@ test('outside their own pages, the libraries are called Tools and Library (no st
   assert.doesNotMatch(markup, /WORKOS|READOS|REACHOS/, 'homepage markup uses the plain names');
   assert.ok(FOOTER_NAV.resources.some((n) => n.label === 'Library RSS feed' && n.href === '/rss.xml'));
   assert.match(read('src/pages/contact/index.astro'), /\{ label: 'Contact', href: '\/contact\/' \}/);
-  for (const f of ['src/components/discovery/DiscoveryResults.astro', 'src/components/knowledge/ApplyInPractice.astro', 'src/components/knowledge/LearnConcepts.astro', 'src/components/ContactForm.astro', 'src/pages/about.astro', 'src/pages/search.astro', 'src/pages/contact/sent.astro', 'src/pages/products.astro', 'src/pages/solutions.astro', 'src/pages/resources/index.astro', 'src/config/products.ts']) {
+  for (const f of ['src/components/discovery/DiscoveryResults.astro', 'src/components/knowledge/ApplyInPractice.astro', 'src/components/knowledge/LearnConcepts.astro', 'src/components/ContactForm.astro', 'src/pages/engine-room.astro', 'src/pages/search.astro', 'src/pages/contact/sent.astro', 'src/pages/products.astro', 'src/pages/solutions.astro', 'src/pages/resources/index.astro', 'src/config/products.ts']) {
     assert.doesNotMatch(read(f).replace(/\/\*[\s\S]*?\*\/|\/\/.*$|<!--[\s\S]*?-->/gm, ''), /WORKOS|READOS|REACHOS/, `${f} uses the plain names`);
   }
 });

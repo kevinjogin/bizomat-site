@@ -16,7 +16,7 @@ export const CONTACT_LIMITS = {
 /**
  * REACHOS enquiry categories (the `service` field). Each slug can be preselected with /contact/?service=<slug>.
  * Engineering and technical projects keep the service values in SERVICE_OPTIONS (src/data/services.ts), so existing
- * ?service= links from the services, Factory Fix and proof-of-work pages still preselect.
+ * ?service= links from the services, Factory Fix and Engine Room (case-study) pages still preselect.
  */
 export const ENQUIRY_CATEGORIES = [
   { value: 'General enquiry', slug: 'general' },

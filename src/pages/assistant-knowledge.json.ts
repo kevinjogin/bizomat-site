@@ -58,7 +58,7 @@ export async function GET() {
   chunks.push({
     id: 'core-facts',
     title: 'About BIZOMAT (core facts)',
-    url: '/about/',
+    url: '/engine-room/',
     text: [
       `${SITE.name} (${SITE.url.replace('https://', '')}). ${SITE.tagline}. ${SITE.statement}`,
       `Services: ${SERVICE_GROUPS.map((g) => g.title).join(', ')}, plus the ${ASSESSMENT.name} (${ASSESSMENT.priceLabel} fixed, ${ASSESSMENT.path}) and the ${FACTORY_FIX.name} (${FACTORY_FIX.price}).`,
@@ -145,14 +145,14 @@ export async function GET() {
   });
   chunks.push({
     id: 'svc-about',
-    title: 'About BIZOMAT and its background',
-    url: '/about/',
+    title: 'About BIZOMAT and its background (the Engine Room)',
+    url: '/engine-room/#founder',
     text: `BIZOMAT is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} BIZOMAT is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
   });
   chunks.push({
     id: 'principles',
     title: 'BIZOMAT principles',
-    url: '/about/#principles',
+    url: '/engine-room/#principles',
     text: PRINCIPLES.map((p) => `${p.title}: ${p.text}`).join(' '),
   });
   chunks.push({
@@ -164,15 +164,15 @@ export async function GET() {
 
   chunks.push({
     id: 'proof-of-work',
-    title: 'BIZOMAT proof of work',
-    url: '/proof-of-work/#engineering-record',
-    text: `The BIZOMAT Proof of Work page lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind BIZOMAT. They were delivered by its founder in employed, contract and consulting roles, not as BIZOMAT engagements for those organisations, and organisation names do not imply endorsement. Sectors: capital projects, window and door hardware, heavy industry and mining, machines and automation, plant and facilities, civil and structural, defence and transport, and product development. The Alchin Long Group projects (window and door hardware product development, May 2018 to October 2024, and capital projects as Operations Excellence Engineer from November 2024) are the founder's employment experience, not BIZOMAT client work. Some projects ended at concept or design stage, and some product-development schedules end at customer approval; both are labelled that way. Each case study can be opened directly at /proof-of-work/#case-<id>.`,
+    title: 'BIZOMAT proof of work (the Engine Room)',
+    url: '/engine-room/#engineering-record',
+    text: `The BIZOMAT Engine Room page (/engine-room/, which replaced the About and Proof of Work pages) lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind BIZOMAT. They were delivered by its founder in employed, contract and consulting roles, not as BIZOMAT engagements for those organisations, and organisation names do not imply endorsement. Sectors: capital projects, window and door hardware, heavy industry and mining, machines and automation, plant and facilities, civil and structural, defence and transport, and product development. The Alchin Long Group projects (window and door hardware product development, May 2018 to October 2024, and capital projects as Operations Excellence Engineer from November 2024) are the founder's employment experience, not BIZOMAT client work. Some projects ended at concept or design stage, and some product-development schedules end at customer approval; both are labelled that way. Each case study can be opened directly at /engine-room/#case-<id>.`,
   });
   for (const p of PROJECTS) {
     chunks.push({
       id: `project-${p.id}`,
       title: `Proof of work: ${p.title}`,
-      url: `/proof-of-work/#case-${p.id}`,
+      url: `/engine-room/#case-${p.id}`,
       text: `${p.title}: ${p.headline} (${p.years}; ${p.client}${p.customer ? `, for ${p.customer}` : ''}, ${p.about} ${p.industry}${p.location ? `, ${p.location}` : ''}). ${p.employment ?? ''} Role: ${p.role}. Status: ${p.statusLabel}. ${p.brief} Approach: ${p.approach.map((a) => `${a.title}: ${a.text}`).join(' ')}${p.path ? ` Development path: ${p.path.map((s) => `${s.stage} (${s.period}): ${s.detail}`).join('; ')}.` : ''} Outcome: ${p.outcome} ${p.note ?? ''}`,
     });
   }

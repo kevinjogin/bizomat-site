@@ -166,7 +166,7 @@ def footer() -> str:
 <div><h4>Resources</h4><ul><li><a href="/docs">Documentation</a></li><li><a href="/docs#troubleshooting">Troubleshooting</a></li>
 <li><a href="/download/solidworks">Download for SOLIDWORKS</a></li><li><a href="{RELEASES_URL}" rel="noopener">All releases</a></li><li><a href="{SUPPORT_URL}" rel="noopener">Support</a></li></ul></div>
 <div><h4>{PLATFORM}</h4><ul><li><a href="{site}/" rel="noopener">bizomat.ai</a></li><li><a href="{escape(work_url())}/" rel="noopener">{WORK_NAME}</a></li>
-<li><a href="{escape(site_page("proof-of-work"))}" rel="noopener">Proof of work</a></li><li><a href="{REPO_URL}" rel="noopener">Source code</a></li></ul></div></div>
+<li><a href="{escape(site_page("engine-room"))}" rel="noopener">The Engine Room</a></li><li><a href="{REPO_URL}" rel="noopener">Source code</a></li></ul></div></div>
 <div class="footer-base"><span>{FULL}. Part of the {PLATFORM} platform.</span>
 <nav class="footer-legal" aria-label="Legal">{legal_links()}</nav></div></div></footer>"""
 

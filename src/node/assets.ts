@@ -2,7 +2,7 @@
 // built dist/ folder works unchanged on either host.
 //   - dist/_redirects (Cloudflare format): exact rules, then rules with * (splat) or :placeholders, first match wins.
 //   - dist/_headers (Cloudflare format): every block whose path pattern matches adds its headers.
-//   - html_handling "auto-trailing-slash": /about/ serves about/index.html; /about redirects to /about/.
+//   - html_handling "auto-trailing-slash": /engine-room/ serves engine-room/index.html; /engine-room redirects to /engine-room/.
 //   - not_found_handling "404-page": unknown paths get dist/404.html with status 404.
 // Files are read only from inside the dist folder (no traversal), and the configuration files are never served.
 import { createReadStream, existsSync, readFileSync, statSync, type Stats } from 'node:fs';

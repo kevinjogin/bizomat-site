@@ -88,10 +88,11 @@ export const NAV: readonly NavItem[] = [
       { label: 'All resources', href: '/resources/' },
     ],
   },
-  { label: 'Proof of Work', href: '/proof-of-work/' },
   {
-    label: 'About', href: '/about/', children: [
-      { label: 'About BIZOMAT', href: '/about/', description: 'Why BIZOMAT exists, from its founder.' },
+    label: 'Engine Room', href: '/engine-room/', children: [
+      { label: 'The Engine Room', href: '/engine-room/', description: 'Who builds BIZOMAT, and the proof that it works.' },
+      { label: 'From the founder', href: '/engine-room/#founder', description: 'Why BIZOMAT exists, in its founder\'s words.' },
+      { label: 'Test record', href: '/engine-room/#tests', description: 'Every suite that was run, with its result.' },
       { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management and Resources.' },
       { label: 'Contact', href: '/contact/', description: 'Ask a question or start a conversation.' },
     ],
@@ -130,8 +131,7 @@ export const FOOTER_NAV = {
     { href: '/rss.xml', label: 'Library RSS feed' },
   ],
   company: [
-    { href: '/about/', label: 'About' },
-    { href: '/proof-of-work/', label: 'Proof of Work' },
+    { href: '/engine-room/', label: 'The Engine Room' },
     { href: '/contact/', label: 'Contact' },
     { href: '/services/', label: 'Engineering services' },
     { href: '/assessment/', label: 'Problem Assessment' },

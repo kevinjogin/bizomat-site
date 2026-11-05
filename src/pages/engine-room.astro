@@ -1,0 +1,379 @@
+---
+// /engine-room/: The Engine Room, BIZOMAT's one page about itself. It joins what were /about/ and /proof-of-work/
+// (owner request, 5 Nov 2026; both now redirect here, see public/_redirects): why BIZOMAT exists, in its founder's
+// words, what it combines and the principles it runs on, then the evidence that it works.
+// Every item of evidence is marked as what it is: a product screen (captured from the running application with example
+// data), an illustration (how something works, drawn), a diagram, or a test result (a suite that was run, with its
+// date). Facts about the founder are only those already published with the owner's approval (src/data/brand.ts,
+// src/data/projects.ts). No testimonials, customer logos, revenue, user counts, performance figures, education,
+// employers, awards or registrations are claimed.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import TradeMarkNotice from '../components/TradeMarkNotice.astro';
+import AiToCad from '../components/visuals/AiToCad.astro';
+import CommandFlow from '../components/visuals/CommandFlow.astro';
+import ProjectFlow from '../components/visuals/ProjectFlow.astro';
+import WorkflowPipeline from '../components/visuals/WorkflowPipeline.astro';
+import SearchScan from '../components/visuals/SearchScan.astro';
+import PlatformArchitecture from '../components/visuals/PlatformArchitecture.astro';
+import ProofOfWork from '../components/ProofOfWork.astro';
+import '../styles/product.css';
+import { SITE } from '../config/site.ts';
+import { PLATFORM } from '../config/platform.ts';
+import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
+import { CAD, WORK } from '../data/platform-catalog.ts';
+import { CAD_TOOL_GROUPS } from '../data/cad-tools.ts';
+import { VERIFICATION } from '../data/verification.ts';
+import { screenshots } from '../data/screenshots.ts';
+import { PROJECTS } from '../data/projects.ts';
+import { HOME_FEATURED_TOOLS } from '../config/home.ts';
+import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
+import { subcategoryLabel } from '../utils/workos-topics.ts';
+import { buildReadosLibrary } from '../utils/reados-library.ts';
+
+const { tools, guides } = loadWorkosTools();
+const subjects = await buildReadosLibrary();
+const books = subjects.reduce((n, s) => n + s.entries.length, 0);
+const chapters = subjects.reduce((n, s) => n + s.entries.reduce((m, e) => m + e.chapters.length, 0), 0);
+const fmt = (n: number) => n.toLocaleString('en-AU');
+const featured = HOME_FEATURED_TOOLS.map((id) => tools.find((t) => t.id === id)).filter((t): t is NonNullable<typeof t> => Boolean(t)).slice(0, 6);
+const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
+const cadShots = screenshots('cad');
+const workShots = screenshots('work');
+const toolCount = CAD_TOOL_GROUPS.reduce((n, g) => n + g.tools.length, 0);
+
+const jump = [
+  { href: '#founder', label: 'The founder' },
+  { href: '#principles', label: 'Principles' },
+  { href: '#glance', label: 'At a glance' },
+  { href: '#cad-automation', label: 'CAD Automation' },
+  { href: '#project-management', label: 'Project Management' },
+  { href: '#resources', label: 'Resources' },
+  { href: '#technical', label: 'How it is built' },
+  { href: '#tests', label: 'Test record' },
+  { href: '#engineering-record', label: 'Engineering record' },
+  { href: '#limits', label: 'Limits' },
+];
+const combines = [
+  { t: 'Engineering automation', x: 'CAD Automation puts an AI assistant to work in SOLIDWORKS, on your own computer, with checks before every change.', href: '/cad/' },
+  { t: 'Project and task management', x: 'Project Management keeps projects, tasks, teams, documents and dashboards in one shared workspace.', href: '/work/' },
+  { t: 'Useful tools', x: 'Engineering, manufacturing and business calculators that show their method and run in your browser.', href: '/tools/' },
+  { t: 'Knowledge resources', x: 'A library of technical books in short chapters, guides and learning paths, free to read.', href: '/resources/' },
+  { t: 'AI-powered productivity', x: 'AI search across all of it, and assistants that do the repetitive part of the job while people make the decisions.', href: '/#ai-search' },
+];
+const stats = [
+  { n: String(toolCount), t: 'CAD Automation tools an assistant can call' },
+  { n: String(WORK.views.length), t: 'Project Management views on one data model' },
+  { n: String(WORK.columnTypes), t: 'column types for boards' },
+  { n: fmt(tools.length), t: 'calculators and tools in Resources' },
+  { n: fmt(books), t: 'Library books' },
+  { n: fmt(chapters), t: 'Library chapters' },
+];
+const technologies = [
+  { area: 'Website and AI search', list: 'Astro static site, TypeScript, Node.js 22, Pagefind, an AI model for search terms with a keyword fallback' },
+  { area: 'Project Management', list: 'React 19, Hono, TypeScript, SQLite (Cloudflare D1 or Node), file storage, WebSockets for live boards' },
+  { area: 'CAD Automation', list: 'Python 3.12, FastAPI, MCP (Streamable HTTP), OAuth 2.1 with PKCE, build123d and OpenCascade, a sketch constraint solver' },
+  { area: 'On the Windows PC', list: '.NET Framework 4.8 add-in for SOLIDWORKS (COM), the Companion tray app, ES256-signed commands, a WiX installer' },
+  { area: 'Platform', list: 'One Fly.io app in Sydney with a host-routing proxy, separate processes and volumes per product, GitHub Actions' },
+];
+const integrations = [
+  { t: 'AI assistants (MCP)', x: 'Claude, ChatGPT where custom connectors are allowed, and any client of remote MCP servers over Streamable HTTP.' },
+  { t: 'SOLIDWORKS', x: 'A native add-in: tab, menu and task pane, built against the SOLIDWORKS 2022 API.' },
+  { t: 'Slack and Microsoft Teams', x: 'Incoming webhooks from Project Management, marked connected only after a delivery succeeds.' },
+  { t: 'Webhooks and API tokens', x: 'Signed outgoing webhooks and personal API tokens in Project Management.' },
+  { t: 'Google sign-in', x: 'In both applications, when it is configured.' },
+];
+const description = `Inside BIZOMAT: why ${PLATFORM.founder} is building it, the principles it runs on, and proof that it works: product screens, test results and the engineering record.`;
+const schema = [{
+  '@type': 'AboutPage', name: 'The Engine Room', url: `${SITE.url}/engine-room/`, description,
+  about: { '@id': `${SITE.url}/#organization` },
+  mainEntity: { '@type': 'Person', name: PLATFORM.founder, jobTitle: 'Founder', worksFor: { '@id': `${SITE.url}/#organization` } },
+}];
+---
+
+<BaseLayout title="The Engine Room" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'The Engine Room', href: '/engine-room/' }]} schema={schema}>
+  <section class="pp-hero" aria-labelledby="er-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <p class="bz-eyebrow">Inside BIZOMAT</p>
+        <h1 id="er-title">The Engine Room</h1>
+        <p class="pp-hero__lead">Who builds BIZOMAT and why, the principles it runs on, and the evidence that it works: real product screens, real test results and the engineering record behind it.</p>
+        <ul class="legend" role="list" aria-label="How to read this page">
+          <li><span class="viz__tag viz__tag--real">Product screen</span> captured from the running application, with example data</li>
+          <li><span class="viz__tag">Illustration</span> how something works, drawn; tool names and steps are real</li>
+          <li><span class="viz__tag viz__tag--demo">Diagram</span> the system as it is built</li>
+        </ul>
+      </div>
+      <PlatformArchitecture id="er-arch" />
+    </Container>
+  </section>
+
+  <nav class="er-jump" aria-label="On this page">
+    <Container>
+      <ul role="list">{jump.map((j) => <li><a href={j.href}>{j.label}</a></li>)}</ul>
+    </Container>
+  </nav>
+
+  <section class="pp-section" id="founder" aria-labelledby="founder-title">
+    <Container class="founder">
+      <div class="founder__aside">
+        <p class="bz-eyebrow">From the founder</p>
+        <h2 id="founder-title">Why I am building BIZOMAT</h2>
+      </div>
+      <figure class="founder__letter">
+        <blockquote>
+          <p>I started my working life on the toolroom floor. Since then I have worked through design offices, production lines and engineering projects, and I kept seeing the same thing: capable people losing hours to work a computer should do for them. Redrawing a part because one size changed. Chasing the status of a task through emails and spreadsheets. Hunting for a method that sits in a textbook nobody has to hand.</p>
+          <p>BIZOMAT is my answer to that. It is practical software that takes the repetitive part of the job so people can spend their time on the part that needs judgement. CAD Automation lets an AI assistant build and check SOLIDWORKS models on your own computer. Project Management keeps projects, tasks and teams in one place. Resources gives anyone the calculators, books and guides that help when the method is not to hand, free and without an account.</p>
+          <p>I only put on this site what I can show working. The rest of this page shows how each product is built and how far it has been tested, and where something is still being proven, it says so.</p>
+          <p>If there is a process that eats your week, I want to hear about it. That is how the next part of BIZOMAT gets built.</p>
+        </blockquote>
+        <figcaption><strong>{PLATFORM.founder}</strong><span>Founder, BIZOMAT</span></figcaption>
+      </figure>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="combines" aria-labelledby="combines-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What BIZOMAT combines</p>
+        <h2 id="combines-title">One platform for the work around the work</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {combines.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3><a href={c.href}>{c.t}</a></h3><p>{c.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="principles" aria-labelledby="principles-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">How BIZOMAT works</p>
+        <h2 id="principles-title">Principles</h2>
+      </div>
+      <dl class="principle-list">
+        {PRINCIPLES.map((p, i) => (
+          <div class="principle-row">
+            <dt><span>{String(i + 1).padStart(2, '0')}</span>{p.title}</dt>
+            <dd>{p.text}</dd>
+          </div>
+        ))}
+      </dl>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="glance" aria-labelledby="glance-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">At a glance</p>
+        <h2 id="glance-title">Counted from the products when this page was built</h2>
+      </div>
+      <dl class="er-stats">{stats.map((s) => <div class="bz-stat"><dt>{s.t}</dt><dd>{s.n}</dd></div>)}</dl>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="cad-automation" aria-labelledby="cad-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Engineering automation</p>
+        <h2 id="cad-title">An AI instruction becomes a SOLIDWORKS operation</h2>
+        <p>CAD Automation turns a request into checked, native features on the customer's own computer. These two scenes use the real tool names and the real command states.</p>
+      </div>
+      <div class="er-pair">
+        <AiToCad id="er-ai2cad" />
+        <CommandFlow id="er-cmd" />
+      </div>
+      {cadShots.length > 0 && (
+        <div class="pp-shots er-shots">
+          {cadShots.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{s.title}. {s.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
+      <div class="bz-alert bz-alert--info pp-status" role="note"><strong>Status</strong><span>{CAD.status}</span></div>
+      <p class="er-more"><a href="/cad/">CAD Automation in detail <span aria-hidden="true">→</span></a></p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="project-management" aria-labelledby="work-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Project management</p>
+        <h2 id="work-title">A project created, tasks assigned, work moving on its own</h2>
+        <p>Project Management runs projects, tasks and teams today. The scenes show a board being set up and an automation rule running.</p>
+      </div>
+      <div class="er-pair">
+        <ProjectFlow id="er-proj" />
+        <WorkflowPipeline id="er-flow" />
+      </div>
+      {workShots.length > 0 && (
+        <div class="pp-shots er-shots">
+          {workShots.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{s.title}. {s.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
+      <p class="er-more"><a href="/work/">Project Management in detail <span aria-hidden="true">→</span></a></p>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="resources" aria-labelledby="res-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Resources</p>
+        <h2 id="res-title">Real calculators and books, found by AI search</h2>
+        <p class="er-lead">{fmt(tools.length)} tools that show their method, and {fmt(books)} books in {fmt(chapters)} chapters. Try some:</p>
+        <ul class="er-tools" role="list">
+          {featured.map((t) => <li><a href={toolHref(t.id)}>{t.name}</a><span>{subcategoryLabel(t.category)}</span></li>)}
+        </ul>
+        <div class="pp-hero__actions"><Button href="/resources/" variant="secondary" arrow>All resources</Button></div>
+      </div>
+      <SearchScan id="er-search" />
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="technical" aria-labelledby="tech-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">How it is built</p>
+        <h2 id="tech-title">How the applications connect, and what they are built with</h2>
+        <p>Each product keeps its own process and its own data; the website holds no customer data. CAD work always runs on the customer's computer.</p>
+      </div>
+      <div class="bz-table-wrap">
+        <table class="bz-table">
+          <caption class="visually-hidden">Technologies by area</caption>
+          <thead><tr><th scope="col">Area</th><th scope="col">Built with</th></tr></thead>
+          <tbody>{technologies.map((t) => <tr><th scope="row">{t.area}</th><td>{t.list}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <h3 class="er-subhead" id="integrations">Integrations that exist today</h3>
+      <ul class="pp-cards" role="list">{integrations.map((i) => <li class="pp-card"><h3>{i.t}</h3><p>{i.x}</p></li>)}</ul>
+      <h3 class="er-subhead" id="tests">Test record</h3>
+      <div class="bz-table-wrap">
+        <table class="bz-table">
+          <caption class="visually-hidden">Automated test results</caption>
+          <thead><tr><th scope="col">Product</th><th scope="col">Suite</th><th scope="col">Result</th><th scope="col">Run</th></tr></thead>
+          <tbody>{VERIFICATION.map((v) => <tr><td>{v.product}</td><td>{v.suite}<br /><span class="er-how">{v.how}</span></td><td>{v.result}</td><td>{v.date}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="engineering-record" aria-labelledby="record-title">
+    <Container>
+      <div class="pp-split er-background" id="background">
+        <div>
+          <p class="bz-eyebrow">Engineering record</p>
+          <h2 id="record-title">Experience from the floor up: {PROJECTS.length} engineering projects behind BIZOMAT</h2>
+          <p class="er-lead">The founder's engineering record since 2010, in employed, contract and consulting roles: coke plants, mine-site trucks, production machinery, door and window hardware, rail interiors, bridges, food plants and patient-specific devices. Each record shows where the work happened, the role, what was delivered and how far it went.</p>
+          <p class="er-small">BIZOMAT does not use or disclose information belonging to any current or former employer, client or supplier. Examples on this website are general or independently created.</p>
+        </div>
+        <ul class="background" role="list">{BACKGROUND.map((b) => <li>{b}</li>)}</ul>
+      </div>
+      <ProofOfWork />
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="limits" aria-labelledby="limits-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Scope and limits</p>
+        <h2 id="limits-title">Clear about what is and is not claimed</h2>
+      </div>
+      <div class="er-prose">
+        <ul class="pp-list">
+          <li>No customer testimonials, logos, revenue, user numbers or performance statistics: none are published until they can be verified.</li>
+          <li>Illustrations explain how the software works; they are not screenshots of customer work.</li>
+          <li>Where a product has not yet been tested in a setting, such as the CAD installer on every Windows and SOLIDWORKS combination, this page says so.</li>
+        </ul>
+        <p>BIZOMAT software and resources support engineering and business work; they do not replace professional judgement. Output from AI assistants, CAD automation and calculators must be checked by a competent person before it is relied on. Work that legally requires a registered engineer, certifier or licensed trade needs that professional.</p>
+        <p><a href="/disclaimer/">Read the disclaimer</a> · <a href="/terms/">Terms of use</a> · <a href="/privacy/">Privacy policy</a></p>
+        <div class="er-former"><TradeMarkNotice /></div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="er-cta">
+    <Container class="pp-band">
+      <h2 id="er-cta">Tell us what you need.</h2>
+      <div class="pp-band__actions">
+        <Button href="/contact/" variant="accent" data-cta="engine-room-contact">Contact BIZOMAT</Button>
+        <Button href="/products/" variant="secondary" data-cta="engine-room-products">Explore products</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<script>
+  // Old in-page links that arrive here through the /about/ and /proof-of-work/ redirects (browsers keep the #part):
+  // the engineering record was /about/#work; the product sections were /proof-of-work/#cad and #work.
+  // Case studies keep their own #case-<id> anchors (ProofOfWork opens them).
+  const legacy: Record<string, string> = { work: 'engineering-record', cad: 'cad-automation' };
+  const id = decodeURIComponent(location.hash.slice(1));
+  const to = legacy[id];
+  if (to && !document.getElementById(id)) location.replace(`#${to}`);
+</script>
+
+<style>
+  .legend { display: grid; gap: .55rem; margin: 1.6rem 0 0; padding: 0; list-style: none; color: var(--ink-2); font-size: .92rem; }
+  .legend li { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+
+  .er-jump { position: relative; border-block: 1px solid var(--line); background: var(--surface); }
+  .er-jump ul { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: .85rem 0; list-style: none; }
+  .er-jump a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 .85rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); font-size: .9rem; font-weight: 560; text-decoration: none; background: var(--paper); }
+  .er-jump a:hover { border-color: var(--accent); color: var(--accent); }
+  :global(#main [id]) { scroll-margin-top: calc(var(--header-h) + 1rem); }
+
+  .founder { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+  .founder__aside h2 { margin-top: .4rem; max-width: 12ch; }
+  @media (min-width: 1001px) { .founder__aside { position: sticky; top: calc(var(--header-h) + 2rem); } }
+  .founder__letter { margin: 0; padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--brand-mark); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+  .founder__letter blockquote { margin: 0; font-family: var(--font-serif); font-size: clamp(1.08rem, 1rem + .35vw, 1.24rem); line-height: 1.7; color: var(--ink); }
+  .founder__letter blockquote p { margin: 0 0 1.1em; }
+  .founder__letter figcaption { display: grid; gap: .15rem; margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
+  .founder__letter figcaption strong { font: 650 1.15rem/1.2 var(--font-display); }
+  .founder__letter figcaption span { color: var(--muted); font-size: .92rem; }
+
+  .pp-card h3 a { color: inherit; text-decoration: none; }
+  .pp-card h3 a:hover { color: var(--accent); }
+  .principle-list { margin: 0; border-top: 1px solid var(--line-strong); }
+  .principle-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: .5rem 5rem; padding: 1.4rem 0; border-bottom: 1px solid var(--line); }
+  .principle-row dt { display: flex; gap: 1rem; font: 640 var(--step-1)/1.25 var(--font-display); }
+  .principle-row dt span { flex: none; width: 2.5rem; padding-top: .2rem; font: 500 .85rem/1 var(--font-mono); color: var(--accent); }
+  .principle-row dd { margin: 0; color: var(--ink-2); font-size: var(--step-0); line-height: 1.6; }
+
+  .er-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; }
+  .er-stats :global(dd) { order: -1; }
+  .er-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
+  .er-shots { margin-top: 1rem; }
+  .er-more { margin: 1.6rem 0 0; }
+  .er-more a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  .er-lead { margin: .9rem 0 1rem; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .er-small { margin: 1rem 0 0; color: var(--muted); font-size: .9rem; max-width: 60ch; }
+  .er-tools { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .er-tools li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; padding: .7rem 0; border-bottom: 1px solid var(--line); }
+  .er-tools a { color: var(--ink); font-weight: 600; text-decoration: none; }
+  .er-tools a:hover { color: var(--accent); }
+  .er-tools span { color: var(--muted); font-size: .86rem; }
+  .er-subhead { margin: clamp(2rem, 4vw, 2.75rem) 0 1rem; font-size: var(--step-1); }
+  .er-how { color: var(--muted); font: 500 .8rem/1.4 var(--font-mono); }
+  .er-background { margin-bottom: clamp(2rem, 4vw, 3rem); }
+  .background { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; align-self: start; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .background li { padding: .9rem 0; border-bottom: 1px solid var(--line); font-weight: 560; }
+  .er-prose p { margin: 1rem 0 0; color: var(--ink-2); }
+  .er-former { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+
+  @media (max-width: 1000px) {
+    .founder { grid-template-columns: 1fr; }
+    .principle-row { grid-template-columns: 1fr; }
+    .er-pair { grid-template-columns: 1fr; }
+    .er-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 560px) { .er-stats { grid-template-columns: 1fr; } .background { grid-template-columns: 1fr; } }
+</style>

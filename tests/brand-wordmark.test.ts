@@ -41,7 +41,7 @@ test('logos, icons and the favicon come from the one brand source and are in ste
 });
 
 test('no page calls BIZOMAT a registered trade mark, and no ® follows it', () => {
-  for (const file of ['src/components/Footer.astro', 'src/components/TradeMarkNotice.astro', 'src/pages/terms.astro', 'src/pages/privacy.astro', 'src/pages/disclaimer.astro', 'src/pages/about.astro', 'src/pages/assistant-knowledge.json.ts']) {
+  for (const file of ['src/components/Footer.astro', 'src/components/TradeMarkNotice.astro', 'src/pages/terms.astro', 'src/pages/privacy.astro', 'src/pages/disclaimer.astro', 'src/pages/engine-room.astro', 'src/pages/assistant-knowledge.json.ts']) {
     const text = read(file);
     assert.doesNotMatch(text, /BIZOMAT®|\{SITE\.name\} is a registered|registration applies to BIZOMAT/, file);
   }

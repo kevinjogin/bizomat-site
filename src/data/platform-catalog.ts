@@ -1,6 +1,6 @@
 // The BIZOMAT platform catalogue: public facts about the two applications and the website's own sections.
 //
-// One source for the product pages (/cad/, /work/), the homepage cards, /proof-of-work/ and the AI search index
+// One source for the product pages (/cad/, /work/), the homepage cards, the Engine Room (/engine-room/) and the AI search index
 // (/discovery-index.json "pages"). Every entry is PUBLIC: product descriptions, documentation and page addresses.
 // Nothing here comes from, or points into, a customer's projects, files or account, so search over it cannot reveal
 // private data. Every capability is taken from the applications' own code and documentation in this repository:
@@ -135,10 +135,10 @@ export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
     keywords: 'learning paths course courses learn study training education curriculum' },
 
   // Platform
-  { id: 'page:proof', title: 'Proof of Work', summary: 'What BIZOMAT has built and how it works: architecture, real screens, test results and how the applications connect.', url: '/proof-of-work/', area: P, kind: 'Page',
-    keywords: 'proof of work evidence demonstration screenshots architecture technical proof how it works tests results system diagram' },
-  { id: 'page:about', title: 'About BIZOMAT', summary: 'Why BIZOMAT exists, from its founder.', url: '/about/', area: P, kind: 'Page',
-    keywords: 'about company founder mission team story who' },
+  { id: 'page:engine-room', title: 'The Engine Room: proof that BIZOMAT works', summary: 'What BIZOMAT has built and how it works: architecture, real screens, test results, the engineering record and how the applications connect.', url: '/engine-room/', area: P, kind: 'Page',
+    keywords: 'engine room proof of work evidence demonstration screenshots architecture technical proof how it works tests results test record system diagram engineering record' },
+  { id: 'page:founder', title: 'The Engine Room: from the founder', summary: 'Why BIZOMAT exists, from its founder, and the principles it runs on.', url: '/engine-room/#founder', area: P, kind: 'Page',
+    keywords: 'about company founder mission team story who principles background' },
   { id: 'page:privacy', title: 'Privacy policy', summary: 'What BIZOMAT collects, why, where it is kept and your rights.', url: '/privacy/', area: P, kind: 'Page',
     keywords: 'privacy policy personal data data protection retention deletion cookies' },
   { id: 'page:terms', title: 'Terms of use', summary: 'The terms for using the BIZOMAT website and applications.', url: '/terms/', area: P, kind: 'Page',

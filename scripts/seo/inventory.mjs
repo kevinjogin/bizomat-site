@@ -30,7 +30,7 @@ export function sectionOf(p) {
   if (p.startsWith('/library/')) return 'library';
   if (p.startsWith('/tools/')) return 'workos';
   if (p.startsWith('/contact/') || p.startsWith('/assessment/')) return 'reachos';
-  if (/^\/(services|factory-fix|how-it-works|industries|about|proof-of-work)\//.test(p)) return 'commercial';
+  if (/^\/(services|factory-fix|how-it-works|industries|engine-room)\//.test(p)) return 'commercial';
   return 'other';
 }
 

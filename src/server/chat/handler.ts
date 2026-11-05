@@ -78,7 +78,7 @@ async function loadKnowledge(request: Request, env: ChatEnv): Promise<KnowledgeC
   return data.chunks;
 }
 
-const SITE_PAGES = ['/', '/about/', '/services/', '/factory-fix/', '/how-it-works/', '/industries/', '/tools/', '/reados/', '/assessment/', '/contact/', '/privacy/', '/terms/', '/search/', '/chat/'];
+const SITE_PAGES = ['/', '/engine-room/', '/services/', '/factory-fix/', '/how-it-works/', '/industries/', '/tools/', '/reados/', '/assessment/', '/contact/', '/privacy/', '/terms/', '/search/', '/chat/'];
 
 /**
  * Models sometimes invent deep links (e.g. a section title turned into a path). Keep links to known

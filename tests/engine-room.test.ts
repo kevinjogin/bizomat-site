@@ -53,18 +53,33 @@ test('every case study is complete, written in the BIZOMAT voice and leads to an
   assert.match(form, /get\('project'\)/, 'the contact form starts the enquiry from the project name');
 });
 
-test('the Proof of Work page holds the engineering record, and old About and homepage links are forwarded to it', () => {
-  const page = read('src/pages/proof-of-work.astro');
-  assert.match(page, /id="engineering-record"/);
-  assert.match(page, /<ProofOfWork \/>/);
-  assert.match(read('src/config/site.ts'), /\{ href: '\/proof-of-work\/', label: 'Proof of Work' \}/);
-  const about = read('src/pages/about.astro');
-  assert.ok(about.includes("location.replace('/proof-of-work/#engineering-record')"), 'old /about/#work links follow the record');
-  assert.ok(about.includes('location.replace(`/proof-of-work/#${id}`)'), 'old /about/#case-<id> links open the case study');
+test('the Engine Room joins About and Proof of Work, and every old address and in-page link reaches it', () => {
+  const page = read('src/pages/engine-room.astro');
+  assert.equal((page.match(/<h1[\s>]/g) ?? []).length, 1, 'one H1');
+  assert.match(page, /<h1 id="er-title">The Engine Room<\/h1>/);
+  for (const id of ['founder', 'principles', 'glance', 'cad-automation', 'project-management', 'resources', 'technical', 'tests', 'engineering-record', 'limits']) {
+    assert.match(page, new RegExp(`id="${id}"`), `section #${id}`);
+  }
+  assert.match(page, /<ProofOfWork \/>/, 'the engineering record');
+  assert.match(page, /Founder, BIZOMAT/, 'the founder letter is signed');
+  assert.match(page, /VERIFICATION\.map/, 'the test record');
+  assert.match(page, /'@type': 'AboutPage'/);
+  assert.match(read('src/config/site.ts'), /\{ href: '\/engine-room\/', label: 'The Engine Room' \}/);
+  for (const gone of ['src/pages/about.astro', 'src/pages/proof-of-work.astro']) assert.ok(!existsSync(gone), `${gone} is merged into the Engine Room`);
+  const redirects = read('public/_redirects').split(/\r?\n/).map((l) => l.trim().split(/\s+/));
+  for (const from of ['/about', '/about/', '/proof-of-work', '/proof-of-work/']) {
+    assert.ok(redirects.some(([f, to, code]) => f === from && to === '/engine-room/' && code === '301'), `${from} redirects to /engine-room/`);
+  }
+  // Old in-page links keep their #part through the redirect; the two that changed meaning are forwarded.
+  assert.ok(page.includes("work: 'engineering-record', cad: 'cad-automation'"), 'old /about/#work and /proof-of-work/#cad links are forwarded');
   const home = read('src/pages/index.astro');
   assert.doesNotMatch(home, /<ProofOfWork/, 'the homepage links to the proof rather than embedding it');
-  assert.ok(home.includes("id.startsWith('case-') ? `/proof-of-work/#${id}`"), 'old /#case-<id> links open the case study');
-  assert.ok(home.includes("work: '/proof-of-work/#engineering-record'"), 'old /#work links open the record');
+  assert.ok(home.includes("id.startsWith('case-') ? `/engine-room/#${id}`"), 'old /#case-<id> links open the case study');
+  assert.ok(home.includes("work: '/engine-room/#engineering-record'"), 'old /#work links open the record');
+  assert.ok(home.includes("about: '/engine-room/'"), 'old /#about links open the Engine Room');
+  for (const f of ['src/pages/index.astro', 'src/pages/cad.astro', 'src/pages/work.astro', 'src/config/site.ts', 'src/data/platform-catalog.ts', 'src/pages/assistant-knowledge.json.ts', 'apps/cad/opensketch/brand.py']) {
+    assert.doesNotMatch(read(f), /["'`(]\/(about|proof-of-work)\//, `${f} links to the Engine Room, not the old pages`);
+  }
   const component = read('src/components/ProofOfWork.astro');
   assert.doesNotMatch(component, /\sstyle=/);
   assert.match(component, /aria-pressed/);
