@@ -23,11 +23,11 @@ from pydantic import Field
 
 from . import auth, uploads
 
-NAME = "OpenSketch"
+NAME = "CADOS"  # the name AI apps show for this connector (CADOS by KEVOS)
 PATHS = ("/mcp", "/solidworks/mcp")  # the first is the address people are given; the second is kept for early connectors
 
-INSTRUCTIONS = """OpenSketch: you build native SOLIDWORKS parts and assemblies in the user's own files, in the
-SOLIDWORKS running on their PC (through the OpenSketch add-in). Everything you make is a real SOLIDWORKS feature:
+INSTRUCTIONS = """CADOS by KEVOS: you build native SOLIDWORKS parts and assemblies in the user's own files, in the
+SOLIDWORKS running on their computer (through the CADOS add-in). Everything you make is a real SOLIDWORKS feature:
 sketches with relations and dimensions, extrudes, revolves, holes, fillets, patterns, mates.
 
 - Call sw_status first. If SOLIDWORKS is not connected, tell the user what it says and stop.
@@ -166,7 +166,7 @@ class _BearerGate:
             grant = mcpauth.grant_info(tok) if ok else None
             if not ok:
                 body = json.dumps({"error": "invalid_token" if tok else "unauthorized",
-                                   "error_description": "Sign in to OpenSketch to use it from this app."}).encode()
+                                   "error_description": "Sign in to CADOS to use it from this app."}).encode()
                 await send({"type": "http.response.start", "status": 401, "headers": cors + [
                     (b"content-type", b"application/json"),
                     (b"www-authenticate", mcpauth.challenge(headers, "invalid_token" if tok else "", path).encode())]})

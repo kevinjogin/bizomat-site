@@ -1,4 +1,4 @@
-# Deploys OpenSketch to Fly.io from main, only after the tests pass (tests.yml, called below).
+# Deploys CADOS by KEVOS (the server in opensketch/) to Fly.io from main, only after the tests pass (tests.yml, called below).
 #
 # Repository secrets (Settings > Secrets and variables > Actions):
 # - FLY_API_TOKEN: a deploy token for this app only: `fly tokens create deploy -a <app>` (or the Fly dashboard:
@@ -97,7 +97,9 @@ jobs:
     env:
       ORG: ${{ vars.FLY_ORG || 'personal' }}
       REGION: syd
-      PUBLIC_URL: ${{ vars.PUBLIC_URL }}  # e.g. https://cad.example.com once its certificate is issued
+      # The public address (OAuth metadata, pairing and download links). The health checks below use <app>.fly.dev, the
+      # origin that always answers. Set the repository variable PUBLIC_URL to override it.
+      PUBLIC_URL: ${{ vars.PUBLIC_URL || 'https://cados.kevos.com' }}
     steps:
       - name: Check setup
         id: setup
@@ -184,7 +186,7 @@ jobs:
           for _ in $(seq 1 36); do
             got=$(curl -fsS --max-time 10 "https://$APP.fly.dev/healthz" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)
             if [ "$got" = "$want" ]; then
-              echo "OpenSketch $want is live at ${PUBLIC_URL:-https://$APP.fly.dev}" >> "$GITHUB_STEP_SUMMARY"
+              echo "CADOS $want is live at ${PUBLIC_URL:-https://$APP.fly.dev}" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
             sleep 5

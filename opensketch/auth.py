@@ -31,7 +31,8 @@ from urllib.parse import parse_qs, quote, urlencode
 COOKIE = "opensketch_session"
 ACCOUNT_COOKIE = "opensketch_user"
 PUBLIC_FILES = ("/favicon.svg", "/favicon.ico")
-PUBLIC_DIRS = ("/fonts/",)  # the self-hosted fonts: no data, needed by the sign-in pages
+PUBLIC_DIRS = ("/fonts/", "/ui/")  # the self-hosted fonts and the design system (CSS, icons): no data, needed by every page
+PUBLIC_PAGES = ("/overview", "/docs")  # the product page and the documentation: no data, for everyone
 
 
 def password() -> str:
@@ -189,69 +190,42 @@ def current_user(scope, m: str | None = None) -> dict | None:
     return None
 
 
+def _signed_in_quietly(scope) -> bool:
+    """For the public pages' header (Sign in or Dashboard): never fails, never opens anything."""
+    try:
+        return mode() == "open" or current_user(scope) is not None
+    except Exception:
+        return False
+
+
 def logged_in(scope) -> bool:
     return mode() == "open" or current_user(scope) is not None
 
 
 # ---------------------------------------------------------------- pages
 
-# Sign-in pages: Stripe-like (bold display type, an angled indigo band, a raised card), in OpenSketch's colours.
-PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>{title} - OpenSketch</title><meta name="theme-color" content="#0c0d0e">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/fonts/fonts.css">
-<style>
-:root{{--bg:#0c0d0e;--card:#141517;--field:#1b1c1f;--line:rgba(255,255,255,.08);--line2:rgba(255,255,255,.14);--text:#e3e4e8;--text2:#a3a6ad;--muted:#868a93;--accent:#5e6ad2;--accent-h:#6b77de;--link:#8b93ff;--err:#eb5757;
---display:"Inter Tight",Inter,system-ui,-apple-system,"Segoe UI",sans-serif;--ease:cubic-bezier(.16,1,.3,1)}}
-*{{box-sizing:border-box}}
-html,body{{height:100%}}
-body{{margin:0;min-height:100vh;background:var(--bg);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased;color-scheme:dark;overflow-x:hidden}}
-.band{{position:fixed;left:-10vw;right:-10vw;top:-38vh;height:78vh;transform:skewY(-9deg);transform-origin:0 0;overflow:hidden;z-index:0;
-background:linear-gradient(100deg,#2a2f7a 0%,#4a51c2 28%,#6670e0 48%,#8b6ad8 66%,#c0569c 86%,#e0559b 100%);opacity:.92}}
-.band:before,.band:after{{content:"";position:absolute;inset:-20%;background:radial-gradient(30% 50% at 20% 60%,rgba(163,170,255,.75),transparent 70%),radial-gradient(28% 45% at 70% 40%,rgba(74,81,194,.8),transparent 70%);
-filter:blur(30px);animation:drift 16s ease-in-out infinite alternate;mix-blend-mode:screen}}
-.band:after{{background:radial-gradient(25% 40% at 80% 70%,rgba(224,85,155,.6),transparent 70%),radial-gradient(30% 40% at 40% 30%,rgba(102,112,224,.7),transparent 70%);animation-duration:22s;animation-direction:alternate-reverse}}
-.band i{{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(to bottom,transparent,var(--bg))}}
-@keyframes drift{{to{{transform:translate3d(8%,-6%,0) rotate(8deg)}}}}
-.wrap{{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,440px);gap:56px;align-items:center;max-width:1080px;margin:0 auto;padding:40px 32px 48px}}
-.brand{{position:absolute;top:26px;left:32px;color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em;line-height:1}}
-.pitch h2{{margin:0;font-family:var(--display);font-weight:750;font-size:52px;line-height:1.02;letter-spacing:-.045em;color:#fff;text-wrap:balance}}
-.card{{background:var(--card);border-radius:16px;padding:32px;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 30px 60px -12px rgba(0,0,0,.6),0 18px 36px -18px rgba(0,0,0,.5);animation:rise .22s var(--ease)}}
-@keyframes rise{{from{{opacity:0;transform:translateY(10px)}}}}
-h1{{font-family:var(--display);font-size:26px;font-weight:750;margin:0 0 6px;letter-spacing:-.035em;line-height:1.15}} p.sub{{color:var(--text2);margin:0 0 22px}}
-label{{display:block;font-size:12.5px;font-weight:550;color:var(--text2);margin:14px 0 6px}}
-input{{width:100%;height:40px;padding:0 12px;border:1px solid var(--line2);border-radius:8px;font:inherit;color:inherit;background:var(--field);outline:none;transition:border-color .12s,box-shadow .12s}}
-input:hover{{border-color:rgba(255,255,255,.2)}} input:focus{{border-color:var(--accent);box-shadow:0 0 0 3px rgba(94,106,210,.25)}}
-button{{margin-top:22px;width:100%;height:42px;border:0;border-radius:21px;background:var(--accent);color:#fff;font:inherit;font-weight:650;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-box-shadow:0 1px 0 rgba(255,255,255,.15) inset,0 6px 16px -6px rgba(94,106,210,.8);transition:background .12s,transform .12s}}
-button:hover{{background:var(--accent-h)}} button:active{{transform:scale(.985)}}
-button:after{{content:"";width:14px;height:14px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12h13M13 7l5 5-5 5' fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform .2s var(--ease)}}
-button:hover:after{{transform:translateX(3px)}}
-.err{{color:#ffb4b4;background:rgba(235,87,87,.14);border:1px solid rgba(235,87,87,.3);border-radius:8px;padding:9px 12px;margin-top:16px;font-size:13px}}
-.note{{color:var(--muted);font-size:12.5px;margin-top:6px}}
-.gbtn{{display:flex;align-items:center;justify-content:center;gap:10px;height:42px;border-radius:21px;background:#fff;color:#1f1f1f;font-weight:600;text-decoration:none;border:1px solid #dadce0;transition:background .12s}}
-.gbtn:hover{{background:#f2f2f2;text-decoration:none}}
-.or{{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:18px 0 0}} .or:before,.or:after{{content:"";flex:1;border-top:1px solid var(--line)}}
-.can{{list-style:none;margin:0 0 14px;padding:14px 16px;border-radius:12px;background:var(--field);display:grid;gap:8px;color:var(--text)}}
-.can li{{display:flex;gap:10px;align-items:center}}.can li:before{{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none}}
-.note b{{color:var(--text);font-weight:600}}.note.center{{text-align:center;margin-top:12px}}
-button.ghost{{margin-top:10px;background:transparent;box-shadow:inset 0 0 0 1px var(--line2);color:var(--text)}}button.ghost:after{{display:none}}button.ghost:hover{{background:rgba(255,255,255,.05)}}
-.links{{margin-top:18px;display:flex;justify-content:space-between;gap:12px;font-size:13px}} a{{color:var(--link);text-decoration:none}} a:hover{{text-decoration:underline}}
-.foot{{position:relative;z-index:2;display:flex;justify-content:space-between;gap:12px;max-width:1080px;margin:-56px auto 0;padding:0 32px 20px;color:var(--muted);font-size:12px}}.foot a{{color:var(--muted)}}.foot a:hover{{color:var(--text)}}
-a:focus-visible,button:focus-visible{{outline:2px solid var(--link);outline-offset:3px;border-radius:4px}} button:focus-visible{{border-radius:21px}}
-@media (max-width:900px){{.wrap{{grid-template-columns:1fr;gap:28px;padding:96px 20px 64px;max-width:480px}}.pitch h2{{font-size:36px}}.brand{{left:20px;top:22px}}.card{{padding:26px 22px}}.foot{{padding:0 20px 20px;max-width:480px;margin-top:-40px}}.band{{height:62vh}}}}
-@media (pointer:coarse){{input{{font-size:16px}}}}
-@media (prefers-reduced-motion:reduce){{*,*:before,*:after{{animation:none!important;transition:none!important}}}}
-</style></head><body><div class="band"><i></i></div>
-<div class="wrap"><a class="brand" href="/">OpenSketch</a>
-<section class="pitch"><h2>{pitch}</h2></section>
-<form class="card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1><p class="sub">{sub}</p>{top}
-<input type="hidden" name="next" value="{next}">{fields}{error}<button type="submit">{button}</button>{links}</form></div>
-<div class="foot"><span>OpenSketch</span><span>AI for SOLIDWORKS &nbsp;&middot;&nbsp; <a href="/privacy">Privacy</a></span></div></body></html>"""
+# Sign-in pages: the CADOS design system (static/ui/cados.css): a product panel on the left, the form on the right.
+def _auth_html(form: str) -> str:
+    """The page around a sign-in form; a str.format template ({title}, {pitch} and the form's own fields)."""
+    from . import brand
+    aside = (f'<aside class="auth-aside">{brand.wordmark()}<div class="auth-pitch"><h2>{{pitch}}</h2>'
+             '<p>Connect your AI assistant to SOLIDWORKS on your own computer.</p><ul class="auth-points">'
+             '<li>Native, editable SOLIDWORKS features</li><li>Every sketch solved and every feature checked before it is built</li>'
+             '<li>You approve each assistant and each computer</li></ul></div>'
+             f'<div class="fine"><span>A product from <a href="{brand.KEVOS_URL}" rel="noopener">KEVOS</a></span>'
+             '<a href="/docs">Documentation</a><a href="/privacy">Privacy</a></div></aside>')
+    top = f'<div class="auth-top">{brand.wordmark()}<a class="small" href="/docs">Help</a></div>'
+    head = brand.head("__TITLE__").replace("{", "{{").replace("}", "}}").replace("__TITLE__", "{title}")
+    return f'{head}<body><div class="auth">{aside}{top}<main class="auth-main" id="main">{form}</main></div></body></html>'
+
+
+PAGE = _auth_html('<form class="auth-card" method="post" action="{action}" autocomplete="on"><h1>{title}</h1>'
+                  '<p class="sub">{sub}</p>{top}<input type="hidden" name="next" value="{next}">{fields}{error}'
+                  '<button type="submit">{button}</button>{links}</form>')
 
 
 def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "") -> bytes:
-    """Allow / Cancel for an AI app that wants to use this person's OpenSketch (mcpauth.py)."""
+    """Allow / Cancel for an AI app that wants to use this person's CADOS (mcpauth.py)."""
     from urllib.parse import urlsplit
     u = urlsplit(redirect_uri)
     host = u.hostname or (u.scheme + "://")
@@ -259,22 +233,22 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
     name = _esc(app_name)
     who = (f'<b>{_esc(user.get("name") or "")}</b> ({_esc(user.get("email") or "")})' if user and not user.get("legacy")
            else "<b>this server</b>")
-    can = ('Work in SOLIDWORKS on your PC through the add-in', 'Create parts and assemblies and change them',
-           'Import, preview and export your models')
+    can = ('Work in SOLIDWORKS on your computers through CADOS', 'Create and change parts, assemblies and drawings',
+           'Import, measure, preview and export your models')
     top = (f'<ul class="can">{"".join(f"<li>{c}</li>" for c in can)}</ul>'
            f'<div class="note">Signed in as {who}. Not you? <a href="/logout">Sign out</a></div>'
-           f'<div class="note">You go back to <b>{_esc(host)}</b> after this.'
+           f'<div class="note">You return to <b>{_esc(host)}</b> after this.'
            + (" That is an app on this computer: allow it only if you just started connecting it." if local else "")
            + '</div>')
     fields = [f'<input type="hidden" name="req" value="{_esc(req)}">']
     links = ('<button type="submit" name="action" value="deny" class="ghost">Cancel</button>'
-             '<div class="note center">You can disconnect it any time on the OpenSketch home page.</div>')
-    sub = f"{name} wants to build in SOLIDWORKS with OpenSketch." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
+             '<div class="note center">You can disconnect it at any time on your CADOS dashboard.</div>')
+    sub = f"{name} wants to use CADOS to work in SOLIDWORKS for you." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
     return _page(f"Connect {name}", sub, "/oauth/authorize", fields,
                  "Allow", "/", "", links, top)
 
 
-def notice_page(title: str, sub: str, message: str = "", button: str = "Go to OpenSketch", href: str = "/") -> bytes:
+def notice_page(title: str, sub: str, message: str = "", button: str = "Go to CADOS", href: str = "/") -> bytes:
     """A page with one message and a way on (no form to fill)."""
     page = _page(title, sub, "/", [], button, "/", message)
     return page.replace(b'method="post" action="/"', f'method="get" action="{_esc(href)}"'.encode()).replace(
@@ -282,77 +256,65 @@ def notice_page(title: str, sub: str, message: str = "", button: str = "Go to Op
 
 
 def oauth_problem_page(message: str) -> bytes:
-    page = _page("Could not connect", "Your AI app sent a sign-in request OpenSketch cannot accept.", "/", [],
-                 "Go to OpenSketch", "/", message)
+    page = _page("Could not connect", "Your AI assistant sent a sign-in request that CADOS cannot accept.", "/", [],
+                 "Go to CADOS", "/", message)
     return page.replace(b'method="post" action="/"', b'method="get" action="/"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
-# Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this server.
-PRIVACY = """<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Privacy - OpenSketch</title><meta name="theme-color" content="#0c0d0e"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/fonts/fonts.css">
-<style>
-:root{--bg:#0c0d0e;--line:rgba(255,255,255,.08);--text:#e3e4e8;--text2:#a3a6ad;--muted:#868a93;--link:#8b93ff;--display:"Inter Tight",Inter,system-ui,sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text2);font:15px/1.65 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;color-scheme:dark}
-header{display:flex;justify-content:space-between;align-items:center;max-width:760px;margin:0 auto;padding:26px 24px}
-.brand{color:#fff;text-decoration:none;font-family:var(--display);font-weight:800;font-size:21px;letter-spacing:-.04em}
-header a.back{color:var(--muted);font-size:13px;text-decoration:none}header a.back:hover{color:var(--text)}
-main{max-width:760px;margin:0 auto;padding:24px 24px 80px}
-h1{font-family:var(--display);font-weight:750;font-size:44px;line-height:1.05;letter-spacing:-.04em;color:#fff;margin:24px 0 8px}
-h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em;color:var(--text);margin:36px 0 8px;padding-top:28px;border-top:1px solid var(--line)}
-p,li{margin:0 0 10px}ul{padding-left:20px;margin:0 0 10px}b{color:var(--text);font-weight:600}a{color:var(--link)}
-.date{color:var(--muted);font-size:13px}
-</style></head><body>
-<header><a class="brand" href="/">OpenSketch</a><a class="back" href="/login">Sign in</a></header>
-<main>
-<h1>Privacy</h1>
-<p class="date">Last updated 20 October 2026</p>
-<p>OpenSketch connects your AI app (Claude, ChatGPT and others) to SOLIDWORKS on your own PC, through the OpenSketch
-add-in. This page explains what this OpenSketch server keeps about you, why, and who else sees it. In short: only
-what it needs to sign you in and pass work between your AI app and SOLIDWORKS. Nothing is sold, used for ads, or
-tracked across other sites.</p>
+# Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this service.
+PRIVACY_BODY = """<main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Legal</span><h1>Privacy</h1>
+<p>What CADOS keeps about you, why, and who else sees it. Last updated 5 November 2026.</p></div></div>
+<div class="container doc-layout"><nav class="toc" aria-label="On this page"><h4>On this page</h4><ol>
+<li><a href="#summary">Summary</a></li><li><a href="#kept">What is kept</a></li><li><a href="#google">Sign in with Google</a></li>
+<li><a href="#ai">AI assistants</a></li><li><a href="#who">Who can see your work</a></li><li><a href="#delete">Deleting your data</a></li>
+<li><a href="#changes">Changes</a></li></ol></nav><article class="prose">
+<section id="summary"><h2>Summary</h2>
+<p>CADOS by KEVOS connects your AI assistant (Claude, ChatGPT and others) to SOLIDWORKS on your own computer, through the
+CADOS add-in and the KEVOS Companion. This service keeps only what it needs to sign you in, know your computers and pass
+work between your assistant and SOLIDWORKS. Nothing is sold, used for advertising or tracked across other sites.</p></section>
+<section id="kept"><h2>What is kept</h2><ul>
+<li><b>Your account:</b> your name, your email address, and either a password (stored only as a one-way hash) or the ID of
+the Google account you sign in with.</li>
+<li><b>Your connections:</b> the AI assistants you connected (their name and sign-in tokens, stored only as one-way hashes)
+and your add-in key, so SOLIDWORKS on your computer can reach your account.</li>
+<li><b>Your computers:</b> the name you gave each paired computer, its Windows computer name and version, the public half of
+its key, and when it was last seen.</li>
+<li><b>A record of commands:</b> for each command sent to one of your computers, which tool and assistant sent it, when,
+its status and its result. The command's details are kept only as a fingerprint (a hash).</li>
+<li><b>Sign-in sessions:</b> a random token in a cookie, so you stay signed in. A second, short-lived cookie protects the
+Google sign-in step and is removed after it.</li>
+<li><b>Work in passing:</b> while your assistant works, the commands it sends and the shapes SOLIDWORKS sends back (for
+example a STEP copy of a part, to measure and check it) pass through this service. They are held in memory or for a short
+time to do that work, then dropped. Files you upload for import are deleted once imported, or after 30 minutes. Your
+SOLIDWORKS files are saved on your computer.</li></ul>
+<p>CADOS pages load nothing from other sites: the fonts and pictures come from this service, so opening CADOS tells no one
+else that you visited.</p></section>
+<section id="google"><h2>Sign in with Google</h2>
+<p>If you choose Continue with Google, Google tells CADOS your name, your email address, whether that address is verified,
+your Google account ID and, for work accounts, your organisation's domain. CADOS asks for nothing else: no access to your
+Gmail, Drive, contacts or anything else in your Google account.</p>
+<p>This information is used only to sign you in and to link the sign-in to your CADOS account. It is stored with your
+account. It is not sold, not shared, not used for advertising and not used to train AI models. You can remove the link at any time in
+your Google account settings (Security, Third-party connections).</p></section>
+<section id="ai"><h2>AI assistants</h2>
+<p>CADOS runs no AI of its own. The assistant you connect sees what the CADOS tools return to it (feature lists,
+measurements, preview images of your SOLIDWORKS model), under that assistant's own privacy terms. It can only do what the
+tools allow, only while you keep it connected, and only with the computers paired to your account.</p></section>
+<section id="who"><h2>Who can see your work</h2>
+<p>Only you and the assistants you connect. The people who run this service can technically reach the data stored on it,
+as with any online service.</p></section>
+<section id="delete"><h2>Deleting your data</h2>
+<p>Disconnect assistants, remove computers or make a new add-in key on your dashboard. To close your account and remove
+your sign-in details, ask your CADOS administrator or the person who invited you.</p></section>
+<section id="changes"><h2>Changes</h2><p>If this notice changes, the date at the top changes with it.</p></section>
+</article></div></main>"""
 
-<h2>What is kept</h2>
-<ul>
-<li><b>Your account:</b> your name, your email address, and either a password (stored only as a one-way hash) or the
-ID of the Google account you sign in with.</li>
-<li><b>Your connections:</b> the AI apps you connected (their name and sign-in tokens, stored only as one-way hashes)
-and your SOLIDWORKS key, so the add-in on your PC can reach your account.</li>
-<li><b>Sign-in sessions:</b> a random token in a cookie, so you stay signed in. A second, short-lived cookie protects
-the Google sign-in step and is removed after it.</li>
-<li><b>Work in passing:</b> while your AI app works, the commands it sends and the shapes SOLIDWORKS sends back
-(for example a STEP copy of the part, to measure and check it) pass through this server. They are held in memory or
-for a short time to do that work, then dropped. Files you upload for import are deleted once imported, or after 30
-minutes. Your SOLIDWORKS files themselves stay on your PC.</li>
-</ul>
-<p>OpenSketch's pages load nothing from other sites: the fonts and pictures come from this server, so opening
-OpenSketch tells no one else that you visited.</p>
 
-<h2>Sign in with Google</h2>
-<p>If you choose Continue with Google, Google tells OpenSketch your name, your email address, whether that address is
-verified, your Google account ID and, for work accounts, your organisation's domain. OpenSketch asks for nothing
-else: no access to your Gmail, Drive, contacts or anything in your Google account.</p>
-<p>This information is used only to sign you in and to link the sign-in to your OpenSketch account. It is stored with
-your account on this server. It is not shared with anyone, not sold, not used for advertising and not used to train
-AI models. You can remove the link at any time in your Google account settings (Security, Third-party
-connections).</p>
-
-<h2>AI</h2>
-<p>OpenSketch runs no AI of its own. The AI app you connect sees what OpenSketch's tools return to it (feature
-lists, measurements, preview pictures of your SOLIDWORKS model), under that app's own privacy terms. It can only do
-what the tools allow, only while you have it connected, and only with the SOLIDWORKS your add-in is linked to.</p>
-
-<h2>Who can see your work</h2>
-<p>Only you and the AI apps you connect. The person who runs this server can technically reach the data stored on
-it, as with any web service.</p>
-
-<h2>Deleting your data</h2>
-<p>Disconnect AI apps or make a new SOLIDWORKS key on the home page. To close your account and remove your sign-in
-details, ask the person who runs this server or who invited you.</p>
-
-<h2>Changes</h2>
-<p>If this page changes, the date at the top changes with it.</p>
-</main></body></html>"""
+def privacy_page(signed_in: bool = False, base: str = "") -> bytes:
+    from . import brand
+    return (brand.head("Privacy", "How CADOS by KEVOS handles your account, your computers and your work.", path="/privacy",
+                       index=True, base=base)
+            + "<body>" + brand.header("", signed_in) + PRIVACY_BODY + brand.footer() + brand.MENU_SCRIPT + "</body></html>").encode()
 
 
 def _field(name: str, label: str, kind: str = "text", auto: str = "", focus: bool = False, value: str = "", note: str = "",
@@ -380,7 +342,7 @@ def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with 
             '<div class="or">or with email</div>')
 
 
-PITCH = "Your AI, building in SOLIDWORKS."
+PITCH = "Turn engineering intent into CAD."
 
 
 def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="", pitch=PITCH) -> bytes:
@@ -392,14 +354,14 @@ def _page(title, sub, action, fields, button, nxt="/", error="", links="", top="
 def _login_page(nxt, error="", email=""):
     from . import accounts
     forgot = ('<span class="note">Forgot your password? Ask the person who invited you. '
-              '<a href="/reset">Run this server?</a></span>' if password() else
-              '<span class="note">Forgot your password? Ask the server owner for help.</span>')
+              '<a href="/reset">Administrator?</a></span>' if password() else
+              '<span class="note">Forgot your password? Ask your CADOS administrator.</span>')
     signup = '<a href="/signup">Create an account</a>' if accounts.settings()["open_signup"] else ""
     links = f'<div class="links">{forgot}{signup}</div>'
     if accounts.access_code():  # keeps `next`, so an AI app's sign-in (/oauth/authorize) carries on after the code
         q = "?" + urlencode({"next": nxt}) if nxt and nxt != "/" else ""
         links += f'<div class="links"><a href="/access{_esc(q)}">Have an early access code?</a></div>'
-    return _page("Sign in", "Sign in to your OpenSketch account.", "/login",
+    return _page("Sign in", "Sign in to your CADOS account.", "/login",
                  [_field("email", "Email", "email", "username", not email, email),
                   _field("password", "Password", "password", "current-password", bool(email), invalid=bool(error))],
                  "Sign in", nxt, error, links, _google_block(nxt))
@@ -407,21 +369,21 @@ def _login_page(nxt, error="", email=""):
 
 def _access_page(nxt="/", error="", code=""):
     """Early access: type the owner's code, skip sign-up, work as an Internal tester (accounts.create_tester)."""
-    return _page("Early access", "Enter your access code to try OpenSketch. No account needed.", "/access",
+    return _page("Early access", "Enter your access code to try CADOS. No account needed.", "/access",
                  [_field("code", "Access code", "text", "off", True, code, invalid=bool(error)).replace(
                      'autocomplete="off"', 'autocomplete="off" spellcheck="false" autocapitalize="off"')], "Start", nxt, error,
                  f'<div class="links"><a href="/login{_esc("?" + urlencode({"next": nxt}) if nxt and nxt != "/" else "")}">I have an account</a></div>')
 
 
 def _access_closed_page() -> bytes:
-    page = _page("Early access", "Early access is closed right now. Ask the person who gave you the code.", "/login", [],
+    page = _page("Early access", "Early access is closed at the moment. Ask the person who gave you the code.", "/login", [],
                  "Sign in instead", "/")
     return page.replace(b'method="post" action="/login"', b'method="get" action="/login"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
 def _signup_page(nxt="/", error="", form=None):
     form = form or {}
-    return _page("Create an account", "Join this OpenSketch server.", "/signup",
+    return _page("Create an account", "Create your CADOS account.", "/signup",
                  [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                   _field("email", "Email", "email", "username", False, form.get("email", "")),
                   _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")],
@@ -436,14 +398,14 @@ def _setup_page(nxt, error="", form=None):
          _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")]
     if password():
         f.append(_field("server_password", "Server password", "password", "off",
-                        note="The OPENSKETCH_PASSWORD this server was started with. It proves you own it."))
-    return _page("Create the owner account", "You will own this server and can invite people.", "/setup", f,
+                        note="The server password (OPENSKETCH_PASSWORD) this service was started with. It proves you run it."))
+    return _page("Set up CADOS", "Create the administrator account. You can invite people afterwards.", "/setup", f,
                  "Create account", nxt, error)
 
 
 def _join_page(token, error="", form=None):
     form = form or {}
-    return _page("Join OpenSketch", "You were invited to this OpenSketch server. Create your account.",
+    return _page("Join CADOS", "You were invited to CADOS. Create your account.",
                  f"/join/{quote(token)}", [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                                            _field("email", "Email", "email", "username", False, form.get("email", "")),
                                            _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")],
@@ -452,7 +414,7 @@ def _join_page(token, error="", form=None):
 
 
 def _reset_page(error="", email=""):
-    return _page("Reset a password", "For the person who runs this server: the server password sets a new password for any account. Everyone else: ask the person who invited you.", "/reset",
+    return _page("Reset a password", "For administrators: the server password sets a new password for any account. Everyone else: ask the person who invited you.", "/reset",
                  [_field("email", "Email", "email", "username", True, email),
                   _field("server_password", "Server password", "password", "off"),
                   _field("new_password", "New password", "password", "new-password", note="At least 8 characters.")],
@@ -626,11 +588,12 @@ class PasswordGate:
             return await self.app(scope, receive, send)
         path = scope.get("path", "")
         if scope.get("method") not in ("GET", "HEAD", "OPTIONS") and not _machine_path(path) and not _same_origin(scope):
-            return await _send(send, 403, b'{"error":"This request did not come from OpenSketch."}', [(b"content-type", b"application/json")])
+            return await _send(send, 403, b'{"error":"This request did not come from a CADOS page."}', [(b"content-type", b"application/json")])
         if path == "/healthz" and scope.get("method") in ("GET", "HEAD"):  # the supervisor's check: no data, no sign-in
             return await self.app(scope, receive, send)
         if path == "/privacy" and scope.get("method") in ("GET", "HEAD"):
-            return await _send(send, 200, PRIVACY.encode(), [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-cache")])
+            return await _send(send, 200, privacy_page(_signed_in_quietly(scope), public_url(_headers(scope))),
+                               [(b"content-type", b"text/html; charset=utf-8"), (b"cache-control", b"no-cache")])
         from . import accounts
         try:
             m = mode()
@@ -649,10 +612,13 @@ class PasswordGate:
         scope.setdefault("state", {})["user"] = user
         if m == "open" or user is not None:
             return await self.app(scope, receive, send)
+        # The product page (/ for visitors) and the documentation are public: they hold no data.
+        if scope.get("method") in ("GET", "HEAD") and (path == "/" or path in PUBLIC_PAGES):
+            return await self.app(scope, receive, send)
         if scope.get("method") == "GET" and not path.startswith("/api/"):
             nxt = path + ("?" + scope["query_string"].decode() if scope.get("query_string") else "")
             return await _send(send, 303, b"", [(b"location", f"/login?next={quote(nxt)}".encode())])
-        return await _send(send, 401, b'{"error":"Sign in to OpenSketch first."}', [(b"content-type", b"application/json")])
+        return await _send(send, 401, b'{"error":"Sign in to CADOS first."}', [(b"content-type", b"application/json")])
 
     async def _google(self, path, scope, q, go, send):
         return await _google_flow(path, scope, q, go, send)
@@ -836,7 +802,7 @@ async def _google_flow(path, scope, q, go, send):
         me = current_user(scope)
         back = _safe_next(st.get("n") or "/")
         if not me or me["id"] != st["k"]:
-            return await _send(send, 403, notice_page("Could not keep your account", "Open OpenSketch in the browser you "
+            return await _send(send, 403, notice_page("Could not keep your account", "Open CADOS in the browser you "
                                                       "used with the access code, then try again.", "This browser is signed in "
                                                       "to a different account.", href=back), HTML + [(b"set-cookie", clear)])
         try:
@@ -845,7 +811,7 @@ async def _google_flow(path, scope, q, go, send):
             await asyncio.to_thread(accounts.keep_tester, me["id"], info["email"], info.get("name") or "", None, info["sub"])
         except accounts.AccountError as e:
             return await _send(send, 409, notice_page("Could not keep your account", "You are still signed in, in this "
-                                                      "browser.", str(e), "Back to OpenSketch", back), HTML + [(b"set-cookie", clear)])
+                                                      "browser.", str(e), "Back to CADOS", back), HTML + [(b"set-cookie", clear)])
         return await go(back, clear)
     domain = (info.get("email") or "").rsplit("@", 1)[-1].lower()
     managed = domain in ("gmail.com", "googlemail.com") or (info.get("hd") or "").lower() == domain

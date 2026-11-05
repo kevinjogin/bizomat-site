@@ -385,7 +385,7 @@ namespace Kevos.Companion
             open.LinkClicked += (s, e) => Browse();
             Controls.AddRange(new Control[] { title, l1, gateway, l2, name, go, code, info, open });
             var cfg = app.Engine.Config;
-            gateway.Text = cfg.GatewayUrl ?? Config.GatewayUrl ?? "https://";
+            gateway.Text = cfg.GatewayUrl ?? Config.GatewayUrl ?? Config.DefaultGateway;
             name.Text = cfg.DeviceName ?? Environment.MachineName;
             info.Text = cfg.Paired ? $"This computer is {cfg.DeviceName} on {cfg.Account}. Pairing again gives it a new identity; the old one stops working." :
                         "You will sign in on the KEVOS website and confirm the code shown here. No password is stored on this computer.";

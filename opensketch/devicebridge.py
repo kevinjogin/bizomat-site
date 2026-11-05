@@ -467,7 +467,7 @@ def pick(user: dict | None, device: str | None):
         return default[0]
     names = ", ".join(r["name"] for r in (with_sw or online))
     raise BridgeError(f"Several computers are connected ({names}). Pass device=\"<name>\" to choose one, or set a "
-                      "default computer on the KEVOS home page.", code="DEVICE_AMBIGUOUS")
+                      "default computer on the CADOS dashboard.", code="DEVICE_AMBIGUOUS")
 
 
 def status_for(user: dict | None, device: str | None = None) -> dict:
@@ -1208,7 +1208,7 @@ async def pair_start(request: Request):
     try:
         raw, body = await _json(request)
         if _open_and_remote(request):
-            raise BridgeAuthError(403, "FORBIDDEN", "This KEVOS server has no sign-in yet: set a server password (OPENSKETCH_PASSWORD) "
+            raise BridgeAuthError(403, "FORBIDDEN", "This CADOS server has no sign-in yet: set a server password (OPENSKETCH_PASSWORD) "
                                                     "before computers pair with it over the network.")
         if not mcpauth._rate_ok("pair:" + _client_ip(request), PAIR_LIMIT, 3600, _pair_hits):
             raise BridgeAuthError(429, "RATE_LIMITED", "Too many pairing attempts from this network. Try again in an hour.")
@@ -1394,9 +1394,8 @@ def _pair_page(code: str = "", pairing: dict | None = None, error: str = "", don
     if pairing:
         fields.append(auth._field("name", "Name for this computer", value=pairing.get("name") or "", focus=True,
                                   note=auth._esc(" ".join(x for x in (info.get("machine"), info.get("os")) if x))))
-    links = ('<div class="links"><button name="decision" value="deny" formnovalidate style="background:none;border:0;'
-             'padding:0;width:auto;font:inherit;font-size:13px;color:var(--link);cursor:pointer">Not my computer</button></div>'
-             if pairing else "")
+    links = ('<button name="decision" value="deny" formnovalidate class="ghost">Not my computer</button>'
+             '<div class="note center">Not added unless you choose Add this computer.</div>' if pairing else "")
     return auth._page("Add a computer", sub, "/devices/pair", fields, "Add this computer" if pairing else "Continue",
                       error=error, links=links)
 

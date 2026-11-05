@@ -169,7 +169,7 @@ class RequestLog:
                       flush=True)
 
 
-app = FastAPI(title="OpenSketch", lifespan=lifespan)
+app = FastAPI(title="CADOS by KEVOS", lifespan=lifespan, docs_url=None, redoc_url=None)  # /docs is the documentation page
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(RequestLog)
 app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
@@ -503,7 +503,7 @@ def _sw_person(request: Request):
     tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
     ok, user = swbridge.resolve(tok)
     if not ok:
-        page = f"the OpenSketch home page, {auth.public_url(dict(request.headers))}"
+        page = f"your CADOS dashboard, {auth.public_url(dict(request.headers))}"
         if swbridge.retired(tok):
             raise HTTPException(401, f"A new SOLIDWORKS key was made, so this one stopped working. Paste the new key from {page}")
         raise HTTPException(401, f"This SOLIDWORKS key is not valid. Copy the key again from {page}")
@@ -629,8 +629,8 @@ def api_sw_key(request: Request):
 @app.get("/api/sw/download")
 def api_sw_download():
     if not SW_DOWNLOAD.is_file():
-        raise HTTPException(404, "The SOLIDWORKS add-in is not on this server.")
-    return FileResponse(SW_DOWNLOAD, filename="OpenSketch-SOLIDWORKS.zip", media_type="application/zip",
+        raise HTTPException(404, "The SOLIDWORKS add-in package is not on this server.")
+    return FileResponse(SW_DOWNLOAD, filename="CADOS-SOLIDWORKS-addin.zip", media_type="application/zip",
                         headers={"Cache-Control": "no-cache"})
 
 
@@ -655,11 +655,33 @@ def api_connect_new_address(request: Request):
     return {"mcp_url": f"{_base(request)}{mcp_server.PATHS[0]}/{auth.mcp_token_for(u)}"}
 
 
-@app.get("/solidworks")  # the page's address before it became the home page
+PAGE_HEADERS = {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin"}
+PUBLIC_HEADERS = {"Cache-Control": "no-cache", "X-Frame-Options": "DENY", "Referrer-Policy": "strict-origin-when-cross-origin"}
+
+
+@app.get("/dashboard")
+@app.get("/solidworks")  # the dashboard's address before it became the home page
 async def solidworks_page(request: Request):
     from . import sw_page
-    return await _text_page(request.scope, sw_page.page(), "text/html; charset=utf-8",
-                            {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin"})
+    return await _text_page(request.scope, sw_page.page(_base(request)), "text/html; charset=utf-8", PAGE_HEADERS)
+
+
+def _signed_in(request: Request) -> bool:
+    return auth.mode() == "open" or _user(request) is not None
+
+
+@app.get("/overview")
+async def overview_page(request: Request):
+    """The product page, for everyone (the sign-in gate lets it through)."""
+    from . import site
+    return await _text_page(request.scope, site.landing(_signed_in(request), _base(request)), "text/html; charset=utf-8", PUBLIC_HEADERS)
+
+
+@app.get("/docs")
+async def docs_page(request: Request):
+    """Setup, connection, verification and troubleshooting, for everyone."""
+    from . import site
+    return await _text_page(request.scope, site.docs(_signed_in(request), _base(request)), "text/html; charset=utf-8", PUBLIC_HEADERS)
 
 
 @app.get("/api/solidworks")
@@ -890,7 +912,10 @@ async def _text_page(scope, body: bytes, media_type: str, headers: dict) -> Resp
 
 @app.get("/")
 async def index(request: Request):
-    return await solidworks_page(request)
+    """The dashboard for a signed-in person (and on an open server); the product page for a visitor."""
+    if _signed_in(request):
+        return await solidworks_page(request)
+    return await overview_page(request)
 
 
 STATIC = Path(__file__).parent / "static"

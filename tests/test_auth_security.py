@@ -385,12 +385,13 @@ def test_the_code_link_keeps_where_the_person_was_going(monkeypatch):
 def test_sign_in_pages_tie_errors_and_notes_to_fields():
     """dialogs-a11y:12: errors and notes are read out with their fields; the setup page talks to a new owner."""
     setup = TestClient(server.app).get("/setup").text
-    assert "now uses accounts" not in setup and "You will own this server" in setup
+    assert "now uses accounts" not in setup and "Create the administrator account" in setup
     assert 'aria-describedby="new_password-note"' in setup and 'id="new_password-note"' in setup
     _owner()
     bad = TestClient(server.app).post("/login", data={"email": "owner@example.com", "password": "nope"}).text
     assert 'id="err"' in bad and 'aria-invalid="true"' in bad and 'aria-describedby="err"' in bad
-    assert "a:focus-visible" in bad
+    # focus styles live in the shared design system the page links
+    assert "/ui/cados.css" in bad and ":focus-visible" in TestClient(server.app).get("/ui/cados.css").text
 
 
 def test_one_connection_per_app_and_registrations_are_bounded(monkeypatch):

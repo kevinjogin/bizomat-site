@@ -195,7 +195,7 @@ def _session(user: dict | None, sid: str) -> Session:
         ended = _ended.get(person_id(user))
         if ended and time.time() - ended[1] < 300:  # a poll that raced the close: say why, not "restarted"
             raise Gone(ended[0], "closed")
-        raise Gone("The OpenSketch server restarted; connecting again.", "restarted")
+        raise Gone("The CADOS server restarted; connecting again.", "restarted")
     if s.id != sid:
         raise Gone("Another SOLIDWORKS connected with this key, so this one stopped.", "replaced")
     if s.closed:
@@ -365,16 +365,16 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
     if version_tuple(have) >= version_tuple(needed):
         return None
     where = s.info.get("path")
-    return (f"{what} needs the OpenSketch add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
+    return (f"{what} needs the CADOS add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
             + (f" from {where}" if where else "") + ". To update: close SOLIDWORKS (check Task Manager for SLDWORKS.exe), "
             f"download OpenSketch-SOLIDWORKS.zip from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
             "all files), run OpenSketchSW.exe from that folder and click Install for me, then reopen SOLIDWORKS and "
             "connect again.")
 
 
-NOT_CONNECTED = ("SOLIDWORKS is not connected. On the PC: open SOLIDWORKS, then Tools > OpenSketch > Connect to "
-                 "Claude (or run OpenSketchSW.exe, which attaches to the open SOLIDWORKS). The add-in and the key "
-                 "are on the OpenSketch site's home page.")
+NOT_CONNECTED = ("SOLIDWORKS is not connected. On the computer: check that the KEVOS Companion is running and that "
+                 "SOLIDWORKS is open with the KEVOS add-in loaded (the KEVOS tab). Without the Companion, open KEVOS > "
+                 "KEVOS status in SOLIDWORKS and connect. The setup steps are on the CADOS dashboard.")
 
 
 def target_key(user: dict | None, device: str | None = None) -> str:

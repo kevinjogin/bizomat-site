@@ -1,4 +1,4 @@
-"""Run OpenSketch: python -m opensketch [--port 8000] [--no-browser] [--supervise]"""
+"""Run the CADOS server: python -m opensketch [--port 8000] [--no-browser] [--supervise]"""
 
 import argparse
 import faulthandler
@@ -28,7 +28,7 @@ def main():
     url = f"http://{args.host}:{args.port}/"
     if not args.no_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
-    print(f"OpenSketch running at {url}")
+    print(f"CADOS running at {url}")
     # on a stop, open connections (the add-in's long polls) get 3 s to finish instead of holding the restart up
     uvicorn.run("opensketch.server:app", host=args.host, port=args.port, log_level="warning", timeout_graceful_shutdown=3)
 

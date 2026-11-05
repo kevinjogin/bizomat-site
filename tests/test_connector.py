@@ -62,9 +62,9 @@ def test_only_the_solidworks_tools_on_both_addresses(app):
         assert {"sw_list_devices", "sw_command_status", "sw_cancel_command"} <= names  # KEVOS registered computers
     init = _rpc(app, "/mcp", "initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
                                             "clientInfo": {"name": "t", "version": "1"}}).json()["result"]
-    assert init["serverInfo"]["name"] == "OpenSketch" and "sw_status first" in init["instructions"]
+    assert init["serverInfo"]["name"] == "CADOS" and "sw_status first" in init["instructions"]
     out = _rpc(app, "/mcp", "tools/call", {"name": "sw_status", "arguments": {}}).json()["result"]
-    assert '"connected": false' in out["content"][0]["text"] and "home page" in out["content"][0]["text"]
+    assert '"connected": false' in out["content"][0]["text"] and "CADOS dashboard" in out["content"][0]["text"]
     guide = _rpc(app, "/mcp", "tools/call", {"name": "sw_get_guide", "arguments": {}}).json()["result"]["content"][0]["text"]
     assert "sw_status first" in guide and '"type":"sketch"' in guide and "Mate references" in guide
     assert "viewport" not in guide  # only the SOLIDWORKS workflow
@@ -80,11 +80,11 @@ def test_one_sign_in_works_on_both_addresses(app):
     assert "/.well-known/oauth-protected-resource/solidworks/mcp" in r.headers["www-authenticate"]
     for path in mcp_server.PATHS:
         meta = app.get("/.well-known/oauth-protected-resource" + path).json()
-        assert meta["resource"] == "http://testserver" + path and meta["resource_name"] == "OpenSketch"
+        assert meta["resource"] == "http://testserver" + path and meta["resource_name"] == "CADOS"
         assert app.get("/.well-known/oauth-authorization-server" + path).json()["issuer"] == "http://testserver"
     info = _register(app)
     page, tok = _connect(owner, app, info, "http://testserver/solidworks/mcp")
-    assert "build in SOLIDWORKS" in page and "Your AI, building in SOLIDWORKS." in page
+    assert "wants to use CADOS to work in SOLIDWORKS" in page and "Turn engineering intent into CAD." in page
     for path in mcp_server.PATHS:
         assert _rpc(app, path, "tools/list", token=tok["access_token"]).status_code == 200
     # Claude connected again to /mcp: one connection per app, as before
@@ -107,13 +107,21 @@ def test_private_address_on_both_paths(app):
 def test_home_page_and_its_api(app):
     owner = _owner()
     anon = TestClient(server.app)
-    r = anon.get("/", follow_redirects=False)
-    assert r.status_code == 303 and r.headers["location"] == "/login?next=/"
+    r = anon.get("/dashboard", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/login?next=/dashboard"
+    # a visitor gets the public product page at /; it holds no data and no API call
+    home = anon.get("/", follow_redirects=False)
+    assert home.status_code == 200 and "Turn engineering intent into CAD." in home.text and "/api/solidworks" not in home.text
+    for path in ("/overview", "/docs", "/privacy"):
+        page = anon.get(path)
+        assert page.status_code == 200 and "CADOS" in page.text and "https://kevos.com/" in page.text, path
+        assert "OpenSketch" not in page.text, path
     login = anon.get("/login").text
-    assert "Your AI, building in SOLIDWORKS." in login and "AI for SOLIDWORKS" in login and "manifest" not in login
-    for path in ("/", "/solidworks"):
+    assert "Turn engineering intent into CAD." in login and "CADOS" in login and "manifest" not in login
+    for path in ("/", "/dashboard", "/solidworks"):
         page = owner.get(path)
-        assert page.status_code == 200 and "OpenSketch" in page.text and "/api/solidworks" in page.text
+        assert page.status_code == 200 and "Dashboard" in page.text and "/api/solidworks" in page.text
+    assert "Sign out" in owner.get("/dashboard").text and "Dashboard" in owner.get("/overview").text
     d = owner.get("/api/solidworks").json()
     assert d["key"].startswith("oss_") and d["status"] == {"connected": False} and d["signin"] is True
     assert d["user"]["email"] == "owner@example.com" and d["apps"] == []
@@ -122,7 +130,7 @@ def test_home_page_and_its_api(app):
     st = owner.get("/api/solidworks").json()["status"]
     assert st["connected"] and st["machine"] == "PC1"
     bad = app.post("/mcp/sw/hello", json={}, headers={"Authorization": "Bearer oss_" + "0" * 40})
-    assert bad.status_code == 401 and "home page, http://testserver" in bad.json()["detail"]
+    assert bad.status_code == 401 and "CADOS dashboard, http://testserver" in bad.json()["detail"]
     privacy = anon.get("/privacy").text
     assert "SOLIDWORKS" in privacy and "built-in AI" not in privacy
 
@@ -130,7 +138,7 @@ def test_home_page_and_its_api(app):
 def test_only_connector_routes():
     owner = _owner()
     allowed = ("/healthz", "/api/account", "/api/sw", "/api/solidworks", "/api/connect/", "/mcp", "/solidworks",
-               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/redoc")
+               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/dashboard", "/overview")
     paths = [getattr(r, "path", "") for r in server.app.routes]
     assert [p for p in paths if p not in ("/", "") and not p.startswith(allowed)] == []
     for path in ("/api/docs", "/api/features", "/api/version", "/sw.js", "/manifest.webmanifest", "/js/app.js",

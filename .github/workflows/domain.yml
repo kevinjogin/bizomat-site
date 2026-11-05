@@ -11,8 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       hostname:
-        description: "The gateway's own address, e.g. bridge.example.com (the domain must be in your Cloudflare account)"
+        description: "The gateway's own address (the domain must be in your Cloudflare account)"
         required: true
+        default: "cados.kevos.com"
       app:
         description: "Fly app"
         default: "cados"

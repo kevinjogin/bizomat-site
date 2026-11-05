@@ -129,7 +129,7 @@ def base_url(headers: dict) -> str:
 
 # The MCP endpoint's addresses (mcp_server.PATHS): /mcp, and /solidworks/mcp, a second address early connectors
 # used. Both are the same server, so a token from either works on both.
-RESOURCES = {"/mcp": "OpenSketch", "/solidworks/mcp": "OpenSketch"}
+RESOURCES = {"/mcp": "CADOS", "/solidworks/mcp": "CADOS"}
 
 
 def resource_url(headers: dict, path: str = "/mcp") -> str:
@@ -443,7 +443,7 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     link on this site bounce a signed-in person to any site (real apps always send a valid request)."""
     rec = client(params.get("client_id", ""), fetch=False)
     if rec is None:
-        raise OAuthError("invalid_client", "OpenSketch does not know this app, or could not read its details. Remove the connector in your AI app and add it again.")
+        raise OAuthError("invalid_client", "CADOS does not know this app, or could not read its details. Remove the connector in your AI app and add it again.")
     redirect = params.get("redirect_uri") or (rec["redirect_uris"][0] if len(rec["redirect_uris"]) == 1 else "")
     if redirect not in rec["redirect_uris"]:
         raise OAuthError("invalid_request", "The app sent a return address it did not register.")
@@ -459,7 +459,7 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     target = known.get(_canon(res or ""), resource_url(headers))
     scope = params.get("scope") or SCOPE
     if any(s not in (SCOPE, "openid", "profile", "email", "offline_access") for s in scope.split()):
-        raise OAuthError("invalid_scope", f"The app asked for more than OpenSketch offers (scope {SCOPE}).")
+        raise OAuthError("invalid_scope", f"The app asked for more than CADOS offers (scope {SCOPE}).")
     req = {"client_id": params["client_id"], "redirect_uri": redirect, "state": state,
            "code_challenge": params["code_challenge"], "resource": target, "scope": SCOPE}
     return rec, req
@@ -542,7 +542,7 @@ def token(form: dict, basic: str = "") -> dict:
                     _canon(c["resource"]), _canon(c["resource"].rsplit("/mcp", 1)[0]), _canon(_origin(c["resource"]))):
                 raise OAuthError("invalid_target", "This server only issues tokens for its own MCP endpoint.")
             if not _user_exists(c["user"]):
-                raise OAuthError("invalid_grant", "That OpenSketch account no longer exists.")
+                raise OAuthError("invalid_grant", "That CADOS account no longer exists.")
             d = _load()
             gid = "osg_" + secrets.token_urlsafe(12)
             now = int(time.time())
@@ -573,7 +573,7 @@ def token(form: dict, basic: str = "") -> dict:
             if not _user_exists(g["user"]):
                 d["grants"].pop(gid, None)
                 _save(d)
-                raise OAuthError("invalid_grant", "That OpenSketch account no longer exists.")
+                raise OAuthError("invalid_grant", "That CADOS account no longer exists.")
             out = _new_tokens(d, gid)
             g["last_used"] = int(now)
             _save(d)

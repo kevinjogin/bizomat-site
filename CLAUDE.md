@@ -4,7 +4,9 @@ Guidance for AI coding agents (and people) working in this repository.
 
 ## What this repo is
 
-OpenSketch connects AI apps (Claude, ChatGPT and other MCP clients) to SOLIDWORKS on the user's own PC. The AI
+CADOS by KEVOS (product name; the code keeps OpenSketch as its internal name: the `opensketch` package,
+`OPENSKETCH_*` settings, cookies, the add-in's COM ids and file names, the MCP tool names) connects AI apps (Claude,
+ChatGPT and other MCP clients) to SOLIDWORKS on the user's own PC. The AI
 calls the `sw_` MCP tools; the server checks each sketch and feature with OpenSketch's build123d/OpenCascade
 kernel, queues the work, and the OpenSketch add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS
 and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-only.
@@ -22,9 +24,14 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   8 SDK) and `npm test` (the solver alone); the add-in and Companion with `bash solidworks/build.sh test` (.NET 8 SDK). For page changes, check the page in Chromium with
   Playwright at desktop and phone width.
 - No emojis anywhere. Plain language, short sentences, little text on pages.
-- Brand: the text wordmark "OpenSketch" (Inter Tight 800, tight tracking) as the logo, "for SOLIDWORKS" beside it on
-  the home page; the sign-in pages' look (dark, the angled indigo-to-pink band, raised cards, pill calls to action);
-  fonts served from `opensketch/static/fonts` (no third-party requests: the privacy page says so).
+- Brand: CADOS by KEVOS. Never "OpenSketch" in anything people read (pages, MCP server name, messages); real file
+  paths and file names (`Documents\OpenSketch`, `OpenSketchSW.exe`) stay as they are. Logos are SVG paths in
+  `brand.py`: the CADOS wordmark (built from the KEVOS letterforms) with "by KEVOS"; the KEVOS logo links to
+  https://kevos.com/. One design system for every page: tokens and components in `opensketch/static/ui/cados.css`
+  (KEVOS orange #F47B20 for marks; #BF550B buttons and #B44F0A links for contrast on white; warm off-white
+  surfaces, charcoal #16181D headings), shared head/header/footer in `brand.py`. Light theme. Inter Tight headings,
+  Inter body, system monospace for technical labels; fonts served from `opensketch/static/fonts` (no third-party
+  requests: the privacy page says so). Copy claims only what the code does (site.py says where each comes from).
 - The feature format (`docs/DOCUMENT.md`, the registry in `opensketch/features/`) is the contract between the AI,
   the kernel and the add-in. Change it there first, then the kernel, then the add-in. The bridge protocol
   (`docs/BRIDGE-PROTOCOL.md`) is the contract between gateway, Companion and add-in: change it there first, then
@@ -73,9 +80,16 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - Sign-in (`auth.py`, `accounts.py`, `oauth.py`): accounts with scrypt passwords, invites, Google sign-in (secret
   encrypted with `secretbox.py`), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
   makes "Internal tester" accounts. Account admin is API only (`/api/account*`), no page yet.
-- Home page (`sw_page.py`, at `/` and `/solidworks`, sign-in required): download the add-in; address + key with Show
-  / Copy / New key; the connector address, the private address with New address, connected AI apps with Disconnect;
-  the self-test prompt; a live status pill. `GET /api/solidworks` gives it everything in one call.
+- Pages: `/` is the product page for visitors (`site.landing`) and the dashboard for a signed-in person (and on an
+  open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
+  security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,
+  `og.png`, `icon-180.png`). FastAPI's own /docs and /redoc are off. Dashboard (`sw_page.py`, `/dashboard`, also
+  `/solidworks`, sign-in required): five setup steps with progress (install, activate in SOLIDWORKS with the
+  computers list and the direct link's address + key with Show / Copy / New key, connect the AI assistant with the
+  connector address, per-app instructions, connected apps and the private address with Show / Copy / New address,
+  verify, self test), a live status (Connected, Disconnected, Checking connection, Authentication required,
+  Installation required, Connection error), a summary and help panel. `GET /api/solidworks` gives it everything in
+  one call. Sign-in, consent, notice and pairing pages share `auth.PAGE` (product panel and form).
 - Server (`server.py`): lifespan (warms the owner's agent CAD worker, runs the MCP session manager), BodyLimit,
   RequestLog, PasswordGate; /healthz; account routes; add-in link (`/mcp/sw/hello|next|result|file|blob`), `/api/sw*`;
   upload links (`/mcp/uploads/{id}`) and artifact downloads (`/mcp/artifacts/...`); OAuth routes; static files
@@ -161,7 +175,9 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - Code: https://github.com/jogkev-creator/CADOS (moved from jogkev-creator/opensketchyz in Nov 2026; release
   downloads, the MSI's links and `swbridge.ADDIN_DOWNLOAD` point there). The Fly app below was linked to the old
   repository: relink it in Fly (or deploy by hand) after the move.
-- Live at https://cados.fly.dev (Fly app `cados`, Sydney, first made with Fly Launch from GitHub on 4 Nov 2026).
+- Public address https://cados.kevos.com (point it at the Fly app with `domain.yml`; deploy.yml sets it as
+  OPENSKETCH_PUBLIC_URL unless the repository variable PUBLIC_URL says otherwise). Origin https://cados.fly.dev (Fly
+  app `cados`, Sydney, first made with Fly Launch from GitHub on 4 Nov 2026); the deploy health checks use it.
   One deploy source: the app is linked to this repository in Fly (Fly builds and deploys every push to main itself;
   /healthz then reports version "dev", as no commit is passed in). On a push `deploy.yml` only runs the tests (unless
   the repository variable DEPLOY_ON_PUSH is "true"); run by hand it deploys from Actions and makes a missing volume

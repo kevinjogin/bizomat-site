@@ -34,7 +34,8 @@ def test_open_mode_setup_turns_sign_in_on(tmp_path):
     assert me["mode"] == "accounts" and me["user"]["email"] == "owner@example.com" and me["user"]["role"] == "owner"
     anon = TestClient(server.app)
     assert anon.get("/api/solidworks").status_code == 401
-    assert anon.get("/", follow_redirects=False).headers["location"].startswith("/login")
+    assert anon.get("/dashboard", follow_redirects=False).headers["location"].startswith("/login")
+    assert "Turn engineering intent into CAD." in anon.get("/").text  # a visitor sees the product page
     assert _owner(anon, email="x@example.com").headers["location"] == "/login"  # setup is closed now
     # files keep no password and no usable session token
     raw = (tmp_path / "data" / "users.json").read_text() + (tmp_path / "data" / "sessions.json").read_text()
@@ -59,7 +60,7 @@ def test_password_mode_needs_the_server_password_to_set_up(monkeypatch):
     c = TestClient(server.app)
     assert c.get("/api/account").status_code == 401
     page = c.get("/login")
-    assert page.status_code == 200 and b"Create the owner account" in page.content and b"server_password" in page.content
+    assert page.status_code == 200 and b"Create the administrator account" in page.content and b"server_password" in page.content
     assert _owner(c, server_pw="wrong").status_code == 401
     assert not accounts.any_users()
     # the old password cookie still works until the owner exists

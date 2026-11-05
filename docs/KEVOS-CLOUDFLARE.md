@@ -20,6 +20,11 @@ Use one of these.
 
 ### A. Gateway hosted on Fly (or any host) with a domain on Cloudflare (recommended)
 
+CADOS by KEVOS uses `cados.kevos.com` (a CNAME to `cados.fly.dev`). Run the Domain workflow with that host name
+(its default) once `kevos.com` is in the Cloudflare account; `deploy.yml` sets `OPENSKETCH_PUBLIC_URL` to it unless the
+repository variable `PUBLIC_URL` says otherwise. If `kevos.com` is managed elsewhere, add the same two records there by
+hand (step 1 below: the CNAME and the check record Fly asks for after `fly certs add cados.kevos.com -a cados`).
+
 **One click:** the workflow `.github/workflows/domain.yml` does steps 1, 2 and 3 below. Add two repository secrets
 (GitHub > the repository > Settings > Secrets and variables > Actions): `CLOUDFLARE_API_TOKEN` (Cloudflare > My
 Profile > API Tokens > Create Token > template "Edit zone DNS", zone resources: only your domain) and
