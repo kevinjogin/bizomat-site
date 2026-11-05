@@ -155,6 +155,9 @@ commands to the add-in over a local named pipe; an MSI installs both. Docs: `doc
 
 ## Hosting
 
+- Code: https://github.com/jogkev-creator/CADOS (moved from jogkev-creator/opensketchyz in Nov 2026; release
+  downloads, the MSI's links and `swbridge.ADDIN_DOWNLOAD` point there). The Fly app below was linked to the old
+  repository: relink it in Fly (or deploy by hand) after the move.
 - Live at https://cados.fly.dev (Fly app `cados`, Sydney, first made with Fly Launch from GitHub on 4 Nov 2026).
   One deploy source: the app is linked to this repository in Fly (Fly builds and deploys every push to main itself;
   /healthz then reports version "dev", as no commit is passed in). On a push `deploy.yml` only runs the tests (unless

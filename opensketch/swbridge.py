@@ -333,7 +333,7 @@ def _v1_status(user: dict | None) -> dict:
 
 
 # Where people get a newer add-in (the GitHub release that solidworks.yml keeps up to date). Overridable for forks.
-ADDIN_DOWNLOAD = os.environ.get("OPENSKETCH_ADDIN_URL", "https://github.com/jogkev-creator/opensketchyz/releases/tag/addin-latest")
+ADDIN_DOWNLOAD = os.environ.get("OPENSKETCH_ADDIN_URL", "https://github.com/jogkev-creator/CADOS/releases/tag/addin-latest")
 
 
 def version_tuple(v: str | None) -> tuple[int, ...]:

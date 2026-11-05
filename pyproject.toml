@@ -22,8 +22,8 @@ ai = ["anthropic>=1.0"]
 dev = ["pytest>=8", "httpx>=0.27", "pytest-timeout>=2.3"]
 
 [project.urls]
-Repository = "https://github.com/yuanzhengyang98/opensketch-mcp-for-solidworks"
-Issues = "https://github.com/yuanzhengyang98/opensketch-mcp-for-solidworks/issues"
+Repository = "https://github.com/jogkev-creator/CADOS"
+Issues = "https://github.com/jogkev-creator/CADOS/issues"
 
 [project.scripts]
 opensketch = "opensketch.__main__:main"

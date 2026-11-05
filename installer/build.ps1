@@ -26,7 +26,7 @@ if (-not (Test-Path (Join-Path $src 'KEVOS.Companion.exe'))) { throw "Build firs
 Copy-Item 'LICENSE' (Join-Path $src 'LICENSE.txt') -Force
 @"
 KEVOS Bridge $Version is free software under the GNU Affero General Public License v3.0 (LICENSE.txt).
-Its complete source code is at https://github.com/jogkev-creator/opensketchyz (this version: tag bridge-v$Version).
+Its complete source code is at https://github.com/jogkev-creator/CADOS (this version: tag bridge-v$Version).
 "@ | Set-Content (Join-Path $src 'SOURCE.txt') -Encoding UTF8
 $lic = (Get-Content 'LICENSE' -Raw) -replace '\\', '\\' -replace '\{', '\{' -replace '\}', '\}' -replace "`r?`n", "\par`r`n"
 "{\rtf1\ansi\deff0{\fonttbl{\f0 Segoe UI;}}\fs16 $lic}" | Set-Content (Join-Path $src 'License.rtf') -Encoding ASCII
@@ -58,7 +58,7 @@ $size = (Get-Item $msi).Length
 $thumb = $null
 if ($sign) { $thumb = (Get-AuthenticodeSignature $msi).SignerCertificate.Thumbprint }
 "$hash  $name" | Set-Content (Join-Path $out "$name.sha256") -Encoding ASCII
-@{ version = $Version; msi_url = "https://github.com/jogkev-creator/opensketchyz/releases/download/bridge-v$Version/$name";
+@{ version = $Version; msi_url = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v$Version/$name";
    sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "KEVOS Bridge $Version";
    published_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ') } | ConvertTo-Json | Set-Content (Join-Path $out 'release.json') -Encoding UTF8
 Write-Host "Built $msi ($size bytes, sha256 $hash)" -ForegroundColor Green

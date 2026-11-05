@@ -27,8 +27,8 @@ This repository is private, so Git asks you to sign in to GitHub the first time.
 
 ```powershell
 cd $HOME\Documents
-git clone https://github.com/jogkev-creator/opensketchyz.git
-cd opensketchyz
+git clone https://github.com/jogkev-creator/CADOS.git
+cd CADOS
 ```
 
 ## 3. Set it up (once, and after each `git pull`)
@@ -45,7 +45,7 @@ GitHub builds it on every change and keeps the newest one on one page:
 
 1. Close SOLIDWORKS. In Task Manager, end any `SLDWORKS.exe` that is still running.
 2. Open the repository on github.com, then **Releases > OpenSketch for SOLIDWORKS (latest)**
-   (`https://github.com/jogkev-creator/opensketchyz/releases/tag/addin-latest`), and download
+   (`https://github.com/jogkev-creator/CADOS/releases/tag/addin-latest`), and download
    **OpenSketch-SOLIDWORKS.zip**. The release notes show the add-in version.
 3. Unzip it into `Documents` so the files land in `Documents\OpenSketch-SOLIDWORKS`. Choose **Replace** for every file.
    Always use the same folder.

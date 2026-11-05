@@ -107,7 +107,7 @@ a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var
 <p class="hint">No menu? Tools &gt; Macro &gt; Run &gt; Documents\\OpenSketch\\OpenSketch.swb</p></article>
 <article class="step" id="s-pcs"><h2>Your computers</h2>
 <p>Install <b>KEVOS Bridge</b> once on each SOLIDWORKS computer. Its Companion opens this site to add the computer, then connects by itself.</p>
-<a class="btn pill" id="bridge-dl" href="https://github.com/jogkev-creator/opensketchyz/releases/tag/bridge-latest" rel="noopener"><span>Get KEVOS Bridge</span></a>
+<a class="btn pill" id="bridge-dl" href="https://github.com/jogkev-creator/CADOS/releases/tag/bridge-latest" rel="noopener"><span>Get KEVOS Bridge</span></a>
 <ul class="apps" id="pcs" aria-label="Your computers"></ul>
 <p class="hint" id="no-pcs">No computer added yet. The steps above connect one SOLIDWORKS without the installer.</p></article>
 <article class="step" id="s-ai"><h2>Add the connector</h2>

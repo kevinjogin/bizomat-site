@@ -37,7 +37,7 @@
 
     <Property Id="GATEWAY_URL" Secure="yes" />
     <Property Id="ARPPRODUCTICON" Value="KevosIcon" />
-    <Property Id="ARPHELPLINK" Value="https://github.com/jogkev-creator/opensketchyz" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/jogkev-creator/CADOS" />
     <Property Id="ARPCOMMENTS" Value="Settings and this computer's KEVOS registration are kept when it is removed. Use the Start menu entry Remove this computer from KEVOS first if the computer leaves your account." />
     <Icon Id="KevosIcon" SourceFile="$(var.Source)/KEVOS.Companion.exe" />
 

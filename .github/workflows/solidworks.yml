@@ -5,6 +5,8 @@ name: SOLIDWORKS add-in
 
 on:
   push:
+    # branches as well as tags: with only a tags filter, GitHub skips branch pushes altogether
+    branches: ["**"]
     paths: ["solidworks/**", "installer/**", ".github/workflows/solidworks.yml"]
     tags: ["bridge-v*"]
   pull_request:
