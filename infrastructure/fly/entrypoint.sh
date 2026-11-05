@@ -282,10 +282,11 @@ case "$ROLE" in
     ;;
   cad)
     WORKDIR=/app/cad
-    # --host '': uvicorn listens on every interface, one socket per address family. ('::' alone would be
-    # IPv6 only, because asyncio sets IPV6_V6ONLY: the supervisor's 127.0.0.1 health probe and Fly's IPv4
-    # checks would then fail and the supervisor would restart the server every 3 minutes.)
-    CMD=(/opt/cad/venv/bin/python -m opensketch --host "${BIZOMAT_CAD_HOST-}" --port 8001 --no-browser --supervise)
+    # --host ::: every address. The CAD server opens one dual-stack socket for it itself (opensketch/__main__.py
+    # listen_sockets: IPv6 and IPv4, or IPv4 alone where the kernel has no IPv6), so the proxy's 6PN connections,
+    # Fly's IPv4 checks and the supervisor's 127.0.0.1 probe all reach it. (asyncio alone would make '::' IPv6 only;
+    # and '' now means 127.0.0.1 to the CAD server, so it must not be used here.)
+    CMD=(/opt/cad/venv/bin/python -m opensketch --host "${BIZOMAT_CAD_HOST:-::}" --port 8001 --no-browser --supervise)
     set_var PATH "/opt/cad/venv/bin:$BASE_PATH"
     set_var OPENSKETCH_DATA "$ROLE_DIR"
     set_var PYTHONUNBUFFERED 1

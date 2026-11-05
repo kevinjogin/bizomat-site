@@ -40,12 +40,13 @@ of its own with one role. Only the proxy is public.
 | proxy | `node /app/proxy/server.mjs` | 8080 (public via Fly) | bzproxy (10001) | none | `/__proxy/health` | shared-cpu-1x 256 MB |
 | web | `node /app/web/dist-server/server.mjs` | 8003 | bzweb (10002) | none | `/healthz` | shared-cpu-1x 512 MB |
 | work | `node /app/work/dist/node/server.mjs` | 8002 | bzwork (10003) | `/data/work` (`work_data`) | `/api/health` | shared-cpu-1x 512 MB |
-| cad | `python -m opensketch --host '' --port 8001 --no-browser --supervise` | 8001 | bzcad (10004) | `/data/cad` (`cad_data`) | `/healthz` | performance-1x 2 GB |
+| cad | `python -m opensketch --host :: --port 8001 --no-browser --supervise` | 8001 | bzcad (10004) | `/data/cad` (`cad_data`) | `/healthz` | performance-1x 2 GB |
 
 Every role listens on all interfaces: IPv6 for the proxy's 6PN connections, IPv4 for Fly's top-level checks. Node
-listens on `::` (dual-stack). The CAD server gets `--host ''`, not `--host ::`: asyncio (uvicorn) makes a `::` socket
-IPv6-only, so the CAD supervisor's `127.0.0.1` health probe and Fly's IPv4 checks would fail and the supervisor would
-restart the server every 3 minutes. `''` opens one socket per address family.
+listens on `::` (dual-stack). The CAD server gets `--host ::` and opens the dual-stack socket itself
+(`apps/cad/opensketch/__main__.py`, `listen_sockets`; IPv4 alone where the kernel has no IPv6): asyncio on its own would
+make a `::` socket IPv6-only, and the CAD supervisor's `127.0.0.1` probe and Fly's IPv4 checks would then fail. Do not
+pass `--host ''`: the CAD server reads it as `127.0.0.1`, which the proxy cannot reach.
 
 work and cad must each run **exactly one Machine**: a volume belongs to one Machine and is never shared, so a second
 Machine would start with an empty data folder. Never `fly scale count work=2` or `cad=2`. proxy and web are
