@@ -71,9 +71,14 @@ if (op === 'audit') {
     }
   }
 } else if (op === 'backup') {
-  const file = `backup-${env}-${new Date().toISOString().replace(/[:.]/g, '-')}.sql`;
-  execFileSync('npx', ['wrangler', 'd1', 'export', `workos-platform-${env}-db`, '--remote', '--env', env, '--output', file], { stdio: 'inherit' });
-  console.log(`Backup written to ${file} (uploaded as a workflow artifact)`);
+  // A D1 Time Travel restore point. The data stays in Cloudflare: this repository is public, and database exports
+  // must never become workflow artifacts (scripts/check-artifact-policy.mjs).
+  const db = `workos-platform-${env}-db`;
+  const out = execFileSync('npx', ['wrangler', 'd1', 'time-travel', 'info', db, '--env', env, '--json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
+  const bookmark = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)).bookmark;
+  if (!bookmark) throw new Error('Cloudflare returned no Time Travel bookmark');
+  console.log(`Restore point for ${db}: ${bookmark}`);
+  console.log(`To go back: npx wrangler d1 time-travel restore ${db} --bookmark=${bookmark} --env ${env}`);
 } else if (op === 'grant-founder' || op === 'revoke-admin') {
   if (!EMAIL_RE.test(email)) throw new Error('A valid email is required');
   const user = d1(`SELECT id, created_at FROM users WHERE email = '${email}'`)[0];

@@ -62,10 +62,13 @@ All timestamps are stored as UTC epoch milliseconds; the console renders them in
 
 ## Deployment safety
 
-`publish-cloudflare.yml` now: backs up the live D1 database (artifact, 30 days) → restores it into a local copy and **rehearses** pending migrations, aborting if core row counts change → applies migrations → deploys → smoke-tests (including the admin protections).
+`publish-cloudflare.yml` now: records a D1 Time Travel restore point (bookmark in the job summary) → copies the live data onto the runner (never uploaded, deleted at the end) and **rehearses** pending migrations, aborting if core row counts change → applies migrations → deploys → smoke-tests (including the admin protections).
 
 ### Restoring a backup
 
-Backups are raw `wrangler d1 export` dumps (tables in alphabetical order). Make one importable with
-`node scripts/reorder-dump.mjs backup.sql restore.sql`, then import `restore.sql` into a **new, empty** D1 database
-(`npx wrangler d1 execute <db> --remote --file restore.sql`) and point the Worker at it. Never import over a live database.
+Use the restore point a deploy or the `backup` operation recorded: `npx wrangler d1 time-travel restore <db>
+--bookmark=<id> --env <env>` (or `--timestamp <ISO>` for any minute in the retention window). A database export made by
+hand with `wrangler d1 export` stays on your own machine, encrypted, and is never committed or uploaded as a workflow
+artifact. To import one: `node scripts/reorder-dump.mjs backup.sql restore.sql`, then import `restore.sql` into a
+**new, empty** D1 database (`npx wrangler d1 execute <db> --remote --file restore.sql`) and point the Worker at it.
+Never import over a live database.

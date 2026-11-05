@@ -97,7 +97,7 @@ Branch alias URLs change per branch, so Google sign-in is only available on the 
 | --- | --- | --- |
 | Any push / PR | `ci.yml` | lint, typecheck, Workers-runtime tests, builds, secret scan, Playwright e2e |
 | Push to a non-`main` branch | `deploy-preview.yml` | preview DB migrations → `wrangler versions upload --env preview --preview-alias <branch>` → smoke test → URL in job summary |
-| Merge to `main` | `deploy-production.yml` | full validation → D1 export backup (artifact) → migrations → `wrangler deploy --env production` → smoke test → automatic `wrangler rollback` if the smoke test fails |
+| Merge to `main` | `deploy-production.yml` | full validation → D1 Time Travel restore point (bookmark in the job summary) → migrations → `wrangler deploy --env production` → smoke test → automatic `wrangler rollback` if the smoke test fails |
 
 ## Health checks and smoke tests
 
@@ -107,7 +107,7 @@ Branch alias URLs change per branch, so Google sign-in is only available on the 
 ## Rollback
 
 - **Code:** `npx wrangler deployments list --env production`, then `npx wrangler rollback <version-id> --env production`. Every deploy is an immutable version.
-- **Data:** D1 Time Travel (`npx wrangler d1 time-travel restore workos-platform-production-db --timestamp <ISO> --env production`) or re-import the pre-deploy SQL artifact into a new database.
+- **Data:** D1 Time Travel (`npx wrangler d1 time-travel restore workos-platform-production-db --timestamp <ISO> --env production`) or `--bookmark <id>` with the restore point the deploy recorded. Database exports are never uploaded as workflow artifacts (this repository is public).
 - Migrations are written to be backward compatible so a code rollback never requires a schema rollback.
 
 ## Local development

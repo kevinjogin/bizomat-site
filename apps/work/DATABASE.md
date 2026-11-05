@@ -59,6 +59,6 @@ CI applies migrations to **preview** on every feature-branch deploy and to **pro
 ## Backups & export
 
 - **Point-in-time recovery:** D1 Time Travel (restore to any minute within the retention window): `npx wrangler d1 time-travel restore workos-platform-production-db --timestamp <ISO> --env production`.
-- **Pre-deploy snapshot:** the production workflow runs `wrangler d1 export` and stores the SQL dump as a 30-day workflow artifact before migrating.
+- **Pre-deploy restore point:** before migrating, the deploy workflows record a D1 Time Travel bookmark in the job summary (`wrangler d1 time-travel info`); `wrangler d1 time-travel restore <db> --bookmark=<id>` returns to it. The data never leaves Cloudflare. Database exports are never uploaded as workflow artifacts: this repository is public (`scripts/check-artifact-policy.mjs` runs in CI and fails if a workflow tries).
 - **Workspace export:** admins can download a JSON export (`GET /api/workspaces/:id/export`, Settings → Admin). File binaries stay in R2 (keys are listed).
 - **R2:** enable bucket versioning/lifecycle in the dashboard if long-term file recovery is required.

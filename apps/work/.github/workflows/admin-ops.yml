@@ -3,7 +3,8 @@ name: Admin operations
 # Manually started, privileged operations against a deployed environment.
 #   audit         read-only: deployment, custom domains, row counts (no personal data
 #                 except whether the configured founder email exists)
-#   backup        export the D1 database to a workflow artifact
+#   backup        record a D1 Time Travel restore point (bookmark) in the job summary. The data never leaves
+#                 Cloudflare: this repository is public, so database exports are never uploaded as artifacts.
 #   grant-founder bind founder-admin rights to the EXISTING account with `email`
 #   revoke-admin  remove platform-admin rights from the account with `email`
 on:
@@ -48,9 +49,5 @@ jobs:
       - run: npm ci
       - name: Run operation
         run: node scripts/admin-ops.mjs
-      - uses: actions/upload-artifact@v4
-        if: inputs.operation == 'backup'
-        with:
-          name: d1-backup-${{ inputs.environment }}-${{ github.run_id }}
-          path: backup-*.sql
-          retention-days: 30
+      - name: Artifact policy (no database, dump or secret is ever uploaded)
+        run: node scripts/check-artifact-policy.mjs
