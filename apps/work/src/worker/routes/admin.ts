@@ -8,7 +8,8 @@ import { parseUserAgent } from '../../shared/ua';
 import type { AppEnv } from '../env';
 import { HttpError, badRequest, body, clientIp, notFound, now, parseJson } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
-import { audit } from '../services/audit';
+import { audit, auditStmt } from '../services/audit';
+import { hashPassword, passwordProblems } from '../auth/password';
 import { EVENT_TYPES, utcDay } from '../services/analytics';
 import { ACTIVE_WINDOW_MS, HEARTBEAT_INTERVAL_MS } from './me';
 
@@ -711,6 +712,30 @@ adminRoutes.delete('/admins/:userId', async (c) => {
   }
   await c.env.DB.prepare('DELETE FROM platform_admins WHERE user_id = ?').bind(userId).run();
   await audit(c.env.DB, { actorId: c.get('user').id, action: 'platform_admin.revoked', targetType: 'user', targetId: userId, ip: clientIp(c) });
+  return c.json({ ok: true });
+});
+
+// Account recovery while no email provider is configured: the founder sets a new password for a person who has lost
+// theirs (after confirming who they are outside the app). The same password rules apply as for a person's own change;
+// every session of that person ends at once, a lockout is cleared, and the change is audited. The person should then
+// choose their own password in Settings. The founder changes their own password in Settings, not here.
+adminRoutes.post('/users/:id/password', async (c) => {
+  if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can set a password for someone');
+  const actor = c.get('user');
+  await rateLimit(c.env.DB, `admin-password:${actor.id}`, 10, 60 * 60_000);
+  const id = c.req.param('id');
+  const input = await body(c, z.object({ password: z.string().max(256) }));
+  const target = await c.env.DB.prepare('SELECT id, email, disabled_at FROM users WHERE id = ?').bind(id).first<{ id: string; email: string; disabled_at: number | null }>();
+  if (!target) throw notFound('User');
+  if (target.id === actor.id) throw badRequest('Change your own password in Settings');
+  const problem = passwordProblems(input.password, target.email);
+  if (problem) throw badRequest(problem);
+  const t = now();
+  await c.env.DB.batch([
+    c.env.DB.prepare('UPDATE users SET password_hash = ?, failed_logins = 0, locked_until = NULL, updated_at = ? WHERE id = ?').bind(await hashPassword(input.password), t, target.id),
+    c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'password_reset' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, target.id),
+    auditStmt(c.env.DB, { actorId: actor.id, action: 'admin.password_reset', targetType: 'user', targetId: target.id, ip: clientIp(c) }),
+  ]);
   return c.json({ ok: true });
 });
 

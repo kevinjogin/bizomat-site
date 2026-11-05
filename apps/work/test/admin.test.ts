@@ -86,6 +86,46 @@ describe('admin authorization', () => {
   });
 });
 
+describe('account recovery by the founder', () => {
+  const NEW = 'a-fresh-start-77!';
+
+  it('only the founder can set someone\'s password; others never see the route', async () => {
+    const f = await makeFounder();
+    const target = await signup('Locked Out');
+    const admin = await signup('Second Admin');
+    expect((await f.req('POST', '/api/admin/admins', { email: admin.email })).status).toBe(201);
+    expect((await admin.req('POST', `/api/admin/users/${target.userId}/password`, { password: NEW })).status).toBe(403);
+    const normal = await signup('Normal');
+    expect((await normal.req('POST', `/api/admin/users/${target.userId}/password`, { password: NEW })).status).toBe(404);
+    expect((await raw('POST', `/api/admin/users/${target.userId}/password`, { body: { password: NEW } })).status).toBe(401);
+  });
+
+  it('applies the password rules and never resets the founder\'s own password here', async () => {
+    const f = await makeFounder();
+    const target = await signup('Weak');
+    expect((await f.req('POST', `/api/admin/users/${target.userId}/password`, { password: 'short' })).status).toBe(400);
+    expect((await f.req('POST', `/api/admin/users/${f.userId}/password`, { password: NEW })).status).toBe(400);
+    expect((await f.req('POST', '/api/admin/users/no-such-user/password', { password: NEW })).status).toBe(404);
+  });
+
+  it('sets the password, ends every session, clears a lockout and records it', async () => {
+    const f = await makeFounder();
+    const target = await signup('Forgetful');
+    await env.DB.prepare('UPDATE users SET failed_logins = 9, locked_until = ? WHERE id = ?').bind(Date.now() + 3_600_000, target.userId).run();
+    expect((await target.req('GET', '/api/auth/me')).status).toBe(200);
+    expect((await f.req('POST', `/api/admin/users/${target.userId}/password`, { password: NEW })).status).toBe(200);
+    expect((await target.req('GET', '/api/auth/me')).status, 'the old session ended').toBe(401);
+    const old = await raw('POST', '/api/auth/login', { body: { email: target.email, password: 'correct-horse-42!' } });
+    expect(old.status).toBe(401);
+    const fresh = await login(target.email, NEW);
+    expect((await fresh.req('GET', '/api/auth/me')).status).toBe(200);
+    const row = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'admin.password_reset' AND target_id = ? AND actor_id = ?").bind(target.userId, f.userId).first<{ n: number }>();
+    expect(row!.n).toBe(1);
+    const hash = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?').bind(target.userId).first<{ password_hash: string }>();
+    expect(hash!.password_hash).toMatch(/^pbkdf2\$100000\$/);
+  });
+});
+
 describe('tracking', () => {
   it('records registration and login', async () => {
     const email = uniqueEmail('track');

@@ -1,15 +1,60 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { api, ApiError } from '../../lib/api';
 import { Icon } from '../../components/ui/Icon';
 import { Avatar } from '../../components/ui/ui';
 import { EVENT_ICON, eventLabel, useAdmin, type UserDetail as Detail } from '../api';
 import { ActivityStrip } from '../charts';
 import { Bar, Card, DeviceCell, Empty, Kpi, QueryState, StatusPill, TableWrap, When, fmtDate, fmtDateTime, num } from '../ui';
 
-const END_REASON: Record<string, string> = { logout: 'Signed out', revoked: 'Revoked', password_change: 'Password changed', expired: 'Expired' };
+const END_REASON: Record<string, string> = { logout: 'Signed out', revoked: 'Revoked', password_change: 'Password changed', password_reset: 'Password reset by the founder', expired: 'Expired' };
+
+/** A strong password suggestion (letters, digits and a symbol; 16 characters) from the browser's secure random source. */
+function suggestPassword(): string {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  const bytes = crypto.getRandomValues(new Uint8Array(14));
+  return `${[...bytes].map((b) => alphabet[b % alphabet.length]).join('')}-${(bytes[0] % 90) + 10}`;
+}
+
+/**
+ * Account recovery while no email provider is configured: the founder sets a new password for a person who has lost
+ * theirs, after confirming who they are outside the app. Every session of that person ends; they should choose their
+ * own password in Settings once they are back in.
+ */
+function PasswordReset({ userId, name }: { userId: string; name: string }) {
+  const [password, setPassword] = useState('');
+  const [show, setShow] = useState(false);
+  const [state, setState] = useState<{ kind: 'idle' | 'busy' | 'done' | 'error'; message?: string }>({ kind: 'idle' });
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setState({ kind: 'busy' });
+    try {
+      await api(`/admin/users/${userId}/password`, { body: { password } });
+      setState({ kind: 'done', message: `Done. ${name} is signed out everywhere and can sign in with the new password. Give it to them by a channel you trust, and ask them to choose their own in Settings.` });
+    } catch (err) {
+      setState({ kind: 'error', message: err instanceof ApiError ? err.message : 'The password could not be set.' });
+    }
+  };
+  return (
+    <Card title="Account recovery">
+      <form className="ac-stack" onSubmit={submit}>
+        <p className="muted small">Set a new password for {name} if they have lost theirs. Confirm who is asking before you do: this signs them out of every device.</p>
+        <div className="row" style={{ flexWrap: 'wrap', gap: 8 }}>
+          <input className="input grow" type={show ? 'text' : 'password'} autoComplete="new-password" aria-label="New password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={10} maxLength={256} required />
+          <button type="button" className="btn sm" onClick={() => setShow((v) => !v)}>{show ? 'Hide' : 'Show'}</button>
+          <button type="button" className="btn sm" onClick={() => { setPassword(suggestPassword()); setShow(true); }}>Suggest</button>
+          <button type="submit" className="btn primary sm" disabled={state.kind === 'busy' || password.length < 10}>Set password</button>
+        </div>
+        {state.message ? <p role="status" className={state.kind === 'error' ? 'danger-text small' : 'muted small'}>{state.message}</p> : null}
+      </form>
+    </Card>
+  );
+}
 
 export default function UserDetail() {
   const { userId } = useParams();
   const q = useAdmin<Detail>(`/users/${userId}`);
+  const me = useAdmin<{ user: { id: string }; role: 'founder' | 'admin' }>('/me', { staleTime: 60_000 });
   return (
     <div className="ac-stack">
       <Link to="/admin/users" className="ac-back"><Icon name="chevronLeft" size={14} /> All users</Link>
@@ -124,6 +169,8 @@ export default function UserDetail() {
                   )}
                 </Card>
               </div>
+
+              {me.data?.role === 'founder' && me.data.user.id !== u.id ? <PasswordReset userId={u.id} name={u.name} /> : null}
 
               <Card title="Recent activity" actions={<Link className="btn sm" to={`/admin/activity?userId=${u.id}&userLabel=${encodeURIComponent(u.email)}`}>Full timeline</Link>}>
                 {d.events.length ? (
