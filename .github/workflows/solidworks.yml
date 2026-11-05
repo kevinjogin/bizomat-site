@@ -43,10 +43,10 @@ jobs:
           version=$(grep -o '<Version>[^<]*' solidworks/Directory.Build.props | cut -d'>' -f2)
           gh release delete addin-latest --yes --cleanup-tag || true
           gh release create addin-latest OpenSketch-SOLIDWORKS.zip --target "$GITHUB_SHA" \
-            --title "OpenSketch for SOLIDWORKS (latest)" \
-            --notes "Add-in $version, built from ${GITHUB_SHA::7}. Close SOLIDWORKS, unzip into your add-in folder (replace all files), run OpenSketchSW.exe and click Install for me, then reopen SOLIDWORKS and connect."
+            --title "CADOS for SOLIDWORKS: manual add-in package (latest)" \
+            --notes "CADOS add-in $version (by KEVOS) for manual installation, built from ${GITHUB_SHA::7}. Most people should use the installer instead: https://cados.kevos.com/download/solidworks. Manual route: close SOLIDWORKS, unzip into your add-in folder (replace all files), run OpenSketchSW.exe and click Install for me, then reopen SOLIDWORKS."
 
-  # KEVOS Bridge installer (installer/): the MSI needs Windows (WiX Toolset 5). Signed when the repository has the
+  # CADOS for SOLIDWORKS installer (installer/): the MSI needs Windows (WiX Toolset 5). Signed when the repository has the
   # secrets KEVOS_SIGN_PFX_BASE64 (a code-signing .pfx, base64) and KEVOS_SIGN_PASSWORD; otherwise an UNSIGNED test MSI.
   # Every run keeps it as an artifact; main replaces the bridge-latest release; a tag bridge-v<version> makes a release.
   installer:
