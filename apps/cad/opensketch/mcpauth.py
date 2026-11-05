@@ -123,13 +123,44 @@ def _eq(a: str, b: str) -> bool:
 # ----------------------------------------------------------------------------- metadata
 
 def base_url(headers: dict) -> str:
+    """This request's address for the metadata: the alias host it was made to, else OPENSKETCH_PUBLIC_URL, else its own
+    host (auth.public_url). A client that connects to cad.bizomat.ai is told about cad.bizomat.ai, one that connects to
+    cados.kevos.com about cados.kevos.com: OAuth clients check that the metadata names the address they used."""
     from . import auth
     return auth.public_url(headers).rstrip("/")
 
 
+def own_bases(headers: dict) -> list[str]:
+    """Every address this server answers as: this request's own first, then each alias host and OPENSKETCH_PUBLIC_URL."""
+    from . import auth
+    out = [base_url(headers)]
+    for b in auth.known_bases():
+        if _canon(b) not in {_canon(x) for x in out}:
+            out.append(b.rstrip("/"))
+    return out
+
+
+def _own_targets(bases: list[str]) -> dict[str, str]:
+    """canon(address) -> MCP resource, for each base's MCP paths and the bare base (which means its /mcp)."""
+    out: dict[str, str] = {}
+    for b in bases:
+        for p in RESOURCES:
+            out.setdefault(_canon(b + p), b + p)
+        out.setdefault(_canon(b), b + "/mcp")
+    return out
+
+
+def issuer_for(resource: str, headers: dict) -> str:
+    """The issuer to name in an authorization response (RFC 9207 iss): the server address the app signed in to, which is
+    its resource's own address when that is one of this server's (the metadata it read there named that issuer)."""
+    o = _canon(_origin(resource))
+    return next((b for b in own_bases(headers) if _canon(b) == o), base_url(headers))
+
+
 # The MCP endpoint's addresses (mcp_server.PATHS): /mcp, and /solidworks/mcp, a second address early connectors
-# used. Both are the same server, so a token from either works on both.
-RESOURCES = {"/mcp": "CADOS", "/solidworks/mcp": "CADOS"}
+# used. Both are the same server, so a token from either works on both, on every public host name (tokens are looked
+# up by their hash, with no host in them).
+RESOURCES = {"/mcp": "BIZOMAT CAD Automation", "/solidworks/mcp": "BIZOMAT CAD Automation"}
 
 
 def resource_url(headers: dict, path: str = "/mcp") -> str:
@@ -443,7 +474,7 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     link on this site bounce a signed-in person to any site (real apps always send a valid request)."""
     rec = client(params.get("client_id", ""), fetch=False)
     if rec is None:
-        raise OAuthError("invalid_client", "CADOS does not know this app, or could not read its details. Remove the connector in your AI app and add it again.")
+        raise OAuthError("invalid_client", "CAD Automation does not know this app, or could not read its details. Remove the connector in your AI app and add it again.")
     redirect = params.get("redirect_uri") or (rec["redirect_uris"][0] if len(rec["redirect_uris"]) == 1 else "")
     if redirect not in rec["redirect_uris"]:
         raise OAuthError("invalid_request", "The app sent a return address it did not register.")
@@ -453,13 +484,13 @@ def check_authorize(params: dict, headers: dict) -> tuple[dict, dict]:
     if params.get("code_challenge_method") != "S256" or not (43 <= len(params.get("code_challenge", "")) <= 128):
         raise OAuthError("invalid_request", "The app did not protect the sign-in with PKCE (S256).")
     res = params.get("resource")
-    known = {_canon(resource_url(headers, p)): resource_url(headers, p) for p in RESOURCES}
-    if res and _canon(res) not in known and _canon(res) != _canon(base_url(headers)):
+    known = _own_targets(own_bases(headers))  # this host, and the server's other public host names
+    if res and _canon(res) not in known:
         raise OAuthError("invalid_target", "The app asked to sign in to a different server.")
     target = known.get(_canon(res or ""), resource_url(headers))
     scope = params.get("scope") or SCOPE
     if any(s not in (SCOPE, "openid", "profile", "email", "offline_access") for s in scope.split()):
-        raise OAuthError("invalid_scope", f"The app asked for more than CADOS offers (scope {SCOPE}).")
+        raise OAuthError("invalid_scope", f"The app asked for more than CAD Automation offers (scope {SCOPE}).")
     req = {"client_id": params["client_id"], "redirect_uri": redirect, "state": state,
            "code_challenge": params["code_challenge"], "resource": target, "scope": SCOPE}
     return rec, req
@@ -539,10 +570,11 @@ def token(form: dict, basic: str = "") -> dict:
             if not verifier or not _eq(calc, c["code_challenge"]):
                 raise OAuthError("invalid_grant", "The PKCE code_verifier does not match.")
             if form.get("resource") and _canon(form["resource"]) not in (
-                    _canon(c["resource"]), _canon(c["resource"].rsplit("/mcp", 1)[0]), _canon(_origin(c["resource"]))):
+                    _canon(c["resource"]), _canon(c["resource"].rsplit("/mcp", 1)[0]), _canon(_origin(c["resource"]))) \
+                    and _canon(form["resource"]) not in _own_targets(_settings_bases()):
                 raise OAuthError("invalid_target", "This server only issues tokens for its own MCP endpoint.")
             if not _user_exists(c["user"]):
-                raise OAuthError("invalid_grant", "That CADOS account no longer exists.")
+                raise OAuthError("invalid_grant", "That CAD Automation account no longer exists.")
             d = _load()
             gid = "osg_" + secrets.token_urlsafe(12)
             now = int(time.time())
@@ -561,6 +593,8 @@ def token(form: dict, basic: str = "") -> dict:
             _save(d)
             return out
         if grant_type == "refresh_token":
+            # A refresh keeps its grant, and a `resource` sent with it is not checked: the tokens work on every address
+            # of this server, so an app that moved from cados.kevos.com to cad.bizomat.ai (or back) refreshes as before.
             h, now = _h(form.get("refresh_token", "")), time.time()
             d = _load()
             gid = next((k for k, g in d["grants"].items() if g.get("refresh") and _eq(g["refresh"], h)), None)
@@ -573,7 +607,7 @@ def token(form: dict, basic: str = "") -> dict:
             if not _user_exists(g["user"]):
                 d["grants"].pop(gid, None)
                 _save(d)
-                raise OAuthError("invalid_grant", "That CADOS account no longer exists.")
+                raise OAuthError("invalid_grant", "That CAD Automation account no longer exists.")
             out = _new_tokens(d, gid)
             g["last_used"] = int(now)
             _save(d)
@@ -597,6 +631,12 @@ def revoke(form: dict, basic: str = "") -> None:
 def _origin(uri: str) -> str:
     u = urlsplit(uri or "")
     return f"{u.scheme}://{u.netloc}"
+
+
+def _settings_bases() -> list[str]:
+    """The server's public addresses from its settings (no request at hand): the alias hosts and OPENSKETCH_PUBLIC_URL."""
+    from . import auth
+    return auth.known_bases()
 
 
 def user_for_access(tok: str) -> tuple[bool, dict | None]:

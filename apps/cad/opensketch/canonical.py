@@ -6,13 +6,19 @@ Settings (both needed, so self-hosted servers and the tests are untouched):
 - OPENSKETCH_REDIRECT_HOSTS: the exact host names to redirect, comma separated (e.g. "cados.fly.dev").
 - OPENSKETCH_PUBLIC_URL: where to (e.g. "https://cados.kevos.com"). Its host is never redirected, so no loop.
 
-Only the Host header is read (the proxy sets it from the address the visitor used); X-Forwarded-Host is never trusted.
+Only the Host header is read. Behind a trusted proxy, proxy.py (the outermost middleware) has already put that
+proxy's X-Forwarded-Host there; an X-Forwarded-Host from anyone else is removed before this runs, so a visitor cannot
+pick the answer.
+
+The alias hosts (OPENSKETCH_ALIAS_HOSTS, the host names that serve this same app during a domain move, for example
+cad.bizomat.ai and cados.kevos.com) are served like any other host: one is redirected only when it is also listed in
+OPENSKETCH_REDIRECT_HOSTS.
 
 Not redirected, on purpose:
 - anything but GET and HEAD (a 301 makes a browser drop a POST's body);
 - /healthz (the deploy check and the supervisor);
 - the paths programs call with their own credentials: the MCP endpoints and their uploads and downloads, OAuth
-  metadata, registration, token and revoke, the add-in's link (/mcp/sw/), the KEVOS Companion's API (/v2/), and the
+  metadata, registration, token and revoke, the add-in's link (/mcp/sw/), the Companion's API (/v2/), and the
   page API (/api/). A connector, add-in or computer set up with the old address keeps working until it is moved.
 """
 

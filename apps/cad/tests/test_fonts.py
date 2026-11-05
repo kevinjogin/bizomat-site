@@ -39,3 +39,13 @@ def test_pages_load_no_fonts_from_other_sites():
         assert anon.get("/ui/" + name).status_code == 200, name
     for name, html in {"product": anon.get("/").text, "docs": anon.get("/docs").text}.items():
         assert "googleapis" not in html and "/ui/cados.css" in html, name
+    # the BIZOMAT design tokens (linked before the app's own CSS) and the heading face, Oxanium, come from here too
+    for name, html in pages.items():
+        assert html.index("/ui/bizomat-tokens.css") < html.index("/ui/cados.css"), name
+    tokens = anon.get("/ui/bizomat-tokens.css")
+    assert tokens.status_code == 200 and "url('/fonts/oxanium-latin.woff2')" in tokens.text and "googleapis" not in tokens.text
+    assert "--bz-teal: #0f766e" in tokens.text and "'Oxanium'" in anon.get("/ui/cados.css").text.replace('"', "'")
+    for font in ("oxanium-latin.woff2", "inter-tight-latin.woff2"):
+        r = anon.get("/fonts/" + font)
+        assert r.status_code == 200 and r.headers["content-type"] == "font/woff2" and r.content[:4] == b"wOF2", font
+    assert "Open Font License" in anon.get("/fonts/OFL-Oxanium.txt").text

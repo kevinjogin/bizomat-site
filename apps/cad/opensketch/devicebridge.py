@@ -1,5 +1,7 @@
-"""KEVOS device bridge (protocol 2): registered Windows computers ("devices") that run SOLIDWORKS commands for their
-owner, through the KEVOS Companion on each computer and the add-in inside SOLIDWORKS.
+"""The device bridge (protocol 2; built as the KEVOS Bridge): registered Windows computers ("devices") that run
+SOLIDWORKS commands for their owner, through the BIZOMAT Companion on each computer and the add-in inside SOLIDWORKS.
+The wire names (the KEVOS-Device proof scheme, the kevos-* JWS types, the KEVOS-* headers) are the protocol's own and
+stay as they are: docs/BRIDGE-PROTOCOL.md.
 
     AI app --MCP--> sw_ tools --swbridge.call--> this module --HTTPS long poll (outbound from the PC)--> Companion
                                                                                      --named pipe--> add-in -> SOLIDWORKS
@@ -451,7 +453,7 @@ def pick(user: dict | None, device: str | None):
         r = hit[0]
         if not _online(r):
             s = _sessions.get(r["id"])
-            why = s.closed[1] if s and s.closed else "Turn it on and sign in to Windows; the KEVOS Companion connects by itself."
+            why = s.closed[1] if s and s.closed else "Turn it on and sign in to Windows; the BIZOMAT Companion connects by itself."
             raise BridgeError(f"The computer {r['name']} is offline. {why}", code="DEVICE_OFFLINE")
         return r
     online = [r for r in rows if _online(r)]
@@ -467,7 +469,7 @@ def pick(user: dict | None, device: str | None):
         return default[0]
     names = ", ".join(r["name"] for r in (with_sw or online))
     raise BridgeError(f"Several computers are connected ({names}). Pass device=\"<name>\" to choose one, or set a "
-                      "default computer on the CADOS dashboard.", code="DEVICE_AMBIGUOUS")
+                      "default computer on the CAD Automation dashboard.", code="DEVICE_AMBIGUOUS")
 
 
 def status_for(user: dict | None, device: str | None = None) -> dict:
@@ -519,7 +521,7 @@ def set_device(user: dict | None, device_id: str, name: str | None = None, defau
     return _device_out(_q("SELECT * FROM devices WHERE id=?", (device_id,), one=True))
 
 
-def revoke_device(user: dict | None, device_id: str, why: str = "This computer was removed from your CADOS account.") -> bool:
+def revoke_device(user: dict | None, device_id: str, why: str = "This computer was removed from your CAD Automation account.") -> bool:
     n = _exec("UPDATE devices SET revoked=? WHERE id=? AND owner=? AND revoked IS NULL", (time.time(), device_id, person_id(user)))
     if not n:
         return False
@@ -585,7 +587,7 @@ def approve_pairing(user: dict | None, code: str, name: str | None = None) -> di
     """The signed-in person approves the code their computer shows: the device is made and bound to them."""
     r = pairing_by_code(code)
     if not r or r["status"] != "pending":
-        raise ValueError("That code is not valid or has expired. Start pairing again in the KEVOS Companion.")
+        raise ValueError("That code is not valid or has expired. Start pairing again in the BIZOMAT Companion.")
     did = ulid("dev")
     name = _clean_name(name) or r["name"] or "Windows computer"
     owner = person_id(user)
@@ -635,19 +637,21 @@ def _client_ip(request: Request) -> str:
 
 def _open_and_remote(request: Request) -> bool:
     """A server without a password or accounts (open mode, for one person on their own PC) takes pairing only from
-    the PC it runs on: nobody on the network can add a computer to it, and whoever runs it publicly must sign in."""
-    from . import auth
+    the PC it runs on: nobody on the network can add a computer to it, and whoever runs it publicly must sign in.
+    Behind a proxy on the same PC (a tunnel, the platform proxy) the client is the one the proxy names (proxy.py), not
+    the proxy itself, so a visitor through the proxy is remote."""
+    from . import auth, proxy
     if auth.mode() != "open":
         return False
-    host = (request.client.host if request.client else "") or ""
-    return host not in ("127.0.0.1", "::1", "localhost")
+    a = proxy.ip(proxy.client_ip(request.scope))
+    return a is None or not a.is_loopback
 
 
 def authenticate(request: Request, body: bytes, pairing: bool = False) -> dict:
     """The device (or, for pairing polls, the pairing) a request is signed by. Raises BridgeAuthError."""
     authz = request.headers.get("authorization", "")
     if not authz.startswith("KEVOS-Device "):
-        raise BridgeAuthError(401, "UNAUTHENTICATED", "This request is not signed by a KEVOS device.")
+        raise BridgeAuthError(401, "UNAUTHENTICATED", "This request is not signed by a registered computer.")
     compact = authz[len("KEVOS-Device "):].strip()
     try:
         header, payload, _, _ = jws_parts(compact)
@@ -663,9 +667,9 @@ def authenticate(request: Request, body: bytes, pairing: bool = False) -> dict:
     else:
         rec = _q("SELECT * FROM devices WHERE id=?", (kid,), one=True)
         if not rec:
-            raise BridgeAuthError(401, "DEVICE_UNKNOWN", "This computer is not registered. Pair it again in the KEVOS Companion.")
+            raise BridgeAuthError(401, "DEVICE_UNKNOWN", "This computer is not registered. Pair it again in the BIZOMAT Companion.")
         if rec["revoked"]:
-            raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from your CADOS account. Pair it again.")
+            raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from your CAD Automation account. Pair it again.")
     try:
         _, payload = jws_verify(compact, jwk_public_key(json.loads(rec["jwk"])))
         claims = json.loads(payload)
@@ -777,8 +781,8 @@ async def call(user: dict | None, device: dict, op: str, args: dict, timeout: fl
         raise BridgeError(f"The command carries what looks like a password, key or token ({bad}); it was not sent. "
                           "SOLIDWORKS commands never need credentials.", code="INPUT_FORBIDDEN_FIELD")
     if s.paused:
-        raise BridgeError(f"CADOS is paused on {device['name']} (by the person at that computer). Ask them to resume it "
-                          "from the KEVOS icon in the Windows taskbar.", code="PAUSED")
+        raise BridgeError(f"CAD Automation is paused on {device['name']} (by the person at that computer). Ask them to "
+                          "resume it from the BIZOMAT icon in the Windows taskbar.", code="PAUSED")
     try:
         files_in = [dict(_blob_ref(bid), name=name) for name, bid in (blobs or {}).items()]
     except ValueError as exc:
@@ -919,7 +923,7 @@ def recent_commands(user: dict | None, limit: int = 50) -> list[dict]:
 def _session_for(rec: dict, sid: str) -> DeviceSession:
     s = _sessions.get(rec["id"])
     if s is None:
-        raise BridgeAuthError(409, "SESSION_RESTARTED", "The KEVOS server restarted; say hello again.")
+        raise BridgeAuthError(409, "SESSION_RESTARTED", "The CAD Automation server restarted; say hello again.")
     if s.id != sid:
         raise BridgeAuthError(409, "SESSION_REPLACED", "This computer connected again from another session; this one stopped.")
     if s.closed:
@@ -936,10 +940,10 @@ def hello(rec: dict, body: dict) -> dict:
     except ValueError:
         lo, hi = (9,), (0,)
     if not lo <= (2, 0) <= hi:
-        raise BridgeAuthError(426, "PROTOCOL_UNSUPPORTED", "This KEVOS Companion speaks another protocol version: update it.")
+        raise BridgeAuthError(426, "PROTOCOL_UNSUPPORTED", "This BIZOMAT Companion speaks another protocol version: update it.")
     old = _sessions.get(rec["id"])
     if old is not None:
-        old.closed = ("replaced", "This computer connected again (the KEVOS Companion restarted).")
+        old.closed = ("replaced", "This computer connected again (the BIZOMAT Companion restarted).")
         old.poke()
     s = DeviceSession(rec, body)
     try:
@@ -960,8 +964,8 @@ def hello(rec: dict, body: dict) -> dict:
             reconcile.append({"command_id": p.id, "action": "send_result" if e.get("result_in_outbox") else "keep_running"})
         else:  # it was running and the companion no longer knows it: its result is lost, never run again
             from .swbridge import BridgeError
-            _note(p, "unknown", note="the KEVOS Companion restarted while it ran")
-            _resolve(p.fut, exc=BridgeError("The KEVOS Companion restarted while SOLIDWORKS worked on this. Read the "
+            _note(p, "unknown", note="the BIZOMAT Companion restarted while it ran")
+            _resolve(p.fut, exc=BridgeError("The BIZOMAT Companion restarted while SOLIDWORKS worked on this. Read the "
                                             "document (sw_get_document) to see what was done.", code="RESULT_LOST"))
     for cid in inflight:
         reconcile.append({"command_id": cid, "action": "forget"})
@@ -1229,7 +1233,7 @@ async def pair_start(request: Request):
     try:
         raw, body = await _json(request)
         if _open_and_remote(request):
-            raise BridgeAuthError(403, "FORBIDDEN", "This CADOS server has no sign-in yet: set a server password "
+            raise BridgeAuthError(403, "FORBIDDEN", "This CAD Automation server has no sign-in yet: set a server password "
                                                     "before computers pair with it over the network.")
         if not mcpauth._rate_ok("pair:" + _client_ip(request), PAIR_LIMIT, 3600, _pair_hits):
             raise BridgeAuthError(429, "RATE_LIMITED", "Too many pairing attempts from this network. Try again in an hour.")
@@ -1257,7 +1261,7 @@ async def pair_poll(request: Request):
 
 @router.post("/v2/devices/pair/password")
 async def pair_password(request: Request):
-    """Pairing from the Companion's window with the person's own CADOS email and password, instead of confirming the
+    """Pairing from the Companion's window with the person's own email and password, instead of confirming the
     code in a browser. Signed with the pairing key, so the password approves only this computer's pairing. The
     Companion sends the password once and keeps neither it nor a token."""
     from . import accounts, auth
@@ -1265,7 +1269,7 @@ async def pair_password(request: Request):
         raw, body = await _json(request)
         pair = authenticate(request, raw, pairing=True)
         if auth.mode() != "accounts":
-            raise BridgeAuthError(403, "FORBIDDEN", "This CADOS server has no accounts yet. Its owner creates the first one on the website.")
+            raise BridgeAuthError(403, "FORBIDDEN", "This CAD Automation server has no accounts yet. Its owner creates the first one on the website.")
         email = str(body.get("email") or "").strip().lower()[:200]
         password = str(body.get("password") or "")[:500]
         keys = ("ip:" + _client_ip(request), "email:" + email)
@@ -1383,7 +1387,7 @@ async def device_blob(request: Request, blob_id: str):
 
 @router.get("/v2/bridge/update.json")
 async def bridge_update(request: Request):
-    """The current KEVOS Bridge release for registered computers, signed with this server's command key (which each
+    """The current release of CAD Automation for SOLIDWORKS for registered computers, signed with this server's command key (which each
     companion pinned at pairing). The operator writes bridge-release.json in the data folder:
     {"version", "msi_url" (https), "sha256", "size", "signer_thumbprints": [...], "notes"}. The companion still checks
     the MSI's hash, its Authenticode signature and signer, and asks the person before installing."""
@@ -1396,7 +1400,7 @@ async def bridge_update(request: Request):
     except ValueError:
         return _err(BridgeAuthError(500, "INTERNAL", "The published release record is not valid."))
     if keep is None:
-        return _err(BridgeAuthError(404, "INPUT_INVALID", "No CADOS for SOLIDWORKS release is published on this server."))
+        return _err(BridgeAuthError(404, "INPUT_INVALID", "No CAD Automation for SOLIDWORKS release is published on this server."))
     return _ok({"manifest_jws": sign_message(dict(keep, type="kevos.update"), "kevos-update")})
 
 
@@ -1456,10 +1460,10 @@ def _pair_page(code: str = "", pairing: dict | None = None, error: str = "", don
     from . import auth
     if done:
         return auth.notice_page("Computer added", f"{auth._esc(done['name'])} is now on your account.",
-                                "You can close this window. The KEVOS Companion on that computer connects by itself.")
+                                "You can close this window. The BIZOMAT Companion on that computer connects by itself.")
     info = json.loads((pairing or {}).get("info") or "{}")
     sub = ("Check that this code is the one your computer shows, then add it." if pairing else
-           "Type the code the KEVOS Companion shows on your computer.")
+           "Type the code the BIZOMAT Companion shows on your computer.")
     fields = [auth._field("code", "Code", value=code, focus=not pairing, auto="off", note="Like ABCD-EFGH")]
     if pairing:
         fields.append(auth._field("name", "Name for this computer", value=pairing.get("name") or "", focus=True,
@@ -1492,7 +1496,7 @@ async def pair_page_post(request: Request):
         from . import auth
         return HTMLResponse(auth.notice_page("Not added", "That computer was not added.", "Its code no longer works."), headers=hdr)
     if not p or p["status"] != "pending":
-        return HTMLResponse(_pair_page(error="That code is not valid or has expired. Start pairing again in the KEVOS Companion."),
+        return HTMLResponse(_pair_page(error="That code is not valid or has expired. Start pairing again in the BIZOMAT Companion."),
                             status_code=400, headers=hdr)
     if "name" not in form:  # first step: the code was typed; show what it is for
         return HTMLResponse(_pair_page(p["code"], p), headers=hdr)

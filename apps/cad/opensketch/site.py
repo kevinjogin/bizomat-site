@@ -1,5 +1,6 @@
-"""The public pages of CADOS by KEVOS: the product page (/ for visitors, /overview for everyone) and the
-documentation (/docs). Plain server-rendered HTML on the shared design system (brand.py, static/ui/cados.css).
+"""The public pages of BIZOMAT CAD Automation: the product page (/ for visitors, /overview for everyone) and the
+documentation (/docs). Plain server-rendered HTML on the shared design system (brand.py, static/ui/bizomat-tokens.css,
+static/ui/cados.css).
 
 Every claim here is checked against the code: the tools in sw_tools.py, the feature registry, the sign-in in
 auth.py and mcpauth.py, the computer link in devicebridge.py. Keep it that way when either changes.
@@ -7,37 +8,43 @@ auth.py and mcpauth.py, the computer link in devicebridge.py. Keep it that way w
 
 from __future__ import annotations
 
+from html import escape
+
 from . import brand
 from .brand import icon
 
+# The hosted service the add-in and the Companion use by default (CadosPane.DefaultGateway, Config.DefaultGateway).
+DEFAULT_SERVICE = "https://cados.kevos.com"
+
 # An illustration of one request (real tool names, a plate drawn in isometric): not a screenshot.
 PART_SVG = """<svg class="part-svg" viewBox="0 0 352 206" role="img" aria-label="Isometric view of a rectangular plate with four holes">
-<g stroke="#16181D" stroke-width="1.2" stroke-linejoin="round">
-<path d="M46.1 76 202 166 202 190 46.1 100Z" fill="#ECE8E2"/><path d="M202 166 305.9 106 305.9 130 202 190Z" fill="#F3F0EB"/>
+<g stroke="#0e1726" stroke-width="1.2" stroke-linejoin="round">
+<path d="M46.1 76 202 166 202 190 46.1 100Z" fill="#e3e9f0"/><path d="M202 166 305.9 106 305.9 130 202 190Z" fill="#eef2f6"/>
 <path d="M150 16 305.9 106 202 166 46.1 76Z" fill="#FFFFFF"/></g>
-<g fill="#FEF3EA" stroke="#F47B20" stroke-width="1.4"><ellipse cx="150" cy="34" rx="10" ry="5.8"/><ellipse cx="274.7" cy="106" rx="10" ry="5.8"/>
+<g fill="#e6f4f2" stroke="#0f766e" stroke-width="1.4"><ellipse cx="150" cy="34" rx="10" ry="5.8"/><ellipse cx="274.7" cy="106" rx="10" ry="5.8"/>
 <ellipse cx="202" cy="148" rx="10" ry="5.8"/><ellipse cx="77.3" cy="76" rx="10" ry="5.8"/></g>
-<g stroke="#8A909A" stroke-width=".9" fill="none"><path d="M210 194 313.9 134M206 192 214 196.5M309.9 132 317.9 136.5"/>
+<g stroke="#8794a6" stroke-width=".9" fill="none"><path d="M210 194 313.9 134M206 192 214 196.5M309.9 132 317.9 136.5"/>
 <path d="M38.1 104 194 194M42.1 102 34.1 106.5M198 192 190 196.5"/></g>
-<g font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" fill="#4A4F59"><text x="268" y="174">60</text><text x="98" y="164">40</text></g></svg>"""
+<g font-family="ui-monospace,Menlo,Consolas,monospace" font-size="11" fill="#56657a"><text x="268" y="174">60</text><text x="98" y="164">40</text></g></svg>"""
 
-PREVIEW = f"""<figure class="preview" aria-label="Example: an AI assistant building a part in SOLIDWORKS through CADOS">
-<div class="preview-bar"><span>AI assistant &rarr; CADOS &rarr; SOLIDWORKS</span><span>Example session</span></div>
+PREVIEW = f"""<figure class="preview" aria-label="Example: an AI assistant building a part in SOLIDWORKS through BIZOMAT CAD Automation">
+<div class="preview-bar"><span>AI assistant &rarr; CAD Automation &rarr; SOLIDWORKS</span><span>Example session</span></div>
 <div class="preview-body"><div class="preview-pane"><div class="pane-label">Your AI assistant</div>
 <div class="msg">Make a 60 x 40 x 8 mm mounting plate with four M5 clearance holes, 6 mm in from each corner.</div>
-<ol class="calls" aria-label="CADOS tools used"><li>sw_status <span>connected</span></li><li>sw_create_document <span>Plate.SLDPRT</span></li>
+<ol class="calls" aria-label="CAD Automation tools used"><li>sw_status <span>connected</span></li><li>sw_create_document <span>Plate.SLDPRT</span></li>
 <li>sw_add_features <span>4 features checked</span></li><li>sw_preview <span>isometric</span></li></ol></div>
 <div class="preview-pane"><div class="pane-label">SOLIDWORKS on your computer</div>
 <ul class="tree" aria-label="Feature tree"><li><i></i>Plate.SLDPRT</li><li style="--d:1"><i></i>Front Plane</li><li style="--d:1"><i></i>Top Plane</li>
 <li class="new" style="--d:1"><i></i>Boss-Extrude1</li><li class="new" style="--d:1"><i></i>Cut-Extrude1</li></ul>{PART_SVG}</div></div>
-<figcaption class="sr-only">An illustration of one request. The tool names are the real CADOS tools.</figcaption></figure>"""
+<figcaption class="sr-only">An illustration of one request. The tool names are the real CAD Automation tools.</figcaption></figure>"""
 
 VALUE = [
     ("spark", "AI-assisted CAD operations",
      "Your assistant creates sketches, features, assemblies and drawings through the SOLIDWORKS API. The results are "
      "native features you can edit like any other."),
     ("chat", "Engineering in plain language",
-     "Describe the part, the change or the check. CADOS turns it into dimensioned operations and reports what it did."),
+     "Describe the part, the change or the check. CAD Automation turns it into dimensioned operations and reports what "
+     "it did."),
     ("folder", "Works with your existing files",
      "Open your own parts and assemblies, read their features and dimensions, and change parameters, equations and "
      "drawings."),
@@ -70,7 +77,7 @@ CAPS = [
 
 SECURITY = [
     ("arrow-up", "Outbound connections only",
-     "Your computer connects out to the CADOS service over HTTPS. It opens no ports and accepts no incoming "
+     "Your computer connects out to the CAD Automation service over HTTPS. It opens no ports and accepts no incoming "
      "connections."),
     ("key", "Signed-in AI assistants",
      "Assistants sign in with OAuth 2.1 and PKCE. You approve each one on a consent page and can disconnect it at any "
@@ -79,28 +86,28 @@ SECURITY = [
      "Pairing makes a key in the Windows key store, on the TPM where there is one. It cannot be exported. Every "
      "request from the computer is signed with it."),
     ("check-circle", "Signed commands",
-     "The CADOS service signs every command. The computer checks the signature before SOLIDWORKS sees anything."),
+     "The CAD Automation service signs every command. The computer checks the signature before SOLIDWORKS sees anything."),
     ("hand", "You confirm destructive changes",
      "Deleting features, undoing, overwriting a file or replacing a drawing asks you in SOLIDWORKS first. No answer "
      "means no."),
     ("eye", "Clear about what passes through",
-     "Commands, results and short-lived geometry copies used for checks pass through the CADOS service. Your model "
-     "files stay on your computer."),
+     "Commands, results and short-lived geometry copies used for checks pass through the CAD Automation service. "
+     "Your model files stay on your computer."),
 ]
 
 
 DOWNLOAD = f"""<section class="section section-warm" id="download" aria-labelledby="download-title"><div class="container">
 <div class="download">
-<div><span class="eyebrow">Download</span><h2 id="download-title">CADOS for SOLIDWORKS</h2>
+<div><span class="eyebrow">Download</span><h2 id="download-title">CAD Automation for SOLIDWORKS</h2>
 <p class="lead">A native SOLIDWORKS add-in for Windows, installed with one installer. It appears in Tools &gt; Add-Ins and
-adds a CADOS tab, menu and task pane to SOLIDWORKS.</p>
-<div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a></div>
-<p class="small muted" style="margin-top:var(--s-3)">Sign in with your CADOS account to download. Your administrator gives you the account and password.</p>
+adds a BIZOMAT tab, menu and task pane to SOLIDWORKS.</p>
+<div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download for SOLIDWORKS</a></div>
+<p class="small muted" style="margin-top:var(--s-3)">Sign in with your CAD Automation account to download. Your administrator gives you the account and password.</p>
 <div class="download-links"><a href="/docs#install">Installation guide</a><a href="/docs#requirements">System requirements</a>
 <a href="/docs#versions">Supported SOLIDWORKS versions</a></div></div>
 <div class="card card-pad download-card"><h3>What the installer adds</h3><ul class="checks">
-<li>{icon("check")}<span><b>CADOS add-in</b> for SOLIDWORKS: the CADOS tab, menu and task pane, and the commands your assistant sends.</span></li>
-<li>{icon("check")}<span><b>KEVOS Companion</b>: pairs the computer with your account and keeps the secure link. Starts with Windows.</span></li>
+<li>{icon("check")}<span><b>The add-in</b> for SOLIDWORKS: the BIZOMAT tab, menu and task pane, and the commands your assistant sends.</span></li>
+<li>{icon("check")}<span><b>BIZOMAT Companion</b>: pairs the computer with your account and keeps the secure link. Starts with Windows.</span></li>
 <li>{icon("check")}<span>Registration with every SOLIDWORKS version on the computer. No files to copy, no registry to edit.</span></li>
 <li>{icon("check")}<span>Clean removal from Windows Settings &gt; Apps. Your CAD files are never changed.</span></li></ul>
 <div class="kv-row small"><span class="k">Installer</span><span class="v">Windows .msi, 64-bit</span></div>
@@ -122,73 +129,76 @@ def landing(signed_in: bool = False, base: str = "") -> bytes:
     caps = "".join(f'<div class="cap"><h3>{t}</h3><p>{d}</p></div>' for t, d in CAPS)
     sec = "".join(f'<div class="sec">{icon(i)}<div><h3>{t}</h3><p>{d}</p></div></div>' for i, t, d in SECURITY)
     start = "/dashboard"
-    html = f"""{brand.head("CADOS by KEVOS | AI-powered CAD automation", path="/", index=True, base=base)}<body>
+    html = f"""{brand.head("AI CAD automation for SOLIDWORKS", path="/", index=True, base=base)}<body>
 {brand.header("product", signed_in)}
 <main id="main">
 <section class="hero"><div class="container hero-grid">
-<div><span class="eyebrow">Intelligence by KEVOS</span><h1>{brand.HEADLINE}</h1>
+<div><span class="eyebrow">{brand.FULL}</span><h1>{brand.HEADLINE}</h1>
 <p class="lead">Connect your AI assistant to your CAD environment. Create, modify and automate engineering models in
 natural language, while your design files stay in your own workflow.</p>
-<div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a>
+<div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download for SOLIDWORKS</a>
 <a class="btn btn-secondary btn-lg" href="{start}">Open the dashboard</a></div>
 <div class="hero-meta"><span>{icon("check")}Native SOLIDWORKS add-in</span><span>{icon("check")}Standard MCP connector</span>
 <span>{icon("check")}Your files stay on your computer</span></div></div>
 <div>{PREVIEW}</div></div></section>
 
 <section class="section" id="product" aria-labelledby="product-title"><div class="container">
-{_section_head("Why CADOS", "Engineering intent in, native CAD out.",
-               "AI assistants are good at understanding what you mean. CADOS gives them a safe, checked way to act on it "
+{_section_head("Why CAD Automation", "Engineering intent in, native CAD out.",
+               "AI assistants are good at understanding what you mean. CAD Automation gives them a safe, checked way to "
+               "act on it "
                "in the CAD software your team already uses.", "product")}
 <div class="grid grid-3">{value}</div></div></section>
 
 <section class="section section-warm" id="how" aria-labelledby="how-title"><div class="container">
 {_section_head("How it works", "Three parts, one connection.",
-               "Your assistant talks to the CADOS service. A small Windows app on your CAD computer holds a secure link "
+               "Your assistant talks to the CAD Automation service. A small Windows app on your CAD computer holds a secure "
+               "link "
                "to it and hands each command to SOLIDWORKS.", "how")}
-<div class="flow" role="img" aria-label="Your AI assistant connects to the CADOS service over HTTPS with OAuth. Your computer connects out to the CADOS service with signed requests. The KEVOS Companion passes commands to the CADOS add-in in SOLIDWORKS.">
+<div class="flow" role="img" aria-label="Your AI assistant connects to the CAD Automation service over HTTPS with OAuth. Your computer connects out to the CAD Automation service with signed requests. The BIZOMAT Companion passes commands to the add-in in SOLIDWORKS.">
 <div class="node"><div class="where">Cloud</div><h3>Your AI assistant</h3><p>Claude, ChatGPT or another app that supports MCP connectors.</p></div>
 <div class="link" aria-hidden="true"><span>HTTPS<br>OAuth 2.1</span></div>
-<div class="node node-brand"><div class="where">CADOS service</div><h3>CADOS gateway</h3><p>Sign-in, your computers, command routing and checks.
+<div class="node node-brand"><div class="where">Hosted service</div><h3>CAD Automation gateway</h3><p>Sign-in, your computers, command routing and checks.
 Every sketch is solved and every feature checked before it is sent.</p></div>
 <div class="link" aria-hidden="true"><span>Outbound HTTPS<br>signed</span></div>
-<div class="node"><div class="where">Your computer</div><h3>CADOS for SOLIDWORKS</h3>
-<ul><li>KEVOS Companion: secure link, pairing, status</li><li>CADOS add-in: tab, task pane, runs each command</li><li>SOLIDWORKS: your files, your licence</li></ul></div></div>
+<div class="node"><div class="where">Your computer</div><h3>CAD Automation for SOLIDWORKS</h3>
+<ul><li>BIZOMAT Companion: secure link, pairing, status</li><li>The add-in: BIZOMAT tab, task pane, runs each command</li><li>SOLIDWORKS: your files, your licence</li></ul></div></div>
 <ol class="grid grid-3 steps" style="margin-top:var(--s-7)">
-<li><h3>Install CADOS for SOLIDWORKS</h3><p>Run the installer on the Windows computer that runs SOLIDWORKS, and pair that computer with your account.</p></li>
-<li><h3>Connect your AI assistant</h3><p>Add the CADOS connector address to your assistant and sign in once.</p></li>
+<li><h3>Install CAD Automation for SOLIDWORKS</h3><p>Run the installer on the Windows computer that runs SOLIDWORKS, and pair that computer with your account.</p></li>
+<li><h3>Connect your AI assistant</h3><p>Add the CAD Automation connector address to your assistant and sign in once.</p></li>
 <li><h3>Work in your CAD environment</h3><p>Ask for parts, changes, drawings and checks. Watch them appear in SOLIDWORKS.</p></li></ol>
 </div></section>
 
 {DOWNLOAD}
 <section class="section" id="integrations" aria-labelledby="integrations-title"><div class="container">
 {_section_head("Integrations", "Built on open standards, connected to the tools you use.",
-               "CADOS uses the Model Context Protocol, the open standard AI assistants use to reach tools.", "integrations")}
+               "CAD Automation uses the Model Context Protocol, the open standard AI assistants use to reach tools.", "integrations")}
 <div class="grid grid-4">
 <article class="card integration"><header><span class="kind">CAD</span><span class="badge badge-ok">Supported</span></header>
-<h3>SOLIDWORKS</h3><p>A native add-in: listed in Tools &gt; Add-Ins, with a CADOS tab, menu and task pane. Parts, assemblies and drawings through the SOLIDWORKS API.</p>
+<h3>SOLIDWORKS</h3><p>A native add-in: listed in Tools &gt; Add-Ins, with a BIZOMAT tab, menu and task pane. Parts, assemblies and drawings through the SOLIDWORKS API.</p>
 <div class="meta">Windows, 64-bit. Built for SOLIDWORKS 2022 and later.</div></article>
 <article class="card integration"><header><span class="kind">AI assistant</span><span class="badge">MCP connector</span></header>
-<h3>Claude</h3><p>Add CADOS as a custom connector and sign in. Claude Desktop can also use a private address.</p>
+<h3>Claude</h3><p>Add CAD Automation as a custom connector and sign in. Claude Desktop can also use a private address.</p>
 <div class="meta">Uses OAuth sign-in.</div></article>
 <article class="card integration"><header><span class="kind">AI assistant</span><span class="badge">MCP connector</span></header>
-<h3>ChatGPT</h3><p>Add CADOS as a custom connector where your ChatGPT plan allows custom connectors.</p>
+<h3>ChatGPT</h3><p>Add CAD Automation as a custom connector where your ChatGPT plan allows custom connectors.</p>
 <div class="meta">Uses OAuth sign-in.</div></article>
 <article class="card integration"><header><span class="kind">AI assistant</span><span class="badge">MCP</span></header>
 <h3>Other MCP clients</h3><p>Any client that supports remote MCP servers over Streamable HTTP, with OAuth or a private address.</p>
 <div class="meta">Standard protocol, no plug-in needed.</div></article></div>
-<p class="small muted" style="margin-top:var(--s-5)">SOLIDWORKS is the CAD integration available today. CADOS is in early
-access: the integration is being validated on more SOLIDWORKS installations.</p></div></section>
+<p class="small muted" style="margin-top:var(--s-5)">SOLIDWORKS is the CAD integration available today. CAD Automation is in
+early access: the integration is being validated on more SOLIDWORKS installations.</p></div></section>
 
 <section class="section section-warm" id="features" aria-labelledby="features-title"><div class="container">
 {_section_head("Capabilities", "What your assistant can do in SOLIDWORKS.",
-               "Each capability is a CADOS tool your assistant calls. Sketches are solved and features checked before "
+               "Each capability is a CAD Automation tool your assistant calls. Sketches are solved and features checked before "
                "SOLIDWORKS builds them.", "features")}
 <div class="caps">{caps}</div></div></section>
 
 <section class="section" id="security" aria-labelledby="security-title"><div class="container">
 {_section_head("Security and architecture", "Clear about what runs where.",
-               "SOLIDWORKS and your files stay on your computer. The CADOS gateway is a hosted service that signs you "
-               "in, routes commands and checks them. CADOS is not a local-only product, and it does not pretend to be.",
+               "SOLIDWORKS and your files stay on your computer. The CAD Automation gateway is a hosted service that "
+               "signs you in, routes commands and checks them. CAD Automation is not a local-only product, and it does "
+               "not pretend to be.",
                "security")}
 <div class="grid grid-3">{sec}</div>
 <p style="margin-top:var(--s-6)"><a href="/privacy">Read the privacy notice</a> &middot; <a href="/docs#security">Security details</a></p>
@@ -197,14 +207,14 @@ access: the integration is being validated on more SOLIDWORKS installations.</p>
 <section class="section section-warm" id="start" aria-labelledby="start-title"><div class="container">
 {_section_head("Getting started", "Up and running in five steps.", "", "start")}
 <ol class="grid grid-2 steps">
-<li><h3>Install CADOS for SOLIDWORKS</h3><p>Run the Windows installer on the computer that runs SOLIDWORKS.</p></li>
-<li><h3>Open SOLIDWORKS and activate CADOS</h3><p>Pair the computer with your account. The CADOS tab and task pane appear in SOLIDWORKS.</p></li>
+<li><h3>Install CAD Automation for SOLIDWORKS</h3><p>Run the Windows installer on the computer that runs SOLIDWORKS.</p></li>
+<li><h3>Open SOLIDWORKS</h3><p>Pair the computer with your account. The BIZOMAT tab and task pane appear in SOLIDWORKS.</p></li>
 <li><h3>Connect your AI assistant</h3><p>Copy the connector address from the CAD Assistant page into your assistant and sign in.</p></li>
 <li><h3>Verify the connection</h3><p>Your dashboard shows each part of the connection live.</p></li>
 <li><h3>Run the guided self test</h3><p>One prompt checks sketches, features, an assembly and a drawing on that computer.</p></li></ol>
 <div class="cta-band" style="margin-top:var(--s-7)"><div><h2>Bring your AI assistant into SOLIDWORKS.</h2>
 <p>Install the add-in, then sign in to your dashboard for your connector address and live status.</p></div>
-<div class="actions"><a class="btn btn-primary btn-lg" href="/download/solidworks">Download CADOS for SOLIDWORKS</a><a class="btn btn-secondary btn-lg" href="{start}">Open the dashboard</a></div></div>
+<div class="actions"><a class="btn btn-primary btn-lg" href="/download/solidworks">Download for SOLIDWORKS</a><a class="btn btn-secondary btn-lg" href="{start}">Open the dashboard</a></div></div>
 </div></section>
 </main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
@@ -212,51 +222,54 @@ access: the integration is being validated on more SOLIDWORKS installations.</p>
 
 
 def docs(signed_in: bool = False, base: str = "") -> bytes:
+    # the service address people type into the Companion: the https address this page was opened at (either public
+    # host name), else the hosted service
+    addr = escape(base.rstrip("/")) if base.startswith("https://") else DEFAULT_SERVICE
     toc = [("overview", "Overview"), ("requirements", "System requirements"), ("versions", "Supported versions"),
-           ("install", "Install"), ("pair", "Pair a computer"), ("activate", "Use CADOS in SOLIDWORKS"),
+           ("install", "Install"), ("pair", "Pair a computer"), ("activate", "Use it in SOLIDWORKS"),
            ("connect", "Connect your AI assistant"), ("auth", "Authentication"), ("verify", "Verify the connection"),
            ("selftest", "Run the self test"), ("computers", "Several computers"), ("update", "Update and uninstall"),
            ("troubleshooting", "Troubleshooting"), ("security", "Security"), ("manual", "Install without the installer")]
     toc_html = "".join(f'<li><a href="#{k}">{v}</a></li>' for k, v in toc)
     trouble = [
-        ("No KEVOS icon in the taskbar after signing in to Windows", "Start the KEVOS Companion from the Start menu. In its tray menu, tick Start with Windows."),
+        ("No BIZOMAT icon in the taskbar after signing in to Windows", "Start the BIZOMAT Companion from the Start menu. In its tray menu, tick Start with Windows."),
         ("The Companion says Not registered", "The computer is not paired. Open the tray menu and choose Pair this computer."),
         ("The Companion says the computer was removed", "It was removed from your account. Pair it again; it gets a new key."),
-        ("The Companion says Offline, retrying", "It cannot reach the CADOS service. Check that the service address opens in a browser. Behind a company proxy, allow that address. The Companion retries by itself."),
+        ("The Companion says Offline, retrying", "It cannot reach the CAD Automation service. Check that the service address opens in a browser. Behind a company proxy, allow that address. The Companion retries by itself."),
         ("A signed request is refused with TOKEN_EXPIRED", "The computer's clock is wrong. Turn on automatic time in Windows Settings."),
         ("Connected, SOLIDWORKS closed", "This is normal. Open SOLIDWORKS."),
-        ("Waiting for the CADOS add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick CADOS under Active and Start Up. Do not run SOLIDWORKS as administrator."),
-        ("No CADOS tab, menu or task pane in SOLIDWORKS", "As above. If it is still missing, repair the installation: Windows Settings > Apps > CADOS for SOLIDWORKS > Modify > Repair."),
+        ("Waiting for the add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick BIZOMAT CAD Automation under Active and Start Up. Do not run SOLIDWORKS as administrator."),
+        ("No BIZOMAT tab, menu or task pane in SOLIDWORKS", "As above. If it is still missing, repair the installation: Windows Settings > Apps > BIZOMAT CAD Automation for SOLIDWORKS > Modify > Repair."),
         ("Windows says it protected your PC when you open the installer", "The early access installer is not code-signed yet. Check that you downloaded it from this site, then choose More info > Run anyway, or ask your IT team."),
         ("The assistant says several computers are connected", "Name the computer in your request, or set a default computer on the SOLIDWORKS page."),
         ("The assistant says SOLIDWORKS has a dialog box open", "Close the dialog box in SOLIDWORKS, then ask again."),
         ("The assistant says a sketch is open for editing", "Exit the sketch in SOLIDWORKS, then ask again."),
         ("The assistant says the person at this computer declined", "A destructive change was declined, or nobody answered within two minutes. Ask again and choose Allow once."),
         ("The assistant says it is still working", "Long operations finish by themselves. The assistant can follow them with sw_command_status."),
-        ("The assistant cannot sign in to CADOS", "Remove the connector in your assistant and add it again. If it still fails, use the private address in Settings."),
+        ("The assistant cannot sign in", "Remove the connector in your assistant and add it again. If it still fails, use the private address in Settings."),
     ]
     rows = "".join(f"<tr><td>{a}</td><td>{b}</td></tr>" for a, b in trouble)
-    html = f"""{brand.head("Documentation", "Install CADOS, connect your AI assistant to SOLIDWORKS, verify the connection and fix common problems.", path="/docs", index=True, base=base)}<body>
+    html = f"""{brand.head("Documentation", "Install CAD Automation, connect your AI assistant to SOLIDWORKS, verify the connection and fix common problems.", path="/docs", index=True, base=base)}<body>
 {brand.header("docs", signed_in)}
-<main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Documentation</span><h1>Set up CADOS</h1>
-<p>Install CADOS on your CAD computer, connect your AI assistant and check that everything works. Most people are done in
+<main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Documentation</span><h1>Set up CAD Automation</h1>
+<p>Install CAD Automation on your CAD computer, connect your AI assistant and check that everything works. Most people are done in
 about fifteen minutes.</p></div></div>
 <div class="container doc-layout"><nav class="toc" aria-label="On this page"><h4>On this page</h4><ol>{toc_html}</ol></nav>
 <article class="prose">
 
 <section id="overview"><h2>Overview</h2>
-<p>CADOS connects an AI assistant to SOLIDWORKS on your own computer. There are three parts:</p>
-<ul><li><b>Your AI assistant</b>, such as Claude or ChatGPT. It calls the CADOS tools.</li>
-<li><b>The CADOS gateway</b>, a hosted service. It signs you in, knows your computers, checks each command and routes it.</li>
-<li><b>CADOS for SOLIDWORKS on your Windows computer</b>: the CADOS add-in, a native SOLIDWORKS add-in with a CADOS tab,
-menu and task pane, and the KEVOS Companion, a small tray app. The Companion holds a secure outbound link to the gateway
+<p>BIZOMAT CAD Automation connects an AI assistant to SOLIDWORKS on your own computer. There are three parts:</p>
+<ul><li><b>Your AI assistant</b>, such as Claude or ChatGPT. It calls the CAD Automation tools.</li>
+<li><b>The CAD Automation gateway</b>, a hosted service. It signs you in, knows your computers, checks each command and routes it.</li>
+<li><b>CAD Automation for SOLIDWORKS on your Windows computer</b>: the add-in, a native SOLIDWORKS add-in with a BIZOMAT
+tab, menu and task pane, and the BIZOMAT Companion, a small tray app. The Companion holds a secure outbound link to the gateway
 and hands each command to the add-in, which runs it in SOLIDWORKS.</li></ul>
 <p>Nothing connects in to your computer, and SOLIDWORKS always runs there, with your licence and your files.</p></section>
 
 <section id="requirements"><h2>Requirements</h2>
 <ul><li>Windows 10 (version 1903 or later) or Windows 11, 64-bit, with .NET Framework 4.8 (included in Windows).</li>
 <li>SOLIDWORKS 2022 or later, 64-bit.</li>
-<li>A CADOS account. Ask your administrator for an invite, or use an early access code if you were given one.</li>
+<li>A CAD Automation account. Ask your administrator for an invite, or use an early access code if you were given one.</li>
 <li>Administrator approval on the computer once, for the installation.</li>
 <li>An AI assistant that supports MCP connectors.</li></ul>
 <div class="callout callout-info"><div><b>Early access.</b> The SOLIDWORKS integration is built against the SOLIDWORKS 2022
@@ -273,62 +286,62 @@ API and is being validated on more installations. Run the self test on each new 
 <p>Run the self test once on each computer and SOLIDWORKS version you use.</p></section>
 
 <section id="install"><h2>Install</h2>
-<div class="actions"><a class="btn btn-primary" href="/download/solidworks">Download CADOS for SOLIDWORKS</a>
+<div class="actions"><a class="btn btn-primary" href="/download/solidworks">Download for SOLIDWORKS</a>
 <a class="small" href="{brand.RELEASES_URL}" rel="noopener">All releases and checksums</a></div>
 <ol class="steps">
-<li><h4>Download the installer</h4><p>Sign in with your CADOS account and download <code>CADOS-for-SOLIDWORKS-x64.msi</code>.
+<li><h4>Download the installer</h4><p>Sign in with your account and download <code>CADOS-for-SOLIDWORKS-x64.msi</code>.
 Each release also lists a SHA-256 checksum you can compare.</p></li>
 <li><h4>Close SOLIDWORKS</h4><p>Save your work and close SOLIDWORKS before you install.</p></li>
 <li><h4>Run the installer</h4><p>Open the file and follow the steps. Windows asks for administrator approval once. The
-installer adds the CADOS add-in and the KEVOS Companion, registers the add-in with every SOLIDWORKS version on the
+installer adds the add-in and the BIZOMAT Companion, registers the add-in with every SOLIDWORKS version on the
 computer and starts the Companion when you sign in to Windows. There are no files to copy and no registry to edit. It does
 not change your CAD files.</p></li></ol>
 <p>IT teams can install silently and set the service address for everyone:</p>
-<pre class="code">msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL=https://cados.kevos.com</pre></section>
+<pre class="code">msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL={addr}</pre></section>
 
 <section id="pair"><h2>Pair a computer</h2>
-<p>Pairing adds the computer to your account. After an interactive install the KEVOS Companion opens its pairing window
+<p>Pairing adds the computer to your account. After an interactive install the BIZOMAT Companion opens its pairing window
 by itself. You can also open it from the tray icon: Pair this computer.</p>
-<ol class="steps"><li><h4>Check the address and the name</h4><p>Check the CADOS service address (<code>https://cados.kevos.com</code> unless your organisation runs its own) and the name for this computer.</p></li>
-<li><h4>Enter your CADOS email and password</h4><p>Use the same email and password you sign in to CADOS with, then choose Pair. The computer is added at once.</p></li>
-<li><h4>Or confirm in the browser</h4><p>Leave email and password empty and choose Pair: your browser opens CADOS. Sign in, check that it shows the same code as the Companion, and choose Add this computer.</p></li></ol>
+<ol class="steps"><li><h4>Check the address and the name</h4><p>Check the CAD Automation service address (<code>{addr}</code> unless your organisation runs its own) and the name for this computer.</p></li>
+<li><h4>Enter your email and password</h4><p>Use the same email and password you sign in to CAD Automation with, then choose Pair. The computer is added at once.</p></li>
+<li><h4>Or confirm in the browser</h4><p>Leave email and password empty and choose Pair: your browser opens CAD Automation. Sign in, check that it shows the same code as the Companion, and choose Add this computer.</p></li></ol>
 <p>The Companion makes a key for this computer in the Windows key store. The key cannot be copied to another computer,
 and no password is stored on the computer.</p></section>
 
-<section id="activate"><h2>Use CADOS in SOLIDWORKS</h2>
-<p>Open SOLIDWORKS. The CADOS add-in loads by itself and connects to the Companion. It is listed in <b>Tools &gt;
-Add-Ins</b> as <b>CADOS</b>, and adds:</p>
-<ul><li>a <b>CADOS</b> tab on the CommandManager and a <b>CADOS</b> menu;</li>
-<li>the <b>CADOS task pane</b>: the connection state, prompts to copy into your assistant, the confirmation setting, live
+<section id="activate"><h2>Use it in SOLIDWORKS</h2>
+<p>Open SOLIDWORKS. The add-in loads by itself and connects to the Companion. It is listed in <b>Tools &gt;
+Add-Ins</b> as <b>BIZOMAT CAD Automation</b>, and adds:</p>
+<ul><li>a <b>BIZOMAT</b> tab on the CommandManager and a <b>BIZOMAT</b> menu;</li>
+<li>the <b>BIZOMAT CAD Automation task pane</b>: the connection state, prompts to copy into your assistant, the confirmation setting, live
 activity and links to your dashboard and help;</li>
-<li>a <b>CADOS: confirm</b> window whenever your assistant asks for a destructive change.</li></ul>
-<p>Your AI assistant does the work: CADOS runs no AI of its own. Ask in Claude, ChatGPT or another connected assistant,
+<li>a <b>BIZOMAT: confirm</b> window whenever your assistant asks for a destructive change.</li></ul>
+<p>Your AI assistant does the work: CAD Automation runs no AI of its own. Ask in Claude, ChatGPT or another connected assistant,
 and follow the work in SOLIDWORKS and in the task pane.</p>
-<div class="callout"><div>No CADOS tab? Open <b>Tools &gt; Add-Ins</b>, tick <b>CADOS</b> under Active and Start Up, and make
+<div class="callout"><div>No BIZOMAT tab? Open <b>Tools &gt; Add-Ins</b>, tick <b>BIZOMAT CAD Automation</b> under Active and Start Up, and make
 sure SOLIDWORKS is not running as administrator.</div></div></section>
 
 <section id="connect"><h2>Connect your AI assistant</h2>
 <p>The <a href="/assistant">CAD Assistant</a> page shows your connector address. It ends in <code>/mcp</code>. Add it to your assistant once.</p>
-<h3>Claude</h3><ol><li>Open Settings &gt; Connectors and choose Add custom connector.</li><li>Give it a name, such as CADOS, and paste the connector address.</li>
-<li>Choose Connect. CADOS opens: sign in and choose Allow.</li></ol>
-<h3>ChatGPT</h3><p>Where your plan allows custom connectors, add a connector with the same address and sign in when CADOS
-asks. Your workspace administrator may need to allow custom connectors first.</p>
+<h3>Claude</h3><ol><li>Open Settings &gt; Connectors and choose Add custom connector.</li><li>Give it a name, such as BIZOMAT CAD, and paste the connector address.</li>
+<li>Choose Connect. CAD Automation opens: sign in and choose Allow.</li></ol>
+<h3>ChatGPT</h3><p>Where your plan allows custom connectors, add a connector with the same address and sign in when CAD
+Automation asks. Your workspace administrator may need to allow custom connectors first.</p>
 <h3>Other assistants and Claude Desktop</h3><p>Any client that supports remote MCP servers over Streamable HTTP can use
 the connector address. If a client cannot sign in, use the private address in <a href="/settings">Settings</a>. Treat the private address like a password.</p></section>
 
 <section id="auth"><h2>Authentication</h2>
 <div class="table-wrap"><table><thead><tr><th>Who</th><th>How it signs in</th><th>How to revoke</th></tr></thead><tbody>
 <tr><td>You</td><td>Email and password, or Google where your administrator turned it on.</td><td>Sign out. An administrator can remove an account.</td></tr>
-<tr><td>AI assistants</td><td>OAuth 2.1 with PKCE. You approve each assistant on a CADOS consent page.</td><td>Disconnect it on the CAD Assistant page.</td></tr>
+<tr><td>AI assistants</td><td>OAuth 2.1 with PKCE. You approve each assistant on a consent page.</td><td>Disconnect it on the CAD Assistant page.</td></tr>
 <tr><td>Private address</td><td>A secret key in the address itself, for clients without sign-in.</td><td>Make a new address in Settings. The old one stops at once.</td></tr>
 <tr><td>Your computers</td><td>A pairing code you confirm, then a key held in the Windows key store. Every request is signed.</td><td>Remove the computer on the SOLIDWORKS page.</td></tr>
 <tr><td>Direct add-in link</td><td>An add-in key you paste into SOLIDWORKS (only without the installer).</td><td>Make a new key in Settings.</td></tr>
 </tbody></table></div></section>
 
 <section id="verify"><h2>Verify the connection</h2>
-<p>Your CADOS Home shows the state of each part: <b>Connected</b>, <b>Disconnected</b>, <b>Checking connection</b>,
+<p>Your Home page shows the state of each part: <b>Connected</b>, <b>Disconnected</b>, <b>Checking connection</b>,
 <b>Installation required</b> or <b>Connection error</b>. It updates every few seconds while the page is open.</p>
-<p>Then ask your assistant:</p><div class="prompt"><span>Check the CADOS connection to SOLIDWORKS.</span></div>
+<p>Then ask your assistant:</p><div class="prompt"><span>Check the CAD Automation connection to SOLIDWORKS.</span></div>
 <p>It calls <code>sw_status</code> and tells you which computer and which SOLIDWORKS version it reached.</p></section>
 
 <section id="selftest"><h2>Run the self test</h2>
@@ -344,12 +357,14 @@ remove one. When more than one is online, tell your assistant which to use, for 
 the new one. Nothing needs to be copied.</p></section>
 
 <section id="update"><h2>Update and uninstall</h2>
-<ul><li><b>Update:</b> the KEVOS Companion offers new versions published on your CADOS service and installs one only after
+<ul><li><b>Update:</b> the BIZOMAT Companion offers new versions published on your CAD Automation service and installs one only after
 you agree. You can also run a newer installer over the old one. Settings and the pairing are kept.</li>
-<li><b>Repair:</b> Windows Settings &gt; Apps &gt; CADOS for SOLIDWORKS &gt; Modify &gt; Repair.</li>
-<li><b>Uninstall:</b> Windows Settings &gt; Apps &gt; CADOS for SOLIDWORKS &gt; Uninstall. To also take the computer off your
-account, first use Start &gt; KEVOS &gt; Remove this computer from CADOS, or remove it on the SOLIDWORKS page.</li></ul>
-<p>Versions up to 0.11 were called KEVOS Bridge. CADOS for SOLIDWORKS upgrades them in place.</p></section>
+<li><b>Repair:</b> Windows Settings &gt; Apps &gt; BIZOMAT CAD Automation for SOLIDWORKS &gt; Modify &gt; Repair.</li>
+<li><b>Uninstall:</b> Windows Settings &gt; Apps &gt; BIZOMAT CAD Automation for SOLIDWORKS &gt; Uninstall. To also take the
+computer off your account, first use Start &gt; BIZOMAT &gt; Remove this computer from CAD Automation, or remove it on the
+SOLIDWORKS page.</li></ul>
+<p>Earlier versions were called CADOS for SOLIDWORKS (0.12) and KEVOS Bridge (up to 0.11). This installer upgrades them in
+place.</p></section>
 
 <section id="troubleshooting"><h2>Troubleshooting</h2>
 <p>Start with the tray icon: right-click it, choose Status, then Copy diagnostics. The diagnostics hold no passwords or keys.</p>
@@ -372,12 +387,12 @@ your model. Your model files are saved on your computer. See the <a href="/priva
 <section id="manual"><h2>Install without the installer</h2>
 <p>For development, or a computer where you cannot run the installer: download the add-in package from the SOLIDWORKS page
 (Direct link and manual installation), unzip it, run the setup program in the folder and choose Install for me. It installs the same
-CADOS add-in for your Windows user only. Then, in SOLIDWORKS, open CADOS &gt; Status and paste the address and the add-in
+add-in for your Windows user only. Then, in SOLIDWORKS, open BIZOMAT &gt; Status and paste the address and the add-in
 key from Settings. This route links one SOLIDWORKS session directly, without the Companion.</p>
 <p>Where SOLIDWORKS does not list add-ins installed without administrator rights, the package also writes a launcher
-macro in your Documents folder (the setup program shows where). It is not the add-in: it only starts the installed CADOS
+macro in your Documents folder (the setup program shows where). It is not the add-in: it only starts the installed
 add-in from Tools &gt; Macro &gt; Run.</p>
-<h3>Individual macros</h3><p>CADOS does not offer macro downloads. Everything CADOS does runs through the add-in.</p></section>
+<h3>Individual macros</h3><p>CAD Automation does not offer macro downloads. Everything it does runs through the add-in.</p></section>
 </article></div></main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
     return html.encode()
@@ -386,11 +401,11 @@ add-in from Tools &gt; Macro &gt; Run.</p>
 def not_found(signed_in: bool = False, base: str = "") -> bytes:
     """The page a browser gets for an address that does not exist (API paths keep their JSON 404)."""
     home = "/dashboard" if signed_in else "/"
-    html = f"""{brand.head("Page not found", "This page does not exist on CADOS by KEVOS.", path="/404", base=base)}<body>
+    html = f"""{brand.head("Page not found", "This page does not exist on BIZOMAT CAD Automation.", path="/404", base=base)}<body>
 {brand.header("", signed_in)}
 <main id="main" class="doc-hero" style="min-height:60vh"><div class="container"><span class="eyebrow">404</span><h1>This page does not exist.</h1>
 <p>The address may be mistyped, or the page has moved.</p>
-<div class="hero-cta"><a class="btn btn-primary" href="{home}">{"Go to your dashboard" if signed_in else "Go to the CADOS home page"}</a>
+<div class="hero-cta"><a class="btn btn-primary" href="{home}">{"Go to your dashboard" if signed_in else "Go to the CAD Automation home page"}</a>
 <a class="btn btn-secondary" href="/docs">Documentation</a></div></div></main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
     return html.encode()

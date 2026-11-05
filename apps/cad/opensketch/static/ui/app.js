@@ -1,4 +1,4 @@
-/* CADOS app script: fills the Home, CAD Assistant, SOLIDWORKS, Tools, History and Settings pages (app_pages.py) from
+/* BIZOMAT CAD Automation app script: fills the Home, CAD Assistant, SOLIDWORKS, Tools, History and Settings pages (app_pages.py) from
    the server's API. One file for every page; each part runs only when its elements are on the page. No secret is ever
    written into the page source: keys and addresses are fetched after sign-in and shown only on request. */
 (() => {
@@ -85,7 +85,7 @@
     if ($('signout')) $('signout').hidden = !d.signin;
     return d;
   }
-  function failed(e) { if (!authFailed) { setState('error', 'Connection error'); err(e && e.message === 'Failed to fetch' ? 'This page cannot reach CADOS. Check your network; it retries by itself.' : (e && e.message) || 'Something went wrong.'); } }
+  function failed(e) { if (!authFailed) { setState('error', 'Connection error'); err(e && e.message === 'Failed to fetch' ? 'This page cannot reach CAD Automation. Check your network; it retries by itself.' : (e && e.message) || 'Something went wrong.'); } }
   function poll(fn, ms) {
     let timer = null;
     const run = () => { clearInterval(timer); timer = document.hidden ? null : setInterval(fn, ms); };
@@ -105,7 +105,7 @@
       const act = el('div', 'row-actions'); const x = el('button', 'link-btn danger', 'Disconnect'); x.type = 'button';
       x.setAttribute('aria-label', 'Disconnect ' + a.name);
       x.addEventListener('click', async () => {
-        if (!confirm('Disconnect ' + a.name + '? It loses access to CADOS until you connect it again.')) return;
+        if (!confirm('Disconnect ' + a.name + '? It loses access to CAD Automation until you connect it again.')) return;
         try { await api('/api/account/apps/' + encodeURIComponent(a.id), { method: 'DELETE' }); await refresh(); } catch (e) { err(e.message); }
       });
       act.append(x); li.append(dot(true), m, act); ul.append(li);
@@ -130,7 +130,7 @@
       }
       const x = el('button', 'link-btn danger', 'Remove'); x.type = 'button'; x.setAttribute('aria-label', 'Remove ' + d.name);
       x.addEventListener('click', async () => {
-        if (!confirm('Remove ' + d.name + '? It stops taking commands at once. To use it again, pair it again from its KEVOS Companion.')) return;
+        if (!confirm('Remove ' + d.name + '? It stops taking commands at once. To use it again, pair it again from its BIZOMAT Companion.')) return;
         try { await api('/api/devices/' + encodeURIComponent(d.id), { method: 'DELETE' }); pcsShown = ''; await refresh(); } catch (e) { err(e.message); }
       });
       act.append(x); li.append(dot(d.online), m, act); ul.append(li);
@@ -147,7 +147,7 @@
     $('t-ai').className = 'v ' + (apps.length ? 'state-ok' : 'state-idle');
     $('t-work').textContent = st.working_on ? 'Working (' + st.working_on.op + ')' : (st.connected ? 'Ready' : 'Idle');
     $('no-assistant').hidden = apps.length > 0;
-    const tried = store('cados.selftest') === '1';
+    const tried = store('cados.selftest') === '1';  // the storage key keeps its earlier name, so the mark survives
     const done = { install: devs.length > 0 || !!st.connected, connect: !!st.connected, ai: apps.length > 0, test: tried };
     let n = 0;
     for (const k of Object.keys(done)) { $('ck-' + k).classList.toggle('done', done[k]); if (done[k]) n++; }
@@ -298,7 +298,7 @@
           body: JSON.stringify({ email, name: $('add-name').value.trim(), password: pw }) });
         const box = $('add-done'); box.textContent = '';
         box.append(el('div', '', 'Account created for ' + email + '. Give them: the address ' + location.origin + ', their email and this password. '
-          + 'They install CADOS for SOLIDWORKS and sign in when the pairing step opens the browser. This is the last time CADOS shows it.'));
+          + 'They install CAD Automation for SOLIDWORKS and sign in when the pairing step opens the browser. This is the last time it is shown.'));
         const row = el('div', 'input-group'); row.style.marginTop = 'var(--s-3)';
         const shown = el('input', 'input'); shown.readOnly = true; shown.defaultValue = pw; shown.spellcheck = false; shown.setAttribute('aria-label', 'Password for ' + email);
         const cb = el('button', 'btn', 'Copy'); cb.type = 'button'; cb.addEventListener('click', () => copy(pw, cb));
@@ -344,7 +344,7 @@
   }
   if (page === 'home') { loadRecent(); poll(loadRecent, 15000); showNewPassword(); }
 
-  // ---------------------------------------------------------------- Home: the password CADOS made at sign-up, once
+  // ---------------------------------------------------------------- Home: the password made at sign-up, once
   async function showNewPassword() {
     try {
       const r = await api('/api/account/new-password');

@@ -59,12 +59,13 @@ def test_only_the_solidworks_tools_on_both_addresses(app):
         assert names == {n for n in names if n.startswith("sw_")} | {"request_upload"}
         assert {"sw_status", "sw_get_guide", "sw_add_features", "sw_batch", "sw_add_mate", "sw_selftest"} <= names
         assert len(names) == 31 and {"sw_create_drawing", "sw_get_drawing", "sw_edit_drawing"} <= names
-        assert {"sw_list_devices", "sw_command_status", "sw_cancel_command"} <= names  # KEVOS registered computers
+        assert {"sw_list_devices", "sw_command_status", "sw_cancel_command"} <= names  # registered computers
     init = _rpc(app, "/mcp", "initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
                                             "clientInfo": {"name": "t", "version": "1"}}).json()["result"]
-    assert init["serverInfo"]["name"] == "CADOS" and "sw_status first" in init["instructions"]
+    assert init["serverInfo"]["name"] == "BIZOMAT CAD Automation" and "sw_status first" in init["instructions"]
+    assert init["instructions"].startswith("BIZOMAT CAD Automation:") and "CADOS" not in init["instructions"]
     out = _rpc(app, "/mcp", "tools/call", {"name": "sw_status", "arguments": {}}).json()["result"]
-    assert '"connected": false' in out["content"][0]["text"] and "CADOS dashboard" in out["content"][0]["text"]
+    assert '"connected": false' in out["content"][0]["text"] and "CAD Automation dashboard" in out["content"][0]["text"]
     guide = _rpc(app, "/mcp", "tools/call", {"name": "sw_get_guide", "arguments": {}}).json()["result"]["content"][0]["text"]
     assert "sw_status first" in guide and '"type":"sketch"' in guide and "Mate references" in guide
     assert "viewport" not in guide  # only the SOLIDWORKS workflow
@@ -80,11 +81,11 @@ def test_one_sign_in_works_on_both_addresses(app):
     assert "/.well-known/oauth-protected-resource/solidworks/mcp" in r.headers["www-authenticate"]
     for path in mcp_server.PATHS:
         meta = app.get("/.well-known/oauth-protected-resource" + path).json()
-        assert meta["resource"] == "http://testserver" + path and meta["resource_name"] == "CADOS"
+        assert meta["resource"] == "http://testserver" + path and meta["resource_name"] == "BIZOMAT CAD Automation"
         assert app.get("/.well-known/oauth-authorization-server" + path).json()["issuer"] == "http://testserver"
     info = _register(app)
     page, tok = _connect(owner, app, info, "http://testserver/solidworks/mcp")
-    assert "wants to use CADOS to work in SOLIDWORKS" in page and "Turn engineering intent into CAD." in page
+    assert "wants to use BIZOMAT CAD Automation to work in SOLIDWORKS" in page and "Turn engineering intent into CAD." in page
     for path in mcp_server.PATHS:
         assert _rpc(app, path, "tools/list", token=tok["access_token"]).status_code == 200
     # Claude connected again to /mcp: one connection per app, as before
@@ -114,10 +115,12 @@ def test_home_page_and_its_api(app):
     assert home.status_code == 200 and "Turn engineering intent into CAD." in home.text and "/api/solidworks" not in home.text
     for path in ("/overview", "/docs", "/privacy"):
         page = anon.get(path)
-        assert page.status_code == 200 and "CADOS" in page.text and "https://kevos.com/" in page.text, path
+        assert page.status_code == 200 and "BIZOMAT CAD Automation" in page.text and "https://bizomat.ai/" in page.text, path
+        assert "https://bizomat.ai/terms/" in page.text and "https://bizomat.ai/disclaimer/" in page.text, path
         assert "OpenSketch" not in page.text, path
     login = anon.get("/login").text
-    assert "Turn engineering intent into CAD." in login and "CADOS" in login and "manifest" not in login
+    assert "Turn engineering intent into CAD." in login and "BIZOMAT" in login and "CAD Automation" in login
+    assert "manifest" not in login and "CADOS" not in login
     for path in ("/", "/dashboard"):
         page = owner.get(path)
         assert page.status_code == 200 and "Engineering, made intelligent." in page.text and "/ui/app.js" in page.text
@@ -132,7 +135,7 @@ def test_home_page_and_its_api(app):
     st = owner.get("/api/solidworks").json()["status"]
     assert st["connected"] and st["machine"] == "PC1"
     bad = app.post("/mcp/sw/hello", json={}, headers={"Authorization": "Bearer oss_" + "0" * 40})
-    assert bad.status_code == 401 and "CADOS dashboard, http://testserver" in bad.json()["detail"]
+    assert bad.status_code == 401 and "CAD Automation dashboard, http://testserver" in bad.json()["detail"]
     privacy = anon.get("/privacy").text
     assert "SOLIDWORKS" in privacy and "built-in AI" not in privacy
 

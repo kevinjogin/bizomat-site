@@ -1,5 +1,5 @@
-/* Inter Tight (the one family CADOS and kevos.com use, variable 100-900) and Inter, served by CADOS itself: no request to another
-   site, so a page view tells no one else you visited.
+/* Inter Tight (the BIZOMAT body family, variable 100-900) and Inter, served by this server itself: no request to another
+   site, so a page view tells no one else you visited. The heading face, Oxanium, is in /ui/bizomat-tokens.css.
    Latin and latin-ext subsets (a browser fetches latin-ext only for characters that need it). SIL OFL 1.1, see OFL.txt. */
 @font-face {
   font-family: 'Inter'; font-style: normal; font-weight: 400 700; font-display: swap;

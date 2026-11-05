@@ -1,4 +1,4 @@
-"""What CADOS can do, in plain words: one entry per MCP tool, grouped, for the app's Tools, History and Assistant
+"""What BIZOMAT CAD Automation can do, in plain words: one entry per MCP tool, grouped, for the app's Tools, History and Assistant
 pages. tests/test_app_pages.py checks that every registered tool is here and nothing else is, so this list cannot
 drift from what the AI assistant can really call.
 """
