@@ -13,3 +13,12 @@ playwright-report/
 test-results/
 .DS_Store
 *.local
+
+# Node runtime data, migration working files and reports (they hold user data): never commit.
+.data/
+.migration/
+*.sqlite
+*.sqlite-*
+*.sqlite.bak-*
+migration-report.json
+migration-report.md
