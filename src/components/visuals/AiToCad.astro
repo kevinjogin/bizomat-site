@@ -35,8 +35,8 @@ const holes = [[540, 106.2], [619, 151.8], [572.9, 178.4], [493.9, 132.8]];
     {calls.map((c, i) => (
       <g class:list={['seq', c.c]}>
         <rect class="v-card" x="244" y={38 + i * 42} width="198" height="34" rx="8" />
-        <text class="v-mono" x="256" y={59 + i * 42}>{c.tool}</text>
-        <text class="v-accent-text" x="406" y={59 + i * 42} text-anchor="end">{c.note}</text>
+        <text class="v-mono" x="256" y={53 + i * 42}>{c.tool}</text>
+        <text class="v-accent-text" x="256" y={66 + i * 42}>{c.note}</text>
         <circle class="v-ok" cx="426" cy={55 + i * 42} r="5" />
         <path d={`M423.4 ${55 + i * 42} l1.9 1.9 l3.2 -3.6`} fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
       </g>

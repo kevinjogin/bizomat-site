@@ -40,7 +40,7 @@ const services = [
     {[78, 158, 238].map((y, i) => <path class:list={['v-pulse', `d${i + 1}`]} d={`M154 ${y} H 192`} pathLength="100" />)}
 
     <rect class="v-panel" x="524" y="38" width="142" height="300" rx="14" />
-    {[{ y: 60, t: 'Companion', s: 'tray app' }, { y: 150, t: 'Add-in', s: 'in SOLIDWORKS' }, { y: 240, t: 'SOLIDWORKS', s: 'your licence, files' }].map((n) => (
+    {[{ y: 60, t: 'Companion', s: 'tray app' }, { y: 150, t: 'Add-in', s: 'in SOLIDWORKS' }, { y: 240, t: 'SOLIDWORKS', s: 'your licence' }].map((n) => (
       <g><rect class="v-card" x="538" y={n.y} width="114" height="52" rx="10" /><text class="v-title" x="552" y={n.y + 22}>{n.t}</text><text class="v-sub" x="552" y={n.y + 39}>{n.s}</text></g>
     ))}
     <path class="v-edge" d="M595 112 V 150" /><path class="v-edge" d="M595 202 V 240" />

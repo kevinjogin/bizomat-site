@@ -7,11 +7,11 @@ import '../../styles/visuals.css';
 interface Props { id?: string }
 const { id = 'cmdflow' } = Astro.props;
 const stations = [
-  { t: 'AI app', s: 'MCP over HTTPS' },
-  { t: 'BIZOMAT', s: 'checks, signs, queues' },
-  { t: 'Companion', s: 'outgoing HTTPS only' },
-  { t: 'Add-in', s: 'local named pipe' },
-  { t: 'SOLIDWORKS', s: 'runs on your PC' },
+  { t: 'AI app', s: 'MCP, HTTPS' },
+  { t: 'BIZOMAT', s: 'checks, signs' },
+  { t: 'Companion', s: 'outgoing only' },
+  { t: 'Add-in', s: 'named pipe' },
+  { t: 'SOLIDWORKS', s: 'on your PC' },
 ];
 const states = [
   { c: 's1', t: 'created', n: 'sw_add_features' },
