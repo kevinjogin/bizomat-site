@@ -218,6 +218,90 @@
     });
   }
 
+  // ---------------------------------------------------------------- Settings: change password
+  on('pw-form', 'submit', async (e) => {
+    e.preventDefault();
+    const msg = $('pw-msg'); msg.textContent = '';
+    try {
+      const r = await api('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_password: $('pw-current').value, new_password: $('pw-new').value }) });
+      msg.textContent = 'Password changed. Sign in again with the new password.';
+      if (r.signed_out) setTimeout(() => { location.href = '/login'; }, 1500);
+    } catch (er) { msg.textContent = er.message; }
+  });
+
+  // ---------------------------------------------------------------- Admin (the owner only; the server checks it too)
+  function strongPassword() {
+    const a = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    const v = new Uint32Array(16); crypto.getRandomValues(v);
+    return Array.from(v, (x) => a[x % a.length]).join('').replace(/(.{4})(?!$)/g, '$1-');
+  }
+  async function loadPeople() {
+    try {
+      const d = await api('/api/admin/people');
+      const body = $('people'); body.textContent = '';
+      $('people-n').textContent = d.people.length + (d.people.length === 1 ? ' person' : ' people');
+      for (const u of d.people) {
+        const tr = el('tr');
+        const who = el('td'); who.append(el('span', '', u.name || u.email), el('span', 'meta', u.email));
+        const role = { owner: 'Owner', member: 'Member', tester: 'Tester' }[u.role] || u.role;
+        const pcs = u.computers ? u.computers + ' (' + u.online + ' online)' : 'None';
+        const act = el('td'); act.style.whiteSpace = 'nowrap';
+        if (u.role !== 'owner') {
+          const pw = el('button', 'link-btn small', 'Set password'); pw.type = 'button';
+          pw.addEventListener('click', async () => {
+            const np = prompt('New password for ' + u.email + ' (at least ' + d.min_password + ' characters). They are signed out everywhere and their AI assistants must sign in again.', strongPassword());
+            if (!np) return;
+            try { await api('/api/account/users/' + encodeURIComponent(u.id) + '/password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: np }) });
+              await copy(np); alert('Password set and copied. Give it to ' + u.email + '.'); } catch (er) { err(er.message); }
+          });
+          const rm = el('button', 'link-btn danger small', 'Remove'); rm.type = 'button'; rm.style.marginLeft = '12px';
+          rm.addEventListener('click', async () => {
+            if (!confirm('Remove ' + u.email + '? Their account, AI assistant connections and paired computers stop working at once.')) return;
+            try { await api('/api/account/users/' + encodeURIComponent(u.id), { method: 'DELETE' }); loadPeople(); } catch (er) { err(er.message); }
+          });
+          act.append(pw, rm);
+        }
+        tr.append(who, el('td', '', role), el('td', '', pcs), el('td', '', u.apps.length ? u.apps.join(', ') : 'None'), act);
+        body.append(tr);
+      }
+      const ul = $('invites'); ul.textContent = '';
+      for (const i of d.invites) {
+        const li = el('li'); const m = el('div');
+        m.append(el('div', '', i.note || 'Invite link'), el('div', 'meta', 'Expires ' + new Date((i.expires || 0) * 1000).toLocaleDateString()));
+        const x = el('button', 'link-btn danger small', 'Revoke'); x.type = 'button';
+        x.addEventListener('click', async () => { try { await api('/api/account/invites/' + encodeURIComponent(i.id), { method: 'DELETE' }); loadPeople(); } catch (er) { err(er.message); } });
+        li.append(m, x); ul.append(li);
+      }
+      $('open-signup').checked = !!(d.settings && d.settings.open_signup);
+      err('');
+    } catch (er) { failed(er); }
+  }
+  if (page === 'admin') {
+    on('add-gen', 'click', () => { $('add-pw').value = strongPassword(); });
+    on('add-form', 'submit', async (e) => {
+      e.preventDefault(); $('add-msg').textContent = ''; $('add-done').hidden = true;
+      const email = $('add-email').value.trim(); const pw = $('add-pw').value;
+      try {
+        await api('/api/account/users', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, name: $('add-name').value.trim(), password: pw }) });
+        const box = $('add-done'); box.textContent = '';
+        box.append(el('div', '', 'Account created for ' + email + '. Give them: the address ' + location.origin + ', their email and the password. '
+          + 'They install CADOS for SOLIDWORKS and sign in when the pairing step opens the browser.'));
+        box.hidden = false; $('add-form').reset(); loadPeople();
+      } catch (er) { $('add-msg').textContent = er.message; }
+    });
+    on('inv-new', 'click', async () => {
+      try { const r = await api('/api/account/invites', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ note: $('inv-note').value.trim() }) });
+        $('inv-url').value = r.url; $('inv-out').hidden = false; $('inv-note').value = ''; loadPeople(); } catch (er) { err(er.message); }
+    });
+    on('open-signup', 'change', async () => {
+      try { await api('/api/account/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ open_signup: $('open-signup').checked }) }); }
+      catch (er) { err(er.message); $('open-signup').checked = !$('open-signup').checked; }
+    });
+    loadPeople();
+  }
+
   // ---------------------------------------------------------------- load and keep fresh
   async function refresh(first) {
     try {
@@ -235,9 +319,9 @@
       if (!$('err').hidden && $('state') && $('state').dataset.state !== 'error') err('');
     } catch (e) { failed(e); }
   }
-  if (['home', 'assistant', 'solidworks', 'settings', 'tools'].includes(page)) {
+  if (['home', 'assistant', 'solidworks', 'settings', 'tools', 'admin'].includes(page)) {
     refresh(true);
-    if (page !== 'tools' && page !== 'settings') poll(refresh, 4000);
+    if (!['tools', 'settings', 'admin'].includes(page)) poll(refresh, 4000);
   }
   if (page === 'home') { loadRecent(); poll(loadRecent, 15000); }
 })();

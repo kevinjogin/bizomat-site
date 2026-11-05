@@ -41,6 +41,7 @@ to a registered computer when one is online, otherwise to the v1 add-in.
 | `POST /v2/devices/pair/start` | none (rate-limited: 20 per address per hour) | `{public_jwk, name, machine, os, companion_version}` | `{pair_id, user_code "ABCD-EFGH", verification_uri, verification_uri_complete, expires_in 600, interval 3}` |
 | `GET/POST /devices/pair` | the person signed in on the website | form: `code`, `name`, or `decision=deny` | the approval page |
 | `POST /v2/devices/pair/poll` | proof signed with the pairing key, `kid` = `pair_id` | `{}` | `{status: pending}` or `{status: approved, device_id, device_name, account, gateway_jwk}`; 410 when expired or denied |
+| `POST /v2/devices/pair/password` | proof signed with the pairing key, `kid` = `pair_id` | `{email, password, name?}` | approves this pairing for the account with that email and password (the same password the person signs in with; the Companion keeps neither), then answers like an approved poll; 401 `INVALID_CREDENTIALS` (failures rate-limited per address and email, as the sign-in page); 403 when the server has no accounts; 410 when the pairing expired or was decided |
 | `POST /v2/device/hello` | device proof | device.hello | device.welcome |
 | `GET /v2/device/next?session=&wait=25` | device proof | | 204 (heartbeat), 200 gateway.messages, 409 session.end |
 | `POST /v2/device/ack` | device proof | command.ack | `{ok, known, status}` |
@@ -167,7 +168,7 @@ A refusal and a result:
 ```json
 {"v": "2.0", "type": "command.ack", "command_id": "cmd_...", "device_id": "dev_...", "hop": "companion", "ack": "rejected",
  "error": {"code": "INSTANCE_NOT_RUNNING", "category": "device", "retryable": false, "hop": "companion",
-           "message": "SOLIDWORKS is not running on DESK. Open SOLIDWORKS there; KEVOS connects by itself."}}
+           "message": "SOLIDWORKS is not running on DESK. Open SOLIDWORKS there; CADOS connects by itself."}}
 {"v": "2.0", "type": "command.result", "msg_id": "msg_...", "sent_at": "...", "command_id": "cmd_...", "device_id": "dev_...",
  "instance_id": "swi_...", "status": "failed", "params_sha256": "sha256:9b2f...", "started_at": "...", "finished_at": "...",
  "duration_ms": 4210, "result": {"features": ["..."], "stopped_at": "f3 (fillet): ..."},

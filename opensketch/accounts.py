@@ -338,6 +338,20 @@ def accept_invite(token: str, email: str, name: str, password: str | None, googl
         return public(u)
 
 
+def create_member(email: str, name: str, password: str) -> dict:
+    """The owner adds a person with a password the owner chose (the Admin page); they sign in with it, for example
+    when the installer's pairing step opens the browser, and can change it in Settings."""
+    if not password:
+        raise AccountError(f"Use a password of at least {MIN_PASSWORD} characters.")
+    with _lock:
+        data = _edit()
+        email, name = _check_new(email, name, password, data)
+        u = _new_user(email, name, password, "member")
+        data["users"].append(u)
+        _write("users.json", data)
+        return public(u)
+
+
 def pending_invites() -> int:
     return len(list_invites())
 

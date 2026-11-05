@@ -354,7 +354,7 @@ namespace OpenSketch.Sw.Bridge
             using (var c = new CloudLink(gateway, key, "pairing", log, o.HttpHandler?.Invoke()))
             {
                 var r = c.PairStart(name, o.MachineName, o.OsName, o.Version);
-                if (r.Status != 200) throw new IOException("The KEVOS server refused pairing: " + r.ErrorMessage);
+                if (r.Status != 200) throw new IOException("The CADOS server refused pairing: " + r.ErrorMessage);
                 var t = new PairingTicket
                 {
                     PairId = J.Str(r.Json, "pair_id"), UserCode = J.Str(r.Json, "user_code"), Url = J.Str(r.Json, "verification_uri_complete"),
@@ -386,19 +386,7 @@ namespace OpenSketch.Sw.Bridge
                     var st = J.Str(r.Json, "status");
                     if (st == "approved")
                     {
-                        var jwk = J.Obj(r.Json, "gateway_jwk");
-                        Jwk.ToVerifier(jwk).Dispose(); // valid key
-                        Config.DeviceId = J.Str(r.Json, "device_id");
-                        Config.DeviceName = J.Str(r.Json, "device_name");
-                        Config.Account = J.Str(r.Json, "account");
-                        Config.GatewayJwk = jwk;
-                        Config.PairedAt = Times.Now();
-                        Config.Revoked = false;
-                        Config.Save(cfgPath);
-                        log("paired as " + Config.DeviceName + " (" + Config.DeviceId + ")");
-                        statusDirty = true;
-                        kick.Set();
-                        Fire();
+                        Accept(r.Json);
                         return true;
                     }
                     if (st != "pending") throw new IOException("Pairing " + (st ?? "failed") + ". Start again.");
@@ -406,6 +394,36 @@ namespace OpenSketch.Sw.Bridge
                 }
             }
             return false;
+        }
+
+        /// <summary>Pairs with the person's CADOS email and password instead of the browser (POST /v2/devices/pair/password,
+        /// signed with the pairing key). The password is sent once over HTTPS and kept nowhere, not even in the log.</summary>
+        public void PairWithPassword(PairingTicket t, string email, string password)
+        {
+            using (var c = new CloudLink(Config.GatewayUrl, key, t.PairId, log, o.HttpHandler?.Invoke()))
+            {
+                var r = c.PostJson("/v2/devices/pair/password", J.O("email", email ?? "", "password", password ?? ""), 30);
+                if (r.Status != 200 || J.Str(r.Json, "status") != "approved")
+                    throw new IOException(r.Status == 200 ? "Pairing was not approved. Start again." : r.ErrorMessage);
+                Accept(r.Json);
+            }
+        }
+
+        void Accept(Dictionary<string, object> approved)
+        {
+            var jwk = J.Obj(approved, "gateway_jwk");
+            Jwk.ToVerifier(jwk).Dispose(); // valid key
+            Config.DeviceId = J.Str(approved, "device_id");
+            Config.DeviceName = J.Str(approved, "device_name");
+            Config.Account = J.Str(approved, "account");
+            Config.GatewayJwk = jwk;
+            Config.PairedAt = Times.Now();
+            Config.Revoked = false;
+            Config.Save(cfgPath);
+            log("paired as " + Config.DeviceName + " (" + Config.DeviceId + ")");
+            statusDirty = true;
+            kick.Set();
+            Fire();
         }
 
         /// <summary>Forgets the registration here and tells the server (best effort). The key stays: the caller
@@ -462,7 +480,7 @@ namespace OpenSketch.Sw.Bridge
             {
                 if (!Config.Paired)
                 {
-                    SetCloud(Config.Revoked ? "Removed from the KEVOS account: pair again" : "Not registered: pair this computer", false);
+                    SetCloud(Config.Revoked ? "Removed from your CADOS account: pair again" : "Not registered: pair this computer", false);
                     kick.WaitOne(TimeSpan.FromSeconds(5));
                     continue;
                 }
@@ -528,7 +546,7 @@ namespace OpenSketch.Sw.Bridge
             Config.Revoked = true;
             Config.Save(cfgPath);
             session = null;
-            SetCloud("Removed from the KEVOS account: pair again", false);
+            SetCloud("Removed from your CADOS account: pair again", false);
         }
 
         void Hello(CloudLink c, CancellationToken stop)
@@ -712,7 +730,7 @@ namespace OpenSketch.Sw.Bridge
             }
             if (Paused)
             {
-                Reject(cid, "PAUSED", $"KEVOS is paused on {Config.DeviceName} by the person at that computer.", "policy");
+                Reject(cid, "PAUSED", $"CADOS is paused on {Config.DeviceName} by the person at that computer.", "policy");
                 return;
             }
             var inst = Choose(cmd);
@@ -734,7 +752,7 @@ namespace OpenSketch.Sw.Bridge
                 var running = o.SolidWorksProcesses() > 0;
                 Reject(cid, "INSTANCE_NOT_RUNNING", running
                            ? $"SOLIDWORKS is running on {Config.DeviceName} but the CADOS add-in is not loaded. In SOLIDWORKS: Tools > Add-Ins, tick CADOS (Active and Start Up)."
-                           : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; KEVOS connects by itself.");
+                           : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; CADOS connects by itself.");
                 return;
             }
             Ack(cid, "accepted");

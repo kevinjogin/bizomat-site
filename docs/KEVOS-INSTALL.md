@@ -7,7 +7,8 @@ Windows, open SOLIDWORKS, and ask your AI app. No command prompt, no macro, no a
 
 - Windows 10 (version 1903 or later) or Windows 11, 64-bit, with .NET Framework 4.8 (built in).
 - SOLIDWORKS 2022 or newer, 64-bit (see [KEVOS-VERSIONS.md](KEVOS-VERSIONS.md)).
-- A KEVOS account on your KEVOS server (for example `https://bridge.example.com`), and administrator rights on the
+- A CADOS account on your CADOS server (`https://cados.kevos.com`, or your own). Your CADOS administrator adds you
+  on the Admin page with a password, or sends you an invite link. You also need administrator rights on the
   computer once, for the installation.
 
 ## 1. Install
@@ -33,8 +34,9 @@ msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL=https://cados.kevos.com
 Right after an interactive install the KEVOS Companion opens its pairing window. (After a silent install it shows a
 notification at the next sign-in; or use Start > KEVOS > Pair this computer with KEVOS.)
 
-1. Check the server address and the computer's name, then click **Pair**.
-2. Your browser opens the KEVOS website. Sign in with your KEVOS account.
+1. Check the server address and the computer's name. Enter your CADOS email and password (the same ones you sign in
+   to CADOS with) and click **Pair**: the computer is added at once. Or leave them empty and continue below.
+2. Your browser opens CADOS. Sign in with the email and password your administrator gave you.
 3. Check that the site shows the same code as the Companion (for example `KQ7M-4RTD`), then click
    **Add this computer**.
 4. The Companion says **Done**. The tray icon (a K with a green dot) shows the computer as connected.
@@ -78,7 +80,7 @@ Remove it on the KEVOS home page. Its key is refused from that moment; AI apps c
 
 ## Pause, stop, start with Windows
 
-Right-click the tray icon: **Pause KEVOS** (commands are refused until you resume; SOLIDWORKS shows it), **Start with
+Right-click the tray icon: **Pause CADOS** (commands are refused until you resume; SOLIDWORKS shows it), **Start with
 Windows** (per user), **Exit**. The add-in's KEVOS window has **Ask me before destructive changes** (on by default).
 
 ## Update, repair, uninstall

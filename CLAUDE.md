@@ -11,7 +11,7 @@ calls the `sw_` MCP tools; the server checks each sketch and feature with OpenSk
 kernel, queues the work, and the OpenSketch add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS
 and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-only.
 
-CADOS for SOLIDWORKS (0.12.1; called KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
+CADOS for SOLIDWORKS (0.12.2; called KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
 Windows computer runs the native CADOS add-in (COM `ISwAddin`, Tools > Add-Ins > CADOS, CADOS tab, menu and task pane)
 and the KEVOS Companion (tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the
 gateway and hands commands to the add-in over a local named pipe; one MSI ("CADOS for SOLIDWORKS") installs both.
@@ -55,7 +55,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   (secrets CLOUDFLARE_API_TOKEN, FLY_API_TOKEN). Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
-## Current state (v0.8 server, CADOS for SOLIDWORKS 0.12.1)
+## Current state (v0.8 server, CADOS for SOLIDWORKS 0.12.2)
 
 - KEVOS registered computers (`devicebridge.py`, router included in `server.py`): pairing (`/v2/devices/pair/*`, the
   signed-in page `/devices/pair`), device proofs (`Authorization: KEVOS-Device <JWS>`, ES256 by the computer's
@@ -99,7 +99,14 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   (`/tools`: every MCP tool in plain words from `catalog.GROUPS`, searchable; `tests/test_app_pages.py` keeps it equal
   to the registered tools), History (`/history`: `GET /api/commands`, the person's commands to paired computers from
   bridge.sqlite; direct-link commands are not recorded), Settings (`/settings`: account, private address and add-in
-  key with Show / Copy / New, sign out). No Automation section: CADOS keeps no stored automations. Live status
+  key with Show / Copy / New, change password, sign out), Admin (`/admin`, the owner only; anyone else is sent to
+  Home: add a person with a password the owner sets (`POST /api/account/users`, role member), set someone's password
+  (`POST /api/account/users/<id>/password`: signs them out everywhere and ends their AI apps' sign-ins), remove a
+  person (also revokes their paired computers), people with their computers and AI apps (`GET /api/admin/people`),
+  invite links, open sign-up). People sign in with that password when the installer's pairing step opens the
+  browser, or type the same email and password in the Companion's pairing window (`POST /v2/devices/pair/password`,
+  signed with the pairing key, rate-limited like the sign-in page; the password is sent once and kept nowhere). The
+  installer download (`/download/solidworks`) needs sign-in. No Automation section: CADOS keeps no stored automations. Live status
   states: Connected, Disconnected, Checking connection, Authentication required, Installation required, Connection
   error. App header: the sections, a KEVOS menu (kevos.com, Work, CADOS), the person, Sign out; app footer links
   kevos.com and Work. `GET /api/solidworks` still gives the pages everything in one call. Sign-in, consent, notice and
@@ -162,7 +169,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
 - Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded; version in
-  `Directory.Build.props`, 0.12.1): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
+  `Directory.Build.props`, 0.12.2): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
   Wire (ids, times, 4-byte-length frames), ReplayGuard, PipeLink (the add-in's pipe client: reader thread for pings and
   cancels, one worker for commands, outbox across reconnects, at-most-once by command id), CloudLink and
   CompanionEngine (the Companion's core: signed long poll, verification, routing to a SOLIDWORKS session, spool,
@@ -233,7 +240,8 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   shows a modal dialog (only an open sketch is detected). SOLIDWORKS run as administrator ignores the per-user
   registration. Plain numbers in equations are in the document's unit.
 - Large assemblies are slow to read: each read exports a STEP of the bodies that changed.
-- No page for account admin (invites, people, early access, Google setup): the `/api/account*` routes remain.
+- Account admin page (`/admin`) covers people, passwords, invites and open sign-up; early access codes and Google
+  sign-in setup are still API only (`/api/account/settings`, `/api/account/google`).
 - KEVOS: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
   (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
   process (SQLite, live sessions in memory).
@@ -246,4 +254,4 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
    Companion, the add-in's new UI, events, confirmation and modal check have only been compiled, not run.
 1. Run the self test on real SOLIDWORKS installs and fix from the reports.
 2. Tune SW_GUIDE from what the AI gets wrong on real work.
-3. An account admin page.
+3. Early access and Google sign-in settings on the Admin page.

@@ -95,6 +95,7 @@ DOWNLOAD = f"""<section class="section section-warm" id="download" aria-labelled
 <p class="lead">A native SOLIDWORKS add-in for Windows, installed with one installer. It appears in Tools &gt; Add-Ins and
 adds a CADOS tab, menu and task pane to SOLIDWORKS.</p>
 <div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a></div>
+<p class="small muted" style="margin-top:var(--s-3)">Sign in with your CADOS account to download. Your administrator gives you the account and password.</p>
 <div class="download-links"><a href="/docs#install">Installation guide</a><a href="/docs#requirements">System requirements</a>
 <a href="/docs#versions">Supported SOLIDWORKS versions</a></div></div>
 <div class="card card-pad download-card"><h3>What the installer adds</h3><ul class="checks">
@@ -275,8 +276,8 @@ API and is being validated on more installations. Run the self test on each new 
 <div class="actions"><a class="btn btn-primary" href="/download/solidworks">Download CADOS for SOLIDWORKS</a>
 <a class="small" href="{brand.RELEASES_URL}" rel="noopener">All releases and checksums</a></div>
 <ol class="steps">
-<li><h4>Download the installer</h4><p>Download <code>CADOS-for-SOLIDWORKS-x64.msi</code>. Each release also lists a SHA-256
-checksum you can compare.</p></li>
+<li><h4>Download the installer</h4><p>Sign in with your CADOS account and download <code>CADOS-for-SOLIDWORKS-x64.msi</code>.
+Each release also lists a SHA-256 checksum you can compare.</p></li>
 <li><h4>Close SOLIDWORKS</h4><p>Save your work and close SOLIDWORKS before you install.</p></li>
 <li><h4>Run the installer</h4><p>Open the file and follow the steps. Windows asks for administrator approval once. The
 installer adds the CADOS add-in and the KEVOS Companion, registers the add-in with every SOLIDWORKS version on the
@@ -288,9 +289,9 @@ not change your CAD files.</p></li></ol>
 <section id="pair"><h2>Pair a computer</h2>
 <p>Pairing adds the computer to your account. After an interactive install the KEVOS Companion opens its pairing window
 by itself. You can also open it from the tray icon: Pair this computer.</p>
-<ol class="steps"><li><h4>Check the address and the name</h4><p>Check the CADOS service address (<code>https://cados.kevos.com</code> unless your organisation runs its own) and the name for this computer, then choose Pair.</p></li>
-<li><h4>Sign in</h4><p>Your browser opens CADOS. Sign in with your CADOS account.</p></li>
-<li><h4>Confirm the code</h4><p>Check that the page shows the same code as the Companion, then choose Add this computer.</p></li></ol>
+<ol class="steps"><li><h4>Check the address and the name</h4><p>Check the CADOS service address (<code>https://cados.kevos.com</code> unless your organisation runs its own) and the name for this computer.</p></li>
+<li><h4>Enter your CADOS email and password</h4><p>Use the same email and password you sign in to CADOS with, then choose Pair. The computer is added at once.</p></li>
+<li><h4>Or confirm in the browser</h4><p>Leave email and password empty and choose Pair: your browser opens CADOS. Sign in, check that it shows the same code as the Companion, and choose Add this computer.</p></li></ol>
 <p>The Companion makes a key for this computer in the Windows key store. The key cannot be copied to another computer,
 and no password is stored on the computer.</p></section>
 

@@ -608,3 +608,4 @@ a.tile:hover { border-color: var(--line-2); text-decoration: none; }
 .kv-list { display: grid; gap: 0; }
 .kv-list .kv-row { padding: 10px 0; border-top: 1px solid var(--line); }
 .kv-list .kv-row:first-child { border-top: 0; }
+.two-col .field + .field { margin-top: 0; }

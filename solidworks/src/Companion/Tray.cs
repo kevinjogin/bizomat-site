@@ -23,7 +23,7 @@ namespace Kevos.Companion
         readonly ContextMenuStrip menu = new ContextMenuStrip();
         readonly ToolStripMenuItem header = new ToolStripMenuItem { Enabled = false };
         readonly ToolStripMenuItem pairItem = new ToolStripMenuItem("Pair this computer...");
-        readonly ToolStripMenuItem pauseItem = new ToolStripMenuItem("Pause KEVOS");
+        readonly ToolStripMenuItem pauseItem = new ToolStripMenuItem("Pause CADOS");
         readonly ToolStripMenuItem startupItem = new ToolStripMenuItem("Start with Windows");
         readonly System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer { Interval = 3000 };
         readonly SynchronizationContext ui;
@@ -55,7 +55,7 @@ namespace Kevos.Companion
             catch (Exception ex)
             {
                 Log.Write("could not start: " + ex);
-                MessageBox.Show("KEVOS could not start: " + ex.Message, "KEVOS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("The KEVOS Companion could not start: " + ex.Message, "KEVOS Companion", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ExitThread();
                 return;
             }
@@ -76,7 +76,7 @@ namespace Kevos.Companion
             }
             BuildMenu();
             icon.Icon = off;
-            icon.Text = "KEVOS";
+            icon.Text = "KEVOS Companion for CADOS";
             icon.Visible = true;
             icon.DoubleClick += (s, e) => ShowStatus();
             icon.BalloonTipClicked += (s, e) =>
@@ -171,12 +171,12 @@ namespace Kevos.Companion
             var diag = new ToolStripMenuItem("Copy diagnostics", null, (s, e) =>
             {
                 Clipboard.SetText(Diagnostics.Report(engine, key));
-                icon.ShowBalloonTip(3000, "KEVOS", "Diagnostics copied. Paste them into your support request.", ToolTipIcon.Info);
+                icon.ShowBalloonTip(3000, "KEVOS Companion", "Diagnostics copied. Paste them into your support request.", ToolTipIcon.Info);
             });
             var exit = new ToolStripMenuItem("Exit", null, (s, e) =>
             {
-                if (MessageBox.Show("Stop KEVOS? AI apps cannot reach SOLIDWORKS on this computer until it starts again (next sign-in, or from the Start menu).",
-                                    "KEVOS", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK) Quit();
+                if (MessageBox.Show("Stop the KEVOS Companion? Your AI assistant cannot reach SOLIDWORKS on this computer until it starts again (next sign-in, or from the Start menu).",
+                                    "KEVOS Companion", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK) Quit();
             });
             menu.Items.AddRange(new ToolStripItem[] { header, new ToolStripSeparator(), statusItem, pairItem, pauseItem, new ToolStripSeparator(), startupItem, update, logs, diag, new ToolStripSeparator(), exit });
             icon.ContextMenuStrip = menu;
@@ -196,7 +196,7 @@ namespace Kevos.Companion
                 if (!toldToPair)
                 {
                     toldToPair = true;
-                    icon.ShowBalloonTip(8000, "KEVOS", "Pair this computer with your KEVOS account to use it from AI apps. Click here.", ToolTipIcon.Info);
+                    icon.ShowBalloonTip(8000, "CADOS", "Pair this computer with your CADOS account to use it from your AI assistant. Click here.", ToolTipIcon.Info);
                 }
             }
             else if (st.Paused)
@@ -220,7 +220,7 @@ namespace Kevos.Companion
                 ic = on;
             }
             header.Text = line.Length > 60 ? line.Substring(0, 60) : line;
-            var tip = "KEVOS: " + line;
+            var tip = "CADOS: " + line;
             if (tip.Length > 63) tip = tip.Substring(0, 63);
             if (tip != lastTip)
             {
@@ -229,7 +229,7 @@ namespace Kevos.Companion
                 icon.Icon = ic;
             }
             pairItem.Text = st.Paired ? "Pair again..." : "Pair this computer...";
-            pauseItem.Text = st.Paused ? "Resume KEVOS" : "Pause KEVOS";
+            pauseItem.Text = st.Paused ? "Resume CADOS" : "Pause CADOS";
             pauseItem.Enabled = st.Paired;
             startupItem.Checked = Startup.Enabled;
             FallbackAttach(st);
@@ -297,12 +297,12 @@ namespace Kevos.Companion
                 {
                     if (offer == null)
                     {
-                        if (asked) MessageBox.Show(why, "KEVOS updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (asked) MessageBox.Show(why, "CADOS updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
                     var q = $"CADOS for SOLIDWORKS {offer.Version} is ready (verified: signed by the same publisher, hash checked).\r\n\r\n{offer.Notes}\r\n\r\n" +
                             "Install it now? Save your work in SOLIDWORKS first: it restarts SOLIDWORKS' add-in at its next start.";
-                    if (MessageBox.Show(q, "KEVOS update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) Updater.Install(offer);
+                    if (MessageBox.Show(q, "CADOS update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) Updater.Install(offer);
                 }, null);
             });
         }
@@ -357,38 +357,45 @@ namespace Kevos.Companion
         readonly Label code = new Label();
         readonly Label info = new Label();
         readonly Button go = new Button { Text = "Pair" };
-        readonly LinkLabel open = new LinkLabel { Text = "Open the KEVOS website", Visible = false };
+        readonly LinkLabel open = new LinkLabel { Text = "Open CADOS in the browser", Visible = false };
+        readonly TextBox email = new TextBox();
+        readonly TextBox password = new TextBox { UseSystemPasswordChar = true };
         CancellationTokenSource cts;
         string url;
 
         public PairForm(TrayApp app)
         {
             this.app = app;
-            Text = "KEVOS: pair this computer";
+            Text = "CADOS: pair this computer";
             Font = new Font("Segoe UI", 9.5f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             StartPosition = FormStartPosition.CenterScreen;
-            ClientSize = new Size(480, 330);
+            ClientSize = new Size(480, 450);
             BackColor = Color.White;
-            var title = new Label { Text = "Add this computer to your KEVOS account", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
-            var l1 = new Label { Text = "KEVOS server address", AutoSize = true, Location = new Point(16, 54) };
+            var title = new Label { Text = "Add this computer to your CADOS account", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
+            var l1 = new Label { Text = "CADOS address", AutoSize = true, Location = new Point(16, 54) };
             gateway.SetBounds(16, 74, 448, 26);
             var l2 = new Label { Text = "Name for this computer", AutoSize = true, Location = new Point(16, 108) };
-            name.SetBounds(16, 128, 300, 26);
-            go.SetBounds(324, 126, 140, 30);
-            code.SetBounds(16, 172, 448, 50);
+            name.SetBounds(16, 128, 448, 26);
+            var l3 = new Label { Text = "Your CADOS email (optional: or sign in in the browser)", AutoSize = true, Location = new Point(16, 162) };
+            email.SetBounds(16, 182, 448, 26);
+            var l4 = new Label { Text = "Your CADOS password", AutoSize = true, Location = new Point(16, 214) };
+            password.SetBounds(16, 234, 300, 26);
+            go.SetBounds(324, 232, 140, 30);
+            code.SetBounds(16, 274, 448, 50);
             code.Font = new Font("Consolas", 26f, FontStyle.Bold);
             code.TextAlign = ContentAlignment.MiddleCenter;
-            info.SetBounds(16, 226, 448, 60);
-            open.SetBounds(16, 292, 300, 22);
+            info.SetBounds(16, 328, 448, 76);
+            open.SetBounds(16, 410, 300, 22);
             open.LinkClicked += (s, e) => Browse();
-            Controls.AddRange(new Control[] { title, l1, gateway, l2, name, go, code, info, open });
+            AcceptButton = go;
+            Controls.AddRange(new Control[] { title, l1, gateway, l2, name, l3, email, l4, password, go, code, info, open });
             var cfg = app.Engine.Config;
             gateway.Text = cfg.GatewayUrl ?? Config.GatewayUrl ?? Config.DefaultGateway;
             name.Text = cfg.DeviceName ?? Environment.MachineName;
             info.Text = cfg.Paired ? $"This computer is {cfg.DeviceName} on {cfg.Account}. Pairing again gives it a new identity; the old one stops working." :
-                        "You will sign in on the KEVOS website and confirm the code shown here. No password is stored on this computer.";
+                        "Enter the email and password of your CADOS account, or leave them empty to sign in in your browser. No password is kept on this computer.";
             go.Click += (s, e) => Start();
             FormClosed += (s, e) => cts?.Cancel();
         }
@@ -409,12 +416,16 @@ namespace Kevos.Companion
             var g = gateway.Text.Trim().TrimEnd('/');
             if (!g.StartsWith("https://", StringComparison.OrdinalIgnoreCase) && !CloudLink.IsLoopback(g))
             {
-                info.Text = "The address must start with https:// (for example https://bridge.example.com).";
+                info.Text = "The address must start with https:// (for example https://cados.kevos.com).";
                 return;
             }
             go.Enabled = false;
             info.Text = "Contacting " + g + "...";
             var n = name.Text.Trim();
+            var em = email.Text.Trim();
+            var pw = password.Text;
+            password.Text = "";   // sent once, kept nowhere
+            var withPassword = em.Length > 0 && pw.Length > 0;
             cts = new CancellationTokenSource();
             var token = cts.Token;
             ThreadPool.QueueUserWorkItem(_ =>
@@ -425,10 +436,22 @@ namespace Kevos.Companion
                     var t = app.Engine.BeginPairing(g, n);
                     Config.GatewayUrl = g;
                     url = t.Url;
+                    if (withPassword)
+                    {
+                        app.Engine.PairWithPassword(t, em, pw);
+                        pw = null;
+                        BeginInvoke((MethodInvoker)(() =>
+                        {
+                            code.Text = "Done";
+                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CADOS connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
+                            open.Visible = false;
+                        }));
+                        return;
+                    }
                     BeginInvoke((MethodInvoker)(() =>
                     {
                         code.Text = t.UserCode;
-                        info.Text = "Your browser opens the KEVOS website. Sign in and check that it shows this code, then click Add this computer. This window waits.";
+                        info.Text = "Your browser opens CADOS. Sign in and check that it shows this code, then click Add this computer. This window waits.";
                         open.Visible = true;
                         Browse();
                     }));
@@ -438,7 +461,7 @@ namespace Kevos.Companion
                         if (ok)
                         {
                             code.Text = "Done";
-                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. KEVOS connects by itself from now on; open SOLIDWORKS and ask your AI app.";
+                            info.Text = $"This computer is {app.Engine.Config.DeviceName} on {app.Engine.Config.Account}. CADOS connects by itself from now on; open SOLIDWORKS and ask your AI assistant.";
                             open.Visible = false;
                         }
                         else

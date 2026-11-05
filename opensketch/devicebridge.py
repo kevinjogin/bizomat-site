@@ -519,7 +519,7 @@ def set_device(user: dict | None, device_id: str, name: str | None = None, defau
     return _device_out(_q("SELECT * FROM devices WHERE id=?", (device_id,), one=True))
 
 
-def revoke_device(user: dict | None, device_id: str, why: str = "This computer was removed from the KEVOS account.") -> bool:
+def revoke_device(user: dict | None, device_id: str, why: str = "This computer was removed from your CADOS account.") -> bool:
     n = _exec("UPDATE devices SET revoked=? WHERE id=? AND owner=? AND revoked IS NULL", (time.time(), device_id, person_id(user)))
     if not n:
         return False
@@ -665,7 +665,7 @@ def authenticate(request: Request, body: bytes, pairing: bool = False) -> dict:
         if not rec:
             raise BridgeAuthError(401, "DEVICE_UNKNOWN", "This computer is not registered. Pair it again in the KEVOS Companion.")
         if rec["revoked"]:
-            raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from the KEVOS account. Pair it again.")
+            raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from your CADOS account. Pair it again.")
     try:
         _, payload = jws_verify(compact, jwk_public_key(json.loads(rec["jwk"])))
         claims = json.loads(payload)
@@ -777,7 +777,7 @@ async def call(user: dict | None, device: dict, op: str, args: dict, timeout: fl
         raise BridgeError(f"The command carries what looks like a password, key or token ({bad}); it was not sent. "
                           "SOLIDWORKS commands never need credentials.", code="INPUT_FORBIDDEN_FIELD")
     if s.paused:
-        raise BridgeError(f"KEVOS is paused on {device['name']} (by the person at that computer). Ask them to resume it "
+        raise BridgeError(f"CADOS is paused on {device['name']} (by the person at that computer). Ask them to resume it "
                           "from the KEVOS icon in the Windows taskbar.", code="PAUSED")
     try:
         files_in = [dict(_blob_ref(bid), name=name) for name, bid in (blobs or {}).items()]
@@ -1253,6 +1253,38 @@ async def pair_poll(request: Request):
         return _err(exc)
     out = poll_pairing(pair)
     return _ok(out, 200 if out["status"] in ("pending", "approved") else 410)
+
+
+@router.post("/v2/devices/pair/password")
+async def pair_password(request: Request):
+    """Pairing from the Companion's window with the person's own CADOS email and password, instead of confirming the
+    code in a browser. Signed with the pairing key, so the password approves only this computer's pairing. The
+    Companion sends the password once and keeps neither it nor a token."""
+    from . import accounts, auth
+    try:
+        raw, body = await _json(request)
+        pair = authenticate(request, raw, pairing=True)
+        if auth.mode() != "accounts":
+            raise BridgeAuthError(403, "FORBIDDEN", "This CADOS server has no accounts yet. Its owner creates the first one on the website.")
+        email = str(body.get("email") or "").strip().lower()[:200]
+        password = str(body.get("password") or "")[:500]
+        keys = ("ip:" + _client_ip(request), "email:" + email)
+        if auth._limited(*keys):
+            raise BridgeAuthError(429, "RATE_LIMITED", "Too many sign-in attempts. Wait a few minutes and try again.")
+        user = await asyncio.to_thread(accounts.verify, email, password)
+        if user is None:
+            auth._failed(*keys)
+            await asyncio.sleep(1)  # slow down guessing, as the sign-in page does
+            raise BridgeAuthError(401, "INVALID_CREDENTIALS", "The email or password is wrong.")
+        if pair["status"] != "pending" or pair["expires"] < time.time():
+            raise BridgeAuthError(410, "PAIRING_CLOSED", "This pairing expired or was already decided. Click Pair again.")
+        try:
+            approve_pairing(user, pair["code"], body.get("name"))
+        except ValueError as exc:
+            raise BridgeAuthError(410, "PAIRING_CLOSED", str(exc))
+    except BridgeAuthError as exc:
+        return _err(exc)
+    return _ok(poll_pairing(_q("SELECT * FROM pairings WHERE id=?", (pair["id"],), one=True)))
 
 
 @router.post("/v2/device/hello")

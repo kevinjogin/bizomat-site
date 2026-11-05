@@ -65,9 +65,16 @@ def test_download_names_agree(tmp_path, monkeypatch):
         "https://example.com/CADOS-for-SOLIDWORKS-0.12.0-x64.msi"
 
 
-def test_the_download_is_public_once_sign_in_is_on(tmp_path, monkeypatch):
+def test_the_download_needs_sign_in(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENSKETCH_DATA", str(tmp_path / "data"))
     monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret")
-    from opensketch import server
-    r = TestClient(server.app).get("/download/solidworks", follow_redirects=False)
+    from opensketch import accounts, server
+    accounts.create_owner("owner@example.com", "Owner", "owner-pass-1")
+    accounts.create_member("pat@example.com", "Pat", "given-pass-1")
+    anon = TestClient(server.app)
+    r = anon.get("/download/solidworks", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/login?next=/download/solidworks"
+    assert anon.post("/login", data={"email": "pat@example.com", "password": "given-pass-1", "next": "/download/solidworks"},
+                     follow_redirects=False).headers["location"] == "/download/solidworks"
+    r = anon.get("/download/solidworks", follow_redirects=False)
     assert r.status_code == 302 and "CADOS-for-SOLIDWORKS" in r.headers["location"]

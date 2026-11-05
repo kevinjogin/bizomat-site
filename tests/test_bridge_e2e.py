@@ -134,7 +134,7 @@ def test_csharp_companion_and_addin_link_end_to_end(base, probe_dll, tmp_path): 
 
         # paused by the person at the computer: refused with that reason
         probe.say("pause")
-        assert _until(lambda: _mcp(base, "sw_status", {})[1].get("note", "").startswith("KEVOS is paused"))
+        assert _until(lambda: _mcp(base, "sw_status", {})[1].get("note", "").startswith("CADOS is paused"))
         res, out = _mcp(base, "sw_get_document", {})
         assert res.get("isError") and out["error_code"] == "PAUSED"
         probe.say("resume")
@@ -150,7 +150,7 @@ def test_csharp_companion_and_addin_link_end_to_end(base, probe_dll, tmp_path): 
         # removed from the account: cut off at once, and it says so
         dev = db.devices_for(None)[0]["id"]
         assert httpx.delete(base + f"/api/devices/{dev}").status_code == 200
-        assert _until(lambda: (probe.say("status"), any("Removed from the KEVOS account" in line for line in probe.all))[1])
+        assert _until(lambda: (probe.say("status"), any("Removed from your CADOS account" in line for line in probe.all))[1])
         res, out = _mcp(base, "sw_get_document", {})
         assert res.get("isError")
         probe.say("quit")
