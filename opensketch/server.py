@@ -466,6 +466,14 @@ def api_set_user_password(user_id: str, req: NewPassword, request: Request):
     return {"ok": True}
 
 
+@app.get("/api/admin/server-password")
+def api_admin_server_password(request: Request):
+    """Owner (Admin page): the server password, fetched only when the owner opens it (never in a page's source).
+    Nobody else needs it: people sign up and sign in with their own email and password."""
+    _owner(request)
+    return {"server_password": auth.password() or None}
+
+
 @app.get("/api/admin/people")
 def api_admin_people(request: Request):
     """Owner (Admin page): everyone with an account, their computers and connected AI apps; invites and sign-up settings."""

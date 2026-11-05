@@ -93,7 +93,9 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   scrypt hash is kept, so nobody (the owner included) can read a password back. A member whose password the owner
   set sees "Choose your own in Settings" on Home. The server password is asked only on the setup page (and /reset);
   spaces and one pair of quotes around it are forgiven (`auth._loose`). The setup page's "Anyone can create their
-  own account" box (ticked by default) turns on open sign-up with the owner account.
+  own account" box (ticked by default) turns on open sign-up with the owner account; the page tells other visitors
+  CADOS is not set up yet. After sign-in the owner sees the server password on Admin (`GET /api/admin/server-password`,
+  owner only, fetched on Show/Copy load, never in page source); people never need it.
 - Pages: `/` is the product page for visitors (`site.landing`) and the app's Home for a signed-in person (and on an
   open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
   security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,

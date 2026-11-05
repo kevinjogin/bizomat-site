@@ -235,3 +235,27 @@ def test_setup_can_stay_invite_only(monkeypatch):
     c = TestClient(server.app)
     c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1", "server_password": "server-secret"})
     assert accounts.any_users() and accounts.settings()["open_signup"] is False
+
+
+def test_only_the_owner_sees_the_server_password_after_sign_in(monkeypatch):
+    """People never need the server password (they sign up with their own email and password); the owner finds it on
+    the Admin page, fetched on request and never in a page's source."""
+    from opensketch import accounts
+    monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret-77")
+    anon = TestClient(server.app)
+    setup = anon.get("/setup").text
+    assert "Not the administrator?" in setup and "server-secret-77" not in setup
+    owner = TestClient(server.app)
+    owner.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1",
+                               "server_password": "server-secret-77", "open_signup": "on"})
+    assert owner.get("/api/admin/server-password").json()["server_password"] == "server-secret-77"
+    admin_page = owner.get("/admin").text
+    assert 'id="spw"' in admin_page and "server-secret-77" not in admin_page
+    assert anon.get("/api/admin/server-password").status_code == 401
+    # anyone signs up without it, and cannot read it
+    ann = TestClient(server.app)
+    assert "Server password" not in ann.get("/signup").text and "Server password" not in ann.get("/login").text
+    ann.post("/signup", data={"name": "Ann", "email": "ann@example.com", "new_password": "anns-pass-1"})
+    assert accounts.find_by_email("ann@example.com") is not None
+    assert ann.get("/api/admin/server-password").status_code == 403
+    assert "server-secret-77" not in ann.get("/dashboard").text

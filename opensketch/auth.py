@@ -463,7 +463,9 @@ def _setup_page(nxt, error="", form=None):
     f.append('<label class="check"><input type="checkbox" name="open_signup" value="on"' + (" checked" if on else "")
              + '> Anyone can create their own account. You can change this on the Admin page.</label>')
     return _page("Set up CADOS", "Create the administrator account. This page shows only once: after this, everyone signs in with their email and password.", "/setup", f,
-                 "Create account", nxt, error, SHOW_SCRIPT)
+                 "Create account", nxt, error,
+                 '<div class="note center">Not the administrator? CADOS is not set up here yet. Ask the person who runs it, '
+                 'then come back to create your account.</div>' + SHOW_SCRIPT)
 
 
 def _join_page(token, error="", form=None):

@@ -242,7 +242,7 @@ def settings(base: str = "", admin: bool = False) -> bytes:
 # ----------------------------------------------------------------------------- Admin (the owner only)
 
 def admin(base: str = "", admin: bool = True) -> bytes:
-    body = """<div class="app-title"><div><span class="eyebrow">Admin</span><h1>People on this CADOS server.</h1>
+    body = f"""<div class="app-title"><div><span class="eyebrow">Admin</span><h1>People on this CADOS server.</h1>
 <p>Add people, reset passwords, and see who chose their own password and who has computers and AI assistants
 connected. Only you see this page.</p></div></div>
 <div class="stack">
@@ -270,6 +270,10 @@ below, so they choose it from the start.</p></div>
 <div class="field" id="inv-out" hidden><label class="field-label" for="inv-url">Invite link</label><div class="input-group">
 <input class="input" id="inv-url" readonly><button class="btn" type="button" data-copy="inv-url">Copy</button></div></div>
 <ul class="list" id="invites" aria-label="Unused invite links"></ul></div></section>
+<section class="panel" id="server-pw" aria-labelledby="spw-h"><div class="panel-head"><h2 id="spw-h">Server password</h2>
+<p>Only you see this. People never need it: they create an account or sign in with their own email and password.
+You need it only for the Reset page (a new password for any account).</p></div><div class="panel-body">
+{_copy_field("spw", "Server password", secret=True)}<p class="small muted" id="spw-none" hidden>No server password is set on this server.</p></div></section>
 <section class="panel" aria-labelledby="signup-h"><div class="panel-head"><h2 id="signup-h">Sign-up</h2></div><div class="panel-body">
 <label class="small" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="open-signup">
 Anyone with the address can create an account (off: only people you add or invite)</label></div></section>

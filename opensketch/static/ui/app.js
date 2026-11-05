@@ -315,6 +315,9 @@
       catch (er) { err(er.message); $('open-signup').checked = !$('open-signup').checked; }
     });
     loadPeople();
+    api('/api/admin/server-password').then((r) => {
+      if (r.server_password) $('spw').value = r.server_password; else $('spw-none').hidden = false;
+    }).catch((er) => err(er.message));
   }
 
   // ---------------------------------------------------------------- load and keep fresh
