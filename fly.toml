@@ -56,8 +56,10 @@ kill_timeout = 15
   WORK_APP_URL = "https://work.bizomat.ai"
   WORK_APP_NAME = "BIZOMAT Project Management"
   WORK_ENVIRONMENT = "production"
-  WORK_ALLOW_SIGNUP = "false"
-  WORK_SESSION_TTL_HOURS = "336"
+  # Sign-up and session length as work.kevos.com runs today (apps/work/wrangler.jsonc, env.preview): open sign-up,
+  # 72-hour sessions. Change only by the owner's decision (closing sign-up means new people need an invitation).
+  WORK_ALLOW_SIGNUP = "true"
+  WORK_SESSION_TTL_HOURS = "72"
   # cad: cados.kevos.com stays the canonical address (OAuth metadata, links) until cad.bizomat.ai is verified;
   # both names are served. No host is redirected (the proxy keeps every path on both hosts).
   OPENSKETCH_PUBLIC_URL = "https://cados.kevos.com"

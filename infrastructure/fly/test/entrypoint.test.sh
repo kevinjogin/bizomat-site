@@ -95,7 +95,7 @@ run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work
 [ "$(uid "$tmp/work.json")" = 10003 ] || bad "work uid"
 [ "$(val "$tmp/work.json" APP_URL)" = https://work.example.test ] || bad "APP_URL from WORK_APP_URL"
 [ "$(val "$tmp/work.json" APP_NAME)" = "BIZOMAT Project Management" ] || bad "APP_NAME default"
-[ "$(val "$tmp/work.json" ALLOW_SIGNUP)" = false ] && [ "$(val "$tmp/work.json" SESSION_TTL_HOURS)" = 336 ] || bad "work defaults"
+[ "$(val "$tmp/work.json" ALLOW_SIGNUP)" = false ] && [ "$(val "$tmp/work.json" SESSION_TTL_HOURS)" = 72 ] || bad "work defaults"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_SECRET)" = throwaway-work-secret ] || bad "GOOGLE_CLIENT_SECRET must be the work one"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_ID)" = work-id ] || bad "a linked secret file must be skipped"
 [ "$(val "$tmp/work.json" WORK_EXTRA_SECRET)" = from-the-volume ] || bad "secret file not read"

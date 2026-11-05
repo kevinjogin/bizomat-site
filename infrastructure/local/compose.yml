@@ -29,8 +29,8 @@ x-env: &app-env
   WORK_APP_URL: https://work.bizomat.ai
   WORK_APP_NAME: BIZOMAT Project Management
   WORK_ENVIRONMENT: production
-  WORK_ALLOW_SIGNUP: "false"
-  WORK_SESSION_TTL_HOURS: "336"
+  WORK_ALLOW_SIGNUP: "true"
+  WORK_SESSION_TTL_HOURS: "72"
   # cad
   OPENSKETCH_PUBLIC_URL: https://cados.kevos.com
   OPENSKETCH_ALIAS_HOSTS: cad.bizomat.ai,cados.kevos.com

@@ -2,9 +2,9 @@
 # workos-platform-preview-db and R2 bucket workos-platform-preview-files) to the work Machine of the Fly app
 # `bizomat` (/data/work: db.sqlite and files/). Run by hand only.
 #
-#   dry-run  export D1 and R2 on the runner, build db.sqlite with apps/work/scripts/migrate/import-d1-dump.mjs and
-#            files/ with apps/work/scripts/migrate/copy-r2-objects.mjs, and report COUNTS ONLY (tables, rows, files,
-#            bytes) in the job summary. Nothing leaves the runner.
+#   dry-run  export D1 and R2 on the runner, build the data folder (db.sqlite, files/, runtime.sqlite) with the
+#            scripts below, verify it, and report COUNTS ONLY (tables, rows, files, bytes) in the job summary.
+#            Nothing leaves the runner.
 #   apply    the same, then: an on-demand snapshot of the work volume, maintenance mode on the work Machine,
 #            upload over flyctl ssh sftp (WireGuard), infrastructure/migrate/work/apply.sh (the data in place is moved
 #            to /data/backups/work-<time>/ first, every file is checked against the manifest, SQLite integrity check),
@@ -17,9 +17,11 @@
 #
 # Repository secrets: CLOUDFLARE_API_TOKEN (D1 read and R2 read on the account), CLOUDFLARE_ACCOUNT_ID, and for
 # apply FLY_API_TOKEN (an organization or deploy token for bizomat).
-# The migration scripts are called as:
-#   node scripts/migrate/import-d1-dump.mjs --dump <dump.sql> --out <db.sqlite>
-#   node scripts/migrate/copy-r2-objects.mjs --bucket <bucket> --out <folder>   (Cloudflare credentials from the env)
+# The migration scripts (apps/work/scripts/migrate, apps/work/docs/NODE-RUNTIME.md) are called as:
+#   node scripts/migrate/import-d1-dump.mjs <dump.sql> <data folder>
+#   node scripts/migrate/repair-text-from-d1.mjs <data folder> --remote --database <db> --env preview
+#   node scripts/migrate/copy-r2-objects.mjs <data folder> --bucket <bucket> --remote   (Cloudflare credentials from the env)
+#   node scripts/migrate/verify-data-dir.mjs <data folder>
 name: BIZOMAT migrate work data
 
 on:
@@ -92,24 +94,44 @@ jobs:
           fi
           echo "D1 export: $(wc -c <"$W/d1-dump.sql") bytes"
 
-      - name: Build db.sqlite from the dump
+      - name: Build the data folder from the dump (db.sqlite with the exact D1 schema)
         working-directory: apps/work
         run: |
-          if ! node scripts/migrate/import-d1-dump.mjs --dump "$W/d1-dump.sql" --out "$W/data/db.sqlite" >"$W/logs/import.log" 2>&1; then
+          # import-d1-dump.mjs checks integrity, foreign keys, migrations and schema, and rows per table against the
+          # dump, and fails on failed rows or duplicate keys (apps/work/docs/NODE-RUNTIME.md).
+          if ! node scripts/migrate/import-d1-dump.mjs "$W/d1-dump.sql" "$W/data" >"$W/logs/import.log" 2>&1; then
             echo "::error::import-d1-dump.mjs failed (its output is not shown: it can hold data). Run it locally on a copy to see why."
             exit 1
           fi
           rm -f "$W/d1-dump.sql"
 
-      - name: Copy the R2 objects
+      - name: Repair text values the D1 export makes ambiguous (literal backslash-n)
         working-directory: apps/work
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          mkdir -p "$W/data/files"
-          if ! node scripts/migrate/copy-r2-objects.mjs --bucket "$R2_BUCKET" --out "$W/data/files" >"$W/logs/r2.log" 2>&1; then
+          if ! node scripts/migrate/repair-text-from-d1.mjs "$W/data" --remote --database "$D1_DATABASE" --env preview >"$W/logs/repair.log" 2>&1; then
+            echo "::error::repair-text-from-d1.mjs failed (its output is not shown). Run it locally to see why."
+            exit 1
+          fi
+
+      - name: Copy the R2 objects the database references
+        working-directory: apps/work
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if ! node scripts/migrate/copy-r2-objects.mjs "$W/data" --bucket "$R2_BUCKET" --remote >"$W/logs/r2.log" 2>&1; then
             echo "::error::copy-r2-objects.mjs failed (its output is not shown). Run it locally to see why."
+            exit 1
+          fi
+
+      - name: Verify the data folder (database, files, checksums)
+        working-directory: apps/work
+        run: |
+          if ! node scripts/migrate/verify-data-dir.mjs "$W/data" >"$W/logs/verify.log" 2>&1; then
+            echo "::error::verify-data-dir.mjs found a problem (its output is not shown). Run the migration locally to see it."
             exit 1
           fi
 
