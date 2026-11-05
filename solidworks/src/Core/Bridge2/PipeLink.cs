@@ -416,7 +416,7 @@ namespace OpenSketch.Sw.Bridge
             }
             Dictionary<string, object> problem = null;
             if (!Protocol.Ops.Contains(op))
-                problem = Msg.Error("UNKNOWN_OP", "input", $"This add-in does not know the command '{op}'. Update KEVOS Bridge on this computer.", false, "addin");
+                problem = Msg.Error("UNKNOWN_OP", "input", $"This add-in does not know the command '{op}'. Update CADOS for SOLIDWORKS on this computer.", false, "addin");
             else if (!Times.TryParse(J.Str(cmd, "expires_at"), out var exp) || exp.AddSeconds(300) < DateTime.UtcNow)
                 problem = Msg.Error("EXPIRED", "transport", "The command expired before it reached SOLIDWORKS.", false, "addin");
             else if (J.Obj(cmd, "params") == null)

@@ -1,4 +1,24 @@
-# KEVOS Bridge release notes
+# CADOS for SOLIDWORKS release notes (KEVOS Bridge up to 0.11)
+
+## 0.12.0 (CADOS for SOLIDWORKS; test build, see the test report)
+
+- **CADOS by KEVOS.** The add-in is listed in Tools > Add-Ins as **CADOS**; its CommandManager tab, toolbar and menu
+  are **CADOS** (the old KEVOS tab is removed when found). The installer is **CADOS for SOLIDWORKS**
+  (`CADOS-for-SOLIDWORKS-<version>-x64.msi`, and `CADOS-for-SOLIDWORKS-x64.msi` on the latest build); it upgrades
+  KEVOS Bridge 0.11 in place (same UpgradeCode), keeping settings and pairing.
+- **CADOS task pane** in SOLIDWORKS: connection state, Connect / Disconnect, prompts to copy into your AI assistant,
+  the confirmation setting, live activity, and links to the dashboard, documentation, troubleshooting, the Companion
+  and the log.
+- The confirmation window is **CADOS: confirm**. Messages from the add-in and the Companion name CADOS.
+- The Companion's pairing window suggests `https://cados.kevos.com` when no address was set.
+- Website: **Download CADOS for SOLIDWORKS** (`/download/solidworks`), the installation guide, system requirements and
+  supported SOLIDWORKS versions.
+
+Kept: COM ids and ProgIDs, the per-user installer, the direct link, the launcher macro (fallback only), every tool.
+
+Known limits: not yet run in a real SOLIDWORKS (test report section 4); the MSI is unsigned until a signing service
+is connected.
+
 
 ## 0.11.0 (first KEVOS Bridge release; test build, see the test report)
 

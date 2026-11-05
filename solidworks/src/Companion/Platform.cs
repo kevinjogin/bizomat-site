@@ -251,7 +251,7 @@ namespace Kevos.Companion
                 using (var proc = Process.GetProcessById(p.Pid))
                 {
                     var addin = proc.Modules.Cast<ProcessModule>().FirstOrDefault(m => string.Equals(Path.GetFileName(m.FileName), "OpenSketch.Sw.dll", StringComparison.OrdinalIgnoreCase));
-                    if (addin == null) return "the KEVOS add-in is not loaded in that SOLIDWORKS";
+                    if (addin == null) return "the CADOS add-in is not loaded in that SOLIDWORKS";
                     if (!string.Equals(Path.GetFullPath(addin.FileName), Path.GetFullPath(Paths.AddinDll), StringComparison.OrdinalIgnoreCase))
                         return "it loaded the add-in from " + addin.FileName + ", not from this KEVOS install (" + Paths.AddinDll + ")";
                     var mine = Authenticode.Signer(Paths.Exe);
@@ -577,7 +577,7 @@ namespace Kevos.Companion
                     {
                         var cb = k?.GetValue("CodeBase") as string;
                         if (cb == null) continue;
-                        Log.Write("removing the old per-user registration of " + progid + " (" + cb + ") so SOLIDWORKS loads the installed KEVOS add-in");
+                        Log.Write("removing the old per-user registration of " + progid + " (" + cb + ") so SOLIDWORKS loads the installed CADOS add-in");
                     }
                     Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\CLSID\" + clsid, false);
                     Registry.CurrentUser.DeleteSubKeyTree(@"Software\Classes\" + progid, false);
@@ -599,7 +599,7 @@ namespace Kevos.Companion
                 using (var k = Registry.CurrentUser.CreateSubKey(@"Software\SolidWorks\AddInsStartup\" + AddinClsid))
                     k.SetValue(null, 1, RegistryValueKind.DWord);
                 Config.SetFlag("AddinStartupSet", true);
-                Log.Write("SOLIDWORKS will load the KEVOS add-in at start-up for this user");
+                Log.Write("SOLIDWORKS will load the CADOS add-in at start-up for this user");
             }
             catch (Exception ex)
             {

@@ -184,7 +184,7 @@ RECT = {"id": "s1", "type": "sketch", "name": "Sketch1", "plane": {"ref": "Front
 
 def test_not_connected_and_bad_key(base):
     res, out = _mcp(base, "sw_status", {})
-    assert out["connected"] is False and "KEVOS status" in out["how"] and "CADOS dashboard" in out["how"]
+    assert out["connected"] is False and "CADOS > Status" in out["how"] and "CADOS dashboard" in out["how"]
     res, out = _mcp(base, "sw_get_document", {})
     assert res["isError"] and "not connected" in out["error"]
     assert httpx.post(base + "/mcp/sw/hello", json={}, headers={"Authorization": "Bearer oss_" + "0" * 40}).status_code == 401

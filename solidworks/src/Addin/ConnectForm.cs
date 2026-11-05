@@ -8,7 +8,7 @@ using SolidWorks.Interop.sldworks;
 
 namespace OpenSketch.Sw
 {
-    /// <summary>The KEVOS window: the Companion link and this computer's registration, the confirmation setting, the
+    /// <summary>The CADOS status window: the Companion link and this computer's registration, the confirmation setting, the
     /// optional direct link (address and key), Connect / Disconnect, and what is happening.</summary>
     public sealed class ConnectForm : Form
     {
@@ -26,7 +26,7 @@ namespace OpenSketch.Sw
         public ConnectForm(Host host)
         {
             this.host = host;
-            Text = "KEVOS for SOLIDWORKS";
+            Text = "CADOS for SOLIDWORKS: status";
             Font = new Font("Segoe UI", 9f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -36,12 +36,12 @@ namespace OpenSketch.Sw
             ClientSize = new Size(520, 430);
             BackColor = Color.White;
 
-            var title = new Label { Text = "AI apps build in this SOLIDWORKS", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
+            var title = new Label { Text = "Your AI assistant works in this SOLIDWORKS", Font = new Font("Segoe UI Semibold", 12f), AutoSize = true, Location = new Point(16, 14) };
             dot.SetBounds(18, 50, 10, 10);
             status.SetBounds(34, 45, 470, 40);
-            var l1 = new Label { Text = "Direct link (optional, without the Companion): OpenSketch address", AutoSize = true, Location = new Point(16, 88) };
+            var l1 = new Label { Text = "Direct link (optional, without the Companion): CADOS address", AutoSize = true, Location = new Point(16, 88) };
             server.SetBounds(16, 106, 488, 24);
-            var l2 = new Label { Text = "SOLIDWORKS key (from the OpenSketch home page)", AutoSize = true, Location = new Point(16, 138) };
+            var l2 = new Label { Text = "Add-in key (from your CADOS dashboard)", AutoSize = true, Location = new Point(16, 138) };
             key.SetBounds(16, 156, 400, 24);
             key.UseSystemPasswordChar = true;
             var paste = new Button { Text = "Paste", Bounds = new Rectangle(424, 155, 80, 26) };

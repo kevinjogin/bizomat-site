@@ -12,7 +12,7 @@ Windows, open SOLIDWORKS, and ask your AI app. No command prompt, no macro, no a
 
 ## 1. Install
 
-1. Download `KEVOS-Bridge-<version>-x64.msi` from your KEVOS server's home page ("Get KEVOS Bridge") or the release
+1. Download `CADOS-for-SOLIDWORKS-x64.msi` from https://cados.kevos.com ("Download CADOS for SOLIDWORKS") or the release
    page. Check its SHA-256 against the `.sha256` file next to it if you like.
 2. Save your work and close SOLIDWORKS.
 3. Double-click the MSI and follow it. Windows asks for administrator approval once.
@@ -25,7 +25,7 @@ CAD files.
 IT departments can install silently and set the server address for everyone:
 
 ```bash
-msiexec /i KEVOS-Bridge-0.11.0-x64.msi /qn GATEWAY_URL=https://bridge.example.com
+msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL=https://cados.kevos.com
 ```
 
 ## 2. Register (pair) the computer
@@ -45,7 +45,7 @@ token is stored on the computer.
 
 ## 3. Use it
 
-1. Open SOLIDWORKS. The KEVOS add-in loads by itself (Tools > Add-Ins shows KEVOS with Start Up ticked) and connects
+1. Open SOLIDWORKS. The CADOS add-in loads by itself (Tools > Add-Ins shows CADOS with Start Up ticked) and connects
    to the Companion. You see a **KEVOS** tab on the CommandManager and a **KEVOS** menu.
 2. In your AI app (Claude, ChatGPT or another app that supports MCP connectors), add a custom connector with the
    address shown on your KEVOS home page (it ends in `/mcp`) and sign in once.
@@ -53,7 +53,7 @@ token is stored on the computer.
    60 x 40 x 8 mm mounting plate with four M5 clearance holes."
 
 When the AI asks to delete features, undo, save over a file, replace a drawing or remove a variable, SOLIDWORKS
-shows a **KEVOS: confirm** window naming the AI app and what it wants to do. Nothing happens unless you click
+shows a **CADOS: confirm** window naming the AI app and what it wants to do. Nothing happens unless you click
 **Allow once**; it denies by itself after two minutes.
 
 ## Several computers
@@ -85,7 +85,7 @@ Windows** (per user), **Exit**. The add-in's KEVOS window has **Ask me before de
 
 - **Update:** the Companion checks for a newer signed release and asks before installing it (tray > Check for updates).
   Or run the newer MSI. Settings and the registration are kept.
-- **Repair:** Settings > Apps > KEVOS Bridge > Modify > Repair, or `msiexec /fa KEVOS-Bridge-<version>-x64.msi`.
+- **Repair:** Settings > Apps > CADOS for SOLIDWORKS > Modify > Repair, or `msiexec /fa CADOS-for-SOLIDWORKS-<version>-x64.msi`.
 - **Uninstall:** Settings > Apps > KEVOS Bridge > Uninstall. Your settings, logs and registration stay in your user
   profile, so a reinstall picks up where you were. To also leave the account, run **Remove this computer from KEVOS**
   first.

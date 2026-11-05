@@ -13,8 +13,8 @@ Neither holds passwords or keys.
 | "Signed request refused (TOKEN_EXPIRED ...)" | The computer's clock is far off | Turn on Windows' automatic time (Settings > Time). |
 | "GATEWAY_KEY_CHANGED" | The server's command key changed (restored or replaced data folder) | Pair again. If you did not change the server, ask its administrator first. |
 | "connected, SOLIDWORKS closed" | Normal: SOLIDWORKS is not open | Open SOLIDWORKS. AI apps get "SOLIDWORKS is not running on <computer>" meanwhile. |
-| "waiting for the KEVOS add-in" | SOLIDWORKS runs but the add-in did not connect | Tools > Add-Ins: tick KEVOS (Active and Start Up). The Companion also asks SOLIDWORKS to load it after 30 s. Is SOLIDWORKS run as administrator? It must not be. |
-| No KEVOS tab or menu in SOLIDWORKS | The add-in is not loaded | As above; then the add-in log. Repair the installation if the log says the DLL was not found. |
+| "waiting for the CADOS add-in" | SOLIDWORKS runs but the add-in did not connect | Tools > Add-Ins: tick CADOS (Active and Start Up). The Companion also asks SOLIDWORKS to load it after 30 s. Is SOLIDWORKS run as administrator? It must not be. |
+| No CADOS tab, menu or task pane in SOLIDWORKS | The add-in is not loaded | As above; then the add-in log. Repair the installation if the log says the DLL was not found. |
 | The add-in log says "Refused the pipe's owner" | Something other than the installed KEVOS Companion holds the pipe | Restart Windows. If it stays, check the computer for malware and reinstall KEVOS Bridge. |
 | The Companion log says "REFUSED a pipe client" | A program that is not SOLIDWORKS with the installed add-in tried to connect | Usually an old add-in copy (another folder): uninstall the old OpenSketch add-in; the Companion removes old per-user registrations by itself. |
 | AI app: "Several computers are connected" | More than one of your computers is online | Tell the AI which one ("on DESK"), or set a default on the home page. |

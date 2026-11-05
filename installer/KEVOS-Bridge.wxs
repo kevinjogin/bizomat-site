@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  KEVOS Bridge: one MSI (WiX Toolset 5, per machine, x64) for each Windows computer that runs SOLIDWORKS.
+  CADOS for SOLIDWORKS (by KEVOS; called KEVOS Bridge up to 0.11): one MSI (WiX Toolset 5, per machine, x64) for each
+  Windows computer that runs SOLIDWORKS. The UpgradeCode is unchanged, so it upgrades KEVOS Bridge in place.
 
   Installs into C:\Program Files\KEVOS\Bridge:
-    OpenSketch.Sw.dll          the KEVOS SOLIDWORKS add-in (COM, loaded by SOLIDWORKS 2022 and newer at start-up)
+    OpenSketch.Sw.dll          the CADOS SOLIDWORKS add-in (COM; Tools > Add-Ins > CADOS; loaded at start-up)
     KEVOS.Companion.exe        the per-user background app (tray), started at every Windows sign-in
     OpenSketchSW.exe, OpenSketch.swb   the earlier per-user installer and launcher macro (fallback during migration)
   Registers (HKLM, 64-bit view): the two COM classes as regasm /codebase would, the SOLIDWORKS add-in entry (one entry
@@ -12,24 +13,24 @@
   Upgrades: a newer MSI replaces the older one (MajorUpgrade); the companion is closed and the person is asked to close
   SOLIDWORKS while files are replaced. Settings and each user's registration live outside the install folder
   (HKCU\Software\KEVOS, %LOCALAPPDATA%\KEVOS, the Windows key store) and are kept across upgrades, repairs and
-  uninstalls. CAD files are never touched. Repair: msiexec /fa KEVOS-Bridge.msi (or Apps > KEVOS Bridge > Repair).
+  uninstalls. CAD files are never touched. Repair: msiexec /fa <the .msi> (or Apps > CADOS for SOLIDWORKS > Modify > Repair).
 
-  Properties: GATEWAY_URL=https://bridge.example.com (the KEVOS server the companion pairs with; optional, the
-  pairing window asks otherwise).
+  Properties: GATEWAY_URL=https://cados.kevos.com (the CADOS server the companion pairs with; optional, the pairing
+  window suggests https://cados.kevos.com otherwise).
   Build: installer/build.ps1 (Windows, after solidworks/build.sh). Variables: Version, Source (the built files).
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-  <Package Name="KEVOS Bridge" Manufacturer="KEVOS" Version="$(var.Version)" UpgradeCode="cef90528-e91b-42ae-9556-f70a612cb58f"
+  <Package Name="CADOS for SOLIDWORKS" Manufacturer="KEVOS" Version="$(var.Version)" UpgradeCode="cef90528-e91b-42ae-9556-f70a612cb58f"
            Scope="perMachine" Compressed="yes" InstallerVersion="500" Language="1033">
-    <SummaryInformation Description="KEVOS Bridge: AI apps build in SOLIDWORKS on this computer" Manufacturer="KEVOS" />
-    <MajorUpgrade DowngradeErrorMessage="A newer KEVOS Bridge is already installed. To go back to an older one, uninstall the newer one first (your settings and this computer's registration are kept)."
+    <SummaryInformation Description="CADOS for SOLIDWORKS: your AI assistant works in SOLIDWORKS on this computer" Manufacturer="KEVOS" />
+    <MajorUpgrade DowngradeErrorMessage="A newer CADOS for SOLIDWORKS is already installed. To go back to an older one, uninstall the newer one first (your settings and this computer's registration are kept)."
                   Schedule="afterInstallInitialize" AllowSameVersionUpgrades="no" />
     <MediaTemplate EmbedCab="yes" />
 
-    <Launch Condition="Installed OR VersionNT64" Message="KEVOS Bridge needs 64-bit Windows 10 or 11." />
-    <Launch Condition="Installed OR NETFRAMEWORK48" Message="KEVOS Bridge needs .NET Framework 4.8 (part of Windows 10 version 1903 and later, and Windows 11). Install it from Microsoft, then run this again." />
+    <Launch Condition="Installed OR VersionNT64" Message="CADOS for SOLIDWORKS needs 64-bit Windows 10 or 11." />
+    <Launch Condition="Installed OR NETFRAMEWORK48" Message="CADOS for SOLIDWORKS needs .NET Framework 4.8 (part of Windows 10 version 1903 and later, and Windows 11). Install it from Microsoft, then run this again." />
     <!-- any .NET Framework 4.x Release value passes here; Windows 10 1903+ and Windows 11 have 4.8, older ones fail at start with a clear message -->
     <Property Id="NETFRAMEWORK48">
       <RegistrySearch Id="NetFx48" Root="HKLM" Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" Name="Release" Type="raw" Bitness="always64" />
@@ -37,13 +38,14 @@
 
     <Property Id="GATEWAY_URL" Secure="yes" />
     <Property Id="ARPPRODUCTICON" Value="KevosIcon" />
-    <Property Id="ARPHELPLINK" Value="https://github.com/jogkev-creator/CADOS" />
-    <Property Id="ARPCOMMENTS" Value="Settings and this computer's KEVOS registration are kept when it is removed. Use the Start menu entry Remove this computer from KEVOS first if the computer leaves your account." />
+    <Property Id="ARPHELPLINK" Value="https://cados.kevos.com/docs" />
+    <Property Id="ARPURLINFOABOUT" Value="https://kevos.com/" />
+    <Property Id="ARPCOMMENTS" Value="Settings and this computer's CADOS registration are kept when it is removed. Use the Start menu entry Remove this computer from CADOS first if the computer leaves your account." />
     <Icon Id="KevosIcon" SourceFile="$(var.Source)/KEVOS.Companion.exe" />
 
     <util:CloseApplication Id="CloseCompanion" Target="KEVOS.Companion.exe" CloseMessage="yes" TerminateProcess="1" RebootPrompt="no" />
     <util:CloseApplication Id="AskToCloseSolidWorks" Target="SLDWORKS.exe" PromptToContinue="yes" RebootPrompt="no"
-                           Description="Please close SOLIDWORKS (save your work first) so the KEVOS add-in can be installed, then click Retry." />
+                           Description="Please close SOLIDWORKS (save your work first) so the CADOS add-in can be installed, then click Retry." />
 
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="KevosDir" Name="KEVOS">
@@ -54,7 +56,7 @@
       <Directory Id="KevosMenu" Name="KEVOS" />
     </StandardDirectory>
 
-    <Feature Id="Main" Title="KEVOS Bridge" Level="1">
+    <Feature Id="Main" Title="CADOS for SOLIDWORKS" Level="1">
       <ComponentGroupRef Id="Files" />
       <ComponentGroupRef Id="Registration" />
       <ComponentRef Id="MenuShortcuts" />
@@ -141,8 +143,8 @@
       <Component Id="SolidWorksAddin" Bitness="always64">
         <RegistryKey Root="HKLM" Key="SOFTWARE\SolidWorks\Addins\{275256ff-b73a-4e4f-9ea8-842b6626d471}">
           <RegistryValue Type="integer" Value="1" KeyPath="yes" />
-          <RegistryValue Name="Title" Type="string" Value="KEVOS" />
-          <RegistryValue Name="Description" Type="string" Value="KEVOS Bridge: AI apps (Claude, ChatGPT...) build parts, assemblies and drawings in SOLIDWORKS" />
+          <RegistryValue Name="Title" Type="string" Value="CADOS" />
+          <RegistryValue Name="Description" Type="string" Value="CADOS by KEVOS: your AI assistant (Claude, ChatGPT...) builds parts, assemblies and drawings in SOLIDWORKS" />
         </RegistryKey>
       </Component>
       <Component Id="InstallRecord" Bitness="always64">
@@ -162,9 +164,9 @@
 
     <Component Id="MenuShortcuts" Directory="KevosMenu" Bitness="always64">
       <Shortcut Id="StartCompanion" Name="KEVOS Companion" Target="[#CompanionExe]" WorkingDirectory="INSTALLFOLDER" Description="Status, pairing, pause" />
-      <Shortcut Id="PairComputer" Name="Pair this computer with KEVOS" Target="[#CompanionExe]" Arguments="--pair" WorkingDirectory="INSTALLFOLDER" />
-      <Shortcut Id="Diagnostics" Name="KEVOS diagnostics" Target="[#CompanionExe]" Arguments="--diagnose" WorkingDirectory="INSTALLFOLDER" />
-      <Shortcut Id="Unpair" Name="Remove this computer from KEVOS" Target="[#CompanionExe]" Arguments="--unpair" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="PairComputer" Name="Pair this computer with CADOS" Target="[#CompanionExe]" Arguments="--pair" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="Diagnostics" Name="CADOS diagnostics" Target="[#CompanionExe]" Arguments="--diagnose" WorkingDirectory="INSTALLFOLDER" />
+      <Shortcut Id="Unpair" Name="Remove this computer from CADOS" Target="[#CompanionExe]" Arguments="--unpair" WorkingDirectory="INSTALLFOLDER" />
       <RemoveFolder Id="RemoveKevosMenu" On="uninstall" />
       <RegistryValue Root="HKLM" Key="SOFTWARE\KEVOS\Bridge" Name="StartMenu" Type="integer" Value="1" KeyPath="yes" />
     </Component>

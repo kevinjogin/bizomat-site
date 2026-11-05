@@ -89,6 +89,27 @@ SECURITY = [
 ]
 
 
+DOWNLOAD = f"""<section class="section section-warm" id="download" aria-labelledby="download-title"><div class="container">
+<div class="download">
+<div><span class="eyebrow">Download</span><h2 id="download-title">CADOS for SOLIDWORKS</h2>
+<p class="lead">A native SOLIDWORKS add-in for Windows, installed with one installer. It appears in Tools &gt; Add-Ins and
+adds a CADOS tab, menu and task pane to SOLIDWORKS.</p>
+<div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a></div>
+<div class="download-links"><a href="/docs#install">Installation guide</a><a href="/docs#requirements">System requirements</a>
+<a href="/docs#versions">Supported SOLIDWORKS versions</a></div></div>
+<div class="card card-pad download-card"><h3>What the installer adds</h3><ul class="checks">
+<li>{icon("check")}<span><b>CADOS add-in</b> for SOLIDWORKS: the CADOS tab, menu and task pane, and the commands your assistant sends.</span></li>
+<li>{icon("check")}<span><b>KEVOS Companion</b>: pairs the computer with your account and keeps the secure link. Starts with Windows.</span></li>
+<li>{icon("check")}<span>Registration with every SOLIDWORKS version on the computer. No files to copy, no registry to edit.</span></li>
+<li>{icon("check")}<span>Clean removal from Windows Settings &gt; Apps. Your CAD files are never changed.</span></li></ul>
+<div class="kv-row small"><span class="k">Installer</span><span class="v">Windows .msi, 64-bit</span></div>
+<div class="kv-row small"><span class="k">Windows</span><span class="v">10 (1903 or later) or 11</span></div>
+<div class="kv-row small"><span class="k">SOLIDWORKS</span><span class="v">2022 or later, 64-bit</span></div>
+<p class="small muted" style="margin-top:var(--s-4)">Early access. The installer is not code-signed yet, so Windows may ask you to
+confirm it. Validation on SOLIDWORKS installations is in progress: run the self test on each computer.</p></div>
+</div></div></section>"""
+
+
 def _section_head(eyebrow: str, title: str, text: str = "", id_: str = "") -> str:
     return (f'<div class="section-head"><span class="eyebrow">{eyebrow}</span><h2 id="{id_}-title">{title}</h2>'
             + (f"<p>{text}</p>" if text else "") + "</div>")
@@ -107,9 +128,9 @@ def landing(signed_in: bool = False, base: str = "") -> bytes:
 <div><span class="eyebrow">{brand.TAGLINE}</span><h1>{brand.HEADLINE}</h1>
 <p class="lead">Connect your AI assistant to your CAD environment. Create, modify and automate engineering models in
 natural language, while your design files stay in your own workflow.</p>
-<div class="hero-cta"><a class="btn btn-primary btn-lg" href="{start}">Get started {icon("arrow-right")}</a>
-<a class="btn btn-secondary btn-lg" href="#how">How it works</a></div>
-<div class="hero-meta"><span>{icon("check")}Native SOLIDWORKS features</span><span>{icon("check")}Standard MCP connector</span>
+<div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a>
+<a class="btn btn-secondary btn-lg" href="{start}">Open the dashboard</a></div>
+<div class="hero-meta"><span>{icon("check")}Native SOLIDWORKS add-in</span><span>{icon("check")}Standard MCP connector</span>
 <span>{icon("check")}Your files stay on your computer</span></div></div>
 <div>{PREVIEW}</div></div></section>
 
@@ -129,20 +150,21 @@ natural language, while your design files stay in your own workflow.</p>
 <div class="node node-brand"><div class="where">CADOS service</div><h3>CADOS gateway</h3><p>Sign-in, your computers, command routing and checks.
 Every sketch is solved and every feature checked before it is sent.</p></div>
 <div class="link" aria-hidden="true"><span>Outbound HTTPS<br>signed</span></div>
-<div class="node"><div class="where">Your computer</div><h3>CADOS on Windows</h3>
-<ul><li>KEVOS Companion: secure link, pairing, status</li><li>CADOS add-in: runs each command</li><li>SOLIDWORKS: your files, your licence</li></ul></div></div>
+<div class="node"><div class="where">Your computer</div><h3>CADOS for SOLIDWORKS</h3>
+<ul><li>KEVOS Companion: secure link, pairing, status</li><li>CADOS add-in: tab, task pane, runs each command</li><li>SOLIDWORKS: your files, your licence</li></ul></div></div>
 <ol class="grid grid-3 steps" style="margin-top:var(--s-7)">
-<li><h3>Install CADOS</h3><p>Install it on the Windows computer that runs SOLIDWORKS, and pair that computer with your account.</p></li>
+<li><h3>Install CADOS for SOLIDWORKS</h3><p>Run the installer on the Windows computer that runs SOLIDWORKS, and pair that computer with your account.</p></li>
 <li><h3>Connect your AI assistant</h3><p>Add the CADOS connector address to your assistant and sign in once.</p></li>
 <li><h3>Work in your CAD environment</h3><p>Ask for parts, changes, drawings and checks. Watch them appear in SOLIDWORKS.</p></li></ol>
 </div></section>
 
+{DOWNLOAD}
 <section class="section" id="integrations" aria-labelledby="integrations-title"><div class="container">
 {_section_head("Integrations", "Built on open standards, connected to the tools you use.",
                "CADOS uses the Model Context Protocol, the open standard AI assistants use to reach tools.", "integrations")}
 <div class="grid grid-4">
 <article class="card integration"><header><span class="kind">CAD</span><span class="badge badge-ok">Supported</span></header>
-<h3>SOLIDWORKS</h3><p>Parts, assemblies and drawings through the SOLIDWORKS API, in your own installation.</p>
+<h3>SOLIDWORKS</h3><p>A native add-in: listed in Tools &gt; Add-Ins, with a CADOS tab, menu and task pane. Parts, assemblies and drawings through the SOLIDWORKS API.</p>
 <div class="meta">Windows, 64-bit. Built for SOLIDWORKS 2022 and later.</div></article>
 <article class="card integration"><header><span class="kind">AI assistant</span><span class="badge">MCP connector</span></header>
 <h3>Claude</h3><p>Add CADOS as a custom connector and sign in. Claude Desktop can also use a private address.</p>
@@ -174,14 +196,14 @@ access: the integration is being validated on more SOLIDWORKS installations.</p>
 <section class="section section-warm" id="start" aria-labelledby="start-title"><div class="container">
 {_section_head("Getting started", "Up and running in five steps.", "", "start")}
 <ol class="grid grid-2 steps">
-<li><h3>Install CADOS on your CAD computer</h3><p>Run the Windows installer on the computer that runs SOLIDWORKS.</p></li>
-<li><h3>Open SOLIDWORKS and activate CADOS</h3><p>Pair the computer with your account. The KEVOS tab appears in SOLIDWORKS.</p></li>
+<li><h3>Install CADOS for SOLIDWORKS</h3><p>Run the Windows installer on the computer that runs SOLIDWORKS.</p></li>
+<li><h3>Open SOLIDWORKS and activate CADOS</h3><p>Pair the computer with your account. The CADOS tab and task pane appear in SOLIDWORKS.</p></li>
 <li><h3>Connect your AI assistant</h3><p>Copy the connector address from your dashboard into your assistant and sign in.</p></li>
 <li><h3>Verify the connection</h3><p>Your dashboard shows each part of the connection live.</p></li>
 <li><h3>Run the guided self test</h3><p>One prompt checks sketches, features, an assembly and a drawing on that computer.</p></li></ol>
 <div class="cta-band" style="margin-top:var(--s-7)"><div><h2>Bring your AI assistant into SOLIDWORKS.</h2>
-<p>Sign in to your dashboard for the installer, your connector address and live status.</p></div>
-<div class="actions"><a class="btn btn-primary btn-lg" href="{start}">Get started</a><a class="btn btn-secondary btn-lg" href="/docs">Read the documentation</a></div></div>
+<p>Install the add-in, then sign in to your dashboard for your connector address and live status.</p></div>
+<div class="actions"><a class="btn btn-primary btn-lg" href="/download/solidworks">Download CADOS for SOLIDWORKS</a><a class="btn btn-secondary btn-lg" href="{start}">Open the dashboard</a></div></div>
 </div></section>
 </main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
@@ -189,9 +211,10 @@ access: the integration is being validated on more SOLIDWORKS installations.</p>
 
 
 def docs(signed_in: bool = False, base: str = "") -> bytes:
-    toc = [("overview", "Overview"), ("requirements", "Requirements"), ("install", "Install"), ("pair", "Pair a computer"),
-           ("activate", "Activate in SOLIDWORKS"), ("connect", "Connect your AI assistant"), ("auth", "Authentication"),
-           ("verify", "Verify the connection"), ("selftest", "Run the self test"), ("computers", "Several computers"),
+    toc = [("overview", "Overview"), ("requirements", "System requirements"), ("versions", "Supported versions"),
+           ("install", "Install"), ("pair", "Pair a computer"), ("activate", "Use CADOS in SOLIDWORKS"),
+           ("connect", "Connect your AI assistant"), ("auth", "Authentication"), ("verify", "Verify the connection"),
+           ("selftest", "Run the self test"), ("computers", "Several computers"), ("update", "Update and uninstall"),
            ("troubleshooting", "Troubleshooting"), ("security", "Security"), ("manual", "Install without the installer")]
     toc_html = "".join(f'<li><a href="#{k}">{v}</a></li>' for k, v in toc)
     trouble = [
@@ -201,8 +224,9 @@ def docs(signed_in: bool = False, base: str = "") -> bytes:
         ("The Companion says Offline, retrying", "It cannot reach the CADOS service. Check that the service address opens in a browser. Behind a company proxy, allow that address. The Companion retries by itself."),
         ("A signed request is refused with TOKEN_EXPIRED", "The computer's clock is wrong. Turn on automatic time in Windows Settings."),
         ("Connected, SOLIDWORKS closed", "This is normal. Open SOLIDWORKS."),
-        ("Waiting for the KEVOS add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick KEVOS under Active and Start Up. Do not run SOLIDWORKS as administrator."),
-        ("No KEVOS tab or menu in SOLIDWORKS", "As above. If it is still missing, repair the installation from Windows Settings > Apps."),
+        ("Waiting for the CADOS add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick CADOS under Active and Start Up. Do not run SOLIDWORKS as administrator."),
+        ("No CADOS tab, menu or task pane in SOLIDWORKS", "As above. If it is still missing, repair the installation: Windows Settings > Apps > CADOS for SOLIDWORKS > Modify > Repair."),
+        ("Windows says it protected your PC when you open the installer", "The early access installer is not code-signed yet. Check that you downloaded it from this site, then choose More info > Run anyway, or ask your IT team."),
         ("The assistant says several computers are connected", "Name the computer in your request, or set a default computer on your dashboard."),
         ("The assistant says SOLIDWORKS has a dialog box open", "Close the dialog box in SOLIDWORKS, then ask again."),
         ("The assistant says a sketch is open for editing", "Exit the sketch in SOLIDWORKS, then ask again."),
@@ -223,8 +247,9 @@ about fifteen minutes.</p></div></div>
 <p>CADOS connects an AI assistant to SOLIDWORKS on your own computer. There are three parts:</p>
 <ul><li><b>Your AI assistant</b>, such as Claude or ChatGPT. It calls the CADOS tools.</li>
 <li><b>The CADOS gateway</b>, a hosted service. It signs you in, knows your computers, checks each command and routes it.</li>
-<li><b>CADOS on your Windows computer</b>: the KEVOS Companion (a small tray app) and the CADOS add-in in SOLIDWORKS. The
-Companion holds a secure outbound link to the gateway and hands each command to the add-in, which runs it in SOLIDWORKS.</li></ul>
+<li><b>CADOS for SOLIDWORKS on your Windows computer</b>: the CADOS add-in, a native SOLIDWORKS add-in with a CADOS tab,
+menu and task pane, and the KEVOS Companion, a small tray app. The Companion holds a secure outbound link to the gateway
+and hands each command to the add-in, which runs it in SOLIDWORKS.</li></ul>
 <p>Nothing connects in to your computer, and SOLIDWORKS always runs there, with your licence and your files.</p></section>
 
 <section id="requirements"><h2>Requirements</h2>
@@ -236,16 +261,29 @@ Companion holds a secure outbound link to the gateway and hands each command to 
 <div class="callout callout-info"><div><b>Early access.</b> The SOLIDWORKS integration is built against the SOLIDWORKS 2022
 API and is being validated on more installations. Run the self test on each new computer.</div></div></section>
 
+<section id="versions"><h2>Supported SOLIDWORKS versions</h2>
+<p>One add-in serves every SOLIDWORKS version installed on the computer.</p>
+<div class="table-wrap"><table><thead><tr><th>SOLIDWORKS</th><th>Support</th><th>Status</th></tr></thead><tbody>
+<tr><td>2022 (64-bit)</td><td>Supported</td><td>Built against the SOLIDWORKS 2022 API. Validation on real installations in progress.</td></tr>
+<tr><td>2023, 2024, 2025, 2026 (64-bit)</td><td>Expected to work</td><td>The same add-in; every call it uses exists in 2022. Not yet validated.</td></tr>
+<tr><td>2021 and older</td><td>Not supported</td><td>The add-in needs the 2022 API.</td></tr>
+<tr><td>Run as administrator</td><td>Not supported</td><td>Run SOLIDWORKS normally, so the add-in and the Companion can meet.</td></tr>
+</tbody></table></div>
+<p>Run the self test once on each computer and SOLIDWORKS version you use.</p></section>
+
 <section id="install"><h2>Install</h2>
+<div class="actions"><a class="btn btn-primary" href="/download/solidworks">Download CADOS for SOLIDWORKS</a>
+<a class="small" href="{brand.RELEASES_URL}" rel="noopener">All releases and checksums</a></div>
 <ol class="steps">
-<li><h4>Download the installer</h4><p>Get the Windows installer (<code>KEVOS-Bridge-&lt;version&gt;-x64.msi</code>) from your
-<a href="/dashboard">dashboard</a> or the <a href="{brand.RELEASES_URL}" rel="noopener">releases page</a>.</p></li>
+<li><h4>Download the installer</h4><p>Download <code>CADOS-for-SOLIDWORKS-x64.msi</code>. Each release also lists a SHA-256
+checksum you can compare.</p></li>
 <li><h4>Close SOLIDWORKS</h4><p>Save your work and close SOLIDWORKS before you install.</p></li>
 <li><h4>Run the installer</h4><p>Open the file and follow the steps. Windows asks for administrator approval once. The
-installer adds the CADOS add-in and the KEVOS Companion, registers the add-in with SOLIDWORKS and starts the Companion when
-you sign in to Windows. It does not change your CAD files.</p></li></ol>
+installer adds the CADOS add-in and the KEVOS Companion, registers the add-in with every SOLIDWORKS version on the
+computer and starts the Companion when you sign in to Windows. There are no files to copy and no registry to edit. It does
+not change your CAD files.</p></li></ol>
 <p>IT teams can install silently and set the service address for everyone:</p>
-<pre class="code">msiexec /i KEVOS-Bridge-&lt;version&gt;-x64.msi /qn GATEWAY_URL=https://cados.kevos.com</pre></section>
+<pre class="code">msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL=https://cados.kevos.com</pre></section>
 
 <section id="pair"><h2>Pair a computer</h2>
 <p>Pairing adds the computer to your account. After an interactive install the KEVOS Companion opens its pairing window
@@ -256,10 +294,16 @@ by itself. You can also open it from the tray icon: Pair this computer.</p>
 <p>The Companion makes a key for this computer in the Windows key store. The key cannot be copied to another computer,
 and no password is stored on the computer.</p></section>
 
-<section id="activate"><h2>Activate in SOLIDWORKS</h2>
-<p>Open SOLIDWORKS. The CADOS add-in loads by itself and connects to the Companion. You see a <b>KEVOS</b> tab on the
-CommandManager and a <b>KEVOS</b> menu. Choose <b>KEVOS status</b> to see the connection and recent activity.</p>
-<div class="callout"><div>No KEVOS tab? Open <b>Tools &gt; Add-Ins</b>, tick <b>KEVOS</b> under Active and Start Up, and make
+<section id="activate"><h2>Use CADOS in SOLIDWORKS</h2>
+<p>Open SOLIDWORKS. The CADOS add-in loads by itself and connects to the Companion. It is listed in <b>Tools &gt;
+Add-Ins</b> as <b>CADOS</b>, and adds:</p>
+<ul><li>a <b>CADOS</b> tab on the CommandManager and a <b>CADOS</b> menu;</li>
+<li>the <b>CADOS task pane</b>: the connection state, prompts to copy into your assistant, the confirmation setting, live
+activity and links to your dashboard and help;</li>
+<li>a <b>CADOS: confirm</b> window whenever your assistant asks for a destructive change.</li></ul>
+<p>Your AI assistant does the work: CADOS runs no AI of its own. Ask in Claude, ChatGPT or another connected assistant,
+and follow the work in SOLIDWORKS and in the task pane.</p>
+<div class="callout"><div>No CADOS tab? Open <b>Tools &gt; Add-Ins</b>, tick <b>CADOS</b> under Active and Start Up, and make
 sure SOLIDWORKS is not running as administrator.</div></div></section>
 
 <section id="connect"><h2>Connect your AI assistant</h2>
@@ -299,6 +343,14 @@ remove one. When more than one is online, tell your assistant which to use, for 
 <p><b>New or lost computer:</b> remove the old one on your dashboard. It stops working at once. Then install and pair
 the new one. Nothing needs to be copied.</p></section>
 
+<section id="update"><h2>Update and uninstall</h2>
+<ul><li><b>Update:</b> the KEVOS Companion offers new versions published on your CADOS service and installs one only after
+you agree. You can also run a newer installer over the old one. Settings and the pairing are kept.</li>
+<li><b>Repair:</b> Windows Settings &gt; Apps &gt; CADOS for SOLIDWORKS &gt; Modify &gt; Repair.</li>
+<li><b>Uninstall:</b> Windows Settings &gt; Apps &gt; CADOS for SOLIDWORKS &gt; Uninstall. To also take the computer off your
+account, first use Start &gt; KEVOS &gt; Remove this computer from CADOS, or remove it on your dashboard.</li></ul>
+<p>Versions up to 0.11 were called KEVOS Bridge. CADOS for SOLIDWORKS upgrades them in place.</p></section>
+
 <section id="troubleshooting"><h2>Troubleshooting</h2>
 <p>Start with the tray icon: right-click it, choose Status, then Copy diagnostics. The diagnostics hold no passwords or keys.</p>
 <div class="table-wrap"><table><thead><tr><th>What you see</th><th>What to do</th></tr></thead><tbody>{rows}</tbody></table></div>
@@ -319,9 +371,13 @@ your model. Your model files are saved on your computer. See the <a href="/priva
 
 <section id="manual"><h2>Install without the installer</h2>
 <p>For development, or a computer where you cannot run the installer: download the add-in package from your dashboard
-(Manual installation), unzip it, run the setup program in the folder and choose Install for me. Then, in SOLIDWORKS,
-open KEVOS status and paste the address and the add-in key from your dashboard. This route links one SOLIDWORKS session
-directly, without the Companion.</p></section>
+(Manual installation), unzip it, run the setup program in the folder and choose Install for me. It installs the same
+CADOS add-in for your Windows user only. Then, in SOLIDWORKS, open CADOS &gt; Status and paste the address and the add-in
+key from your dashboard. This route links one SOLIDWORKS session directly, without the Companion.</p>
+<p>Where SOLIDWORKS does not list add-ins installed without administrator rights, the package also writes a launcher
+macro (<code>OpenSketch.swb</code> in your Documents). It is not the add-in: it only starts the installed CADOS add-in from
+Tools &gt; Macro &gt; Run.</p>
+<h3>Individual macros</h3><p>CADOS does not offer macro downloads. Everything CADOS does runs through the add-in.</p></section>
 </article></div></main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
     return html.encode()

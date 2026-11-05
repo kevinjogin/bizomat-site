@@ -11,9 +11,12 @@ calls the `sw_` MCP tools; the server checks each sketch and feature with OpenSk
 kernel, queues the work, and the OpenSketch add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS
 and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-only.
 
-KEVOS Bridge (0.11.0) builds on it: the server is the KEVOS gateway; each Windows computer runs the KEVOS Companion
-(tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the gateway and hands
-commands to the add-in over a local named pipe; an MSI installs both. Docs: `docs/BRIDGE-PROTOCOL.md` (the contract),
+CADOS for SOLIDWORKS (0.12.0; called KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
+Windows computer runs the native CADOS add-in (COM `ISwAddin`, Tools > Add-Ins > CADOS, CADOS tab, menu and task pane)
+and the KEVOS Companion (tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the
+gateway and hands commands to the add-in over a local named pipe; one MSI ("CADOS for SOLIDWORKS") installs both.
+`docs/CADOS-ADDIN.md` has the architecture, the gap report (there was never a macro product: the add-in was always a
+COM add-in) and the release process. Docs: `docs/BRIDGE-PROTOCOL.md` (the contract),
 `docs/KEVOS-*.md` (install, Cloudflare, security, versions, troubleshooting, build, signing, test report, release
 notes). The MSI builds unsigned on Windows in CI (`installer` job); signing waits for a signing service.
 
@@ -50,7 +53,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   (secrets CLOUDFLARE_API_TOKEN, FLY_API_TOKEN). Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
-## Current state (v0.8 server, KEVOS Bridge 0.11.0)
+## Current state (v0.8 server, CADOS for SOLIDWORKS 0.12.0)
 
 - KEVOS registered computers (`devicebridge.py`, router included in `server.py`): pairing (`/v2/devices/pair/*`, the
   signed-in page `/devices/pair`), device proofs (`Authorization: KEVOS-Device <JWS>`, ES256 by the computer's
@@ -148,18 +151,18 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
 - Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded; version in
-  `Directory.Build.props`, 0.11.0): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
+  `Directory.Build.props`, 0.12.0): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
   Wire (ids, times, 4-byte-length frames), ReplayGuard, PipeLink (the add-in's pipe client: reader thread for pings and
   cancels, one worker for commands, outbox across reconnects, at-most-once by command id), CloudLink and
   CompanionEngine (the Companion's core: signed long poll, verification, routing to a SOLIDWORKS session, spool,
-  persistent outbox, heartbeats), Destructive), Addin (Entry: KEVOS menu, KevosUi CommandManager group and tab; Host:
+  persistent outbox, heartbeats), Destructive), Addin (Entry: CADOS menu (title CADOS in Tools > Add-Ins), KevosUi CommandManager group and CADOS tab (removes the old KEVOS tab), CadosPane task pane (state, Connect/Disconnect, prompts to copy, confirmation setting, activity, links); Host:
   the direct link and the Companion link, UI-thread snapshot of documents, document events, modal-dialog check,
   Safety confirmation of destructive ops; CompanionPipe: the pipe client that checks its server is the installed
   Companion; ConnectForm; Settings in HKCU\Software\OpenSketch and HKCU\Software\KEVOS\Bridge; Log in
   %LOCALAPPDATA%\OpenSketch\SolidWorks; Commands, Files, Pick, Sketches, Features, Edits with Journal rollback,
   Assembly), App `OpenSketchSW.exe` (Install for me = per-user COM registration + the launcher macro
   `Documents\OpenSketch\OpenSketch.swb`; Remove; "Connect to the open SOLIDWORKS" from outside, direct link only).
-  The COM ids are unchanged (existing registrations and the macro keep working); the add-in's title is KEVOS.
+  The COM ids are unchanged (existing registrations and the macro keep working); the add-in's title is CADOS.
 - KEVOS Companion (`solidworks/src/Companion`, `KEVOS.Companion.exe`, net48, compiles Core, no SOLIDWORKS reference):
   tray app, one per Windows user, starts at sign-in (HKLM Run from the MSI; per-user opt-out flag), pairing window,
   device key in CNG (TPM first, not exportable), the pipe `\\.\pipe\KEVOS.Bridge.<SID>` (first instance, user-only
@@ -167,16 +170,24 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   LoadAddIn fallback, removal of old per-user OpenSketch registrations, crash restart, logs in
   %LOCALAPPDATA%\KEVOS\Bridge\logs, diagnostics, updater (gateway-signed manifest, hash, Authenticode, same publisher,
   the person asked). `--pair`, `--diagnose`, `--unpair`, `--startup on|off`, `--exit`.
-- Installer (`installer/KEVOS-Bridge.wxs`, `installer/build.ps1`): WiX 5 per-machine x64 MSI; built and (with secrets)
-  signed by the `installer` job in `solidworks.yml` on Windows; releases `bridge-latest` and `bridge-v<version>`.
+- Installer (`installer/KEVOS-Bridge.wxs`, `installer/build.ps1`): WiX 5 per-machine x64 MSI "CADOS for SOLIDWORKS"
+  (UpgradeCode unchanged: upgrades KEVOS Bridge), `CADOS-for-SOLIDWORKS-<version>-x64.msi` plus the stable
+  `CADOS-for-SOLIDWORKS-x64.msi`; built and (with secrets) signed by the `installer` job in `solidworks.yml` on Windows;
+  releases `bridge-latest` and `bridge-v<version>`. `/download/solidworks` (public) redirects to
+  OPENSKETCH_INSTALLER_URL, else the published `bridge-release.json` msi_url, else the stable bridge-latest asset.
+  `tests/test_installer.py` keeps the MSI, the add-in code and the download link in step.
 
 ## Hosting
 
 - Code: https://github.com/jogkev-creator/CADOS (moved from jogkev-creator/opensketchyz in Nov 2026; release
   downloads, the MSI's links and `swbridge.ADDIN_DOWNLOAD` point there). The Fly app below was linked to the old
   repository: relink it in Fly (or deploy by hand) after the move.
-- Public address https://cados.kevos.com (point it at the Fly app with `domain.yml`; deploy.yml sets it as
-  OPENSKETCH_PUBLIC_URL unless the repository variable PUBLIC_URL says otherwise). Origin https://cados.fly.dev (Fly
+- Public address https://cados.kevos.com (point it at the Fly app with `domain.yml`; fly.toml [env] and deploy.yml set
+  it as OPENSKETCH_PUBLIC_URL). `canonical.py` (outermost middleware) answers 301 on the old host (fly.toml
+  OPENSKETCH_REDIRECT_HOSTS=cados.fly.dev, Host header only) for GET/HEAD, keeping path and query; never for
+  /healthz, /mcp*, /solidworks/mcp*, OAuth register/token/revoke, /.well-known/, /v2/, /api/ (`tests/test_canonical.py`).
+  Favicons (`static/favicon.svg|ico`, `ui/icon-32.png`, `ui/icon-180.png`) are the KEVOS K (drawn from the KEVOS logo;
+  kevos.com could not be fetched from the build session). Origin https://cados.fly.dev (Fly
   app `cados`, Sydney, first made with Fly Launch from GitHub on 4 Nov 2026); the deploy health checks use it.
   One deploy source: the app is linked to this repository in Fly (Fly builds and deploys every push to main itself;
   /healthz then reports version "dev", as no commit is passed in). On a push `deploy.yml` only runs the tests (unless

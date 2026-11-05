@@ -57,9 +57,11 @@ passed, 9 npm passed.
 
 1. Install the CI-built MSI on a clean Windows 11 VM with SOLIDWORKS 2022. Confirm the Companion starts and opens
    pairing; pair; sign out and in again: the Companion starts quietly.
-2. Open SOLIDWORKS: Tools > Add-Ins shows KEVOS (Active, Start Up); the KEVOS tab and menu appear; the Companion's
-   status shows SOLIDWORKS with the add-in.
-3. From Claude (connector to the KEVOS server): run the self test, all three stages; then a part, an assembly, a
+2. Open SOLIDWORKS: Tools > Add-Ins shows CADOS (Active, Start Up); the CADOS tab and menu appear; the CADOS task pane
+   tab appears and shows the connection, activity and prompts (copy one); the Companion's status shows SOLIDWORKS with
+   the add-in. Untick CADOS in Tools > Add-Ins: the tab, menu and task pane go away; tick it: they come back.
+   Upgrading from KEVOS Bridge 0.11: the old KEVOS tab is gone and only CADOS shows.
+3. From Claude (connector to https://cados.kevos.com/mcp): run the self test, all three stages; then a part, an assembly, a
    drawing and its PDF.
 4. Ask the AI to delete a feature: the confirm window names the app; Deny, then Allow once. Leave it two minutes: it
    denies.

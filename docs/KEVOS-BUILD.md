@@ -41,14 +41,15 @@ powershell -ExecutionPolicy Bypass -File installer\build.ps1
 
 It reads the version from `solidworks/Directory.Build.props`, writes the licence files, signs the binaries and the MSI
 when `KEVOS_SIGN_PFX` and `KEVOS_SIGN_PASSWORD` are set (SHA-256, RFC 3161 timestamp), and writes to `installer/out`:
-`KEVOS-Bridge-<version>-x64.msi` (or `-UNSIGNED.msi`), its `.sha256`, and `release.json`.
+`CADOS-for-SOLIDWORKS-<version>-x64.msi` (or `-UNSIGNED.msi`), the same file as `CADOS-for-SOLIDWORKS-x64.msi` (the
+stable name the website links to), their `.sha256`, and `release.json`. See also [CADOS-ADDIN.md](CADOS-ADDIN.md).
 
 ## CI
 
 - `.github/workflows/tests.yml`: pytest (fast and slow jobs; the slow job has .NET for the end-to-end test) and
   npm test, on pull requests and non-main pushes.
 - `.github/workflows/solidworks.yml`: builds and tests the add-in and Companion on Linux, then builds the MSI on
-  Windows. Secrets `KEVOS_SIGN_PFX_BASE64` and `KEVOS_SIGN_PASSWORD` make it signed. Artifact `KEVOS-Bridge-MSI` on
+  Windows. Secrets `KEVOS_SIGN_PFX_BASE64` and `KEVOS_SIGN_PASSWORD` make it signed. Artifact `CADOS-for-SOLIDWORKS-MSI` on
   every run; release `bridge-latest` (prerelease) on main; release `bridge-v<version>` on a tag of that name.
 - `.github/workflows/deploy.yml`: the gateway (unchanged).
 

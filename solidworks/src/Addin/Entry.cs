@@ -8,8 +8,9 @@ using SolidWorks.Interop.swpublished;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The SOLIDWORKS add-in (Tools > Add-Ins > KEVOS), loaded when SOLIDWORKS starts. Adds the KEVOS menu, toolbar and
-    /// CommandManager tab, connects to the KEVOS Companion by itself, and (when a key is saved) to the direct link.
+    /// The CADOS SOLIDWORKS add-in (Tools > Add-Ins > CADOS), loaded when SOLIDWORKS starts. Adds the CADOS menu,
+    /// toolbar, CommandManager tab and task pane, connects to the KEVOS Companion by itself, and (when a key is saved)
+    /// to the direct link.
     /// </summary>
     [ComVisible(true)]
     [Guid(SwAddin.ClassId)]
@@ -19,18 +20,20 @@ namespace OpenSketch.Sw
     {
         public const string ClassId = "275256ff-b73a-4e4f-9ea8-842b6626d471";
         public const string ProgIdName = "OpenSketch.Sw.SwAddin";
-        public const string Title = "KEVOS";
-        public const string Description = "KEVOS Bridge: AI apps (Claude, ChatGPT...) build parts, assemblies and drawings in SOLIDWORKS";
+        public const string Title = "CADOS";
+        public const string Description = "CADOS by KEVOS: your AI assistant (Claude, ChatGPT...) builds parts, assemblies and drawings in SOLIDWORKS";
 
         ISldWorks app;
         int cookie;
         KevosUi ui;
-        const string MenuName = "KEVOS";
+        CadosPane pane;
+        public const string MenuName = "CADOS";
         static readonly (string name, string callback, string hint)[] Menu =
         {
-            ("KEVOS status...", "OsWindow", "Connection, computer, confirmations and activity"),
-            ("Connect now", "OsConnect", "Connect this SOLIDWORKS to KEVOS (it also connects by itself)"),
-            ("Disconnect", "OsDisconnect", "Stop taking commands from AI apps until Connect"),
+            ("CADOS panel", "OsPanel", "Status, prompts for your AI assistant, activity and help"),
+            ("Status...", "OsWindow", "Connection details, the direct link and the log"),
+            ("Connect now", "OsConnect", "Connect this SOLIDWORKS to CADOS (it also connects by itself)"),
+            ("Disconnect", "OsDisconnect", "Stop taking commands from your AI assistant until Connect"),
             ("Open KEVOS Companion", "OsCompanion", "Pairing, pause, logs"),
         };
         static readonly int[] DocTypes =
@@ -59,7 +62,17 @@ namespace OpenSketch.Sw
                 }
                 catch (Exception ex)
                 {
-                    Log.Write("KEVOS toolbar not made: " + ex.Message);   // the menu still works
+                    Log.Write("CADOS toolbar not made: " + ex.Message);   // the menu still works
+                }
+                try
+                {
+                    pane = new CadosPane(app);
+                    pane.Install(host);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("CADOS task pane not made: " + ex.Message);   // the menu and the status window still work
+                    pane = null;
                 }
                 return true;
             }
@@ -82,6 +95,14 @@ namespace OpenSketch.Sw
                 {
                 }
                 ui = null;
+                try
+                {
+                    pane?.Remove();
+                }
+                catch (Exception)
+                {
+                }
+                pane = null;
                 foreach (var t in DocTypes)
                     foreach (var (name, _, _) in Menu)
                         app?.RemoveMenu(t, name + "@" + MenuName, "");
@@ -107,6 +128,19 @@ namespace OpenSketch.Sw
             h.ShowWindow();
         }
 
+        public void OsPanel()
+        {
+            try
+            {
+                if (pane != null) pane.Show();
+                else OsWindow();
+            }
+            catch (Exception ex)
+            {
+                Log.Write("CADOS panel: " + ex.Message);
+            }
+        }
+
         public void OsDisconnect()
         {
             Host.Current?.Disconnect();
@@ -118,7 +152,7 @@ namespace OpenSketch.Sw
             try
             {
                 if (!CompanionPipe.StartCompanion())
-                    System.Windows.Forms.MessageBox.Show("The KEVOS Companion is not installed on this computer. Install KEVOS Bridge.", "KEVOS");
+                    System.Windows.Forms.MessageBox.Show("The KEVOS Companion is not installed on this computer. Install CADOS for SOLIDWORKS.", "CADOS");
             }
             catch (Exception ex)
             {
@@ -219,7 +253,7 @@ namespace OpenSketch.Sw
             catch (Exception ex)
             {
                 Log.Write("launcher: " + ex);
-                return "OpenSketch could not start: " + ex.Message;
+                return "CADOS could not start: " + ex.Message;
             }
         }
 

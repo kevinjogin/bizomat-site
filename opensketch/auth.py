@@ -32,7 +32,7 @@ COOKIE = "opensketch_session"
 ACCOUNT_COOKIE = "opensketch_user"
 PUBLIC_FILES = ("/favicon.svg", "/favicon.ico")
 PUBLIC_DIRS = ("/fonts/", "/ui/")  # the self-hosted fonts and the design system (CSS, icons): no data, needed by every page
-PUBLIC_PAGES = ("/overview", "/docs")  # the product page and the documentation: no data, for everyone
+PUBLIC_PAGES = ("/overview", "/docs", "/download/solidworks")  # the product page and the documentation: no data, for everyone
 
 
 def password() -> str:

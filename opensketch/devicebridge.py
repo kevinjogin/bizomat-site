@@ -1338,16 +1338,27 @@ async def bridge_update(request: Request):
         authenticate(request, b"")
     except BridgeAuthError as exc:
         return _err(exc)
+    try:
+        keep = release_manifest()
+    except ValueError:
+        return _err(BridgeAuthError(500, "INTERNAL", "The published release record is not valid."))
+    if keep is None:
+        return _err(BridgeAuthError(404, "INPUT_INVALID", "No CADOS for SOLIDWORKS release is published on this server."))
+    return _ok({"manifest_jws": sign_message(dict(keep, type="kevos.update"), "kevos-update")})
+
+
+def release_manifest() -> dict | None:
+    """The release the operator published (bridge-release.json in the data folder), checked; None when there is none.
+    Raises ValueError when the file is there but not valid."""
     p = store.data_dir() / "bridge-release.json"
     if not p.exists():
-        return _err(BridgeAuthError(404, "INPUT_INVALID", "No KEVOS Bridge release is published on this server."))
+        return None
     try:
         rel = json.loads(p.read_text())
         assert isinstance(rel, dict) and str(rel.get("msi_url", "")).startswith("https://") and rel.get("sha256", "").startswith("sha256:")
-    except (ValueError, AssertionError):
-        return _err(BridgeAuthError(500, "INTERNAL", "The published release record is not valid."))
-    keep = {k: rel[k] for k in ("version", "msi_url", "sha256", "size", "signer_thumbprints", "notes", "published_at") if k in rel}
-    return _ok({"manifest_jws": sign_message(dict(keep, type="kevos.update"), "kevos-update")})
+    except (ValueError, AssertionError) as exc:
+        raise ValueError("The published release record is not valid.") from exc
+    return {k: rel[k] for k in ("version", "msi_url", "sha256", "size", "signer_thumbprints", "notes", "published_at") if k in rel}
 
 
 # signed-in people: their computers

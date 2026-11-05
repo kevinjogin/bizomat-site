@@ -216,7 +216,7 @@ namespace Kevos.Companion
             }
             else
             {
-                line = name + ": connected" + (st.SolidWorksProcesses > 0 ? ", waiting for the KEVOS add-in" : ", SOLIDWORKS closed");
+                line = name + ": connected" + (st.SolidWorksProcesses > 0 ? ", waiting for the CADOS add-in" : ", SOLIDWORKS closed");
                 ic = on;
             }
             header.Text = line.Length > 60 ? line.Substring(0, 60) : line;
@@ -255,7 +255,7 @@ namespace Kevos.Companion
             {
                 try
                 {
-                    Log.Write("SOLIDWORKS runs without the KEVOS add-in: asking it to load " + dll + ": " + SolidWorks.LoadAddin());
+                    Log.Write("SOLIDWORKS runs without the CADOS add-in: asking it to load " + dll + ": " + SolidWorks.LoadAddin());
                 }
                 catch (Exception ex)
                 {
@@ -300,7 +300,7 @@ namespace Kevos.Companion
                         if (asked) MessageBox.Show(why, "KEVOS updates", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
-                    var q = $"KEVOS Bridge {offer.Version} is ready (verified: signed by the same publisher, hash checked).\r\n\r\n{offer.Notes}\r\n\r\n" +
+                    var q = $"CADOS for SOLIDWORKS {offer.Version} is ready (verified: signed by the same publisher, hash checked).\r\n\r\n{offer.Notes}\r\n\r\n" +
                             "Install it now? Save your work in SOLIDWORKS first: it restarts SOLIDWORKS' add-in at its next start.";
                     if (MessageBox.Show(q, "KEVOS update", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) Updater.Install(offer);
                 }, null);
@@ -483,7 +483,7 @@ namespace Kevos.Companion
             ClientSize = new Size(560, 470);
             MinimumSize = new Size(480, 400);
             BackColor = Color.White;
-            var title = new Label { Text = "KEVOS Bridge", Font = new Font("Segoe UI Semibold", 13f), AutoSize = true, Location = new Point(16, 12) };
+            var title = new Label { Text = "CADOS for SOLIDWORKS", Font = new Font("Segoe UI Semibold", 13f), AutoSize = true, Location = new Point(16, 12) };
             body.SetBounds(16, 46, 528, 170);
             body.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             pause.SetBounds(16, 222, 120, 30);
@@ -531,7 +531,7 @@ namespace Kevos.Companion
             sb.AppendLine(st.Paired ? $"Computer: {st.DeviceName}   Account: {st.Account}" : "Computer: not registered yet (Pair...)");
             sb.AppendLine("Server: " + (st.Gateway ?? "(none)"));
             sb.AppendLine("Link: " + st.Cloud + (st.Paused ? "   PAUSED: commands are refused" : ""));
-            sb.AppendLine($"SOLIDWORKS running: {st.SolidWorksProcesses}   with the KEVOS add-in: {st.Instances.Count}");
+            sb.AppendLine($"SOLIDWORKS running: {st.SolidWorksProcesses}   with the CADOS add-in: {st.Instances.Count}");
             foreach (var i in st.Instances)
                 sb.AppendLine($"  SOLIDWORKS {J.Str(i, "sw_revision")} (pid {J.Num(i, "pid")}), add-in {J.Str(i, "addin_version")}, {J.Num(i, "docs")} documents" +
                               (J.Str(i, "active") != null ? ", active " + J.Str(i, "active") : "") +
@@ -581,7 +581,7 @@ namespace Kevos.Companion
             var cfg = engine.Config;
             var clsid = Startup.AddinClsid;
             var sb = new StringBuilder();
-            sb.AppendLine("KEVOS Bridge diagnostics " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            sb.AppendLine("CADOS for SOLIDWORKS diagnostics " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             sb.AppendLine("Companion " + Updater.Current + " at " + Paths.Exe + (Authenticode.Signer(Paths.Exe) is string s ? " (signed " + s + ")" : " (unsigned build)"));
             sb.AppendLine("Windows: " + OsName() + "; .NET " + Environment.Version + "; user " + Environment.UserName + "; machine " + Environment.MachineName);
             sb.AppendLine("Registered: " + (cfg.Paired ? $"{cfg.DeviceName} ({cfg.DeviceId}) on {cfg.Account}, since {cfg.PairedAt}" : cfg.Revoked ? "removed from the account" : "no"));

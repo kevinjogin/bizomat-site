@@ -545,7 +545,7 @@ namespace OpenSketch.Sw.Bridge
                                 "os", o.OsName, "installations", o.Installations(), "instances", inst, "paused", Paused, "inflight", infl);
             var r = c.PostJson("/v2/device/hello", hello, 30, stop);
             if (r.Status == 401) throw new UnauthorizedAccessException(r.ErrorCode + ": " + r.ErrorMessage);
-            if (r.Status == 426) throw new IOException("This KEVOS Companion is too old for the server: update KEVOS Bridge.");
+            if (r.Status == 426) throw new IOException("This KEVOS Companion is too old for the server: update CADOS for SOLIDWORKS.");
             if (r.Status != 200) throw new IOException("hello: HTTP " + r.Status + " " + r.ErrorMessage);
             var kids = J.Strs(J.Obj(r.Json, "keys"), "command_kids") ?? new List<string>();
             if (!kids.Contains(gatewayKid))
@@ -702,7 +702,7 @@ namespace OpenSketch.Sw.Bridge
             }
             if (!Protocol.Ops.Contains(op))
             {
-                Reject(cid, "UNKNOWN_OP", $"This computer does not know the operation '{op}'. Update KEVOS Bridge.", "input");
+                Reject(cid, "UNKNOWN_OP", $"This computer does not know the operation '{op}'. Update CADOS for SOLIDWORKS.", "input");
                 return;
             }
             if (J.Obj(cmd, "params") == null)
@@ -733,7 +733,7 @@ namespace OpenSketch.Sw.Bridge
             {
                 var running = o.SolidWorksProcesses() > 0;
                 Reject(cid, "INSTANCE_NOT_RUNNING", running
-                           ? $"SOLIDWORKS is running on {Config.DeviceName} but the KEVOS add-in is not loaded. In SOLIDWORKS: Tools > Add-Ins, tick KEVOS (Active and Start Up)."
+                           ? $"SOLIDWORKS is running on {Config.DeviceName} but the CADOS add-in is not loaded. In SOLIDWORKS: Tools > Add-Ins, tick CADOS (Active and Start Up)."
                            : $"SOLIDWORKS is not running on {Config.DeviceName}. Open SOLIDWORKS there; KEVOS connects by itself.");
                 return;
             }

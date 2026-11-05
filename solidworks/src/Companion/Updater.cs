@@ -75,7 +75,7 @@ namespace Kevos.Companion
             }
             if (!System.Version.TryParse(J.Str(m, "version"), out var ver) || ver <= Current)
             {
-                why = "KEVOS Bridge " + Current.ToString(3) + " is up to date.";
+                why = "CADOS for SOLIDWORKS " + Current.ToString(3) + " is up to date.";
                 return null;
             }
             var url = J.Str(m, "msi_url") ?? "";
@@ -111,7 +111,7 @@ namespace Kevos.Companion
         /// <summary>Runs the verified MSI (it keeps settings and this computer's registration).</summary>
         public static void Install(Offer o)
         {
-            Log.Write("installing KEVOS Bridge " + o.Version);
+            Log.Write("installing CADOS for SOLIDWORKS " + o.Version);
             Process.Start(new ProcessStartInfo("msiexec.exe", $"/i \"{o.MsiPath}\" /passive /norestart") { UseShellExecute = true })?.Dispose();
         }
     }

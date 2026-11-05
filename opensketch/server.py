@@ -16,12 +16,12 @@ from pathlib import Path
 import anyio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.datastructures import Headers
 
-from . import artifacts, auth, cadworker, mcp_server, store, uploads
+from . import artifacts, auth, cadworker, canonical, mcp_server, store, uploads
 
 STATIC = Path(__file__).parent / "static"
 
@@ -172,7 +172,8 @@ class RequestLog:
 app = FastAPI(title="CADOS by KEVOS", lifespan=lifespan, docs_url=None, redoc_url=None)  # /docs is the documentation page
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(RequestLog)
-app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
+app.add_middleware(BodyLimit)  # before the sign-in gate reads anything
+app.add_middleware(canonical.CanonicalHost)  # outermost: an old host name is sent to the public address first
 
 
 @app.exception_handler(store.StorageError)
@@ -632,6 +633,30 @@ def api_sw_download():
         raise HTTPException(404, "The SOLIDWORKS add-in package is not on this server.")
     return FileResponse(SW_DOWNLOAD, filename="CADOS-SOLIDWORKS-addin.zip", media_type="application/zip",
                         headers={"Cache-Control": "no-cache"})
+
+
+# The Windows installer (CADOS for SOLIDWORKS, an MSI built by solidworks.yml on Windows). Public: it holds no data.
+INSTALLER_DEFAULT = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-latest/CADOS-for-SOLIDWORKS-x64.msi"
+
+
+def installer_url() -> str:
+    """Where "Download CADOS for SOLIDWORKS" goes: OPENSKETCH_INSTALLER_URL, else the release this server publishes to
+    its computers (bridge-release.json, the same file the Companion's updates come from), else the newest build."""
+    env = os.environ.get("OPENSKETCH_INSTALLER_URL", "").strip()
+    if env.startswith("https://"):
+        return env
+    try:
+        rel = devicebridge.release_manifest()
+        if rel and str(rel.get("msi_url", "")).startswith("https://"):
+            return rel["msi_url"]
+    except Exception:
+        pass
+    return INSTALLER_DEFAULT
+
+
+@app.get("/download/solidworks")
+def download_solidworks():
+    return RedirectResponse(installer_url(), status_code=302, headers={"Cache-Control": "no-store"})
 
 
 # ----------------------------------------------------------------------------- registered computers (KEVOS)

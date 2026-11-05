@@ -121,7 +121,7 @@ namespace OpenSketch.Sw
                 Current.Stop();
             }
             Current = new Host(app, mode);
-            Log.Write($"KEVOS for SOLIDWORKS {Version} started as {mode} from {SafeLocation()}; SOLIDWORKS {Current.swRevision}");
+            Log.Write($"CADOS for SOLIDWORKS {Version} started as {mode} from {SafeLocation()}; SOLIDWORKS {Current.swRevision}");
             if (mode != "program" && Settings.UseCompanion) Current.StartPipe();
             return Current;
         }
@@ -481,7 +481,7 @@ namespace OpenSketch.Sw
             public IntPtr Handle { get; }
         }
 
-        /// <summary>The KEVOS window, once shown.</summary>
+        /// <summary>The CADOS status window, once shown.</summary>
         public Form Window => form;
 
         public void ShowWindow()

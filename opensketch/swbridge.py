@@ -298,7 +298,7 @@ def status(user: dict | None, device: str | None = None) -> dict:
                "machine": sel["name"], "version": inst.get("addin_version"), "sw_version": inst.get("sw_revision"),
                "solidworks": sel.get("solidworks") or [], "devices": d["devices"]}
         if not sel.get("solidworks"):
-            out["note"] = (f"SOLIDWORKS is not running on {sel['name']} (or the KEVOS add-in is not loaded). Open "
+            out["note"] = (f"SOLIDWORKS is not running on {sel['name']} (or the CADOS add-in is not loaded). Open "
                            "SOLIDWORKS there; KEVOS connects by itself.")
         if sel.get("paused"):
             out["note"] = f"KEVOS is paused on {sel['name']} by the person at that computer."
@@ -373,8 +373,8 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
 
 
 NOT_CONNECTED = ("SOLIDWORKS is not connected. On the computer: check that the KEVOS Companion is running and that "
-                 "SOLIDWORKS is open with the KEVOS add-in loaded (the KEVOS tab). Without the Companion, open KEVOS > "
-                 "KEVOS status in SOLIDWORKS and connect. The setup steps are on the CADOS dashboard.")
+                 "SOLIDWORKS is open with the CADOS add-in loaded (the CADOS tab and task pane). Without the Companion, "
+                 "open CADOS > Status in SOLIDWORKS and connect. The setup steps are on the CADOS dashboard.")
 
 
 def target_key(user: dict | None, device: str | None = None) -> str:

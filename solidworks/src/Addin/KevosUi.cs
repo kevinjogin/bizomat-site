@@ -11,20 +11,23 @@ using Environment = System.Environment;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The KEVOS command group (a toolbar and a "KEVOS" tab on the CommandManager for parts, assemblies and drawings):
-    /// Status, Connect, Disconnect, Companion. Buttons call the add-in's public callbacks by name (SwAddin.Os*), on
-    /// SOLIDWORKS' own thread. Icons are drawn once into %LOCALAPPDATA%\KEVOS\icons in every size SOLIDWORKS asks for.
+    /// The CADOS command group (a toolbar and a "CADOS" tab on the CommandManager for parts, assemblies and drawings):
+    /// CADOS panel, Status, Connect, Disconnect, Companion. Buttons call the add-in's public callbacks by name
+    /// (SwAddin.Os*), on SOLIDWORKS' own thread. Icons (KEVOS orange) are drawn once into %LOCALAPPDATA%\KEVOS\icons in
+    /// every size SOLIDWORKS asks for.
     /// </summary>
     public sealed class KevosUi
     {
         public const int GroupId = 0x4B45;   // "KE": stable, so SOLIDWORKS keeps the user's toolbar placement
-        const string TabName = "KEVOS";
+        public const string TabName = "CADOS";
+        const string OldTabName = "KEVOS";   // 0.11 and earlier: removed when found
         static readonly int[] Sizes = { 20, 32, 40, 64, 96, 128 };
         static readonly (string name, string tip, string glyph, string callback)[] Buttons =
         {
-            ("KEVOS status", "KEVOS: connection, computer and activity", "i", "OsWindow"),
-            ("Connect", "Connect this SOLIDWORKS to KEVOS now", "C", "OsConnect"),
-            ("Disconnect", "Stop taking commands from AI apps", "D", "OsDisconnect"),
+            ("CADOS panel", "CADOS: status, prompts for your AI assistant, activity and help", "C", "OsPanel"),
+            ("Status", "Connection details, the direct link and the log", "i", "OsWindow"),
+            ("Connect", "Connect this SOLIDWORKS to CADOS now", "+", "OsConnect"),
+            ("Disconnect", "Stop taking commands from your AI assistant", "\u2013", "OsDisconnect"),
             ("KEVOS Companion", "Open the KEVOS Companion (pairing, pause, logs)", "K", "OsCompanion"),
         };
         static readonly int[] DocTypes = { (int)swDocumentTypes_e.swDocPART, (int)swDocumentTypes_e.swDocASSEMBLY, (int)swDocumentTypes_e.swDocDRAWING };
@@ -42,7 +45,7 @@ namespace OpenSketch.Sw
             mgr = app.GetCommandManager(cookie) as ICommandManager;
             if (mgr == null) return;
             var err = 0;
-            var group = mgr.CreateCommandGroup2(GroupId, "KEVOS", "KEVOS: AI apps building in SOLIDWORKS", "KEVOS Bridge", -1, true, ref err) as ICommandGroup;
+            var group = mgr.CreateCommandGroup2(GroupId, "CADOS", "CADOS by KEVOS: your AI assistant working in SOLIDWORKS", "CADOS by KEVOS", -1, true, ref err) as ICommandGroup;
             if (group == null)
             {
                 Log.Write("CommandManager group not made (error " + err + ")");
@@ -78,9 +81,12 @@ namespace OpenSketch.Sw
             {
                 try
                 {
-                    var tab = mgr.GetCommandTab(t, TabName) as ICommandTab;
-                    if (tab != null) mgr.RemoveCommandTab((CommandTab)tab);
-                    tab = mgr.AddCommandTab(t, TabName) as ICommandTab;
+                    foreach (var name in new[] { OldTabName, TabName })
+                    {
+                        var old = mgr.GetCommandTab(t, name) as ICommandTab;
+                        if (old != null) mgr.RemoveCommandTab((CommandTab)old);
+                    }
+                    var tab = mgr.AddCommandTab(t, TabName) as ICommandTab;
                     var box = tab?.AddCommandTabBox() as ICommandTabBox;
                     box?.AddCommands(ids, text);
                 }
@@ -125,6 +131,9 @@ namespace OpenSketch.Sw
             }
         }
 
+        /// <summary>The CADOS icon in every size (the group's icon, and the task pane tab's).</summary>
+        public static string[] MainIcons() => Strips(true);
+
         /// <summary>One PNG strip per size: every button's icon side by side (or the group's own icon).</summary>
         static string[] Strips(bool main)
         {
@@ -132,10 +141,10 @@ namespace OpenSketch.Sw
             for (var k = 0; k < Sizes.Length; k++)
             {
                 var s = Sizes[k];
-                var path = Path.Combine(IconDir, (main ? "main_" : "buttons_") + s + ".png");
+                var path = Path.Combine(IconDir, (main ? "cados_main_" : "cados_buttons_") + s + ".png");
                 if (!File.Exists(path))
                 {
-                    var glyphs = main ? new[] { "K" } : Array.ConvertAll(Buttons, b => b.glyph);
+                    var glyphs = main ? new[] { "C" } : Array.ConvertAll(Buttons, b => b.glyph);
                     using (var bmp = new Bitmap(s * glyphs.Length, s, PixelFormat.Format32bppArgb))
                     using (var g = Graphics.FromImage(bmp))
                     {
@@ -145,7 +154,7 @@ namespace OpenSketch.Sw
                         for (var i = 0; i < glyphs.Length; i++)
                         {
                             var r = new RectangleF(i * s + s * 0.06f, s * 0.06f, s * 0.88f, s * 0.88f);
-                            using (var bg = new LinearGradientBrush(r, Color.FromArgb(74, 81, 194), Color.FromArgb(192, 86, 156), 45f))
+                            using (var bg = new SolidBrush(Color.FromArgb(244, 123, 32)))   // KEVOS orange
                             using (var path2 = Rounded(r, s * 0.2f))
                                 g.FillPath(bg, path2);
                             using (var f = new Font("Segoe UI", s * 0.5f, FontStyle.Bold, GraphicsUnit.Pixel))

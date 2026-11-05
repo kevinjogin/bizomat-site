@@ -16,6 +16,10 @@ kill_timeout = '15s'
 
 [env]
   OPENSKETCH_DATA = '/data'
+  # The public address (OAuth metadata, links, canonical tags); browsers on the old host are sent there with a 301
+  # (opensketch/canonical.py; health checks, MCP, OAuth, /api/ and the device API are not redirected).
+  OPENSKETCH_PUBLIC_URL = 'https://cados.kevos.com'
+  OPENSKETCH_REDIRECT_HOSTS = 'cados.fly.dev'
 
 [[mounts]]
   source = 'opensketch_data'

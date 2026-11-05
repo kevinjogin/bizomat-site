@@ -5,9 +5,9 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Deterministic>true</Deterministic>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <Version>0.11.0</Version>
-    <Company>OpenSketch</Company>
-    <Product>OpenSketch for SOLIDWORKS</Product>
-    <Copyright>OpenSketch</Copyright>
+    <Version>0.12.0</Version>
+    <Company>KEVOS</Company>
+    <Product>CADOS for SOLIDWORKS</Product>
+    <Copyright>KEVOS</Copyright>
   </PropertyGroup>
 </Project>

@@ -23,25 +23,26 @@ BODY = """<main class="app-main" id="main"><div class="container">
 <div class="setup">
 
 <section class="setup-step" id="s-install" aria-labelledby="h-install"><header><span class="num">1</span><div class="head-text">
-<h2 id="h-install">Install CADOS on your CAD computer</h2><p>Run the installer on the Windows computer that runs SOLIDWORKS.</p></div>
+<h2 id="h-install">Install CADOS for SOLIDWORKS</h2><p>Run the installer on the Windows computer that runs SOLIDWORKS. It adds the CADOS add-in to SOLIDWORKS.</p></div>
 <span class="step-state badge" data-for="s-install">To do</span></header>
-<div class="body"><div class="actions"><a class="btn btn-primary" id="bridge-dl" href="__RELEASES__" rel="noopener">__DOWNLOAD_ICON__Download for Windows</a>
-<span class="small muted">Windows installer (.msi) with the CADOS add-in and the KEVOS Companion. Windows 10 or 11, 64-bit. SOLIDWORKS 2022 or later.</span></div>
+<div class="body"><div class="actions"><a class="btn btn-primary" id="bridge-dl" href="/download/solidworks">__DOWNLOAD_ICON__Download CADOS for SOLIDWORKS</a>
+<span class="small muted">Windows installer (.msi): the CADOS add-in and the KEVOS Companion.</span></div>
+<div class="actions small"><a href="/docs#install">Installation guide</a><a href="/docs#requirements">System requirements</a><a href="/docs#versions">Supported SOLIDWORKS versions</a></div>
 <details class="disclosure"><summary>Manual installation, without the installer</summary><div class="disclosure-body">
-<p>For development, or where you cannot run the installer. Links one SOLIDWORKS session directly, without the KEVOS Companion.</p>
+<p>For development, or where you cannot run the installer. The package holds the same CADOS add-in, installed for your Windows user only, and links one SOLIDWORKS session directly, without the KEVOS Companion.</p>
 <ol style="margin-top:var(--s-3)"><li>Download the add-in package and unzip it on the SOLIDWORKS computer.</li><li>Run the setup program in the folder and choose <b>Install for me</b>.</li>
 <li>Continue with the direct link in step 2.</li></ol>
 <div class="actions" style="margin-top:var(--s-3)"><a class="btn btn-secondary btn-sm" id="download" href="/api/sw/download">Download add-in package (.zip)</a></div>
 <p class="small" id="no-download" hidden style="margin-top:var(--s-2);color:var(--err)">The add-in package is not on this server yet.</p></div></details></div></section>
 
 <section class="setup-step" id="s-connect" aria-labelledby="h-connect"><header><span class="num">2</span><div class="head-text">
-<h2 id="h-connect">Open SOLIDWORKS and activate CADOS</h2><p>Pair the computer when the KEVOS Companion asks, then open SOLIDWORKS. The KEVOS tab shows the link.</p></div>
+<h2 id="h-connect">Open SOLIDWORKS and activate CADOS</h2><p>Pair the computer when the KEVOS Companion asks, then open SOLIDWORKS. The CADOS tab and task pane show the link.</p></div>
 <span class="step-state badge" data-for="s-connect">To do</span></header>
 <div class="body"><div><div class="field-label" style="margin-bottom:var(--s-2)">Your computers</div>
 <ul class="rows" id="pcs" aria-label="Your computers"></ul>
 <p class="small muted" id="no-pcs">No computer paired yet. After installing, the KEVOS Companion opens a pairing window. You confirm its code on this site.</p></div>
 <details class="disclosure"><summary>Direct link, without the Companion</summary><div class="disclosure-body">
-<p>In SOLIDWORKS, open <b>KEVOS &gt; KEVOS status</b> and paste these two values.</p>
+<p>In SOLIDWORKS, open <b>CADOS &gt; Status</b> and paste these two values.</p>
 <div class="field" style="margin-top:var(--s-3)"><label class="field-label" for="server">Service address</label>
 <div class="input-group"><input class="input" id="server" readonly><button class="btn" type="button" data-copy="server">Copy</button></div></div>
 <div class="field"><label class="field-label" for="key">Add-in key</label>
@@ -49,7 +50,7 @@ BODY = """<main class="app-main" id="main"><div class="container">
 <button class="btn" type="button" id="show" aria-controls="key" aria-pressed="false">Show</button><button class="btn" type="button" data-copy="key">Copy</button></div>
 <span class="field-hint" id="key-hint">Private to you. Making a new key disconnects the direct link until you paste the new one.</span></div>
 <div class="actions" style="margin-top:var(--s-3)"><button class="link-btn danger small" type="button" id="newkey">Make a new key</button></div>
-<p class="small muted" style="margin-top:var(--s-3)">No KEVOS menu? Open Tools &gt; Add-Ins and tick KEVOS. Or run the launcher macro: Tools &gt; Macro &gt; Run, then <code>Documents\\OpenSketch\\OpenSketch.swb</code>.</p>
+<p class="small muted" style="margin-top:var(--s-3)">No CADOS menu? Open Tools &gt; Add-Ins and tick CADOS. Where SOLIDWORKS does not list add-ins installed without administrator rights, the manual package also writes a launcher macro that only starts the CADOS add-in: Tools &gt; Macro &gt; Run, then <code>Documents\\OpenSketch\\OpenSketch.swb</code>.</p>
 </div></details></div></section>
 
 <section class="setup-step" id="s-ai" aria-labelledby="h-ai"><header><span class="num">3</span><div class="head-text">
@@ -102,7 +103,7 @@ BODY = """<main class="app-main" id="main"><div class="container">
 <div class="kv-row"><span class="k">Activity</span><span class="v" id="kv-work">Idle</span></div>
 <div class="kv-row"><span class="k">AI assistants</span><span class="v" id="kv-ai">None</span></div></div></section>
 <section class="card"><div class="card-head"><h3>Need help?</h3><a class="small" href="/docs#troubleshooting">All answers</a></div><div class="card-pad" style="padding-top:0">
-<details class="disclosure" style="border-top:0"><summary>SOLIDWORKS shows no KEVOS tab</summary><div class="disclosure-body small">Open Tools &gt; Add-Ins and tick KEVOS under Active and Start Up. Do not run SOLIDWORKS as administrator.</div></details>
+<details class="disclosure" style="border-top:0"><summary>SOLIDWORKS shows no CADOS tab</summary><div class="disclosure-body small">Open Tools &gt; Add-Ins and tick CADOS under Active and Start Up. Do not run SOLIDWORKS as administrator.</div></details>
 <details class="disclosure"><summary>The computer shows Offline</summary><div class="disclosure-body small">Check that the KEVOS Companion runs (tray icon) and that this site opens in a browser on that computer. Behind a company proxy, allow this address.</div></details>
 <details class="disclosure"><summary>The assistant cannot sign in</summary><div class="disclosure-body small">Remove the connector in your assistant and add it again. If it still fails, use the private address in step 3.</div></details>
 <details class="disclosure"><summary>The assistant reports a dialog or open sketch</summary><div class="disclosure-body small">Close the dialog or exit the sketch in SOLIDWORKS, then ask again.</div></details>
@@ -274,6 +275,6 @@ SCRIPT = r"""<script>
 
 
 def page(base: str = "") -> bytes:
-    body = BODY.replace("__RELEASES__", brand.RELEASES_URL).replace("__DOWNLOAD_ICON__", icon("download"))
+    body = BODY.replace("__DOWNLOAD_ICON__", icon("download"))
     return (brand.head("Dashboard", path="/dashboard", base=base) + "<body>" + brand.header("dashboard", app=True)
             + body + SCRIPT + brand.MENU_SCRIPT + "</body></html>").encode()

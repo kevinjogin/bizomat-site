@@ -32,7 +32,7 @@ opensketch = "opensketch.__main__:main"
 packages = ["opensketch", "opensketch.features"]
 
 [tool.setuptools.package-data]
-opensketch = ["static/*.svg", "static/fonts/*", "static/ui/*", "solver/*.js", "solver/*.mjs"]
+opensketch = ["static/*.svg", "static/*.ico", "static/fonts/*", "static/ui/*", "solver/*.js", "solver/*.mjs"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

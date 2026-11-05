@@ -72,7 +72,8 @@ def head(title: str, description: str = DESCRIPTION, *, path: str = "/", index: 
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="CADOS by KEVOS: {escape(HEADLINE)}">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{t}"><meta name="twitter:description" content="{d}">
 <meta name="twitter:image" content="{img}">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/ui/icon-180.png">
+<link rel="icon" href="/favicon.ico" sizes="48x48"><link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/ui/icon-32.png" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/ui/icon-180.png">
 <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/fonts/fonts.css"><link rel="stylesheet" href="/ui/cados.css">{canon}{extra}</head>"""
 
@@ -97,7 +98,7 @@ def header(active: str = "", signed_in: bool = False, *, app: bool = False, user
         menu_end = '<a class="btn btn-secondary btn-block" href="/logout">Sign out</a>' if sign_out else ""
     else:
         links = [a("/overview#product", "Product", "product"), a("/overview#how", "How it works"), a("/overview#integrations", "Integrations"),
-                 a("/docs", "Documentation", "docs"), a(KEVOS_URL, "KEVOS", ext=True)]
+                 a("/overview#download", "Download"), a("/docs", "Documentation", "docs"), a(KEVOS_URL, "KEVOS", ext=True)]
         end = ('<a class="btn btn-primary btn-sm" href="/dashboard">Dashboard</a>' if signed_in else
                '<a class="btn btn-ghost btn-sm hide-sm" href="/login">Sign in</a>'
                '<a class="btn btn-primary btn-sm" href="/dashboard">Get started</a>')
@@ -115,7 +116,7 @@ def footer() -> str:
 <div><h4>Product</h4><ul><li><a href="/overview#product">Overview</a></li><li><a href="/overview#how">How it works</a></li>
 <li><a href="/overview#integrations">Integrations</a></li><li><a href="/overview#security">Security</a></li></ul></div>
 <div><h4>Resources</h4><ul><li><a href="/docs">Documentation</a></li><li><a href="/docs#troubleshooting">Troubleshooting</a></li>
-<li><a href="{RELEASES_URL}" rel="noopener">Downloads</a></li><li><a href="{SUPPORT_URL}" rel="noopener">Support</a></li></ul></div>
+<li><a href="/download/solidworks">Download for SOLIDWORKS</a></li><li><a href="{RELEASES_URL}" rel="noopener">All releases</a></li><li><a href="{SUPPORT_URL}" rel="noopener">Support</a></li></ul></div>
 <div><h4>Company</h4><ul><li><a href="{KEVOS_URL}" rel="noopener">KEVOS</a></li><li><a href="/privacy">Privacy</a></li>
 <li><a href="{REPO_URL}" rel="noopener">Source code</a></li></ul></div></div>
 <div class="footer-base"><span>CADOS by KEVOS. A product from KEVOS.</span>

@@ -58,7 +58,7 @@ your calls, so read before you write (sw_get_document).
 Workflow:
 - sw_status first: is SOLIDWORKS connected, which documents are open. If not connected, tell the user what the
   status says and stop.
-- Several registered computers (KEVOS Bridge): sw_status lists them; pass device="<name>" to every tool when more
+- Several registered computers (CADOS for SOLIDWORKS): sw_status lists them; pass device="<name>" to every tool when more
   than one is online. Deleting, Save As, overwriting a drawing and undo are confirmed by the person at that computer:
   if they decline, say so and do not retry.
 - sw_create_document makes a new part or assembly from the user's default template and saves it in
@@ -1056,7 +1056,7 @@ async def sw_list_devices() -> CallToolResult:
     if v1.get("connected"):
         out["direct_addin"] = {k: v1.get(k) for k in ("machine", "version", "sw_version")}
     if not out["devices"]:
-        out["note"] = ("No computer is registered yet. Install KEVOS Bridge on the SOLIDWORKS computer; its Companion "
+        out["note"] = ("No computer is registered yet. Install CADOS for SOLIDWORKS on the SOLIDWORKS computer; its Companion "
                        "opens this site to add the computer.")
     return _text(out)
 

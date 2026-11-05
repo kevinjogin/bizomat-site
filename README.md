@@ -64,11 +64,11 @@ The feature format is in [docs/DOCUMENT.md](docs/DOCUMENT.md).
 
 1. **Sign in** at https://cados.kevos.com (or your own server, see below) and open the dashboard.
 2. **Install CADOS** on the SOLIDWORKS computer (SOLIDWORKS 2022 or newer, Windows 64-bit): the Windows installer
-   (`KEVOS-Bridge-<version>-x64.msi`) adds the CADOS add-in and the KEVOS Companion; see
+   (`CADOS-for-SOLIDWORKS-x64.msi`, "Download CADOS for SOLIDWORKS" on the website) adds the CADOS add-in and the KEVOS Companion; see
    [docs/KEVOS-INSTALL.md](docs/KEVOS-INSTALL.md). Without the installer: download the add-in package from the
    dashboard, unzip it, run `OpenSketchSW.exe` and click Install for me (per Windows user).
-3. **Pair the computer** when the KEVOS Companion asks, then open SOLIDWORKS: the KEVOS tab shows the link. (Direct
-   link without the Companion: KEVOS > KEVOS status in SOLIDWORKS, then paste the address and add-in key from the
+3. **Pair the computer** when the KEVOS Companion asks, then open SOLIDWORKS: the CADOS tab and task pane show the link. (Direct
+   link without the Companion: CADOS > Status in SOLIDWORKS, then paste the address and add-in key from the
    dashboard; or run the macro `Documents\OpenSketch\OpenSketch.swb`.)
 4. **Add the connector** in your AI app: a custom connector with the address from the dashboard. Apps that cannot
    sign in can use the private address shown under "Assistant cannot sign in?".

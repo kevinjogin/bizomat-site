@@ -39,7 +39,7 @@ namespace OpenSketch.Sw
             public ConfirmForm(string client, string what, string doc, int timeoutS)
             {
                 left = timeoutS;
-                Text = "KEVOS: confirm";
+                Text = "CADOS: confirm";
                 Font = new Font("Segoe UI", 9.5f);
                 FormBorderStyle = FormBorderStyle.FixedDialog;
                 MaximizeBox = MinimizeBox = false;

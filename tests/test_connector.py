@@ -138,7 +138,7 @@ def test_home_page_and_its_api(app):
 def test_only_connector_routes():
     owner = _owner()
     allowed = ("/healthz", "/api/account", "/api/sw", "/api/solidworks", "/api/connect/", "/mcp", "/solidworks",
-               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/dashboard", "/overview")
+               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/dashboard", "/overview", "/download/")
     paths = [getattr(r, "path", "") for r in server.app.routes]
     assert [p for p in paths if p not in ("/", "") and not p.startswith(allowed)] == []
     for path in ("/api/docs", "/api/features", "/api/version", "/sw.js", "/manifest.webmanifest", "/js/app.js",

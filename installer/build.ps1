@@ -1,4 +1,5 @@
-# Builds KEVOS-Bridge-<version>-x64.msi from solidworks/dist/OpenSketch-SOLIDWORKS (run `bash solidworks/build.sh test`
+# Builds CADOS-for-SOLIDWORKS-<version>-x64.msi (and the same file as CADOS-for-SOLIDWORKS-x64.msi, the stable name the
+# website links to) from solidworks/dist/OpenSketch-SOLIDWORKS (run `bash solidworks/build.sh test`
 # first). Windows only (WiX Toolset 5 needs Windows). Repeatable: the same sources give the same MSI contents.
 #
 #   powershell -ExecutionPolicy Bypass -File installer\build.ps1 [-Version 0.11.0]
@@ -34,7 +35,7 @@ $lic = (Get-Content 'LICENSE' -Raw) -replace '\\', '\\' -replace '\{', '\{' -rep
 $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1
 $sign = $env:KEVOS_SIGN_PFX -and (Test-Path $env:KEVOS_SIGN_PFX) -and $signtool
 function Sign($file) {
-  & $signtool.FullName sign /fd sha256 /td sha256 /tr $Timestamp /f $env:KEVOS_SIGN_PFX /p $env:KEVOS_SIGN_PASSWORD /d "KEVOS Bridge" $file
+  & $signtool.FullName sign /fd sha256 /td sha256 /tr $Timestamp /f $env:KEVOS_SIGN_PFX /p $env:KEVOS_SIGN_PASSWORD /d "CADOS for SOLIDWORKS" $file
   if ($LASTEXITCODE -ne 0) { throw "signing $file failed" }
 }
 if ($sign) {
@@ -47,7 +48,7 @@ if (-not (Get-Command wix -ErrorAction SilentlyContinue)) { dotnet tool install 
 wix extension add -g WixToolset.Util.wixext/5.0.2 WixToolset.UI.wixext/5.0.2 | Out-Host
 $out = Join-Path $PSScriptRoot 'out'
 New-Item -ItemType Directory -Force -Path $out | Out-Null
-$name = "KEVOS-Bridge-$Version-x64" + $(if ($sign) { '' } else { '-UNSIGNED' }) + '.msi'
+$name = "CADOS-for-SOLIDWORKS-$Version-x64" + $(if ($sign) { '' } else { '-UNSIGNED' }) + '.msi'
 $msi = Join-Path $out $name
 wix build installer\KEVOS-Bridge.wxs -arch x64 -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -d "Version=$Version" -d "Source=$src" -o $msi
 if ($LASTEXITCODE -ne 0) { throw 'wix build failed' }
@@ -59,6 +60,10 @@ $thumb = $null
 if ($sign) { $thumb = (Get-AuthenticodeSignature $msi).SignerCertificate.Thumbprint }
 "$hash  $name" | Set-Content (Join-Path $out "$name.sha256") -Encoding ASCII
 @{ version = $Version; msi_url = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v$Version/$name";
-   sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "KEVOS Bridge $Version";
+   sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "CADOS for SOLIDWORKS $Version";
    published_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ') } | ConvertTo-Json | Set-Content (Join-Path $out 'release.json') -Encoding UTF8
+# the stable name (bridge-latest): what https://cados.kevos.com/download/solidworks points at
+$stable = Join-Path $out 'CADOS-for-SOLIDWORKS-x64.msi'
+Copy-Item $msi $stable -Force
+"$hash  CADOS-for-SOLIDWORKS-x64.msi" | Set-Content "$stable.sha256" -Encoding ASCII
 Write-Host "Built $msi ($size bytes, sha256 $hash)" -ForegroundColor Green

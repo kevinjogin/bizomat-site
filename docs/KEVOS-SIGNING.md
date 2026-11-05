@@ -7,7 +7,7 @@
 | `OpenSketch.Sw.dll` | The KEVOS SOLIDWORKS add-in (COM, .NET Framework 4.8, x64) | Inside SOLIDWORKS |
 | `KEVOS.Companion.exe` | The KEVOS Companion (tray app, .NET Framework 4.8, x64) | At Windows sign-in, as the user |
 | `OpenSketchSW.exe` | The earlier per-user installer and fallback launcher | Only when the person runs it |
-| `KEVOS-Bridge-<version>-x64.msi` | The installer, holding the three files above | Once per computer, elevated |
+| `CADOS-for-SOLIDWORKS-<version>-x64.msi` | The installer, holding the three files above | Once per computer, elevated |
 
 All four are built by GitHub Actions (`.github/workflows/solidworks.yml`): the DLL and EXEs on a Linux runner and
 again on the Windows runner that builds the MSI (`installer/build.ps1`). Signing must happen on the Windows runner:
@@ -66,7 +66,7 @@ Details for the application form:
 | Repository | https://github.com/jogkev-creator/CADOS (once public) |
 | Licence | GNU Affero General Public License v3.0 only |
 | Description | Connects AI apps (Claude, ChatGPT and other MCP clients) to SOLIDWORKS on the user's own Windows computer. A COM add-in runs inside SOLIDWORKS; a tray app keeps a signed outbound link to the user's KEVOS server. |
-| Files to sign | `OpenSketch.Sw.dll`, `KEVOS.Companion.exe`, `OpenSketchSW.exe`, `KEVOS-Bridge-<version>-x64.msi` (Authenticode, SHA-256, timestamped) |
+| Files to sign | `OpenSketch.Sw.dll`, `KEVOS.Companion.exe`, `OpenSketchSW.exe`, `CADOS-for-SOLIDWORKS-<version>-x64.msi` (Authenticode, SHA-256, timestamped) |
 | Build system | GitHub Actions, GitHub-hosted `windows-latest`, workflow `.github/workflows/solidworks.yml`, job `installer` |
 | Release channel | GitHub Releases `bridge-v<version>` (and `bridge-latest`) |
 | Maintainers | (your name and GitHub account; reviewers and approvers) |
