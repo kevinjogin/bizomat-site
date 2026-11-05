@@ -3,7 +3,8 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { errorMessage, get, post, setCsrfToken } from '../lib/api';
 import { useConfig, useSession } from '../lib/session';
-import { BrandMark, Icon, Wordmark } from '../components/ui/Icon';
+import { Icon, ProductLockup } from '../components/ui/Icon';
+import { PlatformLegalLinks } from '../components/layout/PlatformLinks';
 import { BRAND, pageTitle } from '../lib/brand';
 import { Field, Loading } from '../components/ui/ui';
 
@@ -25,20 +26,23 @@ function AuthLayout({ title, subtitle, children }: { title: string; subtitle?: s
   const config = useConfig();
   useEffect(() => {
     document.title = pageTitle(title);
-  }, [title, config.data?.appName]);
+  }, [title]);
   return (
     <div className="auth-wrap">
       <div className="card auth-card">
-        <div className="row" style={{ marginBottom: 20 }}>
-          <BrandMark size={34} /> <Wordmark size={19} />
+        <div className="auth-brand">
+          <ProductLockup height={20} />
+          <span className="spacer" />
           {config.data && config.data.environment !== 'production' ? <span className="badge warning">{config.data.environment}</span> : null}
         </div>
         <h1>{title}</h1>
         {subtitle ? <p className="muted">{subtitle}</p> : null}
         <div style={{ marginTop: 16 }}>{children}</div>
-        <p className="muted small" style={{ marginTop: 20, textAlign: 'center' }}>
-          {BRAND.product} is part of <strong style={{ color: 'var(--brand)', letterSpacing: '.06em' }}>{BRAND.company}</strong> · <Link to="/privacy">Privacy</Link>
-        </p>
+        <footer className="auth-foot">
+          <span>Part of the {BRAND.platform} platform</span>
+          <PlatformLegalLinks />
+          <Link to="/privacy">How {BRAND.product} uses your data</Link>
+        </footer>
       </div>
     </div>
   );
@@ -88,7 +92,7 @@ export function LoginPage() {
     }
   };
   return (
-    <AuthLayout title="Sign in" subtitle="Welcome back. Sign in to your workspace.">
+    <AuthLayout title={`Sign in to ${BRAND.platform}`} subtitle={`Welcome back. Sign in to your ${BRAND.product} workspace.`}>
       <ProviderButtons next={next} />
       <form onSubmit={submit} noValidate>
         <Field label="Email" htmlFor="email">
@@ -137,7 +141,7 @@ export function SignupPage() {
     }
   };
   return (
-    <AuthLayout title="Create your account" subtitle="Start organising your team's work in minutes.">
+    <AuthLayout title={`Create your ${BRAND.platform} account`} subtitle={`Start organising your team's work in ${BRAND.product}.`}>
       <ProviderButtons next={next} />
       <form onSubmit={submit} noValidate>
         <Field label="Full name" htmlFor="name">

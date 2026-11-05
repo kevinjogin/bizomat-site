@@ -32,8 +32,8 @@ export function CalendarView(props: BoardViewProps) {
 
   const statusCol = bundle.columns.find((c) => c.type === 'status');
   const colorOf = (i: ItemDTO) => {
-    if (!statusCol) return 'var(--accent)';
-    return labelsOf(statusCol).find((l) => l.id === i.values[statusCol.id])?.color ?? 'var(--accent)';
+    if (!statusCol) return 'var(--accent-fill)';
+    return labelsOf(statusCol).find((l) => l.id === i.values[statusCol.id])?.color ?? 'var(--accent-fill)';
   };
 
   const days = useMemo(() => {

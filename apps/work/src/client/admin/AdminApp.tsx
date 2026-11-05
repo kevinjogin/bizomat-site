@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { NavLink, Route, Routes, useLocation, Link } from 'react-router-dom';
 import { ApiError } from '../lib/api';
-import { BrandMark, Icon } from '../components/ui/Icon';
+import { Icon, Wordmark } from '../components/ui/Icon';
+import { BRAND, pageTitle } from '../lib/brand';
 import { Avatar, ErrorBox } from '../components/ui/ui';
 import { useAdmin } from './api';
 import { PageSkeleton } from './ui';
@@ -37,7 +38,7 @@ const NAV: { to: string; label: string; icon: string; end?: boolean }[] = [
 
 export function NotFound() {
   useEffect(() => {
-    document.title = 'Page not found';
+    document.title = pageTitle('Page not found');
   }, []);
   return (
     <div className="ac-notfound">
@@ -54,7 +55,7 @@ export default function AdminApp() {
   const [navOpen, setNavOpen] = useState(false);
   useEffect(() => setNavOpen(false), [location.pathname]);
   useEffect(() => {
-    if (me.data) document.title = 'Founder console · Work by KEVOS';
+    if (me.data) document.title = pageTitle('Founder console');
   }, [me.data]);
 
   if (me.isLoading) return <div className="ac-boot"><span className="spinner" aria-label="Loading" /></div>;
@@ -70,11 +71,12 @@ export default function AdminApp() {
   return (
     <div className={`ac-shell${navOpen ? ' nav-open' : ''}`}>
       <aside className="ac-side" aria-label="Founder console navigation">
-        <Link to="/admin" className="ac-brand">
-          <BrandMark size={30} />
-          <span>
-            <span className="ac-brand-name"><b>KEVOS</b> Work</span>
-            <span className="ac-brand-sub">Founder console</span>
+        <Link to="/admin" className="ac-brand" aria-label={`${BRAND.full} founder console`}>
+          <Wordmark height={16} />
+          <span className="ac-brand-sub">
+            {BRAND.product}
+            <br />
+            Founder console
           </span>
         </Link>
         <nav className="ac-nav">
@@ -86,7 +88,7 @@ export default function AdminApp() {
         </nav>
         <div className="ac-side-foot">
           <a href="/" className="ac-nav-item">
-            <Icon name="chevronLeft" size={17} /> Back to app
+            <Icon name="chevronLeft" size={17} /> Back to {BRAND.product}
           </a>
           <div className="ac-privacy-note">
             Analytics follow the <a href="/privacy">privacy notice</a>. Passwords, tokens and content are never shown.

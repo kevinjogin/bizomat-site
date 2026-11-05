@@ -6,7 +6,7 @@ import { cloudflareTest, readD1Migrations } from '@cloudflare/vitest-plugin';
 // exists so tests can run before the client is built.
 if (!existsSync('dist/client/index.html')) {
   mkdirSync('dist/client', { recursive: true });
-  writeFileSync('dist/client/index.html', '<!doctype html><title>WorkOS</title><div id="root"></div>');
+  writeFileSync('dist/client/index.html', '<!doctype html><title>BIZOMAT Project Management</title><div id="root"></div>');
 }
 
 export default defineConfig(async () => {

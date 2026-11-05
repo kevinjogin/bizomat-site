@@ -727,6 +727,9 @@ function csv(rows: unknown[][]): string {
 }
 const iso = (t: number | null | undefined) => (t ? new Date(t).toISOString() : '');
 
+/** Download names people see: bizomat-project-management-<export>-<day>.csv */
+const EXPORT_PREFIX = 'bizomat-project-management';
+
 function csvResponse(name: string, content: string) {
   return new Response(content, {
     headers: { 'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': `attachment; filename="${name}"`, 'Cache-Control': 'no-store' },
@@ -738,7 +741,7 @@ adminRoutes.get('/export/users.csv', async (c) => {
   const { users } = await queryUsers(c.env.DB, { limit: 100_000, offset: 0 });
   await audit(c.env.DB, { actorId: c.get('user').id, action: 'admin.export_users', metadata: { rows: users.length }, ip: clientIp(c) });
   return csvResponse(
-    `work-by-kevos-users-${utcDay()}.csv`,
+    `${EXPORT_PREFIX}-users-${utcDay()}.csv`,
     csv([
       ['user_id', 'name', 'email', 'registered_at_utc', 'last_login_at_utc', 'last_active_at_utc', 'logins', 'status', 'workspaces', 'projects', 'tasks'],
       ...users.map((u) => [u.id, u.name, u.email, iso(u.registeredAt), iso(u.lastLoginAt), iso(u.lastActiveAt), u.logins, u.status, u.workspaces, u.projects, u.tasks]),
@@ -754,7 +757,7 @@ adminRoutes.get('/export/activity.csv', async (c) => {
   const rows = await all<any>(c.env.DB, `${ACTIVITY_SELECT} ${sql} ORDER BY e.created_at DESC LIMIT 50000`, ...args);
   await audit(c.env.DB, { actorId: c.get('user').id, action: 'admin.export_activity', metadata: { rows: rows.length }, ip: clientIp(c) });
   return csvResponse(
-    `work-by-kevos-activity-${utcDay()}.csv`,
+    `${EXPORT_PREFIX}-activity-${utcDay()}.csv`,
     csv([
       ['event_id', 'occurred_at_utc', 'event_type', 'user_id', 'user_email', 'workspace', 'project', 'entity_type'],
       ...rows.map((e) => [e.id, iso(e.created_at), e.event_type, e.user_id ?? '', e.user_email ?? '', e.workspace_name ?? '', e.board_name ?? '', e.entity_type ?? '']),
@@ -781,7 +784,7 @@ adminRoutes.get('/export/summary.csv', async (c) => {
   const [R, D, P, TC, TD, A] = [regs, dau, projects, tasksC, tasksD, anon].map(m);
   await audit(db, { actorId: c.get('user').id, action: 'admin.export_summary', metadata: { range }, ip: clientIp(c) });
   return csvResponse(
-    `work-by-kevos-daily-summary-${utcDay()}.csv`,
+    `${EXPORT_PREFIX}-daily-summary-${utcDay()}.csv`,
     csv([
       ['date_utc', 'registrations', 'daily_active_users', 'projects_created', 'tasks_created', 'tasks_completed', 'anonymous_page_views'],
       ...days.map((d) => [d, R.get(d) ?? 0, D.get(d) ?? 0, P.get(d) ?? 0, TC.get(d) ?? 0, TD.get(d) ?? 0, A.get(d) ?? 0]),

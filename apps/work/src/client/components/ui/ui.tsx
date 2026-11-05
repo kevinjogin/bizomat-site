@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { colorFor, initials } from '../../lib/format';
 import { PALETTE } from '../../../shared/columns';
+import { usePageTitle } from '../../lib/hooks';
 import { Icon } from './Icon';
 
 export function Avatar({ name, id, url, size }: { name: string; id: string; url?: string | null; size?: 'sm' | 'lg' }) {
@@ -63,11 +64,12 @@ export function Switch({ checked, onChange, label, disabled }: { checked: boolea
   );
 }
 
-export function ColorSwatches({ value, onChange }: { value: string; onChange: (c: string) => void }) {
+export function ColorSwatches({ value, onChange, colors = PALETTE }: { value: string; onChange: (c: string) => void; colors?: readonly string[] }) {
+  const current = value.toLowerCase();
   return (
     <div className="color-swatches" role="radiogroup" aria-label="Colour">
-      {PALETTE.map((c) => (
-        <button key={c} type="button" role="radio" aria-checked={value === c} aria-label={c} className={value === c ? 'selected' : ''} style={{ background: c }} onClick={() => onChange(c)} />
+      {colors.map((c) => (
+        <button key={c} type="button" role="radio" aria-checked={current === c.toLowerCase()} aria-label={c} className={current === c.toLowerCase() ? 'selected' : ''} style={{ background: c }} onClick={() => onChange(c)} />
       ))}
     </div>
   );
@@ -84,6 +86,7 @@ export function Field({ label, hint, error, children, htmlFor }: { label: string
 }
 
 export function PageHeader({ title, subtitle, icon, actions }: { title: ReactNode; subtitle?: ReactNode; icon?: string; actions?: ReactNode }) {
+  usePageTitle(typeof title === 'string' ? title : null);
   return (
     <div className="page-header">
       {icon ? (

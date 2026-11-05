@@ -3,7 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, get, post } from '../lib/api';
 import { useMembers, useWorkspace } from '../lib/session';
-import { useDebounced } from '../lib/hooks';
+import { useDebounced, usePageTitle } from '../lib/hooks';
 import { formatDate, mentionText, timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Field, Spinner } from '../components/ui/ui';
@@ -94,6 +94,7 @@ function toPayload(q: Query) {
 
 export default function Search() {
   const ws = useWorkspace();
+  usePageTitle('Search');
   const [params] = useSearchParams();
   const [query, setQuery] = useState<Query>(() => ({ ...EMPTY, q: params.get('q') ?? '', people: params.get('people') ? [params.get('people')!] : [] }));
   const [saveOpen, setSaveOpen] = useState(false);

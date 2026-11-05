@@ -315,7 +315,7 @@ workspaceRoutes.get('/workspaces/:ws/export', async (c) => {
   }
   await audit(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'workspace.exported', ip: clientIp(c) });
   return new Response(JSON.stringify(out), {
-    headers: { 'Content-Type': 'application/json', 'Content-Disposition': `attachment; filename="workos-export-${wsId}.json"` },
+    headers: { 'Content-Type': 'application/json', 'Content-Disposition': `attachment; filename="bizomat-workspace-export-${wsId}.json"` },
   });
 });
 

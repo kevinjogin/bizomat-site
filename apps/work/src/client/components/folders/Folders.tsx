@@ -7,6 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { FolderDTO } from '../../../shared/types';
 import { PALETTE } from '../../../shared/columns';
 import { del, errorMessage, get, patch, post } from '../../lib/api';
+import { BRAND } from '../../lib/brand';
 import { Icon } from '../ui/Icon';
 import { MenuItem, MenuSep, Modal, Popover, useConfirm, useToast } from '../ui/overlays';
 import { Field } from '../ui/ui';
@@ -14,7 +15,8 @@ import { Field } from '../ui/ui';
 export type FolderScope = FolderDTO['scope'];
 export type FolderSelection = 'all' | 'unfiled' | string;
 
-export const FOLDER_COLORS = ['#F97316', ...PALETTE.filter((c) => c.toLowerCase() !== '#f97316')];
+/** BIZOMAT teal first (the default for new folders), then the shared palette. */
+export const FOLDER_COLORS = [BRAND.defaultColor, ...PALETTE.filter((c) => c.toLowerCase() !== BRAND.defaultColor)];
 const ENTITY_MIME = 'application/x-workos-entity';
 const FOLDER_MIME = 'application/x-workos-folder';
 
@@ -23,7 +25,7 @@ export function useFolders(wsId: string, scope: FolderScope) {
 }
 
 /** Filled folder glyph in any colour. */
-export function FolderIcon({ color = '#F97316', size = 18, open }: { color?: string; size?: number; open?: boolean }) {
+export function FolderIcon({ color = BRAND.defaultColor, size = 18, open }: { color?: string; size?: number; open?: boolean }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden style={{ flex: 'none' }}>
       <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5h4.4l2 2h8.6A1.5 1.5 0 0 1 21 8.5V18a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V6.5Z" fill={color} />
@@ -100,7 +102,7 @@ function useFolderActions(wsId: string, scope: FolderScope) {
 
 export function FolderDialog({ title, initial, onSave, onClose }: { title: string; initial?: { name: string; color: string }; onSave: (name: string, color: string) => Promise<unknown>; onClose: () => void }) {
   const [name, setName] = useState(initial?.name ?? '');
-  const [color, setColor] = useState(initial?.color ?? '#F97316');
+  const [color, setColor] = useState<string>(initial?.color ?? BRAND.defaultColor);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;

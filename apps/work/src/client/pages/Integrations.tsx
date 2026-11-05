@@ -90,7 +90,7 @@ export default function Integrations() {
 
   return (
     <div className="page">
-      <PageHeader icon="plug" title="Integrations" subtitle="Connect WorkOS to the tools your team already uses. An integration is shown as connected only after a real delivery succeeds." />
+      <PageHeader icon="plug" title="Integrations" subtitle="Connect Project Management to the tools your team already uses. An integration is shown as connected only after a real delivery succeeds." />
       {list.error ? <ErrorBox error={list.error} retry={() => list.refetch()} /> : null}
       {!admin ? <div className="info-box" style={{ marginBottom: 16 }}>Only workspace admins can add or change integrations.</div> : null}
 

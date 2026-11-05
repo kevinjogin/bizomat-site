@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import { useAdmin, useRange, type Overview as OverviewData } from '../api';
 import { TimeChart } from '../charts';
 import { Card, Empty, Kpi, PageIntro, QueryState, RangeSelect, When, fmtDate, num, useTick } from '../ui';
+import { BRAND } from '../../lib/brand';
 
-const C = { brand: '#f97316', blue: '#0ea5e9', green: '#00a36c', violet: '#a855f7', slate: '#64748b' };
+const C = { brand: BRAND.colors.teal, blue: '#0ea5e9', green: '#00a36c', violet: '#a855f7', slate: '#64748b' };
 
 export default function Overview() {
   const [range, setRange] = useRange();
@@ -13,7 +14,7 @@ export default function Overview() {
     <div className="ac-stack">
       <PageIntro actions={<RangeSelect value={range} onChange={setRange} />}>
         <p className="muted">
-          Who registered, who signs in, who is using Work by KEVOS right now — from live database records.
+          Who registered, who signs in, who is using {BRAND.product} right now — from live database records.
           {q.data ? <> Updated <When ts={q.data.generatedAt} />.</> : null}
         </p>
       </PageIntro>

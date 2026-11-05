@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Creates the NEW, isolated Cloudflare resources for ONE WorkOS environment.
+# Creates the NEW, isolated Cloudflare resources for ONE environment of this app.
 #
 #   scripts/provision.sh preview       # or: dev | production
 #

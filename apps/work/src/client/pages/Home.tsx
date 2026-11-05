@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { get } from '../lib/api';
 import { canEdit, useUser, useWorkspace } from '../lib/session';
 import { timeAgo, todayISO } from '../lib/format';
+import { usePageTitle } from '../lib/hooks';
 import { Icon } from '../components/ui/Icon';
 import { ErrorBox, Spinner } from '../components/ui/ui';
 import { entityPath } from '../components/layout/AppShell';
@@ -54,6 +55,7 @@ function greeting() {
 
 export default function Home() {
   const ws = useWorkspace();
+  usePageTitle('Home');
   const user = useUser();
   const base = `/w/${ws.id}`;
   const today = todayISO();

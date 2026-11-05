@@ -43,7 +43,7 @@ Then in the repository settings:
 
 ### 2. Cloudflare API token
 
-Create a token scoped to the target account with: *Workers Scripts: Edit*, *D1: Edit*, *Workers R2 Storage: Edit*, *Workers KV Storage: Edit*, *Account Settings: Read*. Do not grant zone or DNS permissions — WorkOS does not need them.
+Create a token scoped to the target account with: *Workers Scripts: Edit*, *D1: Edit*, *Workers R2 Storage: Edit*, *Workers KV Storage: Edit*, *Account Settings: Read*. Do not grant zone or DNS permissions — the app does not need them.
 
 ### 3. Provision resources (per environment)
 

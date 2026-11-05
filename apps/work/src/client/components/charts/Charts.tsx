@@ -1,5 +1,7 @@
 // Dependency-free, accessible SVG charts. Colours come from the data (label
-// colours) or an original fallback palette; text uses theme CSS variables.
+// colours) or an original fallback palette led by BIZOMAT teal; text uses theme CSS variables.
+
+import { BRAND } from '../../lib/brand';
 
 export interface ChartDatum {
   key: string;
@@ -9,7 +11,7 @@ export interface ChartDatum {
   count?: number;
 }
 
-const FALLBACK = ['#f97316', '#5b5bd6', '#00a36c', '#f5a524', '#e5484d', '#0ea5e9', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#64748b', '#334155'];
+const FALLBACK = [BRAND.colors.teal, '#5b5bd6', '#00a36c', '#f5a524', '#e5484d', '#0ea5e9', '#a855f7', '#ec4899', '#14b8a6', '#f97316', '#84cc16', '#64748b', '#334155'];
 
 function colorOf(d: ChartDatum, i: number) {
   return d.color || FALLBACK[i % FALLBACK.length];

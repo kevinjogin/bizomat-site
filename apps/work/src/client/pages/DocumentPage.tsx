@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, del, errorMessage, get, patch, post } from '../lib/api';
 import { canEdit, useWorkspace } from '../lib/session';
-import { useLocalState } from '../lib/hooks';
+import { useLocalState, usePageTitle } from '../lib/hooks';
 import { timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { ErrorBox, Loading } from '../components/ui/ui';
@@ -131,9 +131,7 @@ function DocumentEditor({ doc, reload }: { doc: DocDetail; reload: () => Promise
     };
   }, [doc.id, qc, ws.id]);
 
-  useEffect(() => {
-    document.title = `${title || 'Untitled'} · KEVOS WorkOS`;
-  }, [title]);
+  usePageTitle(title || 'Untitled');
 
   const isFavQ = useQuery({ queryKey: ['favourites', ws.id], queryFn: () => get<any[]>(`/workspaces/${ws.id}/favourites`) });
   const isFav = !!isFavQ.data?.some((f) => f.type === 'document' && f.id === doc.id);

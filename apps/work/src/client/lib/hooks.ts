@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { BRAND, pageTitle } from './brand';
 
 // ---------------------------------------------------------------- theme
 
@@ -8,6 +9,7 @@ export type ThemePref = 'light' | 'dark' | 'system';
 export function applyTheme(pref: ThemePref) {
   const dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? BRAND.themeColor.dark : BRAND.themeColor.light);
   try {
     localStorage.setItem('workos:theme', pref);
   } catch {
@@ -120,6 +122,14 @@ export function useBoardRealtime(boardId: string | undefined, selfId: string) {
     };
   }, [boardId, selfId, qc]);
   return connected;
+}
+
+/** Sets the browser tab title: "<parts> · BIZOMAT Project Management". Pass nothing while data is loading. */
+export function usePageTitle(...parts: (string | null | undefined)[]) {
+  const title = parts.some(Boolean) ? pageTitle(...parts) : null;
+  useEffect(() => {
+    if (title) document.title = title;
+  }, [title]);
 }
 
 export function useDebounced<T>(value: T, ms = 250): T {
