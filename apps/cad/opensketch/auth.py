@@ -346,7 +346,9 @@ Google sign-in step and is removed after it.</li>
 <li><b>Work in passing:</b> while your assistant works, the commands it sends and the shapes SOLIDWORKS sends back (for
 example a STEP copy of a part, to measure and check it) pass through this service. They are held in memory or for a short
 time to do that work, then dropped. Files you upload for import are deleted once imported, or after 30 minutes. Your
-SOLIDWORKS files are saved on your computer.</li></ul>
+SOLIDWORKS files are saved on your computer.</li>
+<li><b>A problem log:</b> when a request fails or takes unusually long, the server's log notes when, which page (without
+any key in it), the account and the address the request came from, so the problem can be found.</li></ul>
 <p>These pages load nothing from other sites: the fonts and pictures come from this service, so opening them tells no one
 else that you visited.</p></section>
 <section id="google"><h2>Sign in with Google</h2>

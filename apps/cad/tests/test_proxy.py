@@ -157,6 +157,8 @@ def test_the_problem_log_names_the_real_client(capsys):
                      "headers": [(b"x-forwarded-for", b"203.0.113.9")]}, None, send))
     out = capsys.readouterr().out.splitlines()
     assert "-> 503" in out[0] and "from 203.0.113.9" in out[0] and f"from {DIRECT[0]}" in out[1]
+    # the privacy notice says so
+    assert "A problem log" in TestClient(server.app).get("/privacy").text
 
 
 # ----------------------------------------------------------------------------- listening on :: and the health check
