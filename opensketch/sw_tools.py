@@ -1047,7 +1047,7 @@ def _standard_step(kind: str, size: str, length: float | None) -> tuple[dict, by
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
 async def sw_list_devices() -> CallToolResult:
-    """The user's registered computers (KEVOS Bridge): name, online, the default one, and per computer the
+    """The user's paired computers (CADOS for SOLIDWORKS): name, online, the default one, and per computer the
     SOLIDWORKS sessions running there (version, add-in version, documents open, busy, ready). Pass a computer's
     name as `device` to any sw_ tool when more than one is online."""
     from . import devicebridge

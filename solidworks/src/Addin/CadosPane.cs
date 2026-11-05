@@ -87,14 +87,14 @@ namespace OpenSketch.Sw
         public const string VerifyPrompt = "Check the CADOS connection to SOLIDWORKS.";
         public const string SelfTestPrompt = "Run the SOLIDWORKS self test, all three stages.";
 
-        static readonly Color Ink = Color.FromArgb(22, 24, 29);
-        static readonly Color Ink2 = Color.FromArgb(74, 79, 89);
-        static readonly Color Ink3 = Color.FromArgb(107, 113, 124);
-        static readonly Color Line = Color.FromArgb(233, 229, 223);
-        static readonly Color Warm = Color.FromArgb(250, 248, 245);
-        static readonly Color Orange = Color.FromArgb(244, 123, 32);
-        static readonly Color OrangeButton = Color.FromArgb(191, 85, 11);
-        static readonly Color Ok = Color.FromArgb(21, 128, 61);
+        static readonly Color Ink = Color.FromArgb(28, 27, 25);          // KEVOS ink #1c1b19
+        static readonly Color Ink2 = Color.FromArgb(63, 61, 57);
+        static readonly Color Ink3 = Color.FromArgb(105, 102, 95);       // KEVOS muted #69665f
+        static readonly Color Line = Color.FromArgb(232, 231, 228);
+        static readonly Color Warm = Color.FromArgb(251, 250, 247);       // KEVOS paper #fbfaf7
+        static readonly Color Orange = Color.FromArgb(255, 106, 19);     // KEVOS logo orange #ff6a13
+        static readonly Color OrangeButton = Color.FromArgb(194, 65, 12); // KEVOS accent #c2410c
+        static readonly Color Ok = Color.FromArgb(31, 107, 69);
         static readonly Color Idle = Color.FromArgb(138, 144, 154);
 
         readonly Host host;
@@ -327,7 +327,7 @@ namespace OpenSketch.Sw
             b.BackColor = primary ? OrangeButton : Color.White;
             b.ForeColor = primary ? Color.White : Ink;
             b.FlatAppearance.BorderColor = primary ? OrangeButton : Color.FromArgb(217, 212, 204);
-            b.FlatAppearance.MouseOverBackColor = primary ? Color.FromArgb(169, 73, 10) : Warm;
+            b.FlatAppearance.MouseOverBackColor = primary ? Color.FromArgb(154, 52, 18) : Warm;
         }
 
         static Label Section(string text) => new Label
@@ -358,7 +358,7 @@ namespace OpenSketch.Sw
 
         static LinkLabel Link(string text, Action go)
         {
-            var l = new LinkLabel { Text = text, AutoSize = true, LinkColor = Color.FromArgb(180, 79, 10), ActiveLinkColor = Ink, LinkBehavior = LinkBehavior.HoverUnderline };
+            var l = new LinkLabel { Text = text, AutoSize = true, LinkColor = Color.FromArgb(194, 65, 12), ActiveLinkColor = Ink, LinkBehavior = LinkBehavior.HoverUnderline };
             l.LinkClicked += (s, e) => Safe(go);
             return l;
         }
@@ -383,14 +383,14 @@ namespace OpenSketch.Sw
                     using (var by = new Font("Segoe UI", 11f, GraphicsUnit.Pixel))
                     using (var ink = new SolidBrush(Ink))
                     using (var grey = new SolidBrush(Ink3))
-                    using (var orange = new SolidBrush(Orange))
+                    using (var accent = new SolidBrush(OrangeButton))
                     {
                         var w = g.MeasureString("CADOS", f).Width;
                         g.DrawString("CADOS", f, ink, 0, 4);
                         var x = w + 6;
                         g.DrawString("by", by, grey, x, 8);
                         using (var bold = new Font(by, FontStyle.Bold))
-                            g.DrawString("KEVOS", bold, orange, x + g.MeasureString("by", by).Width - 2, 8);
+                            g.DrawString("KEVOS", bold, accent, x + g.MeasureString("by", by).Width - 2, 8);
                     }
                 }
                 catch (Exception)
@@ -415,7 +415,7 @@ namespace OpenSketch.Sw
             public Dot()
             {
                 DoubleBuffered = true;
-                BackColor = Color.FromArgb(250, 248, 245);
+                BackColor = Color.FromArgb(251, 250, 247);
             }
 
             protected override void OnPaint(PaintEventArgs e)

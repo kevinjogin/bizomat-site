@@ -118,9 +118,11 @@ def test_home_page_and_its_api(app):
         assert "OpenSketch" not in page.text, path
     login = anon.get("/login").text
     assert "Turn engineering intent into CAD." in login and "CADOS" in login and "manifest" not in login
-    for path in ("/", "/dashboard", "/solidworks"):
+    for path in ("/", "/dashboard"):
         page = owner.get(path)
-        assert page.status_code == 200 and "Dashboard" in page.text and "/api/solidworks" in page.text
+        assert page.status_code == 200 and "Engineering, made intelligent." in page.text and "/ui/app.js" in page.text
+    assert "Your SOLIDWORKS connection." in owner.get("/solidworks").text  # the SOLIDWORKS section (was the dashboard)
+    assert "/api/solidworks" in TestClient(server.app).get("/ui/app.js").text  # the pages read the same API as before
     assert "Sign out" in owner.get("/dashboard").text and "Dashboard" in owner.get("/overview").text
     d = owner.get("/api/solidworks").json()
     assert d["key"].startswith("oss_") and d["status"] == {"connected": False} and d["signin"] is True
@@ -138,7 +140,8 @@ def test_home_page_and_its_api(app):
 def test_only_connector_routes():
     owner = _owner()
     allowed = ("/healthz", "/api/account", "/api/sw", "/api/solidworks", "/api/connect/", "/mcp", "/solidworks",
-               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/dashboard", "/overview", "/download/")
+               "/.well-known/", "/oauth/", "/openapi.json", "/docs", "/dashboard", "/overview", "/download/",
+               "/assistant", "/tools", "/history", "/settings")
     paths = [getattr(r, "path", "") for r in server.app.routes]
     assert [p for p in paths if p not in ("/", "") and not p.startswith(allowed)] == []
     for path in ("/api/docs", "/api/features", "/api/version", "/sw.js", "/manifest.webmanifest", "/js/app.js",

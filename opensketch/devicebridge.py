@@ -893,6 +893,27 @@ def command_record(user: dict | None, command_id: str) -> dict:
     return out
 
 
+def recent_commands(user: dict | None, limit: int = 50) -> list[dict]:
+    """This person's latest commands to their paired computers, newest first, for the History page. Only what the
+    record holds: the tool, the computer, the AI app, the state and, when it failed, the error's code and message."""
+    from . import catalog
+    rows = _q("SELECT c.id, c.tool, c.op, c.status, c.created, c.updated, c.client, c.error, d.name AS device "
+              "FROM commands c LEFT JOIN devices d ON d.id = c.device_id WHERE c.owner = ? ORDER BY c.created DESC LIMIT ?",
+              (person_id(user), max(1, min(int(limit), 200))))
+    out = []
+    for r in rows:
+        item = {"id": r["id"], "tool": r["tool"], "title": catalog.title(r["tool"]), "op": r["op"], "status": r["status"],
+                "created_at": iso(r["created"]), "updated_at": iso(r["updated"]), "device": r["device"], "app": r["client"]}
+        if r["error"]:
+            try:
+                e = json.loads(r["error"])
+                item["error"] = {"code": e.get("code"), "message": str(e.get("message") or "")[:400]}
+            except (ValueError, AttributeError):
+                pass
+        out.append(item)
+    return out
+
+
 # ----------------------------------------------------------------------------- the device side
 
 def _session_for(rec: dict, sid: str) -> DeviceSession:
@@ -1370,6 +1391,12 @@ def _user(request: Request):
 @router.get("/api/devices")
 def api_devices(request: Request):
     return {"devices": list_devices(_user(request))}
+
+
+@router.get("/api/commands")
+def api_commands(request: Request, limit: int = 50):
+    """The signed-in person's recent commands (the app's History and Home pages)."""
+    return {"commands": recent_commands(_user(request), limit)}
 
 
 @router.post("/api/devices/{device_id}")

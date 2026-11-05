@@ -141,7 +141,7 @@ namespace OpenSketch.Sw
             for (var k = 0; k < Sizes.Length; k++)
             {
                 var s = Sizes[k];
-                var path = Path.Combine(IconDir, (main ? "cados_main_" : "cados_buttons_") + s + ".png");
+                var path = Path.Combine(IconDir, (main ? "cados2_main_" : "cados2_buttons_") + s + ".png");
                 if (!File.Exists(path))
                 {
                     var glyphs = main ? new[] { "C" } : Array.ConvertAll(Buttons, b => b.glyph);
@@ -154,7 +154,7 @@ namespace OpenSketch.Sw
                         for (var i = 0; i < glyphs.Length; i++)
                         {
                             var r = new RectangleF(i * s + s * 0.06f, s * 0.06f, s * 0.88f, s * 0.88f);
-                            using (var bg = new SolidBrush(Color.FromArgb(244, 123, 32)))   // KEVOS orange
+                            using (var bg = new SolidBrush(Color.FromArgb(194, 65, 12)))   // KEVOS accent #c2410c (white glyphs readable on it)
                             using (var path2 = Rounded(r, s * 0.2f))
                                 g.FillPath(bg, path2);
                             using (var f = new Font("Segoe UI", s * 0.5f, FontStyle.Bold, GraphicsUnit.Pixel))

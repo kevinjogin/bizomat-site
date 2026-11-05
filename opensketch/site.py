@@ -125,7 +125,7 @@ def landing(signed_in: bool = False, base: str = "") -> bytes:
 {brand.header("product", signed_in)}
 <main id="main">
 <section class="hero"><div class="container hero-grid">
-<div><span class="eyebrow">{brand.TAGLINE}</span><h1>{brand.HEADLINE}</h1>
+<div><span class="eyebrow">Intelligence by KEVOS</span><h1>{brand.HEADLINE}</h1>
 <p class="lead">Connect your AI assistant to your CAD environment. Create, modify and automate engineering models in
 natural language, while your design files stay in your own workflow.</p>
 <div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download CADOS for SOLIDWORKS</a>
@@ -198,7 +198,7 @@ access: the integration is being validated on more SOLIDWORKS installations.</p>
 <ol class="grid grid-2 steps">
 <li><h3>Install CADOS for SOLIDWORKS</h3><p>Run the Windows installer on the computer that runs SOLIDWORKS.</p></li>
 <li><h3>Open SOLIDWORKS and activate CADOS</h3><p>Pair the computer with your account. The CADOS tab and task pane appear in SOLIDWORKS.</p></li>
-<li><h3>Connect your AI assistant</h3><p>Copy the connector address from your dashboard into your assistant and sign in.</p></li>
+<li><h3>Connect your AI assistant</h3><p>Copy the connector address from the CAD Assistant page into your assistant and sign in.</p></li>
 <li><h3>Verify the connection</h3><p>Your dashboard shows each part of the connection live.</p></li>
 <li><h3>Run the guided self test</h3><p>One prompt checks sketches, features, an assembly and a drawing on that computer.</p></li></ol>
 <div class="cta-band" style="margin-top:var(--s-7)"><div><h2>Bring your AI assistant into SOLIDWORKS.</h2>
@@ -227,12 +227,12 @@ def docs(signed_in: bool = False, base: str = "") -> bytes:
         ("Waiting for the CADOS add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick CADOS under Active and Start Up. Do not run SOLIDWORKS as administrator."),
         ("No CADOS tab, menu or task pane in SOLIDWORKS", "As above. If it is still missing, repair the installation: Windows Settings > Apps > CADOS for SOLIDWORKS > Modify > Repair."),
         ("Windows says it protected your PC when you open the installer", "The early access installer is not code-signed yet. Check that you downloaded it from this site, then choose More info > Run anyway, or ask your IT team."),
-        ("The assistant says several computers are connected", "Name the computer in your request, or set a default computer on your dashboard."),
+        ("The assistant says several computers are connected", "Name the computer in your request, or set a default computer on the SOLIDWORKS page."),
         ("The assistant says SOLIDWORKS has a dialog box open", "Close the dialog box in SOLIDWORKS, then ask again."),
         ("The assistant says a sketch is open for editing", "Exit the sketch in SOLIDWORKS, then ask again."),
         ("The assistant says the person at this computer declined", "A destructive change was declined, or nobody answered within two minutes. Ask again and choose Allow once."),
         ("The assistant says it is still working", "Long operations finish by themselves. The assistant can follow them with sw_command_status."),
-        ("The assistant cannot sign in to CADOS", "Remove the connector in your assistant and add it again. If it still fails, use the private address from your dashboard."),
+        ("The assistant cannot sign in to CADOS", "Remove the connector in your assistant and add it again. If it still fails, use the private address in Settings."),
     ]
     rows = "".join(f"<tr><td>{a}</td><td>{b}</td></tr>" for a, b in trouble)
     html = f"""{brand.head("Documentation", "Install CADOS, connect your AI assistant to SOLIDWORKS, verify the connection and fix common problems.", path="/docs", index=True, base=base)}<body>
@@ -307,26 +307,25 @@ and follow the work in SOLIDWORKS and in the task pane.</p>
 sure SOLIDWORKS is not running as administrator.</div></div></section>
 
 <section id="connect"><h2>Connect your AI assistant</h2>
-<p>Your dashboard shows your connector address. It ends in <code>/mcp</code>. Add it to your assistant once.</p>
+<p>The <a href="/assistant">CAD Assistant</a> page shows your connector address. It ends in <code>/mcp</code>. Add it to your assistant once.</p>
 <h3>Claude</h3><ol><li>Open Settings &gt; Connectors and choose Add custom connector.</li><li>Give it a name, such as CADOS, and paste the connector address.</li>
 <li>Choose Connect. CADOS opens: sign in and choose Allow.</li></ol>
 <h3>ChatGPT</h3><p>Where your plan allows custom connectors, add a connector with the same address and sign in when CADOS
 asks. Your workspace administrator may need to allow custom connectors first.</p>
 <h3>Other assistants and Claude Desktop</h3><p>Any client that supports remote MCP servers over Streamable HTTP can use
-the connector address. If a client cannot sign in, use the private address on your dashboard (under "Assistant cannot
-sign in?"). Treat the private address like a password.</p></section>
+the connector address. If a client cannot sign in, use the private address in <a href="/settings">Settings</a>. Treat the private address like a password.</p></section>
 
 <section id="auth"><h2>Authentication</h2>
 <div class="table-wrap"><table><thead><tr><th>Who</th><th>How it signs in</th><th>How to revoke</th></tr></thead><tbody>
 <tr><td>You</td><td>Email and password, or Google where your administrator turned it on.</td><td>Sign out. An administrator can remove an account.</td></tr>
-<tr><td>AI assistants</td><td>OAuth 2.1 with PKCE. You approve each assistant on a CADOS consent page.</td><td>Disconnect it on your dashboard.</td></tr>
-<tr><td>Private address</td><td>A secret key in the address itself, for clients without sign-in.</td><td>Make a new address on your dashboard. The old one stops at once.</td></tr>
-<tr><td>Your computers</td><td>A pairing code you confirm, then a key held in the Windows key store. Every request is signed.</td><td>Remove the computer on your dashboard.</td></tr>
-<tr><td>Direct add-in link</td><td>An add-in key you paste into SOLIDWORKS (only without the installer).</td><td>Make a new key on your dashboard.</td></tr>
+<tr><td>AI assistants</td><td>OAuth 2.1 with PKCE. You approve each assistant on a CADOS consent page.</td><td>Disconnect it on the CAD Assistant page.</td></tr>
+<tr><td>Private address</td><td>A secret key in the address itself, for clients without sign-in.</td><td>Make a new address in Settings. The old one stops at once.</td></tr>
+<tr><td>Your computers</td><td>A pairing code you confirm, then a key held in the Windows key store. Every request is signed.</td><td>Remove the computer on the SOLIDWORKS page.</td></tr>
+<tr><td>Direct add-in link</td><td>An add-in key you paste into SOLIDWORKS (only without the installer).</td><td>Make a new key in Settings.</td></tr>
 </tbody></table></div></section>
 
 <section id="verify"><h2>Verify the connection</h2>
-<p>Your dashboard shows the state of each part: <b>Connected</b>, <b>Disconnected</b>, <b>Checking connection</b>,
+<p>Your CADOS Home shows the state of each part: <b>Connected</b>, <b>Disconnected</b>, <b>Checking connection</b>,
 <b>Installation required</b> or <b>Connection error</b>. It updates every few seconds while the page is open.</p>
 <p>Then ask your assistant:</p><div class="prompt"><span>Check the CADOS connection to SOLIDWORKS.</span></div>
 <p>It calls <code>sw_status</code> and tells you which computer and which SOLIDWORKS version it reached.</p></section>
@@ -338,9 +337,9 @@ sign in?"). Treat the private address like a password.</p></section>
 time, and reports each step as ok, check or failed with the reason. Close or delete the test files when it is done.</p></section>
 
 <section id="computers"><h2>Several computers</h2>
-<p>Install and pair each computer the same way. Each one gets its own key. Your dashboard lists them: set a default or
+<p>Install and pair each computer the same way. Each one gets its own key. The SOLIDWORKS page lists them: set a default or
 remove one. When more than one is online, tell your assistant which to use, for example "on DESK-02".</p>
-<p><b>New or lost computer:</b> remove the old one on your dashboard. It stops working at once. Then install and pair
+<p><b>New or lost computer:</b> remove the old one on the SOLIDWORKS page. It stops working at once. Then install and pair
 the new one. Nothing needs to be copied.</p></section>
 
 <section id="update"><h2>Update and uninstall</h2>
@@ -348,7 +347,7 @@ the new one. Nothing needs to be copied.</p></section>
 you agree. You can also run a newer installer over the old one. Settings and the pairing are kept.</li>
 <li><b>Repair:</b> Windows Settings &gt; Apps &gt; CADOS for SOLIDWORKS &gt; Modify &gt; Repair.</li>
 <li><b>Uninstall:</b> Windows Settings &gt; Apps &gt; CADOS for SOLIDWORKS &gt; Uninstall. To also take the computer off your
-account, first use Start &gt; KEVOS &gt; Remove this computer from CADOS, or remove it on your dashboard.</li></ul>
+account, first use Start &gt; KEVOS &gt; Remove this computer from CADOS, or remove it on the SOLIDWORKS page.</li></ul>
 <p>Versions up to 0.11 were called KEVOS Bridge. CADOS for SOLIDWORKS upgrades them in place.</p></section>
 
 <section id="troubleshooting"><h2>Troubleshooting</h2>
@@ -370,14 +369,27 @@ when you agree.</li>
 your model. Your model files are saved on your computer. See the <a href="/privacy">privacy notice</a>.</li></ul></section>
 
 <section id="manual"><h2>Install without the installer</h2>
-<p>For development, or a computer where you cannot run the installer: download the add-in package from your dashboard
-(Manual installation), unzip it, run the setup program in the folder and choose Install for me. It installs the same
+<p>For development, or a computer where you cannot run the installer: download the add-in package from the SOLIDWORKS page
+(Direct link and manual installation), unzip it, run the setup program in the folder and choose Install for me. It installs the same
 CADOS add-in for your Windows user only. Then, in SOLIDWORKS, open CADOS &gt; Status and paste the address and the add-in
-key from your dashboard. This route links one SOLIDWORKS session directly, without the Companion.</p>
+key from Settings. This route links one SOLIDWORKS session directly, without the Companion.</p>
 <p>Where SOLIDWORKS does not list add-ins installed without administrator rights, the package also writes a launcher
 macro in your Documents folder (the setup program shows where). It is not the add-in: it only starts the installed CADOS
 add-in from Tools &gt; Macro &gt; Run.</p>
 <h3>Individual macros</h3><p>CADOS does not offer macro downloads. Everything CADOS does runs through the add-in.</p></section>
 </article></div></main>
+{brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
+    return html.encode()
+
+
+def not_found(signed_in: bool = False, base: str = "") -> bytes:
+    """The page a browser gets for an address that does not exist (API paths keep their JSON 404)."""
+    home = "/dashboard" if signed_in else "/"
+    html = f"""{brand.head("Page not found", "This page does not exist on CADOS by KEVOS.", path="/404", base=base)}<body>
+{brand.header("", signed_in)}
+<main id="main" class="doc-hero" style="min-height:60vh"><div class="container"><span class="eyebrow">404</span><h1>This page does not exist.</h1>
+<p>The address may be mistyped, or the page has moved.</p>
+<div class="hero-cta"><a class="btn btn-primary" href="{home}">{"Go to your dashboard" if signed_in else "Go to the CADOS home page"}</a>
+<a class="btn btn-secondary" href="/docs">Documentation</a></div></div></main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
     return html.encode()
