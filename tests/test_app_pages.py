@@ -158,3 +158,51 @@ def test_sign_in_pages_say_cados_and_returning_people_go_straight_back(monkeypat
     r = owner.post("/login", data={"email": "owner@example.com", "password": "correct horse", "next": "/dashboard"},
                    follow_redirects=False)
     assert r.status_code == 303 and r.headers["location"] == "/dashboard"
+
+
+def test_a_new_account_gets_a_suggested_password_or_its_own_and_the_owner_sees_who_chose_it():
+    """Sign-up forms come with a strong password filled in (dots, with Show). Keeping it shows it once more on Home after
+    sign-in; typing one's own shows nothing. The Admin page says who chose each password, never the password."""
+    import re
+    anon = TestClient(server.app)
+    page = anon.get("/setup").text
+    pw = re.search(r'name="new_password" type="password" autocomplete="new-password" value="([^"]+)"', page).group(1)
+    assert len(pw) >= 16 and f'name="suggested" value="{pw}"' in page and "pw-show" in page
+    assert pw != re.search(r'name="suggested" value="([^"]+)"', anon.get("/setup").text).group(1)  # new one each time
+    owner = TestClient(server.app)
+    owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": pw, "suggested": pw, "next": "/"})
+    assert owner.get("/api/account/new-password").json()["password"] == pw  # shown on Home
+    assert TestClient(server.app).get("/api/account/new-password").status_code == 401  # nobody else
+    assert owner.delete("/api/account/new-password").status_code == 200
+    assert owner.get("/api/account/new-password").json()["password"] is None  # once only
+
+    # the owner adds Pat with a password: "Set by you", and Pat is asked to choose their own
+    r = owner.post("/api/account/users", json={"email": "pat@example.com", "name": "Pat", "password": "given-pass-1"})
+    pat_id = r.json()["user"]["id"]
+    pat = TestClient(server.app)
+    pat.post("/login", data={"email": "pat@example.com", "password": "given-pass-1", "next": "/"})
+    assert pat.get("/api/solidworks").json()["user"]["password_by"] == "owner"
+    assert pat.get("/api/account/new-password").json()["password"] is None
+    assert 'id="ownerpw"' in pat.get("/dashboard").text
+    people = {p["email"]: p for p in owner.get("/api/admin/people").json()["people"]}
+    assert people["owner@example.com"]["password_by"] == "suggested" and people["pat@example.com"]["password_by"] == "owner"
+    assert people["pat@example.com"]["password_at"] > 0
+    assert not any(k in p for p in people.values() for k in ("hash", "salt", "password"))
+    assert "given-pass-1" not in owner.get("/api/admin/people").text
+
+    # Pat chooses their own in Settings
+    assert pat.post("/api/account", json={"current_password": "given-pass-1", "new_password": "pats-own-pass"}).status_code == 200
+    people = {p["email"]: p for p in owner.get("/api/admin/people").json()["people"]}
+    assert people["pat@example.com"]["password_by"] == "self"
+    # an owner reset is "Set by you" again
+    owner.post(f"/api/account/users/{pat_id}/password", json={"password": "reset-pass-9"})
+    assert {p["email"]: p for p in owner.get("/api/admin/people").json()["people"]}["pat@example.com"]["password_by"] == "owner"
+
+    # an invited person who types their own password gets no notice
+    url = owner.post("/api/account/invites", json={"note": "Sam"}).json()["url"]
+    token = url.rsplit("/join/", 1)[1]
+    sam = TestClient(server.app)
+    offered = re.search(r'name="suggested" value="([^"]+)"', sam.get(f"/join/{token}").text).group(1)
+    sam.post(f"/join/{token}", data={"name": "Sam", "email": "sam@example.com", "new_password": "sams-own-pass", "suggested": offered})
+    assert sam.get("/api/account/new-password").json()["password"] is None
+    assert {p["email"]: p for p in owner.get("/api/admin/people").json()["people"]}["sam@example.com"]["password_by"] == "self"

@@ -151,7 +151,17 @@ def _sha(token: str) -> str:
 
 def public(u: dict) -> dict:
     return {"id": u["id"], "email": u["email"], "name": u["name"], "role": u["role"], "created": u.get("created"),
-            "google": bool(u.get("google")), "has_password": bool(u.get("hash")), "tester": u["role"] == "tester"}
+            "google": bool(u.get("google")), "has_password": bool(u.get("hash")), "tester": u["role"] == "tester",
+            # who chose the password (never the password itself: only its one-way hash is kept): "self" (the person),
+            # "suggested" (the person kept the one CADOS filled in), "owner" (set on the Admin page); None if unrecorded
+            "password_by": u.get("pw_by") if u.get("hash") else None, "password_at": u.get("pw_at") if u.get("hash") else None}
+
+
+PASSWORD_BY = ("self", "suggested", "owner")
+
+
+def _stamp(u: dict, by: str) -> None:
+    u["pw_by"], u["pw_at"] = (by if by in PASSWORD_BY else "self"), int(time.time())
 
 
 def any_users() -> bool:
@@ -190,7 +200,8 @@ def _check_new(email: str, name: str, password: str | None, data: dict, me: str 
     return email, name or email.split("@")[0]
 
 
-def _new_user(email: str, name: str, password: str | None, role: str, google: str | None = None, verified: bool = False) -> dict:
+def _new_user(email: str, name: str, password: str | None, role: str, google: str | None = None, verified: bool = False,
+              by: str = "self") -> dict:
     """A password of None (Google sign-up) stores no usable password until the person sets one. verified: the
     email is proven (Google said so, or the owner set the server up); typed emails are not."""
     salt = secrets.token_bytes(16)
@@ -199,17 +210,19 @@ def _new_user(email: str, name: str, password: str | None, role: str, google: st
          "email_verified": bool(verified or google)}
     if google:
         u["google"] = google
+    if password:
+        _stamp(u, by)
     return u
 
 
-def create_owner(email: str, name: str, password: str) -> dict:
+def create_owner(email: str, name: str, password: str, by: str = "self") -> dict:
     """The first account. Refused once any account exists."""
     with _lock:
         data = _edit()
         if data["users"]:
             raise AccountError("CADOS is already set up. Sign in instead.")
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "owner", verified=True)
+        u = _new_user(email, name, password, "owner", verified=True, by=by)
         data["users"].append(u)
         _write("users.json", data)
         return public(u)
@@ -225,7 +238,7 @@ def verify(email: str, password: str) -> dict | None:
     return None
 
 
-def set_password(user_id: str, new: str, current: str | None = None) -> None:
+def set_password(user_id: str, new: str, current: str | None = None, by: str = "self") -> None:
     """Change a password. With `current`, it must match (the account page); without, the caller checked
     the right to reset it (the server password). Signs the person out everywhere: every session, every AI app
     that signed in, and their private AI address (a new one is made)."""
@@ -240,6 +253,7 @@ def set_password(user_id: str, new: str, current: str | None = None) -> None:
             raise AccountError("The current password is wrong.")
         salt = secrets.token_bytes(16)
         u["salt"], u["hash"] = salt.hex(), _hash(new, salt)
+        _stamp(u, by)
         u["mcp_n"] = int(u.get("mcp_n", 0)) + 1
         _write("users.json", data)
     end_sessions(user_id)
@@ -322,7 +336,7 @@ def invite_valid(token: str) -> bool:
     return any(hmac.compare_digest(i["hash"], h) and i["expires"] > now for i in _users()["invites"])
 
 
-def accept_invite(token: str, email: str, name: str, password: str | None, google: str | None = None) -> dict:
+def accept_invite(token: str, email: str, name: str, password: str | None, google: str | None = None, by: str = "self") -> dict:
     with _lock:
         data = _edit()
         now = int(time.time())
@@ -331,7 +345,7 @@ def accept_invite(token: str, email: str, name: str, password: str | None, googl
         if inv is None:
             raise AccountError("This invite link has expired or was already used. Ask for a new one.")
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "member", google)
+        u = _new_user(email, name, password, "member", google, by=by)
         data["users"].append(u)
         data["invites"] = [i for i in data["invites"] if i is not inv]
         _write("users.json", data)
@@ -346,7 +360,7 @@ def create_member(email: str, name: str, password: str) -> dict:
     with _lock:
         data = _edit()
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "member")
+        u = _new_user(email, name, password, "member", by="owner")
         data["users"].append(u)
         _write("users.json", data)
         return public(u)
@@ -513,6 +527,7 @@ def keep_tester(user_id: str, email: str, name: str, password: str | None, googl
         else:
             salt = secrets.token_bytes(16)
             u["salt"], u["hash"], u["email_verified"] = salt.hex(), _hash(password, salt), False
+            _stamp(u, "self")
         _write("users.json", data)
         return public(u)
 
@@ -529,7 +544,7 @@ def remove_testers() -> list[str]:
     return gone
 
 
-def sign_up(email: str, name: str, password: str | None, google: str | None = None) -> dict:
+def sign_up(email: str, name: str, password: str | None, google: str | None = None, by: str = "self") -> dict:
     """A new member without an invite: only when the owner turned on open sign-up."""
     with _lock:
         data = _edit()
@@ -538,7 +553,7 @@ def sign_up(email: str, name: str, password: str | None, google: str | None = No
         if not data.get("settings", {}).get("open_signup"):
             raise AccountError("This server is invite-only. Ask the owner for an invite link.")
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "member", google)
+        u = _new_user(email, name, password, "member", google, by=by)
         data["users"].append(u)
         _write("users.json", data)
         return public(u)

@@ -381,13 +381,72 @@ def _access_closed_page() -> bytes:
     return page.replace(b'method="post" action="/login"', b'method="get" action="/login"').replace(b'<input type="hidden" name="next" value="/">', b"")
 
 
+# A new account's password: CADOS fills in a strong one (shown as dots, with Show), the person keeps it or types
+# their own. A kept one is shown to them once more after sign-in (hold_new_password), as only its hash is stored.
+_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"
+SHOW_SCRIPT = ("<script>document.querySelectorAll('.pw-show').forEach(function(b){b.addEventListener('click',function(){"
+               "var i=document.getElementById(b.getAttribute('aria-controls'));var s=i.type==='password';i.type=s?'text':'password';"
+               "b.textContent=s?'Hide':'Show';b.setAttribute('aria-pressed',String(s));});});</script>")
+
+
+def suggest_password() -> str:
+    raw = "".join(secrets.choice(_ALPHABET) for _ in range(16))
+    return "-".join(raw[i:i + 4] for i in range(0, 16, 4))
+
+
+def _new_password_field() -> str:
+    pw = suggest_password()
+    return ('<label for="new_password">Password</label><div class="pw-row">'
+            f'<input id="new_password" name="new_password" type="password" autocomplete="new-password" value="{pw}" minlength="8"'
+            ' required spellcheck="false" aria-describedby="new_password-note">'
+            '<button class="pw-show" type="button" aria-controls="new_password" aria-pressed="false">Show</button></div>'
+            f'<input type="hidden" name="suggested" value="{pw}">'
+            '<div class="note" id="new_password-note">We filled in a strong password for you. Keep it, or type your own '
+            '(at least 8 characters). If you keep it, CADOS shows it to you once after you sign in.</div>')
+
+
+def _password_by(form: dict) -> str:
+    """"suggested" when the person kept the password CADOS filled in, else "self"."""
+    given, offered = form.get("new_password", ""), form.get("suggested", "")
+    return "suggested" if given and offered and hmac.compare_digest(given.encode(), offered.encode()) else "self"
+
+
+_NEW_PASSWORDS: dict[str, tuple[str, float]] = {}  # session hash -> (kept suggested password, until); memory only
+NEW_PASSWORD_MINUTES = 30
+
+
+def hold_new_password(session: str, pw: str) -> None:
+    import time
+    from . import accounts
+    now = time.time()
+    for k in [k for k, (_, until) in _NEW_PASSWORDS.items() if until < now]:
+        del _NEW_PASSWORDS[k]
+    if len(_NEW_PASSWORDS) < 1000:
+        _NEW_PASSWORDS[accounts._sha(session)] = (pw, now + NEW_PASSWORD_MINUTES * 60)
+
+
+def new_password_for(scope, drop: bool = False) -> str | None:
+    """The suggested password this browser's new account kept, for the one-time notice after sign-in."""
+    import time
+    from . import accounts
+    tok = _cookie(scope, ACCOUNT_COOKIE)
+    if not tok:
+        return None
+    k = accounts._sha(tok)
+    pw, until = _NEW_PASSWORDS.get(k, (None, 0))
+    if drop or until < time.time():
+        _NEW_PASSWORDS.pop(k, None)
+        return None
+    return pw
+
+
 def _signup_page(nxt="/", error="", form=None):
     form = form or {}
     return _page("Create an account", "Create your CADOS account.", "/signup",
                  [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                   _field("email", "Email", "email", "username", False, form.get("email", "")),
-                  _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")],
-                 "Create account", nxt, error, '<div class="links"><a href="/login">I already have an account</a></div>',
+                  _new_password_field()],
+                 "Create account", nxt, error, '<div class="links"><a href="/login">I already have an account</a></div>' + SHOW_SCRIPT,
                  _google_block(nxt, label="Sign up with Google"))
 
 
@@ -395,12 +454,12 @@ def _setup_page(nxt, error="", form=None):
     form = form or {}
     f = [_field("name", "Your name", "text", "name", True, form.get("name", "")),
          _field("email", "Email", "email", "username", False, form.get("email", "")),
-         _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")]
+         _new_password_field()]
     if password():
         f.append(_field("server_password", "Server password", "password", "off",
                         note="The password set on the server when CADOS was installed. It proves you run this server."))
     return _page("Set up CADOS", "Create the administrator account. This page shows only once: after this, everyone signs in with their email and password.", "/setup", f,
-                 "Create account", nxt, error)
+                 "Create account", nxt, error, SHOW_SCRIPT)
 
 
 def _join_page(token, error="", form=None):
@@ -408,8 +467,8 @@ def _join_page(token, error="", form=None):
     return _page("Join CADOS", "You were invited to CADOS. Create your account.",
                  f"/join/{quote(token)}", [_field("name", "Your name", "text", "name", True, form.get("name", "")),
                                            _field("email", "Email", "email", "username", False, form.get("email", "")),
-                                           _field("new_password", "Password", "password", "new-password", note="At least 8 characters.")],
-                 "Create account", "/", error, '<div class="links"><a href="/login">I already have an account</a></div>',
+                                           _new_password_field()],
+                 "Create account", "/", error, '<div class="links"><a href="/login">I already have an account</a></div>' + SHOW_SCRIPT,
                  _google_block("/", token, "Join with Google"))
 
 
@@ -449,6 +508,15 @@ def _secure(scope) -> str:
 
 def _set_account_cookie(scope, token: str) -> bytes:
     return (f"{ACCOUNT_COOKIE}={token}; Path=/; Max-Age={90 * 86400}; HttpOnly; SameSite=Lax{_secure(scope)}").encode()
+
+
+async def _new_account_cookie(scope, u: dict, form: dict) -> bytes:
+    """Sign a new account in; when it kept the suggested password, hold it for the one-time notice."""
+    from . import accounts
+    token = await asyncio.to_thread(accounts.start_session, u["id"])
+    if _password_by(form) == "suggested":
+        hold_new_password(token, form["new_password"])
+    return _set_account_cookie(scope, token)
 
 
 def _clear(name: str) -> bytes:
@@ -676,10 +744,11 @@ class PasswordGate:
             if not _new_account_ok(scope):
                 return await _send(send, 429, _signup_page(nxt, TOO_MANY_NEW, form), HTML)
             try:
-                u = await asyncio.to_thread(accounts.sign_up, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+                u = await asyncio.to_thread(accounts.sign_up, form.get("email", ""), form.get("name", ""), form.get("new_password", ""),
+                                            by=_password_by(form))
             except accounts.AccountError as e:
                 return await _send(send, 400, _signup_page(nxt, str(e), form), HTML)
-            return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
+            return await go(nxt, await _new_account_cookie(scope, u, form))
 
         if path.startswith("/join/"):
             token = path[len("/join/"):]
@@ -688,10 +757,11 @@ class PasswordGate:
                     return await _send(send, 410, _join_page(token, "This invite link has expired or was already used. Ask for a new one."), HTML)
                 return await _send(send, 200, _join_page(token), HTML)
             try:
-                u = await asyncio.to_thread(accounts.accept_invite, token, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+                u = await asyncio.to_thread(accounts.accept_invite, token, form.get("email", ""), form.get("name", ""), form.get("new_password", ""),
+                                            by=_password_by(form))
             except accounts.AccountError as e:
                 return await _send(send, 400, _join_page(token, str(e), form), HTML)
-            return await go("/", _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
+            return await go("/", await _new_account_cookie(scope, u, form))
 
         if path == "/setup":
             if m == "accounts":
@@ -706,10 +776,11 @@ class PasswordGate:
                 await asyncio.sleep(1)
                 return await _send(send, 401, _setup_page(nxt, "The server password is wrong.", form), HTML)
             try:
-                u = await asyncio.to_thread(accounts.create_owner, form.get("email", ""), form.get("name", ""), form.get("new_password", ""))
+                u = await asyncio.to_thread(accounts.create_owner, form.get("email", ""), form.get("name", ""), form.get("new_password", ""),
+                                            by=_password_by(form))
             except accounts.AccountError as e:
                 return await _send(send, 400, _setup_page(nxt, str(e), form), HTML)
-            return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])), _clear(COOKIE))
+            return await go(nxt, await _new_account_cookie(scope, u, form), _clear(COOKIE))
 
         if path == "/reset":
             if m != "accounts" or not password():
@@ -725,7 +796,7 @@ class PasswordGate:
                 await asyncio.sleep(1)
                 return await _send(send, 401, _reset_page("The email or the server password is wrong.", form.get("email", "")), HTML)
             try:
-                await asyncio.to_thread(accounts.set_password, u["id"], form.get("new_password", ""))
+                await asyncio.to_thread(accounts.set_password, u["id"], form.get("new_password", ""), None, "owner")
             except accounts.AccountError as e:
                 return await _send(send, 400, _reset_page(str(e), form.get("email", "")), HTML)
             return await go("/", _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))

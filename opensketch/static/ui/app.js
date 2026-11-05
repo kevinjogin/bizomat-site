@@ -236,6 +236,16 @@
     const v = new Uint32Array(16); crypto.getRandomValues(v);
     return Array.from(v, (x) => a[x % a.length]).join('').replace(/(.{4})(?!$)/g, '$1-');
   }
+  // who chose each password (the server keeps only a one-way hash, so nobody can read a password back)
+  function pwCell(u) {
+    const by = u.password_by;
+    const text = !u.has_password ? (u.google ? 'Google sign-in only' : 'None yet')
+      : by === 'owner' ? 'Set by you' : by === 'suggested' ? 'Kept the suggested one'
+      : by === 'self' ? (u.role === 'owner' ? 'Yours' : 'Chosen by them') : 'Not recorded';
+    const td = el('td'); td.append(el('span', '', text));
+    if (u.has_password && u.password_at) td.append(el('span', 'meta', 'Changed ' + new Date(u.password_at * 1000).toLocaleDateString()));
+    return td;
+  }
   async function loadPeople() {
     try {
       const d = await api('/api/admin/people');
@@ -262,7 +272,7 @@
           });
           act.append(pw, rm);
         }
-        tr.append(who, el('td', '', role), el('td', '', pcs), el('td', '', u.apps.length ? u.apps.join(', ') : 'None'), act);
+        tr.append(who, el('td', '', role), pwCell(u), el('td', '', pcs), el('td', '', u.apps.length ? u.apps.join(', ') : 'None'), act);
         body.append(tr);
       }
       const ul = $('invites'); ul.textContent = '';
@@ -278,6 +288,7 @@
     } catch (er) { failed(er); }
   }
   if (page === 'admin') {
+    $('add-pw').value = strongPassword();
     on('add-gen', 'click', () => { $('add-pw').value = strongPassword(); });
     on('add-form', 'submit', async (e) => {
       e.preventDefault(); $('add-msg').textContent = ''; $('add-done').hidden = true;
@@ -286,9 +297,13 @@
         await api('/api/account/users', { method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, name: $('add-name').value.trim(), password: pw }) });
         const box = $('add-done'); box.textContent = '';
-        box.append(el('div', '', 'Account created for ' + email + '. Give them: the address ' + location.origin + ', their email and the password. '
-          + 'They install CADOS for SOLIDWORKS and sign in when the pairing step opens the browser.'));
-        box.hidden = false; $('add-form').reset(); loadPeople();
+        box.append(el('div', '', 'Account created for ' + email + '. Give them: the address ' + location.origin + ', their email and this password. '
+          + 'They install CADOS for SOLIDWORKS and sign in when the pairing step opens the browser. This is the last time CADOS shows it.'));
+        const row = el('div', 'input-group'); row.style.marginTop = 'var(--s-3)';
+        const shown = el('input', 'input'); shown.readOnly = true; shown.defaultValue = pw; shown.spellcheck = false; shown.setAttribute('aria-label', 'Password for ' + email);
+        const cb = el('button', 'btn', 'Copy'); cb.type = 'button'; cb.addEventListener('click', () => copy(pw, cb));
+        row.append(shown, cb); box.append(row); box.style.flexDirection = 'column'; box.style.alignItems = 'stretch';
+        box.hidden = false; $('add-form').reset(); $('add-pw').value = strongPassword(); loadPeople();
       } catch (er) { $('add-msg').textContent = er.message; }
     });
     on('inv-new', 'click', async () => {
@@ -313,6 +328,7 @@
         if ($('purl')) { $('purl').value = d.private_url; if (!d.private_url) $('private').hidden = true; }
         if ($('acc-name')) { $('acc-name').textContent = (d.user && d.user.name) || 'Server owner'; $('acc-email').textContent = (d.user && d.user.email) || 'No email (server password sign-in)'; }
         if ($('acc-signout')) $('acc-signout').hidden = !d.signin;
+        if ($('ownerpw')) $('ownerpw').hidden = !(d.user && d.user.password_by === 'owner');
         if ($('download') && !d.download) { $('download').setAttribute('aria-disabled', 'true'); $('no-download').hidden = false; }
       }
       paintState(); renderApps(); renderPcs(); if (page === 'home') paintHome();
@@ -323,5 +339,18 @@
     refresh(true);
     if (!['tools', 'settings', 'admin'].includes(page)) poll(refresh, 4000);
   }
-  if (page === 'home') { loadRecent(); poll(loadRecent, 15000); }
+  if (page === 'home') { loadRecent(); poll(loadRecent, 15000); showNewPassword(); }
+
+  // ---------------------------------------------------------------- Home: the password CADOS made at sign-up, once
+  async function showNewPassword() {
+    try {
+      const r = await api('/api/account/new-password');
+      if (!r.password || !$('newpw')) return;
+      $('newpw-v').value = r.password; $('newpw').hidden = false;
+      on('newpw-ok', 'click', async () => {
+        $('newpw').hidden = true; $('newpw-v').value = '';
+        try { await api('/api/account/new-password', { method: 'DELETE' }); } catch (_) { /* gone in 30 minutes anyway */ }
+      });
+    } catch (_) { /* no notice */ }
+  }
 })();

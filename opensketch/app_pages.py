@@ -50,6 +50,13 @@ def home(base: str = "", admin: bool = False) -> bytes:
     body = f"""<div class="app-title home-hero"><div><span class="eyebrow">CADOS by KEVOS</span><h1>Engineering, made intelligent.</h1>
 <p>CAD automation and AI-powered engineering workflows, connected to SOLIDWORKS.</p></div>{_status_pill()}</div>
 <div class="callout callout-warn" id="update" hidden style="margin-bottom:var(--s-5)"></div>
+<section class="panel" id="newpw" hidden aria-labelledby="newpw-h" style="margin-bottom:var(--s-5)"><div class="panel-head"><h2 id="newpw-h">Your CADOS password</h2>
+<p>The password CADOS made for you. Save it now: it is shown only this once. Use it to sign in and in the KEVOS Companion's pairing window.</p></div>
+<div class="panel-body">{_copy_field("newpw-v", "Password", secret=True)}
+<div class="actions"><button class="btn btn-primary btn-sm" type="button" id="newpw-ok">I saved it</button>
+<a class="small" href="/settings#password">Change it in Settings</a></div></div></section>
+<div class="callout callout-warn" id="ownerpw" hidden style="margin-bottom:var(--s-5)">Your administrator set your password.
+<a href="/settings#password">Choose your own in Settings</a>.</div>
 <div class="two-col"><div class="stack">
 <section class="panel task" aria-labelledby="task-h"><div class="panel-head"><h2 id="task-h">Start an engineering task</h2>
 <p>Describe what you need. CADOS works through your AI assistant: copy the task, paste it into an assistant connected to CADOS,
@@ -236,23 +243,25 @@ def settings(base: str = "", admin: bool = False) -> bytes:
 
 def admin(base: str = "", admin: bool = True) -> bytes:
     body = """<div class="app-title"><div><span class="eyebrow">Admin</span><h1>People on this CADOS server.</h1>
-<p>Add people with a password you choose, reset passwords, and see who has computers and AI assistants connected.
-Only you see this page.</p></div></div>
+<p>Add people, reset passwords, and see who chose their own password and who has computers and AI assistants
+connected. Only you see this page.</p></div></div>
 <div class="stack">
 <section class="panel" aria-labelledby="add-h"><div class="panel-head"><h2 id="add-h">Add a person</h2>
-<p>Give them the password and this address. They sign in when the installer's pairing step opens the browser,
-and can change the password in Settings.</p></div>
+<p>CADOS fills in a strong password. Keep it or type one, then give it to them with this address. They sign in when
+the installer's pairing step opens the browser, and can choose their own password in Settings. Or send an invite link
+below, so they choose it from the start.</p></div>
 <form class="panel-body" id="add-form" autocomplete="off">
 <div class="two-col" style="gap:var(--s-4)"><div class="field"><label class="field-label" for="add-name">Name</label><input class="input" id="add-name"></div>
 <div class="field"><label class="field-label" for="add-email">Email</label><input class="input" id="add-email" type="email" required></div></div>
 <div class="field"><label class="field-label" for="add-pw">Password</label><div class="input-group">
-<input class="input" id="add-pw" type="text" minlength="8" required autocomplete="new-password" spellcheck="false">
-<button class="btn" type="button" id="add-gen">Generate</button><button class="btn" type="button" data-copy="add-pw">Copy</button></div>
-<span class="field-hint">At least 8 characters. Generate makes a strong one.</span></div>
+<input class="input" id="add-pw" type="password" minlength="8" required autocomplete="new-password" spellcheck="false">
+<button class="btn" type="button" data-toggle="add-pw" aria-controls="add-pw" aria-pressed="false">Show</button>
+<button class="btn" type="button" id="add-gen">New</button><button class="btn" type="button" data-copy="add-pw">Copy</button></div>
+<span class="field-hint">At least 8 characters. New makes another strong one.</span></div>
 <div class="actions"><button class="btn btn-primary" type="submit">Add person</button><span class="small" id="add-msg" role="status"></span></div>
 <div class="callout callout-ok" id="add-done" hidden></div></form></section>
 <section class="panel" aria-labelledby="people-h"><div class="panel-head"><h2 id="people-h">People</h2><span class="small muted" id="people-n"></span></div>
-<div class="panel-body"><div class="table-wrap"><table class="history-table"><thead><tr><th>Person</th><th>Role</th><th>Computers</th><th>AI assistants</th><th></th></tr></thead>
+<div class="panel-body"><div class="table-wrap"><table class="history-table"><thead><tr><th>Person</th><th>Role</th><th>Password</th><th>Computers</th><th>AI assistants</th><th></th></tr></thead>
 <tbody id="people"></tbody></table></div></div></section>
 <section class="panel" aria-labelledby="inv-h"><div class="panel-head"><h2 id="inv-h">Invite links</h2>
 <p>Or send a link: the person chooses their own password. A link works once, for 7 days.</p></div><div class="panel-body">

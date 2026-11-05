@@ -264,6 +264,19 @@ def api_account_update(req: AccountUpdate, request: Request):
     return {"user": accounts.get(u["id"]), "signed_out": bool(req.new_password)}
 
 
+@app.get("/api/account/new-password")
+def api_new_password(request: Request):
+    """The suggested password this browser's new account kept, shown once on Home after sign-up (auth.hold_new_password).
+    Kept in memory for 30 minutes at most; the account itself stores only the one-way hash."""
+    return {"password": auth.new_password_for(request.scope)}
+
+
+@app.delete("/api/account/new-password")
+def api_new_password_seen(request: Request):
+    auth.new_password_for(request.scope, drop=True)
+    return {"ok": True}
+
+
 class KeepWork(BaseModel):
     name: str | None = None
     email: str
@@ -447,7 +460,7 @@ def api_set_user_password(user_id: str, req: NewPassword, request: Request):
     if target["role"] == "owner" or user_id == me["id"]:
         return JSONResponse({"error": "Change your own password in Settings."}, status_code=400)
     try:
-        accounts.set_password(user_id, req.password)
+        accounts.set_password(user_id, req.password, by="owner")
     except accounts.AccountError as e:
         return JSONResponse({"error": str(e)}, status_code=400)
     return {"ok": True}
@@ -836,7 +849,8 @@ def api_solidworks(request: Request):
     return {"server": base, "key": swbridge.key_for(u), "status": swbridge.status(u), "download": SW_DOWNLOAD.is_file(),
             "url": base + path, "private_url": f"{base}{path}/{auth.mcp_token_for(u)}",
             "signin": auth.mode() != "open", "apps": mcpauth.grants_for(u["id"] if u else "local"),
-            "user": {"name": u.get("name"), "email": u.get("email")} if u and not u.get("legacy") else None}
+            "user": {"name": u.get("name"), "email": u.get("email"), "password_by": u.get("password_by")}
+            if u and not u.get("legacy") else None}
 
 
 OAUTH_CORS = {"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Methods": "GET, POST, OPTIONS",

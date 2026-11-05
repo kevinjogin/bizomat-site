@@ -86,7 +86,12 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   encrypted with `secretbox.py`), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
   makes "Internal tester" accounts. The setup page shows only until the first account exists; after that `/login` is
   Sign in ("Welcome back"), and a person already signed in on that browser (90-day session) goes straight to `next`.
-  Sign-in pages and messages never name the OPENSKETCH_* settings.
+  Sign-in pages and messages never name the OPENSKETCH_* settings. New-account forms (setup, join, sign-up) come with
+  a strong password filled in (`auth.suggest_password`, dots with Show, hidden `suggested`); keeping it holds it in
+  memory for 30 minutes (`auth.hold_new_password`) so Home shows it once (`GET/DELETE /api/account/new-password`).
+  Each account records who chose its password (`pw_by`: self, suggested, owner; `pw_at`), shown on Admin; only the
+  scrypt hash is kept, so nobody (the owner included) can read a password back. A member whose password the owner
+  set sees "Choose your own in Settings" on Home.
 - Pages: `/` is the product page for visitors (`site.landing`) and the app's Home for a signed-in person (and on an
   open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
   security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,
@@ -102,7 +107,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   to the registered tools), History (`/history`: `GET /api/commands`, the person's commands to paired computers from
   bridge.sqlite; direct-link commands are not recorded), Settings (`/settings`: account, private address and add-in
   key with Show / Copy / New, change password, sign out), Admin (`/admin`, the owner only; anyone else is sent to
-  Home: add a person with a password the owner sets (`POST /api/account/users`, role member), set someone's password
+  Home: add a person with a suggested password the owner can change, shown once after adding (`POST /api/account/users`, role member), set someone's password
   (`POST /api/account/users/<id>/password`: signs them out everywhere and ends their AI apps' sign-ins), remove a
   person (also revokes their paired computers), people with their computers and AI apps (`GET /api/admin/people`),
   invite links, open sign-up). People sign in with that password when the installer's pairing step opens the
