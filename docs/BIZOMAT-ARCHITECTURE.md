@@ -38,7 +38,7 @@ the brand, the design system, the domain and the edge.
 
 | Path | What it is | Toolchain |
 | --- | --- | --- |
-| `/` (root: `src/`, `public/`, `tests/`, `scripts/`) | The BIZOMAT website: home, `/cad/`, `/work/`, `/resources/` (Tools at `/tools/`, Library at `/reados/`, guides at `/library/`), `/proof-of-work/`, `/about/`, legal pages, AI search | Astro 7, Node 22, `npm test`, `npm run build` |
+| `/` (root: `src/`, `public/`, `tests/`, `scripts/`) | The BIZOMAT website: home, `/cad/`, `/work/`, `/resources/` (Tools at `/tools/`, Library at `/reados/`, guides at `/library/`), `/engine-room/` (The Engine Room: the founder, principles and proof of work; `/about/` and `/proof-of-work/` redirect to it), legal pages, AI search | Astro 7, Node 22, `npm test`, `npm run build` |
 | `src/node/` | The website on Node: the same Worker (`src/worker.ts`) with Node bindings (static assets with Cloudflare `_headers`/`_redirects` semantics, Workers AI over REST, rate limits) | `npm run build:server` |
 | `apps/cad/` | CAD Automation (formerly CADOS): Python server `opensketch/`, SOLIDWORKS add-in and Companion `solidworks/` (C#), installer `installer/` (WiX), Windows scripts | Python 3.12, pytest, .NET 8 SDK; AGPL-3.0-only (`apps/cad/LICENSE`) |
 | `apps/work/` | Project Management (formerly KEVOS Work / WorkOS): Hono Worker `src/worker/`, React SPA `src/client/`, shared logic `src/shared/`, Node runtime `src/node/`, migrations, migration tooling `scripts/migrate/` | Node 22, Vitest (workerd and Node), Playwright |
@@ -109,8 +109,8 @@ submits to `/search/` (Pagefind).
 | Product | Store | Backup |
 | --- | --- | --- |
 | Website | Git | Git history |
-| Project Management | `/data/work/db.sqlite` (exact D1 schema), `/data/work/runtime.sqlite` (file index, KV), `/data/work/files/` | Fly volume snapshots (daily) + `scripts/migrate/export-for-d1.mjs` + file copy; see `BIZOMAT-OPERATIONS.md` |
-| CAD Automation | `/data/cad/*` (see `BIZOMAT-DATA-INVENTORY.md`) | Fly volume snapshots + `infrastructure/migrate/cad/export.sh` |
+| Project Management | `/data/work/db.sqlite` (exact D1 schema), `/data/work/runtime.sqlite` (file index, KV), `/data/work/files/` | Fly volume snapshots (daily, 30 days) and portable copies; see `BIZOMAT-OPERATIONS.md` |
+| CAD Automation | `/data/cad/*` (see `BIZOMAT-DATA-INVENTORY.md`) | Fly volume snapshots (daily, 30 days) and portable copies (`infrastructure/migrate/cad/export.sh`) |
 
 ## What stays where it is
 

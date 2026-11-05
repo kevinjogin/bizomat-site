@@ -62,5 +62,6 @@ For front-end hot reload run `npm run dev:client` (Vite on :5173, proxies `/api`
 - [DATABASE.md](DATABASE.md) — schema, tenancy, migrations, backups
 - [SECURITY.md](SECURITY.md) — threat model, controls, audit results
 - [DEPLOYMENT.md](DEPLOYMENT.md) — environments, resource names, CI/CD, Google OAuth setup, rollback
+- [docs/NODE-RUNTIME.md](docs/NODE-RUNTIME.md) — the same Worker on Node 22 for the BIZOMAT Fly app, and the D1/R2 data migration (dry run: [docs/migration/](docs/migration/))
 - [CONTRIBUTING.md](CONTRIBUTING.md) — workflow and conventions
 - [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) — backlog, feature checklist, known issues, deployment history, test results

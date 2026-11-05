@@ -12,8 +12,10 @@ design, and the findings that need the owner's action. Product-level detail stay
 | F2 | Medium | No Fly API token is configured anywhere (`FLY_API_TOKEN` is missing in the CADOS repository too), so `fly-status.yml` fails and the current `cados` app cannot be inspected or redeployed from GitHub. | Create an org token for the `bizomat` deploy (`fly tokens create org`) and store it as a repository secret of `jogkev-creator/gocore-website` only. |
 | F3 | Medium | On a fresh volume with no `OPENSKETCH_PASSWORD`, CAD Automation starts in "open" mode, in which the first visitor can create the owner account. | The BIZOMAT entrypoint refuses to start the cad role without `OPENSKETCH_PASSWORD` (or existing accounts on the volume) unless explicitly allowed for local testing. Set the secret before the first deploy. |
 | F4 | Low | Project Management passwords use PBKDF2-SHA256 with 100,000 iterations (the Workers CPU limit). | Keep 100,000 during the rollback window (the Cloudflare deployment must still verify migrated hashes). Afterwards raise to 600,000 on Node and rehash at sign-in. |
-| F5 | Low | Project Management has no self-service password recovery (no email provider) and no account-deletion feature. | Until an email provider is chosen, a platform admin resets passwords (procedure in `BIZOMAT-OPERATIONS.md`). Account deletion is an anonymisation procedure (authored content keeps referential integrity). |
+| F5 | Low | Project Management has no self-service password recovery (no email provider) and no account-deletion feature. | **Addressed for recovery:** the founder sets a new password in Admin, People (`POST /api/admin/users/:id/password`: founder only, rate limited, password rules, ends the person's sessions, clears lockout, audited; 3 tests). Self-service recovery waits for an email provider. Account erasure is an operator procedure (`BIZOMAT-OPERATIONS.md`) until a feature exists. |
 | F6 | Info | The website's Content-Security-Policy still allows `static.cloudflareinsights.com` (Cloudflare Web Analytics), which BIZOMAT does not use on Fly. | Remove from `scripts/postbuild.mjs` after the Cloudflare deployment is retired. |
+| F7 | Low | CAD Automation's HTML pages send no Content-Security-Policy (they use inline styles and two small inline scripts; this predates BIZOMAT). Framing is already refused (`X-Frame-Options: DENY`) and the proxy adds HSTS. | Move the inline styles and scripts into files, then send a strict CSP like the website's. |
+| F8 | Info | Inside the Fly organisation, any Machine can reach the web, work and cad processes directly over the private network and send its own client-address headers (the apps trust the proxy's). | Accepted: the private network belongs to the operator. Keep the organisation's members to the people who run BIZOMAT. |
 
 ## 2. Controls by area
 
@@ -57,8 +59,22 @@ design, and the findings that need the owner's action. Product-level detail stay
 ### Rate limits
 Website: per client per minute (AI search and learning 10, forms 5) plus Turnstile on Worker-delivered forms.
 Project Management: sign-in, uploads and API windows in the database. CAD: sign-in and pairing limits.
-Behind the proxy the client address comes from Fly's `Fly-Client-IP`; spoofed `X-Forwarded-For` or
-`CF-Connecting-IP` values from clients are overwritten by the proxy and ignored by apps that do not trust a proxy.
+Behind the proxy the client address comes from Fly's `Fly-Client-IP` (or, only when the edge client is inside
+Cloudflare's published ranges, `CF-Connecting-IP`). The proxy removes every client-sent address and forwarding header
+and sets exactly one value in each of `X-Forwarded-For`, `X-Real-IP`, `CF-Connecting-IP` and `Fly-Client-IP`, plus
+`X-Forwarded-Proto` and `X-Forwarded-Host` (`infrastructure/proxy/headers.mjs`, tested). Each app believes them only
+in its proxy mode: the website with `WEB_TRUST_PROXY=1`, Project Management with `WORK_TRUST_PROXY=1` (otherwise it
+replaces them with the socket address), CAD Automation from `Fly-Client-IP` on Fly or from trusted proxy addresses
+(`OPENSKETCH_TRUSTED_PROXIES`, loopback by default; `opensketch/proxy.py`). Run outside the proxy, none of them can be
+fooled by these headers. The preview switch (`/__preview/*` on `*.fly.dev`) only exists while
+`BIZOMAT_PREVIEW_ROUTING=1`; turn it off after cutover.
+
+### Outbound requests
+Project Management sends webhooks and Slack or Teams messages to addresses its users enter. On Cloudflare, Workers
+cannot reach private networks; on Node the runtime refuses destinations whose DNS answers are private, loopback,
+link-local or otherwise non-public, including Fly's private network (`apps/work/src/node/outbound.ts`, tested). A DNS
+answer could change between the check and the connection; HTTPS certificate checks still apply to the connection. CAD Automation
+fetches OAuth client metadata only from public HTTPS addresses, pinned after resolution (`safefetch.py`).
 
 ### Logging
 Request logs record method, host, path without query string, status and time: no IP addresses, cookies, tokens or

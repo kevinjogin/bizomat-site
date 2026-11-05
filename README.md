@@ -8,7 +8,7 @@ one Fly.io app.
 
 | Product | Path | What it is |
 | --- | --- | --- |
-| Website and Resources | `/` (`src/`, `public/`) | bizomat.ai: home, products, Resources (1,000+ tools and calculators, a technical Library, guides), Proof of Work, About, legal pages, AI search. Public, no account. |
+| Website and Resources | `/` (`src/`, `public/`) | bizomat.ai: home, products, Resources (1,000+ tools and calculators, a technical Library, guides), The Engine Room (the founder, principles and proof of work), legal pages, AI search. Public, no account. |
 | CAD Automation | `apps/cad/` | Formerly CADOS. Connects Claude, ChatGPT or another MCP assistant to SOLIDWORKS on the customer's own computer (Python server, C# add-in and Companion, Windows installer). |
 | Project Management | `apps/work/` | Formerly KEVOS Work. Projects, tasks, teams, boards with nine views, automations, dashboards and documents (Hono + React, runs on Cloudflare or Node). |
 | Brand system | `shared/brand/` | The BIZOMAT wordmark, mark, icons, design tokens, components and fonts, copied into every product. |
@@ -95,7 +95,7 @@ src/
   data/         brand.ts (exploring areas, principles) · faq.ts (assistant FAQ)
   layouts/      BaseLayout, LegalLayout
   lib/          contact.ts (shared validation) · contact-client.ts (form delivery)
-  pages/        routes: /, /about/, /tools/ (WORKOS), /reados/ (READOS), /contact/, /privacy/, /terms/, /search/, /chat/, 404
+  pages/        routes: /, /engine-room/, /tools/ (WORKOS), /reados/ (READOS), /contact/, /privacy/, /terms/, /search/, /chat/, 404
   server/       contact + chat handlers (run inside the Cloudflare worker, tested in Node)
   worker.ts     Cloudflare worker: serves the site, /api/chat and /api/contact (built to dist/_worker.js)
   styles/       global.css (design tokens, typography, prose)
