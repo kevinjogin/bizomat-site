@@ -35,3 +35,20 @@ dist-server/
 
 # Agent worktrees (local only)
 .claude/worktrees/
+
+# Data exports, migration archives, database copies and migration reports hold real customer data: never commit.
+# (SQL migrations in apps/work/migrations/ are code and stay tracked; only stray .sql files at these roots are ignored.)
+*.tar
+*.tar.gz
+*.tgz
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.db
+*.dump
+/*.sql
+/apps/work/*.sql
+/apps/cad/*.sql
+.data/
+migration-report.json
+migration-report.md
