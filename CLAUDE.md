@@ -52,10 +52,14 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `main` publishes the BIZOMAT website at kevos.com**. Merge only when that is intended (or disconnect the integration
   after bizomat.ai is live). Manual `npm run deploy` only from a clean checkout whose `HEAD` equals `origin/main`,
   right after `npm run verify`.
-- **Hosts (owner's decision, 5 Nov 2026):** bizomat.ai is the BIZOMAT platform homepage (this website); CAD
-  Automation has its own address, `cad.bizomat.ai`. Today bizomat.ai's record still points (DNS only) at the old
-  `cados` Fly app; `wrangler.toml` routes bizomat.ai and www.bizomat.ai to this Worker once their records are
-  proxied. The steps, in order, are in `docs/BIZOMAT-DEPLOYMENT.md`, section 6a.
+- **Hosts (owner's decision, 5 Nov 2026): everything under bizomat.ai, no subdomains.** The website is the root;
+  CAD Automation is `/cad` and Project Management `/tasks`. `src/worker.ts` (`routeApps`) passes `/cad/...` (and
+  the CAD app's OAuth discovery and root program paths, `CAD_PATHS`) to the CAD app with `fetch(request)`, and
+  `/tasks/...` to Project Management (the `TASKS` service binding, a redirect to work.kevos.com until it is bound).
+  The CAD Automation product page is `/cad-automation/`, because `/cad` is the application. No page or file of the site
+  may take an application's path (tests/worker.test.ts). Today bizomat.ai's record still points (DNS only) at the
+  `cados` Fly app; the Worker answers once the records are proxied. The steps, in order, are in
+  `docs/BIZOMAT-DEPLOYMENT.md`, section 6a.
 - **Incident, 8 Oct 2026:** a manual `wrangler deploy` from a stale checkout (145 commits behind) replaced the site
   with the old GoCore design. That is why manual deploys are restricted as above.
 - Keep the old deployments (the kevos.com Worker, the `workos-platform-preview` Worker behind work.kevos.com, the

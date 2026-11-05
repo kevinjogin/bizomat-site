@@ -1,6 +1,6 @@
 # BIZOMAT production-readiness report
 
-_Updated 5 Nov 2026, about 22:00 UTC. This repository is private: the report names runs, artifacts and hosts but
+_Updated 5 Nov 2026, about 23:45 UTC. This repository is private: the report names runs, artifacts and hosts but
 holds no personal data, no credential and no database content. Nothing here changed production data. No production
 DNS record was changed, and the only deletion was the two exposed artifacts, as the owner asked._
 
@@ -18,14 +18,15 @@ DNS record was changed, and the only deletion was the two exposed artifacts, as 
 | 3 | The two Project Management users change their passwords | **PENDING** (owner) | They must be told (section 3). A change ends their other sessions in today's app |
 | 4 | Forced new password and founder security reset | **TESTED** | Monorepo d2e73a8, CI green; reaches production with the platform, or by a port to PMO |
 | 5 | Secret scan of all three repositories, trees and full histories | **TESTED** | Test fixtures only; the diffs published today scanned clean |
-| 6 | Server password removed from CAD Automation (CADOS#11) | **TESTED**, deploy **BLOCKED** | Merged (1fec502); `main` tests passed (run 42112496988). Fly has not deployed `main` since (section 6) |
-| 7 | `OPENSKETCH_PASSWORD` not set on the live CAD app | **LIVE** | The live app (0fc0cc9, accounts mode) answers `/reset` with 303 to `/login`, which that code does only without the password |
-| 8 | CAD app ready for `cad.bizomat.ai` (alias, host-aware sign-in, phase B is one line) | **TESTED**, deploy **BLOCKED** | jogkev-creator/CADOS#12 merged (9e3f79f2): 104 host tests, 351 + 2 slow in all; `main` tests passed (run 42116359550) |
-| 9 | Companion update manifest reachable on a server with accounts | **TESTED**, deploy **BLOCKED** | CADOS#12; the test reproduced the 303 to `/login` before the fix |
-| 10 | Existing connectors, add-ins and Companions keep working | **TESTED** | Full sign-in through every address in both phases; live baseline recorded (section 6) for the re-check after deploy |
-| 11 | `cad.bizomat.ai` DNS record and Fly certificate, then phase B | **BLOCKED** (Cloudflare and Fly access) | Section 5, step 1; phase B ready as draft jogkev-creator/CADOS#13 (352 tests, add-in 29 of 29 at 0.12.3) |
-| 12 | bizomat.ai as the BIZOMAT homepage | **PENDING** (owner approval) | Worker routes ready (`wrangler deploy --dry-run` passes). Needs a merge to `main` (publishes the website, kevos.com too) and the bizomat.ai record set to proxied |
-| 13 | Windows installer: silent install, registration, uninstall | **TESTED** | Installer test on windows-latest: all checks passed (section 7) |
+| 6 | Server password removed from CAD Automation (CADOS#11) | **TESTED**, deploy **PENDING** (owner) | In CADOS `main` (1fec502, then #12 and #14). The live app does not run `main` yet (section 6) |
+| 7 | `OPENSKETCH_PASSWORD` not set on the live CAD app | **LIVE** | The live app (accounts mode) answers `/reset` with 303 to `/login`, which its code does only without the password |
+| 8 | CAD Automation at `https://bizomat.ai/cad` (prefix, links, cookies, OAuth metadata at the root, old hosts kept for programs) | **TESTED**, deploy **PENDING** (owner) | jogkev-creator/CADOS#14 merged (c853a6a): 363 tests and the Windows installer test passed on its head d7cff31 |
+| 9 | Long CAD tool calls survive Cloudflare (event-stream answers with a 15 s keep-alive) | **TESTED** | CADOS#14; the new test fails with the old JSON answers |
+| 9a | A Content Security Policy on every CAD page (needed now that bizomat.ai is one origin for three applications) | **TESTED**, merge **PENDING** | jogkev-creator/CADOS#15: 364 tests; checked in Chromium with no policy error (section 5) |
+| 10 | Existing connectors, add-ins and Companions keep working | **TESTED** | Sign-in and MCP through `bizomat.ai/cad`, `cados.kevos.com`, `cados.fly.dev`; a computer paired under `/cad`; the live metadata names `cados.kevos.com`, so connections were made with an address that stays (section 6) |
+| 11 | Website Worker routes bizomat.ai: website at `/`, `/cad` to the CAD app, `/tasks` to Project Management | **TESTED**, **PENDING** (owner) | gocore-website c237e4e9: 1,501 tests, type check, 4,441 pages built. Needs the steps in section 5 |
+| 12 | Project Management at `https://bizomat.ai/tasks` (one build serves both addresses; session cookie scoped to `/tasks`) | **TESTED**, deploy **PENDING** (owner) | jogkev-creator/PMO#2: 198 tests and 7 of 7 end-to-end (one under `/tasks`) passed locally. Until it is deployed and bound, `bizomat.ai/tasks` redirects to `work.kevos.com` |
+| 13 | Windows installer 0.12.3: silent install, registration, uninstall with every COM key removed | **TESTED** | Installer test on windows-latest for CADOS#14 passed, including the strict CLSID check (section 7) |
 | 14 | Public installer download | **BLOCKED** (owner decision) | CADOS is private: its release files answer 404 without a GitHub sign-in (section 7) |
 | 15 | CADOS for SOLIDWORKS in a real SOLIDWORKS | **BLOCKED** (Windows PC with SOLIDWORKS) | `docs/KEVOS-TEST-REPORT.md`, section 4, in the CADOS repository |
 | 16 | Signed MSI | **BLOCKED** (code-signing certificate) | Builds are unsigned; unsigned Companions never update themselves |
@@ -133,54 +134,78 @@ here and merged on the owner's instruction (1fec502).
 
 ## 5. Domain architecture (owner's decision, 5 Nov 2026)
 
-**bizomat.ai is the BIZOMAT platform homepage. CAD Automation has its own address, `cad.bizomat.ai`.**
+**Everything lives under bizomat.ai, with no subdomains.** bizomat.ai is the BIZOMAT website; `/cad` is CAD
+Automation and `/tasks` is Project Management. The earlier plan for `cad.bizomat.ai` is withdrawn (its draft,
+jogkev-creator/CADOS#13, is closed).
 
 DNS today (Cloudflare, nameservers `uma` and `zac.ns.cloudflare.com`, same account as kevos.com):
-- `bizomat.ai` A and AAAA point at the `cados` Fly app, DNS only. So bizomat.ai shows the CAD app's product page
-  today, not the BIZOMAT website.
-- `_acme-challenge.bizomat.ai` is Fly's validation record.
-- `www`, `cad` and `work.bizomat.ai` do not exist.
-- `cados.kevos.com` points at the same Fly app; `work.kevos.com` is proxied by Cloudflare to the Project Management
-  Worker.
+- `bizomat.ai` A and AAAA point at the `cados` Fly app, DNS only, so bizomat.ai shows the CAD app today.
+- `_acme-challenge.bizomat.ai` is Fly's validation record; `cad.bizomat.ai` has a Fly certificate but no record.
+- `cados.kevos.com` points at the same Fly app; `work.kevos.com` is the Project Management Worker's custom domain.
 
 **What is ready:**
-- **CAD app (CADOS#12, phase A):** the canonical address stays `cados.kevos.com` until `cad.bizomat.ai` exists.
-  - `cad.bizomat.ai` is an alias that works as soon as its record and certificate exist; `cados.fly.dev` redirects
-    pages.
-  - The app never names bizomat.ai: its metadata on bizomat.ai names the canonical address, so no connector can
-    come to depend on the website's domain.
-  - Phase B is the single line `OPENSKETCH_PUBLIC_URL = 'https://cad.bizomat.ai'`, safe in any order. Old hosts
-    then redirect pages, and programs keep working on the address they were set up with.
-- **Website:** `wrangler.toml` routes `bizomat.ai/*` and `www.bizomat.ai/*` to the website Worker. They do nothing
-  until the bizomat.ai record is proxied.
+- **Website Worker** (`src/worker.ts`):
+  - It answers `bizomat.ai` and `www.bizomat.ai` once their records are proxied.
+  - `/cad/...` is passed to the CAD app with `fetch(request)`: the proxied record keeps Fly as its origin.
+  - The CAD app also receives its OAuth discovery paths and the program paths it keeps at the root (`/mcp`,
+    `/oauth/`, `/v2/`, `/healthz`).
+  - `/tasks/...` goes to Project Management: its Worker through a service binding once it is deployed, a redirect
+    to `work.kevos.com` until then.
+  - `/CAD` and `/TASKS` answer 301 to the lowercase paths. `www` answers 301 to the apex. kevos.com's old CAD page
+    `/cad/` answers 301 to `/cad-automation/`.
+- **CAD app** (CADOS#14): public address `https://bizomat.ai/cad`.
+  - `cados.kevos.com`, `cados.fly.dev` and `cad.bizomat.ai` are old hosts: pages 301 to `bizomat.ai/cad`, and
+    programs keep working there with their own address.
+  - Google sign-in returns to `https://bizomat.ai/cad/auth/google/callback`.
+- **Project Management** (PMO#2): the same build answers `work.kevos.com` and `bizomat.ai/tasks`.
+  - Under `/tasks` its session cookie is `__Secure-workos_sid` with `Path=/tasks`.
+  - Google returns to `https://bizomat.ai/tasks/api/auth/oauth/google/callback`.
 
-The owner's steps are in order, each with a check and a rollback, in `BIZOMAT-DEPLOYMENT.md`, section 6a:
-1. Add `cad.bizomat.ai` (DNS-only CNAME to `cados.fly.dev`) and its Fly certificate.
-2. Merge phase B in CADOS (with Windows 0.12.3 defaults).
-3. Merge this repository to `main` and switch the bizomat.ai records to proxied.
-4. Point the website's CAD links at `cad.bizomat.ai`.
+**One origin for three applications.** Under one host, the website, CAD Automation and Project Management share a
+browser origin, so a script injected into any one of them could call the others with the visitor's sessions.
+Subdomains would have kept them apart. What contains it:
+- each application keeps its session cookie to its own path (`/cad`, `/tasks`); the website has none;
+- changes need same-origin requests in both applications;
+- the website and Project Management send a strict Content Security Policy. CAD pages sent none until
+  jogkev-creator/CADOS#15, which adds one (scripts only from the CAD app, its two inline scripts by hash) and is
+  checked on every page.
 
-The full platform cutover (section 6 there) comes later and moves both CAD hosts to the `bizomat` app with the data.
+Keep the three policies strict, and never serve user-supplied HTML or scripts on bizomat.ai.
+
+The owner's steps, in order, each with a check and a rollback, are in `BIZOMAT-DEPLOYMENT.md`, section 6a:
+1. Deploy CADOS `main` to `cados` from a fresh clone (`git clone --config core.autocrlf=false`, then `fly deploy` in
+   that folder).
+2. Add the `_acme-challenge` record Fly lists for `bizomat.ai`, so its certificate renews behind the proxy.
+3. Merge this repository to `main` (publishes the website, kevos.com included).
+4. Straight after, switch the `bizomat.ai` records to proxied, add a proxied `www`, and set SSL/TLS to Full (strict).
+   Turn Bot Fight Mode off and bypass the cache for the CAD paths.
+5. Deploy PMO#2 to `workos-platform-preview`, then uncomment the website's `TASKS` binding.
+6. If Google sign-in is used, add the two return addresses above to the Google clients.
 
 ## 6. Live deployments and connector compatibility
 
-| Address | 5 Nov, 21:40 UTC |
+| Address | 5 Nov, 23:35 UTC (read-only checks) |
 | --- | --- |
-| `cados.kevos.com` | CAD app 0fc0cc9. Metadata, issuer, token endpoint and 401 pointer all name `cados.kevos.com`. MCP without a token 401; add-in link and device API 401 without credentials |
-| `cados.fly.dev` | Same app; pages 301 to `cados.kevos.com`. Metadata names `cados.kevos.com` (after CADOS#12: `cados.fly.dev`) |
-| `bizomat.ai` | Same app, product page. Metadata names `cados.kevos.com` |
-| `cad.bizomat.ai` | No DNS record |
+| `cados.kevos.com` | CAD app. `/healthz` reports version `9e3f79f`. Metadata, issuer and token endpoint name `cados.kevos.com` |
+| `cados.fly.dev` | Same app; pages 301 to `cados.kevos.com`; metadata names `cados.kevos.com` |
+| `bizomat.ai` | Same app (DNS only): the CADOS product page; `/cad/` answers 303 to `/login` |
 | `kevos.com` | Cloudflare Worker, the KEVOS 2.0 site on `main` |
 | `work.kevos.com` | Project Management, health ok (`environment: preview`) |
 
-- **CADOS `main`:** now 9e3f79f2 (#11 and #12); its tests passed. Fly had not deployed `main` 30 minutes after the
-  first merge, and the repository has no `FLY_API_TOKEN` for `deploy.yml`, so nothing new is live yet.
-  - Owner: deploy `main` from the Fly dashboard (app `cados`, Deploy), or `fly deploy -a cados` from a clean checkout
-    of `main`. Alternatively, add a deploy token as `FLY_API_TOKEN` and run "Deploy to Fly.io" by hand.
-  - Then re-run the read-only checks: every value above must be unchanged, except `cados.fly.dev`'s metadata
-    (`cados.fly.dev`) and `/v2/bridge/update.json`, which answers 401 to a request without a device proof instead
-    of 303.
-- **PMO#1:** merged, deploys nothing (CI files only).
+**The live CAD app is not running CADOS `main`.** It reports `9e3f79f`, but it lacks three behaviours that commit
+has:
+- it answers `cad.bizomat.ai` with `cados.kevos.com`'s metadata;
+- `cados.fly.dev` does not name itself;
+- `/v2/bridge/update.json` still answers 303 to the sign-in page instead of 401.
+
+So the image was built from older code. Owner: deploy `main` (c853a6a) from a fresh clone, then repeat these checks:
+- `https://bizomat.ai/healthz` reports `c853a6a`;
+- `https://bizomat.ai/cad/` is the CAD app;
+- `https://cados.kevos.com/docs` answers 301 to `https://bizomat.ai/cad/docs`;
+- `https://cados.kevos.com/.well-known/oauth-protected-resource/mcp` still names `cados.kevos.com`.
+
+Connections made so far named `cados.kevos.com` (the only address the live metadata has ever given), and that host
+keeps serving MCP, OAuth and the Companion API at its root after the deploy.
 
 ## 7. Installer distribution and Windows installation
 
@@ -189,13 +214,12 @@ windows-latest, then runs `.github/scripts/test-install.ps1`, which a test PC ca
 
 - **Install:** silent, exit code 0; all nine files under `C:\Program Files\KEVOS\Bridge`.
 - **Registration:** the add-in's COM class points at the installed DLL; SOLIDWORKS lists it as "CADOS".
-- **Install record:** version 0.12.2 and the service address.
+- **Install record:** the version (0.12.3 since CADOS#14) and the service address (`https://bizomat.ai/cad`).
 - **Start-up:** the Companion starts at sign-in.
 - **Loading:** the add-in loads in .NET Framework.
 - **Uninstall:** exit code 0; the files, the code base, the SOLIDWORKS listing and the start entry are removed.
-- **Leftover:** the MSI leaves the empty "Implemented Categories" key under the add-in's CLSID. The fix
-  (`ForceDeleteOnUninstall`) comes with 0.12.3, because a rebuilt 0.12.2 would install beside the old one: the MSI
-  refuses same-version upgrades.
+- **Leftover:** fixed in 0.12.3 (`ForceDeleteOnUninstall`): the test now requires the add-in's CLSID keys to be
+  gone after uninstall, and passed on CADOS#14.
 
 **Public distribution, BLOCKED.** CADOS is private, so `https://github.com/jogkev-creator/CADOS/releases/...` answers
 404 without a GitHub sign-in. `/download/solidworks` then sends signed-in customers to a page they cannot open,
@@ -212,11 +236,11 @@ unless the app has its own `OPENSKETCH_INSTALLER_URL`. The owner chooses one:
 
 | Repository and branch | Commit | CI on that commit |
 | --- | --- | --- |
-| PMO default (`claude/pensive-turing-azyn1m`) | 36277878 (PMO#1, squash of c951369) | PR run 42112332363 (lint, typecheck, tests, build, end-to-end): success; cleanup 42112322035: success |
-| CADOS `main` | 9e3f79f2 (#12), after 1fec502 (#11) | Deploy to Fly.io 42116359550 and 42112496988 (tests on `main`): success |
-| CADOS #12 head (merged) | 0d3f1a8 | Tests 42115247023 and 42115255436, installer test 42115247128 and 42115255471: success, 8 of 8 |
-| CADOS #13 head (draft, phase B) | 31d4705 | Running at hand-off (tests, add-in and MSI, installer test) |
-| gocore-website `claude/dazzling-mccarthy-31qg86` = `feat/bizomat-unified-platform` | the commit that adds this report | BIZOMAT CI (see the hand-off message); the previous head 0c9df4d: success, 7 of 7 |
+| CADOS `main` | c853a6a (#14), after 9e3f79f (#12) and 1fec502 (#11) | #14 head d7cff31: tests (main and worker processes), npm, add-in build, MSI install and installer test: 9 of 9 success |
+| CADOS#15 (`claude/dazzling-mccarthy-31qg86`) | d9937f1 | Full suite locally: 364 passed; CI running at hand-off |
+| PMO default (`claude/pensive-turing-azyn1m`) | 3627787 (PMO#1) | PR run 42112332363: success |
+| PMO#2 (`claude/dazzling-mccarthy-31qg86`) | b82a714 | `npm run check` and Playwright locally: success; CI running at hand-off |
+| gocore-website `claude/dazzling-mccarthy-31qg86` = `feat/bizomat-unified-platform` | c237e4e9 and the docs commit after it | `npm run verify` locally: success; BIZOMAT CI running at hand-off |
 
 ## 9. Data migration readiness (unchanged)
 
@@ -235,9 +259,14 @@ Both:
 
 ## 10. Outstanding risks
 
-1. **Medium:** CAD changes merged to `main` are not deployed until the owner deploys (section 6).
-2. **Medium:** customers cannot download the installer while CADOS is private (section 7).
-3. **Medium:** the two exposed accounts' passwords are unchanged until the people change them (section 3).
-4. **Medium:** bizomat.ai shows the CAD app, not the BIZOMAT homepage, until section 5's steps are done.
-5. **Low:** the MSI leaves one empty registry key on uninstall (fixed in 0.12.3).
-6. **Low:** a brand-new public CAD server lets its first visitor create the owner account (section 4).
+1. **High until deployed:** the live CAD app runs code older than CADOS `main` (section 6). Nothing merged since #11
+   is live.
+2. **Medium:** the three applications share one browser origin on bizomat.ai (section 5).
+3. **Medium:** customers cannot download the installer while CADOS is private (section 7).
+4. **Medium:** the two exposed accounts' passwords are unchanged until the people change them (section 3).
+5. **Medium:** bizomat.ai shows the CAD app, not the BIZOMAT homepage, until section 5's steps are done. Between
+   publishing the website and proxying bizomat.ai, the website's `/tasks` links reach the CAD app: do the two steps
+   together.
+6. **Low:** if the `_acme-challenge` record is missing, Fly cannot renew the `bizomat.ai` certificate behind the
+   proxy, and `/cad` fails with 526 when it expires.
+7. **Low:** a brand-new public CAD server lets its first visitor create the owner account (section 4).
