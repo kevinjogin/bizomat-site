@@ -48,6 +48,15 @@ test('socket mode: nothing the client sends is trusted', () => {
   assert.deepEqual(c, { ip: '192.0.2.10', proto: 'http', edge: false, cdn: '' });
 });
 
+test('socket mode with PROXY_ASSUME_HTTPS (the local stack): https for the backends, still nothing trusted', () => {
+  const local = { ...socketMode, assumeHttps: true };
+  const c = clientInfo({ peer: '::ffff:192.0.2.10', headers: { 'fly-client-ip': '1.2.3.4', 'x-forwarded-proto': 'http' }, trust: local });
+  assert.deepEqual(c, { ip: '192.0.2.10', proto: 'https', edge: false, cdn: '' });
+  // a 6PN peer in fly mode is not the edge, and assumeHttps never applies there
+  const flyLocal = { ...fly, assumeHttps: true };
+  assert.equal(clientInfo({ peer: 'fdaa:0:3b99:a7b:ef:8cc4:dc49:2', headers: {}, trust: flyLocal }).proto, 'http');
+});
+
 test('fly mode: the edge sets Fly-Client-IP and X-Forwarded-Proto; spoofed copies are ignored', () => {
   const c = clientInfo({
     peer: '172.19.4.1',

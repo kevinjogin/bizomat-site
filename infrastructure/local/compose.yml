@@ -25,6 +25,8 @@ x-env: &app-env
   UPSTREAM_CAD: http://cad:8001
   BIZOMAT_PREVIEW_ROUTING: "1"
   PROXY_CLIENT_IP_MODE: socket
+  # no TLS in front of this stack: report https to the backends, as Fly's edge does (the website redirects http)
+  PROXY_ASSUME_HTTPS: "1"
   # work
   WORK_APP_URL: https://work.bizomat.ai
   WORK_APP_NAME: BIZOMAT Project Management

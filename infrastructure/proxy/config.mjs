@@ -9,6 +9,8 @@
 //   PROXY_CLIENT_IP_MODE         fly | socket (default: fly when FLY_APP_NAME is set, else socket); see headers.mjs
 //   PROXY_UNTRUSTED_PEERS        CIDRs never treated as Fly's edge (default fdaa::/16, the private network)
 //   PROXY_TRUST_CLOUDFLARE       "1": trust CF-Connecting-IP from Cloudflare's ranges (orange-cloud DNS only)
+//   PROXY_ASSUME_HTTPS           "1" (socket mode only): requests are reported to the backends as https, as Fly's TLS
+//                                edge would; for the local stack, which has no TLS in front. Never trusts the client.
 //   PROXY_CLOUDFLARE_RANGES      replaces the built-in Cloudflare ranges (comma separated)
 //   PROXY_IDLE_TIMEOUT_MS        a request, response or WebSocket with no bytes for this long is closed (620000)
 //   PROXY_HEADERS_TIMEOUT_MS     time to receive a request's headers (60000)
@@ -56,6 +58,7 @@ export function loadConfig(env = process.env) {
       mode,
       untrusted: cidrList(env.PROXY_UNTRUSTED_PEERS !== undefined ? list(env.PROXY_UNTRUSTED_PEERS) : SIX_PN),
       cloudflare: env.PROXY_TRUST_CLOUDFLARE === '1',
+      assumeHttps: mode === 'socket' && env.PROXY_ASSUME_HTTPS === '1',
       cloudflareRanges: cidrList(env.PROXY_CLOUDFLARE_RANGES ? list(env.PROXY_CLOUDFLARE_RANGES) : CLOUDFLARE_RANGES),
     },
     idleTimeoutMs: int(env.PROXY_IDLE_TIMEOUT_MS, 620_000, 'PROXY_IDLE_TIMEOUT_MS'),

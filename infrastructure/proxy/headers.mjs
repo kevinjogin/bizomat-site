@@ -106,13 +106,14 @@ function one(value) {
  * @param {object} p
  * @param {string} p.peer       the TCP peer address (socket.remoteAddress)
  * @param {object} p.headers    req.headers (lower-case names)
- * @param {object} p.trust      { mode: 'fly'|'socket', untrusted: BlockList, cloudflare: boolean, cloudflareRanges: BlockList }
+ * @param {object} p.trust      { mode: 'fly'|'socket', untrusted: BlockList, cloudflare: boolean, cloudflareRanges: BlockList,
+ *                              assumeHttps?: boolean (socket mode: the scheme the local stack's missing TLS edge would give) }
  * @returns {{ip: string, proto: 'http'|'https', edge: boolean, cdn: ''|'cloudflare'}}
  */
 export function clientInfo({ peer, headers, trust }) {
   const socketIp = normalizeIp(peer) || '0.0.0.0';
   if (!trust || trust.mode !== 'fly' || inList(trust.untrusted, socketIp)) {
-    return { ip: socketIp, proto: 'http', edge: false, cdn: '' };
+    return { ip: socketIp, proto: trust?.mode === 'socket' && trust.assumeHttps ? 'https' : 'http', edge: false, cdn: '' };
   }
   const xfp = String(one(headers['x-forwarded-proto']) || '').trim().toLowerCase();
   const proto = xfp === 'http' ? 'http' : 'https';
