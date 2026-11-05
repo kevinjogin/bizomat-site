@@ -32,7 +32,7 @@ export default function Health() {
           </>
         }
       >
-        <p className="muted">Live checks of the Worker and its Cloudflare bindings, plus failure counters recorded by the API.</p>
+        <p className="muted">Live checks of the API, database, file storage and cache, plus failure counters recorded by the API.</p>
       </PageIntro>
       <QueryState q={q}>
         {() => {

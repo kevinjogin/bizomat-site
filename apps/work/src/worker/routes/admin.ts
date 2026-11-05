@@ -654,7 +654,9 @@ adminRoutes.get('/health', async (c) => {
     series: { serverErrors: series('api_5xx'), clientErrors: series('api_4xx'), authFailures: series('api_401'), failedLogins: series('auth_login_failed'), rateLimited: series('api_429') },
     recentErrors: errors.map((e) => ({ id: e.id, at: e.created_at, method: e.method, route: e.route, status: e.status, name: e.error_name, message: e.message })),
     maintenance: lastMaint ? { lastRunAt: lastMaint.updated_at, ...parseJson<Record<string, unknown>>(lastMaint.value, {}) } : null,
-    observability: 'Cloudflare Workers Logs are enabled for this Worker (dashboard → Workers & Pages → the Worker → Logs).',
+    observability: c.env.RUNTIME === 'node'
+      ? 'The server writes one log line per request (method, path, status, time; no IP addresses or content): fly logs -a bizomat.'
+      : 'Cloudflare Workers Logs are enabled for this Worker (dashboard → Workers & Pages → the Worker → Logs).',
   });
 });
 

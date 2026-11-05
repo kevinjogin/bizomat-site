@@ -13,6 +13,8 @@ export interface Env {
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
   CF_VERSION_METADATA?: { id: string; tag: string; timestamp: string };
+  /** Set to 'node' by the Node runtime (src/node/runtime.ts); absent on Cloudflare. */
+  RUNTIME?: 'node';
 }
 
 export interface AuthUser {

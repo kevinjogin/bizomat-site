@@ -93,6 +93,7 @@ export function createRuntime(config: NodeConfig, options: RuntimeOptions = {}):
     CACHE: kv,
     ASSETS: assets.binding,
     BOARD_ROOMS: hub.namespace,
+    RUNTIME: 'node',
     ...config.vars,
     ...(config.version ? { CF_VERSION_METADATA: { id: config.version, tag: config.version, timestamp: startedAt } } : {}),
   };
