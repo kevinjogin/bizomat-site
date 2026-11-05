@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, get, patch, post } from '../lib/api';
 import { canEdit, useWorkspace } from '../lib/session';
+import { usePageTitle } from '../lib/hooks';
 import { formatDate, timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Field, Loading, ProgressBar } from '../components/ui/ui';
@@ -97,6 +98,7 @@ export default function DashboardPage() {
   });
   const favs = useQuery({ queryKey: ['favourites', ws.id], queryFn: () => get<any[]>(`/workspaces/${ws.id}/favourites`) });
   const isFav = !!favs.data?.some((f) => f.type === 'dashboard' && f.id === dashboardId);
+  usePageTitle(dash.data?.dashboard.name);
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ['dashboard', dashboardId] });

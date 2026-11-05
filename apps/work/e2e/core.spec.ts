@@ -17,9 +17,38 @@ async function signup(page: Page, name = 'E2E User') {
 test('unauthenticated visitors are sent to login and APIs refuse data', async ({ page, request }) => {
   await page.goto('/w/some-workspace/boards');
   await expect(page).toHaveURL(/\/login/);
-  await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Sign in to BIZOMAT' })).toBeVisible();
   const res = await request.get('/api/workspaces');
   expect(res.status()).toBe(401);
+});
+
+test('BIZOMAT branding on the sign-in page and in the app shell', async ({ page }) => {
+  await page.goto('/login');
+  await expect(page).toHaveTitle('Sign in to BIZOMAT · BIZOMAT Project Management');
+  await expect(page.getByRole('heading', { name: 'Sign in to BIZOMAT' })).toBeVisible();
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'BIZOMAT Project Management');
+  // Headings use the platform's heading face, body text Inter Tight.
+  expect(await page.getByRole('heading', { level: 1 }).evaluate((h) => getComputedStyle(h).fontFamily)).toContain('Oxanium');
+  expect(await page.locator('body').evaluate((b) => getComputedStyle(b).fontFamily)).toContain('Inter Tight');
+  // Platform legal pages open in the same tab; links to other hosts carry rel="noopener".
+  const legal = page.getByRole('navigation', { name: 'BIZOMAT legal' });
+  for (const [name, href] of [['Privacy', 'https://bizomat.ai/privacy/'], ['Terms', 'https://bizomat.ai/terms/'], ['Disclaimer', 'https://bizomat.ai/disclaimer/']]) {
+    const link = legal.getByRole('link', { name, exact: true });
+    await expect(link).toHaveAttribute('href', href);
+    await expect(link).toHaveAttribute('rel', 'noopener');
+    expect(await link.getAttribute('target')).toBeNull();
+  }
+  await expect(page.locator('body')).not.toContainText(/KEVOS|WorkOS/i);
+
+  await signup(page, 'Brand Tester');
+  await expect(page).toHaveTitle('Home · BIZOMAT Project Management');
+  await expect(page.getByRole('link', { name: 'BIZOMAT Project Management home' })).toBeVisible();
+  await expect(page.getByText('Part of the BIZOMAT platform')).toBeVisible();
+  const platform = page.getByRole('navigation', { name: 'BIZOMAT platform' });
+  await expect(platform.getByRole('link', { name: 'BIZOMAT', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/');
+  await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('href', 'https://cad.bizomat.ai/');
+  await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('rel', 'noopener');
+  await expect(page.locator('body')).not.toContainText(/KEVOS|WorkOS/i);
 });
 
 test('core board workflow persists across reloads', async ({ page }) => {

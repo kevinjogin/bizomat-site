@@ -81,11 +81,17 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
       if (!v) return null;
       const t = todayISO();
       const pct = v.end <= t ? 100 : v.start >= t ? 0 : Math.round(((Date.parse(t) - Date.parse(v.start)) / Math.max(1, Date.parse(v.end) - Date.parse(v.start))) * 100);
+      const label = `${formatDate(v.start)} – ${formatDate(v.end)}`;
+      const text = (color: string) => ({ position: 'absolute', inset: 0, fontSize: 11.5, color, display: 'flex', justifyContent: 'center', lineHeight: '22px', fontWeight: 600, whiteSpace: 'nowrap' }) as const;
+      // The label is drawn twice: dark over the track, white over the elapsed part (clipped to it), so every
+      // character stays readable whatever the progress, in both themes.
       return (
         <div style={{ width: '100%', padding: '0 4px' }}>
           <div style={{ position: 'relative', height: 22, borderRadius: 11, background: 'var(--surface-3)', overflow: 'hidden' }}>
-            <span style={{ position: 'absolute', inset: 0, width: `${pct}%`, background: 'var(--accent)' }} />
-            <span style={{ position: 'relative', fontSize: 11.5, color: pct > 45 ? '#fff' : 'var(--text)', display: 'flex', justifyContent: 'center', lineHeight: '22px', fontWeight: 600 }}>{formatDate(v.start)} – {formatDate(v.end)}</span>
+            <span style={text('var(--text)')}>{label}</span>
+            <span aria-hidden style={{ position: 'absolute', inset: 0, background: 'var(--accent-fill)', clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
+              <span style={text('#fff')}>{label}</span>
+            </span>
           </div>
         </div>
       );

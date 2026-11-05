@@ -7,6 +7,7 @@ import { AppShell } from './components/layout/AppShell';
 import { LoginPage, SignupPage, InvitePage } from './pages/Auth';
 import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
+import { BRAND } from './lib/brand';
 
 const Home = lazy(() => import('./pages/Home'));
 const MyWork = lazy(() => import('./pages/MyWork'));
@@ -33,7 +34,7 @@ const Privacy = lazy(() => import('./pages/Privacy'));
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, error, refresh } = useSession();
   const location = useLocation();
-  if (loading) return <Loading label="Loading WorkOS…" />;
+  if (loading) return <Loading label={`Loading ${BRAND.product}…`} />;
   if (error && !session) return <div className="page"><ErrorBox error={error} retry={() => refresh()} /></div>;
   if (!session) return <Navigate to={`/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />;
   return <>{children}</>;
@@ -78,9 +79,8 @@ export function App() {
 
   useHeartbeat(!!session);
 
-  useEffect(() => {
-    document.title = 'KEVOS WorkOS';
-  }, []);
+  // The default tab title ("BIZOMAT Project Management") is in index.html; pages add their own with usePageTitle.
+  // Setting it here would overwrite the first page's title, because a parent's effects run after its children's.
 
   const page = (el: ReactNode) => <Suspense fallback={<Loading />}>{el}</Suspense>;
 

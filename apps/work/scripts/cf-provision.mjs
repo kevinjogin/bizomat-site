@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Provision the isolated Cloudflare resources for ONE WorkOS environment via
+// Provision the isolated Cloudflare resources for ONE environment of this app via
 // the Cloudflare REST API, then write their IDs into wrangler.jsonc (in the
 // working copy only).
 //
@@ -9,7 +9,7 @@
 //   * only touches names starting with "workos-platform-<env>";
 //   * by default ABORTS if any of those names already exist (never reuses
 //     something it did not create). Pass --reuse only to resume a previous
-//     WorkOS provisioning run that was interrupted;
+//     provisioning run of this app that was interrupted;
 //   * only issues GET and create (POST) calls — never updates or deletes.
 
 import { appendFileSync, readFileSync, writeFileSync } from 'node:fs';
@@ -98,7 +98,7 @@ if (kv) existing('KV namespace', names.kv);
 if (bucket) existing('R2 bucket', names.bucket);
 if (conflicts.length) {
   console.error('Refusing to continue — these names are already taken:\n  - ' + conflicts.join('\n  - '));
-  console.error('If they were created by an earlier WorkOS run, re-run with reuse_existing=true; otherwise pick a new name prefix.');
+  console.error('If they were created by an earlier run of this script, re-run with reuse_existing=true; otherwise pick a new name prefix.');
   process.exit(2);
 }
 

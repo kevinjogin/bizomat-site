@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, badRequest, body, newId, notFound, now } from '../lib/util';
 import { requireWorkspace, wsAtLeast } from '../services/permissions';
+import { DEFAULT_COLOR } from '../../shared/brand';
 
 export const folderRoutes = new Hono<AppEnv>();
 
@@ -12,7 +13,7 @@ const SCOPE_TABLE: Record<FolderScope, string> = { documents: 'documents', board
 const MAX_FOLDERS = 500;
 const MAX_DEPTH = 8;
 
-const colorSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Colour must be a hex value like #F97316');
+const colorSchema = z.string().regex(/^#[0-9a-fA-F]{6}$/, `Colour must be a hex value like ${DEFAULT_COLOR}`);
 
 interface FolderRow {
   id: string;
@@ -90,7 +91,7 @@ folderRoutes.post('/workspaces/:ws/folders', async (c) => {
   const id = newId();
   const t = now();
   await c.env.DB.prepare('INSERT INTO folders (id, workspace_id, scope, parent_id, name, color, position, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(id, wsId, input.scope, input.parentId ?? null, input.name, input.color ?? '#F97316', (agg?.hi ?? 0) + 1000, user.id, t, t)
+    .bind(id, wsId, input.scope, input.parentId ?? null, input.name, input.color ?? DEFAULT_COLOR, (agg?.hi ?? 0) + 1000, user.id, t, t)
     .run();
   const row = await c.env.DB.prepare('SELECT * FROM folders WHERE id = ?').bind(id).first<FolderRow>();
   return c.json(dto(row!), 201);

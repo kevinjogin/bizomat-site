@@ -6,6 +6,11 @@ import { isAdmin, useSession, useWorkspace } from '../../lib/session';
 import { ColorSwatches, ErrorBox, Field, Loading, Switch } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { useConfirm, useToast } from '../../components/ui/overlays';
+import { PALETTE } from '../../../shared/columns';
+import { BRAND } from '../../lib/brand';
+
+/** Workspace colours: BIZOMAT teal (the default for new workspaces) first, then the shared palette. */
+const WORKSPACE_COLORS = [BRAND.defaultColor, ...PALETTE];
 
 export function WorkspaceSettings() {
   const ws = useWorkspace();
@@ -104,7 +109,7 @@ export function WorkspaceSettings() {
         <fieldset disabled={!admin} style={{ border: 0, padding: 0, margin: 0 }}>
           <Field label="Name" htmlFor="ws-name-s"><input id="ws-name-s" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} required /></Field>
           <Field label="Description" htmlFor="ws-desc"><textarea id="ws-desc" className="textarea" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={1000} /></Field>
-          <Field label="Colour"><ColorSwatches value={color} onChange={setColor} /></Field>
+          <Field label="Colour"><ColorSwatches value={color} onChange={setColor} colors={WORKSPACE_COLORS} /></Field>
           <div className="row" style={{ marginBottom: 12 }}>
             <Switch label="Allow members to invite" checked={allowInvite} onChange={setAllowInvite} />
             <span>Allow members (not just admins) to invite people</span>

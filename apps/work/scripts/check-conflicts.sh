@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # READ-ONLY. Lists existing Cloudflare resources and reports whether any of
-# the WorkOS resource names are already taken. Never creates or modifies
+# the workos-platform-* resource names are already taken. Never creates or modifies
 # anything. Requires CLOUDFLARE_API_TOKEN (+ CLOUDFLARE_ACCOUNT_ID) or
 # `wrangler login`.
 set -euo pipefail

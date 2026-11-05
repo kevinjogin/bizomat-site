@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import { z } from 'zod';
 import type { AppConfigDTO } from '../../shared/types';
+import { PRODUCT } from '../../shared/brand';
 import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, now, randomToken, sha256Hex } from '../lib/util';
 import { hashPassword, passwordProblems, verifyPassword } from '../auth/password';
@@ -21,7 +22,7 @@ const signupAllowed = (env: AppEnv['Bindings']) => env.ALLOW_SIGNUP === 'true';
 
 authRoutes.get('/config', (c) => {
   const cfg: AppConfigDTO = {
-    appName: c.env.APP_NAME || 'KEVOS WorkOS',
+    appName: c.env.APP_NAME || PRODUCT.full,
     environment: c.env.ENVIRONMENT,
     allowSignup: signupAllowed(c.env),
     providers: [

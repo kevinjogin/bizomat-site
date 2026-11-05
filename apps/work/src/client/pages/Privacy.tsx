@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BrandMark, Wordmark } from '../components/ui/Icon';
-import { BRAND, pageTitle } from '../lib/brand';
+import { ProductLockup } from '../components/ui/Icon';
+import { BRAND, PLATFORM_URLS, pageTitle, platformLinkProps } from '../lib/brand';
 
 const RETENTION: [string, string][] = [
   ['Your account (name, email, settings)', 'Until you ask us to delete your account'],
@@ -21,16 +21,16 @@ export default function Privacy() {
   return (
     <div className="auth-wrap" style={{ alignItems: 'flex-start' }}>
       <article className="card" style={{ maxWidth: 820, width: '100%', padding: '28px 32px', lineHeight: 1.6 }}>
-        <div className="row" style={{ marginBottom: 18 }}>
-          <BrandMark size={32} /> <Wordmark size={18} />
+        <div className="auth-brand">
+          <ProductLockup height={20} />
         </div>
         <h1>Privacy notice</h1>
-        <p className="muted">Last updated {BRAND.privacyUpdated}</p>
+        <p className="muted">{BRAND.full} · Last updated {BRAND.privacyUpdated}</p>
 
         <h2 style={{ marginTop: 20 }}>Who we are</h2>
         <p>
-          {BRAND.product} (“Work by KEVOS”) is a work management service provided by {BRAND.company}. This notice explains what personal information we collect when you use
-          it, why, how long we keep it and your choices. We handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
+          {BRAND.full} is a work management service on the {BRAND.platform} platform. This notice explains what personal information we collect
+          when you use it, why, how long we keep it and your choices. We handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
         </p>
 
         <h2 style={{ marginTop: 20 }}>What we collect and why</h2>
@@ -52,7 +52,7 @@ export default function Privacy() {
 
         <h2 style={{ marginTop: 20 }}>Who can see it</h2>
         <p>
-          People in your workspaces see the content shared with them. A small number of authorised {BRAND.company} administrators can see account and usage information (for example your
+          People in your workspaces see the content shared with them. A small number of authorised {BRAND.platform} administrators can see account and usage information (for example your
           email, sign-in times and how many projects you have created) to operate and improve the service. Administrators cannot see passwords or sign-in tokens, and their access is
           logged. We do not sell personal information or share it for advertising.
         </p>
@@ -76,6 +76,12 @@ export default function Privacy() {
           You can view and update your profile at any time, sign out of sessions from <em>Settings → Security</em>, and ask us for access to, correction of or deletion of your personal
           information. Contact <a href={`mailto:${BRAND.privacyContact}`}>{BRAND.privacyContact}</a>. If you are not satisfied with our response you may complain to the Office of the
           Australian Information Commissioner (oaic.gov.au).
+        </p>
+
+        <h2 style={{ marginTop: 20 }}>Platform policies</h2>
+        <p>
+          This notice covers {BRAND.full}. See also the {BRAND.platform} platform's <a {...platformLinkProps(PLATFORM_URLS.privacy)}>privacy policy</a>,{' '}
+          <a {...platformLinkProps(PLATFORM_URLS.terms)}>terms</a> and <a {...platformLinkProps(PLATFORM_URLS.disclaimer)}>disclaimer</a>.
         </p>
 
         <p style={{ marginTop: 28 }}>

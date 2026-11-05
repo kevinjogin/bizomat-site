@@ -7,6 +7,7 @@ import { auditStmt } from '../services/audit';
 import { svcFromContext } from '../services/context';
 import { EVENT_TYPES, PROVIDERS, deliver, validateWebhookUrl, type IntegrationRow } from '../services/integrations';
 import { requireBoard, requireWorkspace } from '../services/permissions';
+import { PRODUCT } from '../../shared/brand';
 
 export const integrationRoutes = new Hono<AppEnv>();
 
@@ -116,7 +117,7 @@ integrationRoutes.delete('/integrations/:id', async (c) => {
 integrationRoutes.post('/integrations/:id/test', async (c) => {
   const row = await loadIntegration(c);
   await rateLimit(c.env.DB, `integration-test:${row.id}`, 10, 60_000);
-  const result = await deliver(svcFromContext(c), { ...row, status: row.status === 'disabled' ? 'disabled' : row.status }, 'test', { message: 'Test delivery from WorkOS' });
+  const result = await deliver(svcFromContext(c), { ...row, status: row.status === 'disabled' ? 'disabled' : row.status }, 'test', { message: `Test delivery from ${PRODUCT.full}` });
   return c.json(result, result.ok ? 200 : 502);
 });
 

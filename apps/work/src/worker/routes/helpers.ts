@@ -3,6 +3,7 @@ import { newId, now, parseJson } from '../lib/util';
 import { avatarUrl } from '../services/mappers';
 import { defaultStatusLabels, defaultPriorityLabels } from '../../shared/columns';
 import { eventStmt } from '../services/analytics';
+import { DEFAULT_COLOR } from '../../shared/brand';
 
 export interface UserRow {
   id: string;
@@ -63,7 +64,7 @@ export function createWorkspaceStmts(db: D1Database, opts: { id?: string; name: 
     stmts: [
       db
         .prepare('INSERT INTO workspaces (id, name, description, color, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-        .bind(id, opts.name, opts.description ?? '', opts.color ?? '#F97316', opts.ownerId, t, t),
+        .bind(id, opts.name, opts.description ?? '', opts.color ?? DEFAULT_COLOR, opts.ownerId, t, t),
       db.prepare("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, 'owner', ?)").bind(id, opts.ownerId, t),
       eventStmt(db, { type: 'workspace.created', userId: opts.ownerId, workspaceId: id, entityType: 'workspace', entityId: id, at: t }),
     ],

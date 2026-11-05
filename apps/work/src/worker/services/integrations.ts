@@ -6,6 +6,7 @@
 
 import { newId, now, parseJson } from '../lib/util';
 import type { Svc } from './context';
+import { PRODUCT } from '../../shared/brand';
 
 export interface ProviderInfo {
   id: string;
@@ -25,7 +26,7 @@ export const PROVIDERS: ProviderInfo[] = [
     category: 'webhooks',
     description: 'POST signed JSON events (HMAC-SHA256) to any HTTPS endpoint.',
     availability: 'available',
-    fields: [{ key: 'url', label: 'Endpoint URL', secret: true, placeholder: 'https://example.com/hooks/workos' }],
+    fields: [{ key: 'url', label: 'Endpoint URL', secret: true, placeholder: 'https://example.com/hooks/project-management' }],
   },
   {
     id: 'slack',
@@ -135,7 +136,7 @@ function summarize(event: string, payload: any): string {
     case 'item.moved': return `${item} moved${board}`;
     case 'update.posted': return `New update on ${item}${board}`;
     case 'automation.triggered': return `Automation "${payload?.automation?.name}" ran for ${item}${board}`;
-    default: return `WorkOS test message${board}`;
+    default: return `${PRODUCT.full} test message${board}`;
   }
 }
 

@@ -223,7 +223,7 @@ function TokensCard() {
         <button className="btn sm" onClick={() => { setCreated(null); setCreating(true); }}><Icon name="plus" size={14} /> New token</button>
       </div>
       <div className="card-pad muted small" style={{ paddingBottom: 0 }}>
-        Use tokens with <code>Authorization: Bearer &lt;token&gt;</code> to call the WorkOS API. Tokens act as you, with your permissions.
+        Use tokens with <code>Authorization: Bearer &lt;token&gt;</code> to call the Project Management API. Tokens act as you, with your permissions.
       </div>
       {q.isLoading ? <Loading /> : null}
       <div className="list" style={{ marginTop: 8 }}>

@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ViewDTO, ViewSettings, ViewType } from '../../shared/types';
 import { ApiError, del, get, post } from '../lib/api';
 import { useSession, useWorkspace } from '../lib/session';
-import { useBoardRealtime, useShortcut } from '../lib/hooks';
+import { useBoardRealtime, usePageTitle, useShortcut } from '../lib/hooks';
 import { timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading } from '../components/ui/ui';
@@ -38,9 +38,7 @@ export default function BoardPage() {
   const [dialog, setDialog] = useState<null | 'settings' | 'members' | 'automations' | 'activity'>(params.get('automations') ? 'automations' : null);
   const itemId = params.get('item');
 
-  useEffect(() => {
-    if (bundle) document.title = `${bundle.board.name} · KEVOS WorkOS`;
-  }, [bundle]);
+  usePageTitle(bundle?.board.name);
 
   const canEdit = !!bundle && bundle.board.access !== 'view' && !bundle.board.archivedAt;
   const views = bundle?.views ?? [];

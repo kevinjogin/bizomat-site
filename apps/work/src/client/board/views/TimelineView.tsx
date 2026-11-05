@@ -82,7 +82,7 @@ export function TimelineView(props: BoardViewProps) {
     if (progressCol && typeof it.values[progressCol.id] === 'number') return it.values[progressCol.id] as number;
     return 0;
   };
-  const colorOf = (it: ItemDTO) => (statusCol ? labelsOf(statusCol).find((l) => l.id === it.values[statusCol.id])?.color : undefined) ?? 'var(--accent)';
+  const colorOf = (it: ItemDTO) => (statusCol ? labelsOf(statusCol).find((l) => l.id === it.values[statusCol.id])?.color : undefined) ?? 'var(--accent-fill)';
 
   const onPointerDown = (e: React.PointerEvent, it: ItemDTO, mode: Drag['mode']) => {
     if (!canEdit) return;

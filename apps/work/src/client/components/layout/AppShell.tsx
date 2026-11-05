@@ -5,12 +5,14 @@ import { get, patch, post, errorMessage } from '../../lib/api';
 import { canEdit, useSession, useWorkspace } from '../../lib/session';
 import { applyTheme, storedTheme, useShortcut, useDebounced, type ThemePref } from '../../lib/hooks';
 import { timeAgo } from '../../lib/format';
-import { BrandMark, Icon, Wordmark } from '../ui/Icon';
+import { BrandMark, Icon, ProductLockup } from '../ui/Icon';
 import { Avatar, Spinner } from '../ui/ui';
 import { Dropdown, MenuItem, MenuSep, Modal, Popover, useToast } from '../ui/overlays';
 import { CreateBoardDialog, CreateDashboardDialog, CreateWorkspaceDialog, useBoards, useCreateDocument } from './CreateDialogs';
 import type { BoardDTO, NotificationDTO } from '../../../shared/types';
 import { FolderIcon, buildTree, useFolders } from '../folders/Folders';
+import { PlatformFooter } from './PlatformLinks';
+import { BRAND, PLATFORM_URLS, platformLinkProps } from '../../lib/brand';
 
 const NAV: { to: string; label: string; icon: string; key?: string }[] = [
   { to: 'home', label: 'Home', icon: 'home', key: 'g h' },
@@ -64,8 +66,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />
         </button>
-        <Link to={`${base}/home`} className="brand" aria-label="KEVOS WorkOS home">
-          <BrandMark /> <span className="desktop-only"><Wordmark /></span>
+        <Link to={`${base}/home`} className="brand" aria-label={`${BRAND.full} home`}>
+          <span className="mobile-only"><BrandMark size={28} /></span>
+          <span className="desktop-only"><ProductLockup height={15} /></span>
         </Link>
         <WorkspaceSwitcher onCreate={() => setCreate('workspace')} />
         <button className="search-trigger" onClick={() => setSearchOpen(true)} aria-label="Search (Ctrl+K)">
@@ -129,7 +132,7 @@ function Sidebar({ onNewBoard }: { onNewBoard: () => void }) {
       {boards.isLoading ? <div className="nav-item"><Spinner /></div> : null}
       <SidebarBoards wsId={ws.id} base={base} boards={boards.data ?? []} />
       {boards.data && boards.data.length === 0 ? <div className="muted small" style={{ padding: '4px 10px' }}>No boards yet.</div> : null}
-      <div className="brand-foot"><BrandMark size={16} /> WorkOS is part of <strong>KEVOS</strong></div>
+      <PlatformFooter />
     </nav>
   );
 }
@@ -477,6 +480,9 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
       <p className="muted small">
         Boards hold items in groups; every column type is configurable. Switch between Table, Kanban, Calendar, Timeline, Chart, Workload, Form, Map and Files views —
         they all use the same data. Right-click an item for more actions.
+      </p>
+      <p className="muted small">
+        {BRAND.full} is part of the {BRAND.platform} platform. <a {...platformLinkProps(PLATFORM_URLS.productPage)}>About {BRAND.product}</a>
       </p>
     </Modal>
   );

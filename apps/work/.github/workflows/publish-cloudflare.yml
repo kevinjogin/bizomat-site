@@ -1,7 +1,7 @@
 name: Provision and publish to Cloudflare
 
 # One-time (manually started) workflow that creates the NEW, isolated
-# WorkOS resources for an environment and publishes the Worker.
+# Project Management resources (workos-platform-*) for an environment and publishes the Worker.
 # Requires repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID.
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
         options: [preview, production]
         default: preview
       reuse_existing:
-        description: Resume an interrupted WorkOS run (reuse workos-platform-* resources it already created)
+        description: Resume an interrupted run (reuse workos-platform-* resources it already created)
         type: boolean
         default: false
 
@@ -98,7 +98,7 @@ jobs:
           KV_ID: ${{ steps.provision.outputs.kv_id }}
         run: |
           {
-            echo "## WorkOS published ($TARGET_ENV)"
+            echo "## BIZOMAT Project Management published ($TARGET_ENV)"
             echo ""
             echo "- URL: $APP_URL"
             echo "- Worker: workos-platform-$TARGET_ENV"

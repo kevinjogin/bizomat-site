@@ -1,3 +1,6 @@
+import { BAR_PATH, BRAND_COLORS, B_PATH, B_VIEWBOX, WORDMARK_PATH, WORDMARK_VIEWBOX } from '../../lib/bizomat-brand';
+import { BRAND } from '../../lib/brand';
+
 // Original line icon set (24x24 grid, 1.8 stroke).
 const PATHS: Record<string, string> = {
   home: 'M4 11 12 4l8 7M6 9.5V20h12V9.5M10 20v-5h4v5',
@@ -109,21 +112,58 @@ export function Icon({ name, size = 16, className, title }: { name: IconName | s
   );
 }
 
-export function BrandMark({ size = 26 }: { size?: number }) {
+// ------------------------------------------------------------------ BIZOMAT brand
+// Geometry comes from the generated bizomat-brand.ts (shared/brand/build.mjs); nothing here is hand-drawn.
+
+const box = (viewBox: string) => viewBox.split(' ').map(Number) as [number, number, number, number];
+const [, , B_W, B_H] = box(B_VIEWBOX);
+const [, , WORD_W, WORD_H] = box(WORDMARK_VIEWBOX);
+// Same placement as shared/brand/build.mjs markSvg(): the B fills 58.6 % of a 512 tile, centred.
+const MARK_SCALE = (512 * 0.586) / B_W;
+const MARK_TRANSFORM = `translate(${(256 - (B_W / 2) * MARK_SCALE).toFixed(2)} ${(256 - (B_H / 2) * MARK_SCALE).toFixed(2)}) scale(${MARK_SCALE.toFixed(5)})`;
+
+/** The BIZOMAT mark: the B on a navy rounded tile with the teal connector bar (the app icon and favicon). */
+export function BrandMark({ size = 26, title }: { size?: number; title?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden className="brand-mark">
-      <rect width="32" height="32" rx="8" fill="#F97316" />
-      <rect x="8.5" y="7" width="4.6" height="18" rx="2.3" fill="#fff" />
-      <path d="M13.4 16 22 7.6M13.4 16l8.9 8.6" stroke="#fff" strokeWidth="4.6" strokeLinecap="round" fill="none" />
+    <svg width={size} height={size} viewBox="0 0 512 512" className="brand-mark" role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true} focusable="false">
+      <rect width="512" height="512" rx="112" fill={BRAND_COLORS.navy} />
+      <g transform={MARK_TRANSFORM}>
+        <path fill="#ffffff" fillRule="evenodd" d={B_PATH} />
+        <path fill={BRAND_COLORS.tealMark} d={BAR_PATH} />
+      </g>
     </svg>
   );
 }
 
-/** "KEVOS WorkOS" wordmark. */
-export function Wordmark({ size = 16 }: { size?: number }) {
+/**
+ * The BIZOMAT wordmark. The word follows CSS (`--brand-ink`: navy on light, white on dark); the B's middle bar is
+ * the teal connector (`--brand-bar`). `height` is the cap height in pixels.
+ */
+export function Wordmark({ height = 16, className }: { height?: number; className?: string }) {
   return (
-    <span className="wordmark" style={{ fontSize: size }}>
-      <span className="wordmark-company">KEVOS</span> <span className="wordmark-product">WorkOS</span>
+    <svg
+      className={`wordmark${className ? ` ${className}` : ''}`}
+      viewBox={WORDMARK_VIEWBOX}
+      height={height}
+      width={Math.round((height * WORD_W) / WORD_H)}
+      role="img"
+      aria-label={BRAND.platform}
+      focusable="false"
+    >
+      <path className="wordmark-word" fillRule="evenodd" d={WORDMARK_PATH} />
+      <path className="wordmark-bar" d={BAR_PATH} />
+    </svg>
+  );
+}
+
+/** Product lockup: the BIZOMAT wordmark with the product name beneath it ("Project Management"). */
+export function ProductLockup({ height = 15, className }: { height?: number; className?: string }) {
+  return (
+    <span className={`lockup${className ? ` ${className}` : ''}`}>
+      <Wordmark height={height} />
+      <span className="lockup-product" style={{ fontSize: Math.max(10, Math.round(height * 0.62 * 2) / 2) }}>
+        {BRAND.product}
+      </span>
     </span>
   );
 }
