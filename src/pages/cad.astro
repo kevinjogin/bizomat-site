@@ -1,0 +1,164 @@
+---
+// /cad/: BIZOMAT CAD Automation (formerly CADOS). What it does, how it connects, every tool, how to install it, how
+// it is secured and how far it has been tested. Facts come from src/data/platform-catalog.ts and src/data/cad-tools.ts,
+// which record their sources in apps/cad. The application itself runs at APP_LINKS.cad (sign-in required).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import AiToCad from '../components/visuals/AiToCad.astro';
+import CommandFlow from '../components/visuals/CommandFlow.astro';
+import '../styles/product.css';
+import { SITE } from '../config/site.ts';
+import { APP_LINKS } from '../config/platform.ts';
+import { CAD } from '../data/platform-catalog.ts';
+import { CAD_EXAMPLES, CAD_TOOL_GROUPS } from '../data/cad-tools.ts';
+
+const toolCount = CAD_TOOL_GROUPS.reduce((n, g) => n + g.tools.length, 0);
+if (toolCount !== CAD.toolCount) throw new Error(`cad.astro: ${toolCount} tools listed, CAD.toolCount says ${CAD.toolCount}`);
+const description = 'BIZOMAT CAD Automation connects Claude, ChatGPT or another MCP assistant to SOLIDWORKS on your own computer: native parts, assemblies and drawings from plain-language requests.';
+const security = [
+  { t: 'Signed commands', x: 'Every command to your computer is signed by BIZOMAT (ES256) and checked by the Companion before it runs. Replayed, expired or altered commands are refused.' },
+  { t: 'A key per computer', x: 'Pairing makes a key on the computer, kept by Windows (in the TPM where there is one) and never exported. Removing a computer cuts it off.' },
+  { t: 'Sign-in for every AI app', x: 'Assistants sign in with OAuth (PKCE, refresh rotation, revocation). You see each connected app and can disconnect it.' },
+  { t: 'You confirm deletions', x: 'Deleting features or undoing work asks you in SOLIDWORKS first, by default.' },
+  { t: 'Your files stay with you', x: 'SOLIDWORKS saves your models on your computer. To check and measure, BIZOMAT works on a copy of the current body held briefly in memory; exports you ask for are kept for one hour.' },
+  { t: 'Outgoing connections only', x: 'The Companion reaches BIZOMAT over HTTPS; nothing on your network has to accept incoming connections.' },
+];
+---
+<BaseLayout title="CAD Automation" description={description} image="/brand/bizomat-social-cad.png" imageAlt="BIZOMAT CAD Automation: your AI assistant, working in SOLIDWORKS on your own computer" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'CAD Automation', href: '/cad/' }]}
+  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', alternateName: 'CADOS', url: `${SITE.url}/cad/`, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
+  <section class="pp-hero" aria-labelledby="cad-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <p class="bz-eyebrow">BIZOMAT CAD Automation<span class="pp-hero__formerly">Formerly {CAD.formerly}</span></p>
+        <h1 id="cad-title">{CAD.headline}</h1>
+        <p class="pp-hero__lead">{CAD.summary}</p>
+        <div class="pp-hero__actions">
+          <Button href={APP_LINKS.cad.dashboard} variant="accent" rel="noopener" data-cta="cad-open">Open CAD Automation</Button>
+          <Button href="#install" variant="secondary" data-cta="cad-install">Install and set up</Button>
+        </div>
+        <p class="pp-hero__note">Needs Windows, SOLIDWORKS and an AI assistant that supports MCP connectors. Sign-in required.</p>
+      </div>
+      <AiToCad id="cad-hero" />
+    </Container>
+  </section>
+
+  <section class="pp-section" id="how" aria-labelledby="how-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">How it connects</p>
+        <h2 id="how-title">Your assistant asks. Your SOLIDWORKS does the work.</h2>
+        <p>The assistant calls BIZOMAT's tools over MCP. BIZOMAT checks each step, then sends it to your computer, where the add-in makes native features in your session.</p>
+      </div>
+      <CommandFlow id="cad-flow" />
+      <div class="pp-split pp-section__after">
+        <ol class="pp-steps">
+          {CAD.steps.map((s) => <li><h3>{s.title}</h3><p>{s.text}</p></li>)}
+        </ol>
+        <div class="bz-stack">
+          <h3>Local execution, by design</h3>
+          <ul class="pp-list">
+            <li>SOLIDWORKS runs on your computer, with your licence, templates and file locations.</li>
+            <li>Only commands and their results travel. Model files are read and saved where they are.</li>
+            <li>Each sketch is solved and each feature is rebuilt on BIZOMAT's own kernel first, so the expected volume and size are known before SOLIDWORKS changes anything.</li>
+            <li>Several computers can be paired; you choose which one runs a command.</li>
+          </ul>
+          <p class="pp-table-note">Works with Claude, ChatGPT (where your plan allows custom connectors) and any assistant that supports remote MCP servers over Streamable HTTP.</p>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="capabilities" aria-labelledby="cap-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Capabilities</p>
+        <h2 id="cap-title">Parts, assemblies and drawings, in plain language</h2>
+        <p>Everything it makes is a native SOLIDWORKS feature you can edit like any other.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {CAD.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title}</h3><p>{c.text}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="tools" aria-labelledby="tools-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Supported operations</p>
+        <h2 id="tools-title">All {toolCount} tools your assistant can call</h2>
+        <p>The same list the application shows. Long commands report progress and can be cancelled.</p>
+      </div>
+      <div class="pp-tools">
+        {CAD_TOOL_GROUPS.map((g) => (
+          <section aria-label={g.group}>
+            <h3>{g.group}</h3>
+            <dl>{g.tools.map((t) => <div><dt>{t.name}</dt><dd><strong>{t.title}.</strong> {t.text}</dd></div>)}</dl>
+          </section>
+        ))}
+      </div>
+      <h3 class="pp-examples-title">Requests to try</h3>
+      <ul class="pp-cards" role="list">
+        {CAD_EXAMPLES.slice(0, 3).map((e) => <li class="pp-card"><h3>{e.group}</h3>{e.requests.map((r) => <p>“{r}”</p>)}</li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="install" aria-labelledby="install-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Install and configure</p>
+        <h2 id="install-title">Set up in four steps</h2>
+        <p class="pp-head-lead">Sign in to CAD Automation, download the installer for Windows, pair the computer, then add the connector to your assistant. The application's own guide walks through each step.</p>
+        <div class="pp-hero__actions">
+          <Button href={APP_LINKS.cad.download} variant="accent" rel="noopener" data-cta="cad-download">Download for SOLIDWORKS</Button>
+          <Button href={APP_LINKS.cad.docs} variant="secondary" rel="noopener" data-cta="cad-docs">Read the set-up guide</Button>
+        </div>
+        <p class="pp-hero__note">The download needs a CAD Automation account. Connector address for your assistant: <code>{APP_LINKS.cad.mcp}</code></p>
+      </div>
+      <div class="bz-stack">
+        <h3>What you need</h3>
+        <ul class="pp-list">
+          <li>Windows, 64-bit, with SOLIDWORKS installed (the add-in is built against the SOLIDWORKS 2022 API).</li>
+          <li>An AI assistant that can add an MCP connector, such as Claude or ChatGPT.</li>
+          <li>A CAD Automation account (your administrator can add you).</li>
+        </ul>
+        <h3>Check the set-up</h3>
+        <p>Ask your assistant to run the self test. It builds a plate, a set of shapes and an assembly on your computer, makes a drawing and a PDF, and reports each step as ok, check or failed with the reason.</p>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="security" aria-labelledby="security-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Security</p>
+        <h2 id="security-title">Built to keep your CAD environment yours</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {security.map((s) => <li class="pp-card"><h3>{s.t}</h3><p>{s.x}</p></li>)}
+      </ul>
+      <div class="bz-alert bz-alert--info pp-status" role="note">
+        <strong>Where it stands</strong>
+        <span>{CAD.status} See the <a href="/proof-of-work/#cad">Proof of Work</a> for what has been verified.</span>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="cad-cta">
+    <Container class="pp-band">
+      <h2 id="cad-cta">Bring your assistant into SOLIDWORKS.</h2>
+      <div class="pp-band__actions">
+        <Button href={APP_LINKS.cad.signIn} variant="accent" rel="noopener" data-cta="cad-band-signin">Sign in to CAD Automation</Button>
+        <Button href="/contact/?service=feedback#enquiry" variant="secondary" data-cta="cad-band-contact">Ask a question</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .pp-section__after { margin-top: clamp(2rem, 4vw, 3rem); }
+  .pp-examples-title { margin: clamp(2rem, 4vw, 3rem) 0 1rem; font-size: var(--step-1); }
+  .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  code { font-family: var(--font-mono); font-size: .9em; padding: .1em .35em; background: var(--paper-2); border: 1px solid var(--line); border-radius: 4px; overflow-wrap: anywhere; }
+</style>

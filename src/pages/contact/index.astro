@@ -1,5 +1,5 @@
 ---
-// REACHOS: the KEVOS® connection gateway for enquiries, feedback, ideas and collaboration.
+// REACHOS: the BIZOMAT connection gateway for enquiries, feedback, ideas and collaboration.
 // The form, spam check, booking link and assistant are the site's existing ones (ContactForm, BookingCard,
 // ChatWidget); this page arranges them. Pathway links preselect the form's category with ?service=<slug>.
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -34,7 +34,7 @@ const pathways: { slug: string; icon: LibraryIconName; name: string; title: stri
   },
   {
     slug: 'feedback', icon: 'bulb', name: 'Ideas', title: 'Ideas and feedback',
-    text: 'Have an idea that could make KEVOS® better? Share your thoughts, suggestions and opportunities.',
+    text: 'Have an idea that could make BIZOMAT better? Share your thoughts, suggestions and opportunities.',
     examples: ['Platform improvements', 'New features', 'Product suggestions', 'General feedback', 'Future opportunities'],
   },
   {
@@ -44,21 +44,21 @@ const pathways: { slug: string; icon: LibraryIconName; name: string; title: stri
   },
 ];
 const next = [
-  'KEVOS® reviews your enquiry.',
+  'BIZOMAT reviews your enquiry.',
   'You receive a reply through the contact details you provide.',
   'Where it helps, a conversation is arranged to agree the next step.',
 ];
-const description = 'Connect with KEVOS® for tool enquiries, Library knowledge resources, feedback, technical discussions and collaboration opportunities.';
+const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge resources, feedback, technical discussions and collaboration opportunities.';
 ---
 
 <BaseLayout
-  exactTitle="REACHOS | Connect with KEVOS®"
+  exactTitle="REACHOS | Connect with BIZOMAT"
   description={description}
   breadcrumbs={crumbs}
   canonical="/contact/"
-  schema={[{ '@type': 'ContactPage', name: 'REACHOS | Connect with KEVOS®', description, url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
+  schema={[{ '@type': 'ContactPage', name: 'REACHOS | Connect with BIZOMAT', description, url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="REACHOS" title="Connect with <em>KEVOS.</em>" lead="Questions, ideas, feedback or opportunities. Start a conversation and discover how KEVOS® can help you take the next step.">
+  <Hero eyebrow="REACHOS" title="Connect with <em>BIZOMAT.</em>" lead="Questions, ideas, feedback or opportunities. Start a conversation and discover how BIZOMAT can help you take the next step.">
     <MotionVisual page="contact" slot="visual" priority />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
@@ -71,7 +71,7 @@ const description = 'Connect with KEVOS® for tool enquiries, Library knowledge 
     <div class="reach-head">
       <h2 id="pathways-title">How can we <em>help?</em></h2>
       <div>
-        <p class="reach-intro">Have a question, an idea, feedback or something you want to build? Reach out to KEVOS® and find the right next step.</p>
+        <p class="reach-intro">Have a question, an idea, feedback or something you want to build? Reach out to BIZOMAT and find the right next step.</p>
         <p class="reach-intro reach-intro--small">Whether you’re exploring the tools, discovering Library resources, discussing a technical requirement or looking to collaborate, REACHOS is your connection point.</p>
       </div>
     </div>
@@ -97,12 +97,12 @@ const description = 'Connect with KEVOS® for tool enquiries, Library knowledge 
   </Section>
 
   {SITE.assistant.enabled && (
-    <Section index="02" label="KEVOS® Assistant" tone="alt" id="assistant" labelledby="assistant-title">
+    <Section index="02" label="BIZOMAT Assistant" tone="alt" id="assistant" labelledby="assistant-title">
       <div class="reach-assistant">
         <div>
           <h2 id="assistant-title">Not sure where to start?</h2>
-          <p class="reach-intro">The KEVOS® Assistant can help you explore the platform, understand Tools and the Library, and identify the right way to get in touch.</p>
-          <p class="reach-assistant__note"><span class="reach-badge">AI-assisted guidance</span> Answers come only from published KEVOS® information and may not cover everything. For anything specific, start an enquiry. Please don’t share sensitive information.</p>
+          <p class="reach-intro">The BIZOMAT Assistant can help you explore the platform, understand Tools and the Library, and identify the right way to get in touch.</p>
+          <p class="reach-assistant__note"><span class="reach-badge">AI-assisted guidance</span> Answers come only from published BIZOMAT information and may not cover everything. For anything specific, start an enquiry. Please don’t share sensitive information.</p>
         </div>
         <div class="reach-assistant__panel">
           <p class="reach-assistant__label" id="assistant-starters">Try asking</p>
@@ -111,7 +111,7 @@ const description = 'Connect with KEVOS® for tool enquiries, Library knowledge 
               <li><button type="button" class="reach-starter" data-assistant-ask={q} data-cta="contact-assistant-starter" hidden>{q} <span aria-hidden="true">→</span></button></li>
             ))}
           </ul>
-          <Button type="button" variant="secondary" data-assistant-ask="" data-cta="contact-assistant-open" hidden>Open the KEVOS® Assistant</Button>
+          <Button type="button" variant="secondary" data-assistant-ask="" data-cta="contact-assistant-open" hidden>Open the BIZOMAT Assistant</Button>
           <noscript><p class="reach-assistant__fallback">The assistant needs JavaScript. You can still <a href="#enquiry">start an enquiry</a> or book a meeting.</p></noscript>
         </div>
       </div>
@@ -132,8 +132,8 @@ const description = 'Connect with KEVOS® for tool enquiries, Library knowledge 
           <ol class="reach-next">{next.map((r) => <li>{r}</li>)}</ol>
         </div>
         <div class="reach-card">
-          <h2 class="reach-card__title">Where KEVOS® is</h2>
-          <p>KEVOS® is based in New South Wales, Australia. Enquiries are welcome from anywhere, and suitable remote opportunities can be considered.</p>
+          <h2 class="reach-card__title">Where BIZOMAT is</h2>
+          <p>BIZOMAT is based in New South Wales, Australia. Enquiries are welcome from anywhere, and suitable remote opportunities can be considered.</p>
           {SITE.email && <p>Prefer email? <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>}
         </div>
       </aside>

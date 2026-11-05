@@ -12,7 +12,7 @@ const env: ContactEnv = {
 };
 const valid: Record<string, string> = {
   name: 'Alex Example', email: 'alex@example.com', company: 'Example Pty Ltd', phone: '',
-  service: 'Factory Fix', contactMethod: 'Email', message: 'Hello KEVOS, we have a recurring rework problem on one assembly line.',
+  service: 'Factory Fix', contactMethod: 'Email', message: 'Hello BIZOMAT, we have a recurring rework problem on one assembly line.',
   consent: 'on', 'cf-turnstile-response': 'test-only-token',
 };
 beforeEach(() => {
@@ -51,14 +51,14 @@ test('valid enquiry is verified first and delivered with fixed addresses and esc
   assert.equal(verified[0].get('response'), 'test-only-token'); assert.equal(verified[0].get('remoteip'), '203.0.113.7');
   assert.equal(sent.length, 1);
   const email = sent[0]; assert.equal(email.to, 'kevin@kevos.com'); assert.equal(email.from, 'contact-form@kevos.com'); assert.equal(email.replyTo, 'alex@example.com');
-  assert.equal(email.subject, 'New KEVOS enquiry: Tooling <review>');
+  assert.equal(email.subject, 'New BIZOMAT enquiry: Tooling <review>');
   for (const label of ['Name', 'Visitor email', 'Organisation', 'Subject', 'Enquiry category', 'Message', 'Submission time (UTC)', 'Request IP country']) { assert.ok(email.text.includes(label)); assert.ok(email.html.includes(label)); }
   assert.ok(email.text.includes('<script>')); assert.ok(!email.html.includes('<script>')); assert.ok(email.html.includes('&lt;script&gt;')); assert.ok(email.html.includes('A &lt; B &amp; C'));
   assert.ok(email.text.includes('Name: Alex & Example')); assert.ok(email.text.includes('Request IP country: AU'));
   assert.match(email.text, /Submission time \(UTC\): \d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z/);
 });
 test('enquiries without an explicit subject use the required fallback', async () => {
-  assert.equal((await post()).status, 200); assert.equal(sent[0].subject, 'New KEVOS website enquiry');
+  assert.equal((await post()).status, 200); assert.equal(sent[0].subject, 'New BIZOMAT website enquiry');
   assert.ok(sent[0].text.includes('Enquiry category: Factory Fix'));
   assert.ok(!sent[0].text.includes('Request IP country'), 'absent metadata is not invented');
 });
@@ -186,7 +186,7 @@ test('shared quote validation and separate legacy subject generation remain comp
   const base = normalise(valid); assert.deepEqual(validate(base, { requireCompany: true }), {});
   assert.ok(validate({ ...base, company: '' }, { requireCompany: true }).company); assert.equal(validate({ ...base, company: '' }).company, undefined);
   assert.ok(validate({ ...base, phone: 'call me' }).phone); assert.equal(validate({ ...base, phone: '+61 2 9000 0000' }).phone, undefined);
-  assert.equal(enquirySubject(base), 'KEVOS® enquiry: Factory Fix — Example Pty Ltd');
+  assert.equal(enquirySubject(base), 'BIZOMAT enquiry: Factory Fix — Example Pty Ltd');
   assert.ok(validate(normalise({ ...valid, message: 'http://a http://b http://c http://d and more words' })).message);
 });
 test('mail composer independently strips subject header breaks and escapes every HTML value', () => {

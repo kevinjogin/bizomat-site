@@ -1,4 +1,4 @@
-// KEVOS® discovery: the AI step behind Quick Understanding answers in the homepage box.
+// BIZOMAT discovery: the AI step behind Quick Understanding answers in the homepage box.
 //
 // POST /api/discover { question, context?, candidates? } → { ok, ai, intent? }
 //   Workers AI turns a plain-language question into search terms and a one-line restatement and, when the browser
@@ -39,10 +39,12 @@ export interface DiscoverReply { ok: boolean; ai?: boolean; intent?: Intent; err
 export const MAX_QUESTION = 500;
 const AI_TIMEOUT_MS = 15000; // a solution path is a longer reply; the browser shows a keyword path meanwhile
 
+/** The two BIZOMAT applications the search also covers (public product pages only; src/data/platform-catalog.ts). */
+const PRODUCTS = 'The catalogue also has the BIZOMAT products and their documentation: CAD Automation (an AI assistant such as Claude or ChatGPT working in SOLIDWORKS on the user\'s computer through an MCP connector: parts, assemblies, drawings, imports and exports) and Project Management (projects, tasks, teams, boards with Table, Kanban, Calendar and Gantt views, automations, dashboards, documents, Slack and Teams webhooks). Questions about these products are in scope: use terms that name the product and the capability, such as "solidworks automation", "mcp connector", "project management", "kanban", "workflow automation".';
 /** The catalogue's areas, so the model can phrase search terms the way Tools and the Library do. */
-const AREAS = 'KEVOS® tool topics: Engineering & Design; Manufacturing & Production; Machinery & Power Transmission; Hydraulics & Pneumatics; Quality & Materials; Maintenance & Reliability; Projects & Improvement; Business & Commercial; Reference & Utilities. Library book categories: Engineering, Manufacturing, Operations, Projects, Products, Technology, Business, Ideas.';
+const AREAS = 'BIZOMAT tool topics: Engineering & Design; Manufacturing & Production; Machinery & Power Transmission; Hydraulics & Pneumatics; Quality & Materials; Maintenance & Reliability; Projects & Improvement; Business & Commercial; Reference & Utilities. Library book categories: Engineering, Manufacturing, Operations, Projects, Products, Technology, Business, Ideas.';
 
-export const SYSTEM_PROMPT = `You turn a visitor's question into search terms and a step-by-step solution path over the KEVOS catalogue of engineering, manufacturing and business tools (Tools) and technical books (Library). ${AREAS}
+export const SYSTEM_PROMPT = `You turn a visitor's question into search terms and a step-by-step solution path over the BIZOMAT catalogue of engineering, manufacturing and business tools (Tools) and technical books (Library). ${AREAS} ${PRODUCTS}
 
 Reply with ONE JSON object and nothing else:
 {"summary": "...", "type": "calculation", "terms": ["..."], "picks": [], "inScope": true, "ambiguous": false, "clarify": "", "options": [], "missing": [], "assumptions": [], "steps": [{"do": "...", "why": "...", "tools": [], "reads": [], "need": [], "check": "..."}], "outcome": "..."}
@@ -205,7 +207,7 @@ export async function handleDiscover(request: Request, env: DiscoverEnv): Promis
   const input = {
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
-      { role: 'user', content: `${context ? `Earlier question: ${context}\n` : ''}Question: ${question}${candidates.length ? `\n\nCatalogue entries found for this question (pick only from these, by number):\n${candidates.map((c, i) => `${i + 1}. ${c.kind === 'tool' ? 'KEVOS® tool' : c.kind === 'chapter' ? 'Library chapter' : 'Library book'}: ${c.name} (${c.about})`).join('\n')}` : ''}` },
+      { role: 'user', content: `${context ? `Earlier question: ${context}\n` : ''}Question: ${question}${candidates.length ? `\n\nCatalogue entries found for this question (pick only from these, by number):\n${candidates.map((c, i) => `${i + 1}. ${c.kind === 'tool' ? 'BIZOMAT tool' : c.kind === 'chapter' ? 'Library chapter' : 'Library book'}: ${c.name} (${c.about})`).join('\n')}` : ''}` },
     ],
     max_tokens: 900,
     temperature: 0.1,

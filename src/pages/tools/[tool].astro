@@ -1,5 +1,5 @@
 ---
-// A crawlable page for each KEVOS® tool whose guide stands on its own. All content comes from the tool's
+// A crawlable page for each BIZOMAT tool whose guide stands on its own. All content comes from the tool's
 // existing guide (public/tools/guides-*.js); nothing is written here. The working calculator stays at
 // /tools/?tool=<id>, so bookmarked and shared links keep working unchanged.
 import BaseLayout from '../../layouts/BaseLayout.astro';
@@ -24,7 +24,7 @@ const collectionLabel = collection === 'MAKEOS' ? 'MAKEOS' : 'Tools';
 const kind = /calculator/i.test(tool.name) ? '' : collection === 'MAKEOS' || tool.category === 'Engineering' ? ' calculator' : ' tool';
 const title = `${tool.name}${kind}`;
 const description = (() => {
-  const base = `${tool.description} Free ${collection === 'MAKEOS' ? 'MAKEOS ' : ''}${kind.trim() || 'calculator'} from KEVOS®: runs in your browser, no account.`;
+  const base = `${tool.description} Free ${collection === 'MAKEOS' ? 'MAKEOS ' : ''}${kind.trim() || 'calculator'} from BIZOMAT: runs in your browser, no account.`;
   return base.length <= 200 ? base : `${tool.description.slice(0, 196 - 3).replace(/\s+\S*$/, '')}…`;
 })();
 const href = toolPageHref(tool.id);
@@ -67,7 +67,7 @@ const sections: [string, string[] | undefined][] = [
     <Container>
       <nav class="tool-page__crumbs" aria-label="Breadcrumb"><a href="/tools/">← All tools</a></nav>
       <header class="tool-page__head">
-        <p class="eyebrow">KEVOS® {collectionLabel} · {tool.category}</p>
+        <p class="eyebrow">BIZOMAT {collectionLabel} · {tool.category}</p>
         <h1>{tool.name}</h1>
         <p class="lead">{tool.question}</p>
         <p>{g.purpose}</p>
@@ -101,7 +101,7 @@ const sections: [string, string[] | undefined][] = [
       <LearnConcepts items={readings} />
       {pathways.map((p) => <LearningPathway pathway={p} />)}
 
-      <p class="formula-note">KEVOS® tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
+      <p class="formula-note">BIZOMAT tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
       <p class="tool-page__open"><a class="btn" href={toolAppHref(tool.id)}>Open the {tool.name} calculator</a></p>
 
       {related.length > 0 && <section class="tool-page__related" aria-labelledby="related-tools">
@@ -109,7 +109,7 @@ const sections: [string, string[] | undefined][] = [
         <div class="tool-grid">{related.map((t) => <a class="tool-card" href={toolPageHref(t.id)}><span class="card-top"><span class="category-label">{t.category}</span></span><h3>{t.name}</h3><p>{t.question}</p><span class="card-link">About this tool →</span></a>)}</div>
       </section>}
 
-      <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, KEVOS® can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
+      <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, BIZOMAT can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
     </Container>
   </section>
 </BaseLayout>

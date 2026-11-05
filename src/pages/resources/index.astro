@@ -8,21 +8,35 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import Container from '../../components/Container.astro';
 import { primaryGuide } from '../../data/library.ts';
 import { learningPathways } from '../../utils/knowledge.ts';
+import { loadWorkosTools } from '../../utils/workos-tools.ts';
+import { buildReadosLibrary } from '../../utils/reados-library.ts';
+import SearchScan from '../../components/visuals/SearchScan.astro';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Resources', href: '/resources/' }];
 const pathways = learningPathways();
+const { tools } = loadWorkosTools();
+const subjects = await buildReadosLibrary();
+const bookTotal = subjects.reduce((n, s) => n + s.entries.length, 0);
+const chapterTotal = subjects.reduce((n, s) => n + s.entries.reduce((m, e) => m + e.chapters.length, 0), 0);
+const fmt = (n: number) => n.toLocaleString('en-AU');
 ---
 <BaseLayout
-  title="Resources: Library, guides and tools"
-  description="KEVOS® resources: Library books in short chapters, practical guides and articles, browser-based tools and learning pathways from a chapter to a tool."
+  title="Resources: calculators, tools, books and guides"
+  description="BIZOMAT Resources: free engineering, manufacturing and business calculators and tools, a technical Library of books in short chapters, guides and learning paths. No account needed."
   breadcrumbs={crumbs}
 >
-  <Hero eyebrow="Resources" title="Knowledge that <em>moves you forward.</em>" lead="Read the method, then apply it. Library books, longer guides and practical tools, connected so you can go from understanding to doing.">
+  <Hero eyebrow="BIZOMAT Resources" title="Resources: <em>tools, books and guides.</em>" lead="Calculators and tools that show their method, a Library of technical books in short chapters, and guides that connect understanding to doing. Free, and no account needed.">
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
 
   <section class="res" aria-label="Resources">
     <Container>
+      <dl class="res-stats">
+        <div class="bz-stat"><dt>tools and calculators</dt><dd>{fmt(tools.length)}</dd></div>
+        <div class="bz-stat"><dt>Library books</dt><dd>{fmt(bookTotal)}</dd></div>
+        <div class="bz-stat"><dt>chapters to read</dt><dd>{fmt(chapterTotal)}</dd></div>
+        <div class="bz-stat"><dt>account needed</dt><dd>None</dd></div>
+      </dl>
       <ul class="res-grid" role="list">
         <li><a class="res-card" href="/reados/"><span class="res-card__kind">Books</span><h2>Library</h2><p>Technical books organised by subject, each in short chapters with figures and worked numbers.</p><span class="res-card__go">Explore Library <span aria-hidden="true">→</span></span></a></li>
         <li><a class="res-card" href="/library/"><span class="res-card__kind">Guides</span><h2>Guides and articles</h2><p>Longer original guides with clear chapters, worked examples and quick references.</p><span class="res-card__go">Read the guides <span aria-hidden="true">→</span></span></a></li>
@@ -37,6 +51,15 @@ const pathways = learningPathways();
           <p>{primaryGuide.description}</p>
           <a href={`/library/${primaryGuide.slug}/`}>Read the guide <span aria-hidden="true">→</span></a>
         </div>
+      <div class="res-ai">
+        <div>
+          <p class="eyebrow">AI Search</p>
+          <h2>Ask for what you need in plain words</h2>
+          <p>BIZOMAT AI Search finds the tool, chapter or guide that fits your question, and says why each one matched. It searches public pages only.</p>
+          <a href="/#ai-search">Search with AI <span aria-hidden="true">→</span></a>
+        </div>
+        <SearchScan id="res-search" />
+      </div>
       </div>
     </Container>
   </section>
@@ -62,6 +85,13 @@ const pathways = learningPathways();
   </section>
 </BaseLayout>
 <style>
+  .res-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1.5rem; }
+  .res-stats :global(dd) { order: -1; }
+  .res-ai { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: center; margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: clamp(2rem, 4vw, 3rem); border-top: 1px solid var(--line); }
+  .res-ai h2 { margin-top: .6rem; font-size: var(--step-3); }
+  .res-ai p:not(.eyebrow) { color: var(--ink-2); }
+  .res-ai a { color: var(--accent); font-weight: 600; text-decoration: none; }
+  @media (max-width: 860px) { .res-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .res-ai { grid-template-columns: 1fr; } }
   .res { padding-bottom: var(--space-section); }
   .res-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
   .res-card { display: flex; flex-direction: column; height: 100%; padding: clamp(1.4rem, 2.5vw, 2rem); border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-decoration: none; box-shadow: var(--shadow-1); transition: border-color .15s var(--ease); }

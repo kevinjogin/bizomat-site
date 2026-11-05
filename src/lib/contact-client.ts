@@ -3,7 +3,7 @@
 import { SITE } from '../config/site.ts';
 import { enquirySubject, type ContactInput, type ContactResponse } from './contact.ts';
 
-const SUCCESS = 'Thank you. Your enquiry has been sent and KEVOS® will reply as soon as possible.';
+const SUCCESS = 'Thank you. Your enquiry has been sent and BIZOMAT will reply as soon as possible.';
 export const CONTACT_FAILURE_MESSAGE = 'Your message could not be sent. Please try again or email kevin@kevos.com.';
 const FAILURE = CONTACT_FAILURE_MESSAGE;
 
@@ -47,7 +47,7 @@ export async function submitContact(s: Submission, delivery: 'web3forms' | 'work
         body: JSON.stringify({
           access_key: web3formsAccessKey,
           subject: enquirySubject(s),
-          from_name: 'KEVOS® website',
+          from_name: 'BIZOMAT website',
           replyto: s.email,
           name: s.name,
           company: s.company || '—',

@@ -2,7 +2,7 @@
 // Active when the site's contact provider is 'worker' (PUBLIC_CONTACT_PROVIDER=worker) and Worker mail is
 // configured; until then the page posts to Web3Forms, which verifies the hCaptcha token server-side.
 // The same checks as /api/contact apply: origin, size, honeypot, fill time, validation and rate limit.
-// No files are accepted and nothing is stored; the enquiry is emailed to KEVOS® only.
+// No files are accepted and nothing is stored; the enquiry is emailed to BIZOMAT only.
 import { ASSESSMENT } from '../../config/assessment.ts';
 import { HONEYPOT_FIELD } from '../../lib/contact.ts';
 import { composeAssessment, normaliseAssessment, validateAssessment, type AssessmentResponse } from '../../lib/assessment.ts';

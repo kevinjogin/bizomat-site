@@ -1,4 +1,4 @@
-// KEVOS® discovery (homepage, Tools and Library headers): the question box and its results. The pipeline (catalogue shortlist → Workers AI
+// BIZOMAT discovery (homepage, Tools and Library headers): the question box and its results. The pipeline (catalogue shortlist → Workers AI
 // terms and picks → ranking of real catalogue entries) is src/lib/discovery/client.ts. Everything shown is a catalogue
 // entry; nothing is stored in the browser.
 import { tokens, type Hit, type Outcome } from '../lib/discovery/search.ts';
@@ -21,7 +21,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
   const discovery = createDiscovery();
   let previous = '';
   let busy = false;
-  /** The button's own wording ("Ask KEVOS" on the homepage, "Build My Learning Path" elsewhere). */
+  /** The button's own wording ("Ask BIZOMAT" on the homepage, "Build My Learning Path" elsewhere). */
   const submitLabel = submitBtn.querySelector('.dq__submit-label')?.textContent?.trim() || 'the button';
 
   const device = () => (matchMedia('(max-width: 700px)').matches ? 'mobile' : 'desktop');
@@ -48,7 +48,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
 
   function card(h: Hit, compact = false): HTMLElement {
     const li = el('li', `dr-card dr-card--${h.kind}${compact ? ' dr-card--compact' : ''}${h.ai ? ' dr-card--ai' : ''}`);
-    li.append(el('p', 'dr-card__kind', h.kind === 'tool' ? `Tool${h.context ? ` · ${h.context}` : ''}` : h.kind === 'chapter' ? 'Library chapter' : `Library book${h.context ? ` · ${h.context}` : ''}`));
+    li.append(el('p', 'dr-card__kind', h.kind === 'page' ? (h.context ?? 'BIZOMAT') : h.kind === 'tool' ? `Tool${h.context ? ` · ${h.context}` : ''}` : h.kind === 'chapter' ? 'Library chapter' : `Library book${h.context ? ` · ${h.context}` : ''}`));
     const title = el('h4', 'dr-card__title');
     title.append(link(h.url, h.title, undefined, h));
     li.append(title);
@@ -61,6 +61,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     li.append(el('p', 'dr-card__why', `Why: ${h.reason.replace(/^Matches /, 'matches ')}.`));
     const actions = el('p', 'dr-card__actions');
     if (h.kind === 'tool') actions.append(link(h.secondary!.url, 'Open tool →', 'dr-card__cta', h));
+    else if (h.kind === 'page') actions.append(link(h.url, 'Open →', 'dr-card__cta', h));
     else actions.append(link(h.url, 'Read now →', 'dr-card__cta', h));
     li.append(actions);
     return li;
@@ -120,11 +121,11 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     const head = el('div', 'sp__head');
     head.append(el('h3', 'sp__title', 'Your Solution Path'));
     const meta = el('p', 'sp__meta');
-    meta.append(el('span', 'sp__type', path.typeLabel), ' ', el('span', 'sp__by', path.source === 'ai' ? 'Steps suggested by KEVOS® AI' : 'Steps from the KEVOS® workflow for this type of question'));
+    meta.append(el('span', 'sp__type', path.typeLabel), ' ', el('span', 'sp__by', path.source === 'ai' ? 'Steps suggested by BIZOMAT AI' : 'Steps from the BIZOMAT workflow for this type of question'));
     head.append(meta);
     sec.append(head);
     if (objective) { const p = el('p', 'sp__objective'); p.append(el('strong', undefined, 'Your objective: '), objective.charAt(0).toUpperCase() + objective.slice(1) + '.'); sec.append(p); }
-    if (pending) sec.append(el('p', 'sp__pending', 'KEVOS® AI is tailoring these steps to your question…'));
+    if (pending) sec.append(el('p', 'sp__pending', 'BIZOMAT AI is tailoring these steps to your question…'));
     if (path.missing.length) {
       const box = el('div', 'sp__missing');
       box.append(el('p', 'sp__boxtitle', 'To tailor this path, it would help to know:'), plainList(path.missing));
@@ -154,7 +155,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     sec.append(ol);
     if (path.assumptions.length) { const box = el('div', 'sp__assume'); box.append(el('p', 'sp__boxtitle', 'Assumptions (check these apply to you)'), plainList(path.assumptions)); sec.append(box); }
     const out = el('p', 'sp__outcome'); out.append(el('strong', undefined, 'Expected outcome: '), path.outcome); sec.append(out);
-    sec.append(el('p', 'sp__legend', 'Inputs, outputs and checks marked “from the tool” come from the tools themselves; the steps and their order are recommendations. KEVOS® AI never calculates: every number comes from a tool when you run it.'));
+    sec.append(el('p', 'sp__legend', 'Inputs, outputs and checks marked “from the tool” come from the tools themselves; the steps and their order are recommendations. BIZOMAT AI never calculates: every number comes from a tool when you run it.'));
     return sec;
   }
 
@@ -162,12 +163,12 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     const block = el('article', 'dr-exchange');
     block.append(el('p', 'dr-exchange__q', question));
     const say = el('div', 'dr-exchange__a');
-    const hasResults = outcome.tools.length + outcome.readings.length > 0;
+    const hasResults = outcome.platform.length + outcome.tools.length + outcome.readings.length > 0;
     const understood = intent?.summary ? `I understand you're trying to ${intent.summary}. ` : '';
     if (intent?.outOfScope) {
-      say.append(el('p', 'dr-say', 'That looks outside what KEVOS® covers. KEVOS® has engineering, manufacturing, operations, project and business tools and books, so it cannot help with this one.'));
+      say.append(el('p', 'dr-say', 'That looks outside what BIZOMAT covers. BIZOMAT has CAD Automation, Project Management, and engineering, manufacturing, operations, project and business tools and books, so it cannot help with this one.'));
     } else if (outcome.mode === 'none' || !hasResults) {
-      say.append(el('p', 'dr-say', `${understood}KEVOS® could not find an existing tool or reading that fits this question.`));
+      say.append(el('p', 'dr-say', `${understood}BIZOMAT could not find a product, tool or reading that fits this question.`));
       if (outcome.related.length) say.append(el('p', 'dr-say dr-say--sub', 'These are the closest resources we have:'));
     } else if (intent?.clarify && intent.options?.length) {
       say.append(el('p', 'dr-say', `${understood}${intent.clarify}`));
@@ -186,7 +187,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
     if (path) block.append(pathSection(path, intent?.summary, pending));
     if (path) block.append(el('h3', 'dr-all', 'All matching resources'));
     const limit = outcome.mode === 'clarify' || intent?.clarify ? 3 : 5;
-    for (const g of [group('Recommended tools', outcome.tools.slice(0, limit)), group('Knowledge and references', outcome.readings.slice(0, limit)), group(hasResults ? 'Related resources' : 'Closest resources', outcome.related, true)]) if (g) block.append(g);
+    for (const g of [group('BIZOMAT products and documentation', outcome.platform), group('Recommended tools', outcome.tools.slice(0, limit)), group('Knowledge and references', outcome.readings.slice(0, limit)), group(hasResults ? 'Related resources' : 'Closest resources', outcome.related, true)]) if (g) block.append(g);
     if (outcome.mode === 'none' || !hasResults) {
       const suggest = el('p', 'dr-say dr-say--sub', 'Is there a tool or topic we should add? ');
       suggest.append(link('/contact/', 'Suggest a new tool or topic →'));
@@ -243,16 +244,16 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       const ai = await learnIntent(question, context);
       intent = ai ? { ...ai, source: 'ai', topics: ai.topics.length ? ai.topics : local.topics } : local;
     } catch (err) {
-      setBusy(false, err instanceof LearnVisitorError ? err.message : 'Sorry, KEVOS® could not load its catalogue. Please check your connection and try again.');
+      setBusy(false, err instanceof LearnVisitorError ? err.message : 'Sorry, BIZOMAT could not load its catalogue. Please check your connection and try again.');
       return;
     }
     if (opts.depth) intent.depth = opts.depth;
     previous = question;
     if (intent.outOfScope) {
       results!.hidden = false;
-      render(question, { mode: 'none', tools: [], readings: [], related: [], concepts: [], corrections: [] }, { terms: [], outOfScope: true });
+      render(question, { mode: 'none', platform: [], tools: [], readings: [], related: [], concepts: [], corrections: [] }, { terms: [], outOfScope: true });
       reveal(); done();
-      setBusy(false, 'That subject is outside what KEVOS® covers.');
+      setBusy(false, 'That subject is outside what BIZOMAT covers.');
       return;
     }
     if (intent.clarify && intent.options?.length && !opts.skipClarify) {
@@ -260,7 +261,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       if (title) title.textContent = 'Your learning path';
       clarifyCard(question, intent);
       reveal(); done();
-      setBusy(false, 'One question before KEVOS® builds your path.');
+      setBusy(false, 'One question before BIZOMAT builds your path.');
       return;
     }
     if (intent.depth === 'quick') { busy = false; await askQuick(question, context); return; }
@@ -274,14 +275,14 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
         mount: (node) => { thread!.prepend(node); while (thread!.children.length > MAX_EXCHANGES) thread!.lastElementChild?.remove(); reveal(); },
       }, question, intent, null);
       done();
-      setBusy(false, view ? `Building your ${DEPTH_LABEL[intent.depth].toLowerCase()}…` : 'KEVOS® could not find Library material for this yet.');
+      setBusy(false, view ? `Building your ${DEPTH_LABEL[intent.depth].toLowerCase()}…` : 'BIZOMAT could not find Library material for this yet.');
       if (!view) { busy = false; await askQuick(question, context); }
     } catch {
       setBusy(false, 'Sorry, the learning path could not be loaded. Please try again.');
     }
   }
 
-  /** Quick Understanding: the solution path and matching resources (the original Ask KEVOS answer). */
+  /** Quick Understanding: the solution path and matching resources (the original Ask BIZOMAT answer). */
   async function askQuick(raw: string, context = previous) {
     const question = raw.replace(/\s+/g, ' ').trim().slice(0, 500);
     if (busy) return;
@@ -294,7 +295,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       if (finished || !d.path) return;
       shown = render(question, d.outcome, null, d.path, true);
       reveal();
-      statusEl!.textContent = 'Showing a first path. KEVOS® AI is tailoring the steps…';
+      statusEl!.textContent = 'Showing a first path. BIZOMAT AI is tailoring the steps…';
     }).catch(() => {});
     try {
       const { outcome, intent, path } = await discovery.ask(question, context);
@@ -304,7 +305,7 @@ if (form && input && results && thread && statusEl && clearBtn && submitBtn) {
       render(question, outcome, intent, path, false, shown ?? undefined);
       if (first) reveal();
       previous = question;
-      const n = outcome.tools.length + outcome.readings.length;
+      const n = outcome.platform.length + outcome.tools.length + outcome.readings.length;
       setBusy(false, n ? `Found ${n} resource${n === 1 ? '' : 's'}.` : 'No matching resource found.');
       track({ type: outcome.mode === 'results' && n ? 'search' : outcome.mode === 'clarify' ? 'clarify' : 'none', terms: tokens(question).slice(0, 8) });
       done();

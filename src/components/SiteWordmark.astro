@@ -1,11 +1,13 @@
 ---
+// The BIZOMAT wordmark (shared/brand: navy word with the teal connector on light, white with bright teal on dark).
+// Drawn from SVG paths, never typeset, so it is sharp at every size. Header, footer and product panels use it.
 interface Props {
   class?: string;
   height?: number;
   label?: string;
 }
-const { class: className, height = 36, label = 'KEVOS®' } = Astro.props;
-const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-wordmark--compact' : 'site-wordmark--header';
+const { class: className, height = 22, label = 'BIZOMAT' } = Astro.props;
+const sizeClass = height >= 28 ? 'site-wordmark--footer' : height <= 18 ? 'site-wordmark--compact' : 'site-wordmark--header';
 ---
 <span
   class:list={['site-wordmark', sizeClass, className]}
@@ -13,53 +15,25 @@ const sizeClass = height >= 40 ? 'site-wordmark--footer' : height <= 30 ? 'site-
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <img
-    class="site-wordmark__image site-wordmark__image--light"
-    src="/brand/kevos-wordmark-orange-light.svg"
-    alt=""
-    width="2069"
-    height="284"
-    decoding="async"
-  />
-  <img
-    class="site-wordmark__image site-wordmark__image--dark"
-    src="/brand/kevos-wordmark-orange-dark.svg"
-    alt=""
-    width="2069"
-    height="284"
-    decoding="async"
-  />
+  <img class="site-wordmark__image site-wordmark__image--light" src="/brand/bizomat-logo-light.svg" alt="" width="2329" height="241" decoding="async" />
+  <img class="site-wordmark__image site-wordmark__image--dark" src="/brand/bizomat-logo-dark.svg" alt="" width="2329" height="241" decoding="async" />
 </span>
 
 <style>
   .site-wordmark {
-    --wordmark-h: 36px;
+    --wordmark-h: 22px;
     display: inline-grid;
     align-items: center;
     line-height: 0;
     overflow: visible;
     max-width: 100%;
   }
-  .site-wordmark--compact { --wordmark-h: 28px; }
-  .site-wordmark--header { --wordmark-h: 36px; }
-  .site-wordmark--footer { --wordmark-h: 44px; }
-
-  .site-wordmark__image {
-    display: block;
-    width: auto;
-    height: var(--wordmark-h);
-    max-width: 100%;
-    object-fit: contain;
-  }
-
-  /* The supplied navy master is the source of truth. In dark mode render it as
-     pure white so the wordmark can never disappear against the dark header. */
-  /* KEVOS® orange wordmark, with accessible contrast for each theme. */
+  .site-wordmark--compact { --wordmark-h: 17px; }
+  .site-wordmark--header { --wordmark-h: 21px; }
+  .site-wordmark--footer { --wordmark-h: 28px; }
+  .site-wordmark__image { display: block; width: auto; height: var(--wordmark-h); max-width: 100%; object-fit: contain; }
+  /* One variant per theme, each with the right contrast for its background. */
   .site-wordmark__image--dark { display: none; }
   :global(:root[data-theme='dark']) .site-wordmark__image--light { display: none; }
   :global(:root[data-theme='dark']) .site-wordmark__image--dark { display: block; }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .site-wordmark__image--light { display: none; }
-    :global(:root:not([data-theme='light'])) .site-wordmark__image--dark { display: block; }
-  }
 </style>

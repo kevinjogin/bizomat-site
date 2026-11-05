@@ -4,7 +4,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createContext, runInContext } from 'node:vm';
 
-// KEVOS® WORKOS: tool register, guides, calculations, decision rules, sensitivity analysis and decision reports.
+// BIZOMAT WORKOS: tool register, guides, calculations, decision rules, sensitivity analysis and decision reports.
 // The browser scripts in public/tools/ are loaded into a VM with a minimal document so they run unchanged.
 
 const DIR = join(process.cwd(), 'public', 'tools');
@@ -438,7 +438,7 @@ test('shared links reopen a tool with valid inputs and ignore invalid ones', () 
   const { ui, inputs, document } = loadUi('?tool=roi&discountRate=10&years=abc&bogus=1');
   const { t, r } = ui.state();
   assert.equal(t.id, 'roi');
-  assert.equal(document.title, 'Return on Investment and NPV | KEVOS® Tools');
+  assert.equal(document.title, 'Return on Investment and NPV | BIZOMAT Tools');
   assert.equal(inputs.get('discountRate')?.value, '10');
   assert.equal(inputs.get('years')?.value, '3', 'non-numeric value ignored');
   near(r.primary.value, 15000 * ((1 - Math.pow(1.1, -3)) / 0.1) - 25000, 0.01, 'NPV at the shared 10 % rate');
@@ -448,7 +448,7 @@ test('shared links reopen a tool with valid inputs and ignore invalid ones', () 
   assert.equal(url.searchParams.get('discountRate'), '10');
   assert.ok(!url.searchParams.has('investment') && !url.searchParams.has('bogus'), 'only changed inputs are shared');
   const summary: string = ui.summaryText(t, r);
-  assert.match(summary, /^Return on Investment and NPV \(KEVOS® Tools\)\nDecision: POSITIVE NPV/);
+  assert.match(summary, /^Return on Investment and NPV \(BIZOMAT Tools\)\nDecision: POSITIVE NPV/);
   assert.ok(summary.includes(url.href));
 });
 
@@ -470,7 +470,7 @@ test('the decision report contains the decision, inputs with sources, method, ch
   assert.ok(html.includes('ABOVE BREAK-EVEN'));
   for (const f of t.fields) assert.ok(html.includes(`<th>${f.label}</th>`), `report lists input ${f.key}`);
   assert.ok(html.includes(engine.guides['break-even'].inputs.fixed), 'report gives the input source');
-  assert.match(html, /KEVOS® \| kevos\.com\/tools\//);
+  assert.match(html, /BIZOMAT \| kevos\.com\/tools\//);
   assert.doesNotMatch(html, /NaN|undefined|\[object/);
 });
 
@@ -691,11 +691,11 @@ test('MAKEOS quality and maintenance do not imply unsupported capability or infi
 test('MAKEOS shares inputs, preserves fine precision, links sources and fails visibly on invalid shared values', () => {
   const { ui, document } = loadUi('?tool=fit-clearance&shaftMax=19.999');
   const { t, r, sens } = ui.state();
-  assert.equal(document.title, 'Hole and Shaft Clearance Limits | KEVOS® MAKEOS');
-  assert.match(ui.summaryText(t, r), /KEVOS® MAKEOS/);
+  assert.equal(document.title, 'Hole and Shaft Clearance Limits | BIZOMAT MAKEOS');
+  assert.match(ui.summaryText(t, r), /BIZOMAT MAKEOS/);
   assert.equal(new URL(ui.shareUrl(t)).searchParams.get('shaftMax'), '19.999');
   const html = ui.reportBody(t, r, sens);
-  assert.match(html, /KEVOS® MAKEOS/); assert.match(html, /<h2>References<\/h2>/);
+  assert.match(html, /BIZOMAT MAKEOS/); assert.match(html, /<h2>References<\/h2>/);
   assert.match(html, /href="https:\/\/eprintspublications\.npl\.co\.uk/);
   assert.match(html, /0\.001/);
   near(Number(runInContext('fmtPrimary("engineering", 0.00000123456789)', engine.ctx)), 0.0000012345679, 1e-14, 'small result precision');
@@ -826,7 +826,7 @@ test('thermal, weld, tube and axial models retain signs, units and scaling', () 
 test('all workshop shared URLs render finite results and export inputs, methods, references and tables', () => {
   for (const [id] of WORKSHOP_CASES) {
     const { ui, document } = loadUi(`?tool=${id}`), { t, r, sens } = ui.state();
-    assert.equal(t.id, id); assert.equal(document.title, `${t.name} | KEVOS® MAKEOS`);
+    assert.equal(t.id, id); assert.equal(document.title, `${t.name} | BIZOMAT MAKEOS`);
     assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
     const report: string = ui.reportBody(t, r, sens);
     for (const h of ['Inputs and assumptions', 'Method and calculations', 'Limitations', 'References']) assert.ok(report.includes(`<h2>${h}</h2>`), `${id}/${h}`);
@@ -961,7 +961,7 @@ test('handbook tools reject impossible geometry and contradictory inputs', () =>
 test('all handbook tool shared URLs render finite results and export inputs, methods, references and tables', () => {
   for (const id of hbIds()) {
     const { ui, document } = loadUi(`?tool=${id}`), { t, r, sens } = ui.state();
-    assert.equal(t.id, id); assert.equal(document.title, `${t.name} | KEVOS® MAKEOS`);
+    assert.equal(t.id, id); assert.equal(document.title, `${t.name} | BIZOMAT MAKEOS`);
     assert.ok(r.primary && Number.isFinite(r.primary.value), `${id}: ${r.summary}`);
     const report: string = ui.reportBody(t, r, sens);
     for (const h of ['Inputs and assumptions', 'Method and calculations', 'Limitations', 'References']) assert.ok(report.includes(`<h2>${h}</h2>`), `${id}/${h}`);

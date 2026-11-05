@@ -1,8 +1,8 @@
-// KEVOS® learning paths in the browser: the course view under the homepage question box.
+// BIZOMAT learning paths in the browser: the course view under the homepage question box.
 // Loaded only after a visitor asks for a learning path (dynamic import from src/scripts/discovery.ts).
 //
-// Flow: a course arranged from the Library appears at once; KEVOS® AI's plan replaces it when it arrives. A lesson
-// shows its Library readings and Tools at once; KEVOS® AI's lesson (explanation, the key things to understand,
+// Flow: a course arranged from the Library appears at once; BIZOMAT AI's plan replaces it when it arrives. A lesson
+// shows its Library readings and Tools at once; BIZOMAT AI's lesson (explanation, the key things to understand,
 // exercises, knowledge check) fills in when ready. Without AI, the lesson keeps the Library's own words.
 // All text is set with textContent (no HTML from data). Progress lives in sessionStorage (this tab only).
 import type { Engine } from '../lib/discovery/search.ts';
@@ -53,7 +53,7 @@ class CourseView {
     this.course = course;
     this.pendingPlan = pending;
     this.progress = readProgress(course.id);
-    this.statusLine.textContent = pending ? 'KEVOS® AI is planning your personalised course from these resources (this can take up to a minute). You can start with the course below.' : note;
+    this.statusLine.textContent = pending ? 'BIZOMAT AI is planning your personalised course from these resources (this can take up to a minute). You can start with the course below.' : note;
     this.renderHead();
     this.renderNav();
     const keep = this.current && lessons(course).some((l) => l.id === this.current) ? this.current : null;
@@ -65,7 +65,7 @@ class CourseView {
     const c = this.course;
     this.head.replaceChildren();
     const eyebrow = el('p', 'lc__eyebrow');
-    eyebrow.append(el('span', undefined, 'Your learning path'), ' ', tag(c.source === 'ai' ? 'Planned by KEVOS® AI from the Library and Tools' : 'Arranged from the Library (no AI)', c.source === 'ai' ? 'ai' : 'source'));
+    eyebrow.append(el('span', undefined, 'Your learning path'), ' ', tag(c.source === 'ai' ? 'Planned by BIZOMAT AI from the Library and Tools' : 'Arranged from the Library (no AI)', c.source === 'ai' ? 'ai' : 'source'));
     this.head.append(eyebrow, el('h3', 'lc__title', c.title));
     if (c.description) this.head.append(el('p', 'lc__desc', c.description));
     const facts = el('dl', 'lc__facts');
@@ -152,7 +152,7 @@ class CourseView {
     m.append(ol);
     if (c.gaps.length) {
       const g = el('div', 'lc-gap');
-      g.append(el('p', 'lc-gap__title', 'Limited Library coverage'), ul(c.gaps), el('p', 'lc-muted', 'KEVOS® does not claim to cover every part of this subject. These areas need other sources.'));
+      g.append(el('p', 'lc-gap__title', 'Limited Library coverage'), ul(c.gaps), el('p', 'lc-muted', 'BIZOMAT does not claim to cover every part of this subject. These areas need other sources.'));
       m.append(g);
     }
     const remembered = [...new Set([...this.contents.values()].flatMap((x) => x.content?.key.remember ?? []))];
@@ -183,13 +183,13 @@ class CourseView {
   private async loadLesson(lesson: Lesson & { module: string }, style: Style) {
     const key = `${this.course.id}:${lesson.id}`;
     this.contents.set(key, { style, content: null });
-    this.lessonStatus('KEVOS® AI is writing this lesson from the Library readings (this can take up to a minute)…');
+    this.lessonStatus('BIZOMAT AI is writing this lesson from the Library readings (this can take up to a minute)…');
     let content: LessonContent | null = null;
     try { content = await learnLesson(this.course, lesson.module, lesson, style); } catch (err) { if (err instanceof VisitorError) this.lessonStatus(err.message); }
     this.contents.set(key, { style, content });
     if (this.current === lesson.id) {
       const all = lessons(this.course);
-      this.renderLesson(all.find((l) => l.id === lesson.id)!, all, all.findIndex((l) => l.id === lesson.id), content ? '' : 'KEVOS® AI could not write this lesson right now. Here is what the Library itself says; the readings and tools below are complete.');
+      this.renderLesson(all.find((l) => l.id === lesson.id)!, all, all.findIndex((l) => l.id === lesson.id), content ? '' : 'BIZOMAT AI could not write this lesson right now. Here is what the Library itself says; the readings and tools below are complete.');
     }
   }
 
@@ -207,7 +207,7 @@ class CourseView {
     m.append(el('p', 'lc-crumb', `Module ${pad(lesson.moduleIndex + 1)}: ${lesson.module} · Lesson ${lesson.id}`));
     const h = el('h4', 'lc-lesson__title', lesson.title); h.tabIndex = -1; m.append(h);
     if (lesson.objective) { const p = el('p', 'lc-objective'); p.append(el('strong', undefined, 'Learning objective: '), lesson.objective); m.append(p); }
-    const status = el('p', 'lc-lesson__status'); status.setAttribute('role', 'status'); status.textContent = note || (entry && !content && !note ? 'KEVOS® AI is writing this lesson from the Library readings (this can take up to a minute)…' : ''); m.append(status);
+    const status = el('p', 'lc-lesson__status'); status.setAttribute('role', 'status'); status.textContent = note || (entry && !content && !note ? 'BIZOMAT AI is writing this lesson from the Library readings (this can take up to a minute)…' : ''); m.append(status);
     // Lesson actions (AI)
     const actions = el('div', 'lc-actions');
     actions.setAttribute('role', 'group'); actions.setAttribute('aria-label', 'Change this lesson');
@@ -221,7 +221,7 @@ class CourseView {
     // LEARN + UNDERSTAND
     if (content) {
       const learn = el('section', 'lc-sec');
-      learn.append(this.secHead('Learn', tag('KEVOS® AI explanation, based on the readings below', 'ai')));
+      learn.append(this.secHead('Learn', tag('BIZOMAT AI explanation, based on the readings below', 'ai')));
       for (const para of content.explanation.split(/\n+/)) learn.append(el('p', undefined, para));
       if (content.why) { const p = el('p'); p.append(el('strong', undefined, 'Why it matters: '), content.why); learn.append(p); }
       if (content.concepts.length) { learn.append(el('h6', 'lc-mini', 'Main concepts')); learn.append(ul(content.concepts)); }
@@ -245,7 +245,7 @@ class CourseView {
 
     // PRACTISE
     const prac = el('section', 'lc-sec');
-    prac.append(this.secHead('Practise', content ? tag('Suggested by KEVOS® AI', 'ai') : tag('From the Library', 'source')));
+    prac.append(this.secHead('Practise', content ? tag('Suggested by BIZOMAT AI', 'ai') : tag('From the Library', 'source')));
     if (content?.example) { const p = el('p'); p.append(el('strong', undefined, 'Example: '), content.example); prac.append(p); }
     const tasks = content?.exercises.length ? content.exercises : sources.flatMap((s) => (s.outline?.exr ? [{ task: s.outline.exr }] : s.outline?.ex ? [{ task: `Work through the chapter's worked example: ${s.outline.ex}` }] : []));
     if (tasks.length) {
@@ -291,7 +291,7 @@ class CourseView {
 
   private secHead(title: string, label: HTMLElement) { const h = el('h5', 'lc-sec__title', title); h.append(' ', label); return h; }
 
-  /** THE KEY THINGS TO UNDERSTAND: from KEVOS® AI (grounded on the readings) or, without AI, from the Library text. */
+  /** THE KEY THINGS TO UNDERSTAND: from BIZOMAT AI (grounded on the readings) or, without AI, from the Library text. */
   private keyThings(content: LessonContent | null, sources: { title: string; outline: ChapterOutline | null }[]): HTMLElement {
     const box = el('section', 'lc-key');
     box.setAttribute('aria-label', 'The key things to understand');
@@ -299,7 +299,7 @@ class CourseView {
     const row = (label: string, body: string | HTMLElement) => { const d = el('div', 'lc-key__row'); d.append(el('p', 'lc-key__label', label)); d.append(typeof body === 'string' ? el('p', 'lc-key__text', body) : body); box.append(d); };
     if (content) {
       const k = content.key;
-      box.append(tag(k.basis === 'source' ? 'KEVOS® AI summary of the Library readings' : 'KEVOS® AI, general knowledge: check against the readings', k.basis === 'source' ? 'ai' : 'note'));
+      box.append(tag(k.basis === 'source' ? 'BIZOMAT AI summary of the Library readings' : 'BIZOMAT AI, general knowledge: check against the readings', k.basis === 'source' ? 'ai' : 'note'));
       if (k.principle) row('Central principle', k.principle);
       if (k.essential) row('Essential concept', k.essential);
       if (k.why) row('Why it matters', k.why);
@@ -349,7 +349,7 @@ class CourseView {
 
   private verify(lesson: Lesson, content: LessonContent | null, sources: { outline: ChapterOutline | null }[]) {
     const sec = el('section', 'lc-sec');
-    sec.append(this.secHead('Verify', content ? tag('Suggested by KEVOS® AI', 'ai') : tag('From the Library and Tools', 'source')));
+    sec.append(this.secHead('Verify', content ? tag('Suggested by BIZOMAT AI', 'ai') : tag('From the Library and Tools', 'source')));
     const items = content?.verify.length ? content.verify : [
       ...lesson.tools.filter((t) => t.check).map((t) => `${t.name}: ${t.check}`),
       `Explain "${lesson.title}" in your own words without looking at the reading.`,
@@ -401,7 +401,7 @@ class CourseView {
 
   private askBox(lesson: Lesson, content: LessonContent | null) {
     const sec = el('section', 'lc-sec lc-ask');
-    sec.append(this.secHead('Ask about this lesson', tag('KEVOS® AI', 'ai')));
+    sec.append(this.secHead('Ask about this lesson', tag('BIZOMAT AI', 'ai')));
     const form = el('form', 'lc-ask__form');
     const label = el('label', 'visually-hidden', 'Your question about this lesson');
     const id = `lc-ask-${lesson.id.replace('.', '-')}`;
@@ -423,7 +423,7 @@ class CourseView {
       answers.prepend(item);
       try {
         const r = await learnAsk(this.course, lesson, content ? `${content.explanation} ${content.key.principle}` : lesson.objective, q);
-        ans.textContent = r ? r.answer : 'KEVOS® AI could not answer right now. The readings above are the best place to look.';
+        ans.textContent = r ? r.answer : 'BIZOMAT AI could not answer right now. The readings above are the best place to look.';
         if (r) item.append(tag(r.basis === 'source' ? `Based on the lesson’s readings${r.refs.length ? ` (${r.refs.map((n) => lesson.readings[n - 1]?.title).filter(Boolean).join('; ')})` : ''}` : 'General knowledge: check it against the readings', r.basis === 'source' ? 'ai' : 'note'));
         input.value = '';
       } catch (err) {
@@ -450,7 +450,7 @@ export function startCourse(ctx: Ctx, question: string, intent: Intent, candidat
   v.intent = intent;
   v.show(draft, true);
   if (!view) ctx.mount(v.root);
-  ctx.status('Showing a first course from the Library. KEVOS® AI is planning your personalised version…');
+  ctx.status('Showing a first course from the Library. BIZOMAT AI is planning your personalised version…');
   ctx.track({ type: 'learn', kind: 'course', id: depth });
   void planInBackground(ctx, question, intent, c, depth, draft, v);
   return v;
@@ -468,6 +468,6 @@ async function planInBackground(ctx: Ctx, question: string, intent: Intent, c: C
   if (mounted !== v || v.intent !== intent) return; // a newer request or depth replaced this one
   const course = plan ? courseFromPlan(question, intent, plan, c, ctx.details, depth) : null;
   if (course) { v.show(course, false); ctx.status(`Your course is ready: ${course.modules.length} modules, ${lessons(course).length} lessons.`); }
-  else { v.show(draft, false, 'KEVOS® AI could not plan a course right now, so this course is arranged from the Library chapters that best match your goal.'); ctx.status('Your course is ready (arranged from the Library).'); }
+  else { v.show(draft, false, 'BIZOMAT AI could not plan a course right now, so this course is arranged from the Library chapters that best match your goal.'); ctx.status('Your course is ready (arranged from the Library).'); }
 }
 export type { CourseView };

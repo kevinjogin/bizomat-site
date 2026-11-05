@@ -20,7 +20,7 @@ const volumeDescription = (b: typeof book) => {
   const last = b.chapters[b.chapters.length - 1]?.data.title ?? '';
   const span = ` Volume ${b.volume}: ${b.chapters.length} chapters, from “${first}” to “${last}”.`;
   const text = `${b.description}${span}`;
-  return text.length <= 200 ? text : `${b.description} Volume ${b.volume} of the KEVOS® Library ${b.category} collection, in ${b.chapters.length} chapters.`;
+  return text.length <= 200 ? text : `${b.description} Volume ${b.volume} of the BIZOMAT Library ${b.category} collection, in ${b.chapters.length} chapters.`;
 };
 ---
 <BaseLayout title={`${book.title} (Library)`} description={volumeDescription(book)}

@@ -1,7 +1,7 @@
 ---
 // Library → Tools: the tools connected to a book or chapter (src/data/knowledge-links.json, approved links only).
 // "Apply This in Practice" lists tools that apply or illustrate the reading; "Related Tools and Examples" lists the
-// ones that are useful alongside it. With no connections, a book page may offer a KEVOS® topic to browse instead.
+// ones that are useful alongside it. With no connections, a book page may offer a BIZOMAT topic to browse instead.
 import type { ToolConnection } from '../../utils/knowledge.ts';
 import { toolAppHref } from '../../utils/workos-tools.ts';
 
@@ -22,7 +22,7 @@ const related = items.filter((x) => x.type === 'complements');
   <section class="ka" aria-labelledby={id} data-pagefind-ignore>
     {primary.length > 0 && <>
       <h2 id={id}>Apply This in Practice</h2>
-      <p class="ka__lead">Use these KEVOS® tools to try the method from this reading with your own numbers.</p>
+      <p class="ka__lead">Use these BIZOMAT tools to try the method from this reading with your own numbers.</p>
       <ul class="ka__list">
         {primary.map((x) => (
           <li class="ka__card">

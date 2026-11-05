@@ -1,4 +1,4 @@
-// Replaces ```figure blocks in Markdown with KEVOS® figures (src/utils/kevos-figures.ts).
+// Replaces ```figure blocks in Markdown with BIZOMAT figures (src/utils/kevos-figures.ts).
 // Runs before syntax highlighting, so figure specs never reach the code-block renderer.
 // A malformed figure fails the build with the file name, rather than publishing a broken page.
 import { parseFigure, renderFigure } from './kevos-figures.ts';

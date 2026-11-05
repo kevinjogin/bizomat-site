@@ -1,9 +1,10 @@
 ---
-// Global header: KEVOS® wordmark (home), five top-level items with short menus, the theme switch and one action.
+// Global header: BIZOMAT wordmark (home), five top-level items (CAD Automation, Project Management, Resources, Proof of
+// Work, About), AI Search, a Sign in menu with one entry per application, and the theme switch.
 // Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
 // Escape and outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the
 // links as a wrapped row instead of a collapsed menu.
-import { NAV, GET_STARTED } from '../config/site.ts';
+import { NAV, AI_SEARCH, SIGN_IN } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
@@ -16,8 +17,8 @@ const inSection = (item: (typeof NAV)[number]) =>
 ---
 <header class="site-header" data-header>
   <Container class="site-header__inner">
-    <a class="site-header__brand" href="/" aria-label="KEVOS® home">
-      <SiteWordmark class="site-header__logo" height={28} />
+    <a class="site-header__brand" href="/" aria-label="BIZOMAT home">
+      <SiteWordmark class="site-header__logo" height={21} />
     </a>
 
     <nav class="site-nav" id="site-nav" aria-label="Main" data-site-nav>
@@ -56,12 +57,36 @@ const inSection = (item: (typeof NAV)[number]) =>
           </li>
         ))}
       </ul>
-      <p class="site-nav__mobile-action"><a class="site-nav__cta" href={GET_STARTED.href} data-cta="header-get-started-mobile">{GET_STARTED.label}</a></p>
+      <div class="site-nav__mobile-action">
+        <a class="site-nav__cta" href={AI_SEARCH.href} data-cta="header-ai-search-mobile">{AI_SEARCH.label}</a>
+        <p class="site-nav__signin-label">Sign in</p>
+        <ul class="site-nav__signin">
+          {SIGN_IN.map((s) => <li><a href={s.href} rel="noopener" data-cta={`header-sign-in-mobile-${s.label.toLowerCase().replace(/\s+/g, '-')}`}>{s.label}</a></li>)}
+        </ul>
+      </div>
     </nav>
 
     <div class="site-header__tools">
+      <a class="site-header__search" href={AI_SEARCH.href} data-cta="header-ai-search">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /><path class="spark" d="M15.5 2.5v3M14 4h3" /></svg>
+        <span>{AI_SEARCH.label}</span>
+      </a>
       <ThemeToggle />
-      <a class="site-header__cta" href={GET_STARTED.href} data-cta="header-get-started">{GET_STARTED.label}</a>
+      <details class="nav-menu signin-menu" data-nav-menu>
+        <summary class="site-header__cta" data-cta="header-sign-in">Sign in</summary>
+        <div class="nav-menu__panel nav-menu__panel--right">
+          <ul class="nav-menu__list">
+            {SIGN_IN.map((s) => (
+              <li>
+                <a class="nav-menu__link" href={s.href} rel="noopener">
+                  <span class="nav-menu__title">{s.label}<span class="nav-menu__ext" aria-hidden="true">↗</span></span>
+                  <span class="nav-menu__description">{s.description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </details>
       <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false" data-nav-toggle hidden>
         <span class="visually-hidden">Menu</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-open" d="M4 7h16M4 12h16M4 17h16" /><path class="i-close" d="M6 6l12 12M18 6 6 18" /></svg>
@@ -157,6 +182,17 @@ const inSection = (item: (typeof NAV)[number]) =>
   }
   .site-header__cta:hover, .site-nav__cta:hover { background: var(--accent-strong); color: var(--on-accent); }
   .site-nav__mobile-action { display: none; }
+  .site-header__search { display: inline-flex; align-items: center; gap: .4rem; min-height: 38px; padding: 0 .7rem; border-radius: 8px; color: var(--ink-2); font-size: .92rem; font-weight: 560; text-decoration: none; white-space: nowrap; }
+  .site-header__search:hover { color: var(--ink); background: var(--paper-2); }
+  .site-header__search svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+  .site-header__search .spark { stroke: var(--brand-mark); }
+  .signin-menu { position: relative; }
+  .signin-menu > summary { list-style: none; cursor: pointer; }
+  .signin-menu > summary::-webkit-details-marker { display: none; }
+  .nav-menu__panel--right { left: auto; right: 0; }
+  .site-nav__signin-label { margin: 1.25rem 0 .25rem; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+  .site-nav__signin { display: grid; gap: .1rem; margin: 0; padding: 0; list-style: none; }
+  .site-nav__signin a { display: block; padding: .6rem .25rem; color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--line); }
   .site-header__toggle { display: none; place-items: center; width: 40px; height: 40px; padding: 0; background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; }
   .site-header__toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
   .site-header__toggle .i-close { display: none; }
@@ -182,8 +218,14 @@ const inSection = (item: (typeof NAV)[number]) =>
     .site-header.has-js .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
     .site-header.has-js .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
   }
+  @media (max-width: 1180px) and (min-width: 1001px) {
+    .site-header__search span { display: none; }
+  }
+  @media (max-width: 1000px) {
+    .site-header.has-js .site-header__search { display: none; }
+  }
   @media (max-width: 560px) {
-    .site-header.has-js .site-header__cta { display: none; }
+    .site-header.has-js .signin-menu { display: none; }
   }
   /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
   @media (max-width: 1000px) {

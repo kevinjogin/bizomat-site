@@ -243,17 +243,17 @@ body:has(#tool-workspace:not([hidden])) [data-discover-results], .workos-tool-li
   .panel { border:0; padding:0; }
   .panel.sticky { position:static; }
   body.is-printing-report > *:not(.print-report) { display:none !important; }
-  body.is-printing-report .print-report { display:block !important; color:#121211; background:#fff; font-size:10.5pt; line-height:1.45; }
+  body.is-printing-report .print-report { display:block !important; color:#0a111c; background:#fff; font-size:10.5pt; line-height:1.45; }
   .wr-head h1 { margin:.15em 0; font-size:20pt; }
-  .wr-brand { margin:0; font-size:8pt; letter-spacing:.14em; text-transform:uppercase; color:#c2410c; font-weight:700; }
+  .wr-brand { margin:0; font-size:8pt; letter-spacing:.14em; text-transform:uppercase; color:#0f766e; font-weight:700; }
   .wr-meta { color:#555; font-size:8.5pt; word-break:break-all; }
-  .wr h2 { margin:14pt 0 4pt; font-family:var(--font-sans) !important; font-size:9.5pt; letter-spacing:.08em; text-transform:uppercase; color:#c2410c; break-after:avoid; }
+  .wr h2 { margin:14pt 0 4pt; font-family:var(--font-sans) !important; font-size:9.5pt; letter-spacing:.08em; text-transform:uppercase; color:#0f766e; break-after:avoid; }
   .wr-decision { margin:2pt 0; font-size:16pt; font-weight:700; }
-  .wr-good { color:#1f6b45; } .wr-warn { color:#c2410c; } .wr-bad { color:#b3261e; }
+  .wr-good { color:#1f6b45; } .wr-warn { color:#b45309; } .wr-bad { color:#b3261e; }
   .wr table { width:100%; border-collapse:collapse; font-size:9pt; }
   .wr th, .wr td { padding:3pt 5pt; text-align:left; vertical-align:top; border-bottom:.5pt solid #ccc; }
   .wr tr { break-inside:avoid; }
-  .wr-group { padding-top:8pt; color:#c2410c; font-size:8pt; letter-spacing:.08em; text-transform:uppercase; }
-  .wr-st-pass { color:#1f6b45; font-weight:700; } .wr-st-warn { color:#c2410c; font-weight:700; } .wr-st-fail { color:#b3261e; font-weight:700; } .wr-st-verify { color:#7a4b00; font-weight:700; }
+  .wr-group { padding-top:8pt; color:#0f766e; font-size:8pt; letter-spacing:.08em; text-transform:uppercase; }
+  .wr-st-pass { color:#1f6b45; font-weight:700; } .wr-st-warn { color:#b45309; font-weight:700; } .wr-st-fail { color:#b3261e; font-weight:700; } .wr-st-verify { color:#7a4b00; font-weight:700; }
   .wr-foot { margin-top:16pt; padding-top:6pt; border-top:.5pt solid #ccc; color:#555; font-size:8pt; }
 }

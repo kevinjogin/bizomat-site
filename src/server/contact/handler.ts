@@ -1,4 +1,4 @@
-// Same-origin /api/contact for the existing KEVOS contact form. No enquiry storage.
+// Same-origin /api/contact for the existing BIZOMAT contact form. No enquiry storage.
 import { CONTACT_LIMITS, CONTACT_METHODS, HONEYPOT_FIELD, normalise, validate, type ContactErrors } from '../../lib/contact.ts';
 import type { MailEnv } from './mail.ts';
 import { composeContactEmail, CONTACT_FAILURE, type ContactEmailBinding } from './cloudflare-mail.ts';
@@ -11,7 +11,8 @@ export interface ContactEnv extends MailEnv, RateLimitEnv {
   ALLOWED_ORIGINS?: string;
 }
 const MAX_BODY_BYTES = 32_000;
-const HOSTNAMES = new Set(['kevos.com', 'www.kevos.com']);
+// Hosts the Turnstile check may report: the BIZOMAT site and its former address, which still serves during the move.
+const HOSTNAMES = new Set(['bizomat.ai', 'www.bizomat.ai', 'kevos.com', 'www.kevos.com']);
 const SUCCESS = 'Thank you. Your message has been sent.';
 const TURNSTILE_ERROR = 'Please complete a fresh spam check and try again.';
 const LIMITS: Record<string, number> = {

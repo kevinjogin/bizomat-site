@@ -1,4 +1,4 @@
-// Browser side of KEVOS® discovery, shared by the homepage question box (src/scripts/discovery.ts) and the Tools
+// Browser side of BIZOMAT discovery, shared by the homepage question box (src/scripts/discovery.ts) and the Tools
 // directory search (src/scripts/library-browser.ts).
 //   1. Load the catalogue (/discovery-index.json, once per page) and shortlist the entries related to the question.
 //   2. Ask /api/discover (Workers AI) for search terms, its picks from that shortlist and an ordered solution path.
@@ -14,7 +14,7 @@ export interface Answer { outcome: Outcome; intent: Intent | null; path: Solutio
 export class VisitorError extends Error {}
 
 const API_TIMEOUT_MS = 17000; // the Worker waits up to 15 s for a solution path; a keyword path is shown meanwhile
-const NONE: Outcome = { mode: 'none', tools: [], readings: [], related: [], concepts: [], corrections: [] };
+const NONE: Outcome = { mode: 'none', platform: [], tools: [], readings: [], related: [], concepts: [], corrections: [] };
 
 export function createDiscovery() {
   let engine: Promise<Engine> | null = null;
@@ -55,7 +55,7 @@ export function createDiscovery() {
   async function ask(question: string, context = '', withPath = true): Promise<Answer> {
     const eng = await loadEngine();
     const [intent, det] = await Promise.all([understand(question, context, shortlist(eng, { question, context }, 14, 8)), withPath ? loadDetails() : null]);
-    // A question the AI marks as outside KEVOS's subjects gets an honest "not covered" rather than loose word matches.
+    // A question the AI marks as outside BIZOMAT's subjects gets an honest "not covered" rather than loose word matches.
     const outcome = intent?.outOfScope ? NONE : search(eng, { question, terms: intent?.terms, context, picks: intent?.picks });
     const showPath = withPath && outcome.mode === 'results' && !intent?.clarify;
     return { outcome, intent, path: showPath ? buildPath(eng, question, outcome, det, intent?.plan) : null };

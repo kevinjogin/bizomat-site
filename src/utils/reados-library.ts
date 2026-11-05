@@ -36,8 +36,8 @@ export async function buildReadosLibrary() {
       ...publications.filter((p) => p.book.data.category === c.name).map(({ book, chapters }): ReadosEntry => ({
         id: `publication-${book.id}`, title: book.data.title, summary: book.data.description, href: publicationHref(book.id),
         startHref: publicationChapterHref(book.id, chapters[0].data.chapterSlug),
-        tags: [c.name, 'KEVOS original book', book.data.subtitle, ...book.data.tags.map(tagLabel)].join(' '),
-        cover: { title: book.data.title, category: book.data.category, slug: book.id, motif: book.data.coverVariant, publicationLabel: 'KEVOS® ORIGINAL BOOK' },
+        tags: [c.name, 'BIZOMAT original book', book.data.subtitle, ...book.data.tags.map(tagLabel)].join(' '),
+        cover: { title: book.data.title, category: book.data.category, slug: book.id, motif: book.data.coverVariant, publicationLabel: 'BIZOMAT ORIGINAL BOOK' },
         chapters: chapters.map((ch) => [ch.data.title, publicationChapterHref(book.id, ch.data.chapterSlug)]),
       })),
       ...(c.name === 'Business' ? LIBRARY_GUIDES : []).map((guide): ReadosEntry => ({

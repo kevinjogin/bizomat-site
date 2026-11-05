@@ -1,0 +1,49 @@
+---
+// /sign-in/: the one place to start signing in to BIZOMAT. Each application keeps its own accounts and secure sign-in
+// (Project Management: email and password or Google; CAD Automation: email and password or Google, plus OAuth for AI
+// apps), so this page sends each person to the right one. Existing accounts work unchanged.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import '../styles/product.css';
+import { APP_LINKS, APP_URLS } from '../config/platform.ts';
+
+const host = (u: string) => new URL(u).host;
+const apps = [
+  { name: 'Project Management', text: 'Projects, tasks, boards, documents and your team workspace.', signIn: APP_LINKS.work.signIn, home: APP_LINKS.work.dashboard, page: '/work/', host: host(APP_URLS.work) },
+  { name: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/cad/', host: host(APP_URLS.cad) },
+];
+---
+<BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management or BIZOMAT CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
+  <section class="pp-hero" aria-labelledby="signin-title">
+    <Container>
+      <p class="bz-eyebrow">BIZOMAT account</p>
+      <h1 id="signin-title">Sign in to BIZOMAT</h1>
+      <p class="pp-hero__lead">Choose the application you want to use. Your existing account and data work unchanged: sign in with the email and password you already use.</p>
+      <ul class="pp-cards pp-cards--2 signin" role="list">
+        {apps.map((a) => (
+          <li class="pp-card">
+            <h2>{a.name}</h2>
+            <p>{a.text}</p>
+            <div class="pp-hero__actions">
+              <Button href={a.signIn} variant="accent" rel="noopener" data-cta={`signin-${a.page.replace(/\//g, '')}`}>Sign in to {a.name}</Button>
+              <Button href={a.page} variant="secondary">About {a.name}</Button>
+            </div>
+            <p class="signin__host">Signs in at <span class="bz-mono">{a.host}</span></p>
+          </li>
+        ))}
+      </ul>
+      <div class="bz-alert bz-alert--info signin__note" role="note">
+        <strong>Resources need no account</strong>
+        <span>Tools, calculators, the Library and AI search are free to use without signing in. <a href="/resources/">Go to Resources</a>.</span>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .signin { margin-top: clamp(2rem, 4vw, 2.75rem); }
+  .signin h2 { font-size: var(--step-2); }
+  .signin__host { margin-top: 1rem !important; color: var(--muted) !important; font-size: .86rem !important; }
+  .signin__note { margin-top: 1.5rem; max-width: 760px; }
+</style>

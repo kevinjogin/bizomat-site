@@ -1,6 +1,6 @@
 /**
  * Library cover system. Every book, guide and volume gets a deterministic, purpose-drawn cover:
- * a subject illustration (motif), a KEVOS colourway (tone) and a seed that varies the composition,
+ * a subject illustration (motif), a BIZOMAT colourway (tone) and a seed that varies the composition,
  * so parts of one series share a visual family but no two covers are the same.
  * The data here is rendered by ReadOSAnimatedCover.astro; animation and colour live in its CSS.
  */

@@ -1,0 +1,87 @@
+/* BIZOMAT visual system: the shared vocabulary of the animated product illustrations (src/components/visuals/).
+   Every scene is inline SVG and HTML animated with CSS only: no JavaScript, no external library, nothing inline
+   (the site's Content-Security-Policy forbids inline styles). Colours come from the design tokens, so scenes follow
+   the light and dark themes.
+
+   Motion explains a product step by step; it never decorates. Rules:
+   - The finished state is the base style. Animation only plays toward it, so with reduced motion (or without CSS
+     animation support) every step is shown at once, as a still.
+   - Decorative travel (pulses along links) is hidden under reduced motion.
+   - One shared timeline: .seq elements appear in order s1 to s10 within a 14 s cycle, hold, then reset together. */
+
+.viz { position: relative; margin: 0; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); overflow: hidden; box-shadow: var(--shadow-1); }
+.viz svg { display: block; width: 100%; height: auto; }
+.viz--bare { border: 0; background: transparent; box-shadow: none; }
+.viz__caption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .4rem 1rem; padding: .65rem .95rem; border-top: 1px solid var(--line); color: var(--muted); font: 500 .8rem/1.4 var(--font-sans); }
+.viz__tag { display: inline-flex; align-items: center; gap: .35rem; padding: .12rem .5rem; border-radius: 999px; font: 600 .68rem/1.4 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; background: var(--bz-warning-soft); color: var(--bz-warning); }
+.viz__tag--real { background: var(--bz-success-soft); color: var(--bz-success); }
+.viz__tag--demo { background: var(--bz-info-soft); color: var(--bz-info); }
+
+/* ---------- SVG vocabulary ---------- */
+.v-grid { stroke: var(--line); stroke-width: 1; fill: none; }
+.v-panel { fill: var(--paper); stroke: var(--line); stroke-width: 1; }
+.v-card { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1; }
+.v-card--accent { fill: var(--accent-soft); stroke: var(--brand-mark); }
+.v-hub { fill: var(--brand-navy); }
+.v-hub-b { fill: #ffffff; }
+.v-hub-bar { fill: var(--brand-mark); }
+.v-edge { fill: none; stroke: var(--line-strong); stroke-width: 1.4; }
+.v-edge--strong { stroke: var(--ink-2); }
+.v-pulse { fill: none; stroke: var(--brand-mark); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 7 100; stroke-dashoffset: 107; opacity: 1; animation: v-travel 3.6s linear infinite; }
+.v-dot { fill: var(--brand-mark); }
+.v-dot--muted { fill: var(--line-strong); }
+.v-ok { fill: var(--success); }
+.v-signal { fill: var(--signal); }
+.v-title { fill: var(--ink); font: 650 13px/1 var(--font-sans); }
+.v-text { fill: var(--ink-2); font: 500 11.5px/1 var(--font-sans); }
+.v-mono { fill: var(--ink-2); font: 500 10.5px/1 var(--font-mono); }
+.v-sub { fill: var(--muted); font: 500 9.5px/1 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+.v-accent-text { fill: var(--accent); font: 600 10.5px/1 var(--font-mono); }
+.v-line { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linejoin: round; }
+.v-face-top { fill: var(--surface); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+.v-face-side { fill: var(--paper-2); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+.v-face-front { fill: var(--line); stroke: var(--ink); stroke-width: 1.2; stroke-linejoin: round; }
+.v-hole { fill: var(--accent-soft); stroke: var(--brand-mark); stroke-width: 1.4; }
+.v-pill { fill: var(--paper-2); stroke: var(--line); }
+.v-pill--done { fill: var(--bz-success-soft); stroke: transparent; }
+.v-pill--working { fill: var(--bz-warning-soft); stroke: transparent; }
+.v-pill--stuck { fill: var(--bz-danger-soft); stroke: transparent; }
+.v-pill-text { fill: var(--ink-2); font: 600 9.5px/1 var(--font-sans); }
+.v-avatar { fill: var(--brand-navy); }
+.v-avatar--b { fill: var(--accent); }
+.v-avatar--c { fill: var(--signal); }
+.v-avatar-text { fill: #ffffff; font: 700 8.5px/1 var(--font-sans); }
+.v-caret { fill: var(--brand-mark); animation: v-blink 1s steps(1) infinite; }
+
+/* ---------- One shared timeline (14 s): steps appear in order, hold, then reset together ---------- */
+/* Scenes open part-way through the cycle (most steps already shown), so nothing looks empty on arrival. */
+.seq { animation-duration: 14s; animation-timing-function: var(--ease); animation-iteration-count: infinite; animation-fill-mode: both; animation-delay: -6.2s; }
+.s1 { animation-name: v-s1; } .s2 { animation-name: v-s2; } .s3 { animation-name: v-s3; } .s4 { animation-name: v-s4; } .s5 { animation-name: v-s5; }
+.s6 { animation-name: v-s6; } .s7 { animation-name: v-s7; } .s8 { animation-name: v-s8; } .s9 { animation-name: v-s9; } .s10 { animation-name: v-s10; }
+@keyframes v-s1 { 0%, 4% { opacity: 0; transform: translateY(5px); } 8%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s2 { 0%, 12% { opacity: 0; transform: translateY(5px); } 16%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s3 { 0%, 20% { opacity: 0; transform: translateY(5px); } 24%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s4 { 0%, 28% { opacity: 0; transform: translateY(5px); } 32%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s5 { 0%, 36% { opacity: 0; transform: translateY(5px); } 40%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s6 { 0%, 44% { opacity: 0; transform: translateY(5px); } 48%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s7 { 0%, 52% { opacity: 0; transform: translateY(5px); } 56%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s8 { 0%, 60% { opacity: 0; transform: translateY(5px); } 64%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s9 { 0%, 68% { opacity: 0; transform: translateY(5px); } 72%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes v-s10 { 0%, 76% { opacity: 0; transform: translateY(5px); } 80%, 93% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+/* A state that is visible only between two steps (for example "running" before "succeeded" replaces it). */
+.seq-between { animation: v-between 14s var(--ease) infinite both; animation-delay: -6.2s; }
+@keyframes v-between { 0%, 36% { opacity: 0; } 40%, 62% { opacity: 1; } 66%, 100% { opacity: 0; } }
+
+@keyframes v-travel { from { stroke-dashoffset: 107; } to { stroke-dashoffset: 0; } }
+@keyframes v-blink { 50% { opacity: 0; } }
+@keyframes v-glow { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+.v-glow { animation: v-glow 3.6s ease-in-out infinite; }
+.d1 { animation-delay: 0s; } .d2 { animation-delay: -.6s; } .d3 { animation-delay: -1.2s; } .d4 { animation-delay: -1.8s; } .d5 { animation-delay: -2.4s; } .d6 { animation-delay: -3s; }
+.seq, .v-glow, .v-pulse, .v-caret { transform-box: fill-box; }
+
+/* Reduced motion: every step shows at once as a still; travelling pulses are removed. */
+@media (prefers-reduced-motion: reduce) {
+  .viz .seq, .viz .seq-between, .viz .v-glow, .viz .v-caret { animation: none !important; opacity: 1 !important; transform: none !important; }
+  .viz .seq-between { display: none; }
+  .viz .v-pulse { animation: none !important; display: none; }
+}

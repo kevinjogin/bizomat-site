@@ -29,7 +29,7 @@ const collectionOf = (t: Record<string, any>) => (t.collection === 'MAKEOS' ? 'M
 const tagsOf = (t: Record<string, any>, topicName: string) => [t.category, subcategoryLabel(t.category), topicName, collectionOf(t), ...(t.keywords || [])].join(' ');
 const bodyOf = (t: Record<string, any>) => [t.description, ...(guides[t.id]?.uses || []), ...(guides[t.id]?.users || [])].join(' ');
 const description =
-  'KEVOS® Tools engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
+  'BIZOMAT Tools engineering, manufacturing, operations and commercial decision tools with feasibility checks, sensitivity analysis and exportable decision reports.';
 ---
 
 <BaseLayout title="Engineering and business calculators and decision tools" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.tools, href: '/tools/' }]}>
@@ -39,12 +39,12 @@ const description =
     title="Tools"
     description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions."
     action="/tools/"
-    placeholder="Search KEVOS® tools..."
-    label="Search KEVOS® tools"
+    placeholder="Search BIZOMAT tools..."
+    label="Search BIZOMAT tools"
     total={tools.length}
     noun="tool"
   >
-    <LearningPlanner slot="planner" title="Not sure which tool you need?" lead="Describe what you want to learn or work out. KEVOS® builds a step-by-step path: what to read first, which tools to use and in what order." placeholder="e.g. I need to understand machine hour rates and use the right tools to cost a job." examples={PLANNER_EXAMPLES.tools} />
+    <LearningPlanner slot="planner" title="Not sure which tool you need?" lead="Describe what you want to learn or work out. BIZOMAT builds a step-by-step path: what to read first, which tools to use and in what order." placeholder="e.g. I need to understand machine hour rates and use the right tools to cost a job." examples={PLANNER_EXAMPLES.tools} />
   </LibraryHero>
   <DiscoveryResults />
   <LibraryBrowser id="tool-directory" name="WORKOS" label={CRUMB.tools} searchAll="Search all tools" base="/tools/" noun="tool" preview={PREVIEW} topics={topics.map((t) => ({ slug: t.slug, name: t.name, description: t.description, icon: t.icon, count: t.items.length }))}>
@@ -59,7 +59,7 @@ const description =
       <summary>About Tools</summary>
       <div class="lib-about__body">
         <p>Tools covers the engineering, manufacturing, operations and commercial decisions a team makes every day. Each tool shows its method, checks what could go wrong, tests how sensitive the answer is and gives you a report you can share with confidence.</p>
-        <p><strong>MAKEOS engineering toolkit</strong> is the KEVOS® collection of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it. <a href="/tools/?collection=makeos">Browse the MAKEOS toolkit →</a></p>
+        <p><strong>MAKEOS engineering toolkit</strong> is the BIZOMAT collection of calculators built on established engineering methods. It covers machining, mechanical design, fasteners and gears, power transmission, fluid power, fabrication, quality and maintenance. Every result shows its working and tells you what to verify before you rely on it. <a href="/tools/?collection=makeos">Browse the MAKEOS toolkit →</a></p>
         <ul>
           <li>Methods shown in full, with feasibility and verification checks.</li>
           <li>Sensitivity analysis and decision reports you can download, print or share.</li>
@@ -72,7 +72,7 @@ const description =
     <section class="workspace" id="tool-workspace" hidden>
       <p class="tool-loading" id="tool-loading" role="status">Loading the calculator…</p>
       <div class="tool-loading tool-loading--failed" id="tool-loading-failed" role="alert" hidden><p>This calculator could not load. Check your connection and try again.</p><p><button class="btn" type="button" id="tool-loading-retry">Try again</button> <a class="btn secondary" href="/tools/">Back to all tools</a></p></div>
-      <div class="workspace-head"><div><p class="eyebrow" id="tool-category">KEVOS® Tools</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
+      <div class="workspace-head"><div><p class="eyebrow" id="tool-category">BIZOMAT Tools</p><h2 id="tool-name">Tool</h2><p class="lead" id="tool-question"></p><p id="tool-description"></p></div><button class="btn secondary back-button" type="button" id="back-tools">← All tools</button></div>
       <div class="tool-layout">
         <form id="tool-form" class="panel" autocomplete="off"></form>
         <div class="panel sticky">
@@ -84,13 +84,13 @@ const description =
             <button class="btn secondary" id="share-tool" type="button">Share with inputs</button>
           </div>
           <p class="tool-flash" id="tool-flash" role="status"></p>
-          <p class="formula-note">KEVOS® tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
+          <p class="formula-note">BIZOMAT tools are screening and decision-support utilities. Verify important financial, engineering, safety, legal or operational decisions using appropriate professional standards and your organisation’s approved data.</p>
         </div>
       </div>
       <div class="tool-analysis" id="tool-analysis"></div>
       <div class="tool-guide" id="tool-guide"></div>
       <div class="tool-learn" id="tool-learn"></div>
-      <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, KEVOS® can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
+      <aside class="custom-cta"><div><h2>Need a tool for your own calculation?</h2><p>If your business uses a spreadsheet, repeated formula or manual decision process, BIZOMAT can help turn it into a focused browser tool.</p></div><a href="/contact/">Discuss a custom tool →</a></aside>
     </section>
   </Container>
   <div class="print-report" id="print-report" hidden></div>

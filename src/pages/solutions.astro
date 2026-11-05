@@ -1,5 +1,5 @@
 ---
-// KEVOS® solution areas: the everyday problems each addresses and where to start. Content: src/config/products.ts.
+// BIZOMAT solution areas: the everyday problems each addresses and where to start. Content: src/config/products.ts.
 // Every link goes to a page on kevos.com or to an available product. No outcomes, figures or customers are claimed.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
@@ -11,8 +11,8 @@ import { SOLUTIONS } from '../config/products.ts';
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Solutions', href: '/solutions/' }];
 const external = (href: string) => /^https?:/.test(href);
 ---
-<BaseLayout title="Solutions: productivity, engineering and automation" description="How KEVOS® helps with business productivity, engineering and design, and automation and workflows, and where to start with each." breadcrumbs={crumbs}>
-  <Hero eyebrow="Solutions" title="Start from the problem, <em>not the software.</em>" lead="Three kinds of work KEVOS® helps with. Find the problem that sounds like yours, then start in the right place.">
+<BaseLayout title="Solutions: productivity, engineering and automation" description="How BIZOMAT helps with business productivity, engineering and design, and automation and workflows, and where to start with each." breadcrumbs={crumbs}>
+  <Hero eyebrow="Solutions" title="Start from the problem, <em>not the software.</em>" lead="Three kinds of work BIZOMAT helps with. Find the problem that sounds like yours, then start in the right place.">
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
 
@@ -52,10 +52,10 @@ const external = (href: string) => /^https?:/.test(href);
   <section class="sol-close" aria-labelledby="sol-close-title">
     <Container>
       <h2 id="sol-close-title">Something else?</h2>
-      <p>Describe it in your own words and KEVOS® will point you to the right place.</p>
+      <p>Describe it in your own words and BIZOMAT will point you to the right place.</p>
       <div class="sol-close__actions">
-        <Button href="/#ask" variant="accent">Ask KEVOS</Button>
-        <Button href="/contact/" variant="secondary">Contact KEVOS®</Button>
+        <Button href="/#ask" variant="accent">Ask BIZOMAT</Button>
+        <Button href="/contact/" variant="secondary">Contact BIZOMAT</Button>
       </div>
     </Container>
   </section>

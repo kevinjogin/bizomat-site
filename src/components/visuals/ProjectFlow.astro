@@ -1,0 +1,66 @@
+---
+// Scene: a project is created in Project Management, tasks are added and assigned, a status changes and the Kanban
+// view follows. Fictional example content; the columns (task, owner, status, date) and views are the product's own.
+import '../../styles/visuals.css';
+
+interface Props { id?: string }
+const { id = 'projflow' } = Astro.props;
+const rows = [
+  { c: 's2', t: 'Plan the sitemap', o: 'AL', oc: 'v-avatar', st: 'Done', sc: 'v-pill--done', d: '12 Nov' },
+  { c: 's3', t: 'Write page copy', o: 'RN', oc: 'v-avatar--b', st: 'Working on it', sc: 'v-pill--working', d: '19 Nov' },
+  { c: 's4', t: 'Build page templates', o: 'JS', oc: 'v-avatar--c', st: 'Not started', sc: '', d: '26 Nov' },
+];
+---
+<figure class="viz" aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 660 290" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>A new project board, Website relaunch, gets three tasks. Each task is assigned an owner, a status and a date; the owner is notified, and the same work appears in the Kanban view, where a card moves to Done.</title>
+    <g class="seq s1">
+      <rect class="v-panel" x="14" y="14" width="402" height="262" rx="12" />
+      <text class="v-title" x="30" y="42">Website relaunch</text>
+      <rect class="v-pill v-pill--done" x="148" y="29" width="72" height="18" rx="9" />
+      <text class="v-pill-text" x="184" y="41.5" text-anchor="middle">New board</text>
+      <text class="v-sub" x="30" y="72">Task</text><text class="v-sub" x="212" y="72">Owner</text><text class="v-sub" x="262" y="72">Status</text><text class="v-sub" x="362" y="72">Due</text>
+      <path class="v-edge" d="M30 80 H 400" />
+    </g>
+    {rows.map((r, i) => (
+      <g class:list={['seq', r.c]}>
+        <rect class="v-card" x="22" y={88 + i * 46} width="386" height="38" rx="8" />
+        <text class="v-text" x="34" y={111 + i * 46}>{r.t}</text>
+        <circle class:list={['v-avatar', r.oc]} cx="222" cy={107 + i * 46} r="10" />
+        <text class="v-avatar-text" x="222" y={110 + i * 46} text-anchor="middle">{r.o}</text>
+        <rect class:list={['v-pill', r.sc]} x="250" y={96 + i * 46} width="96" height="22" rx="11" />
+        <text class="v-pill-text" x="298" y={110.5 + i * 46} text-anchor="middle">{r.st}</text>
+        <text class="v-mono" x="362" y={111 + i * 46}>{r.d}</text>
+      </g>
+    ))}
+    <g class="seq s6">
+      <rect class="v-card v-card--accent" x="30" y="232" width="226" height="32" rx="8" />
+      <text class="v-text" x="44" y="252">JS was assigned Build page templates</text>
+    </g>
+
+    <g class="seq s5">
+      <text class="v-sub" x="432" y="28">Same work, Kanban view</text>
+      {['To do', 'Working', 'Done'].map((col, i) => (
+        <g>
+          <rect class="v-panel" x={430 + i * 76} y="38" width="70" height="238" rx="10" />
+          <text class="v-sub" x={438 + i * 76} y="56">{col}</text>
+        </g>
+      ))}
+      <rect class="v-card" x="436" y="66" width="58" height="40" rx="6" /><circle class="v-avatar v-avatar--c" cx="448" cy="94" r="6" />
+      <rect class="v-card" x="512" y="66" width="58" height="40" rx="6" /><circle class="v-avatar v-avatar--b" cx="524" cy="94" r="6" />
+      <rect class="v-card" x="588" y="66" width="58" height="40" rx="6" /><circle class="v-avatar" cx="600" cy="94" r="6" />
+    </g>
+    <g class="pf__move">
+      <rect class="v-card v-card--accent" x="512" y="114" width="58" height="40" rx="6" />
+      <circle class="v-avatar v-avatar--b" cx="524" cy="142" r="6" />
+    </g>
+  </svg>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span>A board created, tasks assigned and tracked. Example content; the views are the product's own.</span><span class="viz__tag">Illustration</span></figcaption>
+</figure>
+
+<style>
+  /* A card moves from Working to Done and stays there (finished state: in Done). */
+  .pf__move { transform: translateX(76px); animation: pf-move 14s var(--ease) infinite both; animation-delay: -6.2s; }
+  @keyframes pf-move { 0%, 60% { transform: none; opacity: 0; } 64% { transform: none; opacity: 1; } 72%, 93% { transform: translateX(76px); opacity: 1; } 100% { transform: translateX(76px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .pf__move { animation: none !important; transform: translateX(76px) !important; opacity: 1 !important; } }
+</style>

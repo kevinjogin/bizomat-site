@@ -1,4 +1,4 @@
-// KEVOS® "Your Solution Path": turns a question into ordered steps, each with what to do, why, what to read, which tool
+// BIZOMAT "Your Solution Path": turns a question into ordered steps, each with what to do, why, what to read, which tool
 // to use, the inputs, the expected output and how to check it.
 //
 // Facts and suggestions are kept apart:
@@ -8,7 +8,7 @@
 //   - The objective, the order of the steps, "what to do" and "why" are recommendations, from the AI step when it
 //     answers (src/server/discover/handler.ts) or from the workflow for the question type below when it does not.
 //   - Assumptions and missing information come only from the AI step and are labelled as such.
-// Nothing is calculated here: every number comes from a KEVOS® tool when the visitor runs it.
+// Nothing is calculated here: every number comes from a BIZOMAT tool when the visitor runs it.
 import { entryById, verifiedReadings, type Engine, type Hit, type Outcome } from './search.ts';
 
 export type QuestionType = 'calculation' | 'troubleshooting' | 'design' | 'manufacturing' | 'business' | 'learning';
@@ -154,7 +154,7 @@ function toolStep(e: Engine, details: DiscoveryDetails | null, tool: Hit | undef
 export function workflowPath(e: Engine, outcome: Outcome, details: DiscoveryDetails | null, type: QuestionType): SolutionPath {
   const wf = WORKFLOWS[type];
   const tools = [...outcome.tools];
-  const matched = [...outcome.readings, ...outcome.related.filter((h) => h.kind !== 'tool')];
+  const matched = [...outcome.readings, ...outcome.related.filter((h) => h.kind !== 'tool' && h.kind !== 'page')];
   const relevant = new Set(matched.map((h) => h.url));
   // Readings to place: those that match the question, then reviewed readings of the leading tools.
   const seen = new Set<string>();
@@ -169,7 +169,7 @@ export function workflowPath(e: Engine, outcome: Outcome, details: DiscoveryDeta
       const r = readings[ri++];
       if (r) used.add(r.url);
       steps.push(r ? { do: t.do, why: t.why, reads: [link(r)], tools: [], inputs: [], inputsMore: 0, inputsFrom: 'none', output: [] }
-        : { do: t.do, why: t.why, reads: [], tools: [], inputs: [], inputsMore: 0, inputsFrom: 'none', output: [], gap: 'KEVOS® does not have a reading that fits this step yet.' });
+        : { do: t.do, why: t.why, reads: [], tools: [], inputs: [], inputsMore: 0, inputsFrom: 'none', output: [], gap: 'BIZOMAT does not have a reading that fits this step yet.' });
       continue;
     }
     if (t.role === 'check') {
@@ -182,7 +182,7 @@ export function workflowPath(e: Engine, outcome: Outcome, details: DiscoveryDeta
     }
     const tool = tools[ti++];
     if (!tool) {
-      if (t.role === 'tool') steps.push({ do: t.do.replace(' with {tool}', ''), why: t.why, reads: [], tools: [], inputs: [], inputsMore: 0, inputsFrom: 'none', output: [], gap: 'KEVOS® does not have a tool for this step yet.' });
+      if (t.role === 'tool') steps.push({ do: t.do.replace(' with {tool}', ''), why: t.why, reads: [], tools: [], inputs: [], inputsMore: 0, inputsFrom: 'none', output: [], gap: 'BIZOMAT does not have a tool for this step yet.' });
       continue; // no second tool: skip the extra check rather than repeat the first
     }
     const step = toolStep(e, details, tool, { do: t.do.replace('{tool}', tool.title), why: t.why, reads: [], tools: [] }, relevant);

@@ -11,9 +11,9 @@ const page = read('src/pages/contact/index.astro');
 const form = read('src/components/ContactForm.astro');
 const widget = read('src/components/ChatWidget.astro');
 
-test('REACHOS presents KEVOS® as a connection point with enquiry and meeting actions', () => {
-  assert.match(page, /exactTitle="REACHOS \| Connect with KEVOS®"/);
-  assert.match(page, /title="Connect with <em>KEVOS\.<\/em>"/);
+test('REACHOS presents BIZOMAT as a connection point with enquiry and meeting actions', () => {
+  assert.match(page, /exactTitle="REACHOS \| Connect with BIZOMAT"/);
+  assert.match(page, /title="Connect with <em>BIZOMAT\.<\/em>"/);
   assert.match(page, /<Button href="#enquiry"[^>]*>Start an Enquiry<\/Button>/);
   assert.match(page, /<Button href=\{SITE\.booking\.url\}[^>]*target="_blank" rel="noopener noreferrer"[^>]*>Book a Meeting/);
   assert.match(page, /<Section [^>]*id="enquiry"/);
@@ -46,7 +46,7 @@ test('the form asks only for name, email, category and message, and keeps its pr
   assert.match(form, /if \(result\.ok\) \{/, 'success is shown only when the endpoint confirms delivery');
 });
 
-test('the assistant section, when the assistant is switched on, uses the live KEVOS® Assistant, labelled as AI-assisted', () => {
+test('the assistant section, when the assistant is switched on, uses the live BIZOMAT Assistant, labelled as AI-assisted', () => {
   assert.match(page, /\{SITE\.assistant\.enabled && \(/, 'the section is left out while the assistant is off');
   assert.equal(SITE.assistant.starters.length, 5);
   assert.match(page, /SITE\.assistant\.starters\.map/);

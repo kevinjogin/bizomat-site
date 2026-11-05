@@ -1,145 +1,164 @@
 ---
+// /about/: why BIZOMAT exists, in its founder's words, what it combines, how it works and where its limits are.
+// Facts about the founder are only those already published with the owner's approval: the practical background in
+// src/data/brand.ts and the engineering record in src/data/projects.ts (shown on /proof-of-work/). No education,
+// employers, awards, registrations or customer results are claimed.
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import MotionVisual from '../components/MotionVisual.astro';
-import Section from '../components/Section.astro';
-import Breadcrumb from '../components/Breadcrumb.astro';
-import CallToAction from '../components/CallToAction.astro';
-import SoftwareNote from '../components/SoftwareNote.astro';
-import ProofOfWork from '../components/ProofOfWork.astro';
-import { PROJECTS } from '../data/projects.ts';
-import { BACKGROUND, FUTURE, PRINCIPLES } from '../data/brand.ts';
-import { SERVICE_AREA } from '../data/services.ts';
-import { PRODUCTS } from '../config/products.ts';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import TradeMarkNotice from '../components/TradeMarkNotice.astro';
+import ConnectedOps from '../components/visuals/ConnectedOps.astro';
+import '../styles/product.css';
+import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
+import { PLATFORM } from '../config/platform.ts';
+import { SITE } from '../config/site.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about/' },
 ];
+const combines = [
+  { t: 'Engineering automation', x: 'CAD Automation puts an AI assistant to work in SOLIDWORKS, on your own computer, with checks before every change.', href: '/cad/' },
+  { t: 'Project and task management', x: 'Project Management keeps projects, tasks, teams, documents and dashboards in one shared workspace.', href: '/work/' },
+  { t: 'Useful tools', x: 'Engineering, manufacturing and business calculators that show their method and run in your browser.', href: '/tools/' },
+  { t: 'Knowledge resources', x: 'A library of technical books in short chapters, guides and learning paths, free to read.', href: '/resources/' },
+  { t: 'AI-powered productivity', x: 'AI search across all of it, and assistants that do the repetitive part of the job while people make the decisions.', href: '/#ai-search' },
+];
+const description = 'Why BIZOMAT exists: practical software for real work, joining engineering automation, project management, tools and knowledge. A message from founder Kevin Jogin.';
+const schema = [{
+  '@type': 'AboutPage', name: 'About BIZOMAT', url: `${SITE.url}/about/`, description,
+  about: { '@id': `${SITE.url}/#organization` },
+  mainEntity: { '@type': 'Person', name: PLATFORM.founder, jobTitle: 'Founder', worksFor: { '@id': `${SITE.url}/#organization` } },
+}];
 ---
 
-<BaseLayout
-  title="About"
-  description="KEVOS® is an Australian technology company building practical software, tools and knowledge that make difficult work simple, with roots in hands-on engineering."
-  breadcrumbs={crumbs}
->
-  <Hero eyebrow="About KEVOS®" title="We make difficult work <em>simple.</em>" lead="KEVOS® builds practical software, tools and knowledge that help people solve real-world problems, without needing to understand the technology behind them.">
-    <MotionVisual page="about" slot="visual" priority />
-    <Breadcrumb items={crumbs} slot="before" />
-  </Hero>
-
-  <Section index="01" label="Who we are" labelledby="who-title">
-    <div class="about-grid">
-      <h2 id="who-title" class="about-grid__heading">A technology company with engineering roots</h2>
-      <div class="prose about-grid__body">
-        <p class="about-lede">
-          KEVOS® is an Australian technology company. It builds software products, browser-based tools and a technical Library, each aimed at a real problem people meet at work.
-        </p>
-        <ul class="about-builds">
-          {PRODUCTS.map((p) => <li><strong>{p.fullName}</strong>{p.status === 'soon' ? ' (coming soon)' : ''}: {p.tagline}</li>)}
-          <li><strong><a href="/tools/">Tools</a></strong>: engineering, manufacturing and business calculators that show their method.</li>
-          <li><strong><a href="/reados/">Library</a></strong>: technical books in short, practical chapters.</li>
-        </ul>
-        <p>
-          Its roots are in hands-on engineering and production work, and it still takes on defined assignments such as drawing changes, fixture concepts, work instructions, process reviews and project documentation. Each job starts with an agreed scope and finishes with the deliverables checked and handed over. See <a href="/services/">engineering services</a>.
-        </p>
-        <p>{SERVICE_AREA}</p>
+<BaseLayout title="About" description={description} breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="about-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <p class="bz-eyebrow">About BIZOMAT</p>
+        <h1 id="about-title">Practical software that gets real work done.</h1>
+        <p class="pp-hero__lead">BIZOMAT is an intelligent business automation platform. It joins engineering automation, project management, practical tools and knowledge, so the repetitive part of a job is done by software and the judgement stays with people.</p>
       </div>
-    </div>
-  </Section>
+      <ConnectedOps id="about-ops" />
+    </Container>
+  </section>
 
-  <Section index="02" label="Background" tone="alt" labelledby="background-title">
-    <div class="about-grid">
-      <h2 id="background-title" class="about-grid__heading">Experience from the floor up</h2>
-      <div class="about-grid__body">
-        <div class="prose">
-          <p>
-            KEVOS® is led by its founder, whose practical background spans making parts through to delivering projects. That experience informs how each production problem is assessed, considering design, tooling, processes, people and documentation together.
-          </p>
-        </div>
-        <ul class="background">{BACKGROUND.map((b) => <li>{b}</li>)}</ul>
-        <p class="muted small">
-          KEVOS® does not use or disclose information belonging to any current or former employer, client or supplier. Examples on this website are general or independently created.
-        </p>
+  <section class="pp-section" id="founder" aria-labelledby="founder-title">
+    <Container class="founder">
+      <div class="founder__aside">
+        <p class="bz-eyebrow">From the founder</p>
+        <h2 id="founder-title">Why I am building BIZOMAT</h2>
       </div>
-    </div>
-  </Section>
+      <figure class="founder__letter">
+        <blockquote>
+          <p>I started my working life on the toolroom floor. Since then I have worked through design offices, production lines and engineering projects, and I kept seeing the same thing: capable people losing hours to work a computer should do for them. Redrawing a part because one size changed. Chasing the status of a task through emails and spreadsheets. Hunting for a method that sits in a textbook nobody has to hand.</p>
+          <p>BIZOMAT is my answer to that. It is practical software that takes the repetitive part of the job so people can spend their time on the part that needs judgement. CAD Automation lets an AI assistant build and check SOLIDWORKS models on your own computer. Project Management keeps projects, tasks and teams in one place. Resources gives anyone the calculators, books and guides that help when the method is not to hand, free and without an account.</p>
+          <p>I only put on this site what I can show working. The Proof of Work page shows how each product is built and how far it has been tested, and where something is still being proven, it says so.</p>
+          <p>If there is a process that eats your week, I want to hear about it. That is how the next part of BIZOMAT gets built.</p>
+        </blockquote>
+        <figcaption><strong>{PLATFORM.founder}</strong><span>Founder, BIZOMAT</span></figcaption>
+      </figure>
+    </Container>
+  </section>
 
-  <Section index="03" label="How we work" id="principles" labelledby="principles-title">
-    <h2 id="principles-title" class="principles-title">Principles KEVOS® works by</h2>
-    <dl class="principle-list">
-      {
-        PRINCIPLES.map((p, i) => (
+  <section class="pp-section pp-section--tint" aria-labelledby="combines-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What BIZOMAT combines</p>
+        <h2 id="combines-title">One platform for the work around the work</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {combines.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3><a href={c.href}>{c.t}</a></h3><p>{c.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="principles" aria-labelledby="principles-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">How BIZOMAT works</p>
+        <h2 id="principles-title">Principles</h2>
+      </div>
+      <dl class="principle-list">
+        {PRINCIPLES.map((p, i) => (
           <div class="principle-row">
-            <dt>
-              <span>{String(i + 1).padStart(2, '0')}</span>
-              {p.title}
-            </dt>
+            <dt><span>{String(i + 1).padStart(2, '0')}</span>{p.title}</dt>
             <dd>{p.text}</dd>
           </div>
-        ))
-      }
-    </dl>
-  </Section>
+        ))}
+      </dl>
+    </Container>
+  </section>
 
-  <Section index="04" label="Capability" tone="alt" labelledby="capability-title">
-    <h2 id="capability-title" class="visually-hidden">Software and delivery capability</h2>
-    <SoftwareNote headingLevel="h3" />
-  </Section>
-
-  <Section index="05" label="Scope and limits" labelledby="limits-title">
-    <div class="about-grid">
-      <h2 id="limits-title" class="about-grid__heading">Clear about what is and isn’t included</h2>
-      <div class="prose about-grid__body">
-        <p>
-          KEVOS® provides practical engineering, documentation, improvement and project support within an agreed scope. Not every assignment includes professional engineering certification or statutory approval. Where regulated or specialist work needs a registered or appropriately qualified professional, KEVOS® will say so, so the right people can be involved.
-        </p>
-        <p><a href="/disclaimer/">Read the full disclaimer</a></p>
+  <section class="pp-section pp-section--tint" id="background" aria-labelledby="background-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Background</p>
+        <h2 id="background-title">Experience from the floor up</h2>
+        <p class="about-lead">The founder's practical background spans making parts through to delivering projects. It shapes how BIZOMAT looks at a problem: design, tooling, process, people and documentation together.</p>
+        <p class="about-small">BIZOMAT does not use or disclose information belonging to any current or former employer, client or supplier. Examples on this website are general or independently created.</p>
+        <div class="pp-hero__actions"><Button href="/proof-of-work/#engineering-record" variant="secondary" arrow>See the engineering record</Button></div>
       </div>
-    </div>
-  </Section>
+      <ul class="background" role="list">{BACKGROUND.map((b) => <li>{b}</li>)}</ul>
+    </Container>
+  </section>
 
-  <Section index="06" label="Proof of work" tone="alt" id="work" labelledby="work-title">
-    <div class="work-head">
-      <h2 id="work-title">From steelworks to medical devices: {PROJECTS.length} Australian engineering projects worth sharing.</h2>
-      <p class="work-intro">The engineering record behind KEVOS®, built since 2010 on a career that started on the toolroom floor. Coke plants, mine-site trucks, production machinery, window and door hardware taken from 3D print to production, rail interiors, bridges, food plants and patient-specific devices, carried out by its founder in employed, contract and consulting roles. Each record shows where the work happened, the role, what was delivered and, honestly, how far it went.</p>
-    </div>
-    <ProofOfWork />
-  </Section>
-
-  <Section index="07" label={FUTURE.title} labelledby="future-title">
-    <div class="about-grid">
-      <h2 id="future-title" class="about-grid__heading">What comes next</h2>
-      <div class="prose about-grid__body">
-        <p>{FUTURE.text}</p>
-        <p>KEVOS® also publishes practical reading in its <a href="/reados/">Library</a> of edited books.</p>
+  <section class="pp-section" id="limits" aria-labelledby="limits-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Scope and limits</p>
+        <h2 id="limits-title">Clear about what is and is not included</h2>
       </div>
-    </div>
-  </Section>
+      <div class="about-prose">
+        <p>BIZOMAT software and resources support engineering and business work; they do not replace professional judgement. Output from AI assistants, CAD automation and calculators must be checked by a competent person before it is relied on. Work that legally requires a registered engineer, certifier or licensed trade needs that professional.</p>
+        <p><a href="/disclaimer/">Read the disclaimer</a> · <a href="/terms/">Terms of use</a> · <a href="/privacy/">Privacy policy</a></p>
+        <div class="about-former"><TradeMarkNotice /></div>
+      </div>
+    </Container>
+  </section>
 
-  <CallToAction title="Tell us what you need." text="Describe the problem or project. KEVOS® will point you to the right product or tool, or help define the scope of the work." label="Contact KEVOS®" />
+  <section class="pp-section pp-section--inverse" aria-labelledby="about-cta">
+    <Container class="pp-band">
+      <h2 id="about-cta">Tell us what you need.</h2>
+      <div class="pp-band__actions">
+        <Button href="/contact/" variant="accent" data-cta="about-contact">Contact BIZOMAT</Button>
+        <Button href="/products/" variant="secondary" data-cta="about-products">Explore products</Button>
+      </div>
+    </Container>
+  </section>
 </BaseLayout>
 
+<script>
+  // The engineering record moved to /proof-of-work/. Old links to /about/#work and /about/#case-<id> follow it there.
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (id === 'work') location.replace('/proof-of-work/#engineering-record');
+  else if (id.startsWith('case-')) location.replace(`/proof-of-work/#${id}`);
+</script>
+
 <style>
-  .about-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 1.5rem 5rem; }
-  .about-grid__heading { font-size: var(--step-3); max-width: 14ch; }
-  @media (min-width: 861px) { .about-grid__heading { position: sticky; top: calc(var(--header-h) + 2rem); align-self: start; } }
-  @media (max-width: 860px) { .about-grid { grid-template-columns: 1fr; } }
-  .about-lede { font-size: 1.2em; line-height: 1.5; color: var(--ink); }
-  .about-builds { padding-left: 1.2em; }
-  .background { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; margin: 1.5rem 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
-  .background li { padding: 0.85rem 0; border-bottom: 1px solid var(--line); font-weight: 520; }
-  @media (max-width: 520px) { .background { grid-template-columns: 1fr; } }
-  .small { font-size: 0.9rem; max-width: 60ch; }
-  .principles-title { margin-bottom: clamp(2rem, 4vw, 3rem); max-width: 16ch; }
+  .founder { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: start; }
+  .founder__aside h2 { margin-top: .4rem; max-width: 12ch; }
+  @media (min-width: 1001px) { .founder__aside { position: sticky; top: calc(var(--header-h) + 2rem); } }
+  .founder__letter { margin: 0; padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--brand-mark); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+  .founder__letter blockquote { margin: 0; font-family: var(--font-serif); font-size: clamp(1.08rem, 1rem + .35vw, 1.24rem); line-height: 1.7; color: var(--ink); }
+  .founder__letter blockquote p { margin: 0 0 1.1em; }
+  .founder__letter figcaption { display: grid; gap: .15rem; margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
+  .founder__letter figcaption strong { font: 650 1.15rem/1.2 var(--font-display); }
+  .founder__letter figcaption span { color: var(--muted); font-size: .92rem; }
+  .pp-card h3 a { color: inherit; text-decoration: none; }
+  .pp-card h3 a:hover { color: var(--accent); }
   .principle-list { margin: 0; border-top: 1px solid var(--line-strong); }
-  .principle-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 0.5rem 5rem; padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
-  .principle-row dt { display: flex; gap: 1rem; font-size: var(--step-2); font-weight: 530; letter-spacing: -0.03em; line-height: 1.15; }
-  .principle-row dt span { flex: none; width: 2.5rem; padding-top: 0.45rem; font-size: 0.85rem; font-weight: 400; letter-spacing: 0; color: var(--accent); font-variant-numeric: tabular-nums; }
-  .principle-row dd { margin: 0; font-family: var(--font-serif); font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
-  @media (max-width: 860px) { .principle-row { grid-template-columns: 1fr; } .principle-row dd { padding-left: 3.5rem; } }
-  :global(#work) { scroll-margin-top: calc(var(--header-h) + 1.5rem); }
-  .work-head { margin-bottom: 2.2rem; }
-  .work-head h2 { max-width: 24ch; }
-  .work-intro { margin: 1rem 0 0; max-width: 74ch; font-size: var(--step-1); color: var(--ink-2); }
+  .principle-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: .5rem 5rem; padding: 1.4rem 0; border-bottom: 1px solid var(--line); }
+  .principle-row dt { display: flex; gap: 1rem; font: 640 var(--step-1)/1.25 var(--font-display); }
+  .principle-row dt span { flex: none; width: 2.5rem; padding-top: .2rem; font: 500 .85rem/1 var(--font-mono); color: var(--accent); }
+  .principle-row dd { margin: 0; color: var(--ink-2); font-size: var(--step-0); line-height: 1.6; }
+  .about-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .about-small { margin: 1rem 0 0; color: var(--muted); font-size: .9rem; max-width: 60ch; }
+  .background { display: grid; grid-template-columns: 1fr 1fr; gap: 0 2rem; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
+  .background li { padding: .9rem 0; border-bottom: 1px solid var(--line); font-weight: 560; }
+  .about-prose p { margin: 0 0 1rem; color: var(--ink-2); }
+  .about-former { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .9rem; }
+  @media (max-width: 1000px) { .founder { grid-template-columns: 1fr; } .principle-row { grid-template-columns: 1fr; } }
+  @media (max-width: 520px) { .background { grid-template-columns: 1fr; } }
 </style>

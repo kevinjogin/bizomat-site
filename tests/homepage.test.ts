@@ -10,37 +10,35 @@ import { PRODUCTS, SOLUTIONS } from '../src/config/products.ts';
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const home = read('src/pages/index.astro');
 
-// KEVOS 2.0 redesign (owner brief, 5 Nov 2026): "Make difficult work simple." Hero with Ask KEVOS, then products,
-// solutions, tools and resources.
-test('the homepage leads with the KEVOS message and the Ask KEVOS box, then products, solutions, tools and resources', () => {
-  assert.match(home, /<p class="eyebrow home-hero__label">Intelligence by KEVOS<\/p>/);
-  assert.match(home, /<h1 id="home-title">Make difficult work simple\.<\/h1>/);
-  assert.match(home, /Tell us what you need\. We'll help you get it done\./);
-  assert.match(home, /placeholder="What would you like to accomplish today\?"/);
-  assert.match(home, /submitLabel="Ask KEVOS"/);
-  assert.match(home, /<DiscoveryExamples suggestions=\{HOME_DISCOVERY_EXAMPLES\}/);
-  assert.doesNotMatch(home, /ServiceMap|home-hero__visual/, 'no animated picture beside the question');
-  const order = ['id="ask"', '<DiscoveryResults />', 'id="products"', 'id="solutions"', 'id="tools"', 'id="resources"'].map((m) => home.indexOf(m));
+// BIZOMAT homepage (5 Nov 2026): "Automate work. Connect systems. Get business done." Hero with Explore Products and
+// Explore AI Tools, then the three products, AI Search, proof, tools and the Library.
+test('the homepage leads with the BIZOMAT message, then products, AI search, proof, tools and resources', () => {
+  assert.match(home, /<p class="bz-eyebrow">Intelligent Business Automation Platform<\/p>/);
+  assert.match(home, /<h1 id="home-title">Automate work\. Connect systems\. Get business done\.<\/h1>/);
+  assert.match(home, />Explore Products<\/Button>/);
+  assert.match(home, />Explore AI Tools<\/Button>/);
+  assert.match(home, /<ConnectedOps id="hero-ops" \/>/, 'the hero shows connected operations');
+  const order = ['home-title', 'id="products"', 'id="ai-search"', '<DiscoveryResults />', 'id="proof-title"', 'id="tools"', 'id="resources"'].map((m) => home.indexOf(m));
   assert.ok(order.every((n, i) => n > 0 && (i === 0 || n > order[i - 1])), 'sections in the agreed order');
-  assert.match(home, /<h2 id="products-title">Explore KEVOS<\/h2>/);
-  assert.match(home, /<h2 id="tools-title">Useful tools\. Less complexity\.<\/h2>/);
-  assert.match(home, /<h2 id="resources-title">Knowledge that moves you forward\.<\/h2>/);
+  assert.match(home, /<h2 id="ai-title">Ask BIZOMAT<\/h2>/);
   assert.match(home, /<Button href="\/tools\/" arrow data-cta="home-tools">Explore Tools<\/Button>/);
   assert.match(home, /<Button href="\/reados\/" arrow data-cta="home-library">Explore Library<\/Button>/);
   assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
-  assert.equal(SITE.title, 'KEVOS® | Make Difficult Work Simple');
-  assert.deepEqual(NAV.map((n) => n.href), ['/products/', '/solutions/', '/tools/', '/resources/', '/about/']);
+  assert.equal(SITE.title, 'BIZOMAT | Intelligent Business Automation Platform');
+  assert.deepEqual(NAV.map((n) => n.label), ['CAD Automation', 'Project Management', 'Resources', 'Proof of Work', 'About']);
+  assert.deepEqual(NAV.map((n) => n.href), ['/cad/', '/work/', '/resources/', '/proof-of-work/', '/about/']);
 });
 
-test('products are described only as stated, and a product that is not available is never linked', () => {
-  assert.deepEqual(PRODUCTS.map((p) => [p.name, p.tagline, p.status, p.url]), [
-    ['Work', 'Get more done. Work smarter.', 'available', 'https://work.kevos.com/'],
-    ['CADOS', 'Engineering and CAD intelligence.', 'available', 'https://cados.kevos.com/'],
-    ['Desk', 'Your desktop, working smarter.', 'soon', undefined],
+test('products are described from the catalogue, and every product action leads to a real page', () => {
+  assert.deepEqual(PRODUCTS.map((p) => [p.id, p.name, p.status, p.url, p.signIn]), [
+    ['cad', 'CAD Automation', 'available', '/cad/', true],
+    ['work', 'Project Management', 'available', '/work/', true],
+    ['resources', 'Resources', 'available', '/resources/', false],
   ]);
-  assert.match(home, /\{p\.url\s*\?\s*<Button href=\{p\.url\}/, 'only a product with an address gets a launch button');
+  assert.deepEqual(PRODUCTS.map((p) => p.formerly), ['CADOS', 'KEVOS Work', undefined], 'former names are stated for people who know them');
+  for (const p of PRODUCTS) assert.ok(read(`src/pages/${p.url!.replace(/^\/|\/$/g, '')}${p.id === 'resources' ? '/index' : ''}.astro`).length > 0, `${p.url} exists`);
   for (const s of SOLUTIONS) for (const path of s.paths) {
-    assert.ok(/^https:\/\/(work|cados)\.kevos\.com\/$/.test(path.href) || /^\/(tools|reados|contact)\//.test(path.href), `${s.id}: ${path.href} is a real page or an available product`);
+    assert.ok(/^\/(tools|reados|contact|cad|work)\//.test(path.href), `${s.id}: ${path.href} is a real page`);
   }
   const text = JSON.stringify([PRODUCTS, SOLUTIONS]);
   assert.doesNotMatch(text, /\d+\s*%|customers? (say|love)|testimonial|trusted by/i, 'no invented statistics or testimonials');
@@ -61,6 +59,8 @@ test('homepage counts come from the catalogues, never from fixed numbers', () =>
   assert.match(home, /fmt\(chapterTotal\)/);
   assert.match(home, /knowledgeGraph\(\)\.live\.length/);
   assert.match(home, /fmt\(connections\)/);
+  assert.match(home, /String\(CAD\.toolCount\)/, 'the proof counts come from the catalogue');
+  assert.match(home, /String\(WORK\.views\.length\)/);
   const markup = home.slice(home.indexOf('<BaseLayout'), home.indexOf('<script>'));
   assert.doesNotMatch(markup, />\s*\d{2,}\s*(tools|books|chapters)\b/i, 'no hand-typed catalogue counts');
 });
@@ -86,8 +86,8 @@ test('discovery is a working feature with a no-JavaScript fallback, and no plann
   assert.doesNotMatch(home, /flow__step--planned|Not yet available/);
   assert.equal(SITE.assistant.enabled, false, 'the floating assistant is retired; the discovery box replaces it');
   assert.doesNotMatch(home, /HomeResourceVisual|home-workos-search/, 'one hero: no second product hero under it');
-  assert.deepEqual(HOME_DISCOVERY_EXAMPLES.map((e) => e.label), ['Analyse a document', 'Solve an engineering problem', 'Work with data', 'Automate a task']);
-  assert.match(home, /It does not open your files or do the work for you\./, 'the box says plainly what it does not do');
+  assert.deepEqual(HOME_DISCOVERY_EXAMPLES.map((e) => e.question), ['Find a tool to calculate engineering dimensions.', 'How can I automate SolidWorks?', 'Show me project management capabilities.', 'Find guides about business automation.']);
+  assert.match(home, /It searches public pages only, never anyone's projects or files\./, 'the box says plainly what it searches');
   assert.match(read('src/components/discovery/DiscoveryExamples.astro'), /data-discover-query=\{s\.question\}/);
   assert.match(read('src/scripts/discovery.ts'), /b\.dataset\.discoverQuery/);
 });

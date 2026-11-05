@@ -1,4 +1,4 @@
-// Casual-copy deterrence for published KEVOS content. This is a courtesy barrier, not a security control:
+// Casual-copy deterrence for published BIZOMAT content. This is a courtesy barrier, not a security control:
 // anything sent to a browser can be saved, inspected or re-typed. See docs/security/CONTENT-PROTECTION-LIMITATIONS.md.
 //
 // What it does: suppresses the right-click menu on published content and imagery, stops images and SVG
@@ -14,7 +14,7 @@ const INTERACTIVE = [
   'pre', 'code', 'kbd', 'samp', 'form', 'dialog', 'output', '[aria-live]', '[data-allow-copy]',
 ].join(',');
 
-// KEVOS® tools are working instruments: their inputs and results stay fully usable, menus included.
+// BIZOMAT tools are working instruments: their inputs and results stay fully usable, menus included.
 const UNGUARDED_PATHS = ['/tools/'];
 
 const MEDIA = 'img, picture, svg, canvas, video, figure';

@@ -1,0 +1,164 @@
+---
+// /work/: BIZOMAT Project Management (formerly KEVOS Work). Introduces the product and opens the working application
+// (sign-in required, at APP_LINKS.work). Facts come from src/data/platform-catalog.ts, which records its sources in
+// apps/work (README feature table, ARCHITECTURE.md, the column registry).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import ProjectFlow from '../components/visuals/ProjectFlow.astro';
+import WorkflowPipeline from '../components/visuals/WorkflowPipeline.astro';
+import '../styles/product.css';
+import { SITE } from '../config/site.ts';
+import { APP_LINKS } from '../config/platform.ts';
+import { WORK } from '../data/platform-catalog.ts';
+
+const description = 'BIZOMAT Project Management: projects, tasks and teams in one workspace, with Table, Kanban, Calendar, Gantt and more, automations, dashboards and documents.';
+const viewNotes: Record<string, string> = {
+  'Table': 'Sort, filter with AND/OR, group, resize and hide columns, select in bulk.',
+  'Kanban': 'Drag cards between statuses.',
+  'Calendar': 'Month, week and day.',
+  'Timeline and Gantt': 'Dependencies, milestones, drag to reschedule.',
+  'Chart': 'Counts and sums from live board data.',
+  'Workload': 'Who has how much, and when.',
+  'Form': 'Collect new items from a form.',
+  'Map': 'Items with locations.',
+  'Files': 'Every attachment on the board.',
+};
+const teams = [
+  { t: 'Workspaces and roles', x: 'Owner, admin, member and viewer roles per workspace, with board roles and private or shared boards.' },
+  { t: 'Invitations and teams', x: 'Invite people with a link, group them into teams, and give each item an owner, a status and a date.' },
+  { t: 'Audit and export', x: 'An audit log of changes and a JSON export of a workspace for its administrators.' },
+];
+const collaboration = [
+  { t: 'Updates on every item', x: 'Updates and replies with @mentions, so the conversation stays with the work.' },
+  { t: 'Files and documents', x: 'Attachments on items, and rich-text documents with autosave, version history, comments and links to boards.' },
+  { t: 'Notifications', x: 'Assignment, mention, reply, status change, due soon and overdue, with your own preferences.' },
+  { t: 'Time and planning', x: 'Time tracking on items, My Work, My Day and a weekly planner.' },
+];
+const security = [
+  'Email and password sign-in with secure session cookies, CSRF protection, rate limits and lockout.',
+  'Google sign-in where it is configured, and personal API tokens for integrations.',
+  'Every query checks the workspace and board you belong to; one workspace never sees another.',
+  'Sessions you can list and end, and a founder console for the platform administrator.',
+];
+---
+<BaseLayout title="Project Management" description={description} image="/brand/bizomat-social-work.png" imageAlt="BIZOMAT Project Management: projects, tasks and teams in one shared workspace" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Project Management', href: '/work/' }]}
+  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT Project Management', url: `${SITE.url}/work/`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
+  <section class="pp-hero" aria-labelledby="work-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <p class="bz-eyebrow">BIZOMAT Project Management<span class="pp-hero__formerly">Formerly {WORK.formerly}</span></p>
+        <h1 id="work-title">{WORK.headline}</h1>
+        <p class="pp-hero__lead">{WORK.summary}</p>
+        <div class="pp-hero__actions">
+          <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="work-start">Start Managing Projects</Button>
+          <Button href="#views" variant="secondary" data-cta="work-features">See how it works</Button>
+        </div>
+        <p class="pp-hero__note">Sign-in required. Existing accounts keep working: sign in with the email and password you already use.</p>
+      </div>
+      <ProjectFlow id="work-hero" />
+    </Container>
+  </section>
+
+  <section class="pp-section" id="features" aria-labelledby="features-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What it does</p>
+        <h2 id="features-title">Plan it, assign it, track it, finish it</h2>
+        <p>Projects, tasks, teams and the conversation around them, on one shared data model.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {WORK.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title}</h3><p>{c.text}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="views" aria-labelledby="views-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Tracking progress</p>
+        <h2 id="views-title">{WORK.views.length} views of the same work</h2>
+        <p>Change a status in the table and the Kanban, calendar and timeline follow, because every view reads the same items. Boards use {WORK.columnTypes} column types, from status and people to dates, numbers and formulas.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {WORK.views.map((v) => <li class="pp-card"><h3>{v}</h3><p>{viewNotes[v]}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="teams" aria-labelledby="teams-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Team management and work allocation</p>
+        <h2 id="teams-title">The right people on the right work</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {teams.map((t) => <li class="pp-card"><h3>{t.t}</h3><p>{t.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="collaboration" aria-labelledby="collab-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Collaboration</p>
+        <h2 id="collab-title">The conversation stays with the work</h2>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {collaboration.map((t) => <li class="pp-card"><h3>{t.t}</h3><p>{t.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="automations" aria-labelledby="auto-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Organising business activities</p>
+        <h2 id="auto-title">Automations move routine work forward</h2>
+        <p>Choose a trigger, add conditions, pick actions. Status changes, dates and schedules start work for you; every run is logged once, failures are retried, and chains cannot loop.</p>
+      </div>
+      <WorkflowPipeline id="work-flow" />
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="dashboards" aria-labelledby="dash-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Dashboards, goals and planning</p>
+        <h2 id="dash-title">See the whole portfolio at a glance</h2>
+        <p class="pp-head-lead">{WORK.widgetTypes} dashboard widget types compute from live board data, with filters and date ranges. Goals track progress by hand or from boards.</p>
+      </div>
+      <div id="integrations">
+        <h3>Integrations</h3>
+        <p>{WORK.integrations}</p>
+        <p class="pp-table-note">Google Drive, Calendar, Gmail and GitHub appear in the app as "requires setup": they are not connected until they are configured.</p>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="security" aria-labelledby="sec-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Accounts and security</p>
+        <h2 id="sec-title">Your projects are visible only to your workspace</h2>
+      </div>
+      <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="work-cta">
+    <Container class="pp-band">
+      <h2 id="work-cta">Bring your projects and your team into one place.</h2>
+      <div class="pp-band__actions">
+        <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="work-band-start">Start Managing Projects</Button>
+        <Button href="/contact/?service=feedback#enquiry" variant="secondary" data-cta="work-band-contact">Ask for access</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  #integrations h3 { font-size: var(--step-1); }
+  #integrations p { margin: .6rem 0 0; color: var(--ink-2); }
+</style>

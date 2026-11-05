@@ -1,84 +1,135 @@
 ---
+// Privacy policy for the whole BIZOMAT platform. Every statement is checked against the code (2026-11-05):
+//   website and AI search: src/worker.ts, src/node/, src/server/discover|learn|contact, src/config/site.ts (contact provider)
+//   Project Management:    apps/work/src/client/pages/Privacy.tsx (retention table), apps/work/src/worker/index.ts (maintenance)
+//   CAD Automation:        apps/cad/opensketch/auth.py PRIVACY_BODY, uploads.py (30 minutes), artifacts.py (exports 1 hour)
+// Items that need the owner's or a lawyer's review are listed in docs/BIZOMAT-PROJECT-STATUS.md ("Legal review").
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { SITE } from '../config/site.ts';
+
+const retention: [string, string][] = [
+  ['Website enquiries you send through the contact or assessment forms', 'As long as needed to reply and for reasonable record-keeping'],
+  ['AI search questions', 'Not stored by BIZOMAT; sent to the AI provider to produce search terms'],
+  ['Project Management account (name, email, settings)', 'Until you ask for the account to be deleted'],
+  ['Project Management content (boards, tasks, documents, comments, files)', 'Until you or your workspace delete it'],
+  ['Project Management usage events and daily activity (no content)', 'Kept as product history'],
+  ['Project Management sign-in sessions (time, last activity, device type, browser, operating system)', '365 days after the session ends'],
+  ['IP address of a Project Management sign-in session', '30 days'],
+  ['Project Management technical error records (no personal content)', '90 days'],
+  ['CAD Automation account, connected AI apps and paired computers', 'Until you remove them or ask for the account to be closed'],
+  ['CAD Automation command record (tool, app, time, status, result; details only as a fingerprint)', 'With your account'],
+  ['Files uploaded to CAD Automation for import', 'Deleted once imported, or after 30 minutes'],
+  ['Files exported from SOLIDWORKS through CAD Automation', 'Download link valid for one hour, then deleted'],
+];
 ---
 
 <LegalLayout
   title="Privacy"
   path="/privacy/"
   scene="privacy"
-  description="How KEVOS® collects, uses and protects personal information submitted through this website, including the contact form."
-  updated={new Date('2026-11-01')}
+  description="How BIZOMAT handles personal information across the website, Resources, AI search, Project Management and CAD Automation: what is collected, why, where it is kept, for how long, and your rights."
+  updated={new Date('2026-11-05')}
 >
   <p>
-    KEVOS® respects your privacy. This policy explains what personal information this website collects, why, and what we do with it. We aim to handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
+    This policy explains what personal information BIZOMAT collects, why, who else processes it, where it is kept and for how long, and what you can ask us to do. It covers the BIZOMAT website (including Resources and AI search) and the two BIZOMAT applications, Project Management and CAD Automation. We aim to handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
+  </p>
+
+  <h2>Public pages and private applications</h2>
+  <p>
+    The website, including Resources (tools, calculators, books and guides) and AI search, is public: you can use it without an account, and we do not ask who you are. Project Management and CAD Automation are private applications: you need an account, and what you create in them is visible only to you and the people and apps you give access to. Public pages and AI search never show anyone's projects, files or account details.
   </p>
 
   <h2>What we collect</h2>
-  <p>This policy covers the KEVOS® website, including Library reading pages, KEVOS® tools and REACHOS enquiries. The <a href="/terms/">website terms</a> include details of the registered KEVOS® trade mark.</p>
-  <p>We only collect personal information you choose to give us. When you use the contact or quote form, we receive:</p>
+  <h3>When you visit the website or use Resources</h3>
   <ul>
-    <li>your name, company and email address;</li>
-    <li>your phone number, if you provide it;</li>
-    <li>the service you are interested in and your preferred contact method; and</li>
-    <li>the description of your project or problem.</li>
+    <li>Calculators run in your browser. The values you enter are not sent to BIZOMAT.</li>
+    <li>Your choice of light or dark display, and your progress through a learning path, stay in your browser for the current tab (session storage).</li>
+    <li>Like any website, the servers that deliver the pages process technical information such as your IP address and browser details, to deliver the site and protect it from abuse. BIZOMAT's own request logs record the address requested and the response, not your IP address.</li>
   </ul>
+  <h3>When you use AI search</h3>
   <p>
-    The Engineering Problem Assessment enquiry form also asks for your state or territory, your industry (optional), the problem category, the current issue or impact, the outcome you want and the kind of information you could share. It does not accept files.
+    Your question, and a short list of matching public catalogue entries, are sent to the AI provider to turn the question into search terms and suggest which entries fit. Results always come from BIZOMAT's public pages. BIZOMAT does not store your question. Please do not include personal or confidential details. If the AI provider is not available, the search works on keywords in your browser.
   </p>
+  <h3>When you contact us</h3>
   <p>
-    Like most websites, our hosting provider also processes technical information such as IP addresses and browser details to deliver the site securely and protect it from abuse.
+    The contact form asks for your name, email address, the kind of enquiry and your message, and optionally your organisation, website, phone number and a related tool or resource. The Engineering Problem Assessment form also asks about the problem, its impact and the outcome you want. The forms do not accept files. We use these details only to reply and, if you engage us, to do the agreed work.
   </p>
+  <h3>When you use Project Management</h3>
+  <ul>
+    <li><strong>Account details:</strong> your name, email address and a one-way hash of your password (never the password itself), or the ID of the Google account you sign in with, where Google sign-in is offered.</li>
+    <li><strong>Your content:</strong> workspaces, boards, tasks, documents, comments, files and time entries that you and your teammates create.</li>
+    <li><strong>Usage and sessions:</strong> sign-in and sign-out times, last activity, and the general type of device, browser and operating system. While the app is open and in use, your browser sends a small "still active" signal about once a minute, with no content. We record product events such as "created a project", never what the project says.</li>
+    <li><strong>Security:</strong> the IP address used to sign in and failed sign-in attempts, to protect your account. IP addresses are deleted after 30 days.</li>
+  </ul>
+  <h3>When you use CAD Automation</h3>
+  <ul>
+    <li><strong>Account details:</strong> your name, email address and a one-way hash of your password, or the ID of the Google account you sign in with.</li>
+    <li><strong>Connected AI apps:</strong> the name of each assistant you connect, and its sign-in tokens stored only as one-way hashes.</li>
+    <li><strong>Paired computers:</strong> the name you give each computer, its Windows computer name and version, the public half of its key, and when it was last seen.</li>
+    <li><strong>A record of commands:</strong> for each command sent to one of your computers, which tool and assistant sent it, when, its status and its result. The command's details are kept only as a fingerprint (a hash).</li>
+    <li><strong>Work in passing:</strong> while your assistant works, its commands and the shapes SOLIDWORKS sends back (for example a STEP copy of a part, to measure and check it) pass through CAD Automation and are held in memory or for a short time, then dropped. Your SOLIDWORKS files are saved on your computer.</li>
+  </ul>
 
   <h2>How we use it</h2>
   <p>
-    We use the details you send only to respond to your enquiry, prepare any quote or proposal you ask for, and keep a record of the conversation. We do not sell, rent or trade personal information, and we do not add you to a mailing list unless you ask us to. Please do not include confidential technical information in the form; if you need to share drawings or documents, we can arrange that once we reply.
+    To provide the services you use, keep accounts and data secure, fix problems, understand whether the products are useful, and reply to you. We do not sell, rent or trade personal information, we do not use it for advertising, and we do not use your content to train AI models.
+  </p>
+
+  <h2>Files and attachments</h2>
+  <p>
+    Files attached in Project Management are stored with your workspace and are available only to people with access to that board. Files sent to CAD Automation for import are deleted once imported or after 30 minutes; exports are available through a one-hour link. Please share only files you are entitled to share.
+  </p>
+
+  <h2>AI assistants you connect</h2>
+  <p>
+    CAD Automation runs no AI of its own. The assistant you connect (for example Claude or ChatGPT) sees what the CAD Automation tools return to it, such as feature lists, measurements and preview images, under that assistant's own privacy terms. It can act only through the tools, only while you keep it connected, and only on computers paired to your account.
+  </p>
+
+  <h2>Cookies and storage in your browser</h2>
+  <p>
+    The website sets no tracking or advertising cookies. Each application uses one essential cookie to keep you signed in, and a short-lived one during Google sign-in where it is enabled. Display and learning-path preferences are kept in your browser's session storage and never leave your device.
   </p>
 
   <h2>Service providers</h2>
+  <p>These providers process information for BIZOMAT, each under its own terms. Some may process data outside Australia.</p>
+  <ul>
+    <li><strong>Fly.io:</strong> hosts the BIZOMAT platform and its applications, in its Sydney, Australia region.</li>
+    <li><strong>Cloudflare:</strong> DNS for BIZOMAT's domains, the AI model used by AI search (Workers AI), the spam check on some forms (Turnstile), and, while the move to the BIZOMAT platform is completed, hosting of parts of the website and Project Management on its global network.</li>
+    <li><strong>Web3Forms and hCaptcha:</strong> deliver contact and assessment form messages to BIZOMAT and check for spam. hCaptcha loads only when you use a form.</li>
+    <li><strong>Proton:</strong> the meeting booking page, if you choose to book a meeting.</li>
+    <li><strong>Google:</strong> sign-in, only if you choose Continue with Google. Google tells the application your name, email address, whether it is verified and your Google account ID; no access to Gmail, Drive or anything else is requested.</li>
+    <li><strong>GitHub:</strong> hosts the CAD Automation installer that you download after signing in.</li>
+    <li><strong>Integrations you turn on:</strong> if a workspace administrator connects Slack, Microsoft Teams or a webhook, the messages they choose are sent to that service.</li>
+  </ul>
+
+  <h2>Where information is kept</h2>
   <p>
-    This website is hosted by Cloudflare. Contact form messages are delivered to our inbox by Web3Forms, a form-to-email service. To block spam, the forms use hCaptcha, which processes information about your device and how you interact with the check, under hCaptcha's own privacy policy and terms; it loads only when you use a form. These providers may process data outside Australia. We only use providers that apply reasonable security safeguards.
+    CAD Automation stores its data on servers in Sydney, Australia. Project Management moves to the same Sydney servers with the BIZOMAT platform; until that move is complete, its data is stored on Cloudflare's network (Workers, D1 and R2), which may be outside Australia. Information handled by the other providers above may be processed in other countries, including the United States.
   </p>
 
-  <h2>Paying for an assessment</h2>
+  <h2>Security</h2>
   <p>
-    Payment for an Engineering Problem Assessment is requested only after KEVOS® confirms the scope, using the method stated in the payment instructions (for example a secure payment link or an invoice). Card payments are processed by the payment provider under its own privacy policy and terms; KEVOS® does not receive or store card details. KEVOS® keeps a record of payments and assessments as needed for accounting and record-keeping. Drawings, photographs and documents you share for an assessment are used only for that assessment and any work you later ask for.
+    Passwords and sign-in tokens are stored only as one-way hashes; connections use HTTPS; each application keeps its data separate; commands to your computer are signed and checked before they run; and access to data is limited to the people who run the service, for operating and supporting it. No system is perfectly secure: if we become aware of a breach that is likely to cause serious harm, we will notify you and the Office of the Australian Information Commissioner as the law requires.
   </p>
 
-  <h2>Booking a meeting</h2>
+  <h2>How long we keep it</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">Information</th><th scope="col">Kept for</th></tr></thead>
+      <tbody>{retention.map(([a, b]) => <tr><td>{a}</td><td>{b}</td></tr>)}</tbody>
+    </table>
+  </div>
+
+  <h2>Your choices and rights</h2>
   <p>
-    If you choose “Book a meeting”, you leave this website and book through Proton Calendar’s booking page. The details you enter there are processed by Proton to arrange your booking and handled under Proton’s privacy policy. KEVOS® uses them only to arrange and hold the meeting.
+    You can view and update your profile in each application, end sign-in sessions, disconnect AI apps and remove paired computers. Workspace administrators can export a workspace. You can ask us for access to, correction of, or deletion of your personal information through the <a href="/contact/">contact page</a>{SITE.email && <> or by email at <a href={`mailto:${SITE.email}`}>{SITE.email}</a></>}. We will confirm who you are before acting on a request about an account. If you are not satisfied with our response, you may complain to the Office of the Australian Information Commissioner (oaic.gov.au).
   </p>
 
-  <h2>Questions on the homepage</h2>
+  <h2>Your responsibilities</h2>
   <p>
-    When you type into the homepage Ask KEVOS box (“What would you like to accomplish today?”) or the learning-path boxes on the Tools and Library pages, or search the KEVOS® tools in plain words, your text, a short list of matching catalogue entries and short excerpts of the matching Library chapters are sent to Cloudflare Workers AI to understand your goal, plan a learning path, write lessons and answer follow-up questions. The tools and readings you are given are always pages published on this website. KEVOS® does not store your question. Your progress through a learning path is kept only in your browser for the current tab (session storage) and never leaves your device. Please do not include personal or confidential information.
-  </p>
-
-  <h2>The website assistant</h2>
-  <p>
-    The KEVOS® Assistant (the chat window) answers questions using information published on this website. Your questions are processed by Cloudflare Workers AI to generate a reply. KEVOS® does not store chat conversations on its servers; the conversation is kept in your browser for the current session only and disappears when you close the tab.
-  </p>
-  <p>
-    If you choose “Leave a message”, the details you enter and the conversation so far are sent to KEVOS® by email so we can reply. Please do not enter sensitive personal information into the chat.
-  </p>
-
-  <h2>Analytics and cookies</h2>
-  <p>KEVOS® calculations run in your browser. The values you enter are not sent to KEVOS® for calculation. If you copy, print or share a result, you control where that information goes.</p>
-  <p>
-    This website does not use advertising or tracking cookies. If we measure visits, we use privacy-focused analytics that do not use cookies or follow you across other websites. Your light or dark display preference is saved in your browser's session storage for the current session and never leaves your device.
-  </p>
-
-  <h2>Security and retention</h2>
-  <p>
-    We take reasonable steps to protect personal information from misuse, loss and unauthorised access. We keep enquiries only as long as they are useful for responding and for reasonable record-keeping, then delete them.
-  </p>
-
-  <h2>Access, correction and complaints</h2>
-  <p>
-    You can ask to see, correct or delete the personal information we hold about you. Please contact us through the <a href="/contact/">contact page</a>{SITE.email && <> or by email at <a href={`mailto:${SITE.email}`}>{SITE.email}</a></>}. If you are not satisfied with our response, you may contact the Office of the Australian Information Commissioner (OAIC).
+    If you administer a workspace or invite people to an application, you are responsible for having the right to add them and to share the information you put into it. Please do not put sensitive personal information (such as health information) into tasks, documents, files or AI search unless you have a lawful reason and the consent required.
   </p>
 
   <h2>Changes to this policy</h2>
-  <p>We may update this policy as KEVOS® and this website develop. The date at the top of this page shows when it last changed.</p>
+  <p>We will update this policy as BIZOMAT changes. The date at the top of this page shows when it last changed.</p>
 </LegalLayout>

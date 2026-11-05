@@ -57,7 +57,7 @@ export async function GET() {
 
   chunks.push({
     id: 'core-facts',
-    title: 'About KEVOS® (core facts)',
+    title: 'About BIZOMAT (core facts)',
     url: '/about/',
     text: [
       `${SITE.name} (${SITE.url.replace('https://', '')}). ${SITE.tagline}. ${SITE.statement}`,
@@ -65,7 +65,7 @@ export async function GET() {
       `Service area: ${SERVICE_AREA}`,
       `Indicative prices (costs, fees): ${ASSESSMENT.name} ${ASSESSMENT.priceLabel} fixed for one defined problem; ${PACKAGES.map((p) => `${p.title} ${p.price}`).join('; ')}; ${FACTORY_FIX.name} ${FACTORY_FIX.price}. ${PRICING_NOTE} Final prices are confirmed in a written quote after scoping.`,
       'Certification: not every assignment includes professional engineering certification, statutory approval or sign-off; regulated or specialist work (for example designs that legally require a registered engineer or certifier) may require appropriately qualified or registered professionals. See /disclaimer/.',
-      'To ask a question, give feedback, suggest an idea, propose a collaboration, request a quote or discuss a project, use the enquiry form at /contact/ (REACHOS). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the KEVOS® Proton Calendar booking page.',
+      'To ask a question, give feedback, suggest an idea, propose a collaboration, request a quote or discuss a project, use the enquiry form at /contact/ (REACHOS). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the BIZOMAT Proton Calendar booking page.',
       `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
       SITE.email ? `Email: ${SITE.email}.` : 'There is no public email address or phone number listed; contact is through /contact/.',
     ].join(' '),
@@ -76,7 +76,7 @@ export async function GET() {
     id: 'brand-registration',
     title: `${SITE.name} brand and Australian trade mark`,
     url: '/terms/',
-    text: `${SITE.name} is Australian word trade mark ${SITE.tradeMark.number}, registered in class ${SITE.tradeMark.class} for the services listed by IP Australia. Registered from ${SITE.tradeMark.registeredFrom}; entered on the register ${SITE.tradeMark.enteredOnRegister}. This is brand registration, not an engineering licence or government endorsement. The Library is the books and guides area at /reados/. Tools contains calculators at /tools/. REACHOS is the enquiry and booking area at /contact/. No separate registrations are claimed for these area names.`,
+    text: `${SITE.name} was formerly called ${SITE.formerName.name}. ${SITE.formerName.name}® is Australian word trade mark ${SITE.formerName.tradeMark}, registered in class ${SITE.formerName.tradeMarkClass} for the services listed by IP Australia. ${SITE.name} itself is not a registered trade mark. This is brand registration, not an engineering licence or government endorsement. The Library is the books and guides area at /reados/. Tools contains calculators at /tools/. REACHOS is the enquiry and booking area at /contact/. No separate registrations are claimed for these area names.`,
   });
 
   // Tools and REACHOS, counted from the same register and categories the pages use.
@@ -86,13 +86,13 @@ export async function GET() {
     id: 'workos',
     title: 'Tools engineering and business tools',
     url: '/tools/',
-    text: `Tools at /tools/ has ${tools.length} practical engineering, manufacturing and business tools that run in the browser with no account. Each tool shows its method, checks feasibility, tests how sensitive the answer is, and gives a report you can download, print or share. Search the directory at /tools/ or browse by topic: ${topics.map((t) => `${t.name} (${t.items.length} tools, /tools/?topic=${t.slug}): ${t.description}`).join(' ')} MAKEOS is the KEVOS® collection of calculators built on established engineering methods. Many tools link to the Library chapters that explain them. To ask about a tool, report a calculation or functionality issue, or suggest a new tool, use REACHOS at /contact/?service=workos.`,
+    text: `Tools at /tools/ has ${tools.length} practical engineering, manufacturing and business tools that run in the browser with no account. Each tool shows its method, checks feasibility, tests how sensitive the answer is, and gives a report you can download, print or share. Search the directory at /tools/ or browse by topic: ${topics.map((t) => `${t.name} (${t.items.length} tools, /tools/?topic=${t.slug}): ${t.description}`).join(' ')} MAKEOS is the BIZOMAT collection of calculators built on established engineering methods. Many tools link to the Library chapters that explain them. To ask about a tool, report a calculation or functionality issue, or suggest a new tool, use REACHOS at /contact/?service=workos.`,
   });
   chunks.push({
     id: 'reachos',
-    title: 'REACHOS: connect with KEVOS®',
+    title: 'REACHOS: connect with BIZOMAT',
     url: '/contact/',
-    text: `REACHOS at /contact/ is how to connect with KEVOS®: questions, ideas, feedback, technical requirements and collaboration. Enquiry categories: ${[...ENQUIRY_CATEGORIES.map((c) => c.value), ENGINEERING_PROJECT.value, 'Other'].join(', ')}. Links: KEVOS® tool questions /contact/?service=workos, Library book and content questions or corrections /contact/?service=reados, ideas and feedback /contact/?service=feedback, collaboration and business enquiries /contact/?service=collaboration. The form asks for a name, email, category and message; organisation, website, a related KEVOS® tool or Library resource and phone are optional. It is protected by a spam check, and KEVOS® replies using the contact details provided. Visitors who prefer to talk can book a meeting through the Book a meeting option, which opens the KEVOS® Proton Calendar booking page. KEVOS® is based in Australia and can consider suitable remote opportunities.`,
+    text: `REACHOS at /contact/ is how to connect with BIZOMAT: questions, ideas, feedback, technical requirements and collaboration. Enquiry categories: ${[...ENQUIRY_CATEGORIES.map((c) => c.value), ENGINEERING_PROJECT.value, 'Other'].join(', ')}. Links: BIZOMAT tool questions /contact/?service=workos, Library book and content questions or corrections /contact/?service=reados, ideas and feedback /contact/?service=feedback, collaboration and business enquiries /contact/?service=collaboration. The form asks for a name, email, category and message; organisation, website, a related BIZOMAT tool or Library resource and phone are optional. It is protected by a spam check, and BIZOMAT replies using the contact details provided. Visitors who prefer to talk can book a meeting through the Book a meeting option, which opens the BIZOMAT Proton Calendar booking page. BIZOMAT is based in Australia and can consider suitable remote opportunities.`,
   });
 
   // Services, pricing and process: the receptionist's most important facts, boosted in retrieval (svc- ids).
@@ -127,31 +127,31 @@ export async function GET() {
       `Examples of suitable problems (examples, not guaranteed outcomes): ${EXAMPLES.map((e) => e.title).join(', ')}.`,
       `How it works: ${JOURNEY.flatMap((p) => p.steps).map((s) => `${Number(s.number)}. ${s.title}: ${s.text}`).join(' ')}`,
       `Conditions: ${CONDITIONS.map((c) => `${c.title}: ${c.text}`).join(' ')} ${ASSESSMENT.gstNote}`,
-      'Payment is never taken on the website and only requested after KEVOS® confirms suitability and scope in writing. A meeting is only booked after payment is verified, and a booking is confirmed only by the calendar confirmation. The assessment is preliminary: it does not guarantee root-cause identification, savings or a solution, and it is not certification or regulated design sign-off.',
+      'Payment is never taken on the website and only requested after BIZOMAT confirms suitability and scope in writing. A meeting is only booked after payment is verified, and a booking is confirmed only by the calendar confirmation. The assessment is preliminary: it does not guarantee root-cause identification, savings or a solution, and it is not certification or regulated design sign-off.',
       `Request an assessment with the form at ${ASSESSMENT.path}#request. A one-page brochure and a fictional sample report can be downloaded from ${ASSESSMENT.path}.`,
     ].join(' '),
   });
   chunks.push({
     id: 'svc-process',
-    title: 'How a KEVOS® engagement works',
+    title: 'How a BIZOMAT engagement works',
     url: '/how-it-works/',
-    text: `${PROCESS.map((p, i) => `Stage ${i + 1}, ${p.title}: ${p.text}`).join(' ')} Before substantial work begins, KEVOS® defines scope, deliverables, assumptions, timing and commercial terms. Ways to engage: ${ENGAGEMENT_MODELS.map((m) => `${m.title} (${m.text})`).join(' ')} Payment terms are agreed for each assignment.`,
+    text: `${PROCESS.map((p, i) => `Stage ${i + 1}, ${p.title}: ${p.text}`).join(' ')} Before substantial work begins, BIZOMAT defines scope, deliverables, assumptions, timing and commercial terms. Ways to engage: ${ENGAGEMENT_MODELS.map((m) => `${m.title} (${m.text})`).join(' ')} Payment terms are agreed for each assignment.`,
   });
   chunks.push({
     id: 'svc-industries',
-    title: 'Industries KEVOS® helps',
+    title: 'Industries BIZOMAT helps',
     url: '/industries/',
     text: `Capability is problem-based rather than limited to one industry. ${INDUSTRIES.map((i) => `${i.title}: ${i.text}`).join(' ')}`,
   });
   chunks.push({
     id: 'svc-about',
-    title: 'About KEVOS® and its background',
+    title: 'About BIZOMAT and its background',
     url: '/about/',
-    text: `KEVOS® is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} KEVOS® is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
+    text: `BIZOMAT is a professional small technical-services business for defined commercial assignments. It is led by its founder, whose practical background spans ${BACKGROUND.join(', ')}. ${SOFTWARE.text} BIZOMAT is not affiliated with or endorsed by its software vendors. Not every assignment includes professional engineering certification or statutory approval; regulated or specialist work may require appropriately qualified or registered professionals (see /disclaimer/). ${FUTURE.text}`,
   });
   chunks.push({
     id: 'principles',
-    title: 'KEVOS® principles',
+    title: 'BIZOMAT principles',
     url: '/about/#principles',
     text: PRINCIPLES.map((p) => `${p.title}: ${p.text}`).join(' '),
   });
@@ -164,15 +164,15 @@ export async function GET() {
 
   chunks.push({
     id: 'proof-of-work',
-    title: 'KEVOS® proof of work',
-    url: '/about/#work',
-    text: `The KEVOS® About page lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind KEVOS®. They were delivered by its founder in employed, contract and consulting roles, not as KEVOS® engagements for those organisations, and organisation names do not imply endorsement. Sectors: capital projects, window and door hardware, heavy industry and mining, machines and automation, plant and facilities, civil and structural, defence and transport, and product development. The Alchin Long Group projects (window and door hardware product development, May 2018 to October 2024, and capital projects as Operations Excellence Engineer from November 2024) are the founder's employment experience, not KEVOS® client work. Some projects ended at concept or design stage, and some product-development schedules end at customer approval; both are labelled that way. Each case study can be opened directly at /about/#case-<id>.`,
+    title: 'BIZOMAT proof of work',
+    url: '/proof-of-work/#engineering-record',
+    text: `The BIZOMAT Proof of Work page lists ${PROJECTS.length} projects from 2010 to 2026 that make up the engineering record behind BIZOMAT. They were delivered by its founder in employed, contract and consulting roles, not as BIZOMAT engagements for those organisations, and organisation names do not imply endorsement. Sectors: capital projects, window and door hardware, heavy industry and mining, machines and automation, plant and facilities, civil and structural, defence and transport, and product development. The Alchin Long Group projects (window and door hardware product development, May 2018 to October 2024, and capital projects as Operations Excellence Engineer from November 2024) are the founder's employment experience, not BIZOMAT client work. Some projects ended at concept or design stage, and some product-development schedules end at customer approval; both are labelled that way. Each case study can be opened directly at /proof-of-work/#case-<id>.`,
   });
   for (const p of PROJECTS) {
     chunks.push({
       id: `project-${p.id}`,
       title: `Proof of work: ${p.title}`,
-      url: `/about/#case-${p.id}`,
+      url: `/proof-of-work/#case-${p.id}`,
       text: `${p.title}: ${p.headline} (${p.years}; ${p.client}${p.customer ? `, for ${p.customer}` : ''}, ${p.about} ${p.industry}${p.location ? `, ${p.location}` : ''}). ${p.employment ?? ''} Role: ${p.role}. Status: ${p.statusLabel}. ${p.brief} Approach: ${p.approach.map((a) => `${a.title}: ${a.text}`).join(' ')}${p.path ? ` Development path: ${p.path.map((s) => `${s.stage} (${s.period}): ${s.detail}`).join('; ')}.` : ''} Outcome: ${p.outcome} ${p.note ?? ''}`,
     });
   }

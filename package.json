@@ -10,6 +10,8 @@
     "dev": "astro dev",
     "build": "node shared/brand/build.mjs && astro build && pagefind --site dist && node scripts/postbuild.mjs",
     "preview": "npm run build && npx wrangler dev",
+    "build:server": "node scripts/build-server.mjs",
+    "start": "node dist-server/server.mjs",
     "check": "astro check",
     "test": "node --test \"tests/**/*.test.ts\"",
     "verify": "npm run check && npm test && npm run build",

@@ -12,7 +12,7 @@ import { parseAnswer, parseCoursePlan, parseLearnIntent, parseLesson, text } fro
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, INTENT_PROMPT, lessonPrompt, planPrompt } from '../src/server/learn/handler.ts';
 import worker, { type Env } from '../src/worker.ts';
 
-// KEVOS® learning paths ("What would you like to learn or achieve?"): chapter outlines, Library and Tools retrieval,
+// BIZOMAT learning paths ("What would you like to learn or achieve?"): chapter outlines, Library and Tools retrieval,
 // the draft and AI-planned course, the structured-output validators and the /api/learn endpoints.
 
 const index = buildDiscoveryIndex();
@@ -76,7 +76,7 @@ test('a one-word field asks one clarifying question; an unsupported subject find
   const bread = localIntent('teach me how to bake sourdough bread', engine);
   assert.equal(bread.topics.length, 0);
   const c = gatherCandidates(engine, 'teach me how to bake sourdough bread', bread);
-  assert.equal(c.readings.length, 0, 'no near-miss chapters for a subject KEVOS does not cover');
+  assert.equal(c.readings.length, 0, 'no near-miss chapters for a subject BIZOMAT does not cover');
   assert.equal(draftCourse('teach me how to bake sourdough bread', bread, c, null, 'complete'), null);
 });
 

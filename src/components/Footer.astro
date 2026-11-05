@@ -1,34 +1,27 @@
 ---
-// Global footer: the KEVOS® identity, then Products, Solutions, Resources and Company columns, then legal links.
-// Product links come from src/config/products.ts; a product that is not available yet is shown as text, not a link.
-import { FOOTER_NAV, QUOTE_CTA, SITE } from '../config/site.ts';
-import { PRODUCTS } from '../config/products.ts';
+// Global footer: the BIZOMAT identity, then Products, Resources, Company and Applications, then the legal links that
+// every page carries (Privacy, Terms, Disclaimer). The registered trade mark is the former name's (KEVOS®); the
+// footer never calls BIZOMAT a registered trade mark.
+import { FOOTER_NAV, SITE } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 
 const year = new Date().getFullYear();
-const upcoming = PRODUCTS.filter((p) => p.status === 'soon');
+const tm = SITE.formerName;
 ---
 
 <footer class="site-footer" id="site-footer">
   <Container>
     <div class="site-footer__grid">
       <div class="site-footer__brand">
-        <a href="/" class="site-footer__logo" aria-label="KEVOS® home"><SiteWordmark height={28} label="" /></a>
+        <a href="/" class="site-footer__logo" aria-label="BIZOMAT home"><SiteWordmark height={28} label="" /></a>
         <p class="site-footer__tagline">{SITE.tagline}</p>
         <p>{SITE.statement}</p>
-        <a class="site-footer__cta" href={QUOTE_CTA.href} data-cta="footer-quote">Tell us what you need <span aria-hidden="true">→</span></a>
+        <a class="site-footer__cta" href="/contact/" data-cta="footer-contact">Tell us what you need <span aria-hidden="true">→</span></a>
       </div>
       <nav class="site-footer__col" aria-label="Products">
         <h2 class="site-footer__heading">Products</h2>
-        <ul>
-          {FOOTER_NAV.products.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
-          {upcoming.map((p) => <li class="site-footer__soon">{p.name} <span>Coming soon</span></li>)}
-        </ul>
-      </nav>
-      <nav class="site-footer__col" aria-label="Solutions">
-        <h2 class="site-footer__heading">Solutions</h2>
-        <ul>{FOOTER_NAV.solutions.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
+        <ul>{FOOTER_NAV.products.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
       </nav>
       <nav class="site-footer__col" aria-label="Resources">
         <h2 class="site-footer__heading">Resources</h2>
@@ -43,9 +36,13 @@ const upcoming = PRODUCTS.filter((p) => p.status === 'soon');
           {SITE.social.map((s) => <li><a href={s.href} rel="noopener me">{s.label}</a></li>)}
         </ul>
       </nav>
+      <nav class="site-footer__col" aria-label="Applications">
+        <h2 class="site-footer__heading">Applications</h2>
+        <ul>{FOOTER_NAV.apps.map((item) => <li><a href={item.href} rel="noopener">{item.label}</a></li>)}</ul>
+      </nav>
     </div>
     <div class="site-footer__base">
-      <p>© {year} {SITE.name}. All rights reserved. {SITE.name} is a registered Australian trade mark, <a href={SITE.tradeMark.record} target="_blank" rel="noopener noreferrer" data-cta="footer-trade-mark">No. {SITE.tradeMark.number}<span class="visually-hidden"> (IP Australia record, opens in a new tab)</span></a>.</p>
+      <p>© {year} {SITE.name}. All rights reserved. {SITE.name} was formerly {tm.name}; {tm.name}® is a registered Australian trade mark, <a href={tm.record} target="_blank" rel="noopener noreferrer" data-cta="footer-trade-mark">No. {tm.tradeMark}<span class="visually-hidden"> (IP Australia record, opens in a new tab)</span></a>.</p>
       <nav aria-label="Legal">
         <ul class="site-footer__legal">{FOOTER_NAV.legal.map((item) => <li><a href={item.href}>{item.label}</a></li>)}</ul>
       </nav>
@@ -57,17 +54,15 @@ const upcoming = PRODUCTS.filter((p) => p.status === 'soon');
   .site-footer { margin-top: auto; border-top: 1px solid var(--line); background: var(--paper); padding-top: clamp(3rem, 5vw, 4.5rem); font-size: .93rem; }
   .site-footer__grid { display: grid; grid-template-columns: minmax(0, 1.5fr) repeat(4, minmax(0, 1fr)); gap: 2.5rem 2rem; padding-bottom: clamp(2.5rem, 4vw, 3.5rem); }
   .site-footer__logo { display: inline-flex; align-items: center; text-decoration: none; border-radius: 4px; }
-  .site-footer__logo :global(.site-wordmark) { --wordmark-h: 24px; }
+  .site-footer__logo :global(.site-wordmark) { --wordmark-h: 22px; }
   .site-footer__tagline { margin: 1rem 0 0; font-weight: 600; color: var(--ink); }
   .site-footer__brand p:not(.site-footer__tagline) { max-width: 32ch; margin: .4rem 0 0; color: var(--muted); }
   .site-footer__cta { display: inline-flex; gap: .4rem; margin-top: 1.1rem; font-weight: 600; color: var(--accent); text-decoration: none; }
   .site-footer__cta:hover { color: var(--accent-strong); text-decoration: underline; text-underline-offset: 3px; }
-  .site-footer__heading { margin-bottom: .9rem; font-size: .78rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .site-footer__heading { margin-bottom: .9rem; font-family: var(--font-mono) !important; font-size: .74rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
   .site-footer ul { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
   .site-footer ul a { color: var(--ink-2); text-decoration: none; }
   .site-footer ul a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
-  .site-footer__soon { color: var(--muted); }
-  .site-footer__soon span { margin-left: .3rem; padding: .05rem .4rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: .7rem; font-weight: 600; }
   .site-footer__base { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1.5rem; padding-block: 1.25rem 1.75rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; }
   .site-footer__base p { margin: 0; max-width: 80ch; }
   .site-footer__base a { color: inherit; }

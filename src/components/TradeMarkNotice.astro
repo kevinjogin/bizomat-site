@@ -1,9 +1,12 @@
 ---
+// The registered trade mark belongs to the business's former name, KEVOS. BIZOMAT itself is not a registered trade
+// mark, so this notice never says it is.
 import { SITE } from '../config/site.ts';
+const tm = SITE.formerName;
 ---
 <p>
-  {SITE.name} is a registered Australian word trade mark, number {SITE.tradeMark.number},
-  in class {SITE.tradeMark.class} for the engineering, design and related services specified in the register.
-  It is registered from {SITE.tradeMark.registeredFrom} and was entered on the register on {SITE.tradeMark.enteredOnRegister}.{' '}
-  <a href={SITE.tradeMark.record} rel="noopener noreferrer" target="_blank">View the IP Australia registration record</a>.
+  {SITE.name} was formerly called {tm.name}. {tm.name}® is a registered Australian word trade mark, number {tm.tradeMark},
+  in class {tm.tradeMarkClass} for the engineering, design and related services specified in the register. It is registered
+  from {tm.registeredFrom} and was entered on the register on {tm.enteredOnRegister}.{' '}
+  <a href={tm.record} rel="noopener noreferrer" target="_blank">View the IP Australia registration record</a>.
 </p>

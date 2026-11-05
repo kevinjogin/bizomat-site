@@ -1,6 +1,6 @@
 ---
-// "Book a meeting" option: links to KEVOS®'s Proton Calendar booking page in a new tab.
-// Deliberately a link rather than an embed, so no third-party scripts or cookies load on KEVOS® pages.
+// "Book a meeting" option: links to BIZOMAT's Proton Calendar booking page in a new tab.
+// Deliberately a link rather than an embed, so no third-party scripts or cookies load on BIZOMAT pages.
 import { SITE } from '../config/site.ts';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 const {
   class: className,
   title = 'Book a meeting',
-  text = 'Prefer to talk it through? Choose a time that suits you from KEVOS®’s calendar and discuss the job before sending details.',
+  text = 'Prefer to talk it through? Choose a time that suits you from BIZOMAT’s calendar and discuss the job before sending details.',
   label = 'Choose a time',
   id,
 } = Astro.props;

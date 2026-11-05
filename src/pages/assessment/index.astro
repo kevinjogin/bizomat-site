@@ -1,5 +1,5 @@
 ---
-// /assessment/: KEVOS® Engineering Problem Assessment, a fixed-price A$195 remote review of one defined problem.
+// /assessment/: BIZOMAT Engineering Problem Assessment, a fixed-price A$195 remote review of one defined problem.
 // Content comes from src/config/assessment.ts; the PDFs, QR code and images come from scripts/assessment/.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
@@ -59,7 +59,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
   description={ASSESSMENT.seo.description}
   canonical={ASSESSMENT.path}
   image={ASSETS.social}
-  imageAlt="KEVOS® Engineering Problem Assessment: A$195 for one defined engineering or manufacturing problem"
+  imageAlt="BIZOMAT Engineering Problem Assessment: A$195 for one defined engineering or manufacturing problem"
   breadcrumbs={crumbs}
   schema={[service]}
 >
@@ -93,7 +93,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
         {ASSESSMENT.description.map((p) => <p>{p}</p>)}
         <p class="muted">
           It suits manufacturers, fabricators, equipment builders and product businesses across Australia that need a mechanical design review,
-          practical manufacturing problem solving, a jig and fixture assessment or a first view on manufacturing process improvement. KEVOS® is an
+          practical manufacturing problem solving, a jig and fixture assessment or a first view on manufacturing process improvement. BIZOMAT is an
           engineering consultancy based in Sydney, and the assessment is delivered remotely anywhere in Australia.
         </p>
       </div>
@@ -136,7 +136,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
   <Section index="04" label="How it works" id="process" tone="alt" labelledby="process-title">
     <div class="section-head">
       <h2 id="process-title">Submit. Confirm. Pay. Book. Receive.</h2>
-      <p>Twelve clear steps. Nothing is paid until KEVOS® confirms the problem suits the assessment, and nothing is booked until the calendar confirms it.</p>
+      <p>Twelve clear steps. Nothing is paid until BIZOMAT confirms the problem suits the assessment, and nothing is booked until the calendar confirms it.</p>
     </div>
     <AssessmentJourney />
   </Section>
@@ -144,7 +144,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
   <Section index="05" label="Sample report" id="sample" labelledby="sample-title">
     <div class="section-head">
       <h2 id="sample-title">See what the written recommendation looks like.</h2>
-      <p>This sample is fictional. It shows the format only; it is not client work and contains no real engineering evidence. Final findings in every real report are prepared or reviewed by the responsible KEVOS® professional.</p>
+      <p>This sample is fictional. It shows the format only; it is not client work and contains no real engineering evidence. Final findings in every real report are prepared or reviewed by the responsible BIZOMAT professional.</p>
     </div>
     <AssessmentReportPreview />
   </Section>
@@ -206,13 +206,13 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
     <div class="request">
       <div class="request__intro">
         <h2 id="request-title">Request an assessment.</h2>
-        <p class="request__lead">Tell KEVOS® about the problem. You will hear back whether it suits the fixed-price assessment before anything is paid or booked.</p>
+        <p class="request__lead">Tell BIZOMAT about the problem. You will hear back whether it suits the fixed-price assessment before anything is paid or booked.</p>
         <ol class="request__next">
-          <li>KEVOS® reviews your enquiry and may ask for more information.</li>
+          <li>BIZOMAT reviews your enquiry and may ask for more information.</li>
           <li>If it is suitable, you receive the confirmed scope and payment instructions.</li>
           <li>After payment is verified, you receive booking instructions for the 30-minute meeting.</li>
         </ol>
-        <p class="request__note">Drawings, photographs and documents are shared after KEVOS® replies, never through this form. A confidentiality agreement can be arranged first.</p>
+        <p class="request__note">Drawings, photographs and documents are shared after BIZOMAT replies, never through this form. A confidentiality agreement can be arranged first.</p>
       </div>
       <div class="request__form">
         <AssessmentForm />
@@ -253,7 +253,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
 
   <CallToAction
     title="One problem. A clear next step."
-    text={`Describe the problem. KEVOS® confirms whether it suits the ${ASSESSMENT.priceLabel} assessment before anything is paid or booked.`}
+    text={`Describe the problem. BIZOMAT confirms whether it suits the ${ASSESSMENT.priceLabel} assessment before anything is paid or booked.`}
     href="#request"
     label="Request an Assessment"
   />
@@ -322,7 +322,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
   .price-card__list li { position: relative; padding: 0.7rem 0 0.7rem 1.6rem; border-bottom: 1px solid var(--inverse-line); }
   .price-card__list li::before { content: ''; position: absolute; left: 0.1rem; top: 1.05rem; width: 0.8rem; height: 0.45rem; border-left: 2px solid var(--brand-orange); border-bottom: 2px solid var(--brand-orange); transform: rotate(-45deg); }
   .price-card :global(.button) { --b-bg: var(--inverse-ink); --b-fg: var(--inverse-bg); --b-border: var(--inverse-ink); }
-  .price-card :global(.button:hover) { --b-bg: var(--brand-orange); --b-border: var(--brand-orange); --b-fg: #121211; }
+  .price-card :global(.button:hover) { --b-bg: var(--brand-orange); --b-border: var(--brand-orange); --b-fg: #0a111c; }
   .price-card__note { margin: 1rem 0 0; font-size: 0.85rem; color: var(--inverse-muted); }
   .conditions h2 { font-size: var(--step-2); max-width: 26ch; margin-bottom: 1.75rem; }
   .conditions__label { margin: 1.75rem 0 0.75rem; font-family: var(--font-sans) !important; font-size: 0.78rem; font-weight: 560; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }

@@ -3,7 +3,7 @@
 //
 // One file handles the whole site, so every deployment method works the same way, including
 // dashboard drag-and-drop (which does not compile a functions/ folder):
-//   /api/chat     → KEVOS® Assistant (Workers AI)
+//   /api/chat     → BIZOMAT Assistant (Workers AI)
 //   /api/discover → homepage discovery: question → search terms (Workers AI); /api/discover/event → anonymous statistics
 //   /api/learn/{intent,plan,lesson,ask} → learning paths built from the Library and Tools (src/server/learn/handler.ts)
 //   /api/contact  → optional contact-form backend
@@ -28,6 +28,9 @@ export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnE
   FORM_LIMITER?: RateLimiter;
 }
 
+/** Production hosts of the website: bizomat.ai, and kevos.com while it still serves during the move. */
+const PRODUCTION_HOSTS = new Set(['bizomat.ai', 'www.bizomat.ai', 'kevos.com', 'www.kevos.com']);
+
 // Injected at build time from the same values written to dist/_headers.
 declare const __SECURITY_HEADERS__: Record<string, string>;
 const SECURITY_HEADERS: Record<string, string> = typeof __SECURITY_HEADERS__ === 'undefined' ? {} : __SECURITY_HEADERS__;
@@ -42,16 +45,16 @@ export function withHeaders(response: Response, url: URL): Response {
   // The page CSP (built with script hashes) describes documents; an API response gets the locked-down one.
   if (isApi) res.headers.set('Content-Security-Policy', API_HEADERS['Content-Security-Policy']);
   if (url.pathname.startsWith('/_astro/')) res.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
-  // Keep Cloudflare preview addresses out of search engines; kevos.com is the canonical domain.
-  if (/\.(pages|workers)\.dev$/.test(url.hostname)) res.headers.set('X-Robots-Tag', 'noindex');
+  // Keep preview addresses (Cloudflare, Fly.io) out of search engines; bizomat.ai is the canonical domain.
+  if (/\.(pages|workers|fly)\.dev$/.test(url.hostname)) res.headers.set('X-Robots-Tag', 'noindex');
   return res;
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-    // Upgrade plain-HTTP page requests on the production domain (HSTS then keeps browsers on HTTPS).
-    if (url.protocol === 'http:' && url.hostname === 'kevos.com' && (request.method === 'GET' || request.method === 'HEAD')) {
+    // Upgrade plain-HTTP page requests on the production domains (HSTS then keeps browsers on HTTPS).
+    if (url.protocol === 'http:' && PRODUCTION_HOSTS.has(url.hostname) && (request.method === 'GET' || request.method === 'HEAD')) {
       url.protocol = 'https:';
       return new Response(null, { status: 301, headers: { Location: url.href, 'Cache-Control': 'public, max-age=3600' } });
     }

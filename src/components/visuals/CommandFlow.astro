@@ -1,0 +1,51 @@
+---
+// Scene: one CAD Automation command travelling from the AI app to SOLIDWORKS and back, with the real command states
+// of the device protocol (apps/cad/docs/BRIDGE-PROTOCOL.md section 4): created, queued, delivered, accepted,
+// running, succeeded. Commands are signed by the gateway (ES256 JWS) and checked by the Companion before they run.
+import '../../styles/visuals.css';
+
+interface Props { id?: string }
+const { id = 'cmdflow' } = Astro.props;
+const stations = [
+  { t: 'AI app', s: 'MCP over HTTPS' },
+  { t: 'BIZOMAT', s: 'checks, signs, queues' },
+  { t: 'Companion', s: 'outgoing HTTPS only' },
+  { t: 'Add-in', s: 'local named pipe' },
+  { t: 'SOLIDWORKS', s: 'runs on your PC' },
+];
+const states = [
+  { c: 's1', t: 'created', n: 'sw_add_features' },
+  { c: 's2', t: 'queued', n: 'for your computer' },
+  { c: 's3', t: 'delivered', n: 'signed command' },
+  { c: 's4', t: 'accepted', n: 'signature checked' },
+  { c: 's5', t: 'running', n: 'in SOLIDWORKS' },
+  { c: 's7', t: 'succeeded', n: 'result and files' },
+];
+---
+<figure class="viz" aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 660 250" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>A command travels from the AI app to BIZOMAT, which checks, signs and queues it; the Companion on your computer collects it over an outgoing connection, checks the signature and passes it to the SOLIDWORKS add-in; the result returns the same way. States: created, queued, delivered, accepted, running, succeeded.</title>
+    <text class="v-sub" x="16" y="24">Where the command goes</text>
+    {stations.map((st, i) => (
+      <g>
+        <rect class:list={['v-card', i === 1 && 'v-card--accent']} x={14 + i * 130} y="38" width="112" height="54" rx="10" />
+        <text class="v-title" x={26 + i * 130} y="61">{st.t}</text>
+        <text class="v-sub" x={26 + i * 130} y="78">{st.s}</text>
+      </g>
+    ))}
+    {[0, 1, 2, 3].map((i) => <path class="v-edge" d={`M${126 + i * 130} 65 H ${144 + i * 130}`} />)}
+    {[0, 1, 2, 3].map((i) => <path class:list={['v-pulse', `d${i + 1}`]} d={`M${126 + i * 130} 65 H ${144 + i * 130}`} pathLength="100" />)}
+    <path class="v-edge v-edge--strong" d="M600 100 C 600 118, 590 120, 560 120 H 100 C 70 120, 60 118, 60 100" stroke-dasharray="3 4" />
+    <text class="v-sub" x="330" y="136" text-anchor="middle">result and files return the same way, hash-checked</text>
+
+    <text class="v-sub" x="16" y="170">Command states</text>
+    {states.map((st, i) => (
+      <g class:list={['seq', st.c]}>
+        <rect class:list={['v-pill', i === states.length - 1 ? 'v-pill--done' : i === 4 ? 'v-pill--working' : '']} x={14 + i * 108} y="182" width="98" height="26" rx="13" />
+        <text class="v-pill-text" x={63 + i * 108} y="199" text-anchor="middle">{st.t}</text>
+        <text class="v-sub" x={63 + i * 108} y="228" text-anchor="middle">{st.n}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span>The real command lifecycle of CAD Automation, drawn as a diagram.</span><span class="viz__tag">Illustration</span></figcaption>
+</figure>

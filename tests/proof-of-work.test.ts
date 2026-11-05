@@ -23,7 +23,7 @@ test('the proof of work keeps every published record, the 3 capital projects and
 
 test('employer work is attributed as track record, and statuses never claim more than the schedule records', () => {
   for (const p of PROJECTS.filter((x) => x.client === 'Alchin Long Group')) {
-    assert.match(p.employment ?? '', /founder of KEVOS®.*employed by Alchin Long Group.*not a KEVOS® client engagement/, `${p.id} states its employment context`);
+    assert.match(p.employment ?? '', /founder of BIZOMAT.*employed by Alchin Long Group.*not a BIZOMAT client engagement/, `${p.id} states its employment context`);
     assert.doesNotMatch(JSON.stringify(p), /AZ[DT]\d|31-JS|\bpatent|\binvent|under budget|\d+ ?days? to/i, `${p.id} leaks nothing internal`);
   }
   for (const p of PROJECTS.filter((x) => x.sector === 'hardware')) {
@@ -36,7 +36,7 @@ test('employer work is attributed as track record, and statuses never claim more
   for (const held of ['abh', 'friction', 'dh60', 'ds2400', 'ds10', 'paraflow', 'link-arm', 'laser']) assert.ok(!PROJECTS.some((p) => p.id.includes(held)), `${held} stays a private draft`);
 });
 
-test('every case study is complete, written in the KEVOS voice and leads to an enquiry', () => {
+test('every case study is complete, written in the BIZOMAT voice and leads to an enquiry', () => {
   for (const p of PROJECTS) {
     for (const field of ['headline', 'title', 'client', 'about', 'industry', 'years', 'role', 'statusLabel', 'summary', 'brief', 'outcome', 'value'] as const) assert.ok(p[field].trim().length > 2, `${p.id}.${field}`);
     assert.ok(p.approach.length >= 4, `${p.id} explains its approach`);
@@ -46,22 +46,25 @@ test('every case study is complete, written in the KEVOS voice and leads to an e
     assert.doesNotMatch(copy, /(I|my|me|I've|I'm)/, `${p.id} has no first-person copy`);
     assert.doesNotMatch(copy, /GoCore/i);
     assert.doesNotMatch(`${copy} ${p.deliverables.join(' ')}`, /A\$|\$\s?\d|\d+k/, `${p.id} shows no commercial figures`);
-    assert.ok(PROJECT_SERVICES[p.service], `${p.id} links to a KEVOS service`);
+    assert.ok(PROJECT_SERVICES[p.service], `${p.id} links to a BIZOMAT service`);
     assert.equal(projectEnquiryHref(p), `/contact/?service=${p.service}&project=${encodeURIComponent(p.title)}`);
   }
   const form = read('src/components/ContactForm.astro');
   assert.match(form, /get\('project'\)/, 'the contact form starts the enquiry from the project name');
 });
 
-test('the About page shows the proof of work as a section, and old homepage links are forwarded to it', () => {
+test('the Proof of Work page holds the engineering record, and old About and homepage links are forwarded to it', () => {
+  const page = read('src/pages/proof-of-work.astro');
+  assert.match(page, /id="engineering-record"/);
+  assert.match(page, /<ProofOfWork \/>/);
+  assert.match(read('src/config/site.ts'), /\{ href: '\/proof-of-work\/', label: 'Proof of Work' \}/);
   const about = read('src/pages/about.astro');
-  assert.match(about, /<Section index="06" label="Proof of work"[^>]*id="work"/);
-  assert.match(about, /<ProofOfWork \/>/);
-  assert.match(read('src/config/site.ts'), /\{ href: '\/about\/#work', label: 'Proof of Work' \}/);
+  assert.ok(about.includes("location.replace('/proof-of-work/#engineering-record')"), 'old /about/#work links follow the record');
+  assert.ok(about.includes('location.replace(`/proof-of-work/#${id}`)'), 'old /about/#case-<id> links open the case study');
   const home = read('src/pages/index.astro');
-  assert.doesNotMatch(home, /<ProofOfWork/, 'the homepage leads with WORKOS and READOS');
-  assert.ok(home.includes("id.startsWith('case-') ? `/about/#${id}`"), 'old /#case-<id> links open the case study on About');
-  assert.ok(home.includes("work: '/about/#work'"), 'old /#work links open the proof of work on About');
+  assert.doesNotMatch(home, /<ProofOfWork/, 'the homepage links to the proof rather than embedding it');
+  assert.ok(home.includes("id.startsWith('case-') ? `/proof-of-work/#${id}`"), 'old /#case-<id> links open the case study');
+  assert.ok(home.includes("work: '/proof-of-work/#engineering-record'"), 'old /#work links open the record');
   const component = read('src/components/ProofOfWork.astro');
   assert.doesNotMatch(component, /\sstyle=/);
   assert.match(component, /aria-pressed/);
@@ -70,7 +73,7 @@ test('the About page shows the proof of work as a section, and old homepage link
   assert.match(component, /hashchange/, 'deep links open the case study');
 });
 
-test('every project has its KEVOS-coloured animated visual', () => {
+test('every project has its BIZOMAT-coloured animated visual', () => {
   const dimensions = JSON.parse(read('src/data/work-visuals.json')) as Record<string, [number, number]>;
   for (const p of PROJECTS) {
     assert.ok(p.visualAlt.trim().length > 10, `${p.id} describes its image`);

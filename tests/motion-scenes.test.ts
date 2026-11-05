@@ -5,7 +5,7 @@ import { join } from 'node:path';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 
-test('the KEVOS service pages use a purpose-built responsive motion scene', () => {
+test('the BIZOMAT service pages use a purpose-built responsive motion scene', () => {
   const motion = read('src/components/MotionVisual.astro');
   const orbit = read('src/components/ServiceMap.astro');
   assert.match(motion, /<ServiceMap variant=/);
@@ -19,7 +19,6 @@ test('the KEVOS service pages use a purpose-built responsive motion scene', () =
     services: 'src/pages/services.astro',
     'how-it-works': 'src/pages/how-it-works.astro',
     industries: 'src/pages/industries.astro',
-    about: 'src/pages/about.astro',
     contact: 'src/pages/contact/index.astro',
   };
   for (const [name, path] of Object.entries(pages)) {
@@ -57,11 +56,11 @@ test('privacy, terms and disclaimer each show their own legal scene', () => {
 
 test('the footer trade mark record opens in a new tab safely', () => {
   const footer = read('src/components/Footer.astro');
-  assert.match(footer, /<a href=\{SITE\.tradeMark\.record\} target="_blank" rel="noopener noreferrer"/);
+  assert.match(footer, /<a href=\{tm\.record\} target="_blank" rel="noopener noreferrer"/);
   assert.match(footer, /opens in a new tab/);
 });
 
-test('services and about share the genuine four-square KEVOS orbit (the homepage hero has none since 2 Nov 2026)', () => {
+test('services and about share the genuine four-square BIZOMAT orbit (the homepage hero has none since 2 Nov 2026)', () => {
   const home = read('src/pages/index.astro');
   const orbit = read('src/components/ServiceMap.astro');
   const motion = read('src/components/MotionVisual.astro');
@@ -78,7 +77,7 @@ test('services and about share the genuine four-square KEVOS orbit (the homepage
   assert.match(orbit, /about: \[/);
 });
 
-test('other KEVOS scenes have distinct content for industries, process, tools and contact', () => {
+test('other BIZOMAT scenes have distinct content for industries, process, tools and contact', () => {
   const motion = read('src/components/MotionVisual.astro');
   assert.match(motion, /INDUSTRIES\.slice\(0, 6\)/);
   assert.match(motion, /PROCESS\.map/);
@@ -89,17 +88,17 @@ test('other KEVOS scenes have distinct content for industries, process, tools an
   assert.match(motion, /<Logo label=""/);
 });
 
-test('all motion panels share orange branding, neutral grids and both accessible themes', () => {
+test('all motion panels share BIZOMAT teal branding, neutral grids and both accessible themes', () => {
   const motion = read('src/components/MotionVisual.astro');
   const orbit = read('src/components/ServiceMap.astro');
   assert.match(motion, /--m-panel:#ffffff/);
   assert.match(motion, /--m-panel:#131412/);
-  assert.match(motion, /--m-orange:#c2410c/);
-  assert.match(motion, /--m-orange:#ff8c47/);
+  assert.match(motion, /--m-orange:#0f766e/);
+  assert.match(motion, /--m-orange:#2dd4bf/);
   assert.match(motion, /:root\[data-theme='dark'\]/);
   assert.match(motion, /border-radius:20px/);
   assert.match(motion, /border-radius:14px/);
-  assert.match(orbit, /--grid: rgb\(255 106 19 \/ 0\.07\)/);
-  assert.doesNotMatch(motion, /#1456e8|#4f95ff|#2d8aff|<text[^>]*>KEVOS<\/text>/i);
+  assert.match(orbit, /--grid: rgb\(20 184 166 \/ 0\.07\)/);
+  assert.doesNotMatch(motion, /#1456e8|#4f95ff|#2d8aff|<text[^>]*>BIZOMAT<\/text>/i);
   assert.doesNotMatch(motion, /KEVOS \/ 01|SYSTEM ACTIVE/);
 });

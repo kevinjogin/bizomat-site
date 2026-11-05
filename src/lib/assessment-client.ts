@@ -27,7 +27,7 @@ export async function submitAssessment(s: AssessmentSubmission): Promise<Assessm
         body: JSON.stringify({
           access_key: web3formsAccessKey,
           subject: assessmentSubject(s),
-          from_name: 'KEVOS® website: assessment',
+          from_name: 'BIZOMAT website: assessment',
           replyto: s.email,
           ...fields,
           'Description of the problem': s.description,

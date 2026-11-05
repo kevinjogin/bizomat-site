@@ -1,5 +1,5 @@
-// KEVOS® Engineering Problem Assessment: the single source of truth for /assessment/, the site-wide
-// promotions, the KEVOS® Assistant, the intake form and the PDF and brochure generators
+// BIZOMAT Engineering Problem Assessment: the single source of truth for /assessment/, the site-wide
+// promotions, the BIZOMAT Assistant, the intake form and the PDF and brochure generators
 // (scripts/assessment/). Change wording, price or terms here and every surface follows.
 //
 // Keep this file dependency-free: it is imported by Astro pages, the Worker, Node tests and scripts.
@@ -7,7 +7,7 @@
 // (see docs/assessment/README.md).
 
 export const ASSESSMENT = {
-  name: 'KEVOS® Engineering Problem Assessment',
+  name: 'BIZOMAT Engineering Problem Assessment',
   shortName: 'Engineering Problem Assessment',
   path: '/assessment/',
   /** Fixed fee in whole Australian dollars. */
@@ -30,17 +30,17 @@ export const ASSESSMENT = {
   ],
   description: [
     'Not every manufacturing or mechanical design problem requires a major consulting engagement.',
-    'KEVOS® provides a practical, fixed-price remote assessment to help businesses understand a defined problem, review potential improvement options and identify the next step.',
+    'BIZOMAT provides a practical, fixed-price remote assessment to help businesses understand a defined problem, review potential improvement options and identify the next step.',
   ],
   summary:
     'A fixed-price remote review of one defined engineering or manufacturing problem: a 30-minute technical discussion, a preliminary review of the information you supply, up to three improvement options and a one-page written recommendation.',
   seo: {
     title: 'Engineering Problem Assessment Australia',
     description:
-      'A focused engineering or manufacturing problem assessment from KEVOS®. A$195 for a defined remote technical review with practical written recommendations.',
+      'A focused engineering or manufacturing problem assessment from BIZOMAT. A$195 for a defined remote technical review with practical written recommendations.',
   },
   successMessage:
-    'Your assessment enquiry has been received. KEVOS® will review the information and confirm whether the problem is suitable for the fixed-price assessment.',
+    'Your assessment enquiry has been received. BIZOMAT will review the information and confirm whether the problem is suitable for the fixed-price assessment.',
 } as const;
 
 export interface Inclusion {
@@ -168,7 +168,7 @@ export const EXAMPLES: readonly Example[] = [
   },
 ];
 
-export type Actor = 'You' | 'KEVOS®';
+export type Actor = 'You' | 'BIZOMAT';
 export interface JourneyStep {
   number: string;
   actor: Actor;
@@ -193,24 +193,24 @@ export const JOURNEY: readonly JourneyPhase[] = [
   {
     title: 'Confirm and pay',
     steps: [
-      { number: '04', actor: 'KEVOS®', title: 'Suitability check', text: 'KEVOS® checks technical and commercial suitability and may ask for more information.' },
-      { number: '05', actor: 'KEVOS®', title: 'Scope confirmed', text: 'KEVOS® confirms the scope in writing and sends payment instructions.' },
+      { number: '04', actor: 'BIZOMAT', title: 'Suitability check', text: 'BIZOMAT checks technical and commercial suitability and may ask for more information.' },
+      { number: '05', actor: 'BIZOMAT', title: 'Scope confirmed', text: 'BIZOMAT confirms the scope in writing and sends payment instructions.' },
       { number: '06', actor: 'You', title: 'Payment', text: 'You pay A$195 using the payment instructions provided.' },
-      { number: '07', actor: 'KEVOS®', title: 'Payment verified', text: 'KEVOS® verifies the payment before anything is booked.' },
+      { number: '07', actor: 'BIZOMAT', title: 'Payment verified', text: 'BIZOMAT verifies the payment before anything is booked.' },
     ],
   },
   {
     title: 'Book and assess',
     steps: [
-      { number: '08', actor: 'KEVOS®', title: 'Booking instructions', text: 'You receive instructions for booking the meeting.' },
+      { number: '08', actor: 'BIZOMAT', title: 'Booking instructions', text: 'You receive instructions for booking the meeting.' },
       { number: '09', actor: 'You', title: 'Book', text: 'Book a 30-minute remote meeting. It is confirmed when the calendar confirmation arrives.' },
-      { number: '10', actor: 'KEVOS®', title: 'Assessment', text: 'The discussion and the preliminary technical review.' },
+      { number: '10', actor: 'BIZOMAT', title: 'Assessment', text: 'The discussion and the preliminary technical review.' },
     ],
   },
   {
     title: 'Recommend',
     steps: [
-      { number: '11', actor: 'KEVOS®', title: 'Report', text: 'KEVOS® delivers the one-page PDF recommendation.' },
+      { number: '11', actor: 'BIZOMAT', title: 'Report', text: 'BIZOMAT delivers the one-page PDF recommendation.' },
       { number: '12', actor: 'You', title: 'Next steps', text: 'Request further engineering work if you choose. It is scoped and quoted separately.' },
     ],
   },
@@ -220,17 +220,17 @@ export const JOURNEY: readonly JourneyPhase[] = [
 export const CONDITIONS: readonly { title: string; text: string }[] = [
   { title: 'One defined problem', text: 'The A$195 assessment covers one defined problem only. Related or additional problems need a separate assessment or a quote.' },
   { title: 'A preliminary desktop assessment', text: 'It is a remote, preliminary engineering assessment based on the information you supply and the discussion. Findings depend on that information and are not a guarantee of a solution.' },
-  { title: 'Payment after approval', text: 'Nothing is paid through this website. KEVOS® requests payment only after confirming in writing that the problem is suitable and the scope is agreed. The fee is payable in full before the meeting is booked.' },
+  { title: 'Payment after approval', text: 'Nothing is paid through this website. BIZOMAT requests payment only after confirming in writing that the problem is suitable and the scope is agreed. The fee is payable in full before the meeting is booked.' },
   { title: 'Rescheduling', text: 'You can reschedule the meeting at no cost by giving at least one business day’s notice.' },
-  { title: 'Cancellation and refunds', text: 'Cancel before the meeting for a full refund. If KEVOS® decides after payment that the problem cannot be assessed within this scope, it will tell you and refund the fee in full.' },
+  { title: 'Cancellation and refunds', text: 'Cancel before the meeting for a full refund. If BIZOMAT decides after payment that the problem cannot be assessed within this scope, it will tell you and refund the fee in full.' },
   { title: 'Further work', text: 'Any further engineering services require separate scoping and a written quote. There is no obligation to proceed.' },
   { title: 'Your rights', text: 'Nothing in these conditions excludes, restricts or modifies rights you have under the Australian Consumer Law.' },
 ];
 
 export const FAQ_ITEMS: readonly { q: string; a: string }[] = [
-  { q: 'When do I pay?', a: 'Only after KEVOS® has reviewed your enquiry and confirmed in writing that the problem suits the fixed-price assessment. Payment instructions are sent with that confirmation. Nothing is charged through this website.' },
-  { q: 'What if my problem is not suitable?', a: 'KEVOS® will tell you, and there is no charge. Where it helps, you will be told what kind of work or specialist would suit the problem better, or offered a quote.' },
-  { q: 'Can I send drawings and photographs?', a: 'Yes, after KEVOS® replies. The enquiry form only asks what you can provide. Please do not paste confidential information into the form, and only share material you are entitled to share. A confidentiality agreement can be arranged first if you need one.' },
+  { q: 'When do I pay?', a: 'Only after BIZOMAT has reviewed your enquiry and confirmed in writing that the problem suits the fixed-price assessment. Payment instructions are sent with that confirmation. Nothing is charged through this website.' },
+  { q: 'What if my problem is not suitable?', a: 'BIZOMAT will tell you, and there is no charge. Where it helps, you will be told what kind of work or specialist would suit the problem better, or offered a quote.' },
+  { q: 'Can I send drawings and photographs?', a: 'Yes, after BIZOMAT replies. The enquiry form only asks what you can provide. Please do not paste confidential information into the form, and only share material you are entitled to share. A confidentiality agreement can be arranged first if you need one.' },
   { q: 'Will the assessment find the root cause?', a: 'Not necessarily. It is a preliminary review. It identifies possible causes, the technical considerations and the checks that would confirm or rule them out, but it cannot guarantee root-cause identification without measurement, inspection or testing.' },
   { q: 'Is a site visit included?', a: 'No. The assessment is fully remote. If a visit, measurement or hands-on work is needed, it can be scoped and quoted separately.' },
   { q: 'Is the report certified engineering advice?', a: 'No. The assessment is not formal certification or regulated design sign-off. Work that legally requires a registered engineer or certifier needs an appropriately qualified professional.' },
@@ -301,7 +301,7 @@ export const ASSETS = {
  * it is not client work and contains no real engineering evidence.
  */
 export const SAMPLE_REPORT = {
-  reference: 'KEVOS-A-SAMPLE-001',
+  reference: 'BIZOMAT-A-SAMPLE-001',
   customer: 'Sample Manufacturing Co. (fictional)',
   date: '16 October 2026',
   problem:

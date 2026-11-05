@@ -1,4 +1,4 @@
-// Library chapter outlines for KEVOS® learning paths: what each published chapter covers, taken from its own text at
+// Library chapter outlines for BIZOMAT learning paths: what each published chapter covers, taken from its own text at
 // build time. Used to ground lessons (the AI is shown these excerpts, never asked to invent them), to show "From the
 // Library" key points when AI is unavailable, and for reading times. Served per book as /learning/<book index>.json
 // (src/pages/learning/[book].json.ts), so a lesson loads only the books it uses.

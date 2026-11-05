@@ -1,5 +1,5 @@
 ---
-// Pop-out window for the KEVOS® Assistant. Opened from the floating widget's "pop out" button.
+// Pop-out window for the BIZOMAT Assistant. Opened from the floating widget's "pop out" button.
 import '@fontsource-variable/inter-tight';
 import '../styles/global.css';
 import SEO from '../components/SEO.astro';
@@ -15,7 +15,7 @@ import ChatWidget from '../components/ChatWidget.astro';
       (function () {
         // Same rule as the main site: light unless dark was chosen in this browser session.
         var d = document.documentElement, t = 'light';
-        try { if (sessionStorage.getItem('kevos-theme') === 'dark') t = 'dark'; } catch (e) {}
+        try { if (sessionStorage.getItem('bizomat-theme') === 'dark') t = 'dark'; } catch (e) {}
         d.dataset.theme = t;
       })();
     </script>
@@ -23,7 +23,7 @@ import ChatWidget from '../components/ChatWidget.astro';
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <SEO title="Assistant" description="Ask the KEVOS® Assistant questions about KEVOS®, answered from information published on the KEVOS® website." noindex />
+    <SEO title="Assistant" description="Ask the BIZOMAT Assistant questions about BIZOMAT, answered from information published on the BIZOMAT website." noindex />
   </head>
   <body class="chat-page">
     <main>

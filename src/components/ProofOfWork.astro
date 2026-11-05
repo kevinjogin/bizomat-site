@@ -1,7 +1,7 @@
 ---
 // Proof of work on the About page: keyword search, featured and sector filters, and expandable case studies
 // (data in src/data/projects.ts). Without JavaScript every project is listed; with it, the list starts at nine
-// and can be searched and filtered. Each case study opens from a deep link: /about/#case-<id>
+// and can be searched and filtered. Each case study opens from a deep link: /proof-of-work/#case-<id>
 // (old /#case-<id> links are forwarded there by the homepage).
 import WorkVisual from './WorkVisual.astro';
 import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, projectEnquiryHref } from '../data/projects.ts';
@@ -59,7 +59,7 @@ const latest = PROJECTS[0].years.slice(-4);
             <summary><span>Read the full case study</span></summary>
             <div class="case__body">
               <div class="case__main">
-                <WorkVisual id={p.id} alt={p.visualAlt} size="large" illustration={p.illustration} tag={p.illustrationTag} final={finalStage(p)} caption={p.illustration ? 'Illustrative KEVOS® visual. Not an image of the actual project, product, drawing or CAD.' : 'Image from the published project record, converted to KEVOS® colours.'} />
+                <WorkVisual id={p.id} alt={p.visualAlt} size="large" illustration={p.illustration} tag={p.illustrationTag} final={finalStage(p)} caption={p.illustration ? 'Illustrative BIZOMAT visual. Not an image of the actual project, product, drawing or CAD.' : 'Image from the published project record, converted to BIZOMAT colours.'} />
                 {p.employment && <p class="case__context"><span>Employment context</span>{p.employment}</p>}
                 <section>
                   <h4>The brief</h4>
@@ -157,12 +157,12 @@ const latest = PROJECTS[0].years.slice(-4);
   <div class="work-invite">
     <div>
       <h3>Have a project like these?</h3>
-      <p>Send a drawing, photos or a short description. KEVOS® will come back with a clear scope, deliverables and an appropriate next step before any substantial work begins.</p>
+      <p>Send a drawing, photos or a short description. BIZOMAT will come back with a clear scope, deliverables and an appropriate next step before any substantial work begins.</p>
     </div>
     <a class="case__button" href="/contact/">Get in touch <span aria-hidden="true">→</span></a>
   </div>
 
-  <p class="work-note">Organisation names show where the work took place and do not imply endorsement of KEVOS®. Work carried out while employed, including the Alchin Long Group product-development and capital projects, is the founder’s professional track record, not KEVOS® client work. Product-development dates come from the project schedules, and a product is described as released to production only where its schedule records it. Organisation descriptions are general background. Engineering calculations, certification and statutory approvals remained with the responsible engineers and authorities. Projects that ended at concept or design stage are labelled that way, and visuals marked “Illustrative” are not images of the actual project. Commercial figures and client-confidential information are not shown.</p>
+  <p class="work-note">Organisation names show where the work took place and do not imply endorsement of BIZOMAT. Work carried out while employed, including the Alchin Long Group product-development and capital projects, is the founder’s professional track record, not BIZOMAT client work. Product-development dates come from the project schedules, and a product is described as released to production only where its schedule records it. Organisation descriptions are general background. Engineering calculations, certification and statutory approvals remained with the responsible engineers and authorities. Projects that ended at concept or design stage are labelled that way, and visuals marked “Illustrative” are not images of the actual project. Commercial figures and client-confidential information are not shown.</p>
 </div>
 
 <script>
@@ -198,7 +198,7 @@ const latest = PROJECTS[0].years.slice(-4);
       buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sector === sector)));
     };
     const reset = () => { sector = 'all'; query = ''; if (search) search.value = ''; };
-    // Deep links (/about/#case-<id>) reveal the card, open its case study and scroll to it: instantly on page load,
+    // Deep links (/proof-of-work/#case-<id>) reveal the card, open its case study and scroll to it: instantly on page load,
     // and with the page's own scroll behaviour (which respects reduced motion) for in-page links.
     const openFromHash = (behavior: ScrollBehavior) => {
       const id = decodeURIComponent(location.hash.slice(1));

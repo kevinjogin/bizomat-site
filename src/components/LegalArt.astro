@@ -1,6 +1,6 @@
 ---
 /**
- * Hero illustrations for the legal pages, one purpose-built scene each, in the KEVOS® blueprint-panel style:
+ * Hero illustrations for the legal pages, one purpose-built scene each, in the BIZOMAT blueprint-panel style:
  *   privacy    → COLLECT → PROTECT → USE → RETAIN: an enquiry travels through an encrypted channel to the inbox,
  *                is used only to respond, and is kept only as long as useful.
  *   terms      → ENQUIRE → SCOPE → AGREE → YOUR RIGHTS: website terms are a guide, the written scope is checked
@@ -20,22 +20,22 @@ const { scene } = Astro.props;
 
 const meta = {
   privacy: {
-    label: 'KEVOS® PRIVACY',
+    label: 'BIZOMAT PRIVACY',
     stages: ['Collect', 'Protect', 'Use', 'Retain'],
     caption:
-      'Illustration: an enquiry form is filled in, travels through an encrypted connection to the KEVOS® inbox, is used only to respond (not sold, not added to a mailing list, no tracking cookies), and is kept only as long as it is useful, with the right to ask for access, correction or deletion.',
+      'Illustration: an enquiry form is filled in, travels through an encrypted connection to the BIZOMAT inbox, is used only to respond (not sold, not added to a mailing list, no tracking cookies), and is kept only as long as it is useful, with the right to ask for access, correction or deletion.',
   },
   terms: {
-    label: 'KEVOS® TERMS',
+    label: 'BIZOMAT TERMS',
     stages: ['Enquire', 'Scope', 'Agree', 'Your rights'],
     caption:
       'Illustration: the website terms are a guide and an enquiry creates no obligation; a written scope covering scope, deliverables, assumptions and commercial terms is checked off, signed and stamped as agreed in writing; and Australian Consumer Law rights stay in place.',
   },
   disclaimer: {
-    label: 'KEVOS® DISCLAIMER',
+    label: 'BIZOMAT DISCLAIMER',
     stages: ['Information', 'Scope', 'Specialists', 'Your rights'],
     caption:
-      'Illustration: Library books and guides and KEVOS® tools are general information; an agreed scope draws the boundary around KEVOS® services; certification, statutory approvals and licensed trades go to registered professionals; and Australian Consumer Law rights are not excluded.',
+      'Illustration: Library books and guides and BIZOMAT tools are general information; an agreed scope draws the boundary around BIZOMAT services; certification, statutory approvals and licensed trades go to registered professionals; and Australian Consumer Law rights are not excluded.',
   },
 }[scene];
 
@@ -103,7 +103,7 @@ const promises = [
             <rect x="152" y="94" width="8" height="8" rx="1.5" class="lg-packet" />
             <g class="lg-in3">
               <rect x="334" y="20" width="126" height="132" rx="5" class="lg-card" />
-              <text x="346" y="40" class="lg-t lg-t--o">03 · KEVOS® INBOX</text>
+              <text x="346" y="40" class="lg-t lg-t--o">03 · BIZOMAT INBOX</text>
               <rect x="364" y="52" width="66" height="44" rx="3" class="lg-env" />
               <path d="M364 54l33 24 33-24" class="lg-thin" />
               <text x="397" y="116" class="lg-t lg-t--b" text-anchor="middle">USED ONLY TO</text>
@@ -251,28 +251,28 @@ const promises = [
   .lg {
     --l-panel: #ffffff;
     --l-card: rgb(255 255 255 / 0.94);
-    --l-line: rgb(18 18 17 / 0.16);
-    --l-line-strong: rgb(18 18 17 / 0.4);
-    --l-grid: rgb(255 106 19 / 0.075);
-    --l-ink: #121211;
+    --l-line: rgb(10 17 28 / 0.16);
+    --l-line-strong: rgb(10 17 28 / 0.4);
+    --l-grid: rgb(20 184 166 / 0.075);
+    --l-ink: #0a111c;
     --l-muted: #67645d;
-    --l-orange: #c2410c;
-    --l-soft: rgb(255 106 19 / 0.1);
-    --l-bar: rgb(18 18 17 / 0.22);
+    --l-orange: #0f766e;
+    --l-soft: rgb(20 184 166 / 0.1);
+    --l-bar: rgb(10 17 28 / 0.22);
     --cycle: 16s;
     display: block; margin: 0; width: 100%; max-width: 560px; color: var(--l-ink);
   }
   :global(:root[data-theme='dark']) .lg {
     --l-panel: #131412;
     --l-card: rgb(28 29 27 / 0.94);
-    --l-line: rgb(238 236 230 / 0.18);
-    --l-line-strong: rgb(238 236 230 / 0.44);
-    --l-grid: rgb(255 140 71 / 0.08);
+    --l-line: rgb(230 237 245 / 0.18);
+    --l-line-strong: rgb(230 237 245 / 0.44);
+    --l-grid: rgb(45 212 191 / 0.08);
     --l-ink: #f1efea;
     --l-muted: #a9a49c;
-    --l-orange: #ff8c47;
-    --l-soft: rgb(255 140 71 / 0.12);
-    --l-bar: rgb(238 236 230 / 0.26);
+    --l-orange: #2dd4bf;
+    --l-soft: rgb(45 212 191 / 0.12);
+    --l-bar: rgb(230 237 245 / 0.26);
   }
   .lg__panel {
     position: relative; display: flex; flex-direction: column; gap: 0.5rem; width: 100%; container-type: inline-size;

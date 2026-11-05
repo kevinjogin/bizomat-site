@@ -1,5 +1,5 @@
 ---
-// Branded, animated KEVOS illustrations for projects that have no shareable project image.
+// Branded, animated BIZOMAT illustrations for projects that have no shareable project image.
 // They are illustrative only and are labelled that way wherever they appear (see WorkVisual.astro).
 // The product-development scenes are generic mechanisms, never the real product geometry, drawings or CAD.
 import type { ProjectIllustration } from '../data/projects.ts';
@@ -113,7 +113,7 @@ const at = (year: number, month: number) => +(92 + (year - 2021 + (month - 1) / 
     <text class="wi-label" x="140" y="164" text-anchor="middle">SPRAY</text>
     <text class="wi-label" x="244" y="164" text-anchor="middle">CURE</text>
     <path class="wi-grey" d="M10 172H310" />
-    {['#ff6a13', '#f6efe6', '#9c9385', '#c2410c'].map((colour, i) => <rect class="wi-swatch" x={24 + i * 13} y="180" width="10" height="10" fill={colour} />)}
+    {['#14b8a6', '#e6f4f2', '#9c9385', '#0f766e'].map((colour, i) => <rect class="wi-swatch" x={24 + i * 13} y="180" width="10" height="10" fill={colour} />)}
     <text class="wi-label" x="80" y="189">CUSTOM COLOUR</text>
   </svg>
 )}
@@ -362,26 +362,26 @@ const at = (year: number, month: number) => +(92 + (year - 2021 + (month - 1) / 
   .wi{position:absolute;inset:0;width:100%;height:100%;display:block}
   .wi-tag{fill:#9c9385;font-family:var(--font-mono);font-size:7px;letter-spacing:.14em}
   .wi-label{fill:#9c9385;font-family:var(--font-mono);font-size:6.5px;letter-spacing:.1em}
-  .wi-orange{fill:none;stroke:#ff6a13;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
+  .wi-orange{fill:none;stroke:#14b8a6;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round}
   .wi-grey{fill:none;stroke:#9c9385;stroke-width:1.2;stroke-linejoin:round;stroke-linecap:round}
   .wi-thick{stroke-width:2.6}
   .wi-thin{stroke-width:1;opacity:.7}
-  .wi-fill-orange{fill:#ff6a13}
+  .wi-fill-orange{fill:#14b8a6}
   .wi-well{fill:#181715}
-  .wi-liquid{fill:rgb(255 106 19 / .14)}
+  .wi-liquid{fill:rgb(20 184 166 / .14)}
   .wi-part{fill:#2c2a27;stroke:#9c9385;stroke-width:.8}
   .wi-belt{fill:#2c2a27;stroke:#9c9385;stroke-width:.8}
-  .wi-station{fill:#1c1b19;stroke:#9c9385;stroke-width:1}
-  .wi-booth{fill:#1c1b19;stroke:#ff6a13;stroke-width:1.6}
-  .wi-oven{fill:#1c1b19;stroke:#9c9385;stroke-width:1.2}
-  .wi-swatch{stroke:#0f0f0e;stroke-width:.8}
-  .wi-label--on{fill:#ff6a13}
-  .wi-hole{fill:#0f0f0e}
+  .wi-station{fill:#0e1726;stroke:#9c9385;stroke-width:1}
+  .wi-booth{fill:#0e1726;stroke:#14b8a6;stroke-width:1.6}
+  .wi-oven{fill:#0e1726;stroke:#9c9385;stroke-width:1.2}
+  .wi-swatch{stroke:#0a111c;stroke-width:.8}
+  .wi-label--on{fill:#14b8a6}
+  .wi-hole{fill:#0a111c}
   .wi-dash{stroke-dasharray:3 4}
   .wi-lane{stroke-width:5;stroke-linecap:butt}
   .wi-hold{stroke-width:5;stroke-linecap:butt;stroke-dasharray:3 3;opacity:.75;animation:wi-flow 1.2s linear infinite}
   .wi-release{stroke-dasharray:2 3}
-  .wi-chain{fill:none;stroke:#ff6a13;stroke-width:2.4;stroke-dasharray:3 1.6}
+  .wi-chain{fill:none;stroke:#14b8a6;stroke-width:2.4;stroke-dasharray:3 1.6}
 
   .wi-hoist-x{animation:wi-hoist-x 12s ease-in-out infinite}
   .wi-hoist-y{animation:wi-hoist-y 12s ease-in-out infinite}

@@ -1,0 +1,60 @@
+---
+// Hero scene: BIZOMAT at the centre of connected business operations. Requests travel from the AI assistant into
+// BIZOMAT and out to SOLIDWORKS, projects, teams and resources. A conceptual illustration, labelled as one.
+import { B_PATH, BAR_PATH } from '../../data/bizomat-brand.ts';
+import '../../styles/visuals.css';
+
+interface Props { id?: string; caption?: boolean }
+const { id = 'ops', caption = true } = Astro.props;
+const nodes = [
+  { x: 36, y: 36, t: 'AI assistant', s: 'Claude · ChatGPT' },
+  { x: 432, y: 36, t: 'SOLIDWORKS', s: 'Parts · drawings' },
+  { x: 8, y: 195, t: 'Projects', s: 'Boards · timelines' },
+  { x: 460, y: 195, t: 'Teams', s: 'Tasks · updates' },
+  { x: 36, y: 354, t: 'Tools', s: 'Calculators' },
+  { x: 432, y: 354, t: 'Library', s: 'Books · guides' },
+];
+// Links: AI assistant into BIZOMAT, then BIZOMAT out to each part of the work.
+const edges = [
+  'M168 61 C 205 66, 222 150, 262 182',
+  'M338 182 C 378 150, 395 66, 432 61',
+  'M255 220 C 215 220, 185 220, 140 220',
+  'M345 220 C 390 220, 420 220, 460 220',
+  'M262 258 C 222 290, 205 374, 168 379',
+  'M338 258 C 378 290, 395 374, 432 379',
+];
+const s = 0.165;
+---
+<figure class:list={['viz', 'viz--bare', 'ops']} aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 600 440" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>BIZOMAT in the middle of connected work: an AI assistant, SOLIDWORKS, projects, teams, tools and the library, linked through BIZOMAT.</title>
+    <defs>
+      <pattern id={`${id}-grid`} width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" class="v-grid" /></pattern>
+    </defs>
+    <rect width="600" height="440" fill={`url(#${id}-grid)`} class="ops__bg" />
+    {edges.map((d) => <path class="v-edge" d={d} />)}
+    {edges.map((d, i) => <path class:list={['v-pulse', `d${i + 1}`]} d={d} pathLength="100" />)}
+    <g class="ops__hub">
+      <rect class="v-hub" x="255" y="175" width="90" height="90" rx="20" />
+      <g transform={`translate(${(300 - 166 * s).toFixed(2)} ${(220 - 120.5 * s).toFixed(2)}) scale(${s})`}>
+        <path class="v-hub-b" fill-rule="evenodd" d={B_PATH} />
+        <path class="v-hub-bar" d={BAR_PATH} />
+      </g>
+      <text class="v-sub" x="300" y="288" text-anchor="middle">BIZOMAT</text>
+    </g>
+    {nodes.map((n, i) => (
+      <g class="ops__node">
+        <rect class="v-card" x={n.x} y={n.y} width="132" height="50" rx="10" />
+        <circle class:list={['v-dot', 'v-glow', `d${i + 1}`]} cx={n.x + 118} cy={n.y + 14} r="3.5" />
+        <text class="v-title" x={n.x + 14} y={n.y + 22}>{n.t}</text>
+        <text class="v-sub" x={n.x + 14} y={n.y + 38}>{n.s}</text>
+      </g>
+    ))}
+  </svg>
+  {caption && <figcaption class="viz__caption" id={`${id}-cap`}><span>How BIZOMAT connects the work: requests flow from your assistant to the tools that do it.</span><span class="viz__tag">Illustration</span></figcaption>}
+</figure>
+
+<style>
+  .ops__bg { opacity: .9; }
+  .ops { max-width: 640px; margin-inline: auto; }
+</style>

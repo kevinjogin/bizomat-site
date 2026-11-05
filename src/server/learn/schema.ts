@@ -1,4 +1,4 @@
-// Structured-output validation for KEVOS® learning paths. Every AI reply passes through these before it reaches a
+// Structured-output validation for BIZOMAT learning paths. Every AI reply passes through these before it reaches a
 // visitor: plain short text only (no links, markup or code), catalogue entries only by their number in the list the
 // browser sent, and no stated calculation results (the Tools calculate; "= 85 %", "comes to 1,200 rpm" are dropped).
 

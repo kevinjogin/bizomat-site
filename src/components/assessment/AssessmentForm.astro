@@ -1,7 +1,7 @@
 ---
 // Engineering Problem Assessment enquiry form. It reuses the REACHOS delivery path (SITE.contact):
 // Web3Forms with hCaptcha today, or the Worker endpoint /api/assessment once Worker mail is configured.
-// It never takes payment, accepts files or confirms a booking; it only asks KEVOS® to check suitability.
+// It never takes payment, accepts files or confirms a booking; it only asks BIZOMAT to check suitability.
 import { SITE } from '../../config/site.ts';
 import { ASSESSMENT, MATERIALS, PROBLEM_CATEGORIES, STATES } from '../../config/assessment.ts';
 import { ASSESSMENT_LIMITS as L } from '../../lib/assessment.ts';
@@ -17,8 +17,8 @@ const action = provider === 'web3forms' ? web3formsEndpoint : '/api/assessment';
     provider === 'web3forms' && (
       <Fragment>
         <input type="hidden" name="access_key" value={web3formsAccessKey} />
-        <input type="hidden" name="subject" value="KEVOS® assessment enquiry" />
-        <input type="hidden" name="from_name" value="KEVOS® website: assessment" />
+        <input type="hidden" name="subject" value="BIZOMAT assessment enquiry" />
+        <input type="hidden" name="from_name" value="BIZOMAT website: assessment" />
         <input type="hidden" name="redirect" value={new URL('/assessment/received/', SITE.url).href} />
       </Fragment>
     )
@@ -78,7 +78,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : '/api/assessment';
     <div class="field">
       <label for="af-description">Description of the problem</label>
       <textarea id="af-description" name="description" rows="5" required minlength={L.description.min} maxlength={L.description.max} aria-describedby="af-description-hint af-description-error" placeholder="What happens, where in the product or process, and how often."></textarea>
-      <p class="field__hint" id="af-description-hint">Please don’t include confidential information here. Drawings and photographs can be shared after KEVOS® replies.</p>
+      <p class="field__hint" id="af-description-hint">Please don’t include confidential information here. Drawings and photographs can be shared after BIZOMAT replies.</p>
       <p class="field__error" id="af-description-error" data-error-for="description"></p>
     </div>
     <div class="af__row">
@@ -135,7 +135,7 @@ const action = provider === 'web3forms' ? web3formsEndpoint : '/api/assessment';
     <div class="field field--check">
       <input id="af-consent" name="consent" type="checkbox" required aria-describedby="af-consent-error" />
       <label for="af-consent">
-        I have read the <a href="#terms">assessment conditions</a> and the <a href="/privacy/">privacy policy</a>. I understand this is an enquiry: it is not a booking or a purchase, and KEVOS® will first confirm whether the problem is suitable.
+        I have read the <a href="#terms">assessment conditions</a> and the <a href="/privacy/">privacy policy</a>. I understand this is an enquiry: it is not a booking or a purchase, and BIZOMAT will first confirm whether the problem is suitable.
       </label>
       <p class="field__error" id="af-consent-error" data-error-for="consent"></p>
     </div>

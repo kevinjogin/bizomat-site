@@ -52,7 +52,7 @@ export interface ContactInput {
   service: string;
   /** Optional website of the visitor or their organisation. */
   website: string;
-  /** Optional KEVOS® tool or Library resource the enquiry is about. */
+  /** Optional BIZOMAT tool or Library resource the enquiry is about. */
   resource: string;
   message: string;
   contactMethod: ContactMethod;
@@ -120,4 +120,4 @@ export function validate(input: ContactInput, { requireCompany = false }: Valida
 
 /** One-line summary used as the email subject. */
 export const enquirySubject = (input: ContactInput) =>
-  `KEVOS® enquiry: ${input.service || 'General'} — ${input.company || input.name}`.replace(/[\r\n]+/g, ' ').slice(0, 200);
+  `BIZOMAT enquiry: ${input.service || 'General'} — ${input.company || input.name}`.replace(/[\r\n]+/g, ' ').slice(0, 200);

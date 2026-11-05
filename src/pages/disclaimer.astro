@@ -1,41 +1,53 @@
 ---
+// Disclaimer for the BIZOMAT platform: AI output, CAD automation, calculations, business information, third-party
+// software, engineering certification. It never says BIZOMAT output replaces professional engineering verification.
 import LegalLayout from '../layouts/LegalLayout.astro';
 import TradeMarkNotice from '../components/TradeMarkNotice.astro';
 ---
-
 <LegalLayout
   title="Disclaimer"
   path="/disclaimer/"
   scene="disclaimer"
-  description="Important information about the general nature of KEVOS® website content, the scope of KEVOS® services, and engineering certification and specialist work."
-  updated={new Date('2026-10-15')}
+  description="The limits of AI output, CAD automation, calculations and resources on BIZOMAT, and your responsibility to verify engineering and business work."
+  updated={new Date('2026-11-05')}
 >
-  <h2>Website content is general information</h2>
   <p>
-    Content on this website, including Library books and guides, KEVOS® calculators, service descriptions, examples and indicative pricing, is general information. It does not take your particular circumstances, requirements or obligations into account and is not a substitute for advice on your specific situation. Calculator results depend on the inputs and assumptions used and should be checked before making decisions.
+    BIZOMAT helps people do engineering and business work faster. It does not take responsibility for that work away from the people who rely on it. Please read this disclaimer with the <a href="/terms/">terms</a>.
   </p>
 
-  <h2>Services depend on agreed scope</h2>
+  <h2>AI-generated output</h2>
   <p>
-    KEVOS®’s services are provided according to a scope, deliverables, assumptions and commercial terms agreed in writing for each assignment. Indicative prices and descriptions on this website are a guide only and do not form an offer. Only the agreed scope defines what is included.
+    AI search, the AI assistants you connect to CAD Automation, and the learning paths written by AI can be wrong, incomplete, out of date or confidently mistaken. BIZOMAT designs these features so the AI chooses only among real pages and real tools, and so its CAD requests are checked before SOLIDWORKS acts on them, but no check catches every error. Treat AI output as a draft to review, not as a decision.
   </p>
 
-  <h2>Engineering certification and approvals</h2>
+  <h2>CAD automation and design validation</h2>
   <p>
-    Not all assignments include professional engineering certification, statutory approval, design sign-off or compliance certification. KEVOS® does not provide statutory engineering certification unless that is expressly agreed in writing for a particular assignment and KEVOS® is appropriately qualified and authorised to provide it.
-  </p>
-  <p>
-    Regulated or specialist work, for example work that legally requires a registered professional engineer, a licensed trade, a building certifier or another accredited professional, may need to be carried out or reviewed by appropriately qualified or registered professionals. Where KEVOS® becomes aware that this is likely, it will tell you.
+    CAD Automation makes real changes to real SOLIDWORKS files on your computer. You are responsible for every model, assembly and drawing it produces or changes: check dimensions, tolerances, features, mates, materials, mass properties, drawing views, notes and title blocks against your requirements and the applicable standards before you use, release or manufacture from them. Keep backups and use your normal version control and release process. Automated checks, such as the kernel prediction of volume and size, reduce errors; they do not prove a design is fit for purpose.
   </p>
 
-  <h2>Project-specific information</h2>
+  <h2>Engineering verification remains yours</h2>
   <p>
-    Technical outcomes depend on the accuracy and completeness of project-specific information, site conditions, requirements and decisions provided by the client and others. Recommendations, concepts and documentation are prepared on the basis of the information available at the time.
+    Nothing produced with BIZOMAT, whether by a calculator, an AI assistant, CAD Automation or a Library chapter, replaces verification by a competent engineer. Not all work includes professional engineering certification, statutory approval, design sign-off or compliance certification, and BIZOMAT does not provide them unless that is expressly agreed in writing for a particular assignment and BIZOMAT is appropriately qualified and authorised to provide it. Work that legally requires a registered professional engineer, a licensed trade, a building certifier or another accredited professional must be carried out or reviewed by that professional.
+  </p>
+
+  <h2>Calculations and Resources</h2>
+  <p>
+    Tools, calculators, books, guides and examples are general information. Results depend on the inputs, units, assumptions and methods used, which may not suit your situation, and some methods simplify the physics. Check inputs, units and results, and confirm critical values against the relevant standards, codes and manufacturer data before relying on them.
+  </p>
+
+  <h2>Business decisions</h2>
+  <p>
+    Business, financial, legal and management content is general information, not financial, legal, tax or investment advice, and it does not consider your circumstances. Decisions you make with it, or with Project Management data or automations, are yours. Seek professional advice where it matters.
+  </p>
+
+  <h2>Third-party software</h2>
+  <p>
+    CAD Automation depends on SOLIDWORKS, Microsoft Windows and the AI assistant you choose; Project Management can depend on Slack, Microsoft Teams or other services you connect. Updates or changes to that software, your licences or your computer can change how BIZOMAT behaves or stop it working until BIZOMAT is updated. BIZOMAT is not responsible for third-party software, its availability or its output.
   </p>
 
   <h2>Safety and implementation</h2>
   <p>
-    Clients remain responsible for how recommendations are implemented in their workplace, including work health and safety obligations, risk assessments, guarding, training and compliance with applicable laws and standards.
+    You remain responsible for how designs, recommendations and outputs are implemented in your workplace, including work health and safety obligations, risk assessments, guarding, training and compliance with applicable laws and standards.
   </p>
 
   <h2>Your rights</h2>
@@ -45,10 +57,8 @@ import TradeMarkNotice from '../components/TradeMarkNotice.astro';
 
   <h2>Trade marks</h2>
   <TradeMarkNotice />
-  <p>Trade mark registration protects the brand for the services recorded in the register. It is not an engineering licence, professional accreditation or government endorsement of website content, tools or services.</p>
   <p>
-    SOLIDWORKS is a registered trademark of Dassault Systèmes or its subsidiaries. Microsoft, Microsoft 365 and Office are trademarks of the Microsoft group of companies. Third-party names are used only to describe the software KEVOS® uses; KEVOS® is not affiliated with, endorsed by or a partner of these companies.
+    Trade mark registration protects a brand for the services recorded in the register. It is not an engineering licence, professional accreditation or government endorsement of content, tools or services. SOLIDWORKS is a registered trade mark of Dassault Systèmes SolidWorks Corporation. Microsoft, Windows and Teams are trade marks of the Microsoft group of companies. Third-party names are used only to describe compatibility; BIZOMAT is not affiliated with, endorsed by or a partner of these companies.
   </p>
-
-  <p>See also the website <a href="/terms/">terms</a> and the <a href="/privacy/">privacy policy</a>.</p>
+  <p>See also the <a href="/terms/">terms</a> and the <a href="/privacy/">privacy policy</a>.</p>
 </LegalLayout>

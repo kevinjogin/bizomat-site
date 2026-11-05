@@ -1,4 +1,4 @@
-// Library and Tools retrieval for learning paths, over the same catalogue and ranking as Ask KEVOS
+// Library and Tools retrieval for learning paths, over the same catalogue and ranking as Ask BIZOMAT
 // (src/lib/discovery/search.ts). A course is gathered topic by topic: each topic's best chapters, then the tools joined
 // to those chapters by reviewed knowledge links (preferred), then tools that match the topic itself.
 import { search, type Engine, type Hit } from '../discovery/search.ts';

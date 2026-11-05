@@ -21,7 +21,7 @@ const crumbs = [
 const priced = (min?: number) => (min ? { priceSpecification: { '@type': 'PriceSpecification', minPrice: min, priceCurrency: 'AUD' } } : {});
 const catalog = {
   '@type': 'OfferCatalog',
-  name: 'KEVOS® services and indicative packages',
+  name: 'BIZOMAT services and indicative packages',
   url: `${SITE.url}/services/`,
   itemListElement: [
     { '@type': 'Offer', name: ASSESSMENT.name, description: ASSESSMENT.summary, url: `${SITE.url}${ASSESSMENT.path}`, price: ASSESSMENT.price.toFixed(2), priceCurrency: ASSESSMENT.currency },
@@ -82,7 +82,7 @@ const catalog = {
   }
 
   <Section index="05" label="Fixed-scope offers" id="factory-fix" labelledby="ff-section-title">
-    <h2 id="ff-section-title" class="visually-hidden">KEVOS® Engineering Problem Assessment and Factory Fix</h2>
+    <h2 id="ff-section-title" class="visually-hidden">BIZOMAT Engineering Problem Assessment and Factory Fix</h2>
     <AssessmentFeature headingLevel="h3" id="assessment" />
     <p class="offer-note">Start with the {ASSESSMENT.priceLabel} assessment when you need an engineering view of one problem and a clear next step. Choose a Factory Fix when the problem is known to be worth solving now. <a href={`${ASSESSMENT.path}#choose`}>Compare the two</a>.</p>
     <FactoryFixFeature headingLevel="h3" />
@@ -121,7 +121,7 @@ const catalog = {
     <SoftwareNote headingLevel="h3" />
   </Section>
 
-  <CallToAction title="Not sure which service fits?" text="Describe the problem and KEVOS® can help define the scope, the deliverables and the best way to price the work." label="Get a Quote" />
+  <CallToAction title="Not sure which service fits?" text="Describe the problem and BIZOMAT can help define the scope, the deliverables and the best way to price the work." label="Get a Quote" />
 </BaseLayout>
 
 <style>

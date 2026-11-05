@@ -1,4 +1,4 @@
-// KEVOS® tool registry, read at build time from the same browser scripts the tools page runs
+// BIZOMAT tool registry, read at build time from the same browser scripts the tools page runs
 // (public/tools/data-*.js, guides-*.js and the input guides in inputs-*.js), so static pages and the live calculators never drift apart.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -42,7 +42,7 @@ export function loadWorkosTools() {
 /**
  * A tool earns its own indexable page only when its guide is complete enough to stand alone:
  * a purpose, input guidance, at least two method steps and at least one stated limitation.
- * Thinner guides stay inside the KEVOS® app until their content is reviewed and extended.
+ * Thinner guides stay inside the BIZOMAT app until their content is reviewed and extended.
  */
 export function hasStandaloneGuide(guide: ToolGuide | undefined): boolean {
   return Boolean(guide?.purpose && guide.inputs && (guide.method?.length ?? 0) >= 2 && (guide.limitations?.length ?? 0) >= 1);

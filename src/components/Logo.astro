@@ -1,18 +1,12 @@
 ---
+// The BIZOMAT wordmark for panels and diagrams (same files as SiteWordmark, sized for illustrations).
 interface Props {
   class?: string;
   height?: number;
   label?: string;
 }
-const { class: className, height = 22, label = 'KEVOS®' } = Astro.props;
-const sizeClass =
-  height <= 18
-    ? 'logo--hero-small'
-    : height <= 24
-      ? 'logo--hero'
-      : height >= 34
-        ? 'logo--large'
-        : 'logo--default';
+const { class: className, height = 18, label = 'BIZOMAT' } = Astro.props;
+const sizeClass = height <= 14 ? 'logo--hero-small' : height <= 18 ? 'logo--hero' : height >= 28 ? 'logo--large' : 'logo--default';
 ---
 <span
   class:list={['logo', sizeClass, className]}
@@ -20,55 +14,18 @@ const sizeClass =
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <img
-    class="logo__image logo__image--light"
-    src="/brand/kevos-wordmark-orange-light.svg"
-    alt=""
-    width="2069"
-    height="284"
-    decoding="async"
-  />
-  <img
-    class="logo__image logo__image--dark"
-    src="/brand/kevos-wordmark-orange-dark.svg"
-    alt=""
-    width="2069"
-    height="284"
-    decoding="async"
-  />
+  <img class="logo__image logo__image--light" src="/brand/bizomat-logo-light.svg" alt="" width="2329" height="241" decoding="async" />
+  <img class="logo__image logo__image--dark" src="/brand/bizomat-logo-dark.svg" alt="" width="2329" height="241" decoding="async" />
 </span>
 
 <style>
-  .logo {
-    --logo-h: 30px;
-    display: inline-grid;
-    place-items: center;
-    max-width: 100%;
-    line-height: 0;
-    overflow: visible;
-    white-space: nowrap;
-  }
-
-  .logo--hero-small { --logo-h: 18px; }
-  .logo--hero { --logo-h: 22px; }
-  .logo--default { --logo-h: 30px; }
-  .logo--large { --logo-h: 34px; }
-
-  .logo__image {
-    display: block;
-    width: auto;
-    height: var(--logo-h);
-    max-width: 100%;
-    object-fit: contain;
-    object-position: center;
-  }
-
-  /* KEVOS® orange wordmark, with accessible contrast for each theme. */
+  .logo { --logo-h: 22px; display: inline-grid; place-items: center; max-width: 100%; line-height: 0; overflow: visible; white-space: nowrap; }
+  .logo--hero-small { --logo-h: 13px; }
+  .logo--hero { --logo-h: 17px; }
+  .logo--default { --logo-h: 22px; }
+  .logo--large { --logo-h: 28px; }
+  .logo__image { display: block; width: auto; height: var(--logo-h); max-width: 100%; object-fit: contain; object-position: center; }
   .logo__image--dark { display: none; }
   :global(:root[data-theme='dark']) .logo__image--light { display: none; }
   :global(:root[data-theme='dark']) .logo__image--dark { display: block; }
-  @media (prefers-color-scheme: dark) {
-    :global(:root:not([data-theme='light'])) .logo__image--light { display: none; }
-    :global(:root:not([data-theme='light'])) .logo__image--dark { display: block; }
-  }
 </style>

@@ -1,11 +1,11 @@
 ---
-// "What would you like to learn or achieve?": the question box (learning paths and Ask KEVOS). Without JavaScript the form is a plain site search
-// (/search/?q=); with it, src/scripts/discovery.ts asks /api/discover for search terms and ranks the KEVOS® and the Library
+// "What would you like to learn or achieve?": the question box (learning paths and Ask BIZOMAT). Without JavaScript the form is a plain site search
+// (/search/?q=); with it, src/scripts/discovery.ts asks /api/discover for search terms and ranks the BIZOMAT and the Library
 // catalogue (/discovery-index.json) in the browser, rendering results into DiscoveryResults. The example questions are
 // DiscoveryExamples.astro, placed by the page (on the homepage, full width under the hero). The same box sits in the
 // Tools and Library page headers (size "compact"); only the homepage runs a question from its address (?q=, `autorun`),
 // because on those pages ?q= belongs to the directory search.
-// The homepage passes its own wording ("Ask KEVOS"); the defaults are the learning-path wording.
+// The homepage passes its own wording ("Ask BIZOMAT"); the defaults are the learning-path wording.
 interface Props {
   size?: 'large' | 'compact';
   autorun?: boolean;

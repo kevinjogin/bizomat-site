@@ -34,7 +34,7 @@ export function composeContactEmail(input: ContactInput, subject: string, submit
   ];
   return {
     from: CONTACT_SENDER, to: CONTACT_RECIPIENT, replyTo: input.email,
-    subject: safeSubject ? `New KEVOS enquiry: ${safeSubject}` : 'New KEVOS website enquiry',
+    subject: safeSubject ? `New BIZOMAT enquiry: ${safeSubject}` : 'New BIZOMAT website enquiry',
     text: `${rows.map(([label, value]) => `${label}: ${value}`).join('\n')}\n\nMessage:\n${input.message}\n`,
     html: `<dl>${rows.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join('')}</dl><p><strong>Message:</strong></p><p>${escapeHtml(input.message).replace(/\r\n|\r|\n/g, '<br>')}</p>`,
   };
