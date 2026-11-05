@@ -375,8 +375,8 @@ your model. Your model files are saved on your computer. See the <a href="/priva
 CADOS add-in for your Windows user only. Then, in SOLIDWORKS, open CADOS &gt; Status and paste the address and the add-in
 key from your dashboard. This route links one SOLIDWORKS session directly, without the Companion.</p>
 <p>Where SOLIDWORKS does not list add-ins installed without administrator rights, the package also writes a launcher
-macro (<code>OpenSketch.swb</code> in your Documents). It is not the add-in: it only starts the installed CADOS add-in from
-Tools &gt; Macro &gt; Run.</p>
+macro in your Documents folder (the setup program shows where). It is not the add-in: it only starts the installed CADOS
+add-in from Tools &gt; Macro &gt; Run.</p>
 <h3>Individual macros</h3><p>CADOS does not offer macro downloads. Everything CADOS does runs through the add-in.</p></section>
 </article></div></main>
 {brand.footer()}{brand.MENU_SCRIPT}</body></html>"""
