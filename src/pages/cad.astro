@@ -8,6 +8,7 @@ import Button from '../components/Button.astro';
 import AiToCad from '../components/visuals/AiToCad.astro';
 import CommandFlow from '../components/visuals/CommandFlow.astro';
 import '../styles/product.css';
+import { screenshots } from '../data/screenshots.ts';
 import { SITE } from '../config/site.ts';
 import { APP_LINKS } from '../config/platform.ts';
 import { CAD } from '../data/platform-catalog.ts';
@@ -15,6 +16,7 @@ import { CAD_EXAMPLES, CAD_TOOL_GROUPS } from '../data/cad-tools.ts';
 
 const toolCount = CAD_TOOL_GROUPS.reduce((n, g) => n + g.tools.length, 0);
 if (toolCount !== CAD.toolCount) throw new Error(`cad.astro: ${toolCount} tools listed, CAD.toolCount says ${CAD.toolCount}`);
+const shots = screenshots('cad');
 const description = 'BIZOMAT CAD Automation connects Claude, ChatGPT or another MCP assistant to SOLIDWORKS on your own computer: native parts, assemblies and drawings from plain-language requests.';
 const security = [
   { t: 'Signed commands', x: 'Every command to your computer is signed by BIZOMAT (ES256) and checked by the Companion before it runs. Replayed, expired or altered commands are refused.' },
@@ -103,6 +105,26 @@ const security = [
       </ul>
     </Container>
   </section>
+
+  {shots.length > 0 && (
+    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+      <Container>
+        <div class="pp-head">
+          <p class="bz-eyebrow">The real product</p>
+          <h2 id="screens-title">Your assistant, your computers and your tools, in one place</h2>
+          <p>Captured from the running application with example data.</p>
+        </div>
+        <div class="pp-shots">
+          {shots.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{s.title.replace(/^[^:]+: /, '')}. {s.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
 
   <section class="pp-section pp-section--tint" id="install" aria-labelledby="install-title">
     <Container class="pp-split">

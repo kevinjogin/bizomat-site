@@ -8,10 +8,12 @@ import Button from '../components/Button.astro';
 import ProjectFlow from '../components/visuals/ProjectFlow.astro';
 import WorkflowPipeline from '../components/visuals/WorkflowPipeline.astro';
 import '../styles/product.css';
+import { screenshots } from '../data/screenshots.ts';
 import { SITE } from '../config/site.ts';
 import { APP_LINKS } from '../config/platform.ts';
 import { WORK } from '../data/platform-catalog.ts';
 
+const shots = screenshots('work');
 const description = 'BIZOMAT Project Management: projects, tasks and teams in one workspace, with Table, Kanban, Calendar, Gantt and more, automations, dashboards and documents.';
 const viewNotes: Record<string, string> = {
   'Table': 'Sort, filter with AND/OR, group, resize and hide columns, select in bulk.',
@@ -85,6 +87,26 @@ const security = [
       </ul>
     </Container>
   </section>
+
+  {shots.length > 0 && (
+    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+      <Container>
+        <div class="pp-head">
+          <p class="bz-eyebrow">The real product</p>
+          <h2 id="screens-title">Boards, views, dashboards and documents</h2>
+          <p>Captured from the running application with example data.</p>
+        </div>
+        <div class="pp-shots">
+          {shots.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{s.title.replace(/^[^:]+: /, '')}. {s.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
 
   <section class="pp-section" id="teams" aria-labelledby="teams-title">
     <Container>
