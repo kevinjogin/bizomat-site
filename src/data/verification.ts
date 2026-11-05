@@ -18,5 +18,6 @@ export const VERIFICATION: readonly Verification[] = [
   { product: 'Project Management', suite: 'Data migration dry run: Cloudflare D1 and R2 to Node, and back', how: 'node scripts/migrate/dry-run.mjs (apps/work)', result: '45 of 45 checks passed', date: '5 Nov 2026' },
   { product: 'Website and Resources', suite: 'Site, search, tools and content tests', how: 'npm test (repository root)', result: '1,490 of 1,490 passed', date: '5 Nov 2026' },
   { product: 'Website and Resources', suite: 'Build quality gate: metadata, one H1, links, images, JSON-LD', how: 'npm run build', result: '4,441 pages verified', date: '5 Nov 2026' },
-  { product: 'Platform', suite: 'Edge proxy: routing, headers, streaming, WebSockets, long polls', how: 'node --test infrastructure/proxy', result: '59 of 59 passed', date: '5 Nov 2026' },
+  { product: 'Platform', suite: 'Edge proxy: routing, headers, streaming, WebSockets, long polls', how: 'node --test infrastructure/proxy', result: '60 of 60 passed', date: '5 Nov 2026' },
+  { product: 'Platform', suite: 'The production image with all four services, smoke-tested through the proxy (GitHub Actions)', how: 'BIZOMAT CI: image and local stack', result: '39 of 39 checks passed', date: '5 Nov 2026' },
 ];
