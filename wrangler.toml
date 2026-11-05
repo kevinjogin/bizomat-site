@@ -13,8 +13,14 @@ workers_dev = false
 
 # kevos.com already has DNS records. Bind the Worker as a route instead of
 # asking Wrangler to recreate the hostname as a Worker custom domain.
+# bizomat.ai is the BIZOMAT website (the platform homepage): the same Worker answers there once the bizomat.ai record
+# is proxied (orange cloud) in the bizomat.ai zone; www.bizomat.ai needs a proxied record too. Until then bizomat.ai
+# still points at the CAD app's Fly address and these routes do nothing. CAD Automation has its own address,
+# cad.bizomat.ai (DNS only, to the CAD app): never route it here (docs/BIZOMAT-DEPLOYMENT.md, "DNS cutover").
 routes = [
   { pattern = "kevos.com/*", zone_name = "kevos.com" },
+  { pattern = "bizomat.ai/*", zone_name = "bizomat.ai" },
+  { pattern = "www.bizomat.ai/*", zone_name = "bizomat.ai" },
 ]
 
 # Contact delivery: onboard kevos.com in Email Service and verify this destination.
