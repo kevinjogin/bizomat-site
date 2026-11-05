@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+// Stand-in `npx` for the Playwright run against the Node server
+// (playwright.node.config.ts puts this folder first on PATH).
+//
+// e2e specs change data with `npx wrangler d1 execute DB --local ... --command
+// <SQL>` (admin.spec.ts grants the founder role this way). On Cloudflare that
+// reaches Miniflare's local D1; here the same SQL is applied to the Node
+// server's D1 database, WORK_E2E_DATA_DIR/db.sqlite. Every other npx call goes
+// to the real npx. Written to run as CommonJS or ESM.
+'use strict';
+
+const args = process.argv.slice(2);
+const { spawnSync } = process.getBuiltinModule('node:child_process');
+const path = process.getBuiltinModule('node:path');
+const fs = process.getBuiltinModule('node:fs');
+
+if (args[0] === 'wrangler' && args[1] === 'd1' && args[2] === 'execute' && args.includes('--local') && args.includes('--command')) {
+  const dataDir = process.env.WORK_E2E_DATA_DIR;
+  if (!dataDir) {
+    console.error('WORK_E2E_DATA_DIR is not set');
+    process.exit(1);
+  }
+  const { DatabaseSync } = process.getBuiltinModule('node:sqlite');
+  const db = new DatabaseSync(path.join(dataDir, 'db.sqlite'), { timeout: 5000, enableForeignKeyConstraints: true, enableDoubleQuotedStringLiterals: true });
+  try {
+    db.exec(args[args.indexOf('--command') + 1]);
+  } finally {
+    db.close();
+  }
+  process.exit(0);
+}
+
+const self = path.dirname(fs.realpathSync(process.argv[1]));
+const real = (process.env.PATH ?? '')
+  .split(path.delimiter)
+  .filter((d) => d && path.resolve(d) !== self)
+  .map((d) => path.join(d, 'npx'))
+  .find((p) => fs.existsSync(p));
+if (!real) {
+  console.error('npx not found on PATH');
+  process.exit(127);
+}
+const r = spawnSync(real, args, { stdio: 'inherit' });
+process.exit(r.status ?? 1);
