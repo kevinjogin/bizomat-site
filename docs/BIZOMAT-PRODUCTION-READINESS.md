@@ -22,10 +22,10 @@ DNS record was changed, and the only deletion was the two exposed artifacts, as 
 | 7 | `OPENSKETCH_PASSWORD` not set on the live CAD app | **LIVE** | The live app (accounts mode) answers `/reset` with 303 to `/login`, which its code does only without the password |
 | 8 | CAD Automation at `https://bizomat.ai/cad` (prefix, links, cookies, OAuth metadata at the root, old hosts kept for programs) | **TESTED**, deploy **PENDING** (owner) | jogkev-creator/CADOS#14 merged (c853a6a): 363 tests and the Windows installer test passed on its head d7cff31 |
 | 9 | Long CAD tool calls survive Cloudflare (event-stream answers with a 15 s keep-alive) | **TESTED** | CADOS#14; the new test fails with the old JSON answers |
-| 9a | A Content Security Policy on every CAD page (needed now that bizomat.ai is one origin for three applications) | **TESTED**, merge **PENDING** | jogkev-creator/CADOS#15: 364 tests; checked in Chromium with no policy error (section 5) |
+| 9a | A Content Security Policy on every CAD page (needed now that bizomat.ai is one origin for three applications) | **TESTED**, deploy **PENDING** (owner) | jogkev-creator/CADOS#15 merged (b3e2be2): CI 6 of 6, 364 tests locally; checked in Chromium with no policy error (section 5) |
 | 10 | Existing connectors, add-ins and Companions keep working | **TESTED** | Sign-in and MCP through `bizomat.ai/cad`, `cados.kevos.com`, `cados.fly.dev`; a computer paired under `/cad`; the live metadata names `cados.kevos.com`, so connections were made with an address that stays (section 6) |
 | 11 | Website Worker routes bizomat.ai: website at `/`, `/cad` to the CAD app, `/tasks` to Project Management | **TESTED**, **PENDING** (owner) | gocore-website c237e4e9: 1,501 tests, type check, 4,441 pages built. Needs the steps in section 5 |
-| 12 | Project Management at `https://bizomat.ai/tasks` (one build serves both addresses; session cookie scoped to `/tasks`) | **TESTED**, deploy **PENDING** (owner) | jogkev-creator/PMO#2: 198 tests and 7 of 7 end-to-end (one under `/tasks`) passed locally. Until it is deployed and bound, `bizomat.ai/tasks` redirects to `work.kevos.com` |
+| 12 | Project Management at `https://bizomat.ai/tasks` (one build serves both addresses; session cookie scoped to `/tasks`) | **TESTED**, deploy **PENDING** (owner) | jogkev-creator/PMO#2 merged (e88fa79) after CI passed (tests, build, end-to-end); 198 tests and 7 of 7 end-to-end (one under `/tasks`) locally. Until it is deployed and bound, `bizomat.ai/tasks` redirects to `work.kevos.com` |
 | 13 | Windows installer 0.12.3: silent install, registration, uninstall with every COM key removed | **TESTED** | Installer test on windows-latest for CADOS#14 passed, including the strict CLSID check (section 7) |
 | 14 | Public installer download | **BLOCKED** (owner decision) | CADOS is private: its release files answer 404 without a GitHub sign-in (section 7) |
 | 15 | CADOS for SOLIDWORKS in a real SOLIDWORKS | **BLOCKED** (Windows PC with SOLIDWORKS) | `docs/KEVOS-TEST-REPORT.md`, section 4, in the CADOS repository |
@@ -167,8 +167,8 @@ Subdomains would have kept them apart. What contains it:
 - each application keeps its session cookie to its own path (`/cad`, `/tasks`); the website has none;
 - changes need same-origin requests in both applications;
 - the website and Project Management send a strict Content Security Policy. CAD pages sent none until
-  jogkev-creator/CADOS#15, which adds one (scripts only from the CAD app, its two inline scripts by hash) and is
-  checked on every page.
+  jogkev-creator/CADOS#15 (merged, not deployed yet), which adds one (scripts only from the CAD app, its two inline
+  scripts by hash) and is checked on every page.
 
 Keep the three policies strict, and never serve user-supplied HTML or scripts on bizomat.ai.
 
@@ -179,7 +179,7 @@ The owner's steps, in order, each with a check and a rollback, are in `BIZOMAT-D
 3. Merge this repository to `main` (publishes the website, kevos.com included).
 4. Straight after, switch the `bizomat.ai` records to proxied, add a proxied `www`, and set SSL/TLS to Full (strict).
    Turn Bot Fight Mode off and bypass the cache for the CAD paths.
-5. Deploy PMO#2 to `workos-platform-preview`, then uncomment the website's `TASKS` binding.
+5. Deploy PMO's default branch (PMO#2) to `workos-platform-preview`, then uncomment the website's `TASKS` binding.
 6. If Google sign-in is used, add the two return addresses above to the Google clients.
 
 ## 6. Live deployments and connector compatibility
@@ -198,8 +198,8 @@ has:
 - `cados.fly.dev` does not name itself;
 - `/v2/bridge/update.json` still answers 303 to the sign-in page instead of 401.
 
-So the image was built from older code. Owner: deploy `main` (c853a6a) from a fresh clone, then repeat these checks:
-- `https://bizomat.ai/healthz` reports `c853a6a`;
+So the image was built from older code. Owner: deploy `main` (b3e2be2) from a fresh clone, then repeat these checks:
+- `https://bizomat.ai/healthz` reports `b3e2be2`;
 - `https://bizomat.ai/cad/` is the CAD app;
 - `https://cados.kevos.com/docs` answers 301 to `https://bizomat.ai/cad/docs`;
 - `https://cados.kevos.com/.well-known/oauth-protected-resource/mcp` still names `cados.kevos.com`.
@@ -236,10 +236,8 @@ unless the app has its own `OPENSKETCH_INSTALLER_URL`. The owner chooses one:
 
 | Repository and branch | Commit | CI on that commit |
 | --- | --- | --- |
-| CADOS `main` | c853a6a (#14), after 9e3f79f (#12) and 1fec502 (#11) | #14 head d7cff31: tests (main and worker processes), npm, add-in build, MSI install and installer test: 9 of 9 success |
-| CADOS#15 (`claude/dazzling-mccarthy-31qg86`) | d9937f1 | Full suite locally: 364 passed; CI running at hand-off |
-| PMO default (`claude/pensive-turing-azyn1m`) | 3627787 (PMO#1) | PR run 42112332363: success |
-| PMO#2 (`claude/dazzling-mccarthy-31qg86`) | b82a714 | `npm run check` and Playwright locally: success; CI running at hand-off |
+| CADOS `main` | b3e2be2 (#15), after c853a6a (#14), 9e3f79f (#12) and 1fec502 (#11) | #15 head d9937f1: tests (main and worker processes) and npm, 6 of 6 success; #14 head d7cff31: tests, add-in build, MSI install and installer test, 9 of 9 success |
+| PMO default (`claude/pensive-turing-azyn1m`) | e88fa79 (PMO#2) | #2 head b82a714: lint, typecheck, tests, build and end-to-end, twice each: success; preview deploy skipped (switched off) |
 | gocore-website `claude/dazzling-mccarthy-31qg86` = `feat/bizomat-unified-platform` | c237e4e9 and the docs commit after it | `npm run verify` locally: success; BIZOMAT CI running at hand-off |
 
 ## 9. Data migration readiness (unchanged)

@@ -33,7 +33,7 @@ to start on Fly without `OPENSKETCH_PASSWORD`, so CAD Automation can never come 
 paths (section 6a). This single-app plan predates that decision and still names `work.bizomat.ai` and
 `cad.bizomat.ai`. Before it is used: the proxy (`infrastructure/proxy`) must route `/cad` and `/tasks` by path as
 the Worker does, and `apps/cad` and `apps/work` must take the path changes made in their source repositories
-(jogkev-creator/CADOS#14 and the page policy after it; jogkev-creator/PMO#2).
+(jogkev-creator/CADOS#14 and #15; jogkev-creator/PMO#2).
 
 | Host | Served by | Notes |
 | --- | --- | --- |
@@ -131,7 +131,7 @@ POST) to `https://bizomat.ai`. kevos.com keeps the website; its old CAD Automati
 
 | Order | Owner's change | Check | Rollback |
 | --- | --- | --- | --- |
-| 1 | Deploy CADOS `main` (with jogkev-creator/CADOS#14) to the `cados` app: from a fresh clone made with `git clone --config core.autocrlf=false https://github.com/jogkev-creator/CADOS`, `fly deploy -a cados` in that folder (not from another directory), or the Fly dashboard | `https://bizomat.ai/healthz` shows the new commit; `https://bizomat.ai/cad/` is the CAD app; `https://cados.kevos.com/docs` answers 301 to `https://bizomat.ai/cad/docs`; `https://cados.kevos.com/.well-known/oauth-protected-resource/mcp` still names `cados.kevos.com` | `fly releases -a cados --image`, then `fly deploy -a cados --image <the previous image>` |
+| 1 | Deploy CADOS `main` (b3e2be2: jogkev-creator/CADOS#14 and #15) to the `cados` app: from a fresh clone made with `git clone --config core.autocrlf=false https://github.com/jogkev-creator/CADOS`, `fly deploy -a cados` in that folder (not from another directory), or the Fly dashboard | `https://bizomat.ai/healthz` shows the new commit; `https://bizomat.ai/cad/` is the CAD app; `https://cados.kevos.com/docs` answers 301 to `https://bizomat.ai/cad/docs`; `https://cados.kevos.com/.well-known/oauth-protected-resource/mcp` still names `cados.kevos.com` | `fly releases -a cados --image`, then `fly deploy -a cados --image <the previous image>` |
 | 2 | bizomat.ai zone: the `_acme-challenge` CNAME that `fly certs show bizomat.ai -a cados` lists, **DNS only**. Behind the proxy Fly can renew the `bizomat.ai` certificate only by DNS, and Cloudflare (Full (strict)) refuses an expired one | `fly certs show bizomat.ai -a cados` reports the DNS validation | Delete the record |
 | 3 | Merge this repository to `main`: Workers Builds publishes the BIZOMAT website (on kevos.com too) with the routes `bizomat.ai/*` and `www.bizomat.ai/*` | kevos.com shows the BIZOMAT website | Revert the merge |
 | 4 | Straight after 3 (until then the website's links to `/tasks` reach the CAD app): switch the `bizomat.ai` A and AAAA records to **proxied** (their targets stay the Fly addresses), add a proxied CNAME `www` to `bizomat.ai`, SSL/TLS mode **Full (strict)**, and the CAD settings below | `https://bizomat.ai/` is the BIZOMAT homepage; `/cad/` the CAD app; `/CAD` answers 301 to `/cad`; `/tasks/` reaches Project Management; an AI app connected with `https://bizomat.ai/cad/mcp` and one connected with `https://cados.kevos.com/mcp` both list the tools | Switch the records back to DNS only: they still point at the CAD app |
