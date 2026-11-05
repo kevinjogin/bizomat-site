@@ -26,6 +26,7 @@ from pydantic import Field
 
 from . import sw_tools as T
 from .mcp_server import mcp
+from .sw_tools import _DEV, _routed
 
 
 def _pt(i, x, y):
@@ -190,8 +191,8 @@ class _Report:
                 "failed": len(bad), "seconds": round(time.monotonic() - self.t0, 1), "steps": self.rows,
                 "files": files,
                 "next": ("All steps passed." if not bad and not check else
-                         "Send the OpenSketch developers this report and the add-in log (%LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt, "
-                         "or Copy log in the OpenSketch window): each failed or check step names the SOLIDWORKS call to fix."),
+                         "Send CADOS support this report and the add-in log (Copy log in the KEVOS status window, or "
+                         "%LOCALAPPDATA%\\OpenSketch\\SolidWorks\\log.txt): each failed or check step names the SOLIDWORKS call to fix."),
                 "note": "The test files stay open in SOLIDWORKS and are saved in Documents\\OpenSketch\\selftest; close or delete them when done."}
 
 
@@ -347,7 +348,7 @@ async def stage_plate(rep: _Report) -> list[str]:
     # a drawing of the saved plate: standard views, scale, model dimensions, title block, then a PDF of it
     drw = await _op(rep, "drawing of the plate (A3, third angle, model dimensions, title block)", "create_drawing",
                     {"doc": doc, "sheet": "A3", "projection": "third", "dimensions": True,
-                     "properties": {"Title": "OpenSketch self test plate", "DrawingNo": "SELFTEST-1", "Revision": "A"}},
+                     "properties": {"Title": "CADOS self test plate", "DrawingNo": "SELFTEST-1", "Revision": "A"}},
                     timeout=300, check=lambda r, f: _drawing_problem(r))
     if drw and drw.get("doc"):
         files.append(drw["doc"])
@@ -436,15 +437,16 @@ STAGES = {"plate": stage_plate, "shapes": stage_shapes, "assembly": stage_assemb
 
 
 @mcp.tool()
+@_routed
 async def sw_selftest(stage: Annotated[Literal["plate", "shapes", "assembly"], Field(description=(
         "plate: every part feature on one part, reading back, variables, a batch rollback, export, save. "
         "shapes: draft, shell, sweep, loft. assembly: components, mates, interference, export."))] = "plate"
-                      ) -> CallToolResult:
+, device: _DEV = None) -> CallToolResult:
     """Check the SOLIDWORKS add-in on this PC: make new test files in Documents\\OpenSketch\\selftest and try every
-    kind of thing the add-in does, one step at a time, each checked against what OpenSketch's own kernel makes of
+    kind of thing the add-in does, one step at a time, each checked against what the CADOS kernel makes of
     it. Run the three stages in turn (plate, shapes, assembly) when the user asks to test the add-in or after
     installing it. Reports each step as ok, check (made, but not as predicted) or failed, with SOLIDWORKS' reason."""
-    st = T.swbridge.status(T._who())
+    st = T._status(T._who())
     if not st.get("connected"):
         return T._text(dict(st, how=T.swbridge.NOT_CONNECTED), True)
     rep = _Report(stage)

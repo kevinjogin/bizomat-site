@@ -184,7 +184,7 @@ RECT = {"id": "s1", "type": "sketch", "name": "Sketch1", "plane": {"ref": "Front
 
 def test_not_connected_and_bad_key(base):
     res, out = _mcp(base, "sw_status", {})
-    assert out["connected"] is False and "Connect to Claude" in out["how"]
+    assert out["connected"] is False and "CADOS > Status" in out["how"] and "CADOS dashboard" in out["how"]
     res, out = _mcp(base, "sw_get_document", {})
     assert res["isError"] and "not connected" in out["error"]
     assert httpx.post(base + "/mcp/sw/hello", json={}, headers={"Authorization": "Bearer oss_" + "0" * 40}).status_code == 401
@@ -359,14 +359,14 @@ def test_an_add_in_too_old_for_drawings_is_told_how_to_update(base):
     try:
         n = len(old.got)
         res, out = _mcp(base, "sw_create_drawing", {})
-        assert res["isError"] and "needs the OpenSketch add-in 0.9.1" in out["error"] and "releases/tag/addin-latest" in out["error"]
+        assert res["isError"] and "needs the CADOS add-in 0.9.1" in out["error"] and "releases/tag/addin-latest" in out["error"]
         res, out = _mcp(base, "sw_export", {"format": "dxf"})
         assert res["isError"] and "Exporting DXF needs" in out["error"]
         res, out = _mcp(base, "sw_edit_drawing", {"actions": [{"do": "arrange_dimensions"}]})
-        assert res["isError"] and "Editing drawings needs the OpenSketch add-in 0.10.0" in out["error"]
+        assert res["isError"] and "Editing drawings needs the CADOS add-in 0.10.0" in out["error"]
         assert len(old.got) == n, "nothing was sent to the old add-in"
         res, out = _mcp(base, "sw_status", {})
-        assert out["version"] == "0.1.0" and "needs the OpenSketch add-in 0.9.1" in out["update_needed"]
+        assert out["version"] == "0.1.0" and "needs the CADOS add-in 0.9.1" in out["update_needed"]
     finally:
         old.stop = True
     assert swbridge.version_tuple("0.10.0") > swbridge.version_tuple("0.9.0") and swbridge.version_tuple(None) == (0,)

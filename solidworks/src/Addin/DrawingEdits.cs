@@ -120,6 +120,10 @@ namespace OpenSketch.Sw
             {
                 var act = J.Obj(actions[i]) ?? new Dictionary<string, object>();
                 var what = J.Str(act, "do", "");
+                if (Bridge.CommandContext.Current?.CancelRequested == true)
+                    throw new UserError($"Cancelled at the AI app's request before action {i + 1}; the ones before it were done.", "CANCELLED",
+                                        J.O("results", results, "views", Views(drw).Select(v => (object)ViewInfo(v)).ToList()));
+                Bridge.CommandContext.Progress(i, actions.Count, what);
                 try
                 {
                     var r = Act(m, drw, what, act);

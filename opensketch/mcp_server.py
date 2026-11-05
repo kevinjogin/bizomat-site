@@ -23,14 +23,16 @@ from pydantic import Field
 
 from . import auth, uploads
 
-NAME = "OpenSketch"
+NAME = "CADOS"  # the name AI apps show for this connector (CADOS by KEVOS)
 PATHS = ("/mcp", "/solidworks/mcp")  # the first is the address people are given; the second is kept for early connectors
 
-INSTRUCTIONS = """OpenSketch: you build native SOLIDWORKS parts and assemblies in the user's own files, in the
-SOLIDWORKS running on their PC (through the OpenSketch add-in). Everything you make is a real SOLIDWORKS feature:
+INSTRUCTIONS = """CADOS by KEVOS: you build native SOLIDWORKS parts and assemblies in the user's own files, in the
+SOLIDWORKS running on their computer (through the CADOS add-in). Everything you make is a real SOLIDWORKS feature:
 sketches with relations and dimensions, extrudes, revolves, holes, fillets, patterns, mates.
 
 - Call sw_status first. If SOLIDWORKS is not connected, tell the user what it says and stop.
+- The user may have several registered computers: sw_status (or sw_list_devices) lists them; when more than one is
+  online, pass device="<name>" to every sw_ tool. A long command that outlives its call: sw_command_status.
 - Call sw_get_guide once before your first change: it has the workflow and the feature format.
 - The user may change the same file by hand between your calls: read it with sw_get_document before you write.
 - Build in small stages with sw_batch (if a step fails, the whole batch is taken back). Predict the volume and
@@ -53,10 +55,27 @@ mcp = MCPServer(name=NAME, instructions=INSTRUCTIONS)
 # The person whose sign-in or private address made this request: set by the gates for the request and copied
 # into the tool's task and worker threads. None = a server without accounts.
 _mcp_user: contextvars.ContextVar = contextvars.ContextVar("opensketch_mcp_user", default=None)
+# The AI app connection ({id, name}, no token) and a correlation id for this MCP request: carried into commands
+# for computers (devicebridge.py) for audit and for the confirmation the person sees at the SOLIDWORKS computer.
+_mcp_grant: contextvars.ContextVar = contextvars.ContextVar("opensketch_mcp_grant", default=None)
+_mcp_corr: contextvars.ContextVar = contextvars.ContextVar("opensketch_mcp_corr", default=None)
 
 
 def _who() -> dict | None:
     return _mcp_user.get()
+
+
+def current_grant() -> dict | None:
+    return _mcp_grant.get()
+
+
+def current_correlation() -> str | None:
+    return _mcp_corr.get()
+
+
+def _new_correlation() -> str:
+    from .devicebridge import ulid
+    return ulid("cor")
 
 
 def _check_filename(filename: str | None) -> str:
@@ -108,9 +127,11 @@ class _TokenGate:
             await send({"type": "http.response.body", "body": b"Not found"})
             return
         token = _mcp_user.set(user)
+        corr = _mcp_corr.set(_new_correlation())
         try:
             await self.endpoint.inner(scope, receive, send)
         finally:
+            _mcp_corr.reset(corr)
             _mcp_user.reset(token)
 
 
@@ -135,15 +156,17 @@ class _BearerGate:
             await send({"type": "http.response.body", "body": b""})
             return
         path = scope.get("path", PATHS[0]).rstrip("/") or PATHS[0]
+        grant = None
         if auth.mode() == "open":
             ok, user = True, None
         else:
             authz = headers.get("authorization", "")
             tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
             ok, user = mcpauth.user_for_access(tok) if tok else (False, None)
+            grant = mcpauth.grant_info(tok) if ok else None
             if not ok:
                 body = json.dumps({"error": "invalid_token" if tok else "unauthorized",
-                                   "error_description": "Sign in to OpenSketch to use it from this app."}).encode()
+                                   "error_description": "Sign in to CADOS to use it from this app."}).encode()
                 await send({"type": "http.response.start", "status": 401, "headers": cors + [
                     (b"content-type", b"application/json"),
                     (b"www-authenticate", mcpauth.challenge(headers, "invalid_token" if tok else "", path).encode())]})
@@ -155,9 +178,13 @@ class _BearerGate:
                 msg = dict(msg, headers=list(msg.get("headers", [])) + cors)
             await send(msg)
         token = _mcp_user.set(user)
+        gtok = _mcp_grant.set(grant)
+        corr = _mcp_corr.set(_new_correlation())
         try:
             await self.endpoint.inner(scope, receive, send_cors)
         finally:
+            _mcp_corr.reset(corr)
+            _mcp_grant.reset(gtok)
             _mcp_user.reset(token)
 
 

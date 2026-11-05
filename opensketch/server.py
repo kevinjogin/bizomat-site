@@ -16,12 +16,12 @@ from pathlib import Path
 import anyio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.datastructures import Headers
 
-from . import artifacts, auth, cadworker, mcp_server, store, uploads
+from . import artifacts, auth, cadworker, canonical, mcp_server, store, uploads
 
 STATIC = Path(__file__).parent / "static"
 
@@ -66,7 +66,7 @@ class _BodyTooBig(HTTPException):
 
 BODY_MAX = 68 * 2**20                 # an MCP call with a 32 MiB file as base64, or a file from the add-in
 BODY_SMALL = 64 * 1024                # sign-in forms, OAuth, everything that is not /api/ or /mcp/
-OWN_BODY_LIMIT = ("/mcp/uploads/", "/mcp/sw/file")  # streamed to their own, larger caps
+OWN_BODY_LIMIT = ("/mcp/uploads/", "/mcp/sw/file", "/v2/device/file")  # streamed to their own, larger caps
 
 
 class BodyLimit:
@@ -81,7 +81,7 @@ class BodyLimit:
     def cap(path: str) -> int | None:
         if path.startswith(OWN_BODY_LIMIT):
             return None
-        return BODY_MAX if path.startswith(("/api/", "/mcp", "/solidworks/mcp")) else BODY_SMALL
+        return BODY_MAX if path.startswith(("/api/", "/mcp", "/solidworks/mcp", "/v2/device/")) else BODY_SMALL
 
     async def __call__(self, scope, receive, send):
         cap = self.cap(scope.get("path", "")) if scope["type"] == "http" else None
@@ -169,10 +169,11 @@ class RequestLog:
                       flush=True)
 
 
-app = FastAPI(title="OpenSketch", lifespan=lifespan)
+app = FastAPI(title="CADOS by KEVOS", lifespan=lifespan, docs_url=None, redoc_url=None)  # /docs is the documentation page
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(RequestLog)
-app.add_middleware(BodyLimit)  # outermost: before the sign-in gate reads anything
+app.add_middleware(BodyLimit)  # before the sign-in gate reads anything
+app.add_middleware(canonical.CanonicalHost)  # outermost: an old host name is sent to the public address first
 
 
 @app.exception_handler(store.StorageError)
@@ -503,7 +504,7 @@ def _sw_person(request: Request):
     tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
     ok, user = swbridge.resolve(tok)
     if not ok:
-        page = f"the OpenSketch home page, {auth.public_url(dict(request.headers))}"
+        page = f"your CADOS dashboard, {auth.public_url(dict(request.headers))}"
         if swbridge.retired(tok):
             raise HTTPException(401, f"A new SOLIDWORKS key was made, so this one stopped working. Paste the new key from {page}")
         raise HTTPException(401, f"This SOLIDWORKS key is not valid. Copy the key again from {page}")
@@ -629,9 +630,41 @@ def api_sw_key(request: Request):
 @app.get("/api/sw/download")
 def api_sw_download():
     if not SW_DOWNLOAD.is_file():
-        raise HTTPException(404, "The SOLIDWORKS add-in is not on this server.")
-    return FileResponse(SW_DOWNLOAD, filename="OpenSketch-SOLIDWORKS.zip", media_type="application/zip",
+        raise HTTPException(404, "The SOLIDWORKS add-in package is not on this server.")
+    return FileResponse(SW_DOWNLOAD, filename="CADOS-SOLIDWORKS-addin.zip", media_type="application/zip",
                         headers={"Cache-Control": "no-cache"})
+
+
+# The Windows installer (CADOS for SOLIDWORKS, an MSI built by solidworks.yml on Windows). Public: it holds no data.
+INSTALLER_DEFAULT = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-latest/CADOS-for-SOLIDWORKS-x64.msi"
+
+
+def installer_url() -> str:
+    """Where "Download CADOS for SOLIDWORKS" goes: OPENSKETCH_INSTALLER_URL, else the release this server publishes to
+    its computers (bridge-release.json, the same file the Companion's updates come from), else the newest build."""
+    env = os.environ.get("OPENSKETCH_INSTALLER_URL", "").strip()
+    if env.startswith("https://"):
+        return env
+    try:
+        rel = devicebridge.release_manifest()
+        if rel and str(rel.get("msi_url", "")).startswith("https://"):
+            return rel["msi_url"]
+    except Exception:
+        pass
+    return INSTALLER_DEFAULT
+
+
+@app.get("/download/solidworks")
+def download_solidworks():
+    return RedirectResponse(installer_url(), status_code=302, headers={"Cache-Control": "no-store"})
+
+
+# ----------------------------------------------------------------------------- registered computers (KEVOS)
+# devicebridge.py: pairing, the KEVOS Companion's signed link (/v2/...), the person's computers (/api/devices)
+
+from . import devicebridge  # noqa: E402
+
+app.include_router(devicebridge.router)
 
 
 # ----------------------------------------------------------------------------- the home page
@@ -647,11 +680,33 @@ def api_connect_new_address(request: Request):
     return {"mcp_url": f"{_base(request)}{mcp_server.PATHS[0]}/{auth.mcp_token_for(u)}"}
 
 
-@app.get("/solidworks")  # the page's address before it became the home page
+PAGE_HEADERS = {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin"}
+PUBLIC_HEADERS = {"Cache-Control": "no-cache", "X-Frame-Options": "DENY", "Referrer-Policy": "strict-origin-when-cross-origin"}
+
+
+@app.get("/dashboard")
+@app.get("/solidworks")  # the dashboard's address before it became the home page
 async def solidworks_page(request: Request):
     from . import sw_page
-    return await _text_page(request.scope, sw_page.page(), "text/html; charset=utf-8",
-                            {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin"})
+    return await _text_page(request.scope, sw_page.page(_base(request)), "text/html; charset=utf-8", PAGE_HEADERS)
+
+
+def _signed_in(request: Request) -> bool:
+    return auth.mode() == "open" or _user(request) is not None
+
+
+@app.get("/overview")
+async def overview_page(request: Request):
+    """The product page, for everyone (the sign-in gate lets it through)."""
+    from . import site
+    return await _text_page(request.scope, site.landing(_signed_in(request), _base(request)), "text/html; charset=utf-8", PUBLIC_HEADERS)
+
+
+@app.get("/docs")
+async def docs_page(request: Request):
+    """Setup, connection, verification and troubleshooting, for everyone."""
+    from . import site
+    return await _text_page(request.scope, site.docs(_signed_in(request), _base(request)), "text/html; charset=utf-8", PUBLIC_HEADERS)
 
 
 @app.get("/api/solidworks")
@@ -882,7 +937,10 @@ async def _text_page(scope, body: bytes, media_type: str, headers: dict) -> Resp
 
 @app.get("/")
 async def index(request: Request):
-    return await solidworks_page(request)
+    """The dashboard for a signed-in person (and on an open server); the product page for a visitor."""
+    if _signed_in(request):
+        return await solidworks_page(request)
+    return await overview_page(request)
 
 
 STATIC = Path(__file__).parent / "static"

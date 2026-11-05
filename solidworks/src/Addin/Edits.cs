@@ -362,8 +362,11 @@ namespace OpenSketch.Sw
                 if (!args.ContainsKey("doc") && a.ContainsKey("doc")) args["doc"] = a["doc"];
                 Dictionary<string, object> res = null;
                 string why = null;
+                string code = null;
                 try
                 {
+                    Bridge.CommandContext.ThrowIfCancelled();
+                    Bridge.CommandContext.Progress(i, steps.Count, op);
                     using (new Quiet(app))
                     {
                         switch (op)
@@ -381,6 +384,7 @@ namespace OpenSketch.Sw
                 catch (UserError ex)
                 {
                     why = ex.Message;
+                    code = ex.Code;
                     res = ex.Detail ?? res;
                 }
                 catch (Exception ex)
@@ -395,7 +399,7 @@ namespace OpenSketch.Sw
                                    "rolled_back", left.Count == 0, "results", results);
                     if (left.Count > 0) fail["not_removed"] = left;
                     else fail["note"] = "Everything the batch made was removed again. Fix that step and send the whole batch again.";
-                    throw new UserError("Step " + i + " (" + op + ") failed: " + why, fail);
+                    throw new UserError("Step " + i + " (" + op + ") failed: " + why, code, fail);
                 }
                 results.Add(J.O("index", i, "op", op, "result", res));
             }

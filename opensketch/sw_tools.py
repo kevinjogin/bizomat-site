@@ -20,7 +20,9 @@ from __future__ import annotations
 
 import base64
 import binascii
+import contextvars
 import copy
+import functools
 import json
 import re
 from collections import OrderedDict
@@ -49,17 +51,20 @@ async def _thread(fn, *args):
 # Errors a geometry tool reports as a plain error result (anything else is a bug and is raised).
 GEOM_ERRORS = (ValueError, importer.ImportError_, cadworker.CadUnavailable, cadworker.CadJobError)
 
-SW_GUIDE = """You are building in SOLIDWORKS 2022 on the user's PC through the OpenSketch add-in. Everything you
+SW_GUIDE = """You are building in SOLIDWORKS 2022 on the user's computer through the CADOS add-in. Everything you
 make is a native SOLIDWORKS feature in the user's own file, and the user may change the file by hand between
 your calls, so read before you write (sw_get_document).
 
 Workflow:
 - sw_status first: is SOLIDWORKS connected, which documents are open. If not connected, tell the user what the
   status says and stop.
+- Several registered computers (CADOS for SOLIDWORKS): sw_status lists them; pass device="<name>" to every tool when more
+  than one is online. Deleting, Save As, overwriting a drawing and undo are confirmed by the person at that computer:
+  if they decline, say so and do not retry.
 - sw_create_document makes a new part or assembly from the user's default template and saves it in
   Documents\\OpenSketch (or `folder`). Every other tool takes `doc`: its path or window title from sw_status;
   leave it out for the active document.
-- sw_add_features writes features in OpenSketch's document format (below): sketches with entities, relations and
+- sw_add_features writes features in the CADOS feature format (below): sketches with entities, relations and
   dimensions, then extrudes, revolves, sweeps, lofts, holes, fillets, chamfers, shells, drafts, mirrors,
   patterns and planes. Feature ids are yours for that call; to point at features already in the file, use their
   SOLIDWORKS names ("Sketch3", "Boss-Extrude1", "Plane1"). Every sketch is checked and solved here first; give
@@ -131,6 +136,37 @@ MATE_TYPES = Literal["coincident", "concentric", "parallel", "perpendicular", "d
                      "hinge", "limit_distance", "limit_angle"]
 _DOC = Annotated[str | None, Field(description="Path or window title from sw_status; omit for the active document")]
 _COMP = Annotated[str | None, Field(description="Assemblies: a component name (e.g. Bracket-1) to work on its part")]
+_DEV = Annotated[str | None, Field(description="Which registered computer (name from sw_list_devices); omit when only "
+                                               "one is online or a default is set")]
+
+# The computer this tool call goes to (its `device` argument) and the tool's name, for every command it sends.
+_DEVICE: contextvars.ContextVar = contextvars.ContextVar("kevos_device", default=None)
+_TOOL: contextvars.ContextVar = contextvars.ContextVar("kevos_tool", default=None)
+
+
+def _device() -> str | None:
+    return _DEVICE.get()
+
+
+def _status(who) -> dict:
+    """swbridge.status for this call's computer (the device argument only when one was given)."""
+    d = _device()
+    return swbridge.status(who) if d is None else swbridge.status(who, d)
+
+
+def _routed(fn):
+    """Sets the call's computer (`device` argument) and tool name for _run, _geometry and the status checks. The
+    signature stays the tool's own (functools.wraps), so the MCP schema still comes from it."""
+    @functools.wraps(fn)
+    async def tool(*args, **kwargs):
+        d = _DEVICE.set(kwargs.get("device"))
+        t = _TOOL.set(fn.__name__)
+        try:
+            return await fn(*args, **kwargs)
+        finally:
+            _TOOL.reset(t)
+            _DEVICE.reset(d)
+    return tool
 
 
 def _text(obj: Any, error: bool = False) -> CallToolResult:
@@ -141,11 +177,14 @@ async def _run(op: str, args: dict, timeout: float = swbridge.DEFAULT_TIMEOUT, b
                ) -> tuple[dict | None, dict, str | None]:
     """(result, files, error) for one SOLIDWORKS command."""
     try:
-        body, files = await swbridge.call(_who(), op, {k: v for k, v in args.items() if v is not None}, timeout, blobs)
+        body, files = await swbridge.call(_who(), op, {k: v for k, v in args.items() if v is not None}, timeout, blobs,
+                                          device=_device(), tool=_TOOL.get())
     except swbridge.BridgeError as exc:
-        return None, {}, str(exc)
+        return ({"error_code": exc.code} if exc.code else None), {}, str(exc)
     if not body.get("ok"):
         out = body.get("result") if isinstance(body.get("result"), dict) else {}
+        if body.get("code"):
+            out = dict(out, error_code=body["code"])
         return out, files, body.get("error") or "SOLIDWORKS could not do it."
     return body.get("result") or {}, files, None
 
@@ -160,17 +199,22 @@ async def _simple(op: str, args: dict, timeout: float = swbridge.DEFAULT_TIMEOUT
 # ----------------------------------------------------------------------------- connection and documents
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def sw_status() -> CallToolResult:
-    """Is SOLIDWORKS connected through the OpenSketch add-in, which version, and which documents are open
+@_routed
+async def sw_status(device: _DEV = None) -> CallToolResult:
+    """Is SOLIDWORKS connected through the CADOS add-in, which version, and which documents are open
     (path, title, part or assembly, active, unsaved changes). Call it first."""
-    st = swbridge.status(_who())
+    st = _status(_who())
     if not st.get("connected"):
         return _text(dict(st, how=swbridge.NOT_CONNECTED))
+    if st.get("ambiguous"):  # several computers online and none chosen: list them, the AI picks with device=
+        return _text(st)
+    if st.get("via") == "companion" and not st.get("solidworks"):
+        return _text(st)  # the computer is online but SOLIDWORKS (or the add-in) is not running there
     res, _, err = await _run("status", {}, timeout=30)
     if err:
         return _text(dict(st, error=err), True)
     out = dict(st, **(res or {}))
-    old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings")
+    old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings", device=_device())
     if old:
         out["update_needed"] = old
     return _text(out)
@@ -185,29 +229,33 @@ def sw_get_guide() -> str:
 
 
 @mcp.tool()
+@_routed
 async def sw_create_document(name: str, kind: Literal["part", "assembly"] = "part",
                              folder: Annotated[str | None, Field(description="Windows folder; default Documents\\OpenSketch")] = None,
-                             units: Literal["mm", "inch"] = "mm") -> CallToolResult:
+                             units: Literal["mm", "inch"] = "mm", device: _DEV = None) -> CallToolResult:
     """A new SOLIDWORKS part or assembly from the user's default template, saved as <name>.SLDPRT / .SLDASM
     (a free name is chosen if the file exists). Units MMGS by default. Returns its path: pass it as `doc`."""
     return await _simple("create_document", {"name": name, "kind": kind, "folder": folder, "units": units})
 
 
 @mcp.tool()
-async def sw_open_document(path: Annotated[str, Field(description="Full Windows path of a .SLDPRT or .SLDASM")]) -> CallToolResult:
+@_routed
+async def sw_open_document(path: Annotated[str, Field(description="Full Windows path of a .SLDPRT or .SLDASM")], device: _DEV = None) -> CallToolResult:
     """Open a SOLIDWORKS file (or bring it to the front if it is open)."""
     return await _simple("open_document", {"path": path}, timeout=180)
 
 
 @mcp.tool()
-async def sw_save(doc: _DOC = None, path: Annotated[str | None, Field(description="Save As this path instead")] = None) -> CallToolResult:
+@_routed
+async def sw_save(doc: _DOC = None, path: Annotated[str | None, Field(description="Save As this path instead")] = None, device: _DEV = None) -> CallToolResult:
     """Save the document (Save As with path)."""
     return await _simple("save", {"doc": doc, "path": path}, timeout=180)
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+@_routed
 async def sw_get_document(doc: _DOC = None, sketches: Annotated[bool, Field(description="Include every sketch's entities, relations and dimensions")] = False,
-                          component: _COMP = None) -> CallToolResult:
+                          component: _COMP = None, device: _DEV = None) -> CallToolResult:
     """Read a SOLIDWORKS document as it is now: the feature tree (name, type, suppressed, rebuild errors and
     warnings with SOLIDWORKS' reason), sketch states (fully / under / over defined), dimensions, global
     variables and equations, the body's volume and bounding box; for an assembly its components (file, fixed,
@@ -305,10 +353,11 @@ def expectations(st, skip: set = frozenset()) -> dict:
 
 
 @mcp.tool()
-async def sw_add_features(features: Annotated[list[dict], Field(description="Features in OpenSketch's format, in tree order (sw_get_guide)")],
+@_routed
+async def sw_add_features(features: Annotated[list[dict], Field(description="Features in the CADOS feature format, in tree order (sw_get_guide)")],
                           doc: _DOC = None, component: _COMP = None,
                           summary: str = "",
-                          predict: Annotated[bool, Field(description="Build the same features here on the current body first and check SOLIDWORKS against it")] = True) -> CallToolResult:
+                          predict: Annotated[bool, Field(description="Build the same features here on the current body first and check SOLIDWORKS against it")] = True, device: _DEV = None) -> CallToolResult:
     """Make features in a SOLIDWORKS part (or in a component's part with component): sketches (entities,
     relations, dimensions), plane, extrude (boss/cut, blind, through all, up to next, mid plane, two directions,
     draft), revolve, sweep, loft, hole, fillet, chamfer, shell, draft, mirror, linear and circular pattern.
@@ -345,12 +394,13 @@ BATCH_OPS = {"sw_add_features": "add_features", "sw_insert_component": "insert_c
 
 
 @mcp.tool()
+@_routed
 async def sw_batch(steps: Annotated[list[dict], Field(description=(
                        'Steps in order, each {"tool": "<tool>", "args": {...}} with that tool\'s arguments (doc may be '
                        'left out: the batch doc is used). Tools: sw_add_features, sw_insert_component, sw_add_mate, '
                        'sw_set_parameter, sw_set_equation.'))],
                    doc: _DOC = None, summary: str = "",
-                   stop_on_warnings: bool = False) -> CallToolResult:
+                   stop_on_warnings: bool = False, device: _DEV = None) -> CallToolResult:
     """Run several steps in SOLIDWORKS as ONE change: if a step fails (an error, a feature SOLIDWORKS cannot
     make, a mate that does not hold, or with stop_on_warnings a warning), everything the batch made is removed
     and changed values are put back, and the reply says which step failed and why. Build parts in stages of a
@@ -407,9 +457,10 @@ async def sw_batch(steps: Annotated[list[dict], Field(description=(
 
 
 @mcp.tool()
+@_routed
 async def sw_delete_items(doc: _DOC = None, features: list[str] | None = None, components: list[str] | None = None,
                           mates: list[str] | None = None,
-                          dry_run: Annotated[bool, Field(description="Only report what would go with them")] = False) -> CallToolResult:
+                          dry_run: Annotated[bool, Field(description="Only report what would go with them")] = False, device: _DEV = None) -> CallToolResult:
     """Delete features (by SOLIDWORKS name; their absorbed sketches go too, children that depend on them are
     listed), components or mates. dry_run=true lists what would be deleted and what depends on it."""
     return await _simple("delete", {"doc": doc, "features": features, "components": components, "mates": mates,
@@ -417,14 +468,16 @@ async def sw_delete_items(doc: _DOC = None, features: list[str] | None = None, c
 
 
 @mcp.tool()
-async def sw_undo(doc: _DOC = None, steps: Annotated[int, Field(ge=1, le=20)] = 1) -> CallToolResult:
+@_routed
+async def sw_undo(doc: _DOC = None, steps: Annotated[int, Field(ge=1, le=20)] = 1, device: _DEV = None) -> CallToolResult:
     """SOLIDWORKS Edit > Undo, `steps` times."""
     return await _simple("undo", {"doc": doc, "steps": steps})
 
 
 @mcp.tool()
+@_routed
 async def sw_set_parameter(name: str, expression: str | None = None, doc: _DOC = None,
-                           remove: bool = False, comment: str | None = None) -> CallToolResult:
+                           remove: bool = False, comment: str | None = None, device: _DEV = None) -> CallToolResult:
     """Create, change or remove a SOLIDWORKS global variable (Tools > Equations): "wall" = 2.5, or an
     expression of other variables ("length / 40"). Everything that uses it is rebuilt."""
     return await _simple("set_parameter", {"doc": doc, "name": name, "expression": expression, "remove": remove,
@@ -432,9 +485,10 @@ async def sw_set_parameter(name: str, expression: str | None = None, doc: _DOC =
 
 
 @mcp.tool()
+@_routed
 async def sw_set_equation(target: Annotated[str, Field(description='A dimension "D1@Sketch1", or "<feature name>.<field>" such as "Boss-Extrude1.depth" (fields: depth, dir2.depth, diameter (from the feature\'s sketch), radius, distance, thickness, offset, spacing, spacing2, angle, draft, step, count, count2; holes also bore_depth, bore_diameter, sink_diameter)')],
                           expression: Annotated[str | None, Field(description='Global variables and numbers, e.g. "wall * 2"; empty removes the equation')] = None,
-                          doc: _DOC = None) -> CallToolResult:
+                          doc: _DOC = None, device: _DEV = None) -> CallToolResult:
     """Drive a dimension with an equation of global variables (SOLIDWORKS Equations)."""
     return await _simple("set_equation", {"doc": doc, "target": target, "expression": expression})
 
@@ -442,11 +496,12 @@ async def sw_set_equation(target: Annotated[str, Field(description='A dimension 
 # ----------------------------------------------------------------------------- assemblies
 
 @mcp.tool()
+@_routed
 async def sw_insert_component(part: Annotated[str, Field(description="Path of a .SLDPRT/.SLDASM, or an open document's title")],
                               doc: _DOC = None,
                               position: Annotated[list[float] | None, Field(description="[x,y,z] mm of the part origin")] = None,
                               rotation: Annotated[list[float] | None, Field(description="[rx,ry,rz] degrees about the assembly X, then Y, then Z axes")] = None,
-                              fixed: bool | None = None) -> CallToolResult:
+                              fixed: bool | None = None, device: _DEV = None) -> CallToolResult:
     """Insert a part (or sub-assembly) into the assembly at a position; mates finish the placement. The first
     component is fixed unless fixed=false. Returns the component's name (e.g. Bracket-1) for mates."""
     return await _simple("insert_component", {"doc": doc, "part": part, "position": position, "rotation": rotation,
@@ -460,11 +515,12 @@ def _mate_args(a: dict) -> dict:
 
 
 @mcp.tool()
+@_routed
 async def sw_add_mate(type: MATE_TYPES, refs: list[dict], doc: _DOC = None, value: float | None = None,
                       align: Literal["anti", "aligned", "auto"] | None = None, flip: bool | None = None,
                       planes: list[dict] | None = None, angle_refs: list[dict] | None = None,
                       angle_min: float | None = None, angle_max: float | None = None,
-                      min: float | None = None, max: float | None = None, name: str | None = None) -> CallToolResult:
+                      min: float | None = None, max: float | None = None, name: str | None = None, device: _DEV = None) -> CallToolResult:
     """Add a SOLIDWORKS mate. refs: two references in each component's PART coordinates, e.g.
     {"component": "Base-1", "plane": {"point": [x,y,z], "normal": [x,y,z]}}, {"component": "Pin-1", "axis":
     {"point": [...], "dir": [...]}}, {"component": "Base-1", "ref": "Top Plane"}, or {"ref": "Front Plane"}
@@ -522,7 +578,7 @@ async def _geometry(doc: str | None, component: str | None = None) -> dict:
     """An OpenSketch document holding SOLIDWORKS' current geometry: a part with one imported body, or an
     assembly whose component ids are SOLIDWORKS' component names. Parts are re-exported only when SOLIDWORKS'
     update stamp changed."""
-    pid = swbridge.person_id(_who())
+    pid = swbridge.person_id(_who()) + "|" + swbridge.target_key(_who(), _device())
     have = {k[1]: v["stamp"] for k, v in _cache.items() if k[0] == pid}
     res, files, err = await _run("geometry", {"doc": doc, "component": component, "have": have}, timeout=600)
     if err:
@@ -580,10 +636,11 @@ def _topology_sync(osdoc: dict, kind, near, limit) -> dict:
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+@_routed
 async def sw_body_topology(doc: _DOC = None, component: _COMP = None,
                            kind: Literal["both", "faces", "edges"] = "both",
                            near: Annotated[list[float] | None, Field(description="[x,y,z] mm: items nearest this point first")] = None,
-                           limit: Annotated[int, Field(ge=1, le=500)] = 60) -> CallToolResult:
+                           limit: Annotated[int, Field(ge=1, le=500)] = 60, device: _DEV = None) -> CallToolResult:
     """Faces and edges of the part's body as SOLIDWORKS has it now (part coordinates; in an assembly give
     component). Faces: type, area, centre, an on-face point, normal, axis and radius, `ref`. Edges: type,
     midpoint, ends, length, direction or centre and radius, the faces it joins, face_angle_deg (90 = square
@@ -601,9 +658,10 @@ async def sw_body_topology(doc: _DOC = None, component: _COMP = None,
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+@_routed
 async def sw_measure_items(a: Annotated[dict, Field(description='{"face": ref} | {"edge": ref} | {"point": [x,y,z]}; in an assembly add "component": "<name>" (assembly coordinates)')],
                            b: Annotated[dict | None, Field(description="Optional second item, same form")] = None,
-                           doc: _DOC = None) -> CallToolResult:
+                           doc: _DOC = None, device: _DEV = None) -> CallToolResult:
     """Measure like SOLIDWORKS Evaluate > Measure, on the current geometry: one item gives area, length,
     diameter, axis, normal, hole or not, and the holes and slots through a planar face; two items give the
     minimum distance with its points, centre distance between axes, angles and plane distances."""
@@ -616,7 +674,8 @@ async def sw_measure_items(a: Annotated[dict, Field(description='{"face": ref} |
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def sw_inspect_design(doc: _DOC = None, component: _COMP = None) -> CallToolResult:
+@_routed
+async def sw_inspect_design(doc: _DOC = None, component: _COMP = None, device: _DEV = None) -> CallToolResult:
     """Numbers to check against what you meant: every feature's state, the body's volume, area, centre of mass,
     bounding box, body count, mass with the SOLIDWORKS material, each sketch's state (fully / under / over
     defined); for an assembly the components, mates and their states."""
@@ -624,6 +683,7 @@ async def sw_inspect_design(doc: _DOC = None, component: _COMP = None) -> CallTo
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+@_routed
 async def sw_preview(doc: _DOC = None, view: Literal["isometric", "top", "front", "right"] = "isometric",
                      width: int = 960, height: int = 720, component: _COMP = None,
                      yaw: Annotated[float | None, Field(description="Degrees about +Y from the front toward the right; with pitch, replaces view")] = None,
@@ -631,8 +691,8 @@ async def sw_preview(doc: _DOC = None, view: Literal["isometric", "top", "front"
                      target: Annotated[list[float] | None, Field(description="[x,y,z] mm to centre on (close-ups)")] = None,
                      view_width: Annotated[float | None, Field(description="Width shown in mm (zoom)")] = None,
                      section: Annotated[dict | None, Field(description='{"point": [x,y,z], "normal": [x,y,z]}: cut away the normal\'s side')] = None,
-                     screenshot: Annotated[bool, Field(description="A picture of the SOLIDWORKS window itself instead (no section or camera options)")] = False
-                     ) -> CallToolResult:
+                     screenshot: Annotated[bool, Field(description="A picture of the SOLIDWORKS window itself instead (no section or camera options)")] = False,
+                     device: _DEV = None) -> CallToolResult:
     """A PNG of the current SOLIDWORKS geometry, returned directly. Rendered here from the body (any view, close-
     ups, a section to look inside), or with screenshot=true the SOLIDWORKS window as the user sees it."""
     if not 128 <= width <= 1600 or not 128 <= height <= 1600:
@@ -666,7 +726,8 @@ def _preview_sync(doc: dict, view, width, height, section, cam) -> bytes:
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def sw_check_interference(doc: _DOC = None) -> CallToolResult:
+@_routed
+async def sw_check_interference(doc: _DOC = None, device: _DEV = None) -> CallToolResult:
     """Every pair of components in the assembly whose bodies overlap, with the overlap volume (mm3)."""
     try:
         g = await _geometry(doc)
@@ -680,7 +741,8 @@ async def sw_check_interference(doc: _DOC = None) -> CallToolResult:
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def sw_find_mate_candidates(doc: _DOC = None) -> CallToolResult:
+@_routed
+async def sw_find_mate_candidates(doc: _DOC = None, device: _DEV = None) -> CallToolResult:
     """Likely mates from the assembly's geometry (shafts in holes, faces lying on each other), with references
     ready for sw_add_mate. Useful after inserting parts or importing a STEP assembly."""
     try:
@@ -704,6 +766,7 @@ _SCALE = re.compile(r"^\s*(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)\s*$")
 
 
 @mcp.tool()
+@_routed
 async def sw_create_drawing(
         doc: Annotated[str | None, Field(description="The part or assembly to draw (path or window title); omit for the active document. It must have been saved.")] = None,
         sheet: Annotated[Literal["A4", "A3", "A2", "A1", "A0"], Field(description="Sheet size, landscape")] = "A3",
@@ -716,7 +779,7 @@ async def sw_create_drawing(
         folder: Annotated[str | None, Field(description="Windows folder; default the model's own folder")] = None,
         notes: Annotated[list[str] | None, Field(description="General notes, one line each, placed bottom left. Omit for the standard set (units, do not scale, deburr, ISO 2768-m general tolerances); [] for none")] = None,
         centre_marks: Annotated[bool, Field(description="Centre marks on holes and slots, centre lines on cylinders")] = True,
-        overwrite: Annotated[bool, Field(description="Replace a drawing of the same name (closing it if open) instead of making Name_2")] = False) -> CallToolResult:
+        overwrite: Annotated[bool, Field(description="Replace a drawing of the same name (closing it if open) instead of making Name_2")] = False, device: _DEV = None) -> CallToolResult:
     """A native SOLIDWORKS drawing (.SLDDRW) of a part or assembly, from the user's default drawing template, set out
     as a drafter would: the views a fixed gap apart and centred above the title block, the isometric beside them,
     centre marks and lines, the model's dimensions auto-arranged, general notes, the sheet scale and the title block
@@ -738,7 +801,7 @@ async def sw_create_drawing(
         return _text({"error": "notes: at most 12 lines of up to 90 characters."}, True)
     if views is not None and not views:
         return _text({"error": "views: name at least one view, or leave it out for the standard set."}, True)
-    old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings")
+    old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, "Making drawings", device=_device())
     if old:
         return _text({"error": old}, True)
     args = {"doc": doc, "sheet": sheet, "projection": projection, "views": list(dict.fromkeys(views)) if views else None,
@@ -818,17 +881,19 @@ def _drawing_action(i: int, a: Any) -> tuple[dict | None, str | None]:
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
-async def sw_get_drawing(doc: Annotated[str | None, Field(description="The drawing (path or window title); omit for the active document")] = None) -> CallToolResult:
+@_routed
+async def sw_get_drawing(doc: Annotated[str | None, Field(description="The drawing (path or window title); omit for the active document")] = None, device: _DEV = None) -> CallToolResult:
     """Read a SOLIDWORKS drawing: the sheet (size, scale, projection), every view (name, type, orientation, scale,
     outline on the sheet in mm, display style, how many dimensions it shows, the model it shows) and the title
     block fields. Read it before sw_edit_drawing, and after, to check the layout."""
-    old = swbridge.addin_too_old(_who(), DRAWING_API_FROM, "Reading drawings")
+    old = swbridge.addin_too_old(_who(), DRAWING_API_FROM, "Reading drawings", device=_device())
     if old:
         return _text({"error": old}, True)
     return await _simple("read_drawing", {"doc": doc}, timeout=180)
 
 
 @mcp.tool()
+@_routed
 async def sw_edit_drawing(
         actions: Annotated[list[dict], Field(description=(
             'Drawing actions, run in order. Sheet positions are [x, y] mm from the lower left corner; views go by '
@@ -848,7 +913,7 @@ async def sw_edit_drawing(
             '{"do":"sheet","scale":"1:2","projection":"third|first"}; '
             '{"do":"bom","view":"...","at":[x,y] (its top right corner),"type":"top|parts|indented","balloons":true} '
             'a parts list for an assembly drawing'))],
-        doc: Annotated[str | None, Field(description="The drawing (path or window title); omit for the active document")] = None) -> CallToolResult:
+        doc: Annotated[str | None, Field(description="The drawing (path or window title); omit for the active document")] = None, device: _DEV = None) -> CallToolResult:
     """Change a SOLIDWORKS drawing step by step, the way a drafter does: add model, projected, section and detail
     views, move and scale views, set their display, bring in the model's dimensions, add centre marks, notes, title
     block fields and a parts list with balloons. Actions run in order; if one fails, the ones before it stay and the
@@ -865,7 +930,7 @@ async def sw_edit_drawing(
             checked.append(out)
     if problems:
         return _text({"error": "Nothing was sent to SOLIDWORKS.", "input_problems": problems}, True)
-    old = swbridge.addin_too_old(_who(), DRAWING_API_FROM, "Editing drawings")
+    old = swbridge.addin_too_old(_who(), DRAWING_API_FROM, "Editing drawings", device=_device())
     if old:
         return _text({"error": old}, True)
     return await _simple("edit_drawing", {"doc": doc, "actions": checked}, timeout=600)
@@ -874,13 +939,14 @@ async def sw_edit_drawing(
 # ----------------------------------------------------------------------------- files in and out
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+@_routed
 async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "sldasm", "slddrw", "pdf", "dwg", "dxf"],
-                    doc: _DOC = None, component: _COMP = None) -> CallToolResult:
+                    doc: _DOC = None, component: _COMP = None, device: _DEV = None) -> CallToolResult:
     """Export from SOLIDWORKS and return a download_url valid for one hour. Parts and assemblies: STEP, STL,
     Parasolid, IGES, a copy of the native file, or a PDF of the view. Drawings: PDF (every sheet), DWG or DXF (the
     active sheet), or a copy of the .SLDDRW."""
     if format in ("dwg", "dxf", "slddrw"):
-        old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, f"Exporting {format.upper()}")
+        old = swbridge.addin_too_old(_who(), DRAWINGS_FROM, f"Exporting {format.upper()}", device=_device())
         if old:
             return _text({"error": old}, True)
     res, files, err = await _run("export", {"doc": doc, "component": component, "format": format}, timeout=600)
@@ -898,14 +964,15 @@ async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "slda
 
 
 @mcp.tool()
+@_routed
 async def sw_import(filename: Annotated[str | None, Field(description="e.g. bracket.step; optional with upload_id")] = None,
                     data: Annotated[str | None, Field(description="Base64 file bytes, small files only")] = None,
                     upload_id: Annotated[str | None, Field(description="From request_upload, after sending the file")] = None,
-                    folder: Annotated[str | None, Field(description="Where to save the SOLIDWORKS files; default Documents\\OpenSketch")] = None) -> CallToolResult:
+                    folder: Annotated[str | None, Field(description="Where to save the SOLIDWORKS files; default Documents\\OpenSketch")] = None, device: _DEV = None) -> CallToolResult:
     """Open a STEP, IGES or Parasolid file in SOLIDWORKS (an assembly if it has several bodies) and save it as
     SOLIDWORKS files. For anything over about 100 KB use request_upload first, as for import_document."""
     who = _who()
-    if not swbridge.status(who).get("connected"):  # before holding the file in memory for SOLIDWORKS
+    if not _status(who).get("connected"):  # before holding the file in memory for SOLIDWORKS
         return _text({"error": swbridge.NOT_CONNECTED}, True)
 
     def read():
@@ -935,12 +1002,13 @@ async def sw_import(filename: Annotated[str | None, Field(description="e.g. brac
 
 
 @mcp.tool()
+@_routed
 async def sw_standard_part(kind: StdKind, size: str, length: float | None = None,
-                           folder: Annotated[str | None, Field(description="Default Documents\\OpenSketch\\Toolbox")] = None) -> CallToolResult:
+                           folder: Annotated[str | None, Field(description="Default Documents\\OpenSketch\\Toolbox")] = None, device: _DEV = None) -> CallToolResult:
     """An ISO screw, nut, washer or ball bearing made to size and saved as a SOLIDWORKS part (from STEP), ready
     for sw_insert_component. size e.g. "M6-1" (screws, nuts, washers) or "M8-22-7" (bore-OD-width bearings);
     length mm for screws. Axis along the part Y axis, head above Y = 0, shank down -Y."""
-    if not swbridge.status(_who()).get("connected"):
+    if not _status(_who()).get("connected"):
         return _text({"error": swbridge.NOT_CONNECTED}, True)
     try:
         pdoc, raw = await _cad(_standard_step, kind, size, length)
@@ -973,3 +1041,44 @@ def _standard_step(kind: str, size: str, length: float | None) -> tuple[dict, by
         p = Path(tmp) / "part.step"
         geometry.export(pdoc, "step", str(p))
         return pdoc, p.read_bytes()
+
+
+# ----------------------------------------------------------------------------- registered computers (KEVOS)
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def sw_list_devices() -> CallToolResult:
+    """The user's registered computers (KEVOS Bridge): name, online, the default one, and per computer the
+    SOLIDWORKS sessions running there (version, add-in version, documents open, busy, ready). Pass a computer's
+    name as `device` to any sw_ tool when more than one is online."""
+    from . import devicebridge
+    out = {"devices": devicebridge.list_devices(_who())}
+    v1 = swbridge._v1_status(_who())
+    if v1.get("connected"):
+        out["direct_addin"] = {k: v1.get(k) for k in ("machine", "version", "sw_version")}
+    if not out["devices"]:
+        out["note"] = ("No computer is registered yet. Install CADOS for SOLIDWORKS on the SOLIDWORKS computer; its Companion "
+                       "opens this site to add the computer.")
+    return _text(out)
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=True, destructive_hint=False, open_world_hint=False))
+async def sw_command_status(command_id: Annotated[str, Field(description="The command_id from an earlier result or error")]) -> CallToolResult:
+    """Where one SOLIDWORKS command is now (queued, delivered, accepted, running, succeeded, failed, cancelled,
+    expired, rejected, unknown), its history and progress, and its result or error when it finished, including one
+    that finished after its tool call gave up."""
+    from . import devicebridge
+    try:
+        return _text(devicebridge.command_record(_who(), command_id))
+    except KeyError:
+        return _text({"error": f"No command {command_id} of yours."}, True)
+
+
+@mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False, idempotent_hint=True, open_world_hint=False))
+async def sw_cancel_command(command_id: Annotated[str, Field(description="The command_id to cancel")]) -> CallToolResult:
+    """Cancel a SOLIDWORKS command: one that has not started is withdrawn; a running batch stops between steps and
+    is rolled back; a single SOLIDWORKS operation already running finishes."""
+    from . import devicebridge
+    try:
+        return _text(devicebridge.cancel(_who(), command_id))
+    except KeyError:
+        return _text({"error": f"No command {command_id} of yours."}, True)

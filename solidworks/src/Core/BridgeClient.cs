@@ -153,7 +153,7 @@ namespace OpenSketch.Sw.Core
                 if (r.StatusCode == HttpStatusCode.Unauthorized)
                     throw new Fatal(J.Str(SafeParse(text), "detail") ?? "The server did not accept this key. Copy it again from the OpenSketch home page.");
                 if (r.StatusCode == HttpStatusCode.NotFound)
-                    throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the OpenSketch site, e.g. https://opensketch-yz.fly.dev).");
+                    throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the CADOS site, e.g. https://cados.kevos.com).");
                 if (!r.IsSuccessStatusCode) throw new IOException("hello: HTTP " + (int)r.StatusCode + " " + Trim(text));
                 var d = Json.ParseObject(text);
                 session = J.Str(d, "session");
@@ -333,10 +333,18 @@ namespace OpenSketch.Sw.Core
     public sealed class UserError : Exception
     {
         public Dictionary<string, object> Detail;
+        /// <summary>Optional machine-readable reason (protocol 2 error codes, e.g. USER_EDITING, APPROVAL_DENIED).</summary>
+        public string Code;
 
         public UserError(string message, Dictionary<string, object> detail = null) : base(message)
         {
             Detail = detail;
+        }
+
+        public UserError(string message, string code, Dictionary<string, object> detail = null) : base(message)
+        {
+            Detail = detail;
+            Code = code;
         }
     }
 }

@@ -1,9 +1,13 @@
-# OpenSketch
+# CADOS by KEVOS
 
-**Your AI, building in SOLIDWORKS.** OpenSketch connects AI apps (Claude, ChatGPT and other
-[MCP](https://modelcontextprotocol.io) clients) to SOLIDWORKS on your own PC. Describe a part or a change, and
-the AI builds it as native SOLIDWORKS features in your own files: fully defined sketches, extrudes, cuts,
-revolves, holes, fillets, patterns, components and mates.
+**Turn engineering intent into CAD.** CADOS connects your AI assistant (Claude, ChatGPT and other
+[MCP](https://modelcontextprotocol.io) clients) to SOLIDWORKS on your own computer. Describe a part or a change, and
+the assistant builds it as native SOLIDWORKS features in your own files: fully defined sketches, extrudes, cuts,
+revolves, holes, fillets, patterns, components, mates and drawings.
+
+CADOS is a product from [KEVOS](https://kevos.com/). Website: https://cados.kevos.com. Code names inside the
+repository (the `opensketch` Python package, `OPENSKETCH_*` settings, the add-in's file names) are kept for
+compatibility.
 
 > **Status: early.** The server side is tested end to end against a stand-in for SOLIDWORKS; the add-in is
 > compiled against the SOLIDWORKS 2022 API and its link is tested against a real server, but it has not yet been
@@ -13,7 +17,7 @@ revolves, holes, fillets, patterns, components and mates.
 ## How it works
 
 ```
-AI app (Claude, ChatGPT)  --MCP-->  OpenSketch server  <--HTTPS long poll--  add-in in SOLIDWORKS (your PC)
+AI app (Claude, ChatGPT)  --MCP-->  CADOS gateway  <--outbound HTTPS--  KEVOS Companion + add-in in SOLIDWORKS (your PC)
 ```
 
 - The AI app adds one connector address (`https://<server>/mcp`) and signs in once (OAuth).
@@ -25,6 +29,16 @@ AI app (Claude, ChatGPT)  --MCP-->  OpenSketch server  <--HTTPS long poll--  add
   feature the other way round if SOLIDWORKS read a direction differently).
 - SOLIDWORKS is the master copy. You can edit the same file by hand between the AI's steps; the AI reads the
   file again before it writes.
+
+## KEVOS Bridge: install once per computer
+
+For everyday use on Windows: install **KEVOS Bridge** (one MSI) on each SOLIDWORKS computer and pair it once with
+your account. The KEVOS Companion starts with Windows and connects by itself; the add-in loads with SOLIDWORKS. No
+command prompt, no macro, no address or key to paste. Several computers per account; destructive changes are
+confirmed in SOLIDWORKS. See [docs/KEVOS-INSTALL.md](docs/KEVOS-INSTALL.md), and for the server side
+[docs/KEVOS-CLOUDFLARE.md](docs/KEVOS-CLOUDFLARE.md), [docs/KEVOS-SECURITY.md](docs/KEVOS-SECURITY.md),
+[docs/BRIDGE-PROTOCOL.md](docs/BRIDGE-PROTOCOL.md). Status: built and tested up to the add-in's command dispatcher;
+not yet run in a real SOLIDWORKS ([test report](docs/KEVOS-TEST-REPORT.md)).
 
 ## What the AI can do
 
@@ -42,20 +56,22 @@ AI app (Claude, ChatGPT)  --MCP-->  OpenSketch server  <--HTTPS long poll--  add
 | `sw_export`, `sw_import`, `request_upload` | STEP, STL, Parasolid, IGES, SOLIDWORKS files, PDF out; drawings as PDF, DWG or DXF; files in |
 | `sw_standard_part` | ISO screws, nuts, washers and ball bearings, made to size |
 | `sw_selftest` | Checks a new install, step by step |
+| `sw_list_devices`, `sw_command_status`, `sw_cancel_command` | Registered computers (KEVOS); a long command's state and late result; cancel |
 
 The feature format is in [docs/DOCUMENT.md](docs/DOCUMENT.md).
 
 ## Use it
 
-1. **Sign in** to an OpenSketch server (your own, see below) and open its home page.
-2. **Install the add-in** on the SOLIDWORKS PC (SOLIDWORKS 2022 or newer, Windows 64-bit): download it from the
-   home page, unzip it into a folder of your own, run `OpenSketchSW.exe` and click Install for me. It installs for
-   your Windows user only.
-3. **Connect SOLIDWORKS.** In SOLIDWORKS: Tools > OpenSketch > Connect to Claude, and paste the address and key
-   from the home page. If the menu is not there, run the macro instead (Tools > Macro > Run >
-   `Documents\OpenSketch\OpenSketch.swb`), or click "Connect to the open SOLIDWORKS" in `OpenSketchSW.exe`.
-4. **Add the connector** in your AI app: a custom connector with the address from the home page. Apps that cannot
-   sign in can use the private address shown under "Your app cannot sign in?".
+1. **Sign in** at https://cados.kevos.com (or your own server, see below) and open the dashboard.
+2. **Install CADOS** on the SOLIDWORKS computer (SOLIDWORKS 2022 or newer, Windows 64-bit): the Windows installer
+   (`CADOS-for-SOLIDWORKS-x64.msi`, "Download CADOS for SOLIDWORKS" on the website) adds the CADOS add-in and the KEVOS Companion; see
+   [docs/KEVOS-INSTALL.md](docs/KEVOS-INSTALL.md). Without the installer: download the add-in package from the
+   dashboard, unzip it, run `OpenSketchSW.exe` and click Install for me (per Windows user).
+3. **Pair the computer** when the KEVOS Companion asks, then open SOLIDWORKS: the CADOS tab and task pane show the link. (Direct
+   link without the Companion: CADOS > Status in SOLIDWORKS, then paste the address and add-in key from the
+   dashboard; or run the macro `Documents\OpenSketch\OpenSketch.swb`.)
+4. **Add the connector** in your AI app: a custom connector with the address from the dashboard. Apps that cannot
+   sign in can use the private address shown under "Assistant cannot sign in?".
 5. **Run the self test** the first time: ask "Run the SOLIDWORKS self test, all three stages." It builds test
    files in `Documents\OpenSketch\selftest` and reports every step as ok, check or failed. The add-in's log is
    `%LOCALAPPDATA%\OpenSketch\SolidWorks\log.txt`.
@@ -126,7 +142,7 @@ security problem.
 
 ## License
 
-[GNU Affero General Public License v3.0](LICENSE). You can use, change and share OpenSketch. If you run a changed
+[GNU Affero General Public License v3.0](LICENSE). You can use, change and share CADOS. If you run a changed
 version as a service for others, you must offer them its source code.
 
-SOLIDWORKS is a trademark of Dassault Systemes. OpenSketch is not affiliated with or endorsed by Dassault Systemes.
+SOLIDWORKS is a trademark of Dassault Systemes. CADOS and KEVOS are not affiliated with or endorsed by Dassault Systemes.

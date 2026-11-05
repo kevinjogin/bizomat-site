@@ -8,8 +8,9 @@ using SolidWorks.Interop.swpublished;
 namespace OpenSketch.Sw
 {
     /// <summary>
-    /// The SOLIDWORKS add-in (Tools > Add-Ins > OpenSketch). Adds an OpenSketch menu with Connect to Claude and the
-    /// window, and connects by itself when SOLIDWORKS starts if the key is saved.
+    /// The CADOS SOLIDWORKS add-in (Tools > Add-Ins > CADOS), loaded when SOLIDWORKS starts. Adds the CADOS menu,
+    /// toolbar, CommandManager tab and task pane, connects to the KEVOS Companion by itself, and (when a key is saved)
+    /// to the direct link.
     /// </summary>
     [ComVisible(true)]
     [Guid(SwAddin.ClassId)]
@@ -19,11 +20,22 @@ namespace OpenSketch.Sw
     {
         public const string ClassId = "275256ff-b73a-4e4f-9ea8-842b6626d471";
         public const string ProgIdName = "OpenSketch.Sw.SwAddin";
-        public const string Title = "OpenSketch";
-        public const string Description = "Claude builds parts and assemblies in SOLIDWORKS (OpenSketch link)";
+        public const string Title = "CADOS";
+        public const string Description = "CADOS by KEVOS: your AI assistant (Claude, ChatGPT...) builds parts, assemblies and drawings in SOLIDWORKS";
 
         ISldWorks app;
         int cookie;
+        KevosUi ui;
+        CadosPane pane;
+        public const string MenuName = "CADOS";
+        static readonly (string name, string callback, string hint)[] Menu =
+        {
+            ("CADOS panel", "OsPanel", "Status, prompts for your AI assistant, activity and help"),
+            ("Status...", "OsWindow", "Connection details, the direct link and the log"),
+            ("Connect now", "OsConnect", "Connect this SOLIDWORKS to CADOS (it also connects by itself)"),
+            ("Disconnect", "OsDisconnect", "Stop taking commands from your AI assistant until Connect"),
+            ("Open KEVOS Companion", "OsCompanion", "Pairing, pause, logs"),
+        };
         static readonly int[] DocTypes =
         {
             (int)swDocumentTypes_e.swDocNONE, (int)swDocumentTypes_e.swDocPART, (int)swDocumentTypes_e.swDocASSEMBLY,
@@ -38,13 +50,30 @@ namespace OpenSketch.Sw
                 cookie = Cookie;
                 app.SetAddinCallbackInfo2(0, this, cookie);
                 foreach (var t in DocTypes)
-                {
-                    app.AddMenuItem5(t, cookie, "Connect to Claude@OpenSketch", -1, "OsConnect", "OsEnable", "Connect this SOLIDWORKS to Claude through OpenSketch", null);
-                    app.AddMenuItem5(t, cookie, "Disconnect@OpenSketch", -1, "OsDisconnect", "OsEnable", "Stop the link to Claude", null);
-                    app.AddMenuItem5(t, cookie, "OpenSketch window...@OpenSketch", -1, "OsWindow", "OsEnable", "Address, key, status and activity", null);
-                }
+                    foreach (var (name, cb, hint) in Menu)
+                        app.AddMenuItem5(t, cookie, name + "@" + MenuName, -1, cb, "OsEnable", hint, null);
+                // the KEVOS Companion link starts here by itself; the direct link only when its key is saved (as before)
                 var host = Host.Start(app, "add-in");
                 if (Settings.AutoConnect && Settings.Key.StartsWith("oss_") && !host.Running) host.Connect();
+                try
+                {
+                    ui = new KevosUi(app);
+                    ui.Install(cookie);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("CADOS toolbar not made: " + ex.Message);   // the menu still works
+                }
+                try
+                {
+                    pane = new CadosPane(app);
+                    pane.Install(host);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write("CADOS task pane not made: " + ex.Message);   // the menu and the status window still work
+                    pane = null;
+                }
                 return true;
             }
             catch (Exception ex)
@@ -58,12 +87,25 @@ namespace OpenSketch.Sw
         {
             try
             {
-                foreach (var t in DocTypes)
+                try
                 {
-                    app?.RemoveMenu(t, "Connect to Claude@OpenSketch", "");
-                    app?.RemoveMenu(t, "Disconnect@OpenSketch", "");
-                    app?.RemoveMenu(t, "OpenSketch window...@OpenSketch", "");
+                    ui?.Remove();
                 }
+                catch (Exception)
+                {
+                }
+                ui = null;
+                try
+                {
+                    pane?.Remove();
+                }
+                catch (Exception)
+                {
+                }
+                pane = null;
+                foreach (var t in DocTypes)
+                    foreach (var (name, _, _) in Menu)
+                        app?.RemoveMenu(t, name + "@" + MenuName, "");
                 Host.Current?.Stop();
             }
             catch (Exception ex)
@@ -76,20 +118,47 @@ namespace OpenSketch.Sw
             return true;
         }
 
-        // menu callbacks (SOLIDWORKS calls them by name)
+        // menu and toolbar callbacks (SOLIDWORKS calls them by name, on its own thread)
         public void OsConnect()
         {
             var h = Host.Current ?? Host.Start(app, "add-in");
-            if (!Settings.Key.StartsWith("oss_"))
-            {
-                h.ShowWindow();
-                return;
-            }
-            h.Connect();
+            Settings.UseCompanion = true;
+            h.StartPipe();
+            if (Settings.Key.StartsWith("oss_")) h.Connect();
             h.ShowWindow();
         }
 
-        public void OsDisconnect() => Host.Current?.Disconnect();
+        public void OsPanel()
+        {
+            try
+            {
+                if (pane != null) pane.Show();
+                else OsWindow();
+            }
+            catch (Exception ex)
+            {
+                Log.Write("CADOS panel: " + ex.Message);
+            }
+        }
+
+        public void OsDisconnect()
+        {
+            Host.Current?.Disconnect();
+            Host.Current?.StopPipe();
+        }
+
+        public void OsCompanion()
+        {
+            try
+            {
+                if (!CompanionPipe.StartCompanion())
+                    System.Windows.Forms.MessageBox.Show("The KEVOS Companion is not installed on this computer. Install CADOS for SOLIDWORKS.", "CADOS");
+            }
+            catch (Exception ex)
+            {
+                Log.Write("open companion: " + ex.Message);
+            }
+        }
 
         public void OsWindow() => (Host.Current ?? Host.Start(app, "add-in")).ShowWindow();
 
@@ -184,7 +253,7 @@ namespace OpenSketch.Sw
             catch (Exception ex)
             {
                 Log.Write("launcher: " + ex);
-                return "OpenSketch could not start: " + ex.Message;
+                return "CADOS could not start: " + ex.Message;
             }
         }
 

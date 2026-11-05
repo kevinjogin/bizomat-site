@@ -32,6 +32,10 @@ def test_pages_load_no_fonts_from_other_sites():
         r = anon.get("/fonts/" + n)
         assert r.status_code == 200 and r.headers["content-type"] == "font/woff2" and r.content[:4] == b"wOF2", n
     assert "Open Font License" in anon.get("/fonts/OFL.txt").text
-    # the home page itself still needs sign-in
-    assert anon.get("/", follow_redirects=False).status_code == 303
-    assert auth.PUBLIC_DIRS == ("/fonts/",)
+    # the dashboard still needs sign-in; the design system (CSS, icon, sharing image) holds no data
+    assert anon.get("/dashboard", follow_redirects=False).status_code == 303
+    assert auth.PUBLIC_DIRS == ("/fonts/", "/ui/")
+    for name in ("cados.css", "og.png", "icon-180.png"):
+        assert anon.get("/ui/" + name).status_code == 200, name
+    for name, html in {"product": anon.get("/").text, "docs": anon.get("/docs").text}.items():
+        assert "googleapis" not in html and "/ui/cados.css" in html, name
