@@ -1,5 +1,10 @@
 # CADOS for SOLIDWORKS release notes (KEVOS Bridge up to 0.11)
 
+## 0.12.1 (CADOS for SOLIDWORKS; test build)
+
+- The task pane, toolbar icons and links use the KEVOS colours of kevos.com (accent #c2410c, ink #1c1b19, paper
+  #fbfaf7). No change to commands or the link.
+
 ## 0.12.0 (CADOS for SOLIDWORKS; test build, see the test report)
 
 - **CADOS by KEVOS.** The add-in is listed in Tools > Add-Ins as **CADOS**; its CommandManager tab, toolbar and menu

@@ -207,7 +207,7 @@ def create_owner(email: str, name: str, password: str) -> dict:
     with _lock:
         data = _edit()
         if data["users"]:
-            raise AccountError("OpenSketch is already set up. Sign in instead.")
+            raise AccountError("CADOS is already set up. Sign in instead.")
         email, name = _check_new(email, name, password, data)
         u = _new_user(email, name, password, "owner", verified=True)
         data["users"].append(u)
@@ -491,7 +491,7 @@ def keep_tester(user_id: str, email: str, name: str, password: str | None, googl
         if u.get("hash") or u.get("google"):  # changing it needs the current password
             raise AccountError("Your account is kept already. Change your password instead.")
         if google and any(x.get("google") == google and x["id"] != user_id for x in data["users"]):
-            raise AccountError("That Google account already has an OpenSketch account.")
+            raise AccountError("That Google account already has a CADOS account.")
         email, name = _check_new(email, name or u["name"], None if google else (password or ""), data, me=user_id)
         u["email"], u["name"] = email, name
         if google:

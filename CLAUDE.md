@@ -11,7 +11,7 @@ calls the `sw_` MCP tools; the server checks each sketch and feature with OpenSk
 kernel, queues the work, and the OpenSketch add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS
 and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-only.
 
-CADOS for SOLIDWORKS (0.12.0; called KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
+CADOS for SOLIDWORKS (0.12.1; called KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
 Windows computer runs the native CADOS add-in (COM `ISwAddin`, Tools > Add-Ins > CADOS, CADOS tab, menu and task pane)
 and the KEVOS Companion (tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the
 gateway and hands commands to the add-in over a local named pipe; one MSI ("CADOS for SOLIDWORKS") installs both.
@@ -30,10 +30,12 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - Brand: CADOS by KEVOS. Never "OpenSketch" in anything people read (pages, MCP server name, messages); real file
   paths and file names (`Documents\OpenSketch`, `OpenSketchSW.exe`) stay as they are. Logos are SVG paths in
   `brand.py`: the CADOS wordmark (built from the KEVOS letterforms) with "by KEVOS"; the KEVOS logo links to
-  https://kevos.com/. One design system for every page: tokens and components in `opensketch/static/ui/cados.css`
-  (KEVOS orange #F47B20 for marks; #BF550B buttons and #B44F0A links for contrast on white; warm off-white
-  surfaces, charcoal #16181D headings), shared head/header/footer in `brand.py`. Light theme. Inter Tight headings,
-  Inter body, system monospace for technical labels; fonts served from `opensketch/static/fonts` (no third-party
+  https://kevos.com/. One design system for every page: tokens and components in `opensketch/static/ui/cados.css`,
+  set to kevos.com's own tokens (its `src/styles/global.css`: paper #fbfaf7, ink #1c1b19, muted #69665f, logo orange
+  #ff6a13 for marks, accent #c2410c for buttons and links, hover #9a3412, 8 px buttons, 14 px cards, one family
+  Inter Tight), shared head/header/footer in `brand.py`. The KEVOS wordmark path and the favicon are kevos.com's
+  official files (`static/ui/kevos-wordmark.svg`, `static/favicon.svg`; `favicon.ico` and `ui/icon-*.png` are
+  rendered from it). Light theme. System monospace for technical labels; fonts served from `opensketch/static/fonts` (no third-party
   requests: the privacy page says so). Copy claims only what the code does (site.py says where each comes from).
 - The feature format (`docs/DOCUMENT.md`, the registry in `opensketch/features/`) is the contract between the AI,
   the kernel and the add-in. Change it there first, then the kernel, then the add-in. The bridge protocol
@@ -53,7 +55,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   (secrets CLOUDFLARE_API_TOKEN, FLY_API_TOKEN). Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
-## Current state (v0.8 server, CADOS for SOLIDWORKS 0.12.0)
+## Current state (v0.8 server, CADOS for SOLIDWORKS 0.12.1)
 
 - KEVOS registered computers (`devicebridge.py`, router included in `server.py`): pairing (`/v2/devices/pair/*`, the
   signed-in page `/devices/pair`), device proofs (`Authorization: KEVOS-Device <JWS>`, ES256 by the computer's
@@ -67,7 +69,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   password, no accounts) pairing is taken only from the server's own machine. Tests: `tests/test_devicebridge.py`
   with the stand-in Companion `tests/bridge_fakes.py` (every SOLIDWORKS tool and the self test run through a
   computer), `tests/test_bridge_e2e.py` (slow: the C# Companion and add-in link, `solidworks/tests/BridgeProbe`).
-- MCP (`mcp_server.py`): one MCPServer "OpenSketch" with INSTRUCTIONS for SOLIDWORKS work and 31 tools: every `sw_`
+- MCP (`mcp_server.py`): one MCPServer "CADOS" with INSTRUCTIONS for SOLIDWORKS work and 31 tools: every `sw_`
   tool (`sw_tools.py`, `sw_selftest.py`, registered on `mcp` at import) plus `request_upload`. Every tool that reaches
   SOLIDWORKS takes an optional `device` (the `_routed` decorator sets `_DEVICE`/`_TOOL` for `_run`, `_geometry`, whose
   cache is per person and computer, and the status checks); `sw_list_devices`, `sw_command_status`,
@@ -77,22 +79,31 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   with the protected-resource pointer for that path), `path/<key>` the private address (`_TokenGate`,
   `auth.resolve_mcp`). /solidworks/mcp is a second address early connectors used. Stateless Streamable HTTP, JSON
   responses.
-- OAuth (`mcpauth.py`): `RESOURCES` maps both paths to "OpenSketch" with their own protected-resource metadata; a
+- OAuth (`mcpauth.py`): `RESOURCES` maps both paths to "CADOS" with their own protected-resource metadata; a
   token from either works on both; one connection per person and app. DCR, client metadata documents (fetched with
   `safefetch.py`: public https only, pinned address), PKCE S256, refresh rotation, revoke.
 - Sign-in (`auth.py`, `accounts.py`, `oauth.py`): accounts with scrypt passwords, invites, Google sign-in (secret
   encrypted with `secretbox.py`), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
   makes "Internal tester" accounts. Account admin is API only (`/api/account*`), no page yet.
-- Pages: `/` is the product page for visitors (`site.landing`) and the dashboard for a signed-in person (and on an
+- Pages: `/` is the product page for visitors (`site.landing`) and the app's Home for a signed-in person (and on an
   open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
   security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,
-  `og.png`, `icon-180.png`). FastAPI's own /docs and /redoc are off. Dashboard (`sw_page.py`, `/dashboard`, also
-  `/solidworks`, sign-in required): five setup steps with progress (install, activate in SOLIDWORKS with the
-  computers list and the direct link's address + key with Show / Copy / New key, connect the AI assistant with the
-  connector address, per-app instructions, connected apps and the private address with Show / Copy / New address,
-  verify, self test), a live status (Connected, Disconnected, Checking connection, Authentication required,
-  Installation required, Connection error), a summary and help panel. `GET /api/solidworks` gives it everything in
-  one call. Sign-in, consent, notice and pairing pages share `auth.PAGE` (product panel and form).
+  `app.js`, `og.png`, icons, `kevos-wordmark.svg`). FastAPI's own /docs and /redoc are off. A browser asking for a
+  missing page gets the branded 404 (`site.not_found`); API, MCP and device paths keep JSON 404s.
+- The signed-in app (`app_pages.py`, one script `static/ui/app.js`, sections in `brand.APP_NAV`): Home (`/dashboard`:
+  "Engineering, made intelligent.", a task box that copies the task for the AI assistant and opens Claude or ChatGPT,
+  connection summary, a 4-step setup list, recent activity), CAD Assistant (`/assistant`: connector address,
+  per-app steps, connected apps with Disconnect, example requests from `catalog.EXAMPLES`), SOLIDWORKS
+  (`/solidworks`: installer, computers with default/remove, how CADOS connects (add-in, Companion, cloud MCP,
+  self-hosted, direct link, launcher macro: never called an add-in), service address, manual package), Tools
+  (`/tools`: every MCP tool in plain words from `catalog.GROUPS`, searchable; `tests/test_app_pages.py` keeps it equal
+  to the registered tools), History (`/history`: `GET /api/commands`, the person's commands to paired computers from
+  bridge.sqlite; direct-link commands are not recorded), Settings (`/settings`: account, private address and add-in
+  key with Show / Copy / New, sign out). No Automation section: CADOS keeps no stored automations. Live status
+  states: Connected, Disconnected, Checking connection, Authentication required, Installation required, Connection
+  error. App header: the sections, a KEVOS menu (kevos.com, Work, CADOS), the person, Sign out; app footer links
+  kevos.com and Work. `GET /api/solidworks` still gives the pages everything in one call. Sign-in, consent, notice and
+  pairing pages share `auth.PAGE` (product panel and form).
 - Server (`server.py`): lifespan (warms the owner's agent CAD worker, runs the MCP session manager), BodyLimit,
   RequestLog, PasswordGate; /healthz; account routes; add-in link (`/mcp/sw/hello|next|result|file|blob`), `/api/sw*`;
   upload links (`/mcp/uploads/{id}`) and artifact downloads (`/mcp/artifacts/...`); OAuth routes; static files
@@ -151,7 +162,7 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
 - Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded; version in
-  `Directory.Build.props`, 0.12.0): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
+  `Directory.Build.props`, 0.12.1): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
   Wire (ids, times, 4-byte-length frames), ReplayGuard, PipeLink (the add-in's pipe client: reader thread for pings and
   cancels, one worker for commands, outbox across reconnects, at-most-once by command id), CloudLink and
   CompanionEngine (the Companion's core: signed long poll, verification, routing to a SOLIDWORKS session, spool,

@@ -1,4 +1,4 @@
-"""FastAPI server for OpenSketch, the connector between AI apps and SOLIDWORKS: the home page (sw_page.py) where a
+"""FastAPI server for OpenSketch, the connector between AI apps and SOLIDWORKS: the signed-in app (app_pages.py) where a
 person sets it up, sign-in (accounts, Google, OAuth for AI apps; auth.py, mcpauth.py), the MCP endpoint
 (mcp_server.py, the sw_ tools), and the link the SOLIDWORKS add-in polls (swbridge.py)."""
 
@@ -16,6 +16,8 @@ from pathlib import Path
 import anyio
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
+from fastapi.exception_handlers import http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -174,6 +176,22 @@ app.add_middleware(auth.PasswordGate)
 app.add_middleware(RequestLog)
 app.add_middleware(BodyLimit)  # before the sign-in gate reads anything
 app.add_middleware(canonical.CanonicalHost)  # outermost: an old host name is sent to the public address first
+
+
+NOT_FOUND_MACHINE = ("/api/", "/mcp", "/solidworks/mcp", "/v2/", "/oauth/", "/.well-known/", "/healthz")
+
+
+@app.exception_handler(StarletteHTTPException)
+async def _http_error(request: Request, exc: StarletteHTTPException):
+    """A browser asking for a page that does not exist gets the branded 404 page; everything else (API, MCP, the
+    device and add-in links) keeps FastAPI's JSON answer."""
+    if (exc.status_code == 404 and request.method in ("GET", "HEAD") and "text/html" in request.headers.get("accept", "")
+            and not request.url.path.startswith(NOT_FOUND_MACHINE)):
+        from . import site
+        signed_in = auth.mode() == "open" or getattr(request.state, "user", None) is not None
+        return Response(site.not_found(signed_in, _base(request)), status_code=404, media_type="text/html; charset=utf-8",
+                        headers={"Cache-Control": "no-store"})
+    return await http_exception_handler(request, exc)
 
 
 @app.exception_handler(store.StorageError)
@@ -684,11 +702,40 @@ PAGE_HEADERS = {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referre
 PUBLIC_HEADERS = {"Cache-Control": "no-cache", "X-Frame-Options": "DENY", "Referrer-Policy": "strict-origin-when-cross-origin"}
 
 
+async def _app_page(request: Request, name: str) -> Response:
+    """One section of the signed-in app (app_pages.py); the sign-in gate sends visitors to /login first."""
+    from . import app_pages
+    return await _text_page(request.scope, app_pages.PAGES[name](_base(request)), "text/html; charset=utf-8", PAGE_HEADERS)
+
+
 @app.get("/dashboard")
-@app.get("/solidworks")  # the dashboard's address before it became the home page
 async def solidworks_page(request: Request):
-    from . import sw_page
-    return await _text_page(request.scope, sw_page.page(_base(request)), "text/html; charset=utf-8", PAGE_HEADERS)
+    return await _app_page(request, "home")
+
+
+@app.get("/assistant")
+async def assistant_page(request: Request):
+    return await _app_page(request, "assistant")
+
+
+@app.get("/solidworks")  # was the dashboard's address before it became the home page; now the SOLIDWORKS section
+async def solidworks_section(request: Request):
+    return await _app_page(request, "solidworks")
+
+
+@app.get("/tools")
+async def tools_page(request: Request):
+    return await _app_page(request, "tools")
+
+
+@app.get("/history")
+async def history_page(request: Request):
+    return await _app_page(request, "history")
+
+
+@app.get("/settings")
+async def settings_page(request: Request):
+    return await _app_page(request, "settings")
 
 
 def _signed_in(request: Request) -> bool:
@@ -797,7 +844,7 @@ async def oauth_token(request: Request):
     try:
         out = await _oauth_client_call(request, mcpauth.token)
     except mcpauth.OAuthError as e:
-        extra = {"WWW-Authenticate": 'Basic realm="OpenSketch"'} if e.status == 401 else {}
+        extra = {"WWW-Authenticate": 'Basic realm="CADOS"'} if e.status == 401 else {}
         return JSONResponse(e.body(), status_code=e.status, headers={**OAUTH_CORS, **extra})
     return JSONResponse(out, headers={**OAUTH_CORS, "Pragma": "no-cache"})
 
