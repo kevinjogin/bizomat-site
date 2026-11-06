@@ -12,7 +12,7 @@
 //   --from-dir   a folder of downloaded objects, each at <dir>/<key> (key
 //                segments as folders) or at <dir>/<sha256 of the key>;
 //   --remote     `wrangler r2 object get <bucket>/<key> --remote` for each key
-//                (needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID);
+//                (CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, or wrangler's own login);
 //   --local      the same against a local wrangler state (for dry runs).
 // Each object is hashed (SHA-256), its size checked against the database,
 // stored atomically with the metadata the Worker gave it (attachments: the
@@ -100,7 +100,8 @@ async function main() {
   const mode = f['from-dir'] ? 'dir' : f.bucket && f.remote ? 'remote' : f.bucket && f.local && f['wrangler-config'] ? 'local' : null;
   if (!mode) die(USAGE, 2);
   if (mode === 'dir' && !existsSync(f['from-dir'])) die(`Folder not found: ${f['from-dir']}`, 2);
-  if (mode === 'remote' && (!process.env.CLOUDFLARE_API_TOKEN || !process.env.CLOUDFLARE_ACCOUNT_ID)) die('--remote needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in the environment.', 2);
+  // --remote: wrangler signs in with CLOUDFLARE_API_TOKEN (CI) or, on the owner's computer, with its own login.
+  if (mode === 'remote' && !process.env.CLOUDFLARE_API_TOKEN) console.log('No CLOUDFLARE_API_TOKEN: wrangler uses its own login (wrangler login).');
   const work = mkdtempSync(join(layout.root, '.copy-'));
   const source = mode === 'dir' ? fromDirSource(f['from-dir']) : wranglerSource(f.bucket, mode, f, work);
   const concurrency = Math.max(1, Math.min(16, Number(f.concurrency ?? 4) || 4));
