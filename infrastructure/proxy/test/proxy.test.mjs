@@ -28,27 +28,56 @@ const hdrPairs = (raw, name) => {
   return out;
 };
 
-test('each host reaches its backend with path, query and Host unchanged', async () => {
+test('each host and path reaches its backend with path, query and Host unchanged', async () => {
   const cases = [
-    ['bizomat.ai', 'web'], ['cad.bizomat.ai', 'cad'], ['cados.kevos.com', 'cad'], ['work.bizomat.ai', 'work'],
-    ['work.kevos.com', 'work'], ['bizomat.fly.dev', 'web'], ['CAD.BIZOMAT.AI:443', 'cad'],
+    ['bizomat.ai', '/some/path/?q=1&r=%2F', 'web'],
+    ['bizomat.ai', '/cad/some/path/?q=1&r=%2F', 'cad'],
+    ['bizomat.ai', '/cad?q=1', 'cad'],
+    ['bizomat.ai', '/mcp/sw/next?q=1', 'cad'],
+    ['bizomat.ai', '/.well-known/oauth-protected-resource/cad/mcp', 'cad'],
+    ['bizomat.ai', '/tasks/some/path/?q=1&r=%2F', 'work'],
+    ['bizomat.ai', '/tasks', 'work'],
+    ['bizomat.ai', '/cad-automation/?q=1', 'web'],
+    ['bizomat.ai', '/./cad/x', 'cad'],
+    ['cados.kevos.com', '/some/path/?q=1&r=%2F', 'cad'],
+    ['CADOS.KEVOS.COM:443', '/some/path/', 'cad'],
+    ['work.kevos.com', '/some/path/?q=1&r=%2F', 'work'],
+    ['bizomat.fly.dev', '/some/path/?q=1', 'web'],
+    ['bizomat.fly.dev', '/cad/some/path/?q=1', 'cad'],
+    ['bizomat.fly.dev', '/tasks/some/path/?q=1', 'work'],
   ];
-  for (const [host, name] of cases) {
-    const r = await request(p.port, { host, path: '/some/path/?q=1&r=%2F' });
-    assert.equal(r.status, 200, host);
+  for (const [host, path, name] of cases) {
+    const r = await request(p.port, { host, path });
+    assert.equal(r.status, 200, `${host}${path}`);
     const echo = r.json();
-    assert.equal(echo.name, name, host);
-    assert.equal(echo.url, '/some/path/?q=1&r=%2F');
+    assert.equal(echo.name, name, `${host}${path}`);
+    assert.equal(echo.url, path, 'the path is never rewritten');
     assert.equal(echo.headers.host, host, 'Host is never rewritten');
   }
 });
 
+test('bizomat.ai: an application path in another case answers 301 to the lowercase one, with HSTS', async () => {
+  const r = await request(p.port, { host: 'bizomat.ai', path: '/CAD/docs?x=1' });
+  assert.equal(r.status, 301);
+  assert.equal(r.headers.location, '/cad/docs?x=1');
+  assert.equal(r.headers['strict-transport-security'], 'max-age=31536000; includeSubDomains');
+  const tasks = await request(p.port, { host: 'bizomat.ai', method: 'HEAD', path: '/Tasks' });
+  assert.equal(tasks.status, 301);
+  assert.equal(tasks.headers.location, '/tasks');
+  const post = await request(p.port, { host: 'bizomat.ai', method: 'POST', path: '/CAD', body: 'x' });
+  assert.equal(post.json().name, 'web', 'other methods are the website\'s');
+});
+
 test('POST bodies and methods pass through', async () => {
-  const r = await request(p.port, { host: 'work.bizomat.ai', method: 'PATCH', path: '/api/items/1', headers: { 'Content-Type': 'application/json' }, body: '{"a":1}' });
+  const r = await request(p.port, { host: 'bizomat.ai', method: 'PATCH', path: '/tasks/api/items/1', headers: { 'Content-Type': 'application/json' }, body: '{"a":1}' });
   assert.equal(r.status, 200);
+  assert.equal(r.json().name, 'work');
   assert.equal(r.json().method, 'PATCH');
-  const up = await request(p.port, { host: 'cad.bizomat.ai', method: 'PUT', path: '/upload', body: Buffer.alloc(3 * 1024 * 1024, 7) });
+  const up = await request(p.port, { host: 'bizomat.ai', method: 'PUT', path: '/cad/upload', body: Buffer.alloc(3 * 1024 * 1024, 7) });
+  assert.equal(up.json().name, 'cad');
   assert.equal(up.json().bytes, 3 * 1024 * 1024);
+  const old = await request(p.port, { host: 'cados.kevos.com', method: 'PUT', path: '/upload', body: Buffer.alloc(1024, 7) });
+  assert.equal(old.json().bytes, 1024);
 });
 
 test('kevos.com and www hosts redirect with path and query; kevos.com API posts reach web', async () => {
@@ -62,6 +91,9 @@ test('kevos.com and www hosts redirect with path and query; kevos.com API posts 
   assert.equal(head.body.length, 0);
   const insights = await request(p.port, { host: 'kevos.com', path: '/insights/old-post/' });
   assert.equal(insights.headers.location, 'https://bizomat.ai/insights/old-post/', 'sent as-is: the web app redirects it');
+  const cadPage = await request(p.port, { host: 'kevos.com', path: '/cad/?ref=x' });
+  assert.equal(cadPage.status, 301);
+  assert.equal(cadPage.headers.location, 'https://bizomat.ai/cad-automation/?ref=x', 'the old CAD page, not the app');
   const www = await request(p.port, { host: 'www.bizomat.ai', path: '/about/?a=b' });
   assert.equal(www.status, 301);
   assert.equal(www.headers.location, 'https://bizomat.ai/about/?a=b');
@@ -91,8 +123,8 @@ test('unknown hosts get 421, as text or as a page without script', async () => {
 
 test('header hygiene (socket mode): spoofed client IP headers never reach a backend', async () => {
   const r = await request(p.port, {
-    host: 'work.bizomat.ai',
-    path: '/echo',
+    host: 'bizomat.ai',
+    path: '/tasks/echo',
     headers: {
       'X-Forwarded-For': '6.6.6.6, 7.7.7.7',
       'X-Real-IP': '6.6.6.6',
@@ -113,7 +145,7 @@ test('header hygiene (socket mode): spoofed client IP headers never reach a back
   assert.equal(h['cf-connecting-ip'], '127.0.0.1');
   assert.equal(h['fly-client-ip'], '127.0.0.1');
   assert.equal(h['x-forwarded-proto'], 'http', 'socket mode: the proxy itself speaks plain http');
-  assert.equal(h['x-forwarded-host'], 'work.bizomat.ai');
+  assert.equal(h['x-forwarded-host'], 'bizomat.ai');
   for (const gone of ['true-client-ip', 'forwarded', 'x-bizomat-upstream', 'x-bizomat-admin', 'cf-ipcountry']) assert.equal(h[gone], undefined, gone);
   assert.match(h['x-bizomat-request-id'], /^[0-9a-f]{16}$/, 'the proxy sets its own request id');
 });
@@ -122,8 +154,8 @@ test('header hygiene (fly mode): Fly-Client-IP from the edge is the client; othe
   const fly = await startProxy(urls(), { PROXY_CLIENT_IP_MODE: 'fly' });
   try {
     const r = await request(fly.port, {
-      host: 'cad.bizomat.ai',
-      path: '/echo',
+      host: 'bizomat.ai',
+      path: '/cad/echo',
       headers: { 'Fly-Client-IP': '203.0.113.9', 'X-Forwarded-For': '6.6.6.6', 'CF-Connecting-IP': '6.6.6.6', 'X-Forwarded-Proto': 'https', 'Fly-Request-Id': 'req-1' },
     });
     const h = r.json().headers;
@@ -142,7 +174,7 @@ test('header hygiene (fly mode): a peer on the private network cannot claim a cl
   // the test connects from 127.0.0.1; treat it like a 6PN neighbour
   const fly = await startProxy(urls(), { PROXY_CLIENT_IP_MODE: 'fly', PROXY_UNTRUSTED_PEERS: 'fdaa::/16,127.0.0.0/8' });
   try {
-    const r = await request(fly.port, { host: 'cad.bizomat.ai', path: '/echo', headers: { 'Fly-Client-IP': '203.0.113.9', 'X-Forwarded-Proto': 'https', 'Fly-Request-Id': 'x' } });
+    const r = await request(fly.port, { host: 'cados.kevos.com', path: '/echo', headers: { 'Fly-Client-IP': '203.0.113.9', 'X-Forwarded-Proto': 'https', 'Fly-Request-Id': 'x' } });
     const h = r.json().headers;
     assert.equal(h['x-forwarded-for'], '127.0.0.1');
     assert.equal(h['cf-connecting-ip'], '127.0.0.1');
@@ -169,8 +201,10 @@ test('hop-by-hop headers are removed both ways; repeated Set-Cookie headers surv
 });
 
 test('HSTS on production hosts when absent; the backend value wins; noindex on the preview host', async () => {
-  const prod = await request(p.port, { host: 'cad.bizomat.ai', path: '/echo' });
-  assert.equal(prod.headers['strict-transport-security'], 'max-age=31536000; includeSubDomains');
+  for (const [host, path] of [['bizomat.ai', '/cad/echo'], ['bizomat.ai', '/tasks/echo'], ['cados.kevos.com', '/echo'], ['work.kevos.com', '/echo']]) {
+    const prod = await request(p.port, { host, path });
+    assert.equal(prod.headers['strict-transport-security'], 'max-age=31536000; includeSubDomains', `${host}${path}`);
+  }
   const own = await request(p.port, { host: 'bizomat.ai', path: '/hsts' });
   assert.deepEqual(hdrPairs(own.rawHeaders, 'strict-transport-security'), ['max-age=60']);
   const preview = await request(p.port, { host: 'bizomat.fly.dev', path: '/echo' });
@@ -202,7 +236,7 @@ test('a request body is streamed: the backend sees the first bytes before the cl
   const px = await startProxy({ ...urls(), cad: up.url });
   try {
     const res = await new Promise((resolve, reject) => {
-      const req = http.request({ host: '127.0.0.1', port: px.port, method: 'POST', path: '/upload', headers: { Host: 'cad.bizomat.ai', 'Transfer-Encoding': 'chunked' }, agent: false }, (r) => {
+      const req = http.request({ host: '127.0.0.1', port: px.port, method: 'POST', path: '/cad/upload', headers: { Host: 'bizomat.ai', 'Transfer-Encoding': 'chunked' }, agent: false }, (r) => {
         const chunks = [];
         r.on('data', (c) => chunks.push(c));
         r.on('end', () => resolve(JSON.parse(Buffer.concat(chunks).toString())));
@@ -223,7 +257,7 @@ test('a request body is streamed: the backend sees the first bytes before the cl
 });
 
 test('WebSocket upgrade passes through both ways, with the same header hygiene', async () => {
-  const { socket, status, head, rest } = await wsOpen(p.port, { host: 'work.bizomat.ai', path: '/ws', headers: { 'X-Forwarded-For': '6.6.6.6', 'CF-Connecting-IP': '6.6.6.6' } });
+  const { socket, status, head, rest } = await wsOpen(p.port, { host: 'bizomat.ai', path: '/tasks/ws', headers: { 'X-Forwarded-For': '6.6.6.6', 'CF-Connecting-IP': '6.6.6.6' } });
   try {
     assert.equal(status, 101);
     assert.match(head, /sec-websocket-accept:/i);
@@ -234,17 +268,27 @@ test('WebSocket upgrade passes through both ways, with the same header hygiene',
     socket.write(wsFrame('again', true));
     assert.equal((await wsRead(socket)).text, 'work:again');
     const seen = work.seen.filter((s) => s.upgrade).at(-1);
+    assert.equal(seen.url, '/tasks/ws', 'the path is never rewritten');
     assert.equal(seen.headers['x-forwarded-for'], '127.0.0.1');
     assert.equal(seen.headers['cf-connecting-ip'], '127.0.0.1');
-    assert.equal(seen.headers.host, 'work.bizomat.ai');
+    assert.equal(seen.headers.host, 'bizomat.ai');
     assert.equal(seen.headers.upgrade, 'websocket');
   } finally {
     socket.destroy();
   }
+  // the old address, at the root
+  const old = await wsOpen(p.port, { host: 'work.kevos.com', path: '/ws' });
+  try {
+    assert.equal(old.status, 101);
+    old.socket.write(wsFrame('hi', true));
+    assert.equal((await wsRead(old.socket, old.rest)).text, 'work:hi');
+  } finally {
+    old.socket.destroy();
+  }
 });
 
 test('a refused WebSocket upgrade passes the backend answer on (no 101)', async () => {
-  const { socket, status, head } = await wsOpen(p.port, { host: 'work.bizomat.ai', path: '/ws-deny/1' });
+  const { socket, status, head } = await wsOpen(p.port, { host: 'bizomat.ai', path: '/tasks/ws-deny/1' });
   socket.destroy();
   assert.equal(status, 401);
   assert.match(head, /connection: close/i);
@@ -258,6 +302,9 @@ test('WebSocket to unknown hosts and moved hosts is answered by the proxy', asyn
   moved.socket.destroy();
   assert.equal(moved.status, 301);
   assert.match(moved.head, /location: https:\/\/bizomat\.ai\/ws/i);
+  const gone = await wsOpen(p.port, { host: 'work.bizomat.ai', path: '/ws' });
+  gone.socket.destroy();
+  assert.equal(gone.status, 421, 'no subdomains');
 });
 
 test('preview cookie: /__preview/<backend> routes this browser there without rewriting Host', async () => {
@@ -280,6 +327,10 @@ test('preview cookie: /__preview/<backend> routes this browser there without rew
   const clear = await request(p.port, { host: 'bizomat.fly.dev', path: '/__preview/clear' });
   assert.equal(clear.status, 303);
   assert.match(clear.headers['set-cookie'][0], /Max-Age=0/);
+  // without the cookie the preview host routes by path, as bizomat.ai does
+  for (const [path, name] of [['/cad/login', 'cad'], ['/tasks/login', 'work'], ['/login', 'web']]) {
+    assert.equal((await request(p.port, { host: 'bizomat.fly.dev', path })).json().name, name, path);
+  }
   // on a production host the cookie means nothing
   const prod = await request(p.port, { host: 'bizomat.ai', path: '/x', headers: { Cookie: 'bizomat_preview=cad' } });
   assert.equal(prod.json().name, 'web');
@@ -300,13 +351,14 @@ test('a dead backend gives a 502 page; logs say why without the address', async 
   const port = await deadPort();
   const px = await startProxy({ ...urls(), cad: `http://127.0.0.1:${port}` });
   try {
-    const r = await request(px.port, { host: 'cad.bizomat.ai', path: '/mcp', headers: { Accept: 'text/html' } });
+    const r = await request(px.port, { host: 'bizomat.ai', path: '/cad/mcp', headers: { Accept: 'text/html' } });
     assert.equal(r.status, 502);
     assert.match(r.text, /BIZOMAT/);
     assert.doesNotMatch(r.text, /<script/i);
     assert.equal(r.headers['retry-after'], '10');
     assert.equal(r.headers['strict-transport-security'], 'max-age=31536000; includeSubDomains');
-    const text = await request(px.port, { host: 'cad.bizomat.ai', path: '/v2/device/next' });
+    assert.equal((await request(px.port, { host: 'bizomat.ai', path: '/tools/' })).status, 200, 'the website does not depend on cad');
+    const text = await request(px.port, { host: 'bizomat.ai', path: '/v2/device/next' });
     assert.equal(text.status, 502);
     assert.match(text.headers['content-type'], /text\/plain/);
     await sleep(20);
@@ -322,7 +374,7 @@ test('a dead backend gives a 502 page; logs say why without the address', async 
 test('a backend that stays silent past the idle timeout gives 504', async () => {
   const px = await startProxy(urls(), { PROXY_IDLE_TIMEOUT_MS: '300' });
   try {
-    const r = await request(px.port, { host: 'work.bizomat.ai', path: '/slow?ms=3000' });
+    const r = await request(px.port, { host: 'bizomat.ai', path: '/tasks/slow?ms=3000' });
     assert.equal(r.status, 504);
   } finally {
     await px.close();
@@ -357,8 +409,9 @@ test('/__proxy/health and /__proxy/ready', async () => {
   assert.deepEqual(Object.keys(body.upstreams).sort(), ['cad', 'web', 'work']);
   assert.doesNotMatch(ready.text, /127\.0\.0\.1/, 'no addresses in the answer');
   // on a product host the path belongs to the backend
-  const onCad = await request(p.port, { host: 'cad.bizomat.ai', path: '/__proxy/health' });
+  const onCad = await request(p.port, { host: 'cados.kevos.com', path: '/__proxy/health' });
   assert.equal(onCad.json().name, 'cad');
+  assert.equal((await request(p.port, { host: 'bizomat.ai', path: '/__proxy/health' })).json().name, 'web');
 
   const port = await deadPort();
   const px = await startProxy({ ...urls(), work: `http://127.0.0.1:${port}` });
@@ -376,17 +429,20 @@ test('/__proxy/health and /__proxy/ready', async () => {
 
 test('request log: one JSON line per request, no query, no addresses, no credentials', async () => {
   const before = p.logs.length;
-  await request(p.port, { host: 'cad.bizomat.ai', path: '/mcp/0123456789abcdef0123456789abcdef?token=secret', headers: { Cookie: 'opensketch_session=supersecret', Authorization: 'Bearer abc.def' } });
+  await request(p.port, { host: 'bizomat.ai', path: '/cad/mcp/0123456789abcdef0123456789abcdef?token=secret', headers: { Cookie: 'opensketch_user=supersecret', Authorization: 'Bearer abc.def' } });
+  await request(p.port, { host: 'cados.kevos.com', path: '/mcp/0123456789abcdef0123456789abcdef', headers: { Cookie: 'opensketch_session=supersecret' } });
   await sleep(20);
   const lines = p.logs.slice(before);
-  assert.equal(lines.length, 1);
+  assert.equal(lines.length, 2);
   const line = lines[0];
   assert.deepEqual(Object.keys(line).sort(), ['host', 'id', 'method', 'ms', 'path', 'status', 't', 'upstream']);
-  assert.equal(line.host, 'cad.bizomat.ai');
+  assert.equal(line.host, 'bizomat.ai');
   assert.equal(line.method, 'GET');
-  assert.equal(line.path, '/mcp/:redacted');
+  assert.equal(line.path, '/cad/mcp/:redacted');
   assert.equal(line.status, 200);
   assert.equal(line.upstream, 'cad');
+  assert.equal(lines[1].host, 'cados.kevos.com');
+  assert.equal(lines[1].path, '/mcp/:redacted');
   assert.equal(typeof line.ms, 'number');
   const all = JSON.stringify(p.logs);
   for (const bad of ['secret', 'supersecret', 'abc.def', '127.0.0.1', '0123456789abcdef0123456789abcdef']) assert.ok(!all.includes(bad), bad);
@@ -440,9 +496,9 @@ test('graceful stop: an open request finishes, new connections are refused', asy
 
 test('graceful stop cuts what is still open after the grace time (long polls, WebSockets)', async () => {
   const px = await startProxy(urls(), { PROXY_SHUTDOWN_GRACE_MS: '300' });
-  const ws = await wsOpen(px.port, { host: 'work.bizomat.ai', path: '/ws' });
+  const ws = await wsOpen(px.port, { host: 'bizomat.ai', path: '/tasks/ws' });
   assert.equal(ws.status, 101);
-  const pending = request(px.port, { host: 'cad.bizomat.ai', path: '/slow?ms=10000' }).catch((err) => err);
+  const pending = request(px.port, { host: 'bizomat.ai', path: '/cad/slow?ms=10000' }).catch((err) => err);
   await sleep(50);
   const t0 = performance.now();
   await px.close();

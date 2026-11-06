@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { BRAND, pageTitle } from './brand';
+import { BASE } from './base';
 
 // ---------------------------------------------------------------- theme
 
@@ -88,7 +89,7 @@ export function useBoardRealtime(boardId: string | undefined, selfId: string) {
     let debounce: ReturnType<typeof setTimeout> | undefined;
     const connect = () => {
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-      ws = new WebSocket(`${proto}://${location.host}/api/live/boards/${boardId}`);
+      ws = new WebSocket(`${proto}://${location.host}${BASE}/api/live/boards/${boardId}`);
       ws.onopen = () => {
         retry = 0;
         setConnected(true);

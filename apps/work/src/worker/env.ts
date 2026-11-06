@@ -9,6 +9,10 @@ export interface Env {
   APP_URL: string;
   ALLOW_SIGNUP: string;
   SESSION_TTL_HOURS: string;
+  /** Pages on other hosts answer 301 to the same path here, e.g. "https://bizomat.ai/tasks" (src/worker/mount.ts). */
+  CANONICAL_URL?: string;
+  /** Set per request, never configured: the path the request came in under ("/tasks"), or "" (src/worker/mount.ts). */
+  BASE_PATH?: string;
   // Secrets (set with `wrangler secret put`), all optional:
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;

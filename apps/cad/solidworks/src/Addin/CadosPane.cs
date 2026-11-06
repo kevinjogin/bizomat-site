@@ -85,7 +85,7 @@ namespace OpenSketch.Sw
     /// action, amber for a state that needs the person.</summary>
     public sealed class CadosPaneControl : UserControl
     {
-        public const string DefaultGateway = "https://cados.kevos.com";   // the hosted service; existing installs keep it
+        public const string DefaultGateway = "https://bizomat.ai/cad";    // the hosted service; existing installs keep theirs
         public const string VerifyPrompt = "Check the CAD Automation connection to SOLIDWORKS.";
         public const string SelfTestPrompt = "Run the SOLIDWORKS self test, all three stages.";
 

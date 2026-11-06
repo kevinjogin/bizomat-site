@@ -101,10 +101,10 @@ the reports with the operations log; they contain ids and counts but no personal
 | | Project Management | CAD Automation |
 | --- | --- | --- |
 | Passwords | Unchanged (PBKDF2 hashes copied); people sign in with the password they use today | Unchanged (scrypt hashes copied) |
-| Sessions | Copied, but cookies are per host: on a new host people sign in once | Copied; same host (`cados.kevos.com`) keeps sessions; `cad.bizomat.ai` needs a new sign-in |
+| Sessions | Copied, but cookies are per host: on a new host people sign in once | Copied; the same addresses (`bizomat.ai/cad`, `cados.kevos.com`) keep their sessions |
 | Roles | Copied (founder and platform admins included) | Copied (owner and members) |
 | AI app connections | | Copied; they keep working on the host they were made with |
-| Paired computers | | Copied; Companions reconnect on their own to `cados.kevos.com` |
+| Paired computers | | Copied; Companions reconnect on their own to the address they paired with (`https://bizomat.ai/cad` or `cados.kevos.com`) |
 
 No account is merged across products. People who use both products keep two accounts until single sign-on links them
 at their own request (`BIZOMAT-SECURITY.md`, section 5).

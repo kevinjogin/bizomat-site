@@ -89,6 +89,9 @@ files.set('brand.json', Buffer.from(JSON.stringify({ name: 'BIZOMAT', tagline: '
 // Copies kept beside the sources: tokens, components and the heading font.
 const copyFrom = (rel) => fs.readFileSync(path.join(here, rel));
 files.set('tokens.css', copyFrom('tokens.css'));
+// CAD Automation is served under a path of bizomat.ai (/cad) as well as at the root of a host: its copy finds the fonts
+// beside its own folder (/ui/bizomat-tokens.css -> /fonts/..., /cad/ui/bizomat-tokens.css -> /cad/fonts/...).
+files.set('tokens-fonts-relative.css', Buffer.from(copyFrom('tokens.css').toString().replaceAll("url('/fonts/", "url('../fonts/")));
 files.set('components.css', copyFrom('components.css'));
 files.set('oxanium-latin.woff2', copyFrom('fonts/oxanium-latin.woff2'));
 files.set('inter-tight-latin.woff2', copyFrom('fonts/inter-tight-latin.woff2'));
@@ -126,7 +129,7 @@ const targets = [
   T('bizomat-icon-32.png', 'apps/cad/opensketch/static/ui/icon-32.png'),
   T('bizomat-icon-180.png', 'apps/cad/opensketch/static/ui/icon-180.png'),
   T('bizomat-logo-light.svg', 'apps/cad/opensketch/static/ui/bizomat-logo-light.svg'),
-  T('tokens.css', 'apps/cad/opensketch/static/ui/bizomat-tokens.css'),
+  T('tokens-fonts-relative.css', 'apps/cad/opensketch/static/ui/bizomat-tokens.css'),
   T('oxanium-latin.woff2', 'apps/cad/opensketch/static/fonts/oxanium-latin.woff2'),
   T('OFL-Oxanium.txt', 'apps/cad/opensketch/static/fonts/OFL-Oxanium.txt'),
   T('bizomat_brand.py', 'apps/cad/opensketch/bizomat_brand.py'),

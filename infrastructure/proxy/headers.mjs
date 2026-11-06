@@ -239,10 +239,11 @@ export function hasRequestBody(headers) {
   return len !== undefined && len !== '0';
 }
 
-// Path segments that look like credentials (private connector addresses, invite and reset links, signed ids).
+// Path segments that look like credentials (private connector addresses, invite and reset links, signed ids), at the
+// root of a host or under an application's path on bizomat.ai (/cad/mcp/<key>, /tasks/invite/<token>).
 const TOKEN_ROUTES = [
-  { re: /^(\/(?:solidworks\/)?mcp)\/([^/]+)/, keep: new Set(['sw', 'uploads', 'artifacts']) },
-  { re: /^(\/join|\/invite|\/reset|\/reset-password|\/verify|\/magic)\/([^/]+)/, keep: new Set() },
+  { re: /^((?:\/cad)?\/(?:solidworks\/)?mcp)\/([^/]+)/, keep: new Set(['sw', 'uploads', 'artifacts']) },
+  { re: /^((?:\/cad|\/tasks)?\/(?:join|invite|reset|reset-password|verify|magic))\/([^/]+)/, keep: new Set() },
 ];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

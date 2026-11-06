@@ -55,7 +55,9 @@ const TYPES: Record<string, string> = {
   '.webm': 'video/webm',
   '.mp3': 'audio/mpeg',
 };
-const COMPRESSIBLE = new Set(['.html', '.htm', '.js', '.mjs', '.cjs', '.css', '.json', '.map', '.webmanifest', '.txt', '.xml', '.svg', '.ico', '.ttf', '.otf']);
+// Pages (.html) are never compressed: the Worker writes <base href> into each one as text (src/worker/mount.ts,
+// withBaseHref), and the app's only page is a small file.
+const COMPRESSIBLE = new Set(['.js', '.mjs', '.cjs', '.css', '.json', '.map', '.webmanifest', '.txt', '.xml', '.svg', '.ico', '.ttf', '.otf']);
 const MAX_FILES = 20_000;
 const MIN_COMPRESS_BYTES = 1024;
 

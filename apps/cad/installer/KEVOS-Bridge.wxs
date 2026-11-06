@@ -19,8 +19,8 @@
   uninstalls. CAD files are never touched. Repair: msiexec /fa <the .msi> (or Apps > BIZOMAT CAD Automation for
   SOLIDWORKS > Modify > Repair).
 
-  Properties: GATEWAY_URL=https://cados.kevos.com (the CAD Automation server the companion pairs with; optional, the
-  pairing window suggests https://cados.kevos.com otherwise).
+  Properties: GATEWAY_URL=https://bizomat.ai/cad (the CAD Automation server the companion pairs with; optional, the
+  pairing window suggests https://bizomat.ai/cad otherwise).
   Build: installer/build.ps1 (Windows, after solidworks/build.sh). Variables: Version, Source (the built files).
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
@@ -42,7 +42,7 @@
 
     <Property Id="GATEWAY_URL" Secure="yes" />
     <Property Id="ARPPRODUCTICON" Value="KevosIcon" />
-    <Property Id="ARPHELPLINK" Value="https://cados.kevos.com/docs" />
+    <Property Id="ARPHELPLINK" Value="https://bizomat.ai/cad/docs" />
     <Property Id="ARPURLINFOABOUT" Value="https://bizomat.ai/" />
     <Property Id="ARPCOMMENTS" Value="Settings and this computer's registration are kept when it is removed. Use the Start menu entry Remove this computer from CAD Automation first if the computer leaves your account." />
     <Icon Id="KevosIcon" SourceFile="$(var.Source)/KEVOS.Companion.exe" />
@@ -100,7 +100,7 @@
     <ComponentGroup Id="Registration" Directory="INSTALLFOLDER">
       <!-- COM: the add-in class (SOLIDWORKS creates it) and the launcher class (the fallback macro), as regasm writes them -->
       <Component Id="ComAddin" Bitness="always64">
-        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{275256ff-b73a-4e4f-9ea8-842b6626d471}">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{275256ff-b73a-4e4f-9ea8-842b6626d471}" ForceDeleteOnUninstall="yes">
           <RegistryValue Type="string" Value="OpenSketch.Sw.SwAddin" KeyPath="yes" />
           <RegistryKey Key="InprocServer32">
             <RegistryValue Type="string" Value="mscoree.dll" />
@@ -119,13 +119,13 @@
           <RegistryKey Key="ProgId"><RegistryValue Type="string" Value="OpenSketch.Sw.SwAddin" /></RegistryKey>
           <RegistryKey Key="Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}" ForceCreateOnInstall="yes" />
         </RegistryKey>
-        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\OpenSketch.Sw.SwAddin">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\OpenSketch.Sw.SwAddin" ForceDeleteOnUninstall="yes">
           <RegistryValue Type="string" Value="OpenSketch.Sw.SwAddin" />
           <RegistryKey Key="CLSID"><RegistryValue Type="string" Value="{275256ff-b73a-4e4f-9ea8-842b6626d471}" /></RegistryKey>
         </RegistryKey>
       </Component>
       <Component Id="ComLauncher" Bitness="always64">
-        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{ed25919a-7e4a-4a08-a2db-4c69ae22b1ea}">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{ed25919a-7e4a-4a08-a2db-4c69ae22b1ea}" ForceDeleteOnUninstall="yes">
           <RegistryValue Type="string" Value="OpenSketch.Sw.Launcher" KeyPath="yes" />
           <RegistryKey Key="InprocServer32">
             <RegistryValue Type="string" Value="mscoree.dll" />
@@ -138,7 +138,7 @@
           <RegistryKey Key="ProgId"><RegistryValue Type="string" Value="OpenSketch.Sw.Launcher" /></RegistryKey>
           <RegistryKey Key="Implemented Categories\{62C8FE65-4EBB-45E7-B440-6E39B2CDBF29}" ForceCreateOnInstall="yes" />
         </RegistryKey>
-        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\OpenSketch.Sw.Launcher">
+        <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\OpenSketch.Sw.Launcher" ForceDeleteOnUninstall="yes">
           <RegistryValue Type="string" Value="OpenSketch.Sw.Launcher" />
           <RegistryKey Key="CLSID"><RegistryValue Type="string" Value="{ed25919a-7e4a-4a08-a2db-4c69ae22b1ea}" /></RegistryKey>
         </RegistryKey>

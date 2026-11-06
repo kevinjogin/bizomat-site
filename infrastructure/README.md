@@ -8,7 +8,7 @@ of its own with one role. Only the proxy is public.
  visitors, AI apps,          |
  CAD add-ins, Companions     v
                     +------------------+  Machine group "proxy" (shared-cpu-1x, 256 MB), port 8080
-                    |  edge proxy      |  routes by Host header, streams bodies, passes WebSockets
+                    |  edge proxy      |  routes bizomat.ai by path, other hosts by name; streams bodies, passes WebSockets
                     +------------------+
           6PN (private IPv6)  |  web.process.bizomat.internal / work.process... / cad.process...
         +---------------------+----------------------+
@@ -54,22 +54,30 @@ stateless and can run two Machines (`fly scale count proxy=2 web=2 --region syd`
 
 ## Routing
 
-From `proxy/routes.mjs` (tested in `proxy/test/routes.test.mjs`). The Host header is never rewritten; paths are never
-changed.
+From `proxy/routes.mjs` (tested in `proxy/test/routes.test.mjs`). Everything lives under bizomat.ai, no subdomains: on
+bizomat.ai the proxy routes by path, as the website's Worker does (`src/worker.ts`; the tests check that the two
+`CAD_PATHS` are equal), every other host by its name. A path is matched as the website reads it (WHATWG URL: dot
+segments resolved). The Host header is never rewritten; paths are never changed (each app takes its prefix off
+itself).
 
 | Host | Requests | Goes to |
 | --- | --- | --- |
-| `bizomat.ai` | all | web |
+| `bizomat.ai` | `/cad`, `/cad/...`; the OAuth metadata at the root (`/.well-known/oauth-protected-resource...`, `/.well-known/oauth-authorization-server...`, `/.well-known/openid-configuration...`); the root program paths `/mcp...`, `/solidworks/mcp...`, `/oauth/...`, `/v2/...`, `/healthz`, `/.well-known/acme-challenge/...` | cad |
+| | `/tasks`, `/tasks/...` (WebSockets included) | work |
+| | GET, HEAD of `/CAD...`, `/Tasks/...` (any case but lowercase) | 301 to the lowercase path, query kept |
+| | everything else | web |
 | `www.bizomat.ai` | GET, HEAD / others | 301 / 308 to `https://bizomat.ai` + path + query |
-| `cad.bizomat.ai`, `cados.kevos.com` | all paths, all methods, upgrades | cad |
-| `work.bizomat.ai`, `work.kevos.com` | all paths, WebSockets | work |
-| `kevos.com`, `www.kevos.com` | GET, HEAD | 301 to `https://bizomat.ai` + same path + query (`/tools/...`, `/reados/...` exist there; `/insights/*` is sent as-is and the web app redirects it) |
+| `cados.kevos.com` (CAD Automation's old address) | all paths, all methods, upgrades | cad |
+| `work.kevos.com` (Project Management's old address) | all paths, WebSockets | work |
+| `kevos.com`, `www.kevos.com` | GET, HEAD of `/cad`, `/cad/` (the old CAD Automation page) | 301 to `https://bizomat.ai/cad-automation/` + query |
+| | GET, HEAD | 301 to `https://bizomat.ai` + same path + query (`/tools/...`, `/reados/...` exist there; `/insights/*` is sent as-is and the web app redirects it) |
 | | other methods to `/api`, `/api/*` | web (old cached pages still post forms) |
 | | other methods elsewhere | 308 to `https://bizomat.ai` + path + query |
 | `<app>.fly.dev` | `/__proxy/health`, `/__proxy/ready` | the proxy itself |
 | | `/__preview/cad`, `/work`, `/web`, `/clear` (only with `BIZOMAT_PREVIEW_ROUTING=1`) | sets or clears the host-only cookie `bizomat_preview`, then 303 to `/` (or `?next=/path`) |
-| | everything else | the cookie's backend when preview routing is on (Host unchanged), else web |
-| anything else (IPs, unknown names) | `/__proxy/health`, `/__proxy/ready` | the proxy itself |
+| | everything else, with the cookie and preview routing on | the cookie's backend at the root, as the old addresses serve it (Host unchanged) |
+| | everything else | as on bizomat.ai, by path (so `/cad/` and `/tasks/` work before DNS moves) |
+| anything else (IPs, unknown names, `cad.bizomat.ai`, `work.bizomat.ai`) | `/__proxy/health`, `/__proxy/ready` | the proxy itself |
 | | everything else | 421 |
 
 `/__proxy/ready` asks each backend's health path (2.5 s timeout, answer cached 2 s) and answers 200 only when all
@@ -93,11 +101,11 @@ three answer; 503 otherwise, with each backend's status (no addresses). The prox
   **Set:** `X-Forwarded-For` (one address), `X-Real-IP`, `CF-Connecting-IP` (work reads it), `Fly-Client-IP` (cad reads
   it), all the same client IP; `X-Forwarded-Proto`; `X-Forwarded-Host` (the Host as received); `X-Bizomat-Request-Id`.
   **Responses:** hop-by-hop headers removed; `Strict-Transport-Security: max-age=31536000; includeSubDomains` added on
-  the eight production hosts when the backend sent none (the value kevos.com already uses); `X-Robots-Tag: noindex`
+  the six production hosts when the backend sent none (the value kevos.com already uses); `X-Robots-Tag: noindex`
   on the preview host.
 - **Log:** one JSON line per request on stdout: `t, host, method, path, status, upstream, ms, id` (+ `upgrade`,
   `aborted`, `err` code). The path has no query and credential-like segments are replaced by `:redacted` (private
-  connector addresses `/mcp/<key>`, invite links, long tokens); no client IP, cookie or header is logged; an IP
+  connector addresses `/mcp/<key>` and `/cad/mcp/<key>`, invite links, long tokens); no client IP, cookie or header is logged; an IP
   used as Host is logged as `ip`.
 - **Stop:** on SIGTERM (fly.toml `kill_signal`) it stops accepting, lets open requests finish for 10 s, then closes
   long polls and WebSockets (clients reconnect) and exits 0. `kill_timeout` is 15 s.
@@ -233,23 +241,28 @@ host: the certificate on `bizomat` first, then the record.
    (`_acme-challenge.<host>` CNAME, or `_fly-ownership` TXT). Add the validation record first: the certificate is then
    issued before traffic moves. `fly certs check <host> -a bizomat` until it reports issued.
 2. Lower each record's TTL (60 s) a day before.
-3. Per host:
-   - `bizomat.ai`: A to the shared IPv4 and AAAA to the IPv6 (apex: no CNAME). `www.bizomat.ai`: CNAME
-     `bizomat.fly.dev`. Check: `smoke.mjs https://bizomat.fly.dev --mode live --skip cad,work`.
-   - `cad.bizomat.ai`: CNAME `bizomat.fly.dev`. New name: nothing depends on it yet.
-   - `cados.kevos.com` (after `migrate/cad`): today a DNS-only CNAME to `cados.fly.dev` with an `_acme-challenge`
-     CNAME for the cados certificate. Point `_acme-challenge.cados.kevos.com` at the target `fly certs setup` shows for
-     bizomat, wait for the certificate, then change the CNAME to `bizomat.fly.dev`. If `fly certs add` refuses because
-     cados holds the name, remove it there first (`fly certs remove cados.kevos.com -a cados`) in the same window.
-     `OPENSKETCH_PUBLIC_URL` stays `https://cados.kevos.com` until cad.bizomat.ai is verified as the new canonical address.
-   - `work.bizomat.ai`: CNAME `bizomat.fly.dev`.
-   - `work.kevos.com` (after the work data apply): today a Workers custom domain of `workos-platform-preview`. Remove the
-     custom domain (Cloudflare: Workers > workos-platform-preview > Settings > Domains & Routes; this deletes its DNS
-     record), then add the DNS-only CNAME `bizomat.fly.dev`. Keep the Worker itself.
+3. Per host, in this order (`docs/BIZOMAT-DEPLOYMENT.md`, section 6). bizomat.ai carries the website, CAD Automation
+   (`/cad`) and Project Management (`/tasks`) by path, so it moves together with CAD's data, after Project Management:
+   - `work.kevos.com` (after the work data apply): today a Workers custom domain of `workos-platform-preview`. If the
+     website's `TASKS` service binding was made, comment it out and merge first (bizomat.ai/tasks then redirects to
+     work.kevos.com). Remove the custom domain (Cloudflare: Workers > workos-platform-preview > Settings > Domains &
+     Routes; this deletes its DNS record), then add the DNS-only CNAME `bizomat.fly.dev`. Keep the Worker itself.
+   - `bizomat.ai`, `www.bizomat.ai` and `cados.kevos.com`, in one window, after `migrate/cad` (cados frozen, data
+     imported and verified). Certificates first: point `_acme-challenge.bizomat.ai`, `_acme-challenge.www.bizomat.ai`
+     and `_acme-challenge.cados.kevos.com` at the targets `fly certs setup` shows for bizomat and wait until all three
+     are issued (if `fly certs add` refuses because cados holds a name, remove it there first: `fly certs remove
+     <host> -a cados`). Then `bizomat.ai`: A to the shared IPv4 and AAAA to the IPv6 (apex: no CNAME), DNS only (if
+     the records were proxied for the Worker, switching them to DNS only takes bizomat.ai off the Worker);
+     `www.bizomat.ai`: CNAME `bizomat.fly.dev`, DNS only; `cados.kevos.com`: today a DNS-only CNAME to `cados.fly.dev`,
+     change it to `bizomat.fly.dev`. `OPENSKETCH_PUBLIC_URL` is `https://bizomat.ai/cad` already (fly.toml), the same
+     address the cados app serves, so connectors and paired computers keep their address.
    - `kevos.com`, `www.kevos.com`: today the Worker `throbbing-block-6c61` on route `kevos.com/*`. Remove the route
      (keep the Worker), then A/AAAA for `kevos.com` and a CNAME for `www.kevos.com` to bizomat, DNS-only. Every page
-     then answers 301 to bizomat.ai with the same path. (Alternative without moving kevos.com: a Cloudflare redirect
-     rule to `https://bizomat.ai${path}` with the query kept; then the proxy's kevos.com rules stay unused.)
+     then answers 301 to bizomat.ai with the same path (`/cad/`, the old CAD Automation page, to `/cad-automation/`).
+     (Alternative without moving kevos.com: Cloudflare redirect rules, `/cad` and `/cad/` to
+     `https://bizomat.ai/cad-automation/` first, then `https://bizomat.ai${path}` with the query kept; then the proxy's
+     kevos.com rules stay unused.)
+   - `cad.bizomat.ai`, `work.bizomat.ai`: no records (no subdomains); the proxy answers them 421.
 4. After each host: `node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode live`.
 5. When every host is live: set `BIZOMAT_PREVIEW_ROUTING = "0"` in fly.toml and deploy.
 

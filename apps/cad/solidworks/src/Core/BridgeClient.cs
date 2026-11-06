@@ -153,7 +153,7 @@ namespace OpenSketch.Sw.Core
                 if (r.StatusCode == HttpStatusCode.Unauthorized)
                     throw new Fatal(J.Str(SafeParse(text), "detail") ?? "The server did not accept this key. Copy it again from CAD Automation: Settings > Add-in key.");
                 if (r.StatusCode == HttpStatusCode.NotFound)
-                    throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the CAD Automation site, e.g. https://cados.kevos.com).");
+                    throw new Fatal("This server has no SOLIDWORKS link. Check the address (it is the CAD Automation site, e.g. https://bizomat.ai/cad).");
                 if (!r.IsSuccessStatusCode) throw new IOException("hello: HTTP " + (int)r.StatusCode + " " + Trim(text));
                 var d = Json.ParseObject(text);
                 session = J.Str(d, "session");

@@ -6,6 +6,7 @@ import { timeAgo } from '../../lib/format';
 import { ErrorBox, Field, Loading } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { Modal, useConfirm, useToast } from '../../components/ui/overlays';
+import { appUrl } from '../../lib/base';
 
 interface SessionRow {
   id: string;
@@ -186,7 +187,7 @@ function ProvidersCard() {
             {!google?.enabled ? <div className="muted small">Google sign-in is not configured on this deployment (an administrator must add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET).</div> : null}
           </span>
           {google?.enabled && !linkedGoogle ? (
-            <a className="btn sm" href="/api/auth/oauth/google/start?link=1">Link Google</a>
+            <a className="btn sm" href={appUrl('/api/auth/oauth/google/start?link=1')}>Link Google</a>
           ) : (
             <button className="btn sm" disabled>{linkedGoogle ? 'Linked' : 'Unavailable'}</button>
           )}

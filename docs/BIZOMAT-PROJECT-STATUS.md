@@ -1,7 +1,9 @@
 # BIZOMAT project status
 
-_Last updated: 5 Nov 2026. Branch `claude/dazzling-mccarthy-31qg86` (mirrored to `feat/bizomat-unified-platform`) of
-`jogkev-creator/gocore-website`. Not merged to `main`: merging publishes the website at kevos.com (`CLAUDE.md`)._
+_Last updated: 6 Nov 2026. Branch `claude/dazzling-mccarthy-31qg86` of `jogkev-creator/gocore-website`, restarted from
+`main` after jogkev-creator/gocore-website#42 and #43 were merged (they published the BIZOMAT website; merging to
+`main` publishes the website at kevos.com, `CLAUDE.md`). `feat/bizomat-unified-platform` mirrored the branch up to
+35ef993._
 
 ## 1. Where things stand
 
@@ -35,7 +37,7 @@ exact remaining actions; each one is the owner's, in order, with its checks and 
 | 14 | About and founder sections | Done, in The Engine Room | First-person letter signed "Kevin Jogin, Founder, BIZOMAT"; nothing invented (no biography, clients, figures) |
 | 15 | Privacy, Terms, Disclaimer | Done, legal review needed | Written from the code; section 7 lists what a lawyer must review and what is missing |
 | 16 | Existing URLs and compatibility preserved | Done | Same paths on bizomat.ai; 1,600+ redirects; kevos.com to bizomat.ai with path and query; CAD and Work hosts keep every path, MCP, OAuth and device routes |
-| 17 | Single-app Fly.io architecture | Implemented, not deployed (blocker: no Fly token) | `fly.toml`, `infrastructure/`; image, proxy and compose stack tested locally (section 4) |
+| 17 | Single-app Fly.io architecture | Implemented, not deployed (blocker: no Fly token) | `fly.toml`, `infrastructure/`; image, proxy and compose stack tested locally (section 4). Path-based since 6 Nov, as the owner decided: the proxy routes bizomat.ai `/cad` to CAD Automation and `/tasks` to Project Management, as the website's Worker does |
 | 18 | Automated tests pass | See section 4 | |
 | 19 | Migration results verified | Dry runs verified; live run pending | Section 5 |
 | 20 | Deployment and rollback documentation | Done | `BIZOMAT-DEPLOYMENT.md`, `BIZOMAT-ROLLBACK.md`, `BIZOMAT-OPERATIONS.md`, `infrastructure/README.md` |
@@ -84,6 +86,23 @@ Every result below is from a run in this session on 5 Nov 2026; commands are in 
 | Platform | GitHub Actions `BIZOMAT CI` on `a930c6f` (run 42075594794): website, Project Management, CAD Automation (pytest in two parts and the solver), proxy and platform files, and the image job | **All 7 jobs passed.** Image from the unmodified Dockerfile (all four roles, about 2.6 GB); entrypoint tests (secret isolation, volumes, secret files, maintenance mode, refusals); migration round trip in the image; the four services started from the same image; smoke test through the proxy **39 of 39** (every host and path family, redirects, security headers, CAD MCP refusing unauthenticated calls with 401, Project Management APIs and WebSockets refusing without a session); isolation check: each service holds only its own settings, runs as its own user with no capabilities and cannot read init's environment |
 | Platform | Earlier CI runs | They found five problems that local runs could not, all fixed: the brand check compared git-ignored build output, Project Management tests resolved the website's tsconfig on a clean checkout, the entrypoint test made secret fixtures as the runner's user, the local stack had no HTTPS in front (the website correctly redirected), and the smoke test still listed the two pages that became the Engine Room |
 
+**6 Nov 2026, the path-based plan** (CADOS#14 and #15 and PMO#2 taken into the apps; the proxy routes bizomat.ai by
+path), from runs in this session:
+
+| Product | Suite | Result |
+| --- | --- | --- |
+| Platform | Edge proxy (`node --test infrastructure/proxy/test/*.test.mjs`): routing by path, `CAD_PATHS` equal to the Worker's, the old addresses, the preview host | 69 of 69 |
+| Platform | Smoke test against the four services run directly on one machine with the compose settings (no Docker image) | hosts mode 47 of 47; preview mode (`bizomat.fly.dev` mapped to the machine) 47 of 47; stand-ins for web and work 29 of 29 |
+| Platform | shellcheck on every platform script; `fly.toml` and both compose files read | Clean |
+| CAD Automation | `pytest -m "not slow"` / `-m slow` (the .NET Companion end to end) / solver `npm test` | 351 passed, 1 skipped (no dual-stack socket on this host) / 3 of 3 / pass |
+| CAD Automation | Add-in and Companion 0.12.4 (`bash solidworks/build.sh test`, .NET 8 SDK) | 0 warnings, 32 of 32 |
+| CAD Automation | Pages under `/cad` in Chromium, 1440 and 390 px, signed out and signed in | No console or policy error, no request outside `/cad`, fonts loaded, no sideways scroll |
+| Project Management | Workers runtime (`npm test`) / Node runtime (`npm run test:node`) / lint and type check / builds | 207 of 207 / 305 of 305 / pass / pass |
+| Project Management | Browser tests on `wrangler dev` and on the Node server (desktop and phone), including the app under `/tasks` | 10 of 10 on each |
+| Website | `npm run verify` and `npm run build:server`; `npm test` again on the current `main` | 4,441 pages verified, 0 errors; 1,502 of 1,502 tests |
+
+Not run here: the platform image build and the compose stack in Docker (the image job of `BIZOMAT CI` does both).
+
 Not run anywhere yet, because they need the real environment: the MSI and the add-in in SOLIDWORKS on Windows; a
 deploy to Fly.io (6PN addresses, Fly's checks, certificates); the live D1 and R2 export.
 
@@ -107,8 +126,8 @@ deploy to Fly.io (6PN addresses, Fly's checks, certificates); the live D1 and R2
 | 4 | Set `OPENSKETCH_PASSWORD` on `bizomat` to the same value as on `cados`, unless CADOS#11 (which removes it) is taken into `apps/cad` first | Secret values cannot be read back from Fly | Run "BIZOMAT deploy" again; smoke test |
 | 5 | Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` (D1 read, R2 read) | No Cloudflare credentials | "BIZOMAT migrate work data", dry run, then apply |
 | 6 | CAD data move (`infrastructure/migrate/cad/README.md`) | Needs Fly access to both apps | Smoke test, then DNS for `cados.kevos.com` |
-| 7 | DNS changes, one host at a time (`BIZOMAT-DEPLOYMENT.md`, section 6) | Production DNS needs the owner's approval | Rollback window starts |
-| 8 | Merge to `main` when the website should go live on kevos.com | Merging publishes through Cloudflare's GitHub integration | Check the public site (`CLAUDE.md`, "After any production change") |
+| 7 | DNS changes in the order of `BIZOMAT-DEPLOYMENT.md`, section 6: `work.kevos.com` with its data; then `bizomat.ai`, `www.bizomat.ai` and `cados.kevos.com` together with the CAD data (bizomat.ai carries all three products by path) | Production DNS needs the owner's approval | Rollback window starts |
+| 8 | Check the public site after the merges of jogkev-creator/gocore-website#42 and #43 (6 Nov), and after any later merge to `main` | Merging publishes through Cloudflare's GitHub integration | `CLAUDE.md`, "After any production change" |
 
 ## 7. Legal review
 
@@ -145,3 +164,4 @@ exists.
 | 5 Nov 2026 | Security remediation and readiness review (`BIZOMAT-PRODUCTION-READINESS.md`): the two PMO database artifacts found and documented (deletion is the owner's); no workflow may upload a database, dump, backup or secrets file (PMO#1, `tests/artifact-policy.test.ts`); forced new password and founder security reset in Project Management; secret scan of all three repositories' trees and histories (test fixtures only); OPENSKETCH_PASSWORD analysed (removal in CADOS#11); bizomat.ai made the CAD app's address with old hosts redirecting pages (CADOS#12) |
 | 5 Nov 2026 | Owner decision: everything under bizomat.ai, no subdomains. The website Worker routes `/cad` to CAD Automation and `/tasks` to Project Management; the CAD Automation page moves to `/cad-automation/`; CADOS#14 merged (CAD at `bizomat.ai/cad`, MCP keep-alive behind Cloudflare, Google sign-in under `/cad`); PMO#2 merged (Project Management under `/tasks`, deploy pending); CADOS#15 merged (a Content Security Policy on every CAD page, now that bizomat.ai is one origin); CADOS#13 (`cad.bizomat.ai`) closed |
 | 5 Nov 2026 | Owner request: About and Proof of Work joined as **The Engine Room** (`/engine-room/`); the old addresses redirect (301) and their in-page links land on the matching sections; navigation reads CAD Automation, Project Management, Resources, Engine Room |
+| 6 Nov 2026 | The single-app plan is path-based, matching the Worker: the proxy routes bizomat.ai `/cad`, `/cad/...` and CAD's root program and OAuth discovery paths to cad, `/tasks` to work and the rest to web, `/CAD` and `/TASKS` 301 to lowercase, `www` 301 to the apex, `cados.kevos.com` and `work.kevos.com` keep working, `cad.bizomat.ai` and `work.bizomat.ai` answer 421, and `kevos.com/cad/` goes to `/cad-automation/`. `apps/cad` took CADOS#14 (the `/cad` prefix, MCP event streams with keep-alive, Google sign-in under `/cad`, the add-in's default address, now 0.12.4) and #15 (page policy), on its own alias hosts (CADOS#11 and #12 not taken). `apps/work` took PMO#2 (`/tasks` mount, base helper, relative build, cookie scoped to `/tasks`), with `<base href>` written as text on Node. `fly.toml`: `OPENSKETCH_PUBLIC_URL = "https://bizomat.ai/cad"`, `WORK_APP_URL = "https://bizomat.ai/tasks"`. Smoke test, deployment sections 2 and 6, rollback and runbook moved to paths |

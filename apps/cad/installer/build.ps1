@@ -63,7 +63,7 @@ if ($sign) { $thumb = (Get-AuthenticodeSignature $msi).SignerCertificate.Thumbpr
 @{ version = $Version; msi_url = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v$Version/$name";
    sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "BIZOMAT CAD Automation for SOLIDWORKS $Version";
    published_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ') } | ConvertTo-Json | Set-Content (Join-Path $out 'release.json') -Encoding UTF8
-# the stable name (bridge-latest): what https://cados.kevos.com/download/solidworks points at
+# the stable name (bridge-latest): what https://bizomat.ai/cad/download/solidworks points at
 $stable = Join-Path $out 'CADOS-for-SOLIDWORKS-x64.msi'
 Copy-Item $msi $stable -Force
 "$hash  CADOS-for-SOLIDWORKS-x64.msi" | Set-Content "$stable.sha256" -Encoding ASCII

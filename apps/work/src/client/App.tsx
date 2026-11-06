@@ -9,6 +9,7 @@ import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
 import { BRAND } from './lib/brand';
+import { appPath } from './lib/base';
 
 const Home = lazy(() => import('./pages/Home'));
 const MyWork = lazy(() => import('./pages/MyWork'));
@@ -69,7 +70,7 @@ export function App() {
   useEffect(() => {
     const onUnauthorized = () => {
       qc.setQueryData(['me'], null);
-      navigate(`/login?next=${encodeURIComponent(location.pathname)}`);
+      navigate(`/login?next=${encodeURIComponent(appPath())}`);
     };
     window.addEventListener('workos:unauthorized', onUnauthorized);
     return () => window.removeEventListener('workos:unauthorized', onUnauthorized);

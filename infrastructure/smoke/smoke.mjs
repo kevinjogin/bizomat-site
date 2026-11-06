@@ -1,14 +1,19 @@
 #!/usr/bin/env node
-// BIZOMAT smoke test: checks every host through the edge proxy. No dependencies (Node 22).
+// BIZOMAT smoke test: checks every host and application path through the edge proxy. No dependencies (Node 22).
+//
+// Everything lives under bizomat.ai: the website at the root, CAD Automation under /cad, Project Management under
+// /tasks (infrastructure/proxy/routes.mjs). The old addresses cados.kevos.com and work.kevos.com serve their app at
+// the root.
 //
 //   node infrastructure/smoke/smoke.mjs [base-url] [options]
 //
 //   base-url        where the proxy answers (default http://127.0.0.1:8080, the compose stack)
 //   --mode M        hosts    every request goes to base-url with the product's Host header (compose, a direct run)
-//                   preview  for https://<app>.fly.dev before DNS moves: web through the fly.dev host, cad and
-//                            work through the preview cookie (/__preview/cad, /__preview/work); host-specific
-//                            checks (redirects, HSTS) are tried with a Host header and only warn if the edge
-//                            does not pass it through
+//                   preview  for https://<app>.fly.dev before DNS moves: the fly.dev host routes by path as
+//                            bizomat.ai does, so the website, /cad/ and /tasks/ are checked there; the old addresses
+//                            through the preview cookie (/__preview/cad, /__preview/work: the app at the root);
+//                            host-specific checks (redirects, HSTS) are tried with a Host header and only warn if the
+//                            edge does not pass it through
 //                   live     after the DNS cutover: each product host by its real name; base-url only for the
 //                            proxy's own endpoints
 //                   default: preview for *.fly.dev, else hosts
@@ -172,16 +177,30 @@ async function previewSwitch(backend) {
   return previewCookie[backend];
 }
 
-/** Request to a backend by its product host (preview mode: the fly.dev host plus the preview cookie). */
-async function toBackend(backend, productHost, req = {}) {
-  if (opts.mode !== 'preview' || backend === 'web') {
-    const host = opts.mode === 'preview' ? base.hostname : productHost;
-    return send(host, req);
-  }
+/** The host that stands for bizomat.ai in this mode: the fly.dev host before DNS moves (it routes by path too). */
+const platformHost = () => (opts.mode === 'preview' ? base.hostname : 'bizomat.ai');
+
+/** A request to bizomat.ai (preview mode: the fly.dev host): the website, /cad/... and /tasks/... by path. */
+function onPlatform(req = {}) {
+  return send(platformHost(), req);
+}
+
+/** A request to an old address (cados.kevos.com, work.kevos.com), whose app answers at the root (preview mode: the
+ * fly.dev host with the preview cookie for that backend). */
+async function onOldHost(backend, host, req = {}) {
+  if (opts.mode !== 'preview') return send(host, req);
   const cookie = await previewSwitch(backend);
   if (!cookie) return { status: 0, error: 'preview switch did not answer with a cookie (BIZOMAT_PREVIEW_ROUTING=1?)', headers: {}, text: '' };
   return send(base.hostname, { ...req, headers: { ...(req.headers || {}), Cookie: cookie } });
 }
+
+const json = (r) => {
+  try {
+    return r.json();
+  } catch {
+    return null;
+  }
+};
 
 async function waitForProxy() {
   if (!opts.wait) return;
@@ -216,23 +235,41 @@ async function proxyChecks() {
       const r = await send('unknown.invalid', { path: '/' });
       return r.status === 421 || { fail: describe(r) };
     }, { soft: hostDependent });
+    await check('proxy', 'no subdomains: cad.bizomat.ai and work.bizomat.ai get 421', async () => {
+      for (const host of ['cad.bizomat.ai', 'work.bizomat.ai']) {
+        const r = await send(host, { path: '/' });
+        if (r.status !== 421) return { fail: `${host}: ${describe(r)}` };
+      }
+      return true;
+    }, { soft: hostDependent });
   }
   await check('proxy', 'www.bizomat.ai redirects to the apex, path and query kept', async () => {
-    const r = await send('www.bizomat.ai', { path: '/about/?smoke=1' });
-    return (r.status === 301 && r.headers.location === 'https://bizomat.ai/about/?smoke=1') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    for (const path of ['/engine-room/?smoke=1', '/cad/docs?smoke=1']) {
+      const r = await send('www.bizomat.ai', { path });
+      if (r.status !== 301 || r.headers.location !== `https://bizomat.ai${path}`) return { fail: `${path}: ${describe(r)} ${r.headers.location || ''}` };
+    }
+    return true;
   }, { soft: hostDependent });
+  for (const [from, to] of [['/CAD/docs?smoke=1', '/cad/docs?smoke=1'], ['/Tasks', '/tasks']]) {
+    await check('proxy', `${from} on bizomat.ai answers 301 to ${to}`, async () => {
+      const r = await onPlatform({ path: from });
+      return (r.status === 301 && r.headers.location === to) || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    });
+  }
   const moves = [
-    ['kevos.com', '/tools/?smoke=1&x=%2F', 'GET'],
-    ['kevos.com', '/reados/', 'GET'],
-    ['kevos.com', '/insights/some-old-post/', 'GET'],
-    ['kevos.com', '/', 'HEAD'],
-    ['www.kevos.com', '/about/', 'GET'],
+    ['kevos.com', '/tools/?smoke=1&x=%2F', 'GET', '/tools/?smoke=1&x=%2F'],
+    ['kevos.com', '/reados/', 'GET', '/reados/'],
+    ['kevos.com', '/insights/some-old-post/', 'GET', '/insights/some-old-post/'],
+    ['kevos.com', '/', 'HEAD', '/'],
+    ['www.kevos.com', '/engine-room/', 'GET', '/engine-room/'],
+    // kevos.com/cad/ was the CAD Automation page; on bizomat.ai /cad is the application itself
+    ['kevos.com', '/cad/?smoke=1', 'GET', '/cad-automation/?smoke=1'],
   ];
-  for (const [host, path, method] of moves) {
-    await check('proxy', `${method} ${host}${path} -> 301 https://bizomat.ai${path}`, async () => {
+  for (const [host, path, method, to] of moves) {
+    await check('proxy', `${method} ${host}${path} -> 301 https://bizomat.ai${to}`, async () => {
       const r = await send(host, { path, method });
       if (r.status !== 301) return { fail: describe(r) };
-      if (r.headers.location !== `https://bizomat.ai${path}`) return { fail: `Location ${r.headers.location}` };
+      if (r.headers.location !== `https://bizomat.ai${to}`) return { fail: `Location ${r.headers.location}` };
       if (opts.mode !== 'preview' && !HSTS.test(r.headers['strict-transport-security'] || '')) return { fail: 'no HSTS on the redirect' };
       return true;
     }, { soft: hostDependent });
@@ -240,9 +277,8 @@ async function proxyChecks() {
 }
 
 async function webChecks() {
-  const host = 'bizomat.ai';
   if (opts.stub.has('web')) {
-    await stubChecks('web', host);
+    await stubChecks('web', 'bizomat.ai', '/__stub/echo');
     await check('web', 'POST to kevos.com outside /api is 308 to bizomat.ai', async () => {
       const r = await send('kevos.com', { method: 'POST', path: '/__stub/echo', headers: { 'Content-Type': 'application/json' }, body: '{}' });
       return (r.status === 308 && r.headers.location === 'https://bizomat.ai/__stub/echo') || { fail: describe(r) };
@@ -255,21 +291,21 @@ async function webChecks() {
   }
   for (const [from, to] of MOVED) {
     await check('web', `${from} moved to ${to}`, async () => {
-      const r = await toBackend('web', host, { path: from, headers: { Accept: 'text/html' } });
+      const r = await onPlatform({ path: from, headers: { Accept: 'text/html' } });
       const location = r.headers.location || '';
-      return (r.status === 301 && (location === to || location.endsWith(`://${host}${to}`) || new URL(location, 'https://x').pathname === to)) || { fail: `${describe(r)} ${location}` };
+      return (r.status === 301 && (location === to || location.endsWith(`://bizomat.ai${to}`) || new URL(location, 'https://x').pathname === to)) || { fail: `${describe(r)} ${location}` };
     });
   }
   for (const page of PAGES) {
     await check('web', `page ${page}`, async () => {
-      const r = await toBackend('web', host, { path: page, headers: { Accept: 'text/html' } });
+      const r = await onPlatform({ path: page, headers: { Accept: 'text/html' } });
       if (r.status === 200) return /<html/i.test(r.text) || { fail: 'not an HTML page' };
       if (r.status === 404) return { warn: '404: not built yet' };
       return { fail: describe(r) };
     });
   }
   await check('web', 'security headers on /', async () => {
-    const r = await toBackend('web', host, { path: '/', headers: { Accept: 'text/html' } });
+    const r = await onPlatform({ path: '/', headers: { Accept: 'text/html' } });
     if (r.status !== 200) return { fail: describe(r) };
     const h = r.headers;
     const missing = [];
@@ -280,9 +316,13 @@ async function webChecks() {
     if (!h['referrer-policy']) missing.push('Referrer-Policy');
     return missing.length === 0 || { fail: `missing ${missing.join(', ')}` };
   });
-  await check('web', '/healthz', async () => {
-    const r = await toBackend('web', host, { path: '/healthz' });
-    return r.status === 200 || { fail: describe(r) };
+  await check('web', 'paths that only look like the applications\' are the website\'s', async () => {
+    for (const path of ['/cadence', '/tasksfoo', '/.well-known/security.txt']) {
+      const r = await onPlatform({ path, headers: { Accept: 'text/html' } });
+      // the website answers (a page or its 404); CAD Automation would redirect into /cad, Project Management into /tasks
+      if (r.status === 0 || r.status >= 500 || /^\/(cad|tasks)(\/|$)/.test(r.headers.location || '')) return { fail: `${path}: ${describe(r)} ${r.headers.location || ''}` };
+    }
+    return true;
   });
   await check('web', 'POST kevos.com/api/contact is proxied to web (old cached forms)', async () => {
     const r = await send('kevos.com', { method: 'POST', path: '/api/contact', headers: { 'Content-Type': 'application/json', Origin: 'https://kevos.com' }, body: '{}' });
@@ -292,83 +332,142 @@ async function webChecks() {
   }, { soft: opts.mode === 'preview' });
 }
 
+const MCP_INIT = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'bizomat-smoke', version: '1' } } });
+const MCP_HEADERS = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' };
+
 async function cadChecks() {
-  const hosts = ['cad.bizomat.ai', 'cados.kevos.com'];
   if (opts.stub.has('cad')) {
-    for (const h of hosts) await stubChecks('cad', h);
+    await stubChecks('cad', 'bizomat.ai', '/cad/__stub/echo');
+    await stubChecks('cad', 'cados.kevos.com', '/__stub/echo');
     return;
   }
-  for (const host of hosts) {
-    await check('cad', `${host} /healthz`, async () => {
-      const r = await toBackend('cad', host, { path: '/healthz' });
-      return (r.status === 200 && typeof r.json() === 'object') || { fail: describe(r) };
-    });
-    await check('cad', `${host} /mcp without a token: 401 with WWW-Authenticate`, async () => {
-      const r = await toBackend('cad', host, {
-        method: 'POST',
-        path: '/mcp',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'bizomat-smoke', version: '1' } } }),
-      });
-      if (r.status !== 401) return { fail: describe(r) };
-      return /resource_metadata=/i.test(r.headers['www-authenticate'] || '') || { fail: 'no resource_metadata in WWW-Authenticate' };
-    });
-    await check('cad', `${host} /.well-known/oauth-protected-resource/mcp`, async () => {
-      const r = await toBackend('cad', host, { path: '/.well-known/oauth-protected-resource/mcp' });
-      if (r.status !== 200) return { fail: describe(r) };
-      const j = r.json();
-      return (typeof j.resource === 'string' && j.resource.endsWith('/mcp') && Array.isArray(j.authorization_servers)) || { fail: 'unexpected metadata' };
-    });
-    await check('cad', `${host} sign-in page`, async () => {
-      const r = await toBackend('cad', host, { path: '/login', headers: { Accept: 'text/html' } });
-      return (r.status === 200 && /text\/html/.test(r.headers['content-type'] || '')) || { fail: describe(r) };
-    });
-  }
+  // bizomat.ai/cad (preview mode: the fly.dev host, by path)
+  await check('cad', 'bizomat.ai/cad/healthz', async () => {
+    const r = await onPlatform({ path: '/cad/healthz' });
+    return (r.status === 200 && json(r)?.ok === true) || { fail: describe(r) };
+  });
+  await check('cad', 'bizomat.ai/cad/ is the app, with its page policy and links under /cad', async () => {
+    const r = await onPlatform({ path: '/cad/', headers: { Accept: 'text/html' } });
+    if (r.status !== 200 || !/text\/html/.test(r.headers['content-type'] || '')) return { fail: describe(r) };
+    if (!/script-src 'self'/.test(r.headers['content-security-policy'] || '')) return { fail: 'no page policy (Content-Security-Policy)' };
+    if (!r.text.includes('href="/cad/ui/cados.css"')) return { fail: 'its links do not name /cad' };
+    return true;
+  });
+  await check('cad', 'bizomat.ai/cad/login: the sign-in page', async () => {
+    const r = await onPlatform({ path: '/cad/login', headers: { Accept: 'text/html' } });
+    return (r.status === 200 && /text\/html/.test(r.headers['content-type'] || '')) || { fail: describe(r) };
+  });
+  await check('cad', 'bizomat.ai/cad/mcp without a token: 401 naming the metadata at the root of the host (RFC 9728)', async () => {
+    const r = await onPlatform({ method: 'POST', path: '/cad/mcp', headers: MCP_HEADERS, body: MCP_INIT });
+    if (r.status !== 401) return { fail: describe(r) };
+    return /resource_metadata="https:\/\/[^/"]+\/\.well-known\/oauth-protected-resource\/cad\/mcp"/.test(r.headers['www-authenticate'] || '') || { fail: `WWW-Authenticate ${r.headers['www-authenticate']}` };
+  });
+  await check('cad', 'bizomat.ai/.well-known/oauth-protected-resource/cad/mcp and the issuer\'s metadata', async () => {
+    const pr = await onPlatform({ path: '/.well-known/oauth-protected-resource/cad/mcp' });
+    const j = json(pr);
+    if (pr.status !== 200 || !j || !String(j.resource).endsWith('/cad/mcp') || !Array.isArray(j.authorization_servers)) return { fail: `${describe(pr)} ${j && j.resource}` };
+    const md = await onPlatform({ path: '/.well-known/oauth-authorization-server/cad' });
+    const m = json(md);
+    return (md.status === 200 && m && String(m.issuer).endsWith('/cad') && String(m.token_endpoint).endsWith('/cad/oauth/token')) || { fail: `${describe(md)} ${m && m.issuer}` };
+  });
+  await check('cad', 'bizomat.ai root program paths reach CAD Automation (/healthz, /mcp)', async () => {
+    const h = await onPlatform({ path: '/healthz' });
+    if (h.status !== 200 || json(h)?.ok !== true || json(h)?.service === 'web') return { fail: `/healthz: ${describe(h)}` };
+    const m = await onPlatform({ method: 'POST', path: '/mcp', headers: MCP_HEADERS, body: MCP_INIT });
+    return m.status === 401 || { fail: `/mcp: ${describe(m)}` };
+  });
+  // cados.kevos.com, the old address: programs at its root with its own address, pages moved to bizomat.ai/cad
+  const old = 'cados.kevos.com';
+  const own = opts.mode !== 'preview'; // through the preview cookie the app sees the fly.dev host, not cados.kevos.com
+  await check('cad', `${old} /healthz`, async () => {
+    const r = await onOldHost('cad', old, { path: '/healthz' });
+    return (r.status === 200 && json(r)?.ok === true) || { fail: describe(r) };
+  });
+  await check('cad', `${old} /mcp without a token: 401${own ? ' naming its own metadata' : ''}`, async () => {
+    const r = await onOldHost('cad', old, { method: 'POST', path: '/mcp', headers: MCP_HEADERS, body: MCP_INIT });
+    if (r.status !== 401) return { fail: describe(r) };
+    const want = own ? `resource_metadata="https://${old}/.well-known/oauth-protected-resource/mcp"` : 'resource_metadata=';
+    return (r.headers['www-authenticate'] || '').includes(want) || { fail: `WWW-Authenticate ${r.headers['www-authenticate']}` };
+  });
+  await check('cad', `${old} /.well-known/oauth-protected-resource/mcp`, async () => {
+    const r = await onOldHost('cad', old, { path: '/.well-known/oauth-protected-resource/mcp' });
+    const j = json(r);
+    if (r.status !== 200 || !j || !Array.isArray(j.authorization_servers)) return { fail: describe(r) };
+    return (own ? j.resource === `https://${old}/mcp` : String(j.resource).endsWith('/mcp')) || { fail: `resource ${j.resource}` };
+  });
+  await check('cad', own ? `${old} pages answer 301 to https://bizomat.ai/cad` : `${old} sign-in page (preview: the app at the root)`, async () => {
+    const r = await onOldHost('cad', old, { path: '/login', headers: { Accept: 'text/html' } });
+    if (own) return (r.status === 301 && r.headers.location === 'https://bizomat.ai/cad/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 200 && /text\/html/.test(r.headers['content-type'] || '')) || { fail: describe(r) };
+  });
 }
 
 async function workChecks() {
-  const hosts = ['work.bizomat.ai', 'work.kevos.com'];
+  const old = 'work.kevos.com';
   if (opts.stub.has('work')) {
-    for (const h of hosts) await stubChecks('work', h);
-    await check('work', 'WebSocket upgrade reaches work through the proxy', async () => {
-      const cookie = opts.mode === 'preview' ? await previewSwitch('work') : '';
-      const host = opts.mode === 'preview' ? base.hostname : hosts[0];
-      const r = await wsHandshake(host, '/__stub/ws', cookie ? { Cookie: cookie } : {});
+    await stubChecks('work', 'bizomat.ai', '/tasks/__stub/echo');
+    await stubChecks('work', old, '/__stub/echo');
+    await check('work', 'WebSocket upgrade under bizomat.ai/tasks reaches work through the proxy', async () => {
+      const r = await wsHandshake(platformHost(), '/tasks/__stub/ws');
       return r.status === 101 || { fail: `HTTP ${r.status}` };
     });
     return;
   }
-  for (const host of hosts) {
-    await check('work', `${host} /api/health`, async () => {
-      const r = await toBackend('work', host, { path: '/api/health' });
-      return r.status === 200 || { fail: describe(r) };
-    });
-    await check('work', `${host} /login`, async () => {
-      const r = await toBackend('work', host, { path: '/login', headers: { Accept: 'text/html' } });
-      return (r.status === 200 && /text\/html/.test(r.headers['content-type'] || '')) || { fail: describe(r) };
-    });
-    await check('work', `${host} private API without a session: 401`, async () => {
-      const r = await toBackend('work', host, { path: '/api/workspaces', headers: { Accept: 'application/json' } });
-      return r.status === 401 || { fail: describe(r) };
-    });
-  }
-  await check('work', 'WebSocket upgrade without a session is refused', async () => {
+  // bizomat.ai/tasks (preview mode: the fly.dev host, by path)
+  await check('work', 'bizomat.ai/tasks/api/health', async () => {
+    const r = await onPlatform({ path: '/tasks/api/health' });
+    return r.status === 200 || { fail: describe(r) };
+  });
+  await check('work', 'bizomat.ai/tasks/login: the app, its files under /tasks/ (<base href>)', async () => {
+    const r = await onPlatform({ path: '/tasks/login', headers: { Accept: 'text/html' } });
+    if (r.status !== 200 || !/text\/html/.test(r.headers['content-type'] || '')) return { fail: describe(r) };
+    return r.text.includes('<base href="/tasks/">') || { fail: 'no <base href="/tasks/"> in the page' };
+  });
+  await check('work', 'bizomat.ai/tasks: a page without a session goes to the sign-in page under /tasks', async () => {
+    const r = await onPlatform({ path: '/tasks/w/smoke/home', headers: { Accept: 'text/html' } });
+    return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/login?next=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
+  });
+  await check('work', 'bizomat.ai/tasks private API without a session: 401', async () => {
+    const r = await onPlatform({ path: '/tasks/api/workspaces', headers: { Accept: 'application/json' } });
+    return r.status === 401 || { fail: describe(r) };
+  });
+  await check('work', 'bizomat.ai/tasks WebSocket upgrade without a session is refused', async () => {
+    const r = await wsHandshake(platformHost(), '/tasks/api/live/boards/smoke-test', { Origin: `https://${platformHost()}` });
+    if (r.status === 101) return { fail: 'accepted without a session' };
+    return [401, 403, 404, 426].includes(r.status) || { fail: `HTTP ${r.status}` };
+  });
+  // work.kevos.com, the old address: the app at the root of its host
+  await check('work', `${old} /api/health`, async () => {
+    const r = await onOldHost('work', old, { path: '/api/health' });
+    return r.status === 200 || { fail: describe(r) };
+  });
+  await check('work', `${old} /login: the app at the root (<base href="/">)`, async () => {
+    const r = await onOldHost('work', old, { path: '/login', headers: { Accept: 'text/html' } });
+    if (r.status !== 200 || !/text\/html/.test(r.headers['content-type'] || '')) return { fail: describe(r) };
+    return r.text.includes('<base href="/">') || { fail: 'no <base href="/"> in the page' };
+  });
+  await check('work', `${old} private API without a session: 401`, async () => {
+    const r = await onOldHost('work', old, { path: '/api/workspaces', headers: { Accept: 'application/json' } });
+    return r.status === 401 || { fail: describe(r) };
+  });
+  await check('work', `${old} WebSocket upgrade without a session is refused`, async () => {
     const cookie = opts.mode === 'preview' ? await previewSwitch('work') : '';
-    const host = opts.mode === 'preview' ? base.hostname : hosts[0];
-    const origin = opts.mode === 'preview' ? `https://${base.hostname}` : `https://${hosts[0]}`;
-    const r = await wsHandshake(host, '/api/live/boards/smoke-test', { Origin: origin, ...(cookie ? { Cookie: cookie } : {}) });
+    const host = opts.mode === 'preview' ? base.hostname : old;
+    const r = await wsHandshake(host, '/api/live/boards/smoke-test', { Origin: `https://${host}`, ...(cookie ? { Cookie: cookie } : {}) });
     if (r.status === 101) return { fail: 'accepted without a session' };
     return [401, 403, 404, 426].includes(r.status) || { fail: `HTTP ${r.status}` };
   });
 }
 
-/** Stand-in backend: the request arrives, with the Host kept and one client IP in every header. */
-async function stubChecks(backend, host) {
-  await check(backend, `${host} reaches the ${backend} stand-in with clean forwarding headers`, async () => {
-    const r = await toBackend(backend, host, {
-      path: '/__stub/echo?x=1',
+/** Stand-in backend: the request arrives with the Host and the path kept and one client IP in every header. */
+async function stubChecks(backend, host, path) {
+  const onPlatformHost = host === 'bizomat.ai';
+  await check(backend, `${host}${path} reaches the ${backend} stand-in with clean forwarding headers`, async () => {
+    const req = {
+      path: `${path}?x=1`,
       headers: { 'X-Forwarded-For': '6.6.6.6', 'CF-Connecting-IP': '6.6.6.6', 'Fly-Client-IP': '6.6.6.6', 'X-Real-IP': '6.6.6.6', 'X-Bizomat-Smoke': '1' },
-    });
+    };
+    const r = onPlatformHost ? await onPlatform(req) : await onOldHost(backend, host, req);
     if (r.status !== 200) return { fail: describe(r) };
     const e = r.json();
     if (e.stub !== backend) return { fail: `reached ${e.stub}` };
@@ -380,7 +479,7 @@ async function stubChecks(backend, host) {
     if (h['x-bizomat-smoke'] !== undefined) problems.push('X-Bizomat-* passed through');
     const wantHost = opts.mode === 'preview' ? base.hostname : host;
     if (h.host !== wantHost) problems.push(`Host ${h.host}`);
-    if (e.url !== '/__stub/echo?x=1') problems.push(`path ${e.url}`);
+    if (e.url !== `${path}?x=1`) problems.push(`path ${e.url}`);
     return problems.length === 0 || { fail: problems.join('; ') };
   });
 }

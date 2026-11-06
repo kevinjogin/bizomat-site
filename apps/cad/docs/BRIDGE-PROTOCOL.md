@@ -29,7 +29,7 @@ to a registered computer when one is online, otherwise to the v1 add-in.
 | What | How |
 |---|---|
 | A computer | An EC P-256 key made on it, non-exportable (Windows key store, the TPM when available). Its public JWK is registered at pairing. |
-| A request from a computer | `Authorization: KEVOS-Device <JWS>`, ES256 by the device key. Header `{"alg":"ES256","typ":"kevos-proof","kid":"<device_id>"}`. Claims `{"htm","htu","iat","jti","bh"}`: method, path and query, Unix time, a one-time id (16 to 64 chars), SHA-256 hex of the body. |
+| A request from a computer | `Authorization: KEVOS-Device <JWS>`, ES256 by the device key. Header `{"alg":"ES256","typ":"kevos-proof","kid":"<device_id>"}`. Claims `{"htm","htu","iat","jti","bh"}`: method, path and query (relative to the gateway address the computer paired with, which may itself have a path: `/v2/device/hello` for `https://bizomat.ai/cad/v2/device/hello`), Unix time, a one-time id (16 to 64 chars), SHA-256 hex of the body. |
 | Checks on every request | Signature with the registered key; device not removed; `htm`/`htu` match the request (compared percent-decoded); `|now - iat| <= 120 s`; `jti` not seen in the last 6 minutes; `bh` matches the body. |
 | A command or cancel from the gateway | A compact JWS by the gateway's command key, `typ` `kevos-command` or `kevos-cancel`, `kid` = the key's RFC 7638 thumbprint. The companion pinned that key at pairing and refuses anything else, including a welcome naming another key (`GATEWAY_KEY_CHANGED`: pair again). |
 | An update manifest | A JWS by the same key, `typ` `kevos-update`. |

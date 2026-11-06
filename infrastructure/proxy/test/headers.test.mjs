@@ -156,8 +156,8 @@ test('upstream request headers: Cloudflare headers pass only when Cloudflare is 
 });
 
 test('upgrade requests keep Connection: Upgrade and the Upgrade token', () => {
-  const raw = ['Host', 'work.bizomat.ai', 'Connection', 'keep-alive, Upgrade', 'Upgrade', 'websocket', 'Sec-WebSocket-Key', 'k', 'Sec-WebSocket-Version', '13'];
-  const out = upstreamRequestHeaders(raw, { client: { ip: '192.0.2.1', proto: 'https', edge: true, cdn: '' }, host: 'work.bizomat.ai', upgrade: 'websocket' });
+  const raw = ['Host', 'work.kevos.com', 'Connection', 'keep-alive, Upgrade', 'Upgrade', 'websocket', 'Sec-WebSocket-Key', 'k', 'Sec-WebSocket-Version', '13'];
+  const out = upstreamRequestHeaders(raw, { client: { ip: '192.0.2.1', proto: 'https', edge: true, cdn: '' }, host: 'work.kevos.com', upgrade: 'websocket' });
   assert.deepEqual(all(out, 'connection'), ['Upgrade']);
   assert.deepEqual(all(out, 'upgrade'), ['websocket']);
   assert.deepEqual(all(out, 'sec-websocket-key'), ['k']);
@@ -202,6 +202,14 @@ test('redactPath: no query, no credentials, website paths kept', () => {
   assert.equal(redactPath('/mcp/uploads/9f86d081884c7d659a2feaa0c55ad015'), '/mcp/uploads/:redacted');
   assert.equal(redactPath('/join/Zm9vYmFyYmF6cXV4'), '/join/:redacted');
   assert.equal(redactPath('/invite/x'), '/invite/:redacted');
+  // the same addresses under the applications' paths on bizomat.ai
+  assert.equal(redactPath('/cad/mcp/k3y'), '/cad/mcp/:redacted');
+  assert.equal(redactPath('/cad/solidworks/mcp/k3y'), '/cad/solidworks/mcp/:redacted');
+  assert.equal(redactPath('/cad/mcp/sw/next'), '/cad/mcp/sw/next');
+  assert.equal(redactPath('/cad/join/x'), '/cad/join/:redacted');
+  assert.equal(redactPath('/tasks/invite/x'), '/tasks/invite/:redacted');
+  assert.equal(redactPath('/tasks/api/live/boards/12'), '/tasks/api/live/boards/12');
+  assert.equal(redactPath('/cadence/mcp/x'), '/cadence/mcp/x', 'not an application path');
   assert.equal(redactPath('/api/files/550e8400-e29b-41d4-a716-446655440000'), '/api/files/:redacted');
   assert.equal(redactPath('/x/aB3_dE5-fG7hJ9kL1mN'), '/x/:redacted');
   assert.equal(redactPath('/reados/books/business-volume-02/bubbles-currencies-and-capital-flows/'), '/reados/books/business-volume-02/bubbles-currencies-and-capital-flows/');

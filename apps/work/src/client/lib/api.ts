@@ -1,5 +1,6 @@
 // Thin fetch wrapper: same-origin cookies, CSRF header on unsafe methods,
 // consistent error objects.
+import { appUrl } from './base';
 
 let csrfToken: string | null = null;
 
@@ -32,7 +33,7 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   }
   let res: Response;
   try {
-    res = await fetch(path.startsWith('/api') ? path : `/api${path}`, { method, headers, body, credentials: 'same-origin', signal: opts.signal });
+    res = await fetch(appUrl(path.startsWith('/api') ? path : `/api${path}`), { method, headers, body, credentials: 'same-origin', signal: opts.signal });
   } catch (e) {
     if ((e as Error).name === 'AbortError') throw e;
     throw new ApiError(0, 'Network error — check your connection and try again.');

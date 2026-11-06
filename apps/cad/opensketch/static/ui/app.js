@@ -2,6 +2,9 @@
    the server's API. One file for every page; each part runs only when its elements are on the page. No secret is ever
    written into the page source: keys and addresses are fetched after sign-in and shown only on request. */
 (() => {
+  // The path this app is served under: '' on a host of its own, '/cad' under bizomat.ai. Read from this script's own
+  // address, so the same file works in both places (opensketch/canonical.py adds the prefix to the server's links).
+  const BASE = (() => { try { return new URL(document.currentScript.src).pathname.replace(/\/ui\/app\.js$/, ''); } catch (_) { return ''; } })();
   const page = document.body.dataset.page || '';
   const $ = (id) => document.getElementById(id);
   const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };
@@ -12,10 +15,10 @@
   function setState(kind, text) { const s = $('state'); if (s) { s.dataset.state = kind; $('state-t').textContent = text; } }
 
   async function api(path, opts) {
-    const r = await fetch(path, Object.assign({ headers: { Accept: 'application/json' }, credentials: 'same-origin' }, opts || {}));
+    const r = await fetch(BASE + path, Object.assign({ headers: { Accept: 'application/json' }, credentials: 'same-origin' }, opts || {}));
     if (r.status === 401) {
       authFailed = true; setState('auth', 'Authentication required');
-      location.href = '/login?next=' + encodeURIComponent(location.pathname); throw new Error('Sign in to continue.');
+      location.href = BASE + '/login?next=' + encodeURIComponent(location.pathname.slice(BASE.length) || '/'); throw new Error('Sign in to continue.');
     }
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.error || j.detail || ('Request failed (' + r.status + ').'));
@@ -226,7 +229,7 @@
       const r = await api('/api/account', { method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_password: $('pw-current').value, new_password: $('pw-new').value }) });
       msg.textContent = 'Password changed. Sign in again with the new password.';
-      if (r.signed_out) setTimeout(() => { location.href = '/login'; }, 1500);
+      if (r.signed_out) setTimeout(() => { location.href = BASE + '/login'; }, 1500);
     } catch (er) { msg.textContent = er.message; }
   });
 

@@ -43,7 +43,7 @@ def test_pages_load_no_fonts_from_other_sites():
     for name, html in pages.items():
         assert html.index("/ui/bizomat-tokens.css") < html.index("/ui/cados.css"), name
     tokens = anon.get("/ui/bizomat-tokens.css")
-    assert tokens.status_code == 200 and "url('/fonts/oxanium-latin.woff2')" in tokens.text and "googleapis" not in tokens.text
+    assert tokens.status_code == 200 and "url('../fonts/oxanium-latin.woff2')" in tokens.text and "googleapis" not in tokens.text
     assert "--bz-teal: #0f766e" in tokens.text and "'Oxanium'" in anon.get("/ui/cados.css").text.replace('"', "'")
     for font in ("oxanium-latin.woff2", "inter-tight-latin.woff2"):
         r = anon.get("/fonts/" + font)

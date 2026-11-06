@@ -9,6 +9,7 @@ import { Icon } from '../../components/ui/Icon';
 import { Popover } from '../../components/ui/overlays';
 import { formatDate, todayISO } from '../../lib/format';
 import { upload, errorMessage } from '../../lib/api';
+import { appUrl } from '../../lib/base';
 
 export interface CellCtx {
   members: MemberDTO[];
@@ -442,7 +443,7 @@ function FilesEditor({ value, item, column, ctx, close }: { value: string[]; ite
   return (
     <div className="col" style={{ padding: 6 }}>
       {value.map((id) => (
-        <a key={id} className="menu-item" href={`/api/files/${id}`} target="_blank" rel="noopener noreferrer"><Icon name="file" /> File {id.slice(0, 6)}</a>
+        <a key={id} className="menu-item" href={appUrl(`/api/files/${id}`)} target="_blank" rel="noopener noreferrer"><Icon name="file" /> File {id.slice(0, 6)}</a>
       ))}
       <input ref={input} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
       <button className="btn sm" disabled={busy} onClick={() => input.current?.click()}><Icon name="upload" /> {busy ? 'Uploading…' : 'Upload files'}</button>
