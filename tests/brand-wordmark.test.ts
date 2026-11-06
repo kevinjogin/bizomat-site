@@ -6,12 +6,13 @@ const read = (path: string) => readFileSync(path, 'utf8');
 
 // BIZOMAT brand (5 Nov 2026): one wordmark drawn from shared/brand/glyphs.mjs, built into every product by
 // shared/brand/build.mjs. KEVOS artwork is retired; its trade mark is mentioned only as the former name.
-test('the BIZOMAT wordmark is used in the header, footer and diagrams, with a variant per theme', () => {
-  for (const component of ['src/components/SiteWordmark.astro', 'src/components/Logo.astro']) {
+test('the BIZOMAT logo is used in the header, footer and diagrams, with a variant per theme', () => {
+  // the header and footer show the lockup (mark and wordmark); diagrams the wordmark alone
+  for (const [component, kind] of [['src/components/SiteWordmark.astro', 'lockup'], ['src/components/Logo.astro', 'logo']]) {
     const source = read(component);
-    assert.match(source, /bizomat-logo-light\.svg/);
-    assert.match(source, /bizomat-logo-dark\.svg/);
-    assert.doesNotMatch(source, /kevos-wordmark/);
+    assert.match(source, new RegExp(`bizomat-${kind}-light\\.svg`));
+    assert.match(source, new RegExp(`bizomat-${kind}-dark\\.svg`));
+    assert.doesNotMatch(source, /kevos-wordmark|width="2329"/);
     assert.match(source, /:root\[data-theme='dark'\]/);
   }
   assert.match(read('src/components/Header.astro'), /<SiteWordmark/);
@@ -25,10 +26,16 @@ test('logos, icons and the favicon come from the one brand source and are in ste
   const layout = read('src/layouts/BaseLayout.astro');
   const manifest = JSON.parse(read('public/site.webmanifest'));
   const pkg = JSON.parse(read('package.json'));
-  assert.match(light, /viewBox="0 0 2329 241"/);
+  assert.match(light, /viewBox="0 0 1626\.6 246"/);
   assert.match(light, /fill="#0a1f33"/, 'navy word on light backgrounds');
-  assert.match(light, /fill="#0f766e"/, 'teal connector bar');
+  assert.match(light, /fill="#14b8a6"/, 'the teal forward arrow in the B');
   assert.match(dark, /fill="#ffffff"/);
+  // M/L/Z only: the SOLIDWORKS add-in draws the same paths with GDI+
+  for (const file of ['public/brand/bizomat-logo-light.svg', 'public/brand/bizomat-mark.svg', 'public/brand/bizomat-lockup-light.svg']) {
+    const paths = [...read(file).matchAll(/ d="([^"]+)"/g)].map((m) => m[1]).join('');
+    assert.match(paths, /^[MLZ0-9. -]+$/, `${file}: straight segments only`);
+  }
+  for (const file of ['public/brand/bizomat-lockup-light.svg', 'public/brand/bizomat-lockup-dark.svg']) assert.ok(existsSync(file), `${file} present`);
   assert.equal(read('public/favicon.svg'), read('public/brand/bizomat-mark.svg'));
   assert.match(config, /ogImage: '\/brand\/bizomat-social\.png'/);
   assert.match(config, /icon: '\/brand\/bizomat-icon-192\.png'/);

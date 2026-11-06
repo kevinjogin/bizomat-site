@@ -52,12 +52,16 @@ def site_page(path: str) -> str:
 
 
 def bizomat_svg(cls: str = "bz-wordmark", label: str = "BIZOMAT") -> str:
-    """The BIZOMAT wordmark drawn inline (no font needed): navy word, teal connector bar in the B (full colour, for
-    light backgrounds). CSS can recolour both parts (.bz-word, .bz-bar)."""
+    """The BIZOMAT logo drawn inline (no font needed): the mark (the B with its teal forward arrow on a navy tile), then
+    the wordmark (navy, the same arrow in its B). For light backgrounds; CSS can recolour the parts (.bz-tile,
+    .bz-word, .bz-bar)."""
     aria = f'role="img" aria-label="{label}"' if label else 'aria-hidden="true"'
-    return (f'<svg class="{cls}" viewBox="{bz.WORDMARK_VIEWBOX}" {aria} focusable="false">'
-            f'<path class="bz-word" fill="{bz.NAVY}" fill-rule="evenodd" d="{bz.WORDMARK_PATH}"/>'
-            f'<path class="bz-bar" fill="{bz.TEAL}" d="{bz.BAR_PATH}"/></svg>')
+    return (f'<svg class="{cls}" viewBox="{bz.LOCKUP_VIEWBOX}" {aria} focusable="false">'
+            f'<rect class="bz-tile" width="{bz.MARK_SIZE}" height="{bz.MARK_SIZE}" rx="{bz.MARK_RADIUS}" fill="{bz.NAVY}"/>'
+            f'<g transform="{bz.MARK_TRANSFORM}"><path fill="#ffffff" fill-rule="evenodd" d="{bz.B_PATH}"/>'
+            f'<path fill="{bz.TEAL_MARK}" d="{bz.ARROW_PATH}"/></g>'
+            f'<g transform="{bz.LOCKUP_WORD_TRANSFORM}"><path class="bz-word" fill="{bz.NAVY}" fill-rule="evenodd" d="{bz.WORDMARK_PATH}"/>'
+            f'<path class="bz-bar" fill="{bz.TEAL_MARK}" d="{bz.ARROW_PATH}"/></g></svg>')
 
 
 def wordmark(href: str = "/") -> str:

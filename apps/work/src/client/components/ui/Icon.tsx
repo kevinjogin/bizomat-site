@@ -1,4 +1,4 @@
-import { BAR_PATH, BRAND_COLORS, B_PATH, B_VIEWBOX, WORDMARK_PATH, WORDMARK_VIEWBOX } from '../../lib/bizomat-brand';
+import { ARROW_PATH, BRAND_COLORS, B_PATH, MARK_RADIUS, MARK_SIZE, MARK_TRANSFORM, WORDMARK_PATH, WORDMARK_VIEWBOX } from '../../lib/bizomat-brand';
 import { BRAND } from '../../lib/brand';
 
 // Original line icon set (24x24 grid, 1.8 stroke).
@@ -116,28 +116,24 @@ export function Icon({ name, size = 16, className, title }: { name: IconName | s
 // Geometry comes from the generated bizomat-brand.ts (shared/brand/build.mjs); nothing here is hand-drawn.
 
 const box = (viewBox: string) => viewBox.split(' ').map(Number) as [number, number, number, number];
-const [, , B_W, B_H] = box(B_VIEWBOX);
 const [, , WORD_W, WORD_H] = box(WORDMARK_VIEWBOX);
-// Same placement as shared/brand/build.mjs markSvg(): the B fills 58.6 % of a 512 tile, centred.
-const MARK_SCALE = (512 * 0.586) / B_W;
-const MARK_TRANSFORM = `translate(${(256 - (B_W / 2) * MARK_SCALE).toFixed(2)} ${(256 - (B_H / 2) * MARK_SCALE).toFixed(2)}) scale(${MARK_SCALE.toFixed(5)})`;
 
-/** The BIZOMAT mark: the B on a navy rounded tile with the teal connector bar (the app icon and favicon). */
+/** The BIZOMAT mark: the B on a navy rounded tile with the teal forward arrow (the app icon and favicon). */
 export function BrandMark({ size = 26, title }: { size?: number; title?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 512 512" className="brand-mark" role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true} focusable="false">
-      <rect width="512" height="512" rx="112" fill={BRAND_COLORS.navy} />
+    <svg width={size} height={size} viewBox={`0 0 ${MARK_SIZE} ${MARK_SIZE}`} className="brand-mark" role={title ? 'img' : undefined} aria-label={title} aria-hidden={title ? undefined : true} focusable="false">
+      <rect width={MARK_SIZE} height={MARK_SIZE} rx={MARK_RADIUS} fill={BRAND_COLORS.navy} />
       <g transform={MARK_TRANSFORM}>
         <path fill="#ffffff" fillRule="evenodd" d={B_PATH} />
-        <path fill={BRAND_COLORS.tealMark} d={BAR_PATH} />
+        <path fill={BRAND_COLORS.tealMark} d={ARROW_PATH} />
       </g>
     </svg>
   );
 }
 
 /**
- * The BIZOMAT wordmark. The word follows CSS (`--brand-ink`: navy on light, white on dark); the B's middle bar is
- * the teal connector (`--brand-bar`). `height` is the cap height in pixels.
+ * The BIZOMAT wordmark. The word follows CSS (`--brand-ink`: navy on light, white on dark); the forward arrow in the B
+ * is teal (`--brand-bar`). `height` is the drawing's height in pixels.
  */
 export function Wordmark({ height = 16, className }: { height?: number; className?: string }) {
   return (
@@ -151,7 +147,7 @@ export function Wordmark({ height = 16, className }: { height?: number; classNam
       focusable="false"
     >
       <path className="wordmark-word" fillRule="evenodd" d={WORDMARK_PATH} />
-      <path className="wordmark-bar" d={BAR_PATH} />
+      <path className="wordmark-bar" d={ARROW_PATH} />
     </svg>
   );
 }

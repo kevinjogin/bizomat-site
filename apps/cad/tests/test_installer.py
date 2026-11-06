@@ -91,7 +91,10 @@ def test_the_add_in_draws_the_brands_own_logo():
     art = (ROOT / "solidworks" / "src" / "Core" / "BrandArt.cs").read_text()
     for name, want in (("WordmarkPath", bz.WORDMARK_PATH), ("BPath", bz.B_PATH), ("BarPath", bz.BAR_PATH)):
         assert re.search(rf'public const string {name} = "([^"]+)";', art).group(1) == want, name
-    assert bz.WORDMARK_VIEWBOX == "0 0 2329 241" and "WordmarkWidth = 2329f, Height = 241f" in art
+    _, _, width, height = bz.WORDMARK_VIEWBOX.split()
+    assert f"WordmarkWidth = {width}f, Height = {height}f, BWidth = {bz.B_VIEWBOX.split()[2]}f" in art
+    # the B on the mark: half the tile tall, as shared/brand/build.mjs places it (scale 512 * 0.5 / 240)
+    assert "CapTop = 3f, Cap = 240f, MarkBHeight = 0.5f" in art and "scale(1.06667)" in bz.MARK_TRANSFORM
 
 
 def test_download_names_agree(tmp_path, monkeypatch):

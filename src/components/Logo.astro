@@ -1,5 +1,7 @@
 ---
-// The BIZOMAT wordmark for panels and diagrams (same files as SiteWordmark, sized for illustrations).
+// The BIZOMAT wordmark for panels and diagrams (the word alone, with the teal forward arrow in its B).
+import { WORDMARK_VIEWBOX } from '../data/bizomat-brand.ts';
+const [, , wordW, wordH] = WORDMARK_VIEWBOX.split(' ').map(Number);
 interface Props {
   class?: string;
   height?: number;
@@ -14,8 +16,8 @@ const sizeClass = height <= 14 ? 'logo--hero-small' : height <= 18 ? 'logo--hero
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <img class="logo__image logo__image--light" src="/brand/bizomat-logo-light.svg" alt="" width="2329" height="241" decoding="async" />
-  <img class="logo__image logo__image--dark" src="/brand/bizomat-logo-dark.svg" alt="" width="2329" height="241" decoding="async" />
+  <img class="logo__image logo__image--light" src="/brand/bizomat-logo-light.svg" alt="" width={wordW} height={wordH} decoding="async" />
+  <img class="logo__image logo__image--dark" src="/brand/bizomat-logo-dark.svg" alt="" width={wordW} height={wordH} decoding="async" />
 </span>
 
 <style>
