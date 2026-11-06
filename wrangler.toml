@@ -1,37 +1,29 @@
-# Cloudflare Worker configuration of the BIZOMAT website as it ran on kevos.com until 6 Nov 2026.
-# Not deployed any more: kevos.com is the KEVOS site again (Stage 0, `bizomat.ps1 restore kevos`), and the BIZOMAT
-# website runs on Fly.io (fly.website.toml). [build] below stops every deploy and upload from here, Cloudflare's
-# Workers Builds included; `npm run preview` still runs the Worker on this computer (wrangler dev).
+# Cloudflare Worker of the BIZOMAT website, https://bizomat.ai (the Nov 2026 move from Fly.io to Cloudflare,
+# docs/BIZOMAT-CLOUDFLARE-MIGRATION.md). It serves the static site from dist/ and runs src/worker.ts for anything that
+# is not a file: the site's APIs, and the applications under bizomat.ai (routeApps): /cad and CAD Automation's root
+# paths to the Worker bizomat-mcp, /tasks to the Worker bizomat-tasks, both by service binding.
 #
-# The Worker serves the static site from dist/ and runs src/worker.ts for anything that is not
-# a file, which is how /api/chat (KEVOS Assistant) and /api/contact work.
-
-# Name of the existing Worker that already serves kevos.com. If you rename the Worker in the
-# Cloudflare dashboard, change this to match, or a second Worker will be created.
-name = "throbbing-block-6c61"
+# Deploys come from the owner's laptop only (`.\bizomat.ps1 cf deploy website`): [build] runs
+# scripts/deploy-guard.mjs, which refuses Cloudflare's Workers Builds and any checkout that is not exactly
+# origin/main. kevos.com is not here: it stays the KEVOS site on its own Worker (throbbing-block-6c61).
+name = "bizomat"
 main = "src/worker.ts"
 compatibility_date = "2025-09-01"
-workers_dev = false
+# https://bizomat.<account subdomain>.workers.dev: the site before bizomat.ai is switched over (noindex)
+workers_dev = true
 
-# kevos.com already has DNS records. Bind the Worker as a route instead of
-# asking Wrangler to recreate the hostname as a Worker custom domain.
-# bizomat.ai is the BIZOMAT platform: the website at the root and the applications under it (src/worker.ts): /cad is
-# CAD Automation, passed on to the CAD app on Fly, which stays the origin of the bizomat.ai record; /tasks is Project
-# Management. The Worker answers there once the bizomat.ai record is proxied (orange cloud); www.bizomat.ai needs a
-# proxied record too and is sent to bizomat.ai. Until then bizomat.ai points (DNS only) at the CAD app and these routes
-# do nothing (docs/BIZOMAT-DEPLOYMENT.md, section 6a).
+# Zone routes, not custom domains: they do nothing while the bizomat.ai and www.bizomat.ai records are DNS only (they
+# point at Fly today). The switch is turning those two records to Proxied in the Cloudflare dashboard, and the way
+# back is turning them to DNS only again (docs/BIZOMAT-CLOUDFLARE-MIGRATION.md, cutover).
 routes = [
-  { pattern = "kevos.com/*", zone_name = "kevos.com" },
   { pattern = "bizomat.ai/*", zone_name = "bizomat.ai" },
   { pattern = "www.bizomat.ai/*", zone_name = "bizomat.ai" },
 ]
 
-# scripts/kevos-guard.mjs: refuses every deploy and upload (exit 1) and lets `npm run preview` through.
+# scripts/deploy-guard.mjs: lets `npm run preview` through, refuses Workers Builds and stale or changed checkouts.
 [build]
-command = "node scripts/kevos-guard.mjs"
+command = "node scripts/deploy-guard.mjs"
 
-# Contact delivery: onboard kevos.com in Email Service and verify this destination.
-# TURNSTILE_SECRET_KEY belongs in this Worker's encrypted secrets, never in this file.
 [[send_email]]
 name = "EMAIL"
 destination_address = "kevin@kevos.com"
@@ -44,12 +36,17 @@ not_found_handling = "404-page"
 # list form sends every other unmatched path to the 404 page instead, which broke the site's APIs on 6 Nov 2026.
 # tests/worker.test.ts checks that no file takes an application's path instead.
 
-# Project Management (bizomat.ai/tasks): its Worker (the one behind work.kevos.com) serves its pages under /tasks
-# since jogkev-creator/PMO#2 (live 6 Nov 2026), so bizomat.ai/tasks/... is handed to it unchanged. Without this
-# binding the Worker would send /tasks/... to work.kevos.com instead (src/worker.ts, TASKS_FALLBACK).
+# Project Management (bizomat.ai/tasks): the Worker bizomat-tasks (apps/work, --env bizomat), handed bizomat.ai/tasks/...
+# unchanged; it has no address of its own.
 [[services]]
 binding = "TASKS"
-service = "workos-platform-preview"
+service = "bizomat-tasks"
+
+# CAD Automation (bizomat.ai/cad and the root paths it keeps, src/worker.ts CAD_PATHS): the Worker bizomat-mcp in
+# front of the CAD server's container (CADOS cloudflare/mcp), handed the requests unchanged.
+[[services]]
+binding = "CAD"
+service = "bizomat-mcp"
 
 # Workers AI for the KEVOS Assistant. Workers Free plan: a daily allocation, no card needed.
 [ai]
@@ -60,21 +57,21 @@ binding = "AI"
 [previews.ai]
 binding = "AI"
 
-# Workers Logs are off, matching the setting chosen in the Cloudflare dashboard (29 Oct 2026).
+# Workers Logs (seven days), as for bizomat-mcp and bizomat-tasks.
 [observability]
-enabled = false
+enabled = true
 
 # Per-IP burst limits at the edge (Workers Rate Limiting API; no KV or paid plan needed).
 # Keys are "<scope>:<client IP>" inside src/worker.ts; a request over the limit gets HTTP 429.
-# namespace_id only has to be a unique number within this Cloudflare account.
+# namespace_id only has to be a unique number within this Cloudflare account (41001 and 41002 were the old Worker's).
 [[ratelimits]]
 name = "CHAT_LIMITER"
-namespace_id = "41001"
+namespace_id = "42001"
 simple = { limit = 10, period = 60 }
 
 [[ratelimits]]
 name = "FORM_LIMITER"
-namespace_id = "41002"
+namespace_id = "42002"
 simple = { limit = 5, period = 60 }
 
 # Anonymous homepage discovery statistics (src/server/discover/handler.ts, POST /api/discover/event):

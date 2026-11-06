@@ -9,6 +9,7 @@
 //   development (top level, local only by default) -> workos-platform-dev
 //   preview     (--env preview)                     -> workos-platform-preview
 //   production  (--env production)                  -> workos-platform-production
+//   bizomat     (--env bizomat)                     -> bizomat-tasks: https://bizomat.ai/tasks on Cloudflare
 //
 // The database_id / KV id values below are PLACEHOLDERS. Run
 // `scripts/provision.sh <env>` (see DEPLOYMENT.md) to create the resources
@@ -104,6 +105,32 @@
       ],
       "r2_buckets": [{ "binding": "FILES", "bucket_name": "workos-platform-production-files" }],
       "kv_namespaces": [{ "binding": "CACHE", "id": "REPLACE_WITH_PRODUCTION_KV_ID" }],
+      "durable_objects": {
+        "bindings": [{ "name": "BOARD_ROOMS", "class_name": "BoardRoom" }]
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BoardRoom"] }]
+    },
+    // BIZOMAT on Cloudflare (the Nov 2026 move from Fly): https://bizomat.ai/tasks, reached only through the website
+    // Worker's TASKS service binding, so it has no workers.dev address of its own. Its D1 database, R2 bucket and KV
+    // namespace are new: the first deploy creates them by these names (wrangler's resource provisioning), and the data
+    // comes from Fly with scripts/migrate/to-cloudflare.mjs. The settings are those on Fly (fly.website.toml WORK_*).
+    "bizomat": {
+      "name": "bizomat-tasks",
+      "workers_dev": false,
+      "preview_urls": false,
+      "version_metadata": { "binding": "CF_VERSION_METADATA" },
+      "triggers": { "crons": ["*/15 * * * *"] },
+      "vars": {
+        "ENVIRONMENT": "production",
+        "APP_NAME": "BIZOMAT Project Management",
+        "APP_URL": "https://bizomat.ai/tasks",
+        "CANONICAL_URL": "https://bizomat.ai/tasks",
+        "ALLOW_SIGNUP": "true",
+        "SESSION_TTL_HOURS": "72"
+      },
+      "d1_databases": [{ "binding": "DB", "database_name": "bizomat-tasks-db", "migrations_dir": "migrations" }],
+      "r2_buckets": [{ "binding": "FILES", "bucket_name": "bizomat-tasks-files" }],
+      "kv_namespaces": [{ "binding": "CACHE" }],
       "durable_objects": {
         "bindings": [{ "name": "BOARD_ROOMS", "class_name": "BoardRoom" }]
       },

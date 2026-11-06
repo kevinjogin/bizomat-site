@@ -1,9 +1,10 @@
 # BIZOMAT project status
 
-_Last updated: 6 Nov 2026 (CAD Automation's group and its move, branch `claude/focused-mayer-1yqfjr`). Earlier: branch
-`claude/dazzling-mccarthy-31qg86`, restarted from `main` after jogkev-creator/gocore-website#42 and #43 were merged. The BIZOMAT website runs on Fly (bizomat.ai);
-kevos.com is the KEVOS site again (Stage 0) and nothing from this repository publishes there (`scripts/kevos-guard.mjs`). `feat/bizomat-unified-platform` mirrored the branch up to
-35ef993._
+_Last updated: 6 Nov 2026 (the Cloudflare migration's Phases 2 and 3 in code, branch `claude/dazzling-mccarthy-31qg86`;
+before it, CAD Automation's group and its move, branch `claude/focused-mayer-1yqfjr`). The BIZOMAT website runs on Fly
+(bizomat.ai); kevos.com is the KEVOS site again (Stage 0) and nothing from this repository publishes there
+(`wrangler.toml` is the Worker `bizomat`; `scripts/deploy-guard.mjs`). `feat/bizomat-unified-platform` mirrored the
+branch up to 35ef993._
 
 ## 1. Where things stand
 
@@ -169,3 +170,4 @@ exists.
 | 6 Nov 2026 | "Not secure" in Edge on bizomat.ai checked from outside (CADOS `Live TLS`, daily): valid Let's Encrypt certificate (YE1, to 4 Feb 2027) whose chain reaches ISRG Root X1; HSTS on; nothing loaded over http. The browser kept the warning clicked through during the certificate switch: `edge://restart` |
 | 6 Nov 2026 | The new logo (#50) and the SOLIDWORKS add-in 0.13.0 (CADOS#22): BIZOMAT names and icons, installer `BIZOMAT-CAD-Automation-x64.msi` (the 0.12 name stays as a copy), computers paired with cados.kevos.com, cados.fly.dev or cad.bizomat.ai move to bizomat.ai/cad and stay paired. The Fly app `cados` stays: it is CAD Automation's server and data behind bizomat.ai/cad; its public address can be switched off once every computer and connector uses bizomat.ai/cad |
 | 6 Nov 2026 | One Fly app for the platform: CAD Automation's group in `bizomat`. `apps/cad` had drifted from CADOS (no CADOS#11 to #22, code of its own): it is now CADOS `17cb5b8` (CADOS main) byte for byte, pinned in `apps/cad-source.json` and checked by git's tree hash (`scripts/sync-cad.mjs`, in CI against GitHub); CADOS stays where CAD Automation changes. `fly.website.toml` gets the cad group (performance-1x, 2 GB), its volume `cad_data` in syd and cados's settings; `UPSTREAM_CAD` stays on cados until the move. The entrypoint drops the old password rule and never starts the CAD server on a volume without data (a holding page instead). The move (`infrastructure/migrate/cad/to-fly.mjs`; laptop: `move cad`, `back cad`, `deploy cad` for the group, `sync cad`, `retire cados`, `delete cados`) carries the data and cados's CAD settings (as root-only files on the cad volume, never printed), proves the same signing key and counts on both sides, and takes the way back by itself on a failure; rehearsed end to end (`infrastructure/migrate/test/cad-move/rehearse.sh`, 9 of 9) |
+| 6 Nov 2026 | Cloudflare migration (owner's request; decisions: bizomat.ai, Containers on the Workers Paid plan, Project Management as its own Worker), Phases 2 and 3 in code, nothing deployed: CADOS#25 (the Worker `bizomat-mcp` at mcp.bizomat.ai in front of the CAD server's container, its data folder in R2, fail-closed without accounts; a local run of Worker, container and R2 passed sign-in, OAuth discovery, the MCP client, a paired computer and a restart onto a fresh disk); this repository: the Worker `bizomat` (zone routes for bizomat.ai that act once the records are proxied, `CAD` and `TASKS` bindings, `deploy-guard.mjs`), the Worker `bizomat-tasks` (apps/work env `bizomat`) and `apps/work/scripts/migrate/to-cloudflare.mjs` (Fly to D1 and R2, rehearsed against wrangler's local D1 and R2). Progress and remaining steps: `BIZOMAT-CLOUDFLARE-MIGRATION.md` |

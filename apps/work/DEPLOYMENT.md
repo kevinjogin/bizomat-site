@@ -138,6 +138,53 @@ is checked. The steps: `docs/BIZOMAT-DEPLOYMENT.md`, section 6.
 - **Data:** D1 Time Travel (`npx wrangler d1 time-travel restore workos-platform-production-db --timestamp <ISO> --env production`) or `--bookmark <id>` with the restore point the deploy recorded. Database exports are never uploaded as workflow artifacts (this repository is public).
 - Migrations are written to be backward compatible so a code rollback never requires a schema rollback.
 
+## Moving the data from Fly back to Cloudflare
+
+Since 6 Nov 2026 the data lives on the work Machine of the Fly app `bizomat` (`/data/work`). To run Project Management
+as its own Worker `bizomat-tasks` again, `scripts/migrate/to-cloudflare.mjs` (the reverse of `to-fly.mjs`) moves it
+to a new D1 database `bizomat-tasks-db` and a new R2 bucket `bizomat-tasks-files`. Run it from `apps/work` on the
+owner's computer, where `fly` and `wrangler` are signed in (Windows, macOS or Linux; Node 22.19 or later; `npm ci`
+first). It prints names, counts and checksums only. The folder it writes holds real data: keep it on that computer.
+
+Once, create the targets: `npx wrangler d1 create bizomat-tasks-db` and `npx wrangler r2 bucket create bizomat-tasks-files`.
+If the wrangler login has several accounts, set `CLOUDFLARE_ACCOUNT_ID`.
+
+```bash
+node scripts/migrate/to-cloudflare.mjs prepare <new folder> [--app bizomat]
+```
+
+Only reads Fly. On the work Machine it copies `db.sqlite` and `runtime.sqlite` with `VACUUM INTO` (consistent while
+the server runs) and links the stored files, streams the copy here (file by file in base64 if the stream arrives
+damaged), checks every SHA-256 and removes the copy from the Machine. It refuses a database that is not at the
+latest migration in `migrations/` or whose schema differs, and data that fails SQLite's integrity or foreign key
+checks. It writes the copy (`snapshot/`), `files.json` (key, size, SHA-256, content type), `counts.json`, the rows as
+SQL in parts (`sql/part-*.sql`: tables and self-referencing rows parents first, every value exact, each statement
+under D1's 100,000 bytes, parts of 4 MiB by default; no schema), and `MANIFEST.sha256`. The SQL is checked by loading
+it into an empty database at the same migrations.
+
+```bash
+node scripts/migrate/to-cloudflare.mjs apply <folder> [--db bizomat-tasks-db] [--bucket bizomat-tasks-files] [--replace]
+```
+
+Checks the folder against `MANIFEST.sha256` and that the bucket exists, runs `wrangler d1 migrations apply` with the
+folder's migrations, and refuses a database that already has rows beyond the ones the migrations make. With
+`--replace` it records a Time Travel bookmark (and prints the restore command), then deletes those rows, children
+first. Then `wrangler d1 execute --remote --file` for each part (it stops at the first that fails and names it),
+`wrangler r2 object put --remote` for each file with its content type, and checks: every table's rows, NULLs, REAL
+values, text and blob bytes and an integer checksum in D1 against `counts.json`, and every file read back from R2 by
+size and SHA-256. After a failure, fix the cause and run `apply` again with `--replace`.
+
+- **Final copy:** stop Project Management first, or what people save after `prepare` stays behind on Fly. Put the
+  work Machine in maintenance (`fly ssh console -a bizomat --machine <id> -C "touch /data/.bizomat-maintenance"`, then
+  `fly machine restart <id> -a bizomat`); remove the file and restart to undo.
+- **Rehearsals:** `prepare <folder> --from-db <copy>/db.sqlite --from-dir <copy>` reads a copy of `/data/work` (for
+  example from `backup-data-dir.mjs`) instead of Fly; `apply <folder> --local <dir>` writes to wrangler's local D1 and
+  R2 in `<dir>` instead of Cloudflare.
+- **Not moved:** the KV namespace (`CACHE` holds only a health check) and the files' custom metadata (the uploader id,
+  which wrangler cannot set and the Worker never reads).
+- Tests: `test-node/to-cloudflare.test.ts` (stand-ins for flyctl and wrangler, and one rehearsal into the real
+  wrangler's local D1 and R2).
+
 ## Local development
 
 ```bash

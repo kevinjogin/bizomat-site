@@ -12,8 +12,9 @@
 //   everything else → the static site from dist/ (env.ASSETS)
 //
 // On bizomat.ai the applications live under the website's address (routeApps below):
-//   /cad/...   → CAD Automation, the CAD app on Fly (the origin of the bizomat.ai record)
-//   /tasks/... → Project Management (the TASKS service binding once that app serves /tasks; until then a redirect)
+//   /cad/...   → CAD Automation: the Worker bizomat-mcp (the CAD service binding); without it, the origin of the
+//                bizomat.ai record (Fly)
+//   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, a redirect
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -30,8 +31,10 @@ interface ServiceBinding {
 }
 export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnEnv {
   ASSETS: AssetsBinding;
-  /** Project Management's Worker (wrangler.toml [[services]]), bound once it serves its pages under /tasks. */
+  /** Project Management's Worker, bizomat-tasks (wrangler.toml [[services]]). */
   TASKS?: ServiceBinding;
+  /** CAD Automation's Worker, bizomat-mcp (wrangler.toml [[services]]); without it, CAD_PATHS go to the origin. */
+  CAD?: ServiceBinding;
   /** Per-IP burst limits (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
   CHAT_LIMITER?: RateLimiter;
   FORM_LIMITER?: RateLimiter;
@@ -44,14 +47,16 @@ const PRODUCTION_HOSTS = new Set(['bizomat.ai', 'www.bizomat.ai', 'kevos.com', '
 export const PLATFORM_HOST = 'bizomat.ai';
 
 /**
- * Paths of bizomat.ai that belong to CAD Automation. The CAD app on Fly is the origin of the bizomat.ai record, so
- * fetch(request) reaches it, and it answers with its own headers. Besides /cad/... it owns:
+ * Paths of bizomat.ai that belong to CAD Automation. They go to the Worker bizomat-mcp (the CAD binding), or, where it
+ * is not bound, to the origin of the bizomat.ai record (the CAD app on Fly) with fetch(request); either way the app
+ * answers with its own headers. Besides /cad/... it owns:
  * - the OAuth metadata, which RFC 9728 and RFC 8414 put at the root of the host
  *   (/.well-known/oauth-protected-resource/cad/mcp, /.well-known/oauth-authorization-server/cad);
  * - the addresses programs call at the root, kept for connectors and computers set up while CAD answered there:
  *   the MCP endpoints and the add-in's link (/mcp, /mcp/..., /solidworks/mcp), OAuth (/oauth/...), the Companion's
  *   API (/v2/...) and /healthz;
- * - /.well-known/acme-challenge/..., so Fly can renew the certificate that Cloudflare checks when it connects.
+ * - /.well-known/acme-challenge/..., so Fly can renew the certificate that Cloudflare checks when it connects (always
+ *   the origin, see fetch below).
  * The website has none of these paths. The CAD app's list: apps/cad/opensketch/canonical.py (KEEP_PREFIXES).
  */
 export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/oauth\/|^\/v2\/|^\/healthz$|^\/\.well-known\/(?:oauth-protected-resource|oauth-authorization-server|openid-configuration|acme-challenge)(?:\/|$)/;
@@ -70,7 +75,7 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   if (app && app[1] !== app[1].toLowerCase() && read) {
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
-  if (CAD_PATHS.test(url.pathname)) return fetch(request);
+  if (CAD_PATHS.test(url.pathname)) return env.CAD ? env.CAD.fetch(request) : fetch(request);
   if (/^\/tasks(?:\/|$)/.test(url.pathname)) {
     if (env.TASKS) return env.TASKS.fetch(request);
     const rest = url.pathname.slice('/tasks'.length) || '/';
