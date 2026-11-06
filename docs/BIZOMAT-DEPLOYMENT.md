@@ -24,8 +24,10 @@ Region: Sydney (`syd`). Deploy strategy: rolling, one Machine at a time (the onl
 
 The entrypoint, for every role: checks that `work` and `cad` have their volume mounted (it refuses to start
 otherwise), gives each role a clean environment with only its own settings, reads optional secret files from the
-role's volume, and runs the service as the role's own unprivileged user with no capabilities. The `cad` role refuses
-to start on Fly without `OPENSKETCH_PASSWORD`, so CAD Automation can never come up as an open server.
+role's volume, and runs the service as the role's own unprivileged user with no capabilities. CAD Automation has no
+server password (CADOS#11): the `cad` role never starts the CAD server on a volume without CAD data, so it can never
+come up as a new server whose first visitor becomes its owner; until its data is there it shows a holding page
+(section 6d).
 
 ## 2. Hosts
 
@@ -47,7 +49,7 @@ resolved), so the website never has an application's request to pass on.
 | `bizomat.ai`: `/CAD...`, `/Tasks/...` in any case but lowercase | proxy | GET and HEAD: 301 to the lowercase path (other methods reach the website, which has nothing there) |
 | `bizomat.ai`: everything else | web | The website. The CAD Automation product page is `/cad-automation/` (`/cad` is the application) |
 | `www.bizomat.ai` | proxy | 301 (308 for other methods) to `https://bizomat.ai` with the same path and query |
-| `cados.kevos.com` | cad | CAD Automation's old address, every path at the root: pages answer 301 to the same path under `https://bizomat.ai/cad`; programs (MCP, OAuth, the device and add-in links) keep working there with that address in their metadata (`OPENSKETCH_ALIAS_HOSTS` and `OPENSKETCH_REDIRECT_HOSTS`), so connectors and computers set up with it carry on |
+| `cados.kevos.com` | cad | CAD Automation's old address, every path at the root: pages answer 301 to the same path under `https://bizomat.ai/cad`; programs (MCP, OAuth, the device and add-in links) keep working there with that address in their metadata (`OPENSKETCH_REDIRECT_HOSTS`, as on the cados app), so connectors and computers set up with it carry on. Today its DNS record still points at the cados app (section 6d, "Old addresses") |
 | `work.kevos.com` | work | Project Management's old address, every path at the root, WebSockets included. Once `WORK_CANONICAL_URL` is set (section 7) its pages answer 301 to `https://bizomat.ai/tasks/...`; `/api/` and the files keep answering for open tabs |
 | `kevos.com`, `www.kevos.com` | proxy | 301 to `https://bizomat.ai` with the same path and query (GET, HEAD); `/cad` and `/cad/`, the old CAD Automation page, to `https://bizomat.ai/cad-automation/`; form posts to `/api/*` go to web |
 | `bizomat.fly.dev` | as bizomat.ai, by path; plus a preview switch | `/cad/` and `/tasks/` work there before DNS moves. `/__preview/cad`, `/__preview/work`, `/__preview/web` send every path of one browser to one service at the root, as the old addresses serve it; `/__preview/clear` returns (only while `BIZOMAT_PREVIEW_ROUTING=1`) |
@@ -60,19 +62,18 @@ resolved), so the website never has an application's request to pass on.
    organisation is not `personal`. After the app exists, a deploy token for this app alone is enough:
    `fly tokens create deploy -a bizomat`.
 2. **App, volumes and addresses.** Run Actions, "BIZOMAT deploy" once: the first run creates the app `bizomat`, the
-   volumes `cad_data` and `work_data` (Sydney, 3 GB, snapshots kept 30 days) and the public addresses, then stops and
-   asks for `OPENSKETCH_PASSWORD`. By hand instead: the commands in `infrastructure/README.md`, "Deploy". The name
+   volumes `cad_data` and `work_data` (Sydney, 3 GB, snapshots kept 30 days) and the public addresses. The owner's
+   laptop does the same with `.\bizomat.ps1 deploy website` (section 6b). By hand instead: the commands in
+   `infrastructure/README.md`, "Deploy". The name
    `bizomat` must be free on Fly; if it is not, choose another and change `app` in `fly.toml` and the
    `bizomat.internal` names in its `[env]`.
 3. **Secrets.** Run `fly secrets import --stage -a bizomat`, type the lines below, then Ctrl-D (values do not appear
-   in shell history or output):
-   - `OPENSKETCH_PASSWORD=<the same value as on the cados app>` (required: the owner's private MCP address is
-     derived from it; Fly cannot show the old value, so take it from the password manager it was saved in);
-   - optional: `CF_ACCOUNT_ID` and `CF_AI_TOKEN` (AI search through Workers AI; the token needs only Workers AI
-     permission), `TURNSTILE_SECRET_KEY`, `WORK_GOOGLE_CLIENT_ID` and `WORK_GOOGLE_CLIENT_SECRET`,
-     `CAD_GOOGLE_CLIENT_ID` and `CAD_GOOGLE_CLIENT_SECRET`, `OPENSKETCH_ACCESS_CODE`.
-   - and any other `OPENSKETCH_*` secret that `fly secrets list -a cados` shows (for example `OPENSKETCH_KEY_SECRET`
-     or `OPENSKETCH_MCP_TOKEN`), with the same values.
+   in shell history or output): optional `CF_ACCOUNT_ID` and `CF_AI_TOKEN` (AI search through Workers AI; the token
+   needs only Workers AI permission), `TURNSTILE_SECRET_KEY`, `WORK_GOOGLE_CLIENT_ID` and `WORK_GOOGLE_CLIENT_SECRET`.
+   CAD Automation's own settings (`OPENSKETCH_*` secrets of cados, its Google client, and `OPENSKETCH_PASSWORD` if
+   cados still has it: it only seeds the owner's old private connector address) are not set here: `bizomat.ps1 move
+   cad` reads them from the cados server and writes them on the cad volume, where only the cad Machine sees them
+   (section 6d).
 4. **Google sign-in** (only if used): add the redirect URIs under bizomat.ai to each Google OAuth client:
    `https://bizomat.ai/tasks/api/auth/oauth/google/callback` (Project Management) and
    `https://bizomat.ai/cad/auth/google/callback` (CAD Automation; each app builds it from the address the sign-in
@@ -185,7 +186,7 @@ old KEVOS site back on kevos.com.
 | Address | Served by |
 | --- | --- |
 | `bizomat.ai/` and every website page | Fly app `bizomat`: the router (`proxy`) and the website (`web`), `fly.website.toml` |
-| `bizomat.ai/cad/...`, CAD's OAuth discovery and root program paths | Fly app `cados`, reached by the router over the private network (`cados.internal:8080`; CADOS listens on `::` since jogkev-creator/CADOS#16) |
+| `bizomat.ai/cad/...`, CAD's OAuth discovery and root program paths | Fly app `cados`, reached by the router over the private network (`cados.internal:8080`; CADOS listens on `::` since jogkev-creator/CADOS#16), until it moves into `bizomat` (section 6d) |
 | `bizomat.ai/tasks/...` | 302 to `https://work.kevos.com/...` (prefix off; `TASKS_REDIRECT_ORIGIN`) until Project Management moves into `bizomat` with its data (`fly.toml`, the full plan) |
 | `kevos.com` | Cloudflare Worker `throbbing-block-6c61`: the KEVOS site (the version built from c79e297), no longer deployed from this repository |
 | `cados.kevos.com`, `cados.fly.dev` | `cados` directly, as before (pages 301 to `bizomat.ai/cad`, programs served there) |
@@ -228,6 +229,24 @@ Project Management on Fly is in the BIZOMAT brand (the wordmark, "Sign in to BIZ
 workspaces and folders; privacy requests to info@bizomat.ai). Workspace colours chosen before stay as they are (a
 colour is the workspace owner's data; KEVOS orange was the old default): change one in the workspace's settings.
 
+### 6d. CAD Automation into the bizomat app, in Sydney, with its data (owner's decision, 6 Nov 2026)
+
+One Fly app for the whole platform: CAD Automation leaves its own app `cados` (one Machine and its volume in
+Amsterdam, so every request from Australia crossed the world) for the `cad` group of `bizomat` in Sydney, with its own
+volume `cad_data`. `apps/cad` is CADOS exactly (a pinned commit, `apps/cad-source.json`, `scripts/sync-cad.mjs`): CADOS
+is what runs and where CAD Automation changes. `OPENSKETCH_PUBLIC_URL` stays `https://bizomat.ai/cad`, and the data is
+the same folder byte for byte, so connectors and paired computers carry on. The steps, what moves, the old addresses,
+the way back and the retirement are in `infrastructure/migrate/cad/README.md`; all run on the owner's laptop.
+
+| Order | Owner's step | Check | Rollback |
+| --- | --- | --- | --- |
+| 1 | Merge the cad group change (`UPSTREAM_CAD` stays on cados), then `.\bizomat.ps1 deploy website`: it checks `apps/cad` against CADOS, makes the volume `cad_data`, deploys; the cad Machine shows its holding page | The script's live checks: bizomat.ai/cad still served by cados; the cad group runs | Deploy the previous commit |
+| 2 | `.\bizomat.ps1 move cad -DryRun`: everything checked, a copy of the data taken while cados runs and verified on the laptop | The counts (accounts, AI apps, computers), the signing key's id | Nothing changed |
+| 3 | `.\bizomat.ps1 move cad`, type yes: a few minutes off line ("being moved"); the router to the cad group, cados frozen, the data copied, checked on both sides, imported, the CAD server started, live checks, cados stopped (autostart off) | The same key at `/cad/v2/keys`, `/cad/setup` goes to sign-in, OAuth metadata; then sign in, Admin, Settings (the private connector address), SOLIDWORKS (the computers), `sw_status` from an AI app | Automatic if a step fails; afterwards `.\bizomat.ps1 back cad` |
+| 4 | Merge the change that sets `UPSTREAM_CAD = "http://cad.process.bizomat.internal:8001"` (until then `deploy website` refuses) | `.\bizomat.ps1 status` | Revert it together with `back cad` |
+| 5 | Optional, with approval: `cados.kevos.com` to `bizomat` (certificate, then its DNS record), so connections made with it keep working | `https://cados.kevos.com/healthz` answers from the cad group | The record back to cados's address |
+| 6 | With the owner's go-ahead: `.\bizomat.ps1 retire cados` (its public addresses released), later `.\bizomat.ps1 delete cados` | bizomat.ai/cad still answers | None: both are irreversible, so each asks for a typed phrase |
+
 ## 7. After cutover
 
 - Set `BIZOMAT_PREVIEW_ROUTING = "0"` in `fly.toml` and deploy.
@@ -251,7 +270,8 @@ colour is the workspace owner's data; KEVOS orange was the old default): change 
 1. Confirm the registration and DNS provider of `bizomat.ai` (not verifiable here) and give access to change its
    records.
 2. Create the Fly token and the app (section 3, steps 1 and 2).
-3. Set `OPENSKETCH_PASSWORD` and any optional secrets (section 3, step 3).
+3. Set any optional secrets (section 3, step 3). CAD Automation needs no server password; its own settings move with
+   its data (section 6d).
 4. Run the deploy workflow, then the checks in section 5.
 5. Make each DNS change in section 6, in order, after its checks pass.
 6. Provide a Cloudflare API token with D1 read and R2 read for the Project Management export

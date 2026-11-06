@@ -140,7 +140,7 @@ cannot read the full environment from `/proc/1/environ` or any other root proces
 | proxy | `UPSTREAM_WEB UPSTREAM_WORK UPSTREAM_CAD BIZOMAT_PREVIEW_ROUTING PROXY_*` | `[env]` |
 | web | `CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WEB_*`; fixed `PORT=8003 HOST WEB_DIST_DIR=/app/web/dist WEB_TRUST_PROXY=1` | secrets |
 | work | `WORK_*`; `APP_URL APP_NAME ENVIRONMENT ALLOW_SIGNUP SESSION_TTL_HOURS` from `WORK_APP_URL ...`; `GOOGLE_CLIENT_ID/SECRET` from `WORK_GOOGLE_CLIENT_ID/SECRET`; fixed `PORT=8002 HOST WORK_DATA_DIR=/data/work WORK_STATIC_DIR WORK_TRUST_PROXY=1` | `[env]`, secrets, `/data/work/.secrets/` |
-| cad | `OPENSKETCH_*` (incl. `OPENSKETCH_PASSWORD`); `GOOGLE_CLIENT_ID/SECRET` from `CAD_GOOGLE_CLIENT_ID/SECRET`; fixed `OPENSKETCH_DATA=/data/cad` | `[env]`, secrets, `/data/cad/.secrets/` |
+| cad | `OPENSKETCH_*`; `GOOGLE_CLIENT_ID/SECRET` from `CAD_GOOGLE_CLIENT_ID/SECRET`; fixed `OPENSKETCH_DATA=/data/cad` | `[env]`, secrets, `/data/cad/.secrets/` (where `bizomat.ps1 move cad` writes the settings it moves from cados) |
 
 Both apps read `GOOGLE_CLIENT_ID`; the `WORK_` and `CAD_` prefixes keep their two Google clients apart.
 
@@ -148,14 +148,15 @@ Set the secrets with flyctl (staged, applied by the next deploy). Values come fr
 files in the repository:
 
 ```bash
-fly secrets set --stage --app bizomat OPENSKETCH_PASSWORD='<the cados app value, unchanged>'
 fly secrets set --stage --app bizomat CF_ACCOUNT_ID=... CF_AI_TOKEN=...          # or ANTHROPIC_API_KEY=...
 fly secrets set --stage --app bizomat TURNSTILE_SECRET_KEY=...                   # optional
 fly secrets set --stage --app bizomat WORK_GOOGLE_CLIENT_ID=... WORK_GOOGLE_CLIENT_SECRET=...   # optional
-fly secrets set --stage --app bizomat CAD_GOOGLE_CLIENT_ID=... CAD_GOOGLE_CLIENT_SECRET=...     # optional
-fly secrets set --stage --app bizomat OPENSKETCH_ACCESS_CODE=...                 # optional, as on cados
 fly secrets list --app bizomat                                                   # names only
 ```
+
+CAD Automation has no server password (CADOS#11), and its own settings (cados's `OPENSKETCH_*` secrets, its Google
+client) are not Fly secrets of `bizomat`: `bizomat.ps1 move cad` reads them from the cados server and writes them as
+the cad volume's secret files (below), so no other Machine of the app ever holds them.
 
 **Stronger option for work and cad secrets: files on the role's own volume.** Only that Machine ever sees them; other
 Machines' environments never contain them. A file `/data/<role>/.secrets/NAME` (root-owned folder, mode 0700; file
@@ -165,23 +166,23 @@ root and names outside the role's allow-list are skipped (named in the log, valu
 ```bash
 fly ssh console -a bizomat -g cad      # a root shell on the cad Machine
 install -d -m 0700 /data/cad/.secrets
-( umask 077; cat > /data/cad/.secrets/OPENSKETCH_PASSWORD )   # paste, Enter, Ctrl-D
+( umask 077; cat > /data/cad/.secrets/OPENSKETCH_ACCESS_CODE )   # paste, Enter, Ctrl-D
 exit
 fly machine restart <cad-machine-id> -a bizomat
-fly secrets unset --stage --app bizomat OPENSKETCH_PASSWORD   # then the value lives only on the cad volume
 ```
 
-(The deploy workflow refuses to deploy without an `OPENSKETCH_PASSWORD` secret; drop that check in
-`bizomat-deploy.yml` when the password moves to the volume. On Fly the cad role itself refuses to start without a
-password from either source.)
+The cad role never starts the CAD server on a volume without CAD data (`users.json` or `accounts.enabled`): a CAD
+server without accounts offers its setup page, where the first visitor becomes the owner. Until `bizomat.ps1 move cad`
+has put the data there (and in maintenance mode) it answers with its holding page (`fly/cad-holding.py`). A new, empty
+platform starts it with `BIZOMAT_CAD_ALLOW_EMPTY=1`, and its owner then creates the owner account at once.
 
 ### Residual risks
 
 - Fly secrets still reach every Machine's init environment (root-owned). Root on any Machine (`fly ssh console`, or a
   kernel or container escape) reads them all. Only volume secret files avoid that, for work and cad. web's secrets
   can only be Fly secrets (it has no volume).
-- A compromised service keeps what its own role holds (cad: the CAD password; work: its Google client secret; web:
-  the AI and Turnstile keys) and its own data folder.
+- A compromised service keeps what its own role holds (cad: its settings and its data folder with every key; work:
+  its Google client secret; web: the AI and Turnstile keys) and its own data folder.
 - The entrypoint makes Fly's in-VM API socket `/.fly/api` root-only (`BIZOMAT_KEEP_FLY_API=1` leaves it alone):
   untested on a real Machine.
 - Members of the Fly organisation can reach every Machine's port over 6PN; the backends trust the proxy's
@@ -193,7 +194,7 @@ password from either source.)
 First time (from GitHub): add the repository secret `FLY_API_TOKEN` (an organisation token: `fly tokens create org -o
 <org>`) and, if the org is not `personal`, the variable `FLY_ORG`. Run **Actions > BIZOMAT deploy**. The first run
 creates the app, the volumes `cad_data` and `work_data` (syd, 3 GB, snapshots kept 30 days) and the public addresses,
-then stops asking for `OPENSKETCH_PASSWORD`. Set the secrets (above) and run it again: it deploys
+and deploys
 (`flyctl deploy --remote-only --config fly.toml --ha=false`), waits until `https://bizomat.fly.dev/__proxy/health`
 shows the commit, and runs the smoke test through the preview cookie.
 
@@ -203,7 +204,6 @@ By hand, from the repository root:
 fly apps create bizomat --org <org>
 fly volumes create cad_data  --app bizomat --region syd --size 3 --snapshot-retention 30 --yes
 fly volumes create work_data --app bizomat --region syd --size 3 --snapshot-retention 30 --yes
-fly secrets set --stage --app bizomat OPENSKETCH_PASSWORD='...'      # and the others above
 fly deploy --app bizomat --config fly.toml --remote-only --ha=false --build-arg BIZOMAT_VERSION=$(git rev-parse --short HEAD)
 node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode preview --wait 180
 ```
@@ -212,7 +212,10 @@ Deploys are rolling, one Machine at a time; work and cad are offline for the 10-
 proxy answers 502 meanwhile; add-ins, Companions and WebSockets reconnect). Watch with `fly status -a bizomat` and
 `fly logs -a bizomat`.
 
-Data moves: `migrate/cad/README.md` (the cados volume) and **Actions > BIZOMAT migrate work data** (dry-run, then
+The owner's laptop deploys with `bizomat.ps1 deploy website` (`fly.website.toml`, every group) and, after the CAD
+move, `bizomat.ps1 deploy cad` (the cad group alone, `--process-groups cad`).
+
+Data moves: `migrate/cad/README.md` (the cados volume, `bizomat.ps1 move cad`) and **Actions > BIZOMAT migrate work data** (dry-run, then
 apply). Maintenance mode for either: `touch /data/.bizomat-maintenance` on the Machine, restart it; the service stays
 off and the Machine up until the file is removed and the Machine restarted.
 

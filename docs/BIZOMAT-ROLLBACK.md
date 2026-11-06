@@ -10,7 +10,7 @@ is deleted, renamed or overwritten.
 | --- | --- | --- | --- |
 | Website and Resources | Cloudflare Worker `throbbing-block-6c61`, route `kevos.com/*` | Git (nothing to restore) | Keeps serving kevos.com until the owner adds the redirect to bizomat.ai |
 | Project Management | Cloudflare Worker `workos-platform-preview`, custom domain `work.kevos.com` | D1 `workos-platform-preview-db`, R2 `workos-platform-preview-files` | Read for the export, never written by the migration |
-| CAD Automation | Fly app `cados` (Sydney), host `cados.kevos.com` (DNS-only CNAME to `cados.fly.dev`) | Volume `opensketch_data` at `/data` | Paused (SIGSTOP) while its data is copied, then left paused or resumed; never destroyed |
+| CAD Automation | Fly app `cados` (one Machine in Amsterdam), host `cados.kevos.com` (DNS-only A record to cados's shared address) | Volume `opensketch_data` at `/data` | Paused (SIGSTOP) while its data is copied, then stopped with autostart off (`bizomat.ps1 move cad`): its volume keeps the data as it was at the move; never destroyed in the window |
 
 **Rollback window:** 30 days after the last product's cutover, or longer if the owner chooses. Only after it ends,
 and only with the owner's explicit decision, may the old Workers, the `cados` app, its volume, the D1 database or the
@@ -78,37 +78,33 @@ has passed.
 
 ## 5. CAD Automation (bizomat.ai/cad, cados.kevos.com)
 
-Paired computers, AI apps and the SOLIDWORKS add-ins connect to `https://bizomat.ai/cad` (since CADOS#14) or to
-`cados.kevos.com`. The BIZOMAT cad process serves both addresses with the same data (accounts, OAuth grants, the
-command-signing key, device keys), so moving the DNS records back is invisible to them apart from reconnecting.
-bizomat.ai also carries the website and `/tasks`: moving it back hands them back to the website's Worker (section 6a
-of `BIZOMAT-DEPLOYMENT.md`, with the records proxied as they were).
+Since `bizomat.ps1 move cad` (`infrastructure/migrate/cad/README.md`), bizomat.ai/cad is the cad group of `bizomat`
+in Sydney: the router's `UPSTREAM_CAD` points at it, and `cados` is stopped with autostart off. No DNS record changed
+for the move: going back is a change of the router and a start of `cados`.
 
-### Before data cutover
-Nothing to do. If the old app was paused for a rehearsal, resume it:
-`fly ssh console -a cados -C "bash /tmp/bizomat-freeze.sh cont"`.
+### During the move
+Automatic: if any step of `move cad` fails before its end, it sends the router back to `cados`, resumes it, puts the
+cad Machine in maintenance and removes the copies from both Machines.
 
-### After data cutover
-1. Put the BIZOMAT cad process in maintenance mode (as for Project Management, with `-g cad`).
-2. Decide whether data written on BIZOMAT since cutover must be kept (new accounts, newly paired computers, new AI
-   app connections). Commands in flight are not worth copying: they expire.
-   - **Keep it:** export from the BIZOMAT cad Machine with the same script used for the move
-     (`infrastructure/migrate/cad/export.sh /data/cad`), check it with `verify.sh --archive`, and import it on the
-     old Machine in place of `/data` after moving the old folder aside (never delete it). The data format is the
-     same in both directions because both run the same CAD Automation code, as long as the old app has not been
-     redeployed with an older version.
-3. Resume the old server: `fly ssh console -a cados -C "bash /tmp/bizomat-freeze.sh cont"`, then check
-   https://cados.fly.dev/healthz.
-4. In Cloudflare, put the records back to the values in the cutover log: zone kevos.com, the DNS-only CNAME `cados`
-   back to `cados.fly.dev`; zone bizomat.ai, the A and AAAA records of `bizomat.ai` and the `www` record (proxied
-   again if they were).
-5. Certificates, for `cados.kevos.com` and `bizomat.ai`: check `fly certs show <host> -a cados`. If a certificate was
-   removed from `cados` during cutover, add it again (`fly certs add <host> -a cados`). If it has expired because its
-   `_acme-challenge` record points at the BIZOMAT app, set that record back to the value `fly certs setup <host> -a
-   cados` shows; Fly issues it within minutes once the record points at `cados` again. (A certificate is valid for 90
-   days and renews 30 days before expiry, so expiry matters only for a late rollback.)
-6. Check https://bizomat.ai/cad/healthz and https://cados.kevos.com/healthz, sign in, and ask one person to check
-   that their Companion shows "Connected" and that `sw_status` answers from their AI app.
+### After the move
+1. On the laptop: `.\bizomat.ps1 back cad` (`-DryRun` first shows where things are). It starts `cados` again with
+   autostart on (its data as it was at the move), sends bizomat.ai/cad back to it (`fly machine update` of the router's
+   Machine, no build), puts the cad Machine in maintenance (it keeps its copy) and runs the live checks: the CAD server
+   answers, the same signing key at `/cad/v2/keys`, setup closed, OAuth metadata.
+2. If the route was made permanent on GitHub (`UPSTREAM_CAD` on the cad group in `fly.website.toml`), revert that
+   change before the next `deploy website` (it refuses while the router and the file disagree).
+3. What changed in the cad group since the move stays on its volume and is not carried back: new sign-ins, AI apps
+   whose sign-in was renewed there (connect them again), computers paired since. To keep it instead, export it from
+   the cad Machine (`export.sh /data/cad`, `verify.sh --archive`) and import it on `cados` in place of `/data` after
+   moving the old folder aside (never delete it); both run the same CAD Automation code.
+4. If `cados.kevos.com` was moved to `bizomat` (optional step of the move), put its record back to cados's address and
+   its certificate back on `cados` (`fly certs add cados.kevos.com -a cados`).
+5. Ask one person to check that their Companion shows "Connected" and that `sw_status` answers from their AI app.
+
+### After retirement
+None: `retire cados` (public addresses released) and `delete cados` (the app and its volume deleted) cannot be undone,
+which is why each needs the owner's go-ahead and a typed phrase. After them, the cad volume's daily snapshots and
+`/data/backups` on it are the copies left.
 
 ## 6. The platform as a whole
 
