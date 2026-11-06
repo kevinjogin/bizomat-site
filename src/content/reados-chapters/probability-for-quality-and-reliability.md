@@ -7,7 +7,7 @@ tags:
   - quality
   - operations
   - validation
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ Probability explains how quality and reliability behave. Independent risks multi
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

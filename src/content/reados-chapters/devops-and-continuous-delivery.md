@@ -7,7 +7,7 @@ tags:
   - systems
   - process-improvement
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ DevOps brings development and operations together around shared responsibility, 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

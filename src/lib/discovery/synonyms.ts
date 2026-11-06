@@ -1,4 +1,4 @@
-// Everyday words → the terms the KEVOS® and the Library catalogues use. Matched as whole words or phrases in the
+// Everyday words → the terms the BIZOMAT and the Library catalogues use. Matched as whole words or phrases in the
 // visitor's question (after lower-casing); each `add` term is searched with a lower weight than the visitor's own
 // words. Keep entries factual and general: a synonym widens the search, it never names a resource.
 export interface Synonym { when: string[]; add: string[] }

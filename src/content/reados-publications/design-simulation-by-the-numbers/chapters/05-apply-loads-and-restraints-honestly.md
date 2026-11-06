@@ -73,7 +73,7 @@ The base plate is 150 mm tall, so its bottom edge is 75 mm below its centre. The
 
 **F_top = 157,000 × 130 / 34,600 ≈ 590 N.**
 
-The model's 610 N is within about 3% of the hand value. The difference is plausible, because the real plate also bends between the bolts and its pivot is not exactly at the edge. Both numbers are small compared with the clamping force of a properly tightened M12 bolt, which the bolted joint design check should confirm with the actual bolt grade and tightening method; the KEVOS® [bolt torque and preload calculator](/tools/bolt-torque-preload/) shows how preload relates to tightening torque.
+The model's 610 N is within about 3% of the hand value. The difference is plausible, because the real plate also bends between the bolts and its pivot is not exactly at the edge. Both numbers are small compared with the clamping force of a properly tightened M12 bolt, which the bolted joint design check should confirm with the actual bolt grade and tightening method; the BIZOMAT [bolt torque and preload calculator](/tools/bolt-torque-preload/) shows how preload relates to tightening torque.
 
 ## Represent the motor as a mass, not a block
 

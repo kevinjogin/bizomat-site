@@ -9,7 +9,7 @@ draft: false
 
 Some processes give one number at a time. A heat-treatment batch yields one hardness result worth recording, a mixing tank one viscosity, a furnace run one carbon content, a destructive test one strength value per lot. There is no subgroup of five consecutive parts to average, because the batch is the unit and the next batch is hours or days away. For these processes the individuals chart, also called the X chart or I–MR chart, plots each reading against limits estimated from the differences between successive readings.
 
-This chapter sets up an individuals chart for SP-12's case hardness with the KEVOS® individuals tool, explains the moving-range estimate and why it is used, and works through a case in which a bad batch inflated its own limits and escaped notice. It then sets out the extra care that single readings need, because they get none of the protection that averaging gives.
+This chapter sets up an individuals chart for SP-12's case hardness with the BIZOMAT individuals tool, explains the moving-range estimate and why it is used, and works through a case in which a bad batch inflated its own limits and escaped notice. It then sets out the extra care that single readings need, because they get none of the protection that averaging gives.
 
 ## SP-12's hardness
 

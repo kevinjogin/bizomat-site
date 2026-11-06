@@ -7,7 +7,7 @@ tags:
   - strategy
   - process-improvement
   - sales
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -183,4 +183,4 @@ Assessments are useful tools that are often pointed at the wrong target, not thr
 
 ---
 
-*Source: KEVOS® notes, drawing on F. Rad and G. Levin, writing on project management maturity assessment in the 2006 AACE International Transactions. Examples and figures in this article are illustrations, not quotes.*
+*Source: BIZOMAT notes, drawing on F. Rad and G. Levin, writing on project management maturity assessment in the 2006 AACE International Transactions. Examples and figures in this article are illustrations, not quotes.*

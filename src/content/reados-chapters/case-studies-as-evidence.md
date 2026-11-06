@@ -7,7 +7,7 @@ tags:
   - validation
   - projects
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -193,4 +193,4 @@ Case studies are powerful evidence for how and why things happen in real setting
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

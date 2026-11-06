@@ -4,8 +4,8 @@ subtitle: "Gas supply, flames, flashback and the cost of a cut, from the 1921 Bu
 description: "Set up, measure and cost oxy-acetylene cutting and heating: flame chemistry, cylinders, regulators, flow, flashback protection, cut quality and the cost of a metre of cut."
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, finance, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-24
@@ -99,7 +99,7 @@ Each chapter takes one part of the investigation, explains it in modern terms an
 
 ## The running case
 
-This is an illustration. A regional Australian fabrication workshop must cut **60 base plates, each 400 × 400 mm, from 25 mm grade 250 steel plate** for a conveyor upgrade. Counting all four edges of each plate, that is 96 m of cut. The workshop has a portable track cutting machine and hand torches, an oxygen manifold and acetylene cylinders. Through the book it compares three cutting settings, sizes its gas supply, checks its regulators and hoses, measures its consumption, audits its flashback protection, examines its cut edges and prices the job. The workshop, its settings, flows, speeds, prices and results are invented for teaching. They are not KEVOS® work, and they are not manufacturer's data for any nozzle or torch.
+This is an illustration. A regional Australian fabrication workshop must cut **60 base plates, each 400 × 400 mm, from 25 mm grade 250 steel plate** for a conveyor upgrade. Counting all four edges of each plate, that is 96 m of cut. The workshop has a portable track cutting machine and hand torches, an oxygen manifold and acetylene cylinders. Through the book it compares three cutting settings, sizes its gas supply, checks its regulators and hoses, measures its consumption, audits its flashback protection, examines its cut edges and prices the job. The workshop, its settings, flows, speeds, prices and results are invented for teaching. They are not BIZOMAT work, and they are not manufacturer's data for any nozzle or torch.
 
 ## How to use the book
 
@@ -111,4 +111,4 @@ This book is educational. Oxy-fuel equipment stores and burns flammable and oxid
 
 ## An original treatment
 
-The Library already compares cutting processes in [Choosing a cutting process for plate and sheet](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/), which places oxy-fuel beside laser, plasma and waterjet. This book goes inside the oxy-fuel process itself. The explanations, the base-plate case, the calculations, figures and exercises are original KEVOS® writing. The 1921 paper is a public United States Government document; its methods and findings are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.
+The Library already compares cutting processes in [Choosing a cutting process for plate and sheet](/reados/collections/machining-and-metal-parts/choosing-a-cutting-process-for-plate-and-sheet/), which places oxy-fuel beside laser, plasma and waterjet. This book goes inside the oxy-fuel process itself. The explanations, the base-plate case, the calculations, figures and exercises are original BIZOMAT writing. The 1921 paper is a public United States Government document; its methods and findings are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.

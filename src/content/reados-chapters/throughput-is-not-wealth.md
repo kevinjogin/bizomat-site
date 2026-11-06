@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -241,4 +241,4 @@ Output shows how much is moving through the business. Wealth depends on what rem
 
 ---
 
-*Source: KEVOS® notes, drawing on W. R. Stahel, "The circular economy", Nature (2016), and teaching material on resource and impact decoupling. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on W. R. Stahel, "The circular economy", Nature (2016), and teaching material on resource and impact decoupling. Examples and figures in this article are illustrations.*

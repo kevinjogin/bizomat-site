@@ -7,7 +7,7 @@ tags:
   - sales
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -217,4 +217,4 @@ A commitment can be created sooner than people expect, or be smaller than they a
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on contract formation, intention to create legal relations, consideration and framework agreements. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on contract formation, intention to create legal relations, consideration and framework agreements. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

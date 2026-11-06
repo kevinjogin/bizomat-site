@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -224,4 +224,4 @@ Location data is core operational data for field service and logistics businesse
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general field service, logistics and spatial data practice. Legal obligations are summarised for orientation; seek advice for your circumstances. Figures in the worked example are illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general field service, logistics and spatial data practice. Legal obligations are summarised for orientation; seek advice for your circumstances. Figures in the worked example are illustrative. This article is general information.*

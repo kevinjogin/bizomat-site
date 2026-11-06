@@ -7,7 +7,7 @@ tags:
   - process-improvement
   - operations
   - leadership
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -229,4 +229,4 @@ The A3 method puts a complete problem-solving story on one page and follows the 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® operations excellence study material on lean practice, the Toyota Production System and continuous improvement, together with established improvement practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT operations excellence study material on lean practice, the Toyota Production System and continuous improvement, together with established improvement practice. The worked example is illustrative. This article is general information.*

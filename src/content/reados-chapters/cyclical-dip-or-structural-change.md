@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ After a shock, the most important decision is often the diagnosis: a dip in a st
 
 ---
 
-*Source: KEVOS® notes, drawing on G. Bird, "Managing a Changing World Economy: Challenges and scenarios", World Economics (2013), and teaching material on environmental uncertainty and Igor Ansoff's concept of environmental turbulence. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on G. Bird, "Managing a Changing World Economy: Challenges and scenarios", World Economics (2013), and teaching material on environmental uncertainty and Igor Ansoff's concept of environmental turbulence. Examples and figures in this article are illustrations.*

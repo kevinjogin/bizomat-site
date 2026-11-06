@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - product-development
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -208,4 +208,4 @@ Good metal selection matches properties to function and manufacturing. Understan
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on standard steels, nonferrous alloys, tool steels, design stresses and fatigue, and steel and metal selection for engineering design, together with established materials engineering practice. The worked example is illustrative. This article is general information; use the relevant standards and qualified advice for critical parts.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on standard steels, nonferrous alloys, tool steels, design stresses and fatigue, and steel and metal selection for engineering design, together with established materials engineering practice. The worked example is illustrative. This article is general information; use the relevant standards and qualified advice for critical parts.*

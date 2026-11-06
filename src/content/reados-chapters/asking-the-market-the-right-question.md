@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - sales
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -212,4 +212,4 @@ The way a business approaches suppliers should match what it knows. Learn when t
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material comparing requests for information, proposals and tenders, and on project-value research describing how early decisions shape what a project can achieve. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material comparing requests for information, proposals and tenders, and on project-value research describing how early decisions shape what a project can achieve. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

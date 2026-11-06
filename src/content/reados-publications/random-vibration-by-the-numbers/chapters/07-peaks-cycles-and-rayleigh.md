@@ -78,7 +78,7 @@ caption: The three-band method puts more cycles at the low levels and none above
 - Above 3σ | 1.11% | none
 ```
 
-The approximation's merit is simplicity: three stress levels and three cycle counts go straight into Miner's rule, with an S–N curve such as the KEVOS® S–N tool provides. Its weakness is the missing tail. For a material whose S–N curve is steep, the rare high peaks do a large share of the damage, and leaving them out can make the method unconservative; in other cases the extra cycles it places at 2σ and 3σ make it conservative. Chapter 8 calculates both for the bracket.
+The approximation's merit is simplicity: three stress levels and three cycle counts go straight into Miner's rule, with an S–N curve such as the BIZOMAT S–N tool provides. Its weakness is the missing tail. For a material whose S–N curve is steep, the rare high peaks do a large share of the damage, and leaving them out can make the method unconservative; in other cases the extra cycles it places at 2σ and 3σ make it conservative. Chapter 8 calculates both for the bracket.
 
 ## Checking by simulation
 

@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -174,4 +174,4 @@ Database access and business decisions remain closely connected, but they need n
 
 ---
 
-*Source basis: original KEVOS® editorial analysis of Data Accessor and Active Domain Object discussions in the supplied Data Access Patterns (2003), with the linked Data Mapper reference used for terminology. The job-release scenario is illustrative and does not describe a KEVOS® implementation or client engagement.*
+*Source basis: original BIZOMAT editorial analysis of Data Accessor and Active Domain Object discussions in the supplied Data Access Patterns (2003), with the linked Data Mapper reference used for terminology. The job-release scenario is illustrative and does not describe a BIZOMAT implementation or client engagement.*

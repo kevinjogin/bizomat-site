@@ -4,8 +4,8 @@ subtitle: "Four-centre ovals, ellipses and flat ovals in sheet metal: girths, ca
 description: "Lay out and make oval sheet metal work with numbers: four-centre ovals, perimeters, capacities, flared ovals as part cones, patterns, seams, flat ovals, material and checks."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -55,7 +55,7 @@ It is for sheet metal workers, fabricators, apprentices and drafters, and for en
 
 Every chapter follows one fictional job. This is an illustration. A rural fabricator has been asked for galvanised steel stock-water troughs, oval in plan so that cattle can drink along both sides and the trough sits along a fence line. Each trough is 1,800 × 900 mm across the top and 450 mm deep, measured on the mean line of 1.6 mm galvanised sheet, with walls flaring outward by 75 mm all round, so the bottom is 1,650 × 750 mm. The oval is a four-centre oval with an end radius of 300 mm at the top. The walls are made in four pieces, two ends and two sides, joined by vertical seams; the bottom is a flat oval plate; the rim is rolled over a steel rod.
 
-The fabricator, the dimensions, the prices and the mistakes are invented. None describes KEVOS® work or a real business.
+The fabricator, the dimensions, the prices and the mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

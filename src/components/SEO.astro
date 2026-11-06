@@ -8,7 +8,7 @@ export interface Crumb {
 }
 export interface Props {
   title?: string;
-  /** A complete <title> used as written, without the " | KEVOS®" suffix. */
+  /** A complete <title> used as written, without the " | BIZOMAT" suffix. */
   exactTitle?: string;
   description?: string;
   /** Absolute or root-relative image URL for social cards. */
@@ -62,7 +62,9 @@ const graph: Record<string, unknown>[] = [
       { '@type': 'State', name: 'New South Wales' },
       { '@type': 'Country', name: 'Australia' },
     ],
-    knowsAbout: ['CAD', 'SolidWorks', 'Manufacturing engineering', 'Jigs and fixtures', 'Process improvement', 'Work instructions', 'Engineering project support'],
+    knowsAbout: ['Business automation', 'CAD automation', 'SOLIDWORKS', 'Model Context Protocol', 'Project management software', 'Engineering calculators', 'Manufacturing engineering', 'Process improvement'],
+    founder: { '@type': 'Person', name: 'Kevin Jogin' },
+    alternateName: SITE.formerName.name,
     ...(SITE.email ? { email: SITE.email } : {}),
     ...(SITE.social.length ? { sameAs: SITE.social.map((s) => s.href) } : {}),
   },

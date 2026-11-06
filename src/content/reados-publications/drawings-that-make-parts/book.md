@@ -4,8 +4,8 @@ subtitle: "Mechanical engineering drawing practice to AS 1100, from sheet and li
 description: "Make and read mechanical drawings that suppliers can quote, make and inspect from: sheets, lines, views, sections, dimensions, tolerances, texture and release."
 category: Engineering
 tags: [design, manufacturing, quality, validation, product-development]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -58,7 +58,7 @@ This book works through those conventions in the order a drawing is built: sheet
 
 Every chapter follows one fictional part. This is an illustration. A small engineering business designs a bearing housing for a centrifugal pump. The housing is machined from a grey iron casting. It has a flange 140 mm in diameter and 12 mm thick, drilled with four 9 mm holes on a 115 mm pitch circle; a body 95 mm in diameter; a locating spigot 100 mm in diameter projecting 5 mm from the flange face; and a bearing bore 62 mm in diameter to take a deep-groove ball bearing. Four M6 tapped holes on a 78 mm pitch circle in the rear face hold an end cap with a lip seal, and an M8 × 1 lubrication hole enters the body at an angle. The overall length is 77 mm.
 
-The housing is drawn on an A3 sheet at full size. Each chapter adds to the drawing, and most chapters include a mistake that a real drawing office or supplier could plausibly make, how it was found and how it was corrected. The part, the business and the mistakes are invented; none describes KEVOS® work or a real supplier.
+The housing is drawn on an A3 sheet at full size. Each chapter adds to the drawing, and most chapters include a mistake that a real drawing office or supplier could plausibly make, how it was found and how it was corrected. The part, the business and the mistakes are invented; none describes BIZOMAT work or a real supplier.
 
 ## Source limits and professional responsibility
 

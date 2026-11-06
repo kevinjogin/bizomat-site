@@ -9,12 +9,12 @@ draft: false
 
 An AI system can help structure research, draft content, compare options and organise repeated work. It cannot know the internal truth of a business from a vague request, and polished text is not evidence of a sound decision.
 
-## The four-step KEVOS working method
+## The four-step BIZOMAT working method
 **Interview:** Ask for missing facts before giving advice. **Confirm:** Summarise what is understood, distinguishing facts from assumptions. **Focus:** Choose one problem and one measurable outcome. **Check:** Verify calculations, claims, compliance and proposed actions before use.
 
 ```figure
 type: cycle
-title: The four-step KEVOS working method
+title: The four-step BIZOMAT working method
 caption: A useful request names the customers, the offer, the constraints, the evidence and what success looks like.
 - Interview | ask for missing facts
 - Confirm | facts versus assumptions

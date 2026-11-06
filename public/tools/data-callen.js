@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: thermodynamics tool from Callen, Thermodynamics and an Introduction to Thermostatistics (batch callen) within the Tools directory.
+// BIZOMAT MAKEOS: thermodynamics tool from Callen, Thermodynamics and an Introduction to Thermostatistics (batch callen) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "liquid-throttling-temperature-rise",

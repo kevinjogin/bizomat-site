@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Reliable bearings come from the whole arrangement, not just the size. Choose the
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on rolling element bearing selection, fits and installation, thrust bearings, plain and journal bearings, and lubricants and lubrication, together with established bearing practice. The worked example is illustrative. This article is general information; use bearing manufacturers' catalogues and advice for specific designs.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on rolling element bearing selection, fits and installation, thrust bearings, plain and journal bearings, and lubricants and lubrication, together with established bearing practice. The worked example is illustrative. This article is general information; use bearing manufacturers' catalogues and advice for specific designs.*

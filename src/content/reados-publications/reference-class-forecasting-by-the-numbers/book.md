@@ -4,8 +4,8 @@ subtitle: "Base rates, percentiles, uplifts and fat tails for project cost and t
 description: "Correct an optimistic project estimate with the outcomes of similar past projects: overrun ratios, P50 and P80 budgets, fat tails, simulation and calibration."
 category: Projects
 tags: [projects, finance, strategy, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-28
@@ -119,13 +119,13 @@ Every chapter follows one fictional decision. This is an illustration. A precisi
 
 The business has kept records of **24 capital projects** completed between 2011 and 2025: machine purchases, building works, automation and software. Their approved budgets and final costs, converted to 2026 dollars, form the reference class that the book builds, reads and extends.
 
-The business, its projects, its records and its numbers are invented. None describes KEVOS® work, a real business or a real project.
+The business, its projects, its records and its numbers are invented. None describes BIZOMAT work, a real business or a real project.
 
 ## How to use the book
 
 Read Chapters 1 and 2 first: the inside view and a consistent measure of overrun underlie everything else. Chapters 3 to 5 build the reference class and turn it into a budget, and should be read in order. Chapter 6 on fat tails, Chapter 7 on schedule and benefits, and Chapter 8 on component simulation can be read in any order after Chapter 5. Chapters 9 and 10 cover the decision itself and what happens after it. Every calculation in the book was checked by running it, and the spreadsheet functions named in the text reproduce the results.
 
-The book is one of a series of nine KEVOS® Library books on planning and delivering projects, written to be read together. *Front-End Planning by the Numbers* covers the definition work that turns an early estimate into a decision-grade one, and *Stage Gates and Stopping Rules by the Numbers* the decisions made at each gate, including when to stop. *Demand and Benefit Forecasts by the Numbers* applies the outside view to volumes and benefits rather than costs, and *First-of-a-Kind Technology by the Numbers* shows why a novel process needs a wider allowance than any reference class of proven plant suggests. *Modular Projects by the Numbers*, *Outcome-First Projects by the Numbers*, *Prototypes and Simulation by the Numbers* and *Project Teams and Contracts by the Numbers* complete the series.
+The book is one of a series of nine BIZOMAT Library books on planning and delivering projects, written to be read together. *Front-End Planning by the Numbers* covers the definition work that turns an early estimate into a decision-grade one, and *Stage Gates and Stopping Rules by the Numbers* the decisions made at each gate, including when to stop. *Demand and Benefit Forecasts by the Numbers* applies the outside view to volumes and benefits rather than costs, and *First-of-a-Kind Technology by the Numbers* shows why a novel process needs a wider allowance than any reference class of proven plant suggests. *Modular Projects by the Numbers*, *Outcome-First Projects by the Numbers*, *Prototypes and Simulation by the Numbers* and *Project Teams and Contracts by the Numbers* complete the series.
 
 ## Source limits and professional responsibility
 

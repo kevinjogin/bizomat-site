@@ -4,8 +4,8 @@ subtitle: "Decibels, sound power, rooms, barriers, enclosures, silencers and iso
 description: "Control machine noise with numbers: decibel arithmetic, sound power, octave bands, exposure, room absorption, barriers, enclosures, silenced openings, vibration isolation and measurement."
 category: Engineering
 tags: [design, operations, quality, people]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -59,7 +59,7 @@ It suits mechanical and facilities engineers, workshop managers, safety advisers
 
 Every chapter follows one fictional installation. This is an illustration. CP-30 is a 30 kW rotary screw air compressor, supplied without an acoustic canopy, standing on the floor, clear of the walls, at one end of a fabrication workshop 24 m long, 16 m wide and 7 m high, with bare steel walls, a concrete floor and a metal roof. A fitter's workbench is 4 m away, where one worker spends six hours of most days. The compressor's sound power spectrum, the room's absorption and every level in the book are illustrations chosen to show the method.
 
-The installation and its numbers are invented; none describes KEVOS® work or a real workplace. Prices, where they appear, are illustrations in Australian dollars excluding GST.
+The installation and its numbers are invented; none describes BIZOMAT work or a real workplace. Prices, where they appear, are illustrations in Australian dollars excluding GST.
 
 ## Source limits and professional responsibility
 

@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - communication
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -221,4 +221,4 @@ The commercial discipline matters as much as the legal one: value the alternativ
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal or tax advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal or tax advice.*

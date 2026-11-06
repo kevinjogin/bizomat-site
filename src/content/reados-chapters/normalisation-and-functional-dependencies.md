@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

@@ -9,7 +9,7 @@ draft: false
 
 Everything so far has produced numbers. This chapter turns them into shims under feet and millimetres of sideways movement, and then proves that the machine ended where the numbers said it would. It is the part of an alignment that takes the least thought and the most care: a correction of 0.192 mm is easy to calculate and easy to get wrong with a shim pack, a spanner and a foot that has two neighbours.
 
-The chapter uses the KEVOS® shaft alignment plan tool, which combines Chapter 6's rim and face corrections with Chapter 8's thermal growth into cold shim corrections and a running check. It follows the HW-3 through its vertical and horizontal moves, and its mistake is the simplest one on the shop floor: the right shims under the wrong feet.
+The chapter uses the BIZOMAT shaft alignment plan tool, which combines Chapter 6's rim and face corrections with Chapter 8's thermal growth into cold shim corrections and a running check. It follows the HW-3 through its vertical and horizontal moves, and its mistake is the simplest one on the shop floor: the right shims under the wrong feet.
 
 ## The plan
 

@@ -7,7 +7,7 @@ description: "Edge distance, curvature, lift-off and probe condition in conducti
 draft: false
 ---
 
-A conductivity meter gives a reading to two decimal places in two seconds, and that precision invites trust. Whether the reading means anything depends on where and how the probe was placed, the temperature, the surface under it and the state of the probe and the standards. The meter cannot tell the operator that the probe was too near an edge or rocking on a curved surface; it simply reports a different number. This chapter works through the influences on a reading, measures the meter's repeatability and bias with a Type 1 gauge study in the KEVOS® gauge tool, and builds the uncertainty budget that Chapter 9 uses to set guard bands. Its mistake is three good bars rejected because they were measured too close to their edges.
+A conductivity meter gives a reading to two decimal places in two seconds, and that precision invites trust. Whether the reading means anything depends on where and how the probe was placed, the temperature, the surface under it and the state of the probe and the standards. The meter cannot tell the operator that the probe was too near an edge or rocking on a curved surface; it simply reports a different number. This chapter works through the influences on a reading, measures the meter's repeatability and bias with a Type 1 gauge study in the BIZOMAT gauge tool, and builds the uncertainty budget that Chapter 9 uses to set guard bands. Its mistake is three good bars rejected because they were measured too close to their edges.
 
 ## What changes a reading
 
@@ -76,7 +76,7 @@ caption: This is an illustration. Tolerance 42.0 to 45.0 %IACS, T = 3.0; resolut
 
 The first study passed, but with Cgk = 1.333 against a minimum of 1.33, which is a pass in name only. Its bias of 0.06 %IACS was statistically significant, with a t statistic of 5.00 and a p-value of 0.00004, so the tool warned that the bias was real and should be corrected or allowed for. It was the same bias the linear calibration in Chapter 3 had found. After the meter was adjusted in its calibration routine and the probe face cleaned, a repeat study gave a mean of 43.13 %IACS with a standard deviation of 0.05: Cg = 2.000 and Cgk = 1.800. The remaining bias of 0.03 %IACS is still statistically significant, because 25 readings detect even small biases, but it uses only a hundredth of the tolerance and the budget below allows for it.
 
-A Type 1 study shows the repeatability and bias of the instrument with one operator on one standard. It does not show how readings vary between operators, between probes or across the range of real parts, which a full gauge repeatability and reproducibility study with several parts and operators measures. The pump maker ran one when the procedure was introduced and repeats it when a new probe or inspector is added. The KEVOS collection chapter on measurement system analysis for manufacturers covers those studies.
+A Type 1 study shows the repeatability and bias of the instrument with one operator on one standard. It does not show how readings vary between operators, between probes or across the range of real parts, which a full gauge repeatability and reproducibility study with several parts and operators measures. The pump maker ran one when the procedure was introduced and repeats it when a new probe or inspector is added. The BIZOMAT collection chapter on measurement system analysis for manufacturers covers those studies.
 
 ## The uncertainty budget
 

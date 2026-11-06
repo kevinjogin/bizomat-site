@@ -1,83 +1,104 @@
-/* KEVOS design system: tokens, base elements, typography and shared utilities.
-   Component-specific styles live in each component's <style> block. */
+/* BIZOMAT website: base elements, typography and shared utilities on the platform tokens.
+   The tokens themselves live in shared/brand/tokens.css (copied to src/styles/bizomat/ by shared/brand/build.mjs and
+   loaded first by BaseLayout); this file maps the site's own variable names onto them, so every page, component and
+   Library book follows the one BIZOMAT design system. Component-specific styles stay in each component.
 
-/* One type family across the site (owner decision, 5 Nov 2026): Inter Tight for headings, body, labels and buttons.
-   Long-form Library reading keeps Source Serif 4 in .prose. The KEVOS® wordmark is a fixed SVG, not a font. */
+   Type: Oxanium for H1 to H4 (it matches the chamfered BIZOMAT wordmark), Inter Tight for body text, labels and
+   buttons, Source Serif 4 for long-form Library reading (.prose). */
+
+/* Fallback for Library prose: the visitor's Times New Roman (or its metric twin Liberation Serif) scaled to Source Serif
+   4, so a chapter keeps its line breaks when the web font arrives (no layout shift). Width ratios measured in Chromium
+   on 5 Nov 2026 (Source Serif 4 400 / Times 400 = 116.34 %, 600 / Times Bold = 111.70 %, italic / Times Italic =
+   108.27 %); overrides are Source Serif 4's ascent 1036 and descent 335 (of 1000) divided by each size-adjust. The
+   sans and display fallbacks are in the shared tokens. */
+@font-face {
+  font-family: 'Source Serif Fallback';
+  font-style: normal;
+  font-weight: 100 549;
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('LiberationSerif');
+  size-adjust: 116.34%;
+  ascent-override: 89.05%;
+  descent-override: 28.79%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Serif Fallback';
+  font-style: normal;
+  font-weight: 550 900;
+  src: local('Times New Roman Bold'), local('TimesNewRomanPS-BoldMT'), local('Liberation Serif Bold'), local('LiberationSerif-Bold');
+  size-adjust: 111.7%;
+  ascent-override: 92.75%;
+  descent-override: 29.99%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Serif Fallback';
+  font-style: italic;
+  font-weight: 100 900;
+  src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'), local('Liberation Serif Italic'), local('LiberationSerif-Italic');
+  size-adjust: 108.27%;
+  ascent-override: 95.69%;
+  descent-override: 30.94%;
+  line-gap-override: 0%;
+}
 
 /* ---------- Tokens ---------- */
 :root {
-  /* Light (default since 5 Nov 2026): warm white paper, charcoal text, orange used sparingly. */
-  --paper: #fbfaf7;
-  --paper-2: #f3f1ec;
-  --surface: #ffffff;
-  --ink: #1c1b19;
-  --ink-2: #3f3d39;
-  --muted: #69665f;
-  --line: rgb(28 27 25 / 0.1);
-  --line-strong: rgb(28 27 25 / 0.2);
-  /* KEVOS® orange. --brand-orange is the logo colour; --accent is the accessible shade for text and buttons
-     (5.2:1 on white). */
-  --brand-orange: #ff6a13;
-  --brand-blue: #ff6a13;
-  --accent: #c2410c;
-  --accent-strong: #9a3412;
-  --accent-soft: rgb(255 106 19 / 0.1);
-  --inverse-bg: #1c1b19;
-  --inverse-ink: #f6f5f1;
-  --inverse-muted: #aaa69d;
-  --inverse-line: rgb(246 245 241 / 0.14);
-  --on-accent: #ffffff;
-  --danger: #b3261e;
-  --success: #1f6b45;
+  --paper: var(--bz-paper);
+  --paper-2: var(--bz-paper-2);
+  --surface: var(--bz-surface);
+  --ink: var(--bz-ink);
+  --ink-2: var(--bz-ink-2);
+  --muted: var(--bz-muted);
+  --line: var(--bz-line);
+  --line-strong: var(--bz-line-strong);
+  /* --brand-mark is the colour of small brand marks (the teal connector of the logo). --brand-orange and --brand-blue
+     are the names older components still use; they point at the same BIZOMAT colour. */
+  --brand-mark: var(--bz-teal-mark);
+  --brand-orange: var(--brand-mark);
+  --brand-blue: var(--brand-mark);
+  --brand-navy: var(--bz-navy);
+  --signal: var(--bz-amber);
+  --accent: var(--bz-teal);
+  --accent-strong: var(--bz-teal-hover);
+  --accent-soft: var(--bz-teal-soft);
+  --inverse-bg: var(--bz-inverse-bg);
+  --inverse-ink: var(--bz-inverse-ink);
+  --inverse-muted: var(--bz-inverse-muted);
+  --inverse-line: rgb(238 244 250 / 0.14);
+  --on-accent: var(--bz-on-accent);
+  --danger: var(--bz-danger);
+  --success: var(--bz-success);
 
-  --font-sans: 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-display: var(--font-sans);
-  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
-  --font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, monospace;
+  --font-sans: 'Inter Tight Variable', 'Inter Tight', 'Inter Tight Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--bz-font-display);
+  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
+  --font-mono: var(--bz-font-mono);
 
   /* Type scale: labels (--step--1), body (0), subheadings (1), section headings (2–3), page titles (4), hero (5). */
-  --step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);
-  --step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
-  --step-1: clamp(1.125rem, 1.07rem + 0.3vw, 1.3rem);
-  --step-2: clamp(1.375rem, 1.24rem + 0.65vw, 1.8rem);
-  --step-3: clamp(1.7rem, 1.45rem + 1.2vw, 2.5rem);
-  --step-4: clamp(2.1rem, 1.65rem + 2.2vw, 3.4rem);
-  --step-5: clamp(2.5rem, 1.8rem + 3.4vw, 4.4rem);
+  --step--1: var(--bz-step--1);
+  --step-0: var(--bz-step-0);
+  --step-1: var(--bz-step-1);
+  --step-2: var(--bz-step-2);
+  --step-3: var(--bz-step-3);
+  --step-4: var(--bz-step-4);
+  --step-5: var(--bz-step-5);
 
-  --gutter: clamp(1.1rem, 4vw, 3rem);
-  --max: 1200px;
-  --measure: 68ch;
-  --space-section: clamp(4rem, 2.8rem + 5.5vw, 7.5rem);
-  --radius: 6px;
-  --radius-lg: 14px;
-  --shadow-1: 0 1px 2px rgb(28 27 25 / 0.04), 0 4px 16px rgb(28 27 25 / 0.04);
-  --shadow-menu: 0 12px 32px rgb(28 27 25 / 0.12);
-  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
-  --header-h: 68px;
+  --gutter: var(--bz-gutter);
+  --max: var(--bz-max);
+  --measure: var(--bz-measure);
+  --space-section: var(--bz-space-section);
+  --radius: var(--bz-radius-sm);
+  --radius-lg: var(--bz-radius-lg);
+  --shadow-1: var(--bz-shadow-1);
+  --shadow-menu: var(--bz-shadow-2);
+  --ease: var(--bz-ease);
+  --header-h: var(--bz-header-h);
   color-scheme: light;
 }
 
 :root[data-theme='dark'] {
-  --paper: #0f0f0e;
-  --paper-2: #171715;
-  --surface: #1a1a18;
-  --ink: #eeece6;
-  --ink-2: #c9c6be;
-  --muted: #9b978e;
-  --line: rgb(238 236 230 / 0.1);
-  --line-strong: rgb(238 236 230 / 0.24);
-  --accent: #ff7a29;
-  --accent-strong: #ff9a57;
-  --accent-soft: rgb(255 122 41 / 0.14);
-  --inverse-bg: #eeece6;
-  --inverse-ink: #121211;
-  --inverse-muted: #55524b;
-  --inverse-line: rgb(18 18 17 / 0.14);
-  --on-accent: #121211;
-  --shadow-1: none;
-  --shadow-menu: 0 14px 36px rgb(0 0 0 / 0.45);
-  --danger: #f2877e;
-  --success: #6fcf9a;
+  --inverse-line: rgb(10 17 28 / 0.14);
   color-scheme: dark;
 }
 /* ---------- Base ---------- */
@@ -106,20 +127,21 @@ body {
 main { flex: 1; }
 img, svg, picture, video { display: block; max-width: 100%; }
 img { height: auto; }
-/* All heading levels use the one site family (Inter Tight). The !important also covers heading styles set inside
-   Astro components (cards, section titles, footer headings), so every heading on every page matches. */
+/* Every heading level uses the BIZOMAT display face (Oxanium), which matches the wordmark. The !important also covers
+   heading styles set inside Astro components (cards, section titles, footer headings), so every heading on every page
+   matches. */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-family: var(--font-display) !important;
-  font-weight: 620;
+  font-weight: 650;
   font-synthesis: none;
   line-height: 1.12;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
-h1 { font-size: var(--step-4); letter-spacing: -0.03em; line-height: 1.06; }
-h2 { font-size: var(--step-3); letter-spacing: -0.026em; }
-h3, h4, h5, h6 { font-weight: 620; letter-spacing: -0.012em; }
+h1 { font-size: var(--step-4); letter-spacing: -0.015em; line-height: 1.06; }
+h2 { font-size: var(--step-3); letter-spacing: -0.012em; }
+h3, h4, h5, h6 { font-weight: 640; letter-spacing: -0.005em; }
 h3 { font-size: var(--step-1); line-height: 1.3; }
 :is(h1, h2, h3, h4) em { font-style: normal; color: var(--accent); }
 @media (max-width: 480px) { h1, h2, h3, h4, h5, h6 { overflow-wrap: break-word; } }
@@ -164,7 +186,7 @@ time { font-variant-numeric: tabular-nums; }
 }
 .prose > :first-child { margin-top: 0; }
 .prose p, .prose ul, .prose ol, .prose blockquote, .prose pre, .prose figure, .prose .table-wrap { margin: 0 0 1.3em; }
-.prose h2, .prose h3 { font-family: var(--font-sans); color: var(--ink); scroll-margin-top: calc(var(--header-h) + 1.5rem); }
+.prose h2, .prose h3 { font-family: var(--font-display); color: var(--ink); scroll-margin-top: calc(var(--header-h) + 1.5rem); }
 .prose h2 { font-size: var(--step-2); margin: 2.2em 0 0.7em; letter-spacing: -0.015em; }
 .prose h3 { font-size: var(--step-1); margin: 1.8em 0 0.5em; }
 .prose strong { color: var(--ink); font-weight: 650; }

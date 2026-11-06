@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

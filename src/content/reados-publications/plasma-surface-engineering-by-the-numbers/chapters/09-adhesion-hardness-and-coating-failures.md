@@ -9,7 +9,7 @@ draft: false
 
 A hard coating that does not stick is worse than no coating at all. It flakes off in service, and its hard fragments act as an abrasive between the surfaces it was meant to protect. Adhesion is decided by everything before the coating's first atom arrives: the steel's hardness and finish, the cleaning, the etch, the interlayer and, in a duplex treatment, the nitrided layer underneath. It cannot be seen, and most of the tests that measure it destroy the sample, so the shop tests coupons from every run and treats a failed adhesion test as a stop sign.
 
-This chapter explains what holds a coating on, describes the two common adhesion tests, the Rockwell indentation test and the scratch test, and shows with the KEVOS® Vickers and Knoop hardness tool why a 4 µm coating's hardness can be measured only with very light loads. It then sets out a method for tracing coating failures in service, and ends with a duplex run in which the nitriding left a compound layer that the coating could not survive.
+This chapter explains what holds a coating on, describes the two common adhesion tests, the Rockwell indentation test and the scratch test, and shows with the BIZOMAT Vickers and Knoop hardness tool why a 4 µm coating's hardness can be measured only with very light loads. It then sets out a method for tracing coating failures in service, and ends with a duplex run in which the nitriding left a compound layer that the coating could not survive.
 
 ## What holds a coating on
 

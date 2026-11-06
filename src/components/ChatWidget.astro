@@ -1,5 +1,5 @@
 ---
-// KEVOS® Assistant: floating receptionist chat (bottom-right on every page), with minimise and
+// BIZOMAT Assistant: floating receptionist chat (bottom-right on every page), with minimise and
 // pop-out. In "page" mode it fills the /chat/ pop-out window instead of floating.
 // Answers come from /api/chat (Cloudflare Workers AI), grounded only in this website's content.
 import { SITE } from '../config/site.ts';
@@ -9,7 +9,7 @@ interface Props {
 }
 const { mode = 'floating' } = Astro.props;
 const name = SITE.assistant.name;
-// Dedicated, crisp KEVOS® K mark for small assistant avatars (independent of favicon).
+// Dedicated, crisp BIZOMAT K mark for small assistant avatars (independent of favicon).
 const chatIcon = '/brand/kevos-chat-k-mark.svg?v=orange-1';
 // Conversation starters, shared with the REACHOS page's "Not sure where to start?" section.
 const prompts = SITE.assistant.starters;
@@ -18,9 +18,9 @@ const prompts = SITE.assistant.starters;
 <div class:list={['assistant', `assistant--${mode}`]} data-assistant data-mode={mode} data-endpoint={SITE.assistant.endpoint}>
   {
     mode === 'floating' && (
-      <button class="assistant__launcher" type="button" aria-label="Ask KEVOS®" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
+      <button class="assistant__launcher" type="button" aria-label="Ask BIZOMAT" aria-expanded="false" aria-controls="assistant-panel" data-assistant-open>
         <img src={chatIcon} alt="" width="34" height="34" decoding="async" />
-        <span>Ask KEVOS®</span>
+        <span>Ask BIZOMAT</span>
       </button>
     )
   }
@@ -57,7 +57,7 @@ const prompts = SITE.assistant.starters;
 
     <div class="assistant__log" role="log" aria-live="polite" aria-relevant="additions" tabindex="0" aria-label="Conversation" data-assistant-log>
       <div class="msg msg--assistant">
-        <p>Welcome to KEVOS®. I can help you explore the platform, understand KEVOS® tools and Library books, and find the right way to get in touch.</p>
+        <p>Welcome to BIZOMAT. I can help you explore the platform, understand BIZOMAT tools and Library books, and find the right way to get in touch.</p>
       </div>
     </div>
 
@@ -69,12 +69,12 @@ const prompts = SITE.assistant.starters;
     </div>
 
     <form class="assistant__handoff" data-assistant-handoff-form hidden novalidate>
-      <p class="assistant__handoff-title">Leave a message for the KEVOS® team</p>
+      <p class="assistant__handoff-title">Leave a message for the BIZOMAT team</p>
       <label>Name<input name="name" type="text" autocomplete="name" required maxlength="100" /></label>
       <label>Email<input name="email" type="email" autocomplete="email" required maxlength="200" /></label>
       <label>Message<textarea name="message" rows="3" required maxlength="2000"></textarea></label>
       <input class="assistant__hp" name="botcheck" type="checkbox" tabindex="-1" autocomplete="off" aria-hidden="true" />
-      <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to KEVOS® using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
+      <label class="assistant__consent"><input name="consent" type="checkbox" required /> I agree to BIZOMAT using these details to reply, as set out in the <a href="/privacy/">privacy policy</a>.</label>
       <div class="assistant__captcha" data-handoff-captcha></div>
       <p class="assistant__handoff-error" role="alert" data-handoff-error></p>
       <div class="assistant__handoff-actions">
@@ -84,13 +84,13 @@ const prompts = SITE.assistant.starters;
     </form>
 
     <form class="assistant__composer" data-assistant-form>
-      <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about KEVOS®</label>
-      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about KEVOS®, Tools or the Library" autocomplete="off" data-assistant-input></textarea>
+      <label for={`assistant-input-${mode}`} class="visually-hidden">Ask a question about BIZOMAT</label>
+      <textarea id={`assistant-input-${mode}`} rows="1" maxlength="600" placeholder="Ask about BIZOMAT, Tools or the Library" autocomplete="off" data-assistant-input></textarea>
       <button type="submit" class="assistant__submit" aria-label="Send question">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
       </button>
     </form>
-    <p class="assistant__note">AI-assisted guidance based on published KEVOS® information. To reach the team, <a href="/contact/#enquiry" data-cta="assistant-note-quote">start an enquiry</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
+    <p class="assistant__note">AI-assisted guidance based on published BIZOMAT information. To reach the team, <a href="/contact/#enquiry" data-cta="assistant-note-quote">start an enquiry</a>. Please don’t share sensitive information. <a href="/privacy/">Privacy</a></p>
   </section>
 </div>
 
@@ -183,7 +183,7 @@ const prompts = SITE.assistant.starters;
     const addContactButton = () => {
       const el = document.createElement('div');
       el.className = 'msg msg--action';
-      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact KEVOS®</a>';
+      el.innerHTML = '<a class="msg__button" href="/contact/" data-cta="assistant-contact">Contact BIZOMAT</a>';
       log.append(el);
       log.scrollTop = log.scrollHeight;
     };
@@ -345,7 +345,7 @@ const prompts = SITE.assistant.starters;
       if (result.ok) {
         handoff.reset();
         showHandoff(false);
-        const thanks = 'Thanks. Your message has been passed to the KEVOS® team, who will reply by email as soon as possible.';
+        const thanks = 'Thanks. Your message has been passed to the BIZOMAT team, who will reply by email as soon as possible.';
         state.messages.push({ role: 'assistant', content: thanks });
         addBubble('assistant', thanks);
         save();
@@ -370,7 +370,7 @@ const prompts = SITE.assistant.starters;
     box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.45); font-size: 0.95rem; font-weight: 560;
     transition: transform 0.25s var(--ease), background 0.2s var(--ease);
   }
-  .assistant__launcher img { width: 34px; height: 34px; padding: 2px; border: 0; border-radius: 9px; background: #f6f5f1; object-fit: contain; }
+  .assistant__launcher img { width: 34px; height: 34px; padding: 2px; border: 0; border-radius: 9px; background: #eef4fa; object-fit: contain; }
   .assistant__launcher:hover { transform: translateY(-2px); }
   .assistant__launcher.is-hidden { display: none; }
 
@@ -387,7 +387,7 @@ const prompts = SITE.assistant.starters;
   .assistant--page .assistant__panel { width: 100%; height: 100dvh; border: 0; border-radius: 0; box-shadow: none; }
 
   .assistant__header { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 0.85rem 0.85rem 1rem; border-bottom: 1px solid var(--line); }
-  .assistant__avatar { width: 46px; height: 46px; flex: none; padding: 3px; border: 0; border-radius: 10px; background: #f6f5f1; object-fit: contain; }
+  .assistant__avatar { width: 46px; height: 46px; flex: none; padding: 3px; border: 0; border-radius: 10px; background: #eef4fa; object-fit: contain; }
   .assistant__heading { flex: 1; min-width: 0; }
   .assistant__heading h1, .assistant__heading h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
   .assistant__heading p { display: flex; align-items: center; gap: 0.4rem; margin: 0.15rem 0 0; font-size: 0.78rem; color: var(--muted); }

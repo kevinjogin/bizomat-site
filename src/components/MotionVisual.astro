@@ -1,6 +1,6 @@
 ---
 /**
- * KEVOS® motion design system.
+ * BIZOMAT motion design system.
  * Services / About share the SAME Home orbit component and geometry.
  * The remaining scenes use purpose-built HTML/CSS layouts within the same
  * blueprint panel, orange palette, square-card radii and reduced-motion contract.
@@ -11,7 +11,7 @@ import Logo from './Logo.astro';
 import { INDUSTRIES, PROCESS } from '../data/services.ts';
 
 type Page = 'services' | 'how-it-works' | 'industries' | 'about' | 'contact' | 'tools' | 'reados';
-/** `compact` draws the KEVOS® and the Library scenes as a wide, short banner for the library page headers. */
+/** `compact` draws the BIZOMAT and the Library scenes as a wide, short banner for the library page headers. */
 interface Props { page: Page; priority?: boolean; class?: string; compact?: boolean; }
 const { page, class: className } = Astro.props;
 const compact = Boolean(Astro.props.compact) && (page === 'tools' || page === 'reados');
@@ -34,7 +34,7 @@ const toolStages = [
 ];
 const contactPaths = [
   { number: '01', title: 'Start an enquiry', note: 'Questions, ideas, feedback or projects' },
-  { number: '02', title: 'Book a meeting', note: 'Talk it through with KEVOS®' },
+  { number: '02', title: 'Book a meeting', note: 'Talk it through with BIZOMAT' },
 ];
 const copy = {
   reados: {
@@ -58,7 +58,7 @@ const copy = {
     footer: 'INPUT  →  ANALYSE  →  DECIDE',
   },
   contact: {
-    eyebrow: 'CONNECT WITH KEVOS®',
+    eyebrow: 'CONNECT WITH BIZOMAT',
     description: 'Two ways to connect, sending an enquiry or booking a meeting, each leading to one clear next step.',
     footer: 'ONE CLEAR NEXT STEP',
   },
@@ -256,13 +256,13 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
   .mv {
     --m-panel:#ffffff;
     --m-card:rgb(255 255 255 / .91);
-    --m-line:rgb(18 18 17 / .14);
-    --m-grid:rgb(255 106 19 / .075);
-    --m-ink:#121211;
+    --m-line:rgb(10 17 28 / .14);
+    --m-grid:rgb(20 184 166 / .075);
+    --m-ink:#0a111c;
     --m-muted:#67645d;
-    --m-orange:#c2410c;
-    --m-bright:#ff6a13;
-    --m-soft:rgb(255 106 19 / .08);
+    --m-orange:#0f766e;
+    --m-bright:#14b8a6;
+    --m-soft:rgb(20 184 166 / .08);
     display:block;
     margin:0;
     width:100%;
@@ -272,25 +272,25 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
   :global(:root[data-theme='dark']) .mv {
     --m-panel:#131412;
     --m-card:rgb(28 29 27 / .91);
-    --m-line:rgb(238 236 230 / .17);
-    --m-grid:rgb(255 140 71 / .08);
+    --m-line:rgb(230 237 245 / .17);
+    --m-grid:rgb(45 212 191 / .08);
     --m-ink:#f1efea;
     --m-muted:#a9a49c;
-    --m-orange:#ff8c47;
-    --m-bright:#ff8c47;
-    --m-soft:rgb(255 140 71 / .10);
+    --m-orange:#2dd4bf;
+    --m-bright:#2dd4bf;
+    --m-soft:rgb(45 212 191 / .10);
   }
   @media (prefers-color-scheme: dark) {
     :global(:root:not([data-theme='light'])) .mv {
       --m-panel:#131412;
       --m-card:rgb(28 29 27 / .91);
-      --m-line:rgb(238 236 230 / .17);
-      --m-grid:rgb(255 140 71 / .08);
+      --m-line:rgb(230 237 245 / .17);
+      --m-grid:rgb(45 212 191 / .08);
       --m-ink:#f1efea;
       --m-muted:#a9a49c;
-      --m-orange:#ff8c47;
-      --m-bright:#ff8c47;
-      --m-soft:rgb(255 140 71 / .10);
+      --m-orange:#2dd4bf;
+      --m-bright:#2dd4bf;
+      --m-soft:rgb(45 212 191 / .10);
     }
   }
   .mv__panel {

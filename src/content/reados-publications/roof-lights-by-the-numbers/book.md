@@ -4,8 +4,8 @@ subtitle: "Sizing, kerbs, glazing bars, hips and valleys, condensation, heat, mo
 description: "Design and make a glazed roof light by numbers: daylight area, kerbs and flashings, glass and bars, hip and valley geometry, condensation, solar heat, movement, sashes and safety."
 category: Engineering
 tags: [design, manufacturing, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -77,7 +77,7 @@ It assumes basic trigonometry, some experience reading building drawings and an 
 
 The book follows **RL-24**, a fictional hipped glazed roof light over the open-plan kitchen and living room of a single-storey house extension. The room is 7.5 m by 5.6 m, 42 m² of floor. The extension's roof is metal deck at a 5° pitch. The roof light sits on a timber kerb whose inside opening is **2,400 mm** across the slope by **1,200 mm** down it. Its glass is pitched at **25°** on all four faces, so it has two long trapezoidal faces, two triangular hipped ends, four hip bars and a ridge **1,200 mm** long. It is glazed with laminated glass on aluminium bars, with folded aluminium flashings to the kerb.
 
-All dimensions, loads, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Money, where it appears, is in Australian dollars including GST.
+All dimensions, loads, prices and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Money, where it appears, is in Australian dollars including GST.
 
 ## Source limits and professional responsibility
 

@@ -1,7 +1,7 @@
-// Library browser for KEVOS® Tools and the Library (src/components/library/LibraryBrowser.astro).
+// Library browser for BIZOMAT Tools and the Library (src/components/library/LibraryBrowser.astro).
 // Topic, subcategory and search state live in the URL (?topic=, ?sub=, ?q=; Tools also keeps ?collection=makeos),
-// so links, reloads and back/forward all work. Search runs over this page's own cards; on KEVOS® Tools, a question in plain
-// words (or a search with no match) is also sent through KEVOS® discovery (src/lib/discovery/client.ts), and the tools
+// so links, reloads and back/forward all work. Search runs over this page's own cards; on BIZOMAT Tools, a question in plain
+// words (or a search with no match) is also sent through BIZOMAT discovery (src/lib/discovery/client.ts), and the tools
 // the AI picks from the catalogue are moved to the top of the results.
 import { highlightParts, indexDoc, queryTokens, scoreDoc, search, type IndexedDoc } from '../utils/library-search.ts';
 import { createDiscovery } from '../lib/discovery/client.ts';
@@ -222,7 +222,7 @@ function init(root: HTMLElement) {
     if (!picks.length) {
       const none = resultsGrid!.children.length === 0;
       aiNote!.hidden = !none;
-      aiNote!.textContent = none ? 'KEVOS® AI found no tool for this question either. Try other words, or browse a topic below.' : '';
+      aiNote!.textContent = none ? 'BIZOMAT AI found no tool for this question either. Try other words, or browse a topic below.' : '';
       return;
     }
     for (const i of [...picks].reverse()) {
@@ -234,7 +234,7 @@ function init(root: HTMLElement) {
     const where = scopeLabel() ? ` in ${scopeLabel()}` : '';
     resultsTitle!.textContent = `${plural(total)} for “${q.trim()}”${where}`;
     aiNote!.hidden = false;
-    aiNote!.textContent = `Best ${picks.length === 1 ? 'match' : `${picks.length} matches`} for your question first, chosen by KEVOS® AI from the KEVOS® catalogue.`;
+    aiNote!.textContent = `Best ${picks.length === 1 ? 'match' : `${picks.length} matches`} for your question first, chosen by BIZOMAT AI from the BIZOMAT catalogue.`;
     topicsEl!.hidden = true;
     if (empty) empty.hidden = true;
     if (status) status.textContent = `${total} found`;
@@ -248,7 +248,7 @@ function init(root: HTMLElement) {
     const cached = answers.get(key);
     if (cached) { applyAi(q, cached); return; }
     aiNote!.hidden = false;
-    aiNote!.textContent = 'Asking KEVOS® AI for the best tools for your question…';
+    aiNote!.textContent = 'Asking BIZOMAT AI for the best tools for your question…';
     aiTimer = window.setTimeout(async () => {
       if (aiAsked === key) return;
       aiAsked = key;

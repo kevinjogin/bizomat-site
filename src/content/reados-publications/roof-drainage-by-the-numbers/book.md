@@ -4,8 +4,8 @@ subtitle: "Design storms, catchments, gutters, outlets, box gutters, overflow an
 description: "Size roof drainage from the design storm: catchment flows, eaves and box gutters, outlets, rainheads, overflow, materials and thermal movement, then install and maintain it."
 category: Engineering
 tags: [design, quality, projects, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -77,7 +77,7 @@ It assumes basic arithmetic and some familiarity with sheet metal work. The hydr
 
 The book follows a fictional **light industrial warehouse, W-40**, 40 m long and 24 m wide, with a gable roof pitched at 5° and its ridge along the 40 m length. Each roof slope covers 40 m by 12 m in plan. At the rear, the roof drains to an eaves gutter. At the front, facing the street, a parapet rises 1.0 m above the roof and the roof drains to a box gutter behind it, discharging through the parapet into rainheads at each end.
 
-The design rainfall intensities used throughout are **180 mm/h** for a 5-minute storm with a 5% annual exceedance probability and **250 mm/h** for a 5-minute storm with a 1% annual exceedance probability. This is an illustration. They are round teaching numbers, not values for any real location. All dimensions, flows, prices and results are invented for teaching and do not describe a KEVOS® client, supplier or project. Money is in Australian dollars, excluding GST.
+The design rainfall intensities used throughout are **180 mm/h** for a 5-minute storm with a 5% annual exceedance probability and **250 mm/h** for a 5-minute storm with a 1% annual exceedance probability. This is an illustration. They are round teaching numbers, not values for any real location. All dimensions, flows, prices and results are invented for teaching and do not describe a BIZOMAT client, supplier or project. Money is in Australian dollars, excluding GST.
 
 ## How to use the book
 

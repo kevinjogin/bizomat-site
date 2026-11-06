@@ -9,7 +9,7 @@ draft: false
 
 Induction is only a way of heating. The hardening itself is metallurgy: the steel's structure changes when it is heated above a critical temperature and changes again, into a hard structure, when it is cooled fast enough. Whether that happens fully in the few seconds an induction heat allows depends on the steel's carbon content, its starting structure and the temperature reached. A perfectly set machine will not harden a steel that cannot respond in the time it is given.
 
-This chapter explains the transformation in plain terms, shows why induction hardening needs higher temperatures than furnace hardening, explains why the bar's starting condition matters, checks incoming bar with a KEVOS® Brinell tool and the grain size of the hardened case with another, and works through a batch of bar that arrived in the wrong condition.
+This chapter explains the transformation in plain terms, shows why induction hardening needs higher temperatures than furnace hardening, explains why the bar's starting condition matters, checks incoming bar with a BIZOMAT Brinell tool and the grain size of the hardened case with another, and works through a batch of bar that arrived in the wrong condition.
 
 ## From ferrite and pearlite to austenite to martensite
 
@@ -46,7 +46,7 @@ The IH-40 specification therefore calls up the bar's condition, normalised, and 
 
 ### Checking incoming bar
 
-The KEVOS® [Brinell hardness test check](/tools/brinell-test-check/) tool evaluates a Brinell test from two indentation diameters. With the force and ball diameter it gives the mean diameter, hardness, indentation ratio, depth and the difference between the diameters, checks the indentation ratio, thickness, edge distance and spacing against the rules you enter, and compares the hardness with the specification. For steels it also gives an approximate tensile strength, from a rule of thumb of about 3.45 MPa per Brinell number.
+The BIZOMAT [Brinell hardness test check](/tools/brinell-test-check/) tool evaluates a Brinell test from two indentation diameters. With the force and ball diameter it gives the mean diameter, hardness, indentation ratio, depth and the difference between the diameters, checks the indentation ratio, thickness, edge distance and spacing against the rules you enter, and compares the hardness with the specification. For steels it also gives an approximate tensile strength, from a rule of thumb of about 3.45 MPa per Brinell number.
 
 This is an illustration. The manufacturer tests a sample from each delivery of 40 mm bar on a flat ground on its side, with a 10 mm ball and 3,000 kgf.
 
@@ -66,7 +66,7 @@ caption: This is an illustration. 3,000 kgf, 10 mm ball, diameters 4.14 and 4.16
 
 When steel is heated into the austenite range, its austenite grains start small and grow with temperature and time. The grain size of the austenite at the moment of quenching, called the prior austenite grain size, carries through into the martensite: coarse austenite grains give coarse, more brittle martensite, more prone to quench cracking. Induction's short heating times normally keep the grains fine. Overheating, from too much power, too long a heat or a coil that concentrates the field, coarsens them.
 
-Prior austenite grain size is measured on a polished section etched to reveal the old grain boundaries, by counting grains or measuring intercept lengths, and expressed as a grain size number, G, where a higher number is finer. The KEVOS® [Grain size acceptance](/tools/grain-size-acceptance/) tool averages up to five field readings, converts them to G, and checks the average and the spread between fields against a specification. Its guide notes that it assumes equiaxed grains and gives only a rough average from five fields.
+Prior austenite grain size is measured on a polished section etched to reveal the old grain boundaries, by counting grains or measuring intercept lengths, and expressed as a grain size number, G, where a higher number is finer. The BIZOMAT [Grain size acceptance](/tools/grain-size-acceptance/) tool averages up to five field readings, converts them to G, and checks the average and the spread between fields against a specification. Its guide notes that it assumes equiaxed grains and gives only a rough average from five fields.
 
 This is an illustration. The IH-40 specification asks for a prior austenite grain size of G 7 or finer in the case. The manufacturer measures the mean lineal intercept on five fields of a sectioned check shaft.
 

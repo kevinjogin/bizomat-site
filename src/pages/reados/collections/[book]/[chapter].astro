@@ -28,7 +28,7 @@ const tools=knowledgeGraph().toolsFor(`collection/${book.topic}`,chapter.id);
     title={chapter.data.title} description={chapter.data.description} minutes={readingTime(chapter.body)} searchable>
     <Content />
     <ApplyInPractice slot="after" items={tools} />
-    <p class="origin" slot="after">Part of <a href={readosCollectionHref(book)}>{book.title}</a> in KEVOS® Library.</p>
+    <p class="origin" slot="after">Part of <a href={readosCollectionHref(book)}>{book.title}</a> in BIZOMAT Library.</p>
   </ReadOSChapterReader>
 </BaseLayout>
 <style>.origin{color:var(--muted);font-size:.83rem;margin:3rem 0 0}</style>

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -247,4 +247,4 @@ Mitigation reduces the business's contribution to future climate change. Adaptat
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on climate change mitigation and adaptation and on research by L. Berrang-Ford, J. Ford and J. Paterson (2011) on adaptation patterns. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on teaching material on climate change mitigation and adaptation and on research by L. Berrang-Ford, J. Ford and J. Paterson (2011) on adaptation patterns. Examples and figures in this article are illustrations.*

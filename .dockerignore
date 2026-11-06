@@ -1,0 +1,60 @@
+# Build context of infrastructure/fly/Dockerfile (context = the repository root).
+# Keep out: anything that is built in the image anyway, caches, local data, secrets and anything that could hold
+# real data (database dumps, migration archives, data folders). A remote builder receives the whole context.
+
+# version control and agent worktrees
+.git
+**/.git
+.claude
+
+# dependencies and build output (each stage installs and builds its own)
+**/node_modules
+dist
+dist-server
+.astro
+**/.astro
+apps/*/dist
+apps/cad/solidworks/dist
+apps/cad/solidworks/**/bin
+apps/cad/solidworks/**/obj
+
+# caches and test output
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/.cache
+**/coverage
+**/test-results
+**/playwright-report
+**/.wrangler
+.seo-data
+.seo-build
+shared/brand/dist
+
+# local data, secrets and real records: never sent to a builder
+assessment-private
+.data
+**/.data
+**/.env
+**/.env.*
+**/.dev.vars
+**/*.pem
+**/*.key
+**/*.tar
+**/*.tar.gz
+**/*.tgz
+**/*.zip
+**/*.sqlite
+**/*.sqlite3
+**/*.sqlite-*
+**/*.db
+**/*.dump
+**/*.sql
+!apps/work/migrations/*.sql
+**/*.log
+**/.DS_Store
+
+# not part of any image
+.github

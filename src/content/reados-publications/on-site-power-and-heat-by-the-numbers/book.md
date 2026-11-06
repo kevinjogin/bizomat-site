@@ -4,8 +4,8 @@ subtitle: "Carnot limits, engine and turbine cycles, steam turbines, waste heat 
 description: "Judge on-site power and heat with engineering thermodynamics: Carnot limits, Otto, Diesel, Brayton and Rankine cycles, turbochargers, waste heat recovery and the cogeneration business case."
 category: Engineering
 tags: [design, systems, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -96,7 +96,7 @@ Every proposal for on-site power arrives with a set of efficiencies: an electric
 
 It starts with the first law and the Carnot limit, then analyses the machines one at a time: compressors and turbines in steady flow, the Otto and Diesel cycles behind gas engines and standby generators, the Brayton cycle behind gas turbines and microturbines, and the Rankine cycle behind steam turbines. It then follows the heat that every engine rejects, finds how much of it is worth recovering, and finishes with cogeneration, where power and heat are judged together and turned into a business case.
 
-It is for mechanical, process and energy engineers, plant managers, energy auditors and students who know the first law and the idea of specific heat and want to apply them to real equipment. It assumes algebra, powers and natural logarithms. Each chapter works one running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's main calculation, and ends with an exercise and its worked answer.
+It is for mechanical, process and energy engineers, plant managers, energy auditors and students who know the first law and the idea of specific heat and want to apply them to real equipment. It assumes algebra, powers and natural logarithms. Each chapter works one running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tool that performs the chapter's main calculation, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -108,7 +108,7 @@ Every chapter follows one fictional plant. This is an illustration. A commercial
 - **The proposal:** a lean-burn gas engine generator taking 1,000 kW of fuel on the lower heating value, making 400 kW of electricity (390 kW net), with 230 kW of jacket-water heat at 90 °C and 0.64 kg/s of exhaust at 470 °C.
 - **The alternatives:** a recuperated microturbine, a back-pressure steam turbine in place of the pressure-reducing valve, and an organic Rankine cycle unit offered for the jacket water. The site already has a 500 kVA standby diesel generator.
 
-The plant, its equipment, the measurements and every price are invented. None describes KEVOS® work or a real business. Surroundings are taken as 25 °C and 101.325 kPa throughout.
+The plant, its equipment, the measurements and every price are invented. None describes BIZOMAT work or a real business. Surroundings are taken as 25 °C and 101.325 kPa throughout.
 
 ## How to use the book
 

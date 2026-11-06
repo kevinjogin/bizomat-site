@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -217,4 +217,4 @@ Strong strategy is not loyalty to an existing business model. It is loyalty to t
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*

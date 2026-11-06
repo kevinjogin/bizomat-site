@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ Rearranging a formula means applying inverse operations to both sides, in revers
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

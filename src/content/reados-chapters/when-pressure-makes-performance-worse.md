@@ -8,7 +8,7 @@ tags:
   - strategy
   - process-improvement
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ When performance falls, pushing harder or cutting deeper can feel like control, 
 
 ---
 
-*Source: KEVOS® notes, drawing on F. Nasirzadeh and P. Nojedehi, "Dynamic modeling of labor productivity in construction projects", International Journal of Project Management (2013). Examples and figures in this article are illustrations. This article is general information, not legal or workplace advice.*
+*Source: BIZOMAT notes, drawing on F. Nasirzadeh and P. Nojedehi, "Dynamic modeling of labor productivity in construction projects", International Journal of Project Management (2013). Examples and figures in this article are illustrations. This article is general information, not legal or workplace advice.*

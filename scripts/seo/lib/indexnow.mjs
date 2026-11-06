@@ -1,11 +1,11 @@
 // IndexNow: tells participating search engines (including Bing) that specific URLs changed.
 // It does not guarantee crawling or indexing, and Google does not use IndexNow.
-// The key is public by design: it must be served at https://kevos.com/<key>.txt (see public/).
+// The key is public by design: it must be served at https://<site>/<key>.txt (see public/; the site is seo/config.json).
 import crypto from 'node:crypto';
 import { fetchJson } from './http.mjs';
 
 export const ENDPOINT = 'https://api.indexnow.org/indexnow';
-const HOST = 'kevos.com';
+import { HOST } from './site.mjs';
 
 /** Hash of a built page's meaningful content: the <main> element, ignoring scripts and whitespace. */
 export function contentHash(html) {

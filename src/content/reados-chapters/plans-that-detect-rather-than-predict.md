@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - experimentation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -255,4 +255,4 @@ Uncertainty is the strongest reason to plan early, as long as the plan is design
 
 ---
 
-*Source: KEVOS® notes, drawing on writing by Stanley Portny on planning uncertain work (2002) and on teaching material on strategic assumptions, staged commitment and decision triggers. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on writing by Stanley Portny on planning uncertain work (2002) and on teaching material on strategic assumptions, staged commitment and decision triggers. Examples and figures in this article are illustrations.*

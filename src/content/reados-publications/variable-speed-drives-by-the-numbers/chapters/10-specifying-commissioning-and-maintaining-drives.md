@@ -9,7 +9,7 @@ draft: false
 
 The earlier chapters each dealt with one aspect of a drive: its switches, losses, heat, life, motor, load, stopping and wiring. A drive that works well for fifteen years is one where all of those were thought about before it was bought, set correctly when it was installed, and looked after afterwards. Most drive problems in factories are not failures of the drive at all but gaps between those stages: a specification that left out the ambient temperature, a commissioning that accepted the defaults, a replacement fitted without the old one's settings.
 
-This chapter turns the book into a specification, a commissioning procedure and a maintenance and spares plan for DP-4, uses the KEVOS® critical spares tool to decide how many spare drives the plant should hold, and ends with a replacement drive that started without its predecessor's settings.
+This chapter turns the book into a specification, a commissioning procedure and a maintenance and spares plan for DP-4, uses the BIZOMAT critical spares tool to decide how many spare drives the plant should hold, and ends with a replacement drive that started without its predecessor's settings.
 
 ## Writing the specification
 

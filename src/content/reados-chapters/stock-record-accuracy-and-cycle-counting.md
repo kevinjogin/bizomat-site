@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -228,4 +228,4 @@ Accurate stock records underpin planning, customer promises and financial statem
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general inventory management, warehousing and internal control practice. Figures in the worked example are illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general inventory management, warehousing and internal control practice. Figures in the worked example are illustrative. This article is general information.*

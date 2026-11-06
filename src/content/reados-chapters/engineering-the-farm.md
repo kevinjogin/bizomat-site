@@ -7,7 +7,7 @@ tags:
   - product-development
   - manufacturing
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -172,4 +172,4 @@ Seed drills, reapers, steel ploughs, tractors and harvesters transformed farming
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

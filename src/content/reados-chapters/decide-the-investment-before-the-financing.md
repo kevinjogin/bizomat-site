@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - finance
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -194,4 +194,4 @@ Financing changes when you pay, not whether an investment is worthwhile. Decide 
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on capital and operating expenditure in procurement, funding and procurement planning, and the 2015 National Public Private Partnership Policy's separation of the investment decision from the procurement and financing decision. Examples and figures in this article are illustrations. This article is general information, not financial or tax advice.*
+*Source: BIZOMAT notes, drawing on teaching material on capital and operating expenditure in procurement, funding and procurement planning, and the 2015 National Public Private Partnership Policy's separation of the investment decision from the procurement and financing decision. Examples and figures in this article are illustrations. This article is general information, not financial or tax advice.*

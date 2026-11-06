@@ -4,8 +4,8 @@ subtitle: "Settings, templates, properties, libraries and modelling rules for a 
 description: "Set up a parametric CAD office so every seat, template, property, library part and model behaves the same, then check, train and change the standard without losing control."
 category: Engineering
 tags: [design, systems, quality, process-improvement, automation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -65,7 +65,7 @@ You will need working knowledge of one parametric CAD system and of mechanical d
 
 Every chapter follows one fictional design office. This is an illustration. A small Australian manufacturer of modular belt conveyors runs six CAD seats: an engineering manager, three designers, a drafter and a graduate. Its main product family is a 600 mm wide transfer module made in seven lengths from 1,200 mm to 3,000 mm in 300 mm steps. The office issues about 480 new drawings a year, holds about 26,400 CAD files in its project folders and has 3,860 standard-part files scattered across personal and shared folders. One of the designers has been given four hours a week to act as CAD administrator.
 
-The chapters measure the office, change it and measure it again. Money is in Australian dollars at an internal cost rate of A$95 an hour; internal labour costs carry no GST, and any bought item is shown excluding GST. The business, people, files, times and costs are invented for teaching. None of them describes KEVOS® work, a real company or a real software product's performance.
+The chapters measure the office, change it and measure it again. Money is in Australian dollars at an internal cost rate of A$95 an hour; internal labour costs carry no GST, and any bought item is shown excluding GST. The business, people, files, times and costs are invented for teaching. None of them describes BIZOMAT work, a real company or a real software product's performance.
 
 ## Source limits and professional responsibility
 

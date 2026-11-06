@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -231,4 +231,4 @@ Good governance starts with decisions, not committees. Define who can decide, re
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on program and portfolio governance, M. Hanford, "Defining program governance and structure" (IBM, 2005), research by A. Mosavi on the roles of portfolio steering committees, and G. Levin and J. L. Ward (2013) on program governance. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on program and portfolio governance, M. Hanford, "Defining program governance and structure" (IBM, 2005), research by A. Mosavi on the roles of portfolio steering committees, and G. Levin and J. L. Ward (2013) on program governance. Examples and figures in this article are illustrations. This article is general information.*

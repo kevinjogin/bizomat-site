@@ -3,6 +3,7 @@
 // Usage: node scripts/seo/inventory.mjs [--dist dist] [--out seo/url-inventory.json]
 import fs from 'node:fs';
 import path from 'node:path';
+import { SITE } from './lib/site.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
@@ -11,7 +12,6 @@ const opt = (name, fallback) => {
 };
 const DIST = path.resolve(opt('dist', 'dist'));
 const OUT = path.resolve(opt('out', 'seo/url-inventory.json'));
-const SITE = 'https://kevos.com';
 
 const decode = (s) => s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 const meta = (doc, attr, name) => {
@@ -30,7 +30,7 @@ export function sectionOf(p) {
   if (p.startsWith('/library/')) return 'library';
   if (p.startsWith('/tools/')) return 'workos';
   if (p.startsWith('/contact/') || p.startsWith('/assessment/')) return 'reachos';
-  if (/^\/(services|factory-fix|how-it-works|industries|about|proof-of-work)\//.test(p)) return 'commercial';
+  if (/^\/(services|factory-fix|how-it-works|industries|engine-room)\//.test(p)) return 'commercial';
   return 'other';
 }
 

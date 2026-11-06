@@ -7,7 +7,7 @@ tags:
   - validation
   - strategy
   - leadership
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -240,4 +240,4 @@ Writing up research is the final, decisive step in turning evidence into better 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

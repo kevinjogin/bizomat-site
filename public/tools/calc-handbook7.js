@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations from Machinery’s Handbook topics (batch handbook7). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations from Machinery’s Handbook topics (batch handbook7). SI units are explicit at each boundary.
 // Methods are standard engineering relations; no handbook tables, ratings or recommended settings are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

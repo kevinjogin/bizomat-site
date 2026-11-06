@@ -9,7 +9,7 @@ draft: false
 
 Welding fume is made of particles too small to settle and too small for simple filters to catch efficiently: agglomerates of metal oxides mostly well under a micrometre across. An electrostatic precipitator catches them by giving each particle an electric charge and then pulling it sideways out of the airstream onto a metal plate. It does this quietly and with very little resistance to airflow, because the air passes straight between open plates, and it can be washed and reused instead of replaced. The physics is the corona of Chapter 3 and the particle charging of Chapter 6, applied to particles a hundred times smaller.
 
-This chapter explains how the case factory's two-stage precipitator works, how a particle's charge and the electric field set the speed at which it moves to the plates, and how the Deutsch equation turns that speed into a collection efficiency that depends strongly on particle size. It checks the welding bay's ductwork with the KEVOS® extraction duct tool, and ends with a precipitator that ticked, sparked and let fume back into the bay because its collector cells had not been washed.
+This chapter explains how the case factory's two-stage precipitator works, how a particle's charge and the electric field set the speed at which it moves to the plates, and how the Deutsch equation turns that speed into a collection efficiency that depends strongly on particle size. It checks the welding bay's ductwork with the BIZOMAT extraction duct tool, and ends with a precipitator that ticked, sparked and let fume back into the bay because its collector cells had not been washed.
 
 ## The two-stage precipitator
 

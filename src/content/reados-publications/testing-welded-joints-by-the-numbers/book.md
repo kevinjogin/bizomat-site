@@ -4,8 +4,8 @@ subtitle: "Tensile, bend, hardness, impact, macro and non-destructive tests, mea
 description: "Plan, run and read weld tests with numbers: joint efficiency, measurement uncertainty, scatter and sample size, bend strain, hardness, impact, macro, NDT, sampling and qualification."
 category: Manufacturing
 tags: [manufacturing, quality, validation, process-improvement, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -86,7 +86,7 @@ His results were variable, and his discussion of why is as valuable as the resul
 
 This is an illustration. A structural fabricator builds mining hoppers from 12 mm steel plate, with full-penetration butt welds in the shell and fillet welds attaching stiffeners. The customer requires the butt-weld procedure to be qualified by testing, the welders to be qualified, and production welds to be inspected. Through the book, the fabricator plans and reads its tests: tensile, bend, hardness, impact and macro tests on the qualification plate, and visual and non-destructive testing of production welds, with the statistics and sampling behind each decision.
 
-The fabricator, the hoppers, test results and costs are invented for teaching. They are not KEVOS® work, and the results are not values from any standard or acceptance criteria for any product.
+The fabricator, the hoppers, test results and costs are invented for teaching. They are not BIZOMAT work, and the results are not values from any standard or acceptance criteria for any product.
 
 ## How to use the book
 
@@ -98,4 +98,4 @@ This book is educational. Testing for qualification, certification or acceptance
 
 ## An original treatment
 
-The Library covers welding procedures and inspection for repairs in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/procedures-welders-and-inspection/) and arc welding practice in [Arc Welding by the Numbers](/reados/publications/arc-welding-by-the-numbers/). This book concentrates on testing. The explanations, the hopper case, the calculations, figures and exercises are original KEVOS® writing. The historical works are public-domain works in the United States; their results are summarised and analysed in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers welding procedures and inspection for repairs in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/procedures-welders-and-inspection/) and arc welding practice in [Arc Welding by the Numbers](/reados/publications/arc-welding-by-the-numbers/). This book concentrates on testing. The explanations, the hopper case, the calculations, figures and exercises are original BIZOMAT writing. The historical works are public-domain works in the United States; their results are summarised and analysed in new words, and none of their text, tables or illustrations is reproduced.

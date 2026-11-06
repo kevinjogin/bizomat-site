@@ -9,7 +9,7 @@ draft: false
 
 Every year a shop has more good ideas than money. The press brakes would benefit from quick-change tooling, the laser from better nesting software, the weld bays from fixtures, the store from racking. Each project has a cost and an expected annual saving, and the budget will not stretch to all of them. The same problem appears with capacity rather than money: a week's spare laser hours, and more job offers than will fit, each with its own hours and contribution. Choosing the subset with the greatest total benefit within the limit is the knapsack problem, named after a hiker packing the most valuable load a pack will hold.
 
-This chapter values one project with the KEVOS® set-up reduction tool, chooses the shop's portfolio by three rules, checks every portfolio to find the best, bounds the answer with the fractional relaxation, and introduces the table method that solves larger cases. Its error is a saving counted at its full value when only part of it was real.
+This chapter values one project with the BIZOMAT set-up reduction tool, chooses the shop's portfolio by three rules, checks every portfolio to find the best, bounds the answer with the fractional relaxation, and introduces the table method that solves larger cases. Its error is a saving counted at its full value when only part of it was real.
 
 ## The candidate projects
 

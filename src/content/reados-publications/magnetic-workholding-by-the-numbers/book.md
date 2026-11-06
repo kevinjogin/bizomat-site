@@ -4,8 +4,8 @@ subtitle: "Holding, grinding and lifting steel with magnets: pull, air gaps, thi
 description: "How magnets hold steel and how to prove they will: pull from flux density, air gaps, thin plates, milling and grinding forces, chucks, lifting magnets and demagnetising."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Statistical Physics, Part 2: Theory of the Condensed State (Course of Theoretical Physics, Volume 9)"
     creator: "E. M. Lifshitz and L. P. Pitaevskii, translated by J. B. Sykes and M. J. Kearsley, Pergamon Press, Oxford"
     year: "1980"
-    note: "In copyright. Used only as a map for the physics in Chapters 1, 2 and 9: the chapter on magnetism, which treats the ferromagnet's spontaneous magnetisation, its spin waves and why magnetisation falls as temperature rises. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the physics in Chapters 1, 2 and 9: the chapter on magnetism, which treats the ferromagnet's spontaneous magnetisation, its spin waves and why magnetisation falls as temperature rises. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Zur Theorie des Ferromagnetismus"
     creator: "F. Bloch, Zeitschrift für Physik 61, 206–219"
     year: "1930"
@@ -84,7 +84,7 @@ A magnetic chuck holds a steel plate with no clamps in the way of the cutter, an
 
 This book shows how. It starts from the flux density at the contact face, which sets the pull per unit area, and follows that pull through everything that reduces it: air gaps from scale, paint and chips, material that saturates or will not magnetise, plates too thin to carry the flux, parts too small to bridge the poles, and heat. It then compares the holding force with the forces that try to move the part, from milling and grinding, and with the weight and stiffness of plates on lifting magnets. The last chapters deal with distortion, residual magnetism and how to prove a set-up works.
 
-It is for machinists, toolmakers, tooling and manufacturing engineers, fabrication supervisors and the people who plan lifts in a plate shop. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for machinists, toolmakers, tooling and manufacturing engineers, fabrication supervisors and the people who plan lifts in a plate shop. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -95,7 +95,7 @@ Every chapter follows one fictional part and the shop that makes it. This is an 
 - **Grinding:** two 80 mm wide rail seats ground to a flatness of 0.01 mm on a surface grinder with an electromagnetic chuck.
 - **Handling:** sheets moved from the rack to the cutting table with two permanent lifting magnets, each with a working load limit of 500 kg, on a lifting beam under a 1 t crane.
 
-Flux densities, forces, derating factors, prices and times in the book are invented for the case or calculated from stated assumptions. They do not describe KEVOS® work or any real business, product or manufacturer's rating.
+Flux densities, forces, derating factors, prices and times in the book are invented for the case or calculated from stated assumptions. They do not describe BIZOMAT work or any real business, product or manufacturer's rating.
 
 ## How to use the book
 

@@ -9,7 +9,7 @@ draft: false
 
 A servo motor has two torque ratings. Its peak torque is what it can deliver for a short time; its continuous torque is what it can deliver indefinitely without overheating. A motor that meets the first can still fail the second if it is asked for its peak too often, and the measure of how hard a repeating cycle works a motor thermally is its root-mean-square, or RMS, torque: the square root of the time-average of the torque squared.
 
-This chapter builds the DL-3 pusher's move cycle with the KEVOS® servo or motor duty cycle check and cross-checks it with the RMS torque tool. It shows why heat goes with torque squared, how the profile's shape changes the RMS, and why short moves can be harder on a motor than long ones. Its mistake is an average used in place of an RMS, which hid an overload.
+This chapter builds the DL-3 pusher's move cycle with the BIZOMAT servo or motor duty cycle check and cross-checks it with the RMS torque tool. It shows why heat goes with torque squared, how the profile's shape changes the RMS, and why short moves can be harder on a motor than long ones. Its mistake is an average used in place of an RMS, which hid an overload.
 
 ## Why the square
 

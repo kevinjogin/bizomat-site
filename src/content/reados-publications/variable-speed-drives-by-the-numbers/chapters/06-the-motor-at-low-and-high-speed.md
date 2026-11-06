@@ -9,7 +9,7 @@ draft: false
 
 A drive can run a motor at any speed, but the motor does not cope equally well at all of them. At low speed a standard motor's own cooling fan turns slowly and moves little air, so the motor cannot carry its rated torque for long. Above rated speed the drive runs out of voltage and the torque the motor can produce falls. Whether either matters depends on what the load asks for as its speed changes, which differs completely between a conveyor and a fan.
 
-This chapter sets out how load torque varies with speed, sizes DP-4's conveyor drive with the KEVOS® conveyor tool, explains the motor's cooling limit at low speed and the field-weakening range above rated speed, and ends with a conveyor motor that passed an RMS torque check and still overheated.
+This chapter sets out how load torque varies with speed, sizes DP-4's conveyor drive with the BIZOMAT conveyor tool, explains the motor's cooling limit at low speed and the field-weakening range above rated speed, and ends with a conveyor motor that passed an RMS torque check and still overheated.
 
 ## How loads vary with speed
 
@@ -118,4 +118,4 @@ On the hottest days, operators ask whether F-1 could run at 55 Hz to pull more a
 
 1. P = 21.6 × 1.1³ = 28.75 kW.
 2. At 1,482 × 1.1 = 1,630 rpm, torque = 9,549.3 × 28.75 ÷ 1,630 = 168.4 N·m. Rated torque is 194.2 N·m; at 55 Hz in field weakening, about 194.2 × 50 ÷ 55 = 176.5 N·m is available continuously.
-3. The motor could just carry it, at 95% of its reduced capability and 96% of its rated power, with little margin for a hotter day or a dirtier filter. Before allowing it, the plant would need to check the fan's maximum safe speed with its maker, the belt drive and bearings at the higher speed, the duct's pressure rating, and the drive's current at 55 Hz. A better answer to more airflow is usually to reduce the system's resistance, for instance by cleaning the duct and filters, which the KEVOS® fan drive sizing tool in Chapter 7 shows can be worth as much as the speed increase.
+3. The motor could just carry it, at 95% of its reduced capability and 96% of its rated power, with little margin for a hotter day or a dirtier filter. Before allowing it, the plant would need to check the fan's maximum safe speed with its maker, the belt drive and bearings at the higher speed, the duct's pressure rating, and the drive's current at 55 Hz. A better answer to more airflow is usually to reduce the system's resistance, for instance by cleaning the duct and filters, which the BIZOMAT fan drive sizing tool in Chapter 7 shows can be worth as much as the speed increase.

@@ -1,4 +1,4 @@
-// Shared library search for KEVOS® Tools and the Library. Each page builds its own index from its own cards,
+// Shared library search for BIZOMAT Tools and the Library. Each page builds its own index from its own cards,
 // so the two libraries never mix results. Pure functions only: the browser script and the tests use the same code.
 
 export interface SearchDoc {

@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ CAD workloads use hardware in specific ways. Interactive modelling depends mainl
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always check your CAD vendor's hardware requirements and certification lists.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always check your CAD vendor's hardware requirements and certification lists.*

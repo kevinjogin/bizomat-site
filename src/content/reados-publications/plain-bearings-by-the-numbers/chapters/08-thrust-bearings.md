@@ -3,13 +3,13 @@ book: plain-bearings-by-the-numbers
 chapterSlug: thrust-bearings
 order: 8
 title: "Thrust bearings"
-description: "Check a thrust face's area, unit load, sliding speed and PV, estimate its friction heat and oil flow with the KEVOS® thrust tools, and see why tapered lands and tilting pads carry load."
+description: "Check a thrust face's area, unit load, sliding speed and PV, estimate its friction heat and oil flow with the BIZOMAT thrust tools, and see why tapered lands and tilting pads carry load."
 draft: false
 ---
 
 A fan's impeller does not only spin; it pulls. Air drawn into its eye and flung out radially leaves an unbalanced pressure on the impeller's back plate, and the shaft is pushed axially towards the inlet. Something must hold the shaft in place against that force, and in FB-75 it is a thrust face in the non-drive-end bearing: a white metal ring against which a collar on the shaft runs, separated, if all is well, by an oil film just like the journal's.
 
-This chapter explains why a thrust face needs a wedge too, and how tapered lands and Michell's tilting pads provide one. It checks FB-75's thrust face with the KEVOS® thrust bearing pad tool and thrust pad bearing check, adds its heat to the non-drive-end housing's balance, and looks at what happens when the thrust rises. It ends with a replacement thrust ring that arrived with a perfectly flat face.
+This chapter explains why a thrust face needs a wedge too, and how tapered lands and Michell's tilting pads provide one. It checks FB-75's thrust face with the BIZOMAT thrust bearing pad tool and thrust pad bearing check, adds its heat to the non-drive-end housing's balance, and looks at what happens when the thrust rises. It ends with a replacement thrust ring that arrived with a perfectly flat face.
 
 ## A thrust face needs a wedge
 

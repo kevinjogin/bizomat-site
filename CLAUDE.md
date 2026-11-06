@@ -1,44 +1,112 @@
-# KEVOS website: permanent project instructions
+# BIZOMAT platform: permanent project instructions
 
-Read this file, `docs/KEVOS_SOURCE_OF_TRUTH.md` and `docs/KEVOS_READOS_PUBLISHING.md` before any change.
+Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md` and, for Library content,
+`docs/KEVOS_READOS_PUBLISHING.md` before any change. Each application has its own instructions too:
+`apps/cad/CLAUDE.md` (CAD Automation) and the docs in `apps/work/` (Project Management).
 
 ## Identity
 
-- **KEVOS is the active, approved website and business identity** (https://kevos.com).
-- **GoCore is a retired identity.** The repository is still named `gocore-website`, and legacy names remain in Git history, some file names, some code identifiers and older articles. None of that is permission to restore GoCore branding, blue logos, the GC favicon, gocore.com.au, or older templates.
-- Never name the founder on the website. Never invent clients, projects, results, statistics, prices or partnerships.
+- **BIZOMAT is the active brand** (owner decision, 5 Nov 2026): "Intelligent Business Automation Platform";
+  statement "Automate work. Connect systems. Get business done." Products: **CAD Automation** (formerly CADOS),
+  **Project Management** (formerly KEVOS Work / WorkOS) and **Resources** (formerly the kevos.com Tools and Library).
+- **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
+  registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
+  name (footer, trade mark notice, "Formerly" labels) and in historical docs.
+- **GoCore is retired** for good: no GoCore branding, blue logos, the GC favicon, gocore.com.au or old templates.
+  Never run `python scripts/brand/build_brand.py`.
+- The founder, **Kevin Jogin**, is named only on The Engine Room (`/engine-room/`, which joined the About and Proof of
+  Work pages on the owner's request, 5 Nov 2026), signing his message as "Founder, BIZOMAT" (owner decision,
+  5 Nov 2026). Never invent biography, qualifications, employers, awards, clients, projects, results,
+  statistics, prices, partnerships, testimonials or customer logos. Product claims come only from the code
+  (`src/data/platform-catalog.ts` records where each comes from).
+- The legal entity, ABN, address and a BIZOMAT contact email are not recorded yet: never invent them.
+
+## Repository layout
+
+| Path | What |
+| --- | --- |
+| `/` | The website (Astro): `src/`, `public/`, `tests/`, `scripts/`; Node server in `src/node/` |
+| `apps/cad/` | CAD Automation (Python server, C# add-in and Companion, installer); full CADOS history via `git subtree` |
+| `apps/work/` | Project Management (Hono Worker + React SPA, Node runtime, migrations, migration tooling); PMO history |
+| `shared/brand/` | Logo geometry, generated assets, tokens, components, fonts (`build.mjs` copies them into every product) |
+| `infrastructure/`, `fly.toml` | The single Fly.io app `bizomat`: proxy, Dockerfile, entrypoint, compose stack, smoke tests, migration scripts |
+| `docs/BIZOMAT-*.md` | Architecture, data inventory, migration, deployment, security, rollback, operations, status |
 
 ## Source of truth
 
-- **Authoritative source:** GitHub `jogkev-creator/gocore-website`, branch `main`. Not old conversations, not cached files, not a local folder that has not been fetched.
-- **Before any work:** `git fetch origin` and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes. If local `main` is behind, fast-forward it (`git merge --ff-only origin/main`). If there are uncommitted changes, preserve them on a backup branch first; never overwrite them.
-- Never merge older GoCore branches (for example `origin/gocore-pro-tools`) into `main`. Never regenerate the site from historical templates.
+- **GitHub `jogkev-creator/gocore-website`, branch `main`** (the repository name is historical). Before any work:
+  `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
+  Preserve uncommitted work on a backup branch before anything else.
+- The original repositories `jogkev-creator/CADOS` and `jogkev-creator/PMO` still deploy the current production
+  apps until cutover. Do not change their deployments from here.
+- Never merge older GoCore branches into `main`.
 
-## Deployment (production)
+## Deployment
 
-- Cloudflare account: `Kevinjogin@protonmail.com's Account` (`21a5414f507ae268302531c39e888f95`).
-- Worker: **`throbbing-block-6c61`** (the only Worker in the account). Route `kevos.com/*` (zone `kevos.com`) from `wrangler.toml`; a Workers custom domain `kevos.com → throbbing-block-6c61` is also attached.
-- **Two deployment sources update this Worker:** (1) Cloudflare's GitHub integration builds and deploys pushes to `main` (README §10; deployment timestamps match pushes), and (2) manual `npm run deploy` / `npx wrangler deploy` from a local checkout. A manual deploy uploads whatever is in the local `dist/`, so it can silently replace the live site.
-- **Rule:** prefer publishing by pushing a verified commit to `main`. Only run `npm run deploy` from a clean checkout whose `HEAD` equals `origin/main`, immediately after a fresh `npm run verify`. Never upload an old `dist/`.
-- **Incident, 8 Oct 2026:** at 07:34 UTC a manual `wrangler deploy` from a stale local checkout (commit `501467d`, 145 commits behind `origin/main`) replaced the KEVOS site with the old GoCore design (version `304698c7`). KEVOS was restored by later deployments from `main`. This is why the rule above exists.
+- **Target:** one Fly.io app `bizomat` (Sydney) with process groups proxy, web, work and cad, deployed by
+  `.github/workflows/bizomat-deploy.yml` (manual) with an org-scoped `FLY_API_TOKEN`. See `docs/BIZOMAT-DEPLOYMENT.md`.
+  DNS changes (bizomat.ai, cad/work subdomains, kevos.com, cados.kevos.com, work.kevos.com) are made by hand only
+  after the new app passes its smoke tests; never automate them from CI.
+- **Current kevos.com:** Cloudflare Worker `throbbing-block-6c61` (account `Kevinjogin@protonmail.com's Account`,
+  route `kevos.com/*`). Cloudflare's GitHub integration builds and deploys every push to `main`, so **merging to
+  `main` publishes the BIZOMAT website at kevos.com**. Merge only when that is intended (or disconnect the integration
+  after bizomat.ai is live). Manual `npm run deploy` only from a clean checkout whose `HEAD` equals `origin/main`,
+  right after `npm run verify`.
+- **Hosts (owner's decision, 5 Nov 2026): everything under bizomat.ai, no subdomains.** The website is the root;
+  CAD Automation is `/cad` and Project Management `/tasks`. `src/worker.ts` (`routeApps`) passes `/cad/...` (and
+  the CAD app's OAuth discovery and root program paths, `CAD_PATHS`) to the CAD app with `fetch(request)`, and
+  `/tasks/...` to Project Management (the `TASKS` service binding, a redirect to work.kevos.com until it is bound).
+  The CAD Automation product page is `/cad-automation/`, because `/cad` is the application. No page or file of the site
+  may take an application's path (tests/worker.test.ts). Today bizomat.ai's record still points (DNS only) at the
+  `cados` Fly app; the Worker answers once the records are proxied. The steps, in order, are in
+  `docs/BIZOMAT-DEPLOYMENT.md`, section 6a.
+- **Incident, 8 Oct 2026:** a manual `wrangler deploy` from a stale checkout (145 commits behind) replaced the site
+  with the old GoCore design. That is why manual deploys are restricted as above.
+- Keep the old deployments (the kevos.com Worker, the `workos-platform-preview` Worker behind work.kevos.com, the
+  `cados` Fly app) running until BIZOMAT is verified and the rollback window has passed (`docs/BIZOMAT-ROLLBACK.md`).
 
 ## Change control
 
-- A content request changes only `src/content/reados-chapters/` (and its images) and, to place a chapter in a book, `src/utils/reados-collections.ts`. The Insights section was retired on 17 October 2026; never recreate `/insights/` (its URLs redirect to READOS chapters). Never change layouts, components, CSS, logos, favicons, animations, navigation or legal pages as part of a content request (the design system is recorded in `docs/KEVOS_2_REDESIGN_2026-11-05.md`). If a website-level change seems necessary, stop and ask.
-- Stage files by explicit path. Never `git add -A` or `git add .` for a release. Inspect `git diff --cached --stat` before committing.
-- Documentation and project-memory changes go in their own commit, separate from content commits.
-- `npm run build` runs `scripts/build-kevos-icons.mjs`, which rewrites `public/brand/kevos-favicon-k-orange.svg`, `public/brand/kevos-icon.svg`, `public/favicon.svg`, `public/favicon.ico` and creates `public/brand/kevos-favicon-k-orange-*.png`. On Windows these show as modified (line endings, encoder bytes). They are build side-effects: do not commit them; restore with `git restore` after building.
-- Never run `python scripts/brand/build_brand.py` (retired GoCore artwork generator).
+- A Library content request changes only `src/content/reados-chapters/` (and its images) and, to place a chapter in a
+  book, `src/utils/reados-collections.ts`. Never recreate `/insights/`. Website-level changes (layouts, components,
+  CSS, logos, navigation, legal pages) need the owner's request.
+- Stage files by explicit path; never `git add -A` or `git add .` for a release; inspect `git diff --cached --stat`.
+- Documentation and project-memory changes go in their own commit.
+- `npm run build` regenerates brand assets with `shared/brand/build.mjs`; it writes only files whose content changed.
+  Never hand-edit the copies in the apps: change `shared/brand/` and run `npm run brand`.
+- No personal, client or confidential data in code, tests or docs. Never commit database dumps, data folders,
+  uploaded files or secrets. Migration tooling prints counts, never row content.
+
+## Rules for every page
+
+- Plain language, short sentences, no emojis. Light theme by default (dark only for the session).
+- One design system: tokens and components from `shared/brand/` (navy `#0a1f33`, teal `#0f766e`, mark `#14b8a6`,
+  Oxanium headings, Inter Tight body). No third-party fonts, scripts or trackers.
+- The CSP forbids inline styles: no `style=""`; scripts are hashed by `scripts/postbuild.mjs`.
+- Animations explain a product, carry an "Illustration" label, and show a finished still under reduced motion
+  (`src/components/visuals/`, `src/styles/visuals.css`). Real screenshots carry "Product screen" and use example data.
+- Every page has one H1, a description of 50 to 200 characters, a canonical URL and valid JSON-LD (the build fails
+  otherwise).
 
 ## Commands
 
 ```bash
-npm ci              # install pinned dependencies
-npm run verify      # astro check + tests + build (icons, Astro, Pagefind, postbuild checks)
-npm run reading-time -- <slug>   # article length check
-npm run deploy      # verify, then wrangler deploy (see deployment rule above)
+npm ci                 # website dependencies
+npm run verify         # astro check + tests + build (brand assets, Astro, Pagefind, postbuild checks)
+npm run build:server   # Node server bundle for the Fly web process (after npm run build)
+npm run brand:check    # brand copies in step across the website and both apps
 ```
+
+Applications: `cd apps/work && npm run check` (and `npm run test:node`, `npm run test:e2e`);
+`cd apps/cad && pytest -q && npm test` (and `bash solidworks/build.sh test` with the .NET 8 SDK).
+Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then `node infrastructure/smoke/smoke.mjs`.
 
 ## After any production change
 
-Check the public site, not just the build: `https://kevos.com/`, `/services/`, `/reados/`, `/about/` and every new chapter URL. Confirm the orange KEVOS wordmark, the orange K favicon (`/brand/kevos-favicon-k-orange.svg`), the navigation **Products, Solutions, Tools, Resources, About** with the orange **Get Started** button (KEVOS 2.0 redesign, 5 Nov 2026; Products lists Work → work.kevos.com, CADOS → cados.kevos.com and Desk as "Coming soon" with no link), the homepage headline "Make difficult work simple." with the **Ask KEVOS** box ("What would you like to accomplish today?"; the live check plans one learning path through `/api/learn/*`), the "Explore Tools" and "Explore Library" buttons, `/products/`, `/solutions/` and `/resources/`, that a new session opens in the **light** theme, and that switching to dark lasts only for that session. The names WORKOS and READOS stay retired from all visible text (since 2 Nov 2026): use Tools / KEVOS® tools and Library; REACHOS remains only on `/contact/`; URLs `/tools/` and `/reados/` and code identifiers are unchanged. Compare the active deployment (`npx wrangler deployments list`) with the release commit. Do not report anything as live until its public URL has been checked. From GitHub, Actions → **Live check** runs `scripts/discovery/live-check.mjs` against kevos.com.
+Check the public site, not just the build: `/`, `/cad/`, `/work/`, `/resources/`, `/tools/`, `/reados/`,
+`/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`, and
+every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
+Resources, Engine Room** with **AI Search** and **Sign in**, that a new session opens in the light theme, and that AI
+search answers. For the apps,
+run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
+public URL has been checked.

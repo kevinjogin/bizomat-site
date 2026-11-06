@@ -4,8 +4,8 @@ subtitle: "Joining hot iron and steel by hammer and pressure: the fire, scale an
 description: "Forge welding with numbers: how solid-state welds form, the fire and its fuel, scale and fluxes, joint shapes and stock, the seconds at heat, what welds, strength, chain, laminates and repair."
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, people, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -71,7 +71,7 @@ Their accounts are the best record of how forge welding was done when it was sti
 
 This is an illustration. A small blacksmith's shop in a country town makes tools, hardware and gates, runs weekend classes, and repairs heritage wrought iron railings, gates and verandah work for owners and local councils. Its owner wants to teach forge welding with reasons rather than rules, cut the shop's fuel and scrap, make welds that can be tested and trusted, and price heritage repairs honestly.
 
-The shop, its students, customers, jobs and figures are invented for teaching. They are not KEVOS® work. Forge welded parts that carry loads where failure could injure people, such as lifting chain, hooks and structural members, must be made and certified to the standards that apply, or not forge welded at all.
+The shop, its students, customers, jobs and figures are invented for teaching. They are not BIZOMAT work. Forge welded parts that carry loads where failure could injure people, such as lifting chain, hooks and structural members, must be made and certified to the standards that apply, or not forge welded at all.
 
 ## How to use the book
 
@@ -83,4 +83,4 @@ This book is educational. Forge fires, hot metal and hammering bring hazards of 
 
 ## An original treatment
 
-The Library covers resistance and flash butt welding in Resistance Welding by the Numbers, large repair welds in Thermit Welding by the Numbers, and solid-state joining in general in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers resistance and flash butt welding in Resistance Welding by the Numbers, large repair welds in Thermit Welding by the Numbers, and solid-state joining in general in Weldability by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their methods are summarised in new words, and none of their text, tables or illustrations is reproduced.

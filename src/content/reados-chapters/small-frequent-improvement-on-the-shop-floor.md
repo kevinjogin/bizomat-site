@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - process-improvement
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -208,4 +208,4 @@ Small, frequent improvements depend on seeing the work clearly and acting quickl
 
 ---
 
-*Source: KEVOS® notes, drawing on earlier KEVOS® manufacturing handbooks on gemba observation, the point kaizen cycle, the five-step shop-floor improvement method, 5S sustainment and measuring participation in continuous improvement. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on earlier BIZOMAT manufacturing handbooks on gemba observation, the point kaizen cycle, the five-step shop-floor improvement method, 5S sustainment and measuring participation in continuous improvement. Examples and figures in this article are illustrations. This article is general information.*

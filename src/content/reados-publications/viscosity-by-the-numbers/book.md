@@ -4,8 +4,8 @@ subtitle: "What viscosity is, how temperature, pressure and shear change it, and
 description: "Understand and use viscosity: units, gases and liquids, temperature, grades, pressure and shear, measurement, flow in lines, leakage, viscous heating and oil condition."
 category: Engineering
 tags: [design, operations, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -38,7 +38,7 @@ references:
   - title: "The viscosity of gases and molecular force"
     creator: "W. Sutherland, Philosophical Magazine, series 5, 36"
     year: "1893"
-    note: "Named in Chapter 2 as the origin of the temperature formula for gas viscosity. The constant used in the book was fitted by KEVOS® to NIST's nitrogen data, not taken from any table."
+    note: "Named in Chapter 2 as the origin of the temperature formula for gas viscosity. The constant used in the book was fitted by BIZOMAT to NIST's nitrogen data, not taken from any table."
   - title: "An experimental investigation of the circumstances which determine whether the motion of water shall be direct or sinuous, and of the law of resistance in parallel channels"
     creator: "O. Reynolds, Philosophical Transactions of the Royal Society of London 174, 935–982"
     year: "1883"
@@ -51,7 +51,7 @@ references:
   - title: "ASTM D341, Standard Practice for Viscosity–Temperature Equations and Charts for Liquid Petroleum or Hydrocarbon Products"
     creator: "ASTM International"
     year: "current edition"
-    note: "Named by number and scope only. Chapter 3 uses the double-logarithmic Walther relation the practice is built on, as implemented in the KEVOS® tools; no values or charts from the standard are reproduced."
+    note: "Named by number and scope only. Chapter 3 uses the double-logarithmic Walther relation the practice is built on, as implemented in the BIZOMAT tools; no values or charts from the standard are reproduced."
   - title: "ISO 3448, Industrial liquid lubricants: ISO viscosity classification"
     creator: "International Organization for Standardization"
     year: "current edition"
@@ -92,7 +92,7 @@ Viscosity is the property that decides whether an oil film holds two surfaces ap
 
 This book explains where viscosity comes from, using the kinetic picture of gases and the activated flow of liquids, and then follows it through the practical work of choosing, measuring and using oil. It covers units, the temperature relation used by every oil data sheet, grades and operating windows, pressure and shear, measurement, flow in lines and hoses, leakage through clearances, viscous heating and the use of viscosity to judge an oil's condition. A companion book, Plain Bearings by the Numbers, applies the same property to hydrodynamic bearings.
 
-It is for mechanical, maintenance and reliability engineers, hydraulic and lubrication technicians, designers and students who know basic fluid mechanics and heat. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, maintenance and reliability engineers, hydraulic and lubrication technicians, designers and students who know basic fluid mechanics and heat. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the BIZOMAT tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -104,13 +104,13 @@ Every chapter follows one fictional hydraulic power unit. This is an illustratio
 - **Pump maker's viscosity window:** 16 to 36 mm²/s preferred in continuous running, 10 mm²/s least for short periods, and 1,000 mm²/s most at a cold start.
 - **Conditions:** the factory air ranges from 5 °C on a winter morning to 38 °C on a summer afternoon. The oil normally runs at 50 °C and reaches 65 °C on the hottest days.
 
-The press shop, its power unit and its oil are invented and do not describe KEVOS® work or any real product or business. Equipment and oil data are of the kind makers publish, not the data of any product.
+The press shop, its power unit and its oil are invented and do not describe BIZOMAT work or any real product or business. Equipment and oil data are of the kind makers publish, not the data of any product.
 
 ## How to use the book
 
 Read Chapters 1 and 3 first: every later chapter uses their units and their temperature relation. Chapter 2 explains why gases and liquids differ and can be skipped by readers who only handle oil. Chapters 4 to 6 are about the oil itself: choosing it, the effects of pressure and shear, and measuring it. Chapters 7 to 9 follow the oil through the machine, and Chapter 10 uses viscosity to watch the oil age.
 
-Numbers are carried to more digits than a measurement would justify so that a reader can follow each step. Every calculation in the book was checked by running it, and the KEVOS® tools linked from the chapters perform the same calculations with the reader's own data.
+Numbers are carried to more digits than a measurement would justify so that a reader can follow each step. Every calculation in the book was checked by running it, and the BIZOMAT tools linked from the chapters perform the same calculations with the reader's own data.
 
 ## Source limits and professional responsibility
 

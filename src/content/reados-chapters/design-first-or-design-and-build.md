@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - product-development
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -245,4 +245,4 @@ The choice between designing first and asking a contractor to design and build i
 
 ---
 
-*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes. Examples in this article are illustrations. This article is general information, not legal advice.*

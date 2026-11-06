@@ -1,4 +1,4 @@
-// KEVOS® tool guides: Decide. Shown under each tool and included in its decision report.
+// BIZOMAT tool guides: Decide. Shown under each tool and included in its decision report.
 window.WORKOS_GUIDES = Object.assign(window.WORKOS_GUIDES || {}, {
   'make-buy': {
     purpose: 'Compares the annual cost of making a part in-house with buying it, and finds the volume at which the cheaper option changes.',

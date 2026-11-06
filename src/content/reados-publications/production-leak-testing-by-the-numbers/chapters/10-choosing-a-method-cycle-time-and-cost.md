@@ -7,7 +7,7 @@ description: "Matching leak test methods to limits and line rates, cycle time ag
 draft: false
 ---
 
-A leak test method has to do three things at once: reach the specification with a reliable decision, keep up with the line, and cost less than the problems it prevents. The earlier chapters dealt with the first. This chapter deals with the other two. It compares the methods for the OC-40 on what each can resolve and how long it takes, builds the helium station's cycle against the line's takt, works out how much helium each cooler consumes and what it costs, appraises a recovery system with the KEVOS investment appraisal tool, and finishes with a gas budget that understated the helium bill elevenfold.
+A leak test method has to do three things at once: reach the specification with a reliable decision, keep up with the line, and cost less than the problems it prevents. The earlier chapters dealt with the first. This chapter deals with the other two. It compares the methods for the OC-40 on what each can resolve and how long it takes, builds the helium station's cycle against the line's takt, works out how much helium each cooler consumes and what it costs, appraises a recovery system with the BIZOMAT investment appraisal tool, and finishes with a gas budget that understated the helium bill elevenfold.
 
 ## Matching the method to the limit
 

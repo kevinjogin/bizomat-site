@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -231,4 +231,4 @@ Benefits rarely arrive exactly as approved. Some erode, some appear unexpectedly
 
 ---
 
-*Source: KEVOS® notes, drawing on the PMI Benefits Realization Management Framework and the New Zealand Treasury's 2017 guidance on benefits management, including emergent benefits and dis-benefits. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on the PMI Benefits Realization Management Framework and the New Zealand Treasury's 2017 guidance on benefits management, including emergent benefits and dis-benefits. Examples and figures in this article are illustrations. This article is general information.*

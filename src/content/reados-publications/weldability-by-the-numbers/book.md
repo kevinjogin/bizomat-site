@@ -4,8 +4,8 @@ subtitle: "Heat flow, expansion, oxides and carbon: why steel, cast iron, alumin
 description: "Understand why each metal welds differently: heat flow, expansion, oxides, carbon and contamination, with worked repairs on cast iron, steel, aluminium, copper, nickel and mixed joints."
 category: Manufacturing
 tags: [manufacturing, quality, design, validation, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-24
@@ -119,7 +119,7 @@ This is an illustration. A regional maintenance workshop is rebuilding a cooling
 - a **phosphorus-deoxidised copper cooling coil** with a cracked joint at a 12 mm thick header block;
 - a **316 stainless steel drain spool** to be welded to a **mild steel bracket** on the baseplate.
 
-Through the book each repair is planned from the metal's properties, with the heat, expansion, composition and risk worked out. The workshop, the parts, compositions, dimensions, settings and results are invented for teaching. They are not KEVOS® work, and the compositions are rounded illustrations, not certified data for any material.
+Through the book each repair is planned from the metal's properties, with the heat, expansion, composition and risk worked out. The workshop, the parts, compositions, dimensions, settings and results are invented for teaching. They are not BIZOMAT work, and the compositions are rounded illustrations, not certified data for any material.
 
 ## How to use the book
 
@@ -131,4 +131,4 @@ This book is educational. Welding and repair of load-bearing, pressure-containin
 
 ## An original treatment
 
-The Library already covers steel plate repair in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/) and the oxy-fuel process in Oxy-Fuel by the Numbers. This book concentrates on the metals themselves. The explanations, the pump-set case, the calculations, figures and exercises are original KEVOS® writing. The 1915 handbook is a public-domain historical work in the United States; its ideas are summarised, discussed and corrected in new words, and none of its text, tables or illustrations is reproduced.
+The Library already covers steel plate repair in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/) and the oxy-fuel process in Oxy-Fuel by the Numbers. This book concentrates on the metals themselves. The explanations, the pump-set case, the calculations, figures and exercises are original BIZOMAT writing. The 1915 handbook is a public-domain historical work in the United States; its ideas are summarised, discussed and corrected in new words, and none of its text, tables or illustrations is reproduced.

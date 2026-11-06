@@ -7,7 +7,7 @@ tags:
   - validation
   - strategy
   - communication
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ Reading research critically means asking consistent questions about the question
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

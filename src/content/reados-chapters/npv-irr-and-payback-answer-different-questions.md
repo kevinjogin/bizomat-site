@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - finance
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -211,4 +211,4 @@ NPV, IRR and payback are three lenses, not three votes. NPV shows total value, I
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on capital budgeting and investment appraisal, and T. Arnold and T. Nixon, "Measuring Investment Value", in H. K. Baker and P. English (eds), Capital Budgeting Valuation (2011). Examples and figures in this article are illustrations, calculated before tax. This article is general information, not financial advice.*
+*Source: BIZOMAT notes, drawing on teaching material on capital budgeting and investment appraisal, and T. Arnold and T. Nixon, "Measuring Investment Value", in H. K. Baker and P. English (eds), Capital Budgeting Valuation (2011). Examples and figures in this article are illustrations, calculated before tax. This article is general information, not financial advice.*

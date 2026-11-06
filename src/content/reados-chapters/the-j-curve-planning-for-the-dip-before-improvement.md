@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ The J-curve is the shape of many good changes: costs, learning and disruption co
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® knowledge notes on J-curve growth, business pivots and improvement cycles, together with general management practice. The worked example is illustrative. This article is general information, not financial advice.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT knowledge notes on J-curve growth, business pivots and improvement cycles, together with general management practice. The worked example is illustrative. This article is general information, not financial advice.*

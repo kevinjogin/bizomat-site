@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -230,4 +230,4 @@ The interval between shortlisting and award is when a supplier will agree to alm
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on procurement, negotiation, contract types, tender departures and the battle of the forms. Examples and figures in this article are illustrations. This article is general information, not legal advice; refer to the ACCC or a lawyer for advice on a particular agreement.*
+*Source: BIZOMAT notes, drawing on teaching material on procurement, negotiation, contract types, tender departures and the battle of the forms. Examples and figures in this article are illustrations. This article is general information, not legal advice; refer to the ACCC or a lawyer for advice on a particular agreement.*

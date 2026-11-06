@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -168,4 +168,4 @@ Cutting is the first operation for most fabricated parts, and the process chosen
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® manufacturing handbooks on process selection for cutting metals with flame, arc, plasma and lasers, metal cutting processes and electrical discharge machining, together with established fabrication practice. The worked example is illustrative. This article is general information; confirm capabilities with your suppliers.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT manufacturing handbooks on process selection for cutting metals with flame, arc, plasma and lasers, metal cutting processes and electrical discharge machining, together with established fabrication practice. The worked example is illustrative. This article is general information; confirm capabilities with your suppliers.*

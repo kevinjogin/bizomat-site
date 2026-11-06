@@ -1,56 +1,81 @@
-// KEVOS® products and solution areas: one source for the header, footer, homepage, /products/ and /solutions/.
+// BIZOMAT products and solution areas: one source for the homepage, /products/ and /solutions/.
 //
-// Rules (owner brief, 5 Nov 2026):
-//  - Describe only what the owner has stated about each product. Do not add features, numbers or customers here.
+// Rules:
+//  - Describe only what the products do today (src/data/platform-catalog.ts records where each fact comes from).
 //  - A product with status 'soon' has no URL and is never shown as a link or as available.
-//  - Links in solutions point only at pages that exist on kevos.com or at a product's own address.
+//  - Links in solutions point only at pages that exist on this site or at a product's own address.
+import { CAD, RESOURCES, WORK } from '../data/platform-catalog.ts';
 
 export type ProductStatus = 'available' | 'soon';
 
 export interface Product {
   id: string;
-  /** Short product name as used in navigation ("Work"); `fullName` is the parent-brand form. */
+  /** Short product name as used in navigation ("CAD Automation"); `fullName` is the parent-brand form. */
   name: string;
   fullName: string;
+  /** The name the product had before BIZOMAT, for visitors who know it by that name. */
+  formerly?: string;
   /** One line, used in menus and cards. */
   tagline: string;
   /** Two or three plain sentences for the product card and /products/. */
   summary: string;
   status: ProductStatus;
-  /** Public address of the product. Omitted for products that are not yet available. */
+  /** The product's page on this site. Omitted for products that are not yet available. */
   url?: string;
-  /** Label for the launch action. */
+  /** Whether using it needs an account. */
+  signIn: boolean;
+  /** Label for the main action. */
   action?: string;
 }
 
 export const PRODUCTS: readonly Product[] = [
   {
-    id: 'work',
-    name: 'Work',
-    fullName: 'KEVOS® Work',
-    tagline: 'Get more done. Work smarter.',
-    summary: 'A general-purpose productivity and work platform. Bring your everyday work into one place and move it forward.',
+    id: 'cad',
+    name: 'CAD Automation',
+    fullName: 'BIZOMAT CAD Automation',
+    formerly: CAD.formerly,
+    tagline: CAD.headline,
+    summary: CAD.summary,
     status: 'available',
-    url: 'https://work.kevos.com/',
-    action: 'Open Work',
+    url: '/cad-automation/',
+    signIn: true,
+    action: 'Explore CAD Automation',
   },
   {
-    id: 'cados',
-    name: 'CADOS',
-    fullName: 'KEVOS® CADOS',
-    tagline: 'Engineering and CAD intelligence.',
-    summary: 'Automation and intelligence for engineering and SOLIDWORKS® work, so design and CAD tasks take less effort.',
+    id: 'work',
+    name: 'Project Management',
+    fullName: 'BIZOMAT Project Management',
+    formerly: WORK.formerly,
+    tagline: WORK.headline,
+    summary: WORK.summary,
     status: 'available',
-    url: 'https://cados.kevos.com/',
-    action: 'Open CADOS',
+    url: '/work/',
+    signIn: true,
+    action: 'Explore Project Management',
   },
+  {
+    id: 'resources',
+    name: 'Resources',
+    fullName: 'BIZOMAT Resources',
+    tagline: RESOURCES.headline,
+    summary: RESOURCES.summary,
+    status: 'available',
+    url: '/resources/',
+    signIn: false,
+    action: 'Explore Resources',
+  },
+] as const;
+
+/** Announced but not available: shown as text only, never as a link. */
+export const PLANNED: readonly Product[] = [
   {
     id: 'desk',
     name: 'Desk',
-    fullName: 'KEVOS® Desk',
+    fullName: 'BIZOMAT Desk',
     tagline: 'Your desktop, working smarter.',
     summary: 'A planned desktop productivity and automation product. It is not available yet.',
     status: 'soon',
+    signIn: true,
   },
 ] as const;
 
@@ -61,7 +86,7 @@ export interface Solution {
   short: string;
   /** The everyday problems this area addresses, in the customer's words. */
   problems: readonly string[];
-  /** Where to go on KEVOS®: real pages and products only. */
+  /** Where to go on BIZOMAT: real pages and products only. */
   paths: readonly { label: string; href: string; note: string }[];
 }
 
@@ -76,7 +101,7 @@ export const SOLUTIONS: readonly Solution[] = [
       'Teams need a clear method for a business case or a project plan, not another blank page.',
     ],
     paths: [
-      { label: 'Work', href: 'https://work.kevos.com/', note: 'One place for everyday work.' },
+      { label: 'Project Management', href: '/work/', note: 'Projects, tasks and teams in one workspace.' },
       { label: 'Business tools', href: '/tools/?topic=business-commercial', note: 'Costing, quoting and investment calculators.' },
       { label: 'Business books', href: '/reados/?topic=business', note: 'Finance, strategy and governance, chapter by chapter.' },
     ],
@@ -91,7 +116,7 @@ export const SOLUTIONS: readonly Solution[] = [
       'The method you need is buried in a textbook you do not have to hand.',
     ],
     paths: [
-      { label: 'CADOS', href: 'https://cados.kevos.com/', note: 'Engineering and CAD intelligence.' },
+      { label: 'CAD Automation', href: '/cad-automation/', note: 'Your AI assistant, working in SOLIDWORKS.' },
       { label: 'Engineering tools', href: '/tools/?topic=engineering-design', note: 'Design checks that show their method.' },
       { label: 'Engineering books', href: '/reados/?topic=engineering', note: 'Practical methods with worked numbers.' },
     ],
@@ -106,9 +131,10 @@ export const SOLUTIONS: readonly Solution[] = [
       'It is not clear which processes are worth automating first.',
     ],
     paths: [
-      { label: 'CADOS', href: 'https://cados.kevos.com/', note: 'Automation for engineering and CAD work.' },
+      { label: 'CAD Automation', href: '/cad-automation/', note: 'Automation for engineering and CAD work.' },
       { label: 'Technology books', href: '/reados/?topic=technology', note: 'AI, software and digital systems in practice.' },
-      { label: 'Talk to KEVOS®', href: '/contact/', note: 'Turn a repeated spreadsheet or manual process into a focused tool.' },
+      { label: 'Project Management automations', href: '/work/#automations', note: 'Let status changes and dates move routine work forward.' },
+      { label: 'Talk to BIZOMAT', href: '/contact/', note: 'Turn a repeated spreadsheet or manual process into a focused tool.' },
     ],
   },
 ] as const;

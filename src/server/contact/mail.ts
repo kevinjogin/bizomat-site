@@ -49,7 +49,7 @@ export async function sendMail(env: MailEnv, input: ContactInput): Promise<MailR
   return sendEmail(env, { ...composeMessage(input), replyTo: input.email });
 }
 
-/** Deliver an already-composed message to KEVOS®'s inbox through the configured provider. */
+/** Deliver an already-composed message to BIZOMAT's inbox through the configured provider. */
 export async function sendEmail(env: MailEnv, { subject, text, html, replyTo }: Email): Promise<MailResult> {
   switch (env.MAIL_PROVIDER) {
     case 'resend': {

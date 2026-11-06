@@ -9,7 +9,7 @@ draft: false
 
 Not every spring is coiled. A straight round bar twisted about its own axis is a spring, and so is a flat strip bent as a cantilever. Both are simple to analyse, because their stress and deflection come straight from the beam and shaft formulas that every engineer learns first. They are used where a coil would not fit, or would be needlessly complicated: torsion bars along the hinge lines of heavy doors and in vehicle suspensions, flat springs as contacts, clips, wipers and hold-downs.
 
-This chapter sizes the torsion bar that balances the VM-8's rear service panel with the KEVOS® torsion bar tools, follows its balance through the panel's opening, and checks the flat spring wipers on the machine's way covers with the flat and leaf spring tool. Its mistake is a bar from another machine that looked identical and was 100 mm longer where it mattered.
+This chapter sizes the torsion bar that balances the VM-8's rear service panel with the BIZOMAT torsion bar tools, follows its balance through the panel's opening, and checks the flat spring wipers on the machine's way covers with the flat and leaf spring tool. Its mistake is a bar from another machine that looked identical and was 100 mm longer where it mattered.
 
 ## The rear service panel
 

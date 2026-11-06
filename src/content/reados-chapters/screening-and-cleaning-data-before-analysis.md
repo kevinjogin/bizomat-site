@@ -7,7 +7,7 @@ tags:
   - validation
   - systems
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -193,4 +193,4 @@ Screening and cleaning turn messy real-world data into a reliable basis for anal
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

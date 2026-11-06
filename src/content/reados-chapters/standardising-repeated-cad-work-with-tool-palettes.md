@@ -8,7 +8,7 @@ tags:
   - automation
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

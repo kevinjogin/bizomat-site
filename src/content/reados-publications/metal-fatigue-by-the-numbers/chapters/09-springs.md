@@ -35,7 +35,7 @@ caption: This is an illustration. The spring is chosen to keep at least 70 N on 
 
 The spring's rate is k = G d⁴ ÷ (8 D³ Na) = 81,700 × 3⁴ ÷ (8 × 24³ × 10) = 5.984 N/mm. At the preload length it is compressed 12 mm, giving F1 = 71.8 N; at the working length 28 mm, giving F2 = 167.5 N.
 
-The shear stress in the wire is the torsional stress of a bar twisted by the force times the coil radius, corrected for the curvature of the coil and the direct shear from the force. The correction factor used in the KEVOS® tools is the Wahl form, K = (4C − 1) ÷ (4C − 4) + 0.615 ÷ C, which for C = 8 is 1.184.
+The shear stress in the wire is the torsional stress of a bar twisted by the force times the coil radius, corrected for the curvature of the coil and the direct shear from the force. The correction factor used in the BIZOMAT tools is the Wahl form, K = (4C − 1) ÷ (4C − 4) + 0.615 ÷ C, which for C = 8 is 1.184.
 
 ```figure
 type: formula

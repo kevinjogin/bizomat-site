@@ -7,7 +7,7 @@ tags:
   - design
   - strategy
   - projects
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ Early builders used materials weak in tension, mud brick, fired brick, stone and
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations. This article is a general historical overview and does not constitute engineering advice.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations. This article is a general historical overview and does not constitute engineering advice.*

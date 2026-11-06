@@ -9,7 +9,7 @@ draft: false
 
 An oil data sheet gives two viscosities, usually at 40 °C and 100 °C. A machine runs at neither temperature. Its oil might sit at 5 °C on a winter morning, 50 °C most of the day and 65 °C on a hot afternoon, and the viscosity at each of those temperatures is what decides whether the pump starts, whether the bearings carry their load and how much the lines lose. Getting from two catalogue numbers to the viscosity at a working temperature is therefore the most frequent viscosity calculation in industry.
 
-This chapter introduces the relation that does it, the double-logarithmic equation Walther published in 1931 and on which the ASTM D341 viscosity–temperature charts are built. It fits the relation to HPU-40's oil, uses the KEVOS® tool that applies it, looks at how sensitive viscosity is to temperature and what that means for measurement, compares two oils of the same grade, and ends with the error of interpolating in a straight line between the data sheet values.
+This chapter introduces the relation that does it, the double-logarithmic equation Walther published in 1931 and on which the ASTM D341 viscosity–temperature charts are built. It fits the relation to HPU-40's oil, uses the BIZOMAT tool that applies it, looks at how sensitive viscosity is to temperature and what that means for measurement, compares two oils of the same grade, and ends with the error of interpolating in a straight line between the data sheet values.
 
 ## Why oils need their own relation
 

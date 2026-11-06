@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS handbook tools: bearings, chain, belt, screw, pipe, pump, alignment, expansion and cylinder volume.
+// BIZOMAT MAKEOS handbook tools: bearings, chain, belt, screw, pipe, pump, alignment, expansion and cylinder volume.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "bearing-l10-life",

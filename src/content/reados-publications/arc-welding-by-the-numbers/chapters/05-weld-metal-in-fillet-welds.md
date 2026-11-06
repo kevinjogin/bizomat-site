@@ -35,7 +35,7 @@ step: mass per metre = 19.8 × 1,000 × 7.85 × 10⁻⁶ ≈ 0.155 kg/m
 step: throat a = 6 ÷ √2 ≈ 4.24 mm
 ```
 
-The KEVOS® [fillet weld quantity calculator](/tools/fillet-weld-quantity/) performs the same calculation, with the profile factor and deposition efficiency as inputs.
+The BIZOMAT [fillet weld quantity calculator](/tools/fillet-weld-quantity/) performs the same calculation, with the profile factor and deposition efficiency as inputs.
 
 ## Weld metal in a conveyor frame
 
@@ -90,7 +90,7 @@ The weld length in an estimate comes from the drawings. Each weld symbol states 
 
 The design strength of a fillet weld comes from its throat area: throat times effective length, multiplied by the design shear strength that the governing design standard allows for the weld metal and weld category. For structural steel in Australia, the design rules are set by the applicable standards, such as AS 4100 for steel structures and the AS/NZS 1554 series for welding, and the weld size on the drawing is set by the designer using them. This book does not reproduce those values.
 
-The geometry is still useful. A 6 mm fillet has a throat of about 4.24 mm; an 8 mm fillet has a throat of about 5.66 mm. Throat, and so strength, rises in proportion to leg size, but weld metal rises with its square. Doubling the leg doubles the strength per metre but quadruples the weld metal. Where more strength is needed, a longer weld at the same size is often cheaper than a bigger weld over the same length, if the joint allows it. The KEVOS® [fillet weld strength calculator](/tools/fillet-weld-strength/) shows the relationship between throat, length and an allowable shear stress entered by the user.
+The geometry is still useful. A 6 mm fillet has a throat of about 4.24 mm; an 8 mm fillet has a throat of about 5.66 mm. Throat, and so strength, rises in proportion to leg size, but weld metal rises with its square. Doubling the leg doubles the strength per metre but quadruples the weld metal. Where more strength is needed, a longer weld at the same size is often cheaper than a bigger weld over the same length, if the joint allows it. The BIZOMAT [fillet weld strength calculator](/tools/fillet-weld-strength/) shows the relationship between throat, length and an allowable shear stress entered by the user.
 
 ## Gaps at the root
 

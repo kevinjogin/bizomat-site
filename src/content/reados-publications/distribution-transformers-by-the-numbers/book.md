@@ -4,8 +4,8 @@ subtitle: "Magnetism, cores, windings, faults, heat, insulation life, losses, no
 description: "How a factory's distribution transformer works and how to load, cool, protect, buy, test and maintain it with numbers: core and winding losses, fault levels, hot spots, ageing and loss costs."
 category: Engineering
 tags: [design, operations, finance, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-02
@@ -24,7 +24,7 @@ references:
   - title: "Elementary Condensed Matter Physics (lecture notes)"
     creator: "A. H. Castro Neto"
     year: "2003"
-    note: "Copyright work, used only as a map of ideas: magnetism in solids, magnetic order and its loss at a transition temperature, free electrons and their scattering, and the effect of disorder on electrons in solids. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: magnetism in solids, magnetic order and its loss at a transition temperature, free electrons and their scattering, and the effect of disorder on electrons in solids. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Greenhouse and Energy Minimum Standards (Power Transformers) Determination 2012"
     creator: "Commonwealth of Australia, Federal Register of Legislation F2012L02135"
     year: "2012"
@@ -67,7 +67,7 @@ A factory that takes its electricity at high voltage owns the transformer that t
 
 This book explains distribution transformers from the atoms up. It starts with why iron is magnetic, then works through how turns and flux set the voltage, where the core's losses come from, the windings and their load losses, short circuits and switching on, heat and cooling, and the ageing of the paper insulation that sets the transformer's life. It finishes with the cost of losses, harmonics and noise, and how to specify, test and maintain a transformer.
 
-It is for electrical, mechanical, maintenance and facilities engineers, plant managers and owners. It assumes engineering or trade training and comfort with power, voltage, current and simple algebra; the physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for electrical, mechanical, maintenance and facilities engineers, plant managers and owners. It assumes engineering or trade training and comfort with power, voltage, current and simple algebra; the physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -81,13 +81,13 @@ Every chapter follows one transformer. This is an illustration. A frozen vegetab
 
 The plant must decide whether TX-1 can carry the tunnel, and if not, what should replace it. The chapters build the answer.
 
-Ratings, losses, temperatures, prices, tariffs, test results and oil analyses are the plant's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, transformer maker, network or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
+Ratings, losses, temperatures, prices, tariffs, test results and oil analyses are the plant's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, transformer maker, network or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
 
 ## How to use the book
 
 Chapters 1 to 3 explain the magnetic core, Chapters 4 to 7 the windings, faults, heat and insulation life, and Chapters 8 to 10 the economics, noise and harmonics, and the specification and care of a transformer. Read Chapter 1 first if the physics is new; the others stand on their own once the case is familiar.
 
-Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Each chapter links the BIZOMAT calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

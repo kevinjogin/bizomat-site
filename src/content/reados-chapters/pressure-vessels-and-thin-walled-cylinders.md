@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -181,4 +181,4 @@ A thin-walled cylinder carries a hoop stress of p × r ÷ t, twice its longitudi
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified pressure equipment engineer, inspector or regulator.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified pressure equipment engineer, inspector or regulator.*

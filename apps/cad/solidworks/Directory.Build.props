@@ -1,0 +1,16 @@
+<Project>
+  <!-- Shared by the add-in, the BIZOMAT Companion and the manual installer. Version: bump it whenever the add-in or
+       the Companion changes (the add-in's hello sends it; the MSI is named after it). Company, Product and Copyright are
+       what Windows shows in a file's properties; nothing reads them back. -->
+  <PropertyGroup>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <Version>0.12.3</Version>
+    <Company>BIZOMAT</Company>
+    <Product>BIZOMAT CAD Automation for SOLIDWORKS</Product>
+    <Copyright>BIZOMAT</Copyright>
+  </PropertyGroup>
+</Project>

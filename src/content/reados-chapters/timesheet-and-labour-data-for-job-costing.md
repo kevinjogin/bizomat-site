@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ Labour data drives job costing, estimating, billing and payroll, yet it is often
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general job costing, payroll and operations practice. Employment and payroll obligations are summarised for orientation; seek professional advice for your circumstances. Figures in the worked examples are illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general job costing, payroll and operations practice. Employment and payroll obligations are summarised for orientation; seek professional advice for your circumstances. Figures in the worked examples are illustrative. This article is general information.*

@@ -4,8 +4,8 @@ subtitle: "Boiling points, flash, boil-off, cooling energy, shrink fitting, tran
 description: "Store, move and use liquid nitrogen safely and economically: pressure and boiling point, flash and boil-off, the nitrogen a part needs, shrink fitting, relief and oxygen deficiency."
 category: Engineering
 tags: [manufacturing, operations, design, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -79,7 +79,7 @@ Liquid nitrogen is the cheapest deep cold a workshop can buy. It shrinks shafts 
 
 This book works through those numbers. It starts with why a cryogenic liquid sits at its boiling point and how the pressure above it sets that temperature. It then calculates the losses that every user pays for, from flash and standing boil-off to the nitrogen spent cooling hoses, and the nitrogen and time a steel part needs to reach −196 °C. It designs a liquid nitrogen shrink fit from measured contraction data, and finishes with the hazards: trapped liquid, self-pressurising vessels, oxygen deficiency and the materials that break when cold.
 
-It is for mechanical, maintenance and manufacturing engineers, workshop supervisors, fitters and safety officers. It assumes algebra, the idea of energy and power, and familiarity with gauge and absolute pressure. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for mechanical, maintenance and manufacturing engineers, workshop supervisors, fitters and safety officers. It assumes algebra, the idea of energy and power, and familiarity with gauge and absolute pressure. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the BIZOMAT tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -91,13 +91,13 @@ Every chapter follows one fictional station. This is an illustration. A gearbox 
 - **Part:** a low-alloy steel shaft 80 mm in diameter and 350 mm long, 13.81 kg, with a design diametral interference of 0.060 to 0.095 mm in its carrier and a wanted assembly clearance of 0.03 mm.
 - **Room:** a maintenance bay 8 × 6 × 3.5 m, 168 m³.
 
-The station, its equipment, the parts and their numbers are invented and do not describe KEVOS® work or any real business. Equipment data are of the kind makers publish, not the data of any product.
+The station, its equipment, the parts and their numbers are invented and do not describe BIZOMAT work or any real business. Equipment data are of the kind makers publish, not the data of any product.
 
 ## How to use the book
 
 Read Chapters 1 to 3 in order: they set out boiling, pressure and heat leak, which every later chapter uses. Chapters 4 to 6 follow a part from the bath to its carrier. Chapter 7 deals with moving the liquid, Chapters 8 and 9 with its two main hazards, and Chapter 10 pulls the station together into materials rules, a procedure and a monthly nitrogen budget.
 
-All fluid properties come from NIST's tables, and all solid properties from NIST's cryogenic material fits, integrated over temperature. Figures are given to more digits than a measurement would justify, so that a reader can follow each step. The linked KEVOS® tools use constant properties; the chapters show how to give them the right average values.
+All fluid properties come from NIST's tables, and all solid properties from NIST's cryogenic material fits, integrated over temperature. Figures are given to more digits than a measurement would justify, so that a reader can follow each step. The linked BIZOMAT tools use constant properties; the chapters show how to give them the right average values.
 
 ## Source limits and professional responsibility
 

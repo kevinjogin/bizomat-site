@@ -1,7 +1,7 @@
-// Converts each proof-of-work featured image from the published KEVOS® project records
-// (kevos.ghost.io, tag kevos-work) into two KEVOS-coloured layers per size:
+// Converts each proof-of-work featured image from the published BIZOMAT project records
+// (kevos.ghost.io, tag kevos-work) into two BIZOMAT-coloured layers per size:
 //   <id>-base-<w>.webp   charcoal-to-warm-grey duotone of the image
-//   <id>-lines-<w>.webp  transparent KEVOS-orange linework traced from the image
+//   <id>-lines-<w>.webp  transparent BIZOMAT-orange linework traced from the image
 // The homepage animates the linework across the base (src/components/ProofOfWork.astro).
 // Run manually when a project image changes: node scripts/build-work-visuals.mjs
 // Sources are downloaded once into node_modules/.cache/work-visuals; outputs are committed.
@@ -46,7 +46,7 @@ const SOURCES = {
 };
 
 /**
- * How each image meets the dark KEVOS ground. Line drawings on white paper are inverted so their
+ * How each image meets the dark BIZOMAT ground. Line drawings on white paper are inverted so their
  * lines read light on dark; renders on a white background keep their tones and have the background
  * (the near-white area connected to the edges) knocked out. Transparent backgrounds become dark.
  */
@@ -60,9 +60,9 @@ const GROUND = {
 };
 
 const WIDTHS = [480, 960];
-const SHADOW = [15, 15, 14]; // KEVOS charcoal
+const SHADOW = [15, 15, 14]; // BIZOMAT charcoal
 const HIGHLIGHT = [156, 147, 133]; // warm grey, kept dark enough for orange linework to read
-const ORANGE = [255, 106, 19]; // KEVOS orange
+const ORANGE = [255, 106, 19]; // BIZOMAT orange
 
 async function source(id, rel) {
   const file = path.join(cacheDir, `${id}${path.extname(rel)}`);

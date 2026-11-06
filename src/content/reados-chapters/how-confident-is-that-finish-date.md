@@ -7,7 +7,7 @@ tags:
   - operations
   - validation
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -228,4 +228,4 @@ A finish date is one point in a range of possible futures, and the range is what
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on three-point estimating, PERT, schedule risk analysis, Monte Carlo simulation and decision trees, and on the US Government Accountability Office's Schedule Assessment Guide. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on three-point estimating, PERT, schedule risk analysis, Monte Carlo simulation and decision trees, and on the US Government Accountability Office's Schedule Assessment Guide. Examples and figures in this article are illustrations. This article is general information.*

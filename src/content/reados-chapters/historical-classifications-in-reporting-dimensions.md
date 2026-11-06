@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -156,4 +156,4 @@ A useful historical dimension makes a report's grouping explainable. It preserve
 
 ---
 
-*Source basis: original KEVOS® analysis of Changing Dimensions in the supplied Designing Effective Database Systems, with terminology and late-arrival handling checked against the linked Kimball Group material. Customer identities, periods and quantities are illustrative.*
+*Source basis: original BIZOMAT analysis of Changing Dimensions in the supplied Designing Effective Database Systems, with terminology and late-arrival handling checked against the linked Kimball Group material. Customer identities, periods and quantities are illustrative.*

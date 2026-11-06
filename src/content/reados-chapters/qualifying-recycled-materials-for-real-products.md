@@ -8,7 +8,7 @@ tags:
   - validation
   - manufacturing
   - design
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -259,4 +259,4 @@ A recycled material is not a sustainable solution until the complete product per
 
 ---
 
-*Source: KEVOS® notes, drawing on published materials research on recycled and waste-derived inputs in panels, binders and road surfaces. Figures in this article are illustrations, not test data. This article is general information, not engineering or legal advice.*
+*Source: BIZOMAT notes, drawing on published materials research on recycled and waste-derived inputs in panels, binders and road surfaces. Figures in this article are illustrations, not test data. This article is general information, not engineering or legal advice.*

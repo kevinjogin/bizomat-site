@@ -1,7 +1,7 @@
 // Cloudflare zone analytics through the GraphQL Analytics API (daily groups are available on the Free plan).
 // This is traffic data, not search data: it cannot show queries, rankings or which visits came from search.
-//   CF_API_TOKEN  an API token with only "Zone → Analytics → Read" for kevos.com (GitHub Actions secret)
-//   CF_ZONE_ID    the kevos.com zone ID (not secret, but kept beside the token)
+//   CF_API_TOKEN  an API token with only "Zone → Analytics → Read" for the site's zone (GitHub Actions secret)
+//   CF_ZONE_ID    the site's zone ID (not secret, but kept beside the token)
 import { fetchJson, skipped, failed } from './http.mjs';
 import { sydneyDate } from './gsc.mjs';
 

@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - experimentation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -237,4 +237,4 @@ The cost of a poor investment begins before any money is spent, when scarce peop
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project selection and pre-feasibility, including O. Mesly's work on project feasibility. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on teaching material on project selection and pre-feasibility, including O. Mesly's work on project feasibility. Examples and figures in this article are illustrations.*

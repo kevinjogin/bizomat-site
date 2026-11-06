@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -235,4 +235,4 @@ Disagreements are a normal part of contracting; letting them stop the work is no
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on dispute resolution processes and standard construction contract dispute clauses, and on R. Hunt's writing on dispute resolution boards. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on dispute resolution processes and standard construction contract dispute clauses, and on R. Hunt's writing on dispute resolution boards. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

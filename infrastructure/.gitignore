@@ -1,0 +1,10 @@
+# Never commit caches, or migration archives and database copies saved next to these scripts (they hold real data).
+__pycache__/
+*.pyc
+*.tar
+*.tar.gz
+*.tgz
+*.sql
+*.sqlite
+*.sqlite-*
+*.db

@@ -1,0 +1,53 @@
+---
+// Diagram: the BIZOMAT platform as this repository builds it (infrastructure/ and fly.toml): one Fly.io app with a
+// proxy that routes by host to the website, Project Management and CAD Automation, each with its own process and
+// data; CAD commands reach SOLIDWORKS on the customer's Windows PC through the Companion's outgoing connection.
+import '../../styles/visuals.css';
+
+interface Props { id?: string }
+const { id = 'arch' } = Astro.props;
+const services = [
+  { y: 96, t: 'Website and AI search', s: 'Node · static pages · public', d: 'no customer data' },
+  { y: 176, t: 'Project Management', s: 'Node · Hono · SQLite', d: 'volume: projects, files' },
+  { y: 256, t: 'CAD Automation', s: 'Python · OpenCascade · MCP', d: 'volume: accounts, devices' },
+];
+---
+<figure class="viz" aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 680 360" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>Visitors, teams and AI assistants reach one BIZOMAT app over HTTPS. A proxy routes each host to its own service: the website with AI search, Project Management with its database and files, and CAD Automation with its accounts and devices. CAD commands go to the BIZOMAT Companion on the customer's Windows PC, which passes them to the add-in in SOLIDWORKS.</title>
+    <text class="v-sub" x="16" y="24">People and assistants</text>
+    <text class="v-sub" x="182" y="24">BIZOMAT platform (one app, Sydney)</text>
+    <text class="v-sub" x="530" y="24">Your Windows PC</text>
+
+    {[{ y: 52, t: 'Visitors', s: 'bizomat.ai' }, { y: 132, t: 'Teams', s: 'work.bizomat.ai' }, { y: 212, t: 'AI assistants', s: 'MCP · OAuth' }].map((p) => (
+      <g><rect class="v-card" x="14" y={p.y} width="140" height="52" rx="10" /><text class="v-title" x="28" y={p.y + 22}>{p.t}</text><text class="v-sub" x="28" y={p.y + 39}>{p.s}</text></g>
+    ))}
+
+    <rect class="v-panel" x="176" y="38" width="330" height="300" rx="14" />
+    <rect class="v-card v-card--accent" x="192" y="52" width="72" height="272" rx="10" />
+    <text class="v-title" x="228" y="182" text-anchor="middle">Proxy</text>
+    <text class="v-sub" x="228" y="198" text-anchor="middle">by host</text>
+    {services.map((sv) => (
+      <g>
+        <rect class="v-card" x="282" y={sv.y - 36} width="210" height="62" rx="10" />
+        <text class="v-title" x="296" y={sv.y - 14}>{sv.t}</text>
+        <text class="v-sub" x="296" y={sv.y + 2}>{sv.s}</text>
+        <text class="v-accent-text" x="296" y={sv.y + 17}>{sv.d}</text>
+        <path class="v-edge" d={`M264 ${sv.y - 5} H 282`} />
+      </g>
+    ))}
+    {[78, 158, 238].map((y) => <path class="v-edge" d={`M154 ${y} H 192`} />)}
+    {[78, 158, 238].map((y, i) => <path class:list={['v-pulse', `d${i + 1}`]} d={`M154 ${y} H 192`} pathLength="100" />)}
+
+    <rect class="v-panel" x="524" y="38" width="142" height="300" rx="14" />
+    {[{ y: 60, t: 'Companion', s: 'tray app' }, { y: 150, t: 'Add-in', s: 'in SOLIDWORKS' }, { y: 240, t: 'SOLIDWORKS', s: 'your licence' }].map((n) => (
+      <g><rect class="v-card" x="538" y={n.y} width="114" height="52" rx="10" /><text class="v-title" x="552" y={n.y + 22}>{n.t}</text><text class="v-sub" x="552" y={n.y + 39}>{n.s}</text></g>
+    ))}
+    <path class="v-edge" d="M595 112 V 150" /><path class="v-edge" d="M595 202 V 240" />
+    <text class="v-sub" x="602" y="134">pipe</text>
+    <path class="v-edge v-edge--strong" d="M538 86 C 515 86, 515 250, 492 250" stroke-dasharray="4 4" />
+    <path class="v-pulse d4" d="M538 86 C 515 86, 515 250, 492 250" pathLength="100" />
+    <text class="v-sub" x="508" y="352" text-anchor="middle">outgoing HTTPS from the PC</text>
+  </svg>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span>The platform as this repository builds it: one Fly.io app, separate processes and data per product.</span><span class="viz__tag viz__tag--demo">Diagram</span></figcaption>
+</figure>

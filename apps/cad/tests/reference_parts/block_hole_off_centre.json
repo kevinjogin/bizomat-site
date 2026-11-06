@@ -1,0 +1,125 @@
+{
+ "name": "block_hole_off_centre",
+ "description": "Top Plane block with a through hole off centre (centre of mass moves).",
+ "derivation": "Box 100x60x20 minus cylinder r 8 at sketch (25, 15) = world (25, y, -15); weighted centres.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Top Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 0,
+     "y": 0
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 100,
+     "y": 0
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 100,
+     "y": 60
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 0,
+     "y": 60
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 20
+  },
+  {
+   "id": "s2",
+   "type": "sketch",
+   "name": "s2",
+   "plane": {
+    "ref": "Top Plane"
+   },
+   "entities": [
+    {
+     "id": "s2cp",
+     "type": "point",
+     "x": 25,
+     "y": 15
+    },
+    {
+     "id": "s2c",
+     "type": "circle",
+     "center": "s2cp",
+     "r": 8
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e2",
+   "type": "extrude",
+   "sketch": "s2",
+   "op": "cut",
+   "end": "through_all",
+   "dir2": {
+    "end": "through_all"
+   }
+  }
+ ],
+ "expect": {
+  "volume_mm3": 115978.761403,
+  "center_of_mass": [
+   50.866805,
+   10.0,
+   -30.520083
+  ],
+  "bbox": {
+   "min": [
+    0,
+    0,
+    -60
+   ],
+   "max": [
+    100,
+    20,
+    0
+   ]
+  }
+ }
+}

@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: quality, reliability, maintenance, operations and fabrication tools (batch handbook76) within the Tools directory.
+// BIZOMAT MAKEOS: quality, reliability, maintenance, operations and fabrication tools (batch handbook76) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "bearing-defect-frequency-check",

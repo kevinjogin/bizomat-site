@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - sales
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -217,4 +217,4 @@ The most careful part of buying, comparing quotes, chooses among suppliers someo
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on supplier prequalification, panels and tender evaluation. Examples and figures in this article are illustrations. This article is general information, not legal or insurance advice.*
+*Source: BIZOMAT notes, drawing on teaching material on supplier prequalification, panels and tender evaluation. Examples and figures in this article are illustrations. This article is general information, not legal or insurance advice.*

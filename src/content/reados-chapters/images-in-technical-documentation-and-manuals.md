@@ -7,7 +7,7 @@ tags:
   - communication
   - design
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -232,4 +232,4 @@ Images are often the most important part of technical documentation. Choose the 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on established technical communication, documentation and illustration practice. The worked example is illustrative. This article is general information and does not replace the work health and safety duties that apply to plant and equipment.*
+*Source: BIZOMAT editorial notes, drawing on established technical communication, documentation and illustration practice. The worked example is illustrative. This article is general information and does not replace the work health and safety duties that apply to plant and equipment.*

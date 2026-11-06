@@ -22,7 +22,7 @@ const total = subjects.reduce((n, s) => n + s.entries.length, 0);
 // Chapter titles and links for search, keyed by card id (read by src/scripts/library-browser.ts).
 const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s.entries.map((e) => [e.id, e.chapters])))).replace(/</g, '\\u003c');
 ---
-<BaseLayout exactTitle="Engineering, Manufacturing & Business Knowledge Library | KEVOS" breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.library, href: '/reados/' }]} description="Browse KEVOS® Library books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
+<BaseLayout exactTitle="Engineering, Manufacturing & Business Knowledge Library | BIZOMAT" breadcrumbs={[{ label: 'Home', href: '/' }, { label: CRUMB.library, href: '/reados/' }]} description="Browse BIZOMAT Library books by Engineering, Manufacturing, Operations, Projects, Technology, Business, Products and Ideas.">
   <LibraryHero
     title="Library"
     description="Practical books and guides covering engineering, manufacturing, operations, projects and business."
@@ -32,7 +32,7 @@ const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s
     total={total}
     noun="book"
   >
-    <LearningPlanner slot="planner" title="Plan what to read" lead="Tell KEVOS® what you want to learn. It puts the right chapters in a sensible order, with the tools to practise on." placeholder="e.g. I want to learn mechanical design, from the basics to bearings, shafts and fasteners." examples={PLANNER_EXAMPLES.library} />
+    <LearningPlanner slot="planner" title="Plan what to read" lead="Tell BIZOMAT what you want to learn. It puts the right chapters in a sensible order, with the tools to practise on." placeholder="e.g. I want to learn mechanical design, from the basics to bearings, shafts and fasteners." examples={PLANNER_EXAMPLES.library} />
   </LibraryHero>
   <DiscoveryResults />
   <LibraryBrowser name="READOS" label={CRUMB.library} searchAll="Search the whole Library" base="/reados/" noun="book" preview={PREVIEW} topics={subjects.map((s) => ({ slug: s.slug, name: s.name, description: s.description, icon: s.icon, count: s.entries.length }))}>
@@ -48,8 +48,8 @@ const chapterIndex = JSON.stringify(Object.fromEntries(subjects.flatMap((s) => s
     <details class="lib-about" slot="after">
       <summary>About Library</summary>
       <div class="lib-about__body">
-        <p>The KEVOS® Library brings together structured, practitioner-written guidance on engineering, manufacturing, operations, projects, technology and business, published to help organisations make sound technical and commercial decisions.</p>
-        <p>Every title is written to be applied. Read the method in the Library, run the numbers with the matching <a href="/tools/">tools</a>, and when your organisation needs the work delivered, <a href="/contact/">discuss your requirements with KEVOS®</a>.</p>
+        <p>The BIZOMAT Library brings together structured, practitioner-written guidance on engineering, manufacturing, operations, projects, technology and business, published to help organisations make sound technical and commercial decisions.</p>
+        <p>Every title is written to be applied. Read the method in the Library, run the numbers with the matching <a href="/tools/">tools</a>, and when your organisation needs the work delivered, <a href="/contact/">discuss your requirements with BIZOMAT</a>.</p>
         <p>Search covers titles, summaries, subjects and chapter headings. It does not search the full text of each chapter.</p>
       </div>
     </details>

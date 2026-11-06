@@ -219,4 +219,4 @@ Choose a part your workshop has made recently. Build an estimate using the eleme
 
 ---
 
-*Source: KEVOS® notes drawing on Taylor's and Gilbert's work on tool life and machining economics, tool supplier formula references and Machinery's Handbook as listed in the book references. The Harbourline case and all prices, rates and cutting data are fictional and illustrative. This book is general technical and business information.*
+*Source: BIZOMAT notes drawing on Taylor's and Gilbert's work on tool life and machining economics, tool supplier formula references and Machinery's Handbook as listed in the book references. The Harbourline case and all prices, rates and cutting data are fictional and illustrative. This book is general technical and business information.*

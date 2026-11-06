@@ -9,7 +9,7 @@ draft: false
 
 A solution of a polymer is a delicate thing. Small molecules mix freely because mixing gives them a large gain in entropy: there are vastly more ways to arrange two kinds of molecule mixed than separated. A long chain gets almost none of that gain, because its segments are tied together and cannot be arranged independently. So the small energy penalty that a marginal solvent carries, which small molecules would shrug off, is enough to make the chains separate out. The temperature at which they do, for a given concentration, is the cloud point, and below it a clear solution turns milky.
 
-This chapter sets out the Flory–Huggins theory that describes this, derives its critical point, estimates the interaction parameter χ from solubility parameters, and uses a KEVOS® tool to check the workshop's cement against cold storage. It ends with the thinned cement from Chapter 3 going cloudy in a winter shed.
+This chapter sets out the Flory–Huggins theory that describes this, derives its critical point, estimates the interaction parameter χ from solubility parameters, and uses a BIZOMAT tool to check the workshop's cement against cold storage. It ends with the thinned cement from Chapter 3 going cloudy in a winter shed.
 
 ## The free energy of mixing
 

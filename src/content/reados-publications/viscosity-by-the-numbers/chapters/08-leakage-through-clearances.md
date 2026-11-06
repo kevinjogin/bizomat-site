@@ -9,7 +9,7 @@ draft: false
 
 A hydraulic pump, valve or cylinder seals its high-pressure side from its low-pressure side not with rubber but with a very small gap. The piston in an axial piston pump, the spool in a directional valve and the plunger in a flow control all slide in bores a few micrometres larger than themselves, and oil leaks through every one of those gaps. The leak is part of the design: it lubricates the sliding parts and carries away their heat. But it is also lost flow, and its size depends directly on the oil's viscosity.
 
-This chapter derives the leakage through a thin annular gap, shows why it rises with the cube of the clearance and falls in proportion to viscosity, and uses that to follow HPU-40's pump through the year. It estimates how fast a press ram would drift through a spool valve's clearance, explains why a pump has a best viscosity at which its total losses are lowest, uses the KEVOS® hydraulic power unit sizing tool to size a pump for hot oil, and ends with two pump tests at different temperatures that were mistaken for a worn pump.
+This chapter derives the leakage through a thin annular gap, shows why it rises with the cube of the clearance and falls in proportion to viscosity, and uses that to follow HPU-40's pump through the year. It estimates how fast a press ram would drift through a spool valve's clearance, explains why a pump has a best viscosity at which its total losses are lowest, uses the BIZOMAT hydraulic power unit sizing tool to size a pump for hot oil, and ends with two pump tests at different temperatures that were mistaken for a worn pump.
 
 ## Flow through a thin gap
 

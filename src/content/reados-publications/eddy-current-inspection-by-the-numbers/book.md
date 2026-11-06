@@ -4,8 +4,8 @@ subtitle: "Conductivity, coating thickness, cracks, sorting and tube testing, wi
 description: "How eddy-current testing works and how to use it with numbers: penetration depth, conductivity and temper, coating thickness, cracks, sorting, tubes, thresholds and records."
 category: Manufacturing
 tags: [quality, manufacturing, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Electrodynamics of Solids: Optical Properties of Electrons in Matter"
     creator: "M. Dressel and G. Grüner, Cambridge University Press"
     year: "2002"
-    note: "Copyright work, used only as a map of ideas: the skin effect and its dependence on frequency and conductivity, the surface impedance of a conductor, the free-electron picture of conductivity and scattering, and the description of resonant circuits and their losses. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: the skin effect and its dependence on frequency and conductivity, the surface impedance of a conductor, the free-electron picture of conductivity and scattering, and the description of resonant circuits and their losses. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Fundamentals of Eddy Current Testing"
     creator: "D. J. Hagemaier, American Society for Nondestructive Testing"
     year: "1990"
@@ -37,7 +37,7 @@ references:
     creator: "National Institute of Standards and Technology"
     year: "2012"
     url: "https://www.itl.nist.gov/div898/handbook/"
-    note: "Background for the calibration, gauge, tolerance interval, capability, outlier and sampling methods used in Chapters 3 to 9 and in the KEVOS® tools linked from them."
+    note: "Background for the calibration, gauge, tolerance interval, capability, outlier and sampling methods used in Chapters 3 to 9 and in the BIZOMAT tools linked from them."
 related:
   - title: "Induction Hardening by the Numbers"
     href: "/reados/publications/induction-hardening-by-the-numbers/"
@@ -57,7 +57,7 @@ Pass an alternating current through a coil and hold it near a metal, and the coi
 
 This book shows how to use eddy-current testing with numbers. It starts with what the coil sees and how deep the currents reach, then works through conductivity and what it reveals about a metal, measuring it reliably, coating thickness, surface cracks, sorting steel parts and testing tubes. It finishes with the decisions: thresholds, false calls and missed defects, acceptance sampling and capability, and the procedure, people and records that make a test result trustworthy.
 
-It is for quality engineers, inspection technicians, manufacturing engineers and supplier quality staff. It assumes engineering or trade training and comfort with basic electricity and statistics; the electromagnetism and the statistical methods are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for quality engineers, inspection technicians, manufacturing engineers and supplier quality staff. It assumes engineering or trade training and comfort with basic electricity and statistics; the electromagnetism and the statistical methods are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -67,13 +67,13 @@ Every chapter follows one product line. This is an illustration. A maker of hydr
 - **Drive shafts:** 42CrMo4 steel, induction hardened at the two bearing journals and ground. The journals are scanned for grinding cracks with a four-element surface probe, and every shaft passes a comparator coil that sorts out any whose journals missed hardening.
 - **Oil cooler:** built in-house from 90/10 copper-nickel tubes 12.7 mm in diameter with 1.0 mm walls, bought in lots of 2,000. The tube maker tests every tube with an encircling coil, and the pump maker audits the records and samples the tubes on its own test bench.
 
-Conductivity bands, readings, signal amplitudes, noise levels, prices and test results are the pump maker's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, instrument maker, material supplier or customer. Material properties are typical values for illustration; real acceptance limits come from the material and product specifications a customer calls up. Prices are in Australian dollars excluding GST.
+Conductivity bands, readings, signal amplitudes, noise levels, prices and test results are the pump maker's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, instrument maker, material supplier or customer. Material properties are typical values for illustration; real acceptance limits come from the material and product specifications a customer calls up. Prices are in Australian dollars excluding GST.
 
 ## How to use the book
 
 Read Chapters 1 and 2 first: they explain the coil's response and the depth of penetration, which every later chapter uses. Chapters 3 and 4 go together on conductivity. Chapters 5 to 8 can then be read in any order. Chapter 9 brings the statistical decisions together, and Chapter 10 the procedure, records and cost.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the induction hardening plan's reference depth, the chapter says which output is used and which are not.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the induction hardening plan's reference depth, the chapter says which output is used and which are not.
 
 ## Source limits and professional responsibility
 

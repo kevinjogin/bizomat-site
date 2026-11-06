@@ -9,7 +9,7 @@ draft: false
 
 In the 1920s Walter Shewhart, working on telephone equipment at Bell Laboratories, separated variation into two kinds. Common-cause variation is the steady background of many small influences that every stable process has; it can be reduced only by changing the process. Special-cause variation comes from something identifiable that has changed: a worn insert, a new bar batch, a loose gauge contact. It should be found and removed. His control chart is a device for telling the two apart in real time, by plotting a statistic against limits set so wide that common causes alone will rarely cross them.
 
-This chapter builds SP-12's X̄ and R charts from its baseline with the KEVOS® limits tool, shows where the constants in the formulas come from, reads a day of the chart, including one signal on each chart, and sets out what the operator does when a point falls outside. It ends with a chart that used the tolerance as its limits and saw nothing for a week.
+This chapter builds SP-12's X̄ and R charts from its baseline with the BIZOMAT limits tool, shows where the constants in the formulas come from, reads a day of the chart, including one signal on each chart, and sets out what the operator does when a point falls outside. It ends with a chart that used the tolerance as its limits and saw nothing for a week.
 
 ## Rational subgroups
 
@@ -19,7 +19,7 @@ The wrong choice is easy to make. Five spools taken at random from the half-hour
 
 ## Limits from the baseline
 
-The limits come from the process itself, from a baseline period long enough to estimate its variation and free of known special causes. The usual recommendation, which the KEVOS® tool repeats, is at least 20 to 25 subgroups. SP-12's baseline of 25 subgroups of five gave a grand average, X̿, of 12.0010 mm and an average range, R̄, of 0.0051 mm.
+The limits come from the process itself, from a baseline period long enough to estimate its variation and free of known special causes. The usual recommendation, which the BIZOMAT tool repeats, is at least 20 to 25 subgroups. SP-12's baseline of 25 subgroups of five gave a grand average, X̿, of 12.0010 mm and an average range, R̄, of 0.0051 mm.
 
 The [X-bar and R control chart limits tool](/tools/xbar-r-limits/) turns those into the two charts. From the grand average, the average range and the subgroup size from 2 to 10, it gives the centre line and upper and lower limits for the X̄ chart and the R chart, the estimated process standard deviation, and the constants it used. It notes that the limits are valid only for a stable process.
 

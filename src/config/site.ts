@@ -1,46 +1,41 @@
 // Site-wide settings. Change branding, navigation and contact details here.
 import { PRODUCTS, SOLUTIONS } from './products.ts';
+import { APP_LINKS, PLATFORM } from './platform.ts';
+
+const env = (import.meta as { env?: Record<string, string | undefined> }).env ?? {};
+const siteUrl = /^https:\/\/[a-z0-9.-]+$/i.test(env.PUBLIC_SITE_URL ?? '') ? (env.PUBLIC_SITE_URL as string) : 'https://bizomat.ai';
 
 export const SITE = {
-  name: 'KEVOS®',
-  tradeMark: {
-    number: '2469816',
-    class: 42,
-    registeredFrom: '29 July 2024',
-    enteredOnRegister: '7 March 2025',
-    record: 'https://search.ipaustralia.gov.au/trademarks/search/view/2469816',
-  },
-  url: 'https://kevos.com',
+  name: 'BIZOMAT',
+  /** The business's former name. KEVOS® is a registered Australian trade mark; BIZOMAT is not registered. */
+  formerName: PLATFORM.formerName,
+  /** Canonical address. bizomat.ai by default; set PUBLIC_SITE_URL at build time while another host serves the site. */
+  url: siteUrl,
   locale: 'en-AU',
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'KEVOS® | Make Difficult Work Simple',
+  title: 'BIZOMAT | Intelligent Business Automation Platform',
   description:
-    'KEVOS® builds practical software, tools and knowledge that make difficult work simple: Work, CADOS, browser-based engineering and business tools and a technical Library.',
+    'BIZOMAT is an intelligent business automation platform: CAD Automation for SOLIDWORKS, Project Management for teams, and free engineering and business tools, books and guides.',
   /** One-line brand statement used in the footer and structured data. */
-  statement: 'Practical software, tools and knowledge that make difficult work simple.',
+  statement: PLATFORM.statement,
   /** Short descriptor shown under the brand in places like the footer. */
-  tagline: 'Make difficult work simple.',
+  tagline: PLATFORM.tagline,
   /** Public contact email. Leave empty to hide it everywhere until it is set up. */
   email: '',
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
   social: [] as Array<{ label: string; href: string }>,
   /** Default social sharing image in /public (1200 × 630). */
-  ogImage: '/brand/kevos-social-orange.png',
-  /**
-   * Orange KEVOS® wordmark, retaining the approved angular letterforms.
-   * The header, footer and Engineering Core also use a matching brighter dark-theme SVG.
-   */
+  ogImage: '/brand/bizomat-social.png',
+  /** The BIZOMAT wordmark (shared/brand): navy with the teal connector on light, white on dark. */
   logo: {
-    svg: '/brand/kevos-wordmark-orange-light.svg',
-    png: '/brand/kevos-wordmark-orange-light.png',
-    webp: '/brand/kevos-wordmark-orange-light.webp',
-    width: 1280,
-    height: 176,
+    svg: '/brand/bizomat-logo-light.svg',
+    width: 2329,
+    height: 241,
   },
-  icon: '/brand/kevos-favicon-k-orange-192.png',
-  iconLarge: '/brand/kevos-favicon-k-orange-512.png',
+  icon: '/brand/bizomat-icon-192.png',
+  iconLarge: '/brand/bizomat-icon-512.png',
   /**
    * Contact form delivery. The UI is identical for both providers.
    *  - 'web3forms': the browser posts straight to Web3Forms (works on day one, no server needed).
@@ -63,10 +58,10 @@ export const SITE = {
   assistant: {
     // Off since 1 Nov 2026: the homepage question box (discovery) replaced the floating chat.
     enabled: false,
-    name: 'KEVOS® Assistant',
+    name: 'BIZOMAT Assistant',
     endpoint: '/api/chat',
     /** Conversation starters in the assistant and on the REACHOS page. */
-    starters: ['Help me explore KEVOS®', 'I have a question about Tools', 'I have a question about Library', 'I have an idea or suggestion', 'I want to discuss a collaboration'],
+    starters: ['Help me explore BIZOMAT', 'I have a question about Tools', 'I have a question about Library', 'I have an idea or suggestion', 'I want to discuss a collaboration'],
   },
   /** Jurisdiction stated in the Terms page. Confirm before launch. */
   jurisdiction: 'New South Wales, Australia',
@@ -82,50 +77,51 @@ export type NavChild = { label: string; href?: string; description?: string; sta
 export type NavItem = { label: string; href: string; children?: readonly NavChild[] };
 
 export const NAV: readonly NavItem[] = [
-  {
-    label: 'Products', href: '/products/', children: [
-      ...PRODUCTS.map((p) => ({ label: p.name, href: p.url, description: p.tagline, status: p.status === 'soon' ? 'Coming soon' : undefined, external: Boolean(p.url) })),
-      { label: 'All products', href: '/products/' },
-    ],
-  },
-  {
-    label: 'Solutions', href: '/solutions/', children: [
-      ...SOLUTIONS.map((s) => ({ label: s.name, href: `/solutions/#${s.id}`, description: s.short })),
-      { label: 'All solutions', href: '/solutions/' },
-    ],
-  },
-  { label: 'Tools', href: '/tools/' },
+  { label: 'CAD Automation', href: '/cad-automation/' },
+  { label: 'Project Management', href: '/work/' },
   {
     label: 'Resources', href: '/resources/', children: [
+      { label: 'Tools', href: '/tools/', description: 'Engineering, manufacturing and business calculators.' },
       { label: 'Library', href: '/reados/', description: 'Technical books in short, practical chapters.' },
       { label: 'Guides and articles', href: '/library/', description: 'Longer guides with worked examples.' },
+      { label: 'Learning paths', href: '/resources/#pathways', description: 'A structured route through a subject.' },
       { label: 'All resources', href: '/resources/' },
     ],
   },
   {
-    label: 'About', href: '/about/', children: [
-      { label: 'Company', href: '/about/', description: 'Who KEVOS® is and how it works.' },
+    label: 'Engine Room', href: '/engine-room/', children: [
+      { label: 'The Engine Room', href: '/engine-room/', description: 'Who builds BIZOMAT, and the proof that it works.' },
+      { label: 'From the founder', href: '/engine-room/#founder', description: 'Why BIZOMAT exists, in its founder\'s words.' },
+      { label: 'Test record', href: '/engine-room/#tests', description: 'Every suite that was run, with its result.' },
+      { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management and Resources.' },
       { label: 'Contact', href: '/contact/', description: 'Ask a question or start a conversation.' },
     ],
   },
 ] as const;
+
+/** The header's sign-in menu: each application has its own sign-in; both send you to your dashboard afterwards. */
+export const SIGN_IN = [
+  { label: 'Project Management', href: APP_LINKS.work.signIn, description: 'Projects, tasks and your team workspace.' },
+  { label: 'CAD Automation', href: APP_LINKS.cad.signIn, description: 'Your AI assistant, computers and SOLIDWORKS.' },
+] as const;
 /** Breadcrumb labels for the two libraries. */
 export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
 
-/** The one action in the header: the "Ask KEVOS" box at the top of the homepage. */
-export const GET_STARTED = { href: '/#ask', label: 'Get Started' } as const;
+/** AI Search: the homepage search box (also reachable from the header on every page). */
+export const AI_SEARCH = { href: '/#ai-search', label: 'AI Search' } as const;
+/** Kept for pages that still offer a single start action. */
+export const GET_STARTED = { href: '/#ai-search', label: 'Get Started' } as const;
 
 /** Contact call to action used in the footer and on service pages. */
 export const QUOTE_CTA = { href: '/contact/', label: 'Contact' } as const;
 
 export const FOOTER_NAV = {
   products: [
-    ...PRODUCTS.filter((p) => p.url).map((p) => ({ href: p.url as string, label: p.name })),
+    { href: '/cad-automation/', label: 'CAD Automation' },
+    { href: '/work/', label: 'Project Management' },
+    { href: '/resources/', label: 'Resources' },
     { href: '/products/', label: 'All products' },
-  ],
-  solutions: [
-    ...SOLUTIONS.map((s) => ({ href: `/solutions/#${s.id}`, label: s.name })),
-    { href: '/solutions/', label: 'All solutions' },
+    { href: '/solutions/', label: 'Solutions' },
   ],
   resources: [
     { href: '/tools/', label: 'Tools' },
@@ -135,14 +131,15 @@ export const FOOTER_NAV = {
     { href: '/rss.xml', label: 'Library RSS feed' },
   ],
   company: [
-    { href: '/about/', label: 'About' },
+    { href: '/engine-room/', label: 'The Engine Room' },
     { href: '/contact/', label: 'Contact' },
     { href: '/services/', label: 'Engineering services' },
     { href: '/assessment/', label: 'Problem Assessment' },
-    { href: '/factory-fix/', label: 'Factory Fix' },
-    { href: '/about/#work', label: 'Proof of Work' },
     { href: '/how-it-works/', label: 'How It Works' },
-    { href: '/industries/', label: 'Industries' },
+  ],
+  apps: [
+    { href: APP_LINKS.work.signIn, label: 'Sign in to Project Management' },
+    { href: APP_LINKS.cad.signIn, label: 'Sign in to CAD Automation' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy' },

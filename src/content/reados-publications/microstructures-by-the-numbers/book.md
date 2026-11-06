@@ -4,8 +4,8 @@ subtitle: "Measuring phases, grains, nodules, pores and inclusions from polished
 description: "How to get trustworthy numbers from a polished section: phase fractions, grain size, particle sizes, porosity, inclusions and microhardness, with their errors."
 category: Engineering
 tags: [quality, manufacturing, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -64,7 +64,7 @@ references:
   - title: "ASTM E112, Standard Test Methods for Determining Average Grain Size"
     creator: "ASTM International"
     year: "current edition"
-    note: "Named by number and scope in Chapters 4 and 5. The relations between grain size number, grains per area and mean intercept used here are those also implemented in the KEVOS® grain size tools; the standard's procedures and tables are not reproduced."
+    note: "Named by number and scope in Chapters 4 and 5. The relations between grain size number, grains per area and mean intercept used here are those also implemented in the BIZOMAT grain size tools; the standard's procedures and tables are not reproduced."
   - title: "ASTM E562 (point counting), ASTM E1382 (grain size by image analysis) and ASTM E1181 (duplex grain sizes)"
     creator: "ASTM International"
     year: "current editions"
@@ -80,7 +80,7 @@ references:
   - title: "ISO 6506-1 (Brinell) and ISO 6507-1 (Vickers) hardness test methods, and ASTM E384 (microindentation hardness)"
     creator: "International Organization for Standardization; ASTM International"
     year: "current editions"
-    note: "Named by number and scope only in Chapters 7 and 10. The validity rules used are those entered in the KEVOS® hardness tools, chosen by the user."
+    note: "Named by number and scope only in Chapters 7 and 10. The validity rules used are those entered in the BIZOMAT hardness tools, chosen by the user."
 related:
   - title: "Defect Maps by the Numbers"
     href: "/reados/publications/defect-maps-by-the-numbers/"
@@ -111,13 +111,13 @@ Every chapter follows one fictional laboratory. This is an illustration. Plant P
 
 The story begins when a batch of casings leaks through the sealing flange on the plant's pressure test, and a shaft from a new supplier fails its journal hardness check. The laboratory is asked whether the material is at fault.
 
-The plant, its suppliers and every measurement and result are invented. None describes KEVOS® work, a real company or a real supplier's product. The drawing requirements are illustrative choices, not values taken from any standard.
+The plant, its suppliers and every measurement and result are invented. None describes BIZOMAT work, a real company or a real supplier's product. The drawing requirements are illustrative choices, not values taken from any standard.
 
 ## How to use the book
 
 Read Chapters 1 to 3 in order: they set out what a section shows, how to sample and the point-counting method that later chapters build on. Chapters 4 and 5 cover grain size. Chapters 6 to 9 deal with particles, pores and inclusions, where the sectioning effect matters most. Chapter 10 covers hardness traverses, and Chapter 11 the uncertainty of microstructure numbers and the decisions made from them.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

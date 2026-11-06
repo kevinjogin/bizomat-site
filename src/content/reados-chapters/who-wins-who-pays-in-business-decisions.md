@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ A net benefit shows whether a decision creates more value than it costs. It does
 
 ---
 
-*Source: KEVOS® notes, drawing on the Australian Government's Handbook of Cost-Benefit Analysis (2006), research by D. Coates and B. Humphreys on the economic impact of sports facilities, and Mark Moore's concept of public value. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*
+*Source: BIZOMAT notes, drawing on the Australian Government's Handbook of Cost-Benefit Analysis (2006), research by D. Coates and B. Humphreys on the economic impact of sports facilities, and Mark Moore's concept of public value. Examples and figures in this article are illustrations. This article is general information, not legal or financial advice.*

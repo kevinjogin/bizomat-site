@@ -9,7 +9,7 @@ draft: false
 
 The simplest useful description of a machine is that it is either running or stopped. While it runs, there is a steady chance in each minute that it will stop; while it is stopped, there is a steady chance in each minute that it will be restarted. That is all a two-state Markov model says, and it is enough to answer the first questions anyone asks about a machine: what share of the time it runs, how often it stops, how long stops last on average, and how quickly a machine that has just been restarted settles into its usual pattern.
 
-This chapter turns a month of the bagger's stoppage log into a failure rate and a repair rate with the KEVOS® availability tool, writes down the model's balance equation, solves it for the long-run availability and for the hour after a restart, and converts the result into bags. It ends with two records of the same machine, the operators' log and the maintenance system, that gave availabilities two and a half points apart, and the reason why.
+This chapter turns a month of the bagger's stoppage log into a failure rate and a repair rate with the BIZOMAT availability tool, writes down the model's balance equation, solves it for the long-run availability and for the hour after a restart, and converts the result into bags. It ends with two records of the same machine, the operators' log and the maintenance system, that gave availabilities two and a half points apart, and the reason why.
 
 ## A month of the bagger's log
 

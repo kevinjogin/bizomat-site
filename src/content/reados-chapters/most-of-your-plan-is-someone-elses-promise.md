@@ -7,7 +7,7 @@ tags:
   - operations
   - customers
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ Most of a plan is other people's promises. Treat sign-off as the collection of r
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project plan sign-off, stakeholder commitments and functional managers' resource pledges. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on project plan sign-off, stakeholder commitments and functional managers' resource pledges. Examples and figures in this article are illustrations. This article is general information.*

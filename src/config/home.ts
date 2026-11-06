@@ -1,8 +1,8 @@
-// Homepage picks. Every id must exist: tool ids in the KEVOS® register (public/tools/data-*.js) and book ids as the
+// Homepage picks. Every id must exist: tool ids in the BIZOMAT register (public/tools/data-*.js) and book ids as the
 // Library names them (publication-<book>, collection-<book> or guide-<slug>). The build stops if one is missing.
 // Counts on the homepage are never written here; they are read from the catalogues at build time.
 
-/** KEVOS® tools shown under "Featured tools", one from each of several topics. */
+/** BIZOMAT tools shown under "Featured tools", one from each of several topics. */
 export const HOME_FEATURED_TOOLS = [
   'bolt-torque-preload',
   'bearing-l10-life',
@@ -23,15 +23,15 @@ export const HOME_FEATURED_BOOKS = [
 ];
 
 /**
- * Examples under the homepage "Ask KEVOS" box. The short label is what the visitor sees; the question is what it puts
- * in the box (they can edit it before asking). Each question is chosen so the answer leads to real KEVOS® tools and
- * Library chapters: Ask KEVOS recommends resources and steps, it does not open files or carry out the task.
+ * Example searches under the homepage AI Search box. The short label is what the visitor sees; the question is what it
+ * puts in the box (they can edit it before asking). Each one leads to real BIZOMAT pages, tools or Library chapters:
+ * the search recommends what exists; it does not open files or carry out the task.
  */
 export const HOME_DISCOVERY_EXAMPLES = [
-  { label: 'Analyse a document', question: 'Help me analyse a company\'s financial statements and annual report.' },
-  { label: 'Solve an engineering problem', question: 'My bearings keep failing early. How do I find the cause and check their life?' },
-  { label: 'Work with data', question: 'Help me use production data to find downtime and improve OEE.' },
-  { label: 'Automate a task', question: 'I want to automate a repetitive manual process in my business. Where do I start?' },
+  { label: 'Engineering calculators', question: 'Find a tool to calculate engineering dimensions.' },
+  { label: 'Automate SOLIDWORKS', question: 'How can I automate SolidWorks?' },
+  { label: 'Project management', question: 'Show me project management capabilities.' },
+  { label: 'Business automation guides', question: 'Find guides about business automation.' },
 ] as const;
 
 /** Example requests for the learning-path box in the Tools and Library page headers (LearningPlanner.astro). */

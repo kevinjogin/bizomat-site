@@ -100,7 +100,7 @@ test('WORKOS and READOS share the same hero, search, topic grid and sections', (
     assert.match(page, /import '\.\.\/\.\.\/scripts\/discovery\.ts';/);
   }
   assert.match(workos, /title="Tools"\s+description="Practical engineering, manufacturing and business tools to calculate, analyse and make better decisions\."/);
-  assert.match(workos, /placeholder="Search KEVOS® tools\.\.\."/);
+  assert.match(workos, /placeholder="Search BIZOMAT tools\.\.\."/);
   assert.match(reados, /title="Library"\s+description="Practical books and guides covering engineering, manufacturing, operations, projects and business\."/);
   assert.match(reados, /placeholder="Search Library books\.\.\."/);
   // Counts are derived at build time, never typed into copy.

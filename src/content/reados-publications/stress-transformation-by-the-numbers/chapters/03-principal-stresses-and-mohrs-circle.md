@@ -9,7 +9,7 @@ draft: false
 
 Chapter 2 showed that the normal stress at the RH-40 spindle's critical point rises from 115 MPa on the cross-section to about 161 MPa on a plane near 31°, and that the shear on that plane is zero. Searching for that peak by tabulating angles works, but it is slow and only as good as the step size. There is a direct route. The largest and smallest normal stresses at a point, and the planes they act on, follow from a short formula, and a circle drawn on graph paper shows the whole family of stresses at once.
 
-This chapter derives both, runs the RH-40 element through the KEVOS® principal stress tool, and shows the one place where the formula most often gives a wrong answer that looks right.
+This chapter derives both, runs the RH-40 element through the BIZOMAT principal stress tool, and shows the one place where the formula most often gives a wrong answer that looks right.
 
 ## The principal stresses
 

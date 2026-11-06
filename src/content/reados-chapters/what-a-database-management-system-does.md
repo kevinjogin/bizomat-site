@@ -6,7 +6,7 @@ category: "Technology"
 tags:
   - systems
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -204,4 +204,4 @@ A database management system is the quiet engine of most business software. It s
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general database systems principles and information technology practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general database systems principles and information technology practice. The worked example is illustrative. This article is general information.*

@@ -4,8 +4,8 @@ subtitle: "Accelerometers, units and severity, spectra, unbalance, misalignment,
 description: "How to monitor the condition of rotating machines by vibration, from piezoelectric sensors and units to spectra, fault diagnosis, alarms and the economics of a program, worked with numbers."
 category: Operations
 tags: [operations, systems, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-03
@@ -24,7 +24,7 @@ references:
   - title: "Introduction to Solid State Physics"
     creator: "C. Kittel, John Wiley & Sons"
     year: "1996"
-    note: "Seventh edition. Copyright work, used only as a map of ideas: dielectric polarisation, ferroelectric crystals and the piezoelectric effect, and elastic waves in solids. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Seventh edition. Copyright work, used only as a map of ideas: dielectric polarisation, ferroelectric crystals and the piezoelectric effect, and elastic waves in solids. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Vibration-based Condition Monitoring: Industrial, Aerospace and Automotive Applications"
     creator: "R. B. Randall, John Wiley & Sons"
     year: "2011"
@@ -63,7 +63,7 @@ Every rotating machine vibrates, and the way it vibrates changes as it wears. An
 
 This book shows how to use vibration monitoring with numbers. It starts with why vibration reveals condition and how that sets monitoring intervals, then covers the units of vibration and how to convert between them, the piezoelectric accelerometer that measures it, judging severity and setting alarms, and reading a spectrum. It then works through the common faults, unbalance, misalignment, looseness, resonance, rolling bearing defects and gear faults, and finishes with running a program and judging what it is worth.
 
-It is for maintenance planners, reliability and mechanical engineers, fitters, vibration technicians and operations managers. It assumes engineering or trade training and comfort with basic mechanics; the physics of the sensor and the signal processing are explained as they are used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for maintenance planners, reliability and mechanical engineers, fitters, vibration technicians and operations managers. It assumes engineering or trade training and comfort with basic mechanics; the physics of the sensor and the signal processing are explained as they are used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -74,13 +74,13 @@ Every chapter follows one site. This is an illustration. A timber mill near Moun
 - **G-3, the log-deck conveyor gearbox:** a two-stage helical reducer driven at 1,480 r/min, with a 19-tooth input pinion.
 - **The chipper:** the mill's largest machine, with permanently mounted accelerometers on its two main bearings.
 
-Speeds, sizes, vibration levels, costs and results are the mill's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real mill, machine maker or service company. Bearing geometry is typical for illustration and should be taken from the bearing maker's data for real calculations. Prices are in Australian dollars excluding GST.
+Speeds, sizes, vibration levels, costs and results are the mill's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real mill, machine maker or service company. Bearing geometry is typical for illustration and should be taken from the bearing maker's data for real calculations. Prices are in Australian dollars excluding GST.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first: they set out why monitoring works, the units and the sensor. Chapters 4 and 5 cover severity, alarms and spectra, which every diagnostic chapter uses. Chapters 6 to 9 cover the faults and can be read in any order. Chapter 10 brings the program and its cost together.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, the chapter says which output is used.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, the chapter says which output is used.
 
 ## Source limits and professional responsibility
 

@@ -7,7 +7,7 @@ tags:
   - operations
   - finance
   - projects
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -224,4 +224,4 @@ A persuasive tender shows that a supplier can describe a good delivery model. Du
 
 ---
 
-*Source: KEVOS® notes on supplier due diligence before contract award. Examples and figures in this article are illustrations. This article is general information and does not constitute legal or financial advice.*
+*Source: BIZOMAT notes on supplier due diligence before contract award. Examples and figures in this article are illustrations. This article is general information and does not constitute legal or financial advice.*

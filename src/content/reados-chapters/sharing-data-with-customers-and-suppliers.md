@@ -7,7 +7,7 @@ tags:
   - systems
   - customers
   - communication
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -236,4 +236,4 @@ Sharing data with customers and suppliers can make supply chains more efficient 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general supply chain, information security and data management practice. Legal points are summarised for orientation; seek legal advice for specific arrangements. The worked example is illustrative. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes, drawing on general supply chain, information security and data management practice. Legal points are summarised for orientation; seek legal advice for specific arrangements. The worked example is illustrative. This article provides general information and does not constitute legal advice.*

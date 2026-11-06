@@ -4,8 +4,8 @@ subtitle: "Shrinkage, sequence and evidence for repairing steel plate, from the 
 description: "Plan weld repairs to steel plate around damage assessment, shrinkage, joint preparation, sequence, preheat, patches, inspection and a repair record that others can check."
 category: Manufacturing
 tags: [manufacturing, quality, design, validation, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-23
@@ -70,7 +70,7 @@ A weld repair is a second manufacturing process applied to a part that has alrea
 
 This book is built around an unusual historical source: *Airco Welding of Locomotive Fireboxes*, a 1919 booklet from the Air Reduction Sales Company of New York. It describes how railway shops replaced riveted firebox seams with oxyacetylene welds, set in patches, closed cracks between staybolt holes and built up edges worn by caulking and corrosion. Its methods were written for a particular era, process and regulatory setting. Its engineering instincts, however, still repay study: weld in short steps that work back towards the finished joint, open the root so the weld penetrates, heat the surrounding plate so it can shrink with the weld, shape patches so their edges avoid rows of holes, and replace a sheet rather than weld one that is cracked everywhere.
 
-Each chapter takes one of those instincts, explains the physics behind it in modern terms and asks what current practice adds. A fictional modern case runs beside the history: a **restoration workshop repairing a cracked 10 mm carbon steel side plate of an atmospheric water tank**. The tank, its dimensions, compositions, measurements and results are invented for teaching. They are not KEVOS® projects or claims.
+Each chapter takes one of those instincts, explains the physics behind it in modern terms and asks what current practice adds. A fictional modern case runs beside the history: a **restoration workshop repairing a cracked 10 mm carbon steel side plate of an atmospheric water tank**. The tank, its dimensions, compositions, measurements and results are invented for teaching. They are not BIZOMAT projects or claims.
 
 ## What this book is and is not
 
@@ -80,4 +80,4 @@ Calculations use metric units, with the booklet's imperial dimensions converted 
 
 ## An original treatment
 
-The Library already introduces welded joints, pressure vessels and corrosion protection in overview chapters, including [welded joints for fabricators](/reados/collections/manufacturing-operations-and-design-for-manufacture/welded-joints-for-fabricators/). This book concentrates on repair: assessing damage, controlling shrinkage, sequencing, patching and documenting. The explanations, the tank case and all worked examples are original KEVOS® writing. The 1919 booklet is a public historical document; its procedures are summarised and analysed in new words, and none of its text or drawings is reproduced.
+The Library already introduces welded joints, pressure vessels and corrosion protection in overview chapters, including [welded joints for fabricators](/reados/collections/manufacturing-operations-and-design-for-manufacture/welded-joints-for-fabricators/). This book concentrates on repair: assessing damage, controlling shrinkage, sequencing, patching and documenting. The explanations, the tank case and all worked examples are original BIZOMAT writing. The 1919 booklet is a public historical document; its procedures are summarised and analysed in new words, and none of its text or drawings is reproduced.

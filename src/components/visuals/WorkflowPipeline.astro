@@ -1,0 +1,34 @@
+---
+// Scene: a business workflow moving through Project Management's automation engine (apps/work/ARCHITECTURE.md:
+// trigger, conditions, actions; each run logged with a unique event key, failed runs retried with backoff, chains
+// limited in depth so automations cannot loop). The rule shown is an example.
+import '../../styles/visuals.css';
+
+interface Props { id?: string }
+const { id = 'workflow' } = Astro.props;
+const stages = [
+  { c: 's1', k: 'Trigger', t: 'Status changes', s: 'to Done' },
+  { c: 's3', k: 'Condition', t: 'Priority is', s: 'High' },
+  { c: 's5', k: 'Action', t: 'Notify the', s: 'item owner' },
+  { c: 's7', k: 'Action', t: 'Create item in', s: 'Delivery board' },
+  { c: 's9', k: 'Run log', t: 'Succeeded', s: 'logged once' },
+];
+---
+<figure class="viz" aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 660 200" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>An automation rule: when an item's status changes to Done and its priority is High, notify the owner and create an item on the Delivery board. The run is written to the run log once.</title>
+    <path class="v-edge" d="M40 92 H 620" />
+    <path class="v-pulse d1" d="M40 92 H 620" pathLength="100" />
+    {stages.map((st, i) => (
+      <g class:list={['seq', st.c]}>
+        <rect class:list={['v-card', i === 4 && 'v-card--accent']} x={14 + i * 128} y="52" width="116" height="80" rx="10" />
+        <text class="v-sub" x={26 + i * 128} y="74">{st.k}</text>
+        <text class="v-title" x={26 + i * 128} y="98">{st.t}</text>
+        <text class="v-text" x={26 + i * 128} y="116">{st.s}</text>
+        {i === 4 && <circle class="v-ok" cx={14 + i * 128 + 100} cy="68" r="6" />}
+      </g>
+    ))}
+    <text class="v-sub" x="330" y="168" text-anchor="middle">Retries with backoff · no duplicate runs · loop limit</text>
+  </svg>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span>A rule in the Project Management automation engine. The rule is an example.</span><span class="viz__tag">Illustration</span></figcaption>
+</figure>

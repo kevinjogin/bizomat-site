@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - quality
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ Traceability connects products to their materials, processes, checks and custome
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general quality management, manufacturing systems and product recall practice. Recall obligations are summarised for orientation; confirm current requirements with the relevant regulator. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general quality management, manufacturing systems and product recall practice. Recall obligations are summarised for orientation; confirm current requirements with the relevant regulator. The worked example is illustrative. This article is general information.*

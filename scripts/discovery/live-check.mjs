@@ -17,24 +17,24 @@ const until = Date.now() + 15 * 60_000;
 let home;
 for (;;) {
   home = await get(`/?live-check=${Date.now()}`);
-  if ((home.text.includes('id="products"') && home.text.includes('Ask KEVOS')) || Date.now() > until) break;
+  if ((home.text.includes('id="products"') && home.text.includes('Ask BIZOMAT')) || Date.now() > until) break;
   await new Promise((r) => setTimeout(r, 20_000));
 }
 check('the new homepage is live', home.status === 200 && home.text.includes('id="products"'));
 
 // 2. Pages and markup.
-for (const p of ['/', '/products/', '/solutions/', '/resources/', '/tools/', '/reados/', '/library/', '/about/', '/services/', '/contact/', '/privacy/', '/terms/', '/brand/kevos-favicon-k-orange.svg', '/discovery-index.json']) {
+for (const p of ['/', '/products/', '/solutions/', '/resources/', '/tools/', '/reados/', '/library/', '/engine-room/', '/services/', '/contact/', '/privacy/', '/terms/', '/brand/kevos-favicon-k-orange.svg', '/discovery-index.json']) {
   check(`${p} answers 200`, (await fetch(BASE + p)).status === 200);
 }
 const h = home.text;
 check('hero: Make difficult work simple.', />Make difficult work simple\.</.test(h));
-check('Ask KEVOS box and four example prompts', h.includes('What would you like to accomplish today?') && />Ask KEVOS</.test(h) && (h.match(/data-discover-example/g) ?? []).length === 4);
+check('Ask BIZOMAT box and four example prompts', h.includes('What would you like to accomplish today?') && />Ask BIZOMAT</.test(h) && (h.match(/data-discover-example/g) ?? []).length === 4);
 check('Explore Tools and Explore Library buttons', />Explore Tools</.test(h) && />Explore Library</.test(h));
 check('homepage says Tools and Library, not WORKOS / READOS', !/>\s*(WORKOS|READOS)\s*</.test(h));
 check('product cards: Work and CADOS link out, Desk is coming soon', h.includes('href="https://work.kevos.com/"') && h.includes('href="https://cados.kevos.com/"') && /Coming soon/.test(h));
-check('orange KEVOS wordmark and K favicon', h.includes('kevos-wordmark-orange') && h.includes('kevos-favicon-k-orange'));
+check('orange BIZOMAT wordmark and K favicon', h.includes('kevos-wordmark-orange') && h.includes('kevos-favicon-k-orange'));
 check('navigation: Products, Solutions, Tools, Resources, About, Get Started', ['Products', 'Solutions', 'Resources', 'About'].every((l) => new RegExp(`<summary[^>]*>\\s*${l}`).test(h)) && /href="\/tools\/"[^>]*>Tools<\/a>/.test(h) && /href="\/#ask"[^>]*>Get Started<\/a>/.test(h));
-check('Library page title', (await get('/reados/')).text.includes('<title>Engineering, Manufacturing &amp; Business Knowledge Library | KEVOS</title>'));
+check('Library page title', (await get('/reados/')).text.includes('<title>Engineering, Manufacturing &amp; Business Knowledge Library | BIZOMAT</title>'));
 check('light theme by default', h.includes('data-theme="light"'));
 check('no floating assistant on the homepage', !h.includes('assistant__launcher'));
 const tools = (await get('/tools/')).text;

@@ -7,7 +7,7 @@ tags:
   - systems
   - automation
   - leadership
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ Every program stores typed data in variables, makes decisions with conditions, r
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ A disciplined response protects the business on both sides: capture the evidence
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*

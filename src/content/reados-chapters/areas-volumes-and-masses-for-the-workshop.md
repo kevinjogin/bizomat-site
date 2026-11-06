@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -193,4 +193,4 @@ Areas, volumes and masses underpin quoting, coating, welding, handling and lifti
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

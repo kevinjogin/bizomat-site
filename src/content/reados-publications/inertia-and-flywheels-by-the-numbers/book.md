@@ -4,8 +4,8 @@ subtitle: "Moments of inertia, reflected inertia, servo ratios and duty cycles, 
 description: "How to work with rotating inertia: moments of inertia, reflection through drives, ratio choice, move profiles and RMS torque, heavy starts, flywheel energy and design, and safe rim speeds."
 category: Engineering
 tags: [design, automation, systems]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Bose–Einstein Condensation in Dilute Gases"
     creator: "C. J. Pethick and H. Smith, Cambridge University Press"
     year: "2002"
-    note: "In copyright. Used only as a map of ideas: the moment of inertia of a rotating body, angular momentum and energy held in rotation, rotation viewed from a turning frame, and the release of energy as a system's speed changes, which this book applies to machine rotors and flywheels. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map of ideas: the moment of inertia of a rotating body, angular momentum and energy held in rotation, rotation viewed from a turning frame, and the release of energy as a system's speed changes, which this book applies to machine rotors and flywheels. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Shigley's Mechanical Engineering Design, tenth edition"
     creator: "R. G. Budynas and J. K. Nisbett, McGraw-Hill Education"
     year: "2015"
@@ -65,7 +65,7 @@ Inertia is the property that makes rotating machinery hard to start, hard to sto
 
 This book shows how to work with inertia by the numbers. It starts with the moments of inertia of machine parts and built-up rotors and the units they are quoted in, then the torque to change speed, the reflection of inertia through drives, the choice of a gear ratio, and the move profiles and RMS torque that size a servo. It then covers heavy starts, flywheels and their design, and finishes with the stresses and energies of spinning parts.
 
-It is for mechanical, machine design, automation and maintenance engineers. It assumes engineering training and comfort with torque, speed and energy; the formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical, machine design, automation and maintenance engineers. It assumes engineering training and comfort with torque, speed and energy; the formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -76,13 +76,13 @@ Every chapter follows one production line. This is an illustration. A sawmill ne
 - **Docking saw:** a 900 mm circular saw blade on a direct-coupled 15 kW motor at 1,480 rpm.
 - **Chipper:** a 1,400 mm steel disc chipper at 600 rpm, belt-driven by a 75 kW motor at 1,480 rpm, started direct on line.
 
-Masses, dimensions, speeds, motor data, limits and loads are the case mill's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, machine or supplier's data.
+Masses, dimensions, speeds, motor data, limits and loads are the case mill's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, machine or supplier's data.
 
 ## How to use the book
 
 Chapters 1 and 2 build the inertias the rest of the book uses. Chapters 3 to 6 cover accelerating loads and sizing drives, ending with servo duty cycles. Chapter 7 covers heavy starts. Chapters 8 and 9 cover flywheels, and Chapter 10 covers the stresses, speeds and energies of spinning parts. Readers interested only in servo sizing can read Chapters 1 to 6; those interested in flywheels and heavy rotors can read Chapters 1 to 3 and 7 to 10.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform.
 
 ## Source limits and professional responsibility
 

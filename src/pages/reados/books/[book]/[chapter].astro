@@ -28,7 +28,7 @@ const href=readosChapterHref(book,chapter);
     chapters={book.chapters.map(ch=>({href:readosChapterHref(book,ch),title:ch.data.title}))} index={index}
     title={chapter.data.title} description={chapter.data.description} minutes={readingTime(chapter.body)}>
     <Content />
-    <p class="origin" slot="after">Part of <a href={readosBookHref(book)}>{book.title}</a> in KEVOS® Library.{canonical && <> Also in its <a href={canonical}>edited Library book</a>.</>}</p>
+    <p class="origin" slot="after">Part of <a href={readosBookHref(book)}>{book.title}</a> in BIZOMAT Library.{canonical && <> Also in its <a href={canonical}>edited Library book</a>.</>}</p>
   </ReadOSChapterReader>
 </BaseLayout>
 <style>.origin{color:var(--muted);font-size:.83rem;margin:3rem 0 0}</style>

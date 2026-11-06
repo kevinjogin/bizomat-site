@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - product-development
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ Choosing a manufacturing process is a design decision with long-lasting cost con
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on metal casting materials and processes, iron and steel castings, process selection for powder metallurgy, press work and fine blanking, and rapid prototyping and additive manufacturing, together with established manufacturing practice. The worked example is illustrative. This article is general information; confirm process capabilities with suppliers.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on metal casting materials and processes, iron and steel castings, process selection for powder metallurgy, press work and fine blanking, and rapid prototyping and additive manufacturing, together with established manufacturing practice. The worked example is illustrative. This article is general information; confirm process capabilities with suppliers.*

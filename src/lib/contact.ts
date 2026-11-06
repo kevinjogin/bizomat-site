@@ -16,7 +16,7 @@ export const CONTACT_LIMITS = {
 /**
  * REACHOS enquiry categories (the `service` field). Each slug can be preselected with /contact/?service=<slug>.
  * Engineering and technical projects keep the service values in SERVICE_OPTIONS (src/data/services.ts), so existing
- * ?service= links from the services, Factory Fix and proof-of-work pages still preselect.
+ * ?service= links from the services, Factory Fix and Engine Room (case-study) pages still preselect.
  */
 export const ENQUIRY_CATEGORIES = [
   { value: 'General enquiry', slug: 'general' },
@@ -52,7 +52,7 @@ export interface ContactInput {
   service: string;
   /** Optional website of the visitor or their organisation. */
   website: string;
-  /** Optional KEVOS® tool or Library resource the enquiry is about. */
+  /** Optional BIZOMAT tool or Library resource the enquiry is about. */
   resource: string;
   message: string;
   contactMethod: ContactMethod;
@@ -120,4 +120,4 @@ export function validate(input: ContactInput, { requireCompany = false }: Valida
 
 /** One-line summary used as the email subject. */
 export const enquirySubject = (input: ContactInput) =>
-  `KEVOS® enquiry: ${input.service || 'General'} — ${input.company || input.name}`.replace(/[\r\n]+/g, ' ').slice(0, 200);
+  `BIZOMAT enquiry: ${input.service || 'General'} — ${input.company || input.name}`.replace(/[\r\n]+/g, ' ').slice(0, 200);

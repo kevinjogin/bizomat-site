@@ -1,0 +1,101 @@
+/* Board view styles (Kanban, Calendar, Timeline, Chart, Workload, Form, Map, Files). */
+
+.view-header { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 24px 0; }
+.view-header .label { margin-right: 2px; }
+.view-header .select { width: auto; min-width: 140px; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 0 10px; height: 28px; cursor: pointer; font-size: 13px; color: var(--text-2); }
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* kanban */
+.lane-head .lane-count { margin-left: auto; font-size: 12px; color: var(--text-3); font-weight: 600; }
+.kcard.drop-before { box-shadow: 0 -3px 0 var(--accent); }
+.kcard .kname { font-weight: 600; word-break: break-word; }
+.kcard .kpill { height: 20px; font-size: 11px; padding: 0 8px; border-radius: 4px; }
+.lane-add input { width: 100%; height: 32px; border: 1px dashed var(--border-strong); background: transparent; border-radius: var(--radius); padding: 0 10px; }
+.lane-add input:focus { outline: none; border-style: solid; border-color: var(--accent); background: var(--surface); }
+
+/* calendar */
+.cal-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.cal-toolbar h2 { min-width: 180px; }
+.cal-cell .cal-add { opacity: 0; margin-left: auto; }
+.cal-cell:hover .cal-add, .cal-cell:focus-within .cal-add { opacity: 1; }
+.cal-cell .cal-more { font-size: 11px; color: var(--text-3); padding: 0 4px; }
+.cal-event.span-mid { border-radius: 0; opacity: .85; }
+.cal-week .cal-cell { min-height: 360px; }
+.cal-day-list { display: flex; flex-direction: column; gap: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px; min-height: 240px; }
+.cal-day-list .cal-event { font-size: 13px; padding: 8px 10px; white-space: normal; }
+.cal-undated { margin-top: 16px; }
+
+/* gantt */
+.gantt-wrap { padding: 12px 24px 40px; }
+.gantt-scroll { overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); max-height: calc(100vh - 260px); }
+.gantt-head .gantt-scale { position: relative; height: 44px; }
+.gantt-scale span { position: absolute; top: 0; height: 44px; font-size: 11px; color: var(--text-3); border-left: 1px solid var(--border); padding: 4px 4px 0; white-space: nowrap; overflow: hidden; }
+.gantt-scale span.major { font-weight: 700; color: var(--text-2); }
+.gantt-lane { position: relative; height: 36px; border-bottom: 1px solid var(--border); }
+.gantt-lane.group { background: var(--surface-2); }
+.gantt-bar.readonly { cursor: pointer; }
+.gantt-bar.dragging { opacity: .8; box-shadow: var(--shadow-2); }
+.gantt-arrows { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+.gantt-arrows path { fill: none; stroke: var(--text-3); stroke-width: 1.5; }
+.gantt-arrows path.bad { stroke: var(--danger); }
+.gantt-today { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--danger); z-index: 2; pointer-events: none; }
+
+/* chart */
+.chart-view { padding: 16px 24px 40px; display: flex; flex-direction: column; gap: 16px; }
+.chart-card { padding: 16px; }
+.chart-table { max-width: 640px; }
+
+/* workload */
+.workload { padding: 16px 24px 40px; }
+.wl-table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.wl-table th, .wl-table td { border-bottom: 1px solid var(--border); padding: 6px 8px; vertical-align: top; font-size: 13px; }
+.wl-table th { background: var(--surface-2); color: var(--text-2); font-weight: 600; text-align: left; font-size: 12px; }
+.wl-table td.wl-day { border-left: 1px solid var(--border); min-width: 90px; }
+.wl-table tr.drop-target td { background: var(--accent-soft); }
+.wl-person { display: flex; align-items: center; gap: 8px; min-width: 180px; }
+.wl-load { height: 8px; border-radius: 999px; background: var(--surface-3); overflow: hidden; margin-top: 6px; position: relative; }
+.wl-load > span { display: block; height: 100%; background: var(--success); }
+.wl-load.over > span { background: var(--danger); }
+.wl-chip { display: inline-flex; align-items: center; gap: 4px; max-width: 100%; padding: 2px 8px; margin: 2px 0; border-radius: 4px; background: var(--accent-soft); color: var(--text); font-size: 12px; cursor: grab; border: 0; text-align: left; }
+.wl-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wl-day-count { font-weight: 700; font-size: 12px; }
+.wl-day-count.over { color: var(--danger); }
+
+/* form */
+.form-view { padding: 16px 24px 60px; display: grid; grid-template-columns: minmax(0, 320px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.form-view.public { grid-template-columns: minmax(0, 1fr); }
+.form-card { max-width: 620px; width: 100%; margin: 0 auto; padding: 24px; }
+.form-builder { padding: 16px; position: sticky; top: 8px; }
+.form-builder .field-list { display: flex; flex-direction: column; gap: 4px; max-height: 360px; overflow: auto; }
+
+/* map */
+.map-view { padding: 16px 24px 40px; display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.map-svg { width: 100%; height: auto; background: var(--surface-2); border-radius: var(--radius-lg); border: 1px solid var(--border); display: block; }
+.map-svg .grat { stroke: var(--border-strong); stroke-width: .4; fill: none; }
+.map-svg .equator { stroke: var(--text-3); stroke-width: .6; stroke-dasharray: 2 2; }
+.map-svg .pt { cursor: pointer; stroke: #fff; stroke-width: 1.2; }
+.map-svg .pt:hover, .map-svg .pt:focus { r: 6; outline: none; }
+.map-svg text { fill: var(--text-3); font-size: 7px; }
+
+/* files */
+.files-view { padding: 16px 24px 40px; }
+.files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.file-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+.file-thumb { height: 120px; background: var(--surface-2); display: flex; align-items: center; justify-content: center; color: var(--text-3); overflow: hidden; }
+.file-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.file-meta { padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 12px; }
+.file-meta .fname { font-weight: 600; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 760px) {
+  .view-header { padding: 10px 16px 0; }
+  .form-view, .map-view { grid-template-columns: 1fr; padding: 12px 16px 40px; }
+  .gantt-wrap, .chart-view, .workload, .files-view { padding-left: 16px; padding-right: 16px; }
+  .cal { padding: 12px 8px; }
+  .cal-cell { min-height: 72px; }
+  .cal-event { font-size: 10.5px; padding: 1px 3px; }
+  .kanban { padding: 12px 16px 40px; }
+  .lane { width: 82vw; }
+}

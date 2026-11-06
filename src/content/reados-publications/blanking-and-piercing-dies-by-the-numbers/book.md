@@ -4,8 +4,8 @@ subtitle: "Cutting force, clearance, punch strength, stripper springs, strip lay
 description: "Plan, size and check a blanking and piercing die with numbers: cutting force, clearance, punch strength, stripping, strip layout, centre of load, setting, wear and tool cost."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -64,7 +64,7 @@ It is for toolmakers, press setters and apprentices, for production engineers wh
 
 Every chapter follows one fictional part. This is an illustration. A manufacturer of electrical enclosures needs a mounting plate, called MP-40 here, for its DIN-rail brackets: a flat plate 80 × 50 mm with R6 corners, two Ø8.5 mm holes on 60 mm centres and a 16 × 8 mm obround slot between them, cut from 2.0 mm low-carbon cold-rolled steel. Demand is 60,000 plates a year, made in batches of 5,000. For the calculations the sheet's tensile strength is taken as 350 MPa and its shear strength as 280 MPa, illustrative values that a real job would take from the material certificate and trials.
 
-The part is made in a three-station progressive die: the holes and slot are pierced at the first station, pilots locate the strip in those holes at the second, and the outline is blanked at the third. The manufacturer, the part, the prices and the mistakes are invented. None describes KEVOS® work or a real business.
+The part is made in a three-station progressive die: the holes and slot are pierced at the first station, pilots locate the strip in those holes at the second, and the outline is blanked at the third. The manufacturer, the part, the prices and the mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

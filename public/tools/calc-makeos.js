@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS engineering calculations. SI units are explicit at each boundary.
+// BIZOMAT MAKEOS engineering calculations. SI units are explicit at each boundary.
 // No catalogue material values, standard fit tables or equipment ratings are inferred.
 (() => {
   const PI = Math.PI;

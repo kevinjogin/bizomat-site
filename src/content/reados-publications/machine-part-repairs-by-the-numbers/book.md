@@ -4,8 +4,8 @@ subtitle: "Repairing shafts, gears, housings and vehicle parts: when to repair, 
 description: "Repair machine parts with numbers: repair or replace, reading the failure, shaft stresses, building up journals, keyways, straightening, gears, cast housings, vehicle parts and the repair record."
 category: Engineering
 tags: [manufacturing, design, quality, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -63,7 +63,7 @@ They were skilled and resourceful, and some of what they did would now be judged
 
 This is an illustration. A regional agricultural machinery repairer services harvesters, tractors, balers, augers and trailers for farmers and contractors, and does general machine repairs for local industry. In one busy season, its workshop faces a worn harvester gearbox shaft, a broken tooth on a feed auger's drive gear, a cracked cast-iron gearbox housing, a sheared trailer axle stub and several smaller jobs. Its workshop manager must decide, for each, whether to repair or replace, how to repair, and how to know the repair will hold.
 
-The business, its jobs, costs and results are invented for teaching. They are not KEVOS® work. Repairs to safety-critical parts must follow the equipment maker's instructions, the applicable standards and the regulator's requirements, and some must not be made at all.
+The business, its jobs, costs and results are invented for teaching. They are not BIZOMAT work. Repairs to safety-critical parts must follow the equipment maker's instructions, the applicable standards and the regulator's requirements, and some must not be made at all.
 
 ## How to use the book
 
@@ -75,4 +75,4 @@ This book is educational. Repairs to parts whose failure could injure people, in
 
 ## An original treatment
 
-The Library covers weld repairs to steel plate and pressure equipment in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), gear geometry and strength in Gears by the Numbers, and the weldability of cast iron and steels in Weldability by the Numbers; this book applies them to machine parts and links to them rather than repeating them. The explanations, the repairer's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their methods are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers weld repairs to steel plate and pressure equipment in [Weld Repairs That Hold](/reados/publications/weld-repairs-that-hold/), gear geometry and strength in Gears by the Numbers, and the weldability of cast iron and steels in Weldability by the Numbers; this book applies them to machine parts and links to them rather than repeating them. The explanations, the repairer's case, the calculations, figures and exercises are original BIZOMAT writing. The historical manuals are public-domain works in the United States; their methods are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

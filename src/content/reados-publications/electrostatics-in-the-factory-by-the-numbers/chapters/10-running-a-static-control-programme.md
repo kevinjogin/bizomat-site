@@ -9,7 +9,7 @@ draft: false
 
 Every chapter of this book ended with a control that had quietly stopped working: a meter held at the wrong distance, humidity measured in the wrong place, a funnel that was never earthed, hangers caked in cured powder, inside corners sprayed the wrong way, ionisers coated in dust, a bench unplugged during a move, precipitator cells left unwashed. None was a failure of technology. Each was a failure of the system around the technology: nobody checking, nobody noticing the change, nobody connecting a symptom with a cause. A static control programme is that system.
 
-This chapter brings the earlier controls together into one programme for the case factory: what it covers, how it is checked and recorded, how changes and incidents feed into it, and how it is audited. It then works out the programme's business case with the KEVOS® investment appraisal tool, separating savings that were measured from those that were estimated, and ends with a checklist that was always signed and rarely done.
+This chapter brings the earlier controls together into one programme for the case factory: what it covers, how it is checked and recorded, how changes and incidents feed into it, and how it is audited. It then works out the programme's business case with the BIZOMAT investment appraisal tool, separating savings that were measured from those that were estimated, and ends with a checklist that was always signed and rarely done.
 
 ## What the programme covers
 

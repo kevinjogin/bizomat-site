@@ -7,7 +7,7 @@ tags:
   - communication
   - people
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -213,4 +213,4 @@ Cultural differences rarely cause problems through manners. They cause problems 
 
 ---
 
-*Source: KEVOS® notes on culture as a delivery variable in distributed programs, and earlier KEVOS® project management handbooks on cultural fluency in global project teams. Examples are illustrations. This article is general information and does not constitute legal advice.*
+*Source: BIZOMAT notes on culture as a delivery variable in distributed programs, and earlier BIZOMAT project management handbooks on cultural fluency in global project teams. Examples are illustrations. This article is general information and does not constitute legal advice.*

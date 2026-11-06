@@ -9,7 +9,7 @@ draft: false
 
 Most electrostatic discharges ignite nothing, because most happen where there is nothing to ignite. An ignition needs three things at once: a flammable atmosphere, a discharge with enough energy, and the discharge occurring inside the flammable atmosphere at the moment it is flammable. Remove any one and there is no fire, however much static there is. Electrostatic hazard control is the job of making sure the three never coincide, and the numbers that guide it are concentrations, flammable limits and minimum ignition energies.
 
-This chapter explains each of the three conditions, compares the discharges of Chapters 1 and 3 with the ignition energies of the materials the case factory handles, and checks the local exhaust at the factory's alcohol cleaning benches with the KEVOS® extraction duct tool. It ends with a technician's fingertip spark at an alcohol dispenser, a near miss that changed how the assembly area handles solvent.
+This chapter explains each of the three conditions, compares the discharges of Chapters 1 and 3 with the ignition energies of the materials the case factory handles, and checks the local exhaust at the factory's alcohol cleaning benches with the BIZOMAT extraction duct tool. It ends with a technician's fingertip spark at an alcohol dispenser, a near miss that changed how the assembly area handles solvent.
 
 ## The flammable atmosphere
 

@@ -4,8 +4,8 @@ subtitle: "Wetting, surface energy, preparation, cure, joint stresses, thermal m
 description: "How to design, prepare, cure, test and prove bonded joints in metal and plastic parts, from contact angles and surface energy to lap shear, peel and thermal movement."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -108,13 +108,13 @@ Every chapter follows one fictional workshop. This is an illustration. Plant K b
 
 The story begins with a trial batch: some stiffeners peel away from the skin at their ends during a drop test, and the first windows show fine cracks in the polycarbonate next to the bond after a hot week. The plant's manufacturing engineer is asked to find out why and to prove a process that works.
 
-The plant, its products, its suppliers, its adhesives and every measured value are invented. None describes KEVOS® work, a real company or a real product. Adhesive properties quoted for the case are illustrative data-sheet values, not the properties of any named product.
+The plant, its products, its suppliers, its adhesives and every measured value are invented. None describes BIZOMAT work, a real company or a real product. Adhesive properties quoted for the case are illustrative data-sheet values, not the properties of any named product.
 
 ## How to use the book
 
 Read Chapters 1 to 3 in order: they set out why bonding works and how to measure a surface's readiness for it. Chapters 4 and 5 cover preparation and cure, the process steps where most production faults arise. Chapters 6 to 8 treat the joint as a structure. Chapter 9 covers durability, Chapter 10 testing and Chapter 11 production control and proof.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

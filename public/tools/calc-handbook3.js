@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS handbook calculations: bearings, chain, belt, screw, pipe, pump, alignment, expansion and cylinder volume.
+// BIZOMAT MAKEOS handbook calculations: bearings, chain, belt, screw, pipe, pump, alignment, expansion and cylinder volume.
 // Units are stated on every input and output. Results are preliminary screening values for idealised models only;
 // no manufacturer ratings, material properties or acceptance limits are built in.
 (() => {

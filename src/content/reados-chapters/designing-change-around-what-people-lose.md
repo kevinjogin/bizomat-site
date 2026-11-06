@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -202,4 +202,4 @@ Change often stalls not because the case is weak but because its losses are spec
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on change leadership and resistance, the decisional balance sheet associated with I. Janis and L. Mann (1977), and a passage from N. Machiavelli's The Prince used in change management teaching. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on change leadership and resistance, the decisional balance sheet associated with I. Janis and L. Mann (1977), and a passage from N. Machiavelli's The Prince used in change management teaching. Examples and figures in this article are illustrations. This article is general information.*

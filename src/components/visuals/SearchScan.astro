@@ -1,0 +1,59 @@
+---
+// Scene: BIZOMAT AI search. The AI step only suggests search terms (and may pick from real catalogue entries); the
+// ranking runs over the public catalogue, so every result is a real page with the reason it matched. The results
+// shown are real entries for this question (src/lib/discovery/search.ts with /discovery-index.json).
+import '../../styles/visuals.css';
+
+interface Props { id?: string }
+const { id = 'aisearch' } = Astro.props;
+const sources = [
+  { c: 's4', t: 'Products', items: ['CAD Automation', 'Project Management'] },
+  { c: 's5', t: 'Tools', items: ['Bolt Tightening Torque and Preload', 'Bolt Stretch and Turn-of-Nut Angle'] },
+  { c: 's6', t: 'Library', items: ['Bolted joints that stay tight', 'Tightening by torque'] },
+];
+---
+<figure class="viz" aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 660 270" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>A visitor asks for a tool to calculate bolt torque. The AI suggests search terms such as bolt preload and tightening torque; BIZOMAT searches its products, tools and library and returns real pages with the reason each one matched.</title>
+    <rect class="v-card" x="14" y="14" width="632" height="40" rx="10" />
+    <text class="v-text" x="30" y="39">Find a tool to calculate bolt torque</text>
+    <rect class="ss__cover" x="28" y="22" width="300" height="26" />
+    <rect class="v-caret" x="330" y="24" width="2" height="20" />
+
+    <g class="seq s3">
+      <text class="v-sub" x="16" y="78">AI search terms</text>
+      {['bolt preload', 'tightening torque', 'fastener', 'clamping force'].map((t, i) => (
+        <g>
+          <rect class="v-pill" x={130 + i * 120} y="64" width="112" height="22" rx="11" />
+          <text class="v-pill-text" x={186 + i * 120} y="78.5" text-anchor="middle">{t}</text>
+        </g>
+      ))}
+    </g>
+
+    {sources.map((src, i) => (
+      <g class:list={['seq', src.c]}>
+        <rect class="v-panel" x={14 + i * 214} y="100" width="204" height="74" rx="10" />
+        <text class="v-sub" x={26 + i * 214} y="118">{src.t}</text>
+        {src.items.map((it, j) => <text class="v-text" x={26 + i * 214} y={140 + j * 20}>{it}</text>)}
+        <rect class="ss__scan" x={14 + i * 214} y="100" width="4" height="74" rx="2" />
+      </g>
+    ))}
+
+    <g class="seq s8">
+      <rect class="v-card v-card--accent" x="14" y="188" width="632" height="68" rx="10" />
+      <text class="v-sub" x="28" y="207">Best match · Tool</text>
+      <text class="v-title" x="28" y="227">Bolt Tightening Torque and Preload</text>
+      <text class="v-accent-text" x="28" y="245">Why: matches bolt, torque, preload (for “bolt”)</text>
+    </g>
+  </svg>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span>AI suggests the search terms; every result is a real page, with the reason it matched.</span><span class="viz__tag">Illustration</span></figcaption>
+</figure>
+
+<style>
+  /* Typing: a cover over the question shrinks from left to right. */
+  .ss__cover { fill: var(--surface); transform-box: fill-box; transform-origin: right center; animation: ss-type 14s steps(30) infinite both; animation-delay: -6.2s; }
+  @keyframes ss-type { 0% { transform: scaleX(1); } 14%, 100% { transform: scaleX(0); } }
+  .ss__scan { fill: var(--brand-mark); opacity: .7; transform-box: fill-box; animation: ss-scan 14s var(--ease) infinite both; animation-delay: -6.2s; }
+  @keyframes ss-scan { 0%, 30% { transform: translateX(0); opacity: 0; } 34% { opacity: .7; } 50% { transform: translateX(196px); opacity: .7; } 54%, 100% { transform: translateX(196px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .ss__cover, .ss__scan { display: none; } }
+</style>

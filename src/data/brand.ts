@@ -1,6 +1,6 @@
 // Brand copy shared across pages. Edit here and the homepage, About page and assistant all update.
 
-/** How KEVOS® works with clients. */
+/** How BIZOMAT works with clients. */
 export const PRINCIPLES = [
   {
     title: 'Understand the real problem first',
@@ -24,7 +24,7 @@ export const PRINCIPLES = [
   },
   {
     title: 'Be honest about limits',
-    text: 'Where certified, registered or specialist input is required, KEVOS® says so.',
+    text: 'Where certified, registered or specialist input is required, BIZOMAT says so.',
   },
 ] as const;
 
@@ -42,5 +42,5 @@ export const BACKGROUND = [
 /** Longer-term direction. Deliberately secondary to services on the current site. */
 export const FUTURE = {
   title: 'Looking ahead',
-  text: 'KEVOS® Work and KEVOS® CADOS are available now. KEVOS® Desk, a desktop productivity and automation product, is planned. Each is built on the same practical, problem-first approach, and new products are announced when they are ready, not before.',
+  text: 'BIZOMAT Work and BIZOMAT CADOS are available now. BIZOMAT Desk, a desktop productivity and automation product, is planned. Each is built on the same practical, problem-first approach, and new products are announced when they are ready, not before.',
 } as const;

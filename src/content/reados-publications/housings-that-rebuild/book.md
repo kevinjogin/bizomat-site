@@ -4,8 +4,8 @@ subtitle: "Curves, continuity, surfaces, shells and split parts for a plastic ho
 description: "Model a two-part plastic housing with hybrid surface and solid methods: clean curves, chosen continuity, shells that solve, robust references and a master model split into parts."
 category: Engineering
 tags: [design, product-development, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -67,7 +67,7 @@ You should already be comfortable with sketches, constraints, extrudes, revolves
 
 This is an illustration. The book follows a fictional **handheld moisture-meter housing** moulded in PC/ABS. It is 160 mm long, 72 mm wide and 34 mm tall, with a 2.0 mm nominal wall, a crowned top that rises 6 mm across its width, plan-view corners of R10, a 50 mm by 30 mm display window and a narrowed sensor nose. The housing splits into a top cover and a base at a parting height 14 mm above the underside.
 
-Every dimension, mass, failure and test result in the case is invented for teaching. None of it describes a KEVOS® project, client or product. Calculations were checked by running them, and figures carry the same numbers as the text.
+Every dimension, mass, failure and test result in the case is invented for teaching. None of it describes a BIZOMAT project, client or product. Calculations were checked by running them, and figures carry the same numbers as the text.
 
 ## Source limits and professional responsibility
 

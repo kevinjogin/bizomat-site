@@ -112,7 +112,7 @@ test('no path for out-of-scope questions or broad ones that need a clarifying qu
 });
 
 test('missing resources are named, not invented', () => {
-  const outcome = { mode: 'results' as const, tools: [], readings: search(engine, { question: 'bolt preload' }).readings.slice(0, 1), related: [], concepts: [], corrections: [] };
+  const outcome = { mode: 'results' as const, platform: [], tools: [], readings: search(engine, { question: 'bolt preload' }).readings.slice(0, 1), related: [], concepts: [], corrections: [] };
   const p = buildPath(engine, 'calculate bolt preload', outcome, details)!;
   const gap = p.steps.find((s) => s.gap);
   assert.ok(gap && /does not have a tool/.test(gap.gap!), 'a step without a tool says so');

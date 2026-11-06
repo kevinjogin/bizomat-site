@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: Machinery’s Handbook topic tools (batch handbook25) within the Tools directory.
+// BIZOMAT MAKEOS: Machinery’s Handbook topic tools (batch handbook25) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "forming-tool-depth",

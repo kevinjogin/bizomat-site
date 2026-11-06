@@ -67,7 +67,7 @@ Change the smallest process that removes a real constraint. Adding a customer ch
 ## Workbook completion checklist
 Maintain an owner capacity map, one-page offer brief, funding estimate, contribution and break-even worksheet, thirteen-week forecast, compliance calendar, AI policy and a 30-day decisions log. These are living records; review them, do not file them away.
 
-*KEVOS independently authored practical business learning material. This is general information, not personalised legal, tax or investment advice.*
+*BIZOMAT independently authored practical business learning material. This is general information, not personalised legal, tax or investment advice.*
 
 
 ## Extended study: professional practice

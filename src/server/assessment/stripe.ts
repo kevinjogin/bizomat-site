@@ -3,8 +3,8 @@
 // Disabled (503) until STRIPE_WEBHOOK_SECRET is set as a Worker secret. When enabled, every event's
 // Stripe-Signature header is verified with HMAC-SHA256 before anything is trusted, so a redirect or a
 // forged request can never mark an assessment as paid. A verified, fully paid A$195 AUD Checkout Session
-// (from a Stripe Payment Link or Checkout) emails KEVOS® a "payment verified" notice; nothing is sent to
-// the customer (Stripe issues its own receipt) and nothing is stored. Card details never touch KEVOS®.
+// (from a Stripe Payment Link or Checkout) emails BIZOMAT a "payment verified" notice; nothing is sent to
+// the customer (Stripe issues its own receipt) and nothing is stored. Card details never touch BIZOMAT.
 import { ASSESSMENT } from '../../config/assessment.ts';
 import { sendEmail, type MailEnv } from '../contact/mail.ts';
 
@@ -89,7 +89,7 @@ export async function handleStripeWebhook(request: Request, env: StripeEnv): Pro
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join('\n')}\n\nNext step: send the booking instructions (template 6, docs/assessment/email-templates.md).\n`;
   const escape = (v: string) => v.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
   const html = `<p>${rows.map(([k, v]) => `<strong>${k}:</strong> ${escape(v)}`).join('<br>')}</p><p>Next step: send the booking instructions (template 6).</p>`;
-  const sent = await sendEmail(env, { subject: `KEVOS® assessment payment verified: ${reference}`, text, html });
+  const sent = await sendEmail(env, { subject: `BIZOMAT assessment payment verified: ${reference}`, text, html });
   if (!sent.ok) console.log(JSON.stringify({ assessmentPayment: { reference, session: s.id, notified: false } }));
   return json(200, { received: true, verified: true, notified: sent.ok });
 }

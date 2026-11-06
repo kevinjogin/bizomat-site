@@ -9,7 +9,7 @@ draft: false
 
 A shaft carrying a rotor is a spring. Push the middle of it sideways and it springs back, and if it is let go it vibrates at its own natural frequency. When the shaft spins, the rotor's small unbalance pushes it sideways once every revolution. If the shaft spins at a speed equal to its natural frequency of sideways vibration, each push arrives just in time to add to the last, and the shaft bows out into a curve that whirls round with it. That speed is the shaft's critical, or whirling, speed.
 
-This chapter explains what happens to a rotor below, at and above its critical speed, using the simplest possible model: one disc on a light shaft between two bearings. It introduces the running case and the first KEVOS® tool, and it describes the prototype test that made the case's maker take critical speeds seriously.
+This chapter explains what happens to a rotor below, at and above its critical speed, using the simplest possible model: one disc on a light shaft between two bearings. It introduces the running case and the first BIZOMAT tool, and it describes the prototype test that made the case's maker take critical speeds seriously.
 
 ## The running case
 
@@ -112,7 +112,7 @@ The HM-30 is not such a machine. Its maker wants the rotor to stay well below it
 
 ## The first estimate
 
-The KEVOS® [Shaft critical (whirling) speed](/tools/critical-speed/) tool calculates the first critical speed of a uniform solid shaft with simple, fixed–free or fixed–fixed supports, optionally with a single disc. It works out the critical speed of the shaft alone from its own mass and stiffness, the critical speed of the disc on the massless shaft, and combines them by Dunkerley's method (Chapter 2). It compares the result with the operating speed and your required separation margin, and reports whether the shaft runs below, near or above its critical speed. It assumes rigid bearings and ignores gyroscopic effects.
+The BIZOMAT [Shaft critical (whirling) speed](/tools/critical-speed/) tool calculates the first critical speed of a uniform solid shaft with simple, fixed–free or fixed–fixed supports, optionally with a single disc. It works out the critical speed of the shaft alone from its own mass and stiffness, the critical speed of the disc on the massless shaft, and combines them by Dunkerley's method (Chapter 2). It compares the result with the operating speed and your required separation margin, and reports whether the shaft runs below, near or above its critical speed. It assumes rigid bearings and ignores gyroscopic effects.
 
 This is an illustration. The maker's first estimate treated the whole 180 kg rotor as one disc at mid-span, on a simply supported steel shaft 1,000 mm between bearings.
 

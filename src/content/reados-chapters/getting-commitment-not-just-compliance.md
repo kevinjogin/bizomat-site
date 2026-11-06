@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - strategy
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -226,4 +226,4 @@ Authority can get things done, but commitment gets them done well and keeps them
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on power, authority and influence, including sources of power, influence outcomes and influence tactics. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on teaching material on power, authority and influence, including sources of power, influence outcomes and influence tactics. Examples and figures in this article are illustrations.*

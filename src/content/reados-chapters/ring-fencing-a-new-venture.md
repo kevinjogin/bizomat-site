@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ The structure chosen for a new venture is not an administrative detail. It decid
 
 ---
 
-*Source: KEVOS® notes, drawing on general principles of venture governance and Clayton Christensen's work on how established organisations allocate resources. Examples and figures in this article are illustrations. This article is general information, not legal, tax or financial advice.*
+*Source: BIZOMAT notes, drawing on general principles of venture governance and Clayton Christensen's work on how established organisations allocate resources. Examples and figures in this article are illustrations. This article is general information, not legal, tax or financial advice.*

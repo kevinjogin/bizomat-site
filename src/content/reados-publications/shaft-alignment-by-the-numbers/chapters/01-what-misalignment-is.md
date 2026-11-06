@@ -9,7 +9,7 @@ draft: false
 
 Two shafts are aligned when their centrelines form one straight line at the coupling while the machines run. Everything else in this book serves that sentence. It contains three ideas worth separating at the start: the centrelines, not the shaft surfaces, are what must line up; they must line up at the coupling, where the shafts meet; and they must do so while running, at working temperature, not only on the day of installation.
 
-This chapter sets out how misalignment is described, in what units, and with what consequences. It introduces the HW-3 hot water pump set in the state it was found after the motor was first set on its baseplate, and uses the KEVOS® shaft angular offset tool to put its angularity in every unit a fitter is likely to meet.
+This chapter sets out how misalignment is described, in what units, and with what consequences. It introduces the HW-3 hot water pump set in the state it was found after the motor was first set on its baseplate, and uses the BIZOMAT shaft angular offset tool to put its angularity in every unit a fitter is likely to meet.
 
 ## Two kinds of misalignment, in two planes
 
@@ -50,7 +50,7 @@ One machine is chosen as stationary and the other as movable, and all correction
 
 ### Where offset is measured
 
-Offset changes along the shafts whenever there is angularity, so an offset number means nothing without its location. This book, and the KEVOS® alignment tools, report offset at the plane where the rim readings are taken, on the movable machine's coupling hub. Many tolerance tables, and most laser systems, report it at the coupling's centre instead. Converting between the two takes one line, as the exercise at the end of this chapter shows.
+Offset changes along the shafts whenever there is angularity, so an offset number means nothing without its location. This book, and the BIZOMAT alignment tools, report offset at the plane where the rim readings are taken, on the movable machine's coupling hub. Many tolerance tables, and most laser systems, report it at the coupling's centre instead. Converting between the two takes one line, as the exercise at the end of this chapter shows.
 
 ## The HW-3 as found
 
@@ -63,7 +63,7 @@ cols: Offset at the reading plane | Angularity | Meaning
 rowhead: Plane
 - * Vertical | 0.25 mm | −0.04 mm per 100 mm | motor shaft low at the coupling, and rising slightly towards its back feet
 - Horizontal | 0.15 mm | +0.06 mm per 100 mm | motor shaft displaced sideways, and further away towards its back feet
-caption: This is an illustration. Readings sag-corrected. Signs follow the convention of the KEVOS® rim and face alignment tool in Chapter 6. The site's running tolerance is 0.05 mm offset and 0.05 mm per 100 mm angularity.
+caption: This is an illustration. Readings sag-corrected. Signs follow the convention of the BIZOMAT rim and face alignment tool in Chapter 6. The site's running tolerance is 0.05 mm offset and 0.05 mm per 100 mm angularity.
 ```
 
 The offsets are five and three times the site's tolerance. The angularities are close to it. That pattern, large offset and modest angle, is typical of a motor placed by eye and bolted down: its shaft is roughly parallel to the pump's but not in line with it.

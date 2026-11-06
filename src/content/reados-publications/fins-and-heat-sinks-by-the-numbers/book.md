@@ -4,8 +4,8 @@ subtitle: "Thermal budgets, interfaces, the fin equation, natural and forced con
 description: "Size and check heat sinks with numbers: thermal budgets, interfaces, fin efficiency, natural-convection spacing, radiation, fans and pressure drop, spreading resistance and testing."
 category: Engineering
 tags: [design, product-development, validation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -94,7 +94,7 @@ It suits mechanical, electrical and product engineers. It assumes school algebra
 
 Every chapter follows one fictional heat sink. This is an illustration. HS-150 cools the power module of a motor drive that a small Australian manufacturer builds into machine control cabinets. At full load the module dissipates 150 W. The heat sink is mounted on the back of the cabinet with its fins vertical, in the factory air, which reaches 40 °C on a hot day. It is an extrusion of 6063-T5 aluminium with an anodised finish: a base 200 mm wide, 250 mm tall and 10 mm thick, carrying fins 45 mm tall and 2.5 mm thick. How many fins, and whether a fan is needed, are among the questions the book answers. A later version of the drive will dissipate 250 W in the same footprint.
 
-The module's own figures, its junction-to-case and case-to-sink resistances and the drive designer's junction temperature limit, are illustration values standing in for a real maker's datasheet. Air properties come from published tables, and aluminium's from published typical values. The product, the company and its numbers are invented; none describes KEVOS® work or a real product. Prices, where they appear, are illustrations in Australian dollars including GST.
+The module's own figures, its junction-to-case and case-to-sink resistances and the drive designer's junction temperature limit, are illustration values standing in for a real maker's datasheet. Air properties come from published tables, and aluminium's from published typical values. The product, the company and its numbers are invented; none describes BIZOMAT work or a real product. Prices, where they appear, are illustrations in Australian dollars including GST.
 
 ## Source limits and professional responsibility
 

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- KEVOS end to end without SOLIDWORKS: the real companion engine (CompanionEngine, CloudLink) and the real add-in
+       pipe link (PipeLink) over a real local pipe, against a real KEVOS gateway, with canned SOLIDWORKS answers.
+       Driven by tests/test_bridge_e2e.py. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Core/**/*.cs" LinkBase="Core" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

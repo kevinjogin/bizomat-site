@@ -71,7 +71,7 @@ test('invalid enquiries get field errors', () => {
 
 test('composed email escapes HTML and carries the NEW status', () => {
   const { subject, html, text } = composeAssessment(normaliseAssessment({ ...valid, description: 'Bracket <script>alert(1)</script> does not locate on the plate at all.' }));
-  assert.match(subject, /^KEVOS® assessment enquiry: Assembly Problem — Example Fabrication Pty Ltd$/);
+  assert.match(subject, /^BIZOMAT assessment enquiry: Assembly Problem — Example Fabrication Pty Ltd$/);
   assert.ok(!html.includes('<script>'));
   assert.match(text, /Status: NEW/);
 });
@@ -141,7 +141,7 @@ test('the Stripe webhook is off until configured and only reports genuinely paid
     const res = await handleStripeWebhook(new Request('https://kevos.com/api/assessment/stripe-webhook', { method: 'POST', body: payload, headers: { 'Stripe-Signature': header } }), stripeEnv);
     return { status: res.status, body: (await res.json()) as { verified?: boolean } };
   };
-  const paid = { id: 'cs_test_1', amount_total: 19500, currency: 'aud', payment_status: 'paid', client_reference_id: 'KEVOS-A-2026-001', customer_details: { email: 'buyer@example.com' } };
+  const paid = { id: 'cs_test_1', amount_total: 19500, currency: 'aud', payment_status: 'paid', client_reference_id: 'BIZOMAT-A-2026-001', customer_details: { email: 'buyer@example.com' } };
 
   const before = sent.length;
   assert.equal((await send(paid, 'checkout.session.completed', false)).status, 400);
@@ -154,7 +154,7 @@ test('the Stripe webhook is off until configured and only reports genuinely paid
   const ok = await send(paid);
   assert.equal(ok.status, 200);
   assert.equal(ok.body.verified, true);
-  assert.match(sent.at(-1)!.subject, /payment verified: KEVOS-A-2026-001/);
+  assert.match(sent.at(-1)!.subject, /payment verified: BIZOMAT-A-2026-001/);
 });
 
 test('the Worker routes both assessment endpoints', async () => {

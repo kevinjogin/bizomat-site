@@ -1,4 +1,5 @@
-// KEVOS discovery search: ranks KEVOS® tools and Library books and chapters for a question in plain language.
+// BIZOMAT AI search: ranks the platform's products and documentation, BIZOMAT tools and Library books and chapters
+// for a question in plain language.
 // Runs in the browser over /discovery-index.json (and in the tests), so every result is a real catalogue entry.
 // Hybrid ranking: the visitor's own words (BM25 over weighted fields), curated synonyms, spelling correction against
 // the catalogue's vocabulary, word pairs, and, when available, search terms from the AI intent step.
@@ -10,13 +11,16 @@ export interface DBook { id: string; n: string; d: string; c: string; u: string;
 /** A chapter: its URL is its id; b is the index of its book in DiscoveryIndex.books. */
 /** m: reading minutes; k: key terms and section headings from the chapter's text. */
 export interface DChapter { n: string; d: string; b: number; u: string; m?: number; k?: string }
-/** links: reviewed Library ↔ Tools connections as [tool id, chapter URL or book id]. */
-export interface DiscoveryIndex { v: 1; tools: DTool[]; books: DBook[]; chapters: DChapter[]; links: [string, string][] }
+/** A public platform page: a product, capability, documentation or integration (src/data/platform-catalog.ts).
+ *  a: area (CAD Automation, Project Management, Resources, BIZOMAT); t: kind of entry; k: search-only keywords. */
+export interface DPage { id: string; n: string; d: string; u: string; a: string; t: string; k: string }
+/** links: reviewed Library ↔ Tools connections as [tool id, chapter URL or book id]. pages: public platform pages. */
+export interface DiscoveryIndex { v: 1; tools: DTool[]; books: DBook[]; chapters: DChapter[]; links: [string, string][]; pages?: DPage[] }
 export const toolHref = (t: DTool) => (t.p ? `/tools/${t.id}/` : `/tools/?tool=${t.id}`);
 export const toolAppHref = (t: DTool) => `/tools/?tool=${t.id}`;
 
 export interface Hit {
-  kind: 'tool' | 'chapter' | 'book';
+  kind: 'tool' | 'chapter' | 'book' | 'page';
   id: string;
   title: string;
   description: string;
@@ -31,6 +35,8 @@ export interface Hit {
 }
 export interface Outcome {
   mode: 'results' | 'clarify' | 'none';
+  /** BIZOMAT products, capabilities, documentation and integrations (public pages only). */
+  platform: Hit[];
   tools: Hit[];
   readings: Hit[];
   related: Hit[];
@@ -54,7 +60,7 @@ export interface Candidate { id: string; kind: 'tool' | 'chapter' | 'book'; name
 // ---------- Text ----------
 const STOP = new Set(('a about above after again all also am an and any are as at be because been before being below between both but by can could did do does doing down during each few for from further had has have having he her here hers him his how i if in into is it its just me more most my no nor not now of off on once only or other our out over own same she should so some such than that the their them then there these they this those through to too under until up very was we were what when where which while who whom why will with would you your yours ' +
   'want need help please tell show find work know get make let like trying try use using best good way ways much many able anything something someone kevos workos reados tool tools calculator calculators book books chapter chapters ' +
-  'lose losing lost sitting standing run running thing things keep keeps kept').split(' '));
+  'lose losing lost sitting standing run running thing things keep keeps kept bizomat').split(' '));
 
 /** Light stemmer shared by documents and questions, so "machines", "machine" and "machining" stay distinct enough. */
 export function stem(w: string): string {
@@ -71,7 +77,7 @@ export function words(text: string): string[] {
 export const tokens = (text: string) => words(text).filter((w) => !STOP.has(w) && (w.length > 1 || /\d/.test(w))).map(stem);
 
 // ---------- Index ----------
-type Doc = { kind: Hit['kind']; ref: DTool | DBook | DChapter; fields: { tf: Map<string, number>; len: number; w: number }[]; bigrams: Set<string>; group: string; id: string };
+type Doc = { kind: Hit['kind']; ref: DTool | DBook | DChapter | DPage; fields: { tf: Map<string, number>; len: number; w: number }[]; bigrams: Set<string>; group: string; id: string };
 export interface Engine { docs: Doc[]; df: Map<string, number>; avg: number[]; vocab: Map<string, number>; byFirst: Map<string, string[]>; index: DiscoveryIndex; books: Map<string, DBook>; chapters: Map<string, DChapter>; tools: Map<string, DTool>; postings: Map<string, number[]>; byId: Map<string, number> }
 
 const FIELD_WEIGHTS = { name: 3, question: 1.4, description: 1.2, keywords: 1, category: 0.7, book: 0.5 };
@@ -96,6 +102,10 @@ export function prepare(index: DiscoveryIndex): Engine {
   }
   for (const b of index.books) {
     docs.push({ kind: 'book', ref: b, id: b.id, group: `book:${b.id}`, bigrams: pairs(tokens(b.n)), fields: [field(b.n, FIELD_WEIGHTS.name), field(b.d, FIELD_WEIGHTS.description), field(b.c, FIELD_WEIGHTS.category)] });
+  }
+  // Platform pages: few, with curated keywords, so the keywords weigh more than a tool's.
+  for (const p of index.pages ?? []) {
+    docs.push({ kind: 'page', ref: p, id: p.id, group: `page:${p.a}`, bigrams: pairs(tokens(p.n)), fields: [field(p.n, FIELD_WEIGHTS.name), field(p.d, FIELD_WEIGHTS.description), field(p.k, FIELD_WEIGHTS.keywords * 1.6), field(`${p.a} ${p.t}`, FIELD_WEIGHTS.category)] });
   }
   const df = new Map<string, number>();
   const postings = new Map<string, number[]>();
@@ -177,6 +187,7 @@ function expand(e: Engine, q: Query) {
 
 // ---------- Scoring ----------
 const K1 = 1.2;
+const PAGE_BOOST = 2;
 const B = 0.75;
 function scoreDocs(e: Engine, terms: Term[], bigrams: Set<string>) {
   const N = e.docs.length;
@@ -201,6 +212,9 @@ function scoreDocs(e: Engine, terms: Term[], bigrams: Set<string>) {
   }
   // Word pairs from the question that appear in a title ("cutting speed", "bend allowance") are strong evidence.
   for (const [i, r] of scores) for (const bg of bigrams) if (e.docs[i].bigrams.has(bg)) r.s *= 1.35;
+  // Platform pages are few and hand-curated (src/data/platform-catalog.ts): a match on one is stronger evidence than
+  // the same words in one of thousands of chapters.
+  for (const [i, r] of scores) if (e.docs[i].kind === 'page') r.s *= PAGE_BOOST;
   return scores;
 }
 
@@ -208,6 +222,7 @@ function scoreDocs(e: Engine, terms: Term[], bigrams: Set<string>) {
 const MAX_TOOLS = 5;
 const MAX_READINGS = 5;
 const MAX_RELATED = 4;
+const MAX_PLATFORM = 3;
 /** Below this raw score nothing is relevant enough to recommend (calibrated in tests/discovery.test.ts). */
 export const MIN_SCORE = 6;
 
@@ -226,6 +241,10 @@ function describe(matched: Set<Term>, own: string[]): string {
 }
 
 function hitOf(e: Engine, d: Doc, score: number, reason: string): Hit {
+  if (d.kind === 'page') {
+    const p = d.ref as DPage;
+    return { kind: 'page', id: p.id, title: p.n, description: p.d, url: p.u, context: `${p.a} · ${p.t}`, reason, score };
+  }
   if (d.kind === 'tool') {
     const t = d.ref as DTool;
     return { kind: 'tool', id: t.id, title: t.n, description: t.q || t.d, url: toolHref(t), secondary: { label: 'Open the calculator', url: toolAppHref(t) }, context: t.c, reason, score };
@@ -236,23 +255,26 @@ function hitOf(e: Engine, d: Doc, score: number, reason: string): Hit {
     return { kind: 'chapter', id: c.u, title: c.n, description: c.d, url: c.u, secondary: b ? { label: b.n, url: b.u } : undefined, context: b?.n, reason, score };
   }
   const b = d.ref as DBook;
-  return { kind: 'book', id: b.id, title: b.n, description: b.d, url: b.u, context: `${b.c} · ${b.kind === 'publication' ? 'KEVOS® original book' : 'Library collection'}`, reason, score };
+  return { kind: 'book', id: b.id, title: b.n, description: b.d, url: b.u, context: `${b.c} · ${b.kind === 'publication' ? 'BIZOMAT original book' : 'Library collection'}`, reason, score };
 }
 
 export function search(e: Engine, q: Query): Outcome {
   const { terms, own, corrections, bigrams } = expand(e, q);
-  const empty: Outcome = { mode: 'none', tools: [], readings: [], related: [], concepts: [], corrections };
+  const empty: Outcome = { mode: 'none', platform: [], tools: [], readings: [], related: [], concepts: [], corrections };
   if (!terms.length) return empty;
   const scores = scoreDocs(e, terms, bigrams);
   const ranked = [...scores].map(([i, r]) => ({ i, d: e.docs[i], ...r })).sort((a, b) => b.s - a.s);
-  const top = ranked[0]?.s ?? 0;
+  // Tools and readings are judged against the strongest tool or reading, platform pages against the strongest page,
+  // so a product page that fits the question never raises the bar for the calculators and chapters beside it.
+  const top = ranked.find((x) => x.d.kind !== 'page')?.s ?? ranked[0]?.s ?? 0;
+  const topPage = ranked.find((x) => x.d.kind === 'page')?.s ?? 0;
   // The AI's choices (only real catalogue entries) lead; keyword matches follow.
   const picked = [...new Set(q.picks ?? [])].map((id) => e.byId.get(id)).filter((i): i is number => i !== undefined).slice(0, 8)
     .map((i) => ({ i, d: e.docs[i], s: Math.max(top, 1), matched: scores.get(i)?.matched ?? new Set<Term>() }));
   const pickedIds = new Set(picked.map((x) => x.i));
-  if (!picked.length && top < MIN_SCORE) {
+  if (!picked.length && Math.max(top, topPage) < MIN_SCORE) {
     // Nothing strong: offer up to three of the nearest resources as "related", clearly labelled.
-    const near = ranked.slice(0, 3).filter((x) => x.s >= MIN_SCORE / 3).map((x) => hitOf(e, x.d, x.s / Math.max(top, 1), describe(x.matched, own)));
+    const near = ranked.slice(0, 3).filter((x) => x.s >= MIN_SCORE / 3).map((x) => hitOf(e, x.d, Math.min(1, x.s / Math.max(top, topPage, 1)), describe(x.matched, own)));
     return { ...empty, related: near, concepts: own.slice(0, 4) };
   }
   // Coverage: the best results must explain at least a third of the question's meaningful words (directly or through
@@ -260,22 +282,25 @@ export function search(e: Engine, q: Query): Outcome {
   const meaningful = own.filter((t) => t.length > 2 && !/\d/.test(t));
   const covered = (x: (typeof ranked)[number]) => meaningful.filter((o) => [...x.matched].some((m) => m.t === o || tokens(m.from).includes(o))).length / Math.max(1, meaningful.length);
   if (!picked.length && meaningful.length >= 3 && Math.max(...ranked.slice(0, 5).map(covered)) < 0.34) {
-    return { ...empty, related: ranked.slice(0, 3).map((x) => hitOf(e, x.d, x.s / top, describe(x.matched, own))), concepts: meaningful.slice(0, 4) };
+    return { ...empty, related: ranked.slice(0, 3).map((x) => hitOf(e, x.d, Math.min(1, x.s / Math.max(top, topPage, 1)), describe(x.matched, own))), concepts: meaningful.slice(0, 4) };
   }
-  const keep = ranked.filter((x) => x.s >= Math.max(MIN_SCORE, top * 0.32) && !pickedIds.has(x.i));
+  const keep = ranked.filter((x) => x.s >= Math.max(MIN_SCORE, (x.d.kind === 'page' ? topPage : top) * 0.32) && !pickedIds.has(x.i));
   const tools = [...picked.filter((x) => x.d.kind === 'tool'), ...keep.filter((x) => x.d.kind === 'tool')].slice(0, MAX_TOOLS);
   // Readings: chapters first; a book appears when it matches as a whole, and a book is not repeated by its chapters' count.
   const perBook = new Map<string, number>();
   // A reading must match at least two different words, unless the question itself has only one.
   const distinct = (x: (typeof ranked)[number]) => new Set([...x.matched].map((m) => m.t)).size;
-  const readings = [...picked.filter((x) => x.d.kind !== 'tool'), ...keep.filter((x) => x.d.kind !== 'tool' && (own.length <= 1 || distinct(x) >= 2))]
+  const reading = (x: { d: Doc }) => x.d.kind === 'chapter' || x.d.kind === 'book';
+  const readings = [...picked.filter(reading), ...keep.filter((x) => reading(x) && (own.length <= 1 || distinct(x) >= 2))]
     .filter((x) => { const n = perBook.get(x.d.group) ?? 0; perBook.set(x.d.group, n + 1); return n < 2; }).slice(0, MAX_READINGS);
   const toHit = (x: { i: number; d: Doc; s: number; matched: Set<Term> }): Hit => {
-    if (!pickedIds.has(x.i)) return hitOf(e, x.d, Math.round((x.s / Math.max(top, 1)) * 100) / 100, describe(x.matched, own));
+    if (!pickedIds.has(x.i)) return hitOf(e, x.d, Math.min(1, Math.round((x.s / Math.max(x.d.kind === 'page' ? topPage : top, 1)) * 100) / 100), describe(x.matched, own));
     const why = describe(x.matched, own);
-    return { ...hitOf(e, x.d, 1, why === 'Related to your question' ? 'Best fit for your question, chosen by KEVOS® AI' : `Best fit, chosen by KEVOS® AI. ${why}`), ai: true };
+    return { ...hitOf(e, x.d, 1, why === 'Related to your question' ? 'Best fit for your question, chosen by BIZOMAT AI' : `Best fit, chosen by BIZOMAT AI. ${why}`), ai: true };
   };
-  const out: Outcome = { mode: 'results', tools: tools.map(toHit), readings: readings.map(toHit), related: [], concepts: [], corrections };
+  // Platform pages (products, capabilities, documentation, integrations) are shown first, at most one per entry id.
+  const platform = keep.filter((x) => x.d.kind === 'page' && (own.length <= 1 || distinct(x) >= 2)).slice(0, MAX_PLATFORM);
+  const out: Outcome = { mode: 'results', platform: platform.map(toHit), tools: tools.map(toHit), readings: readings.map(toHit), related: [], concepts: [], corrections };
 
   // Related: reviewed Library ↔ Tools connections of the leading results that also match the question.
   const shown = new Set([...out.tools, ...out.readings].map((h) => h.id));
@@ -334,10 +359,11 @@ export function shortlist(e: Engine, q: Query, tools = 14, readings = 6): Candid
   const out: Candidate[] = [];
   let nt = 0, nr = 0;
   for (const d of ranked) {
+    if (d.kind === 'page') continue; // the AI step chooses only among tools and readings
     if (d.kind === 'tool' ? nt >= tools : nr >= readings) continue;
     const h = hitOf(e, d, 0, '');
     if (d.kind === 'tool') nt++; else nr++;
-    out.push({ id: h.id, kind: h.kind, name: cut(h.title, 90), about: cut(h.kind === 'chapter' ? `in ${h.context ?? ''}: ${h.description}` : h.description, 110) });
+    out.push({ id: h.id, kind: h.kind as Candidate['kind'], name: cut(h.title, 90), about: cut(h.kind === 'chapter' ? `in ${h.context ?? ''}: ${h.description}` : h.description, 110) });
     if (nt >= tools && nr >= readings) break;
   }
   return out;

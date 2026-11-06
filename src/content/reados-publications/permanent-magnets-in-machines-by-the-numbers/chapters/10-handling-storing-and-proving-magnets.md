@@ -9,7 +9,7 @@ draft: false
 
 Every chapter so far has treated magnets as parts of machines. This one treats them as objects that people pick up, carry, store, assemble, ship and inspect. Strong rare-earth magnets are hazardous in ways that ordinary parts are not: they pull themselves and anything steel together with forces that rise steeply as the gap closes, they shatter, and their fields affect implants, instruments and electronics. They also arrive from suppliers with properties that cannot be seen and are easy to measure badly.
 
-This chapter covers safe handling and assembly, storage and shipping, incoming inspection with a sampling plan from the KEVOS® acceptance sampling tool, and the baselines that let the plant prove its magnetic parts are still doing their jobs. The error is a batch of magnets accepted on readings that could not detect what was wrong with them.
+This chapter covers safe handling and assembly, storage and shipping, incoming inspection with a sampling plan from the BIZOMAT acceptance sampling tool, and the baselines that let the plant prove its magnetic parts are still doing their jobs. The error is a batch of magnets accepted on readings that could not detect what was wrong with them.
 
 ## Hazards of strong magnets
 
@@ -70,7 +70,7 @@ A **magnetic moment measurement** with a Helmholtz coil and fluxmeter measures t
 
 ### A sampling plan
 
-Testing every magnet in a lot is possible but slow. The plant samples. The KEVOS® [acceptance sampling plan tool](/tools/acceptance-sampling-plan/) designs a single attributes sampling plan: the smallest sample size and acceptance number whose binomial operating characteristic accepts lots at the acceptable quality level with at least one minus the producer's risk, and lots at the rejectable quality level with at most the consumer's risk; it gives the plan's average outgoing quality limit, and checks any plan the user enters.
+Testing every magnet in a lot is possible but slow. The plant samples. The BIZOMAT [acceptance sampling plan tool](/tools/acceptance-sampling-plan/) designs a single attributes sampling plan: the smallest sample size and acceptance number whose binomial operating characteristic accepts lots at the acceptable quality level with at least one minus the producer's risk, and lots at the rejectable quality level with at most the consumer's risk; it gives the plan's average outgoing quality limit, and checks any plan the user enters.
 
 This is an illustration. Coupling magnet segments arrive in lots of 400. The plant wants to accept lots with 1% of segments outside the moment specification at least 95% of the time, and to accept lots with 10% outside it no more than 10% of the time.
 

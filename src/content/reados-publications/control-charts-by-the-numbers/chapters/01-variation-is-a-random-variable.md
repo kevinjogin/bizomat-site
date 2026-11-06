@@ -9,7 +9,7 @@ draft: false
 
 No two spools come off a lathe the same. The cutting tool deflects a little differently each time, the bar stock varies in hardness, the spindle warms and cools, coolant temperature drifts, and the gauge that measures the result has its own scatter. None of these causes can be predicted part by part, but together they produce a pattern that can be predicted very well: a spread of diameters with a stable centre and a stable width. Treating each measurement as a random variable, a quantity whose individual values are uncertain but whose distribution is known, is the starting point of every control chart.
 
-This chapter sets out the few properties of random variables that the rest of the book uses: the mean and standard deviation, the normal distribution and why it appears so often, the rule by which independent sources of variation add, and the reduced spread of a subgroup's average. It then uses the KEVOS® out-of-tolerance tool to predict how many SP-12 spools fall outside their limits, and ends with a supplier's capability claim built on the wrong standard deviation.
+This chapter sets out the few properties of random variables that the rest of the book uses: the mean and standard deviation, the normal distribution and why it appears so often, the rule by which independent sources of variation add, and the reduced spread of a subgroup's average. It then uses the BIZOMAT out-of-tolerance tool to predict how many SP-12 spools fall outside their limits, and ends with a supplier's capability claim built on the wrong standard deviation.
 
 ## Mean, spread and the normal curve
 

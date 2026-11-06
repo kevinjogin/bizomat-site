@@ -4,8 +4,8 @@ subtitle: "A practical guide to enquiries, viable offers and customer commitment
 description: "Build a small business pipeline around evidence, viable pricing and reliable delivery, with a continuous worked example and practical exercises."
 category: Business
 tags: [sales, customers, operations, finance, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-13
@@ -79,10 +79,10 @@ A full enquiry list can hide an unworkable business. Some customers need somethi
 
 This book follows an opportunity from its first evidence to the review after delivery. It connects customer conversations with pricing, capacity, cash timing and practical follow-through. The aim is to help a small business choose better work and make promises it can keep.
 
-The ten chapters use **Fieldnote Studio**, a fictional service business, as a continuous example. Every customer, amount and result in that case is invented for teaching. They are not KEVOS® projects, prices or claims of performance. Exercises produce a small set of useful working records rather than a large sales manual.
+The ten chapters use **Fieldnote Studio**, a fictional service business, as a continuous example. Every customer, amount and result in that case is invented for teaching. They are not BIZOMAT projects, prices or claims of performance. Exercises produce a small set of useful working records rather than a large sales manual.
 
 Read in order to build the complete method, or use the contents to revisit a decision. Financial examples use Australian dollars and exclude GST unless stated. The book provides general business education, not a contract template, professional legal advice or a promise of sales results. Apply relevant local requirements and obtain qualified advice where the consequences warrant it.
 
 ## An independent treatment
 
-Charlie Pidcock's *Managing Your Opportunities* workbook helped identify the value of preparation, questioning, listening and sustained customer relationships. The workbook is mainly prompts for a facilitated workshop. This book does not supply purported answers to its blanks or reproduce its training programme. The chapter sequence, explanations, decision records and numerical examples are independently developed for KEVOS®. Current public guidance is cited where legal or operational claims require it.
+Charlie Pidcock's *Managing Your Opportunities* workbook helped identify the value of preparation, questioning, listening and sustained customer relationships. The workbook is mainly prompts for a facilitated workshop. This book does not supply purported answers to its blanks or reproduce its training programme. The chapter sequence, explanations, decision records and numerical examples are independently developed for BIZOMAT. Current public guidance is cited where legal or operational claims require it.

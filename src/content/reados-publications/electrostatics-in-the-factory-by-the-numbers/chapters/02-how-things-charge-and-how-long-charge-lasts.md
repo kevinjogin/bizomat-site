@@ -9,7 +9,7 @@ draft: false
 
 Every static problem has two halves: something that separates charge, and something that stops it from leaking away. Separation happens constantly, whenever two surfaces touch and part: a shoe and a floor, a film and its backing, powder and a pipe wall, a liquid and a filter. Most of the time the charge leaks back before it amounts to anything. Static becomes a problem only where charging is fast and leakage slow, and the second half is usually easier to change.
 
-This chapter explains the ways materials charge, then how quickly charge leaks away, which depends on a material's conductivity and permittivity through a single time constant. It shows why humidity helps many materials and not others, and uses the KEVOS® heating with humidification tool to work out what it takes to keep the case factory's assembly area at a sensible humidity through a Melbourne winter. It ends with a humidifier that did its job at the air handler and not where the technicians worked.
+This chapter explains the ways materials charge, then how quickly charge leaks away, which depends on a material's conductivity and permittivity through a single time constant. It shows why humidity helps many materials and not others, and uses the BIZOMAT heating with humidification tool to work out what it takes to keep the case factory's assembly area at a sensible humidity through a Melbourne winter. It ends with a humidifier that did its job at the air handler and not where the technicians worked.
 
 ## Contact and separation
 

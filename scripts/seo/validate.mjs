@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { HOST, SITE_RE } from './lib/site.mjs';
 
 const args = process.argv.slice(2);
 const DIST = path.resolve(args.includes('--dist') ? args[args.indexOf('--dist') + 1] : 'dist');
@@ -33,7 +34,7 @@ export function checkSchema(doc) {
       for (const type of [].concat(node['@type'] ?? [])) {
         for (const prop of REQUIRED[type] ?? []) if (node[prop] == null || node[prop] === '') problems.push(`${type} missing ${prop}`);
         if (type === 'BreadcrumbList') {
-          for (const item of node.itemListElement ?? []) if (!/^https:\/\/kevos\.com\//.test(item.item ?? '')) problems.push('Breadcrumb item without an absolute kevos.com URL');
+          for (const item of node.itemListElement ?? []) if (!new RegExp(`^${SITE_RE}/`).test(item.item ?? '')) problems.push(`Breadcrumb item without an absolute ${HOST} URL`);
         }
         if (/rating|review/i.test(JSON.stringify(node)) && /aggregateRating|reviewCount|ratingValue/.test(JSON.stringify(node))) problems.push(`${type} contains ratings or reviews; none are published on the site`);
       }
@@ -44,7 +45,7 @@ export function checkSchema(doc) {
 
 export function checkRobots(text) {
   const problems = [];
-  if (!/^Sitemap: https:\/\/kevos\.com\/sitemap-index\.xml$/m.test(text)) problems.push('robots.txt does not point to the sitemap index');
+  if (!new RegExp(`^Sitemap: ${SITE_RE}/sitemap-index\\.xml$`, 'm').test(text)) problems.push('robots.txt does not point to the sitemap index');
   const star = text.split(/\n(?=User-agent:)/i).find((g) => /^User-agent:\s*\*\s*$/im.test(g)) ?? '';
   if (/^Disallow:\s*\/\s*$/im.test(star)) problems.push('robots.txt blocks the whole site for all crawlers');
   for (const p of ['/tools/', '/reados/', '/services/', '/contact/']) {

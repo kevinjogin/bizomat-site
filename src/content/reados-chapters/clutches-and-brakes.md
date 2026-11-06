@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ Clutches, brakes and torque limiters control when and how motion is transmitted,
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow manufacturers' selection procedures and applicable machine safety requirements.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow manufacturers' selection procedures and applicable machine safety requirements.*

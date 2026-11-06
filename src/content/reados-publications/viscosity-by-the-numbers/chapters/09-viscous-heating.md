@@ -9,7 +9,7 @@ draft: false
 
 Every pascal of pressure that oil loses without doing useful work becomes heat in the oil. A pressure drop in a line, a leak past a spool, oil spilling over a relief valve, the shear in a pump's sliding films: each one turns mechanical energy into internal energy, and nothing else. That heat raises the oil's temperature, the higher temperature lowers its viscosity, and the lower viscosity changes the losses that produced the heat. A hydraulic system's running temperature is the point where that loop comes to rest.
 
-This chapter calculates the heating where oil is throttled across a valve, using the KEVOS® liquid throttling tool, builds HPU-40's heat balance with the KEVOS® hydraulic power unit sizing tool, adds the feedback through viscosity that the simple balance leaves out, and sizes the cooler that ends the summer peak. It ends with the original cooler sizing, which was done at the wrong ambient temperature.
+This chapter calculates the heating where oil is throttled across a valve, using the BIZOMAT liquid throttling tool, builds HPU-40's heat balance with the BIZOMAT hydraulic power unit sizing tool, adds the feedback through viscosity that the simple balance leaves out, and sizes the cooler that ends the summer peak. It ends with the original cooler sizing, which was done at the wrong ambient temperature.
 
 ## Where the heat comes from
 

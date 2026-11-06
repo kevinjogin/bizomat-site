@@ -7,7 +7,7 @@ tags:
   - projects
   - product-development
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ A stage gate is an investment decision, not an inspection. It works when each st
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -218,4 +218,4 @@ Every serious estimate has a range, and the range is the most honest information
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project cost estimating, budgeting and reserve analysis, on earned value practice for management reserve, and on G. Winch, A. Usmani and A. Edkins (1998) on estimating ranges during design development, Construction Management and Economics. Examples and figures in this article are illustrations. This article is general information, not financial advice.*
+*Source: BIZOMAT notes, drawing on teaching material on project cost estimating, budgeting and reserve analysis, on earned value practice for management reserve, and on G. Winch, A. Usmani and A. Edkins (1998) on estimating ranges during design development, Construction Management and Economics. Examples and figures in this article are illustrations. This article is general information, not financial advice.*

@@ -7,7 +7,7 @@ tags:
   - operations
   - process-improvement
   - systems
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -195,4 +195,4 @@ HVAC controls sense, decide and act, and their configuration often matters more 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified controls contractor or building services engineer.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace advice from a qualified controls contractor or building services engineer.*

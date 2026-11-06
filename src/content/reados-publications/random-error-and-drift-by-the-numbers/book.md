@@ -4,8 +4,8 @@ subtitle: "Noise, averaging, correlated noise, random walks, Allan deviation, th
 description: "Separate noise, random walk and drift in production measurements by numbers: averaging, correlated noise, Allan deviation, thermal noise, line speed, recalibration and uncertainty budgets."
 category: Engineering
 tags: [quality, manufacturing, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -85,7 +85,7 @@ It assumes algebra, the idea of a standard deviation and a willingness to use a 
 
 The book follows **CW-5**, a fictional checkweigher at the end of a packing line that fills **500 g** packs of dry product at **120 packs a minute**. Each pack crosses a weigh conveyor on a single strain-gauge load cell of 1 kg capacity, rated output 2 mV/V, excited at 5 V, read by an analogue-to-digital converter at **1,000 samples a second**. Each pack spends about 300 ms on the weigh conveyor; the first 100 ms are lost to the transient as it arrives, leaving a **200 ms** averaging window. Between packs, the controller re-zeroes the scale on the empty conveyor. Packs below a set threshold are rejected.
 
-The noise model used throughout is invented for teaching but realistic in form: broadband electrical and mechanical noise of **0.5 g** standard deviation per sample; a correlated vibration component of **0.2 g** with a correlation time of **20 ms**; a slow **random walk** in the zero of about **0.05 g** per square root of a minute; and a temperature-driven **span drift** that wanders with a standard deviation of **0.15 g** and a time constant of 30 minutes. This is an illustration. None of it describes a KEVOS® client, supplier or product.
+The noise model used throughout is invented for teaching but realistic in form: broadband electrical and mechanical noise of **0.5 g** standard deviation per sample; a correlated vibration component of **0.2 g** with a correlation time of **20 ms**; a slow **random walk** in the zero of about **0.05 g** per square root of a minute; and a temperature-driven **span drift** that wanders with a standard deviation of **0.15 g** and a time constant of 30 minutes. This is an illustration. None of it describes a BIZOMAT client, supplier or product.
 
 ## Source limits and professional responsibility
 

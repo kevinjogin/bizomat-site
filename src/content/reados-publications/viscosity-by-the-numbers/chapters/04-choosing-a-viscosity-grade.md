@@ -3,13 +3,13 @@ book: viscosity-by-the-numbers
 chapterSlug: choosing-a-viscosity-grade
 order: 4
 title: "Choosing a viscosity grade"
-description: "Use ISO viscosity grades, a machine maker's viscosity window and the machine's temperature range to choose an oil grade, check it with the KEVOS® tool, and avoid a heavier-is-safer choice."
+description: "Use ISO viscosity grades, a machine maker's viscosity window and the machine's temperature range to choose an oil grade, check it with the BIZOMAT tool, and avoid a heavier-is-safer choice."
 draft: false
 ---
 
 Most oil-filled machines arrive with a recommended grade, and most of the time it is right. Problems arise when a machine is moved to a hotter or colder place, when its duty changes, when the recommended product is unavailable or when someone decides that a heavier oil will give more protection. Each of these needs the same check: does the chosen grade keep the oil's viscosity inside the machine's limits at every temperature the machine will see?
 
-This chapter explains the ISO viscosity classification and the other grading systems an engineer meets, sets out what a machine maker's viscosity window means, and works the grade choice for HPU-40 across three candidate grades. It uses the KEVOS® lubricant viscosity check, which applies Chapter 3's relation to both ends of the window at once, and ends with a summer complaint that nearly led to a heavier oil than the machine needed.
+This chapter explains the ISO viscosity classification and the other grading systems an engineer meets, sets out what a machine maker's viscosity window means, and works the grade choice for HPU-40 across three candidate grades. It uses the BIZOMAT lubricant viscosity check, which applies Chapter 3's relation to both ends of the window at once, and ends with a summer complaint that nearly led to a heavier oil than the machine needed.
 
 ## The ISO viscosity classification
 

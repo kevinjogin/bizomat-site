@@ -15,7 +15,7 @@ Begin with the work the fixture must make repeatable. The best brief describes a
 
 This is an illustration. A fictional workshop machines an inspection bracket from a nominal 150 mm by 80 mm by 16 mm blank. A prepared bottom face, a long side and an end are available as locating references. A feature pattern is machined from the top.
 
-The exercise is to locate the bracket consistently, resist the defined machining loads, permit tool and inspection access, and make loading and unloading understandable to another competent operator. The bracket, loads and results throughout the book are invented. They are not a production design or a KEVOS® project.
+The exercise is to locate the bracket consistently, resist the defined machining loads, permit tool and inspection access, and make loading and unloading understandable to another competent operator. The bracket, loads and results throughout the book are invented. They are not a production design or a BIZOMAT project.
 
 The first process proposal is a stationary fixture on a milling machine. This scope matters. A rotating workholder would introduce additional speed, balance, centrifugal-force and retention questions that the present case does not address.
 

@@ -4,8 +4,8 @@ subtitle: "Absorption, focusing, cutting, welding, marking, gases, safety and co
 description: "How metals absorb laser light and how to plan laser cutting, welding and marking with numbers: focus, power density, heat flow, assist gas, safety and cost per part."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Electrodynamics of Solids: Optical Properties of Electrons in Matter"
     creator: "M. Dressel and G. Grüner, Cambridge University Press"
     year: "2002"
-    note: "Copyright work, used only as a map of ideas: how the reflectivity and absorptivity of a metal follow from its conductivity, the long-wavelength Hagen–Rubens relation and its limits, the optical skin depth, and the Fresnel equations at oblique incidence. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: how the reflectivity and absorptivity of a metal follow from its conductivity, the long-wavelength Hagen–Rubens relation and its limits, the optical skin depth, and the Fresnel equations at oblique incidence. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Laser Material Processing, fourth edition"
     creator: "W. M. Steen and J. Mazumder, Springer"
     year: "2010"
@@ -61,7 +61,7 @@ A laser puts a great deal of power into a very small spot, but only the part of 
 
 This book shows how to plan and check laser processing with numbers. It starts with where a laser's energy goes and why metals reflect so much of it, then works through angle and polarisation, beam quality and focusing, heat flow and hardened cut edges, cutting speed and cost, assist gases, welding and pulsed marking. It finishes with the parts of a laser cell that are easy to overlook until they fail: guarding, fume extraction, the chiller and the hour rate that pays for it all.
 
-It is for manufacturing and production engineers, laser operators moving into process planning, estimators and sheet-metal designers. It assumes engineering or trade training and comfort with power, energy and heat; the optics and electromagnetism are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for manufacturing and production engineers, laser operators moving into process planning, estimators and sheet-metal designers. It assumes engineering or trade training and comfort with power, energy and heat; the optics and electromagnetism are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -74,13 +74,13 @@ Every chapter follows one laser cell. This is an illustration. A sheet-metal and
 
 The parts that recur are 1.5 mm grade 304 stainless steel cabinet doors cut from 760 × 560 mm blanks, 6 mm grade 350 steel mounting brackets, 3 mm grade 5052 aluminium panels, 3 mm copper busbar links, welded stainless boxes and engraved nameplates.
 
-Powers, speeds, absorptivities, prices and test results are the cell's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, laser maker, gas supplier or customer. All prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
+Powers, speeds, absorptivities, prices and test results are the cell's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, laser maker, gas supplier or customer. All prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
 
 ## How to use the book
 
 Read Chapters 1 to 4 in order: they set out absorption, angle and focusing, which every later chapter uses. Chapters 5 to 9 can then be read in any order. Chapter 10 brings together safety, fume, cooling and cost, and the cell's process record.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Optical constants, absorptivities and cutting chart speeds are assumed values for illustration: real values depend on the alloy, the surface and the machine, and come from measurements and the laser maker's process data.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Optical constants, absorptivities and cutting chart speeds are assumed values for illustration: real values depend on the alloy, the surface and the machine, and come from measurements and the laser maker's process data.
 
 ## Source limits and professional responsibility
 

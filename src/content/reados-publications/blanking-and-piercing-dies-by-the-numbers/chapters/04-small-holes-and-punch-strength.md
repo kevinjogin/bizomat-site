@@ -76,7 +76,7 @@ where E is the steel's modulus, about 210,000 MPa, I is the second moment of are
 - a punch held in its punch plate and **free** at the cutting end until it touches the strip: fixed at one end, free at the other, **K = 2**;
 - a punch **guided** close to its tip by a bushed stripper plate: fixed at one end and held in line at the other, K of about **0.7**.
 
-Real punches are not ideal columns, so the result is used with a generous margin: a punch should not work above about a third of its buckling load. The KEVOS® [column buckling calculator](/tools/column-buckling/) does the arithmetic for other end conditions.
+Real punches are not ideal columns, so the result is used with a generous margin: a punch should not work above about a third of its buckling load. The BIZOMAT [column buckling calculator](/tools/column-buckling/) does the arithmetic for other end conditions.
 
 **The Ø8.58 mm hole punches.** I = π × 8.58⁴ ÷ 64 = 266 mm⁴. With 30 mm unsupported and the free-end factor, P_cr = π² × 210,000 × 266 ÷ 60² = about 153 kN, ten times the 15.1 kN they carry. No concern.
 

@@ -9,7 +9,7 @@ draft: false
 
 A spring that works once, or a few times a day, is designed for static strength. A spring that works every time a machine cycles is designed for fatigue, and fatigue in springs is decided less by the highest stress than by how far the stress swings each cycle. The VM-8's lock plunger spring moves every time a tool is changed. In a busy job shop that is tens of times an hour and hundreds of thousands of times a year, and the previous owner's records showed two broken springs in three years.
 
-This chapter checks the plunger springs, old and new, for fatigue with the KEVOS® spring fatigue tool, using wire endurance strengths from Zimmerli's data. Metal Fatigue by the Numbers explains the theory behind those strengths in its [chapter on springs](/reados/publications/metal-fatigue-by-the-numbers/springs/); this chapter applies it. Its mistake is the one that explained the broken springs: the stroke on the drawing was not the stroke in the machine.
+This chapter checks the plunger springs, old and new, for fatigue with the BIZOMAT spring fatigue tool, using wire endurance strengths from Zimmerli's data. Metal Fatigue by the Numbers explains the theory behind those strengths in its [chapter on springs](/reados/publications/metal-fatigue-by-the-numbers/springs/); this chapter applies it. Its mistake is the one that explained the broken springs: the stroke on the drawing was not the stroke in the machine.
 
 ## The stress cycle of a spring
 
@@ -33,7 +33,7 @@ The preload raises the mean stress but does not change the alternating stress. T
 
 Whether a spring needs an infinite-life check depends on how many cycles it will see. The VM-8's shop expects about 40 tool changes an hour while machining, over two shifts of 8 hours, on 250 days a year: 40 × 16 × 250 = 160,000 cycles a year. Over a ten-year rebuild life that is 1.6 million cycles, and the plunger moves once per change. This is an illustration.
 
-Steel springs that survive a few million cycles at a given stress range generally survive indefinitely, so a spring expected to see more than about a million cycles is checked for infinite life, which is what the KEVOS® fatigue tool does. A spring that cycles a few thousand times in its life, such as a lid counterbalance, can be designed for finite life at a higher stress range, using the spring maker's life data; that is not what this tool checks, and the shop does not try to stretch it to that case.
+Steel springs that survive a few million cycles at a given stress range generally survive indefinitely, so a spring expected to see more than about a million cycles is checked for infinite life, which is what the BIZOMAT fatigue tool does. A spring that cycles a few thousand times in its life, such as a lid counterbalance, can be designed for finite life at a higher stress range, using the spring maker's life data; that is not what this tool checks, and the shop does not try to stretch it to that case.
 
 ## Wire strengths for fatigue
 

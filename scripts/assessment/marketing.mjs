@@ -1,4 +1,4 @@
-// Marketing assets for the KEVOS® Engineering Problem Assessment, written to public/assessment/:
+// Marketing assets for the BIZOMAT Engineering Problem Assessment, written to public/assessment/:
 //   kevos-engineering-problem-assessment-brochure.pdf  one-page A4 brochure for email and print
 //   kevos-assessment-qr-card.pdf                       printable A6 QR card
 //   kevos-assessment-social.png                        1200 × 630 social sharing (Open Graph) image
@@ -13,12 +13,12 @@ const URL_TEXT = 'kevos.com/assessment';
 const darkArt = illustration({ ink: T.light, muted: '#8f8b83', orange: '#ff8c47', card: '#1c1d1b', panel: T.graphite, soft: 'rgba(255,140,71,.14)' });
 const grid = (c) => `background-image: linear-gradient(${c} 1px, transparent 1px), linear-gradient(90deg, ${c} 1px, transparent 1px); background-size: 22px 22px;`;
 const base = `${FONT_CSS} * { box-sizing: border-box; } html, body { margin: 0; } body { font-family: 'Inter Tight', 'Segoe UI', Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-.display { font-family: 'KEVOS Display', sans-serif; font-weight: 700; letter-spacing: -.01em; }
+.display { font-family: 'BIZOMAT Display', sans-serif; font-weight: 700; letter-spacing: -.01em; }
 .mono { font-family: Consolas, 'Cascadia Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }`;
 
 const steps = [
   ['Submit', 'Describe one problem using the enquiry form. No payment is taken.'],
-  ['Confirm', 'KEVOS® checks suitability and confirms the scope in writing.'],
+  ['Confirm', 'BIZOMAT checks suitability and confirms the scope in writing.'],
   ['Pay', `Pay ${ASSESSMENT.priceLabel} using the payment instructions provided.`],
   ['Book', 'After payment is verified, book a 30-minute remote meeting.'],
   ['Receive', 'Receive the one-page PDF recommendation.'],
@@ -38,7 +38,7 @@ const inclusions = [
 ];
 
 function brochureHtml() {
-  return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>KEVOS® Engineering Problem Assessment brochure</title><style>${base}
+  return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>BIZOMAT Engineering Problem Assessment brochure</title><style>${base}
 @page { size: A4; margin: 0; }
 body { width: 210mm; height: 297mm; color: ${T.ink}; font-size: 8.4pt; line-height: 1.4; }
 .page { height: 297mm; display: flex; flex-direction: column; overflow: hidden; }
@@ -49,7 +49,7 @@ h1 { margin: 2mm 0 0; font-size: 22pt; line-height: 1.02; }
 h1 em { display: block; font-style: normal; color: #ff8c47; }
 .lines { margin: 3mm 0 0; color: #cfcbc3; font-size: 8.6pt; line-height: 1.45; }
 .price { display: flex; align-items: center; gap: 3.5mm; margin-top: 4mm; padding: 2.6mm 3.5mm; border: .8pt solid rgba(241,239,234,.22); border-left: 1.4mm solid ${T.orange}; border-radius: 1mm; background: rgba(28,29,27,.85); max-width: 100%; }
-.price b { font-family: 'KEVOS Display', sans-serif; font-size: 23pt; line-height: 1; flex: none; }
+.price b { font-family: 'BIZOMAT Display', sans-serif; font-size: 23pt; line-height: 1; flex: none; }
 .price span { display: block; font-weight: 650; font-size: 8.8pt; }
 .price small { display: block; color: ${T.lightMuted}; font-size: 6.8pt; line-height: 1.35; }
 .art { padding: 2.5mm; border: .7pt solid rgba(241,239,234,.16); border-radius: 3mm; background: rgba(19,20,18,.85); }
@@ -73,7 +73,7 @@ li { margin-bottom: .6mm; }
 .preview { display: grid; grid-template-columns: 30mm 1fr; gap: 4mm; align-items: center; }
 .preview p { margin: 0; }
 .mini { height: 40mm; padding: 2.6mm; border: .8pt solid ${T.line}; border-top: 1.4mm solid ${T.orange}; border-radius: 1mm; box-shadow: 0 1.5mm 4mm rgba(0,0,0,.12); background: #fff; }
-.mini .t { font-family: 'KEVOS Display', sans-serif; font-weight: 700; font-size: 5pt; margin-bottom: 1.4mm; }
+.mini .t { font-family: 'BIZOMAT Display', sans-serif; font-weight: 700; font-size: 5pt; margin-bottom: 1.4mm; }
 .mini i { display: block; height: 1mm; margin: .95mm 0; background: #d9d6cf; border-radius: .5mm; }
 .mini i.o { background: ${T.orange}; width: 70%; }
 .mini i.s { width: 60%; }
@@ -82,7 +82,7 @@ li { margin-bottom: .6mm; }
 .note { margin: 1.8mm 0 0; font-size: 7.4pt; color: ${T.muted}; }
 .qr { display: grid; grid-template-columns: 28mm 1fr; gap: 4mm; align-items: center; padding: 2.6mm; border: .8pt solid ${T.line}; border-radius: 1.5mm; }
 .qr svg { width: 28mm; height: 28mm; display: block; }
-.qr strong { display: block; font-family: 'KEVOS Display', sans-serif; font-size: 10.5pt; margin-bottom: 1mm; }
+.qr strong { display: block; font-family: 'BIZOMAT Display', sans-serif; font-size: 10.5pt; margin-bottom: 1mm; }
 .qr span { color: ${T.accent}; font-weight: 700; font-size: 9.6pt; }
 .foot { display: flex; justify-content: space-between; gap: 6mm; margin: 0 12mm; padding: 2.6mm 0 6mm; border-top: .8pt solid ${T.line}; font-size: 6.6pt; color: ${T.muted}; }
 </style></head><body><div class="page">
@@ -111,19 +111,19 @@ li { margin-bottom: .6mm; }
     <section class="qr">${qrSvg(160)}<div><strong>Request an assessment</strong>Scan the code or visit<br><span>${URL_TEXT}</span></div></section>
   </div>
 </main>
-<footer class="foot"><span>KEVOS® | kevos.com · KEVOS® is a registered Australian trade mark.</span><span>A preliminary desktop assessment, not certification or design sign-off.</span></footer>
+<footer class="foot"><span>BIZOMAT | kevos.com · BIZOMAT is a registered Australian trade mark.</span><span>A preliminary desktop assessment, not certification or design sign-off.</span></footer>
 </div></body></html>`;
 }
 
 function qrCardHtml() {
-  return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>KEVOS® assessment QR card</title><style>${base}
+  return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>BIZOMAT assessment QR card</title><style>${base}
 @page { size: 105mm 148mm; margin: 0; }
 body { width: 105mm; height: 148mm; color: ${T.ink}; }
 .card { position: relative; height: 148mm; padding: 9mm 9mm 7mm; display: flex; flex-direction: column; align-items: center; text-align: center; border-top: 3mm solid ${T.orange}; }
 .e { margin: 5mm 0 0; font-size: 6.6pt; color: ${T.accent}; }
 h1 { margin: 1.5mm 0 0; font-size: 15pt; line-height: 1.05; }
 .p { margin: 2mm 0 0; font-size: 9pt; }
-.p b { font-family: 'KEVOS Display', sans-serif; font-size: 16pt; margin-right: 1.5mm; }
+.p b { font-family: 'BIZOMAT Display', sans-serif; font-size: 16pt; margin-right: 1.5mm; }
 .qr { margin-top: 5mm; padding: 2mm; border: .8pt solid ${T.line}; border-radius: 2mm; }
 .qr svg { width: 58mm; height: 58mm; display: block; }
 .cta { margin: 4mm 0 0; font-weight: 700; font-size: 10pt; }
@@ -142,7 +142,7 @@ ${wordmark('light', 18)}
 }
 
 function socialHtml(width, height, { banner = false } = {}) {
-  return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>KEVOS® assessment</title><style>${base}
+  return `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><title>BIZOMAT assessment</title><style>${base}
 body { width: ${width}px; height: ${height}px; overflow: hidden; background: ${T.graphite}; color: ${T.light}; ${grid('rgba(255,140,71,.07)')} }
 .wrap { position: relative; height: 100%; display: grid; grid-template-columns: ${banner ? '1.15fr .85fr' : '1.05fr .95fr'}; align-items: center; gap: 30px; padding: ${banner ? '56px 72px' : '58px 64px'}; }
 .wrap::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: ${T.orange}; }
@@ -150,7 +150,7 @@ body { width: ${width}px; height: ${height}px; overflow: hidden; background: ${T
 h1 { margin: 14px 0 0; font-size: ${banner ? 64 : 58}px; line-height: 1.02; }
 h1 em { display: block; font-style: normal; color: #ff8c47; }
 .price { display: flex; align-items: center; gap: 18px; margin-top: 30px; }
-.price b { font-family: 'KEVOS Display', sans-serif; font-size: ${banner ? 64 : 60}px; line-height: 1; }
+.price b { font-family: 'BIZOMAT Display', sans-serif; font-size: ${banner ? 64 : 60}px; line-height: 1; }
 .price span { font-size: 22px; font-weight: 650; }
 .price small { display: block; margin-top: 4px; color: ${T.lightMuted}; font-size: 17px; font-weight: 450; }
 .url { margin-top: 22px; font-size: 21px; color: ${T.lightMuted}; }

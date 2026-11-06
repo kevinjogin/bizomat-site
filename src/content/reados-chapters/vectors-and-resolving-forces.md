@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -209,4 +209,4 @@ Forces are vectors, and their direction matters as much as their size. Resolving
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace lifting plans, equipment ratings or engineering advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not replace lifting plans, equipment ratings or engineering advice.*

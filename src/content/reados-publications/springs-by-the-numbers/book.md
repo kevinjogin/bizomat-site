@@ -4,8 +4,8 @@ subtitle: "Rate, stress, fatigue and fit of compression, extension, disc, torsio
 description: "How to check and specify mechanical springs: rate and energy, compression, extension, disc, torsion, bar and flat springs, fatigue, and the springs that set forces in machines."
 category: Engineering
 tags: [design, manufacturing, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Concepts of Theoretical Solid State Physics"
     creator: "A. Altland and B. Simons"
     year: "2001"
-    note: "Lecture notes released for verbatim copying only, so treated here as a protected work. Used only as a map of ideas: the harmonic approximation, in which every small deformation about equilibrium behaves as a spring storing energy in proportion to the square of the displacement, and the way springs combine into chains and networks. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Lecture notes released for verbatim copying only, so treated here as a protected work. Used only as a map of ideas: the harmonic approximation, in which every small deformation about equilibrium behaves as a spring storing energy in proportion to the square of the displacement, and the way springs combine into chains and networks. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Shigley's Mechanical Engineering Design, tenth edition"
     creator: "R. G. Budynas and J. K. Nisbett, McGraw-Hill Education"
     year: "2015"
@@ -61,7 +61,7 @@ A spring is a part designed to deflect. Most machine parts are made stiff so tha
 
 This book shows how to check and specify mechanical springs with numbers. It starts with rate, energy and springs acting together, then works through helical compression springs, from checking one to designing one and checking it for fatigue, then square-wire and nested springs, extension springs and their hooks, disc spring stacks, torsion springs, torsion bars and flat springs. It finishes with the springs that set forces and pressures: detents, relief valves and spring-applied clamps.
 
-It is for mechanical design and maintenance engineers, machine builders and fitters. It assumes engineering or trade training and comfort with force, stress and stiffness; the spring formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design and maintenance engineers, machine builders and fitters. It assumes engineering or trade training and comfort with force, stress and stiffness; the spring formulas are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -74,13 +74,13 @@ Every chapter follows one machine. This is an illustration. A job shop in Ballar
 - **Hydraulics:** a small power unit with a direct-acting relief valve, and a spring-applied, hydraulically released brake on the rotary table.
 - **First job:** a fixture whose pressure pads are pushed by heavy springs in tight pockets.
 
-Loads, dimensions, materials, allowable stresses and test figures are the shop's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, machine maker or supplier's data.
+Loads, dimensions, materials, allowable stresses and test figures are the shop's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, machine maker or supplier's data.
 
 ## How to use the book
 
 Read Chapter 1 first: it sets out rate, energy and how springs combine, which every later chapter uses. Chapters 2 to 4 cover helical compression springs and should be read in order. The later chapters can be read in any order once Chapter 2 is familiar. Chapter 10 also covers the inspection routine and records the shop adopted.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Wire strengths, allowable stresses and friction values are typical figures for illustration; a real design uses the spring maker's data for the actual wire and process.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Wire strengths, allowable stresses and friction values are typical figures for illustration; a real design uses the spring maker's data for the actual wire and process.
 
 ## Source limits and professional responsibility
 

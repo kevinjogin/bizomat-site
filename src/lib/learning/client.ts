@@ -1,4 +1,4 @@
-// Browser side of KEVOS® learning paths: the /api/learn calls (with time limits), chapter outlines, and session
+// Browser side of BIZOMAT learning paths: the /api/learn calls (with time limits), chapter outlines, and session
 // progress. Nothing here is stored beyond the browser tab (sessionStorage), and no personal details are collected.
 import type { Depth, Intent } from './retrieve.ts';
 import type { Course, Lesson, PlanFromWorker } from './course.ts';

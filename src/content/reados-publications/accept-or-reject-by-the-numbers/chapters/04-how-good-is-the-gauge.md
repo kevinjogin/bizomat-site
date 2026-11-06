@@ -3,13 +3,13 @@ book: accept-or-reject-by-the-numbers
 chapterSlug: how-good-is-the-gauge
 order: 4
 title: "How good is the gauge?"
-description: "Judge a gauge three ways: a Type 1 study of repeatability and bias with the KEVOS® gauge check, the test uncertainty ratio, and the money a better gauge would save in wrong decisions."
+description: "Judge a gauge three ways: a Type 1 study of repeatability and bias with the BIZOMAT gauge check, the test uncertainty ratio, and the money a better gauge would save in wrong decisions."
 draft: false
 ---
 
 Chapters 2 and 3 took the air gauge's uncertainty as given and asked what decisions to make with it. This chapter asks whether the gauge itself is good enough, and what a better one would be worth. There are three common ways to answer, and they can disagree. A gauge study measures the gauge's repeatability and bias against a reference and compares them with the tolerance. A test uncertainty ratio compares the whole uncertainty budget with the tolerance. And the economic view asks how much money the gauge's error costs in wrong decisions, and therefore what a better gauge would save.
 
-The chapter runs a Type 1 gauge study on the air gauge with the KEVOS® gauge repeatability and bias check, finds and fixes a fault, explains why the study's repeatability differs from the budget's, prices better gauges using the method of Chapter 3, and ends with a gauge set to a master whose value had been entered wrongly.
+The chapter runs a Type 1 gauge study on the air gauge with the BIZOMAT gauge repeatability and bias check, finds and fixes a fault, explains why the study's repeatability differs from the budget's, prices better gauges using the method of Chapter 3, and ends with a gauge set to a master whose value had been entered wrongly.
 
 ## The Type 1 study
 
@@ -32,7 +32,7 @@ This is an illustration. The air gauge was set with a 25.0100 mm master ring, an
 
 ```figure
 type: compare
-title: The air gauge's Type 1 study, from the KEVOS® gauge check
+title: The air gauge's Type 1 study, from the BIZOMAT gauge check
 cols: First study | After cleaning and re-setting
 rowhead: Result
 - Readings | 25, mean 25.01012 mm, s 0.62 µm | 25, mean 25.01005 mm, s 0.45 µm

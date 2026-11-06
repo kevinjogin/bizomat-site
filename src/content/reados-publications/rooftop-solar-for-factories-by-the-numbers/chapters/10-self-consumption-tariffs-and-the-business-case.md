@@ -9,7 +9,7 @@ draft: false
 
 A kilowatt-hour from the roof is worth what it saves or earns, and that depends on where it goes. Used in the factory, it replaces a kilowatt-hour that would have been bought from the retailer at the full energy rate. Exported to the grid, it earns a feed-in credit that is usually a fraction of that. Curtailed by an export limit, it earns nothing. The yield estimate of Chapter 4 says how many kilowatt-hours the array makes; the business case depends on how they split between those three uses, on the costs of running the array, and on how long the business will be there to collect.
 
-This chapter values SF-90's energy, builds the business case with the KEVOS® appraisal tools, tests it against a dull year and an early move, and plans the loan that pays for it. It ends with a business case that valued every kilowatt-hour at the retail rate.
+This chapter values SF-90's energy, builds the business case with the BIZOMAT appraisal tools, tests it against a dull year and an early move, and plans the loan that pays for it. It ends with a business case that valued every kilowatt-hour at the retail rate.
 
 ## Where the energy goes
 

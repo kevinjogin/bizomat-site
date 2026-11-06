@@ -55,7 +55,7 @@ Ask: How many invoices are overdue? What is the ageing of receivables? How much 
 ## Exercise
 Take the last three complete months. Prepare one table with **sales recorded | cash received | direct costs | overheads | profit before tax | closing cash | unpaid invoices**. Explain every large difference between profit and changes in cash. If you cannot reconcile it, that is an immediate bookkeeping improvement task.
 
-*KEVOS learning material; bookkeeping and tax rules depend on the business and should be checked with a professional.*
+*BIZOMAT learning material; bookkeeping and tax rules depend on the business and should be checked with a professional.*
 
 
 ## Extended study: applying the method

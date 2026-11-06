@@ -4,8 +4,8 @@ subtitle: "Free area, blade geometry, pressure drop, rain, mesh, natural ventila
 description: "Design and make weather louvres by numbers: airflow and free area, blade pitch and overlap, pressure drop, rain penetration, mesh, stack ventilation, movable blades, wind loads and cut lists."
 category: Engineering
 tags: [design, manufacturing, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -77,7 +77,7 @@ It assumes basic algebra and trigonometry and some familiarity with folded sheet
 
 The book follows **PR-30**, the fictional compressor plant room of a small food factory. The room is 6.0 m by 5.0 m in plan and 4.0 m high, with one external wall facing south and another facing east. It houses two screw air compressors and a refrigerated air dryer, which together release about **36 kW** of heat into the room when running. Fresh air enters through a fixed weather louvre, **2,400 mm wide by 1,500 mm high**, low in the south wall. Two wall fans exhaust warm air through a motorised louvre high in the east wall. When the compressors stop, the motorised louvre opens and the room ventilates naturally.
 
-All dimensions, loads, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Air is taken at 35 °C, the summer design outdoor temperature in the case, with a density of about 1.15 kg/m³ and a specific heat of about 1.006 kJ/kg·K.
+All dimensions, loads, prices and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Air is taken at 35 °C, the summer design outdoor temperature in the case, with a density of about 1.15 kg/m³ and a specific heat of about 1.006 kJ/kg·K.
 
 ## Source limits and professional responsibility
 

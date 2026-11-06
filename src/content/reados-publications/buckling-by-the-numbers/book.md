@@ -4,8 +4,8 @@ subtitle: "Columns, struts, bracing, cylinder rods, heated pipes, thin shells an
 description: "How compression members buckle and how to check them: Euler, effective length, sections, Johnson and secant formulas, bracing, cylinder rods, heat, vacuum and temporary frames."
 category: Engineering
 tags: [design, validation, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Gauge Fields in Condensed Matter, Volume I: Superflow and Vortex Lines (Disorder Fields, Phase Transitions)"
     creator: "H. Kleinert, World Scientific, Singapore"
     year: "1989"
-    note: "In copyright. Used only as a map for the physics behind Chapters 1 and 5: an energy expanded about an equilibrium whose quadratic term changes sign at a critical point, spontaneous symmetry breaking, and the smoothing of a transition by an applied field. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the physics behind Chapters 1 and 5: an energy expanded about an equilibrium whose quadratic term changes sign at a critical point, spontaneous symmetry breaking, and the smoothing of a transition by an applied field. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Theory of Elastic Stability, second edition"
     creator: "S. P. Timoshenko and J. M. Gere, McGraw-Hill"
     year: "1961"
@@ -91,7 +91,7 @@ A straight member in compression does not fail the way intuition expects. Long b
 
 This book shows how to calculate buckling loads and how to keep them. It starts from Euler's load for a perfect pin-ended strut and the energy picture of buckling as a fork in the road, then adds, one chapter at a time, the things that real members have: end conditions and bracing, sections with weak axes, yielding, crookedness and offset loads. It applies them to bracing, cylinder rods and screws, heated members, thin shells under vacuum and temporary lifting frames, and finishes with how to prove and inspect what was built.
 
-It is for mechanical and structural engineers, designers, fabrication and maintenance supervisors and technicians who design, check, build or inspect members in compression. It assumes school physics, algebra and the idea of a second moment of area. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical and structural engineers, designers, fabrication and maintenance supervisors and technicians who design, check, build or inspect members in compression. It assumes school physics, algebra and the idea of a second moment of area. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -102,13 +102,13 @@ Every chapter follows one structure and the equipment around it. This is an illu
 - **Bracing:** horizontal struts of CHS 48.3 × 3.2 at mid-height, and tension-only diagonals of 16 mm round bar with turnbuckles in every face.
 - **Around it:** a hydraulic tipping cradle that stands the tank upright, a hot-water outlet pipe to a transfer pump, and shear legs used to lift the pump set from its pit.
 
-Loads, dimensions, tolerances, test results, prices and times are invented for the case or calculated from stated assumptions. The wind pressure used is a placeholder, not a design value. None of it describes KEVOS® work or any real business, product or site.
+Loads, dimensions, tolerances, test results, prices and times are invented for the case or calculated from stated assumptions. The wind pressure used is a placeholder, not a design value. None of it describes BIZOMAT work or any real business, product or site.
 
 ## How to use the book
 
 Read Chapters 1 and 2 first: Euler's load and the effective length are used in every later chapter. Chapters 3 to 5 complete the check of a single member: its section, its slenderness range and its imperfections. Chapter 6 deals with bracing. Chapters 7 to 10 apply the same ideas to machines, heat, thin shells and temporary works, and can be read in any order. Chapter 11 covers proving, inspection and records.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The formulas used are the classical ones: they explain behaviour, show which changes matter and give sound first checks. They are not a substitute for the governing design standard.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. The formulas used are the classical ones: they explain behaviour, show which changes matter and give sound first checks. They are not a substitute for the governing design standard.
 
 ## Source limits and professional responsibility
 

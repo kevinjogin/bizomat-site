@@ -22,7 +22,7 @@ const inThisPart = new Set(book.chapters.map((c) => c.id));
 const tools = knowledgeGraph().toolsFor(`collection/${book.topic}`).filter((x) => x.chapters.length === 0 || x.chapters.some((c) => [...inThisPart].some((id) => c.href.endsWith(`/${id}/`))));
 const pathways = book.volume === 1 ? pathwaysForBook(`collection/${book.topic}`) : [];
 ---
-<BaseLayout title={`${book.title} (Library)`} description={`${book.description} Read the full KEVOS® collection in structured chapters.`}
+<BaseLayout title={`${book.title} (Library)`} description={`${book.description} Read the full BIZOMAT collection in structured chapters.`}
   breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:book.title,href}]}>
   <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.category,href:`/reados/#${book.category.toLowerCase()}`}]}
     eyebrow={`Library / ${book.category}`} title={book.title} description={book.description}

@@ -7,7 +7,7 @@ tags:
   - systems
   - communication
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -253,4 +253,4 @@ A data dictionary records what a business's data means: its key terms, fields, c
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general data management and business analysis practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general data management and business analysis practice. The worked example is illustrative. This article is general information.*

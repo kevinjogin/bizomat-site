@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Press tools cut and form sheet metal at high speed and low cost per part once th
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always consult tool designers, toolmakers and press manufacturers for specific tools and equipment.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always consult tool designers, toolmakers and press manufacturers for specific tools and equipment.*

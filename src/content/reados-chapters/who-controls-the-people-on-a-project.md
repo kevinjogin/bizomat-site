@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -201,4 +201,4 @@ How a business organises people around projects decides what a project lead can 
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on functional, matrix and projectised organisation structures, the project manager's authority in each, self-managed teams and bounded autonomy, and an H. K. Craig (2004) trade column on the project management career. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on functional, matrix and projectised organisation structures, the project manager's authority in each, self-managed teams and bounded autonomy, and an H. K. Craig (2004) trade column on the project management career. Examples and figures in this article are illustrations. This article is general information.*

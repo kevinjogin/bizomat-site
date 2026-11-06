@@ -4,8 +4,8 @@ subtitle: "Designing stretched, inflated and gripping rubber parts: hardness and
 description: "Design rubber parts that stretch, inflate and grip with numbers: hardness and modulus, large stretch, biaxial thinning, inflation limits, friction, temperature and ageing."
 category: Engineering
 tags: [design, product-development, quality, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -72,7 +72,7 @@ It suits mechanical designers, product engineers and maintenance engineers. It a
 
 Every chapter follows one fictional product. This is an illustration. A small manufacturer of plumbing test equipment designs TP-100, an inflatable test plug for pipes with a 100 mm bore. It is a plain rubber sleeve, 88 mm outside diameter with a 4 mm wall, clamped between two metal end plates 120 mm apart. Air at 150 kPa gauge inflates the sleeve against the pipe wall, sealing the pipe so that a section of drainage can be filled with water and pressure tested. The sleeve is a natural rubber compound of 50 Shore A.
 
-Real test plugs are often reinforced with fabric or cord and carry their makers' own ratings. TP-100 is deliberately unreinforced so that the rubber's own behaviour can be followed through the book. The manufacturer, the compound's properties, the test pressures and every mistake are invented and do not describe KEVOS® work or a real product.
+Real test plugs are often reinforced with fabric or cord and carry their makers' own ratings. TP-100 is deliberately unreinforced so that the rubber's own behaviour can be followed through the book. The manufacturer, the compound's properties, the test pressures and every mistake are invented and do not describe BIZOMAT work or a real product.
 
 ## Source limits and professional responsibility
 

@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -219,4 +219,4 @@ A schedule shows that a job is late; the contract and the evidence decide what f
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on contract administration, extensions of time, delay and acceleration, liquidated damages, the prevention principle and claims management under standard construction contracts. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on contract administration, extensions of time, delay and acceleration, liquidated damages, the prevention principle and claims management under standard construction contracts. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

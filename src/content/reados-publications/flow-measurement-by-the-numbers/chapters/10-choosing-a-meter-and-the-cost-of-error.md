@@ -9,7 +9,7 @@ draft: false
 
 There is no best flowmeter, only a best meter for a particular flow, range, purpose and budget. A magnetic meter cannot measure oil; a Coriolis meter is an expensive way to measure clean water; an orifice plate cannot measure a flow that varies twenty to one; a vortex meter sized for the maximum cannot see a weekend's leaks. Choosing well means starting from what the reading is for, working through what the fluid and the installation allow, sizing for the whole range, and then asking what the meter's error and its pressure loss will cost over its life.
 
-This chapter sets out a selection method, applies it to the brewery's five flows, shows why meters are sized for their range rather than the pipe, puts a value on a meter's error and its pressure loss with KEVOS tools, and finishes with the compressed-air meter that was the right size for the compressor and the wrong size for the question the brewery most needed answered.
+This chapter sets out a selection method, applies it to the brewery's five flows, shows why meters are sized for their range rather than the pipe, puts a value on a meter's error and its pressure loss with BIZOMAT tools, and finishes with the compressed-air meter that was the right size for the compressor and the wrong size for the question the brewery most needed answered.
 
 ## A selection method
 

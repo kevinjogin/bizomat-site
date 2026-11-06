@@ -1,5 +1,5 @@
 /**
- * KEVOS® proof of work: the engineering record behind KEVOS®, shown on the homepage (/#work), newest first.
+ * BIZOMAT proof of work: the engineering record behind BIZOMAT, shown on the homepage (/#work), newest first.
  * Reworded from the published project records at kevos.ghost.io (tag: kevos-work) and, for Alchin Long Group,
  * from the founder's resume and project schedules (names approved for publication by the founder, 16 Oct 2026).
  * Organisation names identify where the work took place; status states honestly how far each project went,
@@ -22,7 +22,7 @@ export type Project = {
   headline: string;
   /** Describes the project image (public/proof-of-work, built by scripts/build-work-visuals.mjs). */
   visualAlt: string;
-  /** Illustrative KEVOS visual shown instead of a converted project image. */
+  /** Illustrative BIZOMAT visual shown instead of a converted project image. */
   illustration?: ProjectIllustration;
   /** Overrides the label printed on the illustration, e.g. to name the product. */
   illustrationTag?: string;
@@ -55,7 +55,7 @@ export type Project = {
   /** Responsibility boundary, where the record states one. */
   note?: string;
   skills: string[];
-  /** Work done for an employer is the founder's track record, not KEVOS® client work; this says so. */
+  /** Work done for an employer is the founder's track record, not BIZOMAT client work; this says so. */
   employment?: string;
   objectives?: string[];
   /** What the founder contributed in the role. */
@@ -88,7 +88,7 @@ export const PROJECT_SERVICES: Record<ProjectService, string> = {
 
 const ALG_ABOUT = 'Australian window- and door-hardware business, home of the Doric range, with product development, toolroom, coating and assembly operations.';
 
-const OPS_EMPLOYMENT = 'Experience of the founder of KEVOS®, gained while employed by Alchin Long Group as Operations Excellence Engineer (from November 2024). It is professional track record, not a KEVOS® client engagement.';
+const OPS_EMPLOYMENT = 'Experience of the founder of BIZOMAT, gained while employed by Alchin Long Group as Operations Excellence Engineer (from November 2024). It is professional track record, not a BIZOMAT client engagement.';
 
 /** Shared facts for the founder's product-development role at Alchin Long Group (resume and project schedules). */
 const PRODUCT_DEVELOPMENT = {
@@ -98,7 +98,7 @@ const PRODUCT_DEVELOPMENT = {
   industry: 'Window and door hardware',
   sector: 'hardware',
   role: 'Design Drafter and Product Development',
-  employment: 'Product-development experience of the founder of KEVOS®, gained while employed by Alchin Long Group as Design Drafter and Product Development (May 2018 to October 2024). It is professional track record, not a KEVOS® client engagement.',
+  employment: 'Product-development experience of the founder of BIZOMAT, gained while employed by Alchin Long Group as Design Drafter and Product Development (May 2018 to October 2024). It is professional track record, not a BIZOMAT client engagement.',
   contribution: [
     'Rapid CAD modelling and 3D-printed prototypes',
     'Detailed CAD models and CNC working prototypes',

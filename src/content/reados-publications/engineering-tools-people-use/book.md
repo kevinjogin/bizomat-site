@@ -4,8 +4,8 @@ subtitle: "Designing in-house engineering software so designers enter the right 
 description: "Design in-house engineering tools people use correctly: observe users, design inputs and results, write messages, fit the workflow, test with five users and measure use."
 category: Technology
 tags: [design, systems, validation, people, product-development]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -63,7 +63,7 @@ This book is for engineers, CAD administrators and developers who build tools fo
 
 The book follows a fictional machine builder's design office of **14 designers** and an in-house **tolerance stack-up tool**, written by a senior engineer five years ago. It calculates worst-case and statistical (root-sum-square) stacks for linear chains of dimensions. Designers use it for gearbox, bearing and housing assemblies. The tool works, but the office suspects it is misused: two field problems in a year traced back to stacks that the tool passed.
 
-All quantities, times, results and names of fictional products are invented for teaching. This is an illustration. None of it describes a KEVOS® project or product.
+All quantities, times, results and names of fictional products are invented for teaching. This is an illustration. None of it describes a BIZOMAT project or product.
 
 ## How to use the book
 

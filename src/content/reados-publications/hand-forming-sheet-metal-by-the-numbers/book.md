@@ -4,8 +4,8 @@ subtitle: "Raising, sinking, shrinking, stretching, wheeling and wiring by hand,
 description: "Plan hand-formed sheet metal work with numbers: strain and thickness, dome blanks, raising and sinking, shrinking flanges, wheeling, hand wiring, checks and noise."
 category: Manufacturing
 tags: [manufacturing, prototyping, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -68,7 +68,7 @@ Every chapter follows one fictional job. This is an illustration. A small restor
 - **a mounting ring**, a band 30 mm high and 320 mm inside diameter, with a 20 mm flange turned inwards at the top for the dome to sit on, and a wired bottom edge;
 - **a side access panel**, 600 × 300 mm, crowned to match the original, with a radius of 1,200 mm along its length and 900 mm across it.
 
-The customer's drawing asks for a thickness of at least 1.3 mm anywhere on the formed parts, a dome profile within ±2 mm of a template, and a finish free of visible hammer marks. The workshop, the customer, the engines, the material certificate's values and every mistake are invented. None describes KEVOS® work or a real business.
+The customer's drawing asks for a thickness of at least 1.3 mm anywhere on the formed parts, a dome profile within ±2 mm of a template, and a finish free of visible hammer marks. The workshop, the customer, the engines, the material certificate's values and every mistake are invented. None describes BIZOMAT work or a real business.
 
 ## Source limits and professional responsibility
 

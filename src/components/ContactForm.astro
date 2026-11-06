@@ -1,7 +1,7 @@
 ---
 // REACHOS enquiry form: same-origin Worker delivery (/api/contact) with Turnstile in the CAPTCHA slot.
 // ?service=<slug> preselects the enquiry category (REACHOS pathways, "Discuss a Factory Fix", service and
-// proof-of-work links); ?resource=<name> fills the related KEVOS® tool or Library resource.
+// Engine Room case-study links); ?resource=<name> fills the related BIZOMAT tool or Library resource.
 import { SITE } from '../config/site.ts';
 import { CONTACT_LIMITS, CONTACT_METHODS, ENGINEERING_PROJECT, ENQUIRY_CATEGORIES, HONEYPOT_FIELD } from '../lib/contact.ts';
 import { SERVICE_OPTIONS } from '../data/services.ts';
@@ -49,7 +49,7 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
       maxlength={L.message.max}
       aria-describedby="cf-message-hint cf-message-error"
       placeholder="Your question, idea, feedback or requirement, and anything that would help us reply."></textarea>
-    <p class="field__hint" id="cf-message-hint">Files can be shared after KEVOS® replies. Please don’t include confidential information here.</p>
+    <p class="field__hint" id="cf-message-hint">Files can be shared after BIZOMAT replies. Please don’t include confidential information here.</p>
     <p class="field__error" id="cf-message-error" data-error-for="message"></p>
   </div>
   <details class="contact-form__more" data-optional-fields>
@@ -104,7 +104,7 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
   <div class="field field--check">
     <input id="cf-consent" name="consent" type="checkbox" required aria-describedby="cf-consent-error" />
     <label for="cf-consent">
-      I understand KEVOS® will use these details only to respond to my enquiry, as described in the <a href="/privacy/">privacy policy</a>.
+      I understand BIZOMAT will use these details only to respond to my enquiry, as described in the <a href="/privacy/">privacy policy</a>.
     </label>
     <p class="field__error" id="cf-consent-error" data-error-for="consent"></p>
   </div>

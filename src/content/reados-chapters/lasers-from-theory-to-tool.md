@@ -7,7 +7,7 @@ tags:
   - product-development
   - manufacturing
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ The laser grew from a theoretical prediction in 1917 to a laboratory demonstrati
 
 ---
 
-*Source: KEVOS editorial notes. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. This article is a general historical overview.*

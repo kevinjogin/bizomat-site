@@ -4,8 +4,8 @@ subtitle: "Duty, temperature difference, coefficients, fouling, rating, plates a
 description: "Size and rate heat exchangers with numbers: energy balances, LMTD and F correction, overall and film coefficients, fouling, effectiveness–NTU, plate or shell, pressure drop and boiling."
 category: Engineering
 tags: [design, systems, operations, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -54,7 +54,7 @@ It suits mechanical, process and maintenance engineers. It assumes school algebr
 
 Every chapter follows one fictional exchanger. This is an illustration. OC-35 is a shell-and-tube oil cooler on the hydraulic power unit of a large press. It must remove 35 kW from the hydraulic oil, cooling it from 55 °C to 45 °C, using water from the plant's cooling tower, which arrives at 29 °C and may leave at 34 °C. The oil flows through the shell; the tower water flows through the tubes, which can be cleaned. Its fluid properties, coefficients and dimensions are illustrations chosen to show the method.
 
-The exchanger and its numbers are invented; none describes KEVOS® work or a real installation. Prices, where they appear, are illustrations in Australian dollars excluding GST.
+The exchanger and its numbers are invented; none describes BIZOMAT work or a real installation. Prices, where they appear, are illustrations in Australian dollars excluding GST.
 
 ## Source limits and professional responsibility
 

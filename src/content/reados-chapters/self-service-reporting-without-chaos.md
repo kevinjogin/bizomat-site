@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - communication
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -261,4 +261,4 @@ Self-service reporting gives people the power to answer their own questions quic
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general business intelligence and data governance practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general business intelligence and data governance practice. The worked example is illustrative. This article is general information.*

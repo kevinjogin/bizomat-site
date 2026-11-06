@@ -1,4 +1,4 @@
-// KEVOS AutoSEO command runner, used by the scheduled GitHub Actions workflows.
+// BIZOMAT AutoSEO command runner, used by the scheduled GitHub Actions workflows.
 //   node scripts/seo/run.mjs collect                 fetch Search Console, Bing and Cloudflare data (each optional)
 //   node scripts/seo/run.mjs live-check              check production robots.txt, sitemaps and key pages
 //   node scripts/seo/run.mjs report --period weekly  write a report (daily | weekly | monthly)
@@ -12,12 +12,11 @@ import { collectBing } from './lib/bing.mjs';
 import { collectCloudflare } from './lib/cloudflare.mjs';
 import { analyse } from './lib/engine.mjs';
 import { contentHash, changedUrls, submitIndexNow } from './lib/indexnow.mjs';
+import { CONFIG, SITE, SITE_RE } from './lib/site.mjs';
 
 const ROOT = process.cwd();
 const DATA = path.join(ROOT, '.seo-data');
-const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'seo', 'config.json'), 'utf8'));
-const SITE = CONFIG.site;
-const KEY_PAGES = ['/', '/services/', '/factory-fix/', '/assessment/', '/contact/', '/tools/', '/tools/cutting-speed/', '/reados/', '/library/', '/about/'];
+const KEY_PAGES = ['/', '/services/', '/factory-fix/', '/assessment/', '/contact/', '/tools/', '/tools/cutting-speed/', '/reados/', '/library/', '/engine-room/'];
 const args = process.argv.slice(3);
 const flag = (name) => args.includes(`--${name}`);
 const opt = (name, fallback) => (args.includes(`--${name}`) ? args[args.indexOf(`--${name}`) + 1] : fallback);
@@ -50,9 +49,9 @@ async function collect() {
 
 async function liveCheck() {
   const failures = [];
-  const get = async (p, init) => fetch(SITE + p, { redirect: 'manual', signal: AbortSignal.timeout(30_000), headers: { 'User-Agent': 'KEVOS-AutoSEO-check/1.0 (+https://kevos.com/)' }, ...init });
+  const get = async (p, init) => fetch(SITE + p, { redirect: 'manual', signal: AbortSignal.timeout(30_000), headers: { 'User-Agent': `BIZOMAT-AutoSEO-check/1.0 (+${SITE}/)` }, ...init });
   const robots = await get('/robots.txt').then((r) => (r.ok ? r.text() : `HTTP ${r.status}`)).catch((e) => `error ${e.name}`);
-  if (!/^Sitemap: https:\/\/kevos\.com\/sitemap-index\.xml$/m.test(robots)) failures.push('robots.txt is missing or does not list the sitemap');
+  if (!new RegExp(`^Sitemap: ${SITE_RE}/sitemap-index\\.xml$`, 'm').test(robots)) failures.push('robots.txt is missing or does not list the sitemap');
   if (/^User-agent:\s*\*\s*\n(?:.*\n)*?Disallow:\s*\/\s*$/im.test(robots)) failures.push('robots.txt blocks the whole site');
   const index = await get('/sitemap-index.xml').then((r) => (r.ok ? r.text() : '')).catch(() => '');
   const child = index.match(/<loc>([^<]+)<\/loc>/)?.[1];
@@ -107,7 +106,7 @@ function report() {
   const statusRow = (name, s) => `| ${name} | ${s?.status ?? 'NOT RUN'} | ${s?.status === 'OK' ? s.fetchedAt : (s?.reason ?? 'no snapshot yet')} |`;
   const cfDays = cf?.status === 'OK' ? cf.daily : [];
   const md = [
-    `# KEVOS SEO ${period} report, ${today} (Australia/Sydney)`,
+    `# BIZOMAT SEO ${period} report, ${today} (Australia/Sydney)`,
     '',
     'Figures come only from the sources marked OK. Anything unavailable is shown as UNKNOWN, never as zero. Average position is Search Console\'s impression-weighted average, not a fixed rank.',
     '',

@@ -9,7 +9,7 @@ draft: false
 
 An aluminium bar labelled 6061-T6 looks exactly like one in the T4 or annealed condition, and machines almost as easily. Only its strength differs, and strength is expensive to measure. Its electrical conductivity, however, also changes with its heat treatment, and an eddy-current meter measures that in two seconds without leaving a mark. That makes conductivity one of the most useful quick checks in an aluminium shop: not a substitute for a hardness or tensile test, but a fast screen that finds the bar that should not be there.
 
-This chapter explains the scale conductivity is measured on, why a metal's structure changes its conductivity, how to correct readings for temperature, and how to calibrate a meter with the KEVOS® linear calibration tool. Its mistake is a bar that the check was designed to catch, and did.
+This chapter explains the scale conductivity is measured on, why a metal's structure changes its conductivity, how to correct readings for temperature, and how to calibrate a meter with the BIZOMAT linear calibration tool. Its mistake is a bar that the check was designed to catch, and did.
 
 ## The %IACS scale
 

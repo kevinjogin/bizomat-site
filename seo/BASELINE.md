@@ -1,4 +1,4 @@
-# KEVOS SEO baseline
+# BIZOMAT SEO baseline
 
 Recorded 24 October 2026 (Australia/Sydney) from the repository, the production build and public requests to kevos.com. No Google Search Console, Bing Webmaster Tools or Cloudflare account data was available, so every search metric below is **UNKNOWN**, not zero.
 

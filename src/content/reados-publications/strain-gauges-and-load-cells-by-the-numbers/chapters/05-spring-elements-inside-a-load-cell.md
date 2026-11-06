@@ -9,7 +9,7 @@ draft: false
 
 Open a load cell and you find a carefully shaped piece of steel or aluminium, a few gauges glued in pockets or on flats, some compensation resistors, a cable and a lot of sealing. The shape is the clever part. It decides how much strain the gauges see, whether the output depends on where on the cell the load is applied, how much the cell deflects, how much overload it survives and how it reacts to side forces. Choosing the right type of cell for a job is mostly a matter of understanding its spring element.
 
-This chapter describes what a spring element must do and then looks at the main families: columns, bending beams, double-bending beams and shear beams, with a short note on S-type and ring cells. It works the strain in a column and a bending beam of BH-2's capacity with KEVOS® tools, sizes the web of BH-2's shear beam cells from first principles, and ends with a replacement cell that turned a good scale into a poor one.
+This chapter describes what a spring element must do and then looks at the main families: columns, bending beams, double-bending beams and shear beams, with a short note on S-type and ring cells. It works the strain in a column and a bending beam of BH-2's capacity with BIZOMAT tools, sizes the web of BH-2's shear beam cells from first principles, and ends with a replacement cell that turned a good scale into a poor one.
 
 ## What a spring element must do
 

@@ -9,7 +9,7 @@ draft: false
 
 Unbalance is the commonest cause of excessive vibration in rotating machinery, and the easiest to recognise and correct. A rotor whose mass is not evenly distributed about its axis of rotation carries a heavy spot around with it, and the spot's centrifugal force pulls the rotor, and its bearings, towards it once each revolution. The result is a vibration at exactly the running speed, 1×, in the radial directions, steady in amplitude and phase. On fans handling dusty or sticky air, unbalance grows as material builds up unevenly on the blades or flakes off, and correcting it in place, with the fan on its own bearings, is a routine job for a vibration technician.
 
-This chapter explains how unbalance produces vibration and how large the force on the bearings becomes, sets out balance quality grades and the permissible residual unbalance they give, works a single-plane balance on F-2 with a trial weight and vector arithmetic using the KEVOS complex number and balancing tools, splits the correction between blade positions, and finishes with a trial weight that was never removed.
+This chapter explains how unbalance produces vibration and how large the force on the bearings becomes, sets out balance quality grades and the permissible residual unbalance they give, works a single-plane balance on F-2 with a trial weight and vector arithmetic using the BIZOMAT complex number and balancing tools, splits the correction between blade positions, and finishes with a trial weight that was never removed.
 
 ## How unbalance makes vibration
 

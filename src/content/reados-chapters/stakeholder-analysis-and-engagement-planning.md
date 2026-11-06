@@ -7,7 +7,7 @@ tags:
   - projects
   - communication
   - leadership
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -238,4 +238,4 @@ Stakeholder analysis earns its place when it changes what a project team does. I
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management handbooks on identifying project stakeholders, stakeholder mapping with the power and interest grid, salience model and directions of influence, stakeholder engagement planning and planning project communications. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project management handbooks on identifying project stakeholders, stakeholder mapping with the power and interest grid, salience model and directions of influence, stakeholder engagement planning and planning project communications. The worked example is illustrative. This article is general information.*

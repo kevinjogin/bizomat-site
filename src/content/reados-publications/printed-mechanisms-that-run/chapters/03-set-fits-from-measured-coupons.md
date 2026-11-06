@@ -137,7 +137,7 @@ Some fits depend on several printed parts at once. The indexing table's planetar
 
 This is an illustration. The gearbox housing pocket is 16.8 mm deep. Inside it sit the carrier plate, 4.0 mm thick, the planets, 8.0 mm wide, and a spacer ring, 4.0 mm thick. The nominal axial gap is **16.8 − 4.0 − 8.0 − 4.0 = 0.8 mm**. The designer wants it between about 0.3 mm and 1.3 mm: less risks rubbing, more lets the planets tilt.
 
-Each printed dimension in Z can vary by about ±0.1 mm, partly because heights are quantised to the 0.2 mm layer height. With four dimensions, the worst-case variation is **±0.4 mm**, giving a gap from 0.4 to 1.2 mm, still inside the target. A root-sum-square estimate, which assumes the variations are independent and unlikely to all reach their limits together, gives **±√(4 × 0.1²) = ±0.2 mm**, a gap from 0.6 to 1.0 mm. Because the worst case fits, the design does not need to rely on the statistical estimate. The [RSS tolerance stack](/tools/rss-tolerance-stack/) tool in KEVOS® Tools runs the same comparison for longer stacks.
+Each printed dimension in Z can vary by about ±0.1 mm, partly because heights are quantised to the 0.2 mm layer height. With four dimensions, the worst-case variation is **±0.4 mm**, giving a gap from 0.4 to 1.2 mm, still inside the target. A root-sum-square estimate, which assumes the variations are independent and unlikely to all reach their limits together, gives **±√(4 × 0.1²) = ±0.2 mm**, a gap from 0.6 to 1.0 mm. Because the worst case fits, the design does not need to rely on the statistical estimate. The [RSS tolerance stack](/tools/rss-tolerance-stack/) tool in BIZOMAT Tools runs the same comparison for longer stacks.
 
 ## Detect a fit failure
 

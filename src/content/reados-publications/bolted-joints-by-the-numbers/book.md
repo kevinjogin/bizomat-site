@@ -4,8 +4,8 @@ subtitle: "Preload, tightening, separation, fatigue, threads, shear, eccentric l
 description: "How to design, tighten and check bolted joints: preload and joint stiffness, torque, stretch and angle, separation and fatigue, threads, shear, bolt groups, gaskets and heat."
 category: Engineering
 tags: [design, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Concepts of Theoretical Solid State Physics"
     creator: "A. Altland and B. Simons"
     year: "2001"
-    note: "Lecture notes released for verbatim copying only, so treated here as a protected work. Used only as a map of ideas: the harmonic approximation, in which bonded parts act as springs about an equilibrium position, and the way a preloaded system shares an applied load between its stiffnesses. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Lecture notes released for verbatim copying only, so treated here as a protected work. Used only as a map of ideas: the harmonic approximation, in which bonded parts act as springs about an equilibrium position, and the way a preloaded system shares an applied load between its stiffnesses. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Shigley's Mechanical Engineering Design, tenth edition"
     creator: "R. G. Budynas and J. K. Nisbett, McGraw-Hill Education"
     year: "2015"
@@ -36,7 +36,7 @@ references:
   - title: "Machinery's Handbook, thirtieth edition"
     creator: "E. Oberg, F. D. Jones, H. L. Horton and H. H. Ryffel, Industrial Press"
     year: "2016"
-    note: "Background for the length of thread engagement by shear areas, tap drill sizes, bolt and screw thread lengths, the turn-of-nut relation and the empirical working strength of bolts in packed joints, as used by several of the KEVOS® tools in Chapters 3, 6 and 9."
+    note: "Background for the length of thread engagement by shear areas, tap drill sizes, bolt and screw thread lengths, the turn-of-nut relation and the empirical working strength of bolts in packed joints, as used by several of the BIZOMAT tools in Chapters 3, 6 and 9."
   - title: "ISO 898-1 Mechanical properties of fasteners made of carbon steel and alloy steel, Part 1: Bolts, screws and studs"
     creator: "International Organization for Standardization"
     year: "2013"
@@ -65,7 +65,7 @@ A bolted joint looks like the simplest connection in engineering: a hole, a bolt
 
 This book shows how to design, tighten and check bolted joints with numbers. It starts with preload and joint stiffness, then covers the three ways of setting preload, by torque, by stretch and by angle, and how accurately each one works. It then checks joints against separation, proof load and fatigue, sizes threads, tapped holes and screw lengths, and moves on to joints in shear, bolt groups under eccentric loads, brackets in tension, gasketed flanges and joints that change temperature. It finishes with hole patterns and the records that show a joint was made as designed.
 
-It is for mechanical design and maintenance engineers, machine builders and fitters. It assumes engineering or trade training and comfort with force, stress and stiffness; the joint models are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical design and maintenance engineers, machine builders and fitters. It assumes engineering or trade training and comfort with force, stress and stiffness; the joint models are explained as they are used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -76,13 +76,13 @@ Every chapter follows one machine. This is an illustration. A hydraulic repair s
 - **Brackets:** a rod-end support plate bolted to a column web, and a load cell bracket bolted to a column flange.
 - **Hydraulics:** an aluminium valve manifold held by M10 cap screws that runs warm, and a gasketed return-line filter housing.
 
-Pressures, dimensions, materials, property classes, friction and nut factors, gasket factors and test figures are the shop's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, equipment maker or supplier's data.
+Pressures, dimensions, materials, property classes, friction and nut factors, gasket factors and test figures are the shop's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, equipment maker or supplier's data.
 
 ## How to use the book
 
 Read Chapter 1 first: it sets out preload and joint stiffness, which every later chapter uses. Chapters 2 and 3 cover tightening and should be read together. Chapters 4 and 5 check tension joints. Chapters 6 to 10 can be read in any order once Chapter 1 is familiar.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Nut factors, friction coefficients, gasket factors and allowable stresses are typical figures for illustration; a real design uses the fastener, gasket and coating makers' data and the applicable standard.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Nut factors, friction coefficients, gasket factors and allowable stresses are typical figures for illustration; a real design uses the fastener, gasket and coating makers' data and the applicable standard.
 
 ## Source limits and professional responsibility
 

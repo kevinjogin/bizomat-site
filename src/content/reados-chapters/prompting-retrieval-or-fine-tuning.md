@@ -7,7 +7,7 @@ tags:
   - ai
   - systems
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Adapting a language model to a business is a choice between methods that change 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on prompting versus retrieval versus fine-tuning, supervised and parameter-efficient fine-tuning, preference tuning, training data preparation, evaluation and licensing risks, prompt design, structured outputs, tool calling and model routing, together with established AI practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT AI academy lessons on prompting versus retrieval versus fine-tuning, supervised and parameter-efficient fine-tuning, preference tuning, training data preparation, evaluation and licensing risks, prompt design, structured outputs, tool calling and model routing, together with established AI practice. The worked example is illustrative. This article is general information.*

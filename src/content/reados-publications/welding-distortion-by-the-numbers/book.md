@@ -4,8 +4,8 @@ subtitle: "Why welds pull parts out of shape, how much they shrink, bow, twist a
 description: "Understand and control welding distortion with numbers: shrinkage, gap closure, bowing, angular distortion, buckling, restraint, welding sequence, presetting and straightening."
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement, design, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -62,7 +62,7 @@ Those observations are the foundations of distortion control. Each chapter takes
 
 This is an illustration. A fabrication shop builds welded steel products: plate girders for small bridges and platforms, base frames for machines, and thin stainless steel panels for food-processing equipment. It has had trouble with girders that bow, frames whose mounting faces do not sit flat, and panels that buckle, and its production manager wants to understand the causes and control them.
 
-The shop, its products, measurements and costs are invented for teaching. They are not KEVOS® work. Real structures and products are made to the applicable standards and specifications, which set tolerances on straightness, flatness and dimensions.
+The shop, its products, measurements and costs are invented for teaching. They are not BIZOMAT work. Real structures and products are made to the applicable standards and specifications, which set tolerances on straightness, flatness and dimensions.
 
 ## How to use the book
 
@@ -74,4 +74,4 @@ This book is educational. The shrinkage estimates in it are illustrations based 
 
 ## An original treatment
 
-The Library covers shrinkage and welding sequence in plate repairs in Weld Repairs That Hold, and straightening of shafts in Machine Part Repairs by the Numbers; this book covers distortion in new fabrication and links to them. The explanations, the fabrication case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or figures is reproduced.
+The Library covers shrinkage and welding sequence in plate repairs in Weld Repairs That Hold, and straightening of shafts in Machine Part Repairs by the Numbers; this book covers distortion in new fabrication and links to them. The explanations, the fabrication case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their observations are summarised in new words, and none of their text, tables or figures is reproduced.

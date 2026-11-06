@@ -4,8 +4,8 @@ subtitle: "Steam tables, boilers, process heating, pressure reduction, pipes, tr
 description: "Use steam tables to size and run a plant steam system: boiler output, process steam flow, pressure reduction, pipe velocity, traps, flash steam, condensate return, cost and safety."
 category: Engineering
 tags: [operations, design, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -67,7 +67,7 @@ This book works steam through by numbers. It starts with the steam table and wha
 
 The book follows **SV-8**, the steam system of a fictional food factory. A gas-fired shell boiler raises up to **1,000 kg/h** of saturated steam at **800 kPa absolute**, about 7 bar gauge, from feedwater at **80 °C**. A 60 m steam main carries it to the cooking area, where a pressure reducing station drops it to **400 kPa absolute**, about 3 bar gauge, for four jacketed cooking kettles, each rated at **100 kW**. Condensate from the kettles is collected and pumped back to the boiler's feed tank; about **70%** of the steam raised returns as condensate. The plant runs about **4,000 hours** a year.
 
-All quantities, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Heat is costed at an assumed gas price of **A$22 per gigajoule** and a boiler efficiency of 85%. Money is in Australian dollars, excluding GST.
+All quantities, prices and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Heat is costed at an assumed gas price of **A$22 per gigajoule** and a boiler efficiency of 85%. Money is in Australian dollars, excluding GST.
 
 ## How to use the book
 

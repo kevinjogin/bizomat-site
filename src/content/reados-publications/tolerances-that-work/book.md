@@ -4,8 +4,8 @@ subtitle: "Fits, datums and stack-up analysis for parts that assemble and functi
 description: "Specify, analyse and verify dimensional variation in mechanical parts, from ISO limits and fits to datums, geometric tolerances and stack-ups."
 category: Engineering
 tags: [design, quality, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: draft
 publishDate: 2026-10-18
@@ -108,7 +108,7 @@ Too little tolerance makes a part expensive, slow to make and difficult to inspe
 
 This book works through the whole chain. It begins with size limits and the ISO system of fits, moves to datums and geometric tolerances, and then shows how to add up variation through an assembly using worst-case and statistical methods. Later chapters deal with temperature, deflection, allocation of a tolerance budget, measurement uncertainty and a practical review process.
 
-The ten chapters share one fictional example: a **guide roller unit** made by an invented small manufacturer, Northgate Rollers. A steel shaft carries two ball bearings, a spacer and a retaining ring inside a flanged housing that bolts to a frame. The parts, dimensions, supplier data and results are invented for teaching. They are not KEVOS® projects, clients, prices or claims of performance, and the dimensions are not a design to copy.
+The ten chapters share one fictional example: a **guide roller unit** made by an invented small manufacturer, Northgate Rollers. A steel shaft carries two ball bearings, a spacer and a retaining ring inside a flanged housing that bolts to a frame. The parts, dimensions, supplier data and results are invented for teaching. They are not BIZOMAT projects, clients, prices or claims of performance, and the dimensions are not a design to copy.
 
 Calculations use millimetres and degrees Celsius. Where a table value from a standard is used, the chapter says so; check the current edition of the standard for your own size range rather than relying on an example. The book is general engineering education. It does not replace the standards your drawings invoke, your customer's requirements or the judgement of a competent engineer responsible for a design.
 
@@ -116,4 +116,4 @@ Calculations use millimetres and degrees Celsius. Where a table value from a sta
 
 The Library already includes a single chapter on [specifying tolerances, fits and surface finish](/reados/collections/engineering-design-practice/specifying-tolerances-fits-and-surface-finish/). This book goes much further into datums, geometric tolerancing, stack-up calculation and verification, with one assembly carried through every chapter.
 
-The explanations, the guide roller case and all worked examples are original KEVOS® writing. Machinery's Handbook was consulted to cross-check published fit limits; no tables, figures or text from it or from any standard are reproduced. Standards are cited so readers can obtain the authoritative wording.
+The explanations, the guide roller case and all worked examples are original BIZOMAT writing. Machinery's Handbook was consulted to cross-check published fit limits; no tables, figures or text from it or from any standard are reproduced. Standards are cited so readers can obtain the authoritative wording.

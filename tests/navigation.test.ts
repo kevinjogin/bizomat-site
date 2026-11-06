@@ -2,42 +2,45 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { CRUMB, FOOTER_NAV, GET_STARTED, NAV, QUOTE_CTA } from '../src/config/site.ts';
+import { AI_SEARCH, CRUMB, FOOTER_NAV, NAV, QUOTE_CTA, SIGN_IN } from '../src/config/site.ts';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : /\.(astro|ts|md|mdx)$/.test(f) ? [p] : []; });
 
-// KEVOS 2.0 redesign (owner brief, 5 Nov 2026): Products | Solutions | Tools | Resources | About, and Get Started.
-test('the main navigation reads Products, Solutions, Tools, Resources, About, with short menus', () => {
-  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Products', '/products/'], ['Solutions', '/solutions/'], ['Tools', '/tools/'], ['Resources', '/resources/'], ['About', '/about/']]);
+// BIZOMAT navigation (5 Nov 2026): CAD Automation | Project Management | Resources | Engine Room, with AI Search and a
+// Sign in menu (one entry per application) on the right. The Engine Room joins what were About and Proof of Work
+// (owner request, 5 Nov 2026).
+test('the main navigation reads CAD Automation, Project Management, Resources, Engine Room', () => {
+  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
-  assert.deepEqual(menu('Products'), [['Work', 'https://work.kevos.com/'], ['CADOS', 'https://cados.kevos.com/'], ['Desk', undefined], ['All products', '/products/']]);
-  assert.equal(NAV[0].children?.find((c) => c.label === 'Desk')?.status, 'Coming soon', 'Desk is labelled, never linked');
-  assert.deepEqual(menu('Resources'), [['Library', '/reados/'], ['Guides and articles', '/library/'], ['All resources', '/resources/']]);
-  assert.deepEqual(menu('About'), [['Company', '/about/'], ['Contact', '/contact/']]);
-  assert.deepEqual(menu('Solutions').map(([, h]) => h), ['/solutions/#business-productivity', '/solutions/#engineering-design', '/solutions/#automation-workflows', '/solutions/']);
-  assert.deepEqual(GET_STARTED, { href: '/#ask', label: 'Get Started' });
+  assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
+  assert.deepEqual(menu('Engine Room'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests'], ['Products', '/products/'], ['Contact', '/contact/']]);
+  assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
+  assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation']);
+  for (const s of SIGN_IN) assert.match(s.href, /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/login$/, `${s.label} signs in on its own application`);
+  assert.deepEqual(SIGN_IN.map((s) => s.href), ['https://bizomat.ai/tasks/login', 'https://bizomat.ai/cad/login'], 'both under bizomat.ai');
   assert.deepEqual(CRUMB, { tools: 'Tools', library: 'Library' });
   assert.deepEqual(QUOTE_CTA, { href: '/contact/', label: 'Contact' });
   // One list serves desktop, tablet and mobile; menus work without JavaScript (<details>).
   const header = read('src/components/Header.astro');
   assert.match(header, /NAV\.map/);
   assert.match(header, /<details class="nav-menu"/);
-  assert.match(header, /GET_STARTED\.label/);
+  assert.match(header, /<details class="nav-menu signin-menu" data-nav-menu>/);
+  assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
-  for (const page of ['products.astro', 'solutions.astro', 'resources/index.astro', 'about.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  for (const page of ['cad-automation.astro', 'work.astro', 'engine-room.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
 });
 
-test('the footer covers products, solutions, resources and company, and "Guides" alone is not a navigation label', () => {
-  const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.solutions, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
-  for (const pair of [['Work', 'https://work.kevos.com/'], ['CADOS', 'https://cados.kevos.com/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['About', '/about/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/']]) {
+test('the footer covers products, resources, company and the applications, with the legal pages on every page', () => {
+  const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.apps, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
+  for (const pair of [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['The Engine Room', '/engine-room/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
-  assert.ok(!pairs.some(([l]) => l === 'Desk'), 'Desk is not a footer link while it is coming soon');
   const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);
-  for (const old of ['WORKOS', 'READOS', 'REACHOS', 'Guides']) assert.ok(!labels.includes(old as never), `no "${old}" navigation label`);
+  for (const old of ['WORKOS', 'READOS', 'REACHOS', 'Guides', 'CADOS', 'Work']) assert.ok(!labels.includes(old as never), `no "${old}" navigation label`);
   const footer = read('src/components/Footer.astro');
-  for (const h of ['Products', 'Solutions', 'Resources', 'Company']) assert.match(footer, new RegExp(`<h2 class="site-footer__heading">${h}</h2>`));
+  for (const h of ['Products', 'Resources', 'Company', 'Applications']) assert.match(footer, new RegExp(`<h2 class="site-footer__heading">${h}</h2>`));
+  assert.match(footer, /FOOTER_NAV\.legal\.map/);
 });
 
 test('breadcrumbs say Tools and Library, never WORKOS or READOS', () => {
@@ -49,23 +52,23 @@ test('breadcrumbs say Tools and Library, never WORKOS or READOS', () => {
 
 test('the Library page has its SEO title, and the names WORKOS and READOS are retired from visible text', () => {
   const page = read('src/pages/reados/index.astro');
-  assert.match(page, /exactTitle="Engineering, Manufacturing & Business Knowledge Library \| KEVOS"/);
-  assert.match(page, /The KEVOS® Library brings together/);
+  assert.match(page, /exactTitle="Engineering, Manufacturing & Business Knowledge Library \| BIZOMAT"/);
+  assert.match(page, /The BIZOMAT Library brings together/);
   assert.match(page, /title="Library"/);
   assert.match(read('src/pages/tools/index.astro'), /title="Tools"/);
 });
 
 test('outside their own pages, the libraries are called Tools and Library (no stray WORKOS / READOS / REACHOS labels)', () => {
   const home = read('src/pages/index.astro');
-  assert.match(home, /<p class="eyebrow">Tools<\/p>/);
-  assert.match(home, /<p class="eyebrow">Resources<\/p>/);
+  assert.match(home, /<p class="bz-eyebrow">Resources · Tools<\/p>/);
+  assert.match(home, /<p class="bz-eyebrow">Resources · Library<\/p>/);
   assert.match(home, />Explore Tools<\/Button>/);
   assert.match(home, />Explore Library<\/Button>/);
   const markup = home.slice(home.indexOf('<BaseLayout'), home.indexOf('</BaseLayout>'));
   assert.doesNotMatch(markup, /WORKOS|READOS|REACHOS/, 'homepage markup uses the plain names');
   assert.ok(FOOTER_NAV.resources.some((n) => n.label === 'Library RSS feed' && n.href === '/rss.xml'));
   assert.match(read('src/pages/contact/index.astro'), /\{ label: 'Contact', href: '\/contact\/' \}/);
-  for (const f of ['src/components/discovery/DiscoveryResults.astro', 'src/components/knowledge/ApplyInPractice.astro', 'src/components/knowledge/LearnConcepts.astro', 'src/components/ContactForm.astro', 'src/pages/about.astro', 'src/pages/search.astro', 'src/pages/contact/sent.astro', 'src/pages/products.astro', 'src/pages/solutions.astro', 'src/pages/resources/index.astro', 'src/config/products.ts']) {
+  for (const f of ['src/components/discovery/DiscoveryResults.astro', 'src/components/knowledge/ApplyInPractice.astro', 'src/components/knowledge/LearnConcepts.astro', 'src/components/ContactForm.astro', 'src/pages/engine-room.astro', 'src/pages/search.astro', 'src/pages/contact/sent.astro', 'src/pages/products.astro', 'src/pages/solutions.astro', 'src/pages/resources/index.astro', 'src/config/products.ts']) {
     assert.doesNotMatch(read(f).replace(/\/\*[\s\S]*?\*\/|\/\/.*$|<!--[\s\S]*?-->/gm, ''), /WORKOS|READOS|REACHOS/, `${f} uses the plain names`);
   }
 });

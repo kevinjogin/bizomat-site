@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations for polymer thermodynamics (batch polymers). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations for polymer thermodynamics (batch polymers). SI units are explicit at each boundary.
 // Methods follow Klenin (1999) and the original papers cited in the guides; no book tables or data are reproduced.
 // Material properties, interaction parameters, constants of the polymer and acceptance limits are always entered by the user.
 (() => {

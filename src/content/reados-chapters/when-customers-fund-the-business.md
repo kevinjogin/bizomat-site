@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ Customer funding is a genuine advantage, but it is a promise, not profit. Money 
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations. This article is general information, not financial or legal advice.*

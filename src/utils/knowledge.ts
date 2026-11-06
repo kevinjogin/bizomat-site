@@ -1,6 +1,6 @@
 // Library ↔ Tools knowledge connections. Each relationship between a Library book (a publication or an edited
-// collection, optionally one chapter) and a KEVOS® tool is stored once, in src/data/knowledge-links.json, and shown in
-// both directions: "Apply This in Practice" on Library pages and "Learn the Concepts Behind This Tool" on KEVOS® Tools pages.
+// collection, optionally one chapter) and a BIZOMAT tool is stored once, in src/data/knowledge-links.json, and shown in
+// both directions: "Apply This in Practice" on Library pages and "Learn the Concepts Behind This Tool" on BIZOMAT Tools pages.
 // Only entries with status "approved" are published. The catalogues are read from the source files themselves (not
 // astro:content), so the build, the tests and scripts/knowledge/*.mjs share one validator.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
@@ -17,10 +17,10 @@ export const LINK_EVIDENCE = ['book-link', 'review'] as const;
 export interface KnowledgeLink {
   reados: string; // "publication/<book slug>" or "collection/<book slug>"
   chapter?: string; // a publication chapterSlug, or a collection chapter's file slug
-  tool: string; // KEVOS® tool id
+  tool: string; // BIZOMAT tool id
   type: LinkType;
   note: string; // why the tool is relevant, shown on Library pages
-  learn?: string; // what the reader learns, shown on KEVOS® Tools pages (defaults to the chapter's or book's description)
+  learn?: string; // what the reader learns, shown on BIZOMAT Tools pages (defaults to the chapter's or book's description)
   status: LinkStatus;
   evidence: (typeof LINK_EVIDENCE)[number];
   reason?: string; // for review evidence and rejections: what was checked
@@ -75,7 +75,7 @@ export function readCollectionSubjects() {
 
 let catalogueCache: { books: Map<string, ReadosBook>; tools: Map<string, { id: string; name: string; question: string; category: string; href: string; appHref: string }> } | null = null;
 
-/** Every Library book (published or not) and every KEVOS® tool, with the routes the site builds for them. */
+/** Every Library book (published or not) and every BIZOMAT tool, with the routes the site builds for them. */
 export function readCatalogue() {
   if (catalogueCache) return catalogueCache;
   const books = new Map<string, ReadosBook>();
@@ -132,7 +132,7 @@ export function validateLinks(links: KnowledgeLink[], catalogue = readCatalogue(
     if (!/^(publication|collection)\/[a-z0-9-]+$/.test(l.reados ?? '')) problems.push(`${at}: reados must be "publication/<slug>" or "collection/<slug>"`);
     else if (!book) problems.push(`${at}: no Library book ${l.reados}`);
     else if (l.chapter && !book.chapters.has(l.chapter)) problems.push(`${at}: ${l.reados} has no chapter ${l.chapter}`);
-    if (!catalogue.tools.has(l.tool)) problems.push(`${at}: no KEVOS® tool ${l.tool}`);
+    if (!catalogue.tools.has(l.tool)) problems.push(`${at}: no BIZOMAT tool ${l.tool}`);
     if (!LINK_TYPES.includes(l.type)) problems.push(`${at}: type must be one of ${LINK_TYPES.join(', ')}`);
     if (!LINK_STATUSES.includes(l.status)) problems.push(`${at}: status must be one of ${LINK_STATUSES.join(', ')}`);
     if (!LINK_EVIDENCE.includes(l.evidence)) problems.push(`${at}: evidence must be one of ${LINK_EVIDENCE.join(', ')}`);
@@ -201,7 +201,7 @@ export function buildGraph(links: KnowledgeLink[], catalogue = readCatalogue()) 
         continue;
       }
       out.set(l.reados, {
-        book: { title: book.title, href: book.href, kind: book.kind === 'publication' ? 'KEVOS® original book' : 'Library collection' },
+        book: { title: book.title, href: book.href, kind: book.kind === 'publication' ? 'BIZOMAT original book' : 'Library collection' },
         type: l.type, label: TYPE_LABELS[l.type].forTool,
         learn: l.learn ?? c?.description ?? book.description,
         chapters: c ? [{ title: c.title, href: c.href }] : [], order: l.order ?? 100,
@@ -251,7 +251,7 @@ export function validatePathways(pathways: PathwayData[], links: KnowledgeLink[]
     ids.add(p.id);
     if (!p.title || p.title.length < 10 || !p.summary || p.summary.length < 30) problems.push(`${at}: needs a title and a summary`);
     if (!chapterOk(p.learn)) problems.push(`${at}: learn must name a published chapter (${p.learn?.reados}#${p.learn?.chapter})`);
-    if (!catalogue.tools.has(p.apply?.tool)) problems.push(`${at}: no KEVOS® tool ${p.apply?.tool}`);
+    if (!catalogue.tools.has(p.apply?.tool)) problems.push(`${at}: no BIZOMAT tool ${p.apply?.tool}`);
     if (p.next && !chapterOk(p.next)) problems.push(`${at}: next must name a published chapter`);
     const approved = links.some((l) => l.status === 'approved' && l.reados === p.learn?.reados && l.chapter === p.learn?.chapter && l.tool === p.apply?.tool);
     if (!approved) problems.push(`${at}: learn → apply is not an approved relationship in knowledge-links.json`);

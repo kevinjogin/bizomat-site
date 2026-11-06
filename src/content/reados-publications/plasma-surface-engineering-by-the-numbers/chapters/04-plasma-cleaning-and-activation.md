@@ -9,7 +9,7 @@ draft: false
 
 Every plasma treatment starts with a surface that is not quite clean. Machined and polished steel carries a few nanometres of oxide, a film of oil or cutting fluid residue, fingerprints, polishing compound and adsorbed water. A nitriding vessel or coater cannot treat what it cannot reach: nitrogen will not diffuse through a stubborn oxide, and a coating deposited on a film of oil adheres to the oil. The first minutes of every plasma run are therefore spent cleaning, and plasma is very good at it, within limits that are easy to forget.
 
-This chapter explains the two ways a plasma cleans metal, sputter etching by energetic ions and chemical cleaning by hydrogen and oxygen, and works out how fast sputtering removes material, which shows why plasma cleaning is a final polish rather than a degreaser. It sets up the cleaning gas mixture for PN-1 with the KEVOS® gas mixture tool, describes plasma activation of plastics before bonding and printing, and ends with polishing compound that turned order 27's first coating trial into a lesson in precleaning.
+This chapter explains the two ways a plasma cleans metal, sputter etching by energetic ions and chemical cleaning by hydrogen and oxygen, and works out how fast sputtering removes material, which shows why plasma cleaning is a final polish rather than a degreaser. It sets up the cleaning gas mixture for PN-1 with the BIZOMAT gas mixture tool, describes plasma activation of plastics before bonding and printing, and ends with polishing compound that turned order 27's first coating trial into a lesson in precleaning.
 
 ## What plasma cleaning can remove
 

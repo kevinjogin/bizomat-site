@@ -9,7 +9,7 @@ draft: false
 
 Open the viewing port of a plasma nitriding vessel during a run and you see the parts wrapped in a soft violet glow, a millimetre or two thick, following every edge and face. Look into a PVD coater and the chromium targets glow blue-white over a dark chamber. Both glows come from the same kind of matter: a gas at low pressure in which a tiny fraction of the atoms have been ionised, so that free electrons and positive ions move among a large crowd of ordinary neutral atoms and molecules. That partly ionised gas is a plasma, and its behaviour at a surface is what cleans, heats, nitrides and coats the parts.
 
-This chapter describes a processing plasma with the half-dozen numbers that matter: pressure, gas density, the fraction ionised, the temperatures of the electrons and the gas, the Debye length and the mean free path. It works them for the shop's two machines, nitriding vessel PN-1 at 300 Pa and PVD coater PV-1 at 0.5 Pa, converting the pressures with the KEVOS® pressure converter. It ends with a pressure gauge that read twice the true pressure because nobody had told it the gas was mostly hydrogen.
+This chapter describes a processing plasma with the half-dozen numbers that matter: pressure, gas density, the fraction ionised, the temperatures of the electrons and the gas, the Debye length and the mean free path. It works them for the shop's two machines, nitriding vessel PN-1 at 300 Pa and PVD coater PV-1 at 0.5 Pa, converting the pressures with the BIZOMAT pressure converter. It ends with a pressure gauge that read twice the true pressure because nobody had told it the gas was mostly hydrogen.
 
 ## A gas with a few charged particles in it
 

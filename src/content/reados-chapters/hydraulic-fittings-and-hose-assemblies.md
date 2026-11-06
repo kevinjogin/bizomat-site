@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Hydraulic connections hold and seal fluid at high pressure, and the sealing feat
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow component manufacturers' specifications and applicable safety requirements.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow component manufacturers' specifications and applicable safety requirements.*

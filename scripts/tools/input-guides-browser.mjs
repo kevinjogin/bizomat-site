@@ -6,7 +6,7 @@
 // figure draws inside its box, that the figure follows a typed value, that the tool still shows a result, and that the
 // page logs no errors. It also checks keyboard opening, a 360 px wide screen and reduced motion on sample tools.
 // Results go to docs/tool-input-guides-browser.json; `input-guides.mjs inventory` folds them into the inventory.
-// Needs Playwright with Chromium (pre-installed in the KEVOS cloud environment).
+// Needs Playwright with Chromium (pre-installed in the BIZOMAT cloud environment).
 import { createRequire } from 'node:module';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';

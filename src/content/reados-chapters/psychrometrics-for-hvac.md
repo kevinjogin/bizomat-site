@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -208,4 +208,4 @@ Psychrometrics explains the behaviour of moist air through a handful of properti
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. HVAC design should be carried out by qualified practitioners using appropriate data and standards.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. HVAC design should be carried out by qualified practitioners using appropriate data and standards.*

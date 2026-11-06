@@ -3,13 +3,13 @@ book: shop-floor-optimisation-by-the-numbers
 chapterSlug: balancing-an-assembly-line
 order: 4
 title: "Balancing an assembly line"
-description: "Balance an assembly line to takt: takt time, the least number of stations, precedence, the positional weight rule, exhaustive checks, and the KEVOS® takt, bottleneck and cycle time tools."
+description: "Balance an assembly line to takt: takt time, the least number of stations, precedence, the positional weight rule, exhaustive checks, and the BIZOMAT takt, bottleneck and cycle time tools."
 draft: false
 ---
 
 An assembly line is a loading problem with two extra rules. The work is divided into tasks, each task must go to one station, and the stations work in sequence, so a task cannot be done at a station before the tasks it depends on. And the line has a pace, set by demand, that every station must keep: the takt time. The aim is to meet takt with as few stations as possible and, with the stations fixed, to share the work as evenly as possible so that no operator waits while another struggles.
 
-This chapter balances the EC-600 final assembly line. It works out takt with the KEVOS® takt time tool, finds the least possible number of stations, balances the line by a classic rule and by exhaustive search, checks the result with the KEVOS® bottleneck and cycle time tools, and ends with a balance made by dividing the task list into equal thirds.
+This chapter balances the EC-600 final assembly line. It works out takt with the BIZOMAT takt time tool, finds the least possible number of stations, balances the line by a classic rule and by exhaustive search, checks the result with the BIZOMAT bottleneck and cycle time tools, and ends with a balance made by dividing the task list into equal thirds.
 
 ## Takt and the least number of stations
 
@@ -89,7 +89,7 @@ caption: This is an illustration. Balance efficiency = 19.6 ÷ (3 × longest sta
 
 The best balance gives every station between 6.5 and 6.6 minutes, a longest station of 6.6 minutes and 0.4 minutes of margin at the bottleneck. It moves the cable entry blanks, I, to station 1, where they can follow the gland plate, and separates the door seal and lock tasks so that each door task sits with work that does not depend on it. These are moves a supervisor might find by trial and error, but the search finds them in seconds and proves that nothing better exists: no balance of these tasks on three stations has a longest station below 6.6 minutes.
 
-## Checking the balance with the KEVOS® tools
+## Checking the balance with the BIZOMAT tools
 
 The [bottleneck and line balance tool](/tools/bottleneck/) takes the available production time, the daily demand and the cycle times of up to three steps. It reports the required takt, the constraint step and its load against takt, the line's daily capacity and the line balance efficiency, and checks whether the constraint meets takt and whether the balance is above 85%.
 

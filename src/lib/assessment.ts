@@ -89,9 +89,9 @@ export function validateAssessment(input: AssessmentInput): AssessmentErrors {
 
 const oneLine = (s: string) => s.replace(/[\r\n]+/g, ' ').trim();
 
-/** Email subject for KEVOS®'s inbox. */
+/** Email subject for BIZOMAT's inbox. */
 export const assessmentSubject = (i: AssessmentInput) =>
-  oneLine(`KEVOS® assessment enquiry: ${i.category || 'Other'} — ${i.company || i.name}`).slice(0, 200);
+  oneLine(`BIZOMAT assessment enquiry: ${i.category || 'Other'} — ${i.company || i.name}`).slice(0, 200);
 
 /** Ordered label/value rows, used for the email body and any provider that needs flat fields. */
 export function assessmentRows(i: AssessmentInput): Array<[string, string]> {

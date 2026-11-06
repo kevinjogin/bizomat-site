@@ -9,6 +9,7 @@ import { collectBing, bingDate } from '../scripts/seo/lib/bing.mjs';
 import { collectCloudflare } from '../scripts/seo/lib/cloudflare.mjs';
 import { changedUrls, contentHash, submitIndexNow } from '../scripts/seo/lib/indexnow.mjs';
 import { analyse, aggregate } from '../scripts/seo/lib/engine.mjs';
+import { SITE } from '../scripts/seo/lib/site.mjs';
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
@@ -66,15 +67,15 @@ test('Bing and Cloudflare map their responses; API errors become FAILED, not dat
   assert.equal(err.status, 'FAILED');
 });
 
-test('IndexNow: no baseline submits nothing; changes and removals are found; only kevos.com is sent', async () => {
-  assert.deepEqual(changedUrls(null, { 'https://kevos.com/a/': '1' }), []);
-  assert.deepEqual(changedUrls({ 'https://kevos.com/a/': '1', 'https://kevos.com/gone/': '2' }, { 'https://kevos.com/a/': '9', 'https://kevos.com/new/': '3' }), ['https://kevos.com/a/', 'https://kevos.com/gone/', 'https://kevos.com/new/']);
+test('IndexNow: no baseline submits nothing; changes and removals are found; only the site\'s own host is sent', async () => {
+  assert.deepEqual(changedUrls(null, { [`${SITE}/a/`]: '1' }), []);
+  assert.deepEqual(changedUrls({ [`${SITE}/a/`]: '1', [`${SITE}/gone/`]: '2' }, { [`${SITE}/a/`]: '9', [`${SITE}/new/`]: '3' }), [`${SITE}/a/`, `${SITE}/gone/`, `${SITE}/new/`]);
   assert.equal(contentHash('<title>A</title><main>x  y</main><script>1</script>'), contentHash('<title>A</title><main>x y</main>'), 'whitespace and scripts ignored');
   let body: { host: string; urlList: string[]; keyLocation: string } | undefined;
-  const r = await submitIndexNow(['https://kevos.com/a/', 'https://kevos.com/a/', 'https://other.example/x'], { key: 'abc', fetchImpl: async (_u: string, init: RequestInit) => { body = JSON.parse(String(init.body)); return new Response('', { status: 202 }); } });
+  const r = await submitIndexNow([`${SITE}/a/`, `${SITE}/a/`, 'https://other.example/x'], { key: 'abc', fetchImpl: async (_u: string, init: RequestInit) => { body = JSON.parse(String(init.body)); return new Response('', { status: 202 }); } });
   assert.equal(r.submitted, 1);
-  assert.deepEqual(body?.urlList, ['https://kevos.com/a/']);
-  assert.equal(body?.keyLocation, 'https://kevos.com/abc.txt');
+  assert.deepEqual(body?.urlList, [`${SITE}/a/`]);
+  assert.equal(body?.keyLocation, `${SITE}/abc.txt`);
 });
 
 test('engine: evidence thresholds, striking distance, cannibalisation and declines; nothing auto-applied', () => {

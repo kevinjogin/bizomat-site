@@ -4,8 +4,8 @@ subtitle: "Capacity, levels, mass, sheet and patterns for fabricated tanks and h
 description: "Calculate tanks and hoppers with numbers: capacity and freeboard, frustums and the prismoidal formula, level tables, mass and loads, sheet area, and cone and hopper patterns."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -51,7 +51,7 @@ It suits designers, drafters, fabricators and process engineers. It assumes scho
 
 Every chapter follows one fictional job. This is an illustration. A fabricator builds equipment for a small food processor: a stainless steel holding tank, TK-1, with an internal diameter of 1,200 mm, a straight shell 1,500 mm high and a conical bottom 400 mm deep draining to a 100 mm outlet; and a square powder hopper, HP-400, 1,000 × 1,000 mm at the top, tapering over 900 mm to a 250 × 250 mm outlet, with a 300 mm straight upstand above.
 
-The business, the processor and the equipment are invented; none describes KEVOS® work or a real product. Prices are illustrations in Australian dollars, excluding GST.
+The business, the processor and the equipment are invented; none describes BIZOMAT work or a real product. Prices are illustrations in Australian dollars, excluding GST.
 
 ## Source limits and professional responsibility
 

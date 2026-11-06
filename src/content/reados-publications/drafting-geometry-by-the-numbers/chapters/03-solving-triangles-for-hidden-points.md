@@ -50,7 +50,7 @@ The **sine rule** relates each side to the sine of its opposite angle:
 
 a ÷ sin A = b ÷ sin B = c ÷ sin C
 
-The cosine rule has one great advantage for drafting: when used to find an angle, it always gives the right answer, because the inverse cosine returns angles from 0° to 180° and every angle in a triangle lies in that range. The sine rule has a trap. The inverse sine returns only angles from −90° to 90°, and an obtuse angle has the same sine as its supplement: sin 143.6° = sin 36.4°. If the angle you want is obtuse, the inverse sine gives the wrong one, silently. The KEVOS® [triangle solver](/tools/triangle-solver/) handles every case, including the ambiguous one below, and is a useful second route for checking a hand solution.
+The cosine rule has one great advantage for drafting: when used to find an angle, it always gives the right answer, because the inverse cosine returns angles from 0° to 180° and every angle in a triangle lies in that range. The sine rule has a trap. The inverse sine returns only angles from −90° to 90°, and an obtuse angle has the same sine as its supplement: sin 143.6° = sin 36.4°. If the angle you want is obtuse, the inverse sine gives the wrong one, silently. The BIZOMAT [triangle solver](/tools/triangle-solver/) handles every case, including the ambiguous one below, and is a useful second route for checking a hand solution.
 
 ```figure
 type: formula

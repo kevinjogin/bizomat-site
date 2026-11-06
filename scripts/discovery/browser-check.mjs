@@ -179,7 +179,7 @@ try {
     check('path: a first path appears before the AI answers', (await pg.locator('.sp__pending').count()) === 1 && /workflow/.test(await pg.textContent('.sp__by')));
     check('path: titled "Your Solution Path" with numbered steps', (await pg.textContent('.sp__title')) === 'Your Solution Path' && (await pg.locator('.sp__step').count()) >= 2);
     release();
-    await pg.waitForFunction(() => document.querySelector('.sp__by')?.textContent?.includes('KEVOS® AI') && !document.querySelector('.sp__pending'), null, { timeout: 15000 });
+    await pg.waitForFunction(() => document.querySelector('.sp__by')?.textContent?.includes('BIZOMAT AI') && !document.querySelector('.sp__pending'), null, { timeout: 15000 });
     check('path: the AI path replaces the first one in place', (await pg.locator('.dr-exchange').count()) === 1 && (await pg.locator('.sp').count()) === 1);
     const labels = await pg.$$eval('.sp__step:nth-child(2) .sp__label', (n) => n.map((x) => x.textContent));
     check('path: a tool step shows why, tool, inputs, output and check', ['Why it matters', 'Which tool to use', 'Required inputs', 'Expected output', 'How to check the result'].every((l) => labels.includes(l)), labels.join(' | '));
@@ -227,7 +227,7 @@ try {
     await b.pg.goto(BASE + '/');
     await ask(b.pg, 'plan my wedding');
     r = await latest(b.pg);
-    check('AI out-of-scope gives the "outside what KEVOS covers" message', r.say.some((s) => /outside what KEVOS/.test(s)) && r.groups.length === 0);
+    check('AI out-of-scope gives the "outside what BIZOMAT covers" message', r.say.some((s) => /outside what BIZOMAT/.test(s)) && r.groups.length === 0);
     await b.ctx.close();
   }
   // 6. Failures: 500, network abort, 429
@@ -288,7 +288,7 @@ try {
     check('no floating assistant or assistant section on /contact/', (await pg.locator('.assistant__launcher, #assistant').count()) === 0);
     await ctx.close();
   }
-  // 8b. WORKOS directory search asks KEVOS AI for a question in plain words
+  // 8b. WORKOS directory search asks BIZOMAT AI for a question in plain words
   {
     let asked = 0;
     const { ctx, pg, errors } = await page({ api: (body) => { asked++; return { status: 200, body: { ok: true, ai: true, intent: { terms: ['keyhole welding', 'laser welding'], ambiguous: false, picks: ['fillet-weld-strength'] } } }; } });
@@ -298,14 +298,14 @@ try {
     const first = pg.locator('[data-lib-results-grid] > *').first();
     check('/tools/: the AI pick appears first in the results', (await first.getAttribute('data-tool-id')) === 'fillet-weld-strength' || (await first.innerHTML()).includes('fillet-weld-strength'));
     check('/tools/: the "no match" box is hidden once AI finds a tool', await pg.locator('[data-lib-empty]').isHidden());
-    check('/tools/: the note says the AI chose it', /chosen by KEVOS® AI/.test(await pg.textContent('[data-lib-ai-note]')));
+    check('/tools/: the note says the AI chose it', /chosen by BIZOMAT AI/.test(await pg.textContent('[data-lib-ai-note]')));
     await pg.fill('[data-lib-input]', 'oee');
     await pg.waitForTimeout(1000);
     check('/tools/: a short keyword search with matches does not call the AI', asked === 1 && (await pg.locator('[data-ai-pick]').count()) === 0, String(asked));
     check('/tools/: no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
   }
-  // 10. Learning paths (the homepage "Ask KEVOS" box), with KEVOS® AI mocked
+  // 10. Learning paths (the homepage "Ask BIZOMAT" box), with BIZOMAT AI mocked
   {
     const plan = (body) => {
       // A plan over the numbered candidates the browser sent: three modules of two lessons.
@@ -329,10 +329,10 @@ try {
     // Example prompts fill the box; they do not send.
     await pg.locator('[data-discover-example]').nth(1).click();
     check('learn: an example fills the box without sending', (await pg.inputValue('#discover-question')) === 'My bearings keep failing early. How do I find the cause and check their life?' && await pg.locator('[data-discover-results]').isHidden() && learnCalls.length === 0);
-    check('learn: the homepage button says Ask KEVOS', /Ask KEVOS/.test(await pg.textContent('[data-discover-submit]')));
+    check('learn: the homepage button says Ask BIZOMAT', /Ask BIZOMAT/.test(await pg.textContent('[data-discover-submit]')));
     await ask(pg, 'I want to learn manufacturing process improvement.', 'click');
     await pg.waitForSelector('.lc', { timeout: 15000 });
-    await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
+    await pg.waitForFunction(() => /Planned by BIZOMAT AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
     check('learn: the AI course replaces the Library draft in place', (await pg.locator('.lc').count()) === 1 && (await pg.textContent('.lc__title')) === 'Manufacturing process improvement, step by step');
     check('learn: results titled "Your learning path"', (await pg.textContent('#discover-title')).trim() === 'Your learning path');
     const facts = await pg.locator('.lc__facts dt').allTextContents();
@@ -397,7 +397,7 @@ try {
     check('learn: Quick Understanding shows the quick answer', (await pg.locator('.dr-exchange').count()) >= 1);
     // Repeated question: same course, progress kept for the tab
     await ask(pg, 'I want to learn manufacturing process improvement.');
-    await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc .lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
+    await pg.waitForFunction(() => /Planned by BIZOMAT AI/.test(document.querySelector('.lc .lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
     check('learn: asking the same again keeps this tab’s progress', /1 of 6 lessons complete/.test(await pg.locator('.lc').first().locator('.lc__progress-text').textContent()));
     check('learn: no console errors', errors.length === 0, errors.join(' | '));
     await ctx.close();
@@ -428,7 +428,7 @@ try {
     const o = await page({ learn: out });
     await o.pg.goto(BASE + '/');
     await ask(o.pg, 'teach me how to bake sourdough bread');
-    check('learn: an unsupported subject is declined, no course', (await o.pg.locator('.lc').count()) === 0 && /outside what KEVOS® covers/.test(await o.pg.textContent('[data-discover-status]')));
+    check('learn: an unsupported subject is declined, no course', (await o.pg.locator('.lc').count()) === 0 && /outside what BIZOMAT covers/.test(await o.pg.textContent('[data-discover-status]')));
     await o.ctx.close();
     const busy = await page({ learn: () => ({ status: 429, body: { ok: false, error: 'You have made a lot of requests in a short time. Please wait a little and try again.' } }) });
     await busy.pg.goto(BASE + '/');
@@ -445,7 +445,7 @@ try {
     const { ctx, pg, errors } = await page({ width: 390, height: 844, learn });
     await pg.goto(BASE + '/');
     await ask(pg, 'Teach me mechanical engineering from beginner to advanced.');
-    await pg.waitForFunction(() => /Planned by KEVOS® AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
+    await pg.waitForFunction(() => /Planned by BIZOMAT AI/.test(document.querySelector('.lc__eyebrow')?.textContent ?? ''), null, { timeout: 15000 });
     check('learn (mobile): no sideways scroll with a course', await noSideScroll(pg));
     check('learn (mobile): contents stack above the lesson', await pg.evaluate(() => { const n = document.querySelector('.lc__nav').getBoundingClientRect(); const m = document.querySelector('.lc__main').getBoundingClientRect(); return n.bottom <= m.top + 1; }));
     await pg.click('.lc-primary');

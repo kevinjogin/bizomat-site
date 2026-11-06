@@ -4,8 +4,8 @@ subtitle: "Osmotic pressure, recovery, flux, temperature, polarisation, scaling,
 description: "Size, check and run a brackish-water reverse osmosis plant from first principles: osmotic pressure, recovery, flux, temperature, polarisation, scaling, pretreatment, energy and cleaning."
 category: Engineering
 tags: [design, operations, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-30
@@ -98,7 +98,7 @@ Reverse osmosis pushes water through a membrane that holds the salt back. The id
 
 This book works through them one at a time. It starts with osmotic pressure and the recovery that a feed pressure allows, moves to flux, permeability and temperature, then to polarisation, scaling and the pretreatment that keeps a membrane alive. It finishes with the pump and the energy bill, measured against the thermodynamic least work of separation, and with the routine of normalising operating data and cleaning when the numbers say so.
 
-It is for process, mechanical and maintenance engineers, water treatment operators, plant managers and students who know what a pump curve and a mass balance are. It assumes algebra and the ideas of pressure and concentration. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for process, mechanical and maintenance engineers, water treatment operators, plant managers and students who know what a pump curve and a mass balance are. It assumes algebra and the ideas of pressure and concentration. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tool that performs the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -110,13 +110,13 @@ Every chapter follows one fictional plant. This is an illustration. A metal-fini
 - **Design conditions:** 25 °C reference, with the feed tank swinging from about 18 °C in winter to 30 °C in summer.
 - **Pressures at the design point:** 11.5 bar gauge at the membrane inlet, 3.0 bar of pressure drop along the twelve elements in series, and 0.5 bar gauge on the permeate to the storage tank.
 
-The plant, its water analysis, the membrane data and any prices are invented. None describes KEVOS® work or a real business. The element data are of the kind makers publish, not the data of any product.
+The plant, its water analysis, the membrane data and any prices are invented. None describes BIZOMAT work or a real business. The element data are of the kind makers publish, not the data of any product.
 
 ## How to use the book
 
 Read Chapters 1 to 3 in order: they set out osmotic pressure, the mass balances and the flux equation that every later chapter uses. Chapters 4 to 7 each take one practical limit (temperature, polarisation, scaling and fouling) and can be read in any order once Chapter 3 is understood. Chapters 8 and 9 deal with running the plant: energy, and the operating records that show when it needs cleaning.
 
-Calculations use the same relations as the linked KEVOS® tools: the van 't Hoff osmotic pressure with an osmotic coefficient, the log-mean concentration factor, and the membrane maker's temperature correction factor. Values are given to more figures than a measurement could justify, so that a reader can follow each step.
+Calculations use the same relations as the linked BIZOMAT tools: the van 't Hoff osmotic pressure with an osmotic coefficient, the log-mean concentration factor, and the membrane maker's temperature correction factor. Values are given to more figures than a measurement could justify, so that a reader can follow each step.
 
 ## Source limits and professional responsibility
 

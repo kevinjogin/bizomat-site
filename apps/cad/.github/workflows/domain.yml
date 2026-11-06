@@ -1,0 +1,44 @@
+# Gives the KEVOS gateway on Fly its own address on a domain in Cloudflare (docs/KEVOS-CLOUDFLARE.md, option A):
+# the DNS record, Fly's certificate and its validation record, and the app's public address. Run by hand:
+# Actions > Domain > Run workflow, with the host name (for example bridge.example.com).
+#
+# Repository secrets it needs: CLOUDFLARE_API_TOKEN (Cloudflare > My Profile > API Tokens > Create Token > "Edit zone
+# DNS", limited to that one domain) and FLY_API_TOKEN (a deploy token for the app). Nothing else is changed in
+# Cloudflare; records of another kind under the same name are never replaced.
+name: Domain
+
+on:
+  workflow_dispatch:
+    inputs:
+      hostname:
+        description: "The gateway's own address (the domain must be in your Cloudflare account)"
+        required: true
+        default: "cados.kevos.com"
+      app:
+        description: "Fly app"
+        default: "cados"
+      replace_existing:
+        description: "Replace a CNAME that already exists under that name and points elsewhere"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  domain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+      - name: DNS record, certificate, validation record, public address
+        env:
+          HOST: ${{ inputs.hostname }}
+          APP: ${{ inputs.app }}
+          REPLACE: ${{ inputs.replace_existing && 'yes' || 'no' }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: bash .github/scripts/kevos-domain.sh

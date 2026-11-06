@@ -123,7 +123,7 @@ The bracket has no slender compression members, and the hollow section's walls, 
 
 If the brace carried 1 kN, the linear buckling load factor would be about 170. That number is not a safety factor in the usual sense. Real struts have initial crookedness, residual stresses from manufacture and eccentric loads, and they fail at loads well below the ideal Euler value, sometimes by a large fraction for members of intermediate slenderness. Structural design standards use column curves derived from tests to account for this.
 
-A linear buckling result is therefore an upper bound and a mode-shape finder. A load factor of 170 says buckling is not a concern for this brace. A load factor of 3 would not say the brace is safe by a factor of three; it would say a nonlinear analysis with imperfections, or a check to the relevant structural standard, is required. The KEVOS® [column buckling calculator](/tools/column-buckling/) gives the Euler load for common end conditions.
+A linear buckling result is therefore an upper bound and a mode-shape finder. A load factor of 170 says buckling is not a concern for this brace. A load factor of 3 would not say the brace is safe by a factor of three; it would say a nonlinear analysis with imperfections, or a check to the relevant structural standard, is required. The BIZOMAT [column buckling calculator](/tools/column-buckling/) gives the Euler load for common end conditions.
 
 ## A failure case: the mode that was a mechanism
 

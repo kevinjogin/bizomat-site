@@ -7,7 +7,7 @@ tags:
   - strategy
   - finance
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ The standard your building or asset must meet is often set by conditions outside
 
 ---
 
-*Source: KEVOS® notes. Figures in this article are illustrations, not data. This article is general information, not legal, planning or engineering advice. Confirm requirements with your council, building surveyor or certifier and qualified professionals.*
+*Source: BIZOMAT notes. Figures in this article are illustrations, not data. This article is general information, not legal, planning or engineering advice. Confirm requirements with your council, building surveyor or certifier and qualified professionals.*

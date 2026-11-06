@@ -1,4 +1,4 @@
-// AI provider abstraction for KEVOS® features (Ask KEVOS discovery and learning paths).
+// AI provider abstraction for BIZOMAT features (Ask BIZOMAT discovery and learning paths).
 //
 // Features ask for a JSON reply with completeJson(); which provider and models answer is decided here, so the provider
 // can change (for example to another hosted model) without touching the features. Today the provider is the Worker's

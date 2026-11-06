@@ -7,7 +7,7 @@ tags:
   - finance
   - validation
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ Numbers come from people, and people often need a particular answer. Treat estim
 
 ---
 
-*Source: KEVOS® notes, drawing on reporting in The Economist (2005) on project performance, K. Uppal (2002) and N. Lavingia (2003) in Cost Engineering, and J. P. Sahlin (1998) in PM Network. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on reporting in The Economist (2005) on project performance, K. Uppal (2002) and N. Lavingia (2003) in Cost Engineering, and J. P. Sahlin (1998) in PM Network. Examples and figures in this article are illustrations.*

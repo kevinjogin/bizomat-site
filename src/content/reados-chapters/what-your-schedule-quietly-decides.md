@@ -7,7 +7,7 @@ tags:
   - operations
   - validation
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -198,4 +198,4 @@ A schedule quietly decides who may spend spare time and when the business learns
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on critical path scheduling, float, resource levelling and project life cycles, and the US Government Accountability Office's Schedule Assessment Guide. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on critical path scheduling, float, resource levelling and project life cycles, and the US Government Accountability Office's Schedule Assessment Guide. Examples and figures in this article are illustrations. This article is general information.*

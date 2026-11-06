@@ -4,8 +4,8 @@ subtitle: "Model space, paper space and the arithmetic of scale: viewports, text
 description: "Set up CAD layouts that print true to scale: viewport factors, text heights, dimension and linetype scales, line weights, PDF output, mixed-scale sets and file units."
 category: Engineering
 tags: [design, quality, systems, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -76,7 +76,7 @@ It is written for drafters and CAD users who set up layouts, for designers who i
 
 Every chapter follows one fictional drawing set. This is an illustration. A small machinery builder is detailing the tail take-up frame of a belt conveyor: a welded steel frame 1,600 mm long, 450 mm wide and 600 mm high that carries the tail pulley on two sliding bearing pads, adjusted by take-up screws. The set has three sheets on the office's A3 template: a general arrangement of the 6,000 mm conveyor at 1:20, the take-up frame at 1:10 with an enlarged detail of the bearing pad slide at 1:2 and of the take-up screw lug at 2:1, and a part drawing of the bearing pad.
 
-The office's own drafting standard, also fictional, sets its text heights at 3.5 mm for dimensions and notes, 5 mm for view titles and 7 mm for the drawing number, and its plotted line widths at 0.5 mm for visible outlines and 0.25 mm for thin lines. Each chapter builds part of the set, makes the kind of mistake real drawing offices make, and shows how it was detected and corrected. The business, the drawings and the mistakes are invented; none describes KEVOS® work or a real supplier.
+The office's own drafting standard, also fictional, sets its text heights at 3.5 mm for dimensions and notes, 5 mm for view titles and 7 mm for the drawing number, and its plotted line widths at 0.5 mm for visible outlines and 0.25 mm for thin lines. Each chapter builds part of the set, makes the kind of mistake real drawing offices make, and shows how it was detected and corrected. The business, the drawings and the mistakes are invented; none describes BIZOMAT work or a real supplier.
 
 ## Source limits and professional responsibility
 

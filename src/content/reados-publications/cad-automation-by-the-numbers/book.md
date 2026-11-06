@@ -4,8 +4,8 @@ subtitle: "Choosing, specifying, building, testing, deploying and supporting des
 description: "Build CAD automation that pays: measure the work, choose the level, capture rules, prepare master models, specify, build, test, deploy, generate outputs and support the tool."
 category: Engineering
 tags: [design, automation, systems, process-improvement, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -65,7 +65,7 @@ It assumes working knowledge of a parametric CAD system and basic engineering me
 
 The book follows a fictional fabricator that makes bolted steel **conveyor support trestles** for quarries and recycling plants. The range covers six belt widths from 450 mm to 1,200 mm, heights from 400 mm to 1,500 mm in 50 mm steps, three foot styles and two bracing arrangements: 828 possible variants. The design office of four prepares a model, a drawing set and a cut list for about 36 trestle variants a month, each taking about 2.4 hours by hand.
 
-All quantities, times, rates and results are invented for teaching. This is an illustration. None of it describes a KEVOS® project, product or measured result. Money is in Australian dollars, excluding GST unless stated.
+All quantities, times, rates and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT project, product or measured result. Money is in Australian dollars, excluding GST unless stated.
 
 ## How to use the book
 

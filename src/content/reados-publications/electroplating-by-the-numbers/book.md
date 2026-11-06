@@ -4,8 +4,8 @@ subtitle: "Faraday's laws, current, thickness, adhesion, hydrogen and cost for e
 description: "Specify, check and cost electroplated finishes: Faraday's laws, current efficiency and density, thickness distribution, preparation, hydrogen embrittlement, zinc life and rinsing."
 category: Manufacturing
 tags: [manufacturing, quality, design, process-improvement, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-24
@@ -93,7 +93,7 @@ The plating chapters are short, but almost every principle in them still governs
 
 ## The running case
 
-This is an illustration. A sheet-metal workshop orders zinc electroplating with a trivalent passivate for **4,000 mild steel mounting brackets**. Each bracket has about **2.0 dm²** of surface, including a formed channel that creates a recess, and the drawing calls for a minimum of **8 µm** of zinc on significant surfaces. A smaller order of 400 hardened spring clips joins the case in Chapter 7. Through the book the brackets are specified, their plating time calculated, their current efficiency measured, their thickness distribution examined, their preparation, life, rinsing and cost worked out, and the result recorded. The workshop, the plater, the parts, the process settings, prices and results are invented for teaching. They are not KEVOS® work and not data for any real plating process or product.
+This is an illustration. A sheet-metal workshop orders zinc electroplating with a trivalent passivate for **4,000 mild steel mounting brackets**. Each bracket has about **2.0 dm²** of surface, including a formed channel that creates a recess, and the drawing calls for a minimum of **8 µm** of zinc on significant surfaces. A smaller order of 400 hardened spring clips joins the case in Chapter 7. Through the book the brackets are specified, their plating time calculated, their current efficiency measured, their thickness distribution examined, their preparation, life, rinsing and cost worked out, and the result recorded. The workshop, the plater, the parts, the process settings, prices and results are invented for teaching. They are not BIZOMAT work and not data for any real plating process or product.
 
 ## How to use the book
 
@@ -105,4 +105,4 @@ This book is educational. Electroplating uses corrosive, toxic and in some cases
 
 ## An original treatment
 
-The Library already compares coating systems in [Protecting metals from corrosion and wear](/reados/collections/machine-elements-and-mechanical-design/protecting-metals-from-corrosion-and-wear/), which places electroplating beside galvanising, paint and other treatments. This book goes inside the electroplating process itself. The explanations, the bracket case, the calculations, figures and exercises are original KEVOS® writing. The 1917 treatise is a public-domain historical work; its ideas are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.
+The Library already compares coating systems in [Protecting metals from corrosion and wear](/reados/collections/machine-elements-and-mechanical-design/protecting-metals-from-corrosion-and-wear/), which places electroplating beside galvanising, paint and other treatments. This book goes inside the electroplating process itself. The explanations, the bracket case, the calculations, figures and exercises are original BIZOMAT writing. The 1917 treatise is a public-domain historical work; its ideas are summarised and analysed in new words, and none of its text, tables or illustrations is reproduced.

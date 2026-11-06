@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations from thermodynamics and statistical mechanics topics (batch greiner). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations from thermodynamics and statistical mechanics topics (batch greiner). SI units are explicit at each boundary.
 // Methods are standard thermodynamic relations; no source tables, property data or recommended settings are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

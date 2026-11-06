@@ -4,8 +4,8 @@ subtitle: "Speeds, feeds, power, tool life and cost for planning and quoting mac
 description: "Calculate cutting data, power, deflection, tool life, cycle time and cost for turned, milled and drilled parts, and turn the numbers into a defensible quote."
 category: Manufacturing
 tags: [manufacturing, process-improvement, finance]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-23
@@ -86,7 +86,7 @@ Most machining decisions come down to a handful of numbers: how fast the tool mo
 
 This book sets out those calculations in a practical order. It starts with cutting speed and feed for turning, milling, drilling and tapping, then moves to cutting force, power and torque, deflection and chatter, tool life and the economics of choosing a cutting speed. The last two chapters bring everything together into a cycle-time estimate and a quotation.
 
-The eleven chapters follow one fictional example: **Harbourline Precision**, an invented small job shop, quoting a batch of steel pump flanges. The part, the shop, its machines, its cutting data, its rates and its results are invented for teaching. They are not KEVOS® projects, clients, prices or claims of performance, and the cutting data are illustrative starting points rather than recommendations.
+The eleven chapters follow one fictional example: **Harbourline Precision**, an invented small job shop, quoting a batch of steel pump flanges. The part, the shop, its machines, its cutting data, its rates and its results are invented for teaching. They are not BIZOMAT projects, clients, prices or claims of performance, and the cutting data are illustrative starting points rather than recommendations.
 
 Calculations use metric units: millimetres, metres per minute, newtons, kilowatts and minutes. Money is in Australian dollars, excluding GST. Always start from your tool supplier's current data for the specific tool, grade and material, stay within the machine manufacturer's limits, and follow your workplace's guarding and safe work procedures. The book is general technical and business education, not a substitute for those sources or for competent supervision.
 
@@ -94,4 +94,4 @@ Calculations use metric units: millimetres, metres per minute, newtons, kilowatt
 
 The Library already covers machining in a set of overview chapters, including [milling cutters and milling strategies](/reados/collections/machining-and-metal-parts/milling-cutters-and-milling-strategies/) and [designing parts that are economical to machine](/reados/collections/machining-and-metal-parts/designing-parts-that-are-economical-to-machine/). This book is the quantitative companion: it works through the formulas, shows every step of each calculation and connects them to time and cost.
 
-The explanations, the Harbourline case and all worked examples are original KEVOS® writing. Machinery's Handbook was consulted to cross-check relationships and models; no tables, figures or text from it are reproduced. Where tool supplier conventions are mentioned, readers should use the supplier's current published data.
+The explanations, the Harbourline case and all worked examples are original BIZOMAT writing. Machinery's Handbook was consulted to cross-check relationships and models; no tables, figures or text from it are reproduced. Where tool supplier conventions are mentioned, readers should use the supplier's current published data.

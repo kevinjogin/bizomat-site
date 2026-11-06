@@ -4,8 +4,8 @@ subtitle: "Sizing butt and fillet welds, weld groups under eccentric load and be
 description: "Design welded joints with numbers: load paths, butt and fillet weld sizing, eccentric and bending loads on weld groups, matching, fatigue, cost and the weld drawing."
 category: Engineering
 tags: [design, manufacturing, quality, product-development, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -60,7 +60,7 @@ In 1910, Herbert L. Whittemore of the University of Illinois tested oxy-acetylen
 
 This is an illustration. A small engineering company designs the steel base frame, motor bracket and gearbox mounting for a conveyor drive, and the steel supports for a walkway beside it. Its designer wants to size every weld from the loads rather than habit, cut the weld metal where it is not needed, and make sure the joints that see vibration will not crack.
 
-The company, its design, loads and results are invented for teaching. They are not KEVOS® work. Real structures and machines are designed by competent engineers to the applicable standards, such as AS 4100 for steel structures, with welding to AS/NZS 1554.1 or the standard the design calls up.
+The company, its design, loads and results are invented for teaching. They are not BIZOMAT work. Real structures and machines are designed by competent engineers to the applicable standards, such as AS 4100 for steel structures, with welding to AS/NZS 1554.1 or the standard the design calls up.
 
 ## How to use the book
 
@@ -72,4 +72,4 @@ This book is educational. The design strengths, factors and allowances in it are
 
 ## An original treatment
 
-The Library introduces welded joints for fabricators in a collection chapter, covers weld testing in Testing Welded Joints by the Numbers, and weld metal volume in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the conveyor drive case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their findings are summarised in new words, and none of their text, tables or figures is reproduced.
+The Library introduces welded joints for fabricators in a collection chapter, covers weld testing in Testing Welded Joints by the Numbers, and weld metal volume in Arc Welding by the Numbers; this book links to them rather than repeating them. The explanations, the conveyor drive case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their findings are summarised in new words, and none of their text, tables or figures is reproduced.

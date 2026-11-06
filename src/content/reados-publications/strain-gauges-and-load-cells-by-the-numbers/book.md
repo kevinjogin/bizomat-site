@@ -4,8 +4,8 @@ subtitle: "Elasticity, resistance, bridges, spring elements, installation, calib
 description: "How strain gauges turn stretch into resistance and how load cells, bridges and weighing systems are designed, installed, calibrated and kept accurate, worked with numbers."
 category: Manufacturing
 tags: [quality, manufacturing, validation, automation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-02
@@ -24,7 +24,7 @@ references:
   - title: "Elementary Condensed Matter Physics (lecture notes)"
     creator: "A. H. Castro Neto"
     year: "2003"
-    note: "Copyright work, used only as a map of ideas: atoms and bonds, crystals, elasticity and dislocations, free electrons in metals, electron scattering by lattice vibrations and by disorder, and semiconductors. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: atoms and bonds, crystals, elasticity and dislocations, free electrons in metals, electron scattering by lattice vibrations and by disorder, and semiconductors. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "OIML R 60-1:2021 Metrological regulation for load cells, Part 1: Metrological and technical requirements"
     creator: "International Organization of Legal Metrology (OIML)"
     year: "2021"
@@ -67,7 +67,7 @@ A load cell is a piece of steel that bends very slightly under load, with four s
 
 This book follows the chain from the atoms up. It starts with why steel springs back and why a metal's resistance changes when it is stretched, which explains what a strain gauge can and cannot measure and why temperature is its main enemy. It then works through the Wheatstone bridge, the spring elements inside load cells, shear and torque, the installation of a weighing vessel, calibration, accuracy classes and the faults that make a good scale drift.
 
-It is for mechanical, process, maintenance and quality engineers, instrument technicians and plant managers. It assumes engineering or trade training and comfort with stress, strain and simple algebra; the physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical, process, maintenance and quality engineers, instrument technicians and plant managers. It assumes engineering or trade training and comfort with stress, strain and simple algebra; the physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -80,13 +80,13 @@ Every chapter follows one weighing system. This is an illustration. A stock-feed
 - **Below the hopper:** a screw feeder driven at 40 rpm by a 5.5 kW geared motor meters the batch into the mixer.
 - **Test equipment:** twenty 25 kg certified test weights, 500 kg in all.
 
-Masses, readings, stresses, prices and failure records are the mill's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, load cell maker, instrument maker or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
+Masses, readings, stresses, prices and failure records are the mill's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, load cell maker, instrument maker or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
 
 ## How to use the book
 
 Chapters 1 to 4 explain the gauge and the bridge, Chapters 5 and 6 the spring elements and multiaxial strain, Chapters 7 and 8 installation and calibration, and Chapters 9 and 10 accuracy and keeping a system honest. Read Chapter 1 first; the others stand on their own once the case is familiar.
 
-Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Each chapter links the BIZOMAT calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

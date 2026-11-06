@@ -4,8 +4,8 @@ subtitle: "Managing welding hazards with measurement: fume, exposure, extraction
 description: "Welding safety with numbers: risk management, fume and its measurement, extraction and ventilation, respirators, eyes and radiation, electric shock, fire and confined spaces, noise, heat and records."
 category: Operations
 tags: [operations, people, quality, manufacturing, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -71,7 +71,7 @@ The fume, the electrical and the long-term health hazards were less understood t
 
 This is an illustration. A fabrication shop of about thirty people makes structural steel, trailers and general fabrication, with gas metal arc, flux-cored and manual metal arc welding, plasma and oxy-fuel cutting, and some stainless and galvanised work. Its new health and safety coordinator, a former welder, wants to replace a folder of generic procedures with a programme built on the shop's own hazards and measurements, and to bring down a run of eye injuries, burns and strain injuries.
 
-The shop, its people, measurements, incidents and results are invented for teaching. They are not KEVOS® work. Real workplaces must assess their own risks, measure their own exposures and follow the work health and safety laws of their jurisdiction.
+The shop, its people, measurements, incidents and results are invented for teaching. They are not BIZOMAT work. Real workplaces must assess their own risks, measure their own exposures and follow the work health and safety laws of their jurisdiction.
 
 ## How to use the book
 
@@ -83,4 +83,4 @@ This book is educational and does not replace the work health and safety laws, r
 
 ## An original treatment
 
-The Library covers welding equipment in Arc Welding by the Numbers, shop layout in Setting Up a Welding Shop by the Numbers, and the training of welders in Welder Training by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original KEVOS® writing. The historical sources are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.
+The Library covers welding equipment in Arc Welding by the Numbers, shop layout in Setting Up a Welding Shop by the Numbers, and the training of welders in Welder Training by the Numbers; this book links to them rather than repeating them. The explanations, the shop case, the calculations, figures and exercises are original BIZOMAT writing. The historical sources are public-domain works in the United States; their advice is summarised in new words, and none of their text, tables or illustrations is reproduced.

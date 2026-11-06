@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: mechanism kinematics topic tools (batch norton3) within the Tools directory.
+// BIZOMAT MAKEOS: mechanism kinematics topic tools (batch norton3) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "inverted-slider-crank-kinematics",

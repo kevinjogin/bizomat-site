@@ -7,7 +7,7 @@ tags:
   - validation
   - strategy
   - experimentation
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -193,4 +193,4 @@ Correlation measures how measures move together, but confounding, reverse causat
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

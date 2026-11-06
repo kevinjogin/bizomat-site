@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - design
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -163,4 +163,4 @@ A database should make it possible to explain how a number was calculated and wh
 
 ---
 
-*Source basis: original KEVOS® editorial analysis drawing on Introduce Calculated Column in the supplied Refactoring Databases: Evolutionary Database Design (2006). The linked database documentation verifies generated-column scope. All numerical examples use stated hypothetical rules and are not financial or tax advice.*
+*Source basis: original BIZOMAT editorial analysis drawing on Introduce Calculated Column in the supplied Refactoring Databases: Evolutionary Database Design (2006). The linked database documentation verifies generated-column scope. All numerical examples use stated hypothetical rules and are not financial or tax advice.*

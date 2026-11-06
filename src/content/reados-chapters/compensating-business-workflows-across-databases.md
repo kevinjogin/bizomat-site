@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - automation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

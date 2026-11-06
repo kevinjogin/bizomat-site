@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ Satellites grew from a radio beacon in 1957 into infrastructure for communicatio
 
 ---
 
-*Source: KEVOS editorial notes. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. This article is a general historical overview.*

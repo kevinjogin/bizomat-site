@@ -7,7 +7,7 @@ tags:
   - finance
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -224,4 +224,4 @@ Project cost reports measure whether work is efficient. Cash flow measures wheth
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not financial, tax or legal advice.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations. This article is general information, not financial, tax or legal advice.*

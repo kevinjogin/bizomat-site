@@ -4,8 +4,8 @@ subtitle: "Charge, discharges, ignition, earthing, powder coating, ionisers, ESD
 description: "How static charge builds up, discharges and ignites, and how factories control it and put it to work in powder coating, ionisers, ESD-safe assembly and fume precipitators, with numbers."
 category: Manufacturing
 tags: [manufacturing, operations, quality, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-02
@@ -24,7 +24,7 @@ references:
   - title: "Fundamentals of Plasma Physics"
     creator: "P. M. Bellan, Cambridge University Press"
     year: "2006"
-    note: "Copyright work, used only as a map of ideas: charge shielding, quasi-neutrality, collisions between charged and neutral particles and the motion of charged particles in electric fields, which underlie gas discharges, corona and ion drift. The copy consulted was a 2004 manuscript of the book. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: charge shielding, quasi-neutrality, collisions between charged and neutral particles and the motion of charged particles in electric fields, which underlie gas discharges, corona and ion drift. The copy consulted was a 2004 manuscript of the book. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Electrostatics: Principles, Problems and Applications"
     creator: "J. A. Cross, Adam Hilger"
     year: "1987"
@@ -64,7 +64,7 @@ Static electricity is the oldest electrical phenomenon people know and one of th
 
 This book explains static electricity as engineering. It starts with charge, field, voltage and stored energy, then how materials charge and how long the charge lasts, how gases break down into sparks and corona, and when a discharge can ignite something. It then covers earthing and bonding, electrostatic powder coating, ionisers, the control of electrostatic discharge (ESD) in electronics assembly, electrostatic precipitators, and running a static control programme.
 
-It is for manufacturing, process, safety, quality and maintenance engineers, supervisors and technicians. It assumes engineering or trade training and comfort with voltage, current and simple algebra; the physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for manufacturing, process, safety, quality and maintenance engineers, supervisors and technicians. It assumes engineering or trade training and comfort with voltage, current and simple algebra; the physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -75,13 +75,13 @@ Every chapter follows one factory. This is an illustration. A maker of steel ele
 - **Window line:** polycarbonate viewing windows arrive with a protective film that is peeled off before fitting.
 - **Welding bay:** four welding stations extracted to a two-stage electrostatic precipitator that returns cleaned air to the building.
 
-Charges, voltages, energies, airflows, prices and failure records are the factory's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, equipment maker or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
+Charges, voltages, energies, airflows, prices and failure records are the factory's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, equipment maker or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
 
 ## How to use the book
 
 Chapters 1 to 4 explain charge, discharges and ignition; Chapters 5 to 9 earthing, powder coating, ionisers, ESD control and precipitators; Chapter 10 brings them together into a programme. Read Chapters 1 and 3 first; the others stand on their own once the case is familiar.
 
-Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Each chapter links the BIZOMAT calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

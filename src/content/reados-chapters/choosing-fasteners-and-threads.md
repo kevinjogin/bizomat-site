@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -216,4 +216,4 @@ Good fastener choices make products easier to build, more reliable and easier to
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on screw thread fundamentals, metric, unified, British and pipe thread systems, mechanical joint and fastener selection, self-threading screws and thread inserts, studs, pins and rivets, and thread manufacture and gauging, together with established fastening practice. The worked example is illustrative. This article is general information; use fastener standards and suppliers' data for specific applications.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on screw thread fundamentals, metric, unified, British and pipe thread systems, mechanical joint and fastener selection, self-threading screws and thread inserts, studs, pins and rivets, and thread manufacture and gauging, together with established fastening practice. The worked example is illustrative. This article is general information; use fastener standards and suppliers' data for specific applications.*

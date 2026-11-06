@@ -7,7 +7,7 @@ tags:
   - finance
   - projects
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ The most effective protection is ordinary discipline: milestone payments, writte
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*

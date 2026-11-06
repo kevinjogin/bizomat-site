@@ -4,8 +4,8 @@ subtitle: "Semiconductors, losses, cooling, life, motors, fans, braking, harmoni
 description: "How variable-speed drives control induction motors and how to size, cool, apply and maintain them with numbers: switch physics, losses, junction temperature, energy savings and life."
 category: Engineering
 tags: [automation, design, operations, validation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Electronic and Optoelectronic Properties of Semiconductor Structures"
     creator: "J. Singh, Cambridge University Press"
     year: "2003"
-    note: "Copyright work, used only as a map of ideas: doping, intrinsic carrier density and its temperature dependence, carrier mobility and its limitation by lattice scattering, impact ionisation and avalanche breakdown, minority-carrier injection and recombination. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: doping, intrinsic carrier density and its temperature dependence, carrier mobility and its limitation by lattice scattering, impact ionisation and avalanche breakdown, minority-carrier injection and recombination. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Application Manual Power Semiconductors, second edition"
     creator: "A. Wintrich, U. Nicolai, W. Tursky and T. Reimann, SEMIKRON International"
     year: "2015"
@@ -63,7 +63,7 @@ Most of the electricity a factory buys is turned into motion by induction motors
 
 This book explains drives from the semiconductor up and the machine down. It starts with what a drive does to a motor, then explains how its diodes and transistors block voltage and carry current, where their losses come from, how hot they get and how long they last. It then turns to the machines: the motor at low and high speed, the energy saved on fans and pumps, starting, stopping and braking, harmonics, earth leakage and interference, and finally how to specify, commission and maintain a drive.
 
-It is for mechanical, electrical and maintenance engineers, technicians and plant managers. It assumes engineering or trade training and comfort with power, torque and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for mechanical, electrical and maintenance engineers, technicians and plant managers. It assumes engineering or trade training and comfort with power, torque and simple algebra; the semiconductor physics is explained as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -75,11 +75,11 @@ Every chapter follows one drive panel. This is an illustration. A plastics recyc
 
 DP-4 holds three drives of matching rating, each with a six-pulse diode rectifier, a DC link of electrolytic capacitors and a three-phase inverter of insulated-gate bipolar transistors (IGBTs) and diodes switching at 4 kHz, in a ventilated steel cabinet in the wash hall, which is warm, humid and dusty with plastic fines.
 
-Ratings, losses, temperatures, prices and failure records are the plant's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, drive maker, motor maker or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
+Ratings, losses, temperatures, prices and failure records are the plant's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, drive maker, motor maker or supplier. Prices are in Australian dollars excluding GST, because a GST-registered business claims the GST back on its costs.
 
 ## How to use the book
 
-Chapters 1 to 5 are about the drive itself, and Chapters 6 to 10 about applying and keeping it. Read Chapter 1 first; the others stand on their own once the case is familiar. Each chapter links the KEVOS® calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
+Chapters 1 to 5 are about the drive itself, and Chapters 6 to 10 about applying and keeping it. Read Chapter 1 first; the others stand on their own once the case is familiar. Each chapter links the BIZOMAT calculators it uses. The tools do the arithmetic; the chapter explains what the inputs mean and where they come from. Every result in the text was checked by calculation, and the numbers in figures match the text.
 
 ## Limits and responsibility
 

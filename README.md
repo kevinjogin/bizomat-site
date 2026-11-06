@@ -1,25 +1,68 @@
-# KEVOS website
+# BIZOMAT
 
-The website for **KEVOS** (kevos.com): a static Astro site served by a Cloudflare Worker, with the READOS reading library (edited books of Markdown chapters), the WORKOS decision tools, a Web3Forms contact form and an AI receptionist powered by Cloudflare Workers AI.
+**Intelligent Business Automation Platform.** Automate work. Connect systems. Get business done.
 
-- **No database, no WordPress, no server to maintain.** Pages are built in advance and served as Worker static assets from Cloudflare.
-- **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, and Cloudflare rebuilds the site.
-- **Every build checks itself** for broken links, missing metadata, leaked drafts and security headers.
+This repository holds the whole BIZOMAT platform: the public website with Resources and AI search, and the two
+applications, CAD Automation and Project Management, plus the brand system and the infrastructure that runs them as
+one Fly.io app.
+
+| Product | Path | What it is |
+| --- | --- | --- |
+| Website and Resources | `/` (`src/`, `public/`) | bizomat.ai: home, products, Resources (1,000+ tools and calculators, a technical Library, guides), The Engine Room (the founder, principles and proof of work), legal pages, AI search. Public, no account. |
+| CAD Automation | `apps/cad/` | Formerly CADOS. Connects Claude, ChatGPT or another MCP assistant to SOLIDWORKS on the customer's own computer (Python server, C# add-in and Companion, Windows installer). |
+| Project Management | `apps/work/` | Formerly KEVOS Work. Projects, tasks, teams, boards with nine views, automations, dashboards and documents (Hono + React, runs on Cloudflare or Node). |
+| Brand system | `shared/brand/` | The BIZOMAT wordmark, mark, icons, design tokens, components and fonts, copied into every product. |
+| Infrastructure | `infrastructure/`, `fly.toml` | One Fly.io app with proxy, web, work and cad process groups; local compose stack; smoke tests; data migration scripts. |
+
+Documentation: [architecture](docs/BIZOMAT-ARCHITECTURE.md), [data inventory](docs/BIZOMAT-DATA-INVENTORY.md),
+[migration](docs/BIZOMAT-MIGRATION.md), [deployment](docs/BIZOMAT-DEPLOYMENT.md), [security](docs/BIZOMAT-SECURITY.md),
+[rollback](docs/BIZOMAT-ROLLBACK.md), [operations](docs/BIZOMAT-OPERATIONS.md), [project status](docs/BIZOMAT-PROJECT-STATUS.md).
+
+## Quick start
+
+```bash
+npm ci && npm run verify                      # website: type check, tests, build (4,400+ pages)
+```
+
+```bash
+cd apps/work && npm ci && npm run check       # Project Management: lint, types, tests, build
+```
+
+```bash
+cd apps/cad && python3.12 -m venv .venv && .venv/bin/pip install --require-hashes -r requirements-dev.txt && .venv/bin/pytest -q
+```
+
+```bash
+docker compose -f infrastructure/local/compose.yml up --build   # the whole platform behind its proxy
+```
+
+Licences: the website and Project Management are proprietary to BIZOMAT; CAD Automation is AGPL-3.0-only
+(`apps/cad/LICENSE`). Third-party fonts are under the SIL Open Font Licence (`public/fonts/`).
 
 ---
+
+# The website
+
+The website is a static Astro site with its API routes in `src/worker.ts`: the Library (edited books of Markdown
+chapters), the Tools (browser calculators), AI search over products, tools and books, and the contact and assessment
+forms. It is served by the `web` process of the BIZOMAT app, or by a Cloudflare Worker.
+
+- **No database and no server state.** Pages are built in advance.
+- **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, rebuild.
+- **Every build checks itself** for broken links, missing metadata, leaked drafts and security headers.
 
 ## Contents
 
 1. [Local development](#1-local-development)
 2. [Project structure](#2-project-structure)
-3. [Adding a READOS chapter](#3-adding-a-reados-chapter)
+3. [Adding a Library chapter](#3-adding-a-reados-chapter)
 4. [Frontmatter fields](#4-frontmatter-fields)
 5. [Categories and tags](#5-categories-and-tags)
 6. [Work entries](#6-work-entries)
 7. [Images](#7-images)
 8. [Contact form](#8-contact-form)
-9. [KEVOS Assistant (AI chat)](#9-kevos-assistant-ai-chat)
-10. [Deploying to Cloudflare](#10-deploying-to-cloudflare)
+9. [BIZOMAT Assistant (AI chat)](#9-kevos-assistant-ai-chat)
+10. [Deploying the website](#10-deploying-the-website)
 11. [Changing branding](#11-changing-branding)
 12. [Changing navigation and site details](#12-changing-navigation-and-site-details)
 13. [SEO workflow](#13-seo-workflow)
@@ -52,7 +95,7 @@ src/
   data/         brand.ts (exploring areas, principles) · faq.ts (assistant FAQ)
   layouts/      BaseLayout, LegalLayout
   lib/          contact.ts (shared validation) · contact-client.ts (form delivery)
-  pages/        routes: /, /about/, /tools/ (WORKOS), /reados/ (READOS), /contact/, /privacy/, /terms/, /search/, /chat/, 404
+  pages/        routes: /, /engine-room/, /tools/ (WORKOS), /reados/ (READOS), /contact/, /privacy/, /terms/, /search/, /chat/, 404
   server/       contact + chat handlers (run inside the Cloudflare worker, tested in Node)
   worker.ts     Cloudflare worker: serves the site, /api/chat and /api/contact (built to dist/_worker.js)
   styles/       global.css (design tokens, typography, prose)
@@ -102,7 +145,7 @@ category: "Products"                                    # required: exactly one 
 tags:                                                   # required: 1–5 (normally 2–5) from the controlled list
   - product-development
   - validation
-author: "KEVOS"                                        # optional, defaults to KEVOS
+author: "BIZOMAT"                                        # optional, defaults to BIZOMAT
 featured: false                                         # reserved; not currently displayed
 draft: true                                             # true = never in production, RSS, sitemap, search or the assistant
 image: ./images/cover.jpg                               # optional, path relative to the post file
@@ -164,14 +207,14 @@ The UI calls `submitContact()` (`src/lib/contact-client.ts`) and never talks to 
 
 The endpoint (`src/worker.ts` → `src/server/contact/`) validates input, checks origin, enforces the honeypot and rate limits, escapes email HTML and blocks header injection. All of this is covered by `tests/contact.test.ts`.
 
-## 9. KEVOS Assistant (AI chat)
+## 9. BIZOMAT Assistant (AI chat)
 
 A receptionist-style chat sits at the bottom right of every page. Visitors can **minimise** it or **pop it out** into its own window (`/chat/`). It:
 
-- answers **only** from KEVOS's published website content: FAQ, About, Work and READOS chapters;
+- answers **only** from BIZOMAT's published website content: FAQ, About, Work and READOS chapters;
 - refuses unrelated requests, never invents products, prices or promises, and ignores attempts to override its rules;
 - offers **"Leave a message"**, which sends the visitor's details and the chat transcript through the same contact form system;
-- keeps the conversation in the visitor's browser session only (nothing is stored by KEVOS).
+- keeps the conversation in the visitor's browser session only (nothing is stored by BIZOMAT).
 
 **How it works:** each build writes `/assistant-knowledge.json` from the site's published content (drafts are never included). The site worker (`src/worker.ts` → `src/server/chat/`) picks the most relevant passages and asks a Workers AI model, with strict grounding rules, to answer.
 
@@ -188,64 +231,45 @@ Cloudflare occasionally retires models or moves them to the paid plan. If answer
 
 **Improve answers:** edit `src/data/faq.ts`. It is the assistant's highest-priority source. To switch the assistant off, set `SITE.assistant.enabled = false`.
 
-## 10. Deploying to Cloudflare
+## 10. Deploying the website
 
-The site runs as a **Cloudflare Worker** (`throbbing-block-6c61`, attached to `kevos.com`). The Worker serves the static files in `dist/` and runs `src/worker.ts` for `/api/chat` (KEVOS Assistant) and `/api/contact`. All settings, including the Workers AI binding and the custom domain, live in [wrangler.toml](wrangler.toml).
+The website can run two ways, from the same code:
 
-### Deploy (recommended)
+- **On the BIZOMAT Fly.io app (target):** the `web` process serves `dist/` and runs `src/worker.ts` on Node
+  (`src/node/server.ts`, bundled by `npm run build:server`). Deployed with the rest of the platform; see
+  [docs/BIZOMAT-DEPLOYMENT.md](docs/BIZOMAT-DEPLOYMENT.md).
+- **On the Cloudflare Worker `throbbing-block-6c61` (current kevos.com):** unchanged. `npm run deploy` runs the checks and
+  `wrangler deploy`; Cloudflare's GitHub integration also builds and deploys every push to `main`.
 
-One-time setup: sign Wrangler in to your Cloudflare account. A browser window opens; approve the access.
+**Important:** while the Cloudflare integration is connected, merging to `main` publishes the BIZOMAT website at
+kevos.com. Merge only when that is intended, or set `PUBLIC_SITE_URL` in the Cloudflare build settings while kevos.com
+is the serving host, or disconnect the integration once bizomat.ai is live (see the deployment guide).
 
-```bash
-npx wrangler login
-```
+### What both hosts serve
 
-Then, every time you want to publish:
-
-```bash
-npm run deploy     # type check + tests + build + checks, then wrangler deploy
-```
-
-`npm run preview` runs the Worker locally (`wrangler dev`), including the assistant, which calls Workers AI remotely.
-
-### Why not drag and drop?
-
-Uploading files in the dashboard creates a Worker with **static assets only**. The website and the Web3Forms contact form work that way, but the Worker never runs `src/worker.ts`, so the **assistant does not work** and adding an AI binding in the dashboard will not change that. Use `npm run deploy` instead. If you ever do drag and drop, upload only the **`dist`** folder (about 110 files), never the whole project (`node_modules` is over 15,000 files).
-
-### Automatic deploys from GitHub (used by the online editor)
-
-Workers & Pages → **throbbing-block-6c61 → Settings → Build → Connect** → GitHub → `jogkev-creator/gocore-website`, branch `main`.
-
-| Setting | Value |
-| --- | --- |
-| Build command | `npm run build` |
-| Deploy command | `npx wrangler deploy` |
-| Root directory | `/` (blank) |
-
-Every push to `main`, including every save in Pages CMS, then rebuilds and deploys the site. `npm run deploy` from your computer still works too.
-
-### Renaming the Worker
-
-The Worker name in `wrangler.toml` must match the dashboard. If you rename it (Settings → General), update `name` in `wrangler.toml` before the next deploy, or a second Worker will be created.
-
-### What Cloudflare serves
-
-- Static files from `dist/`, with response headers from `dist/_headers` (generated by `scripts/postbuild.mjs`): a strict Content-Security-Policy with hashes for every inline script, HSTS, `nosniff`, frame blocking, referrer and permissions policies, and long-term caching for hashed assets. `dist/404.html` is used for unknown pages.
-- `src/worker.ts` for everything that is not a file: `/api/chat`, `/api/contact` and any other non-file request. It keeps `*.workers.dev` and `*.pages.dev` addresses out of search engines.
-- `dist/_worker.js` is a bundled copy of the same Worker for Cloudflare Pages deployments. `.assetsignore` keeps it out of the public files when deploying as a Worker.
+- Static files from `dist/`, with response headers from `dist/_headers` (generated by `scripts/postbuild.mjs`): a strict
+  Content-Security-Policy with hashes for every inline script, HSTS, `nosniff`, frame blocking, referrer and
+  permissions policies, and long-term caching for hashed assets. `dist/404.html` is used for unknown pages; the
+  redirects in `dist/_redirects` apply first.
+- `src/worker.ts` for everything that is not a file: `/api/discover`, `/api/learn/*`, `/api/contact`,
+  `/api/assessment`. Preview addresses (`*.workers.dev`, `*.pages.dev`, `*.fly.dev`) are kept out of search engines.
 
 ## 11. Changing branding
 
-**Current approved identity: KEVOS orange.** The former GoCore/GC art generator and its blue logo are retired; do not run `python scripts/brand/build_brand.py` on the production website.
+The brand is **BIZOMAT** (formerly BIZOMAT; GoCore is retired). Everything comes from `shared/brand/`
+([shared/brand/README.md](shared/brand/README.md)):
 
-- **Wordmark:** the approved orange vector logos are `public/brand/kevos-wordmark-orange-light.svg` and `public/brand/kevos-wordmark-orange-dark.svg`. The site's `SiteWordmark.astro` and `Logo.astro` use these exact files; the primary identity is not reconstructed from a text font.
-- **Favicons, app icons, assistant K:** the master angular orange K is `public/brand/kevos-chat-k-mark.svg`. `npm run brand` safely regenerates `public/brand/kevos-favicon-k-orange.svg`, the PNG sizes and `public/favicon.ico` using `scripts/build-kevos-icons.mjs`. The normal production build also does this before Astro runs.
-- **Legacy safety:** `scripts/prepare-brand.mjs` is a compatibility shim for previous build setups; it now calls the KEVOS icon builder rather than generating GoCore artwork. Old `brand-source/generated/gocore-*` files are legacy records, not the live KEVOS identity.
-- **Type system:** self-hosted KEVOS Display (Oxanium-based) is used for major headings. Body copy stays readable with Inter Tight and articles use Source Serif 4. The approved KEVOS orange logo itself uses fixed SVG paths.
-- **Colours:** `src/styles/global.css` contains the light/dark colour tokens. All blue legacy brand accents are replaced with the approved KEVOS orange.
-- **Motion:** `src/components/ServiceMap.astro` is the shared four-square Home/Services/About orbit. `src/components/MotionVisual.astro` contains the purpose-specific Industries/How It Works/Tools/Contact diagrams. Every animation respects reduced-motion preferences.
-
-If the website unexpectedly displays GoCore, **do not roll back GitHub**: confirm the Cloudflare Worker `throbbing-block-6c61` has a successful build from the latest `main` commit and that `kevos.com/*` routes to that deployment.
+- **Wordmark and mark:** drawn in `shared/brand/glyphs.mjs`. `npm run brand` (also the first step of every build)
+  writes the logos, icons, `favicon.ico`, tokens, components and fonts into the website and both applications;
+  `npm run brand:check` fails if any copy is out of date. `node shared/brand/og.mjs` renders the social images.
+- **Type:** Oxanium for H1 to H6 (it matches the wordmark), Inter Tight for body text, Source Serif 4 for long-form
+  Library reading. All self-hosted.
+- **Colours:** navy `#0a1f33`, teal `#0f766e` (buttons and links), teal `#14b8a6` (the mark), cool neutrals; tokens in
+  `shared/brand/tokens.css`, mapped to the site's own names in `src/styles/global.css`.
+- **Never** write "®" after BIZOMAT: it is not a registered trade mark. The registered mark is the former name, BIZOMAT,
+  shown only by `TradeMarkNotice.astro` and the footer.
+- **Motion:** product scenes in `src/components/visuals/` (SVG and CSS, no JavaScript, still under reduced motion);
+  `ServiceMap.astro` and `MotionVisual.astro` remain for the service pages.
 
 ## 12. Changing navigation and site details
 

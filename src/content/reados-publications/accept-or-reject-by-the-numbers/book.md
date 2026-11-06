@@ -4,8 +4,8 @@ subtitle: "Inspection decisions as inference: base rates, measurement error, gua
 description: "Make better accept and reject decisions: Bayes' rule, readings near the limits, cost-based guard bands, gauge studies, repeat checks, combined evidence, thresholds and sampling."
 category: Manufacturing
 tags: [quality, manufacturing, validation, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Statistical Physics of Spin Glasses and Information Processing: An Introduction"
     creator: "H. Nishimori, Oxford University Press (International Series of Monographs on Physics 111)"
     year: "2001"
-    note: "In copyright. Used only as a map of the ideas behind Chapters 1, 5, 6 and 7: Bayesian decoding of noisy signals, the gain from assuming the true noise level and prior, majority voting as the simplest error-correcting code, and per-bit against whole-message decisions. No text, structure, figures, tables or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map of the ideas behind Chapters 1, 5, 6 and 7: Bayesian decoding of noisy signals, the gain from assuming the true noise level and prior, majority voting as the simplest error-correcting code, and per-bit against whole-message decisions. No text, structure, figures, tables or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "An essay towards solving a problem in the doctrine of chances"
     creator: "T. Bayes, communicated by R. Price, Philosophical Transactions of the Royal Society of London 53, 370–418"
     year: "1763"
@@ -34,7 +34,7 @@ references:
     creator: "Joint Committee for Guides in Metrology, published by BIPM"
     year: "2008"
     url: "https://www.bipm.org/en/committees/jc/jcgm/publications"
-    note: "Named in Chapter 2 as the basis of the uncertainty budget, combined and expanded uncertainty used there and in the KEVOS® uncertainty tools. The guide is free from the BIPM publications page."
+    note: "Named in Chapter 2 as the basis of the uncertainty budget, combined and expanded uncertainty used there and in the BIZOMAT uncertainty tools. The guide is free from the BIPM publications page."
   - title: "JCGM 106:2012, Evaluation of measurement data: The role of measurement uncertainty in conformity assessment"
     creator: "Joint Committee for Guides in Metrology, published by BIPM"
     year: "2012"
@@ -47,7 +47,7 @@ references:
   - title: "ISO 2859-1, Sampling procedures for inspection by attributes, Part 1: Sampling schemes indexed by acceptance quality limit (AQL) for lot-by-lot inspection"
     creator: "International Organization for Standardization"
     year: "current edition"
-    note: "Named by number and scope only in Chapter 9. The plans in this book are designed from the binomial distribution by the KEVOS® tools, not taken from the standard's tables."
+    note: "Named by number and scope only in Chapter 9. The plans in this book are designed from the binomial distribution by the BIZOMAT tools, not taken from the standard's tables."
   - title: "NIST/SEMATECH e-Handbook of Statistical Methods"
     creator: "National Institute of Standards and Technology"
     year: "n.d."
@@ -82,7 +82,7 @@ Every inspection ends in a decision: accept or reject, pass or hold, ship the lo
 
 This book treats inspection as inference. It starts with Bayes' rule and the base rate, works through readings near the tolerance limits, guard bands set from costs, gauge studies, repeat readings and majority votes, combining several checks, setting automatic inspection thresholds and learning a process's defect rate, and finishes with lot sampling and the design of a whole inspection plan. The mathematics is the same that information theory and statistical physics use to decode noisy signals, applied to parts instead of bits.
 
-It is for quality engineers, inspectors, metrologists, production engineers and supervisors. It assumes familiarity with tolerances, the normal distribution and a spreadsheet. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for quality engineers, inspectors, metrologists, production engineers and supervisors. It assumes familiarity with tolerances, the normal distribution and a spreadsheet. Each chapter works the running case with real numbers, includes one plausible mistake and how it was caught, links the BIZOMAT tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -94,13 +94,13 @@ Every chapter follows one fictional part. This is an illustration. A CNC turning
 - **The costs:** a bad bush that reaches the customer costs about A$400 in sorting, freight and goodwill; a good bush rejected costs about A$6.50 in material and machining. Operator time costs A$80 an hour. All excluding GST.
 - **The customer:** checks incoming lots by attributes, with a plan of 132 bushes and an acceptance number of 3.
 
-The shop, the customer, the bush and every number about them are invented for the case and do not describe KEVOS® work or any real business or product.
+The shop, the customer, the bush and every number about them are invented for the case and do not describe BIZOMAT work or any real business or product.
 
 ## How to use the book
 
 Read Chapter 1 first: Bayes' rule and the base rate are the foundation of everything after. Chapters 2 to 5 concern measured characteristics and the gauge; Chapters 6 and 7 concern pass–fail checks and automatic inspection; Chapter 8 learns the defect rate from data; Chapter 9 decides about lots; Chapter 10 puts the pieces together into an inspection plan.
 
-Every calculation in the book was checked by running it, and the false-accept and false-reject rates were calculated by integrating over the process distribution. The KEVOS® tools linked from the chapters perform the same calculations with the reader's own data.
+Every calculation in the book was checked by running it, and the false-accept and false-reject rates were calculated by integrating over the process distribution. The BIZOMAT tools linked from the chapters perform the same calculations with the reader's own data.
 
 ## Source limits and professional responsibility
 

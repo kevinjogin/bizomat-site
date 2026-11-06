@@ -7,7 +7,7 @@ tags:
   - quality
   - people
   - leadership
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -191,4 +191,4 @@ Engineering registration, competence frameworks and design duties exist because 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering handbook on the engineering profession, competence, registration and the duty of care, together with general knowledge of Australian professional and work health and safety frameworks. The worked example is illustrative. This article is general information, not legal advice; check current requirements with regulators and seek legal advice for specific situations.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering handbook on the engineering profession, competence, registration and the duty of care, together with general knowledge of Australian professional and work health and safety frameworks. The worked example is illustrative. This article is general information, not legal advice; check current requirements with regulators and seek legal advice for specific situations.*

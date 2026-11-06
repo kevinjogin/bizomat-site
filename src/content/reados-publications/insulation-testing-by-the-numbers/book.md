@@ -4,8 +4,8 @@ subtitle: "Insulators and dielectrics, insulation resistance, polarisation index
 description: "How to test and judge the insulation of motor windings, from why insulators insulate to insulation resistance, polarisation index, tan delta, partial discharge and ageing, worked with numbers."
 category: Engineering
 tags: [operations, quality, systems, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-03
@@ -24,7 +24,7 @@ references:
   - title: "Introduction to Solid State Physics"
     creator: "C. Kittel, John Wiley & Sons"
     year: "1996"
-    note: "Seventh edition. Copyright work, used only as a map of ideas: energy bands and the band gap, dielectrics, polarisability and the local field, and dielectric relaxation. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Seventh edition. Copyright work, used only as a map of ideas: energy bands and the band gap, dielectrics, polarisability and the local field, and dielectric relaxation. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Electrical Insulation for Rotating Machines: Design, Evaluation, Aging, Testing, and Repair"
     creator: "G. C. Stone, I. Culbert, E. A. Boulter and H. Dhirani, Wiley-IEEE Press"
     year: "2014"
@@ -67,7 +67,7 @@ Insulation tests give that warning. A DC insulation resistance test, the most co
 
 This book shows how to use those tests with numbers. It starts with why insulation fails and why insulating materials insulate at all, then covers polarisation, the insulation resistance test, the polarisation index, moisture and temperature, dielectric loss, partial discharge and the surges from variable speed drives, thermal ageing, and finally running a test program and judging what it is worth.
 
-It is for electricians, electrical and reliability engineers, maintenance planners, motor rewinders and plant managers. It assumes trade or engineering training and comfort with basic electrical theory; the physics of insulators is explained as it is used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for electricians, electrical and reliability engineers, maintenance planners, motor rewinders and plant managers. It assumes trade or engineering training and comfort with basic electrical theory; the physics of insulators is explained as it is used. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -77,13 +77,13 @@ Every chapter follows one site. This is an illustration. A cold store near Wagga
 - **EF-01 to EF-24, the evaporator fan motors:** 2.2 kW, 415 V, random-wound motors with enamelled wire, four of them in the two blast freezers and twenty in six storage rooms held at about −25 °C, with regular defrost cycles.
 - **CF-1 to CF-6, the condenser fan motors:** 7.5 kW, 415 V motors on the roof, each driven by a variable speed drive in the plant room about 60 metres away.
 
-The site tests its 3.3 kV motors at 2,500 V DC and its 415 V motors at 500 V DC under its own procedure. Readings, sizes, material properties, costs and results are the site's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real cold store, motor maker, rewinder or service company. Material properties are typical values chosen for illustration and should be taken from manufacturers' data and measurements for real work. Prices are in Australian dollars excluding GST.
+The site tests its 3.3 kV motors at 2,500 V DC and its 415 V motors at 500 V DC under its own procedure. Readings, sizes, material properties, costs and results are the site's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real cold store, motor maker, rewinder or service company. Material properties are typical values chosen for illustration and should be taken from manufacturers' data and measurements for real work. Prices are in Australian dollars excluding GST.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first: they set out why insulation fails, why it insulates and how it polarises, which every later chapter uses. Chapters 4 to 6 cover the DC tests and the effects of temperature and moisture. Chapters 7 and 8 cover the AC tests and partial discharge. Chapter 9 covers thermal ageing and life, and Chapter 10 brings the program and its cost together.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, the chapter says which output is used.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, the chapter says which output is used.
 
 ## Source limits and professional responsibility
 

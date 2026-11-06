@@ -8,7 +8,7 @@ tags:
   - operations
   - systems
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -203,4 +203,4 @@ Key-person dependence is not just a risk that might happen one day. It is a cont
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not financial, insurance or legal advice.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations. This article is general information, not financial, insurance or legal advice.*

@@ -3,13 +3,13 @@ book: plain-bearings-by-the-numbers
 chapterSlug: petroff-friction
 order: 3
 title: "Petroff's friction and power loss"
-description: "Derive Petroff's equation for a journal bearing's friction, use the KEVOS® Petroff tool for torque, friction coefficient, power loss and Sommerfeld number, and correct the result for eccentricity."
+description: "Derive Petroff's equation for a journal bearing's friction, use the BIZOMAT Petroff tool for torque, friction coefficient, power loss and Sommerfeld number, and correct the result for eccentricity."
 draft: false
 ---
 
 The first useful number about any running journal bearing is how much power its oil film absorbs. It sets the bearing's temperature, its share of the machine's energy bill and, through the temperature, its oil's viscosity and therefore its film. In 1883, the same year Tower found the film pressure, Nikolai Petroff in Russia published a formula for that friction which is still the starting point of every bearing calculation. It treats the journal as centred in its bore and the oil film as a simple shear layer, which sounds crude and works remarkably well.
 
-This chapter derives Petroff's equation, applies it to FB-75's bearings with the KEVOS® journal bearing friction tool, looks at how the friction depends on speed, size, clearance and viscosity, corrects it for the journal's real off-centre position using the short-bearing solution, and ends with a clearance entered in the wrong form.
+This chapter derives Petroff's equation, applies it to FB-75's bearings with the BIZOMAT journal bearing friction tool, looks at how the friction depends on speed, size, clearance and viscosity, corrects it for the journal's real off-centre position using the short-bearing solution, and ends with a clearance entered in the wrong form.
 
 ## A sheared ring of oil
 

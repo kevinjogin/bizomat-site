@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -231,4 +231,4 @@ A collection of good deeds is not a strategy until the business can explain how 
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on corporate social responsibility as a portfolio, including a teaching example from a 2015 Harvard Business Review article on CSR programs. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on corporate social responsibility as a portfolio, including a teaching example from a 2015 Harvard Business Review article on CSR programs. Examples and figures in this article are illustrations. This article is general information.*

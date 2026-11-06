@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -238,4 +238,4 @@ On-premise servers, hosted servers, managed databases and software as a service 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general information technology and hosting practice. Costs in the worked example are illustrative assumptions. This article is general information, not advice on any particular provider.*
+*Source: BIZOMAT editorial notes, drawing on general information technology and hosting practice. Costs in the worked example are illustrative assumptions. This article is general information, not advice on any particular provider.*

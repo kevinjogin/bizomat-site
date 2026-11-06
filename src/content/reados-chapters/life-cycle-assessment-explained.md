@@ -7,7 +7,7 @@ tags:
   - product-development
   - design
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Life cycle assessment measures a product's environmental effects across its whol
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information only.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information only.*

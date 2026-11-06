@@ -7,7 +7,7 @@ tags:
   - systems
   - quality
   - manufacturing
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ Many business systems remember only the present, but businesses are constantly a
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general database design and records management practice. Record-keeping periods are summarised for orientation only; check current requirements with your advisers and the relevant authorities. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general database design and records management practice. Record-keeping periods are summarised for orientation only; check current requirements with your advisers and the relevant authorities. The worked example is illustrative. This article is general information.*

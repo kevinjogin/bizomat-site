@@ -9,7 +9,7 @@ draft: false
 
 The control chart answers one question: is the process behaving consistently? Capability answers another: is that consistent behaviour good enough for the specification? The two must be asked in that order. A capability index calculated from an unstable process describes nothing that will repeat, because the process it describes is changing. Once the chart shows stability, the process's spread and centre can be compared with the tolerance, and the comparison summarised in the familiar indices Cp and Cpk.
 
-This chapter calculates SP-12's capability from its control chart baseline with the KEVOS® capability tool, separates capability from performance, shows how uncertain a capability index is when it comes from a modest sample, and uses the KEVOS® confidence tool to say how many parts a claim really needs. It ends with a capability claim made to a customer from fifty spools and an hour of production.
+This chapter calculates SP-12's capability from its control chart baseline with the BIZOMAT capability tool, separates capability from performance, shows how uncertain a capability index is when it comes from a modest sample, and uses the BIZOMAT confidence tool to say how many parts a claim really needs. It ends with a capability claim made to a customer from fifty spools and an hour of production.
 
 ## Cp and Cpk
 

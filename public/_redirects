@@ -1,3 +1,10 @@
+# Site pages. The Engine Room joins what were About and Proof of Work (5 Nov 2026); old in-page links keep their #part
+# and land on the matching section (/about/#work and /proof-of-work/#cad are forwarded by the page itself).
+/about /engine-room/ 301
+/about/ /engine-room/ 301
+/proof-of-work /engine-room/ 301
+/proof-of-work/ /engine-room/ 301
+
 # READOS permanent redirects. Generated from the published collection and volume layouts before each
 # reorganisation; every old book and chapter URL points straight at its current page (no chains).
 # Regenerate when READOS books are renamed or chapters move, including the retired Insights section at the end.

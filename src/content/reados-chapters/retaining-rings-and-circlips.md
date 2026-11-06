@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -196,4 +196,4 @@ Retaining rings are small, cheap and effective when chosen and installed with ca
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information; use manufacturers' data and relevant standards for design.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information; use manufacturers' data and relevant standards for design.*

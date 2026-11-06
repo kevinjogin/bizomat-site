@@ -7,7 +7,7 @@ tags:
   - projects
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Schedule recovery is a disciplined process, not a burst of effort. Reschedule wi
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management study material on schedule compression, schedule recovery, the time-cost trade-off and schedule control, together with established project management practice. The worked example is illustrative. This article is general information, not legal advice.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project management study material on schedule compression, schedule recovery, the time-cost trade-off and schedule control, together with established project management practice. The worked example is illustrative. This article is general information, not legal advice.*

@@ -7,7 +7,7 @@ tags:
   - product-development
   - design
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -188,4 +188,4 @@ Aerospace engineering advanced through method as much as invention. The Wright b
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on an earlier KEVOS® engineering history series on powered flight, sailing hydrodynamics, air conditioning, jet airliners, supersonic flight and spaceflight, together with established histories of aviation and engineering. The worked example is illustrative. This article is general information; structural and fatigue design must be carried out by appropriately qualified engineers.*
+*Source: BIZOMAT editorial notes, drawing on an earlier BIZOMAT engineering history series on powered flight, sailing hydrodynamics, air conditioning, jet airliners, supersonic flight and spaceflight, together with established histories of aviation and engineering. The worked example is illustrative. This article is general information; structural and fatigue design must be carried out by appropriately qualified engineers.*

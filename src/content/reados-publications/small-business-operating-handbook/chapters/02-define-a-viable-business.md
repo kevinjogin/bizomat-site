@@ -57,7 +57,7 @@ Day 1: interview existing customers about actual needs. Day 2: draft one limited
 ## Interpretation
 A poor result is information, not a verdict on the founder. Distinguish demand problems from distribution, pricing, credibility and timing problems. Avoid changing all elements of an offer at once, because the cause of an improvement will be impossible to understand.
 
-*KEVOS educational guidance. Assess legal, product and customer obligations independently.*
+*BIZOMAT educational guidance. Assess legal, product and customer obligations independently.*
 
 
 ## Extended study: applying the method

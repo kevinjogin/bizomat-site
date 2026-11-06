@@ -7,7 +7,7 @@ tags:
   - projects
   - strategy
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -194,4 +194,4 @@ Environmental impact assessment is not a final approval step but a way of thinki
 
 ---
 
-*Source: KEVOS editorial notes. Examples in this article are illustrations. This article provides general information and does not constitute legal or environmental advice.*
+*Source: BIZOMAT editorial notes. Examples in this article are illustrations. This article provides general information and does not constitute legal or environmental advice.*

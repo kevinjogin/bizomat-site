@@ -4,8 +4,8 @@ subtitle: "Time-stepped simulation of equipment with random inputs: random numbe
 description: "How to simulate equipment driven by random inputs: generate noise properly, choose time steps and methods, count runs, estimate first-passage times and rare events, and check the results."
 category: Engineering
 tags: [design, validation, systems, experimentation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -101,13 +101,13 @@ Every chapter follows one fictional plant. This is an illustration. Plant D is a
 
 The inflow is the sum of two random parts. Process wastewater averages 2.0 L/s and fluctuates around that by about 0.8 L/s, with changes that persist for a couple of minutes. On top of it, washdowns of filling and packing equipment arrive at random, about four in a production day, each adding 3.0 L/s for 8 minutes. The plant's engineer is asked how often the discharge limit is exceeded, how likely an overflow is, and what would reduce both.
 
-The plant, its tank and every flow, level, rate and cost are invented. None describes KEVOS® work, a real company, a real water utility's requirements or a real supplier's product.
+The plant, its tank and every flow, level, rate and cost are invented. None describes BIZOMAT work, a real company, a real water utility's requirements or a real supplier's product.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first: they set up the model, the random numbers and the basic step. Chapters 4 and 5 make the model realistic and accurate, with correlated noise and a better integration method. Chapters 6 and 7 deal with how many runs are needed and with first-passage times, where coarse time steps cause the largest errors. Chapter 8 adds random events and switching, Chapter 9 rare events, and Chapter 10 brings verification, validation and the design decision together.
 
-KEVOS® tools are linked where they perform a step of the method or check a result, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+BIZOMAT tools are linked where they perform a step of the method or check a result, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

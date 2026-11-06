@@ -28,7 +28,7 @@ step: Centre lies R − h = 450.42 mm below the chord
 step: Angle subtended = 2 × arcsin(350 ÷ 570.42) = 75.70°; arc length = 570.42 × 75.70° in radians = 753.63 mm
 ```
 
-The arc length matters as much as the radius: it is the length of the hood's rolled top panel, which is marked flat and rolled to fit the end cheeks. The KEVOS® [Circular Segment and Arc](/tools/circular-segment/) tool solves the same relationships and is a quick independent check of a hand calculation.
+The arc length matters as much as the radius: it is the length of the hood's rolled top panel, which is marked flat and rolled to fit the end cheeks. The BIZOMAT [Circular Segment and Arc](/tools/circular-segment/) tool solves the same relationships and is a quick independent check of a hand calculation.
 
 ### How sensitive the radius is
 

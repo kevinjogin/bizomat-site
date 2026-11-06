@@ -4,8 +4,8 @@ subtitle: "Turning a configurable engineered product into fast, correct, profita
 description: "Quote configurable engineered products quickly and correctly: model options and constraints, price from cost, write quotes, link orders to drawings and control discounts."
 category: Products
 tags: [sales, product-development, systems, finance, automation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -58,7 +58,7 @@ This book is for owners, sales engineers, estimators and product managers at man
 
 The book follows a fictional fabricator of **stainless-steel benches for food factories**. The range covers eight lengths from 900 mm to 3,000 mm, two depths, up to two undershelves, three splashback options, optional castors and four sink positions: 1,152 combinations, of which 600 can be built. The firm quotes about 120 benches a month, wins about 40% of them, and each quote has taken an estimator about 45 minutes.
 
-All quantities, costs, prices and results are invented for teaching. This is an illustration. None of it describes a KEVOS® project or product. Money is in Australian dollars and each example states whether GST is included.
+All quantities, costs, prices and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT project or product. Money is in Australian dollars and each example states whether GST is included.
 
 ## How to use the book
 

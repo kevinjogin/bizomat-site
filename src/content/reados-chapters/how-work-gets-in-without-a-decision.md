@@ -7,7 +7,7 @@ tags:
   - operations
   - customers
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -175,4 +175,4 @@ Work enters a business through more routes than its processes describe, and it f
 
 ---
 
-*Source: KEVOS® notes, drawing on A. Khan (2006) and N. Lavingia on scope creep in Cost Engineering, H. Robbers (2009) on scope and impact analysis, and teaching material on scope control. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on A. Khan (2006) and N. Lavingia on scope creep in Cost Engineering, H. Robbers (2009) on scope and impact analysis, and teaching material on scope control. Examples and figures in this article are illustrations. This article is general information.*

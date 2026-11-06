@@ -7,7 +7,7 @@ tags:
   - ai
   - people
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ AI can make people decisions faster and more consistent, and it can also repeat 
 
 ---
 
-*Source: KEVOS® notes, drawing on earlier KEVOS® handbooks on responsible AI in human resource management and on algorithmic bias risk controls and fairness audits. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on earlier BIZOMAT handbooks on responsible AI in human resource management and on algorithmic bias risk controls and fairness audits. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

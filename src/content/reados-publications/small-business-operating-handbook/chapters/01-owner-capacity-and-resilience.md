@@ -58,7 +58,7 @@ Create a table with columns **Task | Hours/week | Risk if missed | Can someone e
 ## Failure modes
 Delegating without access or training transfers anxiety, not responsibility. Automating an unstable process speeds up errors. Taking a break while leaving all decisions in one inbox does not solve dependence. Progress means fewer single points of failure and more predictable recovery.
 
-*KEVOS practical guidance. Seek appropriate professional assistance for health or workplace safety concerns.*
+*BIZOMAT practical guidance. Seek appropriate professional assistance for health or workplace safety concerns.*
 
 
 ## Extended study: applying the method

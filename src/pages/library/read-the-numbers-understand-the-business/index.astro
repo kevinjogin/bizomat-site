@@ -23,7 +23,7 @@ const schema=[{
   numberOfPages:undefined
 }];
 ---
-<BaseLayout title={guide.title} description={guide.description} image={guide.cover} imageAlt={`Original KEVOS® Books cover for ${guide.title}`} canonical={canonical}
+<BaseLayout title={guide.title} description={guide.description} image={guide.cover} imageAlt={`Original BIZOMAT Books cover for ${guide.title}`} canonical={canonical}
   breadcrumbs={[{label:'Home',href:'/'},{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'},{label:guide.title,href:canonical}]} schema={schema}>
   <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:'Practical guides',href:'/library/'}]}
     eyebrow={`Library / ${guide.category} / Guide`} title={guide.title} subtitle={guide.subtitle} description={guide.description}
@@ -32,7 +32,7 @@ const schema=[{
   <section class="chapter-section">
     <Container>
       <ReadOSChapterList items={items}>
-        <aside class="notice"><strong>About this publication.</strong> An original KEVOS® educational guide using fictional examples, developed to help readers understand company financial statements. It is not an authorised adaptation or endorsement by the authors of any book consulted as background research. General education only, not financial advice.</aside>
+        <aside class="notice"><strong>About this publication.</strong> An original BIZOMAT educational guide using fictional examples, developed to help readers understand company financial statements. It is not an authorised adaptation or endorsement by the authors of any book consulted as background research. General education only, not financial advice.</aside>
       </ReadOSChapterList>
       <a class="back" href="/reados/">← All Library books</a>
     </Container>

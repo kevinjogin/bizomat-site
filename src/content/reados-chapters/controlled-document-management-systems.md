@@ -7,7 +7,7 @@ tags:
   - quality
   - systems
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -236,4 +236,4 @@ Controlled documents capture the right way to do things, but only when people us
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general quality management, work health and safety and document control practice. Standards and legal requirements are summarised for orientation. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general quality management, work health and safety and document control practice. Standards and legal requirements are summarised for orientation. The worked example is illustrative. This article is general information.*

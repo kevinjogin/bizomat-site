@@ -104,7 +104,7 @@ The rest of the book turns that idea into numbers. Chapter 6 calculates freezing
 
 ## The first estimate: heat and energy
 
-The KEVOS® [Energy and time to melt metal](/tools/melting-energy/) tool works out the three-part heat balance above for a whole charge, and then the energy drawn from the supply at the furnace's efficiency, the melting time at its power and the energy cost per melt. Its inputs are the charge mass, starting, melting and pouring temperatures, the solid and liquid specific heats, the latent heat, the furnace power and efficiency and the energy price. It uses average property values and does not include the heat lost while the metal is held waiting to pour, which its guide notes. Chapter 2 uses it for GB-12's melts. Here its first output is enough: of the energy that must go into the metal, 37% is latent heat, the share that the mould will later have to take away.
+The BIZOMAT [Energy and time to melt metal](/tools/melting-energy/) tool works out the three-part heat balance above for a whole charge, and then the energy drawn from the supply at the furnace's efficiency, the melting time at its power and the energy cost per melt. Its inputs are the charge mass, starting, melting and pouring temperatures, the solid and liquid specific heats, the latent heat, the furnace power and efficiency and the energy price. It uses average property values and does not include the heat lost while the metal is held waiting to pour, which its guide notes. Chapter 2 uses it for GB-12's melts. Here its first output is enough: of the energy that must go into the metal, 37% is latent heat, the share that the mould will later have to take away.
 
 ## The error: pouring hotter to cure porosity
 

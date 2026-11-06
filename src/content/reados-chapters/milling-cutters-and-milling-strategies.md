@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - design
   - process-improvement
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Milling performance rests on a few fundamentals: the right cutter for the materi
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow tool manufacturers' recommendations for a specific tool and material.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow tool manufacturers' recommendations for a specific tool and material.*

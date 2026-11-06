@@ -22,7 +22,7 @@ Method: `scripts/seo/inventory.mjs` parses every built page; `scripts/seo/valida
 | 3 | WORKOS tools had no indexable pages | 115 tools only at `/tools/?tool=<id>`, canonical to `/tools/` | 105 tool pages from existing guides; cards link to them | Built on branch; review requested |
 | 4 | `/about/`, `/industries/`, `/resources/` are orphans | No page links to them; the footer links to home-page anchors instead | Decide whether these pages or the anchors are primary; link or retire accordingly | Needs owner decision |
 | 5 | All commercial intents share `/services/` | 14 commercial seed keywords map to one page with anchors | Consider dedicated pages for the four services and jig/fixture design | Needs owner decision and new copy |
-| 6 | 811 titles over 65 characters | Mostly `Chapter title (Book) \| READOS \| KEVOS®` | Possible shorter pattern for READOS chapters | Review only: changes established titles |
+| 6 | 811 titles over 65 characters | Mostly `Chapter title (Book) \| READOS \| BIZOMAT` | Possible shorter pattern for READOS chapters | Review only: changes established titles |
 | 7 | No `lastmod` in the sitemap | Sitemap entries have no dates | Add only if dates can reflect real content changes (publish/updated dates) | Proposal |
 | 8 | Ten tools have thin guides | Includes OEE (quick), Takt Time, Reorder Point | Extend guides, then they qualify for pages automatically | Editorial work |
 | 9 | Plain HTTP not redirected for pages | `http://kevos.com/about/` returns 200 | Enable *Always Use HTTPS* (security report) | Owner action, open since the security work |

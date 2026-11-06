@@ -1,0 +1,21 @@
+# Stand-ins for web and work, layered on compose.yml while their Node servers are not built yet
+# (npm run build:server at the root, npm run build:node in apps/work). The proxy and cad stay real.
+#   BIZOMAT_BUILD_TARGET=runtime-base docker compose -f infrastructure/local/compose.yml \
+#     -f infrastructure/local/compose.stubs.yml up --build -d --wait
+#   node infrastructure/smoke/smoke.mjs http://127.0.0.1:8080 --stub web,work
+services:
+  web:
+    command: ["/usr/local/bin/node", "/stub/stub-upstream.mjs"]
+    user: "10002:10002"
+    environment:
+      STUB_NAME: web
+      PORT: "8003"
+    volumes: ["./stub-upstream.mjs:/stub/stub-upstream.mjs:ro"]
+
+  work:
+    command: ["/usr/local/bin/node", "/stub/stub-upstream.mjs"]
+    user: "10003:10003"
+    environment:
+      STUB_NAME: work
+      PORT: "8002"
+    volumes: ["./stub-upstream.mjs:/stub/stub-upstream.mjs:ro"]

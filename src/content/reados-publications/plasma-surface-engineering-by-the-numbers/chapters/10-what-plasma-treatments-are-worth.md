@@ -9,7 +9,7 @@ draft: false
 
 A plasma treatment is bought by the piece, but its value shows up somewhere else: in fewer die changes, longer tool life, less scrap and fewer stoppages, usually in a different department's budget from the one that pays the treatment invoice. A purchasing officer comparing two quotations for treating die cores sees one price higher than the other. A production manager sees a die-casting cell that stops every few weeks to change soldered cores. The two are looking at the same decision from opposite ends, and only the numbers can bring them together.
 
-This chapter puts numbers on three decisions in order 27's world. It works out the die-caster's cost per thousand shots with nitrided and with duplex-treated cores, uses the KEVOS® Taylor tool life tool to compare coated and uncoated cutters, and appraises the shop's own purchase of its PVD coater with the investment appraisal tool. It ends with a purchasing decision made on treatment price alone.
+This chapter puts numbers on three decisions in order 27's world. It works out the die-caster's cost per thousand shots with nitrided and with duplex-treated cores, uses the BIZOMAT Taylor tool life tool to compare coated and uncoated cutters, and appraises the shop's own purchase of its PVD coater with the investment appraisal tool. It ends with a purchasing decision made on treatment price alone.
 
 ## What a treatment costs to make
 

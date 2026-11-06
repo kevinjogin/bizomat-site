@@ -7,7 +7,7 @@ tags:
   - sales
   - strategy
   - customers
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -217,4 +217,4 @@ Losing a tender is expensive only if nothing is learned from it. Debriefs, reque
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - leadership
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -211,4 +211,4 @@ Government contracts are judged by public outcomes. Suppliers succeed by underst
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® corporate articles on public value, public accountability in partnerships, last-mile governance and governance as a control system, together with general knowledge of Australian public procurement and privacy frameworks. Research referred to includes Mark Moore's work on public value and published 2017 studies of urban air quality, healthcare waste management and regulatory capacity. The worked example is illustrative. This article is general information, not legal advice.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT corporate articles on public value, public accountability in partnerships, last-mile governance and governance as a control system, together with general knowledge of Australian public procurement and privacy frameworks. Research referred to includes Mark Moore's work on public value and published 2017 studies of urban air quality, healthcare waste management and regulatory capacity. The worked example is illustrative. This article is general information, not legal advice.*

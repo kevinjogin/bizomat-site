@@ -1,0 +1,92 @@
+{
+ "name": "block_offset",
+ "description": "Front Plane rectangle away from the origin, blind extrude.",
+ "derivation": "V = 40*20*15; centre of the box.",
+ "features": [
+  {
+   "id": "s1",
+   "type": "sketch",
+   "name": "s1",
+   "plane": {
+    "ref": "Front Plane"
+   },
+   "entities": [
+    {
+     "id": "s1a",
+     "type": "point",
+     "x": 10,
+     "y": 20
+    },
+    {
+     "id": "s1b",
+     "type": "point",
+     "x": 50,
+     "y": 20
+    },
+    {
+     "id": "s1c",
+     "type": "point",
+     "x": 50,
+     "y": 40
+    },
+    {
+     "id": "s1d",
+     "type": "point",
+     "x": 10,
+     "y": 40
+    },
+    {
+     "id": "s1L0",
+     "type": "line",
+     "p1": "s1a",
+     "p2": "s1b"
+    },
+    {
+     "id": "s1L1",
+     "type": "line",
+     "p1": "s1b",
+     "p2": "s1c"
+    },
+    {
+     "id": "s1L2",
+     "type": "line",
+     "p1": "s1c",
+     "p2": "s1d"
+    },
+    {
+     "id": "s1L3",
+     "type": "line",
+     "p1": "s1d",
+     "p2": "s1a"
+    }
+   ],
+   "constraints": []
+  },
+  {
+   "id": "e1",
+   "type": "extrude",
+   "sketch": "s1",
+   "depth": 15
+  }
+ ],
+ "expect": {
+  "volume_mm3": 12000,
+  "center_of_mass": [
+   30.0,
+   30.0,
+   7.5
+  ],
+  "bbox": {
+   "min": [
+    10,
+    20,
+    0
+   ],
+   "max": [
+    50,
+    40,
+    15
+   ]
+  }
+ }
+}

@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -231,4 +231,4 @@ Data centres provide the power, cooling, connectivity, security and protection t
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on general data centre, IT infrastructure and facilities practice. Costs in the worked example are illustrative assumptions. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on general data centre, IT infrastructure and facilities practice. Costs in the worked example are illustrative assumptions. This article is general information.*

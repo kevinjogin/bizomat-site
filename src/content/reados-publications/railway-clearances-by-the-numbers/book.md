@@ -4,8 +4,8 @@ subtitle: "Keeping trains clear of structures and each other: outlines, curve th
 description: "Railway clearances with numbers: rolling stock outlines, centre and end throw, cant lean, the kinematic envelope, safety margins, track centres, refuges, infringements and out-of-gauge loads."
 category: Engineering
 tags: [design, projects, quality, systems, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -72,7 +72,7 @@ The book draws on a set of Australian Rail Track Corporation engineering standar
 
 This is an illustration. A civil engineering consultancy is designing a new road overbridge for a regional council where the road crosses a single standard gauge main line, on a 400 m radius curve with 60 mm of cant, close to a passing loop and a short industrial siding. Later the same corridor must carry an out-of-gauge transformer on a well wagon. The consultancy's engineers must work out the clearances the bridge needs, check the track centres at the loop, provide for people at a long retaining wall, and plan the transformer move.
 
-The consultancy, council, bridge, rolling stock and numbers are invented for teaching. They are not KEVOS® work.
+The consultancy, council, bridge, rolling stock and numbers are invented for teaching. They are not BIZOMAT work.
 
 ## How to use the book
 
@@ -84,4 +84,4 @@ This book is educational. Railway clearances are safety-critical. Design, constr
 
 ## An original treatment
 
-The explanations, the consultancy case, the derivations, figures and exercises are original KEVOS® writing, built from geometry and mechanics. The ARTC documents are copyright; a small number of their values are quoted with citation for teaching, and none of their text, tables or drawings is reproduced.
+The explanations, the consultancy case, the derivations, figures and exercises are original BIZOMAT writing, built from geometry and mechanics. The ARTC documents are copyright; a small number of their values are quoted with citation for teaching, and none of their text, tables or drawings is reproduced.

@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -236,4 +236,4 @@ The owner's attention is the scarcest resource in most small businesses, and it 
 
 ---
 
-*Source: KEVOS® notes, drawing on Henry Mintzberg's research on managerial work and on teaching material on managerial roles and attention. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on Henry Mintzberg's research on managerial work and on teaching material on managerial roles and attention. Examples and figures in this article are illustrations.*

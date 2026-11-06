@@ -7,7 +7,7 @@ tags:
   - projects
   - strategy
   - communication
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ A tender is a process with rules, and fairness is what makes it work. Buyers tha
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*

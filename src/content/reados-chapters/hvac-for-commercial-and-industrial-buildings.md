@@ -7,7 +7,7 @@ tags:
   - design
   - operations
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -197,4 +197,4 @@ HVAC performance depends on understanding loads, choosing suitable systems, tuni
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® study material on HVAC engineering, heating components and controls, school and commercial HVAC design, low-energy cooling for buildings and building services engineering, together with established building services practice. The worked example is illustrative. This article is general information; HVAC work must be done by qualified, licensed people.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT study material on HVAC engineering, heating components and controls, school and commercial HVAC design, low-energy cooling for buildings and building services engineering, together with established building services practice. The worked example is illustrative. This article is general information; HVAC work must be done by qualified, licensed people.*

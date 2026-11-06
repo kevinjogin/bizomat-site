@@ -9,7 +9,7 @@ draft: false
 
 Nearly every servo motor on a modern packaging machine is a permanent-magnet synchronous motor: a stator with three-phase windings and a rotor carrying rare-earth magnets. The magnets provide the rotor's field without any current, which is why these motors are compact, efficient and quick to respond. They also tie the motor's performance to the magnets' condition. A servo's torque per ampere is proportional to the flux its magnets drive across the air gap; hot magnets give less torque per ampere, and demagnetised magnets give less permanently.
 
-This chapter checks the cross-seal jaw servo on Line 4's bagger with the KEVOS® motor duty cycle check at two line speeds, explains how magnet temperature feeds back into current and heat, and shows how the drive's current limit protects the magnets. The error is a drive replaced with its current limit set too high.
+This chapter checks the cross-seal jaw servo on Line 4's bagger with the BIZOMAT motor duty cycle check at two line speeds, explains how magnet temperature feeds back into current and heat, and shows how the drive's current limit protects the magnets. The error is a drive replaced with its current limit set too high.
 
 ## Torque, current and the magnets
 
@@ -33,7 +33,7 @@ Because torque needs current and current makes heat, a servo's continuous rating
 
 This is an illustration. The bagger's cross-seal jaws close, seal and cut each bag. Their servo drives a cycle of acceleration, running, deceleration and a dwell in which the jaws are held closed against the seal with a holding torque. At 120 bags a minute, the cycle is 0.5 s.
 
-The KEVOS® [motor duty cycle check](/tools/motor-duty-cycle-check/) sizes a motor for a repeated trapezoidal move: the acceleration, running, deceleration and dwell segments from the inertia at the motor, the top speed and the segment times; the segment torques including friction or load torque; the RMS torque over the cycle against the continuous rating; the peak torque against the peak rating; the inertia ratio; and the energy returned on each deceleration.
+The BIZOMAT [motor duty cycle check](/tools/motor-duty-cycle-check/) sizes a motor for a repeated trapezoidal move: the acceleration, running, deceleration and dwell segments from the inertia at the motor, the top speed and the segment times; the segment torques including friction or load torque; the RMS torque over the cycle against the continuous rating; the peak torque against the peak rating; the inertia ratio; and the energy returned on each deceleration.
 
 ```figure
 type: compare

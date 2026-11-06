@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -216,4 +216,4 @@ Deliverables describe what a job produces; constraints describe what kind of job
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project constraints, tailoring and plan-, change- and time-driven approaches, A. Davies (2019) on adaptive project management for the Association for Project Management, and H. I. Ansoff's environmental-dependence hypothesis. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on project constraints, tailoring and plan-, change- and time-driven approaches, A. Davies (2019) on adaptive project management for the Association for Project Management, and H. I. Ansoff's environmental-dependence hypothesis. Examples and figures in this article are illustrations. This article is general information.*

@@ -4,8 +4,8 @@ subtitle: "Growth, measurement, thermal stress, pipe loops, shrink fits, closed-
 description: "Calculate how parts, pipes, liquids and gases change with temperature: growth, measuring at 20 °C, thermal stress, pipe loops, shrink fits, expansion vessels, gas pressure and machine design."
 category: Engineering
 tags: [design, manufacturing, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -72,11 +72,11 @@ This book works through thermal expansion by numbers. It covers how solids, liqu
 
 The book follows **HW-60**, the wash-down hot water system of a fictional food factory, also used in *Heat Transfer by the Numbers*. Its 60 m stainless steel hot water pipe, 60.3 mm in outside diameter with a 2.0 mm wall, carries 85 °C water and is installed at about 15 °C. A closed primary loop of about **400 L** carries heat from a boiler to a plate heat exchanger. The system's pump has a coupling hub shrunk onto its shaft, and an aluminium flowmeter body is machined and inspected in the factory's workshop.
 
-All dimensions, temperatures, pressures, costs and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project. Money is in Australian dollars, excluding GST.
+All dimensions, temperatures, pressures, costs and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project. Money is in Australian dollars, excluding GST.
 
 ## How to use the book
 
-Chapters 1 and 2 cover growth and its effect on measurement. Chapters 3 to 5 deal with solids that are restrained or fitted together. Chapters 6 and 7 cover liquids and gases in closed systems, and Chapter 8 machines. KEVOS® calculators for several steps include [thermal growth](/tools/thermal-growth/), [thermal stress](/tools/thermal-stress/), [pipe expansion loop](/tools/pipe-expansion-loop/) and [shrink fit design](/tools/shrink-fit-design/).
+Chapters 1 and 2 cover growth and its effect on measurement. Chapters 3 to 5 deal with solids that are restrained or fitted together. Chapters 6 and 7 cover liquids and gases in closed systems, and Chapter 8 machines. BIZOMAT calculators for several steps include [thermal growth](/tools/thermal-growth/), [thermal stress](/tools/thermal-stress/), [pipe expansion loop](/tools/pipe-expansion-loop/) and [shrink fit design](/tools/shrink-fit-design/).
 
 ## Source limits and professional responsibility
 

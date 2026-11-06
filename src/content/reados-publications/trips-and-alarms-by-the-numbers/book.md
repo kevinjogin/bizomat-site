@@ -4,8 +4,8 @@ subtitle: "Setting thresholds on noisy plant signals: false trips, missed trips,
 description: "How to set trip and alarm thresholds on noisy signals: predict nuisance trips from the noise, then choose filters, deadbands, on-delays and voting, and prove the settings work."
 category: Engineering
 tags: [automation, systems, design, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -96,13 +96,13 @@ Every chapter follows one fictional plant. This is an illustration. Plant C runs
 
 After a finer strainer mesh was fitted to protect the die's cooling channels, the cell began to trip two or three times a shift for no apparent reason. Each nuisance trip scraps a casting and costs about 12 minutes of production. The plant's controls engineer is asked to stop the nuisance trips without weakening the protection.
 
-The plant, its equipment and every pressure, rate, time and cost are invented. None describes KEVOS® work, a real company or a real supplier's product.
+The plant, its equipment and every pressure, rate, time and cost are invented. None describes BIZOMAT work, a real company or a real supplier's product.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first: they set up the measurements and the crossing-rate formula that everything else uses. Chapters 4 to 6 deal with the three classic remedies, filters, hysteresis and on-delays, one at a time. Chapter 7 deals with a mean that drifts towards the threshold, and Chapter 8 with the cases where noise helps a threshold rather than hinders it. Chapter 9 covers voting between redundant sensors, and Chapter 10 the testing and records that prove the settings.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

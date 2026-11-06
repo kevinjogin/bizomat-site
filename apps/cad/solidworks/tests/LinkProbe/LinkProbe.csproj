@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The add-in's real link client (BridgeClient) against a real OpenSketch server, with canned answers instead of
+       SOLIDWORKS. Driven by ../e2e_link.py. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/Core/**/*.cs" LinkBase="Core" />
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+</Project>

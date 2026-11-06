@@ -7,7 +7,7 @@ tags:
   - systems
   - automation
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ APIs are contracts that let software systems request information and actions fro
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

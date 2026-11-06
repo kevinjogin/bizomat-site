@@ -7,7 +7,7 @@ tags:
   - finance
   - strategy
   - validation
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ A business case is only as reliable as its assumptions, and a single base-case f
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute financial advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute financial advice.*

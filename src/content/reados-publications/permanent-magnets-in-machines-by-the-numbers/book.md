@@ -4,8 +4,8 @@ subtitle: "Magnet materials, load lines, heat and demagnetisation, magnetic coup
 description: "How to choose and use permanent magnets in machines: materials, load lines, heat and demagnetisation, couplings, brakes, servos, separators, sensors and safe handling."
 category: Engineering
 tags: [design, systems, automation]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Statistical Physics, Part 2: Theory of the Condensed State (Course of Theoretical Physics, Volume 9)"
     creator: "E. M. Lifshitz and L. P. Pitaevskii, translated by J. B. Sykes and M. J. Kearsley, Pergamon Press, Oxford"
     year: "1980"
-    note: "In copyright. Used only as a map for the physics in Chapters 1 and 4: the chapter on magnetism, which treats the ferromagnet's spontaneous magnetisation, its spin waves and why magnetisation falls as temperature rises. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the physics in Chapters 1 and 4: the chapter on magnetism, which treats the ferromagnet's spontaneous magnetisation, its spin waves and why magnetisation falls as temperature rises. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Zur Theorie des Ferromagnetismus"
     creator: "F. Bloch, Zeitschrift für Physik 61, 206–219"
     year: "1930"
@@ -76,7 +76,7 @@ Permanent magnets are now in most machines, often where nobody notices them: in 
 
 This book explains how permanent magnets behave in machines and how to design, specify and check them with numbers. It starts with what a permanent magnet is and how to read its demagnetisation curve, chooses between the main magnet materials, and finds a magnet's working point from the load line of its circuit. It then deals with temperature and demagnetisation, which cause most magnet failures, before working through the main applications: magnetic couplings, eddy currents and brakes, servo motors, tramp-metal separation and sensing. The last chapter covers handling, storage, shipping and incoming inspection.
 
-It is for machine designers, maintenance and reliability engineers, automation engineers and technicians. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
+It is for machine designers, maintenance and reliability engineers, automation engineers and technicians. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tool that does the chapter's calculation where one exists, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -87,7 +87,7 @@ Every chapter follows one fictional production line. This is an illustration. A 
 - **Bagger:** a vertical form-fill-seal bagger whose cross-seal jaws are driven by a permanent-magnet servo motor, with a holding brake on its vertical film-reel lift.
 - **Guards and sensors:** magnetic guard interlock switches, a magnetic catch on the hopper lid, and magnetic position sensors on pneumatic cylinders.
 
-Field strengths, torques, temperatures, prices and rates in the book are invented for the case or calculated from stated assumptions. They do not describe KEVOS® work or any real business, product or manufacturer's rating.
+Field strengths, torques, temperatures, prices and rates in the book are invented for the case or calculated from stated assumptions. They do not describe BIZOMAT work or any real business, product or manufacturer's rating.
 
 ## How to use the book
 

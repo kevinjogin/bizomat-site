@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: thermodynamics tools from Fermi’s Thermodynamics (batch handbook69) within the Tools directory.
+// BIZOMAT MAKEOS: thermodynamics tools from Fermi’s Thermodynamics (batch handbook69) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "vapour-pressure-boiling-check",

@@ -1,6 +1,6 @@
 ---
-title: "Why KEVOS® is starting broad"
-description: "The reasoning behind KEVOS®'s early exploratory phase, and how its focus was expected to narrow. KEVOS® now focuses on engineering, manufacturing and operations services."
+title: "Why BIZOMAT is starting broad"
+description: "The reasoning behind BIZOMAT's early exploratory phase, and how its focus was expected to narrow. BIZOMAT now focuses on engineering, manufacturing and operations services."
 publishDate: 2026-09-29
 updatedDate: 2026-10-04
 category: "Ideas"
@@ -8,24 +8,24 @@ tags:
   - strategy
   - experimentation
   - validation
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
 
-> **Update, October 2026.** As this article anticipated, KEVOS®'s focus has since narrowed. KEVOS® now provides engineering and CAD support, manufacturing support, operations improvement and engineering project support; see [Services](/services/). The article is kept as a record of the earlier reasoning.
+> **Update, October 2026.** As this article anticipated, BIZOMAT's focus has since narrowed. BIZOMAT now provides engineering and CAD support, manufacturing support, operations improvement and engineering project support; see [Services](/services/). The article is kept as a record of the earlier reasoning.
 
-A common piece of advice for new businesses is to pick a niche and commit to it. It is good advice once you know which niche is worth committing to. KEVOS® does not know that yet, and pretending otherwise would mean making the most important decision with the least information.
+A common piece of advice for new businesses is to pick a niche and commit to it. It is good advice once you know which niche is worth committing to. BIZOMAT does not know that yet, and pretending otherwise would mean making the most important decision with the least information.
 
-So KEVOS® is starting broad, on purpose, for a limited time.
+So BIZOMAT is starting broad, on purpose, for a limited time.
 
-This article explains what that means in practice, why it is a deliberate choice rather than indecision, the risks it carries and how they are managed, how ideas are judged, and how the focus is expected to narrow as evidence accumulates. It is also, in part, a record: if KEVOS®'s direction changes later, this is the reasoning it started from.
+This article explains what that means in practice, why it is a deliberate choice rather than indecision, the risks it carries and how they are managed, how ideas are judged, and how the focus is expected to narrow as evidence accumulates. It is also, in part, a record: if BIZOMAT's direction changes later, this is the reasoning it started from.
 
 ## What "broad" means here
 
 Broad does not mean doing everything. It means keeping several areas open while the evidence comes in: products, technology, practical systems and ideas that might become any of those.
 
-Each area is held to the same standard. Is there a real problem? Do the people who have it care enough to change? Can KEVOS® build something that is clearly better than what they do now?
+Each area is held to the same standard. Is there a real problem? Do the people who have it care enough to change? Can BIZOMAT build something that is clearly better than what they do now?
 
 The areas that hold up under that scrutiny get more attention. The ones that do not are set aside, and the reasons are written down.
 
@@ -58,13 +58,13 @@ The difference in cost is often large. A conversation with someone who has a pro
 
 Decision researchers describe a general tension between **exploring** (trying new options to learn about them) and **exploiting** (committing to the best option known so far). Exploring too little risks settling on a mediocre choice because better ones were never tried. Exploring too much risks never benefiting from anything, because effort is always spread across new options.
 
-Good strategies usually explore more at the beginning, when little is known, and shift towards exploiting as knowledge accumulates. That is the pattern KEVOS® intends to follow: broad exploration now, narrowing deliberately as evidence shows which directions are strongest.
+Good strategies usually explore more at the beginning, when little is known, and shift towards exploiting as knowledge accumulates. That is the pattern BIZOMAT intends to follow: broad exploration now, narrowing deliberately as evidence shows which directions are strongest.
 
 ## How ideas are judged
 
 Exploring broadly only works if every idea is held to clear, consistent standards. Otherwise, the most exciting idea wins, rather than the best one.
 
-KEVOS®'s Library chapters set out several of the lenses being used.
+BIZOMAT's Library chapters set out several of the lenses being used.
 
 **Is the problem real and worth solving?** The questions in [What makes a useful product worth building?](/reados/collections/product-development-and-launch/what-makes-a-useful-product-worth-building/) cover frequency, severity, current workarounds and willingness to change, and they emphasise evidence over enthusiasm.
 
@@ -131,11 +131,11 @@ caption: The same criteria are applied to every idea, so the focus narrows on ev
 
 When several of these signals appear together, the case for narrowing focus around that initiative becomes strong.
 
-## What KEVOS® is not doing
+## What BIZOMAT is not doing
 
-Starting broad also means being clear about what KEVOS® is not doing.
+Starting broad also means being clear about what BIZOMAT is not doing.
 
-KEVOS® is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. KEVOS® only presents real initiatives as real, and its Library chapters distinguish between summaries of established knowledge and KEVOS®'s own observations.
+BIZOMAT is not presenting ideas as products before they exist. It is not listing services it does not yet offer, and it is not claiming customers, partners or results it has not achieved. BIZOMAT only presents real initiatives as real, and its Library chapters distinguish between summaries of established knowledge and BIZOMAT's own observations.
 
 This restraint is deliberate. A young business can be tempted to look larger and more certain than it is. But credibility built on claims that later prove hollow is fragile, while credibility built on an honest record grows stronger with time.
 
@@ -147,7 +147,7 @@ Starting broad has its own risks, and they deserve honesty.
 
 **Never committing.** Exploration can become a comfortable place to stay, because it postpones the hard work and risk of building. The response is to set decision points: specific moments when each initiative must move forward, pause or stop.
 
-**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what KEVOS® actually does. The honest answer, for now, is that it is exploring, and the Library chapters explain what that exploration looks like.
+**Lacking a clear story.** A broad business is harder to explain than a focused one. People may reasonably ask what BIZOMAT actually does. The honest answer, for now, is that it is exploring, and the Library chapters explain what that exploration looks like.
 
 **Shallow expertise.** Depth often comes from focus. The response is to go deep on the specific initiatives that progress, even while the overall business remains broad.
 
@@ -155,12 +155,12 @@ None of these risks is a reason not to explore. Each is a reason to explore with
 
 ## Writing it down
 
-A distinctive part of KEVOS®'s approach is that the reasoning is recorded and, where appropriate, published. These Library chapters serve several purposes:
+A distinctive part of BIZOMAT's approach is that the reasoning is recorded and, where appropriate, published. These Library chapters serve several purposes:
 
 - **They clarify thinking.** Writing an argument down exposes gaps that remain hidden in conversation.
 - **They create a record.** Decisions can be revisited later with the original reasoning in view.
 - **They invite challenge.** Readers who see a flaw in the reasoning can say so.
-- **They build a body of knowledge.** Over time, the articles become a reference for KEVOS®'s own work and, hopefully, useful to others facing similar questions.
+- **They build a body of knowledge.** Over time, the articles become a reference for BIZOMAT's own work and, hopefully, useful to others facing similar questions.
 
 If the direction changes, the record will show why. That is part of the point.
 
@@ -168,7 +168,7 @@ If the direction changes, the record will show why. That is part of the point.
 
 Exploration can feel slow from the outside, and sometimes from the inside too. Weeks spent on conversations and rough prototypes produce no products, no revenue and few visible results. The pressure to "just pick something" is real.
 
-The articles KEVOS® has published on durable businesses offer some reassurance here. The most valuable businesses are usually built around needs that last and advantages that compound, and those take time to identify and develop. A few months spent choosing well can matter far more over the life of a business than a few months saved by choosing quickly.
+The articles BIZOMAT has published on durable businesses offer some reassurance here. The most valuable businesses are usually built around needs that last and advantages that compound, and those take time to identify and develop. A few months spent choosing well can matter far more over the life of a business than a few months saved by choosing quickly.
 
 Patience does not mean drift, though. Every exploration has a question, a budget and a decision point. When the evidence is clear, the decision is made.
 
@@ -176,7 +176,7 @@ Patience does not mean drift, though. Every exploration has a question, a budget
 
 Starting broad will not suit every founder. Someone with deep experience in a particular industry, a clear view of an unmet need and early customers ready to buy should probably commit. Exploring broadly would only delay them.
 
-But for founders who are genuinely uncertain about where their best opportunity lies, a period of deliberate, disciplined exploration can be valuable. A few principles from KEVOS®'s approach may help:
+But for founders who are genuinely uncertain about where their best opportunity lies, a period of deliberate, disciplined exploration can be valuable. A few principles from BIZOMAT's approach may help:
 
 - **Time-box the exploration.** Decide in advance how long it will last before a direction must be chosen.
 - **Use consistent criteria.** Judge every idea by the same standards.
@@ -187,16 +187,16 @@ But for founders who are genuinely uncertain about where their best opportunity 
 
 ## What this means for readers
 
-For anyone following KEVOS®, starting broad means a few things in practice.
+For anyone following BIZOMAT, starting broad means a few things in practice.
 
-The Library covers a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some chapters summarise established knowledge, such as the series on financial statements and on sales practice. Others describe KEVOS®'s own reasoning and, as work progresses, its own experiments.
+The Library covers a wide range of topics: products, technology, systems, business practice and the ideas behind them. Some chapters summarise established knowledge, such as the series on financial statements and on sales practice. Others describe BIZOMAT's own reasoning and, as work progresses, its own experiments.
 
 Where useful, the Library will document initiatives and lessons as they develop.
 
-And KEVOS® welcomes conversations. If you face a problem that might be worth solving, or you see a flaw in the reasoning here, the [contact page](/contact/) is the place to say so.
+And BIZOMAT welcomes conversations. If you face a problem that might be worth solving, or you see a flaw in the reasoning here, the [contact page](/contact/) is the place to say so.
 
 ## Bringing it together
 
-KEVOS® is starting broad because the most important decision, what to focus on, deserves the most information. Exploration is cheaper than building, and it is easier to change direction before large commitments are made.
+BIZOMAT is starting broad because the most important decision, what to focus on, deserves the most information. Exploration is cheaper than building, and it is easier to change direction before large commitments are made.
 
 Starting broad is not a permanent state or an excuse to avoid commitment. It is a deliberate, time-limited phase with clear criteria, visible progress and written reasoning. As evidence accumulates, the focus will narrow, and the record will show how and why.

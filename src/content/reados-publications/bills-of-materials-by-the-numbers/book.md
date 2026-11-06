@@ -4,8 +4,8 @@ subtitle: "Structuring, rolling up and costing bills of materials: levels, quant
 description: "Build bills of materials that order the right parts: levels, quantity roll-ups, units of measure, scrap and yield, phantoms, variants, costed roll-ups, effectivity and CAD BOMs."
 category: Manufacturing
 tags: [manufacturing, operations, systems, quality, design]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -60,7 +60,7 @@ It suits design and manufacturing engineers, CAD administrators, planners and bu
 
 Every chapter follows one fictional product. This is an illustration. A machinery builder makes a pallet conveyor module, PC-600: a welded steel frame, a drive unit with a bought motor and gearbox and a made drive shaft assembly, twelve idler rollers each made from a tube, a shaft, two bearings and two end caps, two folded sheet metal side guides, a belt bought by the metre, and the fasteners that hold them together. The business builds the module in batches for different customers, sometimes with options, and its BOM lives in its CAD assemblies and its business system.
 
-The business, the product and the faults are invented; none describes KEVOS® work, a real supplier or a real product. Prices are illustrations in Australian dollars, excluding GST.
+The business, the product and the faults are invented; none describes BIZOMAT work, a real supplier or a real product. Prices are illustrations in Australian dollars, excluding GST.
 
 ## Source limits and professional responsibility
 

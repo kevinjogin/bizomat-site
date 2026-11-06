@@ -7,7 +7,7 @@ tags:
   - ai
   - systems
   - strategy
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -199,4 +199,4 @@ Large language models predict plausible text one token at a time, using transfor
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on transformers and large language models, attention, training and alignment, context windows, inference parameters and model selection, together with established AI practice. The worked example is illustrative. This article is general information; check current product capabilities and terms.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT AI academy lessons on transformers and large language models, attention, training and alignment, context windows, inference parameters and model selection, together with established AI practice. The worked example is illustrative. This article is general information; check current product capabilities and terms.*

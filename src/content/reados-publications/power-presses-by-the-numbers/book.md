@@ -4,8 +4,8 @@ subtitle: "Force, energy, stroke and speed: screw, crank, hydraulic and servo pr
 description: "Choose, set and check a power press with numbers: tonnage curves, flywheel energy, frame deflection, hydraulic and servo drives, shut height, feeding, stopping time and cost."
 category: Manufacturing
 tags: [manufacturing, operations, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -79,7 +79,7 @@ Every chapter follows one fictional decision. This is an illustration. A manufac
 - **MP-40**, a flat mounting plate made from 2.0 mm steel strip in a three-station progressive die, 60,000 a year. The die needs 192.8 kN to cut and 28.5 kN for its stripper springs, 221.3 kN in all at the bottom of the stroke, and is 204 mm high when closed.
 - **AB-75**, an angle bracket formed from a pre-cut 3.0 mm blank in a wiping die, loaded by hand, 20,000 a year. Its die maker's trial shows the forming force rising from first contact 25 mm above the bottom of the stroke to 65 kN, and then to 180 kN in the final millimetre as the bend is set.
 
-The main candidate is a 400 kN gap-frame mechanical press with a 60 mm stroke, a crank radius of 30 mm, a connecting rod of 250 mm between centres, a geared flywheel with a moment of inertia of 4.0 kg·m² turning five times for each stroke, a speed range of 40 to 120 strokes a minute, and a shut height adjustable from 240 to 300 mm. Hydraulic and servo presses of the same rating are the alternatives. The manufacturer, the jobs, the presses, the prices and the mistakes are invented. None describes KEVOS® work, a real business or a real press.
+The main candidate is a 400 kN gap-frame mechanical press with a 60 mm stroke, a crank radius of 30 mm, a connecting rod of 250 mm between centres, a geared flywheel with a moment of inertia of 4.0 kg·m² turning five times for each stroke, a speed range of 40 to 120 strokes a minute, and a shut height adjustable from 240 to 300 mm. Hydraulic and servo presses of the same rating are the alternatives. The manufacturer, the jobs, the presses, the prices and the mistakes are invented. None describes BIZOMAT work, a real business or a real press.
 
 ## How to use the book
 

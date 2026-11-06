@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -200,4 +200,4 @@ Ratios and proportion underpin drawing scales, drive ratios, mixtures, dilutions
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

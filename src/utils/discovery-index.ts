@@ -1,4 +1,4 @@
-// The discovery catalogue: every KEVOS® tool, every published Library book and chapter, and the reviewed links
+// The discovery catalogue: every BIZOMAT tool, every published Library book and chapter, and the reviewed links
 // between them, read from the same sources as the site at build time. Served as /discovery-index.json and
 // searched in the browser by src/lib/discovery/search.ts. New tools and books are included by the next build.
 import { loadWorkosTools, hasStandaloneGuide } from './workos-tools.ts';
@@ -6,6 +6,7 @@ import { knowledgeGraph, readCatalogue } from './knowledge.ts';
 import { subcategoryLabel, topicForCategory } from './workos-topics.ts';
 import type { DiscoveryIndex } from '../lib/discovery/search.ts';
 import { outlineForUrl } from './learning-outlines.ts';
+import { PLATFORM_CATALOG } from '../data/platform-catalog.ts';
 import type { DiscoveryDetails } from '../lib/discovery/plan.ts';
 
 const clip = (s: string | undefined, n: number) => {
@@ -16,7 +17,9 @@ const clip = (s: string | undefined, n: number) => {
 export function buildDiscoveryIndex(): DiscoveryIndex {
   const { tools, guides } = loadWorkosTools();
   const { books } = readCatalogue();
-  const index: DiscoveryIndex = { v: 1, tools: [], books: [], chapters: [], links: [] };
+  // Public platform pages first: products, capabilities, documentation and integrations (no customer data).
+  const pages = PLATFORM_CATALOG.map((p) => ({ id: p.id, n: p.title, d: clip(p.summary, 220), u: p.url, a: p.area, t: p.kind, k: clip(p.keywords, 300) }));
+  const index: DiscoveryIndex = { v: 1, tools: [], books: [], chapters: [], links: [], pages };
   for (const t of tools) {
     const g = guides[t.id] ?? {};
     index.tools.push({

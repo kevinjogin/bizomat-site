@@ -7,7 +7,7 @@ tags:
   - design
   - manufacturing
   - quality
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -185,4 +185,4 @@ Tolerances turn a design into a manufacturing commitment, so set them from funct
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® engineering handbooks on tolerance specification and manufacturing cost, allowances and tolerances for fits, and surface texture. The worked example is illustrative. This article is general information; take detailed values from current standards and component manufacturers' recommendations.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT engineering handbooks on tolerance specification and manufacturing cost, allowances and tolerances for fits, and surface texture. The worked example is illustrative. This article is general information; take detailed values from current standards and component manufacturers' recommendations.*

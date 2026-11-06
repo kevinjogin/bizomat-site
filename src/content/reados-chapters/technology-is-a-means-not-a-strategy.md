@@ -8,7 +8,7 @@ tags:
   - strategy
   - ai
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -235,4 +235,4 @@ Technology is neither the enemy nor the strategy. Start with the outcome, find t
 
 ---
 
-*Source: KEVOS® notes, drawing on S. Lorenz (2017) on the means and ends of technology, Journal of Cleaner Production, and G. van de Kaa, L. Kamp and J. Rezaei (2017) on factors in technology selection, Journal of Cleaner Production. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on S. Lorenz (2017) on the means and ends of technology, Journal of Cleaner Production, and G. van de Kaa, L. Kamp and J. Rezaei (2017) on factors in technology selection, Journal of Cleaner Production. Examples and figures in this article are illustrations.*

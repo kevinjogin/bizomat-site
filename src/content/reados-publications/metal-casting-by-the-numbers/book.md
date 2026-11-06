@@ -4,8 +4,8 @@ subtitle: "Melting, charge blending, patterns, gating, solidification, risers, g
 description: "How a sand casting is made right: melt energy and cycle, charge blending, pattern allowances, gating, Chvorinov's rule, riser feeding, gas and grain, T6 heat treatment and Brinell checks."
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -24,7 +24,7 @@ references:
   - title: "Gauge Fields in Condensed Matter, Volume I: Superflow and Vortex Lines (Disorder Fields, Phase Transitions)"
     creator: "H. Kleinert, World Scientific, Singapore"
     year: "1989"
-    note: "In copyright. Used only as a map for the physics behind Chapters 1 and 8: the difference between first-order transitions with latent heat, such as freezing, and the continuous transitions the book treats, and the role of nucleation and order. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Used only as a map for the physics behind Chapters 1 and 8: the difference between first-order transitions with latent heat, such as freezing, and the continuous transitions the book treats, and the role of nucleation and order. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Theorie der Erstarrung von Gußstücken"
     creator: "N. Chvorinov, Die Giesserei, volume 27"
     year: "1940"
@@ -44,7 +44,7 @@ references:
   - title: "ISO 6506-1 Metallic materials — Brinell hardness test — Part 1: Test method"
     creator: "International Organization for Standardization"
     year: "2014"
-    note: "Named by number and scope only in Chapter 10 as the test method standard behind the Brinell validity rules. The rule values in the case are the case foundry's settings in the KEVOS® tool, not quotations from the standard."
+    note: "Named by number and scope only in Chapter 10 as the test method standard behind the Brinell validity rules. The rule values in the case are the case foundry's settings in the BIZOMAT tool, not quotations from the standard."
   - title: "Model Code of Practice: Managing the risks of plant in the workplace"
     creator: "Safe Work Australia"
     year: "2022"
@@ -65,7 +65,7 @@ A casting is decided in the few minutes it takes metal to fill a mould and freez
 
 This book works through those numbers, stage by stage, for one aluminium sand casting. It starts with the physics of freezing: latent heat, freezing range and the three stages of shrinkage. It then follows the casting from the furnace, through charge blending, patternmaking, gating, solidification and feeding, to the melt-quality problems that feeding cannot cure, heat treatment and final inspection.
 
-It is for foundry engineers and supervisors, patternmakers, manufacturing and quality engineers, and the designers and buyers who specify castings. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for foundry engineers and supervisors, patternmakers, manufacturing and quality engineers, and the designers and buyers who specify castings. It assumes school physics and algebra. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -77,13 +77,13 @@ Every chapter follows one casting. This is an illustration. A jobbing foundry in
 - **Production:** 60 castings a shift, sand moulded with a resin-bonded core, solution treated, quenched and aged in batches of 40.
 - **Specification:** 75 to 95 HBW after heat treatment, sound bearing boss, pressure-tight walls.
 
-Temperatures, properties, constants, efficiencies, prices, test results and times are the case foundry's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real foundry, customer or alloy supplier's data.
+Temperatures, properties, constants, efficiencies, prices, test results and times are the case foundry's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real foundry, customer or alloy supplier's data.
 
 ## How to use the book
 
 Read Chapter 1 first: freezing, latent heat and shrinkage underlie every later chapter. Chapters 2 and 3 cover the melt; Chapters 4 to 7 the mould, from pattern to risers, and are best read in order; Chapter 8 covers the defects that come from the melt; Chapters 9 and 10 cover heat treatment and inspection.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. The methods are the classical ones of foundry practice: Bernoulli for gating, Chvorinov for freezing time, feed-volume and modulus checks for risers. They are sound first estimates and teaching tools; trial castings, sections and simulation decide the real design.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. The methods are the classical ones of foundry practice: Bernoulli for gating, Chvorinov for freezing time, feed-volume and modulus checks for risers. They are sound first estimates and teaching tools; trial castings, sections and simulation decide the real design.
 
 ## Source limits and professional responsibility
 

@@ -4,8 +4,8 @@ subtitle: "Standard modules, pilots, learning curves and short exposure windows:
 description: "Plan and deliver a rollout as repeatable modules: outcome first, module boundaries, pilots, learning curves, exposure windows, cadence and an honest cost comparison."
 category: Projects
 tags: [projects, automation, manufacturing, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-28
@@ -103,13 +103,13 @@ Every chapter follows one fictional programme. This is an illustration. A snack-
 
 Two ways of delivering the programme are compared throughout. In the **bespoke** option, each cell is engineered for its own line and installed in place over about three weeks of disrupted production. In the **modular** option, one standard cell is designed once, proved in a pilot, built repeatedly in an integrator's workshop, tested before it ships, and installed on its skids over a long weekend.
 
-The business, its sites, its lines and every number in the case are invented. None describes KEVOS® work, a real business or a real project. All amounts are Australian dollars excluding GST.
+The business, its sites, its lines and every number in the case are invented. None describes BIZOMAT work, a real business or a real project. All amounts are Australian dollars excluding GST.
 
 ## How to use the book
 
-Read Chapter 1 first, because the outcome it defines is the yardstick for every later decision. Chapters 2 to 4 cover design and proving, Chapters 5 and 6 learning and people, Chapters 7 and 8 the rollout, and Chapters 9 and 10 the comparison and the long-run discipline. Every calculation was checked by running it, and the KEVOS® tools linked in the chapters reproduce the learning-curve and cost arithmetic.
+Read Chapter 1 first, because the outcome it defines is the yardstick for every later decision. Chapters 2 to 4 cover design and proving, Chapters 5 and 6 learning and people, Chapters 7 and 8 the rollout, and Chapters 9 and 10 the comparison and the long-run discipline. Every calculation was checked by running it, and the BIZOMAT tools linked in the chapters reproduce the learning-curve and cost arithmetic.
 
-The book is one of a series of nine KEVOS® Library books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside view used here to judge each option's risk, and *Prototypes and Simulation by the Numbers* goes further into models, prototypes and test sizes. *First-of-a-Kind Technology by the Numbers* covers the cost of being first, which a standard module avoids, and *Project Teams and Contracts by the Numbers* the contracts and teams that deliver a rollout. *Front-End Planning by the Numbers*, *Stage Gates and Stopping Rules by the Numbers*, *Outcome-First Projects by the Numbers* and *Demand and Benefit Forecasts by the Numbers* complete the series.
+The book is one of a series of nine BIZOMAT Library books on planning and delivering projects, written to be read together. *Reference Class Forecasting by the Numbers* supplies the outside view used here to judge each option's risk, and *Prototypes and Simulation by the Numbers* goes further into models, prototypes and test sizes. *First-of-a-Kind Technology by the Numbers* covers the cost of being first, which a standard module avoids, and *Project Teams and Contracts by the Numbers* the contracts and teams that deliver a rollout. *Front-End Planning by the Numbers*, *Stage Gates and Stopping Rules by the Numbers*, *Outcome-First Projects by the Numbers* and *Demand and Benefit Forecasts by the Numbers* complete the series.
 
 ## Source limits and professional responsibility
 

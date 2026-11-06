@@ -9,7 +9,7 @@ draft: false
 
 Most vibration failures are fatigue failures. A bracket, a weld, a lead or a solder joint is flexed millions of times at stresses far below its static strength, and a crack starts and grows until the part breaks. Under random vibration the stress cycles come in every size, from tiny ones that do nothing to rare large ones that do most of the harm, and the fatigue calculation must add up the damage from all of them. The tools for doing so are old and simple: an S–N curve giving cycles to failure at each stress, Miner's rule for adding damage, and the peak distribution of Chapter 7 for counting cycles at each level. The difficulty lies in one assumption about the S–N curve that the data rarely settle.
 
-This chapter calculates the fatigue life of the sensor bracket on the screen frame, first in its original form, which cracked in service, and then stiffened. It uses the KEVOS® S–N fatigue tool for cycles to failure, adds damage by the three-band method and by integrating over the Rayleigh distribution, and shows how much the answer depends on what is assumed below the endurance limit.
+This chapter calculates the fatigue life of the sensor bracket on the screen frame, first in its original form, which cracked in service, and then stiffened. It uses the BIZOMAT S–N fatigue tool for cycles to failure, adds damage by the three-band method and by integrating over the Rayleigh distribution, and shows how much the answer depends on what is assumed below the endurance limit.
 
 ## From acceleration to stress
 

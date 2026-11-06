@@ -7,7 +7,7 @@ tags:
   - manufacturing
   - quality
   - design
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Abrasive processes finish hard materials to tolerances and finishes that cutting
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Always follow grinding wheel and machine manufacturers' instructions and applicable safety requirements.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Always follow grinding wheel and machine manufacturers' instructions and applicable safety requirements.*

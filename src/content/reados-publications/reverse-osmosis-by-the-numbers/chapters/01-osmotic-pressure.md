@@ -9,7 +9,7 @@ draft: false
 
 Every reverse osmosis plant is a fight against one number. Put fresh water and salty water on either side of a membrane that passes water but not salt, and water moves towards the salty side on its own. To stop it, the salty side must be pressurised; to reverse it, and squeeze fresh water out of the salty side, the pressure must be higher still. The pressure that exactly stops the flow is the osmotic pressure of the salty water, and it is the floor under every feed pressure, pump selection and energy figure in this book.
 
-This chapter explains where osmotic pressure comes from, sets out the van 't Hoff relation that gives it for dilute solutions, and shows how to calculate it properly from a water analysis rather than from a single dissolved-solids figure. It then applies the relation to BW-12's bore water with the KEVOS® concentrate-end tool, and ends with a spreadsheet that counted the salt wrongly and chose a pump that could not reach the end of the membrane train.
+This chapter explains where osmotic pressure comes from, sets out the van 't Hoff relation that gives it for dilute solutions, and shows how to calculate it properly from a water analysis rather than from a single dissolved-solids figure. It then applies the relation to BW-12's bore water with the BIZOMAT concentrate-end tool, and ends with a spreadsheet that counted the salt wrongly and chose a pump that could not reach the end of the membrane train.
 
 ## Why water moves towards salt
 
@@ -99,7 +99,7 @@ Two checks come free with the table. The first is the ion balance: the positive 
 
 Membrane makers use the same idea in their design manuals. The FilmTec system design equations give the feed osmotic pressure in pounds per square inch as 1.12 × (273 + T) × Σmⱼ, where Σmⱼ is the sum of the molalities of all constituents. Converted to SI, the coefficient is 7.72 kPa per kelvin per mol/kg, which is 0.929 times the gas constant: the maker's formula is the van 't Hoff relation with an osmotic coefficient of about 0.93 built in. For BW-12's water it gives 1.604 bar, within 0.2% of the value above.
 
-## Running the numbers with the KEVOS® tool
+## Running the numbers with the BIZOMAT tool
 
 The [reverse osmosis concentrate-end check](/tools/ro-concentrate-pressure-check/) calculates the osmotic pressure with an osmotic coefficient and then carries it through the stage. From the feed dissolved solids, the molar mass of the dissolved salt, the number of ions per formula unit, the osmotic coefficient and the temperature, it finds the molar concentration and the feed osmotic pressure. From the salt rejection and the recovery, it finds the permeate and concentrate strengths by a solute balance and their osmotic pressures. It then subtracts the element pressure drop and permeate back pressure to give the net driving pressure at the feed end and at the concentrate end, and the least feed pressure that keeps a required driving pressure at the concentrate end. It assumes one osmotic coefficient for all three streams and ignores the extra salt at the membrane surface, which Chapter 5 adds back.
 

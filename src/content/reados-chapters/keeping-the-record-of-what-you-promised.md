@@ -7,7 +7,7 @@ tags:
   - operations
   - validation
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -204,4 +204,4 @@ A plan can only be trusted if it contains all the work, describes the same job i
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on work breakdown structures, baselines, integrated change control and earned value. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on work breakdown structures, baselines, integrated change control and earned value. Examples and figures in this article are illustrations. This article is general information.*

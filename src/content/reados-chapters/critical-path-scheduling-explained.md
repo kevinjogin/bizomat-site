@@ -6,7 +6,7 @@ category: "Projects"
 tags:
   - projects
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -221,4 +221,4 @@ A schedule is a model of how work depends on other work. Build it from the scope
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project management handbooks on project scheduling, Gantt charts and the critical path, schedule readiness reviews, and schedule status, delay and recovery. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project management handbooks on project scheduling, Gantt charts and the critical path, schedule readiness reviews, and schedule status, delay and recovery. The worked example is illustrative. This article is general information.*

@@ -1,4 +1,4 @@
-// The course model for KEVOS® learning paths, and the two ways a course is made:
+// The course model for BIZOMAT learning paths, and the two ways a course is made:
 //   - draftCourse(): from the Library and Tools alone (no AI): one module per topic, one lesson per best chapter.
 //     Shown at once, and kept when the AI step is unavailable.
 //   - courseFromPlan(): the AI's plan (modules and lessons over numbered candidates, validated by the Worker),
@@ -14,7 +14,7 @@ export interface Module { title: string; summary: string; lessons: Lesson[] }
 export interface Course {
   id: string; question: string; subject: string; title: string; description: string; level: Level; depth: Exclude<Depth, 'quick'>;
   objectives: string[]; outcomes: string[]; modules: Module[]; gaps: string[];
-  /** 'ai': planned by KEVOS® AI; 'library': arranged from the best-matching Library chapters without AI. */
+  /** 'ai': planned by BIZOMAT AI; 'library': arranged from the best-matching Library chapters without AI. */
   source: 'ai' | 'library';
   /** Estimated study time in minutes: reading time plus practice. */
   minutes: number;
@@ -65,7 +65,7 @@ export function draftCourse(question: string, intent: Intent, c: Candidates, det
   return {
     id: hash(`${question}|${depth}|library`), question, subject: intent.subject, depth, level: intent.level, source: 'library',
     title: `Learning path: ${intent.subject.charAt(0).toUpperCase()}${intent.subject.slice(1)}`.slice(0, 90),
-    description: intent.objective || 'A path through the KEVOS® Library chapters and Tools that best match your goal, in a suggested order.',
+    description: intent.objective || 'A path through the BIZOMAT Library chapters and Tools that best match your goal, in a suggested order.',
     objectives: modules.map((m) => `Understand ${m.title.replace(/ by the Numbers$/i, '').toLowerCase()}`).slice(0, 5),
     outcomes: intent.outcome ? [intent.outcome] : [],
     modules, gaps, minutes: estimateMinutes(modules),

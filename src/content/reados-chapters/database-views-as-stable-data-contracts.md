@@ -7,7 +7,7 @@ tags:
   - systems
   - design
   - projects
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---

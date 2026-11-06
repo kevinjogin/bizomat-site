@@ -1,0 +1,162 @@
+/* BIZOMAT design tokens: the one source for colour, type, spacing and shape across the website, CAD Automation and
+   Project Management. Apps import this file (copied by shared/brand/sync.mjs) and map their own variable names to
+   these. Contrast: every text pairing below meets WCAG 2.2 AA (shared/brand/README.md lists the ratios).
+
+   Fonts: Oxanium (headings, matching the chamfered BIZOMAT wordmark) and Inter Tight (body, labels, forms), both
+   under the SIL Open Font Licence and served from the product's own origin. */
+
+@font-face {
+  font-family: 'Oxanium';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/oxanium-latin.woff2') format('woff2');
+}
+
+/* Body face for products that do not bundle it themselves (the website loads 'Inter Tight Variable' from its build). */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-tight-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Fallback faces: the visitor's own Arial (or its metric twin Liberation Sans), scaled to the width and vertical
+   metrics of each brand face, so text keeps its line breaks and position when the web fonts arrive (no layout
+   shift). size-adjust is the brand face's width over Arial's for the same English text, measured in Chromium on
+   5 Nov 2026 (Inter Tight 400 / Arial 400 = 95.93 %, Inter Tight 600 / Arial Bold = 93.80 %, Oxanium 400 / Arial
+   400 = 102.80 %, Oxanium 650 / Arial Bold = 98.18 %). The overrides are each face's own metrics divided by its
+   size-adjust (Inter Tight: ascent 1984, descent 494, gap 0 of 2048; Oxanium: 790, 210, 250 of 1000). */
+@font-face {
+  font-family: 'Inter Tight Fallback';
+  font-weight: 100 549;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  size-adjust: 95.93%;
+  ascent-override: 100.98%;
+  descent-override: 25.14%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Inter Tight Fallback';
+  font-weight: 550 900;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold');
+  size-adjust: 93.8%;
+  ascent-override: 103.28%;
+  descent-override: 25.72%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Oxanium Fallback';
+  font-weight: 100 549;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  size-adjust: 102.8%;
+  ascent-override: 76.85%;
+  descent-override: 20.43%;
+  line-gap-override: 24.32%;
+}
+@font-face {
+  font-family: 'Oxanium Fallback';
+  font-weight: 550 900;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold');
+  size-adjust: 98.18%;
+  ascent-override: 80.46%;
+  descent-override: 21.39%;
+  line-gap-override: 25.46%;
+}
+
+:root {
+  /* Brand */
+  --bz-navy: #0a1f33;          /* wordmark, inverse panels */
+  --bz-teal: #0f766e;          /* primary action and links on light (5.5:1 on white) */
+  --bz-teal-hover: #115e59;
+  --bz-teal-bright: #2dd4bf;   /* accent on dark surfaces */
+  --bz-teal-mark: #14b8a6;     /* the connector bar in the mark */
+  --bz-teal-soft: #e6f4f2;
+  --bz-amber: #f59e0b;         /* signal colour for diagrams and progress, never for text on light */
+  --bz-amber-text: #b45309;
+
+  /* Surfaces and text (light, the default theme) */
+  --bz-paper: #f7f9fb;
+  --bz-paper-2: #eef2f6;
+  --bz-surface: #ffffff;
+  --bz-ink: #0e1726;
+  --bz-ink-2: #334155;
+  --bz-muted: #56657a;
+  --bz-line: rgb(14 23 38 / 0.1);
+  --bz-line-strong: rgb(14 23 38 / 0.2);
+  --bz-inverse-bg: #0a1f33;
+  --bz-inverse-ink: #eef4fa;
+  --bz-inverse-muted: #a9b8c9;
+  --bz-on-accent: #ffffff;
+  --bz-focus: #0f766e;
+
+  /* Status */
+  --bz-success: #067647;
+  --bz-success-soft: #ecfdf3;
+  --bz-warning: #b54708;
+  --bz-warning-soft: #fffaeb;
+  --bz-danger: #b42318;
+  --bz-danger-soft: #fef3f2;
+  --bz-info: #175cd3;
+  --bz-info-soft: #eff8ff;
+
+  /* Type */
+  --bz-font-display: 'Oxanium', 'Oxanium Fallback', 'Inter Tight Variable', 'Inter Tight', ui-sans-serif, system-ui, sans-serif;
+  --bz-font-sans: 'Inter Tight Variable', 'Inter Tight', 'Inter Tight Fallback', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bz-font-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Menlo, Consolas, monospace;
+  --bz-heading-weight: 650;
+  --bz-heading-tracking: -0.012em;
+  --bz-step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);
+  --bz-step-0: clamp(1rem, 0.97rem + 0.15vw, 1.0625rem);
+  --bz-step-1: clamp(1.125rem, 1.07rem + 0.3vw, 1.3rem);
+  --bz-step-2: clamp(1.375rem, 1.24rem + 0.65vw, 1.8rem);
+  --bz-step-3: clamp(1.7rem, 1.45rem + 1.2vw, 2.5rem);
+  --bz-step-4: clamp(2.1rem, 1.65rem + 2.2vw, 3.3rem);
+  --bz-step-5: clamp(2.5rem, 1.8rem + 3.2vw, 4.2rem);
+
+  /* Space, shape, depth, motion */
+  --bz-gutter: clamp(1.1rem, 4vw, 3rem);
+  --bz-max: 1200px;
+  --bz-measure: 68ch;
+  --bz-space-section: clamp(4rem, 2.8rem + 5.5vw, 7.5rem);
+  --bz-radius-sm: 6px;
+  --bz-radius: 8px;          /* buttons, inputs */
+  --bz-radius-lg: 12px;      /* cards, panels */
+  --bz-shadow-1: 0 1px 2px rgb(10 31 51 / 0.05), 0 4px 16px rgb(10 31 51 / 0.05);
+  --bz-shadow-2: 0 12px 32px rgb(10 31 51 / 0.14);
+  --bz-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --bz-header-h: 68px;
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bz-paper: #0a111c;
+  --bz-paper-2: #0e1724;
+  --bz-surface: #101a28;
+  --bz-ink: #e6edf5;
+  --bz-ink-2: #c5d0dc;
+  --bz-muted: #9aa8ba;
+  --bz-line: rgb(230 237 245 / 0.1);
+  --bz-line-strong: rgb(230 237 245 / 0.22);
+  --bz-teal: #2dd4bf;
+  --bz-teal-hover: #5eead4;
+  --bz-teal-soft: rgb(45 212 191 / 0.12);
+  --bz-inverse-bg: #e6edf5;
+  --bz-inverse-ink: #0a111c;
+  --bz-inverse-muted: #4b5a6d;
+  --bz-on-accent: #0a111c;
+  --bz-focus: #2dd4bf;
+  --bz-success: #4ade80;
+  --bz-success-soft: rgb(74 222 128 / 0.12);
+  --bz-warning: #fbbf24;
+  --bz-warning-soft: rgb(251 191 36 / 0.12);
+  --bz-danger: #f97066;
+  --bz-danger-soft: rgb(249 112 102 / 0.12);
+  --bz-info: #84caff;
+  --bz-info-soft: rgb(132 202 255 / 0.12);
+  --bz-shadow-1: none;
+  --bz-shadow-2: 0 14px 36px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}

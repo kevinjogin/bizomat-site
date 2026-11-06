@@ -9,7 +9,7 @@ draft: false
 
 A distribution transformer is one of the most efficient machines in a factory, typically better than 99% at its usual load. That makes it easy to overlook its losses, and a mistake to do so. TX-1 passes about 7,500 MWh a year to the plant, and the 1% or so it loses is close to 95 MWh, paid for at the plant's full electricity price every year for the transformer's life. Over thirty years the cost of a transformer's losses can exceed its purchase price several times over, and the difference in losses between two otherwise similar transformers can be worth more than the difference in their prices.
 
-This chapter works out TX-1's yearly losses from the plant's load profile, compares them with two replacement options, checks the options against Australia's minimum energy performance requirements, and values the losses over a transformer's life with the KEVOS® investment appraisal and benefit–cost tools. It ends with a payback rule that nearly rejected the cheapest transformer to own.
+This chapter works out TX-1's yearly losses from the plant's load profile, compares them with two replacement options, checks the options against Australia's minimum energy performance requirements, and values the losses over a transformer's life with the BIZOMAT investment appraisal and benefit–cost tools. It ends with a payback rule that nearly rejected the cheapest transformer to own.
 
 ## Two losses, two behaviours
 

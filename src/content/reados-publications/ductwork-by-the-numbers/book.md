@@ -4,8 +4,8 @@ subtitle: "Sizing, pressure loss, fittings, fans, transitions, sheet and balanci
 description: "Size and check ductwork with numbers: flow and velocity, round and rectangular equivalents, branches, friction, fittings, fan duty and fan laws, transitions, sheet and balancing."
 category: Engineering
 tags: [design, manufacturing, systems, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -60,7 +60,7 @@ It suits mechanical designers, drafters, fabricators and maintenance engineers. 
 
 Every chapter follows one fictional system. This is an illustration. A fabrication workshop installs a dust and fume extraction system, EX-1, serving three booths, B1, B2 and B3, each drawing 0.30 m³/s through its hood. B1, the furthest from the fan, feeds the start of the main; B2 and B3 join it at junctions N2 and N3. The main runs to a collector and fan, and the fan discharges through a short stack. The ventilation designer has specified a minimum duct velocity of 18 m/s to keep the dust moving.
 
-The workshop, the system and its numbers are invented; none describes KEVOS® work or a real installation. Prices are illustrations in Australian dollars, excluding GST. Pressure-loss coefficients for fittings are labelled as illustrations: real values come from the fitting's manufacturer or a recognised design reference.
+The workshop, the system and its numbers are invented; none describes BIZOMAT work or a real installation. Prices are illustrations in Australian dollars, excluding GST. Pressure-loss coefficients for fittings are labelled as illustrations: real values come from the fitting's manufacturer or a recognised design reference.
 
 ## Source limits and professional responsibility
 

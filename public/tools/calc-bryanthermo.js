@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS calculations for the thermodynamics first-principles tools (batch bryanthermo). SI units are explicit at each boundary.
+// BIZOMAT MAKEOS calculations for the thermodynamics first-principles tools (batch bryanthermo). SI units are explicit at each boundary.
 // Methods follow Bryan’s Thermodynamics (1907) and standard engineering relations; no source tables, ratings or recommended settings are reproduced.
 // Material properties, ratings, factors and limits are always entered by the user.
 (() => {

@@ -13,8 +13,15 @@ workers_dev = false
 
 # kevos.com already has DNS records. Bind the Worker as a route instead of
 # asking Wrangler to recreate the hostname as a Worker custom domain.
+# bizomat.ai is the BIZOMAT platform: the website at the root and the applications under it (src/worker.ts): /cad is
+# CAD Automation, passed on to the CAD app on Fly, which stays the origin of the bizomat.ai record; /tasks is Project
+# Management. The Worker answers there once the bizomat.ai record is proxied (orange cloud); www.bizomat.ai needs a
+# proxied record too and is sent to bizomat.ai. Until then bizomat.ai points (DNS only) at the CAD app and these routes
+# do nothing (docs/BIZOMAT-DEPLOYMENT.md, section 6a).
 routes = [
   { pattern = "kevos.com/*", zone_name = "kevos.com" },
+  { pattern = "bizomat.ai/*", zone_name = "bizomat.ai" },
+  { pattern = "www.bizomat.ai/*", zone_name = "bizomat.ai" },
 ]
 
 # Contact delivery: onboard kevos.com in Email Service and verify this destination.
@@ -27,6 +34,14 @@ destination_address = "kevin@kevos.com"
 directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "404-page"
+# The applications' paths always reach the Worker, even if a file of the same name is ever added to the site.
+run_worker_first = ["/cad", "/cad/*", "/tasks", "/tasks/*"]
+
+# Project Management (bizomat.ai/tasks): bind its Worker once it serves its pages under /tasks; until then the Worker
+# sends /tasks/... to its current address (src/worker.ts, TASKS_FALLBACK). The service must exist before a deploy.
+# [[services]]
+# binding = "TASKS"
+# service = "workos-platform-preview"
 
 # Workers AI for the KEVOS Assistant. Workers Free plan: a daily allocation, no card needed.
 [ai]

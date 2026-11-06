@@ -9,7 +9,7 @@ draft: false
 
 Every chapter so far has leaned on equilibrium: forces on an element balance, so stresses transform as they do and integrate to the applied loads. Equilibrium alone could not say how the hoop stress is shared across a thick wall in Chapter 5, or how an interference turns into a pressure in Chapter 9. In both, a second condition did the work: the deformed parts must still fit together, without gaps or overlaps. That is compatibility, and in this final chapter it takes centre stage.
 
-Compatibility matters most where something other than a load tries to change a part's shape: a change of temperature, a fit between two parts, a weld that shrinks as it cools, a region that has yielded. The part cannot follow its own preferred shape, because its neighbours will not let it, and the mismatch becomes stress. The chapter works three RH-40 examples with KEVOS® tools: guide rods that heat in the sun, a bronze bush in a steel housing, and the locked-in stresses that the earlier chapters created on purpose.
+Compatibility matters most where something other than a load tries to change a part's shape: a change of temperature, a fit between two parts, a weld that shrinks as it cools, a region that has yielded. The part cannot follow its own preferred shape, because its neighbours will not let it, and the mismatch becomes stress. The chapter works three RH-40 examples with BIZOMAT tools: guide rods that heat in the sun, a bronze bush in a steel housing, and the locked-in stresses that the earlier chapters created on purpose.
 
 ## Two conditions, always
 

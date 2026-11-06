@@ -7,7 +7,7 @@ tags:
   - strategy
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -292,4 +292,4 @@ The way a business packages work before buying it shapes who can compete, what t
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on procurement strategy, market approach and the disaggregation of projects before sourcing. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on teaching material on procurement strategy, market approach and the disaggregation of projects before sourcing. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

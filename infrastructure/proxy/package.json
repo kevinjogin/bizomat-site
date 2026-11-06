@@ -1,0 +1,15 @@
+{
+  "name": "@bizomat/edge-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "BIZOMAT edge proxy: routes every BIZOMAT host to its backend on the Fly private network. No dependencies.",
+  "type": "module",
+  "main": "test/all.mjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test \"test/*.test.mjs\""
+  }
+}

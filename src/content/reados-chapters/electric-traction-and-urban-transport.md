@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - operations
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -178,4 +178,4 @@ Electric traction freed cities from the limits of walking and horses. Cable tram
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview.*

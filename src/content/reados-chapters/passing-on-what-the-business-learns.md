@@ -7,7 +7,7 @@ tags:
   - operations
   - systems
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -190,4 +190,4 @@ Documents carry facts and conclusions; people carry practice, reasoning and cont
 
 ---
 
-*Source: KEVOS® notes, drawing on J. S. Busby (1999) on post-project reviews in the Project Management Journal, teaching material on project closure, knowledge transfer, mentoring and networks, D. Day's review of leadership development, and M. Granovetter and R. Burt on weak ties and network brokerage. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on J. S. Busby (1999) on post-project reviews in the Project Management Journal, teaching material on project closure, knowledge transfer, mentoring and networks, D. Day's review of leadership development, and M. Granovetter and R. Burt on weak ties and network brokerage. Examples and figures in this article are illustrations. This article is general information.*

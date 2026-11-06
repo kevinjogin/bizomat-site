@@ -1,0 +1,55 @@
+# Reads the Fly app's state, so it can be checked from GitHub (Actions > Fly status > Run workflow): the app, its
+# machines, volumes, secret names (never values), releases, recent logs and what /healthz answers.
+# Changes nothing. Needs the repository secret FLY_API_TOKEN (Fly: the app > Tokens > a deploy token).
+name: Fly status
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  APP: ${{ vars.FLY_APP || 'cados' }}
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check setup
+        env:
+          HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::Add the repository secret FLY_API_TOKEN (Fly: the app > Tokens > Create deploy token)."
+            exit 1
+          fi
+
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+
+      - name: App, machines, volumes, secrets, releases
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set +e
+          for cmd in "status" "machines list" "volumes list" "secrets list" "releases" "certs list" "ips list"; do
+            echo "::group::flyctl $cmd"
+            flyctl $cmd --app "$APP"; rc=$?
+            echo "::endgroup::"
+            echo "=== flyctl $cmd: exit $rc ==="
+          done
+          true
+
+      - name: Recent logs
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: flyctl logs --app "$APP" --no-tail | tail -n 300 || true
+
+      - name: What the site answers
+        run: |
+          for path in /healthz /; do
+            echo "=== https://$APP.fly.dev$path"
+            curl -sS --max-time 60 -o /tmp/body -w "HTTP %{http_code} in %{time_total}s\n" "https://$APP.fly.dev$path" || true
+            head -c 600 /tmp/body 2>/dev/null; echo
+          done

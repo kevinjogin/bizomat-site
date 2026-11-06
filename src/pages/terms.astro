@@ -1,68 +1,98 @@
 ---
+// Terms of use for the BIZOMAT website and applications. The operator's legal entity, ABN and address are not yet
+// recorded in this repository and are not invented here: see docs/BIZOMAT-PROJECT-STATUS.md ("Legal review").
 import LegalLayout from '../layouts/LegalLayout.astro';
 import { SITE } from '../config/site.ts';
 import TradeMarkNotice from '../components/TradeMarkNotice.astro';
 import { ASSESSMENT, CONDITIONS, EXCLUSIONS } from '../config/assessment.ts';
 ---
-
 <LegalLayout
   title="Terms"
   path="/terms/"
   scene="terms"
-  description="The terms that apply to using the KEVOS® website, including the use of its content and links to other websites."
-  updated={new Date('2026-10-16')}
+  description="The terms for using the BIZOMAT website, Resources, Project Management and CAD Automation: accounts, acceptable use, your content, availability, third-party services, liability and termination."
+  updated={new Date('2026-11-05')}
 >
-  <p>These terms apply to your use of this website. By using the site, you agree to them. If you do not agree, please do not use the site.</p>
-
-  <h2>About this website</h2>
   <p>
-    This website is operated by KEVOS®, an Australian business providing engineering, manufacturing, operations and project support services. It includes Library books and guides, KEVOS® calculators and decision tools, and REACHOS enquiries and meeting bookings.
+    These terms apply to your use of the BIZOMAT website (including Resources and AI search) and the BIZOMAT applications, Project Management and CAD Automation. By using any of them you agree to these terms. If you use an application for an organisation, you agree on its behalf and confirm you may do so. If you do not agree, please do not use BIZOMAT.
   </p>
 
-  <h2>Services and quotes</h2>
+  <h2>The services</h2>
+  <ul>
+    <li><strong>The website and Resources</strong> (tools, calculators, books, guides, learning paths and AI search) are free to use without an account.</li>
+    <li><strong>Project Management</strong> and <strong>CAD Automation</strong> need an account. Access, any fees and any service levels are as agreed with you in writing; where nothing has been agreed, the application is provided as described on this website, without a guaranteed level of service.</li>
+    <li><strong>Engineering services</strong> described on this website are provided under a scope, deliverables, assumptions and commercial terms agreed in writing before work begins.</li>
+  </ul>
+
+  <h2>Your account and its security</h2>
   <p>
-    Service descriptions and indicative prices on this website are a guide only and are not an offer. Each assignment is provided under a scope, deliverables, assumptions and commercial terms agreed in writing before the work begins, and those agreed terms apply to the work. GST applies where applicable. Sending an enquiry does not create an obligation for you or for KEVOS®.
+    Give accurate details, keep your password and any API tokens or connector addresses private, and tell us promptly if you think someone else has used your account. You are responsible for what happens under your account, including actions taken by AI assistants and computers you connect to it. Workspace and application administrators are responsible for the people they invite and the access they give them.
   </p>
 
-  <h2 id="assessment">{ASSESSMENT.shortName}</h2>
-  <p>
-    The {ASSESSMENT.name} is a fixed-price service ({ASSESSMENT.priceLabel}) for one defined problem. The following conditions apply to it, in addition to the rest of these terms. {ASSESSMENT.gstNote}
-  </p>
-  <ul>{CONDITIONS.map((c) => <li><strong>{c.title}.</strong> {c.text}</li>)}</ul>
-  <p>The assessment does not include: {EXCLUSIONS.join(', ').toLowerCase()}. A booking exists only once the calendar confirmation has been received.</p>
+  <h2>Acceptable use</h2>
+  <p>You must not:</p>
+  <ul>
+    <li>break the law, infringe anyone's rights, or upload content you are not entitled to share;</li>
+    <li>try to reach another person's account, workspace, files or computers, or get around sign-in, permissions or rate limits;</li>
+    <li>probe, scan or attack BIZOMAT systems, or interfere with their operation (security research needs our written permission first);</li>
+    <li>upload malware, or use BIZOMAT to send spam or harmful content;</li>
+    <li>copy the website or its Resources in bulk, or resell access to the applications, without our written permission;</li>
+    <li>use CAD Automation with software, licences or computers you are not authorised to use. You are responsible for complying with your SOLIDWORKS licence and your AI assistant's terms.</li>
+  </ul>
 
-  <h2>Information only</h2>
+  <h2>Your content</h2>
   <p>
-    Content on this site, including Library books and guides, is general information. It is not professional, technical, financial or legal advice, and it may not suit your circumstances. Please seek appropriate advice before relying on it. We work to keep content accurate and current but cannot guarantee that it always is. See also the <a href="/disclaimer/">disclaimer</a>.
+    You keep ownership of the content you put into BIZOMAT, such as projects, tasks, documents, files and CAD data. You give BIZOMAT permission to host, process, copy and transmit it only as needed to provide the services to you and the people you share it with. You are responsible for your content and for having the rights to use it.
   </p>
 
-  <h2>Information you send us</h2>
+  <h2>AI, automation and calculations</h2>
   <p>
-    Please only send drawings, documents or information that you are entitled to share. KEVOS® uses information received through enquiries only to respond and, if engaged, to carry out the agreed work.
+    AI search, AI assistants connected to CAD Automation, automations and calculators produce output that can be wrong or incomplete. You must check it before relying on it. The <a href="/disclaimer/">disclaimer</a> sets out these limits and forms part of these terms.
+  </p>
+
+  <h2>Third-party services</h2>
+  <p>
+    BIZOMAT works with services run by others, including AI assistants, SOLIDWORKS, Microsoft Windows, Google sign-in, Slack, Microsoft Teams, hosting providers and the form, booking and download services named in the <a href="/privacy/">privacy policy</a>. Your use of those services is governed by their own terms. BIZOMAT is not responsible for their availability, changes or content. Links to other websites are provided for convenience only.
+  </p>
+
+  <h2>Availability and changes</h2>
+  <p>
+    We work to keep BIZOMAT available and secure, but it may be unavailable at times, for example for maintenance, upgrades or events outside our control. We may change, add or remove features. If a change materially reduces a paid service you rely on, we will tell you in advance where we reasonably can.
   </p>
 
   <h2>Intellectual property</h2>
   <p>
-    Unless stated otherwise, the content, design and branding on this website belong to KEVOS®. You are welcome to share links and to quote short extracts with attribution. Please ask before reproducing substantial parts of the site.
+    The BIZOMAT software, website, Resources and branding belong to BIZOMAT or its licensors. You may use them as these terms allow, share links, and quote short extracts with attribution. Please ask before reproducing substantial parts. Some components are open-source software provided under their own licences. These terms do not give you any right to use BIZOMAT's names or logos as your own branding.
+  </p>
+  <TradeMarkNotice />
+  <p>
+    SOLIDWORKS is a registered trade mark of Dassault Systèmes SolidWorks Corporation. Microsoft, Windows and Teams are trade marks of the Microsoft group of companies. Third-party names are used only to describe compatibility; BIZOMAT is not affiliated with or endorsed by these companies.
   </p>
 
-  <h2>Registered trade mark</h2>
-  <TradeMarkNotice />
-  <p>The registration applies to KEVOS®. References to the Library, Tools and REACHOS identify areas of this website and do not claim separate trade mark registrations. These terms do not grant a licence to use the KEVOS® trade mark as your own branding.</p>
+  <h2>Suspension and termination</h2>
+  <p>
+    You may stop using BIZOMAT at any time and ask for your account to be closed. We may suspend or close an account that breaches these terms, puts other users or our systems at risk, or must be closed by law; where it is reasonable, we will tell you first and give you a chance to fix the problem. Before an account is closed, workspace administrators can export their workspace from Project Management.
+  </p>
 
-  <h2>Links to other websites</h2>
-  <p>This site may link to websites run by others. We are not responsible for their content, availability or privacy practices.</p>
+  <h2>{ASSESSMENT.shortName}</h2>
+  <p>
+    The {ASSESSMENT.name} is a fixed-price service ({ASSESSMENT.priceLabel}) for one defined problem. These conditions apply to it, in addition to the rest of these terms. {ASSESSMENT.gstNote}
+  </p>
+  <ul>{CONDITIONS.map((c) => <li><strong>{c.title}.</strong> {c.text}</li>)}</ul>
+  <p>The assessment does not include: {EXCLUSIONS.join(', ').toLowerCase()}. A booking exists only once the calendar confirmation has been received.</p>
 
   <h2>Liability</h2>
   <p>
-    To the extent permitted by law, KEVOS® is not liable for any loss arising from your use of this website or reliance on its content. Nothing in these terms excludes rights you may have under the Australian Consumer Law that cannot be excluded.
+    Nothing in these terms excludes, restricts or modifies any right or remedy you have under the Australian Consumer Law or other laws that cannot be excluded. Where the law allows us to limit our liability for a failure to meet a consumer guarantee, our liability is limited, at our option, to supplying the services again or paying the cost of having them supplied again. To the extent permitted by law, BIZOMAT is not liable for indirect or consequential loss, or for loss of data, profit, revenue or business, arising from your use of BIZOMAT, from content, output or calculations you relied on without checking them, or from third-party services.
   </p>
 
-  <h2>Privacy</h2>
-  <p>Our <a href="/privacy/">privacy policy</a> explains how we handle personal information.</p>
+  <h2>Support</h2>
+  <p>
+    For help, questions or to report a problem, use the <a href="/contact/">contact page</a>. Unless agreed in writing, support is provided on a reasonable-efforts basis without guaranteed response times.
+  </p>
 
   <h2>Governing law and changes</h2>
   <p>
-    These terms are governed by the laws of {SITE.jurisdiction}. We may update them from time to time; the date at the top of this page shows when they last changed.
+    These terms are governed by the laws of {SITE.jurisdiction}, and you and BIZOMAT submit to the courts there. We may update these terms; the date at the top of this page shows when they last changed. If a change materially affects an application you use, we will tell you before it applies where we reasonably can.
   </p>
 </LegalLayout>

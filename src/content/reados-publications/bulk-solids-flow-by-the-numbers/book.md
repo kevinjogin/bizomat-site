@@ -4,8 +4,8 @@ subtitle: "Storing and discharging powders and pellets: density, friction, silo 
 description: "Why powders and pellets behave unlike liquids, and how to size and run bins and silos so they hold what they should, discharge reliably and do not arch, rathole or segregate."
 category: Engineering
 tags: [design, manufacturing, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -136,13 +136,13 @@ Every chapter follows one fictional plant. This is an illustration. Plant C comp
 
 S1 has worked well since it was installed. B2 has not: it stops feeding several times a shift and is cleared by an operator hitting the cone with a mallet. The plant's engineer is asked to explain both and to fix B2.
 
-The plant, its equipment and every measurement and test result are invented. None describes KEVOS® work, a real plant or a real supplier's product.
+The plant, its equipment and every measurement and test result are invented. None describes BIZOMAT work, a real plant or a real supplier's product.
 
 ## How to use the book
 
 Read Chapters 1 to 5 in order: they set out the properties every later chapter uses, and the pressures in a silo. Chapters 6 to 9 cover flow: the two flow patterns, arching, ratholes and flow aids, and discharge rates. Chapter 10 deals with segregation and Chapter 11 with the inspection and safe running of bins and silos.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each one calculates and where its model stops. Where a tool solves a related problem rather than the chapter's own, the text says so.
 
 ## Source limits and professional responsibility
 

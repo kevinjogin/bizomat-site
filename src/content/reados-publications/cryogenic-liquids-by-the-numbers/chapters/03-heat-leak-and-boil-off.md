@@ -9,7 +9,7 @@ draft: false
 
 Every cryogenic vessel loses liquid all the time, because no insulation stops heat completely and every watt that gets in boils some liquid away. The loss is easy to calculate once it is expressed in watts: one watt boils 3.6 kJ of heat an hour, which is 18 g of liquid nitrogen at atmospheric pressure. The rest of this chapter is about where the watts come from and how to count them.
 
-It turns SF-180's cylinder rating into a heat leak, calculates the heat leak of the foam-insulated bath with the KEVOS® layered-wall tool, using a conductivity averaged over the temperature range, bounds the extra loss when the lid is open with the radiant heat tool, and ends with a weighing that showed where the station's nitrogen was really going.
+It turns SF-180's cylinder rating into a heat leak, calculates the heat leak of the foam-insulated bath with the BIZOMAT layered-wall tool, using a conductivity averaged over the temperature range, bounds the extra loss when the lid is open with the radiant heat tool, and ends with a weighing that showed where the station's nitrogen was really going.
 
 ## Watts and kilograms
 

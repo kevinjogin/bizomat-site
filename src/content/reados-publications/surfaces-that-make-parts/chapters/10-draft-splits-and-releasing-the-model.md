@@ -104,7 +104,7 @@ A prototype printed in plastic, or a quick visualisation, often needs a mesh for
 
 **h = R × (1 − cos(θ ÷ 2))**
 
-On the duct's 15 mm outlet corners, a chord tolerance of 0.01 mm needs segments of about **4.2°**, or 22 segments per 90° corner. On the 60 mm round section, the same tolerance allows segments of about 2.1°, 173 around the circle. Relaxing the tolerance to 0.05 mm cuts the 15 mm corners to 10 segments per 90°, which is fine for a look-and-feel prototype and coarse for a fit check of the gasket. The KEVOS® [CNC Arc Linearisation Chord Error](/tools/cnc-chord-error/) tool works the same relationship for machining, where a toolpath approximates arcs with straight moves.
+On the duct's 15 mm outlet corners, a chord tolerance of 0.01 mm needs segments of about **4.2°**, or 22 segments per 90° corner. On the 60 mm round section, the same tolerance allows segments of about 2.1°, 173 around the circle. Relaxing the tolerance to 0.05 mm cuts the 15 mm corners to 10 segments per 90°, which is fine for a look-and-feel prototype and coarse for a fit check of the gasket. The BIZOMAT [CNC Arc Linearisation Chord Error](/tools/cnc-chord-error/) tool works the same relationship for machining, where a toolpath approximates arcs with straight moves.
 
 ```figure
 type: compare

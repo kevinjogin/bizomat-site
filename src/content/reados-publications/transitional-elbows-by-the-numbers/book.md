@@ -4,8 +4,8 @@ subtitle: "Triangulating sheet metal fittings whose ends are not parallel: incli
 description: "Develop sheet metal fittings whose ends are not parallel by triangulation from coordinates: inclined ends, transitional, tapering, rectangular, flat-oval, twisted and helical elbows."
 category: Manufacturing
 tags: [manufacturing, design, quality]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -78,7 +78,7 @@ Every chapter follows one fictional job. This is an illustration. A ductwork fab
 - **F5**, an elbow from Ø250 round to a 350 × 150 mm flat oval to pass between roof purlins;
 - **F6**, a twisted rectangular transition and a helical elbow where the duct climbs round a column.
 
-The fittings are made in 0.8 mm galvanised steel sheet. The fabricator, the workshop, the dimensions and the mistakes are invented. None describes KEVOS® work or a real business.
+The fittings are made in 0.8 mm galvanised steel sheet. The fabricator, the workshop, the dimensions and the mistakes are invented. None describes BIZOMAT work or a real business.
 
 ## How to use the book
 

@@ -7,7 +7,7 @@ tags:
   - systems
   - strategy
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -192,4 +192,4 @@ Nuclear fission moved from discovery in 1938 to electricity within two decades a
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not take a position on energy policy.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not take a position on energy policy.*

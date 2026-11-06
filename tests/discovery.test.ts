@@ -8,7 +8,7 @@ import { handleDiscover, handleDiscoverEvent, parseIntent, SYSTEM_PROMPT } from 
 import { readCatalogue } from '../src/utils/knowledge.ts';
 import worker from '../src/worker.ts';
 
-// KEVOS® discovery: "What would you like to solve today?". The catalogue index, the hybrid search, the Workers AI
+// BIZOMAT discovery: "What would you like to solve today?". The catalogue index, the hybrid search, the Workers AI
 // intent endpoint and its fallbacks. Search expectations below were checked by hand against the catalogue.
 
 const index = buildDiscoveryIndex();
@@ -241,7 +241,7 @@ test('the AI picks from a shortlist of real catalogue entries, by number only', 
   const data = await (await handleDiscover(req({ question: 'How much money am I losing when my machine is sitting idle?', candidates }), { AI: ai })).json();
   assert.deepEqual(data.intent.picks, ['/reados/x/y/', 'downtime-cost', 'oee'], 'numbers map to the shortlist in order; repeats and out-of-range numbers are dropped');
   const prompt = ai.calls[0].input.messages[1].content as string;
-  assert.match(prompt, /1\. KEVOS® tool: Downtime Cost \(What does an hour of stoppage cost\?\)/);
+  assert.match(prompt, /1\. BIZOMAT tool: Downtime Cost \(What does an hour of stoppage cost\?\)/);
   assert.match(prompt, /3\. Library chapter: Counting the cost of stoppages/);
   assert.doesNotMatch(prompt, /Dropped/, 'malformed candidates never reach the model');
   assert.match(SYSTEM_PROMPT, /Use only numbers from the list/);
@@ -260,7 +260,7 @@ test('AI picks lead the results, are marked, and only ever name catalogue entrie
   const picked = search(engine, { question: q, terms: ['keyhole welding', 'laser welding'], picks: ['not-a-real-tool', chapter.id, 'break-even'] });
   assert.equal(picked.readings[0].id, chapter.id, 'the AI’s first valid pick leads its group');
   assert.equal(picked.readings[0].ai, true);
-  assert.match(picked.readings[0].reason, /chosen by KEVOS® AI/);
+  assert.match(picked.readings[0].reason, /chosen by BIZOMAT AI/);
   assert.equal(picked.tools[0].id, 'break-even');
   assert.ok(![...picked.tools, ...picked.readings].some((h) => h.id === 'not-a-real-tool'), 'an unknown id is ignored');
   assert.notEqual(picked.mode, 'clarify');
@@ -271,13 +271,13 @@ test('the privacy page describes statistics exactly when the statistics binding 
   const bound = /^\[\[analytics_engine_datasets\]\]\s*\nbinding = "DISCOVERY_EVENTS"\s*\ndataset = "kevos_discovery"/m.test(wrangler);
   assert.match(readFileSync(join(process.cwd(), 'scripts/discovery/analytics-report.mjs'), 'utf8'), /const DATASET = 'kevos_discovery'/);
   const privacy = readFileSync(join(process.cwd(), 'src/pages/privacy.astro'), 'utf8');
-  assert.match(privacy, /Questions on the homepage/);
+  assert.match(privacy, /When you use AI search/);
   if (bound) {
     assert.match(privacy, /up to eight keywords from the question/, 'the privacy page says what is recorded');
     assert.match(privacy, /without your IP address, cookies or any account or identifier/);
   } else {
     assert.doesNotMatch(privacy, /usage statistics|Analytics Engine/, 'no statistics are described while none are collected');
-    assert.match(privacy, /KEVOS® does not store your question\./);
+    assert.match(privacy, /BIZOMAT does not store your question\./);
   }
 });
 

@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - operations
   - finance
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -182,4 +182,4 @@ Every significant changeover has a period when old and new run side by side, and
 
 ---
 
-*Source: KEVOS® notes, drawing on teaching material on project closure, transition and handover, and staged changeovers. Examples and figures in this article are illustrations. This article is general information.*
+*Source: BIZOMAT notes, drawing on teaching material on project closure, transition and handover, and staged changeovers. Examples and figures in this article are illustrations. This article is general information.*

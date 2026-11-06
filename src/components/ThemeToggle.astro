@@ -27,11 +27,11 @@
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
       root.dataset.theme = next;
       try {
-        sessionStorage.setItem('kevos-theme', next);
+        sessionStorage.setItem('bizomat-theme', next);
       } catch {
         /* storage unavailable; the choice lasts for this page only */
       }
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0f0f0e' : '#fbfaf7');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0a111c' : '#f7f9fb');
       label();
     }),
   );

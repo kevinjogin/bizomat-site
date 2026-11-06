@@ -17,7 +17,7 @@ A regular polygon of n sides fits between two circles. The **circumscribed circl
 
 across flats = across corners × cos(180° ÷ n)
 
-For a hexagon, cos 30° = 0.866, so a hexagon 16 mm across flats is 16 ÷ 0.866 = **18.475 mm** across corners. Each side is half the across-corners size, 9.238 mm, and the area is (√3 ÷ 2) × 16² = 221.70 mm². The KEVOS® [regular polygon calculator](/tools/regular-polygon/) gives the same relationships for any number of sides.
+For a hexagon, cos 30° = 0.866, so a hexagon 16 mm across flats is 16 ÷ 0.866 = **18.475 mm** across corners. Each side is half the across-corners size, 9.238 mm, and the area is (√3 ÷ 2) × 16² = 221.70 mm². The BIZOMAT [regular polygon calculator](/tools/regular-polygon/) gives the same relationships for any number of sides.
 
 CAD polygon commands usually ask for a centre, a number of sides and a radius, and then whether the polygon is **inscribed in** the circle of that radius, which puts the corners on the circle, or **circumscribed about** it, which puts the flats on it. The wording is easy to reverse in your head. "Inscribed in a circle" means the polygon is inside the circle, touching it at the corners, so the radius you type is half the across-corners size. "Circumscribed about a circle" means the polygon is outside it, touching at the flats, so the radius is half the across-flats size.
 
@@ -122,7 +122,7 @@ Unlike a circle, an ellipse has no simple exact formula for its perimeter. The e
 
 P ≈ π × [3(a + b) − √((3a + b)(a + 3b))]
 
-where a and b are the semi-axes, half the major and minor axes. For the ellipses in this chapter its error is far smaller than a thousandth of a millimetre. The KEVOS® [ellipse calculator](/tools/ellipse/) gives the perimeter and area from the two axes.
+where a and b are the semi-axes, half the major and minor axes. For the ellipses in this chapter its error is far smaller than a thousandth of a millimetre. The BIZOMAT [ellipse calculator](/tools/ellipse/) gives the perimeter and area from the two axes.
 
 ```figure
 type: bars

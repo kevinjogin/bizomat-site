@@ -7,7 +7,7 @@ tags:
   - design
   - quality
   - product-development
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ Fatigue causes parts to crack under loads they can easily carry once, because re
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. Fatigue-critical designs require qualified engineers and applicable standards.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. Fatigue-critical designs require qualified engineers and applicable standards.*

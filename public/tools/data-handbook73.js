@@ -1,4 +1,4 @@
-// KEVOS® MAKEOS: project, business, operations, maintenance, quality and machining tools (batch handbook73) within the Tools directory.
+// BIZOMAT MAKEOS: project, business, operations, maintenance, quality and machining tools (batch handbook73) within the Tools directory.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
   {
     "id": "earned-value-check",

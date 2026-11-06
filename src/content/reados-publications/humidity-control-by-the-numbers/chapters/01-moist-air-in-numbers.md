@@ -19,7 +19,7 @@ That is why the **humidity ratio**, written ω, is grams of water vapour per kil
 
 ## Five properties from three readings
 
-Given the dry-bulb temperature t, the relative humidity and the barometric pressure p, everything else follows. The saturation vapour pressure p_s depends only on temperature, and the KEVOS® tools used in this book take it from the Hyland–Wexler equations, the formulation given in the ASHRAE Handbook of Fundamentals. Readers who want the physics of vapour pressure and dew point, and a simpler formula that is accurate to about a quarter of a percent, will find both in [Water in air: vapour pressure, humidity and dew point](/reados/publications/condensation-control-by-the-numbers/water-in-air-vapour-pressure-and-dew-point/). This chapter takes them as given and moves on to what an air-handling engineer does with them.
+Given the dry-bulb temperature t, the relative humidity and the barometric pressure p, everything else follows. The saturation vapour pressure p_s depends only on temperature, and the BIZOMAT tools used in this book take it from the Hyland–Wexler equations, the formulation given in the ASHRAE Handbook of Fundamentals. Readers who want the physics of vapour pressure and dew point, and a simpler formula that is accurate to about a quarter of a percent, will find both in [Water in air: vapour pressure, humidity and dew point](/reados/publications/condensation-control-by-the-numbers/water-in-air-vapour-pressure-and-dew-point/). This chapter takes them as given and moves on to what an air-handling engineer does with them.
 
 ```figure
 type: formula

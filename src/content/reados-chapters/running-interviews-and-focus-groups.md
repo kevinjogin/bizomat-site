@@ -7,7 +7,7 @@ tags:
   - customers
   - validation
   - communication
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -207,4 +207,4 @@ Interviews and focus groups reveal reasons, processes and priorities that number
 
 ---
 
-*Source: KEVOS editorial notes. Examples and findings in this article are illustrations. This article is general information and does not constitute legal advice on recording or privacy.*
+*Source: BIZOMAT editorial notes. Examples and findings in this article are illustrations. This article is general information and does not constitute legal advice on recording or privacy.*

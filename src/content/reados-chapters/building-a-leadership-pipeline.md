@@ -6,7 +6,7 @@ category: "Business"
 tags:
   - leadership
   - people
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ Leadership capability can be built deliberately rather than left to luck. Develo
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project leadership handbooks on leader development and leadership development, leadership development systems and the project manager pipeline, 360-degree feedback, coaching, mentoring and action learning. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project leadership handbooks on leader development and leadership development, leadership development systems and the project manager pipeline, 360-degree feedback, coaching, mentoring and action learning. The worked example is illustrative. This article is general information.*

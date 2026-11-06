@@ -1,0 +1,117 @@
+# The BIZOMAT platform on one computer: the same image as Fly (infrastructure/fly/Dockerfile), the four roles
+# as four services on one network, a volume each for work and cad. Only the proxy is published (127.0.0.1).
+#
+#   docker compose -f infrastructure/local/compose.yml up --build -d --wait
+#   node infrastructure/smoke/smoke.mjs http://127.0.0.1:8080
+#   bash infrastructure/local/check-isolation.sh
+#   docker compose -f infrastructure/local/compose.yml down -v
+#
+# Before the website and work servers exist (npm run build:server, npm run build:node), run the proxy and cad
+# with stand-ins for web and work (compose.stubs.yml) on the image without those builds:
+#   BIZOMAT_BUILD_TARGET=runtime-base docker compose -f infrastructure/local/compose.yml \
+#     -f infrastructure/local/compose.stubs.yml up --build -d --wait
+#   node infrastructure/smoke/smoke.mjs http://127.0.0.1:8080 --stub web,work
+#
+# Like Fly, every service gets the SAME environment, secrets included (Fly secrets reach every Machine of an app):
+# the entrypoint must pass each role only its own settings; check-isolation.sh proves it. The values here are
+# local placeholders, never real ones.
+
+name: bizomat-local
+
+x-env: &app-env
+  # proxy
+  UPSTREAM_WEB: http://web:8003
+  UPSTREAM_WORK: http://work:8002
+  UPSTREAM_CAD: http://cad:8001
+  BIZOMAT_PREVIEW_ROUTING: "1"
+  PROXY_CLIENT_IP_MODE: socket
+  # no TLS in front of this stack: report https to the backends, as Fly's edge does (the website redirects http)
+  PROXY_ASSUME_HTTPS: "1"
+  # work
+  WORK_APP_URL: https://work.bizomat.ai
+  WORK_APP_NAME: BIZOMAT Project Management
+  WORK_ENVIRONMENT: production
+  WORK_ALLOW_SIGNUP: "true"
+  WORK_SESSION_TTL_HOURS: "72"
+  # cad
+  OPENSKETCH_PUBLIC_URL: https://cados.kevos.com
+  OPENSKETCH_ALIAS_HOSTS: cad.bizomat.ai,cados.kevos.com
+  OPENSKETCH_REDIRECT_HOSTS: ""
+  # "secrets": local placeholders, present everywhere as on Fly
+  OPENSKETCH_PASSWORD: ${LOCAL_CAD_PASSWORD:-local-only-cad-password}
+  WORK_GOOGLE_CLIENT_SECRET: local-only-work-google-secret
+  CAD_GOOGLE_CLIENT_SECRET: local-only-cad-google-secret
+  CF_AI_TOKEN: local-only-web-ai-token
+
+x-service: &service
+  image: ${BIZOMAT_IMAGE:-bizomat:local}
+  pull_policy: never
+  init: true
+  restart: unless-stopped
+  environment: *app-env
+  networks: [bizomat]
+  # the hardening Fly does not offer, to prove the services need nothing more: read-only root, no capabilities
+  # but the few the entrypoint uses before it drops to the role's user
+  read_only: true
+  cap_drop: [ALL]
+  cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETUID, SETGID, SETPCAP]
+  security_opt: ["no-new-privileges:true"]
+
+services:
+  proxy:
+    <<: *service
+    pull_policy: build
+    build:
+      context: ../..
+      dockerfile: infrastructure/fly/Dockerfile
+      target: ${BIZOMAT_BUILD_TARGET:-runtime}
+      args:
+        BIZOMAT_VERSION: ${BIZOMAT_VERSION:-local}
+    command: ["/usr/local/bin/bizomat-entrypoint", "proxy"]
+    tmpfs: ["/tmp", "/home/bzproxy:uid=10001,gid=10001,mode=0700"]
+    ports: ["127.0.0.1:${BIZOMAT_PROXY_PORT:-8080}:8080"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/__proxy/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  web:
+    <<: *service
+    command: ["/usr/local/bin/bizomat-entrypoint", "web"]
+    tmpfs: ["/tmp", "/home/bzweb:uid=10002,gid=10002,mode=0700"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8003/healthz').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  work:
+    <<: *service
+    command: ["/usr/local/bin/bizomat-entrypoint", "work"]
+    tmpfs: ["/tmp", "/home/bzwork:uid=10003,gid=10003,mode=0700"]
+    volumes: ["work_data:/data"]
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8002/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  cad:
+    <<: *service
+    command: ["/usr/local/bin/bizomat-entrypoint", "cad"]
+    tmpfs: ["/tmp", "/home/bzcad:uid=10004,gid=10004,mode=0700"]
+    volumes: ["cad_data:/data"]
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8001/healthz', timeout=3).status == 200 else 1)"]
+      interval: 5s
+      timeout: 5s
+      start_period: 120s
+      retries: 30
+
+volumes:
+  work_data:
+  cad_data:
+
+networks:
+  bizomat:

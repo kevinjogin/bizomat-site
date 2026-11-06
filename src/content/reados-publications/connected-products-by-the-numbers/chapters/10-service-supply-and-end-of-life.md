@@ -74,7 +74,7 @@ caption: This is an illustration with a A$110 unit cost, A$2.25 monthly cost to 
 - Full service, 2% churn | 162
 ```
 
-Full service looks better only if customers stay. Its cost is recovered only after **110 ÷ 7.75 ≈ 14.2** months, so every customer who leaves earlier is a loss, and the makers carry the risk of the hardware in the field. Hardware plus subscription recovers the unit's cost on the day of sale and is far less sensitive to churn. For a small maker without much capital and with an uncertain churn rate, that was decisive. The KEVOS® [Subscription Value](/tools/subscription-value/) calculator can test other assumptions.
+Full service looks better only if customers stay. Its cost is recovered only after **110 ÷ 7.75 ≈ 14.2** months, so every customer who leaves earlier is a loss, and the makers carry the risk of the hardware in the field. Hardware plus subscription recovers the unit's cost on the day of sale and is far less sensitive to churn. For a small maker without much capital and with an uncertain churn rate, that was decisive. The BIZOMAT [Subscription Value](/tools/subscription-value/) calculator can test other assumptions.
 
 ## Decide what to make and what to buy
 
@@ -119,7 +119,7 @@ Retiring the unit is part of the design. Lithium primary cells must not go into 
 
 ## How this applies to a small Australian business
 
-Connected products tempt small makers into pricing that covers the hardware and hopes for the rest. Build the cost to serve from the engineering: data per message, platform costs, support contacts per unit and the years of security upkeep you have published. Measure each one in the pilot. State prices including GST, as Australian consumer pricing requires, and plan on the amounts excluding GST. Keep the work that holds the system together in-house, buy what specialists do better, and write the end of the network and the end of the battery into your terms before you sell the first unit. The general make-or-buy arithmetic is in the KEVOS® [Make or Buy](/tools/make-buy/) quick check.
+Connected products tempt small makers into pricing that covers the hardware and hopes for the rest. Build the cost to serve from the engineering: data per message, platform costs, support contacts per unit and the years of security upkeep you have published. Measure each one in the pilot. State prices including GST, as Australian consumer pricing requires, and plan on the amounts excluding GST. Keep the work that holds the system together in-house, buy what specialists do better, and write the end of the network and the end of the battery into your terms before you sell the first unit. The general make-or-buy arithmetic is in the BIZOMAT [Make or Buy](/tools/make-buy/) quick check.
 
 Finally, revisit the numbers once real customers arrive. The pilot gives the first measured support rate, failure rate and data use, but a few hundred paying customers will give better ones within months. Put the cost to serve, the churn rate and the failure rate on a single page that the whole team reviews each quarter, and change the product, not just the price, when they drift.
 

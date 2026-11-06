@@ -4,8 +4,8 @@ subtitle: "Sound speed, echoes, thickness gauging, corrosion surveys, remaining 
 description: "How ultrasonic testing works and how to use it with numbers: sound speed, echoes, beams, thickness surveys, remaining life, weld testing, attenuation, sampling and records."
 category: Manufacturing
 tags: [quality, manufacturing, validation, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-03
@@ -24,7 +24,7 @@ references:
   - title: "Introduction to Modern Solid State Physics"
     creator: "Y. M. Galperin, lecture notes for course FYS 448, Department of Physics, University of Oslo"
     year: "2001"
-    note: "Copyright work, used only as a map of ideas: lattice vibrations and the speed of long elastic waves, longitudinal and transverse modes, phase and group velocity, and the mechanisms that damp sound in solids. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "Copyright work, used only as a map of ideas: lattice vibrations and the speed of long elastic waves, longitudinal and transverse modes, phase and group velocity, and the mechanisms that damp sound in solids. No text, equations as set out there, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Ultrasonic Testing of Materials"
     creator: "J. Krautkrämer and H. Krautkrämer, Springer-Verlag"
     year: "1990"
@@ -49,7 +49,7 @@ references:
     creator: "National Institute of Standards and Technology"
     year: "2012"
     url: "https://www.itl.nist.gov/div898/handbook/"
-    note: "Background for the gauge study, uncertainty, regression and sampling methods used in Chapters 4, 5, 6 and 10 and in the KEVOS® tools linked from them."
+    note: "Background for the gauge study, uncertainty, regression and sampling methods used in Chapters 4, 5, 6 and 10 and in the BIZOMAT tools linked from them."
 related:
   - title: "Eddy-Current Inspection by the Numbers"
     href: "/reados/publications/eddy-current-inspection-by-the-numbers/"
@@ -69,7 +69,7 @@ Tap a steel bar and it rings: the atoms pass a disturbance from one to the next 
 
 This book shows how to use ultrasonic testing with numbers. It starts with how sound travels in steel, what happens at interfaces and what a probe's beam looks like. It then works through the jobs a maintenance or quality engineer most often pays for: thickness gauging and its calibration, corrosion surveys and the remaining life and inspection interval they lead to, angle-beam testing of butt welds and the sizing and evaluation of indications, and the long sound paths of shaft inspection, where attenuation and beam spread decide what can be found. It finishes with the procedure, the people, the sampling and the records that turn readings into decisions.
 
-It is for maintenance, reliability, inspection and quality engineers, NDT technicians, fabricators and plant owners. It assumes engineering or trade training and comfort with basic mechanics and statistics; the wave physics is explained as it is used, starting from the idea of atoms connected by springs. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for maintenance, reliability, inspection and quality engineers, NDT technicians, fabricators and plant owners. It assumes engineering or trade training and comfort with basic mechanics and statistics; the wave physics is explained as it is used, starting from the idea of atoms connected by springs. Each chapter works the running case with real numbers, includes a plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -80,13 +80,13 @@ Every chapter follows one plant. This is an illustration. A raw sugar mill in th
 - **The V-12 insert plate:** a new 12 mm shell insert plate around a replacement nozzle, joined to the shell by full-penetration butt welds that are tested with angle-beam probes.
 - **No. 3 mill top roll shaft:** a forged steel shaft inspected from its end face with a straight-beam probe for fatigue cracks at the journal fillets, 650 mm and 2,550 mm from the end.
 
-Dimensions, readings, signal amplitudes, rates, prices and results are the mill's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real mill, inspection company, instrument maker or customer. Material properties are typical values for illustration; real acceptance limits and inspection intervals come from the design code, the standards a contract calls up and the owner's competent inspection body. Prices are in Australian dollars excluding GST.
+Dimensions, readings, signal amplitudes, rates, prices and results are the mill's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real mill, inspection company, instrument maker or customer. Material properties are typical values for illustration; real acceptance limits and inspection intervals come from the design code, the standards a contract calls up and the owner's competent inspection body. Prices are in Australian dollars excluding GST.
 
 ## How to use the book
 
 Read Chapters 1 to 3 first: they explain sound speed, echoes and beams, which every later chapter uses. Chapters 4 to 6 form a sequence on thickness: gauging and calibration, survey design, and remaining life. Chapters 7 and 8 go together on weld testing. Chapter 9 can be read on its own after Chapter 3, and Chapter 10 brings the procedure, sampling, records and cost together.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the liquid compression tool's wave speed, the chapter says which output is used and which are not.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Where a tool was built for a different purpose but does one step of a chapter's calculation, such as the liquid compression tool's wave speed, the chapter says which output is used and which are not.
 
 ## Source limits and professional responsibility
 

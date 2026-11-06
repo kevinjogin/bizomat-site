@@ -4,8 +4,8 @@ subtitle: "Wave speed, Joukowsky surges, valve closure, pump trip and surge prot
 description: "Size pressure surges in a pumped water main from wave speed and velocity change, check valve closure and pump trip, and choose protection before a pipe bursts."
 category: Engineering
 tags: [design, validation, projects]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -84,7 +84,7 @@ It serves mechanical, process and maintenance engineers, pump and pipework desig
 
 Every chapter works on one fictional pipeline. **A pump station at a dam lifts process water to a header tank on a hill**, 900 m away, through a steel main of 168.3 mm outside diameter and 7.1 mm wall, giving a 154.1 mm bore. The pump sits at reduced level (RL) 100 m and the tank's water level is RL 142 m. The line rises steeply at first, flattens near a high point at chainage 600 m, and ends at a motorised inlet valve at RL 141 m beside the tank. At 30 L/s the water moves at 1.61 m/s, and the pump delivers a head of 58 m. Valves and flanged fittings on the line are rated PN16.
 
-This is an illustration. All dimensions, levels, flows, ratings, times and results are invented for teaching and checked by calculation. They are not KEVOS® work, a real site, or a measured system. The book's transient results come from a short method-of-characteristics model written for this case and described in Chapter 10. It simplifies the pump as a fixed head and omits some effects real studies include.
+This is an illustration. All dimensions, levels, flows, ratings, times and results are invented for teaching and checked by calculation. They are not BIZOMAT work, a real site, or a measured system. The book's transient results come from a short method-of-characteristics model written for this case and described in Chapter 10. It simplifies the pump as a fixed head and omits some effects real studies include.
 
 ## Source limits and professional responsibility
 

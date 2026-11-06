@@ -8,7 +8,7 @@ tags:
   - product-development
   - manufacturing
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -210,4 +210,4 @@ Circularity becomes commercially powerful when it changes who carries the econom
 
 ---
 
-*Source: KEVOS® notes, drawing on Walter R. Stahel's 2016 commentary on the circular economy in Nature and research by Zhao and colleagues (2017) on marketing remanufactured products. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT notes, drawing on Walter R. Stahel's 2016 commentary on the circular economy in Nature and research by Zhao and colleagues (2017) on marketing remanufactured products. Examples and figures in this article are illustrations.*

@@ -9,7 +9,7 @@ draft: false
 
 Reverse osmosis is the most energy-efficient way known to take salt out of water, and it still uses far more energy than the thermodynamic minimum. That gap is not a failing to be fixed but a set of choices: a membrane that makes water at a useful rate needs a driving pressure, a channel that keeps the membrane clean needs crossflow and therefore friction, and a concentrate that leaves the plant at pressure takes its energy with it unless something recovers it. Knowing where each kilowatt goes tells an owner which savings are worth having.
 
-This chapter calculates the power of BW-12's high-pressure and booster pumps with the KEVOS® pump power tool, turns it into specific energy and an annual bill, derives the least work of separation from the entropy of mixing, and divides the energy delivered to the water among the places it goes. It ends with a pump selection made on the permeate flow instead of the feed.
+This chapter calculates the power of BW-12's high-pressure and booster pumps with the BIZOMAT pump power tool, turns it into specific energy and an annual bill, derives the least work of separation from the entropy of mixing, and divides the energy delivered to the water among the places it goes. It ends with a pump selection made on the permeate flow instead of the feed.
 
 ## The high-pressure pump
 

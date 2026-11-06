@@ -7,7 +7,7 @@ tags:
   - quality
   - process-improvement
   - manufacturing
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -214,4 +214,4 @@ The seven basic quality tools turn scattered evidence into understanding. Flowch
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® project and quality management study material on the seven tools of quality and the Pareto principle, together with established quality practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT project and quality management study material on the seven tools of quality and the Pareto principle, together with established quality practice. The worked example is illustrative. This article is general information.*

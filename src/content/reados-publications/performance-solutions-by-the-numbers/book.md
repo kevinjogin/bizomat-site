@@ -4,8 +4,8 @@ subtitle: "Reading Performance Requirements, building a design brief and testing
 description: "Follow one mezzanine stair through the NCC's Performance Solution process: requirements, design brief, assessment methods, evacuation arithmetic, evidence and final report."
 category: Engineering
 tags: [design, validation, quality, projects, manufacturing]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25

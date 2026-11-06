@@ -4,8 +4,8 @@ subtitle: "Sizing, timing, supplying and safely running a small pneumatic system
 description: "Size a pneumatic cylinder, time and cushion its stroke, choose valves and a safe fail state, count air and leak costs, supply clean air and commission and maintain the system."
 category: Engineering
 tags: [automation, design, manufacturing, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -70,11 +70,11 @@ This book replaces habit with numbers. It covers pressure and why absolute press
 
 The book follows a fictional **contract packing business** of about 30 people, packing rice, flour and dry mixes into cartons on two lines. On line 2, a checkweigher identifies underweight cartons, and the business wants a pneumatic pusher to push each rejected carton sideways off the conveyor into a reject chute. The line runs at **40 cartons a minute**. Cartons weigh up to **4 kg**. The factory's air comes from one rotary screw compressor feeding a receiver and a pipe network shared with the other line and the workshop.
 
-All quantities, prices, pressures, timings and results are invented for teaching. This is an illustration. None of it describes a KEVOS® client, supplier or project, and no product or manufacturer is endorsed. Money is in Australian dollars, excluding GST. Electricity is costed at an assumed A$0.30 a kilowatt-hour.
+All quantities, prices, pressures, timings and results are invented for teaching. This is an illustration. None of it describes a BIZOMAT client, supplier or project, and no product or manufacturer is endorsed. Money is in Australian dollars, excluding GST. Electricity is costed at an assumed A$0.30 a kilowatt-hour.
 
 ## How to use the book
 
-Chapters 1 to 4 design the reject station: the job, the cylinder, the timing and the valves. Chapters 5 and 6 look outward to the air it uses and the system that supplies it. Chapters 7 and 8 cover making it safe and keeping it working. Calculators for several of the steps are in the KEVOS® tools, including [pneumatic cylinder force](/tools/pneumatic-cylinder-force/), [pneumatic consumption](/tools/pneumatic-consumption/) and [air leak cost](/tools/air-leak-cost/).
+Chapters 1 to 4 design the reject station: the job, the cylinder, the timing and the valves. Chapters 5 and 6 look outward to the air it uses and the system that supplies it. Chapters 7 and 8 cover making it safe and keeping it working. Calculators for several of the steps are in the BIZOMAT tools, including [pneumatic cylinder force](/tools/pneumatic-cylinder-force/), [pneumatic consumption](/tools/pneumatic-consumption/) and [air leak cost](/tools/air-leak-cost/).
 
 ## Source limits and professional responsibility
 

@@ -61,7 +61,7 @@ Calculating the force available at several heights gives the press's force curve
 - at 25 mm: **184 kN**;
 - at 30 mm, half the stroke: **183 kN**.
 
-The force falls by more than half in the first 25 mm above the rating point and then flattens, because dh/dθ is near its largest around the middle of the stroke. A simpler formula that ignores the connecting rod's angle, F = F_rated × sin θ_rating ÷ sin θ, gives similar numbers, 177 kN at 25 mm against 184 kN, and is good enough for a first check. Press makers publish the curve for their presses, and it should be asked for; the KEVOS® [crank press capacity calculator](/tools/crank-press-capacity/) works it out from the crank's dimensions and the rating.
+The force falls by more than half in the first 25 mm above the rating point and then flattens, because dh/dθ is near its largest around the middle of the stroke. A simpler formula that ignores the connecting rod's angle, F = F_rated × sin θ_rating ÷ sin θ, gives similar numbers, 177 kN at 25 mm against 184 kN, and is good enough for a first check. Press makers publish the curve for their presses, and it should be asked for; the BIZOMAT [crank press capacity calculator](/tools/crank-press-capacity/) works it out from the crank's dimensions and the rating.
 
 The curve applies on the **downstroke**. On the upstroke the ram is moving away from the work, and a die that does work on the way up, such as a stripper or a knockout, takes its force from the drive in the other direction.
 

@@ -7,7 +7,7 @@ tags:
   - strategy
   - sales
   - customers
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ Timing is often treated as a talent, which conveniently means it cannot be exami
 
 ---
 
-*Source: KEVOS® notes. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

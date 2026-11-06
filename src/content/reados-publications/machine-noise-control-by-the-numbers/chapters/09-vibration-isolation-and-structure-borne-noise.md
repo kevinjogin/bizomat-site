@@ -54,7 +54,7 @@ caption: This is an illustration with a damping ratio of 0.05 for the rubber opt
 - Steel spring mount | 25 mm | 3.2 Hz | 15.7 | 46.4 dB
 ```
 
-Rubber-in-shear mounts with about 6 mm of deflection suit CP-30 well: isolation of about 33 dB at the motor's frequency and more at the airend's higher ones, with enough damping to control the machine's movement as it starts and stops. The KEVOS® [Vibration Isolator Selection calculator](/tools/vibration-isolator-selection/) works the same relationships for a target isolation and damping. Steel springs would isolate better, but they let the machine sway more and have little damping of their own; they are used for heavier machines and lower forcing frequencies, often with separate dampers.
+Rubber-in-shear mounts with about 6 mm of deflection suit CP-30 well: isolation of about 33 dB at the motor's frequency and more at the airend's higher ones, with enough damping to control the machine's movement as it starts and stops. The BIZOMAT [Vibration Isolator Selection calculator](/tools/vibration-isolator-selection/) works the same relationships for a target isolation and damping. Steel springs would isolate better, but they let the machine sway more and have little damping of their own; they are used for heavier machines and lower forcing frequencies, often with separate dampers.
 
 ## The error: pads at the motor's frequency
 

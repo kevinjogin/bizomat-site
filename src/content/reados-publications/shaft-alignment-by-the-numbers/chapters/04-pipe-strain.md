@@ -9,7 +9,7 @@ draft: false
 
 A pump is joined to the rest of the plant by pipes, and pipes are heavy, stiff and, when they carry hot water, constantly changing length. If they are not supported and guided properly, they push and pull on the pump's suction and discharge flanges. The pump casing and its feet move, the shaft moves with them, and an alignment done before the pipes were connected is wrong as soon as they are. Pipe strain is one of the most common reasons for an alignment that does not last and for pumps that wear out their bearings and seals early.
 
-This chapter covers the three sources of pipe strain on the HW-3: the weight of the pipes, their thermal growth, and flanges forced together that were never quite in line. It uses the KEVOS® pipe support span and pipe run expansion tools to check the supports and the expansion leg, and shows how dial indicators on the coupling measure what the pipes are doing to the alignment.
+This chapter covers the three sources of pipe strain on the HW-3: the weight of the pipes, their thermal growth, and flanges forced together that were never quite in line. It uses the BIZOMAT pipe support span and pipe run expansion tools to check the supports and the expansion leg, and shows how dial indicators on the coupling measure what the pipes are doing to the alignment.
 
 ## Where pipe forces come from
 

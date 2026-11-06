@@ -4,8 +4,8 @@ subtitle: "Free air delivery, compression work, heat, water, dryers, pressure, r
 description: "Calculate what a compressor room really does: the work of compression, the heat it makes, the water it condenses, and the pressure, storage and pipe choices that set the power bill."
 category: Engineering
 tags: [design, operations, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-27
@@ -71,7 +71,7 @@ It serves mechanical and maintenance engineers, energy managers and plant manage
 
 Every chapter works on one fictional installation: **CA-1, the compressor room of a packaging plant.** An oil-injected rotary screw compressor with a 37 kW motor delivers 6.0 m³/min of free air at 750 kPa gauge, drawing about 41 kW at full load. Air at 25 °C and 60 per cent relative humidity enters the intake. An aftercooler cools the compressed air to 35 °C, a refrigerated dryer brings it to a pressure dew point of 3 °C, and a receiver and a main carry it to the plant, which uses an average of 4.2 m³/min over 6,000 hours a year.
 
-This is an illustration. All flows, powers, prices, results and failures are invented for teaching and checked by calculation. They are not KEVOS® work, a real site or a measured compressor, and real compressors' performance comes from their makers' test data. Electricity is priced at a teaching A$0.25 per kWh and gas at A$18 per GJ, both excluding GST.
+This is an illustration. All flows, powers, prices, results and failures are invented for teaching and checked by calculation. They are not BIZOMAT work, a real site or a measured compressor, and real compressors' performance comes from their makers' test data. Electricity is priced at a teaching A$0.25 per kWh and gas at A$18 per GJ, both excluding GST.
 
 ## Source limits and professional responsibility
 

@@ -33,7 +33,7 @@ The strain falls to zero at the flange's root and is greatest at its edge, varyi
 
 This is an illustration. The ring is a band 30 mm high and 320 mm inside diameter, with a 20 mm flange turned inwards at its top, on which the dome's rim sits and is riveted. The bottom edge of the band is wired, which Chapter 7 covers. The workshop's method is:
 
-1. Cut a straight strip wide enough for the 30 mm band, the 20 mm flange and the wire allowance, with bend allowance for the one fold between band and flange; the KEVOS® [bend allowance calculator](/tools/bend-allowance/) gives the fold's share.
+1. Cut a straight strip wide enough for the 30 mm band, the 20 mm flange and the wire allowance, with bend allowance for the one fold between band and flange; the BIZOMAT [bend allowance calculator](/tools/bend-allowance/) gives the fold's share.
 2. Wire the bottom edge while the strip is straight.
 3. Fold the flange to 90° on the folder, making a straight angle section.
 4. Curve the angle into a ring by **shrinking the flange's edge**, a little at a time along its length, which bends the band around without stretching or shrinking it.

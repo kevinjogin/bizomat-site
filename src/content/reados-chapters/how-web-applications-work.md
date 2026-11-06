@@ -7,7 +7,7 @@ tags:
   - systems
   - operations
   - customers
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -230,4 +230,4 @@ Every click in a web application sets off a chain of steps: DNS finds the server
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

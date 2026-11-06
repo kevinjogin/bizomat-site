@@ -9,7 +9,7 @@ draft: false
 
 A casting alloy is defined by its composition, and its properties after heat treatment depend on a few elements held within narrow bands. A foundry does not buy molten metal of the right composition; it makes it, from new ingot, its own returns and small additions of alloying elements, each of slightly different composition, and some elements are lost in the melting. Getting the charge right before it melts is far cheaper than correcting a melt afterwards, and far cheaper again than scrapping castings that are found to be off.
 
-This chapter shows how to blend two charge materials to a target content with a KEVOS® tool, how to allow for an element that burns off during melting, how to correct a melt that comes out low, and how elements such as iron build up when returns are remelted again and again. Its error is a cost-saving change to the charge that left a whole night's castings soft. The arithmetic throughout is simple; the discipline of doing it for every element, every melt, is what makes it work.
+This chapter shows how to blend two charge materials to a target content with a BIZOMAT tool, how to allow for an element that burns off during melting, how to correct a melt that comes out low, and how elements such as iron build up when returns are remelted again and again. Its error is a cost-saving change to the charge that left a whole night's castings soft. The arithmetic throughout is simple; the discipline of doing it for every element, every melt, is what makes it work.
 
 ## The elements that matter in GB-12's alloy
 
@@ -46,7 +46,7 @@ caption: The target must lie between the two contents. The loss is the fraction 
 - p_A, p_B | prices of the two materials, $/kg
 ```
 
-The KEVOS® [Melt charge blend](/tools/melt-charge-blend/) tool does the calculation for two materials. From the two contents, the target, the melt loss of the element as a percentage of its content, the charge mass, the two prices and the highest charge cost you will accept, it gives the content to aim for, the shares and masses of each material, and the charge cost per kilogram and in total. Its guide notes that it treats mixing as linear, uses a single melt-loss figure, and that every other specified element must be checked with the same shares.
+The BIZOMAT [Melt charge blend](/tools/melt-charge-blend/) tool does the calculation for two materials. From the two contents, the target, the melt loss of the element as a percentage of its content, the charge mass, the two prices and the highest charge cost you will accept, it gives the content to aim for, the shares and masses of each material, and the charge cost per kilogram and in total. Its guide notes that it treats mixing as linear, uses a single melt-loss figure, and that every other specified element must be checked with the same shares.
 
 ### GB-12's charge
 

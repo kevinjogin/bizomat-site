@@ -4,8 +4,8 @@ subtitle: "Mixing, segregation, feeding and sampling of powders and pellets, wor
 description: "How well a blend can be mixed, how to measure it, why it unmixes, how feeders and extruders smooth or pass on variation, and how to sample and prove a blend without fooling yourself."
 category: Manufacturing
 tags: [manufacturing, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-31
@@ -64,7 +64,7 @@ references:
     creator: "National Institute of Standards and Technology"
     year: "2012"
     url: "https://www.itl.nist.gov/div898/handbook/"
-    note: "Reference for the confidence interval of a variance, the F test for two variances, EWMA control charts and capability indices used in Chapters 3, 8 and 11, and by the KEVOS® tools linked there."
+    note: "Reference for the confidence interval of a variance, the F test for two variances, EWMA control charts and capability indices used in Chapters 3, 8 and 11, and by the BIZOMAT tools linked there."
   - title: "ISO 3451-1, Plastics: Determination of ash, Part 1: General methods"
     creator: "International Organization for Standardization"
     year: "Current edition"
@@ -104,13 +104,13 @@ Every chapter follows one fictional plant. This is an illustration. Plant C comp
 - **Filler.** The extrusion line makes a 30% filled compound at 1,500 kg/h. Loss-in-weight feeders deliver polypropylene at 1,035 kg/h, calcium carbonate at 450 kg/h and an additive premix at 15 kg/h into the extruder. The product specification is 30.0 ± 1.0% filler by ash content.
 - **Additives.** The premix is 20% of a stabiliser powder in polypropylene powder, made in 200 kg batches in a 500 L ribbon blender. At 1% addition it gives 0.20% stabiliser in the compound.
 
-The plant, its equipment, materials, specifications and every measurement are invented. None describes KEVOS® work, a real plant or a real supplier's product.
+The plant, its equipment, materials, specifications and every measurement are invented. None describes BIZOMAT work, a real plant or a real supplier's product.
 
 ## How to use the book
 
 Read Chapters 1 to 4 in order: they define mixedness, its random limit, how to measure it and how mixing proceeds. Chapters 5 to 7 cover batch blenders, segregation and what happens to a blend after it leaves the blender. Chapters 8 and 9 deal with continuous feeding and minor ingredients, and Chapters 10 and 11 with sampling and proving a blend.
 
-KEVOS® tools are linked where they perform a step of the method, with a note of exactly what each calculates. The statistical tools follow the methods in the NIST/SEMATECH e-Handbook of Statistical Methods.
+BIZOMAT tools are linked where they perform a step of the method, with a note of exactly what each calculates. The statistical tools follow the methods in the NIST/SEMATECH e-Handbook of Statistical Methods.
 
 ## Source limits and professional responsibility
 

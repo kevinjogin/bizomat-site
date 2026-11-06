@@ -7,7 +7,7 @@ tags:
   - projects
   - finance
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -186,4 +186,4 @@ A letter of intent lets work start before the contract is signed, which is somet
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article provides general information and does not constitute legal advice.*

@@ -7,7 +7,7 @@ tags:
   - people
   - manufacturing
   - operations
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -221,4 +221,4 @@ When skilled people are scarce, capability has to be built inside the business. 
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® operational excellence handbooks on manufacturing skills gaps and capability planning and on experiential training and workforce capability. The worked example is illustrative. This article is general information; check the award or agreement that applies to your workforce.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT operational excellence handbooks on manufacturing skills gaps and capability planning and on experiential training and workforce capability. The worked example is illustrative. This article is general information; check the award or agreement that applies to your workforce.*

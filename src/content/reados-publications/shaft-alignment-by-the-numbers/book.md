@@ -4,8 +4,8 @@ subtitle: "Foundations, soft foot, pipe strain, indicators and sag, rim and face
 description: "How to align coupled machines and prove it: misalignment, foundations, levelling, soft foot, pipe strain, dial indicators, rim and face, reverse indicator, thermal growth, shims and couplings."
 category: Engineering
 tags: [operations, quality, process-improvement]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-11-01
@@ -24,7 +24,7 @@ references:
   - title: "Gauge Fields in Condensed Matter, Volume II: Stresses and Defects (Differential Geometry, Crystal Melting)"
     creator: "H. Kleinert, World Scientific, Singapore"
     year: "1989"
-    note: "In copyright. Part IV was used only as a map of ideas: parallelism and the transport of a direction from one place to another, and the closure of a circuit as a test for a defect, which this book applies to readings round a coupling. No text, equations, figures or problems are reproduced, and all cases and calculations are KEVOS® originals."
+    note: "In copyright. Part IV was used only as a map of ideas: parallelism and the transport of a direction from one place to another, and the closure of a circuit as a test for a defect, which this book applies to readings round a coupling. No text, equations, figures or problems are reproduced, and all cases and calculations are BIZOMAT originals."
   - title: "Shaft Alignment Handbook, third edition"
     creator: "J. Piotrowski, CRC Press"
     year: "2006"
@@ -63,7 +63,7 @@ Two shafts joined by a coupling should run as one: their centrelines continuing 
 
 This book shows how to get two shafts into line and prove they are there. It starts with what misalignment is and how it is measured, then prepares the machine: foundation, baseplate, levelling, soft foot and pipe strain. It covers dial indicators and their sag, the rim and face and reverse indicator methods, thermal growth, the moves that correct the alignment, and the coupling and records that close the job.
 
-It is for maintenance fitters, millwrights, reliability engineers and installation supervisors. It assumes trade or engineering training and familiarity with dial indicators and hand tools; it explains the geometry as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the KEVOS® tools that do the chapter's calculations, and ends with an exercise and its worked answer.
+It is for maintenance fitters, millwrights, reliability engineers and installation supervisors. It assumes trade or engineering training and familiarity with dial indicators and hand tools; it explains the geometry as it is used. Each chapter works the running case with real numbers, includes one plausible mistake and how it was found, links the BIZOMAT tools that do the chapter's calculations, and ends with an exercise and its worked answer.
 
 ## The running case
 
@@ -74,13 +74,13 @@ Every chapter follows one installation. This is an illustration. A food manufact
 - **Coupling and base:** a flexible coupling, a fabricated steel baseplate and a concrete block, with a total machine and baseplate mass of 1,450 kg.
 - **Site tolerances:** at most 0.05 mm offset and 0.05 mm per 100 mm angularity at the coupling when running, 0.05 mm of soft foot at any foot, and 0.05 mm of movement at the coupling from pipe strain.
 
-Dimensions, readings, temperatures, ratings, tolerances, masses and times are the case site's working figures or are calculated from stated assumptions. They do not describe KEVOS® work or any real business, plant or supplier's data.
+Dimensions, readings, temperatures, ratings, tolerances, masses and times are the case site's working figures or are calculated from stated assumptions. They do not describe BIZOMAT work or any real business, plant or supplier's data.
 
 ## How to use the book
 
 Read Chapter 1 first. Chapters 2 to 4 prepare the machine and can be read in order before any alignment. Chapter 5 covers the measuring tools on which every later chapter depends. Chapters 6 and 7 present the two main dial indicator methods, and either can be used alone. Chapter 8 adds thermal growth, Chapter 9 the moves and Chapter 10 the coupling, acceptance and records.
 
-Every calculation in the book was checked by running it, and the KEVOS® tools linked from each chapter were checked against the calculations they perform. Laser alignment systems do the same geometry electronically; the book uses dial indicators because their numbers show the geometry, and because a laser system's results are best understood, and checked, in the same terms.
+Every calculation in the book was checked by running it, and the BIZOMAT tools linked from each chapter were checked against the calculations they perform. Laser alignment systems do the same geometry electronically; the book uses dial indicators because their numbers show the geometry, and because a laser system's results are best understood, and checked, in the same terms.
 
 ## Source limits and professional responsibility
 

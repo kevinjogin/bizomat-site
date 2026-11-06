@@ -7,7 +7,7 @@ tags:
   - operations
   - strategy
   - process-improvement
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -227,4 +227,4 @@ Efficiency is a rate and impact is a total. Track both, together with the level 
 
 ---
 
-*Source: KEVOS® notes, drawing on published research in the Journal of Cleaner Production (2017) by Shi, Chen and Shen on construction emissions, Wolff, Gondran and Brodhag on absolute sustainability assessment, Lin and colleagues on drivers of emissions and Liao and colleagues on sectoral linkages. Examples and figures in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes, drawing on published research in the Journal of Cleaner Production (2017) by Shi, Chen and Shen on construction emissions, Wolff, Gondran and Brodhag on absolute sustainability assessment, Lin and colleagues on drivers of emissions and Liao and colleagues on sectoral linkages. Examples and figures in this article are illustrations. This article is general information, not legal advice.*

@@ -4,8 +4,8 @@ subtitle: "Pricing fabricated sheet metal jobs from the drawing: scope, nesting,
 description: "Quote sheet metal jobs with numbers: scope, blanks and nesting, laser time, folding, joining and finishing, setups and batch size, rates and margin, GST, and learning from actuals."
 category: Manufacturing
 tags: [manufacturing, operations, finance, sales]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -53,7 +53,7 @@ It suits estimators, owners, production managers and engineers in small and medi
 
 Every chapter follows one fictional quote. This is an illustration. A fabricator is asked to quote for EN-700, the outdoor equipment enclosure of *Sheet Metal Joints by the Numbers*: a 700 × 500 × 250 mm body in 1.2 mm galvanised steel, a 2.0 mm aluminium door, a 2.0 mm steel equipment plate on two brackets, a rain hood and a cable plate. The customer asks for prices at 20, 50 and 200 off.
 
-The fabricator, the customer and every price, rate and time in this book are invented illustrations in Australian dollars, excluding GST unless stated; none describes KEVOS® work, a real business or real market prices. Real quotes must use a shop's own costs, rates and records.
+The fabricator, the customer and every price, rate and time in this book are invented illustrations in Australian dollars, excluding GST unless stated; none describes BIZOMAT work, a real business or real market prices. Real quotes must use a shop's own costs, rates and records.
 
 ## Source limits and professional responsibility
 

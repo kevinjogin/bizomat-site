@@ -9,7 +9,7 @@ draft: false
 
 The parts of a laser cell that do not touch the beam path decide whether it runs safely, through an Australian summer, at a price that pays for it. Guarding keeps a Class 4 beam inside the machine. Extraction carries away fume containing chromium and nickel from the stainless steel. A chiller removes about twice the laser's output power as heat. And the hour rate turns the machine's capital, power, gas, maintenance and operator into the number every quote depends on.
 
-This chapter works through each for the LC-4 with KEVOS® tools: the extraction duct, the chiller on a hot afternoon, the machine hour rate and a quote check. It ends with the process record that ties the book's checks together.
+This chapter works through each for the LC-4 with BIZOMAT tools: the extraction duct, the chiller on a hot afternoon, the machine hour rate and a quote check. It ends with the process record that ties the book's checks together.
 
 ## Laser classes and guarding
 

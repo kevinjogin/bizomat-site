@@ -1,4 +1,4 @@
-// KEVOS® tool definitions: Planning. Generated from the tool register; edit with care and keep tests passing.
+// BIZOMAT tool definitions: Planning. Generated from the tool register; edit with care and keep tests passing.
 window.GOCORE_TOOLS = (window.GOCORE_TOOLS || []).concat([
  {
   "id": "demand-capacity",

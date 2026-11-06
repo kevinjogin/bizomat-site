@@ -7,7 +7,7 @@ tags:
   - design
   - projects
   - quality
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -173,4 +173,4 @@ Bridges grew from timber and stone to iron arches, chain and wire suspension spa
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute engineering advice.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is a general historical overview and does not constitute engineering advice.*

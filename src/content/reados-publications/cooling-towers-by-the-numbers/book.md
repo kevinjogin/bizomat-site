@@ -4,8 +4,8 @@ subtitle: "Wet-bulb, range and approach, heat loads, performance, blowdown, wate
 description: "Specify, run and check an industrial cooling tower with numbers: wet-bulb and approach, heat loads, Merkel performance, evaporation and blowdown, treatment, Legionella, fans, siting and tests."
 category: Operations
 tags: [operations, systems, quality, people]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-26
@@ -59,7 +59,7 @@ It suits plant, facilities and maintenance engineers, operations managers and bu
 
 Every chapter follows one fictional installation. This is an illustration. CT-250 is an open, induced-draught counterflow cooling tower serving a manufacturing plant: two hydraulic press oil coolers, two air compressors and a water-cooled chiller for its moulding machines, a total heat load of 250 kW. At a design wet-bulb temperature of 24 °C, it cools about 12 L/s of water from 34 °C to 29 °C. Its weather, loads, water chemistry and every number in the book are illustrations chosen to show the method.
 
-The plant and its numbers are invented; none describes KEVOS® work or a real site. Prices, where they appear, are illustrations in Australian dollars, with GST stated.
+The plant and its numbers are invented; none describes BIZOMAT work or a real site. Prices, where they appear, are illustrations in Australian dollars, with GST stated.
 
 ## Source limits and professional responsibility
 

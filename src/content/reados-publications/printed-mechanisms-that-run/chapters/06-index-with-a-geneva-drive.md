@@ -66,7 +66,7 @@ step: Shortest slot that still reaches the pin's deepest point: a + b − C ≈ 
 
 The slot must be long enough for the pin to reach its innermost position, which happens when the pin crosses the line of centres, at a distance C − a = 30 mm from the wheel's centre. The slot therefore runs from the wheel's rim, at about 51.96 mm plus a little, inwards to at least 30 mm from the centre. That is about 21.96 mm of slot, and the designer made it 24 mm to leave clearance at the bottom.
 
-The [Geneva mechanism](/tools/geneva-mechanism/) tool in KEVOS® Tools computes the same geometry for other slot counts and centre distances.
+The [Geneva mechanism](/tools/geneva-mechanism/) tool in BIZOMAT Tools computes the same geometry for other slot counts and centre distances.
 
 ## Work out the motion and dwell
 

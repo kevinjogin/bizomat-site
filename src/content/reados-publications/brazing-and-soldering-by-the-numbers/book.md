@@ -4,8 +4,8 @@ subtitle: "Capillary joints from first principles: wetting, gaps, fluxes, filler
 description: "Design and make brazed and soldered joints with numbers: capillary flow and joint gaps, thermal expansion, lap length, fluxes, filler and solder alloys, heating, fume and cost."
 category: Manufacturing
 tags: [manufacturing, design, quality, process-improvement, operations]
-author: KEVOS®
-publisher: KEVOS® Library
+author: BIZOMAT
+publisher: BIZOMAT Library
 language: en-AU
 status: published
 publishDate: 2026-10-25
@@ -83,7 +83,7 @@ Much of what they taught still holds, and some of it has been overturned. Each c
 
 This is an illustration. A small manufacturer makes copper and brass manifolds for hydronic heating systems, brazes copper tube into brass fittings and steel headers, solders electrical connections on its control boxes, and re-tips carbide cutting tools for a local machine shop. It has had leaks in the field, a run of cracked carbide tips and a question from a customer about lead in its solder, and its production manager wants to understand the processes well enough to fix them.
 
-The business, its products, prices and failures are invented for teaching. They are not KEVOS® work. Real brazed and soldered products for pressure, potable water, electrical or safety-critical service must meet the applicable standards and regulations.
+The business, its products, prices and failures are invented for teaching. They are not BIZOMAT work. Real brazed and soldered products for pressure, potable water, electrical or safety-critical service must meet the applicable standards and regulations.
 
 ## How to use the book
 
@@ -95,4 +95,4 @@ This book is educational. Brazing and soldering involve heat, flame, fume and ch
 
 ## An original treatment
 
-The Library introduces brazing and soldering briefly in [Choosing a joining method](/reados/collections/machine-elements-and-mechanical-design/choosing-a-joining-method/), and discusses brazing for copper, cast iron and dissimilar metals in Weldability by the Numbers. This book goes further into the processes themselves. The explanations, the manufacturer's case, the calculations, figures and exercises are original KEVOS® writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.
+The Library introduces brazing and soldering briefly in [Choosing a joining method](/reados/collections/machine-elements-and-mechanical-design/choosing-a-joining-method/), and discusses brazing for copper, cast iron and dissimilar metals in Weldability by the Numbers. This book goes further into the processes themselves. The explanations, the manufacturer's case, the calculations, figures and exercises are original BIZOMAT writing. The historical manuals are public-domain works in the United States; their facts are summarised, checked and corrected in new words, and none of their text, tables or illustrations is reproduced.

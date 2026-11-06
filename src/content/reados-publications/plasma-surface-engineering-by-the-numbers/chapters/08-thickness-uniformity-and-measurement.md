@@ -9,7 +9,7 @@ draft: false
 
 A specification that says "CrN, 4 µm" describes a coating that does not exist. Every real PVD coating is thicker on the surfaces that face the targets most often and thinner on those that hide behind a neighbour, in a recess or at the bottom of a hole. A sharp edge collects more than a flat, a face that points along the rotation axis collects differently from one that faces outwards, and the parts at the top and bottom of a fixture differ from those in the middle. Whether a 4 µm specification is met depends on where the 4 µm is measured.
 
-This chapter explains why line-of-sight deposition gives uneven thickness and how rotation and loading reduce the unevenness. It describes the ball crater test that the shop uses to measure thickness, works an example, and judges PV-1's CrN process from witness coupons with the KEVOS® process capability tool. It ends with a densely packed load in which the witness coupons said 4 µm and the inserts' working faces said otherwise.
+This chapter explains why line-of-sight deposition gives uneven thickness and how rotation and loading reduce the unevenness. It describes the ball crater test that the shop uses to measure thickness, works an example, and judges PV-1's CrN process from witness coupons with the BIZOMAT process capability tool. It ends with a densely packed load in which the witness coupons said 4 µm and the inserts' working faces said otherwise.
 
 ## Line of sight
 

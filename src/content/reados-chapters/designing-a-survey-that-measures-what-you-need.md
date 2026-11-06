@@ -7,7 +7,7 @@ tags:
   - customers
   - validation
   - communication
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -189,4 +189,4 @@ A survey is a measuring instrument. Start from decisions and information needs, 
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute legal advice on privacy obligations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations. This article is general information and does not constitute legal advice on privacy obligations.*

@@ -7,7 +7,7 @@ tags:
   - validation
   - strategy
   - experimentation
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -206,4 +206,4 @@ Good business research begins with a decision, turns it into a clear question, a
 
 ---
 
-*Source: KEVOS editorial notes. Examples and figures in this article are illustrations.*
+*Source: BIZOMAT editorial notes. Examples and figures in this article are illustrations.*

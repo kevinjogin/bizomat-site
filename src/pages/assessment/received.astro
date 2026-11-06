@@ -7,9 +7,9 @@ import Button from '../../components/Button.astro';
 import { ASSESSMENT } from '../../config/assessment.ts';
 ---
 
-<BaseLayout title="Assessment enquiry received" description="Your KEVOS® Engineering Problem Assessment enquiry has been received. KEVOS® will confirm whether the problem suits the fixed-price assessment." noindex>
+<BaseLayout title="Assessment enquiry received" description="Your BIZOMAT Engineering Problem Assessment enquiry has been received. BIZOMAT will confirm whether the problem suits the fixed-price assessment." noindex>
   <Hero eyebrow="Assessment enquiry" title="Enquiry received." lead={ASSESSMENT.successMessage}>
-    <p class="note">This is not a booking or a purchase. If the problem is suitable, KEVOS® will send the confirmed scope and payment instructions.</p>
+    <p class="note">This is not a booking or a purchase. If the problem is suitable, BIZOMAT will send the confirmed scope and payment instructions.</p>
     <Fragment slot="actions">
       <Button href="/assessment/" arrow>Back to the assessment</Button>
       <Button href="/" variant="secondary">Back to home</Button>

@@ -1,0 +1,4 @@
+# Local secrets for `wrangler dev`. Copy to .dev.vars (git-ignored).
+# Leave empty to keep Google sign-in disabled locally.
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=

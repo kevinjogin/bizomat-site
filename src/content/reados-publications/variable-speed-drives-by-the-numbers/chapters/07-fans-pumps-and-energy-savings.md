@@ -9,7 +9,7 @@ draft: false
 
 The biggest single reason factories fit drives is energy. A centrifugal fan or pump throttled by a damper or valve runs at full speed and burns off the pressure it does not need; the same machine slowed to deliver just the flow required draws a fraction of the power. Because the power of a fan or pump falls roughly with the cube of its speed, modest speed reductions save a lot. But "roughly" is doing work in that sentence, and the size of the saving depends on the system the machine serves.
 
-This chapter works the fan laws for DP-4's extraction fan with the KEVOS® fan drive tool, measures the pump's load before its drive with the motor load assessment tool, shows why the pump's cooling tower lift cuts its saving below the cube law, and appraises both drives as investments. It ends with a pump saving estimated by the cube law alone.
+This chapter works the fan laws for DP-4's extraction fan with the BIZOMAT fan drive tool, measures the pump's load before its drive with the motor load assessment tool, shows why the pump's cooling tower lift cuts its saving below the cube law, and appraises both drives as investments. It ends with a pump saving estimated by the cube law alone.
 
 ## The fan and affinity laws
 

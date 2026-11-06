@@ -7,7 +7,7 @@ tags:
   - ai
   - quality
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -205,4 +205,4 @@ Generative AI needs an evaluation system as disciplined as any quality system. D
 
 ---
 
-*Source: KEVOS® editorial notes, drawing on earlier KEVOS® AI academy lessons on evaluation strategy and acceptance criteria, gold datasets, offline and online evaluation, human rubrics, judge models, retrieval and agent evaluation, adversarial testing, latency and cost testing, regression pipelines, versioning, monitoring and go or no-go reporting, together with established AI practice. The worked example is illustrative. This article is general information.*
+*Source: BIZOMAT editorial notes, drawing on earlier BIZOMAT AI academy lessons on evaluation strategy and acceptance criteria, gold datasets, offline and online evaluation, human rubrics, judge models, retrieval and agent evaluation, adversarial testing, latency and cost testing, regression pipelines, versioning, monitoring and go or no-go reporting, together with established AI practice. The worked example is illustrative. This article is general information.*

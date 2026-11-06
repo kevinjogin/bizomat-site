@@ -7,7 +7,7 @@ tags:
   - strategy
   - validation
   - systems
-author: "KEVOS®"
+author: "BIZOMAT"
 featured: false
 draft: false
 ---
@@ -237,4 +237,4 @@ Professional advice creates value because others rely on it, and that reliance b
 
 ---
 
-*Source: KEVOS® notes. Examples in this article are illustrations. This article is general information, not legal advice.*
+*Source: BIZOMAT notes. Examples in this article are illustrations. This article is general information, not legal advice.*
