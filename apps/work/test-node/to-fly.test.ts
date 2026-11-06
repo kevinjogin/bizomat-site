@@ -95,6 +95,7 @@ describe('to-fly.mjs', { timeout: 120_000 }, () => {
     const r = await toFly(['prepare', folder, '--from-dump', join(root, 'dump.sql'), '--from-dir', join(root, 'objects')]);
     expect(r.code, r.out).toBe(0);
     expect(r.out).toContain('Nothing on Fly changed');
+    expect(r.out).toContain('the export has none, so there is nothing to repair');
     const info = JSON.parse(readFileSync(join(folder, 'archive.json'), 'utf8'));
     expect(info.name).toMatch(/^work-\d{8}-\d{6}\.tar$/);
     const stage = join(root, 'check');

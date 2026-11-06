@@ -131,7 +131,13 @@ function prepare(o) {
   if (o['from-dump']) say(`Rehearsal: the dump ${o['from-dump']} and the objects in ${o['from-dir']} stand in for Cloudflare.`);
   else node(`Export D1 ${o.database} (read only)`, [WRANGLER, 'd1', 'export', o.database, '--remote', '--env', o.env, '--output', dump]);
   node('Import into a new data folder', ['scripts/migrate/import-d1-dump.mjs', o['from-dump'] ? resolve(o['from-dump']) : dump, data]);
-  if (!o['from-dump']) node('Repair multi-line text from D1 (read only)', ['scripts/migrate/repair-text-from-d1.mjs', data, '--remote', '--env', o.env, '--database', o.database]);
+  // The export writes only text with a line break through replace(...), so the repair has work only when the import
+  // found such text (import.multilineText in its report).
+  const report = JSON.parse(readFileSync(join(data, 'migration-report.json'), 'utf8'));
+  const multiline = Object.values(report.import?.multilineText ?? {}).reduce((a, b) => a + Number(b), 0);
+  if (multiline === 0) say('\n== Repair multi-line text from D1: the export has none, so there is nothing to repair');
+  else if (o['from-dump']) say(`\n== Repair multi-line text from D1: ${multiline} values; a rehearsal does not read D1`);
+  else node(`Repair multi-line text from D1 (read only; ${multiline} values)`, ['scripts/migrate/repair-text-from-d1.mjs', data, '--remote', '--env', o.env, '--database', o.database]);
   node('Copy the referenced files', o['from-dir']
     ? ['scripts/migrate/copy-r2-objects.mjs', data, '--from-dir', resolve(o['from-dir'])]
     : ['scripts/migrate/copy-r2-objects.mjs', data, '--bucket', o.bucket, '--remote']);

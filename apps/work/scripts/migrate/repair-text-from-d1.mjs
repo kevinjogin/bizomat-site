@@ -47,7 +47,9 @@ async function main() {
   const [dataArg] = args.positional;
   const f = args.flags;
   if (!dataArg || args.positional.length !== 1 || (!f.remote && !(f.local && f['wrangler-config']))) die(USAGE, 2);
-  if (f.remote && (!process.env.CLOUDFLARE_API_TOKEN || !process.env.CLOUDFLARE_ACCOUNT_ID)) die('--remote needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID in the environment.', 2);
+  // --remote: wrangler signs in with CLOUDFLARE_API_TOKEN (CI) or, on the owner's computer, with its own login
+  // (wrangler login). With more than one account it needs CLOUDFLARE_ACCOUNT_ID, and says so.
+  if (f.remote && !process.env.CLOUDFLARE_API_TOKEN) console.log('No CLOUDFLARE_API_TOKEN: wrangler uses its own login (wrangler login).');
   const layout = dataLayout(dataArg);
   if (!existsSync(layout.db)) die(`${layout.db} not found: import the database first.`, 2);
   const holder = lockHolder(layout.root);
