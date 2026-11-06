@@ -2,6 +2,7 @@
 wordmark, the platform menu, the legal links), no old product name, a Tools list that matches exactly what the AI
 assistant can call, and a History backed by the real command record."""
 import asyncio
+import re
 
 import httpx
 from fastapi.testclient import TestClient
@@ -220,25 +221,28 @@ def test_a_new_account_gets_a_suggested_password_or_its_own_and_the_owner_sees_w
     assert {p["email"]: p for p in owner.get("/api/admin/people").json()["people"]}["sam@example.com"]["password_by"] == "self"
 
 
-def test_setup_forgives_spaces_and_quotes_and_can_open_sign_up_for_everyone(monkeypatch):
-    """The server password is needed once, for the owner. Spaces or one pair of quotes around it (copied, or set from
-    Windows cmd with 'quotes') do not fail it. The owner can let anyone create their own account right there."""
+def test_setup_needs_no_server_password_and_can_open_sign_up_for_everyone(monkeypatch):
+    """The setup form is name, email, password and the open sign-up box: no server password, even if the old
+    variable is still set. With the box ticked anyone can then create their own account and use CADOS."""
     from opensketch import accounts
-    monkeypatch.setenv("OPENSKETCH_PASSWORD", "'Server-Secret-1'")
+    monkeypatch.setenv("OPENSKETCH_PASSWORD", "left-over-from-before")
     c = TestClient(server.app)
     page = c.get("/setup").text
-    assert 'name="open_signup" value="on" checked' in page and "Needed only this once." in page
-    bad = c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1",
-                                 "server_password": "wrong", "open_signup": "on"})
-    assert bad.status_code == 401 and "If you lost it, set a new one" in bad.text and 'value="on" checked' in bad.text
-    ok = c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1",
-                                "server_password": "  Server-Secret-1 \n", "open_signup": "on"}, follow_redirects=False)
+    assert 'name="open_signup" value="on" checked' in page
+    assert "server_password" not in page and "Server password" not in page
+    fields = re.findall(r'<input id="(\w+)"', page)
+    assert fields == ["name", "email", "new_password"]
+    ok = c.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1", "open_signup": "on"},
+                follow_redirects=False)
     assert ok.status_code == 303 and accounts.settings()["open_signup"] is True
     anyone = TestClient(server.app)
     assert 'href="/signup"' in anyone.get("/login").text
     r = anyone.post("/signup", data={"name": "Ann", "email": "ann@example.com", "new_password": "anns-pass-1"},
                     follow_redirects=False)
     assert r.status_code == 303 and anyone.get("/dashboard").status_code == 200
+    # the owner turns sign-up off on Admin: new people need an invite again
+    assert c.post("/api/account/settings", json={"open_signup": False}).status_code == 200
+    assert TestClient(server.app).get("/signup", follow_redirects=False).headers["location"] == "/login"
 
 
 def test_setup_can_stay_invite_only(monkeypatch):
@@ -249,28 +253,31 @@ def test_setup_can_stay_invite_only(monkeypatch):
     assert accounts.any_users() and accounts.settings()["open_signup"] is False
 
 
-def test_only_the_owner_sees_the_server_password_after_sign_in(monkeypatch):
-    """People never need the server password (they sign up with their own email and password); the owner finds it on
-    the Admin page, fetched on request and never in a page's source."""
+def test_a_suspended_persons_computer_is_refused_until_they_are_resumed(base, companions):
+    """Suspension reaches paired computers too: every signed device request gets ACCOUNT_SUSPENDED (401, the
+    Companion keeps its pairing and retries), pairing with the password is refused, and resuming lets it back in."""
     from opensketch import accounts
-    monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret-77")
-    anon = TestClient(server.app)
-    setup = anon.get("/setup").text
-    assert "Not the administrator?" in setup and "server-secret-77" not in setup
-    owner = TestClient(server.app)
-    owner.post("/setup", data={"name": "O", "email": "owner@example.com", "new_password": "owner-pass-1",
-                               "server_password": "server-secret-77", "open_signup": "on"})
-    assert owner.get("/api/admin/server-password").json()["server_password"] == "server-secret-77"
-    admin_page = owner.get("/admin").text
-    assert 'id="spw"' in admin_page and "server-secret-77" not in admin_page
-    assert anon.get("/api/admin/server-password").status_code == 401
-    # anyone signs up without it, and cannot read it
-    ann = TestClient(server.app)
-    assert "Server password" not in ann.get("/signup").text and "Server password" not in ann.get("/login").text
-    ann.post("/signup", data={"name": "Ann", "email": "ann@example.com", "new_password": "anns-pass-1"})
-    assert accounts.find_by_email("ann@example.com") is not None
-    assert ann.get("/api/admin/server-password").status_code == 403
-    assert "server-secret-77" not in ann.get("/dashboard").text
+    from opensketch import devicebridge as db
+    accounts.create_owner("owner@example.com", "Owner", "owner-pass-1")
+    pat = accounts.create_member("pat@example.com", "Pat", "given-pass-1")
+    pc = FakeCompanion(base, Canned(), name="PAT-PC", approve_as=pat)
+    companions.append(pc)
+    status = lambda: pc.post("/v2/device/status", {"v": "2.0", "type": "device.status", "msg_id": db.ulid("msg"),
+                                                   "sent_at": db.iso(), "device_id": pc.device_id, "session_id": pc.session,
+                                                   "instances": pc.instances, "paused": False})
+    assert status().status_code == 200
+    accounts.set_suspended(pat["id"], True)
+    db.suspend_person(pat["id"])  # what the Admin page's Suspend does next: the live session closes at once
+    assert db._sessions[pc.device_id].closed[0] == "suspended"
+    r = status()
+    assert r.status_code == 401 and r.json()["error"]["code"] == "ACCOUNT_SUSPENDED"
+    other = FakeCompanion(base, Canned(), name="PAT-LAPTOP", approve=False)
+    companions.append(other)
+    r = other.post("/v2/devices/pair/password", {"email": "pat@example.com", "password": "given-pass-1"})
+    assert r.status_code == 403 and r.json()["error"]["code"] == "ACCOUNT_SUSPENDED"
+    accounts.set_suspended(pat["id"], False)
+    pc.hello()  # the Companion's retry: the same pairing works again
+    assert status().status_code == 200
 
 
 def test_the_platform_links_follow_the_settings(monkeypatch):

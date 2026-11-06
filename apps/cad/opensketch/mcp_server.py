@@ -122,7 +122,7 @@ class _TokenGate:
         self.endpoint = endpoint
 
     async def __call__(self, scope, receive, send):
-        ok, user = auth.resolve_mcp(scope.get("path_params", {}).get("token", ""))
+        ok, user = auth.resolve_mcp(scope.get("path_params", {}).get("token", ""), scope)
         if not ok:
             await send({"type": "http.response.start", "status": 404, "headers": [(b"content-type", b"text/plain")]})
             await send({"type": "http.response.body", "body": b"Not found"})
@@ -158,12 +158,12 @@ class _BearerGate:
             return
         path = scope.get("path", PATHS[0]).rstrip("/") or PATHS[0]
         grant = None
-        if auth.mode() == "open":
+        if auth.mode(scope) == "open":  # this machine itself, no account yet
             ok, user = True, None
         else:
             authz = headers.get("authorization", "")
             tok = authz[7:].strip() if authz[:7].lower() == "bearer " else ""
-            ok, user = mcpauth.user_for_access(tok) if tok else (False, None)
+            ok, user = mcpauth.user_for_access(tok, scope) if tok else (False, None)
             grant = mcpauth.grant_info(tok) if ok else None
             if not ok:
                 body = json.dumps({"error": "invalid_token" if tok else "unauthorized",
@@ -203,8 +203,7 @@ class Endpoint:
         # repeated test lifespans), behind the same mounted gates.
         # Answers stream as server-sent events: the headers go at once and a comment every 15 s (sse-starlette's
         # ping) keeps a tool that waits minutes for SOLIDWORKS (up to 900 s) alive through a proxy that ends a silent
-        # response (Cloudflare answers 524 after 100 s without a byte; the BIZOMAT platform's proxy closes an idle
-        # request after 620 s).
+        # response. Cloudflare, in front of bizomat.ai/cad, answers 524 after 100 s without a byte.
         mcp.streamable_http_app(stateless_http=True, json_response=False,
                                 max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
                                 transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))

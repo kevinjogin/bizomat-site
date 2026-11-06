@@ -83,7 +83,7 @@ namespace Kevos.Companion
             var signers = J.Strs(m, "signer_thumbprints") ?? new List<string>();
             var dir = Path.Combine(Paths.Data, "updates");
             Directory.CreateDirectory(dir);
-            var path = Path.Combine(dir, "CADOS-for-SOLIDWORKS-" + ver.ToString(3) + ".msi");   // the MSI's file name (unchanged)
+            var path = Path.Combine(dir, "BIZOMAT-CAD-Automation-" + ver.ToString(3) + ".msi");
             using (var http = new HttpClient(BridgeClient.DefaultHandler(), true) { Timeout = TimeSpan.FromMinutes(10) })
                 File.WriteAllBytes(path, http.GetByteArrayAsync(url).GetAwaiter().GetResult());
             var data = File.ReadAllBytes(path);

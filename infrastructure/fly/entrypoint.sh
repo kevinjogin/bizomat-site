@@ -7,7 +7,7 @@
 #      be lost when the Machine is replaced; BIZOMAT_ALLOW_EPHEMERAL=1 allows a throwaway run), and give the
 #      role's own directory (/data/work, /data/cad) to the role's user;
 #   2. build a CLEAN environment holding only the role's own settings. Fly secrets are environment variables of
-#      EVERY Machine of the app, so without this the website would hold the CAD server password. The service
+#      EVERY Machine of the app, so without this the website would hold CAD Automation's secrets. The service
 #      never sees the rest: it is started with `env -i` and the allow-list below;
 #   3. read the role's secret files, if any: /data/<role>/.secrets/NAME (root-owned directory, mode 0700; each
 #      file root-owned, mode 0600) becomes the setting NAME. These live only on the role's own volume, so other
@@ -18,6 +18,14 @@
 #
 # Maintenance: when /data/.bizomat-maintenance exists (create it with `fly ssh console`), work and cad do not
 # start; the Machine stays up for a restore (infrastructure/migrate). Remove the file and restart the Machine.
+# cad then answers with its holding page (infrastructure/fly/cad-holding.py: /healthz 200 with "ok": false, every
+# other request 503 "back shortly"), so the router shows a clear answer and Fly's check does not hold up a deploy.
+#
+# cad waits for its data: CAD Automation has no server password (CADOS#11), and a server with no account that others
+# can reach offers only its setup page, where the first visitor becomes the owner. So cad never starts the CAD server
+# on a volume without CAD data (/data/cad/users.json or accounts.enabled): it answers with the holding page until
+# `bizomat.ps1 move cad` has put the data there. BIZOMAT_CAD_ALLOW_EMPTY=1 starts it anyway (a new, empty platform,
+# whose owner then creates the owner account at once).
 #
 # Settings each role receives (fly.toml [env], Fly secrets, or secret files):
 #   all roles  FLY_APP_NAME FLY_MACHINE_ID FLY_ALLOC_ID FLY_REGION FLY_PUBLIC_IP FLY_PRIVATE_IP FLY_IMAGE_REF
@@ -122,13 +130,23 @@ prepare_volume() {
   fi
 }
 
+# cad only: the holding page instead of the CAD server (see the top of this file), in maintenance or waiting for data
+HOLD=""
 case "$ROLE" in
   work | cad)
     prepare_volume
     if [ -e "$DATA/.bizomat-maintenance" ]; then
       say "maintenance mode: $DATA/.bizomat-maintenance exists, so $ROLE is not started."
       say "Restore or inspect the data with 'fly ssh console', then remove the file and restart this Machine."
-      exec sleep infinity
+      if [ "$ROLE" = cad ]; then HOLD=maintenance; else exec sleep infinity; fi
+    elif [ "$ROLE" = cad ] && [ ! -e "$ROLE_DIR/users.json" ] && [ ! -e "$ROLE_DIR/accounts.enabled" ]; then
+      if [ "${BIZOMAT_CAD_ALLOW_EMPTY:-}" = 1 ]; then
+        say "WARNING: $ROLE_DIR holds no CAD data; starting an empty CAD server (BIZOMAT_CAD_ALLOW_EMPTY=1): until an owner account exists, its first visitor can create it"
+      else
+        say "waiting for data: $ROLE_DIR holds no CAD data (no users.json), so the CAD server is not started."
+        say "bizomat.ps1 move cad puts the data there (infrastructure/migrate/cad/README.md); until then this Machine answers with a holding page."
+        HOLD=waiting-for-data
+      fi
     fi
     ;;
 esac
@@ -199,7 +217,13 @@ case "$ROLE" in
     pass_prefix "${PREFIXES[@]}"
     map CAD_GOOGLE_CLIENT_ID GOOGLE_CLIENT_ID
     map CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET
-    map OPENSKETCH_VERSION OPENSKETCH_VERSION "$VERSION"
+    # /healthz reports the CADOS commit apps/cad is a copy of (apps/cad-source.json, in the image), so it says which
+    # CAD code runs, as it did on the cados app; without the pin, the platform's version
+    CAD_VERSION=""
+    if [ -f /app/cad/cad-source.json ]; then
+      CAD_VERSION="$(python3 -c 'import json, sys; c = json.load(open(sys.argv[1]))["commit"]; print(c[:7] if len(c) == 40 else "")' /app/cad/cad-source.json 2>/dev/null || true)"
+    fi
+    map OPENSKETCH_VERSION OPENSKETCH_VERSION "${CAD_VERSION:-$VERSION}"
     ;;
 esac
 
@@ -288,14 +312,17 @@ case "$ROLE" in
     # Fly's IPv4 checks and the supervisor's 127.0.0.1 probe all reach it. (asyncio alone would make '::' IPv6 only;
     # and '' now means 127.0.0.1 to the CAD server, so it must not be used here.)
     CMD=(/opt/cad/venv/bin/python -m opensketch --host "${BIZOMAT_CAD_HOST:-::}" --port 8001 --no-browser --supervise)
+    # No server password: CAD Automation signs people in with accounts (CADOS#11). What keeps a server without accounts
+    # from being claimed is the wait for data above. OPENSKETCH_PASSWORD, if a server still has it, only seeds the
+    # owner's old private connector address, so it moves with the data (bizomat.ps1 move cad) and is not required.
+    if [ -n "$HOLD" ]; then
+      # the holding page, as the same unprivileged user, on the same port; it never reads /data
+      CMD=(/usr/local/bin/python3 /usr/local/lib/bizomat/cad-holding.py "$HOLD" 8001)
+    fi
     set_var PATH "/opt/cad/venv/bin:$BASE_PATH"
     set_var OPENSKETCH_DATA "$ROLE_DIR"
     set_var PYTHONUNBUFFERED 1
     set_var PYTHONDONTWRITEBYTECODE 1
-    # On Fly the CAD server is public: never start it without its password (an open server lets anyone in).
-    if [ -n "${FLY_APP_NAME:-}" ] && [ -z "${OUT[OPENSKETCH_PASSWORD]:-}" ] && [ "${BIZOMAT_ALLOW_OPEN_CAD:-}" != 1 ]; then
-      die "OPENSKETCH_PASSWORD is not set (fly secrets set OPENSKETCH_PASSWORD=... or /data/cad/.secrets/OPENSKETCH_PASSWORD); refusing to start an open CAD server"
-    fi
     ;;
 esac
 set_var HOME "/home/$RUN_USER"

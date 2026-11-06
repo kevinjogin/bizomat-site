@@ -146,13 +146,24 @@ jobs:
         run: |
           node --check infrastructure/smoke/smoke.mjs
           node --check infrastructure/local/stub-upstream.mjs
-          python3 -m py_compile infrastructure/migrate/lib/*.py infrastructure/migrate/work/*.py
+          python3 -m py_compile infrastructure/migrate/lib/*.py infrastructure/migrate/work/*.py infrastructure/fly/*.py infrastructure/fly/test/*.py
+          node --check scripts/sync-cad.mjs
+          node --check infrastructure/migrate/cad/to-fly.mjs
+          node --check infrastructure/migrate/test/cad-move/fake-fly.mjs
+          python3 -m py_compile infrastructure/migrate/test/cad-move/cad-standin.py
       - name: Shell scripts (shellcheck)
-        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/local/*.sh
-      - name: fly.toml and the compose files read
+        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/migrate/test/cad-move/*.sh infrastructure/local/*.sh
+      # The whole CAD Automation move (bizomat.ps1 move cad) against a stand-in flyctl: each Machine in its own
+      # namespaces with its own /data and /tmp, the real entrypoint, holding page, export, import and router; the way
+      # back, a failure in the middle, the fallback ways of carrying the copy, the retirement. Root for the namespaces.
+      - name: CAD move rehearsal (infrastructure/migrate/test/cad-move/rehearse.sh)
+        run: sudo env "PATH=$PATH" bash infrastructure/migrate/test/cad-move/rehearse.sh
+      - name: fly.toml and fly.website.toml (groups, the one public service, a volume each for work and cad, the CAD route)
+        run: python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml
+      - name: apps/cad is exactly the pinned CADOS commit (apps/cad-source.json, checked against GitHub)
+        run: node scripts/sync-cad.mjs check --github
+      - name: The compose files read
         run: |
-          python3 -c "import tomllib; c = tomllib.load(open('fly.toml', 'rb')); assert c['app'] == 'bizomat'; assert set(c['processes']) == {'proxy', 'web', 'work', 'cad'}; assert c['http_service']['processes'] == ['proxy']; assert 'services' not in c; print('fly.toml ok')"
-          python3 -c "import tomllib; c = tomllib.load(open('fly.website.toml', 'rb')); assert c['app'] == 'bizomat'; assert set(c['processes']) == {'proxy', 'web', 'work'}; assert c['http_service']['processes'] == ['proxy']; assert 'services' not in c; m = c['mounts']; assert len(m) == 1 and m[0]['source'] == 'work_data' and m[0]['processes'] == ['work'] and m[0]['destination'] == '/data'; e = c['env']; assert e['UPSTREAM_CAD'] == 'http://cados.internal:8080' and e['UPSTREAM_WORK'].startswith('http://work.process.bizomat.internal:'); assert e.get('TASKS_REDIRECT_ORIGIN', 'https://').startswith('https://'); assert {'proxy', 'web', 'work'} == {g for k in c['checks'].values() for g in k['processes']}; print('fly.website.toml ok')"
           docker compose -f infrastructure/local/compose.yml config -q
           docker compose -f infrastructure/local/compose.yml -f infrastructure/local/compose.stubs.yml config -q
 

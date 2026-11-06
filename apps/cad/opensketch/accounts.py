@@ -154,7 +154,8 @@ def public(u: dict) -> dict:
             "google": bool(u.get("google")), "has_password": bool(u.get("hash")), "tester": u["role"] == "tester",
             # who chose the password (never the password itself: only its one-way hash is kept): "self" (the person),
             # "suggested" (the person kept the one the form filled in), "owner" (set on the Admin page); None if unrecorded
-            "password_by": u.get("pw_by") if u.get("hash") else None, "password_at": u.get("pw_at") if u.get("hash") else None}
+            "password_by": u.get("pw_by") if u.get("hash") else None, "password_at": u.get("pw_at") if u.get("hash") else None,
+            "suspended": bool(u.get("suspended"))}
 
 
 PASSWORD_BY = ("self", "suggested", "owner")
@@ -173,8 +174,35 @@ def list_users() -> list[dict]:
 
 
 def get(user_id: str) -> dict | None:
+    """An active account. A suspended one reads as gone: every session, AI app token, private address, add-in key
+    and paired computer that looks its person up here stops working at once (get_any shows it to the owner)."""
+    u = _by_id().get(user_id)
+    return public(u) if u and not u.get("suspended") else None
+
+
+def get_any(user_id: str) -> dict | None:
     u = _by_id().get(user_id)
     return public(u) if u else None
+
+
+def set_suspended(user_id: str, on: bool) -> dict:
+    """Owner (Admin page): suspend an account (no sign-in, no AI app, no computer) or let it back in. Its sessions end;
+    its AI app connections and computers stay registered, so resuming needs no new setup."""
+    with _lock:
+        data = _edit()
+        u = next((x for x in data["users"] if x["id"] == user_id), None)
+        if u is None:
+            raise AccountError("No such account.")
+        if u["role"] == "owner":
+            raise AccountError("The owner account cannot be suspended.")
+        if on:
+            u["suspended"] = int(time.time())
+        else:
+            u.pop("suspended", None)
+        _write("users.json", data)
+    if on:
+        end_sessions(user_id)
+    return public(u)
 
 
 def owner() -> dict | None:
@@ -240,7 +268,7 @@ def verify(email: str, password: str) -> dict | None:
 
 def set_password(user_id: str, new: str, current: str | None = None, by: str = "self") -> None:
     """Change a password. With `current`, it must match (the account page); without, the caller checked
-    the right to reset it (the server password). Signs the person out everywhere: every session, every AI app
+    the right to reset it (the owner on Admin, or a command on the server). Signs the person out everywhere: every session, every AI app
     that signed in, and their private AI address (a new one is made)."""
     if len(new or "") < MIN_PASSWORD:
         raise AccountError(f"Use a password of at least {MIN_PASSWORD} characters.")

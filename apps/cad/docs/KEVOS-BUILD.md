@@ -1,12 +1,12 @@
-# Building and releasing CAD Automation for SOLIDWORKS (formerly KEVOS Bridge)
+# Building and releasing KEVOS Bridge
 
 ## Parts
 
 | Part | Source | Built with |
 |---|---|---|
-| CAD Automation gateway (MCP server, device API) | `opensketch/` (`devicebridge.py` for devices) | Python 3.12, `requirements.txt` (hash-pinned) |
-| The add-in (`OpenSketch.Sw.dll`) | `solidworks/src/Addin`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded |
-| BIZOMAT Companion (`KEVOS.Companion.exe`) | `solidworks/src/Companion`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64 (no SOLIDWORKS reference) |
+| KEVOS gateway (MCP server, device API) | `opensketch/` (`devicebridge.py` for devices) | Python 3.12, `requirements.txt` (hash-pinned) |
+| KEVOS add-in (`OpenSketch.Sw.dll`) | `solidworks/src/Addin`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded |
+| KEVOS Companion (`KEVOS.Companion.exe`) | `solidworks/src/Companion`, `solidworks/src/Core` | .NET 8 SDK, target .NET Framework 4.8 x64 (no SOLIDWORKS reference) |
 | Protocol core (shared) | `solidworks/src/Core/Bridge2` | compiled into both, and into the .NET 8 tests |
 | Installer | `installer/KEVOS-Bridge.wxs`, `installer/build.ps1` | WiX Toolset 5 (Windows only) |
 
@@ -28,7 +28,7 @@ npm test
 bash solidworks/build.sh test
 ```
 
-`pytest -q` includes the bridge end-to-end test (`tests/test_bridge_e2e.py`, marked slow) when the .NET SDK is
+`pytest -q` includes the KEVOS end-to-end test (`tests/test_bridge_e2e.py`, marked slow) when the .NET SDK is
 installed: it builds `solidworks/tests/BridgeProbe` and runs the real C# Companion engine and add-in link against the
 real server. `solidworks/build.sh` puts the add-in, Companion, legacy installer, macro and README in
 `solidworks/dist/OpenSketch-SOLIDWORKS`.
@@ -41,7 +41,7 @@ powershell -ExecutionPolicy Bypass -File installer\build.ps1
 
 It reads the version from `solidworks/Directory.Build.props`, writes the licence files, signs the binaries and the MSI
 when `KEVOS_SIGN_PFX` and `KEVOS_SIGN_PASSWORD` are set (SHA-256, RFC 3161 timestamp), and writes to `installer/out`:
-`CADOS-for-SOLIDWORKS-<version>-x64.msi` (or `-UNSIGNED.msi`), the same file as `CADOS-for-SOLIDWORKS-x64.msi` (the
+`BIZOMAT-CAD-Automation-<version>-x64.msi` (or `-UNSIGNED.msi`), the same file as `BIZOMAT-CAD-Automation-x64.msi` (the
 stable name the website links to), their `.sha256`, and `release.json`. See also [CADOS-ADDIN.md](CADOS-ADDIN.md).
 
 ## CI
@@ -49,7 +49,7 @@ stable name the website links to), their `.sha256`, and `release.json`. See also
 - `.github/workflows/tests.yml`: pytest (fast and slow jobs; the slow job has .NET for the end-to-end test) and
   npm test, on pull requests and non-main pushes.
 - `.github/workflows/solidworks.yml`: builds and tests the add-in and Companion on Linux, then builds the MSI on
-  Windows. Secrets `KEVOS_SIGN_PFX_BASE64` and `KEVOS_SIGN_PASSWORD` make it signed. Artifact `CADOS-for-SOLIDWORKS-MSI` on
+  Windows. Secrets `KEVOS_SIGN_PFX_BASE64` and `KEVOS_SIGN_PASSWORD` make it signed. Artifact `BIZOMAT-CAD-Automation-MSI` on
   every run; release `bridge-latest` (prerelease) on main; release `bridge-v<version>` on a tag of that name.
 - `.github/workflows/deploy.yml`: the gateway (unchanged).
 

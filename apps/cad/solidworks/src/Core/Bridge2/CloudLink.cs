@@ -22,6 +22,25 @@ namespace OpenSketch.Sw.Bridge
 
         public bool Paired => !string.IsNullOrEmpty(DeviceId) && GatewayJwk != null && !Revoked;
 
+        /// <summary>CAD Automation's address under the BIZOMAT platform.</summary>
+        public const string Address = "https://bizomat.ai/cad";
+
+        /// <summary>Its earlier addresses: the same server and the same pairings, now under bizomat.ai/cad.</summary>
+        public static readonly string[] OldAddresses = { "https://cados.kevos.com", "https://cados.fly.dev", "https://cad.bizomat.ai" };
+
+        /// <summary>
+        /// The address to use for a saved one: an earlier address of CAD Automation becomes https://bizomat.ai/cad, any
+        /// other (a server of your own) stays. The computer stays paired: it signs each request's path relative to the
+        /// address, and the server checks that path below /cad, as on its own host.
+        /// </summary>
+        public static string CurrentAddress(string url)
+        {
+            var u = (url ?? "").Trim().TrimEnd('/');
+            foreach (var old in OldAddresses)
+                if (string.Equals(u, old, StringComparison.OrdinalIgnoreCase)) return Address;
+            return url;
+        }
+
         public static DeviceConfig Load(string path)
         {
             if (!File.Exists(path)) return new DeviceConfig();

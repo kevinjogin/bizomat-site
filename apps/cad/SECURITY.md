@@ -14,5 +14,7 @@ it lets someone do. You will get an answer as soon as possible.
 In scope: the server (sign-in, OAuth for AI apps, the MCP endpoint, the add-in link, upload and download links),
 the home page and the add-in.
 
-If you run your own server, keep `OPENSKETCH_PASSWORD` secret, serve it over https, and keep the data folder
-private: it holds account data and the secrets that sign keys and links.
+If you run your own server, create the owner account as soon as it is reachable (until then only the setup page
+answers, and the first person to use it becomes the owner), serve it over https, and keep the data folder private:
+it holds account data and the secrets that sign keys and links. A forgotten owner password is reset on the server
+itself: `python -m opensketch --reset-password EMAIL`.

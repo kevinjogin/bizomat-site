@@ -1,9 +1,13 @@
-"""Run the BIZOMAT CAD Automation server: python -m opensketch [--host 127.0.0.1] [--port 8000] [--no-browser] [--supervise]
+"""Run the CAD Automation server: python -m opensketch [--port 8000] [--no-browser] [--supervise]
+
+Recovery, run on the server itself (on Fly: fly ssh console -a cados -C "python -m opensketch --reset-password EMAIL"):
+--reset-password EMAIL gives that account a new strong password, prints it once and signs the account out everywhere.
+Whoever can run commands on the server can already read its data, so this needs no other password. It writes the
+account files from a second process: run it while nobody is signing up or being changed on the Admin page.
 
 --host :: listens on every address, IPv6 and IPv4 (one dual-stack socket; where the system cannot make one, an IPv6
-socket and an IPv4 one; with no IPv6 at all, IPv4 only), so a proxy or the supervisor reaching 127.0.0.1 and a client
-on ::1 or the network all get through. uvicorn's own X-Forwarded-* handling is off: proxy.py decides what to believe.
-"""
+socket and an IPv4 one; with no IPv6 at all, IPv4 only). On Fly the BIZOMAT router reaches this app over the private
+network, which is IPv6 (cados.internal), while Fly's own proxy and the supervisor's check come in over IPv4."""
 
 import argparse
 import faulthandler
@@ -22,7 +26,7 @@ def _bare(host: str) -> str:
 
 def listen_sockets(host: str, port: int) -> list[socket.socket] | None:
     """The sockets for --host :: (every address), or None to let uvicorn bind `host` itself. asyncio would make an
-    IPv6-only socket for ::, which nothing on 127.0.0.1 (a proxy, the supervisor's health check) could reach."""
+    IPv6-only socket for ::, which nothing on 127.0.0.1 (Fly's proxy, the supervisor's health check) could reach."""
     if _bare(host) != "::":
         return None
     if socket.has_dualstack_ipv6():
@@ -63,7 +67,10 @@ def main():
     ap.add_argument("--no-browser", action="store_true", help="do not open the home page in a web browser")
     ap.add_argument("--supervise", action="store_true",
                     help="run the server as a child process and restart it when it hangs or exits (hosting)")
+    ap.add_argument("--reset-password", metavar="EMAIL", help="give this account a new password and print it (recovery)")
     args = ap.parse_args()
+    if args.reset_password:
+        sys.exit(reset_password(args.reset_password))
     if args.supervise:
         from . import supervisor
         sys.exit(supervisor.main(args.host, args.port))
@@ -75,10 +82,10 @@ def main():
     sockets = listen_sockets(args.host, args.port)
     if not args.no_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
-    print(f"BIZOMAT CAD Automation running at {url}" + (" (every address)" if sockets else ""), flush=True)
+    print(f"CAD Automation running at {url}" + (" (every address)" if sockets else ""), flush=True)
     # on a stop, open connections (the add-in's long polls) get 3 s to finish instead of holding the restart up
-    config = uvicorn.Config("opensketch.server:app", host=_bare(args.host) or "127.0.0.1", port=args.port, log_level="warning",
-                            timeout_graceful_shutdown=3, proxy_headers=False)
+    config = uvicorn.Config("opensketch.server:app", host=_bare(args.host) or "127.0.0.1", port=args.port,
+                            log_level="warning", timeout_graceful_shutdown=3)
     server = uvicorn.Server(config)
     try:
         server.run(sockets=sockets)
@@ -86,6 +93,19 @@ def main():
         pass
     if not server.started:
         sys.exit(3)  # uvicorn's own exit code when the server could not start
+
+
+def reset_password(email: str) -> int:
+    from . import accounts, auth
+    u = accounts.find_by_email(email)
+    if u is None:
+        print(f"No account has the email {email.strip().lower()}.", file=sys.stderr)
+        return 1
+    new = auth.suggest_password()
+    accounts.set_password(u["id"], new, by="owner")
+    print(f"New password for {u['email']}: {new}")
+    print("Sign in with it, then choose your own in Settings. Every earlier sign-in of this account has ended.")
+    return 0
 
 
 if __name__ == "__main__":

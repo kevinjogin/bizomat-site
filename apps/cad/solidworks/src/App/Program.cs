@@ -115,6 +115,8 @@ namespace OpenSketch.Sw.App
                     k.SetValue(null, 1, RegistryValueKind.DWord);
                     k.SetValue("Title", SwAddin.Title);
                     k.SetValue("Description", SwAddin.Description);
+                    var icon = Path.Combine(Folder, "BIZOMAT.bmp");   // the BIZOMAT mark in Tools > Add-Ins
+                    if (File.Exists(icon)) k.SetValue("Icon Path", icon);
                 }
                 using (var k = hk.CreateSubKey(@"Software\SolidWorks\AddInsStartup\{" + SwAddin.ClassId + "}"))
                     k.SetValue(null, 1, RegistryValueKind.DWord);
@@ -141,6 +143,8 @@ namespace OpenSketch.Sw.App
                     k.SetValue(null, 1, RegistryValueKind.DWord);
                     k.SetValue("Title", SwAddin.Title);
                     k.SetValue("Description", SwAddin.Description);
+                    var icon = Path.Combine(Folder, "BIZOMAT.bmp");   // the BIZOMAT mark in Tools > Add-Ins
+                    if (File.Exists(icon)) k.SetValue("Icon Path", icon);
                 }
                 return true;
             }

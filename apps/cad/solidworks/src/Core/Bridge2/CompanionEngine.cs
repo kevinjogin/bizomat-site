@@ -193,7 +193,15 @@ namespace OpenSketch.Sw.Bridge
             Directory.CreateDirectory(spoolDir);
             seen = new ReplayGuard(Path.Combine(o.DataDir, "seen.json"));
             Config = DeviceConfig.Load(cfgPath);
-            if (string.IsNullOrEmpty(Config.GatewayUrl)) Config.GatewayUrl = o.GatewayUrl;
+            if (string.IsNullOrEmpty(Config.GatewayUrl)) Config.GatewayUrl = DeviceConfig.CurrentAddress(o.GatewayUrl);
+            // A computer paired with an earlier address of CAD Automation moves to https://bizomat.ai/cad and stays paired.
+            var current = DeviceConfig.CurrentAddress(Config.GatewayUrl);
+            if (current != Config.GatewayUrl)
+            {
+                this.log("CAD Automation's address " + Config.GatewayUrl + " is now " + current + "; this computer stays paired.");
+                Config.GatewayUrl = current;
+                if (Config.Paired) Config.Save(cfgPath);
+            }
             CleanSpool();
         }
 

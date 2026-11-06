@@ -43,6 +43,10 @@ con.commit()
 con.close()
 PY
 
+# a role's own secret files never go into an export (they move as settings: bizomat.ps1 move cad)
+mkdir -m 0700 "$old/.secrets"
+echo throwaway-secret >"$old/.secrets/OPENSKETCH_KEY_SECRET"
+
 # export: the stream's own checksum matches the file, the archive passes verify.sh --strict
 bash "$M/cad/export.sh" "$old" >"$work/cados-data.tar" 2>"$work/export.log"
 want="$(sed -n 's/^export: stream sha256 //p' "$work/export.log")"
@@ -52,6 +56,8 @@ ok "export stream checksum"
 grep -q 'critical present: bridge-signing-key.pem' "$work/export.log" || bad "EXPORT-INFO lists the key"
 bash "$M/cad/verify.sh" --archive "$work/cados-data.tar" --strict 2>"$work/verify.log" || bad "verify --archive"
 ok "verify --archive --strict"
+if tar -tf "$work/cados-data.tar" | grep -q '\.secrets'; then bad "a .secrets file went into the export"; fi
+ok "the export leaves .secrets out"
 
 # import into a fresh data root (a plain folder here, not a volume)
 export BIZOMAT_DATA_ROOT="$root" BIZOMAT_ALLOW_EPHEMERAL=1

@@ -116,10 +116,10 @@ def resolve(token: str) -> tuple[bool, dict | None]:
     from . import accounts
     counters = _counters()
     users = accounts.list_users()
-    if not users and auth._eq(token, _key("local", int(counters.get("local", 0)))):
-        return True, None
+    if not users and not auth.reachable_by_others() and auth._eq(token, _key("local", int(counters.get("local", 0)))):
+        return True, None  # a server for this PC only; one others can reach waits for its owner (setup mode)
     for u in users:
-        if auth._eq(token, _key(u["id"], int(counters.get(u["id"], 0)))):
+        if not u.get("suspended") and auth._eq(token, _key(u["id"], int(counters.get(u["id"], 0)))):
             return True, u
     return False, None
 
@@ -284,7 +284,7 @@ def blob(user: dict | None, bid: str) -> tuple[bytes, str]:
 
 
 def status(user: dict | None, device: str | None = None) -> dict:
-    """Is SOLIDWORKS reachable for this person: through a registered computer (BIZOMAT Companion, devicebridge.py)
+    """Is SOLIDWORKS reachable for this person: through a registered computer (the Companion, devicebridge.py)
     when one is online, else through a v1 add-in link. Without registered computers the answer is exactly the v1 one."""
     from . import devicebridge
     try:
@@ -373,8 +373,8 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
             "connect again.")
 
 
-NOT_CONNECTED = ("SOLIDWORKS is not connected. On the computer: check that the BIZOMAT Companion is running and that "
-                 "SOLIDWORKS is open with the add-in loaded (the BIZOMAT tab and task pane). Without the Companion, "
+NOT_CONNECTED = ("SOLIDWORKS is not connected. On the computer: check that the Companion is running and that "
+                 "SOLIDWORKS is open with the add-in loaded (its tab and task pane). Without the Companion, "
                  "open BIZOMAT > Status in SOLIDWORKS and connect. The setup steps are on the CAD Automation dashboard.")
 
 
@@ -405,7 +405,7 @@ async def call(user: dict | None, op: str, args: dict | None = None, timeout: fl
         if mine:
             names = ", ".join(r["name"] for r in mine)
             raise BridgeError(f"None of your computers is online ({names}). Turn the computer on and sign in to Windows: the "
-                              "BIZOMAT Companion connects by itself. Then open SOLIDWORKS.", code="DEVICE_OFFLINE")
+                              "Companion connects by itself. Then open SOLIDWORKS.", code="DEVICE_OFFLINE")
         raise BridgeError(NOT_CONNECTED, code="NOT_CONNECTED")
     cid = f"c{next(_ids)}"
     fut = asyncio.get_running_loop().create_future()
