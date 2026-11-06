@@ -238,12 +238,11 @@ The website can run two ways, from the same code:
 - **On the BIZOMAT Fly.io app (target):** the `web` process serves `dist/` and runs `src/worker.ts` on Node
   (`src/node/server.ts`, bundled by `npm run build:server`). Deployed with the rest of the platform; see
   [docs/BIZOMAT-DEPLOYMENT.md](docs/BIZOMAT-DEPLOYMENT.md).
-- **On the Cloudflare Worker `throbbing-block-6c61` (current kevos.com):** unchanged. `npm run deploy` runs the checks and
-  `wrangler deploy`; Cloudflare's GitHub integration also builds and deploys every push to `main`.
-
-**Important:** while the Cloudflare integration is connected, merging to `main` publishes the BIZOMAT website at
-kevos.com. Merge only when that is intended, or set `PUBLIC_SITE_URL` in the Cloudflare build settings while kevos.com
-is the serving host, or disconnect the integration once bizomat.ai is live (see the deployment guide).
+- **Not on Cloudflare any more.** kevos.com is the KEVOS site again (the Worker `throbbing-block-6c61` runs the version
+  built from `c79e297`; `bizomat.ps1 restore kevos` put it back). `wrangler.toml` runs `scripts/kevos-guard.mjs` before
+  every deploy and upload, and `npm run deploy` is that guard, so nothing from this repository reaches kevos.com, not
+  even Cloudflare's Git integration while it is still connected (disconnect it: Workers & Pages >
+  `throbbing-block-6c61` > Settings > Build > Disconnect). `npm run preview` still runs the Worker locally.
 
 ### What both hosts serve
 

@@ -1,5 +1,7 @@
-# Cloudflare Worker configuration for kevos.com.
-# Deploy with:  npm run deploy   (builds, checks, then `wrangler deploy`)
+# Cloudflare Worker configuration of the BIZOMAT website as it ran on kevos.com until 6 Nov 2026.
+# Not deployed any more: kevos.com is the KEVOS site again (Stage 0, `bizomat.ps1 restore kevos`), and the BIZOMAT
+# website runs on Fly.io (fly.website.toml). [build] below stops every deploy and upload from here, Cloudflare's
+# Workers Builds included; `npm run preview` still runs the Worker on this computer (wrangler dev).
 #
 # The Worker serves the static site from dist/ and runs src/worker.ts for anything that is not
 # a file, which is how /api/chat (KEVOS Assistant) and /api/contact work.
@@ -23,6 +25,10 @@ routes = [
   { pattern = "bizomat.ai/*", zone_name = "bizomat.ai" },
   { pattern = "www.bizomat.ai/*", zone_name = "bizomat.ai" },
 ]
+
+# scripts/kevos-guard.mjs: refuses every deploy and upload (exit 1) and lets `npm run preview` through.
+[build]
+command = "node scripts/kevos-guard.mjs"
 
 # Contact delivery: onboard kevos.com in Email Service and verify this destination.
 # TURNSTILE_SECRET_KEY belongs in this Worker's encrypted secrets, never in this file.
