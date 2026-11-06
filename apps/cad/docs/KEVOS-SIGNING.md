@@ -1,13 +1,13 @@
-# Code signing CAD Automation for SOLIDWORKS (formerly KEVOS Bridge)
+# Code signing KEVOS Bridge
 
 ## What gets signed
 
 | File | What it is | Runs where |
 |---|---|---|
-| `OpenSketch.Sw.dll` | The SOLIDWORKS add-in (COM, .NET Framework 4.8, x64) | Inside SOLIDWORKS |
-| `KEVOS.Companion.exe` | The BIZOMAT Companion (tray app, .NET Framework 4.8, x64) | At Windows sign-in, as the user |
+| `OpenSketch.Sw.dll` | The KEVOS SOLIDWORKS add-in (COM, .NET Framework 4.8, x64) | Inside SOLIDWORKS |
+| `KEVOS.Companion.exe` | The KEVOS Companion (tray app, .NET Framework 4.8, x64) | At Windows sign-in, as the user |
 | `OpenSketchSW.exe` | The earlier per-user installer and fallback launcher | Only when the person runs it |
-| `CADOS-for-SOLIDWORKS-<version>-x64.msi` | The installer, holding the three files above | Once per computer, elevated |
+| `BIZOMAT-CAD-Automation-<version>-x64.msi` | The installer, holding the three files above | Once per computer, elevated |
 
 All four are built by GitHub Actions (`.github/workflows/solidworks.yml`): the DLL and EXEs on a Linux runner and
 again on the Windows runner that builds the MSI (`installer/build.ps1`). Signing must happen on the Windows runner:
@@ -26,14 +26,14 @@ That step is added once a service is chosen (below).
 
 ## Options
 
-| Option | Cost | Publisher shown in Windows | Fits BIZOMAT when | Notes |
+| Option | Cost | Publisher shown in Windows | Fits KEVOS when | Notes |
 |---|---|---|---|---|
-| SignPath Foundation | Free for open source | "SignPath Foundation" (not BIZOMAT) | The repository is public and the project is open source | Signing runs through SignPath's GitHub integration; they check that the files come from your public source. |
+| SignPath Foundation | Free for open source | "SignPath Foundation" (not KEVOS) | The repository is public and the project is open source | Signing runs through SignPath's GitHub integration; they check that the files come from your public source. |
 | Azure Artifact Signing (formerly Trusted Signing) | Monthly fee (low) | Your validated name or company | Your company (or you, where individuals are accepted) passes Microsoft's identity validation | GitHub Action available; no hardware to manage. Check current eligibility for Australian individuals and companies. |
 | A commercial OV certificate with cloud signing (for example SSL.com eSigner, DigiCert KeyLocker, Sectigo) | Yearly certificate plus the cloud-signing fee | Your validated company name | Always | Most widely accepted; costs most. |
 | Certum open-source certificate | Low | Your name | Open source individuals | Uses a smart card or Certum's cloud; awkward in CI. |
 
-Recommendation: if CAD Automation is to stay a private, commercial product, use Azure Artifact Signing if your company is
+Recommendation: if KEVOS is to stay a private, commercial product, use Azure Artifact Signing if your company is
 eligible, else a commercial OV certificate with cloud signing. If you make the repository public under its AGPL
 licence (the licence already obliges you to offer the source to users of a modified network service), apply to
 SignPath Foundation.
@@ -53,20 +53,20 @@ Conditions to meet first:
 4. A code-signing policy published with the project (for example a section in README.md): who may commit, who
    reviews, who approves signing, and the line "Free code signing provided by SignPath.io, certificate by SignPath
    Foundation".
-5. A privacy statement. CAD Automation sends data by design: commands, results and the files a command produces go to the
-   CAD Automation server the person registered the computer with, and nowhere else. Say so plainly.
+5. A privacy statement. KEVOS sends data by design: commands, results and the files a command produces go to the
+   KEVOS server the person registered the computer with, and nowhere else. Say so plainly.
 6. Third-party code: the add-in embeds type information from the SOLIDWORKS 2022 API interop (no Dassault code is
    redistributed; it calls SOLIDWORKS on the user's own licence). Mention it.
 
 Details for the application form:
 
-| Field | Answer |
+| Field | KEVOS answer |
 |---|---|
-| Project name | BIZOMAT CAD Automation for SOLIDWORKS |
+| Project name | KEVOS Bridge |
 | Repository | https://github.com/jogkev-creator/CADOS (once public) |
 | Licence | GNU Affero General Public License v3.0 only |
 | Description | Connects AI apps (Claude, ChatGPT and other MCP clients) to SOLIDWORKS on the user's own Windows computer. A COM add-in runs inside SOLIDWORKS; a tray app keeps a signed outbound link to the user's KEVOS server. |
-| Files to sign | `OpenSketch.Sw.dll`, `KEVOS.Companion.exe`, `OpenSketchSW.exe`, `CADOS-for-SOLIDWORKS-<version>-x64.msi` (Authenticode, SHA-256, timestamped) |
+| Files to sign | `OpenSketch.Sw.dll`, `KEVOS.Companion.exe`, `OpenSketchSW.exe`, `BIZOMAT-CAD-Automation-<version>-x64.msi` (Authenticode, SHA-256, timestamped) |
 | Build system | GitHub Actions, GitHub-hosted `windows-latest`, workflow `.github/workflows/solidworks.yml`, job `installer` |
 | Release channel | GitHub Releases `bridge-v<version>` (and `bridge-latest`) |
 | Maintainers | (your name and GitHub account; reviewers and approvers) |

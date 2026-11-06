@@ -2,9 +2,9 @@
 <!--
   BIZOMAT CAD Automation for SOLIDWORKS (called CADOS for SOLIDWORKS in 0.12.0 to 0.12.2, and KEVOS Bridge up to 0.11):
   one MSI (WiX Toolset 5, per machine, x64) for each Windows computer that runs SOLIDWORKS. The UpgradeCode, the
-  component key paths (so their generated GUIDs), the install folder, the registry keys, the Run value's name and the
-  MSI's file names (CADOS-for-SOLIDWORKS-*.msi) are unchanged, so it upgrades every earlier version in place and the
-  download links and update manifests keep working. Only the names people read changed.
+  component key paths (so their generated GUIDs), the install folder, the registry keys and the Run value's name are
+  unchanged, so it upgrades every earlier version in place. The MSI is BIZOMAT-CAD-Automation-<version>-x64.msi (the
+  stable CADOS-for-SOLIDWORKS-x64.msi of 0.12 is still published as a copy). Only the names people read changed.
 
   Installs into C:\Program Files\KEVOS\Bridge (the folder keeps its earlier name):
     OpenSketch.Sw.dll          the add-in (COM; Tools > Add-Ins > BIZOMAT CAD Automation; loaded at start-up)
@@ -83,6 +83,10 @@
       <Component Id="LegacyConfig" Bitness="always64">
         <File Id="LegacyConfig" Source="$(var.Source)/OpenSketchSW.exe.config" KeyPath="yes" />
       </Component>
+      <!-- the BIZOMAT mark next to the add-in in Tools > Add-Ins (Icon Path below) -->
+      <Component Id="AddinIcon" Bitness="always64">
+        <File Id="AddinIcon" Source="$(var.Source)/BIZOMAT.bmp" KeyPath="yes" />
+      </Component>
       <Component Id="Macro" Bitness="always64">
         <File Id="Macro" Source="$(var.Source)/OpenSketch.swb" KeyPath="yes" />
       </Component>
@@ -149,6 +153,7 @@
         <RegistryKey Root="HKLM" Key="SOFTWARE\SolidWorks\Addins\{275256ff-b73a-4e4f-9ea8-842b6626d471}">
           <RegistryValue Type="integer" Value="1" KeyPath="yes" />
           <RegistryValue Name="Title" Type="string" Value="BIZOMAT CAD Automation" />
+          <RegistryValue Name="Icon Path" Type="string" Value="[#AddinIcon]" />
           <RegistryValue Name="Description" Type="string" Value="BIZOMAT CAD Automation: your AI assistant (Claude, ChatGPT...) builds parts, assemblies and drawings in SOLIDWORKS" />
         </RegistryKey>
       </Component>

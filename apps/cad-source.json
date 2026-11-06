@@ -1,0 +1,7 @@
+{
+  "repository": "jogkev-creator/CADOS",
+  "commit": "2919c7f069b4f93cebd26a036d1be5421cd38f77",
+  "tree": "cfc549c216c42665e81a38d8eea2fd03f2a95ee2",
+  "subject": "SOLIDWORKS add-in 0.13.0: BIZOMAT CAD Automation, the new logo, a clear installer name (#22)",
+  "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
+}

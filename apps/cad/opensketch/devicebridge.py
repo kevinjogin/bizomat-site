@@ -1,5 +1,5 @@
 """The device bridge (protocol 2; built as the KEVOS Bridge): registered Windows computers ("devices") that run
-SOLIDWORKS commands for their owner, through the BIZOMAT Companion on each computer and the add-in inside SOLIDWORKS.
+SOLIDWORKS commands for their owner, through the Companion on each computer and the add-in inside SOLIDWORKS.
 The wire names (the KEVOS-Device proof scheme, the kevos-* JWS types, the KEVOS-* headers) are the protocol's own and
 stay as they are: docs/BRIDGE-PROTOCOL.md.
 
@@ -453,7 +453,7 @@ def pick(user: dict | None, device: str | None):
         r = hit[0]
         if not _online(r):
             s = _sessions.get(r["id"])
-            why = s.closed[1] if s and s.closed else "Turn it on and sign in to Windows; the BIZOMAT Companion connects by itself."
+            why = s.closed[1] if s and s.closed else "Turn it on and sign in to Windows; the Companion connects by itself."
             raise BridgeError(f"The computer {r['name']} is offline. {why}", code="DEVICE_OFFLINE")
         return r
     online = [r for r in rows if _online(r)]
@@ -538,7 +538,16 @@ def _end_session(device_id: str, reason: str, message: str) -> None:
     for p in [p for p in _pending.values() if p.payload["device_id"] == device_id]:
         if p.status not in TERMINAL:
             _note(p, "unknown" if p.status == "running" else "failed", note=message)
-            _resolve(p.fut, exc=BridgeError(message, code="DEVICE_REVOKED" if reason == "revoked" else "SESSION_REPLACED"))
+            code = {"revoked": "DEVICE_REVOKED", "suspended": "ACCOUNT_SUSPENDED"}.get(reason, "SESSION_REPLACED")
+            _resolve(p.fut, exc=BridgeError(message, code=code))
+
+
+def suspend_person(user_id: str) -> None:
+    """The owner suspended this person: their computers' live sessions close (a held long poll answers 409 with
+    reason "suspended") and their waiting commands fail. The computers stay paired; their next request gets
+    ACCOUNT_SUSPENDED until the account is resumed."""
+    for d in devices_for({"id": user_id}):
+        _end_session(d["id"], "suspended", "This CAD Automation account is suspended. Ask your administrator.")
 
 
 def _clean_name(name) -> str:
@@ -587,7 +596,7 @@ def approve_pairing(user: dict | None, code: str, name: str | None = None) -> di
     """The signed-in person approves the code their computer shows: the device is made and bound to them."""
     r = pairing_by_code(code)
     if not r or r["status"] != "pending":
-        raise ValueError("That code is not valid or has expired. Start pairing again in the BIZOMAT Companion.")
+        raise ValueError("That code is not valid or has expired. Start pairing again in the Companion.")
     did = ulid("dev")
     name = _clean_name(name) or r["name"] or "Windows computer"
     owner = person_id(user)
@@ -636,15 +645,11 @@ def _client_ip(request: Request) -> str:
 
 
 def _open_and_remote(request: Request) -> bool:
-    """A server without a password or accounts (open mode, for one person on their own PC) takes pairing only from
-    the PC it runs on: nobody on the network can add a computer to it, and whoever runs it publicly must sign in.
-    Behind a proxy on the same PC (a tunnel, the platform proxy) the client is the one the proxy names (proxy.py), not
-    the proxy itself, so a visitor through the proxy is remote."""
-    from . import auth, proxy
-    if auth.mode() != "open":
-        return False
-    a = proxy.ip(proxy.client_ip(request.scope))
-    return a is None or not a.is_loopback
+    """No computer pairs with a server nobody owns yet (setup mode: no account, reached from elsewhere). A server for
+    one person on their own PC (open mode) takes pairing only from that PC (auth.mode treats any other request as
+    setup)."""
+    from . import auth
+    return auth.mode(request.scope) == "setup"
 
 
 def authenticate(request: Request, body: bytes, pairing: bool = False) -> dict:
@@ -667,9 +672,14 @@ def authenticate(request: Request, body: bytes, pairing: bool = False) -> dict:
     else:
         rec = _q("SELECT * FROM devices WHERE id=?", (kid,), one=True)
         if not rec:
-            raise BridgeAuthError(401, "DEVICE_UNKNOWN", "This computer is not registered. Pair it again in the BIZOMAT Companion.")
+            raise BridgeAuthError(401, "DEVICE_UNKNOWN", "This computer is not registered. Pair it again in the Companion.")
         if rec["revoked"]:
             raise BridgeAuthError(401, "DEVICE_REVOKED", "This computer was removed from your CAD Automation account. Pair it again.")
+        if rec["owner"] != "local":
+            from . import accounts
+            who = accounts.get_any(rec["owner"])
+            if who and who.get("suspended"):
+                raise BridgeAuthError(401, "ACCOUNT_SUSPENDED", "This CAD Automation account is suspended. Ask your administrator.")
     try:
         _, payload = jws_verify(compact, jwk_public_key(json.loads(rec["jwk"])))
         claims = json.loads(payload)
@@ -782,7 +792,7 @@ async def call(user: dict | None, device: dict, op: str, args: dict, timeout: fl
                           "SOLIDWORKS commands never need credentials.", code="INPUT_FORBIDDEN_FIELD")
     if s.paused:
         raise BridgeError(f"CAD Automation is paused on {device['name']} (by the person at that computer). Ask them to "
-                          "resume it from the BIZOMAT icon in the Windows taskbar.", code="PAUSED")
+                          "resume it from the Companion's icon in the Windows taskbar.", code="PAUSED")
     try:
         files_in = [dict(_blob_ref(bid), name=name) for name, bid in (blobs or {}).items()]
     except ValueError as exc:
@@ -940,10 +950,10 @@ def hello(rec: dict, body: dict) -> dict:
     except ValueError:
         lo, hi = (9,), (0,)
     if not lo <= (2, 0) <= hi:
-        raise BridgeAuthError(426, "PROTOCOL_UNSUPPORTED", "This BIZOMAT Companion speaks another protocol version: update it.")
+        raise BridgeAuthError(426, "PROTOCOL_UNSUPPORTED", "This Companion speaks another protocol version: update it.")
     old = _sessions.get(rec["id"])
     if old is not None:
-        old.closed = ("replaced", "This computer connected again (the BIZOMAT Companion restarted).")
+        old.closed = ("replaced", "This computer connected again (the Companion restarted).")
         old.poke()
     s = DeviceSession(rec, body)
     try:
@@ -964,8 +974,8 @@ def hello(rec: dict, body: dict) -> dict:
             reconcile.append({"command_id": p.id, "action": "send_result" if e.get("result_in_outbox") else "keep_running"})
         else:  # it was running and the companion no longer knows it: its result is lost, never run again
             from .swbridge import BridgeError
-            _note(p, "unknown", note="the BIZOMAT Companion restarted while it ran")
-            _resolve(p.fut, exc=BridgeError("The BIZOMAT Companion restarted while SOLIDWORKS worked on this. Read the "
+            _note(p, "unknown", note="the Companion restarted while it ran")
+            _resolve(p.fut, exc=BridgeError("The Companion restarted while SOLIDWORKS worked on this. Read the "
                                             "document (sw_get_document) to see what was done.", code="RESULT_LOST"))
     for cid in inflight:
         reconcile.append({"command_id": cid, "action": "forget"})
@@ -1233,8 +1243,8 @@ async def pair_start(request: Request):
     try:
         raw, body = await _json(request)
         if _open_and_remote(request):
-            raise BridgeAuthError(403, "FORBIDDEN", "This CAD Automation server has no sign-in yet: set a server password "
-                                                    "before computers pair with it over the network.")
+            raise BridgeAuthError(403, "FORBIDDEN", "This CAD Automation server is not set up yet. Create the administrator "
+                                                    "account on its website, then pair this computer.")
         if not mcpauth._rate_ok("pair:" + _client_ip(request), PAIR_LIMIT, 3600, _pair_hits):
             raise BridgeAuthError(429, "RATE_LIMITED", "Too many pairing attempts from this network. Try again in an hour.")
         out = start_pairing(body, _client_ip(request))
@@ -1280,6 +1290,8 @@ async def pair_password(request: Request):
             auth._failed(*keys)
             await asyncio.sleep(1)  # slow down guessing, as the sign-in page does
             raise BridgeAuthError(401, "INVALID_CREDENTIALS", "The email or password is wrong.")
+        if user.get("suspended"):
+            raise BridgeAuthError(403, "ACCOUNT_SUSPENDED", "This CAD Automation account is suspended. Ask your administrator.")
         if pair["status"] != "pending" or pair["expires"] < time.time():
             raise BridgeAuthError(410, "PAIRING_CLOSED", "This pairing expired or was already decided. Click Pair again.")
         try:
@@ -1460,10 +1472,10 @@ def _pair_page(code: str = "", pairing: dict | None = None, error: str = "", don
     from . import auth
     if done:
         return auth.notice_page("Computer added", f"{auth._esc(done['name'])} is now on your account.",
-                                "You can close this window. The BIZOMAT Companion on that computer connects by itself.")
+                                "You can close this window. The Companion on that computer connects by itself.")
     info = json.loads((pairing or {}).get("info") or "{}")
     sub = ("Check that this code is the one your computer shows, then add it." if pairing else
-           "Type the code the BIZOMAT Companion shows on your computer.")
+           "Type the code the Companion shows on your computer.")
     fields = [auth._field("code", "Code", value=code, focus=not pairing, auto="off", note="Like ABCD-EFGH")]
     if pairing:
         fields.append(auth._field("name", "Name for this computer", value=pairing.get("name") or "", focus=True,
@@ -1485,7 +1497,7 @@ def pair_page(code: str = ""):
 async def pair_page_post(request: Request):
     from urllib.parse import parse_qs
     if _open_and_remote(request):
-        raise HTTPException(403, "Set a server password before adding computers over the network.")
+        raise HTTPException(403, "CAD Automation is not set up yet. Create the administrator account first.")
     raw = await request.body()
     form = {k: v[0] for k, v in parse_qs(raw.decode(errors="ignore")).items()} if len(raw) < 20000 else {}
     code = form.get("code", "")
@@ -1496,7 +1508,7 @@ async def pair_page_post(request: Request):
         from . import auth
         return HTMLResponse(auth.notice_page("Not added", "That computer was not added.", "Its code no longer works."), headers=hdr)
     if not p or p["status"] != "pending":
-        return HTMLResponse(_pair_page(error="That code is not valid or has expired. Start pairing again in the BIZOMAT Companion."),
+        return HTMLResponse(_pair_page(error="That code is not valid or has expired. Start pairing again in the Companion."),
                             status_code=400, headers=hdr)
     if "name" not in form:  # first step: the code was typed; show what it is for
         return HTMLResponse(_pair_page(p["code"], p), headers=hdr)

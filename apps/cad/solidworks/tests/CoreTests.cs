@@ -306,6 +306,16 @@ namespace OpenSketch.Sw.Tests
     public class BrandArtTests
     {
         [Fact]
+        public void EarlierAddressesOfCadAutomationMoveToBizomatAiCad()
+        {
+            foreach (var old in new[] { "https://cados.kevos.com", "https://cados.fly.dev/", "HTTPS://CAD.BIZOMAT.AI", " https://cados.kevos.com " })
+                Assert.Equal("https://bizomat.ai/cad", OpenSketch.Sw.Bridge.DeviceConfig.CurrentAddress(old));
+            foreach (var keep in new[] { "https://bizomat.ai/cad", "https://cad.example.com", "http://localhost:8080", "https://cados.kevos.com.example.org", "" })
+                Assert.Equal(keep, OpenSketch.Sw.Bridge.DeviceConfig.CurrentAddress(keep));
+            Assert.Null(OpenSketch.Sw.Bridge.DeviceConfig.CurrentAddress(null));
+        }
+
+        [Fact]
         public void TheLogoPathsAreClosedPolygonsInsideTheirBoxes()
         {
             var word = BrandArt.Polygons(BrandArt.WordmarkPath);

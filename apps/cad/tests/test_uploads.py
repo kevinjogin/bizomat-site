@@ -19,7 +19,17 @@ def data(tmp_path, monkeypatch):
     monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", "http://testserver")
     monkeypatch.delenv("OPENSKETCH_PASSWORD", raising=False)
     monkeypatch.delenv("OPENSKETCH_MCP_TOKEN", raising=False)
+    # a public server answers MCP only once someone owns it; the owner's first private address is the server-wide one
+    from opensketch import accounts
+    accounts.create_owner("owner@example.com", "Owner", "correct horse")
     return tmp_path
+
+
+def _signed_in_owner():
+    owner = TestClient(server.app)
+    assert owner.post("/login", data={"email": "owner@example.com", "password": "correct horse", "next": "/"},
+                      follow_redirects=False).status_code == 303
+    return owner
 
 
 def _rpc(c, url, method, params=None):
@@ -36,8 +46,9 @@ def _tool(client, url, tool, **arguments):
 
 
 def _take(upload_id, user=None):
+    from opensketch import accounts
     try:
-        return uploads.take(upload_id, user)[0]
+        return uploads.take(upload_id, user if user is not None else accounts.owner())[0]
     except uploads.UploadError as exc:
         return str(exc)
 
@@ -54,8 +65,7 @@ def _path(url: str) -> str:
 
 
 def _setup_owner_and_member():
-    owner = TestClient(server.app)
-    owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse", "next": "/"})
+    owner = _signed_in_owner()
     token = owner.post("/api/account/invites").json()["url"].split("/join/")[1]
     member = TestClient(server.app)
     member.post(f"/join/{token}", data={"name": "Mei", "email": "mei@example.com", "new_password": "battery staple"})
@@ -64,7 +74,6 @@ def _setup_owner_and_member():
 
 
 def test_upload_then_take_without_base64(tmp_path, monkeypatch):
-    monkeypatch.setenv("OPENSKETCH_PASSWORD", "secret")  # the site is signed-in; the link alone is the key
     raw = _step_bytes(tmp_path)
     url = f"/mcp/{auth.mcp_token()}"
     with TestClient(server.app) as c:
@@ -133,9 +142,6 @@ def test_links_are_signed_expire_and_open_nothing_else(monkeypatch):
         assert c.put(f"/mcp/uploads/../{auth.mcp_token()}?{s.query}", content=b"x").status_code in (404, 405)
         assert c.post(f"/mcp/{args['signature'][0]}").status_code == 404                # not an MCP key
         assert c.get(_path(link["upload_url"])).status_code in (404, 405)               # nothing to read back
-        with monkeypatch.context() as scoped:  # a new server password voids open links
-            scoped.setenv("OPENSKETCH_PASSWORD", "new password")
-            assert put(_path(link["upload_url"])).status_code == 404
         monkeypatch.setattr(uploads.time, "time", lambda: link["expires_at"] + 1)
         late = put(_path(link["upload_url"]))
         assert late.status_code == 410 and "expired" in late.json()["error"]

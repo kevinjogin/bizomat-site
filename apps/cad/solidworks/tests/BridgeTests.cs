@@ -244,6 +244,25 @@ namespace OpenSketch.Sw.Tests
             lock (logs) logs.Add(s);
         }
 
+        [Fact]
+        public void AComputerPairedWithAnEarlierAddressMovesToBizomatAiCadAndStaysPaired()
+        {
+            Directory.CreateDirectory(dir);
+            var cfg = Path.Combine(dir, "device.json");
+            new DeviceConfig { GatewayUrl = "https://cados.kevos.com", DeviceId = DeviceId, DeviceName = "TESTPC", GatewayJwk = gw.Jwk_ }.Save(cfg);
+            var opts = new CompanionOptions { DataDir = dir, GatewayUrl = "https://cados.fly.dev", HttpHandler = () => gw, VerifyPeer = _ => null };
+            using (var e = new CompanionEngine(opts, device, new TestListener(pipe) { Pid = 4242 }, Log))
+            {
+                Assert.Equal("https://bizomat.ai/cad", e.Config.GatewayUrl);
+                Assert.True(e.Config.Paired);
+                Assert.Equal(DeviceId, e.Config.DeviceId);
+            }
+            var saved = DeviceConfig.Load(cfg);
+            Assert.Equal("https://bizomat.ai/cad", saved.GatewayUrl);
+            Assert.Equal(DeviceId, saved.DeviceId);
+            lock (logs) Assert.Contains(logs, l => l.Contains("is now https://bizomat.ai/cad"));
+        }
+
         CompanionEngine StartEngine(Func<PeerInfo, string> verify = null, bool addin = true, Func<int, bool> alive = null)
         {
             Directory.CreateDirectory(dir);

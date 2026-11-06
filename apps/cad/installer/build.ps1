@@ -1,6 +1,6 @@
-# Builds the BIZOMAT CAD Automation for SOLIDWORKS installer, CADOS-for-SOLIDWORKS-<version>-x64.msi (and the same file as
-# CADOS-for-SOLIDWORKS-x64.msi, the stable name the website links to; the file names keep the earlier product name so
-# download links and update manifests keep working) from solidworks/dist/OpenSketch-SOLIDWORKS (run `bash solidworks/build.sh test`
+# Builds the BIZOMAT CAD Automation for SOLIDWORKS installer, BIZOMAT-CAD-Automation-<version>-x64.msi (and the same file
+# as BIZOMAT-CAD-Automation-x64.msi, the stable name the website links to, and as CADOS-for-SOLIDWORKS-x64.msi, the
+# stable name of 0.12, so links already given out keep working) from solidworks/dist/OpenSketch-SOLIDWORKS (run `bash solidworks/build.sh test`
 # first). Windows only (WiX Toolset 5 needs Windows). Repeatable: the same sources give the same MSI contents.
 #
 #   powershell -ExecutionPolicy Bypass -File installer\build.ps1 [-Version 0.11.0]
@@ -49,7 +49,7 @@ if (-not (Get-Command wix -ErrorAction SilentlyContinue)) { dotnet tool install 
 wix extension add -g WixToolset.Util.wixext/5.0.2 WixToolset.UI.wixext/5.0.2 | Out-Host
 $out = Join-Path $PSScriptRoot 'out'
 New-Item -ItemType Directory -Force -Path $out | Out-Null
-$name = "CADOS-for-SOLIDWORKS-$Version-x64" + $(if ($sign) { '' } else { '-UNSIGNED' }) + '.msi'
+$name = "BIZOMAT-CAD-Automation-$Version-x64" + $(if ($sign) { '' } else { '-UNSIGNED' }) + '.msi'
 $msi = Join-Path $out $name
 wix build installer\KEVOS-Bridge.wxs -arch x64 -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -d "Version=$Version" -d "Source=$src" -o $msi
 if ($LASTEXITCODE -ne 0) { throw 'wix build failed' }
@@ -63,8 +63,10 @@ if ($sign) { $thumb = (Get-AuthenticodeSignature $msi).SignerCertificate.Thumbpr
 @{ version = $Version; msi_url = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v$Version/$name";
    sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "BIZOMAT CAD Automation for SOLIDWORKS $Version";
    published_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ') } | ConvertTo-Json | Set-Content (Join-Path $out 'release.json') -Encoding UTF8
-# the stable name (bridge-latest): what https://bizomat.ai/cad/download/solidworks points at
-$stable = Join-Path $out 'CADOS-for-SOLIDWORKS-x64.msi'
-Copy-Item $msi $stable -Force
-"$hash  CADOS-for-SOLIDWORKS-x64.msi" | Set-Content "$stable.sha256" -Encoding ASCII
+# the stable name (bridge-latest): what https://bizomat.ai/cad/download/solidworks points at; and the stable name of 0.12
+foreach ($stableName in @('BIZOMAT-CAD-Automation-x64.msi', 'CADOS-for-SOLIDWORKS-x64.msi')) {
+    $stable = Join-Path $out $stableName
+    Copy-Item $msi $stable -Force
+    "$hash  $stableName" | Set-Content "$stable.sha256" -Encoding ASCII
+}
 Write-Host "Built $msi ($size bytes, sha256 $hash)" -ForegroundColor Green

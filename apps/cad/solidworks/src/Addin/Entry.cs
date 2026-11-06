@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using SolidWorks.Interop.sldworks;
@@ -177,6 +178,9 @@ namespace OpenSketch.Sw
                     k.SetValue(null, 0);
                     k.SetValue("Description", Description);
                     k.SetValue("Title", Title);
+                    // the BIZOMAT mark in Tools > Add-Ins (16 x 16 bitmap next to the add-in)
+                    var icon = Path.Combine(Path.GetDirectoryName(t.Assembly.Location) ?? "", "BIZOMAT.bmp");
+                    if (File.Exists(icon)) k.SetValue("Icon Path", icon);
                 }
             }
             catch (Exception)

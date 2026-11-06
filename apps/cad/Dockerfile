@@ -52,4 +52,5 @@ RUN mkdir -p /data
 EXPOSE 8080
 # --supervise: a small parent process asks the server for /healthz every 5 s and restarts it when it stops answering
 # for 2 minutes (OPENSKETCH_HANG_SECONDS) or exits; the hung server's thread stacks go to the log first
-CMD ["python", "-m", "opensketch", "--host", "0.0.0.0", "--port", "8080", "--no-browser", "--supervise"]
+# --host :: : IPv4 and IPv6, so the BIZOMAT router reaches it over Fly's private network (cados.internal, IPv6)
+CMD ["python", "-m", "opensketch", "--host", "::", "--port", "8080", "--no-browser", "--supervise"]

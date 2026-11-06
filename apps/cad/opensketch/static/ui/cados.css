@@ -6,7 +6,7 @@
 
 /* ------------------------------------------------------------------ tokens */
 :root {
-  /* BIZOMAT teal. --brand is the mark teal (the connector bar in the logo) for marks; the deeper teal carries text and
+  /* BIZOMAT teal. --brand is the mark teal (the forward arrow in the logo) for marks; the deeper teal carries text and
      buttons on white (5.5:1). */
   --brand: var(--bz-teal-mark, #14b8a6);
   --brand-600: var(--bz-teal, #0f766e);       /* buttons with white text */
@@ -36,7 +36,7 @@
   --info: var(--bz-info, #175cd3);    --info-tint: var(--bz-info-soft, #eff8ff);    --info-line: #c4dcfb;
   --idle: #8794a6;
 
-  /* type: Oxanium for headings (its chamfered forms match the wordmark), Inter Tight for everything else */
+  /* type: Oxanium for headings (its squared forms match the wordmark), Inter Tight for everything else */
   --font-display: var(--bz-font-display, "Oxanium", "Inter Tight", ui-sans-serif, system-ui, sans-serif);
   --font-body: var(--bz-font-sans, "Inter Tight", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
   --font-mono: var(--bz-font-mono, ui-monospace, "SF Mono", "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace);
@@ -94,7 +94,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: var(--s-6) 0; }
 .small { font-size: var(--fs-sm); }
 
 /* ------------------------------------------------------------------ brand marks */
-/* The BIZOMAT wordmark (navy word, teal connector bar in the B) and the product name beside it. On a phone the two
+/* The BIZOMAT logo (the mark, then the navy word with the teal forward arrow in its B) and the product name beside it. On a phone the two
    stack, so the header keeps room for its buttons. */
 .wordmark { display: inline-flex; align-items: center; gap: 12px; flex: none; color: var(--ink); text-decoration: none; }
 .wordmark:hover { text-decoration: none; }
