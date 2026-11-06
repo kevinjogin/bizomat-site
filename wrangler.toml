@@ -34,8 +34,9 @@ destination_address = "kevin@kevos.com"
 directory = "./dist"
 binding = "ASSETS"
 not_found_handling = "404-page"
-# The applications' paths always reach the Worker, even if a file of the same name is ever added to the site.
-run_worker_first = ["/cad", "/cad/*", "/tasks", "/tasks/*"]
+# No run_worker_first: every path that is not a file reaches the Worker (/api/*, /insights, /cad, /tasks...). Its
+# list form sends every other unmatched path to the 404 page instead, which broke the site's APIs on 6 Nov 2026.
+# tests/worker.test.ts checks that no file takes an application's path instead.
 
 # Project Management (bizomat.ai/tasks): bind its Worker once it serves its pages under /tasks; until then the Worker
 # sends /tasks/... to its current address (src/worker.ts, TASKS_FALLBACK). The service must exist before a deploy.

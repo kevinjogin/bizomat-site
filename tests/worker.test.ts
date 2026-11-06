@@ -165,7 +165,7 @@ test('the applications are reached only on bizomat.ai; elsewhere the old CAD pag
   });
 });
 
-test('no page or file of the website takes an application\'s path, and those paths reach the Worker first', () => {
+test('no page or file of the website takes an application\'s path, so those paths reach the Worker', () => {
   const taken = (dir: string): string[] =>
     fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
       const rel = `${dir}/${e.name}`;
@@ -179,6 +179,8 @@ test('no page or file of the website takes an application\'s path, and those pat
     }
   }
   const toml = fs.readFileSync('wrangler.toml', 'utf8');
-  assert.match(toml, /run_worker_first = \["\/cad", "\/cad\/\*", "\/tasks", "\/tasks\/\*"\]/);
+  // run_worker_first as a list stops the Worker from being the fallback for paths that are not files: /api/* and
+  // /insights then answer the 404 page (it happened in production on 6 Nov 2026). Paths reach the Worker by having no file.
+  assert.doesNotMatch(toml, /^\s*run_worker_first\s*=/m, 'run_worker_first must stay unset');
   assert.match(toml, /pattern = "bizomat\.ai\/\*", zone_name = "bizomat\.ai"/);
 });
