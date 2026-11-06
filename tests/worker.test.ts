@@ -183,4 +183,6 @@ test('no page or file of the website takes an application\'s path, so those path
   // /insights then answer the 404 page (it happened in production on 6 Nov 2026). Paths reach the Worker by having no file.
   assert.doesNotMatch(toml, /^\s*run_worker_first\s*=/m, 'run_worker_first must stay unset');
   assert.match(toml, /pattern = "bizomat\.ai\/\*", zone_name = "bizomat\.ai"/);
+  // bizomat.ai/tasks is Project Management's Worker (the one behind work.kevos.com), bound by name
+  assert.match(toml, /^\[\[services\]\]\nbinding = "TASKS"\nservice = "workos-platform-preview"$/m);
 });

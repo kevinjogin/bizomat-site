@@ -38,11 +38,12 @@ not_found_handling = "404-page"
 # list form sends every other unmatched path to the 404 page instead, which broke the site's APIs on 6 Nov 2026.
 # tests/worker.test.ts checks that no file takes an application's path instead.
 
-# Project Management (bizomat.ai/tasks): bind its Worker once it serves its pages under /tasks; until then the Worker
-# sends /tasks/... to its current address (src/worker.ts, TASKS_FALLBACK). The service must exist before a deploy.
-# [[services]]
-# binding = "TASKS"
-# service = "workos-platform-preview"
+# Project Management (bizomat.ai/tasks): its Worker (the one behind work.kevos.com) serves its pages under /tasks
+# since jogkev-creator/PMO#2 (live 6 Nov 2026), so bizomat.ai/tasks/... is handed to it unchanged. Without this
+# binding the Worker would send /tasks/... to work.kevos.com instead (src/worker.ts, TASKS_FALLBACK).
+[[services]]
+binding = "TASKS"
+service = "workos-platform-preview"
 
 # Workers AI for the KEVOS Assistant. Workers Free plan: a daily allocation, no card needed.
 [ai]
