@@ -98,4 +98,13 @@ describe('static assets', () => {
     expect(plain.headers.get('content-encoding')).toBeNull();
     expect((await get('/favicon.svg', { 'Accept-Encoding': 'br' })).headers.get('content-encoding')).toBeNull();
   });
+
+  it('never compresses a page: the Worker writes <base href> into it as text', async () => {
+    for (const path of ['/', '/w/abc/home', '/login']) {
+      const page = await get(path, { 'Accept-Encoding': 'gzip, deflate, br' });
+      expect(page.headers.get('content-type'), path).toBe('text/html; charset=utf-8');
+      expect(page.headers.get('content-encoding'), path).toBeNull();
+      expect(await page.text(), path).toBe(INDEX);
+    }
+  });
 });

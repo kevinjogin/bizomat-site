@@ -4,8 +4,9 @@ How the platform is built and deployed as one Fly.io app, and how each domain mo
 `fly.toml`, `infrastructure/`, `.github/workflows/bizomat-*.yml`. Command-level detail: `infrastructure/README.md`.
 Data moves: `BIZOMAT-MIGRATION.md`. Going back: `BIZOMAT-ROLLBACK.md`.
 
-**Status (5 Nov 2026): prepared, not deployed.** This session had no Fly.io token and could not reach fly.io,
-Cloudflare or bizomat.ai, so nothing below has been run against them. Section 8 lists exactly what the owner must do.
+**Status (6 Nov 2026): prepared, not deployed.** The sessions that prepared it had no Fly.io token and could not
+reach fly.io, Cloudflare or bizomat.ai, so nothing below has been run against them. Section 8 lists exactly what the
+owner must do. Since 6 Nov the plan routes bizomat.ai by path (section 2), as the website's Worker does today.
 
 ## 1. What is deployed
 
@@ -28,21 +29,29 @@ to start on Fly without `OPENSKETCH_PASSWORD`, so CAD Automation can never come 
 
 ## 2. Hosts
 
-**Addresses (owner's decision, 5 Nov 2026):** everything lives under bizomat.ai, with no subdomains: CAD Automation is
-`https://bizomat.ai/cad` and Project Management `https://bizomat.ai/tasks`. Today the website's Worker routes those
-paths (section 6a). This single-app plan predates that decision and still names `work.bizomat.ai` and
-`cad.bizomat.ai`. Before it is used: the proxy (`infrastructure/proxy`) must route `/cad` and `/tasks` by path as
-the Worker does, and `apps/cad` and `apps/work` must take the path changes made in their source repositories
-(jogkev-creator/CADOS#14 and #15; jogkev-creator/PMO#2).
+**Everything lives under bizomat.ai, with no subdomains (owner's decision, 5 Nov 2026):** the website at the root,
+CAD Automation at `https://bizomat.ai/cad` and Project Management at `https://bizomat.ai/tasks`. The proxy
+(`infrastructure/proxy/routes.mjs`) routes bizomat.ai by path, as the website's Worker does today (section 6a; the
+proxy's tests check that its `CAD_PATHS` is the Worker's, character for character), and every other host by its name.
+Paths and Host headers reach the apps unchanged: each app takes its prefix off itself and writes it back into its
+links, Location headers and cookie paths (`apps/cad/opensketch/canonical.py`, from jogkev-creator/CADOS#14;
+`apps/work/src/worker/mount.ts`, from jogkev-creator/PMO#2). Paths are matched as the website reads them (dot segments
+resolved), so the website never has an application's request to pass on.
 
-| Host | Served by | Notes |
+| Host and path | Served by | Notes |
 | --- | --- | --- |
-| `bizomat.ai` | web | Canonical website |
-| `www.bizomat.ai` | proxy | 301 to `https://bizomat.ai` with the same path and query |
-| `work.bizomat.ai`, `work.kevos.com` | work | Every path unchanged, WebSockets included |
-| `cad.bizomat.ai`, `cados.kevos.com` | cad | Every path unchanged: MCP, OAuth, device and add-in links. `cad.bizomat.ai` is CAD Automation's own address; `cados.kevos.com` stays the canonical one (`OPENSKETCH_PUBLIC_URL`) until `cad.bizomat.ai` is verified (section 6a) |
-| `kevos.com`, `www.kevos.com` | proxy | 301 to `https://bizomat.ai` with the same path and query (GET, HEAD); form posts to `/api/*` go to web |
-| `bizomat.fly.dev` | web, plus a preview switch | `/__preview/work`, `/__preview/cad`, `/__preview/web`, `/__preview/clear` route one browser to a service before DNS moves (only while `BIZOMAT_PREVIEW_ROUTING=1`) |
+| `bizomat.ai`: `/cad`, `/cad/...` | cad | CAD Automation (`OPENSKETCH_PUBLIC_URL = "https://bizomat.ai/cad"`): pages, MCP at `/cad/mcp`, OAuth, the add-in and Companion links. Every page carries a Content Security Policy (CADOS#15): bizomat.ai is one origin for three products |
+| `bizomat.ai`: `/.well-known/oauth-protected-resource...`, `/.well-known/oauth-authorization-server...`, `/.well-known/openid-configuration...` | cad | RFC 9728 and RFC 8414 put the OAuth metadata of `https://bizomat.ai/cad/mcp` at the root of the host (`/.well-known/oauth-protected-resource/cad/mcp`, `/.well-known/oauth-authorization-server/cad`) |
+| `bizomat.ai`: `/mcp...`, `/solidworks/mcp...`, `/oauth/...`, `/v2/...`, `/healthz`, `/.well-known/acme-challenge/...` | cad | Root program paths, kept for connectors and computers set up while CAD answered at the root of bizomat.ai |
+| `bizomat.ai`: `/tasks`, `/tasks/...` | work | Project Management (`WORK_APP_URL = "https://bizomat.ai/tasks"`), WebSockets included. Pages start with `<base href="/tasks/">`; the session cookie is scoped to `/tasks` |
+| `bizomat.ai`: `/CAD...`, `/Tasks/...` in any case but lowercase | proxy | GET and HEAD: 301 to the lowercase path (other methods reach the website, which has nothing there) |
+| `bizomat.ai`: everything else | web | The website. The CAD Automation product page is `/cad-automation/` (`/cad` is the application) |
+| `www.bizomat.ai` | proxy | 301 (308 for other methods) to `https://bizomat.ai` with the same path and query |
+| `cados.kevos.com` | cad | CAD Automation's old address, every path at the root: pages answer 301 to the same path under `https://bizomat.ai/cad`; programs (MCP, OAuth, the device and add-in links) keep working there with that address in their metadata (`OPENSKETCH_ALIAS_HOSTS` and `OPENSKETCH_REDIRECT_HOSTS`), so connectors and computers set up with it carry on |
+| `work.kevos.com` | work | Project Management's old address, every path at the root, WebSockets included. Once `WORK_CANONICAL_URL` is set (section 7) its pages answer 301 to `https://bizomat.ai/tasks/...`; `/api/` and the files keep answering for open tabs |
+| `kevos.com`, `www.kevos.com` | proxy | 301 to `https://bizomat.ai` with the same path and query (GET, HEAD); `/cad` and `/cad/`, the old CAD Automation page, to `https://bizomat.ai/cad-automation/`; form posts to `/api/*` go to web |
+| `bizomat.fly.dev` | as bizomat.ai, by path; plus a preview switch | `/cad/` and `/tasks/` work there before DNS moves. `/__preview/cad`, `/__preview/work`, `/__preview/web` send every path of one browser to one service at the root, as the old addresses serve it; `/__preview/clear` returns (only while `BIZOMAT_PREVIEW_ROUTING=1`) |
+| `cad.bizomat.ai`, `work.bizomat.ai` | nobody (421) | Not used: no subdomains |
 
 ## 3. Before the first deploy (owner, once)
 
@@ -64,10 +73,11 @@ the Worker does, and `apps/cad` and `apps/work` must take the path changes made 
      `CAD_GOOGLE_CLIENT_ID` and `CAD_GOOGLE_CLIENT_SECRET`, `OPENSKETCH_ACCESS_CODE`.
    - and any other `OPENSKETCH_*` secret that `fly secrets list -a cados` shows (for example `OPENSKETCH_KEY_SECRET`
      or `OPENSKETCH_MCP_TOKEN`), with the same values.
-4. **Google sign-in** (only if used): add the new redirect URIs to each Google OAuth client:
-   `https://work.bizomat.ai/api/auth/oauth/google/callback` (Project Management) and
-   `https://cad.bizomat.ai/auth/google/callback` (CAD Automation builds it from the host the person uses). Keep the
-   kevos.com ones during the rollback window.
+4. **Google sign-in** (only if used): add the redirect URIs under bizomat.ai to each Google OAuth client:
+   `https://bizomat.ai/tasks/api/auth/oauth/google/callback` (Project Management) and
+   `https://bizomat.ai/cad/auth/google/callback` (CAD Automation; each app builds it from the address the sign-in
+   started on, path included). Keep `https://work.kevos.com/api/auth/oauth/google/callback` while work.kevos.com
+   serves pages, and the other kevos.com ones during the rollback window.
 
 ## 4. Deploy
 
@@ -84,34 +94,45 @@ the Worker does, and `apps/cad` and `apps/work` must take the path changes made 
 
 1. `fly status -a bizomat`: four Machines started, every check passing.
 2. Smoke test against the preview host: `node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode preview`.
-3. In a browser on `https://bizomat.fly.dev`: the website; then `/__preview/work` (Project Management sign-in page)
-   and `/__preview/cad` (CAD Automation product page and sign-in); `/__preview/clear` to return.
+   It checks the website, `/cad/` and `/tasks/` there by path, and the old addresses through the preview cookie.
+3. In a browser on `https://bizomat.fly.dev`: the website; `/cad/` (CAD Automation's product page and sign-in, every
+   link under `/cad`) and `/tasks/` (Project Management's sign-in page); then `/__preview/cad` and `/__preview/work`
+   show each app at the root, as `cados.kevos.com` and `work.kevos.com` serve it; `/__preview/clear` to return.
 4. For data cutovers, the migration reports show no unexplained difference (`BIZOMAT-MIGRATION.md`).
 
 ## 6. Domains, in order
 
+bizomat.ai carries all three products by path, so the step that moves bizomat.ai also moves CAD Automation's live
+address (`https://bizomat.ai/cad`: AI apps' connectors and paired computers use it since CADOS#14) and Project
+Management's (`/tasks`). Project Management moves first on its own host; then bizomat.ai and `cados.kevos.com` move
+together with the CAD data, in one window.
+
 Certificates first: for each host, `fly certs add <host> -a bizomat`, then `fly certs setup <host> -a bizomat`
 shows the `_acme-challenge` CNAME to add. With it, Fly issues the certificate before any traffic moves (DNS-01
-validation). Records for Fly must be **DNS only** in Cloudflare (grey cloud), as `cados.kevos.com` is today.
+validation). Records for Fly must be **DNS only** in Cloudflare (grey cloud), as `cados.kevos.com` is today; the
+proxy then sees the visitor's own address (`PROXY_TRUST_CLOUDFLARE` stays off). Where the `cados` app holds a name's
+certificate and Fly refuses it on `bizomat`, remove it there in the same window (`fly certs remove <host> -a cados`).
 
 Before changing any record, write down its current value in the cutover log; that value is the rollback. Lower the
 TTL of each record that will change to 60 seconds a day before. Never change the kevos.com MX, SPF, DKIM or DMARC
-records. After each host: `node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode live`. The exact
+records. After each step: `node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode live`. The exact
 per-host steps are in `infrastructure/README.md`, "DNS cutover".
 
 | Step | Host | Change | When |
 | --- | --- | --- | --- |
-| 1 | `bizomat.ai`, `www.bizomat.ai` | A and AAAA records to the app's addresses (`fly ips list -a bizomat`; allocate a dedicated IPv4 with `fly ips allocate-v4` if the shared one is not wanted) | After section 5 passes |
-| 2 | `work.bizomat.ai`, `cad.bizomat.ai` | CNAME to `bizomat.fly.dev` (or the same A and AAAA records) | After step 1; reachable before any data moves, so test with throwaway accounts only, then empty the volumes again |
-| 3 | `work.kevos.com` | Project Management data cutover (`BIZOMAT-MIGRATION.md`), then: remove the custom domain from the `workos-platform-preview` Worker and add a DNS-only CNAME `work` to `bizomat.fly.dev` | After its data is imported and verified |
-| 4 | `cados.kevos.com` | CAD Automation data cutover, then: point `_acme-challenge.cados.kevos.com` at the target `fly certs setup` shows for `bizomat`, wait for the certificate, and change the DNS-only CNAME `cados` from `cados.fly.dev` to `bizomat.fly.dev` (if Fly refuses the certificate because `cados` holds the name, remove it there in the same window: `fly certs remove cados.kevos.com -a cados`) | After its data is imported and verified |
-| 5 | `kevos.com`, `www.kevos.com` | Recommended (option A): a Cloudflare redirect rule on the kevos.com zone (Rules, Redirect Rules): when the hostname is `kevos.com` or `www.kevos.com` and the path does not start with `/api/` (cached pages may still post forms there; the Worker keeps answering them), dynamic redirect to `concat("https://bizomat.ai", http.request.uri.path)`, status 301, query string preserved. Option B: move both records to Fly (DNS only) and let the proxy redirect | When the owner decides kevos.com should become bizomat.ai |
+| 1 | `work.kevos.com` | Project Management data cutover (`BIZOMAT-MIGRATION.md`), then: remove the custom domain from the `workos-platform-preview` Worker and add a DNS-only CNAME `work` to `bizomat.fly.dev`. If the website's `TASKS` service binding was made (section 6a, step 5), comment it out and merge first, so that `bizomat.ai/tasks` sends people to `work.kevos.com` (now the bizomat app) and not to the old Worker | After its data is imported and verified |
+| 2 | `bizomat.ai`, `www.bizomat.ai`, `cados.kevos.com` | One window. CAD Automation data cutover (`BIZOMAT-MIGRATION.md`, `infrastructure/migrate/cad/README.md`: the `cados` app is frozen first). Then: `_acme-challenge.bizomat.ai`, `_acme-challenge.www.bizomat.ai` and `_acme-challenge.cados.kevos.com` to the targets `fly certs setup` shows for `bizomat`, and wait for the three certificates; the `bizomat.ai` A and AAAA records to the app's addresses (`fly ips list -a bizomat`; a dedicated IPv4 with `fly ips allocate-v4` if the shared one is not wanted), **DNS only** (proxied until now if section 6a was followed: the Worker then stops seeing bizomat.ai); `www.bizomat.ai` a DNS-only CNAME to `bizomat.fly.dev`; the DNS-only CNAME `cados` from `cados.fly.dev` to `bizomat.fly.dev`. Check: `/`, `/cad/`, `/tasks/`, an AI app connected with `https://bizomat.ai/cad/mcp` and one with `https://cados.kevos.com/mcp` both list the tools, a paired computer reconnects | After step 1, and after CAD's data is imported and verified. `apps/cad` does not have CADOS#11 yet (no server password, setup mode, suspension), which the `cados` app runs: take it in, or check its data against this code, before the CAD data moves (`BIZOMAT-PROJECT-STATUS.md`, section 6) |
+| 3 | `kevos.com`, `www.kevos.com` | Recommended (option A): Cloudflare redirect rules on the kevos.com zone (Rules, Redirect Rules). First, when the hostname is `kevos.com` or `www.kevos.com` and the path is `/cad` or `/cad/` (the old CAD Automation page; on bizomat.ai `/cad` is the application): static redirect to `https://bizomat.ai/cad-automation/`, status 301, query string preserved. Then, for the same hostnames when the path does not start with `/api/` (cached pages may still post forms there; the Worker keeps answering them): dynamic redirect to `concat("https://bizomat.ai", http.request.uri.path)`, status 301, query string preserved. Option B: move both records to Fly (DNS only) and let the proxy redirect (it has both rules) | When the owner decides kevos.com should become bizomat.ai |
 
-Option A keeps the Worker route `kevos.com/*` in place behind the rule, so turning the rule off is the rollback, and
-nothing about kevos.com moves to Fly. Option B is described in `infrastructure/README.md`; the proxy already answers
-kevos.com with the same redirects.
+Rollback of step 2: the four records back to their logged values (bizomat.ai and www to the `cados` app, proxied again
+if they were; `cados` back to `cados.fly.dev`), `freeze.sh cont` on `cados`; anything written on `bizomat` since the
+switch stays there (`BIZOMAT-ROLLBACK.md`). Option A keeps the Worker route `kevos.com/*` in place behind the rules,
+so turning the rules off is the rollback, and nothing about kevos.com moves to Fly. Option B is described in
+`infrastructure/README.md`; the proxy already answers kevos.com with the same redirects.
 
 ### 6a. Today's deployments under bizomat.ai (owner's decision, 5 Nov 2026: everything under bizomat.ai, no subdomains)
+
+_Superseded on 6 Nov 2026 by 6b: the website moved to Fly.io; this routing through Cloudflare is not used._
 
 bizomat.ai is the BIZOMAT platform: the website at the root and each application under a path of its own. This
 repository's Worker (`throbbing-block-6c61`, `src/worker.ts`) answers bizomat.ai and sends each path to what runs it
@@ -151,7 +172,40 @@ CAD settings on the bizomat.ai zone (detail: jogkev-creator/CADOS, `docs/KEVOS-C
 
 `cad.bizomat.ai` is not used: the certificate added with `fly certs add cad.bizomat.ai -a cados` can stay or go
 (`fly certs remove cad.bizomat.ai -a cados`), and no DNS record is needed. If a record is ever made, the CAD app
-treats the name as an old host (pages 301 to `https://bizomat.ai/cad`).
+treats the name as an old host (pages 301 to `https://bizomat.ai/cad`); the bizomat app's proxy refuses it (421).
+
+This is today's deployment. The single-app plan routes the same paths in the bizomat app's proxy (section 2); after
+section 6, step 2, bizomat.ai's records point at the bizomat app (DNS only) and this Worker serves kevos.com alone.
+
+### 6b. The website on Fly.io (owner's decision, 6 Nov 2026; replaces the Cloudflare routing of 6a)
+
+The owner chose Fly.io for the BIZOMAT website, deploys from the laptop (CADOS `tools/laptop/bizomat.ps1`), and the
+old KEVOS site back on kevos.com.
+
+| Address | Served by |
+| --- | --- |
+| `bizomat.ai/` and every website page | Fly app `bizomat`: the router (`proxy`) and the website (`web`), `fly.website.toml` |
+| `bizomat.ai/cad/...`, CAD's OAuth discovery and root program paths | Fly app `cados`, reached by the router over the private network (`cados.internal:8080`; CADOS listens on `::` since jogkev-creator/CADOS#16) |
+| `bizomat.ai/tasks/...` | 302 to `https://work.kevos.com/...` (prefix off; `TASKS_REDIRECT_ORIGIN`) until Project Management moves into `bizomat` with its data (`fly.toml`, the full plan) |
+| `kevos.com` | Cloudflare Worker `throbbing-block-6c61`: the KEVOS site (the version built from c79e297), no longer deployed from this repository |
+| `cados.kevos.com`, `cados.fly.dev` | `cados` directly, as before (pages 301 to `bizomat.ai/cad`, programs served there) |
+
+| Order | Owner's step | Check | Rollback |
+| --- | --- | --- | --- |
+| 1 | Cloudflare, Worker `throbbing-block-6c61`: Settings > Builds > Disconnect; Deployments: deploy the version built from c79e297 (5 Nov); Settings > Domains & Routes: remove `bizomat.ai/*` and `www.bizomat.ai/*` | kevos.com is the KEVOS site; its assistant and forms answer | Deploy the later version again |
+| 2 | `.\bizomat.ps1 deploy cad` (CADOS `main` with #16) | `https://bizomat.ai/cad/` and `https://cados.kevos.com/docs` as before | `fly releases -a cados --image`, then `fly deploy -a cados --image <previous>` |
+| 3 | Optional, for the assistant and AI search on Fly: a Cloudflare API token with Workers AI permission, then `fly secrets set CF_ACCOUNT_ID=<account id> CF_AI_TOKEN=<token> -a bizomat` | `/api/chat` answers questions | `fly secrets unset ...` (search falls back to keywords) |
+| 4 | `.\bizomat.ps1 deploy website`: creates `bizomat` the first time (after asking), deploys, checks `bizomat.fly.dev` | The script's live checks: the router's version, the website, its APIs, `/cad/` through the private network, `/tasks/` 302 | `fly releases -a bizomat --image`, then redeploy the previous image; or leave bizomat.ai on `cados` (step 5 not done) |
+| 5 | Certificates, then DNS (bizomat.ai zone, all records DNS only): `fly certs add bizomat.ai -a bizomat` and `fly certs add www.bizomat.ai -a bizomat`. If Fly refuses because `cados` holds the name, first `fly certs remove bizomat.ai -a cados` (bizomat.ai/cad is then without a certificate until step 5 ends: do it in one sitting). Point `_acme-challenge.bizomat.ai` at the target `fly certs setup bizomat.ai -a bizomat` shows; when `fly certs show bizomat.ai -a bizomat` says Issued, change the `bizomat.ai` A and AAAA records to `fly ips list -a bizomat` and add `www` (CNAME `bizomat.fly.dev`). Then `fly certs remove bizomat.ai -a cados` if still there | `https://bizomat.ai/` is the website; `/cad/` CAD Automation; `/CAD` 301; `/tasks/` 302 to work.kevos.com; an AI app connected with `https://bizomat.ai/cad/mcp` and one with `https://cados.kevos.com/mcp` both list tools | The A and AAAA records back to `66.241.125.206` and `2a09:8280:1::1e8:c21b:1` (`cados`) and its certificate back (`fly certs add bizomat.ai -a cados`) |
+
+Known differences on Fly, compared with the Worker:
+- The site's contact address is `info@bizomat.ai` (owner, 6 Nov 2026: `SITE.email`, footer, contact and privacy
+  pages). It receives mail only once bizomat.ai has mail records (no MX record on 6 Nov). The contact form is set up
+  later: until then it answers "Please email info@bizomat.ai" (the Worker sent mail with Cloudflare's email binding,
+  which Fly does not have, and the Resend adapter, `src/server/contact/mail.ts`, is not wired to the form yet).
+- DNS changes on bizomat.ai (step 5) touch only the apex and `www` A, AAAA and CNAME records and `_acme-challenge`:
+  never the MX, SPF, DKIM or DMARC records that mail for info@bizomat.ai uses.
+- The assistant and AI search need step 3; without it, search runs on keywords and the assistant says it is off.
 
 ## 7. After cutover
 
@@ -160,11 +214,15 @@ treats the name as an old host (pages 301 to `https://bizomat.ai/cad`).
   `WORK_SESSION_TTL_HOURS`). Closing sign-up (new people then need an invitation) or changing the session length is
   the owner's decision.
 - CAD Automation's public address is `OPENSKETCH_PUBLIC_URL = "https://bizomat.ai/cad"` (as on the `cados` app). The
-  old hosts keep serving their own OAuth metadata, so connections made with them keep working.
+  old address `cados.kevos.com` keeps serving its own OAuth metadata, so connections made with it keep working.
+- When `https://bizomat.ai/tasks` is checked, uncomment `WORK_CANONICAL_URL = "https://bizomat.ai/tasks"` in
+  `fly.toml` and deploy: pages asked for on `work.kevos.com` then answer 301 to the same path there, while `/api/`
+  and the files keep answering for open tabs. People sign in once more under `/tasks` (a session belongs to its host).
 - Website links to the apps follow `PUBLIC_CAD_APP_URL` and `PUBLIC_WORK_APP_URL` (build-time settings; defaults
   `https://bizomat.ai/cad` and `https://bizomat.ai/tasks`).
 - Merging to `main` also publishes the website at kevos.com through Cloudflare's GitHub integration. Leave it on
-  while kevos.com is served by the Worker; disconnect it after step 5 if the Worker is no longer used.
+  while kevos.com is served by the Worker; disconnect it after section 6, step 3 (option B) if the Worker is no
+  longer used.
 - Leave the old deployments running for the rollback window (`BIZOMAT-ROLLBACK.md`).
 
 ## 8. What the owner must do (not possible from this session)
@@ -172,7 +230,7 @@ treats the name as an old host (pages 301 to `https://bizomat.ai/cad`).
 1. Confirm the registration and DNS provider of `bizomat.ai` (not verifiable here) and give access to change its
    records.
 2. Create the Fly token and the app (section 3, steps 1 and 2).
-3. Set `OPENSKETCH_PASSWORD` and any optional secrets (section 3, step 4).
+3. Set `OPENSKETCH_PASSWORD` and any optional secrets (section 3, step 3).
 4. Run the deploy workflow, then the checks in section 5.
 5. Make each DNS change in section 6, in order, after its checks pass.
 6. Provide a Cloudflare API token with D1 read and R2 read for the Project Management export

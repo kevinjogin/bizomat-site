@@ -29,6 +29,7 @@ bad() {
 APP_ENV=(
   -e UPSTREAM_WEB=http://web:8003 -e UPSTREAM_WORK=http://work:8002 -e UPSTREAM_CAD=http://cad:8001
   -e BIZOMAT_PREVIEW_ROUTING=1 -e WORK_APP_URL=https://work.example.test -e WORK_ALLOW_SIGNUP=false
+  -e WORK_CANONICAL_URL=https://example.test/tasks
   -e OPENSKETCH_PUBLIC_URL=https://cad.example.test -e OPENSKETCH_PASSWORD=throwaway-cad-password
   -e WORK_GOOGLE_CLIENT_ID=work-id -e WORK_GOOGLE_CLIENT_SECRET=throwaway-work-secret
   -e CAD_GOOGLE_CLIENT_ID=cad-id -e CAD_GOOGLE_CLIENT_SECRET=throwaway-cad-secret
@@ -99,6 +100,7 @@ as_root 'mkdir -p /t/workvol/work/.secrets /t/workvol/work/files
 run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work.json"
 [ "$(uid "$tmp/work.json")" = 10003 ] || bad "work uid"
 [ "$(val "$tmp/work.json" APP_URL)" = https://work.example.test ] || bad "APP_URL from WORK_APP_URL"
+[ "$(val "$tmp/work.json" CANONICAL_URL)" = https://example.test/tasks ] || bad "CANONICAL_URL from WORK_CANONICAL_URL"
 [ "$(val "$tmp/work.json" APP_NAME)" = "BIZOMAT Project Management" ] || bad "APP_NAME default"
 [ "$(val "$tmp/work.json" ALLOW_SIGNUP)" = false ] && [ "$(val "$tmp/work.json" SESSION_TTL_HOURS)" = 72 ] || bad "work defaults"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_SECRET)" = throwaway-work-secret ] || bad "GOOGLE_CLIENT_SECRET must be the work one"

@@ -5,7 +5,7 @@ import { createContext, runInContext } from 'node:vm';
 import { buildSync, transformSync } from 'esbuild';
 import { normalise, validate, HONEYPOT_FIELD } from '../src/lib/contact.ts';
 
-const fallback = 'Your message could not be sent. Please try again or email kevin@kevos.com.';
+const fallback = 'Your message could not be sent. Please try again or email info@bizomat.ai.';
 const valid = { name: 'Alex Example', company: 'Example Pty Ltd', email: 'alex@example.com', phone: '', service: 'Other', message: 'Please help review this recurring engineering problem.', contactMethod: 'Email', consent: 'on' };
 function bundle(path: string, globalName: string) {
   return buildSync({ entryPoints: [path], bundle: true, write: false, platform: 'browser', format: 'iife', globalName, define: { 'import.meta.env': '{}' } }).outputFiles[0].text;
@@ -43,7 +43,7 @@ function formHarness(send: () => Promise<any>, captchaPromise?: Promise<any>) {
   const stats = { formResets: 0, widgetResets: 0, consumed: 0, requests: 0 };
   const widget = { token: () => 'fresh-token', reset: () => { stats.widgetResets++; }, consume: () => { stats.consumed++; } };
   const form = {
-    dataset: { email: 'kevin@kevos.com' },
+    dataset: { email: 'info@bizomat.ai' },
     querySelector: (selector: string) => ({ '[data-status]': status, '[data-submit]': submit, '[data-captcha]': {}, '[data-captcha-error]': captchaError } as Record<string, unknown>)[selector] || null,
     querySelectorAll: () => [],
     addEventListener: (event: string, fn: Function) => { listeners[event] = fn; },

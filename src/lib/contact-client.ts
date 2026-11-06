@@ -4,7 +4,7 @@ import { SITE } from '../config/site.ts';
 import { enquirySubject, type ContactInput, type ContactResponse } from './contact.ts';
 
 const SUCCESS = 'Thank you. Your enquiry has been sent and BIZOMAT will reply as soon as possible.';
-export const CONTACT_FAILURE_MESSAGE = 'Your message could not be sent. Please try again or email kevin@kevos.com.';
+export const CONTACT_FAILURE_MESSAGE = `Your message could not be sent. Please try again${SITE.email ? ` or email ${SITE.email}` : ' later'}.`;
 const FAILURE = CONTACT_FAILURE_MESSAGE;
 
 export interface Submission extends ContactInput {

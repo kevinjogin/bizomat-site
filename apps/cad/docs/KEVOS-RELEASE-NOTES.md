@@ -1,5 +1,15 @@
 # BIZOMAT CAD Automation for SOLIDWORKS release notes (CADOS for SOLIDWORKS in 0.12.0 to 0.12.2, KEVOS Bridge up to 0.11)
 
+## 0.12.4 (BIZOMAT CAD Automation for SOLIDWORKS; test build)
+
+- CAD Automation lives at **https://bizomat.ai/cad** (everything under bizomat.ai). New installs suggest that address
+  in the pairing window (`GATEWAY_URL` still sets another); the uninstall help link is https://bizomat.ai/cad/docs.
+  Computers paired with https://cados.kevos.com keep it and keep working: the server answers programs there.
+- A computer paired with an address that has a path signs each request's path relative to it (`/v2/device/hello` for
+  `https://bizomat.ai/cad/v2/device/hello`), as it always has (`docs/BRIDGE-PROTOCOL.md`).
+- Uninstall removes every COM key of the add-in and the launcher (`ForceDeleteOnUninstall`), not only their values.
+  The same changes as CADOS for SOLIDWORKS 0.12.3 (jogkev-creator/CADOS#14), on the BIZOMAT build.
+
 ## 0.12.3 (BIZOMAT CAD Automation for SOLIDWORKS; test build)
 
 - **BIZOMAT CAD Automation.** The add-in is listed in Tools > Add-Ins as **BIZOMAT CAD Automation**; its

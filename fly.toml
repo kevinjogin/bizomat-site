@@ -1,9 +1,10 @@
 # BIZOMAT platform on Fly.io: one app, four process groups, one image (infrastructure/fly/Dockerfile).
 #
-#   visitor --TLS--> Fly edge --> proxy :8080  (the only public service; routes by Host header)
+#   visitor --TLS--> Fly edge --> proxy :8080  (the only public service; routes bizomat.ai by path, others by host)
 #                                   |--6PN--> web  :8003   bizomat.ai (+ kevos.com form posts to /api)
-#                                   |--6PN--> work :8002   work.bizomat.ai, work.kevos.com     volume work_data
-#                                   '--6PN--> cad  :8001   cad.bizomat.ai, cados.kevos.com     volume cad_data
+#                                   |--6PN--> work :8002   bizomat.ai/tasks, work.kevos.com      volume work_data
+#                                   '--6PN--> cad  :8001   bizomat.ai/cad, cados.kevos.com       volume cad_data
+# Everything lives under bizomat.ai, no subdomains (owner's decision, 5 Nov 2026): infrastructure/proxy/routes.mjs.
 #
 # Deploy: .github/workflows/bizomat-deploy.yml (run by hand), or from the repository root:
 #   flyctl deploy --remote-only --config fly.toml --ha=false --build-arg BIZOMAT_VERSION=$(git rev-parse --short HEAD)
@@ -52,19 +53,26 @@ kill_timeout = 15
   # https://bizomat.fly.dev/__preview/{cad,work,web,clear} routes one browser to a backend before DNS moves.
   # Set to "0" once the real hosts are live.
   BIZOMAT_PREVIEW_ROUTING = "1"
-  # work: passed to the work role as APP_URL, APP_NAME, ENVIRONMENT, ALLOW_SIGNUP, SESSION_TTL_HOURS
-  WORK_APP_URL = "https://work.bizomat.ai"
+  # work: passed to the work role as APP_URL, APP_NAME, ENVIRONMENT, ALLOW_SIGNUP, SESSION_TTL_HOURS (and
+  # CANONICAL_URL). Project Management lives at bizomat.ai/tasks (apps/work/src/worker/mount.ts serves the path);
+  # work.kevos.com, its old address, is served at the root of its host.
+  WORK_APP_URL = "https://bizomat.ai/tasks"
+  # After the cutover is checked (docs/BIZOMAT-DEPLOYMENT.md, section 6): pages asked for on work.kevos.com then
+  # answer 301 to the same path under bizomat.ai/tasks; /api/ and the files keep answering there for open tabs.
+  # WORK_CANONICAL_URL = "https://bizomat.ai/tasks"
   WORK_APP_NAME = "BIZOMAT Project Management"
   WORK_ENVIRONMENT = "production"
   # Sign-up and session length as work.kevos.com runs today (apps/work/wrangler.jsonc, env.preview): open sign-up,
   # 72-hour sessions. Change only by the owner's decision (closing sign-up means new people need an invitation).
   WORK_ALLOW_SIGNUP = "true"
   WORK_SESSION_TTL_HOURS = "72"
-  # cad: cados.kevos.com stays the canonical address (OAuth metadata, links) until cad.bizomat.ai is verified;
-  # both names are served. No host is redirected (the proxy keeps every path on both hosts).
-  OPENSKETCH_PUBLIC_URL = "https://cados.kevos.com"
-  OPENSKETCH_ALIAS_HOSTS = "cad.bizomat.ai,cados.kevos.com"
-  OPENSKETCH_REDIRECT_HOSTS = ""
+  # cad: CAD Automation lives at bizomat.ai/cad (apps/cad/opensketch/canonical.py serves the path and writes it into
+  # every link; the OAuth metadata of https://bizomat.ai/cad/mcp is at the root of bizomat.ai, RFC 8414 and 9728).
+  # cados.kevos.com, its old address: pages answer 301 to https://bizomat.ai/cad, and programs (MCP, OAuth, the add-in
+  # link, the Companion's API) keep working at its root with its own address, for connectors set up with it.
+  OPENSKETCH_PUBLIC_URL = "https://bizomat.ai/cad"
+  OPENSKETCH_ALIAS_HOSTS = "cados.kevos.com"
+  OPENSKETCH_REDIRECT_HOSTS = "cados.kevos.com"
 
 # The ONLY service, and only on the proxy group. A [[services]] or [http_service] on web, work or cad would be
 # exposed on the app's public IPs (services are not private per group); they are reached only over 6PN.

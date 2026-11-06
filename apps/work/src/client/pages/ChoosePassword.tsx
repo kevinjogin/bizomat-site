@@ -3,6 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { errorMessage, post } from '../lib/api';
 import { useSession } from '../lib/session';
 import { Field } from '../components/ui/ui';
+import { appUrl } from '../lib/base';
 import { AuthLayout } from './Auth';
 
 /**
@@ -35,7 +36,7 @@ export function ChoosePasswordPage() {
     try {
       await post('/auth/logout');
     } finally {
-      window.location.assign('/login');
+      window.location.assign(appUrl('/login'));
     }
   };
   return (

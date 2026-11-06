@@ -6,8 +6,8 @@ The product was called CADOS by KEVOS until November 2026. Internal names stay a
 Python package, OPENSKETCH_* settings, cookies, the add-in's COM ids and file names, the MCP tool names, cados.css):
 only what people read changed.
 
-Links to the platform are settings, because its domains go live separately: BIZOMAT_SITE_URL (default
-https://bizomat.ai) and BIZOMAT_WORK_URL (default https://work.bizomat.ai).
+Links to the platform are settings: BIZOMAT_SITE_URL (default https://bizomat.ai) and BIZOMAT_WORK_URL (default
+https://bizomat.ai/tasks: everything lives under bizomat.ai, no subdomains).
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ def site_url() -> str:
 
 def work_url() -> str:
     """BIZOMAT Project Management (BIZOMAT_WORK_URL)."""
-    return _url("BIZOMAT_WORK_URL", "https://work.bizomat.ai")
+    return _url("BIZOMAT_WORK_URL", "https://bizomat.ai/tasks")
 
 
 def site_page(path: str) -> str:

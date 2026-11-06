@@ -12,6 +12,7 @@ import { MenuItem, MenuSep, Popover, useConfirm, useToast } from '../components/
 import { Cell, type CellCtx } from './cells/Cell';
 import type { BoardActions } from './useBoard';
 import { useCreateDocument } from '../components/layout/CreateDialogs';
+import { BASE, appUrl } from '../lib/base';
 
 interface ItemDetail {
   item: ItemDTO;
@@ -102,7 +103,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
             </div>
             {menu ? (
               <Popover anchor={menuRef} onClose={() => setMenu(false)} align="end">
-                <MenuItem icon="link" onClick={() => { setMenu(false); navigator.clipboard?.writeText(`${location.origin}/w/${bundle.board.workspaceId}/boards/${bundle.board.id}?item=${item.id}`).then(() => toast('Link copied')); }}>Copy link</MenuItem>
+                <MenuItem icon="link" onClick={() => { setMenu(false); navigator.clipboard?.writeText(`${location.origin}${BASE}/w/${bundle.board.workspaceId}/boards/${bundle.board.id}?item=${item.id}`).then(() => toast('Link copied')); }}>Copy link</MenuItem>
                 {canEdit ? (
                   <>
                     <MenuItem icon="copy" onClick={() => { setMenu(false); actions.duplicateItem(item.id); toast('Item duplicated'); }}>Duplicate</MenuItem>
@@ -535,7 +536,7 @@ function DocsTab({ item, workspaceId, canEdit }: { item: ItemDTO; workspaceId: s
       {q.isLoading ? <Loading /> : q.data?.length ? (
         <div className="list card">
           {q.data.map((d) => (
-            <a key={d.id} className="list-row" href={`/w/${workspaceId}/docs/${d.id}`}>
+            <a key={d.id} className="list-row" href={appUrl(`/w/${workspaceId}/docs/${d.id}`)}>
               <Icon name="doc" /> <span className="grow ellipsis">{d.title}</span> <span className="muted small">{timeAgo(d.updatedAt)}</span>
             </a>
           ))}

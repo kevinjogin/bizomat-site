@@ -201,7 +201,11 @@ class Endpoint:
     def configure(self):
         # The SDK's session manager has a single-use lifespan: a fresh one for each application startup (including
         # repeated test lifespans), behind the same mounted gates.
-        mcp.streamable_http_app(stateless_http=True, json_response=True,
+        # Answers stream as server-sent events: the headers go at once and a comment every 15 s (sse-starlette's
+        # ping) keeps a tool that waits minutes for SOLIDWORKS (up to 900 s) alive through a proxy that ends a silent
+        # response (Cloudflare answers 524 after 100 s without a byte; the BIZOMAT platform's proxy closes an idle
+        # request after 620 s).
+        mcp.streamable_http_app(stateless_http=True, json_response=False,
                                 max_request_body_size=4 * ((MAX_IMPORT_BYTES + 2) // 3) + 65536,
                                 transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=False))
         self.inner = StreamableHTTPASGIApp(mcp.session_manager)

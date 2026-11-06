@@ -6,6 +6,8 @@
 //   UPSTREAM_WORK                http://work.process.bizomat.internal:8002
 //   UPSTREAM_CAD                 http://cad.process.bizomat.internal:8001
 //   BIZOMAT_PREVIEW_ROUTING      "1": the /__preview/* switch and its cookie work on *.fly.dev
+//   TASKS_REDIRECT_ORIGIN        https://work.kevos.com: bizomat.ai/tasks/... redirects there (prefix off) while Project
+//                                Management runs outside this app; unset, /tasks/... goes to UPSTREAM_WORK
 //   PROXY_CLIENT_IP_MODE         fly | socket (default: fly when FLY_APP_NAME is set, else socket); see headers.mjs
 //   PROXY_UNTRUSTED_PEERS        CIDRs never treated as Fly's edge (default fdaa::/16, the private network)
 //   PROXY_TRUST_CLOUDFLARE       "1": trust CF-Connecting-IP from Cloudflare's ranges (orange-cloud DNS only)
@@ -40,6 +42,20 @@ function list(value) {
   return String(value || '').split(',').map((s) => s.trim()).filter(Boolean);
 }
 
+function origin(value, name) {
+  if (value === undefined || value === '') return '';
+  let u;
+  try {
+    u = new URL(value);
+  } catch {
+    throw new Error(`${name} is not a URL: ${value}`);
+  }
+  if (u.protocol !== 'https:' || u.username || u.password || u.search || u.hash || (u.pathname !== '/' && u.pathname !== '')) {
+    throw new Error(`${name} must be https:// and a host only (got ${value})`);
+  }
+  return u.origin;
+}
+
 export function loadConfig(env = process.env) {
   const mode = env.PROXY_CLIENT_IP_MODE || (env.FLY_APP_NAME ? 'fly' : 'socket');
   if (mode !== 'fly' && mode !== 'socket') throw new Error(`PROXY_CLIENT_IP_MODE must be fly or socket (got ${mode})`);
@@ -54,6 +70,7 @@ export function loadConfig(env = process.env) {
       cad: env.UPSTREAM_CAD || DEFAULT_UPSTREAMS.cad,
     },
     previewRouting: env.BIZOMAT_PREVIEW_ROUTING === '1',
+    tasksOrigin: origin(env.TASKS_REDIRECT_ORIGIN, 'TASKS_REDIRECT_ORIGIN'),
     trust: {
       mode,
       untrusted: cidrList(env.PROXY_UNTRUSTED_PEERS !== undefined ? list(env.PROXY_UNTRUSTED_PEERS) : SIX_PN),

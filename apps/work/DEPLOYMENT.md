@@ -87,9 +87,37 @@ npx wrangler secret put GOOGLE_CLIENT_SECRET --env production
    - `https://workos-platform-production.<subdomain>.workers.dev/api/auth/oauth/google/callback`
    - `https://workos-platform-preview.<subdomain>.workers.dev/api/auth/oauth/google/callback`
    - `http://localhost:8787/api/auth/oauth/google/callback`
+   - `https://bizomat.ai/tasks/api/auth/oauth/google/callback` (under the BIZOMAT website's address, below)
 5. Store the client ID/secret as Worker secrets (above) or, locally, in `.dev.vars` (see `.dev.vars.example`). The "Continue with Google" button appears automatically once both are set.
 
 Branch alias URLs change per branch, so Google sign-in is only available on the fixed preview and production URLs; password sign-in works everywhere.
+
+## Under bizomat.ai/tasks
+
+The BIZOMAT website owns bizomat.ai and hands `/tasks/...` to this Worker through a service binding (`TASKS` in the
+website's `wrangler.toml`), with the address unchanged. The same build answers both there and at the root of its own
+host (`work.kevos.com`): `src/worker/mount.ts` serves a request under `/tasks` with the path taken off, and gives the
+root paths it writes the path back (Location headers, cookie paths, invitation links, the Google return address).
+Every page starts with `<base href>` (`/` or `/tasks/`), and the client builds its addresses from it
+(`src/client/lib/base.ts`; the build's own files are relative, `vite.config.ts` `base: './'`). Under `/tasks` the
+session cookie is `__Secure-workos_sid` with `Path=/tasks`, so the website and the other applications on bizomat.ai
+never receive it. People sign in once more there: a session belongs to the host it was made on.
+
+Order (the owner's steps; each is reversible):
+
+1. Deploy this version to the Worker that serves `work.kevos.com` (`workos-platform-preview`). `work.kevos.com` keeps
+   working as before. If Google sign-in is on, add the redirect URI above first.
+2. In the website repository, uncomment the `TASKS` service binding (`service = "workos-platform-preview"`) and
+   publish the website: `https://bizomat.ai/tasks/` is then this app (until then the website redirects there).
+3. When `bizomat.ai/tasks` is checked, set the variable `CANONICAL_URL = "https://bizomat.ai/tasks"` on this Worker:
+   pages asked for on `work.kevos.com` then answer 301 to the same path under `bizomat.ai/tasks`, while `/api/` and
+   the static files keep answering there for tabs already open.
+
+On the BIZOMAT platform (the one Fly.io app, `fly.toml` at the repository root) the same build runs on Node
+(`docs/NODE-RUNTIME.md`): the edge proxy sends `bizomat.ai/tasks` and `/tasks/...` to the work process with the path
+unchanged, and `work.kevos.com` at the root (`infrastructure/proxy/routes.mjs`). There `APP_URL` is
+`https://bizomat.ai/tasks` (`WORK_APP_URL`), and `CANONICAL_URL` is `WORK_CANONICAL_URL`, left unset until the cutover
+is checked. The steps: `docs/BIZOMAT-DEPLOYMENT.md`, section 6.
 
 ## Continuous delivery
 

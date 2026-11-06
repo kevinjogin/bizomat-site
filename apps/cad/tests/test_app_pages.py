@@ -41,7 +41,7 @@ def test_every_section_needs_sign_in_and_carries_the_brand():
         page = owner.get(path)
         assert page.status_code == 200 and heading in page.text, path
         t = page.text
-        assert "/ui/app.js" in t and "https://bizomat.ai/" in t and "https://work.bizomat.ai/" in t, path
+        assert "/ui/app.js" in t and "https://bizomat.ai/" in t and "https://bizomat.ai/tasks/" in t, path
         assert "BIZOMAT CAD Automation" in t and 'class="product"' in t and "Project Management" in t, path
         for legal in ('href="/privacy"', "https://bizomat.ai/privacy/", "https://bizomat.ai/terms/", "https://bizomat.ai/disclaimer/"):
             assert legal in t, (path, legal)

@@ -30,15 +30,18 @@ export const BRAND = {
 export const PLATFORM_URLS = {
   website: 'https://bizomat.ai/',
   productPage: 'https://bizomat.ai/work/',
-  cad: 'https://cad.bizomat.ai/',
+  cad: 'https://bizomat.ai/cad/',
   resources: 'https://bizomat.ai/resources/',
   privacy: 'https://bizomat.ai/privacy/',
   terms: 'https://bizomat.ai/terms/',
   disclaimer: 'https://bizomat.ai/disclaimer/',
 } as const;
 
-/** Hosts that serve this app (same backend). The first is the primary address. */
-export const APP_HOSTS = ['work.bizomat.ai', 'work.kevos.com'] as const;
+/**
+ * Where this app is served (same backend). The first is the primary address: under bizomat.ai/tasks (everything lives
+ * under bizomat.ai, no subdomains); work.kevos.com is the old address, served at the root of its host.
+ */
+export const APP_HOSTS = ['bizomat.ai', 'work.kevos.com'] as const;
 
 /** The platform links shown in the app shell and on the sign-in pages, in display order. */
 export const PLATFORM_LINKS = {

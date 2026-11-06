@@ -1,7 +1,8 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { handleContact, type ContactEnv } from '../src/server/contact/handler.ts';
-import { composeContactEmail, CONTACT_FAILURE, type ContactEmail } from '../src/server/contact/cloudflare-mail.ts';
+import { readFileSync } from 'node:fs';
+import { composeContactEmail, CONTACT_EMAIL, CONTACT_FAILURE, type ContactEmail } from '../src/server/contact/cloudflare-mail.ts';
 import { enquirySubject, normalise, validate } from '../src/lib/contact.ts';
 
 const sent: ContactEmail[] = [];
@@ -124,7 +125,9 @@ test('Turnstile HTTP failures, invalid JSON and network failures return safe err
 });
 test('missing secret or binding fails before verifying and cannot fall back to log or Resend', async () => {
   for (const e of [{}, { EMAIL: env.EMAIL }, { TURNSTILE_SECRET_KEY: 'test-only-secret' }, { MAIL_PROVIDER: 'log' }, { MAIL_PROVIDER: 'resend', RESEND_API_KEY: 'test-key' }] as ContactEnv[]) {
-    assert.equal((await post(valid, e)).status, 503);
+    const response = await post(valid, e);
+    assert.equal(response.status, 503);
+    assert.match((await response.json()).message, /Please email info@bizomat\.ai\.$/, 'the visitor is given the address to write to');
   }
   assert.equal(verified.length, 0); assert.equal(sent.length, 0);
 });
@@ -193,4 +196,10 @@ test('mail composer independently strips subject header breaks and escapes every
   const email = composeContactEmail(normalise({ ...valid, name: '<Alex>', phone: '<phone>', service: '<service>' }), 'Quote\r\nBcc: bad@example.com', '<time>', '<country>');
   assert.ok(!/[\r\n]/.test(email.subject)); assert.ok(!email.html.includes('<Alex>'));
   for (const marker of ['Alex', 'phone', 'service', 'time', 'country']) assert.ok(email.html.includes(`&lt;${marker}&gt;`));
+});
+
+test('the contact messages name the address the site shows', () => {
+  const shown = readFileSync('src/config/site.ts', 'utf8').match(/^\s*email: '([^']*)',/m)?.[1];
+  assert.equal(shown, CONTACT_EMAIL, 'SITE.email and CONTACT_EMAIL differ');
+  assert.ok(CONTACT_FAILURE.endsWith(`email ${CONTACT_EMAIL}.`));
 });

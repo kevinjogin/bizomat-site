@@ -19,6 +19,7 @@ import pytest
 
 from opensketch import auth, devicebridge as db, server, sw_tools, swbridge
 from tests.bridge_fakes import FakeCompanion, Refused
+from tests.mcp_reply import rpc
 
 
 @pytest.fixture(autouse=True)
@@ -73,7 +74,7 @@ def _mcp(base, name, args):
     r = httpx.post(url, json={"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": name, "arguments": args}},
                    headers={"Accept": "application/json, text/event-stream"}, timeout=180)
     assert r.status_code == 200, r.text
-    res = r.json()["result"]
+    res = rpc(r)["result"]
     return res, json.loads(res["content"][0]["text"])
 
 
@@ -550,3 +551,64 @@ def test_an_open_server_takes_pairing_only_from_its_own_machine():
     assert remote.post("/devices/pair", data={"code": "ABCD-EFGH", "name": "x"}).status_code == 403
     local = TestClient(server.app, client=("127.0.0.1", 50000))
     assert local.post("/v2/devices/pair/start", json={"public_jwk": jwk, "name": "x"}).status_code == 200
+
+
+@pytest.fixture()
+def cad_base(monkeypatch):
+    """The server as bizomat.ai/cad runs it: its public address carries the path /cad."""
+    import uvicorn
+    port = _free_port()
+    monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", f"http://127.0.0.1:{port}/cad")
+    srv = uvicorn.Server(uvicorn.Config(server.app, host="127.0.0.1", port=port, log_level="error"))
+    th = threading.Thread(target=srv.run, daemon=True)
+    th.start()
+    url = f"http://127.0.0.1:{port}"
+    for _ in range(100):
+        try:
+            httpx.get(url + "/healthz", timeout=1)
+            break
+        except httpx.HTTPError:
+            time.sleep(0.05)
+    yield url + "/cad"
+    srv.should_exit = True
+    th.join(5)
+
+
+def test_a_computer_paired_under_a_path_works_as_on_a_host_of_its_own(cad_base, companions):
+    """The Companion signs each request's path relative to the address it paired with (https://bizomat.ai/cad), as it
+    always has; the server checks that path below the prefix. Pairing, the long poll, a command and the update
+    manifest all work under /cad."""
+    pc = FakeCompanion(cad_base, Canned())
+    companions.append(pc)
+    assert pc.pair["verification_uri"] == cad_base + "/devices/pair"
+    assert _mcp(cad_base, "sw_get_document", {})[1]["op"] == "read"
+    r = pc.post("/v2/device/hello", {"protocol": {"min": "2.0", "max": "2.0"}})
+    assert r.status_code == 200, r.text
+    assert pc.get("/v2/bridge/update.json").status_code == 404  # reached the route: nothing published
+    bad = pc.http.post(cad_base + "/v2/device/hello", content=b"{}",
+                       headers={"Authorization": pc.proof("POST", "/cad/v2/device/hello", b"{}")})
+    assert bad.status_code == 401  # a proof is for the path below the address, never the prefixed one
+
+
+@pytest.mark.parametrize("where", ["base", "cad_base"])
+def test_a_tool_call_keeps_its_connection_alive_while_solidworks_works(where, request, companions, monkeypatch):
+    """An answer is an event stream: its headers go at once and a comment at each keep-alive interval (15 s; 0.2 s here)
+    until SOLIDWORKS answers, so a proxy that ends a silent response (Cloudflare: 100 s; the BIZOMAT platform's proxy:
+    620 s) keeps a tool that runs for minutes. Under /cad too: the prefix's HTML rewriting never holds a stream back."""
+    from sse_starlette.sse import EventSourceResponse
+    monkeypatch.setattr(EventSourceResponse, "DEFAULT_PING_INTERVAL", 0.2)
+    at = request.getfixturevalue(where)
+    pc = FakeCompanion(at, Canned())
+    companions.append(pc)
+    pc.hold = threading.Event()  # SOLIDWORKS is busy until the test lets it answer
+    body = {"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "sw_get_document", "arguments": {}}}
+    with httpx.stream("POST", f"{at}/mcp/{auth.mcp_token()}", json=body, timeout=30,
+                      headers={"Accept": "application/json, text/event-stream"}) as r:
+        assert r.status_code == 200 and r.headers["content-type"].startswith("text/event-stream")
+        lines = r.iter_lines()
+        first = next(line for line in lines if line)
+        assert first.startswith(":"), first  # a keep-alive comment while the command is still running
+        pc.hold.set()
+        data = [line[5:].strip() for line in lines if line.startswith("data:")]
+    res = json.loads(data[-1])["result"]
+    assert not res.get("isError") and json.loads(res["content"][0]["text"])["op"] == "read"

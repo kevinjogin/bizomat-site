@@ -105,7 +105,7 @@ founder account is a platform admin. Exact counts per table are produced by the 
 | `artifacts/` | Exports (1 hour), previews (10 minutes) | Short-lived | Copy or let expire |
 
 Environment that must match the old app: `OPENSKETCH_PASSWORD` (the owner's server-wide MCP address is derived from
-it), `OPENSKETCH_PUBLIC_URL` (`https://cados.kevos.com` until cad.bizomat.ai is verified), optional
+it), `OPENSKETCH_PUBLIC_URL` (`https://bizomat.ai/cad`, as on the cados app since CADOS#14), optional
 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENSKETCH_ACCESS_CODE`.
 
 Relationships: accounts own sessions, OAuth grants (AI app connections), paired computers and their commands, and

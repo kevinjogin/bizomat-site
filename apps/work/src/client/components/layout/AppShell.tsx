@@ -13,6 +13,7 @@ import type { BoardDTO, NotificationDTO } from '../../../shared/types';
 import { FolderIcon, buildTree, useFolders } from '../folders/Folders';
 import { PlatformFooter } from './PlatformLinks';
 import { BRAND, PLATFORM_URLS, platformLinkProps } from '../../lib/brand';
+import { appUrl } from '../../lib/base';
 
 const NAV: { to: string; label: string; icon: string; key?: string }[] = [
   { to: 'home', label: 'Home', icon: 'home', key: 'g h' },
@@ -358,7 +359,7 @@ function ProfileMenu() {
       toast(errorMessage(e), 'error');
     }
     qc.clear();
-    window.location.href = '/login';
+    window.location.href = appUrl('/login');
   };
   return (
     <Dropdown

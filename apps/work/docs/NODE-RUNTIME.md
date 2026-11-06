@@ -30,7 +30,8 @@ migrations inside. A deployment needs `dist/node/server.mjs` and `dist/client/` 
 | `HOST` | `::` | Address to listen on. `::` is IPv4 and IPv6; on a host without IPv6 the server falls back to `0.0.0.0`. |
 | `WORK_DATA_DIR` | `./.data/work` | Data folder: `db.sqlite`, `runtime.sqlite`, `files/`. Put it on the persistent volume. |
 | `WORK_STATIC_DIR` | `dist/client` | The built SPA. |
-| `APP_URL` | (required unless `ENVIRONMENT` is `development` or `test`) | Public origin, for example `https://work.example.com`. Accepted as Origin for CSRF checks. |
+| `APP_URL` | (required unless `ENVIRONMENT` is `development` or `test`) | Public address, for example `https://work.example.com` or `https://bizomat.ai/tasks`. Its origin is accepted as Origin for CSRF checks. |
+| `CANONICAL_URL` | unset | An https address such as `https://bizomat.ai/tasks`: pages asked for on another host then answer 301 to the same path there; `/api/` and the static files keep answering everywhere (`src/worker/mount.ts`). |
 | `APP_NAME` | `Work` | Name shown on sign-in pages. |
 | `ENVIRONMENT` | `production` | Anything but `development`/`test` gives `__Host-` Secure cookies (as on Cloudflare). |
 | `ALLOW_SIGNUP` | `false` | `true` lets anyone create an account. |
@@ -46,6 +47,12 @@ Behind the platform proxy set `WORK_TRUST_PROXY=1`, and the proxy must set `X-Fo
 `X-Forwarded-Host: <public host>` and `CF-Connecting-IP: <client address>` (overwriting anything the client sent).
 The scheme and host make the Worker's Origin checks and Google's redirect URI (`<origin>/api/auth/oauth/google/callback`)
 come out right; the address feeds rate limits and the session list.
+
+On the BIZOMAT platform the proxy sends `bizomat.ai/tasks` and `/tasks/...` here with the path unchanged, and
+`work.kevos.com` at the root. One build serves both (`src/worker/mount.ts`): under `/tasks` the Worker takes the path
+off, puts it back into Location headers, cookie paths, invitation links and Google's redirect URI
+(`https://bizomat.ai/tasks/api/auth/oauth/google/callback`), and starts every page with `<base href="/tasks/">`. On Node
+that page is rewritten as text, so `src/node/assets.ts` never compresses HTML.
 
 ## How each Cloudflare feature is replaced
 

@@ -8,6 +8,7 @@ import { MenuItem, MenuSep, Popover, useConfirm, useContextMenu, useToast } from
 import { Cell, type CellCtx } from './cells/Cell';
 import type { BoardViewProps } from './types';
 import { ColumnDialog } from './ColumnDialog';
+import { BASE } from '../lib/base';
 
 interface Section {
   key: string;
@@ -574,7 +575,7 @@ export function ItemMenu({ item, props, close, onAddSubitem }: { item: ItemDTO; 
   return (
     <>
       <MenuItem icon="chevronRight" onClick={() => { close(); props.openItem(item.id); }}>Open item</MenuItem>
-      <MenuItem icon="link" onClick={() => { close(); navigator.clipboard?.writeText(`${location.origin}/w/${bundle.board.workspaceId}/boards/${bundle.board.id}?item=${item.id}`).then(() => toast('Link copied')); }}>Copy link</MenuItem>
+      <MenuItem icon="link" onClick={() => { close(); navigator.clipboard?.writeText(`${location.origin}${BASE}/w/${bundle.board.workspaceId}/boards/${bundle.board.id}?item=${item.id}`).then(() => toast('Link copied')); }}>Copy link</MenuItem>
       {canEdit ? (
         <>
           {!item.parentItemId ? <MenuItem icon="subitem" onClick={() => { close(); onAddSubitem?.(item.id); actions.createItem({ name: 'New subitem', parentItemId: item.id }); }}>Add subitem</MenuItem> : null}

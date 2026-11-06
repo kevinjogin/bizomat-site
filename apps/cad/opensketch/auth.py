@@ -917,12 +917,12 @@ class PasswordGate:
 
 
 def _request_base(scope) -> str:
-    """This request's own address (scheme + host), so the Google redirect comes back to the same site whose
-    cookies the browser holds (fly.dev or a custom domain)."""
+    """This request's own address (scheme, host and the path prefix it came in under, as https://bizomat.ai/cad), so
+    the Google redirect comes back to the same site whose cookies the browser holds (fly.dev or a custom domain)."""
     h = _headers(scope)
     host = h.get("x-forwarded-host") or h.get("host") or "127.0.0.1:8000"
     proto = h.get("x-forwarded-proto") or scope.get("scheme") or "http"
-    return f"{proto}://{host}"
+    return f"{proto}://{host}{scope.get('root_path') or ''}"
 
 
 async def _google_flow(path, scope, q, go, send):

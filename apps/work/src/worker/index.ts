@@ -3,6 +3,7 @@ import { apiFailureMetric, createApp, withSecurityHeaders } from './app';
 import { bumpMetric } from './services/analytics';
 import { systemSvc } from './services/context';
 import { notifyDueDates, retryFailedRuns, runScheduledAutomations } from './services/automations';
+import { canonicalRedirect, mountOf, remount, unmount } from './mount';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -38,10 +39,17 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const res = await app.fetch(request, env, ctx);
-    const metric = apiFailureMetric(request, res.status);
+    // Under https://bizomat.ai/tasks the app sees its own paths; elsewhere it answers at the root of its host.
+    const base = mountOf(new URL(request.url));
+    if (!base) {
+      const moved = canonicalRedirect(request, env);
+      if (moved) return withSecurityHeaders(moved, request);
+    }
+    const inner = base ? unmount(request, base) : request;
+    const res = await app.fetch(inner, { ...env, BASE_PATH: base }, ctx);
+    const metric = apiFailureMetric(inner, res.status);
     if (metric) ctx.waitUntil(bumpMetric(env.DB, metric));
-    return withSecurityHeaders(res, request);
+    return remount(await withSecurityHeaders(res, inner), base);
   },
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(

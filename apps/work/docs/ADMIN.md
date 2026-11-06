@@ -1,6 +1,6 @@
 # Founder admin console (BIZOMAT Project Management)
 
-**URL:** `https://work.kevos.com/admin` (served by the `workos-platform-preview` Worker, which `work.kevos.com` is attached to). The same backend is also to be served at `https://work.bizomat.ai/admin`.
+**URL:** `https://work.kevos.com/admin` (served by the `workos-platform-preview` Worker, which `work.kevos.com` is attached to). The same backend is also to be served at `https://bizomat.ai/tasks/admin`.
 
 ## Who can open it
 

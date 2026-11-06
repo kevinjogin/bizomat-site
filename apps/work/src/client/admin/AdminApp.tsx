@@ -7,6 +7,7 @@ import { Avatar, ErrorBox } from '../components/ui/ui';
 import { useAdmin } from './api';
 import { PageSkeleton } from './ui';
 import '../styles/admin-console.css';
+import { appUrl } from '../lib/base';
 
 const Overview = lazy(() => import('./pages/Overview'));
 const Users = lazy(() => import('./pages/Users'));
@@ -44,7 +45,7 @@ export function NotFound() {
     <div className="ac-notfound">
       <h1>Page not found</h1>
       <p className="muted">The page you are looking for does not exist.</p>
-      <a className="btn" href="/">Go home</a>
+      <a className="btn" href={appUrl('/')}>Go home</a>
     </div>
   );
 }
@@ -87,11 +88,11 @@ export default function AdminApp() {
           ))}
         </nav>
         <div className="ac-side-foot">
-          <a href="/" className="ac-nav-item">
+          <a href={appUrl('/')} className="ac-nav-item">
             <Icon name="chevronLeft" size={17} /> Back to {BRAND.product}
           </a>
           <div className="ac-privacy-note">
-            Analytics follow the <a href="/privacy">privacy notice</a>. Passwords, tokens and content are never shown.
+            Analytics follow the <a href={appUrl('/privacy')}>privacy notice</a>. Passwords, tokens and content are never shown.
           </div>
         </div>
       </aside>

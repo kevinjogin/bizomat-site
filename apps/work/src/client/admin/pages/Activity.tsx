@@ -7,6 +7,7 @@ import { Icon } from '../../components/ui/Icon';
 import { ErrorBox } from '../../components/ui/ui';
 import { EVENT_ICON, eventLabel, useAdmin, type ActivityEvent, type AdminUserRow } from '../api';
 import { Card, Empty, PageIntro, PageSkeleton, fmtDateTime } from '../ui';
+import { appUrl } from '../../lib/base';
 
 interface Lookups {
   workspaces: { id: string; name: string }[];
@@ -55,7 +56,7 @@ export default function Activity() {
   const boards = (lookups.data?.boards ?? []).filter((b) => !params.get('workspaceId') || b.workspaceId === params.get('workspaceId'));
   return (
     <div className="ac-stack">
-      <PageIntro actions={<a className="btn" href={`/api/admin/export/activity.csv${fq ? `?${fq}` : ''}`} download><Icon name="download" /> Export CSV</a>}>
+      <PageIntro actions={<a className="btn" href={appUrl(`/api/admin/export/activity.csv${fq ? `?${fq}` : ''}`)} download><Icon name="download" /> Export CSV</a>}>
         <p className="muted">Every tracked product event, newest first. Content (task names, descriptions, messages) is never recorded.</p>
       </PageIntro>
       <Card>

@@ -82,8 +82,11 @@ def test_no_loop_and_off_unless_set(monkeypatch):
     monkeypatch.setenv("OPENSKETCH_REDIRECT_HOSTS", "cados.kevos.com,cados.fly.dev")  # target among the old hosts
     assert canonical.settings() == (frozenset(), "") and _get("/docs").status_code == 200
     monkeypatch.setenv("OPENSKETCH_REDIRECT_HOSTS", OLD)
-    monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", "https://cados.kevos.com/sub")  # not a bare origin
-    assert _get("/docs").status_code == 200
+    monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", "https://cados.kevos.com/sub")  # a path: pages go there (test_path_prefix.py)
+    assert _get("/docs").headers["location"] == "https://cados.kevos.com/sub/docs"
+    for bad in ("https://cados.kevos.com/Sub", "https://cados.kevos.com/sub?x=1"):  # not an address with a lowercase path
+        monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", bad)
+        assert _get("/docs").status_code == 200, bad
     monkeypatch.delenv("OPENSKETCH_PUBLIC_URL")
     assert _get("/docs").status_code == 200
     monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", NEW)

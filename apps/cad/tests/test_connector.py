@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from opensketch import mcp_server, mcpauth, server, swbridge
+from tests.mcp_reply import rpc
 from tests.test_mcp_oauth import ACCEPT, _owner, _pkce, _register
 
 
@@ -55,18 +56,18 @@ def test_only_the_solidworks_tools_on_both_addresses(app):
     for path in mcp_server.PATHS:  # no accounts: open
         r = _rpc(app, path, "tools/list")
         assert r.status_code == 200, (path, r.text)
-        names = {t["name"] for t in r.json()["result"]["tools"]}
+        names = {t["name"] for t in rpc(r)["result"]["tools"]}
         assert names == {n for n in names if n.startswith("sw_")} | {"request_upload"}
         assert {"sw_status", "sw_get_guide", "sw_add_features", "sw_batch", "sw_add_mate", "sw_selftest"} <= names
         assert len(names) == 31 and {"sw_create_drawing", "sw_get_drawing", "sw_edit_drawing"} <= names
         assert {"sw_list_devices", "sw_command_status", "sw_cancel_command"} <= names  # registered computers
-    init = _rpc(app, "/mcp", "initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
-                                            "clientInfo": {"name": "t", "version": "1"}}).json()["result"]
+    init = rpc(_rpc(app, "/mcp", "initialize", {"protocolVersion": "2025-06-18", "capabilities": {},
+                                                "clientInfo": {"name": "t", "version": "1"}}))["result"]
     assert init["serverInfo"]["name"] == "BIZOMAT CAD Automation" and "sw_status first" in init["instructions"]
     assert init["instructions"].startswith("BIZOMAT CAD Automation:") and "CADOS" not in init["instructions"]
-    out = _rpc(app, "/mcp", "tools/call", {"name": "sw_status", "arguments": {}}).json()["result"]
+    out = rpc(_rpc(app, "/mcp", "tools/call", {"name": "sw_status", "arguments": {}}))["result"]
     assert '"connected": false' in out["content"][0]["text"] and "CAD Automation dashboard" in out["content"][0]["text"]
-    guide = _rpc(app, "/mcp", "tools/call", {"name": "sw_get_guide", "arguments": {}}).json()["result"]["content"][0]["text"]
+    guide = rpc(_rpc(app, "/mcp", "tools/call", {"name": "sw_get_guide", "arguments": {}}))["result"]["content"][0]["text"]
     assert "sw_status first" in guide and '"type":"sketch"' in guide and "Mate references" in guide
     assert "viewport" not in guide  # only the SOLIDWORKS workflow
     assert "Drafting practice" in guide and "overwrite=true" in guide  # how a drawing is set out and checked
