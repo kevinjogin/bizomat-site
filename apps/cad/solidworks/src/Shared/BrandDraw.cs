@@ -36,14 +36,14 @@ namespace OpenSketch.Sw.Core
             return p;
         }
 
-        /// <summary>The wordmark, `height` pixels tall, at (x, y): navy word, teal connector bar. Returns its width.</summary>
+        /// <summary>The wordmark, `height` pixels tall, at (x, y): navy word, teal forward arrow in the B. Returns its width.</summary>
         public static float Wordmark(Graphics g, float x, float y, float height)
         {
             var s = height / BrandArt.Height;
             using (var word = PathOf(BrandArt.WordmarkPath, s, x, y))
             using (var bar = PathOf(BrandArt.BarPath, s, x, y))
             using (var navy = new SolidBrush(C(BrandArt.Navy)))
-            using (var teal = new SolidBrush(C(BrandArt.Teal)))
+            using (var teal = new SolidBrush(C(BrandArt.TealMark)))
             {
                 g.FillPath(navy, word);
                 g.FillPath(teal, bar);
@@ -51,12 +51,13 @@ namespace OpenSketch.Sw.Core
             return BrandArt.WordmarkWidth * s;
         }
 
-        /// <summary>The B with its teal bar, centred in `r` at 58.6 % of its width (as in shared/brand/build.mjs).</summary>
+        /// <summary>The B with its teal arrow, placed in `r` as on the mark (shared/brand/construct.py): its cap height is
+        /// half of `r`, centred, nudged right by 1 % for the weight of the stem.</summary>
         public static void B(Graphics g, RectangleF r, Color letter)
         {
-            var s = r.Width * 0.586f / BrandArt.BWidth;
-            var dx = r.X + r.Width / 2 - BrandArt.BWidth / 2 * s;
-            var dy = r.Y + r.Height / 2 - BrandArt.Height / 2 * s;
+            var s = r.Height * BrandArt.MarkBHeight / BrandArt.Cap;
+            var dx = r.X + r.Width / 2 - BrandArt.BWidth / 2 * s + r.Width * 0.01f;
+            var dy = r.Y + r.Height / 2 - (BrandArt.CapTop + BrandArt.Cap / 2) * s;
             using (var b = PathOf(BrandArt.BPath, s, dx, dy))
             using (var bar = PathOf(BrandArt.BarPath, s, dx, dy))
             using (var fill = new SolidBrush(letter))
@@ -67,7 +68,7 @@ namespace OpenSketch.Sw.Core
             }
         }
 
-        /// <summary>The mark: the white B with its teal bar on a navy rounded tile (as the favicon).</summary>
+        /// <summary>The mark: the white B with its teal arrow on a navy rounded tile (as the favicon).</summary>
         public static void Mark(Graphics g, RectangleF r)
         {
             using (var tile = Rounded(r, r.Width * 0.22f))

@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { COLORS, GLYPHS, WORDMARK_WIDTH, wordmarkPath } from './glyphs.mjs';
+import { ARROW, B, COLORS, LOCKUP, MARK, WORD } from './glyphs.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -33,14 +33,14 @@ body { background: ${COLORS.navy}; color: #eef4fa; font-family: It; position: re
 .node { position: absolute; width: 12px; height: 12px; border-radius: 3px; background: ${COLORS.tealMark}; }
 .line { position: absolute; height: 2px; background: linear-gradient(90deg, ${COLORS.tealMark}, transparent); }
 .wrap { position: absolute; left: 80px; right: 80px; top: 78px; bottom: 70px; display: flex; flex-direction: column; }
-svg { width: 430px; height: auto; }
+svg { width: 520px; height: auto; }
 .kicker { margin-top: 64px; font: 600 22px/1.2 It; letter-spacing: .12em; text-transform: uppercase; color: ${COLORS.tealBright}; }
 h1 { margin: 18px 0 0; font: 650 60px/1.06 Ox; letter-spacing: -.01em; max-width: 960px; }
 .foot { margin-top: auto; font: 500 22px/1.3 It; color: #a9b8c9; }
 </style></head><body><div class="grid"></div>
 <div class="line" style="left:860px;top:150px;width:260px"></div><div class="node" style="left:854px;top:145px"></div>
 <div class="line" style="left:940px;top:226px;width:180px"></div><div class="node" style="left:934px;top:221px"></div>
-<div class="wrap"><svg viewBox="0 0 ${WORDMARK_WIDTH} 241" aria-label="BIZOMAT"><path fill="#fff" fill-rule="evenodd" d="${wordmarkPath()}"/><path fill="${COLORS.tealBright}" d="${GLYPHS.B.bar}"/></svg>
+<div class="wrap"><svg viewBox="0 0 ${LOCKUP.width} ${LOCKUP.height}" aria-label="BIZOMAT"><rect width="${MARK.size}" height="${MARK.size}" rx="${MARK.radius}" fill="${COLORS.tileDark}"/><g transform="${MARK.transform}"><path fill="#fff" fill-rule="evenodd" d="${B.d}"/><path fill="${COLORS.tealMark}" d="${ARROW}"/></g><g transform="${LOCKUP.wordTransform}"><path fill="#fff" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.tealMark}" d="${ARROW}"/></g></svg>
 <div class="kicker">${c.kicker}</div><h1>${c.title}</h1><div class="foot">${c.foot}</div></div></body></html>`;
 
 const browser = await chromium.launch();

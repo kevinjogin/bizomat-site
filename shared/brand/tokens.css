@@ -2,7 +2,7 @@
    Project Management. Apps import this file (copied by shared/brand/sync.mjs) and map their own variable names to
    these. Contrast: every text pairing below meets WCAG 2.2 AA (shared/brand/README.md lists the ratios).
 
-   Fonts: Oxanium (headings, matching the chamfered BIZOMAT wordmark) and Inter Tight (body, labels, forms), both
+   Fonts: Oxanium (headings, matching the squared BIZOMAT wordmark) and Inter Tight (body, labels, forms), both
    under the SIL Open Font Licence and served from the product's own origin. */
 
 @font-face {
@@ -72,7 +72,7 @@
   --bz-teal: #0f766e;          /* primary action and links on light (5.5:1 on white) */
   --bz-teal-hover: #115e59;
   --bz-teal-bright: #2dd4bf;   /* accent on dark surfaces */
-  --bz-teal-mark: #14b8a6;     /* the connector bar in the mark */
+  --bz-teal-mark: #14b8a6;     /* the forward arrow in the logo */
   --bz-teal-soft: #e6f4f2;
   --bz-amber: #f59e0b;         /* signal colour for diagrams and progress, never for text on light */
   --bz-amber-text: #b45309;

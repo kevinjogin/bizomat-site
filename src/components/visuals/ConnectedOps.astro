@@ -1,7 +1,7 @@
 ---
 // Hero scene: BIZOMAT at the centre of connected business operations. Requests travel from the AI assistant into
 // BIZOMAT and out to SOLIDWORKS, projects, teams and resources. A conceptual illustration, labelled as one.
-import { B_PATH, BAR_PATH } from '../../data/bizomat-brand.ts';
+import { ARROW_PATH, B_PATH, MARK_SIZE, MARK_TRANSFORM } from '../../data/bizomat-brand.ts';
 import '../../styles/visuals.css';
 
 interface Props { id?: string; caption?: boolean }
@@ -23,7 +23,6 @@ const edges = [
   'M262 258 C 222 290, 205 374, 168 379',
   'M338 258 C 378 290, 395 374, 432 379',
 ];
-const s = 0.165;
 ---
 <figure class:list={['viz', 'viz--bare', 'ops']} aria-labelledby={`${id}-cap`}>
   <svg viewBox="0 0 600 440" role="img" aria-labelledby={`${id}-title`}>
@@ -36,10 +35,10 @@ const s = 0.165;
     {edges.map((d, i) => <path class:list={['v-pulse', `d${i + 1}`]} d={d} pathLength="100" />)}
     <g class="ops__hub">
       <rect class="v-hub" x="255" y="175" width="90" height="90" rx="20" />
-      <g transform={`translate(${(300 - 166 * s).toFixed(2)} ${(220 - 120.5 * s).toFixed(2)}) scale(${s})`}>
+      <g transform={`translate(255 175) scale(${90 / MARK_SIZE})`}><g transform={MARK_TRANSFORM}>
         <path class="v-hub-b" fill-rule="evenodd" d={B_PATH} />
-        <path class="v-hub-bar" d={BAR_PATH} />
-      </g>
+        <path class="v-hub-bar" d={ARROW_PATH} />
+      </g></g>
       <text class="v-sub" x="300" y="288" text-anchor="middle">BIZOMAT</text>
     </g>
     {nodes.map((n, i) => (

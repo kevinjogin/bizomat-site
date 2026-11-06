@@ -311,8 +311,8 @@ namespace OpenSketch.Sw.Tests
             var word = BrandArt.Polygons(BrandArt.WordmarkPath);
             var b = BrandArt.Polygons(BrandArt.BPath);
             var bar = BrandArt.Polygons(BrandArt.BarPath);
-            Assert.Equal(2, b.Count);            // the B and its lower counter
-            Assert.Single(bar);                  // the connector bar
+            Assert.Equal(3, b.Count);            // the B, its upper counter and the forward arrow cut out of it
+            Assert.Single(bar);                  // the forward arrow (teal)
             Assert.True(word.Count > 8);         // B, I, Z, O and its counter, M, A and its bar, T
             foreach (var poly in word)
             {

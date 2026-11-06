@@ -1,6 +1,9 @@
 ---
-// The BIZOMAT wordmark (shared/brand: navy word with the teal connector on light, white with bright teal on dark).
-// Drawn from SVG paths, never typeset, so it is sharp at every size. Header, footer and product panels use it.
+// The BIZOMAT logo for the header and footer: the mark (the B with its teal forward arrow on a navy tile) and the
+// wordmark (shared/brand: navy on light, white on a lifted tile on dark). Drawn from SVG paths, never typeset, so it is
+// sharp at every size.
+import { LOCKUP_VIEWBOX } from '../data/bizomat-brand.ts';
+const [, , lockupW, lockupH] = LOCKUP_VIEWBOX.split(' ').map(Number);
 interface Props {
   class?: string;
   height?: number;
@@ -15,8 +18,8 @@ const sizeClass = height >= 28 ? 'site-wordmark--footer' : height <= 18 ? 'site-
   aria-label={label || undefined}
   aria-hidden={label ? undefined : 'true'}
 >
-  <img class="site-wordmark__image site-wordmark__image--light" src="/brand/bizomat-logo-light.svg" alt="" width="2329" height="241" decoding="async" />
-  <img class="site-wordmark__image site-wordmark__image--dark" src="/brand/bizomat-logo-dark.svg" alt="" width="2329" height="241" decoding="async" />
+  <img class="site-wordmark__image site-wordmark__image--light" src="/brand/bizomat-lockup-light.svg" alt="" width={lockupW} height={lockupH} decoding="async" />
+  <img class="site-wordmark__image site-wordmark__image--dark" src="/brand/bizomat-lockup-dark.svg" alt="" width={lockupW} height={lockupH} decoding="async" />
 </span>
 
 <style>
@@ -28,9 +31,9 @@ const sizeClass = height >= 28 ? 'site-wordmark--footer' : height <= 18 ? 'site-
     overflow: visible;
     max-width: 100%;
   }
-  .site-wordmark--compact { --wordmark-h: 17px; }
-  .site-wordmark--header { --wordmark-h: 21px; }
-  .site-wordmark--footer { --wordmark-h: 28px; }
+  .site-wordmark--compact { --wordmark-h: 28px; }
+  .site-wordmark--header { --wordmark-h: 36px; }
+  .site-wordmark--footer { --wordmark-h: 44px; }
   .site-wordmark__image { display: block; width: auto; height: var(--wordmark-h); max-width: 100%; object-fit: contain; }
   /* One variant per theme, each with the right contrast for its background. */
   .site-wordmark__image--dark { display: none; }

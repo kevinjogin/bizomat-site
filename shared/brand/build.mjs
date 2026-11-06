@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { CAP, COLORS, GLYPHS, WORDMARK_WIDTH, wordmarkPath } from './glyphs.mjs';
+import { ARROW, B as BGLYPH, CAP, COLORS, LOCKUP, MARK, WORD, WORDMARK_WIDTH } from './glyphs.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, '..', '..');
@@ -20,34 +20,42 @@ const check = process.argv.includes('--check');
 
 const W = WORDMARK_WIDTH;
 const H = CAP.height;
-const WORD = wordmarkPath();
-const BAR = GLYPHS.B.bar;
-const B = GLYPHS.B.d;
+const B = BGLYPH.d;
+const BW = BGLYPH.width;
+const TILE = MARK.size;
+const svgOpen = (w, h, label = 'BIZOMAT') =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}"${label ? ` role="img" aria-label="${label}"` : ' aria-hidden="true"'}>`;
+
+// The mark's inside: the white B with its teal arrow, placed on a tile of MARK.size.
+const markInner = (letter = '#ffffff', arrow = COLORS.tealMark) =>
+  `<g transform="${MARK.transform}"><path fill="${letter}" fill-rule="evenodd" d="${B}"/><path fill="${arrow}" d="${ARROW}"/></g>`;
+const lockup = (tile, ink) =>
+  `${svgOpen(LOCKUP.width, LOCKUP.height)}<rect width="${TILE}" height="${TILE}" rx="${MARK.radius}" fill="${tile}"/>${markInner()}` +
+  `<g transform="${LOCKUP.wordTransform}"><path fill="${ink}" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.tealMark}" d="${ARROW}"/></g></svg>\n`;
 
 // ---------- SVG sources ----------
 const svg = {
-  // One colour, follows CSS `color` (header, footer, apps). The connector bar is drawn in the same colour.
-  'bizomat-wordmark.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BIZOMAT"><path fill="currentColor" fill-rule="evenodd" d="${WORD}"/></svg>\n`,
-  // Full colour on light backgrounds: navy word, teal connector in the B.
-  'bizomat-logo-light.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BIZOMAT"><path fill="${COLORS.navy}" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.teal}" d="${BAR}"/></svg>\n`,
-  // Full colour on dark backgrounds: white word, bright teal connector.
-  'bizomat-logo-dark.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="BIZOMAT"><path fill="#ffffff" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.tealBright}" d="${BAR}"/></svg>\n`,
+  // One colour, follows CSS `color`: the arrow is a hole in the B.
+  'bizomat-wordmark.svg': `${svgOpen(W, H)}<path fill="currentColor" fill-rule="evenodd" d="${WORD}"/></svg>\n`,
+  // Full colour on light backgrounds: navy word, teal arrow in the B.
+  'bizomat-logo-light.svg': `${svgOpen(W, H)}<path fill="${COLORS.navy}" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.tealMark}" d="${ARROW}"/></svg>\n`,
+  // Full colour on dark backgrounds: white word, the same teal arrow.
+  'bizomat-logo-dark.svg': `${svgOpen(W, H)}<path fill="#ffffff" fill-rule="evenodd" d="${WORD}"/><path fill="${COLORS.tealMark}" d="${ARROW}"/></svg>\n`,
+  // The lockup: the mark, then the wordmark (headers and footers). On dark paper the tile is lifted (tileDark).
+  'bizomat-lockup-light.svg': lockup(COLORS.navy, COLORS.navy),
+  'bizomat-lockup-dark.svg': lockup(COLORS.tileDark, '#ffffff'),
 };
 
-// The mark: the B of the wordmark, centred on a navy tile, with the teal connector bar. `inset` leaves the safe zone
-// a maskable icon needs (the platform may crop to a circle).
-function markSvg({ size = 512, inset = 0, radius = 112, label = true } = {}) {
-  const box = size - inset * 2;
-  const s = (box * 0.586) / 332; // the B fills 58.6 % of the tile width
-  const tx = size / 2 - 166 * s;
-  const ty = size / 2 - 120.5 * s;
-  const aria = label ? ' role="img" aria-label="BIZOMAT"' : ' aria-hidden="true"';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"${aria}><rect width="${size}" height="${size}" rx="${radius}" fill="${COLORS.navy}"/><g transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${s.toFixed(5)})"><path fill="#ffffff" fill-rule="evenodd" d="${B}"/><path fill="${COLORS.tealMark}" d="${BAR}"/></g></svg>\n`;
+// The mark: the B on a navy tile with the teal arrow. `inset` leaves the safe zone a maskable icon needs (the platform
+// may crop it to a circle).
+function markSvg({ size = TILE, inset = 0, radius = MARK.radius, label = true } = {}) {
+  const k = (size - inset * 2) / TILE;
+  return `${svgOpen(size, size, label ? 'BIZOMAT' : '')}<rect width="${size}" height="${size}" rx="${radius}" fill="${COLORS.navy}"/><g transform="translate(${inset} ${inset}) scale(${k.toFixed(5)})">${markInner()}</g></svg>\n`;
 }
 svg['bizomat-mark.svg'] = markSvg();
 svg['bizomat-mark-maskable.svg'] = markSvg({ inset: 0, radius: 0, label: false });
-// The B alone in one colour (for UI where the tile is not wanted).
-svg['bizomat-b.svg'] = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 332 241" role="img" aria-label="BIZOMAT"><path fill="currentColor" fill-rule="evenodd" d="${B}"/></svg>\n`;
+// The B alone in one colour (for UI where the tile is not wanted); the arrow is a hole.
+svg['bizomat-b.svg'] = `${svgOpen(BW, H)}<path fill="currentColor" fill-rule="evenodd" d="${B}"/></svg>\n`;
 
 // ---------- Raster ----------
 async function png(source, size) {
@@ -77,14 +85,24 @@ const files = new Map(); // name in dist -> Buffer
 for (const [name, text] of Object.entries(svg)) files.set(name, Buffer.from(text));
 const mark = svg['bizomat-mark.svg'];
 for (const size of [16, 32, 48, 180, 192, 512]) files.set(`bizomat-icon-${size}.png`, await png(mark, size));
-files.set('bizomat-maskable-512.png', await png(markSvg({ inset: 64, radius: 0, label: false }).replace(/<rect [^>]+>/, `<rect width="512" height="512" fill="${COLORS.navy}"/>`), 512));
+files.set('bizomat-maskable-512.png', await png(markSvg({ inset: 64, radius: 0, label: false }), 512));
 files.set('favicon.ico', await ico(mark));
 
 // ---------- Generated modules for apps that draw the logo inline ----------
+// BAR_PATH keeps its earlier name for callers that colour the accent: it is now the arrow (also ARROW_PATH).
 const header = 'Generated by shared/brand/build.mjs from shared/brand/glyphs.mjs. Do not edit by hand.';
-files.set('bizomat_brand.py', Buffer.from(`"""${header}"""\n\nWORDMARK_VIEWBOX = "0 0 ${W} ${H}"\nWORDMARK_PATH = "${WORD}"\nB_VIEWBOX = "0 0 332 241"\nB_PATH = "${B}"\nBAR_PATH = "${BAR}"\nNAVY = "${COLORS.navy}"\nTEAL = "${COLORS.teal}"\nTEAL_BRIGHT = "${COLORS.tealBright}"\nTEAL_MARK = "${COLORS.tealMark}"\n`));
-files.set('bizomat-brand.ts', Buffer.from(`// ${header}\nexport const WORDMARK_VIEWBOX = '0 0 ${W} ${H}';\nexport const WORDMARK_PATH = '${WORD}';\nexport const B_VIEWBOX = '0 0 332 241';\nexport const B_PATH = '${B}';\nexport const BAR_PATH = '${BAR}';\nexport const BRAND_COLORS = ${JSON.stringify({ navy: COLORS.navy, teal: COLORS.teal, tealBright: COLORS.tealBright, tealMark: COLORS.tealMark })} as const;\n`));
-files.set('brand.json', Buffer.from(JSON.stringify({ name: 'BIZOMAT', tagline: 'Intelligent Business Automation Platform', statement: 'Automate work. Connect systems. Get business done.', wordmark: { viewBox: `0 0 ${W} ${H}`, path: WORD }, b: { viewBox: '0 0 332 241', path: B, bar: BAR }, colors: COLORS }, null, 2) + '\n'));
+const consts = {
+  WORDMARK_VIEWBOX: `0 0 ${W} ${H}`, WORDMARK_PATH: WORD, B_VIEWBOX: `0 0 ${BW} ${H}`, B_PATH: B, BAR_PATH: ARROW, ARROW_PATH: ARROW,
+  MARK_SIZE: TILE, MARK_RADIUS: MARK.radius, MARK_TRANSFORM: MARK.transform,
+  LOCKUP_VIEWBOX: `0 0 ${LOCKUP.width} ${LOCKUP.height}`, LOCKUP_WORD_TRANSFORM: LOCKUP.wordTransform,
+};
+const pyConsts = Object.entries(consts).map(([k, v]) => `${k} = ${typeof v === 'number' ? v : JSON.stringify(v)}`).join('\n');
+const pyColors = `NAVY = "${COLORS.navy}"\nTEAL = "${COLORS.teal}"\nTEAL_BRIGHT = "${COLORS.tealBright}"\nTEAL_MARK = "${COLORS.tealMark}"\nTILE_DARK = "${COLORS.tileDark}"\n`;
+files.set('bizomat_brand.py', Buffer.from(`"${'""'}${header}"${'""'}\n\n${pyConsts}\n${pyColors}`));
+const tsConsts = Object.entries(consts).map(([k, v]) => `export const ${k} = ${typeof v === 'number' ? v : `'${v}'`};`).join('\n');
+const tsColors = JSON.stringify({ navy: COLORS.navy, teal: COLORS.teal, tealBright: COLORS.tealBright, tealMark: COLORS.tealMark, tileDark: COLORS.tileDark });
+files.set('bizomat-brand.ts', Buffer.from(`// ${header}\n${tsConsts}\nexport const BRAND_COLORS = ${tsColors} as const;\n`));
+files.set('brand.json', Buffer.from(JSON.stringify({ name: 'BIZOMAT', tagline: 'Intelligent Business Automation Platform', statement: 'Automate work. Connect systems. Get business done.', wordmark: { viewBox: `0 0 ${W} ${H}`, path: WORD }, b: { viewBox: `0 0 ${BW} ${H}`, path: B, arrow: ARROW }, mark: MARK, lockup: LOCKUP, colors: COLORS }, null, 2) + '\n'));
 
 // Copies kept beside the sources: tokens, components and the heading font.
 const copyFrom = (rel) => fs.readFileSync(path.join(here, rel));
@@ -105,6 +123,8 @@ const targets = [
   T('bizomat-wordmark.svg', 'public/brand/bizomat-wordmark.svg'),
   T('bizomat-logo-light.svg', 'public/brand/bizomat-logo-light.svg'),
   T('bizomat-logo-dark.svg', 'public/brand/bizomat-logo-dark.svg'),
+  T('bizomat-lockup-light.svg', 'public/brand/bizomat-lockup-light.svg'),
+  T('bizomat-lockup-dark.svg', 'public/brand/bizomat-lockup-dark.svg'),
   T('bizomat-mark.svg', 'public/brand/bizomat-mark.svg'),
   T('bizomat-b.svg', 'public/brand/bizomat-b.svg'),
   T('bizomat-icon-32.png', 'public/brand/bizomat-icon-32.png'),
