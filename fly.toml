@@ -6,6 +6,8 @@
 #                                   '--6PN--> cad  :8001   bizomat.ai/cad, cados.kevos.com       volume cad_data
 # Everything lives under bizomat.ai, no subdomains (owner's decision, 5 Nov 2026): infrastructure/proxy/routes.mjs.
 #
+# What the owner's laptop deploys today is fly.website.toml (the same groups, the same image; bizomat.ps1 deploy
+# website). This file is the plan for the deploy workflow below, with the preview switch on.
 # Deploy: .github/workflows/bizomat-deploy.yml (run by hand), or from the repository root:
 #   flyctl deploy --remote-only --config fly.toml --ha=false --build-arg BIZOMAT_VERSION=$(git rev-parse --short HEAD)
 # Secrets are app-wide environment variables on EVERY Machine; the entrypoint (infrastructure/fly/entrypoint.sh)
@@ -68,11 +70,11 @@ kill_timeout = 15
   WORK_SESSION_TTL_HOURS = "72"
   # cad: CAD Automation lives at bizomat.ai/cad (apps/cad/opensketch/canonical.py serves the path and writes it into
   # every link; the OAuth metadata of https://bizomat.ai/cad/mcp is at the root of bizomat.ai, RFC 8414 and 9728).
-  # cados.kevos.com, its old address: pages answer 301 to https://bizomat.ai/cad, and programs (MCP, OAuth, the add-in
-  # link, the Companion's API) keep working at its root with its own address, for connectors set up with it.
+  # Its old host names (as on the cados app, CADOS fly.toml): pages answer 301 to https://bizomat.ai/cad, and programs
+  # (MCP, OAuth, the add-in link, the Companion's API) keep working at their root with their own address, for
+  # connectors set up with them. apps/cad is an exact copy of a CADOS commit (apps/cad-source.json).
   OPENSKETCH_PUBLIC_URL = "https://bizomat.ai/cad"
-  OPENSKETCH_ALIAS_HOSTS = "cados.kevos.com"
-  OPENSKETCH_REDIRECT_HOSTS = "cados.kevos.com"
+  OPENSKETCH_REDIRECT_HOSTS = "cados.fly.dev,cados.kevos.com,cad.bizomat.ai"
 
 # The ONLY service, and only on the proxy group. A [[services]] or [http_service] on web, work or cad would be
 # exposed on the app's public IPs (services are not private per group); they are reached only over 6PN.
@@ -193,7 +195,7 @@ kill_timeout = 15
   memory = "2gb"
 
 # Restart a Machine whose main process exits, whatever the exit code. (The entrypoint exits non-zero on a missing
-# volume or a missing CAD password: the loop then shows in `fly logs` until it is fixed.)
+# volume: the loop then shows in `fly logs` until it is fixed. cad without its data answers with a holding page.)
 [[restart]]
   policy = "always"
   processes = ["proxy"]

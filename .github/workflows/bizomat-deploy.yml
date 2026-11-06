@@ -82,13 +82,10 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
+          # CAD Automation needs no server password (CADOS#11): its settings move with its data to the cad volume
+          # (bizomat.ps1 move cad), and the cad Machine shows a holding page until that data is there.
           names="$(flyctl secrets list --app "$APP" --json | jq -r '.[] | (.Name // .name)')"
-          if ! grep -qx OPENSKETCH_PASSWORD <<<"$names"; then
-            echo "::error::Set OPENSKETCH_PASSWORD on $APP first, with the SAME value as the cados app (the owner's private connector address is derived from it): flyctl secrets set --stage --app $APP OPENSKETCH_PASSWORD=... (see infrastructure/README.md). Nothing was deployed."
-            exit 1
-          fi
-          for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET \
-                   CAD_GOOGLE_CLIENT_ID CAD_GOOGLE_CLIENT_SECRET OPENSKETCH_ACCESS_CODE; do
+          for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET; do
             grep -qx "$s" <<<"$names" || echo "::notice::Optional secret $s is not set"
           done
 
