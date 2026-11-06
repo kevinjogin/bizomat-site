@@ -199,8 +199,12 @@ old KEVOS site back on kevos.com.
 | 5 | Certificates, then DNS (bizomat.ai zone, all records DNS only): `fly certs add bizomat.ai -a bizomat` and `fly certs add www.bizomat.ai -a bizomat`. If Fly refuses because `cados` holds the name, first `fly certs remove bizomat.ai -a cados` (bizomat.ai/cad is then without a certificate until step 5 ends: do it in one sitting). Point `_acme-challenge.bizomat.ai` at the target `fly certs setup bizomat.ai -a bizomat` shows; when `fly certs show bizomat.ai -a bizomat` says Issued, change the `bizomat.ai` A and AAAA records to `fly ips list -a bizomat` and add `www` (CNAME `bizomat.fly.dev`). Then `fly certs remove bizomat.ai -a cados` if still there | `https://bizomat.ai/` is the website; `/cad/` CAD Automation; `/CAD` 301; `/tasks/` 302 to work.kevos.com; an AI app connected with `https://bizomat.ai/cad/mcp` and one with `https://cados.kevos.com/mcp` both list tools | The A and AAAA records back to `66.241.125.206` and `2a09:8280:1::1e8:c21b:1` (`cados`) and its certificate back (`fly certs add bizomat.ai -a cados`) |
 
 Known differences on Fly, compared with the Worker:
-- The contact form answers "Please email kevin@kevos.com": the Worker sent mail with Cloudflare's email binding, which
-  Fly does not have, and the Resend adapter (`src/server/contact/mail.ts`) is not wired to the form yet.
+- The site's contact address is `info@bizomat.ai` (owner, 6 Nov 2026: `SITE.email`, footer, contact and privacy
+  pages). It receives mail only once bizomat.ai has mail records (no MX record on 6 Nov). The contact form is set up
+  later: until then it answers "Please email info@bizomat.ai" (the Worker sent mail with Cloudflare's email binding,
+  which Fly does not have, and the Resend adapter, `src/server/contact/mail.ts`, is not wired to the form yet).
+- DNS changes on bizomat.ai (step 5) touch only the apex and `www` A, AAAA and CNAME records and `_acme-challenge`:
+  never the MX, SPF, DKIM or DMARC records that mail for info@bizomat.ai uses.
 - The assistant and AI search need step 3; without it, search runs on keywords and the assistant says it is off.
 
 ## 7. After cutover

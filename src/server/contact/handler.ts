@@ -1,7 +1,7 @@
 // Same-origin /api/contact for the existing BIZOMAT contact form. No enquiry storage.
 import { CONTACT_LIMITS, CONTACT_METHODS, HONEYPOT_FIELD, normalise, validate, type ContactErrors } from '../../lib/contact.ts';
 import type { MailEnv } from './mail.ts';
-import { composeContactEmail, CONTACT_FAILURE, type ContactEmailBinding } from './cloudflare-mail.ts';
+import { composeContactEmail, CONTACT_EMAIL, CONTACT_FAILURE, type ContactEmailBinding } from './cloudflare-mail.ts';
 import { checkRateLimit, type RateLimitEnv } from './rate-limit.ts';
 
 export interface ContactEnv extends MailEnv, RateLimitEnv {
@@ -110,11 +110,11 @@ export async function handleContact(request: Request, env: ContactEnv): Promise<
   if (Object.keys(errors).length) return respond(422, false, 'Please check the highlighted fields.', errors);
   const token = String(fields['cf-turnstile-response'] || '').trim();
   if (!token) return respond(403, false, TURNSTILE_ERROR);
-  if (!env.TURNSTILE_SECRET_KEY?.trim()) return respond(503, false, 'Contact service configuration incomplete (CF-CONTACT-01). Please email kevin@kevos.com.');
-  if (!env.EMAIL || typeof env.EMAIL.send !== 'function') return respond(503, false, 'Email service binding unavailable (CF-CONTACT-02). Please email kevin@kevos.com.');
+  if (!env.TURNSTILE_SECRET_KEY?.trim()) return respond(503, false, `Contact service configuration incomplete (CF-CONTACT-01). Please email ${CONTACT_EMAIL}.`);
+  if (!env.EMAIL || typeof env.EMAIL.send !== 'function') return respond(503, false, `Email service binding unavailable (CF-CONTACT-02). Please email ${CONTACT_EMAIL}.`);
   try {
     if (!(await checkRateLimit(env, request.headers.get('CF-Connecting-IP') || 'unknown'))) return respond(429, false, 'Too many messages have been sent from your connection. Please try again later.');
-  } catch { return respond(503, false, 'Contact rate-limit service unavailable (CF-CONTACT-03). Please email kevin@kevos.com.'); }
+  } catch { return respond(503, false, `Contact rate-limit service unavailable (CF-CONTACT-03). Please email ${CONTACT_EMAIL}.`); }
   const verification = await verifyTurnstile(token, request, env.TURNSTILE_SECRET_KEY);
   if (verification !== 'valid') return respond(verification === 'invalid' ? 403 : 503, false, verification === 'invalid' ? TURNSTILE_ERROR : 'Spam verification service unavailable (CF-CONTACT-04). Please try again.');
   // Use Cloudflare metadata only, never a submitted country or visitor-supplied country header.
@@ -123,12 +123,12 @@ export async function handleContact(request: Request, env: ContactEnv): Promise<
   const email = composeContactEmail(input, String(fields.subject || '').trim(), new Date().toISOString(), country);
   try {
     const delivered = await env.EMAIL.send(email);
-    if (!delivered || typeof delivered.messageId !== 'string' || !delivered.messageId) return respond(502, false, 'Email service returned no delivery reference (CF-CONTACT-05). Please email kevin@kevos.com.');
+    if (!delivered || typeof delivered.messageId !== 'string' || !delivered.messageId) return respond(502, false, `Email service returned no delivery reference (CF-CONTACT-05). Please email ${CONTACT_EMAIL}.`);
   } catch (error) {
     const code = typeof error === 'object' && error !== null && 'code' in error && typeof error.code === 'string' ? error.code : '';
     const safeCodes = new Set(['E_SENDER_NOT_VERIFIED', 'E_RECIPIENT_NOT_ALLOWED', 'E_RECIPIENT_SUPPRESSED', 'E_SENDER_DOMAIN_NOT_AVAILABLE', 'E_DELIVERY_FAILED', 'E_RATE_LIMIT_EXCEEDED', 'E_DAILY_LIMIT_EXCEEDED', 'E_VALIDATION_ERROR', 'E_FIELD_MISSING']);
     const detail = safeCodes.has(code) ? code : 'DELIVERY_UNAVAILABLE';
-    return respond(502, false, `Email delivery was rejected (CF-CONTACT-06: ${detail}). Please email kevin@kevos.com.`);
+    return respond(502, false, `Email delivery was rejected (CF-CONTACT-06: ${detail}). Please email ${CONTACT_EMAIL}.`);
   }
   return respond(200, true, SUCCESS);
 }

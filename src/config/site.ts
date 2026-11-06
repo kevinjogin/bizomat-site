@@ -22,8 +22,9 @@ export const SITE = {
   statement: PLATFORM.statement,
   /** Short descriptor shown under the brand in places like the footer. */
   tagline: PLATFORM.tagline,
-  /** Public contact email. Leave empty to hide it everywhere until it is set up. */
-  email: '',
+  /** Public contact email (owner, 6 Nov 2026). Leave empty to hide it everywhere. Must equal CONTACT_EMAIL in
+   *  src/server/contact/cloudflare-mail.ts (a test checks). */
+  email: 'info@bizomat.ai',
   /** Optional profiles, e.g. { label: 'LinkedIn', href: 'https://www.linkedin.com/company/…' }. */
   social: [] as Array<{ label: string; href: string }>,
   /** Default social sharing image in /public (1200 × 630). */

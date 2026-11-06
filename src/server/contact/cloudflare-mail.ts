@@ -2,9 +2,12 @@
 // The assessment form's existing delivery adapters remain separate.
 import type { ContactInput } from '../../lib/contact.ts';
 
+/** The public contact address, as the site shows it (SITE.email in src/config/site.ts; a test keeps them equal). */
+export const CONTACT_EMAIL = 'info@bizomat.ai';
+/** Where Cloudflare's email binding delivers enquiries: the binding only sends to wrangler.toml's destination_address. */
 export const CONTACT_RECIPIENT = 'kevin@kevos.com';
 export const CONTACT_SENDER = 'contact-form@kevos.com';
-export const CONTACT_FAILURE = 'Your message could not be sent. Please try again or email kevin@kevos.com.';
+export const CONTACT_FAILURE = `Your message could not be sent. Please try again or email ${CONTACT_EMAIL}.`;
 
 export interface ContactEmail {
   from: string;
