@@ -1,7 +1,7 @@
 {
   "repository": "jogkev-creator/CADOS",
-  "commit": "2919c7f069b4f93cebd26a036d1be5421cd38f77",
-  "tree": "cfc549c216c42665e81a38d8eea2fd03f2a95ee2",
-  "subject": "SOLIDWORKS add-in 0.13.0: BIZOMAT CAD Automation, the new logo, a clear installer name (#22)",
+  "commit": "17cb5b8f5b5ccaf84e557ece30c858fc3002fd4d",
+  "tree": "bf99c745f379895bfce3187a9d9f0163f103edf7",
+  "subject": "tools/laptop: restore kevos works in Windows PowerShell 5.1 (#23)",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }

@@ -520,12 +520,26 @@ function Get-Prop($Obj, [string] $Name) {
 }
 
 function ConvertTo-Utc($Value) {
-    # A JSON time: PowerShell 7 reads it as a DateTime already, Windows PowerShell 5.1 leaves the text.
+    # A JSON time in UTC, or $null when it is not one. PowerShell 7 reads it as a DateTime already; Windows PowerShell
+    # 5.1 leaves the text, which Cloudflare may write with up to 9 decimals of a second (.NET reads at most 7).
     if ($Value -is [datetime]) {
         if ($Value.Kind -eq [DateTimeKind]::Unspecified) { return [datetime]::SpecifyKind($Value, [DateTimeKind]::Utc) }
         return $Value.ToUniversalTime()
     }
-    return [datetimeoffset]::Parse("$Value", [Globalization.CultureInfo]::InvariantCulture).UtcDateTime
+    $text = ("$Value".Trim()) -replace '(\.\d{7})\d+', '$1'
+    $when = [datetimeoffset]::MinValue
+    $styles = [Globalization.DateTimeStyles]::AssumeUniversal
+    if ($text -and [datetimeoffset]::TryParse($text, [Globalization.CultureInfo]::InvariantCulture, $styles, [ref]$when)) { return $when.UtcDateTime }
+    return $null
+}
+
+function ConvertFrom-JsonList([string] $Text) {
+    # The items of the first JSON list in a program's output. Windows PowerShell 5.1's ConvertFrom-Json hands a list
+    # on as one object (PowerShell 7 hands on its items), so the list is unrolled here: the same answer in both.
+    $m = [regex]::Match("$Text", '(?s)\[\s*(?:\{.*\})?\s*\]')
+    if (-not $m.Success) { return $null }
+    try { $json = ConvertFrom-Json -InputObject $m.Value } catch { return $null }
+    return ,@($json | ForEach-Object { $_ })
 }
 
 function Restore-Kevos {
@@ -558,31 +572,34 @@ function Restore-Kevos {
         Write-Host 'Reading the Worker''s last 10 deployments (wrangler deployments list)...'
         $raw = Get-Output 'node' @($wrangler, 'deployments', 'list', '--name', $worker, '--json', '--config', $config) $work
         $deployments = $null
-        if ($raw) {
-            $from = $raw.IndexOf('['); $to = $raw.LastIndexOf(']')
-            if ($from -ge 0 -and $to -gt $from) { try { $deployments = @($raw.Substring($from, $to - $from + 1) | ConvertFrom-Json) } catch { $deployments = $null } }
-        }
+        if ($raw) { $deployments = ConvertFrom-JsonList $raw }
         if ($null -eq $deployments) {
             Stop-Here "wrangler could not list the Worker's deployments: not signed in (cd `"$site`"; npx wrangler login), or more than one Cloudflare account (`$env:CLOUDFLARE_ACCOUNT_ID = '<the account ID>', then run this again)."
         }
-        $sorted = @($deployments | Sort-Object { ConvertTo-Utc (Get-Prop $_ 'created_on') })
+        # each deployment: when it was made and the versions it serves; any we cannot read stops everything
+        $list = @(foreach ($d in $deployments) {
+            $when = ConvertTo-Utc (Get-Prop $d 'created_on')
+            if ($null -eq $when) { Stop-Here "wrangler's list of deployments was not understood (a deployment without a time: '$(Get-Prop $d 'created_on')'). Nothing was changed." }
+            [pscustomobject]@{ When = $when; Versions = @(Get-Prop $d 'versions') }
+        })
+        $sorted = @($list | Sort-Object When)
         if ($sorted.Count -eq 0) { Stop-Here 'The Worker has no deployments. Nothing was changed.' }
         $live = $sorted[-1]
-        $before = @($sorted | Where-Object { (ConvertTo-Utc (Get-Prop $_ 'created_on')) -lt $published })
+        $before = @($sorted | Where-Object { $_.When -lt $published })
         if ($before.Count -eq 0) {
             Stop-Here "The deployment from before 6 Nov 2026 01:03 UTC is not among the last 10. Nothing was changed. In the Cloudflare dashboard: Workers & Pages > $worker > Deployments: deploy the version of 5 Nov 2026 (the KEVOS site, c79e297)."
         }
         $target = $before[-1]
-        $targetVersions = @(Get-Prop $target 'versions')
-        $liveVersions = @(Get-Prop $live 'versions')
+        $targetVersions = @($target.Versions)
+        $liveVersions = @($live.Versions)
         if ($targetVersions.Count -ne 1) { Stop-Here "That deployment splits traffic between versions: deploy it from the dashboard (Workers & Pages > $worker > Deployments). Nothing was changed." }
         $want = "$(Get-Prop $targetVersions[0] 'version_id')"
         $now = ''
         if ($liveVersions.Count -eq 1) { $now = "$(Get-Prop $liveVersions[0] 'version_id')" }
         if ($want -notmatch '^[0-9a-f-]{36}$') { Stop-Here 'wrangler did not give a version ID for that deployment. Nothing was changed.' }
         Write-Host ''
-        Write-Host ("  live now          deployment of {0:yyyy-MM-dd HH:mm} UTC, version {1}" -f (ConvertTo-Utc (Get-Prop $live 'created_on')), $(if ($now) { $now } else { '(several)' }))
-        Write-Host ("  the KEVOS site    deployment of {0:yyyy-MM-dd HH:mm} UTC, version {1}" -f (ConvertTo-Utc (Get-Prop $target 'created_on')), $want)
+        Write-Host ("  live now          deployment of {0:yyyy-MM-dd HH:mm} UTC, version {1}" -f $live.When, $(if ($now) { $now } else { '(several)' }))
+        Write-Host ("  the KEVOS site    deployment of {0:yyyy-MM-dd HH:mm} UTC, version {1}" -f $target.When, $want)
         Write-Host "  kevos.com shows   $(Get-Title 'https://kevos.com/')"
 
         if ($now -eq $want) {
