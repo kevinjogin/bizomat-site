@@ -132,6 +132,8 @@ so turning the rules off is the rollback, and nothing about kevos.com moves to F
 
 ### 6a. Today's deployments under bizomat.ai (owner's decision, 5 Nov 2026: everything under bizomat.ai, no subdomains)
 
+_Superseded on 6 Nov 2026 by 6b: the website moved to Fly.io; this routing through Cloudflare is not used._
+
 bizomat.ai is the BIZOMAT platform: the website at the root and each application under a path of its own. This
 repository's Worker (`throbbing-block-6c61`, `src/worker.ts`) answers bizomat.ai and sends each path to what runs it
 today. Both zones are in the owner's Cloudflare account (nameservers `uma` and `zac.ns.cloudflare.com`).
@@ -174,6 +176,32 @@ treats the name as an old host (pages 301 to `https://bizomat.ai/cad`); the bizo
 
 This is today's deployment. The single-app plan routes the same paths in the bizomat app's proxy (section 2); after
 section 6, step 2, bizomat.ai's records point at the bizomat app (DNS only) and this Worker serves kevos.com alone.
+
+### 6b. The website on Fly.io (owner's decision, 6 Nov 2026; replaces the Cloudflare routing of 6a)
+
+The owner chose Fly.io for the BIZOMAT website, deploys from the laptop (CADOS `tools/laptop/bizomat.ps1`), and the
+old KEVOS site back on kevos.com.
+
+| Address | Served by |
+| --- | --- |
+| `bizomat.ai/` and every website page | Fly app `bizomat`: the router (`proxy`) and the website (`web`), `fly.website.toml` |
+| `bizomat.ai/cad/...`, CAD's OAuth discovery and root program paths | Fly app `cados`, reached by the router over the private network (`cados.internal:8080`; CADOS listens on `::` since jogkev-creator/CADOS#16) |
+| `bizomat.ai/tasks/...` | 302 to `https://work.kevos.com/...` (prefix off; `TASKS_REDIRECT_ORIGIN`) until Project Management moves into `bizomat` with its data (`fly.toml`, the full plan) |
+| `kevos.com` | Cloudflare Worker `throbbing-block-6c61`: the KEVOS site (the version built from c79e297), no longer deployed from this repository |
+| `cados.kevos.com`, `cados.fly.dev` | `cados` directly, as before (pages 301 to `bizomat.ai/cad`, programs served there) |
+
+| Order | Owner's step | Check | Rollback |
+| --- | --- | --- | --- |
+| 1 | Cloudflare, Worker `throbbing-block-6c61`: Settings > Builds > Disconnect; Deployments: deploy the version built from c79e297 (5 Nov); Settings > Domains & Routes: remove `bizomat.ai/*` and `www.bizomat.ai/*` | kevos.com is the KEVOS site; its assistant and forms answer | Deploy the later version again |
+| 2 | `.\bizomat.ps1 deploy cad` (CADOS `main` with #16) | `https://bizomat.ai/cad/` and `https://cados.kevos.com/docs` as before | `fly releases -a cados --image`, then `fly deploy -a cados --image <previous>` |
+| 3 | Optional, for the assistant and AI search on Fly: a Cloudflare API token with Workers AI permission, then `fly secrets set CF_ACCOUNT_ID=<account id> CF_AI_TOKEN=<token> -a bizomat` | `/api/chat` answers questions | `fly secrets unset ...` (search falls back to keywords) |
+| 4 | `.\bizomat.ps1 deploy website`: creates `bizomat` the first time (after asking), deploys, checks `bizomat.fly.dev` | The script's live checks: the router's version, the website, its APIs, `/cad/` through the private network, `/tasks/` 302 | `fly releases -a bizomat --image`, then redeploy the previous image; or leave bizomat.ai on `cados` (step 5 not done) |
+| 5 | Certificates, then DNS (bizomat.ai zone, all records DNS only): `fly certs add bizomat.ai -a bizomat` and `fly certs add www.bizomat.ai -a bizomat`. If Fly refuses because `cados` holds the name, first `fly certs remove bizomat.ai -a cados` (bizomat.ai/cad is then without a certificate until step 5 ends: do it in one sitting). Point `_acme-challenge.bizomat.ai` at the target `fly certs setup bizomat.ai -a bizomat` shows; when `fly certs show bizomat.ai -a bizomat` says Issued, change the `bizomat.ai` A and AAAA records to `fly ips list -a bizomat` and add `www` (CNAME `bizomat.fly.dev`). Then `fly certs remove bizomat.ai -a cados` if still there | `https://bizomat.ai/` is the website; `/cad/` CAD Automation; `/CAD` 301; `/tasks/` 302 to work.kevos.com; an AI app connected with `https://bizomat.ai/cad/mcp` and one with `https://cados.kevos.com/mcp` both list tools | The A and AAAA records back to `66.241.125.206` and `2a09:8280:1::1e8:c21b:1` (`cados`) and its certificate back (`fly certs add bizomat.ai -a cados`) |
+
+Known differences on Fly, compared with the Worker:
+- The contact form answers "Please email kevin@kevos.com": the Worker sent mail with Cloudflare's email binding, which
+  Fly does not have, and the Resend adapter (`src/server/contact/mail.ts`) is not wired to the form yet.
+- The assistant and AI search need step 3; without it, search runs on keywords and the assistant says it is off.
 
 ## 7. After cutover
 
