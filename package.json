@@ -15,7 +15,7 @@
     "check": "astro check",
     "test": "node --test \"tests/**/*.test.ts\"",
     "verify": "npm run check && npm test && npm run build",
-    "deploy": "node scripts/kevos-guard.mjs",
+    "deploy": "wrangler deploy",
     "brand": "node shared/brand/build.mjs",
     "brand:check": "node shared/brand/build.mjs --check",
     "reading-time": "node scripts/reading-time.mjs",

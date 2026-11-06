@@ -118,6 +118,31 @@ test('an application path in another case answers 301 to the lowercase one', asy
   });
 });
 
+test('with the CAD binding, CAD Automation\'s paths go to bizomat-mcp as they were asked; certificate checks stay at the origin', async () => {
+  await withOrigin(async (seen) => {
+    const handed: Request[] = [];
+    const bound = (): Env => ({ ...env(), CAD: { fetch: async (r: Request) => (handed.push(r), new Response(`cad:${new URL(r.url).pathname}`, { headers: { 'X-From': 'bizomat-mcp' } })) } });
+    for (const path of ['/cad/', '/cad/login?next=%2F', '/mcp', '/solidworks/mcp/k', '/oauth/token', '/v2/device/next?session=s&wait=25', '/healthz',
+      '/.well-known/oauth-protected-resource/cad/mcp', '/.well-known/oauth-authorization-server/cad', '/.well-known/openid-configuration/cad']) {
+      const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), bound());
+      assert.equal(await res.text(), `cad:${path.split('?')[0]}`, path);
+      assert.equal(res.headers.get('X-From'), 'bizomat-mcp', path);
+    }
+    const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' });
+    await worker.fetch(new Request('https://bizomat.ai/cad/mcp', { method: 'POST', body, headers: { Authorization: 'Bearer t', 'Content-Type': 'application/json' } }), bound());
+    const post = handed.at(-1)!;
+    assert.equal(post.method, 'POST');
+    assert.equal(post.url, 'https://bizomat.ai/cad/mcp');
+    assert.equal(post.headers.get('Authorization'), 'Bearer t');
+    assert.equal(await post.text(), body);
+    assert.equal(seen.length, 0, 'nothing went to the origin');
+    // Fly renews the origin's certificate through Cloudflare: that path stays with the origin
+    assert.equal(await (await worker.fetch(new Request('http://bizomat.ai/.well-known/acme-challenge/t0k3n'), bound())).text(), 'origin:/.well-known/acme-challenge/t0k3n');
+    // the website itself is not handed on
+    assert.equal(await (await worker.fetch(new Request('https://bizomat.ai/cad-automation/'), bound())).text(), 'asset:/cad-automation/');
+  });
+});
+
 test('bizomat.ai/tasks/... reaches Project Management: its Worker once bound, its current address until then', async () => {
   for (const [path, to] of [['/tasks', 'https://work.kevos.com/'], ['/tasks/', 'https://work.kevos.com/'], ['/tasks/login', 'https://work.kevos.com/login'], ['/tasks/b/7?view=board', 'https://work.kevos.com/b/7?view=board']]) {
     const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
@@ -183,6 +208,9 @@ test('no page or file of the website takes an application\'s path, so those path
   // /insights then answer the 404 page (it happened in production on 6 Nov 2026). Paths reach the Worker by having no file.
   assert.doesNotMatch(toml, /^\s*run_worker_first\s*=/m, 'run_worker_first must stay unset');
   assert.match(toml, /pattern = "bizomat\.ai\/\*", zone_name = "bizomat\.ai"/);
-  // bizomat.ai/tasks is Project Management's Worker (the one behind work.kevos.com), bound by name
-  assert.match(toml, /^\[\[services\]\]\nbinding = "TASKS"\nservice = "workos-platform-preview"$/m);
+  // bizomat.ai/tasks is the Worker bizomat-tasks and bizomat.ai/cad the Worker bizomat-mcp, bound by name
+  assert.match(toml, /^\[\[services\]\]\nbinding = "TASKS"\nservice = "bizomat-tasks"$/m);
+  assert.match(toml, /^\[\[services\]\]\nbinding = "CAD"\nservice = "bizomat-mcp"$/m);
+  const tasks = fs.readFileSync('apps/work/wrangler.jsonc', 'utf8');
+  assert.match(tasks, /"bizomat": \{\n\s+"name": "bizomat-tasks",\n\s+"workers_dev": false,/, 'bizomat-tasks has no address of its own');
 });
