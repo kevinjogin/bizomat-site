@@ -74,7 +74,7 @@ Test a restore once a quarter: create a volume from the latest snapshot in a scr
 | Each role sees only its own | The entrypoint's allow-list (`infrastructure/fly/entrypoint.sh`); a new secret must be added there for its role |
 | Stronger storage for work and cad | A root-owned file `/data/<role>/.secrets/<NAME>` (mode 0600) on the role's own volume; other Machines never see it |
 | CAD keys | `secret.keys`, `bridge-signing-key.pem`, `ai_keys.secret` live only on the CAD volume. Never regenerate them: a new signing key makes every paired computer refuse commands, a new data key changes every add-in key and private MCP address |
-| `OPENSKETCH_PASSWORD` | Must stay the same value as on the old `cados` app. Changing it changes the owner's server-wide private MCP address. The cad role refuses to start on Fly without it |
+| `OPENSKETCH_PASSWORD` | Not needed: CAD Automation has no server password (CADOS#11). If cados still had it, `bizomat.ps1 move cad` moved its value to `/data/cad/.secrets/` (it only seeds the owner's old private MCP address); leave it there |
 | Rotation | Workers AI token and Turnstile key: rotate in Cloudflare, then `fly secrets import`. Google client secrets: rotate in Google Cloud, then set `WORK_GOOGLE_CLIENT_SECRET` or `CAD_GOOGLE_CLIENT_SECRET` |
 
 ## 7. Accounts

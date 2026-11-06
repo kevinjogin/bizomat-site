@@ -11,7 +11,7 @@ Earlier versions were called CADOS for SOLIDWORKS (0.12) and KEVOS Bridge (up to
 
 The normal way: the installer
 -----------------------------
-Install CADOS-for-SOLIDWORKS-<version>-x64.msi once (the file keeps its earlier name; it asks for administrator
+Install BIZOMAT-CAD-Automation-<version>-x64.msi once (it asks for administrator
 approval once). It installs this add-in and the BIZOMAT Companion, makes SOLIDWORKS load the add-in at start-up,
 and starts the Companion at every Windows sign-in. The Companion then opens its pairing window: type the email and
 password of your CAD Automation account, or confirm the code it shows in your browser. From then on: open SOLIDWORKS

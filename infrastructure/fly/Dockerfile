@@ -113,10 +113,13 @@ RUN cd /app/cad \
  && OPENSKETCH_DATA=/tmp/cad-import-check /opt/cad/venv/bin/python -c "import build123d, opensketch.server; print('CAD ready')" \
  && rm -rf /tmp/cad-import-check \
  && /opt/cad/venv/bin/python -m compileall -q /app/cad/opensketch
+# which CADOS commit apps/cad is (scripts/sync-cad.mjs): the cad role reports it as its version (/healthz)
+COPY apps/cad-source.json /app/cad/cad-source.json
 
-# proxy, entrypoint and the restore scripts (infrastructure/migrate, run with fly ssh console)
+# proxy, entrypoint, cad's holding page and the restore scripts (infrastructure/migrate, run with fly ssh console)
 COPY infrastructure/proxy/package.json infrastructure/proxy/*.mjs /app/proxy/
 COPY infrastructure/migrate /usr/local/lib/bizomat/migrate
+COPY infrastructure/fly/cad-holding.py /usr/local/lib/bizomat/cad-holding.py
 COPY infrastructure/fly/entrypoint.sh /usr/local/bin/bizomat-entrypoint
 RUN chmod -R a+rX /app /usr/local/lib/bizomat \
  && chmod 0755 /usr/local/bin/bizomat-entrypoint \

@@ -22,7 +22,7 @@ import uuid
 from pathlib import Path
 from urllib.parse import urlencode
 
-from . import assembly, auth, geometry, store
+from . import assembly, auth, canonical, geometry, store
 
 LIFETIME = 3600
 PREVIEW_LIFETIME = 600
@@ -121,8 +121,7 @@ def _directory() -> Path:
 def _signature(artifact_id: str, filename: str, expires: int) -> str:
     # Domain separation prevents a download signature from being used as any other credential.
     message = f"opensketch-artifact-v1\n{artifact_id}\n{filename}\n{expires}"
-    # keyed by the random data-folder secret and the connector address: a new server password still revokes
-    # every link, but a short password cannot be guessed offline from one
+    # keyed by the random data-folder secret and the server-wide connector address
     key = hmac.new(auth.data_secret("artifact-download"), auth.mcp_token().encode(), hashlib.sha256).digest()
     return hmac.new(key, message.encode(), hashlib.sha256).hexdigest()
 
@@ -226,7 +225,7 @@ def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None, ow
         (directory / f"{artifact_id}.json").unlink(missing_ok=True)
         raise
     query = urlencode({"expires": expires, "signature": _signature(artifact_id, filename, expires)})
-    return dict(info, download_url=f"{auth.public_url()}/mcp/artifacts/{artifact_id}/{filename}?{query}")
+    return dict(info, download_url=f"{canonical.machine_base() or auth.public_url()}/mcp/artifacts/{artifact_id}/{filename}?{query}")
 
 
 def resolve(artifact_id: str, filename: str, expires: str, signature: str) -> tuple[Path, dict]:

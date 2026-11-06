@@ -1,8 +1,7 @@
 # KEVOS bridge protocol 2.0
 
-The contract between the CAD Automation gateway (this server, `opensketch/devicebridge.py`), the BIZOMAT Companion on
-each Windows computer and the add-in inside SOLIDWORKS (`solidworks/src/Core/Bridge2`). The protocol was built as the
-KEVOS bridge: its KEVOS names (`KEVOS-Device`, `kevos-*` types, `KEVOS-*` headers, the pipe name) are ids and stay. Version 2.0. Minor versions
+The contract between the KEVOS gateway (this server, `opensketch/devicebridge.py`), the KEVOS Companion on each
+Windows computer and the KEVOS add-in inside SOLIDWORKS (`solidworks/src/Core/Bridge2`). Version 2.0. Minor versions
 (2.x) only add optional fields; receivers ignore fields they do not know. A major version change needs a new URL
 prefix (`/v3/`) and a new pipe hello range.
 
@@ -119,6 +118,7 @@ MCP tools add `error_code` beside `error` in their JSON.
 | `INPUT_INVALID`, `INPUT_FORBIDDEN_FIELD`, `UNKNOWN_OP`, `PAYLOAD_TOO_LARGE` | The command is wrong; nothing ran | after fixing it |
 | `UNAUTHENTICATED`, `SIGNATURE_INVALID`, `REPLAY_DETECTED`, `TOKEN_EXPIRED` (clock), `DPOP_INVALID` | A request or command failed its checks | no (clock: after correcting) |
 | `DEVICE_UNKNOWN`, `DEVICE_REVOKED`, `WRONG_DEVICE` | Not this account's computer, or removed | pair again |
+| `ACCOUNT_SUSPENDED` | The computer's CADOS account is suspended by the owner (401 on every device request; pairing with the password: 403; a held `next` ends with 409 reason `suspended`; waiting commands fail with this code). The computer stays paired | after the owner resumes the account (the Companion retries every 30 s) |
 | `DEVICE_OFFLINE`, `DEVICE_AMBIGUOUS`, `NOT_CONNECTED` | Which computer: offline, several online, none | when it is online / with `device=` |
 | `INSTANCE_NOT_RUNNING`, `SW_BUSY_DIALOG`, `USER_EDITING`, `PAUSED` | SOLIDWORKS closed, a dialog open, a sketch open, paused by the person | after they act |
 | `APPROVAL_DENIED` | The person declined a destructive operation in SOLIDWORKS | no |
@@ -169,7 +169,7 @@ A refusal and a result:
 ```json
 {"v": "2.0", "type": "command.ack", "command_id": "cmd_...", "device_id": "dev_...", "hop": "companion", "ack": "rejected",
  "error": {"code": "INSTANCE_NOT_RUNNING", "category": "device", "retryable": false, "hop": "companion",
-           "message": "SOLIDWORKS is not running on DESK. Open SOLIDWORKS there; CAD Automation connects by itself."}}
+           "message": "SOLIDWORKS is not running on DESK. Open SOLIDWORKS there; CADOS connects by itself."}}
 {"v": "2.0", "type": "command.result", "msg_id": "msg_...", "sent_at": "...", "command_id": "cmd_...", "device_id": "dev_...",
  "instance_id": "swi_...", "status": "failed", "params_sha256": "sha256:9b2f...", "started_at": "...", "finished_at": "...",
  "duration_ms": 4210, "result": {"features": ["..."], "stopped_at": "f3 (fillet): ..."},

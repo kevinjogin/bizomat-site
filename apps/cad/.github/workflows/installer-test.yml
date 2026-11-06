@@ -1,0 +1,36 @@
+# Builds the add-in, the Companion and the MSI on Windows, then installs the MSI silently, checks the files and the
+# registration, uninstalls it and checks it is gone (.github/scripts/test-install.ps1). The runner has no SOLIDWORKS:
+# this proves the installer, not the add-in inside SOLIDWORKS. Publishes nothing (solidworks.yml does the releases).
+name: Installer test
+
+on:
+  pull_request:
+    paths: ["solidworks/**", "installer/**", ".github/scripts/test-install.ps1", ".github/workflows/installer-test.yml"]
+  push:
+    branches-ignore: [main]
+    paths: ["solidworks/**", "installer/**", ".github/scripts/test-install.ps1", ".github/workflows/installer-test.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build the add-in and the Companion
+        shell: bash
+        run: bash solidworks/build.sh
+      - name: Build the MSI (unsigned)
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File installer\build.ps1
+      - name: Install, check and uninstall
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .github\scripts\test-install.ps1 -Msi installer\out\BIZOMAT-CAD-Automation-x64.msi

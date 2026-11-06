@@ -26,7 +26,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 | Path | What |
 | --- | --- |
 | `/` | The website (Astro): `src/`, `public/`, `tests/`, `scripts/`; Node server in `src/node/` |
-| `apps/cad/` | CAD Automation (Python server, C# add-in and Companion, installer); full CADOS history via `git subtree` |
+| `apps/cad/` | CAD Automation (Python server, C# add-in and Companion, installer): an exact copy of one CADOS commit, pinned in `apps/cad-source.json` (`scripts/sync-cad.mjs check` proves it by git's tree hash; CI checks it against GitHub). Never edit it here: change CADOS, then `node scripts/sync-cad.mjs to <commit>` (or the laptop's `bizomat.ps1 sync cad`) in a pull request of its own |
 | `apps/work/` | Project Management (Hono Worker + React SPA, Node runtime, migrations, migration tooling); PMO history |
 | `shared/brand/` | Logo geometry, generated assets, tokens, components, fonts (`build.mjs` copies them into every product) |
 | `infrastructure/`, `fly.toml` | The single Fly.io app `bizomat`: proxy, Dockerfile, entrypoint, compose stack, smoke tests, migration scripts |
@@ -37,12 +37,21 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 - **GitHub `jogkev-creator/gocore-website`, branch `main`** (the repository name is historical). Before any work:
   `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
   Preserve uncommitted work on a backup branch before anything else.
-- The original repositories `jogkev-creator/CADOS` and `jogkev-creator/PMO` still deploy the current production
-  apps until cutover. Do not change their deployments from here.
+- `jogkev-creator/CADOS` is where CAD Automation is changed and tested (and its add-in and installer released); the
+  `cad` group of the Fly app `bizomat` is built from `apps/cad`, its exact copy. Until `bizomat.ps1 move cad` has run,
+  production CAD is still the Fly app `cados`, deployed from CADOS; do not change that deployment from here.
+  `jogkev-creator/PMO` is where Project Management came from.
 - Never merge older GoCore branches into `main`.
 
 ## Deployment
 
+- **CAD Automation into `bizomat` (6 Nov 2026):** `fly.website.toml` has the `cad` group (performance-1x, 2 GB, volume
+  `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
+  holding page instead) and needs no server password. The data moves with `bizomat.ps1 move cad`
+  (`infrastructure/migrate/cad/to-fly.mjs`, rehearsed by `infrastructure/migrate/test/cad-move/rehearse.sh` in CI); it
+  switches the router's `UPSTREAM_CAD` itself, and `fly.website.toml` follows in a pull request (until then
+  `deploy website` refuses). Retiring `cados` (`retire cados`, `delete cados`) is irreversible: only with the owner's
+  go-ahead. Steps: `infrastructure/migrate/cad/README.md`.
 - **Target:** one Fly.io app `bizomat` (Sydney) with process groups proxy, web, work and cad, deployed by
   `.github/workflows/bizomat-deploy.yml` (manual) with an org-scoped `FLY_API_TOKEN`. See `docs/BIZOMAT-DEPLOYMENT.md`.
   DNS changes (bizomat.ai, www.bizomat.ai, kevos.com, cados.kevos.com, work.kevos.com) are made by hand only after the
@@ -77,7 +86,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 - Stage files by explicit path; never `git add -A` or `git add .` for a release; inspect `git diff --cached --stat`.
 - Documentation and project-memory changes go in their own commit.
 - `npm run build` regenerates brand assets with `shared/brand/build.mjs`; it writes only files whose content changed.
-  Never hand-edit the copies in the apps: change `shared/brand/` and run `npm run brand`.
+  Never hand-edit the copies in the apps: change `shared/brand/` and run `npm run brand`. Its copies in `apps/cad` are CADOS's
+  files too: a brand change that touches them goes to CADOS in the same form, then comes back with a sync (CI checks
+  both `brand:check` and `scripts/sync-cad.mjs check`).
 - No personal, client or confidential data in code, tests or docs. Never commit database dumps, data folders,
   uploaded files or secrets. Migration tooling prints counts, never row content.
 

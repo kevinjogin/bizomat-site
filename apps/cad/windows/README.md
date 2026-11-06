@@ -69,13 +69,13 @@ Run `windows\setup.ps1` again afterwards and it copies the zip from Downloads, s
 powershell -ExecutionPolicy Bypass -File windows\start.ps1
 ```
 
-It asks two things:
+It asks one thing:
 
-- **Server password**: you choose it (at least 10 characters). It is typed hidden and kept only in that window.
-  Type the same one each time you start. Keep it in your password manager. Never send it to anyone.
 - **Public https address**: press Enter for now. Fill it in after step 6.
 
-The home page opens at `http://127.0.0.1:8000`. The first time, create the owner account with the server password.
+The home page opens at `http://127.0.0.1:8000`. The first time, create the owner account (your name, email and a
+password). There is no server password. Until the owner account exists, nothing answers through a tunnel except
+the setup page.
 The home page then shows your **SOLIDWORKS key** and the **connector address**.
 
 Keep the window open while you work. Stop the server with Ctrl+C.
@@ -142,6 +142,6 @@ prints its log in the PowerShell window.
 
 - **Accounts**: the server keeps its accounts and keys in `%USERPROFILE%\opensketch-data`. Back that folder up.
 - **Anyone with the address**: when the tunnel is on, anyone who has the public address sees the sign-in page.
-  The password and keys protect it. Stop the tunnel when you are not using the AI app.
+  Each person's own password, and the keys, protect it. Stop the tunnel when you are not using the AI app.
 - **Licence**: OpenSketch is AGPL-3.0. A private copy for your own use is fine. If you offer it to other people
   over a network, the AGPL requires you to offer them its source code.

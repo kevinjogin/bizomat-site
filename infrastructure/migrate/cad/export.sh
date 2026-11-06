@@ -33,7 +33,9 @@ tmp="$(mktemp -d /tmp/bizomat-export.XXXXXX)"
 trap 'rm -rf "$tmp"' EXIT
 
 cd "$DATA"
-find . -xdev \( -path ./lost+found -o -path ./incoming -o -path ./backups \) -prune -o \
+# never: lost+found, the platform's upload and backup folders, and a role's own secret files (.secrets: they move as
+# settings, never in an archive)
+find . -xdev \( -path ./lost+found -o -path ./incoming -o -path ./backups -o -path ./.secrets \) -prune -o \
   -type f ! -name '*.tmp' -print0 | LC_ALL=C sort -z >"$tmp/files"
 count="$(tr -cd '\0' <"$tmp/files" | wc -c | tr -d ' ')"
 [ "$count" -gt 0 ] || die "no files in $DATA"

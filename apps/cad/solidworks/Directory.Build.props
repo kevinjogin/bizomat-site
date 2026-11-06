@@ -8,7 +8,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Deterministic>true</Deterministic>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <Version>0.12.4</Version>
+    <Version>0.13.0</Version>
     <Company>BIZOMAT</Company>
     <Product>BIZOMAT CAD Automation for SOLIDWORKS</Product>
     <Copyright>BIZOMAT</Copyright>

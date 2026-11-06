@@ -547,10 +547,27 @@ def test_an_open_server_takes_pairing_only_from_its_own_machine():
     jwk = db.jwk_of(__import__("cryptography.hazmat.primitives.asymmetric.ec", fromlist=["ec"]).generate_private_key(
         __import__("cryptography.hazmat.primitives.asymmetric.ec", fromlist=["ec"]).SECP256R1()).public_key())
     r = remote.post("/v2/devices/pair/start", json={"public_jwk": jwk, "name": "x"})
-    assert r.status_code == 403 and "password" in r.json()["error"]["message"]
-    assert remote.post("/devices/pair", data={"code": "ABCD-EFGH", "name": "x"}).status_code == 403
-    local = TestClient(server.app, client=("127.0.0.1", 50000))
+    assert r.status_code == 403 and "not set up yet" in r.json()["error"]["message"]
+    assert remote.post("/devices/pair", data={"code": "ABCD-EFGH", "name": "x"}).status_code in (401, 403)
+    via_tunnel = TestClient(server.app, client=("127.0.0.1", 50000), headers={"X-Forwarded-For": "203.0.113.9"})
+    assert via_tunnel.post("/v2/devices/pair/start", json={"public_jwk": jwk, "name": "x"}).status_code == 403
+    local = TestClient(server.app, base_url="http://127.0.0.1:8000", client=("127.0.0.1", 50000))
     assert local.post("/v2/devices/pair/start", json={"public_jwk": jwk, "name": "x"}).status_code == 200
+
+
+def test_the_update_manifest_reaches_computers_on_a_server_with_accounts(monkeypatch):
+    """The Companion asks with its device proof and no cookie. On a server with accounts the sign-in gate must leave
+    /v2/bridge/ to the device API (it sent such requests to the sign-in page)."""
+    from fastapi.testclient import TestClient
+    monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", "https://cad.example.test")
+    owner = TestClient(server.app, base_url="https://cad.example.test")
+    r = owner.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": "correct horse",
+                                   "next": "/"}, follow_redirects=False)
+    assert r.status_code in (302, 303), r.text[:200]
+    anon = TestClient(server.app, base_url="https://cad.example.test")
+    r = anon.get("/v2/bridge/update.json", follow_redirects=False)
+    assert r.status_code == 401 and r.headers["content-type"].startswith("application/json"), (r.status_code, r.headers)
+    assert anon.get("/dashboard", follow_redirects=False).status_code == 303  # pages still need sign-in
 
 
 @pytest.fixture()
@@ -593,8 +610,8 @@ def test_a_computer_paired_under_a_path_works_as_on_a_host_of_its_own(cad_base, 
 @pytest.mark.parametrize("where", ["base", "cad_base"])
 def test_a_tool_call_keeps_its_connection_alive_while_solidworks_works(where, request, companions, monkeypatch):
     """An answer is an event stream: its headers go at once and a comment at each keep-alive interval (15 s; 0.2 s here)
-    until SOLIDWORKS answers, so a proxy that ends a silent response (Cloudflare: 100 s; the BIZOMAT platform's proxy:
-    620 s) keeps a tool that runs for minutes. Under /cad too: the prefix's HTML rewriting never holds a stream back."""
+    until SOLIDWORKS answers, so a proxy that ends a silent response (Cloudflare in front of bizomat.ai/cad: 100 s)
+    keeps a tool that runs for minutes. Under /cad too: the prefix's HTML rewriting never holds a stream back."""
     from sse_starlette.sse import EventSourceResponse
     monkeypatch.setattr(EventSourceResponse, "DEFAULT_PING_INTERVAL", 0.2)
     at = request.getfixturevalue(where)

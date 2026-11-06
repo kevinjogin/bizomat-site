@@ -3,14 +3,15 @@
 # Repository secrets (Settings > Secrets and variables > Actions):
 # - FLY_API_TOKEN: a deploy token for this app only: `fly tokens create deploy -a <app>` (or the Fly dashboard:
 #   the app > Tokens). Until it is set nothing is deployed. Only the steps that run flyctl see it.
-# - OPENSKETCH_PASSWORD (required, so the public site is never open), GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET
-#   (optional), OPENSKETCH_ACCESS_CODE (optional early access code): passed to Fly as the app's secrets.
+# - GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET (optional), OPENSKETCH_ACCESS_CODE (optional early access code): passed
+#   to Fly as the app's secrets. There is no server password: a server with no account answers only its setup page
+#   (auth.py, setup mode) until the first person creates the owner account.
 # A new app needs the app and its volume once: `fly apps create <app>` and
 # `fly volumes create opensketch_data -a <app> -r syd -s 1` (with an org token this workflow still makes them).
 #
 # Pushes: the Fly app (cados) is linked to this repository and Fly deploys every push to main itself, so a push runs
 # only the tests here, unless the repository variable DEPLOY_ON_PUSH is "true" (then unlink the repo in Fly).
-# Run by hand, it deploys from here (and makes the volume and passes the password secret if they are missing).
+# Run by hand, it deploys from here (and makes the volume if it is missing).
 #
 # What deploys: a push to main whose changes since the live version (the site's /healthz names its commit) touch
 # more than notes and tests (root *.md, docs/, tests/, solidworks/tests/): each deploy restarts the one server
@@ -99,13 +100,12 @@ jobs:
       REGION: syd
       # The public address (OAuth metadata, pairing and download links). The health checks below use <app>.fly.dev, the
       # origin that always answers. Set the repository variable PUBLIC_URL to override it.
-      PUBLIC_URL: ${{ vars.PUBLIC_URL || 'https://cados.kevos.com' }}
+      PUBLIC_URL: ${{ vars.PUBLIC_URL || 'https://bizomat.ai/cad' }}
     steps:
       - name: Check setup
         id: setup
         env:
           HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
-          HAS_PASSWORD: ${{ secrets.OPENSKETCH_PASSWORD != '' }}
           EVENT: ${{ github.event_name }}
           DEPLOY_ON_PUSH: ${{ vars.DEPLOY_ON_PUSH }}
           GH_TOKEN: ${{ github.token }}
@@ -117,9 +117,6 @@ jobs:
             # the Fly app is linked to this repository and deploys each push itself; deploying here too would race it
             echo "Fly deploys pushes itself (repository variable DEPLOY_ON_PUSH is not true): tests only." | tee -a "$GITHUB_STEP_SUMMARY"
             echo "go=no" >> "$GITHUB_OUTPUT"
-          elif [ "$HAS_PASSWORD" != "true" ]; then
-            echo "::error::Add the OPENSKETCH_PASSWORD secret first, so the public site is not open to everyone."
-            exit 1
           elif [ "$EVENT" = "push" ] && tip=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha) \
                && [ -n "$tip" ] && [ "$tip" != "$GITHUB_SHA" ]; then
             # tests of two pushes can finish in either order: never put an older commit over a newer one
@@ -158,15 +155,16 @@ jobs:
         if: steps.setup.outputs.go == 'yes'
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-          PASSWORD: ${{ secrets.OPENSKETCH_PASSWORD }}
           OPENSKETCH_ACCESS_CODE: ${{ secrets.OPENSKETCH_ACCESS_CODE }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: |
-          args=("OPENSKETCH_PASSWORD=$PASSWORD")
-          [ -n "$OPENSKETCH_ACCESS_CODE" ] && args+=("OPENSKETCH_ACCESS_CODE=$OPENSKETCH_ACCESS_CODE")
-          [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ] && args+=("GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET")
-          flyctl secrets set --app "$APP" --stage "${args[@]}"
+          args=()
+          if [ -n "$OPENSKETCH_ACCESS_CODE" ]; then args+=("OPENSKETCH_ACCESS_CODE=$OPENSKETCH_ACCESS_CODE"); fi
+          if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
+            args+=("GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET")
+          fi
+          if [ "${#args[@]}" -gt 0 ]; then flyctl secrets set --app "$APP" --stage "${args[@]}"; else echo "No optional secrets to pass."; fi
 
       - name: Deploy
         if: steps.setup.outputs.go == 'yes'

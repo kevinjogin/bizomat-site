@@ -13,9 +13,6 @@ from html import escape
 from . import brand
 from .brand import icon
 
-# The hosted service the add-in and the Companion use by default (CadosPane.DefaultGateway, Config.DefaultGateway).
-DEFAULT_SERVICE = "https://cados.kevos.com"
-
 # An illustration of one request (real tool names, a plate drawn in isometric): not a screenshot.
 PART_SVG = """<svg class="part-svg" viewBox="0 0 352 206" role="img" aria-label="Isometric view of a rectangular plate with four holes">
 <g stroke="#0e1726" stroke-width="1.2" stroke-linejoin="round">
@@ -100,14 +97,14 @@ DOWNLOAD = f"""<section class="section section-warm" id="download" aria-labelled
 <div class="download">
 <div><span class="eyebrow">Download</span><h2 id="download-title">CAD Automation for SOLIDWORKS</h2>
 <p class="lead">A native SOLIDWORKS add-in for Windows, installed with one installer. It appears in Tools &gt; Add-Ins and
-adds a BIZOMAT tab, menu and task pane to SOLIDWORKS.</p>
+adds its own tab, menu and task pane to SOLIDWORKS.</p>
 <div class="hero-cta"><a class="btn btn-primary btn-lg" href="/download/solidworks">{icon("download")}Download for SOLIDWORKS</a></div>
-<p class="small muted" style="margin-top:var(--s-3)">Sign in with your CAD Automation account to download. Your administrator gives you the account and password.</p>
+<p class="small muted" style="margin-top:var(--s-3)">Sign in with your CAD Automation account to download. No account yet? Create one, or ask your administrator.</p>
 <div class="download-links"><a href="/docs#install">Installation guide</a><a href="/docs#requirements">System requirements</a>
 <a href="/docs#versions">Supported SOLIDWORKS versions</a></div></div>
 <div class="card card-pad download-card"><h3>What the installer adds</h3><ul class="checks">
-<li>{icon("check")}<span><b>The add-in</b> for SOLIDWORKS: the BIZOMAT tab, menu and task pane, and the commands your assistant sends.</span></li>
-<li>{icon("check")}<span><b>BIZOMAT Companion</b>: pairs the computer with your account and keeps the secure link. Starts with Windows.</span></li>
+<li>{icon("check")}<span><b>The add-in</b> for SOLIDWORKS: its tab, menu and task pane, and the commands your assistant sends.</span></li>
+<li>{icon("check")}<span><b>The Companion</b>: pairs the computer with your account and keeps the secure link. Starts with Windows.</span></li>
 <li>{icon("check")}<span>Registration with every SOLIDWORKS version on the computer. No files to copy, no registry to edit.</span></li>
 <li>{icon("check")}<span>Clean removal from Windows Settings &gt; Apps. Your CAD files are never changed.</span></li></ul>
 <div class="kv-row small"><span class="k">Installer</span><span class="v">Windows .msi, 64-bit</span></div>
@@ -154,14 +151,14 @@ natural language, while your design files stay in your own workflow.</p>
                "Your assistant talks to the CAD Automation service. A small Windows app on your CAD computer holds a secure "
                "link "
                "to it and hands each command to SOLIDWORKS.", "how")}
-<div class="flow" role="img" aria-label="Your AI assistant connects to the CAD Automation service over HTTPS with OAuth. Your computer connects out to the CAD Automation service with signed requests. The BIZOMAT Companion passes commands to the add-in in SOLIDWORKS.">
+<div class="flow" role="img" aria-label="Your AI assistant connects to the CAD Automation service over HTTPS with OAuth. Your computer connects out to the CAD Automation service with signed requests. The Companion passes commands to the add-in in SOLIDWORKS.">
 <div class="node"><div class="where">Cloud</div><h3>Your AI assistant</h3><p>Claude, ChatGPT or another app that supports MCP connectors.</p></div>
 <div class="link" aria-hidden="true"><span>HTTPS<br>OAuth 2.1</span></div>
 <div class="node node-brand"><div class="where">Hosted service</div><h3>CAD Automation gateway</h3><p>Sign-in, your computers, command routing and checks.
 Every sketch is solved and every feature checked before it is sent.</p></div>
 <div class="link" aria-hidden="true"><span>Outbound HTTPS<br>signed</span></div>
 <div class="node"><div class="where">Your computer</div><h3>CAD Automation for SOLIDWORKS</h3>
-<ul><li>BIZOMAT Companion: secure link, pairing, status</li><li>The add-in: BIZOMAT tab, task pane, runs each command</li><li>SOLIDWORKS: your files, your licence</li></ul></div></div>
+<ul><li>The Companion: secure link, pairing, status</li><li>The add-in: its tab and task pane, runs each command</li><li>SOLIDWORKS: your files, your licence</li></ul></div></div>
 <ol class="grid grid-3 steps" style="margin-top:var(--s-7)">
 <li><h3>Install CAD Automation for SOLIDWORKS</h3><p>Run the installer on the Windows computer that runs SOLIDWORKS, and pair that computer with your account.</p></li>
 <li><h3>Connect your AI assistant</h3><p>Add the CAD Automation connector address to your assistant and sign in once.</p></li>
@@ -174,7 +171,7 @@ Every sketch is solved and every feature checked before it is sent.</p></div>
                "CAD Automation uses the Model Context Protocol, the open standard AI assistants use to reach tools.", "integrations")}
 <div class="grid grid-4">
 <article class="card integration"><header><span class="kind">CAD</span><span class="badge badge-ok">Supported</span></header>
-<h3>SOLIDWORKS</h3><p>A native add-in: listed in Tools &gt; Add-Ins, with a BIZOMAT tab, menu and task pane. Parts, assemblies and drawings through the SOLIDWORKS API.</p>
+<h3>SOLIDWORKS</h3><p>A native add-in: listed in Tools &gt; Add-Ins, with its own tab, menu and task pane. Parts, assemblies and drawings through the SOLIDWORKS API.</p>
 <div class="meta">Windows, 64-bit. Built for SOLIDWORKS 2022 and later.</div></article>
 <article class="card integration"><header><span class="kind">AI assistant</span><span class="badge">MCP connector</span></header>
 <h3>Claude</h3><p>Add CAD Automation as a custom connector and sign in. Claude Desktop can also use a private address.</p>
@@ -208,7 +205,7 @@ early access: the integration is being validated on more SOLIDWORKS installation
 {_section_head("Getting started", "Up and running in five steps.", "", "start")}
 <ol class="grid grid-2 steps">
 <li><h3>Install CAD Automation for SOLIDWORKS</h3><p>Run the Windows installer on the computer that runs SOLIDWORKS.</p></li>
-<li><h3>Open SOLIDWORKS</h3><p>Pair the computer with your account. The BIZOMAT tab and task pane appear in SOLIDWORKS.</p></li>
+<li><h3>Open SOLIDWORKS</h3><p>Pair the computer with your account. The add-in's tab and task pane appear in SOLIDWORKS.</p></li>
 <li><h3>Connect your AI assistant</h3><p>Copy the connector address from the CAD Assistant page into your assistant and sign in.</p></li>
 <li><h3>Verify the connection</h3><p>Your dashboard shows each part of the connection live.</p></li>
 <li><h3>Run the guided self test</h3><p>One prompt checks sketches, features, an assembly and a drawing on that computer.</p></li></ol>
@@ -222,9 +219,6 @@ early access: the integration is being validated on more SOLIDWORKS installation
 
 
 def docs(signed_in: bool = False, base: str = "") -> bytes:
-    # the service address people type into the Companion: the https address this page was opened at (either public
-    # host name), else the hosted service
-    addr = escape(base.rstrip("/")) if base.startswith("https://") else DEFAULT_SERVICE
     toc = [("overview", "Overview"), ("requirements", "System requirements"), ("versions", "Supported versions"),
            ("install", "Install"), ("pair", "Pair a computer"), ("activate", "Use it in SOLIDWORKS"),
            ("connect", "Connect your AI assistant"), ("auth", "Authentication"), ("verify", "Verify the connection"),
@@ -232,14 +226,14 @@ def docs(signed_in: bool = False, base: str = "") -> bytes:
            ("troubleshooting", "Troubleshooting"), ("security", "Security"), ("manual", "Install without the installer")]
     toc_html = "".join(f'<li><a href="#{k}">{v}</a></li>' for k, v in toc)
     trouble = [
-        ("No BIZOMAT icon in the taskbar after signing in to Windows", "Start the BIZOMAT Companion from the Start menu. In its tray menu, tick Start with Windows."),
+        ("No Companion icon in the taskbar after signing in to Windows", "Start BIZOMAT Companion from the Start menu. In its tray menu, tick Start with Windows."),
         ("The Companion says Not registered", "The computer is not paired. Open the tray menu and choose Pair this computer."),
         ("The Companion says the computer was removed", "It was removed from your account. Pair it again; it gets a new key."),
         ("The Companion says Offline, retrying", "It cannot reach the CAD Automation service. Check that the service address opens in a browser. Behind a company proxy, allow that address. The Companion retries by itself."),
         ("A signed request is refused with TOKEN_EXPIRED", "The computer's clock is wrong. Turn on automatic time in Windows Settings."),
         ("Connected, SOLIDWORKS closed", "This is normal. Open SOLIDWORKS."),
-        ("Waiting for the add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick BIZOMAT CAD Automation under Active and Start Up. Do not run SOLIDWORKS as administrator."),
-        ("No BIZOMAT tab, menu or task pane in SOLIDWORKS", "As above. If it is still missing, repair the installation: Windows Settings > Apps > BIZOMAT CAD Automation for SOLIDWORKS > Modify > Repair."),
+        ("Waiting for the add-in", "In SOLIDWORKS, open Tools > Add-Ins and tick BIZOMAT CAD Automation (CADOS before version 0.13) under Active and Start Up. Do not run SOLIDWORKS as administrator."),
+        ("No add-in tab, menu or task pane in SOLIDWORKS", "As above. If it is still missing, repair the installation: Windows Settings > Apps > BIZOMAT CAD Automation for SOLIDWORKS > Modify > Repair."),
         ("Windows says it protected your PC when you open the installer", "The early access installer is not code-signed yet. Check that you downloaded it from this site, then choose More info > Run anyway, or ask your IT team."),
         ("The assistant says several computers are connected", "Name the computer in your request, or set a default computer on the SOLIDWORKS page."),
         ("The assistant says SOLIDWORKS has a dialog box open", "Close the dialog box in SOLIDWORKS, then ask again."),
@@ -249,6 +243,7 @@ def docs(signed_in: bool = False, base: str = "") -> bytes:
         ("The assistant cannot sign in", "Remove the connector in your assistant and add it again. If it still fails, use the private address in Settings."),
     ]
     rows = "".join(f"<tr><td>{a}</td><td>{b}</td></tr>" for a, b in trouble)
+    svc = escape(base.rstrip("/")) if base.startswith("https://") else "https://cados.kevos.com"  # this server's own address
     html = f"""{brand.head("Documentation", "Install CAD Automation, connect your AI assistant to SOLIDWORKS, verify the connection and fix common problems.", path="/docs", index=True, base=base)}<body>
 {brand.header("docs", signed_in)}
 <main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Documentation</span><h1>Set up CAD Automation</h1>
@@ -262,7 +257,7 @@ about fifteen minutes.</p></div></div>
 <ul><li><b>Your AI assistant</b>, such as Claude or ChatGPT. It calls the CAD Automation tools.</li>
 <li><b>The CAD Automation gateway</b>, a hosted service. It signs you in, knows your computers, checks each command and routes it.</li>
 <li><b>CAD Automation for SOLIDWORKS on your Windows computer</b>: the add-in, a native SOLIDWORKS add-in with a BIZOMAT
-tab, menu and task pane, and the BIZOMAT Companion, a small tray app. The Companion holds a secure outbound link to the gateway
+tab, menu and task pane, and the Companion, a small tray app. The Companion holds a secure outbound link to the gateway
 and hands each command to the add-in, which runs it in SOLIDWORKS.</li></ul>
 <p>Nothing connects in to your computer, and SOLIDWORKS always runs there, with your licence and your files.</p></section>
 
@@ -289,20 +284,20 @@ API and is being validated on more installations. Run the self test on each new 
 <div class="actions"><a class="btn btn-primary" href="/download/solidworks">Download for SOLIDWORKS</a>
 <a class="small" href="{brand.RELEASES_URL}" rel="noopener">All releases and checksums</a></div>
 <ol class="steps">
-<li><h4>Download the installer</h4><p>Sign in with your account and download <code>CADOS-for-SOLIDWORKS-x64.msi</code>.
+<li><h4>Download the installer</h4><p>Sign in with your account and download <code>BIZOMAT-CAD-Automation-x64.msi</code>.
 Each release also lists a SHA-256 checksum you can compare.</p></li>
 <li><h4>Close SOLIDWORKS</h4><p>Save your work and close SOLIDWORKS before you install.</p></li>
 <li><h4>Run the installer</h4><p>Open the file and follow the steps. Windows asks for administrator approval once. The
-installer adds the add-in and the BIZOMAT Companion, registers the add-in with every SOLIDWORKS version on the
+installer adds the add-in and the Companion, registers the add-in with every SOLIDWORKS version on the
 computer and starts the Companion when you sign in to Windows. There are no files to copy and no registry to edit. It does
 not change your CAD files.</p></li></ol>
 <p>IT teams can install silently and set the service address for everyone:</p>
-<pre class="code">msiexec /i CADOS-for-SOLIDWORKS-x64.msi /qn GATEWAY_URL={addr}</pre></section>
+<pre class="code">msiexec /i BIZOMAT-CAD-Automation-x64.msi /qn GATEWAY_URL={svc}</pre></section>
 
 <section id="pair"><h2>Pair a computer</h2>
-<p>Pairing adds the computer to your account. After an interactive install the BIZOMAT Companion opens its pairing window
+<p>Pairing adds the computer to your account. After an interactive install the Companion opens its pairing window
 by itself. You can also open it from the tray icon: Pair this computer.</p>
-<ol class="steps"><li><h4>Check the address and the name</h4><p>Check the CAD Automation service address (<code>{addr}</code> unless your organisation runs its own) and the name for this computer.</p></li>
+<ol class="steps"><li><h4>Check the address and the name</h4><p>Check the CAD Automation service address (<code>{svc}</code> unless your organisation runs its own) and the name for this computer.</p></li>
 <li><h4>Enter your email and password</h4><p>Use the same email and password you sign in to CAD Automation with, then choose Pair. The computer is added at once.</p></li>
 <li><h4>Or confirm in the browser</h4><p>Leave email and password empty and choose Pair: your browser opens CAD Automation. Sign in, check that it shows the same code as the Companion, and choose Add this computer.</p></li></ol>
 <p>The Companion makes a key for this computer in the Windows key store. The key cannot be copied to another computer,
@@ -317,7 +312,7 @@ activity and links to your dashboard and help;</li>
 <li>a <b>BIZOMAT: confirm</b> window whenever your assistant asks for a destructive change.</li></ul>
 <p>Your AI assistant does the work: CAD Automation runs no AI of its own. Ask in Claude, ChatGPT or another connected assistant,
 and follow the work in SOLIDWORKS and in the task pane.</p>
-<div class="callout"><div>No BIZOMAT tab? Open <b>Tools &gt; Add-Ins</b>, tick <b>BIZOMAT CAD Automation</b> under Active and Start Up, and make
+<div class="callout"><div>No BIZOMAT tab? Open <b>Tools &gt; Add-Ins</b>, tick <b>BIZOMAT CAD Automation</b> (CADOS before version 0.13) under Active and Start Up, and make
 sure SOLIDWORKS is not running as administrator.</div></div></section>
 
 <section id="connect"><h2>Connect your AI assistant</h2>
@@ -331,7 +326,7 @@ the connector address. If a client cannot sign in, use the private address in <a
 
 <section id="auth"><h2>Authentication</h2>
 <div class="table-wrap"><table><thead><tr><th>Who</th><th>How it signs in</th><th>How to revoke</th></tr></thead><tbody>
-<tr><td>You</td><td>Email and password, or Google where your administrator turned it on.</td><td>Sign out. An administrator can remove an account.</td></tr>
+<tr><td>You</td><td>Email and password, or Google where your administrator turned it on.</td><td>Sign out. An administrator can suspend or remove an account.</td></tr>
 <tr><td>AI assistants</td><td>OAuth 2.1 with PKCE. You approve each assistant on a consent page.</td><td>Disconnect it on the CAD Assistant page.</td></tr>
 <tr><td>Private address</td><td>A secret key in the address itself, for clients without sign-in.</td><td>Make a new address in Settings. The old one stops at once.</td></tr>
 <tr><td>Your computers</td><td>A pairing code you confirm, then a key held in the Windows key store. Every request is signed.</td><td>Remove the computer on the SOLIDWORKS page.</td></tr>
@@ -357,14 +352,14 @@ remove one. When more than one is online, tell your assistant which to use, for 
 the new one. Nothing needs to be copied.</p></section>
 
 <section id="update"><h2>Update and uninstall</h2>
-<ul><li><b>Update:</b> the BIZOMAT Companion offers new versions published on your CAD Automation service and installs one only after
+<ul><li><b>Update:</b> the Companion offers new versions published on your CAD Automation service and installs one only after
 you agree. You can also run a newer installer over the old one. Settings and the pairing are kept.</li>
 <li><b>Repair:</b> Windows Settings &gt; Apps &gt; BIZOMAT CAD Automation for SOLIDWORKS &gt; Modify &gt; Repair.</li>
 <li><b>Uninstall:</b> Windows Settings &gt; Apps &gt; BIZOMAT CAD Automation for SOLIDWORKS &gt; Uninstall. To also take the
-computer off your account, first use Start &gt; BIZOMAT &gt; Remove this computer from CAD Automation, or remove it on the
+computer off your account, first use the Start menu entry Remove this computer from CAD Automation, or remove it on the
 SOLIDWORKS page.</li></ul>
-<p>Earlier versions were called CADOS for SOLIDWORKS (0.12) and KEVOS Bridge (up to 0.11). This installer upgrades them in
-place.</p></section>
+<p>Earlier versions were called CADOS for SOLIDWORKS (0.12) and KEVOS Bridge (up to 0.11). This installer upgrades them
+in place: the computer stays paired.</p></section>
 
 <section id="troubleshooting"><h2>Troubleshooting</h2>
 <p>Start with the tray icon: right-click it, choose Status, then Copy diagnostics. The diagnostics hold no passwords or keys.</p>

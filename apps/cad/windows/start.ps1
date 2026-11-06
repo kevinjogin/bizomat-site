@@ -1,6 +1,6 @@
-# Starts the OpenSketch server on this Windows PC. It asks for:
-#   1. the server password (you choose it; it is typed hidden, kept only in this window, never saved to disk), and
-#   2. the public https address, if AI apps reach this PC through a tunnel (Enter for none).
+# Starts the CADOS server on this Windows PC. It asks for the public https address, if AI apps reach this PC through
+# a tunnel (Enter for none). There is no server password: the first time, the home page asks you to create the owner
+# account, and from then on everyone signs in with their own email and password.
 # From the repository folder:   powershell -ExecutionPolicy Bypass -File windows\start.ps1
 # Stop it with Ctrl+C. The home page opens in your browser: http://127.0.0.1:8000
 param([int]$Port = 8000)
@@ -12,19 +12,11 @@ if (-not (Test-Path '.venv\Scripts\python.exe')) {
   exit 1
 }
 
-Write-Host 'OpenSketch server' -ForegroundColor Cyan
-Write-Host 'The password protects the server. The first time, the home page asks you to create the owner account with it.'
-$secure = Read-Host 'Server password' -AsSecureString
-$bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-try { $password = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr) } finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr) }
-if ($password.Length -lt 10) {
-  Write-Host 'Please use a password of at least 10 characters (without one the server would be open to anyone who reaches it).' -ForegroundColor Yellow
-  exit 1
-}
-$env:OPENSKETCH_PASSWORD = $password   # this window only
-Remove-Variable password
+Write-Host 'CADOS server' -ForegroundColor Cyan
+Write-Host 'The first time, the home page asks you to create the owner account. Until then nothing else answers through a tunnel.'
+Remove-Item Env:OPENSKETCH_PASSWORD -ErrorAction SilentlyContinue   # no longer used
 
-$public = Read-Host 'Public https address for AI apps (for example https://opensketch.example.com), or Enter for this PC only'
+$public = Read-Host 'Public https address for AI apps (for example https://cados.example.com), or Enter for this PC only'
 $public = $public.Trim().TrimEnd('/', '.')   # a full stop copied from a sentence would make a different address
 # The address on this PC is not a public one: treat it as "none" rather than stopping.
 if ($public -match '^(https?://)?(127\.0\.0\.1|localhost)(:\d+)?$') {

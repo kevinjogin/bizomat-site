@@ -6,7 +6,7 @@ breaks the file). Instead the client asks for a link, sends the file's bytes to 
 (`curl -T model.step '<url>'`), and passes the upload_id to sw_import.
 
 - The link is a capability for one upload, like an artifact download link: signed with the data-folder secret
-  and the connector address (a new server password voids it), valid LINK_LIFETIME seconds, used once.
+  and the server-wide connector address, valid LINK_LIFETIME seconds, used once.
   It carries no MCP credential and opens nothing else.
 - The upload belongs to the person whose connector asked for it; sw_import refuses anyone else's id.
 - The file is capped at the import limit (32 MiB, the same as base64 imports), after unzipping a gzip body.
@@ -29,7 +29,7 @@ import uuid
 from pathlib import Path
 from urllib.parse import urlencode
 
-from . import auth, store
+from . import auth, canonical, store
 
 LINK_LIFETIME = 600          # seconds a link takes an upload
 KEEP = 1800                  # seconds an uploaded file waits for sw_import
@@ -156,7 +156,7 @@ def create(user: dict | None, filename: str, cap: int, size_bytes: int | None = 
                 "created": int(now), "expires_at": expires}
         _write(meta)
     query = urlencode({"expires": expires, "signature": _signature(upload_id, owner, expires)})
-    url = f"{auth.public_url()}/mcp/uploads/{upload_id}?{query}"
+    url = f"{canonical.machine_base() or auth.public_url()}/mcp/uploads/{upload_id}?{query}"
     return {"upload_id": upload_id, "upload_url": url, "method": "PUT", "filename": filename,
             "expires_at": expires, "expires_in_seconds": LINK_LIFETIME, "max_bytes": cap}
 

@@ -26,8 +26,8 @@ def data(tmp_path, monkeypatch):
 
 def _owner(pw="correct horse"):
     c = TestClient(server.app)
-    r = c.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": pw, "next": "/",
-                               "server_password": auth.password()}, follow_redirects=False)
+    r = c.post("/setup", data={"name": "Owner", "email": "owner@example.com", "new_password": pw, "next": "/"},
+               follow_redirects=False)
     assert r.status_code == 303, r.text
     return c
 

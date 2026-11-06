@@ -33,12 +33,12 @@ x-env: &app-env
   WORK_ENVIRONMENT: production
   WORK_ALLOW_SIGNUP: "true"
   WORK_SESSION_TTL_HOURS: "72"
-  # cad (as fly.toml: CAD Automation at bizomat.ai/cad, cados.kevos.com its old address)
+  # cad (as fly.toml: CAD Automation at bizomat.ai/cad, cados.kevos.com one of its old addresses)
   OPENSKETCH_PUBLIC_URL: https://bizomat.ai/cad
-  OPENSKETCH_ALIAS_HOSTS: cados.kevos.com
-  OPENSKETCH_REDIRECT_HOSTS: cados.kevos.com
-  # "secrets": local placeholders, present everywhere as on Fly
-  OPENSKETCH_PASSWORD: ${LOCAL_CAD_PASSWORD:-local-only-cad-password}
+  OPENSKETCH_REDIRECT_HOSTS: cados.fly.dev,cados.kevos.com,cad.bizomat.ai
+  # "secrets": local placeholders, present everywhere as on Fly (OPENSKETCH_KEY_SECRET: a secret of CAD Automation's
+  # only, which check-isolation.sh looks for)
+  OPENSKETCH_KEY_SECRET: local-only-cad-key-secret
   WORK_GOOGLE_CLIENT_SECRET: local-only-work-google-secret
   CAD_GOOGLE_CLIENT_SECRET: local-only-cad-google-secret
   CF_AI_TOKEN: local-only-web-ai-token
@@ -97,9 +97,35 @@ services:
       timeout: 3s
       retries: 30
 
+  # An owner account on cad's volume, made once by CAD Automation's own code: on Fly the volume holds the moved data,
+  # and the cad role never starts the CAD server on a volume without CAD data (it shows a holding page instead).
+  # Throwaway values, this stack only.
+  cad-seed:
+    <<: *service
+    restart: "no"
+    working_dir: /app/cad
+    command:
+      - /opt/cad/venv/bin/python
+      - -c
+      - |
+        import os
+        os.makedirs("/data/cad", exist_ok=True)
+        os.environ["OPENSKETCH_DATA"] = "/data/cad"
+        from opensketch import accounts
+        if not accounts.any_users():
+            accounts.create_owner("owner@example.test", "Local owner", "local-only-owner-password")
+        print("cad-seed: an owner account is on the cad volume")
+    tmpfs: ["/tmp"]
+    volumes: ["cad_data:/data"]
+    healthcheck:
+      disable: true
+
   cad:
     <<: *service
     command: ["/usr/local/bin/bizomat-entrypoint", "cad"]
+    depends_on:
+      cad-seed:
+        condition: service_completed_successfully
     tmpfs: ["/tmp", "/home/bzcad:uid=10004,gid=10004,mode=0700"]
     volumes: ["cad_data:/data"]
     healthcheck:

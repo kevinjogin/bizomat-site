@@ -15,10 +15,8 @@ def data(tmp_path, monkeypatch):
     return tmp_path
 
 
-def _owner(c, email="owner@example.com", pw="correct horse", server_pw=None):
+def _owner(c, email="owner@example.com", pw="correct horse"):
     form = {"name": "Owner", "email": email, "new_password": pw, "next": "/"}
-    if server_pw is not None:
-        form["server_password"] = server_pw
     return c.post("/setup", data=form, follow_redirects=False)
 
 
@@ -55,22 +53,44 @@ def test_sign_in_wrong_password_sign_out():
     assert c.get("/api/solidworks").status_code == 200
 
 
-def test_password_mode_needs_the_server_password_to_set_up(monkeypatch):
-    monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret")
+def test_a_public_server_waits_for_its_owner_without_any_server_password(monkeypatch):
+    """No account yet on a server with a public address: only the setup page answers, and it asks for no server
+    password. The first person to create an account owns the server; then sign-in is on for everyone."""
+    monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", "https://cados.example.com")
     c = TestClient(server.app)
     assert c.get("/api/account").status_code == 401
-    page = c.get("/login")
-    assert page.status_code == 200 and b"Create the administrator account" in page.content and b"server_password" in page.content
-    assert _owner(c, server_pw="wrong").status_code == 401
+    assert c.get("/dashboard", follow_redirects=False).headers["location"] == "/setup"
+    for p in ("/login", "/signup", "/access", "/join/abc", "/reset"):
+        assert c.get(p, follow_redirects=False).headers["location"] == "/setup", p
+    page = c.get("/setup")
+    assert page.status_code == 200 and b"Create the administrator account" in page.content
+    assert b"server_password" not in page.content and b"Server password" not in page.content
+    assert c.get("/").status_code == 200 and c.get("/docs").status_code == 200  # the product pages stay public
+    # the old password-only sign-in is gone
+    assert c.post("/login", data={"password": "anything", "next": "/"}, follow_redirects=False).headers["location"] == "/setup"
     assert not accounts.any_users()
-    # the old password cookie still works until the owner exists
-    old = TestClient(server.app)
-    old.post("/login", data={"password": "server-secret", "next": "/"})
-    me = old.get("/api/account").json()
-    assert me["mode"] == "password" and me["user"]["legacy"] and me["can_setup"]
-    assert _owner(c, server_pw="server-secret").status_code == 303
-    assert old.get("/api/solidworks").status_code == 401  # accounts now: the shared password cookie no longer signs in
+    assert _owner(c).status_code == 303
     assert c.get("/api/account").json()["user"]["name"] == "Owner"
+    assert TestClient(server.app).get("/setup", follow_redirects=False).headers["location"] == "/login"
+    assert _owner(TestClient(server.app), email="late@example.com").headers["location"] == "/login"  # once only
+    assert [u["email"] for u in accounts.list_users()] == ["owner@example.com"]
+
+
+def test_a_request_from_elsewhere_never_gets_open_mode():
+    """Open mode (no account, no sign-in) is only for the machine the server runs on; through a proxy or tunnel, or
+    from another address, the same server waits in setup mode."""
+    host = (b"host", b"127.0.0.1:8000")
+    local = {"type": "http", "client": ("127.0.0.1", 5000), "headers": [host]}
+    assert auth.mode(local) == "open"
+    assert auth.mode({**local, "headers": [(b"host", b"localhost:8000"), (b"origin", b"http://localhost:8000")]}) == "open"
+    assert auth.mode() == "setup"  # without the request: never open
+    assert auth.mode({**local, "headers": [host, (b"x-forwarded-for", b"203.0.113.9")]}) == "setup"
+    assert auth.mode({**local, "headers": [host, (b"cf-connecting-ip", b"203.0.113.9")]}) == "setup"
+    assert auth.mode({"type": "http", "client": ("192.168.1.20", 5000), "headers": [host]}) == "setup"
+    # a page on another site in this machine's browser: its Origin, or (DNS rebinding) its own name as the Host
+    assert auth.mode({**local, "headers": [host, (b"origin", b"https://evil.example")]}) == "setup"
+    assert auth.mode({**local, "headers": [(b"host", b"attacker.example:8000")]}) == "setup"
+    assert auth.mode({**local, "headers": [(b"host", b"testserver")]}) == "setup"  # the test name only with the test client
 
 
 def test_invites_members_and_owner_rules():
@@ -106,14 +126,22 @@ def test_change_password_and_reset(monkeypatch):
     assert c.get("/api/solidworks").status_code == 401  # every session ends on a password change
     assert c.post("/login", data={"email": "owner@example.com", "password": "a new password"}, follow_redirects=False).status_code == 303
     assert c.post("/api/account", json={"name": "Olivia"}).json()["user"]["name"] == "Olivia"
-    # reset needs the server password
-    assert TestClient(server.app).get("/reset", follow_redirects=False).headers["location"] == "/login"
-    monkeypatch.setenv("OPENSKETCH_PASSWORD", "server-secret")
+    # no reset page with a shared password any more: the owner resets people on Admin, and their own password with a
+    # command on the server (python -m opensketch --reset-password EMAIL)
     r = TestClient(server.app)
-    assert r.post("/reset", data={"email": "owner@example.com", "server_password": "nope", "new_password": "third password"}).status_code == 401
-    assert r.post("/reset", data={"email": "owner@example.com", "server_password": "server-secret", "new_password": "third password"},
-                  follow_redirects=False).status_code == 303
-    assert r.get("/api/solidworks").status_code == 200
+    assert r.get("/reset", follow_redirects=False).headers["location"] == "/login"
+    assert r.post("/reset", data={"email": "owner@example.com", "server_password": "x", "new_password": "third password"},
+                  follow_redirects=False).headers["location"] == "/login"
+    from opensketch import __main__ as cli
+    assert cli.reset_password("nobody@example.com") == 1
+    import contextlib
+    import io
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert cli.reset_password("Owner@Example.com") == 0
+    new = out.getvalue().split(": ", 1)[1].split()[0]
+    assert r.post("/login", data={"email": "owner@example.com", "password": "a new password"}).status_code == 401
+    assert r.post("/login", data={"email": "owner@example.com", "password": new}, follow_redirects=False).status_code == 303
 
 
 def test_mcp_ignores_accounts():

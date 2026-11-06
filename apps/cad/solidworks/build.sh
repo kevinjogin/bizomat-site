@@ -17,7 +17,7 @@ rm -rf dist
 mkdir -p "$pkg"
 cp "$out/OpenSketch.Sw.dll" "$out/OpenSketchSW.exe" "$out/OpenSketchSW.exe.config" "$pkg/"
 cp src/Companion/bin/Release/net48/KEVOS.Companion.exe src/Companion/bin/Release/net48/KEVOS.Companion.exe.config "$pkg/"
-cp package/README.txt package/OpenSketch.swb "$pkg/"
+cp package/README.txt package/OpenSketch.swb package/BIZOMAT.bmp "$pkg/"
 if [ "${1:-}" = "test" ]; then
   dotnet test tests/OpenSketch.Sw.Tests.csproj -nologo -v quiet
 fi

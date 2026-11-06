@@ -7,6 +7,8 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
+    <!-- the BIZOMAT mark: Start menu, Apps list, taskbar and Explorer -->
+    <ApplicationIcon>../Shared/bizomat.ico</ApplicationIcon>
     <AssemblyName>KEVOS.Companion</AssemblyName>
     <AssemblyTitle>BIZOMAT Companion</AssemblyTitle>
     <RootNamespace>Kevos.Companion</RootNamespace>
