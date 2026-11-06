@@ -164,11 +164,26 @@ function isApiPath(path) {
   return path === '/api' || path.startsWith('/api/');
 }
 
+/**
+ * While Project Management still runs outside this app, /tasks/... answers a temporary redirect to its own address
+ * (TASKS_REDIRECT_ORIGIN, for example https://work.kevos.com) with the /tasks prefix taken off, as the website's
+ * Worker did before its TASKS binding: 302 for GET and HEAD, 307 for other methods (method and body kept). Never
+ * cached, so it can be lifted at any time.
+ */
+export function tasksRedirect(origin, path, query, method) {
+  const p = routingPath(path);
+  const rest = p.slice('/tasks'.length) || '/';
+  const read = method === 'GET' || method === 'HEAD';
+  return { action: 'redirect', status: read ? 302 : 307, location: origin + rest + (query ? `?${query}` : ''), temporary: true };
+}
+
 /** The answer for a path of bizomat.ai (and of the preview host): a 301 to the lowercase path, or a backend. */
-function byPath(base, path, query, method, preview) {
+function byPath(base, path, query, method, preview, tasksOrigin) {
   const lower = lowercaseLocation(path, query, method);
   if (lower) return { ...base, action: 'redirect', status: 301, location: lower };
-  return { ...base, action: 'proxy', upstream: platformUpstream(path), preview };
+  const upstream = platformUpstream(path);
+  if (upstream === 'work' && tasksOrigin) return { ...base, ...tasksRedirect(tasksOrigin, path, query, method) };
+  return { ...base, action: 'proxy', upstream, preview };
 }
 
 /**
@@ -181,6 +196,7 @@ function byPath(base, path, query, method, preview) {
  * @param {string} r.query           the raw query string without '?', or ''
  * @param {string} [r.previewCookie] the bizomat_preview cookie value, if any
  * @param {boolean} [r.previewRouting] BIZOMAT_PREVIEW_ROUTING=1
+ * @param {string} [r.tasksOrigin]    TASKS_REDIRECT_ORIGIN: /tasks/... redirects there instead of reaching work
  * @returns {{action: string, [k: string]: any}} one of:
  *   { action: 'proxy', upstream, host, production, preview }
  *   { action: 'redirect', status, location, host, production }
@@ -188,12 +204,12 @@ function byPath(base, path, query, method, preview) {
  *   { action: 'preview', target: 'web'|'work'|'cad'|'clear', host }
  *   { action: 'error', status, reason, host, production }
  */
-export function decide({ host, method, path, query = '', previewCookie = '', previewRouting = false }) {
+export function decide({ host, method, path, query = '', previewCookie = '', previewRouting = false, tasksOrigin = '' }) {
   const h = normalizeHost(host);
   const rule = h ? HOSTS[h] : undefined;
   if (rule) {
     const base = { host: h, production: true };
-    if (rule.kind === 'platform') return byPath(base, path, query, method, false);
+    if (rule.kind === 'platform') return byPath(base, path, query, method, false, tasksOrigin);
     if (rule.kind === 'proxy') return { ...base, action: 'proxy', upstream: rule.upstream, preview: false };
     if (rule.kind === 'redirect') return { ...base, ...redirectTo(rule.origin, path, query, method) };
     // legacy: kevos.com and www.kevos.com moved to bizomat.ai
@@ -222,7 +238,7 @@ export function decide({ host, method, path, query = '', previewCookie = '', pre
     if (previewRouting && UPSTREAM_NAMES.includes(previewCookie)) {
       return { action: 'proxy', upstream: previewCookie, host: h, production: false, preview: true };
     }
-    return byPath({ host: h, production: false }, path, query, method, true);
+    return byPath({ host: h, production: false }, path, query, method, true, tasksOrigin);
   }
 
   return { action: 'error', status: 421, reason: 'unknown_host', host: h, production: false };

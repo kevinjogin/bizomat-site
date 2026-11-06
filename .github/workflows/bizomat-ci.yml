@@ -152,6 +152,7 @@ jobs:
       - name: fly.toml and the compose files read
         run: |
           python3 -c "import tomllib; c = tomllib.load(open('fly.toml', 'rb')); assert c['app'] == 'bizomat'; assert set(c['processes']) == {'proxy', 'web', 'work', 'cad'}; assert c['http_service']['processes'] == ['proxy']; assert 'services' not in c; print('fly.toml ok')"
+          python3 -c "import tomllib; c = tomllib.load(open('fly.website.toml', 'rb')); assert c['app'] == 'bizomat'; assert set(c['processes']) == {'proxy', 'web'}; assert c['http_service']['processes'] == ['proxy']; assert 'mounts' not in c and 'services' not in c; assert c['env']['UPSTREAM_CAD'] == 'http://cados.internal:8080'; assert c['env']['TASKS_REDIRECT_ORIGIN'].startswith('https://'); print('fly.website.toml ok')"
           docker compose -f infrastructure/local/compose.yml config -q
           docker compose -f infrastructure/local/compose.yml -f infrastructure/local/compose.stubs.yml config -q
 

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import net from 'node:net';
 import { deadPort, request, sleep, startProxy, startUpstream, wsFrame, wsOpen, wsRead } from './helpers.mjs';
+import { loadConfig } from '../config.mjs';
 
 let web;
 let work;
@@ -506,4 +507,34 @@ test('graceful stop cuts what is still open after the grace time (long polls, We
   const result = await pending;
   assert.ok(result instanceof Error || result.status >= 500, 'the long poll was cut');
   await new Promise((r) => (ws.socket.destroyed ? r() : ws.socket.once('close', r)));
+});
+
+test('TASKS_REDIRECT_ORIGIN: /tasks/... answers an uncached redirect to Project Management, a WebSocket too; nothing reaches work', async () => {
+  const t = await startProxy(urls(), { TASKS_REDIRECT_ORIGIN: 'https://work.kevos.com' });
+  try {
+    const before = work.seen.length;
+    const page = await request(t.port, { host: 'bizomat.ai', path: '/tasks/w/7?view=kanban' });
+    assert.equal(page.status, 302);
+    assert.equal(page.headers.location, 'https://work.kevos.com/w/7?view=kanban');
+    assert.equal(page.headers['cache-control'], 'no-store');
+    const post = await request(t.port, { host: 'bizomat.ai', method: 'POST', path: '/tasks/api/auth/login', body: '{}' });
+    assert.equal(post.status, 307);
+    const ws = await wsOpen(t.port, { host: 'bizomat.ai', path: '/tasks/api/live/boards/b1' });
+    assert.match(ws.head, /^HTTP\/1\.1 302 Found\r\n/);
+    assert.match(ws.head, /\r\nlocation: https:\/\/work\.kevos\.com\/api\/live\/boards\/b1\r\n/i);
+    assert.match(ws.head, /\r\ncache-control: no-store\r\n/i);
+    ws.socket.destroy();
+    assert.equal(work.seen.length, before, 'the work backend is never asked');
+    assert.equal((await request(t.port, { host: 'bizomat.ai', path: '/' })).status, 200); // the website still answers
+  } finally {
+    await t.close();
+  }
+});
+
+test('TASKS_REDIRECT_ORIGIN must be an https origin', () => {
+  for (const bad of ['http://work.kevos.com', 'https://work.kevos.com/x', 'https://u:p@work.kevos.com', 'work.kevos.com']) {
+    assert.throws(() => loadConfig({ TASKS_REDIRECT_ORIGIN: bad }), /TASKS_REDIRECT_ORIGIN/, bad);
+  }
+  assert.equal(loadConfig({ TASKS_REDIRECT_ORIGIN: 'https://work.kevos.com/' }).tasksOrigin, 'https://work.kevos.com');
+  assert.equal(loadConfig({}).tasksOrigin, '');
 });

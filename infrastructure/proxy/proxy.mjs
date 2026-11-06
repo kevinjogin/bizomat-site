@@ -29,7 +29,7 @@ export const HEALTH_PATHS = Object.freeze({ web: '/healthz', work: '/api/health'
 
 const READY_CACHE_MS = 2000;
 const HANDSHAKE_TIMEOUT_MS = 30_000;
-const STATUS_TEXT = { 301: 'Moved Permanently', 303: 'See Other', 308: 'Permanent Redirect', 400: 'Bad Request', 404: 'Not Found', 405: 'Method Not Allowed', 421: 'Misdirected Request', 502: 'Bad Gateway', 503: 'Service Unavailable', 504: 'Gateway Timeout' };
+const STATUS_TEXT = { 301: 'Moved Permanently', 302: 'Found', 303: 'See Other', 307: 'Temporary Redirect', 308: 'Permanent Redirect', 400: 'Bad Request', 404: 'Not Found', 405: 'Method Not Allowed', 421: 'Misdirected Request', 502: 'Bad Gateway', 503: 'Service Unavailable', 504: 'Gateway Timeout' };
 
 export function defaultLog(entry) {
   process.stdout.write(`${JSON.stringify(entry)}\n`);
@@ -138,7 +138,7 @@ export function createProxy(config, { log = defaultLog, resolve } = {}) {
       Location: d.location,
       'Content-Type': 'text/plain; charset=utf-8',
       'Content-Length': String(body.length),
-      'Cache-Control': 'public, max-age=86400',
+      'Cache-Control': d.temporary ? 'no-store' : 'public, max-age=86400',
     };
     if (d.production) headers['Strict-Transport-Security'] = HSTS_VALUE;
     try {
@@ -286,6 +286,7 @@ export function createProxy(config, { log = defaultLog, resolve } = {}) {
       query: target.query,
       previewCookie: readCookie(req.headers.cookie, PREVIEW_COOKIE),
       previewRouting: config.previewRouting,
+      tasksOrigin: config.tasksOrigin,
     });
     info.host = d.host;
 
@@ -392,10 +393,11 @@ export function createProxy(config, { log = defaultLog, resolve } = {}) {
       query: target.query,
       previewCookie: readCookie(req.headers.cookie, PREVIEW_COOKIE),
       previewRouting: config.previewRouting,
+      tasksOrigin: config.tasksOrigin,
     });
     info.host = d.host;
     if (d.action === 'redirect') {
-      const h = { Location: d.location, 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=86400' };
+      const h = { Location: d.location, 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': d.temporary ? 'no-store' : 'public, max-age=86400' };
       if (d.production) h['Strict-Transport-Security'] = HSTS_VALUE;
       socket.end(rawResponse(d.status, STATUS_TEXT[d.status], h));
       info.upstream = 'redirect';

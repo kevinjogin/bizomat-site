@@ -1,0 +1,82 @@
+# BIZOMAT on Fly.io, first stage: the website and the router behind bizomat.ai (owner's decision, 6 Nov 2026: the
+# website on Fly.io, kevos.com back to the old KEVOS site on Cloudflare).
+#
+#   bizomat.ai/...       -> web    the BIZOMAT website (this app)
+#   bizomat.ai/cad/...   -> cad    CAD Automation: its own Fly app `cados`, over Fly's private network; it keeps its
+#                                  data and its old addresses (cados.kevos.com, cados.fly.dev)
+#   bizomat.ai/tasks/... -> 302    Project Management, still on Cloudflare at work.kevos.com, until it moves into this
+#                                  app with its data (fly.toml, the full plan: proxy, web, work and cad)
+#
+# Deploy from the owner's laptop: bizomat.ps1 deploy website, which runs
+#   fly deploy --config fly.website.toml --remote-only --ha=false --build-arg BIZOMAT_VERSION=<commit>
+# Same image as fly.toml (infrastructure/fly/Dockerfile); only the proxy and web groups run.
+
+app = "bizomat"
+primary_region = "syd"
+kill_signal = "SIGTERM"
+kill_timeout = 15
+
+[build]
+  dockerfile = "infrastructure/fly/Dockerfile"
+  ignorefile = ".dockerignore"
+
+[deploy]
+  strategy = "rolling"
+  max_unavailable = 1
+  wait_timeout = "10m"
+
+[processes]
+  proxy = "/usr/local/bin/bizomat-entrypoint proxy"
+  web = "/usr/local/bin/bizomat-entrypoint web"
+
+[env]
+  UPSTREAM_WEB = "http://web.process.bizomat.internal:8003"
+  # CAD Automation's app on the private network. It listens on :: (IPv4 and IPv6), so 6PN reaches it.
+  UPSTREAM_CAD = "http://cados.internal:8080"
+  # Project Management until it runs here: bizomat.ai/tasks/... answers 302 to the same path there, prefix off.
+  TASKS_REDIRECT_ORIGIN = "https://work.kevos.com"
+  BIZOMAT_PREVIEW_ROUTING = "0"
+
+[http_service]
+  processes = ["proxy"]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "off"
+  auto_start_machines = true
+  min_machines_running = 1
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 800
+    hard_limit = 1500
+  [http_service.http_options]
+    idle_timeout = 600
+
+[checks]
+  [checks.proxy]
+    processes = ["proxy"]
+    type = "http"
+    port = 8080
+    method = "get"
+    path = "/__proxy/health"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "10s"
+  [checks.web]
+    processes = ["web"]
+    type = "http"
+    port = 8003
+    method = "get"
+    path = "/healthz"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "20s"
+
+[[vm]]
+  processes = ["proxy"]
+  size = "shared-cpu-1x"
+  memory = "256mb"
+
+[[vm]]
+  processes = ["web"]
+  size = "shared-cpu-1x"
+  memory = "512mb"

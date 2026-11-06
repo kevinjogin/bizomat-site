@@ -281,3 +281,27 @@ test('preview cookie and next', () => {
   assert.equal(previewNext('next=/work/boards?x=1'), '/work/boards?x=1');
   assert.equal(previewNext('next=/\\evil'), '/');
 });
+
+test('with TASKS_REDIRECT_ORIGIN, bizomat.ai/tasks/... redirects there, prefix off, temporarily; the rest is unchanged', () => {
+  const tasksOrigin = 'https://work.kevos.com';
+  const at = (path, query = '', method = 'GET', host = 'bizomat.ai') => decide({ host, method, path, query, tasksOrigin });
+  assert.deepEqual(at('/tasks'), { host: 'bizomat.ai', production: true, action: 'redirect', status: 302, location: 'https://work.kevos.com/', temporary: true });
+  assert.equal(at('/tasks/').location, 'https://work.kevos.com/');
+  assert.equal(at('/tasks/w/7/boards', 'view=kanban').location, 'https://work.kevos.com/w/7/boards?view=kanban');
+  assert.equal(at('/tasks/login', '', 'HEAD').status, 302);
+  const post = at('/tasks/api/auth/login', '', 'POST');
+  assert.equal(post.status, 307); // method and body kept
+  assert.equal(post.location, 'https://work.kevos.com/api/auth/login');
+  assert.equal(at('/tasks/../tasks/x').location, 'https://work.kevos.com/x'); // matched as the website reads paths
+  assert.equal(at('/Tasks/x').status, 301); // another case: the lowercase path first
+  assert.equal(at('/Tasks/x').location, '/tasks/x');
+  // nothing else changes: the website, CAD Automation, other paths that merely start with "tasks"
+  assert.equal(at('/').upstream, 'web');
+  assert.equal(at('/tasksfoo').upstream, 'web');
+  assert.equal(at('/cad/docs').upstream, 'cad');
+  assert.equal(at('/mcp').upstream, 'cad');
+  // the preview host routes as bizomat.ai does
+  assert.equal(at('/tasks/x', '', 'GET', 'bizomat.fly.dev').location, 'https://work.kevos.com/x');
+  // without the setting /tasks/... goes to the work backend, as before
+  assert.equal(decide({ host: 'bizomat.ai', method: 'GET', path: '/tasks/x', query: '' }).upstream, 'work');
+});
