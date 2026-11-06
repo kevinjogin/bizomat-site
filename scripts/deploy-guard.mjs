@@ -3,7 +3,7 @@
 //
 // - `npm run preview` (wrangler dev on this computer) goes through.
 // - Cloudflare's Workers Builds is refused: the website deploys from the owner's laptop, which checks the live site
-//   afterwards (`.\bizomat.ps1 cf deploy website`, which sets BIZOMAT_DEPLOY=website).
+//   afterwards (`.\cloudflare.ps1 deploy website`, which sets BIZOMAT_DEPLOY=website).
 // - A deploy goes through only from the laptop tool, from a checkout with no changes that is exactly origin/main:
 //   on 8 Oct 2026 a manual deploy from a checkout 145 commits behind replaced the site with an old design.
 // - The configuration must be the Worker `bizomat` and never take kevos.com, which stays the KEVOS site on its own
@@ -28,7 +28,7 @@ function git(args) {
 const inCloudflareBuild = Boolean(env.WORKERS_CI || env.WORKERS_CI_BUILD_UUID);
 if (inCloudflareBuild) {
   refuse([
-    "This is Cloudflare's Workers Builds. The website deploys from the owner's laptop: .\\bizomat.ps1 cf deploy website.",
+    "This is Cloudflare's Workers Builds. The website deploys from the owner's laptop: .\\cloudflare.ps1 deploy website.",
     'Turn the Git connection off in the Cloudflare dashboard (Workers & Pages > the Worker > Settings > Build).',
   ]);
 }
@@ -49,7 +49,7 @@ if (env.npm_lifecycle_event === 'preview') process.exit(0);
 
 if (env.BIZOMAT_DEPLOY !== 'website') {
   refuse([
-    'Deploy the website with the laptop tool, which checks the live site afterwards: .\\bizomat.ps1 cf deploy website.',
+    'Deploy the website with the laptop tool, which checks the live site afterwards: .\\cloudflare.ps1 deploy website.',
     'To run the Worker on this computer: npm run preview.',
   ]);
 }

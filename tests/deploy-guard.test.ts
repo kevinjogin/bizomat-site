@@ -53,7 +53,7 @@ test('a deploy needs the laptop tool', () => {
   for (const env of plain) {
     const r = guard(work, env);
     assert.equal(r.status, 1, JSON.stringify(env));
-    assert.match(r.stderr, /bizomat\.ps1 cf deploy website/);
+    assert.match(r.stderr, /cloudflare\.ps1 deploy website/);
   }
 });
 
