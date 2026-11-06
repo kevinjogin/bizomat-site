@@ -9,6 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from opensketch import auth, geometry, mcp_server, server, store, uploads
+from tests.mcp_reply import rpc
 from tests.test_assembly import plate
 
 
@@ -25,7 +26,7 @@ def _rpc(c, url, method, params=None):
     r = c.post(url, json={"jsonrpc": "2.0", "id": 1, "method": method, "params": params or {}},
                headers={"Accept": "application/json, text/event-stream"})
     assert r.status_code == 200, r.text
-    return r.json()["result"]
+    return rpc(r)["result"]
 
 
 def _tool(client, url, tool, **arguments):

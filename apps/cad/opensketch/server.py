@@ -4,6 +4,7 @@ person sets it up, sign-in (accounts, Google, OAuth for AI apps; auth.py, mcpaut
 
 from __future__ import annotations
 
+import base64
 import gzip
 import hashlib
 import json
@@ -23,7 +24,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from starlette.datastructures import Headers
 
-from . import artifacts, auth, cadworker, canonical, mcp_server, proxy, store, uploads
+from . import artifacts, auth, brand, cadworker, canonical, mcp_server, proxy, store, uploads
 
 STATIC = Path(__file__).parent / "static"
 
@@ -172,11 +173,51 @@ class RequestLog:
                       f" from {proxy.client_ip(scope)}{who}", flush=True)
 
 
+def _inline_hash(tag: str) -> str:
+    body = tag.removeprefix("<script>").removesuffix("</script>")
+    return "'sha256-" + base64.b64encode(hashlib.sha256(body.encode()).digest()).decode() + "'"
+
+
+# Every page runs only the scripts this server wrote: /ui/app.js and the two inline scripts, by their hashes. Under
+# bizomat.ai the BIZOMAT website and Project Management share this origin, so a page here must never run a script
+# from anywhere else. Style attributes need 'unsafe-inline'. Forms are not limited: the consent page's answer
+# redirects to the AI app's own address.
+PAGE_CSP = ("default-src 'self'; script-src 'self' " + " ".join(_inline_hash(t) for t in (brand.MENU_SCRIPT, auth.SHOW_SCRIPT))
+            + "; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self';"
+            " object-src 'none'; base-uri 'self'; frame-ancestors 'none'")
+
+
+class PagePolicy:
+    """ASGI middleware: every HTML answer gets PAGE_CSP unless it set its own, and every answer nosniff."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") != "http":
+            return await self.app(scope, receive, send)
+
+        async def with_policy(message):
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                names = {k.lower() for k, _ in headers}
+                ctype = next((v for k, v in headers if k.lower() == b"content-type"), b"")
+                if ctype.split(b";")[0].strip().lower() == b"text/html" and b"content-security-policy" not in names:
+                    headers.append((b"content-security-policy", PAGE_CSP.encode()))
+                if b"x-content-type-options" not in names:
+                    headers.append((b"x-content-type-options", b"nosniff"))
+                message = dict(message, headers=headers)
+            await send(message)
+
+        return await self.app(scope, receive, with_policy)
+
+
 app = FastAPI(title="BIZOMAT CAD Automation", lifespan=lifespan, docs_url=None, redoc_url=None)  # /docs is the documentation page
 app.add_middleware(auth.PasswordGate)
 app.add_middleware(RequestLog)
 app.add_middleware(BodyLimit)  # before the sign-in gate reads anything
-app.add_middleware(canonical.CanonicalHost)  # an old host name is sent to the public address first
+app.add_middleware(PagePolicy)  # the sign-in gate's pages and the app's alike
+app.add_middleware(canonical.CanonicalHost)  # the path prefix, then an old host name is sent to the public address
 app.add_middleware(proxy.ForwardedHeaders)  # outermost: what to believe of a proxy's headers (client, host, scheme)
 
 

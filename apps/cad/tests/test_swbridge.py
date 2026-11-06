@@ -17,6 +17,7 @@ import httpx
 import pytest
 
 from opensketch import auth, server, swbridge
+from tests.mcp_reply import rpc
 
 
 @pytest.fixture(autouse=True)
@@ -166,7 +167,7 @@ def _mcp(base, name, args):
     r = httpx.post(url, json={"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": name, "arguments": args}},
                    headers={"Accept": "application/json, text/event-stream"}, timeout=120)
     assert r.status_code == 200, r.text
-    res = r.json()["result"]
+    res = rpc(r)["result"]
     return res, json.loads(res["content"][0]["text"])
 
 
@@ -316,7 +317,7 @@ def test_drawings_are_checked_here_and_made_by_the_addin(base, fake):
     # a sheet outside the list is refused by the tool's schema (a plain-text error)
     r = httpx.post(f"{base}/mcp/{auth.mcp_token()}", json={"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {
         "name": "sw_create_drawing", "arguments": {"sheet": "Letter"}}}, headers={"Accept": "application/json, text/event-stream"}, timeout=60)
-    assert r.json()["result"]["isError"]
+    assert rpc(r)["result"]["isError"]
     assert len(fake.got) == n
 
     # a drawing's own formats come back as downloads named for what they are
