@@ -1,0 +1,1951 @@
+{
+  "_about": "The MCP contract of CAD Automation (Fly app cados) on 6 Nov 2026, read from the running code (CADOS main 17cb5b8): server name, instructions and every tool with its description, input schema and output schema. The Cloudflare migration must serve exactly this (docs/BIZOMAT-CLOUDFLARE-MIGRATION.md, section 4).",
+  "server": "BIZOMAT CAD Automation",
+  "instructions": "BIZOMAT CAD Automation: you build native SOLIDWORKS parts and assemblies in the user's own files, in\nthe SOLIDWORKS running on their computer (through the BIZOMAT CAD Automation add-in). Everything you make is a real\nSOLIDWORKS feature:\nsketches with relations and dimensions, extrudes, revolves, holes, fillets, patterns, mates.\n\n- Call sw_status first. If SOLIDWORKS is not connected, tell the user what it says and stop.\n- The user may have several registered computers: sw_status (or sw_list_devices) lists them; when more than one is\n  online, pass device=\"<name>\" to every sw_ tool. A long command that outlives its call: sw_command_status.\n- Call sw_get_guide once before your first change: it has the workflow and the feature format.\n- The user may change the same file by hand between your calls: read it with sw_get_document before you write.\n- Build in small stages with sw_batch (if a step fails, the whole batch is taken back). Predict the volume and\n  bounding box before each stage and compare with the result; a difference means a wrong plane, direction or depth.\n- Pick faces and edges with sw_body_topology (pass each item's `ref`). Check with sw_inspect_design,\n  sw_measure_items and sw_preview; assemblies with sw_check_interference.\n- To bring in a file over about 100 KB: request_upload, send the file with an HTTP PUT, then sw_import(upload_id).\n- New documents are saved when made; later changes are saved with sw_save (or by the user).\n- For a drawing of a saved part or assembly, sw_create_drawing (views, scale, dimensions, title block), then refine it\n  with sw_edit_drawing (section and detail views, notes, parts list) and check it with sw_get_drawing and a\n  screenshot; export it with sw_export (pdf, dwg, dxf).\n- When the user asks to test the setup, run sw_selftest (stages plate, shapes, assembly) and pass on its report.",
+  "tools": [
+    {
+      "name": "request_upload",
+      "description": "Get a one-time link to send a file for sw_import(upload_id=...). Use it for any file bigger than about\n100 KB instead of base64 data. Send the file's raw bytes as the body of an HTTP PUT (or POST) to upload_url,\ne.g. curl -sS -T model.step '<upload_url>'; a gzipped body works with the header Content-Encoding: gzip. The\nlink is for this account only, takes one upload, expires after 10 minutes, and carries no other access; the\nfile waits 30 minutes for sw_import. Max 32 MiB.",
+      "inputSchema": {
+        "properties": {
+          "filename": {
+            "description": "The file's name, e.g. bracket.step or housing.x_t",
+            "title": "Filename",
+            "type": "string"
+          },
+          "size_bytes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional: the file size, to refuse a too-big file before sending it",
+            "title": "Size Bytes"
+          }
+        },
+        "required": [
+          "filename"
+        ],
+        "title": "request_uploadArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "request_uploadOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "sw_status",
+      "description": "Is SOLIDWORKS connected through the BIZOMAT CAD Automation add-in, which version, and which documents are open\n(path, title, part or assembly, active, unsaved changes). Call it first.",
+      "inputSchema": {
+        "properties": {
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_get_guide",
+      "description": "How to build in SOLIDWORKS with these tools, and the feature format (sketches, features, mate references).\nRead it once before your first change.",
+      "inputSchema": {
+        "properties": {},
+        "title": "sw_get_guideArguments",
+        "type": "object"
+      },
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "sw_get_guideOutput",
+        "type": "object"
+      }
+    },
+    {
+      "name": "sw_create_document",
+      "description": "A new SOLIDWORKS part or assembly from the user's default template, saved as <name>.SLDPRT / .SLDASM\n(a free name is chosen if the file exists). Units MMGS by default. Returns its path: pass it as `doc`.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "kind": {
+            "default": "part",
+            "enum": [
+              "part",
+              "assembly"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "folder": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Windows folder; default Documents\\OpenSketch",
+            "title": "Folder"
+          },
+          "units": {
+            "default": "mm",
+            "enum": [
+              "mm",
+              "inch"
+            ],
+            "title": "Units",
+            "type": "string"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "sw_create_documentArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_open_document",
+      "description": "Open a SOLIDWORKS file (or bring it to the front if it is open).",
+      "inputSchema": {
+        "properties": {
+          "path": {
+            "description": "Full Windows path of a .SLDPRT or .SLDASM",
+            "title": "Path",
+            "type": "string"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "title": "sw_open_documentArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_save",
+      "description": "Save the document (Save As with path).",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Save As this path instead",
+            "title": "Path"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_saveArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_get_document",
+      "description": "Read a SOLIDWORKS document as it is now: the feature tree (name, type, suppressed, rebuild errors and\nwarnings with SOLIDWORKS' reason), sketch states (fully / under / over defined), dimensions, global\nvariables and equations, the body's volume and bounding box; for an assembly its components (file, fixed,\nposition) and mates with their state. sketches=true adds each sketch's entities (in sketch coordinates, with\nids you can use), relations and dimensions. Read before editing: the user may have changed it by hand.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "sketches": {
+            "default": false,
+            "description": "Include every sketch's entities, relations and dimensions",
+            "title": "Sketches",
+            "type": "boolean"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Assemblies: a component name (e.g. Bracket-1) to work on its part",
+            "title": "Component"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_get_documentArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_add_features",
+      "description": "Make features in a SOLIDWORKS part (or in a component's part with component): sketches (entities,\nrelations, dimensions), plane, extrude (boss/cut, blind, through all, up to next, mid plane, two directions,\ndraft), revolve, sweep, loft, hole, fillet, chamfer, shell, draft, mirror, linear and circular pattern.\nEach sketch is solved here first; SOLIDWORKS gets exact coordinates, then the relations and dimensions.\nEvery feature is checked after it is made (direction, volume change, errors) and made the other way if\nSOLIDWORKS read a flag differently. Returns each feature's SOLIDWORKS name, state, volume change and the\nbody's bounding box. Stops at the first feature that fails and leaves the earlier ones in place (use\nsw_batch to have it all or nothing).",
+      "inputSchema": {
+        "properties": {
+          "features": {
+            "description": "Features in the CAD Automation feature format, in tree order (sw_get_guide)",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Assemblies: a component name (e.g. Bracket-1) to work on its part",
+            "title": "Component"
+          },
+          "summary": {
+            "default": "",
+            "title": "Summary",
+            "type": "string"
+          },
+          "predict": {
+            "default": true,
+            "description": "Build the same features here on the current body first and check SOLIDWORKS against it",
+            "title": "Predict",
+            "type": "boolean"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "features"
+        ],
+        "title": "sw_add_featuresArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_batch",
+      "description": "Run several steps in SOLIDWORKS as ONE change: if a step fails (an error, a feature SOLIDWORKS cannot\nmake, a mate that does not hold, or with stop_on_warnings a warning), everything the batch made is removed\nand changed values are put back, and the reply says which step failed and why. Build parts in stages of a\nfew features, checking each stage's volume and bounding box.",
+      "inputSchema": {
+        "properties": {
+          "steps": {
+            "description": "Steps in order, each {\"tool\": \"<tool>\", \"args\": {...}} with that tool's arguments (doc may be left out: the batch doc is used). Tools: sw_add_features, sw_insert_component, sw_add_mate, sw_set_parameter, sw_set_equation.",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "summary": {
+            "default": "",
+            "title": "Summary",
+            "type": "string"
+          },
+          "stop_on_warnings": {
+            "default": false,
+            "title": "Stop On Warnings",
+            "type": "boolean"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "steps"
+        ],
+        "title": "sw_batchArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_delete_items",
+      "description": "Delete features (by SOLIDWORKS name; their absorbed sketches go too, children that depend on them are\nlisted), components or mates. dry_run=true lists what would be deleted and what depends on it.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "features": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Features"
+          },
+          "components": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Components"
+          },
+          "mates": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Mates"
+          },
+          "dry_run": {
+            "default": false,
+            "description": "Only report what would go with them",
+            "title": "Dry Run",
+            "type": "boolean"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_delete_itemsArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_undo",
+      "description": "SOLIDWORKS Edit > Undo, `steps` times.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "steps": {
+            "default": 1,
+            "maximum": 20,
+            "minimum": 1,
+            "title": "Steps",
+            "type": "integer"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_undoArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_set_parameter",
+      "description": "Create, change or remove a SOLIDWORKS global variable (Tools > Equations): \"wall\" = 2.5, or an\nexpression of other variables (\"length / 40\"). Everything that uses it is rebuilt.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "expression": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Expression"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "remove": {
+            "default": false,
+            "title": "Remove",
+            "type": "boolean"
+          },
+          "comment": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Comment"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "sw_set_parameterArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_set_equation",
+      "description": "Drive a dimension with an equation of global variables (SOLIDWORKS Equations).",
+      "inputSchema": {
+        "properties": {
+          "target": {
+            "description": "A dimension \"D1@Sketch1\", or \"<feature name>.<field>\" such as \"Boss-Extrude1.depth\" (fields: depth, dir2.depth, diameter (from the feature's sketch), radius, distance, thickness, offset, spacing, spacing2, angle, draft, step, count, count2; holes also bore_depth, bore_diameter, sink_diameter)",
+            "title": "Target",
+            "type": "string"
+          },
+          "expression": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Global variables and numbers, e.g. \"wall * 2\"; empty removes the equation",
+            "title": "Expression"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "target"
+        ],
+        "title": "sw_set_equationArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_insert_component",
+      "description": "Insert a part (or sub-assembly) into the assembly at a position; mates finish the placement. The first\ncomponent is fixed unless fixed=false. Returns the component's name (e.g. Bracket-1) for mates.",
+      "inputSchema": {
+        "properties": {
+          "part": {
+            "description": "Path of a .SLDPRT/.SLDASM, or an open document's title",
+            "title": "Part",
+            "type": "string"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "[x,y,z] mm of the part origin",
+            "title": "Position"
+          },
+          "rotation": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "[rx,ry,rz] degrees about the assembly X, then Y, then Z axes",
+            "title": "Rotation"
+          },
+          "fixed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fixed"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "part"
+        ],
+        "title": "sw_insert_componentArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_add_mate",
+      "description": "Add a SOLIDWORKS mate. refs: two references in each component's PART coordinates, e.g.\n{\"component\": \"Base-1\", \"plane\": {\"point\": [x,y,z], \"normal\": [x,y,z]}}, {\"component\": \"Pin-1\", \"axis\":\n{\"point\": [...], \"dir\": [...]}}, {\"component\": \"Base-1\", \"ref\": \"Top Plane\"}, or {\"ref\": \"Front Plane\"}\nfor the assembly's own plane. value: mm or degrees for distance / angle. hinge: refs = two axes, planes =\ntwo faces that stay together, angle_refs + angle_min / angle_max = travel limits (a Hinge mate).\nlimit_distance / limit_angle: refs + min / max. The mate is kept only if SOLIDWORKS makes it without error;\nalignments are tried in order (the one you give first). Returns the mate's name and state.",
+      "inputSchema": {
+        "properties": {
+          "type": {
+            "enum": [
+              "coincident",
+              "concentric",
+              "parallel",
+              "perpendicular",
+              "distance",
+              "angle",
+              "lock",
+              "hinge",
+              "limit_distance",
+              "limit_angle"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "refs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Refs",
+            "type": "array"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Value"
+          },
+          "align": {
+            "anyOf": [
+              {
+                "enum": [
+                  "anti",
+                  "aligned",
+                  "auto"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Align"
+          },
+          "flip": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Flip"
+          },
+          "planes": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Planes"
+          },
+          "angle_refs": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Angle Refs"
+          },
+          "angle_min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Angle Min"
+          },
+          "angle_max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Angle Max"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Min"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Max"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Name"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "type",
+          "refs"
+        ],
+        "title": "sw_add_mateArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_body_topology",
+      "description": "Faces and edges of the part's body as SOLIDWORKS has it now (part coordinates; in an assembly give\ncomponent). Faces: type, area, centre, an on-face point, normal, axis and radius, `ref`. Edges: type,\nmidpoint, ends, length, direction or centre and radius, the faces it joins, face_angle_deg (90 = square\ncorner, 0 = smooth), seam, `ref`. Pass a ref as-is in fillet / chamfer edges, shell / draft faces, mate\nplanes and axes.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Assemblies: a component name (e.g. Bracket-1) to work on its part",
+            "title": "Component"
+          },
+          "kind": {
+            "default": "both",
+            "enum": [
+              "both",
+              "faces",
+              "edges"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "near": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "[x,y,z] mm: items nearest this point first",
+            "title": "Near"
+          },
+          "limit": {
+            "default": 60,
+            "maximum": 500,
+            "minimum": 1,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_body_topologyArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_measure_items",
+      "description": "Measure like SOLIDWORKS Evaluate > Measure, on the current geometry: one item gives area, length,\ndiameter, axis, normal, hole or not, and the holes and slots through a planar face; two items give the\nminimum distance with its points, centre distance between axes, angles and plane distances.",
+      "inputSchema": {
+        "properties": {
+          "a": {
+            "additionalProperties": true,
+            "description": "{\"face\": ref} | {\"edge\": ref} | {\"point\": [x,y,z]}; in an assembly add \"component\": \"<name>\" (assembly coordinates)",
+            "title": "A",
+            "type": "object"
+          },
+          "b": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Optional second item, same form",
+            "title": "B"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "a"
+        ],
+        "title": "sw_measure_itemsArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_inspect_design",
+      "description": "Numbers to check against what you meant: every feature's state, the body's volume, area, centre of mass,\nbounding box, body count, mass with the SOLIDWORKS material, each sketch's state (fully / under / over\ndefined); for an assembly the components, mates and their states.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Assemblies: a component name (e.g. Bracket-1) to work on its part",
+            "title": "Component"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_inspect_designArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_preview",
+      "description": "A PNG of the current SOLIDWORKS geometry, returned directly. Rendered here from the body (any view, close-\nups, a section to look inside), or with screenshot=true the SOLIDWORKS window as the user sees it.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "view": {
+            "default": "isometric",
+            "enum": [
+              "isometric",
+              "top",
+              "front",
+              "right"
+            ],
+            "title": "View",
+            "type": "string"
+          },
+          "width": {
+            "default": 960,
+            "title": "Width",
+            "type": "integer"
+          },
+          "height": {
+            "default": 720,
+            "title": "Height",
+            "type": "integer"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Assemblies: a component name (e.g. Bracket-1) to work on its part",
+            "title": "Component"
+          },
+          "yaw": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Degrees about +Y from the front toward the right; with pitch, replaces view",
+            "title": "Yaw"
+          },
+          "pitch": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Degrees above the XZ plane (90 = top)",
+            "title": "Pitch"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "[x,y,z] mm to centre on (close-ups)",
+            "title": "Target"
+          },
+          "view_width": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Width shown in mm (zoom)",
+            "title": "View Width"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "{\"point\": [x,y,z], \"normal\": [x,y,z]}: cut away the normal's side",
+            "title": "Section"
+          },
+          "screenshot": {
+            "default": false,
+            "description": "A picture of the SOLIDWORKS window itself instead (no section or camera options)",
+            "title": "Screenshot",
+            "type": "boolean"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_previewArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_check_interference",
+      "description": "Every pair of components in the assembly whose bodies overlap, with the overlap volume (mm3).",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_check_interferenceArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_find_mate_candidates",
+      "description": "Likely mates from the assembly's geometry (shafts in holes, faces lying on each other), with references\nready for sw_add_mate. Useful after inserting parts or importing a STEP assembly.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_find_mate_candidatesArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_create_drawing",
+      "description": "A native SOLIDWORKS drawing (.SLDDRW) of a part or assembly, from the user's default drawing template, set out\nas a drafter would: the views a fixed gap apart and centred above the title block, the isometric beside them,\ncentre marks and lines, the model's dimensions auto-arranged, general notes, the sheet scale and the title block\nproperties. It is saved next to the model. Follow the drafting practice in sw_get_guide. Always look at the result\nwith sw_preview (doc = the drawing, screenshot=true) and read its notes; export with sw_export (pdf, dwg, dxf).",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "The part or assembly to draw (path or window title); omit for the active document. It must have been saved.",
+            "title": "Doc"
+          },
+          "sheet": {
+            "default": "A3",
+            "description": "Sheet size, landscape",
+            "enum": [
+              "A4",
+              "A3",
+              "A2",
+              "A1",
+              "A0"
+            ],
+            "title": "Sheet",
+            "type": "string"
+          },
+          "projection": {
+            "default": "third",
+            "description": "Third angle (AS 1100, ASME) or first angle (ISO in Europe)",
+            "enum": [
+              "third",
+              "first"
+            ],
+            "title": "Projection",
+            "type": "string"
+          },
+          "views": {
+            "anyOf": [
+              {
+                "items": {
+                  "enum": [
+                    "front",
+                    "top",
+                    "right",
+                    "left",
+                    "bottom",
+                    "back",
+                    "isometric"
+                  ],
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Omit for the standard set: front, top and right in the chosen projection, plus an isometric. Or name the views you want.",
+            "title": "Views"
+          },
+          "scale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sheet scale such as \"1:2\" or \"2:1\"; omit to choose the largest standard scale that fits the sheet",
+            "title": "Scale"
+          },
+          "dimensions": {
+            "default": true,
+            "description": "Insert the model's own dimensions (those marked for drawing) into the views",
+            "title": "Dimensions",
+            "type": "boolean"
+          },
+          "properties": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Title block fields, set as the drawing's custom properties, e.g. {\"Title\": \"Mounting plate\", \"DrawingNo\": \"KV-1001\", \"Revision\": \"A\", \"DrawnBy\": \"KJ\", \"Material\": \"6061-T6\"}",
+            "title": "Properties"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "File name without extension; default the model's name",
+            "title": "Name"
+          },
+          "folder": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Windows folder; default the model's own folder",
+            "title": "Folder"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "General notes, one line each, placed bottom left. Omit for the standard set (units, do not scale, deburr, ISO 2768-m general tolerances); [] for none",
+            "title": "Notes"
+          },
+          "centre_marks": {
+            "default": true,
+            "description": "Centre marks on holes and slots, centre lines on cylinders",
+            "title": "Centre Marks",
+            "type": "boolean"
+          },
+          "overwrite": {
+            "default": false,
+            "description": "Replace a drawing of the same name (closing it if open) instead of making Name_2",
+            "title": "Overwrite",
+            "type": "boolean"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_create_drawingArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_get_drawing",
+      "description": "Read a SOLIDWORKS drawing: the sheet (size, scale, projection), every view (name, type, orientation, scale,\noutline on the sheet in mm, display style, how many dimensions it shows, the model it shows) and the title\nblock fields. Read it before sw_edit_drawing, and after, to check the layout.",
+      "inputSchema": {
+        "properties": {
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "The drawing (path or window title); omit for the active document",
+            "title": "Doc"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_get_drawingArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_edit_drawing",
+      "description": "Change a SOLIDWORKS drawing step by step, the way a drafter does: add model, projected, section and detail\nviews, move and scale views, set their display, bring in the model's dimensions, add centre marks, notes, title\nblock fields and a parts list with balloons. Actions run in order; if one fails, the ones before it stay and the\nresult says which failed. Every result lists the views with their outlines. Not saved until sw_save. Check with\nsw_preview (screenshot=true).",
+      "inputSchema": {
+        "properties": {
+          "actions": {
+            "description": "Drawing actions, run in order. Sheet positions are [x, y] mm from the lower left corner; views go by name (sw_get_drawing). {\"do\":\"view\",\"orientation\":\"front|top|right|left|bottom|back|isometric\",\"at\":[x,y]} a view of the model; {\"do\":\"projected\",\"from\":\"Drawing View1\",\"at\":[x,y]} a projected view (its side of the parent decides which); {\"do\":\"section\",\"view\":\"Drawing View1\",\"direction\":\"horizontal|vertical\",\"through\":[x,y,z] (a model point, mm) or \"fraction\":[0.5,0.5] (of the view outline),\"label\":\"A\",\"place\":[x,y],\"flip\":false} a section view; {\"do\":\"detail\",\"view\":\"...\",\"through\":[x,y,z] or \"fraction\":[fx,fy],\"radius\":12 (sheet mm),\"scale\":\"2:1\",\"label\":\"B\",\"place\":[x,y]} a detail view; {\"do\":\"move\",\"view\":\"...\",\"to\":[x,y]} the view's centre; {\"do\":\"scale\",\"view\":\"...\",\"scale\":\"1:2\" or \"sheet\"}; {\"do\":\"display\",\"view\":\"...\",\"style\":\"hidden_removed|hidden_visible|wireframe|shaded|shaded_edges\"}; {\"do\":\"delete\",\"view\":\"...\"}; {\"do\":\"rename\",\"view\":\"...\",\"name\":\"...\"}; {\"do\":\"dimensions\",\"view\":\"...\" (omit for all views)} the model's dimensions, auto-arranged; {\"do\":\"arrange_dimensions\"}; {\"do\":\"centre_marks\",\"view\":\"...\" (optional)}; {\"do\":\"note\",\"text\":\"...\",\"at\":[x,y],\"height\":3.5}; {\"do\":\"properties\",\"set\":{\"Title\":\"...\"}}; {\"do\":\"sheet\",\"scale\":\"1:2\",\"projection\":\"third|first\"}; {\"do\":\"bom\",\"view\":\"...\",\"at\":[x,y] (its top right corner),\"type\":\"top|parts|indented\",\"balloons\":true} a parts list for an assembly drawing",
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "The drawing (path or window title); omit for the active document",
+            "title": "Doc"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "actions"
+        ],
+        "title": "sw_edit_drawingArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_export",
+      "description": "Export from SOLIDWORKS and return a download_url valid for one hour. Parts and assemblies: STEP, STL,\nParasolid, IGES, a copy of the native file, or a PDF of the view. Drawings: PDF (every sheet), DWG or DXF (the\nactive sheet), or a copy of the .SLDDRW.",
+      "inputSchema": {
+        "properties": {
+          "format": {
+            "enum": [
+              "step",
+              "stl",
+              "x_t",
+              "igs",
+              "sldprt",
+              "sldasm",
+              "slddrw",
+              "pdf",
+              "dwg",
+              "dxf"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "doc": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Path or window title from sw_status; omit for the active document",
+            "title": "Doc"
+          },
+          "component": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Assemblies: a component name (e.g. Bracket-1) to work on its part",
+            "title": "Component"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "format"
+        ],
+        "title": "sw_exportArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_import",
+      "description": "Open a STEP, IGES or Parasolid file in SOLIDWORKS (an assembly if it has several bodies) and save it as\nSOLIDWORKS files. For anything over about 100 KB use request_upload first, as for import_document.",
+      "inputSchema": {
+        "properties": {
+          "filename": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "e.g. bracket.step; optional with upload_id",
+            "title": "Filename"
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Base64 file bytes, small files only",
+            "title": "Data"
+          },
+          "upload_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "From request_upload, after sending the file",
+            "title": "Upload Id"
+          },
+          "folder": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Where to save the SOLIDWORKS files; default Documents\\OpenSketch",
+            "title": "Folder"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_importArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_standard_part",
+      "description": "An ISO screw, nut, washer or ball bearing made to size and saved as a SOLIDWORKS part (from STEP), ready\nfor sw_insert_component. size e.g. \"M6-1\" (screws, nuts, washers) or \"M8-22-7\" (bore-OD-width bearings);\nlength mm for screws. Axis along the part Y axis, head above Y = 0, shank down -Y.",
+      "inputSchema": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "socket_head_cap_screw",
+              "hex_head_screw",
+              "counter_sunk_screw",
+              "button_head_screw",
+              "set_screw",
+              "hex_nut",
+              "plain_washer",
+              "ball_bearing"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "size": {
+            "title": "Size",
+            "type": "string"
+          },
+          "length": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Length"
+          },
+          "folder": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Default Documents\\OpenSketch\\Toolbox",
+            "title": "Folder"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "required": [
+          "kind",
+          "size"
+        ],
+        "title": "sw_standard_partArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_list_devices",
+      "description": "The user's paired computers (CAD Automation for SOLIDWORKS): name, online, the default one, and per computer the\nSOLIDWORKS sessions running there (version, add-in version, documents open, busy, ready). Pass a computer's\nname as `device` to any sw_ tool when more than one is online.",
+      "inputSchema": {
+        "properties": {},
+        "title": "sw_list_devicesArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_command_status",
+      "description": "Where one SOLIDWORKS command is now (queued, delivered, accepted, running, succeeded, failed, cancelled,\nexpired, rejected, unknown), its history and progress, and its result or error when it finished, including one\nthat finished after its tool call gave up.",
+      "inputSchema": {
+        "properties": {
+          "command_id": {
+            "description": "The command_id from an earlier result or error",
+            "title": "Command Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "command_id"
+        ],
+        "title": "sw_command_statusArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_cancel_command",
+      "description": "Cancel a SOLIDWORKS command: one that has not started is withdrawn; a running batch stops between steps and\nis rolled back; a single SOLIDWORKS operation already running finishes.",
+      "inputSchema": {
+        "properties": {
+          "command_id": {
+            "description": "The command_id to cancel",
+            "title": "Command Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "command_id"
+        ],
+        "title": "sw_cancel_commandArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    },
+    {
+      "name": "sw_selftest",
+      "description": "Check the SOLIDWORKS add-in on this PC: make new test files in Documents\\OpenSketch\\selftest and try every\nkind of thing the add-in does, one step at a time, each checked against what the CAD Automation kernel makes of\nit. Run the three stages in turn (plate, shapes, assembly) when the user asks to test the add-in or after\ninstalling it. Reports each step as ok, check (made, but not as predicted) or failed, with SOLIDWORKS' reason.",
+      "inputSchema": {
+        "properties": {
+          "stage": {
+            "default": "plate",
+            "description": "plate: every part feature on one part, reading back, variables, a batch rollback, export, save. shapes: draft, shell, sweep, loft. assembly: components, mates, interference, export.",
+            "enum": [
+              "plate",
+              "shapes",
+              "assembly"
+            ],
+            "title": "Stage",
+            "type": "string"
+          },
+          "device": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Which registered computer (name from sw_list_devices); omit when only one is online or a default is set",
+            "title": "Device"
+          }
+        },
+        "title": "sw_selftestArguments",
+        "type": "object"
+      },
+      "outputSchema": null
+    }
+  ]
+}
