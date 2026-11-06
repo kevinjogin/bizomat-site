@@ -27,16 +27,16 @@ x-env: &app-env
   PROXY_CLIENT_IP_MODE: socket
   # no TLS in front of this stack: report https to the backends, as Fly's edge does (the website redirects http)
   PROXY_ASSUME_HTTPS: "1"
-  # work
-  WORK_APP_URL: https://work.bizomat.ai
+  # work (as fly.toml: Project Management at bizomat.ai/tasks, work.kevos.com its old address)
+  WORK_APP_URL: https://bizomat.ai/tasks
   WORK_APP_NAME: BIZOMAT Project Management
   WORK_ENVIRONMENT: production
   WORK_ALLOW_SIGNUP: "true"
   WORK_SESSION_TTL_HOURS: "72"
-  # cad
-  OPENSKETCH_PUBLIC_URL: https://cados.kevos.com
-  OPENSKETCH_ALIAS_HOSTS: cad.bizomat.ai,cados.kevos.com
-  OPENSKETCH_REDIRECT_HOSTS: ""
+  # cad (as fly.toml: CAD Automation at bizomat.ai/cad, cados.kevos.com its old address)
+  OPENSKETCH_PUBLIC_URL: https://bizomat.ai/cad
+  OPENSKETCH_ALIAS_HOSTS: cados.kevos.com
+  OPENSKETCH_REDIRECT_HOSTS: cados.kevos.com
   # "secrets": local placeholders, present everywhere as on Fly
   OPENSKETCH_PASSWORD: ${LOCAL_CAD_PASSWORD:-local-only-cad-password}
   WORK_GOOGLE_CLIENT_SECRET: local-only-work-google-secret

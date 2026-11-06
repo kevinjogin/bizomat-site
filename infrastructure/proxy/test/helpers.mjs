@@ -46,12 +46,16 @@ export function wsParse(buf) {
  *   /hsts                   answers with its own Strict-Transport-Security
  *   anything else           echoes {name, method, url, headers}
  * Upgrades: /ws echoes WebSocket frames; /ws-deny answers 401.
+ * Under an application's path on bizomat.ai the same paths answer (/cad/upload is /upload, /tasks/ws is /ws), as the
+ * apps take their prefix off themselves; the echo shows the path as it arrived.
  */
+const ownPath = (path) => path.replace(/^\/(?:cad|tasks)(?=\/)/, '');
+
 export async function startUpstream(name, { onBodyChunk } = {}) {
   const seen = [];
   const sockets = new Set();
   const server = http.createServer((req, res) => {
-    const url = new URL(req.url, 'http://upstream');
+    const url = new URL(ownPath(req.url), 'http://upstream');
     seen.push({ method: req.method, url: req.url, headers: req.headers, rawHeaders: req.rawHeaders });
     const json = (status, body, headers = {}) => {
       const b = JSON.stringify(body);
@@ -107,7 +111,7 @@ export async function startUpstream(name, { onBodyChunk } = {}) {
   server.on('upgrade', (req, socket) => {
     seen.push({ method: req.method, url: req.url, headers: req.headers, rawHeaders: req.rawHeaders, upgrade: true });
     socket.on('error', () => {});
-    if (req.url.startsWith('/ws-deny')) {
+    if (ownPath(req.url).startsWith('/ws-deny')) {
       const body = '{"error":"Authentication required"}';
       socket.end(`HTTP/1.1 401 Unauthorized\r\nContent-Type: application/json\r\nContent-Length: ${body.length}\r\n\r\n${body}`);
       return;

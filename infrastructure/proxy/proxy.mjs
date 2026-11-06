@@ -1,7 +1,7 @@
 // BIZOMAT edge proxy: the HTTP server. Fly's edge sends every request for every BIZOMAT host here; this server
-// picks the backend by Host header (routes.mjs) and passes the request on over the private network, streaming
-// both bodies (nothing is buffered: big uploads, long polls, server-sent events and WebSockets pass straight
-// through).
+// picks the backend by Host header and, on bizomat.ai, by path (routes.mjs) and passes the request on over the
+// private network, streaming both bodies (nothing is buffered: big uploads, long polls, server-sent events and
+// WebSockets pass straight through).
 //
 // Timeouts:
 //   - headers: a client gets headersTimeoutMs (60 s) to send its request headers;
