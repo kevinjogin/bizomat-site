@@ -18,9 +18,9 @@ export const BRAND = {
   defaultColor: DEFAULT_COLOR,
   /** Browser UI colour (meta theme-color): the top bar's surface in each theme. */
   themeColor: { light: '#ffffff', dark: '#101a28' },
-  /** Where privacy requests go: the only verified inbox so far. Change it here when a BIZOMAT address exists. */
-  privacyContact: 'kevin@kevos.com',
-  privacyUpdated: '5 November 2026',
+  /** Where privacy requests go: BIZOMAT's contact address (as on the website). */
+  privacyContact: 'info@bizomat.ai',
+  privacyUpdated: '6 November 2026',
 } as const;
 
 /**

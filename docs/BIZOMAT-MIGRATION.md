@@ -7,6 +7,11 @@ Going back: `BIZOMAT-ROLLBACK.md`. The website has no data to migrate (it is bui
 **Status (5 Nov 2026): tooling built and dry-run on representative data; the live migration has not run.** It needs
 a Cloudflare API token (Project Management export) and a Fly.io token (both apps), which this session did not have.
 
+**6 Nov 2026:** Project Management moves from the owner's laptop, where wrangler and flyctl are signed in, so no token is
+needed: `.\bizomat.ps1 move tasks` (CADOS `tools/laptop`) runs `apps/work/scripts/migrate/to-fly.mjs`: steps 1 to 6
+below with the sign-ins of that computer, then step 7 over `fly ssh console` (the archive's SHA-256 compared on the
+Machine before anything is applied). Order and checks: `BIZOMAT-DEPLOYMENT.md`, section 6c.
+
 ## 1. Rules
 
 These rules come from the project brief and are enforced by the tooling, not only by procedure:

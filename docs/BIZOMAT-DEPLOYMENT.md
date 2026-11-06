@@ -207,6 +207,27 @@ Known differences on Fly, compared with the Worker:
   never the MX, SPF, DKIM or DMARC records that mail for info@bizomat.ai uses.
 - The assistant and AI search need step 3; without it, search runs on keywords and the assistant says it is off.
 
+### 6c. Project Management on Fly.io at bizomat.ai/tasks (owner's decision, 6 Nov 2026)
+
+Project Management moves into the `bizomat` app (process group `work`, volume `work_data`, `fly.website.toml`) with
+its data from Cloudflare (D1 `workos-platform-preview-db`, R2 `workos-platform-preview-files`). The move runs on the
+owner's laptop, where wrangler and flyctl are signed in: `.\bizomat.ps1 move tasks` (CADOS `tools/laptop`), which
+runs `apps/work/scripts/migrate/to-fly.mjs` (the steps of `BIZOMAT-MIGRATION.md`, section 2; Cloudflare is only read).
+It signs people in with email and password only (Google sign-in is off on work.kevos.com), so no secret is needed.
+
+| Order | Owner's step | Check | Rollback |
+| --- | --- | --- | --- |
+| 1 | `.\bizomat.ps1 deploy website`: the first deploy with `work` creates its Machine and its volume (3 GB, daily snapshots). The copy on Fly starts empty; `bizomat.ai/tasks` still answers 302 to work.kevos.com | The script's live checks; `https://bizomat.fly.dev/__proxy/ready` shows `work` ok | Deploy the previous commit |
+| 2 | Tell the people who use work.kevos.com about a short pause, and stop using it until step 5: what is written there after the export stays in the old database | | |
+| 3 | `.\bizomat.ps1 move tasks`: export, import, repair, copy the files, verify and pack (counts and checksums on screen, the data in `C:\BIZOMAT\moves\tasks-<time>\`); type yes; it uploads the archive, compares its SHA-256 on the Machine, puts the Machine in maintenance, runs `apply.sh` (what was there is moved to `/data/backups`), ends maintenance and waits until Project Management is healthy | The counts per table; `migration-report.md` in the folder | Run it again (it replaces the data and keeps the previous copy in `/data/backups`) |
+| 4 | Open `https://bizomat.fly.dev/__preview/work`, sign in with your own email and password, compare a board, a document and a file with work.kevos.com; `https://bizomat.fly.dev/__preview/clear` returns to the website | The same boards, items, documents and files | Nothing has moved yet: work.kevos.com and `bizomat.ai/tasks` (302) are unchanged |
+| 5 | The switch: `TASKS_REDIRECT_ORIGIN` removed and `BIZOMAT_PREVIEW_ROUTING = "0"` in `fly.website.toml` (a pull request), then `.\bizomat.ps1 deploy website` | `https://bizomat.ai/tasks/` is Project Management; sign in once more (a session belongs to its address) | Put `TASKS_REDIRECT_ORIGIN = "https://work.kevos.com"` back and deploy; what was written on Fly since step 3 can go back to D1 with `export-for-d1.mjs` (`BIZOMAT-MIGRATION.md`) |
+| 6 | work.kevos.com to Fly, with the same data: `fly certs add work.kevos.com -a bizomat`; Cloudflare: remove the custom domain `work.kevos.com` from the Worker `workos-platform-preview`, then a DNS-only CNAME `work` to `bizomat.fly.dev` on kevos.com; then `WORK_CANONICAL_URL = "https://bizomat.ai/tasks"` in `fly.website.toml` and deploy: its pages answer 301 to `bizomat.ai/tasks`, its API keeps answering open tabs | `https://work.kevos.com/` answers 301 to `https://bizomat.ai/tasks/` | The custom domain back on the Worker (it still holds the data of step 3) |
+
+Project Management on Fly is in the BIZOMAT brand (the wordmark, "Sign in to BIZOMAT", the platform links, teal for new
+workspaces and folders; privacy requests to info@bizomat.ai). Workspace colours chosen before stay as they are (a
+colour is the workspace owner's data; KEVOS orange was the old default): change one in the workspace's settings.
+
 ## 7. After cutover
 
 - Set `BIZOMAT_PREVIEW_ROUTING = "0"` in `fly.toml` and deploy.
