@@ -115,7 +115,7 @@ jobs:
           echo "::error::https://$APP.fly.dev/__proxy/health did not show version $want within 5 minutes (last: ${got:-none}). See 'flyctl logs -a $APP'; to go back: infrastructure/README.md, Rollback."
           exit 1
 
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: inputs.smoke
         with:
           node-version: "22"
