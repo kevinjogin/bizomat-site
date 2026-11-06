@@ -149,8 +149,15 @@ jobs:
           python3 -m py_compile infrastructure/migrate/lib/*.py infrastructure/migrate/work/*.py infrastructure/fly/*.py infrastructure/fly/test/*.py
           node --check scripts/sync-cad.mjs
           node --check infrastructure/migrate/cad/to-fly.mjs
+          node --check infrastructure/migrate/test/cad-move/fake-fly.mjs
+          python3 -m py_compile infrastructure/migrate/test/cad-move/cad-standin.py
       - name: Shell scripts (shellcheck)
-        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/local/*.sh
+        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/migrate/test/cad-move/*.sh infrastructure/local/*.sh
+      # The whole CAD Automation move (bizomat.ps1 move cad) against a stand-in flyctl: each Machine in its own
+      # namespaces with its own /data and /tmp, the real entrypoint, holding page, export, import and router; the way
+      # back, a failure in the middle, the fallback ways of carrying the copy, the retirement. Root for the namespaces.
+      - name: CAD move rehearsal (infrastructure/migrate/test/cad-move/rehearse.sh)
+        run: sudo env "PATH=$PATH" bash infrastructure/migrate/test/cad-move/rehearse.sh
       - name: fly.toml and fly.website.toml (groups, the one public service, a volume each for work and cad, the CAD route)
         run: python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml
       - name: apps/cad is exactly the pinned CADOS commit (apps/cad-source.json, checked against GitHub)
