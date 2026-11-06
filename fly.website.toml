@@ -3,10 +3,9 @@
 # on Fly.io at bizomat.ai/tasks; one Fly app for the whole platform, CAD Automation's group in Sydney with its data).
 #
 #   bizomat.ai/...       -> web    the BIZOMAT website (this app)
-#   bizomat.ai/cad/...   -> cad    CAD Automation. Its group runs here, in syd, with the volume cad_data. Until its data
-#                                  is moved (bizomat.ps1 move cad, infrastructure/migrate/cad/README.md) the router still
-#                                  sends /cad to the old Fly app `cados` (UPSTREAM_CAD below) and the cad Machine answers
-#                                  only with a holding page (it never starts an empty CAD server)
+#   bizomat.ai/cad/...   -> cad    CAD Automation, in this app's cad group in syd with its data on the volume cad_data
+#                                  (moved from the Fly app `cados` with bizomat.ps1 move cad:
+#                                  infrastructure/migrate/cad/README.md)
 #   bizomat.ai/tasks/... -> work   Project Management, in this app with its data on the volume work_data (moved from
 #                                  Cloudflare on 6 Nov 2026: docs/BIZOMAT-DEPLOYMENT.md, section 6c)
 #   bizomat.ai/login     -> 301    /sign-in/, the website's page that offers each application's sign-in
@@ -45,11 +44,11 @@ kill_timeout = 15
 [env]
   UPSTREAM_WEB = "http://web.process.bizomat.internal:8003"
   UPSTREAM_WORK = "http://work.process.bizomat.internal:8002"
-  # Where bizomat.ai/cad goes. Today the old Fly app cados, over the private network (it listens on ::). bizomat.ps1
-  # move cad switches the running router to this app's cad group, http://cad.process.bizomat.internal:8001, once the
-  # data is in place there; this line then changes to that in a pull request. Until it has, bizomat.ps1 deploy website
-  # refuses to deploy (the router and this file would disagree on where CAD Automation is).
-  UPSTREAM_CAD = "http://cados.internal:8080"
+  # Where bizomat.ai/cad goes: this app's cad group, since bizomat.ps1 move cad switched the running router there (the
+  # old Fly app cados, http://cados.internal:8080, before it). bizomat.ps1 deploy website refuses while the router and
+  # this line disagree, so a deploy never moves CAD Automation away from its data; after bizomat.ps1 back cad, set this
+  # back to http://cados.internal:8080.
+  UPSTREAM_CAD = "http://cad.process.bizomat.internal:8001"
   # bizomat.ai/tasks/... reaches work (no TASKS_REDIRECT_ORIGIN since the switch, 6 Nov 2026). To send it back to the old
   # address for a while: TASKS_REDIRECT_ORIGIN = "https://work.kevos.com" (302, prefix off).
   # Off outside a cutover: bizomat.fly.dev then answers 301 to bizomat.ai. "1" turns on the preview switch
