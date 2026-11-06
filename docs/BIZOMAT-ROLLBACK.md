@@ -42,7 +42,7 @@ bizomat.ai is a new domain: before cutover nobody depends on it, so there is not
 
 Never touch the kevos.com MX, SPF, DKIM or DMARC records during a rollback: email for kevos.com depends on them.
 
-## 4. Project Management (work.kevos.com, work.bizomat.ai)
+## 4. Project Management (work.kevos.com, bizomat.ai/tasks)
 
 ### Before data cutover
 Nothing to do: work.kevos.com still points at the Cloudflare Worker and its D1 database.
@@ -67,18 +67,22 @@ Nothing to do: work.kevos.com still points at the Cloudflare Worker and its D1 d
    Cloudflare creates its DNS record and certificate within minutes.
 5. Check https://work.kevos.com/api/health and sign in. People's sessions on the old host may still be valid; if
    not, they sign in again with the same password (hashes were never changed).
-6. Leave `work.bizomat.ai` pointing at Fly in maintenance mode, or remove its DNS record, so nobody writes to the
-   BIZOMAT copy while the old one is live.
+6. Leave the BIZOMAT work process in maintenance mode, so nobody writes to the BIZOMAT copy while the old one is
+   live. If bizomat.ai already points at the BIZOMAT app (`BIZOMAT-DEPLOYMENT.md`, section 6, step 2), its `/tasks`
+   reaches that copy and answers 502: tell people to use https://work.kevos.com until the cutover is tried again, or
+   roll bizomat.ai back too (section 5).
 
 Hashes stay compatible both ways during the window because the Node runtime keeps PBKDF2-SHA256 at 100,000
 iterations, the same as the Worker (`BIZOMAT-SECURITY.md`, F4). Do not raise the iteration count until the window
 has passed.
 
-## 5. CAD Automation (cados.kevos.com, cad.bizomat.ai)
+## 5. CAD Automation (bizomat.ai/cad, cados.kevos.com)
 
-Paired computers, AI apps and the SOLIDWORKS add-ins connect to `cados.kevos.com`. The BIZOMAT cad process serves
-the same host with the same data (accounts, OAuth grants, the command-signing key, device keys), so moving the DNS
-record back is invisible to them apart from reconnecting.
+Paired computers, AI apps and the SOLIDWORKS add-ins connect to `https://bizomat.ai/cad` (since CADOS#14) or to
+`cados.kevos.com`. The BIZOMAT cad process serves both addresses with the same data (accounts, OAuth grants, the
+command-signing key, device keys), so moving the DNS records back is invisible to them apart from reconnecting.
+bizomat.ai also carries the website and `/tasks`: moving it back hands them back to the website's Worker (section 6a
+of `BIZOMAT-DEPLOYMENT.md`, with the records proxied as they were).
 
 ### Before data cutover
 Nothing to do. If the old app was paused for a rehearsal, resume it:
@@ -95,14 +99,16 @@ Nothing to do. If the old app was paused for a rehearsal, resume it:
      redeployed with an older version.
 3. Resume the old server: `fly ssh console -a cados -C "bash /tmp/bizomat-freeze.sh cont"`, then check
    https://cados.fly.dev/healthz.
-4. In Cloudflare (zone kevos.com), set the DNS-only CNAME `cados` back to `cados.fly.dev`.
-5. Certificates: check `fly certs show cados.kevos.com -a cados`. If the certificate was removed from `cados` during
-   cutover, add it again (`fly certs add cados.kevos.com -a cados`). If it has expired because its `_acme-challenge`
-   record points at the BIZOMAT app, set that record back to the value `fly certs setup cados.kevos.com -a cados`
-   shows; Fly issues it within minutes once the CNAME points at `cados.fly.dev` again. (A certificate is valid for 90
+4. In Cloudflare, put the records back to the values in the cutover log: zone kevos.com, the DNS-only CNAME `cados`
+   back to `cados.fly.dev`; zone bizomat.ai, the A and AAAA records of `bizomat.ai` and the `www` record (proxied
+   again if they were).
+5. Certificates, for `cados.kevos.com` and `bizomat.ai`: check `fly certs show <host> -a cados`. If a certificate was
+   removed from `cados` during cutover, add it again (`fly certs add <host> -a cados`). If it has expired because its
+   `_acme-challenge` record points at the BIZOMAT app, set that record back to the value `fly certs setup <host> -a
+   cados` shows; Fly issues it within minutes once the record points at `cados` again. (A certificate is valid for 90
    days and renews 30 days before expiry, so expiry matters only for a late rollback.)
-6. Check https://cados.kevos.com/healthz, sign in, and ask one person to check that their Companion shows
-   "Connected" and that `sw_status` answers from their AI app.
+6. Check https://bizomat.ai/cad/healthz and https://cados.kevos.com/healthz, sign in, and ask one person to check
+   that their Companion shows "Connected" and that `sw_status` answers from their AI app.
 
 ## 6. The platform as a whole
 
@@ -111,7 +117,7 @@ Nothing to do. If the old app was paused for a rehearsal, resume it:
 | A bad deploy of the `bizomat` app | `fly deploy --image <previous image>`; volumes are untouched by deploys |
 | Corrupted data on a volume | Restore the latest good snapshot (`fly volumes snapshots list <volume id>`, `fly volumes create <name> --snapshot-id <id> -r syd`, then move the Machine to the new volume), or restore the migration archive kept under `/data/backups/` with `infrastructure/migrate/restore.sh` |
 | A secret set wrongly | `fly secrets set` / `fly secrets unset`; for volume-held secrets, edit `/data/<role>/.secrets/<NAME>` as root and restart the Machine |
-| The proxy routes a host wrongly | Redeploy the previous image; the routing table is in `infrastructure/proxy/routes.mjs` and covered by its tests |
+| The proxy routes a host or path wrongly | Redeploy the previous image; the routing table is in `infrastructure/proxy/routes.mjs` and covered by its tests |
 | DNS record changed by mistake | Each DNS step in `BIZOMAT-DEPLOYMENT.md` records the old value before it is changed; put the old value back |
 
 ## 7. Rollback log

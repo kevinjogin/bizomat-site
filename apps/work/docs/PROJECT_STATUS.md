@@ -4,7 +4,7 @@ _Last updated: 2026-11-05_
 
 ## 2026-11-05: renamed to BIZOMAT Project Management
 
-KEVOS WorkOS ("Work by KEVOS") is now **BIZOMAT Project Management**, part of the BIZOMAT platform ("Automate work. Connect systems. Get business done."). The app is to be served at https://work.bizomat.ai and still at https://work.kevos.com (same backend). In this change (not deployed yet):
+KEVOS WorkOS ("Work by KEVOS") is now **BIZOMAT Project Management**, part of the BIZOMAT platform ("Automate work. Connect systems. Get business done."). The app is to be served at https://bizomat.ai/tasks and still at https://work.kevos.com (same backend). In this change (not deployed yet):
 
 - **Brand:** BIZOMAT wordmark, mark (navy tile, white B, teal connector bar) and the "Project Management" lockup drawn from the generated `bizomat-brand.ts`; page titles "<page> · BIZOMAT Project Management"; `index.html` title, description, theme colour (follows the light or dark theme), favicon, touch icon and Open Graph tags (`/og.png`); `APP_NAME` "BIZOMAT Project Management" in all three environments (preview keeps "(Preview)").
 - **Visual system:** `app.css` imports the BIZOMAT tokens and sets every app variable from `--bz-*` (paper, surfaces, ink, teal accent, focus ring, status colours, 8 px buttons and inputs, 12 px cards) in light and dark; headings, page, board and document titles in Oxanium, body in Inter Tight, both served from `/fonts/`. The founder console has a navy sidebar with teal accents. Layout, density and features are unchanged.
@@ -14,7 +14,7 @@ KEVOS WorkOS ("Work by KEVOS") is now **BIZOMAT Project Management**, part of th
 - **Demo content:** `npm run seed:local` (`scripts/seed-local.mjs`) fills a local Worker with the fictional "Acme Studio" workspace; used for the platform's Proof of Work screenshots.
 - **Tests:** 195 / 195 in workerd (3 new: product name, teal default with chosen colours kept, no migration rewrites workspace colours); 9 / 9 Playwright (1 new: brand on sign-in and in the shell).
 
-Owner decisions still open: a BIZOMAT address for privacy requests (the notice still names the only verified inbox, `BRAND.privacyContact`), and `APP_URL` for production once work.bizomat.ai is the primary address.
+Owner decisions still open: a BIZOMAT address for privacy requests (the notice still names the only verified inbox, `BRAND.privacyContact`), and `APP_URL` for production once bizomat.ai/tasks is the primary address (the platform's `fly.toml` sets `https://bizomat.ai/tasks`).
 
 ## Phase summary
 

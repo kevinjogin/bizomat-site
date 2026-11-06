@@ -13,7 +13,7 @@ the add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS and 
 home page sets it up. License: AGPL-3.0-only. This folder is `apps/cad` in the BIZOMAT platform repository (the
 website at its root, `apps/work` Project Management, `shared/brand` the brand system); its CADOS history is kept.
 
-BIZOMAT CAD Automation for SOLIDWORKS (0.12.3; CADOS for SOLIDWORKS in 0.12.0 to 0.12.2, KEVOS Bridge up to 0.11) builds
+BIZOMAT CAD Automation for SOLIDWORKS (0.12.4; CADOS for SOLIDWORKS in 0.12.0 to 0.12.2, KEVOS Bridge up to 0.11) builds
 on it: the server is the CAD Automation gateway; each Windows computer runs the native add-in (COM `ISwAddin`, Tools >
 Add-Ins > BIZOMAT CAD Automation, BIZOMAT tab, menu and task pane) and the BIZOMAT Companion (`KEVOS.Companion.exe`,
 tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the gateway and hands
@@ -70,7 +70,7 @@ waits for a signing service.
   (secrets CLOUDFLARE_API_TOKEN, FLY_API_TOKEN). Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
-## Current state (v0.8 server, BIZOMAT CAD Automation for SOLIDWORKS 0.12.3)
+## Current state (v0.8 server, BIZOMAT CAD Automation for SOLIDWORKS 0.12.4)
 
 - Registered computers (`devicebridge.py`, built as the KEVOS bridge; router included in `server.py`): pairing (`/v2/devices/pair/*`, the
   signed-in page `/devices/pair`), device proofs (`Authorization: KEVOS-Device <JWS>`, ES256 by the computer's
@@ -92,15 +92,19 @@ waits for a signing service.
   commands. `Endpoint` serves it
   at each path in `PATHS` = ("/mcp", "/solidworks/mcp"): the path itself takes a Bearer token (`_BearerGate`, 401
   with the protected-resource pointer for that path), `path/<key>` the private address (`_TokenGate`,
-  `auth.resolve_mcp`). /solidworks/mcp is a second address early connectors used. Stateless Streamable HTTP, JSON
-  responses.
+  `auth.resolve_mcp`). /solidworks/mcp is a second address early connectors used. Stateless Streamable HTTP; each
+  answer is an event stream (`json_response=False`): its headers go at once and sse-starlette sends a comment every
+  15 s, so a tool that waits minutes for SOLIDWORKS survives a proxy's idle limit (CADOS#14). Tests read answers with
+  `tests/mcp_reply.rpc`.
 - OAuth (`mcpauth.py`): `RESOURCES` maps both paths to "BIZOMAT CAD Automation" with their own protected-resource
-  metadata; a token from either works on both; one connection per person and app. Two public host names
-  (OPENSKETCH_ALIAS_HOSTS, e.g. "cad.bizomat.ai,cados.kevos.com"): a request to one gets `auth.public_url()` /
+  metadata; a token from either works on both; one connection per person and app. Other public host names
+  (OPENSKETCH_ALIAS_HOSTS, on the platform "cados.kevos.com"): a request to one gets `auth.public_url()` /
   `mcpauth.base_url()` = https://<that host>, so its metadata names the address the client used (else
   OPENSKETCH_PUBLIC_URL, else the request's host); tokens are looked up by hash and work on both; authorize and token
-  accept either host's resource (`own_bases`, `_own_targets`), `iss` is the issuer of the resource's host
-  (`issuer_for`), refresh ignores `resource`; a resource elsewhere is `invalid_target` (`tests/test_alias_hosts.py`). DCR, client metadata documents (fetched with
+  accept either host's resource (`own_bases`, `_own_targets`), `iss` is the issuer whose address the resource lives
+  under (`issuer_for`: the longest, so https://bizomat.ai/cad), refresh ignores `resource`; a resource elsewhere is
+  `invalid_target` (`tests/test_alias_hosts.py`). Under a path the protected-resource metadata is where RFC 9728 puts
+  it (`resource_metadata_url`: https://bizomat.ai/.well-known/oauth-protected-resource/cad/mcp). DCR, client metadata documents (fetched with
   `safefetch.py`: public https only, pinned address), PKCE S256, refresh rotation, revoke.
 - Sign-in (`auth.py`, `accounts.py`, `oauth.py`): accounts with scrypt passwords, invites, Google sign-in (secret
   encrypted with `secretbox.py`), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
@@ -192,7 +196,7 @@ waits for a signing service.
   general notes it is sent (`DEFAULT_NOTES`: units, do not scale, deburr, ISO 2768-m) bottom left, and replaces a
   drawing of the same name with overwrite=true. SW_GUIDE has the drafting practice (AS 1100.101/201, ISO 128,
   ISO 129-1) the AI follows: dimension sketches from datums, fewest views, preferred scales, check by screenshot and
-  remake. The add-in is 0.12.3
+  remake. The add-in is 0.12.4
   (`solidworks/Directory.Build.props`; bump it whenever the add-in or the Companion changes). Its hello sends its version and
   the DLL's path; `swbridge.addin_too_old` makes sw_create_drawing, the dwg/dxf/slddrw exports and sw_status
   (`update_needed`) say which add-in is loaded and how to update, before anything is sent. `solidworks.yml` replaces
@@ -211,7 +215,7 @@ waits for a signing service.
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
 - Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded; version in
-  `Directory.Build.props`, 0.12.3; Company BIZOMAT, Product "BIZOMAT CAD Automation for SOLIDWORKS"): Core (Json, Geom,
+  `Directory.Build.props`, 0.12.4; Company BIZOMAT, Product "BIZOMAT CAD Automation for SOLIDWORKS"): Core (Json, Geom,
   SketchPlan, BridgeClient, BrandArt (the names, the logo's paths as polygons, the tab names); Bridge2: Crypto (ES256 JWS, JWK),
   Wire (ids, times, 4-byte-length frames), ReplayGuard, PipeLink (the add-in's pipe client: reader thread for pings and
   cancels, one worker for commands, outbox across reconnects, at-most-once by command id), CloudLink and
@@ -253,11 +257,27 @@ waits for a signing service.
   releases: release downloads, the MSI's links and `swbridge.ADDIN_DOWNLOAD` point there. The workflows in
   `apps/cad/.github` run only in that repository; the platform's own workflows are at the repository root.
 - BIZOMAT platform: one Fly.io app with a proxy in front; this server runs there as `python -m opensketch --host ::
-  --port 8001 --no-browser --supervise` (OPENSKETCH_DATA=/data/cad) and answers on https://cad.bizomat.ai and, for
-  existing connectors, add-ins and Companions, https://cados.kevos.com (OPENSKETCH_ALIAS_HOSTS lists both). The
-  platform's own docs (repository root `docs/BIZOMAT-*.md`) describe the proxy and the cutover.
-- Until the cutover: public address https://cados.kevos.com (point it at the Fly app with `domain.yml`; fly.toml [env] and deploy.yml set
-  it as OPENSKETCH_PUBLIC_URL). `canonical.py` (outermost middleware) answers 301 on the old host (fly.toml
+  --port 8001 --no-browser --supervise` (OPENSKETCH_DATA=/data/cad). Everything lives under bizomat.ai (no
+  subdomains): the proxy sends https://bizomat.ai/cad, /cad/... and the root program and OAuth discovery paths here
+  (the website Worker's CAD_PATHS), and https://cados.kevos.com, the old address, on every path. The root fly.toml sets
+  OPENSKETCH_PUBLIC_URL=https://bizomat.ai/cad and cados.kevos.com in OPENSKETCH_ALIAS_HOSTS and
+  OPENSKETCH_REDIRECT_HOSTS (pages 301 to bizomat.ai/cad, programs keep its own address). `canonical.py` serves the
+  prefix (CADOS#14): a request under /cad is served with the prefix taken off and put in root_path, so routes, the
+  sign-in gate and the computers' signed paths are unchanged; root paths the app writes get it back (HTML
+  href/src/action/url(), Location, cookie Path; `static/ui/app.js` takes it from its own address; the brand tokens copy
+  finds its fonts with `../fonts/`); pages under the prefix are not compressed by the app; the OAuth metadata of the
+  prefixed resource is answered at the root of the host (RFC 9728, RFC 8414, also /.well-known/openid-configuration/cad);
+  on bizomat.ai /CAD 301s to /cad and other pages 302 into /cad. Google sign-in comes back under the prefix
+  (`auth._request_base` adds root_path): https://bizomat.ai/cad/auth/google/callback. Every HTML answer carries
+  `server.PAGE_CSP` (`PagePolicy`, CADOS#15): scripts only from this server and the two inline scripts by hash
+  (`brand.MENU_SCRIPT`, `auth.SHOW_SCRIPT`; a new inline script needs its hash there), because the website and Project
+  Management share the bizomat.ai origin; every answer gets nosniff. Tests: `tests/test_path_prefix.py` (crawls every
+  page for links outside /cad and the policy), the official MCP client under /cad (`test_mcp_oauth.py`), a computer
+  paired under /cad and the keep-alive (`test_devicebridge.py`). The platform's own docs (repository root
+  `docs/BIZOMAT-*.md`) describe the proxy and the cutover. Not ported: CADOS#11 (no server password, setup mode,
+  suspension) and #12 (`machine_base`; the alias hosts above do that job here).
+- The standalone `cados` app (until the cutover; deployed from jogkev-creator/CADOS, which now runs CADOS#14 at
+  https://bizomat.ai/cad): `apps/cad/fly.toml` is its configuration as imported. `canonical.py` answers 301 on an old host (fly.toml
   OPENSKETCH_REDIRECT_HOSTS=cados.fly.dev, Host header only) for GET/HEAD, keeping path and query; never for
   /healthz, /mcp*, /solidworks/mcp*, OAuth register/token/revoke, /.well-known/, /v2/, /api/ (`tests/test_canonical.py`).
   Alias hosts are redirected only when they are also in OPENSKETCH_REDIRECT_HOSTS. Favicons (`static/favicon.svg|ico`,
@@ -298,8 +318,9 @@ waits for a signing service.
 - Large assemblies are slow to read: each read exports a STEP of the bodies that changed.
 - Account admin page (`/admin`) covers people, passwords, invites and open sign-up; early access codes and Google
   sign-in setup are still API only (`/api/account/settings`, `/api/account/google`).
-- The device bridge: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
-  (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
+- The device bridge: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress
+  notifications (an answer's stream carries only keep-alive comments), progress is in `sw_command_status`; ChatGPT and
+  Grok connectors untested; the gateway is one
   process (SQLite, live sessions in memory).
 - App sign-in (OAuth) is tested with the MCP Python SDK client; not yet with every AI app's connector.
 - The `ai` extra in pyproject.toml (anthropic) is no longer used; drop it the next time the pins are regenerated.
@@ -309,8 +330,8 @@ waits for a signing service.
 1. Run the checklist (`docs/KEVOS-TEST-REPORT.md` section 4) on Windows with SOLIDWORKS 2022: the MSI, the
    Companion, the add-in's BIZOMAT UI (tab, menu, task pane, icons drawn from the brand paths, the old CADOS and KEVOS
    tabs removed), events, confirmation and modal check have only been compiled, not run.
-1. When cad.bizomat.ai is live: set OPENSKETCH_PUBLIC_URL to it (canonical tags), keep both hosts in
-   OPENSKETCH_ALIAS_HOSTS, and leave cados.kevos.com out of OPENSKETCH_REDIRECT_HOSTS while connectors still use it.
+1. Take CADOS#11 (no server password, setup mode, suspension) into this folder before the CAD data moves from the
+   `cados` app, whose data that code wrote (the root `docs/BIZOMAT-PROJECT-STATUS.md`, section 6).
 1. Run the self test on real SOLIDWORKS installs and fix from the reports.
 2. Tune SW_GUIDE from what the AI gets wrong on real work.
 3. Early access and Google sign-in settings on the Admin page.

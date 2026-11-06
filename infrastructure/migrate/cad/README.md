@@ -108,15 +108,17 @@ Freeze writes, copy, verify checksums, then switch DNS. Until step 7 the old app
    node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode preview --skip web,work
    ```
 
-   Then by hand: open `https://bizomat.fly.dev/__preview/cad`, sign in as the owner; Admin lists the same people;
-   Settings shows the same private connector address as on `cados.kevos.com`; SOLIDWORKS lists the same computers.
+   Then by hand: open `https://bizomat.fly.dev/cad/`, sign in as the owner; Admin lists the same people;
+   Settings shows the same private connector address as on `https://bizomat.ai/cad`; SOLIDWORKS lists the same
+   computers.
    `fly ssh console -a bizomat -g cad -C "bash /usr/local/lib/bizomat/migrate/cad/verify.sh --installed /data/cad"`
    repeats the file checks.
 
-7. **Switch DNS** for `cados.kevos.com` (`infrastructure/README.md`, DNS cutover): the certificate on `bizomat`
-   first, then the record. The old app keeps no traffic and stays frozen. Then `cad.bizomat.ai`.
+7. **Switch DNS** for `bizomat.ai`, `www.bizomat.ai` and `cados.kevos.com` together (`infrastructure/README.md`, DNS
+   cutover): the certificates on `bizomat` first, then the records. The old app keeps no traffic and stays frozen.
 
 8. **Rollback** (any time in the window): `fly ssh console -a cados -C "bash /tmp/bizomat-freeze.sh cont"` resumes
-   the old server where it stopped; point `cados.kevos.com` back at `cados.fly.dev`. Changes made on the new app
+   the old server where it stopped; point `cados.kevos.com` back at `cados.fly.dev` and `bizomat.ai` back to its
+   logged records (`docs/BIZOMAT-ROLLBACK.md`, section 5). Changes made on the new app
    after the switch stay there (export them the same way to carry them back). When the window ends: remove
    `cados-data.tar` everywhere, then retire the old app.

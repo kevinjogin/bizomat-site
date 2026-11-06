@@ -45,8 +45,11 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 
 - **Target:** one Fly.io app `bizomat` (Sydney) with process groups proxy, web, work and cad, deployed by
   `.github/workflows/bizomat-deploy.yml` (manual) with an org-scoped `FLY_API_TOKEN`. See `docs/BIZOMAT-DEPLOYMENT.md`.
-  DNS changes (bizomat.ai, cad/work subdomains, kevos.com, cados.kevos.com, work.kevos.com) are made by hand only
-  after the new app passes its smoke tests; never automate them from CI.
+  DNS changes (bizomat.ai, www.bizomat.ai, kevos.com, cados.kevos.com, work.kevos.com) are made by hand only after the
+  new app passes its smoke tests; never automate them from CI. Its proxy routes bizomat.ai by path as the Worker does
+  (`infrastructure/proxy/routes.mjs`; `CAD_PATHS` is one list, checked equal by the proxy's tests): `/cad` to cad,
+  `/tasks` to work, the rest to web; `cados.kevos.com` and `work.kevos.com` (the old addresses) by host. The apps take
+  their prefix off themselves (`apps/cad/opensketch/canonical.py`, `apps/work/src/worker/mount.ts`).
 - **Current kevos.com:** Cloudflare Worker `throbbing-block-6c61` (account `Kevinjogin@protonmail.com's Account`,
   route `kevos.com/*`). Cloudflare's GitHub integration builds and deploys every push to `main`, so **merging to
   `main` publishes the BIZOMAT website at kevos.com**. Merge only when that is intended (or disconnect the integration
@@ -59,7 +62,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   The CAD Automation product page is `/cad-automation/`, because `/cad` is the application. No page or file of the site
   may take an application's path (tests/worker.test.ts). Today bizomat.ai's record still points (DNS only) at the
   `cados` Fly app; the Worker answers once the records are proxied. The steps, in order, are in
-  `docs/BIZOMAT-DEPLOYMENT.md`, section 6a.
+  `docs/BIZOMAT-DEPLOYMENT.md`, section 6a (today) and section 6 (the single app).
 - **Incident, 8 Oct 2026:** a manual `wrangler deploy` from a stale checkout (145 commits behind) replaced the site
   with the old GoCore design. That is why manual deploys are restricted as above.
 - Keep the old deployments (the kevos.com Worker, the `workos-platform-preview` Worker behind work.kevos.com, the
@@ -103,10 +106,10 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 
 ## After any production change
 
-Check the public site, not just the build: `/`, `/cad/`, `/work/`, `/resources/`, `/tools/`, `/reados/`,
+Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/resources/`, `/tools/`, `/reados/`,
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`, and
 every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Resources, Engine Room** with **AI Search** and **Sign in**, that a new session opens in the light theme, and that AI
-search answers. For the apps,
+search answers. For the apps (`/cad/` and `/tasks/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
 public URL has been checked.

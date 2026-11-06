@@ -9,11 +9,11 @@ the brand, the design system, the domain and the edge.
                      |                  |                          |
                      v                  v                          v
             +--------------------------------------------------------------------+
-            |  Fly.io edge (TLS, HTTP/2)  bizomat.ai  work.*  cad.*  kevos.com   |
+            |  Fly.io edge (TLS, HTTP/2)   bizomat.ai   cados.*  work.*  kevos.com  |
             +--------------------------------------------------------------------+
                                          |
                                  [proxy] process group (public, :8080)
-                                 routes by Host header, sets client IP
+                     routes bizomat.ai by path (/cad, /tasks), others by host
                      +-------------------+--------------------+
                      |                   |                    |
                [web] :8003         [work] :8002          [cad] :8001          (6PN only, not public)
@@ -55,11 +55,11 @@ current production deployments until cutover.
 
 | Host | Process | Notes |
 | --- | --- | --- |
-| `bizomat.ai` | web | Canonical website. `www.bizomat.ai` redirects to it. |
-| `cad.bizomat.ai`, `cados.kevos.com` | cad | Every path unchanged: MCP (`/mcp`, `/solidworks/mcp`), OAuth, `/v2/device/*`, `/mcp/sw/*`, pages. Each host serves its own OAuth metadata (`OPENSKETCH_ALIAS_HOSTS`). |
-| `work.bizomat.ai`, `work.kevos.com` | work | Every path unchanged, including WebSockets on `/api/live/boards/:id`. |
+| `bizomat.ai` | web, cad, work by path | Everything lives under bizomat.ai, no subdomains: the website at the root; CAD Automation at `/cad` (and the OAuth metadata and program paths it keeps at the root, the Worker's `CAD_PATHS`); Project Management at `/tasks`, WebSockets on `/tasks/api/live/boards/:id` included. Paths reach the apps unchanged; each takes its prefix off itself. `www.bizomat.ai` redirects to it. |
+| `cados.kevos.com` | cad | CAD Automation's old address, every path: pages answer 301 to `https://bizomat.ai/cad`; MCP (`/mcp`, `/solidworks/mcp`), OAuth, `/v2/device/*` and `/mcp/sw/*` keep working with its own OAuth metadata (`OPENSKETCH_ALIAS_HOSTS`). |
+| `work.kevos.com` | work | Project Management's old address, every path at the root, including WebSockets on `/api/live/boards/:id`. |
 | `kevos.com`, `www.kevos.com` | proxy redirect | `301` to `https://bizomat.ai` with the same path and query for GET and HEAD; form posts to `/api/*` are passed to web so cached pages keep working. |
-| `bizomat.fly.dev` | web (and preview switch) | Before DNS: `/__preview/cad` or `/__preview/work` sets a preview cookie on this host only, so each app can be tested end to end. |
+| `bizomat.fly.dev` | as bizomat.ai, by path (and a preview switch) | Before DNS: `/cad/` and `/tasks/` work there; `/__preview/cad` or `/__preview/work` sets a preview cookie on this host only that shows one app at the root, as the old addresses serve it. |
 
 Paths on bizomat.ai keep the old kevos.com structure (`/tools/...`, `/reados/...`, `/library/...`), so a kevos.com
 link becomes a bizomat.ai link by changing only the host. The 1,600+ redirects for retired URLs in
