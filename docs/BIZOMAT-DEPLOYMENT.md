@@ -192,7 +192,7 @@ old KEVOS site back on kevos.com.
 
 | Order | Owner's step | Check | Rollback |
 | --- | --- | --- | --- |
-| 1 | Cloudflare, Worker `throbbing-block-6c61`: Settings > Builds > Disconnect; Deployments: deploy the version built from c79e297 (5 Nov); Settings > Domains & Routes: remove `bizomat.ai/*` and `www.bizomat.ai/*` | kevos.com is the KEVOS site; its assistant and forms answer | Deploy the later version again |
+| 1 | `.\bizomat.ps1 restore kevos` (CADOS `tools/laptop`): with wrangler's sign-in, puts back the deployment that was live before 6 Nov 2026 01:03 UTC (the KEVOS site built from c79e297) and sets the Worker's routes to `kevos.com/*` alone (`bizomat.ai/*` and `www.bizomat.ai/*` removed). Then Cloudflare, Worker `throbbing-block-6c61`: Settings > Build > Disconnect (until then `scripts/kevos-guard.mjs` stops its builds) | The script checks that kevos.com shows KEVOS and bizomat.ai BIZOMAT; the assistant and forms answer on kevos.com | The rollback command the script prints before it starts |
 | 2 | `.\bizomat.ps1 deploy cad` (CADOS `main` with #16) | `https://bizomat.ai/cad/` and `https://cados.kevos.com/docs` as before | `fly releases -a cados --image`, then `fly deploy -a cados --image <previous>` |
 | 3 | Optional, for the assistant and AI search on Fly: a Cloudflare API token with Workers AI permission, then `fly secrets set CF_ACCOUNT_ID=<account id> CF_AI_TOKEN=<token> -a bizomat` | `/api/chat` answers questions | `fly secrets unset ...` (search falls back to keywords) |
 | 4 | `.\bizomat.ps1 deploy website`: creates `bizomat` the first time (after asking), deploys, checks `bizomat.fly.dev` | The script's live checks: the router's version, the website, its APIs, `/cad/` through the private network, `/tasks/` 302 | `fly releases -a bizomat --image`, then redeploy the previous image; or leave bizomat.ai on `cados` (step 5 not done) |
@@ -241,9 +241,9 @@ colour is the workspace owner's data; KEVOS orange was the old default): change 
   and the files keep answering for open tabs. People sign in once more under `/tasks` (a session belongs to its host).
 - Website links to the apps follow `PUBLIC_CAD_APP_URL` and `PUBLIC_WORK_APP_URL` (build-time settings; defaults
   `https://bizomat.ai/cad` and `https://bizomat.ai/tasks`).
-- Merging to `main` also publishes the website at kevos.com through Cloudflare's GitHub integration. Leave it on
-  while kevos.com is served by the Worker; disconnect it after section 6, step 3 (option B) if the Worker is no
-  longer used.
+- Merging to `main` publishes nothing on Cloudflare: kevos.com is the KEVOS site again, and `wrangler.toml` runs
+  `scripts/kevos-guard.mjs`, which stops every deploy and upload of this repository there (Cloudflare's GitHub
+  integration included until it is disconnected).
 - Leave the old deployments running for the rollback window (`BIZOMAT-ROLLBACK.md`).
 
 ## 8. What the owner must do (not possible from this session)

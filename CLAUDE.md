@@ -50,11 +50,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (`infrastructure/proxy/routes.mjs`; `CAD_PATHS` is one list, checked equal by the proxy's tests): `/cad` to cad,
   `/tasks` to work, the rest to web; `cados.kevos.com` and `work.kevos.com` (the old addresses) by host. The apps take
   their prefix off themselves (`apps/cad/opensketch/canonical.py`, `apps/work/src/worker/mount.ts`).
-- **Current kevos.com:** Cloudflare Worker `throbbing-block-6c61` (account `Kevinjogin@protonmail.com's Account`,
-  route `kevos.com/*`). Cloudflare's GitHub integration builds and deploys every push to `main`, so **merging to
-  `main` publishes the BIZOMAT website at kevos.com**. Merge only when that is intended (or disconnect the integration
-  after bizomat.ai is live). Manual `npm run deploy` only from a clean checkout whose `HEAD` equals `origin/main`,
-  right after `npm run verify`.
+- **kevos.com is the KEVOS site again (Stage 0, owner's decision of 6 Nov 2026):** Cloudflare Worker
+  `throbbing-block-6c61` (account `Kevinjogin@protonmail.com's Account`, route `kevos.com/*`) runs the KEVOS site built
+  from `c79e297`, put back with the laptop's `bizomat.ps1 restore kevos`. Nothing from this repository publishes there:
+  `wrangler.toml`'s `[build]` runs `scripts/kevos-guard.mjs`, which stops every deploy and upload (Cloudflare's Workers
+  Builds included, while its Git connection is still on), and `npm run deploy` is that guard. `npm run preview` still
+  runs the Worker locally. The BIZOMAT website deploys to Fly only (`fly.website.toml`, `bizomat.ps1 deploy website`).
 - **Hosts (owner's decision, 5 Nov 2026): everything under bizomat.ai, no subdomains.** The website is the root;
   CAD Automation is `/cad` and Project Management `/tasks`. `src/worker.ts` (`routeApps`) passes `/cad/...` (and
   the CAD app's OAuth discovery and root program paths, `CAD_PATHS`) to the CAD app with `fetch(request)`, and
