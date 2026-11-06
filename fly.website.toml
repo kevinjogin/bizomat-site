@@ -1,15 +1,19 @@
-# BIZOMAT on Fly.io, first stage: the website and the router behind bizomat.ai (owner's decision, 6 Nov 2026: the
-# website on Fly.io, kevos.com back to the old KEVOS site on Cloudflare).
+# BIZOMAT on Fly.io: the website, the router behind bizomat.ai and Project Management (owner's decisions, 6 Nov 2026:
+# the website on Fly.io, kevos.com back to the old KEVOS site on Cloudflare; Project Management on Fly.io at
+# bizomat.ai/tasks).
 #
 #   bizomat.ai/...       -> web    the BIZOMAT website (this app)
 #   bizomat.ai/cad/...   -> cad    CAD Automation: its own Fly app `cados`, over Fly's private network; it keeps its
 #                                  data and its old addresses (cados.kevos.com, cados.fly.dev)
-#   bizomat.ai/tasks/... -> 302    Project Management, still on Cloudflare at work.kevos.com, until it moves into this
-#                                  app with its data (fly.toml, the full plan: proxy, web, work and cad)
+#   bizomat.ai/tasks/... -> work   Project Management, in this app with its data on the volume work_data. Until its data
+#                                  is moved from Cloudflare and checked (docs/BIZOMAT-DEPLOYMENT.md, section 6c),
+#                                  /tasks/... still answers 302 to work.kevos.com (TASKS_REDIRECT_ORIGIN), and the copy
+#                                  here is reached only through https://bizomat.fly.dev/__preview/work
 #
 # Deploy from the owner's laptop: bizomat.ps1 deploy website, which runs
 #   fly deploy --config fly.website.toml --remote-only --ha=false --build-arg BIZOMAT_VERSION=<commit>
-# Same image as fly.toml (infrastructure/fly/Dockerfile); only the proxy and web groups run.
+# Same image as fly.toml (infrastructure/fly/Dockerfile, the full plan); the proxy, web and work groups run here.
+# --ha=false keeps one Machine per group: work must never have two (each would get its own empty volume).
 
 app = "bizomat"
 primary_region = "syd"
@@ -21,6 +25,8 @@ kill_timeout = 15
   ignorefile = ".dockerignore"
 
 [deploy]
+  # rolling is the only strategy for Machines with volumes. work is offline while its Machine is replaced (10-60 s):
+  # the proxy answers 502 meanwhile and open boards reconnect.
   strategy = "rolling"
   max_unavailable = 1
   wait_timeout = "10m"
@@ -28,14 +34,27 @@ kill_timeout = 15
 [processes]
   proxy = "/usr/local/bin/bizomat-entrypoint proxy"
   web = "/usr/local/bin/bizomat-entrypoint web"
+  work = "/usr/local/bin/bizomat-entrypoint work"
 
 [env]
   UPSTREAM_WEB = "http://web.process.bizomat.internal:8003"
+  UPSTREAM_WORK = "http://work.process.bizomat.internal:8002"
   # CAD Automation's app on the private network. It listens on :: (IPv4 and IPv6), so 6PN reaches it.
   UPSTREAM_CAD = "http://cados.internal:8080"
-  # Project Management until it runs here: bizomat.ai/tasks/... answers 302 to the same path there, prefix off.
+  # Until Project Management's data is here and checked: bizomat.ai/tasks/... answers 302 to the same path on its old
+  # address, prefix off. Removing this line is the switch (section 6c): /tasks/... then reaches work.
   TASKS_REDIRECT_ORIGIN = "https://work.kevos.com"
-  BIZOMAT_PREVIEW_ROUTING = "0"
+  # On while the data move is checked: https://bizomat.fly.dev/__preview/work routes that one browser to work (only on
+  # bizomat.fly.dev, never on bizomat.ai). "0" again after the switch.
+  BIZOMAT_PREVIEW_ROUTING = "1"
+  # work: passed to the work role as APP_URL, APP_NAME, ENVIRONMENT, ALLOW_SIGNUP and SESSION_TTL_HOURS
+  # (infrastructure/fly/entrypoint.sh). Sign-up and session length as work.kevos.com runs today: open sign-up, 72 h.
+  # It signs people in with email and password only; Google sign-in is off on work.kevos.com, so no secret is needed.
+  WORK_APP_URL = "https://bizomat.ai/tasks"
+  WORK_APP_NAME = "BIZOMAT Project Management"
+  WORK_ENVIRONMENT = "production"
+  WORK_ALLOW_SIGNUP = "true"
+  WORK_SESSION_TTL_HOURS = "72"
 
 [http_service]
   processes = ["proxy"]
@@ -70,6 +89,28 @@ kill_timeout = 15
     interval = "15s"
     timeout = "5s"
     grace_period = "20s"
+  [checks.work]
+    processes = ["work"]
+    type = "http"
+    port = 8002
+    method = "get"
+    path = "/api/health"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "30s"
+
+# Project Management's data: one volume on its one Machine (created by the first deploy), snapshotted daily and kept
+# 30 days. The data move puts db.sqlite and files/ in /data/work (infrastructure/migrate/work).
+[[mounts]]
+  source = "work_data"
+  destination = "/data"
+  processes = ["work"]
+  initial_size = "3gb"
+  snapshot_retention = 30
+  scheduled_snapshots = true
+  auto_extend_size_threshold = 80
+  auto_extend_size_increment = "1GB"
+  auto_extend_size_limit = "20GB"
 
 [[vm]]
   processes = ["proxy"]
@@ -80,3 +121,14 @@ kill_timeout = 15
   processes = ["web"]
   size = "shared-cpu-1x"
   memory = "512mb"
+
+[[vm]]
+  processes = ["work"]
+  size = "shared-cpu-1x"
+  memory = "512mb"
+
+# Restart work whenever its process exits (the entrypoint exits non-zero on a missing volume: the loop then shows in
+# fly logs until it is fixed; in maintenance mode it stays up without the service, for the data move).
+[[restart]]
+  policy = "always"
+  processes = ["work"]
