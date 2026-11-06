@@ -130,6 +130,8 @@ function machines(app) {
     id: m.id, state: m.state, region: m.region,
     group: m.config?.metadata?.fly_process_group ?? m.process_group ?? '',
     env: m.config?.env ?? {}, mounts: m.config?.mounts ?? [], services: m.config?.services ?? [],
+    // the image's tag: bizomat.ps1 deploys with --image-label bizomat-<commit>, so it says which commit runs
+    image: m.image_ref?.tag ?? '',
   }));
 }
 
@@ -1071,7 +1073,7 @@ async function status(o) {
   const report = {
     route, upstream: ups, old_url: o.oldUrl, new_url: o.newUrl,
     public: { ok: health.ok === true, version: health.version ?? '', status: health.status ?? '', kid: await publicKid() },
-    cad: cad ? { machine: cad.id, state: cad.state, region: cad.region } : null, old,
+    cad: cad ? { machine: cad.id, state: cad.state, region: cad.region, image: cad.image } : null, old,
   };
   if (o.json) return process.stdout.write(`${JSON.stringify(report)}\n`);
   say(`bizomat.ai/cad goes to: ${route === 'old' ? o.from : route === 'new' ? `the cad group of ${o.to}` : route}${ups.length ? ` (${ups.join(' | ')})` : ''}`);
