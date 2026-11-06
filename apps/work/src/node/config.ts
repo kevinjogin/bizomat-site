@@ -10,9 +10,14 @@ export interface WorkerVars {
   APP_URL: string;
   ALLOW_SIGNUP: string;
   SESSION_TTL_HOURS: string;
+  /** Pages asked for on another host answer 301 to the same path here (src/worker/mount.ts canonicalRedirect). */
+  CANONICAL_URL?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
 }
+
+/** An https address with an optional lowercase path, as canonicalRedirect (src/worker/mount.ts) accepts it. */
+const CANONICAL = /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i;
 
 export interface NodeConfig {
   port: number;
@@ -65,6 +70,9 @@ export function configFromEnv(env: Record<string, string | undefined> = process.
     ALLOW_SIGNUP: signup,
     SESSION_TTL_HOURS: ttl,
   };
+  const canonical = env.CANONICAL_URL?.trim() ?? '';
+  if (canonical && !CANONICAL.test(canonical)) throw new ConfigError('CANONICAL_URL must be an https address such as https://bizomat.ai/tasks');
+  if (canonical) vars.CANONICAL_URL = canonical;
   if (env.GOOGLE_CLIENT_ID) vars.GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
   if (env.GOOGLE_CLIENT_SECRET) vars.GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
   return {

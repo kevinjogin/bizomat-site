@@ -4,6 +4,7 @@ import { useDebounced } from '../../lib/hooks';
 import { Icon } from '../../components/ui/Icon';
 import { useAdmin, type AdminUserRow } from '../api';
 import { Card, Empty, PageIntro, QueryState, StatusPill, TableWrap, When, fmtDateTime, num } from '../ui';
+import { appUrl } from '../../lib/base';
 
 interface UsersResp {
   total: number;
@@ -52,7 +53,7 @@ export default function Users() {
   const res = useAdmin<UsersResp>(`/users?${qs}`, { placeholderData: (prev) => prev });
   return (
     <div className="ac-stack">
-      <PageIntro actions={<a className="btn" href="/api/admin/export/users.csv" download><Icon name="download" /> Export CSV</a>}>
+      <PageIntro actions={<a className="btn" href={appUrl('/api/admin/export/users.csv')} download><Icon name="download" /> Export CSV</a>}>
         <p className="muted">Every registered account with sign-in, activity and usage counts. Click a row for the full profile.</p>
       </PageIntro>
       <Card>

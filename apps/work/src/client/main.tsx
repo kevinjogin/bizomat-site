@@ -7,6 +7,7 @@ import { SessionProvider } from './lib/session';
 import { ConfirmProvider, ToastProvider } from './components/ui/overlays';
 import { applyTheme, storedTheme } from './lib/hooks';
 import { ApiError } from './lib/api';
+import { BASE } from './lib/base';
 import './styles/app.css';
 
 applyTheme(storedTheme());
@@ -25,7 +26,7 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={BASE || undefined}>
         <SessionProvider>
           <ToastProvider>
             <ConfirmProvider>

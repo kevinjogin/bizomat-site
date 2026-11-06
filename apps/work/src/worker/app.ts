@@ -22,6 +22,7 @@ import { folderRoutes } from './routes/folders';
 import { adminRoutes } from './routes/admin';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
+import { withBaseHref } from './mount';
 
 export const CSP = [
   "default-src 'self'",
@@ -142,7 +143,8 @@ export function createApp() {
     const out = new Response(res.body, res);
     if (url.pathname.startsWith('/assets/')) out.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
     else if ((out.headers.get('Content-Type') ?? '').includes('text/html')) out.headers.set('Cache-Control', 'no-cache');
-    return out;
+    // The client builds its addresses from <base href>: "/" here, "/tasks/" under bizomat.ai (src/worker/mount.ts).
+    return withBaseHref(out, c.env.BASE_PATH ?? '');
   });
 
   return app;

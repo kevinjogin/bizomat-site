@@ -10,6 +10,7 @@ import { useConfirm, useToast } from '../components/ui/overlays';
 import { CreateWorkspaceDialog } from '../components/layout/CreateDialogs';
 import type { WorkspaceDTO } from '../../shared/types';
 import '../styles/admin.css';
+import { appUrl } from '../lib/base';
 
 function WorkspaceRow({ w, current, onLeave }: { w: WorkspaceDTO; current: boolean; onLeave?: (w: WorkspaceDTO) => void }) {
   return (
@@ -109,7 +110,7 @@ export default function Workspaces({ standalone }: { standalone?: boolean }) {
             onClick={async () => {
               await post('/auth/logout').catch(() => {});
               qc.clear();
-              window.location.href = '/login';
+              window.location.href = appUrl('/login');
             }}
           >
             <Icon name="logout" /> Sign out

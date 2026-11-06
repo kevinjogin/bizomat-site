@@ -5,6 +5,7 @@ import { Icon } from '../../components/ui/Icon';
 import { useConfirm, useToast } from '../../components/ui/overlays';
 import { RANGE_LABELS, useAdmin, type Range } from '../api';
 import { Card, Empty, PageIntro, QueryState, TableWrap, When, fmtDate, fmtDateTime } from '../ui';
+import { appUrl } from '../../lib/base';
 
 interface SettingsResp {
   you: { id: string; role: 'founder' | 'admin' };
@@ -134,7 +135,7 @@ export default function Settings({ role }: { role: 'founder' | 'admin' }) {
                     <dt>Tracking started</dt>
                     <dd>{fmtDateTime(d.tracking.analyticsStartedAt)}</dd>
                   </dl>
-                  <a className="btn sm" href="/privacy" target="_blank" rel="noopener noreferrer">View privacy notice</a>
+                  <a className="btn sm" href={appUrl('/privacy')} target="_blank" rel="noopener noreferrer">View privacy notice</a>
                 </Card>
                 <Card title="Data retention">
                   <TableWrap label="Retention">
@@ -158,15 +159,15 @@ export default function Settings({ role }: { role: 'founder' | 'admin' }) {
 
               <Card title="Exports" subtitle="CSV files, generated on demand from live data. Downloads are logged and contain no passwords or tokens.">
                 <div className="ac-exports">
-                  <a className="btn" href="/api/admin/export/users.csv" download><Icon name="download" /> Registered users</a>
-                  <a className="btn" href="/api/admin/export/activity.csv" download><Icon name="download" /> Activity log</a>
+                  <a className="btn" href={appUrl('/api/admin/export/users.csv')} download><Icon name="download" /> Registered users</a>
+                  <a className="btn" href={appUrl('/api/admin/export/activity.csv')} download><Icon name="download" /> Activity log</a>
                   <span className="row" style={{ gap: 6 }}>
                     <select className="select" aria-label="Summary range" value={summaryRange} onChange={(e) => setSummaryRange(e.target.value as Range)} style={{ width: 'auto' }}>
                       {(Object.keys(RANGE_LABELS) as Range[]).map((r) => (
                         <option key={r} value={r}>{RANGE_LABELS[r]}</option>
                       ))}
                     </select>
-                    <a className="btn" href={`/api/admin/export/summary.csv?range=${summaryRange}`} download><Icon name="download" /> Daily summary</a>
+                    <a className="btn" href={appUrl(`/api/admin/export/summary.csv?range=${summaryRange}`)} download><Icon name="download" /> Daily summary</a>
                   </span>
                 </div>
               </Card>

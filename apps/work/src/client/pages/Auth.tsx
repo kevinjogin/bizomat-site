@@ -7,6 +7,7 @@ import { Icon, ProductLockup } from '../components/ui/Icon';
 import { PlatformLegalLinks } from '../components/layout/PlatformLinks';
 import { BRAND, pageTitle } from '../lib/brand';
 import { Field, Loading } from '../components/ui/ui';
+import { appUrl } from '../lib/base';
 
 const OAUTH_ERRORS: Record<string, string> = {
   invalid_state: 'The sign-in request expired or was tampered with. Please try again.',
@@ -54,7 +55,7 @@ function ProviderButtons({ next }: { next: string }) {
   if (!google?.enabled) return null;
   return (
     <>
-      <a className="btn block lg" href={`/api/auth/oauth/google/start?next=${encodeURIComponent(next)}`}>
+      <a className="btn block lg" href={appUrl(`/api/auth/oauth/google/start?next=${encodeURIComponent(next)}`)}>
         <Icon name="globe" /> Continue with Google
       </a>
       <div className="divider">or</div>

@@ -5,6 +5,7 @@ import { useWorkspace } from '../../lib/session';
 import { formatBytes, timeAgo } from '../../lib/format';
 import { EmptyState, ErrorBox, Loading } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
+import { appUrl } from '../../lib/base';
 
 export function AdminOverview() {
   const ws = useWorkspace();
@@ -37,7 +38,7 @@ export function AdminOverview() {
           Download a complete JSON export of this workspace: boards, groups, columns, items, updates, documents, dashboards, goals, automations, teams, time entries and file metadata.
           File contents remain in secure storage. Exports are rate-limited and recorded in the audit log.
         </p>
-        <a className="btn primary" href={`/api/workspaces/${ws.id}/export`} download>
+        <a className="btn primary" href={appUrl(`/api/workspaces/${ws.id}/export`)} download>
           <Icon name="download" /> Export workspace data
         </a>
         <p className="muted small" style={{ marginTop: 12 }}>

@@ -194,7 +194,7 @@ workspaceRoutes.post('/workspaces/:ws/invitations', async (c) => {
     }
   }
   // No email provider is configured, so the link is returned for the inviter to share.
-  const origin = new URL(c.req.url).origin;
+  const origin = new URL(c.req.url).origin + (c.env.BASE_PATH ?? '');
   return c.json({ id, email: input.email, role: input.role, inviteUrl: `${origin}/invite/${token}`, emailDelivery: 'not_configured' }, 201);
 });
 

@@ -46,7 +46,7 @@ test('BIZOMAT branding on the sign-in page and in the app shell', async ({ page 
   await expect(page.getByText('Part of the BIZOMAT platform')).toBeVisible();
   const platform = page.getByRole('navigation', { name: 'BIZOMAT platform' });
   await expect(platform.getByRole('link', { name: 'BIZOMAT', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/');
-  await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('href', 'https://cad.bizomat.ai/');
+  await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/cad/');
   await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('rel', 'noopener');
   await expect(page.locator('body')).not.toContainText(/KEVOS|WorkOS/i);
 });

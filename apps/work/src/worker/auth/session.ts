@@ -11,9 +11,12 @@ export function isSecureEnv(env: Env): boolean {
   return env.ENVIRONMENT !== 'development' && env.ENVIRONMENT !== 'test';
 }
 
-/** `__Host-` cookies require Secure + Path=/ + no Domain: strongest browser guarantees. */
+/** `__Host-` cookies require Secure + Path=/ + no Domain: strongest browser guarantees. Under a path of another
+ * site's address (https://bizomat.ai/tasks) the cookie is scoped to that path (src/worker/mount.ts), so it is
+ * `__Secure-` there: the website and the other applications on that host never receive it. */
 export function sessionCookieName(env: Env): string {
-  return isSecureEnv(env) ? '__Host-workos_sid' : 'workos_sid';
+  if (!isSecureEnv(env)) return 'workos_sid';
+  return env.BASE_PATH ? '__Secure-workos_sid' : '__Host-workos_sid';
 }
 
 function ttlMs(env: Env): number {

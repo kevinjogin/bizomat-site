@@ -261,6 +261,73 @@ describe('Node server: realtime', () => {
   });
 });
 
+describe('Node server: under /tasks, as the platform proxy sends bizomat.ai/tasks', () => {
+  const pageDir = join(root, 'static-tasks');
+  const page = `<!doctype html><html><head><title>Work</title><script type="module" src="./assets/app-abc.js"></script></head><body><div id="root"></div></body></html>${' '.repeat(2000)}`;
+  let app: RunningServer;
+
+  beforeAll(async () => {
+    mkdirSync(join(pageDir, 'assets'), { recursive: true });
+    writeFileSync(join(pageDir, 'index.html'), page);
+    writeFileSync(join(pageDir, 'assets', 'app-abc.js'), 'console.log("app")'.repeat(100));
+    app = await startServer(testConfig(join(root, 'data-tasks'), pageDir));
+    await app.runtime.assets.precompress(); // as at startup: files are compressed, pages never
+  });
+
+  afterAll(async () => {
+    await app?.close();
+  });
+
+  it('starts each page with <base href> for its path, and serves the files under it', async () => {
+    for (const [path, base] of [['/tasks/login', '/tasks/'], ['/tasks/', '/tasks/'], ['/login', '/']]) {
+      const res = await fetch(`${app.url}${path}`, { headers: { Accept: 'text/html', 'Accept-Encoding': 'br, gzip' } });
+      expect(res.status, path).toBe(200);
+      expect(res.headers.get('content-encoding'), path).toBeNull();
+      expect(await res.text(), path).toBe(page.replace('<head>', `<head><base href="${base}">`));
+    }
+    const js = await fetch(`${app.url}/tasks/assets/app-abc.js`, { headers: { 'Accept-Encoding': 'br' } });
+    expect(js.status).toBe(200);
+    expect(js.headers.get('content-encoding')).toBe('br');
+    const away = await fetch(`${app.url}/tasks/w/abc/home`, { headers: { Accept: 'text/html' }, redirect: 'manual' });
+    expect(away.status).toBe(302);
+    expect(away.headers.get('location')).toBe(`/tasks/login?next=${encodeURIComponent('/w/abc/home')}`);
+  });
+
+  it('scopes the session to /tasks and upgrades the live board socket there', async () => {
+    const s = await signup(`${app.url}/tasks`, { Origin: app.url });
+    const res = await fetch(`${app.url}/tasks/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Origin: app.url },
+      body: JSON.stringify({ email: email(), name: 'Path Tester', password: PASSWORD }),
+    });
+    expect(res.headers.getSetCookie().find((c) => c.startsWith('workos_sid='))).toMatch(/;\s*path=\/tasks(;|$)/i);
+    const me = await fetch(`${app.url}/tasks/api/auth/me`, { headers: { Cookie: s.cookie } });
+    expect(me.status).toBe(200);
+    const board = await fetch(`${app.url}/tasks/api/workspaces/${s.workspaceId}/boards`, {
+      method: 'POST',
+      headers: { Cookie: s.cookie, 'X-CSRF-Token': s.csrf, Origin: app.url, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'Under a path' }),
+    });
+    expect(board.status).toBe(201);
+    const { id } = (await board.json()) as { id: string };
+    const ws = await new Promise<WebSocket | number>((resolve, reject) => {
+      const socket = new WebSocket(`${app.url.replace('http://', 'ws://')}/tasks/api/live/boards/${id}`, { headers: { Origin: app.url, Cookie: s.cookie } });
+      socket.once('open', () => resolve(socket));
+      socket.once('unexpected-response', (_req, r) => {
+        resolve(r.statusCode ?? 0);
+        r.resume();
+      });
+      socket.once('error', reject);
+    });
+    expect(ws).toBeInstanceOf(WebSocket);
+    const live = ws as WebSocket;
+    const pong = nextMessage(live);
+    live.send('ping');
+    expect(await pong).toBe('pong');
+    live.close();
+  });
+});
+
 describe('Node server: lock file', () => {
   it('takes over a lock left by a crashed server and removes it on stop', async () => {
     const dir = join(root, 'data-lock');
