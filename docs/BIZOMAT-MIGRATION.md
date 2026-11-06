@@ -59,6 +59,11 @@ the export and before DNS moves would be lost: export again (the steps are repea
 **Rollback export:** `node scripts/migrate/export-for-d1.mjs <dir> out.sql [--files <dir>]` writes the BIZOMAT
 database as SQL for a new D1 database (checked by a round trip), and the files with an upload script for R2.
 
+**Back to Cloudflare (Fly to a new D1 database and R2 bucket):** `node scripts/migrate/to-cloudflare.mjs prepare`
+(reads the work Machine only) and `apply` (`bizomat-tasks-db`, `bizomat-tasks-files` by default), run from the
+owner's computer like `to-fly.mjs`; the steps and checks are in `apps/work/DEPLOYMENT.md`, "Moving the data from Fly
+back to Cloudflare".
+
 ## 3. CAD Automation: the cados volume to the cad volume
 
 Source: the data folder on the `cados` Machine (`/data`, volume `opensketch_data`). Target: `/data/cad` on the
