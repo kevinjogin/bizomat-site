@@ -138,9 +138,13 @@ mkdir -p "$tmp/maint"
 touch "$tmp/maint/.bizomat-maintenance"
 docker run -d --name bz-ep-maint --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=work -v "$tmp/maint:/data" \
   "$IMAGE" /usr/local/bin/bizomat-entrypoint work >/dev/null
+# The entrypoint prepares the volume before it says so: wait for the message (a fixed 2 s lost the race on a busy
+# runner), then check the Machine is still up a moment later. The logs are read whole, not piped into grep -q,
+# which under pipefail can fail a pipeline whose text matched (docker logs gets SIGPIPE).
+for _ in $(seq 1 30); do grep -q "maintenance mode" <<<"$(docker logs bz-ep-maint 2>&1)" && break; sleep 1; done
+grep -q "maintenance mode" <<<"$(docker logs bz-ep-maint 2>&1)" || bad "maintenance message"
 sleep 2
 [ "$(docker inspect -f '{{.State.Running}}' bz-ep-maint)" = true ] || bad "maintenance container stopped"
-docker logs bz-ep-maint 2>&1 | grep -q "maintenance mode" || bad "maintenance message"
 docker rm -f bz-ep-maint >/dev/null
 ok "maintenance mode keeps the Machine up without the service"
 
