@@ -191,11 +191,11 @@ test('kevos.com: other methods to /api are proxied to web (old cached forms), el
   }
 });
 
-test('the preview host routes as bizomat.ai does, by path', () => {
+test('the preview host routes as bizomat.ai does, by path, while preview routing is on', () => {
   assert.ok(isPreviewHost('bizomat.fly.dev'));
   assert.ok(!isPreviewHost('a.b.fly.dev'));
   assert.ok(!isPreviewHost('fly.dev'));
-  for (const previewRouting of [false, true]) {
+  for (const previewRouting of [true]) {
     for (const [paths, upstream] of [[CAD, 'cad'], [TASKS, 'work'], [WEBSITE.filter((p) => p !== '/__proxy/health'), 'web']]) {
       for (const path of paths) {
         const d = get('bizomat.fly.dev', path, '', { previewRouting });
@@ -209,9 +209,42 @@ test('the preview host routes as bizomat.ai does, by path', () => {
   }
 });
 
+test('preview routing off: the preview host sends every request to the same address on bizomat.ai', () => {
+  for (const [method, status] of [['GET', 301], ['HEAD', 301], ['POST', 308], ['PUT', 308]]) {
+    for (const [path, query] of [['/', ''], ['/login', ''], ['/tasks/b/7', 'x=1'], ['/cad/mcp', ''], ['/api/contact', ''], ['/__preview/x/y', '']]) {
+      const d = decide({ host: 'bizomat.fly.dev', method, path, query, previewCookie: 'cad' });
+      if (path.startsWith('/__preview/')) { assert.equal(d.status, 404, 'the switch is off'); continue; }
+      assert.deepEqual(d, { host: 'bizomat.fly.dev', production: false, action: 'redirect', status, location: `https://bizomat.ai${path}${query ? `?${query}` : ''}` }, `${method} ${path}`);
+    }
+  }
+  // the proxy's own endpoints stay, for the deploy checks and monitoring
+  assert.equal(get('bizomat.fly.dev', '/__proxy/health').action, 'health');
+  assert.equal(get('bizomat.fly.dev', '/__proxy/ready').action, 'ready');
+});
+
+test('sign-in addresses people type go to the platform sign-in page', () => {
+  for (const host of ['bizomat.ai', 'bizomat.fly.dev']) {
+    for (const path of ['/login', '/login/', '/Login', '/LOG-IN', '/signin', '/SignIn/', '/logon']) {
+      const d = get(host, path, 'from=menu', { previewRouting: true });
+      assert.equal(d.action, 'redirect', `${host} ${path}`);
+      assert.equal(d.status, 301);
+      assert.equal(d.location, '/sign-in/?from=menu');
+    }
+  }
+  assert.equal(get('bizomat.ai', '/login').location, '/sign-in/');
+  // the page itself, each application's sign-in, other methods and longer paths are served as before
+  assert.equal(get('bizomat.ai', '/sign-in/').upstream, 'web');
+  assert.equal(get('bizomat.ai', '/tasks/login').upstream, 'work');
+  assert.equal(get('bizomat.ai', '/cad/login').upstream, 'cad');
+  assert.equal(decide({ host: 'bizomat.ai', method: 'POST', path: '/login' }).upstream, 'web');
+  assert.equal(get('bizomat.ai', '/login/help').upstream, 'web');
+  assert.equal(get('bizomat.ai', '/loginx').upstream, 'web');
+  // the old addresses keep their own /login
+  assert.equal(get('work.kevos.com', '/login').upstream, 'work');
+  assert.equal(get('cados.kevos.com', '/login').upstream, 'cad');
+});
+
 test('the preview cookie (preview routing on) sends every path to one backend at the root, as the old addresses do', () => {
-  assert.equal(get('bizomat.fly.dev', '/', '', { previewCookie: 'cad' }).upstream, 'web', 'off: cookie ignored');
-  assert.equal(get('bizomat.fly.dev', '/tasks/', '', { previewCookie: 'cad' }).upstream, 'work', 'off: by path');
   for (const target of ['cad', 'work', 'web']) {
     for (const path of ['/login', '/', '/tasks/x', '/cad/x', '/mcp', '/CAD']) {
       const d = get('bizomat.fly.dev', path, '', { previewCookie: target, previewRouting: true });
@@ -300,8 +333,9 @@ test('with TASKS_REDIRECT_ORIGIN, bizomat.ai/tasks/... redirects there, prefix o
   assert.equal(at('/tasksfoo').upstream, 'web');
   assert.equal(at('/cad/docs').upstream, 'cad');
   assert.equal(at('/mcp').upstream, 'cad');
-  // the preview host routes as bizomat.ai does
-  assert.equal(at('/tasks/x', '', 'GET', 'bizomat.fly.dev').location, 'https://work.kevos.com/x');
+  // the preview host routes as bizomat.ai does while preview routing is on; off, it sends people to bizomat.ai first
+  assert.equal(decide({ host: 'bizomat.fly.dev', method: 'GET', path: '/tasks/x', query: '', tasksOrigin, previewRouting: true }).location, 'https://work.kevos.com/x');
+  assert.equal(at('/tasks/x', '', 'GET', 'bizomat.fly.dev').location, 'https://bizomat.ai/tasks/x');
   // without the setting /tasks/... goes to the work backend, as before
   assert.equal(decide({ host: 'bizomat.ai', method: 'GET', path: '/tasks/x', query: '' }).upstream, 'work');
 });

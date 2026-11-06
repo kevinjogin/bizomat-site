@@ -5,10 +5,11 @@
 #   bizomat.ai/...       -> web    the BIZOMAT website (this app)
 #   bizomat.ai/cad/...   -> cad    CAD Automation: its own Fly app `cados`, over Fly's private network; it keeps its
 #                                  data and its old addresses (cados.kevos.com, cados.fly.dev)
-#   bizomat.ai/tasks/... -> work   Project Management, in this app with its data on the volume work_data. Until its data
-#                                  is moved from Cloudflare and checked (docs/BIZOMAT-DEPLOYMENT.md, section 6c),
-#                                  /tasks/... still answers 302 to work.kevos.com (TASKS_REDIRECT_ORIGIN), and the copy
-#                                  here is reached only through https://bizomat.fly.dev/__preview/work
+#   bizomat.ai/tasks/... -> work   Project Management, in this app with its data on the volume work_data (moved from
+#                                  Cloudflare on 6 Nov 2026: docs/BIZOMAT-DEPLOYMENT.md, section 6c)
+#   bizomat.ai/login     -> 301    /sign-in/, the website's page that offers each application's sign-in
+#   bizomat.fly.dev/...  -> 301    the same path on bizomat.ai (the app's own address is not a second address of the
+#                                  platform; /__proxy/health and /__proxy/ready stay, for checks)
 #
 # Deploy from the owner's laptop: bizomat.ps1 deploy website, which runs
 #   fly deploy --config fly.website.toml --remote-only --ha=false --build-arg BIZOMAT_VERSION=<commit>
@@ -41,12 +42,11 @@ kill_timeout = 15
   UPSTREAM_WORK = "http://work.process.bizomat.internal:8002"
   # CAD Automation's app on the private network. It listens on :: (IPv4 and IPv6), so 6PN reaches it.
   UPSTREAM_CAD = "http://cados.internal:8080"
-  # Until Project Management's data is here and checked: bizomat.ai/tasks/... answers 302 to the same path on its old
-  # address, prefix off. Removing this line is the switch (section 6c): /tasks/... then reaches work.
-  TASKS_REDIRECT_ORIGIN = "https://work.kevos.com"
-  # On while the data move is checked: https://bizomat.fly.dev/__preview/work routes that one browser to work (only on
-  # bizomat.fly.dev, never on bizomat.ai). "0" again after the switch.
-  BIZOMAT_PREVIEW_ROUTING = "1"
+  # bizomat.ai/tasks/... reaches work (no TASKS_REDIRECT_ORIGIN since the switch, 6 Nov 2026). To send it back to the old
+  # address for a while: TASKS_REDIRECT_ORIGIN = "https://work.kevos.com" (302, prefix off).
+  # Off outside a cutover: bizomat.fly.dev then answers 301 to bizomat.ai. "1" turns on the preview switch
+  # (https://bizomat.fly.dev/__preview/{web,work,cad}) for checking a backend before it goes live.
+  BIZOMAT_PREVIEW_ROUTING = "0"
   # work: passed to the work role as APP_URL, APP_NAME, ENVIRONMENT, ALLOW_SIGNUP and SESSION_TTL_HOURS
   # (infrastructure/fly/entrypoint.sh). Sign-up and session length as work.kevos.com runs today: open sign-up, 72 h.
   # It signs people in with email and password only; Google sign-in is off on work.kevos.com, so no secret is needed.
@@ -55,6 +55,9 @@ kill_timeout = 15
   WORK_ENVIRONMENT = "production"
   WORK_ALLOW_SIGNUP = "true"
   WORK_SESSION_TTL_HOURS = "72"
+  # Its address: a page asked for on another host (work.kevos.com once it points here, bizomat.fly.dev) answers 301 to
+  # the same path under it; /api/ and the files keep answering there for open tabs.
+  WORK_CANONICAL_URL = "https://bizomat.ai/tasks"
 
 [http_service]
   processes = ["proxy"]
