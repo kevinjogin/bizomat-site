@@ -329,20 +329,25 @@ test('preview cookie: /__preview/<backend> routes this browser there without rew
   assert.equal(clear.status, 303);
   assert.match(clear.headers['set-cookie'][0], /Max-Age=0/);
   // without the cookie the preview host routes by path, as bizomat.ai does
-  for (const [path, name] of [['/cad/login', 'cad'], ['/tasks/login', 'work'], ['/login', 'web']]) {
+  for (const [path, name] of [['/cad/login', 'cad'], ['/tasks/login', 'work'], ['/sign-in/', 'web']]) {
     assert.equal((await request(p.port, { host: 'bizomat.fly.dev', path })).json().name, name, path);
   }
+  const signIn = await request(p.port, { host: 'bizomat.fly.dev', path: '/login' });
+  assert.equal(signIn.status, 301);
+  assert.equal(signIn.headers.location, '/sign-in/');
   // on a production host the cookie means nothing
   const prod = await request(p.port, { host: 'bizomat.ai', path: '/x', headers: { Cookie: 'bizomat_preview=cad' } });
   assert.equal(prod.json().name, 'web');
 });
 
-test('preview routing off: the switch is 404 and the cookie is ignored', async () => {
+test('preview routing off: the switch is 404 and the app address sends people to bizomat.ai', async () => {
   const off = await startProxy(urls());
   try {
     assert.equal((await request(off.port, { host: 'bizomat.fly.dev', path: '/__preview/cad' })).status, 404);
-    const r = await request(off.port, { host: 'bizomat.fly.dev', path: '/', headers: { Cookie: 'bizomat_preview=cad' } });
-    assert.equal(r.json().name, 'web');
+    const r = await request(off.port, { host: 'bizomat.fly.dev', path: '/tasks/login?x=1', headers: { Cookie: 'bizomat_preview=cad' } });
+    assert.equal(r.status, 301);
+    assert.equal(r.headers.location, 'https://bizomat.ai/tasks/login?x=1');
+    assert.equal((await request(off.port, { host: 'bizomat.fly.dev', path: '/__proxy/health' })).status, 200);
   } finally {
     await off.close();
   }

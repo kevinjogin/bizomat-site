@@ -15,6 +15,8 @@
 //                                   root paths (CAD_PATHS below)
 //                                   /tasks, /tasks/...                        proxy -> work
 //                                   GET, HEAD /CAD..., /Tasks/... (any case)  301 to the lowercase path, query kept
+//                                   GET, HEAD /login, /log-in, /signin,       301 /sign-in/ (the platform's sign-in page,
+//                                   /logon (any case, optional /)             which offers each application's)
 //                                   everything else                           proxy -> web
 //   www.bizomat.ai                  GET, HEAD                                 301 https://bizomat.ai<path>?<query>
 //                                   other methods                             308 https://bizomat.ai<path>?<query>
@@ -30,7 +32,9 @@
 //                                                                             BIZOMAT_PREVIEW_ROUTING=1), then 303 to /
 //                                   everything else, with the preview cookie  proxy -> the cookie's backend at the root, as
 //                                   and preview routing on                    the old addresses serve the apps
-//                                   everything else                           as on bizomat.ai, by path
+//                                   everything else, preview routing on       as on bizomat.ai, by path
+//                                   everything else, preview routing off      301 (GET, HEAD) or 308 to
+//                                                                             https://bizomat.ai<path>?<query>
 //   any other host (IP, localhost)  /__proxy/health, /__proxy/ready           the proxy's own health endpoints
 //                                   everything else                           421 Misdirected Request
 //
@@ -61,6 +65,12 @@ export const TASKS_PATHS = /^\/tasks(?:\/|$)/;
 
 // An application's path in another case (/CAD, /Tasks/...): one address per page, in lowercase.
 const APP_ANY_CASE = /^\/(cad|tasks)(?=\/|$)/i;
+
+/** The platform's sign-in page (the website's): it offers each application's own sign-in. */
+export const SIGN_IN_PATH = '/sign-in/';
+// Sign-in addresses people type on bizomat.ai (/login, /Log-In, /signin): the platform's sign-in page. Each application
+// signs in under its own path (/tasks/login, /cad/login).
+const SIGN_IN_ALIASES = /^\/(?:login|log-in|signin|logon)\/?$/i;
 
 /**
  * Exact production host names. `production: true` hosts get HSTS when the backend does not send it.
@@ -179,6 +189,9 @@ export function tasksRedirect(origin, path, query, method) {
 
 /** The answer for a path of bizomat.ai (and of the preview host): a 301 to the lowercase path, or a backend. */
 function byPath(base, path, query, method, preview, tasksOrigin) {
+  if ((method === 'GET' || method === 'HEAD') && SIGN_IN_ALIASES.test(routingPath(path))) {
+    return { ...base, action: 'redirect', status: 301, location: SIGN_IN_PATH + (query ? `?${query}` : '') };
+  }
   const lower = lowercaseLocation(path, query, method);
   if (lower) return { ...base, action: 'redirect', status: 301, location: lower };
   const upstream = platformUpstream(path);
@@ -238,6 +251,9 @@ export function decide({ host, method, path, query = '', previewCookie = '', pre
     if (previewRouting && UPSTREAM_NAMES.includes(previewCookie)) {
       return { action: 'proxy', upstream: previewCookie, host: h, production: false, preview: true };
     }
+    // Outside a cutover (preview routing off) the app's own address is not a second address of the platform: every
+    // request goes to the same path on bizomat.ai (the proxy's endpoints above stay, for checks and monitoring).
+    if (!previewRouting) return { host: h, production: false, ...redirectTo(CANONICAL_ORIGIN, path, query, method) };
     return byPath({ host: h, production: false }, path, query, method, true, tasksOrigin);
   }
 
