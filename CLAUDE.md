@@ -62,13 +62,25 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 - **kevos.com is the KEVOS site again (Stage 0, owner's decision of 6 Nov 2026):** Cloudflare Worker
   `throbbing-block-6c61` (account `Kevinjogin@protonmail.com's Account`, route `kevos.com/*`) runs the KEVOS site built
   from `c79e297`, put back with the laptop's `bizomat.ps1 restore kevos`. Nothing from this repository publishes there:
-  `wrangler.toml`'s `[build]` runs `scripts/kevos-guard.mjs`, which stops every deploy and upload (Cloudflare's Workers
-  Builds included, while its Git connection is still on), and `npm run deploy` is that guard. `npm run preview` still
-  runs the Worker locally. The BIZOMAT website deploys to Fly only (`fly.website.toml`, `bizomat.ps1 deploy website`).
+  `wrangler.toml` is the Worker `bizomat`, and `scripts/deploy-guard.mjs` (its `[build]`) refuses any other name and any
+  kevos.com route. Today the BIZOMAT website runs on Fly (`fly.website.toml`, `bizomat.ps1 deploy website`).
+- **Cloudflare migration (owner's request, 6 Nov 2026; plan and progress in `docs/BIZOMAT-CLOUDFLARE-MIGRATION.md`):**
+  bizomat.ai, CAD Automation in a Cloudflare Container, Project Management as its own Worker. `wrangler.toml` is the
+  Worker `bizomat`: zone routes `bizomat.ai/*` and `www.bizomat.ai/*`, which do nothing while those records are DNS only
+  (the switch is turning them to Proxied; the way back is turning them back), `workers_dev` for checks before that,
+  `TASKS` bound to `bizomat-tasks` and `CAD` to `bizomat-mcp` (CADOS `cloudflare/mcp`: the CAD server's container,
+  its data folder in R2). `src/worker.ts` sends `CAD_PATHS` to the `CAD` binding when bound, else to the origin.
+  `apps/work/wrangler.jsonc` env `bizomat` is the Worker `bizomat-tasks` (no workers.dev address; D1
+  `bizomat-tasks-db`, R2 `bizomat-tasks-files` and KV created by name on its first deploy); its data comes from Fly
+  with `apps/work/scripts/migrate/to-cloudflare.mjs`. `scripts/deploy-guard.mjs` runs before every wrangler build: it
+  lets `npm run preview` through, refuses Workers Builds, and deploys only from the laptop tool
+  (`BIZOMAT_DEPLOY=website`) from a clean checkout that is exactly origin/main. Nothing on Cloudflare is deployed yet;
+  both Fly apps stay running until the owner approves their retirement.
 - **Hosts (owner's decision, 5 Nov 2026): everything under bizomat.ai, no subdomains.** The website is the root;
   CAD Automation is `/cad` and Project Management `/tasks`. `src/worker.ts` (`routeApps`) passes `/cad/...` (and
-  the CAD app's OAuth discovery and root program paths, `CAD_PATHS`) to the CAD app with `fetch(request)`, and
-  `/tasks/...` to Project Management (the `TASKS` service binding, a redirect to work.kevos.com until it is bound).
+  the CAD app's OAuth discovery and root program paths, `CAD_PATHS`) to the CAD app (the `CAD` binding, else the
+  origin with `fetch(request)`), and `/tasks/...` to Project Management (the `TASKS` service binding, a redirect to
+  work.kevos.com where it is not bound).
   The CAD Automation product page is `/cad-automation/`, because `/cad` is the application. No page or file of the site
   may take an application's path (tests/worker.test.ts). Today bizomat.ai's record still points (DNS only) at the
   `cados` Fly app; the Worker answers once the records are proxied. The steps, in order, are in

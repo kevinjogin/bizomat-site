@@ -6,6 +6,60 @@ an audit: nothing in production was changed. Code reviewed: gocore-website `main
 Platform facts are from Cloudflare's documentation as published in October and November 2026 (Containers limits,
 pricing, lifecycle, FAQ and snapshots; Workers limits; Agents MCP transport)._
 
+## Progress (updated 6 Nov 2026)
+
+Decided by the owner: **bizomat.ai** (website `https://bizomat.ai`, MCP `https://mcp.bizomat.ai/mcp`),
+**Containers** for CAD Automation (Workers Paid plan), Project Management as **its own Worker** (`bizomat-tasks`).
+Nothing is deployed on Cloudflare yet and nothing on Fly has changed.
+
+| Phase | State | Where |
+| --- | --- | --- |
+| 1 Audit | Done | this file, `docs/cloudflare/mcp-contract.json` |
+| 2 Website | Done in code | `wrangler.toml` (Worker `bizomat`), `src/worker.ts` (`CAD` binding), `scripts/deploy-guard.mjs`, `apps/work/wrangler.jsonc` env `bizomat` (Worker `bizomat-tasks`) |
+| 3 MCP | Done in code | CADOS `cloudflare/mcp` (Worker `bizomat-mcp`, Container `CadServer`, R2 `bizomat-mcp-data`), CADOS `opensketch/persist.py` |
+| 4 Cloudflare setup | Next | laptop commands; the first deploys create the D1, R2 and KV resources and the mcp.bizomat.ai record |
+| 5 Data | Tools: Project Management ready, CAD next | `apps/work/scripts/migrate/to-cloudflare.mjs` (Fly to D1 and R2, rehearsed against wrangler's local D1 and R2) |
+| 6 Tests | Local run passed (below); the real platform after Phase 4 | |
+| 7 Cutover | Prepared (below) | owner |
+| 8 Fly | Not started: only with the owner's go-ahead | owner |
+
+**Tested so far (run, not assumed).** CADOS: pytest 383 passed; the Worker's typecheck and 21 tests, including a
+contract test that runs the server's own `persist.py` against the Worker's store; `wrangler deploy --dry-run`. A local
+run of the whole CAD stack (`wrangler dev` with Docker: the Worker, the Durable Object, the real server image and a
+local R2) passed:
+- an empty store gives 503 and never a set-up page;
+- a cold start restores the data and answers in about 3 s;
+- sign-in at bizomat.ai/cad, and the connector address https://mcp.bizomat.ai/mcp;
+- OAuth discovery on mcp.bizomat.ai (issuer `https://mcp.bizomat.ai`, PKCE S256, client registration);
+- the official MCP client, with 31 tools, on both addresses;
+- a stand-in Companion paired through the page, with an idle 25 s long poll and commands delivered and answered;
+- after a restart onto a fresh disk, the sessions, the paired computers and the command history were all there.
+
+Website: `npm run verify` (0 type errors, 1510 tests, 4441 pages checked). Project Management: `npm run check` (lint,
+typecheck, 207 and 322 tests, build); `wrangler deploy --dry-run --env bizomat`.
+Not run yet: anything on the real Cloudflare account, and the full OAuth sign-in through the Worker with a browser
+(the server's own tests cover that path).
+
+**Cutover (Phase 7), in this order, each with its way back:**
+1. `bizomat-mcp` deployed. Its first deploy creates the mcp.bizomat.ai record and certificate (a new name; nothing
+   existing changes). Check `https://mcp.bizomat.ai/__worker/health`; until the data is in R2 every other path
+   answers 503.
+2. `bizomat-tasks` deployed. The first deploy creates D1, R2 and KV. It has no address of its own.
+3. The website Worker `bizomat` deployed. Its zone routes do nothing yet; check it at its workers.dev address.
+4. Data:
+   - Project Management with `to-cloudflare.mjs prepare`, then `apply`; the final copy with the work Machine in
+     maintenance, as `apps/work/DEPLOYMENT.md` says.
+   - CAD Automation's data folder to R2. Do this right before step 5: changes made on Fly after the copy stay on Fly.
+5. **The switch (DNS, owner only):** in the Cloudflare dashboard turn the `bizomat.ai` and `www.bizomat.ai` records
+   from DNS only to Proxied. Nothing else changes. The way back is turning them to DNS only again: Fly answers as before.
+6. Checks: the smoke test against bizomat.ai, the MCP client, a paired computer, sign-in to both apps.
+7. CADOS `Live TLS` checks only Let's Encrypt chains today; proxied, bizomat.ai shows Cloudflare's certificate, so the
+   check needs Cloudflare's issuers added at the switch.
+
+Two efforts run side by side: this migration, and moving CAD Automation into the Fly app `bizomat` (#53,
+jogkev-creator/CADOS#24). Whichever Fly app serves CAD at step 4 is where its data is copied from. The Fly retirement
+commands in CADOS#24 (`retire cados`, `delete cados`) are irreversible and are not part of this plan before Phase 8.
+
 ## 0. The short version
 
 | | Finding |
@@ -60,8 +114,9 @@ command, prepared and tested here first.
 - **External services:** Workers AI, Turnstile, Cloudflare Email (send_email), optionally Resend and Stripe
   (webhook verified with `STRIPE_WEBHOOK_SECRET`).
 - **Cloudflare fit:** native. The Worker build only needs its configuration changed: name `bizomat`, its own custom
-  domain, the guard that today stops deploys to the kevos.com Worker (`scripts/kevos-guard.mjs`) replaced by a guard
-  that deploys only to `bizomat`, and `/cad` pointed at the new MCP Worker (service binding) instead of an origin.
+  domain, the guard that stopped deploys to the kevos.com Worker replaced by a guard that deploys only to `bizomat`
+  (`scripts/deploy-guard.mjs`, done), and `/cad` pointed at the new MCP Worker (service binding) instead of an origin
+  (done).
 
 ## 3. Project Management (`apps/work`)
 
@@ -257,11 +312,12 @@ mcp.<domain>         Worker bizomat-mcp    front door for CAD Automation: TLS, l
   `https://mcp.<domain>/mcp` (the server serves the root of that host). Old addresses keep working for connectors and
   computers set up with them: bizomat.ai/cad and its MCP and OAuth paths through the website Worker, and
   cados.kevos.com as an alias.
-- **Persistence for the container:** restore the data folder from R2 before the server starts; write each JSON state
-  file through to R2 when it changes; replicate `bridge.sqlite` continuously to R2 (Litestream, which speaks R2's S3
-  API); flush everything on SIGTERM. One instance only, so there is one writer. Files in transit stay on local disk.
-  This is new code (a small sidecar and the image's start script), tested by restarting the container repeatedly
-  without losing data.
+- **Persistence for the container (built, CADOS `opensketch/persist.py`):** the supervisor restores the data folder
+  from R2 before the server starts, and does not start it when R2 holds no accounts. It copies every changed state
+  file back every 2 s (`bridge.sqlite` through SQLite's online backup) and once more on SIGTERM. The container reaches
+  R2 only through the Worker's outbound handler, with no R2 keys, and R2 checks each upload's SHA-256. One instance
+  only, so there is one writer. Files in transit stay on local disk. Tested by a restart onto a fresh disk in the
+  local run.
 - **Project Management:** its own Worker (recommended) keeps its D1, R2, KV, Durable Object and cron bindings and its
   deploys apart from the website, as before 6 Nov; the website reaches it by service binding at `/tasks`, so visitors
   see one site. The alternative is to fold it into the `bizomat` Worker (one deploy for both).
