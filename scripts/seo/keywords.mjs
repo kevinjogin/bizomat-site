@@ -4,6 +4,7 @@
 // supplies them. Scores are therefore provisional, and every component is shown.
 // Usage: node scripts/seo/keywords.mjs   (requires seo/url-inventory.json from scripts/seo/inventory.mjs)
 import fs from 'node:fs';
+import { SITE } from './lib/site.mjs';
 
 export const WEIGHTS = { relevance: 0.3, demand: 0.2, opportunity: 0.2, feasibility: 0.15, readiness: 0.15 };
 
@@ -95,7 +96,7 @@ if (process.argv[1]?.endsWith('keywords.mjs')) {
     const page = target ? pages.get(target) : null;
     if (target && (!page || page.noindex || !page.selfCanonical)) problems.push(`${keyword}: target ${target} is not an indexable canonical page`);
     const components = { relevance, demand: 'UNKNOWN', opportunity: 'UNKNOWN', feasibility: 'UNKNOWN', readiness };
-    return { keyword, cluster, intent, target: target ? `https://kevos.com${target}` : null, targetTitle: page?.title ?? null, components, ...score(components), rationale, status: target ? 'mapped' : 'content-gap', history: [{ date: inv.summary.generatedAt.slice(0, 10), event: 'seeded', note: 'Provisional seed; validate with Search Console data before prioritising' }] };
+    return { keyword, cluster, intent, target: target ? `${SITE}${target}` : null, targetTitle: page?.title ?? null, components, ...score(components), rationale, status: target ? 'mapped' : 'content-gap', history: [{ date: inv.summary.generatedAt.slice(0, 10), event: 'seeded', note: 'Provisional seed; validate with Search Console data before prioritising' }] };
   });
   const targets = new Map();
   for (const k of keywords) if (k.target) (targets.get(k.target) ?? targets.set(k.target, []).get(k.target)).push(k.keyword);

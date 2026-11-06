@@ -3,6 +3,7 @@
 // Usage: node scripts/seo/inventory.mjs [--dist dist] [--out seo/url-inventory.json]
 import fs from 'node:fs';
 import path from 'node:path';
+import { SITE } from './lib/site.mjs';
 
 const args = process.argv.slice(2);
 const opt = (name, fallback) => {
@@ -11,7 +12,6 @@ const opt = (name, fallback) => {
 };
 const DIST = path.resolve(opt('dist', 'dist'));
 const OUT = path.resolve(opt('out', 'seo/url-inventory.json'));
-const SITE = 'https://kevos.com';
 
 const decode = (s) => s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 const meta = (doc, attr, name) => {

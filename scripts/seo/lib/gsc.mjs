@@ -1,7 +1,7 @@
 // Google Search Console, read-only. Authenticates as a service account that the property owner has added
 // as a user in Search Console. Credentials come only from the environment:
 //   GSC_SERVICE_ACCOUNT_JSON  the service account key (JSON), stored as a GitHub Actions secret
-//   GSC_PROPERTY              the exact verified property, e.g. "sc-domain:kevos.com" or "https://kevos.com/"
+//   GSC_PROPERTY              the exact verified property, e.g. "sc-domain:bizomat.ai" or "https://bizomat.ai/"
 // Search Console data is delayed by about two to three days, aggregated and anonymised; average position is
 // an impression-weighted average, not a fixed ranking.
 import crypto from 'node:crypto';

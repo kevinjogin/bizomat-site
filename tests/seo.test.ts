@@ -4,6 +4,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../src/utils/workos-tools.ts';
 import { parsePage, audit, sectionOf } from '../scripts/seo/inventory.mjs';
+import { SITE } from '../scripts/seo/lib/site.mjs';
+import { SITE as WEBSITE } from '../src/config/site.ts';
 
 test('tool pages exist only for tools whose guide stands alone, and keep the calculator link', () => {
   const { tools, guides } = loadWorkosTools();
@@ -35,11 +37,11 @@ test('category volumes get their own descriptions', () => {
 test('the audit flags sitemap, canonical, orphan and duplicate problems', () => {
   const html = (title: string, canonical: string, extra = '') =>
     `<html lang="en-AU"><head><title>${title}</title><meta name="description" content="A description long enough to be counted properly here, over seventy characters."><link rel="canonical" href="${canonical}">${extra}</head><body><main><h1>${title}</h1><a href="/b/">b</a></main></body></html>`;
-  const a = parsePage(html('A', 'https://kevos.com/a/'), '/a/');
-  const b = parsePage(html('A', 'https://kevos.com/b/'), '/b/');
-  const c = parsePage(html('C', 'https://kevos.com/a/'), '/c/');
-  const d = parsePage(html('D', 'https://kevos.com/d/', '<meta name="robots" content="noindex, follow">'), '/d/');
-  const { issues } = audit([a, b, c, d], ['https://kevos.com/a/', 'https://kevos.com/c/', 'https://kevos.com/d/']);
+  const a = parsePage(html('A', `${SITE}/a/`), '/a/');
+  const b = parsePage(html('A', `${SITE}/b/`), '/b/');
+  const c = parsePage(html('C', `${SITE}/a/`), '/c/');
+  const d = parsePage(html('D', `${SITE}/d/`, '<meta name="robots" content="noindex, follow">'), '/d/');
+  const { issues } = audit([a, b, c, d], [`${SITE}/a/`, `${SITE}/c/`, `${SITE}/d/`]);
   const codes = issues.map((i: { code: string; path: string }) => `${i.code}:${i.path}`);
   assert.ok(codes.includes('duplicate-title:/b/'));
   assert.ok(codes.includes('sitemap-non-canonical:/c/'));
@@ -48,4 +50,11 @@ test('the audit flags sitemap, canonical, orphan and duplicate problems', () => 
   assert.ok(codes.includes('orphan:/a/'));
   assert.equal(sectionOf('/tools/cutting-speed/'), 'workos');
   assert.equal(sectionOf('/reados/books/x/y/'), 'reados-volume');
+});
+
+test('the SEO scripts use the website\'s own canonical address', () => {
+  assert.equal(SITE, WEBSITE.url, 'seo/config.json "site" and src/config/site.ts SITE.url must name the same address');
+  for (const f of fs.readdirSync('scripts/seo').filter((n) => n.endsWith('.mjs')).map((n) => `scripts/seo/${n}`).concat(fs.readdirSync('scripts/seo/lib').map((n) => `scripts/seo/lib/${n}`))) {
+    assert.doesNotMatch(fs.readFileSync(f, 'utf8').replace(/^\s*\/\/.*$/gm, ''), /https?:\/\/(www\.)?(kevos\.com|bizomat\.ai)/, `${f} names a host itself instead of reading seo/config.json`);
+  }
 });

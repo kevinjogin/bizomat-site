@@ -1,7 +1,8 @@
 // Bing Webmaster Tools, read-only, using the API key generated in Bing Webmaster Tools (Settings → API access).
 //   BING_WEBMASTER_API_KEY  stored as a GitHub Actions secret
-//   BING_SITE_URL           the verified site, default https://kevos.com/
+//   BING_SITE_URL           the verified site, default the site address (seo/config.json)
 import { fetchJson, skipped, failed } from './http.mjs';
+import { SITE } from './site.mjs';
 
 const BASE = 'https://ssl.bing.com/webmaster/api.svc/json';
 const METHODS = { queries: 'GetQueryStats', pages: 'GetPageStats', traffic: 'GetRankAndTrafficStats', crawl: 'GetCrawlStats' };
@@ -14,7 +15,7 @@ export function bingDate(value) {
 
 export async function collectBing({ env = process.env, fetchImpl = globalThis.fetch } = {}) {
   if (!env.BING_WEBMASTER_API_KEY) return skipped('bing-webmaster', 'BING_WEBMASTER_API_KEY is not configured');
-  const site = env.BING_SITE_URL || 'https://kevos.com/';
+  const site = env.BING_SITE_URL || `${SITE}/`;
   const out = { source: 'bing-webmaster', status: 'OK', site, fetchedAt: new Date().toISOString() };
   try {
     for (const [name, method] of Object.entries(METHODS)) {

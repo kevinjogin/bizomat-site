@@ -12,11 +12,10 @@ import { collectBing } from './lib/bing.mjs';
 import { collectCloudflare } from './lib/cloudflare.mjs';
 import { analyse } from './lib/engine.mjs';
 import { contentHash, changedUrls, submitIndexNow } from './lib/indexnow.mjs';
+import { CONFIG, SITE, SITE_RE } from './lib/site.mjs';
 
 const ROOT = process.cwd();
 const DATA = path.join(ROOT, '.seo-data');
-const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, 'seo', 'config.json'), 'utf8'));
-const SITE = CONFIG.site;
 const KEY_PAGES = ['/', '/services/', '/factory-fix/', '/assessment/', '/contact/', '/tools/', '/tools/cutting-speed/', '/reados/', '/library/', '/engine-room/'];
 const args = process.argv.slice(3);
 const flag = (name) => args.includes(`--${name}`);
@@ -50,9 +49,9 @@ async function collect() {
 
 async function liveCheck() {
   const failures = [];
-  const get = async (p, init) => fetch(SITE + p, { redirect: 'manual', signal: AbortSignal.timeout(30_000), headers: { 'User-Agent': 'BIZOMAT-AutoSEO-check/1.0 (+https://kevos.com/)' }, ...init });
+  const get = async (p, init) => fetch(SITE + p, { redirect: 'manual', signal: AbortSignal.timeout(30_000), headers: { 'User-Agent': `BIZOMAT-AutoSEO-check/1.0 (+${SITE}/)` }, ...init });
   const robots = await get('/robots.txt').then((r) => (r.ok ? r.text() : `HTTP ${r.status}`)).catch((e) => `error ${e.name}`);
-  if (!/^Sitemap: https:\/\/kevos\.com\/sitemap-index\.xml$/m.test(robots)) failures.push('robots.txt is missing or does not list the sitemap');
+  if (!new RegExp(`^Sitemap: ${SITE_RE}/sitemap-index\\.xml$`, 'm').test(robots)) failures.push('robots.txt is missing or does not list the sitemap');
   if (/^User-agent:\s*\*\s*\n(?:.*\n)*?Disallow:\s*\/\s*$/im.test(robots)) failures.push('robots.txt blocks the whole site');
   const index = await get('/sitemap-index.xml').then((r) => (r.ok ? r.text() : '')).catch(() => '');
   const child = index.match(/<loc>([^<]+)<\/loc>/)?.[1];
