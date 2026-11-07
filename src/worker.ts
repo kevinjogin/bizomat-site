@@ -9,6 +9,7 @@
 //   /api/contact  → optional contact-form backend
 //   /api/assessment                → Engineering Problem Assessment enquiries (server-side validation)
 //   /api/assessment/stripe-webhook → optional Stripe payment verification (signature-checked)
+//   /downloads/<folder>/<file> → public downloads from the R2 bucket bizomat-downloads (src/server/downloads.ts)
 //   everything else → the static site from dist/ (env.ASSETS)
 //
 // On bizomat.ai the applications live under the website's address (routeApps below):
@@ -22,6 +23,7 @@ import { handleContact, type ContactEnv } from './server/contact/handler.ts';
 import { handleAssessment } from './server/assessment/handler.ts';
 import { handleStripeWebhook, type StripeEnv } from './server/assessment/stripe.ts';
 import { API_HEADERS, BASELINE_HEADERS, withinEdgeLimit, type RateLimiter } from './server/security.ts';
+import { DOWNLOADS_PATH, handleDownload, type DownloadsBucket } from './server/downloads.ts';
 
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
@@ -35,6 +37,8 @@ export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnE
   TASKS?: ServiceBinding;
   /** CAD Automation's Worker, bizomat-mcp (wrangler.toml [[services]]); without it, CAD_PATHS go to the origin. */
   CAD?: ServiceBinding;
+  /** Public downloads, the R2 bucket bizomat-downloads (wrangler.toml [[r2_buckets]]); without it, /downloads/ is 404. */
+  DOWNLOADS?: DownloadsBucket;
   /** Per-IP burst limits (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
   CHAT_LIMITER?: RateLimiter;
   FORM_LIMITER?: RateLimiter;
@@ -145,6 +149,7 @@ export default {
     else if (url.pathname === '/api/assessment' || url.pathname === '/api/assessment/') response = await handleAssessment(request, env);
     else if (url.pathname === '/api/assessment/stripe-webhook') response = await handleStripeWebhook(request, env);
     else if (url.pathname.startsWith('/api/')) response = new Response('Not found', { status: 404 });
+    else if (url.pathname.startsWith(DOWNLOADS_PATH)) response = await handleDownload(request, env.DOWNLOADS);
     else response = await env.ASSETS.fetch(request);
     return withHeaders(response, url);
   },

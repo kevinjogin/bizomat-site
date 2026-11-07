@@ -34,7 +34,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 
 ## Source of truth
 
-- **GitHub `jogkev-creator/gocore-website`, branch `main`** (the repository name is historical). Before any work:
+- **GitHub `jogkev-creator/gocore-website`, branch `main`** (the repository name is historical). Every repository is
+  private (owner, 7 Nov 2026): nothing public may link to GitHub, the laptop works from its signed-in clones, and public
+  files are published on bizomat.ai (`/downloads/`, the R2 bucket `bizomat-downloads`, `src/server/downloads.ts`). Before any work:
   `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
   Preserve uncommitted work on a backup branch before anything else.
 - `jogkev-creator/CADOS` is where CAD Automation is changed and tested (and its add-in and installer released); the
