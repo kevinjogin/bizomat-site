@@ -6,7 +6,7 @@ an audit: nothing in production was changed. Code reviewed: gocore-website `main
 Platform facts are from Cloudflare's documentation as published in October and November 2026 (Containers limits,
 pricing, lifecycle, FAQ and snapshots; Workers limits; Agents MCP transport)._
 
-## Progress (updated 6 Nov 2026)
+## Progress (updated 7 Nov 2026)
 
 Decided by the owner: **bizomat.ai** (website `https://bizomat.ai`, MCP `https://mcp.bizomat.ai/mcp`),
 **Containers** for CAD Automation (Workers Paid plan), Project Management as **its own Worker** (`bizomat-tasks`).
@@ -19,9 +19,159 @@ Nothing is deployed on Cloudflare yet and nothing on Fly has changed.
 | 3 MCP | Done in code | CADOS `cloudflare/mcp` (Worker `bizomat-mcp`, Container `CadServer`, R2 `bizomat-mcp-data`), CADOS `opensketch/persist.py` |
 | 4 Cloudflare setup | Done in code | CADOS `tools/laptop/cloudflare.ps1` (check, deploy mcp, tasks and website, secrets website, move tasks and cad, switch, status); the first deploys create the D1, R2 and KV resources and the mcp.bizomat.ai record |
 | 5 Data | Tools: Project Management ready, CAD in progress | `apps/work/scripts/migrate/to-cloudflare.mjs` (Fly to D1 and R2, rehearsed against wrangler's local D1 and R2); CADOS `cloudflare/mcp/scripts/move-from-fly.mjs` (Fly to R2). A new copy over one already in R2 pauses bizomat-mcp first (`CAD_PAUSED`), so the server cannot write over it |
-| 6 Tests | Local run passed (below); the real platform after Phase 4 | |
+| 6 Tests | Readiness rehearsal passed on 7 Nov (below); the real platform after Phase 4 | "Production readiness review" below |
 | 7 Cutover | Prepared (below) | owner |
 | 8 Fly | Not started: only with the owner's go-ahead | owner |
+
+## Production readiness review (7 Nov 2026)
+
+Nothing was deployed, no production data was read or moved, no DNS changed and Fly was not touched. Every check ran on
+one computer with throwaway test data.
+
+### What was run
+
+1. **A stand-in Fly machine.** The production image (CADOS main `3f71999`, the Dockerfile Fly builds) with fly.toml's
+   settings, filled over HTTP the way people use it:
+   - an owner made through /setup, two members (one suspended), Google sign-in set on the Admin page, an early access
+     code and an invite;
+   - two AI apps signed in with OAuth (Claude and ChatGPT addresses);
+   - the private address and the add-in key;
+   - a computer paired through the signed-in page, with commands in its history.
+2. **`.\cloudflare.ps1 move cad -Local`**, the real script (PowerShell 7.4), from a clean clone of CADOS main, with
+   flyctl replaced by a stand-in that runs each command on that machine's /data while the server kept running.
+   - Result: 10 state files copied, SQLite through the online backup (integrity ok), each checked by SHA-256.
+   - The copy on the machine was removed, and no file content appeared in the output.
+   - Uploaded to wrangler's local R2 and read back, `accounts.enabled` last.
+3. **bizomat-mcp from that R2 copy** (`wrangler dev` with Docker, the image of the fix below), behind the website Worker
+   (`wrangler dev` over https, the `CAD` service binding), at https://bizomat.ai/cad.
+   - Every value the owner sees matches the stand-in Fly: users with their roles, suspension and password origin;
+     invites; open sign-up and early access; Google sign-in; computers; AI apps; command history.
+   - A browser session made on Fly is still signed in. The owner and the member sign in with their Fly passwords, and
+     the suspended member is still refused.
+   - Google sign-in starts with the kept client and https://bizomat.ai/cad/auth/google/callback.
+   - The OAuth access and refresh tokens from Fly work, for both apps.
+   - The private address and the add-in key from Fly work.
+   - The computer paired on Fly connects with its own key and runs commands.
+   - All 31 tools run through the paired computer (26 with canned SOLIDWORKS answers, plus `sw_list_devices`,
+     `sw_command_status`, `sw_cancel_command`, `request_upload` with an HTTP PUT then `sw_import`, and `sw_get_guide`).
+   - `sw_selftest` plate, shapes and assembly pass against the simulated SOLIDWORKS.
+   - The official MCP SDK client (Streamable HTTP, protocol 2025-11-25) works at bizomat.ai/cad and mcp.bizomat.ai.
+4. **Long calls.** SOLIDWORKS was held busy for 150 s, both through the website Worker and directly. The headers came at
+   once (`text/event-stream`), a keep-alive comment every 15.0 s (10 in all), and the result arrived intact. Cloudflare's
+   limit is 100 s of silence.
+5. **mcp.bizomat.ai** (12 checks):
+   - discovery names https://mcp.bizomat.ai/mcp, and /mcp without a token answers 401 with the RFC 9728 pointer;
+   - registration works there, and the consent page is sent to bizomat.ai/cad, which answers with
+     `iss=https://mcp.bizomat.ai`;
+   - the token and its refresh work, and the same token works at bizomat.ai/cad/mcp;
+   - pages on mcp.bizomat.ai answer 301 to bizomat.ai/cad.
+
+Not run: the real Cloudflare platform, real flyctl, Windows PowerShell 5.1, a real SOLIDWORKS.
+
+### Found and fixed
+
+| What | Effect | Fix |
+| --- | --- | --- |
+| CAD worker processes could not import `sw_tools` (a circular import through `mcp_server` and `sw_selftest`) | **Live on Fly since 5 Nov:** every tool that reads geometry (prediction in `sw_add_features`, `sw_get_document`, `sw_body_topology`, `sw_measure_items`, `sw_inspect_design`, `sw_preview`, `sw_standard_part`) answers "Error executing tool". Tests run CAD work in threads, so they never saw it | CADOS PR #29, not merged: a merge deploys Fly |
+| The website Worker's main module exported plain values (`PLATFORM_HOST`, `CAD_PATHS`) | The Workers runtime refuses to start the Worker ("Incorrect type for map entry") | This repository: `src/server/platform-paths.ts`, and a test that the entry exports only its handler |
+| The container did not get secrets a Fly server may have (`OPENSKETCH_PASSWORD` or `OPENSKETCH_MCP_TOKEN`, `OPENSKETCH_KEY_SECRET`, `GOOGLE_CLIENT_ID`/`SECRET`, `OPENSKETCH_ADDIN_URL`) | With the same data, the owner's server-wide private address and link signatures would change, a stored Google secret could not be read, and server-set Google sign-in would be gone | CADOS PR #29: passed when set; `.\cloudflare.ps1 secrets mcp` copies them from the Fly Machine unseen |
+| `move cad` said to sign in at mcp.bizomat.ai to check the copy | Before the switch those pages go to bizomat.ai/cad, which is Fly: the check showed Fly's data | CADOS PR #29: `move cad` checks the copy through the owner's private address (hidden prompt) |
+
+### Blockers, in order
+
+1. **Cloudflare sign-in.** The token saved in the cloud environment is refused by Cloudflare (malformed Authorization
+   header). Deploy from the laptop with `npx wrangler login`, or save a valid API token. A token needs these
+   permissions:
+   - Workers Scripts, R2, D1, Workers KV, Containers: Edit;
+   - Workers Routes and DNS on bizomat.ai.
+2. **The account.**
+   - bizomat.ai must be a zone of the same account. Its nameservers are Cloudflare's, but which account holds it was
+     not checked.
+   - The account needs the Workers Paid plan (Containers).
+3. **Docker Desktop** on the laptop: deploy mcp builds the image there.
+4. **The owner's go-ahead** for these, each a production change:
+   - merge CADOS #29 (it deploys Fly, and fixes the live bug);
+   - merge this repository's pull request;
+   - the first deploy mcp, which creates the DNS record and certificate of mcp.bizomat.ai (a new name; nothing existing
+     changes);
+   - the data copies;
+   - the DNS switch.
+5. **Facts only the laptop can read** (read only):
+   - `fly secrets list -a cados`: the names decide what `secrets mcp` copies;
+   - `fly ssh console -a cados -C "ls -la /data"`: a state file over 64 MiB, `bridge.sqlite` most likely, is refused by
+     the move.
+6. **Settings outside Cloudflare** (`switch` lists them):
+   - Google Cloud sign-in clients: https://bizomat.ai/cad/auth/google/callback and
+     https://bizomat.ai/tasks/api/auth/oauth/google/callback;
+   - the Stripe webhook;
+   - Turnstile hostnames.
+7. **Every paired computer on 0.13 or later**, and the installer published on bizomat.ai (`publish installer`).
+
+### Deployment plan (Windows PowerShell on the laptop, in C:\BIZOMAT)
+
+Once:
+
+```powershell
+git -C CADOS pull; git -C gocore-website pull
+Copy-Item CADOS\tools\laptop\cloudflare.ps1 . -Force
+cd gocore-website; npx wrangler login; cd ..
+.\cloudflare.ps1 check
+fly secrets list -a cados
+fly ssh console -a cados -C "ls -la /data"
+.\cloudflare.ps1 move cad -Local
+```
+
+Nothing on bizomat.ai changes while its records are DNS only:
+
+```powershell
+.\cloudflare.ps1 deploy mcp
+.\cloudflare.ps1 secrets mcp
+.\cloudflare.ps1 deploy tasks
+.\cloudflare.ps1 deploy website
+.\cloudflare.ps1 secrets website
+.\cloudflare.ps1 publish installer -File <path to BIZOMAT-CAD-Automation-0.13.0-x64.msi>
+```
+
+Right before the switch: the last copies, in this order. `move cad -Replace` is for a second copy over a first one.
+
+```powershell
+.\cloudflare.ps1 move tasks -Final
+.\cloudflare.ps1 move cad
+.\cloudflare.ps1 switch
+```
+
+The switch itself happens in the Cloudflare dashboard:
+1. SSL/TLS for bizomat.ai: Full (strict).
+2. DNS: the bizomat.ai A and AAAA records and www to Proxied. Nothing else changes.
+
+Then:
+
+```powershell
+.\cloudflare.ps1 status
+```
+
+After that, the checks in CLAUDE.md "After any production change":
+- sign in at https://bizomat.ai/cad, then look at Admin, SOLIDWORKS and History;
+- an AI app at https://mcp.bizomat.ai/mcp;
+- `sw_status` through a paired computer.
+
+### Rollback plan
+
+- **The way back** is the same records to DNS only: Fly answers again within a minute. The Worker routes do nothing
+  then. For Project Management, also remove its maintenance file on Fly (`move tasks -Final` prints the command).
+- **A bad Worker version**: in that Worker's folder, `npx wrangler rollback`. For bizomat-mcp,
+  `npx wrangler secret put CAD_PAUSED` (value 1) stops the server, and it copies its last changes to R2 first.
+- **Fly** stays running and unchanged until the owner approves its retirement.
+- **Gap: changes made on Cloudflare after the switch are not copied back.** New sign-ins, pairings, AI app
+  connections and history stay in R2. After a way back, Fly has the state of the last copy. There is no tested
+  `move cad -Back` yet, so decide the rollback window before the switch.
+
+### Known limits
+
+- Old hosts still reach Fly after the switch, because their DNS points there: AI apps connected at cados.kevos.com or
+  cados.fly.dev, and computers older than 0.13.
+- Command files in transit are not copied (`bridge-files/`, uploads, exports), so links made on Fly stop working.
+- Pages of CAD Automation answer only on bizomat.ai: the website Worker's workers.dev address gives 404 for /cad.
 
 ## Production addresses (the single source of truth)
 
