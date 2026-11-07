@@ -17,8 +17,8 @@ Nothing is deployed on Cloudflare yet and nothing on Fly has changed.
 | 1 Audit | Done | this file, `docs/cloudflare/mcp-contract.json` |
 | 2 Website | Done in code | `wrangler.toml` (Worker `bizomat`), `src/worker.ts` (`CAD` binding), `scripts/deploy-guard.mjs`, `apps/work/wrangler.jsonc` env `bizomat` (Worker `bizomat-tasks`) |
 | 3 MCP | Done in code | CADOS `cloudflare/mcp` (Worker `bizomat-mcp`, Container `CadServer`, R2 `bizomat-mcp-data`), CADOS `opensketch/persist.py` |
-| 4 Cloudflare setup | Next | laptop commands; the first deploys create the D1, R2 and KV resources and the mcp.bizomat.ai record |
-| 5 Data | Tools: Project Management ready, CAD next | `apps/work/scripts/migrate/to-cloudflare.mjs` (Fly to D1 and R2, rehearsed against wrangler's local D1 and R2) |
+| 4 Cloudflare setup | Done in code | CADOS `tools/laptop/cloudflare.ps1` (check, deploy mcp, tasks and website, secrets website, move tasks and cad, switch, status); the first deploys create the D1, R2 and KV resources and the mcp.bizomat.ai record |
+| 5 Data | Tools: Project Management ready, CAD in progress | `apps/work/scripts/migrate/to-cloudflare.mjs` (Fly to D1 and R2, rehearsed against wrangler's local D1 and R2); CADOS `cloudflare/mcp/scripts/move-from-fly.mjs` (Fly to R2). A new copy over one already in R2 pauses bizomat-mcp first (`CAD_PAUSED`), so the server cannot write over it |
 | 6 Tests | Local run passed (below); the real platform after Phase 4 | |
 | 7 Cutover | Prepared (below) | owner |
 | 8 Fly | Not started: only with the owner's go-ahead | owner |
@@ -50,11 +50,24 @@ Not run yet: anything on the real Cloudflare account, and the full OAuth sign-in
    - Project Management with `to-cloudflare.mjs prepare`, then `apply`; the final copy with the work Machine in
      maintenance, as `apps/work/DEPLOYMENT.md` says.
    - CAD Automation's data folder to R2. Do this right before step 5: changes made on Fly after the copy stay on Fly.
-5. **The switch (DNS, owner only):** in the Cloudflare dashboard turn the `bizomat.ai` and `www.bizomat.ai` records
+5. Every computer on CAD Automation 0.13 or later. 0.13 moves itself from cados.kevos.com, cados.fly.dev and
+   cad.bizomat.ai to bizomat.ai/cad; an older Companion would keep polling Fly and get no commands after the switch.
+6. **The switch (DNS, owner only):** in the Cloudflare dashboard turn the `bizomat.ai` and `www.bizomat.ai` records
    from DNS only to Proxied. Nothing else changes. The way back is turning them to DNS only again: Fly answers as before.
-6. Checks: the smoke test against bizomat.ai, the MCP client, a paired computer, sign-in to both apps.
-7. CADOS `Live TLS` checks only Let's Encrypt chains today; proxied, bizomat.ai shows Cloudflare's certificate, so the
+7. Checks: the smoke test against bizomat.ai, the MCP client, a paired computer, sign-in to both apps.
+8. CADOS `Live TLS` checks only Let's Encrypt chains today; proxied, bizomat.ai shows Cloudflare's certificate, so the
    check needs Cloudflare's issuers added at the switch.
+
+`.\cloudflare.ps1 switch` prints these steps with their checks; it changes no DNS itself.
+
+**Found while testing (6 Nov 2026, 23:56 UTC):**
+- bizomat.ai/cad answered 502 while the `cados` Machine was suspended. The router reaches it over Fly's private network
+  (`cados.internal:8080`), and that does not wake a suspended Machine; a request to cados.fly.dev woke it, and
+  bizomat.ai/cad answered 200 again.
+- Until CAD Automation leaves `cados`, one of these fixes it:
+  - keep one Machine running: `min_machines_running = 1` in CADOS `fly.toml`, then deploy cad (it then runs all month);
+  - reach it through Flycast, which wakes Machines.
+- The move to Cloudflare (the Worker starts the container on demand) or into the `bizomat` app replaces this path.
 
 Two efforts run side by side: this migration, and moving CAD Automation into the Fly app `bizomat` (#53,
 jogkev-creator/CADOS#24). Whichever Fly app serves CAD at step 4 is where its data is copied from. The Fly retirement
