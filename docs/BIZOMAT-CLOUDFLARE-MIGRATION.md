@@ -34,6 +34,7 @@ The owner's decision of 7 Nov 2026: everything on **bizomat.ai**, two independen
 | CAD Automation: pages, sign-in, its computers | `https://bizomat.ai/cad` | `bizomat` hands `/cad` to `bizomat-mcp` (service binding `CAD`) | CADOS `cloudflare/mcp/wrangler.jsonc` `OPENSKETCH_PUBLIC_URL` |
 | MCP endpoint for AI apps | `https://mcp.bizomat.ai/mcp`; OAuth issuer `https://mcp.bizomat.ai` | Worker `bizomat-mcp` (custom domain `mcp.bizomat.ai`) | `OPENSKETCH_MCP_URL`, `OPENSKETCH_REDIRECT_HOSTS`; the website's `PUBLIC_CAD_MCP_URL` |
 | Project Management | `https://bizomat.ai/tasks` | `bizomat` hands `/tasks` to `bizomat-tasks` (service binding `TASKS`) | `apps/work/wrangler.jsonc` env `bizomat` `APP_URL`, `CANONICAL_URL` |
+| Downloads (the SOLIDWORKS installer, its SHA-256, the release record) | `https://bizomat.ai/downloads/cad/...` | Worker `bizomat`, from the R2 bucket `bizomat-downloads` (`src/server/downloads.ts`) | CADOS `tools/laptop/cloudflare.ps1 publish installer` |
 
 Outside Cloudflare, each must list the same addresses:
 - Google sign-in clients: `https://bizomat.ai/cad/auth/google/callback` (CAD Automation) and
@@ -41,6 +42,19 @@ Outside Cloudflare, each must list the same addresses:
 - The Stripe webhook, if used: `https://bizomat.ai/api/assessment/stripe-webhook`.
 - Turnstile widget hostnames: `bizomat.ai` and `www.bizomat.ai`. The contact form accepts tokens from these two only
   (`src/server/contact/handler.ts`).
+
+**The repositories are private** (the owner's decision, 7 Nov 2026). Their pages, releases and raw files answer 404 to
+everyone else, so:
+- **Downloads:** nothing public points at GitHub. The installer and the update record are published on bizomat.ai
+  (above). The CAD pages link the checksum and the website's contact page.
+- **Laptop scripts:** the laptop works from its signed-in clones (`bizomat.ps1 setup`, then `git pull`); a raw GitHub
+  link does not work for a private repository.
+- **CI:** GitHub Actions minutes for private repositories are limited. When they run out, every job fails at once with
+  no log, and the repository's own checks, run by `cloudflare.ps1` before each deploy, are the gate.
+  `scripts/sync-cad.mjs` and the Workers deploy from the laptop's clones, which hold the sign-in.
+- **Code signing:** the free signing programme for open-source projects needs a public repository; a paid service
+  (for example Azure Trusted Signing) or a code-signing certificate applies.
+- No new repository is needed: CADOS and this one hold everything.
 
 Kept on purpose:
 - Earlier addresses keep working for programs set up with them: `https://bizomat.ai/cad/mcp` (connectors made there)
