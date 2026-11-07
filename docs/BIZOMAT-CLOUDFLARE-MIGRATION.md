@@ -23,6 +23,35 @@ Nothing is deployed on Cloudflare yet and nothing on Fly has changed.
 | 7 Cutover | Prepared (below) | owner |
 | 8 Fly | Not started: only with the owner's go-ahead | owner |
 
+## Production addresses (the single source of truth)
+
+The owner's decision of 7 Nov 2026: everything on **bizomat.ai**, two independent Workers, each deployed on its own.
+
+| What | Address | Served by | Set in |
+| --- | --- | --- | --- |
+| The website | `https://bizomat.ai` | Worker `bizomat` | `wrangler.toml` (zone routes `bizomat.ai/*`) |
+| www | `https://www.bizomat.ai` answers 301 to `https://bizomat.ai` (308 for other methods) | Worker `bizomat` | `wrangler.toml` (route `www.bizomat.ai/*`), `src/worker.ts` |
+| CAD Automation: pages, sign-in, its computers | `https://bizomat.ai/cad` | `bizomat` hands `/cad` to `bizomat-mcp` (service binding `CAD`) | CADOS `cloudflare/mcp/wrangler.jsonc` `OPENSKETCH_PUBLIC_URL` |
+| MCP endpoint for AI apps | `https://mcp.bizomat.ai/mcp`; OAuth issuer `https://mcp.bizomat.ai` | Worker `bizomat-mcp` (custom domain `mcp.bizomat.ai`) | `OPENSKETCH_MCP_URL`, `OPENSKETCH_REDIRECT_HOSTS`; the website's `PUBLIC_CAD_MCP_URL` |
+| Project Management | `https://bizomat.ai/tasks` | `bizomat` hands `/tasks` to `bizomat-tasks` (service binding `TASKS`) | `apps/work/wrangler.jsonc` env `bizomat` `APP_URL`, `CANONICAL_URL` |
+
+Outside Cloudflare, each must list the same addresses:
+- Google sign-in clients: `https://bizomat.ai/cad/auth/google/callback` (CAD Automation) and
+  `https://bizomat.ai/tasks/api/auth/oauth/google/callback` (Project Management).
+- The Stripe webhook, if used: `https://bizomat.ai/api/assessment/stripe-webhook`.
+- Turnstile widget hostnames: `bizomat.ai` and `www.bizomat.ai`. The contact form accepts tokens from these two only
+  (`src/server/contact/handler.ts`).
+
+Kept on purpose:
+- Earlier addresses keep working for programs set up with them: `https://bizomat.ai/cad/mcp` (connectors made there)
+  and, on Fly, cados.kevos.com, cados.fly.dev and cad.bizomat.ai. Companion 0.13 moves itself from those to
+  `https://bizomat.ai/cad`.
+- SOLIDWORKS computers stay on `https://bizomat.ai/cad` while Fly is the way back: there they follow the DNS switch both
+  ways. Moving them to `https://mcp.bizomat.ai` (no hop through the website Worker) belongs with Fly's retirement.
+- The contact form mails from `contact-form@kevos.com` to the owner: it is a mailbox, not an address of the site.
+  Mailing from bizomat.ai would need Cloudflare Email Routing there, which would replace the iCloud MX records of
+  info@bizomat.ai.
+
 **Tested so far (run, not assumed).** CADOS: pytest 383 passed; the Worker's typecheck and 21 tests, including a
 contract test that runs the server's own `persist.py` against the Worker's store; `wrangler deploy --dry-run`. A local
 run of the whole CAD stack (`wrangler dev` with Docker: the Worker, the Durable Object, the real server image and a
@@ -77,7 +106,7 @@ commands in CADOS#24 (`retire cados`, `delete cados`) are irreversible and are n
 
 | | Finding |
 | --- | --- |
-| Domain | **bizomat.io is not registered.** The .io registry answers NXDOMAIN for bizomat.io, www and mcp. The domain the owner holds, on Cloudflare (nameservers uma and zac.ns.cloudflare.com), is **bizomat.ai**. A decision is needed before Phase 2. |
+| Domain | **bizomat.ai** is the production domain (the owner's decision): its zone is on Cloudflare (nameservers uma and zac.ns.cloudflare.com), with its certificate, email and every link. See "Production addresses" above. |
 | Website | **Workers-native.** It ran as the Cloudflare Worker `throbbing-block-6c61` until 6 Nov 2026; `src/worker.ts` and `wrangler.toml` are still maintained. Low risk. |
 | Project Management (`/tasks`) | **Workers-native** (Hono, D1, R2, KV, a Durable Object, a cron). It ran on Cloudflare until 6 Nov 2026 (`workos-platform-preview`). Its live data now sits on the Fly volume `work_data` and must move back to D1 and R2. |
 | MCP server (CAD Automation, cados.fly.dev) | **Cannot run in a Worker.** It is a 15,000-line Python server with a C++ CAD kernel (OpenCascade), a Node.js solver subprocess, worker processes, files and SQLite on disk, and long-held connections to the SOLIDWORKS computers. The Cloudflare product built for this is **Containers**: the existing image runs unchanged behind the Worker `bizomat-mcp`. Containers need the **Workers Paid plan**, and their disk is **not persistent**, so the server's data folder needs a persistence layer on **R2**. |
@@ -290,10 +319,13 @@ the laptop with `fly secrets list -a cados` before Phase 5.
 
 ## 6. Addresses in the code
 
-| Repository | fly.dev | bizomat.ai | kevos.com | bizomat.io |
-| --- | --- | --- | --- | --- |
-| gocore-website | 140 lines in 32 files (router, Fly configs, deploy workflows, smoke tests, migration tooling, docs) | 584 lines in 90 files | 7,096 lines in 170 files (mostly Library content and history) | 0 |
-| CADOS | 53 lines in 16 files (`fly.toml` redirect hosts, deploy and status workflows, Live TLS, laptop toolkit, tests) | 140 lines in 40 files (public URL, add-in and Companion default address, docs) | 86 lines in 15 files | 0 |
+| Repository | fly.dev | bizomat.ai | kevos.com |
+| --- | --- | --- | --- |
+| gocore-website | 140 lines in 32 files (router, Fly configs, deploy workflows, smoke tests, migration tooling, docs) | 584 lines in 90 files | 7,096 lines in 170 files (mostly Library content and history) |
+| CADOS | 53 lines in 16 files (`fly.toml` redirect hosts, deploy and status workflows, Live TLS, laptop toolkit, tests) | 140 lines in 40 files (public URL, add-in and Companion default address, docs) | 86 lines in 15 files |
+
+(Counted at the audit, 6 Nov 2026. The fly.dev and kevos.com lines left now describe the Fly apps kept for the way
+back, or keep earlier addresses working for programs set up with them.)
 
 Addresses that matter at cutover: `OPENSKETCH_PUBLIC_URL` and the OAuth issuer and resources; the Companion's
 default address and its move list (0.13.0 moves cados.kevos.com, cados.fly.dev and cad.bizomat.ai to
@@ -341,9 +373,7 @@ mcp.<domain>         Worker bizomat-mcp    front door for CAD Automation: TLS, l
 
 ## 9. Decisions needed before Phase 2
 
-1. **Domain.** bizomat.io is not registered. Either register it (Cloudflare Registrar, then the zone is in the same
-   account) or use bizomat.ai, which is already the owner's, on Cloudflare, with its certificate, email and every
-   link: website `https://bizomat.ai`, MCP `https://mcp.bizomat.ai/mcp`.
+1. **Domain (decided: bizomat.ai).** Website `https://bizomat.ai`, MCP `https://mcp.bizomat.ai/mcp`.
 2. **Workers Paid plan** for Containers ($5 a month plus usage). Running all month, one standard-2 instance (1 vCPU,
    6 GiB, the closest to today's Fly machine) is about $41 of memory and disk, one standard-1 (1/2 vCPU, 4 GiB) about
    $27, plus a few dollars of active CPU; less when it sleeps. A paired Companion's long poll keeps it awake.
