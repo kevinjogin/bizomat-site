@@ -48,6 +48,13 @@ service = "bizomat-tasks"
 binding = "CAD"
 service = "bizomat-mcp"
 
+# Public downloads (https://bizomat.ai/downloads/...): the SOLIDWORKS installer, its checksum and the update manifest.
+# The GitHub repositories are private, so their releases cannot be downloaded by anyone else; CADOS
+# tools/laptop/cloudflare.ps1 publish installer puts each release here (src/server/downloads.ts serves it).
+[[r2_buckets]]
+binding = "DOWNLOADS"
+bucket_name = "bizomat-downloads"
+
 # Workers AI for the KEVOS Assistant. Workers Free plan: a daily allocation, no card needed.
 [ai]
 binding = "AI"
