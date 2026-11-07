@@ -5,7 +5,7 @@
 //
 // Everything lives under bizomat.ai, with no subdomains (owner's decision, 5 Nov 2026): the website at the root, CAD
 // Automation under /cad and Project Management under /tasks. On bizomat.ai the proxy routes by path, as the website's
-// Worker does (src/worker.ts, routeApps and CAD_PATHS); every other host is routed by its name. Paths are never
+// Worker does (src/worker.ts routeApps, src/server/platform-paths.ts CAD_PATHS); every other host is routed by its name. Paths are never
 // rewritten and the Host header is never changed: each backend sees the address the visitor used. The two apps take
 // their prefix off themselves and write it back into the links they make (apps/cad/opensketch/canonical.py,
 // apps/work/src/worker/mount.ts).
@@ -55,7 +55,7 @@ export const CANONICAL_ORIGIN = 'https://bizomat.ai';
  * RFC 8414 put at the root of the host (/.well-known/oauth-protected-resource/cad/mcp,
  * /.well-known/oauth-authorization-server/cad); the root addresses programs call, kept for connectors and computers
  * set up while CAD answered there (/mcp, /mcp/..., /solidworks/mcp, /oauth/..., /v2/..., /healthz); and
- * /.well-known/acme-challenge/. The same expression as the website's Worker (src/worker.ts, CAD_PATHS; the tests
+ * /.well-known/acme-challenge/. The same expression as the website's Worker (src/server/platform-paths.ts, CAD_PATHS; the tests
  * check that the two are equal). The CAD app's own list: apps/cad/opensketch/canonical.py (KEEP_PREFIXES).
  */
 export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/oauth\/|^\/v2\/|^\/healthz$|^\/\.well-known\/(?:oauth-protected-resource|oauth-authorization-server|openid-configuration|acme-challenge)(?:\/|$)/;

@@ -47,8 +47,9 @@ test('every production host is in the table, and nothing else is: no subdomains 
 
 test('the CAD paths are the website Worker\'s, character for character', () => {
   const worker = readFileSync(new URL('../../../src/worker.ts', import.meta.url), 'utf8');
-  const literal = /^export const CAD_PATHS = (\/.+\/[a-z]*);$/m.exec(worker);
-  assert.ok(literal, 'src/worker.ts exports CAD_PATHS as a regular expression literal');
+  const paths = readFileSync(new URL('../../../src/server/platform-paths.ts', import.meta.url), 'utf8');
+  const literal = /^export const CAD_PATHS = (\/.+\/[a-z]*);$/m.exec(paths);
+  assert.ok(literal, 'src/server/platform-paths.ts exports CAD_PATHS as a regular expression literal');
   assert.equal(CAD_PATHS.toString(), literal[1]);
   assert.match(worker, /\/\^\\\/tasks\(\?:\\\/\|\$\)\/\.test\(url\.pathname\)/, 'the Worker sends /tasks and /tasks/... to Project Management');
   assert.equal(TASKS_PATHS.toString(), '/^\\/tasks(?:\\/|$)/');

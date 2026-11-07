@@ -2,7 +2,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import worker, { CAD_PATHS, type Env } from '../src/worker.ts';
+import worker, { type Env } from '../src/worker.ts';
+import * as entry from '../src/worker.ts';
+import { CAD_PATHS } from '../src/server/platform-paths.ts';
 
 const env = (): Env => ({
   ASSETS: { fetch: async (input) => new Response(`asset:${new URL(String(input instanceof Request ? input.url : input)).pathname}`, { status: 200 }) },
@@ -216,4 +218,9 @@ test('no page or file of the website takes an application\'s path, so those path
   assert.match(toml, /^\[\[services\]\]\nbinding = "CAD"\nservice = "bizomat-mcp"$/m);
   const tasks = fs.readFileSync('apps/work/wrangler.jsonc', 'utf8');
   assert.match(tasks, /"bizomat": \{\n\s+"name": "bizomat-tasks",\n\s+"workers_dev": false,/, 'bizomat-tasks has no address of its own');
+});
+
+test('the Worker\'s main module exports only its handler: the runtime refuses any other value there', () => {
+  assert.deepEqual(Object.keys(entry), ['default']);
+  assert.equal(typeof worker.fetch, 'function');
 });

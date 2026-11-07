@@ -24,6 +24,7 @@ import { handleAssessment } from './server/assessment/handler.ts';
 import { handleStripeWebhook, type StripeEnv } from './server/assessment/stripe.ts';
 import { API_HEADERS, BASELINE_HEADERS, withinEdgeLimit, type RateLimiter } from './server/security.ts';
 import { DOWNLOADS_PATH, handleDownload, type DownloadsBucket } from './server/downloads.ts';
+import { CAD_PATHS, PLATFORM_HOST } from './server/platform-paths.ts';
 
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
@@ -47,24 +48,6 @@ export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnE
 /** Production hosts of the website: bizomat.ai (www.bizomat.ai answers 301 there). kevos.com is the KEVOS site, another Worker. */
 const PRODUCTION_HOSTS = new Set(['bizomat.ai', 'www.bizomat.ai']);
 
-/** The BIZOMAT platform's address: the website at the root, each application under a path of its own. */
-export const PLATFORM_HOST = 'bizomat.ai';
-
-/**
- * Paths of bizomat.ai that belong to CAD Automation. They go to the Worker bizomat-mcp (the CAD binding), or, where it
- * is not bound, to the origin of the bizomat.ai record (the CAD app on Fly) with fetch(request); either way the app
- * answers with its own headers. Besides /cad/... it owns:
- * - the OAuth metadata, which RFC 9728 and RFC 8414 put at the root of the host
- *   (/.well-known/oauth-protected-resource/cad/mcp, /.well-known/oauth-authorization-server/cad);
- * - the addresses programs call at the root, kept for connectors and computers set up while CAD answered there:
- *   the MCP endpoints and the add-in's link (/mcp, /mcp/..., /solidworks/mcp), OAuth (/oauth/...), the Companion's
- *   API (/v2/...) and /healthz;
- * - /.well-known/acme-challenge/..., so Fly can renew the certificate that Cloudflare checks when it connects (always
- *   the origin, see fetch below).
- * The website has none of these paths. The CAD app's list: apps/cad/opensketch/canonical.py (KEEP_PREFIXES).
- */
-export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/oauth\/|^\/v2\/|^\/healthz$|^\/\.well-known\/(?:oauth-protected-resource|oauth-authorization-server|openid-configuration|acme-challenge)(?:\/|$)/;
-
 const redirect = (location: string, status: number, cache = 'public, max-age=86400'): Response =>
   new Response(null, { status, headers: { Location: location, 'Cache-Control': cache } });
 
@@ -87,7 +70,7 @@ declare const __SECURITY_HEADERS__: Record<string, string>;
 const SECURITY_HEADERS: Record<string, string> = typeof __SECURITY_HEADERS__ === 'undefined' ? {} : __SECURITY_HEADERS__;
 
 /** Apply security and caching headers (only where not already present). */
-export function withHeaders(response: Response, url: URL): Response {
+function withHeaders(response: Response, url: URL): Response {
   const res = new Response(response.body, response);
   const isApi = url.pathname.startsWith('/api/');
   for (const set of [SECURITY_HEADERS, BASELINE_HEADERS, isApi ? API_HEADERS : {}]) {
