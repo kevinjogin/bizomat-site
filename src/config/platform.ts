@@ -1,10 +1,12 @@
 // BIZOMAT platform: where each product application lives, and the facts the website states about them.
 //
-// Everything lives under the website's own address (the owner's decision, 5 Nov 2026), and the applications need sign-in:
-//   CAD Automation      (formerly CADOS)          https://bizomat.ai/cad    (the Worker passes /cad to the CAD app)
+// The production addresses, all on bizomat.ai (docs/BIZOMAT-CLOUDFLARE-MIGRATION.md, "Production addresses"):
+//   the website                                   https://bizomat.ai        (www.bizomat.ai answers 301 there)
+//   CAD Automation      (formerly CADOS)          https://bizomat.ai/cad    (the Worker passes /cad to bizomat-mcp)
+//   its MCP endpoint for AI apps                  https://mcp.bizomat.ai/mcp (the Worker bizomat-mcp itself)
 //   Project Management  (formerly KEVOS Work)     https://bizomat.ai/tasks  (the Worker sends /tasks on to the app)
-// The old addresses (cados.kevos.com, work.kevos.com) keep working for programs set up with them. Override with
-// PUBLIC_CAD_APP_URL and PUBLIC_WORK_APP_URL at build time (docs/BIZOMAT-DEPLOYMENT.md, section 6a).
+// The applications need sign-in. The old addresses (cados.kevos.com, work.kevos.com) keep working for programs set up
+// with them. Override with PUBLIC_CAD_APP_URL, PUBLIC_CAD_MCP_URL and PUBLIC_WORK_APP_URL at build time.
 const env = (import.meta as { env?: Record<string, string | undefined> }).env ?? {};
 const clean = (value: string | undefined, fallback: string) => (value && /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i.test(value.trim()) ? value.trim().replace(/\/$/, '') : fallback);
 
@@ -26,11 +28,13 @@ export const PLATFORM = {
 
 export const APP_URLS = {
   cad: clean(env.PUBLIC_CAD_APP_URL, 'https://bizomat.ai/cad'),
+  /** The connector address AI apps add: the MCP server's own host (the Worker bizomat-mcp). */
+  cadMcp: clean(env.PUBLIC_CAD_MCP_URL, 'https://mcp.bizomat.ai/mcp'),
   work: clean(env.PUBLIC_WORK_APP_URL, 'https://bizomat.ai/tasks'),
 } as const;
 
 /** Links into the applications. Both send a visitor who is not signed in to their sign-in page. */
 export const APP_LINKS = {
-  cad: { home: `${APP_URLS.cad}/`, signIn: `${APP_URLS.cad}/login`, dashboard: `${APP_URLS.cad}/dashboard`, docs: `${APP_URLS.cad}/docs`, download: `${APP_URLS.cad}/download/solidworks`, mcp: `${APP_URLS.cad}/mcp` },
+  cad: { home: `${APP_URLS.cad}/`, signIn: `${APP_URLS.cad}/login`, dashboard: `${APP_URLS.cad}/dashboard`, docs: `${APP_URLS.cad}/docs`, download: `${APP_URLS.cad}/download/solidworks`, mcp: APP_URLS.cadMcp },
   work: { home: `${APP_URLS.work}/`, signIn: `${APP_URLS.work}/login`, dashboard: `${APP_URLS.work}/` },
 } as const;

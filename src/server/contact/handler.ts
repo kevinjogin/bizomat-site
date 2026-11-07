@@ -12,7 +12,8 @@ export interface ContactEnv extends MailEnv, RateLimitEnv {
 }
 const MAX_BODY_BYTES = 32_000;
 // Hosts the Turnstile check may report: the BIZOMAT site and its former address, which still serves during the move.
-const HOSTNAMES = new Set(['bizomat.ai', 'www.bizomat.ai', 'kevos.com', 'www.kevos.com']);
+/** The hosts a Turnstile token may come from: the website's production hosts only. */
+const HOSTNAMES = new Set(['bizomat.ai', 'www.bizomat.ai']);
 const SUCCESS = 'Thank you. Your message has been sent.';
 const TURNSTILE_ERROR = 'Please complete a fresh spam check and try again.';
 const LIMITS: Record<string, number> = {
