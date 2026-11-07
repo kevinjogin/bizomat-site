@@ -22,19 +22,19 @@ beforeEach(() => {
     assert.equal(String(url), 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
     assert.equal(init?.method, 'POST'); assert.ok(init?.signal);
     verified.push(new URLSearchParams(String(init?.body)));
-    return Response.json({ success: true, hostname: 'kevos.com', action: 'contact' });
+    return Response.json({ success: true, hostname: 'bizomat.ai', action: 'contact' });
   }) as typeof fetch;
 });
-function request(fields: Record<string, string> = valid, origin = 'https://kevos.com') {
+function request(fields: Record<string, string> = valid, origin = 'https://bizomat.ai') {
   const body = new FormData();
   for (const [key, value] of Object.entries(fields)) body.append(key, value);
-  return new Request('https://kevos.com/api/contact', { method: 'POST', body, headers: { Origin: origin, 'CF-Connecting-IP': '203.0.113.7' } });
+  return new Request('https://bizomat.ai/api/contact', { method: 'POST', body, headers: { Origin: origin, 'CF-Connecting-IP': '203.0.113.7' } });
 }
 const post = (fields: Record<string, string> = valid, e: ContactEnv = env) => handleContact(request(fields), e);
 
 test('contact is POST-only and every method response is JSON', async () => {
   for (const method of ['GET', 'PUT', 'DELETE', 'OPTIONS', 'HEAD']) {
-    const response = await handleContact(new Request('https://kevos.com/api/contact', { method }), env);
+    const response = await handleContact(new Request('https://bizomat.ai/api/contact', { method }), env);
     assert.equal(response.status, 405); assert.equal(response.headers.get('Allow'), 'POST');
     assert.match(response.headers.get('Content-Type')!, /application\/json/); assert.equal((await response.json() as any).success, false);
   }
@@ -101,9 +101,11 @@ test('missing or blank Turnstile tokens never reach verification or email', asyn
 });
 test('failed, replayed, wrong-action and wrong-hostname tokens fail closed', async () => {
   const responses = [
-    { success: false, 'error-codes': ['timeout-or-duplicate'] }, { success: 'true', hostname: 'kevos.com', action: 'contact' },
+    { success: false, 'error-codes': ['timeout-or-duplicate'] }, { success: 'true', hostname: 'bizomat.ai', action: 'contact' },
     { success: true, hostname: 'evil.example', action: 'contact' }, { success: true, hostname: 'localhost', action: 'contact' },
-    { success: true, hostname: 'kevos.com', action: 'signup' }, { success: true },
+    { success: true, hostname: 'bizomat.ai', action: 'signup' }, { success: true },
+    // kevos.com is the KEVOS site on its own Worker: a token made there is not for this site
+    { success: true, hostname: 'kevos.com', action: 'contact' }, { success: true, hostname: 'www.kevos.com', action: 'contact' },
   ];
   for (const value of responses) {
     globalThis.fetch = async () => Response.json(value);
@@ -112,8 +114,11 @@ test('failed, replayed, wrong-action and wrong-hostname tokens fail closed', asy
   assert.equal(sent.length, 0);
 });
 test('both approved production widget hostnames are accepted', async () => {
-  globalThis.fetch = async () => Response.json({ success: true, hostname: 'www.kevos.com', action: 'contact' });
-  assert.equal((await post()).status, 200); assert.equal(sent.length, 1);
+  for (const hostname of ['bizomat.ai', 'www.bizomat.ai']) {
+    globalThis.fetch = async () => Response.json({ success: true, hostname, action: 'contact' });
+    assert.equal((await post()).status, 200, hostname);
+  }
+  assert.equal(sent.length, 2);
 });
 test('Turnstile HTTP failures, invalid JSON and network failures return safe errors', async () => {
   for (const stub of [async () => new Response('provider internals', { status: 500 }), async () => new Response('invalid JSON'), async () => { throw new Error('sensitive provider detail'); }]) {
@@ -139,28 +144,28 @@ test('email delivery rejection never reports success or leaks provider details',
   assert.equal(verified.length, 2);
 });
 test('same-origin checks reject foreign, malformed and downgrade origins without CORS', async () => {
-  for (const origin of ['https://evil.example', 'not a url', 'null', 'http://kevos.com']) {
+  for (const origin of ['https://evil.example', 'not a url', 'null', 'http://bizomat.ai']) {
     const response = await handleContact(request(valid, origin), { ...env, ALLOWED_ORIGINS: origin });
     assert.equal(response.status, 403); assert.equal(response.headers.get('Access-Control-Allow-Origin'), null);
   }
   assert.equal(sent.length, 0);
 });
 test('JSON and URL-encoded inputs work; scalar objects, files and repeated fields do not', async () => {
-  const json = new Request('https://kevos.com/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...valid, consent: true }) });
+  const json = new Request('https://bizomat.ai/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...valid, consent: true }) });
   assert.equal((await handleContact(json, env)).status, 200);
-  const encoded = new Request('https://kevos.com/api/contact', { method: 'POST', body: new URLSearchParams(valid) });
+  const encoded = new Request('https://bizomat.ai/api/contact', { method: 'POST', body: new URLSearchParams(valid) });
   assert.equal((await handleContact(encoded, env)).status, 200);
   for (const body of ['null', '[]', '{bad', JSON.stringify({ ...valid, name: {} }), JSON.stringify({ ...valid, token: 'unexpected' })]) {
-    assert.equal((await handleContact(new Request('https://kevos.com/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }), env)).status, 400);
+    assert.equal((await handleContact(new Request('https://bizomat.ai/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }), env)).status, 400);
   }
   for (const value of ['duplicate', new Blob(['attachment'])]) {
     const body = new FormData(); for (const [key, item] of Object.entries(valid)) body.append(key, item); body.append('name', value);
-    assert.equal((await handleContact(new Request('https://kevos.com/api/contact', { method: 'POST', body }), env)).status, 400);
+    assert.equal((await handleContact(new Request('https://bizomat.ai/api/contact', { method: 'POST', body }), env)).status, 400);
   }
 });
 test('unsupported types and actual oversized bodies are rejected even without Content-Length', async () => {
-  assert.equal((await handleContact(new Request('https://kevos.com/api/contact', { method: 'POST', body: 'plain text' }), env)).status, 415);
-  const req = new Request('https://kevos.com/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'x'.repeat(32_001) }) });
+  assert.equal((await handleContact(new Request('https://bizomat.ai/api/contact', { method: 'POST', body: 'plain text' }), env)).status, 415);
+  const req = new Request('https://bizomat.ai/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'x'.repeat(32_001) }) });
   assert.equal(req.headers.get('Content-Length'), null); assert.equal((await handleContact(req, env)).status, 413);
   assert.equal(verified.length, 0); assert.equal(sent.length, 0);
 });

@@ -37,10 +37,12 @@ test('hashed assets get long caching; pages.dev is kept out of search engines', 
 });
 
 test('plain HTTP page requests on the production domain are upgraded to HTTPS', async () => {
-  const res = await worker.fetch(new Request('http://kevos.com/services/?a=1'), env());
+  const res = await worker.fetch(new Request('http://bizomat.ai/services/?a=1'), env());
   assert.equal(res.status, 301);
-  assert.equal(res.headers.get('Location'), 'https://kevos.com/services/?a=1');
-  assert.equal((await worker.fetch(new Request('https://kevos.com/services/'), env())).status, 200);
+  assert.equal(res.headers.get('Location'), 'https://bizomat.ai/services/?a=1');
+  assert.equal((await worker.fetch(new Request('https://bizomat.ai/services/'), env())).status, 200);
+  // kevos.com is the KEVOS site on its own Worker: this one does not answer for it as a production host
+  assert.equal((await worker.fetch(new Request('http://kevos.com/services/'), env())).status, 200);
 });
 
 // ----------------------------------------------------------------------------- bizomat.ai: the applications
@@ -143,13 +145,14 @@ test('with the CAD binding, CAD Automation\'s paths go to bizomat-mcp as they we
   });
 });
 
-test('bizomat.ai/tasks/... reaches Project Management: its Worker once bound, its current address until then', async () => {
-  for (const [path, to] of [['/tasks', 'https://work.kevos.com/'], ['/tasks/', 'https://work.kevos.com/'], ['/tasks/login', 'https://work.kevos.com/login'], ['/tasks/b/7?view=board', 'https://work.kevos.com/b/7?view=board']]) {
-    const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
-    assert.equal(res.status, 302, path);
-    assert.equal(res.headers.get('Location'), to, path);
-    assert.equal(res.headers.get('Cache-Control'), 'no-store', `${path}: temporary`);
-  }
+test('bizomat.ai/tasks/... reaches Project Management: its Worker once bound, the origin until then', async () => {
+  await withOrigin(async (seen) => {
+    for (const path of ['/tasks', '/tasks/', '/tasks/login', '/tasks/b/7?view=board']) {
+      const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
+      assert.equal(await res.text(), `origin:${path.split('?')[0]}`, path);
+    }
+    assert.equal(seen.at(-1)?.url, 'https://bizomat.ai/tasks/b/7?view=board');
+  });
   const got: Request[] = [];
   const bound: Env = { ...env(), TASKS: { fetch: async (req) => (got.push(req), new Response('tasks app')) } };
   const res = await worker.fetch(new Request('https://bizomat.ai/tasks/b/7?view=board', { method: 'POST', body: 'x' }), bound);

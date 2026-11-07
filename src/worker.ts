@@ -14,7 +14,7 @@
 // On bizomat.ai the applications live under the website's address (routeApps below):
 //   /cad/...   → CAD Automation: the Worker bizomat-mcp (the CAD service binding); without it, the origin of the
 //                bizomat.ai record (Fly)
-//   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, a redirect
+//   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, the origin
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -31,7 +31,7 @@ interface ServiceBinding {
 }
 export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnEnv {
   ASSETS: AssetsBinding;
-  /** Project Management's Worker, bizomat-tasks (wrangler.toml [[services]]). */
+  /** Project Management's Worker, bizomat-tasks (wrangler.toml [[services]]); without it, /tasks goes to the origin. */
   TASKS?: ServiceBinding;
   /** CAD Automation's Worker, bizomat-mcp (wrangler.toml [[services]]); without it, CAD_PATHS go to the origin. */
   CAD?: ServiceBinding;
@@ -40,8 +40,8 @@ export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnE
   FORM_LIMITER?: RateLimiter;
 }
 
-/** Production hosts of the website: bizomat.ai, and kevos.com while it still serves during the move. */
-const PRODUCTION_HOSTS = new Set(['bizomat.ai', 'www.bizomat.ai', 'kevos.com', 'www.kevos.com']);
+/** Production hosts of the website: bizomat.ai (www.bizomat.ai answers 301 there). kevos.com is the KEVOS site, another Worker. */
+const PRODUCTION_HOSTS = new Set(['bizomat.ai', 'www.bizomat.ai']);
 
 /** The BIZOMAT platform's address: the website at the root, each application under a path of its own. */
 export const PLATFORM_HOST = 'bizomat.ai';
@@ -61,9 +61,6 @@ export const PLATFORM_HOST = 'bizomat.ai';
  */
 export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/oauth\/|^\/v2\/|^\/healthz$|^\/\.well-known\/(?:oauth-protected-resource|oauth-authorization-server|openid-configuration|acme-challenge)(?:\/|$)/;
 
-/** Project Management's current address, where /tasks/... is sent until that app serves the path itself. */
-export const TASKS_FALLBACK = 'https://work.kevos.com';
-
 const redirect = (location: string, status: number, cache = 'public, max-age=86400'): Response =>
   new Response(null, { status, headers: { Location: location, 'Cache-Control': cache } });
 
@@ -76,11 +73,8 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
   if (CAD_PATHS.test(url.pathname)) return env.CAD ? env.CAD.fetch(request) : fetch(request);
-  if (/^\/tasks(?:\/|$)/.test(url.pathname)) {
-    if (env.TASKS) return env.TASKS.fetch(request);
-    const rest = url.pathname.slice('/tasks'.length) || '/';
-    return redirect(`${TASKS_FALLBACK}${rest}${url.search}`, 302, 'no-store');
-  }
+  // without the binding, the origin of the bizomat.ai record (Fly, until it is retired), as for CAD_PATHS
+  if (/^\/tasks(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   return null;
 }
 

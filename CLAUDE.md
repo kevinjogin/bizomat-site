@@ -65,7 +65,11 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `wrangler.toml` is the Worker `bizomat`, and `scripts/deploy-guard.mjs` (its `[build]`) refuses any other name and any
   kevos.com route. Today the BIZOMAT website runs on Fly (`fly.website.toml`, `bizomat.ps1 deploy website`).
 - **Cloudflare migration (owner's request, 6 Nov 2026; plan and progress in `docs/BIZOMAT-CLOUDFLARE-MIGRATION.md`):**
-  bizomat.ai, CAD Automation in a Cloudflare Container, Project Management as its own Worker. `wrangler.toml` is the
+  bizomat.ai, CAD Automation in a Cloudflare Container, Project Management as its own Worker. **Production addresses
+  (owner, 7 Nov 2026), the single source of truth (that doc, "Production addresses"):** the website `https://bizomat.ai`
+  (Worker `bizomat`; www answers 301 there), CAD Automation `https://bizomat.ai/cad`, its MCP endpoint
+  `https://mcp.bizomat.ai/mcp` (Worker `bizomat-mcp`, its own subdomain: the one exception to "no subdomains"),
+  Project Management `https://bizomat.ai/tasks`. bizomat.ai only, no other domain. `wrangler.toml` is the
   Worker `bizomat`: zone routes `bizomat.ai/*` and `www.bizomat.ai/*`, which do nothing while those records are DNS only
   (the switch is turning them to Proxied; the way back is turning them back), `workers_dev` for checks before that,
   `TASKS` bound to `bizomat-tasks` and `CAD` to `bizomat-mcp` (CADOS `cloudflare/mcp`: the CAD server's container,

@@ -3,7 +3,7 @@
 # is not a file: the site's APIs, and the applications under bizomat.ai (routeApps): /cad and CAD Automation's root
 # paths to the Worker bizomat-mcp, /tasks to the Worker bizomat-tasks, both by service binding.
 #
-# Deploys come from the owner's laptop only (`.\bizomat.ps1 cf deploy website`): [build] runs
+# Deploys come from the owner's laptop only (`.\cloudflare.ps1 deploy website`): [build] runs
 # scripts/deploy-guard.mjs, which refuses Cloudflare's Workers Builds and any checkout that is not exactly
 # origin/main. kevos.com is not here: it stays the KEVOS site on its own Worker (throbbing-block-6c61).
 name = "bizomat"
