@@ -1,7 +1,7 @@
 // Test results shown in the Engine Room (/engine-room/#tests). Each row is a suite that was run, with the date and the count it reported.
 // Update a row only from a real run (the command is in `how`); never round up or carry a result across a change.
 export interface Verification {
-  product: 'CAD Automation' | 'Project Management' | 'Website and Resources' | 'Platform';
+  product: 'CAD Automation' | 'Project Management' | 'Website' | 'Platform';
   suite: string;
   how: string;
   result: string;
@@ -16,8 +16,9 @@ export const VERIFICATION: readonly Verification[] = [
   { product: 'Project Management', suite: 'The same suite and the runtime tests on Node 22 (the BIZOMAT platform)', how: 'npm run test:node (apps/work)', result: '293 of 293 passed', date: '5 Nov 2026' },
   { product: 'Project Management', suite: 'Browser tests, desktop and phone, on both runtimes', how: 'npm run test:e2e and test:e2e:node (apps/work)', result: '9 of 9 passed on each', date: '5 Nov 2026' },
   { product: 'Project Management', suite: 'Data migration dry run: Cloudflare D1 and R2 to Node, and back', how: 'node scripts/migrate/dry-run.mjs (apps/work)', result: '45 of 45 checks passed', date: '5 Nov 2026' },
-  { product: 'Website and Resources', suite: 'Site, search, tools and content tests', how: 'npm test (repository root)', result: '1,490 of 1,490 passed', date: '5 Nov 2026' },
-  { product: 'Website and Resources', suite: 'Build quality gate: metadata, one H1, links, images, JSON-LD', how: 'npm run build', result: '4,441 pages verified', date: '5 Nov 2026' },
+  { product: 'Website', suite: 'Site, routing, redirect and contact tests', how: 'npm test (repository root)', result: '94 of 94 passed', date: '8 Nov 2026' },
+  { product: 'Website', suite: 'Build quality gate: metadata, one H1, links, images, JSON-LD, retired sections', how: 'npm run build', result: '12 pages verified', date: '8 Nov 2026' },
+  { product: 'Platform', suite: 'CAD Automation, Project Management and the proxy together on one machine, smoke test through the proxy', how: 'node infrastructure/smoke/smoke.mjs (hosts mode)', result: '57 of 57 checks passed', date: '8 Nov 2026' },
   { product: 'Platform', suite: 'Edge proxy: routing, headers, streaming, WebSockets, long polls', how: 'node --test infrastructure/proxy', result: '60 of 60 passed', date: '5 Nov 2026' },
   { product: 'Platform', suite: 'The production image with all four services, smoke-tested through the proxy (GitHub Actions)', how: 'BIZOMAT CI: image and local stack', result: '39 of 39 checks passed', date: '5 Nov 2026' },
 ];

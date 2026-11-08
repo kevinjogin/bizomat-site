@@ -94,3 +94,13 @@ test('every retired address answers 301 with a retained page, the same in _redir
   assert.equal(exact.get('/about/')?.to, '/engine-room/');
   assert.equal(exact.get('/proof-of-work/')?.to, '/engine-room/');
 });
+
+test('no page, component or data file names the retired Resources, Tools, Library or AI search to visitors', () => {
+  const files = [...walk(join(root, 'src/pages')), ...walk(join(root, 'src/components')), ...walk(join(root, 'src/data')), ...walk(join(root, 'src/layouts'))];
+  const offenders = files.filter((f) => {
+    // comments may record history; visible text may not
+    const text = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\/|^\s*\/\/.*$|<!--[\s\S]*?-->/gm, '');
+    return /\bResources\b|\bCalculators\b|AI [Ss]earch|'Library'|"Library"|>Library</.test(text);
+  }).map((f) => f.slice(root.length + 1));
+  assert.deepEqual(offenders, []);
+});

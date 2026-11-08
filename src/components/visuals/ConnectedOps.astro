@@ -1,6 +1,7 @@
 ---
 // Hero scene: BIZOMAT at the centre of connected business operations. Requests travel from the AI assistant into
-// BIZOMAT and out to SOLIDWORKS, projects, teams and resources. A conceptual illustration, labelled as one.
+// BIZOMAT and out to SOLIDWORKS and its exports, and to projects, teams and their automations: only what CAD
+// Automation and Project Management do (src/data/platform-catalog.ts). A conceptual illustration, labelled as one.
 import { ARROW_PATH, B_PATH, MARK_SIZE, MARK_TRANSFORM } from '../../data/bizomat-brand.ts';
 import '../../styles/visuals.css';
 
@@ -11,8 +12,8 @@ const nodes = [
   { x: 432, y: 36, t: 'SOLIDWORKS', s: 'Parts · drawings' },
   { x: 8, y: 195, t: 'Projects', s: 'Boards · timelines' },
   { x: 460, y: 195, t: 'Teams', s: 'Tasks · updates' },
-  { x: 36, y: 354, t: 'Tools', s: 'Calculators' },
-  { x: 432, y: 354, t: 'Library', s: 'Books · guides' },
+  { x: 36, y: 354, t: 'Automations', s: 'Rules · dashboards' },
+  { x: 432, y: 354, t: 'Exports', s: 'STEP · PDF · DWG' },
 ];
 // Links: AI assistant into BIZOMAT, then BIZOMAT out to each part of the work.
 const edges = [
@@ -26,7 +27,7 @@ const edges = [
 ---
 <figure class:list={['viz', 'viz--bare', 'ops']} aria-labelledby={`${id}-cap`}>
   <svg viewBox="0 0 600 440" role="img" aria-labelledby={`${id}-title`}>
-    <title id={`${id}-title`}>BIZOMAT in the middle of connected work: an AI assistant, SOLIDWORKS, projects, teams, tools and the library, linked through BIZOMAT.</title>
+    <title id={`${id}-title`}>BIZOMAT in the middle of connected work: an AI assistant, SOLIDWORKS and its exports, projects, teams and their automations, linked through BIZOMAT.</title>
     <defs>
       <pattern id={`${id}-grid`} width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" class="v-grid" /></pattern>
     </defs>

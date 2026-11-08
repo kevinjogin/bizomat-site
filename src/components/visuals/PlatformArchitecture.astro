@@ -7,14 +7,14 @@ import '../../styles/visuals.css';
 interface Props { id?: string }
 const { id = 'arch' } = Astro.props;
 const services = [
-  { y: 96, t: 'Website and AI search', s: 'Node · static pages · public', d: 'no customer data' },
+  { y: 96, t: 'Website', s: 'Node · static pages · public', d: 'no customer data' },
   { y: 176, t: 'Project Management', s: 'Node · Hono · SQLite', d: 'volume: projects, files' },
   { y: 256, t: 'CAD Automation', s: 'Python · OpenCascade · MCP', d: 'volume: accounts, devices' },
 ];
 ---
 <figure class="viz" aria-labelledby={`${id}-cap`}>
   <svg viewBox="0 0 680 360" role="img" aria-labelledby={`${id}-title`}>
-    <title id={`${id}-title`}>Visitors, teams and AI assistants reach one BIZOMAT app over HTTPS. A proxy routes each host to its own service: the website with AI search, Project Management with its database and files, and CAD Automation with its accounts and devices. CAD commands go to the BIZOMAT Companion on the customer's Windows PC, which passes them to the add-in in SOLIDWORKS.</title>
+    <title id={`${id}-title`}>Visitors, teams and AI assistants reach one BIZOMAT app over HTTPS. A proxy routes each host to its own service: the website, Project Management with its database and files, and CAD Automation with its accounts and devices. CAD commands go to the BIZOMAT Companion on the customer's Windows PC, which passes them to the add-in in SOLIDWORKS.</title>
     <text class="v-sub" x="16" y="24">People and assistants</text>
     <text class="v-sub" x="182" y="24">BIZOMAT platform (one app, Sydney)</text>
     <text class="v-sub" x="530" y="24">Your Windows PC</text>
