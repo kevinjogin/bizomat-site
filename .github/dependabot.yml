@@ -1,17 +1,29 @@
-# Weekly dependency and GitHub Actions update checks. Pull requests run the Verify workflow before merge.
+# Dependency update checks. GitHub Free: every pull request Dependabot opens runs BIZOMAT CI (Actions minutes), so the
+# checks are monthly, grouped into one pull request per ecosystem, and leave major versions (which need a person to
+# read the changes) to a deliberate update.
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
     schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
+      interval: monthly
+    open-pull-requests-limit: 2
     groups:
-      astro:
-        patterns: ['astro', '@astrojs/*']
+      website:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
+    open-pull-requests-limit: 1
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

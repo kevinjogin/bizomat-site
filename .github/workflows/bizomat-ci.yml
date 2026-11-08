@@ -1,6 +1,13 @@
 # BIZOMAT CI: the website, CAD MCP (apps/cad), Task Management (apps/work), the edge proxy, the platform image and
-# the single 1 GB machine. Runs on every push and pull request, and as the gate of every deploy (deploy.yml calls it).
-# Read-only: no secrets, nothing deployed, nothing pushed.
+# the single 1 GB machine. Read-only: no secrets, nothing deployed, nothing pushed.
+#
+# GitHub Free (private repository: a monthly allowance of Actions minutes, shared by every private repository of the
+# account), so it runs only when it is useful:
+#   pull requests     the fast jobs, once per change (no second run for the same commit's push); not for changes
+#                     that only touch documentation
+#   by hand           Actions > BIZOMAT CI > Run workflow; `image` also builds the platform image and runs the single
+#                     1 GB machine (about 30-40 minutes of a runner)
+#   from deploy.yml   the fast jobs (deploy.yml builds the image once and tests that same image itself)
 #
 # Jobs: website (brand copies, verify), work (lint, types, tests, builds incl. the Node server), cad (pytest in two
 # parts, npm test), proxy (tests, script and config checks, the single-app tests), image (Docker build of
@@ -9,17 +16,26 @@
 name: BIZOMAT CI
 
 on:
-  push:
-    branches-ignore: [main] # main is checked by deploy.yml, which calls this workflow before it deploys
   pull_request:
+    paths-ignore: ["docs/**", "**/*.md"]
   workflow_dispatch:
+    inputs:
+      image:
+        description: Also build the platform image and run the single 1 GB machine (about 30-40 runner minutes)
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      image:
+        type: boolean
+        default: false
 
 permissions:
   contents: read
 
+# One run per workflow and branch: a newer push cancels the older run (called from deploy.yml, the group is Deploy's).
 concurrency:
-  group: bizomat-ci-${{ github.event_name }}-${{ github.ref }}
+  group: bizomat-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -152,7 +168,7 @@ jobs:
           node --check infrastructure/local/stub-upstream.mjs
           python3 -m py_compile infrastructure/migrate/lib/*.py infrastructure/migrate/work/*.py infrastructure/fly/*.py infrastructure/fly/test/*.py
       - name: Shell scripts (shellcheck)
-        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/adopt-cados-volume.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/local/*.sh
+        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/adopt-cados-volume.sh infrastructure/fly/memory-report.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/local/*.sh
       # The single machine: the cados volume's adoption (byte for byte, resume, refusals, undo) and the supervisor of
       # cad, work and proxy (own process group each, restart, SIGTERM). Root, as the entrypoint requires.
       - name: Single application (adopt-cados-volume.sh, bizomat-entrypoint all)
@@ -167,6 +183,7 @@ jobs:
   image:
     name: image and local stack
     needs: proxy
+    if: inputs.image
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -189,38 +206,8 @@ jobs:
         run: bash infrastructure/fly/test/entrypoint.test.sh "$BIZOMAT_IMAGE"
       - name: Migration round trip in the image (export, restore, verify)
         run: docker run --rm --network none -v "$PWD/infrastructure/migrate/test:/t:ro" "$BIZOMAT_IMAGE" bash /t/roundtrip.sh
-      # The production Machine as fly.toml runs it: one container, `bizomat-entrypoint all` (cad, work, the proxy with
-      # the website inside), capped at 1 GB with no extra swap. The smoke test runs inside it through the proxy, then
-      # the memory it used is reported. A test owner account is made so CAD MCP starts (an empty CAD server waits).
       - name: Single machine in 1 GB (smoke test inside, memory reported)
-        run: |
-          set -euo pipefail
-          docker volume create bz1g >/dev/null
-          docker run --rm -v bz1g:/data "$BIZOMAT_IMAGE" bash -c 'install -d -o 10004 -g 10004 -m 0700 /data/cad && cd /app/cad && \
-            setpriv --reuid=10004 --regid=10004 --init-groups env OPENSKETCH_DATA=/data/cad HOME=/tmp /opt/cad/venv/bin/python -c \
-            "from opensketch import accounts; accounts.create_owner(\"owner@example.invalid\", \"CI Owner\", \"ci-only-passphrase-123456\")"'
-          envs=()
-          while IFS='=' read -r k v; do envs+=(-e "$k=$v"); done < <(python3 -c 'import tomllib; [print(f"{k}={v}") for k, v in tomllib.load(open("fly.toml", "rb"))["env"].items()]')
-          # no Fly edge in front here: the proxy treats the local requests as HTTPS, as the compose stack does
-          docker run -d --name bz1g --memory 1g --memory-swap 1g -v bz1g:/data "${envs[@]}" -e PROXY_ASSUME_HTTPS=1 "$BIZOMAT_IMAGE" /usr/local/bin/bizomat-entrypoint all
-          ok=""
-          for _ in $(seq 1 60); do
-            if docker exec bz1g node -e "fetch('http://127.0.0.1:8080/__proxy/ready').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"; then ok=1; break; fi
-            sleep 5
-          done
-          [ -n "$ok" ] || { docker logs bz1g | tail -80; echo "::error::the single machine did not become ready"; exit 1; }
-          docker exec bz1g node /usr/local/lib/bizomat/smoke/smoke.mjs http://127.0.0.1:8080 --mode hosts
-          docker exec bz1g sh -c 'for p in /proc/[0-9]*; do c=$(tr "\0" " " <$p/cmdline 2>/dev/null); r=$(awk "/VmRSS/{print \$2}" $p/status 2>/dev/null); [ -n "$r" ] && echo "$r $c"; done' \
-            | sort -rn | head -8 | awk '{printf "%6d MB  %s %s %s\n", $1/1024, $2, $3, $4}' | tee -a "$GITHUB_STEP_SUMMARY"
-          used="$(docker stats --no-stream --format '{{.MemUsage}}' bz1g)"
-          echo "Single machine, all services: $used (limit 1 GiB)" | tee -a "$GITHUB_STEP_SUMMARY"
-          [ "$(docker inspect -f '{{.State.OOMKilled}}' bz1g)" = false ] || { echo "::error::out of memory at 1 GB"; exit 1; }
-      - name: Single machine logs
-        if: failure()
-        run: docker logs bz1g 2>&1 | tail -150 || true
-      - name: Remove the single machine
-        if: always()
-        run: docker rm -f bz1g >/dev/null 2>&1 || true; docker volume rm bz1g >/dev/null 2>&1 || true
+        run: bash infrastructure/fly/test/single-machine-1gb.sh "$BIZOMAT_IMAGE" "$GITHUB_STEP_SUMMARY"
       - name: Start the local stack (the same image)
         run: docker compose -f infrastructure/local/compose.yml up -d --wait --wait-timeout 300 --no-build
       - name: Smoke test through the proxy

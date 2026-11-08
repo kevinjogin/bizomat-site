@@ -2,14 +2,15 @@
 # it is trusted, whether it still reaches a trusted root on computers that only know Let's Encrypt's older roots
 # (ISRG Root X1 and X2: Windows and older phones until they add the 2025 roots), how long until it expires, and anything
 # a page loads over plain http (which also makes a browser say "Not secure"). Read only: it changes nothing.
-# Runs every day, by hand (Actions > Live TLS > Run workflow) and on a pull request that changes it. Fails when a
+# Runs once a week (GitHub Free: about 1 runner minute a run), by hand (Actions > Live TLS > Run workflow) and on a
+# pull request that changes it. Fails when a
 # certificate is not trusted, does not reach the older roots, or expires within 14 days.
 name: Live TLS
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "41 20 * * *"   # 07:41 in Sydney
+    - cron: "41 20 * * 0"   # Monday 07:41 in Sydney
   pull_request:
     paths:
       - .github/workflows/live-tls.yml

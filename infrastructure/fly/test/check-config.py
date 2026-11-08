@@ -2,7 +2,7 @@
 
     python3 infrastructure/fly/test/check-config.py fly.toml
 
-The production rules (docs/BIZOMAT-SINGLE-APP.md): the app is cados in syd; one process group, `all`, that runs the
+The production rules (docs/BIZOMAT-SINGLE-APP.md): the app is cados in syd; one process group, `app` (the existing Machine's), that runs the
 entrypoint's `all` role with cad, work and proxy (the website inside the proxy); exactly one [[vm]] of 1 GB; one
 volume, the cados app's existing opensketch_data, at /data; the only public service is the proxy's port 8080 with the
 Machine always on; a check for each service; restart always; CAD geometry in the server process (the 1 GB budget);
@@ -24,8 +24,10 @@ def check(path: str) -> list[str]:
     if c.get("primary_region") != "syd":
         bad.append("primary_region is not syd")
     procs = c.get("processes", {})
-    if list(procs) != ["all"] or procs.get("all") != "/usr/local/bin/bizomat-entrypoint all":
-        bad.append("one process group, all = /usr/local/bin/bizomat-entrypoint all")
+    # "app": the group the existing cados Machine is in. Any other name makes flyctl create new Machines and an empty
+    # volume for them and remove the old Machine.
+    if list(procs) != ["app"] or procs.get("app") != "/usr/local/bin/bizomat-entrypoint all":
+        bad.append("one process group, app = /usr/local/bin/bizomat-entrypoint all (the existing Machine's group)")
     env = c.get("env", {})
     if env.get("BIZOMAT_ROLES") != "cad work proxy":
         bad.append("BIZOMAT_ROLES must be 'cad work proxy' (CAD MCP, Task Management, the proxy)")
@@ -48,24 +50,24 @@ def check(path: str) -> list[str]:
     if "services" in c:
         bad.append("[[services]] is not used: the only public service is [http_service] on the proxy's port")
     hs = c.get("http_service", {})
-    if hs.get("processes") != ["all"] or hs.get("internal_port") != 8080:
-        bad.append("[http_service] must be the proxy's port 8080 on the all group")
+    if hs.get("processes") != ["app"] or hs.get("internal_port") != 8080:
+        bad.append("[http_service] must be the proxy's port 8080 on the app group")
     if hs.get("auto_stop_machines") != "off" or hs.get("min_machines_running") != 1:
         bad.append("the one Machine stays on: auto_stop_machines = off, min_machines_running = 1")
-    ports = {k.get("port") for k in c.get("checks", {}).values() if k.get("processes") == ["all"]}
+    ports = {k.get("port") for k in c.get("checks", {}).values() if k.get("processes") == ["app"]}
     for port, what in ((8080, "proxy"), (8001, "cad"), (8002, "work")):
         if port not in ports:
             bad.append(f"no check for {what} (port {port})")
     vms = c.get("vm", [])
-    if len(vms) != 1 or vms[0].get("processes") != ["all"]:
-        bad.append("exactly one [[vm]], for the all group")
+    if len(vms) != 1 or vms[0].get("processes") != ["app"]:
+        bad.append("exactly one [[vm]], for the app group")
     elif str(vms[0].get("memory", "")).lower() not in ("1gb", "1024", "1024mb") and vms[0].get("memory_mb") != 1024:
         bad.append(f"the Machine has 1 GB (memory = '1gb'), not {vms[0].get('memory') or vms[0].get('memory_mb')!r}: a change needs the owner's approval")
     mounts = c.get("mounts", [])
-    if len(mounts) != 1 or mounts[0].get("source") != "opensketch_data" or mounts[0].get("destination") != "/data":
+    if len(mounts) != 1 or mounts[0].get("source") != "opensketch_data" or mounts[0].get("destination") != "/data" or mounts[0].get("processes") != ["app"]:
         bad.append("one volume: the cados app's existing opensketch_data at /data")
-    if not any(r.get("policy") == "always" and r.get("processes") == ["all"] for r in c.get("restart", [])):
-        bad.append("[[restart]] policy always for the all group")
+    if not any(r.get("policy") == "always" and r.get("processes") == ["app"] for r in c.get("restart", [])):
+        bad.append("[[restart]] policy always for the app group")
     return bad
 
 

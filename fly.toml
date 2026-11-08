@@ -39,8 +39,10 @@ swap_size_mb = 512
   max_unavailable = 1
   wait_timeout = "10m"
 
+# The group keeps Fly's default name, "app": the cados Machine is in it today. A new name would make flyctl create a
+# new Machine (two, with its default high availability) and a new, empty volume for it, and remove the old Machine.
 [processes]
-  all = "/usr/local/bin/bizomat-entrypoint all"
+  app = "/usr/local/bin/bizomat-entrypoint all"
 
 [env]
   # The services this Machine runs, and the website inside the proxy (no separate web process).
@@ -67,7 +69,7 @@ swap_size_mb = 512
   OPENSKETCH_CAD_WORKERS = "0"
 
 [http_service]
-  processes = ["all"]
+  processes = ["app"]
   internal_port = 8080
   force_https = true
   # One Machine, always on: the website, MCP connections and the add-ins' long polls need it available.
@@ -84,7 +86,7 @@ swap_size_mb = 512
 
 [checks]
   [checks.proxy]
-    processes = ["all"]
+    processes = ["app"]
     type = "http"
     port = 8080
     method = "get"
@@ -93,7 +95,7 @@ swap_size_mb = 512
     timeout = "5s"
     grace_period = "20s"
   [checks.cad]
-    processes = ["all"]
+    processes = ["app"]
     type = "http"
     port = 8001
     method = "get"
@@ -103,7 +105,7 @@ swap_size_mb = 512
     # OpenCascade loads slowly
     grace_period = "120s"
   [checks.work]
-    processes = ["all"]
+    processes = ["app"]
     type = "http"
     port = 8002
     method = "get"
@@ -119,7 +121,7 @@ swap_size_mb = 512
 [[mounts]]
   source = "opensketch_data"
   destination = "/data"
-  processes = ["all"]
+  processes = ["app"]
   snapshot_retention = 30
   scheduled_snapshots = true
   auto_extend_size_threshold = 80
@@ -128,10 +130,10 @@ swap_size_mb = 512
 
 # 1 GB, as decided. Two shared vCPUs so a CAD geometry call does not starve the proxy and Task Management.
 [[vm]]
-  processes = ["all"]
+  processes = ["app"]
   size = "shared-cpu-2x"
   memory = "1gb"
 
 [[restart]]
   policy = "always"
-  processes = ["all"]
+  processes = ["app"]

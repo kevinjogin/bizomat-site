@@ -14,7 +14,7 @@
 #                   app's public IP addresses (bizomat.fly.dev stops answering) and stop its Machines. Its volumes,
 #                   snapshots and the app itself are KEPT for the rollback window. Type RETIRE.
 # Destroying the bizomat app (and with it its volumes) is not done here: only the owner, in the Fly dashboard, after
-# the rollback window (docs/BIZOMAT-SINGLE-APP.md, section 7).
+# the rollback window (docs/BIZOMAT-SINGLE-APP.md, section 6.6).
 #
 # Secrets: FLY_API_TOKEN (deploy token for cados) and FLY_BIZOMAT_TOKEN (deploy token for bizomat: fly tokens create
 # deploy -a bizomat; delete it once bizomat is retired). Personal data never leaves the two Machines and this runner:
@@ -118,7 +118,7 @@ jobs:
           set -euo pipefail
           flyctl machines list --app "$NEW" --json >m.json
           [ "$(jq 'length' m.json)" = 1 ] || { echo "::error::cados must have exactly one Machine"; exit 1; }
-          [ "$(jq -r '.[0].config.metadata.fly_process_group' m.json)" = all ] || { echo "::error::cados does not run this repository's image yet: run Deploy with first_switch = SWITCH first"; exit 1; }
+          [ -n "$(jq -r '.[0].config.env.BIZOMAT_ROLES // empty' m.json)" ] || { echo "::error::cados does not run this repository's image yet: run Deploy with first_switch = SWITCH first"; exit 1; }
           {
             echo "NEW_MACHINE=$(jq -r '.[0].id' m.json)"
             echo "STAMP=$(date -u +%Y%m%dT%H%M%SZ)"
