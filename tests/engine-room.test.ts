@@ -62,6 +62,12 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   }
   assert.match(page, /<ProofOfWork \/>/, 'the engineering record');
   assert.match(page, /Founder, BIZOMAT/, 'the founder letter is signed');
+  assert.match(page, /<FounderPortrait name=\{PLATFORM\.founder\} \/>/, 'the founder portrait sits under the founder heading');
+  const portrait = read('src/components/visuals/FounderPortrait.astro');
+  assert.match(portrait, /prefers-reduced-motion: no-preference/, 'the portrait animates only when motion is welcome');
+  assert.match(portrait, /<img class="fp__photo" src="\/engine-room\/founder\.webp" alt=/, 'the founder photo, with alt text');
+  assert.ok(existsSync('public/engine-room/founder.webp'), 'the cut-out photo is published');
+  assert.doesNotMatch(portrait, /<script|style="/, 'no script or inline style (CSP)');
   assert.match(page, /VERIFICATION\.map/, 'the test record');
   assert.match(page, /'@type': 'AboutPage'/);
   assert.match(read('src/config/site.ts'), /\{ href: '\/engine-room\/', label: 'The Engine Room' \}/);

@@ -1,0 +1,74 @@
+---
+// The founder's portrait for The Engine Room (owner's request, 8 Nov 2026): the founder's own photograph, cut from
+// its white background (public/engine-room/founder.webp, transparent), set on a CAD-style plate drawn in the theme's
+// own colours (grid, centre lines, a teal ring, corner marks), so it sits right in the light and the dark theme. On
+// arrival the plate draws and the photo rises in; a short teal arc then keeps circling the ring. CSS only (no script,
+// nothing inline: the CSP forbids it). The finished state is the base style, so with reduced motion it shows at once
+// as a still and the circling arc is hidden.
+import '../../styles/visuals.css';
+
+interface Props { id?: string; name: string }
+const { id = 'founder-portrait', name } = Astro.props;
+const S = 400; // the photo is 400 x 400; the plate uses the same units
+const grid = Array.from({ length: S / 20 - 1 }, (_, i) => (i + 1) * 20);
+// The ring is a path (not a circle) so pathLength works in every browser.
+const ring = 'M210 22a138 138 0 1 1 0 276a138 138 0 1 1 0-276';
+---
+<figure class="viz fp" aria-labelledby={`${id}-cap`}>
+  <div class="fp__stage">
+    <svg class="fp__plate" viewBox={`0 0 ${S} ${S}`} aria-hidden="true">
+      <rect class="fp__bg" width={S} height={S} />
+      <g class="fp__grid">
+        {grid.map((v) => <path class:list={[v % 100 === 0 && 'fp__major']} d={`M${v} 0V${S}M0 ${v}H${S}`} />)}
+      </g>
+      <circle class="fp__disc" cx="210" cy="160" r="138" />
+      <path class="fp__ring" d={ring} pathLength="1" />
+      <path class="fp__orbit" d={ring} pathLength="1" />
+      <path class="fp__centre fp__centre--h" d="M12 140H388" />
+      <path class="fp__centre fp__centre--v" d="M210 12V388" />
+      <g class="fp__notes">
+        <path class="fp__marks" d="M12 32V12H32M368 12H388V32" />
+        <text class="fp__label" x="20" y="27">BIZOMAT · FOUNDER</text>
+        <text class="fp__label" x="380" y="27" text-anchor="end">FIG. 01</text>
+      </g>
+    </svg>
+    <img class="fp__photo" src="/engine-room/founder.webp" alt={`${name}, founder of BIZOMAT`} width="400" height="400" decoding="async" />
+  </div>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span><strong>{name}</strong> · Founder, BIZOMAT</span></figcaption>
+</figure>
+
+<style>
+  .fp { max-width: 380px; }
+  .fp__stage { position: relative; aspect-ratio: 1; }
+  .fp__plate, .fp__photo { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .fp__photo { display: block; object-fit: contain; }
+  .fp__bg { fill: var(--paper-2); }
+  .fp__grid path { fill: none; stroke: var(--line); stroke-width: .6; }
+  .fp__grid .fp__major { stroke: var(--line-strong); stroke-width: .8; }
+  .fp__disc { fill: var(--accent-soft); }
+  .fp__ring { fill: none; stroke: var(--brand-mark); stroke-width: 1.4; opacity: .7; }
+  .fp__orbit { fill: none; stroke: var(--brand-mark); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: .07 .93; opacity: 0; }
+  /* Centre lines in the drawing convention: long dash, short gap, dot, short gap. */
+  .fp__centre { fill: none; stroke: var(--muted); stroke-width: .8; stroke-dasharray: 16 4 2 4; opacity: .7; }
+  .fp__marks { fill: none; stroke: var(--brand-mark); stroke-width: 2; }
+  .fp__label { fill: var(--muted); font: 600 10px/1 var(--font-mono); letter-spacing: .1em; }
+  .fp :global(.viz__caption strong) { color: var(--ink); font-weight: 650; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fp__grid, .fp__disc, .fp__notes { animation: fp-fade .8s var(--ease) both; }
+    .fp__disc { animation-delay: .2s; }
+    .fp__notes { animation-delay: 1.2s; }
+    .fp__centre { transform-box: fill-box; animation: fp-grow 1s var(--ease) .2s both; }
+    .fp__centre--h { transform-origin: left center; }
+    .fp__centre--v { transform-origin: center top; animation-name: fp-grow-v; }
+    .fp__ring { stroke-dasharray: 1; animation: fp-draw 1.6s cubic-bezier(.45, 0, .25, 1) .3s both; }
+    .fp__photo { animation: fp-rise 1.1s var(--ease) .7s both; }
+    .fp__orbit { animation: fp-orbit 9s linear 2s infinite both; }
+  }
+  @keyframes fp-fade { from { opacity: 0; } }
+  @keyframes fp-grow { from { transform: scaleX(0); } }
+  @keyframes fp-grow-v { from { transform: scaleY(0); } }
+  @keyframes fp-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+  @keyframes fp-rise { from { opacity: 0; transform: translateY(14px); } }
+  @keyframes fp-orbit { 0% { stroke-dashoffset: 0; opacity: 0; } 8%, 92% { opacity: 1; } 100% { stroke-dashoffset: -1; opacity: 0; } }
+</style>
