@@ -61,7 +61,7 @@ RUN npm run build:node && test -f dist/node/server.mjs && npm prune --omit=dev
 FROM ${DOTNET_SDK_IMAGE} AS swaddin
 WORKDIR /src
 COPY apps/cad/solidworks ./solidworks
-RUN mkdir -p /out && (bash solidworks/build.sh && cp -r solidworks/dist/OpenSketch-SOLIDWORKS /out/) \
+RUN mkdir -p /out && (bash solidworks/build.sh && cp -r solidworks/dist/BIZOMAT-CAD-SOLIDWORKS /out/) \
     || echo "SOLIDWORKS add-in not built: no download on this server"
 
 # Python packages in a virtual environment of their own (copied whole into the runtime: same base image).
@@ -104,9 +104,9 @@ RUN set -eu; \
 COPY --from=cad-deps /opt/cad/venv /opt/cad/venv
 COPY --from=swaddin /out /tmp/swaddin
 RUN mkdir -p /app/cad/opensketch/static/downloads \
- && if [ -d /tmp/swaddin/OpenSketch-SOLIDWORKS ]; then \
+ && if [ -d /tmp/swaddin/BIZOMAT-CAD-SOLIDWORKS ]; then \
       cd /tmp/swaddin \
-      && /opt/cad/venv/bin/python -m zipfile -c /app/cad/opensketch/static/downloads/OpenSketch-SOLIDWORKS.zip OpenSketch-SOLIDWORKS; \
+      && /opt/cad/venv/bin/python -m zipfile -c /app/cad/opensketch/static/downloads/BIZOMAT-CAD-SOLIDWORKS.zip BIZOMAT-CAD-SOLIDWORKS; \
     fi; rm -rf /tmp/swaddin
 COPY apps/cad/opensketch /app/cad/opensketch
 RUN cd /app/cad \
