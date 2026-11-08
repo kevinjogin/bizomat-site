@@ -6,8 +6,11 @@ import { DEFAULT_COLOR, PRODUCT } from '../../shared/brand';
 export const BRAND = {
   /** The platform this product belongs to. Never followed by a trade mark sign. */
   platform: PRODUCT.platform,
-  platformTagline: 'Intelligent Business Automation Platform',
-  statement: 'Automate work. Connect systems. Get business done.',
+  /** The platform's descriptor and slogan (the website's src/config/platform.ts, owner 8 Nov 2026). */
+  platformTagline: 'Business Intelligence & Automation',
+  statement: 'Connecting Intelligence. Empowering Progress.',
+  /** The copyright line every BIZOMAT site carries. */
+  copyright: `© ${new Date().getFullYear()} BIZOMAT. All rights reserved.`,
   /** Short product name, used next to the BIZOMAT wordmark. */
   product: PRODUCT.name,
   /** Full product name: page titles, metadata, screen readers. */
@@ -29,6 +32,9 @@ export const BRAND = {
  */
 export const PLATFORM_URLS = {
   website: 'https://bizomat.ai/',
+  about: 'https://bizomat.ai/engine-room/',
+  products: 'https://bizomat.ai/products/',
+  contact: 'https://bizomat.ai/contact/',
   productPage: 'https://bizomat.ai/work/',
   cad: 'https://bizomat.ai/cad/',
   resources: 'https://bizomat.ai/resources/',
@@ -46,13 +52,18 @@ export const APP_HOSTS = ['bizomat.ai', 'work.kevos.com'] as const;
 /** The platform links shown in the app shell and on the sign-in pages, in display order. */
 export const PLATFORM_LINKS = {
   products: [
-    { label: 'BIZOMAT', href: PLATFORM_URLS.website, title: 'The BIZOMAT platform website' },
+    { label: 'BIZOMAT', href: PLATFORM_URLS.website, title: 'The BIZOMAT website' },
     { label: 'CAD Automation', href: PLATFORM_URLS.cad, title: 'BIZOMAT CAD Automation' },
     { label: 'Resources', href: PLATFORM_URLS.resources, title: 'BIZOMAT Resources' },
   ],
+  company: [
+    { label: 'About', href: PLATFORM_URLS.about, title: 'About BIZOMAT' },
+    { label: 'Products', href: PLATFORM_URLS.products, title: 'BIZOMAT products' },
+    { label: 'Contact', href: PLATFORM_URLS.contact, title: 'Contact BIZOMAT' },
+  ],
   legal: [
-    { label: 'Privacy', href: PLATFORM_URLS.privacy, title: 'BIZOMAT privacy policy' },
-    { label: 'Terms', href: PLATFORM_URLS.terms, title: 'BIZOMAT terms' },
+    { label: 'Privacy Policy', href: PLATFORM_URLS.privacy, title: 'BIZOMAT privacy policy' },
+    { label: 'Terms of Use', href: PLATFORM_URLS.terms, title: 'BIZOMAT terms of use' },
     { label: 'Disclaimer', href: PLATFORM_URLS.disclaimer, title: 'BIZOMAT disclaimer' },
   ],
 } as const;

@@ -1,7 +1,7 @@
 {
   "name": "BIZOMAT",
   "short_name": "BIZOMAT",
-  "description": "Intelligent Business Automation Platform: CAD Automation, Project Management and free Resources.",
+  "description": "BIZOMAT: Business Intelligence & Automation. CAD Automation, Project Management and free Resources.",
   "start_url": "/",
   "scope": "/",
   "display": "browser",

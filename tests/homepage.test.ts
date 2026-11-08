@@ -10,11 +10,16 @@ import { PRODUCTS, SOLUTIONS } from '../src/config/products.ts';
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const home = read('src/pages/index.astro');
 
-// BIZOMAT homepage (5 Nov 2026): "Automate work. Connect systems. Get business done." Hero with Explore Products and
+// BIZOMAT homepage: the corporate slogan "Connecting Intelligence. Empowering Progress." (owner, 8 Nov 2026; it replaced
+// "Automate work. Connect systems. Get business done." of 5 Nov). Hero with Explore Products and
 // Explore AI Tools, then the three products, AI Search, proof, tools and the Library.
 test('the homepage leads with the BIZOMAT message, then products, AI search, proof, tools and resources', () => {
-  assert.match(home, /<p class="bz-eyebrow">Intelligent Business Automation Platform<\/p>/);
-  assert.match(home, /<h1 id="home-title"><span class="home-hero__line">Automate work\.<\/span> <span class="home-hero__line">Connect systems\.<\/span> <span class="home-hero__line">Get business done\.<\/span><\/h1>/);
+  assert.match(home, /<p class="bz-eyebrow">\{SITE\.tagline\}<\/p>/);
+  assert.match(home, /<h1 id="home-title"><span class="home-hero__line">Connecting Intelligence\.<\/span> <span class="home-hero__line">Empowering Progress\.<\/span><\/h1>/);
+  assert.match(home, /<p class="home-hero__lead">\{SITE\.introduction\}<\/p>/);
+  assert.equal(SITE.tagline, 'Business Intelligence & Automation');
+  assert.equal(SITE.statement, 'Connecting Intelligence. Empowering Progress.');
+  assert.equal(SITE.support, 'Technology Connected. Progress Delivered.');
   assert.match(home, />Explore Products<\/Button>/);
   assert.match(home, />Explore AI Tools<\/Button>/);
   assert.match(home, /<ConnectedOps id="hero-ops" \/>/, 'the hero shows connected operations');
@@ -24,7 +29,7 @@ test('the homepage leads with the BIZOMAT message, then products, AI search, pro
   assert.match(home, /<Button href="\/tools\/" arrow data-cta="home-tools">Explore Tools<\/Button>/);
   assert.match(home, /<Button href="\/reados\/" arrow data-cta="home-library">Explore Library<\/Button>/);
   assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
-  assert.equal(SITE.title, 'BIZOMAT | Intelligent Business Automation Platform');
+  assert.equal(SITE.title, 'BIZOMAT | Business Intelligence & Automation');
   assert.deepEqual(NAV.map((n) => n.label), ['CAD Automation', 'Project Management', 'Resources', 'Engine Room']);
   assert.deepEqual(NAV.map((n) => n.href), ['/cad-automation/', '/work/', '/resources/', '/engine-room/']);
 });

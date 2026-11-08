@@ -102,7 +102,7 @@ files.set('bizomat_brand.py', Buffer.from(`"${'""'}${header}"${'""'}\n\n${pyCons
 const tsConsts = Object.entries(consts).map(([k, v]) => `export const ${k} = ${typeof v === 'number' ? v : `'${v}'`};`).join('\n');
 const tsColors = JSON.stringify({ navy: COLORS.navy, teal: COLORS.teal, tealBright: COLORS.tealBright, tealMark: COLORS.tealMark, tileDark: COLORS.tileDark });
 files.set('bizomat-brand.ts', Buffer.from(`// ${header}\n${tsConsts}\nexport const BRAND_COLORS = ${tsColors} as const;\n`));
-files.set('brand.json', Buffer.from(JSON.stringify({ name: 'BIZOMAT', tagline: 'Intelligent Business Automation Platform', statement: 'Automate work. Connect systems. Get business done.', wordmark: { viewBox: `0 0 ${W} ${H}`, path: WORD }, b: { viewBox: `0 0 ${BW} ${H}`, path: B, arrow: ARROW }, mark: MARK, lockup: LOCKUP, colors: COLORS }, null, 2) + '\n'));
+files.set('brand.json', Buffer.from(JSON.stringify({ name: 'BIZOMAT', tagline: 'Business Intelligence & Automation', statement: 'Connecting Intelligence. Empowering Progress.', wordmark: { viewBox: `0 0 ${W} ${H}`, path: WORD }, b: { viewBox: `0 0 ${BW} ${H}`, path: B, arrow: ARROW }, mark: MARK, lockup: LOCKUP, colors: COLORS }, null, 2) + '\n'));
 
 // Copies kept beside the sources: tokens, components and the heading font.
 const copyFrom = (rel) => fs.readFileSync(path.join(here, rel));

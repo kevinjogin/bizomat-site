@@ -15,13 +15,16 @@ export const SITE = {
   ogLocale: 'en_AU',
   country: 'Australia',
   /** Default <title> on the homepage and fallback description everywhere else. */
-  title: 'BIZOMAT | Intelligent Business Automation Platform',
-  description:
-    'BIZOMAT is an intelligent business automation platform: CAD Automation for SOLIDWORKS, Project Management for teams, and free engineering and business tools, books and guides.',
+  title: 'BIZOMAT | Business Intelligence & Automation',
+  description: PLATFORM.description,
   /** One-line brand statement used in the footer and structured data. */
   statement: PLATFORM.statement,
   /** Short descriptor shown under the brand in places like the footer. */
   tagline: PLATFORM.tagline,
+  /** Supporting message, corporate introduction and the footer's short description (src/config/platform.ts). */
+  support: PLATFORM.support,
+  introduction: PLATFORM.introduction,
+  footer: PLATFORM.footer,
   /** Public contact email (owner, 6 Nov 2026). Leave empty to hide it everywhere. Must equal CONTACT_EMAIL in
    *  src/server/contact/cloudflare-mail.ts (a test checks). */
   email: 'info@bizomat.ai',
@@ -132,7 +135,8 @@ export const FOOTER_NAV = {
     { href: '/rss.xml', label: 'Library RSS feed' },
   ],
   company: [
-    { href: '/engine-room/', label: 'The Engine Room' },
+    { href: '/', label: 'Home' },
+    { href: '/engine-room/', label: 'About' },
     { href: '/contact/', label: 'Contact' },
     { href: '/services/', label: 'Engineering services' },
     { href: '/assessment/', label: 'Problem Assessment' },
@@ -143,8 +147,8 @@ export const FOOTER_NAV = {
     { href: APP_LINKS.cad.signIn, label: 'Sign in to CAD Automation' },
   ],
   legal: [
-    { href: '/privacy/', label: 'Privacy' },
-    { href: '/terms/', label: 'Terms' },
+    { href: '/privacy/', label: 'Privacy Policy' },
+    { href: '/terms/', label: 'Terms of Use' },
     { href: '/disclaimer/', label: 'Disclaimer' },
   ],
 } as const;

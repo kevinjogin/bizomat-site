@@ -12,8 +12,20 @@ const clean = (value: string | undefined, fallback: string) => (value && /^https
 
 export const PLATFORM = {
   name: 'BIZOMAT',
-  tagline: 'Intelligent Business Automation Platform',
-  statement: 'Automate work. Connect systems. Get business done.',
+  // Corporate brand language (owner, 8 Nov 2026). The descriptor and the slogan replace "Intelligent Business Automation
+  // Platform" and "Automate work. Connect systems. Get business done." Products keep their own names and wording.
+  /** Brand descriptor. */
+  tagline: 'Business Intelligence & Automation',
+  /** Primary slogan. */
+  statement: 'Connecting Intelligence. Empowering Progress.',
+  /** Supporting message. */
+  support: 'Technology Connected. Progress Delivered.',
+  /** Corporate introduction. */
+  introduction: 'BIZOMAT brings together intelligent technologies, connected systems and practical automation to help businesses and industries work smarter, operate better and move forward.',
+  /** Corporate description: metadata and structured data. */
+  description: 'BIZOMAT is a technology and automation company connecting business intelligence, artificial intelligence, engineering and practical automation.',
+  /** The footer's short description. */
+  footer: 'BIZOMAT connects intelligent technologies, software and practical automation to simplify work and advance business and industry.',
   founder: 'Kevin Jogin',
   /** The trade mark the business registered under its former name. BIZOMAT itself is not a registered trade mark. */
   formerName: {

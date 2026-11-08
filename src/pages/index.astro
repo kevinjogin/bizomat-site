@@ -1,5 +1,5 @@
 ---
-// BIZOMAT homepage: "Automate work. Connect systems. Get business done."
+// BIZOMAT homepage: "Connecting Intelligence. Empowering Progress." (the corporate slogan, owner 8 Nov 2026)
 // 1. Hero: what BIZOMAT is, Explore Products and Explore AI Tools, and the connected-operations scene.
 // 2. Products: CAD Automation, Project Management and Resources (src/config/products.ts, facts from
 //    src/data/platform-catalog.ts).
@@ -60,7 +60,7 @@ const proof = [
   { n: fmt(chapterTotal), t: 'Library chapters to read free', href: '/reados/' },
 ];
 
-const description = 'BIZOMAT is an intelligent business automation platform: CAD Automation for SOLIDWORKS, Project Management for teams, and free engineering and business tools, books and guides.';
+const description = SITE.description;
 const schema = [{
   '@type': 'WebPage', '@id': `${SITE.url}/#webpage`, url: `${SITE.url}/`, name: SITE.title, description, inLanguage: SITE.locale,
   isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@id': `${SITE.url}/#organization` },
@@ -72,13 +72,13 @@ const schema = [{
   ],
 }];
 ---
-<BaseLayout description={description} imageAlt="BIZOMAT: Automate work. Connect systems. Get business done." schema={schema}>
+<BaseLayout description={description} imageAlt={`${SITE.name}: ${SITE.statement}`} schema={schema}>
   <section class="home-hero" aria-labelledby="home-title">
     <Container class="home-hero__inner">
       <div class="home-hero__copy">
-        <p class="bz-eyebrow">Intelligent Business Automation Platform</p>
-        <h1 id="home-title"><span class="home-hero__line">Automate work.</span> <span class="home-hero__line">Connect systems.</span> <span class="home-hero__line">Get business done.</span></h1>
-        <p class="home-hero__lead">BIZOMAT connects engineering automation, project management, practical tools and intelligent search in one platform, so your team spends its time on decisions, not on repetition.</p>
+        <p class="bz-eyebrow">{SITE.tagline}</p>
+        <h1 id="home-title"><span class="home-hero__line">Connecting Intelligence.</span> <span class="home-hero__line">Empowering Progress.</span></h1>
+        <p class="home-hero__lead">{SITE.introduction}</p>
         <div class="home-hero__actions">
           <Button href="#products" variant="accent" data-cta="home-explore-products">Explore Products</Button>
           <Button href="#ai-search" variant="secondary" data-cta="home-explore-ai">Explore AI Tools</Button>
@@ -201,7 +201,7 @@ const schema = [{
 
   <section class="home-close" aria-labelledby="close-title">
     <Container class="home-close__inner">
-      <h2 id="close-title">Start with the work in front of you.</h2>
+      <h2 id="close-title">{SITE.support}</h2>
       <p>Open a product, search the resources, or tell us what you need.</p>
       <div class="home-close__actions">
         <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="home-close-work">Start Managing Projects</Button>
@@ -245,6 +245,8 @@ const schema = [{
      lines never wrap differently before and after the web font arrives. */
   .home-hero__copy { container-type: inline-size; }
   .home-hero h1 { font-size: var(--step-5); font-size: min(var(--step-5), 11cqi); line-height: 1.04; }
+  /* The slogan's two lines ("Connecting Intelligence." is the longer) each stay on one line beside the scene. */
+  @media (min-width: 1001px) { .home-hero h1 { font-size: min(var(--step-5), 7.9cqi); } }
   .home-hero__line { display: block; }
   .home-hero__lead { margin: 1.2rem 0 0; max-width: 46ch; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
   .home-hero__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.9rem; }

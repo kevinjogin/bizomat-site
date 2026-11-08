@@ -43,6 +43,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
           <span>Part of the {BRAND.platform} platform</span>
           <PlatformLegalLinks />
           <Link to="/privacy">How {BRAND.product} uses your data</Link>
+          <span>{BRAND.copyright}</span>
         </footer>
       </div>
     </div>

@@ -6,9 +6,13 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 
 ## Identity
 
-- **BIZOMAT is the active brand** (owner decision, 5 Nov 2026): "Intelligent Business Automation Platform";
-  statement "Automate work. Connect systems. Get business done." Products: **CAD Automation** (formerly CADOS),
+- **BIZOMAT is the active brand** (owner decision, 5 Nov 2026), the parent corporate brand of every product. Corporate
+  language (owner, 8 Nov 2026; one source, `src/config/platform.ts`): descriptor "Business Intelligence & Automation";
+  slogan "Connecting Intelligence. Empowering Progress."; supporting message "Technology Connected. Progress
+  Delivered."; the corporate introduction, description and footer line there. The logo, layout, colours (navy and
+  teal) and product names stay as they are (owner, 8 Nov 2026). Products: **CAD Automation** (formerly CADOS),
   **Project Management** (formerly KEVOS Work / WorkOS) and **Resources** (formerly the kevos.com Tools and Library).
+  Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
   name (footer, trade mark notice, "Formerly" labels) and in historical docs.

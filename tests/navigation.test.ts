@@ -33,7 +33,7 @@ test('the main navigation reads CAD Automation, Project Management, Resources, E
 
 test('the footer covers products, resources, company and the applications, with the legal pages on every page', () => {
   const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.apps, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
-  for (const pair of [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['The Engine Room', '/engine-room/'], ['Contact', '/contact/'], ['Privacy', '/privacy/'], ['Terms', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
+  for (const pair of [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['Home', '/'], ['About', '/engine-room/'], ['Contact', '/contact/'], ['All products', '/products/'], ['Solutions', '/solutions/'], ['Privacy Policy', '/privacy/'], ['Terms of Use', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
   const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);
@@ -41,6 +41,10 @@ test('the footer covers products, resources, company and the applications, with 
   const footer = read('src/components/Footer.astro');
   for (const h of ['Products', 'Resources', 'Company', 'Applications']) assert.match(footer, new RegExp(`<h2 class="site-footer__heading">${h}</h2>`));
   assert.match(footer, /FOOTER_NAV\.legal\.map/);
+  // The corporate footer (owner, 8 Nov 2026): logo, slogan, short description and the copyright line.
+  assert.match(footer, /<p class="site-footer__tagline">\{SITE\.statement\}<\/p>/);
+  assert.match(footer, /<p>\{SITE\.footer\}<\/p>/);
+  assert.match(footer, /© \{year\} \{SITE\.name\}\. All rights reserved\./);
 });
 
 test('breadcrumbs say Tools and Library, never WORKOS or READOS', () => {

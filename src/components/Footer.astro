@@ -1,5 +1,5 @@
 ---
-// Global footer: the BIZOMAT identity, then Products, Resources, Company and Applications, then the legal links that
+// Global footer: the BIZOMAT identity (logo, the slogan and the corporate short description), then Products, Resources, Company and Applications, then the legal links that
 // every page carries (Privacy, Terms, Disclaimer). The registered trade mark is the former name's (KEVOS®); the
 // footer never calls BIZOMAT a registered trade mark.
 import { FOOTER_NAV, SITE } from '../config/site.ts';
@@ -15,8 +15,8 @@ const tm = SITE.formerName;
     <div class="site-footer__grid">
       <div class="site-footer__brand">
         <a href="/" class="site-footer__logo" aria-label="BIZOMAT home"><SiteWordmark height={28} label="" /></a>
-        <p class="site-footer__tagline">{SITE.tagline}</p>
-        <p>{SITE.statement}</p>
+        <p class="site-footer__tagline">{SITE.statement}</p>
+        <p>{SITE.footer}</p>
         <a class="site-footer__cta" href="/contact/" data-cta="footer-contact">Tell us what you need <span aria-hidden="true">→</span></a>
       </div>
       <nav class="site-footer__col" aria-label="Products">

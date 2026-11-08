@@ -32,7 +32,7 @@ test('BIZOMAT branding on the sign-in page and in the app shell', async ({ page 
   expect(await page.locator('body').evaluate((b) => getComputedStyle(b).fontFamily)).toContain('Inter Tight');
   // Platform legal pages open in the same tab; links to other hosts carry rel="noopener".
   const legal = page.getByRole('navigation', { name: 'BIZOMAT legal' });
-  for (const [name, href] of [['Privacy', 'https://bizomat.ai/privacy/'], ['Terms', 'https://bizomat.ai/terms/'], ['Disclaimer', 'https://bizomat.ai/disclaimer/']]) {
+  for (const [name, href] of [['Privacy Policy', 'https://bizomat.ai/privacy/'], ['Terms of Use', 'https://bizomat.ai/terms/'], ['Disclaimer', 'https://bizomat.ai/disclaimer/']]) {
     const link = legal.getByRole('link', { name, exact: true });
     await expect(link).toHaveAttribute('href', href);
     await expect(link).toHaveAttribute('rel', 'noopener');
@@ -44,6 +44,8 @@ test('BIZOMAT branding on the sign-in page and in the app shell', async ({ page 
   await expect(page).toHaveTitle('Home · BIZOMAT Project Management');
   await expect(page.getByRole('link', { name: 'BIZOMAT Project Management home' })).toBeVisible();
   await expect(page.getByText('Part of the BIZOMAT platform')).toBeVisible();
+  await expect(page.getByText('Connecting Intelligence. Empowering Progress.')).toBeVisible();
+  await expect(page.getByText(/© \d{4} BIZOMAT\. All rights reserved\./).first()).toBeVisible();
   const platform = page.getByRole('navigation', { name: 'BIZOMAT platform' });
   await expect(platform.getByRole('link', { name: 'BIZOMAT', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/');
   await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/cad/');

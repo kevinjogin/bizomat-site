@@ -18,7 +18,7 @@ const oxanium = font(path.join(here, 'fonts/oxanium-latin.woff2'));
 const inter = font(path.join(root, 'node_modules/@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2'));
 
 const CARDS = [
-  { file: 'og-bizomat.png', kicker: 'Intelligent Business Automation Platform', title: 'Automate work. Connect systems. Get business done.', foot: 'CAD Automation  ·  Project Management  ·  Resources' },
+  { file: 'og-bizomat.png', kicker: 'Business Intelligence & Automation', title: 'Connecting Intelligence. Empowering Progress.', foot: 'CAD Automation  ·  Project Management  ·  Resources' },
   { file: 'og-cad.png', kicker: 'BIZOMAT CAD Automation', title: 'Your AI assistant, working in SOLIDWORKS on your own computer.', foot: 'Native parts, assemblies and drawings  ·  MCP connector' },
   { file: 'og-work.png', kicker: 'BIZOMAT Project Management', title: 'Projects, tasks and teams in one shared workspace.', foot: 'Boards  ·  Timelines  ·  Dashboards  ·  Documents' },
   { file: 'og-resources.png', kicker: 'BIZOMAT Resources', title: 'Calculators, tools, books and guides. Free, no sign-in.', foot: 'Engineering  ·  Manufacturing  ·  Operations  ·  Business' },

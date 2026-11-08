@@ -243,6 +243,8 @@ kbd {
 .brand-foot { margin-top: auto; padding: 16px 10px 2px; font-size: 11.5px; color: var(--text-3); display: flex; flex-direction: column; gap: 8px; }
 .brand-foot-line { display: flex; align-items: center; gap: 7px; }
 .brand-foot-line strong { color: var(--text-2); font-weight: 650; letter-spacing: .02em; }
+.brand-foot-slogan, .brand-foot-copy { margin: 0; }
+.brand-foot-slogan { color: var(--text-2); font-weight: 600; }
 .platform-links { display: flex; flex-direction: column; gap: 4px; }
 .platform-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 12px; }
 .platform-links a { color: var(--text-3); }

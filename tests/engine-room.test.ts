@@ -70,7 +70,8 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   assert.doesNotMatch(portrait, /<script|style="/, 'no script or inline style (CSP)');
   assert.match(page, /VERIFICATION\.map/, 'the test record');
   assert.match(page, /'@type': 'AboutPage'/);
-  assert.match(read('src/config/site.ts'), /\{ href: '\/engine-room\/', label: 'The Engine Room' \}/);
+  // The footer's About link (the corporate footer, 8 Nov 2026) is The Engine Room.
+  assert.match(read('src/config/site.ts'), /\{ href: '\/engine-room\/', label: 'About' \}/);
   for (const gone of ['src/pages/about.astro', 'src/pages/proof-of-work.astro']) assert.ok(!existsSync(gone), `${gone} is merged into the Engine Room`);
   const redirects = read('public/_redirects').split(/\r?\n/).map((l) => l.trim().split(/\s+/));
   for (const from of ['/about', '/about/', '/proof-of-work', '/proof-of-work/']) {
