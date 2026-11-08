@@ -14,8 +14,8 @@
 # Run by hand, it deploys from here (and makes the volume if it is missing).
 #
 # What deploys: a push to main whose changes since the live version (the site's /healthz names its commit) touch
-# more than notes and tests (root *.md, docs/, tests/, solidworks/tests/): each deploy restarts the one server
-# (~15 s offline). Afterwards the live /healthz must answer with the new version within 3 minutes, else the run fails.
+# more than notes, tests and backups (root *.md, docs/, tests/, solidworks/tests/, backups/): each deploy restarts the
+# one server (~15 s offline). Afterwards the live /healthz must answer with the new version within 3 minutes, else the run fails.
 # Run by hand (Actions > Deploy to Fly.io > Run workflow) to redeploy; "skip tests" only to bring a stuck site back.
 name: Deploy to Fly.io
 
@@ -54,8 +54,8 @@ jobs:
           BEFORE: ${{ github.event.before }}
           SKIP_TESTS: ${{ inputs.skip_tests }}
         run: |
-          not_tested='^docs/|^[^/]+\.md$|^$'
-          not_deployed='^(docs|tests|solidworks/tests)/|^[^/]+\.md$|^$'
+          not_tested='^docs/|^backups/|^[^/]+\.md$|^$'
+          not_deployed='^(docs|tests|solidworks/tests|backups)/|^[^/]+\.md$|^$'
           changed() {  # files changed from commit $1 to this one; one placeholder line when $1 is unknown
             if [ -n "$1" ] && git cat-file -e "$1^{commit}" 2>/dev/null; then
               git diff --name-only "$1" "$GITHUB_SHA"

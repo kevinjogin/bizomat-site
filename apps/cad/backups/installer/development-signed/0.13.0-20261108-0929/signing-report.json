@@ -1,0 +1,152 @@
+﻿{
+    "result":  "all signatures verified",
+    "made_at":  "2026-11-07T22:29:31Z",
+    "computer_user":  "kevin",
+    "version":  "0.13.0",
+    "msi":  "BIZOMAT-CAD-Automation-0.13.0-x64-DEV.msi",
+    "msi_sha256":  "51b6de4152e60f9bce604a551900215ae9fa8f0d0811c5644d1f09da973e2e32",
+    "source_commit":  "ec24227f8db065602fa5aa0fe1c3e221adcd181d",
+    "source_changed_locally":  true,
+    "certificate":  {
+                        "subject":  "CN=BIZOMAT Development",
+                        "issuer":  "CN=BIZOMAT Development",
+                        "thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                        "serial":  "5485815DF1D80591456149BD44FFBCE8",
+                        "not_before":  "2026-11-08",
+                        "not_after":  "2028-11-08",
+                        "self_signed":  true,
+                        "store":  "Cert:\\CurrentUser\\My"
+                    },
+    "signtool":  {
+                     "path":  "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\x64\\signtool.exe",
+                     "version":  "4.00 (WinBuild.160101.0800)"
+                 },
+    "file_digest":  "sha256",
+    "timestamp":  "http://timestamp.digicert.com (RFC 3161, sha256)",
+    "files":  [
+                  {
+                      "file":  "package\\OpenSketch.Sw.dll (before packaging)",
+                      "sha256":  "e9a2b2ea675b28f88aa3900ca0dcb8dc2a523e28ad8f955abcbeefde3ff66d8c",
+                      "size":  430288,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  },
+                  {
+                      "file":  "package\\KEVOS.Companion.exe (before packaging)",
+                      "sha256":  "60737e3662e7383b4a8f7d6214f5fab9735679fc26762891a3085813ff507646",
+                      "size":  244944,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  },
+                  {
+                      "file":  "package\\OpenSketchSW.exe (before packaging)",
+                      "sha256":  "517403c4c25b94a84b8c6e2bfc0e45c6d2c6abdc43bc91d116f7b094ca484fb2",
+                      "size":  82640,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  },
+                  {
+                      "file":  "BIZOMAT-CAD-Automation-0.13.0-x64-DEV.msi",
+                      "sha256":  "51b6de4152e60f9bce604a551900215ae9fa8f0d0811c5644d1f09da973e2e32",
+                      "size":  1323008,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  },
+                  {
+                      "file":  "BIZOMAT-CAD-Automation-0.13.0-x64-DEV.msi \u003e OpenSketch.Sw.dll",
+                      "sha256":  "e9a2b2ea675b28f88aa3900ca0dcb8dc2a523e28ad8f955abcbeefde3ff66d8c",
+                      "size":  430288,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  },
+                  {
+                      "file":  "BIZOMAT-CAD-Automation-0.13.0-x64-DEV.msi \u003e KEVOS.Companion.exe",
+                      "sha256":  "60737e3662e7383b4a8f7d6214f5fab9735679fc26762891a3085813ff507646",
+                      "size":  244944,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  },
+                  {
+                      "file":  "BIZOMAT-CAD-Automation-0.13.0-x64-DEV.msi \u003e OpenSketchSW.exe",
+                      "sha256":  "517403c4c25b94a84b8c6e2bfc0e45c6d2c6abdc43bc91d116f7b094ca484fb2",
+                      "size":  82640,
+                      "signer_thumbprint":  "DBEB45D14B7662DACFCFE92308536CE0ED5E6B12",
+                      "signer_subject":  "CN=BIZOMAT Development",
+                      "status":  "Valid",
+                      "timestamped":  true,
+                      "timestamp_signer":  "CN=DigiCert SHA256 RSA4096 Timestamp Responder 2026 1, O=\"DigiCert, Inc.\", C=US",
+                      "signtool_verify_exit":  0,
+                      "ok":  true,
+                      "problems":  [
+
+                                   ]
+                  }
+              ],
+    "msi_contents":  "checked: the files in the MSI are the signed ones",
+    "checksums":  [
+                      {
+                          "file":  "BIZOMAT-CAD-Automation-0.13.0-x64-DEV.msi",
+                          "sha256":  "51b6de4152e60f9bce604a551900215ae9fa8f0d0811c5644d1f09da973e2e32",
+                          "ok":  true
+                      },
+                      {
+                          "file":  "BIZOMAT-CAD-Automation-x64.msi",
+                          "sha256":  "51b6de4152e60f9bce604a551900215ae9fa8f0d0811c5644d1f09da973e2e32",
+                          "ok":  true
+                      },
+                      {
+                          "file":  "CADOS-for-SOLIDWORKS-x64.msi",
+                          "sha256":  "51b6de4152e60f9bce604a551900215ae9fa8f0d0811c5644d1f09da973e2e32",
+                          "ok":  true
+                      }
+                  ],
+    "trust_note":  "Self-signed development certificate: verified on this computer because it trusts the certificate. Other computers do not trust it."
+}

@@ -23,15 +23,16 @@ Cloudflare (Worker `throbbing-block-6c61`), which nothing here deploys.
 
    Then open a new PowerShell window.
 2. In a **normal** PowerShell window (not "Run as administrator", which opens in `C:\WINDOWS\System32` and makes
-   the files belong to the administrator), make the folder and download the script into it. The script uses its own
-   folder as the BIZOMAT folder:
+   the files belong to the administrator), make the folder, clone CADOS into it and take the scripts from the clone.
+   The repositories are private, so raw GitHub links answer 404; Git opens a browser once for your GitHub sign-in.
+   The scripts use their own folder as the BIZOMAT folder:
    ```powershell
    mkdir C:\BIZOMAT
    cd C:\BIZOMAT
-   curl.exe -fsSL -o bizomat.ps1 https://raw.githubusercontent.com/jogkev-creator/CADOS/claude/dazzling-mccarthy-31qg86/tools/laptop/bizomat.ps1
-   curl.exe -fsSL -o README.md https://raw.githubusercontent.com/jogkev-creator/CADOS/claude/dazzling-mccarthy-31qg86/tools/laptop/README.md
+   git clone --config core.autocrlf=false https://github.com/jogkev-creator/CADOS.git
+   Copy-Item CADOS\tools\laptop\bizomat.ps1, CADOS\tools\laptop\cloudflare.ps1, CADOS\tools\laptop\README.md .
    ```
-3. Clone everything. `gocore-website` is private, so Git opens a browser once for your GitHub sign-in:
+3. Clone the rest (setup keeps the CADOS clone that is already there):
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\bizomat.ps1 setup
    ```

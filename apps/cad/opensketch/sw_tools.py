@@ -1083,3 +1083,8 @@ async def sw_cancel_command(command_id: Annotated[str, Field(description="The co
         return _text(devicebridge.cancel(_who(), command_id))
     except KeyError:
         return _text({"error": f"No command {command_id} of yours."}, True)
+
+
+# The self test's tools, last: sw_selftest takes _DEV and _routed from this module, so it may only be imported once
+# they exist (a CAD worker process imports this module first, before mcp_server).
+from . import sw_selftest  # noqa: E402,F401

@@ -61,7 +61,7 @@ passed, 9 npm passed.
    tab appears and shows the connection, activity and prompts (copy one); the Companion's status shows SOLIDWORKS with
    the add-in. Untick CADOS in Tools > Add-Ins: the tab, menu and task pane go away; tick it: they come back.
    Upgrading from KEVOS Bridge 0.11: the old KEVOS tab is gone and only CADOS shows.
-3. From Claude (connector to https://bizomat.ai/cad/mcp): run the self test, all three stages; then a part, an assembly, a
+3. From Claude (connector to https://mcp.bizomat.ai/mcp; on Fly, before the move: https://bizomat.ai/cad/mcp): run the self test, all three stages; then a part, an assembly, a
    drawing and its PDF.
 4. Ask the AI to delete a feature: the confirm window names the app; Deny, then Allow once. Leave it two minutes: it
    denies.

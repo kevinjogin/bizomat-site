@@ -46,6 +46,7 @@ def test_every_section_needs_sign_in_and_carries_the_brand():
         assert "BIZOMAT CAD Automation" in t and 'class="product"' in t and "Project Management" in t, path
         for legal in ('href="/privacy"', "https://bizomat.ai/privacy/", "https://bizomat.ai/terms/", "https://bizomat.ai/disclaimer/"):
             assert legal in t, (path, legal)
+        assert "\u00a9 " in t and " BIZOMAT. All rights reserved." in t, path  # the BIZOMAT copyright line
         assert "<title>" in t and " | BIZOMAT CAD Automation</title>" in t, path
         # no old name (the repository's address and the stylesheet's file name are not names people read)
         visible = t.replace("jogkev-creator/CADOS", "").replace("cados.css", "")
@@ -294,3 +295,14 @@ def test_the_platform_links_follow_the_settings(monkeypatch):
     monkeypatch.setenv("BIZOMAT_SITE_URL", "javascript:alert(1)")
     page = owner.get("/dashboard").text
     assert "javascript:" not in page and "https://bizomat.ai/terms/" in page
+
+
+def test_public_pages_carry_the_bizomat_footer():
+    """The corporate footer (owner, 8 Nov 2026): the slogan, the short description, the company links and the copyright."""
+    from opensketch import brand
+    page = TestClient(server.app).get("/overview").text
+    assert brand.SLOGAN == "Connecting Intelligence. Empowering Progress." and brand.SLOGAN in page
+    assert brand.CORPORATE in page
+    for href in ("https://bizomat.ai/engine-room/", "https://bizomat.ai/products/", "https://bizomat.ai/contact/"):
+        assert href in page, href
+    assert brand.copyright_line() in page and ">Privacy Policy<" in page and ">Terms of Use<" in page

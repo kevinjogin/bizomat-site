@@ -260,7 +260,8 @@ def _auth_html(form: str) -> str:
              '<li>You approve each assistant and each computer</li></ul></div>'
              f'<div class="fine"><span>Part of the <a href="{_esc(site)}/" rel="noopener">{brand.PLATFORM}</a> platform</span>'
              '<a href="/docs">Documentation</a><a href="/privacy">Privacy</a>'
-             f'<a href="{_esc(brand.site_page("terms"))}" rel="noopener">Terms</a></div></aside>')
+             f'<a href="{_esc(brand.site_page("terms"))}" rel="noopener">Terms of Use</a>'
+             f'<span>{brand.copyright_line()}</span></div></aside>')
     top = f'<div class="auth-top">{brand.wordmark()}<a class="small" href="/docs">Help</a></div>'
     head = brand.head("__TITLE__").replace("{", "{{").replace("}", "}}").replace("__TITLE__", "{doctitle}")
     return f'{head}<body><div class="auth">{aside}{top}<main class="auth-main" id="main">{form}</main></div></body></html>'
@@ -630,6 +631,12 @@ def _from_cloudflare(ip: str) -> bool:
 
 def _client(scope) -> str:
     h = _headers(scope)
+    if os.environ.get("OPENSKETCH_CLIENT_IP_HEADER", "").strip().lower() == "cf-connecting-ip":
+        # Cloudflare Containers: the server is reachable only through its Worker (bizomat-mcp), and Cloudflare's edge
+        # sets CF-Connecting-IP on every request that reaches the Worker, so the header is the visitor's address.
+        cf = (h.get("cf-connecting-ip") or "").strip()
+        if cf:
+            return _net(cf)
     ip = h.get("fly-client-ip") or (h.get("x-forwarded-for") or "").split(",")[0].strip()
     ip = ip or (scope.get("client") or ("?",))[0]
     cf = (h.get("cf-connecting-ip") or "").strip()

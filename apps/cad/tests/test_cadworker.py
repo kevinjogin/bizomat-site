@@ -344,3 +344,25 @@ def test_idle_workers_give_way_before_a_job_starts(monkeypatch):
     old._pool = "again"
     cadworker.make_room(700)  # room already: nothing stops
     assert stopped == []
+
+
+def test_every_module_imports_first_in_a_fresh_process():
+    """A worker process is a fresh interpreter (spawn) whose first import is the module of the function it runs;
+    the tests' own process never starts that way. sw_tools once failed so (a circular import through mcp_server and
+    sw_selftest), and every tool that reads geometry through a worker failed in production."""
+    names = sorted(p.stem for p in (ROOT / "opensketch").glob("*.py") if p.stem not in ("__init__", "__main__"))
+    code = ("import importlib, sys\nbad = []\nfor n in sys.argv[1:]:\n    for m in [k for k in sys.modules if k.startswith('opensketch')]:\n"
+            "        del sys.modules[m]\n    try:\n        importlib.import_module('opensketch.' + n)\n"
+            "    except Exception as e:\n        bad.append(f'{n}: {type(e).__name__}: {e}')\nprint('\\n'.join(bad))\n")
+    r = subprocess.run([sys.executable, "-c", code, *names], cwd=ROOT, capture_output=True, text=True, timeout=300,
+                       env={**os.environ, "OPENSKETCH_DATA": os.environ.get("OPENSKETCH_DATA", str(ROOT / ".no-data"))})
+    assert r.returncode == 0 and not r.stdout.strip(), r.stdout + r.stderr[-2000:]
+
+
+def test_the_sw_tools_functions_run_in_a_worker(workers):
+    """What the SOLIDWORKS tools send to the person's CAD worker (_cad in sw_tools) runs there."""
+    from opensketch import sw_tools
+    doc, raw = _run(workers.run(sw_tools._standard_step, "hex_nut", "M6-1", None))
+    assert raw.startswith(b"ISO-10303-21") and doc
+    parts = _run(workers.run(sw_tools._parts_from_step, [(raw, "Nut")]))
+    assert parts and parts[0]["features"]

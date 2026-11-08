@@ -20,7 +20,7 @@ compatibility.
 AI app (Claude, ChatGPT)  --MCP-->  CADOS gateway  <--outbound HTTPS--  KEVOS Companion + add-in in SOLIDWORKS (your PC)
 ```
 
-- The AI app adds one connector address (`https://<server>/mcp`) and signs in once (OAuth).
+- The AI app adds one connector address (`https://mcp.bizomat.ai/mcp` for BIZOMAT; `https://<server>/mcp` for a server of your own) and signs in once (OAuth).
 - The add-in on the SOLIDWORKS PC connects out to the server, so the PC needs no open ports, and runs each
   command in SOLIDWORKS through its API.
 - Before anything reaches SOLIDWORKS, the server checks it with its own CAD kernel

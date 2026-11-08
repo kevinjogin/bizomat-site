@@ -67,7 +67,10 @@ stable name the website links to), their `.sha256`, and `release.json`. See also
 
 See [KEVOS-SIGNING.md](KEVOS-SIGNING.md) for the options (SignPath Foundation, Azure Artifact Signing, a commercial
 certificate with cloud signing). Certificates are no longer issued as exportable `.pfx` files, so the `KEVOS_SIGN_PFX`
-path in `build.ps1` is for test certificates; production signing is wired to the chosen service.
+path in `build.ps1` is for test certificates; production signing is wired to the chosen service. On the development
+computer, `installer/sign-development.ps1` signs with a certificate from the Windows certificate store (the self-signed
+BIZOMAT development certificate today, an OV certificate on a token or cloud service later) and checks every
+signature: [BIZOMAT-DEV-SIGNING.md](BIZOMAT-DEV-SIGNING.md).
 
 Use an OV or EV code-signing certificate. Every release must be signed: an unsigned add-in cannot be checked by the
 Companion's publisher test, and Companions refuse to update to an unsigned MSI. Keep the certificate's thumbprint

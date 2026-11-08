@@ -1,7 +1,7 @@
 {
   "repository": "jogkev-creator/CADOS",
-  "commit": "17cb5b8f5b5ccaf84e557ece30c858fc3002fd4d",
-  "tree": "bf99c745f379895bfce3187a9d9f0163f103edf7",
-  "subject": "tools/laptop: restore kevos works in Windows PowerShell 5.1 (#23)",
+  "commit": "e669cc642e49df5814ffec1ebcd0d7764568e02f",
+  "tree": "e97f6f4ce10d2da0d966eb87b7c64dee50ee2b68",
+  "subject": "BIZOMAT corporate footer on CAD Automation's pages (#33)",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }

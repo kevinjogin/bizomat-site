@@ -34,3 +34,20 @@ jobs:
       - name: Install, check and uninstall
         shell: pwsh
         run: powershell -ExecutionPolicy Bypass -File .github\scripts\test-install.ps1 -Msi installer\out\BIZOMAT-CAD-Automation-x64.msi
+      - name: Development signing (a throwaway certificate that exists only on this runner)
+        shell: pwsh
+        run: |
+          # the same steps as on the development computer (docs/BIZOMAT-DEV-SIGNING.md), with a certificate made here and
+          # trusted machine-wide on this runner only (CurrentUser\Root would need a person to confirm a dialog)
+          $c = New-SelfSignedCertificate -Subject 'CN=BIZOMAT CI Test' -Type CodeSigningCert -CertStoreLocation Cert:\CurrentUser\My `
+            -HashAlgorithm SHA256 -KeyAlgorithm RSA -KeyLength 3072 -NotAfter (Get-Date).AddDays(1) -KeyExportPolicy NonExportable
+          $cer = Join-Path $env:RUNNER_TEMP 'ci-test.cer'
+          Export-Certificate -Cert $c -FilePath $cer -Type CERT | Out-Null
+          Import-Certificate -FilePath $cer -CertStoreLocation Cert:\LocalMachine\Root | Out-Null
+          Import-Certificate -FilePath $cer -CertStoreLocation Cert:\LocalMachine\TrustedPublisher | Out-Null
+          powershell -ExecutionPolicy Bypass -File installer\sign-development.ps1 -Thumbprint $c.Thumbprint
+          if ($LASTEXITCODE -ne 0) { throw 'development signing failed' }
+          Get-Content installer\out\signing-report.txt
+      - name: Install the signed MSI, check and uninstall
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .github\scripts\test-install.ps1 -Msi installer\out\BIZOMAT-CAD-Automation-x64.msi

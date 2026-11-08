@@ -56,15 +56,17 @@ the MCP tools, the API and the device protocol are unchanged.
 1. Bump `<Version>` in `solidworks/Directory.Build.props` (add-in, Companion and MSI share it; an MSI upgrade needs a
    higher version). Add the release notes to `docs/KEVOS-RELEASE-NOTES.md`.
 2. Merge to `main`. `solidworks.yml` replaces the `bridge-latest` pre-release with the new MSI (versioned and stable
-   names, SHA-256 files, `release.json`). The website's **Download CADOS for SOLIDWORKS** serves it at once.
+   names, SHA-256 files, `release.json`). The repositories are private, so that release is for the owner: download the
+   MSI from it (signed in to GitHub), or build it on Windows with `installer\build.ps1`. Then publish it with
+   `.\cloudflare.ps1 publish installer -File <msi>`. That puts it on https://bizomat.ai/downloads/cad/ with its
+   SHA-256, and writes the release record the Download button and the Companions read.
 3. Run the checklist in `docs/KEVOS-TEST-REPORT.md` section 4 on a clean Windows computer with SOLIDWORKS 2022 (and
    each newer version you support): install, Tools > Add-Ins lists CADOS, the CADOS tab and task pane appear, pairing,
    the self test, a destructive change asks, uninstall leaves CAD files.
 4. Tag `bridge-v<version>` and push the tag: CI publishes the versioned release.
-5. To offer the update to paired computers, copy that release's `release.json` to the server's data folder as
-   `bridge-release.json`. The Companion verifies the hash, signature and publisher and asks before installing. The
-   website's download then points at that release too (`/download/solidworks` prefers it). `OPENSKETCH_INSTALLER_URL`
-   overrides both.
+5. The update reaches paired computers through the release record `publish installer` wrote (CAD's
+   `bridge-release.json`, read at the server's next start). The Companion verifies the hash, signature and publisher
+   and asks before installing. `/download/solidworks` prefers the record too; `OPENSKETCH_INSTALLER_URL` overrides both.
 
 ## 5. Not verified yet
 
@@ -72,5 +74,5 @@ the MCP tools, the API and the device protocol are unchanged.
   test report is the gate before telling customers it is ready.
 - The MSI is unsigned until a code-signing service is connected (docs/KEVOS-SIGNING.md): Windows SmartScreen warns,
   and the Companion does not update itself from unsigned builds.
-- `bridge-latest` exists only after the first build of `main` with this release; until then `/download/solidworks`
+- The public download exists only once `publish installer` has run for a release; until then `/download/solidworks`
   leads to a missing file.
