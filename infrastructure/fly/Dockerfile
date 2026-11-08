@@ -120,13 +120,17 @@ COPY apps/cad-source.json /app/cad/cad-source.json
 COPY infrastructure/proxy/package.json infrastructure/proxy/*.mjs /app/proxy/
 COPY infrastructure/migrate /usr/local/lib/bizomat/migrate
 COPY infrastructure/fly/cad-holding.py /usr/local/lib/bizomat/cad-holding.py
+COPY infrastructure/fly/adopt-cados-volume.sh /usr/local/lib/bizomat/adopt-cados-volume.sh
+COPY infrastructure/fly/memory-report.sh /usr/local/lib/bizomat/memory-report.sh
+COPY infrastructure/smoke/smoke.mjs /usr/local/lib/bizomat/smoke/smoke.mjs
 COPY infrastructure/fly/entrypoint.sh /usr/local/bin/bizomat-entrypoint
 RUN chmod -R a+rX /app /usr/local/lib/bizomat \
  && chmod 0755 /usr/local/bin/bizomat-entrypoint \
  && find /usr/local/lib/bizomat -name '*.sh' -exec chmod 0755 {} +
 
 EXPOSE 8080 8003 8002 8001
-# Each Fly process group (and each compose service) runs `bizomat-entrypoint <role>`.
+# Each Fly process group (and each compose service) runs `bizomat-entrypoint <role>`; the single application (fly.toml,
+# app cados) runs `bizomat-entrypoint all`, which starts cad, work and the proxy in one Machine.
 CMD ["/usr/local/bin/bizomat-entrypoint", "help"]
 
 # ----------------------------------------------------------------------------------------------- final image

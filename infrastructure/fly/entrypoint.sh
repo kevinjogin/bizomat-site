@@ -1,7 +1,10 @@
 #!/bin/bash
-# BIZOMAT platform entrypoint: bizomat-entrypoint <proxy|web|work|cad>
+# BIZOMAT platform entrypoint: bizomat-entrypoint <proxy|web|work|cad|all>
 #
 # One image runs four roles; each Fly process group starts it with its role (fly.toml [processes]).
+# `all` runs the four in one Machine (the single application `cados`, fly.toml; docs/BIZOMAT-SINGLE-APP.md): it
+# adopts the old cados volume layout once (adopt-cados-volume.sh), then starts each role exactly as its own process
+# group would (`bizomat-entrypoint <role>`: own user, own clean environment, own secrets) and restarts any that stops.
 # It runs as root only long enough to:
 #   1. for work and cad: check that the role's volume is mounted at /data (else refuse to start: the data would
 #      be lost when the Machine is replaced; BIZOMAT_ALLOW_EPHEMERAL=1 allows a throwaway run), and give the
@@ -56,12 +59,13 @@ usage: bizomat-entrypoint <role>
   web     the website (port 8003)
   work    BIZOMAT Project Management (port 8002, volume /data/work)
   cad     CAD Automation (port 8001, volume /data/cad)
+  all     the four above in one Machine, supervised (the single application; one volume at /data)
 EOF
 }
 
 ROLE="${1:-}"
 case "$ROLE" in
-  proxy | web | work | cad) ;;
+  proxy | web | work | cad | all) ;;
   help | -h | --help | "")
     usage
     exit 64
@@ -75,12 +79,13 @@ esac
 [ "$(id -u)" = 0 ] || die "start this as root: it gives the $ROLE service its own unprivileged user"
 
 # A Machine of one process group must never run another group's service (and get its volume or settings).
-if [ -n "${FLY_PROCESS_GROUP:-}" ] && [ "$FLY_PROCESS_GROUP" != "$ROLE" ]; then
+if [ "$ROLE" != all ] && [ -n "${FLY_PROCESS_GROUP:-}" ] && [ "$FLY_PROCESS_GROUP" != "$ROLE" ]; then
   die "this Machine is in process group '$FLY_PROCESS_GROUP' but was asked to run '$ROLE'"
 fi
 
 DATA=/data
 case "$ROLE" in
+  all) RUN_USER=root ;;
   proxy) RUN_USER=bzproxy ;;
   web) RUN_USER=bzweb ;;
   work) RUN_USER=bzwork ;;
@@ -99,6 +104,91 @@ is_mounted() {
     awk -v d="$1" '$5 == d { found = 1 } END { exit !found }' /proc/self/mountinfo
   fi
 }
+
+# ----------------------------------------------------------------------------------------------- all: one Machine
+
+# The single application: every role in this Machine, each started as its own process group would start it. The
+# supervisor holds no service itself: it stays root only to start the roles (each drops to its own user and builds its
+# own clean environment, below), and it never passes one role's settings to another.
+run_all() {
+  local self="${BIZOMAT_ENTRYPOINT:-${BASH_SOURCE[0]}}"
+  # The cados app's own Google sign-in names (GOOGLE_CLIENT_*), for CAD Automation only: the platform calls them
+  # CAD_GOOGLE_*. They are given to the cad role's start alone; no other role is started with them.
+  local cad_env=() n
+  for n in CLIENT_ID CLIENT_SECRET; do
+    if [[ -v CAD_GOOGLE_$n ]]; then
+      local v="CAD_GOOGLE_$n"
+      cad_env+=("CAD_GOOGLE_$n=${!v}")
+    elif [[ -v GOOGLE_$n ]]; then
+      local v="GOOGLE_$n"
+      cad_env+=("CAD_GOOGLE_$n=${!v}")
+    fi
+  done
+  unset GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_ID CAD_GOOGLE_CLIENT_SECRET
+  # The old cados volume keeps CAD data at its root: move it into /data/cad once, before cad prepares its folder
+  # (which would otherwise make an empty /data/cad and answer with the holding page, waiting for data).
+  if [ "${BIZOMAT_ADOPT_CADOS_VOLUME:-1}" = 1 ] && is_mounted "$DATA"; then
+    "${BIZOMAT_ADOPT_SCRIPT:-/usr/local/lib/bizomat/adopt-cados-volume.sh}" ||
+      say "all: the volume adoption stopped (see above); cad waits with its holding page until that is resolved"
+  fi
+
+  # BIZOMAT_ROLES: which services this Machine runs (fly.toml). The single 1 GB application runs cad, work and the
+  # proxy in front of them; the website's static pages are served by the proxy itself (no web process).
+  local roles=() r
+  read -r -a roles <<<"${BIZOMAT_ROLES:-cad work proxy}"
+  for r in "${roles[@]}"; do
+    case "$r" in proxy | web | work | cad) ;; *) die "BIZOMAT_ROLES: unknown role '$r'" ;; esac
+  done
+  declare -A PID=() STARTED=() FAILS=()
+  STOPPING=0
+  start_role() {
+    if [ "$1" = cad ]; then
+      /usr/bin/env "${cad_env[@]}" FLY_PROCESS_GROUP=cad "$self" cad &
+    else
+      FLY_PROCESS_GROUP="$1" "$self" "$1" &
+    fi
+    PID[$1]=$!
+    STARTED[$1]=$SECONDS
+    say "all: started $1 (pid ${PID[$1]})"
+  }
+  # shellcheck disable=SC2329 # invoked by the TERM/INT trap
+  stop_all() {
+    STOPPING=1
+    local p
+    for p in "${PID[@]}"; do kill -TERM "$p" 2>/dev/null || true; done
+  }
+  trap stop_all TERM INT
+  for r in "${roles[@]}"; do start_role "$r"; done
+  local done_pid rc role delay
+  while :; do
+    done_pid=""
+    rc=0
+    wait -n -p done_pid "${PID[@]}" || rc=$?
+    [ "$STOPPING" = 1 ] && break
+    [ -n "$done_pid" ] || continue
+    role=""
+    for r in "${!PID[@]}"; do [ "${PID[$r]}" = "$done_pid" ] && role="$r"; done
+    [ -n "$role" ] || continue
+    # a role that ran for a minute starts again at once; one that keeps failing waits longer each time (up to 30 s)
+    if ((SECONDS - STARTED[$role] >= 60)); then FAILS[$role]=0; fi
+    FAILS[$role]=$((${FAILS[$role]:-0} + 1))
+    delay=$((FAILS[$role] > 4 ? 30 : (1 << FAILS[$role])))
+    say "all: $role stopped (exit $rc); starting it again in ${delay}s"
+    sleep "$delay" &
+    wait $! || true
+    [ "$STOPPING" = 1 ] && break
+    start_role "$role"
+  done
+  say "all: stopping"
+  wait || true
+  exit 0
+}
+if [ "$ROLE" = all ]; then
+  if [ -n "${FLY_PROCESS_GROUP:-}" ] && [ "$FLY_PROCESS_GROUP" != all ] && [ "$FLY_PROCESS_GROUP" != app ]; then
+    die "this Machine is in process group '$FLY_PROCESS_GROUP' but was asked to run all roles"
+  fi
+  run_all
+fi
 
 prepare_volume() {
   if ! is_mounted "$DATA"; then
@@ -135,8 +225,10 @@ HOLD=""
 case "$ROLE" in
   work | cad)
     prepare_volume
-    if [ -e "$DATA/.bizomat-maintenance" ]; then
-      say "maintenance mode: $DATA/.bizomat-maintenance exists, so $ROLE is not started."
+    # /data/.bizomat-maintenance stops both; /data/.bizomat-maintenance-<role> stops only that role (the single
+    # application keeps cad and work on one volume, so a work data move need not stop CAD Automation)
+    if [ -e "$DATA/.bizomat-maintenance" ] || [ -e "$DATA/.bizomat-maintenance-$ROLE" ]; then
+      say "maintenance mode: $DATA/.bizomat-maintenance or $DATA/.bizomat-maintenance-$ROLE exists, so $ROLE is not started."
       say "Restore or inspect the data with 'fly ssh console', then remove the file and restart this Machine."
       if [ "$ROLE" = cad ]; then HOLD=maintenance; else exec sleep infinity; fi
     elif [ "$ROLE" = cad ] && [ ! -e "$ROLE_DIR/users.json" ] && [ ! -e "$ROLE_DIR/accounts.enabled" ]; then
@@ -189,6 +281,18 @@ case "$ROLE" in
     PREFIXES=(PROXY_)
     pass "${EXACT[@]}"
     pass_prefix "${PREFIXES[@]}"
+    # BIZOMAT_EMBED_WEB=1 (the single 1 GB machine): the website runs inside the proxy's process, on 127.0.0.1:8003,
+    # with the web role's own WEB_* settings only (no secrets: the contact form posts to its provider from the browser).
+    if [ "${BIZOMAT_EMBED_WEB:-}" = 1 ]; then
+      PREFIXES+=(WEB_)
+      pass_prefix WEB_
+      set_var PROXY_EMBED_WEB /app/web/dist-server/server.mjs
+      set_var WEB_DIST_DIR /app/web/dist
+      set_var WEB_HOST 127.0.0.1
+      set_var WEB_PORT 8003
+      map WEB_VERSION WEB_VERSION "$VERSION"
+      if [ -z "${OUT[UPSTREAM_WEB]:-}" ]; then set_var UPSTREAM_WEB http://127.0.0.1:8003; fi
+    fi
     ;;
   web)
     EXACT=(CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY)

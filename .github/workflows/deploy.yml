@@ -1,0 +1,204 @@
+# Deploy BIZOMAT to its single Fly.io app `cados` (one Machine in syd, 1 GB): GitHub -> Actions -> Fly -> cados.fly.dev.
+# No laptop is involved: the image is built on the GitHub runner and pushed to Fly's registry by flyctl.
+#
+# On every push to main: the whole CI (bizomat-ci.yml) first; then, only if it passed:
+#   1. checks fly.toml (app cados, syd, one Machine of 1 GB) and that the app has at most one Machine;
+#   2. snapshots the volume (opensketch_data: CAD MCP's and Task Management's data) before every deploy;
+#   3. builds the image on the runner and deploys it (rolling, --ha=false: the one Machine is replaced in place);
+#   4. after the deploy: exactly one Machine, in syd, with 1024 MB, started; the proxy reports the new version;
+#      the smoke test runs inside the Machine through the proxy (website pages, retired-section redirects, CAD MCP,
+#      Task Management, cados.fly.dev); memory in use is reported; the public cados.fly.dev CAD paths answer;
+#      bizomat.ai is checked too once its DNS points at cados (the new site answers /resources/ with 301).
+# A failure stops the workflow red, with the reason in the job summary; GitHub notifies the person who pushed.
+#
+# The FIRST deploy of this repository replaces the old CADOS image on cados. It runs only by hand (Actions > Deploy >
+# Run workflow, first_switch = SWITCH) after the steps in docs/BIZOMAT-SINGLE-APP.md, section 3; a push to main is
+# refused until the Machine runs this repository's image.
+#
+# Rollback without a laptop: Actions > Deploy > Run workflow, with rollback_image = an image from an earlier run's
+# summary (or `flyctl releases -a cados --image`). The volume snapshots stay for 30 days.
+#
+# Secret (repository or environment secret, never in the repository): FLY_API_TOKEN, a deploy token for the cados app
+# (fly tokens create deploy -a cados). It is only given to the steps that call flyctl.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      first_switch:
+        description: Type SWITCH for the first deploy that replaces the old CADOS image on cados (see the runbook)
+        required: false
+        default: ""
+      rollback_image:
+        description: Deploy this earlier image instead of building (rollback), e.g. registry.fly.io/cados:deployment-...
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cados
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    if: inputs.rollback_image == ''
+    uses: ./.github/workflows/bizomat-ci.yml
+
+  deploy:
+    needs: ci
+    if: always() && (needs.ci.result == 'success' || (needs.ci.result == 'skipped' && inputs.rollback_image != ''))
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      APP: cados
+      REGION: syd
+      MEMORY_MB: "1024"
+      VERSION: ${{ github.sha }}
+    steps:
+      - name: Check the token
+        env:
+          HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::Add the secret FLY_API_TOKEN (a deploy token for cados: fly tokens create deploy -a cados) in Settings > Secrets and variables > Actions. Nothing was deployed."
+            exit 1
+          fi
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+
+      - name: fly.toml is the single application (app cados, syd, one Machine of 1 GB, one volume)
+        run: python3 infrastructure/fly/test/check-config.py fly.toml
+
+      - name: The app has at most one Machine, and the first switch is deliberate
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FIRST_SWITCH: ${{ inputs.first_switch }}
+        run: |
+          set -euo pipefail
+          flyctl machines list --app "$APP" --json >machines.json
+          count="$(jq 'length' machines.json)"
+          echo "Machines on $APP before the deploy: $count" >>"$GITHUB_STEP_SUMMARY"
+          if [ "$count" -gt 1 ]; then
+            echo "::error::$APP has $count Machines; the single application has exactly one. Nothing was deployed: look at them with 'flyctl machines list -a $APP' (the runbook, section 7) before deploying."
+            exit 1
+          fi
+          # Does the Machine already run this repository's image? Its Machines are in the process group "all" (fly.toml).
+          ours="$(jq -r '[.[] | .config.metadata.fly_process_group // ""] | any(. == "all")' machines.json)"
+          if [ "$count" = 1 ] && [ "$ours" != true ] && [ "$FIRST_SWITCH" != SWITCH ]; then
+            {
+              echo "### Not deployed: the first switch is a deliberate step"
+              echo "cados still runs the old CADOS image. Follow docs/BIZOMAT-SINGLE-APP.md, section 3 (disconnect Fly's own"
+              echo "GitHub deploys of CADOS, snapshot, Task Management data), then run this workflow by hand with first_switch = SWITCH."
+            } >>"$GITHUB_STEP_SUMMARY"
+            echo "::error::cados still runs the old CADOS image: the first deploy runs only by hand with first_switch = SWITCH (docs/BIZOMAT-SINGLE-APP.md, section 3)."
+            exit 1
+          fi
+
+      - name: Snapshot the volume before the deploy
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          vol="$(flyctl volumes list --app "$APP" --json | jq -r '[.[] | select(.name == "opensketch_data")][0].id')"
+          [ -n "$vol" ] && [ "$vol" != null ] || { echo "::error::no opensketch_data volume on $APP"; exit 1; }
+          flyctl volumes snapshots create "$vol" --app "$APP" >/dev/null
+          echo "Volume $vol snapshotted before the deploy (kept 30 days)." >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Make room on the runner (the image builds the website, the .NET add-in and OpenCascade)
+        if: inputs.rollback_image == ''
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
+
+      - name: Build on this runner and deploy (one Machine, replaced in place)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          ROLLBACK_IMAGE: ${{ inputs.rollback_image }}
+        run: |
+          set -euo pipefail
+          if [ -n "$ROLLBACK_IMAGE" ]; then
+            [[ $ROLLBACK_IMAGE =~ ^registry\.fly\.io/cados(:|@)[A-Za-z0-9._:-]+$ ]] || { echo "::error::rollback_image must be a registry.fly.io/cados image"; exit 1; }
+            flyctl deploy --app "$APP" --config fly.toml --image "$ROLLBACK_IMAGE" --ha=false --wait-timeout 10m
+            echo "VERSION=" >>"$GITHUB_ENV"
+          else
+            flyctl deploy --app "$APP" --config fly.toml --local-only --ha=false \
+              --build-arg BIZOMAT_VERSION="${VERSION::7}" --image-label "${VERSION::12}" --wait-timeout 10m
+          fi
+          flyctl releases --app "$APP" --image --json | jq -r '.[0] | "Image: \(.ImageRef // .imageRef // "?")"' >>"$GITHUB_STEP_SUMMARY" || true
+
+      - name: Exactly one Machine, in syd, with 1 GB, started
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl machines list --app "$APP" --json >machines.json
+          jq -r '.[] | "Machine \(.id): \(.region), \(.config.guest.cpu_kind) \(.config.guest.cpus) vCPU, \(.config.guest.memory_mb) MB, \(.state)"' machines.json | tee -a "$GITHUB_STEP_SUMMARY"
+          [ "$(jq 'length' machines.json)" = 1 ] || { echo "::error::$APP has $(jq 'length' machines.json) Machines after the deploy, not one"; exit 1; }
+          [ "$(jq -r '.[0].region' machines.json)" = "$REGION" ] || { echo "::error::the Machine is not in $REGION"; exit 1; }
+          [ "$(jq -r '.[0].config.guest.memory_mb' machines.json)" = "$MEMORY_MB" ] || { echo "::error::the Machine does not have $MEMORY_MB MB"; exit 1; }
+          [ "$(jq -r '.[0].state' machines.json)" = started ] || { echo "::error::the Machine is not started"; exit 1; }
+
+      - name: The proxy serves the new version
+        run: |
+          want="${VERSION::7}"
+          got=""
+          for _ in $(seq 1 60); do
+            got="$(curl -fsS --max-time 10 "https://$APP.fly.dev/__proxy/health" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)"
+            if [ -n "$got" ] && { [ -z "$want" ] || [ "$got" = "$want" ]; }; then
+              echo "The proxy on https://$APP.fly.dev reports version $got." >>"$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::https://$APP.fly.dev/__proxy/health did not show version ${want:-any} within 5 minutes (last: ${got:-none}). Logs: flyctl logs -a $APP. Rollback: run this workflow with rollback_image."
+          exit 1
+
+      - name: Smoke test inside the Machine (website, redirects, CAD MCP, Task Management, cados.fly.dev)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          status=0
+          flyctl ssh console --app "$APP" -C "node /usr/local/lib/bizomat/smoke/smoke.mjs http://127.0.0.1:8080 --mode hosts --wait 180" >smoke.txt 2>&1 || status=$?
+          { echo; echo "### Smoke test (inside the Machine)"; echo '```'; tail -70 smoke.txt; echo '```'; } >>"$GITHUB_STEP_SUMMARY"
+          [ "$status" = 0 ] || { echo "::error::the smoke test failed (above). Rollback: run this workflow with rollback_image."; exit 1; }
+
+      - name: Memory in use
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          flyctl ssh console --app "$APP" -C /usr/local/lib/bizomat/memory-report.sh >mem.txt 2>&1 || true
+          { echo "### Memory (1 GB Machine)"; echo '```'; cat mem.txt; echo '```'; } >>"$GITHUB_STEP_SUMMARY"
+          avail="$(awk '/^MemAvailable:/ {print int($2 / 1024)}' mem.txt)"
+          if [ -n "$avail" ] && [ "$avail" -lt 150 ]; then
+            echo "::warning::only ${avail} MB of memory available on the 1 GB Machine: watch it (flyctl logs -a $APP, out-of-memory kills); raising the memory needs the owner's approval."
+          fi
+
+      - name: Public checks (cados.fly.dev CAD paths; bizomat.ai once its DNS points at cados)
+        run: |
+          set -euo pipefail
+          code() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$@"; }
+          # each check prints PASS or FAIL; the step fails if any line is FAIL
+          check() { local want="$1" got="$2" what="$3"; if [ "$got" = "$want" ]; then echo "PASS $what ($got)"; else echo "FAIL $what (got $got, want $want)"; fi; }
+          {
+            check 200 "$(code "https://$APP.fly.dev/healthz")" "https://$APP.fly.dev/healthz (CAD MCP)"
+            check 200 "$(code "https://$APP.fly.dev/.well-known/oauth-protected-resource/mcp")" "CAD MCP OAuth metadata on $APP.fly.dev"
+            check 401 "$(code -X POST -H 'Content-Type: application/json' -d '{}' "https://$APP.fly.dev/mcp")" "CAD MCP refuses a call without a token"
+            # which app serves bizomat.ai: the old bizomat app still has /resources/ (200); this site answers 301
+            if [ "$(code "https://bizomat.ai/resources/")" = 301 ]; then
+              for p in / /cad-automation/ /work/ /engine-room/; do check 200 "$(code "https://bizomat.ai$p")" "https://bizomat.ai$p"; done
+              check 200 "$(code "https://bizomat.ai/tasks/api/health")" "Task Management on bizomat.ai"
+              check 200 "$(code "https://bizomat.ai/cad/healthz")" "CAD MCP on bizomat.ai"
+              check 301 "$(code "https://www.bizomat.ai/")" "www.bizomat.ai redirects to bizomat.ai"
+            else
+              echo "NOTE bizomat.ai does not point at cados yet (DNS): only cados.fly.dev was checked publicly"
+            fi
+          } | tee public.txt
+          { echo "### Public checks"; echo '```'; cat public.txt; echo '```'; } >>"$GITHUB_STEP_SUMMARY"
+          ! grep -q '^FAIL' public.txt

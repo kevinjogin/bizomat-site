@@ -21,6 +21,9 @@
 //   www.bizomat.ai                  GET, HEAD                                 301 https://bizomat.ai<path>?<query>
 //                                   other methods                             308 https://bizomat.ai<path>?<query>
 //   cados.kevos.com                 all (all paths, upgrades)                 proxy -> cad (CAD Automation's old address)
+//   cados.fly.dev                   /__proxy/health, /__proxy/ready           the proxy's own health endpoints
+//                                   everything else                           proxy -> cad (the single app's Fly address,
+//                                                                             CAD Automation's address before)
 //   work.kevos.com                  all (all paths, WebSockets)               proxy -> work (Project Management's old address)
 //   kevos.com, www.kevos.com        GET, HEAD /cad, /cad/                     301 https://bizomat.ai/cad-automation/?<query>
 //                                                                             (the old CAD Automation page: /cad is the app)
@@ -80,6 +83,11 @@ export const HOSTS = Object.freeze({
   'bizomat.ai': Object.freeze({ kind: 'platform' }),
   'www.bizomat.ai': Object.freeze({ kind: 'redirect', origin: CANONICAL_ORIGIN }),
   'cados.kevos.com': Object.freeze({ kind: 'proxy', upstream: 'cad' }),
+  // The single application's own Fly address (fly.toml app `cados`). It was CAD Automation's address before the
+  // platform moved in, so connectors, add-ins and Companions set up with it call CAD's root paths there: every path
+  // keeps going to cad, which sends browsers on to bizomat.ai/cad itself (OPENSKETCH_REDIRECT_HOSTS). The proxy's own
+  // health endpoints stay answered here, for Fly's checks.
+  'cados.fly.dev': Object.freeze({ kind: 'proxy', upstream: 'cad', ownHealth: true }),
   'work.kevos.com': Object.freeze({ kind: 'proxy', upstream: 'work' }),
   'kevos.com': Object.freeze({ kind: 'legacy', origin: CANONICAL_ORIGIN }),
   'www.kevos.com': Object.freeze({ kind: 'legacy', origin: CANONICAL_ORIGIN }),
@@ -223,6 +231,8 @@ export function decide({ host, method, path, query = '', previewCookie = '', pre
   if (rule) {
     const base = { host: h, production: true };
     if (rule.kind === 'platform') return byPath(base, path, query, method, false, tasksOrigin);
+    if (rule.ownHealth && path === '/__proxy/health') return { action: 'health', host: h };
+    if (rule.ownHealth && path === '/__proxy/ready') return { action: 'ready', host: h };
     if (rule.kind === 'proxy') return { ...base, action: 'proxy', upstream: rule.upstream, preview: false };
     if (rule.kind === 'redirect') return { ...base, ...redirectTo(rule.origin, path, query, method) };
     // legacy: kevos.com and www.kevos.com moved to bizomat.ai

@@ -23,8 +23,18 @@ test('the policy recognises a forbidden upload in every YAML form it can take', 
   }
 });
 
-test('the platform migration workflow never uploads an artifact and deletes the export from the runner', () => {
-  const wf = readFileSync('.github/workflows/bizomat-migrate-work.yml', 'utf8');
+test('the consolidation workflow never uploads an artifact and deletes the archive from the runner', () => {
+  const wf = readFileSync('.github/workflows/consolidate.yml', 'utf8');
   assert.doesNotMatch(wf, /upload-artifact/);
-  assert.match(wf, /Delete the export from the runner[\s\S]*if: always\(\)[\s\S]*rm -rf "\$W"/);
+  assert.match(wf, /remove the archive from bizomat and from this runner"\n\s+if: always\(\) && inputs\.mode == 'move-work-data'[\s\S]*rm -rf "\$W"/);
+});
+
+test('the deploy workflow takes its token from GitHub secrets only and builds on the runner', () => {
+  const wf = readFileSync('.github/workflows/deploy.yml', 'utf8');
+  assert.doesNotMatch(wf, /upload-artifact/);
+  assert.match(wf, /branches: \[main\]/);
+  assert.match(wf, /uses: \.\/\.github\/workflows\/bizomat-ci\.yml/, 'the full CI gates every deploy');
+  assert.match(wf, /flyctl deploy --app "\$APP" --config fly\.toml --local-only --ha=false/, 'built on the GitHub runner, one Machine');
+  for (const m of wf.matchAll(/FLY_API_TOKEN: (.+)/g)) assert.equal(m[1].trim(), '${{ secrets.FLY_API_TOKEN }}');
+  assert.doesNotMatch(wf, /FlyV1 |fo1_/, 'no token in the file');
 });

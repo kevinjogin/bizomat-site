@@ -23,6 +23,30 @@ try {
 
 const proxy = createProxy(config, { log: defaultLog });
 
+// PROXY_EMBED_WEB=<path of the website's server bundle> (the single 1 GB machine, fly.toml): the website (its static
+// pages, redirects and /api/contact) runs in this process on 127.0.0.1:8003 instead of a web process of its own, which
+// saves about 55 MB. The proxy reaches it as UPSTREAM_WEB, exactly as it reaches a separate web process. It gets only
+// the WEB_* settings (infrastructure/fly/entrypoint.sh) and the website holds no customer data or secrets of its own.
+let web = null;
+if (process.env.PROXY_EMBED_WEB) {
+  try {
+    const { startWebServer } = await import(process.env.PROXY_EMBED_WEB);
+    const settings = Object.fromEntries(Object.entries(process.env).filter(([k]) => k.startsWith('WEB_')));
+    web = startWebServer({
+      port: Number(process.env.WEB_PORT || 8003),
+      host: process.env.WEB_HOST || '127.0.0.1',
+      distDir: process.env.WEB_DIST_DIR || '/app/web/dist',
+      trustProxy: true,
+      env: settings,
+    });
+    const port = await web.ready;
+    note('website embedded', { port });
+  } catch (err) {
+    process.stderr.write(`bizomat-proxy: cannot start the embedded website: ${err && (err.code || err.message)}\n`);
+    process.exit(72);
+  }
+}
+
 // An unexpected exception in one request must not drop every other connection (long polls, WebSockets).
 // Log it and carry on; if they keep coming, exit so the Machine's restart policy starts a clean process.
 let faults = [];
@@ -46,6 +70,7 @@ async function stop(signal) {
   stopping = true;
   note('stopping', { signal, ...proxy.stats(), graceMs: config.shutdownGraceMs });
   await proxy.close();
+  if (web) await web.close();
   note('stopped');
   process.exit(0);
 }

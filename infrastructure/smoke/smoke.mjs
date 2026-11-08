@@ -29,7 +29,10 @@ import https from 'node:https';
 import net from 'node:net';
 import tls from 'node:tls';
 
-const PAGES = ['/', '/cad-automation/', '/work/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+const PAGES = ['/', '/cad-automation/', '/work/', '/engine-room/', '/contact/', '/sign-in/', '/privacy/', '/terms/', '/disclaimer/'];
+// Retired 8 Nov 2026 (Resources and the old landing pages): each answers 301 with the retained page that replaces it.
+const RETIRED = [['/resources/', '/'], ['/tools/', '/'], ['/reados/', '/'], ['/library/', '/'], ['/insights/x/', '/'], ['/search/', '/'],
+  ['/products/', '/'], ['/services/', '/engine-room/'], ['/assessment/', '/contact/']];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room).
 const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/']];
 const HSTS = /max-age=\d{7,}/;
@@ -256,6 +259,21 @@ async function proxyChecks() {
       return (r.status === 301 && r.headers.location === to) || { fail: `${describe(r)} ${r.headers.location || ''}` };
     });
   }
+  // cados.fly.dev: the single application's own address, and CAD Automation's before it: every path is CAD's
+  if (opts.mode === 'hosts') {
+    await check('proxy', 'cados.fly.dev reaches CAD MCP on its root paths (health, OAuth metadata, MCP)', async () => {
+      const h = await send('cados.fly.dev', { path: '/healthz' });
+      if (h.status !== 200 || h.json().ok === undefined) return { fail: `/healthz: ${describe(h)}` };
+      const meta = await send('cados.fly.dev', { path: '/.well-known/oauth-protected-resource/mcp' });
+      if (meta.status !== 200) return { fail: `oauth metadata: ${describe(meta)}` };
+      const mcp = await send('cados.fly.dev', { method: 'POST', path: '/mcp', headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }, body: '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}' });
+      return mcp.status === 401 || { fail: `/mcp without a token should be 401: ${describe(mcp)}` };
+    });
+    await check('proxy', 'cados.fly.dev keeps the proxy\'s own health endpoint', async () => {
+      const r = await send('cados.fly.dev', { path: '/__proxy/health' });
+      return (r.status === 200 && r.json().ok === true) || { fail: describe(r) };
+    });
+  }
   const moves = [
     ['kevos.com', '/tools/?smoke=1&x=%2F', 'GET', '/tools/?smoke=1&x=%2F'],
     ['kevos.com', '/reados/', 'GET', '/reados/'],
@@ -294,6 +312,13 @@ async function webChecks() {
       const r = await onPlatform({ path: from, headers: { Accept: 'text/html' } });
       const location = r.headers.location || '';
       return (r.status === 301 && (location === to || location.endsWith(`://bizomat.ai${to}`) || new URL(location, 'https://x').pathname === to)) || { fail: `${describe(r)} ${location}` };
+    });
+  }
+  for (const [from, to] of RETIRED) {
+    await check('web', `retired ${from} answers 301 to ${to}`, async () => {
+      const r = await onPlatform({ path: from, headers: { Accept: 'text/html' } });
+      const location = r.headers.location || '';
+      return (r.status === 301 && new URL(location, 'https://bizomat.ai').pathname === to) || { fail: `${describe(r)} ${location}` };
     });
   }
   for (const page of PAGES) {

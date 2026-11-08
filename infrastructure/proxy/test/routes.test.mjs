@@ -40,7 +40,7 @@ test('normalizeHost: case, port, trailing dot, IPv6 literals, junk', () => {
 });
 
 test('every production host is in the table, and nothing else is: no subdomains of bizomat.ai but www', () => {
-  assert.deepEqual(Object.keys(HOSTS).sort(), ['bizomat.ai', 'cados.kevos.com', 'kevos.com', 'work.kevos.com', 'www.bizomat.ai', 'www.kevos.com']);
+  assert.deepEqual(Object.keys(HOSTS).sort(), ['bizomat.ai', 'cados.fly.dev', 'cados.kevos.com', 'kevos.com', 'work.kevos.com', 'www.bizomat.ai', 'www.kevos.com']);
   for (const h of Object.keys(HOSTS)) assert.ok(isProductionHost(h));
   for (const h of ['bizomat.fly.dev', 'example.com', 'cad.bizomat.ai', 'work.bizomat.ai']) assert.ok(!isProductionHost(h), h);
 });
@@ -123,6 +123,25 @@ test('the old CAD Automation address reaches cad on all paths, unchanged', () =>
       assert.equal(d.upstream, 'cad', `${host} ${path}`);
     }
   }
+});
+
+test('cados.fly.dev, the single app\'s Fly address and CAD Automation\'s before it, reaches cad on every path but the proxy\'s own health', () => {
+  for (const host of ['cados.fly.dev', 'CADOS.FLY.DEV:443']) {
+    for (const path of ['/', '/login', '/dashboard', '/mcp', '/mcp/0123456789abcdef0123456789abcdef', '/solidworks/mcp', '/mcp/sw/next',
+      '/v2/device/next', '/v2/bridge/update.json', '/oauth/token', '/.well-known/oauth-protected-resource/mcp', '/healthz', '/download/solidworks',
+      '/cad/x', '/__preview/web']) {
+      for (const method of ['GET', 'POST']) {
+        const d = decide({ host, method, path, previewRouting: true, previewCookie: 'web' });
+        assert.equal(d.action, 'proxy', `${method} ${host} ${path}`);
+        assert.equal(d.upstream, 'cad', `${method} ${host} ${path}`);
+        assert.equal(d.preview, false);
+      }
+    }
+    assert.equal(get(host, '/__proxy/health').action, 'health', 'Fly\'s check of the proxy');
+    assert.equal(get(host, '/__proxy/ready').action, 'ready');
+  }
+  // the retired app's address is no longer one of ours: as any other fly.dev name, it is never a second platform address
+  assert.equal(get('bizomat.fly.dev', '/work/').action, 'redirect');
 });
 
 test('the old Project Management address reaches work on all paths', () => {

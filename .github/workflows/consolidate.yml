@@ -1,0 +1,255 @@
+# One-time consolidation into the single app `cados` (docs/BIZOMAT-SINGLE-APP.md). Run by hand from the Actions tab:
+# no laptop. Each mode checks before it changes anything, and prints names and counts only, never data.
+#
+#   inspect         read-only: both apps' Machines (region, CPU, memory, state, image), volumes, IP addresses,
+#                   certificates and secret NAMES (never values); which bizomat secrets cados lacks; the cados volume's
+#                   layout; Task Management's table counts on both sides
+#   move-work-data  Task Management's data from the bizomat app (work Machine, /data/work) to cados (/data/work):
+#                   snapshots of both volumes; the old Task Management stops taking changes (maintenance mode); the data
+#                   is packed with a checksum manifest, copied through this runner, checked, and put in place on cados
+#                   by apply.sh (anything already there is moved to /data/backups first, never deleted; SQLite
+#                   integrity check); the counts on both sides must be equal; only Task Management restarts on cados,
+#                   CAD MCP keeps running. Type MOVE. The old copy stays on the bizomat volume, untouched.
+#   retire-bizomat  only once bizomat.ai is served by cados and cados has the Task Management data: release the bizomat
+#                   app's public IP addresses (bizomat.fly.dev stops answering) and stop its Machines. Its volumes,
+#                   snapshots and the app itself are KEPT for the rollback window. Type RETIRE.
+# Destroying the bizomat app (and with it its volumes) is not done here: only the owner, in the Fly dashboard, after
+# the rollback window (docs/BIZOMAT-SINGLE-APP.md, section 7).
+#
+# Secrets: FLY_API_TOKEN (deploy token for cados) and FLY_BIZOMAT_TOKEN (deploy token for bizomat: fly tokens create
+# deploy -a bizomat; delete it once bizomat is retired). Personal data never leaves the two Machines and this runner:
+# the archive is never uploaded as an artifact, never printed, and is deleted at the end whatever happens.
+name: Consolidate into cados
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: inspect (read-only), move-work-data or retire-bizomat
+        type: choice
+        options: [inspect, move-work-data, retire-bizomat]
+        default: inspect
+      confirm:
+        description: MOVE for move-work-data, RETIRE for retire-bizomat
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-cados
+  cancel-in-progress: false
+
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      NEW: cados
+      OLD: bizomat
+      MODE: ${{ inputs.mode }}
+    steps:
+      - name: Inputs and secrets
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+          HAS_NEW: ${{ secrets.FLY_API_TOKEN != '' }}
+          HAS_OLD: ${{ secrets.FLY_BIZOMAT_TOKEN != '' }}
+        run: |
+          [ "$HAS_NEW" = true ] || { echo "::error::Add the secret FLY_API_TOKEN (fly tokens create deploy -a cados)."; exit 1; }
+          [ "$HAS_OLD" = true ] || { echo "::error::Add the secret FLY_BIZOMAT_TOKEN (fly tokens create deploy -a bizomat)."; exit 1; }
+          case "$MODE" in
+            move-work-data) [ "$CONFIRM" = MOVE ] || { echo "::error::Type MOVE in confirm for move-work-data."; exit 1; } ;;
+            retire-bizomat) [ "$CONFIRM" = RETIRE ] || { echo "::error::Type RETIRE in confirm for retire-bizomat."; exit 1; } ;;
+          esac
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+
+      - name: Inspect both apps (names and settings only)
+        env:
+          NEW_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          OLD_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          set -uo pipefail
+          for app in "$NEW" "$OLD"; do
+            if [ "$app" = "$NEW" ]; then export FLY_API_TOKEN="$NEW_TOKEN"; else export FLY_API_TOKEN="$OLD_TOKEN"; fi
+            {
+              echo "## $app"
+              echo '```'
+              flyctl machines list --app "$app" --json 2>/dev/null | jq -r '.[] | "machine \(.id) \(.config.metadata.fly_process_group // "-") \(.region) \(.config.guest.cpu_kind) x\(.config.guest.cpus) \(.config.guest.memory_mb) MB \(.state) image \(.config.image)"' || echo "machines: not readable"
+              flyctl volumes list --app "$app" --json 2>/dev/null | jq -r '.[] | "volume \(.id) \(.name) \(.region) \(.size_gb) GB \(.state) attached to \(.attached_machine_id // "-")"' || echo "volumes: not readable"
+              flyctl ips list --app "$app" --json 2>/dev/null | jq -r '.[] | "ip \(.Type // .type) \(.Address // .address) \(.Region // .region)"' || echo "ips: not readable"
+              flyctl certs list --app "$app" --json 2>/dev/null | jq -r '.[] | "certificate \(.Hostname // .hostname) \(.ClientStatus // .clientStatus // "")"' || echo "certificates: not readable"
+              flyctl secrets list --app "$app" --json 2>/dev/null | jq -r '.[] | "secret \(.Name // .name)"' | sort || echo "secrets: not readable"
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY" >/dev/null
+          done
+          export FLY_API_TOKEN="$NEW_TOKEN"; flyctl secrets list --app "$NEW" --json | jq -r '.[] | (.Name // .name)' | sort >new-secrets.txt || true
+          export FLY_API_TOKEN="$OLD_TOKEN"; flyctl secrets list --app "$OLD" --json | jq -r '.[] | (.Name // .name)' | sort >old-secrets.txt || true
+          missing="$(comm -13 new-secrets.txt old-secrets.txt | tr '\n' ' ')"
+          echo "Secrets the bizomat app has and cados does not (names only; set them on cados only if a service still needs them): ${missing:-none}" >>"$GITHUB_STEP_SUMMARY"
+
+      - name: The cados volume's layout and the Task Management counts on both sides
+        env:
+          NEW_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          OLD_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          set -uo pipefail
+          export FLY_API_TOKEN="$NEW_TOKEN"
+          layout="$(flyctl ssh console --app "$NEW" -C "sh -c 'if [ -x /usr/local/lib/bizomat/adopt-cados-volume.sh ]; then /usr/local/lib/bizomat/adopt-cados-volume.sh --check; else echo old CADOS image: not adopted yet; fi'" 2>&1 | tail -1)"
+          echo "cados volume: $layout" >>"$GITHUB_STEP_SUMMARY"
+          new_counts="$(flyctl ssh console --app "$NEW" -C "sh -c 'test -f /data/work/db.sqlite && python3 /usr/local/lib/bizomat/migrate/work/counts.py /data/work/db.sqlite || echo no Task Management data on cados yet'" 2>&1 | grep -E '^(counts|no Task)' || true)"
+          export FLY_API_TOKEN="$OLD_TOKEN"
+          wm="$(flyctl machines list --app "$OLD" --json | jq -r '[.[] | select(.config.metadata.fly_process_group == "work")][0].id // empty')"
+          old_counts=""
+          [ -n "$wm" ] && old_counts="$(flyctl ssh console --app "$OLD" --machine "$wm" -C "python3 /usr/local/lib/bizomat/migrate/work/counts.py /data/work/db.sqlite" 2>&1 | grep '^counts' || true)"
+          { echo "### Task Management counts"; echo "bizomat (work Machine ${wm:-none}):"; echo '```'; echo "${old_counts:-not readable}"; echo '```'; echo "cados:"; echo '```'; echo "${new_counts:-not readable}"; echo '```'; } >>"$GITHUB_STEP_SUMMARY"
+
+      # ---------------------------------------------------------------- move-work-data
+      - name: "move-work-data: cados runs this repository's image"
+        if: inputs.mode == 'move-work-data'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl machines list --app "$NEW" --json >m.json
+          [ "$(jq 'length' m.json)" = 1 ] || { echo "::error::cados must have exactly one Machine"; exit 1; }
+          [ "$(jq -r '.[0].config.metadata.fly_process_group' m.json)" = all ] || { echo "::error::cados does not run this repository's image yet: run Deploy with first_switch = SWITCH first"; exit 1; }
+          {
+            echo "NEW_MACHINE=$(jq -r '.[0].id' m.json)"
+            echo "STAMP=$(date -u +%Y%m%dT%H%M%SZ)"
+            echo "W=$(mktemp -d)"
+          } >>"$GITHUB_ENV"
+
+      - name: "move-work-data: snapshots of both volumes"
+        if: inputs.mode == 'move-work-data'
+        env:
+          NEW_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          OLD_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          set -euo pipefail
+          export FLY_API_TOKEN="$NEW_TOKEN"
+          v="$(flyctl volumes list --app "$NEW" --json | jq -r '[.[] | select(.name == "opensketch_data")][0].id')"
+          flyctl volumes snapshots create "$v" --app "$NEW" >/dev/null
+          export FLY_API_TOKEN="$OLD_TOKEN"
+          v="$(flyctl volumes list --app "$OLD" --json | jq -r '[.[] | select(.name == "work_data")][0].id')"
+          [ -n "$v" ] && [ "$v" != null ] || { echo "::error::no work_data volume on bizomat"; exit 1; }
+          flyctl volumes snapshots create "$v" --app "$OLD" >/dev/null
+          echo "Snapshots taken of cados opensketch_data and bizomat work_data." >>"$GITHUB_STEP_SUMMARY"
+
+      - name: "move-work-data: the old Task Management stops taking changes, and its data is packed"
+        if: inputs.mode == 'move-work-data'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          set -euo pipefail
+          wm="$(flyctl machines list --app "$OLD" --json | jq -r '[.[] | select(.config.metadata.fly_process_group == "work")][0].id // empty')"
+          [ -n "$wm" ] || { echo "::error::no work Machine on bizomat"; exit 1; }
+          echo "OLD_MACHINE=$wm" >>"$GITHUB_ENV"
+          flyctl ssh console --app "$OLD" --machine "$wm" -C "touch /data/.bizomat-maintenance"
+          flyctl machine restart "$wm" --app "$OLD" --skip-health-checks >/dev/null
+          sleep 15
+          flyctl ssh console --app "$OLD" --machine "$wm" -C "bash /usr/local/lib/bizomat/migrate/work/pack.sh /data/work /data/incoming/work-$STAMP.tar" 2>&1 | grep '^pack:' || true
+          flyctl ssh console --app "$OLD" --machine "$wm" -C "sha256sum /data/incoming/work-$STAMP.tar" | awk '{print $1}' | tail -1 >"$W/sum.old"
+          flyctl ssh console --app "$OLD" --machine "$wm" -C "python3 /usr/local/lib/bizomat/migrate/work/counts.py /data/work/db.sqlite" 2>&1 | grep '^counts' >"$W/counts.old"
+          [ -s "$W/counts.old" ] || { echo "::error::could not count the old Task Management data"; exit 1; }
+
+      - name: "move-work-data: copy through this runner, checked at each end"
+        if: inputs.mode == 'move-work-data'
+        env:
+          NEW_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          OLD_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          set -euo pipefail
+          export FLY_API_TOKEN="$OLD_TOKEN"
+          flyctl ssh sftp get "/data/incoming/work-$STAMP.tar" "$W/work.tar" --app "$OLD" --machine "$OLD_MACHINE" >/dev/null
+          [ "$(sha256sum "$W/work.tar" | awk '{print $1}')" = "$(cat "$W/sum.old")" ] || { echo "::error::the copy on the runner does not match the archive on bizomat"; exit 1; }
+          export FLY_API_TOKEN="$NEW_TOKEN"
+          flyctl ssh sftp put "$W/work.tar" "/data/incoming/work-$STAMP.tar" --app "$NEW" --machine "$NEW_MACHINE" -m 0600 >/dev/null
+          got="$(flyctl ssh console --app "$NEW" --machine "$NEW_MACHINE" -C "sha256sum /data/incoming/work-$STAMP.tar" | awk '{print $1}' | tail -1)"
+          [ "$got" = "$(cat "$W/sum.old")" ] || { echo "::error::the copy on cados does not match"; exit 1; }
+          echo "Archive copied and checked (sha256 equal on bizomat, the runner and cados)." >>"$GITHUB_STEP_SUMMARY"
+
+      - name: "move-work-data: put it in place on cados (only Task Management stops; CAD MCP keeps running)"
+        if: inputs.mode == 'move-work-data'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          run() { flyctl ssh console --app "$NEW" --machine "$NEW_MACHINE" -C "$1"; }
+          # maintenance for work only; the supervisor starts work again, which then waits in maintenance mode
+          run "touch /data/.bizomat-maintenance-work"
+          run "pkill -TERM -f /app/work/dist/node/server.mjs" || true
+          sleep 8
+          status=0
+          run "/usr/local/lib/bizomat/migrate/work/apply.sh /data/incoming/work-$STAMP.tar" >"$W/apply.log" 2>&1 || status=$?
+          grep '^counts' "$W/apply.log" >"$W/counts.new" || true
+          if [ "$status" != 0 ]; then
+            echo "::error::apply.sh failed (exit $status): Task Management on cados stays in maintenance, its previous data untouched or in /data/backups. The old Task Management on bizomat is in maintenance too: remove /data/.bizomat-maintenance there to bring it back."
+            exit 1
+          fi
+          if ! diff -q "$W/counts.old" "$W/counts.new" >/dev/null; then
+            echo "::error::the table counts differ between bizomat and cados; Task Management on cados stays in maintenance for inspection."
+            exit 1
+          fi
+          run "rm -f /data/.bizomat-maintenance-work /data/incoming/work-$STAMP.tar"
+          # the waiting work role (sleep in maintenance) is replaced by a normal start
+          run "pkill -TERM -f '^sleep infinity'" || true
+          { echo "### Task Management data on cados"; echo '```'; cat "$W/counts.new"; echo '```'; echo "Counts equal on both sides."; } >>"$GITHUB_STEP_SUMMARY"
+          for _ in $(seq 1 30); do
+            if run "node -e \"fetch('http://127.0.0.1:8002/api/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))\"" >/dev/null 2>&1; then
+              echo "Task Management on cados answers." >>"$GITHUB_STEP_SUMMARY"; exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::Task Management on cados did not answer after the import (flyctl logs -a cados)"
+          exit 1
+
+      - name: "move-work-data: remove the archive from bizomat and from this runner"
+        if: always() && inputs.mode == 'move-work-data'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          if [ -n "${OLD_MACHINE:-}" ] && [ -n "${STAMP:-}" ]; then
+            flyctl ssh console --app "$OLD" --machine "$OLD_MACHINE" -C "rm -f /data/incoming/work-$STAMP.tar" >/dev/null 2>&1 || true
+          fi
+          if [ -n "${W:-}" ]; then rm -rf "$W"; fi
+
+      # ---------------------------------------------------------------- retire-bizomat
+      - name: "retire-bizomat: bizomat.ai is served by cados and cados has the Task Management data"
+        if: inputs.mode == 'retire-bizomat'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          code() { curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$@"; }
+          # the old bizomat app still serves /resources/ (200); the site on cados answers 301
+          [ "$(code https://bizomat.ai/resources/)" = 301 ] || { echo "::error::bizomat.ai is not served by cados yet (DNS): nothing was retired"; exit 1; }
+          for p in / /cad-automation/ /work/ /engine-room/; do [ "$(code "https://bizomat.ai$p")" = 200 ] || { echo "::error::https://bizomat.ai$p does not answer 200"; exit 1; }; done
+          [ "$(code https://bizomat.ai/tasks/api/health)" = 200 ] || { echo "::error::Task Management on bizomat.ai does not answer"; exit 1; }
+          [ "$(code https://bizomat.ai/cad/healthz)" = 200 ] || { echo "::error::CAD MCP on bizomat.ai does not answer"; exit 1; }
+          flyctl ssh console --app "$NEW" -C "test -s /data/work/db.sqlite" || { echo "::error::cados has no Task Management data: run move-work-data first"; exit 1; }
+
+      - name: "retire-bizomat: release its public addresses and stop its Machines (volumes and app kept)"
+        if: inputs.mode == 'retire-bizomat'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          set -euo pipefail
+          for ip in $(flyctl ips list --app "$OLD" --json | jq -r '.[] | (.Address // .address)'); do
+            flyctl ips release "$ip" --app "$OLD"
+          done
+          for m in $(flyctl machines list --app "$OLD" --json | jq -r '.[] | select(.state != "stopped") | .id'); do
+            flyctl machine stop "$m" --app "$OLD" >/dev/null
+          done
+          {
+            echo "### bizomat retired"
+            echo "Public addresses released (bizomat.fly.dev no longer answers) and Machines stopped."
+            echo "Kept for the rollback window: the app, its volumes (work_data, cad_data) and their snapshots."
+            flyctl machines list --app "$OLD" --json | jq -r '.[] | "machine \(.id) \(.config.metadata.fly_process_group // "-") \(.state)"'
+            flyctl volumes list --app "$OLD" --json | jq -r '.[] | "volume \(.id) \(.name) \(.size_gb) GB kept"'
+          } >>"$GITHUB_STEP_SUMMARY"

@@ -1,7 +1,9 @@
 {
-  "repository": "jogkev-creator/CADOS",
-  "commit": "e669cc642e49df5814ffec1ebcd0d7764568e02f",
-  "tree": "e97f6f4ce10d2da0d966eb87b7c64dee50ee2b68",
-  "subject": "BIZOMAT corporate footer on CAD Automation's pages (#33)",
-  "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
+  "importedFrom": {
+    "repository": "jogkev-creator/CADOS",
+    "commit": "e669cc642e49df5814ffec1ebcd0d7764568e02f",
+    "subject": "BIZOMAT corporate footer on CAD Automation's pages (#33)",
+    "date": "2026-11-08"
+  },
+  "note": "Since 8 Nov 2026 apps/cad in jogkev-creator/bizomat is where CAD Automation (CAD MCP, the SOLIDWORKS add-in, the Companion and the installer) is changed. It started as the CADOS commit above, byte for byte; CADOS keeps its full history and its installer backups."
 }
