@@ -30,8 +30,15 @@ Read this file, `README.md` and `docs/BIZOMAT-SINGLE-APP.md` before any change. 
   Management (`apps/work`, :8002) and the proxy (:8080, the only public port) with the website inside it.
   Never add a Machine, a process group or memory without the owner's approval; never set
   `OPENSKETCH_CAD_WORKERS` above 0 at 1 GB (each CAD worker process is about 400 MB).
-- **Deploys only through GitHub Actions** (`deploy.yml`, on push to `main`, after the whole CI). Nothing is deployed
-  from a laptop. Secrets live in GitHub Secrets (`FLY_API_TOKEN`, ...) and Fly secrets; never in the repository.
+- **Three services only** (owner, 8 Nov 2026): GitHub Free (private repository, free Actions minutes only, spending
+  limit US$0), Fly.io (the one Machine) and Cloudflare (DNS only, records DNS only). No other host, CI, builder,
+  self-hosted runner or Cloudflare Worker/Container/R2; never buy minutes or raise a spending limit.
+- **Deploys only through GitHub Actions, by hand** (`deploy.yml`: Run workflow on `main`, `confirm` = `DEPLOY`; it runs
+  the CI, builds the image once, tests it in 1 GB, then deploys). No push, merge or schedule deploys. Nothing is
+  deployed from a laptop. Keep the process group `app` (renaming it makes Fly create a new Machine with an empty
+  volume). Secrets live in GitHub Secrets (`FLY_API_TOKEN`, ...) and Fly secrets; never in the repository.
+- GitHub Actions minutes are scarce (2,000 a month for all private repositories, Windows counts double): workflows run
+  on pull requests that change code, by hand, or on a tag; never on every push. `docs/BIZOMAT-SINGLE-APP.md`, section 3.
 - Domains: `bizomat.ai` (primary; `www` 301 there), `cados.fly.dev` (every path to CAD MCP: connectors and paired
   computers use its root paths). DNS changes are the owner's, by hand, after the checks pass.
 - Routing (`infrastructure/proxy/routes.mjs`, the same `CAD_PATHS` as `src/server/platform-paths.ts`, checked equal by

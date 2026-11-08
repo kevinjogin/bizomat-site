@@ -1,5 +1,9 @@
 # BIZOMAT deployment
 
+> **Superseded on 8 Nov 2026.** This describes the earlier multi-Machine Fly app `bizomat`. Production is now the single
+> Machine of the app `cados`, deployed by hand from GitHub Actions: `docs/BIZOMAT-SINGLE-APP.md`. Kept as history and for
+> the rollback window of `bizomat`.
+
 How the platform is built and deployed as one Fly.io app, and how each domain moves to it. Configuration:
 `fly.toml`, `infrastructure/`, `.github/workflows/bizomat-*.yml`. Command-level detail: `infrastructure/README.md`.
 Data moves: `BIZOMAT-MIGRATION.md`. Going back: `BIZOMAT-ROLLBACK.md`.

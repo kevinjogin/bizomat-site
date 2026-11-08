@@ -4,7 +4,8 @@
 
 One repository, one Fly.io app, one Machine: the BIZOMAT website, **CAD MCP** (BIZOMAT CAD Automation: the SOLIDWORKS
 MCP server, its Windows add-in and installer) and **Task Management** (BIZOMAT Project Management), served at
-`https://bizomat.ai` from the Fly app `cados` (Sydney, 1 GB), deployed by GitHub Actions on every push to `main`.
+`https://bizomat.ai` from the Fly app `cados` (Sydney, 1 GB). Three services only: **GitHub Free** (code, tests,
+a deploy started by hand), **Fly.io** (one Machine) and **Cloudflare** (DNS only).
 
 | Address | What |
 | --- | --- |
@@ -13,7 +14,7 @@ MCP server, its Windows add-in and installer) and **Task Management** (BIZOMAT P
 | `https://bizomat.ai/tasks/` | Task Management |
 | `https://cados.fly.dev` | The Fly app's own address: every path is CAD MCP's, as before (connectors and paired computers use it) |
 
-The architecture, the measured memory and the one-time switch-over are in
+The architecture, the measured memory, GitHub Free's limits, the DNS records and the one-time switch-over are in
 [docs/BIZOMAT-SINGLE-APP.md](docs/BIZOMAT-SINGLE-APP.md).
 
 ## Repository
@@ -29,22 +30,29 @@ The architecture, the measured memory and the one-time switch-over are in
 | `infrastructure/migrate/` | Data tools: pack, restore with manifests and backups, counts (never row content) |
 | `infrastructure/smoke/` | Smoke test of every host and path through the proxy |
 | `fly.toml` | The single application: app `cados`, `syd`, one Machine, 1 GB, volume `opensketch_data` |
-| `wrangler.toml` | Optional Cloudflare Worker for the website (not used in production; `scripts/deploy-guard.mjs` guards it) |
-| `.github/workflows/` | `bizomat-ci.yml` (all checks), `deploy.yml` (deploy to cados), `consolidate.yml` (one-time switch-over), `cad-windows.yml` (add-in and MSI), `live-tls.yml` (daily certificate check) |
+| `.github/workflows/` | `bizomat-ci.yml` (all checks), `deploy.yml` (deploy to cados, by hand only), `consolidate.yml` (one-time switch-over, by hand), `cad-windows.yml` (add-in and MSI), `live-tls.yml` (weekly certificate check) |
 | `docs/` | Platform docs: single app runbook, architecture, deployment, security, rollback, operations |
 
 ## Development workflow (no laptop deployment)
 
 1. Work on a branch and open a pull request. **BIZOMAT CI** checks the website, CAD MCP (pytest, solver), Task
-   Management (lint, types, tests, builds), the proxy, the single-machine scripts, `fly.toml`, and builds the image
-   and runs it in a 1 GB container with the smoke test.
-2. Merge to `main`. **Deploy** runs the same CI, then builds the image on the GitHub runner, snapshots the volume,
-   deploys to `cados`, and checks: exactly one Machine in `syd` with 1024 MB, the new version, the smoke test inside
-   the Machine, memory, public CAD MCP paths and (once DNS points at cados) `bizomat.ai`. A failure turns the run red
+   Management (lint, types, tests, builds), the proxy, the single-machine scripts and `fly.toml` (not for changes to
+   documentation only). Run it by hand with `image` to also build the image and run it in 1 GB.
+2. Merge to `main`. Nothing is deployed by a merge or a push.
+3. Deploy: Actions > **Deploy** > Run workflow on `main`, `confirm` = `DEPLOY`. It runs the CI, snapshots the volume,
+   builds the image once on the GitHub runner, runs it in a 1 GB container with the smoke test, deploys that image to
+   `cados`, and checks: exactly one Machine in `syd` with 1024 MB, the new version, the smoke test inside the
+   Machine, memory, public CAD MCP paths and (once DNS points at cados) `bizomat.ai`. A failure turns the run red
    with the reason in its summary.
-3. Rollback: Actions > Deploy > Run workflow, `rollback_image` = an earlier image (shown in each run's summary).
-4. Windows add-in and installer: **BIZOMAT CAD for Windows** builds and tests on Linux and Windows, installs and
-   uninstalls the MSI, and publishes `bridge-latest` on `main` (a tag `bridge-v<version>` makes a release).
+4. Rollback: Actions > Deploy > Run workflow, `confirm` = `DEPLOY`, `rollback_image` = an earlier image (shown in
+   each run's summary).
+5. Windows add-in and installer: **BIZOMAT CAD for Windows** builds and tests on Linux and Windows for a pull request
+   that changes them, installs, repairs and uninstalls the MSI; a tag `bridge-v<version>` makes a release.
+
+GitHub Free gives 2,000 Actions minutes a month for all private repositories together (Windows minutes count
+double). An ordinary month here is estimated at about 400 minutes. If Actions is blocked, see
+docs/BIZOMAT-SINGLE-APP.md, sections 3.2 and 3.3 (what to check, and deploying through Fly.io's own GitHub
+integration, with its trade-offs).
 
 ### GitHub secrets
 
@@ -106,9 +114,10 @@ cd apps/cad && bash solidworks/build.sh test
 
 ## Open items
 
-- The first switch-over (docs/BIZOMAT-SINGLE-APP.md, section 3) is the owner's: it needs the Fly tokens, the Fly
+- The first switch-over (docs/BIZOMAT-SINGLE-APP.md, section 6) is the owner's: it needs the Fly tokens, the Fly
   dashboard and the Cloudflare DNS, which the build environment could not reach.
-- GitHub Actions minutes for private repositories ran out once (7 Nov 2026); check the billing before relying on CI.
+- GitHub Actions jobs were blocked by billing on 8 Nov 2026 (most likely the shared free minutes used up); the checks
+  and the fix are in docs/BIZOMAT-SINGLE-APP.md, section 3.2.
 - The BIZOMAT CAD add-in 0.14.0 (new name and `Documents\BIZOMAT CAD`) is built and unit-tested on Linux and its MSI is
   installed and removed on a Windows runner, but it has not been run inside SOLIDWORKS yet (no SOLIDWORKS in CI).
 - Publishing a new MSI to every computer (the signed update record) still needs the record and file put where CAD MCP

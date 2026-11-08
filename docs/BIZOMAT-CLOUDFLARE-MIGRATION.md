@@ -1,5 +1,9 @@
 # BIZOMAT on Cloudflare: Phase 1 audit and migration plan
 
+> **Superseded on 8 Nov 2026.** The owner chose three services only: GitHub Free, one Fly.io Machine (`cados`) and
+> Cloudflare for DNS only. No Cloudflare Worker, Container or R2 bucket is used; the Worker code was removed from this
+> repository. Current setup: `docs/BIZOMAT-SINGLE-APP.md`. This plan is kept as history.
+
 _6 Nov 2026. Phase 1 of the owner's request "Migrate BIZOMAT and its MCP server from Fly.io to Cloudflare". This is
 an audit: nothing in production was changed. Code reviewed: gocore-website `main` 2c05106 (website, `apps/work`,
 `apps/cad` copy, `infrastructure/`), CADOS `main` 17cb5b8 (the live CAD Automation server, add-in and laptop tools).
