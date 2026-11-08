@@ -3,7 +3,8 @@
 // The production addresses, all on bizomat.ai (docs/BIZOMAT-CLOUDFLARE-MIGRATION.md, "Production addresses"):
 //   the website                                   https://bizomat.ai        (www.bizomat.ai answers 301 there)
 //   CAD Automation      (formerly CADOS)          https://bizomat.ai/cad    (the Worker passes /cad to bizomat-mcp)
-//   its MCP endpoint for AI apps                  https://mcp.bizomat.ai/mcp (the Worker bizomat-mcp itself)
+//   its MCP endpoint for AI apps                  https://bizomat.ai/cad/mcp (the CAD server on the single Fly app
+//                                                 `cados`; the same address its own pages give)
 //   Project Management  (formerly KEVOS Work)     https://bizomat.ai/tasks  (the Worker sends /tasks on to the app)
 // The applications need sign-in. The old addresses (cados.kevos.com, work.kevos.com) keep working for programs set up
 // with them. Override with PUBLIC_CAD_APP_URL, PUBLIC_CAD_MCP_URL and PUBLIC_WORK_APP_URL at build time.
@@ -40,8 +41,8 @@ export const PLATFORM = {
 
 export const APP_URLS = {
   cad: clean(env.PUBLIC_CAD_APP_URL, 'https://bizomat.ai/cad'),
-  /** The connector address AI apps add: the MCP server's own host (the Worker bizomat-mcp). */
-  cadMcp: clean(env.PUBLIC_CAD_MCP_URL, 'https://mcp.bizomat.ai/mcp'),
+  /** The connector address AI apps add, as CAD MCP itself gives it (apps/cad/opensketch/server.py _mcp_base). */
+  cadMcp: clean(env.PUBLIC_CAD_MCP_URL, 'https://bizomat.ai/cad/mcp'),
   work: clean(env.PUBLIC_WORK_APP_URL, 'https://bizomat.ai/tasks'),
 } as const;
 
