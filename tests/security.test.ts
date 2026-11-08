@@ -76,8 +76,7 @@ test('security.txt names a real channel and a future expiry', () => {
   assert.ok(new Date(expires!).getTime() - Date.now() < 400 * 86_400_000, 'Expires should be under about a year away');
 });
 
-test('wrangler config binds the edge rate limiters and keeps secrets out', () => {
-  const toml = fs.readFileSync('wrangler.toml', 'utf8');
-  assert.match(toml, /name = "FORM_LIMITER"/);
-  assert.doesNotMatch(toml, /TURNSTILE_SECRET_KEY\s*=|STRIPE_WEBHOOK_SECRET\s*=|sk_live_|whsec_/);
+test('fly.toml keeps secrets out of its [env]', () => {
+  const toml = fs.readFileSync('fly.toml', 'utf8');
+  assert.doesNotMatch(toml, /TURNSTILE_SECRET_KEY\s*=|STRIPE_WEBHOOK_SECRET\s*=|sk_live_|whsec_|FlyV1 |fo1_/);
 });

@@ -213,16 +213,8 @@ test('no page or file of the website takes an application\'s path, so those path
       assert.ok(!CAD_PATHS.test(path) || path.startsWith('/.well-known/security'), `${file} is under a path CAD Automation keeps`);
     }
   }
-  const toml = fs.readFileSync('wrangler.toml', 'utf8');
-  // run_worker_first as a list stops the Worker from being the fallback for paths that are not files: /api/* and
-  // /insights then answer the 404 page (it happened in production on 6 Nov 2026). Paths reach the Worker by having no file.
-  assert.doesNotMatch(toml, /^\s*run_worker_first\s*=/m, 'run_worker_first must stay unset');
-  assert.match(toml, /pattern = "bizomat\.ai\/\*", zone_name = "bizomat\.ai"/);
-  // bizomat.ai/tasks is the Worker bizomat-tasks and bizomat.ai/cad the Worker bizomat-mcp, bound by name
-  assert.match(toml, /^\[\[services\]\]\nbinding = "TASKS"\nservice = "bizomat-tasks"$/m);
-  assert.match(toml, /^\[\[services\]\]\nbinding = "CAD"\nservice = "bizomat-mcp"$/m);
-  const tasks = fs.readFileSync('apps/work/wrangler.jsonc', 'utf8');
-  assert.match(tasks, /"bizomat": \{\n\s+"name": "bizomat-tasks",\n\s+"workers_dev": false,/, 'bizomat-tasks has no address of its own');
+  // The website is hosted on Fly only (inside the proxy): there is no Cloudflare Worker deployment of it any more.
+  assert.ok(!fs.existsSync('wrangler.toml'), 'no Cloudflare Worker configuration for the website');
 });
 
 test('the Worker\'s main module exports only its handler: the runtime refuses any other value there', () => {

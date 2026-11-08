@@ -9,13 +9,11 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node shared/brand/build.mjs && astro build && node scripts/postbuild.mjs",
-    "preview": "npm run build && wrangler dev",
     "build:server": "node scripts/build-server.mjs",
     "start": "node dist-server/server.mjs",
     "check": "astro check",
     "test": "node --test \"tests/**/*.test.ts\"",
     "verify": "npm run check && npm test && npm run build",
-    "deploy": "wrangler deploy",
     "brand": "node shared/brand/build.mjs",
     "brand:check": "node shared/brand/build.mjs --check"
   },
@@ -28,8 +26,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "esbuild": "^0.28.2",
-    "typescript": "^6.0.3",
-    "wrangler": "^4.147.0"
+    "typescript": "^6.0.3"
   },
-  "description": "BIZOMAT: the website (Astro), CAD Automation and Project Management, deployed together as one Fly.io app."
+  "description": "BIZOMAT: the website (Astro), CAD MCP and Task Management, deployed together as one Fly.io app (cados)."
 }

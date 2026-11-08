@@ -78,8 +78,7 @@ test('only files of the listed kinds, one folder down, and never without the buc
   assert.equal(post.headers.get('Allow'), 'GET, HEAD');
 });
 
-test('no page or file of the website takes /downloads/, and the bucket is bound by name', () => {
+test('no page or file of the website takes /downloads/', () => {
+  // Dormant on Fly (no bucket bound: /downloads/ answers 404); CAD MCP serves the installer itself (/cad/download/...).
   for (const root of ['src/pages', 'public']) assert.ok(!fs.existsSync(`${root}/downloads`), `${root}/downloads would hide the downloads`);
-  const toml = fs.readFileSync('wrangler.toml', 'utf8');
-  assert.match(toml, /^\[\[r2_buckets\]\]\nbinding = "DOWNLOADS"\nbucket_name = "bizomat-downloads"$/m);
 });
