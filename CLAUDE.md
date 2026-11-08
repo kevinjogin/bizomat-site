@@ -1,118 +1,72 @@
-# BIZOMAT platform: permanent project instructions
+# BIZOMAT: permanent project instructions
 
-Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md` and, for Library content,
-`docs/KEVOS_READOS_PUBLISHING.md` before any change. Each application has its own instructions too:
-`apps/cad/CLAUDE.md` (CAD Automation) and the docs in `apps/work/` (Project Management).
+Read this file, `README.md` and `docs/BIZOMAT-SINGLE-APP.md` before any change. CAD MCP has its own instructions in
+`apps/cad/CLAUDE.md`; Task Management's docs are in `apps/work/`.
 
 ## Identity
 
-- **BIZOMAT is the active brand** (owner decision, 5 Nov 2026), the parent corporate brand of every product. Corporate
-  language (owner, 8 Nov 2026; one source, `src/config/platform.ts`): descriptor "Business Intelligence & Automation";
-  slogan "Connecting Intelligence. Empowering Progress."; supporting message "Technology Connected. Progress
-  Delivered."; the corporate introduction, description and footer line there. The logo, layout, colours (navy and
-  teal) and product names stay as they are (owner, 8 Nov 2026). Products: **CAD Automation** (formerly CADOS),
-  **Project Management** (formerly KEVOS Work / WorkOS) and **Resources** (formerly the kevos.com Tools and Library).
-  Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
+- **BIZOMAT is the brand** (owner, 5 Nov 2026), the parent of every product. Corporate language (owner, 8 Nov 2026;
+  one source, `src/config/platform.ts`): descriptor "Business Intelligence & Automation"; slogan "Connecting
+  Intelligence. Empowering Progress."; supporting message "Technology Connected. Progress Delivered."; the corporate
+  introduction, description and footer line there. Logo, layout, colours (navy and teal) and product names stay.
+  Products: **CAD Automation** (CAD MCP; the Windows add-in is **BIZOMAT CAD**, owner 8 Nov 2026; formerly CADOS) and
+  **Project Management** (Task Management; formerly KEVOS Work). Resources was retired on 8 Nov 2026.
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
-  registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
-  name (footer, trade mark notice, "Formerly" labels) and in historical docs.
-- **GoCore is retired** for good: no GoCore branding, blue logos, the GC favicon, gocore.com.au or old templates.
-  Never run `python scripts/brand/build_brand.py`.
-- The founder, **Kevin Jogin**, is named only on The Engine Room (`/engine-room/`, which joined the About and Proof of
-  Work pages on the owner's request, 5 Nov 2026), signing his message as "Founder, BIZOMAT" (owner decision,
-  5 Nov 2026). Never invent biography, qualifications, employers, awards, clients, projects, results,
-  statistics, prices, partnerships, testimonials or customer logos. Product claims come only from the code
-  (`src/data/platform-catalog.ts` records where each comes from).
-- The legal entity, ABN, address and a BIZOMAT contact email are not recorded yet: never invent them.
+  registered. Never write "®" or "TM" after BIZOMAT and never call it registered.
+- **GoCore is retired** for good: no GoCore branding, logos or templates.
+- The founder, **Kevin Jogin**, is named only on The Engine Room (`/engine-room/`), signing as "Founder, BIZOMAT".
+  Never invent biography, qualifications, employers, awards, clients, projects, results, statistics, prices,
+  partnerships, testimonials or customer logos. Product claims come only from the code
+  (`src/data/platform-catalog.ts` says where each comes from).
+- The legal entity, ABN and address are not recorded: never invent them.
+
+## Source of truth and production
+
+- **GitHub `jogkev-creator/bizomat`, branch `main`**, private. `jogkev-creator/CADOS` and
+  `jogkev-creator/gocore-website` are history only (CADOS also keeps the old installer backups): do not change them
+  for new work, do not delete them.
+- **Production is one Fly.io app, `cados`, with one Machine in `syd` of 1 GB** (`fly.toml`, checked by
+  `infrastructure/fly/test/check-config.py`). It runs `bizomat-entrypoint all`: CAD MCP (`apps/cad`, :8001), Task
+  Management (`apps/work`, :8002) and the proxy (:8080, the only public port) with the website inside it.
+  Never add a Machine, a process group or memory without the owner's approval; never set
+  `OPENSKETCH_CAD_WORKERS` above 0 at 1 GB (each CAD worker process is about 400 MB).
+- **Deploys only through GitHub Actions** (`deploy.yml`, on push to `main`, after the whole CI). Nothing is deployed
+  from a laptop. Secrets live in GitHub Secrets (`FLY_API_TOKEN`, ...) and Fly secrets; never in the repository.
+- Domains: `bizomat.ai` (primary; `www` 301 there), `cados.fly.dev` (every path to CAD MCP: connectors and paired
+  computers use its root paths). DNS changes are the owner's, by hand, after the checks pass.
+- Routing (`infrastructure/proxy/routes.mjs`, the same `CAD_PATHS` as `src/server/platform-paths.ts`, checked equal by
+  the tests): on bizomat.ai `/cad/...` and CAD's root program paths (`/mcp`, `/solidworks/mcp`, `/oauth/...`, `/v2/...`,
+  `/healthz`, `/.well-known/oauth-*`) to CAD MCP, `/tasks/...` to Task Management, the rest to the website. No page of
+  the website may take an application's path (`tests/worker.test.ts`). Never change MCP endpoints, OAuth paths or the
+  device API: AI clients and SOLIDWORKS computers depend on them.
+- Data: one volume, `opensketch_data`, at `/data`: `/data/cad` (CAD MCP: accounts, OAuth, the bridge signing key,
+  `bridge.sqlite`, installer record) and `/data/work` (Task Management's SQLite and files). Deploys snapshot it first.
+  Never delete data, keys or backups; restores move what was there to `/data/backups` (infrastructure/migrate).
 
 ## Repository layout
 
 | Path | What |
 | --- | --- |
 | `/` | The website (Astro): `src/`, `public/`, `tests/`, `scripts/`; Node server in `src/node/` |
-| `apps/cad/` | CAD Automation (Python server, C# add-in and Companion, installer): an exact copy of one CADOS commit, pinned in `apps/cad-source.json` (`scripts/sync-cad.mjs check` proves it by git's tree hash; CI checks it against GitHub). Never edit it here: change CADOS, then `node scripts/sync-cad.mjs to <commit>` (or the laptop's `bizomat.ps1 sync cad`) in a pull request of its own |
-| `apps/work/` | Project Management (Hono Worker + React SPA, Node runtime, migrations, migration tooling); PMO history |
-| `shared/brand/` | Logo geometry, generated assets, tokens, components, fonts (`build.mjs` copies them into every product) |
-| `infrastructure/`, `fly.toml` | The single Fly.io app `bizomat`: proxy, Dockerfile, entrypoint, compose stack, smoke tests, migration scripts |
-| `docs/BIZOMAT-*.md` | Architecture, data inventory, migration, deployment, security, rollback, operations, status |
-
-## Source of truth
-
-- **GitHub `jogkev-creator/gocore-website`, branch `main`** (the repository name is historical). Every repository is
-  private (owner, 7 Nov 2026): nothing public may link to GitHub, the laptop works from its signed-in clones, and public
-  files are published on bizomat.ai (`/downloads/`, the R2 bucket `bizomat-downloads`, `src/server/downloads.ts`). Before any work:
-  `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
-  Preserve uncommitted work on a backup branch before anything else.
-- `jogkev-creator/CADOS` is where CAD Automation is changed and tested (and its add-in and installer released); the
-  `cad` group of the Fly app `bizomat` is built from `apps/cad`, its exact copy. Until `bizomat.ps1 move cad` has run,
-  production CAD is still the Fly app `cados`, deployed from CADOS; do not change that deployment from here.
-  `jogkev-creator/PMO` is where Project Management came from.
-- Never merge older GoCore branches into `main`.
-
-## Deployment
-
-- **CAD Automation into `bizomat` (6 Nov 2026):** `fly.website.toml` has the `cad` group (performance-1x, 2 GB, volume
-  `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
-  holding page instead) and needs no server password. The data moves with `bizomat.ps1 move cad`
-  (`infrastructure/migrate/cad/to-fly.mjs`, rehearsed by `infrastructure/migrate/test/cad-move/rehearse.sh` in CI); it
-  switches the router's `UPSTREAM_CAD` itself, and `fly.website.toml` follows in a pull request (until then
-  `deploy website` refuses). Retiring `cados` (`retire cados`, `delete cados`) is irreversible: only with the owner's
-  go-ahead. Steps: `infrastructure/migrate/cad/README.md`.
-- **Target:** one Fly.io app `bizomat` (Sydney) with process groups proxy, web, work and cad, deployed by
-  `.github/workflows/bizomat-deploy.yml` (manual) with an org-scoped `FLY_API_TOKEN`. See `docs/BIZOMAT-DEPLOYMENT.md`.
-  DNS changes (bizomat.ai, www.bizomat.ai, kevos.com, cados.kevos.com, work.kevos.com) are made by hand only after the
-  new app passes its smoke tests; never automate them from CI. Its proxy routes bizomat.ai by path as the Worker does
-  (`infrastructure/proxy/routes.mjs`; `CAD_PATHS` is one list, checked equal by the proxy's tests): `/cad` to cad,
-  `/tasks` to work, the rest to web; `cados.kevos.com` and `work.kevos.com` (the old addresses) by host. The apps take
-  their prefix off themselves (`apps/cad/opensketch/canonical.py`, `apps/work/src/worker/mount.ts`).
-- **kevos.com is the KEVOS site again (Stage 0, owner's decision of 6 Nov 2026):** Cloudflare Worker
-  `throbbing-block-6c61` (account `Kevinjogin@protonmail.com's Account`, route `kevos.com/*`) runs the KEVOS site built
-  from `c79e297`, put back with the laptop's `bizomat.ps1 restore kevos`. Nothing from this repository publishes there:
-  `wrangler.toml` is the Worker `bizomat`, and `scripts/deploy-guard.mjs` (its `[build]`) refuses any other name and any
-  kevos.com route. Today the BIZOMAT website runs on Fly (`fly.website.toml`, `bizomat.ps1 deploy website`).
-- **Cloudflare migration (owner's request, 6 Nov 2026; plan and progress in `docs/BIZOMAT-CLOUDFLARE-MIGRATION.md`):**
-  bizomat.ai, CAD Automation in a Cloudflare Container, Project Management as its own Worker. **Production addresses
-  (owner, 7 Nov 2026), the single source of truth (that doc, "Production addresses"):** the website `https://bizomat.ai`
-  (Worker `bizomat`; www answers 301 there), CAD Automation `https://bizomat.ai/cad`, its MCP endpoint
-  `https://mcp.bizomat.ai/mcp` (Worker `bizomat-mcp`, its own subdomain: the one exception to "no subdomains"),
-  Project Management `https://bizomat.ai/tasks`. bizomat.ai only, no other domain. `wrangler.toml` is the
-  Worker `bizomat`: zone routes `bizomat.ai/*` and `www.bizomat.ai/*`, which do nothing while those records are DNS only
-  (the switch is turning them to Proxied; the way back is turning them back), `workers_dev` for checks before that,
-  `TASKS` bound to `bizomat-tasks` and `CAD` to `bizomat-mcp` (CADOS `cloudflare/mcp`: the CAD server's container,
-  its data folder in R2). `src/worker.ts` sends `CAD_PATHS` to the `CAD` binding when bound, else to the origin.
-  `apps/work/wrangler.jsonc` env `bizomat` is the Worker `bizomat-tasks` (no workers.dev address; D1
-  `bizomat-tasks-db`, R2 `bizomat-tasks-files` and KV created by name on its first deploy); its data comes from Fly
-  with `apps/work/scripts/migrate/to-cloudflare.mjs`. `scripts/deploy-guard.mjs` runs before every wrangler build: it
-  lets `npm run preview` through, refuses Workers Builds, and deploys only from the laptop tool
-  (`BIZOMAT_DEPLOY=website`) from a clean checkout that is exactly origin/main. Nothing on Cloudflare is deployed yet;
-  both Fly apps stay running until the owner approves their retirement.
-- **Hosts (owner's decision, 5 Nov 2026): everything under bizomat.ai, no subdomains.** The website is the root;
-  CAD Automation is `/cad` and Project Management `/tasks`. `src/worker.ts` (`routeApps`) passes `/cad/...` (and
-  the CAD app's OAuth discovery and root program paths, `CAD_PATHS`) to the CAD app (the `CAD` binding, else the
-  origin with `fetch(request)`), and `/tasks/...` to Project Management (the `TASKS` service binding, a redirect to
-  work.kevos.com where it is not bound).
-  The CAD Automation product page is `/cad-automation/`, because `/cad` is the application. No page or file of the site
-  may take an application's path (tests/worker.test.ts). Today bizomat.ai's record still points (DNS only) at the
-  `cados` Fly app; the Worker answers once the records are proxied. The steps, in order, are in
-  `docs/BIZOMAT-DEPLOYMENT.md`, section 6a (today) and section 6 (the single app).
-- **Incident, 8 Oct 2026:** a manual `wrangler deploy` from a stale checkout (145 commits behind) replaced the site
-  with the old GoCore design. That is why manual deploys are restricted as above.
-- Keep the old deployments (the kevos.com Worker, the `workos-platform-preview` Worker behind work.kevos.com, the
-  `cados` Fly app) running until BIZOMAT is verified and the rollback window has passed (`docs/BIZOMAT-ROLLBACK.md`).
+| `apps/cad/` | CAD MCP and BIZOMAT CAD for Windows; changed here (imported from CADOS e669cc6, `apps/cad-source.json`) |
+| `apps/work/` | Task Management (Project Management) |
+| `shared/brand/` | Brand system copied into every product (`npm run brand`; `npm run brand:check` in CI) |
+| `infrastructure/` | Image, entrypoint, proxy, migration tools, smoke test, local compose stack |
+| `docs/` | `BIZOMAT-SINGLE-APP.md` (current), and the earlier platform docs (architecture, security, rollback) |
 
 ## Change control
 
-- A Library content request changes only `src/content/reados-chapters/` (and its images) and, to place a chapter in a
-  book, `src/utils/reados-collections.ts`. Never recreate `/insights/`. Website-level changes (layouts, components,
-  CSS, logos, navigation, legal pages) need the owner's request.
-- Stage files by explicit path; never `git add -A` or `git add .` for a release; inspect `git diff --cached --stat`.
-- Documentation and project-memory changes go in their own commit.
-- `npm run build` regenerates brand assets with `shared/brand/build.mjs`; it writes only files whose content changed.
-  Never hand-edit the copies in the apps: change `shared/brand/` and run `npm run brand`. Its copies in `apps/cad` are CADOS's
-  files too: a brand change that touches them goes to CADOS in the same form, then comes back with a sync (CI checks
-  both `brand:check` and `scripts/sync-cad.mjs check`).
+- Website-level changes (layouts, components, CSS, logos, navigation, legal pages) need the owner's request. The site
+  has four sections (Home, CAD Automation, Work, The Engine Room) plus contact, sign-in and legal pages; do not add
+  sections or bring back Resources pages (`tests/site-structure.test.ts`).
+- Legal pages (privacy, terms, disclaimer) changed on 8 Nov 2026 only to remove the retired features; their content
+  still needs a lawyer's review (`docs/BIZOMAT-PROJECT-STATUS.md`, "Legal review").
+- Stage files by explicit path; inspect `git diff --cached --stat` before committing. Documentation changes in their
+  own commit where practical.
+- `npm run build` regenerates brand assets; never hand-edit the copies in the apps: change `shared/brand/`.
 - No personal, client or confidential data in code, tests or docs. Never commit database dumps, data folders,
-  uploaded files or secrets. Migration tooling prints counts, never row content.
+  uploaded files or secrets. Migration tooling prints counts, never row content. No workflow uploads data as an
+  artifact (`tests/artifact-policy.test.ts`).
 
 ## Rules for every page
 
@@ -120,30 +74,26 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 - One design system: tokens and components from `shared/brand/` (navy `#0a1f33`, teal `#0f766e`, mark `#14b8a6`,
   Oxanium headings, Inter Tight body). No third-party fonts, scripts or trackers.
 - The CSP forbids inline styles: no `style=""`; scripts are hashed by `scripts/postbuild.mjs`.
-- Animations explain a product, carry an "Illustration" label, and show a finished still under reduced motion
-  (`src/components/visuals/`, `src/styles/visuals.css`). Real screenshots carry "Product screen" and use example data.
+- Animations explain a product, carry an "Illustration" label and show a still under reduced motion; keep them few.
 - Every page has one H1, a description of 50 to 200 characters, a canonical URL and valid JSON-LD (the build fails
-  otherwise).
+  otherwise). Retired sections must not be built again (the post-build check fails).
 
 ## Commands
 
 ```bash
-npm ci                 # website dependencies
-npm run verify         # astro check + tests + build (brand assets, Astro, Pagefind, postbuild checks)
-npm run build:server   # Node server bundle for the Fly web process (after npm run build)
-npm run brand:check    # brand copies in step across the website and both apps
+npm ci && npm run verify          # website: astro check, tests, build with its quality gate
+npm run build:server              # the website's Node bundle (the proxy hosts it)
+node --test 'infrastructure/proxy/test/*.test.mjs'
+sudo bash infrastructure/fly/test/single-app.test.sh
+python3 infrastructure/fly/test/check-config.py fly.toml
 ```
 
-Applications: `cd apps/work && npm run check` (and `npm run test:node`, `npm run test:e2e`);
-`cd apps/cad && pytest -q && npm test` (and `bash solidworks/build.sh test` with the .NET 8 SDK).
-Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then `node infrastructure/smoke/smoke.mjs`.
+Applications: `cd apps/work && npm run check` (and `npm run test:node`); `cd apps/cad && pytest -q && npm test`, and
+`bash solidworks/build.sh test` (.NET 8 SDK) for the add-in.
 
 ## After any production change
 
-Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/resources/`, `/tools/`, `/reados/`,
-`/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`, and
-every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
-Resources, Engine Room** with **AI Search** and **Sign in**, that a new session opens in the light theme, and that AI
-search answers. For the apps (`/cad/` and `/tasks/` on bizomat.ai, and their old hosts),
-run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
+The Deploy workflow's summary is the first check (one Machine, syd, 1024 MB, version, smoke test, memory, public
+checks). Then the public site: `/`, `/cad-automation/`, `/work/`, `/engine-room/`, that `/resources/` answers 301,
+`/tasks/` sign-in, `/cad/` sign-in, and an MCP connection from an AI app. Do not report anything as live until its
 public URL has been checked.
