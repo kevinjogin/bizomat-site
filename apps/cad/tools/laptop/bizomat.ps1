@@ -324,13 +324,21 @@ function Deploy-Website {
         Invoke-Step 'fly' @('ips', 'allocate-v6', '--app', 'bizomat') $c.Dir
         Invoke-Step 'fly' @('ips', 'allocate-v4', '--shared', '--app', 'bizomat') $c.Dir
     }
-    # Project Management's volume: fly deploy does not create one for a group added to an existing app.
+    # The volumes of Project Management (work_data) and CAD Automation (cad_data): fly deploy does not create one for
+    # a group added to an existing app, and stops with "requires an unattached volume" when it is missing.
     $toml = Join-Path $c.Dir 'fly.website.toml'
-    if (Select-String -LiteralPath $toml -Pattern 'source\s*=\s*"work_data"' -Quiet) {
+    $needWork = Select-String -LiteralPath $toml -Pattern 'source\s*=\s*"work_data"' -Quiet
+    $needCad = Select-String -LiteralPath $toml -Pattern 'source\s*=\s*"cad_data"' -Quiet
+    if ($needWork -or $needCad) {
         $vols = Get-Output 'fly' @('volumes', 'list', '--app', 'bizomat', '--json') $c.Dir
-        if (-not ("$vols" -match '"work_data"')) {
+        if ($needWork -and -not ("$vols" -match '"work_data"')) {
             Write-Host 'Creating the volume for Project Management''s data (3 GB in Sydney). If Fly asks whether to continue with one volume, answer y.' -ForegroundColor Yellow
             Invoke-Step 'fly' @('volumes', 'create', 'work_data', '--region', 'syd', '--size', '3', '--app', 'bizomat') $c.Dir
+        }
+        if ($needCad -and -not ("$vols" -match '"cad_data"')) {
+            Write-Host 'Creating the volume for CAD Automation''s data (cad_data: 3 GB in Sydney, a snapshot every day kept 30 days).' -ForegroundColor Yellow
+            Write-Host 'The cad Machine is a dedicated-CPU machine (performance-1x, 2 GB) and runs all the time once it exists.' -ForegroundColor Yellow
+            Invoke-Step 'fly' @('volumes', 'create', 'cad_data', '--app', 'bizomat', '--region', 'syd', '--size', '3', '--snapshot-retention', '30', '--yes') $c.Dir
         }
     }
     # Built on Fly's machines; one Machine per group (router, website, Project Management); the commit as its version.

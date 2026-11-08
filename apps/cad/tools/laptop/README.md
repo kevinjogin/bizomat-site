@@ -70,7 +70,9 @@ What the script does, in order:
 3. **Shows** the commit that will go live and asks you to type `yes`.
 4. **Deploys**, then checks the live addresses. For example, the website's check confirms that its APIs answer and
    that `/cad` reaches CAD Automation over Fly's private network. The first website deploy creates the Fly app
-   `bizomat` (after asking).
+   `bizomat` (after asking), and each website deploy creates the volumes `fly.website.toml` mounts when they are
+   missing: `work_data` (Project Management) and `cad_data` (CAD Automation: 3 GB in Sydney, a snapshot every day kept
+   30 days). The cad Machine that uses `cad_data` has a dedicated CPU and runs all the time once it exists.
 5. **Records** the deploy in `deploy-log.csv` in the folder: when, what, which commit and who.
 
 Useful switches:
