@@ -1,0 +1,121 @@
+# BIZOMAT CAD for Windows: the SOLIDWORKS add-in, the Companion, the manual installer (OpenSketchSW.exe) and the MSI,
+# all built by GitHub Actions (apps/cad/solidworks, apps/cad/installer). Moved here from jogkev-creator/CADOS
+# (solidworks.yml and installer-test.yml there) when this repository became CAD MCP's source of truth.
+#
+#   build      Linux, .NET 8 SDK: the add-in, the Companion and the App for .NET Framework 4.8, and the C# tests
+#              (including the Documents\BIZOMAT CAD folder and the migration of Documents\OpenSketch)
+#   installer  Windows: the MSI (WiX 5; signed when the secrets below exist, else an UNSIGNED test build), then installs
+#              it silently, checks the files and the SOLIDWORKS registration, repairs it (one registration only),
+#              uninstalls it and checks that it is gone and that the person's Documents\BIZOMAT CAD files are kept
+#              (apps/cad/.github/scripts/test-install.ps1). The runner has no SOLIDWORKS: this proves the installer,
+#              not the add-in inside SOLIDWORKS.
+#   publish    on main: replaces the bridge-latest pre-release; on a tag bridge-v<version>: makes that release. The
+#              repository is private, so these are for the owner; computers are offered an update through CAD MCP's
+#              signed update record (bridge-release.json, docs/BIZOMAT-SINGLE-APP.md, "Installer releases").
+#
+# Optional secrets (as in CADOS): KEVOS_SIGN_PFX_BASE64 (a code-signing .pfx, base64) and KEVOS_SIGN_PASSWORD.
+name: BIZOMAT CAD for Windows
+
+on:
+  push:
+    branches: ["**"]
+    paths: ["apps/cad/solidworks/**", "apps/cad/installer/**", "apps/cad/.github/scripts/test-install.ps1", ".github/workflows/cad-windows.yml"]
+    tags: ["bridge-v*"]
+  pull_request:
+    paths: ["apps/cad/solidworks/**", "apps/cad/installer/**", "apps/cad/.github/scripts/test-install.ps1", ".github/workflows/cad-windows.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/cad
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build and test (add-in, Companion, App; C# tests)
+        run: bash solidworks/build.sh test
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: BIZOMAT-CAD-SOLIDWORKS-package
+          path: apps/cad/solidworks/dist/OpenSketch-SOLIDWORKS
+
+  installer:
+    runs-on: windows-latest
+    needs: build
+    timeout-minutes: 40
+    defaults:
+      run:
+        working-directory: apps/cad
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
+        with:
+          dotnet-version: "8.0.x"
+      - name: Build and test the add-in and the Companion
+        shell: bash
+        run: bash solidworks/build.sh test
+      - name: Signing certificate (if the repository has one)
+        shell: pwsh
+        env:
+          PFX: ${{ secrets.KEVOS_SIGN_PFX_BASE64 }}
+        run: |
+          if ($env:PFX) {
+            $p = Join-Path $env:RUNNER_TEMP 'kevos-sign.pfx'
+            [IO.File]::WriteAllBytes($p, [Convert]::FromBase64String($env:PFX))
+            "KEVOS_SIGN_PFX=$p" | Out-File -FilePath $env:GITHUB_ENV -Append
+          }
+      - name: Build the MSI
+        shell: pwsh
+        env:
+          KEVOS_SIGN_PASSWORD: ${{ secrets.KEVOS_SIGN_PASSWORD }}
+        run: powershell -ExecutionPolicy Bypass -File installer\build.ps1
+      - name: Remove the certificate
+        if: always()
+        shell: pwsh
+        run: if ($env:KEVOS_SIGN_PFX) { Remove-Item $env:KEVOS_SIGN_PFX -Force -ErrorAction SilentlyContinue }
+      - name: Install, check, repair, uninstall (the person's files are kept)
+        shell: pwsh
+        run: powershell -ExecutionPolicy Bypass -File .github\scripts\test-install.ps1 -Msi installer\out\BIZOMAT-CAD-Automation-x64.msi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: BIZOMAT-CAD-MSI
+          path: apps/cad/installer/out
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: installer
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/bridge-v'))
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: BIZOMAT-CAD-MSI
+          path: out
+      - name: Publish (bridge-latest on main, bridge-v<version> on a tag)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version=$(grep -o '<Version>[^<]*' apps/cad/solidworks/Directory.Build.props | cut -d'>' -f2)
+          tag=bridge-latest
+          case "$GITHUB_REF" in refs/tags/bridge-v*) tag=${GITHUB_REF#refs/tags/};; esac
+          if [ "$tag" = bridge-latest ]; then gh release delete bridge-latest --yes --cleanup-tag || true; fi
+          args=(--target "$GITHUB_SHA" --title "BIZOMAT CAD for SOLIDWORKS $version")
+          if [ "$tag" = bridge-latest ]; then args+=(--prerelease); fi
+          gh release create "$tag" out/*.msi out/*.sha256 out/release.json "${args[@]}" \
+            --notes "BIZOMAT CAD for SOLIDWORKS $version, built from ${GITHUB_SHA::7}. Install once per Windows computer that runs SOLIDWORKS. Check the SHA-256 against the .sha256 file. A file named UNSIGNED is an unsigned test build."

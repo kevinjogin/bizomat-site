@@ -1,0 +1,72 @@
+# The public addresses' certificates, seen from outside (a GitHub runner, IPv4): the chain each one serves, whether
+# it is trusted, whether it still reaches a trusted root on computers that only know Let's Encrypt's older roots
+# (ISRG Root X1 and X2: Windows and older phones until they add the 2025 roots), how long until it expires, and anything
+# a page loads over plain http (which also makes a browser say "Not secure"). Read only: it changes nothing.
+# Runs every day, by hand (Actions > Live TLS > Run workflow) and on a pull request that changes it. Fails when a
+# certificate is not trusted, does not reach the older roots, or expires within 14 days.
+name: Live TLS
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 20 * * *"   # 07:41 in Sydney
+  pull_request:
+    paths:
+      - .github/workflows/live-tls.yml
+
+permissions:
+  contents: read
+
+jobs:
+  tls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Certificates and pages
+        shell: bash
+        run: |
+          set -u
+          fail=0
+          # Let's Encrypt's roots trusted everywhere for years (the 2025 roots ISRG Root YE and YR are newer)
+          curl -fsS -o /tmp/x1.pem https://letsencrypt.org/certs/isrgrootx1.pem
+          curl -fsS -o /tmp/x2.pem https://letsencrypt.org/certs/isrg-root-x2.pem
+          cat /tmp/x1.pem /tmp/x2.pem > /tmp/old-roots.pem
+          echo "ISRG roots in this runner's store:"
+          openssl crl2pkcs7 -nocrl -certfile /etc/ssl/certs/ca-certificates.crt | openssl pkcs7 -print_certs -noout | grep -o 'CN *= *ISRG[^,]*' | sort -u || true
+          for host in bizomat.ai www.bizomat.ai cados.fly.dev cados.kevos.com; do
+            echo "::group::$host"
+            for alg in ecdsa rsa; do
+              if [ "$alg" = ecdsa ]; then sig='ecdsa_secp256r1_sha256:ecdsa_secp384r1_sha384'; else sig='rsa_pss_rsae_sha256:rsa_pss_rsae_sha384:rsa_pkcs1_sha256'; fi
+              out=$(timeout 25 openssl s_client -connect "$host:443" -servername "$host" -showcerts -sigalgs "$sig" </dev/null 2>&1 || true)
+              echo "-- $alg: the chain as served"
+              rm -f /tmp/c*.pem
+              echo "$out" | awk '/BEGIN CERTIFICATE/{n++; f="/tmp/c" n ".pem"} f{print > f} /END CERTIFICATE/{f=""}'
+              if [ ! -f /tmp/c1.pem ]; then echo "   (no $alg certificate offered)"; continue; fi
+              for c in /tmp/c*.pem; do
+                openssl x509 -in "$c" -noout -subject -issuer -enddate -ext authorityInfoAccess 2>/dev/null | grep -v -E '^X509v3|^ *OCSP' | sed 's/^/   /' || true
+              done
+              echo "$out" | grep -E '^Verify return code' | head -1 | sed 's/^/   this runner: /' || true
+              cat /tmp/c[2-9].pem > /tmp/chain.pem 2>/dev/null || : > /tmp/chain.pem
+              if openssl verify -CAfile /tmp/old-roots.pem -untrusted /tmp/chain.pem /tmp/c1.pem >/tmp/v.txt 2>&1; then
+                echo "   with the older roots only (X1, X2): OK"
+              else
+                echo "   with the older roots only (X1, X2): FAILS: $(tail -2 /tmp/v.txt | tr '\n' ' ')"
+                echo "::error::$host ($alg): its chain does not reach ISRG Root X1 or X2; computers without Let's Encrypt's 2025 roots (Windows among them) say Not secure"
+                fail=1
+              fi
+            done
+            # curl verifies the chain and the name with the runner's trust store
+            r=$(curl -sS -o /tmp/page.html -D /tmp/headers.txt -m 30 -w '%{http_code} %{ssl_verify_result} %{remote_ip}' "https://$host/" 2>&1 || true)
+            echo "-- curl https://$host/ : status, verify result (0 = trusted), address: $r"
+            grep -i -E '^(strict-transport-security|location):' /tmp/headers.txt || true
+            echo "-- what the page loads or posts over plain http (none is right):"
+            grep -o -i -E '(src|href|action)="http://[^"]+"' /tmp/page.html | grep -v -E 'xmlns|www\.w3\.org' | head -5 || true
+            end=$(echo | timeout 25 openssl s_client -connect "$host:443" -servername "$host" 2>/dev/null | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2 || true)
+            if [ -z "$end" ] || [ "$(echo "$r" | cut -d' ' -f2)" != "0" ]; then
+              echo "::error::$host: the certificate is not trusted from outside"; fail=1
+            elif [ $(( ($(date -d "$end" +%s) - $(date +%s)) / 86400 )) -lt 14 ]; then
+              echo "::error::$host: the certificate expires on $end"; fail=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $fail

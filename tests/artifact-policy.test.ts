@@ -7,7 +7,7 @@ import { uploads, violations } from '../apps/work/scripts/check-artifact-policy.
 // Security remediation, 5 Nov 2026: two Cloudflare D1 exports with account data were uploaded as workflow artifacts in
 // the public PMO repository. No workflow anywhere in this repository may upload a database, a dump, a backup or a
 // secrets file as an artifact; backups are D1 restore points or Fly volume snapshots, which never leave the provider.
-const FOLDERS = ['.github/workflows', 'apps/work/.github/workflows', 'apps/cad/.github/workflows'];
+const FOLDERS = ['.github/workflows', 'apps/work/.github/workflows'];
 
 test('no workflow in the repository uploads a database, dump, backup or secrets file', () => {
   assert.deepEqual(FOLDERS.flatMap(violations), []);
