@@ -5,14 +5,19 @@
 #
 #   powershell -ExecutionPolicy Bypass -File installer\build.ps1 [-Version 0.11.0]
 #
-# Signing (production): set KEVOS_SIGN_PFX (path to a code-signing .pfx) and KEVOS_SIGN_PASSWORD. The DLL and EXEs are
-# signed before they go into the MSI, then the MSI itself, all with SHA-256 and an RFC 3161 timestamp. Without them the
-# MSI is built unsigned and named *-UNSIGNED.msi: fine for testing, never for release (the companion refuses to update
-# itself to an unsigned MSI, and an unsigned add-in cannot be checked by the companion's publisher test).
+# Signing: either a certificate in the Windows certificate store, by thumbprint (-CertThumbprint or KEVOS_SIGN_THUMBPRINT:
+# the BIZOMAT development certificate, or later an OV certificate on a token or cloud service, which also appears in the
+# store; installer\sign-development.ps1 finds or makes the certificate and checks every signature afterwards), or a
+# .pfx file (KEVOS_SIGN_PFX and KEVOS_SIGN_PASSWORD, as CI does). The DLL and EXEs are signed before they go into the
+# MSI, then the MSI itself, all with SHA-256 and, unless -Timestamp is '', an RFC 3161 timestamp (SHA-256). Without a
+# certificate the MSI is built unsigned and named *-UNSIGNED.msi: fine for testing, never for release (the companion
+# refuses to update itself to an unsigned MSI, and an unsigned add-in cannot be checked by the companion's publisher
+# test). -NameSuffix is added to the versioned file name (sign-development.ps1 passes -DEV for a self-signed one).
 #
 # Output in installer\out: the MSI, its SHA-256, and release.json (the record a CAD Automation server publishes as
 # bridge-release.json once msi_url points at where the MSI is hosted).
-param([string]$Version = "", [string]$Timestamp = "http://timestamp.digicert.com")
+param([string]$Version = "", [string]$Timestamp = "http://timestamp.digicert.com",
+      [string]$CertThumbprint = $env:KEVOS_SIGN_THUMBPRINT, [string]$SignToolPath = "", [string]$NameSuffix = "")
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 Set-Location $root
@@ -28,28 +33,48 @@ if (-not (Test-Path (Join-Path $src 'KEVOS.Companion.exe'))) { throw "Build firs
 Copy-Item 'LICENSE' (Join-Path $src 'LICENSE.txt') -Force
 @"
 BIZOMAT CAD Automation for SOLIDWORKS $Version is free software under the GNU Affero General Public License v3.0 (LICENSE.txt).
-Its complete source code is at https://github.com/jogkev-creator/CADOS (this version: tag bridge-v$Version).
+Its complete source code (this version: bridge-v$Version) is available from BIZOMAT on request: https://bizomat.ai/contact/
 "@ | Set-Content (Join-Path $src 'SOURCE.txt') -Encoding UTF8
 $lic = (Get-Content 'LICENSE' -Raw) -replace '\\', '\\' -replace '\{', '\{' -replace '\}', '\}' -replace "`r?`n", "\par`r`n"
 "{\rtf1\ansi\deff0{\fonttbl{\f0 Segoe UI;}}\fs16 $lic}" | Set-Content (Join-Path $src 'License.rtf') -Encoding ASCII
 
-$signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1
-$sign = $env:KEVOS_SIGN_PFX -and (Test-Path $env:KEVOS_SIGN_PFX) -and $signtool
+$signtool = if ($SignToolPath) { Get-Item $SignToolPath } else {
+  Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" -ErrorAction SilentlyContinue | Sort-Object FullName -Descending | Select-Object -First 1 }
+$CertThumbprint = ($CertThumbprint -replace '[^0-9A-Fa-f]', '').ToUpper()
+if ($CertThumbprint) {
+  # a certificate was asked for: never fall back to an unsigned build
+  if (-not $signtool) { throw 'No signtool.exe (Windows SDK Signing Tools for Desktop Apps): see docs\BIZOMAT-DEV-SIGNING.md' }
+  $cert = Get-ChildItem Cert:\CurrentUser\My, Cert:\LocalMachine\My -CodeSigningCert -ErrorAction SilentlyContinue | Where-Object Thumbprint -eq $CertThumbprint | Select-Object -First 1
+  if (-not $cert) { throw "No code-signing certificate with thumbprint $CertThumbprint in Cert:\CurrentUser\My or Cert:\LocalMachine\My" }
+  $store = if ($cert.PSParentPath -like '*LocalMachine*') { @('/sm', '/s', 'My') } else { @('/s', 'My') }
+  $by = @('/sha1', $CertThumbprint) + $store
+} else {
+  $by = @('/f', $env:KEVOS_SIGN_PFX, '/p', $env:KEVOS_SIGN_PASSWORD)
+}
+$sign = $signtool -and ($CertThumbprint -or ($env:KEVOS_SIGN_PFX -and (Test-Path $env:KEVOS_SIGN_PFX)))
+$stamp = if ($Timestamp) { @('/tr', $Timestamp, '/td', 'sha256') } else { @() }
 function Sign($file) {
-  & $signtool.FullName sign /fd sha256 /td sha256 /tr $Timestamp /f $env:KEVOS_SIGN_PFX /p $env:KEVOS_SIGN_PASSWORD /d "BIZOMAT CAD Automation for SOLIDWORKS" $file
+  & $signtool.FullName sign /fd sha256 @stamp @by /d "BIZOMAT CAD Automation for SOLIDWORKS" $file
   if ($LASTEXITCODE -ne 0) { throw "signing $file failed" }
 }
 if ($sign) {
   foreach ($f in 'OpenSketch.Sw.dll', 'KEVOS.Companion.exe', 'OpenSketchSW.exe') { Sign (Join-Path $src $f) }
 } else {
-  Write-Host 'No signing certificate (KEVOS_SIGN_PFX): building an UNSIGNED test MSI.' -ForegroundColor Yellow
+  Write-Host 'No signing certificate (KEVOS_SIGN_THUMBPRINT or KEVOS_SIGN_PFX): building an UNSIGNED test MSI.' -ForegroundColor Yellow
 }
 
-if (-not (Get-Command wix -ErrorAction SilentlyContinue)) { dotnet tool install --global wix --version 5.0.2 | Out-Host }
+if (-not (Get-Command wix -ErrorAction SilentlyContinue)) {
+  if (-not (Get-Command dotnet -ErrorAction SilentlyContinue)) { throw 'No dotnet: install the .NET 8 SDK (winget install --id Microsoft.DotNet.SDK.8 -e), then open a new PowerShell window' }
+  dotnet tool install --global wix --version 5.0.2 | Out-Host
+  # on a computer that never had a dotnet tool, the tools folder is not on this window's PATH yet
+  $tools = Join-Path $env:USERPROFILE '.dotnet\tools'
+  if (($env:PATH -split ';') -notcontains $tools) { $env:PATH = "$env:PATH;$tools" }
+  if (-not (Get-Command wix -ErrorAction SilentlyContinue)) { throw "wix was not installed (dotnet tool install --global wix --version 5.0.2; it goes to $tools)" }
+}
 wix extension add -g WixToolset.Util.wixext/5.0.2 WixToolset.UI.wixext/5.0.2 | Out-Host
 $out = Join-Path $PSScriptRoot 'out'
 New-Item -ItemType Directory -Force -Path $out | Out-Null
-$name = "BIZOMAT-CAD-Automation-$Version-x64" + $(if ($sign) { '' } else { '-UNSIGNED' }) + '.msi'
+$name = "BIZOMAT-CAD-Automation-$Version-x64" + $(if ($sign) { $NameSuffix } else { '-UNSIGNED' }) + '.msi'
 $msi = Join-Path $out $name
 wix build installer\KEVOS-Bridge.wxs -arch x64 -ext WixToolset.Util.wixext -ext WixToolset.UI.wixext -d "Version=$Version" -d "Source=$src" -o $msi
 if ($LASTEXITCODE -ne 0) { throw 'wix build failed' }
@@ -60,7 +85,8 @@ $size = (Get-Item $msi).Length
 $thumb = $null
 if ($sign) { $thumb = (Get-AuthenticodeSignature $msi).SignerCertificate.Thumbprint }
 "$hash  $name" | Set-Content (Join-Path $out "$name.sha256") -Encoding ASCII
-@{ version = $Version; msi_url = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v$Version/$name";
+# published on bizomat.ai (cloudflare.ps1 publish installer puts the file there; the GitHub releases are private)
+@{ version = $Version; msi_url = "https://bizomat.ai/downloads/cad/$name";
    sha256 = "sha256:$hash"; size = $size; signer_thumbprints = @($thumb | Where-Object { $_ }); notes = "BIZOMAT CAD Automation for SOLIDWORKS $Version";
    published_at = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ') } | ConvertTo-Json | Set-Content (Join-Path $out 'release.json') -Encoding UTF8
 # the stable name (bridge-latest): what https://bizomat.ai/cad/download/solidworks points at; and the stable name of 0.12

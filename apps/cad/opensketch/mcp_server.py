@@ -106,7 +106,9 @@ def request_upload(filename: Annotated[str, Field(description="The file's name, 
     return json.dumps(out)
 
 
-from . import sw_selftest, sw_tools  # noqa: E402,F401  (the sw_ tools register on `mcp`)
+# The sw_ tools register on `mcp`. sw_tools imports sw_selftest at its end: a CAD worker process imports sw_tools
+# first (cadworker resolves its functions by name), and sw_selftest needs sw_tools whole.
+from . import sw_tools  # noqa: E402,F401
 
 
 def tool_names() -> list[str]:

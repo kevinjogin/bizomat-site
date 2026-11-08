@@ -7,8 +7,13 @@ and the add-in compiled against the SOLIDWORKS 2022 interop by solidworks.yml on
 - what people read in Windows (the product, its publisher, the Start menu) says BIZOMAT, while every id stays;
 - the MSI's file name, the stable download name and the server's download link agree (they keep the earlier name);
 - the add-in's version can upgrade (higher than the last released 0.12.2);
-- the logo the add-in and the Companion draw is the brand's own (the paths shared/brand/build.mjs generates)."""
+- the logo the add-in and the Companion draw is the brand's own (the paths shared/brand/build.mjs generates);
+- development signing (installer/sign-development.ps1, docs/BIZOMAT-DEV-SIGNING.md) signs every binary of BIZOMAT's own
+  that the MSI holds, then the MSI, with SHA-256, and never exports a private key; the repository holds no private
+  key; the original installer backup is byte for byte what was released."""
+import hashlib
 import re
+import subprocess
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -105,7 +110,8 @@ def test_download_names_agree(tmp_path, monkeypatch):
     monkeypatch.delenv("OPENSKETCH_INSTALLER_URL", raising=False)
     from opensketch import server
     r = TestClient(server.app).get("/download/solidworks", follow_redirects=False)
-    assert r.status_code == 302 and r.headers["location"].endswith("/releases/download/bridge-latest/BIZOMAT-CAD-Automation-x64.msi")
+    assert r.status_code == 302 and r.headers["location"] == "https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi"
+    assert 'msi_url = "https://bizomat.ai/downloads/cad/$name"' in build, "the release record points where publish puts the file"
     # a release the operator published wins
     (tmp_path / "data").mkdir(exist_ok=True)
     (tmp_path / "data" / "bridge-release.json").write_text(
@@ -152,3 +158,121 @@ def test_the_bizomat_icons_ship():
     # the admin and per-user registrations set it too, when the bitmap is next to the add-in
     assert 'k.SetValue("Icon Path", icon)' in (ROOT / "solidworks" / "src" / "Addin" / "Entry.cs").read_text()
     assert (ROOT / "solidworks" / "src" / "App" / "Program.cs").read_text().count('k.SetValue("Icon Path", icon)') == 2
+
+
+SIGN_DEV = ROOT / "installer" / "sign-development.ps1"
+
+
+def test_development_signing_signs_every_own_binary_in_the_msi():
+    sign = SIGN_DEV.read_text()
+    build = (ROOT / "installer" / "build.ps1").read_text()
+    own = re.search(r"\$OwnFiles = @\(([^)]*)\)", sign).group(1)
+    own = set(re.findall(r"'([^']+)'", own))
+    sources = {Path(f.get("Source")).name for f in ET.parse(WXS).getroot().iterfind(".//w:File", NS)}
+    binaries = {n for n in sources if n.lower().endswith((".dll", ".exe"))}
+    assert own == binaries, "every DLL and EXE the MSI installs is signed and checked (they are all BIZOMAT's own)"
+    signed_by_build = set(re.findall(r"'([^']+\.(?:dll|exe))'", re.search(r"foreach \(\$f in ([^)]*)\) \{ Sign", build).group(1)))
+    assert signed_by_build == binaries, "build.ps1 signs the same files before packaging"
+    # SHA-256 digests, RFC 3161 SHA-256 timestamps, and a store certificate chosen by thumbprint
+    assert "sign /fd sha256 @stamp @by" in build and "@('/tr', $Timestamp, '/td', 'sha256')" in build
+    assert "@('/sha1', $CertThumbprint)" in build
+    assert "never fall back to an unsigned build" in build
+    # checks after signing: signtool verify with the default Authenticode policy, Windows' own check, the MSI's contents
+    assert "verify /pa /v" in sign and "Get-AuthenticodeSignature" in sign and "msiexec.exe -ArgumentList '/a'" in sign
+    assert "exit 1" in sign and "exit 0" in sign
+
+
+def test_development_signing_never_exports_a_private_key():
+    sign = SIGN_DEV.read_text()
+    assert "-KeyExportPolicy NonExportable" in sign
+    assert "-Type CodeSigningCert" in sign and "-HashAlgorithm SHA256" in sign and "-KeyLength 3072" in sign
+    assert "Cert:\\CurrentUser\\My" in sign
+    for bad in ("Export-PfxCertificate", "-Type PFX", ".pfx", "ToByteArray", "Export(", ".PrivateKey"):
+        assert bad not in sign, bad
+    # the only export is the public certificate (DER)
+    assert re.findall(r"Export-Certificate [^\n]*", sign) == ["Export-Certificate -Cert $cert -FilePath $cerFile -Type CERT | Out-Null"]
+    # trust is added for this Windows user on this computer only
+    assert "Cert:\\CurrentUser\\Root" in sign and "LocalMachine\\Root | Out-Null" not in sign
+    assert all(ord(c) < 128 for c in sign), "Windows PowerShell 5.1 reads a file without a BOM as ANSI"
+
+
+def test_the_repository_holds_no_private_key():
+    files = subprocess.run(["git", "ls-files", "-co", "--exclude-standard"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
+    assert not [f for f in files if f.lower().endswith((".pfx", ".p12", ".pvk", ".snk"))]
+    ignore = (ROOT / ".gitignore").read_text().split()
+    assert {"*.pfx", "*.p12", "*.pvk", "installer/out/"} <= set(ignore)
+    for f in files:
+        if f.startswith(("backups/", "installer/")) and (ROOT / f).is_file():
+            data = (ROOT / f).read_bytes()
+            assert b"PRIVATE KEY" not in data, f
+
+
+def test_the_original_installer_backup_is_what_was_released():
+    found = sorted((ROOT / "backups" / "installer" / "original").glob("*/*.msi"))
+    assert found, "the original installer is backed up"
+    for msi in found:
+        line = (msi.parent / (msi.name + ".sha256")).read_text("utf-8-sig").split()
+        digest = hashlib.sha256(msi.read_bytes()).hexdigest()
+        assert line == [digest, msi.name]
+        assert digest in (msi.parent / "MANIFEST.md").read_text()
+    assert "backups/** -text" in (ROOT / ".gitattributes").read_text(), "no line-ending conversion of backups"
+
+
+def test_the_server_serves_an_installer_put_in_its_data_folder(tmp_path, monkeypatch):
+    """While bizomat.ai serves no /downloads/ (the website on Fly has no such route), the operator puts the MSI on the
+    CAD server's volume and the Download button gives it from there, to signed-in people only, with its SHA-256."""
+    data = tmp_path / "data"
+    monkeypatch.setenv("OPENSKETCH_DATA", str(data))
+    for k in ("OPENSKETCH_INSTALLER_URL", "OPENSKETCH_PASSWORD", "OPENSKETCH_PUBLIC_URL", "OPENSKETCH_REDIRECT_HOSTS"):
+        monkeypatch.delenv(k, raising=False)
+    from opensketch import accounts, server
+    accounts.create_owner("owner@example.com", "Owner", "owner-pass-1")
+    accounts.create_member("pat@example.com", "Pat", "given-pass-1")
+    anon = TestClient(server.app)
+    # no file yet: the published addresses
+    assert anon.post("/login", data={"email": "pat@example.com", "password": "given-pass-1", "next": "/"},
+                     follow_redirects=False).status_code == 303
+    r = anon.get("/download/solidworks", follow_redirects=False)
+    assert r.status_code == 302 and r.headers["location"] == "https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi"
+    r = anon.get("/download/solidworks.sha256", follow_redirects=False)
+    assert r.status_code == 302 and r.headers["location"] == "https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi.sha256"
+    # the file on the volume
+    msi = bytes(range(256)) * 5000  # binary, not text: nothing may rewrite or decode it
+    (data / "downloads").mkdir(parents=True)
+    (data / "downloads" / "BIZOMAT-CAD-Automation-x64.msi").write_bytes(msi)
+    digest = hashlib.sha256(msi).hexdigest()
+    r = anon.get("/download/solidworks", follow_redirects=False)
+    assert r.status_code == 200 and r.content == msi
+    assert r.headers["content-type"] == "application/x-msi" and r.headers["x-content-sha256"] == digest
+    assert 'filename="BIZOMAT-CAD-Automation-x64.msi"' in r.headers["content-disposition"]
+    r = anon.get("/download/solidworks.sha256", follow_redirects=False)
+    assert r.status_code == 200 and r.text == f"{digest}  BIZOMAT-CAD-Automation-x64.msi\n"
+    # still only for people who are signed in
+    for path in ("/download/solidworks", "/download/solidworks.sha256"):
+        r = TestClient(server.app).get(path, follow_redirects=False)
+        assert r.status_code == 303 and r.headers["location"].startswith("/login?next=")
+    # an address the operator set wins over the file
+    monkeypatch.setenv("OPENSKETCH_INSTALLER_URL", "https://example.com/x.msi")
+    assert anon.get("/download/solidworks", follow_redirects=False).headers["location"] == "https://example.com/x.msi"
+
+
+def test_the_installer_on_the_volume_is_served_whole_under_cad(tmp_path, monkeypatch):
+    """At https://bizomat.ai/cad (the prefix is taken off and HTML is rewritten) the MSI comes through byte for byte."""
+    data = tmp_path / "data"
+    monkeypatch.setenv("OPENSKETCH_DATA", str(data))
+    for k in ("OPENSKETCH_INSTALLER_URL", "OPENSKETCH_PASSWORD"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("OPENSKETCH_PUBLIC_URL", "https://bizomat.ai/cad")
+    from opensketch import accounts, server
+    accounts.create_owner("owner@example.com", "Owner", "owner-pass-1")
+    msi = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1" + b'<a href="/x">' + bytes(range(256)) * 100
+    (data / "downloads").mkdir(parents=True)
+    (data / "downloads" / "BIZOMAT-CAD-Automation-x64.msi").write_bytes(msi)
+    c = TestClient(server.app, base_url="https://bizomat.ai")
+    assert c.post("/cad/login", data={"email": "owner@example.com", "password": "owner-pass-1", "next": "/"},
+                  headers={"host": "bizomat.ai"}, follow_redirects=False).status_code == 303
+    r = c.get("/cad/download/solidworks", headers={"host": "bizomat.ai"}, follow_redirects=False)
+    assert r.status_code == 200 and r.content == msi
+    # the pages link the checksum this server answers for, under /cad
+    page = c.get("/cad/docs", headers={"host": "bizomat.ai"}).text
+    assert 'href="/cad/download/solidworks.sha256"' in page and "downloads/cad/BIZOMAT-CAD-Automation-x64.msi.sha256" not in page

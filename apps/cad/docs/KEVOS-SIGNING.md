@@ -24,6 +24,10 @@ Certificate authorities now issue code-signing keys only on a hardware token or 
 (`KEVOS_SIGN_PFX`) for testing; production signing needs the workflow to call the chosen signing service instead.
 That step is added once a service is chosen (below).
 
+Until then, development builds are signed on the Windows development computer with a self-signed certificate
+(`CN=BIZOMAT Development`, private key not exportable, kept in that computer's certificate store) by
+`installer/sign-development.ps1`. Other computers do not trust it. See [BIZOMAT-DEV-SIGNING.md](BIZOMAT-DEV-SIGNING.md).
+
 ## Options
 
 | Option | Cost | Publisher shown in Windows | Fits KEVOS when | Notes |
@@ -63,12 +67,12 @@ Details for the application form:
 | Field | KEVOS answer |
 |---|---|
 | Project name | KEVOS Bridge |
-| Repository | https://github.com/jogkev-creator/CADOS (once public) |
+| Repository | https://github.com/jogkev-creator/CADOS (private since 7 Nov 2026: the free programme for open-source projects needs a public repository, so a paid service applies, such as Azure Trusted Signing or an OV code-signing certificate) |
 | Licence | GNU Affero General Public License v3.0 only |
 | Description | Connects AI apps (Claude, ChatGPT and other MCP clients) to SOLIDWORKS on the user's own Windows computer. A COM add-in runs inside SOLIDWORKS; a tray app keeps a signed outbound link to the user's KEVOS server. |
 | Files to sign | `OpenSketch.Sw.dll`, `KEVOS.Companion.exe`, `OpenSketchSW.exe`, `BIZOMAT-CAD-Automation-<version>-x64.msi` (Authenticode, SHA-256, timestamped) |
 | Build system | GitHub Actions, GitHub-hosted `windows-latest`, workflow `.github/workflows/solidworks.yml`, job `installer` |
-| Release channel | GitHub Releases `bridge-v<version>` (and `bridge-latest`) |
+| Release channel | https://bizomat.ai/downloads/cad/ (`cloudflare.ps1 publish installer`; the GitHub releases are private) |
 | Maintainers | (your name and GitHub account; reviewers and approvers) |
 
 Once approved, SignPath gives an organization id, a project slug, a signing policy and an API token. Then the

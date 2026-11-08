@@ -44,9 +44,10 @@ This creates `.venv` in the folder and installs the pinned Python packages.
 GitHub builds it on every change and keeps the newest one on one page:
 
 1. Close SOLIDWORKS. In Task Manager, end any `SLDWORKS.exe` that is still running.
-2. Open the repository on github.com, then **Releases > OpenSketch for SOLIDWORKS (latest)**
-   (`https://github.com/jogkev-creator/CADOS/releases/tag/addin-latest`), and download
-   **OpenSketch-SOLIDWORKS.zip**. The release notes show the add-in version.
+2. Open the repository on github.com (signed in: it is private), then **Releases > OpenSketch for SOLIDWORKS
+   (latest)** (`https://github.com/jogkev-creator/CADOS/releases/tag/addin-latest`), and download
+   **OpenSketch-SOLIDWORKS.zip**. The release notes show the add-in version. A running server also gives its own
+   copy, signed in, at `<server>/api/sw/download`.
 3. Unzip it into `Documents` so the files land in `Documents\OpenSketch-SOLIDWORKS`. Choose **Replace** for every file.
    Always use the same folder.
 4. Run `OpenSketchSW.exe` from that folder and click **Install for me**. If SmartScreen warns, click **More info**, then

@@ -254,6 +254,16 @@ def _base(request: Request) -> str:
     return auth.public_url(dict(request.headers))
 
 
+def _mcp_base(request: Request) -> str:
+    """The connector address AI apps are given: OPENSKETCH_MCP_URL when it is an https address ending in /mcp (on
+    Cloudflare, https://mcp.bizomat.ai/mcp: the MCP server's own host), else the public address followed by /mcp.
+    The other addresses keep working for apps connected with them (canonical.py)."""
+    v = os.environ.get("OPENSKETCH_MCP_URL", "").strip().rstrip("/")
+    if v.startswith("https://") and v.endswith(mcp_server.PATHS[0]) and " " not in v:
+        return v
+    return _base(request) + mcp_server.PATHS[0]
+
+
 def _user(request: Request) -> dict | None:
     return getattr(request.state, "user", None)
 
@@ -783,12 +793,22 @@ def api_sw_download():
 
 
 # The Windows installer (CADOS for SOLIDWORKS, an MSI built by solidworks.yml on Windows). Public: it holds no data.
-INSTALLER_DEFAULT = "https://github.com/jogkev-creator/CADOS/releases/download/bridge-latest/BIZOMAT-CAD-Automation-x64.msi"
+# public, on bizomat.ai (the website Worker serves /downloads/ from R2; the GitHub repositories and releases are private)
+INSTALLER_DEFAULT = "https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi"
+
+
+def local_installer() -> Path | None:
+    """An installer the operator put in this server's own data folder (<data>/downloads/BIZOMAT-CAD-Automation-x64.msi,
+    on Fly the volume at /data): served by the server itself, for as long as bizomat.ai does not serve /downloads/
+    (the website on Fly has no such route; the Cloudflare Worker has). Never a file the server writes."""
+    p = store.data_dir() / "downloads" / brand.INSTALLER_NAME
+    return p if p.is_file() else None
 
 
 def installer_url() -> str:
     """Where "Download for SOLIDWORKS" goes: OPENSKETCH_INSTALLER_URL, else the release this server publishes to
-    its computers (bridge-release.json, the same file the Companion's updates come from), else the newest build."""
+    its computers (bridge-release.json, the same file the Companion's updates come from), else the newest build.
+    (An installer in the data folder, local_installer, is served before the last two.)"""
     env = os.environ.get("OPENSKETCH_INSTALLER_URL", "").strip()
     if env.startswith("https://"):
         return env
@@ -801,9 +821,44 @@ def installer_url() -> str:
     return INSTALLER_DEFAULT
 
 
+def _explicit_installer_url() -> bool:
+    return os.environ.get("OPENSKETCH_INSTALLER_URL", "").strip().startswith("https://")
+
+
+_SUMS: dict = {}
+
+
+def _installer_sha256(p: Path) -> str:
+    st = p.stat()
+    key = (str(p), st.st_size, st.st_mtime_ns)
+    if key not in _SUMS:
+        h = hashlib.sha256()
+        with open(p, "rb") as f:
+            for block in iter(lambda: f.read(1 << 20), b""):
+                h.update(block)
+        _SUMS.clear()
+        _SUMS[key] = h.hexdigest()
+    return _SUMS[key]
+
+
 @app.get("/download/solidworks")
 def download_solidworks():
+    # a plain def: FastAPI runs it in a thread, so reading the file never holds the event loop
+    local = None if _explicit_installer_url() else local_installer()
+    if local:
+        return FileResponse(local, filename=brand.INSTALLER_NAME, media_type="application/x-msi",
+                            headers={"Cache-Control": "private, no-cache", "X-Content-SHA256": _installer_sha256(local)})
     return RedirectResponse(installer_url(), status_code=302, headers={"Cache-Control": "no-store"})
+
+
+@app.get("/download/solidworks.sha256")
+def download_solidworks_sha256():
+    """The SHA-256 of the installer "Download for SOLIDWORKS" gives, in sha256sum's format."""
+    local = None if _explicit_installer_url() else local_installer()
+    if local:
+        return Response(f"{_installer_sha256(local)}  {brand.INSTALLER_NAME}\n", media_type="text/plain; charset=utf-8",
+                        headers={"Cache-Control": "private, no-cache"})
+    return RedirectResponse(brand.checksum_url(), status_code=302, headers={"Cache-Control": "no-store"})
 
 
 # ----------------------------------------------------------------------------- registered computers
@@ -824,7 +879,7 @@ def api_connect_new_address(request: Request):
     if not u or u.get("legacy"):
         return JSONResponse({"error": "Create an account first."}, status_code=400)
     accounts.new_mcp_address(u["id"])
-    return {"mcp_url": f"{_base(request)}{mcp_server.PATHS[0]}/{auth.mcp_token_for(u)}"}
+    return {"mcp_url": f"{_mcp_base(request)}/{auth.mcp_token_for(u)}"}
 
 
 PAGE_HEADERS = {"Cache-Control": "no-store", "X-Frame-Options": "DENY", "Referrer-Policy": "same-origin"}
@@ -907,9 +962,9 @@ def api_solidworks(request: Request):
     from . import mcpauth, swbridge
     base = _base(request)
     u = _user(request)
-    path = mcp_server.PATHS[0]
+    mcp = _mcp_base(request)
     return {"server": base, "key": swbridge.key_for(u), "status": swbridge.status(u), "download": SW_DOWNLOAD.is_file(),
-            "url": base + path, "private_url": f"{base}{path}/{auth.mcp_token_for(u)}",
+            "url": mcp, "private_url": f"{mcp}/{auth.mcp_token_for(u)}",
             "signin": auth.mode(request.scope) != "open", "apps": mcpauth.grants_for(u["id"] if u else "local"),
             "user": {"name": u.get("name"), "email": u.get("email"), "password_by": u.get("password_by")}
             if u and not u.get("legacy") else None}

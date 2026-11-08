@@ -1,0 +1,4 @@
+# Installer backups are kept byte for byte: no line-ending conversion on any checkout.
+backups/** -text
+*.msi binary
+*.cer binary

@@ -1,6 +1,7 @@
 # Runs the test suite: pytest on Python 3.12 with the pinned requirements-dev.txt (the versions the server image
-# installs) and npm test on Node 20. On pull requests and on pushes to branches other than main; pushes to main are
-# tested by deploy.yml, which calls this workflow and deploys only when every job here passes.
+# installs), npm test on Node 20, and the Cloudflare Worker (cloudflare/mcp) on Node 22. On pull requests and on
+# pushes to branches other than main; pushes to main are tested by deploy.yml, which calls this workflow and deploys
+# only when every job here passes.
 # The end-to-end worker tests (`@pytest.mark.slow`: real servers and worker processes, timing checks) run in a job
 # of their own, so they have the runner to themselves.
 name: Tests
@@ -60,6 +61,26 @@ jobs:
         run: python -m pip install --require-hashes -r requirements-dev.txt
       - name: pytest
         run: python -m pytest -q -ra --timeout=900 -m "${{ matrix.select }}"
+
+  worker:
+    name: Cloudflare Worker (cloudflare/mcp)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: cloudflare/mcp
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: cloudflare/mcp/package-lock.json
+      # the contract test runs opensketch/persist.py (standard library only) with the runner's python3
+      - run: npm ci
+      - run: npm run check
 
   npm:
     name: npm test

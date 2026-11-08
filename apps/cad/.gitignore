@@ -10,3 +10,9 @@ solidworks/**/bin/
 solidworks/**/obj/
 solidworks/dist/
 opensketch/static/downloads/
+.wrangler/
+installer/out/
+# signing keys never go into the repository (public .cer files may)
+*.pfx
+*.p12
+*.pvk

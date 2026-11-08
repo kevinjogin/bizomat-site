@@ -360,7 +360,8 @@ def test_an_add_in_too_old_for_drawings_is_told_how_to_update(base):
     try:
         n = len(old.got)
         res, out = _mcp(base, "sw_create_drawing", {})
-        assert res["isError"] and "needs the CAD Automation add-in 0.9.1" in out["error"] and "releases/tag/addin-latest" in out["error"]
+        assert res["isError"] and "needs the CAD Automation add-in 0.9.1" in out["error"] and "/api/sw/download" in out["error"]
+        assert "github.com" not in out["error"], "the repositories are private: no download link may point there"
         res, out = _mcp(base, "sw_export", {"format": "dxf"})
         assert res["isError"] and "Exporting DXF needs" in out["error"]
         res, out = _mcp(base, "sw_edit_drawing", {"actions": [{"do": "arrange_dimensions"}]})

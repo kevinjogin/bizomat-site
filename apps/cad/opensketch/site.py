@@ -243,7 +243,7 @@ def docs(signed_in: bool = False, base: str = "") -> bytes:
         ("The assistant cannot sign in", "Remove the connector in your assistant and add it again. If it still fails, use the private address in Settings."),
     ]
     rows = "".join(f"<tr><td>{a}</td><td>{b}</td></tr>" for a, b in trouble)
-    svc = escape(base.rstrip("/")) if base.startswith("https://") else "https://cados.kevos.com"  # this server's own address
+    svc = escape(base.rstrip("/")) if base.startswith("https://") else "https://bizomat.ai/cad"  # this server's own address
     html = f"""{brand.head("Documentation", "Install CAD Automation, connect your AI assistant to SOLIDWORKS, verify the connection and fix common problems.", path="/docs", index=True, base=base)}<body>
 {brand.header("docs", signed_in)}
 <main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Documentation</span><h1>Set up CAD Automation</h1>
@@ -282,10 +282,10 @@ API and is being validated on more installations. Run the self test on each new 
 
 <section id="install"><h2>Install</h2>
 <div class="actions"><a class="btn btn-primary" href="/download/solidworks">Download for SOLIDWORKS</a>
-<a class="small" href="{brand.RELEASES_URL}" rel="noopener">All releases and checksums</a></div>
+<a class="small" href="/download/solidworks.sha256">SHA-256 checksum</a></div>
 <ol class="steps">
 <li><h4>Download the installer</h4><p>Sign in with your account and download <code>BIZOMAT-CAD-Automation-x64.msi</code>.
-Each release also lists a SHA-256 checksum you can compare.</p></li>
+Its SHA-256 checksum is published next to it, for you to compare.</p></li>
 <li><h4>Close SOLIDWORKS</h4><p>Save your work and close SOLIDWORKS before you install.</p></li>
 <li><h4>Run the installer</h4><p>Open the file and follow the steps. Windows asks for administrator approval once. The
 installer adds the add-in and the Companion, registers the add-in with every SOLIDWORKS version on the
@@ -364,7 +364,7 @@ in place: the computer stays paired.</p></section>
 <section id="troubleshooting"><h2>Troubleshooting</h2>
 <p>Start with the tray icon: right-click it, choose Status, then Copy diagnostics. The diagnostics hold no passwords or keys.</p>
 <div class="table-wrap"><table><thead><tr><th>What you see</th><th>What to do</th></tr></thead><tbody>{rows}</tbody></table></div>
-<p>Still stuck? <a href="{brand.SUPPORT_URL}" rel="noopener">Contact support</a> with the diagnostics.</p></section>
+<p>Still stuck? <a href="{escape(brand.support_url())}" rel="noopener">Contact support</a> with the diagnostics.</p></section>
 
 <section id="security"><h2>Security</h2>
 <ul><li><b>Outbound only.</b> The computer connects out over HTTPS. It opens no ports.</li>

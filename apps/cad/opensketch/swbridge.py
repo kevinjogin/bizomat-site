@@ -333,7 +333,14 @@ def _v1_status(user: dict | None) -> dict:
 
 
 # Where people get a newer add-in (the GitHub release that solidworks.yml keeps up to date). Overridable for forks.
-ADDIN_DOWNLOAD = os.environ.get("OPENSKETCH_ADDIN_URL", "https://github.com/jogkev-creator/CADOS/releases/tag/addin-latest")
+def addin_download() -> str:
+    """Where the add-in package is: OPENSKETCH_ADDIN_URL, else this server's own copy (/api/sw/download, signed in;
+    the image builds it). The GitHub repositories, and so their releases, are private."""
+    v = os.environ.get("OPENSKETCH_ADDIN_URL", "").strip()
+    if v.startswith(("https://", "http://")) and " " not in v:
+        return v
+    from . import auth
+    return auth.public_url().rstrip("/") + "/api/sw/download"
 
 
 def version_tuple(v: str | None) -> tuple[int, ...]:
@@ -368,7 +375,7 @@ def addin_too_old(user: dict | None, needed: str, what: str, device: str | None 
     where = s.info.get("path")
     return (f"{what} needs the CAD Automation add-in {needed} or newer; SOLIDWORKS is running {have or 'an unknown version'}"
             + (f" from {where}" if where else "") + ". To update: close SOLIDWORKS (check Task Manager for SLDWORKS.exe), "
-            f"download the add-in package from {ADDIN_DOWNLOAD}, unzip it over the old add-in folder (replace "
+            f"download the add-in package from {addin_download()}, unzip it over the old add-in folder (replace "
             "all files), run the setup program in that folder and click Install for me, then reopen SOLIDWORKS and "
             "connect again.")
 

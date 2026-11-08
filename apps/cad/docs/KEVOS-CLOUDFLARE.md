@@ -1,10 +1,30 @@
 # KEVOS Bridge and Cloudflare
 
-## What was inspected
+## Production on Cloudflare (from November 2026)
 
-- This repository has no Cloudflare configuration: no tunnel `config.yml`, no credentials, no Workers, D1, Durable
-  Objects or Access settings. The only Cloudflare material is `windows/README.md` section 7b (a quick tunnel or a
-  dashboard-made tunnel to `http://127.0.0.1:8000`).
+Production runs on Cloudflare, all on bizomat.ai. Two independent Workers, each deployed on its own: `bizomat` (the
+website, gocore-website) and `bizomat-mcp` (CAD Automation's server, `cloudflare/mcp` here).
+
+| What | Address | Served by |
+| --- | --- | --- |
+| The website | `https://bizomat.ai`. `https://www.bizomat.ai` answers 301 there | Worker `bizomat` |
+| CAD Automation's pages, sign-in, Google sign-in's callback (`/cad/auth/google/callback`) | `https://bizomat.ai/cad` | Worker `bizomat`, which hands `/cad` to `bizomat-mcp` by service binding |
+| MCP endpoint for AI apps | `https://mcp.bizomat.ai/mcp` (OAuth issuer `https://mcp.bizomat.ai`) | Worker `bizomat-mcp`, custom domain |
+| SOLIDWORKS computers (add-in and Companion 0.13 and later) | `https://bizomat.ai/cad` | as the pages |
+| Project Management | `https://bizomat.ai/tasks` | Worker `bizomat`, which hands `/tasks` to `bizomat-tasks` |
+
+- **DNS:** `bizomat.ai` and `www.bizomat.ai` keep their records and are Proxied (the switch; turning them back to DNS
+  only is the way back to Fly). `mcp.bizomat.ai` is created by `bizomat-mcp`'s first deploy.
+- **TLS and edge settings:** SSL/TLS Full (strict). The cache, bot and challenge settings of section A below apply to
+  the same paths.
+- **Details and limits:** `cloudflare/mcp/README.md`. The laptop runs the steps with `tools/laptop/cloudflare.ps1`.
+- **Fly:** section A below is the setup on Fly. It stays for the way back until the owner retires Fly.
+
+## What was inspected (before the move to Cloudflare)
+
+- This repository had no Cloudflare configuration then: no tunnel `config.yml`, no credentials, no Workers, D1, Durable
+  Objects or Access settings. The only Cloudflare material was `windows/README.md` section 7b (a quick tunnel or a
+  dashboard-made tunnel to `http://127.0.0.1:8000`). Now `cloudflare/mcp` is the Worker above.
 - The Cloudflare account itself could not be inspected from the build session (no access to the Cloudflare API).
   Before changing anything there, list what exists: Zero Trust > Networks > Tunnels, Workers and Pages, D1, Access >
   Applications, and the DNS records of your domain. Nothing in this guide deletes or replaces existing services.
@@ -18,7 +38,7 @@ Durable Object is needed, and none is used. Cloudflare's job is the front door o
 
 Use one of these.
 
-### A. Gateway hosted on Fly (or any host) with a domain on Cloudflare (recommended)
+### A. Gateway hosted on Fly (or any host) with a domain on Cloudflare (production until the move; kept for the way back)
 
 CAD Automation lives under the BIZOMAT website's address, at `https://bizomat.ai/cad` (fly.toml
 `OPENSKETCH_PUBLIC_URL`; `opensketch/canonical.py` serves the prefix). bizomat.ai is in the owner's Cloudflare account.

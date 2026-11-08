@@ -18,6 +18,9 @@ import sys
 import threading
 import time
 import urllib.request
+from pathlib import Path
+
+from . import persist
 
 HANG_SECONDS = 120.0   # no answer for this long after it has answered once -> restart
 DUMP_SECONDS = 30.0    # no answer for this long -> the server prints its thread stacks once (it keeps running)
@@ -178,7 +181,22 @@ def probe_url(host: str, port: int) -> str:
 
 
 def main(host: str, port: int) -> int:
-    """Entry point for `python -m opensketch --supervise`: the server runs as a child on the same host and port."""
+    """Entry point for `python -m opensketch --supervise`: the server runs as a child on the same host and port.
+
+    With OPENSKETCH_PERSIST_URL (Cloudflare Containers, whose disk does not last) the data folder is restored from
+    the store first, and the server is not started when that fails (persist.py); changed state files go back to the
+    store while it runs and once more after it stops."""
+    syncer = None
+    if persist.enabled():
+        folder = Path(os.environ.get("OPENSKETCH_DATA") or Path.home() / "opensketch-data")
+        try:
+            sent = persist.restore(folder, allow_empty=os.environ.get("OPENSKETCH_PERSIST_EMPTY_OK") == "1", log=_log)
+        except persist.StoreError as e:
+            _log(f"not starting the server: {e}")
+            return 2
+        syncer = persist.Syncer(folder, sent=sent, log=_log)
+        syncer.start()
+        _log(f"copying changed state files to the data store every {syncer.every:g} s")
     cmd = [sys.executable, "-m", "opensketch", "--host", host, "--port", str(port), "--no-browser"]
     sup = Supervisor(cmd, probe_url(host, port),
                      hang=float(os.environ.get("OPENSKETCH_HANG_SECONDS", HANG_SECONDS)),
@@ -190,4 +208,10 @@ def main(host: str, port: int) -> int:
     signal.signal(signal.SIGINT, on_signal)
     signal.signal(signal.SIGTERM, on_signal)
     _log(f"watching the server at {sup.url} (restart after {sup.hang:g} s without an answer)")
-    return sup.run()
+    code = sup.run()
+    if syncer is not None:
+        if syncer.flush():
+            _log("the data store has the latest state")
+        else:
+            _log("the latest changes may not have reached the data store")
+    return code

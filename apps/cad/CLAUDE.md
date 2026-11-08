@@ -18,15 +18,25 @@ gateway and hands commands to the add-in over a local named pipe; one MSI ("CADO
 `docs/CADOS-ADDIN.md` has the architecture, the gap report (there was never a macro product: the add-in was always a
 COM add-in) and the release process. Docs: `docs/BRIDGE-PROTOCOL.md` (the contract),
 `docs/KEVOS-*.md` (install, Cloudflare, security, versions, troubleshooting, build, signing, test report, release
-notes). The MSI builds unsigned on Windows in CI (`installer` job); signing waits for a signing service.
+notes). The MSI builds unsigned on Windows in CI (`installer` job); release signing waits for a signing service.
+Development signing (`installer/sign-development.ps1`, `docs/BIZOMAT-DEV-SIGNING.md`) runs on the Windows development
+computer with a self-signed `CN=BIZOMAT Development` certificate from its certificate store (not trusted elsewhere);
+`installer-test.yml` runs it with a throwaway certificate. Installer backups: `backups/installer/` (original, as
+released; development-signed), never overwritten.
 
 ## Rules
 
 - After completing any phase or significant change, update this file to reflect the current state before committing.
 - Test before committing: `pytest -q` (needs node for the sketch solver; the slow KEVOS end-to-end test needs the .NET
-  8 SDK) and `npm test` (the solver alone); the add-in and Companion with `bash solidworks/build.sh test` (.NET 8 SDK). For page changes, check the page in Chromium with
+  8 SDK) and `npm test` (the solver alone); the add-in and Companion with `bash solidworks/build.sh test` (.NET 8 SDK);
+  the Cloudflare Worker with `cd cloudflare/mcp && npm ci && npm run check` (Node 22, python3). For page changes, check the page in Chromium with
   Playwright at desktop and phone width.
 - No emojis anywhere. Plain language, short sentences, little text on pages.
+- BIZOMAT corporate footer (owner, 8 Nov 2026; the website's `src/config/platform.ts` is the source): `brand.SLOGAN`
+  ("Connecting Intelligence. Empowering Progress."), `brand.CORPORATE` (short description) and
+  `brand.copyright_line()` ("(c) <year> BIZOMAT. All rights reserved.") in the site footer, the app footer and the
+  sign-in panel; the footer's BIZOMAT column links Home, About (/engine-room/), Products, Project Management and
+  Contact on bizomat.ai; legal links read Privacy Policy and Terms of Use. Product name, headline, logo and colours unchanged.
 - Brand: CADOS by KEVOS. Never "OpenSketch" in anything people read (pages, MCP server name, messages); real file
   paths and file names (`Documents\OpenSketch`, `OpenSketchSW.exe`) stay as they are. Logos are SVG paths in
   `brand.py`: the CADOS wordmark (built from the KEVOS letterforms) with "by KEVOS"; the KEVOS logo links to
@@ -46,8 +56,11 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   pipe link) must never let an exception escape a thread: it would close SOLIDWORKS.
 - Heavy work never runs on the web server's event loop: OpenCascade goes through the person's "agent" CAD worker
   (`cadworker.lane_for(person, "agent")`), node and big file writes through threads.
-- No personal, client or confidential details in code, comments, tests or docs: the repository is public.
-- CI: `.github/workflows/tests.yml` (pytest in two jobs: main and `-m slow`; npm test) on pull requests and
+- No personal, client or confidential details in code, comments, tests or docs (the repository is private since 7 Nov
+  2026, but it may be shared). Nothing public may link to GitHub: every repository is private, so its pages, releases
+  and raw files answer 404 to everyone else. Downloads are published on bizomat.ai (`/downloads/cad/`, R2).
+- CI: `.github/workflows/tests.yml` (pytest in two jobs: main and `-m slow`; npm test; the Cloudflare Worker's
+  `npm run check` in `cloudflare/mcp` on Node 22) on pull requests and
   non-main pushes; `deploy.yml` deploys main to Fly after the same tests, skipping pushes that only touch notes,
   docs or tests, and fails if the live /healthz does not show the new version within 3 minutes; `solidworks.yml`
   builds and tests the add-in and keeps the zip as an artifact. `domain.yml` (run by hand, `.github/scripts/kevos-domain.sh`) gives the Fly app
@@ -181,7 +194,8 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
   (`solidworks/Directory.Build.props`; bump it whenever the add-in learns a command). Its hello sends its version and
   the DLL's path; `swbridge.addin_too_old` makes sw_create_drawing, the dwg/dxf/slddrw exports and sw_status
   (`update_needed`) say which add-in is loaded and how to update, before anything is sent. `solidworks.yml` replaces
-  the `addin-latest` GitHub release with every main build (`swbridge.ADDIN_DOWNLOAD`, `OPENSKETCH_ADDIN_URL`).
+  the `addin-latest` GitHub release with every main build (private: for the owner). The update message points at
+  `swbridge.addin_download()`: `OPENSKETCH_ADDIN_URL`, else this server's own package (`/api/sw/download`).
 - Drawing API (0.10.0; `sw_get_drawing`, `sw_edit_drawing` in `sw_tools.py`, `solidworks/src/Addin/DrawingEdits.cs`):
   read the sheet, views (type, orientation, scale, outline in sheet mm, display, dimension count, model) and title
   block fields; change a drawing with up to 40 actions run in order (`DRAWING_ACTIONS` lists each one's keys and is
@@ -218,15 +232,36 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - Installer (`installer/KEVOS-Bridge.wxs`, `installer/build.ps1`): WiX 5 per-machine x64 MSI "BIZOMAT CAD Automation for
   SOLIDWORKS" (UpgradeCode unchanged: upgrades CADOS for SOLIDWORKS and KEVOS Bridge), `BIZOMAT-CAD-Automation-<version>-x64.msi`
   plus the stable `BIZOMAT-CAD-Automation-x64.msi` (and `CADOS-for-SOLIDWORKS-x64.msi`, the 0.12 stable name, as a copy); built and (with secrets) signed by the `installer` job in `solidworks.yml` on Windows;
-  releases `bridge-latest` and `bridge-v<version>`. `/download/solidworks` (public) redirects to
-  OPENSKETCH_INSTALLER_URL, else the published `bridge-release.json` msi_url, else the stable bridge-latest asset.
-  `tests/test_installer.py` keeps the MSI, the add-in code and the download link in step.
+  releases `bridge-latest` and `bridge-v<version>` (private: the owner downloads from there). Public copies are on
+  bizomat.ai: `tools/laptop/cloudflare.ps1 publish installer -File <msi>` puts the versioned and stable names and their
+  `.sha256` files in the R2 bucket `bizomat-downloads` (the website Worker serves `/downloads/`). It also writes the
+  release record as `/downloads/cad/release.json` and as CAD's `bridge-release.json` in R2. `build.ps1`'s `release.json`
+  points there too. `/download/solidworks` (signed in) redirects to OPENSKETCH_INSTALLER_URL, else serves
+  `<data>/downloads/BIZOMAT-CAD-Automation-x64.msi` itself when the operator put one there (`server.local_installer`;
+  on Fly `/data/downloads/`, because bizomat.ai is still the Fly website, which has no /downloads/ route: the fallback
+  below answered 404 on 8 Nov 2026), else redirects to the published `bridge-release.json` msi_url, else
+  `https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi`. `/download/solidworks.sha256` (the pages'
+  checksum link) answers for the file on the volume, else redirects to `brand.checksum_url()`. Pages link the
+  checksum (`/download/solidworks.sha256`) and support (`brand.support_url()`: the website's contact page), never GitHub.
+  `tests/test_installer.py` keeps the MSI, the add-in code and the download link in step. `build.ps1` signs with a
+  store certificate by thumbprint (`-CertThumbprint`/KEVOS_SIGN_THUMBPRINT, never falls back to unsigned when one is
+  asked for) or a `.pfx` (CI); `-Timestamp ''` signs without a timestamp, `-NameSuffix` (sign-development passes
+  `-DEV` for a self-signed certificate). `sign-development.ps1`: finds or makes the certificate (RSA 3072, 2 years,
+  NonExportable), finds SignTool or installs only the SDK Signing Tools (`-SdkSetup`), trusts the public certificate
+  for this user (`-TrustOnThisComputer`), builds (`-Build`), signs the three own binaries and the MSI (SHA-256,
+  RFC 3161), checks each with `signtool verify /pa` and Get-AuthenticodeSignature, unpacks the MSI (`msiexec /a`) to
+  check the files in it, writes `installer/out/signing-report.*` and backs up (`-Backup`). The tests check it never
+  exports a private key and the repository holds none. The original 0.13.0 MSI (unsigned, from `bridge-latest`,
+  which CI remakes on every build) is in `backups/installer/original/2026-11-07`.
 
 ## Hosting
 
 - Code: https://github.com/jogkev-creator/CADOS (moved from jogkev-creator/opensketchyz in Nov 2026; release
-  downloads, the MSI's links and `swbridge.ADDIN_DOWNLOAD` point there). The Fly app below was linked to the old
-  repository: relink it in Fly (or deploy by hand) after the move.
+  downloads are on bizomat.ai now, as the repository is private since 7 Nov 2026: see the Rules). The laptop works from
+  its own signed-in clones (`bizomat.ps1 setup`, then `git pull`); raw GitHub links do not work for a private
+  repository. GitHub Actions minutes for private repositories are limited: when they run out, every job fails at once
+  with no log (seen 7 Nov 2026), and `cloudflare.ps1` runs the repository's own checks before each deploy. The Fly app
+  below was linked to the old repository: relink it in Fly (or deploy by hand) after the move.
 - Listens on `::` (`--host ::`, `__main__.listen_sockets`: one dual-stack socket, IPv4 alone where there is no IPv6), so
   the BIZOMAT router (Fly app `bizomat`) reaches it over Fly's private network at cados.internal:8080.
 - Public address https://bizomat.ai/cad: CAD Automation lives under the BIZOMAT website's own address (the owner's
@@ -263,10 +298,43 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - fly.toml: app `cados`, performance-1x (one dedicated core, 2 GB), `auto_stop_machines = "suspend"`, kill_timeout 15, volume
   `opensketch_data` at /data. The add-in's long poll keeps the machine awake while SOLIDWORKS is linked.
 - `supervisor.py` (`python -m opensketch --supervise`, the image's CMD): asks /healthz every 5 s, restarts the server
-  after 120 s without an answer (stacks to the log first), tells a suspended machine from a hang.
+  after 120 s without an answer (stacks to the log first), tells a suspended machine from a hang. With
+  OPENSKETCH_PERSIST_URL it first restores the data folder from an object store and copies changes back
+  (`persist.py`, below).
+- Cloudflare (migration from Fly, Nov 2026; plan in gocore-website `docs/BIZOMAT-CLOUDFLARE-MIGRATION.md`):
+  `cloudflare/mcp` is the Worker `bizomat-mcp` (custom domain mcp.bizomat.ai; the website Worker hands bizomat.ai/cad
+  here by service binding) in front of one Cloudflare Container built from this Dockerfile (`CadServer`, standard-2,
+  `max_instances` 1, instance "main", sleeps after 30 min). The Worker sets X-Forwarded-Proto and X-Forwarded-Host
+  from the visitor's own address (`settings.ts` `forServer`) and gives the container OPENSKETCH_DATA=/data,
+  OPENSKETCH_PERSIST_URL=http://persist.bizomat.internal and OPENSKETCH_CLIENT_IP_HEADER=cf-connecting-ip
+  (`auth._client` then believes only CF-Connecting-IP). Container disks do not last, so `persist.py` (run by the
+  supervisor) restores the top-level state files from R2 (`bizomat-mcp-data`, keys `data/<name>`, names
+  `persist.NAME`) through the Worker's outbound handler (`src/persist.ts`: GET /list, GET/PUT/DELETE /o/<key>,
+  streamed, R2 checks each PUT's SHA-256; no R2 keys in the container), refuses to start the server when R2 holds no
+  `accounts.enabled` (exit 2; visitors get 503, never /setup; OPENSKETCH_PERSIST_EMPTY_OK=1 for a deliberate empty
+  start), copies changed files every 2 s (SQLite through the online backup; a refused file never holds back the
+  others) and once more on SIGTERM. OPENSKETCH_MCP_URL (`server._mcp_base`) makes the connector address
+  https://mcp.bizomat.ai/mcp; mcp.bizomat.ai is in OPENSKETCH_REDIRECT_HOSTS, so OAuth there has issuer
+  https://mcp.bizomat.ai. Tests: `tests/test_persist.py`; `cloudflare/mcp/test` (vitest; `contract.test.ts` runs
+  persist.py against the Worker's store). A local run of the whole stack (`wrangler dev` with Docker: Worker,
+  container, local R2) passed: fail-closed 503 on an empty store, cold start about 3 s, sign-in, OAuth discovery,
+  the MCP SDK client (31 tools), a stand-in Companion paired through the page with 25 s long polls and commands,
+  and sessions, computers and command history restored onto a fresh disk. Not yet deployed. `CAD_PAUSED=1` (a Worker
+  secret) answers 503 and stops a running server so a new copy of the data can go into R2. The laptop runs the move
+  with `tools/laptop/cloudflare.ps1`: check, deploy mcp|tasks|website, secrets website, move tasks|cad (-Local,
+  -Replace, -Final), switch (prints the DNS steps; DNS stays the owner's), status. It is ASCII and PS 5.1, apart from
+  bizomat.ps1.
+  The data moves from Fly with `cloudflare/mcp/scripts/move-from-fly.mjs` (prepare, then apply) before the DNS switch.
+  Secrets a Fly server may have (OPENSKETCH_PASSWORD or OPENSKETCH_MCP_TOKEN: the private address and link signature seed;
+  OPENSKETCH_KEY_SECRET; GOOGLE_CLIENT_ID/SECRET; OPENSKETCH_ADDIN_URL) are passed to the container when set as Worker
+  secrets (`settings.ts` PASSED); `cloudflare.ps1 secrets mcp` copies them from the Fly Machine unseen. Readiness
+  rehearsal (7 Nov 2026): the production image seeded over HTTP, `move cad -Local`, the restored stack behind the website
+  Worker over https: same accounts, settings, OAuth grants, private address, add-in key, paired computer and history as
+  Fly; every tool; a 150 s call with a keep-alive every 15 s (gocore-website docs/BIZOMAT-CLOUDFLARE-MIGRATION.md).
 - `cadworker.py`: CAD in worker processes, one per person and kind, at most OPENSKETCH_CAD_LANES (3) live, one place
   kept for the owner, idle ones stop after 15 min, workers over 800 MB replaced. `OPENSKETCH_CAD_WORKERS=0` runs in
-  threads (tests/conftest.py sets it).
+  threads (tests/conftest.py sets it), so `tests/test_cadworker.py` imports every module first in a fresh process and
+  runs sw_tools' worker functions in a real worker (a worker's first import is the module of the function it runs).
 
 - One Windows PC (`windows/`): `setup.ps1` (Python 3.12 venv, pinned packages, copies the add-in zip from
   Downloads), `start.ps1` (asks for an optional public https address for a tunnel; no server password; runs on port
@@ -289,6 +357,9 @@ notes). The MSI builds unsigned on Windows in CI (`installer` job); signing wait
 - Large assemblies are slow to read: each read exports a STEP of the bodies that changed.
 - Account admin page (`/admin`) covers people, passwords, invites and open sign-up; early access codes and Google
   sign-in setup are still API only (`/api/account/settings`, `/api/account/google`).
+- On Cloudflare: a state file over 64 MiB is not copied to R2 (logged; `bridge.sqlite` grows with the command
+  history); files in transit (uploads, exports, file chunks) do not survive a container restart; a container killed
+  without SIGTERM loses up to 2 s of changes.
 - KEVOS: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
   (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
   process (SQLite, live sessions in memory).

@@ -1,0 +1,11 @@
+﻿{
+    "published_at":  "2026-11-06T13:41:29.799Z",
+    "version":  "0.13.0",
+    "msi_url":  "https://github.com/jogkev-creator/CADOS/releases/download/bridge-v0.13.0/BIZOMAT-CAD-Automation-0.13.0-x64-UNSIGNED.msi",
+    "sha256":  "sha256:e8517f9c6f351cc0636809f8d06ab9b93c485071dc19129049331425b06251b8",
+    "notes":  "BIZOMAT CAD Automation for SOLIDWORKS 0.13.0",
+    "signer_thumbprints":  [
+
+                           ],
+    "size":  1290240
+}

@@ -1,0 +1,40 @@
+// bizomat-mcp: CAD Automation's server as a Cloudflare Container behind this Worker.
+// Deploy from the owner's laptop: .\cloudflare.ps1 deploy mcp (tools/laptop), which passes the commit as
+// OPENSKETCH_VERSION. The image is the repository's Dockerfile (wrangler builds it with Docker, or Workers Builds
+// builds it in the cloud). Docs: cloudflare/mcp/README.md and gocore-website docs/BIZOMAT-CLOUDFLARE-MIGRATION.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bizomat-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // no workers.dev address: only mcp.bizomat.ai (created by the first deploy) and the website Worker reach the server
+  "workers_dev": false,
+  "routes": [{ "pattern": "mcp.bizomat.ai", "custom_domain": true }],
+  "observability": { "enabled": true },
+  "containers": [
+    {
+      "class_name": "CadServer",
+      "image": "../../Dockerfile",
+      "image_build_context": "../..",
+      // 1 vCPU, 6 GiB, 12 GB disk: the closest to the Fly machine it replaces (one dedicated core, 2 GB)
+      "instance_type": "standard-2",
+      // one instance: live sessions with the computers are in memory, and the server is its data's only writer
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": { "bindings": [{ "name": "CAD", "class_name": "CadServer" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CadServer"] }],
+  // the server's data folder (accounts, OAuth, paired computers, keys): opensketch/persist.py through src/persist.ts
+  "r2_buckets": [{ "binding": "DATA", "bucket_name": "bizomat-mcp-data" }],
+  "vars": {
+    // The product's public address stays https://bizomat.ai/cad (pages, sign-in, Google's callback, the computers);
+    // the website Worker hands it here. AI apps connect at mcp.bizomat.ai/mcp: pages asked for there go to
+    // bizomat.ai/cad, while MCP, OAuth, /v2/ and /api/ answer with that host's own address (canonical.py).
+    "OPENSKETCH_PUBLIC_URL": "https://bizomat.ai/cad",
+    "OPENSKETCH_MCP_URL": "https://mcp.bizomat.ai/mcp",
+    // cados.kevos.com and cad.bizomat.ai: earlier addresses, for connectors and computers set up with them if their DNS
+    // is ever pointed here (cados.fly.dev is Fly's own name: it can only reach Fly)
+    "OPENSKETCH_REDIRECT_HOSTS": "mcp.bizomat.ai,cados.kevos.com,cad.bizomat.ai"
+  }
+}
