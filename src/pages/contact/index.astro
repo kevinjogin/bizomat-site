@@ -4,43 +4,40 @@
 // ChatWidget); this page arranges them. Pathway links preselect the form's category with ?service=<slug>.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
-import MotionVisual from '../../components/MotionVisual.astro';
 import Section from '../../components/Section.astro';
 import Button from '../../components/Button.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import ContactForm from '../../components/ContactForm.astro';
 import BookingCard from '../../components/BookingCard.astro';
-import LibraryIcon from '../../components/library/LibraryIcon.astro';
-import type { LibraryIconName } from '../../components/library/icons.ts';
-import '../../styles/library.css';
 import { SITE } from '../../config/site.ts';
 
 const crumbs = [
   { label: 'Home', href: '/' },
   { label: 'Contact', href: '/contact/' },
 ];
-const pathways: { slug: string; icon: LibraryIconName; name: string; title: string; text: string; examples: string[]; explore?: { href: string; label: string } }[] = [
+const pathways: { slug: string; name: string; title: string; text: string; examples: string[]; explore?: { href: string; label: string } }[] = [
   {
-    slug: 'workos', icon: 'gear', name: 'Tools', title: 'Tools and technical support',
-    text: 'Have a question about a tool, calculation, technical resource or functionality? Get in touch.',
-    examples: ['Tool-related questions', 'Technical feedback', 'Calculation or functionality issues', 'Feature suggestions', 'New tool requests'],
-    explore: { href: '/tools/', label: 'Explore Tools' },
+    slug: 'cad-automation', name: 'CAD Automation', title: 'CAD Automation for SOLIDWORKS',
+    text: 'Questions about connecting an AI assistant to SOLIDWORKS, installing the add-in or what it can build.',
+    examples: ['Installation and pairing', 'Supported commands', 'Licensing and access', 'Feature requests'],
+    explore: { href: '/cad-automation/', label: 'About CAD Automation' },
   },
   {
-    slug: 'reados', icon: 'book', name: 'Library', title: 'Knowledge and resources',
-    text: 'Questions, suggestions or feedback about technical books, reading resources and knowledge content.',
-    examples: ['Book and reading enquiries', 'Content corrections', 'Resource suggestions', 'Knowledge and learning opportunities', 'Requests for additional topics'],
-    explore: { href: '/reados/', label: 'Explore Library' },
+    slug: 'project-management', name: 'Project Management', title: 'Projects, tasks and teams',
+    text: 'Questions about workspaces, boards, automations, dashboards or bringing your team on board.',
+    examples: ['Getting started', 'Workspaces and permissions', 'Automations and integrations', 'Feature requests'],
+    explore: { href: '/work/', label: 'About Project Management' },
   },
   {
-    slug: 'feedback', icon: 'bulb', name: 'Ideas', title: 'Ideas and feedback',
-    text: 'Have an idea that could make BIZOMAT better? Share your thoughts, suggestions and opportunities.',
-    examples: ['Platform improvements', 'New features', 'Product suggestions', 'General feedback', 'Future opportunities'],
+    slug: 'engineering-project', name: 'Engineering', title: 'Engineering and technical projects',
+    text: 'A design, manufacturing or operations problem you want to discuss, like those in the engineering record.',
+    examples: ['Design and CAD', 'Manufacturing support', 'Operations improvement', 'Project support'],
+    explore: { href: '/engine-room/#engineering-record', label: 'The engineering record' },
   },
   {
-    slug: 'collaboration', icon: 'briefcase', name: 'Collaboration', title: 'Collaboration and business enquiries',
+    slug: 'collaboration', name: 'Collaboration', title: 'Collaboration and business enquiries',
     text: 'Interested in working together, exploring a partnership or discussing a technical or business opportunity?',
-    examples: ['Business collaboration', 'Technical projects', 'Partnerships', 'Development opportunities', 'Commercial enquiries'],
+    examples: ['Business collaboration', 'Partnerships', 'Development opportunities', 'Commercial enquiries'],
   },
 ];
 const next = [
@@ -48,18 +45,17 @@ const next = [
   'You receive a reply through the contact details you provide.',
   'Where it helps, a conversation is arranged to agree the next step.',
 ];
-const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge resources, feedback, technical discussions and collaboration opportunities.';
+const description = 'Contact BIZOMAT about CAD Automation, Project Management, an engineering project or a collaboration. Send an enquiry or book a meeting.';
 ---
 
 <BaseLayout
-  exactTitle="REACHOS | Connect with BIZOMAT"
+  title="Contact"
   description={description}
   breadcrumbs={crumbs}
   canonical="/contact/"
-  schema={[{ '@type': 'ContactPage', name: 'REACHOS | Connect with BIZOMAT', description, url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
+  schema={[{ '@type': 'ContactPage', name: 'Contact BIZOMAT', description, url: `${SITE.url}/contact/`, about: { '@id': `${SITE.url}/#organization` } }]}
 >
-  <Hero eyebrow="REACHOS" title="Connect with <em>BIZOMAT.</em>" lead="Questions, ideas, feedback or opportunities. Start a conversation and discover how BIZOMAT can help you take the next step.">
-    <MotionVisual page="contact" slot="visual" priority />
+  <Hero eyebrow="Contact" title="Talk to <em>BIZOMAT.</em>" lead="Questions about a product, an engineering problem or an opportunity. Send an enquiry or book a meeting.">
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <Button href="#enquiry" arrow data-cta="contact-hero-enquiry">Start an Enquiry</Button>
@@ -71,15 +67,13 @@ const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge 
     <div class="reach-head">
       <h2 id="pathways-title">How can we <em>help?</em></h2>
       <div>
-        <p class="reach-intro">Have a question, an idea, feedback or something you want to build? Reach out to BIZOMAT and find the right next step.</p>
-        <p class="reach-intro reach-intro--small">Whether you’re exploring the tools, discovering Library resources, discussing a technical requirement or looking to collaborate, REACHOS is your connection point.</p>
+        <p class="reach-intro">Choose the subject closest to your question, or go straight to the form below.</p>
       </div>
     </div>
     <ul class="pathways" role="list">
       {pathways.map((p) => (
         <li class="pathway">
           <div class="pathway__head">
-            <span class="lib-topic__icon"><LibraryIcon name={p.icon} /></span>
             <div>
               <p class="pathway__name">{p.name}</p>
               <h3>{p.title}</h3>
@@ -96,29 +90,7 @@ const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge 
     </ul>
   </Section>
 
-  {SITE.assistant.enabled && (
-    <Section index="02" label="BIZOMAT Assistant" tone="alt" id="assistant" labelledby="assistant-title">
-      <div class="reach-assistant">
-        <div>
-          <h2 id="assistant-title">Not sure where to start?</h2>
-          <p class="reach-intro">The BIZOMAT Assistant can help you explore the platform, understand Tools and the Library, and identify the right way to get in touch.</p>
-          <p class="reach-assistant__note"><span class="reach-badge">AI-assisted guidance</span> Answers come only from published BIZOMAT information and may not cover everything. For anything specific, start an enquiry. Please don’t share sensitive information.</p>
-        </div>
-        <div class="reach-assistant__panel">
-          <p class="reach-assistant__label" id="assistant-starters">Try asking</p>
-          <ul class="reach-starters" role="list" aria-labelledby="assistant-starters">
-            {SITE.assistant.starters.map((q) => (
-              <li><button type="button" class="reach-starter" data-assistant-ask={q} data-cta="contact-assistant-starter" hidden>{q} <span aria-hidden="true">→</span></button></li>
-            ))}
-          </ul>
-          <Button type="button" variant="secondary" data-assistant-ask="" data-cta="contact-assistant-open" hidden>Open the BIZOMAT Assistant</Button>
-          <noscript><p class="reach-assistant__fallback">The assistant needs JavaScript. You can still <a href="#enquiry">start an enquiry</a> or book a meeting.</p></noscript>
-        </div>
-      </div>
-    </Section>
-  )}
-
-  <Section index={SITE.assistant.enabled ? '03' : '02'} label="Enquiries" id="enquiry" labelledby="enquiry-title">
+  <Section index="02" label="Enquiries" id="enquiry" labelledby="enquiry-title">
     <div class="reach-layout">
       <div class="reach-form">
         <h2 id="enquiry-title">Start a conversation.</h2>
@@ -142,7 +114,7 @@ const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge 
 </BaseLayout>
 
 <style>
-  :global(#pathways), :global(#assistant), :global(#enquiry) { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  :global(#pathways), :global(#enquiry) { scroll-margin-top: calc(var(--header-h) + 1rem); }
   .reach-head { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); gap: 1.5rem 5rem; margin-bottom: 2.2rem; }
   .reach-head h2 { max-width: 14ch; }
   .reach-intro { margin: 0; max-width: 64ch; font-size: var(--step-1); color: var(--ink-2); }
@@ -150,7 +122,7 @@ const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge 
   .pathways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; margin: 0; padding: 0; list-style: none; }
   .pathway { display: flex; flex-direction: column; gap: .85rem; min-width: 0; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); transition: border-color .2s var(--ease); }
   .pathway:hover { border-color: var(--line-strong); }
-  .pathway__head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: .85rem; align-items: center; }
+  .pathway__head { display: grid; grid-template-columns: minmax(0, 1fr); gap: .85rem; align-items: center; }
   .pathway__name { margin: 0 0 .15rem; font-size: .72rem; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
   .pathway h3 { font-size: var(--step-1); }
   .pathway__text { margin: 0; color: var(--ink-2); font-size: .95rem; }
@@ -160,19 +132,6 @@ const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge 
   .pathway__cta { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; color: var(--accent); font-weight: 600; text-decoration: none; }
   .pathway__cta:hover, .pathway__link:hover { text-decoration: underline; text-underline-offset: 3px; }
   .pathway__link { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink-2); font-size: .9rem; text-decoration: none; }
-  .reach-assistant { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem 5rem; align-items: start; }
-  .reach-assistant h2 { max-width: 16ch; margin-bottom: 1rem; }
-  .reach-assistant__note { margin: 1.25rem 0 0; max-width: 60ch; color: var(--muted); font-size: .88rem; }
-  .reach-badge { display: inline-block; margin-right: .4rem; padding: .12rem .55rem; border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); font-size: .72rem; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; }
-  .reach-assistant__panel { display: grid; gap: 1rem; justify-items: start; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-  .reach-assistant__label { margin: 0; font-size: .78rem; font-weight: 560; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-  .reach-starters { display: grid; gap: .5rem; width: 100%; margin: 0; padding: 0; list-style: none; }
-  .reach-starter { display: flex; justify-content: space-between; align-items: center; gap: 1rem; width: 100%; min-height: 48px; padding: .7rem 1rem; border: 1px solid var(--line-strong); border-radius: 10px; background: var(--paper); color: var(--ink); font: inherit; font-size: .95rem; text-align: left; cursor: pointer; transition: border-color .2s var(--ease), color .2s var(--ease); }
-  .reach-starter[hidden], .reach-assistant__panel :global(.button[hidden]) { display: none; }
-  .reach-starter:hover { border-color: var(--accent); color: var(--accent); }
-  .reach-starter:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .reach-starter span { color: var(--accent); }
-  .reach-assistant__fallback { margin: 0; color: var(--ink-2); }
   .reach-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 2.5rem 4rem; align-items: start; }
   .reach-form h2 { margin-bottom: .25rem; }
   .reach-form__card { margin-top: 1.75rem; padding: clamp(1.25rem, 3.5vw, 2.5rem); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
@@ -185,6 +144,6 @@ const description = 'Connect with BIZOMAT for tool enquiries, Library knowledge 
   .reach-next li { counter-increment: next; display: grid; grid-template-columns: 2rem 1fr; padding: .6rem 0; border-top: 1px solid var(--line); color: var(--ink-2); font-size: .95rem; }
   .reach-next li::before { content: counter(next, decimal-leading-zero); padding-top: .1rem; color: var(--accent); font-size: .85rem; }
   @media (max-width: 1000px) { .reach-layout { grid-template-columns: 1fr; } .reach-aside { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); } }
-  @media (max-width: 860px) { .reach-head, .reach-assistant { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { .reach-head { grid-template-columns: 1fr; } }
   @media (max-width: 700px) { .pathways { grid-template-columns: 1fr; } }
 </style>

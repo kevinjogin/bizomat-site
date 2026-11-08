@@ -4,7 +4,7 @@
 // and can be searched and filtered. Each case study opens from a deep link: /engine-room/#case-<id>
 // (old /#case-<id> links are forwarded there by the homepage).
 import WorkVisual from './WorkVisual.astro';
-import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, PROJECT_SERVICES, projectEnquiryHref } from '../data/projects.ts';
+import { NAMED_ORGANISATIONS, PROJECTS, PROJECT_SECTORS, projectEnquiryHref } from '../data/projects.ts';
 const INITIAL = 9;
 const sectorLabel = Object.fromEntries(PROJECT_SECTORS.map((s) => [s.id, s.label]));
 const sectors = PROJECT_SECTORS.map((s) => ({ ...s, count: PROJECTS.filter((p) => p.sector === s.id).length }));
@@ -142,7 +142,6 @@ const latest = PROJECTS[0].years.slice(-4);
                   <p>This experience is directly relevant if:</p>
                   <ul>{p.relevantIf.map((r) => <li>{r}</li>)}</ul>
                   <a class="case__button" href={projectEnquiryHref(p)}>Discuss a similar project <span aria-hidden="true">→</span></a>
-                  <a class="case__service" href={`/services/#${p.service}`}>Explore {PROJECT_SERVICES[p.service]} →</a>
                   <a class="case__service" href={`#case-${p.id}`}>Link to this case study</a>
                 </section>
               </aside>

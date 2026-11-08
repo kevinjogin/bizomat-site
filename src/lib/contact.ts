@@ -1,4 +1,4 @@
-// REACHOS enquiry contract shared by the browser form, the assistant's "Leave a message"
+// Contact enquiry contract shared by the browser form, the assistant's "Leave a message"
 // form and the Cloudflare function. Keep this file dependency-free so it runs in the browser,
 // Workers and Node tests alike.
 
@@ -14,14 +14,14 @@ export const CONTACT_LIMITS = {
 } as const;
 
 /**
- * REACHOS enquiry categories (the `service` field). Each slug can be preselected with /contact/?service=<slug>.
+ * Enquiry categories (the `service` field). Each slug can be preselected with /contact/?service=<slug>.
  * Engineering and technical projects keep the service values in SERVICE_OPTIONS (src/data/services.ts), so existing
  * ?service= links from the services, Factory Fix and Engine Room (case-study) pages still preselect.
  */
 export const ENQUIRY_CATEGORIES = [
   { value: 'General enquiry', slug: 'general' },
-  { value: 'Tools – technical questions', slug: 'workos' },
-  { value: 'Library – books and knowledge resources', slug: 'reados' },
+  { value: 'CAD Automation', slug: 'cad-automation' },
+  { value: 'Project Management', slug: 'project-management' },
   { value: 'Ideas and feedback', slug: 'feedback' },
   { value: 'Collaboration and partnerships', slug: 'collaboration' },
 ] as const;
@@ -52,7 +52,7 @@ export interface ContactInput {
   service: string;
   /** Optional website of the visitor or their organisation. */
   website: string;
-  /** Optional BIZOMAT tool or Library resource the enquiry is about. */
+  /** Optional product, feature or case study the enquiry is about. */
   resource: string;
   message: string;
   contactMethod: ContactMethod;

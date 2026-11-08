@@ -1,7 +1,7 @@
-// Runs after `astro build` and `pagefind`:
+// Runs after `astro build`:
 //   1. writes dist/_headers with a strict Content-Security-Policy (hashes for every inline script/style)
-//   2. bundles dist/_worker.js (site + assistant + contact API) for every Cloudflare deployment method
-//   3. verifies the build: metadata, headings, internal links, structured data, drafts, feeds, search index.
+//   2. bundles dist/_worker.js (site + contact API + app routing) for every Cloudflare deployment method
+//   3. verifies the build: metadata, headings, internal links, images, structured data, retired sections, secrets.
 // Any problem fails the build, so a broken site is never deployed.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +11,6 @@ import { build } from 'esbuild';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
-const CONTENT = path.join(ROOT, 'src', 'content');
 
 const files = [];
 const walk = (dir) => {
@@ -53,7 +52,7 @@ const HCAPTCHA = 'https://hcaptcha.com https://*.hcaptcha.com';
 const TURNSTILE = 'https://challenges.cloudflare.com';
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'wasm-unsafe-eval' ${[...scriptHashes].join(' ')} https://static.cloudflareinsights.com ${HCAPTCHA} ${TURNSTILE}`.replace(/\s+/g, ' '),
+  `script-src 'self' ${[...scriptHashes].join(' ')} https://static.cloudflareinsights.com ${HCAPTCHA} ${TURNSTILE}`.replace(/\s+/g, ' '),
   `style-src 'self' ${[...styleHashes].join(' ')} ${HCAPTCHA}`.replace(/\s+/g, ' ').trim(),
   "img-src 'self' data:",
   "font-src 'self'",
@@ -85,9 +84,6 @@ ${Object.entries(securityHeaders).map(([k, v]) => `  ${k}: ${v}`).join('\n')}
 
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
-
-/pagefind/*
-  Cache-Control: public, max-age=3600
 
 # Keep the *.pages.dev address out of search engines; bizomat.ai is the canonical domain.
 https://:project.pages.dev/*
@@ -149,7 +145,7 @@ for (const file of html) {
     }
   }
   for (const m of doc.matchAll(/\s(?:href|src)="(\/(?!\/)[^"]*)"/g)) {
-    if (m[1].startsWith('/api/') || m[1].startsWith('/pagefind/')) continue;
+    if (m[1].startsWith('/api/') || m[1].startsWith('/downloads/')) continue;
     if (!exists(m[1])) problems.push(`${name}: broken internal link ${m[1]}`);
   }
   for (const m of doc.matchAll(/\ssrcset="([^"]+)"/g)) {
@@ -163,39 +159,13 @@ for (const file of html) {
   }
 }
 
-// The Insights section is retired (its articles are READOS chapters); /insights/ URLs only redirect.
-if (fs.existsSync(path.join(DIST, 'insights'))) problems.push('Retired /insights/ pages were built; READOS chapters replace them');
-
-// Drafts and future-dated entries must not reach production.
-const rss = fs.existsSync(path.join(DIST, 'rss.xml')) ? fs.readFileSync(path.join(DIST, 'rss.xml'), 'utf8') : '';
-const sitemaps = files.filter((f) => /sitemap-\d+\.xml$/.test(f)).map((f) => fs.readFileSync(f, 'utf8')).join('');
-let draftCount = 0;
-// READOS chapters are published inside books: /reados/collections/<book>/<slug>/ and /reados/books/<volume>/<slug>/.
-const ROUTES = { 'reados-chapters': ['reados/collections', 'reados/books'], work: ['work'] };
-for (const [collection, routes] of Object.entries(ROUTES)) {
-  const dir = path.join(CONTENT, collection);
-  if (!fs.existsSync(dir)) continue;
-  for (const f of fs.readdirSync(dir).filter((f) => /^[^_].*\.mdx?$/.test(f))) {
-    const front = fs.readFileSync(path.join(dir, f), 'utf8').match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? '';
-    const isDraft = /^draft:\s*true\s*$/m.test(front) || (collection === 'reados-chapters' && !/^draft:/m.test(front));
-    const date = front.match(/^publishDate:\s*["']?([\d-]+)/m)?.[1];
-    // Publish dates are calendar dates in Sydney, matching isVisible() in src/utils/content.ts.
-    const future = date && date > new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
-    if (!isDraft && !future) continue;
-    draftCount++;
-    const slug = f.replace(/\.mdx?$/, '');
-    for (const route of routes) {
-      const base = path.join(DIST, route);
-      if (!fs.existsSync(base)) continue;
-      for (const parent of route === 'work' ? [''] : fs.readdirSync(base)) {
-        if (fs.existsSync(path.join(base, parent, slug))) problems.push(`Draft or scheduled entry was published: /${[route, parent, slug].filter(Boolean).join('/')}/`);
-      }
-    }
-    if (rss.includes(`/${slug}/`) || sitemaps.includes(`/${slug}/`)) problems.push(`Draft or scheduled entry appears in RSS or sitemap: ${slug}`);
-  }
+// Retired sections (8 Nov 2026) must stay retired: their addresses only redirect (public/_redirects).
+for (const dir of ['resources', 'tools', 'reados', 'library', 'insights', 'learning', 'search', 'chat', 'products', 'solutions', 'industries', 'services', 'how-it-works', 'factory-fix', 'assessment']) {
+  if (fs.existsSync(path.join(DIST, dir))) problems.push(`Retired section /${dir}/ was built; it must only redirect`);
 }
+const sitemaps = files.filter((f) => /sitemap-\d+\.xml$/.test(f)).map((f) => fs.readFileSync(f, 'utf8')).join('');
 
-const required = ['index.html', '404.html', 'rss.xml', 'robots.txt', 'sitemap-index.xml', 'og-default.png', 'favicon.ico', 'pagefind/pagefind.js', '_headers', 'assistant-knowledge.json', 'chat/index.html', '_worker.js'];
+const required = ['index.html', 'cad-automation/index.html', 'work/index.html', 'engine-room/index.html', '404.html', 'robots.txt', 'sitemap-index.xml', 'og-default.png', 'favicon.ico', '_headers', '_redirects', '_worker.js'];
 for (const r of required) if (!fs.existsSync(path.join(DIST, r))) problems.push(`Missing ${r}`);
 if (!sitemaps.includes('<loc>')) problems.push('Sitemap contains no URLs');
 for (const f of files) {
@@ -216,6 +186,6 @@ if (problems.length) {
 }
 const kb = Math.round(files.reduce((s, f) => s + fs.statSync(f).size, 0) / 1024);
 console.log(
-  `✓ ${html.length} pages verified (metadata, one H1, links, images, JSON-LD). ${draftCount} draft/scheduled entr${draftCount === 1 ? 'y' : 'ies'} correctly excluded.\n` +
+  `✓ ${html.length} pages verified (metadata, one H1, links, images, JSON-LD).\n` +
     `✓ _headers written: CSP with ${scriptHashes.size} script hash(es), ${styleHashes.size} style hash(es). Output ${kb} KB.`,
 );

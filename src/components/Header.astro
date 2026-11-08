@@ -1,19 +1,16 @@
 ---
-// Global header: BIZOMAT wordmark (home), five top-level items (CAD Automation, Project Management, Resources, Proof of
-// Work, About), AI Search, a Sign in menu with one entry per application, and the theme switch.
-// Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
-// Escape and outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the
-// links as a wrapped row instead of a collapsed menu.
-import { NAV, AI_SEARCH, SIGN_IN } from '../config/site.ts';
+// Global header: the BIZOMAT wordmark (home), the three other sections (CAD Automation, Project Management, The Engine
+// Room), the theme switch and a Sign in menu with one entry per application.
+// The Sign in menu is a <details> element, so it opens without JavaScript; the script below adds Escape and
+// outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the links as a
+// wrapped row instead of a collapsed menu.
+import { NAV, SIGN_IN } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
 
 const path = Astro.url.pathname;
-const internal = (href?: string) => Boolean(href && href.startsWith('/') && !href.includes('#'));
-const isCurrent = (href?: string) => internal(href) && path === href;
-const inSection = (item: (typeof NAV)[number]) =>
-  (item.href !== '/' && path.startsWith(item.href)) || Boolean(item.children?.some((c) => internal(c.href) && path.startsWith(c.href as string)));
+const inSection = (href: string) => href !== '/' && path.startsWith(href);
 ---
 <header class="site-header" data-header>
   <Container class="site-header__inner">
@@ -23,42 +20,13 @@ const inSection = (item: (typeof NAV)[number]) =>
 
     <nav class="site-nav" id="site-nav" aria-label="Main" data-site-nav>
       <ul class="site-nav__list">
-        {NAV.map((item) => item.children ? (
+        {NAV.map((item) => (
           <li class="site-nav__item">
-            <details class="nav-menu" data-nav-menu>
-              <summary class:list={['site-nav__link', { 'is-current': inSection(item) }]}>
-                {item.label}
-                <svg class="nav-menu__chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
-              </summary>
-              <div class="nav-menu__panel">
-                <ul class="nav-menu__list">
-                  {item.children.map((child) => (
-                    <li>
-                      {child.href ? (
-                        <a class="nav-menu__link" href={child.href} aria-current={isCurrent(child.href) ? 'page' : undefined} rel={child.external ? 'noopener' : undefined}>
-                          <span class="nav-menu__title">{child.label}{child.external && <span class="nav-menu__ext" aria-hidden="true">↗</span>}</span>
-                          {child.description && <span class="nav-menu__description">{child.description}</span>}
-                        </a>
-                      ) : (
-                        <span class="nav-menu__link nav-menu__link--disabled">
-                          <span class="nav-menu__title">{child.label}{child.status && <span class="nav-menu__status">{child.status}</span>}</span>
-                          {child.description && <span class="nav-menu__description">{child.description}</span>}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </details>
-          </li>
-        ) : (
-          <li class="site-nav__item">
-            <a class:list={['site-nav__link', { 'is-current': inSection(item) }]} href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+            <a class:list={['site-nav__link', { 'is-current': inSection(item.href) }]} href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>
           </li>
         ))}
       </ul>
       <div class="site-nav__mobile-action">
-        <a class="site-nav__cta" href={AI_SEARCH.href} data-cta="header-ai-search-mobile">{AI_SEARCH.label}</a>
         <p class="site-nav__signin-label">Sign in</p>
         <ul class="site-nav__signin">
           {SIGN_IN.map((s) => <li><a href={s.href} rel="noopener" data-cta={`header-sign-in-mobile-${s.label.toLowerCase().replace(/\s+/g, '-')}`}>{s.label}</a></li>)}
@@ -67,10 +35,6 @@ const inSection = (item: (typeof NAV)[number]) =>
     </nav>
 
     <div class="site-header__tools">
-      <a class="site-header__search" href={AI_SEARCH.href} data-cta="header-ai-search">
-        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /><path class="spark" d="M15.5 2.5v3M14 4h3" /></svg>
-        <span>{AI_SEARCH.label}</span>
-      </a>
       <ThemeToggle />
       <details class="nav-menu signin-menu" data-nav-menu>
         <summary class="site-header__cta" data-cta="header-sign-in">Sign in</summary>
@@ -132,7 +96,7 @@ const inSection = (item: (typeof NAV)[number]) =>
     // A menu link to a place on the current page (for example /#ask on the homepage) closes the menus.
     header.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => a.addEventListener('click', () => setPanel(false)));
     // Back to the wide layout: the phone menu state no longer applies.
-    matchMedia('(min-width: 1001px)').addEventListener('change', (e) => { if (e.matches) setPanel(false); });
+    matchMedia('(min-width: 761px)').addEventListener('change', (e) => { if (e.matches) setPanel(false); });
   }
 </script>
 <style>
@@ -147,15 +111,12 @@ const inSection = (item: (typeof NAV)[number]) =>
   .site-nav__item { position: relative; }
   .site-nav__link {
     display: inline-flex; align-items: center; gap: .3rem; min-height: 40px; padding: 0 .75rem; border-radius: 8px;
-    color: var(--ink-2); font-size: .94rem; font-weight: 540; text-decoration: none; cursor: pointer; list-style: none; user-select: none;
+    color: var(--ink-2); font-size: .94rem; font-weight: 540; text-decoration: none; 
     transition: color .15s var(--ease), background .15s var(--ease);
   }
-  .site-nav__link::-webkit-details-marker { display: none; }
-  .site-nav__link:hover, details[open] > .site-nav__link { color: var(--ink); background: var(--paper-2); }
+  .site-nav__link:hover { color: var(--ink); background: var(--paper-2); }
   .site-nav__link.is-current { color: var(--ink); }
   .site-nav__link.is-current::after { content: ''; position: absolute; left: .75rem; right: .75rem; bottom: 2px; height: 2px; border-radius: 2px; background: var(--brand-orange); }
-  .nav-menu__chevron { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s var(--ease); }
-  details[open] .nav-menu__chevron { transform: rotate(180deg); }
 
   .nav-menu__panel {
     position: absolute; left: 0; top: calc(100% + .5rem); z-index: 60; width: 320px; padding: .45rem;
@@ -167,25 +128,15 @@ const inSection = (item: (typeof NAV)[number]) =>
   .nav-menu__title { display: inline-flex; align-items: center; gap: .45rem; font-size: .94rem; font-weight: 600; }
   .nav-menu__ext { color: var(--muted); font-size: .8rem; font-weight: 400; }
   .nav-menu__description { color: var(--muted); font-size: .84rem; line-height: 1.4; }
-  .nav-menu__link--disabled { cursor: default; }
-  .nav-menu__link--disabled .nav-menu__title { color: var(--ink-2); }
-  .nav-menu__status { padding: .1rem .45rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--muted); font-size: .7rem; font-weight: 600; letter-spacing: .04em; }
-  /* The last entry of a menu ("All products") is the overview link: set apart by a rule. */
-  .nav-menu__list > li:last-child:not(:first-child) .nav-menu__link:not(:has(.nav-menu__description)) { margin-top: .25rem; border-top: 1px solid var(--line); border-radius: 0 0 8px 8px; padding-block: .65rem; color: var(--accent); }
-  .nav-menu__list > li:last-child:not(:first-child) .nav-menu__link:not(:has(.nav-menu__description)) .nav-menu__title { font-size: .88rem; }
 
   .site-header__tools { display: flex; align-items: center; gap: .5rem; margin-left: auto; flex: none; }
-  .site-header__cta, .site-nav__cta {
+  .site-header__cta {
     display: inline-flex; align-items: center; min-height: 38px; padding: 0 1rem; border-radius: 8px;
     background: var(--accent); color: var(--on-accent); font-size: .92rem; font-weight: 600; text-decoration: none; white-space: nowrap;
     transition: background .15s var(--ease);
   }
-  .site-header__cta:hover, .site-nav__cta:hover { background: var(--accent-strong); color: var(--on-accent); }
+  .site-header__cta:hover { background: var(--accent-strong); color: var(--on-accent); }
   .site-nav__mobile-action { display: none; }
-  .site-header__search { display: inline-flex; align-items: center; gap: .4rem; min-height: 38px; padding: 0 .7rem; border-radius: 8px; color: var(--ink-2); font-size: .92rem; font-weight: 560; text-decoration: none; white-space: nowrap; }
-  .site-header__search:hover { color: var(--ink); background: var(--paper-2); }
-  .site-header__search svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-  .site-header__search .spark { stroke: var(--brand-mark); }
   .signin-menu { position: relative; }
   .signin-menu > summary { list-style: none; cursor: pointer; }
   .signin-menu > summary::-webkit-details-marker { display: none; }
@@ -202,7 +153,7 @@ const inSection = (item: (typeof NAV)[number]) =>
   /* Tablet and phone: the links move into a panel under the header, opened by the menu button. The `js` class is set on
      <html> by the inline script in BaseLayout's head, before the first paint, so the header never renders expanded and
      then collapses when this component's script runs (that was a layout shift of the whole page on slow phones). */
-  @media (max-width: 1000px) {
+  @media (max-width: 760px) {
     :global(.js) .site-header .site-header__toggle { display: inline-grid; }
     :global(.js) .site-header .site-nav {
       display: none; position: absolute; left: 0; right: 0; top: 100%; margin: 0;
@@ -215,26 +166,16 @@ const inSection = (item: (typeof NAV)[number]) =>
     :global(.js) .site-header .site-nav__link { display: flex; justify-content: space-between; width: 100%; min-height: 52px; padding: 0 .25rem; font-size: 1.02rem; border-radius: 0; background: none; }
     :global(.js) .site-header .site-nav__link.is-current::after { display: none; }
     :global(.js) .site-header .site-nav__link.is-current { color: var(--accent); }
-    :global(.js) .site-header .nav-menu__panel { position: static; width: auto; padding: 0 0 .6rem; border: 0; border-radius: 0; box-shadow: none; background: none; }
-    :global(.js) .site-header .nav-menu__link { padding: .6rem .25rem; }
     :global(.js) .site-header .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
-    :global(.js) .site-header .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
-  }
-  @media (max-width: 1180px) and (min-width: 1001px) {
-    .site-header__search span { display: none; }
-  }
-  @media (max-width: 1000px) {
-    :global(.js) .site-header .site-header__search { display: none; }
   }
   @media (max-width: 560px) {
     :global(.js) .site-header .signin-menu { display: none; }
   }
   /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
-  @media (max-width: 1000px) {
+  @media (max-width: 760px) {
     :global(html:not(.js)) .site-header :global(.site-header__inner) { flex-wrap: wrap; padding-block: .5rem; }
     :global(html:not(.js)) .site-header .site-nav { order: 3; flex: 1 0 100%; margin: 0; }
     :global(html:not(.js)) .site-header .site-nav__list { flex-wrap: wrap; }
     :global(html:not(.js)) .site-header .site-nav__link { padding: 0 .5rem; font-size: .9rem; }
   }
-  @media (prefers-reduced-motion: reduce) { .nav-menu__chevron { transition: none; } }
 </style>

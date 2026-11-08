@@ -24,43 +24,37 @@ test('API responses carry a locked-down CSP and the baseline headers', async () 
   assert.equal((await worker.fetch(new Request('https://kevos.com/api/nope'), env())).headers.get('X-Content-Type-Options'), 'nosniff');
 });
 
-test('edge limits answer 429 for chat and forms, and only for POST', async () => {
-  for (const path of ['/api/chat', '/api/contact', '/api/assessment']) {
-    const res = await worker.fetch(post(path, '{}'), env({ CHAT_LIMITER: deny, FORM_LIMITER: deny }));
+test('the edge limit answers 429 for the contact form, and only for POST', async () => {
+  for (const path of ['/api/contact', '/api/contact/']) {
+    const res = await worker.fetch(post(path, '{}'), env({ FORM_LIMITER: deny }));
     assert.equal(res.status, 429, path);
     assert.equal(res.headers.get('Retry-After'), '60');
   }
   assert.equal((await worker.fetch(new Request('https://kevos.com/api/contact'), env({ FORM_LIMITER: deny }))).status, 405);
-  assert.equal((await worker.fetch(new Request('https://kevos.com/about/'), env({ CHAT_LIMITER: deny, FORM_LIMITER: deny }))).status, 200);
+  assert.equal((await worker.fetch(new Request('https://kevos.com/about/'), env({ FORM_LIMITER: deny }))).status, 200);
 });
 
 test('a missing or failing limiter never takes the endpoints down', async () => {
-  const req = post('/api/chat', '{}');
-  assert.equal(await withinEdgeLimit(undefined, 'chat', req), true);
-  assert.equal(await withinEdgeLimit({ limit: async () => { throw new Error('down'); } }, 'chat', req), true);
+  const req = post('/api/contact', '{}');
+  assert.equal(await withinEdgeLimit(undefined, 'form', req), true);
+  assert.equal(await withinEdgeLimit({ limit: async () => { throw new Error('down'); } }, 'form', req), true);
   let key = '';
   await withinEdgeLimit({ limit: async (o) => { key = o.key; return { success: true }; } }, 'form', post('/api/contact', '{}', { 'CF-Connecting-IP': '203.0.113.9' }));
   assert.equal(key, 'form:203.0.113.9');
 });
 
 test('malformed or cross-site origins are refused instead of throwing', async () => {
-  assert.equal(isSameOrigin(post('/api/chat', '{}', { Origin: 'not a url' })), false);
-  assert.equal(isSameOrigin(post('/api/chat', '{}', { Origin: 'https://evil.example' })), false);
-  assert.equal(isSameOrigin(post('/api/chat', '{}', { 'Sec-Fetch-Site': 'cross-site' })), false);
-  assert.equal(isSameOrigin(post('/api/chat', '{}', { Origin: 'https://kevos.com' })), true);
-  const chat = await worker.fetch(post('/api/chat', '{}', { Origin: '::::' }), env());
-  assert.equal(chat.status, 403);
-  const assessment = await worker.fetch(new Request('https://kevos.com/api/assessment', { method: 'POST', headers: { Origin: '::::', 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body: 'a=1' }), env());
-  assert.equal(assessment.status, 403);
+  assert.equal(isSameOrigin(post('/api/contact', '{}', { Origin: 'not a url' })), false);
+  assert.equal(isSameOrigin(post('/api/contact', '{}', { Origin: 'https://evil.example' })), false);
+  assert.equal(isSameOrigin(post('/api/contact', '{}', { 'Sec-Fetch-Site': 'cross-site' })), false);
+  assert.equal(isSameOrigin(post('/api/contact', '{}', { Origin: 'https://kevos.com' })), true);
+  const contact = await worker.fetch(new Request('https://kevos.com/api/contact', { method: 'POST', headers: { Origin: '::::', 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body: 'a=1' }), env());
+  assert.equal(contact.status, 403);
 });
 
-test('chat rejects oversized and non-object bodies without a 500', async () => {
-  const big = JSON.stringify({ messages: [{ role: 'user', content: 'x'.repeat(20_000) }] });
-  assert.equal((await worker.fetch(post('/api/chat', big), env())).status, 413);
-  assert.equal((await worker.fetch(post('/api/chat', 'null'), env())).status, 400);
-  assert.equal((await worker.fetch(post('/api/chat', '[1,2]'), env())).status, 400);
-  assert.equal(await readBoundedText(post('/api/chat', 'abc'), 2), null);
-  assert.equal(await readBoundedText(post('/api/chat', 'abc'), 10), 'abc');
+test('bounded body reads stop at the limit', async () => {
+  assert.equal(await readBoundedText(post('/api/contact', 'abc'), 2), null);
+  assert.equal(await readBoundedText(post('/api/contact', 'abc'), 10), 'abc');
 });
 
 test('the copy guard is shared by every page and keeps interactive content usable', () => {
@@ -84,7 +78,6 @@ test('security.txt names a real channel and a future expiry', () => {
 
 test('wrangler config binds the edge rate limiters and keeps secrets out', () => {
   const toml = fs.readFileSync('wrangler.toml', 'utf8');
-  assert.match(toml, /name = "CHAT_LIMITER"/);
   assert.match(toml, /name = "FORM_LIMITER"/);
   assert.doesNotMatch(toml, /TURNSTILE_SECRET_KEY\s*=|STRIPE_WEBHOOK_SECRET\s*=|sk_live_|whsec_/);
 });

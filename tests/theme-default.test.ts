@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 const read = (path: string) => readFileSync(path, 'utf8');
 
 test('pages open in the light theme, even before JavaScript runs', () => {
-  for (const file of ['src/layouts/BaseLayout.astro', 'src/pages/chat.astro']) {
+  for (const file of ['src/layouts/BaseLayout.astro']) {
     const source = read(file);
     assert.match(source, /<html lang="en-AU" data-theme="light">/, `${file} should render data-theme="light"`);
     assert.doesNotMatch(source, /prefers-color-scheme: dark\)'\)\.matches/, `${file} must not follow the OS preference`);

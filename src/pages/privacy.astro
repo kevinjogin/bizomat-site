@@ -1,6 +1,7 @@
 ---
 // Privacy policy for the whole BIZOMAT platform. Every statement is checked against the code (2026-11-05):
-//   website and AI search: src/worker.ts, src/node/, src/server/discover|learn|contact, src/config/site.ts (contact provider)
+//   website:               src/worker.ts, src/node/, src/server/contact, src/config/site.ts (contact provider)
+// Updated 2026-11-08: Resources, AI search and the assessment form were retired from the website.
 //   Project Management:    apps/work/src/client/pages/Privacy.tsx (retention table), apps/work/src/worker/index.ts (maintenance)
 //   CAD Automation:        apps/cad/opensketch/auth.py PRIVACY_BODY, uploads.py (30 minutes), artifacts.py (exports 1 hour)
 // Items that need the owner's or a lawyer's review are listed in docs/BIZOMAT-PROJECT-STATUS.md ("Legal review").
@@ -8,8 +9,7 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 import { SITE } from '../config/site.ts';
 
 const retention: [string, string][] = [
-  ['Website enquiries you send through the contact or assessment forms', 'As long as needed to reply and for reasonable record-keeping'],
-  ['AI search questions', 'Not stored by BIZOMAT; sent to the AI provider to produce search terms'],
+  ['Website enquiries you send through the contact form', 'As long as needed to reply and for reasonable record-keeping'],
   ['Project Management account (name, email, settings)', 'Until you ask for the account to be deleted'],
   ['Project Management content (boards, tasks, documents, comments, files)', 'Until you or your workspace delete it'],
   ['Project Management usage events and daily activity (no content)', 'Kept as product history'],
@@ -27,32 +27,27 @@ const retention: [string, string][] = [
   title="Privacy"
   path="/privacy/"
   scene="privacy"
-  description="How BIZOMAT handles personal information across the website, Resources, AI search, Project Management and CAD Automation: what is collected, why, where it is kept, for how long, and your rights."
-  updated={new Date('2026-11-05')}
+  description="How BIZOMAT handles personal information across the website, Project Management and CAD Automation: what is collected, why, where it is kept, for how long, and your rights."
+  updated={new Date('2026-11-08')}
 >
   <p>
-    This policy explains what personal information BIZOMAT collects, why, who else processes it, where it is kept and for how long, and what you can ask us to do. It covers the BIZOMAT website (including Resources and AI search) and the two BIZOMAT applications, Project Management and CAD Automation. We aim to handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
+    This policy explains what personal information BIZOMAT collects, why, who else processes it, where it is kept and for how long, and what you can ask us to do. It covers the BIZOMAT website and the two BIZOMAT applications, Project Management and CAD Automation. We aim to handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
   </p>
 
   <h2>Public pages and private applications</h2>
   <p>
-    The website, including Resources (tools, calculators, books and guides) and AI search, is public: you can use it without an account, and we do not ask who you are. Project Management and CAD Automation are private applications: you need an account, and what you create in them is visible only to you and the people and apps you give access to. Public pages and AI search never show anyone's projects, files or account details.
+    The website is public: you can use it without an account, and we do not ask who you are. Project Management and CAD Automation are private applications: you need an account, and what you create in them is visible only to you and the people and apps you give access to. Public pages never show anyone's projects, files or account details.
   </p>
 
   <h2>What we collect</h2>
-  <h3>When you visit the website or use Resources</h3>
+  <h3>When you visit the website</h3>
   <ul>
-    <li>Calculators run in your browser. The values you enter are not sent to BIZOMAT.</li>
-    <li>Your choice of light or dark display, and your progress through a learning path, stay in your browser for the current tab (session storage).</li>
+    <li>Your choice of light or dark display stays in your browser for the current tab (session storage).</li>
     <li>Like any website, the servers that deliver the pages process technical information such as your IP address and browser details, to deliver the site and protect it from abuse. BIZOMAT's own request logs record the address requested and the response, not your IP address.</li>
   </ul>
-  <h3>When you use AI search</h3>
-  <p>
-    Your question, and a short list of matching public catalogue entries, are sent to the AI provider to turn the question into search terms and suggest which entries fit. Results always come from BIZOMAT's public pages. BIZOMAT does not store your question. Please do not include personal or confidential details. If the AI provider is not available, the search works on keywords in your browser.
-  </p>
   <h3>When you contact us</h3>
   <p>
-    The contact form asks for your name, email address, the kind of enquiry and your message, and optionally your organisation, website, phone number and a related tool or resource. The Engineering Problem Assessment form also asks about the problem, its impact and the outcome you want. The forms do not accept files. We use these details only to reply and, if you engage us, to do the agreed work.
+    The contact form asks for your name, email address, the kind of enquiry and your message, and optionally your organisation, website, phone number and a related product. The form does not accept files. We use these details only to reply and, if you engage us, to do the agreed work.
   </p>
   <h3>When you use Project Management</h3>
   <ul>
@@ -94,8 +89,8 @@ const retention: [string, string][] = [
   <p>These providers process information for BIZOMAT, each under its own terms. Some may process data outside Australia.</p>
   <ul>
     <li><strong>Fly.io:</strong> hosts the BIZOMAT platform and its applications, in its Sydney, Australia region.</li>
-    <li><strong>Cloudflare:</strong> DNS for BIZOMAT's domains, the AI model used by AI search (Workers AI), the spam check on some forms (Turnstile), and, while the move to the BIZOMAT platform is completed, hosting of parts of the website and Project Management on its global network.</li>
-    <li><strong>Web3Forms and hCaptcha:</strong> deliver contact and assessment form messages to BIZOMAT and check for spam. hCaptcha loads only when you use a form.</li>
+    <li><strong>Cloudflare:</strong> DNS for BIZOMAT's domains, the spam check on some forms (Turnstile), and, while the move to the BIZOMAT platform is completed, hosting of parts of the website and Project Management on its global network.</li>
+    <li><strong>Web3Forms and hCaptcha:</strong> deliver contact form messages to BIZOMAT and check for spam. hCaptcha loads only when you use a form.</li>
     <li><strong>Proton:</strong> the meeting booking page, if you choose to book a meeting.</li>
     <li><strong>Google:</strong> sign-in, only if you choose Continue with Google. Google tells the application your name, email address, whether it is verified and your Google account ID; no access to Gmail, Drive or anything else is requested.</li>
     <li><strong>GitHub:</strong> hosts the CAD Automation installer that you download after signing in.</li>

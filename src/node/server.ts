@@ -5,14 +5,16 @@
 //   npm run build && npm run build:server      dist/ and dist-server/server.mjs
 //   node dist-server/server.mjs                 PORT (8003), HOST (::), WEB_DIST_DIR (dist), WEB_TRUST_PROXY ("1")
 //
-// Optional: CF_ACCOUNT_ID + CF_AI_TOKEN (Workers AI for AI search; without them search runs on keywords),
-// TURNSTILE_SECRET_KEY, WEB_VERSION. GET /healthz answers without touching the Worker.
+// Optional: TURNSTILE_SECRET_KEY and the contact mail settings (MAIL_PROVIDER, RESEND_API_KEY, CONTACT_TO,
+// CONTACT_FROM), WEB_VERSION. GET /healthz answers without touching the Worker.
+import { realpathSync } from 'node:fs';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+import { pathToFileURL } from 'node:url';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import worker, { type Env } from '../worker.ts';
 import { createAssets } from './assets.ts';
-import { memoryLimiter, workersAiRest } from './bindings.ts';
+import { memoryLimiter } from './bindings.ts';
 
 export interface WebServerOptions {
   port?: number;
@@ -29,11 +31,9 @@ const MAX_BODY = 1024 * 1024; // the site's own API routes read at most a few te
 export function buildEnv(distDir: string, settings: Record<string, string | undefined>): Env {
   const env: Record<string, unknown> = {
     ASSETS: createAssets({ dir: distDir }),
-    CHAT_LIMITER: memoryLimiter(10, 60),
     FORM_LIMITER: memoryLimiter(5, 60),
   };
-  if (settings.CF_ACCOUNT_ID && settings.CF_AI_TOKEN) env.AI = workersAiRest(settings.CF_ACCOUNT_ID, settings.CF_AI_TOKEN);
-  for (const name of ['TURNSTILE_SECRET_KEY', 'CHAT_MODEL', 'CHAT_FALLBACK_MODEL', 'DISCOVER_MODEL', 'LEARN_MODEL', 'DISCOVER_RATE_LIMIT_MAX', 'LEARN_RATE_LIMIT_MAX', 'RATE_LIMIT_MAX', 'RATE_LIMIT_WINDOW', 'MAIL_PROVIDER', 'RESEND_API_KEY', 'CONTACT_TO', 'CONTACT_FROM', 'STRIPE_WEBHOOK_SECRET']) {
+  for (const name of ['TURNSTILE_SECRET_KEY', 'RATE_LIMIT_MAX', 'RATE_LIMIT_WINDOW', 'MAIL_PROVIDER', 'RESEND_API_KEY', 'CONTACT_TO', 'CONTACT_FROM']) {
     if (settings[name]) env[name] = settings[name];
   }
   return env as unknown as Env;
@@ -96,7 +96,7 @@ export function startWebServer(options: WebServerOptions = {}) {
     const done = (status: number) => log({ web: 'request', method: req.method, path: path.slice(0, 200), status, ms: Math.round(performance.now() - started) });
     if (path === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
-      res.end(JSON.stringify({ status: 'ok', service: 'web', version, ai: Boolean((env as unknown as { AI?: unknown }).AI) }));
+      res.end(JSON.stringify({ status: 'ok', service: 'web', version }));
       done(200);
       return;
     }
@@ -135,9 +135,17 @@ export function startWebServer(options: WebServerOptions = {}) {
   return { server, ready, close };
 }
 
-// Run directly: node dist-server/server.mjs
+// Run directly: node dist-server/server.mjs. Only when this file is the script node was started with: the platform proxy
+// also imports this bundle to host the website in its own process (infrastructure/proxy/server.mjs, PROXY_EMBED_WEB),
+// and its entry file is also called server.mjs, so the check compares the whole path, not the name.
 const entry = process.argv[1] ?? '';
-if (/server\.(mjs|ts)$/.test(entry) && import.meta.url.endsWith(entry.split('/').pop()!)) {
+let isMain = false;
+try {
+  isMain = Boolean(entry) && import.meta.url === pathToFileURL(realpathSync(entry)).href;
+} catch {
+  isMain = false;
+}
+if (isMain) {
   const { ready, close } = startWebServer();
   ready.then((port) => console.log(JSON.stringify({ web: 'listening', port })));
   for (const signal of ['SIGTERM', 'SIGINT'] as const) {

@@ -19,3 +19,21 @@ export const PLATFORM_HOST = 'bizomat.ai';
  * The website has none of these paths. The CAD app's list: apps/cad/opensketch/canonical.py (KEEP_PREFIXES).
  */
 export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/oauth\/|^\/v2\/|^\/healthz$|^\/\.well-known\/(?:oauth-protected-resource|oauth-authorization-server|openid-configuration|acme-challenge)(?:\/|$)/;
+
+/**
+ * Website sections retired on 8 Nov 2026: the site keeps Home, CAD Automation, Work (Project Management) and The
+ * Engine Room. Their pages are gone, and every old address answers 301 with the retained page that replaces it:
+ * public/_redirects on Cloudflare, and the Worker for anything those rules cannot match (for example a missing trailing
+ * slash) and on Node. None of these is an application's path (tests/worker.test.ts).
+ */
+const RETIRED: readonly [RegExp, string][] = [
+  [/^\/(?:resources|tools|reados|library|insights|learning|search|chat|products|solutions|industries)(?:\/|$)|^\/rss\.xml$/, '/'],
+  [/^\/(?:services|how-it-works|factory-fix)(?:\/|$)/, '/engine-room/'],
+  [/^\/assessment(?:\/|$)/, '/contact/'],
+];
+
+/** Where a retired address now goes, or null when the path is not retired. */
+export function retiredTarget(pathname: string): string | null {
+  for (const [re, to] of RETIRED) if (re.test(pathname)) return to;
+  return null;
+}

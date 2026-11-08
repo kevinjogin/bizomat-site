@@ -1,7 +1,7 @@
 ---
-// REACHOS enquiry form: same-origin Worker delivery (/api/contact) with Turnstile in the CAPTCHA slot.
-// ?service=<slug> preselects the enquiry category (REACHOS pathways, "Discuss a Factory Fix", service and
-// Engine Room case-study links); ?resource=<name> fills the related BIZOMAT tool or Library resource.
+// Contact enquiry form: same-origin Worker delivery (/api/contact) with Turnstile in the CAPTCHA slot.
+// ?service=<slug> preselects the enquiry category (the contact page's pathways and
+// Engine Room case-study links); ?resource=<name> fills the related product or case study.
 import { SITE } from '../config/site.ts';
 import { CONTACT_LIMITS, CONTACT_METHODS, ENGINEERING_PROJECT, ENQUIRY_CATEGORIES, HONEYPOT_FIELD } from '../lib/contact.ts';
 import { SERVICE_OPTIONS } from '../data/services.ts';
@@ -53,7 +53,7 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
     <p class="field__error" id="cf-message-error" data-error-for="message"></p>
   </div>
   <details class="contact-form__more" data-optional-fields>
-    <summary>Add optional details <span>organisation, website, related tool or resource, phone</span></summary>
+    <summary>Add optional details <span>organisation, website, related product, phone</span></summary>
     <div class="contact-form__more-body">
       <div class="contact-form__row">
         <div class="field">
@@ -69,8 +69,8 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
       </div>
       <div class="contact-form__row">
         <div class="field">
-          <label for="cf-resource">Related tool or Library resource <span class="field__optional">(optional)</span></label>
-          <input id="cf-resource" name="resource" type="text" maxlength={L.resource.max} placeholder="Tool, book or chapter name" aria-describedby="cf-resource-error" />
+          <label for="cf-resource">Related product or case study <span class="field__optional">(optional)</span></label>
+          <input id="cf-resource" name="resource" type="text" maxlength={L.resource.max} placeholder="For example CAD Automation" aria-describedby="cf-resource-error" />
           <p class="field__error" id="cf-resource-error" data-error-for="resource"></p>
         </div>
         <div class="field">
@@ -156,7 +156,7 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
     const check = (input: ReturnType<typeof normalise>) => validate(input);
     const more = form.querySelector<HTMLDetailsElement>('[data-optional-fields]');
 
-    // Preselect the category from ?service=<slug>, e.g. REACHOS pathways or the Factory Fix page.
+    // Preselect the category from ?service=<slug>, e.g. the contact page pathways or an Engine Room case study.
     const params = new URLSearchParams(location.search);
     const choose = (slug: string | null) => {
       const match = slug && select ? Array.from(select.options).find((o) => o.dataset.slug === slug) : undefined;
@@ -164,11 +164,11 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
       return Boolean(match);
     };
     choose(params.get('service'));
-    // Pathway links on the REACHOS page choose their category in place, without reloading the page.
+    // Pathway links on the contact page choose their category in place, without reloading the page.
     document.querySelectorAll<HTMLAnchorElement>('a[data-enquiry-category]').forEach((a) => a.addEventListener('click', () => {
       if (choose(a.dataset.enquiryCategory ?? null)) history.replaceState(null, '', a.href);
     }));
-    // Name the related tool or resource from ?resource=<name>.
+    // Name the related product or case study from ?resource=<name>.
     const resource = params.get('resource')?.trim().slice(0, 150);
     const resourceInput = form.querySelector<HTMLInputElement>('#cf-resource');
     if (resource && resourceInput) {

@@ -15,15 +15,6 @@ test('static requests are served from the site assets', async () => {
   assert.equal(await res.text(), 'asset:/about/');
 });
 
-test('/api/chat reaches the assistant (503 until the AI binding is added)', async () => {
-  const res = await worker.fetch(
-    new Request('https://kevos.com/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: 'Hi' }] }) }),
-    env(),
-  );
-  assert.equal(res.status, 503);
-  assert.match(((await res.json()) as { error: string }).error, /not switched on/);
-});
-
 test('/api/contact reaches the contact handler; unknown API paths 404', async () => {
   assert.equal((await worker.fetch(new Request('https://kevos.com/api/contact'), env())).status, 405);
   assert.equal((await worker.fetch(new Request('https://kevos.com/api/other'), env())).status, 404);
@@ -39,12 +30,26 @@ test('hashed assets get long caching; pages.dev is kept out of search engines', 
 });
 
 test('plain HTTP page requests on the production domain are upgraded to HTTPS', async () => {
-  const res = await worker.fetch(new Request('http://bizomat.ai/services/?a=1'), env());
+  const res = await worker.fetch(new Request('http://bizomat.ai/engine-room/?a=1'), env());
   assert.equal(res.status, 301);
-  assert.equal(res.headers.get('Location'), 'https://bizomat.ai/services/?a=1');
-  assert.equal((await worker.fetch(new Request('https://bizomat.ai/services/'), env())).status, 200);
+  assert.equal(res.headers.get('Location'), 'https://bizomat.ai/engine-room/?a=1');
+  assert.equal((await worker.fetch(new Request('https://bizomat.ai/engine-room/'), env())).status, 200);
   // kevos.com is the KEVOS site on its own Worker: this one does not answer for it as a production host
-  assert.equal((await worker.fetch(new Request('http://kevos.com/services/'), env())).status, 200);
+  assert.equal((await worker.fetch(new Request('http://kevos.com/engine-room/'), env())).status, 200);
+});
+
+test('retired sections answer 301 with the page that replaces them, also without a trailing slash', async () => {
+  for (const [path, to] of [['/resources', '/'], ['/tools/bolt-torque', '/'], ['/reados', '/'], ['/insights/x', '/'], ['/services', '/engine-room/'], ['/assessment', '/contact/']]) {
+    const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
+    assert.equal(res.status, 301, path);
+    assert.equal(res.headers.get('Location'), to, path);
+  }
+  // a form post to a retired address is not redirected (it finds nothing)
+  assert.notEqual((await worker.fetch(new Request('https://bizomat.ai/resources/', { method: 'POST' }), env())).status, 301);
+  // the retired APIs are gone
+  for (const api of ['/api/chat', '/api/discover', '/api/learn/plan', '/api/assessment']) {
+    assert.equal((await worker.fetch(new Request(`https://bizomat.ai${api}`, { method: 'POST', body: '{}' }), env())).status, 404, api);
+  }
 });
 
 // ----------------------------------------------------------------------------- bizomat.ai: the applications

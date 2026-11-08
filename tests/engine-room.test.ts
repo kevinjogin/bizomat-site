@@ -57,7 +57,7 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   const page = read('src/pages/engine-room.astro');
   assert.equal((page.match(/<h1[\s>]/g) ?? []).length, 1, 'one H1');
   assert.match(page, /<h1 id="er-title">The Engine Room<\/h1>/);
-  for (const id of ['founder', 'principles', 'glance', 'cad-automation', 'project-management', 'resources', 'technical', 'tests', 'engineering-record', 'limits']) {
+  for (const id of ['founder', 'principles', 'glance', 'cad-automation', 'project-management', 'technical', 'tests', 'engineering-record', 'limits']) {
     assert.match(page, new RegExp(`id="${id}"`), `section #${id}`);
   }
   assert.match(page, /<ProofOfWork \/>/, 'the engineering record');
@@ -84,7 +84,7 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   assert.ok(home.includes("id.startsWith('case-') ? `/engine-room/#${id}`"), 'old /#case-<id> links open the case study');
   assert.ok(home.includes("work: '/engine-room/#engineering-record'"), 'old /#work links open the record');
   assert.ok(home.includes("about: '/engine-room/'"), 'old /#about links open the Engine Room');
-  for (const f of ['src/pages/index.astro', 'src/pages/cad-automation.astro', 'src/pages/work.astro', 'src/config/site.ts', 'src/data/platform-catalog.ts', 'src/pages/assistant-knowledge.json.ts', 'apps/cad/opensketch/brand.py']) {
+  for (const f of ['src/pages/index.astro', 'src/pages/cad-automation.astro', 'src/pages/work.astro', 'src/config/site.ts', 'src/data/platform-catalog.ts', 'apps/cad/opensketch/brand.py']) {
     assert.doesNotMatch(read(f), /["'`(]\/(about|proof-of-work)\//, `${f} links to the Engine Room, not the old pages`);
   }
   const component = read('src/components/ProofOfWork.astro');

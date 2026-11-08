@@ -1,16 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { SITE } from './src/config/site.ts';
-import rehypeWrapTables from './src/utils/rehype-wrap-tables.ts';
-import remarkKevosFigures from './src/utils/remark-kevos-figures.ts';
 
 // Utility pages that should never appear in search results or the sitemap.
-const EXCLUDE_FROM_SITEMAP = ['/search/', '/chat/', '/contact/sent/', '/contact/error/', '/assessment/received/'];
-// Chapters inside category volumes (/reados/books/<volume>/<chapter>/) canonicalise to their edited READOS
-// book, so only that canonical copy belongs in the sitemap. The volume index pages stay listed.
-const NON_CANONICAL = /\/reados\/books\/[^/]+\/[^/]+\/$/;
+const EXCLUDE_FROM_SITEMAP = ['/contact/sent/', '/contact/error/'];
 
 export default defineConfig({
   site: SITE.url,
@@ -21,18 +15,10 @@ export default defineConfig({
     inlineStylesheets: 'never',
   },
   integrations: [
-    mdx(),
     sitemap({
-      filter: (page) => !EXCLUDE_FROM_SITEMAP.some((path) => page.endsWith(path)) && !NON_CANONICAL.test(page),
+      filter: (page) => !EXCLUDE_FROM_SITEMAP.some((path) => page.endsWith(path)),
     }),
   ],
-  markdown: {
-    // Prism emits CSS classes rather than inline styles (CSP-friendly). Token colours live in global.css.
-    syntaxHighlight: 'prism',
-    // ```figure blocks in READOS pages become accessible, theme-aware SVG and HTML figures.
-    remarkPlugins: [remarkKevosFigures],
-    rehypePlugins: [rehypeWrapTables],
-  },
   image: {
     responsiveStyles: false,
   },

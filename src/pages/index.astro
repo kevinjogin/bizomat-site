@@ -1,63 +1,27 @@
 ---
 // BIZOMAT homepage: "Connecting Intelligence. Empowering Progress." (the corporate slogan, owner 8 Nov 2026)
-// 1. Hero: what BIZOMAT is, Explore Products and Explore AI Tools, and the connected-operations scene.
-// 2. Products: CAD Automation, Project Management and Resources (src/config/products.ts, facts from
-//    src/data/platform-catalog.ts).
-// 3. AI Search: the discovery pipeline (/api/discover, /discovery-index.json) over public products, docs, tools and books.
-// 4. Proof: counts read from the code and the catalogues at build time, and a link to the Engine Room (/engine-room/).
-// 5. Tools and 6. Library, then a short close. Every count is computed here; none is typed in.
+// 1. Hero: what BIZOMAT is, with the connected-operations scene.
+// 2. Products: CAD Automation and Project Management (src/config/products.ts, facts from src/data/platform-catalog.ts).
+// 3. Proof: counts read from the products' code at build time, and a link to The Engine Room.
+// 4. A short close. Every count is computed here; none is typed in.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import Button from '../components/Button.astro';
-import LibraryIcon from '../components/library/LibraryIcon.astro';
-import DiscoveryBox from '../components/discovery/DiscoveryBox.astro';
-import DiscoveryExamples from '../components/discovery/DiscoveryExamples.astro';
-import DiscoveryResults from '../components/discovery/DiscoveryResults.astro';
 import ConnectedOps from '../components/visuals/ConnectedOps.astro';
-import SearchScan from '../components/visuals/SearchScan.astro';
-import '../styles/discovery.css';
-import '../styles/learning.css';
-import '../styles/library.css';
 import { SITE } from '../config/site.ts';
 import { PRODUCTS } from '../config/products.ts';
 import { APP_LINKS } from '../config/platform.ts';
 import { CAD, WORK } from '../data/platform-catalog.ts';
-import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS } from '../config/home.ts';
-import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
-import { groupToolsByTopic, subcategoryLabel } from '../utils/workos-topics.ts';
-import { buildReadosLibrary } from '../utils/reados-library.ts';
-import { knowledgeGraph } from '../utils/knowledge.ts';
-
-const { tools, guides } = loadWorkosTools();
-const topics = groupToolsByTopic(tools, 0);
-const subjects = await buildReadosLibrary();
-const entries = subjects.flatMap((s) => s.entries.map((e) => ({ ...e, subject: s })));
-const bookTotal = entries.length;
-const chapterTotal = entries.reduce((n, e) => n + e.chapters.length, 0);
-const connections = knowledgeGraph().live.length;
-const fmt = (n: number) => n.toLocaleString('en-AU');
-
-const pick = <T,>(ids: string[], find: (id: string) => T | undefined, kind: string) => ids.map((id) => {
-  const item = find(id);
-  if (!item) throw new Error(`src/config/home.ts: no ${kind} "${id}"`);
-  return item;
-});
-const featuredTools = pick(HOME_FEATURED_TOOLS, (id) => tools.find((t) => t.id === id), 'BIZOMAT tool').slice(0, 4);
-const featuredBooks = pick(HOME_FEATURED_BOOKS, (id) => entries.find((e) => e.id === id), 'Library book').slice(0, 4);
-// Cards link to a tool's own page where one exists, as on /tools/.
-const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(id) : toolAppHref(id));
 
 // What each product card lists: three capabilities from the catalogue (facts from each application's code).
 const highlights: Record<string, string[]> = {
   cad: CAD.capabilities.slice(0, 3).map((c) => c.title),
   work: [`${WORK.views.length} views of one project`, 'Teams, roles and permissions', 'Automations and dashboards'],
-  resources: [`${fmt(tools.length)} tools and calculators`, `${fmt(bookTotal)} books, ${fmt(chapterTotal)} chapters`, 'No account needed'],
 };
 const proof = [
   { n: String(CAD.toolCount), t: 'CAD tools an AI assistant can call', href: '/cad-automation/#tools' },
   { n: String(WORK.views.length), t: 'views of the same project data', href: '/work/#views' },
-  { n: fmt(tools.length), t: 'tools that show their method', href: '/tools/' },
-  { n: fmt(chapterTotal), t: 'Library chapters to read free', href: '/reados/' },
+  { n: String(WORK.columnTypes), t: 'column types for project boards', href: '/work/' },
 ];
 
 const description = SITE.description;
@@ -67,8 +31,6 @@ const schema = [{
   hasPart: [
     { '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', url: `${SITE.url}/cad-automation/`, description: CAD.headline, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'SoftwareApplication', name: 'BIZOMAT Project Management', url: `${SITE.url}/work/`, description: WORK.headline, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', publisher: { '@id': `${SITE.url}/#organization` } },
-    { '@type': 'CollectionPage', name: 'BIZOMAT Tools', url: `${SITE.url}/tools/`, description: 'Engineering, manufacturing and business tools.' },
-    { '@type': 'CollectionPage', name: 'BIZOMAT Library', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
   ],
 }];
 ---
@@ -81,12 +43,11 @@ const schema = [{
         <p class="home-hero__lead">{SITE.introduction}</p>
         <div class="home-hero__actions">
           <Button href="#products" variant="accent" data-cta="home-explore-products">Explore Products</Button>
-          <Button href="#ai-search" variant="secondary" data-cta="home-explore-ai">Explore AI Tools</Button>
+          <Button href="/engine-room/" variant="secondary" data-cta="home-engine-room">Inside the Engine Room</Button>
         </div>
         <ul class="home-hero__facts" role="list">
           <li><span class="dot"></span>CAD Automation for SOLIDWORKS</li>
           <li><span class="dot"></span>Project Management for teams</li>
-          <li><span class="dot"></span>Resources, free without an account</li>
         </ul>
       </div>
       <div class="home-hero__visual"><ConnectedOps id="hero-ops" /></div>
@@ -97,43 +58,24 @@ const schema = [{
     <Container>
       <div class="home-head">
         <p class="bz-eyebrow">Products</p>
-        <h2 id="products-title">Three ways BIZOMAT gets work done</h2>
-        <p>Engineering automation, project delivery and the knowledge behind both, on one platform.</p>
+        <h2 id="products-title">Engineering automation and project delivery</h2>
+        <p>Two applications that take the repetitive part of the work, so people can spend their time on decisions.</p>
       </div>
       <ul class="product-grid" role="list">
         {PRODUCTS.map((p) => (
           <li class="product-card" id={`product-${p.id}`}>
-            <p class="product-card__meta"><span class:list={['bz-badge', p.signIn ? '' : 'bz-badge--live']}>{p.signIn ? 'Sign-in' : 'Free, no sign-in'}</span>{p.formerly && <span class="product-card__formerly">Formerly {p.formerly}</span>}</p>
+            <p class="product-card__meta"><span class="bz-badge">Sign-in</span>{p.formerly && <span class="product-card__formerly">Formerly {p.formerly}</span>}</p>
             <h3 class="product-card__name">{p.name}</h3>
             <p class="product-card__tagline">{p.tagline}</p>
             <ul class="product-card__list" role="list">{highlights[p.id].map((h) => <li>{h}</li>)}</ul>
-            <div class="product-card__action"><Button href={p.url!} variant={p.id === 'resources' ? 'secondary' : 'primary'} arrow data-cta={`home-product-${p.id}`}>{p.action}</Button></div>
+            <div class="product-card__action"><Button href={p.url!} variant="primary" arrow data-cta={`home-product-${p.id}`}>{p.action}</Button></div>
           </li>
         ))}
       </ul>
     </Container>
   </section>
 
-  <section class="home-section home-section--alt home-ai" id="ai-search" aria-labelledby="ai-title">
-    <Container class="home-ai__inner">
-      <div class="home-ai__ask">
-        <p class="bz-eyebrow">AI Search</p>
-        <h2 id="ai-title">Ask BIZOMAT</h2>
-        <p class="home-ai__lead">Search tools, calculators, books, guides, product capabilities and documentation in plain language. Every answer links to a real page and says why it matched.</p>
-        <DiscoveryBox size="large" autorun rows={2}
-          placeholder="What would you like to find or get done?"
-          label="What would you like to find or get done?"
-          submitLabel="Search"
-          support=""
-          hint="BIZOMAT AI Search finds BIZOMAT products, documentation, tools and Library chapters that fit your question. It searches public pages only, never anyone's projects or files. Please leave out personal or confidential details." />
-        <DiscoveryExamples suggestions={HOME_DISCOVERY_EXAMPLES} heading="Try" />
-      </div>
-      <div class="home-ai__visual"><SearchScan id="home-search" /></div>
-    </Container>
-    <DiscoveryResults />
-  </section>
-
-  <section class="home-section home-proof" aria-labelledby="proof-title">
+  <section class="home-section home-section--alt home-proof" aria-labelledby="proof-title">
     <Container>
       <div class="home-head">
         <p class="bz-eyebrow">From the Engine Room</p>
@@ -143,66 +85,14 @@ const schema = [{
       <dl class="proof-stats">
         {proof.map((x) => <div class="bz-stat proof-stat"><dt><a href={x.href}>{x.t}</a></dt><dd>{x.n}</dd></div>)}
       </dl>
-      <p class="home-more"><a href="/engine-room/">Inside the Engine Room: how it is built and how it works <span aria-hidden="true">→</span></a></p>
-    </Container>
-  </section>
-
-  <section class="home-section" id="tools" aria-labelledby="tools-title">
-    <Container class="home-split">
-      <div class="home-split__copy">
-        <p class="bz-eyebrow">Resources · Tools</p>
-        <h2 id="tools-title">Useful tools. Less complexity.</h2>
-        <p>{fmt(tools.length)} engineering, manufacturing and business tools that show their method and run in your browser. No account needed.</p>
-        <form class="home-search" role="search" action="/tools/" method="get">
-          <label class="visually-hidden" for="home-tool-search">Search BIZOMAT tools</label>
-          <input id="home-tool-search" name="q" type="search" placeholder="Search tools, e.g. bolt torque" autocomplete="off" />
-          <button type="submit">Search</button>
-        </form>
-        <div class="home-split__actions"><Button href="/tools/" arrow data-cta="home-tools">Explore Tools</Button></div>
-      </div>
-      <div class="home-split__list">
-        <h3 class="home-label" id="tools-topics">Browse by topic</h3>
-        <ul class="topic-list" role="list" aria-labelledby="tools-topics">
-          {topics.map((t) => (
-            <li><a href={`/tools/?topic=${t.slug}`}><span class="topic-list__icon"><LibraryIcon name={t.icon} /></span><span class="topic-list__name">{t.name}</span><span class="topic-list__count" aria-label={`${fmt(t.items.length)} tools`}>{fmt(t.items.length)}</span></a></li>
-          ))}
-        </ul>
-        <h3 class="home-label" id="tools-featured">Popular starting points</h3>
-        <ul class="featured-list" role="list" aria-labelledby="tools-featured">
-          {featuredTools.map((t) => <li><a href={toolHref(t.id)}>{t.name}</a><span>{subcategoryLabel(t.category)}</span></li>)}
-        </ul>
-      </div>
-    </Container>
-  </section>
-
-  <section class="home-section home-section--alt" id="resources" aria-labelledby="resources-title">
-    <Container class="home-split">
-      <div class="home-split__copy">
-        <p class="bz-eyebrow">Resources · Library</p>
-        <h2 id="resources-title">Knowledge that moves you forward.</h2>
-        <p>The BIZOMAT Library: {fmt(bookTotal)} technical books in {fmt(chapterTotal)} short chapters, with figures and worked numbers. {fmt(connections)} reviewed links connect chapters to the tools that apply them.</p>
-        <div class="home-split__actions">
-          <Button href="/reados/" arrow data-cta="home-library">Explore Library</Button>
-          <Button href="/library/" variant="secondary" data-cta="home-guides">Guides and articles</Button>
-        </div>
-      </div>
-      <div class="home-split__list">
-        <h3 class="home-label" id="library-subjects">Subjects</h3>
-        <ul class="subject-list" role="list" aria-labelledby="library-subjects">
-          {subjects.map((sub) => <li><a href={`/reados/?topic=${sub.slug}`}>{sub.name}</a></li>)}
-        </ul>
-        <h3 class="home-label" id="library-featured">Featured books</h3>
-        <ul class="featured-list" role="list" aria-labelledby="library-featured">
-          {featuredBooks.map((e) => <li><a href={e.href}>{e.title}</a><span>{e.subject.name} · {fmt(e.chapters.length)} chapters</span></li>)}
-        </ul>
-      </div>
+      <p class="home-more"><a href="/engine-room/">Inside the Engine Room: who builds BIZOMAT, and the proof that it works <span aria-hidden="true">→</span></a></p>
     </Container>
   </section>
 
   <section class="home-close" aria-labelledby="close-title">
     <Container class="home-close__inner">
       <h2 id="close-title">{SITE.support}</h2>
-      <p>Open a product, search the resources, or tell us what you need.</p>
+      <p>Open a product, or tell us what you need.</p>
       <div class="home-close__actions">
         <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="home-close-work">Start Managing Projects</Button>
         <Button href="/cad-automation/" variant="secondary" data-cta="home-close-cad">Explore CAD Automation</Button>
@@ -213,18 +103,11 @@ const schema = [{
 </BaseLayout>
 
 <script>
-  // AI Search: quick answers (Your Solution Path) over BIZOMAT products, documentation, tools and the Library.
-  import '../scripts/discovery.ts';
-</script>
-
-<script>
-  // Old links to sections that moved (for example /#pricing, /#case-<id> or the former #ask box) are sent on.
+  // Old links to homepage sections that have moved or been retired (for example /#about or /#case-<id>) are sent on;
+  // links to the retired AI Search, Tools and Library sections land on the products.
   const moved: Record<string, string> = {
-    services: '/services/', 'engineering-cad': '/services/#engineering-cad', manufacturing: '/services/#manufacturing',
-    operations: '/services/#operations', 'project-support': '/services/#project-support', pricing: '/services/#pricing',
-    assessment: '/assessment/', 'factory-fix': '/factory-fix/', 'how-it-works': '/how-it-works/', industries: '/industries/',
-    work: '/engine-room/#engineering-record', resources: '/resources/', overview: '#ai-search', ask: '#ai-search',
-    workos: '/tools/', reados: '/reados/', connected: '/resources/#pathways', about: '/engine-room/', solutions: '/solutions/',
+    about: '/engine-room/', work: '/engine-room/#engineering-record', services: '/engine-room/', pricing: '/engine-room/',
+    assessment: '/contact/', 'ai-search': '#products', ask: '#products', overview: '#products', tools: '#products', resources: '#products',
   };
   const forward = () => {
     const id = decodeURIComponent(location.hash.slice(1));
@@ -236,13 +119,12 @@ const schema = [{
 </script>
 
 <style>
-  .home-section, .home-ai { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .home-section { scroll-margin-top: calc(var(--header-h) + 1rem); }
   /* Hero: the message on the left, the connected-operations scene on the right. */
   .home-hero { padding: clamp(3rem, 7vw, 6rem) 0 clamp(2.5rem, 5vw, 4.5rem); background: radial-gradient(80% 60% at 85% 20%, var(--accent-soft), transparent 70%); }
   :global(.home-hero__inner) { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-  /* The statement is three sentences on three lines at every width. The size follows the copy column (11 % of
-     it: the longest line, "Get business done.", is 8.65 em in Oxanium and 8.78 em in its fallback face), so the
-     lines never wrap differently before and after the web font arrives. */
+  /* The slogan's size follows the copy column, so its lines never wrap differently before and after the web font
+     arrives. */
   .home-hero__copy { container-type: inline-size; }
   .home-hero h1 { font-size: var(--step-5); font-size: min(var(--step-5), 11cqi); line-height: 1.04; }
   /* The slogan's two lines ("Connecting Intelligence." is the longer) each stay on one line beside the scene. */
@@ -263,7 +145,7 @@ const schema = [{
   .home-more a { color: var(--accent); font-weight: 600; text-decoration: none; }
   .home-more a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-  .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .product-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
   .product-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.4rem, 2.5vw, 2rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
   .product-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; margin: 0 0 1.25rem; }
   .product-card__formerly { color: var(--muted); font-size: .8rem; }
@@ -274,12 +156,8 @@ const schema = [{
   .product-card__list li::before { content: ''; position: absolute; left: 0; top: .62em; width: 7px; height: 2px; background: var(--brand-mark); }
   .product-card__action { margin-top: auto; padding-top: 1.75rem; }
 
-  :global(.home-ai__inner) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 4vw, 3.5rem); align-items: start; }
-  .home-ai__lead { margin: .9rem 0 1.4rem; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
-  .home-ai :global(.dq__examples) { margin-top: 1rem; }
-  .home-ai__visual { padding-top: .5rem; }
 
-  .proof-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; }
+  .proof-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; }
   /* The whole tile is the link's target (a stretched link), so the list stays a valid description list. */
   .proof-stat { position: relative; transition: border-color .15s var(--ease); }
   .proof-stat:hover, .proof-stat:focus-within { border-color: var(--accent); }
@@ -287,32 +165,6 @@ const schema = [{
   .proof-stat a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
   .proof-stats :global(dd) { order: -1; }
 
-  :global(.home-split) { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
-  .home-split__copy h2 { margin-top: .9rem; max-width: 18ch; }
-  .home-split__copy > p:not(.eyebrow) { margin: 1rem 0 0; max-width: 46ch; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
-  .home-split__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.75rem; }
-  .home-search { display: flex; gap: .4rem; max-width: 30rem; margin-top: 1.75rem; padding: .3rem; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; }
-  .home-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .home-search input { flex: 1; min-width: 0; padding: 0 .7rem; border: 0; background: transparent; outline: none; font-size: 1rem; }
-  .home-search button { min-height: 40px; padding: 0 1rem; border: 0; border-radius: 7px; background: var(--ink); color: var(--paper); font-weight: 600; }
-  .home-search button:hover { background: var(--ink-2); }
-  .home-label { margin: 0 0 .75rem; font-family: var(--font-mono) !important; font-size: .74rem !important; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-  .home-split__list .home-label:not(:first-child) { margin-top: 2rem; }
-  .topic-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-  .topic-list a { display: flex; align-items: center; gap: .65rem; min-height: 48px; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; font-size: .95rem; font-weight: 520; }
-  .topic-list a:hover .topic-list__name { color: var(--accent); }
-  .topic-list__icon { display: inline-grid; place-items: center; width: 20px; color: var(--muted); }
-  .topic-list__icon :global(svg) { width: 18px; height: 18px; }
-  .topic-list__name { flex: 1; min-width: 0; }
-  .topic-list__count { color: var(--muted); font-size: .84rem; font-variant-numeric: tabular-nums; }
-  .subject-list { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0; padding: 0; list-style: none; }
-  .subject-list a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 .85rem; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: .9rem; font-weight: 540; text-decoration: none; }
-  .subject-list a:hover { border-color: var(--ink-2); }
-  .featured-list { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
-  .featured-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .2rem 1rem; padding: .8rem 0; border-bottom: 1px solid var(--line); }
-  .featured-list a { color: var(--ink); font-weight: 580; text-decoration: none; }
-  .featured-list a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
-  .featured-list span { color: var(--muted); font-size: .86rem; }
 
   .home-close { padding-block: clamp(4rem, 8vw, 6.5rem); border-top: 1px solid var(--line); background: var(--inverse-bg); color: var(--inverse-ink); }
   :global(.home-close__inner) { display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -323,15 +175,11 @@ const schema = [{
   .home-close__actions :global(.button--secondary:hover) { --b-fg: var(--inverse-ink); --b-border: var(--inverse-ink); --b-bg: transparent; }
 
   @media (max-width: 1000px) {
-    :global(.home-hero__inner), :global(.home-ai__inner) { grid-template-columns: 1fr; }
+    :global(.home-hero__inner) { grid-template-columns: 1fr; }
     .product-grid { grid-template-columns: 1fr; }
-    .proof-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .product-card__action { padding-top: 1.25rem; }
-    :global(.home-split) { grid-template-columns: 1fr; }
   }
-  @media (min-width: 640px) and (max-width: 1000px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px) {
-    .topic-list { grid-template-columns: 1fr; }
     .proof-stats { grid-template-columns: 1fr; }
     :global(.home-close__inner) { align-items: flex-start; text-align: left; }
     .home-close__actions { justify-content: flex-start; }

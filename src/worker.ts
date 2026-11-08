@@ -3,12 +3,7 @@
 //
 // One file handles the whole site, so every deployment method works the same way, including
 // dashboard drag-and-drop (which does not compile a functions/ folder):
-//   /api/chat     → BIZOMAT Assistant (Workers AI)
-//   /api/discover → homepage discovery: question → search terms (Workers AI); /api/discover/event → anonymous statistics
-//   /api/learn/{intent,plan,lesson,ask} → learning paths built from the Library and Tools (src/server/learn/handler.ts)
 //   /api/contact  → optional contact-form backend
-//   /api/assessment                → Engineering Problem Assessment enquiries (server-side validation)
-//   /api/assessment/stripe-webhook → optional Stripe payment verification (signature-checked)
 //   /downloads/<folder>/<file> → public downloads from the R2 bucket bizomat-downloads (src/server/downloads.ts)
 //   everything else → the static site from dist/ (env.ASSETS)
 //
@@ -16,15 +11,10 @@
 //   /cad/...   → CAD Automation: the Worker bizomat-mcp (the CAD service binding); without it, the origin of the
 //                bizomat.ai record (Fly)
 //   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, the origin
-import { handleChat, type ChatEnv } from './server/chat/handler.ts';
-import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
-import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
 import { handleContact, type ContactEnv } from './server/contact/handler.ts';
-import { handleAssessment } from './server/assessment/handler.ts';
-import { handleStripeWebhook, type StripeEnv } from './server/assessment/stripe.ts';
 import { API_HEADERS, BASELINE_HEADERS, withinEdgeLimit, type RateLimiter } from './server/security.ts';
 import { DOWNLOADS_PATH, handleDownload, type DownloadsBucket } from './server/downloads.ts';
-import { CAD_PATHS, PLATFORM_HOST } from './server/platform-paths.ts';
+import { CAD_PATHS, PLATFORM_HOST, retiredTarget } from './server/platform-paths.ts';
 
 interface AssetsBinding {
   fetch(input: Request | string | URL): Promise<Response>;
@@ -32,7 +22,7 @@ interface AssetsBinding {
 interface ServiceBinding {
   fetch(request: Request): Promise<Response>;
 }
-export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnEnv {
+export interface Env extends ContactEnv {
   ASSETS: AssetsBinding;
   /** Project Management's Worker, bizomat-tasks (wrangler.toml [[services]]); without it, /tasks goes to the origin. */
   TASKS?: ServiceBinding;
@@ -40,8 +30,7 @@ export interface Env extends ChatEnv, ContactEnv, StripeEnv, DiscoverEnv, LearnE
   CAD?: ServiceBinding;
   /** Public downloads, the R2 bucket bizomat-downloads (wrangler.toml [[r2_buckets]]); without it, /downloads/ is 404. */
   DOWNLOADS?: DownloadsBucket;
-  /** Per-IP burst limits (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
-  CHAT_LIMITER?: RateLimiter;
+  /** Per-IP burst limit for the contact form (wrangler.toml [[ratelimits]]). Optional: absent bindings allow requests. */
   FORM_LIMITER?: RateLimiter;
 }
 
@@ -107,30 +96,16 @@ export default {
     if ((url.pathname === '/cad' || url.pathname === '/cad/') && read) {
       return withHeaders(redirect(`/cad-automation/${url.search}`, 301), url);
     }
-    // The Insights section is retired. public/_redirects sends each /insights/<slug>/ to its Library chapter;
-    // anything those rules cannot match exactly reaches the Worker: add the missing trailing slash so the
-    // exact rule applies, and send unknown addresses to the Library.
-    if (url.pathname === '/insights' || url.pathname.startsWith('/insights/')) {
-      const location = url.pathname.endsWith('/') ? new URL('/reados/', url) : new URL(`${url.pathname}/${url.search}`, url);
-      return withHeaders(new Response(null, { status: 301, headers: { Location: location.href, 'Cache-Control': 'public, max-age=86400' } }), url);
-    }
+    // Retired sections (Resources, Tools, Library, Insights, AI search and the old service pages; 8 Nov 2026): a 301 to
+    // the retained page that replaces each (src/server/platform-paths.ts), the same answer as public/_redirects.
+    const retired = read ? retiredTarget(url.pathname) : null;
+    if (retired) return withHeaders(redirect(retired, 301), url);
     let response: Response;
-    // Discovery shares the assistant's per-IP limiter, with its own counter (scope).
-    const scope = url.pathname.startsWith('/api/chat') ? 'chat' : url.pathname === '/api/discover' || url.pathname === '/api/discover/' ? 'discover' : url.pathname === '/api/discover/event' ? 'discover-event' : url.pathname.startsWith('/api/learn/') ? 'learn' : /^\/api\/(contact|assessment)\/?$/.test(url.pathname) ? 'form' : '';
-    if (scope && request.method === 'POST' && !(await withinEdgeLimit(scope === 'form' ? env.FORM_LIMITER : env.CHAT_LIMITER, scope, request))) {
+    if (/^\/api\/contact\/?$/.test(url.pathname) && request.method === 'POST' && !(await withinEdgeLimit(env.FORM_LIMITER, 'form', request))) {
       const body = JSON.stringify({ ok: false, success: false, error: 'Too many requests. Please wait a minute and try again.', message: 'Too many requests. Please wait a minute and try again.' });
       return withHeaders(new Response(body, { status: 429, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': '60' } }), url);
     }
-    if (url.pathname === '/api/chat' || url.pathname === '/api/chat/') response = await handleChat(request, env);
-    else if (url.pathname === '/api/discover' || url.pathname === '/api/discover/') response = await handleDiscover(request, env);
-    else if (url.pathname === '/api/discover/event') response = await handleDiscoverEvent(request, env);
-    else if (url.pathname === '/api/learn/intent') response = await handleLearnIntent(request, env);
-    else if (url.pathname === '/api/learn/plan') response = await handleLearnPlan(request, env);
-    else if (url.pathname === '/api/learn/lesson') response = await handleLearnLesson(request, env);
-    else if (url.pathname === '/api/learn/ask') response = await handleLearnAsk(request, env);
-    else if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);
-    else if (url.pathname === '/api/assessment' || url.pathname === '/api/assessment/') response = await handleAssessment(request, env);
-    else if (url.pathname === '/api/assessment/stripe-webhook') response = await handleStripeWebhook(request, env);
+    if (url.pathname === '/api/contact' || url.pathname === '/api/contact/') response = await handleContact(request, env);
     else if (url.pathname.startsWith('/api/')) response = new Response('Not found', { status: 404 });
     else if (url.pathname.startsWith(DOWNLOADS_PATH)) response = await handleDownload(request, env.DOWNLOADS);
     else response = await env.ASSETS.fetch(request);

@@ -21,7 +21,6 @@ const CARDS = [
   { file: 'og-bizomat.png', kicker: 'Business Intelligence & Automation', title: 'Connecting Intelligence. Empowering Progress.', foot: 'CAD Automation  ·  Project Management  ·  Resources' },
   { file: 'og-cad.png', kicker: 'BIZOMAT CAD Automation', title: 'Your AI assistant, working in SOLIDWORKS on your own computer.', foot: 'Native parts, assemblies and drawings  ·  MCP connector' },
   { file: 'og-work.png', kicker: 'BIZOMAT Project Management', title: 'Projects, tasks and teams in one shared workspace.', foot: 'Boards  ·  Timelines  ·  Dashboards  ·  Documents' },
-  { file: 'og-resources.png', kicker: 'BIZOMAT Resources', title: 'Calculators, tools, books and guides. Free, no sign-in.', foot: 'Engineering  ·  Manufacturing  ·  Operations  ·  Business' },
 ];
 
 const html = (c) => `<!doctype html><html><head><style>
@@ -57,7 +56,6 @@ const copies = [
   ['og-bizomat.png', 'public/brand/bizomat-social.png'],
   ['og-cad.png', 'public/brand/bizomat-social-cad.png'],
   ['og-work.png', 'public/brand/bizomat-social-work.png'],
-  ['og-resources.png', 'public/brand/bizomat-social-resources.png'],
   ['og-cad.png', 'apps/cad/opensketch/static/ui/og.png'],
   ['og-work.png', 'apps/work/public/og.png'],
 ];

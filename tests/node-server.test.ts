@@ -6,7 +6,7 @@ import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createAssets, parseHeaders, parseRedirects } from '../src/node/assets.ts';
-import { memoryLimiter, workersAiRest } from '../src/node/bindings.ts';
+import { memoryLimiter } from '../src/node/bindings.ts';
 import { startWebServer } from '../src/node/server.ts';
 
 function fixture(): string {
@@ -84,21 +84,6 @@ test('rate limiter: a fixed window per key', async () => {
   assert.equal((await lim.limit({ key: 'a' })).success, true);
 });
 
-test('Workers AI over REST: account id checked, result returned, errors raised', async () => {
-  assert.throws(() => workersAiRest('not-an-id', 't'));
-  const calls: string[] = [];
-  const ok = workersAiRest('0123456789abcdef0123456789abcdef', 'token', (async (url: string, init: RequestInit) => {
-    calls.push(String(url));
-    assert.equal((init.headers as Record<string, string>).Authorization, 'Bearer token');
-    return new Response(JSON.stringify({ success: true, result: { response: '{"terms":["x"]}' } }));
-  }) as typeof fetch);
-  assert.deepEqual(await ok.run('@cf/meta/llama-3.1-8b-instruct-fp8', { messages: [] }), { response: '{"terms":["x"]}' });
-  assert.match(calls[0], /\/accounts\/0123456789abcdef0123456789abcdef\/ai\/run\/@cf\/meta\//);
-  await assert.rejects(ok.run('../../evil', {}));
-  const bad = workersAiRest('0123456789abcdef0123456789abcdef', 'token', (async () => new Response(JSON.stringify({ success: false, errors: [{ message: 'nope' }] }), { status: 403 })) as typeof fetch);
-  await assert.rejects(bad.run('@cf/meta/llama-3.1-8b-instruct-fp8', {}), /403/);
-});
-
 test('server: health, pages, API through the Worker, rate limit by client and proxy trust', async () => {
   const lines: Record<string, unknown>[] = [];
   const { ready, close } = startWebServer({ port: 0, host: '127.0.0.1', distDir: fixture(), trustProxy: true, env: {}, log: (l) => lines.push(l) });
@@ -110,9 +95,9 @@ test('server: health, pages, API through the Worker, rate limit by client and pr
     assert.equal((await health.json()).service, 'web');
     assert.equal((await fetch(`${base}/about/`)).status, 200);
     assert.equal((await fetch(`${base}/api/unknown`)).status, 404);
-    const discover = await fetch(`${base}/api/discover`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Forwarded-Proto': 'https', 'X-Forwarded-Host': 'bizomat.ai', Origin: 'https://bizomat.ai', 'CF-Connecting-IP': '203.0.113.9' }, body: JSON.stringify({ question: 'bolt torque' }) });
-    assert.equal(discover.status, 200);
-    assert.equal((await discover.json()).ai, false, 'no AI configured: the browser falls back to keyword search');
+    const retired = await fetch(`${base}/resources/`, { redirect: 'manual' });
+    assert.equal(retired.status, 301);
+    assert.equal(retired.headers.get('location'), '/');
     // Five contact posts a minute per client address, then 429 (the form limiter, keyed by the proxy's client IP).
     const post = (ip: string) => fetch(`${base}/api/contact`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'CF-Connecting-IP': ip, Origin: base }, body: '{}' });
     const statuses = [];

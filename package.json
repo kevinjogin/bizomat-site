@@ -1,5 +1,5 @@
 {
-  "name": "kevos",
+  "name": "bizomat",
   "type": "module",
   "version": "1.0.0",
   "private": true,
@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "node shared/brand/build.mjs && astro build && pagefind --site dist && node scripts/postbuild.mjs",
+    "build": "node shared/brand/build.mjs && astro build && node scripts/postbuild.mjs",
     "preview": "npm run build && wrangler dev",
     "build:server": "node scripts/build-server.mjs",
     "start": "node dist-server/server.mjs",
@@ -17,20 +17,9 @@
     "verify": "npm run check && npm test && npm run build",
     "deploy": "wrangler deploy",
     "brand": "node shared/brand/build.mjs",
-    "brand:check": "node shared/brand/build.mjs --check",
-    "reading-time": "node scripts/reading-time.mjs",
-    "assessment:assets": "python scripts/assessment/qr.py && node scripts/assessment/marketing.mjs && node scripts/assessment/report.mjs",
-    "assessment:report": "node scripts/assessment/report.mjs",
-    "seo:inventory": "node scripts/seo/inventory.mjs",
-    "seo:validate": "node scripts/seo/validate.mjs",
-    "seo:report": "node scripts/seo/run.mjs report --period weekly",
-    "knowledge:check": "node scripts/knowledge/check.mjs",
-    "knowledge:suggest": "node scripts/knowledge/suggest.mjs"
+    "brand:check": "node shared/brand/build.mjs --check"
   },
   "dependencies": {
-    "@astrojs/markdown-remark": "^7.3.1",
-    "@astrojs/mdx": "^8.0.2",
-    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource-variable/inter-tight": "^5.3.0",
     "@fontsource-variable/source-serif-4": "^5.3.0",
@@ -39,9 +28,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "esbuild": "^0.28.2",
-    "pagefind": "^1.5.2",
     "typescript": "^6.0.3",
     "wrangler": "^4.147.0"
   },
-  "description": "KEVOS website: Astro static site served by a Cloudflare Worker."
+  "description": "BIZOMAT: the website (Astro), CAD Automation and Project Management, deployed together as one Fly.io app."
 }
