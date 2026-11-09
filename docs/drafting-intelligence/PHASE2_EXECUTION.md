@@ -148,7 +148,8 @@ drawing, and is labelled so.
 
 | Suite | Result |
 | --- | --- |
-| CAD MCP `pytest -q -m "not slow"` | 450 passed, 2 skipped |
+| CAD MCP `pytest -q` (slow tests included) | 453 passed, 2 skipped |
+| Sketch solver `npm test` | 9 passed |
 | Drafting tests (`test_drafting_engine.py`, `test_drafting_tools.py`) | 57 passed (simulated SOLIDWORKS) |
 | Synthetic benchmark (12 cases) | feature recall, disciplines, main view and section decisions at their floors or above, unchanged |
 | Add-in, Companion and App (`bash solidworks/build.sh test`, .NET 8 SDK on Linux) | builds; 46 C# tests pass |
