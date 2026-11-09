@@ -1,23 +1,25 @@
-# BIZOMAT on Fly.io: the website, the router behind bizomat.ai, Project Management and CAD Automation (owner's
-# decisions, 6 Nov 2026: the website on Fly.io, kevos.com back to the old KEVOS site on Cloudflare; Project Management
-# on Fly.io at bizomat.ai/tasks; one Fly app for the whole platform, CAD Automation's group in Sydney with its data).
+# BIZOMAT on Fly.io: the website, the router behind bizomat.ai and Project Management, in the Fly app `bizomat` (syd).
+# CAD Automation is its own Fly app, `cados` (repository kevinjogin/bizomat-cad), reached over Fly's private network.
+#
+# This file matches the Machines production runs, as read with `fly scale show -a bizomat` and `fly volumes list -a
+# bizomat` on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web shared-cpu-1x 512 MB, work
+# shared-cpu-1x 512 MB) and the volume work_data (3 GB) on work. The `cad` group of the earlier plan (CAD inside this
+# app, infrastructure/migrate/cad/README.md) never ran in production and was removed from this file on 9 Nov 2026;
+# fly.toml still describes that plan and is not deployed.
 #
 #   bizomat.ai/...       -> web    the BIZOMAT website (this app)
-#   bizomat.ai/cad/...   -> cad    CAD Automation. Its group runs here, in syd, with the volume cad_data. Until its data
-#                                  is moved (bizomat.ps1 move cad, infrastructure/migrate/cad/README.md) the router still
-#                                  sends /cad to the old Fly app `cados` (UPSTREAM_CAD below) and the cad Machine answers
-#                                  only with a holding page (it never starts an empty CAD server)
+#   bizomat.ai/cad/...   -> the Fly app `cados` at http://cados.internal:8080 (UPSTREAM_CAD below), with CAD's root
+#                           program paths (CAD_PATHS in infrastructure/proxy/routes.mjs; docs/SITE-CAD-INTEGRATION.md)
 #   bizomat.ai/tasks/... -> work   Project Management, in this app with its data on the volume work_data (moved from
 #                                  Cloudflare on 6 Nov 2026: docs/BIZOMAT-DEPLOYMENT.md, section 6c)
 #   bizomat.ai/login     -> 301    /sign-in/, the website's page that offers each application's sign-in
 #   bizomat.fly.dev/...  -> 301    the same path on bizomat.ai (the app's own address is not a second address of the
 #                                  platform; /__proxy/health and /__proxy/ready stay, for checks)
 #
-# Deploy from the owner's laptop: bizomat.ps1 deploy website, which runs
-#   fly deploy --config fly.website.toml --remote-only --ha=false --build-arg BIZOMAT_VERSION=<commit>
-# Same image as fly.toml (infrastructure/fly/Dockerfile, the full plan). CAD Automation is apps/cad, an exact copy of
-# a CADOS commit (apps/cad-source.json, scripts/sync-cad.mjs). --ha=false keeps one Machine per group: work and cad must
-# never have two (each would get its own empty volume).
+# Deployed only by hand from GitHub Actions (.github/workflows/bizomat-deploy.yml), which runs
+#   flyctl deploy --config fly.website.toml --app bizomat --remote-only --ha=false --build-arg BIZOMAT_VERSION=<commit>
+# after its preflight (.github/scripts/fly-preflight.py) has checked that the deploy keeps these Machines as they are.
+# --ha=false keeps one Machine per group: work must never have two (each would get its own empty volume).
 
 app = "bizomat"
 primary_region = "syd"
@@ -29,9 +31,8 @@ kill_timeout = 15
   ignorefile = ".dockerignore"
 
 [deploy]
-  # rolling is the only strategy for Machines with volumes. work and cad are offline while their Machine is replaced
-  # (10-60 s; cad up to 90 s while OpenCascade loads): the proxy answers 502 meanwhile, open boards reconnect, and the
-  # CAD add-ins and Companions retry.
+  # rolling is the only strategy for Machines with volumes. work is offline while its Machine is replaced (10-60 s):
+  # the proxy answers 502 for /tasks meanwhile and open boards reconnect. CAD (the cados app) is not affected.
   strategy = "rolling"
   max_unavailable = 1
   wait_timeout = "10m"
@@ -40,15 +41,12 @@ kill_timeout = 15
   proxy = "/usr/local/bin/bizomat-entrypoint proxy"
   web = "/usr/local/bin/bizomat-entrypoint web"
   work = "/usr/local/bin/bizomat-entrypoint work"
-  cad = "/usr/local/bin/bizomat-entrypoint cad"
 
 [env]
   UPSTREAM_WEB = "http://web.process.bizomat.internal:8003"
   UPSTREAM_WORK = "http://work.process.bizomat.internal:8002"
-  # Where bizomat.ai/cad goes. Today the old Fly app cados, over the private network (it listens on ::). bizomat.ps1
-  # move cad switches the running router to this app's cad group, http://cad.process.bizomat.internal:8001, once the
-  # data is in place there; this line then changes to that in a pull request. Until it has, bizomat.ps1 deploy website
-  # refuses to deploy (the router and this file would disagree on where CAD Automation is).
+  # Where bizomat.ai/cad goes: the Fly app cados (repository kevinjogin/bizomat-cad), over the private network; it
+  # listens on :: port 8080. Both apps must stay in the same Fly organization (docs/SITE-CAD-INTEGRATION.md).
   UPSTREAM_CAD = "http://cados.internal:8080"
   # bizomat.ai/tasks/... reaches work (no TASKS_REDIRECT_ORIGIN since the switch, 6 Nov 2026). To send it back to the old
   # address for a while: TASKS_REDIRECT_ORIGIN = "https://work.kevos.com" (302, prefix off).
@@ -66,11 +64,9 @@ kill_timeout = 15
   # Its address: a page asked for on another host (work.kevos.com once it points here, bizomat.fly.dev) answers 301 to
   # the same path under it; /api/ and the files keep answering there for open tabs.
   WORK_CANONICAL_URL = "https://bizomat.ai/tasks"
-  # cad: the same settings as the cados app's fly.toml (CADOS). CAD Automation lives at bizomat.ai/cad
-  # (apps/cad/opensketch/canonical.py serves the prefix and writes it into every link; its OAuth metadata is at the
-  # root of bizomat.ai). Its old host names: a browser asking one of them for a page gets a 301 to bizomat.ai/cad, and
-  # programs (MCP, OAuth, the add-in link, the Companion's API) keep working there with that host's own address. The
-  # entrypoint passes OPENSKETCH_* to the cad role only, and sets OPENSKETCH_DATA=/data/cad itself.
+  # CAD Automation's address, the same as the cados app's fly.toml. The entrypoint passes OPENSKETCH_* to a cad role
+  # only, and this app runs none since 9 Nov 2026, so these two have no effect here; they stay so that the Machines'
+  # settings are unchanged and infrastructure/fly/test/check-config.py keeps checking the address.
   OPENSKETCH_PUBLIC_URL = "https://bizomat.ai/cad"
   OPENSKETCH_REDIRECT_HOSTS = "cados.fly.dev,cados.kevos.com,cad.bizomat.ai"
 
@@ -116,18 +112,6 @@ kill_timeout = 15
     interval = "15s"
     timeout = "5s"
     grace_period = "30s"
-  # cad: the CAD server's /healthz, or the holding page's (200, "ok": false) while it waits for its data or is in
-  # maintenance, so a deploy never waits on a Machine that is idle on purpose
-  [checks.cad]
-    processes = ["cad"]
-    type = "http"
-    port = 8001
-    method = "get"
-    path = "/healthz"
-    interval = "15s"
-    timeout = "8s"
-    # OpenCascade loads slowly and the supervisor starts the server as a child
-    grace_period = "90s"
 
 # Project Management's data: one volume on its one Machine (created by the first deploy), snapshotted daily and kept
 # 30 days. The data move puts db.sqlite and files/ in /data/work (infrastructure/migrate/work).
@@ -135,20 +119,6 @@ kill_timeout = 15
   source = "work_data"
   destination = "/data"
   processes = ["work"]
-  initial_size = "3gb"
-  snapshot_retention = 30
-  scheduled_snapshots = true
-  auto_extend_size_threshold = 80
-  auto_extend_size_increment = "1GB"
-  auto_extend_size_limit = "20GB"
-
-# CAD Automation's data: one volume in syd on its one Machine (bizomat.ps1 deploy website creates it, 3 GB with daily
-# snapshots kept 30 days, before the first deploy with the cad group), snapshotted daily. The data move puts the old
-# cados volume's files in /data/cad (infrastructure/migrate/cad).
-[[mounts]]
-  source = "cad_data"
-  destination = "/data"
-  processes = ["cad"]
   initial_size = "3gb"
   snapshot_retention = 30
   scheduled_snapshots = true
@@ -171,19 +141,9 @@ kill_timeout = 15
   size = "shared-cpu-1x"
   memory = "512mb"
 
-# cad keeps the dedicated core and 2 GB the cados app has: heavy CAD work on a shared CPU uses up the burst allowance.
-# It has no service of its own, so Fly cannot stop or wake it: it runs all the time (cados suspended when idle).
-[[vm]]
-  processes = ["cad"]
-  size = "performance-1x"
-  memory = "2gb"
-
-# Restart work and cad whenever their process exits (the entrypoint exits non-zero on a missing volume: the loop then
-# shows in fly logs until it is fixed; in maintenance mode they stay up without the service, for a data move).
+# Restart work whenever its process exits (the entrypoint exits non-zero on a missing volume: the loop then shows in
+# fly logs until it is fixed; in maintenance mode it stays up without the service, for a data move).
 [[restart]]
   policy = "always"
   processes = ["work"]
 
-[[restart]]
-  policy = "always"
-  processes = ["cad"]
