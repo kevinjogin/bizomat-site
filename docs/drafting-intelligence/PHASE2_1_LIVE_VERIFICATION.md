@@ -223,7 +223,17 @@ Ctrl+C. `%LOCALAPPDATA%\BIZOMAT CAD\AddIn` can stay (nothing loads it) or be del
 10. Roll back (section 13).
 11. Fill in sections 1 to 12 of this file with the live results; keep the simulated sections as they are.
 
-## 15. Recommended next phase
+## 15. Regression (Step 11, build session)
+
+| Suite | Result |
+| --- | --- |
+| CAD MCP `pytest -q`, slow integration tests included (the C# Companion and add-in link end to end) | 461 passed, 2 skipped |
+| Drafting and harness tests (`test_drafting_engine.py`, `test_drafting_tools.py`, `test_live_verify.py`) | included above; simulated SOLIDWORKS |
+| Sketch solver `npm test` | 9 passed |
+| Add-in, Companion and App build, C# tests | builds; 46 passed |
+| The original 31 MCP tools | registered with their schemas; their tests pass unchanged |
+
+## 16. Recommended next phase
 
 Run section 14 on KEVOS (about an hour with the copies ready), fix what it finds, and only then judge whether the
 machining drawing is professional enough to build on. Weldment and fabrication work waits for that result.
