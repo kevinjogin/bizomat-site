@@ -38,6 +38,11 @@ Preflight at `8c1278e` (one docs-only commit after the expected `0068e1f`; worki
 | Folders on the owner's computers shared with this session (Remote Control) | none |
 | Live operations run | none: stopped at the preflight, as the procedure requires |
 
+Second attempt (9 Nov 2026, later the same day): the request said the session was on the Windows computer, but it
+ran in the same cloud build environment (Ubuntu 24.04 Linux, no Windows, no SOLIDWORKS), with no folder of the owner's
+computers shared with it (`list_computer_folders`: none). It stopped before step 1 of section 14. The production
+connector was not used, as the request forbade connecting to it. Nothing was installed, copied or changed.
+
 ## 5. Step 3 in the build session (local server, no SOLIDWORKS)
 
 The branch's server (`python -m opensketch --port 8765`, empty data folder, loopback only), driven by the official
