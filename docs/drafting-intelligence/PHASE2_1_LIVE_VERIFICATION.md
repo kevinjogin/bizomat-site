@@ -136,6 +136,7 @@ No material is assigned or changed, and none is inferred from the mass.
 | The stand-in answered edits under `actions`; the add-in answers under `results` (and a move with the moved annotation) | tests | stand-in matches `DrawingEdits.cs` now |
 | The development install conflicts with the MSI on KEVOS (section 13) | installation process | procedure below; no code change |
 | A drawing copied under a new name in Explorer still shows the original part | test documents | Pack and Go; the harness refuses a copy that shows another part |
+| Connect in the BIZOMAT task pane did not connect; only the toolbar's Connect did (reported by the owner on KEVOS, add-in 0.13.0) | add-in (`CadosPane.cs`) | both now use `Host.ConnectNow` (`Core/ConnectPlan.cs`): a Companion link that is not connected is restarted at once and the Companion started; a connected link is never cut; C# tests and a guard test. Not yet run live (section 14, step 8). Ships with 0.15, after this verification (owner's decision, 9 Nov 2026) |
 
 Open: everything only a live run can show.
 
@@ -219,14 +220,18 @@ Ctrl+C. `%LOCALAPPDATA%\BIZOMAT CAD\AddIn` can stay (nothing loads it) or be del
 
    It refuses a server that is not on this computer, copies next to the originals, and a copied drawing that still
    shows the original part. It hashes the originals before and after; a change fails the run (exit code 3).
-8. Inspect: open `evidence\results.md`, the screenshots and the PDFs; compare each read with SOLIDWORKS' own dialogs
+8. Check by hand (the harness cannot press panel buttons): with the add-in 0.15 loaded, stop the local server, wait
+   for "Not connected" in the BIZOMAT task pane, start the server again and press the pane's **Connect** (not the
+   toolbar's): it must connect within a few seconds. After the rollback, with the Companion running, the pane's
+   Connect must reconnect a Companion link that was stopped.
+9. Inspect: open `evidence\results.md`, the screenshots and the PDFs; compare each read with SOLIDWORKS' own dialogs
    (Evaluate > Mass Properties, File Properties, the feature tree). Mark an operation LIVE VERIFIED only when its
    result is right on inspection. Claude Code on that computer can also connect to the local server
    (`http://127.0.0.1:8000/mcp`) to look further.
-9. Failures: each row has SOLIDWORKS' message; fix on this branch, add a test, run that operation again
+10. Failures: each row has SOLIDWORKS' message; fix on this branch, add a test, run that operation again
    (`--steps annotations`, for example).
-10. Roll back (section 13).
-11. Fill in sections 1 to 12 of this file with the live results; keep the simulated sections as they are.
+11. Roll back (section 13).
+12. Fill in sections 1 to 12 of this file with the live results; keep the simulated sections as they are.
 
 ## 15. Regression (Step 11, build session)
 
