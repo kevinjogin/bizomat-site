@@ -14,9 +14,8 @@
 #
 # Steps: the preflight (.github/scripts/fly-preflight.py) compares fly.website.toml with the live Machines and stops
 # when the deploy would add or remove a Machine or change its size, memory or region (allow_machine_change = YES lets a
-# deliberate change through). On 9 Nov 2026 fly.website.toml on main has a fourth process group, `cad` (performance-1x,
-# 2 GB, volume cad_data), that the live app does not run: the preflight stops until that is decided (README.md,
-# "Fly.io deployment"). Then the deploy (rolling, --ha=false: one Machine per group, replaced in place), a wait for
+# deliberate change through). fly.website.toml matches the live Machines (read from Fly on 9 Nov 2026: proxy, web and
+# work in syd), so the preflight passes for it. Then the deploy (rolling, --ha=false: one Machine per group, replaced in place), a wait for
 # https://bizomat.fly.dev/__proxy/health to report the new version, and the public checks the laptop tool runs.
 #
 # Rollback: `flyctl releases -a bizomat --image`, then
