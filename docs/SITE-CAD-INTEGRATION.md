@@ -4,7 +4,8 @@ The same file is kept in both repositories: `kevinjogin/bizomat-site` and `kevin
 (`docs/SITE-CAD-INTEGRATION.md`). Change it in both, in the same week, when a contract below changes.
 
 Written 9 Nov 2026, when the source moved to these two repositories. It describes production as it runs: two Fly.io
-apps in the same Fly organization, both in Sydney (`syd`).
+apps in the same Fly organization, in different regions. The figures below were read from Fly on 9 Nov 2026
+(`fly scale show`, `fly volumes list`), and each repository's Fly configuration matches them.
 
 | | BIZOMAT Site | BIZOMAT CAD |
 | --- | --- | --- |
@@ -13,7 +14,16 @@ apps in the same Fly organization, both in Sydney (`syd`).
 | Config deployed | `fly.website.toml` | `fly.toml` |
 | Serves | `bizomat.ai` (website, sign-in page, Project Management at `/tasks`), and the router in front of everything | CAD MCP: the MCP endpoint, OAuth, the SOLIDWORKS device bridge, CAD pages at `/cad`, installer and update endpoints |
 | Fly origin | `https://bizomat.fly.dev` (health only; pages 301 to bizomat.ai) | `https://cados.fly.dev` (all CAD paths, as connectors and computers use it) |
+| Region | Sydney (`syd`) | **Amsterdam (`ams`)** |
+| Machines | proxy (shared-cpu-1x, 256 MB), web and work (shared-cpu-1x, 512 MB each) | one Machine, `app` (shared CPU, 2 vCPUs, 2048 MB) |
+| Volumes | `work_data` (3 GB, on work) | `opensketch_data` (1 GB) |
 | Deploy workflow | `bizomat-deploy.yml`, secret `FLY_BIZOMAT_TOKEN` | `deploy.yml`, secret `FLY_CADOS_TOKEN` |
+
+**The two apps are on opposite sides of the world.** Every request for `bizomat.ai/cad` goes from the router in Sydney
+to `cados` in Amsterdam and back, which adds roughly a quarter of a second, and AI apps and SOLIDWORKS computers in
+Australia reach `cados.fly.dev` in Amsterdam. Moving `cados` to Sydney means a new volume in `syd` made from a snapshot
+and the Machine moved onto it: a production change of its own, planned and done outside a code deploy (the deploy
+preflight stops any deploy that would change the region).
 
 ## 1. Network: the router reaches CAD over Fly's private network
 
@@ -81,16 +91,18 @@ these paths (the site's `tests/worker.test.ts`).
 ## 5. The CAD copy inside the site repository (`apps/cad`)
 
 The site repository carries `apps/cad`, a byte-for-byte copy of one CAD commit, pinned in `apps/cad-source.json`
-(commit `e669cc6`, tree `e97f6f4`, the commit `cados` runs). It exists because `fly.website.toml` defines a `cad`
-process group (the earlier plan to run CAD inside the `bizomat` app; see the site README, "Fly.io deployment"). That
-group does not run in production on 9 Nov 2026, and nothing there is edited by hand:
+(commit `e669cc6`, tree `e97f6f4`: CADOS `main` on 9 Nov 2026, the branch Fly built `cados` from). It came with the
+earlier plan to run CAD inside the `bizomat` app. That plan's `cad` process group never ran and was removed from
+`fly.website.toml` on 9 Nov 2026, but the site's image (`infrastructure/fly/Dockerfile`) still builds its CAD stages
+from `apps/cad`, so the copy stays until those stages go. Nothing there is edited by hand:
 
 - `node scripts/sync-cad.mjs check` proves `apps/cad` is exactly the pinned tree (site CI runs it).
 - `node scripts/sync-cad.mjs to <commit> --cados <path to a bizomat-cad clone>` replaces it with another CAD commit,
   in a pull request of its own.
 
-CAD is changed only in `kevinjogin/bizomat-cad`. If the `cad` group is removed from `fly.website.toml` (production
-keeps CAD in `cados`), `apps/cad` and its pin can be removed from the site repository in the same pull request.
+CAD is changed only in `kevinjogin/bizomat-cad`. Removing the CAD stages from the site's Dockerfile (and the
+`cad` role from `infrastructure/fly/entrypoint.sh`) lets `apps/cad` and its pin go too, in one pull request of the site
+repository with its image and entrypoint tests.
 
 ## 6. Installer downloads and updates
 

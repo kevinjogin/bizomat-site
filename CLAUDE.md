@@ -56,13 +56,14 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 - **Two repositories, two Fly apps (owner, 9 Nov 2026):** this repository deploys only the Fly app `bizomat`
   (website, router, Project Management), with `fly.website.toml`, through `.github/workflows/bizomat-deploy.yml`: by
   hand, `confirm` = `DEPLOY`, repository secret `FLY_BIZOMAT_TOKEN` (a deploy token for `bizomat` only). Its preflight
-  (`.github/scripts/fly-preflight.py`) stops any deploy that would add, remove or resize a Machine. Production runs
-  three Machines (proxy, web, work); the `cad` group in `fly.website.toml` is not running, so the preflight stops a
-  deploy of `main` until the owner decides (README.md, section 9). Never add a Machine, a process group or memory
-  without the owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
+  (`.github/scripts/fly-preflight.py`) stops any deploy that would add, remove or resize a Machine. Production, read
+  from Fly on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web and work shared-cpu-1x 512 MB) and
+  the volume `work_data` (3 GB); `fly.website.toml` matches it exactly (the `cad` group of the earlier plan never ran
+  and was removed). Never add a Machine, a process group or memory without the owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
   and Cloudflare describe earlier plans.
-- **CAD Automation into `bizomat` (6 Nov 2026):** `fly.website.toml` has the `cad` group (performance-1x, 2 GB, volume
-  `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
+- **CAD Automation into `bizomat` (6 Nov 2026; an earlier plan, not carried out: the `cad` group was removed from
+  `fly.website.toml` on 9 Nov 2026 and CAD stays in the app `cados`, in ams):** the plan gave `fly.website.toml` a `cad`
+  group (performance-1x, 2 GB, volume `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
   holding page instead) and needs no server password. The data moves with `bizomat.ps1 move cad`
   (`infrastructure/migrate/cad/to-fly.mjs`, rehearsed by `infrastructure/migrate/test/cad-move/rehearse.sh` in CI); it
   switches the router's `UPSTREAM_CAD` itself, and `fly.website.toml` follows in a pull request (until then

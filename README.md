@@ -61,15 +61,16 @@ application itself:
 ```
 
 - **One image, several process groups.** `infrastructure/fly/Dockerfile` builds one image; `fly.website.toml`
-  starts it as one Machine per process group (`bizomat-entrypoint proxy|web|work|cad`). The entrypoint
+  starts it as one Machine per process group (`bizomat-entrypoint proxy|web|work`). The entrypoint
   (`infrastructure/fly/entrypoint.sh`) starts each service as its own user with only its own settings (an allow-list),
   so no service can read another's secrets.
-- **Process groups in `fly.website.toml`:** `proxy` (shared-cpu-1x, 256 MB), `web` (shared-cpu-1x, 512 MB), `work`
-  (shared-cpu-1x, 512 MB, volume `work_data`) and `cad` (performance-1x, 2 GB, volume `cad_data`). The `cad` group is
-  the earlier plan to run CAD inside this app. **It is not running in production**: the laptop tool deployed "one
-  Machine per group (router, website, Project Management)". See [section 9](#9-flyio-deployment).
-- **Owner's record of production (9 Nov 2026):** 3 Machines in Sydney, 3 GB in total. These were not read from Fly
-  during the move; the deploy workflow's preflight prints the live Machines before any deploy.
+- **Production, read from Fly on 9 Nov 2026 (`fly scale show`, `fly volumes list`), and `fly.website.toml` matches
+  it:** three Machines in `syd`: `proxy` (shared-cpu-1x, 256 MB), `web` (shared-cpu-1x, 512 MB) and `work`
+  (shared-cpu-1x, 512 MB), 1.25 GB of memory in all, and one volume, `work_data` (3 GB), on `work`.
+- **The `cad` group was removed on 9 Nov 2026.** `fly.website.toml` had a fourth group, `cad` (performance-1x, 2 GB,
+  volume `cad_data`), from the earlier plan to run CAD inside this app. It never ran in production: there was no such
+  Machine or volume. CAD stays in its own app, `cados`. The image (`infrastructure/fly/Dockerfile`) still builds the
+  CAD stages from `apps/cad`; removing them is a later clean-up (section 3).
 - **Other configurations in the repository, not deployed:** `fly.toml` (the single-app plan with the preview switch
   on; it routes `/cad` inside this app), `wrangler.toml` and `src/worker.ts` (the planned Cloudflare Worker for
   bizomat.ai; nothing on Cloudflare is deployed), `apps/work/wrangler.jsonc` (Project Management's earlier Cloudflare
@@ -88,8 +89,9 @@ In short (the full contract, with a change checklist: [docs/SITE-CAD-INTEGRATION
 - The CAD app serves itself under `https://bizomat.ai/cad` (`OPENSKETCH_PUBLIC_URL`) and takes the prefix off itself.
 - The two apps share no database, queue or secret. The brand (`shared/brand/`) and the footer text
   (`src/config/platform.ts`) are repeated in the CAD app.
-- `apps/cad/` is a pinned, read-only copy of one CAD commit, kept only because the image can build the `cad` group
-  (section 9). CAD is changed in `kevinjogin/bizomat-cad`.
+- `apps/cad/` is a pinned, read-only copy of one CAD commit. The `cad` group is gone (9 Nov 2026), but the image
+  (`infrastructure/fly/Dockerfile`) still builds its CAD stages from it, so it stays until those stages are removed
+  in a pull request of their own. CAD is changed in `kevinjogin/bizomat-cad`.
 
 ## 4. Folder structure
 
@@ -166,7 +168,7 @@ bizomat` shows names only); GitHub Actions secrets are repository secrets.
 | `UPSTREAM_CAD` | proxy | CAD: `http://cados.internal:8080` (the `cados` app) |
 | `BIZOMAT_PREVIEW_ROUTING` | proxy | `0` in production; `1` turns on preview routing on bizomat.fly.dev |
 | `WORK_APP_URL`, `WORK_APP_NAME`, `WORK_ENVIRONMENT`, `WORK_ALLOW_SIGNUP`, `WORK_SESSION_TTL_HOURS`, `WORK_CANONICAL_URL` | work | Project Management's address, name, sign-up and session length |
-| `OPENSKETCH_PUBLIC_URL`, `OPENSKETCH_REDIRECT_HOSTS` | cad (not running) | CAD's address, for the `cad` group |
+| `OPENSKETCH_PUBLIC_URL`, `OPENSKETCH_REDIRECT_HOSTS` | none since 9 Nov 2026 | CAD's address. Only a `cad` group would use them; kept so the Machines' settings did not change |
 
 **Fly app `bizomat`: secrets (all optional)**
 
@@ -242,15 +244,11 @@ automatically: no push, merge or schedule.
 4. waits until `https://bizomat.fly.dev/__proxy/health` reports the new version;
 5. checks bizomat.ai: the website, `/api/chat`, `/cad/` (CAD over the private network), `/tasks/`.
 
-**Decision needed before the first deploy from `main`.** `fly.website.toml` on `main` has the `cad` process group
-(performance-1x, 2 GB, volume `cad_data`), added on 7 Nov 2026 for the plan to run CAD inside this app. Production
-does not run it. Deploying `main` as it is would create a fourth Machine and need a new volume, so **the preflight
-will stop the deploy**. Choose one:
-
-- keep the two-app setup (CAD stays in `cados`): remove the `cad` group, its `[[vm]]`, mount and check from
-  `fly.website.toml` in a pull request (and then `apps/cad`, its pin and the image's CAD stages), then deploy; or
-- run CAD inside `bizomat` after all: follow `infrastructure/migrate/cad/README.md` and deploy with
-  `allow_machine_change` = `YES`.
+**`fly.website.toml` matches production** (9 Nov 2026): the three Machines and the volume in section 2. The
+preflight passes for it, so a deploy ships new code onto the same Machines. A change to the Machines (another group,
+size, memory or region) is a decision of its own: change `fly.website.toml` in a pull request, then deploy with
+`allow_machine_change` = `YES`. To run CAD inside this app after all, follow `infrastructure/migrate/cad/README.md`
+(the earlier plan; the `cad` group would have to come back).
 
 The workflow never creates an app, volume or IP address, never sets a secret, and never touches `cados`, DNS or
 Cloudflare. DNS for bizomat.ai is changed by hand only, in Cloudflare (`docs/BIZOMAT-DEPLOYMENT.md`).
