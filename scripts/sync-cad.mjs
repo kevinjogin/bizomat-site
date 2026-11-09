@@ -14,7 +14,9 @@
 //   node scripts/sync-cad.mjs show
 //       the pin as JSON (for scripts such as the laptop's bizomat.ps1).
 //
-// Without --cados, CADOS is fetched from GitHub (the repository is public). Prints commits, trees and counts only.
+// Without --cados, the CAD repository (kevinjogin/bizomat-cad since 9 Nov 2026, formerly jogkev-creator/CADOS, same
+// commits) is fetched from GitHub; it is private, so that needs Git credentials that can read it. Prints commits, trees
+// and counts only.
 
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
@@ -24,7 +26,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PIN = join(ROOT, 'apps', 'cad-source.json');
 const PREFIX = 'apps/cad';
-const GITHUB = 'https://github.com/jogkev-creator/CADOS';
+const GITHUB = 'https://github.com/kevinjogin/bizomat-cad';
 const HEX40 = /^[0-9a-f]{40}$/;
 const USAGE = 'usage: sync-cad.mjs check [--cados <dir> | --github] | to [<commit>] [--cados <dir>] | show';
 
@@ -120,7 +122,7 @@ function to(o) {
     git(['read-tree', `--prefix=${PREFIX}/`, '-u', commit]);
   }
   const pin = {
-    repository: 'jogkev-creator/CADOS',
+    repository: 'kevinjogin/bizomat-cad',
     commit,
     tree,
     subject,

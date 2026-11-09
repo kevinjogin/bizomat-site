@@ -160,8 +160,10 @@ jobs:
         run: sudo env "PATH=$PATH" bash infrastructure/migrate/test/cad-move/rehearse.sh
       - name: fly.toml and fly.website.toml (groups, the one public service, a volume each for work and cad, the CAD route)
         run: python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml
-      - name: apps/cad is exactly the pinned CADOS commit (apps/cad-source.json, checked against GitHub)
-        run: node scripts/sync-cad.mjs check --github
+      # apps/cad's tree hash must equal the pinned tree. The pinned commit's own tree can only be checked against the
+      # private repository kevinjogin/bizomat-cad with a token that can read it (--github), so CI checks the tree here.
+      - name: apps/cad is exactly the pinned CAD commit (apps/cad-source.json)
+        run: node scripts/sync-cad.mjs check
       - name: The compose files read
         run: |
           docker compose -f infrastructure/local/compose.yml config -q

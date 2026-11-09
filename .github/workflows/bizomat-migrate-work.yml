@@ -58,12 +58,12 @@ jobs:
         env:
           CONFIRM: ${{ inputs.confirm }}
           HAS_CF: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
-          HAS_FLY: ${{ secrets.FLY_API_TOKEN != '' }}
+          HAS_FLY: ${{ secrets.FLY_BIZOMAT_TOKEN != '' }}
         run: |
           [ "$HAS_CF" = "true" ] || { echo "::error::Add the repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID."; exit 1; }
           if [ "$MODE" = "apply" ]; then
             [ "$CONFIRM" = "APPLY" ] || { echo "::error::apply replaces the data on the work Machine: type APPLY in the confirm box."; exit 1; }
-            [ "$HAS_FLY" = "true" ] || { echo "::error::apply needs the repository secret FLY_API_TOKEN."; exit 1; }
+            [ "$HAS_FLY" = "true" ] || { echo "::error::apply needs the repository secret FLY_BIZOMAT_TOKEN."; exit 1; }
           fi
           echo "W=$RUNNER_TEMP/work-migration" >> "$GITHUB_ENV"
           echo "STAMP=$(date -u +%Y%m%dT%H%M%SZ)" >> "$GITHUB_ENV"
@@ -156,7 +156,7 @@ jobs:
       - name: Snapshot the work volume, then maintenance mode on the work Machine
         if: inputs.mode == 'apply'
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
           vol="$(flyctl volumes list --app "$APP" --json | jq -r '[.[] | select(.name == "work_data")][0].id')"
           [ -n "$vol" ] && [ "$vol" != "null" ] || { echo "::error::no work_data volume on $APP"; exit 1; }
@@ -171,7 +171,7 @@ jobs:
       - name: Upload and apply (the previous data is kept in /data/backups)
         if: inputs.mode == 'apply'
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
           flyctl ssh sftp put "$W/work-$STAMP.tar" "/data/incoming/work-$STAMP.tar" --app "$APP" --machine "$MACHINE" -m 0600 >/dev/null
           status=0
@@ -187,7 +187,7 @@ jobs:
       - name: Maintenance mode off, then check work through the preview cookie
         if: inputs.mode == 'apply'
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
           flyctl ssh console --app "$APP" --machine "$MACHINE" -C "rm -f /data/.bizomat-maintenance"
           flyctl machine restart "$MACHINE" --app "$APP"
