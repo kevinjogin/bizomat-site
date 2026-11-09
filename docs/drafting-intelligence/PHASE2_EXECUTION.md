@@ -15,7 +15,7 @@ This report keeps three kinds of result apart:
 **Not run.** Three blockers, each outside this session's reach:
 
 1. The owner's computer (KEVOS, SOLIDWORKS 2022 SP5 30.5.0.0049, Companion 0.13.0) was offline for the whole
-   session (`sw_list_devices`: online false, last seen 67 minutes before the last check).
+   session (`sw_status`: connected false, last seen 81 minutes before the last check).
 2. The six drafting tools and the 0.15 server changes are on this branch only. Production CAD MCP serves the 31
    SOLIDWORKS tools without them, and this phase must not deploy.
 3. The 0.15 add-in is not installed on any computer. Its new reads and actions can only be tested after the owner
@@ -27,8 +27,9 @@ How to run the live test without deploying production (section 8 has the checkli
 
 1. On the Windows computer, check out this branch and start the local server: `windows/setup.ps1`, then
    `windows/start.ps1` (port 8000 on that computer only; production is not touched).
-2. Install the 0.15 add-in package with `windows/update-addin.ps1` (the package is built by `bash solidworks/build.sh`
-   or the `build` job of `cad-windows.yml`, which runs on Linux and uses no Windows minutes).
+2. Install the 0.15 add-in package with `windows/update-addin.ps1`. The package is built by `bash solidworks/build.sh`
+   on any computer with the .NET 8 SDK (Linux works). `cad-windows.yml` builds it too, but a run also starts its
+   Windows jobs, which use the scarce Windows minutes.
 3. Connect the add-in's direct link to `http://127.0.0.1:8000` and Claude Desktop with `windows/connect-claude.ps1`.
 4. Work only on copies: copy the clamp plate and its drawing into a new folder (for example
    `Documents\BIZOMAT CAD\Projects\phase2-test`) in Windows Explorer and open the copies. Never Save As over an
