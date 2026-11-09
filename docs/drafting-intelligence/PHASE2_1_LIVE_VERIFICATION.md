@@ -207,7 +207,11 @@ Ctrl+C. `%LOCALAPPDATA%\BIZOMAT CAD\AddIn` can stay (nothing loads it) or be del
 4. Add-in 0.15: build the package (`bash solidworks/build.sh` with the .NET 8 SDK, or the zip handed over with this
    phase), put the zip in Downloads, close SOLIDWORKS, `powershell -ExecutionPolicy Bypass -File windows\update-addin.ps1`.
    It prints the version SOLIDWORKS will load: expect 0.15.0.
-5. Test copies: in SOLIDWORKS open the original drawing, File > Pack and Go, include the drawing and the part, add
+5. Test copies: `powershell -ExecutionPolicy Bypass -File windows\make-test-copies.ps1` (SOLIDWORKS open). It
+   runs SOLIDWORKS' own Pack and Go through its API on the original drawing opened read-only, refuses to overwrite or
+   save an original, checks the copied drawing references only the copies, compares the originals' SHA-256 before and
+   after, writes `evidence\pack-and-go.json` and prints the harness command. By hand instead: in SOLIDWORKS open the
+   original drawing, File > Pack and Go, include the drawing and the part, add
    the suffix `_P21TEST`, save to `Documents\BIZOMAT CAD\Projects\phase21-test`. Close the originals. Record their
    SHA-256 (`Get-FileHash`).
 6. Connect: open the copied drawing; BIZOMAT > Status: address `http://127.0.0.1:8000`, the key from the local
