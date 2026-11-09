@@ -1,0 +1,16 @@
+# gitleaks findings reviewed on 9 Nov 2026, when this repository was created. None is a secret.
+# Each line is a finding's fingerprint (commit:file:rule:line); the comment above it gives the reason.
+# A new finding is NOT covered by this file: review it, and rotate the secret if it is real.
+
+# infrastructure/migrate/test/roundtrip.sh: test fixture: an empty EC key shell (no key material) written into a temporary folder
+a9544b65a8cb772d9a6bede26b563c9a61b9dce0:infrastructure/migrate/test/roundtrip.sh:private-key:32
+# seo/config.json: public by design: the IndexNow key, published at /<key>.txt on the site
+fcfd8bd512fc67d52d18e5db0003f50c814fc00f:seo/config.json:generic-api-key:4
+# src/config/site.ts: public by design: the Web3Forms form key, sent from the browser (safe in page HTML)
+b8c65eef5ec9354e18139c0c8092e42b234d75d2:src/config/site.ts:generic-api-key:42
+# src/lib/captcha.ts: public by design: the hCaptcha site key from Web3Forms' public script
+1e66c1f8914a08e96b267caff35b311f3a2781a5:src/lib/captcha.ts:generic-api-key:6
+# tests/test_aikeys.py: test fixture: made-up keys used to check that keys are never echoed back
+7a9aa72b3d4271e1e20fee1c9ce74a10f646703e:tests/test_aikeys.py:generic-api-key:59
+# tests/test_aikeys.py: test fixture: made-up keys used to check that keys are never echoed back
+7a9aa72b3d4271e1e20fee1c9ce74a10f646703e:tests/test_aikeys.py:generic-api-key:139

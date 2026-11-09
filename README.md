@@ -1,308 +1,316 @@
-# BIZOMAT
+# BIZOMAT – Site
 
-**Intelligent Business Automation Platform.** Automate work. Connect systems. Get business done.
+The BIZOMAT website and platform: the public website at **bizomat.ai**, the router in front of every BIZOMAT
+address, sign-in, and Project Management (Task Management) at `bizomat.ai/tasks`. It runs on the Fly.io app
+**`bizomat`** in Sydney.
 
-This repository holds the whole BIZOMAT platform: the public website with Resources and AI search, and the two
-applications, CAD Automation and Project Management, plus the brand system and the infrastructure that runs them as
-one Fly.io app.
+CAD Automation (the SOLIDWORKS MCP server, the add-in and its Windows installer) is a separate product in a separate
+repository, [`kevinjogin/bizomat-cad`](https://github.com/kevinjogin/bizomat-cad), on the Fly app `cados`. How the
+two work together: [docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md).
 
-| Product | Path | What it is |
-| --- | --- | --- |
-| Website and Resources | `/` (`src/`, `public/`) | bizomat.ai: home, products, Resources (1,000+ tools and calculators, a technical Library, guides), The Engine Room (the founder, principles and proof of work), legal pages, AI search. Public, no account. |
-| CAD Automation | `apps/cad/` | Formerly CADOS. Connects Claude, ChatGPT or another MCP assistant to SOLIDWORKS on the customer's own computer (Python server, C# add-in and Companion, Windows installer). |
-| Project Management | `apps/work/` | Formerly KEVOS Work. Projects, tasks, teams, boards with nine views, automations, dashboards and documents (Hono + React, runs on Cloudflare or Node). |
-| Brand system | `shared/brand/` | The BIZOMAT wordmark, mark, icons, design tokens, components and fonts, copied into every product. |
-| Infrastructure | `infrastructure/`, `fly.toml` | One Fly.io app with proxy, web, work and cad process groups; local compose stack; smoke tests; data migration scripts. |
-
-Documentation: [architecture](docs/BIZOMAT-ARCHITECTURE.md), [data inventory](docs/BIZOMAT-DATA-INVENTORY.md),
-[migration](docs/BIZOMAT-MIGRATION.md), [deployment](docs/BIZOMAT-DEPLOYMENT.md), [security](docs/BIZOMAT-SECURITY.md),
-[rollback](docs/BIZOMAT-ROLLBACK.md), [operations](docs/BIZOMAT-OPERATIONS.md), [project status](docs/BIZOMAT-PROJECT-STATUS.md).
-
-## Quick start
-
-```bash
-npm ci && npm run verify                      # website: type check, tests, build (4,400+ pages)
-```
-
-```bash
-cd apps/work && npm ci && npm run check       # Project Management: lint, types, tests, build
-```
-
-```bash
-cd apps/cad && python3.12 -m venv .venv && .venv/bin/pip install --require-hashes -r requirements-dev.txt && .venv/bin/pytest -q
-```
-
-```bash
-docker compose -f infrastructure/local/compose.yml up --build   # the whole platform behind its proxy
-```
-
-Licences: the website and Project Management are proprietary to BIZOMAT; CAD Automation is AGPL-3.0-only
-(`apps/cad/LICENSE`). Third-party fonts are under the SIL Open Font Licence (`public/fonts/`).
-
----
-
-# The website
-
-The website is a static Astro site with its API routes in `src/worker.ts`: the Library (edited books of Markdown
-chapters), the Tools (browser calculators), AI search over products, tools and books, and the contact and assessment
-forms. It is served by the `web` process of the BIZOMAT app, or by a Cloudflare Worker.
-
-- **No database and no server state.** Pages are built in advance.
-- **Publishing is a reviewed file change.** Write Markdown, set `draft: false`, push to Git, rebuild.
-- **Every build checks itself** for broken links, missing metadata, leaked drafts and security headers.
+- Repository: `kevinjogin/bizomat-site` (private). Default branch `main`.
+- Production: Fly app `bizomat`, region `syd`, deployed by hand from `main` with `fly.website.toml`.
+- Public address: <https://bizomat.ai> (`www.bizomat.ai` answers 301 there). Fly origin: <https://bizomat.fly.dev>
+  (health endpoints only; pages answer 301 to bizomat.ai).
+- Project instructions for AI coding agents: [CLAUDE.md](CLAUDE.md). The earlier, detailed website guide (READOS
+  chapters, contact form, AI chat, branding, SEO): [docs/README-website-guide.md](docs/README-website-guide.md).
 
 ## Contents
 
-1. [Local development](#1-local-development)
-2. [Project structure](#2-project-structure)
-3. [Adding a Library chapter](#3-adding-a-reados-chapter)
-4. [Frontmatter fields](#4-frontmatter-fields)
-5. [Categories and tags](#5-categories-and-tags)
-6. [Work entries](#6-work-entries)
-7. [Images](#7-images)
-8. [Contact form](#8-contact-form)
-9. [BIZOMAT Assistant (AI chat)](#9-kevos-assistant-ai-chat)
-10. [Deploying the website](#10-deploying-the-website)
-11. [Changing branding](#11-changing-branding)
-12. [Changing navigation and site details](#12-changing-navigation-and-site-details)
-13. [SEO workflow](#13-seo-workflow)
-14. [Quality checks](#14-quality-checks)
+1. [Product purpose](#1-product-purpose)
+2. [Architecture](#2-architecture)
+3. [How the Site and CAD communicate](#3-how-the-site-and-cad-communicate)
+4. [Folder structure](#4-folder-structure)
+5. [Dependencies](#5-dependencies)
+6. [Local setup](#6-local-setup)
+7. [Environment variables and secrets](#7-environment-variables-and-secrets)
+8. [Testing](#8-testing)
+9. [Fly.io deployment](#9-flyio-deployment)
+10. [GitHub Actions](#10-github-actions)
+11. [Recovery and maintenance](#11-recovery-and-maintenance)
+12. [Repository history](#12-repository-history)
+13. [Security rules](#13-security-rules)
 
----
+## 1. Product purpose
 
-## 1. Local development
+BIZOMAT ("Business Intelligence & Automation") is the parent brand of two products: **CAD Automation** and
+**Project Management**. This repository holds everything a visitor or member sees on bizomat.ai except the CAD
+application itself:
 
-Requires **Node.js 22.12 or newer**.
+- **The website** (Astro, static pages served by a small Node server): Home, CAD Automation (product page), Work,
+  The Engine Room, the READOS library, contact and legal pages, the sign-in page that offers each application's
+  sign-in, and the AI chat endpoint (`/api/chat`).
+- **Project Management** (`apps/work/`, at `bizomat.ai/tasks`): accounts and sessions, workspaces, boards, projects,
+  tasks, files, a founder/admin dashboard; Hono server and React client, SQLite on a Fly volume.
+- **The router** (`infrastructure/proxy/`): the only public port of the Fly app. It routes bizomat.ai by path (the
+  website, `/tasks` to Project Management, CAD's paths to the `cados` app) and the old addresses by host.
+- **Platform services**: the Fly image and entrypoint, migration tooling, smoke tests, the local compose stack.
+
+## 2. Architecture
+
+```
+                       bizomat.ai, www.bizomat.ai (Cloudflare DNS, DNS only)
+                                        |
+                                        v
+  Fly app bizomat (syd) -----------------------------------------------------------------
+  |  proxy  :8080  infrastructure/proxy        the only public port; routes by host and path
+  |    |-- web   :8003  the website (Astro build + src/node server: /api/chat, contact)
+  |    |-- work  :8002  Project Management (apps/work), volume work_data at /data
+  |    '-- CAD paths --> http://cados.internal:8080  (Fly app cados, repository bizomat-cad)
+  ---------------------------------------------------------------------------------------
+```
+
+- **One image, several process groups.** `infrastructure/fly/Dockerfile` builds one image; `fly.website.toml`
+  starts it as one Machine per process group (`bizomat-entrypoint proxy|web|work|cad`). The entrypoint
+  (`infrastructure/fly/entrypoint.sh`) starts each service as its own user with only its own settings (an allow-list),
+  so no service can read another's secrets.
+- **Process groups in `fly.website.toml`:** `proxy` (shared-cpu-1x, 256 MB), `web` (shared-cpu-1x, 512 MB), `work`
+  (shared-cpu-1x, 512 MB, volume `work_data`) and `cad` (performance-1x, 2 GB, volume `cad_data`). The `cad` group is
+  the earlier plan to run CAD inside this app. **It is not running in production**: the laptop tool deployed "one
+  Machine per group (router, website, Project Management)". See [section 9](#9-flyio-deployment).
+- **Owner's record of production (9 Nov 2026):** 3 Machines in Sydney, 3 GB in total. These were not read from Fly
+  during the move; the deploy workflow's preflight prints the live Machines before any deploy.
+- **Other configurations in the repository, not deployed:** `fly.toml` (the single-app plan with the preview switch
+  on; it routes `/cad` inside this app), `wrangler.toml` and `src/worker.ts` (the planned Cloudflare Worker for
+  bizomat.ai; nothing on Cloudflare is deployed), `apps/work/wrangler.jsonc` (Project Management's earlier Cloudflare
+  Worker).
+
+## 3. How the Site and CAD communicate
+
+In short (the full contract, with a change checklist: [docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md)):
+
+- The router sends CAD's requests on bizomat.ai to the Fly app `cados` over Fly's private network:
+  `UPSTREAM_CAD = "http://cados.internal:8080"` in `fly.website.toml`. Both apps must stay in the same Fly
+  organization. Paths and the Host header are passed through unchanged.
+- Which paths are CAD's is one expression, `CAD_PATHS`, in `infrastructure/proxy/routes.mjs` and
+  `src/server/platform-paths.ts` (tests keep them equal): `/cad/...`, `/mcp`, `/solidworks/mcp`, `/oauth/...`,
+  `/v2/...`, `/healthz` and CAD's OAuth `/.well-known/...` documents. Never change them without the CAD repository.
+- The CAD app serves itself under `https://bizomat.ai/cad` (`OPENSKETCH_PUBLIC_URL`) and takes the prefix off itself.
+- The two apps share no database, queue or secret. The brand (`shared/brand/`) and the footer text
+  (`src/config/platform.ts`) are repeated in the CAD app.
+- `apps/cad/` is a pinned, read-only copy of one CAD commit, kept only because the image can build the `cad` group
+  (section 9). CAD is changed in `kevinjogin/bizomat-cad`.
+
+## 4. Folder structure
+
+| Path | What |
+| --- | --- |
+| `src/` | The website (Astro): `pages/`, `layouts/`, `components/`, `content/` (READOS chapters), `config/` (`site.ts`, `platform.ts`), `data/`, `server/` (shared server code, `platform-paths.ts`), `node/` (the Node server of the `web` group), `worker.ts` (the planned Cloudflare Worker) |
+| `public/` | Static files served as they are (favicons, brand images, the IndexNow key file) |
+| `tests/` | Website tests (`node --test`): routing and paths (`worker.test.ts`), security, navigation, SEO, chat, contact, downloads, the deploy guard, the artifact policy, and more |
+| `scripts/` | Build and maintenance scripts: `postbuild.mjs` (CSP hashes, quality gate), `build-server.mjs`, `sync-cad.mjs` (the `apps/cad` pin), `seo/`, `deploy-guard.mjs` |
+| `apps/work/` | Project Management: `src/worker/` (Hono server, auth, API), `src/client/` (React), `migrations/` (SQLite schema), `scripts/`, tests (`test/`, `test-node/`, `e2e/`); its own docs (`README.md`, `ARCHITECTURE.md`, `DATABASE.md`, `DEPLOYMENT.md`, `SECURITY.md`) |
+| `apps/cad/` | Pinned copy of CAD Automation (commit in `apps/cad-source.json`). Never edited here |
+| `shared/brand/` | Logo geometry, tokens, components, fonts; `build.mjs` copies them into every product |
+| `infrastructure/fly/` | The Dockerfile, `entrypoint.sh`, the CAD holding page, config checks (`test/check-config.py`) |
+| `infrastructure/proxy/` | The router (`server.mjs`, `routes.mjs`) and its tests |
+| `infrastructure/migrate/` | Data move tools (Project Management, CAD) and their rehearsals |
+| `infrastructure/smoke/` | The smoke test (`smoke.mjs`) for a local stack, the Fly origin or the live hosts |
+| `infrastructure/local/` | Docker compose stack for running the whole platform locally |
+| `docs/` | Architecture, deployment, security, rollback, operations, status (`BIZOMAT-*.md`), the integration contract, the earlier README |
+| `seo/`, `brand-source/` | SEO configuration and brand source files |
+| `.github/workflows/` | CI, the deploy, SEO jobs (section 10); `.github/scripts/fly-preflight.py` |
+| `fly.website.toml` | **The production Fly configuration** (app `bizomat`) |
+| `fly.toml`, `wrangler.toml` | Not deployed (section 2) |
+
+## 5. Dependencies
+
+- **Node.js 22** (`.node-version`; `package.json` needs >= 22.12) and npm. Website: Astro, Pagefind; Project
+  Management: Hono, React, Vite, TanStack Query, Tiptap, zod, ws (`apps/work/package.json`). Lock files are committed;
+  install with `npm ci`.
+- **Python 3.12** for the infrastructure checks and migration tools (standard library), and for the `cad` group.
+- **Docker** to build the production image and run the local stack. `flyctl` only for deploys and operations.
+- **shellcheck** for the shell scripts (CI).
+- **External services used at runtime:** Fly.io (hosting), Cloudflare (DNS only), Web3Forms (contact form, posted
+  from the browser, with hCaptcha), Cloudflare Workers AI or Anthropic (the AI chat, when their secrets are set),
+  Google sign-in (Project Management, optional).
+- Dependabot opens pull requests for npm and GitHub Actions updates (`.github/dependabot.yml`).
+
+## 6. Local setup
 
 ```bash
-npm install
-npm run dev        # http://localhost:4321 — drafts are visible here, marked "Draft"
-npm run build      # production build into dist/ (drafts excluded) + search index + checks
-npm run preview    # serve dist/ with Cloudflare's runtime, including /api/contact and /api/chat
-npm run verify     # type check + tests + build: run this before every push
+git clone https://github.com/kevinjogin/bizomat-site.git
+cd bizomat-site
+npm ci
+npm run dev                 # the website at http://localhost:4321
 ```
 
-`npm run preview` uses Wrangler. The AI assistant needs `npx wrangler login` once, because Workers AI always runs on Cloudflare.
+Project Management on its own:
 
-## 2. Project structure
-
-```
-src/
-  components/   Header, Footer, Container, Section, Button, SEO, ReadOSAnimatedCover,
-                Breadcrumb, Hero, CallToAction, ContactForm, ChatWidget, Logo, …
-  config/       site.ts (name, URL, nav, contact, assistant) · taxonomy.ts (categories, tags) · work.ts
-  content/      reados-chapters/*.md(x), reados-publications/ and work/*.md: all editable content
-  data/         brand.ts (exploring areas, principles) · faq.ts (assistant FAQ)
-  layouts/      BaseLayout, LegalLayout
-  lib/          contact.ts (shared validation) · contact-client.ts (form delivery)
-  pages/        routes: /, /engine-room/, /tools/ (WORKOS), /reados/ (READOS), /contact/, /privacy/, /terms/, /search/, /chat/, 404
-  server/       contact + chat handlers (run inside the Cloudflare worker, tested in Node)
-  worker.ts     Cloudflare worker: serves the site, /api/chat and /api/contact (built to dist/_worker.js)
-  styles/       global.css (design tokens, typography, prose)
-  utils/        content helpers, rehype table wrapper
-public/         static files: brand/, favicons, og-default.png, manifest
-brand-source/   brand typeface (Archivo, OFL), generated artwork, legacy logo files (not published)
-scripts/        brand/ (wordmark and heading-font builders), prepare-brand.mjs, postbuild.mjs
-tests/          contact and chat tests (node --test)
-docs/           EDITORIAL_PROMPTS.md: the reusable article-writing prompts
+```bash
+cd apps/work
+npm ci
+cp .dev.vars.example .dev.vars    # optional: Google sign-in for local runs
+npm run dev                       # http://localhost:8787
 ```
 
-## 3. Adding a READOS chapter
+The whole platform (router, website, Project Management, and a stand-in or the real CAD group) as in production:
 
-The former Insights section was retired on 17 October 2026. Its 750 articles are now chapters of the edited READOS books, and every old `/insights/` address redirects to its chapter. Full workflow and rules: [docs/KEVOS_READOS_PUBLISHING.md](docs/KEVOS_READOS_PUBLISHING.md).
-
-### Easiest: the online editor (Pages CMS)
-
-1. Go to **https://app.pagescms.org** and sign in with GitHub.
-2. Open the **gocore-website** repository. You will see **READOS chapters**, **Work** and **Assistant FAQ**.
-3. **READOS chapters → Add an entry.** Fill in the title, description, category and tags, then write the chapter. Images can be uploaded straight into the editor.
-4. Leave **Draft** ticked and save while you are still working. Untick **Draft** and save when it is ready.
-
-Every save is a commit to GitHub. Cloudflare rebuilds and redeploys the site automatically within a few minutes. If a save breaks a content rule (for example a missing tag), the Cloudflare build fails and the live site stays as it was: check **Workers & Pages → throbbing-block-6c61 → Deployments** for the error.
-
-### On your computer
-
-1. Create `src/content/reados-chapters/your-chapter-slug.md` (or `.mdx`). **The file name is the chapter's permanent slug.** Dates never appear in URLs.
-2. Add frontmatter (below) with `draft: true`.
-3. Write the chapter in Markdown. Use `##` for main sections.
-4. Add the slug to the right edited book's `ids` list in `src/utils/reados-collections.ts`; until then it appears in its category's "Further Reading" book. The chapter is read at `/reados/collections/<book>/<slug>/`.
-5. Run `npm run dev` and review it at its URL.
-6. When it is ready, set `draft: false`, run `npm run verify`, commit and push.
-
-For drafting help, use the prompts in [docs/EDITORIAL_PROMPTS.md](docs/EDITORIAL_PROMPTS.md).
-
-**Workflow:** Idea → Draft → Review → Fact check → Publish → Update. Never publish AI output without review.
-
-## 4. Frontmatter fields
-
-```yaml
----
-title: "What makes a useful product worth building?"   # required, 5–120 chars
-description: "A practical way to judge whether…"          # required, 50–200 chars (meta description)
-publishDate: 2026-10-08                                 # required; future dates stay hidden until a build after that date
-updatedDate: 2026-11-01                                 # optional, must not be before publishDate
-category: "Products"                                    # required: exactly one of Ideas, Products, Technology, Business
-tags:                                                   # required: 1–5 (normally 2–5) from the controlled list
-  - product-development
-  - validation
-author: "BIZOMAT"                                        # optional, defaults to BIZOMAT
-featured: false                                         # reserved; not currently displayed
-draft: true                                             # true = never in production, RSS, sitemap, search or the assistant
-image: ./images/cover.jpg                               # optional, path relative to the post file
-imageAlt: "Describe the image"                          # required when image is set
-canonicalURL: https://example.com/original              # optional, only for chapters first published elsewhere
----
+```bash
+docker compose -f infrastructure/local/compose.yml up --build
+node infrastructure/smoke/smoke.mjs
 ```
 
-The schema (`src/content.config.ts`) rejects unknown categories and tags, missing alt text and invalid dates, so mistakes fail the build instead of reaching the live site.
+Local secrets live only in ignored files (`.env`, `.dev.vars`): never commit them. The example files list the names.
 
-## 5. Categories and tags
+## 7. Environment variables and secrets
 
-**Categories = navigation. Tags = discovery. Dates = chronology. Search = retrieval.**
+Values are never in the repository. Production secrets are Fly secrets of the app `bizomat` (`fly secrets list -a
+bizomat` shows names only); GitHub Actions secrets are repository secrets.
 
-- **Adding a category:** add it to `CATEGORIES` in `src/config/taxonomy.ts`. Only add one when enough chapters justify it. Each category is a section of `/reados/` with its own edited books.
-- **Adding a tag:** add it to `TAGS` in the same file, using one canonical lowercase slug (`ai`, never also `AI-tools` or `artificial-intelligence`). Tags feed site search, the assistant and the RSS feed.
-- Monthly or yearly archive pages are intentionally not generated.
+**Fly app `bizomat`: `[env]` in `fly.website.toml` (not secret)**
 
-## 6. Work entries
-
-Projects, products, experiments, research and concepts live in `src/content/work/`. Copy `_example-entry.md` (files starting with `_` are ignored), remove the underscore and fill it in.
-
-| Field | Notes |
-| --- | --- |
-| `type` | Project · Product · Experiment · Research · Concept. A type only shows on the site when an entry uses it. |
-| `status` | Exploring · Developing · Testing · Released · Completed · Archived |
-| `featured` | Shown in "Selected work" on the homepage |
-| `image`, `gallery` | Optional; optimised automatically |
-| `relatedChapters` | List of READOS chapter slugs related to the entry |
-| `externalUrl` | Optional outbound link |
-| `detailPage` | A detail page is created when the entry has body text, or when this is `true` |
-
-Only add real work. Never invent projects or results.
-
-## 7. Images
-
-- **Article and work images:** put them next to the Markdown file (e.g. `src/content/reados-chapters/images/`) and reference them relatively. Astro creates AVIF and WebP versions at several sizes, with lazy loading and correct dimensions. Use JPG/PNG originals at least 2000 px wide.
-- **Inline images in Markdown:** `![Alt text](./images/diagram.png)` (alt text is required).
-- **Social card:** posts with an `image` use it automatically (cropped to 1200×630). Otherwise `public/og-default.png` is used.
-- **Static files** that must keep an exact URL go in `public/`.
-
-## 8. Contact form
-
-The form at `/contact/` works from day one through **Web3Forms**, using the access key in `src/config/site.ts` (`SITE.contact.web3formsAccessKey`). Messages arrive at the email address registered with that key.
-
-- The access key is a **public form identifier**, designed to be placed in website HTML. It is not a password. If it is ever abused, regenerate it in the Web3Forms dashboard and update `site.ts`.
-- **Spam protection:** Web3Forms' honeypot (`botcheck`), a "too fast to be human" check, and validation of every field. All of these are accessible.
-- **Without JavaScript**, the form still posts to Web3Forms and redirects to `/contact/sent/`.
-- **Free plan:** 250 submissions per month.
-- **Show an email address** next to the form by setting `SITE.email` in `src/config/site.ts`.
-
-### Switching to a Cloudflare Worker later
-
-The UI calls `submitContact()` (`src/lib/contact-client.ts`) and never talks to a provider directly. To move delivery to your own function:
-
-1. Set `PUBLIC_CONTACT_PROVIDER=worker` as a **build** environment variable in Cloudflare.
-2. Add the variables from [.dev.vars.example](.dev.vars.example) (`MAIL_PROVIDER`, `RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`) under **Settings → Variables and Secrets**. Store keys as **Secrets**.
-3. Optional rate limiting: create a KV namespace, bind it as `CONTACT_RATE_LIMIT` (see `wrangler.toml`).
-
-The endpoint (`src/worker.ts` → `src/server/contact/`) validates input, checks origin, enforces the honeypot and rate limits, escapes email HTML and blocks header injection. All of this is covered by `tests/contact.test.ts`.
-
-## 9. BIZOMAT Assistant (AI chat)
-
-A receptionist-style chat sits at the bottom right of every page. Visitors can **minimise** it or **pop it out** into its own window (`/chat/`). It:
-
-- answers **only** from BIZOMAT's published website content: FAQ, About, Work and READOS chapters;
-- refuses unrelated requests, never invents products, prices or promises, and ignores attempts to override its rules;
-- offers **"Leave a message"**, which sends the visitor's details and the chat transcript through the same contact form system;
-- keeps the conversation in the visitor's browser session only (nothing is stored by BIZOMAT).
-
-**How it works:** each build writes `/assistant-knowledge.json` from the site's published content (drafts are never included). The site worker (`src/worker.ts` → `src/server/chat/`) picks the most relevant passages and asks a Workers AI model, with strict grounding rules, to answer.
-
-**Free usage:** Workers AI is included in the Cloudflare **Workers Free plan** with a daily allocation (no card required). When the allocation is used up for the day, the assistant politely offers "Leave a message" instead. A 3B fallback model keeps cost per question low.
-
-| Setting | Where | Default |
+| Name | Used by | Meaning |
 | --- | --- | --- |
-| AI binding `AI` | `wrangler.toml` (`[ai]`), applied by `npm run deploy` | required |
-| `CHAT_MODEL` | Worker variable (`[vars]` in wrangler.toml) | `@cf/meta/llama-3.1-8b-instruct-fast` |
-| `CHAT_FALLBACK_MODEL` | Worker variable (`[vars]` in wrangler.toml) | `@cf/meta/llama-3.2-3b-instruct` |
-| `CHAT_RATE_LIMIT_MAX` | Worker variable (`[vars]` in wrangler.toml; needs the KV binding) | 40 questions per hour per visitor |
+| `UPSTREAM_WEB`, `UPSTREAM_WORK` | proxy | The website and Project Management on the private network |
+| `UPSTREAM_CAD` | proxy | CAD: `http://cados.internal:8080` (the `cados` app) |
+| `BIZOMAT_PREVIEW_ROUTING` | proxy | `0` in production; `1` turns on preview routing on bizomat.fly.dev |
+| `WORK_APP_URL`, `WORK_APP_NAME`, `WORK_ENVIRONMENT`, `WORK_ALLOW_SIGNUP`, `WORK_SESSION_TTL_HOURS`, `WORK_CANONICAL_URL` | work | Project Management's address, name, sign-up and session length |
+| `OPENSKETCH_PUBLIC_URL`, `OPENSKETCH_REDIRECT_HOSTS` | cad (not running) | CAD's address, for the `cad` group |
 
-Cloudflare occasionally retires models or moves them to the paid plan. If answers stop, run `npx wrangler ai models`, pick a current free text-generation model, and set it as `CHAT_MODEL`. No code change is needed.
+**Fly app `bizomat`: secrets (all optional)**
 
-**Improve answers:** edit `src/data/faq.ts`. It is the assistant's highest-priority source. To switch the assistant off, set `SITE.assistant.enabled = false`.
+| Name | Used by | Meaning |
+| --- | --- | --- |
+| `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | web | Cloudflare Workers AI for the AI chat |
+| `ANTHROPIC_API_KEY` | web | Anthropic for the AI chat (instead of Workers AI) |
+| `TURNSTILE_SECRET_KEY` | web | Cloudflare Turnstile check on forms |
+| `WORK_GOOGLE_CLIENT_ID`, `WORK_GOOGLE_CLIENT_SECRET` | work | Google sign-in for Project Management |
 
-## 10. Deploying the website
+Which role receives which names, and the stronger per-volume secret files: [infrastructure/README.md](infrastructure/README.md),
+"Settings and secrets". Fly sets `FLY_*` variables itself.
 
-The website can run two ways, from the same code:
+**Build time (website)**
 
-- **On the BIZOMAT Fly.io app (target):** the `web` process serves `dist/` and runs `src/worker.ts` on Node
-  (`src/node/server.ts`, bundled by `npm run build:server`). Deployed with the rest of the platform; see
-  [docs/BIZOMAT-DEPLOYMENT.md](docs/BIZOMAT-DEPLOYMENT.md).
-- **Not on Cloudflare any more.** kevos.com is the KEVOS site again (the Worker `throbbing-block-6c61` runs the version
-  built from `c79e297`; `bizomat.ps1 restore kevos` put it back). `wrangler.toml` runs `scripts/kevos-guard.mjs` before
-  every deploy and upload, and `npm run deploy` is that guard, so nothing from this repository reaches kevos.com, not
-  even Cloudflare's Git integration while it is still connected (disconnect it: Workers & Pages >
-  `throbbing-block-6c61` > Settings > Build > Disconnect). `npm run preview` still runs the Worker locally.
+| Name | Meaning |
+| --- | --- |
+| `PUBLIC_CONTACT_PROVIDER` | `web3forms` (default) or `worker` |
+| `PUBLIC_WEB3FORMS_ACCESS_KEY` | Web3Forms form key (a public identifier; a default is in `src/config/site.ts`) |
+| `PUBLIC_CONTACT_ENDPOINT` | Contact endpoint when the provider is `worker` |
 
-### What both hosts serve
+**Local only**: `.dev.vars` (the planned Cloudflare Worker: `MAIL_PROVIDER`, `RESEND_API_KEY`, `CONTACT_TO`,
+`CONTACT_FROM`, `ALLOWED_ORIGINS`, `RATE_LIMIT_MAX`, `RATE_LIMIT_WINDOW`), `apps/work/.dev.vars` (`GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET`), `apps/work/.env` (Cloudflare tooling: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`,
+`CLOUDFLARE_DEPLOY_ENABLED`, `PRODUCTION_URL`).
 
-- Static files from `dist/`, with response headers from `dist/_headers` (generated by `scripts/postbuild.mjs`): a strict
-  Content-Security-Policy with hashes for every inline script, HSTS, `nosniff`, frame blocking, referrer and
-  permissions policies, and long-term caching for hashed assets. `dist/404.html` is used for unknown pages; the
-  redirects in `dist/_redirects` apply first.
-- `src/worker.ts` for everything that is not a file: `/api/discover`, `/api/learn/*`, `/api/contact`,
-  `/api/assessment`. Preview addresses (`*.workers.dev`, `*.pages.dev`, `*.fly.dev`) are kept out of search engines.
+**GitHub Actions (Settings > Secrets and variables > Actions)**
 
-## 11. Changing branding
+| Name | Kind | Used by |
+| --- | --- | --- |
+| `FLY_BIZOMAT_TOKEN` | secret | `bizomat-deploy.yml`, `bizomat-migrate-work.yml`: a deploy token for the `bizomat` app only |
+| `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | secrets | `bizomat-migrate-work.yml` (the one-time move from Cloudflare D1, done 6 Nov 2026) |
+| `GSC_SERVICE_ACCOUNT_JSON`, `BING_WEBMASTER_API_KEY`, `CF_API_TOKEN` | secrets | SEO jobs (optional) |
+| `GSC_PROPERTY`, `BING_SITE_URL`, `CF_ZONE_ID` | variables | SEO jobs (optional) |
 
-The brand is **BIZOMAT** (formerly BIZOMAT; GoCore is retired). Everything comes from `shared/brand/`
-([shared/brand/README.md](shared/brand/README.md)):
+## 8. Testing
 
-- **Wordmark and mark:** drawn in `shared/brand/glyphs.mjs`. `npm run brand` (also the first step of every build)
-  writes the logos, icons, `favicon.ico`, tokens, components and fonts into the website and both applications;
-  `npm run brand:check` fails if any copy is out of date. `node shared/brand/og.mjs` renders the social images.
-- **Type:** Oxanium for H1 to H6 (it matches the wordmark), Inter Tight for body text, Source Serif 4 for long-form
-  Library reading. All self-hosted.
-- **Colours:** navy `#0a1f33`, teal `#0f766e` (buttons and links), teal `#14b8a6` (the mark), cool neutrals; tokens in
-  `shared/brand/tokens.css`, mapped to the site's own names in `src/styles/global.css`.
-- **Never** write "®" after BIZOMAT: it is not a registered trade mark. The registered mark is the former name, BIZOMAT,
-  shown only by `TradeMarkNotice.astro` and the footer.
-- **Motion:** product scenes in `src/components/visuals/` (SVG and CSS, no JavaScript, still under reduced motion);
-  `ServiceMap.astro` and `MotionVisual.astro` remain for the service pages.
+```bash
+npm ci && npm run verify                                 # astro check, website tests, build with its quality gate
+npm run brand:check                                      # brand copies in step across the products
+node --test 'infrastructure/proxy/test/*.test.mjs'       # the router
+python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml
+node scripts/sync-cad.mjs check                          # apps/cad is exactly the pinned CAD commit
+cd apps/work && npm ci && npm run check                  # Project Management: lint, types, tests, build
+```
 
-## 12. Changing navigation and site details
+`.github/workflows/bizomat-ci.yml` runs all of these, plus the image build, the local stack's smoke test and the
+migration rehearsals. Before a deploy, run it by hand (Actions > BIZOMAT CI > Run workflow).
 
-Everything lives in `src/config/site.ts`:
+## 9. Fly.io deployment
 
-- `NAV`: header links (keep it short). `FOOTER_NAV` adds Privacy and Terms.
-- `SITE`: name, URL, default title and description, footer statement, `email` (empty = hidden), `social` links, contact provider, assistant settings, and the jurisdiction shown in Terms.
-- Homepage "exploring" areas and principles: `src/data/brand.ts`. Assistant FAQ: `src/data/faq.ts`.
+**Production is the Fly app `bizomat`, deployed from `main` with `fly.website.toml`.** Nothing deploys
+automatically: no push, merge or schedule.
 
-## 13. SEO workflow
+**One-time setup in this repository**
 
-Generated automatically on every build:
+1. Fly dashboard > `bizomat` > Tokens > Create deploy token. GitHub: Settings > Secrets and variables > Actions >
+   New repository secret `FLY_BIZOMAT_TOKEN`.
+2. Settings > Actions > General: allow Actions (they were turned off for the move, so that copying the branches
+   started no workflow).
+3. Until 9 Nov 2026 the deploy ran from the owner's laptop (`bizomat.ps1 deploy website` in the CAD repository's
+   `tools/laptop/`), from a clone of `jogkev-creator/gocore-website`. Point the laptop's clone at this repository
+   (`git remote set-url origin https://github.com/kevinjogin/bizomat-site.git`) or deploy from Actions only.
 
-- Unique `<title>` and meta description per page (the build fails on duplicates or missing descriptions)
-- Canonical URLs, Open Graph and X/Twitter cards
-- JSON-LD: `Organization` and `WebSite` everywhere, `Article` on posts, `BreadcrumbList` on inner pages, `ContactPage` on Contact, `CreativeWork` for work
-- `sitemap-index.xml` (drafts, search, chat and form result pages excluded), `robots.txt`, RSS at `/rss.xml`
+**Deploy**: Actions > **BIZOMAT deploy (bizomat)** > Run workflow on `main`, `confirm` = `DEPLOY`. It:
 
-**Per article:** write a specific `title` (aim for 50–60 characters) and `description` (140–160), choose one category and 2–5 tags, add alt text to every image, and link to related articles.
+1. runs the **preflight** (`.github/scripts/fly-preflight.py`): reads the live Machines and compares them with
+   `fly.website.toml`. It stops, deploying nothing, when the deploy would add or remove a Machine or change its size,
+   memory or region. `allow_machine_change` = `YES` lets a deliberate change through;
+2. lists which optional secrets are set (names only);
+3. deploys: `flyctl deploy --config fly.website.toml --app bizomat --remote-only --ha=false --build-arg
+   BIZOMAT_VERSION=<commit>` (rolling, one Machine per group replaced in place);
+4. waits until `https://bizomat.fly.dev/__proxy/health` reports the new version;
+5. checks bizomat.ai: the website, `/api/chat`, `/cad/` (CAD over the private network), `/tasks/`.
 
-**After launch:**
+**Decision needed before the first deploy from `main`.** `fly.website.toml` on `main` has the `cad` process group
+(performance-1x, 2 GB, volume `cad_data`), added on 7 Nov 2026 for the plan to run CAD inside this app. Production
+does not run it. Deploying `main` as it is would create a fourth Machine and need a new volume, so **the preflight
+will stop the deploy**. Choose one:
 
-1. Google Search Console → add `https://kevos.com` → verify with a DNS TXT record (added in Cloudflare DNS).
-2. Submit `https://kevos.com/sitemap-index.xml`.
-3. Optional analytics: Cloudflare → **Analytics & Logs → Web Analytics → Add a site** → kevos.com, then enable automatic setup (cookieless; already allowed by the CSP).
+- keep the two-app setup (CAD stays in `cados`): remove the `cad` group, its `[[vm]]`, mount and check from
+  `fly.website.toml` in a pull request (and then `apps/cad`, its pin and the image's CAD stages), then deploy; or
+- run CAD inside `bizomat` after all: follow `infrastructure/migrate/cad/README.md` and deploy with
+  `allow_machine_change` = `YES`.
 
-## 14. Quality checks
+The workflow never creates an app, volume or IP address, never sets a secret, and never touches `cados`, DNS or
+Cloudflare. DNS for bizomat.ai is changed by hand only, in Cloudflare (`docs/BIZOMAT-DEPLOYMENT.md`).
 
-`npm run build` ends with `scripts/postbuild.mjs`, which fails the build if any page has:
+## 10. GitHub Actions
 
-- zero or several `<h1>`, a missing or duplicate title, or a missing description or canonical URL
-- a broken internal link, missing image, broken in-page anchor or `<img>` without `alt`
-- invalid JSON-LD or an inline `style` attribute (blocked by the CSP)
-- a draft or future-dated entry in the pages, RSS or sitemap
-- missing `sitemap-index.xml`, `rss.xml`, `robots.txt`, `404.html`, search index or assistant knowledge
+| Workflow | Starts on | Does |
+| --- | --- | --- |
+| `bizomat-ci.yml` BIZOMAT CI | push, pull request, by hand | Website, router, Project Management, infrastructure checks, image and local stack |
+| `bizomat-deploy.yml` BIZOMAT deploy (bizomat) | by hand only (`DEPLOY`) | Deploys `fly.website.toml` to the app `bizomat` (section 9) |
+| `bizomat-migrate-work.yml` | by hand only (`APPLY`) | The one-time move of Project Management's data from Cloudflare D1 (done 6 Nov 2026) |
+| `verify.yml` | push to `main`, pull request, by hand | Website checks |
+| `seo-validate.yml` | push to `main`, pull request, by hand | SEO checks; on a push to `main` it also submits the changed URLs to IndexNow |
+| `seo-daily.yml`, `seo-weekly.yml`, `seo-monthly.yml` | schedule, by hand | SEO data and reports (need the SEO secrets and variables in section 7) |
+| `live-check.yml` | by hand | Checks a public site |
 
-`npm test` runs 20 tests covering the contact endpoint (validation, honeypot, timing, origin, header injection, rate limiting, no-JS fallback), the assistant (grounding, retrieval, model fallback, limits, input cleaning) and the site worker (routing, caching and search-engine headers).
+GitHub Free gives private repositories a limited number of Actions minutes a month; when they run out every job fails
+at once with a billing message (seen on 7-8 Nov 2026 in the old repositories). Turn off the scheduled SEO jobs if
+the minutes are short: Actions > the workflow > Disable workflow.
+
+## 11. Recovery and maintenance
+
+- **A bad release:** `flyctl releases -a bizomat --image` lists the releases with their images. Redeploy the
+  previous one: `flyctl deploy --config fly.website.toml -a bizomat --image <registry.fly.io/bizomat:deployment-...>
+  --ha=false`.
+- **Project Management's data:** volume `work_data` on the `work` Machine, with Fly's daily snapshots. To restore:
+  `flyctl volumes snapshots list <volume-id> -a bizomat`, make a new volume from a snapshot, move the Machine onto it,
+  check it, then remove the old one. Step by step: [infrastructure/README.md](infrastructure/README.md) and
+  [docs/BIZOMAT-ROLLBACK.md](docs/BIZOMAT-ROLLBACK.md). Never delete a volume or snapshot during a recovery.
+- **Logs and state:** `flyctl status -a bizomat`, `flyctl logs -a bizomat`, `flyctl machines list -a bizomat`.
+- **Secrets:** rotate on Fly (`fly secrets set --stage -a bizomat NAME=...`, applied by the next deploy) and in
+  GitHub. A deploy token is per app: rotating `FLY_BIZOMAT_TOKEN` never affects `cados`.
+- **Dependencies:** review Dependabot pull requests; CI must pass before merging.
+- **Operations and status docs:** [docs/BIZOMAT-OPERATIONS.md](docs/BIZOMAT-OPERATIONS.md),
+  [docs/BIZOMAT-PROJECT-STATUS.md](docs/BIZOMAT-PROJECT-STATUS.md),
+  [docs/BIZOMAT-SECURITY.md](docs/BIZOMAT-SECURITY.md).
+
+## 12. Repository history
+
+This repository was created on 9 Nov 2026 from the source of the live `bizomat` app:
+
+- **`main` and every other branch and tag** are `jogkev-creator/gocore-website` exactly as it was on 9 Nov 2026 (the
+  repository name is historical): 52 branches, the tag `pre-b2b-redesign-2026-10-04`, the full history with the
+  same commit ids. `main` continues it with the move's own commits.
+- **`archive/bizomat-repo/*`**: the website part of `jogkev-creator/bizomat`, the 8-9 Nov 2026 single-app work that
+  was never deployed (every one of its deploy runs failed while GitHub Actions was blocked). Each commit keeps its
+  author, date and message, with an `Archived-From:` line naming the original commit; its CAD part is in the CAD
+  repository under the same branch names. `archive/bizomat-repo/claude/vigilant-johnson-g8ecmi` is the newest
+  (9 Nov 2026). Review before merging anything from it: it changes `fly.toml` and the deployment model.
+- The old repositories (`jogkev-creator/gocore-website`, `jogkev-creator/bizomat`, `jogkev-creator/CADOS`,
+  `jogkev-creator/PMO`) were not changed or deleted.
+
+## 13. Security rules
+
+- Never commit `.env` or `.dev.vars` files, Fly or Cloudflare tokens, database files or dumps, data exports, signing
+  keys or certificates with private keys, passwords, or personal data. `.gitignore` covers the usual names; check
+  `git diff --cached --stat` before every commit.
+- History was scanned with gitleaks on 9 Nov 2026: no secret. The findings it reports are test fixtures and public
+  identifiers by design (the Web3Forms form key, the hCaptcha site key, the IndexNow key), listed with reasons in
+  `.gitleaksignore`. Run `gitleaks git . --redact` before pushing anything unusual.
+- One migration (`apps/work/migrations/0004_founder_admin.sql`) names the founder's own business email to grant the
+  founder role; it is not a credential.
+- Report a security problem privately to the owner; never in a public place.

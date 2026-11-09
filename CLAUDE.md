@@ -30,7 +30,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 | Path | What |
 | --- | --- |
 | `/` | The website (Astro): `src/`, `public/`, `tests/`, `scripts/`; Node server in `src/node/` |
-| `apps/cad/` | CAD Automation (Python server, C# add-in and Companion, installer): an exact copy of one CADOS commit, pinned in `apps/cad-source.json` (`scripts/sync-cad.mjs check` proves it by git's tree hash; CI checks it against GitHub). Never edit it here: change CADOS, then `node scripts/sync-cad.mjs to <commit>` (or the laptop's `bizomat.ps1 sync cad`) in a pull request of its own |
+| `apps/cad/` | CAD Automation (Python server, C# add-in and Companion, installer): an exact copy of one CADOS commit, pinned in `apps/cad-source.json` (`scripts/sync-cad.mjs check` proves it by git's tree hash; CI runs it). Never edit it here: change kevinjogin/bizomat-cad, then `node scripts/sync-cad.mjs to <commit>` (or the laptop's `bizomat.ps1 sync cad`) in a pull request of its own |
 | `apps/work/` | Project Management (Hono Worker + React SPA, Node runtime, migrations, migration tooling); PMO history |
 | `shared/brand/` | Logo geometry, generated assets, tokens, components, fonts (`build.mjs` copies them into every product) |
 | `infrastructure/`, `fly.toml` | The single Fly.io app `bizomat`: proxy, Dockerfile, entrypoint, compose stack, smoke tests, migration scripts |
@@ -38,19 +38,29 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 
 ## Source of truth
 
-- **GitHub `jogkev-creator/gocore-website`, branch `main`** (the repository name is historical). Every repository is
+- **GitHub `kevinjogin/bizomat-site`, branch `main`** (since 9 Nov 2026; its history is `jogkev-creator/gocore-website`,
+  which is kept unchanged as an archive: never push there). Every repository is
   private (owner, 7 Nov 2026): nothing public may link to GitHub, the laptop works from its signed-in clones, and public
   files are published on bizomat.ai (`/downloads/`, the R2 bucket `bizomat-downloads`, `src/server/downloads.ts`). Before any work:
   `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
   Preserve uncommitted work on a backup branch before anything else.
-- `jogkev-creator/CADOS` is where CAD Automation is changed and tested (and its add-in and installer released); the
-  `cad` group of the Fly app `bizomat` is built from `apps/cad`, its exact copy. Until `bizomat.ps1 move cad` has run,
-  production CAD is still the Fly app `cados`, deployed from CADOS; do not change that deployment from here.
+- `kevinjogin/bizomat-cad` (formerly `jogkev-creator/CADOS`, same commits) is where CAD Automation is changed and
+  tested (and its add-in and installer released); the `cad` group of `fly.website.toml` would be built from
+  `apps/cad`, its exact copy. Production CAD is the Fly app `cados`, deployed from bizomat-cad; do not change that
+  deployment from here. How the two apps work together: `docs/SITE-CAD-INTEGRATION.md`.
   `jogkev-creator/PMO` is where Project Management came from.
 - Never merge older GoCore branches into `main`.
 
 ## Deployment
 
+- **Two repositories, two Fly apps (owner, 9 Nov 2026):** this repository deploys only the Fly app `bizomat`
+  (website, router, Project Management), with `fly.website.toml`, through `.github/workflows/bizomat-deploy.yml`: by
+  hand, `confirm` = `DEPLOY`, repository secret `FLY_BIZOMAT_TOKEN` (a deploy token for `bizomat` only). Its preflight
+  (`.github/scripts/fly-preflight.py`) stops any deploy that would add, remove or resize a Machine. Production runs
+  three Machines (proxy, web, work); the `cad` group in `fly.website.toml` is not running, so the preflight stops a
+  deploy of `main` until the owner decides (README.md, section 9). Never add a Machine, a process group or memory
+  without the owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
+  and Cloudflare describe earlier plans.
 - **CAD Automation into `bizomat` (6 Nov 2026):** `fly.website.toml` has the `cad` group (performance-1x, 2 GB, volume
   `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
   holding page instead) and needs no server password. The data moves with `bizomat.ps1 move cad`
@@ -59,7 +69,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `deploy website` refuses). Retiring `cados` (`retire cados`, `delete cados`) is irreversible: only with the owner's
   go-ahead. Steps: `infrastructure/migrate/cad/README.md`.
 - **Target:** one Fly.io app `bizomat` (Sydney) with process groups proxy, web, work and cad, deployed by
-  `.github/workflows/bizomat-deploy.yml` (manual) with an org-scoped `FLY_API_TOKEN`. See `docs/BIZOMAT-DEPLOYMENT.md`.
+  a deploy workflow with an org-scoped token (earlier plan; the workflow now deploys `fly.website.toml`, see above). See `docs/BIZOMAT-DEPLOYMENT.md`.
   DNS changes (bizomat.ai, www.bizomat.ai, kevos.com, cados.kevos.com, work.kevos.com) are made by hand only after the
   new app passes its smoke tests; never automate them from CI. Its proxy routes bizomat.ai by path as the Worker does
   (`infrastructure/proxy/routes.mjs`; `CAD_PATHS` is one list, checked equal by the proxy's tests): `/cad` to cad,

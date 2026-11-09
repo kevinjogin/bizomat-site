@@ -52,3 +52,14 @@ dist-server/
 .data/
 migration-report.json
 migration-report.md
+
+# Added 9 Nov 2026 (move to kevinjogin/bizomat-site). Never commit secrets:
+# signing certificates and private keys
+*.pfx
+*.p12
+*.pvk
+*.key
+*.pem
+id_rsa*
+# secret files on a role's volume, copied locally by mistake
+.secrets/
