@@ -178,6 +178,9 @@ Then a separate test drawing (`sw_drafting_build` with `overwrite=false`, into t
 
 ## 9. Next stage
 
+Phase 2.1 (`PHASE2_1_LIVE_VERIFICATION.md`) prepares and records the live run of section 8; it supersedes the
+procedure in section 1 where they differ.
+
 1. Run section 8 on the KEVOS computer, fix from the results, and record them here.
 2. Then make the machining drawing workflow reliable on real parts (shafts, blocks, plates) before extending
    fabrication.
