@@ -4,6 +4,10 @@ _8 Nov 2026. Repository `jogkev-creator/bizomat`, branch `claude/vigilant-johnso
 audit of CAD MCP before the drafting engine was added. Live facts were read from the owner's computer through the
 production connector with read-only tools only (sw_status, sw_get_document, sw_get_drawing, sw_body_topology)._
 
+_Phase 2 (9 Nov 2026) extended the add-in to 0.15 (model details, drawing annotations, callouts, tolerances and
+native symbols) and corrected this audit's material finding: see `PHASE2_EXECUTION.md`. This audit is kept as it was
+written; where it and phase 2 differ, phase 2 is current._
+
 ## 1. Where CAD MCP lives
 
 | Part | Path | Language | Role |

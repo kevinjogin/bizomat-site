@@ -85,18 +85,21 @@ presentation 15, document 5}, `release_blocked`, `release_blockers[]`, `counts`,
 | `sw_drafting_build` | plan_id, overwrite, correct_layout, export (pdf, dwg, dxf), device | makes a new drawing (create_drawing + edit_drawing); never the model |
 | `sw_drafting_check` | doc, plan_id, with_model, correct_layout, rounds (1..3), answers, device | with correct_layout: view moves only |
 | `sw_drafting_knowledge` | query, discipline, category, include_suggestions, limit | nothing (read-only) |
-| `sw_drafting_feedback` | kind, plan_id, drawing, target, before, after, comment, reviewer, retain, guideline | stores feedback or a guideline on the server |
+| `sw_drafting_feedback` | kind (also submit_for_review), plan_id, drawing, target, before, after, comment, reviewer, reviewer_name, expert_score, retain, guideline | stores feedback, a guideline or an expert review on the server |
 
 `answers` keys: material, general_tolerance, threads {hole id: spec}, fits {feature: fit}, surface_finish,
-edge_break, welds, finish, title_block {field: value}, notes [lines], approve_proposed_notes. Unknown keys and wrong
+surface_symbols {hole id: roughness}, edge_break, welds, finish, title_block {field: value}, notes [lines],
+approve_proposed_notes, apply_fits_to_model (a fit goes on the model's own dimension, which changes the part). Unknown keys and wrong
 types are refused before anything is sent. Every error result is `{"error": ...}` with `is_error`. The tools are in
 `catalog.GROUPS` ("Drafting intelligence") and in the server's instructions.
 
 Build sequence: create_drawing with the planned views, sheet, scale, the model's dimensions, notes and title block;
 read the drawing; move the base views into their projection positions (layout corrections); add the planned
 sections and details in free space beside the main view; insert the model's remaining dimensions (no duplicates),
-centre marks, a bill of materials with balloons for assemblies, arrange dimensions; correct the layout again (moves
-only); export if asked; check against the plan.
+centre marks, a bill of materials with balloons for assemblies, arrange dimensions; with an add-in of 0.15 or later,
+the planned hole callouts, the designer's fits and surface symbols and a weldment's cut list, one action at a time
+(reported as deferred with an older add-in); correct the layout again (view moves, then annotation text moves);
+export if asked; check against the plan. Phase 2 (`PHASE2_EXECUTION.md`) describes the 0.15 reads and actions.
 
 ## 6. Knowledge base
 
@@ -118,8 +121,12 @@ only); export if asked; check against the plan.
 - Never a tolerance, fit, thread, weld, material or finish chosen by the engine; unknowns show as TO BE CONFIRMED on
   a draft and as release blockers in the check.
 - Approval fields (CheckedBy, ApprovedBy) are never filled.
-- Layout corrections are view moves only; scales, dimensions and notes are not changed automatically.
-- The model is never changed by the drafting tools; the drawing is new unless the person asks to overwrite.
+- Layout corrections are view moves and annotation text moves only; scales, values, tolerances and notes are not
+  changed automatically.
+- The model is never changed by the drafting tools, except a fit the designer gave with apply_fits_to_model=true (a
+  model dimension's tolerance lives in the part); the drawing is new unless the person asks to overwrite.
+- A material is claimed missing only when SOLIDWORKS reports none assigned (add-in 0.15 details); never inferred
+  from mass.
 - Feedback and plans stay on the server, per account; examples are retained only when the person says so; nothing
   trains an external model.
 - `manufacturing_ready` is always false in a report; release is a person's decision.
@@ -131,10 +138,11 @@ only); export if asked; check against the plan.
 | Unit | `tests/test_drafting_engine.py`: knowledge integrity and retrieval, recognition on hand-made facts, classification, override, planning, answers, understanding (names, dimensions, mass), dimensioning (PCD offsets, repetition, callouts), standards, layout, QA blockers, learning store, fresh-process import | passes |
 | Benchmark | 12 synthetic models (stepped shaft, flanged shaft, bearing housing, machined block, multi-hole plate, bracket, welded frame, beam connection, sheet-metal enclosure, mechanical assembly, pipe spool, equipment assembly) | feature recall 1.00, discipline 1.00, main view 1.00, section decision 1.00 on this synthetic set; floors in the test: 0.95 / 0.9 / 0.9 / 0.9 |
 | MCP integration (simulated SOLIDWORKS) | `tests/test_drafting_tools.py`: analyse, plan, build, check, feedback, knowledge through the MCP server; input validation; per-account plans; catalog and schema | passes; the drawing commands are simulated |
-| Real SOLIDWORKS data, read-only | a real mould clamp plate and its existing drawing on the owner's computer (SOLIDWORKS 2022 SP5, add-in 0.13.0): feature tree and drawing read with the production tools, the body exported as STEP (SHA-256 checked), the engine run here on that data | recognition: 53 faces, 11 holes in 3 groups (counterbored clearance holes in a grid, a counterbored stepped bore, flat-bottomed blind holes at M6 tapping size on a pitch circle), thread and clearance intent inferred from sketch names at medium confidence, never confirmed; plan: A3 1:2, plan view + one edge view + section A-A through the counterbores and the bore, right view and isometric left out with reasons; check of the existing drawing: 68/100, 2 release blockers (general tolerance, threads), 3 major (no section through counterbores, material only in the title block, mass inconsistent with the material), 7 minor (redundant right view, pitch circle given as x/y offsets, per-hole repeated locations, empty DrawnBy and Date). Nothing in SOLIDWORKS was changed; the data stayed in the session |
+| Real SOLIDWORKS data, read-only | a real mould clamp plate and its existing drawing on the owner's computer (SOLIDWORKS 2022 SP5, add-in 0.13.0): feature tree and drawing read with the production tools, the body exported as STEP (SHA-256 checked), the engine run here on that data | recognition: 53 faces, 11 holes in 3 groups (counterbored clearance holes in a grid, a counterbored stepped bore, flat-bottomed blind holes at M6 tapping size on a pitch circle), thread and clearance intent inferred from sketch names at medium confidence, never confirmed; plan: A3 1:2, plan view + one edge view + section A-A through the counterbores and the bore, right view and isometric left out with reasons; check of the existing drawing: 68/100, 2 release blockers (general tolerance, threads), 3 major (no section through counterbores, material only in the title block, mass inconsistent with the material), 7 minor (redundant right view, pitch circle given as x/y offsets, per-hole repeated locations, empty DrawnBy and Date). Nothing in SOLIDWORKS was changed; the data stayed in the session. **Correction (9 Nov 2026):** "material only in the title block" was not supported by the data (the add-in leaves an empty material out of its read); the phase 2 engine reports the material and the mass as not verified and scores the drawing 80/100 (`PHASE2_EXECUTION.md`, section 2) |
 | Live SOLIDWORKS drawing creation by the new tools | the new tools are not deployed, so they have not run against SOLIDWORKS | not run |
 
-Live tests still to run once deployed (on the KEVOS computer, SOLIDWORKS 2022 SP5, add-in 0.10+):
+Live tests still to run (on the KEVOS computer, SOLIDWORKS 2022 SP5; for add-in 0.15 the checklist in
+`PHASE2_EXECUTION.md`, section 8, which runs against a local server and needs no deployment):
 1. sw_drafting_analyse on a part, an assembly, a weldment and a sheet-metal part.
 2. sw_drafting_build on a plate with counterbores: section A-A placed and readable; layout moves applied; PDF export.
 3. sw_drafting_build on a turned shaft: detail view of a groove at the planned scale.
@@ -144,8 +152,8 @@ Live tests still to run once deployed (on the KEVOS computer, SOLIDWORKS 2022 SP
 ## 9. Known limitations and pending capabilities
 
 Engineering and recognition:
-- Threads are never seen in STEP geometry; a Hole Wizard or cosmetic thread is detected by type, but the add-in does
-  not read its specification. Holes at tapping-drill size are hints, not threads.
+- Threads are never seen in STEP geometry. Add-in 0.15 reads Hole Wizard data and cosmetic threads (unverified in
+  SOLIDWORKS); without it, holes at tapping-drill size are hints, not threads.
 - Holes that break out through a face (partial cylinders) are not recognised as holes; slots need two half
   cylinders on parallel axes.
 - Weldment members are recognised from geometry (section class and size); the SOLIDWORKS weldment profile name,
@@ -153,15 +161,15 @@ Engineering and recognition:
 - Sheet-metal thickness and bends come from geometry; K-factor, bend allowance and the flat pattern are in
   SOLIDWORKS and not read.
 - Datums are candidates from geometry (largest face, outside faces); functional datums come from the designer.
-- Configurations and part custom properties are not reported by the add-in.
-- Mass from SOLIDWORKS looked 1000 times too small on the real part (no material assigned, or a units issue in
-  `Commands.cs`); the engine reports the inconsistency, the cause needs checking in SOLIDWORKS.
+- Configurations and part custom properties: read by add-in 0.15 only.
+- Mass on the real part: SOLIDWORKS computed a density of 1 kg/m3; the add-in's unit chain is consistent. The cause
+  (no material with that document density, an override, or a wrong material density) is read by add-in 0.15
+  (`PHASE2_EXECUTION.md`, section 2).
 
-Drawing API (needs add-in work and live SOLIDWORKS testing): hole callouts, new dimensions between picked entities,
-ordinate and baseline sets, hole tables, weld symbols, GD&T frames and datum symbols, surface texture symbols,
-revision tables, weldment cut-list tables, flat-pattern views, exploded views, break lines, annotation bounding boxes,
-reading notes back, dimension tolerances. Until then the engine plans them, lists them as deferred or proposed text,
-and uses the model's own associative dimensions.
+Drawing API: add-in 0.15 adds hole callouts, dimensions between picked entities, ordinate dimensions, hole tables,
+weld symbols, GD&T frames, datum symbols, surface texture symbols, revision tables, weldment cut-list tables,
+annotation boxes, notes read back and dimension tolerances; all compiled, none yet run in SOLIDWORKS. Still missing:
+baseline sets, flat-pattern views, exploded views, break lines, assembly-view selections.
 
 ## 10. Resources and cost
 
@@ -173,6 +181,8 @@ size.
 
 ## 11. Deployment and rollback
 
-Deployed with CAD MCP (the `cad` role of the image): no add-in or Companion update is needed (no new SOLIDWORKS API
-call). Rollback: deploy the previous image; the six tools disappear and the 31 existing tools are unchanged. The
+Deployed with CAD MCP (the `cad` role of the image). The phase 1 behaviour needs no add-in update; the phase 2
+reads and actions need the add-in 0.15, and the server checks the add-in's version before sending them, so a server
+with phase 2 works with older add-ins (those steps are reported as deferred). Rollback: deploy the previous image;
+the six tools disappear and the 31 existing tools are unchanged; a 0.15 add-in takes the same commands as before from an older server (the new keys are optional). The
 drafting SQLite files (`<data>/drafting/<account>/`) can stay; nothing else reads them.
