@@ -5,7 +5,9 @@
     .\bizomat-folder.ps1 -Fresh       The same, after emptying D:\BIZOMAT\from-KEVOS-SITE (the copies of an earlier run).
                                       Only while D:\KEVOS SITE is still whole.
     .\bizomat-folder.ps1 -DeleteOld   The same as the first, then moves D:\KEVOS SITE to the Recycle Bin, after you type
-                                      a phrase. Refused while the report lists a problem.
+                                      a phrase. Refused while the report lists a problem, and when its findings differ
+                                      from the report you last read (KEVOS-SITE-report.txt from the run before): then
+                                      it saves the new report and deletes nothing.
 
   D:\BIZOMAT
     BIZOMAT-SITE           kevinjogin/bizomat-site, on the branch of the one-Machine work (it includes #7)
@@ -42,9 +44,12 @@ $Keep = Join-Path $New 'from-KEVOS-SITE'
 $Backups = Join-Path $New 'backups'
 $ReportPath = Join-Path $New 'KEVOS-SITE-report.txt'
 $DeleteMarker = Join-Path $New '.kevos-site-delete-started'
+# the report the user last read: -DeleteOld deletes only when this run finds the same
+$Reviewed = @(if (Test-Path -LiteralPath $ReportPath) { Get-Content -LiteralPath $ReportPath -Encoding UTF8 })
 # Ignored folders that are packages or build output: made again by npm ci or a build, so not copied. Applied only to
 # what a folder's own .gitignore ignores: a folder with one of these names that Git tracks or would track is copied.
-$Rebuilt = '(^|/)(node_modules|dist|dist-server|\.astro|\.wrangler|\.cache|\.turbo|\.next|build|coverage|playwright-report|test-results|__pycache__|\.pytest_cache|\.venv|venv|bin|obj|pagefind|\.vs)(/|$)|\.pyc$'
+# .wrangler is kept: wrangler dev keeps its local databases there. The report lists, per clone, what is left out.
+$Rebuilt = '(^|/)(node_modules|dist|dist-server|\.astro|\.cache|\.turbo|\.next|build|coverage|playwright-report|test-results|__pycache__|\.pytest_cache|\.venv|venv|bin|obj|pagefind|\.vs)(/|$)|\.pyc$'
 # The two repositories GitHub holds today: a clone of one of them with nothing unpushed needs no copy of its history
 $Live = 'github\.com[:/]kevinjogin/(bizomat-site|bizomat-cad)(\.git)?/?$'
 $script:Copied = 0
@@ -213,6 +218,7 @@ if (-not (Test-Path -LiteralPath $Old)) {
                     $left = @($ignored | Where-Object { $_ -match $Rebuilt })
                     foreach ($f in $left) { $skip[(Key (Join-Path $c $f))] = $true }
                     if ($left.Count -gt 0) { Say "    left out (its own .gitignore ignores them: packages and build output): $(($left | Select-Object -First 12) -join ', ')$(if ($left.Count -gt 12) { ' ...' })" }
+                    else { Say '    left out: nothing' }
                 }
                 Copy-Folder $c (Join-Path $dest 'whole-folder') $skip
                 Say "    copied: the whole folder, its .git included, $($script:Copied - $before) file(s), to $(Rel $New (Join-Path $dest 'whole-folder'))"
@@ -250,6 +256,7 @@ if (-not (Test-Path -LiteralPath $Old)) {
             $own = { -not $script:CloneSet.ContainsKey((Key (Join-Path $c $_))) }
             $changed = @($changed | ForEach-Object { $_.TrimEnd('/') } | Sort-Object -Unique | Where-Object $own)
             $kept = @($ignored | Where-Object { $_ -notmatch $Rebuilt } | Where-Object $own)
+            $leftOut = @($ignored | Where-Object { $_ -match $Rebuilt } | Where-Object $own)
 
             Say "    GitHub: $(if ($remote) { $remote } else { 'none' }); branch: $(if ($branch) { $branch } else { '(none: detached)' })"
             Say "    not pushed: $($unpushed.Count) commit(s); stashes: $($stashes.Count); older commits on no branch: $undo; files that differ from the last commit: $($changed.Count); ignored files kept: $($kept.Count)"
@@ -297,6 +304,7 @@ if (-not (Test-Path -LiteralPath $Old)) {
             }
             if ($changed.Count -gt 0) { Say '    files that differ from the last commit (changed, staged or new):'; Names $changed | ForEach-Object { Say $_ } }
             if ($kept.Count -gt 0) { Say '    ignored files kept (not packages or build output):'; Names $kept 15 | ForEach-Object { Say $_ } }
+            if ($leftOut.Count -gt 0) { Say "    left out (ignored packages and build output, made again by npm ci or a build): $(($leftOut | Select-Object -First 12) -join ', ')$(if ($leftOut.Count -gt 12) { " and $($leftOut.Count - 12) more" })" }
             if ($script:Copied -gt $beforeFiles) { Say "    copied: $($script:Copied - $beforeFiles) file(s) to $(Rel $New $files)" }
             if ($missing.Count -gt 0) { Problem "$($missing.Count) file(s) of $rel that Git lists could not be read: $(($missing | Select-Object -First 10) -join ', ')" }
         }
@@ -344,11 +352,31 @@ if (-not $DeleteOld) {
 }
 if (-not (Test-Path -LiteralPath $Old)) { return }
 if ($Problems.Count -gt 0) { throw "The report lists $($Problems.Count) problem(s): they are looked at first. Nothing was deleted." }
+# Delete only what was reviewed: this run's findings (from the clone list on; the first lines carry the time and the
+# two repositories' state) must equal the report the user last read.
+function Findings($Lines) {
+    $out = New-Object System.Collections.Generic.List[string]
+    $on = $false
+    foreach ($l in @($Lines)) {
+        if (-not $on -and "$l" -like 'Git clones in *') { $on = $true }
+        if ($on) { $out.Add("$l".TrimEnd()) }
+    }
+    return ($out -join "`n").Trim()
+}
+$was = Findings $Reviewed
+$now = Findings $Report.ToArray()
+if (-not $was) { throw "There is no earlier report to compare with: run without -DeleteOld first and read $ReportPath. Nothing was deleted." }
+if ($was -ne $now) {
+    throw "This run found something different from the report you last read (files, clones or commits that are new or gone). The new report is in ${ReportPath}: read it, then run -DeleteOld again. Nothing was deleted."
+}
 $onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or $IsWindows
 if (-not $onWindows) { throw 'Moving a folder to the Recycle Bin works on Windows only. Nothing was deleted.' }
 $here = (Get-Location).ProviderPath.TrimEnd('\', '/')
 if (("$here\").StartsWith("$Old\", [StringComparison]::OrdinalIgnoreCase)) { throw "This window is inside ${Old}: run cd $New first, and close editors and terminals open there. Nothing was deleted." }
+$all = Get-ChildItem -LiteralPath $Old -Recurse -File -Force -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum
 Write-Host ''
+Write-Host ("{0} holds {1:N0} file(s), {2:N1} GB. Kept in {3}: {4:N0} file(s), {5:N1} GB, the same findings as the report you read." -f $Old, $all.Count, ($all.Sum / 1GB), $New, $script:Copied, ($script:CopiedBytes / 1GB))
+Write-Host 'The rest is on GitHub (kevinjogin), in the bundles (Git history), or packages and build output (the report''s "left out" lines).'
 Write-Host "Everything above is copied and checked. $Old goes to the Recycle Bin (restore it from there if needed;" -ForegroundColor Yellow
 Write-Host "if Windows says it is too big for the Recycle Bin, choose No to keep it)." -ForegroundColor Yellow
 $typed = Read-Host 'Type DELETE KEVOS SITE to continue (anything else stops)'
