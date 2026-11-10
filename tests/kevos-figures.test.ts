@@ -31,13 +31,23 @@ test('every figure type renders accessible, CSP-safe markup', () => {
   assert.deepEqual(Object.keys(sample).sort(), [...FIGURE_TYPES].sort());
   for (const [type, src] of Object.entries(sample)) {
     const html = renderFigure(parseFigure(`type: ${type}\n${src}`), `kfx-${type}`, 1);
-    assert.match(html, /^<figure class="kf kf-/, type);
+    assert.match(html, new RegExp(`^<figure class="kf kf-type-${type}"`), type);
     assert.match(html, /aria-labelledby="kfx-[a-z]+-t"/, `${type} is labelled`);
     assert.doesNotMatch(html, /\sstyle=/, `${type} has no inline style`);
     assert.doesNotMatch(html, /NaN|undefined|Infinity/, `${type} has no bad values`);
     for (const svg of html.match(/<svg\b[^>]*>/g) ?? []) assert.match(svg, /viewBox=/, `${type} svg has a viewBox`);
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
     assert.equal(new Set(ids).size, ids.length, `${type} ids are unique`);
+  }
+});
+
+test("a figure's own classes are never a layout class of figure content", () => {
+  // A figure classed "kf-matrix" took the matrix's two-column grid itself: head on the left, cells squeezed right.
+  const rendered = Object.entries(sample).map(([type, src]) => renderFigure(parseFigure(`type: ${type}\n${src}`), `kfc-${type}`, 1));
+  const inner = new Set(rendered.flatMap((html) => [...html.replace(/^<figure\b[^>]*>/, '').matchAll(/\sclass="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/))));
+  for (const html of rendered) {
+    const own = /^<figure class="([^"]+)"/.exec(html)![1].split(/\s+/);
+    for (const c of own) assert.ok(!inner.has(c), `figure class "${c}" is also used inside figures`);
   }
 });
 

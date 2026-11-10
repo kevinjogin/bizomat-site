@@ -306,5 +306,7 @@ export function renderFigure(spec: FigureSpec, id: string, n: number): string {
     list: (k) => spec.props[k] ?? [],
   };
   const caption = spec.props.caption?.[0];
-  return `<figure class="kf kf-${spec.type}" aria-labelledby="${id}-t"${caption ? ` aria-describedby="${id}-c"` : ''} data-pagefind-ignore><div class="kf-head"><span class="kf-num">Figure ${n}</span><span class="kf-title" id="${id}-t">${txt(title)}</span></div><div class="kf-body">${render(ctx)}</div>${caption ? `<figcaption class="kf-cap" id="${id}-c">${txt(caption)}</figcaption>` : ''}</figure>`;
+  // The figure's type class has its own prefix: a bare "kf-<type>" would be the class of the layout inside the
+  // body (.kf-matrix, .kf-stats, .kf-cycle...) and would lay out the figure itself, head beside body.
+  return `<figure class="kf kf-type-${spec.type}" aria-labelledby="${id}-t"${caption ? ` aria-describedby="${id}-c"` : ''} data-pagefind-ignore><div class="kf-head"><span class="kf-num">Figure ${n}</span><span class="kf-title" id="${id}-t">${txt(title)}</span></div><div class="kf-body">${render(ctx)}</div>${caption ? `<figcaption class="kf-cap" id="${id}-c">${txt(caption)}</figcaption>` : ''}</figure>`;
 }

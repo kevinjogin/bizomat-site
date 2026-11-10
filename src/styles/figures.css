@@ -1,6 +1,7 @@
 /* BIZOMAT READOS figures: styles for the HTML and SVG produced by src/utils/kevos-figures.ts.
    Colours come only from the design tokens, so every figure follows the light and dark themes.
-   Motion runs only when the visitor allows it; without JavaScript every figure is fully visible. */
+   Motion runs only when the visitor allows it; without JavaScript every figure is fully visible.
+   The figure is .kf.kf-type-<type>; layout classes such as .kf-matrix belong to the content inside .kf-body. */
 
 .kf {
   --kf-hot: var(--accent);
