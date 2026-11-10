@@ -14,7 +14,7 @@ tmp="$(mktemp -d)"
 # whose files the entrypoint rightly refuses as secrets, and who cannot look inside the role's 0700 folders.
 as_root() { docker run --rm --network none -v "$tmp:/t" --entrypoint /bin/sh "$IMAGE" -c "$1"; }
 rstat() { as_root "stat -c '$1' '/t/${2#"$tmp"/}'"; }
-trap 'docker rm -f bz-ep-maint bz-ep-hold bz-ep-cadmaint >/dev/null 2>&1 || true; as_root "rm -rf /t/*" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
+trap 'docker rm -f bz-ep-maint bz-ep-hold bz-ep-cadmaint bz-ep-all bz-ep-all-dies bz-ep-all-maint >/dev/null 2>&1 || true; as_root "rm -rf /t/*" >/dev/null 2>&1 || true; rm -rf "$tmp"' EXIT
 passed=0
 ok() {
   passed=$((passed + 1))
@@ -199,5 +199,141 @@ wait_log bz-ep-cadmaint "answering on port 8001" || bad "cad maintenance: no hol
 [[ "$(hold_get bz-ep-cadmaint /cad/login)" == "503 30 "* ]] || bad "cad maintenance must answer 503"
 docker rm -f bz-ep-cadmaint >/dev/null
 ok "cad maintenance mode: the holding page, the CAD server not started"
+
+# ------------------------------------------------------------------------------------------------ all
+# fly.website.toml's one Machine: `bizomat-entrypoint all` on the work group's Machine runs the real proxy, website and
+# Project Management together on the volume.
+in_get() { # container port path [Host]: "<status> <body>" of a GET from inside the container (redirects not followed)
+  docker exec -e LD_PRELOAD= "$1" python3 -c 'import sys, urllib.request, urllib.error
+class Keep(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *a, **k): return None
+h = {"Host": sys.argv[3]} if sys.argv[3] else {}
+try:
+    r = urllib.request.build_opener(Keep).open(urllib.request.Request("http://127.0.0.1:" + sys.argv[1] + sys.argv[2], headers=h), timeout=5)
+except urllib.error.HTTPError as e:
+    r = e
+except Exception as e:
+    print(0, type(e).__name__)
+    sys.exit(0)
+print(r.status, r.read().decode(errors="replace")[:4000])' "$2" "$3" "${4:-}"
+}
+# the proxy reports web and work healthy (cad is the cados app, out of reach here)
+all_ready() {
+  local r
+  for _ in $(seq 1 60); do
+    r="$(in_get "$1" 8080 /__proxy/ready 2>/dev/null || true)"
+    if python3 -c 'import json, sys; u = json.loads(sys.argv[1].split(" ", 1)[1])["upstreams"]; sys.exit(0 if u["web"]["ok"] and u["work"]["ok"] else 1)' "$r" 2>/dev/null; then return 0; fi
+    sleep 1
+  done
+  return 1
+}
+proc_env() { # container uid script: UID=<uid> then the environment of the node process running that script, read as
+  # the service's own user (only it, or root with CAP_SYS_PTRACE, may read it)
+  docker exec -e LD_PRELOAD= -u "$2" "$1" python3 -c 'import os, sys
+for p in sorted(x for x in os.listdir("/proc") if x.isdigit()):
+    try:
+        cmd = open(f"/proc/{p}/cmdline", "rb").read().split(b"\0")
+    except OSError:
+        continue
+    if len(cmd) > 1 and cmd[0].endswith(b"/node") and cmd[1].decode() == sys.argv[1]:
+        st = open(f"/proc/{p}/status").read()
+        print("UID=" + [l.split()[1] for l in st.splitlines() if l.startswith("Uid:")][0])
+        print(open(f"/proc/{p}/environ", "rb").read().replace(b"\0", b"\n").decode())
+        break' "$3"
+}
+in_env() { grep -qx -- "$2" <<<"$1"; }
+has_name() { grep -q -- "^$2=" <<<"$1"; }
+
+# refusals: all only on the work group's Machine, and the roles it starts never run alone on it
+if docker run --rm -e FLY_PROCESS_GROUP=web "$IMAGE" /usr/local/bin/bizomat-entrypoint all 2>"$tmp/e" >/dev/null; then bad "all accepted on a web Machine"; fi
+grep -q "process group 'web' but was asked to run 'all'" "$tmp/e" || bad "all on another group: message"
+if docker run --rm -e FLY_PROCESS_GROUP=work "$IMAGE" /usr/local/bin/bizomat-entrypoint proxy 2>"$tmp/e" >/dev/null; then bad "proxy accepted on the work Machine without all"; fi
+if docker run --rm -e FLY_PROCESS_GROUP=work -e BIZOMAT_UNDER_ALL=1 "$IMAGE" /usr/local/bin/bizomat-entrypoint cad 2>"$tmp/e" >/dev/null; then bad "cad accepted under all"; fi
+ok "all: only on the work group's Machine; proxy, web and cad never run there on their own"
+
+# without the volume, work refuses to start, and all stops the rest and exits non-zero (Fly restarts the Machine)
+set +e
+timeout 60 docker run --rm --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=work -e PROXY_SHUTDOWN_GRACE_MS=500 \
+  "$IMAGE" /usr/local/bin/bizomat-entrypoint all >/dev/null 2>"$tmp/e"
+rc=$?
+set -e
+[ "$rc" != 0 ] && [ "$rc" != 124 ] || bad "all without the volume must exit non-zero by itself (got $rc)"
+grep -q "not a mounted volume" "$tmp/e" || bad "all without the volume: work's message"
+grep -q "all: work exited with status 1" "$tmp/e" || bad "all without the volume: which service stopped"
+ok "all: work without its volume stops the Machine (exit $rc)"
+
+# the three services, each as its own user with its own settings; the proxy on 127.0.0.1 for web and work
+mkdir -p "$tmp/allvol"
+docker run -d --name bz-ep-all --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=work -e PROXY_SHUTDOWN_GRACE_MS=1000 \
+  -v "$tmp/allvol:/data" "$IMAGE" /usr/local/bin/bizomat-entrypoint all >/dev/null
+all_ready bz-ep-all || bad "all: the proxy does not see web and work ($(docker logs bz-ep-all 2>&1 | tail -5))"
+p="$(proc_env bz-ep-all 10001 /app/proxy/server.mjs)"
+w="$(proc_env bz-ep-all 10002 /app/web/dist-server/server.mjs)"
+k="$(proc_env bz-ep-all 10003 /app/work/dist/node/server.mjs)"
+in_env "$p" UID=10001 || bad "all: proxy must run as bzproxy"
+in_env "$w" UID=10002 || bad "all: web must run as bzweb"
+in_env "$k" UID=10003 || bad "all: work must run as bzwork"
+in_env "$p" UPSTREAM_WEB=http://127.0.0.1:8003 || bad "all: the proxy must reach web on 127.0.0.1"
+in_env "$p" UPSTREAM_WORK=http://127.0.0.1:8002 || bad "all: the proxy must reach work on 127.0.0.1"
+in_env "$p" UPSTREAM_CAD=http://cad:8001 || bad "all: UPSTREAM_CAD comes from the configuration"
+for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CF_AI_TOKEN GOOGLE_CLIENT_SECRET LD_PRELOAD NODE_OPTIONS BIZOMAT_UNDER_ALL; do
+  if has_name "$p" "$n"; then bad "all: proxy holds $n"; fi
+done
+in_env "$w" CF_AI_TOKEN=throwaway-web-token || bad "all: web settings"
+for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET UPSTREAM_CAD UPSTREAM_WEB LD_PRELOAD NODE_OPTIONS BIZOMAT_UNDER_ALL; do
+  if has_name "$w" "$n"; then bad "all: web holds $n"; fi
+done
+in_env "$k" GOOGLE_CLIENT_SECRET=throwaway-work-secret || bad "all: work must have its own Google client"
+in_env "$k" WORK_DATA_DIR=/data/work || bad "all: work's data directory"
+for n in OPENSKETCH_KEY_SECRET CAD_GOOGLE_CLIENT_SECRET CF_AI_TOKEN UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS BIZOMAT_UNDER_ALL; do
+  if has_name "$k" "$n"; then bad "all: work holds $n"; fi
+done
+[ "$(rstat %u "$tmp/allvol/work")" = 10003 ] || bad "all: /data/work given to bzwork"
+ok "all: proxy, web and work each as its own user with only its own settings; the proxy reaches the others on 127.0.0.1"
+
+[[ "$(in_get bz-ep-all 8080 /tasks/api/health bizomat.ai)" == "200 "* ]] || bad "all: bizomat.ai/tasks/api/health through the proxy"
+[[ "$(in_get bz-ep-all 8080 / bizomat.ai)" == "200 "*BIZOMAT* ]] || bad "all: the website through the proxy"
+[[ "$(in_get bz-ep-all 8003 /healthz)" == "200 "* ]] && [[ "$(in_get bz-ep-all 8002 /api/health)" == "200 "* ]] || bad "all: the health checks on 8003 and 8002"
+ok "all: bizomat.ai and bizomat.ai/tasks through the proxy; each health endpoint answers"
+
+# SIGTERM (fly machine stop, a deploy): the proxy stops first, then web and work; exit 0
+started=$SECONDS
+docker kill -s TERM bz-ep-all >/dev/null
+rc="$(timeout 40 docker wait bz-ep-all || echo timeout)"
+[ "$rc" = 0 ] || bad "all: SIGTERM must end with exit 0 (got $rc)"
+[ $((SECONDS - started)) -lt 30 ] || bad "all: SIGTERM took $((SECONDS - started)) s"
+docker logs bz-ep-all >"$tmp/all.log" 2>&1
+grep -q "all: SIGTERM received" "$tmp/all.log" || bad "all: SIGTERM message"
+grep -q "all: stopped" "$tmp/all.log" || bad "all: stopped message"
+a="$(grep -n '"msg":"stopped"' "$tmp/all.log" | head -1 | cut -d: -f1)"
+b="$(grep -n '"event":"shutdown"' "$tmp/all.log" | head -1 | cut -d: -f1)"
+[ -n "$a" ] && [ -n "$b" ] && [ "$a" -lt "$b" ] || bad "all: the proxy must stop before work (proxy line ${a:-none}, work line ${b:-none})"
+if grep -q "still running: killed" "$tmp/all.log"; then bad "all: a service had to be killed"; fi
+docker rm -f bz-ep-all >/dev/null
+ok "all: SIGTERM stops the proxy, then web and work, and exits 0 ($((SECONDS - started)) s)"
+
+# a service that dies takes the others down, and all exits with its status (Fly restarts the Machine)
+docker run -d --name bz-ep-all-dies --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=work -e PROXY_SHUTDOWN_GRACE_MS=1000 \
+  -v "$tmp/allvol:/data" "$IMAGE" /usr/local/bin/bizomat-entrypoint all >/dev/null
+all_ready bz-ep-all-dies || bad "all: second start"
+docker exec -e LD_PRELOAD= bz-ep-all-dies sh -c 'for p in /proc/[0-9]*; do case "$(tr "\0" " " <$p/cmdline 2>/dev/null)" in "/usr/local/bin/node /app/web/dist-server/server.mjs"*) kill -KILL "${p#/proc/}";; esac; done'
+rc="$(timeout 40 docker wait bz-ep-all-dies || echo timeout)"
+[ "$rc" = 137 ] || bad "all: after web was killed, exit with its status 137 (got $rc)"
+grep -q "all: web exited with status 137" <<<"$(docker logs bz-ep-all-dies 2>&1)" || bad "all: which service died"
+docker rm -f bz-ep-all-dies >/dev/null
+ok "all: a service that dies stops the others; exit with its status"
+
+# maintenance mode: work is not started, the Machine stays up, the website answers and /tasks is 502
+mkdir -p "$tmp/allmaint"
+touch "$tmp/allmaint/.bizomat-maintenance"
+docker run -d --name bz-ep-all-maint --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=work -e PROXY_SHUTDOWN_GRACE_MS=1000 \
+  -v "$tmp/allmaint:/data" "$IMAGE" /usr/local/bin/bizomat-entrypoint all >/dev/null
+for _ in $(seq 1 60); do [[ "$(in_get bz-ep-all-maint 8080 / bizomat.ai 2>/dev/null)" == "200 "* ]] && break; sleep 1; done
+[[ "$(in_get bz-ep-all-maint 8080 / bizomat.ai)" == "200 "* ]] || bad "all in maintenance: the website must answer"
+[[ "$(in_get bz-ep-all-maint 8080 /tasks/api/health bizomat.ai)" == "502 "* ]] || bad "all in maintenance: /tasks must be 502"
+grep -q "maintenance mode" <<<"$(docker logs bz-ep-all-maint 2>&1)" || bad "all in maintenance: message"
+[ "$(docker inspect -f '{{.State.Running}}' bz-ep-all-maint)" = true ] || bad "all in maintenance: stopped"
+docker rm -f bz-ep-all-maint >/dev/null
+ok "all in maintenance mode: work not started, the website up, /tasks 502"
 
 echo "entrypoint: all $passed checks passed"

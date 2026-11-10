@@ -1,7 +1,8 @@
 #!/bin/bash
-# BIZOMAT platform entrypoint: bizomat-entrypoint <proxy|web|work|cad>
+# BIZOMAT platform entrypoint: bizomat-entrypoint <proxy|web|work|cad|all>
 #
 # One image runs four roles; each Fly process group starts it with its role (fly.toml [processes]).
+# `all` runs proxy, web and work together on one Machine, each exactly as its own role starts (see "all" below).
 # It runs as root only long enough to:
 #   1. for work and cad: check that the role's volume is mounted at /data (else refuse to start: the data would
 #      be lost when the Machine is replaced; BIZOMAT_ALLOW_EPHEMERAL=1 allows a throwaway run), and give the
@@ -37,7 +38,22 @@
 #              SESSION_TTL_HOURS <- WORK_SESSION_TTL_HOURS, CANONICAL_URL <- WORK_CANONICAL_URL,
 #              GOOGLE_CLIENT_ID <- WORK_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- WORK_GOOGLE_CLIENT_SECRET
 #   cad        OPENSKETCH_* ; GOOGLE_CLIENT_ID <- CAD_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- CAD_GOOGLE_CLIENT_SECRET
+#   all        nothing of its own: proxy, web and work each get their settings as above, except that the proxy's
+#              UPSTREAM_WEB and UPSTREAM_WORK are always http://127.0.0.1:8003 and http://127.0.0.1:8002
 # The prefixed names keep the work and cad Google sign-in clients apart (both apps read GOOGLE_CLIENT_ID).
+#
+# all: one Machine for the platform (fly.website.toml since 10 Nov 2026, to cut cost: the work group's Machine, which
+# holds the volume work_data, runs `bizomat-entrypoint all`). This script then stays as a small supervisor, as root,
+# and starts this same script once per role (work, web, proxy), so each service keeps everything above: its clean
+# environment, its own unprivileged user with no capabilities, and for work the volume check, secret files and
+# maintenance mode (work then sleeps; the proxy answers 502 for /tasks and the website stays up). Like Fly's init, the
+# supervisor holds the Machine's environment; the services, as other users, cannot read it.
+#   - SIGTERM or SIGINT: SIGTERM to the proxy first, which stops taking requests and lets open ones finish
+#     (PROXY_SHUTDOWN_GRACE_MS, 10 s; the supervisor waits 2 s more); then to web and work, which get 12 s; whatever
+#     still runs is then killed; exit 0. fly.website.toml's kill_timeout (30 s) covers both waits. A second signal is
+#     passed on to every service still running at once.
+#   - a service exits: the others are stopped the same way and the supervisor exits non-zero (the service's status,
+#     or 1), so Fly restarts the whole Machine ([[restart]] policy always) instead of leaving the platform half up.
 # Fixed by this script (not overridable): PORT, HOST, the data and static directories, *_TRUST_PROXY, PATH,
 # HOME, LANG, NODE_ENV.
 set -euo pipefail
@@ -56,12 +72,13 @@ usage: bizomat-entrypoint <role>
   web     the website (port 8003)
   work    BIZOMAT Project Management (port 8002, volume /data/work)
   cad     CAD Automation (port 8001, volume /data/cad)
+  all     proxy, web and work together on this Machine (the work group's, with its volume)
 EOF
 }
 
 ROLE="${1:-}"
 case "$ROLE" in
-  proxy | web | work | cad) ;;
+  proxy | web | work | cad | all) ;;
   help | -h | --help | "")
     usage
     exit 64
@@ -74,9 +91,118 @@ esac
 
 [ "$(id -u)" = 0 ] || die "start this as root: it gives the $ROLE service its own unprivileged user"
 
-# A Machine of one process group must never run another group's service (and get its volume or settings).
+# A Machine of one process group must never run another group's service (and get its volume or settings). The one
+# exception is `all`, on the Machine of a group in ALL_GROUPS: work, the group that holds the volume work_data. The
+# supervisor marks the roles it starts there with BIZOMAT_UNDER_ALL=1 (never passed on to a service).
+ALL_GROUPS=(work)
+in_all_group() {
+  local g
+  for g in "${ALL_GROUPS[@]}"; do [ "$1" = "$g" ] && return 0; done
+  return 1
+}
 if [ -n "${FLY_PROCESS_GROUP:-}" ] && [ "$FLY_PROCESS_GROUP" != "$ROLE" ]; then
-  die "this Machine is in process group '$FLY_PROCESS_GROUP' but was asked to run '$ROLE'"
+  if [ "$ROLE" = all ] && in_all_group "$FLY_PROCESS_GROUP"; then
+    :
+  elif [ "${BIZOMAT_UNDER_ALL:-}" = 1 ] && in_all_group "$FLY_PROCESS_GROUP" && [[ $ROLE =~ ^(proxy|web|work)$ ]]; then
+    :
+  else
+    die "this Machine is in process group '$FLY_PROCESS_GROUP' but was asked to run '$ROLE'"
+  fi
+fi
+
+# ----------------------------------------------------------------------------------------------- all
+
+run_all() {
+  local self pid status grace_ms proxy_wait=12 rest_wait=12
+  self="$(readlink -f "${BASH_SOURCE[0]}")"
+  grace_ms="${PROXY_SHUTDOWN_GRACE_MS:-10000}"
+  if [[ $grace_ms =~ ^[0-9]{1,7}$ ]]; then proxy_wait=$(((10#$grace_ms + 999) / 1000 + 2)); fi
+  declare -gA ALL_PIDS=() # pid -> role, of the services still running
+  ALL_STOPPING=""
+
+  all_alive() { [ -r "/proc/$1/status" ] && ! grep -q '^State:[[:space:]]*Z' "/proc/$1/status" 2>/dev/null; }
+  all_signal() { # signal role...: send the signal to those roles' services
+    local sig="$1" p r
+    shift
+    for p in "${!ALL_PIDS[@]}"; do
+      for r in "$@"; do
+        if [ "${ALL_PIDS[$p]}" = "$r" ]; then kill "-$sig" "$p" 2>/dev/null || true; fi
+      done
+    done
+  }
+  all_wait() { # seconds role...: wait until those roles' services have exited, at most that long
+    local limit=$(($1 * 10)) i p r busy
+    shift
+    for ((i = 0; i < limit; i++)); do
+      busy=""
+      for p in "${!ALL_PIDS[@]}"; do
+        for r in "$@"; do
+          if [ "${ALL_PIDS[$p]}" = "$r" ] && all_alive "$p"; then busy=1; fi
+        done
+      done
+      [ -n "$busy" ] || return 0
+      sleep 0.1
+    done
+  }
+  all_stop() {
+    say "all: stopping the proxy (waiting up to ${proxy_wait} s for its open requests), then web and work (up to ${rest_wait} s)"
+    all_signal TERM proxy
+    all_wait "$proxy_wait" proxy
+    all_signal TERM web work
+    all_wait "$rest_wait" proxy web work
+    local p
+    for p in "${!ALL_PIDS[@]}"; do
+      if all_alive "$p"; then
+        say "all: ${ALL_PIDS[$p]} still running: killed"
+        kill -KILL "$p" 2>/dev/null || true
+      fi
+    done
+    wait 2>/dev/null || true
+  }
+  all_on_signal() {
+    if [ -n "$ALL_STOPPING" ]; then
+      say "all: second $1: passing SIGTERM to every service still running"
+      all_signal TERM proxy web work
+    fi
+    ALL_STOPPING="$1"
+  }
+  all_start() { # role [NAME=value...]: start that role as this script would on its own Machine
+    local role="$1"
+    shift
+    env "$@" BIZOMAT_UNDER_ALL=1 /bin/bash "$self" "$role" &
+    ALL_PIDS[$!]="$role"
+  }
+
+  trap 'all_on_signal SIGTERM' TERM
+  trap 'all_on_signal SIGINT' INT
+  say "all: starting work, web and proxy on this Machine; the proxy reaches web and work on 127.0.0.1"
+  all_start work
+  all_start web
+  all_start proxy UPSTREAM_WEB=http://127.0.0.1:8003 UPSTREAM_WORK=http://127.0.0.1:8002
+
+  while :; do
+    pid=""
+    status=0
+    wait -n -p pid "${!ALL_PIDS[@]}" || status=$?
+    if [ -n "$ALL_STOPPING" ]; then
+      say "all: $ALL_STOPPING received"
+      all_stop
+      say "all: stopped"
+      exit 0
+    fi
+    if [ -n "${pid:-}" ]; then
+      say "all: ${ALL_PIDS[$pid]} exited with status $status; stopping the others so that Fly restarts this Machine"
+      unset "ALL_PIDS[$pid]"
+      all_stop
+      [ "$status" != 0 ] || status=1
+      exit "$status"
+    fi
+  done
+}
+
+if [ "$ROLE" = all ]; then
+  [ "${BIZOMAT_UNDER_ALL:-}" != 1 ] || die "all cannot start all"
+  run_all
 fi
 
 DATA=/data

@@ -152,7 +152,7 @@ jobs:
           node --check infrastructure/migrate/test/cad-move/fake-fly.mjs
           python3 -m py_compile infrastructure/migrate/test/cad-move/cad-standin.py
       - name: Shell scripts (shellcheck)
-        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/migrate/test/cad-move/*.sh infrastructure/local/*.sh
+        run: shellcheck infrastructure/fly/entrypoint.sh infrastructure/fly/memory.sh infrastructure/fly/test/*.sh infrastructure/migrate/*.sh infrastructure/migrate/*/*.sh infrastructure/migrate/test/cad-move/*.sh infrastructure/local/*.sh
       # The whole CAD Automation move (bizomat.ps1 move cad) against a stand-in flyctl: each Machine in its own
       # namespaces with its own /data and /tmp, the real entrypoint, holding page, export, import and router; the way
       # back, a failure in the middle, the fallback ways of carrying the copy, the retirement. Root for the namespaces.
@@ -160,6 +160,8 @@ jobs:
         run: sudo env "PATH=$PATH" bash infrastructure/migrate/test/cad-move/rehearse.sh
       - name: fly.toml and fly.website.toml (groups, the one public service, a volume each for work and cad, the CAD route)
         run: python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml
+      - name: The deploy preflight (Machine changes, --process-groups, the public service)
+        run: python3 .github/scripts/test-fly-preflight.py
       # apps/cad's tree hash must equal the pinned tree. The pinned commit's own tree can only be checked against the
       # private repository kevinjogin/bizomat-cad with a token that can read it (--github), so CI checks the tree here.
       - name: apps/cad is exactly the pinned CAD commit (apps/cad-source.json)
@@ -190,7 +192,7 @@ jobs:
         run: docker build -f infrastructure/fly/Dockerfile -t "$BIZOMAT_IMAGE" --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}" .
       - name: Image size
         run: docker image ls "$BIZOMAT_IMAGE" --format '{{.Repository}}:{{.Tag}} {{.Size}}' | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Entrypoint (secret isolation per role, volumes, secret files, maintenance mode, refusals)
+      - name: Entrypoint (secret isolation per role, volumes, secret files, maintenance mode, refusals, the one-Machine all mode)
         run: bash infrastructure/fly/test/entrypoint.test.sh "$BIZOMAT_IMAGE"
       - name: Migration round trip in the image (export, restore, verify)
         run: docker run --rm --network none -v "$PWD/infrastructure/migrate/test:/t:ro" "$BIZOMAT_IMAGE" bash /t/roundtrip.sh

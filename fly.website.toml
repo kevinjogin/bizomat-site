@@ -1,11 +1,16 @@
 # BIZOMAT on Fly.io: the website, the router behind bizomat.ai and Project Management, in the Fly app `bizomat` (syd).
 # CAD Automation is its own Fly app, `cados` (repository kevinjogin/bizomat-cad), reached over Fly's private network.
 #
-# This file matches the Machines production runs, as read with `fly scale show -a bizomat` and `fly volumes list -a
-# bizomat` on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web shared-cpu-1x 512 MB, work
-# shared-cpu-1x 512 MB) and the volume work_data (3 GB) on work. The `cad` group of the earlier plan (CAD inside this
-# app, infrastructure/migrate/cad/README.md) never ran in production and was removed from this file on 9 Nov 2026;
-# fly.toml still describes that plan and is not deployed.
+# One Machine (owner, 10 Nov 2026, to cut cost): the Machine of the group `work`, which holds the volume work_data,
+# runs the router, the website and Project Management together (`bizomat-entrypoint all`: each service as its own user
+# with its own settings; infrastructure/fly/entrypoint.sh). The group keeps the name work so that the Machine and its
+# volume stay where they are. shared-cpu-1x with 1 GB to start; measured needs and the step down to 768 or 512 MB:
+# docs/BIZOMAT-DEPLOYMENT.md, section 6e. Until that section's cutover has run, production still has the three
+# Machines of 9 Nov 2026 (proxy 256 MB, web 512 MB, work 512 MB, all shared-cpu-1x in syd): deploy nothing else from
+# this file before it (`bizomat.ps1 deploy website` runs no preflight, and flyctl would destroy proxy and web before
+# work takes over). The three-Machine file, for the way back: `git show 738e48b:fly.website.toml`.
+# The `cad` group of the earlier plan (CAD inside this app) never ran and is not here; fly.toml still describes that
+# plan and is not deployed.
 #
 #   bizomat.ai/...       -> web    the BIZOMAT website (this app)
 #   bizomat.ai/cad/...   -> the Fly app `cados` at http://cados.internal:8080 (UPSTREAM_CAD below), with CAD's root
@@ -15,36 +20,40 @@
 #   bizomat.ai/login     -> 301    /sign-in/, the website's page that offers each application's sign-in
 #   bizomat.fly.dev/...  -> 301    the same path on bizomat.ai (the app's own address is not a second address of the
 #                                  platform; /__proxy/health and /__proxy/ready stay, for checks)
+#   (the router, web and work are processes of the one Machine; the router reaches the other two on 127.0.0.1)
 #
 # Deployed only by hand from GitHub Actions (.github/workflows/bizomat-deploy.yml), which runs
 #   flyctl deploy --config fly.website.toml --app bizomat --remote-only --ha=false --build-arg BIZOMAT_VERSION=<commit>
 # after its preflight (.github/scripts/fly-preflight.py) has checked that the deploy keeps these Machines as they are.
-# --ha=false keeps one Machine per group: work must never have two (each would get its own empty volume).
+# --ha=false keeps one Machine: work must never have two (each would get its own empty volume).
 
 app = "bizomat"
 primary_region = "syd"
 kill_signal = "SIGTERM"
-kill_timeout = 15
+# all stops the router first (its open requests get 10 s, PROXY_SHUTDOWN_GRACE_MS, and 2 s more), then the website and
+# Project Management (12 s): 30 s leaves room for both before Fly kills what is left.
+kill_timeout = 30
 
 [build]
   dockerfile = "infrastructure/fly/Dockerfile"
   ignorefile = ".dockerignore"
 
 [deploy]
-  # rolling is the only strategy for Machines with volumes. work is offline while its Machine is replaced (10-60 s):
-  # the proxy answers 502 for /tasks meanwhile and open boards reconnect. CAD (the cados app) is not affected.
+  # rolling is the only strategy for Machines with volumes. With one Machine, bizomat.ai is offline while it restarts
+  # on a deploy (about 10-60 s: Fly answers with an error page); open boards and CAD long polls reconnect. CAD's own
+  # app (cados) keeps running, but bizomat.ai/cad goes through this router, so it pauses too.
   strategy = "rolling"
   max_unavailable = 1
   wait_timeout = "10m"
 
 [processes]
-  proxy = "/usr/local/bin/bizomat-entrypoint proxy"
-  web = "/usr/local/bin/bizomat-entrypoint web"
-  work = "/usr/local/bin/bizomat-entrypoint work"
+  # the router (:8080, public), the website (:8003) and Project Management (:8002) on this one Machine
+  work = "/usr/local/bin/bizomat-entrypoint all"
 
 [env]
-  UPSTREAM_WEB = "http://web.process.bizomat.internal:8003"
-  UPSTREAM_WORK = "http://work.process.bizomat.internal:8002"
+  # On the same Machine (the entrypoint's all fixes these two to the same values whatever is set here).
+  UPSTREAM_WEB = "http://127.0.0.1:8003"
+  UPSTREAM_WORK = "http://127.0.0.1:8002"
   # Where bizomat.ai/cad goes: the Fly app cados (repository kevinjogin/bizomat-cad), over the private network; it
   # listens on :: port 8080. Both apps must stay in the same Fly organization (docs/SITE-CAD-INTEGRATION.md).
   UPSTREAM_CAD = "http://cados.internal:8080"
@@ -71,7 +80,7 @@ kill_timeout = 15
   OPENSKETCH_REDIRECT_HOSTS = "cados.fly.dev,cados.kevos.com,cad.bizomat.ai"
 
 [http_service]
-  processes = ["proxy"]
+  processes = ["work"]
   internal_port = 8080
   force_https = true
   auto_stop_machines = "off"
@@ -84,9 +93,10 @@ kill_timeout = 15
   [http_service.http_options]
     idle_timeout = 600
 
+# All three on the one Machine: the router, the website and Project Management each answer their own health path.
 [checks]
   [checks.proxy]
-    processes = ["proxy"]
+    processes = ["work"]
     type = "http"
     port = 8080
     method = "get"
@@ -95,7 +105,7 @@ kill_timeout = 15
     timeout = "5s"
     grace_period = "10s"
   [checks.web]
-    processes = ["web"]
+    processes = ["work"]
     type = "http"
     port = 8003
     method = "get"
@@ -126,23 +136,16 @@ kill_timeout = 15
   auto_extend_size_increment = "1GB"
   auto_extend_size_limit = "20GB"
 
-[[vm]]
-  processes = ["proxy"]
-  size = "shared-cpu-1x"
-  memory = "256mb"
-
-[[vm]]
-  processes = ["web"]
-  size = "shared-cpu-1x"
-  memory = "512mb"
-
+# 1 GB to start (owner, 10 Nov 2026); the three services together used about 85 MB idle and at most about 320 MB under
+# a heavy local load test (docs/BIZOMAT-DEPLOYMENT.md, section 6e). Read production's use before going to 768 or 512 MB.
 [[vm]]
   processes = ["work"]
   size = "shared-cpu-1x"
-  memory = "512mb"
+  memory = "1gb"
 
-# Restart work whenever its process exits (the entrypoint exits non-zero on a missing volume: the loop then shows in
-# fly logs until it is fixed; in maintenance mode it stays up without the service, for a data move).
+# Restart the Machine whenever its process exits: all exits when any of the three services exits, so a crash restarts
+# all three (the entrypoint exits non-zero on a missing volume: the loop then shows in fly logs until it is fixed; in
+# maintenance mode work sleeps, the router and the website stay up, for a data move).
 [[restart]]
   policy = "always"
   processes = ["work"]

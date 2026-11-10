@@ -116,10 +116,13 @@ RUN cd /app/cad \
 # which CADOS commit apps/cad is (scripts/sync-cad.mjs): the cad role reports it as its version (/healthz)
 COPY apps/cad-source.json /app/cad/cad-source.json
 
-# proxy, entrypoint, cad's holding page and the restore scripts (infrastructure/migrate, run with fly ssh console)
+# proxy, entrypoint, cad's holding page, the memory report and the restore scripts (infrastructure/migrate, run with fly
+# ssh console)
 COPY infrastructure/proxy/package.json infrastructure/proxy/*.mjs /app/proxy/
 COPY infrastructure/migrate /usr/local/lib/bizomat/migrate
 COPY infrastructure/fly/cad-holding.py /usr/local/lib/bizomat/cad-holding.py
+# memory of the Machine and of each service (fly machine exec <id> "bash /usr/local/lib/bizomat/memory.sh")
+COPY infrastructure/fly/memory.sh /usr/local/lib/bizomat/memory.sh
 COPY infrastructure/fly/entrypoint.sh /usr/local/bin/bizomat-entrypoint
 RUN chmod -R a+rX /app /usr/local/lib/bizomat \
  && chmod 0755 /usr/local/bin/bizomat-entrypoint \

@@ -1,5 +1,5 @@
-# Deploy the BIZOMAT website platform to its Fly.io app `bizomat` (Sydney): the router (proxy), the website (web) and
-# Project Management (work). Run by hand only:
+# Deploy the BIZOMAT website platform to its Fly.io app `bizomat` (Sydney): the router, the website and Project
+# Management, together on one Machine (the group work, `bizomat-entrypoint all`, since 10 Nov 2026). Run by hand only:
 #   Actions > BIZOMAT deploy (bizomat) > Run workflow on main, confirm = DEPLOY.
 # No push, merge, tag or schedule starts it, so nothing reaches production by accident.
 #
@@ -14,13 +14,18 @@
 #
 # Steps: the preflight (.github/scripts/fly-preflight.py) compares fly.website.toml with the live Machines and stops
 # when the deploy would add or remove a Machine or change its size, memory or region (allow_machine_change = YES lets a
-# deliberate change through). fly.website.toml matches the live Machines (read from Fly on 9 Nov 2026: proxy, web and
-# work in syd), so the preflight passes for it. Then the deploy (rolling, --ha=false: one Machine per group, replaced in place), a wait for
-# https://bizomat.fly.dev/__proxy/health to report the new version, and the public checks the laptop tool runs.
+# deliberate change through), and in every case when no Machine would serve bizomat.ai afterwards. Then the deploy
+# (rolling, --ha=false: the one Machine, updated in place; bizomat.ai is offline for the 10-60 s it restarts), a wait
+# for https://bizomat.fly.dev/__proxy/health to report the new version, and the public checks the laptop tool runs.
+#
+# The move from three Machines to one (docs/BIZOMAT-DEPLOYMENT.md, section 6e) is NOT run here: it deploys the work
+# group alone (--process-groups work) while proxy and web still serve, from the laptop, step by step. Until it is done,
+# the preflight stops this workflow (proxy and web are not in fly.website.toml); do not override that with
+# allow_machine_change = YES: flyctl would destroy proxy and web before work takes over.
 #
 # Rollback: `flyctl releases -a bizomat --image`, then
 #   `flyctl deploy --config fly.website.toml -a bizomat --image <the previous image> --ha=false`
-# (README.md, "Recovery and maintenance").
+# (README.md, "Recovery and maintenance"). Back to three Machines: docs/BIZOMAT-ROLLBACK.md, section 6a.
 name: BIZOMAT deploy (bizomat)
 
 on:
