@@ -206,9 +206,11 @@ grep -q "Nothing was changed" "$W/out/check.log" || bad "check output"
 [ "$(frozen m_old)" = 0 ] || bad "check left cados frozen"
 ok "check: the rehearsal copy verified here, the upload way tested, nothing changed"
 
-# a write on the old server before the move: it must come across
+# a write on the old server before the move: it must come across. Retried like the readiness checks above: right
+# after the check, the first request can get an empty reply (curl 52, seen on a GitHub runner on 10 Nov 2026), and
+# under set -e one bare failed request would end the whole rehearsal.
 before_sessions="$(sha256sum "$OLD/sessions.json" | cut -d' ' -f1)"
-get /cad/api/touch -X POST >/dev/null
+wait_for 'get /cad/api/touch -X POST >/dev/null 2>&1' || bad "the old app did not take the write (/cad/api/touch)"
 [ "$(sha256sum "$OLD/sessions.json" | cut -d' ' -f1)" != "$before_sessions" ] || bad "the stand-in did not write"
 
 # the move, with the raw ways failing so the fallback ways carry the copy both ways

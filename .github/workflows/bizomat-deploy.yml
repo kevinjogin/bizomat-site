@@ -1,7 +1,13 @@
 # Deploy the BIZOMAT website platform to its Fly.io app `bizomat` (Sydney): the router (proxy), the website (web) and
-# Project Management (work). Run by hand only:
-#   Actions > BIZOMAT deploy (bizomat) > Run workflow on main, confirm = DEPLOY.
-# No push, merge, tag or schedule starts it, so nothing reaches production by accident.
+# Project Management (work).
+#
+# When it runs (owner's choice, 9 Nov 2026: automatic deploys on merge):
+# - automatically on every push to main (a merged pull request), unless the push only changes docs/ or root *.md
+#   files, or the commit message contains [skip ci]. BIZOMAT CI (bizomat-ci.yml) always runs first on this path, and
+#   the preflight cannot be overridden: an automatic deploy never adds, removes, resizes or moves a Machine.
+# - by hand: Actions > BIZOMAT deploy (bizomat) > Run workflow on main, confirm = DEPLOY (to redeploy, to deploy a
+#   docs-only change, or with skip_ci / allow_machine_change for an exceptional deploy).
+# No other branch, tag or schedule deploys.
 #
 # It deploys fly.website.toml, the configuration production runs today (the laptop's `bizomat.ps1 deploy website`
 # runs the same command), and only ever targets the app `bizomat` (fixed below). It never touches the app `cados`, DNS
@@ -12,9 +18,9 @@
 # - FLY_BIZOMAT_TOKEN: a deploy token for the bizomat app only (Fly dashboard > bizomat > Tokens > Create deploy
 #   token, or `fly tokens create deploy -a bizomat`). Only the steps that run flyctl see it.
 #
-# Steps: the preflight (.github/scripts/fly-preflight.py) compares fly.website.toml with the live Machines and stops
-# when the deploy would add or remove a Machine or change its size, memory or region (allow_machine_change = YES lets a
-# deliberate change through). fly.website.toml matches the live Machines (read from Fly on 9 Nov 2026: proxy, web and
+# Steps: BIZOMAT CI (skip_ci applies to a deploy by hand only); the preflight (.github/scripts/fly-preflight.py)
+# compares fly.website.toml with the live Machines and stops when the deploy would add or remove a Machine or change its
+# size, memory or region (allow_machine_change = YES, by hand only, lets a deliberate change through). fly.website.toml matches the live Machines (read from Fly on 9 Nov 2026: proxy, web and
 # work in syd), so the preflight passes for it. Then the deploy (rolling, --ha=false: one Machine per group, replaced in place), a wait for
 # https://bizomat.fly.dev/__proxy/health to report the new version, and the public checks the laptop tool runs.
 #
@@ -24,12 +30,21 @@
 name: BIZOMAT deploy (bizomat)
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
   workflow_dispatch:
     inputs:
       confirm:
         description: Type DEPLOY to deploy main to production (Fly app bizomat)
         required: true
         default: ""
+      skip_ci:
+        description: Deploy without running BIZOMAT CI first (only to bring a stuck site back quickly)
+        type: boolean
+        default: false
       allow_machine_change:
         description: Type YES only if the deploy is meant to change the Machines (groups, count, size, memory, region)
         required: false
@@ -38,14 +53,23 @@ on:
 permissions:
   contents: read
 
+# One deploy at a time. A deploy that is running always finishes; when several merges wait, only the newest runs.
 concurrency:
   group: bizomat-deploy
   cancel-in-progress: false
 
 jobs:
+  ci:
+    if: github.event_name == 'push' || (inputs.confirm == 'DEPLOY' && !inputs.skip_ci)
+    uses: ./.github/workflows/bizomat-ci.yml
+
   deploy:
-    # As before the move, the deploy does not run BIZOMAT CI itself: run it first (Actions > BIZOMAT CI > Run workflow).
-    if: inputs.confirm == 'DEPLOY' && github.ref == 'refs/heads/main'
+    needs: ci
+    if: >-
+      !cancelled() && github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || inputs.confirm == 'DEPLOY') &&
+      (needs.ci.result == 'success' ||
+       (needs.ci.result == 'skipped' && github.event_name == 'workflow_dispatch' && inputs.skip_ci))
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -70,7 +94,8 @@ jobs:
       - name: Preflight (the deploy keeps the live Machines as they are)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
-          ALLOW_MACHINE_CHANGE: ${{ inputs.allow_machine_change }}
+          # only a deploy by hand can allow a change to the Machines; an automatic deploy never does
+          ALLOW_MACHINE_CHANGE: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_machine_change || '' }}
         run: python3 .github/scripts/fly-preflight.py --app "$APP" --config "$CONFIG"
 
       - name: The optional secrets (names only, never values)

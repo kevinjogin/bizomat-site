@@ -17,7 +17,7 @@ apps in the same Fly organization, in different regions. The figures below were 
 | Region | Sydney (`syd`) | **Amsterdam (`ams`)** |
 | Machines | proxy (shared-cpu-1x, 256 MB), web and work (shared-cpu-1x, 512 MB each) | one Machine, `app` (shared CPU, 2 vCPUs, 2048 MB) |
 | Volumes | `work_data` (3 GB, on work) | `opensketch_data` (1 GB) |
-| Deploy workflow | `bizomat-deploy.yml`, secret `FLY_BIZOMAT_TOKEN` | `deploy.yml`, secret `FLY_CADOS_TOKEN` |
+| Deploy workflow | `bizomat-deploy.yml`, secret `FLY_BIZOMAT_TOKEN`: on every merge to `main` (after CI and the preflight) and by hand | `deploy.yml`, secret `FLY_CADOS_TOKEN`: on every merge to `main` (after the tests and the preflight) and by hand |
 
 **The two apps are on opposite sides of the world.** Every request for `bizomat.ai/cad` goes from the router in Sydney
 to `cados` in Amsterdam and back, which adds roughly a quarter of a second, and AI apps and SOLIDWORKS computers in

@@ -54,8 +54,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 ## Deployment
 
 - **Two repositories, two Fly apps (owner, 9 Nov 2026):** this repository deploys only the Fly app `bizomat`
-  (website, router, Project Management), with `fly.website.toml`, through `.github/workflows/bizomat-deploy.yml`: by
-  hand, `confirm` = `DEPLOY`, repository secret `FLY_BIZOMAT_TOKEN` (a deploy token for `bizomat` only). Its preflight
+  (website, router, Project Management), with `fly.website.toml`, through `.github/workflows/bizomat-deploy.yml`:
+  automatically on every merge to main that changes more than docs/ or root *.md (owner, 9 Nov 2026), after BIZOMAT
+  CI, and by hand (`confirm` = `DEPLOY`). Every merge to main therefore goes to production: keep main releasable, and
+  put [skip ci] in a merge commit's message to merge without deploying. Repository secret `FLY_BIZOMAT_TOKEN` (a deploy token for `bizomat` only). Its preflight
   (`.github/scripts/fly-preflight.py`) stops any deploy that would add, remove or resize a Machine. Production, read
   from Fly on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web and work shared-cpu-1x 512 MB) and
   the volume `work_data` (3 GB); `fly.website.toml` matches it exactly (the `cad` group of the earlier plan never ran

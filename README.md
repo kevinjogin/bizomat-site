@@ -216,12 +216,16 @@ cd apps/work && npm ci && npm run check                  # Project Management: l
 ```
 
 `.github/workflows/bizomat-ci.yml` runs all of these, plus the image build, the local stack's smoke test and the
-migration rehearsals. Before a deploy, run it by hand (Actions > BIZOMAT CI > Run workflow).
+migration rehearsals. It runs on pull requests and on pushes to other branches; on `main` it runs as the first step
+of the deploy (section 9), so a merge deploys only if CI passes.
 
 ## 9. Fly.io deployment
 
-**Production is the Fly app `bizomat`, deployed from `main` with `fly.website.toml`.** Nothing deploys
-automatically: no push, merge or schedule.
+**Production is the Fly app `bizomat`, deployed from `main` with `fly.website.toml`.** Since 9 Nov 2026 (the
+owner's choice) **every merge to `main` deploys automatically**, after BIZOMAT CI and the preflight pass, unless the
+change only touches `docs/` or root `*.md` files. Keep `main` releasable. To merge without deploying, put `[skip ci]`
+in the merge commit's message (for example `gh pr merge <n> --merge --subject "... [skip ci]"`). No other branch, tag
+or schedule deploys.
 
 **One-time setup in this repository**
 
@@ -233,11 +237,13 @@ automatically: no push, merge or schedule.
    `tools/laptop/`), from a clone of `jogkev-creator/gocore-website`. Point the laptop's clone at this repository
    (`git remote set-url origin https://github.com/kevinjogin/bizomat-site.git`) or deploy from Actions only.
 
-**Deploy**: Actions > **BIZOMAT deploy (bizomat)** > Run workflow on `main`, `confirm` = `DEPLOY`. It:
+**Deploy**: automatically on a merge to `main`, or by hand: Actions > **BIZOMAT deploy (bizomat)** > Run workflow on
+`main`, `confirm` = `DEPLOY` (to redeploy, or to deploy a docs-only change). Either way it first runs BIZOMAT CI (only a
+deploy by hand can skip it, `skip_ci`), then:
 
 1. runs the **preflight** (`.github/scripts/fly-preflight.py`): reads the live Machines and compares them with
    `fly.website.toml`. It stops, deploying nothing, when the deploy would add or remove a Machine or change its size,
-   memory or region. `allow_machine_change` = `YES` lets a deliberate change through;
+   memory or region. Only a deploy by hand can let a deliberate change through (`allow_machine_change` = `YES`);
 2. lists which optional secrets are set (names only);
 3. deploys: `flyctl deploy --config fly.website.toml --app bizomat --remote-only --ha=false --build-arg
    BIZOMAT_VERSION=<commit>` (rolling, one Machine per group replaced in place);
@@ -257,8 +263,8 @@ Cloudflare. DNS for bizomat.ai is changed by hand only, in Cloudflare (`docs/BIZ
 
 | Workflow | Starts on | Does |
 | --- | --- | --- |
-| `bizomat-ci.yml` BIZOMAT CI | push, pull request, by hand | Website, router, Project Management, infrastructure checks, image and local stack |
-| `bizomat-deploy.yml` BIZOMAT deploy (bizomat) | by hand only (`DEPLOY`) | Deploys `fly.website.toml` to the app `bizomat` (section 9) |
+| `bizomat-ci.yml` BIZOMAT CI | pull request, push to a branch other than `main`, by hand, called by the deploy | Website, router, Project Management, infrastructure checks, image and local stack |
+| `bizomat-deploy.yml` BIZOMAT deploy (bizomat) | push to `main` (not docs-only), by hand (`DEPLOY`) | CI, preflight, deploys `fly.website.toml` to the app `bizomat` (section 9) |
 | `bizomat-migrate-work.yml` | by hand only (`APPLY`) | The one-time move of Project Management's data from Cloudflare D1 (done 6 Nov 2026) |
 | `verify.yml` | push to `main`, pull request, by hand | Website checks |
 | `seo-validate.yml` | push to `main`, pull request, by hand | SEO checks; on a push to `main` it also submits the changed URLs to IndexNow |
