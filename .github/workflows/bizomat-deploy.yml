@@ -14,9 +14,10 @@
 #
 # Steps: the preflight (.github/scripts/fly-preflight.py) compares fly.website.toml with the live Machines and stops
 # when the deploy would add or remove a Machine or change its size, memory or region (allow_machine_change = YES lets a
-# deliberate change through), and in every case when no Machine would serve bizomat.ai afterwards. Then the deploy
-# (rolling, --ha=false: the one Machine, updated in place; bizomat.ai is offline for the 10-60 s it restarts), a wait
-# for https://bizomat.fly.dev/__proxy/health to report the new version, and the public checks the laptop tool runs.
+# deliberate change through), and in every case when no Machine would serve bizomat.ai afterwards. Then the deploy (the
+# image built on the runner with --local-only and pushed to Fly's registry; rolling, --ha=false: the one Machine,
+# updated in place; bizomat.ai is offline for the 10-60 s it restarts), a wait for https://bizomat.fly.dev/__proxy/health
+# to report the new version, and the public checks the laptop tool runs.
 #
 # The move from three Machines to one (docs/BIZOMAT-DEPLOYMENT.md, section 6e) is NOT run here: it deploys the work
 # group alone (--process-groups work) while proxy and web still serve, from the laptop, step by step. Until it is done,
@@ -87,11 +88,17 @@ jobs:
             grep -qx "$s" <<<"$names" || echo "::notice::Optional secret $s is not set on $APP"
           done
 
-      - name: Deploy (rolling, one Machine per process group)
+      # The image is built here, on the runner, as BIZOMAT CI builds it ("image and local stack"), then pushed to Fly's
+      # registry. Fly's remote builder stopped answering during the website build on both attempts of the first
+      # deploy from this workflow (10 Nov 2026), so it is not used.
+      - name: Make room on the runner (the image builds the website, the .NET add-in and OpenCascade)
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
+
+      - name: Deploy (rolling, the one Machine)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
-          flyctl deploy --config "$CONFIG" --app "$APP" --remote-only --ha=false \
+          flyctl deploy --config "$CONFIG" --app "$APP" --local-only --ha=false \
             --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}" --wait-timeout 10m
 
       # flyctl reports success once the Machines run; ask the router itself which version it serves

@@ -242,8 +242,9 @@ automatically: no push, merge or schedule.
    `fly.website.toml`. It stops, deploying nothing, when the deploy would add or remove a Machine or change its size,
    memory or region. `allow_machine_change` = `YES` lets a deliberate change through;
 2. lists which optional secrets are set (names only);
-3. deploys: `flyctl deploy --config fly.website.toml --app bizomat --remote-only --ha=false --build-arg
-   BIZOMAT_VERSION=<commit>` (rolling, the one Machine updated in place: bizomat.ai is offline for its restart);
+3. deploys: builds the image on the runner and pushes it to Fly's registry, `flyctl deploy --config fly.website.toml
+   --app bizomat --local-only --ha=false --build-arg BIZOMAT_VERSION=<commit>` (rolling, the one Machine updated in
+   place: bizomat.ai is offline for its restart). Fly's remote builder is not used: it stopped answering during the website build (10 Nov 2026);
 4. waits until `https://bizomat.fly.dev/__proxy/health` reports the new version;
 5. checks bizomat.ai: the website, `/api/chat`, `/cad/` (CAD over the private network), `/tasks/`.
 
