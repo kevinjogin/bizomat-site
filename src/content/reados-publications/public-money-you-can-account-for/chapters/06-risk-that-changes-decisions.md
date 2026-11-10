@@ -36,13 +36,13 @@ This is an illustration. After Ridgeway's first year, the branch entry reads as 
 | Field | Entry |
 |---|---|
 | Risk | Maintenance contractor cannot staff remote sites in the wet season |
-| Cause | Technicians travel from one regional centre; floods cut roads; no local subcontractors arranged |
+| Cause | Crews are based in two regional towns; floods cut the roads from both to remote sites; no local subcontractors arranged |
 | Event | Urgent work at one of the 14 remote sites is not attended within the response time |
 | Consequence | Unsafe conditions stay unrepaired; a facility closes or someone is hurt; the purpose "Regional communities have safe, working public facilities" is not met |
 | Existing controls | Contract response times and service levels; monthly contract meetings; site coordinators' make-safe procedure |
 | Owners | The Facilities Director (risk owner); Tom (contract actions); Lena (register and reporting) |
 | Rating with existing controls | Likelihood 3, consequence 4: score 12, Medium |
-| Treatment | Ridgeway's wet-season staffing plan, with a technician based in a hub town; local subcontractors approved before the season; pre-season inspections of roofs, gutters and drains at the 14 remote sites; weekly report of open urgent jobs during the season |
+| Treatment | Ridgeway's wet-season staffing plan, with a technician stationed for the season near the most isolated sites; local subcontractors approved before the season; pre-season inspections of roofs, gutters and drains at the 14 remote sites; weekly report of open urgent jobs during the season |
 | Rating after treatment | Likelihood 2, consequence 4: score 8, Medium |
 | Review | Monthly, weekly during the wet season, and at once if a trigger fires |
 | Decisions changed | Inspections in the suppliers forecast; wet-season results in the option evidence; an escalation trigger |
@@ -80,9 +80,9 @@ Two cautions. First, the score is a ranking aid. The numbers are labels on order
 
 ## Residual risk and the decision to accept
 
-Treatment works on the cause, the consequence or both. This is an illustration. At NRIO, the hub technician, the local subcontractors and the inspections all act on the cause: they make it less likely that urgent work at a remote site waits. None of them changes what happens to a community if it does wait, so the consequence stays at 4. The residual rating is 2 × 4 = 8, still Medium.
+Treatment works on the cause, the consequence or both. This is an illustration. At NRIO, the stationed technician, the local subcontractors and the inspections all act on the cause: they make it less likely that urgent work at a remote site waits. None of them changes what happens to a community if it does wait, so the consequence stays at 4. The residual rating is 2 × 4 = 8, still Medium.
 
-The band did not change, but the decision did. NRIO's fictional framework lets a risk owner accept a Medium risk with documented treatments and monitoring; a High risk needs the Branch Manager. The Facilities Director accepts the residual 8 on two recorded conditions: weekly reporting during the wet season, and an immediate re-rating if any treatment fails. If the hub technician is not in place when the season starts, the likelihood returns to 3, the score to 12, and the Facilities Director takes options to the Branch Manager.
+The band did not change, but the decision did. NRIO's fictional framework lets a risk owner accept a Medium risk with documented treatments and monitoring; a High risk needs the Branch Manager. The Facilities Director accepts the residual 8 on two recorded conditions: weekly reporting during the wet season, and an immediate re-rating if any treatment fails. If the stationed technician is not in place when the season starts, the likelihood returns to 3, the score to 12, and the Facilities Director takes options to the Branch Manager.
 
 Accepting a risk is a decision, so record who accepted it, on what basis and until when. An acceptance with no name and no date is not acceptance. It is drift.
 
