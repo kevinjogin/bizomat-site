@@ -56,10 +56,17 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 - **Two repositories, two Fly apps (owner, 9 Nov 2026):** this repository deploys only the Fly app `bizomat`
   (website, router, Project Management), with `fly.website.toml`, through `.github/workflows/bizomat-deploy.yml`: by
   hand, `confirm` = `DEPLOY`, repository secret `FLY_BIZOMAT_TOKEN` (a deploy token for `bizomat` only). Its preflight
-  (`.github/scripts/fly-preflight.py`) stops any deploy that would add, remove or resize a Machine. Production, read
-  from Fly on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web and work shared-cpu-1x 512 MB) and
-  the volume `work_data` (3 GB); `fly.website.toml` matches it exactly (the `cad` group of the earlier plan never ran
-  and was removed). Never add a Machine, a process group or memory without the owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
+  (`.github/scripts/fly-preflight.py`) stops any deploy that would add, remove or resize a Machine, and any deploy
+  that would leave no Machine serving bizomat.ai. **One Machine (owner, 10 Nov 2026, to cut cost):**
+  `fly.website.toml` runs the router, the website and Project Management together on the group `work`'s Machine
+  (`80e971da556628`, `bizomat-entrypoint all`, shared-cpu-1x 1 GB, syd, the volume `work_data` (3 GB) where it was).
+  Production before it, read from Fly on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web and work
+  shared-cpu-1x 512 MB); they stay until the cutover of `docs/BIZOMAT-DEPLOYMENT.md`, section 6e, has run (the work
+  group alone with `--process-groups work`, then proxy and web parked, removed only after verification; the way back:
+  `docs/BIZOMAT-ROLLBACK.md`, 6a). Until then deploy nothing else from `fly.website.toml`: `bizomat.ps1 deploy website`
+  runs no preflight, and a plain `fly deploy` destroys proxy and web before work takes over. The `cad` group of the
+  earlier plan never ran and was removed; never create it. Never add a Machine, a process group or memory without the
+  owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
   and Cloudflare describe earlier plans.
 - **CAD Automation into `bizomat` (6 Nov 2026; an earlier plan, not carried out: the `cad` group was removed from
   `fly.website.toml` on 9 Nov 2026 and CAD stays in the app `cados`, in ams):** the plan gave `fly.website.toml` a `cad`
