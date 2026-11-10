@@ -52,21 +52,24 @@ application itself:
                        bizomat.ai, www.bizomat.ai (Cloudflare DNS, DNS only)
                                         |
                                         v
-  Fly app bizomat (syd) -----------------------------------------------------------------
+  Fly app bizomat (syd): one Machine, group work, bizomat-entrypoint all -------------------
   |  proxy  :8080  infrastructure/proxy        the only public port; routes by host and path
-  |    |-- web   :8003  the website (Astro build + src/node server: /api/chat, contact)
-  |    |-- work  :8002  Project Management (apps/work), volume work_data at /data
+  |    |-- web   :8003  the website (Astro build + src/node server: /api/chat, contact)    127.0.0.1
+  |    |-- work  :8002  Project Management (apps/work), volume work_data at /data          127.0.0.1
   |    '-- CAD paths --> http://cados.internal:8080  (Fly app cados, repository bizomat-cad)
   ---------------------------------------------------------------------------------------
 ```
 
-- **One image, several process groups.** `infrastructure/fly/Dockerfile` builds one image; `fly.website.toml`
-  starts it as one Machine per process group (`bizomat-entrypoint proxy|web|work`). The entrypoint
-  (`infrastructure/fly/entrypoint.sh`) starts each service as its own user with only its own settings (an allow-list),
-  so no service can read another's secrets.
-- **Production, read from Fly on 9 Nov 2026 (`fly scale show`, `fly volumes list`), and `fly.website.toml` matches
-  it:** three Machines in `syd`: `proxy` (shared-cpu-1x, 256 MB), `web` (shared-cpu-1x, 512 MB) and `work`
-  (shared-cpu-1x, 512 MB), 1.25 GB of memory in all, and one volume, `work_data` (3 GB), on `work`.
+- **One image, one Machine (owner, 10 Nov 2026, to cut cost).** `infrastructure/fly/Dockerfile` builds one image;
+  `fly.website.toml` runs it as one Machine, the group `work`'s (it holds the volume), with
+  `bizomat-entrypoint all`. The entrypoint (`infrastructure/fly/entrypoint.sh`) starts the router, the website and
+  Project Management there, each as its own user with only its own settings (an allow-list), so no service can read
+  another's secrets; if one exits, the Machine restarts. shared-cpu-1x, 1 GB to start, `syd`, volume `work_data`
+  (3 GB). The move and the way back: `docs/BIZOMAT-DEPLOYMENT.md`, section 6e, and `docs/BIZOMAT-ROLLBACK.md`, 6a.
+- **Production before that move, read from Fly on 9 Nov 2026 (`fly scale show`, `fly volumes list`):** three
+  Machines in `syd`: `proxy` (shared-cpu-1x, 256 MB), `web` (shared-cpu-1x, 512 MB) and `work` (shared-cpu-1x,
+  512 MB), 1.25 GB of memory in all, and one volume, `work_data` (3 GB), on `work`. They stay until the move has run;
+  then proxy and web are parked, and removed after verification.
 - **The `cad` group was removed on 9 Nov 2026.** `fly.website.toml` had a fourth group, `cad` (performance-1x, 2 GB,
   volume `cad_data`), from the earlier plan to run CAD inside this app. It never ran in production: there was no such
   Machine or volume. CAD stays in its own app, `cados`. The image (`infrastructure/fly/Dockerfile`) still builds the
@@ -240,12 +243,14 @@ automatically: no push, merge or schedule.
    memory or region. `allow_machine_change` = `YES` lets a deliberate change through;
 2. lists which optional secrets are set (names only);
 3. deploys: `flyctl deploy --config fly.website.toml --app bizomat --remote-only --ha=false --build-arg
-   BIZOMAT_VERSION=<commit>` (rolling, one Machine per group replaced in place);
+   BIZOMAT_VERSION=<commit>` (rolling, the one Machine updated in place: bizomat.ai is offline for its restart);
 4. waits until `https://bizomat.fly.dev/__proxy/health` reports the new version;
 5. checks bizomat.ai: the website, `/api/chat`, `/cad/` (CAD over the private network), `/tasks/`.
 
-**`fly.website.toml` matches production** (9 Nov 2026): the three Machines and the volume in section 2. The
-preflight passes for it, so a deploy ships new code onto the same Machines. A change to the Machines (another group,
+**`fly.website.toml` describes the one Machine** (section 2). Until the move of `docs/BIZOMAT-DEPLOYMENT.md`,
+section 6e, has run, production still has three Machines and the preflight stops this workflow; the move itself runs
+from the laptop (it deploys the work group alone, `--process-groups work`). After it, the preflight passes, so a
+deploy ships new code onto the same Machine. A change to the Machines (another group,
 size, memory or region) is a decision of its own: change `fly.website.toml` in a pull request, then deploy with
 `allow_machine_change` = `YES`. To run CAD inside this app after all, follow `infrastructure/migrate/cad/README.md`
 (the earlier plan; the `cad` group would have to come back).
@@ -278,7 +283,10 @@ the minutes are short: Actions > the workflow > Disable workflow.
   `flyctl volumes snapshots list <volume-id> -a bizomat`, make a new volume from a snapshot, move the Machine onto it,
   check it, then remove the old one. Step by step: [infrastructure/README.md](infrastructure/README.md) and
   [docs/BIZOMAT-ROLLBACK.md](docs/BIZOMAT-ROLLBACK.md). Never delete a volume or snapshot during a recovery.
-- **Logs and state:** `flyctl status -a bizomat`, `flyctl logs -a bizomat`, `flyctl machines list -a bizomat`.
+- **Back to three Machines** (if the one Machine does not work out): [docs/BIZOMAT-ROLLBACK.md](docs/BIZOMAT-ROLLBACK.md),
+  section 6a. No data moves: the volume stays on the work Machine.
+- **Logs and state:** `flyctl status -a bizomat`, `flyctl logs -a bizomat`, `flyctl machines list -a bizomat`; memory:
+  `flyctl machine exec <id> -a bizomat "bash /usr/local/lib/bizomat/memory.sh"`.
 - **Secrets:** rotate on Fly (`fly secrets set --stage -a bizomat NAME=...`, applied by the next deploy) and in
   GitHub. A deploy token is per app: rotating `FLY_BIZOMAT_TOKEN` never affects `cados`.
 - **Dependencies:** review Dependabot pull requests; CI must pass before merging.

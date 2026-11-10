@@ -110,11 +110,51 @@ which is why each needs the owner's go-ahead and a typed phrase. After them, the
 
 | Change | How to undo it |
 | --- | --- |
-| A bad deploy of the `bizomat` app | `fly deploy --image <previous image>`; volumes are untouched by deploys |
+| A bad deploy of the `bizomat` app | `fly deploy --config fly.website.toml -a bizomat --ha=false --image <previous image>`; volumes are untouched by deploys |
+| The one Machine (section 6e of `BIZOMAT-DEPLOYMENT.md`) does not work out | Section 6a below: back to three Machines, no data moved |
 | Corrupted data on a volume | Restore the latest good snapshot (`fly volumes snapshots list <volume id>`, `fly volumes create <name> --snapshot-id <id> -r syd`, then move the Machine to the new volume), or restore the migration archive kept under `/data/backups/` with `infrastructure/migrate/restore.sh` |
 | A secret set wrongly | `fly secrets set` / `fly secrets unset`; for volume-held secrets, edit `/data/<role>/.secrets/<NAME>` as root and restart the Machine |
 | The proxy routes a host or path wrongly | Redeploy the previous image; the routing table is in `infrastructure/proxy/routes.mjs` and covered by its tests |
 | DNS record changed by mistake | Each DNS step in `BIZOMAT-DEPLOYMENT.md` records the old value before it is changed; put the old value back |
+
+### 6a. Back to three Machines (after the one-Machine cutover, `BIZOMAT-DEPLOYMENT.md`, section 6e)
+
+No data moves either way: the volume `work_data` stays on the work Machine `80e971da556628` throughout. The
+three-Machine configuration is `fly.website.toml` as it was before the change, in Git: in the laptop's clone,
+`git show 738e48b:fly.website.toml > fly.three-machines.toml` (at the repository root; the commands below deploy an
+existing image, so nothing is built). Note each step in the cutover log.
+
+**While proxy and web are parked** (stopped, section 6e step 6; a few minutes, no build):
+
+1. Start the old Machines, the website first: `fly machine start <WEB_ID> -a bizomat`; then the router:
+   `fly machine update <PROXY_ID> -a bizomat --autostart=true --skip-start -y` and `fly machine start <PROXY_ID> -a
+   bizomat`. They still run the image and settings they had before the cutover; the router reaches web over the
+   private network and Project Management on the work Machine (`work.process.bizomat.internal:8002`, which the work
+   Machine still answers). Both the old router and the work Machine now serve bizomat.ai.
+2. Put the work Machine back to its own role, without the public service and at 512 MB. Pick the image: the one noted
+   before the cutover (section 6e step 0), or the current one from `fly releases -a bizomat --image` (it has the `all`
+   mode and the single roles). Check, then deploy the work group alone:
+   `ALLOW_MACHINE_CHANGE=YES python3 .github/scripts/fly-preflight.py --app bizomat --config fly.three-machines.toml --process-groups work`
+   (it must not say that no Machine would serve: the router from step 1 must be started), then
+   `fly deploy --config fly.three-machines.toml --app bizomat --ha=false --process-groups work --image <image>`.
+   `/tasks` answers 502 while work restarts (10-60 s); the website stays up.
+3. Check: `fly machine list -a bizomat` (three started), `fly checks list -a bizomat`, the public checks of
+   `BIZOMAT-DEPLOYMENT.md`, section 6e step 7, and `/__proxy/ready`.
+4. Make the repository match: a pull request that puts `fly.website.toml` back (`git revert` of the change), merged
+   before the next deploy. A normal deploy from `main` then brings proxy and web to the current code.
+
+**After the removal** (section 6e step 8 done; a deploy creates the two Machines again):
+
+1. `ALLOW_MACHINE_CHANGE=YES python3 .github/scripts/fly-preflight.py --app bizomat --config fly.three-machines.toml`
+   lists proxy and web as created and work back to 512 MB.
+2. `fly deploy --config fly.three-machines.toml --app bizomat --ha=false --image <image>`. flyctl creates the new
+   proxy and web Machines before it updates work, so the new router serves before the work Machine gives up the
+   public service.
+3. Steps 3 and 4 above.
+
+If the work Machine itself will not start after the cutover (all three services down): the old router still serves
+the website and `/cad` while proxy and web are not yet parked; otherwise do step 1 above first, then step 2. If the data
+on the volume is damaged, section 6, "Corrupted data on a volume" (the snapshot of section 6e step 1).
 
 ## 7. Rollback log
 

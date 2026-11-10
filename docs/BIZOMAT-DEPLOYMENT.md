@@ -10,8 +10,13 @@ owner must do. Since 6 Nov the plan routes bizomat.ai by path (section 2), as th
 
 ## 1. What is deployed
 
+**Production today (10 Nov 2026):** the app `bizomat` runs the router, the website and Project Management on one
+Machine (the group `work`, `bizomat-entrypoint all`, shared-cpu-1x 1 GB, syd, volume `work_data`) once section 6e's
+cutover has run; until then, three Machines (proxy 256 MB, web 512 MB, work 512 MB). CAD Automation is the separate
+app `cados`. The table below is the earlier four-group plan (`fly.toml`, not deployed).
+
 One image (`infrastructure/fly/Dockerfile`) holds the four services. Each Fly process group starts it with its role
-(`bizomat-entrypoint proxy|web|work|cad`).
+(`bizomat-entrypoint proxy|web|work|cad`), or one Machine runs three of them (`bizomat-entrypoint all`).
 
 | Group | Port | Machine | Volume | Reached from |
 | --- | --- | --- | --- | --- |
@@ -246,6 +251,67 @@ the way back and the retirement are in `infrastructure/migrate/cad/README.md`; a
 | 4 | Merge the change that sets `UPSTREAM_CAD = "http://cad.process.bizomat.internal:8001"` (until then `deploy website` refuses) | `.\bizomat.ps1 status` | Revert it together with `back cad` |
 | 5 | Optional, with approval: `cados.kevos.com` to `bizomat` (certificate, then its DNS record), so connections made with it keep working | `https://cados.kevos.com/healthz` answers from the cad group | The record back to cados's address |
 | 6 | With the owner's go-ahead: `.\bizomat.ps1 retire cados` (its public addresses released), later `.\bizomat.ps1 delete cados` | bizomat.ai/cad still answers | None: both are irreversible, so each asks for a typed phrase |
+
+### 6e. One Machine for the bizomat app (owner's request, 10 Nov 2026: cut cost)
+
+The router, the website and Project Management move onto one Machine: the existing `work` Machine
+(`80e971da556628`), which keeps its volume `work_data` (`vol_vz8om6ze77n5dmqv`, 3 GB, daily snapshots kept 30 days),
+its region (`syd`) and its group name. It runs `bizomat-entrypoint all`: the entrypoint starts the three services
+exactly as their own Machines did (each its own user, its own settings, work's volume checks and maintenance mode),
+the router reaches the other two on `127.0.0.1`, SIGTERM stops the router first, and if any service exits the Machine
+exits and Fly restarts it. The Machine is shared-cpu-1x with 1 GB to start. `cados` is not changed, and no `cad` group
+is created.
+
+| | Before (9 Nov 2026) | After |
+| --- | --- | --- |
+| Machines | proxy 256 MB, web 512 MB, work 512 MB (shared-cpu-1x, syd) | work 1 GB (shared-cpu-1x, syd), all three services |
+| Public service and checks | on proxy (checks on each group) | on work: `/__proxy/health` :8080, `/healthz` :8003, `/api/health` :8002 |
+| Router to backends | `web.process.bizomat.internal:8003`, `work.process.bizomat.internal:8002` | `127.0.0.1:8003`, `127.0.0.1:8002` |
+| Compute per month (Sydney list prices, `infrastructure/README.md`) | about 12.2 USD | about 8.5 at 1 GB; about 6.6 at 768 MB; about 4.7 at 512 MB |
+| A deploy or restart | each Machine restarts in turn | bizomat.ai offline for the Machine's restart (about 10-60 s) |
+| A crash | one product down | all three restart together |
+
+**Memory.** Measured on 10 Nov 2026 with the real router, website and Project Management in one container (the
+production image's layout, `bizomat-entrypoint all`, 4,440 website pages and Project Management's APIs through the
+router): about 85 MB idle; at most 262 MB under a 450 MB limit and 316 MB with room, at 48 requests at a time (about
+1,100 a second), with no out-of-memory kill. The web process holds most of it (up to 166 MB of its own), then the
+router and Project Management (about 70 MB each). Production has to confirm this with its own traffic, AI search and
+uploads (Project Management accepts up to 32 MB a request): read it with
+`fly machine exec 80e971da556628 -a bizomat "bash /usr/local/lib/bizomat/memory.sh"` (the Machine's used and
+available memory, and each service's) and Fly's metrics for the Machine (memory over time). Suggested rule: after at
+least a week, go to 768 MB if the Machine's used memory stayed under 400 MB, and to 512 MB if it stayed under 300 MB.
+Each step is a pull request changing `memory` in `[[vm]]`, deployed with `allow_machine_change` = `YES`.
+
+**Why the work group alone is deployed first.** `flyctl deploy` destroys the Machines of groups that are no longer in
+the file before it updates any other Machine (flyctl v0.5.6, `deployMachinesApp`), and asks nothing. A plain deploy of
+this file would therefore destroy proxy and web first, leaving bizomat.ai with no Machine until work has restarted,
+and remove the fallback before anything was checked. `--process-groups work` takes proxy and web out of the deploy
+entirely: work takes over the public service while the old router still serves, and proxy and web are parked, then
+removed only after verification. The preflight knows both cases (`.github/scripts/fly-preflight.py`, and its tests).
+
+**Until the cutover is done, deploy nothing else.** Once this change is on `main`, `fly.website.toml` describes one
+Machine while production still has three. The deploy workflow's preflight stops a deploy then (proxy and web are not
+in the file); `.\bizomat.ps1 deploy website` (bizomat-cad `tools/laptop`) runs no preflight and would run the plain
+deploy above. Merge and cut over in one sitting.
+
+Run on the laptop, in a clean clone of `kevinjogin/bizomat-site` at `origin/main` with this change, signed in with
+`fly auth login`. Commands are the same in PowerShell, except where noted. Write each value below into the cutover log.
+
+| Step | Do | Check | If it goes wrong |
+| --- | --- | --- | --- |
+| 0 | `git fetch origin`, `git status`: `main` at `origin/main`, nothing changed. `fly machine list -a bizomat`: note the ids of the proxy and web Machines (PROXY_ID, WEB_ID below); work is `80e971da556628`. `fly volumes list -a bizomat`: `work_data` `vol_vz8om6ze77n5dmqv` attached to `80e971da556628`. `fly releases -a bizomat --image`: note the current image (the way back) | Three Machines started in syd; the volume attached to work | Stop: production is not what this section expects |
+| 1 | Snapshot: `fly volumes snapshots create vol_vz8om6ze77n5dmqv -a bizomat`, then `fly volumes snapshots list vol_vz8om6ze77n5dmqv -a bizomat` until the new snapshot is listed as created. Note its id | A snapshot from the last minutes | Do not go on without it |
+| 2 | **STOP. Confirm your own backup of Project Management's data** (for example the portable copy in `BIZOMAT-OPERATIONS.md`, section 4, kept outside Fly) **before the switch.** The steps so far changed nothing | | |
+| 3 | Preflight for the work group alone: `python3 .github/scripts/fly-preflight.py --app bizomat --config fly.website.toml --process-groups work`. It must list one change only, `80e971da556628` from 512 to 1024 MB, and proxy and web as "left as it is"; then the same with `ALLOW_MACHINE_CHANGE=YES` in front (PowerShell: `$env:ALLOW_MACHINE_CHANGE = 'YES'` first, and `Remove-Item Env:ALLOW_MACHINE_CHANGE` after) | Exit 0 with `ALLOW_MACHINE_CHANGE=YES` | Any other change listed: stop |
+| 4 | The switch: `fly deploy --config fly.website.toml --app bizomat --remote-only --ha=false --process-groups work --build-arg BIZOMAT_VERSION=<git rev-parse --short HEAD>`. Only `80e971da556628` is updated: the new image, `bizomat-entrypoint all`, 1 GB, the public service and the three checks. The old router keeps serving meanwhile; `/tasks` answers 502 while work restarts (10-60 s) | flyctl reports the Machine healthy (all three checks) | If Fly cannot give the Machine 1 GB on its host, or the Machine does not become healthy: the old router still serves; go back with `BIZOMAT-ROLLBACK.md`, section 6a, step 2 |
+| 5 | Check the new Machine directly (the header sends a request to that Machine only): `curl -sS -H "fly-force-instance-id: 80e971da556628" https://bizomat.fly.dev/__proxy/health` (the new version) and `.../__proxy/ready` (web, work and cad ok); then with the same header `https://bizomat.ai/` (200), `https://bizomat.ai/tasks/` (200 or 302), `https://bizomat.ai/cad/` (200), `https://bizomat.ai/login` (301). `fly checks list -a bizomat`: the three checks of `80e971da556628` passing. (PowerShell: `curl.exe`.) | All as listed | As in step 4 |
+| 6 | Park the old Machines (zero running, kept for the way back): `fly machine stop <PROXY_ID> -a bizomat`, then `fly machine update <PROXY_ID> -a bizomat --autostart=false --skip-start -y` (so Fly's proxy never starts it for a request), then `fly machine stop <WEB_ID> -a bizomat` | `fly machine list -a bizomat`: `80e971da556628` started, the other two stopped | `BIZOMAT-ROLLBACK.md`, section 6a |
+| 7 | Public checks without the header: `/`, `/cad-automation/`, `/work/`, `/resources/`, `/tools/`, `/reados/`, `/engine-room/` (and `/about/`, `/proof-of-work/` redirecting to it), `/privacy/`, `/terms/`, `/disclaimer/`; `/tasks/` and `/cad/`; `node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode live`; in a browser: the wordmark, the navigation, sign-in to Project Management, AI search. Memory: `fly machine exec 80e971da556628 -a bizomat "bash /usr/local/lib/bizomat/memory.sh"` | Everything answers; note the memory figures | `BIZOMAT-ROLLBACK.md`, section 6a |
+| 8 | Later, after the owner has verified it (a few days of normal use): remove the parked Machines, `fly machine destroy <PROXY_ID> -a bizomat` and `fly machine destroy <WEB_ID> -a bizomat`. Then `python3 .github/scripts/fly-preflight.py --app bizomat --config fly.website.toml` reports no change, and `fly machine list -a bizomat` shows one Machine. From then on the deploy workflow and `bizomat.ps1 deploy website` deploy the one Machine as usual | One Machine; the preflight passes | `BIZOMAT-ROLLBACK.md`, section 6a, "after the removal" |
+
+While proxy and web are parked, a deploy of this file without `--process-groups work` is stopped by the preflight
+(they are not in the file); with `allow_machine_change` = `YES` it would destroy them, which is step 8 done early.
+Parked Machines cost only their stored image, not compute.
 
 ## 7. After cutover
 

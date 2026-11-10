@@ -6,6 +6,16 @@ prints names, counts and states only; none prints a secret or a person's data.
 
 ## 1. The app at a glance
 
+**One Machine since the cutover of `BIZOMAT-DEPLOYMENT.md`, section 6e (10 Nov 2026):** the group `work`'s Machine
+(`80e971da556628`, shared-cpu-1x 1 GB, syd) runs the router, the website and Project Management together
+(`bizomat-entrypoint all`), each as its own user with its own settings; the router reaches the other two on
+`127.0.0.1`. Its three checks are those of the table below (8080, 8003, 8002), all on that Machine. If any of the three
+services exits, the Machine exits and Fly restarts it (all three), so `fly logs` shows which one stopped
+(`all: <service> exited with status ...`). CAD Automation is the separate app `cados`. Memory:
+`fly machine exec 80e971da556628 -a bizomat "bash /usr/local/lib/bizomat/memory.sh"`.
+
+The table is per service (and per group in the four-group plan, `fly.toml`):
+
 | Group | Port | Health | Volume | Scale |
 | --- | --- | --- | --- | --- |
 | proxy | 8080 (public) | `/__proxy/health` (alive), `/__proxy/ready` (upstreams reachable) | none | 1 or more |
@@ -21,10 +31,11 @@ proxy is public.
 
 | When | Check | Command |
 | --- | --- | --- |
-| Daily | All four Machines started, checks passing | `fly status -a bizomat`, `fly checks list -a bizomat` |
+| Daily | The Machine started, its three checks passing | `fly status -a bizomat`, `fly checks list -a bizomat` |
 | Daily | The public hosts answer | `node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode live` (options in `infrastructure/README.md`) |
 | Weekly | Snapshots exist for both volumes | `fly volumes list -a bizomat`, then `fly volumes snapshots list <volume id>` |
 | Weekly | Volume use below 80 % (auto-extend adds 1 GB up to 20 GB) | `fly ssh console -a bizomat -g work -C "df -h /data"` (and `-g cad`) |
+| Weekly | Memory: the Machine's used memory well under its size (the step down to 768 or 512 MB: `BIZOMAT-DEPLOYMENT.md`, section 6e) | `fly machine exec 80e971da556628 -a bizomat "bash /usr/local/lib/bizomat/memory.sh"`; Fly's metrics for the Machine |
 | Monthly | Certificates valid for every host | `fly certs list -a bizomat` |
 | Monthly | Dependencies: website `npm audit`, Project Management `npm audit`, CAD pins (`apps/cad/requirements*.txt`) | in CI or locally |
 
@@ -57,7 +68,8 @@ Test a restore once a quarter: create a volume from the latest snapshot in a scr
 
 1. Put the role in maintenance mode: `fly ssh console -a bizomat -g <work|cad> -C "touch /data/.bizomat-maintenance"`
    and restart its Machine (`fly machine restart <id> -a bizomat`). The entrypoint then keeps the Machine up without
-   starting the service.
+   starting the service. On the one Machine, only Project Management stops: the router and the website keep running,
+   and `/tasks` answers 502 until maintenance ends.
 2. Either restore a snapshot (`fly volumes create <work_data|cad_data> --snapshot-id <id> -r syd -a bizomat`, then
    clone the Machine onto the new volume: `fly machine clone <id> --attach-volume <new volume id>:/data`, and destroy
    the old Machine only after the new one passes its checks; keep the old volume until the restore is confirmed),
@@ -135,7 +147,9 @@ Accounts are separate per product and are never merged by email address. Linking
   deploy (`BIZOMAT-DEPLOYMENT.md`). Take volume snapshots first.
 - After each deploy: `fly status`, the smoke test, and the version on each health endpoint.
 - Rolling deploys replace one Machine at a time; `work` and `cad` are offline for about 10 to 60 seconds each.
-  Paired computers and boards reconnect by themselves.
+  On the one Machine (`BIZOMAT-DEPLOYMENT.md`, section 6e) a deploy restarts everything at once: bizomat.ai, `/tasks`
+  and the route to `/cad` are offline for about 10 to 60 seconds. Deploy at a quiet time. Paired computers and boards
+  reconnect by themselves.
 - The CAD add-in and Companion have their own release process (`apps/cad/docs/KEVOS-BUILD.md`,
   `apps/cad/docs/KEVOS-SIGNING.md`); the installer is built by CI, not by the platform deploy.
 
@@ -143,7 +157,8 @@ Accounts are separate per product and are never merged by email address. Linking
 
 | Symptom | First steps |
 | --- | --- |
-| BIZOMAT page "temporarily unavailable" (proxy 502/504) | `fly status`: which group is down? `fly logs --machine <id>`; restart that Machine |
+| BIZOMAT page "temporarily unavailable" (proxy 502/504) | `fly status` and `fly checks list -a bizomat`: which check fails (router 8080, website 8003, Project Management 8002)? `fly logs --machine <id>`; restart that Machine. For `/cad` only: is `cados` suspended? (`SITE-CAD-INTEGRATION.md`, section 1) |
+| Fly's own error page for bizomat.ai, every path | The Machine is down or restarting: `fly logs -a bizomat` (`all: <service> exited with status ...` says which service stopped the Machine) |
 | CAD Automation slow or not answering | The supervisor restarts the server after 120 s without an answer; check the logs for its stack dump. Heavy CAD work uses the dedicated core; three CAD workers at most |
 | Paired computers offline | `fly logs` for `/v2/device` errors; the Companion's own logs on the PC (`%LOCALAPPDATA%\KEVOS\Bridge\logs`) |
 | Project Management realtime not updating | WebSockets on `/api/live/boards/:id`: check the proxy logs for upgrades and the work Machine's health |

@@ -67,6 +67,13 @@ link becomes a bizomat.ai link by changing only the host. The 1,600+ redirects f
 
 ## Why one app with process groups
 
+**Production since 10 Nov 2026 (owner, to cut cost): one Machine.** The router, the website and Project Management
+run together on the Machine of the group `work`, which holds the volume `work_data` (`bizomat-entrypoint all`; the
+router reaches the other two on `127.0.0.1`; `BIZOMAT-DEPLOYMENT.md`, section 6e). They keep their own users, settings
+and ports, so the secret isolation below is unchanged; what they no longer have is separate memory and a separate
+crash domain: a crash or a deploy restarts all three. CAD Automation is the separate Fly app `cados`. The rest of this
+section is the reasoning of the four-group plan (`fly.toml`, not deployed).
+
 The owner's target is one Fly app. Process groups give each product its own Machine (separate memory, CPU, crash
 domain and volume) from one image and one deploy. The proxy is the only public service; web, work and cad have no
 `[[services]]` section, so they are reachable only over Fly's private network (`<group>.process.bizomat.internal`).

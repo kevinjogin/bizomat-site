@@ -15,7 +15,7 @@ apps in the same Fly organization, in different regions. The figures below were 
 | Serves | `bizomat.ai` (website, sign-in page, Project Management at `/tasks`), and the router in front of everything | CAD MCP: the MCP endpoint, OAuth, the SOLIDWORKS device bridge, CAD pages at `/cad`, installer and update endpoints |
 | Fly origin | `https://bizomat.fly.dev` (health only; pages 301 to bizomat.ai) | `https://cados.fly.dev` (all CAD paths, as connectors and computers use it) |
 | Region | Sydney (`syd`) | **Amsterdam (`ams`)** |
-| Machines | proxy (shared-cpu-1x, 256 MB), web and work (shared-cpu-1x, 512 MB each) | one Machine, `app` (shared CPU, 2 vCPUs, 2048 MB) |
+| Machines | one Machine, `work` (shared-cpu-1x, 1 GB), running the router, the website and Project Management (`bizomat-entrypoint all`, from 10 Nov 2026; before: proxy 256 MB, web and work 512 MB each) | one Machine, `app` (shared CPU, 2 vCPUs, 2048 MB) |
 | Volumes | `work_data` (3 GB, on work) | `opensketch_data` (1 GB) |
 | Deploy workflow | `bizomat-deploy.yml`, secret `FLY_BIZOMAT_TOKEN` | `deploy.yml`, secret `FLY_CADOS_TOKEN` |
 
@@ -28,10 +28,10 @@ preflight stops any deploy that would change the region).
 ## 1. Network: the router reaches CAD over Fly's private network
 
 ```
-visitor --https--> bizomat.ai (DNS) --> Fly app bizomat, group proxy (:8080, the only public port)
-                                          |-- /tasks/...            --> work  :8002  (same app, private network)
+visitor --https--> bizomat.ai (DNS) --> Fly app bizomat, the router (:8080, the only public port)
+                                          |-- /tasks/...            --> work  :8002  (same Machine, 127.0.0.1)
                                           |-- CAD_PATHS (below)     --> http://cados.internal:8080  (Fly app cados)
-                                          '-- everything else       --> web   :8003  (same app, private network)
+                                          '-- everything else       --> web   :8003  (same Machine, 127.0.0.1)
 
 AI apps, SOLIDWORKS computers --https--> cados.fly.dev (or bizomat.ai/cad, or the old cados.kevos.com) --> Fly app cados :8080
 ```
@@ -46,6 +46,15 @@ AI apps, SOLIDWORKS computers --https--> cados.fly.dev (or bizomat.ai/cad, or th
   `bizomat.ai/cad` can fail while `cados` is suspended. The CAD branch `claude/practical-lovelace-hi2nio` (commit
   `c4a60c7`, "cados always on", not merged) proposes `auto_stop_machines = "off"` for this reason: a production
   change for the owner to decide.
+- Seen live on 10 Nov 2026 (a probe of `https://bizomat.ai/cad/healthz` and the router's `/__proxy/ready` every
+  minute, from outside): at 10:45:13 UTC `/cad/healthz` answered 502 and the router reported `cad: ENOTFOUND`, so
+  `cados.internal` had no address (the name lists started Machines only) while `cados` was suspended. A minute later it
+  answered again, woken by other traffic through Fly's proxy (`cados.fly.dev`, `cados.kevos.com`); the router's own
+  requests are not that. The two ways to make the router wake it are changes to `cados`, for the owner: keep it
+  running (`auto_stop_machines = "off"`, or `min_machines_running = 1`), or give it a private Flycast address
+  (`fly ips allocate-v6 --private -a cados`) and point `UPSTREAM_CAD` at `http://cados.flycast`, so that the router's
+  requests go through Fly's proxy, which starts a suspended Machine (check first how cados's `force_https` treats
+  those plain-HTTP requests).
 - There is no shared database, queue or secret between the two apps. Each keeps its own data on its own volume:
   `bizomat` has `work_data` (Project Management); `cados` has `opensketch_data` (CAD accounts, OAuth grants, the
   bridge signing key, `bridge.sqlite`).

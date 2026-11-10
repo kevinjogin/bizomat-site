@@ -1,7 +1,15 @@
 # BIZOMAT platform infrastructure (runbook draft)
 
-One Fly.io app, `bizomat` (Sydney, `syd`), runs the whole platform from one image. Each process group is a Machine
-of its own with one role. Only the proxy is public.
+One Fly.io app, `bizomat` (Sydney, `syd`), runs the whole platform from one image. Only the proxy is public.
+
+**Production (`fly.website.toml`, owner, 10 Nov 2026): one Machine.** The group `work`'s Machine (it holds the volume
+`work_data`) runs `bizomat-entrypoint all`: the proxy, web and work roles together, each started exactly as below
+(its own user and settings), the proxy reaching the other two on `127.0.0.1`; SIGTERM stops the proxy first; if a
+role exits, the Machine exits and Fly restarts it. shared-cpu-1x, 1 GB to start. CAD Automation is the separate Fly app
+`cados`. The move from three Machines: `docs/BIZOMAT-DEPLOYMENT.md`, section 6e.
+
+The drawing and the roles table below are the four-group plan (`fly.toml`, not deployed), where each process group is
+a Machine of its own with one role.
 
 ```
                     https (Fly edge: TLS, HTTP/2, force_https)
@@ -26,7 +34,8 @@ of its own with one role. Only the proxy is public.
 | --- | --- |
 | `proxy/` | the edge proxy (Node 22, no dependencies): `routes.mjs` (the routing table), `headers.mjs` (header hygiene, trust model), `upstreams.mjs` (6PN lookups), `proxy.mjs`, `server.mjs`; tests in `proxy/test/` |
 | `fly/Dockerfile` | the image (build context: the repository root; `.dockerignore` at the root) |
-| `fly/entrypoint.sh` | `bizomat-entrypoint <role>`: volume checks, a clean environment per role, drop to the role's user |
+| `fly/entrypoint.sh` | `bizomat-entrypoint <role>`: volume checks, a clean environment per role, drop to the role's user; `all`: proxy, web and work on one Machine |
+| `fly/memory.sh` | the Machine's and each service's memory (`fly machine exec <id> "bash /usr/local/lib/bizomat/memory.sh"`) |
 | `../fly.toml` | the app: process groups, the one service, checks, volumes, Machine sizes, restart policy |
 | `local/` | the same image as four compose services; stand-ins for unbuilt backends; the secret-isolation check |
 | `smoke/smoke.mjs` | checks every host through the proxy (compose, `bizomat.fly.dev` before DNS, live after) |
@@ -299,6 +308,20 @@ Fly prices from its pricing page (Ashburn base, Sydney is 1.269 times that), 30 
 | snapshots | first 10 GB free | 0.00 |
 | IPv4 (shared), IPv6, 8 certificates (first 10 free) | | 0.00 |
 | **Total** | | **about 55** |
+
+Production runs neither cad nor three Machines (CAD is the app `cados`; one Machine since 10 Nov 2026,
+`docs/BIZOMAT-DEPLOYMENT.md`, section 6e). The same prices, with 768 MB and 1 GB worked out from the 256 and 512 MB
+prices (about 7.64 per GB above a base of 0.87):
+
+| Shape | Size | Per month |
+| --- | --- | ---: |
+| Before: proxy, web, work | shared-cpu-1x 256 + 512 + 512 MB | 12.16 |
+| One Machine, to start | shared-cpu-1x, 1 GB | about 8.50 |
+| One Machine | shared-cpu-1x, 768 MB | about 6.60 |
+| One Machine | shared-cpu-1x, 512 MB | 4.69 |
+
+Plus the volume `work_data` (3 GB, 0.45) in each case. Parked (stopped) Machines are billed for their stored image
+only, until they are removed.
 
 Plus outbound data at 0.04 per GB from Sydney. Everything runs all the time: the backends have no service, so Fly
 cannot wake them. Today's cados Machine suspends when idle, so cad costs more than now (up to 41.88 against its
