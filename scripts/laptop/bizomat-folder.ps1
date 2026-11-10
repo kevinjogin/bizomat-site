@@ -40,15 +40,19 @@ $Report = New-Object System.Collections.Generic.List[string]
 function Say([string] $Text) { Write-Host $Text; $Report.Add($Text) }
 
 function GitLines([string] $Dir, [string[]] $GitArgs, [switch] $AllowFail) {
-    # git's output lines; stops the script when git fails (unless -AllowFail)
+    # git's output lines; stops the script when git fails (unless -AllowFail), with git's own message.
+    # safe.directory=*: clones made by another Windows account (an administrator window, for example) are read too;
+    # this script only reads them (and writes bundles outside them).
     $ErrorActionPreference = 'Continue'
-    $out = & git -C $Dir @GitArgs 2>$null
+    $all = @(& git -c 'safe.directory=*' -C $Dir @GitArgs 2>&1)
     $code = $LASTEXITCODE
+    $out = @($all | Where-Object { $_ -isnot [System.Management.Automation.ErrorRecord] })
     if ($code -ne 0) {
         if ($AllowFail) { return @() }
-        throw "git $($GitArgs -join ' ') failed in $Dir (exit $code). Nothing was deleted."
+        $msg = (@($all | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] } | ForEach-Object { "$_" }) | Select-Object -First 2) -join ' '
+        throw "git $($GitArgs -join ' ') failed in $Dir (exit $code): $msg. Nothing was deleted."
     }
-    return @($out | Where-Object { $null -ne $_ -and $_ -ne '' })
+    return @($out | ForEach-Object { "$_" } | Where-Object { $_ -ne '' })
 }
 function Run([string] $Exe, [string[]] $ExeArgs) {
     & $Exe @ExeArgs
@@ -63,6 +67,23 @@ function Copy-Checked([string] $From, [string] $To) {
     }
     $script:Copied++
     $script:CopiedBytes += (Get-Item -LiteralPath $From -Force).Length
+}
+function Copy-Whole([string] $From, [string] $To) {
+    # a whole folder, .git included, without build output and packages ($Rebuilt); links are not followed
+    $base = (Get-Item -LiteralPath $From -Force).FullName.TrimEnd('\', '/')
+    $stack = New-Object System.Collections.Generic.Stack[string]
+    $stack.Push($base)
+    while ($stack.Count -gt 0) {
+        $d = $stack.Pop()
+        foreach ($item in Get-ChildItem -LiteralPath $d -Force) {
+            $r = Rel $base $item.FullName
+            if ($item.PSIsContainer) {
+                if (($r -replace '\\', '/') -match $Rebuilt) { continue }
+                if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) { continue }
+                $stack.Push($item.FullName)
+            } else { Copy-Checked $item.FullName (Join-Path $To $r) }
+        }
+    }
 }
 function Copy-Tree([string] $From, [string] $To) {
     # a file, or a folder with everything in it (never another clone's .git)
@@ -121,7 +142,17 @@ if (-not (Test-Path -LiteralPath $Old)) {
     foreach ($c in $clones) {
         $rel = Rel $Old $c
         $dest = Join-Path $Keep $rel
-        [void](GitLines $c @('rev-parse', '--git-dir'))          # stops here if Git cannot read the clone
+        try {
+            [void](GitLines $c @('rev-parse', '--git-dir'))
+        } catch {
+            # Git cannot read it (a broken or half-made clone, a worktree whose main folder is gone): keep all of it
+            Say ''
+            Say "  $rel"
+            Say "    Git cannot read it: $($_.Exception.Message -replace ' Nothing was deleted\.$', '')"
+            Copy-Whole $c (Join-Path $dest 'whole-folder')
+            Say "    copied: the whole folder (its .git included, without build output and packages) to $(Rel $New (Join-Path $dest 'whole-folder'))"
+            continue
+        }
         $remote = (GitLines $c @('remote', 'get-url', 'origin') -AllowFail) -join ''
         $branch = (GitLines $c @('branch', '--show-current')) -join ''
         $hasCommits = [bool](GitLines $c @('rev-parse', '--verify', '--quiet', 'HEAD') -AllowFail)
