@@ -244,14 +244,15 @@ automatically: no push, merge or schedule.
 2. lists which optional secrets are set (names only);
 3. deploys: builds the image on the runner and pushes it to Fly's registry, `flyctl deploy --config fly.website.toml
    --app bizomat --local-only --ha=false --build-arg BIZOMAT_VERSION=<commit>` (rolling, the one Machine updated in
-   place: bizomat.ai is offline for its restart). Fly's remote builder is not used: it stopped answering during the website build (10 Nov 2026);
+   place: bizomat.ai is offline for its restart; `process_groups` = `work` adds `--process-groups work`, for the move
+   to one Machine only). Fly's remote builder is not used: it stopped answering during the website build (10 Nov 2026);
 4. waits until `https://bizomat.fly.dev/__proxy/health` reports the new version;
 5. checks bizomat.ai: the website, `/api/chat`, `/cad/` (CAD over the private network), `/tasks/`.
 
 **`fly.website.toml` describes the one Machine** (section 2). Until the move of `docs/BIZOMAT-DEPLOYMENT.md`,
-section 6e, has run, production still has three Machines and the preflight stops this workflow; the move itself runs
-from the laptop (it deploys the work group alone, `--process-groups work`). After it, the preflight passes, so a
-deploy ships new code onto the same Machine. A change to the Machines (another group,
+section 6e, has run, production still has three Machines and the preflight stops this workflow, except for the move
+itself: this workflow with `process_groups` = `work` (the work group alone, while the old router keeps serving). After
+it, the preflight passes, so a deploy ships new code onto the same Machine. A change to the Machines (another group,
 size, memory or region) is a decision of its own: change `fly.website.toml` in a pull request, then deploy with
 `allow_machine_change` = `YES`. To run CAD inside this app after all, follow `infrastructure/migrate/cad/README.md`
 (the earlier plan; the `cad` group would have to come back).
