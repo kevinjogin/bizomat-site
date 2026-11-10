@@ -21,7 +21,7 @@ Advice is not a decision. Lena advises and the Branch Manager decides; that is h
 
 ## The decision brief
 
-A decision brief has one job: to get a clear decision from the right person by a stated date. Its shape follows from that job. Keep it to one or two pages and put the detail in attachments. Mark it "for decision" with the date at the top. Use the reader's words, not the finance system's codes, and give every number its source.
+A decision brief has one job: to get a clear decision from the right person by a stated date. Its shape follows from that job. Keep it to one or two pages and put the detail in attachments. Mark it "for decision" with the date at the top.
 
 ```figure
 type: steps
@@ -38,9 +38,9 @@ This is an illustration. Lena sent her brief to the Branch Manager on Thursday 5
 
 The issue: the suppliers line is forecast to overspend by A$150,000, or 7.1% of its A$2,100,000 budget (150,000 ÷ 2,100,000 = 7.14%, rounded to one decimal place). The cause is reactive repairs: roofs and plumbing at older sites are failing faster than the allowance assumed, so reactive repairs are forecast at A$610,000 against an allowance of A$450,000, A$160,000 over. A renewed site services contract adds A$10,000 and planned maintenance is A$20,000 under: A$160,000 + A$10,000 − A$20,000 = A$150,000 (Chapter 2). If nothing changes, the branch will exceed the line by 30 June 2027, and the choices narrow each month as more of the remaining spend is committed.
 
-The facts: A$620,000 paid, A$910,000 committed in open orders and contract call-offs, and A$720,000 forecast but not yet committed, A$2,250,000 in all. Tom checked every open order and call-off with the people managing the work. Paid and committed together are A$1,530,000, already 72.9% of the line. Invoices alone show 29.5% spent a third of the way through the year, which is why the position looked comfortable. The least certain number is the A$330,000 of reactive repairs still forecast, because failures are hard to predict.
+The facts: A$620,000 paid, A$910,000 committed in open orders and contract call-offs, and A$720,000 forecast but not yet committed, A$2,250,000 in all. Tom checked every open order and call-off with the people managing the work. Paid and committed together are A$1,530,000, already 72.9% of the line. The least certain number is the A$330,000 of reactive repairs still forecast, because failures are hard to predict.
 
-Any real choice sits in the A$720,000 not yet committed, and not all of that is open. Safety, legal and compliance work is not available for deferral, and neither are repairs that cannot wait. Nor is the facility condition survey (Chapter 3). It was inside the A$720,000 at 31 October, taking most of the A$200,000 forecast for planned maintenance, but Lena approved it in early November, so it is now a commitment. Staging it was considered and set aside, because the maintenance tender depends on its results (Chapter 4) and reopening an approved order would cost time for little saving this year.
+Any real choice sits in the A$720,000 not yet committed, and not all of that is open. Safety, legal and compliance work is not available for deferral, and neither are repairs that cannot wait. Nor is the facility condition survey (Chapter 3). It was inside the A$720,000 at 31 October, taking most of the A$200,000 forecast for planned maintenance, but Lena approved it in early November, so it is now a commitment. Staging it was set aside, because the maintenance tender depends on its results (Chapter 4).
 
 | Option | What it means | Forecast outturn | Main risk |
 |---|---|---|---|
@@ -67,7 +67,7 @@ caption: This is an illustration. The positions hold for this decision only. The
 - Keep informed: the site coordinators | carry out the change; hear it from Lena after the decision
 ```
 
-The map changed what Lena did. The Facilities Director sets which sites come first (Chapter 1), so the deferral list was agreed with the Facilities Director before the brief went up; a Branch Manager should not learn of a disagreement from the brief itself. The CFO's area had a short early warning that a request might come, without a number until the Branch Manager decided. The site coordinators heard nothing until the decision was made, and then heard it from Lena. If a deferred job was due to be ordered under a contract, Tom would tell the contractor through the contract after the decision. The branch's budget position is not information for suppliers.
+The map changed what Lena did. The Facilities Director sets which sites come first (Chapter 1), so the deferral list was agreed with the Facilities Director before the brief went up; a Branch Manager should not learn of a disagreement from the brief itself. The CFO's area had a short early warning that a request might come, without a number until the Branch Manager decided. The site coordinators heard nothing until the decision was made, and then heard it from Lena. Contractors hear only what a decision means for their work, through Tom, once it is made.
 
 ## Competing priorities and escalation
 
