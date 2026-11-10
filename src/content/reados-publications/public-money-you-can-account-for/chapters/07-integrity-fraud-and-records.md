@@ -39,7 +39,7 @@ The test is not only the value but who offers, when and why. Hospitality worth A
 
 ## Position and information
 
-A business manager holds information other people would value: tender prices, the forecast position, a contractor's performance problems, the work coming to market next year. Section 28 of the PGPA Act and 13(10) of the Code forbid its improper use. The risks are ordinary. A friend asks which firms bid. A relative with a business asks whether a tender is coming. A supplier offers a personal discount "because we work together". The answer is the same each time: do not disclose or use it, and tell the panel chair or your manager if the approach is repeated, because a repeated approach can be an early sign that someone is trying to influence a procurement.
+A business manager holds information other people would value: tender prices, the forecast position, a contractor's performance problems, the work coming to market next year. Section 28 of the PGPA Act and 13(10) of the Code forbid its improper use. A friend asks which firms bid. A relative with a business asks whether a tender is coming. A supplier offers a personal discount "because we work together". The answer is the same each time: do not disclose or use it, and tell the panel chair or your manager if the approach is repeated, because a repeated approach can be an early sign that someone is trying to influence a procurement.
 
 ```figure
 type: checklist
@@ -56,9 +56,9 @@ caption: Most of these take minutes. Skipping them is what makes a later problem
 
 ## A duplicate invoice
 
-This is an illustration. In September NRIO paid a fencing contractor A$14,300 for depot repairs. In October a second invoice for the same job arrived, with a new date and the same invoice number plus an "A". The finance system's duplicate check compared invoice numbers only, and the purchase order was still open because the receipt had been entered as partial. The system would have let payments reach A$28,600, twice the order. Arun noticed only because the job number and site were familiar.
+This is an illustration. In September NRIO paid a fencing contractor A$13,750 for depot repairs. In October a second invoice for the same job arrived, with a new date and the same invoice number plus an "A". The finance system's duplicate check compared invoice numbers only, and the purchase order was still open because the receipt had been entered as partial. The system would have let payments reach A$27,500, twice the order. Arun noticed only because the job number and site were familiar.
 
-He stopped the payment. Then he established the facts before deciding what they meant: he checked the order, the receipt and the first payment, and asked the supplier, without accusation, which invoice was current. The supplier explained that a new accounting system had re-issued invoices it showed as unpaid, and cancelled the duplicate in writing. Arun still reported it to Lena and to the finance area that owns the system, because the control had failed even though no money had gone.
+He stopped the payment. Then he established the facts before deciding what they meant: he checked the order, the receipt and the first payment, and asked the supplier, without accusation, which invoice was current. The supplier explained that a new accounting system had re-issued invoices it showed as unpaid, and cancelled the duplicate in writing. Arun still reported it to Lena and to the finance area that owns the system: the control had failed, even though no money had gone.
 
 An honest error and a deliberate one can look the same on the first day, which is why Arun started with facts and did not keep digging on his own. Had the explanation not held up, or had the supplier shown a pattern, the next step would have been a report through NRIO's fraud reporting process, leaving any investigation to people trained for it.
 
@@ -74,7 +74,7 @@ caption: Illustration. A simple rule on supplier, amount and date found what an 
 - *Confirmed duplicates | 2 | A$3,960 recovered by credit notes
 ```
 
-The fix belonged to finance: a duplicate check on supplier, amount and date range as well as invoice number, and closing each order when its final receipt is entered. Lena's part was to report the gap with the evidence and check a month later that the change had been made. Section 10 of the Rule asks for periodic reviews of whether controls work. Findings like Arun's are the evidence those reviews need, if someone passes them on.
+The fix belonged to finance: a duplicate check on supplier, amount and date range as well as invoice number, and closing each order when its final receipt is entered. Lena reported the gap with the evidence and checked a month later that it had been fixed. Section 10 of the Rule asks for periodic reviews of whether controls work. Findings like Arun's are the evidence those reviews need, if someone passes them on.
 
 ## Records that explain the decision
 
@@ -125,7 +125,7 @@ For each situation, say what Lena's team should do, which rule applies and what 
 1. Grace is about to join the panel for a A$90,000 security services request. Over coffee she mentions that she worked for one of the likely bidders until last year.
 2. A supplier sends the team a box of chocolates in December.
 3. A friend of Jas asks, "just out of interest", which firms bid for the cleaning request that closed last week.
-4. Tom receives a Ridgeway invoice for an after-hours call-out to a remote site: 9.5 hours at A$120 an hour, A$1,140. The access log shows 4 hours on site. The contract allows up to 2 hours of travel each way to that site, at the same rate.
+4. Tom receives an invoice from an electrical contractor for an after-hours repair at a remote site: 9.5 hours at A$120 an hour, A$1,140. The access log shows 4 hours on site. The contract pays by the hour and allows up to 2 hours of travel each way to that site, at the same rate.
 5. A manager in another branch asks Lena to delete an email chain about a contractor dispute because "it reads badly".
 
 ### Worked answer
@@ -138,7 +138,7 @@ For each situation, say what Lena's team should do, which rule applies and what 
    - Allowed: 4 hours on site + 2 × 2 hours of travel = 8 hours; 8 × A$120 = A$960.
    - In question: 9.5 − 8 = 1.5 hours; 1.5 × A$120 = A$180 (check: A$1,140 − A$960 = A$180).
 
-   Tom asks Ridgeway, without accusation, to explain the extra 1.5 hours or correct the invoice, and asks finance how NRIO handles a disputed invoice within its payment terms. One overcharge of A$180 is most likely a mistake. If the same gap appears on many call-outs, the pattern goes to the fraud area through NRIO's process and Tom stops asking questions himself. Record the invoice, access log, query and reply in the contract file.
+   Tom asks the contractor, without accusation, to explain the extra 1.5 hours or correct the invoice, and asks finance how NRIO handles a disputed invoice within its payment terms. One overcharge of A$180 is most likely a mistake. If the same gap appears on many call-outs, the pattern goes to the fraud area through NRIO's process and Tom stops asking questions himself. Record the invoice, access log, query and reply in the contract file.
 5. Lena refuses and explains why. The chain records the agency's business, so she treats it as a Commonwealth record. Section 24 of the Archives Act forbids destroying or altering a Commonwealth record except as allowed, and none of the exceptions is about how a record reads. She keeps the chain in the records system and, if the request is repeated, tells the Branch Manager.
 
 Every control in this chapter depends on people with the time, skills and support to run it. Chapter 8 turns to the team.
