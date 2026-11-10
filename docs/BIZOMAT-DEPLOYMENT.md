@@ -294,7 +294,10 @@ Machine while production still has three. The deploy workflow's preflight stops 
 in the file); `.\bizomat.ps1 deploy website` (bizomat-cad `tools/laptop`) runs no preflight and would run the plain
 deploy above. Merge and cut over in one sitting.
 
-Run on the laptop, in a clean clone of `kevinjogin/bizomat-site` at `origin/main` with this change, signed in with
+Run on the laptop, in a clean clone of `kevinjogin/bizomat-site` at `origin/main` with this change, made with
+`git clone --config core.autocrlf=false https://github.com/kevinjogin/bizomat-site` (the deploy uploads the laptop's
+files to Fly's builder: with Windows line endings the entrypoint script would not run, and the Machine would not start;
+`git config core.autocrlf` in the clone must say `false`), signed in with
 `fly auth login`, with Python 3.11 or newer (the preflight reads TOML with `tomllib`) and Node.js 22.19 or newer (the
 smoke test). Commands are the same in PowerShell, except where noted; on Windows, `python3` below is `py -3`. Write each
 value below into the cutover log.
