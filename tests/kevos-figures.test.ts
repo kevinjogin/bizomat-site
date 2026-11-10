@@ -80,3 +80,34 @@ test('values are written with their units the way a reader expects', () => {
   assert.equal(val('mm', '0.05'), '0.05 mm');
   assert.equal(val('$', 'about 5000'), 'about 5000 $');
 });
+
+test('gauge labels stay clear of the arc: zone labels go to the legend, values sit outside the stroke', () => {
+  const files: string[] = [];
+  const walk = (dir: string) => { for (const e of readdirSync(dir, { withFileTypes: true })) { const p = join(dir, e.name); if (e.isDirectory()) walk(p); else if (/\.mdx?$/.test(e.name)) files.push(p); } };
+  ['src/content/reados-chapters', 'src/content/reados-publications'].forEach(walk);
+  const sources = files.flatMap((f) => [...readFileSync(f, 'utf8').matchAll(/```figure\n([\s\S]*?)```/g)].map((m) => m[1])).filter((s) => /^type: gauge$/m.test(s));
+  assert.ok(sources.length >= 13, 'the Library gauges are found');
+  // Dial geometry from gauge(): centre (160, 150), radius 112, zone stroke 22; labels are 15px.
+  const cx = 160, cy = 150, outer = 112 + 11, FS = 15;
+  for (const src of [sample.gauge, ...sources]) {
+    const spec = parseFigure(src.startsWith('type:') ? src : `type: gauge\n${src}`);
+    const html = renderFigure(spec, 'kfg', 1);
+    const svg = /<svg class="kf-gauge"[\s\S]*?<\/svg>/.exec(html)![0];
+    const legend = /<ul class="kf-gauge-legend">([\s\S]*?)<\/ul>/.exec(html)?.[1] ?? '';
+    for (const it of spec.items) {
+      assert.ok(legend.includes(`<strong>${it.fields[2]}</strong>`), `${spec.props.title}: "${it.fields[2]}" is in the legend`);
+      assert.ok(!svg.includes(`>${it.fields[2]}<`), `${spec.props.title}: "${it.fields[2]}" is not drawn on the dial`);
+    }
+    for (const m of svg.matchAll(/<text class="kf-axt" x="([-\d.]+)" y="([-\d.]+)" text-anchor="middle">([^<]*)<\/text>/g)) {
+      const x = Number(m[1]), y = Number(m[2]), w = m[3].length * 0.6 * FS, h = 0.72 * FS;
+      // Every point of the label's box that lies level with or above the centre is outside the stroke's outer edge.
+      for (let i = 0; i <= 10; i++) for (let j = 0; j <= 10; j++) {
+        const px = x - w / 2 + (w * i) / 10, py = y - h + (h * j) / 10;
+        if (py <= cy) assert.ok(Math.hypot(px - cx, py - cy) >= outer, `${spec.props.title}: "${m[3]}" clears the arc`);
+      }
+    }
+    const v = Number(spec.props.value?.[0]), lo = Number(spec.props.min?.[0] ?? 0), hi = Number(spec.props.max?.[0] ?? 100);
+    const covered = spec.items.some((it) => v >= Math.min(Number(it.fields[0]), Number(it.fields[1])) && v <= Math.max(Number(it.fields[0]), Number(it.fields[1])));
+    assert.equal((legend.match(/kf-hot/g) ?? []).length, covered && v >= lo && v <= hi ? 1 : 0, `${spec.props.title}: the zone holding the value is marked`);
+  }
+});

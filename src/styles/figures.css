@@ -212,6 +212,14 @@ span.kf-seg3 { background: repeating-linear-gradient(-45deg, var(--ink-2) 0 3px,
 .kf-needle-hub { fill: var(--kf-hot); }
 .kf-gauge-val { margin: 0.3rem 0 0; text-align: center; }
 .kf-gauge-val strong { font-family: var(--font-display); font-size: 1.3rem; color: var(--kf-hot); }
+/* Zone labels sit in a legend under the dial, so long labels wrap instead of crossing the arc. */
+.kf .kf-gauge-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 0.55rem 1.2rem; max-width: 40rem; margin: 0.9rem auto 0; }
+.kf-gauge-legend > li { display: grid; grid-template-columns: 1.75rem 1fr; gap: 0.1rem 0.55rem; align-items: start; }
+.kf-gauge-key { grid-row: span 2; width: 1.75rem; height: 0.75rem; margin-top: 0.3rem; }
+.kf-gauge-key path { stroke-width: 12; }
+.kf-gauge-range { font-size: 0.8rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.kf-gauge-legend > li.kf-hot strong::before { content: '◆ '; color: var(--kf-hot); }
+.kf-gauge-legend > li.kf-hot .kf-gauge-range { color: var(--ink-2); }
 
 /* Cycle */
 .kf-cycle { display: grid; grid-template-columns: minmax(9rem, 14rem) 1fr; gap: 1rem 1.4rem; align-items: center; }
