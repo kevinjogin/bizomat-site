@@ -4,7 +4,7 @@ chapterSlug: integrity-fraud-and-records
 order: 7
 title: "Integrity, fraud control and records"
 description: "Handle conflicts of interest, gifts, suspected fraud and records under the PGPA Act and Rule, the APS Code of Conduct and the Archives Act."
-draft: true
+draft: false
 ---
 
 Integrity problems rarely arrive with a label. They turn up as a remark before a panel meeting, a friendly email with an offer in it, or an invoice that looks oddly familiar. The business manager is often the first to see them, and what happens in the next day matters more than any policy on the intranet. The facts are written down or lost, the right people hear or do not, and the failed control is fixed or left for the next person.

@@ -4,7 +4,7 @@ chapterSlug: advice-stakeholders-and-the-first-ninety-days
 order: 10
 title: "Advice, stakeholders and the first ninety days"
 description: "Write a decision brief with costed options, map who needs what, rank competing work, plan the first ninety days and show the capability in a merit selection."
-draft: true
+draft: false
 ---
 
 Advice is the part of a business manager's work that leaders remember. A budget report, a risk register or a procurement plan matters because at some point someone must decide something on the strength of it. The business manager's task is to put that decision in front of the right person, early enough to matter, with the facts and the options laid out so that the choice is real.

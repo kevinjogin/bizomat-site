@@ -7,7 +7,7 @@ tags: [finance, operations, leadership, people, communication]
 author: BIZOMAT
 publisher: BIZOMAT Library
 language: en-AU
-status: draft
+status: published
 publishDate: 2026-11-10
 referencesChecked: 2026-11-10
 edition: "1"

@@ -4,7 +4,7 @@ chapterSlug: contracts-that-deliver-after-signature
 order: 5
 title: "Managing contracts after the signature"
 description: "Run a government contract after it is signed: a management plan, acceptance before payment, performance records, variations within delegation, options and close-out."
-draft: true
+draft: false
 ---
 
 An evaluation predicts value for money. A contract delivers it only if someone manages the work, checks it, pays for it on time and changes it properly when the need changes. In a services contract the money is spent after the signature, through small decisions made by people who never sat on the evaluation panel.

@@ -4,7 +4,7 @@ chapterSlug: budgets-that-show-commitments
 order: 2
 title: "Budgets that show what is already committed"
 description: "Build and report a branch budget that shows commitments and a forecast as well as invoices paid, so an overspend is visible while it can still be fixed."
-draft: true
+draft: false
 ---
 
 This is an illustration. At the end of October, the Asset Programs Branch's draft monthly report said the branch had spent A$620,000 of its A$2,100,000 suppliers budget. That is 29.5% of the money with a third of the year gone, and it looked comfortable. It was not. Another A$910,000 was already committed through open purchase orders and contract call-offs, and the site coordinators expected to need A$720,000 more before 30 June. The branch was heading for a A$150,000 overspend.

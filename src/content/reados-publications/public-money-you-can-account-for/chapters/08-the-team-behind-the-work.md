@@ -4,7 +4,7 @@ chapterSlug: the-team-behind-the-work
 order: 8
 title: "The team behind the work"
 description: "Plan a small team's workload in hours and FTE, recruit on merit, set clear expectations, raise performance early and keep people safe at work."
-draft: true
+draft: false
 ---
 
 Every control in the earlier chapters is carried out by a person. An invoice is matched by someone with time to match it. A contract amendment is reported within 42 days because someone knows it has to be. When a team is short, untrained or unsure what is expected, the controls slip first, because they are the work nobody sees until it is missing.

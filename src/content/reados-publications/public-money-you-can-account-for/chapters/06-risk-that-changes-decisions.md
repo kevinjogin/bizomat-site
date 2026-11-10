@@ -4,7 +4,7 @@ chapterSlug: risk-that-changes-decisions
 order: 6
 title: "Risk that changes decisions"
 description: "Build a risk register that changes what you approve, buy and report: appetite, 5 × 5 ratings, treatment, residual risk, shared risks and timely escalation."
-draft: true
+draft: false
 ---
 
 A risk register can be a list of worries kept for the audit committee, or a working tool that changes what people approve, buy, schedule and report. The difference is easy to test. Pick any entry and ask which decision it changed in the last three months. If nobody can name one, the entry is decoration.

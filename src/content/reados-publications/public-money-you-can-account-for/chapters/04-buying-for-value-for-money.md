@@ -4,7 +4,7 @@ chapterSlug: buying-for-value-for-money
 order: 4
 title: "Buying for value for money"
 description: "Apply the Commonwealth Procurement Rules to a maintenance tender: thresholds, open tender, criteria set in advance, whole-of-life cost and a weighted decision."
-draft: true
+draft: false
 ---
 
 The condition survey in Chapter 3 told the Asset Programs Branch what its 46 facilities need. The next step is to buy the maintenance that keeps them safe and working. It is the largest commitment in the branch's year, and the one most likely to be examined later.

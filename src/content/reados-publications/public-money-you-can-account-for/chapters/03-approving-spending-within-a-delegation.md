@@ -4,7 +4,7 @@ chapterSlug: approving-spending-within-a-delegation
 order: 3
 title: "Approving spending within your delegation"
 description: "How to approve a commitment of public money under a delegation, record it properly, keep duties separate, declare interests and value the whole need."
-draft: true
+draft: false
 ---
 
 A spending approval is a small act with a long tail. It commits public money before any invoice arrives, it fixes who answers for the decision, and it becomes the record an auditor reads a year later. Most approvals are routine. The ones that go wrong usually looked routine too.

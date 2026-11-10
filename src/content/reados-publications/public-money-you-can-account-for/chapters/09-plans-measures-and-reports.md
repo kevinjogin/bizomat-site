@@ -4,7 +4,7 @@ chapterSlug: plans-measures-and-reports
 order: 9
 title: "Plans, measures and reports leaders can rely on"
 description: "Link a branch plan to the corporate plan, write measures that pass the PGPA Rule's six tests, and report status, cost and earned value on one honest page."
-draft: true
+draft: false
 ---
 
 A leader can read a report in two minutes and still be misled for three months. The page says green, the numbers look tidy, and nothing on it shows whether the work is on track, what it will cost or which decision is waiting. Reports like that are rarely dishonest. They are built from the data that was easiest to collect, and easy data tends to count activity and money spent rather than results.

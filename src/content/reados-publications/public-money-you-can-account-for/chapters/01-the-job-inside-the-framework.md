@@ -4,7 +4,7 @@ chapterSlug: the-job-inside-the-framework
 order: 1
 title: "The business manager's job inside the framework"
 description: "Where a business manager's authority comes from in an Australian Government agency, from the PGPA Act down to your own written delegation."
-draft: true
+draft: false
 ---
 
 On her first morning at the Northfield Regional Infrastructure Office, Lena Moss was given a folder and a request. The folder held the agency's financial delegations instrument, its Accountable Authority Instructions, the branch budget and the corporate plan. The request came by email from one of the regional site coordinators. A contractor was ready to repair a leaking depot roof, and the coordinator wanted the new business manager to sign the order that day.
