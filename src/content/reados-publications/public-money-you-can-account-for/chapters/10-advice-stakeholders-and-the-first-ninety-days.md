@@ -36,7 +36,7 @@ caption: The decision sought goes at the top as well as the bottom, so a reader 
 
 This is an illustration. Lena sent her brief to the Branch Manager on Thursday 5 November 2026, the fourth working day after the month ended and ahead of the monthly meeting on Wednesday 11 November. Its figures are the branch's internal budget figures, which exclude GST (Chapter 2); procurement values under the CPRs include GST.
 
-The issue: the suppliers line is forecast to overspend by A$150,000, or 7.1% of its A$2,100,000 budget (150,000 ÷ 2,100,000 = 7.14%, rounded to one decimal place). The cause is reactive repairs: roofs and plumbing at older sites are failing faster than the allowance assumed, and reactive repairs are forecast at A$610,000 against A$450,000 (Chapter 2). If nothing changes, the branch will exceed the line by 30 June 2027, and the choices narrow each month as more of the remaining spend is committed.
+The issue: the suppliers line is forecast to overspend by A$150,000, or 7.1% of its A$2,100,000 budget (150,000 ÷ 2,100,000 = 7.14%, rounded to one decimal place). The cause is reactive repairs: roofs and plumbing at older sites are failing faster than the allowance assumed, so reactive repairs are forecast at A$610,000 against an allowance of A$450,000, A$160,000 over. A renewed site services contract adds A$10,000 and planned maintenance is A$20,000 under: A$160,000 + A$10,000 − A$20,000 = A$150,000 (Chapter 2). If nothing changes, the branch will exceed the line by 30 June 2027, and the choices narrow each month as more of the remaining spend is committed.
 
 The facts: A$620,000 paid, A$910,000 committed in open orders and contract call-offs, and A$720,000 forecast but not yet committed, A$2,250,000 in all. Tom checked every open order and call-off with the people managing the work. Paid and committed together are A$1,530,000, already 72.9% of the line. Invoices alone show 29.5% spent a third of the way through the year, which is why the position looked comfortable. The least certain number is the A$330,000 of reactive repairs still forecast, because failures are hard to predict.
 
@@ -48,7 +48,7 @@ Any real choice sits in the A$720,000 not yet committed, and not all of that is 
 | 2. Ask for funds | Ask the CFO for A$150,000 at NRIO's mid-year review in February, on the evidence that the reactive allowance was too low | A$2,250,000 against a revised A$2,250,000, if approved | If refused in February, far less of the year's spend can still change |
 | 3. Defer part, ask for part | Defer or hold A$90,000 now (12.5% of the forecast at 31 October), ask the CFO for A$60,000, and hold A$60,000 of reserve items uncommitted until the CFO decides | A$2,160,000; A$2,100,000 if the request is refused and the reserve items are deferred | Some cost moves into 2027–28; the reserve items wait until February |
 
-The recommendation was option 3. It acts now on the items that can wait at least cost, asks the CFO for less, and keeps a fallback that still works if the answer is no. It also says plainly that deferring a repair moves its cost into next year rather than removing it. The decision sought is the subject of this chapter's exercise.
+The recommendation was option 3. It acts now on the items that can wait at least cost, asks the CFO for less, and keeps a fallback that still works if the answer is no. It also says plainly that deferring a repair moves its cost into next year rather than removing it, so the brief adds a step for the cause: reset the reactive repairs allowance for 2027–28 from the condition survey's results, so that the same gap does not open again. The decision sought is the subject of this chapter's exercise.
 
 ## Mapping the stakeholders
 
@@ -124,7 +124,7 @@ Be exact about where your authority stopped. "I recommended; the Branch Manager 
 
 ## Exercise: write the decision paragraph
 
-Using the facts and option 3 above, write the "decision sought" paragraph of Lena's brief. Say exactly what the Branch Manager is asked to agree to, the amounts and the works involved, the date the decision is needed by and why, and what happens if the CFO says no. Lay out the arithmetic that supports it.
+Using the facts and option 3 above, write the "decision sought" paragraph of Lena's brief. Say exactly what the Branch Manager is asked to agree to, the amounts and the items involved, the date the decision is needed by and why, and what happens if the CFO says no. Lay out the arithmetic that supports it.
 
 ### Worked answer
 
@@ -137,6 +137,8 @@ This is an illustration. One version reads:
 > (b) agree that I prepare, for your signature, a request to the CFO for A$60,000 for the mid-year review in February. Agreed / Not agreed
 >
 > (c) note that A$60,000 of reserve items, door and joinery repairs at four community buildings (A$35,000) and grounds renewal at four sites (A$25,000), will stay uncommitted until the CFO decides, and will be deferred if the request is refused. Noted
+>
+> (d) agree that the branch's 2027–28 budget bid resets the reactive repairs allowance from the condition survey's results. Agreed / Not agreed
 >
 > A decision by 13 November is needed because, on average, about A$90,000 of the remaining spend will be committed each month.
 
