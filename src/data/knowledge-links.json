@@ -10262,6 +10262,42 @@
    "status": "rejected",
    "evidence": "review",
    "reason": "Rejected: chapter sets clamping force and clamp choice; the tool designs a linkage for three positions and does not size clamps."
+  },
+  {
+   "reados": "publication/public-money-you-can-account-for",
+   "chapter": "risk-that-changes-decisions",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Multiplies likelihood by consequence on 1 to 5 scales and bands the score, the rating this chapter applies to an entry in the branch risk register.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/public-money-you-can-account-for",
+   "chapter": "the-team-behind-the-work",
+   "tool": "staffing-need",
+   "type": "applies",
+   "note": "Converts a workload, minutes per unit, available hours and productive efficiency into an FTE requirement, the calculation this chapter works for invoice processing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/public-money-you-can-account-for",
+   "chapter": "plans-measures-and-reports",
+   "tool": "earned-value-check",
+   "type": "applies",
+   "note": "Gives cost and schedule variances, CPI, SPI and estimates at completion from planned value, earned value and actual cost, as in the depot upgrade report.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/public-money-you-can-account-for",
+   "chapter": "advice-stakeholders-and-the-first-ninety-days",
+   "tool": "priority",
+   "type": "applies",
+   "note": "Scores competing work on impact, urgency, risk if delayed and effort, a consistent way to set out the priority trade-offs this chapter asks you to escalate.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
