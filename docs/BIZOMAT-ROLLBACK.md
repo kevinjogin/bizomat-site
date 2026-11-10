@@ -122,7 +122,9 @@ which is why each needs the owner's go-ahead and a typed phrase. After them, the
 No data moves either way: the volume `work_data` stays on the work Machine `80e971da556628` throughout. The
 three-Machine configuration is `fly.website.toml` as it was before the change, in Git: in the laptop's clone,
 `git show 738e48b:fly.website.toml > fly.three-machines.toml` (at the repository root; the commands below deploy an
-existing image, so nothing is built). Note each step in the cutover log.
+existing image, so nothing is built). On Windows, `python3` below is `py -3` (Python 3.11 or newer), and
+`ALLOW_MACHINE_CHANGE=YES` in front of a command is `$env:ALLOW_MACHINE_CHANGE = 'YES'` on the line before. Note each
+step in the cutover log.
 
 **While proxy and web are parked** (stopped, section 6e step 6; a few minutes, no build):
 

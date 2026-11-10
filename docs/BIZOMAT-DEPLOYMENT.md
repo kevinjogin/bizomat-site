@@ -295,7 +295,9 @@ in the file); `.\bizomat.ps1 deploy website` (bizomat-cad `tools/laptop`) runs n
 deploy above. Merge and cut over in one sitting.
 
 Run on the laptop, in a clean clone of `kevinjogin/bizomat-site` at `origin/main` with this change, signed in with
-`fly auth login`. Commands are the same in PowerShell, except where noted. Write each value below into the cutover log.
+`fly auth login`, with Python 3.11 or newer (the preflight reads TOML with `tomllib`) and Node.js 22.19 or newer (the
+smoke test). Commands are the same in PowerShell, except where noted; on Windows, `python3` below is `py -3`. Write each
+value below into the cutover log.
 
 | Step | Do | Check | If it goes wrong |
 | --- | --- | --- | --- |
