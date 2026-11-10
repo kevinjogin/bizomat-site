@@ -31,7 +31,7 @@ The procurement file holds the declaration, options, decision, reasons, question
 
 ## A supplier offers tickets
 
-This is an illustration. In October, while Tom was pricing a variation to add two sites to the Ridgeway Maintenance contract (Chapter 5), Ridgeway's account manager emailed him and Lena. The offer was two tickets each to a regional football final in a hospitality suite, "about A$450 a ticket". Four tickets at A$450 is A$1,800 of hospitality, offered to the two officials about to agree a price with the supplier.
+This is an illustration. Later in the contract, while Tom was pricing a variation to add two sites to the Ridgeway Maintenance contract (Chapter 5), Ridgeway's account manager emailed him and Lena. The offer was two tickets each to a regional football final in a hospitality suite, "about A$450 a ticket". Four tickets at A$450 is A$1,800 of hospitality, offered to the two officials about to agree a price with the supplier.
 
 The CPRs say officials must act ethically, including "not accepting inappropriate gifts", and section 27 of the PGPA Act covers using a position to gain a benefit. These rules state principles, not dollar limits. Your agency's gifts and benefits policy sets the limits, who may approve acceptance and what must be recorded. NRIO's policy, as fictional as the rest of the case, requires every offer above token value, accepted or declined, to go in its gifts register. It also says officials do not accept hospitality from a supplier while a procurement or contract negotiation with that supplier is open.
 
