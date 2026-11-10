@@ -29,9 +29,9 @@ For procurements above A$1 million (A$7.5 million for construction services), of
 
 Every procurement by a non-corporate Commonwealth entity follows Division 1 of the CPRs, the rules for all procurements, at any value. The additional rules in Division 2 also apply when the estimated value is at or above the relevant procurement threshold and no Appendix A exemption applies. For non-corporate entities the threshold is A$125,000, except for construction services, where it is A$7.5 million. "Where the CPRs refer to thresholds and values, these are inclusive of the Goods and Services Tax (GST)." Every amount in this chapter includes GST.
 
-Below the threshold, a newer rule applies. For a procurement with an expected value from A$10,000 up to the threshold, other than a standing offer, non-corporate entities must invite only Australian businesses to make submissions. An official may decide that is not appropriate, but must document the basis. Separately, non-corporate entities must use the Commonwealth Contracting Suite for contracts under A$200,000.
+Below the threshold, a newer rule applies. For a procurement with an expected value at or above A$10,000 and below the threshold, other than a standing offer, non-corporate entities must invite only Australian businesses to make submissions. An official may decide that is not appropriate, but must document the basis. Separately, non-corporate entities must use the Commonwealth Contracting Suite for contracts under A$200,000.
 
-The CPRs also set an entity-wide commitment for small and medium enterprises (SMEs). The commitment is for non-corporate entities to procure at least 25 per cent of contracts by value from SMEs for contracts up to A$1 billion, with a target of 40 per cent by value for contracts up to A$20 million. That commitment shapes an agency's buying overall. NRIO's evaluation plans do not turn it into a score in a single tender.
+The CPRs also state the Government's commitment on small and medium enterprises (SMEs). The commitment is for non-corporate entities to procure at least 25 per cent of contracts by value from SMEs for contracts up to A$1 billion, with a target of 40 per cent by value for contracts up to A$20 million. That commitment shapes an agency's buying overall. NRIO's evaluation plans do not turn it into a score in a single tender.
 
 ```figure
 type: decision
@@ -48,7 +48,7 @@ This is an illustration. NRIO estimates the maintenance contract at about A$1,20
 
 ## Going to market
 
-Each entity keeps an annual procurement plan, and open tenders are published on AusTender. An open tender must stay open "at least 25 days" from publication. That can be cut to no less than 10 days, but only in the circumstances the CPRs list. The CPRs add that time limits "should not be treated as default time limits". NRIO allows 30 days, because tenderers need to visit remote sites before they can price them honestly.
+Each entity keeps an annual procurement plan, and open tenders are published on AusTender. An open tender must stay open "at least 25 days" from publication. That can be cut to no less than 10 days, but only in the circumstances the CPRs list. The CPRs add that time limits "should not be treated as default time limits". This is an illustration. NRIO allows 30 days, because tenderers need to visit remote sites before they can price them honestly.
 
 Request documentation should include the evaluation criteria, so that submissions are assessed "on a fair, common and appropriately transparent basis". The work that makes this possible happens before release. Grace drafts an evaluation plan, and the Branch Manager, who will be the delegate for the final commitment, approves it. The plan fixes:
 
@@ -57,7 +57,7 @@ Request documentation should include the evaluation criteria, so that submission
 - the price basis: the five-year whole-of-life cost to NRIO, with call-outs priced at each tenderer's rates on a planning figure of 160 call-outs a year, taken from NRIO's job records and given to every tenderer;
 - the panel: the Facilities Director as chair, a regional site coordinator and Tom. Grace advises on procurement and is the only contact for tenderers. Lena oversees the process and keeps the record.
 
-In the CPRs, "ethical" relates to "honesty, integrity, probity, diligence, fairness and consistency". Officials must act ethically throughout, including "recognising and dealing with actual, potential and perceived conflicts of interest and not accepting inappropriate gifts". Every panel member signs a declaration of interests before seeing any tender (Chapter 7 covers what happens when someone has something to declare). Questions from tenderers go to Grace, and her answers go to every tenderer.
+In the CPRs, "ethical" relates to "honesty, integrity, probity, diligence, fairness and consistency". Officials must act ethically throughout, including "recognising and dealing with actual, potential and perceived conflicts of interest and not accepting inappropriate gifts or hospitality". Every panel member signs a declaration of interests before seeing any tender (Chapter 7 covers what happens when someone has something to declare). Questions from tenderers go to Grace, and her answers go to every tenderer.
 
 "Officials must maintain for each procurement a level of documentation commensurate with the scale, scope and risk of the procurement." For a five-year contract across 46 sites, that means the procurement plan, the evaluation plan, the declarations, each member's scores and the agreed scores with reasons, the whole-of-life calculation, the value-for-money report and the delegate's approval. A A$3,000 purchase needs far less. The CPRs also require processes to identify, analyse, allocate and treat procurement risk, with effort to match. Here the main risk is staffing remote sites in the wet season, which Chapter 6 takes up.
 

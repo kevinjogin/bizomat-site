@@ -64,7 +64,7 @@ Every official also carries general duties personally, at every level from the a
 - Section 28: the same duty for information you obtain as an official.
 - Section 29: disclose details of any material personal interest that relates to the affairs of the entity.
 
-The words "position and circumstances" in section 25 matter. A reasonable business manager is expected to read a delegation before using it and to check the numbers before signing. The standard rises with the role.
+Section 25 measures you against a reasonable person who held your position, with your responsibilities, in your entity's circumstances. A reasonable business manager is expected to read a delegation before using it and to check the numbers before signing. The standard rises with the role.
 
 ## Delegation: power lent in writing
 
@@ -149,7 +149,7 @@ This is an illustration. Lena's map uses NRIO's fictional instrument and instruc
 
 | Decision | Whose call | Why |
 | --- | --- | --- |
-| A$46,000 roof repair at one depot | Lena | Within her A$250,000 limit. Below the A$125,000 threshold, so Division 1 of the CPRs applies. At A$10,000 or more, and not under a standing offer, only Australian businesses are invited unless an official decides that is not appropriate and documents why. She records her approval in writing. |
+| A$46,000 roof repair at one depot | Lena | Within her A$250,000 limit. Below the A$125,000 threshold, so only Division 1 of the CPRs applies. At A$10,000 or more, and not under a standing offer, only Australian businesses are invited unless an official decides that is not appropriate and documents why. She records her approval in writing. |
 | Two-year security patrol contract at A$160,000 a year | Facilities Director or Branch Manager | The commitment is the whole value: 2 × A$160,000 = A$320,000, which is A$320,000 − A$250,000 = A$70,000 above Lena's limit and within the Facilities Director's A$500,000. Above A$125,000, Division 2 applies and central procurement signs off the method. Lena prepares the approval. |
 | An open tender for a A$140,000 service | Central procurement signs off the method; Lena then approves the commitment | A$140,000 − A$125,000 = A$15,000 above the threshold. The commitment is within her limit, but NRIO's instructions need central procurement's sign-off on the method first. |
 | The format of the monthly budget report | Lena | A branch procedure. No financial delegation is needed. |

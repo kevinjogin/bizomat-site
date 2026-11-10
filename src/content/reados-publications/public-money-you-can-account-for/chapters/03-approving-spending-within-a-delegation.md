@@ -67,7 +67,7 @@ question: Is the whole value within my limit, with a cleared method, confirmed f
 - Funds not confirmed | Ask finance to confirm the budget line | A commitment without budget becomes next month's overspend
 - Interest or conflict | Declare it in writing first | Step aside if the response to your declaration says so
 - *All four clear | Approve and record it in writing | As soon as practicable, with the evidence attached
-caption: NRIO's limits are the fictional agency's own. Use your own delegation instrument and Accountable Authority Instructions.
+caption: This is an illustration. NRIO's limits are the fictional agency's own. Use your own delegation instrument and Accountable Authority Instructions.
 ```
 
 ## What the approval record should show

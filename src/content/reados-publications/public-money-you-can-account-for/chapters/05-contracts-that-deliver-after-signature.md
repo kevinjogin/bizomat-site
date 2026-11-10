@@ -15,7 +15,7 @@ Those decisions are where public money leaks. A site visit turns into extra work
 
 This is an illustration. NRIO has signed with Ridgeway Maintenance for regional facilities maintenance at its 46 sites. The term is three years plus two one-year options. Ridgeway is paid a fixed fee of A$4,000 per site per year and A$375 per call-out, and the total contract value is A$1,240,000 including GST if both options are taken. The Commonwealth Procurement Rules state their thresholds and values inclusive of GST, and every amount below follows that convention. The Branch Manager, the only official in the branch whose delegation covers that value, approved the commitment. Tom, the contracts officer, is the contract manager. Lena is accountable for how the branch runs the contract.
 
-Section 23 of the PGPA Act gives the accountable authority of a non-corporate Commonwealth entity the power to enter into, vary and administer arrangements, and to approve commitments of relevant money. Those powers reach officials only through a written delegation under section 110. Entering into the contract took a day; varying and administering it takes five years.
+Section 23 of the PGPA Act gives the accountable authority of a non-corporate Commonwealth entity the power to enter into, vary and administer arrangements, and to approve commitments of relevant money. Those powers usually reach officials through a written delegation under section 110. Entering into the contract took a day; varying and administering it takes five years.
 
 ## Write a contract management plan
 
@@ -52,7 +52,7 @@ The table keeps the separation of duties from Chapter 3. The person who orders w
 
 ## Accept the work, then pay on time
 
-The CPRs require non-corporate Commonwealth entities to "make all payments to suppliers within the maximum payment terms", after acknowledging satisfactory delivery and receiving a correctly rendered invoice. Both halves bind. NRIO must not pay for work it has not accepted. Once it has accepted the work and holds a correct invoice, it must not sit on the payment. Ask your finance area for the current maximum payment terms and how the period is counted, and read what your contract says a correctly rendered invoice must contain.
+The CPRs require non-corporate Commonwealth entities to "make all payments to suppliers within the maximum payment terms", after acknowledging satisfactory delivery and receiving a correctly rendered invoice. Both halves matter. NRIO does not pay for work it has not accepted. Once it has accepted the work and holds a correct invoice, it must not sit on the payment. Ask your finance area for the current maximum payment terms and how the period is counted, and read what your contract says a correctly rendered invoice must contain.
 
 Acceptance is a decision based on evidence. For Ridgeway, the evidence is the work order or scheduled task, the job sheet with its date, times and photos, and the site coordinator's confirmation that the work was done to standard. Tom checks the invoice against the contract's rates, and Arun pays. When one line is wrong, tell Ridgeway promptly and in writing, and ask your finance area how your agency handles a partly disputed invoice.
 

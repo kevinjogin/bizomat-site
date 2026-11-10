@@ -9,7 +9,7 @@ draft: true
 
 Integrity problems rarely arrive with a label. They turn up as a remark before a panel meeting, a friendly email with an offer in it, or an invoice that looks oddly familiar. The business manager is often the first to see them, and what happens in the next day matters more than any policy on the intranet. The facts are written down or lost, the right people hear or do not, and the failed control is fixed or left for the next person.
 
-Lena meets three of these moments in one month, then finds a fourth that someone had already tidied away. Each has a rule behind it and a record that someone will read later. Amounts in the case include GST, as the Commonwealth Procurement Rules (CPRs) state their values.
+Lena meets three of these moments, then finds a fourth that someone had already tidied away. Each has a rule behind it and a record that someone will read later. Amounts in the case include GST, as the Commonwealth Procurement Rules (CPRs) state their values.
 
 ## The framework behind the controls
 
@@ -33,7 +33,7 @@ The procurement file holds the declaration, options, decision, reasons, question
 
 This is an illustration. Later in the contract, while Tom was pricing a variation to add two sites to the Ridgeway Maintenance contract (Chapter 5), Ridgeway's account manager emailed him and Lena. The offer was two tickets each to a regional football final in a hospitality suite, "about A$450 a ticket". Four tickets at A$450 is A$1,800 of hospitality, offered to the two officials about to agree a price with the supplier.
 
-The CPRs say officials must act ethically, including "not accepting inappropriate gifts", and section 27 of the PGPA Act covers using a position to gain a benefit. These rules state principles, not dollar limits. Your agency's gifts and benefits policy sets the limits, who may approve acceptance and what must be recorded. NRIO's policy, as fictional as the rest of the case, requires every offer above token value, accepted or declined, to go in its gifts register. It also says officials do not accept hospitality from a supplier while a procurement or contract negotiation with that supplier is open.
+The CPRs say officials must act ethically, including "not accepting inappropriate gifts or hospitality", and section 27 of the PGPA Act covers improperly using a position to gain a benefit. These rules state principles, not dollar limits. Your agency's gifts and benefits policy sets the limits, who may approve acceptance and what must be recorded. NRIO's policy, as fictional as the rest of the case, requires every offer above token value, accepted or declined, to go in its gifts register. It also says officials do not accept hospitality from a supplier while a procurement or contract negotiation with that supplier is open.
 
 The test is not only the value but who offers, when and why. Hospitality worth A$1,800, from the contractor, to the negotiators, during a price negotiation, fails on all three. Lena declined for both of them in a short, polite reply, recorded the offer and reply in the register, and told the Branch Manager. Tom asked whether he could go if he paid for his own ticket. The answer was no: the suite was not open to the public, so the access itself was the benefit.
 
@@ -50,8 +50,8 @@ caption: Most of these take minutes. Skipping them is what makes a later problem
 - Record every offer the policy covers | Accepted or declined, with the reply.
 - Keep tender and budget information to those who need it | Sections 27 and 28 of the PGPA Act apply to every official.
 - ? Ask the fraud or integrity area when unsure | They would rather hear about something small than miss something large.
-- x Do not investigate a suspicion yourself | Establish the facts, then report through the agency's process.
-- x Do not tidy a record after the event | Annotate it; never alter or destroy it.
+- x Investigate a suspicion yourself | Establish the facts, then report through the agency's process.
+- x Tidy a record after the event | Annotate it; never alter or destroy it.
 ```
 
 ## A duplicate invoice
@@ -67,7 +67,7 @@ Lena then asked for a wider check, shown below. This is an illustration. Of the 
 ```figure
 type: funnel
 title: Arun's duplicate payment check, 1 July to 31 October
-caption: Illustration. A simple rule on supplier, amount and date found what an invoice-number check missed.
+caption: This is an illustration. A simple rule on supplier, amount and date found what an invoice-number check missed.
 - Invoices paid | 3200 | a third of the year's 9,600
 - Same supplier and amount within 60 days | 38 | pairs to review
 - Not explained by regular fixed charges | 5 | pairs checked against orders and receipts
@@ -82,7 +82,7 @@ Section 41 of the PGPA Act requires the accountable authority to cause accounts 
 
 Section 24 of the Archives Act 1983 says a person must not engage in conduct that results in the destruction or other disposal of a Commonwealth record, the transfer of its custody or ownership, or damage to or alteration of it, unless an exception applies. The exceptions include the permission of the Archives or a practice or procedure it has approved, what the law requires, and normal administrative practice. A breach is an offence (20 penalty units). Ask your records area what your agency's approved practices allow before you delete anything about the agency's business, email included.
 
-Lena's team filed each of the month's records in NRIO's records system, not a personal drive or inbox. Write each one as if an auditor will read it in two years without you in the room: what happened, when, who decided and why.
+Lena's team filed each of these records in NRIO's records system, not a personal drive or inbox. Write each one as if an auditor will read it in two years without you in the room: what happened, when, who decided and why.
 
 ## When it goes wrong: the quiet fix
 

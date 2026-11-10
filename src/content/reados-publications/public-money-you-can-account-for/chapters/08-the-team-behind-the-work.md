@@ -20,7 +20,7 @@ This is an illustration. The branch processes 9,600 supplier invoices a year. Ja
 ```figure
 type: formula
 title: From invoices to FTE
-caption: Illustration. NRIO's planning figures. The FTE is rounded to two decimal places only at the end.
+caption: This is an illustration. NRIO's planning figures. The FTE is rounded to two decimal places only at the end.
 formula: Workload hours = units × minutes per unit ÷ 60
 formula: Productive hours per person = available hours × productive share
 formula: FTE = workload hours ÷ productive hours per person
@@ -39,9 +39,9 @@ Two inputs deserve the most care. Minutes per unit should be measured, not guess
 
 ## Turn the number into a decision
 
-The calculation says 1.51 FTE. Nobody employs 0.51 of a person, and the right answer is rarely just "round up". Lena worked through four questions before she wrote anything for the Branch Manager.
+This is an illustration. The calculation says 1.51 FTE. Nobody employs 0.51 of a person, and the right answer is rarely just "round up". Lena worked through four questions before she wrote anything for the Branch Manager.
 
-**Coverage.** Today the work is done by Jas, who spends most of the week on it, and a labour-hire temp whose contract ends on 31 December. When the temp leaves, the invoices fall on one person: 1,275 productive hours against 1,920 hours of work, a shortfall of 645 hours. Late payments would follow, and the CPRs require payments to suppliers within the maximum payment terms once delivery is acknowledged and a correctly rendered invoice is received.
+**Coverage.** Today the work is done by Jas, who spends most of the week on it, and a labour-hire temp whose contract ends on 31 December. When the temp leaves, the invoices fall on one person: 1,275 productive hours against 1,920 hours of work, a shortfall of 645 hours. Late payments would follow, and the CPRs require payments to suppliers within the maximum payment terms once satisfactory delivery is acknowledged and a correctly rendered invoice is received.
 
 **Separation of duties.** The person who enters an invoice should not also approve it for payment (Chapter 3). One person cannot run the whole chain, whatever the hours say.
 
@@ -53,7 +53,7 @@ The calculation says 1.51 FTE. Nobody employs 0.51 of a person, and the right an
 type: bars
 title: Invoice workload against productive capacity
 unit: hours
-caption: Illustration. One person leaves a 645-hour gap. Two leave 630 hours for peaks, absence, queries and checks.
+caption: This is an illustration. One person leaves a 645-hour gap. Two leave 630 hours for peaks, absence, queries and checks.
 - Invoice workload, 9,600 × 12 minutes | 1920
 - One person's productive hours | 1275 | 645 hours short
 - *Two people's productive hours | 2550 | 630 hours spare
@@ -81,7 +81,7 @@ caption: Each step answers part of section 10A(2) of the Public Service Act. HR 
 
 ## When it goes wrong: the friend's recommendation
 
-In November the Facilities Director stopped by Lena's desk. "My neighbour's son is great with numbers and he's between jobs. Ask the labour-hire firm to send him in when your temp finishes. It saves you months."
+This is an illustration. In November the Facilities Director stopped by Lena's desk. "My neighbour's son is great with numbers and he's between jobs. Ask the labour-hire firm to send him in when your temp finishes. It saves you months."
 
 Here is how that goes wrong. Lena, worried about the 645-hour gap, asks the firm for him by name. He starts in January. In March an applicant for the ongoing role, who has heard how the placement was made, asks the selection panel whether the outcome is already decided.
 
@@ -117,8 +117,8 @@ caption: Early and private, based on facts, with support and a review date. Foll
 - Describe examples, not character | "31 of 300 invoices coded to the wrong cost centre", not "careless".
 - Agree the standard and the support | Training, guidance, time and who to ask.
 - Set a review date and write a short note | Share the note with the employee.
-- x Do not raise it first in a team meeting or by email | It embarrasses people and rarely fixes anything.
-- x Do not wait six months | A late conversation is unfair to the employee and to the work.
+- x Raise it first in a team meeting or by email | It embarrasses people and rarely fixes anything.
+- x Wait six months | A late conversation is unfair to the employee and to the work.
 ```
 
 ## Develop the people you have

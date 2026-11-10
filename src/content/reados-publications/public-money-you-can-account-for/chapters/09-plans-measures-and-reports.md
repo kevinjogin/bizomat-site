@@ -117,9 +117,9 @@ caption: This is an illustration. Spend is below plan, which looked like good ne
 
 ## A one-page report the Branch Manager can rely on
 
-A leader needs five things from a project or program report: its status, its trend, its cost position, the main risk and the decision needed. Everything else belongs in an attachment. NRIO's reporting guide sets the colours in advance from the indices: green at 0.95 or above, amber from 0.90 to below 0.95, and red below 0.90. Because the rule is fixed, nobody chooses a colour to suit the mood of the month.
+A leader needs five things from a project or program report: its status, its trend, its cost position, the main risk and the decision needed. Everything else belongs in an attachment. This is an illustration. NRIO's reporting guide sets the colours in advance from the indices: green at 0.95 or above, amber from 0.90 to below 0.95, and red below 0.90. Because the rule is fixed, nobody chooses a colour to suit the mood of the month.
 
-This is an illustration of the depot's page for October.
+Here is the depot's page for October.
 
 | Line | Depot upgrade, 31 October 2026 |
 |---|---|

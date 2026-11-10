@@ -37,9 +37,9 @@ Write the assumptions down beside the numbers. When someone asks in March why re
 
 ## Phase it by month
 
-An annual budget does not say when the money will be spent. Spread evenly, the suppliers line would be A$175,000 a month, or A$700,000 by 31 October. The branch's real pattern is different. July starts slowly while new orders are raised. December and January are quieter, with the holiday shutdown and wet-season access limits at some remote sites. March to June are busier as planned works are finished before the year ends.
+An annual budget does not say when the money will be spent. This is an illustration. Spread evenly, the suppliers line would be A$175,000 a month, or A$700,000 by 31 October. The branch's real pattern is different. July starts slowly while new orders are raised. December and January are quieter, with the holiday shutdown and wet-season access limits at some remote sites. March to June are busier as planned works are finished before the year ends.
 
-This is an illustration. Arun phases the suppliers line with Tom and the Facilities Director, using the maintenance schedule and the contract calendars. The phased budget to 31 October is A$650,000, not A$700,000. Phasing lets the branch compare what it has spent with what it expected to have spent by now, rather than with a twelfth of the year for each month.
+Arun phases the suppliers line with Tom and the Facilities Director, using the maintenance schedule and the contract calendars. The phased budget to 31 October is A$650,000, not A$700,000. Phasing lets the branch compare what it has spent with what it expected to have spent by now, rather than with a twelfth of the year for each month.
 
 ## The four numbers
 
@@ -85,7 +85,7 @@ Ask your finance area how NRIO's system shows work that has been delivered but n
 
 ## Explaining a variance
 
-A variance explanation is useful when it answers four questions: how much, why, whether it is timing or permanent, and what happens next and who does it. Compare two versions for the same line.
+A variance explanation is useful when it answers four questions: how much, why, whether it is timing or permanent, and what happens next and who does it. This is an illustration. Compare two versions for the same line.
 
 Weak: "Suppliers underspent to date due to timing."
 
