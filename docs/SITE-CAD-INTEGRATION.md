@@ -46,11 +46,12 @@ AI apps, SOLIDWORKS computers --https--> cados.fly.dev (or bizomat.ai/cad, or th
   `bizomat.ai/cad` can fail while `cados` is suspended. The CAD branch `claude/practical-lovelace-hi2nio` (commit
   `c4a60c7`, "cados always on", not merged) proposes `auto_stop_machines = "off"` for this reason: a production
   change for the owner to decide.
-- Seen live on 10 Nov 2026 (a probe of `https://bizomat.ai/cad/healthz` and the router's `/__proxy/ready` every
-  minute, from outside): at 10:45:13 UTC `/cad/healthz` answered 502 and the router reported `cad: ENOTFOUND`, so
-  `cados.internal` had no address (the name lists started Machines only) while `cados` was suspended. A minute later it
-  answered again, woken by other traffic through Fly's proxy (`cados.fly.dev`, `cados.kevos.com`); the router's own
-  requests are not that. The two ways to make the router wake it are changes to `cados`, for the owner: keep it
+- Seen live on 10 Nov 2026 (probes of `https://bizomat.ai/cad/healthz` every 5 s and of the router's `/__proxy/ready`
+  every minute, from outside, 10:20 to 11:50 UTC): five times (10:33, 10:45, 11:05, 11:18, 11:35) `/cad/healthz`
+  answered 502 and the router reported `cad: ENOTFOUND`, so `cados.internal` had no address (the name lists started
+  Machines only) while `cados` was suspended. The router cannot wake it: with no address it sends nothing. Each time
+  `cados` answered again about 12 s later, woken by other traffic through Fly's proxy (`cados.fly.dev`,
+  `cados.kevos.com`). With no such traffic (at night, for example), bizomat.ai/cad stays down until some. The two ways to make the router wake it are changes to `cados`, for the owner: keep it
   running (`auto_stop_machines = "off"`, or `min_machines_running = 1`), or give it a private Flycast address
   (`fly ips allocate-v6 --private -a cados`) and point `UPSTREAM_CAD` at `http://cados.flycast`, so that the router's
   requests go through Fly's proxy, which starts a suspended Machine (check first how cados's `force_https` treats
