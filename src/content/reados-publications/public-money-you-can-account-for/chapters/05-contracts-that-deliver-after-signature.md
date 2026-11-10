@@ -91,7 +91,7 @@ caption: This is an illustration. The service level is 95% in each quarter. Mont
 
 The whole year, 170 of 190 jobs on time, comes to 170 ÷ 190 = 89.5% (rounded to one decimal place), a figure that hides the pattern. The review at the end of month 9 heard why: technicians could not reach remote sites when roads flooded, and Ridgeway had no local subcontractors arranged. The Facilities Director asked for a written wet-season staffing plan, and Tom recorded the action with an owner and a date. Chapter 6 shows why the same numbers should also have reached the risk register much sooner.
 
-When performance slips, raise it early and in writing, and use only the remedies the contract contains.
+When performance slips, raise it early and in writing, and work from what the contract itself provides, with advice from central procurement or legal before any formal step.
 
 ## Change the contract before the work changes
 
@@ -113,7 +113,7 @@ Before anything is signed, Tom works through four questions.
 
 **Is the approval recorded properly?** Section 18 of the PGPA Rule requires the official approving a commitment of relevant money to "record the approval in writing as soon as practicable after giving it". The guide to that section reminds officials that sections 25 and 26 of the PGPA Act require care and diligence, and a proper purpose, when approving. Tom's brief gives the Branch Manager what that care needs: the reason, the checked price build-up, procurement's advice on scope, the effect on the budget forecast and the cumulative change in value.
 
-**What must be reported?** Under the [Commonwealth Procurement Rules](https://www.legislation.gov.au/F2025L01263/latest/text), an amendment must be reported on AusTender within 42 days when it changes the reported value by A$10,000 or more. This one changes it by A$38,000, so Grace prepares the report with central procurement as soon as the variation is signed. Small changes are caught too: once accumulated unreported amendments reach A$10,000, they must be reported.
+**What must be reported?** Under the [Commonwealth Procurement Rules](https://www.legislation.gov.au/F2025L01263/latest/text), an amendment must be reported on AusTender within 42 days when it changes the reported value by A$10,000 or more. This one changes it by A$38,000, so Tom, who reported the original contract, prepares the amendment report with central procurement as soon as the variation is signed. Small changes are caught too: once accumulated unreported amendments reach A$10,000, they must be reported.
 
 Tom adds one line to the brief. Half of the variation sits in the option years. At 4 call-outs a year, years 2 and 3 cost (2 × A$4,000 × 2) + (8 × A$375) = A$19,000, and years 4 and 5 cost the same again, but only if NRIO takes the options. The Branch Manager should see both halves now, not at the option decision.
 

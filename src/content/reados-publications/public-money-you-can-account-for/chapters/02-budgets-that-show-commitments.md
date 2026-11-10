@@ -29,7 +29,7 @@ A budget that is useful in March is built from what drives each line, not from l
 
 Employees come from the positions in the branch, the expected cost of each, and the dates of vacancies and planned recruitment. Arun does not guess position costs. He takes them from the finance area's costings and notes the date he received them.
 
-Suppliers come from contracts and their schedules, the planned maintenance program for the 46 facilities, an allowance for reactive repairs based on the condition of the sites, site services contracts, and travel and training. The branch's A$2,100,000 has four components: planned maintenance A$1,150,000, reactive repairs A$450,000, site services contracts A$300,000, and travel, training and minor services A$200,000.
+Suppliers come from contracts and their schedules, the planned maintenance program for the 46 facilities, an allowance for reactive repairs based on the condition of the sites, site services contracts, and travel and training. The branch's A$2,100,000 has four components: planned maintenance A$1,150,000, reactive repairs A$450,000, site services contracts A$300,000, and travel, training and minor services A$200,000. Planned maintenance is more than one contract: it covers the general maintenance contract's fixed fees, specialist servicing of fire systems, lifts and air conditioning, and scheduled works such as repainting and roof renewals.
 
 Minor capital covers named small capital works, each with its own approval. What counts as capital rather than an expense is set by the finance area's policy. Ask them rather than guessing.
 
