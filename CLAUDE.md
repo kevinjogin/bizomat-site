@@ -61,10 +61,13 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `fly.website.toml` runs the router, the website and Project Management together on the group `work`'s Machine
   (`80e971da556628`, `bizomat-entrypoint all`, shared-cpu-1x 1 GB, syd, the volume `work_data` (3 GB) where it was).
   Production before it, read from Fly on 9 Nov 2026: three Machines in syd (proxy shared-cpu-1x 256 MB, web and work
-  shared-cpu-1x 512 MB); they stay until the cutover of `docs/BIZOMAT-DEPLOYMENT.md`, section 6e, has run (the work
-  group alone with `--process-groups work`, then proxy and web parked, removed only after verification; the way back:
-  `docs/BIZOMAT-ROLLBACK.md`, 6a). Until then deploy nothing else from `fly.website.toml`: `bizomat.ps1 deploy website`
-  runs no preflight, and a plain `fly deploy` destroys proxy and web before work takes over. The `cad` group of the
+  shared-cpu-1x 512 MB); they stay until the cutover of `docs/BIZOMAT-DEPLOYMENT.md`, section 6e, has run (the deploy
+  workflow with `process_groups` = `work`: the work group alone, then proxy and web parked, removed only after
+  verification; the way back: `docs/BIZOMAT-ROLLBACK.md`, 6a). Until then deploy nothing else from `fly.website.toml`:
+  a plain `fly deploy` destroys proxy and web before work takes over. The deploy workflow builds the image on the
+  runner (`--local-only`, #7): Fly's remote builder stopped answering during the website build on 10 Nov 2026. Never
+  deploy the website with `bizomat.ps1 deploy website`: it runs no preflight and deploys from a clone of the archived
+  `jogkev-creator/gocore-website`. The `cad` group of the
   earlier plan never ran and was removed; never create it. Never add a Machine, a process group or memory without the
   owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
   and Cloudflare describe earlier plans.
