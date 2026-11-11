@@ -10388,6 +10388,150 @@
    "note": "Compares the tank's remaining hours with the fabricator's productive capacity to test whether a delivery date has grounds.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "speed-against-length",
+   "tool": "ballscrew-limits",
+   "type": "applies",
+   "note": "Calculates the critical (whirling) speed and buckling load of a screw from root diameter, unsupported length and end mounting, and checks them against the operating speed and axial load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "life-preload-and-maintenance-free",
+   "tool": "ballscrew-duty-life",
+   "type": "applies",
+   "note": "Gives the mean speed, cubic mean load, basic rated life in hours and travel over a duty cycle, with preload entered in each step's load, against the running hours required.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "accuracy-against-the-error-budget",
+   "tool": "machine-axis-error-budget",
+   "type": "applies",
+   "note": "Combines positioning accuracy, repeatability, Abbe error, uncompensated thermal growth and fixture error by worst case and root-sum-square against the share of tolerance allowed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "stiffness-mass-and-height",
+   "tool": "beam-sizing",
+   "type": "applies",
+   "note": "Finds the section modulus and second moment of area a beam needs for deflection limits down to span ÷ 5,000; the chapter scales its result to test a far tighter sag limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "possible-but-improbable",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Calculates Cp and Cpk with their lower confidence bounds and the sample size that would prove a required Cpk, showing why a 30-run test usually fails a capable axis.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "possible-but-improbable",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Gives the worst-case and root-sum-square limits of the probe clearance stack and the predicted share of frames falling outside the probe's search range.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "defending-an-impossible-specification",
+   "tool": "option-compare",
+   "type": "applies",
+   "note": "Scores two feasible options on annual benefit, cost, delivery time and risk, after the infeasible specification has been excluded as the tool's own mandatory-requirements check asks.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "rewriting-the-specification",
+   "tool": "change-impact",
+   "type": "applies",
+   "note": "Rates the cost, schedule, risk and quality effect of adopting the rewritten specification against the project's value and remaining time, and reports benefit less added cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "accepted-rejected-or-not-proven",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the MTBF estimate and its one-sided lower and upper confidence bounds from operating hours and failures, so a reliability claim can be judged accepted, rejected or not proven.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "extraordinary-claims",
+   "tool": "carnot-limit-check",
+   "type": "applies",
+   "note": "Tests a heat pump's claimed COP against the Carnot limit for the source and sink temperatures, gives its second-law efficiency and running cost, and flags claims above the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "claims-that-cannot-fail",
+   "tool": "pump-speed-control-plan",
+   "type": "applies",
+   "note": "Works out the speed, power and yearly saving of slowing a pump instead of throttling it at the site's measured duty, turning an 'up to' claim into a prediction; drive losses are added separately.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "evidence-in-proportion-to-consequence",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Rates likelihood times consequence on a five-by-five matrix with a response band, used to set how much evidence a seal claim needs in a water service and a chemical service.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "a-test-that-could-prove-it-wrong",
+   "tool": "weibull-reliability",
+   "type": "applies",
+   "note": "Gives reliability, failure probability, hazard, B10 life and mean life from Weibull parameters, used to predict seal failures under each life hypothesis before the trial rule is set.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "a-test-that-could-prove-it-wrong",
+   "tool": "reliability-demonstration-test",
+   "type": "applies",
+   "note": "Plans the unit-hours and days needed to demonstrate an MTBF with a constant failure rate, showing why a controller claim needs fleet data and why the method does not suit wearing seals.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "acting-while-unproven",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Recomputes NPV, IRR and payback for the package as claimed, on the evidence and as a staged purchase, with uniform yearly savings and running costs before tax.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "acting-while-unproven",
+   "tool": "maintenance-interval-plan",
+   "type": "applies",
+   "note": "Finds the lowest-cost and target-reliability replacement intervals for the present seals from the factory's Weibull data, the fallback if the new seal claim fails.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
