@@ -271,6 +271,11 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'public-money-you-can-account-for': { motif: 'ledger', tone: 'carbon' },
   'practical-wisdom-by-the-numbers': { motif: 'compass', tone: 'ember' },
   'fair-dealing-by-the-numbers': { motif: 'ledger', tone: 'graphite' },
+  'yes-and-no-when-sources-disagree': { motif: 'dialogue', tone: 'ember' },
+  'arguments-that-hold': { motif: 'decision', tone: 'graphite' },
+  'divide-the-work': { motif: 'workflow', tone: 'paper' },
+  'the-love-of-system': { motif: 'compass', tone: 'carbon' },
+  'tolerances-that-work': { motif: 'gauge', tone: 'ember' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);

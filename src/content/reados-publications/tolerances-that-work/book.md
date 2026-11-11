@@ -7,9 +7,9 @@ tags: [design, quality, manufacturing]
 author: BIZOMAT
 publisher: BIZOMAT Library
 language: en-AU
-status: draft
-publishDate: 2026-10-18
-referencesChecked: 2026-10-18
+status: published
+publishDate: 2026-11-11
+referencesChecked: 2026-11-11
 edition: "1"
 level: "Intermediate"
 audience: "Mechanical designers, drafters, manufacturing and quality engineers, and technical buyers who write, check or quote from toleranced drawings and need assemblies to work without paying for unnecessary precision."
@@ -34,17 +34,17 @@ references:
     creator: "International Organization for Standardization"
     year: "1989"
     url: "https://www.iso.org/standard/7748.html"
-    note: "General tolerance classes discussed in Chapter 2."
+    note: "General tolerance classes discussed in Chapters 1 and 2. ISO lists this part for revision; its former Part 2, on geometrical general tolerances, was withdrawn in 2021 and replaced by ISO 22081."
   - title: "ISO 1101:2017 Geometrical product specifications (GPS): Geometrical tolerancing, Tolerances of form, orientation, location and run-out"
     creator: "International Organization for Standardization"
     year: "2017"
     url: "https://www.iso.org/standard/66777.html"
     note: "Defines the tolerance zones described in Chapter 5. Symbols and rules should be confirmed against the edition your drawings invoke."
-  - title: "ISO 5459:2011 Geometrical product specifications (GPS): Geometrical tolerancing, Datums and datum systems"
+  - title: "ISO 5459:2024 Geometrical product specifications (GPS): Geometrical tolerancing, Datums and datum systems"
     creator: "International Organization for Standardization"
-    year: "2011"
-    url: "https://www.iso.org/standard/40358.html"
-    note: "Datum concepts used in Chapter 4."
+    year: "2024"
+    url: "https://www.iso.org/standard/87855.html"
+    note: "Datum concepts used in Chapter 4. The third edition (2024) replaced the 2011 edition; check which edition your drawings invoke."
   - title: "ISO 8015:2011 Geometrical product specifications (GPS): Fundamentals, Concepts, principles and rules"
     creator: "International Organization for Standardization"
     year: "2011"
@@ -65,7 +65,7 @@ references:
     note: "The principal alternative to the ISO GPS system. Chapters 2, 4 and 6 note where its default rules differ."
   - title: "AS 1100.201 Technical drawing, Part 201: Mechanical engineering drawing"
     creator: "Standards Australia"
-    year: "1992"
+    year: "1992, reconfirmed 2014"
     note: "Australian mechanical drawing standard. Check the edition and any ISO standards your organisation has adopted in its place."
   - title: "ISO 492 Rolling bearings: Radial bearings, Geometrical product specifications (GPS) and tolerance values"
     creator: "International Organization for Standardization"
@@ -92,6 +92,8 @@ references:
     year: "1967"
     note: "Early systematic treatment of tolerance chains and statistical stacking, background to Chapters 7 and 8."
 related:
+  - title: "Fits That Work"
+    href: "/reados/publications/fits-that-work/"
   - title: "Engineering Design Practice"
     href: "/reados/collections/engineering-design-practice/"
   - title: "Machine Elements and Mechanical Design"
@@ -115,5 +117,9 @@ Calculations use millimetres and degrees Celsius. Where a table value from a sta
 ## An independent treatment
 
 The Library already includes a single chapter on [specifying tolerances, fits and surface finish](/reados/collections/engineering-design-practice/specifying-tolerances-fits-and-surface-finish/). This book goes much further into datums, geometric tolerancing, stack-up calculation and verification, with one assembly carried through every chapter.
+
+The Library book [Fits That Work](/reados/publications/fits-that-work/) covers some of the same ground from the other end. It follows an assembly from tolerance budgets to the evidence for releasing it: statistics, temperature, measurement, pilots and design changes. This book is about writing the drawing: the ISO system of limits and fits, datums, geometric tolerances and material condition, with stack-ups used to decide what goes on each drawing. Where a topic is treated more fully there, the chapter links to it.
+
+Each chapter follows the guide roller through one thing that went wrong, from the first drawings to production, how it was detected and how it was corrected, and ends with a worked exercise. Where a BIZOMAT tool performs the calculation, the chapter links to it and quotes its result.
 
 The explanations, the guide roller case and all worked examples are original BIZOMAT writing. Machinery's Handbook was consulted to cross-check published fit limits; no tables, figures or text from it or from any standard are reproduced. Standards are cited so readers can obtain the authoritative wording.

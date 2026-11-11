@@ -4,7 +4,7 @@ chapterSlug: worst-case-stack-ups
 order: 7
 title: "Worst-case tolerance stack-ups"
 description: "Draw a dimension loop, add tolerances through a chain of parts, test the guide roller's axial float and compare the design options when the worst case does not fit."
-draft: true
+draft: false
 ---
 
 An assembly condition such as a gap, an overlap or an alignment is rarely set by one part. It is the sum of dimensions on several parts, each with its own tolerance. A tolerance stack-up adds them up to find the range of the assembled condition. The worst-case method assumes every part could sit at the least favourable limit at the same time, and asks whether the assembly still works.
@@ -74,7 +74,7 @@ This is one of the most valuable outcomes of stack-up work. The loop tells the d
 
 ## Convert to mean and equal bilateral
 
-Tolerances on the drawings are written in different ways. For calculation, convert each to a mean value with an equal plus-and-minus tolerance. The table shows the initial Northgate design. Bearing and ring tolerances are illustrative values of the kind given in supplier catalogues; check your own suppliers' data.
+Tolerances on the drawings are written in different ways. For calculation, convert each to a mean value with an equal plus-and-minus tolerance. This is an illustration. The table shows the initial Northgate design. Bearing and ring tolerances are illustrative values of the kind given in supplier catalogues; check your own suppliers' data.
 
 | Link | Drawing value | Mean | ± tolerance | Sign |
 |---|---|---|---|---|
@@ -96,7 +96,7 @@ G tolerance = 0.05 + 0.03 + 0.06 + 0.05 + 0.06 = **±0.25 mm**
 
 So the float ranges from 0.35 − 0.25 = **0.10 mm** to 0.35 + 0.25 = **0.60 mm**.
 
-As a check, calculate the extremes directly. The smallest gap occurs with the shortest housing and the longest of everything else: 41.90 − 1.75 − 12.00 − 16.05 − 12.00 = 0.10 mm. The largest occurs with the longest housing and the shortest of everything else: 42.00 − 1.69 − 11.88 − 15.95 − 11.88 = 0.60 mm. Both methods agree.
+As a check, calculate the extremes directly. The smallest gap occurs with the shortest housing and the longest of everything else: 41.90 − 1.75 − 12.00 − 16.05 − 12.00 = 0.10 mm. The largest occurs with the longest housing and the shortest of everything else: 42.00 − 1.69 − 11.88 − 15.95 − 11.88 = 0.60 mm. Both methods agree. The [statistical (RSS) tolerance stack tool](/tools/rss-tolerance-stack/) in BIZOMAT Tools gives the same worst-case range, 0.10 to 0.60 mm, when the five means and tolerances are entered. It also names the largest contributors: the two bearings, at about 27.5% each.
 
 The minimum, 0.10 mm, satisfies the 0.05 mm limit. The maximum, 0.60 mm, exceeds the 0.40 mm limit. The initial design fails.
 
@@ -166,6 +166,22 @@ Worst-case analysis guarantees that every combination of conforming parts assemb
 
 Its weakness is cost. For long chains, it demands tolerances that are much tighter than needed for nearly all real assemblies.
 
+## The failure case: a stack added at nominal
+
+This is an illustration. Before this analysis was done, Northgate's designer checked the float with a quick sum of the nominal dimensions: 41.95 − 1.75 − 12 − 16 − 12 = **0.20 mm**. That sat comfortably in the middle of the 0.05 to 0.40 mm window, and the design went to a pilot build of twenty units.
+
+The pilot floats were measured with a dial indicator. They ranged from about 0.28 to 0.47 mm, and six of the twenty were above 0.40 mm. The rollers on those units could be felt shuttling by hand. The nominal sum had been wrong by 0.15 mm, for a reason that is easy to miss: the bearing widths and the ring thickness have one-sided tolerances. Their nominal values, 12 and 1.75 mm, are their largest permitted sizes, not their typical sizes. Real bearings are on average 0.06 mm narrower than nominal, and so are real rings 0.03 mm thinner. Every one of those differences opens the gap. Together they add 0.06 + 0.06 + 0.03 = 0.15 mm.
+
+### How it is detected
+
+Convert every link to its mean before adding, as in the table above. The mean float is 0.35 mm, near the top of the window, and the worst case reaches 0.60 mm. A pilot build is a second check: when measured results sit consistently on one side of the calculated value, the calculation has a bias, and one-sided tolerances on bought-in parts are the usual cause.
+
+### How it is corrected
+
+Northgate's stack-up worksheet now records the drawing value, the mean and the equal bilateral tolerance for every link, as in this chapter. Nominal values are never summed. The pilot results also confirmed that the initial design could not be released, which led to the options below.
+
+The Library book [Fits That Work](/reados/publications/fits-that-work/calculate-the-dimensional-bounds/) goes further into asymmetric limits and how to set out a stack-up worksheet that others can check. This book stays with the guide roller's drawings.
+
 ## Common mistakes
 
 - **Chaining dimensions through features outside the loop.** Each extra dimension adds its tolerance to the result.
@@ -182,8 +198,14 @@ Its weakness is cost. For long chains, it demands tolerances that are much tight
 - Which links are fixed by suppliers and which can the design control?
 - Could select fitting, adjustment or a design change remove the need for very tight tolerances?
 
-## Exercise: build a loop
+## Exercise: narrower bearings
 
-Choose an assembly with a functional gap. Sketch the parts, mark the gap and draw the loop through contacting faces. Write the gap equation, convert each tolerance to mean and equal bilateral form, and calculate the worst-case range. Check your result by calculating the two extreme assemblies directly.
+A bearing distributor offers to sort bearings by measured width and supply them to 12 with deviations 0 and −0.06 mm. Combine them with A and S at ±0.03 mm and the existing ring, 1.75 with deviations 0 and −0.06 mm. Is the worst-case range now narrower than the allowed window? If so, choose a nominal for A, to two decimal places, that centres the float, and give the worst-case range.
+
+**Worked answer.** Each sorted bearing has a mean of 11.97 mm and a tolerance of ±0.03 mm. The worst-case tolerance of the float is 0.03 + 0.03 + 0.03 + 0.03 + 0.03 = **±0.15 mm**, a range of 0.30 mm. That is narrower than the 0.35 mm window, so a nominal can now be found that passes.
+
+The centre of the window is (0.05 + 0.40) ÷ 2 = 0.225 mm. To put the mean float there, A must be 0.225 + 1.72 + 11.97 + 16.00 + 11.97 = 41.885 mm. Rounding to **A = 41.89 ± 0.03 mm** gives a mean float of 0.23 mm and a worst-case range of **0.08 to 0.38 mm**, inside the requirement with 0.03 mm to spare at the bottom and 0.02 mm at the top. The statistical (RSS) tolerance stack tool gives the same worst-case range. Sorted bearings cost more than standard ones, so the choice is between that cost and the cost of the select-fit spacer in option 3.
+
+**Try it on your own assembly.** Choose an assembly with a functional gap. Sketch the parts, mark the gap and draw the loop through contacting faces. Write the gap equation, convert each tolerance to mean and equal bilateral form, and calculate the worst-case range. Check your result by calculating the two extreme assemblies directly.
 
 The revised Northgate design narrowly fails the worst-case test. The next chapter asks how likely those failing combinations really are.

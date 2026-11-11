@@ -4,7 +4,7 @@ chapterSlug: temperature-deflection-and-allocation
 order: 9
 title: "Temperature, deflection and allocating the tolerance budget"
 description: "Add thermal expansion, distortion and form effects to a stack-up, then share an assembly tolerance between parts using equal, size-based and cost-based allocation."
-draft: true
+draft: false
 ---
 
 A stack-up calculated from drawing dimensions describes the assembly at one moment: on the bench, at the reference temperature, with every part rigid and perfectly formed. Real assemblies run warm or cold, are clamped and bolted, and contain faces that are not quite flat or square. Those effects can be as large as the manufacturing tolerances themselves.
@@ -43,7 +43,7 @@ Chapter 3 gave the Northgate outer ring fit in the housing as 0.000 to 0.036 mm 
 
 42 × (23 − 11.5) × 10⁻⁶ × 60 ≈ **0.029 mm**
 
-At 80 °C the fit becomes roughly 0.029 mm to 0.065 mm clearance. A ring that was a light push fit at assembly is now loose. Under a stationary load that may be acceptable, but it can allow the outer ring to creep, which wears the housing. Bearing manufacturers commonly recommend tighter housing fits for light alloy housings for exactly this reason. In service, the inner ring often runs warmer than the outer ring, which reduces the bearing's internal clearance; that effect should be checked against the bearing manufacturer's guidance as well.
+The [differential thermal expansion tool](/tools/differential-expansion/) in BIZOMAT Tools gives the same change, 0.02898 mm, for a 42 mm fit with an aluminium bore and a steel ring warmed by 60 °C. At 80 °C the fit becomes roughly 0.029 mm to 0.065 mm clearance. A ring that was a light push fit at assembly is now loose. Under a stationary load that may be acceptable, but it can allow the outer ring to creep, which wears the housing. Bearing manufacturers commonly recommend tighter housing fits for light alloy housings for exactly this reason. In service, the inner ring often runs warmer than the outer ring, which reduces the bearing's internal clearance; that effect should be checked against the bearing manufacturer's guidance as well.
 
 ### Axial float
 
@@ -128,6 +128,20 @@ caption: Bearings and ring are fixed at 0.0081 mm² of the 0.0100 mm² budget, s
 - Basis | Same tolerance each | Proportional to i: 1.561 and 1.083 µm | Rounded size-based split
 ```
 
+## The failure case: housings measured warm
+
+This is an illustration. Chapter 8 traced a fall in the float to housings whose groove dimension A averaged about 41.785 mm, 0.015 mm short of its nominal. The cause turned out to be temperature, not the new finishing tool.
+
+The supplier's machinist measured the first housing of each batch straight off the machine, at about 35 °C, with a steel gauge at 20 °C. Aluminium grows about twice as fast as steel, so the warm housing read large. The machinist adjusted the tool offset until the warm reading was on nominal, and every housing in the batch was then made short. The [measurement temperature error tool](/tools/measurement-temperature-error/) in BIZOMAT Tools gives the size of the effect. For a 41.8 mm aluminium dimension at 35 °C measured with a steel gauge at 20 °C, the apparent deviation is about **0.0144 mm**. A warm reading of exactly 41.800 mm corresponds to **41.786 mm** at 20 °C. That is the shift the assembly line found, and it used about a fifth of A's ±0.035 mm tolerance before any machining error was counted.
+
+### How it is detected
+
+Measure the same part twice: straight off the machine, and again after it has stood in the measuring room long enough to reach room temperature. A consistent difference in the direction thermal expansion predicts identifies the cause. Here the warm and soaked readings of a test housing differed by 0.014 mm.
+
+### How it is corrected
+
+The supplier's inspection plan now requires housings to soak until they reach the measuring room's temperature before critical dimensions are measured. Where that is too slow for setting the machine, the reading is corrected to 20 °C using the part's measured temperature. The correction is written into the plan, so that it does not depend on the machinist remembering it. The Library book [Fits That Work](/reados/publications/fits-that-work/carry-the-stack-through-temperature/) goes further into temperatures that differ between parts and uncertainty in the expansion coefficients.
+
 ## Common mistakes
 
 - **Analysing only at 20 °C** when parts of different materials share a chain.
@@ -144,8 +158,17 @@ caption: Bearings and ring are fixed at 0.0081 mm² of the 0.0100 mm² budget, s
 - Which tolerances are fixed by suppliers, and how much budget remains after them?
 - Which dimensions are expensive to control, and has the allocation reflected that?
 
-## Exercise: add temperature and reallocate
+## Exercise: a roller for a drying oven
 
-For your own stack-up, list the material of each part and calculate the change in the gap per degree. Find the gap at the coldest and hottest expected conditions. Then subtract fixed contributors from the allowed variation and reallocate the remaining budget using the size-based method. Compare the result with the existing drawing tolerances.
+A customer wants the guide roller for a conveyor through a drying oven, where the unit runs at about 120 °C. Assume, as in this chapter, that the housing and the steel parts reach the same temperature. What happens to the outer ring fit, from 0.000 to 0.036 mm clearance at 20 °C, and to the revised design's RSS float range, 0.101 to 0.299 mm at 20 °C? Does the design still meet the float requirement?
+
+**Worked answer.** The temperature rise is 120 − 20 = 100 °C.
+
+- **Outer ring fit.** The bore grows faster than the ring by 42 × (23 − 11.5) × 10⁻⁶ × 100 ≈ **0.048 mm**, which the differential thermal expansion tool confirms as 0.0483 mm. The fit becomes about **0.048 to 0.084 mm clearance**. The ring is now distinctly loose in its bore, and the risk of outer ring creep and housing wear rises. The design would need a tighter housing fit chosen for a light alloy housing at that temperature, on the bearing manufacturer's guidance. The fit at 20 °C must still allow assembly.
+- **Float.** The float opens by about 0.00048 × 100 = **0.048 mm**, giving an RSS range of about **0.149 to 0.347 mm**. That is still inside 0.05 to 0.40 mm, but only 0.053 mm remains at the top. With the inflated RSS method of Chapter 8, 0.051 to 0.349 mm at 20 °C becomes about 0.099 to 0.397 mm, leaving only 0.003 mm.
+
+So the float still just passes, but the bearing fit does not suit the new duty. The temperature also matters for the bearing's grease, seals and internal clearance, which the bearing manufacturer's data should settle. An oven version would be a design change with its own analysis, not a new customer order for the existing part.
+
+**Try it on your own stack-up.** List the material of each part and calculate the change in the gap per degree. Find the gap at the coldest and hottest expected conditions. Then subtract fixed contributors from the allowed variation and reallocate the remaining budget using the size-based method. Compare the result with the existing drawing tolerances.
 
 The design now has tolerances that are reasoned, allocated and checked against temperature. The final chapter asks how those tolerances will be verified, and sets out a review process to use before releasing a drawing.

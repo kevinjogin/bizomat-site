@@ -4,7 +4,7 @@ chapterSlug: verifying-tolerances-and-tolerance-review
 order: 10
 title: "Verifying tolerances and running a tolerance review"
 description: "Allow for measurement uncertainty, match gauges and CMM methods to the specification, and use a structured review to release drawings that are complete and verifiable."
-draft: true
+draft: false
 ---
 
 A tolerance is only as good as the ability to verify it. A requirement that cannot be measured reliably invites disputes, rejected good parts and accepted bad ones. Verification also feeds back into design: if a tolerance consumes most of the measurement capability available, it is effectively tighter than written.
@@ -91,6 +91,20 @@ For every critical and important feature, an inspection plan records:
 
 Writing this plan during design, not after the first parts arrive, often exposes requirements that are ambiguous or impractical to verify while they can still be changed cheaply.
 
+## The failure case: a rejection that could not be proven
+
+This is an illustration. Northgate's receiving inspection rejected a batch of housings because three bores read 42.026 to 42.027 mm on a hand-held bore gauge, just above the 42.025 mm limit. The supplier's coordinate measuring machine, in a temperature-controlled room, had measured the same three bores at 42.022 to 42.024 mm. Each side was sure of its result, and the batch sat in quarantine for a week while they argued.
+
+Two things decided it. First, under the default rule of ISO 14253-1 the customer must prove nonconformance. Northgate's readings were above the limit by 1 to 2 µm, well within any realistic uncertainty of a hand-held bore gauge, so they could not prove it. Second, Northgate checked its own gauge. It ran a type 1 study: 25 readings of a 42.010 mm setting master by one inspector, with a mean of 42.0128 mm and a standard deviation of 0.0011 mm. The [gauge repeatability and bias check tool](/tools/gauge-repeatability-bias-check/) in BIZOMAT Tools gives a bias of **+0.0028 mm**, which its t-test shows is real, and capability indices of Cg = **0.76** and Cgk = **−0.09**, against a usual minimum of 1.33. The gauge read about 3 µm large and was too variable for a 0.025 mm tolerance. Its readings of 42.026 to 42.027 mm correspond to about 42.023 to 42.024 mm, in agreement with the supplier.
+
+### How it is detected
+
+Before rejecting a part near a limit, ask what uncertainty the measurement has, and whether the gauge has been shown to be capable for this tolerance. A type 1 study on a master takes less than an hour. A rejection the inspection plan cannot defend costs far more.
+
+### How it is corrected
+
+Northgate released the batch and moved the bore check to an air gauge set against masters, with a stated expanded uncertainty of about 0.004 mm. The inspection plan now states the decision rule and the action for readings in the uncertainty band. The supplier and Northgate agreed both before the next delivery. The Library book [Fits That Work](/reados/publications/fits-that-work/make-measurement-and-acceptance-agree/) goes further into building an uncertainty budget and choosing a decision rule.
+
 ## A tolerance review before release
 
 The following review brings together every chapter of this book. It works best as a short meeting between the designer, someone from manufacturing or the supplier, and someone responsible for inspection.
@@ -129,7 +143,7 @@ The table summarises the main changes Northgate made across the chapters. The va
 | Item | First issue | Released design | Chapter |
 |---|---|---|---|
 | General tolerances | ±0.1 on all dimensions | ISO 2768-m, standard named in title block | 2 |
-| Bearing fits | Not analysed | Shaft k5 and housing H7 from bearing supplier guidance, checked at both extremes | 3 |
+| Bearing fits | Shaft k6 copied from an H7/k6 table, not analysed | Shaft k5 and housing H7 from bearing supplier guidance, checked at both extremes with the bearing's own limits | 3 |
 | Datums | Edges of flange | A mounting face, B bore axis, C bolt hole | 4 |
 | Bore alignment | No control | Perpendicularity of bore to A, traced to roller tracking | 5 |
 | Bolt holes | ±0.1 coordinates from edges | Position at MMC relative to A and B, sized by the fixed-fastener formula; frame tapped holes with projected zone | 5, 6 |
@@ -146,9 +160,22 @@ Tolerancing is design work. It decides how much a part costs, how it is inspecte
 
 The habits matter more than any single technique: start from function, choose datums that reflect the assembly, analyse the chains that matter, test the assumptions behind statistical results, allow for temperature and measurement, and record the reasoning. A drawing produced that way is a clear contract between designer, supplier and inspector, and a reliable foundation for every later change.
 
-## Exercise: review one drawing
+## Exercise: four bore readings
 
-Run the ten-point review on a drawing that is about to be released or revised. For each question, record the answer and any action. Count how many actions improve function, how many reduce cost and how many reduce the risk of dispute. Most reviews find all three.
+The air gauge for the Ø42 H7 bore, 42.000 to 42.025 mm, has these standard uncertainties: calibration of the gauge 1.0 µm (an expanded 2 µm at k = 2), resolution 1 µm, repeatability 1.6 µm, and a temperature difference known to ±0.5 K on an aluminium part. Using the ISO 14253-1 default with k = 2, decide the four readings 42.003, 42.012, 42.022 and 42.029 mm.
+
+**Worked answer.** The [guard-banded acceptance decision tool](/tools/guard-band-acceptance/) in BIZOMAT Tools combines the contributors. Resolution contributes 1 ÷ √12 ≈ 0.29 µm and temperature 42 × 23 × 10⁻⁶ × 0.5 ≈ 0.48 µm divided by √3, about 0.28 µm. The combined standard uncertainty is about 1.93 µm and the expanded uncertainty **U ≈ 3.9 µm**, close to the 0.004 mm used in this chapter. The conformance zone is therefore **42.0039 to 42.0211 mm**.
+
+| Reading (mm) | Decision | Why |
+|---|---|---|
+| 42.003 | Neither proven | Inside the tolerance but within U of the lower limit |
+| 42.012 | Conformance proven | Inside the conformance zone |
+| 42.022 | Neither proven | Inside the tolerance but within U of the upper limit |
+| 42.029 | Nonconformance proven | Above 42.025 + 0.0039 = 42.0289 mm |
+
+Two of the four readings need the action the inspection plan sets for the uncertainty band, such as re-measuring with a better method. The tool also warns about its test uncertainty ratio, 3.24, below its default of 4. The tool divides the whole tolerance by 2U, while this chapter divided it by U, so its 3.24 corresponds to the chapter's 6.5 or so. Both say the same thing: about a third of this bore's tolerance is used by the measurement.
+
+**Try it on your own drawing.** Run the ten-point review on a drawing that is about to be released or revised. For each question, record the answer and any action. Count how many actions improve function, how many reduce cost and how many reduce the risk of dispute. Most reviews find all three.
 
 ---
 
