@@ -62,7 +62,9 @@ caption: Based on footnote 51 of the CGRPs. Its examples are not a complete list
 - Neither list fits | Check the guidance and decide | Ask your grants policy area if unsure, and record the reasoning either way.
 ```
 
-Footnote 49's "must accurately report" covers mistakes as well as gaps. This is an illustration. In August 2027 Nadia's monthly reconciliation compared GrantConnect with the branch's grants register and the finance system. Brindlemere Football Netball Club's grant appeared on GrantConnect as A$301,000; the agreement says A$310,000. Ben corrected the record that day. The grant file shows what was wrong, what it was changed to, when, by whom and how the error was found.
+Footnote 49's "must accurately report" covers mistakes as well as gaps.
+
+This is an illustration. In August 2027 Nadia's monthly reconciliation compared GrantConnect with the branch's grants register and the finance system. Brindlemere Football Netball Club's grant appeared on GrantConnect as A$301,000; the agreement says A$310,000. Ben corrected the record that day. The grant file shows what was wrong, what it was changed to, when, by whom and how the error was found.
 
 The reconciliation compares the count and total value of executed agreements across the three sources. When the round is fully contracted, all three should show 31 grants and A$9.98 million.
 

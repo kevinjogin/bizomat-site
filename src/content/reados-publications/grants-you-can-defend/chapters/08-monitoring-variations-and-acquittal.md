@@ -13,7 +13,7 @@ This is an illustration. By September 2027 the 31 Regional Community Facilities 
 
 ## Monitoring in proportion to risk
 
-Paragraph 14.12 of the [CGRPs](https://www.legislation.gov.au/F2024L00854/latest/text) says a well-drafted agreement is not enough on its own. Officials should support it with "ongoing communication, active grants management and performance monitoring requirements, which are proportional to the risks involved".
+Paragraph 14.12 of the [Commonwealth Grants Rules and Principles 2024](https://www.legislation.gov.au/F2024L00854/latest/text) (CGRPs) says a well-drafted agreement is not enough on its own. Officials should support it with "ongoing communication, active grants management and performance monitoring requirements, which are proportional to the risks involved".
 
 Proportion cuts both ways. Paragraph 9.5 says "There are no mandatory acquittal or reporting requirements for grantees in the CGRPs", and asks officials to set the volume, detail and frequency of reporting in proportion to the risks and outcomes sought. Heavy reporting wastes a volunteer group's time. Light reporting of a struggling project puts public money at risk.
 
@@ -105,7 +105,7 @@ question: Does the change keep the project, the money and the round's rules as t
 caption: This is an illustration. NRIO's rules are the fictional agency's own. Only the delegate's written approval varies an agreement; an officer's email does not.
 ```
 
-This is an illustration. Two Round 1 requests show the difference. On Thursday 2 March 2028, Kellerton Hall Committee Inc. asked to move its mid-point report from 15 March to Friday 12 May 2028, after asbestos removal ran three weeks over. Nothing else changed. On Ben's assessment and Sam's recommendation, the Branch Manager approved it in writing, and Ivy Chen moved the A$168,000 instalment from April to June 2028, still in 2027–28. A date change within one financial year is a minor variation that need not go on GrantConnect (Chapter 9).
+This is an illustration. Two Round 1 requests show the difference. On Thursday 2 March 2028, Kellerton Hall Committee Inc. asked to move its mid-point report from 15 March to Friday 12 May 2028, after asbestos removal ran three weeks over. Nothing else changed. On Ben's assessment and Sam's recommendation, the Branch Manager approved it in writing, and Ivy Chen moved the A$168,000 instalment from April to June 2028, still in 2027–28. A date change within one financial year is a minor variation that need not go on GrantConnect (footnote 51; Chapter 9).
 
 In May 2028 the Shire of Eastbrook's tenders came in A$60,000 above its estimate, and the council asked NRIO to add that amount. NRIO could not. The grant was already A$500,000, the maximum in the guidelines. Extra money would also be new spending the Minister had not approved, and Round 1 had only A$10.0 million − A$9.98 million = A$20,000 unallocated. The council funded the gap, raising its contribution from A$300,000 to A$360,000 of an A$860,000 project: 41.9 per cent, well above the 25 per cent minimum.
 

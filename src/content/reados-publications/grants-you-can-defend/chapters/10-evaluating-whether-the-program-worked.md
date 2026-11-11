@@ -15,9 +15,9 @@ This is an illustration. Round 1 projects of the Regional Community Facilities P
 
 The [Commonwealth Grants Rules and Principles 2024](https://www.legislation.gov.au/F2024L00854/latest/text) (CGRPs) treat evaluation as part of the grants lifecycle (2.8(e)), and their evaluation provisions use "should": they describe better practice. Officials should work out what change a grant is expected to bring and then measure the actual outcome (10.2), and should set performance measures on which to evaluate grants (10.8). They also "should undertake an evaluation of a grant opportunity before initiating further grant opportunities or extending existing grant agreements" (10.8).
 
-This is an illustration. That is hard when rounds overlap, and Round 2 opened in 2028, while Round 1 halls were still being built. As Chapter 2 planned, a short review of Round 1's process ran in August and September 2027, before Round 2's guidelines were drafted, and the outcome evaluation follows in 2029–30. A "should" that cannot be met in full is met as far as it can be, and the reason recorded.
+This is an illustration. RCFP's rounds overlap: Round 2 opened in 2028, while Round 1 halls were still being built. As Chapter 2 planned, a short review of Round 1's process ran in August and September 2027, before Round 2's guidelines were drafted, and the outcome evaluation follows in 2029–30. A "should" that cannot be met in full is met as far as it can be, and the reason recorded.
 
-An evaluation starts with questions, not data. Each question needs a measure, a source and a comparison, agreed before anyone opens a spreadsheet.
+An evaluation starts with questions, not data. Each needs a measure, a source and a comparison, agreed before anyone opens a spreadsheet.
 
 ```figure
 type: compare
@@ -46,7 +46,7 @@ This is an illustration. RCFP has a natural comparison group. Of the 61 applicat
 
 Chapter 2's plan reports the median change and the number that improved, so one large library cannot swamp many small halls; both tell the same story. Cost calculations need totals, so the evaluation also uses averages: the funded facilities gained 11 hours a week, the comparison facilities 2. The estimated effect is the difference: 11 − 2 = 9 hours a week per facility, or 9 × 31 = 279 extra hours a week across the round. A before-and-after report would have claimed 11 × 31 = 341.
 
-The comparison is not perfect, and the report says so. Some unfunded applicants may have found other money, six did not respond, and their result year does not match each funded facility's exactly. Each limit lowers the confidence the evaluation can claim; none makes the comparison worthless.
+The comparison is not perfect, and the report says so. Some unfunded applicants may have found other money, six did not respond, and the result years do not match exactly. Each limit lowers the confidence the evaluation can claim; none makes the comparison worthless.
 
 ## Facility use you can rely on
 
@@ -127,7 +127,7 @@ The comparison group deals with the trend. An honest evaluation names what it do
 - **Selection.** Funded projects scored higher, so the estimate of 9 hours may be too high.
 - **Displacement.** Bookings that moved from another venue in the same town are a gain for the hall but not for the town. The evaluation asked new user groups where they met before.
 - **What the dollar figure leaves out.** Accessible toilets let people attend who could not before. Describe such benefits with evidence, such as the number of facilities with new accessible features, but do not invent a price for them.
-- **Time.** Twelve months after completion is early. New use may fade or keep growing; a later count would show which.
+- **Time.** Twelve months after completion is early; new use may fade or keep growing.
 
 Write the finding as a contribution, not a proof: "the grants are estimated to have added about 9 hours of use a week per facility", not "the grants doubled use".
 
@@ -137,7 +137,7 @@ This is an illustration. The two grants approved against officials' recommendati
 
 This is an illustration. Lessons come from the outcome evidence and from the round's own records. The clearest outcome lesson is described below: facilities with nobody responsible for opening and booking them gained no use, however good the building work. From the records, the evaluation checks whether the controls added after Round 1's problems, such as the shared publication register (Chapter 9), have worked in Round 2.
 
-Whether RCFP continues after 2029–30, and with what money, is for the Minister and the government. Officials owe advice the decision-maker can rely on: the evidence, how sure the evaluation is, the options with their costs and risks, and a recommendation, unwelcome findings included.
+Whether RCFP continues after 2029–30, and with what money, is for the Minister and the government. Officials owe advice the decision-maker can rely on: the evidence, how sure it is, the options with their costs and risks, and a recommendation, unwelcome findings included.
 
 ```figure
 type: compare
