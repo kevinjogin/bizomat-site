@@ -4,7 +4,7 @@ chapterSlug: separate-making-from-deciding
 order: 1
 title: "Separate the well-made part from the well-made decision"
 description: "Distinguish technical skill from practical judgement, set up the pump-flange case and describe a decision by its object, purpose and circumstances before choosing anything."
-draft: true
+draft: false
 ---
 
 An inspection report arrives late on a Thursday. Eighteen of 240 machined flanges show indications on their sealing faces, delivery is due in six working days, and someone asks the obvious question: can we still ship on time? The question sounds technical. Most of what makes it hard is not.

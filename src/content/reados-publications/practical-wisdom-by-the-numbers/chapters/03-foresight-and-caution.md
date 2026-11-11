@@ -4,7 +4,7 @@ chapterSlug: rate-what-could-go-wrong
 order: 3
 title: "Look ahead with foresight and caution: rating what could go wrong"
 description: "Use foresight and caution to rate the risks of each option on a shared likelihood and consequence scale, then add controls and re-rate before any option is preferred."
-draft: true
+draft: false
 ---
 
 Counsel produced a list of options. Before any of them can be judged, the team needs to know what each could lead to. Aquinas calls this part of prudence foresight, and he ranks it as the principal one: the ability to look ahead to things not yet done and to order present means towards a distant end (*Summa Theologiae* II-II q.49 a.6). He pairs it with caution, the guarding against obstacles and chance events that could defeat a good plan, while admitting that rare and unforeseeable dangers cannot all be anticipated (II-II q.49 a.8).

@@ -4,7 +4,7 @@ chapterSlug: weigh-the-means-by-proportion
 order: 6
 title: "Weigh the means by proportion, not by the cheapest line"
 description: "Cost each option for everyone it affects, find the acceptance probability at which asking pays, and test the choice for proportion between the means and the end."
-draft: true
+draft: false
 ---
 
 By the end of day zero the team had three legitimate options, a set of low residual risks and a draft concession request. Before the request went to the customer, the owner asked the question every business eventually asks: which option is cheapest? It is a fair question. It is not the decisive one.

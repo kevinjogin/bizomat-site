@@ -4,7 +4,7 @@ chapterSlug: when-the-rule-falls-short
 order: 5
 title: "When the rule falls short: equity, interpretation and the concession request"
 description: "Recognise when applying a requirement's letter would defeat its purpose, refer doubtful cases to the rule's owner, and prepare and score a concession request that leaves the decision with them."
-draft: true
+draft: false
 ---
 
 Every rule is written for the cases its author expected. Sooner or later a case arrives that the author did not foresee, and following the rule's letter would work against the rule's own purpose. Aquinas treats the ability to recognise and handle such cases as a virtue, which he calls *epikeia* and his translators render as equity (*Summa Theologiae* II-II q.120 a.1). His example is a deposit. Returning what was deposited is normally just, but if a man left a sword in your keeping and demands it back while insane, returning it would be harmful. The rule's purpose is served by not following its letter.

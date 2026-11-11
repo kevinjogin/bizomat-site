@@ -4,7 +4,7 @@ chapterSlug: a-margin-you-can-explain
 order: 3
 title: "A margin you can explain: margin, markup and discounts"
 description: "Check the tank quote's margin, catch the common error of applying a margin as a markup, measure what a discount does to gross profit and treat customers alike for like reasons."
-draft: true
+draft: false
 ---
 
 A price is fair, in the sense of Chapter 2, when it honestly estimates what it costs a going concern to supply the thing. That makes the margin part of the claim. If the workshop says, as a matter of policy, that it prices one-off stainless work at a 28% gross margin, then the margin on any particular quote should be 28%, and the workshop should be able to show it. A margin that drifts because of an arithmetic slip, or that bends for one customer and not another without a reason, makes the price less an estimate of worth and more an accident.

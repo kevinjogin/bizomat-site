@@ -4,7 +4,7 @@ chapterSlug: take-counsel-before-choosing
 order: 2
 title: "Take counsel before choosing: records, purpose and people"
 description: "Use memory, understanding, docility and shrewdness to gather the facts, test whether something has changed and build a full set of options before any is chosen."
-draft: true
+draft: false
 ---
 
 Aquinas describes three acts in a prudent decision: taking counsel, judging what counsel has found, and commanding the action that follows (*Summa Theologiae* II-II q.47 a.8). Counsel comes first because a judgement can only choose among the options that inquiry has put in front of it. A team that skips counsel does not save time; it simply chooses from a shorter and usually worse list.

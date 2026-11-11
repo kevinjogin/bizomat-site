@@ -4,7 +4,7 @@ chapterSlug: judge-each-case-against-the-rule
 order: 4
 title: "Judge each case against the rule as written"
 description: "Apply the specification precisely to each flange, map every indication against the gasket band, allow for measurement and assembly offsets, and separate nonconforming from doubtful cases."
-draft: true
+draft: false
 ---
 
 Counsel and foresight prepare a decision. Judgement makes it. Aquinas names a particular virtue for judging well in ordinary cases, *synesis*, which gives right judgement about particular matters that fall under common rules (*Summa Theologiae* II-II q.51 a.3). He names another, *gnome*, for the exceptional cases the rules do not cover (q.51 a.4). The order matters. A team that reaches for the exception before it has applied the rule carefully is not exercising higher judgement; it is skipping the lower one.

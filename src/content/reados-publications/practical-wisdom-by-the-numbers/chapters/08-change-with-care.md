@@ -4,7 +4,7 @@ chapterSlug: change-the-procedure-with-care
 order: 8
 title: "Change the procedure only when the gain outweighs the change"
 description: "Compare two lasting fixes on an honest baseline, recognise when a comparison is too close to call, and weigh the cost of changing a rule others rely on before standardising."
-draft: true
+draft: false
 ---
 
 The flanges are delivered. The decision about the 18 has been made, carried out and recorded. But the incoming sample from the next production batch shows porosity at a rate similar to the one that started the book, which means the problem was never really about 18 flanges. It was about a supply process that has changed for the worse. The workshop now has to decide whether, and how, to change its own procedures and its supply arrangements.

@@ -4,7 +4,7 @@ chapterSlug: command-and-carry-it-through
 order: 7
 title: "Command: turn the judgement into action on time"
 description: "Check that the capacity exists to keep each promise, issue a clear command with owners and dates, and guard against rashness, thoughtlessness, inconstancy and negligence."
-draft: true
+draft: false
 ---
 
 A decision that is never carried out has not been made. Aquinas is blunt about this. Of the three acts of prudence, taking counsel, judging and commanding, he ranks command as the chief, because it comes closest to the purpose of practical reason, which is action (*Summa Theologiae* II-II q.47 a.8). A person who reasons well and then fails to act is, in his account, more imprudent than one who reasons poorly, because the failure lies in the very act prudence exists to perform.

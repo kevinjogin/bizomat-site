@@ -4,7 +4,7 @@ chapterSlug: describe-the-goods-truly
 order: 4
 title: "Describe the goods truly: substance, quantity and quality"
 description: "Check a quote against the specification for material, capacity and finish, calculate the tank's working volume and correct a description that promised more than the design delivered."
-draft: true
+draft: false
 ---
 
 A fair price for the wrong thing is not a fair exchange. Chapters 2 and 3 checked that the tank's price honestly estimates its worth. This chapter checks the other side of the exchange: that what the quote describes is what the customer asked for, and that what the workshop delivers will be what the quote describes.

@@ -4,7 +4,7 @@ chapterSlug: two-kinds-of-fairness
 order: 1
 title: "Two kinds of fairness: equal exchange and proportionate shares"
 description: "Separate fairness between two parties to an exchange from fairness in sharing something among many, set up the stainless tank case and calculate each kind with real numbers."
-draft: true
+draft: false
 ---
 
 "Is that fair?" is one of the most common questions in business and one of the least precise. A customer asks it about a price. A welder asks it about overtime. A supplier asks it about who got the order. Each question sounds similar, but they call for different kinds of answer, and mixing them up is a reliable way to treat someone unfairly while believing you are being reasonable.

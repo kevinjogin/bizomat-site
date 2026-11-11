@@ -4,7 +4,7 @@ chapterSlug: disclose-what-the-buyer-cannot-see
 order: 5
 title: "Disclose what the buyer cannot see"
 description: "Decide what to disclose about a weld repair, a visible scratch and a changed design load, using Aquinas's line between hidden and manifest defects and the duty when a defect could endanger."
-draft: true
+draft: false
 ---
 
 Chapter 4 dealt with describing the goods truly before the work starts. This chapter deals with what happens during the work, when things go wrong in ways the buyer will not see unless the seller tells them. Every fabrication job produces some of these moments: a weld that fails its test and is repaired, a mark from handling, a design assumption that turns out to need checking. Some must be disclosed. Some need not be. The difference matters to the customer, and it matters to the workshop's integrity.

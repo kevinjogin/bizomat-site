@@ -4,7 +4,7 @@ chapterSlug: share-scarce-capacity-fairly
 order: 6
 title: "Share scarce capacity fairly and choose suppliers on fixed criteria"
 description: "Allocate 120 welding hours among three customers by stated entitlement rather than friendship, and score two subcontractors with weights agreed before the quotes were opened."
-draft: true
+draft: false
 ---
 
 Chapter 1 set out the problem: two welders, eight working days, 120 welding hours, and three customers who want 150. Somebody will get less than they asked for. The question this chapter answers is who, and on what basis.

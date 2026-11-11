@@ -4,7 +4,7 @@ chapterSlug: say-what-you-can-deliver
 order: 8
 title: "Say only what you can deliver: truthful promises and prudent silence"
 description: "Test a requested delivery date against real capacity before promising it, correct a careless promise quickly, and tell the difference between keeping information back and saying what is false."
-draft: true
+draft: false
 ---
 
 The last test of fair dealing on the tank job is a sentence spoken on the phone. The customer's operations manager, worried about the old tank, asks whether the new one could be ready in two weeks instead of three. The owner, wanting to help and to keep a good customer, says: "Two weeks, no problem." It is the kind of thing said a hundred times a day in businesses everywhere, and it is the subject of this chapter.

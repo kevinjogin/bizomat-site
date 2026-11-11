@@ -4,7 +4,7 @@ chapterSlug: what-the-work-is-worth
 order: 2
 title: "What the work is worth: cost, price and the honest premium"
 description: "Build the tank's cost from its parts, turn it into a price with a stated margin, and test any urgency premium against Aquinas's rule that the seller's loss may be charged but the buyer's need may not."
-draft: true
+draft: false
 ---
 
 A quote is a claim about worth. When the workshop sends a price for the stainless tank, it is saying, in effect, that this sum fairly represents what it costs a going concern to make and deliver this thing. If the claim is honest, the exchange that follows is equal in the sense of Chapter 1. If it is careless or opportunistic, the exchange is unequal before a single weld is made.

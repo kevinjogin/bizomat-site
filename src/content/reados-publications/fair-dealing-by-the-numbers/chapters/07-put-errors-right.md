@@ -4,7 +4,7 @@ chapterSlug: put-errors-right-promptly
 order: 7
 title: "Put errors right: exact, prompt and unconditional restitution"
 description: "Find and correct an invoice overcharge, restore exactly the amount taken without delay, handle the GST correctly, and separate restitution from penalties, goodwill and claims for lost gains."
-draft: true
+draft: false
 ---
 
 Every business makes mistakes in its invoices. What distinguishes fair dealing from its opposite is not the absence of errors but what happens when one is found. A business that corrects an overcharge promptly and completely, without being asked, builds a kind of trust that no marketing can buy. A business that waits to see whether the customer notices teaches its customers to check everything, and charges them, in effect, for the checking.
