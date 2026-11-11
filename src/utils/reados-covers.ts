@@ -273,6 +273,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'fair-dealing-by-the-numbers': { motif: 'ledger', tone: 'graphite' },
   'industrial-hydraulics-by-the-numbers': { motif: 'gauge', tone: 'ember' },
   'design-for-assembly-by-the-numbers': { motif: 'geometry', tone: 'paper' },
+  'requirements-that-cannot-all-be-true': { motif: 'specsheet', tone: 'graphite' },
+  'the-burden-of-proof': { motif: 'dialogue', tone: 'carbon' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
