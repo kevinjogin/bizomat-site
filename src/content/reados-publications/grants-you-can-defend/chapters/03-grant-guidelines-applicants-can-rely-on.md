@@ -9,7 +9,7 @@ draft: true
 
 Grant opportunity guidelines are a promise to every potential applicant. They say who can apply, what the money is for, how applications will be judged and who will decide. Applicants spend days preparing against that promise. An agency that later judges them by different rules has broken it, whatever it intended.
 
-This is an illustration. In October 2026 Ivy Chen, the Senior Grants Officer, began drafting the guidelines for Round 1 of the Regional Community Facilities Program (RCFP). Chapter 2 settled the program's logic, eligibility and co-contribution. Ivy's task was to turn those decisions into documents that a volunteer hall committee could read once and act on. Sam Reid, the Grants Program Manager, reviewed every draft. The Minister approved the guidelines on Tuesday 15 December 2026.
+This is an illustration. In October 2026 Ivy Chen, the Senior Grants Officer, began drafting the guidelines for Round 1 of the Regional Community Facilities Program (RCFP). Chapter 2 settled the program's logic, eligibility and co-contribution. Ivy's task was to turn those decisions into documents a volunteer hall committee could read once and act on. Sam Reid, the Grants Program Manager, reviewed every draft. The Minister approved the guidelines on Tuesday 15 December 2026.
 
 This chapter follows the guidelines from the first draft to the close of the round, at 2:00 pm Canberra time on Thursday 11 March 2027. Assessment is Chapter 5.
 
@@ -37,7 +37,7 @@ An eligibility criterion is a gate; an assessment criterion is a scale. To sort 
 
 This is an illustration. Each RCFP eligibility criterion is settled by a document: the applicant's incorporation or council status, the town's population at the most recent Census, the budget for the grant range and a council's 25 per cent, the project timeline for the 18-month limit, and the time recorded at lodgement.
 
-Two criteria need care. The 18-month test checks only that the plan finishes in time; whether the plan is realistic is judged under criterion 2, capacity to deliver. And because a council's 25 per cent is calculated on eligible project costs, the guidelines list which costs count, so that two councils with the same project cannot calculate different contributions.
+Two criteria need care. The 18-month test checks only that the plan finishes in time; whether the plan is realistic is judged under criterion 2, capacity to deliver. And because a council's 25 per cent is calculated on eligible project costs, the guidelines list which costs count, so two councils with the same project cannot calculate different contributions.
 
 The opposite mistake is a rule hidden inside a score. If a program will not fund work already under way, say so as an eligibility criterion, not as a reason for assessors to mark projects down.
 
@@ -89,7 +89,7 @@ If the decision-maker may weigh other factors, such as the spread of projects ac
 
 Paragraph 13.4 says requirements should be simply expressed and clear in their intent, and that officials should consider testing the guidelines with stakeholders before release. Paragraph 13.5 says the form should help applicants address every selection criterion, and the proposed grant agreement should be included, so applicants know what they would sign.
 
-Ivy wrote for a volunteer committee working in the evenings. Each eligibility criterion is a yes-or-no question. Each key term, such as "eligible project costs", is defined once. Amounts say "excluding GST", dates give the weekday and times give the time zone. The form follows the criteria in the same order and words.
+This is an illustration. Ivy wrote for a volunteer committee working in the evenings. Each eligibility criterion is a yes-or-no question. Each key term, such as "eligible project costs", is defined once. Amounts say "excluding GST", dates give the weekday and times give the time zone. The form follows the criteria in the same order and words.
 
 This is an illustration. In November 2026, Ivy tested the draft with four readers from outside NRIO's region, who could not apply and so gained no early look. Three of the four could not tell which costs counted towards a council's 25 per cent. Ivy added a list of eligible costs and an example: on eligible project costs of A$400,000, a council must contribute at least A$100,000 (25 per cent), so the largest grant it can seek is A$300,000.
 

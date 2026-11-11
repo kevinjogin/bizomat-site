@@ -21,7 +21,7 @@ The second feature does most of the work: a grant serves the government's outcom
 
 This is an illustration. In Round 1, Kellerton Hall Committee Inc. will receive A$420,000 to replace its hall roof and build accessible toilets. The committee wants a dry hall that everyone can use; the government wants small towns to have facilities people use. NRIO does not end up owning a hall, and it is not buying anything for itself.
 
-Paragraph 2.4 says the CGRPs apply to "all forms and types of grants, including election commitments". A grant may follow a competitive or non-competitive process, be paid because someone meets eligibility criteria, or be made on a one-off ad hoc basis. That last phrase is narrow: an urgent, unexpected need; no opportunity to run another process; one or very few recipients; and no repeats. All four must apply. Payments between non-corporate Commonwealth entities are notional and are not grants (2.5), and nor is a gift of public property (footnote 7).
+Paragraph 2.4 says the CGRPs apply to "all forms and types of grants, including election commitments". A grant may follow a competitive or non-competitive process, be paid because someone meets eligibility criteria, or be made on a one-off ad hoc basis. That last phrase is narrow. It includes a circumstance where all four of these apply (2.4(c)): an urgent, unexpected need; no opportunity to run another process; one or very few recipients; and no repeats. Payments between non-corporate Commonwealth entities are notional and are not grants (2.5), and nor is a gift of public property (footnote 7).
 
 ## What is not a grant
 
@@ -123,7 +123,7 @@ This is an illustration. NRIO's delegations and the split of roles are the ficti
 
 Ivy Chen (APS 6), the Senior Grants Officer, drafts the guidelines and runs the round day to day. Ben Walker (APS 5) coordinates assessment, publishes on GrantConnect and manages agreements. Nadia Haddad (APS 4) handles intake, records and payment processing. The Director, Regional Programs, owns the program and chairs the assessment panel. NRIO's CFO area makes payments and checks bank details, and Hartley Probity Services, an external adviser, advises on probity for Round 1.
 
-The split of roles is itself a control. Paragraph 15.5 says accountable authorities should set up internal controls such as separation of duties: generally, "no single officer should appraise an application for a grant, give financial approval for the expenditure and also make the offer". In the RCFP the panel appraises, the Minister approves and the Branch Manager makes the offer.
+The split of roles is itself a control. Paragraph 15.5 says accountable authorities should set up internal controls such as separation of duties: generally, "no single officer should appraise an application for a grant, give financial approval for the expenditure and also make the offer". This is an illustration. In the RCFP the panel appraises, the Minister approves and the Branch Manager makes the offer.
 
 ## The six steps of a grant
 
@@ -136,7 +136,7 @@ caption: This is an illustration. The dates are Round 1's. In practice steps 2 a
 - Design the program | mid to late 2026: objective, program logic, eligibility, funding profile and evaluation plan (Chapter 2)
 - Write the guidelines | the Minister approves them on Tue 15 Dec 2026; the round opens on GrantConnect on Mon 1 Feb 2027 (Chapter 3)
 - Choose the selection process | open competitive, settled before the guidelines are approved; the round closes at 2:00 pm Canberra time on Thu 11 Mar 2027 (Chapter 4)
-- Assess | eligibility checks and scoring from 12 March to 23 April 2027; panel moderation on Wed 28 Apr 2027 (Chapter 5)
+- Assess | eligibility checks and scoring from 12 March to 23 April 2027; panel meeting on Wed 28 Apr 2027 (Chapter 5)
 - Advise and decide | the brief to the Minister on Fri 7 May 2027; the Minister's decisions on Mon 31 May 2027 (Chapter 6)
 - Agree, pay, monitor, acquit, publish and evaluate | agreements from Tue 15 Jun 2027; projects to December 2028; final reports and acquittals by 31 March 2029; evaluation in 2029–30 (Chapters 7 to 10)
 ```
@@ -160,7 +160,7 @@ The cost was real:
 
 Sam did not relabel the letter or quietly cancel it. He told the Director in writing the same day and reported it through NRIO's process for possible non-compliance with the finance law. The CFO area, central procurement and NRIO's legal area decided what happened to the letter and the A$40,000 already paid. The remaining work was bought under the CPRs, and the council's part was recorded for the probity adviser to consider.
 
-The control that would have caught it is the one paragraph 4.2 already requires: a written finding, before any document is drafted, that the arrangement is or is not a grant. NRIO now uses a one-page record of the tests in Figure 3, signed by the program owner and seen by central procurement before any arrangement with an outside party is drafted.
+The control that would have caught it starts with paragraph 4.2: officials must document whether an activity is a grant before applying the CGRPs. NRIO's own rule sets the timing. A one-page record of the tests in Figure 3, signed by the program owner, is seen by central procurement before any arrangement with an outside party is drafted.
 
 ## Exercise: grant, procurement or neither
 
@@ -189,6 +189,6 @@ This is an illustration. Ivy has six arrangements on her desk. Classify each as 
 
 **F: a procurement.** NRIO is buying goods for its own use (2.6(a)). It makes no difference that the seller is a not-for-profit or an RCFP grantee, or that the price is low. The grant and the purchase are separate arrangements under separate rules.
 
-Two are grants, two are procurements and two are something else, one of which needs advice first. In every case the finding is written down before the paperwork starts (4.2).
+Two are grants, two are procurements and two are something else, one of which needs advice first. In every case the finding is documented (4.2), under NRIO's rule before the paperwork starts.
 
 Chapter 2 turns to the first of the six steps: designing the RCFP so that, in 2029–30, it can show whether it worked.
