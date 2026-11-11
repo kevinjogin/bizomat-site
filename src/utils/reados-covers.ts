@@ -45,6 +45,7 @@ export const TOPIC_COVERS: Record<string, Look> = {
   'booms-bubbles-and-business-cycles': { motif: 'bubbles', tone: 'graphite' },
   'starting-funding-and-structuring-a-business': { motif: 'venture', tone: 'paper' },
   'commercial-law-and-contracts': { motif: 'scales', tone: 'carbon' },
+  'information-you-can-release': { motif: 'archive', tone: 'paper' },
   'procurement-and-tendering': { motif: 'tender', tone: 'ember' },
   'suppliers-contractors-and-government-work': { motif: 'supply', tone: 'graphite' },
   'project-estimates-schedules-and-costs': { motif: 'estimate', tone: 'paper' },
