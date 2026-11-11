@@ -69,9 +69,9 @@ Eligibility is a gate, not a measure of quality. Whether a project is needed, de
 
 ## Co-contribution: who else pays
 
-Councils must contribute at least 25 per cent of eligible project costs; incorporated not-for-profit organisations need not contribute. Paragraph 12.4 explains why a council should pay something. Officials should be alert to "cost shifting", where the Commonwealth funds an activity that a state, territory or local government should pay for. A council owns many of its facilities and raises its own revenue, so a contribution shows the project is a council priority, not a cost moved to the Commonwealth.
+This is an illustration. In the RCFP, councils must contribute at least 25 per cent of eligible project costs; incorporated not-for-profit organisations need not contribute. Paragraph 12.4 explains why a council should pay something. Officials should be alert to "cost shifting", where the Commonwealth funds an activity that a state, territory or local government should pay for. A council owns many of its facilities and raises its own revenue, so a contribution shows the project is a council priority, not a cost moved to the Commonwealth.
 
-A volunteer hall committee has no rates base and often small reserves. Requiring a contribution would screen out the smallest towns, the ones the program exists to serve. Paragraph 9.2 makes the general point: administration should reflect the capabilities of potential grantees. Paragraph 12.4 also warns of "double-dipping", funding the same activity twice, so every applicant lists any other funding for the same work.
+A volunteer hall committee has no rates base and often small reserves. Requiring a contribution would screen out the smallest towns, the ones the program exists to serve. Paragraph 9.2 makes the general point: administration should reflect the capabilities of potential grantees. Paragraph 12.4 also warns of "double-dipping", funding for the same activity from more than one source, so every applicant lists other funding for the work.
 
 For a council, the two limits interact: the largest grant is the lesser of 75 per cent of the eligible cost and A$500,000 (Figure 2).
 
@@ -90,7 +90,7 @@ step: Council contribution: A$800,000 − A$500,000 = A$300,000, or 37.5%, above
 
 ## Proportionality and risk
 
-Proportionality, in paragraph 9.1, means balancing complexity, risks, outcomes and transparency. Paragraph 9.4 says officials should use it to choose the selection process, the grant agreement and the reporting and acquittal requirements. Paragraph 9.5 corrects a common belief: "There are no mandatory acquittal or reporting requirements for grantees in the CGRPs." Reporting is a design choice, matched to the risks and the outcomes sought.
+Proportionality, in paragraph 9.1, means balancing complexity, risks, outcomes and transparency. Paragraph 9.4 says officials should use it to inform the choice of selection process, grant agreement and reporting and acquittal requirements. Paragraph 9.5 corrects a common belief: "There are no mandatory acquittal or reporting requirements for grantees in the CGRPs." Reporting is a design choice, matched to the risks and the outcomes sought.
 
 The CGRPs sort risks into three groups (7.9): the grant opportunity itself, the grantee, and the funded activity. Each risk should be assigned to the party best placed to manage it (7.14).
 
@@ -108,15 +108,13 @@ This work feeds the guidelines: footnote 36 says officials developing guidelines
 
 ## Profile the money across four years
 
-The A$20.0 million is administered funding, available by financial year. A profile says how much will be paid in each year, and it should follow the payment schedule. Dividing by four, A$5.0 million a year, is almost always wrong.
-
-This is an illustration. Sam's design-stage profile rests on three written assumptions:
+This is an illustration. The RCFP's A$20.0 million is administered funding, available by financial year. A profile says how much will be paid in each year, and it should follow the payment schedule. Dividing by four, A$5.0 million a year, is almost always wrong. Sam's design-stage profile rests on three written assumptions:
 
 - Round 1 agreements are executed from 15 June 2027, and about a quarter of the round by value is executed and paid before 30 June. Its first instalments, 0.40 × A$10.0 million = A$4.0 million, fall A$1.0 million in 2026–27 and A$3.0 million in 2027–28.
 - Mid-point reports come about nine months into the projects, in early 2028, so the second A$4.0 million falls in 2027–28. The final 0.20 × A$10.0 million = A$2.0 million follows final reports due by 31 March 2029, in 2028–29.
 - Round 2 runs a year behind Round 1, with the same split.
 
-The funding, which ends with 2029–30, forces the third assumption. If Round 2's agreements are executed by mid-June 2028, its projects finish within 18 months, by mid-December 2029, leaving time for final reports and payments before 30 June 2030. A later round would push final payments past the funding.
+The funding ends with 2029–30, which forces the third assumption. Round 2 agreements executed by mid-June 2028 mean projects finished within 18 months, by mid-December 2029, with time for final reports and payments before 30 June 2030. A later round would not fit.
 
 ```figure
 type: bars
@@ -129,7 +127,7 @@ caption: This is an illustration. A design-stage plan for the A$20.0 million, ex
 - 2029–30 | 2.0 | Round 2 final payments
 ```
 
-The total checks: A$1.0 million + A$8.0 million + A$9.0 million + A$2.0 million = A$20.0 million. Against an even split, the plan is A$4.0 million lower in 2026–27, A$3.0 million higher in 2027–28, A$4.0 million higher in 2028–29 and A$3.0 million lower in 2029–30. Without the profile, each difference would appear at year end as an unplanned underspend or overspend. Delays move money later, so the CFO area reviews the profile after each round's decisions and each reporting milestone (Chapter 7).
+The total checks: A$1.0 million + A$8.0 million + A$9.0 million + A$2.0 million = A$20.0 million. Against an even split, the plan is A$4.0 million lower in 2026–27, A$3.0 million higher in 2027–28, A$4.0 million higher in 2028–29 and A$3.0 million lower in 2029–30. Each difference would otherwise appear at year end as an unplanned underspend or overspend. Delays move money later, so the CFO area reviews the profile after each round's decisions and each reporting milestone (Chapter 7).
 
 The departmental A$1.2 million is A$1.2 million ÷ A$20.0 million = 6 per cent of the grant funding. Sam asks for part of it to be reserved for the evaluation.
 
@@ -137,9 +135,11 @@ The departmental A$1.2 million is A$1.2 million ÷ A$20.0 million = 6 per cent o
 
 Evaluation is part of the grants lifecycle (2.8(e)). Paragraph 10.8 says officials should establish performance measures and specify them in the guidelines and agreements, and "should undertake an evaluation of a grant opportunity before initiating further grant opportunities or extending existing grant agreements". Paragraph 7.6 says programs should be "designed to enable closure on successful completion".
 
-A baseline is the value of a measure before the grant changes anything, so it must be collected before the work starts. For the RCFP the cheapest moment is the application, when applicants are already gathering evidence of need. Three points of better practice shape what Sam asks for:
+A baseline is the value of a measure before the grant changes anything, so it must be collected before the work starts.
 
-- **Use records grantees already keep.** Paragraph 9.5 says officials should not ask for information available from other sources, and should align reporting with grantees' own reporting where possible. Most halls keep a booking diary, even a paper one.
+This is an illustration. For the RCFP the cheapest moment is the application, when applicants are already gathering evidence of need. Three points of better practice shape what Sam asks for:
+
+- **Use records grantees already keep.** Paragraph 9.5 says officials should not ask for information available from other sources, and should consider aligning reporting with grantees' own reporting. Most halls keep a booking diary, even a paper one.
 - **Check the grantee can produce the data.** Paragraph 10.5 warns against indicators "reliant on data provided by the grantee" without checking the grantee's capacity to provide it. Applicants say how they record use; those with no records count use for four weeks before the works start.
 - **Measure outcomes as well as outputs.** Paragraph 9.6 warns that "poorly formulated reporting requirements, which focus on outputs rather than outcomes, can be overly burdensome".
 
@@ -149,7 +149,7 @@ Round 2 opens in 2028, before Round 1's projects finish, so Sam plans two pieces
 
 This is an illustration. In 2023–24 the Regional Programs Branch ran a smaller, one-round program for hall refurbishment. It paid 48 grants of up to A$30,000 each, A$1.15 million in total, for painting, floors, curtains and furniture. It measured halls refurbished, projects on time and acquittals received. Final reports carried photos, invoices and a "project complete" tick.
 
-By those measures it succeeded: 48 halls refurbished, 44 of them on time (44 ÷ 48 = 91.7 per cent), and every grant acquitted. In late 2025 the branch wanted to use the program as evidence for the RCFP and found it could not. Nobody had recorded how the halls were used before the works, or asked afterwards. When Ivy rang 12 of the hall committees in early 2026, only 3 had booking records from before the works.
+By those measures it succeeded: 48 halls refurbished, 44 of them on time (44 ÷ 48 = 91.7 per cent), and every grant acquitted. In late 2025 the branch tried to use it as evidence for the RCFP and could not. Nobody had recorded how the halls were used before the works, or asked afterwards. When Ivy rang 12 of the hall committees in early 2026, only 3 had booking records from before the works.
 
 Worse, two of the halls closed within a year because their roofs leaked onto the new floors. Together they had received A$54,000. Nothing in the design asked whether a hall's condition would let it stay open.
 
@@ -171,9 +171,11 @@ The control is the design in this chapter: an objective that names a change, a l
 
 ## Exercise: the RCFP program logic and three measures
 
-This is an illustration. It is September 2026. The Director asks Sam for one page that settles the design before Ivy starts the guidelines: the RCFP program logic at five levels, and three outcome measures. For each measure, give a definition, the data source, how and when the baseline is collected, when the result is measured and how it is calculated. Use the case facts: the objective, the 18-month limit, the 40/40/20 payments, final reports by 31 March 2029 and the evaluation in 2029–30.
+This is an illustration. It is September 2026. The Director asks Sam for one page that settles the design before Ivy starts the guidelines: the RCFP program logic at five levels, and three outcome measures. For each measure, give a definition, the data source, how and when the baseline is collected, when the result is measured and how it is calculated. Use the dates and limits in this chapter.
 
 ### Worked answer
+
+This is an illustration.
 
 | Level | RCFP program logic |
 | --- | --- |

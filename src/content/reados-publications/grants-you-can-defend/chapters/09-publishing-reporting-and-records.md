@@ -44,7 +44,7 @@ Paragraph 5.4 requires the information "no later than twenty-one calendar days a
 
 "Or the variation" means each reportable variation has its own clock.
 
-This is an illustration. An RCFP agreement that took effect on Tuesday 15 June 2027 had to be on GrantConnect by Tuesday 6 July 2027, which is 15 June plus 21 days. NRIO's practice now has four parts, added after the failure described below. Nadia enters the date of effect and the due date in the branch's publication register on the day of execution. Ben publishes within five working days. Ivy reads the register every Monday. And Nadia is trained to publish when Ben is away.
+This is an illustration. RCFP agreements take effect when the second party signs (Chapter 7). Kellerton Hall's, the first, took effect on Tuesday 15 June 2027, so it had to be on GrantConnect by Tuesday 6 July 2027, which is 15 June plus 21 days. NRIO's practice now has four parts, added after the failure described below. Nadia enters the date of effect and the due date in the branch's publication register on the day of execution. Ben publishes within five working days. Ivy reads the register every Monday. And Nadia is trained to publish when Ben is away.
 
 ## Variations and corrections
 
@@ -151,7 +151,7 @@ This is an illustration. In May 2029, before the evaluation starts, Sam asks Ivy
 | 3 | Cross-reference to the brief (Fri 7 May 2027) and the Minister's decision record (Mon 31 May 2027) on the master file |
 | 4 | Agreement executed and in effect Thu 17 Jun 2027, signed for NRIO by the Branch Manager; section 18 record |
 | 5 | An email from the association's treasurer giving its bank account; nothing else on bank details |
-| 6 | GrantConnect award record published Wed 7 Jul 2027, linked to the guidelines |
+| 6 | GrantConnect award record published Thu 24 Jun 2027, linked to the guidelines |
 | 7 | Payments: A$72,000 on Tue 22 Jun 2027; A$72,000 after the approved mid-point report; A$36,000 after the final report was approved on Tue 17 Apr 2029 |
 | 8 | Variation 1: mid-point report due date moved from Wed 15 Dec 2027 to Fri 14 Jan 2028. A file note says the Branch Manager approved it by email; the email is not filed |
 | 9 | Variation 2: completion date moved from Fri 28 Apr 2028 to Thu 31 Aug 2028, signed by the Branch Manager, in effect Wed 5 Apr 2028. No GrantConnect record |
@@ -166,7 +166,7 @@ For each item, say whether it passes. For each fault, name the rule or procedure
 3. **Passes.** One master copy, cross-referenced, is better than a second copy that can drift.
 4. **Passes.** A$180,000 is within the Branch Manager's A$500,000 delegation, and the section 18 record is there.
 5. **Fails.** NRIO's procedure requires a call-back to confirm bank details before the first payment (Chapter 7). It is one of the controls through which NRIO meets the "must" in section 10 of the PGPA Rule, and an emailed bank account is a common route for redirecting payments. Fix: ask the CFO area whether a call-back was recorded elsewhere. If not, report the control failure and confirm with the association that it received all three payments.
-6. **Passes.** 17 June plus 21 days is 8 July 2027. The record went up on 7 July, day 20, with the link to the guidelines.
+6. **Passes.** 17 June plus 21 days is 8 July 2027. The record went up on 24 June, day 7, with the link to the guidelines.
 7. **Passes.** 40 per cent of A$180,000 is A$72,000 and 20 per cent is A$36,000; A$72,000 + A$72,000 + A$36,000 = A$180,000. The first payment came after the agreement took effect, and the last after the final report was approved.
 8. **Fails in part.** 15 December 2027 and 14 January 2028 both fall in 2027–28, so this is a date change within one financial year and does not go on GrantConnect. But the approval is not on the file, which falls short of 3.15 and breaks NRIO's rule on emails. Fix: file the Branch Manager's email.
 9. **Fails.** 28 April 2028 falls in 2027–28 and 31 August 2028 in 2028–29, so this is an extension into a new financial year and is reportable under 5.4. It took effect on 5 April 2028, so the deadline was Wednesday 26 April 2028. The new date is within the 18-month limit (17 June 2027 plus 18 months is 17 December 2028). Fix: publish the variation now, note on the file that it is late and why, report the missed deadline under NRIO's compliance procedure, and check the other grant files for the same gap.

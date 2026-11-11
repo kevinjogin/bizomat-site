@@ -30,7 +30,7 @@ Paragraph 2.6 lists fourteen kinds of financial arrangement that are "taken not 
 ```figure
 type: tree
 title: What paragraph 2.6 takes out of the grants rules
-caption: Paragraph 2.6 of the CGRPs, grouped. Its footnotes keep some loans, and some payments to states, territories, councils and education bodies, inside the rules, so check them before you rely on an item.
+caption: Paragraph 2.6 of the CGRPs, grouped. Its footnotes say some loans, and some other payments to states, territories, councils and education bodies, may still be covered, so check them before you rely on an item.
 - Not grants under the CGRPs
   - Buying | (a) goods and services acquired for the entity's own use, which the CPRs cover
   - Payments other rules already govern | (b) act of grace payments under section 65 of the PGPA Act; (c) compensation; (d) benefits or entitlements set by legislation; (e) tax concessions or offsets
@@ -39,7 +39,7 @@ caption: Paragraph 2.6 of the CGRPs, grouped. Its footnotes keep some loans, and
   - Other items | (k) official development assistance; (l) charitable donations made from money given by individuals for that purpose; (m) membership payments under international treaties; (n) payments for the operation of corporate Commonwealth entities
 ```
 
-The footnotes matter as much as the list. Some concessional loans may still be subject to the CGRPs (footnote 14), and so may other assistance to states and territories, local government and educational institutions (footnotes 15 to 17). The list excludes kinds of payment, not kinds of recipient. A council can receive a grant: the RCFP's payments to councils are not made for the purposes of the Local Government (Financial Assistance) Act 1995, so item (i) does not apply.
+The footnotes matter as much as the list. Some concessional loans may still be subject to the CGRPs (footnote 14), and so may other assistance to states and territories, local government and educational institutions (footnotes 15 to 17). The list excludes kinds of payment, not kinds of recipient. A council can receive a grant, because item (i) covers only payments made for the purposes of the Local Government (Financial Assistance) Act 1995.
 
 ## Telling a grant from a procurement
 
@@ -88,7 +88,7 @@ The CGRPs rest on the [PGPA Act](https://www.legislation.gov.au/C2013A00123/late
 
 There must also be legal authority for the arrangement before money is committed (CGRPs 3.8). Paragraph 3.9 names three sources: section 23 of the PGPA Act, for the ordinary services and functions of government; section 32B of the Financial Framework (Supplementary Powers) Act 1997, where the arrangement is specified in its regulations; or specific legislation.
 
-This is an illustration. Sam asks NRIO's legal area to confirm the RCFP's legal authority in writing before the design goes further, and files the advice. Paragraph 4.6(b) requires every brief to the Minister to state it.
+This is an illustration. Sam asks NRIO's legal area to confirm the RCFP's legal authority in writing before the design goes further, and files the advice. Paragraph 4.6(b) requires the written advice to the Minister to state it.
 
 ## Who the rules bind, and what "must" means
 
@@ -141,7 +141,9 @@ caption: This is an illustration. The dates are Round 1's. In practice steps 2 a
 - Agree, pay, monitor, acquit, publish and evaluate | agreements from Tue 15 Jun 2027; projects to December 2028; final reports and acquittals by 31 March 2029; evaluation in 2029–30 (Chapters 7 to 10)
 ```
 
-Steps 2 and 3 run together because the guidelines describe the selection process, so the choice is made before they are approved. Step 6 is several jobs: agreements and payments (Chapter 7), monitoring and acquittal (Chapter 8), publishing and records (Chapter 9), and evaluation (Chapter 10). Round 2 opens in 2028, while Round 1's projects are still running, so lessons from each step are written down as they happen.
+Steps 2 and 3 run together because the guidelines describe the selection process, so the choice is made before they are approved. Step 6 is several jobs: agreements and payments (Chapter 7), monitoring and acquittal (Chapter 8), publishing and records (Chapter 9), and evaluation (Chapter 10).
+
+This is an illustration. The RCFP's Round 2 opens in 2028, while Round 1's projects are still running, so lessons from each step are written down as they happen.
 
 ## When it goes wrong: a study paid for as a grant
 

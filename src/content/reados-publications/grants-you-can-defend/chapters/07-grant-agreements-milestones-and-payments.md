@@ -9,21 +9,19 @@ draft: true
 
 This is an illustration. On Monday 31 May 2027 the Minister approved 31 Regional Community Facilities Program (RCFP) grants worth A$9.98 million. No money had moved, and no grantee had promised anything. A decision says who should receive public money and how much. The grant agreement says what each grantee will deliver, on what terms, and when each part of the money will be paid.
 
-The work fell to Ben Walker, who manages RCFP agreements, with Nadia Haddad processing payments and Ivy Chen keeping the round's forecast. Sam Reid answered for all of it. Most of the 31 agreements would be signed in the last weeks of a financial year, when the pressure to pay quickly is strongest. This chapter follows the team from the form of the agreement to the first payments, and shows how one payment went out before there was an agreement to pay against.
+Ben Walker manages RCFP agreements, Nadia Haddad processes payments and Ivy Chen keeps the round's forecast. Sam Reid answers for all of it. Most of the 31 agreements would be signed in the last weeks of a financial year, when the pressure to pay quickly is strongest. This chapter follows the team from the form of the agreement to the first payments, including one that went out before there was an agreement to pay against.
 
 ## What the agreement adds to the decision
 
-Section 23 of the PGPA Act lets the accountable authority of a non-corporate Commonwealth entity enter into, vary and administer arrangements on behalf of the Commonwealth. An arrangement includes a contract, agreement, deed or understanding. This is an illustration. At NRIO, a written delegation gives that power for RCFP agreements, and for variations to them, to the Branch Manager, Regional Programs, up to A$500,000.
+Section 23 of the PGPA Act lets the accountable authority of a non-corporate Commonwealth entity enter into, vary and administer arrangements on behalf of the Commonwealth. An arrangement includes a contract, agreement, deed or understanding. This is an illustration. At NRIO, a written delegation gives that power for RCFP agreements and their variations to the Branch Manager, Regional Programs, up to A$500,000.
 
-The Minister's approval and the Branch Manager's signature are different acts. Under section 71 of the PGPA Act, the Minister approved each grant as a proper use of relevant money and recorded the terms of the approval (Chapter 6). The Branch Manager's task is to put that approval into an agreement that matches it: the same grantee, the same project, the same amount, and terms that protect the money while it is being spent.
+The Minister's approval and the Branch Manager's signature are different acts. Under section 71 of the PGPA Act, the Minister approved each grant as a proper use of relevant money and recorded the terms of the approval (Chapter 6). The Branch Manager puts that approval into an agreement that matches it: the same grantee, project and amount, with terms that protect the money while it is spent.
 
-The [Commonwealth Grants Rules and Principles 2024](https://www.legislation.gov.au/F2024L00854/latest/text) (CGRPs) describe what a good agreement does. Paragraph 14.8 says officials should ensure agreements are well drafted and fit for purpose. The first thing a well-drafted agreement provides for is "a clear understanding between the parties on required outcomes, prior to commencing payment of the grant". The others are accountability for the money informed by risk analysis, agreed conditions on its use, including any access requirements, and the performance information the grantee may have to collect. These are "should" statements: better practice, not requirements. They are also the questions an auditor or a complainant will ask about any agreement.
+Paragraph 14.8 of the [Commonwealth Grants Rules and Principles 2024](https://www.legislation.gov.au/F2024L00854/latest/text) (CGRPs) says officials should ensure agreements are well drafted and fit for purpose. The first thing a well-drafted agreement provides for is "a clear understanding between the parties on required outcomes, prior to commencing payment of the grant". The others are accountability informed by risk analysis, agreed conditions on the money's use, including any access requirements, and the performance information the grantee may have to collect. These are "should" statements, better practice rather than requirements, but an auditor or a complainant will ask about each of them.
 
 ## Choosing the form of agreement
 
-No form of agreement suits every grant. Paragraph 14.9 says that, unless legislation or policy mandates a form, officials should choose one based on an analysis of the risks, proportionality, the context of the grant, Finance's guidance, templates and tools, working with the grantee, how issues will be resolved and, where appropriate, legal advice.
-
-Paragraph 9.4 sketches the range. A small-scale, low-risk, one-off grant "should take the form of a letter of agreement or exchange of letters". For low-risk activities, the agreement should cover the risks it can manage without overburdening the grantee, and footnote 64 points to the simple grant agreement template on the Finance website. Complex grants with many conditions may need agreements structured individually.
+No form suits every grant. Paragraph 14.9 says that, unless legislation or policy mandates a form, officials should choose one based on factors that include the risks, proportionality, the grant's context, Finance's guidance, templates and tools, and legal advice where appropriate. Paragraph 9.4 sketches the range. A small-scale, low-risk, one-off grant "should take the form of a letter of agreement or exchange of letters". For low-risk activities, the agreement should cover the risks it can manage without overburdening the grantee; footnote 64 points to the simple grant agreement template on the Finance website. Complex grants with many conditions may need agreements structured individually.
 
 ```figure
 type: compare
@@ -37,9 +35,9 @@ rowhead: Form
 caption: This is an illustration in the last row. The first three rows paraphrase paragraph 9.4 and footnote 64, which are "should" statements. NRIO chose one agreement for the whole round.
 ```
 
-This is an illustration. RCFP grants run from A$50,000 to A$500,000, pay for building work over up to 18 months and are paid in three instalments against reports. A letter could not carry that, and 31 individually negotiated contracts would have been slow and inconsistent. Before the round opened, NRIO's legal area prepared one RCFP grant agreement, drawing on Finance's templates and guidance, and the Minister approved it as a draft with the guidelines (Chapter 3). The grants team considered the simple template for the smallest grants and decided against it: even an A$85,000 workshop fit-out involves contractors, staged payments and a final acquittal.
+This is an illustration. RCFP grants of A$50,000 to A$500,000 pay for building work over up to 18 months, in three instalments against reports. A letter could not carry that, and 31 negotiated contracts would have been slow and inconsistent. Before the round opened, NRIO's legal area prepared one RCFP agreement from Finance's templates and guidance, and the Minister approved it as a draft with the guidelines (Chapter 3). The simple template was considered for the smallest grants and not used: even an A$85,000 workshop fit-out involves contractors, staged payments and an acquittal.
 
-One form means every grantee signs the same terms and every officer administers the same clauses. Differences in risk sit in each project's schedule and conditions. Because the draft was published with the guidelines, applicants knew the terms, including the payment schedule, before they applied.
+One form means the same terms for every grantee and the same clauses for every officer, while each project's schedule carries its own risks. Applicants saw those terms, including the payment schedule, before they applied.
 
 ## Schedules, milestones and conditions
 
@@ -47,21 +45,21 @@ Paragraph 14.10 says the agreement should, at a minimum, "define grant activity 
 
 This is an illustration. Kellerton Hall Committee Inc.'s schedule shows the parts.
 
-- **Deliverables:** a new roof, including removal of the asbestos found in the old sheeting, and accessible toilets, as described in the application the Minister approved.
+- **Deliverables:** a new roof, including removal of the asbestos found in the old sheeting, and accessible toilets, as described in the approved application.
 - **Completion:** by 15 December 2028, 18 months after execution, the longest the guidelines allow.
-- **Payments:** A$168,000 (40 per cent) on execution; A$168,000 (40 per cent) on NRIO's approval of the mid-point progress report, due on Wednesday 15 March 2028; and A$84,000 (20 per cent) on approval of the final report and acquittal, due by 31 March 2029. Together they make the A$420,000 grant.
-- **Reports:** what each report must show, including spending to date against the schedule's budget lines.
-- **Conditions:** public liability insurance before works start, a licensed contractor for the asbestos removal, and access to the site for NRIO officers on reasonable notice.
+- **Payments:** A$168,000 (40 per cent) on execution; A$168,000 (40 per cent) on approval of the mid-point progress report, due on Wednesday 15 March 2028; and A$84,000 (20 per cent) on approval of the final report and acquittal, due by 31 March 2029. Together they make A$420,000.
+- **Reports:** what each must show, including spending to date by the schedule's budget lines.
+- **Conditions:** public liability insurance before works start, a licensed contractor for the asbestos removal, and site access for NRIO officers on reasonable notice.
 
-Each schedule sets the mid-point report at the halfway point of the project's own plan, usually about nine months after execution. Write each milestone so that someone who was not part of the negotiation can tell whether it has been met. "Roof replaced" is a deliverable. "NRIO has approved a mid-point report showing the asbestos removed, the new roof frame in place and spending to date by budget line" is a milestone that a payment can depend on.
+Each schedule sets the mid-point report at the halfway point of the project's own plan, usually about nine months after execution. Write milestones that someone outside the negotiation could test. "Roof replaced" is a deliverable. "NRIO has approved a mid-point report showing the asbestos removed, the new roof frame in place and spending to date by budget line" is a milestone that a payment can depend on.
 
-Conditions do different jobs. Some must be met before work starts, some before a payment and some for the life of the agreement. The Shire of Eastbrook's schedule adds one for councils: each report shows the council's own spending, so NRIO can see its A$300,000 contribution, 37.5 per cent of the A$800,000 eligible cost, actually being spent. The 25 per cent minimum applied to every council applicant, and the agreement is where NRIO checks that it is kept.
+Conditions do different jobs: some apply before work starts, some before a payment and some for the life of the agreement. The Shire of Eastbrook's schedule adds one for councils. Each report shows the council's own spending, so NRIO can see its A$300,000 contribution, 37.5 per cent of the A$800,000 eligible cost, being spent. The 25 per cent minimum applied to every council applicant, and the agreement is where NRIO checks it.
 
-Keep conditions in proportion. Paragraph 9.5 asks officials to set reporting and acquittal requirements in proportion to the risks and the outcomes sought. A condition that nobody will check burdens the grantee and gives NRIO false comfort.
+Keep conditions in proportion. Paragraph 9.5 asks officials to set reporting and acquittal requirements in proportion to the risks and the outcomes sought. A condition that nobody checks burdens the grantee and gives NRIO false comfort.
 
 ## Executing the agreement and recording the approval
 
-This is an illustration. NRIO's offers went out in June 2027 with the agreement and each project's schedule. The grantee's authorised signatories sign first. Ben checks the returned copy against the version NRIO sent, page by page, and only then takes it to the Branch Manager. The RCFP agreement takes effect on the date the second party signs. The first, Kellerton's, was executed on Tuesday 15 June 2027.
+This is an illustration. NRIO's offers went out in June 2027. The grantee's authorised signatories sign first. Ben checks the returned copy against the version sent, page by page, before it goes to the Branch Manager. The RCFP agreement takes effect on the date the second party signs. The first, Kellerton's, was executed on Tuesday 15 June 2027.
 
 ```figure
 type: steps
@@ -77,38 +75,38 @@ caption: This is an illustration. NRIO's sequence for each RCFP grant. The Branc
 
 Section 18 of the [PGPA Rule](https://www.legislation.gov.au/F2014L00911/latest/text) says an official approving a commitment of relevant money "must record the approval in writing as soon as practicable after giving it". The approval and its record must also follow the delegation instrument, any directions and the accountable authority's instructions.
 
-This is an illustration. NRIO's instructions treat the Branch Manager's decision to enter into each RCFP agreement as approving the commitment of that grant's money, within the amount the Minister approved. The record shows the grantee, the amount, the ministerial approval it relies on, the delegation used, the agreement version, the date of execution and any interest the Branch Manager has declared. Agencies divide a minister's approval and an official's commitment in different ways. Read your own delegation instrument, and ask your finance area which approvals it requires.
+This is an illustration. NRIO's instructions treat the Branch Manager's decision to enter into each RCFP agreement as approving the commitment of that grant's money, within the Minister's approval. The record shows the grantee, the amount, the ministerial approval relied on, the delegation used, the agreement version, the execution date and any interest declared. Agencies split a minister's approval and an official's commitment in different ways, so read your own delegation instrument and ask your finance area which approvals it requires.
 
-The date of execution matters beyond the file. Paragraph 5.4 of the CGRPs counts the 21 calendar days for reporting a grant on GrantConnect from when the agreement takes effect (Chapter 9). It is also the day the whole grant becomes a commitment in NRIO's finance system.
+The execution date matters beyond the file. Paragraph 5.4 of the CGRPs counts the 21 calendar days for reporting a grant on GrantConnect from when the agreement takes effect (Chapter 9).
 
 ## No payment before execution
 
-This is an illustration. The first RCFP instalment is paid on execution. That is a trigger, not a target. Until both parties have signed there is no agreement: no deliverables NRIO can insist on, no reports it can require and no clause under which unspent money must be returned. A payment made before execution hands over public money on the strength of an intention.
+This is an illustration. The first RCFP instalment is paid on execution. That is a trigger, not a target. Until both parties have signed there is no agreement: no deliverables NRIO can insist on, no reports it can require and no clause under which unspent money is returned. A payment made before execution hands over public money on the strength of an intention.
 
-NRIO's rule is short. No grant payment is released until the grants system shows an executed agreement, entered by the officer who checked it, with the signed copy attached. Nadia raises payment requests only from that record, and the CFO area checks the record again before it releases the money. That is three people and three checks. Paragraph 15.5 of the CGRPs says separation of duties can be a key internal control, and payments are where it earns its place.
+NRIO's rule is short. No grant payment is released until the grants system shows an executed agreement, entered by the officer who checked it, with the signed copy attached. Nadia raises payment requests only from that record, and the CFO area checks it again before releasing the money. Paragraph 15.5 of the CGRPs says separation of duties can be a key internal control. Here it means three people and three checks.
 
-The pressure to break the rule usually comes from the calendar. An agreement a grantee signs in late June is tempting to pay before 30 June, because the forecast assumed it would be. The forecast should follow the agreements, not lead them. An agreement executed on 2 July is paid in the new financial year, and the forecast is corrected.
+The pressure to break the rule comes from the calendar. A grantee's signature in late June is tempting to pay before 30 June, because the forecast assumed it. The forecast should follow the agreements, not lead them: an agreement executed on 2 July is paid in the new financial year, and the forecast is corrected. Paying early to use a year's money is hard to reconcile with proper use, which section 8 of the PGPA Act defines as efficient, effective, economical and ethical.
 
 ## Confirming bank details by calling back
 
-Money paid into the wrong account can be very hard to get back. Section 10 of the PGPA Rule says the accountable authority "must take all reasonable measures to prevent, detect and respond to fraud and corruption relating to the entity", including by developing and implementing control plans. Paragraph 15.4 of the CGRPs says accountable authorities must ensure their fraud and corruption procedures comply with section 10, including in grants administration. Checking bank details before paying is one of the most practical of those measures.
+Money paid into the wrong account can be very hard to get back. Section 10 of the PGPA Rule says the accountable authority "must take all reasonable measures to prevent, detect and respond to fraud and corruption relating to the entity", including by developing and implementing control plans. Paragraph 15.4 of the CGRPs says accountable authorities must ensure their fraud and corruption procedures comply with section 10, including in grants administration. Checking bank details is one of the most practical of those measures.
 
 This is an illustration. NRIO's call-back rule has four parts:
 
-- call the grantee on a number NRIO already holds, from the application or the agreement, never on a number given in the message that supplies or changes the details;
+- call the grantee on a number NRIO already holds, never on one given in the message that supplies or changes the details;
 - confirm that the account name matches the grantee's legal name in the agreement;
 - speak, where possible, to a signatory other than the person who sent the details;
-- record who called whom, when, and what was confirmed, before any payment is released.
+- record who called whom, when and what was confirmed, before any payment is released.
 
-On Thursday 17 June 2027, two days after Kellerton's agreement was executed, an email from the hall committee's new treasurer gave a different account from the one in the application. The committee had changed banks after its annual general meeting. The CFO area rang the committee's secretary on the number in the application, who confirmed both the new account and the new treasurer. The first instalment of A$168,000 was paid on Tuesday 22 June 2027. The change was genuine, and the call took a few minutes. The same call is what would have stopped a false one.
+On Thursday 17 June 2027, an email from Kellerton's new treasurer gave a different account from the one in the application. The committee had changed banks after its annual general meeting. The CFO area rang the committee's secretary on the number in the application, who confirmed both the account and the new treasurer. The A$168,000 first instalment was paid on Tuesday 22 June 2027. The change was genuine and the call took minutes. The same call would have stopped a false one.
 
-The rule applies to every change of details, before every instalment. A request to change bank details shortly before a payment deserves the most care, not the least.
+The rule applies to every change of details, before every instalment, and most of all to a change that arrives just before a payment.
 
 ## Commitments, the forecast and the financial year
 
-The companion book "Public Money You Can Account For" argues, in its chapter on budgets, that a report showing only payments describes the past and hides what has already been promised. Grants sharpen the point. On the day an RCFP agreement is executed, the whole grant becomes a commitment, but only 40 per cent is paid. The rest stays committed for up to two years.
+The companion book "Public Money You Can Account For" argues, in its chapter on budgets, that a report showing only payments describes the past and hides what is already promised. Grants sharpen the point. On the day an RCFP agreement is executed, the whole grant becomes a commitment, but only 40 per cent is paid. The rest stays committed for up to two years.
 
-This is an illustration. Across the round, the schedule splits the A$9.98 million as follows.
+This is an illustration. Across the round, the schedule splits the A$9.98 million like this.
 
 ```figure
 type: stack
@@ -120,17 +118,15 @@ caption: This is an illustration. 31 grants, excluding GST. All of it is committ
 - On the approved final report and acquittal, 20% | 1996000 | 2028–29 if approved by 30 June 2029, otherwise 2029–30
 ```
 
-The schedule, not the decision, sets the year in which each instalment is paid. The financial year runs from 1 July to 30 June. A first instalment paid on 29 June 2027 falls in 2026–27; one paid on 1 July falls in 2027–28. Mid-point reports due early in 2028 are paid in 2027–28, but a report due in June can be paid in July and land in 2028–29. Final reports are due by 31 March 2029, so the last instalments should be paid in 2028–29. A late or incomplete report can push its 20 per cent into 2029–30.
+The schedule, not the decision, sets the financial year of each payment. A first instalment paid on 29 June 2027 falls in 2026–27; one paid on 1 July falls in 2027–28. The same boundary catches a mid-point report due in June 2028, and a final report, due by 31 March 2029, that is approved after 30 June 2029.
 
-Chapter 2 phased the program's administered funding across four years. Ivy builds the round's cash forecast from the executed schedules, not from the decision list, and updates it whenever a report is early or late. For every grant it shows the amount, the amount paid to date, the amount committed but not yet paid, and the expected date of each remaining instalment. When the forecast moves money between years, the CFO area hears about it early. Whether money can move between years is not the program's decision; ask your finance area how your agency handles it.
-
-Never move a payment to fit a year. Paying an instalment before its milestone is met, to use a year's money, is hard to reconcile with proper use, which section 8 of the PGPA Act defines as efficient, effective, economical and ethical.
+Chapter 2 phased the program's administered funding across four years. Ivy builds the round's cash forecast from the executed schedules, not from the decision list. For every grant it shows the amount, the amount paid, the amount committed but unpaid, and the expected date of each remaining instalment. It changes whenever a report is early or late. Whether money can move between years is for the finance area, not the program, so tell the CFO area early.
 
 ## When it goes wrong: the payment that went out first
 
-This is an illustration. Brindlemere Football Netball Club Inc. was offered a A$310,000 grant for its change-room upgrade on Wednesday 9 June 2027, with completion by 15 December 2028. The club returned a signed copy on Friday 25 June. Ben started three weeks of leave the next working day, and Ivy covered agreements. The team was working through a list of first payments that the 2026–27 forecast expected by 30 June. On Monday 28 June, Nadia saw the signed copy in the shared mailbox and raised the payment request. The form asked whether the grantee had signed. It did not ask whether NRIO had. The CFO area confirmed the bank details by call-back, as the rule requires, and paid the A$124,000 first instalment on Tuesday 29 June.
+This is an illustration. Brindlemere Football Netball Club Inc. was offered A$310,000 for its change-room upgrade on Wednesday 9 June 2027, with completion by 15 December 2028. The club returned a signed copy on Friday 25 June. Ben began three weeks of leave the next working day, and Ivy covered agreements. The team was working through the first payments that the 2026–27 forecast expected by 30 June. On Monday 28 June, Nadia saw the signed copy in the shared mailbox and raised the payment request. The form asked whether the grantee had signed, not whether NRIO had. The CFO area confirmed the bank details by call-back and paid the A$124,000 first instalment on Tuesday 29 June.
 
-On Thursday 1 July, Ivy read the returned copy before taking it to the Branch Manager. The committee had crossed out the completion date, written in 30 June 2029 and initialled the change. NRIO could not accept it. The guidelines require completion within 18 months of the agreement, and every applicant had been held to that limit.
+On Thursday 1 July, preparing the copy for the Branch Manager, Ivy found that the committee had crossed out the completion date, written in 30 June 2029 and initialled the change. NRIO could not accept it. The guidelines require completion within 18 months of the agreement, and every applicant had been held to that.
 
 ```figure
 type: timeline
@@ -144,11 +140,11 @@ caption: This is an illustration. The bank details were checked properly. Nobody
 - Wed 14 Jul 2027 | Agreement executed | a clean copy on NRIO's terms; on legal advice, the payment is treated as the first instalment
 ```
 
-The cost was real, although no money was lost. For more than two weeks, A$124,000 of public money sat with a grantee under no agreed terms. Had the club refused NRIO's terms, NRIO would have been seeking the money back with no agreement to rely on, and only legal advice could have said how. The payment fell in 2026–27 for an agreement executed in 2027–28, so both years' figures were wrong until the CFO area corrected them. And the club, which had acted openly, learned after the money arrived that its change could not stand.
+No money was lost, but the cost was real. For more than two weeks, A$124,000 of public money sat with a grantee under no agreed terms. Had the club refused NRIO's terms, NRIO would have had no agreement to rely on in seeking the money back. The payment fell in 2026–27 for an agreement executed in 2027–28, so both years' figures were wrong until the CFO area corrected them. And the club, which had acted openly, learned after the money arrived that its change could not stand.
 
-Sam told the Director and the Branch Manager in writing the same day, and reported the payment through NRIO's process for possible non-compliance with the finance law. NRIO's legal area advised on the position. Ivy explained the 18-month requirement to the club, which signed a clean copy. The Branch Manager executed it on Wednesday 14 July 2027, and on legal advice the A$124,000 was treated as the first instalment under it.
+Sam told the Director and the Branch Manager in writing that day, and reported the payment through NRIO's process for possible non-compliance with the finance law. NRIO's legal area advised. Ivy explained the 18-month requirement to the club, which signed a clean copy, and the Branch Manager executed it on Wednesday 14 July 2027.
 
-Nobody acted dishonestly. The form asked the wrong question, and the forecast set the pace. The controls that would have caught it are the ones in this chapter: payment requests raised only from an executed-agreement record entered by the officer who checked the copy, the CFO area checking that record before release, and a forecast that follows the agreements. NRIO changed the form that week.
+Nobody acted dishonestly. The form asked the wrong question, and the forecast set the pace. The controls in this chapter would have caught it: payment requests raised only from an executed-agreement record entered by the officer who checked the copy, a CFO check of that record before release, and a forecast that follows the agreements. NRIO changed the form that week.
 
 ## Exercise: three grantees' payments by financial year
 
@@ -174,7 +170,7 @@ This is an illustration. Each grant splits 40, 40 and 20 per cent.
 | Eastbrook | A$200,000 | A$200,000 | A$100,000 | A$500,000 |
 | Tallowood Ridge | A$34,000 | A$34,000 | A$17,000 | A$85,000 |
 
-The payment dates follow from the assumptions:
+Payment dates:
 
 - **Kellerton:** Tuesday 22 June 2027 (2026–27); Wednesday 12 April 2028 (2027–28); by the end of April 2029 (2028–29).
 - **Eastbrook:** Thursday 15 July 2027 (2027–28); Friday 14 July 2028 (2028–29); by the end of April 2029 (2028–29).
@@ -190,6 +186,6 @@ The totals check: A$168,000 + A$436,000 + A$401,000 = A$1,005,000, which equals 
 
 At 30 June 2027, Kellerton and Tallowood Ridge had been executed, so A$420,000 + A$85,000 = A$505,000 was committed. Only A$168,000 had been paid, leaving A$505,000 − A$168,000 = A$337,000 committed but not yet paid. Eastbrook's A$500,000 became a commitment on 8 July 2027, in 2027–28.
 
-Three points matter more than the arithmetic. Tallowood Ridge's agreement was executed on the last day of 2026–27, but its first payment falls in 2027–28: the commitment follows execution, and the cash follows payment. Eastbrook's mid-point instalment lands in 2028–29 because its report is due in mid-June and payment follows four weeks later. A forecast that put every mid-point payment in 2027–28 would overstate that year by A$200,000 and understate the next by the same amount. The fix is a correct forecast, not an early report or an early payment. If Eastbrook's work reaches its halfway point sooner, the report can come sooner. If it does not, the A$200,000 belongs in 2028–29.
+Three points matter more than the arithmetic. Tallowood Ridge was executed on the last day of 2026–27 but first paid in 2027–28: the commitment follows execution, and the cash follows payment. Eastbrook's mid-point instalment lands in 2028–29 because its report is due in mid-June. A forecast that put every mid-point payment in 2027–28 would overstate that year by A$200,000 and understate the next by the same amount. The fix is a correct forecast, not an early report or an early payment.
 
 Chapter 8 follows these grants after the first payment: monitoring them in proportion to risk, deciding requests to vary them, and closing each one with evidence.
