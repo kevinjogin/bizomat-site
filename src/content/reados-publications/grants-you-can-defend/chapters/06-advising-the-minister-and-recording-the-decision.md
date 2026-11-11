@@ -7,7 +7,7 @@ description: "What written advice to a minister must contain, how the decision a
 draft: true
 ---
 
-A grant decision made by a minister rests on two documents: the advice officials gave and the record of what the minister decided. If either is missing or vague, the decision cannot be explained later, however sound it was. The CGRPs set out what the advice must contain, what the minister must record, and what must be reported when a decision departs from the advice or falls in the minister's own electorate.
+A grant decision made by a minister rests on two documents: the advice officials gave and the record of what the minister decided. If either is missing or vague, the decision cannot be explained later, however sound it was. The CGRPs set out what each must contain, and what must be reported when a decision departs from the advice or falls in the minister's own electorate.
 
 This is an illustration. On Friday 7 May 2027 the Branch Manager, Regional Programs, signed the brief that took Round 1's ranked list to the Minister. Sam Reid drafted it with Ivy Chen and Ben Walker from the assessment record (Chapter 5). On Monday 31 May 2027 the Minister approved 31 grants totalling A$9.98 million. They were 29 of the 31 projects officials recommended, and 2 that officials had assessed as meeting the minimum but ranked below the funding line. One of those two, Corran Bay Progress Association Inc., is in the Minister's own electorate.
 
@@ -21,7 +21,7 @@ Written means written: the minister must receive written advice on the merits be
 
 When officials brief a minister on the merits of applications, paragraph 4.7 adds three requirements. Officials must sort applications into three categories: those that fully meet the selection criteria, those that partially meet them, and those that do not meet any. They may add rankings. They must indicate which applications can be supported within the available funding. And they "must recommend that applications that do not meet any of the selection criteria be rejected" (4.7(c)). Any other specific recommendations are a "should" (4.7(d)).
 
-This is an illustration. NRIO mapped its scores onto the categories using the guidelines' minimum. An application scoring at least 5 on every criterion fully meets the criteria, one scoring at least 5 on some but not all partially meets them, and one scoring below 5 on all three meets none. Of the 177 applications assessed, 61 fully met the criteria, 104 partially met them and 12 met none. The nine ineligible applications were never assessed, so the brief listed them separately, each with the criterion it failed.
+This is an illustration. NRIO applied the categories to the assessment criteria, a choice the brief explained, using the guidelines' minimum. An application scoring at least 5 on every criterion fully meets the criteria, one scoring at least 5 on some but not all partially meets them, and one scoring below 5 on all three meets none. Of the 177 applications assessed, 61 fully met the criteria, 104 partially met them and 12 met none. The nine ineligible applications were never scored, so the brief listed them separately, each with the eligibility criterion it failed, and recommended their rejection.
 
 Attachment A ranked all 177 applications with their criterion scores, weighted score, grant sought, running total and federal electorate. The funding line fell after the 31st:
 
@@ -53,9 +53,9 @@ caption: This is an illustration. The first seven items are requirements of 4.6 
 
 ## The approval under section 71
 
-The Minister approves the spending under section 71 of the [PGPA Act](https://www.legislation.gov.au/C2013A00123/latest/text). A minister must not approve a proposed expenditure of relevant money unless "satisfied, after making reasonable inquiries, that the expenditure would be a proper use of relevant money" (s 71(1)). Proper means efficient, effective, economical and ethical (s 8). Having approved it, the minister must "record the terms of the approval in writing as soon as practicable after giving the approval" (s 71(2)(a)).
+The Minister approves the spending under section 71 of the [PGPA Act](https://www.legislation.gov.au/C2013A00123/latest/text). A minister must not approve a proposed expenditure of relevant money unless "satisfied, after making reasonable inquiries, that the expenditure would be a proper use of relevant money" (s 71(1)). Having approved it, the minister must "record the terms of the approval in writing as soon as practicable after giving the approval" (s 71(2)(a)).
 
-The brief is most of the Minister's reasonable inquiries. For grants, paragraph 4.10 adds that the minister must receive written advice on the merits before approving, and must record in writing:
+The brief is most of the Minister's reasonable inquiries. For grants, paragraph 4.10 adds that the minister must record in writing:
 
 - the basis for the approval, relative to the guidelines and value with relevant money;
 - the basis for not approving any grant that officials recommended be approved;
@@ -83,10 +83,10 @@ The money is committed later, when the Branch Manager, as delegate, enters into 
 
 ## Decisions against advice and in the Minister's electorate
 
-The CGRPs allow both. "Ministers may approve grants within their own electorate" (4.11), and ministers "may approve grants that are not recommended by officials" (4.12). In return they require transparency, noting that the geographic spread of grants may be seen as a sign of a round's general equity, and of party-political bias (11.7).
+The CGRPs allow both. "Ministers may approve grants within their own electorate" (4.11), and ministers "may approve grants that are not recommended by officials" (4.12). Paragraph 11.7 adds that those involved should be aware that the geographic spread of grants may be seen as a sign of a round's general equity, and of party-political bias.
 
-- **Against advice.** A minister must report to the Minister for Finance every approval of a grant that the official "recommended be rejected". The report "must include a brief statement of reasons" and must go "as soon as practicable following the approval" (4.12(a)). Footnote 46 adds that December decisions should be reported before 31 January, and that Finance publishes guidance on the form of the report.
-- **In the minister's own electorate.** The minister must write to the Minister for Finance advising of the details (4.11(a)). A copy of the letter to the grantee is enough, except where the grant was also approved against advice; with no such letter, the minister must write as soon as practicable after the decision (4.11(b)). A decision against advice in the minister's own electorate must be included when writing under 4.11 (4.12(b), for members of the House of Representatives). Grants senators approve in their own state or territory, and grants awarded by formula Australia-wide, state-wide or across a region, are exempt (4.11(c)).
+- **Against advice.** A minister must report to the Minister for Finance every approval of a grant that the official "recommended be rejected". The report "must include a brief statement of reasons" and must go "as soon as practicable following the approval" (4.12(a)). Footnote 46 adds that December decisions should be reported before 31 January.
+- **In the minister's own electorate.** The minister must write to the Minister for Finance advising of the details (4.11(a)). A copy of the letter to the grantee is enough, except where the grant was also approved against advice; with no such letter, the minister must write as soon as practicable after the decision (4.11(b)). A decision against advice in the minister's own electorate must be included when writing under 4.11 (4.12(b), for members of the House of Representatives). Two kinds of grant are exempt (4.11(c)): those senators approve in their own state or territory, and those awarded by formula.
 - **Afterwards.** The Minister for Finance must table these reports in each House "as soon as practicable after the end of each quarter" (4.13). Quarters start on 1 January, 1 April, 1 July and 1 October (footnote 47). The decisions must also be recorded on GrantConnect with a summary of the basis of the approval (4.13), which the entity must do as soon as practicable (5.5).
 
 ```figure
@@ -94,7 +94,7 @@ type: compare
 title: What each kind of ministerial decision requires
 rowhead: Decision
 cols: The minister must record | Report to the Minister for Finance | Public record
-- Recommended and approved | The basis for the approval (4.10(b)) and the terms (s 71(2)(a)) | None, unless in the minister's own electorate | Each grant on GrantConnect within 21 calendar days of its agreement taking effect (5.4)
+- Recommended and approved | The basis for the approval (4.10(b)) and the terms (s 71(2)(a)) | None, unless in the minister's own electorate | The decision on GrantConnect as soon as practicable (5.5); each grant within 21 calendar days of its agreement taking effect (5.4)
 - Recommended, not approved | The basis for not approving it (4.10(c)) | None | No grant to report
 - Recommended be rejected, approved | The basis for approving it (4.10(d)) | A brief statement of reasons, as soon as practicable (4.12(a)) | Tabled after the quarter; the decision and a summary of its basis on GrantConnect (4.13, 5.5)
 - In the minister's own electorate | The basis for the approval (4.10(b)) | The details (4.11(a)), including any approval against advice (4.12(b)) | Tabled after the quarter; the decision and a summary of its basis on GrantConnect (4.13, 5.5)
@@ -110,7 +110,7 @@ caption: This is an illustration. "As soon as practicable" is the CGRPs' test. N
 - Fri 7 May 2027 | Brief to the Minister | ranked list, categories, funding line and the Minister's obligations
 - Mon 31 May 2027 | Decisions signed | 31 grants, A$9.98 million; terms, reasons and conflicts recorded
 - As soon as practicable | Report to the Minister for Finance | both approvals against advice, with reasons; Corran Bay's details in the same letter
-- As soon as practicable | Decisions on GrantConnect | with a summary of the basis of each approval
+- As soon as practicable | Decisions on GrantConnect | with a summary of the basis for the two approvals against advice (4.13)
 - From Tue 15 Jun 2027 | Agreements take effect | each grant on GrantConnect within 21 calendar days
 - Wed 30 Jun 2027 | The quarter ends | 1 April to 30 June 2027
 - *After 30 Jun 2027 | Tabling | the Minister for Finance tables the report as soon as practicable after the quarter
@@ -136,7 +136,7 @@ This is an illustration. On Wednesday 19 May 2027, twelve days after the brief w
 
 In July, when the 32nd-ranked applicant complained, the Branch Manager asked what advice officials had given on the two approvals against advice. The file held the brief of 7 May and the signed decision sheet, and nothing in between. Sam remembered the call clearly; the adviser did not recall the funding point. Neither could show what had been said.
 
-NRIO could not show the advice it had given on the two decisions most likely to be scrutinised. The only written advice on Yarrowmere's merits was a line of scores in Attachment A, silent on the unconfirmed funding. If that funding fell through, the project would be A$40,000 short, and nobody could show that the Minister had been told. Sam wrote a file note that day, dated the day he wrote it and saying when the call took place. The Branch Manager sent the office a written advice setting out what officials had said, and Ben asked Yarrowmere to confirm its other funding.
+The only written advice on Yarrowmere's merits was a line of scores in Attachment A, silent on the unconfirmed funding. If that funding fell through, the project would be A$40,000 short, and nobody could show that the Minister had been told. Sam wrote a file note that day, dated the day he wrote it and saying when the call took place. The Branch Manager sent the office a written advice setting out what officials had said, and Ivy asked Yarrowmere to confirm its other funding.
 
 Every question from a minister's office about a pending decision gets a written answer, the same day or the next, filed with the brief. A phone call gets a file note the same day: who called, when, what was asked, what was said and what was promised. And the brief should give a short merit summary for the applications just below the funding line, the likeliest to be approved against advice. If it was worth saying to a minister's office, it is worth writing down.
 
@@ -156,11 +156,14 @@ Prepare the decision record and the reporting for both. Say what is complete and
 
 ### Worked answer
 
+This is an illustration.
+
 **The decision record.** Each approval needs the terms (grantee, project and amount), signed and dated, for section 71(2)(a); the basis for approving a grant officials recommended be rejected (4.10(d)); the basis relative to the guidelines and value with relevant money (4.10(b)); and any conflicts of interest, recorded and declared as appropriate (4.10(e)).
 
 - **Terms.** Complete: the signed sheet names both grantees, projects and amounts, dated 31 May 2027.
-- **Corran Bay's basis.** The annotation ties the approval to community need and benefit, the first criterion in the guidelines, weighted 40 per cent. That links it to the guidelines, but it says nothing about value with relevant money, so officials note that 4.10(b) asks for both.
-- **Yarrowmere's basis.** The annotation states where other approved projects are, but not how that relates to the guidelines or value with relevant money. Officials ask the office, in writing, whether the Minister wishes to complete it. They do not draft the reason.
+- **Corran Bay's basis.** The annotation ties the approval to community need and benefit, the first criterion in the guidelines, weighted 40 per cent, but says nothing about value with relevant money, which 4.10(b) also asks for.
+- **Yarrowmere's basis.** The annotation says no other approved project serves the district, but not how that relates to the guidelines or value with relevant money.
+- **Asking the office.** For both, officials ask the office, in writing, whether the Minister wishes to complete the basis. They do not draft the reason.
 - **Conflicts.** The line is blank for both. A nil declaration is still a record, so officials ask the office to complete it (4.10(e)).
 
 **Reports and publication.**
@@ -173,7 +176,7 @@ Prepare the decision record and the reporting for both. Say what is complete and
 | NRIO | GrantConnect | Both decisions, with a summary of the basis of each (4.13, 5.5) | As soon as practicable |
 | NRIO | GrantConnect | Each grant, with a link to the guidelines (5.4) | Within 21 calendar days after its agreement takes effect: one taking effect on Tue 15 Jun 2027, by Tue 6 Jul 2027 |
 
-The brief statement of reasons uses the Minister's recorded reasons and nothing else. For Corran Bay: "Approved because the hall is the town's relief centre when floods cut the road, and it needs a working kitchen to feed residents." Yarrowmere's waits for the office's answer. Speed matters too: a letter that reaches Finance in June is tabled after the June quarter; one that slips into July waits a quarter longer.
+The brief statement of reasons uses the Minister's recorded reasons and nothing else. For Corran Bay the draft reads: "Approved because the hall is the town's relief centre when floods cut the road, and it needs a working kitchen to feed residents." Both wait for the office's answers. Speed matters too: a letter that reaches Finance in June is tabled after the June quarter; one that slips into July waits a quarter longer.
 
 The GrantConnect summaries and the tabled report will be read side by side, so they should use the same words, taken from the signed record. File the letter, the office's replies and the GrantConnect entries with the brief and the decision sheet. The decisions were the Minister's to make; the record lets NRIO show that each was made, recorded and reported as the CGRPs require.
 

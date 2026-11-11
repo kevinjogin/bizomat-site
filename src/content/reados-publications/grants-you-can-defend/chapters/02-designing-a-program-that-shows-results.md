@@ -63,13 +63,13 @@ This is an illustration.
 | A grant of A$50,000 to A$500,000, excluding GST | Below A$50,000 a competitive application costs more effort than the grant justifies; the cap spreads each round across many towns |
 | Work finished within 18 months of the grant agreement | Results can be seen, and final reports received by 31 March 2029, inside the funding period |
 
-The cap is easy to check: A$10.0 million ÷ A$500,000 = 20, so even if every project asked for the maximum, a round would fund 20 facilities.
+The cap is easy to check: A$10.0 million ÷ A$500,000 = 20, so a round funds at least 20 facilities.
 
 Eligibility is a gate, not a measure of quality. Whether a project is needed, deliverable and good value belongs to the weighted assessment criteria (Chapter 3).
 
 ## Co-contribution: who else pays
 
-This is an illustration. In the RCFP, councils must contribute at least 25 per cent of eligible project costs; incorporated not-for-profit organisations need not contribute. Paragraph 12.4 explains why a council should pay something. Officials should be alert to "cost shifting", where the Commonwealth funds an activity that a state, territory or local government should pay for. A council owns many of its facilities and raises its own revenue, so a contribution shows the project is a council priority, not a cost moved to the Commonwealth.
+This is an illustration. In the RCFP, councils must contribute at least 25 per cent of eligible project costs; incorporated not-for-profit organisations need not contribute. The cost-shifting warning in 12.4 supports a council contribution. Officials should be alert to "cost shifting", where the Commonwealth funds an activity that a state, territory or local government should pay for. A council owns many of its facilities and raises its own revenue, so a contribution shows the project is a council priority, not a cost moved to the Commonwealth.
 
 A volunteer hall committee has no rates base and often small reserves. Requiring a contribution would screen out the smallest towns, the ones the program exists to serve. Paragraph 9.2 makes the general point: administration should reflect the capabilities of potential grantees. Paragraph 12.4 also warns of "double-dipping", funding for the same activity from more than one source, so every applicant lists other funding for the work.
 
@@ -127,9 +127,9 @@ caption: This is an illustration. A design-stage plan for the A$20.0 million, ex
 - 2029–30 | 2.0 | Round 2 final payments
 ```
 
-The total checks: A$1.0 million + A$8.0 million + A$9.0 million + A$2.0 million = A$20.0 million. Against an even split, the plan is A$4.0 million lower in 2026–27, A$3.0 million higher in 2027–28, A$4.0 million higher in 2028–29 and A$3.0 million lower in 2029–30. Each difference would otherwise appear at year end as an unplanned underspend or overspend. Delays move money later, so the CFO area reviews the profile after each round's decisions and each reporting milestone (Chapter 7).
+The total checks: A$1.0 million + A$8.0 million + A$9.0 million + A$2.0 million = A$20.0 million. Against an even split, the plan is A$4.0 million lower in 2026–27, A$3.0 million higher in 2027–28, A$4.0 million higher in 2028–29 and A$3.0 million lower in 2029–30. Each difference would otherwise appear at year end as an unplanned underspend or overspend. Delays move money later, so Ivy updates the forecast from the agreements and reports, and tells the CFO area early (Chapter 7).
 
-The departmental A$1.2 million is A$1.2 million ÷ A$20.0 million = 6 per cent of the grant funding. Sam asks for part of it to be reserved for the evaluation.
+The departmental A$1.2 million is A$1.2 million ÷ A$20.0 million = 6 per cent of the grant funding. Sam asks for part of it to be reserved for evaluation.
 
 ## Plan the evaluation and the baseline now
 
@@ -140,10 +140,10 @@ A baseline is the value of a measure before the grant changes anything, so it mu
 This is an illustration. For the RCFP the cheapest moment is the application, when applicants are already gathering evidence of need. Three points of better practice shape what Sam asks for:
 
 - **Use records grantees already keep.** Paragraph 9.5 says officials should not ask for information available from other sources, and should consider aligning reporting with grantees' own reporting. Most halls keep a booking diary, even a paper one.
-- **Check the grantee can produce the data.** Paragraph 10.5 warns against indicators "reliant on data provided by the grantee" without checking the grantee's capacity to provide it. Applicants say how they record use; those with no records count use for four weeks before the works start.
+- **Check the grantee can produce the data.** Paragraph 10.5 warns against indicators "reliant on data provided by the grantee" without checking the grantee's capacity to provide it. Applicants say how they record use; those with no records count use for four weeks in February 2027, while the round is open.
 - **Measure outcomes as well as outputs.** Paragraph 9.6 warns that "poorly formulated reporting requirements, which focus on outputs rather than outcomes, can be overly burdensome".
 
-Round 2 opens in 2028, before Round 1's projects finish, so Sam plans two pieces of work. A short review of Round 1's process runs in August and September 2027, after its agreements are executed and before Round 2's guidelines are drafted. The full evaluation in 2029–30 tests the outcomes and informs whether Round 2's settings change and whether the program should continue.
+Round 2 opens in 2028, before Round 1's projects finish, so Sam plans two pieces of work. A short review of Round 1's process runs in August and September 2027, after its agreements are executed and before Round 2's guidelines are drafted. It informs Round 2 and is NRIO's recorded answer to 10.8. The full evaluation in 2029–30 tests Round 1's outcomes and informs whether the program continues, and on what settings.
 
 ## When it goes wrong: halls painted, use unknown
 
@@ -171,7 +171,7 @@ The control is the design in this chapter: an objective that names a change, a l
 
 ## Exercise: the RCFP program logic and three measures
 
-This is an illustration. It is September 2026. The Director asks Sam for one page that settles the design before Ivy starts the guidelines: the RCFP program logic at five levels, and three outcome measures. For each measure, give a definition, the data source, how and when the baseline is collected, when the result is measured and how it is calculated. Use the dates and limits in this chapter.
+This is an illustration. It is September 2026. The Director asks Sam for one page that settles the design before Ivy starts the guidelines: the RCFP program logic at five levels, and three outcome measures. For each measure, give a definition, the data source, how and when the baseline is collected, when the result is measured and how it is calculated.
 
 ### Worked answer
 
@@ -187,7 +187,7 @@ This is an illustration.
 
 Three assumptions are tested: condition or access limits use (measure 3); local groups would use a better facility (measure 2); and owners can afford upkeep afterwards (the capacity criterion).
 
-All three measures share one baseline and one result period. The baseline is the 12 months to 31 January 2027, the last full month before the round opens on 1 February 2027: 1 February 2026 to 31 January 2027, or 365 days. It comes from the applicant's records, attached to the application. The result is the first 12 months after the works finish, in a short return the agreement requires. NRIO checks a sample of baselines against source records at site visits (Chapter 8).
+All three measures share one baseline and one result period. The baseline is the 12 months from 1 February 2026 to 31 January 2027, or 365 days, ending with the last full month before the round opens. It comes from the applicant's records, attached to the application. Applicants without records attach the February count and, for measures 2 and 3, a signed account of the year's user groups and closures. The result is the first 12 months after the works finish, in a short return the agreement requires. NRIO checks a sample of baselines against source records at site visits (Chapter 8).
 
 **Measure 1: booked hours a week.** Average hours a week the facility is booked or open for community use, from booking records. Calculation: hours in the period ÷ 52. For example, 312 hours ÷ 52 = 6.0 hours a week at baseline, and 494 hours ÷ 52 = 9.5 hours afterwards. The change is 9.5 − 6.0 = 3.5 hours a week, or 3.5 ÷ 6.0 = 58.3 per cent. Report the change in hours as the main result, because a facility closed for the whole baseline has zero hours, and a percentage change from zero cannot be calculated. A four-week count gives hours ÷ 4.
 
@@ -195,7 +195,7 @@ All three measures share one baseline and one result period. The baseline is the
 
 **Measure 3: days lost to condition.** Days when the facility, or the part being upgraded, could not be used because of its condition, such as leaks, unsafe floors or no working toilet. The source is the grantee's closure records, with photos attached to the application. For example, 41 days lost in the baseline year is 41 ÷ 365 = 11.2 per cent of days; none afterwards is a fall of 41 days.
 
-The timing works for Round 1. The last projects finish in December 2028, so their result period ends in December 2029 and the return can be due by the end of February 2030, inside the 2029–30 evaluation. Round 2's projects finish by about December 2029, too late for a full year of use, so the evaluation will report Round 2 as partial.
+The timing works for Round 1's short-term outcomes. The last projects finish in December 2028, so their result period ends in December 2029 and the return can be due by the end of February 2030, inside the 2029–30 evaluation. Medium-term outcomes fall after it. Round 2's projects finish by about December 2029, too late for a full year of use, so the evaluation will report Round 2 as partial.
 
 For the program, report each measure as the number of facilities that improved and the median change, so one large library cannot swamp many small halls.
 

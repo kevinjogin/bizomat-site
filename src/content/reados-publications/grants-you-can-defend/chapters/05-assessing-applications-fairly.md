@@ -37,13 +37,13 @@ A scoring anchor is a written description of what an application at a given scor
 
 This is an illustration. Two assessors score every eligible application independently. Each reads the whole application and its attachments, scores the three criteria against the anchors, and writes a reason for every score that points to the evidence. Neither sees the other's scores until both are submitted. Ben varies the pairs, and nobody scores an application from a town they have declared a link to.
 
-Score only what is in the application and its attachments, because that is all every applicant had the chance to provide, and write down anything else you rely on. The CGRPs say "grant assessors should document when referring to, or relying on, knowledge or documentation other than the application form" (13.9). NRIO's plan adds a rule of its own: outside knowledge is recorded but does not count towards a score.
+Score only what is in the application and its attachments, because that is all every applicant had the chance to provide, and write down anything else you rely on. The CGRPs say "grant assessors should document when referring to, or relying on, knowledge or documentation other than the application form" (13.9). This is an illustration. NRIO's own rule: outside knowledge is recorded but does not count towards a score.
 
 ## Plan the workload in hours
 
 A round that runs short of assessors in week three is tempted to cut corners. Plan assessment like any other workload: count the units, time one unit, work out each person's productive hours in the period, then divide. The result is in full-time equivalents (FTE): the number of full-time people the work needs.
 
-This is an illustration. With 177 applications and two assessors each, Round 1 needs 354 assessments. Ivy timed herself and Ben on three practice applications written for the training. A careful assessment took about 150 minutes: 90 to read the form, plan, budget, quotes and supporting material, 45 to score the criteria and write the reasons, and 15 to record it all. Individual scoring runs from Monday 22 March to Friday 16 April 2027, which is 18 working days after Good Friday and Easter Monday. NRIO plans on a paid day of 7.5 hours, and Sam asked the assessors not to book leave in the period. He assumed that 80 per cent of paid hours would be productive, because training, a calibration session, weekly check-ins and questions all take time. These are illustrative planning figures, not standards.
+This is an illustration. With 177 applications and two assessors each, Round 1 needs 354 assessments. Ivy timed herself and Ben on three practice applications written for the training. A careful assessment took about 150 minutes: 90 to read the form, plan, budget, quotes and supporting material, 45 to score the criteria and write the reasons, and 15 to record it all. Individual scoring runs from Monday 22 March to Friday 16 April 2027, which is 18 working days after Good Friday and Easter Monday. NRIO plans on a paid day of 7.5 hours, and Sam asked the assessors not to book leave in the period. He assumed 80 per cent of paid hours would be productive, because training, a calibration session, weekly check-ins and questions all take time. These are illustrative planning figures, not standards.
 
 ```figure
 type: formula
@@ -61,9 +61,9 @@ step: 135 × 80% = 108 productive hours per person
 step: 885 ÷ 108 = 8.19 FTE, so 9 assessors
 ```
 
-The [Staffing Need](/tools/staffing-need/) tool runs the same calculation. It takes the units of work, minutes per unit, paid hours per person and an efficiency figure, and gives the FTE requirement and the number of whole people. Use it to check the arithmetic or to test another assumption.
+The [Staffing Need](/tools/staffing-need/) tool runs the same calculation. It takes the units of work, minutes per unit, paid hours per person and an efficiency figure, and gives the FTE requirement and the number of whole people. Use it to check the arithmetic or test another assumption.
 
-This is an illustration. Sam had 11 officials from Regional Programs and two other NRIO branches trained on Thursday 18 March: nine to assess and two in reserve, for illness and conflicts. Nine assessors give 9 × 108 = 972 productive hours against 885 hours of work, a margin of 87 hours. Ivy and Ben stay out of the pool so that they can moderate with fresh eyes. Because 150 minutes came from only three practice runs, Ben records how long each assessment actually takes, and the plan is checked at the end of week two.
+This is an illustration. Sam had 11 officials from Regional Programs and two other NRIO branches trained on Thursday 18 March: nine to assess and two in reserve, for illness and conflicts. Nine assessors give 9 × 108 = 972 productive hours against 885 hours of work, a margin of 87 hours. Ivy and Ben stay out of the pool so they can moderate with fresh eyes. Because 150 minutes came from only three practice runs, Ben records how long each assessment actually takes, and the plan is checked at the end of week two.
 
 ## Moderate differences with reasons, not averages
 
@@ -81,7 +81,7 @@ Ben also compares each assessor's average scores with their partners' on the sam
 
 ## The panel and the probity adviser
 
-This is an illustration. The Director, Regional Programs, chairs the assessment panel, with Sam and a director from another NRIO branch as members. On Wednesday 28 April 2027 it met with the moderated results. Of the 177 applications assessed, 61 scored at least 5 on every criterion. Taken in rank order, the first 31 fitted within the A$10.0 million, asking for A$9.92 million between them.
+This is an illustration. The Director, Regional Programs, chairs the assessment panel, with Sam and a director from another NRIO branch as members. On Wednesday 28 April 2027 it met with the moderated results. Of the 177 applications assessed, 61 scored at least 5 on every criterion. In rank order, the first 31 fitted within the A$10.0 million, asking for A$9.92 million between them.
 
 ```figure
 type: funnel
@@ -99,7 +99,7 @@ This is an illustration. Hartley Probity Services, the probity adviser engaged f
 
 ## Declare conflicts early and act on them
 
-The CGRPs describe a conflict of interest as arising when a decision or a power may be, or may be seen to be, influenced by "material personal interests (financial or non-financial) or material personal associations" (15.6). Conflicts can arise at any stage (15.7). Section 29 of the [PGPA Act](https://www.legislation.gov.au/C2013A00123/latest/text) says an official who has "a material personal interest that relates to the affairs of the entity must disclose details of the interest". Paragraph 3.12 of the [CGRPs](https://www.legislation.gov.au/F2024L00854/latest/text) confirms that this duty applies to grants administration. How an agency finds and manages conflicts is better practice: accountable authorities should put mechanisms in place, which may include declaration procedures and a register of interests (15.9).
+The CGRPs describe a conflict of interest as arising when a decision or a power may be, or may be seen to be, influenced by "material personal interests (financial or non-financial) or material personal associations" (15.6). Conflicts can arise at any stage (15.7). Section 29 of the [PGPA Act](https://www.legislation.gov.au/C2013A00123/latest/text) says an official who has "a material personal interest that relates to the affairs of the entity must disclose details of the interest". Paragraph 3.12 of the [CGRPs](https://www.legislation.gov.au/F2024L00854/latest/text) confirms this duty applies to grants administration. How an agency finds and manages conflicts is better practice: accountable authorities should put mechanisms in place, which may include declaration procedures and a register of interests (15.9).
 
 This is an illustration. NRIO's plan asks every assessor and panel member to declare interests in writing before any allocation, against the list of eligible applicants and their towns, and at once if a link appears later. Family ties, club memberships, past employment and close friendships count, not only money. A declaration is not an admission of wrongdoing. It is the start of a decision.
 
@@ -137,7 +137,7 @@ Test each reason by imagining it read aloud to the applicant. If it would embarr
 
 ## When it goes wrong: a brother on the club committee
 
-This is an illustration. On Thursday 18 March, at the training, one of the nine assessors declared no conflicts against the list of eligible applicants. On Tuesday 6 April she scored the application from Brindlemere Football Netball Club Inc. for its A$310,000 change-room upgrade. On Tuesday 20 April, checking papers for the panel, Ben noticed that the club's treasurer shared her uncommon surname. Asked, she confirmed that he is her brother. She had not declared it because she had no money in the club and thought conflicts were about financial interests.
+This is an illustration. On Thursday 18 March, at the training, one of the nine assessors declared no conflicts against the list of eligible applicants. On Tuesday 6 April she scored the application from Brindlemere Football Netball Club Inc. for its A$310,000 change-room upgrade. On Tuesday 20 April, checking papers for the panel, Ben noticed the club's treasurer shared her uncommon surname. Asked, she confirmed he is her brother. She had not declared it because she had no money in the club and thought conflicts were about financial interests.
 
 The CGRPs answer that point directly: a material personal association is enough (15.6). Her scores for the club were the higher of the pair on two criteria. With them, the club's weighted score was 7.90 and it ranked 10th.
 
@@ -161,7 +161,7 @@ This is an illustration.
 
 At moderation, Ivy and the assessors find that attachment 4 is a one-page risk table covering works while the shed stays open. The dust extraction cost is a supplier's published price, not a quote. Nothing in the application mentions a 2024 project.
 
-**Part 2.** By the end of Friday 2 April, after eight working days, the nine assessors have completed 130 of the 354 assessments. They are taking 175 minutes each on average, not 150, mostly because checking budgets against quotes takes longer than the practice runs suggested. Ten working days remain until Friday 16 April. Using the same 7.5-hour day and 80 per cent productive share, work out the FTE needed for the remaining assessments, and say what Sam should do.
+**Part 2.** Suppose that by Friday 2 April, after eight working days, the nine assessors have completed 130 of the 354 assessments. They are taking 175 minutes each on average, not 150, mostly because checking budgets against quotes takes longer than the practice runs suggested. Ten working days remain until Friday 16 April. Using the same 7.5-hour day and 80 per cent productive share, work out the FTE needed for the remaining assessments, and say what Sam should do.
 
 ### Worked answer
 
@@ -181,7 +181,7 @@ Moderation changed the outcome. Had A's 4 stood, the application would have fail
 
 Nine assessors give 9 × 60 = 540 hours, 113.3 hours short: about 39 assessments at 175 minutes (113.3 × 60 ÷ 175 = 38.9). Both reserves make 11 assessors and 660 hours, a margin of only 6.7 hours, or about two assessments. The Staffing Need tool flags a margin that thin, here 0.11 FTE.
 
-Sam should bring both reserves in from Monday 5 April, after an hour with Ben on the calibration notes, and hold Monday 19 April as a catch-up day. That day adds 11 × 7.5 × 80 per cent = 66 productive hours, enough for about 22 more assessments, and still leaves four days for moderation.
+Sam should bring both reserves in from Monday 5 April, after a calibration hour with Ben, and hold Monday 19 April as a catch-up day. That day adds 11 × 7.5 × 80 per cent = 66 productive hours, enough for about 22 more assessments, and still leaves four days for moderation.
 
 Sam should not ask the assessors to get back to 150 minutes. The extra time is the budget checking that criterion 2 requires, and cutting it for the applications scored last would mean like applications were no longer assessed alike. He records the timetable change, and its reason, in the assessment plan.
 
