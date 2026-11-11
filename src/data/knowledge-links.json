@@ -10298,6 +10298,96 @@
    "note": "Scores competing work on impact, urgency, risk if delayed and effort, a consistent way to set out the priority trade-offs this chapter asks you to escalate.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "rate-what-could-go-wrong",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Multiplies likelihood by consequence on 1 to 5 scales to rank the flange risks, using descriptors the team writes down first.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "when-the-rule-falls-short",
+   "tool": "change-impact",
+   "type": "applies",
+   "note": "Scores the concession request from added cost, schedule effect and risk and quality ratings, and flags the engineering sign-off it needs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "command-and-carry-it-through",
+   "tool": "schedule-risk",
+   "type": "applies",
+   "note": "Compares the replacement work with the machinists' productive hours to test whether the day-12 promise has grounds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "change-the-procedure-with-care",
+   "tool": "option-compare",
+   "type": "applies",
+   "note": "Scores the two lasting fixes on benefit-to-cost, risk and delivery time, and reports when they are too close to call.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "what-the-work-is-worth",
+   "tool": "job-cost",
+   "type": "applies",
+   "note": "Adds materials, labour hours at a loaded rate, subcontract, overhead and contingency to give the tank's estimated cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "what-the-work-is-worth",
+   "tool": "price-builder",
+   "type": "applies",
+   "note": "Turns the tank's estimated cost into a selling price at a target gross margin and shows the equivalent markup.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "a-margin-you-can-explain",
+   "tool": "margin",
+   "type": "applies",
+   "note": "Shows the quote's gross profit, margin on price and markup on cost, so the two figures are not confused.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "a-margin-you-can-explain",
+   "tool": "quote-check",
+   "type": "applies",
+   "note": "Checks a quoted price against a target margin and gives the price needed when the quote falls short.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "share-scarce-capacity-fairly",
+   "tool": "supplier-compare",
+   "type": "applies",
+   "note": "Weights price, lead time, quality and reliability to score two subcontractors on criteria fixed before the quotes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "say-what-you-can-deliver",
+   "tool": "schedule-risk",
+   "type": "applies",
+   "note": "Compares the tank's remaining hours with the fabricator's productive capacity to test whether a delivery date has grounds.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
