@@ -7,7 +7,7 @@ description: "Monitor grantees in proportion to risk, decide variations within t
 draft: true
 ---
 
-For up to 18 months after a grant agreement is signed, NRIO's money is in the hands of volunteer committees and council project teams. Monitoring tells NRIO, early enough to act, whether the money is doing what the Minister approved it for. Variations let an agreement follow real events without becoming a different grant. Acquittal ends the grant with evidence rather than an assumption.
+Once a grant agreement is signed, public money can spend many months in other people's hands: volunteer committees, council project teams and their builders. Monitoring tells the agency, early enough to act, whether the money is doing what it was approved for. Variations let an agreement follow real events without becoming a different grant. Acquittal ends the grant with evidence rather than an assumption.
 
 This is an illustration. By September 2027 the 31 Regional Community Facilities Program (RCFP) agreements were executed and the first instalments paid. Four officers could not watch 31 projects equally closely, and they should not try. This chapter follows Sam Reid and Ben Walker as they set monitoring by risk, decide requests to change agreements and close grants. It also shows how an unauthorised "yes" in an email surfaced sixteen months later.
 
@@ -17,7 +17,7 @@ Paragraph 14.12 of the [CGRPs](https://www.legislation.gov.au/F2024L00854/latest
 
 Proportion cuts both ways. Paragraph 9.5 says "There are no mandatory acquittal or reporting requirements for grantees in the CGRPs", and asks officials to set the volume, detail and frequency of reporting in proportion to the risks and outcomes sought. Heavy reporting wastes a volunteer group's time. Light reporting of a struggling project puts public money at risk.
 
-This is an illustration. The RCFP agreement fixes what every grantee reports: the mid-point progress report, and the final report and acquittal. It also lets NRIO ask for information it reasonably needs and visit the site on reasonable notice. What varies is how closely NRIO watches between reports. Ben rates each grantee at execution, the band sets the monitoring, and the rating is reviewed at each report and whenever something changes.
+This is an illustration. The RCFP agreement fixes what every grantee reports: the mid-point progress report, and the final report and acquittal. It also lets NRIO ask for information it reasonably needs and visit the site on reasonable notice. Ben rates each grantee at execution, the band sets the monitoring, and the rating is reviewed at each report and whenever something changes.
 
 ```figure
 type: compare
@@ -113,9 +113,9 @@ In May 2028 the Shire of Eastbrook's tenders came in A$60,000 above its estimate
 
 This is an illustration. Tallowood Ridge Men's Shed Inc. finished its workshop fit-out for A$79,000, A$6,000 under its A$85,000 grant. The RCFP agreement pays eligible costs actually incurred, up to the grant amount. So the question is not whether the shed keeps the A$6,000, but whether the money is spent on the project or not paid at all.
 
-If, before its completion date, the shed asks to spend it within the project, on more of the equipment the schedule describes, the Branch Manager can consider a variation, weighing value with relevant money. Otherwise NRIO pays only what was spent. The shed had received A$34,000 + A$34,000 = A$68,000, so the final instalment is A$79,000 − A$68,000 = A$11,000 instead of A$17,000.
+If, before its completion date, the shed asks to spend it on more of the equipment the schedule describes, the Branch Manager can consider a variation. Otherwise NRIO pays only what was spent. The shed had received A$34,000 + A$34,000 = A$68,000, so the final instalment is A$79,000 − A$68,000 = A$11,000 instead of A$17,000.
 
-Holding 20 per cent back until the final report is approved is what turns an underspend into a smaller payment rather than a debt. Once the underspend is confirmed, close that part of the commitment, so the forecast stops showing money that will never be paid (Chapter 7). What happens to released money is for the Branch Manager and the CFO area to decide.
+Holding 20 per cent back until the final report is approved is what turns an underspend into a smaller payment rather than a debt. Once the underspend is confirmed, close that part of the commitment, so the forecast stops showing money that will never be paid (Chapter 7).
 
 ## Misuse and recovering money
 
@@ -123,7 +123,7 @@ Not every problem in an acquittal is misconduct. A grantee that buys something t
 
 Section 10 of the [PGPA Rule](https://www.legislation.gov.au/F2014L00911/latest/text) requires the accountable authority to have mechanisms for detecting fraud and corruption, including confidential reporting, and for investigating or otherwise responding to it. Paragraph 15.5 of the CGRPs adds: "Officials should be aware of the procedures to follow when fraud, corruption or misappropriation is suspected." Report the suspicion through NRIO's process, keep the evidence as it is, do not question the grantee or alert anyone involved, and release no further payment without advice.
 
-The CGRPs do not deal with recovering grant money; the duty comes from the PGPA Rule. Money repayable under the agreement is a debt to the Commonwealth. Section 11 says the accountable authority of a non-corporate Commonwealth entity "must pursue recovery of each debt for which the accountable authority is responsible". There are three exceptions: the accountable authority considers recovery uneconomical, it is satisfied the debt is not legally recoverable, or the debt has been written off as authorised by an Act. Not pursuing a debt is therefore a recorded decision with reasons, made by the official NRIO's instructions name.
+The CGRPs do not deal with recovering grant money; the duty comes from the PGPA Rule. Money that the agreement requires a grantee to repay is a debt owed to the Commonwealth. Section 11 says the accountable authority of a non-corporate Commonwealth entity "must pursue recovery of each debt for which the accountable authority is responsible". There are three exceptions: the accountable authority considers recovery uneconomical, it is satisfied the debt is not legally recoverable, or the debt has been written off as authorised by an Act. Not pursuing a debt is therefore a recorded decision with reasons, made by the official NRIO's instructions name.
 
 Recovery is not set-off. Section 64 of the PGPA Act is a separate power, for the Finance Minister to authorise setting off amounts owed to and by the Commonwealth. Ask the CFO area before netting one amount against another, and NRIO's legal area what the agreement allows NRIO to withhold.
 
@@ -131,7 +131,7 @@ Recovery is not set-off. Section 64 of the PGPA Act is a separate power, for the
 
 Acquittal is the grantee's account of how the grant was spent, and NRIO's check of it. Paragraph 14.12 says well-documented arrangements for financial accountability are the basis of effective acquittal, and that "Reliable, timely and adequate evidence is required" to show the grant was spent as agreed. Officials should balance the stringency of acquittal against the risk and the cost of compliance.
 
-This is an illustration. RCFP final reports and acquittals are due by 31 March 2029. Each shows what was delivered, evidence that the work is finished and any required approvals signed off, and a spending statement by budget line certified by the grantee's authorised officers. Councils add their own spending. The evidence rises with the risk band.
+This is an illustration. RCFP final reports and acquittals are due by 31 March 2029. Each shows what was delivered, evidence that the work is finished and any required approvals signed off, and a spending statement by budget line certified by the grantee's authorised officers. Councils add their own spending.
 
 ```figure
 type: checklist
@@ -170,8 +170,8 @@ This is an illustration. On Monday 6 September 2027, Ben rates four grantees and
 | Grantee | Grant | What Ben knows |
 | --- | ---: | --- |
 | Kellerton Hall Committee Inc. | A$420,000 | Fixed-price builder's quote; asbestos in the roof, its removal costed; the town's only public venue |
-| Shire of Eastbrook | A$500,000 | Council projects team that has delivered similar buildings; building approval granted in August 2027; A$300,000 contribution in the adopted budget |
-| Tallowood Ridge Men's Shed Inc. | A$85,000 | Volunteer group; its first grant above A$20,000; licensed electrician not yet engaged; key equipment on a 12-week order |
+| Shire of Eastbrook | A$500,000 | Experienced council projects team; building approval granted in August 2027; A$300,000 contribution in the adopted budget |
+| Tallowood Ridge Men's Shed Inc. | A$85,000 | Volunteer group; first grant above A$20,000; licensed electrician not yet engaged; key equipment on a 12-week order |
 | Corran Bay Progress Association Inc. | A$140,000 | Builder withdrew in August 2027; new quote A$22,000 above the kitchen budget; no plan yet to fund the gap |
 
 Rate each grantee, set its monitoring, and name one trigger that would change its rating.

@@ -15,7 +15,7 @@ This is an illustration. Round 1 projects of the Regional Community Facilities P
 
 The [Commonwealth Grants Rules and Principles 2024](https://www.legislation.gov.au/F2024L00854/latest/text) (CGRPs) treat evaluation as part of the grants lifecycle (2.8(e)), and their evaluation provisions use "should": they describe better practice. Officials should work out what change a grant is expected to bring and then measure the actual outcome (10.2), and should set performance measures on which to evaluate grants (10.8). They also "should undertake an evaluation of a grant opportunity before initiating further grant opportunities or extending existing grant agreements" (10.8).
 
-That is hard when rounds overlap. This is an illustration. Round 2 opened in 2028, while Round 1 halls were still being built. As Chapter 2 planned, a short review of Round 1's process ran in August and September 2027, before Round 2's guidelines were drafted, and the outcome evaluation follows in 2029–30. A "should" that cannot be met in full is met as far as it can be, and the reason recorded.
+This is an illustration. That is hard when rounds overlap, and Round 2 opened in 2028, while Round 1 halls were still being built. As Chapter 2 planned, a short review of Round 1's process ran in August and September 2027, before Round 2's guidelines were drafted, and the outcome evaluation follows in 2029–30. A "should" that cannot be met in full is met as far as it can be, and the reason recorded.
 
 An evaluation starts with questions, not data. Each question needs a measure, a source and a comparison, agreed before anyone opens a spreadsheet.
 
@@ -44,7 +44,7 @@ This is an illustration. RCFP has a natural comparison group. Of the 61 applicat
 | Funded (31) | 11 | 22 | +11 | +10 | 27 of 31 |
 | Comparison (24) | 10 | 12 | +2 | +2 | 14 of 24 |
 
-Chapter 2's plan reports the median change and the number that improved, so that one large library cannot swamp many small halls, and both tell the same story. Cost calculations need totals, so the evaluation also uses averages: the funded facilities gained 11 hours a week, the comparison facilities 2. The estimated effect is the difference: 11 − 2 = 9 hours a week per facility, or 9 × 31 = 279 extra hours a week across the round. A before-and-after report would have claimed 11 × 31 = 341.
+Chapter 2's plan reports the median change and the number that improved, so one large library cannot swamp many small halls; both tell the same story. Cost calculations need totals, so the evaluation also uses averages: the funded facilities gained 11 hours a week, the comparison facilities 2. The estimated effect is the difference: 11 − 2 = 9 hours a week per facility, or 9 × 31 = 279 extra hours a week across the round. A before-and-after report would have claimed 11 × 31 = 341.
 
 The comparison is not perfect, and the report says so. Some unfunded applicants may have found other money, six did not respond, and their result year does not match each funded facility's exactly. Each limit lowers the confidence the evaluation can claim; none makes the comparison worthless.
 
@@ -52,9 +52,11 @@ The comparison is not perfect, and the report says so. Some unfunded applicants 
 
 Among its examples of outcome measures, the CGRPs list "the level of usage of facilities built with the grant" (10.4). RCFP's first measure, booked hours a week, is exactly that; its other two, regular user groups and days lost to condition, come from the same records (Chapter 2). The evaluation also notes which facilities gained accessible features.
 
-Paragraph 10.5 lists common issues to consider. One is relying on indicators built from grantee data without checking that the grantee can produce accurate, reliable and complete data, and volunteers' booking records vary. This is an illustration. Chapter 2's plan checks a sample of baselines at site visits. For the result year, Ben checked six funded and four comparison facilities' records against hire receipts and a visit. Most matched within an hour or two a week. One hall had kept counting bookings that had lapsed months earlier; its figures were corrected, and the report describes the check.
+Paragraph 10.5 lists common issues to consider. One is relying on indicators built from grantee data without checking that the grantee can produce accurate, reliable and complete data, and volunteers' booking records vary.
 
-Data costs grantees time. Officials should balance the information they seek against the cost to grantees of collecting it (10.7), so ask only for what answers a question. One way grantees contribute to value, the CGRPs say, is "Participating in evaluation processes" (12.3), and most will if the request is short and explained.
+This is an illustration. Chapter 2's plan checks a sample of baselines at site visits. For the result year, Ben checked six funded and four comparison facilities' records against hire receipts and a visit. Most matched within an hour or two a week. One hall had kept counting bookings that had lapsed months earlier; its figures were corrected, and the report describes the check.
+
+Data costs grantees time. Officials should balance the information they seek against the cost to grantees of collecting it (10.7). One way grantees contribute to value, the CGRPs say, is "Participating in evaluation processes" (12.3); most will, if asked briefly.
 
 ## Cost per outcome
 
@@ -69,7 +71,7 @@ This is an illustration. The evaluation subtracts the comparison group's average
 | Shire of Eastbrook library | A$500,000 | A$860,000 | 6 | 38 | 38 − 6 − 2 = 30 |
 | Tallowood Ridge Men's Shed | A$79,000 | A$79,000 | 6 | 14 | 14 − 6 − 2 = 6 |
 
-For the round, using the A$9.98 million approved, A$9.98 million ÷ 279 hours = A$35,771 of grant per additional weekly hour. NRIO's records attribute A$600,000 of the A$1.2 million departmental funding to Round 1: A$19,355 per grant, or 6.0 per cent of the grant value. Counting it, the round's figure rises to A$10.58 million ÷ 279 = A$37,921.
+For the round, the A$9.98 million approved ÷ 279 hours = A$35,771 of grant per additional weekly hour. NRIO's records attribute A$600,000 of the A$1.2 million departmental funding to Round 1: A$19,355 per grant, or 6.0 per cent of the grant value. Counting it, the round's figure rises to A$10.58 million ÷ 279 = A$37,921.
 
 ```figure
 type: bars
@@ -116,7 +118,7 @@ step: PV of costs = A$420,000 + A$5,000 × 10.594 = A$420,000 + A$52,970 = A$472
 step: BCR = A$538,176 ÷ A$472,970 = 1.14; net present benefit A$65,206
 ```
 
-The annuity factor turns a level yearly amount into its present value. At the case's rate, Kellerton returns about A$1.14 of valued benefit for each dollar of cost. Now test what that depends on. At 4 per cent the ratio is 1.41; at 10 per cent it is 0.93; with benefits 20 per cent lower it is 0.91. The result rests on the hours and the value of an hour, so report the range, not a single figure.
+The annuity factor turns a level yearly amount into its present value. At the case's rate, Kellerton returns about A$1.14 of valued benefit per dollar of cost. The result is sensitive: at 4 per cent the ratio is 1.41, at 10 per cent 0.93, and with benefits 20 per cent lower 0.91. It rests on the hours and the value of an hour, so report the range, not a single figure.
 
 ## Attribution and its limits
 
@@ -133,7 +135,7 @@ This is an illustration. The two grants approved against officials' recommendati
 
 ## Lessons for Round 2 and advice on continuation
 
-Lessons come from the outcome evidence and from the round's own records. This is an illustration. The clearest outcome lesson is described below: facilities with nobody responsible for opening and booking them gained no use, however good the building work. From the records, the evaluation checks whether the controls added after Round 1's problems, such as the shared publication register (Chapter 9), have worked in Round 2.
+This is an illustration. Lessons come from the outcome evidence and from the round's own records. The clearest outcome lesson is described below: facilities with nobody responsible for opening and booking them gained no use, however good the building work. From the records, the evaluation checks whether the controls added after Round 1's problems, such as the shared publication register (Chapter 9), have worked in Round 2.
 
 Whether RCFP continues after 2029–30, and with what money, is for the Minister and the government. Officials owe advice the decision-maker can rely on: the evidence, how sure the evaluation is, the options with their costs and risks, and a recommendation, unwelcome findings included.
 
@@ -149,7 +151,7 @@ caption: This is an illustration. The recommendation is the officials' advice. T
 - Cost and risk | Saves the grant money; small towns lose a source of funding | Cost per outcome likely to stay at Round 1's level | A little more assessment work; a lower cost per outcome expected
 ```
 
-Sam recommends continuing with three changes, each for future guidelines that the Minister would approve. Applicants say who will open, book and record use of the facility, assessed under capacity to deliver. Booking records follow the evaluation's definition throughout. And every applicant is asked to agree to be contacted for the evaluation, so the comparison group is built in from the start.
+Sam recommends continuing with three changes to future guidelines, which the Minister would approve. Applicants say who will open, book and record use of the facility, assessed under capacity to deliver. Booking records follow the evaluation's definition throughout. And every applicant is asked to agree to be contacted for the evaluation, so the comparison group is built in from the start.
 
 ## When it goes wrong: an evaluation that counted outputs
 
@@ -157,7 +159,7 @@ This is an illustration. The first draft of the evaluation report, written in Ma
 
 Sam's review asked what the draft could not answer: how much more are these facilities used than before, and than the ones we did not fund? Every number in the draft was correct, and none was an outcome. Paragraph 10.5 warns against "assuming that a grant being awarded automatically secures the desired outcome". The draft made that assumption 31 times.
 
-The booking data showed that 4 of the 31 upgraded facilities had no rise in use at all. In each, nobody was responsible for opening the building and taking bookings: one committee had wound up, a caretaker had retired, and two councils had no officer assigned. No output count could show it. The cost was six weeks of rework and advice that reached the Minister later than the office had asked. Had the draft gone forward, it would have recommended repeating a design with a known gap.
+The booking data showed that 4 of the 31 upgraded facilities had no rise in use at all. In each, nobody was responsible for opening the building and taking bookings: one committee had wound up, a caretaker had retired, and two councils had no officer assigned. The cost was six weeks of rework and advice that reached the Minister later than the office had asked. Had the draft gone forward, it would have recommended repeating a design with a known gap.
 
 The control belongs in the evaluation plan, written at design. Each question names its outcome measure, baseline and comparison, and every draft is checked against the plan before anyone reads its conclusions. A draft that answers an outcome question with an output count goes back.
 
@@ -188,7 +190,7 @@ Annual benefits:
 | Tallowood | A$18,720 × 10.594 = A$198,320 | A$79,000 + A$15,891 = A$94,891 | 2.09 | A$103,429 |
 | Together | A$1,560,287 | A$1,361,613 | 1.15 | A$198,674 |
 
-Together: A$285,615 + A$1,076,352 + A$198,320 = A$1,560,287 of benefits and A$300,782 + A$965,940 + A$94,891 = A$1,361,613 of costs, so the ratio is A$1,560,287 ÷ A$1,361,613 = 1.15 and the net present benefit A$198,674.
+Together, benefits are A$285,615 + A$1,076,352 + A$198,320 = A$1,560,287 and costs A$300,782 + A$965,940 + A$94,891 = A$1,361,613, so the ratio is 1.15 and the net present benefit A$198,674.
 
 What the results mean:
 
