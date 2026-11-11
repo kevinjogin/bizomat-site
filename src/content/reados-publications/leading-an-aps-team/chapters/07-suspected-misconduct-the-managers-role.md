@@ -15,9 +15,9 @@ This is an illustration. Late in November 2026, Leila Farah tells Hannah Lee tha
 
 ## The Code of Conduct and who decides a breach
 
-The APS Code of Conduct is in [section 13 of the Public Service Act 1999](https://www.legislation.gov.au/C2004A00538/latest/text). It binds every APS employee, and the Act defines an APS employee as a person engaged under section 22, so non-ongoing staff are covered just as ongoing staff are. An employee "must behave honestly and with integrity" (s 13(1)) and "must act with care and diligence" (s 13(2)) in connection with their employment. They must take reasonable steps to avoid conflicts of interest, real or apparent (s 13(7)), "use Commonwealth resources in a proper manner and for a proper purpose" (s 13(8)), and not improperly use inside information or their duties, status, power or authority to benefit themselves or anyone else (s 13(10)).
+The APS Code of Conduct is in [section 13 of the Public Service Act 1999](https://www.legislation.gov.au/C2004A00538/latest/text). It binds every APS employee, and the Act's definition of an APS employee includes any person engaged under section 22, so non-ongoing staff are covered just as ongoing staff are. An employee "must behave honestly and with integrity" (s 13(1)) and "must act with care and diligence" (s 13(2)) in connection with their employment. They must take reasonable steps to avoid conflicts of interest, real or apparent (s 13(7)), "use Commonwealth resources in a proper manner and for a proper purpose" (s 13(8)), and not improperly use inside information or their duties, status, power or authority to benefit themselves or anyone else (s 13(10)).
 
-Several of those could be relevant to a case like Aaron's. Which applies, if any, is for the decision-maker. A manager's report describes what was seen, not which subsection was breached.
+Several of those could be relevant when someone opens a record without a work reason. Which applies, if any, is for the decision-maker. A manager's report describes what was seen, not which subsection was breached.
 
 Section 15(3) says "An Agency Head must establish written procedures" for deciding whether an employee has breached the Code and what sanction, if any, to impose. The Agency Head, or a person to whom the power has been delegated in writing (s 78(7)), makes those decisions under the procedures. Section 15(1) lists the sanctions, from "termination of employment" to "a reprimand".
 
@@ -62,7 +62,7 @@ What Hannah did not do matters as much. She did not open the group's record or s
 
 ```figure
 type: timeline
-title: The first three working days
+title: The first four working days
 caption: This is an illustration. NRIO's procedures are fictional. Hannah's part ends with the note and the report; the People Branch runs everything after that.
 - Wed 25 Nov, 2.30 pm | Leila raises the concern | She describes what the record's access history shows. Hannah listens and asks only what a report needs.
 - Wed 25 Nov, 3.15 pm | Hannah writes her note | Date, time, what was said and seen, and who knows. Facts, not conclusions.
@@ -81,7 +81,7 @@ The second is the evidence. Logs, emails and documents can change, and memories 
 
 The third is independence. A manager who has asked the questions and formed a view no longer "appears to be" independent and unbiased (s 61), and may have become a witness.
 
-Hannah's role after the report is limited. She answers the People Branch's questions accurately, frees staff for interviews, passes on new information that reaches her without going looking for it, and manages Aaron's work as she would anyone's.
+The manager's role after the report is limited: answer the People Branch's questions accurately, free staff for interviews, pass on new information without going looking for it, and manage the employee's work as you would anyone's.
 
 ```figure
 type: checklist
@@ -110,7 +110,9 @@ People rarely say "public interest disclosure", and the Act does not require the
 
 ## Confidentiality and the team
 
-A suspected breach is not a finding. Until the procedures run, nobody has decided that Aaron did anything wrong, and he is entitled to be treated that way. This is an illustration. The People Branch, the authorised officer and the people they appoint know the details. Hannah and Leila know because they were there. The Director knows a matter was referred. Nobody else in the team is told anything.
+A suspected breach is not a finding. Until the procedures run, nobody has decided that the employee did anything wrong, and they are entitled to be treated that way.
+
+This is an illustration. The People Branch, the authorised officer and the people they appoint know the details. Hannah and Leila know because they were there. The Director knows a matter was referred. Nobody else in the team is told anything.
 
 The team will still notice things. If asked, Hannah gives the same answer every time: "I can't talk about anyone's individual employment matters, and I'd do the same for you."
 
@@ -128,7 +130,7 @@ The power to suspend is in section 14 of the Public Service Regulations 2023. An
 
 The section then sets limits. Suspension "may be with remuneration" (s 14(3)). If it is without remuneration, that period "must not be more than 30 days unless exceptional circumstances apply" (s 14(4)). It must be reviewed "at reasonable intervals" (s 14(5)) and ended at once if the grounds no longer exist or a sanction has been imposed (s 14(6)–(7)). Procedural fairness applies unless the Agency Head is satisfied on reasonable grounds that it would not be appropriate (s 14(8)).
 
-Suspension is a decision for the Agency Head or a delegate, not the manager, and it is not a sanction. The manager's contribution is facts about the work: what the employee does, what access they hold and what other duties exist.
+Suspension is a decision for the Agency Head or a person given the power in writing (Regulations s 105(3)), not the manager, and it is not a sanction. The manager's contribution is facts about the work: what the employee does, what access they hold and what other duties exist.
 
 This is an illustration. Asked whether Aaron could work without the group's record, Hannah said he could, because another officer could take the group's enquiries. The delegate decided suspension was not needed. Instead, the system owner removed Aaron's access to that one record, and he kept working on the phones. That step protects the record. It decides nothing about what happened.
 
