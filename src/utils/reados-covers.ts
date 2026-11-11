@@ -271,6 +271,8 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'public-money-you-can-account-for': { motif: 'ledger', tone: 'carbon' },
   'practical-wisdom-by-the-numbers': { motif: 'compass', tone: 'ember' },
   'fair-dealing-by-the-numbers': { motif: 'ledger', tone: 'graphite' },
+  'industrial-hydraulics-by-the-numbers': { motif: 'gauge', tone: 'ember' },
+  'design-for-assembly-by-the-numbers': { motif: 'geometry', tone: 'paper' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);

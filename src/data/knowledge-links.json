@@ -10388,6 +10388,168 @@
    "note": "Compares the tank's remaining hours with the fabricator's productive capacity to test whether a delivery date has grounds.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-cylinder-and-rod",
+   "tool": "hydraulic-cylinder-sizing",
+   "type": "applies",
+   "note": "Gives the minimum bore for the push force, the Euler minimum rod, the largest rod for the pull force, extend and retract flows, pump power and line bores for the press cylinder.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "check-the-barrel-end-caps-and-frame",
+   "tool": "hydraulic-cylinder-structure",
+   "type": "applies",
+   "note": "Checks the barrel by the Lamé equations and von Mises, the end cap as a clamped plate and the rod's buckling by Euler or Johnson, at the relief setting and the trapped rod-end pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "check-the-barrel-end-caps-and-frame",
+   "tool": "press-tie-rod-check",
+   "type": "applies",
+   "note": "Checks the press's tie rods for load per rod, thread stress, elastic stretch and nut engagement at the relief setting, assuming equal load sharing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "choose-the-pumps-and-control-the-speed",
+   "tool": "cylinder-speed-control",
+   "type": "applies",
+   "note": "Calculates the rod-side pressure, including intensification, the orifice size and the heat when a cylinder is metered out, the check behind the chapter's failure case.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-lines-for-the-real-flows",
+   "tool": "hydraulic-line-sizing",
+   "type": "applies",
+   "note": "Checks a pressure, return or suction line for velocity, Reynolds number, pressure drop through tube and fittings, power lost and Barlow tube rating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-power-unit-and-keep-it-cool",
+   "tool": "hydraulic-power-unit-sizing",
+   "type": "applies",
+   "note": "Sizes pump displacement, drive torque, shaft power, reservoir volume and an approximate heat balance for the press's power unit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-power-unit-and-keep-it-cool",
+   "tool": "gearbox-heat-balance",
+   "type": "applies",
+   "note": "In hydraulic unit mode, finds the oil's equilibrium temperature from the cycle's input power and efficiency, and the cooler duty needed to hold the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "hold-the-load-and-control-stored-energy",
+   "tool": "accumulator-circuit-sizing",
+   "type": "applies",
+   "note": "Sizes an accumulator to help the pump with a fast approach: stroke volume, pump deficit, gas volume and recharge time, used to test and reject the idea.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "oil-viscosity-temperature",
+   "type": "applies",
+   "note": "Gives the oil's kinematic viscosity at any temperature from two known points by the ASTM D341 relation, used for the press's VG 46 oil.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "lubricant-viscosity-check",
+   "type": "applies",
+   "note": "Checks an oil grade's viscosity at the hottest running and coldest start temperatures against the pump's minimum and cold-start limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "iso-cleanliness-code",
+   "type": "explains",
+   "note": "Converts particle counts at 4, 6 and 14 µm into the three-part ISO 4406 code and checks it against a target code.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "hydraulic-filter-selection",
+   "type": "applies",
+   "note": "Gives the cleanliness code after a filter from its beta ratios and scales the element's pressure drop to the real flow and coldest viscosity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "retention-selector",
+   "type": "applies",
+   "note": "Screens the press fit, retaining ring and staking options for the rear bush against load, disassembly needs and design factor, and compares their lifecycle cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "retaining-ring-thrust",
+   "type": "applies",
+   "note": "Gives the ring's shear capacity, the groove's yield capacity and the governing allowable thrust for the retaining ring option.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "snap-fit-joint-design",
+   "type": "applies",
+   "note": "Checks a cantilever snap-fit finger for assembly strain, mating force and separation force, used to test and reject a snap-fit knob.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "tolerances-that-let-parts-go-together",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Compares the nose protrusion stack of both revisions by worst case, root-sum-square and predicted rejects, and identifies the largest contributor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "weigh-part-cost-against-assembly-cost",
+   "tool": "tooling-payback",
+   "type": "applies",
+   "note": "Compares the old and new unit costs against the redesign's tooling and annual volume to give the saving, units to pay back and payback period.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "weigh-part-cost-against-assembly-cost",
+   "tool": "process-breakeven",
+   "type": "applies",
+   "note": "Finds the break-even quantity between modifying the knob mould and buying a catalogue knob, and the cheaper choice at one and five years.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
