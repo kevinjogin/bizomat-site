@@ -21,7 +21,7 @@ This is an illustration. Nadia Haddad checked every application against a checkl
 - four came from an ineligible type of applicant: two unincorporated groups, a company that operates for profit and a state government body;
 - two proposed projects in towns outside NRIO's region.
 
-That left 177 applications to assess. Record the criterion and the evidence for each fail, not just the word "ineligible". And keep ineligible applications away from assessors: one who has read a strong project that cannot be funded will compare every other application with it.
+That left 177 applications to assess. Record the criterion and the evidence for each fail, not just the word "ineligible". Keep ineligible applications away from assessors: one who has read a strong project that cannot be funded will compare others with it.
 
 ## Write the assessment plan before the round closes
 
@@ -41,9 +41,9 @@ Score only what is in the application and its attachments, because that is all e
 
 ## Plan the workload in hours
 
-A round that runs short of assessors in week three is tempted to cut corners. Plan assessment like any other workload: count the units, time one unit, work out each person's productive hours in the period, then divide. The result is a number of full-time equivalents (FTE): how many people working full time on the task the work needs.
+A round that runs short of assessors in week three is tempted to cut corners. Plan assessment like any other workload: count the units, time one unit, work out each person's productive hours in the period, then divide. The result is in full-time equivalents (FTE): the number of full-time people the work needs.
 
-This is an illustration. With 177 applications and two assessors each, Round 1 needs 354 assessments. Ivy timed herself and Ben on three practice applications she had written for the training. A careful assessment took about 150 minutes: 90 to read the form, plan, budget, quotes and supporting material, 45 to score the criteria and write the reasons, and 15 to record it all. Individual scoring runs from Monday 22 March to Friday 16 April 2027, which is 18 working days after Good Friday and Easter Monday. NRIO plans on a paid day of 7.5 hours, and Sam asked the assessors not to book leave in the period. He assumed that 80 per cent of paid hours would be productive, because training, a calibration session, weekly check-ins and questions all take time. These are illustrative planning figures, not standards.
+This is an illustration. With 177 applications and two assessors each, Round 1 needs 354 assessments. Ivy timed herself and Ben on three practice applications written for the training. A careful assessment took about 150 minutes: 90 to read the form, plan, budget, quotes and supporting material, 45 to score the criteria and write the reasons, and 15 to record it all. Individual scoring runs from Monday 22 March to Friday 16 April 2027, which is 18 working days after Good Friday and Easter Monday. NRIO plans on a paid day of 7.5 hours, and Sam asked the assessors not to book leave in the period. He assumed that 80 per cent of paid hours would be productive, because training, a calibration session, weekly check-ins and questions all take time. These are illustrative planning figures, not standards.
 
 ```figure
 type: formula
@@ -63,7 +63,7 @@ step: 885 ÷ 108 = 8.19 FTE, so 9 assessors
 
 The [Staffing Need](/tools/staffing-need/) tool runs the same calculation. It takes the units of work, minutes per unit, paid hours per person and an efficiency figure, and gives the FTE requirement and the number of whole people. Use it to check the arithmetic or to test another assumption.
 
-Sam had 11 officials from Regional Programs and two other NRIO branches trained on Thursday 18 March: nine to assess and two in reserve, for illness and conflicts. Nine assessors give 9 × 108 = 972 productive hours against 885 hours of work, a margin of 87 hours. Ivy and Ben stay out of the pool so that they can moderate with fresh eyes. Because 150 minutes came from only three practice runs, Ben records how long each assessment actually takes, and the plan is checked at the end of week two.
+This is an illustration. Sam had 11 officials from Regional Programs and two other NRIO branches trained on Thursday 18 March: nine to assess and two in reserve, for illness and conflicts. Nine assessors give 9 × 108 = 972 productive hours against 885 hours of work, a margin of 87 hours. Ivy and Ben stay out of the pool so that they can moderate with fresh eyes. Because 150 minutes came from only three practice runs, Ben records how long each assessment actually takes, and the plan is checked at the end of week two.
 
 ## Moderate differences with reasons, not averages
 
@@ -75,7 +75,7 @@ This is an illustration. NRIO's plan sets one rule for each criterion:
 - If they differ by 3 points or more, or one is below 5 and the other is 5 or above, Ivy or Ben moderates. The two assessors and the moderator go back to the application and the anchors, and agree a score with a written reason.
 - If they cannot agree, a third assessor scores that criterion and the panel decides.
 
-The second trigger exists because of the minimum. Scores of 4 and 6 are only 2 points apart, but their average of 5 would pass an application that one assessor found below the minimum, without anyone saying why it meets it. In the reconciliation week, 19 to 23 April, the rule applied to 38 of the 177 applications, about one in five.
+The second trigger exists because of the minimum. Scores of 4 and 6 are only 2 points apart, but their average of 5 would pass an application that one assessor found below the minimum, with no reason given. In the reconciliation week, 19 to 23 April, the rule applied to 38 of the 177 applications, about one in five.
 
 Ben also compares each assessor's average scores with their partners' on the same applications; a large, steady gap means someone is reading the anchors differently. Keep both original scores beside the moderated one. Overwriting a score destroys the evidence that moderation happened.
 
@@ -95,7 +95,7 @@ caption: This is an illustration. Of 61 applications that met the minimum, the A
 
 The panel checks the process and owns the ranked list: that every application was assessed the same way, that each moderated score has a reason, that conflicts were handled, and where the funding line falls. It is not a third round of scoring, and changes a score only where it records a reason tied to the anchors and the evidence.
 
-Hartley Probity Services, the probity adviser engaged for Round 1, wrote the probity plan, briefed the assessors, reviewed every conflict declaration, observed the panel and gave the Director a written probity report for the brief. A probity adviser advises; it does not make decisions or take over officials' responsibility for them.
+This is an illustration. Hartley Probity Services, the probity adviser engaged for Round 1, wrote the probity plan, briefed the assessors, reviewed every conflict declaration, observed the panel and gave the Director a written probity report for the brief. A probity adviser advises; it does not make decisions or take over officials' responsibility for them.
 
 ## Declare conflicts early and act on them
 
@@ -176,12 +176,12 @@ Moderation changed the outcome. Had A's 4 stood, the application would have fail
 **Part 2.** The remaining assessments are 354 − 130 = 224.
 
 - Workload: 224 × 175 = 39,200 minutes; 39,200 ÷ 60 = 653.3 hours.
-- Productive hours per person: 10 days × 7.5 hours = 75 paid hours; 75 × 80% = 60 hours.
+- Productive hours per person: 10 days × 7.5 hours = 75 paid hours; 75 × 80 per cent = 60 hours.
 - FTE: 653.3 ÷ 60 = 10.89, so 11 people.
 
 Nine assessors give 9 × 60 = 540 hours, 113.3 hours short: about 39 assessments at 175 minutes (113.3 × 60 ÷ 175 = 38.9). Both reserves make 11 assessors and 660 hours, a margin of only 6.7 hours, or about two assessments. The Staffing Need tool flags a margin that thin, here 0.11 FTE.
 
-Sam should bring both reserves in from Monday 5 April, after an hour with Ben on the calibration notes, and hold Monday 19 April as a catch-up day. That day adds 11 × 7.5 × 80% = 66 productive hours, enough for about 22 more assessments, and still leaves four days for moderation.
+Sam should bring both reserves in from Monday 5 April, after an hour with Ben on the calibration notes, and hold Monday 19 April as a catch-up day. That day adds 11 × 7.5 × 80 per cent = 66 productive hours, enough for about 22 more assessments, and still leaves four days for moderation.
 
 Sam should not ask the assessors to get back to 150 minutes. The extra time is the budget checking that criterion 2 requires, and cutting it for the applications scored last would mean like applications were no longer assessed alike. He records the timetable change, and its reason, in the assessment plan.
 

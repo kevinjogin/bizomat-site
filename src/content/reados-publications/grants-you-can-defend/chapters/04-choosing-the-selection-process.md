@@ -25,7 +25,7 @@ caption: Paraphrased from paragraph 11.3 and the glossary of the CGRPs. The name
 - Targeted or restricted competitive | A small number, because the activity has specialised requirements | Against the selection criteria | Yes
 - Non-competitive, open | Anyone eligible, at any time over the life of the opportunity | Each on its own, against the selection criteria | No
 - Demand-driven or 'first-in first-served' | Anyone who meets the eligibility criteria, until the money runs out | Eligibility criteria only; assessment criteria are not used | No
-- Closed non-competitive | Only those the entity invites | Each on its own, against the selection criteria | No
+- Closed non-competitive | Typically, those the entity invites | Each on its own, against the selection criteria | No
 - One-off ad hoc grants | One or a very few, when all four elements of 2.4(c) apply | On proper use and value with relevant money, usually by a minister | No
 ```
 
@@ -78,7 +78,7 @@ This is an illustration. The RCFP's design record works through the 11.2 factors
 - **Nature and value.** Building projects carry delivery risk, and judging capacity to deliver needs assessment, not a yes-or-no check.
 - **Timeliness.** No urgency justified a faster, less open process.
 
-The record then rejects the other five processes in a line each.
+It then rejects the other five processes.
 
 | Process | Why not for the RCFP |
 | --- | --- |
@@ -88,11 +88,11 @@ The record then rejects the other five processes in a line each.
 | Closed non-competitive | NRIO has no fair basis for choosing whom to invite |
 | One-off ad hoc grants | Fails all four tests: no unforeseen need, time for a process, many bodies with the same need, and two rounds planned |
 
-Open competitive is the 11.5 default, so the guidelines needed no rationale for a departure. The reasons are still on file, and in the brief that sought approval of the guidelines.
+Open competitive is the 11.5 default, so the guidelines needed no rationale for a departure. The reasons are still on file and in the brief that sought approval of the guidelines.
 
 ## Timing and capacity
 
-Paragraph 11.2 names the tension: decisions should be timely and cost-effective while keeping rigour, equity and accountability. The answer is to plan for the time a competitive round takes, not to cut the process.
+Paragraph 11.2 names the tension: one factor is the need for timely, cost-effective decisions while maintaining rigour, equity and accountability. The answer is to plan for the time a competitive round takes, not to cut the process.
 
 ```figure
 type: bars
@@ -110,7 +110,7 @@ This is an illustration. The stages add to 48 + 38 + 43 + 14 + 24 = 167 days. Ea
 
 The team is four officers, with the Director, Regional Programs, chairing the panel. The departmental funding of A$1.2 million over four years, separate from the grants, averages A$300,000 a year (A$1.2 million ÷ 4). It must cover two rounds, and Round 2 opens in 2028 while Round 1 projects are still running. A process needing far more effort would not fit, and one needing much less would not be fair.
 
-The open period started in February, not straight after the December approval, so it did not fall mostly in the summer holidays. The CGRPs set no minimum open period (Chapter 3), and every day added to it comes out of the stages after the close.
+The CGRPs set no minimum open period (Chapter 3), and every day added to it comes out of the stages after the close.
 
 ## A council asks for a direct grant
 
@@ -168,19 +168,19 @@ The control is the one the RCFP now uses. Any proposal to fund outside a publish
 
 This is an illustration. Suppose these four requests reach Sam during 2027. For each, choose the selection process by its CGRPs name, and give your reasons and the records you would make.
 
-- **A. Storm damage.** In late March 2027, a storm tears the roof off the only community hall in a town of 900 people. The not-for-profit committee's insurance covers A$90,000 of a A$160,000 repair, and the committee asks for the A$70,000 gap. Round 1 has closed, and Round 2 opens in 2028.
+- **A. Storm damage.** In late March 2027, a storm tears the roof off the only community hall in a town of 900 people. The not-for-profit committee's insurance covers A$90,000 of a A$160,000 repair, and the committee asks for the A$70,000 gap so the hall can reopen. Round 1 has closed, and Round 2 opens in 2028.
 - **B. Accessible entrances.** The Minister asks for options for a separate opportunity: a fixed A$20,000 for each hall that lacks an accessible entrance, judged against a published checklist, with A$600,000 available. NRIO estimates that 25 halls would qualify.
 - **C. Training hall committees.** NRIO proposes A$240,000 over two years to train volunteer committees across the region in managing building projects. Three region-wide not-for-profit networks have the reach and specialised skills to deliver it.
-- **D. A request after the round.** In July 2027, a council asks the Minister for its Round 1 request of A$260,000 as a direct grant. Its application met the minimum on every criterion but ranked below the funding line and was not funded.
+- **D. A request after the round.** In August 2027, a council asks the Minister for its Round 1 request of A$230,000 as a direct grant. Its application met the minimum on every criterion but ranked below the funding line and was not funded.
 
 ### Worked answer
 
-**A: a one-off ad hoc grant may be appropriate, if every test holds.** (i) The storm was unforeseen and the town has no other hall. (ii) Round 1 has closed and Round 2 opens in 2028, so no process could consider the committee in time. (iii) One body. (iv) A storm repair is not expected to recur. All four hold, so the process is available, usually by the Minister's decision. A$90,000 + A$70,000 = A$160,000, so the request is exactly the uninsured gap; confirm the insurer's figure, because paying for what someone else will cover is not value with relevant money. Confirm the legal authority (3.8), and say where the A$70,000 comes from, since it reduces what is left for Round 2. Then prepare short guidelines covering at least what 9.4 lists, publish them on GrantConnect (5.2), and advise the Minister in writing (4.6).
+**A: a one-off ad hoc grant may be appropriate, if every test holds.** (i) The storm was unforeseen and the town has no other hall. (ii) Round 1 has closed and Round 2 opens in 2028. If even a short closed non-competitive process would take too long, no other process is available; if there is time for one, this test fails and that process is the better choice. (iii) One body. (iv) A storm repair is not expected to recur. All four hold, so the process is available, usually by the Minister's decision. A$90,000 + A$70,000 = A$160,000, so the request is exactly the uninsured gap; confirm the insurer's figure, because paying for what someone else will cover is not value with relevant money. Confirm the legal authority (3.8), and say where the A$70,000 comes from, since it reduces what is left for Round 2. Then prepare short guidelines covering at least what 9.4 lists, publish them on GrantConnect (5.2), and advise the Minister in writing (4.6).
 
 **B: demand-driven, with the risks written down.** Eligibility can be checked objectively, the grant is a fixed amount and no comparison of merit is needed. The money covers A$600,000 ÷ A$20,000 = 30 grants, more than the 25 halls expected, so first-in first-served is unlikely to become a race. The eligibility criteria must be clearly linked to value with relevant money (11.3), so a hall that already has an accessible entrance should not qualify. Document the risks for the delegate (footnote 70). The main one is higher demand: if 40 halls qualified, 10 of them (40 − 30) would miss out on lodgement order alone, so the guidelines should say what happens when the money runs out. Each grant is below the RCFP's A$50,000 minimum, so this is a new opportunity with its own guidelines.
 
 **C: targeted or restricted competitive.** First apply Chapter 1's test: the networks would train community committees, not NRIO, so this is a grant rather than a purchase. Specialised requirements limit the field to a few providers, which is what this process is for, and the three networks compete on merit. Paragraph 11.7 warns that care is needed so restrictive eligibility does not exclude applicants better placed to deliver, and footnote 73 names targeted processes alongside non-competitive ones. So record how the three were identified and why no one else could deliver, and put that reason in the guidelines. If only one network could deliver, a closed non-competitive process might fit, with the applicant named.
 
-**D: no new process; Round 2 is the route.** A direct grant would be a one-off ad hoc grant, and it fails the tests. (i) Nothing unforeseen has happened. (ii) Round 2 opens in 2028. (iii) The council is not alone. Of the 61 applications that met the minimum, 31 were recommended, leaving 30 below the line (61 − 31 = 30). The Minister approved 2 of those, leaving 28 unfunded (30 − 2 = 28): this council and 27 others with the same claim. (iv) Funding one would invite the rest. Round 1's money is also committed: A$10.0 million − A$9.98 million leaves A$20,000, far short of A$260,000. Advise the Minister in writing (4.4(d)), log the request, offer the council feedback on its application, and point it to Round 2.
+**D: no new process; Round 2 is the route.** A direct grant would be a one-off ad hoc grant, and it fails the tests. (i) Nothing unforeseen has happened. (ii) Round 2 opens in 2028. (iii) The council is not alone. Of the 61 applications that met the minimum, 31 were recommended, leaving 30 below the line (61 − 31 = 30). The Minister approved 2 of those, leaving 28 unfunded (30 − 2 = 28): this council and 27 others with the same claim. (iv) Funding one would invite the rest. Round 1's money is also committed: A$10.0 million − A$9.98 million leaves A$20,000, far short of A$230,000. Advise the Minister in writing (4.4(d)), log the request, offer the council feedback on its application, and point it to Round 2.
 
 Chapter 5 picks up the round at 2:00 pm on Thursday 11 March 2027, when applications stop arriving and the work of assessing them begins.

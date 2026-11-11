@@ -21,13 +21,13 @@ Three requirements apply directly to guidelines.
 
 - **Guidelines for every new opportunity.** Officials must develop guidelines for all new grant opportunities, and revised guidelines where significant changes have been made to one (4.4(a)). Footnote 35 adds that this includes one-off ad hoc grants.
 - **Consistency.** Officials must ensure that the guidelines, and any suite of documents that forms them, are consistent with the CGRPs (4.4(c) and 13.4).
-- **Publication.** Guidelines "must be made publicly available on GrantConnect", unless a minister obtains an exemption from the Minister for Finance for a specific policy reason (5.2 and 5.8). Any other public information about the opportunity must be "the same, or a subset" of what is on GrantConnect (5.2(a)).
+- **Publication.** Guidelines "must be made publicly available on GrantConnect", unless there is a specific policy reason not to, for which a minister may seek an exemption from the Minister for Finance (5.2 and 5.8). Any other public information about the opportunity must be "the same, or a subset" of what is on GrantConnect (5.2(a)).
 
 Footnote 36 adds a risk step. Officials who develop guidelines are required to complete a risk assessment, and the Department of Finance, in consultation with the Department of the Prime Minister and Cabinet, agrees the final risk rating. Build that time into the plan.
 
 "Guidelines" means more than one document. The glossary includes application forms, frequently asked questions, draft grant agreements and reporting templates. Everything an applicant reads is part of the promise, and all of it falls under 5.2.
 
-Paragraph 13.3 lists what guidelines should include, "as relevant": objectives, weighted criteria, the closing and likely decision dates, the selection process, the decision-maker, the agreement terms, reporting and acquittal, and complaint, review and freedom of information mechanisms. That list is better practice, not a requirement; if you leave an item out, be ready to say why.
+Paragraph 13.3 lists what guidelines should include, "as relevant": objectives, eligibility criteria, weighted assessment criteria, the closing and likely decision dates, the selection process, the decision-maker, the agreement terms, reporting and acquittal, and complaint, review and freedom of information mechanisms. That list is better practice, not a requirement; if you leave an item out, be ready to say why.
 
 ## Eligibility criteria and assessment criteria do different jobs
 
@@ -116,7 +116,7 @@ caption: This is an illustration. Times are Canberra time. Each entry is a decis
 
 ## Questions and answers during the round
 
-Frequently asked questions form part of the guidelines, so an answer to one applicant is an addition to the guidelines. Everyone therefore gets the same answer, on GrantConnect, and no answer can change the guidelines.
+Frequently asked questions form part of the guidelines, so treat every answer to an applicant as an addition to them. Everyone gets the same answer, on GrantConnect, and no answer can change the guidelines.
 
 This is an illustration. The RCFP guidelines set four rules for questions. They go to one mailbox, and questions taken by phone go into the same log. Ivy approves every answer before release. Ben publishes the week's questions and answers on GrantConnect each Friday, without the asker's name. Questions close at 5:00 pm Canberra time on Thursday 4 March 2027, and the final answers are published on Friday 5 March, six days before the close.
 
@@ -128,7 +128,7 @@ Ivy tests each draft answer. If it would change who can apply, what applicants m
 
 Under 4.4(a), officials must develop revised guidelines where significant changes have been made to a grant opportunity. Paragraph 13.9 adds better practice. Guidelines should say when criteria may be waived or amended and how any disadvantage will be reduced, and officials should seek ministerial or other appropriate authority before doing so. Guidelines "should not be changed after the grant opportunity is closed to applications". Any departure should be documented and communicated, including whether applicants may revise their applications or a new opportunity will be issued.
 
-Before the close, the usual tool is an addendum: a numbered, dated notice that corrects or changes part of the guidelines, published on GrantConnect beside them. This is an illustration. Under the RCFP guidelines, any change to eligibility, the criteria, the weights, the minimum score or the closing date needs the Minister's approval, because the Minister approved the guidelines. An addendum that changes what applicants must provide moves the close to at least three weeks after its publication. Any extension applies to everyone and is announced before the original closing time.
+A change before the close is best made by addendum: a numbered, dated notice that corrects or changes part of the guidelines, published on GrantConnect beside them. This is an illustration. Under the RCFP guidelines, every addendum needs the Minister's approval, because the Minister approved the guidelines. An addendum that changes what applicants must provide moves the close to at least three weeks after its publication. Any extension applies to everyone and is announced before the original closing time.
 
 An extension for one applicant is a late application by another name. And every day added comes out of the time for assessment and decisions, which Chapter 4 looks at.
 
@@ -152,7 +152,7 @@ An officer helping with the mailbox in a busy week replied that afternoon: NRIO 
 
 On Thursday 25 February, the second council asked what form its resolution should take. Ivy had approved no such answer, and she traced it that day. Eligibility had been changed quietly, for two councils, by someone with no authority to change it, and NRIO's website no longer met 5.2(a).
 
-Sam took it to the Director, Regional Programs, that afternoon. Adopting the estimate rule for everyone would need the Minister's approval, change a limit set deliberately in the program's design and push the close to late March at the earliest. The Director withdrew the answer instead, and told the Branch Manager and the Minister's office in writing. On Friday 26 February the line came off the website and GrantConnect carried a correction. Sam called both councils and apologised, and every step went on the round's file.
+Sam took it to the Director, Regional Programs, that afternoon. Adopting the estimate rule for everyone would need the Minister's approval, change a limit set deliberately in the program's design and, under the three-week rule, push the close back by at least a week. The Director withdrew the answer instead, and told the Branch Manager and the Minister's office in writing. On Friday 26 February the line came off the website and GrantConnect carried a correction. Sam called both councils and apologised, and every step went on the round's file.
 
 The cost was contained: two councils' wasted work, a complaint to the Minister's office and two days of the team's time. Found after the close, it would have been far worse. NRIO would have had to choose between rejecting applications made on its own written advice and accepting them against guidelines that 13.9 says should not change after the close, and either choice would have been unfair to someone.
 

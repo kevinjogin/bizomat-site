@@ -48,7 +48,7 @@ This is an illustration. RCFP agreements take effect when the second party signs
 
 ## Variations and corrections
 
-Variations go on GrantConnect too, but not all of them. Footnote 51 points to Finance's guidance on reportable variations and gives examples: significant additional payments of relevant money, extensions into a new financial year, novation (moving the agreement to a different grantee) and changes in organisation details. Minor variations, such as indexation, changes to project or research team members, or date changes within the same financial year, do not need to be reported.
+Not every variation goes on GrantConnect. Footnote 51 points to Finance's guidance on reportable variations and gives examples: significant additional payments of relevant money, extensions into a new financial year, novation (moving the agreement to a different grantee) and changes in organisation details. Minor variations, such as indexation, changes to project or research team members, or date changes within the same financial year, do not need to be reported.
 
 The test is what changed, not how large it felt. Moving a report's due date from December to January stays within one financial year, so it is minor. Moving a completion date from April to August crosses 30 June, so it is reportable. Reportable or not, every variation needs approval by the right delegate and a record on the file (Chapter 8).
 
@@ -68,7 +68,7 @@ The reconciliation compares the count and total value of executed agreements acr
 
 ## When less than everything can be published
 
-Sometimes full publication would break another rule: the Privacy Act 1988, another statute or the terms of a grant agreement. Officials then "must publish as much information as legally possible", for example by leaving out a grantee's name and personal information but reporting the other details (5.7(a)). They must document the reasons for not reporting fully (5.7(b)). They should also take all reasonable steps so that future agreements do not prevent disclosure (5.7(c)). Paragraph 5.6 adds a quieter requirement: officials must identify whether a grant agreement contains confidentiality provisions.
+Sometimes full publication would conflict with the Privacy Act 1988, another statute or a grant agreement's terms. Officials then "must publish as much information as legally possible", for example by leaving out a grantee's name and personal information but reporting the other details (5.7(a)). They must document the reasons for not reporting fully (5.7(b)). They should also take all reasonable steps so that future agreements do not prevent disclosure (5.7(c)). Paragraph 5.6 adds a quieter requirement: officials must identify whether a grant agreement contains confidentiality provisions.
 
 Not publishing at all is a different matter, and officials cannot decide it. Under 5.8 a minister may seek an exemption from the Minister for Finance where publishing could adversely affect the achievement of government policy outcomes, or there is a specific policy reason not to publish. The responsible minister must write to the Minister for Finance with the rationale, and officials should consult Finance before the process starts.
 
@@ -157,11 +157,11 @@ This is an illustration. In May 2029, before the evaluation starts, Sam asks Ivy
 | 9 | Variation 2: completion date moved from Fri 28 Apr 2028 to Thu 31 Aug 2028, signed by the Branch Manager, in effect Wed 5 Apr 2028. No GrantConnect record |
 | 10 | A site visit note: "Visited. All good." No date and no author |
 
-For each item, say whether it passes. For each fault, name the rule or procedure it breaks, say whether that is a "must", a "should" or NRIO's own procedure, and give the fix.
+Say whether each item passes. For each fault, name the rule or procedure it breaks, say whether it is a "must", a "should" or NRIO's own procedure, and give the fix.
 
 ### Worked answer
 
-1. **Passes.** The eligibility and assessment records are complete.
+1. **Passes.** The assessment record is complete.
 2. **Fails.** Officials must disclose material personal interests (3.12) and must retain appropriate records (3.15). A note that a declaration is somewhere else does not show that it exists. Fix: find it and file it. If it cannot be found, record that, ask the assessor to state in writing whether they had any interest at the time, and tell the Director.
 3. **Passes.** One master copy, cross-referenced, is better than a second copy that can drift.
 4. **Passes.** A$180,000 is within the Branch Manager's A$500,000 delegation, and the section 18 record is there.
