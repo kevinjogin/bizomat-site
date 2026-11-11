@@ -275,6 +275,11 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'design-for-assembly-by-the-numbers': { motif: 'geometry', tone: 'paper' },
   'requirements-that-cannot-all-be-true': { motif: 'specsheet', tone: 'graphite' },
   'the-burden-of-proof': { motif: 'dialogue', tone: 'carbon' },
+  'yes-and-no-when-sources-disagree': { motif: 'dialogue', tone: 'ember' },
+  'arguments-that-hold': { motif: 'decision', tone: 'graphite' },
+  'divide-the-work': { motif: 'workflow', tone: 'paper' },
+  'the-love-of-system': { motif: 'compass', tone: 'carbon' },
+  'tolerances-that-work': { motif: 'drawing', tone: 'graphite' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);

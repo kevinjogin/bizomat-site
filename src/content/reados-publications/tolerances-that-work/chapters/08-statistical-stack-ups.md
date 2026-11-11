@@ -4,7 +4,7 @@ chapterSlug: statistical-stack-ups
 order: 8
 title: "Statistical stack-ups and process capability"
 description: "Use root-sum-square and simulation to estimate how often an assembly falls outside its limits, and see how part distributions, mean shifts and capability change the answer."
-draft: true
+draft: false
 ---
 
 The worst-case method asks whether any combination of conforming parts could fail. A statistical method asks a different question: how often will real combinations fail? For an assembly of several parts, the answer can be "almost never", even when the worst case fails, because it is unlikely that every part will sit at its least favourable limit at once.
@@ -31,7 +31,7 @@ T = √(0.03² + 0.03² + 0.06² + 0.03² + 0.06²) = √0.0099 = **±0.0995 mm*
 
 With the mean of 0.20 mm, the statistical range is **0.101 mm to 0.299 mm**, well inside the requirement.
 
-If each tolerance really is three standard deviations, the standard deviation of the float is 0.0995 ÷ 3 = 0.0332 mm. The lower limit, 0.05 mm, is 4.5 standard deviations below the mean, and the upper limit is 6.0 standard deviations above. The normal distribution then predicts about **3 assemblies in a million** below 0.05 mm and effectively none above 0.40 mm.
+If each tolerance really is three standard deviations, the standard deviation of the float is 0.0995 ÷ 3 = 0.0332 mm. The lower limit, 0.05 mm, is 4.5 standard deviations below the mean, and the upper limit is 6.0 standard deviations above. The normal distribution then predicts about **3 assemblies in a million** below 0.05 mm and effectively none above 0.40 mm. The [tolerance stack design tool](/tools/tolerance-stack-design/) in BIZOMAT Tools gives the same result: an RSS range of 0.101 to 0.299 mm, a float standard deviation of 0.0332 mm and predicted rejects of 0.0003%, when each part's capability index Cp is set to 1.0.
 
 ## Where the variation comes from
 
@@ -81,23 +81,23 @@ When those assumptions do not hold, the predicted failure rate can be wrong by o
 
 A Monte Carlo simulation replaces the formula with direct sampling. For each simulated assembly, a value is drawn for every dimension from an assumed distribution, the gap is calculated and the result is recorded. After a large number of trials, the fraction of assemblies outside the limits is counted directly. Simulation can handle non-normal distributions, mean shifts, non-linear equations and correlated parts, which the RSS formula cannot.
 
-Northgate simulated the revised design, one million assemblies per case, under three sets of assumptions. The simulation used a simple random sampler with a fixed starting seed so that the results can be reproduced; rounded results are shown.
+This is an illustration. Northgate simulated the revised design, several million assemblies per case, under three sets of assumptions. The simulation used a simple random sampler with fixed starting seeds so that the results can be reproduced; rounded results are shown. In case 3, "half their tolerance" means half of ±0.03 mm, a shift of 0.015 mm on each part.
 
 | Case | Assumptions | Mean float | Fraction outside 0.05 to 0.40 mm |
 |---|---|---|---|
 | 1 | All parts normal, centred, tolerance = 3σ | 0.200 | About 3 per million |
-| 2 | Bearings and ring spread evenly across their whole tolerance; machined parts as case 1 | 0.200 | About 0.04%, or 440 per million |
-| 3 | As case 2, with housing and spacer means each shifted by half their tolerance in the direction that closes the gap | 0.170 | About 0.7% |
+| 2 | Bearings and ring spread evenly across their whole tolerance; machined parts as case 1 | 0.200 | About 0.04%, or 430 per million |
+| 3 | As case 2, with housing and spacer means each shifted by half their tolerance in the direction that closes the gap | 0.170 | About 0.87% |
 
-Case 1 simply reproduces the RSS prediction. Case 2 uses a uniform distribution for the bought-in parts, a cautious assumption when nothing is known about how the bearing manufacturer's widths are distributed within its tolerance. The failure rate rises more than a hundredfold. Case 3 adds a modest and very common production habit, machining slightly off-centre, and the failure rate rises again to nearly one assembly in a hundred and fifty.
+Case 1 simply reproduces the RSS prediction. Case 2 uses a uniform distribution for the bought-in parts, a cautious assumption when nothing is known about how the bearing manufacturer's widths are distributed within its tolerance. The failure rate rises more than a hundredfold. Case 3 adds a modest and very common production habit, machining slightly off-centre, and the failure rate rises again to almost one assembly in a hundred.
 
 ```figure
 type: stats
 title: Simulated assemblies outside 0.05 to 0.40 mm, revised design
-caption: One million simulated assemblies per case. The answer moves by orders of magnitude with the assumptions, not the arithmetic.
+caption: Several million simulated assemblies per case. The answer moves by orders of magnitude with the assumptions, not the arithmetic.
 - 3 ppm | Case 1 | all parts normal and centred
-- 440 ppm | Case 2 | bearings and ring spread evenly across their tolerance
-- *≈ 7,300 ppm | Case 3 | case 2 plus machined means shifted half a tolerance
+- 430 ppm | Case 2 | bearings and ring spread evenly across their tolerance
+- *≈ 8,700 ppm | Case 3 | case 2 plus machined means shifted half a tolerance
 ```
 
 None of these cases is "the answer". Together they show the range of plausible outcomes and the assumptions that drive them. That is the honest output of a statistical tolerance analysis.
@@ -134,6 +134,22 @@ Northgate now has a clear choice:
 
 For a low-cost guide roller in moderate volumes, with a failure that is detected easily at assembly by checking float with feeler gauges, the statistical option with a capability requirement may be entirely reasonable. For a product where a failure would be hidden until it caused damage in the field, the select-fit option is the safer choice. The numbers inform the decision; they do not make it.
 
+## The failure case: statistics without a capability requirement
+
+This is an illustration. Northgate released the revised design on the strength of the RSS result. The housing and spacer drawings carried their size tolerances, but no capability requirement. Six months later the spacer moved to a new supplier, and the housing supplier changed its finishing tool for the groove.
+
+The float check at assembly, a feeler gauge test on every unit, began to find units below 0.05 mm: three in the first 400. Measurements of the parts explained why. The new spacers averaged about 16.015 mm, and the housings' groove dimension A averaged about 41.785 mm. Both shifts were within tolerance, and both closed the gap. It was simulation case 3 in production. That case predicts about 0.87% of assemblies outside the limits, or about three or four in 400, which is what the assembly line found.
+
+### How it is detected
+
+Two signals pointed to the cause. The assembly float check showed a trend, not random scatter: the mean float fell from about 0.20 mm to about 0.17 mm. The parts were then measured against their mean, not just against their limits. A part inside tolerance can still break a statistical analysis if its mean has moved.
+
+### How it is corrected
+
+The drawings for A and S now carry a note requiring a process capability index Cpk of at least 1.33, with control chart evidence supplied with each delivery. The spacer supplier was asked to aim at the middle of the tolerance rather than the long end. The assembly float check stayed in place, because it detects the failure before a unit leaves the factory.
+
+The Library book [Fits That Work](/reados/publications/fits-that-work/use-statistics-without-losing-the-limits/) goes further into correlation, mixed populations and how inspection changes the population a statistical model describes.
+
 ## Common mistakes
 
 - **Using RSS for two or three parts.** With few links, the averaging effect is small and extreme combinations are not rare.
@@ -150,8 +166,17 @@ For a low-cost guide roller in moderate volumes, with a failure that is detected
 - How sensitive is the predicted failure rate to plausible changes in assumptions?
 - How would a failure be detected, and what would it cost?
 
-## Exercise: run your own comparison
+## Exercise: the new spacer supplier's capability
 
-Take the stack-up from the previous chapter's exercise. Calculate the RSS range and the variance share of each link. Then build a simple spreadsheet simulation: for each row, generate a random value for each dimension using a normal distribution for machined parts and a uniform distribution for any bought-in part you know little about, and calculate the gap. Copy the row ten thousand times and count the gaps outside the limits. Repeat with a mean shift on one machined part and compare.
+The new spacer supplier sends control chart data for the spacer length, specified as 16.00 ± 0.03 mm: subgroups of five, a grand average X̄ of 16.012 mm and an average range R̄ of 0.012 mm. The drawing now requires Cpk of at least 1.33. Does the process meet the requirement? What would change if it were centred?
+
+**Worked answer.** For subgroups of five, the standard constant d₂ is 2.326, so the process standard deviation is R̄ ÷ d₂ = 0.012 ÷ 2.326 = **0.00516 mm**.
+
+- Cp = tolerance width ÷ 6σ = 0.06 ÷ (6 × 0.00516) = **1.94**. The spread is small compared with the tolerance.
+- Cpk = distance from the mean to the nearer limit ÷ 3σ = (16.03 − 16.012) ÷ (3 × 0.00516) = **1.16**. That is below 1.33, so the process **does not meet** the requirement.
+
+The [process capability check tool](/tools/process-capability-check/) in BIZOMAT Tools gives the same Cp and Cpk, predicts about 242 parts per million outside tolerance, and warns that the process is off-centre. If the supplier centred its process at 16.000 mm with the same spread, Cpk would rise to equal Cp, 1.94, and the process would comfortably pass. The fault is the aim, not the machine. This is also the shift that closed the float in the failure case. A spacer that averages long by 0.012 mm takes 0.012 mm out of every assembly's float. The tool's checks also ask for confirmation that the chart shows a stable process, because capability figures from an unstable process mean little.
+
+**Try it on your own stack-up.** Take the stack-up from the previous chapter's exercise. Calculate the RSS range and the variance share of each link. Then build a simple spreadsheet simulation: for each row, generate a random value for each dimension using a normal distribution for machined parts and a uniform distribution for any bought-in part you know little about, and calculate the gap. Copy the row ten thousand times and count the gaps outside the limits. Repeat with a mean shift on one machined part and compare.
 
 Stack-ups so far have used only dimensions at room temperature, with rigid parts. The next chapter adds temperature, deflection and the allocation of a tolerance budget between parts.

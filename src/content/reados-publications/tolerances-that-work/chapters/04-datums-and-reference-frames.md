@@ -4,7 +4,7 @@ chapterSlug: datums-and-reference-frames
 order: 4
 title: "Datums and the datum reference frame"
 description: "Choose datum features that reflect how a part is located in its assembly, order them correctly and build a reference frame that manufacturing and inspection can reproduce."
-draft: true
+draft: false
 ---
 
 A dimension is a distance between two things. On many drawings one of those things is unclear: a hole is dimensioned from an edge, but which edge, touching where, with the part resting on which face? Two inspectors can measure the same part from different starting points and both be right according to the drawing, while disagreeing about whether the part conforms.
@@ -125,6 +125,22 @@ A material condition modifier on the datum reference, discussed in Chapter 6, ch
 
 Datum B in the Northgate frame is the bore axis, established **perpendicular to datum A**. If the actual bore is slightly tilted relative to the mounting face, datum B is still perpendicular to A by definition, so the tilt appears as an error in the bore itself, not as a tilted reference. That is why the bore needs its own perpendicularity tolerance to A. Without it, the housing could pass every positional check and still hold the roller out of square, the functional failure the assembly most needs to avoid.
 
+## The failure case: two inspectors, two answers
+
+This is an illustration. On the first issue of the housing drawing, the bore and the four clearance holes were all dimensioned from two edges of the flange, each with ±0.1 mm. The supplier machined the flange outline in one set-up and the bore and holes in another. Its inspector set the housing on a surface plate, measured every feature from the two edges with a height gauge, and passed the batch.
+
+Northgate's receiving inspection measured the same housings differently. Its inspector located them on the mounting face and the bore, the way they sit on the machine, and found some bolt holes about 0.25 mm from where they belonged relative to the bore. Both inspectors had followed the drawing. The drawing allowed both readings.
+
+The arithmetic shows why. Each hole was allowed ±0.1 mm in each direction from the edges, and so was the bore. Relative to each other, a hole and the bore could therefore differ by up to 0.2 mm in each direction. That is a radial error of √(0.2² + 0.2²) ≈ 0.28 mm, or a diametral position error of about 0.57 mm. Chapter 6 shows that, with M8 screws in Ø9.0 clearance holes and tapped holes in the frame, the housing holes can afford a position error of only about Ø0.5 mm at their smallest size. A housing that passed every edge dimension could therefore fail to accept its screws. Before the drawing was changed, three housings in the first batch needed their holes opened up by hand at assembly.
+
+### How it is detected
+
+Ask which features touch the mating part, and in what order. The flange edges touch nothing, yet every location on the drawing was measured from them. Working out the relationship that function needs, here hole to bore, shows how much error the edge dimensions allow between the features that matter.
+
+### How it is corrected
+
+Northgate adopted the A, B, C frame in this chapter. The bore and holes are now located by basic dimensions relative to the mounting face and the bore axis, with their tolerances in geometric tolerance frames. The supplier can still set up on the flange edges if that suits its machines. It must show that the finished housing meets the requirements relative to A, B and C.
+
 ## Common mistakes
 
 - **Edge datums by habit.** Choosing datums for convenience rather than function produces drawings that are easy to check but do not guarantee assembly.
@@ -141,8 +157,14 @@ Datum B in the Northgate frame is the bore axis, established **perpendicular to 
 - Does each geometric tolerance reference only the datums its function needs?
 - Do the datum features of size need modifiers to match the clearance in the real assembly?
 
-## Exercise: build a datum scheme
+## Exercise: a datum scheme for the shaft
 
-Choose a part that bolts or clamps to something else. Sketch how it sits in the assembly and number the contacts in the order they happen. Assign datums A, B and C accordingly, then compare with the dimensions on its current drawing. Note any feature that is dimensioned from a surface that touches nothing in the assembly.
+Build a datum scheme for the Northgate shaft. It turns in two bearings, its inner rings bear axially against a shoulder, and a roller is mounted on its threaded end. The shaft was turned between centres. Which features should be the datum features, in what order, and should the centre holes be datums?
+
+**Worked answer.** The shaft is located in the assembly by its two bearing seats. Together they decide the axis it actually turns about, so the primary datum should be the **common axis of the two bearing seats**, usually written A–B. Using one seat alone would make the shaft's alignment depend on a short feature, and errors at that seat would be magnified at the far end of the shaft. Axially, the shaft is located by the **shoulder** that the inner ring bears against. That face is the natural datum for axial dimensions, such as the distance to the roller seat. Rotation about the axis does not matter to function, so no third datum is needed.
+
+The centre holes are where the shaft was held during turning. They are a manufacturing datum, not a functional one, and they touch nothing in the assembly. The workshop can still check the shaft between centres if it shows that the result agrees with the common axis of the bearing seats. Chapter 5 uses this A–B axis for the run-out tolerances on the shaft.
+
+**Try it on your own part.** Choose a part that bolts or clamps to something else. Sketch how it sits in the assembly and number the contacts in the order they happen. Assign datums A, B and C accordingly, then compare with the dimensions on its current drawing. Note any feature that is dimensioned from a surface that touches nothing in the assembly.
 
 With a reference frame in place, the next chapter introduces the geometric tolerances that control form, orientation and location relative to it.
