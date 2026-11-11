@@ -46,6 +46,7 @@ export const TOPIC_COVERS: Record<string, Look> = {
   'starting-funding-and-structuring-a-business': { motif: 'venture', tone: 'paper' },
   'commercial-law-and-contracts': { motif: 'scales', tone: 'carbon' },
   'procurement-and-tendering': { motif: 'tender', tone: 'ember' },
+  'leading-an-aps-team': { motif: 'compass', tone: 'graphite' },
   'suppliers-contractors-and-government-work': { motif: 'supply', tone: 'graphite' },
   'project-estimates-schedules-and-costs': { motif: 'estimate', tone: 'paper' },
   'project-sponsors-governance-and-decisions': { motif: 'gates', tone: 'carbon' },
