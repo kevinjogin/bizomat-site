@@ -33,7 +33,7 @@ Hannah reports to the Director, Corporate and Client Services, an EL2. NRIO's Pe
 
 ## Where the rules come from
 
-People decisions in an APS agency rest on five layers of rules, each made by a different body (see the figure). Three are on the Federal Register of Legislation, and each has replaced an older version whose numbering still turns up in old guidance:
+People decisions in an APS agency rest on five layers of rules, each made by a different body (see the figure). Three are on the Federal Register of Legislation. Use the current version of each. The Regulations and Directions replaced older instruments, whose numbering still turns up in old guidance:
 
 - the **Public Service Act 1999**, Compilation No. 22 of 11 December 2024;
 - the **Public Service Regulations 2023**, which commenced on 30 March 2023 and replaced the 1999 Regulations;
@@ -57,7 +57,7 @@ caption: The order shows where each rule is made, not which one prevails when tw
 
 Section 20(1) of the [Public Service Act](https://www.legislation.gov.au/C2004A00538/latest/text) says: "An Agency Head, on behalf of the Commonwealth, has all the rights, duties and powers of an employer" in respect of the agency's APS employees. Section 22(1) adds the power to engage employees. Do not confuse these with section 41, which lists the APS Commissioner's functions.
 
-Section 78(7) lets the Agency Head share the load: "An Agency Head may, in writing, delegate to another person any of the Agency Head's powers or functions under this Act". The written instrument is the source of a delegate's authority. A position title, a team habit or an email from a senior officer is not a delegation.
+Section 78(7) lets the Agency Head share the load: "An Agency Head may, in writing, delegate to another person any of the Agency Head's powers or functions under this Act". The written instrument is the source of a delegate's authority. A manager's title does not create one, and neither does custom or a senior officer's email.
 
 This is an illustration. NRIO keeps its people delegations in one instrument, and Hannah reads it in her first week. As an EL1 she can approve leave for her own staff within the enterprise agreement and direct their day-to-day work. The Director engages and promotes staff at APS 1 to 6. Ending employment and deciding suspected breaches of the Code sit with other positions in the schedule. Where Hannah holds no power, she can still gather facts, consult, draft and recommend. That is a real role, but it is not deciding.
 
@@ -69,7 +69,7 @@ The Directions say what each Value requires, having regard to a person's duties.
 
 Section 10A sets the Employment Principles. Among them, the APS makes fair employment decisions with a fair system of review, treats ongoing engagement as the usual basis, "makes decisions relating to engagement and promotion that are based on merit", "requires effective performance from each employee" and "provides workplaces that are free from discrimination, patronage and favouritism" (s 10A(1)(c), (d) and (f)).
 
-These are working rules. Section 10A(2) defines merit in five elements (Chapter 3). Section 50 of the Directions lists what a supervisor does to uphold effective performance, including yearly career conversations, a performance agreement for each employee, clear, honest and timely feedback, and prompt action on unsatisfactory performance while "maintaining appropriate records" (Chapters 5 and 6).
+These are working rules. Section 10A(2) defines merit in five elements (Chapter 3). Section 50 of the Directions lists what a supervisor does to uphold effective performance, including career conversations at least once a year, a performance agreement for each employee, clear, honest and timely feedback, and prompt action on unsatisfactory performance while "maintaining appropriate records" (Chapters 5 and 6).
 
 ## The Code of Conduct, for the team and for you
 
@@ -96,7 +96,7 @@ This is an illustration. NRIO's procedures for recruitment, performance and cond
 
 The Work Health and Safety Act 2011 binds the Commonwealth (s 10), and its regulator is Comcare (s 4). A person conducting a business or undertaking "must ensure, so far as is reasonably practicable, the health and safety of" its workers (s 19(1)), and health means "physical and psychological health" (s 4). Every worker must take reasonable care for their own health and safety and that of others (s 28).
 
-Officers must exercise due diligence (s 27). For the Commonwealth, an officer is a person who "makes, or participates in making, decisions that affect the whole, or a substantial part" of its business or undertaking (s 247(1)). Whether a manager is one depends on the role, so ask your WHS area rather than assume. Sections 47 to 49 require consultation with workers, and the psychosocial risk rules in regulations 55A to 55D of the WHS Regulations have applied since 1 April 2023 (Chapter 8).
+Officers must exercise due diligence (s 27). For the Commonwealth, an officer is a person who "makes, or participates in making, decisions that affect the whole, or a substantial part" of its business or undertaking (s 247(1)). That turns on the role, so check with your WHS area instead of guessing. Sections 47 to 49 require consultation with workers, and the psychosocial risk rules in regulations 55A to 55D of the WHS Regulations have applied since 1 April 2023 (Chapter 8).
 
 The Fair Work Act 2009 applies to APS employment too. Besides the National Employment Standards, enterprise agreements and the limit on hours, it gives the right to request flexible working arrangements (ss 65 to 65C, Chapter 9).
 
@@ -104,7 +104,7 @@ Public interest disclosures are made under the Public Interest Disclosure Act 20
 
 ## Your authority and the People Branch's
 
-With the layers in place, every people decision can be sorted by four questions. What is the decision? Which rule governs it? Who holds the power? What record will show it was made properly?
+Every people decision can then be sorted by four questions. What is the decision? Which rule governs it? Who holds the power? What record will show it was made properly?
 
 This is an illustration. Hannah's answers fall into four groups:
 
@@ -180,11 +180,11 @@ This is an illustration. Six people decisions will reach Hannah over the coming 
 
 **C: the Director decides on a panel's recommendation.** The source is the power to engage and promote (ss 20 and 22), limited by merit (s 10A) and by sections 24 and 25 of the Directions. At NRIO the Director is the delegate for APS 1 to 6, and People Branch runs the process. Hannah helps define the duties, may chair the panel, declares any interest (s 13(7)) and documents the assessment (Chapter 3).
 
-**D: NRIO as employer decides, through the person its procedure names.** An eligible employee may request flexible working arrangements in writing (Fair Work Act s 65), and the employer must respond in writing within 21 days (s 65A). A refusal must rest on reasonable business grounds, after genuinely trying to reach agreement and considering the consequences for the employee, and must state the effect of sections 65B and 65C. Your enterprise agreement may add to this. Before 4 January, Hannah checks who signs the response. Then she meets Mei, prepares the reasons and keeps to the time limit (Chapter 9).
+**D: NRIO as employer decides, through the person its procedure names, who may be Hannah.** An eligible employee may request flexible working arrangements in writing (Fair Work Act s 65), and the employer must respond in writing within 21 days (s 65A). A refusal must rest on reasonable business grounds, after genuinely trying to reach agreement and considering the consequences for the employee, and must state the effect of sections 65B and 65C. Your enterprise agreement may add to this. Before 4 January, Hannah checks who signs the response. Then she meets Mei, prepares the reasons and keeps to the time limit (Chapter 9).
 
 **E: an independent decision-maker decides; Hannah reports.** The source is the Code (s 13) and NRIO's procedures under section 15(3), which require a decision-maker who "is, and appears to be, independent and unbiased" (Directions s 61). Reporting is part of the Ethical Value (s 14(f)). Hannah reports promptly to People Branch, keeps the matter confidential, and neither interviews Aaron nor gathers evidence herself (Chapter 7).
 
-**F: Hannah acts at once; NRIO settles the lasting controls.** The WHS Act requires health and safety, psychological health included, to be ensured so far as is reasonably practicable (ss 4 and 19), and every worker has duties (s 28). Hannah makes sure Sophie is safe and supported and reports the incident under NRIO's procedures. Lasting controls are settled with the WHS area and the Director after consulting the team (ss 47 to 49) (Chapter 8).
+**F: Hannah acts at once; NRIO settles the lasting controls.** The WHS Act requires health and safety, psychological health included, to be ensured so far as is reasonably practicable (ss 4 and 19), and every worker has duties (s 28). Hannah makes sure Sophie is safe and supported and reports the incident under NRIO's procedures. Lasting controls are settled with the WHS area and the Director after consulting the team (ss 47 to 49; Chapter 8).
 
 Only A is Hannah's alone. In B, C and D she recommends or prepares; in E she reports and stays out; in F she acts first, then hands the lasting decisions to those who hold them.
 
