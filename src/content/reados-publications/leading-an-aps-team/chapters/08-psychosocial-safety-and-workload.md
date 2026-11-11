@@ -13,7 +13,7 @@ This is an illustration. On Monday 16 November 2026, a caller threatened Sophie 
 
 ## Who holds which duty
 
-Chapter 1 introduced the duties in the [Work Health and Safety Act 2011](https://www.legislation.gov.au/C2011A00137/latest/text). Here is what each means for a team.
+Chapter 1 introduced the duties in the [Work Health and Safety Act 2011](https://www.legislation.gov.au/C2011A00137/latest/text). This section applies them to a team.
 
 The primary duty sits with the person conducting a business or undertaking (PCBU). Section 19(1) says a PCBU "must ensure, so far as is reasonably practicable, the health and safety of" the workers it engages and those whose work it influences or directs. The Act binds the Commonwealth (s 10). In an agency, the duty reaches the desk through WHS policies, the WHS area and managers.
 
@@ -38,7 +38,7 @@ caption: This is an illustration. The PCBU's duty is carried out through NRIO's 
 
 The [Work Health and Safety Regulations 2011](https://www.legislation.gov.au/F2011L02664/latest/text) have contained a Division on psychosocial risks since 1 April 2023. A psychosocial hazard arises from or relates to the design or management of work, a work environment, plant at a workplace, or "workplace interactions or behaviours", and "may cause psychological harm" (r 55A). A psychosocial risk is "a risk to the health or safety of a worker or other person arising from a psychosocial hazard" (r 55B).
 
-Regulation 55C says a PCBU must "manage psychosocial risks in accordance with Part 3.1" and "implement the control measures required by regulation 55D". Part 3.1 is the general method. The duty holder must identify reasonably foreseeable hazards (r 34), eliminate risks so far as is reasonably practicable or, if that is not reasonably practicable, minimise them so far as is reasonably practicable (r 35), follow the hierarchy of control measures (r 36), keep controls effective (r 37) and review them (r 38).
+Regulation 55C says a PCBU must "manage psychosocial risks in accordance with Part 3.1" and "implement the control measures required by regulation 55D". Under Part 3.1, the duty holder must identify reasonably foreseeable hazards (r 34), eliminate risks so far as is reasonably practicable or, if that is not reasonably practicable, minimise them so far as is reasonably practicable (r 35), follow the hierarchy of control measures (r 36), keep controls effective (r 37) and review them (r 38).
 
 In choosing controls, the PCBU "must have regard to all relevant matters" (r 55D(2)), including the duration, frequency and severity of exposure, "how the psychosocial hazards may interact or combine", job demands, systems of work, and the training and supervision workers receive.
 
@@ -56,7 +56,7 @@ Section 1.1 lists common hazards, among them "Job demands", "Low job control", "
 
 This is an illustration. At about 11.40 am on Monday 16 November 2026, Sophie took a call from a man angry that an NRIO facility had closed for repairs. He swore at her, demanded her surname and said he knew where the office was and would wait for her after work. Sophie ended the call and told Marcus.
 
-Marcus took Sophie off the phones and told Hannah. Hannah's first conversation with Sophie was about Sophie, not the paperwork. The practical steps followed in the order NRIO's fictional procedures set.
+Marcus took Sophie off the phones and told Hannah. Hannah's first conversation with Sophie was about Sophie, not the paperwork.
 
 ```figure
 type: timeline
@@ -104,7 +104,7 @@ A WHS rating is not a decision to accept a risk. Under Part 3.1 the question is 
 
 Regulation 36 sets the order. If a risk cannot reasonably be eliminated, it must be minimised first by substitution, isolation or engineering controls, then by administrative controls, and last by personal protective equipment, combining controls where one is not enough. The Code says changes to the system of work, such as "rostering, working hours, task rotation and breaks", can achieve the higher-order controls (section 5.3). It also warns that "Administrative control measures and PPE do not control the hazard at the source."
 
-This is an illustration. NRIO cannot stop people calling, or guarantee that none will be abusive. It can change how much abuse reaches an officer, for how long and with what support. Hannah, Marcus and the WHS adviser drafted the controls below, and the Director approved them after the team was consulted.
+This is an illustration. NRIO cannot stop abusive calls altogether. It can change how much abuse reaches an officer, for how long and with what support. Hannah, Marcus and the WHS adviser drafted the controls below, and the Director approved them after the team was consulted.
 
 ```figure
 type: layers
@@ -117,7 +117,7 @@ caption: This is an illustration. The order follows regulation 36. Higher layers
 - Personal protective equipment | None identified for this hazard.
 ```
 
-Two controls follow the Code's own examples, which include "management plans where a client is known to have a history of aggression or violence" and letting workers refuse or suspend service when people do not meet the expected standard of behaviour (Appendix B). They are examples; the requirement is what is reasonably practicable in your workplace.
+Two controls follow examples in the Code: "management plans where a client is known to have a history of aggression or violence", and letting workers refuse or suspend service when people do not meet the expected standard of behaviour (Appendix B). They are examples; the requirement is what is reasonably practicable in your workplace.
 
 With these controls, Hannah and the WHS adviser rated the risk again. Fewer officers meet a known abusive caller, abusive calls end sooner and support comes the same day: likelihood 3 and consequence 3, so 3 × 3 = 9, Medium. Abuse can be reduced, not removed, so the risk stays on the register.
 
@@ -129,13 +129,13 @@ Under the Fair Work Act 2009, an employer must not request or require a full-tim
 
 This is an illustration. Chapter 2 sized the section's handling work at 7,120 hours a year, about 5.6 FTE, before team-leader duties, service-level cover and the Monday morning peak. One of the six officer positions is empty until 15 February 2027. Even with every other position filled, five officers give 5 × 1,275 = 6,375 productive hours a year, and 7,120 ÷ 6,375 = 111.7 per cent. Any leave or illness makes it worse. Marcus reports that officers have worked through breaks on most Mondays since late October, and that he and Leila are taking calls most afternoons.
 
-The signs are in the team's own data: growing queues, people working through breaks or late, leave nobody can take and rising rework. The controls are mostly decisions a manager can make or ask for: show the gap in hours, agree with the Director what waits, protect breaks, ask about workload in every one-to-one, and escalate early with numbers and options. Officers must take reasonable steps to ensure the agency has "appropriate resources and processes" (s 27(5)(c)), and they can only do that if managers tell them the size of the gap.
+The signs are in the team's own data: growing queues, missed breaks, leave nobody can take and rising rework. Most controls are decisions a manager can make or ask for: show the gap in hours, agree with the Director what waits, protect breaks, ask about workload in every one-to-one, and escalate early with numbers and options. Officers must take reasonable steps to ensure the agency has "appropriate resources and processes" (s 27(5)(c)), and they can only do that if managers tell them the size of the gap.
 
 ## Consulting the team
 
 Consultation is a legal duty. Section 47 requires the PCBU, so far as is reasonably practicable, to consult workers "who are, or are likely to be, directly affected" by a WHS matter. Under section 48, it means sharing relevant information, giving workers a reasonable opportunity to "contribute to the decision-making process", taking their views into account and telling them the outcome in a timely manner. If workers are represented by a health and safety representative (HSR), "the consultation must involve that representative" (s 48(2)). Section 49 requires consultation, among other times, "when identifying hazards and assessing risks", when deciding how to eliminate or minimise them, and "when proposing changes that may affect the health or safety of workers".
 
-This is an illustration. Hannah spoke to Sophie privately first, because she was the person most affected and could choose what was shared. On Monday 23 November she took the draft assessment to the team meeting, with the HSR for the section's work group present, shared the call-note figures without names, the rating and the draft controls, and asked what was missing.
+This is an illustration. Hannah spoke to Sophie privately first, because she was most affected and could choose what was shared. On Monday 23 November she took the draft assessment to the team meeting, with the HSR for the section's work group present, shared the call-note figures without names, the rating and the draft controls, and asked what was missing.
 
 The team changed the plan. Several officers asked to give first names only, which became the rule. Leila pointed out that abusive callers often follow up in writing, so the alert now shows on correspondence too. Ruby asked to be walked through the call-ending procedure before her next Monday peak. The Director approved the final controls on Thursday 26 November, and they started on Monday 30 November.
 
@@ -143,7 +143,7 @@ Hannah recorded what was raised, what changed and why, and sent it to the team. 
 
 ## When it goes wrong: "part of the job"
 
-This is an illustration. The call notes Hannah read on 19 November showed that Sophie's caller had rung twice in October. Two different officers took the calls, and both notes read much the same: abusive, swore at officer, call ended. Neither officer reported an incident, flagged the record or told a team leader. When Hannah asked why, she heard the answer she heard about the other abusive calls: it's part of the job, and the form takes longer than the call.
+This is an illustration. The call notes Hannah read on 19 November showed that Sophie's caller had rung twice in October. Two different officers took the calls, and both notes read much the same: abusive, swore at officer, call ended. Neither officer reported an incident, flagged the record or told a team leader. Asked why, officers gave the answer Hannah heard about the other abusive calls: it's part of the job, and the form takes longer than the call.
 
 Each choice made sense on the day. Together, they hid a caller whose behaviour was escalating from abuse to a threat, and Sophie took his third call with no warning. Fourteen abusive calls in three months produced no incident reports, so the WHS area had no data and no officer above Hannah had anything to respond to. Hannah had not asked either: she had never told the team that every abusive call should be reported.
 
