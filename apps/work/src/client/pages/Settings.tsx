@@ -9,6 +9,7 @@ import { WorkspaceSettings } from './settings/Workspace';
 import { MembersSettings } from './settings/Members';
 import { TeamsSettings } from './settings/Teams';
 import { AdminOverview, AuditLog } from './settings/Admin';
+import { AuditTrail, EmailSettings, FinanceSettings } from './settings/Platform';
 import '../styles/admin.css';
 
 const TABS: { id: string; label: string; icon: string; section: 'Account' | 'Workspace' | 'Administration'; admin?: boolean }[] = [
@@ -18,8 +19,11 @@ const TABS: { id: string; label: string; icon: string; section: 'Account' | 'Wor
   { id: 'workspace', label: 'Workspace', icon: 'layers', section: 'Workspace' },
   { id: 'members', label: 'Members', icon: 'users', section: 'Workspace' },
   { id: 'teams', label: 'Teams', icon: 'users', section: 'Workspace' },
+  { id: 'finance', label: 'Finance', icon: 'chart', section: 'Administration', admin: true },
+  { id: 'email', label: 'Email', icon: 'message', section: 'Administration', admin: true },
   { id: 'admin', label: 'Overview & export', icon: 'chart', section: 'Administration', admin: true },
-  { id: 'audit', label: 'Audit log', icon: 'history', section: 'Administration', admin: true },
+  { id: 'audit-trail', label: 'Audit trail', icon: 'shield', section: 'Administration', admin: true },
+  { id: 'audit', label: 'Sign-in and settings log', icon: 'history', section: 'Administration', admin: true },
 ];
 
 export default function Settings() {
@@ -32,7 +36,7 @@ export default function Settings() {
   let sections: string[] = [];
   return (
     <div className="page">
-      <PageHeader icon="settings" title="Settings" subtitle={`Your account and the ${ws.name} workspace.`} />
+      <PageHeader icon="settings" title="Settings" subtitle={`Your account and the ${ws.name} organisation.`} />
       <div className="settings-layout">
         <nav className="settings-nav" aria-label="Settings sections">
           {visible.map((t) => {
@@ -57,6 +61,9 @@ export default function Settings() {
           {tab === 'teams' ? <TeamsSettings /> : null}
           {tab === 'admin' ? <AdminOverview /> : null}
           {tab === 'audit' ? <AuditLog /> : null}
+          {tab === 'finance' ? <FinanceSettings /> : null}
+          {tab === 'email' ? <EmailSettings /> : null}
+          {tab === 'audit-trail' ? <AuditTrail /> : null}
         </div>
       </div>
     </div>

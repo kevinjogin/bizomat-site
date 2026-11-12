@@ -100,7 +100,11 @@ export function useInvalidate() {
 }
 
 export function canEdit(role: WorkspaceDTO['role']) {
-  return role !== 'viewer';
+  return role !== 'viewer' && role !== 'guest';
+}
+/** Guests (contractors) see only what is shared with them: no organisation-wide areas. */
+export function isGuest(role: WorkspaceDTO['role']) {
+  return role === 'guest';
 }
 export function isAdmin(role: WorkspaceDTO['role']) {
   return role === 'owner' || role === 'admin';

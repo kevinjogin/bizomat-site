@@ -46,6 +46,17 @@ application itself:
   website, `/tasks` to Project Management, CAD's paths to the `cados` app) and the old addresses by host.
 - **Platform services**: the Fly image and entrypoint, migration tooling, smoke tests, the local compose stack.
 
+### Project Management features (12 Nov 2026)
+
+Organisations with members, roles (owner, admin, project manager, member, viewer, guest or contractor), email
+invitations, project-level and task-level permissions, currencies and decimal-safe finance, executive and monthly
+project reports (preview, PDF, Excel, HTML, CSV, saved versions), a permanent audit trail and Brevo email. Details:
+[docs/architecture/current-state-audit.md](docs/architecture/current-state-audit.md),
+[organisation-permissions](docs/architecture/organisation-permissions.md),
+[reporting-system](docs/architecture/reporting-system.md), [financial-system](docs/architecture/financial-system.md),
+[Brevo setup](docs/email/brevo-setup.md), [email templates](docs/email/email-templates.md),
+[deployment](docs/deployment/fly-deployment.md) and [test results](docs/testing/feature-test-results.md).
+
 ## 2. Architecture
 
 ```
@@ -178,6 +189,9 @@ bizomat` shows names only); GitHub Actions secrets are repository secrets.
 | `ANTHROPIC_API_KEY` | web | Anthropic for the AI chat (instead of Workers AI) |
 | `TURNSTILE_SECRET_KEY` | web | Cloudflare Turnstile check on forms |
 | `WORK_GOOGLE_CLIENT_ID`, `WORK_GOOGLE_CLIENT_SECRET` | work | Google sign-in for Project Management |
+| `WORK_BREVO_API_KEY` | work | Brevo transactional email (invitations, assignments, reminders). Without it, invitations show a link to share |
+| `WORK_BREVO_WEBHOOK_TOKEN` | work | The bearer token Brevo sends with delivery events to `https://bizomat.ai/tasks/api/email-webhooks/brevo` |
+| `WORK_EMAIL_FROM_ADDRESS`, `WORK_EMAIL_FROM_NAME`, `WORK_EMAIL_REPLY_TO`, `WORK_APP_BASE_URL`, `WORK_EMAIL_DAILY_LIMIT`, `WORK_EMAIL_CRITICAL_RESERVE`, `WORK_EMAIL_PROVIDER`, `WORK_EMAIL_SANDBOX` | work | Email settings (not secret; defaults: `notifications@bizomat.ai`, `BIZOMAT`, none, `WORK_APP_URL`, 250, 40, `brevo` when a key is set, off). Setup: [docs/email/brevo-setup.md](docs/email/brevo-setup.md) |
 
 Which role receives which names, and the stronger per-volume secret files: [infrastructure/README.md](infrastructure/README.md),
 "Settings and secrets". Fly sets `FLY_*` variables itself.

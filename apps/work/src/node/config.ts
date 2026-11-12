@@ -14,7 +14,23 @@ export interface WorkerVars {
   CANONICAL_URL?: string;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  // Email (docs/email/brevo-setup.md): passed through unchanged when set.
+  EMAIL_PROVIDER?: string;
+  BREVO_API_KEY?: string;
+  BREVO_WEBHOOK_TOKEN?: string;
+  EMAIL_FROM_NAME?: string;
+  EMAIL_FROM_ADDRESS?: string;
+  EMAIL_REPLY_TO?: string;
+  APP_BASE_URL?: string;
+  EMAIL_DAILY_LIMIT?: string;
+  EMAIL_CRITICAL_RESERVE?: string;
+  EMAIL_SANDBOX?: string;
+  /** Encrypts secrets saved in the founder console; without it, a random key file in the data folder is used. */
+  SETTINGS_ENCRYPTION_KEY?: string;
 }
+
+/** Email settings copied from the environment into the Worker's env when present. */
+export const EMAIL_VARS = ['EMAIL_PROVIDER', 'BREVO_API_KEY', 'BREVO_WEBHOOK_TOKEN', 'EMAIL_FROM_NAME', 'EMAIL_FROM_ADDRESS', 'EMAIL_REPLY_TO', 'APP_BASE_URL', 'EMAIL_DAILY_LIMIT', 'EMAIL_CRITICAL_RESERVE', 'EMAIL_SANDBOX', 'SETTINGS_ENCRYPTION_KEY'] as const;
 
 /** An https address with an optional lowercase path, as canonicalRedirect (src/worker/mount.ts) accepts it. */
 const CANONICAL = /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i;
@@ -75,6 +91,10 @@ export function configFromEnv(env: Record<string, string | undefined> = process.
   if (canonical) vars.CANONICAL_URL = canonical;
   if (env.GOOGLE_CLIENT_ID) vars.GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
   if (env.GOOGLE_CLIENT_SECRET) vars.GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
+  for (const k of EMAIL_VARS) {
+    const v = env[k]?.trim();
+    if (v) vars[k] = v;
+  }
   return {
     port: int('PORT', env.PORT, DEFAULT_PORT, 0, 65535),
     host: env.HOST?.trim() || '::',

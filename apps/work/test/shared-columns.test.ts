@@ -74,7 +74,9 @@ describe('column registry', () => {
     expect(labels[0].color).toMatch(/^#/);
     expect(labels[1].id).not.toBe('a');
     const s = sanitizeColumnSettings('currency', { currency: 'eur', decimals: '3', evil: '<x>' });
-    expect(s.currency).toBe('USD');
+    // No currency is assumed (12 Nov 2026): an invalid code leaves the column on the project's or organisation's.
+    expect(s.currency).toBeUndefined();
+    expect(s.currencyMode).toBe('inherit');
     expect(s.decimals).toBe(3);
     expect((s as any).evil).toBeUndefined();
     expect(isSafeUrl('data:text/html,hi')).toBe(false);

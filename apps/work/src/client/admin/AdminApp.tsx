@@ -18,6 +18,8 @@ const Projects = lazy(() => import('./pages/Projects'));
 const Adoption = lazy(() => import('./pages/Adoption'));
 const Health = lazy(() => import('./pages/Health'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Email = lazy(() => import('./pages/Email'));
+const SignupProtection = lazy(() => import('./pages/SignupProtection'));
 
 interface AdminMe {
   user: { id: string; name: string; email: string };
@@ -34,6 +36,8 @@ const NAV: { to: string; label: string; icon: string; end?: boolean }[] = [
   { to: '/admin/projects', label: 'Projects', icon: 'grid' },
   { to: '/admin/adoption', label: 'Adoption Analytics', icon: 'target' },
   { to: '/admin/health', label: 'System Health', icon: 'shield' },
+  { to: '/admin/email', label: 'Email (Brevo)', icon: 'message' },
+  { to: '/admin/signup', label: 'Sign-up Protection', icon: 'shield' },
   { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 
@@ -122,6 +126,8 @@ export default function AdminApp() {
               <Route path="projects" element={<Projects />} />
               <Route path="adoption" element={<Adoption />} />
               <Route path="health" element={<Health />} />
+              <Route path="email" element={<Email />} />
+              <Route path="signup" element={<SignupProtection />} />
               <Route path="settings" element={<Settings role={admin.role} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

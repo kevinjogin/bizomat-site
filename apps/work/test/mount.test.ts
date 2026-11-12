@@ -34,13 +34,15 @@ describe('under /tasks', () => {
     expect(await atRoot.text()).toContain('<head><base href="/">');
   });
 
-  it('invitation links made under /tasks point under /tasks', async () => {
+  it('invitation links use the configured app address, whichever path or host the request came in on', async () => {
+    // Links come from APP_URL (production: https://bizomat.ai/tasks, which includes the mount), never from the
+    // request (services/app-url.ts). Here APP_URL is http://example.com, so both give http://example.com/invite/...
     const owner = await signup('Owner');
     const res = await raw('POST', `/tasks/api/workspaces/${owner.workspaceId}/invitations`, {
       body: { email: uniqueEmail('invitee'), role: 'member' }, cookie: owner.cookie, csrf: owner.csrf,
     });
     expect(res.status).toBe(201);
-    expect(((await res.json()) as any).inviteUrl).toMatch(new RegExp(`^${ORIGIN}/tasks/invite/`));
+    expect(((await res.json()) as any).inviteUrl).toMatch(new RegExp(`^${ORIGIN}/invite/`));
     const atRoot = await owner.json('POST', `/api/workspaces/${owner.workspaceId}/invitations`, { email: uniqueEmail('invitee'), role: 'member' });
     expect(atRoot.inviteUrl).toMatch(new RegExp(`^${ORIGIN}/invite/`));
   });

@@ -9400,16 +9400,6 @@
    "reason": "Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads."
   },
   {
-   "reados": "publication/tolerances-that-work",
-   "chapter": "choosing-and-calculating-fits",
-   "tool": "iso-fit-limits-from-deviations",
-   "type": "applies",
-   "note": "Turns fit designations into limits of size from the tabulated deviations and IT values, used to show how a k6 seat read as a transition fit from a table.",
-   "status": "approved",
-   "evidence": "book-link",
-   "reason": "Chapter teaches choosing and calculating ISO fits; tool applies the handbook procedure es/ei, ES/EI ± IT with the delta value and gives the clearance range."
-  },
-  {
    "reados": "publication/checking-drawings-by-the-numbers",
    "chapter": "limits-and-fits-from-the-drawings",
    "tool": "iso-fit-limits-from-deviations",
@@ -10388,6 +10378,322 @@
    "note": "Compares the tank's remaining hours with the fabricator's productive capacity to test whether a delivery date has grounds.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-cylinder-and-rod",
+   "tool": "hydraulic-cylinder-sizing",
+   "type": "applies",
+   "note": "Gives the minimum bore for the push force, the Euler minimum rod, the largest rod for the pull force, extend and retract flows, pump power and line bores for the press cylinder.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "check-the-barrel-end-caps-and-frame",
+   "tool": "hydraulic-cylinder-structure",
+   "type": "applies",
+   "note": "Checks the barrel by the Lamé equations and von Mises, the end cap as a clamped plate and the rod's buckling by Euler or Johnson, at the relief setting and the trapped rod-end pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "check-the-barrel-end-caps-and-frame",
+   "tool": "press-tie-rod-check",
+   "type": "applies",
+   "note": "Checks the press's tie rods for load per rod, thread stress, elastic stretch and nut engagement at the relief setting, assuming equal load sharing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "choose-the-pumps-and-control-the-speed",
+   "tool": "cylinder-speed-control",
+   "type": "applies",
+   "note": "Calculates the rod-side pressure, including intensification, the orifice size and the heat when a cylinder is metered out, the check behind the chapter's failure case.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-lines-for-the-real-flows",
+   "tool": "hydraulic-line-sizing",
+   "type": "applies",
+   "note": "Checks a pressure, return or suction line for velocity, Reynolds number, pressure drop through tube and fittings, power lost and Barlow tube rating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-power-unit-and-keep-it-cool",
+   "tool": "hydraulic-power-unit-sizing",
+   "type": "applies",
+   "note": "Sizes pump displacement, drive torque, shaft power, reservoir volume and an approximate heat balance for the press's power unit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-power-unit-and-keep-it-cool",
+   "tool": "gearbox-heat-balance",
+   "type": "applies",
+   "note": "In hydraulic unit mode, finds the oil's equilibrium temperature from the cycle's input power and efficiency, and the cooler duty needed to hold the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "hold-the-load-and-control-stored-energy",
+   "tool": "accumulator-circuit-sizing",
+   "type": "applies",
+   "note": "Sizes an accumulator to help the pump with a fast approach: stroke volume, pump deficit, gas volume and recharge time, used to test and reject the idea.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "oil-viscosity-temperature",
+   "type": "applies",
+   "note": "Gives the oil's kinematic viscosity at any temperature from two known points by the ASTM D341 relation, used for the press's VG 46 oil.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "lubricant-viscosity-check",
+   "type": "applies",
+   "note": "Checks an oil grade's viscosity at the hottest running and coldest start temperatures against the pump's minimum and cold-start limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "iso-cleanliness-code",
+   "type": "explains",
+   "note": "Converts particle counts at 4, 6 and 14 µm into the three-part ISO 4406 code and checks it against a target code.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "hydraulic-filter-selection",
+   "type": "applies",
+   "note": "Gives the cleanliness code after a filter from its beta ratios and scales the element's pressure drop to the real flow and coldest viscosity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "retention-selector",
+   "type": "applies",
+   "note": "Screens the press fit, retaining ring and staking options for the rear bush against load, disassembly needs and design factor, and compares their lifecycle cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "retaining-ring-thrust",
+   "type": "applies",
+   "note": "Gives the ring's shear capacity, the groove's yield capacity and the governing allowable thrust for the retaining ring option.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "snap-fit-joint-design",
+   "type": "applies",
+   "note": "Checks a cantilever snap-fit finger for assembly strain, mating force and separation force, used to test and reject a snap-fit knob.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "tolerances-that-let-parts-go-together",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Compares the nose protrusion stack of both revisions by worst case, root-sum-square and predicted rejects, and identifies the largest contributor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "weigh-part-cost-against-assembly-cost",
+   "tool": "tooling-payback",
+   "type": "applies",
+   "note": "Compares the old and new unit costs against the redesign's tooling and annual volume to give the saving, units to pay back and payback period.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "weigh-part-cost-against-assembly-cost",
+   "tool": "process-breakeven",
+   "type": "applies",
+   "note": "Finds the break-even quantity between modifying the knob mould and buying a catalogue knob, and the cheaper choice at one and five years.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "speed-against-length",
+   "tool": "ballscrew-limits",
+   "type": "applies",
+   "note": "Calculates the critical (whirling) speed and buckling load of a screw from root diameter, unsupported length and end mounting, and checks them against the operating speed and axial load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "life-preload-and-maintenance-free",
+   "tool": "ballscrew-duty-life",
+   "type": "applies",
+   "note": "Gives the mean speed, cubic mean load, basic rated life in hours and travel over a duty cycle, with preload entered in each step's load, against the running hours required.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "accuracy-against-the-error-budget",
+   "tool": "machine-axis-error-budget",
+   "type": "applies",
+   "note": "Combines positioning accuracy, repeatability, Abbe error, uncompensated thermal growth and fixture error by worst case and root-sum-square against the share of tolerance allowed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "stiffness-mass-and-height",
+   "tool": "beam-sizing",
+   "type": "applies",
+   "note": "Finds the section modulus and second moment of area a beam needs for deflection limits down to span ÷ 5,000; the chapter scales its result to test a far tighter sag limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "possible-but-improbable",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Calculates Cp and Cpk with their lower confidence bounds and the sample size that would prove a required Cpk, showing why a 30-run test usually fails a capable axis.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "possible-but-improbable",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Gives the worst-case and root-sum-square limits of the probe clearance stack and the predicted share of frames falling outside the probe's search range.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "defending-an-impossible-specification",
+   "tool": "option-compare",
+   "type": "applies",
+   "note": "Scores two feasible options on annual benefit, cost, delivery time and risk, after the infeasible specification has been excluded as the tool's own mandatory-requirements check asks.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "rewriting-the-specification",
+   "tool": "change-impact",
+   "type": "applies",
+   "note": "Rates the cost, schedule, risk and quality effect of adopting the rewritten specification against the project's value and remaining time, and reports benefit less added cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "accepted-rejected-or-not-proven",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the MTBF estimate and its one-sided lower and upper confidence bounds from operating hours and failures, so a reliability claim can be judged accepted, rejected or not proven.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "extraordinary-claims",
+   "tool": "carnot-limit-check",
+   "type": "applies",
+   "note": "Tests a heat pump's claimed COP against the Carnot limit for the source and sink temperatures, gives its second-law efficiency and running cost, and flags claims above the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "claims-that-cannot-fail",
+   "tool": "pump-speed-control-plan",
+   "type": "applies",
+   "note": "Works out the speed, power and yearly saving of slowing a pump instead of throttling it at the site's measured duty, turning an 'up to' claim into a prediction; drive losses are added separately.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "evidence-in-proportion-to-consequence",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Rates likelihood times consequence on a five-by-five matrix with a response band, used to set how much evidence a seal claim needs in a water service and a chemical service.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "a-test-that-could-prove-it-wrong",
+   "tool": "weibull-reliability",
+   "type": "applies",
+   "note": "Gives reliability, failure probability, hazard, B10 life and mean life from Weibull parameters, used to predict seal failures under each life hypothesis before the trial rule is set.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "a-test-that-could-prove-it-wrong",
+   "tool": "reliability-demonstration-test",
+   "type": "applies",
+   "note": "Plans the unit-hours and days needed to demonstrate an MTBF with a constant failure rate, showing why a controller claim needs fleet data and why the method does not suit wearing seals.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "acting-while-unproven",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Recomputes NPV, IRR and payback for the package as claimed, on the evidence and as a staged purchase, with uniform yearly savings and running costs before tax.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "acting-while-unproven",
+   "tool": "maintenance-interval-plan",
+   "type": "applies",
+   "note": "Finds the lowest-cost and target-reliability replacement intervals for the present seals from the factory's Weibull data, the fallback if the new seal claim fails.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "choosing-and-calculating-fits",
+   "tool": "iso-fit-limits-from-deviations",
+   "type": "applies",
+   "note": "Turns fit designations into limits of size from the tabulated deviations and IT values, used to show how a k6 seat read as a transition fit from a table.",
+   "status": "approved",
+   "evidence": "book-link",
+   "reason": "Chapter teaches choosing and calculating ISO fits; tool applies the handbook procedure es/ei, ES/EI ± IT with the delta value and gives the clearance range."
   },
   {
    "reados": "publication/yes-and-no-when-sources-disagree",

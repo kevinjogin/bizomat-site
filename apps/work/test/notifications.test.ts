@@ -95,7 +95,8 @@ describe('notifications (critical test 10)', () => {
   it('preferences mute notification types', async () => {
     const { owner, bob, b, person } = await team();
     const prefs = await bob.json('GET', '/api/me/notification-preferences');
-    expect(prefs.find((p: any) => p.type === 'assignment')).toEqual({ type: 'assignment', inApp: true, email: false });
+    // Email is on by default for assignments (12 Nov 2026); in-app as before.
+    expect(prefs.find((p: any) => p.type === 'assignment')).toEqual({ type: 'assignment', inApp: true, email: true });
     await bob.json('PUT', '/api/me/notification-preferences', [{ type: 'assignment', inApp: false, email: false }]);
     await owner.json('POST', `/api/boards/${b.board.id}/items`, { name: 'muted', values: { [person.id]: bob.userId } });
     expect((await list(bob, owner.workspaceId)).notifications.filter((x) => x.type === 'assignment')).toHaveLength(0);

@@ -1,7 +1,9 @@
+import { ROLE_LABELS } from '../../shared/permissions';
+import type { WorkspaceRole } from '../../shared/types';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { errorMessage, get, post, setCsrfToken } from '../lib/api';
+import { ApiError, errorMessage, get, post, setCsrfToken } from '../lib/api';
 import { useConfig, useSession } from '../lib/session';
 import { Icon, ProductLockup } from '../components/ui/Icon';
 import { PlatformLegalLinks } from '../components/layout/PlatformLinks';
@@ -17,7 +19,78 @@ const OAUTH_ERRORS: Record<string, string> = {
   signup_disabled: 'Sign-up is by invitation only. Ask a workspace admin to invite you.',
   provider_unavailable: 'That sign-in method is not configured.',
   account_disabled: 'This account is disabled.',
+  email_not_allowed: 'This email address cannot be used here. Use your work or personal email address.',
+  email_unverified: 'Confirm your email address first: we have sent you a link. Open it, then sign in.',
 };
+
+/** Asks for a new confirmation link; the answer is the same whether or not the address has an account. */
+function ResendLink({ email }: { email: string }) {
+  const [state, setState] = useState<'idle' | 'busy' | 'sent' | 'error'>('idle');
+  const [msg, setMsg] = useState<string | null>(null);
+  const resend = async () => {
+    setState('busy');
+    try {
+      await post('/auth/verify-email/resend', { email });
+      setState('sent');
+    } catch (e) {
+      setMsg(errorMessage(e));
+      setState('error');
+    }
+  };
+  if (state === 'sent') return <p className="muted small">If {email} still needs confirming, a new link is on its way. It can take a minute; check the spam folder too.</p>;
+  return (
+    <p className="muted small">
+      No email?{' '}
+      <button type="button" className="btn ghost sm" onClick={resend} disabled={state === 'busy'}>
+        {state === 'busy' ? 'Sending…' : 'Send the link again'}
+      </button>
+      {msg ? <span className="error"> {msg}</span> : null}
+    </p>
+  );
+}
+
+/** After sign-up, when the address must be confirmed before signing in. */
+function CheckInbox({ email }: { email: string }) {
+  return (
+    <AuthLayout title="Check your inbox" subtitle={`We sent a link to ${email}.`}>
+      <div className="info-box" role="status">
+        Open the link in that email to confirm your address, then sign in. The link works for 24 hours. This keeps accounts to real, reachable email
+        addresses.
+      </div>
+      <div className="auth-gap" />
+      <ResendLink email={email} />
+      <Link className="btn block lg" to={`/login?email=${encodeURIComponent(email)}`}>Go to sign in</Link>
+    </AuthLayout>
+  );
+}
+
+/** The page the confirmation link opens (/verify-email?token=...). */
+export function VerifyEmailPage() {
+  const [params] = useSearchParams();
+  const token = params.get('token') ?? '';
+  const [state, setState] = useState<{ ok: boolean; email?: string; error?: string } | null>(null);
+  useEffect(() => {
+    let live = true;
+    post<{ ok: boolean; email: string }>('/auth/verify-email', { token })
+      .then((r) => live && setState({ ok: true, email: r.email }))
+      .catch((e) => live && setState({ ok: false, error: errorMessage(e) }));
+    return () => {
+      live = false;
+    };
+  }, [token]);
+  if (!state) return <Loading label="Confirming your email address…" />;
+  return state.ok ? (
+    <AuthLayout title="Email address confirmed" subtitle={`${state.email} is confirmed.`}>
+      <Link className="btn primary block lg" to={`/login?email=${encodeURIComponent(state.email ?? '')}`}>Sign in</Link>
+    </AuthLayout>
+  ) : (
+    <AuthLayout title="This link did not work">
+      <div className="error-box" role="alert">{state.error}</div>
+      <div className="auth-gap" />
+      <Link className="btn block lg" to="/login">Go to sign in</Link>
+    </AuthLayout>
+  );
+}
 
 function safeNext(next: string | null) {
   return next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
@@ -67,9 +140,10 @@ function ProviderButtons({ next }: { next: string }) {
 export function LoginPage() {
   const [params] = useSearchParams();
   const next = safeNext(params.get('next'));
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(params.get('email') ?? '');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(params.get('error') ? OAUTH_ERRORS[params.get('error')!] ?? 'Sign-in failed' : null);
+  const [unconfirmed, setUnconfirmed] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -82,12 +156,14 @@ export function LoginPage() {
     e.preventDefault();
     setBusy(true);
     setError(null);
+    setUnconfirmed(null);
     try {
       const s = await post('/auth/login', { email, password });
       setCsrfToken(s.csrfToken);
       qc.setQueryData(['me'], s);
       navigate(next, { replace: true });
     } catch (err) {
+      if (err instanceof ApiError && (err.details as { code?: string; email?: string } | undefined)?.code === 'EMAIL_UNVERIFIED') setUnconfirmed((err.details as { email?: string }).email ?? email);
       setError(errorMessage(err));
     } finally {
       setBusy(false);
@@ -103,7 +179,8 @@ export function LoginPage() {
         <Field label="Password" htmlFor="password">
           <input id="password" className="input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </Field>
-        {error ? <div className="error-box" role="alert" style={{ marginBottom: 12 }}>{error}</div> : null}
+        {error ? <div className={unconfirmed ? 'info-box' : 'error-box'} role="alert" style={{ marginBottom: 12 }}>{error}</div> : null}
+        {unconfirmed ? <ResendLink email={unconfirmed} /> : null}
         <button className="btn primary block lg" disabled={busy || !email || !password}>{busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
       {config.data?.allowSignup ? (
@@ -123,8 +200,10 @@ export function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState(params.get('email') ?? '');
   const [password, setPassword] = useState('');
+  const [website, setWebsite] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [sentTo, setSentTo] = useState<string | null>(null);
   const qc = useQueryClient();
   const navigate = useNavigate();
   const submit = async (e: React.FormEvent) => {
@@ -132,16 +211,23 @@ export function SignupPage() {
     setBusy(true);
     setError(null);
     try {
-      const s = await post('/auth/signup', { name, email, password });
+      // Signing up from an invitation link: the token joins the invited organisation (src/worker/routes/auth.ts).
+      const inviteToken = /^\/invite\/([A-Za-z0-9_-]{10,200})$/.exec(next)?.[1];
+      const s = await post('/auth/signup', { name, email, password, ...(inviteToken ? { inviteToken } : {}), ...(website ? { website } : {}) });
+      if (s.verificationRequired) {
+        setSentTo(s.email);
+        return;
+      }
       setCsrfToken(s.csrfToken);
       qc.setQueryData(['me'], s);
-      navigate(next, { replace: true });
+      navigate(s.joinedWorkspaceId ? `/w/${s.joinedWorkspaceId}/home` : next, { replace: true });
     } catch (err) {
       setError(errorMessage(err));
     } finally {
       setBusy(false);
     }
   };
+  if (sentTo) return <CheckInbox email={sentTo} />;
   return (
     <AuthLayout title={`Create your ${BRAND.platform} account`} subtitle={`Start organising your team's work in ${BRAND.product}.`}>
       <ProviderButtons next={next} />
@@ -155,6 +241,11 @@ export function SignupPage() {
         <Field label="Password" htmlFor="password" hint="At least 10 characters, with letters and a number or symbol.">
           <input id="password" className="input" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={10} />
         </Field>
+        {/* Hidden from people (and from screen readers): only form-filling robots fill it in. */}
+        <div className="sr-only" aria-hidden="true">
+          <label htmlFor="website">Website</label>
+          <input id="website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+        </div>
         {error ? <div className="error-box" role="alert" style={{ marginBottom: 12 }}>{error}</div> : null}
         <button className="btn primary block lg" disabled={busy || !name || !email || password.length < 10}>{busy ? 'Creating account…' : 'Create account'}</button>
       </form>
@@ -170,7 +261,21 @@ export function InvitePage() {
   const { session, refresh } = useSession();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const inv = useQuery({ queryKey: ['invite', token], queryFn: () => get(`/auth/invitations/${token}`), retry: false });
+  const linkCheck = token === 'link-check';
+  const inv = useQuery({ queryKey: ['invite', token], queryFn: () => get(`/auth/invitations/${token}`), retry: false, enabled: !linkCheck });
+  if (linkCheck) {
+    // The target of the "Check an email link" button in test emails: shows where the link really arrived.
+    const here = `${window.location.origin}${window.location.pathname}`;
+    return (
+      <AuthLayout title="Email links work" subtitle="This page was opened from a BIZOMAT email link.">
+        <div className="info-box" role="status">
+          You arrived at <strong style={{ wordBreak: 'break-all' }}>{here}</strong>. Invitation links in emails open this same page with the invitation’s own code instead of “link-check”.
+        </div>
+        <p className="muted small" style={{ marginTop: 12 }}>If the address above does not start with the BIZOMAT address you expected, check the link tracking settings of the email service (founder console, Email).</p>
+        <Link className="btn block lg" to="/login">Go to sign in</Link>
+      </AuthLayout>
+    );
+  }
   if (inv.isLoading) return <Loading />;
   if (inv.error) return <AuthLayout title="Invitation not found"><p className="muted">This invitation link is invalid.</p><Link to="/login">Go to sign in</Link></AuthLayout>;
   const d = inv.data;
@@ -178,13 +283,14 @@ export function InvitePage() {
     try {
       const r = await post(`/auth/invitations/${token}/accept`);
       await refresh();
-      navigate(`/w/${r.workspaceId}/home`);
+      // An invitation to one task opens that task; otherwise the organisation's home.
+      navigate(r.itemId ? `/w/${r.workspaceId}/tasks/${r.itemId}` : `/w/${r.workspaceId}/home`);
     } catch (e) {
       setError(errorMessage(e));
     }
   };
   return (
-    <AuthLayout title={`Join ${d.workspaceName}`} subtitle={`${d.inviterName} invited ${d.email} as ${d.role}.`}>
+    <AuthLayout title={`Join ${d.workspaceName}`} subtitle={`${d.inviterName} invited ${d.email} as ${ROLE_LABELS[d.role as WorkspaceRole] ?? d.role}.`}>
       {d.status !== 'pending' ? <div className="info-box">This invitation is {d.status}.</div> : session ? (
         <>
           {session.user.email.toLowerCase() !== d.email.toLowerCase() ? (
