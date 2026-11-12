@@ -50,7 +50,7 @@ This is an illustration. RCFP agreements take effect when the second party signs
 
 Not every variation goes on GrantConnect. Footnote 51 points to Finance's guidance on reportable variations and gives examples: significant additional payments of relevant money, extensions into a new financial year, novation (moving the agreement to a different grantee) and changes in organisation details. Minor variations, such as indexation, changes to project or research team members, or date changes within the same financial year, do not need to be reported.
 
-The test is what changed, not how large it felt. Moving a report's due date from December to January stays within one financial year, so it is minor. Moving a completion date from April to August crosses 30 June, so it is reportable. Reportable or not, every variation needs approval by the right delegate and a record on the file (Chapter 8).
+For dates, the test is the financial year, not how long the delay felt. Moving a report's due date from December to January stays within one financial year, so it is minor. Moving a completion date from April to August crosses 30 June, so it is reportable. Reportable or not, every variation needs approval by the right delegate and a record on the file (Chapter 8).
 
 ```figure
 type: decision
@@ -80,9 +80,9 @@ This is an illustration. RCFP's agreement template has no clause that prevents p
 
 Because the Minister approved every RCFP grant, paragraph 5.5 applies: NRIO must record the grants awarded and the decisions on GrantConnect as soon as practicable. Paragraph 4.13 adds that decisions reported to the Minister for Finance under 4.11(a), for grants in a minister's own electorate, and 4.12(a), for grants officials recommended be rejected, must also be recorded on GrantConnect "with a summary of the basis of the approval". Chapter 6 covered the reports to the Minister for Finance and their tabling; GrantConnect is the public face of the same decisions.
 
-This is an illustration. Two of the 31 grants were approved against officials' recommendations, and one of them, Corran Bay Progress Association's hall kitchen, is in the Minister's own electorate. Ben takes each summary of the basis from the Minister's own written reasons, not from the brief or a conversation with the Minister's office, and files the published text with the decision record. If the summary and the recorded reasons ever differ, someone will ask which is wrong.
+This is an illustration. Two of the 31 grants were approved against officials' recommendations, and one of them, Corran Bay Progress Association's hall kitchen, is in the Minister's own electorate. Ben takes each summary of the basis from the Minister's written reasons, not from the brief or a conversation with the Minister's office, and files the published text with the decision record. If the summary and the recorded reasons ever differ, someone will ask which is wrong.
 
-Other reporting, such as an agency's annual report or answers to the Parliament, has its own rules, which this book does not cover. Ask your governance area what applies, and make sure every figure you supply can be traced to the file.
+Other reporting, such as an agency's annual report or answers to the Parliament, has its own rules, outside this book. Ask your governance area what applies, and make sure every figure you supply can be traced to the file.
 
 ## Keeping the full file
 
@@ -110,7 +110,7 @@ caption: This is an illustration of NRIO's checklist. Each item names the rule o
 - Signed conflict-of-interest declarations from everyone who assessed or decided | Disclosure is a "must" (3.12); the record must be kept (3.15)
 - Cross-reference to the brief and the Minister's decision record | 4.10 and 14.7
 - Executed agreement and the record of the approval to commit | PGPA Rule section 18
-- Bank details verified by call-back before the first payment | NRIO's procedure (Chapter 7)
+- Bank details verified by call-back before the first payment and after any change | NRIO's procedure (Chapter 7)
 - GrantConnect record for the award and each reportable variation, with dates | 5.4
 - Each variation's request, the delegate's approval and reasons | Chapter 8
 - Progress reports, site visit notes and payment approvals, each dated and signed | NRIO's procedure
@@ -138,13 +138,13 @@ This is an illustration. Three RCFP agreements were executed and took effect on 
 
 Meanwhile an unsuccessful applicant from the town of one of the three projects searched GrantConnect, found nothing, and wrote to the Minister's office that a grant had been made "in secret". The record was late, not secret, but showing that took three days, because a decision about that grant was not on the file. The grantee had asked to start work a month later than planned, and the Branch Manager had agreed by email. The email was in Ivy's inbox and the reasons in a reply in Ben's. Until both were found, nobody could show who had approved the change, or why.
 
-The cost was a missed "must" under 5.4, reported to the CFO area under NRIO's compliance procedure, a complaint to the Minister's office, three days of staff time, and a grantee that had been told two different start dates.
+The cost was a missed "must" under 5.4, reported to the CFO area under NRIO's compliance procedure, a complaint to the Minister's office, three days of staff time, and a grantee whose agreement and approval email gave different start dates.
 
 The controls are those now in NRIO's practice: a team-owned publication register with due dates entered on the day of execution, a second trained publisher, a weekly check, and a rule that any email deciding something about a grant goes to the grant file the same week, with a note of the reasons if the email does not give them.
 
 ## Exercise: audit a grant file
 
-This is an illustration. In May 2029, before the evaluation starts, Sam asks Ivy to audit one closed grant file against the checklist above. The grantee, an incorporated community association not named elsewhere in this book, received A$180,000, excluding GST, for a hall kitchen and an accessible entry. RCFP pays 40 per cent on execution, 40 per cent on an approved mid-point report and 20 per cent on an approved final report and acquittal.
+This is an illustration. In May 2029, before the evaluation starts, Sam asks Ivy to audit one closed grant file against the checklist above. The grantee, an incorporated community association not named elsewhere, received A$180,000, excluding GST, for a hall kitchen and an accessible entry. RCFP pays 40, 40 and 20 per cent: on execution, on an approved mid-point report and on an approved final report and acquittal.
 
 | No. | What the file holds |
 |---|---|
@@ -162,6 +162,8 @@ This is an illustration. In May 2029, before the evaluation starts, Sam asks Ivy
 Say whether each item passes. For each fault, name the rule or procedure it breaks, say whether it is a "must", a "should" or NRIO's own procedure, and give the fix.
 
 ### Worked answer
+
+This is an illustration.
 
 1. **Passes.** The assessment record is complete.
 2. **Fails.** Officials must disclose material personal interests (3.12) and must retain appropriate records (3.15). A note that a declaration is somewhere else does not show that it exists. Fix: find it and file it. If it cannot be found, record that, ask the assessor to state in writing whether they had any interest at the time, and tell the Director.

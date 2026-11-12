@@ -35,9 +35,9 @@ caption: This is an illustration. Every question has a measure and a source befo
 
 ## Baseline and comparison
 
-Paragraph 12.2 states the test every evaluation faces: "a grant should add value by achieving something worthwhile that would not occur without the grant." A before-and-after figure cannot answer it: if use was rising anyway, because towns grew or a new sport arrived, it credits the grant with that too. The question is how use changed compared with what would have happened without the grant. Nobody can observe that, so a comparison group stands in for it.
+Paragraph 12.2 states a fundamental appraisal criterion, which evaluation tests afterwards: "a grant should add value by achieving something worthwhile that would not occur without the grant." A before-and-after figure cannot answer it: if use was rising anyway, because towns grew or a new sport arrived, it credits the grant with that too. The question is how use changed against what would have happened without the grant. Nobody can observe that, so a comparison group stands in for it.
 
-This is an illustration. RCFP has a natural comparison group. Of the 61 applications that met the minimum score on every criterion, 31 were funded and 30 were not. The 30 had similar facilities and needs, applied in the same round and were judged fundable; they missed out because of the funding line and the final decisions. Every applicant's baseline, the 12 months to 31 January 2027, came with its application (Chapter 2). Funded facilities report their first 12 months after completion in the return their agreements require. The evaluation asked the other 30 for their records for 2029, which overlaps most funded result years, and 24 agreed.
+This is an illustration. RCFP has a natural comparison group. Of the 61 applications that met the minimum score on every criterion, 31 were funded and 30 were not. The 30 had similar facilities and needs, applied in the same round and were judged fundable; they missed out because of the funding line and the final decisions. Most applicants' baselines, the 12 months to 31 January 2027, came with their applications (Chapter 2). Funded facilities report their first 12 months after completion in the return their agreements require. The evaluation asked the other 30 for their records for 2029, which overlaps most funded result years, and 24 agreed.
 
 | Group | Average hours a week, baseline | Result year | Average change | Median change | Facilities that improved |
 |---|---:|---:|---:|---:|---:|
@@ -46,13 +46,13 @@ This is an illustration. RCFP has a natural comparison group. Of the 61 applicat
 
 Chapter 2's plan reports the median change and the number that improved, so one large library cannot swamp many small halls; both tell the same story. Cost calculations need totals, so the evaluation also uses averages: the funded facilities gained 11 hours a week, the comparison facilities 2. The estimated effect is the difference: 11 − 2 = 9 hours a week per facility, or 9 × 31 = 279 extra hours a week across the round. A before-and-after report would have claimed 11 × 31 = 341.
 
-The comparison is not perfect, and the report says so. Some unfunded applicants may have found other money, six did not respond, and the result years do not match exactly. Each limit lowers the confidence the evaluation can claim; none makes the comparison worthless.
+The comparison is not perfect, and the report says so. Some unfunded applicants may have found other money, six did not take part, and the result years do not match exactly. Each limit lowers the confidence the evaluation can claim; none makes the comparison worthless.
 
 ## Facility use you can rely on
 
-Among its examples of outcome measures, the CGRPs list "the level of usage of facilities built with the grant" (10.4). RCFP's first measure, booked hours a week, is exactly that; its other two, regular user groups and days lost to condition, come from the same records (Chapter 2). The evaluation also notes which facilities gained accessible features.
+Among its examples of outcome measures, the CGRPs list "the level of usage of facilities built with the grant" (10.4). This is an illustration. RCFP's first measure, booked hours a week, is exactly that; its other two, regular user groups and days lost to condition, come from the same records (Chapter 2). The evaluation also notes which facilities gained accessible features.
 
-Paragraph 10.5 lists common issues to consider. One is relying on indicators built from grantee data without checking that the grantee can produce accurate, reliable and complete data, and volunteers' booking records vary.
+One common issue in 10.5 is relying on indicators built from grantee data without checking that the grantee can produce accurate, reliable and complete data, and volunteers' booking records vary.
 
 This is an illustration. Chapter 2's plan checks a sample of baselines at site visits. For the result year, Ben checked six funded and four comparison facilities' records against hire receipts and a visit. Most matched within an hour or two a week. One hall had kept counting bookings that had lapsed months earlier; its figures were corrected, and the report describes the check.
 
@@ -93,7 +93,7 @@ A benefit–cost ratio (BCR) divides the present value of a project's benefits b
 
 This is an illustration. The evaluation states its assumptions once and uses them for every project:
 
-- each additional hour of community use is worth A$60, the typical hire charge for a comparable regional hall, a cautious stand-in for what users would pay;
+- each additional hour of community use is worth A$60, NRIO's assumed hire charge for a comparable regional hall, a cautious stand-in for what users would pay;
 - weekly hours become yearly hours by multiplying by 52, the reverse of Chapter 2's calculation;
 - benefits include costs the grantee no longer pays, such as repairs to an old roof;
 - costs are the whole project cost, whoever paid it, plus any extra yearly running costs;
@@ -102,7 +102,7 @@ This is an illustration. The evaluation states its assumptions once and uses the
 
 The [Benefit–Cost Ratio](/tools/benefit-cost-ratio/) tool does this arithmetic. From the initial investment, annual benefits, annual operating costs, salvage value, years and discount rate, it gives the present values of benefits and costs, the ratio and the net present benefit. It also gives a modified ratio, which nets running costs off benefits; RCFP reports the conventional one.
 
-For Kellerton Hall the yearly benefit is 15 hours × 52 weeks × A$60 = A$46,800 of use, plus A$4,000 of roof repairs no longer needed: A$50,800. Extra cleaning, power and insurance cost A$5,000 a year.
+This is an illustration. For Kellerton Hall the yearly benefit is 15 hours × 52 weeks × A$60 = A$46,800 of use, plus A$4,000 of roof repairs no longer needed: A$50,800. Extra cleaning, power and insurance cost A$5,000 a year.
 
 ```figure
 type: formula
@@ -131,7 +131,7 @@ The comparison group deals with the trend. An honest evaluation names what it do
 
 Write the finding as a contribution, not a proof: "the grants are estimated to have added about 9 hours of use a week per facility", not "the grants doubled use".
 
-This is an illustration. The two grants approved against officials' recommendations, including Corran Bay Progress Association's hall kitchen, are measured and reported like every other grant. The evaluation reports results; it does not revisit the Minister's decisions, which were recorded and reported as Chapter 6 described.
+This is an illustration. The two grants approved against officials' recommendations are measured and reported like every other grant. The evaluation reports results; it does not revisit the Minister's decisions, which were recorded and reported as Chapter 6 described.
 
 ## Lessons for Round 2 and advice on continuation
 
@@ -151,7 +151,7 @@ caption: This is an illustration. The recommendation is the officials' advice. T
 - Cost and risk | Saves the grant money; small towns lose a source of funding | Cost per outcome likely to stay at Round 1's level | A little more assessment work; a lower cost per outcome expected
 ```
 
-Sam recommends continuing with three changes to future guidelines, which the Minister would approve. Applicants say who will open, book and record use of the facility, assessed under capacity to deliver. Booking records follow the evaluation's definition throughout. And every applicant is asked to agree to be contacted for the evaluation, so the comparison group is built in from the start.
+This is an illustration. Sam recommends continuing with three changes to future guidelines, which the Minister would approve. Applicants say who will open, book and record use of the facility, assessed under capacity to deliver. Booking records follow the evaluation's definition throughout. And every applicant is asked to agree to be contacted for the evaluation, so the comparison group is built in from the start.
 
 ## When it goes wrong: an evaluation that counted outputs
 
@@ -175,7 +175,7 @@ This is an illustration. Using the evaluation's assumptions and the 7 per cent r
 
 ### Worked answer
 
-The annuity factor is 10.594, as for Kellerton. Dollar figures use the unrounded factor and are rounded to the nearest dollar.
+This is an illustration. The annuity factor is 10.594, as for Kellerton. Dollar figures use the unrounded factor and are rounded to the nearest dollar.
 
 Annual benefits:
 
@@ -188,7 +188,6 @@ Annual benefits:
 | Brindlemere | A$26,960 × 10.594 = A$285,615 | A$269,000 + A$31,782 = A$300,782 | 0.95 | −A$15,167 |
 | Eastbrook | A$101,600 × 10.594 = A$1,076,352 | A$860,000 + A$105,940 = A$965,940 | 1.11 | A$110,412 |
 | Tallowood | A$18,720 × 10.594 = A$198,320 | A$79,000 + A$15,891 = A$94,891 | 2.09 | A$103,429 |
-| Together | A$1,560,287 | A$1,361,613 | 1.15 | A$198,674 |
 
 Together, benefits are A$285,615 + A$1,076,352 + A$198,320 = A$1,560,287 and costs A$300,782 + A$965,940 + A$94,891 = A$1,361,613, so the ratio is 1.15 and the net present benefit A$198,674.
 
@@ -197,7 +196,7 @@ What the results mean:
 1. **Pool the present values; do not average the ratios.** (0.95 + 1.11 + 2.09) ÷ 3 = 1.38 gives the A$79,000 shed the same weight as the A$860,000 library. The pooled 1.15 weighs each project by its size.
 2. **A ratio below 1 is a finding, not a verdict.** Brindlemere's valued use does not quite cover its cost, but change rooms that meet current standards may matter more for safety and for who can play than for hours booked. Report the ratio and describe those benefits, with evidence, beside it.
 3. **Count the whole cost, as actually spent.** With the grant alone, Eastbrook's costs would be A$500,000 + A$105,940 = A$605,940, and its ratio A$1,076,352 ÷ A$605,940 = 1.78. That overstates its value: the council's A$360,000 is a real cost. Equally, Brindlemere's cost is the A$269,000 spent on the change rooms, not the A$310,000 approved. The Commonwealth-only view belongs in the cost per outcome, labelled as such.
-4. **Test the rate.** At 10 per cent the factor falls to 8.514 and the pooled ratio to 0.94. The advice should say that these projects' benefits exceed their costs at the case's rate, but not at a higher one.
+4. **Test the rate.** At 10 per cent the factor falls to 8.514 and the pooled ratio to 0.94. The advice should say that these projects' benefits exceed their costs at the case's rate, but not at 10 per cent (break-even is about 9 per cent).
 5. **Three projects are not the program.** The advice should rest on the ratio for all 31 grants.
 
 A fair summary for the Director: at the evaluation's assumptions, these three projects return about A$1.15 of valued benefit per dollar of cost, with a wide spread between projects and a result below 1 at a 10 per cent rate. The ratio supports continuing with changes; on its own, it does not prove value for money.

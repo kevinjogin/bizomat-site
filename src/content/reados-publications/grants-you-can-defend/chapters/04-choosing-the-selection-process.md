@@ -164,9 +164,9 @@ Months later, a football club whose grandstand project had ranked below the fund
 
 The control is the one the RCFP now uses. Any proposal to fund outside a published process goes to the Grants Program Manager in writing before anyone drafts an approval. It is tested against 11.3 and, for a one-off ad hoc grant, against all four elements of 2.4(c). A minister, the accountable authority or a delegate agrees to it specifically, in writing. Guidelines are published even for one grant, every contact goes in the record of representations, and officials declare any association with the people asking. None of these steps stops a sound grant. Each makes it defensible.
 
-## Exercise: four requests, four processes
+## Exercise: four requests, four decisions
 
-This is an illustration. Suppose these four requests reach Sam during 2027. For each, choose the selection process by its CGRPs name, and give your reasons and the records you would make.
+This is an illustration. Suppose these four requests reach Sam during 2027. For each, decide whether it is a grant and, if so, choose the process by its CGRPs name; give your reasons and records.
 
 - **A. Storm damage.** In late March 2027, a storm tears the roof off the only community hall in a town of 900 people. The not-for-profit committee's insurance covers A$90,000 of a A$160,000 repair, and the committee asks for the A$70,000 gap so the hall can reopen. Round 1 has closed, and Round 2 opens in 2028.
 - **B. Accessible entrances.** The Minister asks for options for a separate opportunity: a fixed A$20,000 for each hall that lacks an accessible entrance, judged against a published checklist, with A$600,000 available. NRIO estimates that 25 halls would qualify.

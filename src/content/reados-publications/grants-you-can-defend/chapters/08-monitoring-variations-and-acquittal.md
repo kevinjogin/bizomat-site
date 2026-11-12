@@ -17,7 +17,7 @@ Paragraph 14.12 of the [Commonwealth Grants Rules and Principles 2024](https://w
 
 Proportion cuts both ways. Paragraph 9.5 says "There are no mandatory acquittal or reporting requirements for grantees in the CGRPs", and asks officials to set the volume, detail and frequency of reporting in proportion to the risks and outcomes sought. Heavy reporting wastes a volunteer group's time. Light reporting of a struggling project puts public money at risk.
 
-This is an illustration. The RCFP agreement fixes what every grantee reports: the mid-point progress report, and the final report and acquittal. It also lets NRIO ask for information it reasonably needs and visit the site on reasonable notice. Ben rates each grantee at execution, the band sets the monitoring, and the rating is reviewed at each report and whenever something changes.
+This is an illustration. The RCFP agreement fixes what every grantee reports: the mid-point progress report, the final report and acquittal, and a return on use for the 12 months after the works finish, which outlasts the grant. It also lets NRIO ask for information it reasonably needs and visit the site on reasonable notice. Ben rates each grantee after execution, the band sets the monitoring, and the rating is reviewed at each report and whenever something changes.
 
 ```figure
 type: compare
@@ -54,11 +54,11 @@ Consequence:
 
 The [Risk Rating (5 × 5 matrix)](/tools/risk-score/) tool does the same multiplication and applies the same three bands. Use it to check the arithmetic, but rate against the branch's descriptors.
 
-This is an illustration. Ben rated Brindlemere Football Netball Club Inc. when its agreement was executed in July 2027.
+This is an illustration. Ben rated Brindlemere Football Netball Club Inc. on his return from leave, after its agreement was executed in July 2027.
 
 ```figure
 type: formula
-title: Rating Brindlemere at execution
+title: Rating Brindlemere in July 2027
 caption: This is an illustration. The score ranks grantees for attention. Keep both factors on the file, because they say what kind of attention is needed.
 formula: Risk score = Likelihood × Consequence
 - Likelihood | 1 (rare) to 5 (almost certain), on the branch's grant descriptors
@@ -69,13 +69,13 @@ step: Consequence 4, major: the A$310,000 grant puts more than A$100,000 at risk
 step: Risk score = 3 × 4 = 12, Medium
 ```
 
-The likelihood is 3, not 2, because at signing the committee had written in a completion date of 30 June 2029 (Chapter 7). That was not misconduct, but it was evidence that the club's own plan might not fit 18 months.
+The likelihood is 3, not 2, because at signing the committee had written in a completion date of 30 June 2029 (Chapter 7). That was not misconduct, but it was evidence the club's own plan might not fit 18 months.
 
 ## Progress reports and site visits
 
 This is an illustration. The mid-point report decides the second 40 per cent, so it must show enough to decide: progress against each deliverable, spending to date by the schedule's budget lines, photos, changes to timing or risks and, for councils, the council's own spending.
 
-Ben assesses each report against the schedule. Sam accepts the milestone under NRIO's instructions, which give the Grants Program Manager that power but not the power to vary an agreement. Nadia Haddad raises the payment and the CFO area releases it. The file records what was checked, what was queried and why the milestone was met.
+Ben assesses each report against the schedule and, at a sample of site visits, checks use baselines against source records (Chapter 2). Sam accepts the milestone under NRIO's instructions, which give the Grants Program Manager that power but not the power to vary an agreement. Nadia Haddad raises the payment and the CFO area releases it. The file records what was checked, what was queried and why the milestone was met.
 
 Three habits make reports useful:
 
@@ -91,7 +91,7 @@ A variation changes the agreement: its dates, deliverables, budget lines, condit
 
 The CGRPs give the principles as better practice. Paragraph 14.13 says value with relevant money should be considered in recommending and approving a variation, and adds: "Variations should not be used as an alternative to appropriately planning a new grant opportunity." Paragraph 14.14 says agreements should generally be varied only where necessary, and should "not significantly change the scope of the initial agreement". Under 14.16, a pattern of variations should prompt officials to consider longer agreements or a new process.
 
-In a competitive round, some changes cannot be made by variation at all. Each grant was won on merit, against 176 other eligible applications, for the project described. A change that would have altered its score, ranking or amount is not an administrative matter.
+In a competitive round, some changes cannot be made by variation at all. This is an illustration. Each grant was won on merit, against 176 other eligible applications, for the project described. A change that would have altered its score, ranking or amount is not an administrative matter.
 
 ```figure
 type: decision
@@ -107,7 +107,7 @@ caption: This is an illustration. NRIO's rules are the fictional agency's own. O
 
 This is an illustration. Two Round 1 requests show the difference. On Thursday 2 March 2028, Kellerton Hall Committee Inc. asked to move its mid-point report from 15 March to Friday 12 May 2028, after asbestos removal ran three weeks over. Nothing else changed. On Ben's assessment and Sam's recommendation, the Branch Manager approved it in writing, and Ivy Chen moved the A$168,000 instalment from April to June 2028, still in 2027–28. A date change within one financial year is a minor variation that need not go on GrantConnect (footnote 51; Chapter 9).
 
-In May 2028 the Shire of Eastbrook's tenders came in A$60,000 above its estimate, and the council asked NRIO to add that amount. NRIO could not. The grant was already A$500,000, the maximum in the guidelines. Extra money would also be new spending the Minister had not approved, and Round 1 had only A$10.0 million − A$9.98 million = A$20,000 unallocated. The council funded the gap, raising its contribution from A$300,000 to A$360,000 of an A$860,000 project: 41.9 per cent, well above the 25 per cent minimum.
+In November 2027 the Shire of Eastbrook's tenders came in A$60,000 above its estimate, and the council asked NRIO to add that amount. NRIO could not. The grant was already A$500,000, the maximum in the guidelines. Extra money would also be new spending the Minister had not approved, and Round 1 had only A$10.0 million − A$9.98 million = A$20,000 unallocated. The council funded the gap, raising its contribution from A$300,000 to A$360,000 of an A$860,000 project: 41.9 per cent, well above the 25 per cent minimum.
 
 ## Underspends
 
@@ -123,9 +123,9 @@ Not every problem in an acquittal is misconduct. A grantee that buys something t
 
 Section 10 of the [PGPA Rule](https://www.legislation.gov.au/F2014L00911/latest/text) requires the accountable authority to have mechanisms for detecting fraud and corruption, including confidential reporting, and for investigating or otherwise responding to it. Paragraph 15.5 of the CGRPs adds: "Officials should be aware of the procedures to follow when fraud, corruption or misappropriation is suspected." Report the suspicion through NRIO's process, keep the evidence as it is, do not question the grantee or alert anyone involved, and release no further payment without advice.
 
-The CGRPs do not deal with recovering grant money; the duty comes from the PGPA Rule. Money that the agreement requires a grantee to repay is a debt owed to the Commonwealth. Section 11 says the accountable authority of a non-corporate Commonwealth entity "must pursue recovery of each debt for which the accountable authority is responsible". There are three exceptions: the accountable authority considers recovery uneconomical, it is satisfied the debt is not legally recoverable, or the debt has been written off as authorised by an Act. Not pursuing a debt is therefore a recorded decision with reasons, made by the official NRIO's instructions name.
+The CGRPs do not deal with recovering grant money; the duty comes from the PGPA Rule. Section 11 says the accountable authority of a non-corporate Commonwealth entity "must pursue recovery of each debt for which the accountable authority is responsible". There are three exceptions: the accountable authority considers recovery uneconomical, it is satisfied the debt is not legally recoverable, or the debt has been written off as authorised by an Act. The duty applies where the agreement makes an amount repayable as a debt to the Commonwealth, so check its terms with the legal area. Under NRIO's practice, not pursuing a debt is a recorded decision with reasons, made by the official its instructions name.
 
-Recovery is not set-off. Section 64 of the PGPA Act is a separate power, for the Finance Minister to authorise setting off amounts owed to and by the Commonwealth. Ask the CFO area before netting one amount against another, and NRIO's legal area what the agreement allows NRIO to withhold.
+Recovery is not set-off. Section 64 of the PGPA Act is a separate power, for the Finance Minister to authorise setting off amounts owed to and by the Commonwealth. Ask the CFO area before netting amounts, and the legal area what the agreement lets NRIO withhold.
 
 ## Acquittal and closing the grant
 
@@ -147,7 +147,7 @@ caption: This is an illustration. NRIO's acquittal check. The question-marked it
 - ? Does anything suggest misuse rather than error | if so, NRIO's fraud process comes before any conversation with the grantee
 ```
 
-Then close the grant: pay the final instalment or record why less is paid, close the commitment, write to the grantee, check that every reportable variation is on GrantConnect (Chapter 9), and file the decision, its reasons and the evidence together. A file that ends with a payment and no closing note leaves the next reader guessing.
+Then close the grant: pay the final instalment or record why less is paid, close the commitment, write to the grantee, check every reportable variation is on GrantConnect (Chapter 9), and file the decision, its reasons and the evidence together. A file that ends with a payment and no closing note leaves the next reader guessing.
 
 ## When it goes wrong: the email that varied an agreement
 
@@ -187,13 +187,11 @@ This is an illustration.
 | Tallowood Ridge Men's Shed Inc. | 3: first project of this size; electrician and equipment open | 3: A$85,000 is between A$25,000 and A$100,000 | 3 × 3 = 9, Medium |
 | Corran Bay Progress Association Inc. | 4: no builder and an unfunded gap | 4: more than A$100,000 at risk | 4 × 4 = 16, High |
 
-Each score sits inside its band: 4 in Low (1 to 6), 8 and 9 in Medium (7 to 14), and 16 in High (15 to 25).
-
 - **Eastbrook (Low).** The agreement's reports, and a call when each is due. Each report shows the council's own spending, because the 25 per cent minimum applied to every council applicant; Eastbrook's plan is A$300,000 of A$800,000, or 37.5 per cent. Trigger: any change to the council's budget for the project. A Low score with a consequence of 4 means watching the right thing, not watching nothing.
 - **Kellerton (Medium).** A quarterly call, photos with each report, and a site visit before the mid-point report is accepted. Trigger: asbestos removal costing more than quoted, or the program slipping past the mid-point date.
 - **Tallowood Ridge (Medium).** A quarterly call, starting with help on the report template, photos, and a site visit at completion. Trigger: no licensed electrician engaged by the end of October 2027.
 - **Corran Bay (High).** A monthly update, a site visit before works start, and written evidence that a builder is engaged and the A$22,000 gap is funded before the mid-point report can be accepted. The Director hears at once, the Branch Manager within two working days, and the rating is reviewed monthly.
 
-Corran Bay was approved against officials' recommendation, in the Minister's own electorate (Chapter 6). That history must not soften or harden its monitoring; the evidence sets it. Once the association signs a builder and shows the gap is funded, the likelihood falls to 2 and the score to 2 × 4 = 8, Medium, and its monitoring steps down. Using the same method for every grantee is what makes each rating defensible.
+Corran Bay was approved against officials' recommendation, in the Minister's own electorate (Chapter 6). That history must not soften or harden its monitoring; the evidence sets it. Once the association signs a builder and shows the gap is funded, the likelihood falls to 2 and the score to 2 × 4 = 8, Medium, and its monitoring steps down. The same method for every grantee is what makes each rating defensible.
 
 Chapter 9 turns to what NRIO must publish about these grants and their variations, and to the file that has to explain all of it.
