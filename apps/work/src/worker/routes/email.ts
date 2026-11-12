@@ -2,6 +2,7 @@
 // administrators' email page (status, delays, failures, a test message to themselves, retry).
 
 import { Hono } from 'hono';
+import { inviteUrl } from '../services/app-url';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, notFound, now, timingSafeEqual } from '../lib/util';
@@ -105,7 +106,7 @@ emailAdminRoutes.post('/workspaces/:ws/email/test', async (c) => {
     userId: user.id,
     to: user.email,
     toName: user.name,
-    data: { template: 'test', organisation: ws?.name ?? '', sentBy: user.name, provider: cfg.provider === 'brevo' ? `Brevo${cfg.sandbox ? ' (sandbox: accepted and dropped)' : ''}` : cfg.provider, at },
+    data: { template: 'test', organisation: ws?.name ?? '', sentBy: user.name, provider: cfg.provider === 'brevo' ? `Brevo${cfg.sandbox ? ' (sandbox: accepted and dropped)' : ''}` : cfg.provider, at, ...(cfg.baseUrl ? { url: inviteUrl(c.env, 'link-check') } : {}) },
     idempotencyKey: `test:${user.id}:${now()}`,
   });
   await auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'email.test', ip: clientIp(c) }).run();

@@ -1,4 +1,5 @@
 import { NOTIFICATION_TYPES, type NotificationType } from '../../shared/types';
+import { appLink } from './app-url';
 import { newId, now, placeholders } from '../lib/util';
 import type { Svc } from './context';
 import { emailConfig } from './email/provider';
@@ -48,11 +49,12 @@ export interface NotifyInput {
   email?: NotifyEmail;
 }
 
-/** The address of an app link in emails, e.g. https://bizomat.ai/tasks/w/... */
+/**
+ * The address of an app link in emails, e.g. https://bizomat.ai/tasks/w/... `baseUrl` is the validated app address
+ * from the email configuration (services/app-url.ts), never the request's host.
+ */
 export function absoluteLink(baseUrl: string, link: string | null | undefined): string {
-  if (!link) return baseUrl || '/';
-  if (/^https?:\/\//.test(link)) return link;
-  return `${baseUrl}${link.startsWith('/') ? '' : '/'}${link}`;
+  return appLink({ APP_URL: baseUrl, ENVIRONMENT: 'local' }, link);
 }
 
 /** The link to one task in emails: opens the board for project members and the task alone for task-only access. */
@@ -109,6 +111,11 @@ export async function notify(svc: Svc, n: NotifyInput): Promise<number> {
 async function emailNotification(svc: Svc, n: NotifyInput, userIds: string[], notificationIds: Map<string, string>) {
   const cfg = emailConfig(await emailEnv(svc.env));
   if (cfg.provider === 'none') return;
+  if (cfg.baseUrlProblem) {
+    // Better no email than one whose links point somewhere wrong.
+    console.error('email_links_unavailable', cfg.baseUrlProblem);
+    return;
+  }
   const users = await svc.db.prepare(`SELECT id, email, name FROM users WHERE disabled_at IS NULL AND id IN (${placeholders(userIds.length)})`).bind(...userIds).all<{ id: string; email: string; name: string }>();
   const ws = await svc.db.prepare('SELECT name FROM workspaces WHERE id = ?').bind(n.workspaceId).first<{ name: string }>();
   const prefsUrl = absoluteLink(cfg.baseUrl, `/w/${n.workspaceId}/settings/notifications`);
