@@ -116,9 +116,11 @@ describe('founder console email settings', () => {
     const f = await platformAdmin('founder');
     const r = await f.json('POST', '/api/admin/email/test', {});
     expect(r).toMatchObject({ ok: true, status: 'sent', to: f.email });
-    expect(fake.sent).toHaveLength(1);
-    expect(fake.sent[0].to.email).toBe(f.email);
-    expect(fake.sent[0].subject).toMatch(/test/i);
+    // (The founder's own sign-up confirmation went out too, with email switched on.)
+    const tests = fake.sent.filter((m) => m.subject === 'BIZOMAT test email');
+    expect(tests).toHaveLength(1);
+    expect(tests[0].to.email).toBe(f.email);
+    expect(fake.sent.every((m) => m.to.email === f.email)).toBe(true);
   });
 
   it('a saved key that this server cannot decrypt is reported, not used', async () => {

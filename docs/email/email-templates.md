@@ -23,6 +23,7 @@ settings (where applicable), the contact page, the slogan "Connecting Intelligen
 | 12 | `report_generated` | A report is generated on a project you manage | off | Report ready – <project>: <report> |
 | | `test` | An administrator sends a test to themselves | | BIZOMAT test email |
 | | `notification` | Any other notification type | | The notification's title |
+| | `verify_email` | A new account must confirm its address ([sign-up protection](../architecture/signup-protection.md)) | always | Confirm your email address for BIZOMAT |
 
 "Default" is the email setting for people who never changed it; each person changes it per type in Settings >
 Notifications. Invitations go to people who are not members yet, so they are always sent (when email is configured).
@@ -42,6 +43,7 @@ Notifications. Invitations go to people who are not members yet, so they are alw
 ## Delivery rules
 
 Idempotency keys: `invite:<invitation>:<send number>` (each resend is a new message with a new link),
-`notify:<notification row or de-duplication key>` (one email per notification), `member-removed:...`, `test:...`.
-Priority: invitations and tests are sent first and may use the reserve above the daily limit. See
+`notify:<notification row or de-duplication key>` (one email per notification), `member-removed:...`, `test:...`,
+`verify:<link hash>`. Priority: invitations, tests and email confirmations are sent first and may use the reserve above
+the daily limit. Invitations and confirmations carry a secret link, so their bodies are cleared once sent. See
 [brevo-setup.md](brevo-setup.md) for limits, retries, suppression and webhooks.

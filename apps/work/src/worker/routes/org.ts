@@ -285,6 +285,17 @@ orgRoutes.post('/workspaces/:ws/invitations', async (c) => {
   if (grants.length) await checkGrants(c.env.DB, wsId, user.id, grants);
   const existingMember = await c.env.DB.prepare('SELECT u.id FROM users u JOIN workspace_members m ON m.user_id = u.id WHERE m.workspace_id = ? AND u.email = ?').bind(wsId, input.email).first();
   if (existingMember) throw new HttpError(409, 'That person is already a member');
+  // The same sign-up protection the invitee would meet (services/signup-guard.ts), so the inviter hears it now. People
+  // who already have an account were accepted when they joined.
+  const hasAccount = await c.env.DB.prepare('SELECT 1 FROM users WHERE email = ?').bind(input.email).first();
+  if (!hasAccount) {
+    const { checkAddress, loadPolicy, refusalMetadata } = await import('../services/signup-guard');
+    const check = await checkAddress(c.env, input.email, await loadPolicy(c.env.DB));
+    if (!check.ok) {
+      await auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'invitation.refused', metadata: refusalMetadata(check, 'invitation'), ip: clientIp(c) }).run();
+      throw new HttpError(400, check.message, { code: 'EMAIL_NOT_ALLOWED', reason: check.reason });
+    }
+  }
   const token = randomToken(32);
   const id = newId();
   const t = now();
