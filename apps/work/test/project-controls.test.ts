@@ -286,6 +286,23 @@ describe('fixes from review', () => {
     expect(row(C.id).baselineStart).toBe('2026-11-06');
   });
 
+  it('a milestone after a task sits on the day its predecessor finishes, and applying the schedule accepts it', async () => {
+    const o = await signup('Owner');
+    const p = await project(o);
+    const A = await p.add('Install', '2026-11-02', '2026-11-04');
+    const M = await p.add('Handover', '2026-11-10', '2026-11-10');
+    await o.json('PATCH', `/api/items/${M.id}/schedule`, { milestone: true });
+    await o.json('POST', `/api/boards/${p.boardId}/links`, { predecessorId: A.id, successorId: M.id });
+    const s = await sched(o, p.boardId);
+    const m = s.tasks.find((x: any) => x.itemId === M.id);
+    // A ends at the close of Wed 4 Nov: the milestone is on 4 Nov, start and finish alike (it was 5 Nov to 4 Nov).
+    expect(m).toMatchObject({ milestone: true, earlyStart: '2026-11-04', earlyFinish: '2026-11-04', lateStart: '2026-11-04', lateFinish: '2026-11-04' });
+    const res = await o.req('POST', `/api/boards/${p.boardId}/schedule/apply`, { statusDate: '2026-11-02' });
+    expect(res.status).toBe(200);
+    const bundle = await o.json('GET', `/api/boards/${p.boardId}`);
+    expect(bundle.items.find((i: any) => i.id === M.id).values[p.tl.id]).toMatchObject({ start: '2026-11-04', end: '2026-11-04' });
+  });
+
   it('someone with access to one task sees the names of linked tasks only', async () => {
     const o = await signup('Owner');
     const p = await project(o);

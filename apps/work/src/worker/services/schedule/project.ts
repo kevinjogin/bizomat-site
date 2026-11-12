@@ -157,6 +157,17 @@ export function finishDate(cal: WorkCalendar, offset: number, projectStartOffset
   return offset > projectStartOffset ? cal.dateAtFinish(offset) : cal.dateAtStart(offset);
 }
 
+/**
+ * Start and finish dates of a span of working minutes. A zero-length span (a milestone) sits on one date, the day its
+ * predecessors finish, so its start is never after its finish: an offset at the end of a working day reads as the next
+ * day with start semantics but as that day with finish semantics.
+ */
+export function spanDates(cal: WorkCalendar, start: number, finish: number, projectStartOffset: number): { start: string; finish: string } {
+  if (finish > start) return { start: cal.dateAtStart(start), finish: cal.dateAtFinish(finish) };
+  const d = finishDate(cal, start, projectStartOffset);
+  return { start: d, finish: d };
+}
+
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 /**
@@ -316,7 +327,8 @@ export async function buildSchedule(env: Env, board: BoardRow, opts: { statusDat
     const r = cpm.tasks.get(it.id);
     const summary = summaryIds.has(it.id);
     const criticality: Criticality = summary ? 'non_critical' : r ? r.criticality : 'unscheduled';
-    const fd = (o: number) => finishDate(cal, o, projectStartOffset);
+    const early = r && criticality !== 'invalid' ? spanDates(cal, r.es, r.ef, projectStartOffset) : null;
+    const late = r && criticality !== 'invalid' ? spanDates(cal, r.ls, r.lf, projectStartOffset) : null;
     return {
       itemId: it.id,
       key: it.task_key,
@@ -346,10 +358,10 @@ export async function buildSchedule(env: Env, board: BoardRow, opts: { statusDat
       earningMethod: s?.earning_method ?? settings.defaultEarningMethod,
       pvProfile: s?.pv_profile ?? settings.defaultPvProfile,
       owners: owners(it.id),
-      earlyStart: r && criticality !== 'invalid' ? cal.dateAtStart(r.es) : null,
-      earlyFinish: r && criticality !== 'invalid' ? (r.ef > r.es ? cal.dateAtFinish(r.ef) : fd(r.ef)) : null,
-      lateStart: r && criticality !== 'invalid' ? cal.dateAtStart(r.ls) : null,
-      lateFinish: r && criticality !== 'invalid' ? (r.lf > r.ls ? cal.dateAtFinish(r.lf) : fd(r.lf)) : null,
+      earlyStart: early?.start ?? null,
+      earlyFinish: early?.finish ?? null,
+      lateStart: late?.start ?? null,
+      lateFinish: late?.finish ?? null,
       totalFloatDays: r && criticality !== 'invalid' ? round2(r.totalFloat / mpd) : null,
       freeFloatDays: r && criticality !== 'invalid' ? round2(r.freeFloat / mpd) : null,
       criticality,
@@ -378,10 +390,12 @@ export async function buildSchedule(env: Env, board: BoardRow, opts: { statusDat
     t.ls = Math.min(...kids.map((k) => k.ls!));
     t.lf = Math.max(...kids.map((k) => k.lf!));
     t.totalFloat = Math.min(...kids.map((k) => k.totalFloat!));
-    t.earlyStart = cal.dateAtStart(t.es);
-    t.earlyFinish = finishDate(cal, t.ef, projectStartOffset);
-    t.lateStart = cal.dateAtStart(t.ls);
-    t.lateFinish = finishDate(cal, t.lf, projectStartOffset);
+    const early = spanDates(cal, t.es, t.ef, projectStartOffset);
+    const late = spanDates(cal, t.ls, t.lf, projectStartOffset);
+    t.earlyStart = early.start;
+    t.earlyFinish = early.finish;
+    t.lateStart = late.start;
+    t.lateFinish = late.finish;
     t.totalFloatDays = round2(t.totalFloat / mpd);
     t.durationMinutes = t.ef - t.es;
     t.durationDays = round2((t.ef - t.es) / mpd);
