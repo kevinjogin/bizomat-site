@@ -11,6 +11,7 @@ import type { BoardViewProps } from './types';
 import { ColumnDialog } from './ColumnDialog';
 import { BASE } from '../lib/base';
 import { GroupDescriptionPreview, GroupInfoPanel, groupFigures } from './GroupDescription';
+import { CriticalBadge, TaskKey, useScheduleIndex } from './controls/schedule';
 
 interface Section {
   key: string;
@@ -455,6 +456,7 @@ function moveGroup(props: BoardViewProps, g: GroupDTO, dir: number) {
 function NameCell({ item, props, subCount, open, toggle, isSub }: { item: ItemDTO; props: BoardViewProps; subCount: number; open: boolean; toggle: () => void; isSub?: boolean }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(item.name);
+  const criticality = useScheduleIndex().byItem.get(item.id)?.criticality;
   const save = () => {
     setEditing(false);
     const n = name.trim();
@@ -469,6 +471,7 @@ function NameCell({ item, props, subCount, open, toggle, isSub }: { item: ItemDT
           <Icon name={open ? 'chevronDown' : 'chevronRight'} size={14} />
         </button>
       ) : <Icon name="subitem" size={14} className="muted" />}
+      {!editing ? <TaskKey value={item.key} /> : null}
       {editing ? (
         <input className="input sm grow" autoFocus value={name} aria-label="Item name" onChange={(e) => setName(e.target.value)} onBlur={save} onKeyDown={(e) => { if (e.key === 'Enter') save(); if (e.key === 'Escape') { setName(item.name); setEditing(false); } }} maxLength={500} />
       ) : (
@@ -487,6 +490,7 @@ function NameCell({ item, props, subCount, open, toggle, isSub }: { item: ItemDT
           {item.name}
         </span>
       )}
+      <CriticalBadge criticality={criticality} compact />
       {subCount ? <span className="badge" title="Subitems">{subCount}</span> : null}
       {item.updateCount ? <span className="badge accent" title="Updates"><Icon name="message" size={11} /> {item.updateCount}</span> : null}
       <button className="btn ghost icon sm open-btn" aria-label={`Open ${item.name}`} onClick={() => props.openItem(item.id)}><Icon name="chevronRight" size={14} /></button>

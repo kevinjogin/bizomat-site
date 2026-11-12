@@ -96,3 +96,61 @@ button.task-key.copy:hover { color: var(--text); }
   .pc-bars .bar-row { grid-template-columns: 90px 1fr 80px; }
 }
 .sched-filter-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 4px 24px 6px; }
+
+/* Task panel: the Schedule tab (board/controls/TaskSchedule.tsx). Compact two-column fields; the Advanced part is a
+   native disclosure. */
+.ts { display: grid; gap: 12px; }
+.ts .pc-section h3 { font-size: 13.5px; }
+.ts-ident { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: flex-start; padding: 2px 2px 0; }
+.ts-field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ts-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); }
+.ts-value { font-size: 13px; min-height: 28px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.ts-wide { grid-column: 1 / -1; }
+.ts-inline { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ts-inline > .select, .ts-link-form > .select { width: auto; }
+.ts-stack { display: grid; gap: 4px; }
+.ts-hint { font-size: 12px; color: var(--text-3); margin: 0; }
+.ts-note { margin-bottom: 8px; }
+.ts .input.ts-num { width: 88px; }
+.ts .input.ts-date { width: 150px; }
+.ts .select.ts-select-wide { max-width: 100%; }
+.ts-advanced { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.ts-advanced > summary { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-weight: 600; font-size: 13.5px; list-style: none; }
+.ts-advanced > summary::-webkit-details-marker { display: none; }
+.ts-advanced > summary:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 10px; }
+.ts-advanced > summary .muted { font-weight: 400; }
+.ts-advanced .ts-chev { transition: transform .15s; flex: none; }
+.ts-advanced[open] .ts-chev { transform: rotate(90deg); }
+.ts-advanced-body { padding: 0 14px 12px; }
+.ts-rows { display: grid; gap: 6px; }
+.ts-rows-table td { padding: 3px 6px; }
+.ts-deps + .ts-deps { margin-top: 12px; }
+.ts-dep-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+.ts-dep-head .muted { font-weight: 400; }
+.ts-links { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 4px; }
+.ts-link { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 34px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+.ts-link.critical { box-shadow: inset 3px 0 0 var(--danger); }
+.ts-link-name { flex: 1 1 140px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ts-link-type { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; font-weight: 600; }
+.ts-link-actions { display: inline-flex; gap: 2px; margin-left: auto; }
+.ts-link-src { margin-left: auto; }
+.ts-link-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
+.ts-link-form .ts-task-pick { flex: 1 1 220px; min-width: 0; }
+.ts-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; align-items: end; margin-bottom: 10px; }
+.ts-form .input { width: 100%; }
+.ts-form-wide { grid-column: span 2; }
+.ts-form-actions { display: flex; align-items: end; }
+.ts-table-wrap { overflow-x: auto; }
+.ts .pc-table th { position: static; }
+.ts-compare td.ts-rowhead { font-weight: 600; color: var(--text-2); }
+.ts-total td { font-weight: 600; background: var(--surface-2); }
+@media (max-width: 760px) {
+  .ts-form { grid-template-columns: 1fr 1fr; }
+  .ts-form-wide { grid-column: 1 / -1; }
+}
+
+/* Task keys and criticality in the table's name cell and on Kanban cards: never shrink, never change the row height. */
+.name-cell .task-key, .name-cell .crit-badge { flex: none; }
+.kcard .kmeta .task-key { font-size: 10.5px; }
+/* The board's critical path filter: the select keeps its own width (the base .select is full width). */
+.sched-filter-bar .select { width: auto; }
