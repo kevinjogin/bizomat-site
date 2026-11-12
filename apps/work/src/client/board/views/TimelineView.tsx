@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { labelsOf, doneLabelIds } from '../../../shared/columns';
 import { addDays, diffDays, parseIsoDate } from '../../../shared/dates';
@@ -47,6 +47,8 @@ export function TimelineView(props: BoardViewProps) {
   const dragRef = useRef<Drag | null>(null);
   const [linking, setLinking] = useState<false | { from: string | null }>(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrolledFor = useRef<string>('');
 
   const progressCol = bundle.columns.find((c) => c.type === 'progress');
   const statusCol = bundle.columns.find((c) => c.type === 'status');
@@ -112,6 +114,17 @@ export function TimelineView(props: BoardViewProps) {
     hi = addDays(hi, 21);
     return { start: lo, totalDays: Math.min(3000, diffDays(lo, hi) + 1) };
   }, [allItems, col, today, byItem, baseBy]);
+
+  // Open on the work: scroll so the project start (or today, if earlier work is done) is near the left edge, once per
+  // project and zoom.
+  const focusDate = sched?.summary.projectStart && sched.summary.projectStart > start ? sched.summary.projectStart : null;
+  useEffect(() => {
+    const el = scrollRef.current;
+    const key = `${bundle.board.id}:${zoom}:${showCols}`;
+    if (!el || !focusDate || scrolledFor.current === key) return;
+    scrolledFor.current = key;
+    el.scrollLeft = Math.max(0, diffDays(start, focusDate) * px - px * 2);
+  }, [focusDate, start, px, zoom, showCols, bundle.board.id]);
 
   if (!col && !sched?.tasks.some((t) => t.earlyStart)) {
     return (
@@ -329,7 +342,7 @@ export function TimelineView(props: BoardViewProps) {
       {rows.length === 0 ? (
         <div className="card card-pad muted">No items have {col ? col.title.toLowerCase() : 'timeline'} dates yet.</div>
       ) : (
-        <div className="gantt-scroll" onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onKeyDown={(e) => e.key === 'Escape' && setLinking(false)}>
+        <div className="gantt-scroll" ref={scrollRef} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerUp} onKeyDown={(e) => e.key === 'Escape' && setLinking(false)}>
           <div className="gantt" style={{ gridTemplateColumns: `${leftWidth}px ${width}px` }}>
             <div className="gantt-left">
               <div className="gantt-row gantt-head" style={{ height: HEAD }}>

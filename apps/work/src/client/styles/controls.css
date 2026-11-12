@@ -39,7 +39,7 @@ button.task-key.copy:hover { color: var(--text); }
 .gantt-summary b { font-weight: 600; }
 
 /* Project controls screens */
-.pc-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 14px; overflow-x: auto; }
+.pc-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 14px; overflow-x: auto; position: sticky; top: -18px; z-index: 6; background: var(--surface); }
 .pc-tabs button { border: 0; background: none; padding: 8px 12px; font: inherit; font-size: 13.5px; color: var(--text-2); border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
 .pc-tabs button.on { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
 .pc-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
@@ -96,4 +96,17 @@ button.task-key.copy:hover { color: var(--text); }
   .pc-bars .bar-row { grid-template-columns: 90px 1fr 80px; }
 }
 .sched-filter-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 4px 24px 6px; }
-.gantt-today { background: var(--info); }
+.gantt-canvas .gantt-today { background: var(--info); }
+.pc-chart .pv, .pc-legend i.pv { color: var(--info); }
+.pc-chart .ev, .pc-legend i.ev { color: var(--success); }
+.pc-chart .ac, .pc-legend i.ac { color: var(--danger); }
+.pc-chart .plan, .pc-legend i.plan { color: var(--text-3); }
+.pc-chart .cpi, .pc-legend i.cpi { stroke: var(--accent); color: var(--accent); }
+.pc-chart .spi, .pc-legend i.spi { stroke: var(--warning); color: var(--warning); }
+.pc-qa { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pc-qa li { display: grid; grid-template-columns: 220px 1fr; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.pc-qa li b { font-weight: 600; }
+@media (max-width: 760px) { .pc-qa li { grid-template-columns: 1fr; gap: 2px; } }
+.pc-root { display: block; width: 100%; min-width: 0; }
+.sched-filter-bar .select { width: auto; min-width: 200px; flex: 0 0 auto; }
+.pc-root .row .select, .pc-root .row .input { width: auto; max-width: 100%; }
