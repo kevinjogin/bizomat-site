@@ -11,6 +11,7 @@ import { emailAdminRoutes, emailWebhookRoutes } from './routes/email';
 import { financeRoutes } from './routes/finance';
 import { reportRoutes } from './routes/reports';
 import { adminEmailRoutes } from './routes/admin-email';
+import { adminSignupRoutes } from './routes/admin-signup';
 import { boardRoutes } from './routes/boards';
 import { itemRoutes } from './routes/items';
 import { fileRoutes } from './routes/files';
@@ -120,6 +121,7 @@ export function createApp() {
   admin.use('*', requirePlatformAdmin);
   admin.route('/', adminRoutes);
   admin.route('/', adminEmailRoutes);
+  admin.route('/', adminSignupRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
@@ -131,7 +133,7 @@ export function createApp() {
   app.get('*', async (c) => {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy'];
+    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email'];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));

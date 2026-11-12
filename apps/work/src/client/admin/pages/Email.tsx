@@ -52,18 +52,20 @@ interface CheckResult {
 
 const TEMPLATE_LABELS: Record<string, string> = {
   invitation: 'Invitation',
-  invitation_reminder: 'Invitation reminder',
   invitation_accepted: 'Invitation accepted',
-  assignment: 'Task assigned',
-  mention: 'Mention',
-  due_soon: 'Due soon',
+  project_assignment: 'Added to a project',
+  task_assignment: 'Task assigned',
+  task_reassignment: 'Task reassigned',
+  due_reminder: 'Due soon',
   overdue: 'Overdue',
-  project_membership: 'Added to a project',
+  status_update: 'Status changed',
+  comment_mention: 'Comment or mention',
+  project_membership: 'Project membership',
   permission_change: 'Access changed',
   report_generated: 'Report ready',
-  member_removed: 'Removed from organisation',
-  notification: 'Notification',
   test: 'Test',
+  notification: 'Notification',
+  verify_email: 'Email confirmation',
 };
 
 function Tick({ ok, yes, no, unknown }: { ok: boolean | null; yes: string; no: string; unknown?: string }) {
@@ -99,7 +101,7 @@ export default function Email() {
       criticalReserve: String(d.settings.criticalReserve),
       sandbox: d.settings.sandbox,
     });
-  }, [d?.settings.updatedAt]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [d?.settings.updatedAt]);
 
   const refresh = () => qc.invalidateQueries({ queryKey: ['admin', '/email'] });
   const run = async (what: string, fn: () => Promise<void>) => {

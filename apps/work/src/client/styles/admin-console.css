@@ -261,3 +261,4 @@ p.ac-ok, p.ac-bad, dd.ac-bad { display: block; }
 .ac-check { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
 .ac-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; word-break: break-all; background: var(--surface-2); padding: 2px 6px; border-radius: 6px; }
 @media (max-width: 760px) { .ac-dl { grid-template-columns: 1fr; } }
+.ac-textarea { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; resize: vertical; min-height: 110px; }

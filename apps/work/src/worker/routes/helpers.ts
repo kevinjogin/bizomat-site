@@ -21,6 +21,8 @@ export interface UserRow {
   created_at: number;
   updated_at: number;
   password_reset_required?: number;
+  /** Migration 0007: when the address was confirmed; null while it is not. */
+  email_verified_at?: number | null;
 }
 
 export function userDTO(u: UserRow): UserDTO {

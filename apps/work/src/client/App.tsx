@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { lastWorkspace, useSession } from './lib/session';
 import { Loading, ErrorBox } from './components/ui/ui';
 import { AppShell } from './components/layout/AppShell';
-import { LoginPage, SignupPage, InvitePage } from './pages/Auth';
+import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth';
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
@@ -94,6 +94,7 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/invite/:token" element={<InvitePage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="/privacy" element={page(<Privacy />)} />
       <Route path="/admin/*" element={<RequireAuth>{page(<AdminApp />)}</RequireAuth>} />
       <Route path="/" element={<RequireAuth><RootRedirect /></RequireAuth>} />
