@@ -111,7 +111,9 @@ The calendar is turned into a straight axis of working minutes; on it:
   lag − ES(p), FF: EF(s) − lag − EF(p), SF: EF(s) − lag − ES(p)), or project finish − EF.
 - Critical: total float ≤ the critical threshold (default 0 working days). Near-critical: ≤ the near-critical
   threshold (default 5). Otherwise non-critical. Invalid: the network has a loop; nothing is calculated.
-- Started work keeps its actual start; finished work its actual dates (and is not counted as critical). Work not
+- Started work keeps its actual start; finished work its actual dates (and is not counted as critical). A task
+  marked done without recorded actual dates finished on its planned finish, or on the day it was marked done if that
+  came first; a task with progress but no actual start started on its planned start. Work not
   started is never scheduled before the status date, which gives the current forecast; baselines are taken in plan
   mode, without that.
 - Multiple critical paths are listed (chains of critical tasks joined by links with no slack), as are multiple start
