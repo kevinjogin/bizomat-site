@@ -11153,6 +11153,33 @@
    "note": "Converts the yearly caseload, hours per case and productive time into the FTE this chapter calculates for an FOI and privacy team.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/policy-advice-that-lands",
+   "chapter": "impact-analysis",
+   "tool": "benefit-cost-ratio",
+   "type": "applies",
+   "note": "Discounts each option's benefits and costs over ten years to compare benefit-cost ratios and net benefits, with sensitivity tests.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/policy-advice-that-lands",
+   "chapter": "planning-implementation",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Rates implementation risks as likelihood times consequence on the 5 × 5 matrix to set controls and reporting triggers.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/policy-advice-that-lands",
+   "chapter": "evaluation-and-review",
+   "tool": "sample-size-mean",
+   "type": "applies",
+   "note": "Sets how many eased bridges to survey to estimate the mean detour avoided within a chosen margin, with the finite-population correction.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
