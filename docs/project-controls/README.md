@@ -270,7 +270,8 @@ access.
   requests a volume snapshot.
 - After deploying, the first load of each board gives its tasks keys; nothing else changes until people use the new
   features. Existing timeline and dependency data is used as it is.
-- This release is published for review only: not merged and not deployed.
+- This release is published for review only: not merged and not deployed. The owner plans to deploy it in December
+  2026; the steps, checks and rollback are in `DEPLOYMENT.md`.
 
 ## Known limitations
 
