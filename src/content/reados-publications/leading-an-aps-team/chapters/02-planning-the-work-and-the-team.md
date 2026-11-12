@@ -107,13 +107,13 @@ The six officer positions give 6 × 1,275 = 7,650 hours. Even at full strength t
 
 A plan built on the average fails in the busiest hours. Peaks come in layers: the morning, the Monday, the season, and the weeks when many people want leave at once.
 
-This is an illustration. The section's seasonal peaks are the first two weeks of July and the first three weeks of December. In those weeks the morning rate on any weekday reaches about 30 calls an hour, as on a normal Monday, and ordinary hours run a little busier. Each weekday morning needs five call-takers instead of four. That is one more person for two hours on four mornings, or 8 more hours on the phones in each peak week. December's three weeks need 3 × 8 = 24 extra hours.
+This is an illustration. The section's seasonal peaks are the first two weeks of July and the first three weeks of December. In those weeks the morning rate on any weekday reaches about 30 calls an hour, as on a normal Monday. From Tuesday to Friday that adds 10 calls an hour for two hours: 4 × 2 × 10 = 80 calls a week, or 400 over the five weeks. The other 100 peak calls fall in the 150 ordinary hours, lifting them to nearly 16 calls an hour, and three call-takers would then answer only 79.4 per cent within 60 seconds. So each peak week needs five call-takers on weekday mornings and four in ordinary hours: 4 × 2 = 8 more hours on the phones in the mornings and 30 in ordinary hours, or 38 in all. December's three weeks need 3 × 38 = 114 extra hours.
 
 Hannah's peak plan is agreed before each peak, not invented during it:
 
 - no training, team meetings or projects on peak mornings;
 - leave planned around the peaks, because the 1,275 hours allow for leave on average, not for half the team away in the same fortnight;
-- correspondence officers join the phones on peak mornings and draft letters in the afternoons, keeping letters within NRIO's 15-business-day standard;
+- correspondence officers join the phones on peak mornings and take turns as the fourth call-taker after 11 am, keeping letters within NRIO's 15-business-day standard;
 - a trigger: if the share answered within 60 seconds falls below 80 per cent on two days in a row, Marcus tells Hannah that day;
 - before each peak, Hannah tells the Director what will wait.
 
@@ -123,7 +123,7 @@ Because the 34,000 calls include the peaks, a normal week runs a little below th
 
 Section 22(2) of the [Public Service Act](https://www.legislation.gov.au/C2004A00538/latest/text) allows three kinds of engagement: as an ongoing employee, "for a specified term or for the duration of a specified task", or for irregular or intermittent duties. The Employment Principles recognise "that the usual basis for engagement is as an ongoing APS employee" (s 10A(1)(b)).
 
-The [Public Service Regulations 2023](https://www.legislation.gov.au/F2023L00368/latest/text) set the circumstances for a specified term. The main one is that the duties are needed only for a limited period and are unlikely to be needed after it (s 13(4)(a)). The note to that provision gives examples: a temporary increase in workload, a temporary demand for particular skills, or replacing an ongoing employee who is on leave. The Regulations also refer to the Fair Work Act's limits on fixed-term contracts (s 13(8)), so ask People Branch which rules apply before you propose one.
+The [Public Service Regulations 2023](https://www.legislation.gov.au/F2023L00368/latest/text) set the circumstances for a specified term. One is that the duties are needed only for a limited period and are unlikely to be needed after it (s 13(4)(a)). The note to that provision gives examples: a temporary increase in workload, a temporary demand for particular skills, or replacing an ongoing employee who is on leave. The Regulations also refer to the Fair Work Act's limits on fixed-term contracts (s 13(8)), so ask People Branch which rules apply before you propose one.
 
 This is an illustration. The plan answers the question. The 8,400 hours recur every year, so they belong in ongoing positions. A peak, a project or cover for a long absence may suit a specified term. Aaron's term ends on Wednesday 30 June 2027, but the work in the plan does not. Hannah notes in the plan that the hours continue after that date, so the question of how they will be staffed reaches the Director well before June. Any ongoing engagement is a merit decision (Chapter 3).
 
@@ -135,10 +135,10 @@ title: Officers at work against the plan's 8,400 hours
 caption: This is an illustration. Each officer gives 1,275 productive hours a year. Shortfalls are annual rates; the weekly figure divides by 50 weeks.
 - Mon 5 Oct 2026 | Ruby starts | Five officers, one still learning the calls
 - Late Oct | Daniel leaves | Four officers: 5,100 hours, 3,300 short, 66 a week
-- 1 to 18 Dec | December peak | Weekday mornings need five call-takers
+- 1 to 18 Dec | December peak | Five call-takers on weekday mornings, four in ordinary hours
 - Mon 4 Jan 2027 | Mei returns | Five officers if full-time: 6,375 hours, 2,025 short, 40.5 a week
-- *Mon 15 Feb | New APS 5 starts | Six officers: 7,650 hours, 750 short, covered by the team leaders
-- Wed 30 Jun | Aaron's term ends | Five officers again unless the need is met
+- *Mon 15 Feb | New APS 5 starts | Six officers if Mei is full-time: 7,650 hours, 750 short, covered by the team leaders
+- Wed 30 Jun | Aaron's term ends | One officer fewer unless the need is met
 ```
 
 This is an illustration. The figure shows why timing mattered. With Mei on parental leave and Daniel gone, four officers give 4 × 1,275 = 5,100 hours a year against 8,400: a shortfall of 3,300 hours, or 66 a week. Even if Marcus and Leila did nothing but take calls, their 2 × 1,275 ÷ 50 = 51 productive hours a week would not close it. The December peak falls in the middle.

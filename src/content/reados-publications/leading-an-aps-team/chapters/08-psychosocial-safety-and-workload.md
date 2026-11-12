@@ -7,21 +7,21 @@ description: "Manage psychosocial risks in an APS team under the WHS Act and Reg
 draft: true
 ---
 
-A threatening phone call can feel like the worst part of an ordinary day. In law it is a work health and safety matter. The Work Health and Safety Act 2011 says "health means physical and psychological health" (s 4), and since 1 April 2023 the Commonwealth WHS Regulations have set out how psychosocial risks must be managed. Abuse from callers and a workload that never eases are risks to health, not features of the job.
+A threatening phone call can feel like the worst part of an ordinary day. In law it is a work health and safety matter. The Work Health and Safety Act 2011 says "health means physical and psychological health" (s 4). Abuse from callers and a workload that never eases are risks to health, not features of the job.
 
 This is an illustration. On Monday 16 November 2026, a caller threatened Sophie Grant, and the incident was reported that day. This chapter follows what Hannah did next, and why workload belongs in the same conversation.
 
 ## Who holds which duty
 
-Chapter 1 introduced the duties in the [Work Health and Safety Act 2011](https://www.legislation.gov.au/C2011A00137/latest/text). This section applies them to a team.
+Chapter 1 introduced the duties in the [Work Health and Safety Act 2011](https://www.legislation.gov.au/C2011A00137/latest/text). Here they apply to a team.
 
 The primary duty sits with the person conducting a business or undertaking (PCBU). Section 19(1) says a PCBU "must ensure, so far as is reasonably practicable, the health and safety of" the workers it engages and those whose work it influences or directs. The Act binds the Commonwealth (s 10). In an agency, the duty reaches the desk through WHS policies, the WHS area and managers.
 
-"Reasonably practicable" (s 18) weighs the likelihood of the hazard or risk, the degree of harm, what the duty holder knows or ought reasonably to know, the availability of suitable controls, and only then their cost, including whether it is grossly disproportionate to the risk. Once a hazard is reported, the agency knows about it.
+"Reasonably practicable" (s 18) weighs the likelihood and degree of harm, what the duty holder knows or ought reasonably to know, and the controls available, and only then their cost. Once a hazard is reported, the agency knows about it.
 
-Officers must exercise due diligence to ensure the PCBU complies (s 27(1)). That includes reasonable steps to ensure it has "appropriate resources and processes" to eliminate or minimise risks, and processes for receiving information about incidents, hazards and risks and "responding in a timely way" (s 27(5)(c)–(d)). A Commonwealth officer is someone who makes, or participates in making, decisions that affect the whole or a substantial part of a Commonwealth business or undertaking (s 247(1)). A section manager is unlikely to fit, but ask your WHS area rather than assume.
+Officers must exercise due diligence to ensure the PCBU complies (s 27(1)). That includes reasonable steps to ensure it has "appropriate resources and processes" to eliminate or minimise risks, and processes for receiving information about incidents, hazards and risks and "responding in a timely way" (s 27(5)(c)–(d)). Section 247(1) decides who is a Commonwealth officer (Chapter 1). A section manager is unlikely to be one, but ask your WHS area rather than assume.
 
-Every worker, managers included, must take reasonable care for their own health and safety and that of others, comply so far as they reasonably can with reasonable instructions, and co-operate with notified WHS policies and procedures (s 28).
+Every worker, managers included, must take reasonable care for themselves and others, follow reasonable instructions and co-operate with notified WHS policies and procedures (s 28).
 
 ```figure
 type: compare
@@ -38,7 +38,7 @@ caption: This is an illustration. The PCBU's duty is carried out through NRIO's 
 
 The [Work Health and Safety Regulations 2011](https://www.legislation.gov.au/F2011L02664/latest/text) have contained a Division on psychosocial risks since 1 April 2023. A psychosocial hazard arises from or relates to the design or management of work, a work environment, plant at a workplace, or "workplace interactions or behaviours", and "may cause psychological harm" (r 55A). A psychosocial risk is "a risk to the health or safety of a worker or other person arising from a psychosocial hazard" (r 55B).
 
-Regulation 55C says a PCBU must "manage psychosocial risks in accordance with Part 3.1" and "implement the control measures required by regulation 55D". Under Part 3.1, the duty holder must identify reasonably foreseeable hazards (r 34), eliminate risks so far as is reasonably practicable or, if that is not reasonably practicable, minimise them so far as is reasonably practicable (r 35), follow the hierarchy of control measures (r 36), keep controls effective (r 37) and review them (r 38).
+Regulation 55C says a PCBU must "manage psychosocial risks in accordance with Part 3.1" and "implement the control measures required by regulation 55D". Under Part 3.1, the duty holder must identify reasonably foreseeable hazards (r 34), eliminate risks so far as is reasonably practicable or, failing that, minimise them so far as is reasonably practicable (r 35), follow the hierarchy of control measures (r 36), keep controls effective (r 37) and review them (r 38).
 
 In choosing controls, the PCBU "must have regard to all relevant matters" (r 55D(2)), including the duration, frequency and severity of exposure, "how the psychosocial hazards may interact or combine", job demands, systems of work, and the training and supervision workers receive.
 
@@ -46,9 +46,9 @@ An abusive caller is a workplace interaction. A workload that never eases comes 
 
 ## What the Code of Practice adds
 
-The [Work Health and Safety (Managing Psychosocial Hazards at Work) Code of Practice 2024](https://www.legislation.gov.au/F2024L01380/latest/text) was approved by the Minister for Employment and Workplace Relations on 27 October 2024, under section 274 of the Act, and registered on 1 November 2024 (F2024L01380). It is guidance, but it carries weight. In a prosecution, an approved code "is admissible in the proceeding as evidence of whether or not a duty or obligation under this Act has been complied with" (s 275(2)).
+The [Work Health and Safety (Managing Psychosocial Hazards at Work) Code of Practice 2024](https://www.legislation.gov.au/F2024L01380/latest/text) was approved by the Minister for Employment and Workplace Relations under section 274 of the Act and registered on 1 November 2024 (F2024L01380). It is guidance, but it carries weight. In a prosecution, an approved code "is admissible in the proceeding as evidence of whether or not a duty or obligation under this Act has been complied with" (s 275(2)).
 
-The Code's note on how to use it says that "must", "requires" and "mandatory" "indicate a legal requirement exists", while "should" is used "to indicate a recommended course of action". When the Code says you must consult workers about psychosocial risks, it restates the law. When it says you should record the process, it recommends good practice.
+The Code's note on how to use it says that "must", "requires" and "mandatory" "indicate a legal requirement exists", while "should" is used "to indicate a recommended course of action". When it says you should record the process, it recommends good practice.
 
 Section 1.1 lists common hazards, among them "Job demands", "Low job control", "Poor support", "Lack of role clarity", "Poor organisational justice" and "Violence and aggression". Section 3.1 adds that "Some hazards by themselves may cause serious harm, such as experiencing workplace violence."
 
@@ -56,7 +56,7 @@ Section 1.1 lists common hazards, among them "Job demands", "Low job control", "
 
 This is an illustration. At about 11.40 am on Monday 16 November 2026, Sophie took a call from a man angry that an NRIO facility had closed for repairs. He swore at her, demanded her surname and said he knew where the office was and would wait for her after work. Sophie ended the call and told Marcus.
 
-Marcus took Sophie off the phones and told Hannah. Hannah's first conversation with Sophie was about Sophie, not the paperwork.
+Hannah's first conversation with Sophie was about Sophie, not the paperwork.
 
 ```figure
 type: timeline
@@ -84,7 +84,7 @@ NRIO's fictional WHS procedure uses a 5 × 5 matrix with descriptors written for
 
 The risk is: "A Client Service Officer is harmed by an abusive or threatening caller." At that rate of exposure, with so little to cut a call short or support the officer, serious harm was expected within a year: likelihood 4. A threat of harm can cause serious psychological injury: consequence 4. The rating is 4 × 4 = 16, High.
 
-The [Risk Rating (5 × 5 matrix)](/tools/risk-score/) tool does the same arithmetic. It multiplies likelihood (1 to 5) by consequence (1 to 5) and bands the score Low 1 to 6, Medium 7 to 14 and High 15 to 25, with a reminder to use your organisation's own descriptors. The score is only as sound as the judgement behind each factor.
+The [Risk Rating (5 × 5 matrix)](/tools/risk-score/) tool does the same arithmetic. It multiplies likelihood (1 to 5) by consequence (1 to 5) and bands the score Low 1 to 6, Medium 7 to 14 and High 15 to 25. The score is only as sound as the judgement behind each factor.
 
 ```figure
 type: formula
@@ -109,7 +109,7 @@ This is an illustration. NRIO cannot stop abusive calls altogether. It can chang
 ```figure
 type: layers
 title: The section's call controls, highest first
-caption: This is an illustration. The order follows regulation 36. Higher layers change the work; lower layers rely on people following a procedure.
+caption: This is an illustration. The order follows regulation 36 and Code section 5.3. Higher layers change the work; lower layers rely on people following a procedure.
 - Substitute | A caller with a history of threats gets a management plan: contact in writing only, handled by a team leader.
 - Change the system of work | Officers rotate between phones and email every two hours, a team leader is kept free for escalations in the Monday morning peak, and anyone who takes an abusive call has a break.
 - Engineer | The phone system shows an alert before a flagged caller is answered, and transfers to the team leader with one touch.
@@ -119,25 +119,25 @@ caption: This is an illustration. The order follows regulation 36. Higher layers
 
 Two controls follow examples in the Code: "management plans where a client is known to have a history of aggression or violence", and letting workers refuse or suspend service when people do not meet the expected standard of behaviour (Appendix B). They are examples; the requirement is what is reasonably practicable in your workplace.
 
-With these controls, Hannah and the WHS adviser rated the risk again. Fewer officers meet a known abusive caller, abusive calls end sooner and support comes the same day: likelihood 3 and consequence 3, so 3 × 3 = 9, Medium. Abuse can be reduced, not removed, so the risk stays on the register.
+This is an illustration. With these controls, Hannah and the WHS adviser rated the risk again. Fewer officers meet a known abusive caller, abusive calls end sooner and support comes the same day: likelihood 3 and consequence 3, so 3 × 3 = 9, Medium. Abuse can be reduced, not removed, so the risk stays on the register.
 
 ## Workload is a hazard too
 
 Workload is the psychosocial hazard a manager controls most directly. The Code's description of job demands includes "Unreasonable or excessive time pressures or role overload" (section 3.1). Hazards also combine: an officer who has taken calls back to back for three hours has less in reserve for an abusive one.
 
-Under the Fair Work Act 2009, an employer must not request or require a full-time employee to work more than 38 hours a week "unless the additional hours are reasonable" (s 62(1)). The first factor in deciding is "any risk to employee health and safety from working the additional hours" (s 62(3)(a)).
+Under the Fair Work Act 2009, a full-time employee may be asked to work more than 38 hours a week only if the additional hours are reasonable (s 62(1)), and the first factor in deciding is "any risk to employee health and safety from working the additional hours" (s 62(3)(a)).
 
-This is an illustration. Chapter 2 sized the section's handling work at 7,120 hours a year, about 5.6 FTE, before team-leader duties, service-level cover and the Monday morning peak. One of the six officer positions is empty until 15 February 2027. Even with every other position filled, five officers give 5 × 1,275 = 6,375 productive hours a year, and 7,120 ÷ 6,375 = 111.7 per cent. Any leave or illness makes it worse. Marcus reports that officers have worked through breaks on most Mondays since late October, and that he and Leila are taking calls most afternoons.
+This is an illustration. Chapter 2 put the section's need at 8,400 hours of officer time a year, ready time for the phones included. With Daniel gone and Mei on parental leave until Monday 4 January 2027, four officers give 4 × 1,275 = 5,100 hours, 3,300 short, or 66 a week over 50 weeks. From 4 January five give 6,375 hours, 2,025 short, or 40.5 a week. From 1 February, with Mei on three days a week (Chapter 9), 4.6 FTE give 5,865 hours, 2,535 short, or 50.7 a week, until Tessa Morgan starts on 15 February. Any leave or illness makes it worse. Marcus reports that officers have worked through breaks on most Mondays since late October, and that he and Leila are taking calls most afternoons.
 
-The signs are in the team's own data: growing queues, missed breaks, leave nobody can take and rising rework. Most controls are decisions a manager can make or ask for: show the gap in hours, agree with the Director what waits, protect breaks, ask about workload in every one-to-one, and escalate early with numbers and options. Officers must take reasonable steps to ensure the agency has "appropriate resources and processes" (s 27(5)(c)), and they can only do that if managers tell them the size of the gap.
+The signs are in the team's own data: growing queues, missed breaks, leave nobody can take and rising rework. Most controls are decisions a manager can make or ask for: show the gap in hours, agree with the Director what waits, protect breaks, ask about workload in every one-to-one, and escalate early with numbers and options. Officers must take reasonable steps to ensure the PCBU, here the Commonwealth acting through the agency, has "appropriate resources and processes" (s 27(5)(c)), and they can only do that if managers tell them the size of the gap.
 
 ## Consulting the team
 
-Consultation is a legal duty. Section 47 requires the PCBU, so far as is reasonably practicable, to consult workers "who are, or are likely to be, directly affected" by a WHS matter. Under section 48, it means sharing relevant information, giving workers a reasonable opportunity to "contribute to the decision-making process", taking their views into account and telling them the outcome in a timely manner. If workers are represented by a health and safety representative (HSR), "the consultation must involve that representative" (s 48(2)). Section 49 requires consultation, among other times, "when identifying hazards and assessing risks", when deciding how to eliminate or minimise them, and "when proposing changes that may affect the health or safety of workers".
+Section 47 requires the PCBU, so far as is reasonably practicable, to consult workers "who are, or are likely to be, directly affected" by a WHS matter. Under section 48, it means sharing relevant information, giving workers a reasonable opportunity to "contribute to the decision-making process", taking their views into account and telling them the outcome in a timely manner. If workers are represented by a health and safety representative (HSR), "the consultation must involve that representative" (s 48(2)). Section 49 requires consultation, among other times, "when identifying hazards and assessing risks", when deciding how to eliminate or minimise them, and "when proposing changes that may affect the health or safety of workers".
 
 This is an illustration. Hannah spoke to Sophie privately first, because she was most affected and could choose what was shared. On Monday 23 November she took the draft assessment to the team meeting, with the HSR for the section's work group present, shared the call-note figures without names, the rating and the draft controls, and asked what was missing.
 
-The team changed the plan. Several officers asked to give first names only, which became the rule. Leila pointed out that abusive callers often follow up in writing, so the alert now shows on correspondence too. Ruby asked to be walked through the call-ending procedure before her next Monday peak. The Director approved the final controls on Thursday 26 November, and they started on Monday 30 November.
+The team changed the plan. Several officers asked to give first names only, which became the rule. Leila pointed out that abusive callers often follow up in writing, so the alert now shows on correspondence too. The Director approved the final controls on Thursday 26 November, and they started on Monday 30 November.
 
 Hannah recorded what was raised, what changed and why, and sent it to the team. The Code says you "should record your risk management process and the outcomes, including your consultation with workers" (section 7). She set a review for Monday 1 March 2027. Regulation 38 requires an earlier one if, for example, a control is not working or a new hazard is identified.
 
@@ -162,11 +162,11 @@ This is an illustration. Using NRIO's descriptors and bands, write each risk as 
 
 **Risk A.** "Officers and team leaders are harmed by sustained high job demands until the vacancy is filled."
 
-- The gap: 7,120 − 6,375 = 745 hours a year, and 745 ÷ 52 = 14.3 hours a week, averaged over the year.
-- With existing controls: at this pace, harm that needs support or days off is expected within the year (likelihood 4), and it would be moderate (consequence 3). 4 × 3 = 12, Medium.
-- Controls, highest first. System of work: Hannah and the Director agree what waits, such as non-urgent projects, and Hannah rosters Monday breaks as firmly as calls. Resources: she asks the Director for 15 hours a week of temporary handling help until 15 February, which covers the 14.3-hour gap. Administrative: a weekly workload check with the team leaders.
-- After controls, if the help is approved: likelihood 2 and consequence 3, so 2 × 3 = 6, Low. If it is not, the other controls bring likelihood to 3 at best: 3 × 3 = 9, Medium, and Hannah tells the Director so in writing. A rating is only as real as the controls behind it.
-- Consult the team and the HSR on the priorities and roster (s 49(b)). Review weekly, and before the temporary help ends, because that change could bring the risk back (r 38(2)(b)).
+- The gap, from the workload section: 66 hours a week until 4 January, 40.5 from then and 50.7 from 1 February.
+- With existing controls: breaks are already missed, and serious harm, such as weeks off work, is expected within the year. Likelihood 4 × consequence 4 = 16, High.
+- Controls, highest first. System of work: Hannah and the Director agree what waits, such as non-urgent projects, and Hannah rosters Monday breaks as firmly as calls. Resources: she asks the Director for two full-time temporary officers until 4 January and one until 15 February: 2 × 1,275 ÷ 50 = 51 hours a week, then 25.5. That leaves 66 − 51 = 15 and 40.5 − 25.5 = 15, the hours the team leaders already carry at full strength (Chapter 2). Administrative: a weekly workload check with the team leaders.
+- After controls, if the help is approved: likelihood 3 × consequence 3 = 9, Medium, because new staff need weeks to learn the calls and the plan has no slack. If it is not, nothing else closes a gap of 40.5 to 66 hours a week, so the rating stays at 16, High, and Hannah tells the Director so in writing. A rating is only as real as the controls behind it.
+- Consult the team and the HSR on the priorities and roster (s 49(b)). Review weekly, and before each step down in the help, because that change could bring the risk back (r 38(2)(b)). From 1 February, Mei's three-day week leaves 50.7 − 25.5 = 25.2 hours, 10.2 more than the team leaders' usual 15, so that review also needs the Director's answer on filling Mei's other 0.4 (Chapter 9).
 
 **Risk B.** "A team leader is harmed by repeated exposure to the most abusive callers."
 

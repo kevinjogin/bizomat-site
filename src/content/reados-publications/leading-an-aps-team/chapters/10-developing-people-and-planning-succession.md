@@ -17,7 +17,7 @@ Section 50 of the [Commissioner's Directions 2022](https://www.legislation.gov.a
 
 Hold the conversation apart from any rating, so this month's numbers do not crowd it out. Ask what the person wants to be doing in a year and in three, which work they enjoy and which they avoid, what they would like to learn and what would help. Listen more than you talk. Record the actions you agree, not the whole conversation, and promise only what you control (Chapter 1).
 
-An aspiration is personal information. Marcus's wish to move on is his to share, not the team's to plan around in public. A good succession plan is written about roles and tasks, so it never needs to say who might leave.
+An aspiration is personal information. This is an illustration. Marcus's wish to move on is his to share, not the team's to plan around in public. A good succession plan is written about roles and tasks, so it never needs to say who might leave.
 
 This is an illustration. Hannah's conversations gave each person one development goal. Two matter for this chapter. Sophie Grant, who has coached Ruby as her buddy (Chapter 4), wants to see the correspondence and complaints side of the section. Mei Wong, now working three days a week (Chapter 9), wants to keep growing on those days and to try some team-leader work.
 
@@ -80,9 +80,9 @@ caption: An acting arrangement is not a promotion, but the APS Employment Princi
 
 A succession plan says how each critical role keeps working when its holder is away or leaves: a trained back-up for each critical task, written procedures, people ready to act, and the development that gets them there. It plans for the role. It does not name a successor, and it cannot promise anyone a job.
 
-If Marcus does leave, an ongoing APS 4 or APS 5 officer selected for his position would be promoted, and engagement and promotion decisions must be based on merit (s 10A(1)(c)). All eligible members of the community must have a reasonable opportunity to apply (s 10A(2)(a)), and the selection must meet the Directions, including notice in the Public Service Gazette (Directions s 25). Acting experience is evidence a candidate can offer, not an entitlement. A promotion to APS 6 falls in Group 6, so promotion review may apply (Chapter 3).
+This is an illustration. If Marcus does leave, an ongoing APS 4 or APS 5 officer selected for his position would be promoted, and engagement and promotion decisions must be based on merit (s 10A(1)(c)). All eligible members of the community must have a reasonable opportunity to apply (s 10A(2)(a)), and the selection must meet the Directions, including notice in the Public Service Gazette (Directions s 25). Acting experience is evidence a candidate can offer, not an entitlement. A promotion to APS 6 falls in Group 6, so promotion review may apply (Chapter 3).
 
-This is an illustration. Under NRIO's delegations the Director approves higher duties on Hannah's recommendation. Hannah's plan covers both team-leader roles, because a gap in either stops the section. It runs from the April conversations to the end of the performance cycle on Thursday 30 September 2027, and it uses two leave periods already booked: Marcus's three weeks from Monday 5 July and Leila's two weeks from Monday 13 September.
+This is an illustration. Under NRIO's delegations the Director approves higher duties on Hannah's recommendation. Hannah's plan covers both team-leader roles, because a gap in either stops the section. It runs from the April conversations to the end of the performance cycle on Thursday 30 September 2027, and it uses two leave periods already booked: Marcus's three weeks from Monday 19 July, after the July peak, and Leila's two weeks from Monday 13 September. Aaron's term ends on Wednesday 30 June, so unless his hours have been filled (Chapter 2), the section will be one officer down while each team leader is away.
 
 ```figure
 type: timeline
@@ -93,7 +93,7 @@ caption: This is an illustration. NRIO's dates. The plan covers roles and tasks,
 - Week of Mon 10 May | Short assessment | a work sample and a conversation; reasons recorded
 - Mon 17 May to Fri 2 Jul | Shadowing and cross-training | two hours a week for each pool member, in the roster
 - Fri 21 May | Procedures written | every single-person task, in the records system
-- Mon 5 to Fri 23 Jul | Acting in Marcus's role | during his booked leave
+- Mon 19 Jul to Fri 6 Aug | Acting in Marcus's role | during his booked leave
 - Mon 13 to Fri 24 Sep | Acting in Leila's role | during her booked leave
 - *Thu 30 Sep | Review | every critical task has a trained back-up
 ```
@@ -148,12 +148,12 @@ The quickest gains come from the team leaders backing each other up. Leila learn
 | Second administrator | Hannah asks IT to give Leila access to the phone system, after training | Fri 28 May |
 | Cross-training | Leila and Marcus each run the other's tasks for a week, with the owner checking | Fri 2 Jul |
 | Pool shadowing | Mei with Marcus, Sophie with Leila, two hours a week each for the 7 weeks from 17 May | Fri 2 Jul |
-| Acting, July | Mei acts in Marcus's role on her three days; Leila covers his critical tasks on Mondays and Fridays | Mon 5 to Fri 23 Jul |
+| Acting, July and August | Mei acts in Marcus's role on her three days; Leila covers his critical tasks on Mondays and Fridays | Mon 19 Jul to Fri 6 Aug |
 | Acting, September | Sophie acts in Leila's role for the two weeks; Marcus covers anything she escalates | Mon 13 to Fri 24 Sep |
 | Review | Coverage, procedures and acting reports, then into each person's career conversation | Thu 30 Sep |
 
 The arithmetic behind the acting rows. Marcus's leave is 3 weeks × 5 days = 15 working days: Mei works 3 × 3 = 9 of them and Leila covers the other 3 × 2 = 6. Leila's leave is 2 × 5 = 10 days, all acted by Sophie. So Mei acts for 9 days and Sophie for 10, close to equal. Shadowing costs 2 people × 2 hours × 7 weeks = 28 hours, which Hannah books in the roster: 28 ÷ 7,140 = 0.39 per cent of the section's annual handling capacity with Mei at three days a week (Chapter 9).
 
-The fairness checks. The expression of interest went to every officer, and the requirements were set before anyone applied. Mei's three days did not count against her; the plan was shaped around them. The reasons for each allocation are on file: Sophie's period matches her development goal, and Mei's fits her days, because the roster is built a week ahead and Leila covers the Mondays. The next acting period goes first to whoever has acted least. Nothing in the plan mentions Marcus's career goal, and nothing promises either officer a promotion. Hannah's own leave is covered by Marcus and Leila in turn.
+The fairness checks. The expression of interest went to every officer, and the requirements were set before anyone applied. Mei's three days did not count against her; the plan was shaped around them. The reasons for each allocation are on file: Sophie's period matches her development goal, and Mei's fits her days, because the roster is built a week ahead and Leila covers the Mondays and Fridays. The next acting period goes first to whoever has acted least. Nothing in the plan mentions Marcus's career goal, and nothing promises either officer a promotion. Hannah's own leave is covered by Marcus and Leila in turn.
 
 This book began with the rules behind every people decision and ends with the people who will make those decisions next. The method has been the same in every chapter. Find the rule and the person who holds the power. Turn the work into hours before arguing about people. Recruit on merit, set expectations that two people could check, and raise problems early, privately and on the record. Report suspected misconduct rather than investigating it. Treat aggression and workload as safety risks. Answer requests on time and with reasons. Build a team that does not depend on any one person, its manager included. Hannah's first year was demanding but not unusual. What carried her through was that each decision could be explained, checked and handed on.

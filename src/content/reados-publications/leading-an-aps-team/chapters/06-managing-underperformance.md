@@ -97,7 +97,7 @@ caption: This is an illustration. A delegate or reviewer reads the record, not t
 
 Procedural fairness, often called natural justice, comes down to three things in practice. The employee knows the concern and the evidence behind it. The employee has a real chance to respond before any decision, and the response is genuinely considered. And the person who decides is unbiased and decides on the evidence. Section 49(1) of the Directions asks for performance policies that are "fair, open and effective". These three habits are what that looks like at a manager's desk.
 
-Fair process protects the manager as well. Chapter 1 noted that the Fair Work Act's definition of bullying does not cover reasonable management action carried out in a reasonable manner. Managing performance is management action, and both halves of that phrase matter. The action must be reasonable, and so must the way it is done.
+Fair process protects the manager as well. The Fair Work Act 2009 says its definition of bullying at work "does not apply to reasonable management action carried out in a reasonable manner" (s 789FD(2)). Managing performance is management action, and both halves of that phrase matter. The action must be reasonable, and so must the way it is done.
 
 ## NRIO's formal process
 

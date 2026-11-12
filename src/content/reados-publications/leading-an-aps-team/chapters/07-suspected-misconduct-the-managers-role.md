@@ -116,7 +116,7 @@ This is an illustration. The People Branch, the authorised officer and the peopl
 
 The team will still notice things. If asked, Hannah gives the same answer every time: "I can't talk about anyone's individual employment matters, and I'd do the same for you."
 
-Supporting the team means supporting each person in it.
+This is an illustration. Supporting the team means supporting each person in it.
 
 - **Leila** reported in good faith. Nothing about how she is treated or rostered should change. Hannah checks in with her privately a week later.
 - **Aaron** still has a manager. Hannah keeps their weekly one-to-one about his work and makes sure he knows about NRIO's employee assistance service.
@@ -165,7 +165,7 @@ caption: This is an illustration. The quiet word felt kinder on the day. It left
 This is an illustration. Each situation happens while Aaron's matter is with the People Branch. Say what Hannah does, which rule applies and what record should exist.
 
 1. On Tuesday 1 December, Aaron stops Hannah in the corridor. "Has someone said something about me? I'd rather just sort it out with you."
-2. At the team meeting on Monday 7 December, Sophie asks why Aaron can no longer open some records and whether he is "in trouble".
+2. At the team meeting on Monday 7 December, Sophie asks why Aaron can no longer open a record and whether he is "in trouble".
 3. The Director suggests that Hannah decide the matter herself, "since you know the team and it's only a small thing".
 4. Marcus tells Hannah that a caller from the community group said "someone at NRIO" had told them how their complaint was going.
 5. Ruby asks to speak privately. She saw an officer in another section give a contractor details of a tender before it was released, and asks whether she will get into trouble for saying so.

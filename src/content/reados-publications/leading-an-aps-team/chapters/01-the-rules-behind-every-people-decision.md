@@ -23,7 +23,7 @@ This is an illustration. The Client Services Section sits in NRIO's Corporate an
 | Marcus Tan | Team Leader, phones and email | APS 6 | Nine years at NRIO |
 | Leila Farah | Team Leader, correspondence and complaints | APS 6 | |
 | Josh Baker | Client Services Officer, correspondence | APS 5 | |
-| Mei Wong | Client Services Officer | APS 5 | On parental leave until Monday 4 January 2027 |
+| Mei Wong | Client Services Officer, correspondence | APS 5 | On parental leave until Monday 4 January 2027 |
 | Daniel Kim | Client Services Officer, phones and email | APS 5 | |
 | Sophie Grant | Client Service Officer | APS 4 | |
 | Aaron Liu | Client Service Officer | APS 4 | Non-ongoing until 30 June 2027 |
@@ -33,7 +33,7 @@ Hannah reports to the Director, Corporate and Client Services, an EL2. NRIO's Pe
 
 ## Where the rules come from
 
-People decisions in an APS agency rest on five layers of rules, each made by a different body (see the figure). Three are on the Federal Register of Legislation. Use the current version of each. The Regulations and Directions replaced older instruments, whose numbering still turns up in old guidance:
+People decisions in an APS agency rest on five layers of rules, each made by a different body. Three are on the Federal Register of Legislation. Use the current version of each. The Regulations and Directions replaced older instruments, whose numbering still turns up in old guidance:
 
 - the **Public Service Act 1999**, Compilation No. 22 of 11 December 2024;
 - the **Public Service Regulations 2023**, which commenced on 30 March 2023 and replaced the 1999 Regulations;
@@ -82,7 +82,7 @@ Section 13 sets the APS Code of Conduct. It binds every APS employee, the manage
 
 Subsection 13(5) cuts both ways. A direction binds staff only when it is lawful, reasonable and given by someone with authority. "Take the phones on Monday morning" usually meets the test. "Stay back every night until the queue clears" may not: the Fair Work Act allows a full-time employee to be asked to work more than 38 hours a week only if the additional hours are reasonable (s 62), and long hours are a safety question too (Chapter 8).
 
-Section 15(3) requires the Agency Head to establish written procedures for determining whether an employee has breached the Code and what sanction, if any, to impose. They must meet the basic procedural requirements in the Directions and have due regard to procedural fairness. A manager reports a suspected breach under them, and neither investigates nor decides it (Chapter 7).
+Section 15(3) requires the Agency Head to establish written procedures for determining whether an employee has breached the Code and what sanction, if any, to impose. They must meet the basic procedural requirements in the Directions and have due regard to procedural fairness. This is an illustration. Under NRIO's procedures a manager reports a suspected breach, and neither investigates nor decides it (Chapter 7).
 
 ## Enterprise agreements and agency procedures
 
@@ -127,7 +127,7 @@ question: Do I hold this power in writing, and does the rule let me use it in th
 caption: Check the first two branches first. A conduct concern or a safety risk is reported even when part of the matter is yours to decide.
 ```
 
-The same four questions give the book its map. Each later chapter starts from one row of it.
+The same four questions give the book its map.
 
 ```figure
 type: compare
@@ -180,12 +180,12 @@ This is an illustration. Six people decisions will reach Hannah over the coming 
 
 **C: the Director decides on a panel's recommendation.** The source is the power to engage and promote (ss 20 and 22), limited by merit (s 10A) and by sections 24 and 25 of the Directions. At NRIO the Director is the delegate for APS 1 to 6, and People Branch runs the process. Hannah helps define the duties, may chair the panel, declares any interest (s 13(7)) and documents the assessment (Chapter 3).
 
-**D: NRIO as employer decides, through the person its procedure names, who may be Hannah.** An eligible employee may request flexible working arrangements in writing (Fair Work Act s 65), and the employer must respond in writing within 21 days (s 65A). A refusal must rest on reasonable business grounds, after genuinely trying to reach agreement and considering the consequences for the employee, and must state the effect of sections 65B and 65C. Your enterprise agreement may add to this. Before 4 January, Hannah checks who signs the response. Then she meets Mei, prepares the reasons and keeps to the time limit (Chapter 9).
+**D: NRIO as employer decides, through the person its procedure names, who may be Hannah.** An eligible employee may request flexible working arrangements in writing (Fair Work Act s 65), and the employer must respond in writing within 21 days (s 65A). A refusal must rest on reasonable business grounds, after genuinely trying to reach agreement and considering the consequences for the employee, and must set out the effect of sections 65B and 65C. Your enterprise agreement may add to this. Before 4 January, Hannah checks who signs the response. Then she meets Mei, prepares the reasons and keeps to the time limit (Chapter 9).
 
 **E: an independent decision-maker decides; Hannah reports.** The source is the Code (s 13) and NRIO's procedures under section 15(3), which require a decision-maker who "is, and appears to be, independent and unbiased" (Directions s 61). Reporting is part of the Ethical Value (s 14(f)). Hannah reports promptly to People Branch, keeps the matter confidential, and neither interviews Aaron nor gathers evidence herself (Chapter 7).
 
 **F: Hannah acts at once; NRIO settles the lasting controls.** The WHS Act requires health and safety, psychological health included, to be ensured so far as is reasonably practicable (ss 4 and 19), and every worker has duties (s 28). Hannah makes sure Sophie is safe and supported and reports the incident under NRIO's procedures. Lasting controls are settled with the WHS area and the Director after consulting the team (ss 47 to 49; Chapter 8).
 
-Only A is Hannah's alone. In B, C and D she recommends or prepares; in E she reports and stays out; in F she acts first, then hands the lasting decisions to those who hold them.
+Only A, and D if NRIO's procedure names her, are decided within the section. In B and C she recommends; in E she reports and stays out; in F she acts first, then hands the lasting decisions to those who hold them.
 
 Chapter 2 turns from the rules to the work: how much demand the section faces, how many people it takes, and how to ask for them.

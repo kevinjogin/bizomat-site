@@ -9,7 +9,7 @@ draft: true
 
 Most people decisions in this book have no deadline set by law. A request for flexible working arrangements does. Under the Fair Work Act 2009, an employer must give an eligible employee who asks in writing a written response within 21 days, and the Act lists the only conditions under which the answer may be no. Leave and attendance carry rules too: some in the Act's National Employment Standards, more in your agency's enterprise agreement.
 
-This is an illustration. Mei Wong, an APS 5 Client Services Officer, comes back from parental leave on Monday 4 January 2027. That morning she gives Hannah a written request to work part-time, three days a week, from Monday 1 February. The timing is hard. Daniel's former position stays empty until Tessa Morgan starts on Monday 15 February (Chapter 3), and January is when the section plans its leave for the year.
+This is an illustration. Mei Wong, an APS 5 in Leila's correspondence team, comes back from parental leave on Monday 4 January 2027. That morning she gives Hannah a written request to work part-time, three days a week, from Monday 1 February. The timing is hard. Daniel's former position stays empty until Tessa Morgan starts on Monday 15 February (Chapter 3), and January is when the section plans its leave for the year.
 
 ## Who can ask, and what a request must say
 
@@ -25,7 +25,7 @@ Section 65A(1) is a requirement, not a guideline: "the employer must give the em
 
 The response must do one of three things (s 65A(2)): grant the request; set out a different change that both people have agreed after discussion; or refuse and include what section 65A(6) requires. Calling a partial refusal an agreement does not make it one; the employee has to agree.
 
-The Act does not require a meeting before a grant, but you should hold one: you learn what the request is for and what else might work. If a refusal is possible, the meeting is not optional, as the next section shows.
+The Act does not require a meeting before a grant, but you should hold one: you learn what the request is for and what else might work. If a refusal is possible, the discussion is not optional, as the next section shows.
 
 This is an illustration. Hannah acknowledged Mei's email the same morning, entered the date received and the deadline in the section's request register, and booked a meeting for Tuesday 12 January. She planned to reply by Friday 15 January, ten days early, so that Mei could confirm her childcare place and the team leaders could change the roster.
 
@@ -54,7 +54,7 @@ A refusal must also explain itself. Under section 65A(6) the response must give 
 type: checklist
 title: Before any refusal is sent
 caption: Section 65A(3) sets the conditions for refusing and section 65A(6) the contents of the response. Your agency's procedure may add steps.
-- Discuss the request with the employee | In a meeting, not only by email. s 65A(3)(a)(i)
+- Discuss the request with the employee | Required before a refusal; a meeting is good practice. s 65A(3)(a)(i)
 - Genuinely try to reach an agreement | Other days, hours, a later start or a trial the employee could accept. s 65A(3)(a)(ii)
 - Weigh the consequences for the employee | Childcare, care of others, health, income. s 65A(3)(c)
 - Identify reasonable business grounds | Specific to this request and this team, with numbers. s 65A(3)(d) and (5)
@@ -75,7 +75,7 @@ If the FWC arbitrates, it may order further steps or, where there is no reasonab
 
 The National Employment Standards are minimum standards that cannot be displaced (s 61(1)). They cover, among other things, flexible working requests, parental leave, annual leave, personal/carer's leave and public holidays (s 61(2)). Your agency's enterprise agreement builds on them, and this book gives no figures from any agreement.
 
-Read its clauses on flexible work, part-time work, working from home and leave before you reply. An agreement may add rights or steps; ask the People Branch which apply. Working from home is a change in the location of work, so a request from an employee in a section 65 circumstance is a section 65 request, whatever the policy calls it. Other requests follow the agreement and your agency's policy.
+Read its clauses on flexible work, part-time work, working from home and leave before you reply. An agreement may add rights or steps; ask the People Branch which apply. Working from home is a change in the location of work, so a written request from an eligible employee who wants it because of a section 65(1A) circumstance is a section 65 request, whatever the policy calls it. Other requests follow the agreement and your agency's policy.
 
 ## Test the roster with the numbers
 
@@ -137,7 +137,7 @@ Keep a register of every request: date received, circumstance, change sought, de
 
 Assess each request on its merits, against the roster as it then stands. An earlier grant can change the numbers, and a lack of capacity to change other employees' arrangements is a listed ground (s 65A(5)(b)). It still has to be shown, and arriving second does not make a request less deserving.
 
-Respect an arrangement once it is made. Mei is not on call on Mondays and Fridays. The Act gives employees a right to refuse "to monitor, read or respond to contact … outside of the employee's working hours unless the refusal is unreasonable" (s 333M(1)). This is an illustration. From February the weekly team meeting moved from Monday to Wednesday, a day everyone works. Development and acting opportunities, the subject of Chapter 10, should be open to part-time staff on the same terms as everyone else.
+Respect an arrangement once it is made. Mei is not on call on Mondays and Fridays. The Act gives employees a right to refuse "to monitor, read or respond to contact … outside of the employee's working hours unless the refusal is unreasonable" (s 333M(1)). This is an illustration. From February the weekly team meeting moved from Monday to Wednesday, a day everyone works. Development and acting opportunities should be open to part-time staff on the same terms as everyone else.
 
 ## When it goes wrong: the two-line refusal
 
@@ -167,7 +167,7 @@ The response is a grant under section 65A(2)(a). It need not contain grounds, al
 >
 > I grant your request. From Monday 1 February 2027 you will work 0.6 of full-time hours, on Tuesdays, Wednesdays and Thursdays. The People Branch will confirm in writing how your hours, pay and leave are worked out under our enterprise agreement.
 >
-> As we agreed, Marcus will send you a short handover note each Tuesday morning covering Friday and Monday, and we will meet in the week of Monday 3 May 2027 to see how the arrangement is working. If your circumstances change, you are welcome to make a new request at any time.
+> As we agreed, Leila will send you a short handover note each Tuesday morning covering Friday and Monday, and we will meet in the week of Monday 3 May 2027 to see how the arrangement is working. If your circumstances change, you are welcome to make a new request at any time.
 >
 > Hannah Lee
 > Client Services Manager

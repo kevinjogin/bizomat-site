@@ -45,7 +45,7 @@ This is an illustration. Before anything is advertised, Hannah writes a one-page
 
 It names the methods: a two-page application, a 40-minute work sample (a reply to a difficult complaint email), a structured interview of five questions, and referee checks for every candidate in the range for an offer. It also names the panel and the delegate. Under NRIO's fictional delegations, the Director, Corporate and Client Services, engages and promotes staff at APS 1 to 6. The panel recommends; the Director decides.
 
-Knowledge of NRIO's own records system is not on the list. New officers learn it in their first weeks, so it is not genuinely required, and asking for it would favour internal applicants for no reason connected with the duties.
+Knowledge of NRIO's own records system is not on the list. New officers learn it in their first weeks, so it is not genuinely required, and asking for it would favour internal applicants.
 
 ## Advertise so that everyone eligible can apply
 
@@ -108,11 +108,12 @@ Promotions carry two further steps. The agency head must notify the promotion of
 ```figure
 type: decision
 title: Can this applicant seek promotion review?
-question: Is the applicant an ongoing APS employee who applied for an APS 2 to 6 vacancy, where the decision promoted another APS employee?
+question: Is the applicant an ongoing APS employee who applied to be promoted to an APS 2 to 6 vacancy, where the decision promoted another APS employee?
 - Not an ongoing APS employee | No promotion review | External and non-ongoing candidates can ask for feedback instead
 - The decision engaged someone from outside the APS | No promotion review | An engagement is not a promotion (for Parliamentary Service staff, see the caption)
 - The vacancy is EL1 or EL2 | No promotion review | Groups 7 and 8 are outside section 20; other review is limited to serious defects
-- *All three conditions met | Apply in writing, with reasons, to the Merit Protection Commissioner | By 5 pm on the 14th day after the Gazette notice; applying stays the decision
+- The job would not be a promotion for the applicant | No promotion review | For an APS 5 vacancy, only applicants at APS 4 or below applied to be promoted
+- *All four conditions met | Apply in writing, with reasons, to the Merit Protection Commissioner | By 5 pm on the 14th day after the Gazette notice; applying stays the decision
 caption: Public Service Regulations 2023, sections 20, 21 and 37. Ongoing Parliamentary Service employees are treated much like APS employees here: see section 20(2) and (3).
 ```
 
@@ -155,11 +156,11 @@ Two cautions. A person engaged short-term to cover a gap competes for the ongoin
 
 ## When it goes wrong: a panel that had already chosen
 
-This is an illustration of a process NRIO did not run. Suppose that, in the week Daniel's move was confirmed, a former colleague rings Hannah from her old agency. An APS 4 officer there, whom Hannah supervised for two years and rates highly, wants a move.
+This is an illustration of a process NRIO did not run. Suppose that, in the week Daniel's move was confirmed, a former colleague rings Hannah from her old agency. An APS 4 officer there, whom Hannah worked alongside for two years and rates highly, wants a move.
 
 Here is how that goes wrong if Hannah decides before the process starts. The criteria come from the officer's résumé, including experience with the complaints software her old agency uses. The notice runs for the minimum seven days. Hannah chairs the panel and declares nothing. The officer scores highly, the report says she "stood out", and nobody else's referees are called. The Director signs.
 
-After the Gazette notice, an ongoing APS 4 who was ranked second learns from a mutual contact that Hannah knew the successful candidate well. She applies to the Merit Protection Commissioner before the deadline, and the promotion is stayed. The reviewer asks NRIO for the documents (Regulations s 22(5)). The aim and purpose is dated after applications closed. One criterion was not genuinely required for the duties. The scores were written after the panel's discussion. Hannah's past supervision of the officer appears nowhere. If the Merit Protection Commissioner finds the process fell short, the promotion does not take effect unless the outcome would have been the same anyway.
+After the Gazette notice, an ongoing APS 4 who was ranked second learns from a mutual contact that Hannah knew the successful candidate well. She applies to the Merit Protection Commissioner before the deadline, and the promotion is stayed. The reviewer asks NRIO for the documents (Regulations s 22(5)). The aim and purpose is dated after applications closed. One criterion was not genuinely required for the duties. The scores were written after the panel's discussion. Hannah's two years working with the officer appear nowhere. If the Merit Protection Commissioner finds the process fell short, the promotion does not take effect unless the outcome would have been the same anyway.
 
 The team carries the vacancy into autumn. The officer, who may well have been the best candidate, loses the job and her good name. Hannah's undeclared interest becomes a question under section 13(7) for People Branch. And the team has learned how jobs are filled.
 
@@ -191,7 +192,7 @@ This is an illustration. On Friday 11 December 2026 the panel's first draft of t
 
 **Merit list.** The ranking can fill only a similar vacancy (Directions s 9): ongoing, APS 5, similar work-related qualities, at NRIO. It covers written decisions within 18 months of the notice of Thursday 12 November 2026, so until May 2028; People Branch confirms the last day. The order is B; then C and D, equal; then A; then E and F, equal. With two pairs grouped as equally suitable, the result is a ranked merit pool (Regulations s 5).
 
-**Review.** Only ongoing APS employees who applied can seek promotion review (Regulations s 20(1)): C and F, and any of the 25 applicants not short-listed who are ongoing APS employees. A, D and E cannot. The right exists because the decision promotes B, an APS employee. The deadline runs from the Gazette notice, not from when candidates are told. For a notice on Thursday 7 January 2027, the 14th day after is Thursday 21 January, so applications close at 5 pm that day.
+**Review.** Only applicants for whom the job would be a promotion, ongoing APS employees at APS 4 or below, can seek promotion review (Regulations s 20(1)): C and F, and any such applicant among the 25 not short-listed. A, D and E cannot. The right exists because the decision promotes B, an APS employee. The deadline runs from the Gazette notice, not from when candidates are told. For a notice on Thursday 7 January 2027, the 14th day after is Thursday 21 January, so applications close at 5 pm that day.
 
 Only the aim and purpose could go to the Director as drafted. The corrected report recommends B, Tessa Morgan, with C and D next: the report the Director signed on 17 December.
 

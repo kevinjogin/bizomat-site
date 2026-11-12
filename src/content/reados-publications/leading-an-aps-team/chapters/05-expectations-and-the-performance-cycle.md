@@ -111,7 +111,7 @@ This is an illustration. NRIO's mid-point review falls in April 2027 and carries
 
 Hannah prepares from the October to March reports the person has seen, her one-to-one notes (to check each concern was raised when it arose) and a list of what has changed.
 
-By April, a lot has. Mei returned from parental leave on Monday 4 January 2027, and her agreement reflects the working arrangement settled after her request (Chapter 9). The new APS 5 started on Monday 15 February 2027, so their mid-point covers about two months, not six. Ruby's agreement sits alongside her probation plan (Chapter 4), and the two should not send her different messages.
+By April, a lot has. Mei returned from parental leave on Monday 4 January 2027, and her agreement reflects the working arrangement settled after her request (Chapter 9). Tessa Morgan, the new APS 5, started on Monday 15 February 2027, so her mid-point covers about two months, not six. Ruby's agreement sits alongside her probation plan (Chapter 4), and the two should not send her different messages.
 
 Change an expectation at the mid-point when the work has changed, and record why. Do not change it because someone is behind; that calls for support and, if the gap is real and lasting, Chapter 6. End each review with a written summary the person has seen. If anything in it would surprise them, the problem lies in the months before.
 

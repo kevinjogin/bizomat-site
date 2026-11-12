@@ -29,9 +29,9 @@ Section 44 of the [Commissioner's Directions 2022](https://www.legislation.gov.a
 - **May.** The agency head may waive that requirement if satisfied that there are "reasonable circumstances justifying the waiver" (s 44(2)).
 - **Must.** During probation the agency head must ensure that "processes are in place to assess the suitability" of the employee to perform the duties (s 44(3)).
 
-Two points follow. First, probation is the default for non-ongoing employees engaged for a specified term or task, as well as for ongoing employees. Second, the Directions require a process for assessing suitability, not just an end date. NRIO's fictional probation procedure, owned by People Branch, supplies that process: reviews at set points, a written record of each, and the manager's recommendation to the delegate before the end date. Probation attaches to engagement, not to a promotion or a move.
+Three points follow. First, probation is the default for non-ongoing employees engaged for a specified term or task, as well as for ongoing employees. Second, the Directions require a process for assessing suitability, not just an end date. Third, the Directions require probation on engagement, and a promotion is not an engagement.
 
-This is an illustration. Tessa Morgan, the new APS 5 who starts on Monday 15 February 2027 (Chapter 3), is not being engaged. She is an ongoing APS employee moving to NRIO on promotion, so People Branch confirms that no probation applies to her. Her onboarding still does.
+This is an illustration. NRIO's fictional probation procedure, owned by People Branch, supplies the assessment process: reviews at set points, a written record of each, and the manager's recommendation to the delegate before the end date. Tessa Morgan, the new APS 5 who starts on Monday 15 February 2027 (Chapter 3), is not being engaged. She is an ongoing APS employee moving to NRIO on promotion, so People Branch confirms that no probation applies to her. Her onboarding still does.
 
 The end of probation can lead to a decision either way. For an ongoing employee, "failure to meet a condition imposed under subsection 22(6)" is one of the grounds for termination in section 29(3)(f). That decision belongs to a delegate, with People Branch's advice, and a note to section 29 points out that the Fair Work Act 2009 also has rules for termination. The manager's part is to make sure that whatever is decided rests on a fair process and an accurate record.
 
@@ -75,7 +75,7 @@ caption: This is an illustration. The ramp-up expectations and review points are
 - Fri 27 Nov | Week 8 check | against the week 8 expectations
 ```
 
-Hannah meets Ruby for half an hour every fortnight, and Marcus talks with her briefly each week. Most early problems surface there, while they are still small.
+Hannah meets Ruby for half an hour every week, and Marcus talks with her briefly between those meetings. Most early problems surface there, while they are still small.
 
 ## Probation reviews that assess suitability
 
@@ -175,7 +175,7 @@ Write Ruby's probation review plan: the first review's findings against the week
 - Week 8 check on Friday 27 November. The expectation is an average of 7.5 minutes or less and at least 85 per cent. Of the 20 calls Marcus samples in weeks 7 and 8, 85 per cent of 20 = 17, so at least 17 must meet the checklist.
 - Midpoint review on the date halfway between 5 October and the end date, booked now.
 - Final review timed so that Hannah's written recommendation reaches the delegate at least four weeks before the end date, as NRIO's procedure asks.
-- The fortnightly one-to-ones continue in between.
+- The weekly one-to-ones continue in between.
 
 **What each note records.** The date, the evidence, progress against each expectation, what is going well, what needs work with the support agreed, Ruby's own comments and the next date. Ruby receives each note within two working days and adds her comments before it is filed as People Branch directs.
 
