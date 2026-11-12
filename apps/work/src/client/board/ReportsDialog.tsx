@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { labelsOf } from '../../shared/columns';
-import { DEFAULT_SECTIONS, REPORT_SECTIONS, REPORT_TYPES, REPORT_TYPE_LABELS, SECTION_LABELS, type ReportOptions, type ReportSection, type ReportType } from '../../shared/reports';
+import { CONTROLS_SECTIONS, DEFAULT_SECTIONS, REPORT_SECTIONS, REPORT_TYPES, REPORT_TYPE_LABELS, SECTION_LABELS, isControlsReportType, type ReportOptions, type ReportSection, type ReportType } from '../../shared/reports';
 import type { BoardBundle, BoardDTO } from '../../shared/types';
 import { errorMessage, get, post } from '../lib/api';
 import { appUrl } from '../lib/base';
@@ -32,6 +32,13 @@ interface SavedReport {
 }
 
 const FORMAT_LABELS: Record<string, string> = { pdf: 'PDF', xlsx: 'Excel', html: 'Print (HTML)', csv: 'CSV tasks' };
+
+interface BaselineSummary {
+  id: string;
+  number: number;
+  name: string;
+  approvedOn: string;
+}
 
 function lastMonth(): string {
   const d = new Date();
@@ -61,6 +68,7 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
   const [includeRisks, setIncludeRisks] = useState(true);
   const [includeUpcoming, setIncludeUpcoming] = useState(true);
   const [confidentiality, setConfidentiality] = useState('');
+  const [baselineId, setBaselineId] = useState('');
   const [commentary, setCommentary] = useState<NonNullable<ReportOptions['commentary']>>({});
   const [preview, setPreview] = useState<{ html: string; at: number } | null>(null);
   const [previewing, setPreviewing] = useState(false);
@@ -72,12 +80,20 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
   const hasFinance = (bundle.finance?.hiddenColumns ?? 0) === 0 && bundle.columns.some((c) => c.type === 'currency' || (c.type === 'number' && c.settings?.financial));
 
   useEffect(() => setSections(DEFAULT_SECTIONS[type]), [type]);
+  useEffect(() => setBaselineId(''), [boardId]);
+
+  const controlsType = isControlsReportType(type);
+  // The baseline choice matters only to the project controls sections (L to N).
+  const wantsBaseline = sections.some((s) => CONTROLS_SECTIONS.includes(s));
+  const baselines = useQuery({ queryKey: ['baselines', boardId], queryFn: () => get<{ baselines: BaselineSummary[] }>(`/boards/${boardId}/baselines`), enabled: wantsBaseline });
 
   const options = useMemo<ReportOptions>(
     () => ({
       type,
       ...(type === 'monthly' ? { month } : {}),
       ...(type === 'custom' ? { start: start || undefined, end: end || undefined } : {}),
+      ...(controlsType ? { end: end || undefined } : {}),
+      ...(wantsBaseline && baselineId ? { baselineId } : {}),
       timezone: tz,
       sections,
       statuses,
@@ -89,7 +105,7 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
       confidentiality: confidentiality.trim() || undefined,
       commentary: Object.fromEntries(Object.entries(commentary).filter(([, v]) => v != null && v !== '')),
     }),
-    [type, month, start, end, tz, sections, statuses, owners, includeFinance, includeActivity, includeRisks, includeUpcoming, confidentiality, commentary],
+    [type, month, start, end, tz, sections, statuses, owners, includeFinance, includeActivity, includeRisks, includeUpcoming, confidentiality, commentary, controlsType, wantsBaseline, baselineId],
   );
 
   const runPreview = async () => {
@@ -158,7 +174,8 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
               </Field>
               <Field label="Report type" htmlFor="rp-type">
                 <select id="rp-type" className="select" value={type} onChange={(e) => setType(e.target.value as ReportType)}>
-                  {REPORT_TYPES.map((t) => <option key={t} value={t}>{REPORT_TYPE_LABELS[t]}</option>)}
+                  <optgroup label="Progress reports">{REPORT_TYPES.filter((t) => !isControlsReportType(t)).map((t) => <option key={t} value={t}>{REPORT_TYPE_LABELS[t]}</option>)}</optgroup>
+                  <optgroup label="Project controls">{REPORT_TYPES.filter(isControlsReportType).map((t) => <option key={t} value={t}>{REPORT_TYPE_LABELS[t]}</option>)}</optgroup>
                 </select>
               </Field>
               {type === 'monthly' ? <Field label="Month" htmlFor="rp-month"><input id="rp-month" className="input" type="month" value={month} onChange={(e) => setMonth(e.target.value)} /></Field> : null}
@@ -168,7 +185,25 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
                   <Field label="End date" htmlFor="rp-end"><input id="rp-end" className="input" type="date" value={end} min={start || undefined} onChange={(e) => setEnd(e.target.value)} /></Field>
                 </div>
               ) : null}
-              <p className="muted small">Dates are in your time zone ({tz}). Monthly and previous-month reports separate work completed in the month, work still active at its end, work carried forward and new work.</p>
+              {controlsType ? (
+                <Field label="Status date" htmlFor="rp-status" hint="The schedule, baseline comparison and earned value are calculated at this date. Empty: today.">
+                  <input id="rp-status" className="input" type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
+                </Field>
+              ) : null}
+              {wantsBaseline ? (
+                <Field label="Baseline" htmlFor="rp-baseline">
+                  <select id="rp-baseline" className="select" value={baselineId} onChange={(e) => setBaselineId(e.target.value)}>
+                    <option value="">The latest approved baseline</option>
+                    {(baselines.data?.baselines ?? []).map((b) => <option key={b.id} value={b.id}>Baseline {b.number}: {b.name} (approved {b.approvedOn})</option>)}
+                  </select>
+                </Field>
+              ) : null}
+              <p className="muted small">
+                Dates are in your time zone ({tz}).{' '}
+                {controlsType
+                  ? 'Project controls reports run from the project start to the status date. Earned value and baseline budgets appear only when your access includes the project finances.'
+                  : 'Monthly and previous-month reports separate work completed in the month, work still active at its end, work carried forward and new work.'}
+              </p>
 
               <h3>Include</h3>
               <div className="check-grid">

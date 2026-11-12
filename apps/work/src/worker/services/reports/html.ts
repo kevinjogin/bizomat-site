@@ -5,6 +5,21 @@ import { SECTION_LABELS, STATUS_LABELS, type ReportSection } from '../../../shar
 import { parseGroupDescription } from '../../../shared/group-description';
 import type { ReportData, RiskRow, TaskRow } from './build';
 import type { CategorySection } from './categories';
+import { CRITICALITY_LABELS, type Criticality } from '../../../shared/schedule';
+import {
+  amountText,
+  dateText,
+  daysText,
+  evmMeasures,
+  finishVarianceWords,
+  indexText,
+  moneyText,
+  percentText,
+  signedDays,
+  type BaselineSection,
+  type EvmSection,
+  type ScheduleSection,
+} from './controls';
 
 const NAVY = '#0a1f33';
 const TEAL = '#0f766e';
@@ -31,17 +46,17 @@ export function fmtDay(ms: number, tz: string): string {
 
 function taskTable(rows: TaskRow[], empty: string, opts: { status?: boolean; desc?: boolean } = {}): string {
   if (!rows.length) return `<p class="muted">${esc(empty)}</p>`;
-  return `<table><thead><tr><th>Task</th><th>Group</th>${opts.status !== false ? '<th>Status</th>' : ''}<th>Owner</th><th>Priority</th><th>Due</th></tr></thead><tbody>${rows
+  return `<table><thead><tr><th>ID</th><th>Task</th><th>Group</th>${opts.status !== false ? '<th>Status</th>' : ''}<th>Owner</th><th>Priority</th><th>Due</th></tr></thead><tbody>${rows
     .map(
       (r) =>
-        `<tr><td>${esc(r.name)}${opts.desc && r.description ? `<div class="desc">${esc(r.description)}</div>` : ''}</td><td>${esc(r.group)}</td>${opts.status !== false ? `<td><span class="pill ${r.statusClass}">${esc(r.status || '-')}</span></td>` : ''}<td>${esc(r.owners.join(', ') || 'Unassigned')}</td><td>${esc(r.priority ?? '-')}</td><td class="${r.overdue ? 'late' : ''}">${esc(r.due ?? '-')}${r.overdue ? ' (overdue)' : ''}</td></tr>`,
+        `<tr><td class="nowrap">${esc(r.key ?? '-')}</td><td>${esc(r.name)}${opts.desc && r.description ? `<div class="desc">${esc(r.description)}</div>` : ''}</td><td>${esc(r.group)}</td>${opts.status !== false ? `<td><span class="pill ${r.statusClass}">${esc(r.status || '-')}</span></td>` : ''}<td>${esc(r.owners.join(', ') || 'Unassigned')}</td><td>${esc(r.priority ?? '-')}</td><td class="${r.overdue ? 'late' : ''}">${esc(r.due ?? '-')}${r.overdue ? ' (overdue)' : ''}</td></tr>`,
     )
     .join('')}</tbody></table>`;
 }
 
 function riskTable(rows: RiskRow[]): string {
-  return `<table><thead><tr><th>Type</th><th>Task</th><th>Detail</th><th>Impact</th><th>Responsible</th><th>Suggested action</th></tr></thead><tbody>${rows
-    .map((r) => `<tr><td>${esc(r.kind)}</td><td>${esc(r.task)}</td><td>${esc(r.detail)}</td><td>${esc(r.impact)}</td><td>${esc(r.owners.join(', ') || 'Unassigned')}</td><td class="muted">${esc(r.suggestedAction)}</td></tr>`)
+  return `<table><thead><tr><th>ID</th><th>Type</th><th>Task</th><th>Detail</th><th>Impact</th><th>Responsible</th><th>Suggested action</th></tr></thead><tbody>${rows
+    .map((r) => `<tr><td class="nowrap">${esc(r.taskKey ?? '-')}</td><td>${esc(r.kind)}</td><td>${esc(r.task)}</td><td>${esc(r.detail)}</td><td>${esc(r.impact)}</td><td>${esc(r.owners.join(', ') || 'Unassigned')}</td><td class="muted">${esc(r.suggestedAction)}</td></tr>`)
     .join('')}</tbody></table>`;
 }
 
@@ -92,6 +107,169 @@ ${g.finance ? (money.length ? `<table><thead><tr><th>Financial column</th><th>Cu
     })
     .join('\n');
   return `<section><h2>${SECTION_LABELS.categories}</h2><p class="muted small">${esc(k.note)}</p>${summary}${details}</section>`;
+}
+
+/** A small table: `head` cells (plain text) and rows of already escaped cells. */
+function grid(head: string[], rows: string[][], cls = ''): string {
+  return `<table${cls ? ` class="${cls}"` : ''}><thead><tr>${head.map((h) => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+const idCell = (k: string | null) => `<span class="nowrap">${esc(k ?? '-')}</span>`;
+const critPill = (c: Criticality | 'summary', label: string) => `<span class="pill ${c === 'summary' ? '' : esc(c)}">${esc(label)}</span>`;
+
+
+/** Section L: schedule summary, critical paths, the task schedule, the dependency register, milestones and actuals. */
+function scheduleHtml(s: ScheduleSection): string {
+  const counts = (['critical', 'near_critical', 'non_critical', 'unscheduled', 'invalid'] as Criticality[]).filter((k) => k !== 'invalid' || s.counts.invalid);
+  const taskName = (t: ScheduleSection['tasks'][number]) => (t.summary ? `<strong>${esc(t.name)}</strong>` : esc(t.name) + (t.milestone ? ' <span class="tag">milestone</span>' : ''));
+  return `<section><h2>${SECTION_LABELS.schedule}</h2>
+<p class="muted small">${esc(s.note)}</p>
+<div class="kpis three">${kpi('Status date', s.statusDate)}${kpi('Project start', s.projectStart ?? 'Not set')}${kpi('Forecast finish', s.projectFinish ?? 'Cannot be calculated', s.projectFinish ? '' : 'red')}</div>
+<div class="kpis three">${kpi('Critical path (working days)', s.criticalDurationDays ?? 'Unavailable')}${kpi('Critical tasks', s.counts.critical, s.counts.critical ? 'red' : '')}${kpi('Near-critical tasks', s.counts.near_critical, s.counts.near_critical ? 'amber' : '')}</div>
+${s.valid ? '' : '<p class="late">The schedule cannot be calculated: the dependencies form a loop (see the warnings below). Dates, float and the critical path are not available until it is removed.</p>'}
+<h3>Tasks by criticality</h3>${grid(['Criticality', 'Tasks'], counts.map((k) => [esc(CRITICALITY_LABELS[k]), String(s.counts[k])]))}
+<h3>Critical path</h3>${s.criticalPaths.length ? `<ol>${s.criticalPaths.map((p) => `<li>${p.map(esc).join(' &rarr; ')}</li>`).join('')}</ol>` : `<p class="muted">${s.valid ? 'No critical path: no task is scheduled.' : 'Not available: the schedule cannot be calculated.'}</p>`}
+<h3>Schedule: dates and float</h3>${
+    s.tasks.length
+      ? grid(
+          ['ID', 'WBS', 'Task', 'Planned start', 'Planned finish', 'Early start', 'Early finish', 'Duration (d)', 'Total float (d)', 'Free float (d)', 'Criticality'],
+          s.tasks.map((t) => [
+            idCell(t.key),
+            esc(t.wbs),
+            taskName(t),
+            esc(dateText(t.plannedStart)),
+            esc(dateText(t.plannedFinish)),
+            esc(dateText(t.earlyStart)),
+            esc(dateText(t.earlyFinish)),
+            esc(daysText(t.durationDays)),
+            `<span class="${(t.totalFloatDays ?? 0) < 0 ? 'late' : ''}">${esc(daysText(t.totalFloatDays))}</span>`,
+            esc(daysText(t.freeFloatDays)),
+            critPill(t.summary ? 'summary' : t.criticality, t.criticalityLabel),
+          ]),
+          'dense',
+        )
+      : '<p class="muted">This project has no tasks.</p>'
+  }
+${s.tasks.length ? `<h3>Schedule: logic and progress</h3>${grid(['ID', 'Task', 'Predecessors', 'Successors', 'Complete'], s.tasks.map((t) => [idCell(t.key), taskName(t), esc(t.predecessors.join(', ') || '-'), esc(t.successors.join(', ') || '-'), esc(percentText(t.percentComplete))]), 'dense')}` : ''}
+<h3>Dependency register</h3>${
+    s.dependencies.length
+      ? grid(
+          ['Predecessor ID', 'Predecessor', 'Successor ID', 'Successor', 'Type', 'Lag', 'Float (d)', 'Critical'],
+          s.dependencies.map((d) => [
+            idCell(d.predecessorKey),
+            esc(d.predecessorName),
+            idCell(d.successorKey),
+            esc(d.successorName),
+            `${esc(d.type)} <span class="muted">${esc(d.typeLabel)}</span>${d.source === 'column' ? ' <span class="tag">Dependency column</span>' : ''}`,
+            esc(d.lag),
+            esc(daysText(d.floatDays)),
+            d.critical ? '<strong class="late">Yes</strong>' : 'No',
+          ]),
+          'dense',
+        )
+      : '<p class="muted">No dependencies are recorded between the tasks.</p>'
+  }
+<h3>Near-critical activities</h3>${s.nearCritical.length ? grid(['ID', 'Task', 'Total float (d)', 'Early start', 'Early finish'], s.nearCritical.map((t) => [idCell(t.key), esc(t.name), esc(daysText(t.totalFloatDays)), esc(dateText(t.earlyStart)), esc(dateText(t.earlyFinish))])) : '<p class="muted">No task is near-critical.</p>'}
+<h3>Milestones</h3>${
+    s.milestones.length
+      ? `${s.milestoneBaseline ? `<p class="small muted">Baseline dates from baseline ${s.milestoneBaseline.number}: ${esc(s.milestoneBaseline.name)}.</p>` : '<p class="small muted">No approved baseline: baseline dates are not available.</p>'}${grid(
+          ['ID', 'Milestone', 'Baseline date', 'Forecast date', 'Actual date', 'Criticality'],
+          s.milestones.map((t) => [idCell(t.key), esc(t.name), esc(dateText(t.baselineDate)), esc(dateText(t.forecastDate)), esc(dateText(t.actualDate)), esc(t.criticalityLabel)]),
+        )}`
+      : '<p class="muted">No milestone is scheduled (a task with no duration, or marked as a milestone).</p>'
+  }
+<h3>Planned against actual dates</h3>${
+    s.plannedVsActual.length
+      ? grid(
+          ['ID', 'Task', 'Planned start', 'Actual start', 'Planned finish', 'Actual finish', 'Forecast finish', 'Complete', 'State'],
+          s.plannedVsActual.map((t) => [idCell(t.key), esc(t.name), esc(dateText(t.plannedStart)), esc(dateText(t.actualStart)), esc(dateText(t.plannedFinish)), esc(dateText(t.actualFinish)), esc(dateText(t.forecastFinish)), esc(percentText(t.percentComplete)), esc(t.state)]),
+          'dense',
+        )
+      : '<p class="muted">No task has started by the status date.</p>'
+  }
+<h3>Schedule warnings</h3>${s.warnings.length ? `<ul>${s.warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>` : '<p class="muted">None: the schedule has no loops, conflicts or missing logic.</p>'}
+</section>`;
+}
+
+
+/** Section M: the compared baseline, the project finish against it, and the variances of every task. */
+function baselineHtml(b: BaselineSection): string {
+  if (!b.available || !b.baseline) return `<section><h2>${SECTION_LABELS.baseline}</h2><p class="muted">${esc(b.reason ?? 'No approved baseline.')}</p></section>`;
+  const bl = b.baseline;
+  const later = (v: number | null) => `<span class="${(v ?? 0) > 0 ? 'late' : ''}">${esc(signedDays(v))}</span>`;
+  const flag = (r: BaselineSection['rows'][number]) => (!r.inBaseline ? ' <span class="tag">added after the baseline</span>' : !r.inPlan ? ' <span class="tag">no longer in the plan</span>' : '');
+  const cur = b.currency ?? 'no currency';
+  return `<section><h2>${SECTION_LABELS.baseline}</h2>
+<p class="muted small">${esc(b.note)}</p>
+<table class="kv">
+<tr><th>Baseline</th><td>Baseline ${bl.number}: ${esc(bl.name)}</td></tr>
+<tr><th>Approved</th><td>By ${esc(bl.approvedBy)} on ${esc(bl.approvedOn)}</td></tr>
+<tr><th>Baseline finish</th><td>${esc(dateText(bl.projectFinish))}</td></tr>
+<tr><th>Forecast finish</th><td>${esc(b.forecastFinish ?? 'Cannot be calculated')}</td></tr>
+<tr><th>Finish variance</th><td class="${(b.projectFinishVarianceDays ?? 0) > 0 ? 'late' : ''}"><strong>${esc(finishVarianceWords(b.projectFinishVarianceDays))}</strong></td></tr>
+${b.original ? `<tr><th>Original baseline (0) finish</th><td>${esc(dateText(b.original.projectFinish))} (${esc(b.original.name)}); forecast variance against it: ${esc(signedDays(b.original.finishVarianceDays))} working days</td></tr>` : ''}
+${b.costIncluded ? `<tr><th>Budget at completion</th><td>${esc(moneyText(b.bac, b.currency))}</td></tr>` : ''}
+</table>
+<h3>Dates</h3>${grid(
+    ['ID', 'WBS', 'Task', 'Baseline start', 'Current start', 'Start var. (d)', 'Baseline finish', 'Current finish', 'Finish var. (d)'],
+    b.rows.map((r) => [idCell(r.key), esc(r.wbs), esc(r.name) + flag(r), esc(dateText(r.baselineStart)), esc(dateText(r.currentStart)), later(r.startVarianceDays), esc(dateText(r.baselineFinish)), esc(dateText(r.currentFinish)), later(r.finishVarianceDays)]),
+    'dense',
+  )}
+<h3>Duration, progress${b.costIncluded ? ' and cost' : ''}</h3>${grid(
+    ['ID', 'Task', 'Baseline duration (d)', 'Current duration (d)', 'Duration var. (d)', 'Planned by status date', 'Complete', 'Progress var. (points)', ...(b.costIncluded ? [`Baseline budget (${cur})`, `Current budget (${cur})`, `Cost variance (${cur})`] : [])],
+    b.rows.map((r) => [
+      idCell(r.key),
+      esc(r.name),
+      esc(daysText(r.baselineDurationDays)),
+      esc(daysText(r.currentDurationDays)),
+      later(r.durationVarianceDays),
+      esc(percentText(r.plannedPercent)),
+      esc(percentText(r.percentComplete)),
+      `<span class="${(r.progressVariance ?? 0) < 0 ? 'late' : ''}">${esc(signedDays(r.progressVariance))}</span>`,
+      ...(b.costIncluded ? [esc(amountText(r.baselineCost, b.currency)), esc(amountText(r.currentCost, b.currency)), esc(amountText(r.costVariance, b.currency))] : []),
+    ]),
+    'dense',
+  )}
+</section>`;
+}
+
+
+/** Section N: earned value at the status date against the baseline, every forecast labelled, and the definitions. */
+function evmHtml(e: EvmSection): string {
+  if (!e.financeAllowed || !e.available || !e.metrics || !e.baseline) return `<section><h2>${SECTION_LABELS.evm}</h2><p class="muted">${esc(e.reason ?? 'Earned value is not available.')}</p></section>`;
+  const m = e.metrics;
+  const cur = e.currency;
+  const money = (v: string | null) => esc(moneyText(v, cur));
+  const tone = (s: string) => (s === 'below' ? 'red' : s === 'unavailable' ? '' : 'green');
+  return `<section><h2>${SECTION_LABELS.evm}</h2>
+<table class="kv">
+<tr><th>Baseline</th><td>Baseline ${e.baseline.number}: ${esc(e.baseline.name)}, approved by ${esc(e.baseline.approvedBy)} on ${esc(e.baseline.approvedOn)}</td></tr>
+<tr><th>Status date</th><td>${esc(e.statusDate)}</td></tr>
+<tr><th>Currency</th><td>${esc(cur ?? 'Not set')}</td></tr>
+</table>
+<div class="kpis three">${kpi('BAC', moneyText(m.bac, cur))}${kpi('PV', moneyText(m.pv, cur))}${kpi('EV', moneyText(m.ev, cur))}</div>
+<div class="kpis three">${kpi('AC', moneyText(m.ac, cur))}${kpi('CPI', indexText(m.cpi), tone(m.cpiStatus))}${kpi('SPI', indexText(m.spi), tone(m.spiStatus))}</div>
+<ul><li>${esc(e.cpiText)}</li><li>${esc(e.spiText)}</li></ul>
+${e.caution ? `<div class="caution">${esc(e.caution)}</div>` : ''}
+<h3>Measures at the status date</h3>${grid(['Measure', 'Value'], evmMeasures(e).map(([a, b]) => [esc(a), esc(b)]))}
+<h3>Forecasts at completion</h3>${grid(['Method', 'How it is calculated', 'Estimate at completion (EAC)', 'Estimate to complete (ETC)', 'Variance at completion (VAC)'], e.forecasts.map((f) => [`<strong>${esc(f.label)}</strong>`, `<span class="small">${esc(f.formula)}</span>`, money(f.eac), money(f.etc), money(f.vac)]))}
+<h3>By task</h3>${
+    e.tasks.length
+      ? `<p class="small muted">Amounts in ${esc(cur ?? 'no currency')}. n/a: not available (for example, no actual cost is recorded for the task).</p>${grid(
+          ['ID', 'Task', 'Earning method', 'BAC', 'PV', 'EV', 'AC', 'CV', 'SV'],
+          e.tasks.map((t) => [idCell(t.key), esc(t.name), esc(t.methodLabel), esc(amountText(t.bac, cur)), esc(amountText(t.pv, cur)), esc(amountText(t.ev, cur)), esc(amountText(t.ac, cur)), esc(amountText(t.cv, cur)), esc(amountText(t.sv, cur))]),
+          'dense',
+        )}`
+      : '<p class="muted">No task in the baseline has a budget.</p>'
+  }
+<h3>Trend</h3>${
+    e.trend.length
+      ? `<p class="small muted">${e.trend.length < e.trendPoints ? `The latest ${e.trend.length} of ${e.trendPoints} points. ` : ''}Cumulative values at each date, in ${esc(cur ?? 'no currency')}.</p>${grid(['Date', 'PV', 'EV', 'AC', 'CPI', 'SPI'], e.trend.map((p) => [esc(p.date), esc(amountText(p.pv, cur)), esc(amountText(p.ev, cur)), esc(amountText(p.ac, cur)), esc(indexText(p.cpi, 'n/a')), esc(indexText(p.spi, 'n/a'))]))}`
+      : '<p class="muted">No trend yet: the status date is before the baseline start.</p>'
+  }
+<h3>Warnings</h3>${e.warnings.length ? `<ul>${e.warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>` : '<p class="muted">None.</p>'}
+<h3>Definitions</h3>${grid(['Term', 'Definition'], Object.entries(e.definitions).map(([k, v]) => [`<strong>${esc(k)}</strong>`, esc(v)]), 'defs')}
+</section>`;
 }
 
 export function renderReportHtml(r: ReportData): string {
@@ -197,9 +375,9 @@ ${f.mixedCurrencies ? '<p class="small">This project uses more than one currency
 <h3>By group</h3><table><thead><tr><th>Group</th>${f.columns.map((col) => `<th>${esc(col.title)}</th>`).join('')}</tr></thead><tbody>${f.groups
       .map((g) => `<tr><td>${esc(g.name)}</td>${g.totals.map((t) => `<td>${t.count ? esc(t.total.display) : '-'}</td>`).join('')}</tr>`)
       .join('')}</tbody></table>
-<h3>By task</h3>${f.tasks.length ? `<table><thead><tr><th>Task</th>${f.columns.map((col) => `<th>${esc(col.title)}</th>`).join('')}</tr></thead><tbody>${f.tasks
+<h3>By task</h3>${f.tasks.length ? `<table><thead><tr><th>ID</th><th>Task</th>${f.columns.map((col) => `<th>${esc(col.title)}</th>`).join('')}</tr></thead><tbody>${f.tasks
       .slice(0, 300)
-      .map((t) => `<tr><td>${esc(t.name)}</td>${f.columns.map((col) => `<td>${esc(t.amounts.find((a) => a.columnId === col.columnId)?.amount.display ?? '-')}</td>`).join('')}</tr>`)
+      .map((t) => `<tr><td class="nowrap">${esc(t.key ?? '-')}</td><td>${esc(t.name)}</td>${f.columns.map((col) => `<td>${esc(t.amounts.find((a) => a.columnId === col.columnId)?.amount.display ?? '-')}</td>`).join('')}</tr>`)
       .join('')}</tbody></table>` : '<p class="muted">No task has an amount.</p>'}
 ${f.changes.length ? `<h3>Financial changes recorded in the period</h3><table><thead><tr><th>Date</th><th>Task</th><th>Column</th><th>Before</th><th>After</th><th>By</th></tr></thead><tbody>${f.changes.map((x) => `<tr><td>${esc(fmtDay(x.at, tz))}</td><td>${esc(x.task)}</td><td>${esc(x.column)}</td><td>${esc(x.before)}</td><td>${esc(x.after)}</td><td>${esc(x.actor ?? '-')}</td></tr>`).join('')}</tbody></table>` : ''}
 </section>`);
@@ -220,6 +398,9 @@ ${commentaryBlock(c.resources, c.author)}
     parts.push(`<section><h2>${SECTION_LABELS.timeline}</h2>${r.timeline.events.length ? `<table><thead><tr><th>Date and time</th><th>Event</th><th>By</th></tr></thead><tbody>${r.timeline.events.map((e) => `<tr><td class="nowrap">${esc(fmtTime(e.at, tz))}</td><td>${esc(e.text)}</td><td>${esc(e.actor ?? '-')}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No significant events were recorded in this period.</p>'}${r.timeline.truncated ? '<p class="small">Only the latest 1,000 events are listed.</p>' : ''}</section>`);
   }
   if (has('categories') && r.categories) parts.push(categoriesHtml(r.categories));
+  if (has('schedule') && r.schedule) parts.push(scheduleHtml(r.schedule));
+  if (has('baseline') && r.baseline) parts.push(baselineHtml(r.baseline));
+  if (has('evm') && r.evm) parts.push(evmHtml(r.evm));
   const notes = [...r.history.notes, ...r.truncated];
   parts.push(`<section class="notes"><h2>About this report</h2>
 <p>Every figure, task and date comes from the activity recorded in BIZOMAT Project Management. Past statuses are taken from the recorded history of changes, not inferred from today's values. ${r.history.reliableFrom ? `Reliable activity history for this board is available from ${esc(fmtDay(r.history.reliableFrom, tz))}.` : 'No activity has been recorded on this board.'}</p>
@@ -256,6 +437,7 @@ tr{page-break-inside:avoid}
 .kpi{flex:1 1 120px;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px}
 .kpi-v{font:700 20px/1.2 Oxanium,Helvetica,Arial,sans-serif;color:${NAVY}}
 .kpi-l{font-size:11px;color:#64748b}
+.kpis.three .kpi{flex:1 1 30%}
 .kpi.green{border-color:#86efac}.kpi.amber{border-color:#fcd34d}.kpi.red{border-color:#fca5a5}
 .pill{display:inline-block;padding:1px 8px;border-radius:10px;background:#f1f5f9;font-size:11px}
 .pill.done{background:#dcfce7}.pill.blocked{background:#fee2e2}.pill.in_progress{background:#ccfbf1}.pill.pending_approval{background:#ede9fe}
@@ -272,6 +454,11 @@ section{page-break-inside:auto}
 .swatch{display:inline-block;vertical-align:baseline;margin-right:2px}
 .category{border-top:1px solid #e2e8f0;padding-top:4px;margin-top:10px;page-break-inside:avoid}
 .category ul{margin:4px 0 8px;padding-left:20px}
+table.dense{font-size:10.5px}
+table.dense th,table.dense td{padding:4px 5px}
+.pill.critical{background:#fee2e2}.pill.near_critical{background:#fef3c7}.pill.invalid{background:#fee2e2}
+.caution{border-left:3px solid #d97706;background:#fffbeb;padding:8px 12px;margin:8px 0 12px;font-size:12px}
+table.defs td:first-child{width:70px}
 @media print{.page{padding:0}h2{page-break-after:avoid}h3{page-break-after:avoid}}
 </style></head><body><main class="page">
 ${parts.join('\n')}

@@ -1,7 +1,21 @@
 // Project report definitions shared by the server (which builds and renders reports) and the client (which offers
 // the options). A report is built from recorded data only; see src/worker/services/reports/build.ts.
 
-export const REPORT_TYPES = ['inception', 'previous_month', 'current_month', 'custom', 'monthly', 'completion', 'financial', 'outstanding'] as const;
+export const REPORT_TYPES = [
+  'inception',
+  'previous_month',
+  'current_month',
+  'custom',
+  'monthly',
+  'completion',
+  'financial',
+  'outstanding',
+  'project_controls',
+  'critical_path',
+  'baseline_comparison',
+  'earned_value',
+  'completion_forecast',
+] as const;
 export type ReportType = (typeof REPORT_TYPES)[number];
 
 export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
@@ -13,9 +27,24 @@ export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
   completion: 'Project completion report',
   financial: 'Financial report',
   outstanding: 'Outstanding tasks report',
+  project_controls: 'Project controls report',
+  critical_path: 'Critical path report',
+  baseline_comparison: 'Baseline comparison report',
+  earned_value: 'Earned value report',
+  completion_forecast: 'Project completion forecast',
 };
 
-export const REPORT_SECTIONS = ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories'] as const;
+/**
+ * Report types about project controls (schedule, baseline, earned value). Their period runs from the project start to
+ * the status date: the chosen end date, or today when none is chosen (never later than today).
+ */
+export const CONTROLS_REPORT_TYPES: readonly ReportType[] = ['project_controls', 'critical_path', 'baseline_comparison', 'earned_value', 'completion_forecast'];
+
+export function isControlsReportType(type: ReportType): boolean {
+  return CONTROLS_REPORT_TYPES.includes(type);
+}
+
+export const REPORT_SECTIONS = ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories', 'schedule', 'baseline', 'evm'] as const;
 export type ReportSection = (typeof REPORT_SECTIONS)[number];
 
 export const SECTION_LABELS: Record<ReportSection, string> = {
@@ -30,7 +59,13 @@ export const SECTION_LABELS: Record<ReportSection, string> = {
   next: 'I. Next period plan',
   timeline: 'J. Activity timeline',
   categories: 'K. Categories',
+  schedule: 'L. Schedule and critical path',
+  baseline: 'M. Baseline comparison',
+  evm: 'N. Earned value and forecasts',
 };
+
+/** Project controls sections: built from the schedule at the report's status date (services/reports/controls.ts). */
+export const CONTROLS_SECTIONS: readonly ReportSection[] = ['schedule', 'baseline', 'evm'];
 
 /** Sections each report type starts with (people can switch any of them on or off). */
 export const DEFAULT_SECTIONS: Record<ReportType, ReportSection[]> = {
@@ -42,6 +77,11 @@ export const DEFAULT_SECTIONS: Record<ReportType, ReportSection[]> = {
   completion: ['cover', 'summary', 'overview', 'previous', 'remaining', 'risks', 'finance', 'timeline', 'categories'],
   financial: ['cover', 'summary', 'finance'],
   outstanding: ['cover', 'overview', 'current', 'remaining', 'risks', 'next', 'categories'],
+  project_controls: ['cover', 'summary', 'schedule', 'baseline', 'evm'],
+  critical_path: ['cover', 'schedule'],
+  baseline_comparison: ['cover', 'baseline'],
+  earned_value: ['cover', 'evm'],
+  completion_forecast: ['cover', 'summary', 'schedule', 'evm'],
 };
 
 export type ExportFormat = 'pdf' | 'xlsx' | 'html' | 'csv';
@@ -59,7 +99,10 @@ export interface ReportCommentary {
 
 export interface ReportOptions {
   type: ReportType;
-  /** Inclusive calendar dates (YYYY-MM-DD) in `timezone`. Needed for custom; computed for the others. */
+  /**
+   * Inclusive calendar dates (YYYY-MM-DD) in `timezone`. Needed for custom; computed for the others, except that the
+   * project controls types take `end` as their status date (today when not given).
+   */
   start?: string;
   end?: string;
   /** YYYY-MM for a monthly report. */
@@ -76,6 +119,8 @@ export interface ReportOptions {
   sections?: ReportSection[];
   commentary?: ReportCommentary;
   confidentiality?: string;
+  /** The approved baseline the project controls sections compare with (empty: the latest). */
+  baselineId?: string;
 }
 
 export const STATUS_LABELS: Record<'on_track' | 'at_risk' | 'off_track' | 'complete' | 'not_started', string> = {

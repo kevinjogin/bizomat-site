@@ -7,15 +7,20 @@
 //
 // Figures are counts of tasks and sums of recorded amounts; achievements are the names of tasks recorded as completed.
 // Text that people write for the report (commentary) is kept apart from the recorded data and labelled as such.
+//
+// Sections L to N (schedule, baseline, earned value) come from the project controls services at the report's status
+// date: see controls.ts.
 
 import { getColumnType, labelsOf, type ColumnLike } from '../../../shared/columns';
 import { addDays, addMonths, startOfMonth, todayIn } from '../../../shared/dates';
 import { summariseFinance, type FinanceSummary } from '../../../shared/finance';
 import { isFinancialColumn } from '../../../shared/permissions';
 import {
+  CONTROLS_SECTIONS,
   DEFAULT_SECTIONS,
   REPORT_TYPE_LABELS,
   STATUS_LABELS,
+  isControlsReportType,
   type ReportCommentary,
   type ReportOptions,
   type ReportSection,
@@ -24,7 +29,9 @@ import type { ColumnDTO, GroupDTO, ItemDTO } from '../../../shared/types';
 import { parseJson } from '../../lib/util';
 import { columnDTO, groupDTO, itemDTO, type ColumnRow, type GroupRow } from '../mappers';
 import type { BoardRow, ItemRow } from '../permissions';
+import { ensureTaskKeys } from '../schedule/task-keys';
 import { buildCategorySection, type CategorySection } from './categories';
+import { buildControlsSections, controlsIncludeFinance, type BaselineSection, type EvmSection, type ScheduleSection } from './controls';
 
 export const REPORT_SCHEMA_VERSION = 1;
 const LIST_LIMIT = 500;
@@ -34,6 +41,8 @@ export type StatusClass = 'done' | 'in_progress' | 'not_started' | 'blocked' | '
 
 export interface TaskRow {
   id: string;
+  /** The permanent task key (PREFIX-0001), the task's ID in every report table. */
+  key: string | null;
   name: string;
   group: string;
   status: string;
@@ -53,6 +62,7 @@ export interface RiskRow {
   kind: 'Risk' | 'Issue' | 'Blocked' | 'Overdue' | 'Dependency' | 'Pending approval';
   task: string;
   taskId: string;
+  taskKey: string | null;
   owners: string[];
   due: string | null;
   impact: string;
@@ -119,13 +129,33 @@ export interface ReportData {
   current: { active: TaskRow[] };
   remaining: { outstanding: TaskRow[]; overdue: TaskRow[]; blocked: TaskRow[]; pendingApprovals: TaskRow[]; carriedForward: TaskRow[]; unassigned: number };
   risks: { recorded: RiskRow[]; derived: RiskRow[]; note: string };
-  finance: (FinanceSummary & { asOf: string; changes: { at: number; task: string; column: string; before: string; after: string; actor: string | null }[]; note: string }) | null;
+  finance:
+    | (Omit<FinanceSummary, 'tasks'> & {
+        tasks: (FinanceSummary['tasks'][number] & { key: string | null })[];
+        asOf: string;
+        changes: { at: number; task: string; column: string; before: string; after: string; actor: string | null }[];
+        note: string;
+      })
+    | null;
   next: { start: string; end: string; planned: TaskRow[]; milestones: TaskRow[]; priorities: TaskRow[]; workload: { owner: string; open: number; overdue: number }[]; unscheduled: number };
   timeline: { events: TimelineEvent[]; truncated: boolean };
   tasks: TaskRow[];
   truncated: string[];
   /** Section K (Categories): present when the report includes it. */
   categories?: CategorySection;
+  /** Sections L, M and N (project controls), each present when the report includes it. */
+  schedule?: ScheduleSection;
+  baseline?: BaselineSection;
+  evm?: EvmSection;
+}
+
+/**
+ * Whether a report holds financial figures, so that only people who may see the project's finances can open it: the
+ * financial summary (H, with K's amounts, which need H), earned value (N) or the cost part of the baseline comparison (M).
+ */
+export function reportIncludesFinance(r: ReportData): boolean {
+  const has = (s: ReportSection) => r.meta.sections.includes(s);
+  return (!!r.finance && has('finance')) || controlsIncludeFinance(r, r.meta.sections);
 }
 
 // ------------------------------------------------------------------ time
@@ -191,6 +221,11 @@ export function reportPeriod(opts: ReportOptions, board: Pick<BoardRow, 'created
       return s <= e ? { start: s, end: clampEnd(e) } : { start: e, end: clampEnd(s) };
     }
     default:
+      if (isControlsReportType(opts.type)) {
+        // Project controls: inception to the status date (the chosen end date, never later than today).
+        const e = clampEnd(opts.end && /^\d{4}-\d{2}-\d{2}$/.test(opts.end) ? opts.end : today);
+        return { start: projectStart <= e ? projectStart : e, end: e };
+      }
       return { start: projectStart <= today ? projectStart : today, end: today };
   }
 }
@@ -231,7 +266,10 @@ export interface BuildInput {
   organisation: string;
   options: ReportOptions;
   generatedBy: { id: string; name: string };
-  /** False when the caller may not see financial data: the finance section is left out whatever was asked. */
+  /**
+   * False when the caller may not see financial data: the finance section is left out whatever was asked, and the
+   * project controls sections hold no money (no earned value, no budgets in the baseline comparison).
+   */
   financeAllowed: boolean;
   workspaceCurrency: string | null;
   confidentiality: string | null;
@@ -249,6 +287,8 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
   const E = zonedDayStart(addDays(period.end, 1), tz) - 1;
   const notes: string[] = [];
   const truncated: string[] = [];
+  // Every task carries its permanent key into the report (tasks from before keys get theirs now, as on the board).
+  await ensureTaskKeys(db, board);
 
   const [colRows, groupRows, itemRows, firstActivity, activityRows] = await Promise.all([
     db.prepare('SELECT * FROM columns WHERE board_id = ? ORDER BY position').bind(board.id).all<ColumnRow>(),
@@ -381,6 +421,7 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
     const progress = progressCol ? valueAt(item, progressCol.id, T) : null;
     return {
       id: item.id,
+      key: item.key ?? null,
       name: item.name,
       group: groupName.get(item.groupId) ?? '',
       status: statusLabelAt(item, T),
@@ -490,6 +531,7 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
       kind: /issue/i.test(groupName.get(x.item.groupId) ?? '') ? 'Issue' : 'Risk',
       task: x.r.name,
       taskId: x.r.id,
+      taskKey: x.r.key,
       owners: x.r.owners,
       due: x.r.due,
       impact: x.r.priority ? `Priority: ${x.r.priority}` : 'Not recorded',
@@ -500,7 +542,7 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
   const doneIds = new Set(endRows.filter((x) => x.r.statusClass === 'done').map((x) => x.r.id));
   for (const x of open) {
     if (riskGroup(x.item) || riskTag(x.item)) continue;
-    const base = { task: x.r.name, taskId: x.r.id, owners: x.r.owners, due: x.r.due, impact: x.r.priority ? `Priority: ${x.r.priority}` : 'Not recorded' };
+    const base = { task: x.r.name, taskId: x.r.id, taskKey: x.r.key, owners: x.r.owners, due: x.r.due, impact: x.r.priority ? `Priority: ${x.r.priority}` : 'Not recorded' };
     if (x.r.statusClass === 'blocked') derived.push({ ...base, kind: 'Blocked', detail: `Status: ${x.r.status}`, suggestedAction: 'Resolve the blocker or escalate it' });
     else if (x.r.overdue) derived.push({ ...base, kind: 'Overdue', detail: `Due ${x.r.due}`, suggestedAction: 'Agree a new date or add resources' });
     else if (x.r.statusClass === 'pending_approval') derived.push({ ...base, kind: 'Pending approval', detail: `Status: ${x.r.status}`, suggestedAction: 'Decide or delegate the approval' });
@@ -534,8 +576,10 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
       }
     }
     finChanges.sort((a, b) => a.at - b.at);
+    const keyOf = new Map(allItems.map((i) => [i.id, i.key ?? null]));
     finance = {
       ...summary,
+      tasks: summary.tasks.map((t) => ({ ...t, key: keyOf.get(t.itemId) ?? null })),
       asOf: period.end,
       changes: finChanges.slice(0, 200),
       note:
@@ -732,6 +776,26 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
       end: E,
       finance: sections.includes('finance') ? finance : null,
     });
+  }
+  if (sections.some((s) => CONTROLS_SECTIONS.includes(s))) {
+    // The status date of the project controls sections: the end of the period, never later than today.
+    const today = todayIn(tz, at);
+    const capAny = <T,>(rows: T[], what: string): T[] => {
+      if (rows.length > LIST_LIMIT) truncated.push(`${what}: ${rows.length} rows, the first ${LIST_LIMIT} are listed`);
+      return rows.slice(0, LIST_LIMIT);
+    };
+    Object.assign(
+      data,
+      await buildControlsSections(db, {
+        board,
+        sections,
+        statusDate: period.end < today ? period.end : today,
+        baselineId: options.baselineId || null,
+        financeAllowed: input.financeAllowed,
+        includeFinance: options.includeFinance !== false,
+        cap: capAny,
+      }),
+    );
   }
   return data;
 }
