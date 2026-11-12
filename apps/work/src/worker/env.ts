@@ -37,6 +37,11 @@ export interface Env {
   EMAIL_CRITICAL_RESERVE?: string;
   /** '1': Brevo accepts and drops every message (X-Sib-Sandbox: drop), for testing the integration. */
   EMAIL_SANDBOX?: string;
+  /**
+   * Secret: base64 of 32 bytes, encrypting secrets saved in the founder console (the Brevo key). The Node runtime
+   * creates one in the data folder when none is set (src/node/runtime.ts).
+   */
+  SETTINGS_ENCRYPTION_KEY?: string;
 }
 
 export interface AuthUser {

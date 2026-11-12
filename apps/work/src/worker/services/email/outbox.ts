@@ -14,6 +14,7 @@ import type { Env } from '../../env';
 import { newId, now, placeholders } from '../../lib/util';
 import { CRITICAL_TEMPLATES, renderEmail, type EmailTemplate, type TemplateData } from './templates';
 import { emailConfig, providerFor, type EmailConfig } from './provider';
+import { emailEnv } from './settings';
 
 export const MAX_ATTEMPTS = 8;
 const BACKOFF_MS = [60_000, 5 * 60_000, 15 * 60_000, 60 * 60_000, 3 * 3_600_000, 6 * 3_600_000, 12 * 3_600_000];
@@ -45,7 +46,9 @@ export async function sentToday(db: D1Database, at = now()): Promise<number> {
   return r?.n ?? 0;
 }
 
-export async function enqueueEmail(env: Env, input: QueueInput, cfg: EmailConfig = emailConfig(env)): Promise<QueueResult> {
+export async function enqueueEmail(env: Env, input: QueueInput, cfgIn?: EmailConfig): Promise<QueueResult> {
+  // Settings saved in the founder console apply on top of the environment.
+  const cfg = cfgIn ?? emailConfig(await emailEnv(env));
   if (cfg.provider === 'none') return { queued: false, reason: 'not_configured' };
   const to = input.to.trim().toLowerCase();
   if (!EMAIL_RE.test(to) || to.length > 320) return { queued: false, reason: 'invalid_address' };
@@ -96,9 +99,10 @@ function backoff(attempts: number): number {
 
 /** Hand due messages to the provider, most important first, within the daily limit. */
 export async function processOutbox(env: Env, opts: { max?: number; at?: number } = {}): Promise<ProcessResult> {
-  const cfg = emailConfig(env);
+  const merged = await emailEnv(env);
+  const cfg = emailConfig(merged);
   const out: ProcessResult = { sent: 0, deferred: 0, failed: 0, limitReached: false };
-  const provider = providerFor(env, cfg);
+  const provider = providerFor(merged, cfg);
   if (!provider) return out;
   const db = env.DB;
   const t0 = opts.at ?? now();

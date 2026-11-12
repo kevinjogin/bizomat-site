@@ -2,6 +2,7 @@ import { NOTIFICATION_TYPES, type NotificationType } from '../../shared/types';
 import { newId, now, placeholders } from '../lib/util';
 import type { Svc } from './context';
 import { emailConfig } from './email/provider';
+import { emailEnv } from './email/settings';
 import { enqueueEmail, processOutbox } from './email/outbox';
 import type { TemplateData } from './email/templates';
 
@@ -106,7 +107,7 @@ export async function notify(svc: Svc, n: NotifyInput): Promise<number> {
 }
 
 async function emailNotification(svc: Svc, n: NotifyInput, userIds: string[], notificationIds: Map<string, string>) {
-  const cfg = emailConfig(svc.env);
+  const cfg = emailConfig(await emailEnv(svc.env));
   if (cfg.provider === 'none') return;
   const users = await svc.db.prepare(`SELECT id, email, name FROM users WHERE disabled_at IS NULL AND id IN (${placeholders(userIds.length)})`).bind(...userIds).all<{ id: string; email: string; name: string }>();
   const ws = await svc.db.prepare('SELECT name FROM workspaces WHERE id = ?').bind(n.workspaceId).first<{ name: string }>();

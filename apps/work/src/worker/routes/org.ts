@@ -14,6 +14,7 @@ import { requireWorkspace, wsAtLeast } from '../services/permissions';
 import { requireProject, requireTask } from '../services/access';
 import { enqueueEmail } from '../services/email/outbox';
 import { emailConfig } from '../services/email/provider';
+import { emailEnv } from '../services/email/settings';
 import {
   INVITE_TTL_MS,
   emailDeliveryLabel,
@@ -178,7 +179,7 @@ orgRoutes.delete('/workspaces/:ws/members/:userId', async (c) => {
   // They are no longer a member, so they get an email only (no in-app notification can reach them here).
   if (!self && person) {
     const ws = await wsName(c.env.DB, wsId);
-    const cfg = emailConfig(c.env);
+    const cfg = emailConfig(await emailEnv(c.env));
     await enqueueEmail(c.env, {
       workspaceId: wsId,
       userId: targetId,
