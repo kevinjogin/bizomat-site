@@ -33,8 +33,62 @@ export interface BoardActions {
   refresh: () => Promise<unknown>;
 }
 
+type ItemPatch = { name?: string; description?: string; values?: Record<string, unknown> };
+
+// An added item is shown at once under a temporary id ('tmp-…') and replaced by the saved item when the server
+// answers. Someone can click the new row in between, so that window is invisible to the rest of the board:
+// - `saving`: temporary id → the save, so an edit made meanwhile waits for the real id instead of being lost;
+// - `queued`: temporary id → those edits, laid over the saved item when it replaces the temporary one;
+// - `savedAs`: temporary id → real id, for an edit from the row as it was drawn just before the swap;
+// - `rowKeys`: real id → the temporary id it replaced, so the row keeps its React key and an editor opened on
+//   the temporary row stays open (a new key would remount the row and close it);
+// - `waiting`: temporary ids that a row action (move, delete, archive, duplicate) is waiting on. That action
+//   refreshes the board when it is done, so the save does not: a refresh in between would show the item as the
+//   server had it before the action (a deleted row back for a moment, a moved row in its old place).
+const saving = new Map<string, Promise<ItemDTO | null>>();
+const queued = new Map<string, ItemPatch>();
+const savedAs = new Map<string, string>();
+const rowKeys = new Map<string, string>();
+const waiting = new Set<string>();
+
+/** True while an added item is still being saved (it has no id on the server yet). */
+export const isUnsaved = (id: string) => id.startsWith('tmp-');
+
+/** React key for an item's row: the same before and after an added item is saved. */
+export const itemKey = (id: string) => rowKeys.get(id) ?? id;
+
+/** The id an item's row has in the board now: a temporary id gives way to the real one once the save answers. */
+const rowId = (id: string) => savedAs.get(id) ?? id;
+
+/**
+ * The item's id on the server. For an item still being saved, waits for the save. Null if that save failed
+ * (createItem has said so and removed the row).
+ */
+export async function resolveId(id: string): Promise<string | null> {
+  if (!isUnsaved(id)) return id;
+  const real = savedAs.get(id);
+  if (real) return real;
+  return (await saving.get(id))?.id ?? null;
+}
+
+function applyPatch(i: ItemDTO, p: ItemPatch): ItemDTO {
+  return { ...i, ...(p.name !== undefined ? { name: p.name } : {}), ...(p.description !== undefined ? { description: p.description } : {}), values: p.values ? mergeValues(i.values, p.values) : i.values, updatedAt: Date.now() };
+}
+
 export function useBoardQuery(boardId: string | undefined) {
-  return useQuery({ queryKey: ['board', boardId], queryFn: () => get<BoardBundle>(`/boards/${boardId}`), enabled: !!boardId, staleTime: 5_000 });
+  const qc = useQueryClient();
+  return useQuery({
+    queryKey: ['board', boardId],
+    queryFn: async () => keepUnsaved(await get<BoardBundle>(`/boards/${boardId}`), qc.getQueryData<BoardBundle>(['board', boardId])),
+    enabled: !!boardId,
+    staleTime: 5_000,
+  });
+}
+
+/** The server knows nothing yet of an item still being saved: a board fetch keeps its row (and any editor open on it). */
+function keepUnsaved(fresh: BoardBundle, current: BoardBundle | undefined): BoardBundle {
+  const unsaved = current?.items.filter((i) => saving.has(i.id)) ?? [];
+  return unsaved.length ? { ...fresh, items: [...fresh.items, ...unsaved] } : fresh;
 }
 
 /** Items with computed values (formula, progress, created/updated) filled in. */
@@ -68,6 +122,12 @@ export function useBoardActions(boardId: string): BoardActions {
       return null;
     }
   };
+  // A row action on an item still being saved waits for its real id, and then refreshes the board itself.
+  const saved = (id: string) => {
+    if (saving.has(id)) waiting.add(id);
+    return resolveId(id);
+  };
+  const real = async (id: string | null | undefined) => (id ? resolveId(id) : id);
 
   return {
     refresh,
@@ -83,16 +143,41 @@ export function useBoardActions(boardId: string): BoardActions {
           items: [...bb.items, { id: tempId, boardId, groupId, parentItemId: input.parentItemId ?? null, name: input.name, description: '', position: pos, values: input.values ?? {}, createdBy: '', createdAt: Date.now(), updatedAt: Date.now(), completedAt: null, archivedAt: null, subitemCount: 0, updateCount: 0 }],
         }));
       }
-      const created = await run(post<ItemDTO>(`/boards/${boardId}/items`, { ...input, groupId: input.parentItemId ? undefined : groupId || undefined }));
-      // Swap the optimistic row for the real one immediately so it is editable at once.
-      setB((bb) => ({ ...bb, items: created ? bb.items.map((i) => (i.id === tempId ? { ...created, subitemCount: 0, updateCount: 0 } : i)) : bb.items.filter((i) => i.id !== tempId) }));
-      return created;
+      const save = (async () => {
+        const created = await run(post<ItemDTO>(`/boards/${boardId}/items`, { ...input, groupId: input.parentItemId ? undefined : groupId || undefined }), false);
+        const edits = queued.get(tempId);
+        const acted = waiting.delete(tempId);
+        queued.delete(tempId);
+        saving.delete(tempId);
+        // A board fetch still on its way may predate the save: it would drop the saved row again.
+        void qc.cancelQueries({ queryKey: key });
+        // Swap the temporary row for the saved one under the same React key, with any edit made meanwhile
+        // (and without a copy of the saved item that a fetch may already have brought in).
+        if (created) {
+          savedAs.set(tempId, created.id);
+          rowKeys.set(created.id, tempId);
+        }
+        setB((bb) => ({ ...bb, items: created ? bb.items.filter((i) => i.id !== created.id).map((i) => (i.id === tempId ? applyPatch({ ...created, subitemCount: 0, updateCount: 0 }, edits ?? {}) : i)) : bb.items.filter((i) => i.id !== tempId) }));
+        // An edit or row action made meanwhile refreshes the board once it is done; refreshing now could bring
+        // back the item without it for a moment.
+        if (!created || !(edits || acted)) void refresh();
+        return created;
+      })();
+      saving.set(tempId, save);
+      return save;
     },
     async updateItem(id, p) {
-      setB((b) => ({
-        ...b,
-        items: b.items.map((i) => (i.id === id ? { ...i, ...(p.name !== undefined ? { name: p.name } : {}), ...(p.description !== undefined ? { description: p.description } : {}), values: p.values ? mergeValues(i.values, p.values) : i.values, updatedAt: Date.now() } : i)),
-      }));
+      id = savedAs.get(id) ?? id;
+      setB((b) => ({ ...b, items: b.items.map((i) => (i.id === id ? applyPatch(i, p) : i)) }));
+      if (isUnsaved(id)) {
+        const pending = saving.get(id);
+        if (!pending) return false; // its save failed; createItem has said so and removed the row
+        const before = queued.get(id);
+        queued.set(id, { ...before, ...p, ...(before?.values || p.values ? { values: { ...before?.values, ...p.values } } : {}) });
+        const created = await pending;
+        if (!created) return false;
+        id = created.id;
+      }
       return (await run(patch(`/items/${id}`, p))) !== null;
     },
     async setValue(id, columnId, value) {
@@ -100,29 +185,40 @@ export function useBoardActions(boardId: string): BoardActions {
     },
     async moveItem(id, to) {
       const b = getB();
+      let place: ((row: string) => void) | undefined;
       if (b) {
-        const pos = (x?: string | null) => (x ? b.items.find((i) => i.id === x)?.position ?? null : null);
-        const item = b.items.find((i) => i.id === id);
+        const pos = (x?: string | null) => (x ? b.items.find((i) => i.id === rowId(x))?.position ?? null : null);
+        const item = b.items.find((i) => i.id === rowId(id));
         const groupId = to.groupId ?? item?.groupId;
         let position: number;
         if (!to.beforeId && !to.afterId) {
-          const last = b.items.filter((i) => i.groupId === groupId && !i.parentItemId && i.id !== id).sort((a, c) => a.position - c.position).at(-1);
+          const last = b.items.filter((i) => i.groupId === groupId && !i.parentItemId && i.id !== item?.id).sort((a, c) => a.position - c.position).at(-1);
           position = positionBetween(last?.position ?? null, null);
         } else position = positionBetween(pos(to.beforeId), pos(to.afterId));
-        setB((bb) => ({ ...bb, items: bb.items.map((i) => (i.id === id ? { ...i, groupId: groupId!, position } : i.parentItemId === id ? { ...i, groupId: groupId! } : i)) }));
+        place = (row) => setB((bb) => ({ ...bb, items: bb.items.map((i) => (i.id === row ? { ...i, groupId: groupId!, position } : i.parentItemId === row ? { ...i, groupId: groupId! } : i)) }));
+        place(rowId(id));
       }
-      await run(post(`/items/${id}/move`, to));
+      const itemId = await saved(id);
+      if (!itemId) return;
+      // The saved item has just replaced the temporary row, in the place the server gave it: show the move again.
+      if (itemId !== id) place?.(itemId);
+      await run(post(`/items/${itemId}/move`, { ...to, beforeId: await real(to.beforeId), afterId: await real(to.afterId) }));
     },
     async deleteItem(id) {
-      setB((b) => ({ ...b, items: b.items.filter((i) => i.id !== id && i.parentItemId !== id) }));
-      await run(del(`/items/${id}`));
+      const row = rowId(id);
+      setB((b) => ({ ...b, items: b.items.filter((i) => i.id !== row && i.parentItemId !== row) }));
+      const itemId = await saved(id);
+      if (itemId) await run(del(`/items/${itemId}`));
     },
     async archiveItem(id) {
-      setB((b) => ({ ...b, items: b.items.filter((i) => i.id !== id && i.parentItemId !== id) }));
-      await run(post(`/items/${id}/archive`));
+      const row = rowId(id);
+      setB((b) => ({ ...b, items: b.items.filter((i) => i.id !== row && i.parentItemId !== row) }));
+      const itemId = await saved(id);
+      if (itemId) await run(post(`/items/${itemId}/archive`));
     },
     async duplicateItem(id) {
-      await run(post(`/items/${id}/duplicate`, { withSubitems: true }));
+      const itemId = await saved(id);
+      if (itemId) await run(post(`/items/${itemId}/duplicate`, { withSubitems: true }));
     },
     async bulk(itemIds, action, extra = {}) {
       if (action === 'delete' || action === 'archive') setB((b) => ({ ...b, items: b.items.filter((i) => !itemIds.includes(i.id) && !itemIds.includes(i.parentItemId ?? '')) }));

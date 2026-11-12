@@ -8,6 +8,7 @@ import { ColorSwatches } from '../components/ui/ui';
 import { MenuItem, MenuSep, Popover, useConfirm, useContextMenu, useToast } from '../components/ui/overlays';
 import { Cell, type CellCtx } from './cells/Cell';
 import type { BoardViewProps } from './types';
+import { isUnsaved, itemKey } from './useBoard';
 import { ColumnDialog } from './ColumnDialog';
 import { BASE } from '../lib/base';
 
@@ -337,10 +338,10 @@ function GroupSection(p: {
               const open = p.expanded.has(it.id);
               const over = p.drag?.over && 'id' in p.drag.over && p.drag.over.id === it.id ? p.drag.over.where : null;
               return (
-                <Fragment key={it.id}>
+                <Fragment key={itemKey(it.id)}>
                   <tr
                     className={`${selected.has(it.id) ? 'selected' : ''}${p.drag?.id === it.id ? ' dragging' : ''}${over === 'before' ? ' drop-before' : over === 'after' ? ' drop-after' : ''}`}
-                    draggable={canEdit && !it.id.startsWith('tmp-')}
+                    draggable={canEdit && !isUnsaved(it.id)}
                     onDragStart={(e) => { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', it.id); p.setDrag({ id: it.id }); }}
                     onDragEnd={() => p.setDrag(null)}
                     onDragOver={(e) => p.onRowDragOver(e, it)}
@@ -355,7 +356,7 @@ function GroupSection(p: {
                     </td>
                     {columns.map((c) => (
                       <td key={c.id}>
-                        <Cell column={c} item={it} value={it.values[c.id]} ctx={ctx} canEdit={canEdit && !it.id.startsWith('tmp-')} onChange={(v) => actions.setValue(it.id, c.id, v)} />
+                        <Cell column={c} item={it} value={it.values[c.id]} ctx={ctx} canEdit={canEdit} onChange={(v) => actions.setValue(it.id, c.id, v)} />
                       </td>
                     ))}
                     <td />
@@ -363,7 +364,7 @@ function GroupSection(p: {
                   {open ? (
                     <>
                       {subs.map((s) => (
-                        <tr key={s.id} className="subitem-row" onContextMenu={(e) => p.onContextMenu(e, s)}>
+                        <tr key={itemKey(s.id)} className="subitem-row" onContextMenu={(e) => p.onContextMenu(e, s)}>
                           <td className="group-bar" style={{ background: section.color, opacity: 0.4 }} />
                           <td className="select-cell sticky-col" style={{ left: 0 }} />
                           <td className="sticky-col" style={{ left: 34 }}>
@@ -371,7 +372,7 @@ function GroupSection(p: {
                           </td>
                           {columns.map((c) => (
                             <td key={c.id}>
-                              <Cell column={c} item={s} value={s.values[c.id]} ctx={ctx} canEdit={canEdit && !s.id.startsWith('tmp-')} onChange={(v) => actions.setValue(s.id, c.id, v)} />
+                              <Cell column={c} item={s} value={s.values[c.id]} ctx={ctx} canEdit={canEdit} onChange={(v) => actions.setValue(s.id, c.id, v)} />
                             </td>
                           ))}
                           <td />
