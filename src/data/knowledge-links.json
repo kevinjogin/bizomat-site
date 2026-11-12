@@ -11135,6 +11135,24 @@
    "note": "Compares planned work hours with the team's available capacity, the check this chapter makes before and after agreeing to a part-time arrangement.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/information-you-can-release",
+   "chapter": "handling-an-foi-request",
+   "tool": "workload",
+   "type": "applies",
+   "note": "Compares the hours a large request will take with the team's available capacity, the check this chapter makes before committing to the processing timeline.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/information-you-can-release",
+   "chapter": "a-team-process-that-meets-the-deadlines",
+   "tool": "staffing-need",
+   "type": "applies",
+   "note": "Converts the yearly caseload, hours per case and productive time into the FTE this chapter calculates for an FOI and privacy team.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
