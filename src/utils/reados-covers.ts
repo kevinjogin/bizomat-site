@@ -269,6 +269,17 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'on-site-power-and-heat-by-the-numbers': { motif: 'pylon', tone: 'carbon' },
   'humidity-control-by-the-numbers': { motif: 'leaf', tone: 'graphite' },
   'public-money-you-can-account-for': { motif: 'ledger', tone: 'carbon' },
+  'practical-wisdom-by-the-numbers': { motif: 'compass', tone: 'ember' },
+  'fair-dealing-by-the-numbers': { motif: 'ledger', tone: 'graphite' },
+  'industrial-hydraulics-by-the-numbers': { motif: 'gauge', tone: 'ember' },
+  'design-for-assembly-by-the-numbers': { motif: 'geometry', tone: 'paper' },
+  'requirements-that-cannot-all-be-true': { motif: 'specsheet', tone: 'graphite' },
+  'the-burden-of-proof': { motif: 'dialogue', tone: 'carbon' },
+  'yes-and-no-when-sources-disagree': { motif: 'dialogue', tone: 'ember' },
+  'arguments-that-hold': { motif: 'decision', tone: 'graphite' },
+  'divide-the-work': { motif: 'workflow', tone: 'paper' },
+  'the-love-of-system': { motif: 'compass', tone: 'carbon' },
+  'tolerances-that-work': { motif: 'drawing', tone: 'graphite' },
   'grants-you-can-defend': { motif: 'handover', tone: 'ember' },
 };
 

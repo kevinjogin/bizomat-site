@@ -11,12 +11,15 @@ Its new address is <https://bizomat.ai/tasks> (everything lives under bizomat.ai
 | Area | What works today |
 | --- | --- |
 | Auth | Email + password (PBKDF2), secure `__Host-` session cookies, CSRF tokens, rate limiting, lockout, session list/revoke, personal API tokens, provider-independent OAuth with a real Google OIDC provider that activates when credentials are configured |
-| Workspaces | Multi-workspace, roles (owner/admin/member/viewer), invitations (copyable link), teams, audit log, JSON export |
+| Organisations | Multi-workspace (organisation), roles (owner, admin, project manager, member, viewer, guest or contractor), suspension, email invitations with resend and revoke (token-only acceptance), per-project permission matrix, per-task access, teams, permanent audit trail, JSON export. [docs/architecture/organisation-permissions.md](../../docs/architecture/organisation-permissions.md) |
+| Finance | 11 currencies (ISO 4217), organisation and project currency, finance roles (approved budget, estimated, actual, committed), decimal-safe totals per currency, remaining budget, variance, utilisation, finance visibility. [docs/architecture/financial-system.md](../../docs/architecture/financial-system.md) |
+| Reports | Eight report types (inception to date, previous and current month, custom, monthly, completion, financial, outstanding) built from recorded history; preview, commentary, PDF, Excel, HTML, CSV; immutable saved versions. [docs/architecture/reporting-system.md](../../docs/architecture/reporting-system.md) |
+| Email | Brevo transactional API behind a provider abstraction, outbox with idempotency, daily limit with an invitation reserve, retries, webhooks, 12 templates. [docs/email/brevo-setup.md](../../docs/email/brevo-setup.md) |
 | Boards | Groups, items, subitems, 25 column types, inline editing, drag & drop (rows, groups, columns), bulk actions, archive/restore, duplicate, templates, private/workspace visibility, board roles, default values |
 | Views | Table, Kanban, Calendar (month/week/day), Timeline/Gantt (dependencies, milestones, drag-to-reschedule), Chart, Workload, Form, Map, Files — all on one shared data model; saved filters/sorts, personal views |
 | Items | Detail panel: updates, replies, @mentions, attachments (R2), subitems, activity history, time tracking, linked documents |
 | Automations | Trigger → conditions → actions engine, run logs, retries, de-duplication, loop prevention, recurring + date-based triggers |
-| Notifications | Assignment, mention, comment, reply, status change, due soon, overdue, automation, invitation; read/unread, preferences, deep links |
+| Notifications | Assignment, mention, comment, reply, status change, due soon, overdue, automation, invitation, access changes, reports; read/unread, in-app and email preferences, deep links |
 | Dashboards | 11 widget types computed from live data, add/remove/resize/reorder, source boards, filters, date ranges |
 | Documents | Rich text (headings, lists, checklists, tables, links, images), autosave with conflict detection, version history, comments, sharing, links to boards/items |
 | Planning | My Work, My Day + weekly planner, goals (manual or board-driven progress), favourites, recent, global search with AND/OR filters and saved filters |

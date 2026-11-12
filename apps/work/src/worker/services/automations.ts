@@ -508,12 +508,15 @@ export async function notifyDueDates(svc: Svc, at: number = now()): Promise<numb
       .all<ItemRow & { board_name: string }>();
     if (!items.results.length) continue;
     const boardCols = await loadColumns(svc.db, c.board_id);
+    const boardRow = await svc.db.prepare('SELECT * FROM boards WHERE id = ?').bind(c.board_id).first<BoardRow>();
+    const { taskEmailDetails } = await import('./item-ops');
     for (const it of items.results) {
       const values = parseJson<Record<string, unknown>>(it.values_json, {});
       const due = String(values[c.id]).slice(0, 10);
       const users = assigneesOf(values, boardCols);
       if (!users.length) continue;
       const overdue = due < today;
+      const details = boardRow ? { ...(await taskEmailDetails(svc, boardRow, it, values, boardCols)), dueDate: due } : null;
       sent += await notify(svc, {
         workspaceId: it.workspace_id,
         userIds: users,
@@ -525,6 +528,7 @@ export async function notifyDueDates(svc: Svc, at: number = now()): Promise<numb
         entityId: it.id,
         dedupeKey: `${overdue ? 'overdue' : 'due'}:${it.id}:${c.id}:${due}:${overdue ? 'o' : due === today ? 't' : 'n'}`,
         includeActor: true,
+        email: details ? { template: overdue ? 'overdue' : 'due_reminder', ...details } : undefined,
       });
     }
   }

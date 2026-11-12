@@ -19,6 +19,29 @@ export interface Env {
   CF_VERSION_METADATA?: { id: string; tag: string; timestamp: string };
   /** Set to 'node' by the Node runtime (src/node/runtime.ts); absent on Cloudflare. */
   RUNTIME?: 'node';
+  // Email (docs/email/brevo-setup.md). All optional: without a provider, invitations show a link to share.
+  /** 'brevo' (default when BREVO_API_KEY is set), 'log' (development: stored, never sent) or 'none'. */
+  EMAIL_PROVIDER?: string;
+  /** Secret. Brevo API key (v3), sent only in the api-key header to api.brevo.com. */
+  BREVO_API_KEY?: string;
+  /** Secret. The bearer token Brevo sends to the transactional webhook. */
+  BREVO_WEBHOOK_TOKEN?: string;
+  EMAIL_FROM_NAME?: string;
+  EMAIL_FROM_ADDRESS?: string;
+  EMAIL_REPLY_TO?: string;
+  /** Public address for links in emails; APP_URL when unset. */
+  APP_BASE_URL?: string;
+  /** Messages handed to the provider per UTC day (default 250, under Brevo Free's 300). */
+  EMAIL_DAILY_LIMIT?: string;
+  /** Extra sends per day kept for invitations and security messages (default 40). */
+  EMAIL_CRITICAL_RESERVE?: string;
+  /** '1': Brevo accepts and drops every message (X-Sib-Sandbox: drop), for testing the integration. */
+  EMAIL_SANDBOX?: string;
+  /**
+   * Secret: base64 of 32 bytes, encrypting secrets saved in the founder console (the Brevo key). The Node runtime
+   * creates one in the data folder when none is set (src/node/runtime.ts).
+   */
+  SETTINGS_ENCRYPTION_KEY?: string;
 }
 
 export interface AuthUser {

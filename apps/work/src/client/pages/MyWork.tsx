@@ -62,7 +62,7 @@ export function useAddToMyDay(wsId: string) {
 export function WorkRow({ w, wsId, onAdd }: { w: WorkItem; wsId: string; onAdd?: (w: WorkItem) => void }) {
   return (
     <div className="work-row">
-      <Link className="item-link ellipsis" to={`/w/${wsId}/boards/${w.boardId}?item=${w.item.id}`}>
+      <Link className="item-link ellipsis" to={`/w/${wsId}/tasks/${w.item.id}`}>
         {w.item.parentItemId ? <Icon name="subitem" size={13} /> : null} {w.item.name}
       </Link>
       <Link className="muted small ellipsis hide-sm" to={`/w/${wsId}/boards/${w.boardId}`}>
@@ -99,6 +99,7 @@ export default function MyWork() {
   return (
     <div className="page">
       <PageHeader icon="checkSquare" title="My Work" subtitle="Everything assigned to you across the boards you can access." />
+      <SharedWithMe wsId={ws.id} />
       {total === 0 && data.completed.length === 0 ? (
         <div className="card">
           <EmptyState icon="checkSquare" title="Nothing assigned to you yet">
@@ -131,5 +132,25 @@ export default function MyWork() {
         </div>
       )}
     </div>
+  );
+}
+
+/** Tasks shared with me one by one (task access, not the whole project). */
+function SharedWithMe({ wsId }: { wsId: string }) {
+  const q = useQuery({ queryKey: ['shared-tasks', wsId], queryFn: () => get<{ id: string; name: string; boardName: string; done: boolean; sharedBy: string | null }[]>(`/workspaces/${wsId}/shared-tasks`) });
+  if (!q.data?.length) return null;
+  return (
+    <section className="card" style={{ marginBottom: 14 }} aria-labelledby="shared-tasks">
+      <div className="card-header"><h2 id="shared-tasks" className="grow">Shared with me</h2><span className="badge">{q.data.length}</span></div>
+      {q.data.map((t) => (
+        <div key={t.id} className="work-row">
+          <Link className="item-link ellipsis" to={`/w/${wsId}/tasks/${t.id}`}><Icon name="lock" size={13} /> {t.name}</Link>
+          <span className="muted small ellipsis hide-sm">{t.boardName}</span>
+          <span className="small hide-sm">{t.done ? 'Done' : ''}</span>
+          <span className="muted small hide-sm">{t.sharedBy ? `Shared by ${t.sharedBy}` : ''}</span>
+          <span />
+        </div>
+      ))}
+    </section>
   );
 }

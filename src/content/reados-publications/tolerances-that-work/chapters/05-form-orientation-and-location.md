@@ -4,7 +4,7 @@ chapterSlug: form-orientation-and-location
 order: 5
 title: "Form, orientation and location tolerances"
 description: "Use flatness, perpendicularity, position, run-out and profile to control what size limits cannot, and understand why a cylindrical position zone accepts more good parts."
-draft: true
+draft: false
 ---
 
 Size limits say how big a feature may be. They say nothing reliable about whether a face is flat, whether a bore is square to a mounting face or whether a hole is where it should be relative to other features. Those properties often matter more to function than size does. Geometric tolerances control them directly.
@@ -134,6 +134,20 @@ Profile of a surface is the most general geometric tolerance. It defines a unifo
 
 Chapter 2 noted that the spacer's "length" is ambiguous if its end faces are not square to its bore. A practical specification is a size tolerance on length together with a perpendicularity tolerance on each end face relative to the bore axis, or a parallelism tolerance between the faces. The faces then push squarely against the bearing outer rings, and the length measurement means the same thing to the turner and the inspector.
 
+## The failure case: a perpendicularity zone with one direction missing
+
+This is an illustration. When Northgate first added the bore's perpendicularity to the housing drawing, the frame read "⊥ 0.02 A", without the diameter symbol. The designer meant a cylindrical zone of Ø0.02 mm, as calculated above. What the drawing specified was a zone between two parallel planes 0.02 mm apart, perpendicular to datum A. That zone controls the tilt of the bore axis in one direction only. It says nothing about tilt at right angles to it.
+
+The supplier's coordinate measuring machine program evaluated the requirement exactly as drawn. It reported one value per housing, every one inside 0.02 mm. A housing in the first production batch had its bore axis tilted by about 0.03 mm over the 40 mm depth of the bore in the uncontrolled direction. It passed. At the roller face, 100 mm from the mounting face, that tilt displaced the roller by about 0.03 ÷ 40 × 100 = 0.075 mm, half as much again as the 0.05 mm the belt tracking had been judged to tolerate. The belt on that unit wandered, and it took two days to trace the cause back to a missing symbol.
+
+### How it is detected
+
+For each geometric tolerance, describe its zone in words: what shape it is, how large, and in which directions it constrains the feature. "Two planes, 0.02 mm apart, perpendicular to A" immediately raises the question: which way do they face? A measurement report that gives one number for an axis requirement, where function cares about every direction, is another clue.
+
+### How it is corrected
+
+The frame became "⊥ Ø0.02 A", and the supplier's program was changed to evaluate a cylindrical zone. The review checklist in Chapter 10 now asks, for every axis tolerance, whether the Ø symbol is present when function cares about all directions.
+
 ## Common mistakes
 
 - **Perpendicularity without the Ø symbol** when an axis is toleranced. Without it the zone is two parallel planes, which controls only one direction of tilt.
@@ -149,8 +163,21 @@ Chapter 2 noted that the spacer's "length" is ambiguous if its end faces are not
 - Are refinements smaller than the tolerances they refine?
 - How will the inspector evaluate this requirement, and is that consistent with the datum scheme?
 
-## Exercise: convert a coordinate drawing
+## Exercise: evaluate four bolt holes
 
-Take a drawing with hole positions given by plus-and-minus coordinates. Re-specify them with basic dimensions from functional datums and a cylindrical position tolerance equal to the diagonal of the original square zone. Calculate the area gained, then check whether any parts rejected in the past would have conformed.
+The four clearance holes of one Northgate housing are toleranced at position Ø0.5 mm relative to A and B, regardless of feature size, with a size of Ø9.0 to Ø9.2 mm. The measuring machine reports these deviations from true position in that frame: hole 1, Δx = +0.12 and Δy = −0.09 mm; hole 2, +0.21 and +0.10 mm; hole 3, −0.18 and +0.17 mm; hole 4, +0.05 and −0.26 mm. Each hole is within its size limits. Which holes conform? How would the old ±0.1 mm coordinate tolerances have judged them?
+
+**Worked answer.** The [true position tool](/tools/true-position/) in BIZOMAT Tools converts measured deviations into a diametral position and compares it with the allowed tolerance.
+
+| Hole | Δx, Δy (mm) | Position | Ø0.5 position | ±0.1 coordinates |
+|---|---|---|---|---|
+| 1 | +0.12, −0.09 | Ø0.300 | Conforms | Rejected: Δx over 0.1 |
+| 2 | +0.21, +0.10 | Ø0.465 | Conforms | Rejected: Δx over 0.1 |
+| 3 | −0.18, +0.17 | Ø0.495 | Conforms, only just | Rejected: both over 0.1 |
+| 4 | +0.05, −0.26 | Ø0.530 | **Does not conform** | Rejected: Δy over 0.1 |
+
+Three holes conform and the housing is rejected because of hole 4. The coordinate tolerances would have rejected all four. Hole 3 is the warning: at Ø0.495 mm it leaves almost nothing for measurement uncertainty, which Chapter 10 deals with. Hole 4 measures Ø9.12 mm, larger than its smallest permitted size. The next chapter shows how a material condition modifier would let that extra size count towards its position.
+
+**Try it on your own drawing.** Take a drawing with hole positions given by plus-and-minus coordinates. Re-specify them with basic dimensions from functional datums and a cylindrical position tolerance equal to the diagonal of the original square zone. Calculate the area gained, then check whether any parts rejected in the past would have conformed.
 
 Position tolerances become even more useful when they are linked to the actual size of the feature. The next chapter covers material condition modifiers, bonus tolerance and the classic fastener formulas.

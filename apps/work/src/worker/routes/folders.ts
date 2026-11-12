@@ -64,7 +64,7 @@ async function ancestors(db: D1Database, folderId: string | null): Promise<strin
 
 folderRoutes.get('/workspaces/:ws/folders', async (c) => {
   const wsId = c.req.param('ws');
-  await requireWorkspace(c.env.DB, wsId, c.get('user').id);
+  await requireWorkspace(c.env.DB, wsId, c.get('user').id, 'viewer');
   const scope = c.req.query('scope');
   if (scope && !FOLDER_SCOPES.includes(scope as FolderScope)) throw badRequest('Unknown folder scope');
   const rows = await c.env.DB.prepare(`SELECT * FROM folders WHERE workspace_id = ? ${scope ? 'AND scope = ?' : ''} ORDER BY position, name`)
@@ -100,7 +100,7 @@ folderRoutes.post('/workspaces/:ws/folders', async (c) => {
 async function loadFolder(c: any) {
   const f = (await c.env.DB.prepare('SELECT * FROM folders WHERE id = ?').bind(c.req.param('id')).first()) as FolderRow | null;
   if (!f) throw notFound('Folder');
-  const role = await requireWorkspace(c.env.DB, f.workspace_id, c.get('user').id).catch(() => {
+  const role = await requireWorkspace(c.env.DB, f.workspace_id, c.get('user').id, 'viewer').catch(() => {
     throw notFound('Folder');
   });
   return { folder: f, role };

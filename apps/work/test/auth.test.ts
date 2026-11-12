@@ -1,6 +1,6 @@
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
-import { PASSWORD, login, raw, signup, uniqueEmail } from './helpers';
+import { PASSWORD, login, raw, signup, signupWith, uniqueEmail } from './helpers';
 
 describe('authentication', () => {
   it('rejects weak passwords and duplicate accounts', async () => {
@@ -165,12 +165,43 @@ describe('invitations', () => {
   it('invited people can sign up even when signup is otherwise allowed and land in the workspace', async () => {
     const owner = await signup('Owner2');
     const email = uniqueEmail('new');
-    await owner.json('POST', `/api/workspaces/${owner.workspaceId}/invitations`, { email, role: 'viewer' });
-    const fresh = await signup('Newbie', email);
+    const inv = await owner.json('POST', `/api/workspaces/${owner.workspaceId}/invitations`, { email, role: 'viewer' });
+    // Since 12 Nov 2026 the invitation's token (from the email or the shared link) is what joins the workspace.
+    const fresh = await signupWith('Newbie', email, inv.inviteUrl.split('/invite/')[1]);
     const ws = await fresh.json('GET', '/api/workspaces');
     expect(ws).toHaveLength(1);
     expect(ws[0].id).toBe(owner.workspaceId);
     expect(ws[0].role).toBe('viewer');
+  });
+
+  it('knowing an invited address is not enough: signing up with it but without the token joins nothing', async () => {
+    const owner = await signup('Owner3');
+    const email = uniqueEmail('target');
+    const inv = await owner.json('POST', `/api/workspaces/${owner.workspaceId}/invitations`, { email, role: 'admin' });
+    const impostor = await signup('Impostor', email);
+    const ws = await impostor.json('GET', '/api/workspaces');
+    expect(ws.some((w: any) => w.id === owner.workspaceId)).toBe(false);
+    expect((await impostor.req('GET', `/api/workspaces/${owner.workspaceId}/boards`)).status).toBe(404);
+    // Signing in again does not accept it either.
+    const again = await login(email);
+    expect((await again.json('GET', '/api/workspaces')).some((w: any) => w.id === owner.workspaceId)).toBe(false);
+    const list = await owner.json('GET', `/api/workspaces/${owner.workspaceId}/invitations`);
+    expect(list.find((i: any) => i.id === inv.id).status).toBe('pending');
+  });
+
+  it('an invitation token works once', async () => {
+    const owner = await signup();
+    const invitee = await signup();
+    const inv = await owner.json('POST', `/api/workspaces/${owner.workspaceId}/invitations`, { email: invitee.email });
+    const token = inv.inviteUrl.split('/invite/')[1];
+    await invitee.json('POST', `/api/auth/invitations/${token}/accept`, {});
+    // The same person again: fine (idempotent); the stored hash is never returned.
+    expect((await invitee.req('POST', `/api/auth/invitations/${token}/accept`, {})).status).toBe(200);
+    const list = await owner.json('GET', `/api/workspaces/${owner.workspaceId}/invitations`);
+    expect(list[0].status).toBe('accepted');
+    expect(list[0].token_hash).toBeUndefined();
+    const rows = await env.DB.prepare('SELECT token_hash FROM invitations WHERE id = ?').bind(inv.id).all<{ token_hash: string }>();
+    expect(rows.results[0].token_hash).not.toContain(token);
   });
 
   it('revoked or expired invitations cannot be used', async () => {

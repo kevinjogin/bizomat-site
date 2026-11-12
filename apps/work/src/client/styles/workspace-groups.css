@@ -1,0 +1,65 @@
+/* Workspace identification colours and board group (category) descriptions. Kept apart from app.css so the two
+   features stay self-contained; every value comes from the app's tokens. */
+
+/* ------------------------------------------------------------ workspace dot */
+/* A small indicator next to a workspace's name. The ring keeps dark colours visible on the dark theme. */
+.ws-dot { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18); vertical-align: middle; }
+.ws-dot.sm { width: 8px; height: 8px; border-radius: 2px; }
+.ws-dot.lg { width: 12px; height: 12px; border-radius: 3px; }
+:root[data-theme='dark'] .ws-dot { box-shadow: 0 0 0 1px var(--border-strong); }
+
+/* ------------------------------------------------------------ colour picker */
+.ws-color-picker { display: flex; flex-direction: column; gap: 8px; }
+.ws-color-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.ws-color-option { display: flex; align-items: center; gap: 6px; min-width: 0; height: 32px; padding: 0 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); cursor: pointer; font-size: 12.5px; text-align: left; }
+.ws-color-option:hover { background: var(--surface-2); }
+.ws-color-option.selected { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); font-weight: 600; }
+.ws-color-option:disabled { opacity: .55; cursor: not-allowed; }
+.ws-color-chip { flex: none; width: 14px; height: 14px; border-radius: 4px; }
+:root[data-theme='dark'] .ws-color-chip { box-shadow: 0 0 0 1px var(--border-strong); }
+.ws-color-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ws-color-custom { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ws-color-custom .label { margin-right: 2px; }
+.ws-color-native { width: 34px; height: 28px; padding: 2px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; }
+.ws-color-custom .ws-color-hex { width: 120px; flex: none; }
+.ws-color-picker .hint, .ws-color-picker .error { display: inline-flex; align-items: center; gap: 6px; }
+.ws-identity-preview { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 10px 12px; margin-bottom: 12px; border: 1px dashed var(--border-strong); border-radius: var(--radius); }
+@media (max-width: 560px) {
+  .ws-color-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ------------------------------------------------------------ board breadcrumb */
+.board-crumbs { display: flex; align-items: center; gap: 6px; min-width: 0; margin-bottom: 2px; font-size: 12px; color: var(--text-3); }
+.board-crumbs a { display: inline-flex; align-items: center; gap: 6px; min-width: 0; max-width: 260px; color: var(--text-2); }
+.board-crumbs a > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ------------------------------------------------------------ group descriptions */
+.group-info { color: var(--text-3); }
+.group-info:hover, .group-info[aria-expanded='true'] { color: var(--accent); }
+.group-preview { display: flex; align-items: flex-start; gap: 6px; position: sticky; left: 24px; max-width: min(760px, calc(100vw - 80px)); margin: -2px 0 6px 38px; font-size: 12.5px; color: var(--text-3); }
+.group-preview .group-preview-text { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.group-preview.open .group-preview-text { white-space: normal; overflow: visible; }
+.group-preview .btn { flex: none; height: 20px; padding: 0 6px; font-size: 12px; color: var(--accent); }
+.group-desc { color: var(--text); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.group-desc p { margin: 0 0 8px; }
+.group-desc ul { margin: 0 0 8px; padding-left: 20px; }
+.group-desc li { margin: 2px 0; }
+.group-desc > :last-child { margin-bottom: 0; }
+.group-desc-compact p, .group-desc-compact ul { margin-bottom: 4px; }
+.group-panel { display: flex; flex-direction: column; gap: 12px; padding: 12px; width: min(400px, calc(100vw - 34px)); }
+.group-panel-head { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.group-panel-head h3 { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.group-panel-bar { width: 4px; align-self: stretch; border-radius: 2px; flex: none; }
+.group-panel-body { max-height: 40vh; overflow: auto; }
+.group-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 6px; }
+.group-stat { padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface-2); }
+.group-stat strong { display: block; font-family: var(--font-display); font-size: 16px; line-height: 1.2; }
+.group-stat span { font-size: 11px; color: var(--text-3); }
+.group-stat.late strong { color: var(--danger); }
+.group-panel textarea { min-height: 140px; font-size: 13px; }
+.group-panel .counter { font-size: 11px; color: var(--text-3); }
+.group-panel .counter.over { color: var(--danger); font-weight: 600; }
+.group-panel-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .group-preview { margin-left: 8px; max-width: calc(100vw - 48px); }
+}

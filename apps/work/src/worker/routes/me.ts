@@ -12,7 +12,7 @@ import { rateLimit } from '../auth/rate-limit';
 import { audit } from '../services/audit';
 import { dailyActivityStmt, trackEvent } from '../services/analytics';
 import { columnDTO, itemDTO, type ColumnRow } from '../services/mappers';
-import { accessibleBoardIds, requireItem, requireWorkspace, type ItemRow } from '../services/permissions';
+import { accessibleBoardIds, requireWorkspace, type ItemRow } from '../services/permissions';
 import { userDTO, type UserRow } from './helpers';
 
 export const meRoutes = new Hono<AppEnv>();
@@ -138,12 +138,18 @@ meRoutes.delete('/me/tokens/:id', async (c) => {
 
 meRoutes.get('/me/notification-preferences', async (c) => {
   const rows = await c.env.DB.prepare('SELECT type, in_app, email FROM notification_preferences WHERE user_id = ?').bind(c.get('user').id).all<{ type: string; in_app: number; email: number }>();
-  return c.json(
+  const { EMAIL_DEFAULTS } = await import('../services/notify');
+  const { emailConfig } = await import('../services/email/provider');
+  // The response stays an array (the existing client reads it as one); whether email is configured is in a header.
+  const res = c.json(
     NOTIFICATION_TYPES.map((t) => {
       const r = rows.results.find((x) => x.type === t);
-      return { type: t, inApp: r ? !!r.in_app : true, email: r ? !!r.email : false };
+      return { type: t, inApp: r ? !!r.in_app : true, email: r ? !!r.email : EMAIL_DEFAULTS[t] };
     }),
   );
+  const { emailEnv } = await import('../services/email/settings');
+  res.headers.set('X-Email-Delivery', emailConfig(await emailEnv(c.env)).provider === 'none' ? 'not_configured' : 'configured');
+  return res;
 });
 
 meRoutes.put('/me/notification-preferences', async (c) => {
@@ -155,7 +161,9 @@ meRoutes.put('/me/notification-preferences', async (c) => {
     ),
   );
   await trackEvent(c.env.DB, { type: 'settings.changed', userId: user.id, entityType: 'user', entityId: user.id, metadata: { section: 'notifications' } });
-  return c.json({ ok: true, emailDelivery: 'not_configured' });
+  const { emailConfig } = await import('../services/email/provider');
+  const { emailEnv } = await import('../services/email/settings');
+  return c.json({ ok: true, emailDelivery: emailConfig(await emailEnv(c.env)).provider === 'none' ? 'not_configured' : 'configured' });
 });
 
 // ------------------------------------------------------ favourites & recents
@@ -245,9 +253,26 @@ export interface WorkItem {
 }
 
 /** Items assigned to the user across every board they can access. */
+/** Item ids shared with the user one by one (task grants), on boards they cannot otherwise open. */
+async function grantedItems(db: D1Database, wsId: string, userId: string, exceptBoards: string[]): Promise<{ ids: Set<string>; boards: string[] }> {
+  const rows = await db
+    .prepare(
+      `SELECT ip.item_id, ip.board_id FROM item_permissions ip JOIN workspace_members m ON m.workspace_id = ip.workspace_id AND m.user_id = ip.user_id AND m.status = 'active'
+       WHERE ip.workspace_id = ? AND ip.user_id = ?`,
+    )
+    .bind(wsId, userId)
+    .all<{ item_id: string; board_id: string }>();
+  const except = new Set(exceptBoards);
+  const own = rows.results.filter((r) => !except.has(r.board_id));
+  return { ids: new Set(own.map((r) => r.item_id)), boards: Array.from(new Set(own.map((r) => r.board_id))) };
+}
+
 export async function assignedItems(db: D1Database, wsId: string, userId: string): Promise<{ items: WorkItem[]; columnsByBoard: Map<string, ColumnDTO[]> }> {
-  const boards = await accessibleBoardIds(db, wsId, userId);
+  const projectBoards = await accessibleBoardIds(db, wsId, userId);
+  const granted = await grantedItems(db, wsId, userId, projectBoards);
+  const boards = [...projectBoards, ...granted.boards];
   if (!boards.length) return { items: [], columnsByBoard: new Map() };
+  const onProject = new Set(projectBoards);
   const cols = await db.prepare(`SELECT * FROM columns WHERE board_id IN (${placeholders(boards.length)}) AND type IN ('person','people','status','date','timeline')`).bind(...boards).all<ColumnRow>();
   const columnsByBoard = new Map<string, ColumnDTO[]>();
   for (const col of cols.results.map(columnDTO)) columnsByBoard.set(col.boardId, [...(columnsByBoard.get(col.boardId) ?? []), col]);
@@ -260,6 +285,8 @@ export async function assignedItems(db: D1Database, wsId: string, userId: string
     .all<ItemRow>();
   const out: WorkItem[] = [];
   for (const r of rows.results) {
+    // On a board seen through task grants only, just the shared tasks (and their subitems) count.
+    if (!onProject.has(r.board_id) && !granted.ids.has(r.id) && !(r.parent_item_id && granted.ids.has(r.parent_item_id))) continue;
     const bc = columnsByBoard.get(r.board_id) ?? [];
     const values = parseJson<Record<string, unknown>>(r.values_json, {});
     if (!assigneesOf(values, bc).includes(userId)) continue;
@@ -275,7 +302,10 @@ export async function assignedItems(db: D1Database, wsId: string, userId: string
       statusColor: label?.color ?? null,
     });
   }
-  return { items: out, columnsByBoard };
+  // Financial amounts stay hidden where the person may not see them.
+  const { hideFinanceInItems } = await import('../services/access');
+  const visible = await hideFinanceInItems(db, wsId, userId, out.map((w) => w.item));
+  return { items: out.map((w, i) => ({ ...w, item: visible[i] })), columnsByBoard };
 }
 
 meRoutes.get('/workspaces/:ws/my-work', async (c) => {
@@ -311,7 +341,9 @@ meRoutes.get('/workspaces/:ws/planner', async (c) => {
   const from = c.req.query('from') ?? todayIn('UTC');
   const to = c.req.query('to') ?? from;
   if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) throw badRequest('Invalid date range');
-  const boards = new Set(await accessibleBoardIds(c.env.DB, wsId, user.id));
+  const projectBoards = await accessibleBoardIds(c.env.DB, wsId, user.id);
+  const boards = new Set(projectBoards);
+  const granted = await grantedItems(c.env.DB, wsId, user.id, projectBoards);
   const rows = await c.env.DB.prepare(
     `SELECT p.*, i.name AS item_name, i.board_id, i.values_json, i.completed_at, b.name AS board_name FROM planner_entries p
      JOIN items i ON i.id = p.item_id JOIN boards b ON b.id = i.board_id
@@ -321,7 +353,7 @@ meRoutes.get('/workspaces/:ws/planner', async (c) => {
     .all<any>();
   return c.json(
     rows.results
-      .filter((r) => boards.has(r.board_id))
+      .filter((r) => boards.has(r.board_id) || granted.ids.has(r.item_id))
       .map((r) => ({ id: r.id, itemId: r.item_id, itemName: r.item_name, boardId: r.board_id, boardName: r.board_name, day: r.day, position: r.position, done: !!r.done, itemCompleted: !!r.completed_at })),
   );
 });
@@ -331,7 +363,8 @@ meRoutes.post('/workspaces/:ws/planner', async (c) => {
   const wsId = c.req.param('ws');
   await requireWorkspace(c.env.DB, wsId, user.id);
   const input = await body(c, z.object({ itemId: z.string(), day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }));
-  const { item } = await requireItem(c.env.DB, input.itemId, user.id, 'view');
+  const { requireTask } = await import('../services/access');
+  const { item } = await requireTask(c.env.DB, input.itemId, user.id, 'view');
   if (item.workspace_id !== wsId) throw notFound('Item');
   const id = newId();
   await c.env.DB.prepare('INSERT INTO planner_entries (id, workspace_id, user_id, item_id, day, position, created_at) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(user_id, item_id, day) DO NOTHING')

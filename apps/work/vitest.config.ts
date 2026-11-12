@@ -20,7 +20,7 @@ export default defineConfig(async () => {
         main: './src/worker/index.ts',
         wrangler: { configPath: './wrangler.jsonc' },
         miniflare: {
-          bindings: { TEST_MIGRATIONS: migrations, ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com' },
+          bindings: { TEST_MIGRATIONS: migrations, ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com', BREVO_WEBHOOK_TOKEN: 'test-webhook-token', SETTINGS_ENCRYPTION_KEY: 'BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=' },
         },
       }),
     ],

@@ -68,7 +68,7 @@ async function buildDataFolder(dir: string, migrations = readMigrationsDir('migr
   ins("INSERT INTO users (id, email, name, created_at, updated_at) VALUES ('User3AAAAAAAAAAA', 'third.person@example.com', 'O''Brien', ?, ?)", t0, t0);
   ins("INSERT INTO workspaces (id, name, description, logo_key, created_by, created_at, updated_at) VALUES ('WorkspaceAAAAAAA', 'Synthetic', ?, ?, 'User1AAAAAAAAAAA', ?, ?)", TRICKY, keys.logo, t0, t0);
   ins("INSERT INTO workspaces (id, name, created_by, created_at, updated_at) VALUES ('WorkspaceBBBBBBB', 'Second', 'User2AAAAAAAAAAA', ?, ?)", t0, t0);
-  ins("INSERT INTO workspace_members VALUES ('WorkspaceAAAAAAA', 'User1AAAAAAAAAAA', 'owner', ?), ('WorkspaceAAAAAAA', 'User2AAAAAAAAAAA', 'member', ?), ('WorkspaceBBBBBBB', 'User2AAAAAAAAAAA', 'owner', ?)", t0, t0, t0);
+  ins("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES ('WorkspaceAAAAAAA', 'User1AAAAAAAAAAA', 'owner', ?), ('WorkspaceAAAAAAA', 'User2AAAAAAAAAAA', 'member', ?), ('WorkspaceBBBBBBB', 'User2AAAAAAAAAAA', 'owner', ?)", t0, t0, t0);
   // Rows stored before the rows they refer to (as a moved or re-parented folder or item is): parents first must be
   // worked out, not taken from the stored order.
   db.exec('PRAGMA defer_foreign_keys = ON; BEGIN');

@@ -1,6 +1,8 @@
 // Shared DTOs between the Worker API and the React client.
 
-export type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer';
+export type WorkspaceRole = 'owner' | 'admin' | 'project_manager' | 'member' | 'viewer' | 'guest';
+export const WORKSPACE_ROLES: WorkspaceRole[] = ['owner', 'admin', 'project_manager', 'member', 'viewer', 'guest'];
+export type MemberStatus = 'active' | 'suspended';
 export type BoardRole = 'owner' | 'editor' | 'viewer';
 export type BoardAccess = 'view' | 'edit' | 'admin';
 
@@ -23,6 +25,7 @@ export interface MemberDTO {
   name: string;
   avatarUrl: string | null;
   role: WorkspaceRole;
+  status?: MemberStatus;
 }
 
 export interface WorkspaceDTO {
@@ -52,6 +55,12 @@ export interface BoardDTO {
   folderId: string | null;
   access?: BoardAccess;
   itemCount?: number;
+  /** ISO 4217 code set on the project, or null to inherit the organisation's. */
+  currency?: string | null;
+  startDate?: string | null;
+  managerId?: string | null;
+  /** The caller's capabilities on this project (computed by the server). */
+  caps?: import('./permissions').ProjectCaps;
 }
 
 export interface BoardSettings {
@@ -72,6 +81,8 @@ export interface GroupDTO {
   position: number;
   collapsed: boolean;
   archivedAt: number | null;
+  /** Plain text (paragraphs and "- " bullets, rendered as text, never as HTML); '' when there is none. */
+  description: string;
 }
 
 export interface ColumnDTO {
@@ -101,6 +112,8 @@ export interface ItemDTO {
   updatedAt: number;
   completedAt: number | null;
   archivedAt: number | null;
+  /** Permanent task key (PREFIX-0001), never reused or changed. */
+  key?: string | null;
   subitemCount?: number;
   updateCount?: number;
 }
@@ -157,6 +170,20 @@ export interface BoardBundle {
   views: ViewDTO[];
   members: MemberDTO[];
   boardMembers: { userId: string; role: BoardRole }[];
+  /** Each listed member's access to this project: 'manage' | 'edit' | 'view' | 'none'. */
+  memberAccess?: Record<string, 'manage' | 'edit' | 'view' | 'none'>;
+  finance?: FinanceContextDTO;
+}
+
+export interface FinanceContextDTO {
+  /** The organisation's default currency, or null when an administrator has not chosen one. */
+  workspaceCurrency: string | null;
+  /** The project's own currency, or null when it inherits. */
+  boardCurrency: string | null;
+  /** The currency amounts on this project are in, or null when none is configured. */
+  effectiveCurrency: string | null;
+  /** Columns hidden from the caller because they hold financial data the caller may not view. */
+  hiddenColumns: number;
 }
 
 export interface UpdateDTO {
@@ -220,6 +247,10 @@ export const NOTIFICATION_TYPES = [
   'overdue',
   'automation',
   'invitation',
+  'invitation_accepted',
+  'project_membership',
+  'permission_change',
+  'report_generated',
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 

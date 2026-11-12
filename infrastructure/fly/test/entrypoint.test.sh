@@ -32,6 +32,7 @@ APP_ENV=(
   -e WORK_CANONICAL_URL=https://example.test/tasks
   -e OPENSKETCH_PUBLIC_URL=https://cad.example.test -e OPENSKETCH_KEY_SECRET=throwaway-cad-key
   -e WORK_GOOGLE_CLIENT_ID=work-id -e WORK_GOOGLE_CLIENT_SECRET=throwaway-work-secret
+  -e WORK_BREVO_API_KEY=throwaway-brevo-key -e WORK_EMAIL_FROM_ADDRESS=notifications@example.test
   -e CAD_GOOGLE_CLIENT_ID=cad-id -e CAD_GOOGLE_CLIENT_SECRET=throwaway-cad-secret
   -e CF_AI_TOKEN=throwaway-web-token -e WEB_EXTRA=web-setting -e PROXY_LOG=0
   -e GOOGLE_CLIENT_SECRET=ambiguous-app-wide -e LD_PRELOAD=/nope.so -e NODE_OPTIONS=--inspect
@@ -106,7 +107,7 @@ ok "cad starts an empty CAD server only with BIZOMAT_CAD_ALLOW_EMPTY=1, and says
 run_role proxy /app/proxy/server.mjs >"$tmp/proxy.json"
 [ "$(uid "$tmp/proxy.json")" = 10001 ] || bad "proxy uid"
 for n in UPSTREAM_WEB UPSTREAM_CAD BIZOMAT_PREVIEW_ROUTING PROXY_LOG FLY_APP_NAME PROXY_HOST; do has "$tmp/proxy.json" "$n" || bad "proxy lacks $n"; done
-for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET CF_AI_TOKEN WEB_EXTRA LD_PRELOAD NODE_OPTIONS; do
+for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET CF_AI_TOKEN WEB_EXTRA LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY; do
   if has "$tmp/proxy.json" "$n"; then bad "proxy holds $n"; fi
 done
 ok "proxy: its own settings only, uid 10001"
@@ -116,7 +117,7 @@ run_role web /app/web/dist-server/server.mjs >"$tmp/web.json"
 [ "$(uid "$tmp/web.json")" = 10002 ] || bad "web uid"
 [ "$(val "$tmp/web.json" PORT)" = 8003 ] && [ "$(val "$tmp/web.json" WEB_DIST_DIR)" = /app/web/dist ] && [ "$(val "$tmp/web.json" WEB_TRUST_PROXY)" = 1 ] || bad "web fixed settings"
 [ "$(val "$tmp/web.json" CF_AI_TOKEN)" = throwaway-web-token ] && [ "$(val "$tmp/web.json" WEB_EXTRA)" = web-setting ] || bad "web settings"
-for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS; do
+for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY; do
   if has "$tmp/web.json" "$n"; then bad "web holds $n"; fi
 done
 ok "web: PORT 8003, its own secrets only, uid 10002"
@@ -136,6 +137,8 @@ run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work
 [ "$(val "$tmp/work.json" APP_NAME)" = "BIZOMAT Project Management" ] || bad "APP_NAME default"
 [ "$(val "$tmp/work.json" ALLOW_SIGNUP)" = false ] && [ "$(val "$tmp/work.json" SESSION_TTL_HOURS)" = 72 ] || bad "work defaults"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_SECRET)" = throwaway-work-secret ] || bad "GOOGLE_CLIENT_SECRET must be the work one"
+[ "$(val "$tmp/work.json" BREVO_API_KEY)" = throwaway-brevo-key ] || bad "BREVO_API_KEY from WORK_BREVO_API_KEY"
+[ "$(val "$tmp/work.json" EMAIL_FROM_ADDRESS)" = notifications@example.test ] || bad "EMAIL_FROM_ADDRESS from WORK_EMAIL_FROM_ADDRESS"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_ID)" = work-id ] || bad "a linked secret file must be skipped"
 [ "$(val "$tmp/work.json" WORK_EXTRA_SECRET)" = from-the-volume ] || bad "secret file not read"
 [ "$(val "$tmp/work.json" WORK_DATA_DIR)" = /data/work ] && [ "$(val "$tmp/work.json" PORT)" = 8002 ] || bad "work fixed settings"

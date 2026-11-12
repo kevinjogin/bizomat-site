@@ -59,12 +59,12 @@ export async function runSearch(db: D1Database, wsId: string, userId: string, in
     const rows = await db
       .prepare(
         `SELECT * FROM items WHERE workspace_id = ? AND archived_at IS NULL AND board_id IN (${placeholders(boards.length)})
-         ${q ? "AND search_text LIKE ? ESCAPE '\\'" : ''}
+         ${q ? "AND (search_text LIKE ? ESCAPE '\\' OR task_key LIKE ? ESCAPE '\\')" : ''}
          ${types.has('items') && !types.has('subitems') ? 'AND parent_item_id IS NULL' : ''}
          ${!types.has('items') && types.has('subitems') ? 'AND parent_item_id IS NOT NULL' : ''}
          ORDER BY updated_at DESC LIMIT 2000`,
       )
-      .bind(wsId, ...boards, ...(q ? [like] : []))
+      .bind(wsId, ...boards, ...(q ? [like, like] : []))
       .all<ItemRow>();
     const boardIds = Array.from(new Set(rows.results.map((r) => r.board_id)));
     const cols = boardIds.length ? (await db.prepare(`SELECT * FROM columns WHERE board_id IN (${placeholders(boardIds.length)})`).bind(...boardIds).all<ColumnRow>()).results.map(columnDTO) : [];
@@ -75,7 +75,10 @@ export async function runSearch(db: D1Database, wsId: string, userId: string, in
     const filter = input.filter ? sanitizeFilter(input.filter) : null;
     const statuses = input.statuses?.map((s) => s.toLowerCase());
     const priorities = input.priorities?.map((s) => s.toLowerCase());
-    let items = rows.results.map(itemDTO).filter((it) => {
+    // Financial values are removed before any filter runs, so a filter cannot reveal an amount the person may not see.
+    const { hideFinanceInItems } = await import('../services/access');
+    const visibleRows = await hideFinanceInItems(db, wsId, userId, rows.results.map(itemDTO));
+    let items = visibleRows.filter((it) => {
       const bc = byBoard.get(it.boardId) ?? [];
       it.values = computeValues(it, bc);
       const labelMatch = (type: 'status' | 'priority', wanted?: string[]) => {
@@ -123,7 +126,7 @@ export async function runSearch(db: D1Database, wsId: string, userId: string, in
       )
       .bind(userId, wsId, ...(q ? [like] : []), input.limit)
       .all<any>();
-    results.documents = rows.results.filter((d) => wsAtLeast(role, 'admin') || d.visibility === 'workspace' || d.created_by === userId || d.doc_role).map(({ doc_role: _r, ...d }) => d);
+    results.documents = rows.results.filter((d) => wsAtLeast(role, 'admin') || (d.visibility === 'workspace' && role !== 'guest') || d.created_by === userId || d.doc_role).map(({ doc_role: _r, ...d }) => d);
   }
 
   if (types.has('comments') && boards.length && q) {
@@ -139,7 +142,8 @@ export async function runSearch(db: D1Database, wsId: string, userId: string, in
     results.comments = rows.results;
   }
 
-  if (types.has('users')) {
+  // Guests do not search the organisation's people.
+  if (types.has('users') && role !== 'guest') {
     results.users = members.filter((m) => !q || m.name.toLowerCase().includes(q.toLowerCase()) || m.email.toLowerCase().includes(q.toLowerCase())).slice(0, input.limit);
   }
   return results;

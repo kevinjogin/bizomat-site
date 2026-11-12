@@ -10,6 +10,7 @@ import { ErrorBox, Spinner } from '../components/ui/ui';
 import { entityPath } from '../components/layout/AppShell';
 import { CreateBoardDialog, CreateDashboardDialog, useCreateDocument } from '../components/layout/CreateDialogs';
 import { useMyWork, WorkRow } from './MyWork';
+import { WorkspaceDot } from '../components/workspace/WorkspaceIdentity';
 import '../styles/admin.css';
 
 interface EntityRef {
@@ -40,6 +41,8 @@ export function describeAction(action: string): string {
     file_deleted: 'removed a file from',
     group_created: 'created a group',
     group_deleted: 'deleted a group',
+    group_description_changed: 'described a group',
+    group_description_cleared: 'cleared a group description',
     column_created: 'added a column',
     column_deleted: 'deleted a column',
     column_renamed: 'renamed a column',
@@ -83,7 +86,7 @@ export default function Home() {
             {greeting()}, {user.name.split(' ')[0]}
           </h1>
           <p>
-            Here's what's happening in <strong>{ws.name}</strong>.
+            Here's what's happening in <WorkspaceDot color={ws.color} /> <strong>{ws.name}</strong>.
           </p>
         </div>
         {canEdit(ws.role) ? (
