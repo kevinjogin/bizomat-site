@@ -162,7 +162,13 @@ scheduleRoutes.get('/items/:id/schedule', async (c) => {
     earning,
     pv,
     links: m.links.filter((l) => l.predecessorId === t.item.id || l.successorId === t.item.id),
-    names: Object.fromEntries(m.tasks.map((x) => [x.itemId, { key: x.key, name: x.name, wbs: x.wbs, summary: x.summary }])),
+    // People who see this one task only (a contractor's task grant) get the names of the tasks linked to it, not of
+    // the whole project.
+    names: Object.fromEntries(
+      m.tasks
+        .filter((x) => t.project || x.itemId === t.item.id || m.links.some((l) => (l.predecessorId === t.item.id && l.successorId === x.itemId) || (l.successorId === t.item.id && l.predecessorId === x.itemId)))
+        .map((x) => [x.itemId, { key: x.key, name: x.name, wbs: x.wbs, summary: x.summary }]),
+    ),
     hoursPerDay: m.cal.hoursPerDay,
     daysPerWeek: m.cal.daysPerWeek,
     statusDate: m.statusDate,

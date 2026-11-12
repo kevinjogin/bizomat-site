@@ -270,9 +270,12 @@ export async function buildSchedule(env: Env, board: BoardRow, opts: { statusDat
     else if (span != null && s?.duration_minutes != null && s.duration_minutes <= span && s.duration_minutes > span - cal.minutesPerDay) dur = s.duration_minutes;
     else if (span != null) dur = span;
     else if (s?.duration_minutes != null) dur = s.duration_minutes;
-    // Actual dates: recorded ones first; otherwise a finished task finished when it was marked done, and a task with
-    // progress started on its planned start.
-    let actualFinish = s?.actual_finish ?? (complete && it.completed_at ? todayIn(calendar.timezone, it.completed_at) : null);
+    // Actual dates: recorded ones first. Otherwise, as when a task is marked 100% complete in other planning tools: a
+    // finished task finished on its planned finish, or on the day it was marked done if that came earlier (marking
+    // done is bookkeeping, often days later, so the click date alone would move the finish and its successors); a
+    // task with progress started on its planned start.
+    const doneOn = complete && it.completed_at ? todayIn(calendar.timezone, it.completed_at) : null;
+    let actualFinish = s?.actual_finish ?? (doneOn ? (p && p.end < doneOn ? p.end : doneOn) : null);
     let actualStart = s?.actual_start ?? ((complete || (percent ?? 0) > 0) && p ? p.start : null);
     if (actualFinish && !actualStart) actualStart = p?.start && p.start <= actualFinish ? p.start : actualFinish;
     if (actualStart && actualFinish && actualFinish < actualStart) actualFinish = actualStart;

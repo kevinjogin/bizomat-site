@@ -3,7 +3,7 @@
 
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
-import { addMember, createBoard, signup, type Client } from './helpers';
+import { addMember, createBoard, signup, signupWith, uniqueEmail, type Client } from './helpers';
 
 async function project(owner: Client, name = 'Laser installation') {
   const b = await createBoard(owner, name);
@@ -263,5 +263,44 @@ describe('permissions', () => {
     const x = await signup('Outsider');
     expect((await x.req('GET', `/api/boards/${p.boardId}/schedule`)).status).toBe(404);
     expect((await x.req('GET', `/api/items/${A.id}/schedule`)).status).toBe(404);
+  });
+});
+
+describe('fixes from review', () => {
+  it('a task marked done without actual dates keeps its planned finish (and baselines record the plan)', async () => {
+    const o = await signup('Owner');
+    const p = await project(o);
+    const status = (await o.json('GET', `/api/boards/${p.boardId}`)).columns.find((c: any) => c.type === 'status');
+    const done = status.settings.labels.find((l: any) => l.done).id;
+    const A = await p.add('A', '2026-10-26', '2026-10-30');
+    const B = await p.add('B', '2026-11-02', '2026-11-04');
+    const C = await p.add('C', '2026-11-06', '2026-11-12');
+    await o.json('POST', `/api/boards/${p.boardId}/links`, { predecessorId: B.id, successorId: C.id, lag: 1 });
+    for (const x of [A, B]) await o.json('PATCH', `/api/items/${x.id}`, { values: { [status.id]: done } });
+    await o.json('POST', `/api/boards/${p.boardId}/baselines`, { name: 'Original', approvedBy: 'Sponsor', approvedOn: '2026-10-25' });
+    const cmp = await o.json('GET', `/api/boards/${p.boardId}/baselines/compare`);
+    const row = (id: string) => cmp.rows.find((r: any) => r.itemId === id);
+    expect(row(A.id)).toMatchObject({ baselineStart: '2026-10-26', baselineFinish: '2026-10-30' });
+    expect(row(B.id).baselineFinish).toBe('2026-11-04');
+    // C follows B's planned finish (4 Nov) and the 1-day lag, not the day B was marked done.
+    expect(row(C.id).baselineStart).toBe('2026-11-06');
+  });
+
+  it('someone with access to one task sees the names of linked tasks only', async () => {
+    const o = await signup('Owner');
+    const p = await project(o);
+    const A = await p.add('A', '2026-11-02', '2026-11-04');
+    const B = await p.add('B', '2026-11-05', '2026-11-06');
+    const secret = await p.add('Confidential negotiation', '2026-11-09', '2026-11-10');
+    await o.json('POST', `/api/boards/${p.boardId}/links`, { predecessorId: A.id, successorId: B.id });
+    const email = uniqueEmail('contractor');
+    const inv = await o.json('POST', `/api/workspaces/${o.workspaceId}/invitations`, { email, role: 'guest' });
+    const contractor = await signupWith('Contractor', email, inv.inviteUrl.split('/invite/')[1]);
+    await o.json('PUT', `/api/items/${B.id}/access/${contractor.userId}`, { canUpdateStatus: true });
+    const got = await contractor.json('GET', `/api/items/${B.id}/schedule`);
+    expect(Object.keys(got.names).sort()).toEqual([A.id, B.id].sort());
+    expect(JSON.stringify(got)).not.toContain('Confidential negotiation');
+    expect(JSON.stringify(got)).not.toContain(secret.id);
+    expect((await contractor.req('GET', `/api/boards/${p.boardId}/schedule`)).status).toBe(404);
   });
 });
