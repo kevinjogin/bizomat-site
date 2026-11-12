@@ -511,3 +511,4 @@ tr:hover .name-cell .open-btn { opacity: 1; }
   .folder-panel { position: static; max-height: none; }
   .folder-more { opacity: 1; }
 }
+.auth-gap { height: 12px; }

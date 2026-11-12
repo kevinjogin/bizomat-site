@@ -4,7 +4,7 @@ import { Icon } from './Icon';
 
 // ------------------------------------------------------------------ Modal
 
-export function Modal({ title, onClose, children, footer, wide, labelledBy }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; labelledBy?: string }) {
+export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; /** Nearly full screen (report preview). */ xl?: boolean; labelledBy?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
@@ -38,7 +38,7 @@ export function Modal({ title, onClose, children, footer, wide, labelledBy }: { 
   const id = labelledBy ?? 'modal-title';
   return createPortal(
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`modal${wide ? ' wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby={id} ref={ref}>
+      <div className={`modal${wide || xl ? ' wide' : ''}${xl ? ' xl' : ''}`} role="dialog" aria-modal="true" aria-labelledby={id} ref={ref}>
         <div className="modal-header">
           <h2 id={id} className="grow">
             {title}
@@ -164,6 +164,8 @@ export function Popover({
   children,
   align = 'start',
   width,
+  role = 'menu',
+  label,
 }: {
   anchor?: RefObject<HTMLElement | null> | HTMLElement | null;
   point?: { x: number; y: number };
@@ -171,6 +173,9 @@ export function Popover({
   children: ReactNode;
   align?: 'start' | 'end' | 'center';
   width?: number;
+  /** 'menu' (default) for menus; 'dialog' for a small panel such as a group's details. */
+  role?: 'menu' | 'dialog';
+  label?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
@@ -216,7 +221,7 @@ export function Popover({
     };
   }, [onClose]);
   return createPortal(
-    <div ref={ref} className="popover" style={{ top: pos?.top ?? -9999, left: pos?.left ?? -9999, width }} role="menu">
+    <div ref={ref} className="popover" style={{ top: pos?.top ?? -9999, left: pos?.left ?? -9999, width }} role={role} aria-label={label}>
       {children}
     </div>,
     document.body,

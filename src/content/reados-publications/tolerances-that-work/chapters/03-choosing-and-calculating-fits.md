@@ -4,7 +4,7 @@ chapterSlug: choosing-and-calculating-fits
 order: 3
 title: "Choosing and calculating fits"
 description: "Select clearance, transition and interference fits, calculate their limits, account for bought-in bearing tolerances and check a shrink fit for pressure, torque and stress."
-draft: true
+draft: false
 ---
 
 A fit is the relationship between two mating features before assembly: a shaft in a hole, a key in a slot, a bearing in a housing. The fit decides whether the parts slide, locate, grip or are pressed together for life. Because both features vary, a fit is never a single clearance. It is a range, from the tightest combination of parts to the loosest.
@@ -169,6 +169,20 @@ where α is the coefficient of thermal expansion and c is the assembly clearance
 
 The hub must be heated about 155 °C above the shaft, to roughly 175 °C in a 20 °C workshop. That is within normal induction or oven practice for plain steel, but it could affect a hardened gear, a coating or a part with seals. Cooling the shaft instead reduces the hub temperature needed. Whichever method is used, handling hot or very cold parts is a work health and safety matter and needs a safe procedure.
 
+## The failure case: a table fit applied to a bearing
+
+This is an illustration. Northgate's first issue of the shaft drawing gave the bearing seats as Ø20 k6. The designer had taken the fit from a table of H7/k6 fits. The [ISO limits of size and fit tool](/tools/iso-fit-limits-from-deviations/) in BIZOMAT Tools reproduces that reading: for a 20 mm basic size with an H hole of IT7 (21 µm) and a k shaft with a lower deviation of +2 µm and IT6 (13 µm), the shaft is 20.002 to 20.015 mm and the fit runs from 19 µm of clearance to 15 µm of interference. It is a transition fit. The assembly instruction followed from it: "push fit, assemble by hand".
+
+The bearing was not an H7 hole. Its bore is 19.990 to 20.000 mm. Against that bore, the k6 seat gives an interference of 0.002 mm at the loosest combination and 0.025 mm at the tightest. Every combination is an interference fit. On the first pilot build, the assemblers found that the bearings would not go on by hand. Some tapped them home through the outer ring, which sends the assembly force through the balls. Two of the first units ran noisily from the start.
+
+### How it is detected
+
+Calculate the fit with the bought-in part's own limits, never with the H or h class it resembles. Writing both limits of the bearing bore in the fit table on the drawing makes the check visible to anyone who reviews it. A fit described as a "push fit" that turns out to be an interference at both ends is a sign the wrong mating limits were used.
+
+### How it is corrected
+
+Northgate followed its bearing supplier's guidance and changed the seats to k5, 20.002 to 20.011 mm, giving the 0.002 to 0.021 mm interference shown earlier. The fit table on the drawing now shows the bearing's bore limits beside the shaft limits. The assembly instruction was rewritten as well: press the inner ring on with a sleeve that bears on the inner ring only, never through the balls or the outer ring.
+
 ## Common mistakes
 
 - **Designing for the nominal fit.** Check both extremes. A fit that grips at nominal may slip at minimum interference.
@@ -184,8 +198,14 @@ The hub must be heated about 155 °C above the shaft, to roughly 175 °C in a 20
 - Is the minimum interference enough for the load, with margin, and is the maximum interference safe for the hub?
 - How will the parts be assembled, and is that method practical and safe at the maximum interference?
 
-## Exercise: tabulate your fits
+## Exercise: the hub torque check
 
-For one assembly you know, list every mating pair, its function, the fit used and its calculated limits at actual size. Mark any pair where the fit was chosen by habit rather than function, and any bought-in part whose tolerance you have not checked.
+The gear hub in this chapter, 50 H7/s6 on a solid steel shaft, 90 mm outside diameter and 40 mm long, must transmit 400 N·m with a safety factor of 1.5 against slip. Friction is 0.15 and the hub material's yield strength is taken as 350 MPa. Does the fit hold at its least interference? If not, what is the smallest simple change that makes it work, and does that change affect the hub stress?
+
+**Worked answer.** The required grip is 400 × 1.5 = **600 N·m**. The [interference fit limits check tool](/tools/interference-fit-limits-check/) in BIZOMAT Tools checks a fit over its whole tolerance range. It works from the formula IT values, so it gives a shaft of +43 to +58.6 µm rather than the tabulated +43 to +59 µm. It gives a least interference of 18 µm, a pressure of 24.9 MPa and a holding torque of about **587 N·m**, which agrees with the hand calculation of 586 N·m. That is below 600 N·m, so the fit **fails** at its loose end, by about 2%.
+
+The holding torque is proportional to the engagement length, so lengthening the hub is the simplest change. At 42 mm the tool gives **616 N·m** and the fit passes. At 45 mm it gives 660 N·m, which leaves a more comfortable margin. Neither change alters the contact pressure, so the hub stress at most interference stays the same. The tool gives a von Mises stress of 206 MPa there, a safety factor of 1.7 against 350 MPa. The tool's stress is a combined stress, so it is higher than the hoop stress of 154.4 MPa in the table above. A tighter fit, such as a u-class shaft, would also grip harder, but it would raise the hub stress and the heating needed for assembly.
+
+**Try it on your own assembly.** List every mating pair, its function, the fit used and its calculated limits at actual size. Mark any pair where the fit was chosen by habit rather than function, and any bought-in part whose tolerance you have not checked.
 
 The guide roller now has its bearing fits. The next chapter turns to the question of where measurements start: the datum reference frame.

@@ -47,3 +47,44 @@ export function activityStmt(
       now(),
     );
 }
+
+/**
+ * The permanent audit trail (audit_events): one row per significant event, with the values before and after where
+ * they matter. Insert-only: nothing in the application updates or deletes these rows, and they carry no foreign keys,
+ * so they outlive the task, project or person they describe. Never put passwords, tokens or message bodies here.
+ */
+export interface AuditEvent {
+  workspaceId?: string | null;
+  boardId?: string | null;
+  itemId?: string | null;
+  actorId?: string | null;
+  type: string;
+  before?: unknown;
+  after?: unknown;
+  metadata?: Record<string, unknown>;
+  at?: number;
+}
+
+export function auditEventStmt(db: D1Database, e: AuditEvent) {
+  return db
+    .prepare(
+      `INSERT INTO audit_events (id, workspace_id, board_id, item_id, actor_id, event_type, before_json, after_json, metadata_json, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    )
+    .bind(
+      newId(),
+      e.workspaceId ?? null,
+      e.boardId ?? null,
+      e.itemId ?? null,
+      e.actorId ?? null,
+      e.type,
+      e.before === undefined ? null : JSON.stringify(e.before),
+      e.after === undefined ? null : JSON.stringify(e.after),
+      JSON.stringify(e.metadata ?? {}),
+      e.at ?? now(),
+    );
+}
+
+export async function auditEvent(db: D1Database, e: AuditEvent) {
+  await auditEventStmt(db, e).run();
+}

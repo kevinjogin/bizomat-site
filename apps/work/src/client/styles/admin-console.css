@@ -249,3 +249,16 @@ a.ac-user-cell:hover .ac-user-name { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) {
   .ac-live-dot { animation: none; }
 }
+
+/* Email (Brevo) */
+.ac-ok { color: var(--success); display: inline-flex; align-items: center; gap: 4px; }
+.ac-bad { color: var(--danger); display: inline-flex; align-items: center; gap: 4px; }
+p.ac-ok, p.ac-bad, dd.ac-bad { display: block; }
+.ac-steps { margin: 0 0 16px; padding-left: 20px; display: grid; gap: 6px; color: var(--text-2); }
+.ac-form { display: grid; gap: 12px; }
+.ac-form-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.ac-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.ac-check { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-2); }
+.ac-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; word-break: break-all; background: var(--surface-2); padding: 2px 6px; border-radius: 6px; }
+@media (max-width: 760px) { .ac-dl { grid-template-columns: 1fr; } }
+.ac-textarea { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; resize: vertical; min-height: 110px; }

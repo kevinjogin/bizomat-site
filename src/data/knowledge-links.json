@@ -9400,16 +9400,6 @@
    "reason": "Rejected: chapter is about fastening threads, tapped holes and engagement lengths; the tool gives power transmission thread forms, not fastener threads."
   },
   {
-   "reados": "publication/tolerances-that-work",
-   "chapter": "choosing-and-calculating-fits",
-   "tool": "iso-fit-limits-from-deviations",
-   "type": "complements",
-   "note": "Turns the fit designations this chapter teaches into limits of size from the tabulated deviations, IT values and delta values.",
-   "status": "approved",
-   "evidence": "review",
-   "reason": "Chapter teaches choosing and calculating ISO fits; tool applies the handbook procedure es/ei, ES/EI ± IT with the delta value and gives the clearance range."
-  },
-  {
    "reados": "publication/checking-drawings-by-the-numbers",
    "chapter": "limits-and-fits-from-the-drawings",
    "tool": "iso-fit-limits-from-deviations",
@@ -10296,6 +10286,799 @@
    "tool": "priority",
    "type": "applies",
    "note": "Scores competing work on impact, urgency, risk if delayed and effort, a consistent way to set out the priority trade-offs this chapter asks you to escalate.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "rate-what-could-go-wrong",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Multiplies likelihood by consequence on 1 to 5 scales to rank the flange risks, using descriptors the team writes down first.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "when-the-rule-falls-short",
+   "tool": "change-impact",
+   "type": "applies",
+   "note": "Scores the concession request from added cost, schedule effect and risk and quality ratings, and flags the engineering sign-off it needs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "command-and-carry-it-through",
+   "tool": "schedule-risk",
+   "type": "applies",
+   "note": "Compares the replacement work with the machinists' productive hours to test whether the day-12 promise has grounds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/practical-wisdom-by-the-numbers",
+   "chapter": "change-the-procedure-with-care",
+   "tool": "option-compare",
+   "type": "applies",
+   "note": "Scores the two lasting fixes on benefit-to-cost, risk and delivery time, and reports when they are too close to call.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "what-the-work-is-worth",
+   "tool": "job-cost",
+   "type": "applies",
+   "note": "Adds materials, labour hours at a loaded rate, subcontract, overhead and contingency to give the tank's estimated cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "what-the-work-is-worth",
+   "tool": "price-builder",
+   "type": "applies",
+   "note": "Turns the tank's estimated cost into a selling price at a target gross margin and shows the equivalent markup.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "a-margin-you-can-explain",
+   "tool": "margin",
+   "type": "applies",
+   "note": "Shows the quote's gross profit, margin on price and markup on cost, so the two figures are not confused.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "a-margin-you-can-explain",
+   "tool": "quote-check",
+   "type": "applies",
+   "note": "Checks a quoted price against a target margin and gives the price needed when the quote falls short.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "share-scarce-capacity-fairly",
+   "tool": "supplier-compare",
+   "type": "applies",
+   "note": "Weights price, lead time, quality and reliability to score two subcontractors on criteria fixed before the quotes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/fair-dealing-by-the-numbers",
+   "chapter": "say-what-you-can-deliver",
+   "tool": "schedule-risk",
+   "type": "applies",
+   "note": "Compares the tank's remaining hours with the fabricator's productive capacity to test whether a delivery date has grounds.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-cylinder-and-rod",
+   "tool": "hydraulic-cylinder-sizing",
+   "type": "applies",
+   "note": "Gives the minimum bore for the push force, the Euler minimum rod, the largest rod for the pull force, extend and retract flows, pump power and line bores for the press cylinder.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "check-the-barrel-end-caps-and-frame",
+   "tool": "hydraulic-cylinder-structure",
+   "type": "applies",
+   "note": "Checks the barrel by the Lamé equations and von Mises, the end cap as a clamped plate and the rod's buckling by Euler or Johnson, at the relief setting and the trapped rod-end pressure.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "check-the-barrel-end-caps-and-frame",
+   "tool": "press-tie-rod-check",
+   "type": "applies",
+   "note": "Checks the press's tie rods for load per rod, thread stress, elastic stretch and nut engagement at the relief setting, assuming equal load sharing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "choose-the-pumps-and-control-the-speed",
+   "tool": "cylinder-speed-control",
+   "type": "applies",
+   "note": "Calculates the rod-side pressure, including intensification, the orifice size and the heat when a cylinder is metered out, the check behind the chapter's failure case.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-lines-for-the-real-flows",
+   "tool": "hydraulic-line-sizing",
+   "type": "applies",
+   "note": "Checks a pressure, return or suction line for velocity, Reynolds number, pressure drop through tube and fittings, power lost and Barlow tube rating.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-power-unit-and-keep-it-cool",
+   "tool": "hydraulic-power-unit-sizing",
+   "type": "applies",
+   "note": "Sizes pump displacement, drive torque, shaft power, reservoir volume and an approximate heat balance for the press's power unit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "size-the-power-unit-and-keep-it-cool",
+   "tool": "gearbox-heat-balance",
+   "type": "applies",
+   "note": "In hydraulic unit mode, finds the oil's equilibrium temperature from the cycle's input power and efficiency, and the cooler duty needed to hold the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "hold-the-load-and-control-stored-energy",
+   "tool": "accumulator-circuit-sizing",
+   "type": "applies",
+   "note": "Sizes an accumulator to help the pump with a fast approach: stroke volume, pump deficit, gas volume and recharge time, used to test and reject the idea.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "oil-viscosity-temperature",
+   "type": "applies",
+   "note": "Gives the oil's kinematic viscosity at any temperature from two known points by the ASTM D341 relation, used for the press's VG 46 oil.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "lubricant-viscosity-check",
+   "type": "applies",
+   "note": "Checks an oil grade's viscosity at the hottest running and coldest start temperatures against the pump's minimum and cold-start limits.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "iso-cleanliness-code",
+   "type": "explains",
+   "note": "Converts particle counts at 4, 6 and 14 µm into the three-part ISO 4406 code and checks it against a target code.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/industrial-hydraulics-by-the-numbers",
+   "chapter": "keep-the-oil-clean-and-at-the-right-viscosity",
+   "tool": "hydraulic-filter-selection",
+   "type": "applies",
+   "note": "Gives the cleanliness code after a filter from its beta ratios and scales the element's pressure drop to the real flow and coldest viscosity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "retention-selector",
+   "type": "applies",
+   "note": "Screens the press fit, retaining ring and staking options for the rear bush against load, disassembly needs and design factor, and compares their lifecycle cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "retaining-ring-thrust",
+   "type": "applies",
+   "note": "Gives the ring's shear capacity, the groove's yield capacity and the governing allowable thrust for the retaining ring option.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "make-parts-easy-to-insert-and-fasten",
+   "tool": "snap-fit-joint-design",
+   "type": "applies",
+   "note": "Checks a cantilever snap-fit finger for assembly strain, mating force and separation force, used to test and reject a snap-fit knob.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "tolerances-that-let-parts-go-together",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Compares the nose protrusion stack of both revisions by worst case, root-sum-square and predicted rejects, and identifies the largest contributor.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "weigh-part-cost-against-assembly-cost",
+   "tool": "tooling-payback",
+   "type": "applies",
+   "note": "Compares the old and new unit costs against the redesign's tooling and annual volume to give the saving, units to pay back and payback period.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/design-for-assembly-by-the-numbers",
+   "chapter": "weigh-part-cost-against-assembly-cost",
+   "tool": "process-breakeven",
+   "type": "applies",
+   "note": "Finds the break-even quantity between modifying the knob mould and buying a catalogue knob, and the cheaper choice at one and five years.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "speed-against-length",
+   "tool": "ballscrew-limits",
+   "type": "applies",
+   "note": "Calculates the critical (whirling) speed and buckling load of a screw from root diameter, unsupported length and end mounting, and checks them against the operating speed and axial load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "life-preload-and-maintenance-free",
+   "tool": "ballscrew-duty-life",
+   "type": "applies",
+   "note": "Gives the mean speed, cubic mean load, basic rated life in hours and travel over a duty cycle, with preload entered in each step's load, against the running hours required.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "accuracy-against-the-error-budget",
+   "tool": "machine-axis-error-budget",
+   "type": "applies",
+   "note": "Combines positioning accuracy, repeatability, Abbe error, uncompensated thermal growth and fixture error by worst case and root-sum-square against the share of tolerance allowed.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "stiffness-mass-and-height",
+   "tool": "beam-sizing",
+   "type": "applies",
+   "note": "Finds the section modulus and second moment of area a beam needs for deflection limits down to span ÷ 5,000; the chapter scales its result to test a far tighter sag limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "possible-but-improbable",
+   "tool": "capability-confidence-check",
+   "type": "applies",
+   "note": "Calculates Cp and Cpk with their lower confidence bounds and the sample size that would prove a required Cpk, showing why a 30-run test usually fails a capable axis.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "possible-but-improbable",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Gives the worst-case and root-sum-square limits of the probe clearance stack and the predicted share of frames falling outside the probe's search range.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "defending-an-impossible-specification",
+   "tool": "option-compare",
+   "type": "applies",
+   "note": "Scores two feasible options on annual benefit, cost, delivery time and risk, after the infeasible specification has been excluded as the tool's own mandatory-requirements check asks.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/requirements-that-cannot-all-be-true",
+   "chapter": "rewriting-the-specification",
+   "tool": "change-impact",
+   "type": "applies",
+   "note": "Rates the cost, schedule, risk and quality effect of adopting the rewritten specification against the project's value and remaining time, and reports benefit less added cost.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "accepted-rejected-or-not-proven",
+   "tool": "mtbf-confidence-bounds",
+   "type": "applies",
+   "note": "Gives the MTBF estimate and its one-sided lower and upper confidence bounds from operating hours and failures, so a reliability claim can be judged accepted, rejected or not proven.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "extraordinary-claims",
+   "tool": "carnot-limit-check",
+   "type": "applies",
+   "note": "Tests a heat pump's claimed COP against the Carnot limit for the source and sink temperatures, gives its second-law efficiency and running cost, and flags claims above the limit.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "claims-that-cannot-fail",
+   "tool": "pump-speed-control-plan",
+   "type": "applies",
+   "note": "Works out the speed, power and yearly saving of slowing a pump instead of throttling it at the site's measured duty, turning an 'up to' claim into a prediction; drive losses are added separately.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "evidence-in-proportion-to-consequence",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Rates likelihood times consequence on a five-by-five matrix with a response band, used to set how much evidence a seal claim needs in a water service and a chemical service.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "a-test-that-could-prove-it-wrong",
+   "tool": "weibull-reliability",
+   "type": "applies",
+   "note": "Gives reliability, failure probability, hazard, B10 life and mean life from Weibull parameters, used to predict seal failures under each life hypothesis before the trial rule is set.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "a-test-that-could-prove-it-wrong",
+   "tool": "reliability-demonstration-test",
+   "type": "applies",
+   "note": "Plans the unit-hours and days needed to demonstrate an MTBF with a constant failure rate, showing why a controller claim needs fleet data and why the method does not suit wearing seals.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "acting-while-unproven",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Recomputes NPV, IRR and payback for the package as claimed, on the evidence and as a staged purchase, with uniform yearly savings and running costs before tax.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-burden-of-proof",
+   "chapter": "acting-while-unproven",
+   "tool": "maintenance-interval-plan",
+   "type": "applies",
+   "note": "Finds the lowest-cost and target-reliability replacement intervals for the present seals from the factory's Weibull data, the fallback if the new seal claim fails.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "choosing-and-calculating-fits",
+   "tool": "iso-fit-limits-from-deviations",
+   "type": "applies",
+   "note": "Turns fit designations into limits of size from the tabulated deviations and IT values, used to show how a k6 seat read as a transition fit from a table.",
+   "status": "approved",
+   "evidence": "book-link",
+   "reason": "Chapter teaches choosing and calculating ISO fits; tool applies the handbook procedure es/ei, ES/EI ± IT with the delta value and gives the clearance range."
+  },
+  {
+   "reados": "publication/yes-and-no-when-sources-disagree",
+   "chapter": "when-good-sources-disagree",
+   "tool": "bolt-torque-preload",
+   "type": "applies",
+   "note": "Converts each conflicting torque value to bolt preload and share of proof load from the nut factor you supply, so the sources can be compared in one quantity.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yes-and-no-when-sources-disagree",
+   "chapter": "both-true-under-different-conditions",
+   "tool": "flange-bolt-load-check",
+   "type": "applies",
+   "note": "Gives the code-method bolt loads for gasket seating and operation, with load and torque per bolt: a design minimum, which the chapter shows is not an assembly target.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yes-and-no-when-sources-disagree",
+   "chapter": "both-true-under-different-conditions",
+   "tool": "bolted-joint-temperature",
+   "type": "applies",
+   "note": "Calculates the preload change when bolts and clamped parts expand differently, to test whether a difference in operating temperature matters for the joint.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yes-and-no-when-sources-disagree",
+   "chapter": "when-measurements-disagree",
+   "tool": "bolt-preload-verification",
+   "type": "applies",
+   "note": "Turns a measured bolt stretch into preload, its deviation from target and the nut factor implied by the applied torque.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yes-and-no-when-sources-disagree",
+   "chapter": "when-measurements-disagree",
+   "tool": "two-sample-t",
+   "type": "applies",
+   "note": "Tests whether two crews’ measured bolt preloads differ by more than scatter, with Welch’s t-test and a confidence interval for the difference.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/yes-and-no-when-sources-disagree",
+   "chapter": "when-the-conflict-will-not-resolve",
+   "tool": "risk-score",
+   "type": "complements",
+   "note": "Rates likelihood times consequence on a 5 × 5 matrix, used to record residual risk before and after an unresolved conflict is settled.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arguments-that-hold",
+   "chapter": "claims-you-can-check",
+   "tool": "gear-forces",
+   "type": "applies",
+   "note": "Converts transmitted power, speed and pitch diameter into pinion tooth forces, turning a claim about a motor rating into a checkable claim about gear load.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arguments-that-hold",
+   "chapter": "all-some-and-none",
+   "tool": "sampling-oc",
+   "type": "applies",
+   "note": "Gives the probability that a lot with a given fraction defective passes a sampling plan, showing what a clean sample can and cannot support.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arguments-that-hold",
+   "chapter": "where-arguments-come-from",
+   "tool": "lewis-bending",
+   "type": "applies",
+   "note": "Screens gear tooth root bending stress against an allowable, used to test comparison and whole-to-part arguments about load and face contact.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arguments-that-hold",
+   "chapter": "connection-not-coincidence",
+   "tool": "process-change-trial",
+   "type": "applies",
+   "note": "Plans and evaluates a before-and-after trial with Welch’s t-test, used to test whether a lubricant change affected gear drive vibration.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arguments-that-hold",
+   "chapter": "eliminating-causes-with-evidence",
+   "tool": "two-sample-t",
+   "type": "applies",
+   "note": "Compares the tooth hardness of two suppliers’ pinions with Welch’s t-test and a confidence interval for the difference.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/arguments-that-hold",
+   "chapter": "writing-the-justification",
+   "tool": "reliability-demonstration-test",
+   "type": "example",
+   "note": "Works out the test length to demonstrate an MTBF under a constant failure rate; the chapter uses it to show why that model is the wrong warrant for gear fatigue.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "what-dividing-the-work-buys",
+   "tool": "staffing-need",
+   "type": "applies",
+   "note": "Converts a weekly workload and the hours each person actually produces into a staffing requirement, used to compare a team of generalists with a divided team.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "dexterity-and-the-learning-curve",
+   "tool": "learning-curve",
+   "type": "applies",
+   "note": "Applies the learning curve to estimate the time for a later unit and the cumulative time from the first-unit time and learning rate, showing what repetition buys a specialist.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "time-lost-switching",
+   "tool": "setup-worth",
+   "type": "applies",
+   "note": "Converts set-up minutes saved by not switching between tasks into an annual value at a stated hourly rate, used to price the time a generalist loses changing jobs.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "machines-from-attention",
+   "tool": "jig-fixture-roi",
+   "type": "applies",
+   "note": "Estimates the return on a jig or fixture from the time it saves per part, the annual volume and its cost, for the small aids that specialised workers tend to invent.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "the-extent-of-the-market",
+   "tool": "capacity",
+   "type": "applies",
+   "note": "Converts working time, cycle time and efficiency into realistic output and utilisation, used to test whether demand is large enough to keep a divided team busy.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "balance-the-divided-work",
+   "tool": "bottleneck",
+   "type": "applies",
+   "note": "Compares step cycle times with the required takt to find the constraint and the balance loss once work is divided into separate stations.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "stock-before-division",
+   "tool": "wip-lead-time-check",
+   "type": "applies",
+   "note": "Applies Little’s law to relate work in progress, throughput and lead time, used to set the buffer stock between divided steps.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "specialists-and-waiting",
+   "tool": "queue-wait-check",
+   "type": "applies",
+   "note": "Models an M/M/c queue to estimate how long work waits for a shared specialist at a given utilisation, and how a second server changes it.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/divide-the-work",
+   "chapter": "the-cost-of-narrow-work",
+   "tool": "hire-outsource",
+   "type": "applies",
+   "note": "Compares the annual cost of employing someone for a defined workload with buying the same hours from outside, used when deciding whether to keep a narrow role in house.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "name-the-end-and-price-it",
+   "tool": "machine-hour-rate",
+   "type": "applies",
+   "note": "Works out the hourly cost of a machine and operator from capital recovery, overheads and productive hours, so released machine time can be given a fair price.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "name-the-end-and-price-it",
+   "tool": "improvement-value",
+   "type": "applies",
+   "note": "Translates time saved per occurrence into hours released and an annual value with payback, used to price a changeover reduction before comparing it with a robot.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "the-robot-cell",
+   "tool": "automation-check",
+   "type": "applies",
+   "note": "Compares the annual cost of manual work with an automation investment and its running cost, tested first with a vendor’s case and then with the shop’s own data.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "the-robot-cell",
+   "tool": "investment-appraisal",
+   "type": "applies",
+   "note": "Gives net present value, internal rate of return, payback and benefit–cost ratio from cost, savings, salvage, life and hurdle rate for a robot cell and a bar feeder.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "precision-beyond-need",
+   "tool": "measurement-uncertainty-budget",
+   "type": "applies",
+   "note": "Builds an uncertainty budget for a dimensional measurement and its ratio to the tolerance, showing that a finer display does not meet a need that temperature control does.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "software-that-fits-the-work",
+   "tool": "process-or-software",
+   "type": "applies",
+   "note": "Rates whether a process is stable and defined enough for software to help yet, used before buying a scheduling system for a job shop.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "software-that-fits-the-work",
+   "tool": "build-buy-software",
+   "type": "applies",
+   "note": "Compares the cost of a custom build with a package over a period, used to test whether a tailored scheduling system is worth its premium.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "the-man-of-system",
+   "tool": "change-impact",
+   "type": "applies",
+   "note": "Turns cost, disruption, risk and quality judgements into an impact rating out of 100, used to compare imposing standard work at once with a pilot.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "keep-the-ingenuity-check-the-end",
+   "tool": "before-after",
+   "type": "applies",
+   "note": "Compares cycle time, unit cost and defect rate before and after a change and counts the measures that improved, used in a review a year after the changes.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/the-love-of-system",
+   "chapter": "keep-the-ingenuity-check-the-end",
+   "tool": "business-case",
+   "type": "applies",
+   "note": "Screens an investment for annual net benefit, payback and NPV with a 20% lower-benefit test, used to compare the package bought with the robot declined.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "designing-for-variation",
+   "tool": "it-tolerance-grade",
+   "type": "applies",
+   "note": "Gives the ISO standard tolerance for a size and grade, used to show that a title-block ±0.1 mm held a cosmetic 110 mm flange outline to about IT11.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "size-tolerances-and-it-grades",
+   "tool": "plug-gauge-plan",
+   "type": "applies",
+   "note": "Places go and no-go gauge tolerances inside the work limits for a hole or shaft, worked for a Ø25 H7 hole with a wear allowance on the go gauge.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "choosing-and-calculating-fits",
+   "tool": "interference-fit-limits-check",
+   "type": "applies",
+   "note": "Checks an interference fit over its full tolerance range for grip, hub stress and assembly heating, used to test whether a 50 H7/s6 hub holds its torque.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "form-orientation-and-location",
+   "tool": "true-position",
+   "type": "applies",
+   "note": "Converts measured X and Y deviations into a diametral position and compares it with the allowed tolerance, used to judge four bolt holes of a housing.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "material-condition-and-fastener-assemblies",
+   "tool": "fastener-position-tolerance",
+   "type": "applies",
+   "note": "Divides the clearance of a fixed or floating fastener joint between the two parts and checks a measured hole with its bonus tolerance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "worst-case-stack-ups",
+   "tool": "rss-tolerance-stack",
+   "type": "applies",
+   "note": "Gives worst-case and root-sum-square ranges for a linear stack with each link’s share, used for the axial float of a guide roller.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "statistical-stack-ups",
+   "tool": "tolerance-stack-design",
+   "type": "applies",
+   "note": "Predicts the gap standard deviation and reject rate of a stack from each part’s capability index, reproducing the RSS result for the guide roller float.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "statistical-stack-ups",
+   "tool": "process-capability-check",
+   "type": "applies",
+   "note": "Calculates Cp and Cpk from control chart averages and ranges, used to show that an off-centre spacer process fails a Cpk 1.33 requirement.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "temperature-deflection-and-allocation",
+   "tool": "differential-expansion",
+   "type": "applies",
+   "note": "Calculates the change in diametral clearance between an aluminium bore and a steel bearing ring as the assembly warms.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "temperature-deflection-and-allocation",
+   "tool": "measurement-temperature-error",
+   "type": "applies",
+   "note": "Gives the apparent size error when a warm aluminium part is measured with a steel gauge, the cause of housings being machined short.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "verifying-tolerances-and-tolerance-review",
+   "tool": "gauge-repeatability-bias-check",
+   "type": "applies",
+   "note": "Runs a type 1 gauge study on a setting master, showing that a hand-held bore gauge was biased and too variable for a 0.025 mm tolerance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/tolerances-that-work",
+   "chapter": "verifying-tolerances-and-tolerance-review",
+   "tool": "guard-band-acceptance",
+   "type": "applies",
+   "note": "Combines measurement uncertainty contributors and decides readings as accepted, rejected or indeterminate, worked for a Ø42 H7 bore.",
    "status": "approved",
    "evidence": "book-link"
   },

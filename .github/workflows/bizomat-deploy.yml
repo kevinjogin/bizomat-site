@@ -83,6 +83,24 @@ jobs:
             grep -qx "$s" <<<"$names" || echo "::notice::Optional secret $s is not set on $APP"
           done
 
+      # A restore point for Project Management's data before the new version starts (a new version can carry database
+      # migrations). Fly also snapshots the volume daily (30 days), and the work server copies its database to
+      # /data/work/pre-migration-backups/ before applying any migration. Restore: docs/deployment/fly-deployment.md.
+      - name: Snapshot the work volume
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          vol="$(flyctl volumes list --app "$APP" --json | jq -r '[.[] | select(.name == "work_data")][0].id // empty')"
+          if [ -z "$vol" ]; then
+            echo "::warning::No work_data volume found on $APP; no snapshot taken."
+            exit 0
+          fi
+          if flyctl volumes snapshots create "$vol" --app "$APP"; then
+            echo "- Snapshot of the work_data volume ($vol) requested before the deploy" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::Could not snapshot $vol (the deploy token may not allow it). The daily snapshots and the server's pre-migration copy remain."
+          fi
+
       # The image is built here, on the runner, as BIZOMAT CI builds it ("image and local stack"), then pushed to Fly's
       # registry. Fly's remote builder stopped answering during the website build on both attempts of the first
       # deploy from this workflow (10 Nov 2026), so it is not used.

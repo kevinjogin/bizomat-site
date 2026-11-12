@@ -7,8 +7,9 @@ import { Icon } from '../components/ui/Icon';
 import { Modal, useConfirm, useToast } from '../components/ui/overlays';
 import { Avatar, Field } from '../components/ui/ui';
 import { Cell } from './cells/Cell';
+import { AccessMatrix, ProjectDetails } from './ProjectAccess';
 
-type Tab = 'general' | 'members' | 'defaults' | 'danger';
+type Tab = 'general' | 'members' | 'access' | 'project' | 'defaults' | 'danger';
 
 export function BoardSettingsDialog({ bundle, onClose, initialTab = 'general' }: { bundle: BoardBundle; onClose: () => void; initialTab?: Tab }) {
   const b = bundle.board;
@@ -45,10 +46,12 @@ export function BoardSettingsDialog({ bundle, onClose, initialTab = 'general' }:
   return (
     <Modal title="Board settings" onClose={onClose} wide>
       <div className="tabs" style={{ marginBottom: 16 }}>
-        {(['general', 'members', 'defaults', 'danger'] as Tab[]).map((t) => (
-          <button key={t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>{t === 'danger' ? 'Archive & delete' : t[0].toUpperCase() + t.slice(1)}</button>
+        {(['general', 'members', 'access', 'project', 'defaults', 'danger'] as Tab[]).filter((t) => t !== 'access' || b.caps?.manageMembers).map((t) => (
+          <button key={t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>{t === 'danger' ? 'Archive & delete' : t === 'access' ? 'Permissions' : t === 'project' ? 'Project details' : t[0].toUpperCase() + t.slice(1)}</button>
         ))}
       </div>
+      {tab === 'access' ? <AccessMatrix bundle={bundle} /> : null}
+      {tab === 'project' ? <ProjectDetails bundle={bundle} /> : null}
       {tab === 'general' ? (
         <div>
           <Field label="Name" htmlFor="bs-name"><input id="bs-name" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={200} disabled={b.access === 'view'} /></Field>

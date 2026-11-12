@@ -4,7 +4,7 @@ chapterSlug: material-condition-and-fastener-assemblies
 order: 6
 title: "Material condition, bonus tolerance and fastener assemblies"
 description: "Link position tolerances to feature size with maximum material requirements, calculate virtual condition and bonus tolerance, and size clearance-hole patterns that always assemble."
-draft: true
+draft: false
 ---
 
 A clearance hole that is made slightly large gives a bolt more room. If the hole is at its largest permitted size, its position can wander further from true position and the bolt will still pass through. A plain positional tolerance ignores that. It applies the same small zone to a hole at its smallest size, where clearance is tight, and to one at its largest, where clearance is generous. Good parts get rejected for no functional reason.
@@ -101,7 +101,7 @@ where T is the positional tolerance diameter for each part, H the hole's MMC dia
 
 when the tolerance is split equally. It can also be split unequally, as long as the two tolerances add up to H − F.
 
-This is an illustration from the guide roller. The housing is fixed to the frame with four M8 screws into tapped holes in the frame. ISO 273 lists clearance holes for M8 screws in fine, medium and coarse series of Ø8.4, Ø9 and Ø10. Northgate chose the medium series, Ø9.0. Using the nominal 8.0 mm as a conservative maximum screw diameter:
+This is an illustration. In the guide roller, the housing is fixed to the frame with four M8 screws into tapped holes in the frame. ISO 273 lists clearance holes for M8 screws in fine, medium and coarse series of Ø8.4, Ø9 and Ø10. Northgate chose the medium series, Ø9.0. Using the nominal 8.0 mm as a conservative maximum screw diameter:
 
 - **Fixed fastener case:** T = (9.0 − 8.0) ÷ 2 = 0.5 mm. The housing holes get position Ø0.5 at MMC, and the tapped holes in the customer's frame are specified at position Ø0.5 at MMC as well.
 - **If the design used through-bolts and nuts instead:** T = 9.0 − 8.0 = 1.0 mm for each part.
@@ -152,6 +152,20 @@ The underlying geometry of MMC, virtual condition and bonus tolerance is the sam
 
 A drawing that names its governing standard, and uses modifiers deliberately, avoids most disputes.
 
+## The failure case: a floating formula on a fixed joint
+
+This is an illustration. One of Northgate's customers drew its own machine frame. Its drafter worked out the tolerance for the four tapped M8 holes from the clearance hole size alone, using the floating formula: 9.0 − 8.0 = 1.0, so position Ø1.0 mm at MMC. There was no projected tolerance zone. The housing drawing, meanwhile, gave its holes position Ø0.5 mm at MMC. Each drawing was internally consistent. Together they allowed Ø1.5 mm of position error where only Ø1.0 mm was available.
+
+At the worst combination, a housing hole at its smallest size, Ø9.0, sits 0.25 mm off its true position in one direction, and a tapped hole sits 0.5 mm off in the opposite direction. The screw, centred on the tapped hole, must then pass through a clearance hole whose centre is 0.75 mm away. The radial room in the hole is only 0.5 mm, so the screw overlaps the edge of the hole by 0.25 mm. On site, two of the first ten units needed their holes opened up with a drill before the screws would start. One screw was forced in at an angle and stripped the frame thread.
+
+### How it is detected
+
+Add the two parts' position tolerances and compare the sum with H − F. For a fixed fastener, the sum must not exceed the total clearance at MMC, here 1.0 mm. The [fastener position tolerance tool](/tools/fastener-position-tolerance/) in BIZOMAT Tools does this division for the floating and fixed cases and flags the projected zone that a threaded part needs. The check can only be made with both drawings side by side, which is why it is so often missed.
+
+### How it is corrected
+
+Northgate now sends an interface sheet with the housing. It states the fixed-fastener case, the housing's Ø0.5 at MMC, and the matching requirement for the frame: tapped holes at position Ø0.5 at MMC, with a projected tolerance zone at least as high as the thickest part of the housing flange.
+
 ## Common mistakes
 
 - **Using regardless-of-size position for clearance holes.** It rejects good parts and makes functional gauging impossible.
@@ -168,8 +182,17 @@ A drawing that names its governing standard, and uses modifiers deliberately, av
 - What is the virtual condition of each mating feature, and do they always clear?
 - Would a functional gauge or a coordinate measuring machine be the better verification method at the expected volume?
 
-## Exercise: size a bolt pattern
+## Exercise: sharing the clearance with the frame
 
-For a two-part bolted joint you know, record the fastener size, the clearance hole size and whether each fastener is fixed or floating. Calculate the positional tolerance each part can have at MMC and the virtual condition of the holes. Compare your results with the tolerances on the current drawings.
+The customer asks whether the frame's tapped holes could have more tolerance, because tapped holes are harder to place accurately. The total for the fixed joint is still H − F = 9.0 − 8.0 = 1.0 mm. Compare an equal split with one that gives 40% to the housing. Use hole 4 from the last chapter's exercise: deviations +0.05 and −0.26 mm, size Ø9.12 mm, size limits Ø9.0 to Ø9.2 mm. Does it conform under each split?
+
+**Worked answer.** Hole 4's measured position is 2 × √(0.05² + 0.26²) ≈ **Ø0.53 mm**. At Ø9.12 mm it is 0.12 mm larger than its MMC size, so it earns a bonus of 0.12 mm.
+
+- **Equal split:** the housing gets Ø0.5 at MMC and the frame Ø0.5 at MMC. Hole 4 is allowed 0.5 + 0.12 = **Ø0.62 mm**, so it **conforms**. Under the regardless-of-size tolerance of the last chapter, the same hole was rejected.
+- **40% to the housing:** the housing gets Ø0.4 at MMC and the frame Ø0.6 at MMC. Hole 4 is allowed 0.4 + 0.12 = **Ø0.52 mm**, so it is **rejected** by 0.01 mm.
+
+The fastener position tolerance tool gives the same results. The split is a commercial decision as much as a technical one: every 0.1 mm given to the frame is taken from the housing. Northgate kept the equal split, because the evidence from its own housings, holes like hole 4 at Ø0.53 mm, showed it needed the tolerance more than the frame supplier had shown it did.
+
+**Try it on your own joint.** For a two-part bolted joint you know, record the fastener size, the clearance hole size and whether each fastener is fixed or floating. Calculate the positional tolerance each part can have at MMC and the virtual condition of the holes. Compare your results with the tolerances on the current drawings.
 
 So far, each requirement has been checked on one part at a time. The next chapter adds variation through a chain of parts and calculates the worst-case result for the guide roller's axial float.

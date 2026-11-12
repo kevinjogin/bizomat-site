@@ -19,7 +19,7 @@ const here = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 export default defineConfig(async () => {
   const migrations = await readD1Migrations('migrations');
   const wrangler = unstable_readConfig({ config: here('./wrangler.jsonc') });
-  const vars = { ...(wrangler.vars as Record<string, string>), ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com' };
+  const vars = { ...(wrangler.vars as Record<string, string>), ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com', BREVO_WEBHOOK_TOKEN: 'test-webhook-token', SETTINGS_ENCRYPTION_KEY: 'BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=' };
   return {
     // This app's own tsconfig for every transform (see vitest.config.ts).
     tsconfig: './tsconfig.node.json',

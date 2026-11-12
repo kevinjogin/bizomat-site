@@ -8,8 +8,10 @@ import { Avatar } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { Popover } from '../../components/ui/overlays';
 import { formatDate, todayISO } from '../../lib/format';
-import { upload, errorMessage } from '../../lib/api';
+import { upload, errorMessage, get, put } from '../../lib/api';
+import { useQuery } from '@tanstack/react-query';
 import { appUrl } from '../../lib/base';
+import { isUnsaved } from '../useBoard';
 
 export interface CellCtx {
   members: MemberDTO[];
@@ -18,6 +20,11 @@ export interface CellCtx {
   memberName: (id: string) => string | undefined;
   onUploaded?: () => void;
   toast?: (m: string, k?: 'info' | 'error') => void;
+  /** Each member's access to the project ('none': cannot be assigned until given access). */
+  memberAccess?: Record<string, 'manage' | 'edit' | 'view' | 'none'>;
+  /** The person may share a task with someone who has no project access. */
+  canShareTask?: boolean;
+  workspaceId?: string;
 }
 
 const COMPUTED = new Set(['formula', 'created_at', 'updated_at']);
@@ -257,7 +264,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
     }
     case 'person':
     case 'people':
-      return <PeoplePicker multi={column.type === 'people'} value={value} ctx={ctx} onChange={(v) => { onChange(v); if (column.type === 'person') close(); }} />;
+      return <PeoplePicker multi={column.type === 'people'} value={value} ctx={ctx} itemId={item.id} onChange={(v) => { onChange(v); if (column.type === 'person') close(); }} />;
     case 'date':
       return (
         <div className="col" style={{ padding: 6 }}>
@@ -307,22 +314,60 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
   }
 }
 
-function PeoplePicker({ multi, value, ctx, onChange }: { multi: boolean; value: unknown; ctx: CellCtx; onChange: (v: unknown) => void }) {
+const ACCESS_TEXT: Record<string, string> = { manage: 'Manages project', edit: 'Can edit', view: 'Can view', task: 'This task only', none: 'No access' };
+
+function PeoplePicker({ multi, value, ctx, itemId, onChange }: { multi: boolean; value: unknown; ctx: CellCtx; itemId: string; onChange: (v: unknown) => void }) {
   const [q, setQ] = useState('');
+  const [busy, setBusy] = useState<string | null>(null);
   const current = Array.isArray(value) ? (value as string[]) : typeof value === 'string' ? [value] : [];
+  // Who can open this task: project access from the board, task-only access from the server.
+  const assignable = useQuery({
+    queryKey: ['assignable', itemId],
+    queryFn: () => get<{ canShare: boolean; people: { id: string; access: string }[] }>(`/items/${itemId}/assignable`),
+    enabled: !!itemId && !isUnsaved(itemId) && itemId !== 'defaults',
+    staleTime: 30_000,
+  });
+  const accessOf = (id: string): string => assignable.data?.people.find((p) => p.id === id)?.access ?? ctx.memberAccess?.[id] ?? 'edit';
   const list = ctx.members.filter((m) => !q || m.name.toLowerCase().includes(q.toLowerCase()) || m.email.toLowerCase().includes(q.toLowerCase()));
+  const pick = (id: string) => onChange(multi ? (current.includes(id) ? current.filter((x) => x !== id) : [...current, id]) : current.includes(id) ? null : id);
+  const shareAndAssign = async (id: string) => {
+    setBusy(id);
+    try {
+      await put(`/items/${itemId}/access/${id}`, { canEdit: false, canUpdateStatus: true, canComment: true, canUpload: true, canManageAssignments: false, canViewFinance: false });
+      await assignable.refetch();
+      pick(id);
+    } catch (e) {
+      ctx.toast?.(errorMessage(e), 'error');
+    } finally {
+      setBusy(null);
+    }
+  };
   return (
-    <div className="col" style={{ gap: 2, padding: 4 }}>
-      <input className="input sm" placeholder="Search people" value={q} onChange={(e) => setQ(e.target.value)} autoFocus aria-label="Search people" />
+    <div className="col" style={{ gap: 2, padding: 4, minWidth: 280 }}>
+      <input className="input sm" placeholder="Search people by name or email" value={q} onChange={(e) => setQ(e.target.value)} autoFocus aria-label="Search people" />
       {list.map((m) => {
         const on = current.includes(m.id);
+        const access = accessOf(m.id);
+        const blocked = access === 'none' && !on;
         return (
-          <button key={m.id} className={`menu-item${on ? ' active' : ''}`} onClick={() => onChange(multi ? (on ? current.filter((x) => x !== m.id) : [...current, m.id]) : on ? null : m.id)}>
-            <Avatar id={m.id} name={m.name} url={m.avatarUrl} size="sm" /> <span className="grow ellipsis">{m.name}</span> {on ? <Icon name="check" /> : null}
-          </button>
+          <div key={m.id} className={`row${blocked ? ' picker-row-disabled' : ''}`} style={{ gap: 4 }}>
+            <button className={`menu-item grow${on ? ' active' : ''}`} disabled={blocked} title={blocked ? 'No access to this project or task' : undefined} onClick={() => pick(m.id)}>
+              <Avatar id={m.id} name={m.name} url={m.avatarUrl} size="sm" />
+              <span className="grow" style={{ minWidth: 0, textAlign: 'left' }}>
+                <span className="ellipsis" style={{ display: 'block' }}>{m.name}</span>
+                <span className="muted small ellipsis" style={{ display: 'block' }}>{m.email}{m.role ? ` · ${m.role === 'project_manager' ? 'project manager' : m.role}` : ''}</span>
+              </span>
+              <span className={`badge access-badge${access === 'none' ? ' danger' : ''}`}>{ACCESS_TEXT[access] ?? access}</span>
+              {on ? <Icon name="check" /> : null}
+            </button>
+            {blocked && !isUnsaved(itemId) && (assignable.data?.canShare ?? ctx.canShareTask) ? (
+              <button className="btn ghost sm" disabled={busy === m.id} onClick={() => shareAndAssign(m.id)} title="Give this person access to this task only, then assign it">Share</button>
+            ) : null}
+          </div>
         );
       })}
       {current.length ? <button className="btn ghost sm" onClick={() => onChange(null)}>Clear</button> : null}
+      {ctx.workspaceId ? <a className="btn ghost sm" href={appUrl(`/w/${ctx.workspaceId}/settings/members`)}><Icon name="plus" size={13} /> Invite a new person</a> : null}
     </div>
   );
 }
@@ -446,7 +491,7 @@ function FilesEditor({ value, item, column, ctx, close }: { value: string[]; ite
         <a key={id} className="menu-item" href={appUrl(`/api/files/${id}`)} target="_blank" rel="noopener noreferrer"><Icon name="file" /> File {id.slice(0, 6)}</a>
       ))}
       <input ref={input} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
-      <button className="btn sm" disabled={busy} onClick={() => input.current?.click()}><Icon name="upload" /> {busy ? 'Uploading…' : 'Upload files'}</button>
+      <button className="btn sm" disabled={busy || isUnsaved(item.id)} onClick={() => input.current?.click()}><Icon name="upload" /> {busy ? 'Uploading…' : isUnsaved(item.id) ? 'Saving the item…' : 'Upload files'}</button>
       <span className="muted small">Open the item to manage all attachments.</span>
     </div>
   );
