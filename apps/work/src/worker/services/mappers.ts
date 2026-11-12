@@ -100,6 +100,7 @@ export const itemDTO = (i: ItemRow): ItemDTO => ({
   updatedAt: i.updated_at,
   completedAt: i.completed_at,
   archivedAt: i.archived_at,
+  key: i.task_key ?? null,
 });
 
 export const viewDTO = (v: ViewRow): ViewDTO => ({

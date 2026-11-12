@@ -57,6 +57,9 @@ export interface BoardRow {
   currency?: string | null;
   start_date?: string | null;
   manager_id?: string | null;
+  /** Migration 0008: task key prefix and counter. */
+  task_prefix?: string | null;
+  task_seq?: number;
 }
 
 export function computeBoardAccess(
@@ -134,6 +137,9 @@ export interface ItemRow {
   updated_at: number;
   completed_at: number | null;
   archived_at: number | null;
+  /** Migration 0008: permanent key (PREFIX-0001). */
+  task_number?: number | null;
+  task_key?: string | null;
 }
 
 export async function requireItem(db: D1Database, itemId: string, userId: string, need: BoardAccess = 'view') {

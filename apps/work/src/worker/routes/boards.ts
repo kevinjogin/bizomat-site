@@ -1,4 +1,5 @@
 import { Hono, type Context } from 'hono';
+import { ensureTaskKeys } from '../services/schedule/task-keys';
 import { z } from 'zod';
 import { canConvert, convertValue, getColumnType, isColumnType, PALETTE, sanitizeColumnSettings } from '../../shared/columns';
 import { checkFormula } from '../../shared/formula';
@@ -98,6 +99,8 @@ boardRoutes.get('/boards/:id', async (c) => {
   const { board, access, caps, wsRole } = await requireProject(c.env.DB, c.req.param('id'), user.id, 'view');
   const db = c.env.DB;
   const policy = await financePolicy(db, board.workspace_id);
+  // Tasks from before keys existed, and copies of boards and templates, get their permanent keys here.
+  await ensureTaskKeys(db, board);
   const [groups, columns, items, views, members, boardMembers, counts, memberAccess] = await Promise.all([
     db.prepare('SELECT * FROM groups WHERE board_id = ? AND archived_at IS NULL ORDER BY position').bind(board.id).all<GroupRow>(),
     db.prepare('SELECT * FROM columns WHERE board_id = ? ORDER BY position').bind(board.id).all<ColumnRow>(),

@@ -110,6 +110,8 @@ export interface ItemDTO {
   updatedAt: number;
   completedAt: number | null;
   archivedAt: number | null;
+  /** Permanent task key (PREFIX-0001), never reused or changed. */
+  key?: string | null;
   subitemCount?: number;
   updateCount?: number;
 }
