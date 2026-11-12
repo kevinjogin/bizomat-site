@@ -11110,6 +11110,51 @@
    "evidence": "book-link"
   },
   {
+   "reados": "publication/leading-an-aps-team",
+   "chapter": "planning-the-work-and-the-team",
+   "tool": "queue-wait-check",
+   "type": "applies",
+   "note": "Models the call queue from arrivals, handling time and call-takers, giving the utilisation and waiting figures this chapter uses to staff the phones against the service standard.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/leading-an-aps-team",
+   "chapter": "psychosocial-safety-and-workload",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Multiplies likelihood by consequence on 1 to 5 scales and bands the score, the rating this chapter gives the aggressive-caller risk before and after controls.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/leading-an-aps-team",
+   "chapter": "flexible-work-leave-and-attendance",
+   "tool": "workload",
+   "type": "applies",
+   "note": "Compares planned work hours with the team's available capacity, the check this chapter makes before and after agreeing to a part-time arrangement.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/information-you-can-release",
+   "chapter": "handling-an-foi-request",
+   "tool": "workload",
+   "type": "applies",
+   "note": "Compares the hours a large request will take with the team's available capacity, the check this chapter makes before committing to the processing timeline.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/information-you-can-release",
+   "chapter": "a-team-process-that-meets-the-deadlines",
+   "tool": "staffing-need",
+   "type": "applies",
+   "note": "Converts the yearly caseload, hours per case and productive time into the FTE this chapter calculates for an FOI and privacy team.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
    "reados": "publication/accountable-to-parliament",
    "chapter": "questions-on-notice",
    "tool": "priority",
