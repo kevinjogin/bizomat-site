@@ -9,7 +9,7 @@ import { timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, Modal, useConfirm } from '../components/ui/overlays';
-import { useBoardActions, useBoardQuery, useComputedItems } from './useBoard';
+import { isUnsaved, resolveId, useBoardActions, useBoardQuery, useComputedItems } from './useBoard';
 import { applyView, visibleColumns, type QuickFilters } from './filtering';
 import { Toolbar } from './Toolbar';
 import { ItemPanel } from './ItemPanel';
@@ -59,6 +59,16 @@ export default function BoardPage() {
 
   const openItem = useCallback((id: string) => setParams((p) => { const n = new URLSearchParams(p); n.set('item', id); return n; }), [setParams]);
   const closeItem = useCallback(() => setParams((p) => { const n = new URLSearchParams(p); n.delete('item'); return n; }), [setParams]);
+  // An item opened right after it was added still has its temporary id: once the server has saved it, the address
+  // takes the real id (in place, so Back does not return to the temporary one). If the save failed, the panel closes.
+  useEffect(() => {
+    if (!itemId || !isUnsaved(itemId)) return;
+    let current = true;
+    void resolveId(itemId).then((id) => {
+      if (current) setParams((p) => { const n = new URLSearchParams(p); if (id) n.set('item', id); else n.delete('item'); return n; }, { replace: true });
+    });
+    return () => { current = false; };
+  }, [itemId, setParams]);
 
   const newItem = async () => {
     if (!canEdit || !bundle) return;
