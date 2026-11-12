@@ -135,7 +135,7 @@ export function useBoardActions(boardId: string): BoardActions {
         setB((bb) => ({ ...bb, items: created ? bb.items.filter((i) => i.id !== created.id).map((i) => (i.id === tempId ? applyPatch({ ...created, subitemCount: 0, updateCount: 0 }, edits ?? {}) : i)) : bb.items.filter((i) => i.id !== tempId) }));
         // An edit made meanwhile refreshes the board once it is saved; refreshing now could bring back the item
         // without it for a moment.
-        if (!edits) void refresh();
+        if (!created || !edits) void refresh();
         return created;
       })();
       saving.set(tempId, save);
