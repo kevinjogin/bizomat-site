@@ -228,22 +228,43 @@ function range({ spec, list, p }: Ctx) {
   return `<div class="kf-bars kf-ranges">${rows.join('')}<div class="kf-range-axis" aria-hidden="true"><span></span><span class="kf-ticks">${ticks.map((t) => `<span>${esc(t)}</span>`).join('')}</span></div></div>`;
 }
 
+/**
+ * A half-dial with a needle. Zone labels can be long, so they sit in a legend under the dial, each with a key drawn
+ * in its zone's own stroke and the zone holding the value marked; the arc carries only the short boundary values.
+ * Each boundary value is placed outside the arc's outer edge whatever its direction, and dropped if it would touch
+ * the end labels or another value (the legend still gives every range).
+ */
 function gauge({ id, spec, p }: Ctx) {
   const min = num(p('min', '0')), max = num(p('max', '100')), val = num(p('value', '0'));
-  const cx = 160, cy = 150, R = 112;
+  const cx = 160, cy = 150, R = 112, HALF = 11; // HALF: half the zone stroke width (.kf-zone)
+  const FS = 15, CAP = 0.72 * FS; // .kf-axt font size and figure height in user units
   const ang = (v: number) => Math.PI * (1 - (Math.max(min, Math.min(max, v)) - min) / (max - min || 1));
   const pt = (a: number, rr: number) => `${r1(cx + rr * Math.cos(a))} ${r1(cy - rr * Math.sin(a))}`;
-  let zones = '';
-  spec.items.forEach((it, i) => {
-    const a0 = ang(num(it.fields[0])), a1 = ang(num(it.fields[1]));
-    zones += `<path class="kf-zone kf-zone${i % 3}" d="M${pt(a0, R)}A${R} ${R} 0 0 1 ${pt(a1, R)}"/>`;
-    const am = (a0 + a1) / 2;
-    zones += `<text class="kf-axt" x="${pt(am, R + 24).split(' ')[0]}" y="${pt(am, R + 24).split(' ')[1]}" text-anchor="middle">${esc(it.fields[2] ?? '')}</text>`;
-  });
+  const zones = spec.items.map((it, i) => `<path class="kf-zone kf-zone${i % 3}" d="M${pt(ang(num(it.fields[0])), R)}A${R} ${R} 0 0 1 ${pt(ang(num(it.fields[1])), R)}"/>`).join('');
+  const width = (s: string) => s.length * 0.6 * FS; // generous for figures, so a value errs away from the arc
+  const label = (x: number, y: number, s: string) => `<text class="kf-axt" x="${r1(x)}" y="${r1(y)}" text-anchor="middle">${esc(s)}</text>`;
+  const ends = [[cx - R, p('min', '0')], [cx + R, p('max', '100')]] as const;
+  const boxes = ends.map(([x, s]) => [x - width(s) / 2, cy + 26 - CAP, x + width(s) / 2, cy + 26]);
+  const bounds = new Map<number, string>();
+  for (const it of spec.items) for (const f of it.fields.slice(0, 2)) { const v = num(f); if (v > min && v < max && !bounds.has(v)) bounds.set(v, f.trim()); }
+  let ticks = '';
+  for (const [v, s] of [...bounds].sort((a, b) => a[0] - b[0])) {
+    // A box whose centre is this far out along the radius clears the circle R + HALF + 4 at every point.
+    const a = ang(v), c = Math.cos(a), sn = Math.sin(a), w = width(s);
+    const rho = R + HALF + 4 + (w / 2) * Math.abs(c) + (CAP / 2) * sn;
+    const x = cx + rho * c, y = cy - rho * sn, box = [x - w / 2, y - CAP / 2, x + w / 2, y + CAP / 2];
+    if (boxes.some((b) => box[0] < b[2] + 3 && b[0] < box[2] + 3 && box[1] < b[3] + 3 && b[1] < box[3] + 3)) continue;
+    boxes.push(box);
+    ticks += label(x, y + CAP / 2, s);
+  }
+  const span = (it: FigureItem) => [num(it.fields[0]), num(it.fields[1])].sort((a, b) => a - b);
+  let here = spec.items.findIndex((it) => { const [lo, hi] = span(it); return val >= lo && val < hi; });
+  if (here < 0) here = spec.items.findIndex((it) => span(it)[1] === val);
+  const legend = spec.items.map((it, i) => `<li class="kf-a ${d(i)}${i === here ? ' kf-hot' : ''}"><svg class="kf-gauge-key" viewBox="0 0 28 12" aria-hidden="true"><path class="kf-track-arc" d="M0 6H28"/><path class="kf-zone kf-zone${i % 3}" d="M0 6H28"/></svg><strong>${txt(it.fields[2] ?? '')}</strong><span class="kf-gauge-range">${qty(it.fields[0])} to ${qty(it.fields[1])}${i === here ? '<span class="visually-hidden">; the value is in this band</span>' : ''}</span></li>`).join('');
   const a = ang(val);
   const needle = `<g class="kf-needle"><path class="kf-needle-line" d="M${cx} ${cy}L${pt(a, R - 18)}"/><circle class="kf-needle-hub" cx="${cx}" cy="${cy}" r="8"/></g>`;
-  const scale = `<text class="kf-axt" x="${cx - R}" y="${cy + 26}" text-anchor="middle">${esc(p('min', '0'))}</text><text class="kf-axt" x="${cx + R}" y="${cy + 26}" text-anchor="middle">${esc(p('max', '100'))}</text>`;
-  return `<svg class="kf-gauge" viewBox="0 0 320 190" role="img" aria-labelledby="${id}-t ${id}-v"><path class="kf-track-arc" d="M${pt(Math.PI, R)}A${R} ${R} 0 0 1 ${pt(0, R)}"/>${zones}${scale}${needle}</svg><p class="kf-gauge-val" id="${id}-v"><strong>${qty(p('value'), p('unit'))}</strong> ${txt(p('label'))}</p>`;
+  const scale = ends.map(([x, s]) => label(x, cy + 26, s)).join('');
+  return `<svg class="kf-gauge" viewBox="0 0 320 190" role="img" aria-labelledby="${id}-t ${id}-v"><path class="kf-track-arc" d="M${pt(Math.PI, R)}A${R} ${R} 0 0 1 ${pt(0, R)}"/>${zones}${ticks}${scale}${needle}</svg><p class="kf-gauge-val" id="${id}-v"><strong>${qty(p('value'), p('unit'))}</strong> ${txt(p('label'))}</p>${legend ? `<ul class="kf-gauge-legend">${legend}</ul>` : ''}`;
 }
 
 /* ---------- Diagram layouts ---------- */
