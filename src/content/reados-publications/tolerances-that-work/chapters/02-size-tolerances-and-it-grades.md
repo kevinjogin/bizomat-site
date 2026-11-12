@@ -4,7 +4,7 @@ chapterSlug: size-tolerances-and-it-grades
 order: 2
 title: "Size tolerances, IT grades and general tolerances"
 description: "Read and write limits of size, use ISO tolerance grades and fundamental deviations, convert between notations and apply general tolerances without hidden ambiguity."
-draft: true
+draft: false
 ---
 
 The size tolerance is the oldest and most familiar tolerance on a drawing. It looks simple: a nominal value and a permitted range. Behind that simplicity sit several choices that change how a part is made and judged, including the notation, the tolerance grade, the position of the range relative to nominal and whether the size limit also controls form.
@@ -131,7 +131,7 @@ General tolerances work well when they reflect what the workshop achieves withou
 
 General tolerance notes also have limits. They do not create datums, so an untoleranced hole position under a general note is still ambiguous about where it is measured from. Geometrical general tolerances exist as well, and newer standards such as ISO 22081 provide a different approach to general specifications. Whatever note is used, it must name the standard and class exactly; "unless otherwise stated ±0.1" without a standard leaves angular dimensions and many geometric questions undefined.
 
-## Does a size limit control form?
+## Whether a size limit controls form
 
 This is the most important rule difference between the two main tolerancing systems, and it causes real disputes.
 
@@ -153,6 +153,20 @@ caption: Name the governing standard in the title block, and state form requirem
 - How to get envelope behaviour | Add Ⓔ after the size, or a geometric tolerance | Applies by default to regular features of size
 ```
 
+## The failure case: a converted bearing width
+
+This is an illustration. When Northgate drew its first assembly drawing, a drafter tidied the notation so that every length was shown as an equal bilateral tolerance. The bearing width, supplied as 12 with deviations 0 and −0.12 mm, was redrawn as 12 ± 0.06 mm. The tolerance looked the same, 0.12 mm, and nobody questioned it.
+
+The limits had moved. The bearing manufacturer's range is 11.88 to 12.00 mm. The redrawn range is 11.94 to 12.06 mm: the same width of tolerance, shifted 0.06 mm upwards. Two bearings sit in the axial float chain, so the error doubled to 0.12 mm. Wider bearings take up more of the space between the shoulder and the groove. The early float analysis therefore predicted floats 0.12 mm smaller than the real bearings would give, at both ends of the range. A design that looked tight on paper would have been loose in the housing, and a correction made to fix the imagined problem would have made the real one worse.
+
+### How it is detected
+
+Compare limits, not notation. Writing out the upper and lower limits of every bought-in part beside the supplier's catalogue value shows the shift at once. A conversion is correct only if both limits survive it unchanged.
+
+### How it is corrected
+
+The assembly drawing went back to the supplier's notation, 12 with deviations 0 and −0.12 mm. The conversion to a mean and an equal bilateral tolerance, 11.94 ± 0.06 mm, was kept where it belongs: in the stack-up worksheet, labelled as a conversion for analysis.
+
 ## Common mistakes
 
 - **Mixing notations on one drawing** without a reason. Choose a house convention and keep to it so inspectors know what to expect.
@@ -168,8 +182,17 @@ caption: Name the governing standard in the title block, and state form requirem
 - Does the general tolerance class match what the supplier achieves without special effort?
 - Which standard governs the drawing, and does the size tolerance also need to control form?
 
-## Exercise: decode and convert
+## Exercise: decode, convert and gauge
 
-Write the limits, deviations, tolerance and mean size for Ø25 H7, Ø25 g6 and a 12 mm bearing width with deviations 0 and −0.12 mm. Then rewrite the bearing width as an equal bilateral tolerance about its mean. Finally, check the title block of one of your own drawings: does it name a general tolerance standard and class, and does it say whether ISO or ASME rules apply?
+Write the limits, deviations, tolerance and mean size for Ø25 H7, Ø25 g6 and a 12 mm bearing width with deviations 0 and −0.12 mm. Rewrite the bearing width as an equal bilateral tolerance about its mean. Then plan go and no-go plug gauges for the Ø25 H7 hole, with a gauge tolerance of 10% and a wear allowance of 5% of the work tolerance.
+
+**Worked answer.**
+
+- **Ø25 H7:** limits 25.000 and 25.021 mm; ES = +0.021 mm and EI = 0; tolerance 0.021 mm; mean 25.0105 mm.
+- **Ø25 g6:** limits 24.980 and 24.993 mm; es = −0.007 mm and ei = −0.020 mm; tolerance 0.013 mm; mean 24.9865 mm.
+- **Bearing width:** limits 11.88 and 12.00 mm; upper deviation 0 and lower deviation −0.12 mm; tolerance 0.12 mm; mean 11.94 mm. As an equal bilateral tolerance it is 11.94 ± 0.06 mm, not 12 ± 0.06 mm.
+- **Gauges:** the [limit gauge plan tool](/tools/plug-gauge-plan/) in BIZOMAT Tools places the gauge tolerances inside the work limits. It works from the formula value of IT7, 20.9 µm, rather than the published 21 µm. It gives a gauge tolerance of 2.09 µm and a wear allowance of 1.05 µm, a go gauge of 25.0010 to 25.0031 mm and a no-go gauge of 25.0188 to 25.0209 mm. The go gauge is a full-form plug at the smallest permitted hole, raised by the wear allowance so that it can wear without accepting small holes. The no-go gauge sits just inside the largest permitted hole. Use the published value and your gauge maker's tolerances for real gauges.
+
+**Try it on your own drawing.** Check the title block of one of your own drawings. Does it name a general tolerance standard and class, and does it say whether ISO or ASME rules apply?
 
 With size tolerances in hand, the next chapter combines a hole and a shaft into a fit and works through clearance, transition and interference fits, including the calculation of a shrink fit.

@@ -1,5 +1,6 @@
 // Aggregations over REAL board data for dashboards, goals and charts.
 
+import { isFinancialColumn } from '../../shared/permissions';
 import { getColumnType, labelsOf } from '../../shared/columns';
 import { addDays, todayIn } from '../../shared/dates';
 import { isItemDone, matchFilter, sanitizeFilter, type FilterGroup } from '../../shared/filters';
@@ -16,7 +17,13 @@ export interface BoardData {
   items: ItemDTO[]; // top-level + subitems, not archived
 }
 
-export async function loadBoardData(db: D1Database, boardIds: string[]): Promise<BoardData> {
+/** Board data as the caller may see it: financial columns removed on boards where they lack finance access. */
+export async function loadBoardDataFor(db: D1Database, workspaceId: string, userId: string, boardIds: string[]): Promise<BoardData> {
+  const { financeHiddenBoards } = await import('./access');
+  return loadBoardData(db, boardIds, await financeHiddenBoards(db, workspaceId, userId, boardIds));
+}
+
+export async function loadBoardData(db: D1Database, boardIds: string[], hideFinanceOn: Set<string> = new Set()): Promise<BoardData> {
   const data: BoardData = { boards: new Map(), columns: new Map(), groups: new Map(), items: [] };
   if (!boardIds.length) return data;
   const ph = placeholders(boardIds.length);
@@ -27,9 +34,21 @@ export async function loadBoardData(db: D1Database, boardIds: string[]): Promise
     db.prepare(`SELECT * FROM items WHERE board_id IN (${ph}) AND archived_at IS NULL`).bind(...boardIds).all<ItemRow>(),
   ]);
   boards.results.forEach((b) => data.boards.set(b.id, b));
-  for (const c of cols.results.map(columnDTO)) data.columns.set(c.boardId, [...(data.columns.get(c.boardId) ?? []), c]);
+  const hiddenCols = new Set<string>();
+  for (const c of cols.results.map(columnDTO)) {
+    if (hideFinanceOn.has(c.boardId) && isFinancialColumn(c)) {
+      hiddenCols.add(c.id);
+      continue;
+    }
+    data.columns.set(c.boardId, [...(data.columns.get(c.boardId) ?? []), c]);
+  }
   groups.results.map(groupDTO).forEach((g) => data.groups.set(g.id, g));
-  const all = items.results.map(itemDTO);
+  const all = items.results.map(itemDTO).map((i) => {
+    if (!hiddenCols.size || !hideFinanceOn.has(i.boardId)) return i;
+    const values: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(i.values)) if (!hiddenCols.has(k)) values[k] = v;
+    return { ...i, values };
+  });
   const subs = new Map<string, ItemDTO[]>();
   for (const i of all) if (i.parentItemId) subs.set(i.parentItemId, [...(subs.get(i.parentItemId) ?? []), i]);
   data.items = all.map((i) => ({ ...i, values: computeValues(i, data.columns.get(i.boardId) ?? [], { subitemsOf: (id) => subs.get(id) ?? [] }) }));

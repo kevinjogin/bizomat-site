@@ -7,6 +7,7 @@
 // this registry.
 
 import { isIsoDate } from './dates';
+import { normalizeAmount } from './money';
 
 export const COLUMN_TYPES = [
   'text',
@@ -59,8 +60,28 @@ export interface ColumnSettings {
   formula?: string;
   mode?: 'manual' | 'subitems' | 'status';
   progressStatusColumnId?: string;
+  /** Currency columns: 'inherit' takes the project's or organisation's currency; 'fixed' (or absent) uses `currency`. */
+  currencyMode?: 'inherit' | 'fixed';
+  /** Set when an administrator confirmed which currency a column's existing amounts are in. */
+  currencyConfirmed?: boolean;
+  /** What the amounts are, for finance summaries and reports. */
+  financeRole?: FinanceRole;
+  /** Number columns: holds money (finance permissions then apply). */
+  financial?: boolean;
+  /** Set by the server on the board bundle: where the currency shown came from. Never stored. */
+  currencySource?: 'column' | 'project' | 'organisation' | 'unset';
   [k: string]: unknown;
 }
+
+export const FINANCE_ROLES = ['approved_budget', 'estimated_cost', 'actual_cost', 'committed', 'other'] as const;
+export type FinanceRole = (typeof FINANCE_ROLES)[number];
+export const FINANCE_ROLE_LABELS: Record<FinanceRole, string> = {
+  approved_budget: 'Approved budget',
+  estimated_cost: 'Estimated cost',
+  actual_cost: 'Actual cost',
+  committed: 'Committed expenditure',
+  other: 'Other amount',
+};
 
 export interface ColumnLike {
   id: string;
@@ -371,14 +392,22 @@ const defs: Record<ColumnType, ColumnTypeDef> = {
   },
   currency: {
     type: 'currency', label: 'Currency', category: 'numbers',
-    defaultSettings: () => ({ currency: 'USD', decimals: 2 }),
-    normalize: numberNormalizer(),
+    // New columns take the project's or organisation's currency; existing columns keep the code stored on them.
+    defaultSettings: () => ({ currencyMode: 'inherit', decimals: 2 }),
+    normalize: (v, s) => {
+      const base = numberNormalizer()(v, s);
+      if (!base.ok || base.value == null) return base;
+      const r = normalizeAmount(typeof v === 'string' ? v : base.value);
+      return r.ok ? ok(r.value) : fail(r.error);
+    },
     toText: (v, s) => {
       if (typeof v !== 'number') return '';
+      const digits = s.decimals ?? 2;
+      if (!s.currency || !/^[A-Z]{3}$/.test(s.currency)) return v.toLocaleString('en', { minimumFractionDigits: digits, maximumFractionDigits: digits });
       try {
-        return new Intl.NumberFormat('en', { style: 'currency', currency: s.currency || 'USD', maximumFractionDigits: s.decimals ?? 2 }).format(v);
+        return new Intl.NumberFormat('en', { style: 'currency', currency: s.currency, minimumFractionDigits: digits, maximumFractionDigits: digits }).format(v);
       } catch {
-        return v.toFixed(2);
+        return `${s.currency} ${v.toFixed(digits)}`;
       }
     },
     sortKey: (v) => (typeof v === 'number' ? v : null),
@@ -660,6 +689,16 @@ export function sanitizeColumnSettings(type: string, input: unknown): ColumnSett
   }
   if (typeof s.pattern === 'string' && s.pattern.length <= 200) out.pattern = s.pattern;
   if (typeof s.currency === 'string' && /^[A-Z]{3}$/.test(s.currency)) out.currency = s.currency;
+  if (type === 'currency') {
+    if (s.currencyMode === 'inherit' || s.currencyMode === 'fixed') out.currencyMode = s.currencyMode;
+    else if (out.currency && !('currencyMode' in s)) out.currencyMode = 'fixed';
+    if (out.currencyMode === 'fixed' && !out.currency) out.currencyMode = 'inherit';
+    if (typeof s.currencyConfirmed === 'boolean') out.currencyConfirmed = s.currencyConfirmed;
+  }
+  if (type === 'currency' || type === 'number') {
+    if (typeof s.financeRole === 'string' && (FINANCE_ROLES as readonly string[]).includes(s.financeRole)) out.financeRole = s.financeRole as FinanceRole;
+  }
+  if (type === 'number' && typeof s.financial === 'boolean') out.financial = s.financial;
   if (typeof s.includeTime === 'boolean') out.includeTime = s.includeTime;
   if (type === 'formula' && typeof s.formula === 'string') out.formula = s.formula.slice(0, 2000);
   if (type === 'progress' && (s.mode === 'manual' || s.mode === 'subitems' || s.mode === 'status')) out.mode = s.mode;

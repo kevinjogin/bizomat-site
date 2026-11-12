@@ -10,24 +10,42 @@ import { Icon } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading, Spinner } from '../components/ui/ui';
 import { MenuItem, MenuSep, Popover, useConfirm, useToast } from '../components/ui/overlays';
 import { Cell, type CellCtx } from './cells/Cell';
-import type { BoardActions } from './useBoard';
+import { isUnsaved, type BoardActions } from './useBoard';
 import { useCreateDocument } from '../components/layout/CreateDialogs';
 import { BASE, appUrl } from '../lib/base';
+import { isFinancialColumn, type TaskCaps } from '../../shared/permissions';
+import { TaskAccessTab } from './TaskAccess';
+import { TaskScheduleTab } from './controls/TaskSchedule';
+import { TaskKey } from './controls/schedule';
 
 interface ItemDetail {
   item: ItemDTO;
   parent: { id: string; name: string } | null;
   board: { id: string; name: string; workspaceId: string; access: string };
   subitems: ItemDTO[];
+  caps?: TaskCaps;
   attachments: AttachmentDTO[];
   timeEntries: { id: string; user_id: string; user_name: string; started_at: number; ended_at: number | null; duration_seconds: number | null; note: string }[];
 }
 
-type Tab = 'updates' | 'details' | 'subitems' | 'files' | 'activity' | 'time' | 'docs';
+type Tab = 'updates' | 'details' | 'schedule' | 'subitems' | 'files' | 'activity' | 'time' | 'docs' | 'access';
+
+/** What a person may change, column by column, from their rights on the task (src/shared/permissions.ts). */
+export function columnEditable(caps: TaskCaps | undefined, fallback: boolean) {
+  return (c: ColumnDTO) => {
+    if (!caps) return fallback;
+    if (isFinancialColumn(c)) return caps.editFinance;
+    if (c.type === 'person' || c.type === 'people') return caps.manageAssignments;
+    if (c.type === 'status') return caps.updateStatus || caps.edit;
+    return caps.edit;
+  };
+}
 
 export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onClose, onOpen, members, memberName }: { itemId: string; bundle: BoardBundle; computedItems: ItemDTO[]; actions: BoardActions; canEdit: boolean; onClose: () => void; onOpen: (id: string) => void; members: MemberDTO[]; memberName: (id: string) => string | undefined }) {
   const [tab, setTab] = useState<Tab>('updates');
-  const detail = useQuery({ queryKey: ['item', itemId], queryFn: () => get<ItemDetail>(`/items/${itemId}`) });
+  // A just-added item opened before the server has saved it: BoardPage puts its real id in the address once saved.
+  const unsaved = isUnsaved(itemId);
+  const detail = useQuery({ queryKey: ['item', itemId], queryFn: () => get<ItemDetail>(`/items/${itemId}`), enabled: !unsaved });
   const qc = useQueryClient();
   const toast = useToast();
   const confirm = useConfirm();
@@ -52,7 +70,11 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
-  const ctx: CellCtx = { members, items: computedItems, boardId: bundle.board.id, memberName, onUploaded: refresh, toast };
+  const caps = detail.data?.caps;
+  const editable = columnEditable(caps, canEdit);
+  const editAll = caps ? caps.edit && canEdit : canEdit;
+  const canShare = !!bundle.board.caps && (bundle.board.caps.manageMembers || bundle.board.caps.assignTasks) && detail.data?.board && (detail.data.board as { projectAccess?: boolean }).projectAccess !== false;
+  const ctx: CellCtx = { members, items: computedItems, boardId: bundle.board.id, memberName, onUploaded: refresh, toast, memberAccess: bundle.memberAccess, canShareTask: !!canShare, workspaceId: bundle.board.workspaceId };
   const group = bundle.groups.find((g) => g.id === item?.groupId);
   const subitems = computedItems.filter((i) => i.parentItemId === itemId).sort((a, b) => a.position - b.position);
 
@@ -63,7 +85,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
     <>
       <div className="sidepanel-overlay" onClick={onClose} />
       <aside className="sidepanel" role="dialog" aria-modal="true" aria-label={item ? `Item ${item.name}` : 'Item'} ref={ref} tabIndex={-1}>
-        {detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 20 }}><ErrorBox error={detail.error} /></div> : item ? (
+        {unsaved ? <Loading label="Saving the item…" /> : detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 20 }}><ErrorBox error={detail.error} /></div> : item ? (
           <>
             <div className="panel-head">
               <div className="row small muted" style={{ marginBottom: 6 }}>
@@ -71,13 +93,14 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
                 <span>{bundle.board.name}</span> <Icon name="chevronRight" size={12} /> <span>{group?.name}</span>
                 {detail.data?.parent ? (<><Icon name="chevronRight" size={12} /><button className="btn ghost sm" onClick={() => onOpen(detail.data!.parent!.id)}>{detail.data.parent.name}</button></>) : null}
                 <span className="spacer" />
+                <TaskKey value={item.key} copy />
                 <button ref={menuRef} className="btn ghost icon sm" aria-label="Item actions" onClick={() => setMenu(true)}><Icon name="more" /></button>
                 <button className="btn ghost icon sm" aria-label="Close panel" onClick={onClose}><Icon name="x" /></button>
               </div>
               <input
                 className="panel-title"
                 value={name}
-                readOnly={!canEdit}
+                readOnly={!editAll}
                 aria-label="Item name"
                 onChange={(e) => setName(e.target.value)}
                 onBlur={() => { if (name.trim() && name !== item.name) actions.updateItem(item.id, { name: name.trim() }); }}
@@ -85,26 +108,28 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
                 maxLength={500}
               />
               <div className="tabs" role="tablist" style={{ marginTop: 8 }}>
-                {(['updates', 'details', 'subitems', 'files', 'activity', 'time', 'docs'] as Tab[]).filter((t) => !(t === 'subitems' && item.parentItemId)).map((t) => (
+                {(['updates', 'details', 'schedule', 'subitems', 'files', 'activity', 'time', 'docs', 'access'] as Tab[]).filter((t) => !(t === 'subitems' && item.parentItemId) && (t !== 'access' || canShare) && (t !== 'docs' || caps?.via !== 'task') && (t !== 'schedule' || !item.id.startsWith('tmp-'))).map((t) => (
                   <button key={t} role="tab" aria-selected={tab === t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>
-                    {t === 'updates' ? `Updates${item.updateCount ? ` (${item.updateCount})` : ''}` : t === 'subitems' ? `Subitems (${subitems.length})` : t === 'files' ? `Files (${detail.data?.attachments.length ?? 0})` : t[0].toUpperCase() + t.slice(1)}
+                    {t === 'access' ? 'Access' : t === 'updates' ? `Updates${item.updateCount ? ` (${item.updateCount})` : ''}` : t === 'subitems' ? `Subitems (${subitems.length})` : t === 'files' ? `Files (${detail.data?.attachments.length ?? 0})` : t[0].toUpperCase() + t.slice(1)}
                   </button>
                 ))}
               </div>
             </div>
             <div className="panel-body">
-              {tab === 'details' ? <DetailsTab item={item} columns={bundle.columns} ctx={ctx} canEdit={canEdit} actions={actions} /> : null}
-              {tab === 'updates' ? <UpdatesTab itemId={item.id} members={members} onPosted={refresh} /> : null}
-              {tab === 'subitems' ? <SubitemsTab item={item} subitems={subitems} columns={bundle.columns} ctx={ctx} canEdit={canEdit} actions={actions} onOpen={onOpen} /> : null}
-              {tab === 'files' ? <FilesTab item={item} attachments={detail.data?.attachments ?? []} canEdit={canEdit} refresh={refresh} /> : null}
+              {tab === 'details' ? <DetailsTab item={item} columns={bundle.columns} ctx={ctx} canEdit={editAll} editable={editable} actions={actions} /> : null}
+              {tab === 'schedule' ? <TaskScheduleTab key={item.id} itemId={item.id} boardId={bundle.board.id} archived={!!bundle.board.archivedAt} memberName={memberName} /> : null}
+              {tab === 'updates' ? <UpdatesTab itemId={item.id} members={members} onPosted={refresh} canComment={caps ? caps.comment : true} /> : null}
+              {tab === 'subitems' ? <SubitemsTab item={item} subitems={subitems} columns={bundle.columns} ctx={ctx} canEdit={editAll && (bundle.board.caps?.createTasks ?? canEdit)} actions={actions} onOpen={onOpen} /> : null}
+              {tab === 'files' ? <FilesTab item={item} attachments={detail.data?.attachments ?? []} canEdit={caps ? caps.upload && canEdit : canEdit} refresh={refresh} /> : null}
+              {tab === 'access' ? <TaskAccessTab item={item} bundle={bundle} canViewFinance={!!caps?.viewFinance} /> : null}
               {tab === 'activity' ? <ActivityTab itemId={item.id} columns={bundle.columns} ctx={ctx} /> : null}
               {tab === 'time' ? <TimeTab item={item} entries={detail.data?.timeEntries ?? []} canEdit={canEdit} refresh={refresh} /> : null}
               {tab === 'docs' ? <DocsTab item={item} workspaceId={bundle.board.workspaceId} canEdit={canEdit} /> : null}
             </div>
             {menu ? (
               <Popover anchor={menuRef} onClose={() => setMenu(false)} align="end">
-                <MenuItem icon="link" onClick={() => { setMenu(false); navigator.clipboard?.writeText(`${location.origin}${BASE}/w/${bundle.board.workspaceId}/boards/${bundle.board.id}?item=${item.id}`).then(() => toast('Link copied')); }}>Copy link</MenuItem>
-                {canEdit ? (
+                <MenuItem icon="link" onClick={() => { setMenu(false); navigator.clipboard?.writeText(`${location.origin}${BASE}/w/${bundle.board.workspaceId}/tasks/${item.id}`).then(() => toast('Link copied')); }}>Copy link</MenuItem>
+                {canEdit && caps?.via !== 'task' ? (
                   <>
                     <MenuItem icon="copy" onClick={() => { setMenu(false); actions.duplicateItem(item.id); toast('Item duplicated'); }}>Duplicate</MenuItem>
                     <MenuSep />
@@ -124,7 +149,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
   );
 }
 
-function DetailsTab({ item, columns, ctx, canEdit, actions }: { item: ItemDTO; columns: ColumnDTO[]; ctx: CellCtx; canEdit: boolean; actions: BoardActions }) {
+function DetailsTab({ item, columns, ctx, canEdit, editable, actions }: { item: ItemDTO; columns: ColumnDTO[]; ctx: CellCtx; canEdit: boolean; editable: (c: ColumnDTO) => boolean; actions: BoardActions }) {
   const [desc, setDesc] = useState(item.description);
   useEffect(() => setDesc(item.description), [item.description]);
   return (
@@ -132,7 +157,7 @@ function DetailsTab({ item, columns, ctx, canEdit, actions }: { item: ItemDTO; c
       <div className="props">
         {columns.map((c) => (
           <PropRow key={c.id} label={c.title} icon={iconFor(c.type)} hint={c.description}>
-            <Cell column={c} item={item} value={item.values[c.id]} ctx={ctx} canEdit={canEdit} onChange={(v) => actions.setValue(item.id, c.id, v)} variant="panel" />
+            <Cell column={c} item={item} value={item.values[c.id]} ctx={ctx} canEdit={editable(c)} onChange={(v) => actions.setValue(item.id, c.id, v)} variant="panel" />
           </PropRow>
         ))}
         <PropRow label="Created" icon="clock"><span className="small muted">{new Date(item.createdAt).toLocaleString()}</span></PropRow>
@@ -256,7 +281,7 @@ export function MentionComposer({ members, onSubmit, placeholder, autoFocus, ini
   );
 }
 
-function UpdatesTab({ itemId, members, onPosted }: { itemId: string; members: MemberDTO[]; onPosted: () => void }) {
+function UpdatesTab({ itemId, members, onPosted, canComment = true }: { itemId: string; members: MemberDTO[]; onPosted: () => void; canComment?: boolean }) {
   const q = useQuery({ queryKey: ['updates', itemId], queryFn: () => get<UpdateDTO[]>(`/items/${itemId}/updates`) });
   const user = useUser();
   const toast = useToast();
@@ -317,16 +342,16 @@ function UpdatesTab({ itemId, members, onPosted }: { itemId: string; members: Me
             <div style={{ marginTop: 10 }}>
               <MentionComposer members={members} placeholder="Write a reply…" autoFocus submitLabel="Reply" onSubmit={(b) => post_(b, u.id)} />
             </div>
-          ) : (
+          ) : canComment ? (
             <button className="btn ghost sm" style={{ marginTop: 6 }} onClick={() => setReplyTo(u.id)}><Icon name="message" size={13} /> Reply</button>
-          )}
+          ) : null}
         </>
       ) : null}
     </div>
   );
   return (
     <div className="stack">
-      <MentionComposer members={members} placeholder="Write an update… use @ to mention" onSubmit={(b) => post_(b)} />
+      {canComment ? <MentionComposer members={members} placeholder="Write an update… use @ to mention" onSubmit={(b) => post_(b)} /> : <p className="muted small">Your access to this task does not include comments.</p>}
       {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : null}
       {q.data && q.data.length === 0 ? <EmptyState icon="message" title="No updates yet">Share progress, ask questions and @mention teammates.</EmptyState> : null}
       {q.data?.map((u) => renderOne(u))}

@@ -1,4 +1,4 @@
-import type { BoardDTO, ColumnDTO, GroupDTO, ItemDTO, ViewDTO } from '../../shared/types';
+import type { BoardDTO, ColumnDTO, GroupDTO, ItemDTO, ViewDTO, WorkspaceRole } from '../../shared/types';
 import { parseJson } from '../lib/util';
 import type { BoardRow, ItemRow } from './permissions';
 
@@ -12,6 +12,8 @@ export interface GroupRow {
   collapsed: number;
   archived_at: number | null;
   created_at: number;
+  /** Migration 0009: plain text, '' when there is none. */
+  description?: string | null;
 }
 
 export interface ColumnRow {
@@ -58,6 +60,9 @@ export const boardDTO = (b: BoardRow): BoardDTO => ({
   updatedAt: b.updated_at,
   archivedAt: b.archived_at,
   folderId: b.folder_id ?? null,
+  currency: b.currency ?? null,
+  startDate: b.start_date ?? null,
+  managerId: b.manager_id ?? null,
 });
 
 export const groupDTO = (g: GroupRow): GroupDTO => ({
@@ -68,6 +73,7 @@ export const groupDTO = (g: GroupRow): GroupDTO => ({
   position: g.position,
   collapsed: !!g.collapsed,
   archivedAt: g.archived_at,
+  description: g.description ?? '',
 });
 
 export const columnDTO = (c: ColumnRow): ColumnDTO => ({
@@ -97,6 +103,7 @@ export const itemDTO = (i: ItemRow): ItemDTO => ({
   updatedAt: i.updated_at,
   completedAt: i.completed_at,
   archivedAt: i.archived_at,
+  key: i.task_key ?? null,
 });
 
 export const viewDTO = (v: ViewRow): ViewDTO => ({
@@ -118,13 +125,14 @@ export async function loadColumns(db: D1Database, boardId: string): Promise<Colu
   return rows.results.map(columnDTO);
 }
 
-export async function workspaceMembers(db: D1Database, workspaceId: string) {
+/** Active members (suspended ones only when asked, for the members page). */
+export async function workspaceMembers(db: D1Database, workspaceId: string, opts: { includeSuspended?: boolean } = {}) {
   const rows = await db
     .prepare(
-      `SELECT u.id, u.email, u.name, u.avatar_key, m.role FROM workspace_members m JOIN users u ON u.id = m.user_id
-       WHERE m.workspace_id = ? ORDER BY u.name`,
+      `SELECT u.id, u.email, u.name, u.avatar_key, m.role, m.status FROM workspace_members m JOIN users u ON u.id = m.user_id
+       WHERE m.workspace_id = ? ${opts.includeSuspended ? '' : "AND m.status = 'active'"} ORDER BY u.name`,
     )
     .bind(workspaceId)
-    .all<{ id: string; email: string; name: string; avatar_key: string | null; role: 'owner' | 'admin' | 'member' | 'viewer' }>();
-  return rows.results.map((r) => ({ id: r.id, email: r.email, name: r.name, avatarUrl: avatarUrl(r.id, r.avatar_key), role: r.role }));
+    .all<{ id: string; email: string; name: string; avatar_key: string | null; role: WorkspaceRole; status: 'active' | 'suspended' }>();
+  return rows.results.map((r) => ({ id: r.id, email: r.email, name: r.name, avatarUrl: avatarUrl(r.id, r.avatar_key), role: r.role, status: r.status }));
 }

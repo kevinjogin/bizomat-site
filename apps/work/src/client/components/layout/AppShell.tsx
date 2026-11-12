@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { get, patch, post, errorMessage } from '../../lib/api';
-import { canEdit, useSession, useWorkspace } from '../../lib/session';
+import { canEdit, isAdmin, isGuest, useSession, useWorkspace } from '../../lib/session';
 import { applyTheme, storedTheme, useShortcut, useDebounced, type ThemePref } from '../../lib/hooks';
 import { timeAgo } from '../../lib/format';
 import { BrandMark, Icon, ProductLockup } from '../ui/Icon';
@@ -12,8 +12,12 @@ import { CreateBoardDialog, CreateDashboardDialog, CreateWorkspaceDialog, useBoa
 import type { BoardDTO, NotificationDTO } from '../../../shared/types';
 import { FolderIcon, buildTree, useFolders } from '../folders/Folders';
 import { PlatformFooter } from './PlatformLinks';
+import { WorkspaceDot, WorkspaceIdentityDialog } from '../workspace/WorkspaceIdentity';
 import { BRAND, PLATFORM_URLS, platformLinkProps } from '../../lib/brand';
 import { appUrl } from '../../lib/base';
+
+/** What a guest's navigation shows: their own work and what is shared with them. */
+const GUEST_NAV = new Set(['home', 'my-work', 'my-day', 'inbox', 'notifications', 'workspaces', 'boards', 'favourites', 'recent', 'settings/profile']);
 
 const NAV: { to: string; label: string; icon: string; key?: string }[] = [
   { to: 'home', label: 'Home', icon: 'home', key: 'g h' },
@@ -105,7 +109,7 @@ function Sidebar({ onNewBoard }: { onNewBoard: () => void }) {
   const favs = useQuery({ queryKey: ['favourites', ws.id], queryFn: () => get<any[]>(`/workspaces/${ws.id}/favourites`) });
   return (
     <nav className="sidebar" aria-label="Main navigation">
-      {NAV.map((n) => (
+      {NAV.filter((n) => !isGuest(ws.role) || GUEST_NAV.has(n.to)).map((n) => (
         <NavLink key={n.to} to={`${base}/${n.to}`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
           <Icon name={n.icon} /> {n.label}
           {n.to === 'notifications' && (notif.data?.unreadCount ?? 0) > 0 ? <span className="count">{notif.data!.unreadCount > 99 ? '99+' : notif.data!.unreadCount}</span> : null}
@@ -207,31 +211,58 @@ function WorkspaceSwitcher({ onCreate }: { onCreate: () => void }) {
   const ws = useWorkspace();
   const { session } = useSession();
   const navigate = useNavigate();
+  // Renaming and recolouring: owners and admins, as the API requires. The same actions are on a right-click menu.
+  const admin = isAdmin(ws.role);
+  const [renaming, setRenaming] = useState(false);
+  const [ctx, setCtx] = useState<{ x: number; y: number } | null>(null);
   return (
-    <Dropdown
-      label="Workspaces"
-      width={260}
-      trigger={(open, ref) => (
-        <button ref={ref} className="btn ghost ws-switcher" onClick={open} aria-haspopup="menu" aria-label={`Workspace: ${ws.name}`}>
-          <span className="icon-dot" style={{ background: ws.color }} />
-          <span className="ellipsis">{ws.name}</span>
-          <Icon name="chevronDown" size={14} />
-        </button>
-      )}
-    >
-      {(close) => (
-        <>
-          {session!.workspaces.map((w) => (
-            <MenuItem key={w.id} active={w.id === ws.id} onClick={() => { close(); navigate(`/w/${w.id}/home`); }}>
-              <span className="row"><span className="icon-dot" style={{ background: w.color }} /> {w.name} <span className="muted small">{w.role}</span></span>
-            </MenuItem>
-          ))}
-          <MenuSep />
-          <MenuItem icon="plus" onClick={() => { close(); onCreate(); }}>New workspace</MenuItem>
-          <MenuItem icon="settings" onClick={() => { close(); navigate(`/w/${ws.id}/settings/workspace`); }}>Workspace settings</MenuItem>
-        </>
-      )}
-    </Dropdown>
+    <>
+      <Dropdown
+        label="Workspaces"
+        width={280}
+        trigger={(open, ref) => (
+          <button
+            ref={ref}
+            className="btn ghost ws-switcher"
+            onClick={open}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              setCtx({ x: e.clientX, y: e.clientY });
+            }}
+            aria-haspopup="menu"
+            aria-label={`Workspace: ${ws.name}`}
+          >
+            <WorkspaceDot color={ws.color} />
+            <span className="ellipsis">{ws.name}</span>
+            <Icon name="chevronDown" size={14} />
+          </button>
+        )}
+      >
+        {(close) => (
+          <>
+            {session!.workspaces.map((w) => (
+              <MenuItem key={w.id} active={w.id === ws.id} onClick={() => { close(); navigate(`/w/${w.id}/home`); }}>
+                <span className="row"><WorkspaceDot color={w.color} /> <span className="ellipsis">{w.name}</span> <span className="muted small">{w.role}</span></span>
+              </MenuItem>
+            ))}
+            <MenuSep />
+            {admin ? <MenuItem icon="edit" onClick={() => { close(); setRenaming(true); }}>Rename or change colour</MenuItem> : null}
+            <MenuItem icon="plus" onClick={() => { close(); onCreate(); }}>New workspace</MenuItem>
+            <MenuItem icon="settings" onClick={() => { close(); navigate(`/w/${ws.id}/settings/workspace`); }}>Workspace settings</MenuItem>
+          </>
+        )}
+      </Dropdown>
+      {ctx ? (
+        <Popover point={ctx} onClose={() => setCtx(null)} width={240}>
+          <div className="menu-label row"><WorkspaceDot color={ws.color} size="sm" /> <span className="ellipsis">{ws.name}</span></div>
+          {admin ? <MenuItem icon="edit" onClick={() => { setCtx(null); setRenaming(true); }}>Rename workspace</MenuItem> : null}
+          {admin ? <MenuItem icon="droplet" onClick={() => { setCtx(null); setRenaming(true); }}>Change colour</MenuItem> : null}
+          <MenuItem icon="settings" onClick={() => { setCtx(null); navigate(`/w/${ws.id}/settings/workspace`); }}>Workspace settings</MenuItem>
+          <MenuItem icon="layers" onClick={() => { setCtx(null); navigate(`/w/${ws.id}/workspaces`); }}>All workspaces</MenuItem>
+        </Popover>
+      ) : null}
+      {renaming ? <WorkspaceIdentityDialog workspace={ws} onClose={() => setRenaming(false)} /> : null}
+    </>
   );
 }
 

@@ -45,7 +45,6 @@ export const TOPIC_COVERS: Record<string, Look> = {
   'booms-bubbles-and-business-cycles': { motif: 'bubbles', tone: 'graphite' },
   'starting-funding-and-structuring-a-business': { motif: 'venture', tone: 'paper' },
   'commercial-law-and-contracts': { motif: 'scales', tone: 'carbon' },
-  'information-you-can-release': { motif: 'archive', tone: 'paper' },
   'procurement-and-tendering': { motif: 'tender', tone: 'ember' },
   'suppliers-contractors-and-government-work': { motif: 'supply', tone: 'graphite' },
   'project-estimates-schedules-and-costs': { motif: 'estimate', tone: 'paper' },
@@ -270,6 +269,20 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'on-site-power-and-heat-by-the-numbers': { motif: 'pylon', tone: 'carbon' },
   'humidity-control-by-the-numbers': { motif: 'leaf', tone: 'graphite' },
   'public-money-you-can-account-for': { motif: 'ledger', tone: 'carbon' },
+  'practical-wisdom-by-the-numbers': { motif: 'compass', tone: 'ember' },
+  'fair-dealing-by-the-numbers': { motif: 'ledger', tone: 'graphite' },
+  'industrial-hydraulics-by-the-numbers': { motif: 'gauge', tone: 'ember' },
+  'design-for-assembly-by-the-numbers': { motif: 'geometry', tone: 'paper' },
+  'requirements-that-cannot-all-be-true': { motif: 'specsheet', tone: 'graphite' },
+  'the-burden-of-proof': { motif: 'dialogue', tone: 'carbon' },
+  'yes-and-no-when-sources-disagree': { motif: 'dialogue', tone: 'ember' },
+  'arguments-that-hold': { motif: 'decision', tone: 'graphite' },
+  'divide-the-work': { motif: 'workflow', tone: 'paper' },
+  'the-love-of-system': { motif: 'compass', tone: 'carbon' },
+  'tolerances-that-work': { motif: 'drawing', tone: 'graphite' },
+  'grants-you-can-defend': { motif: 'handover', tone: 'ember' },
+  'leading-an-aps-team': { motif: 'compass', tone: 'graphite' },
+  'information-you-can-release': { motif: 'archive', tone: 'paper' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);

@@ -4,7 +4,7 @@ chapterSlug: designing-for-variation
 order: 1
 title: "Designing for variation, not perfection"
 description: "Why every dimension needs a decided range, how function determines which features deserve tight control, and the guide roller assembly used throughout this book."
-draft: true
+draft: false
 ---
 
 A drawing shows a perfect part. The part that arrives is never perfect: every machine, tool, operator, temperature and batch of material leaves a small signature on it. A designer cannot remove that variation. A designer can only decide how much of it each feature may carry, how it will be judged and what happens when parts with different errors are assembled together.
@@ -135,6 +135,22 @@ A practical sequence for setting any critical tolerance is:
 
 This sequence reverses the common habit of choosing tolerances first and discovering their consequences in production. It also produces a record, the reasoning behind each number, that makes later changes much safer.
 
+## The failure case: Northgate's first housing drawing
+
+This is an illustration. Northgate's first issue of the housing drawing was adapted from an older part. Its title block said "unless otherwise stated ±0.1", every location was dimensioned from the edges of the flange, and the only individually toleranced feature was the bearing bore. The drawing looked careful. It was wrong in both directions at once.
+
+**Too tight where nothing depended on it.** The flange outline is about 110 mm across and only has to fit the space on the frame. Under the template it carried ±0.1 mm, a total of 0.2 mm. The [ISO tolerance grade tool](/tools/it-tolerance-grade/) in BIZOMAT Tools gives the standard tolerance for a size and grade: for the 80 to 120 mm size step it gives about 0.22 mm for IT11, 0.54 mm for IT13 and 0.87 mm for IT14. So the template held a cosmetic outline to roughly IT11. The medium class of ISO 2768-1, ±0.3 mm in that range, allows 0.6 mm in total, between IT13 and IT14. That is about what a workshop achieves without special effort. The supplier's quote asked whether ±0.1 really applied to chamfers and outline edges. It also priced coordinate measurement of every dimension, because the drawing gave no way to tell the important ones from the rest.
+
+**Missing where everything depended on it.** Two of the four functional requirements had no controlling tolerance. Nothing related the bore axis to the mounting face, so the drawing allowed a housing that would make the roller run out of square. Nobody had analysed the axial float either. Chapter 7 shows that its worst-case range on the first issue was 0.10 to 0.60 mm, beyond the 0.40 mm limit.
+
+### How it is detected
+
+The trace table in this chapter detects both faults in a few minutes. Listing the four requirements and the features that control each one shows two requirements with no tolerance behind them. Listing the features that control nothing shows a dozen dimensions carrying a tolerance that no function asked for.
+
+### How it is corrected
+
+Northgate replaced the template with a named general tolerance, ISO 2768-m, and made a short critical list for the housing. Each feature on it would get a deliberate tolerance, a datum and an inspection method in the following chapters. Chapter 10 tabulates the result. None of the changes made the housing harder to make. Several made it easier.
+
 ```figure
 type: steps
 title: Setting a critical tolerance: function first, then capability
@@ -162,8 +178,18 @@ caption: The sequence produces a record of the reasoning behind every critical n
 - How will this requirement be measured, and from which features?
 - Is any bought-in part's tolerance missing from the analysis?
 
-## Exercise: classify one drawing
+## Exercise: classify the housing's features
 
-Take a drawing of a part you know well. List its functional requirements in the assembly, then mark every dimension and tolerance as critical, important or general. Count how many tolerances are tighter than their function needs and how many functional relationships have no tolerance at all. Most first attempts find both.
+Classify these ten features of the Northgate housing as critical, important or general, using the four functional requirements above: the bearing bore Ø42; the distance from the bore shoulder to the groove load face; the groove width; the bore axis relative to the mounting face; the positions of the four clearance holes; the clearance hole diameter; the flatness of the mounting face; the flange outline; the outer end face; and the chamfers and corner radii. Which requirement does each critical feature control?
+
+**Worked answer.**
+
+- **Critical, six features.** The bore diameter controls the outer ring fit. The shoulder-to-groove distance and the groove width both sit in the axial float chain. The bore's perpendicularity to the mounting face controls roller alignment. The positions of the clearance holes control mounting. The flatness of the mounting face is critical too, because the mounting face is the surface that both mounting and alignment are measured from. Chapter 4 makes it datum A.
+- **Important, one feature.** The clearance hole diameter matters for mounting, but through its size, which Chapter 6 links to position. On many drawings it sits between the two groups.
+- **General, three features.** The flange outline, the outer end face and the chamfers and radii have no functional role beyond fitting the envelope and looking tidy. A general tolerance note covers them.
+
+The housing therefore has six or seven critical features out of the dozens on the drawing. On the first issue, none of the six was controlled in a way that matched its function.
+
+**Try it on your own drawing.** Take a drawing of a part you know well. List its functional requirements in the assembly, then mark every dimension and tolerance as critical, important or general. Count how many tolerances are tighter than their function needs and how many functional relationships have no tolerance at all. Most first attempts find both.
 
 The next chapter examines the basic building block: the size tolerance, and the ISO system that gives each size range a consistent set of tolerance grades.

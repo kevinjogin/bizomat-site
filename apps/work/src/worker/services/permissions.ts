@@ -3,9 +3,11 @@
 // tenants' records is never revealed.
 
 import type { BoardAccess, WorkspaceRole } from '../../shared/types';
+import { ROLE_RANK } from '../../shared/permissions';
 import { HttpError, notFound } from '../lib/util';
 
-const WS_RANK: Record<WorkspaceRole, number> = { viewer: 1, member: 2, admin: 3, owner: 4 };
+// guest < viewer < member < project_manager < admin < owner. A suspended membership counts as no membership.
+const WS_RANK: Record<WorkspaceRole, number> = ROLE_RANK;
 const ACCESS_RANK: Record<BoardAccess, number> = { view: 1, edit: 2, admin: 3 };
 
 export function wsAtLeast(role: WorkspaceRole, min: WorkspaceRole): boolean {
@@ -16,7 +18,7 @@ export async function getWorkspaceRole(db: D1Database, workspaceId: string, user
   const row = await db
     .prepare(
       `SELECT m.role FROM workspace_members m JOIN workspaces w ON w.id = m.workspace_id
-       WHERE m.workspace_id = ? AND m.user_id = ? AND w.deleted_at IS NULL`,
+       WHERE m.workspace_id = ? AND m.user_id = ? AND w.deleted_at IS NULL AND m.status = 'active'`,
     )
     .bind(workspaceId, userId)
     .first<{ role: WorkspaceRole }>();
@@ -27,7 +29,9 @@ export async function requireWorkspace(
   db: D1Database,
   workspaceId: string,
   userId: string,
-  min: WorkspaceRole = 'viewer',
+  // Any active member, guests included. Organisation-wide areas (documents, dashboards, goals, teams, templates,
+  // folders) ask for 'viewer', which guests are below: a guest sees only what is shared with them.
+  min: WorkspaceRole = 'guest',
 ): Promise<WorkspaceRole> {
   const role = await getWorkspaceRole(db, workspaceId, userId);
   if (!role) throw notFound('Workspace');
@@ -50,6 +54,12 @@ export interface BoardRow {
   updated_at: number;
   archived_at: number | null;
   folder_id?: string | null;
+  currency?: string | null;
+  start_date?: string | null;
+  manager_id?: string | null;
+  /** Migration 0008: task key prefix and counter. */
+  task_prefix?: string | null;
+  task_seq?: number;
 }
 
 export function computeBoardAccess(
@@ -57,11 +67,15 @@ export function computeBoardAccess(
   wsRole: WorkspaceRole,
   boardRole: 'owner' | 'editor' | 'viewer' | null,
   userId: string,
+  denied = false,
 ): BoardAccess | null {
   if (wsRole === 'owner' || wsRole === 'admin') return 'admin';
+  // "No access" set for this person on this project (board_permissions.denied).
+  if (denied) return null;
   const fromBoardRole: BoardAccess | null = boardRole === 'owner' ? 'admin' : boardRole === 'editor' ? 'edit' : boardRole === 'viewer' ? 'view' : null;
   if (board.kind === 'personal') return board.created_by === userId ? 'admin' : fromBoardRole;
-  if (board.visibility === 'private') return fromBoardRole;
+  // Guests and contractors see only what is shared with them explicitly.
+  if (board.visibility === 'private' || wsRole === 'guest') return fromBoardRole;
   const fromWs: BoardAccess = wsRole === 'viewer' ? 'view' : 'edit';
   if (!fromBoardRole) return fromWs;
   // A workspace viewer explicitly granted edit on the board gets edit; an explicit
@@ -78,19 +92,20 @@ export interface BoardAuth {
 export async function loadBoardAuth(db: D1Database, boardId: string, userId: string): Promise<BoardAuth | null> {
   const row = await db
     .prepare(
-      `SELECT b.*, m.role AS ws_role, bm.role AS board_role
+      `SELECT b.*, m.role AS ws_role, bm.role AS board_role, COALESCE(bp.denied, 0) AS bp_denied
        FROM boards b
        JOIN workspaces w ON w.id = b.workspace_id AND w.deleted_at IS NULL
-       JOIN workspace_members m ON m.workspace_id = b.workspace_id AND m.user_id = ?1
+       JOIN workspace_members m ON m.workspace_id = b.workspace_id AND m.user_id = ?1 AND m.status = 'active'
        LEFT JOIN board_members bm ON bm.board_id = b.id AND bm.user_id = ?1
+       LEFT JOIN board_permissions bp ON bp.board_id = b.id AND bp.user_id = ?1
        WHERE b.id = ?2`,
     )
     .bind(userId, boardId)
-    .first<BoardRow & { ws_role: WorkspaceRole; board_role: 'owner' | 'editor' | 'viewer' | null }>();
+    .first<BoardRow & { ws_role: WorkspaceRole; board_role: 'owner' | 'editor' | 'viewer' | null; bp_denied: number }>();
   if (!row) return null;
-  const access = computeBoardAccess(row, row.ws_role, row.board_role, userId);
+  const access = computeBoardAccess(row, row.ws_role, row.board_role, userId, !!row.bp_denied);
   if (!access) return null;
-  const { ws_role, board_role: _br, ...board } = row;
+  const { ws_role, board_role: _br, bp_denied: _d, ...board } = row;
   return { board, access, wsRole: ws_role };
 }
 
@@ -122,6 +137,9 @@ export interface ItemRow {
   updated_at: number;
   completed_at: number | null;
   archived_at: number | null;
+  /** Migration 0008: permanent key (PREFIX-0001). */
+  task_number?: number | null;
+  task_key?: string | null;
 }
 
 export async function requireItem(db: D1Database, itemId: string, userId: string, need: BoardAccess = 'view') {
@@ -140,13 +158,14 @@ export async function accessibleBoardIds(db: D1Database, workspaceId: string, us
   if (!role) return [];
   const rows = await db
     .prepare(
-      `SELECT b.id, b.visibility, b.kind, b.created_by, bm.role AS board_role FROM boards b
-       LEFT JOIN board_members bm ON bm.board_id = b.id AND bm.user_id = ?
-       WHERE b.workspace_id = ? AND b.kind != 'template' ${includeArchived ? '' : 'AND b.archived_at IS NULL'}`,
+      `SELECT b.id, b.visibility, b.kind, b.created_by, bm.role AS board_role, COALESCE(bp.denied, 0) AS denied FROM boards b
+       LEFT JOIN board_members bm ON bm.board_id = b.id AND bm.user_id = ?1
+       LEFT JOIN board_permissions bp ON bp.board_id = b.id AND bp.user_id = ?1
+       WHERE b.workspace_id = ?2 AND b.kind != 'template' ${includeArchived ? '' : 'AND b.archived_at IS NULL'}`,
     )
     .bind(userId, workspaceId)
-    .all<{ id: string; visibility: 'workspace' | 'private'; kind: 'board' | 'personal' | 'template'; created_by: string; board_role: 'owner' | 'editor' | 'viewer' | null }>();
-  return rows.results.filter((b) => computeBoardAccess(b, role, b.board_role, userId)).map((b) => b.id);
+    .all<{ id: string; visibility: 'workspace' | 'private'; kind: 'board' | 'personal' | 'template'; created_by: string; board_role: 'owner' | 'editor' | 'viewer' | null; denied: number }>();
+  return rows.results.filter((b) => computeBoardAccess(b, role, b.board_role, userId, !!b.denied)).map((b) => b.id);
 }
 
 /** Documents: workspace-visible docs are readable by members; private docs require membership or authorship. */
@@ -171,7 +190,7 @@ export async function requireDocument(db: D1Database, docId: string, userId: str
   const row = await db
     .prepare(
       `SELECT d.*, m.role AS ws_role, dm.role AS doc_role FROM documents d
-       JOIN workspace_members m ON m.workspace_id = d.workspace_id AND m.user_id = ?1
+       JOIN workspace_members m ON m.workspace_id = d.workspace_id AND m.user_id = ?1 AND m.status = 'active'
        LEFT JOIN document_members dm ON dm.document_id = d.id AND dm.user_id = ?1
        WHERE d.id = ?2`,
     )
@@ -181,7 +200,7 @@ export async function requireDocument(db: D1Database, docId: string, userId: str
   let access: BoardAccess | null;
   if (row.ws_role === 'owner' || row.ws_role === 'admin' || row.created_by === userId) access = 'admin';
   else if (row.doc_role) access = row.doc_role === 'editor' ? 'edit' : 'view';
-  else if (row.visibility === 'workspace') access = row.ws_role === 'viewer' ? 'view' : 'edit';
+  else if (row.visibility === 'workspace' && row.ws_role !== 'guest') access = row.ws_role === 'viewer' ? 'view' : 'edit';
   else access = null;
   if (!access) throw notFound('Document');
   if (ACCESS_RANK[access] < ACCESS_RANK[need]) throw new HttpError(403, `You need ${need} access to this document`);

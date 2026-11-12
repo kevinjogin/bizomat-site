@@ -1,4 +1,4 @@
-import { SELF } from 'cloudflare:test';
+import { SELF, env } from 'cloudflare:test';
 
 export const ORIGIN = 'http://example.com';
 
@@ -49,9 +49,23 @@ export async function raw(method: string, path: string, opts: { body?: unknown; 
 
 export async function signup(name = 'Test User', email = uniqueEmail()): Promise<Client> {
   const res = await raw('POST', '/api/auth/signup', { body: { email, name, password: PASSWORD } });
+  // With email switched on in a test, a new account confirms its address before signing in (sign-up protection):
+  // the helper confirms it directly, as the link would, and signs in. test/signup-protection.test.ts covers the link.
+  if (res.status === 202) {
+    await env.DB.prepare('UPDATE users SET email_verified_at = ? WHERE email = ?').bind(Date.now(), email).run();
+    return login(email);
+  }
   if (res.status !== 201) throw new Error(`signup failed ${res.status}: ${await res.text()}`);
   const data = (await res.json()) as any;
   return makeClient(cookieFrom(res), data.csrfToken, data.user, data.workspaces[0]?.id);
+}
+
+/** Sign up through an invitation link: the token joins the invited workspace. */
+export async function signupWith(name: string, email: string, inviteToken: string): Promise<Client> {
+  const res = await raw('POST', '/api/auth/signup', { body: { email, name, password: PASSWORD, inviteToken } });
+  if (res.status !== 201) throw new Error(`signup failed ${res.status}: ${await res.text()}`);
+  const data = (await res.json()) as any;
+  return makeClient(cookieFrom(res), data.csrfToken, data.user, data.joinedWorkspaceId ?? data.workspaces[0]?.id);
 }
 
 export async function login(email: string, password = PASSWORD): Promise<Client> {

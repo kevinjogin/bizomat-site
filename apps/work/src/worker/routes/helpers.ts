@@ -21,6 +21,8 @@ export interface UserRow {
   created_at: number;
   updated_at: number;
   password_reset_required?: number;
+  /** Migration 0007: when the address was confirmed; null while it is not. */
+  email_verified_at?: number | null;
 }
 
 export function userDTO(u: UserRow): UserDTO {
@@ -42,7 +44,7 @@ export async function listWorkspaces(db: D1Database, userId: string): Promise<Wo
     .prepare(
       `SELECT w.id, w.name, w.description, w.color, w.logo_key, w.created_at, m.role FROM workspaces w
        JOIN workspace_members m ON m.workspace_id = w.id
-       WHERE m.user_id = ? AND w.deleted_at IS NULL ORDER BY w.created_at`,
+       WHERE m.user_id = ? AND w.deleted_at IS NULL AND m.status = 'active' ORDER BY w.created_at`,
     )
     .bind(userId)
     .all<{ id: string; name: string; description: string; color: string; logo_key: string | null; created_at: number; role: WorkspaceRole }>();
@@ -71,23 +73,6 @@ export function createWorkspaceStmts(db: D1Database, opts: { id?: string; name: 
       eventStmt(db, { type: 'workspace.created', userId: opts.ownerId, workspaceId: id, entityType: 'workspace', entityId: id, at: t }),
     ],
   };
-}
-
-/** Accept every pending invitation addressed to this email. */
-export async function acceptPendingInvitations(db: D1Database, userId: string, email: string): Promise<number> {
-  const t = now();
-  const invites = await db
-    .prepare('SELECT id, workspace_id, role FROM invitations WHERE email = ? AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > ?')
-    .bind(email, t)
-    .all<{ id: string; workspace_id: string; role: string }>();
-  if (!invites.results.length) return 0;
-  const stmts = invites.results.flatMap((i) => [
-    db.prepare('INSERT OR IGNORE INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)').bind(i.workspace_id, userId, i.role, t),
-    db.prepare('UPDATE invitations SET accepted_at = ? WHERE id = ?').bind(t, i.id),
-    eventStmt(db, { type: 'member.joined', userId, workspaceId: i.workspace_id, entityType: 'workspace', entityId: i.workspace_id, metadata: { role: i.role }, at: t }),
-  ]);
-  await db.batch(stmts);
-  return invites.results.length;
 }
 
 export { defaultStatusLabels, defaultPriorityLabels };
