@@ -1,23 +1,26 @@
-# Codex prompt: write READOS chapters from source material
+# Codex prompt: write Library chapters from source material
 
-Paste everything inside the block into Codex (opened on the `gocore-website` repository, which is the KEVOS website despite its historical name), then add your notes, text or file paths under **SOURCE MATERIAL** at the end. Codex writes new article files but does not commit or deploy. When it finishes, hand the result back to Claude to review, verify, commit and publish.
+Paste everything inside the block into Codex (opened on the `kevinjogin/bizomat-site` repository, the BIZOMAT website), then add your notes, text or file paths under **SOURCE MATERIAL** at the end. Codex writes new chapter files as drafts but does not commit or deploy. When it finishes, hand the result back to Claude to review, check and open a pull request (`docs/KEVOS_READOS_PUBLISHING.md`).
+
+The prompt is for chapters of the edited Library books. For an authored book, use the `/library-book` command instead (`.claude/commands/library-book.md`). The file keeps its former name; until November 2026 this prompt wrote READOS chapters for the KEVOS site (kevos.com).
 
 ```text
-You are writing READOS chapters for the KEVOS website (kevos.com). This repository is an Astro site; chapters are Markdown files in src/content/reados-chapters/, grouped into edited books in src/utils/reados-collections.ts.
+You are writing chapters for the BIZOMAT Library on the BIZOMAT website (bizomat.ai). This repository is an Astro site; chapters are Markdown files in src/content/reados-chapters/, grouped into edited books in src/utils/reados-collections.ts.
 
 TASK
-Turn the source material at the end into as many high-quality, standalone READOS chapters as it genuinely supports. One clear topic per article. Don't pad thin material and don't split one idea across several thin articles.
+Turn the source material at the end into as many high-quality, standalone Library chapters as it genuinely supports. One clear topic per article. Don't pad thin material and don't split one idea across several thin articles.
 Save each article as a NEW Markdown file in src/content/reados-chapters/.
 Do not edit, rename or delete any existing file. Do not commit, push or deploy. Leave the new files for review.
 
-ABOUT KEVOS
-- KEVOS is an Australian technical-services business providing engineering and CAD support, manufacturing support, operations improvement and engineering project support (including the KEVOS Factory Fix), for Sydney and NSW businesses with suitable remote work Australia-wide.
-- Never invent clients, projects, results, statistics or prices, and never describe services or capabilities beyond those on the Services page (src/data/services.ts). Never use or describe information belonging to any employer, client or supplier.
+ABOUT BIZOMAT
+- BIZOMAT (Business Intelligence & Automation) is a technology and automation company connecting business intelligence, artificial intelligence, engineering and practical automation. Its products are CAD Automation, Project Management and Resources (the Tools and the Library). The wording comes from src/config/platform.ts.
+- Never invent clients, projects, results, statistics or prices, and never describe services, products or capabilities beyond those in src/data/services.ts and src/data/platform-catalog.ts. Never use or describe information belonging to any employer, client or supplier. Never name the founder.
+- Names: write BIZOMAT, "the Library" and "Tools". Never write the former names READOS, WORKOS, REACHOS, KEVOS, CADOS or GoCore in chapter text (tests/navigation.test.ts fails on READOS and WORKOS). BIZOMAT is not a registered trade mark: never write ® or ™ after it.
 - These articles also feed the website's AI assistant, so each article must stand alone: define terms the first time they appear, avoid "as mentioned in another article", and keep each section focused under a clear heading.
 
 LENGTH (HARD REQUIREMENT)
 - Every article must take 10–20 minutes to read. The site calculates reading time as body words ÷ 220, rounded.
-- Body text (excluding front matter) must be 2,300–4,000 words. Anything under 2,150 words fails.
+- Body text (excluding front matter) must be 2,300–4,000 words. Under 2,090 words the reading-time check shows SHORT and the chapter is sent back. The build does not check length, so run the check.
 - Reach the length with substance (explanation, step-by-step methods, worked examples, tables, common mistakes, practical checklists), never with filler or repetition.
 - Check with: npm run reading-time -- <file-name-without-.md>
   (If that script is missing, count the body words yourself.)
@@ -35,14 +38,16 @@ category: "Business"
 tags:
   - finance
   - strategy
-author: "KEVOS"
+author: "BIZOMAT"
 featured: false
-draft: false
+draft: true
 ---
 Rules:
 - title: 5–120 characters.
 - description: aim for 120–190 characters; hard limits 50–200 characters or the build fails.
 - publishDate: today's date in Sydney. Never a future date (future-dated posts are hidden from the site).
+- author: always "BIZOMAT".
+- draft: always true. The owner approves each chapter before it is set to false.
 - category: exactly one of Engineering, Manufacturing, Operations, Projects, Ideas, Products, Technology, Business. Prefer the first four for articles on those subjects.
 - tags: 2–5, chosen only from this list: product-development, manufacturing, prototyping, design, automation, ai, systems, operations, strategy, experimentation, customers, validation, process-improvement, finance, sales, marketing, leadership, people, startups, communication, quality, projects. Do not invent tags; if one is genuinely needed, recommend it in your report instead.
 - Only add image fields if I supply images: image: "./images/<file-name>" plus a required imageAlt: "<description>", with the file saved in src/content/reados-chapters/images/.
@@ -56,11 +61,12 @@ BODY STRUCTURE
 - Finish with a horizontal rule and one italic source and disclaimer line, for example:
   ---
   *Source: <author>, <title> (<year>). Figures in this article are illustrations, not data. This article is general information, not financial, legal or investment advice.*
-  Keep only the parts of the disclaimer that fit the topic. If the source is my own notes, write "Source: KEVOS notes."
+  Keep only the parts of the disclaimer that fit the topic. If the source is my own notes, write "Source: BIZOMAT notes."
 
 INTERNAL LINKS
-- Where genuinely useful, link to 1–3 existing articles using this exact form: [Chapter title](/reados/collections/<book-slug>/<existing-file-name-without-.md>/), using the book that lists the chapter in src/utils/reados-collections.ts. The trailing slash is required.
-- Link only to files that already exist in src/content/reados-chapters/ or that you are creating in this task.
+- Where genuinely useful, link to 1–3 existing chapters using this exact form: [Chapter title](/reados/collections/<book-slug>/<existing-file-name-without-.md>/), using the book that lists the chapter in src/utils/reados-collections.ts. The trailing slash is required.
+- Link only to published files that already exist in src/content/reados-chapters/ or that you are creating in this task.
+- Do not link to tools (/tools/...): a tool link needs an entry in src/data/knowledge-links.json, which Claude adds at review. Suggest tool links in your report instead.
 - Do not invent external URLs. Include an external link only if it appears in my source material or is an official site you are certain exists.
 
 STYLE
@@ -78,7 +84,7 @@ ACCURACY AND COPYRIGHT
 FINAL CHECKS (run them if you can execute commands)
 1. npm run reading-time -- <each new file name>: every new article must show "ok" (10–20 min).
 2. Every description is 50–200 characters.
-3. No body contains a line starting with "# ".
+3. No body contains a line starting with "# ", and none contains a former name (READOS, WORKOS, REACHOS, KEVOS, CADOS, GoCore).
 4. If Node.js is available: run npm ci (only if node_modules is missing), then npm run verify, and fix any errors it reports in your new files.
 
 FINAL REPORT
@@ -91,4 +97,4 @@ SOURCE MATERIAL
 
 ## After Codex finishes
 
-Tell Claude, for example: "Codex has added new READOS chapters, review and publish them." Claude will check facts, length, front matter and links, run `npm run verify`, then commit, push and deploy.
+Tell Claude, for example: "Codex has added new Library chapters as drafts, review them." Claude checks facts, length, front matter, names and links, adds each chapter to its book's `ids` list in `src/utils/reados-collections.ts`, runs `npm run verify`, then commits and opens a pull request to `main` (`docs/KEVOS_READOS_PUBLISHING.md`). Claude does not deploy. The owner approves the chapters (`draft: false`), merges, and deploys bizomat.ai (the Fly app `bizomat`); merging alone publishes nothing.
