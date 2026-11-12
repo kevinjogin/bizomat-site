@@ -147,7 +147,8 @@ meRoutes.get('/me/notification-preferences', async (c) => {
       return { type: t, inApp: r ? !!r.in_app : true, email: r ? !!r.email : EMAIL_DEFAULTS[t] };
     }),
   );
-  res.headers.set('X-Email-Delivery', emailConfig(c.env).provider === 'none' ? 'not_configured' : 'configured');
+  const { emailEnv } = await import('../services/email/settings');
+  res.headers.set('X-Email-Delivery', emailConfig(await emailEnv(c.env)).provider === 'none' ? 'not_configured' : 'configured');
   return res;
 });
 
@@ -161,7 +162,8 @@ meRoutes.put('/me/notification-preferences', async (c) => {
   );
   await trackEvent(c.env.DB, { type: 'settings.changed', userId: user.id, entityType: 'user', entityId: user.id, metadata: { section: 'notifications' } });
   const { emailConfig } = await import('../services/email/provider');
-  return c.json({ ok: true, emailDelivery: emailConfig(c.env).provider === 'none' ? 'not_configured' : 'configured' });
+  const { emailEnv } = await import('../services/email/settings');
+  return c.json({ ok: true, emailDelivery: emailConfig(await emailEnv(c.env)).provider === 'none' ? 'not_configured' : 'configured' });
 });
 
 // ------------------------------------------------------ favourites & recents

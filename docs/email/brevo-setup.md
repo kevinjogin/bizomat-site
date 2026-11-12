@@ -4,8 +4,9 @@ BIZOMAT Project Management sends transactional email (invitations, task assignme
 reports) through Brevo's transactional API. Until the steps below are done, nothing is sent: invitations show their
 link to the person who created them, exactly as before, and every other notification stays in the app.
 
-Code: `apps/work/src/worker/services/email/` (provider abstraction, Brevo provider, outbox, templates), routes in
-`src/worker/routes/email.ts`. Another provider can be added as a second `EmailProvider` in `provider.ts` without
+Code: `apps/work/src/worker/services/email/` (provider abstraction, Brevo provider, outbox, templates, console
+settings in `settings.ts`), routes in `src/worker/routes/email.ts` and `src/worker/routes/admin-email.ts` (founder
+console). Another provider can be added as a second `EmailProvider` in `provider.ts` without
 changing anything else.
 
 ## What BIZOMAT does
@@ -55,7 +56,35 @@ Nothing in BIZOMAT assumes it is done.
 4. **Senders** > **Add a sender**: name `BIZOMAT`, email `notifications@bizomat.ai`.
 5. Optional: a mailbox for replies, then set `EMAIL_REPLY_TO` (for example a support address once one exists).
 
-## 3. Settings on the Fly app `bizomat`
+## 3. Connect Brevo in the founder console (recommended)
+
+Added on 12 Nov 2026 so the founder can connect email without a deploy or a command line.
+
+1. Sign in as the founder and open <https://bizomat.ai/tasks/admin/email> (**Founder console** > **Email (Brevo)**).
+2. Paste the API key from step 1, check the sender name and address (`BIZOMAT`, `notifications@bizomat.ai`), and
+   optionally a reply-to address.
+3. **Check key**: BIZOMAT reads the Brevo account, its senders and its domains with the key (`GET /v3/account`,
+   `/v3/senders`, `/v3/senders/domains`; nothing is sent) and says whether Brevo accepts the key, whether the sender
+   is active and whether its domain is authenticated.
+4. **Save**. Email is on from that moment, for every organisation; the Status card says "Connected to Brevo".
+5. **Send a test email to me** (top of the page): one message to the signed-in founder's own address. The page says
+   whether Brevo accepted it; acceptance is not delivery, so check the inbox (and spam folder).
+
+How the key is kept:
+
+- Encrypted with AES-256-GCM before it is stored (`system_kv`, key `email_settings`). The encryption key is the
+  file `settings.key` in the data folder (`/data/work/settings.key` on Fly), made once on first start with mode 0600,
+  never in the database: a copy or export of the database holds no usable key. `SETTINGS_ENCRYPTION_KEY` (32 bytes,
+  base64) in the environment replaces the file.
+- Write-only: after saving, the page shows only "Saved key ending abcd". The API never returns it, the audit log says
+  only "replaced" or "removed", and it is never logged.
+- Only the founder can change the connection; other platform admins can read the status and send themselves a test;
+  everyone else gets "not found".
+- A database restored on another server cannot decrypt the key: the page says so and asks for it again.
+- A value saved in the console wins over the server's environment; **Remove saved key** falls back to it.
+- **Send email** off stops all email whatever the key; **Sandbox** makes Brevo accept and drop every message.
+
+## 3b. Or: secrets on the Fly app `bizomat`
 
 Secrets are app-wide on Fly; the entrypoint gives the `work` role only its own `WORK_*` names, under the names the
 app reads, so the website process never receives the key.
@@ -77,23 +106,27 @@ drop every message: a safe first test), `WORK_EMAIL_PROVIDER` (`brevo` when a ke
 Elsewhere (local Node server, Cloudflare): the same settings without the `WORK_` prefix (`BREVO_API_KEY`, ...);
 names only in `apps/work/.env.example`.
 
-## 4. Delivery events (webhook)
+## 4. Delivery events (webhook, optional)
 
-1. Copy the value of `WORK_BREVO_WEBHOOK_TOKEN` you generated.
+1. Founder console > Email (Brevo) > **Delivery events** > **Create token**. Copy the token: it is shown once and
+   stored encrypted like the API key. (Or use the value of `WORK_BREVO_WEBHOOK_TOKEN` from step 3b; a console token
+   wins over it.)
 2. Brevo > **Transactional** > **Settings** > **Webhook** (or the API `POST /v3/webhooks` with `type`
-   `transactional`): URL `https://bizomat.ai/tasks/api/email-webhooks/brevo`, events delivered, hard bounce, soft
-   bounce, blocked, invalid email, error, deferred, spam, unsubscribed. Authentication: **token** (bearer) with that
-   value. (Via the API: `"auth": {"type": "bearer", "token": "<value>"}`.)
+   `transactional`): URL `https://bizomat.ai/tasks/api/email-webhooks/brevo` (the console shows it with a Copy
+   button), events delivered, hard bounce, soft bounce, blocked, invalid email, error, deferred, spam, unsubscribed.
+   Authentication: **token** (bearer) with that value. (Via the API: `"auth": {"type": "bearer", "token": "<value>"}`.)
 3. BIZOMAT accepts the call only with `Authorization: Bearer <token>` (or Basic authentication with the token as the
-   password), compared in constant time; without the setting the endpoint answers 503, with a wrong token 401.
+   password), compared in constant time; without a token the endpoint answers 503, with a wrong token 401.
 
 ## 5. Test
 
-1. Settings > **Email** (organisation owners and admins): shows the provider, sender, today's count against the
-   limit, delayed and failed messages, and suppressed addresses.
-2. **Send a test email to me**: queued and handed to Brevo at once; the page reports whether Brevo accepted it.
-   Acceptance is not delivery: check the inbox, and Brevo's logs or the delivery events for the final result.
-3. Invite a test address you control and check the invitation email and link.
+1. Founder console > **Email (Brevo)**: connection, today's count against the limit, recent emails across every
+   organisation (kind and status, never content), suppressed addresses, and **Send delayed emails now**.
+2. Settings > **Email** (organisation owners and admins): the same status for their organisation. While email is not
+   connected, its test button is off and the page points to the founder console.
+3. **Send a test email to me** (either page): queued and handed to Brevo at once; the page reports whether Brevo
+   accepted it. Acceptance is not delivery: check the inbox, and Brevo's logs or the delivery events for the result.
+4. Invite a test address you control and check the invitation email and link.
 
 ## 6. Development
 

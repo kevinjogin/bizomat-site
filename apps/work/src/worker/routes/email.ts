@@ -10,6 +10,7 @@ import { auditStmt } from '../services/audit';
 import { requireWorkspace } from '../services/permissions';
 import { applyWebhookEvents, enqueueEmail, outboxSummary, processOutbox, sentToday, suppressedAmong } from '../services/email/outbox';
 import { BREVO_ENDPOINT, emailConfig } from '../services/email/provider';
+import { emailEnv } from '../services/email/settings';
 
 /** Mounted at /api/email-webhooks, before authentication. */
 export const emailWebhookRoutes = new Hono<AppEnv>();
@@ -36,7 +37,7 @@ function tokenFrom(header: string | undefined): string | null {
  * BREVO_WEBHOOK_TOKEN value (docs/email/brevo-setup.md). Without the token configured, every call is refused.
  */
 emailWebhookRoutes.post('/brevo', async (c) => {
-  const expected = c.env.BREVO_WEBHOOK_TOKEN;
+  const expected = (await emailEnv(c.env)).BREVO_WEBHOOK_TOKEN;
   if (!expected) return c.json({ error: 'Webhook not configured' }, 503);
   await rateLimit(c.env.DB, `email-webhook:${clientIp(c)}`, 1200, 60_000);
   const got = tokenFrom(c.req.header('Authorization'));
@@ -59,7 +60,7 @@ export const emailAdminRoutes = new Hono<AppEnv>();
 emailAdminRoutes.get('/workspaces/:ws/email', async (c) => {
   const wsId = c.req.param('ws');
   await requireWorkspace(c.env.DB, wsId, c.get('user').id, 'admin');
-  const cfg = emailConfig(c.env);
+  const cfg = emailConfig(await emailEnv(c.env));
   const db = c.env.DB;
   const [summary, today, members] = await Promise.all([
     outboxSummary(db, wsId),
@@ -95,8 +96,8 @@ emailAdminRoutes.post('/workspaces/:ws/email/test', async (c) => {
   const wsId = c.req.param('ws');
   await requireWorkspace(c.env.DB, wsId, user.id, 'admin');
   await rateLimit(c.env.DB, `email-test:${user.id}`, 5, 60 * 60_000);
-  const cfg = emailConfig(c.env);
-  if (cfg.provider === 'none') throw new HttpError(409, 'Email is not configured on this deployment: set BREVO_API_KEY (docs/email/brevo-setup.md)');
+  const cfg = emailConfig(await emailEnv(c.env));
+  if (cfg.provider === 'none') throw new HttpError(409, 'Email is not configured yet: the founder adds the Brevo API key in the founder console (Email)');
   const ws = await c.env.DB.prepare('SELECT name FROM workspaces WHERE id = ?').bind(wsId).first<{ name: string }>();
   const at = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
   const r = await enqueueEmail(c.env, {

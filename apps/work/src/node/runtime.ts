@@ -6,7 +6,8 @@
 // (fetch(request, env, ctx)), so routing, authentication, security headers and
 // metrics are exactly the Worker's.
 
-import { mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
@@ -63,6 +64,31 @@ export interface RuntimeOptions {
   log?: Logger;
 }
 
+/**
+ * The key that encrypts secrets saved in the founder console (the Brevo API key, the webhook token): a random file in
+ * the data folder, created on first start and readable only by the server. It is not in the database, so a database
+ * copy or export never holds a usable secret. SETTINGS_ENCRYPTION_KEY in the environment replaces it.
+ */
+export function settingsKey(root: string): string {
+  const file = join(root, 'settings.key');
+  try {
+    const k = readFileSync(file, 'utf8').trim();
+    if (Buffer.from(k, 'base64').length === 32) return k;
+    throw new Error(`${file} is not a 32-byte base64 key`);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
+  }
+  const k = randomBytes(32).toString('base64');
+  try {
+    writeFileSync(file, k + '\n', { mode: 0o600, flag: 'wx' });
+    return k;
+  } catch (e) {
+    // Another process wrote it first: use theirs.
+    if ((e as NodeJS.ErrnoException).code === 'EEXIST') return readFileSync(file, 'utf8').trim();
+    throw e;
+  }
+}
+
 export function createRuntime(config: NodeConfig, options: RuntimeOptions = {}): Runtime {
   const log = options.log ?? silentLogger;
   const layout = dataLayout(config.dataDir);
@@ -108,6 +134,7 @@ export function createRuntime(config: NodeConfig, options: RuntimeOptions = {}):
     ASSETS: assets.binding,
     BOARD_ROOMS: hub.namespace,
     RUNTIME: 'node',
+    SETTINGS_ENCRYPTION_KEY: config.vars.SETTINGS_ENCRYPTION_KEY ?? settingsKey(layout.root),
     ...config.vars,
     ...(config.version ? { CF_VERSION_METADATA: { id: config.version, tag: config.version, timestamp: startedAt } } : {}),
   };

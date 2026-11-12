@@ -12,6 +12,7 @@ import { useWorkspace } from '../../lib/session';
 import { Icon } from '../../components/ui/Icon';
 import { EmptyState, ErrorBox, Field, Loading } from '../../components/ui/ui';
 import { useToast } from '../../components/ui/overlays';
+import { appUrl } from '../../lib/base';
 import '../../styles/platform.css';
 
 interface FinanceCol {
@@ -228,6 +229,12 @@ export function EmailSettings() {
             <tr><td>Delayed</td><td>{s.delayed ? <span className="badge warning">{s.delayed} waiting (daily limit or provider)</span> : 'None'}</td></tr>
           </tbody>
         </table>
+        {!s.configured && !s.developmentMode ? (
+          <p className="small" style={{ marginTop: 12 }}>
+            Email is not connected yet, so the test button is off. The founder connects Brevo once for the whole platform in the founder console:{' '}
+            <a href={appUrl('/admin/email')}>Founder console, Email (Brevo)</a>.
+          </p>
+        ) : null}
         <div className="row" style={{ marginTop: 12 }}>
           <button className="btn primary" onClick={test} disabled={testing || (!s.configured && !s.developmentMode)}><Icon name="message" /> Send a test email to me</button>
           <button className="btn" onClick={() => q.refetch()}><Icon name="refresh" /> Refresh</button>

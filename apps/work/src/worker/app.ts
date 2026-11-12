@@ -10,6 +10,7 @@ import { accessRoutes } from './routes/access';
 import { emailAdminRoutes, emailWebhookRoutes } from './routes/email';
 import { financeRoutes } from './routes/finance';
 import { reportRoutes } from './routes/reports';
+import { adminEmailRoutes } from './routes/admin-email';
 import { boardRoutes } from './routes/boards';
 import { itemRoutes } from './routes/items';
 import { fileRoutes } from './routes/files';
@@ -118,6 +119,7 @@ export function createApp() {
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
   admin.route('/', adminRoutes);
+  admin.route('/', adminEmailRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
