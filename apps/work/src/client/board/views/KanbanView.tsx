@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { labelsOf } from '../../../shared/columns';
 import type { ColumnDTO, ItemDTO } from '../../../shared/types';
 import type { BoardViewProps } from '../types';
+import { itemKey } from '../useBoard';
 import { Avatar, EmptyState } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { MenuItem, MenuSep, Popover, useContextMenu } from '../../components/ui/overlays';
@@ -62,18 +63,19 @@ export function KanbanView(props: BoardViewProps) {
   const valueFor = (laneId: string) => (laneId === EMPTY ? null : col.type === 'dropdown' ? [laneId] : laneId);
 
   const moveToLane = async (itemId: string, laneId: string, beforeCardId?: string | null) => {
-    const item = items.find((i) => i.id === itemId);
+    // A card dragged while it was still being saved may have its real id by the time it is dropped.
+    const item = items.find((i) => i.id === itemId || itemKey(i.id) === itemId);
     if (!item) return;
-    if (laneValue(item, col) !== laneId) await actions.setValue(itemId, col.id, valueFor(laneId));
+    if (laneValue(item, col) !== laneId) await actions.setValue(item.id, col.id, valueFor(laneId));
     if (beforeCardId !== undefined) {
       const lane = lanes.find((l) => l.id === laneId);
-      const list = (lane?.items ?? []).filter((i) => i.id !== itemId);
+      const list = (lane?.items ?? []).filter((i) => i.id !== item.id);
       const idx = beforeCardId ? list.findIndex((i) => i.id === beforeCardId) : list.length;
       const above = idx > 0 ? list[idx - 1] : null;
       const below = idx >= 0 && idx < list.length ? list[idx] : null;
       // Reorder within the item's own group so the position is meaningful.
       if ((above && above.groupId === item.groupId) || (below && below.groupId === item.groupId)) {
-        await actions.moveItem(itemId, { beforeId: above?.groupId === item.groupId ? above.id : null, afterId: below?.groupId === item.groupId ? below.id : null });
+        await actions.moveItem(item.id, { beforeId: above?.groupId === item.groupId ? above.id : null, afterId: below?.groupId === item.groupId ? below.id : null });
       }
     }
   };
@@ -122,7 +124,7 @@ export function KanbanView(props: BoardViewProps) {
                 const overdue = due && due.slice(0, 10) < todayISO() && !item.completedAt;
                 return (
                   <article
-                    key={item.id}
+                    key={itemKey(item.id)}
                     className={`kcard${dragId === item.id ? ' dragging' : ''}${overCard === item.id ? ' drop-before' : ''}`}
                     draggable={canEdit}
                     tabIndex={0}

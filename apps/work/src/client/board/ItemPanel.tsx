@@ -10,7 +10,7 @@ import { Icon } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading, Spinner } from '../components/ui/ui';
 import { MenuItem, MenuSep, Popover, useConfirm, useToast } from '../components/ui/overlays';
 import { Cell, type CellCtx } from './cells/Cell';
-import type { BoardActions } from './useBoard';
+import { isUnsaved, type BoardActions } from './useBoard';
 import { useCreateDocument } from '../components/layout/CreateDialogs';
 import { BASE, appUrl } from '../lib/base';
 import { isFinancialColumn, type TaskCaps } from '../../shared/permissions';
@@ -43,7 +43,9 @@ export function columnEditable(caps: TaskCaps | undefined, fallback: boolean) {
 
 export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onClose, onOpen, members, memberName }: { itemId: string; bundle: BoardBundle; computedItems: ItemDTO[]; actions: BoardActions; canEdit: boolean; onClose: () => void; onOpen: (id: string) => void; members: MemberDTO[]; memberName: (id: string) => string | undefined }) {
   const [tab, setTab] = useState<Tab>('updates');
-  const detail = useQuery({ queryKey: ['item', itemId], queryFn: () => get<ItemDetail>(`/items/${itemId}`) });
+  // A just-added item opened before the server has saved it: BoardPage puts its real id in the address once saved.
+  const unsaved = isUnsaved(itemId);
+  const detail = useQuery({ queryKey: ['item', itemId], queryFn: () => get<ItemDetail>(`/items/${itemId}`), enabled: !unsaved });
   const qc = useQueryClient();
   const toast = useToast();
   const confirm = useConfirm();
@@ -83,7 +85,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
     <>
       <div className="sidepanel-overlay" onClick={onClose} />
       <aside className="sidepanel" role="dialog" aria-modal="true" aria-label={item ? `Item ${item.name}` : 'Item'} ref={ref} tabIndex={-1}>
-        {detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 20 }}><ErrorBox error={detail.error} /></div> : item ? (
+        {unsaved ? <Loading label="Saving the item…" /> : detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 20 }}><ErrorBox error={detail.error} /></div> : item ? (
           <>
             <div className="panel-head">
               <div className="row small muted" style={{ marginBottom: 6 }}>
