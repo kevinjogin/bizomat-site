@@ -5,7 +5,9 @@
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage, type RGB } from 'pdf-lib';
 import { SECTION_LABELS, STATUS_LABELS, type ReportSection } from '../../../shared/reports';
+import { parseGroupDescription } from '../../../shared/group-description';
 import type { ReportData, RiskRow, TaskRow } from './build';
+import type { CategorySection } from './categories';
 import { fmtDay, fmtTime } from './html';
 
 const A4: [number, number] = [595.28, 841.89];
@@ -214,6 +216,31 @@ function risks(w: Writer, rows: RiskRow[]) {
   );
 }
 
+/** Section K: a summary table, then each category's description (paragraphs and bullets) and figures. */
+function categories(w: Writer, k: CategorySection) {
+  w.h2(SECTION_LABELS.categories);
+  w.muted(k.note);
+  if (!k.rows.length) return w.muted('This board has no groups.');
+  w.table(
+    ['Category', 'Tasks', 'Completed', 'In progress', 'Outstanding', 'Overdue', 'Owners'],
+    k.rows.map((g) => [g.name, String(g.total), String(g.completed), String(g.inProgress), String(g.outstanding), String(g.overdue), g.owners.join(', ') || 'Unassigned']),
+    [24, 8, 11, 11, 12, 9, 25],
+  );
+  for (const g of k.rows) {
+    w.h3(g.name);
+    const blocks = parseGroupDescription(g.description);
+    if (!blocks.length) w.muted('No description.');
+    for (const b of blocks) {
+      if (b.kind === 'list') w.bullets(b.items);
+      else w.text(b.lines.join('\n'), { size: 9.5, gap: 5 });
+    }
+    w.muted(`${g.total} task(s): ${g.completed} completed, ${g.inProgress} in progress, ${g.outstanding} outstanding${g.overdue ? `, ${g.overdue} overdue` : ''}${g.unassigned ? `, ${g.unassigned} unassigned` : ''}.`);
+    const money = (g.finance ?? []).filter((f) => f.count > 0);
+    if (money.length) w.table(['Financial column', 'Currency', 'Total', 'Tasks'], money.map((f) => [f.role ? `${f.column} (${f.role})` : f.column, f.currency ?? 'Not set', f.display, String(f.count)]), [40, 16, 28, 16]);
+    else if (g.finance) w.muted('No amounts recorded in this category.');
+  }
+}
+
 export async function renderReportPdf(r: ReportData): Promise<Uint8Array> {
   const w = await Writer.create();
   const tz = r.meta.period.timezone;
@@ -417,6 +444,8 @@ export async function renderReportPdf(r: ReportData): Promise<Uint8Array> {
     if (r.timeline.events.length) w.table(['Date and time', 'Event', 'By'], r.timeline.events.map((e) => [fmtTime(e.at, tz), e.text, e.actor ?? '-']), [22, 58, 20]);
     else w.muted('No significant events were recorded in this period.');
   }
+
+  if (has('categories') && r.categories) categories(w, r.categories);
 
   w.h2('About this report');
   w.text(

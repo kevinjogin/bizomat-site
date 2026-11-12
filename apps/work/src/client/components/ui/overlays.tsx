@@ -164,6 +164,8 @@ export function Popover({
   children,
   align = 'start',
   width,
+  role = 'menu',
+  label,
 }: {
   anchor?: RefObject<HTMLElement | null> | HTMLElement | null;
   point?: { x: number; y: number };
@@ -171,6 +173,9 @@ export function Popover({
   children: ReactNode;
   align?: 'start' | 'end' | 'center';
   width?: number;
+  /** 'menu' (default) for menus; 'dialog' for a small panel such as a group's details. */
+  role?: 'menu' | 'dialog';
+  label?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
@@ -216,7 +221,7 @@ export function Popover({
     };
   }, [onClose]);
   return createPortal(
-    <div ref={ref} className="popover" style={{ top: pos?.top ?? -9999, left: pos?.left ?? -9999, width }} role="menu">
+    <div ref={ref} className="popover" style={{ top: pos?.top ?? -9999, left: pos?.left ?? -9999, width }} role={role} aria-label={label}>
       {children}
     </div>,
     document.body,

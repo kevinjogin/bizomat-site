@@ -15,7 +15,7 @@ export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
   outstanding: 'Outstanding tasks report',
 };
 
-export const REPORT_SECTIONS = ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline'] as const;
+export const REPORT_SECTIONS = ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories'] as const;
 export type ReportSection = (typeof REPORT_SECTIONS)[number];
 
 export const SECTION_LABELS: Record<ReportSection, string> = {
@@ -29,18 +29,19 @@ export const SECTION_LABELS: Record<ReportSection, string> = {
   finance: 'H. Financial summary',
   next: 'I. Next period plan',
   timeline: 'J. Activity timeline',
+  categories: 'K. Categories',
 };
 
 /** Sections each report type starts with (people can switch any of them on or off). */
 export const DEFAULT_SECTIONS: Record<ReportType, ReportSection[]> = {
-  inception: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline'],
-  previous_month: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline'],
-  current_month: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'next'],
-  custom: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline'],
-  monthly: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline'],
-  completion: ['cover', 'summary', 'overview', 'previous', 'remaining', 'risks', 'finance', 'timeline'],
+  inception: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories'],
+  previous_month: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories'],
+  current_month: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'next', 'categories'],
+  custom: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories'],
+  monthly: ['cover', 'summary', 'overview', 'previous', 'current', 'remaining', 'risks', 'finance', 'next', 'timeline', 'categories'],
+  completion: ['cover', 'summary', 'overview', 'previous', 'remaining', 'risks', 'finance', 'timeline', 'categories'],
   financial: ['cover', 'summary', 'finance'],
-  outstanding: ['cover', 'overview', 'current', 'remaining', 'risks', 'next'],
+  outstanding: ['cover', 'overview', 'current', 'remaining', 'risks', 'next', 'categories'],
 };
 
 export type ExportFormat = 'pdf' | 'xlsx' | 'html' | 'csv';

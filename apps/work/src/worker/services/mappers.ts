@@ -12,6 +12,8 @@ export interface GroupRow {
   collapsed: number;
   archived_at: number | null;
   created_at: number;
+  /** Migration 0009: plain text, '' when there is none. */
+  description?: string | null;
 }
 
 export interface ColumnRow {
@@ -71,6 +73,7 @@ export const groupDTO = (g: GroupRow): GroupDTO => ({
   position: g.position,
   collapsed: !!g.collapsed,
   archivedAt: g.archived_at,
+  description: g.description ?? '',
 });
 
 export const columnDTO = (c: ColumnRow): ColumnDTO => ({

@@ -81,6 +81,8 @@ export interface GroupDTO {
   position: number;
   collapsed: boolean;
   archivedAt: number | null;
+  /** Plain text (paragraphs and "- " bullets, rendered as text, never as HTML); '' when there is none. */
+  description: string;
 }
 
 export interface ColumnDTO {

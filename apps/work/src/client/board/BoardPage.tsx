@@ -1,5 +1,5 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ViewDTO, ViewSettings, ViewType } from '../../shared/types';
 import { ApiError, del, get, post } from '../lib/api';
@@ -19,6 +19,7 @@ import type { BoardViewProps } from './types';
 import { AutomationsPanel } from '../components/automations/AutomationBuilder';
 import { ReportsDialog } from './ReportsDialog';
 import { FinancePanel } from './FinancePanel';
+import { WorkspaceDot } from '../components/workspace/WorkspaceIdentity';
 
 export default function BoardPage() {
   const { boardId, viewId } = useParams();
@@ -136,6 +137,7 @@ function TaskFallback({ wsId, itemId }: { wsId: string; itemId: string }) {
 
 function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle: NonNullable<ReturnType<typeof useBoardQuery>['data']>; canEdit: boolean; live: boolean; onOpen: (d: 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance') => void; actions: ReturnType<typeof useBoardActions>; wsId: string }) {
   const b = bundle.board;
+  const ws = useWorkspace();
   const [name, setName] = useState(b.name);
   useEffect(() => setName(b.name), [b.name]);
   const qc = useQueryClient();
@@ -155,6 +157,11 @@ function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle:
   };
   return (
     <div className="board-header">
+      <nav className="board-crumbs" aria-label="Breadcrumb">
+        <Link to={`/w/${ws.id}/home`}><WorkspaceDot color={ws.color} size="sm" /><span>{ws.name}</span></Link>
+        <Icon name="chevronRight" size={12} />
+        <Link to={`/w/${ws.id}/boards`}><span>Boards</span></Link>
+      </nav>
       <div className="row wrap">
         <input className="board-title" value={name} readOnly={!canEdit} aria-label="Board name" onChange={(e) => setName(e.target.value)} onBlur={saveName} onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} size={Math.max(8, name.length)} maxLength={200} />
         <button className="btn ghost icon sm" aria-label={isFav ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isFav} onClick={toggleFav} style={{ color: isFav ? '#f5a524' : undefined }}>

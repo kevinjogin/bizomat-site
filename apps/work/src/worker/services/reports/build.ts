@@ -24,6 +24,7 @@ import type { ColumnDTO, GroupDTO, ItemDTO } from '../../../shared/types';
 import { parseJson } from '../../lib/util';
 import { columnDTO, groupDTO, itemDTO, type ColumnRow, type GroupRow } from '../mappers';
 import type { BoardRow, ItemRow } from '../permissions';
+import { buildCategorySection, type CategorySection } from './categories';
 
 export const REPORT_SCHEMA_VERSION = 1;
 const LIST_LIMIT = 500;
@@ -123,6 +124,8 @@ export interface ReportData {
   timeline: { events: TimelineEvent[]; truncated: boolean };
   tasks: TaskRow[];
   truncated: string[];
+  /** Section K (Categories): present when the report includes it. */
+  categories?: CategorySection;
 }
 
 // ------------------------------------------------------------------ time
@@ -722,5 +725,13 @@ export async function buildReport(db: D1Database, input: BuildInput): Promise<Re
     tasks: cap(listedRows(endRows), 'Task list'),
     truncated,
   };
+  if (sections.includes('categories')) {
+    data.categories = buildCategorySection({
+      groups: groupRows.results,
+      tasks: endRows.map((x) => ({ groupId: x.item.groupId, row: x.r })),
+      end: E,
+      finance: sections.includes('finance') ? finance : null,
+    });
+  }
   return data;
 }

@@ -2,17 +2,18 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, post } from '../lib/api';
-import { useSession } from '../lib/session';
+import { isAdmin, useSession } from '../lib/session';
 import { Icon, ProductLockup } from '../components/ui/Icon';
 import { usePageTitle } from '../lib/hooks';
 import { EmptyState, Field, PageHeader } from '../components/ui/ui';
 import { useConfirm, useToast } from '../components/ui/overlays';
 import { CreateWorkspaceDialog } from '../components/layout/CreateDialogs';
+import { WorkspaceIdentityDialog } from '../components/workspace/WorkspaceIdentity';
 import type { WorkspaceDTO } from '../../shared/types';
 import '../styles/admin.css';
 import { appUrl } from '../lib/base';
 
-function WorkspaceRow({ w, current, onLeave }: { w: WorkspaceDTO; current: boolean; onLeave?: (w: WorkspaceDTO) => void }) {
+function WorkspaceRow({ w, current, onLeave, onRename }: { w: WorkspaceDTO; current: boolean; onLeave?: (w: WorkspaceDTO) => void; onRename?: (w: WorkspaceDTO) => void }) {
   return (
     <div className="card ws-card">
       <div className="ws-swatch" style={{ background: w.color }}>
@@ -25,6 +26,11 @@ function WorkspaceRow({ w, current, onLeave }: { w: WorkspaceDTO; current: boole
         </div>
         <div className="muted small ellipsis">{w.description || 'No description'} · {w.role}</div>
       </div>
+      {onRename && isAdmin(w.role) ? (
+        <button className="btn ghost icon sm" aria-label={`Rename or change the colour of ${w.name}`} title="Rename or change colour" onClick={() => onRename(w)}>
+          <Icon name="edit" size={14} />
+        </button>
+      ) : null}
       <Link className="btn sm" to={`/w/${w.id}/home`}>Open</Link>
       {onLeave ? (
         <button className="btn ghost icon sm" aria-label={`Leave ${w.name}`} title="Leave workspace" onClick={() => onLeave(w)}>
@@ -71,6 +77,7 @@ export default function Workspaces({ standalone }: { standalone?: boolean }) {
   const { session, refresh } = useSession();
   const { wsId } = useParams();
   const [creating, setCreating] = useState(false);
+  const [renaming, setRenaming] = useState<WorkspaceDTO | null>(null);
   const confirm = useConfirm();
   const toast = useToast();
   const qc = useQueryClient();
@@ -130,9 +137,10 @@ export default function Workspaces({ standalone }: { standalone?: boolean }) {
       />
       {workspaces.length === 0 ? <EmptyState icon="layers" title="No workspaces" /> : null}
       <div className="col" style={{ gap: 10 }}>
-        {workspaces.map((w) => <WorkspaceRow key={w.id} w={w} current={w.id === wsId} onLeave={leave} />)}
+        {workspaces.map((w) => <WorkspaceRow key={w.id} w={w} current={w.id === wsId} onLeave={leave} onRename={setRenaming} />)}
       </div>
       {creating ? <CreateWorkspaceDialog onClose={() => setCreating(false)} /> : null}
+      {renaming ? <WorkspaceIdentityDialog workspace={renaming} onClose={() => setRenaming(null)} /> : null}
     </div>
   );
 }

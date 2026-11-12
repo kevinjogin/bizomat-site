@@ -10,6 +10,7 @@ import { Cell, type CellCtx } from './cells/Cell';
 import type { BoardViewProps } from './types';
 import { ColumnDialog } from './ColumnDialog';
 import { BASE } from '../lib/base';
+import { GroupDescriptionPreview, GroupInfoPanel, groupFigures } from './GroupDescription';
 
 interface Section {
   key: string;
@@ -279,6 +280,12 @@ function GroupSection(p: {
   const [name, setName] = useState(section.title);
   const [editingName, setEditingName] = useState(false);
   const [dropHover, setDropHover] = useState(false);
+  // Group description: the details panel (from the name, the information icon or the menu) and the preview line.
+  const [info, setInfo] = useState<null | 'view' | 'edit'>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const nameRef = useRef<HTMLButtonElement>(null);
+  const description = section.group?.description ?? '';
+  const startRename = () => { setName(section.title); setEditingName(true); };
   return (
     <section className="group-block" aria-label={`Group ${section.title}`}>
       <div className="group-head">
@@ -297,10 +304,24 @@ function GroupSection(p: {
             onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); if (e.key === 'Escape') { setName(section.title); setEditingName(false); } }}
           />
         ) : (
-          <button className="group-name" style={{ color: section.color }} onClick={() => canEdit && section.group && setEditingName(true)} disabled={!canEdit || !section.group}>
+          <button
+            ref={nameRef}
+            className="group-name"
+            style={{ color: section.color }}
+            // With a description (or without edit access) the name opens the group's details; otherwise it renames, as before.
+            onClick={() => { if (!section.group) return; if (description || !canEdit) setInfo('view'); else startRename(); }}
+            disabled={!section.group}
+            aria-haspopup={description || !canEdit ? 'dialog' : undefined}
+            title={description || !canEdit ? 'Show group details' : 'Rename group'}
+          >
             {section.title}
           </button>
         )}
+        {section.group && description && !editingName ? (
+          <button className="btn ghost icon sm group-info" aria-label={`About ${section.title}`} title="Group description" aria-haspopup="dialog" aria-expanded={!!info} onClick={() => setInfo('view')}>
+            <Icon name="info" size={14} />
+          </button>
+        ) : null}
         <span className="muted small">{section.items.length} item{section.items.length === 1 ? '' : 's'}</span>
         {canEdit && section.group ? (
           <>
@@ -309,6 +330,7 @@ function GroupSection(p: {
               <Popover anchor={menuRef} onClose={() => setMenuOpen(false)} width={230}>
                 <MenuItem icon="plus" onClick={() => { setMenuOpen(false); actions.createItem({ name: 'New item', groupId: section.group!.id, position: 'top' }); }}>Add item at top</MenuItem>
                 <MenuItem icon="edit" onClick={() => { setMenuOpen(false); setEditingName(true); }}>Rename group</MenuItem>
+                <MenuItem icon="info" onClick={() => { setMenuOpen(false); setInfo('edit'); }}>{description ? 'Edit description' : 'Add description'}</MenuItem>
                 <div style={{ padding: '6px 10px' }}><ColorSwatches value={section.color} onChange={(c) => actions.updateGroup(section.group!.id, { color: c })} /></div>
                 <MenuItem icon="chevronDown" onClick={() => { setMenuOpen(false); moveGroup(props, section.group!, 1); }}>Move down</MenuItem>
                 <MenuItem icon="chevronRight" onClick={() => { setMenuOpen(false); moveGroup(props, section.group!, -1); }}>Move up</MenuItem>
@@ -320,7 +342,22 @@ function GroupSection(p: {
             ) : null}
           </>
         ) : null}
+        {info && section.group ? (
+          <GroupInfoPanel
+            group={section.group}
+            figures={groupFigures(props.bundle, props.allItems, section.group.id)}
+            anchor={nameRef}
+            canEdit={canEdit}
+            startEditing={info === 'edit'}
+            onSave={(d) => actions.updateGroup(section.group!.id, { description: d })}
+            onRename={canEdit ? startRename : undefined}
+            onClose={() => setInfo(null)}
+          />
+        ) : null}
       </div>
+      {section.group && description && !collapsed ? (
+        <GroupDescriptionPreview text={description} groupName={section.title} open={previewOpen} onToggle={() => setPreviewOpen((o) => !o)} />
+      ) : null}
       {!collapsed ? (
         <table className="grid-table" style={{ width: 'max-content' }} onDragOver={(e) => { if (p.drag) { e.preventDefault(); setDropHover(true); } }} onDragLeave={() => setDropHover(false)} onDrop={(e) => { e.preventDefault(); setDropHover(false); p.onDrop(); }}>
           <colgroup>
