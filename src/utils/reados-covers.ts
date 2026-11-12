@@ -283,6 +283,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'grants-you-can-defend': { motif: 'handover', tone: 'ember' },
   'leading-an-aps-team': { motif: 'compass', tone: 'graphite' },
   'information-you-can-release': { motif: 'archive', tone: 'paper' },
+  'accountable-to-parliament': { motif: 'summit', tone: 'carbon' },
   'policy-advice-that-lands': { motif: 'decision', tone: 'carbon' },
 };
 
