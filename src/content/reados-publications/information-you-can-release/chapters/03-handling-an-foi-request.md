@@ -9,17 +9,17 @@ draft: true
 
 A freedom of information (FOI) request starts a clock the day it arrives. The Freedom of Information Act 1982 (the FOI Act) sets the outer limit for a decision, the only ways to extend it and what happens when time runs out. It also says what an agency may charge and when it may refuse a request as too large. An officer who knows those rules plans the work in week one, not in week four.
 
-This is an illustration. On Monday 7 June 2027 the journalist's request about Round 1 of the Regional Community Facilities Program (RCFP) arrived in NRIO's FOI mailbox (Chapter 1). Priya Shah is the case officer and Liam O'Connor, an authorised decision-maker, will decide it. This chapter follows it from receipt to a plan the team can deliver; the exercise works out its dates and charge.
+This is an illustration. On Monday 7 June 2027 the journalist's request about Round 1 of the Regional Community Facilities Program (RCFP) arrived in NRIO's FOI mailbox (Chapter 1). Priya Shah is the case officer and Liam O'Connor, an authorised decision-maker, will decide it. This chapter follows it to a plan the team can deliver.
 
 ## What makes a request valid
 
 Section 15(2) of the [FOI Act](https://www.legislation.gov.au/C2004A02562/latest/text) sets four requirements. A request must be in writing, "state that the request is an application for the purposes of this Act", give enough information to identify the documents, and give an address for notices, such as an email address. It must be sent to the agency, for example to an email address the agency specifies (s15(2A)).
 
-Nothing else is required. There is no application fee, and access is not affected by "any reasons the person gives for seeking access" (s11(2)(a)). Never ask for them.
+There is no application fee, and access is not affected by "any reasons the person gives for seeking access" (s11(2)(a)). Never ask for them.
 
 A request that misses a requirement is not ignored: the agency has a duty "to take reasonable steps to assist" the person to comply (s15(3)), and to redirect a request meant for another agency or a Minister (s15(4)). Write the same day, saying what is missing.
 
-Section 15(5)(a) says the agency must take all reasonable steps to notify the applicant that the request has been received, "not later than 14 days" after the day it is received. This is an illustration. Priya checked the request on the morning it arrived and acknowledged it on Tuesday 8 June. Her email gave the date of receipt, the date the 30 days ended and her name, and warned that consultation might extend the period and charges might apply. Those extras are better practice, not requirements.
+Section 15(5)(a) says the agency must take all reasonable steps to notify the applicant that the request has been received, "not later than 14 days" after the day it is received. This is an illustration. Priya checked the request on the morning it arrived and acknowledged it on Tuesday 8 June. Her email gave the date of receipt, the date the 30 days ended and her name, and warned of possible extensions and charges: better practice, not requirements.
 
 ## How the 30 days are counted
 
@@ -29,9 +29,9 @@ Section 15(5)(b) says the agency must take all reasonable steps to notify a deci
 - **Receipt by the agency.** The period runs from receipt "by or on behalf of" the agency. A request that reaches the FOI mailbox on Friday afternoon is received that Friday, even if nobody reads it until Monday.
 - **A ceiling, not a target.** "As soon as practicable" comes first; a simple request decided on day 29 was not handled as the Act expects.
 
-Two things stop the count: a practical refusal consultation, from the notice until the applicant revises the request or declines to (s24AB(8)), and an unpaid charge, from the day the applicant receives the notice until they pay or are told no charge applies (s31(2)). Leave, a busy fortnight and a slow reply from another area all count.
+Two things stop the count: a practical refusal consultation, from the notice until the applicant revises the request or declines to (s24AB(8)), and an unpaid charge, from the day the applicant receives the notice until they pay or are told no charge applies (s31(2)). Leave and a busy fortnight count.
 
-The decision must also have regard to the Information Commissioner's FOI Guidelines (s15(5A)).
+In deciding, the agency must also have regard to the Information Commissioner's FOI Guidelines (s15(5A)).
 
 ## Extensions: three routes, three conditions
 
@@ -63,7 +63,7 @@ Scope is the other early decision. The applicant decides what to ask for, but a 
 This is an illustration. NRIO held every document within the request, so there was nothing to transfer; documents held only in the Minister's office could be requested from the Minister (s15(1)). On Thursday 10 June Priya rang the journalist and confirmed in writing what they agreed:
 
 - one copy of each email, not every copy in every mailbox;
-- attachments travel with the email or brief they were attached to, which brought in the assessment spreadsheet emailed to the Minister's office with the brief;
+- attachments travel with the email or brief they were attached to, which brought in the assessment spreadsheet attached to an email to the Minister's office;
 - the direct phone numbers and email addresses of NRIO and ministerial staff are outside the request.
 
 In July, Sam Reid, the RCFP manager, wrote a file note of the Minister's office's call on 19 May, dated the day he wrote it. Because the note was created after the request arrived, Priya did not guess whether it was covered. She asked, and the journalist agreed in writing to include it.
@@ -78,7 +78,7 @@ This is an illustration. Liam found the test was not met: the documents sat main
 
 ## Charges: when they apply and when they do not
 
-Charges come from the [Freedom of Information (Charges) Regulations 2019](https://www.legislation.gov.au/F2019L00348/latest/text). Charging is a choice: the agency "may" decide that an applicant is liable (reg 8), having regard to the objects of the Act, which include access "promptly and at the lowest reasonable cost" (s3(4)).
+Charges come from the [Freedom of Information (Charges) Regulations 2019](https://www.legislation.gov.au/F2019L00348/latest/text). Charging is a choice: the agency "may" decide that an applicant is liable (reg 8), and a note to reg 8 says it must have regard to the objects of the Act, which include access "promptly and at the lowest reasonable cost" (s3(4)).
 
 | Activity | Rate in Schedule 1 |
 | --- | --- |
@@ -102,16 +102,16 @@ This is an illustration. Priya ran the searches from Tuesday 8 to Friday 11 June
 | Where | Who | What was found | Hours |
 | --- | --- | --- | --- |
 | RCFP master file in the records system | Priya and the Information Management Unit | Signed brief and attachments, decision sheet, legal advice | 3 |
-| NRIO's ministerial briefing system | Priya | The brief as lodged and as returned | 2 |
-| Mailboxes of Sam's team, for the Minister's office's email domain, 1 March to 31 May | Sam's team, guided by the Information Management Unit | Emails with the Minister's office, including the spreadsheet | 6 |
+| Records system, for Round 1 documents dated 1 March to 31 May | The Information Management Unit | Copies of documents already found | 2 |
+| Mailboxes of Sam's team, for the Minister's office's email domain, 1 March to 31 May | Sam's team, on Priya's written search request | Emails with the Minister's office, including the spreadsheet | 6 |
 | Shared drive and the team's chat channel | Sam's team | Copies of documents already found | 3 |
 | Total | | About 420 pages | 14 |
 
-Two of the mailbox hours went on emails that belonged on the master file but sat only in inboxes, so they cannot be charged (reg 5(2)).
+The emails belonged on the master file but sat only in four inboxes (Chapter 2). Under reg 5(2), only the time a search of the master file would have taken counts: about 1 of the 6 hours.
 
 ## Planning the work with Team Workload
 
-Large requests fail because the team's other work does not stop. Before relying on a date, compare planned hours with available hours.
+Before relying on a date, compare planned hours with available hours: the team's other work does not stop.
 
 This is an illustration. On Friday 11 June Liam planned the eight weeks from Monday 14 June to Friday 6 August, the date he expected after a consultation extension. NRIO plans on a 37.5-hour week and assumes 30 per cent of time goes on leave, public holidays, meetings and training. Each person therefore has 8 × 37.5 × 0.7 = 210 hours, and the four of them 4 × 210 = 840 hours. Planned work was 690 hours: the RCFP request 55 (the 47 hours of decision work in the exercise, plus 8 for case management and Ruth Adeyemi's quality review), other FOI requests 480, privacy and Information Publication Scheme work 75, and reporting and team management 80.
 
@@ -136,15 +136,15 @@ Re-run the check when something unplanned arrives. The data breach on Wednesday 
 
 This is an illustration. On Wednesday 2 June 2027 a planning consultant asked NRIO for condition reports on three community buildings. It was one of the two requests Liam moved to Ethan on 11 June, and its 30 days ended on Friday 2 July. On Monday 28 June, day 26, Ethan saw that the decision would not be ready. He rang the consultant, who agreed to two more weeks, and changed the register's due date to Friday 16 July.
 
-The call extended nothing. Section 15AA needs the applicant's agreement in writing and written notice to the Information Commissioner, and neither existed. On 2 July, with no decision notified, the principal officer was "taken to have made a decision personally refusing to give access" (s15AC(3)). Liam found the gap at his weekly register review on Monday 5 July.
+The call extended nothing. Section 15AA needs the applicant's agreement in writing and written notice to the Information Commissioner, and neither existed. On 2 July, with no decision notified, the principal officer was "taken to have made a decision personally refusing to give access" (s15AC(3)). On Monday 5 July, Liam's weekly register review found no written agreement behind the new date.
 
 The costs were real:
 
 - A deemed refusal is the principal officer's personal decision, so there is no internal review of it (s54(1)), and the consultant could go straight to IC review.
 - The A$90 search charge NRIO had estimated was lost: reg 7(2) bars a charge after a late decision unless the period was extended under one of the listed sections, and this one was not.
-- NRIO had to apply in writing to the Commissioner for further time (s15AC(4)). Liam applied that day and decided within the time allowed, so, as in Chapter 1, the deemed refusal was taken never to have applied (s15AC(7)).
+- NRIO had to apply in writing to the Commissioner for further time (s15AC(4)). Liam applied that day, decided within the time allowed and met its conditions, so, as in Chapter 1, the deemed refusal was taken never to have applied (s15AC(7)).
 
-The control is a written-only rule: an extension enters the register only with the applicant's email agreeing to it attached, and the notice to the Commissioner goes the same day. Ethan's call was the right instinct, made late and never put in writing.
+The control is a written-only rule: an extension enters the register only with the applicant's email agreeing to it attached, and the notice to the Commissioner goes the same day.
 
 ## Exercise: the RCFP request's dates and charge
 
@@ -152,7 +152,7 @@ This is an illustration. Use these facts:
 
 - The valid request arrived by email on Monday 7 June 2027.
 - On Tuesday 22 June Liam determined in writing under s15(6) that consultation under sections 27 and 27A made an extension appropriate.
-- Priya's search record shows 14 hours, of which 2 were spent finding emails that should have been on the master file.
+- Priya's search record shows 14 hours. Six went on four inboxes holding emails that belonged on the master file, where finding them would have taken about 1 hour.
 - The team estimates the decision work: examining about 420 pages at 3 minutes a page; consulting third parties, 12 hours; preparing edited copies, 8 hours; notifying the decision, 6 hours.
 - NRIO will give access by email.
 
@@ -189,20 +189,20 @@ caption: This is an illustration. Count calendar days, starting the day after re
 
 **5. Charge.**
 
-- Search and retrieval: 14 − 2 = 12 chargeable hours (reg 5(2)); 12 × A$15.00 = A$180.
+- Search and retrieval: 14 − 6 + 1 = 9 chargeable hours (reg 5(2)); 9 × A$15.00 = A$135.
 - Decision time: 420 pages × 3 minutes = 1,260 minutes = 21 hours of examining; 21 + 12 + 8 + 6 = 47 hours. The first 5 hours are free: (47 − 5) × A$20 = 42 × A$20 = A$840.
 - Copies: NRIO decides not to charge for giving access by email, as reg 8 allows.
-- Preliminary assessment: A$180 + A$840 = A$1,020.
-- Deposit: the assessment exceeds A$100, so the deposit must not exceed 25 per cent: 0.25 × A$1,020 = A$255 (reg 12(2)(b)).
+- Preliminary assessment: A$135 + A$840 = A$975.
+- Deposit: the assessment exceeds A$100, so the deposit must not exceed 25 per cent: 0.25 × A$975 = A$243.75 (reg 12(2)(b)).
 
 ```figure
 type: formula
 title: The preliminary assessment of the charge
 formula: Charge = search hours × A$15.00 + (decision hours − 5) × A$20
-step: Search: (14 − 2) × A$15.00 = A$180
+step: Search: (14 − 6 + 1) × A$15.00 = 9 × A$15.00 = A$135
 step: Decision: 21 + 12 + 8 + 6 = 47 hours; (47 − 5) × A$20 = A$840
-step: Charge = A$180 + A$840 = A$1,020; deposit at most 25% = A$255
-- Search hours | time spent searching for or retrieving documents, less time caused by misfiling (reg 5(2))
+step: Charge = A$135 + A$840 = A$975; deposit at most 25% = A$243.75
+- Search hours | time spent searching for or retrieving documents, counting misfiled documents only at the time a search of the right place would take (reg 5(2))
 - Decision hours | examining, consulting, preparing edited copies and notifying (Schedule 1, Part 1, item 4)
 caption: This is an illustration. Charging is NRIO's choice under reg 8, and it decided not to impose this charge.
 ```
