@@ -11198,6 +11198,42 @@
    "note": "Sets how many eased bridges to survey to estimate the mean detour avoided within a chosen margin, with the finite-population correction.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/exact-words-for-real-parts",
+   "chapter": "analyse-before-you-argue",
+   "tool": "fastener-position-tolerance",
+   "type": "applies",
+   "note": "Splits the 0.6 mm between the 6.6 mm clearance holes and M6 screws into Ø0.3 mm for the bracket and the module, the fixed-fastener calculation behind the bracket's tolerance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/exact-words-for-real-parts",
+   "chapter": "constructions-not-inferred-things",
+   "tool": "true-position",
+   "type": "applies",
+   "note": "Turns the constructed hole centre's X and Y deviations and measured size into a position error, MMC bonus and allowed tolerance, the last layers of the chapter's construction.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/exact-words-for-real-parts",
+   "chapter": "vague-words-sharp-limits",
+   "tool": "guard-band-acceptance",
+   "type": "applies",
+   "note": "Builds the micrometer's uncertainty budget, narrows the thickness tolerance by the expanded uncertainty and decides accept, reject or indeterminate for each reading.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/exact-words-for-real-parts",
+   "chapter": "structure-and-the-best-fit-trap",
+   "tool": "polar-hole-position-check",
+   "type": "applies",
+   "note": "Converts the polar hole pattern to X and Y and finds each hole's position error and share of its allowed tolerance from measured centres, in whatever frame the measurement used.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
