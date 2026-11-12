@@ -15,7 +15,7 @@ This is an illustration. At the Budget estimates hearing on Wednesday 2 June 202
 
 Section 13(9) of the [Public Service Act 1999](https://www.legislation.gov.au/C2004A00538/latest/text) says an APS employee "must not provide false or misleading information in response to a request for information that is made for official purposes" in connection with their APS employment. Section 14(1) binds agency heads to the Code of Conduct in the same way. Section 13(1) adds a broader duty: an employee "must behave honestly and with integrity in connection with APS employment".
 
-Section 13 does not mention correction in so many words, and whether a particular mistake breaches the Code is a question for the agency's own processes. But an honest slip corrected promptly is a different thing from a wrong statement left standing after it is known to be wrong. The first is a mistake. The second starts to look like a choice. In practice the duty comes down to this: once you know that a committee, an auditor or the Ombudsman is relying on wrong information your agency gave, correct it as soon as you are sure of the right facts.
+Section 13 does not mention correction in so many words, and whether a particular mistake breaches the Code is decided under the Act's procedures: the agency's own for an employee (s 15(3)), the Australian Public Service Commissioner's for an agency head (s 41A). But an honest slip corrected promptly is a different thing from a wrong statement left standing after it is known to be wrong. The first is a mistake. The second starts to look like a choice. In practice, the safe course is this: once you know that a committee, an auditor or the Ombudsman is relying on wrong information your agency gave, correct it as soon as you are sure of the right facts.
 
 Speed matters for three more reasons. Committees use evidence to question other witnesses, write reports and test the government, so a wrong fact can shape all three. Each repetition multiplies the work: one wrong number can travel into answers to questions on notice, a submission, an audit response and an annual report. And an agency that corrects itself first is more likely to be believed next time than one corrected by someone else. The APS Values point the same way. The APS is "open and accountable" (s 10(4)) and gives advice that is "frank, honest, timely and based on the best available evidence" (s 10(5)).
 
@@ -41,7 +41,7 @@ A transcript records what was said. If the words were recorded correctly but wer
 
 The rule is simple: whoever made a statement corrects it, through the channel in which it was made.
 
-A witness who realises during a hearing that an answer was wrong should correct it at the table. After the hearing, the witness writes to the committee.
+A witness who realises during a hearing that an answer was wrong should correct it at the table. After the hearing, the witness usually writes to the committee, as its instructions require.
 
 An answer to a question on notice is corrected by a corrected answer. It should go through the same clearance as the original, including the Minister's office, with a note saying what changed and why (Chapter 3). A submission to an inquiry is corrected by a letter to the committee.
 
@@ -49,7 +49,7 @@ Ministers correct their own statements. If a minister has repeated wrong informa
 
 This is an illustration. At NRIO, the CEO signs any correction of evidence given by NRIO officials. Had the minister at the table repeated the CEO's figure on 2 June, NRIO's part would have been a call to the Minister's office that evening with the right figures, and the correction would have been the minister's to make.
 
-An annual report is corrected in a later annual report. If a previous report contains a significant statement of fact that has "proved to be wrong in a material respect", the next must include "information correcting the record" (section 17AH(1)(e) of the [PGPA Rule](https://www.legislation.gov.au/F2014L00911/latest/text); Chapter 9). Information given to the Auditor-General or the Ombudsman is corrected in writing to them as soon as the error is known (Chapters 5 and 8).
+An annual report is corrected in a later annual report. If a previous report contains a significant statement of fact that has "proved to be wrong in a material respect", the next must include "information correcting the record" (section 17AH(1)(e) of the [PGPA Rule](https://www.legislation.gov.au/F2014L00911/latest/text); Chapter 9). Information given to the Auditor-General or the Ombudsman should be corrected in writing to them as soon as the error is known (Chapters 5 and 8).
 
 The committee decides how it receives corrections and what it publishes, so follow its instructions or ask its secretariat. Before you write, read your agency's own instructions and the current *Government Guidelines for Official Witnesses before Parliamentary Committees and Related Matters*, published by the Department of the Prime Minister and Cabinet.
 

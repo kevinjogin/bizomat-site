@@ -27,7 +27,7 @@ The plan says in advance what will be measured and how, the records hold the evi
 type: steps
 title: The PGPA performance cycle for one reporting period
 caption: The first five steps are duties of the accountable authority; tabling is the Minister's. The plan sets the standard the statements are later held to.
-- Corporate plan | at least once each reporting period (s 35(1)(a)); covers at least 4 reporting periods, with measures and targets; published by 31 August (Rule s 16E)
+- Corporate plan | at least once each reporting period (s 35(1)(a)); covers at least 4 reporting periods, with measures and, where reasonably practicable, targets; published by 31 August (Rule s 16E)
 - Records | that "properly record and explain" performance, kept through the year (s 37(1))
 - Measure and assess | by the method the corporate plan set out for the year (s 38(1); Rule s 16F(1))
 - Annual performance statements | as soon as practicable after 30 June (s 39(1)(a)); contents in Rule s 16F(2)
@@ -54,7 +54,7 @@ Sometimes a definition has to change. If the plan is varied during the year and 
 
 Section 37 asks for records that "properly record and explain" performance, kept in a way that enables the annual performance statements to be prepared (s 37(2)(b)). The responsible Minister and the Finance Minister are entitled to full and free access to them (s 37(3)).
 
-"Explain" is the demanding word. Explaining a result needs the definition, the source data, the calculation, who did it, who checked it and any judgement made along the way. The test: could an outsider recalculate the result from the file without asking anyone? The outsider may be an auditor. The Auditor-General can audit annual performance statements (Auditor-General Act s 15), including at a Minister's request (PGPA Act s 40), and the appropriateness of an entity's performance measures and its reporting against them (Auditor-General Act s 18A).
+"Explain" is the demanding word. Explaining a result needs the definition, the source data, the calculation, who did it, who checked it and any judgement made along the way. The test: could an outsider recalculate the result from the file without asking anyone? The outsider may be an auditor. The Auditor-General can audit annual performance statements (Auditor-General Act s 15), on request by the responsible Minister or the Finance Minister (PGPA Act s 40), and the appropriateness of an entity's performance measures and its reporting against them (Auditor-General Act s 18A).
 
 This is an illustration. For each 2026–27 result, NRIO keeps a short evidence file: the method card from the corporate plan, the source data, the calculation, and who calculated and who checked it, with dates. For RCFP-1 the source is the Minister's decision record of 31 May 2027; for RCFP-2, the eligibility record and the Round 1 assessment report.
 
@@ -72,7 +72,7 @@ Section 16F(2) then lists three matters the statements must include:
 
 The accountable authority signs that opinion. At NRIO that is the CEO, so every officer who supplies a result supplies part of what the CEO certifies.
 
-Good statements report every measure in the plan, including the misses. They put each result next to its target, say plainly whether it was met, and show earlier years on the same definition. When a target is missed, say so first, then give the reason and what the agency is doing about it. A miss explained honestly costs far less than one someone else discovers.
+The statements must report every measure in the plan, including the misses (s 16F(1) and (2)). Good statements put each result next to its target, say plainly whether it was met, and show earlier years on the same definition. When a target is missed, say so first, then give the reason and what the agency is doing about it. A miss explained honestly costs far less than one someone else discovers.
 
 ## The annual report and its required contents
 
@@ -83,7 +83,7 @@ Section 17AB says the report "must comply with the guidelines for presenting doc
 ```figure
 type: checklist
 title: What a non-corporate entity's annual report must include
-caption: PGPA Rule s 17AD. Each item has its own section setting out the detail, and the list of requirements in Schedule 2 to the Rule is one of the aids to access.
+caption: PGPA Rule s 17AD. Most items have their own section setting out the detail, and the list of requirements in Schedule 2 to the Rule is one of the aids to access.
 - A review by the accountable authority | of the entity for the period (s 17AD(a))
 - An overview of the entity | role, functions, structure, outcomes and programs, purposes, accountable authority (s 17AE)
 - A report on performance | the annual performance statements (s 16F) and a report on financial performance (s 17AF)
@@ -132,7 +132,7 @@ During 2025–26, the area managing the works began counting a project as on tim
 
 On the method in the plan, 18 of the 28 projects finished by their first approved date: 64.3 per cent. A percentage point is the difference between two percentages. Performance had not improved by 27.9 percentage points (92.9 − 65.0). It had slipped by 0.7 of a point (64.3 − 65.0).
 
-The problem surfaced in July 2027, when the planning and performance team first asked each area for the method card behind its result. The card said "as last varied"; the plan said "first approved". By then the cost was fixed. The Parliament had a tabled report, certified as accurate, showing an improvement that had not happened. The Minister's office had quoted the figure in a media release in late 2026, and NRIO had to tell the office it could not be relied on; what to do about the release was the Minister's decision (Chapter 10). And NRIO judged the 2025–26 statement significant and wrong in a material respect, so the 2026–27 report must include information correcting the record (s 17AH(1)(e)).
+The problem surfaced in July 2027, when the planning and performance team first checked each area's method card against the corporate plan. The card said "as last varied"; the plan said "first approved". By then the cost was fixed. The Parliament had a tabled report, certified as accurate, showing an improvement that had not happened. The Minister's office had quoted the figure in a media release in late 2026, and NRIO had to tell the office it could not be relied on; what to do about the release was the Minister's decision (Chapter 10). And NRIO judged the 2025–26 statement significant and wrong in a material respect, so the 2026–27 report must include information correcting the record (s 17AH(1)(e)).
 
 The 2026–27 statements report the measure on the published method for all three years: 65.0 per cent, 64.3 per cent and, for 2026–27, 21 of 30 projects, or 70.0 per cent. The target was not met in any year, and the statements say so.
 

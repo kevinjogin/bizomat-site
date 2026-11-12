@@ -65,7 +65,7 @@ question: What kind of statement is it?
 caption: This is an illustration. NRIO applies this test to every sentence that says "should", "recommends" or "NRIO considers". A submission describes policy; it does not make it.
 ```
 
-This is an illustration. The applicant ranked 32nd in Round 1 complained to NRIO in July 2027 and took its complaint to the Commonwealth Ombudsman in August (Chapter 8). The Ombudsman Act says an investigation "shall be conducted in private" (section 8(2)). NRIO's submission says nothing about the complaint. An open complaint is a matter between the applicant, NRIO and the Ombudsman, and the applicant's details are not NRIO's to publish.
+This is an illustration. The applicant ranked 32nd in Round 1 complained to NRIO in July 2027 and took its complaint to the Commonwealth Ombudsman in August (Chapter 8). The Ombudsman Act says an investigation "shall be conducted in private" (section 8(2)). That governs how the Ombudsman works, not what NRIO may say, but NRIO's submission still says nothing about the open complaint: the applicant's details are not NRIO's to publish.
 
 ## Clearance before the submission goes
 
@@ -120,11 +120,11 @@ Parliamentary privilege is the set of legal protections that let each House and 
 ```figure
 type: compare
 title: Four provisions of the Parliamentary Privileges Act, and what NRIO does
-caption: This is an illustration of how NRIO applies the Act. Whether a particular document is covered is a legal question for the legal area.
+caption: This is an illustration. It shows how NRIO applies the Act. Whether a particular document is covered is a legal question for the legal area.
 rowhead: Provision
 cols: In short | What NRIO does
 - Section 16(2) | Proceedings include giving evidence, submitting a document and preparing one for a committee's business | Treats the submission and the hearing as proceedings; never tells anyone an internal brief is privileged
-- Section 16(3) | Courts and tribunals may not use proceedings to question their truth, motive, intention or good faith | Lets witnesses speak plainly, and still holds every answer to the Code of Conduct
+- Section 16(3) | Courts and tribunals may not use proceedings to question their truth, motive, intention or good faith | Lets witnesses speak plainly, and still expects every answer to meet the Code of Conduct
 - Section 12 | Offences: improperly influencing a witness, or penalising anyone because of their evidence | Briefs its witnesses on facts only; takes advice before any decision about staff who gave evidence
 - Section 13 | Offence: publishing or disclosing in camera evidence without authority | Circulates no record of private evidence unless the committee authorises it
 ```
@@ -193,7 +193,7 @@ The section states the decisions, their date and their amounts. It does not char
 **Left out, and why.**
 
 - Any view on whether Ministers should approve grants against officials' recommendations. It fails the sentence test.
-- The complaint from the applicant ranked 32nd, now with the Ombudsman. Investigations are conducted in private, and the applicant's details are not NRIO's to publish.
+- The complaint from the applicant ranked 32nd, now with the Ombudsman. It is still open, and the applicant's details are not NRIO's to publish.
 - Personal information about individual applicants beyond what is already public.
 - Any figure not on the settled facts sheet. A new figure is checked and added to the sheet first.
 

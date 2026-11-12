@@ -122,7 +122,7 @@ Clearance is a chain of checks, each by a person who can see something the other
 ```figure
 type: steps
 title: How an answer is cleared at NRIO
-caption: This is an illustration of NRIO's fictional clearance chain. Your agency's chain, and its arrangements with the Minister's office, will differ.
+caption: This is an illustration. NRIO's clearance chain is fictional. Your agency's chain, and its arrangements with the Minister's office, will differ.
 - Owner drafts | the answer, with the evidence attached and every figure sourced
 - Content clearance | the Director, Regional Programs, the CFO or Clare, by group, confirms the facts
 - Read-across | Lucy checks format; Clare checks the answer against the record and every related answer
@@ -189,7 +189,7 @@ This is an illustration. It is Friday 11 June 2027, and Q03, Q04, Q08 and Q09 ar
 
 ### Worked answer
 
-**1. Scores.** For Q16: 0.35 × 4 = 1.40; 0.30 × 4 = 1.20; 0.20 × 4 = 0.80; 0.15 × (6 − 3) = 0.45. The sum is 3.85, and 3.85 ÷ 5 × 100 = 77. The others follow the same steps.
+This is an illustration. **1. Scores.** For Q16: 0.35 × 4 = 1.40; 0.30 × 4 = 1.20; 0.20 × 4 = 0.80; 0.15 × (6 − 3) = 0.45. The sum is 3.85, and 3.85 ÷ 5 × 100 = 77. The others follow the same steps.
 
 | Rank | Question | Weighted sum | Score | Band |
 |---:|---|---|---:|---|

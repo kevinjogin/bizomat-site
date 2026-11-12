@@ -19,7 +19,7 @@ The Act does not tell an agency how to run its own complaints process, and neith
 
 This is an illustration. NRIO's complaints coordinator, who had no part in the round, received the complaint on Monday 5 July 2027, acknowledged it the next day and promised a full reply by Monday 19 July. The reply went that day. It explained that the Minister decides RCFP grants and may approve projects officials did not recommend, and that such decisions are reported and published. It gave the applicant its own scores, rank and reasons, and the review options. It did not guess at the Minister's reasons, apologise for the decision or promise anything for Round 2.
 
-One good reply is not a complaints system. The ANAO later found that complaints about Round 1 had arrived through several channels and were not recorded in one place, and recommended that they be (Chapter 6).
+This is an illustration. The ANAO later found that complaints about Round 1 had arrived through several channels and were not recorded in one place, and recommended that they be (Chapter 6).
 
 ```figure
 type: steps
@@ -36,7 +36,7 @@ caption: This is an illustration. The steps are the fictional agency's own pract
 
 Subject to the Act, the Ombudsman "shall investigate action, being action that relates to a matter of administration", taken by a Department or a prescribed authority, when someone complains about it, and may investigate such action on the Ombudsman's own motion (s 5(1)). "Prescribed authority" is defined in section 3. This is an illustration. The case treats NRIO as one, so its administration is within the Ombudsman's reach.
 
-That qualification matters. Section 6 lets the Ombudsman decline to investigate, or stop, in several cases: for example, where the complainant became aware of the action more than 12 months before complaining (s 6(1)(a)), or where an investigation is not warranted in all the circumstances (s 6(1)(b)).
+That qualification matters. Section 6 lets the Ombudsman decline to investigate, or stop, in several cases: for example, where the complainant became aware of the action more than 12 months before complaining (s 6(1)(a)), or where an investigation is not warranted in all the circumstances (s 6(1)(b)(iii)).
 
 Before deciding, the Ombudsman may make preliminary inquiries of the agency's principal officer, to work out whether the Ombudsman is authorised to investigate, or whether to decline (s 7A). A preliminary inquiry is the agency's first chance to show its records and its attitude. Treat it with the same care as a formal notice.
 
@@ -131,7 +131,7 @@ The July stage worked. The August stage did not, as the next section shows. From
 
 This is an illustration. The Ombudsman's letter of Tuesday 17 August 2027 asked the CEO three things by Tuesday 31 August: for NRIO's complaint file, how the applicant's application had been assessed and ranked, and whether NRIO had advised the Minister about the two applications funded against its recommendations.
 
-Because the letter was about a complaint, it went to the complaints coordinator, who asked Regional Programs for the facts. Nobody put its date in the unit's register of deadlines, and Regional Programs spent the last week of August on the inquiry submission lodged on Thursday 2 September (Chapter 4).
+Because the letter was about a complaint, it went to the complaints coordinator, who asked Regional Programs for the facts. Nobody put its date in the unit's register of deadlines, and Regional Programs was busy with the inquiry submission, lodged on Thursday 2 September (Chapter 4).
 
 The reply went on Tuesday 7 September, signed for the CEO by the Director, Regional Programs: 7 days late, with no request for more time. It ran to one page. It said the complaint was "in substance about the Minister's decision", which the Ombudsman is not authorised to investigate, and described it as an attempt to reopen a lawful decision. It attached the July reply and nothing else, and did not answer the second or third question.
 

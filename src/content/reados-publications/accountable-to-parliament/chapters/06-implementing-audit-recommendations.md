@@ -13,7 +13,7 @@ This is an illustration. The ANAO's report on Round 1 of the Regional Community 
 
 ## Agreeing, and saying why
 
-An agency has three honest responses to a recommendation. It can agree. It can agree with a qualification, saying exactly what it will do instead of, or as well as, what was recommended. Or it can disagree, with reasons and evidence. Whichever it chooses, the response is printed in the report under s19(8) of the [Auditor-General Act 1997](https://www.legislation.gov.au/C2004A05248/latest/text), so it has to stand up in public.
+An agency has three honest responses to a recommendation. It can agree. It can agree with a qualification, saying exactly what it will do instead of, or as well as, what was recommended. Or it can disagree, with reasons and evidence. Whichever it chooses, a written response within the 28 days is printed in the report under s19(8) of the [Auditor-General Act 1997](https://www.legislation.gov.au/C2004A05248/latest/text), so it has to stand up in public.
 
 Agreement is a commitment, not a courtesy: once the response says "agreed", Parliament, the Auditor-General and the public can hold the agency to it. Before the accountable authority signs, the people who will do the work should record whether it can be done, what it will cost, who owns it and by when.
 
@@ -28,9 +28,9 @@ This is an illustration. The audit, its four recommendations and the findings be
 | No. | Recommendation (summary) | Finding behind it (summary) | Accountable owner | Action officer |
 |---|---|---|---|---|
 | 1 | Record all advice to the Minister and the Minister's office on funding decisions, including advice given orally, on the grant file when it is given | Records of advice given between the funding brief and the decisions were incomplete | Director, Regional Programs | Sam Reid |
-| 2 | Keep one reconciled set of RCFP figures for applications received, found ineligible, assessed and funded, and use it for all briefings, answers to Parliament and performance reporting | Figures came from different sources for different purposes and did not always show the stages separately; a figure given at Estimates had to be corrected | Director, Regional Programs | Sam Reid, with Clare Whitfield for briefing checks |
+| 2 | Keep one reconciled set of RCFP figures for applications received, found ineligible, assessed and funded, and use it for all briefings, answers to Parliament and performance reporting | Beyond the settled facts sheet, figures came from different sources for different purposes and did not always show the stages separately; a figure given at Estimates had to be corrected | Director, Regional Programs | Sam Reid, with Clare Whitfield for briefing checks |
 | 3 | Record every complaint about an RCFP outcome in NRIO's complaints system, track each to a response date, and report themes to the Director, Regional Programs each quarter | Complaints arrived through several channels and were not recorded in one place | Director, Regional Programs | Sam Reid |
-| 4 | Before any further RCFP round opens, review Round 1's guidelines and procedures against the audit's findings and the complaints received, and record the changes made | Lessons from Round 1 had not been brought together | Director, Regional Programs | Sam Reid |
+| 4 | Before any RCFP round after Round 2 opens, review Round 1's guidelines and procedures against the audit's findings and the complaints received, and record the changes made | The 2027 review of Round 1 predated the audit | Director, Regional Programs | Sam Reid |
 
 ## Action plans with owners and dates
 
@@ -57,12 +57,12 @@ A plan is not evidence at any level, and a procedure alone is evidence of design
 
 Decide in advance who closes an entry. A sound rule is that the action officer proposes closure and attaches the evidence, someone independent of the work checks it against the closure test, the accountable owner signs, and the audit committee is told at its next meeting.
 
-This is an illustration. NRIO adopted that rule after the failure described below, with Oscar as the independent checker. Recommendation 1 concerns advice on funding decisions, and none is expected before its due date. NRIO will close it on implementation: an updated procedure, a file-note template in the grants system and a record that every RCFP officer has been briefed. The entry will carry a flag that stays open until Oscar has checked the first ten records of advice in any further round.
+This is an illustration. NRIO adopted that rule after the failure described below, with Oscar as the independent checker. Recommendation 1 concerns advice on funding decisions; after Round 2's, none is expected before its due date. NRIO will close it on implementation: an updated procedure, a file-note template in the grants system and a record that every RCFP officer has been briefed. The entry will carry a flag that stays open until Oscar has checked the first ten records of advice in any later round.
 
 ```figure
 type: checklist
 title: Evidence that can close a recommendation
-caption: This is an illustration of NRIO's closure test. The evidence is filed with the register entry, so that anyone can check it later.
+caption: This is an illustration. It shows NRIO's closure test. The evidence is filed with the register entry, so that anyone can check it later.
 - It meets the closure test written in the plan | not a test redefined at the end
 - Records show the change operating over a period | for example, three months of figures traced to the reconciled set
 - Someone independent of the work has checked a sample | at NRIO, the Audit Liaison Officer
@@ -147,7 +147,7 @@ This is an illustration. The RCFP report was tabled in June 2028, inside the 202
 
 This is an illustration. On Thu 31 Aug 2028 the Director, Regional Programs, signed the procedure for the reconciled RCFP data set. That afternoon Recommendation 2 was marked closed in the register, with the signed procedure as its evidence. Under the rule NRIO used at the time, an entry closed when its accountable owner said so, and Oscar recorded it. The interim check stopped the next day, and the papers for the audit committee's next quarterly meeting reported Recommendation 2 as implemented.
 
-In late September, Clare's unit drafted the external scrutiny section of the 2027–28 annual report, which said Recommendation 2 had been implemented. Before the draft went to the CEO, Oscar tested the claim. He traced the 12 RCFP figures used in briefs and draft answers since 1 September back to their sources. Four of the 12, one in three, came from the old standard report, which had not yet been changed to draw on the reconciled set. The plan's second step was incomplete. All 4 figures happened to be right; the next might not have been.
+In late September, Clare's unit drafted the external scrutiny section of the 2027–28 annual report, which said Recommendation 2 had been implemented. Before the draft went to the CEO, Oscar tested the claim. He traced the 12 RCFP figures used in briefs and draft reports since 1 September back to their sources. Four of the 12, one in three, came from the old standard report, which had not yet been changed to draw on the reconciled set. The plan's second step was incomplete. All 4 figures happened to be right; the next might not have been.
 
 The cost was contained, but only just. The annual report statement was rewritten before it went to the Minister, so nothing wrong reached Parliament. But the audit committee had been told something untrue and had to be told so. For about four weeks neither the complete fix nor the interim check had been in place. The entry was reopened, its closure date moved from Fri 15 Dec 2028 to Wed 31 Jan 2029 and shown beside the old one.
 
@@ -165,16 +165,16 @@ This is an illustration. The four, in order of priority:
 |---|---|---|---|---|---|
 | 2 | 4 × 4 = 16 (2 × 4 = 8 with the interim check) | High | Interim check from Mon 3 Jul 2028; reconciled set, procedure and changed standard report by Thu 31 Aug 2028 | Three months of figures, September to November, traced by Oscar to the reconciled set; closed by Fri 15 Dec 2028 | CEO monthly; audit committee quarterly |
 | 3 | 3 × 3 = 9 | Medium | Complaint fields, response dates and a quarterly themes report set up by Fri 29 Sep 2028 | Complaints from October to December 2028 recorded with response dates; first themes report to the Director; closed by Wed 31 Jan 2029 | Audit committee quarterly |
-| 1 | 2 × 4 = 8 | Medium | Procedure, file-note template and briefing of RCFP staff by Fri 29 Sep 2028 | Closed on implementation by Fri 15 Dec 2028; flag open until the first ten records of advice in any further round are checked | Audit committee quarterly, flag shown |
-| 4 | 2 × 3 = 6 | Low | Lessons review approved by Fri 23 Feb 2029, or before any further round opens if that is sooner | Each change traced to updated guidelines or procedures; closed by Fri 30 Mar 2029 | Audit committee quarterly |
+| 1 | 2 × 4 = 8 | Medium | Procedure, file-note template and briefing of RCFP staff by Fri 29 Sep 2028 | Closed on implementation by Fri 15 Dec 2028; flag open until the first ten records of advice in any later round are checked | Audit committee quarterly, flag shown |
+| 4 | 2 × 3 = 6 | Low | Lessons review approved by Fri 23 Feb 2029, or before any later round opens if that is sooner | Each change traced to updated guidelines or procedures; closed by Fri 30 Mar 2029 | Audit committee quarterly |
 
 **Recommendation 2.** As rated above: 4 × 4 = 16, inside the High band of 15 to 25, and 2 × 4 = 8, Medium, while the interim check runs.
 
 **Recommendation 3.** Complaints about Round 1 can arrive in any quarter: likelihood 3. A complaint lost or answered late is likely to be upheld, and may go to the Ombudsman, as the July 2027 complaint did in August 2027: consequence 3. So 3 × 3 = 9, inside the Medium band of 7 to 14.
 
-**Recommendation 1.** Funding decisions come with a round, none is expected before the due date, and a decision outside a round is rare: likelihood 2. A decision that cannot be explained from the record is consequence 4. So 2 × 4 = 8, Medium.
+**Recommendation 1.** Round 2's decisions are made, no later round is expected before the due date, and a decision outside a round is rare: likelihood 2. A decision that cannot be explained from the record is consequence 4. So 2 × 4 = 8, Medium.
 
-**Recommendation 4.** No further round is expected before the due date, so likelihood is 2. A round that repeats avoidable weaknesses brings complaints that would be upheld: consequence 3. So 2 × 3 = 6, inside the Low band of 1 to 6.
+**Recommendation 4.** A later round is possible but not expected before the due date: likelihood 2. A round that repeats avoidable weaknesses brings complaints that would be upheld: consequence 3. So 2 × 3 = 6, inside the Low band of 1 to 6.
 
 ```figure
 type: bars
@@ -184,10 +184,10 @@ caption: This is an illustration. Scores on NRIO's 5 × 5 matrix at tabling in J
 - * Rec 2: one reconciled set of figures | 16 | 4 × 4, High; 8 with the interim check
 - Rec 3: complaints recorded and tracked | 9 | 3 × 3, Medium
 - Rec 1: records of advice on funding decisions | 8 | 2 × 4, Medium
-- Rec 4: lessons before any further round | 6 | 2 × 3, Low
+- Rec 4: lessons before any later round | 6 | 2 × 3, Low
 ```
 
-**Order and rhythm.** The order is 2 (16), 3 (9), 1 (8) and 4 (6). Scores only sort, so watch the factors too. If a further round is announced before Recommendation 1 is closed, its likelihood rises to 3 and its score to 3 × 4 = 12, ahead of Recommendation 3. Recommendation 4's likelihood would rise to 3 as well, giving 3 × 3 = 9. Low does not mean dropped: every agreed ANAO recommendation goes to each audit committee meeting until it is closed on evidence.
+**Order and rhythm.** The order is 2 (16), 3 (9), 1 (8) and 4 (6). Scores only sort, so watch the factors too. If a later round is announced before Recommendation 1 is closed, its likelihood rises to 3 and its score to 3 × 4 = 12, ahead of Recommendation 3. Recommendation 4's likelihood would rise to 3 as well, giving 3 × 3 = 9. Low does not mean dropped: every agreed ANAO recommendation goes to each audit committee meeting until it is closed on evidence.
 
 **Dates.** Closures run from Fri 15 Dec 2028 to Fri 30 Mar 2029, within ten months of tabling; the High-rated recommendation is among the first and the Low-rated one the last.
 

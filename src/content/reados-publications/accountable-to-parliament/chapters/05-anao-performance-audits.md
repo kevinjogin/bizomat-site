@@ -63,12 +63,12 @@ Section 19(8) then says: "The Auditor-General must, in the final report, include
 
 Count carefully. Section 36(1) of the [Acts Interpretation Act 1901](https://www.legislation.gov.au/C1901A00002/latest/text) says that a period expressed to begin after a specified day does not include that day. Its own example: a 28-day period after 2 August begins on 3 August. So day 1 is the day after the report is received.
 
-This is an illustration. The CEO received the proposed report on Mon 10 Apr 2028. Day 1 was Tue 11 Apr, and day 28 was Mon 8 May 2028. The period held four weekends and three public holidays: Good Friday on 14 April, Easter Monday on 17 April and Anzac Day on Tuesday 25 April. That left 17 working days. Oscar asked the audit team to confirm the due date in writing that afternoon, and it did.
+This is an illustration. The CEO received the proposed report on Mon 10 Apr 2028. Day 1 was Tue 11 Apr, and day 28 was Mon 8 May 2028. The period held four weekends and three national public holidays: Good Friday on 14 April, Easter Monday on 17 April and Anzac Day on Tuesday 25 April. That left 17 working days. Oscar asked the audit team to confirm the due date in writing that afternoon, and it did.
 
 ```figure
 type: formula
 title: Counting NRIO's 28 days
-caption: This is an illustration. Day 1 is the day after receipt, because Acts Interpretation Act s36(1) excludes the day a period begins after.
+caption: This is an illustration. Day 1 is the day after receipt, because Acts Interpretation Act s36(1) excludes the day a period begins after. The holidays are national; check local ones too.
 formula: Last day = day received + 28 days
 - Day received | Mon 10 Apr 2028, not counted
 - Day 1 | Tue 11 Apr 2028
@@ -92,7 +92,7 @@ This is an illustration. On the afternoon of Mon 10 Apr, the audit team confirme
 type: decision
 title: Before anyone sees the proposed report
 question: Has the Auditor-General consented, in writing, to this person seeing it?
-caption: This is an illustration of NRIO's working rule. The legal test is in s36(3) and (4) of the Auditor-General Act; ask your legal area when a case is unclear.
+caption: This is an illustration. It shows NRIO's working rule. The legal test is in s36(3) and (4) of the Auditor-General Act; ask your legal area when a case is unclear.
 - Yes, they are on the agreed list | Give access to the controlled copy | log the access and brief them on s36(3)
 - * No, or not sure | Share no part of it, not even a summary | ask the audit team in writing and wait for the answer
 - They need only the timing | Give the dates, not the content | for example, the Minister's office
@@ -141,7 +141,7 @@ The controls that would have prevented it are simple. Agree the access list with
 
 ## Exercise: 28 days to a signed response
 
-This is an illustration. It is the afternoon of Mon 10 Apr 2028. The proposed report has four recommendations: records of advice to the Minister, one reconciled set of program figures, complaints about grant outcomes, and lessons before any further round. Chapter 6 sets them out. Plan NRIO's response:
+This is an illustration. It is the afternoon of Mon 10 Apr 2028. The proposed report has four recommendations: records of advice to the Minister, one reconciled set of program figures, complaints about grant outcomes, and lessons before any later round. Chapter 6 sets them out. Plan NRIO's response:
 
 - confirm the last day and the working days available;
 - say who may see the report and how it is held;
@@ -163,7 +163,7 @@ This is an illustration. **The last day.** The CEO received the report on Mon 10
 | 1 to 3 | Tue 11 to Thu 13 Apr | Owners named; facts checked against the records; errors raised with the audit team as found | Oscar, Sam |
 | 4 to 7 | Tue 18 to Fri 21 Apr | Responses drafted with action, owner, date and cost; consistency with what NRIO told Parliament checked | Sam, Clare |
 | 8 | Mon 24 Apr | Draft cleared; cost of actions confirmed | Director, Regional Programs; CFO |
-| 9 to 11 | Wed 26 to Fri 28 Apr | CEO's office reviews | CEO's office |
+| 9 to 11 | Wed 26 to Fri 28 Apr | CEO reviews the draft | CEO |
 | 12 to 13 | Mon 1 and Tue 2 May | Changes made; access log checked against the agreed list | Oscar, Clare |
 | 14 | Wed 3 May | CEO signs | CEO |
 | 15 | Thu 4 May | Signed comments sent; receipt confirmed in writing | Oscar |

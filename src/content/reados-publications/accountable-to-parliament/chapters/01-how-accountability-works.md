@@ -68,7 +68,7 @@ A Senator's question at a hearing, a question on notice, a committee's call for 
 
 Two other Values point the same way. Impartial, in section 10(5), asks for advice that is "frank, honest, timely and based on the best available evidence". Stewardship, in section 10(6), asks the APS to build "its capability and institutional knowledge": in this work, records good enough for the next person to answer for what this person did.
 
-Mistakes still happen. Whether a particular wrong statement breaches the Code is a question for the agency's own processes. What is not in question is what to do once you know: tell the people who need to know, and correct the record promptly. Chapter 10 covers how.
+Mistakes still happen. Whether a wrong statement breaches the Code is decided under the Public Service Act's procedures; for evidence to a committee, take legal advice first (Parliamentary Privileges Act s 12). What is not in question is what to do once you know: tell the people who need to know, and correct the record promptly. Chapter 10 covers how.
 
 ## The bodies that hold an agency to account
 
@@ -100,7 +100,7 @@ Behind all four sits the agency's own assurance. Section 45(1) of the PGPA Act s
 
 Some accountability work runs on a cycle set by law. The accountable authority must prepare a corporate plan at least once each reporting period (PGPA Act s 35(1)(a)), and the PGPA Rule requires it to be published "on the entity's website by the last day of the second month of the reporting period" (s 16E(3)): 31 August, for a year that starts on 1 July. The annual report, with the annual performance statements in it, must be given to the responsible Minister by "the 15th day of the fourth month after the end of the reporting period" (PGPA Act s 46(2)(a)): 15 October, for a year that ends on 30 June.
 
-Tabling is a separate step. Where an Act sets no period for tabling, as section 46 sets none, section 34C(3) of the Acts Interpretation Act 1901 allows 15 sitting days of each House after the day the Minister receives the report. Giving the report to the Minister and tabling it have different deadlines. Do not confuse them.
+Tabling is a separate step. Where an Act sets no period for tabling, as section 46 sets none, section 34C(3) of the Acts Interpretation Act 1901 requires the Minister to table the report within 15 sitting days of each House after receiving it. Giving the report to the Minister and tabling it have different deadlines. Do not confuse them.
 
 Other work arrives on dates set by someone else. The Senate schedules Estimates hearings, and each committee sets its date for answers to questions on notice. An inquiry committee sets its own date for submissions. The Auditor-General decides when to audit; once a proposed report arrives, the agency has 28 days to comment (Auditor-General Act s 19(7)(b)). A complaint to the Ombudsman can come at any time, and a notice under section 9 sets its own date.
 
@@ -109,7 +109,7 @@ This is an illustration. Clare plans the fixed dates a year ahead. She enters th
 ```figure
 type: timeline
 title: NRIO's accountability year, June 2027 to June 2028
-caption: This is an illustration. The hearing, the committees' dates and the inquiry are fictional. The 31 August, 15 October and 28-day dates follow from the law.
+caption: This is an illustration. Clare's page as it stood a year later; she added each date as it was set. The hearing, the committees' dates and the inquiry are fictional. The 31 August, 15 October and 28-day dates follow from the law.
 - * Wed 2 Jun 2027 | Budget estimates hearing | 38 issue briefs; Senators ask about the RCFP (Chapter 2)
 - Fri 4 Jun 2027 | Correcting letter to the committee | an error in the evidence is corrected in writing (Chapter 10)
 - Fri 16 Jul 2027 | Answers to 46 questions on notice due | the committee's date; 19 of the questions are about the RCFP (Chapter 3)
@@ -171,7 +171,7 @@ This is an illustration. Clare's map reads as follows.
 | 1. Hearing | A Senate legislation committee | Proposed spending and NRIO's administration | No false or misleading information (PS Act s 13(9)), binding the CEO through s 14(1); the Minister's reasons are for the minister at the table | The CEO and officials at the table | Ravi's briefing pack; a log of questions taken on notice |
 | 2. Questions on notice | The same committee | What the hearing could not settle | The committee's date; s 13(9) for every fact; clearance through the Minister's office | The CEO, from answers drafted by line areas | Lucy's register and the deadline |
 | 3. Inquiry | A Senate committee | Regional community grant programs | The committee's dates; s 13(9); witnesses protected from interference (Parliamentary Privileges Act s 12) | The CEO approves the submission; officials appear | Lucy coordinates drafting and clearance |
-| 4. Ombudsman | The Commonwealth Ombudsman | NRIO's administration of the round and the complaint, not the Minister's decisions (s 5(2)(a)) | Best endeavours to assist (Ombudsman Act s 32(2)); a s 9 notice sets its own date | The program area drafts; the CEO or a nominated officer signs | Checks the response against what NRIO has already said |
+| 4. Ombudsman | The Commonwealth Ombudsman | NRIO's administration of the round and the complaint, not the Minister's decisions (s 5(2)(a)) | Best endeavours to assist (Ombudsman Act s 32(2)); a s 9 notice sets its own date | The program area drafts; the CEO signs | Checks the response against what NRIO has already said |
 | 5. Annual report | Parliament, through the Minister | NRIO's performance in 2026–27 | To the Minister by 15 October (PGPA Act s 46(2)(a)); performance statements included (s 39(1)(b)); tabled within 15 sitting days (Acts Interpretation Act s 34C(3)) | The CEO, as accountable authority | Supplies the year's external scrutiny and NRIO's response (PGPA Rule s 17AG(3)) |
 | 6. Proposed audit report | The Auditor-General | NRIO's administration of Round 1 | Comments within 28 days (Auditor-General Act s 19(7)(b)), printed in the final report (s 19(8)); the proposed report confidential (s 36) | The CEO, who receives it as the accountable authority (s 19(1)(a)) | Oscar coordinates the response and controls the copies |
 

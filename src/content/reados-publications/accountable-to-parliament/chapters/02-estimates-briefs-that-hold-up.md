@@ -15,7 +15,7 @@ This is an illustration. On Wednesday 2 June 2027, the Northfield Regional Infra
 
 ## What Estimates is for
 
-Estimates hearings let the Senate examine the government's proposed spending and how agencies administer the money they already have. Senate legislation committees hold them, portfolio by portfolio, at times the Senate sets. A minister who sits in the Senate attends with the officials, often representing a portfolio minister from the other House, and officials answer questions about programs, spending, staffing and administration. This book calls that person "the minister at the table", to keep them apart from NRIO's own Minister.
+Estimates hearings let the Senate examine the government's proposed spending and how agencies administer the money they already have. Senate legislation committees hold them, portfolio by portfolio, at times the Senate sets. Usually a minister who sits in the Senate attends with the officials, often representing a portfolio minister from the other House, and officials answer questions about programs, spending, staffing and administration. This book calls that person "the minister at the table", to keep them apart from NRIO's own Minister.
 
 For an agency, the hearing tests three things: whether its officials know the facts, whether they can say them plainly, and whether what they say matches what the agency has said before, in answers, reports, media releases and on its website. Senators and their staff compare. A figure that differs from the annual report without an explanation is a question in itself.
 
@@ -99,7 +99,7 @@ The line runs both ways. It does not let a witness decline a factual question be
 
 This is an illustration. For the RCFP, the line is clear in principle. Officials can describe the process: the published guidelines, the eligibility check, the assessment, the fact that officials made recommendations, and the decisions and their date. The Minister made the decisions and recorded reasons for them, and those reasons are for the minister at the table to give. An official who guesses at a Minister's reasons crosses the line twice: into policy, and into facts the official does not know.
 
-Some questions ask what officials advised, or what was said to the Minister's office. Section 13(6) of the [Public Service Act 1999](https://www.legislation.gov.au/C2004A00538/latest/text) says an APS employee must maintain "appropriate confidentiality" about dealings with a Minister or a Minister's staff. Whether advice is disclosed is a matter for the minister, and the Senate has its own orders on how a claim not to disclose information is to be made. Know where your agency's guidance on those orders is, and do not improvise a claim at the table. The sensitivities part of each brief should say, in plain words, where the line falls on that topic.
+Some questions ask what officials advised, or what was said to the Minister's office. Section 13(6) of the [Public Service Act 1999](https://www.legislation.gov.au/C2004A00538/latest/text) says an APS employee must maintain "appropriate confidentiality" about dealings with a Minister or a Minister's staff. A witness does not decide alone to withhold information from a committee, and the Senate has its own orders on how a claim not to disclose information is to be made. Know where your agency's guidance on those orders is, and do not improvise a claim at the table. The sensitivities part of each brief should say, in plain words, where the line falls on that topic.
 
 ## Take it on notice rather than guess
 
