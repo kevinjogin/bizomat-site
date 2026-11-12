@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { errorMessage, post, put } from '../../lib/api';
 import { Icon } from '../../components/ui/Icon';
@@ -33,10 +33,19 @@ interface EmailAdmin {
     updatedAt: number | null;
     updatedBy: string | null;
   };
+  appAddress: { href: string | null; problem: string | null; invitationExample: string | null };
   webhookUrl: string;
   endpoint: string;
   recent: { id: string; to_email: string; template: string; status: string; attempts: number; next_attempt_at: number; last_error: string | null; last_event: string | null; created_at: number; sent_at: number | null }[];
   suppressed: { email: string; reason: string; created_at: number }[];
+}
+
+interface LinkCheck {
+  ok: boolean;
+  verdict: string;
+  dns: { host: string; resolves: boolean | null; detail: string };
+  hops: { url: string; host: string; status: number | null; error: string | null }[];
+  finalUrl: string | null;
 }
 
 interface CheckResult {
@@ -88,6 +97,8 @@ export default function Email() {
   const [check, setCheck] = useState<CheckResult | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [test, setTest] = useState<{ ok: boolean; status: string; error: string | null; to?: string } | null>(null);
+  const [link, setLink] = useState('');
+  const [linkCheck, setLinkCheck] = useState<LinkCheck | null>(null);
   const d = q.data;
 
   useEffect(() => {
@@ -218,6 +229,8 @@ export default function Email() {
                       <dd className="ac-bad">The saved key cannot be read on this server (the database came from another server). Enter it again.</dd>
                     </>
                   ) : null}
+                  <dt>Links in emails</dt>
+                  <dd>{d!.appAddress.problem ? <span className="ac-bad">{d!.appAddress.problem}</span> : <>{d!.appAddress.invitationExample} <span className="muted small">(from the app's configured address, never the browser's)</span></>}</dd>
                   <dt>Sender</dt>
                   <dd>{st.fromName} &lt;{st.fromAddress}&gt;{st.replyTo ? `, replies to ${st.replyTo}` : ''}</dd>
                   <dt>Today (UTC)</dt>
@@ -345,6 +358,38 @@ export default function Email() {
                     {check.ok && check.senderActive === false && check.domainAuthenticated === false ? (
                       <p className="small muted">Until the sender or its domain is ready in Brevo, Brevo refuses messages from it.</p>
                     ) : null}
+                  </div>
+                ) : null}
+              </Card>
+
+              <Card title="Check an email link" subtitle="Brevo rewrites every link in an email to count clicks (an address like https://r.…/tr/cl/…). Paste a link from a received email: the server opens it as a recipient would and shows where it ends. Opening it counts as a click in Brevo.">
+                <form
+                  className="ac-grant"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    void run('link', async () => setLinkCheck(await post<LinkCheck>('/admin/email/link-check', { link })));
+                  }}
+                >
+                  <label className="ac-search grow">
+                    <Icon name="link" />
+                    <input className="input" placeholder="https://r.…/tr/cl/… or https://bizomat.ai/tasks/invite/…" aria-label="Link from an email" value={link} onChange={(e) => setLink(e.target.value)} />
+                  </label>
+                  <button className="btn" disabled={!!busy || link.trim().length < 8}>{busy === 'link' ? 'Checking…' : 'Check link'}</button>
+                </form>
+                <p className="small muted">Tip: send yourself the test email (Status, above); its “Check an email link” button points to …/tasks/invite/link-check.</p>
+                {linkCheck ? (
+                  <div className="ac-check" role="status">
+                    <p className={linkCheck.ok ? 'ac-ok' : 'ac-bad'}><Icon name={linkCheck.ok ? 'check' : 'x'} size={14} /> {linkCheck.verdict}</p>
+                    <dl className="ac-dl">
+                      <dt>DNS for {linkCheck.dns.host}</dt>
+                      <dd>{linkCheck.dns.resolves === null ? 'Not checked' : linkCheck.dns.resolves ? 'Found' : 'Not found'}{linkCheck.dns.detail ? `: ${linkCheck.dns.detail}` : ''}</dd>
+                      {linkCheck.hops.map((h, i) => (
+                        <Fragment key={i}>
+                          <dt>{i === 0 ? 'Link' : `Redirect ${i}`}</dt>
+                          <dd><code className="ac-code">{h.url}</code> {h.status != null ? `→ ${h.status}` : ''}{h.error ? <span className="ac-bad"> {h.error}</span> : null}</dd>
+                        </Fragment>
+                      ))}
+                    </dl>
                   </div>
                 ) : null}
               </Card>

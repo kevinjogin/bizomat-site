@@ -2,6 +2,7 @@
 // provider can be added here without touching the outbox, the templates or the routes.
 
 import type { Env } from '../../env';
+import { appBase, appUrlProblem } from '../app-url';
 
 export interface OutgoingEmail {
   to: { email: string; name?: string };
@@ -36,7 +37,10 @@ export interface EmailConfig {
   provider: 'brevo' | 'log' | 'none' | 'test';
   from: { email: string; name: string };
   replyTo: string | null;
+  /** The validated public address of the app (services/app-url.ts); empty when the configuration is wrong. */
   baseUrl: string;
+  /** Why links cannot be built, when they cannot (then no email with links is sent). */
+  baseUrlProblem: string | null;
   dailyLimit: number;
   criticalReserve: number;
   sandbox: boolean;
@@ -64,12 +68,15 @@ export function emailConfig(env: Env): EmailConfig {
   else provider = env.BREVO_API_KEY ? 'brevo' : env.ENVIRONMENT === 'development' ? 'log' : 'none';
   const fromEmail = (env.EMAIL_FROM_ADDRESS ?? '').trim();
   const replyTo = (env.EMAIL_REPLY_TO ?? '').trim();
-  const base = (env.APP_BASE_URL || env.APP_URL || '').trim().replace(/\/+$/, '');
+  // Links in emails come from configuration only, never from the request (services/app-url.ts).
+  const baseUrlProblem = appUrlProblem(env);
+  const base = baseUrlProblem ? '' : appBase(env).href;
   return {
     provider,
     from: { email: EMAIL_RE.test(fromEmail) ? fromEmail : 'notifications@bizomat.ai', name: (env.EMAIL_FROM_NAME ?? '').trim().slice(0, 70) || 'BIZOMAT' },
     replyTo: EMAIL_RE.test(replyTo) ? replyTo : null,
     baseUrl: base,
+    baseUrlProblem,
     dailyLimit: intOr(env.EMAIL_DAILY_LIMIT, 250, 1, 100_000),
     criticalReserve: intOr(env.EMAIL_CRITICAL_RESERVE, 40, 0, 100_000),
     sandbox: env.EMAIL_SANDBOX === '1',

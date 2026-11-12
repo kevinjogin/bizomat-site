@@ -4,11 +4,11 @@
 // marked sensitive so its body is cleared from the outbox once sent.
 
 import type { Env } from '../env';
+import { verifyEmailUrl } from './app-url';
 import { now, randomToken, sha256Hex } from '../lib/util';
 import { emailConfig } from './email/provider';
 import { emailEnv } from './email/settings';
 import { enqueueEmail, processOutbox } from './email/outbox';
-import { absoluteLink } from './notify';
 import { loadPolicy, type SignupPolicy } from './signup-guard';
 
 const LINK_MS = 24 * 60 * 60_000;
@@ -35,6 +35,10 @@ export async function sendVerification(env: Env, user: { id: string; email: stri
   if ((recent?.last ?? 0) > 0 || (recent?.day ?? 0) >= 10) return false;
   const cfg = emailConfig(await emailEnv(env));
   if (cfg.provider === 'none') return false;
+  if (cfg.baseUrlProblem) {
+    console.error('email_links_unavailable', cfg.baseUrlProblem);
+    return false;
+  }
   const token = randomToken(32);
   const hash = await sha256Hex(token);
   const expires = t + LINK_MS;
@@ -49,7 +53,7 @@ export async function sendVerification(env: Env, user: { id: string; email: stri
         template: 'verify_email',
         name: user.name,
         email: user.email,
-        url: absoluteLink(cfg.baseUrl, `/verify-email?token=${token}`),
+        url: verifyEmailUrl(env, token),
         expires: new Date(expires).toISOString().replace('T', ' ').slice(0, 16) + ' UTC',
       },
       idempotencyKey: `verify:${hash}`,
