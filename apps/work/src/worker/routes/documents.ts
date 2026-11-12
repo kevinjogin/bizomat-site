@@ -108,7 +108,7 @@ const docDTO = (d: DocumentRow, access?: string) => ({
 documentRoutes.get('/workspaces/:ws/documents', async (c) => {
   const user = c.get('user');
   const wsId = c.req.param('ws');
-  const role = await requireWorkspace(c.env.DB, wsId, user.id);
+  const role = await requireWorkspace(c.env.DB, wsId, user.id, 'viewer');
   const archived = c.req.query('archived') === '1';
   const boardId = c.req.query('boardId');
   const itemId = c.req.query('itemId');

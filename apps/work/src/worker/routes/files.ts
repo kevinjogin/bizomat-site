@@ -3,7 +3,8 @@ import type { AppEnv } from '../env';
 import { HttpError, badRequest, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { activityStmt } from '../services/audit';
-import { requireDocument, requireItem, requireWorkspace } from '../services/permissions';
+import { requireDocument, requireWorkspace } from '../services/permissions';
+import { requireTask } from '../services/access';
 import { broadcast } from '../realtime/board-room';
 
 export const fileRoutes = new Hono<AppEnv>();
@@ -87,7 +88,7 @@ fileRoutes.post('/files', async (c) => {
   const id = newId();
   if (scope === 'item') {
     const itemId = String(form.get('itemId') ?? '');
-    const { item, board } = await requireItem(c.env.DB, itemId, user.id, 'edit');
+    const { item, board } = await requireTask(c.env.DB, itemId, user.id, 'upload');
     const { name, type, bytes } = await validateUpload(file);
     const key = `ws/${board.workspace_id}/boards/${board.id}/${id}`;
     await c.env.FILES.put(key, bytes, { httpMetadata: { contentType: type }, customMetadata: { uploader: user.id } });
@@ -160,12 +161,12 @@ async function loadAttachment(c: any, need: 'view' | 'edit') {
   let access: string;
   if (a.scope === 'item') {
     // Resolve visibility first (404 hides existence), then enforce edit (403).
-    const r = await requireItem(c.env.DB, a.item_id, userId, 'view').catch(() => {
+    const r = await requireTask(c.env.DB, a.item_id, userId, 'view').catch(() => {
       throw notFound('File');
     });
-    if (need === 'edit') await requireItem(c.env.DB, a.item_id, userId, 'edit');
+    if (need === 'edit') await requireTask(c.env.DB, a.item_id, userId, 'upload');
     if (r.item.workspace_id !== a.workspace_id) throw notFound('File');
-    access = r.access;
+    access = r.project ? r.project.access : r.caps.edit ? 'edit' : 'view';
   } else if (a.scope === 'document') {
     const r = await requireDocument(c.env.DB, a.document_id, userId, 'view').catch(() => {
       throw notFound('File');

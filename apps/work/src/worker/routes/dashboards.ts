@@ -5,7 +5,7 @@ import type { AppEnv } from '../env';
 import { badRequest, body, forbidden, newId, notFound, now, parseJson } from '../lib/util';
 import { workspaceMembers } from '../services/mappers';
 import { accessibleBoardIds, requireWorkspace, wsAtLeast } from '../services/permissions';
-import { computeWidget, loadBoardData, makeCtx, type WidgetConfig } from '../services/stats';
+import { computeWidget, loadBoardDataFor, makeCtx, type WidgetConfig } from '../services/stats';
 import { assertFolder } from './folders';
 
 export const dashboardRoutes = new Hono<AppEnv>();
@@ -63,14 +63,14 @@ function sanitizeConfig(raw: unknown): WidgetConfig {
 async function loadDashboard(c: any, needEdit: boolean) {
   const d = (await c.env.DB.prepare('SELECT * FROM dashboards WHERE id = ?').bind(c.req.param('id')).first()) as DashboardRow | null;
   if (!d) throw notFound('Dashboard');
-  const role = await requireWorkspace(c.env.DB, d.workspace_id, c.get('user').id);
+  const role = await requireWorkspace(c.env.DB, d.workspace_id, c.get('user').id, 'viewer');
   if (needEdit && !(wsAtLeast(role, 'member'))) throw forbidden('Viewers cannot edit dashboards');
   return { dashboard: d, role };
 }
 
 dashboardRoutes.get('/workspaces/:ws/dashboards', async (c) => {
   const wsId = c.req.param('ws');
-  await requireWorkspace(c.env.DB, wsId, c.get('user').id);
+  await requireWorkspace(c.env.DB, wsId, c.get('user').id, 'viewer');
   const rows = await c.env.DB.prepare(`SELECT * FROM dashboards WHERE workspace_id = ? AND ${c.req.query('archived') === '1' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'} ORDER BY created_at`).bind(wsId).all<DashboardRow>();
   return c.json(rows.results.map(dashDTO));
 });
@@ -181,7 +181,7 @@ dashboardRoutes.post('/dashboards/:id/widgets', async (c) => {
 async function loadWidget(c: any) {
   const w = (await c.env.DB.prepare('SELECT * FROM dashboard_widgets WHERE id = ?').bind(c.req.param('widgetId')).first()) as (WidgetRow & { workspace_id: string }) | null;
   if (!w) throw notFound('Widget');
-  const role = await requireWorkspace(c.env.DB, w.workspace_id, c.get('user').id);
+  const role = await requireWorkspace(c.env.DB, w.workspace_id, c.get('user').id, 'viewer');
   if (!wsAtLeast(role, 'member')) throw forbidden('Viewers cannot edit dashboards');
   return w;
 }
@@ -212,7 +212,7 @@ dashboardRoutes.get('/dashboards/:id/data', async (c) => {
   const configured = parseJson<string[]>(dashboard.board_ids_json, []);
   const boardIds = (configured.length ? configured : Array.from(accessible)).filter((b) => accessible.has(b));
   const [data, members, widgets, tz] = await Promise.all([
-    loadBoardData(c.env.DB, boardIds),
+    loadBoardDataFor(c.env.DB, dashboard.workspace_id, user.id, boardIds),
     workspaceMembers(c.env.DB, dashboard.workspace_id),
     c.env.DB.prepare('SELECT * FROM dashboard_widgets WHERE dashboard_id = ? ORDER BY position').bind(dashboard.id).all<WidgetRow>(),
     c.env.DB.prepare('SELECT timezone FROM users WHERE id = ?').bind(user.id).first<{ timezone: string }>(),
@@ -235,6 +235,6 @@ dashboardRoutes.post('/boards/:id/chart', async (c) => {
   const { requireBoard } = await import('../services/permissions');
   const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'view');
   const cfg = sanitizeConfig(await c.req.json().catch(() => ({})));
-  const [data, members] = await Promise.all([loadBoardData(c.env.DB, [board.id]), workspaceMembers(c.env.DB, board.workspace_id)]);
+  const [data, members] = await Promise.all([loadBoardDataFor(c.env.DB, board.workspace_id, user.id, [board.id]), workspaceMembers(c.env.DB, board.workspace_id)]);
   return c.json(await computeWidget(c.env.DB, 'chart', { ...cfg, boardIds: [board.id] }, makeCtx(data, members, user.id)));
 });

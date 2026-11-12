@@ -4,7 +4,7 @@ import { Icon } from './Icon';
 
 // ------------------------------------------------------------------ Modal
 
-export function Modal({ title, onClose, children, footer, wide, labelledBy }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; labelledBy?: string }) {
+export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; /** Nearly full screen (report preview). */ xl?: boolean; labelledBy?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
@@ -38,7 +38,7 @@ export function Modal({ title, onClose, children, footer, wide, labelledBy }: { 
   const id = labelledBy ?? 'modal-title';
   return createPortal(
     <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className={`modal${wide ? ' wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby={id} ref={ref}>
+      <div className={`modal${wide || xl ? ' wide' : ''}${xl ? ' xl' : ''}`} role="dialog" aria-modal="true" aria-labelledby={id} ref={ref}>
         <div className="modal-header">
           <h2 id={id} className="grow">
             {title}

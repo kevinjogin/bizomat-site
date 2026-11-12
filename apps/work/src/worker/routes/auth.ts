@@ -11,7 +11,42 @@ import { checkOrigin, createSession, destroySession, isSecureEnv, requireAuth, r
 import { getProvider, pkceChallenge, providers } from '../auth/providers';
 import { audit } from '../services/audit';
 import { bumpMetric, eventStmt } from '../services/analytics';
-import { acceptPendingInvitations, createWorkspaceStmts, listWorkspaces, userDTO, type UserRow } from './helpers';
+import { createWorkspaceStmts, listWorkspaces, userDTO, type UserRow } from './helpers';
+import { acceptInvitation, type InvitationRow } from '../services/invitations';
+import { notify } from '../services/notify';
+import { systemSvc } from '../services/context';
+import { ROLE_LABELS } from '../../shared/permissions';
+import type { WorkspaceRole } from '../../shared/types';
+
+/** A pending, unexpired invitation for this token and email, or null. */
+async function pendingInvite(db: D1Database, token: string | undefined, email: string): Promise<InvitationRow | null> {
+  if (!token || token.length > 200) return null;
+  const inv = await db.prepare('SELECT * FROM invitations WHERE token_hash = ? AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > ?').bind(await sha256Hex(token), now()).first<InvitationRow>();
+  return inv && inv.email.toLowerCase() === email.toLowerCase() ? inv : null;
+}
+
+/** Accept with the token after sign-up or sign-in, tell the inviter, and return where to go. */
+async function acceptWithToken(c: any, token: string, user: { id: string; email: string; name: string }) {
+  const r = await acceptInvitation(c.env.DB, token, user, clientIp(c));
+  if (!r.already) await tellInviter(c, r.inv, user);
+  return r;
+}
+
+async function tellInviter(c: any, inv: InvitationRow, user: { id: string; email: string; name: string }) {
+  const ws = await c.env.DB.prepare('SELECT name FROM workspaces WHERE id = ?').bind(inv.workspace_id).first();
+  const svc = { ...systemSvc(c.env, (p: Promise<unknown>) => c.executionCtx.waitUntil(p)), actor: user };
+  await notify(svc, {
+    workspaceId: inv.workspace_id,
+    userIds: [inv.invited_by],
+    type: 'invitation_accepted',
+    title: `${user.name} accepted your invitation to ${ws?.name ?? 'the workspace'}`,
+    body: `Role: ${ROLE_LABELS[inv.role as WorkspaceRole] ?? inv.role}`,
+    link: `/w/${inv.workspace_id}/settings/members`,
+    entityType: 'workspace',
+    entityId: inv.workspace_id,
+    email: { template: 'invitation_accepted', organisation: ws?.name ?? '', person: user.name, email: user.email, role: ROLE_LABELS[inv.role as WorkspaceRole] ?? inv.role, url: `/w/${inv.workspace_id}/settings/members` },
+  });
+}
 
 export const authRoutes = new Hono<AppEnv>();
 
@@ -39,10 +74,11 @@ authRoutes.post('/signup', async (c) => {
   checkOrigin(c);
   const ip = clientIp(c);
   await rateLimit(c.env.DB, `signup:ip:${ip}`, 10, 60 * 60_000);
-  const input = await body(c, z.object({ email: emailSchema, name: z.string().trim().min(1).max(100), password: z.string().max(256) }));
-  const hasInvite = await c.env.DB.prepare('SELECT 1 FROM invitations WHERE email = ? AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > ?')
-    .bind(input.email, now())
-    .first();
+  const input = await body(c, z.object({ email: emailSchema, name: z.string().trim().min(1).max(100), password: z.string().max(256), inviteToken: z.string().max(200).optional() }));
+  // An invitation counts only with its token (from the email or the link the inviter shared): knowing that an address
+  // was invited is not enough to join an organisation.
+  const invite = await pendingInvite(c.env.DB, input.inviteToken, input.email);
+  const hasInvite = !!invite;
   if (!signupAllowed(c.env) && !hasInvite) throw new HttpError(403, 'Sign-up is by invitation only');
   const problem = passwordProblems(input.password, input.email);
   if (problem) throw new HttpError(400, problem);
@@ -63,11 +99,12 @@ authRoutes.post('/signup', async (c) => {
   stmts.push(eventStmt(c.env.DB, { type: 'user.registered', userId, entityType: 'user', entityId: userId, metadata: { provider: 'password', invited: !!hasInvite }, at: t }));
   if (!hasInvite) stmts.push(...createWorkspaceStmts(c.env.DB, { name: `${input.name.split(' ')[0]}'s workspace`, ownerId: userId }).stmts);
   await c.env.DB.batch(stmts);
-  await acceptPendingInvitations(c.env.DB, userId, input.email);
+  let joined: string | null = null;
+  if (invite && input.inviteToken) joined = (await acceptWithToken(c, input.inviteToken, { id: userId, email: input.email, name: input.name })).inv.workspace_id;
   const session = await createSession(c, userId, 'password');
   await audit(c.env.DB, { actorId: userId, action: 'user.signup', targetType: 'user', targetId: userId, ip });
   const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(userId).first<UserRow>();
-  return c.json({ user: userDTO(user!), csrfToken: session.csrfToken, workspaces: await listWorkspaces(c.env.DB, userId) }, 201);
+  return c.json({ user: userDTO(user!), csrfToken: session.csrfToken, workspaces: await listWorkspaces(c.env.DB, userId), joinedWorkspaceId: joined }, 201);
 });
 
 authRoutes.post('/login', async (c) => {
@@ -95,7 +132,6 @@ authRoutes.post('/login', async (c) => {
   }
   await c.env.DB.prepare('UPDATE users SET failed_logins = 0, locked_until = NULL WHERE id = ?').bind(user.id).run();
   await resetRateLimit(c.env.DB, `login:email:${input.email}`);
-  await acceptPendingInvitations(c.env.DB, user.id, user.email);
   const session = await createSession(c, user.id, 'password');
   await audit(c.env.DB, { actorId: user.id, action: 'auth.login', ip });
   const { getPlatformRole } = await import('../services/platform-admin');
@@ -177,6 +213,8 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
     const existing = await db.prepare('SELECT id FROM users WHERE email = ?').bind(profile.email).first<{ id: string }>();
     if (existing) userId = existing.id;
     else {
+      // Google verifies the address, so an invitation to it lets the person create an account; joining the
+      // organisation still happens on the invitation page with its token.
       const invited = await db.prepare('SELECT 1 FROM invitations WHERE email = ? AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at > ?').bind(profile.email, t).first();
       if (!signupAllowed(c.env) && !invited) return fail('signup_disabled');
       userId = newId();
@@ -191,7 +229,6 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
   }
   const user = await db.prepare('SELECT * FROM users WHERE id = ?').bind(userId).first<UserRow>();
   if (!user || user.disabled_at) return fail('account_disabled');
-  await acceptPendingInvitations(db, user.id, user.email);
   if (!row.link_user_id) await createSession(c, user.id, provider.id);
   await audit(db, { actorId: user.id, action: row.link_user_id ? 'auth.identity_linked' : 'auth.login', metadata: { provider: provider.id }, ip: clientIp(c) });
   return c.redirect(row.link_user_id ? '/settings/security?linked=1' : row.redirect_to ?? '/', 302);
@@ -214,18 +251,9 @@ authRoutes.get('/invitations/:token', async (c) => {
 
 authRoutes.post('/invitations/:token/accept', requireAuth, async (c) => {
   const user = c.get('user');
-  const inv = await c.env.DB.prepare('SELECT * FROM invitations WHERE token_hash = ?')
-    .bind(await sha256Hex(c.req.param('token')))
-    .first<{ id: string; workspace_id: string; email: string; role: string; expires_at: number; accepted_at: number | null; revoked_at: number | null }>();
-  if (!inv || inv.revoked_at) throw new HttpError(404, 'Invitation not found');
-  if (inv.expires_at < now()) throw new HttpError(410, 'This invitation has expired');
-  if (inv.email.toLowerCase() !== user.email.toLowerCase()) throw new HttpError(403, `This invitation was sent to ${inv.email}. Sign in with that account to accept it.`);
-  const t = now();
-  await c.env.DB.batch([
-    c.env.DB.prepare('INSERT OR IGNORE INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, ?, ?)').bind(inv.workspace_id, user.id, inv.role, t),
-    c.env.DB.prepare('UPDATE invitations SET accepted_at = COALESCE(accepted_at, ?) WHERE id = ?').bind(t, inv.id),
-    eventStmt(c.env.DB, { type: 'member.joined', userId: user.id, workspaceId: inv.workspace_id, entityType: 'workspace', entityId: inv.workspace_id, metadata: { role: inv.role }, at: t }),
-  ]);
-  await audit(c.env.DB, { workspaceId: inv.workspace_id, actorId: user.id, action: 'member.joined', targetType: 'user', targetId: user.id });
-  return c.json({ workspaceId: inv.workspace_id });
+  await rateLimit(c.env.DB, `invite-accept:${user.id}`, 30, 15 * 60_000);
+  const r = await acceptWithToken(c, c.req.param('token'), user);
+  const grants = r.already ? [] : (r.grants ?? []);
+  const onlyItem = grants.length === 1 && grants[0].kind === 'item' && r.valid?.items.has(grants[0].id) ? grants[0].id : null;
+  return c.json({ workspaceId: r.inv.workspace_id, itemId: onlyItem });
 });

@@ -54,6 +54,14 @@ export async function signup(name = 'Test User', email = uniqueEmail()): Promise
   return makeClient(cookieFrom(res), data.csrfToken, data.user, data.workspaces[0]?.id);
 }
 
+/** Sign up through an invitation link: the token joins the invited workspace. */
+export async function signupWith(name: string, email: string, inviteToken: string): Promise<Client> {
+  const res = await raw('POST', '/api/auth/signup', { body: { email, name, password: PASSWORD, inviteToken } });
+  if (res.status !== 201) throw new Error(`signup failed ${res.status}: ${await res.text()}`);
+  const data = (await res.json()) as any;
+  return makeClient(cookieFrom(res), data.csrfToken, data.user, data.joinedWorkspaceId ?? data.workspaces[0]?.id);
+}
+
 export async function login(email: string, password = PASSWORD): Promise<Client> {
   const res = await raw('POST', '/api/auth/login', { body: { email, password } });
   if (res.status !== 200) throw new Error(`login failed ${res.status}: ${await res.text()}`);

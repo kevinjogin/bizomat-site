@@ -1,3 +1,4 @@
+import { formatScaled, sumScaled } from '../../shared/money';
 import { Fragment, useMemo, useRef, useState } from 'react';
 import { getColumnType, labelsOf, PALETTE } from '../../shared/columns';
 import { positionBetween } from '../../shared/items';
@@ -520,6 +521,11 @@ function ColumnSummary({ col, items }: { col: ColumnDTO; items: ItemDTO[]; color
     );
   }
   const nums = items.map((i) => i.values[col.id]).filter((v): v is number => typeof v === 'number');
+  if (col.type === 'currency' && nums.length) {
+    // Integer arithmetic for money (src/shared/money.ts): no floating-point drift in group subtotals.
+    const { total } = sumScaled(nums);
+    return <span title={`Sum of ${nums.length} amount${nums.length === 1 ? '' : 's'}`}>{formatScaled(total, col.settings.currency ?? null)}</span>;
+  }
   if (['number', 'currency', 'percentage', 'rating', 'formula'].includes(col.type) && nums.length) {
     const sum = nums.reduce((a, b) => a + b, 0);
     const show = col.type === 'percentage' || col.type === 'rating' ? sum / nums.length : sum;

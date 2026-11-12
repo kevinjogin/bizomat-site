@@ -67,7 +67,7 @@ export function builtinTemplates(): TemplateDef[] {
         { key: 'deps', title: 'Depends on', type: 'dependency' },
         { key: 'progress', title: 'Progress', type: 'progress', settings: { mode: 'subitems' } },
         { key: 'effort', title: 'Effort (days)', type: 'number' },
-        { key: 'budget', title: 'Budget', type: 'currency', settings: { currency: 'USD', decimals: 0 } },
+        { key: 'budget', title: 'Budget', type: 'currency', settings: { currencyMode: 'inherit', decimals: 0, financeRole: 'approved_budget' } },
       ],
       items: [
         { group: 'plan', name: 'Define scope and goals', values: { status: 'done', timeline: { start: d, end: addDays(d, 3) }, priority: 'high', effort: 3 }, subitems: ['Stakeholder interviews', 'Write scope statement'] },
@@ -140,7 +140,7 @@ export function builtinTemplates(): TemplateDef[] {
           { id: 'won', label: 'Won', color: '#00a36c', done: true },
           { id: 'lost', label: 'Lost', color: '#e5484d' },
         ] } },
-        { key: 'value', title: 'Deal value', type: 'currency', settings: { currency: 'USD', decimals: 0 } },
+        { key: 'value', title: 'Deal value', type: 'currency', settings: { currencyMode: 'inherit', decimals: 0, financeRole: 'other' } },
         { key: 'probability', title: 'Probability', type: 'percentage' },
         { key: 'forecast', title: 'Forecast', type: 'formula', settings: { formula: 'ROUND({Deal value} * {Probability} / 100, 0)' } },
         { key: 'email', title: 'Contact email', type: 'email' },

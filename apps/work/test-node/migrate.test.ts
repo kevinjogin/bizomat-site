@@ -64,8 +64,8 @@ beforeAll(() => {
   db.prepare('INSERT INTO users (id, email, name, password_hash, avatar_key, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)').run(ids.u1, SECRET_EMAIL, 'Person One', SECRET_HASH, keys.avatar, t, t);
   db.prepare('INSERT INTO users (id, email, name, password_hash, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)').run(ids.u2, 'second.person@example.com', 'Person Two', SECRET_HASH, t, t);
   db.prepare('INSERT INTO workspaces (id, name, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?)').run(ids.ws, 'Synthetic', ids.u1, t, t);
-  db.prepare("INSERT INTO workspace_members VALUES (?, ?, 'owner', ?)").run(ids.ws, ids.u1, t);
-  db.prepare("INSERT INTO workspace_members VALUES (?, ?, 'member', ?)").run(ids.ws, ids.u2, t);
+  db.prepare("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, 'owner', ?)").run(ids.ws, ids.u1, t);
+  db.prepare("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at) VALUES (?, ?, 'member', ?)").run(ids.ws, ids.u2, t);
   db.prepare('INSERT INTO boards (id, workspace_id, name, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)').run(ids.board, ids.ws, 'Board', ids.u1, t, t);
   db.prepare('INSERT INTO groups (id, workspace_id, board_id, name, position, created_at) VALUES (?, ?, ?, ?, ?, ?)').run(ids.group, ids.ws, ids.board, 'Group', 1024.0, t);
   db.prepare('INSERT INTO items (id, workspace_id, board_id, group_id, name, description, position, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').run(ids.item, ids.ws, ids.board, ids.group, 'Item', TRICKY, 1.5, ids.u1, t, t);

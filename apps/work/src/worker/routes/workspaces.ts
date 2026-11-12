@@ -1,14 +1,11 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, clientIp, newId, notFound, now, parseJson, randomToken, sha256Hex } from '../lib/util';
+import { HttpError, body, clientIp, newId, notFound, now, parseJson } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { audit, auditStmt } from '../services/audit';
-import { eventStmt } from '../services/analytics';
-import { svcFromContext } from '../services/context';
 import { workspaceMembers } from '../services/mappers';
-import { notify } from '../services/notify';
-import { requireWorkspace, wsAtLeast } from '../services/permissions';
+import { requireWorkspace } from '../services/permissions';
 import { createWorkspaceStmts, listWorkspaces } from './helpers';
 
 export const workspaceRoutes = new Hono<AppEnv>();
@@ -82,137 +79,11 @@ workspaceRoutes.delete('/workspaces/:ws', async (c) => {
   return c.json({ ok: true });
 });
 
-// ------------------------------------------------------------------ members
-
-workspaceRoutes.get('/workspaces/:ws/members', async (c) => {
-  await requireWorkspace(c.env.DB, c.req.param('ws'), c.get('user').id);
-  return c.json(await workspaceMembers(c.env.DB, c.req.param('ws')));
-});
-
-workspaceRoutes.patch('/workspaces/:ws/members/:userId', async (c) => {
-  const user = c.get('user');
-  const wsId = c.req.param('ws');
-  const targetId = c.req.param('userId');
-  const myRole = await requireWorkspace(c.env.DB, wsId, user.id, 'admin');
-  const { role } = await body(c, z.object({ role: z.enum(['owner', 'admin', 'member', 'viewer']) }));
-  const target = await c.env.DB.prepare('SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ?').bind(wsId, targetId).first<{ role: string }>();
-  if (!target) throw notFound('Member');
-  if ((role === 'owner' || target.role === 'owner') && myRole !== 'owner') throw new HttpError(403, 'Only owners can grant or remove the owner role');
-  if (target.role === 'owner' && role !== 'owner') {
-    const owners = await c.env.DB.prepare("SELECT COUNT(*) AS n FROM workspace_members WHERE workspace_id = ? AND role = 'owner'").bind(wsId).first<{ n: number }>();
-    if ((owners?.n ?? 0) <= 1) throw new HttpError(400, 'A workspace must keep at least one owner');
-  }
-  await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE workspace_members SET role = ? WHERE workspace_id = ? AND user_id = ?').bind(role, wsId, targetId),
-    auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'member.role_changed', targetType: 'user', targetId, metadata: { from: target.role, to: role }, ip: clientIp(c) }),
-  ]);
-  return c.json({ ok: true });
-});
-
-workspaceRoutes.delete('/workspaces/:ws/members/:userId', async (c) => {
-  const user = c.get('user');
-  const wsId = c.req.param('ws');
-  const targetId = c.req.param('userId');
-  const myRole = await requireWorkspace(c.env.DB, wsId, user.id);
-  const self = targetId === user.id;
-  if (!self && !wsAtLeast(myRole, 'admin')) throw new HttpError(403, 'Only admins can remove members');
-  const target = await c.env.DB.prepare('SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ?').bind(wsId, targetId).first<{ role: string }>();
-  if (!target) throw notFound('Member');
-  if (target.role === 'owner') {
-    if (!self && myRole !== 'owner') throw new HttpError(403, 'Only owners can remove owners');
-    const owners = await c.env.DB.prepare("SELECT COUNT(*) AS n FROM workspace_members WHERE workspace_id = ? AND role = 'owner'").bind(wsId).first<{ n: number }>();
-    if ((owners?.n ?? 0) <= 1) throw new HttpError(400, 'Transfer ownership before the last owner leaves');
-  }
-  await c.env.DB.batch([
-    c.env.DB.prepare('DELETE FROM workspace_members WHERE workspace_id = ? AND user_id = ?').bind(wsId, targetId),
-    c.env.DB.prepare('DELETE FROM board_members WHERE workspace_id = ? AND user_id = ?').bind(wsId, targetId),
-    c.env.DB.prepare('DELETE FROM team_members WHERE workspace_id = ? AND user_id = ?').bind(wsId, targetId),
-    c.env.DB.prepare('DELETE FROM document_members WHERE workspace_id = ? AND user_id = ?').bind(wsId, targetId),
-    auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: self ? 'member.left' : 'member.removed', targetType: 'user', targetId, ip: clientIp(c) }),
-  ]);
-  return c.json({ ok: true });
-});
-
-// -------------------------------------------------------------- invitations
-
-workspaceRoutes.get('/workspaces/:ws/invitations', async (c) => {
-  await requireWorkspace(c.env.DB, c.req.param('ws'), c.get('user').id, 'admin');
-  const rows = await c.env.DB.prepare(
-    `SELECT i.id, i.email, i.role, i.created_at, i.expires_at, i.accepted_at, i.revoked_at, u.name AS invited_by_name
-     FROM invitations i JOIN users u ON u.id = i.invited_by WHERE i.workspace_id = ? ORDER BY i.created_at DESC LIMIT 200`,
-  )
-    .bind(c.req.param('ws'))
-    .all();
-  return c.json(rows.results);
-});
-
-workspaceRoutes.post('/workspaces/:ws/invitations', async (c) => {
-  const user = c.get('user');
-  const wsId = c.req.param('ws');
-  const role = await requireWorkspace(c.env.DB, wsId, user.id, 'member');
-  const ws = await c.env.DB.prepare('SELECT name, settings_json FROM workspaces WHERE id = ?').bind(wsId).first<{ name: string; settings_json: string }>();
-  const settings = parseJson<{ allowMembersToInvite?: boolean }>(ws?.settings_json, {});
-  if (!wsAtLeast(role, 'admin') && !settings.allowMembersToInvite) throw new HttpError(403, 'Only admins can invite members');
-  await rateLimit(c.env.DB, `invite:user:${user.id}`, 50, 60 * 60_000);
-  const input = await body(c, z.object({ email: z.string().trim().toLowerCase().email().max(320), role: z.enum(['admin', 'member', 'viewer']).default('member') }));
-  if (input.role === 'admin' && !wsAtLeast(role, 'admin')) throw new HttpError(403, 'Only admins can invite admins');
-  const existingMember = await c.env.DB.prepare('SELECT u.id FROM users u JOIN workspace_members m ON m.user_id = u.id WHERE m.workspace_id = ? AND u.email = ?').bind(wsId, input.email).first();
-  if (existingMember) throw new HttpError(409, 'That person is already a member');
-  const token = randomToken(32);
-  const id = newId();
-  const t = now();
-  await c.env.DB.batch([
-    c.env.DB.prepare("UPDATE invitations SET revoked_at = ? WHERE workspace_id = ? AND email = ? AND accepted_at IS NULL AND revoked_at IS NULL").bind(t, wsId, input.email),
-    c.env.DB.prepare('INSERT INTO invitations (id, workspace_id, email, role, token_hash, invited_by, created_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(
-      id,
-      wsId,
-      input.email,
-      input.role,
-      await sha256Hex(token),
-      user.id,
-      t,
-      t + 7 * 86_400_000,
-    ),
-    auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'invitation.created', targetType: 'invitation', targetId: id, metadata: { email: input.email, role: input.role }, ip: clientIp(c) }),
-    eventStmt(c.env.DB, { type: 'member.invited', userId: user.id, workspaceId: wsId, entityType: 'invitation', entityId: id, metadata: { role: input.role }, at: t }),
-  ]);
-  // Existing users get an in-app notification in their other workspaces' inbox.
-  const existingUser = await c.env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(input.email).first<{ id: string }>();
-  if (existingUser) {
-    const other = await c.env.DB.prepare('SELECT workspace_id FROM workspace_members WHERE user_id = ? LIMIT 1').bind(existingUser.id).first<{ workspace_id: string }>();
-    if (other) {
-      await notify(svcFromContext(c), {
-        workspaceId: other.workspace_id,
-        userIds: [existingUser.id],
-        type: 'invitation',
-        title: `${user.name} invited you to ${ws?.name}`,
-        body: `Role: ${input.role}`,
-        link: `/invite/${token}`,
-        entityType: 'workspace',
-        entityId: wsId,
-      });
-    }
-  }
-  // No email provider is configured, so the link is returned for the inviter to share.
-  const origin = new URL(c.req.url).origin + (c.env.BASE_PATH ?? '');
-  return c.json({ id, email: input.email, role: input.role, inviteUrl: `${origin}/invite/${token}`, emailDelivery: 'not_configured' }, 201);
-});
-
-workspaceRoutes.delete('/workspaces/:ws/invitations/:id', async (c) => {
-  const user = c.get('user');
-  const wsId = c.req.param('ws');
-  await requireWorkspace(c.env.DB, wsId, user.id, 'admin');
-  const r = await c.env.DB.prepare('UPDATE invitations SET revoked_at = ? WHERE id = ? AND workspace_id = ? AND accepted_at IS NULL').bind(now(), c.req.param('id'), wsId).run();
-  if (!r.meta.changes) throw notFound('Invitation');
-  await audit(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'invitation.revoked', targetId: c.req.param('id') });
-  return c.json({ ok: true });
-});
-
 // -------------------------------------------------------------------- teams
 
 workspaceRoutes.get('/workspaces/:ws/teams', async (c) => {
   const wsId = c.req.param('ws');
-  await requireWorkspace(c.env.DB, wsId, c.get('user').id);
+  await requireWorkspace(c.env.DB, wsId, c.get('user').id, 'viewer');
   const teams = await c.env.DB.prepare('SELECT * FROM teams WHERE workspace_id = ? ORDER BY name').bind(wsId).all<{ id: string; name: string; description: string; color: string }>();
   const members = await c.env.DB.prepare('SELECT team_id, user_id FROM team_members WHERE workspace_id = ?').bind(wsId).all<{ team_id: string; user_id: string }>();
   return c.json(teams.results.map((t) => ({ ...t, memberIds: members.results.filter((m) => m.team_id === t.id).map((m) => m.user_id) })));
@@ -332,6 +203,13 @@ workspaceRoutes.get('/workspaces/:ws/activity', async (c) => {
      WHERE a.workspace_id = ? AND a.board_id IN (${boards.map(() => '?').join(',')}) ORDER BY a.created_at DESC LIMIT 50`,
   )
     .bind(wsId, ...boards)
-    .all();
-  return c.json(rows.results);
+    .all<Record<string, any>>();
+  // Amounts in financial columns are not shown where the person may not see financial data.
+  const { financeHiddenBoards } = await import('../services/access');
+  const hiddenBoards = await financeHiddenBoards(c.env.DB, wsId, user.id, Array.from(new Set(rows.results.map((r) => r.board_id).filter(Boolean))));
+  if (!hiddenBoards.size) return c.json(rows.results);
+  const cols = await c.env.DB.prepare(`SELECT id, type, settings_json FROM columns WHERE workspace_id = ? AND type IN ('currency','number')`).bind(wsId).all<{ id: string; type: string; settings_json: string }>();
+  const { isFinancialColumn } = await import('../../shared/permissions');
+  const fin = new Set(cols.results.filter((col) => isFinancialColumn({ type: col.type, settings: parseJson(col.settings_json, {}) })).map((col) => col.id));
+  return c.json(rows.results.map((r) => (hiddenBoards.has(r.board_id) && fin.has(r.column_id) ? { ...r, old_value: null, new_value: null, restricted: true } : r)));
 });
