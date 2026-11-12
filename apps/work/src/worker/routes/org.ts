@@ -1,6 +1,7 @@
 // Organisation members and invitations (an organisation is a workspace). Every check is made here, on the server.
 
 import { Hono } from 'hono';
+import { AppUrlError, inviteUrl } from '../services/app-url';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, notFound, now, parseJson, randomToken, sha256Hex } from '../lib/util';
@@ -185,7 +186,7 @@ orgRoutes.delete('/workspaces/:ws/members/:userId', async (c) => {
       userId: targetId,
       to: person.email,
       toName: person.name,
-      data: { template: 'project_membership', organisation: ws?.name ?? '', project: null, change: `You were removed from ${ws?.name ?? 'the organisation'} and no longer have access to its projects.`, by: user.name, url: cfg.baseUrl || '/' },
+      data: { template: 'project_membership', organisation: ws?.name ?? '', project: null, change: `You were removed from ${ws?.name ?? 'the organisation'} and no longer have access to its projects.`, by: user.name, url: cfg.baseUrl ? `${cfg.baseUrl}/` : '/' },
       idempotencyKey: `member-removed:${wsId}:${targetId}:${now()}`,
     }).catch(() => null);
   }
@@ -253,9 +254,21 @@ async function checkGrants(db: D1Database, wsId: string, userId: string, grants:
   }
 }
 
+/**
+ * The invitation link: always the configured public address (https://bizomat.ai/tasks/invite/<token> in production),
+ * never the host the request arrived on (services/app-url.ts). A wrong configuration stops the invitation instead of
+ * sending a wrong link.
+ */
 function inviteUrlFor(c: any, token: string) {
-  const origin = new URL(c.req.url).origin + (c.env.BASE_PATH ?? '');
-  return `${origin}/invite/${token}`;
+  try {
+    return inviteUrl(c.env, token);
+  } catch (e) {
+    if (e instanceof AppUrlError) {
+      console.error('invite_url_unavailable', e.message);
+      throw new HttpError(503, `Invitation links cannot be created: ${e.message}. Ask the administrator to fix the app address.`);
+    }
+    throw e;
+  }
 }
 
 orgRoutes.post('/workspaces/:ws/invitations', async (c) => {

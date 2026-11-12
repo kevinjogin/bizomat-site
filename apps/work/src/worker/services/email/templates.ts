@@ -149,7 +149,7 @@ export type TemplateData =
   | { template: 'project_membership'; organisation: string; project?: string | null; change: string; by: string; url: string; preferencesUrl?: string }
   | { template: 'permission_change'; organisation: string; project?: string | null; change: string; by: string; url: string; preferencesUrl?: string }
   | { template: 'report_generated'; organisation: string; project: string; report: string; period: string; by: string; url: string; preferencesUrl?: string }
-  | { template: 'test'; organisation: string; sentBy: string; provider: string; at: string }
+  | { template: 'test'; organisation: string; sentBy: string; provider: string; at: string; url?: string }
   | { template: 'verify_email'; name: string; email: string; url: string; expires: string }
   | { template: 'notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string };
 
@@ -342,6 +342,10 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         preheader: 'Email delivery from BIZOMAT Project Management works.',
         heading: 'Email delivery works',
         intro: [`${d.sentBy} sent this test from ${d.organisation} at ${d.at}.`, `Provider: ${d.provider}.`],
+        button: d.url ? { label: 'Check an email link', url: d.url } : undefined,
+        after: d.url
+          ? ['The button should open the BIZOMAT page "Email links work" at bizomat.ai/tasks/invite/link-check. If it shows an error or another address, the email service’s link tracking needs attention (see Email in the founder console).']
+          : undefined,
         reason: 'You received this email because you asked for a test message.',
       });
     case 'verify_email':

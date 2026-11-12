@@ -261,7 +261,21 @@ export function InvitePage() {
   const { session, refresh } = useSession();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
-  const inv = useQuery({ queryKey: ['invite', token], queryFn: () => get(`/auth/invitations/${token}`), retry: false });
+  const linkCheck = token === 'link-check';
+  const inv = useQuery({ queryKey: ['invite', token], queryFn: () => get(`/auth/invitations/${token}`), retry: false, enabled: !linkCheck });
+  if (linkCheck) {
+    // The target of the "Check an email link" button in test emails: shows where the link really arrived.
+    const here = `${window.location.origin}${window.location.pathname}`;
+    return (
+      <AuthLayout title="Email links work" subtitle="This page was opened from a BIZOMAT email link.">
+        <div className="info-box" role="status">
+          You arrived at <strong style={{ wordBreak: 'break-all' }}>{here}</strong>. Invitation links in emails open this same page with the invitation’s own code instead of “link-check”.
+        </div>
+        <p className="muted small" style={{ marginTop: 12 }}>If the address above does not start with the BIZOMAT address you expected, check the link tracking settings of the email service (founder console, Email).</p>
+        <Link className="btn block lg" to="/login">Go to sign in</Link>
+      </AuthLayout>
+    );
+  }
   if (inv.isLoading) return <Loading />;
   if (inv.error) return <AuthLayout title="Invitation not found"><p className="muted">This invitation link is invalid.</p><Link to="/login">Go to sign in</Link></AuthLayout>;
   const d = inv.data;

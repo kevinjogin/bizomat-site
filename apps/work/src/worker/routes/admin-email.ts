@@ -3,6 +3,8 @@
 // at rest and never returned, only whether they are set and the key's last four characters.
 
 import { Hono } from 'hono';
+import { appBase, appUrl, appUrlProblem, inviteUrl } from '../services/app-url';
+import { checkEmailLink } from '../services/email/link-check';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, badRequest, body, clientIp, now, randomToken } from '../lib/util';
@@ -20,8 +22,12 @@ function requireFounder(c: any) {
 }
 
 function webhookUrl(c: any): string {
-  const origin = new URL(c.req.url).origin + (c.env.BASE_PATH ?? '');
-  return `${origin}/api/email-webhooks/brevo`;
+  // The configured public address (services/app-url.ts); the request's host only if that is misconfigured.
+  try {
+    return appUrl(c.env, ['api', 'email-webhooks', 'brevo']);
+  } catch {
+    return `${new URL(c.req.url).origin}${c.env.BASE_PATH ?? ''}/api/email-webhooks/brevo`;
+  }
 }
 
 adminEmailRoutes.get('/email', async (c) => {
@@ -61,6 +67,8 @@ adminEmailRoutes.get('/email', async (c) => {
       updatedAt: s.updatedAt ?? null,
       updatedBy: s.updatedBy ?? null,
     },
+    // The address every email link is built from (never the request's host), and why it is unusable if it is.
+    appAddress: { href: cfg.baseUrl || null, problem: appUrlProblem(c.env), invitationExample: cfg.baseUrl ? `${cfg.baseUrl}/invite/<token>` : null },
     webhookUrl: webhookUrl(c),
     endpoint: BREVO_ENDPOINT,
     // The console never shows content: no subjects, only the kind of message and its delivery.
@@ -165,7 +173,7 @@ adminEmailRoutes.post('/email/test', async (c) => {
     userId: user.id,
     to: user.email,
     toName: user.name,
-    data: { template: 'test', organisation: 'BIZOMAT founder console', sentBy: user.name, provider: cfg.provider === 'brevo' ? `Brevo${cfg.sandbox ? ' (sandbox: accepted and dropped)' : ''}` : cfg.provider, at: new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC' },
+    data: { template: 'test', organisation: 'BIZOMAT founder console', sentBy: user.name, provider: cfg.provider === 'brevo' ? `Brevo${cfg.sandbox ? ' (sandbox: accepted and dropped)' : ''}` : cfg.provider, at: new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC', ...(cfg.baseUrl ? { url: inviteUrl(c.env, 'link-check') } : {}) },
     idempotencyKey: `admin-test:${user.id}:${now()}`,
   });
   if (!r.queued) return c.json({ ok: false, status: r.reason, error: r.reason === 'suppressed' ? 'Your address is on the suppression list (it bounced or was blocked before).' : r.reason });
@@ -180,4 +188,20 @@ adminEmailRoutes.post('/email/process', async (c) => {
   invalidateEmailSettings();
   await c.env.DB.prepare("UPDATE email_outbox SET next_attempt_at = ? WHERE status = 'deferred'").bind(now()).run();
   return c.json(await processOutbox(c.env, { max: 50 }));
+});
+
+/**
+ * Follows a link copied from a received email (Brevo rewrites links for click tracking) and says where it ends:
+ * DNS for the tracking host, HTTPS, each redirect, the final address (tokens masked).
+ */
+adminEmailRoutes.post('/email/link-check', async (c) => {
+  const user = c.get('user');
+  await rateLimit(c.env.DB, `admin-email-link-check:${user.id}`, 30, 60 * 60_000);
+  const input = await body(c, z.object({ link: z.string().trim().min(8).max(4000) }));
+  const problem = appUrlProblem(c.env);
+  if (problem) throw new HttpError(409, `The app address is misconfigured: ${problem}`);
+  const base = appBase(c.env);
+  const r = await checkEmailLink(input.link, { appHost: new URL(base.origin).hostname, expected: `${base.href}/` });
+  await audit(c.env.DB, { actorId: user.id, action: 'admin.email_link_check', metadata: { host: r.dns.host, ok: r.ok, hops: r.hops.length }, ip: clientIp(c) });
+  return c.json(r);
 });
