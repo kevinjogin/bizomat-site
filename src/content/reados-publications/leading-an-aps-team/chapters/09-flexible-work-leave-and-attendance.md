@@ -79,7 +79,7 @@ Read its clauses on flexible work, part-time work, working from home and leave b
 
 ## Test the roster with the numbers
 
-A business ground has to be shown, not assumed. Hannah measured the effect of Mei's request with the [Team Workload](/tools/workload/) tool. It divides planned work hours by people times available hours per person, and reports AVAILABLE up to 85 per cent utilisation, FULL up to 100 per cent and OVERLOADED above that, with the buffer in hours.
+A business ground has to be shown, not assumed. Hannah measured the effect of Mei's request with the [Team Workload](/tools/?tool=workload) tool. It divides planned work hours by people times available hours per person, and reports AVAILABLE up to 85 per cent utilisation, FULL up to 100 per cent and OVERLOADED above that, with the buffer in hours.
 
 This is an illustration. The work is the section's 2026–27 handling time (Chapter 2). The people are the six officer positions; the team leaders' time goes to supervision, rosters, checks and escalations. Each full-time officer gives NRIO's 1,275 productive hours a year, already net of leave, so leave is not taken out twice. The tool takes whole people and one figure for hours, so Hannah entered Mei at 0.6 through the average: 5.6 FTE × 1,275 = 7,140 hours, entered as 6 people at 1,190 hours.
 
