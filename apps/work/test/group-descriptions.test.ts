@@ -136,8 +136,9 @@ describe('group descriptions on the API', () => {
 });
 
 describe('section K, Categories, in project reports', () => {
-  it('is the last section and is offered by default', () => {
-    expect(REPORT_SECTIONS.at(-1)).toBe('categories');
+  it('follows J (the project controls sections L to N come after it) and is offered by default', () => {
+    expect(REPORT_SECTIONS.indexOf('categories')).toBe(REPORT_SECTIONS.indexOf('timeline') + 1);
+    expect(REPORT_SECTIONS.slice(REPORT_SECTIONS.indexOf('categories') + 1)).toEqual(['schedule', 'baseline', 'evm']);
     expect(SECTION_LABELS.categories).toBe('K. Categories');
   });
 
