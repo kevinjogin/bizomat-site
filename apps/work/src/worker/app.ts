@@ -5,6 +5,11 @@ import { HttpError } from './lib/util';
 import { requireAuth, resolveAuth, sessionCookieName } from './auth/session';
 import { authRoutes } from './routes/auth';
 import { workspaceRoutes } from './routes/workspaces';
+import { orgRoutes } from './routes/org';
+import { accessRoutes } from './routes/access';
+import { emailAdminRoutes, emailWebhookRoutes } from './routes/email';
+import { financeRoutes } from './routes/finance';
+import { reportRoutes } from './routes/reports';
 import { boardRoutes } from './routes/boards';
 import { itemRoutes } from './routes/items';
 import { fileRoutes } from './routes/files';
@@ -84,11 +89,18 @@ export function createApp() {
   });
 
   app.route('/api/auth', authRoutes);
+  // Provider callbacks: no session, their own authentication (src/worker/routes/email.ts).
+  app.route('/api/email-webhooks', emailWebhookRoutes);
 
   // Everything below requires authentication.
   const api = new Hono<AppEnv>();
   api.use('*', requireAuth);
   api.route('/', workspaceRoutes);
+  api.route('/', orgRoutes);
+  api.route('/', accessRoutes);
+  api.route('/', emailAdminRoutes);
+  api.route('/', financeRoutes);
+  api.route('/', reportRoutes);
   api.route('/', boardRoutes);
   api.route('/', itemRoutes);
   api.route('/', fileRoutes);

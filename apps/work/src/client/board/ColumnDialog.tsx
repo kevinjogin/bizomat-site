@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { COLUMN_TYPES, canConvert, columnTypes, getColumnType, PALETTE, type LabelOption } from '../../shared/columns';
+import { COLUMN_TYPES, FINANCE_ROLES, FINANCE_ROLE_LABELS, canConvert, columnTypes, getColumnType, PALETTE, type LabelOption } from '../../shared/columns';
+import { CURRENCIES } from '../../shared/money';
 import { checkFormula } from '../../shared/formula';
 import type { ColumnDTO } from '../../shared/types';
 import { Icon } from '../components/ui/Icon';
@@ -111,19 +112,49 @@ function TypeSettings({ type, settings, setSettings, columns, formulaError }: { 
     case 'percentage':
       return (
         <div className="row wrap">
+          {type === 'number' ? (
+            <Field label="Holds money" hint="Finance permissions and summaries then apply.">
+              <label className="checkbox"><input type="checkbox" checked={!!settings.financial} onChange={(e) => set('financial', e.target.checked)} /> Financial amounts</label>
+            </Field>
+          ) : null}
           <Field label="Decimals"><input className="input" type="number" min={0} max={6} value={settings.decimals ?? 0} onChange={(e) => set('decimals', Number(e.target.value))} /></Field>
           <Field label="Minimum"><input className="input" type="number" value={settings.min ?? ''} onChange={(e) => set('min', e.target.value === '' ? undefined : Number(e.target.value))} /></Field>
           <Field label="Maximum"><input className="input" type="number" value={settings.max ?? ''} onChange={(e) => set('max', e.target.value === '' ? undefined : Number(e.target.value))} /></Field>
         </div>
       );
-    case 'currency':
+    case 'currency': {
+      // Stored settings, not the currency shown on the board (which may come from the project or organisation).
+      const mode = settings.currencyMode ?? (settings.currency && settings.currencySource === 'column' ? 'fixed' : 'inherit');
       return (
-        <div className="row wrap">
-          <Field label="Currency code"><input className="input" value={settings.currency ?? 'USD'} maxLength={3} onChange={(e) => set('currency', e.target.value.toUpperCase())} /></Field>
-          <Field label="Decimals"><input className="input" type="number" min={0} max={4} value={settings.decimals ?? 2} onChange={(e) => set('decimals', Number(e.target.value))} /></Field>
-          <Field label="Minimum"><input className="input" type="number" value={settings.min ?? ''} onChange={(e) => set('min', e.target.value === '' ? undefined : Number(e.target.value))} /></Field>
+        <div className="col" style={{ gap: 8 }}>
+          <div className="row wrap">
+            <Field label="Currency" hint="Changing it never changes the amounts already entered.">
+              <select
+                className="select"
+                value={mode === 'inherit' ? '' : settings.currency ?? ''}
+                onChange={(e) => {
+                  if (e.target.value) setSettings({ ...settings, currency: e.target.value, currencyMode: 'fixed', currencyConfirmed: true });
+                  else setSettings({ ...settings, currency: undefined, currencyMode: 'inherit', currencyConfirmed: true });
+                }}
+              >
+                <option value="">Use the project's or organisation's currency</option>
+                {CURRENCIES.map((c) => <option key={c.code} value={c.code}>{c.code} - {c.name}</option>)}
+              </select>
+            </Field>
+            <Field label="Finance role">
+              <select className="select" value={settings.financeRole ?? ''} onChange={(e) => set('financeRole', e.target.value || undefined)}>
+                <option value="">Not set</option>
+                {FINANCE_ROLES.map((r) => <option key={r} value={r}>{FINANCE_ROLE_LABELS[r]}</option>)}
+              </select>
+            </Field>
+          </div>
+          <div className="row wrap">
+            <Field label="Decimals"><input className="input" type="number" min={0} max={4} value={settings.decimals ?? 2} onChange={(e) => set('decimals', Number(e.target.value))} /></Field>
+            <Field label="Minimum"><input className="input" type="number" value={settings.min ?? ''} onChange={(e) => set('min', e.target.value === '' ? undefined : Number(e.target.value))} /></Field>
+          </div>
         </div>
       );
+    }
     case 'rating':
       return <Field label="Maximum stars"><input className="input" type="number" min={3} max={10} value={settings.max ?? 5} onChange={(e) => set('max', Number(e.target.value))} /></Field>;
     case 'text':

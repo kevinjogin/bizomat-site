@@ -32,6 +32,8 @@ const Settings = lazy(() => import('./pages/Settings'));
 const Workspaces = lazy(() => import('./pages/Workspaces'));
 const AdminApp = lazy(() => import('./admin/AdminApp'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+const TaskPage = lazy(() => import('./pages/TaskPage'));
+const MyInvitations = lazy(() => import('./pages/MyInvitations'));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, error, refresh } = useSession();
@@ -96,6 +98,7 @@ export function App() {
       <Route path="/admin/*" element={<RequireAuth>{page(<AdminApp />)}</RequireAuth>} />
       <Route path="/" element={<RequireAuth><RootRedirect /></RequireAuth>} />
       <Route path="/welcome" element={<RequireAuth>{page(<Workspaces standalone />)}</RequireAuth>} />
+      <Route path="/invitations" element={<RequireAuth>{page(<MyInvitations />)}</RequireAuth>} />
       <Route
         path="/w/:wsId/*"
         element={
@@ -112,6 +115,7 @@ export function App() {
                   <Route path="boards" element={page(<Boards />)} />
                   <Route path="boards/:boardId" element={page(<BoardPage />)} />
                   <Route path="boards/:boardId/views/:viewId" element={page(<BoardPage />)} />
+                  <Route path="tasks/:itemId" element={page(<TaskPage />)} />
                   <Route path="favourites" element={page(<Favourites />)} />
                   <Route path="recent" element={page(<Recent />)} />
                   <Route path="dashboards" element={page(<Dashboards />)} />

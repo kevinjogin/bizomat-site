@@ -4,6 +4,7 @@ import { bumpMetric } from './services/analytics';
 import { systemSvc } from './services/context';
 import { notifyDueDates, retryFailedRuns, runScheduledAutomations } from './services/automations';
 import { canonicalRedirect, mountOf, remount, unmount } from './mount';
+import { processOutbox } from './services/email/outbox';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -15,6 +16,12 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
   results.scheduled = await runScheduledAutomations(svc, at);
   results.retried = await retryFailedRuns(svc, at);
   results.dueNotifications = await notifyDueDates(svc, at);
+  // Email: hand queued and delayed messages to the provider, within the daily limit.
+  try {
+    results.email = await processOutbox(env, { max: 100 });
+  } catch (e) {
+    results.email = { error: e instanceof Error ? e.message : 'failed' };
+  }
   // Housekeeping & retention. Uses the wall clock (not the schedule time) so a
   // delayed or replayed schedule can never end still-valid sessions.
   //  * sessions are kept as login history for 365 days after they end;
@@ -32,6 +39,8 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     env.DB.prepare('DELETE FROM app_errors WHERE created_at < ?').bind(wall - 90 * DAY),
     env.DB.prepare('DELETE FROM oauth_states WHERE expires_at < ?').bind(wall),
     env.DB.prepare('DELETE FROM rate_limits WHERE window_start < ?').bind(wall - DAY),
+    // Email bodies are kept 30 days for diagnostics, then cleared; the delivery record stays.
+    env.DB.prepare("UPDATE email_outbox SET html = '', text = '' WHERE created_at < ? AND status NOT IN ('queued','deferred','sending') AND (html != '' OR text != '')").bind(wall - 30 * DAY),
     env.DB.prepare("INSERT INTO system_kv (key, value, updated_at) VALUES ('last_maintenance', ?1, ?2) ON CONFLICT(key) DO UPDATE SET value = ?1, updated_at = ?2").bind(JSON.stringify({ at: wall, ...results }), wall),
   ]);
   return results;

@@ -6,7 +6,8 @@
 // (fetch(request, env, ctx)), so routing, authentication, security headers and
 // metrics are exactly the Worker's.
 
-import { mkdirSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import type { Duplex } from 'node:stream';
@@ -27,7 +28,7 @@ import { CRON, QuarterHourScheduler } from './scheduler.ts';
 import { FileStore, openRuntimeDatabase } from './store/file-store.ts';
 import { CACHE_NAMESPACE, dataLayout, FILES_BUCKET, type DataLayout } from './store/layout.ts';
 import { acquireServerLock } from './store/server-lock.ts';
-import { applyMigrations, readMigrationsDir, type Migration } from './store/migrations.ts';
+import { applyMigrations, migrationStatus, readMigrationsDir, type Migration } from './store/migrations.ts';
 import { integrityProblems, openDatabase, type DatabaseSync } from './store/sqlite.ts';
 
 declare const __WORK_MIGRATIONS__: Migration[] | undefined;
@@ -74,7 +75,20 @@ export function createRuntime(config: NodeConfig, options: RuntimeOptions = {}):
   }
   let migrationsApplied: string[];
   try {
-    migrationsApplied = applyMigrations(db, options.migrations ?? bundledMigrations());
+    const migrations = options.migrations ?? bundledMigrations();
+    // Before changing an existing database, keep a transaction-consistent copy of it on the same volume
+    // (pre-migration-backups/, the newest five kept). Restoring it: docs/deployment/fly-deployment.md.
+    const status = migrationStatus(db, migrations);
+    if (status.pending.length && status.applied.length) {
+      const dir = join(layout.root, 'pre-migration-backups');
+      mkdirSync(dir, { recursive: true, mode: 0o700 });
+      const file = join(dir, `db-before-${status.pending[0].replace(/\.sql$/, '')}-${new Date().toISOString().replace(/[:.]/g, '-')}.sqlite`);
+      db.exec(`VACUUM INTO '${file.replace(/'/g, "''")}'`);
+      log({ event: 'pre_migration_backup', file, pending: status.pending });
+      const old = readdirSync(dir).filter((f) => f.startsWith('db-before-') && f.endsWith('.sqlite')).sort((a, b) => statSync(join(dir, b)).mtimeMs - statSync(join(dir, a)).mtimeMs);
+      for (const f of old.slice(5)) rmSync(join(dir, f), { force: true });
+    }
+    migrationsApplied = applyMigrations(db, migrations);
   } catch (e) {
     db.close();
     throw e;

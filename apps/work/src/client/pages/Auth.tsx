@@ -1,3 +1,5 @@
+import { ROLE_LABELS } from '../../shared/permissions';
+import type { WorkspaceRole } from '../../shared/types';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -132,10 +134,12 @@ export function SignupPage() {
     setBusy(true);
     setError(null);
     try {
-      const s = await post('/auth/signup', { name, email, password });
+      // Signing up from an invitation link: the token joins the invited organisation (src/worker/routes/auth.ts).
+      const inviteToken = /^\/invite\/([A-Za-z0-9_-]{10,200})$/.exec(next)?.[1];
+      const s = await post('/auth/signup', { name, email, password, ...(inviteToken ? { inviteToken } : {}) });
       setCsrfToken(s.csrfToken);
       qc.setQueryData(['me'], s);
-      navigate(next, { replace: true });
+      navigate(s.joinedWorkspaceId ? `/w/${s.joinedWorkspaceId}/home` : next, { replace: true });
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -178,13 +182,14 @@ export function InvitePage() {
     try {
       const r = await post(`/auth/invitations/${token}/accept`);
       await refresh();
-      navigate(`/w/${r.workspaceId}/home`);
+      // An invitation to one task opens that task; otherwise the organisation's home.
+      navigate(r.itemId ? `/w/${r.workspaceId}/tasks/${r.itemId}` : `/w/${r.workspaceId}/home`);
     } catch (e) {
       setError(errorMessage(e));
     }
   };
   return (
-    <AuthLayout title={`Join ${d.workspaceName}`} subtitle={`${d.inviterName} invited ${d.email} as ${d.role}.`}>
+    <AuthLayout title={`Join ${d.workspaceName}`} subtitle={`${d.inviterName} invited ${d.email} as ${ROLE_LABELS[d.role as WorkspaceRole] ?? d.role}.`}>
       {d.status !== 'pending' ? <div className="info-box">This invitation is {d.status}.</div> : session ? (
         <>
           {session.user.email.toLowerCase() !== d.email.toLowerCase() ? (

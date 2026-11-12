@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { get, patch, post, errorMessage } from '../../lib/api';
-import { canEdit, useSession, useWorkspace } from '../../lib/session';
+import { canEdit, isGuest, useSession, useWorkspace } from '../../lib/session';
 import { applyTheme, storedTheme, useShortcut, useDebounced, type ThemePref } from '../../lib/hooks';
 import { timeAgo } from '../../lib/format';
 import { BrandMark, Icon, ProductLockup } from '../ui/Icon';
@@ -14,6 +14,9 @@ import { FolderIcon, buildTree, useFolders } from '../folders/Folders';
 import { PlatformFooter } from './PlatformLinks';
 import { BRAND, PLATFORM_URLS, platformLinkProps } from '../../lib/brand';
 import { appUrl } from '../../lib/base';
+
+/** What a guest's navigation shows: their own work and what is shared with them. */
+const GUEST_NAV = new Set(['home', 'my-work', 'my-day', 'inbox', 'notifications', 'workspaces', 'boards', 'favourites', 'recent', 'settings/profile']);
 
 const NAV: { to: string; label: string; icon: string; key?: string }[] = [
   { to: 'home', label: 'Home', icon: 'home', key: 'g h' },
@@ -105,7 +108,7 @@ function Sidebar({ onNewBoard }: { onNewBoard: () => void }) {
   const favs = useQuery({ queryKey: ['favourites', ws.id], queryFn: () => get<any[]>(`/workspaces/${ws.id}/favourites`) });
   return (
     <nav className="sidebar" aria-label="Main navigation">
-      {NAV.map((n) => (
+      {NAV.filter((n) => !isGuest(ws.role) || GUEST_NAV.has(n.to)).map((n) => (
         <NavLink key={n.to} to={`${base}/${n.to}`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
           <Icon name={n.icon} /> {n.label}
           {n.to === 'notifications' && (notif.data?.unreadCount ?? 0) > 0 ? <span className="count">{notif.data!.unreadCount > 99 ? '99+' : notif.data!.unreadCount}</span> : null}

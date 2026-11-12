@@ -83,7 +83,7 @@ function dto(g: GoalRow, progress: { percent: number; done?: number; total?: num
 goalRoutes.get('/workspaces/:ws/goals', async (c) => {
   const user = c.get('user');
   const wsId = c.req.param('ws');
-  await requireWorkspace(c.env.DB, wsId, user.id);
+  await requireWorkspace(c.env.DB, wsId, user.id, 'viewer');
   const rows = await c.env.DB.prepare(`SELECT * FROM goals WHERE workspace_id = ? AND ${c.req.query('archived') === '1' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'} ORDER BY created_at`).bind(wsId).all<GoalRow>();
   const accessible = new Set(await accessibleBoardIds(c.env.DB, wsId, user.id));
   const out = [];

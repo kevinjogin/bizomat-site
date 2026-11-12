@@ -4,17 +4,19 @@ import { canConvert, convertValue, getColumnType, isColumnType, PALETTE, sanitiz
 import { checkFormula } from '../../shared/formula';
 import { positionBetween } from '../../shared/items';
 import { sanitizeFilter } from '../../shared/filters';
-import type { BoardBundle, ViewType } from '../../shared/types';
+import type { BoardBundle, ViewType, WorkspaceRole } from '../../shared/types';
 import type { AppEnv } from '../env';
 import { HttpError, badRequest, body, clientIp, newId, notFound, now, parseJson } from '../lib/util';
 import { broadcast } from '../realtime/board-room';
-import { activityStmt, auditStmt } from '../services/audit';
+import { activityStmt, auditEventStmt, auditStmt } from '../services/audit';
 import { BLANK_TEMPLATE, builtinTemplates, cloneBoard, instantiateTemplate } from '../services/boards';
 import { boardDTO, columnDTO, groupDTO, itemDTO, viewDTO, workspaceMembers, type ColumnRow, type GroupRow, type ViewRow } from '../services/mappers';
 import { computeBoardAccess, requireBoard, requireWorkspace, type BoardRow, type ItemRow } from '../services/permissions';
 import { buildSearchText } from '../services/item-ops';
 import { assertFolder } from './folders';
 import { eventStmt } from '../services/analytics';
+import { financePolicy, financialColumnIds, memberAccessMap, requireProject, stripValues } from '../services/access';
+import { resolveColumnCurrency } from '../../shared/finance';
 
 export const boardRoutes = new Hono<AppEnv>();
 
@@ -34,16 +36,17 @@ boardRoutes.get('/workspaces/:ws/boards', async (c) => {
   const archived = c.req.query('archived') === '1';
   const kind = c.req.query('kind');
   const rows = await c.env.DB.prepare(
-    `SELECT b.*, bm.role AS board_role,
+    `SELECT b.*, bm.role AS board_role, COALESCE(bp.denied, 0) AS bp_denied,
        (SELECT COUNT(*) FROM items i WHERE i.board_id = b.id AND i.archived_at IS NULL AND i.parent_item_id IS NULL) AS item_count
-     FROM boards b LEFT JOIN board_members bm ON bm.board_id = b.id AND bm.user_id = ?
-     WHERE b.workspace_id = ? AND ${archived ? 'b.archived_at IS NOT NULL' : 'b.archived_at IS NULL'} ${kind ? 'AND b.kind = ?' : "AND b.kind != 'template'"}
+     FROM boards b LEFT JOIN board_members bm ON bm.board_id = b.id AND bm.user_id = ?1
+     LEFT JOIN board_permissions bp ON bp.board_id = b.id AND bp.user_id = ?1
+     WHERE b.workspace_id = ?2 AND ${archived ? 'b.archived_at IS NOT NULL' : 'b.archived_at IS NULL'} ${kind ? 'AND b.kind = ?3' : "AND b.kind != 'template'"}
      ORDER BY b.position, b.created_at`,
   )
     .bind(user.id, wsId, ...(kind ? [kind] : []))
-    .all<BoardRow & { board_role: 'owner' | 'editor' | 'viewer' | null; item_count: number }>();
+    .all<BoardRow & { board_role: 'owner' | 'editor' | 'viewer' | null; item_count: number; bp_denied: number }>();
   const out = rows.results
-    .map((b) => ({ b, access: computeBoardAccess(b, role, b.board_role, user.id) }))
+    .map((b) => ({ b, access: computeBoardAccess(b, role, b.board_role, user.id, !!b.bp_denied) }))
     .filter((x) => x.access)
     .map(({ b, access }) => ({ ...boardDTO(b), access: access!, itemCount: b.item_count }));
   return c.json(out);
@@ -92,9 +95,10 @@ boardRoutes.post('/workspaces/:ws/boards', async (c) => {
 
 boardRoutes.get('/boards/:id', async (c) => {
   const user = c.get('user');
-  const { board, access } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'view');
+  const { board, access, caps, wsRole } = await requireProject(c.env.DB, c.req.param('id'), user.id, 'view');
   const db = c.env.DB;
-  const [groups, columns, items, views, members, boardMembers, counts] = await Promise.all([
+  const policy = await financePolicy(db, board.workspace_id);
+  const [groups, columns, items, views, members, boardMembers, counts, memberAccess] = await Promise.all([
     db.prepare('SELECT * FROM groups WHERE board_id = ? AND archived_at IS NULL ORDER BY position').bind(board.id).all<GroupRow>(),
     db.prepare('SELECT * FROM columns WHERE board_id = ? ORDER BY position').bind(board.id).all<ColumnRow>(),
     db.prepare(`SELECT * FROM items WHERE board_id = ? AND ${c.req.query('archived') === '1' ? 'archived_at IS NOT NULL' : 'archived_at IS NULL'} ORDER BY position`).bind(board.id).all<ItemRow>(),
@@ -102,18 +106,33 @@ boardRoutes.get('/boards/:id', async (c) => {
     workspaceMembers(db, board.workspace_id),
     db.prepare('SELECT user_id, role FROM board_members WHERE board_id = ?').bind(board.id).all<{ user_id: string; role: 'owner' | 'editor' | 'viewer' }>(),
     db.prepare('SELECT item_id, COUNT(*) AS n FROM updates WHERE board_id = ? AND deleted_at IS NULL GROUP BY item_id').bind(board.id).all<{ item_id: string; n: number }>(),
+    memberAccessMap(db, board),
   ]);
   const updateCounts = new Map(counts.results.map((r) => [r.item_id, r.n]));
   const subCounts = new Map<string, number>();
   for (const i of items.results) if (i.parent_item_id) subCounts.set(i.parent_item_id, (subCounts.get(i.parent_item_id) ?? 0) + 1);
+  // Financial columns are left out entirely for people without finance access (values and the columns themselves).
+  const allColumns = columns.results.map(columnDTO);
+  const hidden = caps.viewFinance ? new Set<string>() : financialColumnIds(allColumns);
+  const visibleColumns = allColumns
+    .filter((col) => !hidden.has(col.id))
+    .map((col) => {
+      if (col.type !== 'currency') return col;
+      const r = resolveColumnCurrency(col.settings, board.currency ?? null, policy.defaultCurrency);
+      return { ...col, settings: { ...col.settings, currency: r.currency ?? undefined, currencySource: r.source } };
+    });
+  // Guests see the people on this project, not the whole organisation.
+  const people = wsRole === 'guest' ? members.filter((m) => memberAccess[m.id] && memberAccess[m.id] !== 'none') : members;
   const bundle: BoardBundle = {
-    board: { ...boardDTO(board), access },
+    board: { ...boardDTO(board), access, caps },
     groups: groups.results.map(groupDTO),
-    columns: columns.results.map(columnDTO),
-    items: items.results.map((i) => ({ ...itemDTO(i), subitemCount: subCounts.get(i.id) ?? 0, updateCount: updateCounts.get(i.id) ?? 0 })),
+    columns: visibleColumns,
+    items: items.results.map((i) => stripValues({ ...itemDTO(i), subitemCount: subCounts.get(i.id) ?? 0, updateCount: updateCounts.get(i.id) ?? 0 }, hidden)),
     views: views.results.map(viewDTO),
-    members,
+    members: people,
     boardMembers: boardMembers.results.map((m) => ({ userId: m.user_id, role: m.role })),
+    memberAccess: Object.fromEntries(people.map((m) => [m.id, memberAccess[m.id] ?? 'none'])),
+    finance: { workspaceCurrency: policy.defaultCurrency, boardCurrency: board.currency ?? null, effectiveCurrency: board.currency ?? policy.defaultCurrency, hiddenColumns: hidden.size },
   };
   c.executionCtx.waitUntil(
     db.prepare("INSERT INTO recents (user_id, workspace_id, entity_type, entity_id, visited_at) VALUES (?, ?, 'board', ?, ?) ON CONFLICT(user_id, entity_type, entity_id) DO UPDATE SET visited_at = excluded.visited_at")
@@ -176,17 +195,19 @@ boardRoutes.patch('/boards/:id', async (c) => {
 
 boardRoutes.post('/boards/:id/duplicate', async (c) => {
   const user = c.get('user');
-  const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'view');
+  const { board, caps } = await requireProject(c.env.DB, c.req.param('id'), user.id, 'view');
   await requireWorkspace(c.env.DB, board.workspace_id, user.id, 'member');
   const input = await body(c, z.object({ name: z.string().trim().min(1).max(200).optional(), withItems: z.boolean().default(true), withAutomations: z.boolean().default(true) }));
+  await refuseFinanceCopy(c.env.DB, board.id, caps.viewFinance, input.withItems);
   const id = await cloneBoard(c.env.DB, board.id, { name: input.name ?? `${board.name} (copy)`, createdBy: user.id, withItems: input.withItems, withAutomations: input.withAutomations, kind: board.kind === 'template' ? 'board' : board.kind });
   return c.json({ id }, 201);
 });
 
 boardRoutes.post('/boards/:id/save-as-template', async (c) => {
   const user = c.get('user');
-  const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'admin');
+  const { board, caps } = await requireProject(c.env.DB, c.req.param('id'), user.id, 'manage');
   const input = await body(c, z.object({ name: z.string().trim().min(1).max(200), withItems: z.boolean().default(false) }));
+  await refuseFinanceCopy(c.env.DB, board.id, caps.viewFinance, input.withItems);
   const id = await cloneBoard(c.env.DB, board.id, { name: input.name, createdBy: user.id, kind: 'template', withItems: input.withItems, withAutomations: true });
   return c.json({ id }, 201);
 });
@@ -239,38 +260,36 @@ boardRoutes.delete('/boards/:id', async (c) => {
 
 boardRoutes.put('/boards/:id/members', async (c) => {
   const user = c.get('user');
-  const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'admin');
+  const p = await requireProject(c.env.DB, c.req.param('id'), user.id, 'manageMembers');
   const input = await body(c, z.object({ userId: z.string(), role: z.enum(['owner', 'editor', 'viewer']) }));
-  const member = await c.env.DB.prepare('SELECT 1 FROM workspace_members WHERE workspace_id = ? AND user_id = ?').bind(board.workspace_id, input.userId).first();
-  if (!member) throw badRequest('User must be a workspace member');
-  await c.env.DB.batch([
-    c.env.DB.prepare('INSERT INTO board_members (board_id, workspace_id, user_id, role) VALUES (?, ?, ?, ?) ON CONFLICT(board_id, user_id) DO UPDATE SET role = excluded.role').bind(board.id, board.workspace_id, input.userId, input.role),
-    auditStmt(c.env.DB, { workspaceId: board.workspace_id, actorId: user.id, action: 'board.member_set', targetType: 'board', targetId: board.id, metadata: input, ip: clientIp(c) }),
-  ]);
-  rt(c, board.id, 'board_updated');
+  await setProjectLevel(c, p, input.userId, input.role === 'owner' ? 'manage' : input.role === 'editor' ? 'edit' : 'view');
   return c.json({ ok: true });
 });
 
 boardRoutes.delete('/boards/:id/members/:userId', async (c) => {
   const user = c.get('user');
-  const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'admin');
-  const owners = await c.env.DB.prepare("SELECT user_id FROM board_members WHERE board_id = ? AND role = 'owner'").bind(board.id).all<{ user_id: string }>();
+  const p = await requireProject(c.env.DB, c.req.param('id'), user.id, 'manageMembers');
+  const owners = await c.env.DB.prepare("SELECT user_id FROM board_members WHERE board_id = ? AND role = 'owner'").bind(p.board.id).all<{ user_id: string }>();
   if (owners.results.length === 1 && owners.results[0].user_id === c.req.param('userId')) throw badRequest('A board must keep at least one owner');
-  await c.env.DB.prepare('DELETE FROM board_members WHERE board_id = ? AND user_id = ?').bind(board.id, c.req.param('userId')).run();
-  rt(c, board.id, 'board_updated');
+  await setProjectLevel(c, p, c.req.param('userId'), 'default');
   return c.json({ ok: true });
 });
 
 boardRoutes.get('/boards/:id/activity', async (c) => {
   const user = c.get('user');
-  const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'view');
+  const { board, caps } = await requireProject(c.env.DB, c.req.param('id'), user.id, 'view');
+  const hidden = caps.viewFinance ? new Set<string>() : financialColumnIds((await c.env.DB.prepare('SELECT * FROM columns WHERE board_id = ?').bind(board.id).all<ColumnRow>()).results.map(columnDTO));
   const rows = await c.env.DB.prepare(
     `SELECT a.*, u.name AS actor_name, i.name AS item_name FROM activity_log a LEFT JOIN users u ON u.id = a.actor_id LEFT JOIN items i ON i.id = a.item_id
      WHERE a.board_id = ? ORDER BY a.created_at DESC LIMIT 200`,
   )
     .bind(board.id)
     .all<any>();
-  return c.json(rows.results.map((r) => ({ ...r, old_value: parseJson(r.old_value, null), new_value: parseJson(r.new_value, null) })));
+  return c.json(
+    rows.results.map((r) =>
+      hidden.has(r.column_id) ? { ...r, old_value: null, new_value: null, restricted: true } : { ...r, old_value: parseJson(r.old_value, null), new_value: parseJson(r.new_value, null) },
+    ),
+  );
 });
 
 // ------------------------------------------------------------------- groups
@@ -546,3 +565,84 @@ boardRoutes.delete('/views/:viewId', async (c) => {
   if (!view.owner_id) rt(c, board.id, 'views_changed');
   return c.json({ ok: true });
 });
+
+type LevelChoice = 'default' | 'none' | 'view' | 'edit' | 'manage';
+
+/**
+ * Set a person's access level on a project, with the rules against privilege escalation: nobody changes their own
+ * access (except organisation administrators, who always have full access anyway), nobody gives a level above their
+ * own, organisation owners and admins cannot be restricted, and the person must be an active member.
+ */
+export async function setProjectLevel(c: any, p: import('../services/access').ProjectAuth, targetId: string, level: LevelChoice, overrides?: Record<string, boolean | null>) {
+  const user = c.get('user');
+  const db: D1Database = c.env.DB;
+  const board = p.board;
+  if (targetId === user.id && p.wsRole !== 'owner' && p.wsRole !== 'admin') throw new HttpError(403, 'You cannot change your own access');
+  const target = await db.prepare("SELECT role FROM workspace_members WHERE workspace_id = ? AND user_id = ? AND status = 'active'").bind(board.workspace_id, targetId).first<{ role: WorkspaceRole }>();
+  if (!target) throw badRequest('User must be a workspace member');
+  if (target.role === 'owner' || target.role === 'admin') {
+    if (level !== 'default' || (overrides && Object.values(overrides).some((v) => v === false))) throw new HttpError(400, 'Organisation owners and admins always have full access to every project');
+  }
+  const rank = { view: 1, edit: 2, manage: 3 } as const;
+  if ((level === 'view' || level === 'edit' || level === 'manage') && rank[level] > rank[p.caps.level]) throw new HttpError(403, 'You cannot give more access than you have');
+  if (overrides) {
+    for (const [k, v] of Object.entries(overrides)) {
+      if (v === true && !(p.caps as unknown as Record<string, boolean>)[k]) throw new HttpError(403, 'You cannot give a permission you do not have');
+    }
+  }
+  const before = await db.prepare('SELECT bm.role, bp.denied FROM workspace_members m LEFT JOIN board_members bm ON bm.board_id = ?1 AND bm.user_id = m.user_id LEFT JOIN board_permissions bp ON bp.board_id = ?1 AND bp.user_id = m.user_id WHERE m.workspace_id = ?2 AND m.user_id = ?3').bind(board.id, board.workspace_id, targetId).first<{ role: string | null; denied: number | null }>();
+  const t = now();
+  const stmts: D1PreparedStatement[] = [];
+  if (level === 'view' || level === 'edit' || level === 'manage') {
+    const role = level === 'manage' ? 'owner' : level === 'edit' ? 'editor' : 'viewer';
+    stmts.push(db.prepare('INSERT INTO board_members (board_id, workspace_id, user_id, role) VALUES (?, ?, ?, ?) ON CONFLICT(board_id, user_id) DO UPDATE SET role = excluded.role').bind(board.id, board.workspace_id, targetId, role));
+  } else {
+    stmts.push(db.prepare('DELETE FROM board_members WHERE board_id = ? AND user_id = ?').bind(board.id, targetId));
+  }
+  const ov = overrides ?? {};
+  const col = (k: string) => (ov[k] === true ? 1 : ov[k] === false ? 0 : null);
+  stmts.push(
+    db
+      .prepare(
+        `INSERT INTO board_permissions (board_id, workspace_id, user_id, denied, view_finance, edit_finance, manage_members, create_tasks, assign_tasks, delete_tasks, generate_reports, updated_by, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(board_id, user_id) DO UPDATE SET denied = excluded.denied, view_finance = excluded.view_finance, edit_finance = excluded.edit_finance,
+           manage_members = excluded.manage_members, create_tasks = excluded.create_tasks, assign_tasks = excluded.assign_tasks, delete_tasks = excluded.delete_tasks,
+           generate_reports = excluded.generate_reports, updated_by = excluded.updated_by, updated_at = excluded.updated_at`,
+      )
+      .bind(board.id, board.workspace_id, targetId, level === 'none' ? 1 : 0, col('viewFinance'), col('editFinance'), col('manageMembers'), col('createTasks'), col('assignTasks'), col('deleteTasks'), col('generateReports'), user.id, t),
+  );
+  stmts.push(
+    auditStmt(db, { workspaceId: board.workspace_id, actorId: user.id, action: 'board.member_set', targetType: 'board', targetId: board.id, metadata: { userId: targetId, level, overrides: overrides ?? null }, ip: clientIp(c) }),
+    auditEventStmt(db, { workspaceId: board.workspace_id, boardId: board.id, actorId: user.id, type: 'project.membership_changed', before: { role: before?.role ?? null, denied: !!before?.denied }, after: { level, overrides: overrides ?? null }, metadata: { userId: targetId } }),
+  );
+  await db.batch(stmts);
+  c.executionCtx.waitUntil(broadcast(c.env, board.id, { kind: 'board_updated', actorId: user.id }));
+  if (targetId !== user.id) {
+    const ws = await db.prepare('SELECT name FROM workspaces WHERE id = ?').bind(board.workspace_id).first<{ name: string }>();
+    const { notify } = await import('../services/notify');
+    const { svcFromContext } = await import('../services/context');
+    const gained = !before?.role && (level === 'view' || level === 'edit' || level === 'manage');
+    const text = level === 'none' ? 'You no longer have access to this project.' : level === 'default' ? 'Your access now follows your organisation role.' : `You now have ${level} access.`;
+    await notify(svcFromContext(c), {
+      workspaceId: board.workspace_id,
+      userIds: [targetId],
+      type: gained ? 'project_membership' : 'permission_change',
+      title: gained ? `You were added to ${board.name}` : `Your access to ${board.name} changed`,
+      body: text,
+      link: `/w/${board.workspace_id}/boards/${board.id}`,
+      entityType: 'board',
+      entityId: board.id,
+      email: gained
+        ? { template: 'project_assignment', organisation: ws?.name ?? '', project: board.name, level, by: user.name, url: `/w/${board.workspace_id}/boards/${board.id}` }
+        : { template: 'permission_change', organisation: ws?.name ?? '', project: board.name, change: text, by: user.name, url: `/w/${board.workspace_id}/boards/${board.id}` },
+    });
+  }
+}
+
+/** A copy with items carries the amounts, and its maker owns the copy: not for people who may not see them. */
+async function refuseFinanceCopy(db: D1Database, boardId: string, canSee: boolean, withItems: boolean) {
+  if (canSee || !withItems) return;
+  const cols = (await db.prepare('SELECT * FROM columns WHERE board_id = ?').bind(boardId).all<ColumnRow>()).results.map(columnDTO);
+  if (financialColumnIds(cols).size) throw new HttpError(403, 'This project holds financial data you may not view: copy it without its items');
+}

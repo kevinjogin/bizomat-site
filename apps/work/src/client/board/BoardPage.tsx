@@ -17,6 +17,8 @@ import { BoardSettingsDialog } from './BoardSettings';
 import { VIEW_REGISTRY } from './views';
 import type { BoardViewProps } from './types';
 import { AutomationsPanel } from '../components/automations/AutomationBuilder';
+import { ReportsDialog } from './ReportsDialog';
+import { FinancePanel } from './FinancePanel';
 
 export default function BoardPage() {
   const { boardId, viewId } = useParams();
@@ -35,7 +37,7 @@ export default function BoardPage() {
   const computed = useComputedItems(bundle, memberName);
   const [quick, setQuick] = useState<QuickFilters>({ search: '', personId: null });
   const [localSettings, setLocalSettings] = useState<Record<string, ViewSettings>>({});
-  const [dialog, setDialog] = useState<null | 'settings' | 'members' | 'automations' | 'activity'>(params.get('automations') ? 'automations' : null);
+  const [dialog, setDialog] = useState<null | 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance'>(params.get('automations') ? 'automations' : params.get('reports') ? 'reports' : null);
   const itemId = params.get('item');
 
   usePageTitle(bundle?.board.name);
@@ -70,7 +72,7 @@ export default function BoardPage() {
     const status = q.error instanceof ApiError ? q.error.status : 0;
     return (
       <div className="page">
-        {status === 404 ? <EmptyState icon="lock" title="Board not found">It may have been deleted, or you don't have access.</EmptyState> : <ErrorBox error={q.error} retry={() => q.refetch()} />}
+        {status === 404 && itemId ? <TaskFallback wsId={ws.id} itemId={itemId} /> : status === 404 ? <EmptyState icon="lock" title="Board not found">It may have been deleted, or you don't have access.</EmptyState> : <ErrorBox error={q.error} retry={() => q.refetch()} />}
       </div>
     );
   }
@@ -117,11 +119,22 @@ export default function BoardPage() {
         </Modal>
       ) : null}
       {dialog === 'activity' ? <BoardActivity boardId={bundle.board.id} onClose={() => setDialog(null)} onOpenItem={(id) => { setDialog(null); openItem(id); }} /> : null}
+      {dialog === 'reports' ? <ReportsDialog bundle={bundle} onClose={() => { setDialog(null); setParams((p) => { const n = new URLSearchParams(p); n.delete('reports'); return n; }); }} /> : null}
+      {dialog === 'finance' ? <FinancePanel bundle={bundle} onClose={() => setDialog(null)} /> : null}
     </div>
   );
 }
 
-function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle: NonNullable<ReturnType<typeof useBoardQuery>['data']>; canEdit: boolean; live: boolean; onOpen: (d: 'settings' | 'members' | 'automations' | 'activity') => void; actions: ReturnType<typeof useBoardActions>; wsId: string }) {
+/** Someone with access to one task but not to its board followed a board link: open the task on its own. */
+function TaskFallback({ wsId, itemId }: { wsId: string; itemId: string }) {
+  const navigate = useNavigate();
+  useEffect(() => {
+    navigate(`/w/${wsId}/tasks/${itemId}`, { replace: true });
+  }, [navigate, wsId, itemId]);
+  return <Loading label="Opening the task…" />;
+}
+
+function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle: NonNullable<ReturnType<typeof useBoardQuery>['data']>; canEdit: boolean; live: boolean; onOpen: (d: 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance') => void; actions: ReturnType<typeof useBoardActions>; wsId: string }) {
   const b = bundle.board;
   const [name, setName] = useState(b.name);
   useEffect(() => setName(b.name), [b.name]);
@@ -157,6 +170,10 @@ function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle:
         </button>
         <button className="btn ghost sm" onClick={() => onOpen('activity')}><Icon name="activity" /> <span className="desktop-only">Activity</span></button>
         <button className="btn ghost sm" onClick={() => onOpen('automations')}><Icon name="bolt" /> <span className="desktop-only">Automate</span></button>
+        {b.caps?.viewFinance && bundle.columns.some((c) => c.type === 'currency' || (c.type === 'number' && c.settings?.financial)) ? (
+          <button className="btn ghost sm" onClick={() => onOpen('finance')} aria-label="Project finance"><Icon name="chart" /> <span className="desktop-only">Finance</span></button>
+        ) : null}
+        {b.caps?.generateReports ? <button className="btn ghost sm" onClick={() => onOpen('reports')} aria-label="Project reports"><Icon name="file" /> <span className="desktop-only">Reports</span></button> : null}
         <button className="btn ghost icon sm" aria-label="Board settings" onClick={() => onOpen('settings')}><Icon name="settings" /></button>
       </div>
       {b.description ? <p className="muted small" style={{ margin: '2px 0 0' }}>{b.description}</p> : null}

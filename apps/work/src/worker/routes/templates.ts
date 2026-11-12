@@ -7,7 +7,7 @@ export const templateRoutes = new Hono<AppEnv>();
 
 templateRoutes.get('/workspaces/:ws/templates', async (c) => {
   const wsId = c.req.param('ws');
-  await requireWorkspace(c.env.DB, wsId, c.get('user').id);
+  await requireWorkspace(c.env.DB, wsId, c.get('user').id, 'viewer');
   const custom = await c.env.DB.prepare(
     "SELECT b.id, b.name, b.description, b.icon, b.created_at, u.name AS created_by_name FROM boards b JOIN users u ON u.id = b.created_by WHERE b.workspace_id = ? AND b.kind = 'template' AND b.archived_at IS NULL ORDER BY b.created_at DESC",
   )
