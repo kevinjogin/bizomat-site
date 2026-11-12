@@ -19,11 +19,12 @@ export const EMAIL_TEMPLATES = [
   'report_generated',
   'test',
   'notification',
+  'verify_email',
 ] as const;
 export type EmailTemplate = (typeof EMAIL_TEMPLATES)[number];
 
 /** Invitations and security messages are sent first and may use the reserve above the daily limit. */
-export const CRITICAL_TEMPLATES: EmailTemplate[] = ['invitation', 'test'];
+export const CRITICAL_TEMPLATES: EmailTemplate[] = ['invitation', 'test', 'verify_email'];
 
 export interface RenderedEmail {
   subject: string;
@@ -149,6 +150,7 @@ export type TemplateData =
   | { template: 'permission_change'; organisation: string; project?: string | null; change: string; by: string; url: string; preferencesUrl?: string }
   | { template: 'report_generated'; organisation: string; project: string; report: string; period: string; by: string; url: string; preferencesUrl?: string }
   | { template: 'test'; organisation: string; sentBy: string; provider: string; at: string }
+  | { template: 'verify_email'; name: string; email: string; url: string; expires: string }
   | { template: 'notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string };
 
 function taskRows(d: TaskEmailData): [string, string | null | undefined][] {
@@ -341,6 +343,16 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         heading: 'Email delivery works',
         intro: [`${d.sentBy} sent this test from ${d.organisation} at ${d.at}.`, `Provider: ${d.provider}.`],
         reason: 'You received this email because you asked for a test message.',
+      });
+    case 'verify_email':
+      return layout({
+        subject: 'Confirm your email address for BIZOMAT',
+        preheader: 'One step left: confirm your email address to start using BIZOMAT Project Management.',
+        heading: 'Confirm your email address',
+        intro: [`Hello ${d.name}, confirm that ${d.email} is your email address to finish creating your BIZOMAT account.`],
+        button: { label: 'Confirm email address', url: d.url },
+        after: [`The link works once, until ${d.expires}. After confirming, sign in with your email address and password.`, 'If you did not create a BIZOMAT account, ignore this email: nothing happens without the link.'],
+        reason: 'You received this email because this address was used to create a BIZOMAT account.',
       });
     case 'notification':
     default: {
