@@ -65,7 +65,25 @@ class Handler(BaseHTTPRequestHandler):
         for k, v in headers:
             self.send_header(k, v)
         self.end_headers()
-        self.wfile.write(body)
+        if self.command != "HEAD":  # a body after a HEAD answer would be read as the next answer
+            self.wfile.write(body)
+
+    def read_body(self) -> bytes:
+        """The whole request body, by Content-Length or in chunks: the router sends a POST without a body as one empty
+        chunk ("0"). Anything left unread stays on the kept-alive connection and is taken for the next request, whose
+        400 (written without a status line on Python 3.12) then breaks the router's reading of this answer."""
+        if "chunked" in (self.headers.get("Transfer-Encoding") or "").lower():
+            body = b""
+            while True:
+                size = int(self.rfile.readline().split(b";")[0].strip() or b"0", 16)
+                if not size:
+                    while self.rfile.readline() not in (b"\r\n", b"\n", b""):  # trailers, then the blank line
+                        pass
+                    return body
+                body += self.rfile.read(size)
+                self.rfile.readline()  # the line end after each chunk
+        n = int(self.headers.get("Content-Length") or 0)
+        return self.rfile.read(n) if n else b""
 
     def route(self):
         host = (self.headers.get("Host") or "").split(":")[0].lower()
@@ -74,9 +92,7 @@ class Handler(BaseHTTPRequestHandler):
         if prefix:
             path = path[len(prefix):] or "/"
         base = f"{P.scheme}://{host}{PREFIX}" if prefix else f"{P.scheme}://{host}"
-        n = int(self.headers.get("Content-Length") or 0)
-        if n:
-            self.rfile.read(n)
+        self.read_body()
         if path == "/healthz":
             return self.send(200, json.dumps({"ok": True, "version": VERSION}).encode())
         if path == "/v2/keys":
