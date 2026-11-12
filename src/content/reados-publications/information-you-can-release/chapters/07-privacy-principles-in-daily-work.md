@@ -22,7 +22,7 @@ Section 15 says an APP entity "must not do an act, or engage in a practice, that
 ```figure
 type: steps
 title: The principles this chapter follows, in the order information moves
-caption: APPs 1, 3, 5, 6, 11, 12 and 13 of Schedule 1 to the Privacy Act. The other six APPs, such as APP 8 on overseas disclosure, apply when their subject arises.
+caption: APPs 1, 3, 5, 6, 11, 12 and 13 of Schedule 1 to the Privacy Act. Most of the other six, such as APP 8 on overseas disclosure, apply when their subject arises; APPs 7 and 9 bind organisations, and reach an agency only through s7A.
 - Be open about it | APP 1: practices, procedures and a clearly expressed, up-to-date privacy policy
 - Collect only what is needed | APP 3: reasonably necessary for, or directly related to, the agency's functions
 - Tell people | APP 5: the purposes, the usual disclosures and how to seek access or complain
@@ -45,7 +45,7 @@ An agency must not collect personal information unless it is "reasonably necessa
 
 The test works field by field. A form that asks for a date of birth "in case we need it" fails. In a free-text field, write only what you would be content for the person to read, because under APP 12 they may.
 
-At or before collection, or as soon as practicable after it, the entity must take reasonable steps to tell the person the matters in APP 5.2, or otherwise make sure they are aware of them (APP 5.1). They include who is collecting, the purposes, any law behind the collection, the usual recipients and how to seek access or complain. Describe the real flows: if information will go to a contractor or the Minister's office, say so. What people were told at collection is the best evidence of what they would reasonably expect later.
+At or before collection or, if that is not practicable, as soon as practicable after it, the entity must take reasonable steps to tell the person the matters in APP 5.2, or otherwise make sure they are aware of them (APP 5.1). They include who is collecting, the purposes, any law behind the collection, the usual recipients and how to seek access or complain. Describe the real flows: if information will go to a contractor or the Minister's office, say so. What people were told at collection is the best evidence of what they would reasonably expect later.
 
 ## Use it for the purpose it was collected for: APP 6
 

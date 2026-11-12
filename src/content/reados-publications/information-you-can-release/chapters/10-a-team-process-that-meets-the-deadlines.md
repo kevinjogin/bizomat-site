@@ -36,7 +36,7 @@ Triage then asks five questions:
 - **How big?** Pages, document holders, third parties, likely exemptions.
 - **Who works on it?** An owner, a backup and an authorised decision-maker (s23).
 
-This is an illustration. NRIO sorts items into three classes. Routine items, such as most own-information requests, get a sample check. Standard items get a second-officer check before decision. Complex items get the full check, a written plan in the first week and a hold notice on day one. The RCFP request was complex from the start: three kinds of document, the Minister's office and likely third parties. Priya Shah became case officer and Liam O'Connor decision-maker that morning, but the hold notice went out only after the deletion in Chapter 2.
+This is an illustration. NRIO sorts items into three classes. Routine items, such as most own-information requests, get a sample check. Standard items get a second-officer check before decision. Complex items get the full check and a written plan in the first week. Every request gets a hold notice on day one (Chapter 2). The RCFP request was complex from the start: three kinds of document, the Minister's office and likely third parties. Priya Shah became case officer and Liam O'Connor decision-maker that morning, but the hold notice went out only after the deletion in Chapter 2.
 
 ## A case register with alerts for more than one person
 
@@ -51,9 +51,9 @@ This is an illustration. NRIO's register sends alerts five and two working days 
 
 ## Templates and checks
 
-Templates carry the parts of a document the law fixes, so that officers spend their time on the facts. NRIO keeps one for each step with a legal form: the acknowledgement (s15(5)(a)), extension notices (s15(6)(b), s15AA), consultation notices (s27, s27A), the charges notice (s29(1)), decision notices (s26, s27(6), s27A(5)), the internal review decision (s54C), the APP 12 refusal notice (APP 12.9), the breach assessment record and the log entry (s11C).
+Templates carry the parts of a document the law fixes, so that officers spend their time on the facts. This is an illustration. NRIO keeps one for each step with a legal form: the acknowledgement (s15(5)(a)), extension notices (s15(6)(b), s15AA), consultation notices (s27, s27A), the charges notice (s29(1)), decision notices (s26, s27(6), s27A(5)), the internal review decision (s54C), the APP 12 refusal notice (APP 12.9), the breach assessment record and the log entry (s11C).
 
-A template cannot make findings. Section 26(1)(a) requires the notice to "state the findings on any material questions of fact", and only the officer who has read the documents can write them. A template sentence that states a conclusion invites the thin reasons of Chapter 6. Each template has an owner, a date and a review whenever the law changes. A template that still sends review to the Administrative Appeals Tribunal has been wrong since the Administrative Review Tribunal replaced it on 14 October 2024.
+A template cannot make findings. Section 26(1)(a) requires the notice to "state the findings on any material questions of fact", and only the officer who has read the documents can write them. A template sentence that states a conclusion invites the thin reasons of Chapter 6. Each template has an owner, a date and a review whenever the law changes.
 
 This is an illustration. At NRIO a second officer, never the one who prepared the work, checks every decision that refuses anything, every release with third-party information and every log entry. Ruth samples one routine own-information release in five. The checker asks questions; the decision stays with the authorised decision-maker.
 
@@ -123,7 +123,7 @@ Never let a period run out quietly. A deemed refusal is the agency head's own de
 
 ## Training the people who hold the documents
 
-Most of the hours in a large request are spent outside the team. Sam Reid's officers searched their own mailboxes for the RCFP request (Chapter 3), and one of them deleted a folder of drafts within it before it was restored (Chapter 2). Document holders need to know five things:
+Most of the hours in a large request are spent outside the team. This is an illustration. Sam Reid's officers searched their own mailboxes for the RCFP request (Chapter 3), and one of them deleted a folder of drafts within it before it was restored (Chapter 2). Document holders need to know five things:
 
 - a request reaches every format: emails, chats, texts and file notes;
 - nothing within an open request, review or complaint is destroyed or altered;
@@ -131,7 +131,7 @@ Most of the hours in a large request are spent outside the team. Sam Reid's offi
 - to send everything within scope, unmarked, with any concerns noted separately;
 - NRIO's turnaround of three working days.
 
-This is an illustration. Ruth's team gives each program area a 30-minute session each year, a one-page guide and the hold notice template. The search record shows why: two of Priya's 14 search hours went on emails that should have been on the master file.
+This is an illustration. Ruth's team gives each program area a 30-minute session each year, a one-page guide and the hold notice template. The search record shows why: six of Priya's 14 search hours went on emails that should have been on the master file, where a search would have taken about one.
 
 Privacy training is a legal duty under the [APP Code 2017](https://www.legislation.gov.au/F2017L01396/latest/text). An agency must include privacy education or training in any staff induction program (s16(1)), and must take reasonable steps to provide appropriate training annually to all staff with access to personal information (s16(2)).
 
@@ -143,7 +143,7 @@ This is an illustration. The RCFP internal review affirmed Liam's decision (Chap
 
 ## When it goes wrong: one person holding every deadline
 
-This is an illustration. Until October 2027, the register named one owner for each case and sent alerts only to that owner, and the weekly check was always Liam's. Liam ran some cases himself and coordinated internal reviews. On Monday 11 October 2027 he fell ill without warning and was away for two weeks, returning on Monday 25 October.
+This is an illustration. Until October 2027, the register named one owner for each case and sent alerts only to that owner, and the weekly check was always Liam's. Liam ran some cases himself, which nobody else checked, and coordinated internal reviews. On Monday 11 October 2027 he fell ill without warning and was away for two weeks, returning on Monday 25 October.
 
 Two of his items fell due while he was away. An internal review of another request, received on Tuesday 21 September, needed a fresh decision by Thursday 21 October, 30 days later (s54C(3)). The reviewer, from another branch, was waiting for the file Liam had planned to send. The alerts of Thursday 14 and Tuesday 19 October went to Liam's inbox, and the weekly checks of 11 and 18 October did not happen. Separately, an own-information request Liam was running fell due on Wednesday 20 October. Priya learned of it only when the applicant rang on Tuesday 19 October, and Ruth spent a day and a half on an unfamiliar file to decide it in time.
 

@@ -9,7 +9,7 @@ draft: true
 
 A freedom of information (FOI) request starts a clock the day it arrives. The Freedom of Information Act 1982 (the FOI Act) sets the outer limit for a decision, the only ways to extend it and what happens when time runs out. It also says what an agency may charge and when it may refuse a request as too large. An officer who knows those rules plans the work in week one, not in week four.
 
-This is an illustration. On Monday 7 June 2027 the journalist's request about Round 1 of the Regional Community Facilities Program (RCFP) arrived in NRIO's FOI mailbox (Chapter 1). Priya Shah is the case officer and Liam O'Connor, an authorised decision-maker, will decide it. This chapter follows it to a plan the team can deliver.
+This is an illustration. On Monday 7 June 2027 the journalist's request about Round 1 of the Regional Community Facilities Program (RCFP) arrived in NRIO's FOI mailbox (Chapter 1). Priya Shah is the case officer and Liam O'Connor, an authorised decision-maker, will decide it.
 
 ## What makes a request valid
 
@@ -25,13 +25,11 @@ Section 15(5)(a) says the agency must take all reasonable steps to notify the ap
 
 Section 15(5)(b) says the agency must take all reasonable steps to notify a decision "as soon as practicable" and in any case "not later than the end of the period of 30 days after the day on which the request is received". Three points follow:
 
-- **Calendar days.** The period counts every day, not working days. The day of receipt is not counted, so day 1 is the next day.
+- **Calendar days.** The period counts every day, not working days. The day of receipt is not counted, so day 1 is the next day. If the last day is a Saturday, Sunday or public holiday, the decision may be notified on the next day that is none of these (Acts Interpretation Act 1901 s36(2)).
 - **Receipt by the agency.** The period runs from receipt "by or on behalf of" the agency. A request that reaches the FOI mailbox on Friday afternoon is received that Friday, even if nobody reads it until Monday.
-- **A ceiling, not a target.** "As soon as practicable" comes first; a simple request decided on day 29 was not handled as the Act expects.
+- **A ceiling, not a target.** "As soon as practicable" comes first; a simple request decided on day 29 may not have been handled as the Act expects.
 
 Two things stop the count: a practical refusal consultation, from the notice until the applicant revises the request or declines to (s24AB(8)), and an unpaid charge, from the day the applicant receives the notice until they pay or are told no charge applies (s31(2)). Leave and a busy fortnight count.
-
-In deciding, the agency must also have regard to the Information Commissioner's FOI Guidelines (s15(5A)).
 
 ## Extensions: three routes, three conditions
 
@@ -50,20 +48,20 @@ rowhead: Feature
 caption: Each route needs its own written step. Take it while the period is still running.
 ```
 
-Subsections 15(7) and (8) give a similar 30 days to consult a foreign government on certain exemptions, and agreement under s15AA can be added to a period already extended for consultation. Ask when the need first shows, not on day 29: an applicant asked early is more likely to agree, and the Commissioner needs time to consider an application.
+Subsections 15(7) and (8) give a similar 30 days to consult a foreign government on certain exemptions, and agreement under s15AA can be added to a period already extended for consultation. Ask when the need first shows, not on day 29.
 
 This is an illustration. On Tuesday 22 June Liam determined in writing that consultation under sections 27 and 27A made an extension appropriate, and Priya told the journalist that day (Chapter 5).
 
 ## Transfers and scope
 
-An agency may transfer a request "with the agreement of the other agency" when the documents are held by another agency or their subject is more closely connected with its functions (s16(1)). For this purpose an agency includes a Minister (s16(6)). The applicant must be told (s16(4)), and the transferred request is taken to have been received when an agency first received it (s16(5)(b)). A transfer does not restart the clock, so agree it within days.
+An agency may transfer a request "with the agreement of the other agency" when the documents are held by another agency, not yours, or their subject is more closely connected with its functions (s16(1)). For this purpose an agency includes a Minister (s16(6)). The applicant must be told (s16(4)), and the transferred request is taken to have been received when an agency first received it (s16(5)(b)). A transfer does not restart the clock, so agree it within days.
 
 Scope is the other early decision. The applicant decides what to ask for, but a short call can clarify an ambiguous request. Confirm any agreed change in writing and file it.
 
 This is an illustration. NRIO held every document within the request, so there was nothing to transfer; documents held only in the Minister's office could be requested from the Minister (s15(1)). On Thursday 10 June Priya rang the journalist and confirmed in writing what they agreed:
 
 - one copy of each email, not every copy in every mailbox;
-- attachments travel with the email or brief they were attached to, which brought in the assessment spreadsheet attached to an email to the Minister's office;
+- attachments travel with the email or brief they were attached to, which brought in the assessment spreadsheet attached to an email to the Minister's office, and NRIO's legal advice on the program's authority, attached to the 7 May brief;
 - the direct phone numbers and email addresses of NRIO and ministerial staff are outside the request.
 
 In July, Sam Reid, the RCFP manager, wrote a file note of the Minister's office's call on 19 May, dated the day he wrote it. Because the note was created after the request arrived, Priya did not guess whether it was covered. She asked, and the journalist agreed in writing to include it.
@@ -101,11 +99,11 @@ This is an illustration. Priya ran the searches from Tuesday 8 to Friday 11 June
 
 | Where | Who | What was found | Hours |
 | --- | --- | --- | --- |
-| RCFP master file in the records system | Priya and the Information Management Unit | Signed brief and attachments, decision sheet, legal advice | 3 |
+| RCFP master file in the records system | Priya and the Information Management Unit | Signed brief and attachments, including the legal advice; decision sheet | 3 |
 | Records system, for Round 1 documents dated 1 March to 31 May | The Information Management Unit | Copies of documents already found | 2 |
 | Mailboxes of Sam's team, for the Minister's office's email domain, 1 March to 31 May | Sam's team, on Priya's written search request | Emails with the Minister's office, including the spreadsheet | 6 |
 | Shared drive and the team's chat channel | Sam's team | Copies of documents already found | 3 |
-| Total | | About 420 pages | 14 |
+| Total | | About 420 pages, with the July file note | 14 |
 
 The emails belonged on the master file but sat only in four inboxes (Chapter 2). Under reg 5(2), only the time a search of the master file would have taken counts: about 1 of the 6 hours.
 
@@ -130,7 +128,7 @@ unit: hours
 caption: This is an illustration. Each person has 210 hours for the work. The team total is 690 hours, 82 per cent of 840, but one person is over capacity.
 ```
 
-Re-run the check when something unplanned arrives. The data breach on Wednesday 23 June (Chapter 8) added about 80 hours, mostly Ruth's and Ethan's: 770 ÷ 840 = 91.7 per cent, FULL, with 70 hours of buffer, so Ruth moved the team's training to after 6 August.
+Re-run the check when something unplanned arrives. This is an illustration. The data breach on Wednesday 23 June (Chapter 8) added about 80 hours, mostly Ruth's and Ethan's: 770 ÷ 840 = 91.7 per cent, FULL, with 70 hours of buffer, so Ruth moved the team's training to after 6 August.
 
 ## When it goes wrong: the extension that was never made
 
@@ -207,6 +205,6 @@ step: Charge = A$135 + A$840 = A$975; deposit at most 25% = A$243.75
 caption: This is an illustration. Charging is NRIO's choice under reg 8, and it decided not to impose this charge.
 ```
 
-**6. Whether to impose it.** Neither exception in reg 7 applies: the documents do not hold the journalist's personal information, and NRIO is on time. The choice is NRIO's, with regard to the objects of the Act (reg 8). Imposing it means a s29 notice and 30 days for the journalist to respond. A contention that access is in the general public interest would be strong: the documents show how A$9.98 million was granted, including 2 approvals against officials' recommendations, one in the Minister's electorate. NRIO would have up to 30 days to decide it (s29(6)), and the clock would stop from the day the journalist received the notice (s31), moving 6 August to a date nobody could predict. Liam decided not to impose a charge and recorded the estimate and his reasons on the file.
+**6. Whether to impose it.** Neither exception in reg 7 applies: the documents do not hold the journalist's personal information, and NRIO is on time. The choice is NRIO's, with regard to the objects of the Act (reg 8). Imposing it means a s29 notice and 30 days for the journalist to respond. A contention that access is in the general public interest would be strong: the documents show how A$9.98 million was granted. NRIO would have up to 30 days to decide it (s29(6)), and the clock would stop from the day the journalist received the notice (s31), moving 6 August to a date nobody could predict. Liam decided not to impose a charge and recorded the estimate and his reasons on the file.
 
 Chapter 4 turns to the 420 pages themselves: which exemptions apply, and how the public interest test decides the rest.

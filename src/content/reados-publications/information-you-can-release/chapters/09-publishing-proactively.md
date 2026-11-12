@@ -73,7 +73,7 @@ question: Has a person been given access to a document containing it under secti
 - No: APP 12 access, release outside the Act, or refused | Section 11C does not apply | Publication is a separate choice under the IPS or another power
 - Personal information, unreasonable to publish | Leave it out | s11C(1)(a); most own-information requests end here
 - Business information, unreasonable to publish | Leave it out | s11C(1)(b); weigh it afresh for publication to everyone
-- Deleting those parts is not reasonably practicable | Section 11C does not apply to that information | s11C(1)(d); record why
+- Publishing is not reasonably practicable because of the editing needed | Section 11C does not apply to that information | s11C(1)(d); record why
 - *Everything else | Publish on a website within 10 working days | s11C(3) and (6): download, link or details of how to obtain it
 caption: The tests come from s11C of the FOI Act. Record each decision to leave information out, with the paragraph relied on.
 ```
@@ -85,7 +85,7 @@ The exceptions in section 11C(1) are not the exemptions in Part IV. A document r
 - "personal information about any person, if it would be unreasonable to publish the information" (s11C(1)(a));
 - information about a person's business, commercial, financial or professional affairs, if publishing it would be unreasonable (s11C(1)(b));
 - other information of a kind the Information Commissioner determines by legislative instrument, if publishing it would be unreasonable (s11C(1)(c), (2));
-- any information that cannot reasonably be published because of the extent of the editing needed to remove the first three kinds (s11C(1)(d)).
+- any information that it is "not reasonably practicable to publish" because of the extent of the editing needed to remove the first three kinds (s11C(1)(d)).
 
 The clearest case is a request for the applicant's own personal information. This is an illustration. About 60 of NRIO's roughly 140 requests a year are of this kind. The documents released are mostly about the applicant, so publishing them would usually be unreasonable, and few of them reach the log.
 
@@ -106,7 +106,7 @@ Before releasing outside the Act, check four things:
 
 Release in good faith under another power is protected from the same civil actions (s90(1)(c)) and from criminal liability (s92(1)(c)). It gives the person no review rights, so a person who wants a reviewable decision can still make an FOI request.
 
-This is an illustration. After the decision, Ruth Adeyemi suggested that Sam Reid's team offer each unsuccessful applicant, on request, its own scores and assessors' comments, outside the FOI Act. Each letter carries one applicant's information only, from a template the team agreed with Ruth, and Sam's team records each one. Each applicant answered this way is one fewer FOI request for the team to process, and none of these letters goes on the disclosure log, because none is access under section 11A.
+This is an illustration. After the decision, Ruth Adeyemi pointed unsuccessful applicants who asked her team for their own scores to the feedback Sam Reid's team already offers outside the FOI Act: a written summary of each applicant's own scores and reasons. Each summary carries one applicant's information only, and Sam's team records each one. Each applicant answered this way is one fewer FOI request for the team to process, and none of these letters goes on the disclosure log, because none is access under section 11A.
 
 ## The open access period
 
@@ -120,7 +120,7 @@ This is an illustration. The RCFP documents were made in 2027, so they enter the
 
 This is an illustration. Ethan opened a log entry in the case register on Wednesday 28 July 2027. The statutory date was Wednesday 11 August, 10 working days later. NRIO's own target is five working days, Wednesday 4 August, so that a problem found in checking still leaves time to fix it. No public holiday fell in these weeks where NRIO publishes.
 
-He built the entry from the released files as decided, with the held information still removed. Priya Shah, the case officer, checked it against the schedule of deletions and the consultation register (Chapter 5) before it went up. The entry described the request in a sentence, gave the date of access and offered each document as a searchable, edited PDF. When the held information was released on Wednesday 1 September, the second 10 working days ended on Wednesday 15 September; Ethan published the second entry on Wednesday 8 September.
+He built the entry with the held information still removed. Priya Shah, the case officer, checked it against the schedule of deletions and the consultation register (Chapter 5) before it went up. The entry described the request in a sentence, gave the date of access and offered each document as a searchable, edited PDF. When the held information was released on Wednesday 1 September, the second 10 working days ended on Wednesday 15 September; Ethan published the second entry on Wednesday 8 September.
 
 He also worked through the IPS register:
 
@@ -143,11 +143,11 @@ caption: This is an illustration. Working days exclude weekends and public holid
 
 ## When it goes wrong: the hidden columns
 
-This is an illustration. The first entry could have gone wrong in an ordinary way. The edited spreadsheet the journalist received was a PDF. Suppose Ethan, wanting readers to sort and search it, had exported a spreadsheet file from the working copy for the log. In that copy, the three columns deleted under section 47F, the contact person's name, phone number and email address for each of the 186 applications (Chapter 6), had been hidden, not removed. On screen the export looked exactly like the release. Anyone who unhid the columns would have the names, mostly mobile numbers and often personal email addresses of 186 people, most of them volunteers.
+This is an illustration. The first entry nearly went wrong in an ordinary way. The edited spreadsheet the journalist received was a PDF. Wanting readers to sort and search it, Ethan exported a spreadsheet file from the working copy for the log instead. In that copy, the three columns deleted under section 47F, the contact person's name, phone number and email address for each of the 186 applications (Chapter 6), had been hidden, not removed. On screen the export looked exactly like the release and matched the schedule of deletions. On Tuesday 3 August, the day before it was due to go up, Priya noticed that its column letters jumped from D to H. Anyone who unhid the columns would have had the names, mostly mobile numbers and often personal email addresses of 186 people, most of them volunteers.
 
-The cost would have been large and permanent. Liam had withheld that information because disclosure would be unreasonable, so section 11C did not require its publication, and section 90 offers no protection for a privacy failure. NRIO would have had to assess within 30 days whether this was an eligible data breach (s26WH; Chapter 8), its second RCFP assessment within two months. Removing the file would not recall copies already downloaded. And 186 people who had trusted NRIO with their details might learn of it from the newspaper.
+Published, the cost would have been large and permanent. Liam had withheld that information, so section 11C never applied to it, and section 90 offers no protection for a privacy failure. NRIO would have had to assess within 30 days whether this was an eligible data breach (s26WH; Chapter 8), its second RCFP assessment within two months. Removing the file would not recall copies already downloaded. And 186 people who had trusted NRIO with their details might have learned of it from the newspaper. As it was, Ethan replaced the file with the released PDF, and the entry went up on target on Wednesday 4 August.
 
-The control is a publication check by a second officer, and NRIO wrote it into its procedure:
+Priya caught it by chance: her check compared what showed on screen. The control is a publication check by a second officer, and NRIO wrote it into its procedure:
 
 - publish only from the files actually released, never from a new export of a working copy;
 - use formats in which deleted text is gone, not covered or hidden;
@@ -161,7 +161,7 @@ This is an illustration. For each item, decide whether it goes on the RCFP log e
 | Item | Information |
 | --- | --- |
 | A | The brief of Fri 7 May 2027 with its ranked list, released on 28 July with the 155 unsuccessful applicants' names and one grantee's finance comments deleted, and the held information removed |
-| B | The assessment spreadsheet. The journalist's copy of 28 July had the contact columns and the 155 names deleted, but, through the error in Chapter 5, the sporting club's row went out unedited before its review period ended |
+| B | The assessment spreadsheet. The journalist's copy of 28 July had the contact columns and the 155 names deleted, but, through the error in Chapter 5, the sporting club's row went out with its scores and comments still in it before its review period ended |
 | C | The file note of the 19 May call and the emails with the Minister's office, naming two advisers. One adviser's name was held until 1 September |
 | D | NRIO's legal advice on the program's authority, refused under section 42 |
 | E | Liam's decision notice, addressed to the journalist at the newspaper's email address |
@@ -173,7 +173,7 @@ Then give the latest lawful date for each entry.
 
 **A: first entry.** Publish the brief as released. The deletions made under section 47G stay deleted, and the held information stays out until it is released.
 
-**B: first entry, as decided, not as sent.** Publish the spreadsheet with the contact columns and the 155 names deleted. Leave out the sporting club's row, with the other held information, even though the journalist received it in error. Its review period was still running, so publishing it would have been unreasonable under s11C(1)(b) and would have spread the harm section 27(7) exists to prevent. Ruth records that judgement on the file. The row goes into the second entry once the club's review rights have run out.
+**B: first entry, as decided, not as sent.** Publish the spreadsheet with the contact columns and the 155 names deleted. Leave out the sporting club's row, with the other held information, even though the journalist received it in error. Ruth judged that, while the club's review period ran, publishing it would be unreasonable (s11C(1)(b)) and would spread the harm section 27(7) exists to prevent. She records that judgement on the file. The row goes into the second entry once the club's review rights have run out.
 
 **C: first entry, one name later.** Publish the note and the emails, with the objecting adviser's name removed. The names and positions concern official work, and Liam found their disclosure not unreasonable. Ask the s11C(1)(a) question again, record that the answer is the same, and publish.
 

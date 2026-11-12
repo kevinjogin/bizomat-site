@@ -59,17 +59,17 @@ Internal review lets the agency look at its own decision again, quickly. The app
 
 A fresh decision means deciding the request again on the material available now, not asking whether the first decision was reasonable. The reviewer may affirm, vary or reverse it. If the fresh decision would release third-party information the original withheld, check section 27 or 27A first.
 
-The Act requires only that the reviewer is not the original decision-maker. NRIO, by its own choice, goes further: its internal reviewers had no part in the decision and hold an authorisation under section 23. For the RCFP request, the reviewer was an EL2 from another branch.
+The Act requires only that the reviewer is not the original decision-maker. This is an illustration. NRIO, by its own choice, goes further: its internal reviewers had no part in the decision and hold an authorisation under section 23. For the RCFP request, the reviewer was an EL2 from another branch.
 
 ## The journalist's internal review
 
 This is an illustration. The journalist applied on Monday 9 August 2027, well within time: the period ran at least to Friday 27 August, 30 days after the decision was notified. The application challenged two parts of Liam's decision:
-- the deletion, under section 47G, of the names of the 155 unsuccessful applicants from the brief's ranked list and the assessment spreadsheet;
+- the deletion, under section 47G, of the names of the 155 unsuccessful applicants from the brief, the decision sheet and the assessment spreadsheet;
 - the refusal, under section 42, of NRIO's legal advice on the program's authority.
 
 On Tuesday 10 August Ruth arranged the review. The fresh decision was due by Wednesday 8 September, 30 days after 9 August. The reviewer decided on Friday 3 September, day 25 of the 30, and affirmed both parts.
 
-On the legal advice, she found who wrote it (NRIO's in-house lawyers), for whom (the RCFP program area), for what purpose (legal advice on the program's authority), that it had been kept confidential, and that NRIO had not waived privilege (s42(2)). She explained that section 42 has no public interest test, so the journalist's public interest arguments could not make the advice available under the Act. On the names, she wrote the findings that Liam's notice had left out (see "When it goes wrong" below). Her letter set out the journalist's rights to IC review and to complain.
+On the legal advice, she found who wrote it (NRIO's in-house lawyers), for whom (the RCFP program area), for what purpose (legal advice on the program's authority), that it had been kept confidential, including when it went to the Minister attached to the 7 May brief, and that NRIO had not waived privilege by providing it (s42(2)). She explained that section 42 has no public interest test, so the journalist's public interest arguments could not make the advice available under the Act. On the names, she wrote the findings that Liam's notice had left out (see "When it goes wrong" below). Her letter set out the journalist's rights to IC review and to complain.
 
 ```figure
 type: timeline
@@ -133,11 +133,11 @@ That names a section and states a conclusion, but it does not meet s26(1)(a) and
 
 The cost came in stages. The reviewer found no record of why Liam thought release would harm the applicants, and spent days rebuilding the facts with the RCFP team. She found that:
 - the applicants were mostly volunteer-run community organisations relying on grants and donations;
-- the files linked each name to scores below the funding line and to comments on its weaknesses, including its finances;
+- the files linked most of the names to scores below the funding line and to comments on weaknesses, including finances; two had been recommended but not approved, and nine were ineligible and never scored;
 - several applications said the organisation had also applied to other funders for the same project;
 - the program guidelines had told applicants that NRIO would publish details of successful grants.
 
-She concluded that release could reasonably be expected to unreasonably affect the applicants adversely in their lawful financial affairs. In the public interest test she weighed debate on a matter of public importance and oversight of public expenditure (s11B(3)(b), (c)) against that harm. She noted that every unsuccessful application's score, rank, region and project type had been released, so the public could already see where each stood against the funded ones. She recorded that she had not considered embarrassment to the Government or the risk of misunderstanding (s11B(4)). By then the journalist no longer trusted the first reasons, and the matter went to the Commissioner, where NRIO carries the onus and the statement of reasons is read first.
+She concluded that release could reasonably be expected to unreasonably affect the applicants adversely in their lawful financial affairs. In the public interest test she weighed debate on a matter of public importance and oversight of public expenditure (s11B(3)(b), (c)) against that harm. She noted that every assessed application's score, rank, grant sought and electorate had been released, so the public could already see where each stood against the funded ones. She recorded that she had not considered embarrassment to the Government or the risk of misunderstanding (s11B(4)). By then the journalist no longer trusted the first reasons, and the matter went to the Commissioner, where NRIO carries the onus and the statement of reasons is read first.
 
 The control is a check before any notice goes out. Ruth now asks a second officer to answer five questions for each deletion from the notice alone: What is the information? What would release do? What shows that? Why does that meet the test? For a conditional exemption, what was weighed, and how? If the reader cannot answer, the notice goes back.
 
@@ -147,7 +147,7 @@ title: Reasons that cite and reasons that find
 cols: Liam's notice, 28 July | Reviewer's notice, 3 September
 best: 2
 rowhead: Element
-- What was deleted | "Names of unsuccessful applicants" | 155 names, each linked to scores below the funding line and assessors' comments
+- What was deleted | "Names of unsuccessful applicants" | 155 names: most linked to scores below the funding line and assessors' comments, 2 recommended but not approved, 9 ineligible
 - Effect of release | Not stated | Adverse effect with other funders, and why it is unreasonable
 - Material | None referred to | Spreadsheet, program guidelines, applications' funding plans
 - Public interest | "Contrary to the public interest" | Factors for and against, irrelevant factors excluded, the weighing shown
@@ -174,7 +174,7 @@ A model text, with the section each part meets:
 
 **Findings and material (s26(1)(a)).** "Each entry is information about an identified individual, so it is personal information (Privacy Act s6(1), adopted by FOI Act s4(1)). The contact persons lodged applications for community organisations, and most are volunteers; I rely on the spreadsheet, the application forms and the RCFP team's advice. Most phone numbers are mobiles and many email addresses are personal; I rely on the spreadsheet."
 
-**The test in section 47F.** "Having regard to s47F(2): (a) the details are not well known; (b) the contact persons are associated with their organisations' applications, not with the briefs, decisions and correspondence the request concerns; (c) they are not publicly available, and an organisation's published contact is its own, not the person's; (d) release would expose private individuals to unsolicited contact and adds nothing to an understanding of the round. Disclosure would be unreasonable, so the columns are conditionally exempt under s47F(1)."
+**The test in section 47F.** "Having regard to s47F(2): (a) the details are not well known; (b) each contact person is linked to the application the spreadsheet records, but that link is not publicly known and their role was administrative; (c) they are not publicly available, and an organisation's published contact is its own, not the person's; (d) release would expose private individuals to unsolicited contact and adds nothing to an understanding of the round. Disclosure would be unreasonable, so the columns are conditionally exempt under s47F(1)."
 
 **The public interest (s26(1)(aa), s11A(5), s11B).** "Access would promote the objects of the Act, inform debate on a matter of public importance and promote oversight of public expenditure (s11B(3)(a) to (c)). These factors carry little weight here, because contact details reveal nothing about the assessment or the decisions, which have been released. Against access is the privacy of 186 individuals, most of them volunteers. I have not taken into account any embarrassment to the Government or risk of misunderstanding (s11B(4)). On balance, access to these columns at this time would be contrary to the public interest."
 

@@ -133,17 +133,17 @@ This is an illustration. Decide each document: release in full, give an edited c
 | Document | What it contains |
 | --- | --- |
 | 1. Brief of 7 May | Background, process and category counts; advice on the merits and recommendations; Attachment A, ranking 177 applications with scores, grant sought and electorate |
-| 2. Decision sheet of 31 May | The Minister's signed decisions, with a short handwritten reason beside each change to the recommendations |
+| 2. Decision sheet of 31 May | Every application with its recommendation and the Minister's signed decision, with a short handwritten reason beside each change |
 | 3. File note of the 19 May call | Written by Sam in July: what the Minister's adviser asked and what Sam said |
 | 4. Emails with the Minister's office | Sending the brief and the spreadsheet and returning the decision sheet; one chain also covers another program |
 | 5. Assessment spreadsheet | 186 rows: scores, assessors' comments, grant sought, eligibility results, and each contact person's name, phone and email |
-| 6. Legal advice on the program's authority | Written by NRIO's in-house lawyers for the RCFP program area; a copy is on the master file |
+| 6. Legal advice on the program's authority | Written by NRIO's in-house lawyers for the RCFP program area; attached to the 7 May brief on the master file |
 
 ### Worked answer
 
-**1. Edited copy.** The factual parts are outside s47C (s47C(2)(b)). The advice and recommendations are deliberative matter, but at the decision date the public interest favours their release, as the balance above shows. Officers named in their official roles are associated with the matters in the brief (s47F(2)(b)), so their names stay. The unsuccessful applicants' names, linked to their scores, are deleted under s47G (Chapter 5); their scores and the rest of the ranked list are released.
+**1. Edited copy.** The factual parts are outside s47C (s47C(2)(b)). The advice and recommendations are deliberative matter, but at the decision date the public interest favours their release, as the balance above shows. Officers named in their official roles are associated with the matters in the brief (s47F(2)(b)), so their names stay. The unsuccessful applicants' names are deleted under s47G (Chapter 5): disclosing them beside their results and comments on their weaknesses could reasonably be expected to unreasonably affect these mostly volunteer-run organisations adversely in their lawful financial affairs, for example with other funders (s47G(1)(a)). The rest of the ranked list, including scores, ranks and electorates, is released without the names, which serves oversight of public expenditure and debate on the round (s11B(3)(b), (c)), so on balance access to the names would be contrary to the public interest.
 
-**2. Release.** The sheet is the record of a final decision given in the exercise of a power, so s47C cannot apply (s47C(3)(c)), and the handwritten reasons are part of that record. The approvals against recommendations, and Corran Bay's place in the Minister's electorate, make it the most sensitive document in the set, but embarrassment is an irrelevant factor (s11B(4)(a)). Section 47C(3)(c) removes only s47C, so any applicant's business information on the sheet is still tested under s47G, as in the ranked list.
+**2. Edited copy.** The sheet is the record of a final decision given in the exercise of a power, so s47C cannot apply (s47C(3)(c)), and the handwritten reasons are part of that record. The approvals against recommendations, and Corran Bay's place in the Minister's electorate, make it the most sensitive document in the set, but embarrassment is an irrelevant factor (s11B(4)(a)). Section 47C(3)(c) removes only s47C. The sheet lists every application, so the unsuccessful applicants' names are deleted under s47G, as in the ranked list, and the rest is released.
 
 **3. Release.** Parts record consultation during the Minister's deliberation, but most of the note is factual: whether the two applications met the criteria and what funding both would cost. At the decision date the factors favouring access, oversight of public expenditure and debate on a matter of public importance, outweigh any harm. The adviser's name is personal information, but the adviser is known to be associated with the call (s47F(2)(b)), and it is released after consultation (Chapter 5). The note's July date is no reason to withhold it: the journalist agreed in writing to include it (Chapter 3).
 
@@ -151,7 +151,7 @@ This is an illustration. Decide each document: release in full, give an edited c
 
 **5. Edited copy.** Scores, grant sought and eligibility results are the basis of a spending decision and are released (s11B(3)(c)). The assessors' comments are opinion recorded for a deliberative process, but at the decision date the public interest favours release, and s47E(d) does not apply. The three contact columns are deleted under s47F: the contact persons are mostly volunteers, and their details are not publicly available and add nothing to oversight (Chapter 6 writes these reasons in full). The unsuccessful applicants' names are deleted under s47G, as in the brief.
 
-**6. Refuse, once privilege is confirmed.** NRIO's legal area confirms in writing that the advice is privileged and that privilege has not been waived (s42(2)). The advice is then exempt under s42(1), and no public interest test applies, however important the program's authority is. Releasing it anyway, outside the Act (s3A), would be a separate decision for whoever holds that power.
+**6. Refuse, once privilege is confirmed.** NRIO's legal area confirms in writing that the advice is privileged and that privilege has not been waived (s42(2)): giving it to the Minister in confidence, attached to the brief, did not waive it. The advice is then exempt under s42(1), and no public interest test applies, however important the program's authority is. Releasing it anyway, outside the Act (s3A), would be a separate decision for whoever holds that power.
 
 Five documents are released in full or in part and one is refused: partial access, which is what Liam decided on 28 July.
 

@@ -7,9 +7,9 @@ description: "When the FOI Act requires you to consult a State, a business or a 
 draft: true
 ---
 
-Most FOI requests involve two parties, the applicant and the agency. That changes when a document holds information about someone else. A grant applicant's finances or an adviser's name can sit inside an agency's documents, and the people concerned may have good reasons to argue against release. For some of them, the FOI Act provides three things: a chance to be heard before the agency decides, a written notice if it decides to release anyway, and time to seek review before anything goes out.
+Most FOI requests involve two parties, the applicant and the agency. That changes when a document holds information about someone else. The people concerned may have good reasons to argue against release. For some of them, the FOI Act provides three things: a chance to be heard before the agency decides, a written notice if it decides to release anyway, and time to seek review before anything goes out.
 
-This is an illustration. By mid-June 2027, Priya Shah had identified about 420 pages for the journalist's request about Round 1 of the Regional Community Facilities Program (RCFP), as Chapter 3 described, and Liam O'Connor had formed preliminary views on the exemptions (Chapter 4). Many pages held information about people outside NRIO. This chapter follows the team as it decides whom to consult, runs the consultation, weighs the replies and releases at the right time.
+This is an illustration. By mid-June 2027, Priya Shah had identified about 420 pages for the journalist's request about Round 1 of the Regional Community Facilities Program (RCFP), as Chapter 3 described, and Liam O'Connor had formed preliminary views on the exemptions (Chapter 4). Many pages held information about people outside NRIO.
 
 ## Three duties to consult
 
@@ -31,11 +31,11 @@ Write down how you applied them. A decision not to consult is still a decision, 
 
 ## Consult before you decide to release
 
-All three sections are framed the same way: the agency must not decide to give access unless the third party has had a reasonable opportunity to make submissions and the agency has had regard to them (s27(4), s27A(3)). The duty is a condition on releasing. If you are minded to refuse access to a third party's information, the duty does not apply to that information.
+Sections 27 and 27A are framed the same way: the agency must not decide to give access unless the third party has had a reasonable opportunity to make submissions and the agency has had regard to them (s27(4), s27A(3)). Section 26A instead requires consultation between the Commonwealth and the State under their arrangements, and its notice and hold do not depend on a submission (s26A(2) to (4)). Each duty is a condition on releasing. If you are minded to refuse access to a third party's information, the duty does not apply to that information.
 
 That does not make refusal the easy option. A refusal still needs an exemption that applies on the facts, and reasons that show it (Chapter 6). Never refuse access to save the work of consulting.
 
-The duty under sections 27 and 27A applies only if it is reasonably practicable to give the opportunity, having regard to all the circumstances, including the time limits in subsections 15(5) and (6) (s27(5), s27A(4)). Treat that as a narrow exception, for example for a person you cannot reach, not as permission to skip a large consultation. The time limits include the 30-day extension that consultation itself allows.
+The duty under sections 27 and 27A applies only if it is reasonably practicable to give the opportunity, having regard to all the circumstances, including the time limits in subsections 15(5) and (6) (s27(5), s27A(4)). Treat that as a narrow exception, for example for a person you cannot reach, not as permission to skip a large consultation.
 
 This is an illustration. Priya and Liam sorted every piece of third-party information in the RCFP documents.
 
@@ -43,11 +43,11 @@ This is an illustration. Priya and Liam sorted every piece of third-party inform
 | --- | --- | --- | --- |
 | Names, projects and grant amounts of the 31 grantees | Brief, decision records, spreadsheet | Release | No: announced with the round, so well known and public |
 | Scores and assessors' comments for the 31 grantees | Ranked list in the brief, spreadsheet | Release | Yes: 31 organisations under s27 |
-| Names of the 155 unsuccessful applicants, linked to their scores | Ranked list in the brief, spreadsheet | Delete under s47G | No: not minded to give access |
+| Names of the 155 unsuccessful applicants: 146 ranked with scores, 9 ineligible | Brief, decision sheet, spreadsheet | Delete under s47G | No: not minded to give access |
 | Contact persons' names, phone numbers and email addresses for all 186 applications | Spreadsheet | Delete under s47F | No: not minded to give access |
-| Names and positions of two advisers in the Minister's office | File note of the 19 May call, emails | Release | Yes: 2 individuals under s27A |
+| Names and positions of two advisers in the Minister's office | Emails; from July, also Sam's file note of the 19 May call (Chapter 3) | Release | Yes: 2 individuals under s27A |
 
-None of the 420 pages came from a State or a State authority, so section 26A did not apply. That left 31 + 2 = 33 third parties to consult. (The 155 are the 186 applications less the 31 grants.)
+None of the 420 pages came from a State or a State authority, so section 26A did not apply. That left 31 + 2 = 33 third parties to consult. When the journalist agreed in July to include the note (Chapter 3), Priya sent the adviser who had rung a short further notice covering it before Liam decided.
 
 ```figure
 type: decision
@@ -63,11 +63,11 @@ caption: Consultation is required only before a decision to give access. Record 
 
 ## Extend the time, then set the timetable
 
-Section 15(6) lets the agency extend the decision period by a further 30 days if it determines in writing that the requirements of section 26A, 27 or 27A make an extension appropriate. It must then inform the applicant as soon as practicable (s15(6)(b)). Without a written determination there is no extension, so make it early, while the original period is running, and file it.
+Section 15(6) lets the agency extend the decision period by a further 30 days if it determines in writing that the requirements of section 26A, 27 or 27A make an extension appropriate. It must then inform the applicant as soon as practicable (s15(6)(b)). Without a written determination there is no extension, so make it early and file it.
 
 This is an illustration. The request arrived on Monday 7 June 2027, so the original period ended on Wednesday 7 July. On Tuesday 22 June, Liam determined in writing that the consultations made an extension appropriate, and Priya told the journalist the same day. The new deadline was Friday 6 August 2027, 30 days after 7 July.
 
-The Act does not say how long third parties get to reply; it asks for a reasonable opportunity. NRIO's own practice, its choice and not a legal rule, is two weeks for most consultations, with a follow-up after one week. Priya sent all 33 notices on Thursday 24 June, with submissions due on Thursday 8 July. That left four weeks to weigh the replies, decide and prepare the release.
+The Act does not say how long third parties get to reply; it asks for a reasonable opportunity. NRIO's own practice, its choice and not a legal rule, is two weeks for most consultations, with a follow-up after one week. Priya sent all 33 notices on Thursday 24 June, with submissions due on Thursday 8 July.
 
 ```figure
 type: timeline
@@ -93,7 +93,7 @@ A consultation notice should let the third party make a useful submission withou
 - that the decision is the agency's, and submissions are considered but are not a veto;
 - that if they argue for exemption and the agency still decides to release, they will get a written notice and a chance to seek review before release.
 
-Send each third party only its own information. Each grantee received its own row of the spreadsheet and its own entry in the ranked list; sending the whole 186-row file would itself have disclosed other applicants' information. And do not name the applicant without their agreement. The right of access does not depend on "any reasons the person gives for seeking access" (s11(2)(a)), and who asked does not change whether information is exempt.
+Send each third party only its own information, and do not name the applicant without their agreement. The right of access does not depend on "any reasons the person gives for seeking access" (s11(2)(a)), and who asked does not change whether information is exempt. This is an illustration. Each grantee received its own row of the spreadsheet and its own entry in the ranked list; sending the whole 186-row file would itself have disclosed other applicants' information.
 
 Keep a consultation register: for each third party, the section, the pages, the notice date, the reply and what it said, the decision, and any information held back with the date it may be released. At release, the register is the control that matters most.
 
@@ -104,7 +104,7 @@ A submission is evidence and argument, not a vote. The decision-maker must have 
 Some submissions rely on reasons the Act rules out. In the public interest test you must not take into account that access could result in any person "misinterpreting or misunderstanding the document" (s11B(4)(b)).
 
 This is an illustration. Twenty of the 33 third parties replied. Fourteen grantees did not object; five grantees and one adviser did.
-- **One grantee** showed that its assessors' comments repeated figures from its unpublished accounts about a loan it was renegotiating. Liam found the adverse effect on its financial affairs unreasonable, because the figures added little once its score and grant were released, and deleted those comments under section 47G.
+- **One grantee** showed that its assessors' comments repeated figures from its unpublished accounts about a loan it was renegotiating. Liam found that releasing them while the loan was under negotiation could reasonably be expected to unreasonably affect it adversely in its lawful financial affairs (s47G(1)(a)). The figures added little to oversight once its score and grant were released, so on balance access would be contrary to the public interest, and he deleted those comments.
 - **Corran Bay Progress Association Inc.** argued that the assessors' criticisms of its project design would be misunderstood in the town. Misunderstanding is an irrelevant factor. Liam found that criticism of a publicly funded project's design did not unreasonably affect the association's lawful affairs, and that access would inform debate on a matter of public importance and promote oversight of public expenditure (s11B(3)(b), (c)). He decided to release.
 - **Three other grantees** made similar arguments; Liam decided to release.
 - **The adviser who objected** feared media contact. Liam found the information concerned official work, not private life, and that disclosure would not be unreasonable.
@@ -139,19 +139,19 @@ This is an illustration. Liam decided on Wednesday 28 July 2027, nine days befor
 
 ## When it goes wrong: the spreadsheet that went out early
 
-This is an illustration. One objecting grantee was a regional sporting club. Liam rejected its objection, so its scores and comments were held until the end of 27 August. On 28 July the journalist received the club's spreadsheet row unedited.
+This is an illustration. One objecting grantee was a regional sporting club. Liam rejected its objection, so its scores and comments were held until the end of 27 August. On 28 July the journalist received the club's spreadsheet row with its scores and comments still in it.
 
-Priya had marked up the documents in June and exported an edited extract of the spreadsheet then. After the submissions she re-marked the brief and ranked list, but never regenerated the spreadsheet extract. Liam's pre-release check compared the statement of reasons with the ranked list, not with every file in the bundle.
+Priya regenerated the edited spreadsheet extract on Monday 12 July, once the submissions were in. The club's objection arrived late, on Wednesday 14 July; Liam considered it, and Priya re-marked the brief and ranked list to hold its entry, but never regenerated the extract. Liam's pre-release check compared the statement of reasons with the ranked list, not with every file in the bundle.
 
 On Friday 30 July the club's secretary rang Priya: the journalist had asked the club to comment on the assessors' remarks. Ruth confirmed the error and told General Counsel. She wrote to the club that day, apologising, setting out what had been released and confirming that its review rights still stood, though review could no longer keep the information private. She told the journalist the row had gone out in error and asked that it not be published before 27 August; the journalist was not bound to agree. The comments named no individual, so no personal information was involved, but NRIO had given access that s27(7) said it must not give yet. The following week the club complained to the Information Commissioner (Chapter 6).
 
-The cost went beyond one club. A file-handling error had removed the protection Parliament gives a third party until its review rights run out, and other grantees would trust the next consultation less. The control is a release check against the register by someone other than the person who prepared the release. Ruth added it to the team's procedure.
+A file-handling error had removed the protection Parliament gives a third party until its review rights run out, and other grantees would trust the next consultation less. The control is a release check against the register by someone other than the person who prepared the release. Ruth added it to the team's procedure.
 
 ```figure
 type: checklist
 title: Release check against the consultation register
 caption: This is an illustration of NRIO's procedure after the error. Your agency's procedure may differ.
-- Rebuild every edited copy from the final markup | Never release a file exported before the submissions came in.
+- Rebuild every edited copy from the final markup | Never release a file exported before the last submission was dealt with.
 - Check each file, page by page, against the register | Every held entry must be deleted or absent.
 - Keep held material in a separate folder with its release date | The date follows the end of the review period and the agency's own check.
 - Have a second person do the check | Not the person who prepared the bundle.
@@ -169,13 +169,13 @@ This is an illustration. For each item below, decide whether NRIO must consult, 
 | B | One grantee's score and summary comment, which it published in its own newsletter, plus three unpublished comments on its finances | Release all |
 | C | An assessor's comment that a small grantee's treasurer, a retired accountant, has personally guaranteed any cost overrun | Release, with the treasurer's name deleted |
 | D | The name and position of the second adviser in the Minister's office, in four emails | Release |
-| E | The names of the 155 unsuccessful applicants, linked to their scores | Delete under s47G |
+| E | The names of the 155 unsuccessful applicants, with their results | Delete under s47G |
 
 Then suppose Liam had decided and given the third-party notices on Tuesday 3 August 2027. When is the last day an objecting third party could apply for review, and when could NRIO release the held information under its two-working-day practice if nobody applies?
 
 ### Worked answer
 
-**A: consult under section 27.** The comments are about the grantee's financial affairs (s27(2)(b)), are not well known or public, and might attract a section 47G contention. Send only its own row and ranked-list entry.
+**A: consult under section 27.** The comments are about the grantee's financial affairs (s27(2)(b)), are not well known or public, and might attract a section 47G contention.
 
 **B: consult on part.** The score and summary comment are available from a public source the grantee published itself (s27(3)(c)), so no consultation is needed for them. Consult under section 27 on the three unpublished comments, in one notice marked to show which parts are already public.
 
@@ -183,8 +183,8 @@ Then suppose Liam had decided and given the third-party notices on Tuesday 3 Aug
 
 **D: consult under section 27A.** A name and position are personal information, and the adviser's part in the emails is not well known. This adviser did not reply, so s27A(5) and (6) did not apply (s27A(7)) and the name went out on 28 July.
 
-**E: no consultation.** Liam is not minded to give access, so s27(4) is not engaged, but he must give full reasons for the section 47G deletion. If a reviewer later considers releasing the names, consultation comes first. If the journalist seeks IC review of the refusal, NRIO must notify the applicants (Chapter 6).
+**E: no consultation.** Liam is not minded to give access, so s27(4) is not engaged, but he must give full reasons for the section 47G deletion: the unreasonable adverse effect found, and the public interest factors on both sides (Chapters 4 and 6). If a reviewer later considers releasing the names, consultation comes first. If the journalist seeks IC review of the refusal, NRIO must notify the applicants (Chapter 6).
 
-**Dates.** Internal review closes 30 days after the day the third party is notified (s54B(1)(a)) and IC review 30 days after the day the notice is given (s54S(2)(b)). Notices on Tuesday 3 August make both end on **Thursday 2 September 2027**. The legal earliest release is Friday 3 September. NRIO's two working days, Friday 3 and Monday 6 September, put release on **Tuesday 7 September 2027**. A decision six days later than 28 July moves release six days later, from 1 to 7 September.
+**Dates.** Internal review closes 30 days after the day the third party is notified (s54B(1)(a)) and IC review 30 days after the day the notice is given (s54S(2)(b)). Notices on Tuesday 3 August make both end on **Thursday 2 September 2027**. The legal earliest release is Friday 3 September. NRIO's two working days, Friday 3 and Monday 6 September, put release on **Tuesday 7 September 2027**.
 
 Chapter 6 turns to the statement of reasons that every refusal needs, and to the reviews that test it.

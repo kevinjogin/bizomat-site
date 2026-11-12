@@ -130,7 +130,7 @@ The request met every element of s15(2), so the clock started on 9 February. The
 
 By then the law had acted. Under s15AC(3), NRIO's agency head was taken to have personally refused access on 11 March, with notice taken to have been given that day. Because a deemed refusal counts as the principal officer's personal decision, internal review was not available (s54(1)); the resident's next step was IC review. No charge could be imposed, but none ever could have been: the documents held his own personal information (reg 7).
 
-Ruth apologised in writing that day and applied to the Information Commissioner for further time (s15AC(4)). Liam decided within the time allowed, so the deemed refusal was taken never to have applied (s15AC(7)). The cost remained: two missed statutory limits, an application to the regulator, a rushed decision and five weeks without an answer.
+Ruth apologised in writing that day and applied to the Information Commissioner for further time (s15AC(4)). Liam decided within the time allowed and met any conditions on it, so the deemed refusal was taken never to have applied (s15AC(7)). The cost remained: two missed statutory limits, an application to the regulator, a rushed decision and five weeks without an answer.
 
 The team knew the 30-day rule. The request was routed by its subject instead of the law it invoked, into a log that tracked no dates. NRIO's intake rule, in the figure above, now applies to every item on the day it arrives. Every FOI and APP 12 request goes into one case register with its due dates, and someone other than the case officer checks the register weekly. With about 60 own-information FOI requests a year, this is not a rare case.
 

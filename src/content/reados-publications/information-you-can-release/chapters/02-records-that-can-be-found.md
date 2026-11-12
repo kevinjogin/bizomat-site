@@ -17,9 +17,9 @@ This chapter explains what a Commonwealth record is, when one may be destroyed, 
 
 The [Archives Act 1983](https://www.legislation.gov.au/C2004A02796/latest/text) defines a record broadly. It is a document or an object, "in any form (including any electronic form)", kept because of the information it contains or its connection with an event, person, circumstance or thing (s3(1)). A Commonwealth record is, in the main, "a record that is the property of the Commonwealth or of a Commonwealth institution" (s3(1)).
 
-Two consequences follow. Format does not matter: a signed brief, an email, a spreadsheet, a chat message, a text on a work phone and a scanned decision sheet are all records if they are kept for what they say or what they relate to. Status does not matter either: a draft is a record as much as a final version, and a copy can be one too.
+Two consequences follow. Format does not matter: a signed brief, an email, a spreadsheet, a chat message, a text on a work phone and a scanned decision sheet are all records if they are kept for what they say or what they relate to. Status does not matter: a draft is a record as much as a final version, and a copy can be one too.
 
-The [Freedom of Information Act 1982](https://www.legislation.gov.au/C2004A02562/latest/text) (FOI Act) casts a wider net still. A "document" includes any record of information and any copy of one, and a document of an agency is one in its possession, whether created there or received (s4(1)). An FOI search therefore reaches everything NRIO holds, wherever it sits: the records system, shared drives, inboxes, chat channels and work phones. The records system is where documents should be. The search has to go wherever they are.
+The [Freedom of Information Act 1982](https://www.legislation.gov.au/C2004A02562/latest/text) (FOI Act) casts a wider net still. A "document" includes any record of information and any copy of one, and a document of an agency is one in its possession, whether created there or received (s4(1)). An FOI search reaches everything NRIO holds, wherever it sits: the records system, shared drives, inboxes, chat channels and work phones. The records system is where documents should be. The search has to go wherever they are.
 
 Agency business on a personal phone or account is hard to find and manage. Avoid it; if it happens, save the substance to the records system that day.
 
@@ -130,7 +130,7 @@ caption: This is an illustration. The deletion happened before anyone answered t
 
 ## Exercise: a records check of the RCFP documents
 
-This is an illustration. Before the documents go to Liam, Priya checks how each item in the RCFP set is held. She also notes one item she saw along the way.
+This is an illustration. In July, before Liam decides, Priya checks how each item in the RCFP set is held. She also notes one item she saw along the way.
 
 | Item | Document | Where Priya finds it | What she notices |
 | --- | --- | --- | --- |
@@ -139,7 +139,7 @@ This is an illustration. Before the documents go to Liam, Priya checks how each 
 | C | Emails with the Minister's office, 1 Mar to 31 May 2027 | The inboxes of Sam and three of his officers | None is on the master file |
 | D | File note of the call of Wed 19 May 2027 | Master file | Written by Sam in July 2027, dated that day, saying when the call took place |
 | E | Assessment spreadsheet, 186 rows | Attached to an email to the Minister's office; three more copies on the RCFP shared drive: "Assessment final", "Assessment final v2" and "Assessment FINAL moderated" | None is on the master file |
-| F | NRIO's legal advice on the program's authority | Master file, a copy; the original is on the legal area's advice file | Nothing unusual |
+| F | NRIO's legal advice on the program's authority | Master file, attached to the signed brief; the original is on the legal area's advice file | Nothing unusual |
 | G | Not in the set: a chat thread from 31 May in which officers agreed how applicants would be told of the decisions | The RCFP team's chat channel | Not saved anywhere else |
 
 For each item, say whether it is a Commonwealth record, whether it is where it should be, and what Priya should do now. Nothing may be destroyed or altered.
