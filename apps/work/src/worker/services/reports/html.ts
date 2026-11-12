@@ -2,7 +2,9 @@
 // in-app preview shows exactly this page, so what people preview is what they export.
 
 import { SECTION_LABELS, STATUS_LABELS, type ReportSection } from '../../../shared/reports';
+import { parseGroupDescription } from '../../../shared/group-description';
 import type { ReportData, RiskRow, TaskRow } from './build';
+import type { CategorySection } from './categories';
 
 const NAVY = '#0a1f33';
 const TEAL = '#0f766e';
@@ -62,6 +64,34 @@ function bars(items: { label: string; value: number; color: string }[]): string 
 function commentaryBlock(text: string | undefined, author: string): string {
   if (!text?.trim()) return '';
   return `<div class="commentary"><div class="commentary-h">Management commentary, entered by ${esc(author)} (not derived from recorded data)</div><p>${esc(text.trim()).replace(/\n/g, '<br>')}</p></div>`;
+}
+
+/** A group description as paragraphs and bullet lists, every character escaped. */
+export function descriptionHtml(text: string): string {
+  return parseGroupDescription(text)
+    .map((b) => (b.kind === 'list' ? `<ul>${b.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : `<p>${b.lines.map(esc).join('<br>')}</p>`))
+    .join('');
+}
+
+/** Section K: one row per category, then each category's description and figures. */
+function categoriesHtml(k: CategorySection): string {
+  const swatch = (color: string) => `<svg class="swatch" width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><rect width="10" height="10" rx="2" fill="${esc(color)}"/></svg>`;
+  if (!k.rows.length) return `<section><h2>${SECTION_LABELS.categories}</h2><p class="muted">This board has no groups.</p></section>`;
+  const summary = `<table><thead><tr><th>Category</th><th>Tasks</th><th>Completed</th><th>In progress</th><th>Outstanding</th><th>Overdue</th><th>Owners</th></tr></thead><tbody>${k.rows
+    .map(
+      (g) =>
+        `<tr><td>${swatch(g.color)} ${esc(g.name)}</td><td>${g.total}</td><td>${g.completed}</td><td>${g.inProgress}</td><td>${g.outstanding}</td><td class="${g.overdue ? 'late' : ''}">${g.overdue}</td><td>${esc(g.owners.join(', ') || 'Unassigned')}</td></tr>`,
+    )
+    .join('')}</tbody></table>`;
+  const details = k.rows
+    .map((g) => {
+      const money = (g.finance ?? []).filter((f) => f.count > 0);
+      return `<div class="category"><h3>${swatch(g.color)} ${esc(g.name)}</h3>${g.description ? descriptionHtml(g.description) : '<p class="muted">No description.</p>'}
+<p class="small muted">${g.total} task(s): ${g.completed} completed, ${g.inProgress} in progress, ${g.outstanding} outstanding${g.overdue ? `, <span class="late">${g.overdue} overdue</span>` : ''}${g.unassigned ? `, ${g.unassigned} unassigned` : ''}.</p>
+${g.finance ? (money.length ? `<table><thead><tr><th>Financial column</th><th>Currency</th><th>Total</th><th>Tasks with an amount</th></tr></thead><tbody>${money.map((f) => `<tr><td>${esc(f.column)}${f.role ? ` <span class="tag">${esc(f.role)}</span>` : ''}</td><td>${esc(f.currency ?? 'Not set')}</td><td><strong>${esc(f.display)}</strong></td><td>${f.count}</td></tr>`).join('')}</tbody></table>` : '<p class="small muted">No amounts recorded in this category.</p>') : ''}</div>`;
+    })
+    .join('\n');
+  return `<section><h2>${SECTION_LABELS.categories}</h2><p class="muted small">${esc(k.note)}</p>${summary}${details}</section>`;
 }
 
 export function renderReportHtml(r: ReportData): string {
@@ -189,6 +219,7 @@ ${commentaryBlock(c.resources, c.author)}
   if (has('timeline')) {
     parts.push(`<section><h2>${SECTION_LABELS.timeline}</h2>${r.timeline.events.length ? `<table><thead><tr><th>Date and time</th><th>Event</th><th>By</th></tr></thead><tbody>${r.timeline.events.map((e) => `<tr><td class="nowrap">${esc(fmtTime(e.at, tz))}</td><td>${esc(e.text)}</td><td>${esc(e.actor ?? '-')}</td></tr>`).join('')}</tbody></table>` : '<p class="muted">No significant events were recorded in this period.</p>'}${r.timeline.truncated ? '<p class="small">Only the latest 1,000 events are listed.</p>' : ''}</section>`);
   }
+  if (has('categories') && r.categories) parts.push(categoriesHtml(r.categories));
   const notes = [...r.history.notes, ...r.truncated];
   parts.push(`<section class="notes"><h2>About this report</h2>
 <p>Every figure, task and date comes from the activity recorded in BIZOMAT Project Management. Past statuses are taken from the recorded history of changes, not inferred from today's values. ${r.history.reliableFrom ? `Reliable activity history for this board is available from ${esc(fmtDay(r.history.reliableFrom, tz))}.` : 'No activity has been recorded on this board.'}</p>
@@ -238,6 +269,9 @@ tr{page-break-inside:avoid}
 .nowrap{white-space:nowrap}
 .footer{margin-top:28px;padding-top:10px;border-top:1px solid #e2e8f0;font-size:11px;color:#64748b;display:flex;justify-content:space-between;gap:10px}
 section{page-break-inside:auto}
+.swatch{display:inline-block;vertical-align:baseline;margin-right:2px}
+.category{border-top:1px solid #e2e8f0;padding-top:4px;margin-top:10px;page-break-inside:avoid}
+.category ul{margin:4px 0 8px;padding-left:20px}
 @media print{.page{padding:0}h2{page-break-after:avoid}h3{page-break-after:avoid}}
 </style></head><body><main class="page">
 ${parts.join('\n')}

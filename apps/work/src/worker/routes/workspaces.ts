@@ -1,9 +1,10 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, clientIp, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, badRequest, body, clientIp, newId, notFound, now, parseJson } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
-import { audit, auditStmt } from '../services/audit';
+import { audit, auditEventStmt, auditStmt } from '../services/audit';
+import { isHexColor, sameColor, workspaceNameKey } from '../../shared/workspace-colors';
 import { workspaceMembers } from '../services/mappers';
 import { requireWorkspace } from '../services/permissions';
 import { createWorkspaceStmts, listWorkspaces } from './helpers';
@@ -35,6 +36,11 @@ workspaceRoutes.get('/workspaces/:ws', async (c) => {
   return c.json({ ...ws, settings: parseJson(row?.settings_json, {}) });
 });
 
+/**
+ * Rename, recolour or change the settings of a workspace (owners and admins). Renaming keeps the workspace's id, so
+ * every link and every board, item and member stays where it is. A new name must be 1 to 100 characters once trimmed
+ * and must differ (ignoring letter case) from every other workspace the person belongs to.
+ */
 workspaceRoutes.patch('/workspaces/:ws', async (c) => {
   const user = c.get('user');
   const wsId = c.req.param('ws');
@@ -42,26 +48,56 @@ workspaceRoutes.patch('/workspaces/:ws', async (c) => {
   const input = await body(
     c,
     z.object({
-      name: z.string().trim().min(1).max(100).optional(),
+      name: z.string().max(1000).optional(),
       description: z.string().max(1000).optional(),
-      color: colorSchema.optional(),
+      color: z.string().max(100).optional(),
       settings: z.object({ defaultMemberRole: z.enum(['member', 'viewer']).optional(), allowMembersToInvite: z.boolean().optional() }).optional(),
     }),
   );
+  const name = input.name?.trim();
+  if (name !== undefined) {
+    if (!name) throw badRequest('Enter a workspace name.', [{ path: 'name', message: 'Enter a workspace name.' }]);
+    if (name.length > 100) throw badRequest('A workspace name can be up to 100 characters long.', [{ path: 'name', message: 'Up to 100 characters.' }]);
+  }
+  if (input.color !== undefined && !isHexColor(input.color)) {
+    throw badRequest('Choose a colour from the palette or enter a hex colour such as #0f766e.', [{ path: 'color', message: 'Use #rrggbb.' }]);
+  }
   const cur = await c.env.DB.prepare('SELECT * FROM workspaces WHERE id = ?').bind(wsId).first<{ name: string; description: string; color: string; settings_json: string }>();
-  const settings = { ...parseJson<Record<string, unknown>>(cur!.settings_json, {}), ...(input.settings ?? {}) };
+  if (!cur) throw notFound('Workspace');
+  const renamed = name !== undefined && name !== cur.name;
+  if (renamed) {
+    const key = workspaceNameKey(name);
+    const clash = (await listWorkspaces(c.env.DB, user.id)).find((w) => w.id !== wsId && workspaceNameKey(w.name) === key);
+    if (clash) throw new HttpError(409, `You already belong to a workspace called "${clash.name}". Choose a different name.`, { code: 'WORKSPACE_NAME_TAKEN' });
+  }
+  const recoloured = input.color !== undefined && !sameColor(input.color, cur.color);
+  const settings = { ...parseJson<Record<string, unknown>>(cur.settings_json, {}), ...(input.settings ?? {}) };
+  const ip = clientIp(c);
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE workspaces SET name = ?, description = ?, color = ?, settings_json = ?, updated_at = ? WHERE id = ?').bind(
-      input.name ?? cur!.name,
-      input.description ?? cur!.description,
-      input.color ?? cur!.color,
+      name ?? cur.name,
+      input.description ?? cur.description,
+      input.color ?? cur.color,
       JSON.stringify(settings),
       now(),
       wsId,
     ),
-    auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'workspace.updated', metadata: input, ip: clientIp(c) }),
+    auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'workspace.updated', metadata: { ...input, ...(name !== undefined ? { name } : {}) }, ip }),
+    ...(renamed
+      ? [
+          auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'workspace.renamed', targetType: 'workspace', targetId: wsId, metadata: { from: cur.name, to: name }, ip }),
+          auditEventStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, type: 'workspace.renamed', before: cur.name, after: name }),
+        ]
+      : []),
+    ...(recoloured
+      ? [
+          auditStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, action: 'workspace.color_changed', targetType: 'workspace', targetId: wsId, metadata: { from: cur.color, to: input.color }, ip }),
+          auditEventStmt(c.env.DB, { workspaceId: wsId, actorId: user.id, type: 'workspace.color_changed', before: cur.color, after: input.color }),
+        ]
+      : []),
   ]);
-  return c.json({ ok: true });
+  const workspace = (await listWorkspaces(c.env.DB, user.id)).find((w) => w.id === wsId) ?? null;
+  return c.json({ ok: true, workspace });
 });
 
 workspaceRoutes.delete('/workspaces/:ws', async (c) => {

@@ -3,6 +3,7 @@
 
 import { strToU8, zipSync } from 'fflate';
 import type { ReportData, TaskRow } from './build';
+import type { CategorySection } from './categories';
 import { fmtTime } from './html';
 
 type Cell = string | number | null | { n: number; style: 'money0' | 'money2' | 'pct' } | { s: string; bold: true };
@@ -85,6 +86,28 @@ const TASK_HEAD = ['Task', 'Group', 'Status', 'Owners', 'Priority', 'Due date', 
 
 function taskCells(r: TaskRow, tz: string): Cell[] {
   return [r.name, r.group, r.status, r.owners.join(', '), r.priority, r.due, r.overdue ? 'Yes' : 'No', r.progress, fmtTime(r.createdAt, tz), r.completedAt ? fmtTime(r.completedAt, tz) : null, r.description];
+}
+
+/** Section K as its own sheet: one row per category; amounts (when the report has financial data) one column each. */
+function categoriesSheet(k: CategorySection): Sheet {
+  const finCols = k.financeIncluded ? (k.rows.find((g) => g.finance?.length)?.finance ?? []) : [];
+  const head: Cell[] = ['Category', 'Description', 'Total tasks', 'Completed', 'In progress', 'Outstanding', 'Overdue', 'Unassigned', 'Owners', ...finCols.map((f) => `${f.column} (${f.currency ?? 'no currency'})`)];
+  const rows: Cell[][] = k.rows.map((g) => [
+    g.name,
+    g.description,
+    g.total,
+    g.completed,
+    g.inProgress,
+    g.outstanding,
+    g.overdue,
+    g.unassigned,
+    g.owners.join(', '),
+    ...finCols.map((col) => {
+      const f = g.finance?.find((x) => x.columnId === col.columnId);
+      return f && f.count ? money(f.amount, f.currency) : null;
+    }),
+  ]);
+  return { name: 'Categories', widths: [28, 70, 11, 11, 11, 12, 10, 11, 30, ...finCols.map(() => 20)], rows: [head, ...rows, [], ['Note', k.note]], header: 0 };
 }
 
 export function renderReportXlsx(r: ReportData): Uint8Array {
@@ -183,6 +206,7 @@ export function renderReportXlsx(r: ReportData): Uint8Array {
     sheets.push({ name: 'Finance', widths: [34, 18, 22, 20, 16, 18, 16, 14], rows, header: 0 });
   }
   sheets.push({ name: 'Timeline', widths: [20, 80, 24], rows: [['Date and time', 'Event', 'By'], ...r.timeline.events.map((e) => [fmtTime(e.at, tz), e.text, e.actor])], header: 0 });
+  if (r.categories && r.meta.sections.includes('categories')) sheets.push(categoriesSheet(r.categories));
 
   const files: Record<string, Uint8Array> = {
     '[Content_Types].xml': strToU8(
@@ -217,8 +241,15 @@ export function csvCell(v: unknown): string {
 
 export function renderTasksCsv(r: ReportData): string {
   const tz = r.meta.period.timezone;
-  const lines = [TASK_HEAD.map(csvCell).join(',')];
-  for (const t of r.tasks) lines.push(taskCells(t, tz).map((c) => csvCell(c as string | number | null)).join(','));
+  // With section K, each task also carries its category's description, in a last column so the others keep their place.
+  // Tasks name their group, so two groups with the same name and different descriptions leave the cell empty.
+  let described: Map<string, string> | null = null;
+  if (r.categories && r.meta.sections.includes('categories')) {
+    described = new Map();
+    for (const g of r.categories.rows) described.set(g.name, described.has(g.name) && described.get(g.name) !== g.description ? '' : g.description);
+  }
+  const lines = [[...TASK_HEAD, ...(described ? ['Category description'] : [])].map(csvCell).join(',')];
+  for (const t of r.tasks) lines.push([...taskCells(t, tz), ...(described ? [described.get(t.group) ?? ''] : [])].map((c) => csvCell(c as string | number | null)).join(','));
   // A byte-order mark so Excel opens the file as UTF-8.
   return `\ufeff${lines.join('\r\n')}\r\n`;
 }

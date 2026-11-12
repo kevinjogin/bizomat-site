@@ -302,7 +302,7 @@ export function AuditTrail() {
     <section className="card">
       <div className="card-header"><h2 className="grow">Audit trail</h2></div>
       <div className="card-pad">
-        <p className="muted small" style={{ marginBottom: 10 }}>The permanent record of task, project, membership, permission, invitation, finance and report events. Nobody can edit or delete it from the application.</p>
+        <p className="muted small" style={{ marginBottom: 10 }}>The permanent record of task, project, membership, permission, invitation, finance, report and workspace name and colour events. Nobody can edit or delete it from the application.</p>
         <div className="row wrap" style={{ alignItems: 'flex-end' }}>
           <Field label="Event type">
             <select className="select" value={type} onChange={(e) => setType(e.target.value)}>
@@ -314,6 +314,7 @@ export function AuditTrail() {
               <option value="permission.">Permissions</option>
               <option value="finance.">Finance</option>
               <option value="report.">Reports</option>
+              <option value="workspace.">Workspace (name and colour)</option>
             </select>
           </Field>
           <Field label="From"><input className="input" type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></Field>

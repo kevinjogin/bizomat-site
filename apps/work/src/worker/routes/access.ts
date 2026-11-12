@@ -269,7 +269,8 @@ accessRoutes.get('/items/:id/context', async (c) => {
     projectAccess: !!t.project,
     taskCaps: t.caps,
     board: { id: t.board.id, workspaceId: t.board.workspace_id, name: t.board.name, description: '', kind: t.board.kind, visibility: t.board.visibility, icon: t.board.icon, settings: parseJson(t.board.settings_json, {}), position: 0, createdBy: t.board.created_by, createdAt: t.board.created_at, updatedAt: t.board.updated_at, archivedAt: t.board.archived_at, folderId: null, access },
-    groups: group ? [groupDTO(group)] : [],
+    // Like the project's own description, the group's is project information: not shown to people who see only a task.
+    groups: group ? [{ ...groupDTO(group), description: '' }] : [],
     columns,
     items: [root!, ...subs.results].map((i) => stripValues(itemDTO(i), hidden)),
     views: [],

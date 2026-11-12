@@ -17,6 +17,7 @@ import { assertFolder } from './folders';
 import { eventStmt } from '../services/analytics';
 import { financePolicy, financialColumnIds, memberAccessMap, requireProject, stripValues } from '../services/access';
 import { resolveColumnCurrency } from '../../shared/finance';
+import { GROUP_DESCRIPTION_MAX, normalizeGroupDescription } from '../../shared/group-description';
 
 export const boardRoutes = new Hono<AppEnv>();
 
@@ -297,13 +298,15 @@ boardRoutes.get('/boards/:id/activity', async (c) => {
 boardRoutes.post('/boards/:id/groups', async (c) => {
   const user = c.get('user');
   const { board } = await requireBoard(c.env.DB, c.req.param('id'), user.id, 'edit');
-  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200), color: colorSchema.optional(), position: z.enum(['top', 'bottom']).default('top') }));
+  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200), color: colorSchema.optional(), position: z.enum(['top', 'bottom']).default('top'), description: z.string().max(GROUP_DESCRIPTION_MAX * 4).optional() }));
+  const description = normalizeGroupDescription(input.description ?? '');
+  if (description.length > GROUP_DESCRIPTION_MAX) throw badRequest(`A description can be up to ${GROUP_DESCRIPTION_MAX.toLocaleString('en')} characters long.`);
   const agg = await c.env.DB.prepare('SELECT MIN(position) AS lo, MAX(position) AS hi, COUNT(*) AS n FROM groups WHERE board_id = ?').bind(board.id).first<{ lo: number | null; hi: number | null; n: number }>();
   if ((agg?.n ?? 0) >= 200) throw badRequest('Group limit reached');
   const id = newId();
   const position = input.position === 'top' ? positionBetween(null, agg?.lo) : positionBetween(agg?.hi, null);
   await c.env.DB.batch([
-    c.env.DB.prepare('INSERT INTO groups (id, workspace_id, board_id, name, color, position, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, board.workspace_id, board.id, input.name, input.color ?? PALETTE[(agg?.n ?? 0) % PALETTE.length], position, now()),
+    c.env.DB.prepare('INSERT INTO groups (id, workspace_id, board_id, name, color, position, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, board.workspace_id, board.id, input.name, input.color ?? PALETTE[(agg?.n ?? 0) % PALETTE.length], position, description, now()),
     activityStmt(c.env.DB, { workspaceId: board.workspace_id, boardId: board.id, actorId: user.id, action: 'group_created', newValue: input.name }),
   ]);
   rt(c, board.id, 'groups_changed');
@@ -318,14 +321,43 @@ async function loadGroup(c: any, need: 'view' | 'edit' | 'admin') {
   return { group: g as GroupRow, ...auth };
 }
 
+// Renaming, recolouring, collapsing, reordering and describing a group need edit access to the board (the same right
+// for each); anyone who can view the board reads the description in the board bundle.
 boardRoutes.patch('/groups/:groupId', async (c) => {
   const { group, board } = await loadGroup(c, 'edit');
-  const input = await body(c, z.object({ name: z.string().trim().min(1).max(200).optional(), color: colorSchema.optional(), collapsed: z.boolean().optional(), position: z.number().optional() }));
-  await c.env.DB.prepare('UPDATE groups SET name = ?, color = ?, collapsed = ?, position = ? WHERE id = ?')
-    .bind(input.name ?? group.name, input.color ?? group.color, input.collapsed === undefined ? group.collapsed : input.collapsed ? 1 : 0, input.position ?? group.position, group.id)
-    .run();
+  const input = await body(
+    c,
+    z.object({ name: z.string().trim().min(1).max(200).optional(), color: colorSchema.optional(), collapsed: z.boolean().optional(), position: z.number().optional(), description: z.string().max(GROUP_DESCRIPTION_MAX * 4).optional() }),
+  );
+  const description = input.description === undefined ? undefined : normalizeGroupDescription(input.description);
+  if (description !== undefined && description.length > GROUP_DESCRIPTION_MAX) {
+    throw badRequest(`A description can be up to ${GROUP_DESCRIPTION_MAX.toLocaleString('en')} characters long.`, [{ path: 'description', message: `Up to ${GROUP_DESCRIPTION_MAX} characters.` }]);
+  }
+  const before = group.description ?? '';
+  const describedChanged = description !== undefined && description !== before;
+  await c.env.DB.batch([
+    c.env.DB.prepare('UPDATE groups SET name = ?, color = ?, collapsed = ?, position = ?, description = ? WHERE id = ?').bind(
+      input.name ?? group.name,
+      input.color ?? group.color,
+      input.collapsed === undefined ? group.collapsed : input.collapsed ? 1 : 0,
+      input.position ?? group.position,
+      description ?? before,
+      group.id,
+    ),
+    ...(describedChanged
+      ? [
+          activityStmt(c.env.DB, {
+            workspaceId: board.workspace_id,
+            boardId: board.id,
+            actorId: c.get('user').id,
+            action: description ? 'group_description_changed' : 'group_description_cleared',
+            newValue: input.name ?? group.name,
+          }),
+        ]
+      : []),
+  ]);
   rt(c, board.id, 'groups_changed');
-  return c.json({ ok: true });
+  return c.json({ ok: true, description: description ?? before });
 });
 
 boardRoutes.post('/groups/:groupId/duplicate', async (c) => {
@@ -334,7 +366,7 @@ boardRoutes.post('/groups/:groupId/duplicate', async (c) => {
   const { duplicateItem } = await import('../services/item-ops');
   const id = newId();
   const next = await c.env.DB.prepare('SELECT MIN(position) AS p FROM groups WHERE board_id = ? AND position > ?').bind(board.id, group.position).first<{ p: number | null }>();
-  await c.env.DB.prepare('INSERT INTO groups (id, workspace_id, board_id, name, color, position, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, board.workspace_id, board.id, `${group.name} (copy)`, group.color, positionBetween(group.position, next?.p ?? null), now()).run();
+  await c.env.DB.prepare('INSERT INTO groups (id, workspace_id, board_id, name, color, position, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, board.workspace_id, board.id, `${group.name} (copy)`, group.color, positionBetween(group.position, next?.p ?? null), group.description ?? '', now()).run();
   const items = await c.env.DB.prepare('SELECT * FROM items WHERE group_id = ? AND parent_item_id IS NULL AND archived_at IS NULL ORDER BY position').bind(group.id).all<ItemRow>();
   const svc = svcFromContext(c);
   for (const it of items.results) await duplicateItem(svc, board, it, { groupId: id, name: it.name });
