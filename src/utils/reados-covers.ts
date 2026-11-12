@@ -284,6 +284,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'leading-an-aps-team': { motif: 'compass', tone: 'graphite' },
   'information-you-can-release': { motif: 'archive', tone: 'paper' },
   'accountable-to-parliament': { motif: 'summit', tone: 'carbon' },
+  'policy-advice-that-lands': { motif: 'decision', tone: 'carbon' },
 };
 
 const hash = (s: string) => [...s].reduce((a, c) => (Math.imul(a, 33) + c.charCodeAt(0)) >>> 0, 5381);
