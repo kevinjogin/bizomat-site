@@ -15,6 +15,8 @@ import { useCreateDocument } from '../components/layout/CreateDialogs';
 import { BASE, appUrl } from '../lib/base';
 import { isFinancialColumn, type TaskCaps } from '../../shared/permissions';
 import { TaskAccessTab } from './TaskAccess';
+import { TaskScheduleTab } from './controls/TaskSchedule';
+import { TaskKey } from './controls/schedule';
 
 interface ItemDetail {
   item: ItemDTO;
@@ -26,7 +28,7 @@ interface ItemDetail {
   timeEntries: { id: string; user_id: string; user_name: string; started_at: number; ended_at: number | null; duration_seconds: number | null; note: string }[];
 }
 
-type Tab = 'updates' | 'details' | 'subitems' | 'files' | 'activity' | 'time' | 'docs' | 'access';
+type Tab = 'updates' | 'details' | 'schedule' | 'subitems' | 'files' | 'activity' | 'time' | 'docs' | 'access';
 
 /** What a person may change, column by column, from their rights on the task (src/shared/permissions.ts). */
 export function columnEditable(caps: TaskCaps | undefined, fallback: boolean) {
@@ -91,6 +93,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
                 <span>{bundle.board.name}</span> <Icon name="chevronRight" size={12} /> <span>{group?.name}</span>
                 {detail.data?.parent ? (<><Icon name="chevronRight" size={12} /><button className="btn ghost sm" onClick={() => onOpen(detail.data!.parent!.id)}>{detail.data.parent.name}</button></>) : null}
                 <span className="spacer" />
+                <TaskKey value={item.key} copy />
                 <button ref={menuRef} className="btn ghost icon sm" aria-label="Item actions" onClick={() => setMenu(true)}><Icon name="more" /></button>
                 <button className="btn ghost icon sm" aria-label="Close panel" onClick={onClose}><Icon name="x" /></button>
               </div>
@@ -105,7 +108,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
                 maxLength={500}
               />
               <div className="tabs" role="tablist" style={{ marginTop: 8 }}>
-                {(['updates', 'details', 'subitems', 'files', 'activity', 'time', 'docs', 'access'] as Tab[]).filter((t) => !(t === 'subitems' && item.parentItemId) && (t !== 'access' || canShare) && (t !== 'docs' || caps?.via !== 'task')).map((t) => (
+                {(['updates', 'details', 'schedule', 'subitems', 'files', 'activity', 'time', 'docs', 'access'] as Tab[]).filter((t) => !(t === 'subitems' && item.parentItemId) && (t !== 'access' || canShare) && (t !== 'docs' || caps?.via !== 'task') && (t !== 'schedule' || !item.id.startsWith('tmp-'))).map((t) => (
                   <button key={t} role="tab" aria-selected={tab === t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>
                     {t === 'access' ? 'Access' : t === 'updates' ? `Updates${item.updateCount ? ` (${item.updateCount})` : ''}` : t === 'subitems' ? `Subitems (${subitems.length})` : t === 'files' ? `Files (${detail.data?.attachments.length ?? 0})` : t[0].toUpperCase() + t.slice(1)}
                   </button>
@@ -114,6 +117,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
             </div>
             <div className="panel-body">
               {tab === 'details' ? <DetailsTab item={item} columns={bundle.columns} ctx={ctx} canEdit={editAll} editable={editable} actions={actions} /> : null}
+              {tab === 'schedule' ? <TaskScheduleTab key={item.id} itemId={item.id} boardId={bundle.board.id} archived={!!bundle.board.archivedAt} memberName={memberName} /> : null}
               {tab === 'updates' ? <UpdatesTab itemId={item.id} members={members} onPosted={refresh} canComment={caps ? caps.comment : true} /> : null}
               {tab === 'subitems' ? <SubitemsTab item={item} subitems={subitems} columns={bundle.columns} ctx={ctx} canEdit={editAll && (bundle.board.caps?.createTasks ?? canEdit)} actions={actions} onOpen={onOpen} /> : null}
               {tab === 'files' ? <FilesTab item={item} attachments={detail.data?.attachments ?? []} canEdit={caps ? caps.upload && canEdit : canEdit} refresh={refresh} /> : null}

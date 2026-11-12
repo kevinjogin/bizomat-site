@@ -20,7 +20,8 @@ export interface BoardActions {
   duplicateItem: (id: string) => Promise<void>;
   bulk: (itemIds: string[], action: string, extra?: Record<string, unknown>) => Promise<void>;
   createGroup: (name: string, position?: 'top' | 'bottom') => Promise<void>;
-  updateGroup: (id: string, patch: Partial<Pick<GroupDTO, 'name' | 'color' | 'collapsed' | 'position'>>) => Promise<void>;
+  /** Resolves true when the server accepted the change (a failure is shown as a toast and the board reloads). */
+  updateGroup: (id: string, patch: Partial<Pick<GroupDTO, 'name' | 'color' | 'collapsed' | 'position' | 'description'>>) => Promise<boolean>;
   deleteGroup: (id: string) => Promise<void>;
   archiveGroup: (id: string) => Promise<void>;
   duplicateGroup: (id: string) => Promise<void>;
@@ -230,7 +231,7 @@ export function useBoardActions(boardId: string): BoardActions {
     },
     async updateGroup(id, p) {
       setB((b) => ({ ...b, groups: b.groups.map((g) => (g.id === id ? { ...g, ...p } : g)).sort((a, c) => a.position - c.position) }));
-      await run(patch(`/groups/${id}`, p), p.collapsed === undefined);
+      return (await run(patch(`/groups/${id}`, p), p.collapsed === undefined)) !== null;
     },
     async deleteGroup(id) {
       setB((b) => ({ ...b, groups: b.groups.filter((g) => g.id !== id), items: b.items.filter((i) => i.groupId !== id) }));

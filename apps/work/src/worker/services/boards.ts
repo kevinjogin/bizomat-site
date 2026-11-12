@@ -337,7 +337,11 @@ export async function cloneBoard(
     db.prepare("INSERT INTO board_members (board_id, workspace_id, user_id, role) VALUES (?, ?, ?, 'owner')").bind(boardId, wsId, opts.createdBy),
   ];
   for (const g of groups.results) {
-    stmts.push(db.prepare('INSERT INTO groups (id, workspace_id, board_id, name, color, position, collapsed, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(map.get(g.id), wsId, boardId, g.name, g.color, g.position, g.collapsed, t));
+    stmts.push(
+      db
+        .prepare('INSERT INTO groups (id, workspace_id, board_id, name, color, position, collapsed, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(map.get(g.id), wsId, boardId, g.name, g.color, g.position, g.collapsed, g.description ?? '', t),
+    );
   }
   for (const c of columns.results) {
     stmts.push(

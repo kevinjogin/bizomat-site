@@ -1,5 +1,5 @@
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ViewDTO, ViewSettings, ViewType } from '../../shared/types';
 import { ApiError, del, get, post } from '../lib/api';
@@ -19,6 +19,10 @@ import type { BoardViewProps } from './types';
 import { AutomationsPanel } from '../components/automations/AutomationBuilder';
 import { ReportsDialog } from './ReportsDialog';
 import { FinancePanel } from './FinancePanel';
+import { WorkspaceDot } from '../components/workspace/WorkspaceIdentity';
+import { SCHEDULE_FILTERS, ScheduleContext, matchesScheduleFilter, useSchedule, useScheduleIndexValue, type ScheduleFilter } from './controls/schedule';
+
+const ProjectControls = lazy(() => import('./controls/ProjectControls'));
 
 export default function BoardPage() {
   const { boardId, viewId } = useParams();
@@ -37,7 +41,11 @@ export default function BoardPage() {
   const computed = useComputedItems(bundle, memberName);
   const [quick, setQuick] = useState<QuickFilters>({ search: '', personId: null });
   const [localSettings, setLocalSettings] = useState<Record<string, ViewSettings>>({});
-  const [dialog, setDialog] = useState<null | 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance'>(params.get('automations') ? 'automations' : params.get('reports') ? 'reports' : null);
+  const [dialog, setDialog] = useState<null | 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance' | 'controls'>(params.get('automations') ? 'automations' : params.get('reports') ? 'reports' : params.get('controls') ? 'controls' : null);
+  // One schedule calculation (on the server) shared by every view, the task panel and Project controls.
+  const sched = useSchedule(bundle);
+  const schedIndex = useScheduleIndexValue(sched.data);
+  const [schedFilter, setSchedFilter] = useState<ScheduleFilter>('all');
   const itemId = params.get('item');
 
   usePageTitle(bundle?.board.name);
@@ -88,7 +96,8 @@ export default function BoardPage() {
   }
   if (!bundle) return null;
 
-  const items = applyView(computed, bundle.columns, view, quick, { currentUserId: userId, memberName });
+  const items = applyView(computed, bundle.columns, view, quick, { currentUserId: userId, memberName }).filter((i) => schedFilter === 'all' || matchesScheduleFilter(schedIndex.byItem.get(i.id), schedFilter));
+  const showSchedFilter = schedFilter !== 'all' || (sched.data?.links.length ?? 0) > 0;
   const columns = visibleColumns(bundle.columns, view);
   const reg = VIEW_REGISTRY[view.type] ?? VIEW_REGISTRY.table;
   const ViewComp = reg.component;
@@ -108,10 +117,21 @@ export default function BoardPage() {
   };
 
   return (
+    <ScheduleContext.Provider value={schedIndex}>
     <div className="page full">
       <BoardHeader bundle={bundle} canEdit={canEdit} live={live} onOpen={setDialog} actions={actions} wsId={ws.id} />
       <ViewTabs views={views} activeId={baseView.id} wsId={ws.id} boardId={bundle.board.id} canEdit={canEdit} actions={actions} userId={userId} navigate={navigate} />
       <Toolbar bundle={bundle} view={view} quick={quick} setQuick={setQuick} updateSettings={updateViewSettings} canEdit={canEdit} onNewItem={newItem} members={members} />
+      {showSchedFilter ? (
+        <div className="sched-filter-bar">
+          <label className="small muted" htmlFor="sched-filter">Critical path</label>
+          <select id="sched-filter" className="select sm" value={schedFilter} onChange={(e) => setSchedFilter(e.target.value as ScheduleFilter)}>
+            {Object.entries(SCHEDULE_FILTERS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          </select>
+          {sched.data?.summary.projectFinish ? <span className="small muted">Forecast finish {sched.data.summary.projectFinish} · {sched.data.summary.counts.critical} critical</span> : null}
+          {sched.data && !sched.data.summary.valid ? <span className="crit-badge critical">Dependency loop: open Project controls</span> : null}
+        </div>
+      ) : null}
       {bundle.board.archivedAt ? <div className="info-box" style={{ margin: '8px 24px' }}><Icon name="archive" /> This board is archived and read-only. {bundle.board.access === 'admin' ? 'Restore it from board settings.' : ''}</div> : null}
       <div className="view-body">
         <Suspense fallback={<Loading />}>
@@ -131,7 +151,13 @@ export default function BoardPage() {
       {dialog === 'activity' ? <BoardActivity boardId={bundle.board.id} onClose={() => setDialog(null)} onOpenItem={(id) => { setDialog(null); openItem(id); }} /> : null}
       {dialog === 'reports' ? <ReportsDialog bundle={bundle} onClose={() => { setDialog(null); setParams((p) => { const n = new URLSearchParams(p); n.delete('reports'); return n; }); }} /> : null}
       {dialog === 'finance' ? <FinancePanel bundle={bundle} onClose={() => setDialog(null)} /> : null}
+      {dialog === 'controls' ? (
+        <Suspense fallback={<Loading />}>
+          <ProjectControls bundle={bundle} onClose={() => { setDialog(null); setParams((p) => { const n = new URLSearchParams(p); n.delete('controls'); return n; }); }} onOpenItem={(id) => openItem(id)} />
+        </Suspense>
+      ) : null}
     </div>
+    </ScheduleContext.Provider>
   );
 }
 
@@ -144,8 +170,9 @@ function TaskFallback({ wsId, itemId }: { wsId: string; itemId: string }) {
   return <Loading label="Opening the task…" />;
 }
 
-function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle: NonNullable<ReturnType<typeof useBoardQuery>['data']>; canEdit: boolean; live: boolean; onOpen: (d: 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance') => void; actions: ReturnType<typeof useBoardActions>; wsId: string }) {
+function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle: NonNullable<ReturnType<typeof useBoardQuery>['data']>; canEdit: boolean; live: boolean; onOpen: (d: 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance' | 'controls') => void; actions: ReturnType<typeof useBoardActions>; wsId: string }) {
   const b = bundle.board;
+  const ws = useWorkspace();
   const [name, setName] = useState(b.name);
   useEffect(() => setName(b.name), [b.name]);
   const qc = useQueryClient();
@@ -165,6 +192,11 @@ function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle:
   };
   return (
     <div className="board-header">
+      <nav className="board-crumbs" aria-label="Breadcrumb">
+        <Link to={`/w/${ws.id}/home`}><WorkspaceDot color={ws.color} size="sm" /><span>{ws.name}</span></Link>
+        <Icon name="chevronRight" size={12} />
+        <Link to={`/w/${ws.id}/boards`}><span>Boards</span></Link>
+      </nav>
       <div className="row wrap">
         <input className="board-title" value={name} readOnly={!canEdit} aria-label="Board name" onChange={(e) => setName(e.target.value)} onBlur={saveName} onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} size={Math.max(8, name.length)} maxLength={200} />
         <button className="btn ghost icon sm" aria-label={isFav ? 'Remove from favourites' : 'Add to favourites'} aria-pressed={isFav} onClick={toggleFav} style={{ color: isFav ? '#f5a524' : undefined }}>
@@ -183,6 +215,7 @@ function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle:
         {b.caps?.viewFinance && bundle.columns.some((c) => c.type === 'currency' || (c.type === 'number' && c.settings?.financial)) ? (
           <button className="btn ghost sm" onClick={() => onOpen('finance')} aria-label="Project finance"><Icon name="chart" /> <span className="desktop-only">Finance</span></button>
         ) : null}
+        <button className="btn ghost sm" onClick={() => onOpen('controls')} aria-label="Project controls: critical path, baselines and earned value"><Icon name="target" /> <span className="desktop-only">Project controls</span></button>
         {b.caps?.generateReports ? <button className="btn ghost sm" onClick={() => onOpen('reports')} aria-label="Project reports"><Icon name="file" /> <span className="desktop-only">Reports</span></button> : null}
         <button className="btn ghost icon sm" aria-label="Board settings" onClick={() => onOpen('settings')}><Icon name="settings" /></button>
       </div>

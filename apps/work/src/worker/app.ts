@@ -12,6 +12,7 @@ import { financeRoutes } from './routes/finance';
 import { reportRoutes } from './routes/reports';
 import { adminEmailRoutes } from './routes/admin-email';
 import { adminSignupRoutes } from './routes/admin-signup';
+import { scheduleRoutes } from './routes/schedule';
 import { boardRoutes } from './routes/boards';
 import { itemRoutes } from './routes/items';
 import { fileRoutes } from './routes/files';
@@ -103,6 +104,7 @@ export function createApp() {
   api.route('/', emailAdminRoutes);
   api.route('/', financeRoutes);
   api.route('/', reportRoutes);
+  api.route('/', scheduleRoutes);
   api.route('/', boardRoutes);
   api.route('/', itemRoutes);
   api.route('/', fileRoutes);

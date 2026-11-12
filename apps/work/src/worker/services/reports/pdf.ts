@@ -5,7 +5,24 @@
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage, type RGB } from 'pdf-lib';
 import { SECTION_LABELS, STATUS_LABELS, type ReportSection } from '../../../shared/reports';
+import { parseGroupDescription } from '../../../shared/group-description';
 import type { ReportData, RiskRow, TaskRow } from './build';
+import type { CategorySection } from './categories';
+import { CRITICALITY_LABELS, type Criticality } from '../../../shared/schedule';
+import {
+  amountText,
+  dateText,
+  daysText,
+  evmMeasures,
+  finishVarianceWords,
+  indexText,
+  moneyText,
+  percentText,
+  signedDays,
+  type BaselineSection,
+  type EvmSection,
+  type ScheduleSection,
+} from './controls';
 import { fmtDay, fmtTime } from './html';
 
 const A4: [number, number] = [595.28, 841.89];
@@ -22,7 +39,7 @@ const WIN_ANSI_EXTRA = new Set([0x20ac, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020, 
 /** Text the standard PDF fonts can draw: WinAnsi characters only, everything else replaced. */
 export function pdfSafe(s: unknown): string {
   let out = '';
-  for (const ch of String(s ?? '').replace(/[\t\r]/g, ' ').replace(/\u2192/g, '->').replace(/[\u2010\u2011\u2012]/g, '-').replace(/\u00a0/g, ' ')) {
+  for (const ch of String(s ?? '').replace(/[\t\r]/g, ' ').replace(/\u2192/g, '->').replace(/[\u2010\u2011\u2012\u2212]/g, '-').replace(/\u00a0/g, ' ')) {
     const cp = ch.codePointAt(0)!;
     if ((cp >= 32 && cp <= 126) || (cp >= 160 && cp <= 255) || WIN_ANSI_EXTRA.has(cp) || ch === '\n') out += ch;
     else out += '?';
@@ -159,9 +176,9 @@ class Writer {
     this.y -= 6;
   }
 
-  table(headers: string[], rows: string[][], widths: number[]) {
-    const size = 8.3;
-    const pad = 4;
+  table(headers: string[], rows: string[][], widths: number[], opts: { size?: number } = {}) {
+    const size = opts.size ?? 8.3;
+    const pad = size < 8 ? 3 : 4;
     const lh = size * 1.3;
     const total = widths.reduce((a, b) => a + b, 0);
     const cols = widths.map((w) => (w / total) * this.width);
@@ -200,18 +217,207 @@ class Writer {
 function tasks(w: Writer, rows: TaskRow[], empty: string) {
   if (!rows.length) return w.muted(empty);
   w.table(
-    ['Task', 'Group', 'Status', 'Owner', 'Priority', 'Due'],
-    rows.map((r) => [r.name, r.group, r.status || '-', r.owners.join(', ') || 'Unassigned', r.priority ?? '-', r.due ? `${r.due}${r.overdue ? ' (overdue)' : ''}` : '-']),
-    [30, 14, 13, 18, 10, 15],
+    ['ID', 'Task', 'Group', 'Status', 'Owner', 'Priority', 'Due'],
+    rows.map((r) => [r.key ?? '-', r.name, r.group, r.status || '-', r.owners.join(', ') || 'Unassigned', r.priority ?? '-', r.due ? `${r.due}${r.overdue ? ' (overdue)' : ''}` : '-']),
+    [12, 25, 13, 12, 16, 9, 13],
   );
 }
 
 function risks(w: Writer, rows: RiskRow[]) {
   w.table(
-    ['Type', 'Task', 'Detail', 'Impact', 'Responsible', 'Suggested action'],
-    rows.map((r) => [r.kind, r.task, r.detail, r.impact, r.owners.join(', ') || 'Unassigned', r.suggestedAction]),
-    [11, 21, 22, 12, 15, 19],
+    ['ID', 'Type', 'Task', 'Detail', 'Impact', 'Responsible', 'Suggested action'],
+    rows.map((r) => [r.taskKey ?? '-', r.kind, r.task, r.detail, r.impact, r.owners.join(', ') || 'Unassigned', r.suggestedAction]),
+    [11, 10, 18, 20, 11, 13, 17],
   );
+}
+
+/** Section K: a summary table, then each category's description (paragraphs and bullets) and figures. */
+function categories(w: Writer, k: CategorySection) {
+  w.h2(SECTION_LABELS.categories);
+  w.muted(k.note);
+  if (!k.rows.length) return w.muted('This board has no groups.');
+  w.table(
+    ['Category', 'Tasks', 'Completed', 'In progress', 'Outstanding', 'Overdue', 'Owners'],
+    k.rows.map((g) => [g.name, String(g.total), String(g.completed), String(g.inProgress), String(g.outstanding), String(g.overdue), g.owners.join(', ') || 'Unassigned']),
+    [24, 8, 11, 11, 12, 9, 25],
+  );
+  for (const g of k.rows) {
+    w.h3(g.name);
+    const blocks = parseGroupDescription(g.description);
+    if (!blocks.length) w.muted('No description.');
+    for (const b of blocks) {
+      if (b.kind === 'list') w.bullets(b.items);
+      else w.text(b.lines.join('\n'), { size: 9.5, gap: 5 });
+    }
+    w.muted(`${g.total} task(s): ${g.completed} completed, ${g.inProgress} in progress, ${g.outstanding} outstanding${g.overdue ? `, ${g.overdue} overdue` : ''}${g.unassigned ? `, ${g.unassigned} unassigned` : ''}.`);
+    const money = (g.finance ?? []).filter((f) => f.count > 0);
+    if (money.length) w.table(['Financial column', 'Currency', 'Total', 'Tasks'], money.map((f) => [f.role ? `${f.column} (${f.role})` : f.column, f.currency ?? 'Not set', f.display, String(f.count)]), [40, 16, 28, 16]);
+    else if (g.finance) w.muted('No amounts recorded in this category.');
+  }
+}
+
+// ------------------------------------------------------------------ sections L, M and N (project controls)
+
+/** Dense tables (many columns) use a smaller font so that dates fit their column on A4. */
+const DENSE = { size: 7 };
+
+function scheduleSection(w: Writer, s: ScheduleSection) {
+  w.h2(SECTION_LABELS.schedule);
+  w.muted(s.note);
+  w.kpis([
+    { label: 'Status date', value: s.statusDate },
+    { label: 'Project start', value: s.projectStart ?? 'Not set' },
+    { label: 'Forecast finish', value: s.projectFinish ?? 'Cannot be calculated' },
+  ]);
+  w.kpis([
+    { label: 'Critical path (working days)', value: s.criticalDurationDays == null ? 'Unavailable' : String(s.criticalDurationDays) },
+    { label: 'Critical tasks', value: String(s.counts.critical) },
+    { label: 'Near-critical tasks', value: String(s.counts.near_critical) },
+  ]);
+  if (!s.valid) w.text('The schedule cannot be calculated: the dependencies form a loop (see the warnings below). Dates, float and the critical path are not available until it is removed.', { size: 9.5, color: rgb(0.725, 0.11, 0.11) });
+  w.h3('Tasks by criticality');
+  const counts = (['critical', 'near_critical', 'non_critical', 'unscheduled', 'invalid'] as Criticality[]).filter((k) => k !== 'invalid' || s.counts.invalid);
+  w.table(['Criticality', 'Tasks'], counts.map((k) => [CRITICALITY_LABELS[k], String(s.counts[k])]), [70, 30]);
+  w.h3('Critical path');
+  if (s.criticalPaths.length) w.bullets(s.criticalPaths.map((p) => p.join(' -> ')));
+  else w.muted(s.valid ? 'No critical path: no task is scheduled.' : 'Not available: the schedule cannot be calculated.');
+  w.h3('Schedule: dates and float');
+  if (!s.tasks.length) w.muted('This project has no tasks.');
+  else {
+    w.table(
+      ['ID', 'WBS', 'Task', 'Planned start', 'Planned finish', 'Early start', 'Early finish', 'Duration (d)', 'Total float (d)', 'Free float (d)', 'Criticality'],
+      s.tasks.map((t) => [t.key ?? '-', t.wbs, t.milestone ? `${t.name} (milestone)` : t.name, dateText(t.plannedStart), dateText(t.plannedFinish), dateText(t.earlyStart), dateText(t.earlyFinish), daysText(t.durationDays), daysText(t.totalFloatDays), daysText(t.freeFloatDays), t.criticalityLabel]),
+      [47, 28, 119, 42, 42, 42, 42, 35, 30, 30, 46],
+      DENSE,
+    );
+    w.h3('Schedule: logic and progress');
+    w.table(['ID', 'Task', 'Predecessors', 'Successors', 'Complete'], s.tasks.map((t) => [t.key ?? '-', t.name, t.predecessors.join(', ') || '-', t.successors.join(', ') || '-', percentText(t.percentComplete)]), [47, 150, 130, 130, 46], DENSE);
+  }
+  w.h3('Dependency register');
+  if (s.dependencies.length)
+    w.table(
+      ['Predecessor ID', 'Predecessor', 'Successor ID', 'Successor', 'Type', 'Lag', 'Float (d)', 'Critical'],
+      s.dependencies.map((d) => [d.predecessorKey ?? '-', d.predecessorName, d.successorKey ?? '-', d.successorName, d.source === 'column' ? `${d.type} (Dependency column)` : `${d.type} (${d.typeLabel})`, d.lag, daysText(d.floatDays), d.critical ? 'Yes' : 'No']),
+      [47, 105, 47, 105, 70, 35, 35, 35],
+      DENSE,
+    );
+  else w.muted('No dependencies are recorded between the tasks.');
+  w.h3('Near-critical activities');
+  if (s.nearCritical.length) w.table(['ID', 'Task', 'Total float (d)', 'Early start', 'Early finish'], s.nearCritical.map((t) => [t.key ?? '-', t.name, daysText(t.totalFloatDays), dateText(t.earlyStart), dateText(t.earlyFinish)]), [50, 200, 60, 60, 60], DENSE);
+  else w.muted('No task is near-critical.');
+  w.h3('Milestones');
+  if (s.milestones.length) {
+    w.muted(s.milestoneBaseline ? `Baseline dates from baseline ${s.milestoneBaseline.number}: ${s.milestoneBaseline.name}.` : 'No approved baseline: baseline dates are not available.');
+    w.table(['ID', 'Milestone', 'Baseline date', 'Forecast date', 'Actual date', 'Criticality'], s.milestones.map((t) => [t.key ?? '-', t.name, dateText(t.baselineDate), dateText(t.forecastDate), dateText(t.actualDate), t.criticalityLabel]), [50, 170, 60, 60, 60, 60], DENSE);
+  } else w.muted('No milestone is scheduled (a task with no duration, or marked as a milestone).');
+  w.h3('Planned against actual dates');
+  if (s.plannedVsActual.length)
+    w.table(
+      ['ID', 'Task', 'Planned start', 'Actual start', 'Planned finish', 'Actual finish', 'Forecast finish', 'Complete', 'State'],
+      s.plannedVsActual.map((t) => [t.key ?? '-', t.name, dateText(t.plannedStart), dateText(t.actualStart), dateText(t.plannedFinish), dateText(t.actualFinish), dateText(t.forecastFinish), percentText(t.percentComplete), t.state]),
+      [47, 99, 42, 42, 42, 42, 42, 40, 45],
+      DENSE,
+    );
+  else w.muted('No task has started by the status date.');
+  w.h3('Schedule warnings');
+  if (s.warnings.length) w.bullets(s.warnings);
+  else w.muted('None: the schedule has no loops, conflicts or missing logic.');
+}
+
+function baselineSection(w: Writer, b: BaselineSection) {
+  w.h2(SECTION_LABELS.baseline);
+  if (!b.available || !b.baseline) return w.text(b.reason ?? 'No approved baseline.', { size: 9.5, color: SLATE });
+  const bl = b.baseline;
+  w.muted(b.note);
+  const kv: [string, string][] = [
+    ['Baseline', `Baseline ${bl.number}: ${bl.name}`],
+    ['Approved', `By ${bl.approvedBy} on ${bl.approvedOn}`],
+    ['Baseline finish', dateText(bl.projectFinish)],
+    ['Forecast finish', b.forecastFinish ?? 'Cannot be calculated'],
+    ['Finish variance', finishVarianceWords(b.projectFinishVarianceDays)],
+  ];
+  if (b.original) kv.push(['Original baseline (0) finish', `${dateText(b.original.projectFinish)} (${b.original.name}); forecast variance against it: ${signedDays(b.original.finishVarianceDays)} working days`]);
+  if (b.costIncluded) kv.push(['Budget at completion', moneyText(b.bac, b.currency)]);
+  w.table(['Item', 'Detail'], kv, [30, 70]);
+  const flag = (r: BaselineSection['rows'][number]) => (!r.inBaseline ? ' (added after the baseline)' : !r.inPlan ? ' (no longer in the plan)' : '');
+  w.h3('Dates');
+  w.table(
+    ['ID', 'WBS', 'Task', 'Baseline start', 'Current start', 'Start var. (d)', 'Baseline finish', 'Current finish', 'Finish var. (d)'],
+    b.rows.map((r) => [r.key ?? '-', r.wbs, r.name + flag(r), dateText(r.baselineStart), dateText(r.currentStart), signedDays(r.startVarianceDays), dateText(r.baselineFinish), dateText(r.currentFinish), signedDays(r.finishVarianceDays)]),
+    [47, 28, 130, 42, 42, 35, 42, 42, 35],
+    DENSE,
+  );
+  w.h3(b.costIncluded ? 'Duration, progress and cost' : 'Duration and progress');
+  const cur = b.currency ?? 'no currency';
+  w.table(
+    ['ID', 'Task', 'Baseline duration (d)', 'Current duration (d)', 'Duration var. (d)', 'Planned by status date', 'Complete', 'Progress var. (points)', ...(b.costIncluded ? [`Baseline budget (${cur})`, `Current budget (${cur})`, `Cost variance (${cur})`] : [])],
+    b.rows.map((r) => [
+      r.key ?? '-',
+      r.name,
+      daysText(r.baselineDurationDays),
+      daysText(r.currentDurationDays),
+      signedDays(r.durationVarianceDays),
+      percentText(r.plannedPercent),
+      percentText(r.percentComplete),
+      signedDays(r.progressVariance),
+      ...(b.costIncluded ? [amountText(r.baselineCost, b.currency), amountText(r.currentCost, b.currency), amountText(r.costVariance, b.currency)] : []),
+    ]),
+    b.costIncluded ? [50, 70, 36, 36, 36, 40, 38, 40, 52, 52, 53] : [47, 150, 40, 40, 40, 45, 45, 45],
+    DENSE,
+  );
+}
+
+function evmSection(w: Writer, e: EvmSection) {
+  w.h2(SECTION_LABELS.evm);
+  if (!e.financeAllowed || !e.available || !e.metrics || !e.baseline) return w.text(e.reason ?? 'Earned value is not available.', { size: 9.5, color: SLATE });
+  const m = e.metrics;
+  const cur = e.currency;
+  w.table(
+    ['Item', 'Detail'],
+    [
+      ['Baseline', `Baseline ${e.baseline.number}: ${e.baseline.name}, approved by ${e.baseline.approvedBy} on ${e.baseline.approvedOn}`],
+      ['Status date', e.statusDate],
+      ['Currency', cur ?? 'Not set'],
+    ],
+    [30, 70],
+  );
+  // Money needs room: two rows of three.
+  w.kpis([
+    { label: 'Budget at completion (BAC)', value: moneyText(m.bac, cur) },
+    { label: 'Planned value (PV)', value: moneyText(m.pv, cur) },
+    { label: 'Earned value (EV)', value: moneyText(m.ev, cur) },
+  ]);
+  w.kpis([
+    { label: 'Actual cost (AC)', value: moneyText(m.ac, cur) },
+    { label: 'Cost performance index (CPI)', value: indexText(m.cpi) },
+    { label: 'Schedule performance index (SPI)', value: indexText(m.spi) },
+  ]);
+  w.bullets([e.cpiText ?? '', e.spiText ?? ''].filter(Boolean));
+  if (e.caution) w.text(e.caution, { size: 9, bold: true, color: rgb(0.706, 0.325, 0.035) });
+  w.h3('Measures at the status date');
+  w.table(['Measure', 'Value'], evmMeasures(e), [55, 45]);
+  w.h3('Forecasts at completion');
+  w.table(['Method', 'How it is calculated', 'Estimate at completion (EAC)', 'Estimate to complete (ETC)', 'Variance at completion (VAC)'], e.forecasts.map((f) => [f.label, f.formula, moneyText(f.eac, cur), moneyText(f.etc, cur), moneyText(f.vac, cur)]), [16, 33, 17, 17, 17]);
+  w.h3('By task');
+  if (e.tasks.length) {
+    w.muted(`Amounts in ${cur ?? 'no currency'}. n/a: not available (for example, no actual cost is recorded for the task).`);
+    w.table(
+      ['ID', 'Task', 'Earning method', 'BAC', 'PV', 'EV', 'AC', 'CV', 'SV'],
+      e.tasks.map((t) => [t.key ?? '-', t.name, t.methodLabel, amountText(t.bac, cur), amountText(t.pv, cur), amountText(t.ev, cur), amountText(t.ac, cur), amountText(t.cv, cur), amountText(t.sv, cur)]),
+      [47, 90, 60, 51, 51, 51, 51, 51, 51],
+      DENSE,
+    );
+  } else w.muted('No task in the baseline has a budget.');
+  w.h3('Trend');
+  if (e.trend.length) {
+    w.muted(`${e.trend.length < e.trendPoints ? `The latest ${e.trend.length} of ${e.trendPoints} points. ` : ''}Cumulative values at each date, in ${cur ?? 'no currency'}.`);
+    w.table(['Date', 'PV', 'EV', 'AC', 'CPI', 'SPI'], e.trend.map((p) => [p.date, amountText(p.pv, cur), amountText(p.ev, cur), amountText(p.ac, cur), indexText(p.cpi, 'n/a'), indexText(p.spi, 'n/a')]), [18, 19, 19, 19, 12, 13]);
+  } else w.muted('No trend yet: the status date is before the baseline start.');
+  w.h3('Warnings');
+  if (e.warnings.length) w.bullets(e.warnings);
+  else w.muted('None.');
+  w.h3('Definitions');
+  w.table(['Term', 'Definition'], Object.entries(e.definitions), [12, 88]);
 }
 
 export async function renderReportPdf(r: ReportData): Promise<Uint8Array> {
@@ -386,7 +592,7 @@ export async function renderReportPdf(r: ReportData): Promise<Uint8Array> {
     w.h3('By group');
     w.table(['Group', ...f.columns.map((col) => col.title)], f.groups.map((g) => [g.name, ...g.totals.map((t) => (t.count ? t.total.display : '-'))]), [24, ...f.columns.map(() => 76 / Math.max(1, f.columns.length))]);
     w.h3('By task');
-    if (f.tasks.length) w.table(['Task', ...f.columns.map((col) => col.title)], f.tasks.slice(0, 300).map((t) => [t.name, ...f.columns.map((col) => t.amounts.find((a) => a.columnId === col.columnId)?.amount.display ?? '-')]), [30, ...f.columns.map(() => 70 / Math.max(1, f.columns.length))]);
+    if (f.tasks.length) w.table(['ID', 'Task', ...f.columns.map((col) => col.title)], f.tasks.slice(0, 300).map((t) => [t.key ?? '-', t.name, ...f.columns.map((col) => t.amounts.find((a) => a.columnId === col.columnId)?.amount.display ?? '-')]), [11, 25, ...f.columns.map(() => 64 / Math.max(1, f.columns.length))]);
     else w.muted('No task has an amount.');
     if (f.changes.length) {
       w.h3('Financial changes recorded in the period');
@@ -417,6 +623,11 @@ export async function renderReportPdf(r: ReportData): Promise<Uint8Array> {
     if (r.timeline.events.length) w.table(['Date and time', 'Event', 'By'], r.timeline.events.map((e) => [fmtTime(e.at, tz), e.text, e.actor ?? '-']), [22, 58, 20]);
     else w.muted('No significant events were recorded in this period.');
   }
+
+  if (has('categories') && r.categories) categories(w, r.categories);
+  if (has('schedule') && r.schedule) scheduleSection(w, r.schedule);
+  if (has('baseline') && r.baseline) baselineSection(w, r.baseline);
+  if (has('evm') && r.evm) evmSection(w, r.evm);
 
   w.h2('About this report');
   w.text(

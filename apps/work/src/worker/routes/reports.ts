@@ -10,7 +10,7 @@ import { HttpError, badRequest, body, clientIp, newId, notFound, now, parseJson,
 import { rateLimit } from '../auth/rate-limit';
 import { auditEventStmt, auditStmt } from '../services/audit';
 import { financePolicy, memberAccessMap, requireProject } from '../services/access';
-import { buildReport } from '../services/reports/build';
+import { buildReport, reportIncludesFinance } from '../services/reports/build';
 import { renderReportHtml } from '../services/reports/html';
 import { DEFAULT_SECTIONS, REPORT_SECTIONS, REPORT_TYPES, REPORT_TYPE_LABELS, type ExportFormat, type ReportOptions } from '../../shared/reports';
 import { notify } from '../services/notify';
@@ -33,6 +33,7 @@ const optionsSchema = z.object({
   includeUpcoming: z.boolean().optional(),
   sections: z.array(z.enum(REPORT_SECTIONS)).max(20).optional(),
   confidentiality: z.string().trim().max(80).optional(),
+  baselineId: z.string().max(64).optional(),
   commentary: z
     .object({
       summary: text,
@@ -131,7 +132,7 @@ reportRoutes.post('/boards/:id/reports', async (c) => {
         version,
         JSON.stringify(data.meta.sections),
         JSON.stringify(opts),
-        data.finance && data.meta.sections.includes('finance') ? 1 : 0,
+        reportIncludesFinance(data) ? 1 : 0,
         snapshotKey,
         await sha256Hex(snapshot),
         JSON.stringify(files),

@@ -7,6 +7,7 @@ import { Avatar, EmptyState } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { MenuItem, MenuSep, Popover, useContextMenu } from '../../components/ui/overlays';
 import { formatDate, todayISO } from '../../lib/format';
+import { CriticalBadge, TaskKey, useScheduleIndex } from '../controls/schedule';
 import '../../styles/views.css';
 
 const LANE_TYPES = new Set(['status', 'priority', 'dropdown']);
@@ -30,6 +31,7 @@ export function KanbanView(props: BoardViewProps) {
   const [overLane, setOverLane] = useState<string | null>(null);
   const [overCard, setOverCard] = useState<string | null>(null);
   const ctxMenu = useContextMenu();
+  const schedule = useScheduleIndex().byItem;
 
   const personCol = bundle.columns.find((c) => c.type === 'person' || c.type === 'people');
   const dateCol = bundle.columns.find((c) => c.type === 'date');
@@ -151,6 +153,8 @@ export function KanbanView(props: BoardViewProps) {
                       ) : null}
                     </div>
                     <div className="kmeta">
+                      <TaskKey value={item.key} />
+                      <CriticalBadge criticality={schedule.get(item.id)?.criticality} compact />
                       {people.length ? (
                         <span className="avatar-stack">
                           {people.slice(0, 3).map((id) => {

@@ -1,0 +1,170 @@
+/* Project controls: task keys, criticality marks, the Gantt's critical path, and the Project controls screens.
+   Colours come from the theme tokens, so the light and dark themes both work. Critical = danger red, near-critical =
+   warning amber; workspace colours are only small dots elsewhere, so the two are not confused. */
+
+.task-key { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: var(--text-3); white-space: nowrap; letter-spacing: .01em; }
+button.task-key.copy { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-2); padding: 1px 6px; cursor: pointer; color: var(--text-2); }
+button.task-key.copy:hover { color: var(--text); }
+
+.crit-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 600; border-radius: 6px; padding: 0 5px; height: 18px; white-space: nowrap; }
+.crit-badge.critical { color: var(--danger); background: var(--danger-soft); }
+.crit-badge.near_critical { color: var(--warning-text); background: var(--warning-soft); }
+
+/* Gantt */
+.gantt-bar.crit-critical { background: var(--danger) !important; color: #fff; box-shadow: 0 0 0 1px var(--danger); }
+.gantt-bar.crit-near_critical { background: var(--warning) !important; color: #1f1300; }
+.gantt-bar.complete { opacity: .55; background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.18) 0 6px, transparent 6px 12px) !important; }
+.gantt-bar .crit-mark { position: relative; display: inline-flex; margin-right: 4px; }
+.gantt-milestone.crit-critical { background: var(--danger) !important; }
+.gantt-milestone.crit-near_critical { background: var(--warning) !important; }
+.gantt-baseline { position: absolute; height: 6px; top: 27px; border: 1.5px solid var(--text-3); border-radius: 3px; background: transparent; pointer-events: none; opacity: .8; }
+.gantt-baseline.milestone { width: 8px !important; height: 8px; transform: rotate(45deg); top: 25px; }
+.gantt-arrows path.critical { stroke: var(--danger); stroke-width: 2.2; }
+.gantt-arrows path.link-hit { stroke: transparent; stroke-width: 10; pointer-events: stroke; cursor: pointer; fill: none; }
+.gantt-arrows { pointer-events: none; }
+.gantt-arrows path.link-hit { pointer-events: stroke; }
+.gantt-legend { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 12px; color: var(--text-2); }
+.gantt-legend .sw { display: inline-block; width: 18px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.gantt-legend .sw.critical { background: var(--danger); }
+.gantt-legend .sw.near { background: var(--warning); }
+.gantt-legend .sw.std { background: var(--accent-fill); }
+.gantt-legend .sw.base { border: 1.5px solid var(--text-3); background: transparent; height: 6px; }
+.gantt-legend .sw.done { background: var(--accent-fill); opacity: .55; }
+.gantt-legend .dia { display: inline-block; width: 9px; height: 9px; background: var(--warning); transform: rotate(45deg); margin-right: 6px; }
+.gantt-row .row-key { flex: 0 0 auto; }
+.gantt-row.linking-from { outline: 2px solid var(--accent); outline-offset: -2px; }
+.gantt-cols { display: grid; align-items: center; gap: 6px; width: 100%; font-size: 12px; }
+.gantt-cols .num { text-align: right; font-variant-numeric: tabular-nums; }
+.gantt-summary { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12.5px; }
+.gantt-summary b { font-weight: 600; }
+
+/* Project controls screens */
+.pc-tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 14px; overflow-x: auto; position: sticky; top: -18px; z-index: 6; background: var(--surface); }
+.pc-tabs button { border: 0; background: none; padding: 8px 12px; font: inherit; font-size: 13.5px; color: var(--text-2); border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; }
+.pc-tabs button.on { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+.pc-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.pc-tile { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; background: var(--surface); min-width: 0; }
+.pc-tile .lbl { font-size: 11.5px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
+.pc-tile .val { font-size: 19px; font-weight: 650; margin-top: 2px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.pc-tile .sub { font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+.pc-tile.bad .val { color: var(--danger); }
+.pc-tile.warn .val { color: var(--warning-text); }
+.pc-tile.good .val { color: var(--success); }
+.pc-unavailable { color: var(--text-3); font-style: italic; font-weight: 500; font-size: 13px; }
+.pc-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.pc-section { border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; background: var(--surface); min-width: 0; }
+.pc-section h3 { font-size: 14px; margin: 0 0 8px; }
+.pc-table-wrap { overflow: auto; max-height: 60vh; border: 1px solid var(--border); border-radius: 8px; }
+.pc-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.pc-table th { position: sticky; top: 0; background: var(--surface-2); text-align: left; font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: default; z-index: 1; }
+.pc-table th.sortable { cursor: pointer; }
+.pc-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.pc-table td.wrap { white-space: normal; min-width: 180px; }
+.pc-table td.num, .pc-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.pc-table tr.crit-critical td:first-child { box-shadow: inset 3px 0 0 var(--danger); }
+.pc-table tr.crit-near_critical td:first-child { box-shadow: inset 3px 0 0 var(--warning); }
+.pc-table tr.summary td { font-weight: 600; background: var(--surface-2); }
+.pc-table tr.clickable { cursor: pointer; }
+.pc-table tr.clickable:hover td { background: var(--surface-2); }
+.pc-neg { color: var(--danger); }
+.pc-pos { color: var(--success); }
+.pc-warnings { display: grid; gap: 6px; margin: 0 0 12px; padding: 0; list-style: none; }
+.pc-warnings li { padding: 7px 10px; border-radius: 8px; background: var(--warning-soft); color: var(--text); font-size: 12.5px; }
+.pc-warnings li.cycle, .pc-warnings li.constraint_conflict { background: var(--danger-soft); }
+.pc-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px 14px; align-items: end; }
+.pc-chart { width: 100%; height: auto; display: block; }
+.pc-chart .axis { stroke: var(--border); }
+.pc-chart text { fill: var(--text-3); font-size: 10px; }
+.pc-chart .pv { stroke: var(--info); }
+.pc-chart .ev { stroke: var(--success); }
+.pc-chart .ac { stroke: var(--danger); }
+.pc-chart .plan { stroke: var(--text-3); stroke-dasharray: 4 3; }
+.pc-chart .one { stroke: var(--text-3); stroke-dasharray: 2 3; }
+.pc-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--text-2); margin-top: 4px; }
+.pc-legend i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 5px; border-radius: 2px; }
+.pc-defs { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 12.5px; margin: 0; }
+.pc-defs dt { font-weight: 600; }
+.pc-defs dd { margin: 0; color: var(--text-2); }
+.pc-bars { display: grid; gap: 6px; }
+.pc-bars .bar-row { display: grid; grid-template-columns: 140px 1fr 110px; gap: 8px; align-items: center; font-size: 12.5px; }
+.pc-bars .bar-track { height: 10px; background: var(--surface-2); border-radius: 5px; overflow: hidden; }
+.pc-bars .bar-fill { height: 100%; background: var(--accent-fill); border-radius: 5px; }
+.pc-bars .bar-fill.danger { background: var(--danger); }
+.task-sched-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; }
+@media (max-width: 760px) {
+  .pc-grid-2, .task-sched-grid { grid-template-columns: 1fr; }
+  .pc-bars .bar-row { grid-template-columns: 90px 1fr 80px; }
+}
+.sched-filter-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 4px 24px 6px; }
+.gantt-canvas .gantt-today { background: var(--info); }
+.pc-chart .pv, .pc-legend i.pv { color: var(--info); }
+.pc-chart .ev, .pc-legend i.ev { color: var(--success); }
+.pc-chart .ac, .pc-legend i.ac { color: var(--danger); }
+.pc-chart .plan, .pc-legend i.plan { color: var(--text-3); }
+.pc-chart .cpi, .pc-legend i.cpi { stroke: var(--accent); color: var(--accent); }
+.pc-chart .spi, .pc-legend i.spi { stroke: var(--warning); color: var(--warning); }
+.pc-qa { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pc-qa li { display: grid; grid-template-columns: 220px 1fr; gap: 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.pc-qa li b { font-weight: 600; }
+@media (max-width: 760px) { .pc-qa li { grid-template-columns: 1fr; gap: 2px; } }
+.pc-root { display: block; width: 100%; min-width: 0; }
+.sched-filter-bar .select { width: auto; min-width: 200px; flex: 0 0 auto; }
+.pc-root .row .select, .pc-root .row .input { width: auto; max-width: 100%; }
+
+/* Task panel: the Schedule tab (board/controls/TaskSchedule.tsx). Compact two-column fields; the Advanced part is a
+   native disclosure. */
+.ts { display: grid; gap: 12px; }
+.ts .pc-section h3 { font-size: 13.5px; }
+.ts-ident { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: flex-start; padding: 2px 2px 0; }
+.ts-field { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ts-label { font-size: 11.5px; font-weight: 600; color: var(--text-3); }
+.ts-value { font-size: 13px; min-height: 28px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+.ts-wide { grid-column: 1 / -1; }
+.ts-inline { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ts-inline > .select, .ts-link-form > .select { width: auto; }
+.ts-stack { display: grid; gap: 4px; }
+.ts-hint { font-size: 12px; color: var(--text-3); margin: 0; }
+.ts-note { margin-bottom: 8px; }
+.ts .input.ts-num { width: 88px; }
+.ts .input.ts-date { width: 150px; }
+.ts .select.ts-select-wide { max-width: 100%; }
+.ts-advanced { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+.ts-advanced > summary { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-weight: 600; font-size: 13.5px; list-style: none; }
+.ts-advanced > summary::-webkit-details-marker { display: none; }
+.ts-advanced > summary:focus-visible { outline: none; box-shadow: var(--focus); border-radius: 10px; }
+.ts-advanced > summary .muted { font-weight: 400; }
+.ts-advanced .ts-chev { transition: transform .15s; flex: none; }
+.ts-advanced[open] .ts-chev { transform: rotate(90deg); }
+.ts-advanced-body { padding: 0 14px 12px; }
+.ts-rows { display: grid; gap: 6px; }
+.ts-rows-table td { padding: 3px 6px; }
+.ts-deps + .ts-deps { margin-top: 12px; }
+.ts-dep-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+.ts-dep-head .muted { font-weight: 400; }
+.ts-links { list-style: none; margin: 0 0 6px; padding: 0; display: grid; gap: 4px; }
+.ts-link { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; min-height: 34px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+.ts-link.critical { box-shadow: inset 3px 0 0 var(--danger); }
+.ts-link-name { flex: 1 1 140px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ts-link-type { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; font-weight: 600; }
+.ts-link-actions { display: inline-flex; gap: 2px; margin-left: auto; }
+.ts-link-src { margin-left: auto; }
+.ts-link-form { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
+.ts-link-form .ts-task-pick { flex: 1 1 220px; min-width: 0; }
+.ts-form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; align-items: end; margin-bottom: 10px; }
+.ts-form .input { width: 100%; }
+.ts-form-wide { grid-column: span 2; }
+.ts-form-actions { display: flex; align-items: end; }
+.ts-table-wrap { overflow-x: auto; }
+.ts .pc-table th { position: static; }
+.ts-compare td.ts-rowhead { font-weight: 600; color: var(--text-2); }
+.ts-total td { font-weight: 600; background: var(--surface-2); }
+@media (max-width: 760px) {
+  .ts-form { grid-template-columns: 1fr 1fr; }
+  .ts-form-wide { grid-column: 1 / -1; }
+}
+
+/* Task keys and criticality in the table's name cell and on Kanban cards: never shrink, never change the row height. */
+.name-cell .task-key, .name-cell .crit-badge { flex: none; }
+.kcard .kmeta .task-key { font-size: 10.5px; }
+/* The board's critical path filter: the select keeps its own width (the base .select is full width). */
+.sched-filter-bar .select { width: auto; }

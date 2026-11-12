@@ -59,12 +59,12 @@ export async function runSearch(db: D1Database, wsId: string, userId: string, in
     const rows = await db
       .prepare(
         `SELECT * FROM items WHERE workspace_id = ? AND archived_at IS NULL AND board_id IN (${placeholders(boards.length)})
-         ${q ? "AND search_text LIKE ? ESCAPE '\\'" : ''}
+         ${q ? "AND (search_text LIKE ? ESCAPE '\\' OR task_key LIKE ? ESCAPE '\\')" : ''}
          ${types.has('items') && !types.has('subitems') ? 'AND parent_item_id IS NULL' : ''}
          ${!types.has('items') && types.has('subitems') ? 'AND parent_item_id IS NOT NULL' : ''}
          ORDER BY updated_at DESC LIMIT 2000`,
       )
-      .bind(wsId, ...boards, ...(q ? [like] : []))
+      .bind(wsId, ...boards, ...(q ? [like, like] : []))
       .all<ItemRow>();
     const boardIds = Array.from(new Set(rows.results.map((r) => r.board_id)));
     const cols = boardIds.length ? (await db.prepare(`SELECT * FROM columns WHERE board_id IN (${placeholders(boardIds.length)})`).bind(...boardIds).all<ColumnRow>()).results.map(columnDTO) : [];

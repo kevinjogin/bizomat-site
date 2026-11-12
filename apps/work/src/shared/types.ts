@@ -81,6 +81,8 @@ export interface GroupDTO {
   position: number;
   collapsed: boolean;
   archivedAt: number | null;
+  /** Plain text (paragraphs and "- " bullets, rendered as text, never as HTML); '' when there is none. */
+  description: string;
 }
 
 export interface ColumnDTO {
@@ -110,6 +112,8 @@ export interface ItemDTO {
   updatedAt: number;
   completedAt: number | null;
   archivedAt: number | null;
+  /** Permanent task key (PREFIX-0001), never reused or changed. */
+  key?: string | null;
   subitemCount?: number;
   updateCount?: number;
 }

@@ -3,6 +3,7 @@
 // automation triggers behave identically no matter who makes the change.
 
 import { getColumnType, isComputed, normalizeColumnValue, doneLabelIds, labelsOf } from '../../shared/columns';
+import { allocateTaskKey } from './schedule/task-keys';
 import type { ColumnDTO } from '../../shared/types';
 import { assigneesOf, positionBetween } from '../../shared/items';
 import { HttpError, badRequest, newId, now, parseJson, placeholders } from '../lib/util';
@@ -292,13 +293,17 @@ export async function createItem(svc: Svc, board: BoardRow, input: CreateItemInp
     completed_at: isDone(values, cols) ? t : null,
     archived_at: null,
   };
+  // A permanent key (PREFIX-0001) from the project's counter (services/schedule/task-keys.ts).
+  const key = await allocateTaskKey(svc.db, board);
+  item.task_number = key.number;
+  item.task_key = key.key;
   await svc.db.batch([
     svc.db
       .prepare(
-        `INSERT INTO items (id, workspace_id, board_id, group_id, parent_item_id, name, description, position, values_json, search_text, created_by, created_at, updated_at, completed_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO items (id, workspace_id, board_id, group_id, parent_item_id, name, description, position, values_json, search_text, created_by, created_at, updated_at, completed_at, task_number, task_key)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .bind(item.id, item.workspace_id, item.board_id, item.group_id, item.parent_item_id, item.name, item.description, item.position, item.values_json, item.search_text, item.created_by, t, t, item.completed_at),
+      .bind(item.id, item.workspace_id, item.board_id, item.group_id, item.parent_item_id, item.name, item.description, item.position, item.values_json, item.search_text, item.created_by, t, t, item.completed_at, key.number, key.key),
     activityStmt(svc.db, {
       workspaceId: board.workspace_id,
       boardId: board.id,
