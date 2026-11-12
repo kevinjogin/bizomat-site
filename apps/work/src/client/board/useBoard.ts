@@ -58,7 +58,19 @@ function applyPatch(i: ItemDTO, p: ItemPatch): ItemDTO {
 }
 
 export function useBoardQuery(boardId: string | undefined) {
-  return useQuery({ queryKey: ['board', boardId], queryFn: () => get<BoardBundle>(`/boards/${boardId}`), enabled: !!boardId, staleTime: 5_000 });
+  const qc = useQueryClient();
+  return useQuery({
+    queryKey: ['board', boardId],
+    queryFn: async () => keepUnsaved(await get<BoardBundle>(`/boards/${boardId}`), qc.getQueryData<BoardBundle>(['board', boardId])),
+    enabled: !!boardId,
+    staleTime: 5_000,
+  });
+}
+
+/** The server knows nothing yet of an item still being saved: a board fetch keeps its row (and any editor open on it). */
+function keepUnsaved(fresh: BoardBundle, current: BoardBundle | undefined): BoardBundle {
+  const unsaved = current?.items.filter((i) => saving.has(i.id)) ?? [];
+  return unsaved.length ? { ...fresh, items: [...fresh.items, ...unsaved] } : fresh;
 }
 
 /** Items with computed values (formula, progress, created/updated) filled in. */
@@ -100,8 +112,6 @@ export function useBoardActions(boardId: string): BoardActions {
       const b = getB();
       const groupId = input.groupId ?? (input.parentItemId ? b?.items.find((i) => i.id === input.parentItemId)?.groupId : b?.groups[0]?.id) ?? '';
       if (b) {
-        // A board refetch already on its way would answer without the new row and wipe it from the screen.
-        void qc.cancelQueries({ queryKey: key });
         const siblings = b.items.filter((i) => (input.parentItemId ? i.parentItemId === input.parentItemId : i.groupId === groupId && !i.parentItemId));
         const pos = input.position === 'top' ? positionBetween(null, siblings[0]?.position ?? null) : positionBetween(siblings.at(-1)?.position ?? null, null);
         setB((bb) => ({
@@ -114,12 +124,15 @@ export function useBoardActions(boardId: string): BoardActions {
         const edits = queued.get(tempId);
         queued.delete(tempId);
         saving.delete(tempId);
-        // Swap the temporary row for the saved one under the same React key, with any edit made meanwhile.
+        // A board fetch still on its way may predate the save: it would drop the saved row again.
+        void qc.cancelQueries({ queryKey: key });
+        // Swap the temporary row for the saved one under the same React key, with any edit made meanwhile
+        // (and without a copy of the saved item that a fetch may already have brought in).
         if (created) {
           savedAs.set(tempId, created.id);
           rowKeys.set(created.id, tempId);
         }
-        setB((bb) => ({ ...bb, items: created ? bb.items.map((i) => (i.id === tempId ? applyPatch({ ...created, subitemCount: 0, updateCount: 0 }, edits ?? {}) : i)) : bb.items.filter((i) => i.id !== tempId) }));
+        setB((bb) => ({ ...bb, items: created ? bb.items.filter((i) => i.id !== created.id).map((i) => (i.id === tempId ? applyPatch({ ...created, subitemCount: 0, updateCount: 0 }, edits ?? {}) : i)) : bb.items.filter((i) => i.id !== tempId) }));
         // An edit made meanwhile refreshes the board once it is saved; refreshing now could bring back the item
         // without it for a moment.
         if (!edits) void refresh();

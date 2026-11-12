@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Page, type Request } from '@playwright/test';
 
 const password = 'e2e-Password-123!';
 const unique = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
@@ -75,18 +75,31 @@ test('core board workflow persists across reloads', async ({ page }) => {
   await expect(row.getByRole('button', { name: 'Status: Working on it' })).toBeVisible();
 
   // A new row can be edited before the server has saved it: hold the save until the status is picked.
-  // The edit must survive the saved row replacing the temporary one and be saved under the item's real id.
+  // The row and its open menu must survive a board refetch meanwhile (here: another item is added, so the
+  // board's live channel asks for one), the edit must survive the saved row replacing the temporary one, and
+  // it must be saved under the item's real id.
   let release = () => {};
   const held = new Promise<void>((resolve) => (release = resolve));
+  let heldSave: Request | undefined;
   const isCreate = (url: URL) => /\/api\/boards\/[^/]+\/items$/.test(url.pathname);
   await page.route(isCreate, async (route) => {
-    if (route.request().method() === 'POST') await held;
+    if (route.request().method() === 'POST') {
+      heldSave = route.request();
+      await held;
+    }
     await route.continue();
   });
   await add.fill('Review launch plan');
   await add.press('Enter');
   const unsaved = page.locator('tr', { hasText: 'Review launch plan' });
   await unsaved.getByRole('button', { name: /^Status:/ }).click();
+  await expect(page.getByRole('button', { name: 'Stuck' })).toBeVisible();
+  const refetched = page.waitForResponse((r) => r.request().method() === 'GET' && /\/api\/boards\/[^/]+$/.test(new URL(r.url()).pathname));
+  const sent = await heldSave!.allHeaders();
+  const other = await page.request.post(heldSave!.url(), { data: { name: 'Book launch venue' }, headers: { origin: sent.origin, 'x-csrf-token': sent['x-csrf-token'] } });
+  expect(other.ok()).toBe(true);
+  await refetched;
+  await expect(page.locator('tr', { hasText: 'Book launch venue' })).toBeVisible();
   await page.getByRole('button', { name: 'Stuck' }).click();
   const statusSaved = page.waitForResponse((r) => r.request().method() === 'PATCH' && /\/api\/items\/[^/]+$/.test(new URL(r.url()).pathname));
   release();
@@ -94,6 +107,7 @@ test('core board workflow persists across reloads', async ({ page }) => {
   expect(patched.ok()).toBe(true);
   expect(patched.url()).not.toContain('tmp-');
   await expect(unsaved.getByRole('button', { name: 'Status: Stuck' })).toBeVisible();
+  await expect(unsaved).toHaveCount(1);
   await page.unroute(isCreate);
 
   // Reload: data must come from the backend
