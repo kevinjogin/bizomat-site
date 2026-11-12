@@ -49,6 +49,55 @@ Finance, Email and Audit trail settings load. A contractor invited as a guest wi
 on a 390 px phone screen, sees the task under "Shared with me", opens it, and gets 404 for the board. No page errors
 (one expected 401 from the signed-out session check on the sign-up page).
 
-## Live checks after deployment
+## Deployment (12 Nov 2026)
 
-See the section added after the deploy.
+Pull request kevinjogin/bizomat-site#14 merged as `e109830`. Before the merge, `BIZOMAT CI` (run 43147602916) passed all
+seven jobs: website, work, CAD (pytest in two parts and the solver), proxy and platform files (including shellcheck),
+and the image job (platform image, entrypoint isolation test with the new check that `WORK_BREVO_API_KEY` reaches only
+the work role, migration round trip, local stack, smoke test through the proxy, secret isolation).
+
+"BIZOMAT deploy (bizomat)" run 43149488932 on `main`: token, preflight (Machines unchanged), the new snapshot step
+(completed; whether it created a snapshot or only warned could not be read from this session, because the log storage
+host is outside its network), image built and pushed (601 MB), the three Machines (proxy, web, work) updated in place
+and healthy, the router reporting `e109830`, and the public checks (website, its API, `/cad/`, `/tasks/`, redirects)
+passing. Migration 0006 ran at the work server's start (the new tables answer below); the server's own copy of the
+database before the migration is in `/data/work/pre-migration-backups/`.
+
+## Live checks after deployment (https://bizomat.ai/tasks)
+
+A test owner (`bizomat-smoke-owner-mwd0bdc2@example.com`, organisation "Smoke test organisation mwd0bdc2") and a test
+contractor (`bizomat-smoke-contractor-mwd0bdc2@example.com`) were created through open sign-up, on reserved
+`example.com` addresses (no email goes to anyone; email is not configured yet). No existing record was read or changed.
+
+| Check | Result |
+| --- | --- |
+| Sign-in page, `/api/health` (`db: ok`) | pass |
+| Sign up and sign in | pass |
+| Create a project from the Project plan template; organisation currency AUD | pass |
+| Decimal-safe total: 1,000.10 + 0.10 + 0.20 shows AUD 1,000.40 | pass |
+| Board returns capabilities and the resolved currency; Reports and Finance buttons on the board | pass |
+| Report preview; save; PDF (15,891 bytes, `%PDF-`), Excel (8,619 bytes, zip), CSV downloads | pass |
+| Invitation of a guest with one task (email delivery reported as `not_configured`, link returned) | pass |
+| Members page lists the contractor and the accepted invitation | pass (on a second run: the first check ran before the list loaded) |
+| Settings > Finance, Email, Audit trail load | pass |
+| Contractor joins through the invitation link (phone, 390 px) and lands in the organisation | pass |
+| Contractor opens the shared task (via task access); 404 for the board and another task; 403 renaming; status update allowed; no financial values; no report download | pass |
+| Assigning someone without access refused (422); assigning the contractor to the shared task allowed | pass |
+| Signed out: board API 401, report download 401; Brevo webhook without a token refused | pass |
+| No page errors in the browser | pass |
+| Audit trail records `invitation.sent`, `invitation.accepted`, `finance.settings_changed`, `task.finance_changed`, `task.status_changed`, `task.owner_assigned`, `report.generated`, `report.downloaded` | pass |
+
+Website after the deploy: `/`, `/cad-automation/`, `/work/`, `/resources/`, `/tools/`, `/reados/`, `/engine-room/`,
+`/privacy/`, `/terms/`, `/disclaimer/` answer 200; `/about/` and `/proof-of-work/` answer 301 to `/engine-room/`;
+`/cad/` 200; title and favicon present.
+
+Platform smoke test (`node infrastructure/smoke/smoke.mjs https://bizomat.fly.dev --mode live`): **29 passed** for
+bizomat.ai and the proxy. 16 checks on `www.bizomat.ai`, `www.kevos.com`, `cados.kevos.com` and `work.kevos.com`
+could not run here: this session's network refuses connections to those hosts. They were not changed by this release.
+
+Not checked live: existing organisations, boards and tasks of real users (no credentials for them in this session),
+and real email delivery (no Brevo key yet).
+
+The two test accounts and their organisation remain on production (it holds only the template project and one
+saved report). No product screen deletes accounts: they can be left, or removed with the account erasure procedure
+in `docs/BIZOMAT-OPERATIONS.md`.
