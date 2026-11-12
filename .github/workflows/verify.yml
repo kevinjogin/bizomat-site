@@ -37,7 +37,8 @@ jobs:
         run: |
           set -euo pipefail
           grep -q '<title>BIZOMAT' dist/index.html
-          grep -q 'bizomat-logo-light.svg' dist/index.html
+          # The header shows the logo lockup (SiteWordmark.astro); the wordmark file (Logo.astro) is also accepted.
+          grep -Eq 'bizomat-(lockup|logo)-light\.svg' dist/index.html
           grep -q 'Explore Tools' dist/index.html
           grep -q 'Explore Library' dist/index.html
           # Earlier brands may be named in the text (the former name, the trade mark), never as the homepage's brand.
