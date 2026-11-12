@@ -11081,6 +11081,33 @@
    "note": "Combines measurement uncertainty contributors and decides readings as accepted, rejected or indeterminate, worked for a Ø42 H7 bore.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/grants-you-can-defend",
+   "chapter": "assessing-applications-fairly",
+   "tool": "staffing-need",
+   "type": "applies",
+   "note": "Converts the number of assessments, minutes per assessment, productive hours and efficiency into the assessor FTE this chapter plans for the round.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/grants-you-can-defend",
+   "chapter": "monitoring-variations-and-acquittal",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Multiplies likelihood by consequence on 1 to 5 scales and bands the score, the grantee risk rating this chapter uses to set the level of monitoring.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/grants-you-can-defend",
+   "chapter": "evaluating-whether-the-program-worked",
+   "tool": "benefit-cost-ratio",
+   "type": "applies",
+   "note": "Discounts annual benefits and costs over the facility's life to give the benefit–cost ratio this chapter calculates for a funded project.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
