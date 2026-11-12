@@ -74,11 +74,34 @@ test('core board workflow persists across reloads', async ({ page }) => {
   await page.getByRole('button', { name: 'Working on it' }).click();
   await expect(row.getByRole('button', { name: 'Status: Working on it' })).toBeVisible();
 
+  // A new row can be edited before the server has saved it: hold the save until the status is picked.
+  // The edit must survive the saved row replacing the temporary one and be saved under the item's real id.
+  let release = () => {};
+  const held = new Promise<void>((resolve) => (release = resolve));
+  const isCreate = (url: URL) => /\/api\/boards\/[^/]+\/items$/.test(url.pathname);
+  await page.route(isCreate, async (route) => {
+    if (route.request().method() === 'POST') await held;
+    await route.continue();
+  });
+  await add.fill('Review launch plan');
+  await add.press('Enter');
+  const unsaved = page.locator('tr', { hasText: 'Review launch plan' });
+  await unsaved.getByRole('button', { name: /^Status:/ }).click();
+  await page.getByRole('button', { name: 'Stuck' }).click();
+  const statusSaved = page.waitForResponse((r) => r.request().method() === 'PATCH' && /\/api\/items\/[^/]+$/.test(new URL(r.url()).pathname));
+  release();
+  const patched = await statusSaved;
+  expect(patched.ok()).toBe(true);
+  expect(patched.url()).not.toContain('tmp-');
+  await expect(unsaved.getByRole('button', { name: 'Status: Stuck' })).toBeVisible();
+  await page.unroute(isCreate);
+
   // Reload: data must come from the backend
   await page.waitForTimeout(500);
   await page.reload();
   const row2 = page.locator('tr', { hasText: 'Write launch plan' });
   await expect(row2.getByRole('button', { name: 'Status: Working on it' })).toBeVisible();
+  await expect(page.locator('tr', { hasText: 'Review launch plan' }).getByRole('button', { name: 'Status: Stuck' })).toBeVisible();
 
   // Same data in the Kanban view
   await page.getByRole('tab', { name: 'Kanban' }).click();

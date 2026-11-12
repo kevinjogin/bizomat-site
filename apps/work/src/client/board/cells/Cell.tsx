@@ -11,6 +11,7 @@ import { formatDate, todayISO } from '../../lib/format';
 import { upload, errorMessage, get, put } from '../../lib/api';
 import { useQuery } from '@tanstack/react-query';
 import { appUrl } from '../../lib/base';
+import { isUnsaved } from '../useBoard';
 
 export interface CellCtx {
   members: MemberDTO[];
@@ -323,7 +324,7 @@ function PeoplePicker({ multi, value, ctx, itemId, onChange }: { multi: boolean;
   const assignable = useQuery({
     queryKey: ['assignable', itemId],
     queryFn: () => get<{ canShare: boolean; people: { id: string; access: string }[] }>(`/items/${itemId}/assignable`),
-    enabled: !!itemId && !itemId.startsWith('tmp-') && itemId !== 'defaults',
+    enabled: !!itemId && !isUnsaved(itemId) && itemId !== 'defaults',
     staleTime: 30_000,
   });
   const accessOf = (id: string): string => assignable.data?.people.find((p) => p.id === id)?.access ?? ctx.memberAccess?.[id] ?? 'edit';
@@ -359,7 +360,7 @@ function PeoplePicker({ multi, value, ctx, itemId, onChange }: { multi: boolean;
               <span className={`badge access-badge${access === 'none' ? ' danger' : ''}`}>{ACCESS_TEXT[access] ?? access}</span>
               {on ? <Icon name="check" /> : null}
             </button>
-            {blocked && (assignable.data?.canShare ?? ctx.canShareTask) ? (
+            {blocked && !isUnsaved(itemId) && (assignable.data?.canShare ?? ctx.canShareTask) ? (
               <button className="btn ghost sm" disabled={busy === m.id} onClick={() => shareAndAssign(m.id)} title="Give this person access to this task only, then assign it">Share</button>
             ) : null}
           </div>
@@ -490,7 +491,7 @@ function FilesEditor({ value, item, column, ctx, close }: { value: string[]; ite
         <a key={id} className="menu-item" href={appUrl(`/api/files/${id}`)} target="_blank" rel="noopener noreferrer"><Icon name="file" /> File {id.slice(0, 6)}</a>
       ))}
       <input ref={input} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
-      <button className="btn sm" disabled={busy} onClick={() => input.current?.click()}><Icon name="upload" /> {busy ? 'Uploading…' : 'Upload files'}</button>
+      <button className="btn sm" disabled={busy || isUnsaved(item.id)} onClick={() => input.current?.click()}><Icon name="upload" /> {busy ? 'Uploading…' : isUnsaved(item.id) ? 'Saving the item…' : 'Upload files'}</button>
       <span className="muted small">Open the item to manage all attachments.</span>
     </div>
   );

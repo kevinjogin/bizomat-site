@@ -33,6 +33,30 @@ export interface BoardActions {
   refresh: () => Promise<unknown>;
 }
 
+type ItemPatch = { name?: string; description?: string; values?: Record<string, unknown> };
+
+// An added item is shown at once under a temporary id ('tmp-…') and replaced by the saved item when the server
+// answers. Someone can click the new row in between, so that window is invisible to the rest of the board:
+// - `saving`: temporary id → the save, so an edit made meanwhile waits for the real id instead of being lost;
+// - `queued`: temporary id → those edits, laid over the saved item when it replaces the temporary one;
+// - `savedAs`: temporary id → real id, for an edit from the row as it was drawn just before the swap;
+// - `rowKeys`: real id → the temporary id it replaced, so the row keeps its React key and an editor opened on
+//   the temporary row stays open (a new key would remount the row and close it).
+const saving = new Map<string, Promise<ItemDTO | null>>();
+const queued = new Map<string, ItemPatch>();
+const savedAs = new Map<string, string>();
+const rowKeys = new Map<string, string>();
+
+/** True while an added item is still being saved (it has no id on the server yet). */
+export const isUnsaved = (id: string) => id.startsWith('tmp-');
+
+/** React key for an item's row: the same before and after an added item is saved. */
+export const itemKey = (id: string) => rowKeys.get(id) ?? id;
+
+function applyPatch(i: ItemDTO, p: ItemPatch): ItemDTO {
+  return { ...i, ...(p.name !== undefined ? { name: p.name } : {}), ...(p.description !== undefined ? { description: p.description } : {}), values: p.values ? mergeValues(i.values, p.values) : i.values, updatedAt: Date.now() };
+}
+
 export function useBoardQuery(boardId: string | undefined) {
   return useQuery({ queryKey: ['board', boardId], queryFn: () => get<BoardBundle>(`/boards/${boardId}`), enabled: !!boardId, staleTime: 5_000 });
 }
@@ -76,6 +100,8 @@ export function useBoardActions(boardId: string): BoardActions {
       const b = getB();
       const groupId = input.groupId ?? (input.parentItemId ? b?.items.find((i) => i.id === input.parentItemId)?.groupId : b?.groups[0]?.id) ?? '';
       if (b) {
+        // A board refetch already on its way would answer without the new row and wipe it from the screen.
+        void qc.cancelQueries({ queryKey: key });
         const siblings = b.items.filter((i) => (input.parentItemId ? i.parentItemId === input.parentItemId : i.groupId === groupId && !i.parentItemId));
         const pos = input.position === 'top' ? positionBetween(null, siblings[0]?.position ?? null) : positionBetween(siblings.at(-1)?.position ?? null, null);
         setB((bb) => ({
@@ -83,16 +109,37 @@ export function useBoardActions(boardId: string): BoardActions {
           items: [...bb.items, { id: tempId, boardId, groupId, parentItemId: input.parentItemId ?? null, name: input.name, description: '', position: pos, values: input.values ?? {}, createdBy: '', createdAt: Date.now(), updatedAt: Date.now(), completedAt: null, archivedAt: null, subitemCount: 0, updateCount: 0 }],
         }));
       }
-      const created = await run(post<ItemDTO>(`/boards/${boardId}/items`, { ...input, groupId: input.parentItemId ? undefined : groupId || undefined }));
-      // Swap the optimistic row for the real one immediately so it is editable at once.
-      setB((bb) => ({ ...bb, items: created ? bb.items.map((i) => (i.id === tempId ? { ...created, subitemCount: 0, updateCount: 0 } : i)) : bb.items.filter((i) => i.id !== tempId) }));
-      return created;
+      const save = (async () => {
+        const created = await run(post<ItemDTO>(`/boards/${boardId}/items`, { ...input, groupId: input.parentItemId ? undefined : groupId || undefined }), false);
+        const edits = queued.get(tempId);
+        queued.delete(tempId);
+        saving.delete(tempId);
+        // Swap the temporary row for the saved one under the same React key, with any edit made meanwhile.
+        if (created) {
+          savedAs.set(tempId, created.id);
+          rowKeys.set(created.id, tempId);
+        }
+        setB((bb) => ({ ...bb, items: created ? bb.items.map((i) => (i.id === tempId ? applyPatch({ ...created, subitemCount: 0, updateCount: 0 }, edits ?? {}) : i)) : bb.items.filter((i) => i.id !== tempId) }));
+        // An edit made meanwhile refreshes the board once it is saved; refreshing now could bring back the item
+        // without it for a moment.
+        if (!edits) void refresh();
+        return created;
+      })();
+      saving.set(tempId, save);
+      return save;
     },
     async updateItem(id, p) {
-      setB((b) => ({
-        ...b,
-        items: b.items.map((i) => (i.id === id ? { ...i, ...(p.name !== undefined ? { name: p.name } : {}), ...(p.description !== undefined ? { description: p.description } : {}), values: p.values ? mergeValues(i.values, p.values) : i.values, updatedAt: Date.now() } : i)),
-      }));
+      id = savedAs.get(id) ?? id;
+      setB((b) => ({ ...b, items: b.items.map((i) => (i.id === id ? applyPatch(i, p) : i)) }));
+      if (isUnsaved(id)) {
+        const pending = saving.get(id);
+        if (!pending) return false; // its save failed; createItem has said so and removed the row
+        const before = queued.get(id);
+        queued.set(id, { ...before, ...p, ...(before?.values || p.values ? { values: { ...before?.values, ...p.values } } : {}) });
+        const created = await pending;
+        if (!created) return false;
+        id = created.id;
+      }
       return (await run(patch(`/items/${id}`, p))) !== null;
     },
     async setValue(id, columnId, value) {
