@@ -11108,6 +11108,24 @@
    "note": "Discounts annual benefits and costs over the facility's life to give the benefit–cost ratio this chapter calculates for a funded project.",
    "status": "approved",
    "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accountable-to-parliament",
+   "chapter": "questions-on-notice",
+   "tool": "priority",
+   "type": "applies",
+   "note": "Scores the committee's questions on notice by impact, urgency, risk if delayed and effort to plan drafting and clearance.",
+   "status": "approved",
+   "evidence": "book-link"
+  },
+  {
+   "reados": "publication/accountable-to-parliament",
+   "chapter": "implementing-audit-recommendations",
+   "tool": "risk-score",
+   "type": "applies",
+   "note": "Rates the risk of each open audit recommendation as likelihood times consequence on the 5 × 5 matrix.",
+   "status": "approved",
+   "evidence": "book-link"
   }
  ]
 }
