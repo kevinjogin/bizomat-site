@@ -92,7 +92,7 @@ This book follows one policy proposal from a minister's request to a Budget deci
 
 The chapters use **the Strategy and Policy Branch of the Northfield Regional Infrastructure Office**, a fictional agency, as a continuous example. Its staff, survey, consultations, options, estimates, costings and decisions are invented for teaching. They are not a real agency, program or decision, a BIZOMAT project or a claim about how any agency, Cabinet or Budget process works. The discount rate, unit rates and dates in the case are the fictional agency's choices.
 
-Much of the policy and Budget process is set by government guidance rather than law: the Cabinet Handbook, the Budget Process Operational Rules, the impact analysis guidance and the evaluation policy. This book describes those processes in general terms and does not quote them. Read the current versions published by the Department of the Prime Minister and Cabinet and the Department of Finance alongside it.
+Much of the policy and Budget process is set by government guidance rather than law: the Cabinet Handbook, the Budget Process Operational Rules, the impact analysis guidance and the evaluation policy. This book describes those processes in general terms and does not quote them. Read the current versions issued by the Department of the Prime Minister and Cabinet and the Department of Finance alongside it.
 
 Amounts are in Australian dollars.
 

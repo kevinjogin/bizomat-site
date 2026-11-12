@@ -9,7 +9,7 @@ draft: true
 
 Impact analysis asks whether an option is worth doing. A costing asks a narrower question: what will it cost the government, in which year, and for what? A benefit–cost ratio can be right while the costing behind a Budget proposal is wrong, and ministers decide on the costing.
 
-This is an illustration. On Thu 11 Nov 2027 the Minister agreed that NRIO should develop Option C, the central assessment service, as a new policy proposal for the 2028–29 Budget. Chapter 4 treated C's A$14.5 million as one sum spent at the start, a fair simplification for comparing options. A Budget proposal must show what the money buys, what each part costs, when it will be spent and what has been assumed. Grace Mitchell had about four weeks. Tom Becker had the evidence, and Zoe Fraser, the Finance Business Partner in the CFO area, had the method. The costing was final on Fri 10 Dec 2027.
+This is an illustration. On Thu 11 Nov 2027 the Minister agreed that NRIO should develop Option C, the central assessment service, as a new policy proposal for the 2028–29 Budget. Chapter 4 treated C's A$14.5 million as one sum spent at the start, a fair simplification for comparing options. A Budget proposal needs to show what the money buys, what each part costs, when it will be spent and what has been assumed. Grace Mitchell had about four weeks. Tom Becker had the evidence, and Zoe Fraser, the Finance Business Partner in the CFO area, had the method. The costing was final on Fri 10 Dec 2027.
 
 In the case, tables are in A$ million and every costing amount excludes GST, which is how NRIO's CFO area builds costings. Ask yours which convention it uses, and keep to one.
 
@@ -38,7 +38,7 @@ The quantity has drivers of its own: how many bridges councils nominate and how 
 
 ## Separate program costs from running costs
 
-Program costs are the money the policy exists to spend: the payments, grants or services that reach the people it is for. Running costs are what the agency spends to deliver it: staff, systems, evaluation and the like. Budget practice calls the first administered and the second departmental. These are working terms, not definitions in an Act. Agencies usually estimate, fund and report the two separately, and your CFO area decides which side of the line each item falls on.
+Program costs are the money the policy exists to spend: the payments, grants or services that reach the people it is for. Running costs are what the agency spends to deliver it: staff, systems, evaluation and the like. Budget practice calls the first administered and the second departmental. Appropriation Acts use the same terms for their items. Agencies usually estimate, fund and report the two separately, and your CFO area decides which side of the line each item falls on.
 
 The split shows how much of the money reaches the problem, and exposes the costs most often left out: nobody at the policy stage thinks about who will answer the phone in year three.
 
@@ -132,7 +132,7 @@ caption: A half-hour review for any costing. The question-marked item prepares f
 
 A costing is a joint product. The policy team owns the design and the assumptions. The CFO area owns the method: staff rates, the split between administered and departmental, phasing conventions, fit with the agency's existing estimates, and the government's Budget rules.
 
-This is an illustration. Grace brought Zoe in the day after the Minister's agreement. They agreed on one costing file, versioned and dated in NRIO's records system, with Zoe as its only editor. Tom would give Zoe the evidence for each driver in writing. Every design change would go through Grace. And the costing would be final by Fri 10 Dec 2027, so that the Cabinet material could be finished around it.
+This is an illustration. Grace put Zoe on the costing the day after the Minister's agreement. They agreed on one costing file, versioned and dated in NRIO's records system, with Zoe as its only editor. Tom would give Zoe the evidence for each driver in writing. Every design change would go through Grace. And the costing would be final by Fri 10 Dec 2027, so that the Cabinet material could be finished around it.
 
 Give your CFO area the design, drivers, sources, delivery plan and assumptions; ask it for staff rates, classifications, overlapping funding and this year's Budget rules. Then keep the numbers in one place: a figure changed in a Cabinet draft but not in the costing starts two versions of the truth.
 
@@ -148,7 +148,7 @@ In practice, a Budget proposal's costing is usually checked with the Department 
 
 Expect questions about every driver, and answer from the evidence file. If Finance's view of a number differs from yours, record both views and the reasons and tell your manager; do not blend them into a third number nobody can explain.
 
-This is an illustration. Zoe and the CFO area took Option C's costing through those steps, and it was final on Fri 10 Dec 2027. From then on, any change to the design would reopen it.
+This is an illustration. Zoe and the CFO area finished Option C's costing on Fri 10 Dec 2027, ready for those steps. From then on, any change to the design would reopen it.
 
 ## What the Parliamentary Budget Office does and does not do
 
@@ -183,7 +183,7 @@ Prepare the costing table. Work out the saving against the 1,200-bridge version,
 
 ### Worked answer
 
-The program cost follows the bridges: 300 × A$9,500 = A$2.85 million and 500 × A$9,500 = A$4.75 million, so 2.85 + 4.75 = A$7.60 million. The running cost is 1.25 + 0.75 + 0.30 + 0.10 = A$2.40 million.
+This is an illustration. The program cost follows the bridges: 300 × A$9,500 = A$2.85 million and 500 × A$9,500 = A$4.75 million, so 2.85 + 4.75 = A$7.60 million. The running cost is 1.25 + 0.75 + 0.30 + 0.10 = A$2.40 million.
 
 | A$ million | 2028–29 | 2029–30 | 2030–31 | 2031–32 | Total |
 | --- | --- | --- | --- | --- | --- |

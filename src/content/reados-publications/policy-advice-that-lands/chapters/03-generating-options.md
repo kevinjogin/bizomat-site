@@ -13,17 +13,17 @@ This is an illustration. By Wed 6 Oct 2027, Grace Mitchell's team in the Strateg
 
 ## Start from the objectives, not the request
 
-Options answer objectives. They do not answer the request that started the work. The Minister's office asked on Tue 3 Aug 2027 for "a fund to fix regional bridges" (Chapter 1). Had the team started there, every option would have been a fund of some size, and the only question would have been how big.
+Options answer objectives. They do not answer the request that started the work. This is an illustration. The Minister's office asked on Tue 3 Aug 2027 for "a fund to fix regional bridges" (Chapter 1). Had the team started there, every option would have been a fund of some size, and the only question would have been how big.
 
 This is an illustration. The problem statement says that many councils do not know the safe load of their bridges, because assessments are costly and bridge engineers are scarce, and that they respond with precautionary limits and closures. Grace's brief set three objectives (Chapter 1). Councils know the safe load of the bridges that matter most for freight and access. Limits and closures that are not needed are lifted or eased, and those that are needed stay. Unsafe bridges are found and acted on. None of these names a solution, and each can be measured.
 
 Test every option against the causes, not just the symptoms. The council survey named three causes: the cost of an assessment, the shortage of bridge engineers and poor asset data. An option that removes one cause leaves the other two in place. Write the causes at the top of your working page and keep them in view while you generate options.
 
-Targets come with options, because a target depends on what an option can deliver. This is an illustration. Options B and C both aim at 1,200 priority bridges, chosen by councils. That is a target, not the whole need: the councils that answered the survey alone reported 1,540 bridges with no load assessment in the last ten years. The paper says so, so that nobody mistakes 1,200 for the end of the problem.
+Targets come with options, because a target depends on what an option can deliver. This is an illustration. Options B and C both aim at 1,200 priority bridges, chosen by councils. That is a target, not the whole need: the councils that answered the survey alone reported 1,540 bridges with no load assessment in the last 10 years. The paper says so, so that nobody mistakes 1,200 for the end of the problem.
 
 ## Describe the base case honestly
 
-The base case is what happens if the government does nothing new. In the bridge paper it is option A: no new Commonwealth action, with councils continuing as now. Every other option is measured against it, so it deserves as much care as the recommendation.
+The base case is what happens if the government does nothing new. This is an illustration. In the bridge paper it is Option A: no new Commonwealth action, with councils continuing as now. Every other option is measured against it, so it deserves as much care as the recommendation.
 
 Three errors are common:
 
@@ -31,7 +31,7 @@ Three errors are common:
 - **Painting a disaster.** If the base case is described as catastrophe, any action looks good, and the comparison tells the reader nothing.
 - **Leaving it out.** Without a base case, a decision-maker cannot see how much difference an option makes.
 
-This is an illustration. Tom Becker wrote the base case from the evidence. Councils keep paying for some assessments themselves. Most of the 410 precautionary limits and the 37 closures stay in place. Heavy vehicle operators keep paying for detours, which Tom estimated at about A$9 million a year (Chapter 2). Some unsafe bridges may stay open without anyone knowing. The base case costs the Commonwealth nothing, and the paper says so plainly, because nil cost is a real feature of option A.
+This is an illustration. Tom Becker wrote the base case from the evidence. Councils keep paying for some assessments themselves. Most of the 410 precautionary limits and the 37 closures stay in place. Heavy vehicle operators keep paying for detours, which Tom estimated at about A$9 million a year (Chapter 2). Some unsafe bridges may stay open without anyone knowing. The base case costs the Commonwealth nothing, and the paper says so plainly, because nil cost is a real feature of Option A.
 
 Keep the base case to the end. It is not an option to screen out; it is the yardstick for all the others.
 
@@ -75,21 +75,21 @@ Three ideas did not survive the screening described below, and each was recorded
 
 Options are not always rivals. Some contain others, and some work only in sequence. Look for three kinds of combination:
 
-- **Nested.** One option includes another. Option C needs a data standard to work, so it does much of what E would do, and more. The paper presents E as a cheaper stand-alone choice and says that choosing C includes its data standard.
-- **Sequenced.** One option makes another work. A strengthening fund can only target the right bridges once assessments show which bridges need work. D after C is a coherent package; D before C is a guess.
+- **Nested.** One option includes another. This is an illustration. Option C needs a data standard to work, so it does much of what E would do, and more. The paper presents E as a cheaper stand-alone choice and says that choosing C includes its data standard.
+- **Sequenced.** One option makes another work. This is an illustration. A strengthening fund can only target the right bridges once assessments show which bridges need work. D after C is a coherent package; D before C is a guess.
 - **Parallel.** Two options run side by side for different groups, such as grants for councils that want to hire their own engineers and a central service for the rest. A hybrid can suit everyone, but it runs two systems and two sets of rules.
 
 When you combine options, analyse the combination as a whole. Do not add up the benefits of options that overlap; work out what the package achieves against the base case (Chapter 4 shows why).
 
 A staged package also helps the conversation with a minister. "Not now, and here is what would make it ready" is easier to hear than "no". This is an illustration. The paper shows D as a possible later stage, once C's results show which bridges need strengthening.
 
-## Grant against procurement: options B and C
+## Grant against procurement: Options B and C
 
-Options B and C look alike at first. Both cost about A$15 million, both cover 1,200 priority bridges, and both pay engineers to assess them. They differ in who buys the work, and that changes almost everything else.
+This is an illustration. Options B and C look alike at first. Both cost about A$15 million, both cover 1,200 priority bridges, and both pay engineers to assess them. They differ in who buys the work, and that changes almost everything else.
 
 Under B, NRIO pays councils. Each council commissions its own engineer, sets the scope and owns the report. The arrangement serves the council's own objective, knowing the state of its assets, as well as the government's. That is the mark of a grant, and the Commonwealth's grants rules would govern it, from guidelines to acquittal. Under C, NRIO buys engineering services from a panel, sets the scope and the data standard, and holds the results in a shared register. That would be a procurement under the Commonwealth Procurement Rules, even though councils benefit.
 
-The label does not decide which it is; the substance does. "Grants You Can Defend", Chapter 1, sets out the test and why it matters. For a policy officer the point comes earlier. The choice of instrument decides which rules apply, how long delivery takes and who carries the risk, so choose it on purpose and write down why (Figure 2).
+The label does not decide which it is; the substance does. *Grants You Can Defend*, Chapter 1, sets out the test and why it matters. For a policy officer the point comes earlier. The choice of instrument decides which rules apply, how long delivery takes and who carries the risk, so choose it on purpose and write down why (Figure 2).
 
 ```figure
 type: compare
@@ -108,7 +108,7 @@ rowhead: Question
 caption: This is an illustration. The comparison as it stood in NRIO's options paper of Fri 29 Oct 2027. The highlighted column is the recommended option.
 ```
 
-B has real strengths, and a fair paper says so. Councils own the bridges and know them best. B respects that, needs no new delivery capability in NRIO and uses a familiar process. C's strengths are consistency and scale: one data standard, a panel that can schedule scarce engineers across the area, and an average price per assessment of A$9,500, at the lower end of the A$8,000 to A$15,000 that councils reported (Chapter 5 shows how it was built).
+This is an illustration. B has real strengths, and a fair paper says so. Councils own the bridges and know them best. B respects that, needs no new delivery capability in NRIO and uses a familiar process. C's strengths are consistency and scale: one data standard, a panel that can schedule scarce engineers across the area, and an average price per assessment of A$9,500, at the lower end of the A$8,000 to A$15,000 that councils reported (Chapter 5 shows how it was built).
 
 The evidence from Chapter 2 weighs here. At the councils' roundtable, several councils said they could not get an engineer to quote for a single bridge at any price. B would put up to 142 councils into that queue at once.
 
@@ -135,12 +135,12 @@ title: From long list to recommendation
 caption: This is an illustration. NRIO's options from the workshop on Tue 12 Oct 2027 to the options paper of Fri 29 Oct 2027.
 - Long list | 8 | every kind of instrument
 - Shortlist | 5 | four options and the base case
-- Recommended | 1 | option C
+- Recommended | 1 | Option C
 ```
 
 The shortlist goes to full impact analysis (Chapter 4). Options screened out appear in the paper in a line each, with the reason, so the Minister can see that they were considered.
 
-Take care with an option the decision-maker has already asked about. The office's first idea was a fund to fix bridges, which is option D. Screening it out quietly would look like the team dodging the request. Keep it in, analyse it as carefully as any other option, and let the analysis show its weakness.
+Take care with an option the decision-maker has already asked about. This is an illustration. The office's first idea was a fund to fix bridges, which is Option D. Screening it out quietly would look like the team dodging the request. Keep it in, analyse it as carefully as any other option, and let the analysis show its weakness.
 
 ## Present options fairly
 
@@ -178,9 +178,11 @@ Three controls would have caught it. First, build a long list across every kind 
 
 ## Exercise: screen the five options
 
-This is an illustration. Use Grace's four criteria (effectiveness, cost, feasibility and fairness) to rate options A to E as meets, partly meets or does not meet, with a reason for each rating. The facts you need are in this chapter: the three causes (cost, scarce engineers and poor data), the option costs, and the 142 councils in the program area. Then decide which options go to full impact analysis, and how to treat D.
+This is an illustration. Use Grace's four criteria (effectiveness, cost, feasibility and fairness) to rate Options A to E as meets, partly meets or does not meet, with a reason for each rating. The facts you need are in this chapter: the three causes (cost, scarce engineers and poor data), the option costs, and the 142 councils in the program area. Then decide which options go to full impact analysis, and how to treat D.
 
 ### Worked answer
+
+This is an illustration.
 
 | Option | Effectiveness | Cost | Feasibility | Fairness |
 | --- | --- | --- | --- | --- |

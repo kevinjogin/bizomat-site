@@ -9,7 +9,7 @@ draft: true
 
 A Cabinet submission is often the last piece of advice a proposal gets before a decision. Its readers are ministers from other portfolios, busy, not specialists in the subject and reading it among many others. Whatever the earlier work found but the submission does not say clearly is, for that decision, lost.
 
-This is an illustration. On Thu 11 Nov 2027 the Minister agreed that the Northfield Regional Infrastructure Office (NRIO) develop option C, the central assessment service, as a new policy proposal for the 2028–29 Budget. Amara Osei drafted NRIO's Cabinet material, Grace Mitchell reviewed it, and Zoe Fraser's costing, final on Fri 10 Dec 2027, sat behind it. The material was lodged through the portfolio department on Fri 21 Jan 2028.
+This is an illustration. On Thu 11 Nov 2027 the Minister agreed that the Northfield Regional Infrastructure Office (NRIO) develop Option C, the central assessment service, as a new policy proposal for the 2028–29 Budget. Amara Osei drafted NRIO's Cabinet material, Grace Mitchell reviewed it, and Zoe Fraser's costing, final on Fri 10 Dec 2027, sat behind it. The material was lodged through the portfolio department on Fri 21 Jan 2028.
 
 This chapter follows that drafting: what Cabinet is for, how a submission is built, recommendations that can be agreed as written, other agencies' views, and how the law protects Cabinet material and its drafts.
 
@@ -37,7 +37,7 @@ This is an illustration. Amara built the submission from the options paper of Fr
 | The value | C's benefits worth 1.63 times its costs over 10 years at NRIO's 7 per cent real discount rate, and 1.14 if benefits were 30 per cent lower |
 | The cost | A$14.5 million over four years, by year, from Zoe's costing |
 
-Ministers will not read "P/A factor" or "net present value" without stopping. Amara wrote "benefits worth about 1.6 times the costs over ten years, in today's dollars" and left the method to an attachment. Every number in the body was checked against the costing and attachments; numbers that disagree lose a reader's trust at once.
+Ministers will not read "P/A factor" or "net present value" without stopping. Amara wrote "benefits worth about 1.6 times the costs over 10 years, in today's dollars" and left the method to an attachment. Every number in the body was checked against the costing and attachments; numbers that disagree lose a reader's trust at once.
 
 ## Recommendations that can be agreed as written
 
@@ -65,7 +65,7 @@ caption: Read each recommendation as if it were the only page ministers saw. If 
 - x A reference to a paragraph | Each recommendation is read on its own
 ```
 
-This is an illustration. Amara's first draft of the recommendations, on Wed 15 Dec 2027, had four. Grace read them with one question: could Zoe set up a program on 1 July from these alone? The answer was no, and the exercise at the end of this chapter shows why.
+This is an illustration. Amara's first draft of the recommendations, on Wed 15 Dec 2027, had four. Grace read them with one question: could officials set the program up in July from these alone? The answer was no, and the exercise at the end of this chapter shows why.
 
 ## Other agencies' views
 
@@ -73,7 +73,7 @@ Cabinet decides for the whole government, so agencies whose responsibilities a p
 
 Send a near-final draft with time to read it, and say what you want checked. Settle what you can at officer level and record it. Where disagreement remains, state it plainly in the submission, with your reason for keeping the recommendation. Ministers should never discover in the room a disagreement that the submission hid.
 
-This is an illustration. In early January 2028 the portfolio department circulated Amara's draft to the agencies it judged had an interest. One, which runs grant programs for local government, preferred grants to councils, option B. Grace and Amara met its officers. They agreed on the size of the problem but not on the instrument. The submission recorded that view in two sentences, with NRIO's reason for C: bridge engineers are scarce, and a panel can plan their work across the area instead of having up to 142 councils compete for the same firms. Zoe's costing had been settled with the CFO area in December, and its handling with the Department of Finance followed the Budget process (Chapters 5 and 6).
+This is an illustration. In early January 2028 the portfolio department circulated Amara's draft to the agencies it judged had an interest. One, which runs grant programs for local government, preferred grants to councils, Option B. Grace and Amara met its officers. They agreed on the size of the problem but not on the instrument. The submission recorded that view in two sentences, with NRIO's reason for C: bridge engineers are scarce, and a panel can plan their work across the area instead of having up to 142 councils compete for the same firms. Zoe's costing had been settled with the CFO area in December, and its handling with the Department of Finance followed the Budget process (Chapters 5 and 6).
 
 Consultation outside the Commonwealth is different. Councils, operators and state and territory road agencies gave evidence on the problem (Chapter 2). None of them saw the submission.
 
@@ -94,11 +94,11 @@ Three exceptions limit the exemption:
 
 - **Attachments.** A document is "not an exempt document only because it is attached" to a Cabinet document (s 34(4)). The Act's note adds that the attachment may be exempt in its own right.
 - **Official publication.** "A document by which a decision of the Cabinet is officially published is not an exempt document" (s 34(5)).
-- **Facts.** "Purely factual material" is not exempt under s 34, unless releasing it would reveal a deliberation or decision whose existence has not been officially disclosed (s 34(6)).
+- **Facts.** Information that is "purely factual material" is not exempt under s 34, unless releasing it would reveal a deliberation or decision whose existence has not been officially disclosed (s 34(6)).
 
 Section 34 is an exemption, not a conditional exemption, so a document within it does not face a public interest test. Contrast deliberative material, such as advice and opinion, which is only conditionally exempt (s 47C) and must be released unless access would, on balance, be contrary to the public interest (s 11A(5)).
 
-The dominant purpose test is what decides. Writing "Cabinet" on the front of a document does not make it a Cabinet document.
+For paragraphs (a) and (c), the dominant purpose test is what decides. Writing "Cabinet" on the front of a document does not make it a Cabinet document.
 
 ```figure
 type: decision
@@ -151,7 +151,7 @@ This is an illustration. In January 2027, before the bridge work began, another 
 
 An officer wanted to test the unit cost. He emailed the draft costing and the draft submission to a contact at a regional councils' association, "for a quick sense-check", with "confidential" in the subject line. The association shared them with its board. Ten days later a regional newspaper reported that the Government was considering a A$80 million level crossing plan.
 
-Ministers had not seen the proposal. The Minister's office spent a week answering questions about a plan Cabinet had not considered. NRIO had to tell the portfolio department's Cabinet liaison area and its own security area. It also had to consider whether the officer had breached the Code of Conduct, including the duty of confidentiality in s 13(6). The Minister held the proposal back from that year's Budget. And councils that had read "50" would treat any smaller number as a cut.
+Ministers had not seen the proposal. The Minister's office spent a week answering questions about a plan Cabinet had not considered. NRIO had to tell the portfolio department's Cabinet liaison area and its own security area. It also had to consider whether the officer had breached the Code of Conduct, including s 13(6), as the draft was prepared for the Minister. The Minister held the proposal back from that year's Budget. And councils that had read "50" would treat any smaller number as a cut.
 
 Three controls would have caught it:
 
@@ -197,6 +197,6 @@ That the Committee:
 4. **note** that keeping the data register after 2031–32 would cost about A$0.15 million a year, which this proposal does not fund;
 5. **note** that NRIO will evaluate the service against the 2027 council survey, with a final evaluation in 2031–32, and that a strengthening fund is not proposed now.
 
-Each decision is an "agree", and each "note" tells ministers something they would otherwise find later. Recommendation 4 is the one most often left out. The impact analysis assumed A$0.15 million a year of register upkeep over ten years, but the costing funds it only to 2031–32. Saying so now prevents a surprise later. Recommendation 5 states what ministers are not deciding, so nobody reads the agreement as a fund in waiting. If the proposal were to be funded by savings elsewhere, a further recommendation would say so, in the form the portfolio department advises.
+Each decision is an "agree", and each "note" tells ministers something they would otherwise find later. Recommendation 4 is the one most often left out. The impact analysis assumed A$0.15 million a year of register upkeep over 10 years, but the costing funds it only to 2031–32. Saying so now prevents a surprise later. Recommendation 5 states what ministers are not deciding, so nobody reads the agreement as a fund in waiting. If the proposal were to be funded by savings elsewhere, a further recommendation would say so, in the form the portfolio department advises.
 
 Recommendations are the end of a long line of advice. Chapter 8 goes back along that line, to briefing the Minister and keeping advice frank when the office preferred another answer.

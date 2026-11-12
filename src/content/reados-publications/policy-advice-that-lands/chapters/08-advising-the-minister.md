@@ -9,7 +9,7 @@ draft: true
 
 Policy advice is written for one reader who has the power to decide. A minister reads it between many other briefs, often with an adviser's view beside it, and then agrees, asks for more or goes another way. Advice that buries the decision, softens the bad news or bends to what the office wants to hear fails that reader, however good the analysis behind it.
 
-This is an illustration. Grace Mitchell's advice to the Minister on bridge load limits took three written forms in 2027. There was the brief of Fri 13 Aug, the options paper of Fri 29 Oct, and a one-page note a week later, after the Minister's senior adviser pressed for the strengthening fund, option D. On Thu 11 Nov 2027 the Minister agreed to develop option C, the central assessment service, as a new policy proposal for the 2028–29 Budget. This chapter follows how that advice was written, kept frank and recorded.
+This is an illustration. Grace Mitchell's advice to the Minister on bridge load limits took three written forms in 2027. There was the brief of Fri 13 Aug, the options paper of Fri 29 Oct, and a one-page note a week later, after the Minister's senior adviser pressed for the strengthening fund, Option D. On Thu 11 Nov 2027 the Minister agreed to develop Option C, the central assessment service, as a new policy proposal for the 2028–29 Budget. This chapter follows how that advice was written, kept frank and recorded.
 
 ## Who decides and who advises
 
@@ -24,7 +24,7 @@ The [Australian Public Service Commissioner's Directions 2022](https://www.legis
 - (e) "providing advice that is relevant and comprehensive, is not affected by fear of consequences, and does not withhold important facts or bad news";
 - (f) advice that "takes account of the context in which policy needs to be implemented".
 
-A minister's advisers are part of the picture too. They are employed under the Members of Parliament (Staff) Act 1984. Even an APS employee on leave to work in a minister's office is not bound by the Values of Committed to Service and Impartial while there (Directions s 17B). An adviser's job includes the political side of a decision, and a good one tells you what the Minister needs. But the Code of Conduct requires you to follow lawful and reasonable directions given by "someone in the employee's Agency who has authority to give the direction" (s 13(5)). A request from the office to change NRIO's advice is not one of those. Take it to your manager, who decides how NRIO responds.
+A minister's advisers are part of the picture too. They are employed under the Members of Parliament (Staff) Act 1984. Even an APS employee on leave without pay to work in a minister's office under that Act is not bound by the Values of Committed to Service and Impartial while there (Directions s 17B); one placed there without that leave remains bound. An adviser's job includes the political side of a decision, and a good one tells you what the Minister needs. But the Code of Conduct requires you to follow lawful and reasonable directions given by "someone in the employee's Agency who has authority to give the direction" (s 13(5)). A request from the office to change NRIO's advice is not one of those. Take it to your manager, who decides how NRIO responds.
 
 ## Briefs that lead with the decision
 
@@ -44,7 +44,7 @@ caption: Agencies have their own templates. Whatever the headings, the order of 
 
 This is an illustration. Grace's first brief went on Fri 13 Aug 2027, ten days after the commission. Its purpose and recommendation came first: agree that NRIO define the problem and test the evidence before advising on funding options, and note that an options paper would follow by the end of October. Two pages were enough. Sending a short brief in ten days, instead of a long one in six weeks, was part of being timely in the sense of s 10(5). The office needed to know at once what NRIO proposed to do.
 
-The options paper of Fri 29 Oct 2027 had a covering brief that led the same way. It recommended that the Minister agree to develop C as a new policy proposal. Its key points gave C's cost (A$14.5 million over four years for 1,200 priority bridges) and its value (benefits worth 1.63 times its costs over ten years). They also named the main alternative (grants to councils, B, with benefits 1.34 times its costs) and C's main risk: NRIO had never run such a service. One point dealt with D: a strengthening fund now would cost A$120 million, its benefits over ten years were worth less than its costs, and without assessments it could not be targeted. The five options, at their strongest, were in the attachment (Chapter 3).
+The options paper of Fri 29 Oct 2027 had a covering brief that led the same way. It recommended that the Minister agree to develop C as a new policy proposal. Its key points gave C's cost (A$14.5 million over four years for 1,200 priority bridges) and its value (benefits worth 1.63 times its costs over 10 years). They also named the main alternative (grants to councils, B, with benefits 1.34 times its costs) and C's main risk: NRIO had never run such a service. One point dealt with D: a strengthening fund now would cost A$120 million, its benefits over 10 years were worth less than its costs, and without assessments it could not be targeted. The five options, at their strongest, were in the attachment (Chapter 3).
 
 ## Frank advice when the office prefers D
 
@@ -54,7 +54,7 @@ Grace listened and asked what the Minister wanted to achieve. The answer was vis
 
 Frank advice is not the same as repeating the recommendation more firmly. This is an illustration. Grace's note did five things:
 
-1. **It said the bad news plainly.** Over ten years, D's benefits were worth less than its costs: a ratio of 0.80.
+1. **It said the bad news plainly.** Over 10 years, D's benefits were worth less than its costs: a ratio of 0.80.
 2. **It gave D its due.** Over 30 years, because strengthened bridges last, D's ratio was 1.38. Element (e) of the Directions requires advice that does not withhold important facts, and that includes facts that favour the option you do not recommend.
 3. **It named the real weakness: sequencing.** Without assessments, nobody knows which bridges need strengthening. D's benefits assume the money reaches the right bridges, and a competitive fund picks the best bids, not the greatest needs.
 4. **It compared like with like.** It did not set D's 30-year ratio beside C's 10-year ratio as if they measured the same thing.
@@ -106,11 +106,11 @@ Once a decision is made, implement it well even if you advised otherwise. Elemen
 
 ## When a minister approves spending
 
-Section 71(1) of the [Public Governance, Performance and Accountability Act 2013](https://www.legislation.gov.au/C2013A00123/latest/text) (PGPA Act) says a Minister "must not approve a proposed expenditure of relevant money unless the Minister is satisfied, after making reasonable inquiries", that it would be a proper use of that money. "Proper" means "efficient, effective, economical and ethical" (s 8). A Minister who approves must "record the terms of the approval in writing as soon as practicable after giving the approval" (s 71(2)(a)).
+Section 71(1) of the [Public Governance, Performance and Accountability Act 2013](https://www.legislation.gov.au/C2013A00123/latest/text) (PGPA Act) says a Minister "must not approve a proposed expenditure of relevant money unless the Minister is satisfied, after making reasonable inquiries", that it would be a proper use of that money. In s 8, "proper" means "efficient, effective, economical and ethical". A Minister who approves must "record the terms of the approval in writing as soon as practicable after giving the approval" (s 71(2)(a)).
 
 This is an illustration. Option C would not involve the Minister in approving individual payments. NRIO would buy assessments under its own authority, because its accountable authority may approve commitments of relevant money for the entity (s 23(3)), usually through delegations. Nor was the Minister's agreement of 11 Nov 2027 an approval of expenditure: it was an agreement to develop a proposal.
 
-But if a later strengthening fund had the Minister choosing which bridges to fund, s 71 would apply to each approval. Then NRIO's brief should give the Minister what reasonable inquiries need: how each proposal was assessed, its cost and value, its risks and the alternatives, and a place to record the terms of approval. A brief that asks a minister to approve spending without that material leaves the minister unable to show the inquiries s 71 requires. If the spending is a grant, the Commonwealth's grants rules also apply; the companion book "Grants You Can Defend" covers them.
+But if a later strengthening fund had the Minister choosing which bridges to fund, s 71 would apply to each approval. Then NRIO's brief should give the Minister what reasonable inquiries need: how each proposal was assessed, its cost and value, its risks and the alternatives, and a place to record the terms of approval. A brief that asks a minister to approve spending without that material leaves the minister unable to show the inquiries s 71 requires. If the spending is a grant, the Commonwealth's grants rules also apply; the companion book *Grants You Can Defend* covers them.
 
 ## When it goes wrong: the overrun in paragraph 11
 
@@ -118,7 +118,7 @@ This is an illustration. In early 2026, before the bridge work began, another NR
 
 The branch's brief of Thu 12 Mar 2026 was headed "Causeway program: progress update". It asked the Minister to note it. Its first key point said the program remained on schedule. The tender result appeared in paragraph 11 of the background as "tendered prices exceed the estimate; options are being considered", with no figure and no options. The Minister noted the brief. Two weeks later, on a regional visit, the Minister said all 12 causeways would be rebuilt by the end of 2027.
 
-In June 2026 the branch asked for A$6.3 million more. The Minister now had to choose between finding money elsewhere and cutting causeways that had been promised in public. The office asked why it had not been told in March. Three months in which the work could have been re-scoped, staged or funded were gone, and the office read NRIO's progress briefs with suspicion for a long time afterwards.
+In June 2026 the branch asked for A$6.3 million more. The Minister now had to choose between finding money elsewhere and cutting causeways that had been promised in public. The office asked why it had not been told in March. Three months in which the work could have been re-scoped, staged or funded were gone, and the office began asking for the figures behind every NRIO progress brief.
 
 Every sentence in the brief was true. But it withheld the one fact the Minister needed, in a form the Minister could act on, and element (e) requires advice that "does not withhold important facts or bad news". Briefs are also one way an agency's accountable authority meets its duty to "keep the responsible Minister informed of the activities of the entity" (PGPA Act s 19(1)(a)).
 
@@ -138,9 +138,9 @@ title: Option D at 10 and 30 years, and C at 10 years
 caption: This is an illustration. All amounts are A$ million in present values at NRIO's 7 per cent real discount rate.
 formula: B/C = PV benefits ÷ PV costs
 formula: PV benefits = B × P/A(i, n); PV costs = P + C × P/A(i, n)
-- P | initial investment: 120 for option D, 14.5 for option C
-- B | annual benefits: 14.0 for option D, 3.6 for option C
-- C | annual operating cost: 0.5 for option D, 0.15 for option C
+- P | initial investment: 120 for Option D, 14.5 for Option C
+- B | annual benefits: 14.0 for Option D, 3.6 for Option C
+- C | annual operating cost: 0.5 for Option D, 0.15 for Option C
 step: Option D, 10 years: 14.0 × 7.0236 = 98.33; 120 + 0.5 × 7.0236 = 123.51; 98.33 ÷ 123.51 = 0.80
 step: Option D, 30 years: 14.0 × 12.4090 = 173.73; 120 + 0.5 × 12.4090 = 126.20; 173.73 ÷ 126.20 = 1.38
 step: Option C, 10 years: 25.28 ÷ 15.55 = 1.63; D's initial cost is 120 ÷ 14.5 = 8.3 times C's
@@ -148,9 +148,9 @@ step: Option C, 10 years: 25.28 ÷ 15.55 = 1.63; D's initial cost is 120 ÷ 14.5
 
 A note that meets the brief:
 
-**Purpose.** To compare a strengthening fund (option D) with a central assessment service (option C), as your office asked, before you decide on the options paper of 29 October.
+**Purpose.** To compare a strengthening fund (Option D) with a central assessment service (Option C), as your office asked, before you decide on the options paper of 29 October.
 
-**Recommendation.** That you agree to develop option C as a new policy proposal for the 2028–29 Budget, and note that a strengthening fund targeted on C's results could follow. Agreed / Not agreed / Please discuss.
+**Recommendation.** That you agree to develop Option C as a new policy proposal for the 2028–29 Budget, and note that a strengthening fund targeted on C's results could follow. Agreed / Not agreed / Please discuss.
 
 **Key points.**
 

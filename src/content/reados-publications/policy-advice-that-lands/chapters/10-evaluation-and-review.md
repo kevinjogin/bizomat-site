@@ -13,7 +13,7 @@ This is an illustration. The decision of Tue 9 May 2028 funded 800 bridges and m
 
 ## Why evaluate
 
-Section 17A(d) of the [Australian Public Service Commissioner's Directions 2022](https://www.legislation.gov.au/F2022L00088/latest/text) (the Directions) says that upholding the APS Value of Stewardship requires "reflecting on and learning from past experience and institutional knowledge, including through robust evaluation, to inform operations, advice, and decisions". It is a requirement, applied having regard to each person's duties and responsibilities. It names three uses: improving a program while it runs, making the next advice better, and informing decisions to continue, change or stop.
+Section 17A(d) of the [Australian Public Service Commissioner's Directions 2022](https://www.legislation.gov.au/F2022L00088/latest/text) (the Directions) says that upholding the APS Value of Stewardship requires "reflecting on and learning from past experience and institutional knowledge, including through robust evaluation, to inform operations, advice, and decisions". It is a requirement, applied having regard to each person's duties and responsibilities. It names three uses, "operations, advice, and decisions": in practice, improving a program, the next advice, and whether to continue it.
 
 Evaluation is not the same as performance reporting. Performance measures say what happened: bridges assessed, cost per assessment, limits changed (Chapter 9). An evaluation asks why it happened, whether the program caused it, what it was worth and what to do next. The PGPA Act requires the first, as explained below. It does not require a policy evaluation. Read the *Commonwealth Evaluation Policy* and your agency's own evaluation guidance for what is expected of you.
 
@@ -41,7 +41,7 @@ This is an illustration. Tom drafted NRIO's evaluation plan in June 2028 and fin
 3. Were the benefits as large as the proposal estimated?
 4. Should the remaining 400 bridges be assessed, and should anything change if they are?
 
-With no money for a final evaluation, the plan builds data collection into the program. The nomination form records each bridge's starting point (Chapter 9), the register records every result and each council's decision, and the panel contract requires reports in the data standard's format. Most of the data costs nothing extra, and Tom runs the mid-term review within the program's staff time. The plan also says what a final evaluation in 2031–32 would add and cost, so the review can propose funding it. Nobody has yet decided.
+With no money for a final evaluation, the plan builds data collection into the program. The nomination form records each bridge's starting point (Chapter 9), the register records every result and each council's decision, and the panel contract requires reports in the data standard's format. Most of the data costs nothing extra, and Tom runs the mid-term review within existing staff time. The plan also says what a final evaluation in 2031–32 would add and cost, so the review can propose funding it. Nobody has yet decided.
 
 ## The baseline
 
@@ -53,7 +53,7 @@ The baseline has two gaps, and the plan fills both. The 46 councils that did not
 
 ## Outcome measures and attribution
 
-Outcomes are harder to measure than outputs, and harder to credit. Attribution is the question of how much of a change the program caused. A limit lifted after an NRIO assessment is not automatically the program's success, because some councils would have paid for that assessment themselves.
+Outcomes are harder to measure than outputs, and harder to credit. Attribution is the question of how much of a change the program caused. This is an illustration. A limit lifted after an NRIO assessment is not automatically the program's success, because some councils would have paid for that assessment themselves.
 
 Three approaches help, and stronger evaluations use more than one:
 
@@ -86,7 +86,7 @@ formula: n = n₀ ÷ (1 + (n₀ − 1) ÷ N)
 - E | 5 km, the margin of error
 - N | 410, the precautionary limits in the 2027 survey
 step: n₀ = (1.960 × 18 ÷ 5)² = 7.056² = 49.79, which rounds up to 50
-step: n = 49.79 ÷ (1 + 48.79 ÷ 410) = 49.79 ÷ 1.1190 = 44.49
+step: n = 49.787 ÷ (1 + 48.787 ÷ 410) = 49.787 ÷ 1.11899 = 44.49
 step: Rounded up: measure 45 eased limits
 ```
 
@@ -114,18 +114,18 @@ The [PGPA Act](https://www.legislation.gov.au/C2013A00123/latest/text) gives the
 
 None of these requires an evaluation. They do require data that an evaluation also uses, so collect it once and use it for both.
 
-This is an illustration. NRIO's 2028–29 annual performance statements will report the program's four measures, each traced to the register. Tom keeps a file showing, for every published number, the query and the date it came from.
+This is an illustration. NRIO's 2028–29 annual performance statements will report the program's four measures, each traced to its source. Tom keeps a file showing, for every published number, the query and the date it came from.
 
 ## Sunsetting: a review the law schedules
 
-Many policies rest on a legislative instrument, and the [Legislation Act 2003](https://www.legislation.gov.au/C2004A01224/latest/text) gives most instruments a review date. Part 4 exists "to ensure that legislative instruments are kept up to date and only remain in force for so long as they are needed" (s 49).
+Many policies rest on a legislative instrument, and the [Legislation Act 2003](https://www.legislation.gov.au/C2004A01224/latest/text) gives most instruments a repeal date that forces a review. Part 4 exists "to ensure that legislative instruments are kept up to date and only remain in force for so long as they are needed" (s 49).
 
-The rule is a date rule, not "ten years". Section 50(1) repeals an instrument "on the first 1 April or 1 October falling on or after the tenth anniversary of registration". An instrument registered on Tue 14 Mar 2028 reaches its tenth anniversary on 14 March 2038 and is repealed on 1 April 2038. One registered on Mon 3 Apr 2028 has its anniversary after 1 April 2038, so it lasts until 1 October 2038.
+The rule is a date rule, not "10 years". Section 50(1) repeals an instrument "on the first 1 April or 1 October falling on or after the tenth anniversary of registration". An instrument registered on Tue 14 Mar 2028 reaches its tenth anniversary on 14 March 2038 and is repealed on 1 April 2038. One registered on Mon 3 Apr 2028 has its anniversary after 1 April 2038, so it lasts until 1 October 2038.
 
 Three further provisions shape the timing:
 
 - **Deferral is possible, not assumed.** On the rule-maker's written application, the Attorney-General may defer sunsetting to a 1 April or 1 October on or before the second anniversary of the sunsetting day, if satisfied of a ground in section 51(1)(b). The certificate's explanatory statement must give the reasons (s 51(5)).
-- **Some instruments are exempt.** Part 4 does not apply to instruments covered by section 54, including those prescribed by regulation under section 54(2)(b). The PGPA Rule is one, under section 12, table item 53A, of the Legislation (Exemptions and Other Matters) Regulation 2015. Exempt instruments still need review; they just have no deadline. Acts do not sunset under Part 4.
+- **Some instruments are exempt.** Part 4 does not apply to instruments covered by section 54, including those prescribed by regulation under section 54(2)(b). The PGPA Rule is one, under section 12, table item 53A, of the Legislation (Exemptions and Other Matters) Regulation 2015. Exempt instruments should still be reviewed; the law sets no deadline. Acts do not sunset under Part 4.
 - **Lists give warning.** The Attorney-General must arrange for lists of instruments due to sunset to be tabled in each House on its first sitting day within 18 months before the sunsetting day (s 52).
 
 The Register shows the Directions themselves as due to be repealed by sunsetting on 1 April 2032.
@@ -140,7 +140,7 @@ question: Does Part 4 of the Legislation Act apply to the instrument?
 caption: General guidance on the Legislation Act 2003, Part 4. Your legal area confirms the date for a particular instrument.
 ```
 
-This is an illustration. The bridge program needs no legislative instrument (Chapter 2), so its review trigger is the Budget decision. If a later stage did rest on an instrument, Grace's team would put its sunsetting date in the evaluation plan and finish the review before the list is tabled, leaving time to consult (s 17) and make a replacement.
+This is an illustration. The bridge program needs no new legislative instrument (Chapter 2), so its review trigger is the Budget decision. If a later stage did rest on an instrument, Grace's team would put its sunsetting date in the evaluation plan and finish the review before the list is tabled, leaving time to consult (s 17) and make a replacement.
 
 ## When it goes wrong: a program with no before
 
@@ -182,7 +182,7 @@ caption: This is an illustration. The case's dates. Each step must finish before
 - June to September 2028 | Evaluation plan | drafted, piloted and finalised before any data arrives
 - August and September 2029 | Repeat survey | the core questions, to all 142 councils
 - Wed 31 Oct 2029 | Data cut-off | sample of eased limits drawn
-- November and December 2029 | Detours measured | 45, or up to 64 if σ is higher
+- November and December 2029 | Detours measured | 45, or 64 if σ is 22 km
 - *Thu 28 Feb 2030 | Mid-term review report | informs the decision on 400 bridges
 ```
 
@@ -192,6 +192,6 @@ caption: This is an illustration. The case's dates. Each step must finish before
 - *Continue with changes* if delivery or cost misses but the benefits hold: for example, more panel firms or a slower pace.
 - *Do not continue on this design* if benefits fall more than 30 per cent short.
 
-**The final evaluation.** The plan records the gap plainly: a final evaluation in 2031–32 is not funded. The review will say what it would cost and recommend how to fund it, with any further tranche or from NRIO's existing running costs, for the Director and the CEO to decide. Meanwhile the register keeps the data, so any later evaluation can start where the review stopped.
+**The final evaluation.** The plan records the gap plainly: a final evaluation in 2031–32 is not funded. The review will say what it would cost and recommend how to fund it, with any further tranche or from NRIO's existing running costs, for the Director and the CEO to consider. Meanwhile the register keeps the data, so any later evaluation can start where the review stopped.
 
 This book has followed one fictional proposal from a request for a fund to a review that will decide its second half. Each chapter added a question that advice must answer before it lands: what the problem is, what the evidence shows, what else could be done, what each option is worth, what it costs, how the Budget weighs it, how ministers will read it, what the minister needs to hear, whether it can be delivered, and how anyone will know it worked. The answers are rarely tidy, and the decision is never the adviser's. The adviser controls something smaller and just as important: whether the person who decides sees the problem, the options, the costs and the risks clearly, in time and in writing, and whether the record lets the next adviser learn from what happened.

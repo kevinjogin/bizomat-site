@@ -88,7 +88,7 @@ A problem does not by itself justify government action. A brief should say why t
 
 This is an illustration. Here, councils own the bridges and state and territory road agencies have their own roles.
 
-Market failure means that private decisions, left alone, give the community a worse result than they could. Two forms fit. The first is missing information: those who would gain from knowing a bridge's safe load are mostly not those who would pay for the assessment. The second is costs that fall on others. A council bears the safety and liability risk, so a precautionary limit is sensible for it, while the detour costs land on operators who have no say.
+Market failure means that decisions left to each party give the community a worse result than they could. Two forms fit. The first is missing information: those who would gain from knowing a bridge's safe load are mostly not those who would pay for the assessment. The second is costs that fall on others. A council bears the safety and liability risk, so a precautionary limit is sensible for it, while the detour costs land on operators who have no say.
 
 Equity is about fairness. A small council may own many bridges, and an assessment takes a far larger share of its budget than of a city council's.
 

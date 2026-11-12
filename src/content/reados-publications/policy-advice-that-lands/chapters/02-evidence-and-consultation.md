@@ -7,7 +7,7 @@ description: "Gather evidence that can change the advice: judge its quality and 
 draft: true
 ---
 
-This is an illustration. Grace Mitchell's brief of Fri 13 Aug 2027 promised the Minister an options paper by the end of October, built on evidence NRIO did not yet have. Its working problem statement named three suspected causes: the cost of assessments, the shortage of bridge engineers and poor asset data. Nobody knew how many bridges were affected or what the limits cost.
+This is an illustration. Grace Mitchell's brief of Fri 13 Aug 2027 promised the Minister an options paper by the end of October, built on evidence NRIO did not yet have. Its problem tree named three suspected causes: the cost of assessments, the shortage of bridge engineers and poor asset data. Nobody knew how many bridges were affected or what the limits cost.
 
 Between Mon 23 Aug and Wed 6 Oct 2027, the Strategy and Policy Branch surveyed councils and ran three roundtables, and Tom Becker estimated what the load limits cost heavy vehicle operators. This chapter covers gathering and judging evidence like that, designing consultation that can change the advice, recording and reporting back, and the extra duties when a proposal is made by legislative instrument.
 
@@ -136,7 +136,7 @@ These are requirements, not better practice, scaled to each person's role. None 
 
 ## When a proposal needs a legislative instrument
 
-Some proposals take effect through a legislative instrument, such as a rule or determination made under an Act. Then the [Legislation Act 2003](https://www.legislation.gov.au/C2004A01224/latest/text) adds duties about consultation. This is an illustration. The bridge proposal, as it develops in this book, needs no new legislative instrument, so they do not apply to it.
+Some proposals take effect through a legislative instrument, such as a rule or determination made under an Act. Then the [Legislation Act 2003](https://www.legislation.gov.au/C2004A01224/latest/text) adds duties about consultation. This is an illustration. The case assumes existing legislation already authorises the bridge spending, so no new instrument is needed and these duties do not apply.
 
 The provisions use all three verbs. Section 17's heading says "Rule-makers should consult before making legislative instruments". The duty is firmer: under section 17(1), "the rule-maker must be satisfied that there has been undertaken any consultation that is" appropriate in the rule-maker's view and reasonably practicable. Section 17(2) lists matters the rule-maker "may have regard to", such as whether the consultation drew on relevant expertise and gave people likely to be affected an adequate opportunity to comment.
 

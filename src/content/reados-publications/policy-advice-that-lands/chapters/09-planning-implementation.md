@@ -9,7 +9,7 @@ draft: true
 
 A Budget decision turns advice into promises: so many bridges, by these dates, for this much money. Someone now has to keep them. Advice that reads well and then fails in delivery has not landed, however good the analysis behind it.
 
-This is an illustration. On Tue 9 May 2028 the government agreed that NRIO would assess 800 council bridges over 2028–29 and 2029–30, for A$10.0 million over four years (Chapter 6). The program starts on Mon 3 Jul 2028, and the first assessments begin on Mon 2 Oct 2028. NRIO has never run a service like this, and the options paper named that as Option C's main risk (Chapter 3). Grace Mitchell's team had just under eight weeks to turn the proposal's delivery section into a plan people could work from. This chapter follows that plan, from governance and milestones to measures, briefing and risk.
+This is an illustration. On Tue 9 May 2028 the government agreed that NRIO would assess 800 council bridges over 2028–29 and 2029–30, for A$10.0 million over four years (Chapter 6). The program starts on Mon 3 Jul 2028, and the first assessments begin on Mon 2 Oct 2028. NRIO has never run a service like this, and the options paper named that as Option C's main risk (Chapter 3). Grace Mitchell's team had just over five weeks to turn the proposal's delivery section into a plan people could work from. This chapter follows that plan, from governance and milestones to measures, briefing and risk.
 
 ## Design for delivery from the first brief
 
@@ -35,7 +35,7 @@ Governance answers one question: who can decide what. Write it down before the f
 
 This is an illustration. NRIO's CEO, its accountable authority, approved the plan on Fri 16 Jun 2028. Its governance has four parts:
 
-- **The program board** meets monthly, chaired by the Director, Strategy and Policy, as senior responsible officer, with Grace, the program manager, Zoe Fraser and a procurement adviser. It may approve changes that keep each year's assessments and costs within 10 per cent of the plan and leave the review date alone. Anything larger goes to the CEO.
+- **The program board** meets monthly, chaired by the Director, Strategy and Policy, as senior responsible officer, with Grace, Zoe Fraser, the program manager and a procurement adviser. It may approve changes that keep each year's assessments and costs within 10 per cent of the plan and leave the review date alone. Anything larger goes to the CEO.
 - **The program team** runs the panel, the nominations, the data checks and the register. With the CFO area's agreement, recruitment began after the Budget for start dates from Mon 3 Jul, when the money would be there.
 - **Grace's team** remains the policy owner. It writes the measures, drafts the Minister's briefs on the program and designs the review in Chapter 10.
 - **A council reference group** of councils and their associations meets each quarter to advise on the nominations guidance and the data standard. It decides nothing, and its terms of reference say so.
@@ -73,7 +73,7 @@ Section 16EA sets six tests. Measures meet it if, in the context of the entity's
 
 Put in the corporate plan only the few measures that show whether the activity works, and keep the rest for the program board.
 
-This is an illustration. NRIO's 2028–29 corporate plan, due by Thu 31 Aug 2028, adds bridge load assessment as a key activity. Grace's team drafted four measures, and NRIO's performance area checked them against section 16EA. The panel's prices were not yet known, so the cost target came from the costing.
+This is an illustration. NRIO's 2028–29 corporate plan, due by Thu 31 Aug 2028, adds bridge load assessment as a key activity. Grace's team drafted four measures, and NRIO's planning and performance team checked them against section 16EA. The panel's prices were not yet known, so the cost target came from the costing.
 
 ```figure
 type: compare
@@ -87,7 +87,7 @@ caption: This is an illustration. Costs exclude GST, as all the case's costings 
 - Councils' view of whether the results were usable | qualitative | a short yearly survey of nominating councils, with their comments | a baseline set in 2028–29
 ```
 
-Two choices need their reasons on file. First, there is no target for limits lifted. A target would push engineers and councils towards one answer, and the objective is limits that are right, not limits that are gone (Chapter 1). Reporting every outcome together gives the unbiased basis section 16EA asks for, and section 16E asks for targets only where one is reasonably practicable. Paying firms the same for every assessment, whatever it finds, protects the same independence.
+Two choices need their reasons on file. First, there is no target for limits lifted. A target would push engineers and councils towards one answer, and the objective is limits that are right, not limits that are gone (Chapter 1). Nobody can know before an assessment what the right result is, so no target is reasonably practicable (s 16E(2), item 5), and reporting every outcome gives the unbiased basis section 16EA asks for. Paying firms the same for every assessment, whatever it finds, protects the same independence.
 
 Second, the mean detour avoided is missing: it is costly to measure every year, so it belongs to the evaluation (Chapter 10). The limits measure continues in 2030–31 and 2031–32, after the assessments end, because councils keep acting on results.
 
@@ -132,7 +132,7 @@ This is an illustration. The program's register uses NRIO's 5 × 5 matrix. Likel
 
 Take the risk that the register is not ready when the first reports arrive. Its build starts in July, and reports start arriving in November. Likelihood 3, possible. Consequence 3, moderate: for up to three months, councils cannot see results and checks pile up. The score is 3 × 3 = 9, Medium. The treatment is to build the parts that load and check reports first, hold accepted reports in a checked interim store, and send each council its own results directly. Re-rated, likelihood stays at 3, but consequence falls to 2, a delay of weeks to the shared view: 3 × 2 = 6, Low. The treatment worked on the consequence, and took the register off the critical path.
 
-The score sorts risks for attention; it does not measure them. It also hides its parts: 2 × 5 and 5 × 2 both make 10, but one is a rare disaster and the other a frequent nuisance, so record both factors.
+The score sorts risks for attention; it does not measure them. It also hides its parts: 2 × 5 and 5 × 2 both make 10, but one is an unlikely disaster and the other a frequent nuisance, so record both factors.
 
 ## When it goes wrong: a help desk announced before it existed
 
