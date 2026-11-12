@@ -118,6 +118,9 @@ The calendar is turned into a straight axis of working minutes; on it:
   mode, without that.
 - Multiple critical paths are listed (chains of critical tasks joined by links with no slack), as are multiple start
   and end activities and milestones.
+- Dates: a start offset reads as the working day that minute begins, a finish offset as the day that minute ends. A
+  milestone (zero duration) has one date for both, the day its predecessors finish: after a task ending on Wednesday
+  it sits on Wednesday, not Thursday.
 
 Worked example (engine test, 1 d = 8 h): A 3 d → B 4 d, A → C 2 d, B → D 5 d, C → D (all FS).
 
