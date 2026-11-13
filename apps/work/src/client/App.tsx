@@ -39,6 +39,7 @@ const CrmJoin = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Join
 // BIZOMAT Finance, when the app is served under /finance (src/client/fin), in the same way.
 const FinRoutes = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.FinRoutes })));
 const FinJoin = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.Join })));
+const FinPublicView = lazy(() => import('./fin/PublicView').then((m) => ({ default: m.FinPublicView })));
 // The company area, when the app is served under /company (src/client/company).
 const CompanyRoutes = lazy(() => import('./company/CompanyApp').then((m) => ({ default: m.CompanyRoutes })));
 const CompanyJoin = lazy(() => import('./company/CompanyApp').then((m) => ({ default: m.Join })));
@@ -123,6 +124,7 @@ export function App() {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
         <Route path="/join/:token" element={page(<FinJoin />)} />
+        <Route path="/view/:kind/:id" element={page(<FinPublicView />)} />
         <Route path="/admin/*" element={<RequireAuth>{page(<FinAdmin />)}</RequireAuth>} />
         <Route path="/*" element={<RequireAuth>{page(<FinRoutes />)}</RequireAuth>} />
       </Routes>

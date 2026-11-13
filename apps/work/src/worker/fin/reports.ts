@@ -579,11 +579,12 @@ export async function aged(db: D1Database, a: FinAccess, p: ReportParams, kind: 
   const rows0 = await db
     .prepare(
       `SELECT d.id, d.number, d.due_date, d.issue_date, d.total, ct.name AS contact, d.contact_id,
-         (SELECT COALESCE(SUM(p.amount), 0) FROM fin_payments p WHERE p.doc_id = d.id AND p.date <= ? AND (p.voided_at IS NULL)) AS paid
+         (SELECT COALESCE(SUM(p.amount), 0) FROM fin_payments p WHERE p.doc_id = d.id AND p.date <= ? AND (p.voided_at IS NULL))
+         + (SELECT COALESCE(SUM(ca.amount), 0) FROM fin_credit_allocations ca WHERE ca.org_id = d.org_id AND ca.invoice_id = d.id AND ca.date <= ? AND ca.voided_at IS NULL) AS paid
        FROM fin_docs d LEFT JOIN fin_contacts ct ON ct.id = d.contact_id
        WHERE d.org_id = ? AND d.kind = ? AND d.deleted_at IS NULL AND d.issue_date <= ? AND d.approved_at IS NOT NULL AND d.status <> 'void'`,
     )
-    .bind(p.date, a.orgId, kind, p.date)
+    .bind(p.date, p.date, a.orgId, kind, p.date)
     .all<any>();
   const buckets = ['Current', '1 to 30 days', '31 to 60 days', '61 to 90 days', 'Over 90 days'];
   const byContact = new Map<string, { name: string; v: number[] }>();
@@ -596,6 +597,25 @@ export async function aged(db: D1Database, a: FinAccess, p: ReportParams, kind: 
     const e = byContact.get(key) ?? { name: d.contact ?? 'No contact', v: [0, 0, 0, 0, 0] };
     e.v[i] += due;
     byContact.set(key, e);
+  }
+  if (kind === 'invoice') {
+    // Credit a customer has not used yet (not applied to an invoice or paid back) lowers what they owe, shown as current.
+    const credits = await db
+      .prepare(
+        `SELECT cn.contact_id, ct.name AS contact, cn.total
+           - (SELECT COALESCE(SUM(ca.amount), 0) FROM fin_credit_allocations ca WHERE ca.org_id = cn.org_id AND ca.credit_note_id = cn.id AND ca.date <= ? AND ca.voided_at IS NULL)
+           - (SELECT COALESCE(SUM(r.amount), 0) FROM fin_credit_refunds r WHERE r.org_id = cn.org_id AND r.credit_note_id = cn.id AND r.date <= ? AND r.voided_at IS NULL) AS unused
+         FROM fin_credit_notes cn JOIN fin_contacts ct ON ct.id = cn.contact_id
+         WHERE cn.org_id = ? AND cn.deleted_at IS NULL AND cn.issue_date <= ? AND cn.approved_at IS NOT NULL AND (cn.voided_at IS NULL)`,
+      )
+      .bind(p.date, p.date, a.orgId, p.date)
+      .all<any>();
+    for (const cn of credits.results) {
+      if (cn.unused <= 0) continue;
+      const e = byContact.get(cn.contact_id) ?? { name: cn.contact, v: [0, 0, 0, 0, 0] };
+      e.v[0] -= cn.unused;
+      byContact.set(cn.contact_id, e);
+    }
   }
   const rows: ReportRow[] = [...byContact.values()].sort((x, y) => x.name.localeCompare(y.name)).map((e) => ({ cells: [e.name, ...e.v, e.v.reduce((n, x) => n + x, 0)] }));
   const totals = [0, 1, 2, 3, 4].map((i) => [...byContact.values()].reduce((n, e) => n + e.v[i], 0));
@@ -640,7 +660,7 @@ export async function gstReport(db: D1Database, a: FinAccess, p: ReportParams): 
     fold((await db.prepare(lineSql('')).bind(a.orgId, p.from, p.to).all<any>()).results);
   } else {
     // Cash basis: bank transactions and journals by their date; invoices, bills and claims as they are paid.
-    fold((await db.prepare(lineSql(`AND (j.source_type IN ('transaction','manual','opening') OR (j.source_type = 'reversal' AND COALESCE(j.source_id, '') NOT IN (SELECT id FROM fin_docs WHERE org_id = ?)))`)).bind(a.orgId, p.from, p.to, a.orgId).all<any>()).results);
+    fold((await db.prepare(lineSql(`AND (j.source_type IN ('transaction','manual','opening') OR (j.source_type = 'reversal' AND COALESCE(j.source_id, '') NOT IN (SELECT id FROM fin_docs WHERE org_id = ?) AND COALESCE(j.source_id, '') NOT IN (SELECT id FROM fin_credit_notes WHERE org_id = ?)))`)).bind(a.orgId, p.from, p.to, a.orgId, a.orgId).all<any>()).results);
     const pays = await db
       .prepare(`SELECT p.amount, d.total, d.kind, d.id FROM fin_payments p JOIN fin_docs d ON d.id = p.doc_id WHERE p.org_id = ? AND p.date >= ? AND p.date <= ? AND p.voided_at IS NULL AND d.total > 0`)
       .bind(a.orgId, p.from, p.to)
@@ -650,6 +670,18 @@ export async function gstReport(db: D1Database, a: FinAccess, p: ReportParams): 
     for (const pay of pays.results) {
       const share = pay.amount / pay.total;
       for (const l of dl.results.filter((x) => x.doc_id === pay.id)) add(l.tax_code_id, Math.round(l.net * share), Math.round(l.tax * share));
+    }
+    // A credit note paid back to the customer lowers sales when the money goes out. A credit applied to an unpaid
+    // invoice needs nothing here: that part of the invoice is never received, so it is never counted.
+    const refunds = await db
+      .prepare(`SELECT r.amount, cn.total, cn.id FROM fin_credit_refunds r JOIN fin_credit_notes cn ON cn.id = r.credit_note_id WHERE r.org_id = ? AND r.date >= ? AND r.date <= ? AND r.voided_at IS NULL AND cn.total > 0`)
+      .bind(a.orgId, p.from, p.to)
+      .all<any>();
+    const noteIds = [...new Set(refunds.results.map((x) => x.id))];
+    const nl = noteIds.length ? await db.prepare(`SELECT credit_note_id, tax_code_id, net, tax FROM fin_credit_note_lines WHERE org_id = ? AND tax_code_id IS NOT NULL AND credit_note_id IN (${placeholders(noteIds.length)})`).bind(a.orgId, ...noteIds).all<any>() : { results: [] };
+    for (const r of refunds.results) {
+      const share = r.amount / r.total;
+      for (const l of nl.results.filter((x) => x.credit_note_id === r.id)) add(l.tax_code_id, -Math.round(l.net * share), -Math.round(l.tax * share));
     }
   }
   const rows: ReportRow[] = [];

@@ -27,6 +27,10 @@ const BankAccounts = lazy(() => import('./Banking').then((m) => ({ default: m.Ba
 const AccountPage = lazy(() => import('./Banking').then((m) => ({ default: m.AccountPage })));
 const DocList = lazy(() => import('./Docs').then((m) => ({ default: m.DocList })));
 const DocPage = lazy(() => import('./Docs').then((m) => ({ default: m.DocPage })));
+const QuoteList = lazy(() => import('./Sales').then((m) => ({ default: m.QuoteList })));
+const QuotePage = lazy(() => import('./Sales').then((m) => ({ default: m.QuotePage })));
+const CreditList = lazy(() => import('./Sales').then((m) => ({ default: m.CreditList })));
+const CreditPage = lazy(() => import('./Sales').then((m) => ({ default: m.CreditPage })));
 const Contacts = lazy(() => import('./Contacts').then((m) => ({ default: m.Contacts })));
 const ContactPage = lazy(() => import('./Contacts').then((m) => ({ default: m.ContactPage })));
 const Reports = lazy(() => import('./Reports').then((m) => ({ default: m.Reports })));
@@ -49,23 +53,56 @@ interface NavEntry {
 
 const business = (o: FinOrgDTO) => o.kind === 'business';
 
-const NAV: NavEntry[] = [
-  { to: 'dashboard', label: 'Dashboard', icon: 'home' },
-  { to: 'transactions', label: 'Transactions', icon: 'list', show: (p) => p.banking.view !== 'none' },
-  { to: 'banking', label: 'Bank accounts', icon: 'building', show: (p) => p.banking.view !== 'none' },
-  { to: 'invoices', label: 'Invoices', icon: 'doc', show: (p, o) => business(o) && p.sales.view !== 'none' },
-  { to: 'bills', label: 'Bills', icon: 'file', show: (p, o) => business(o) && p.purchases.view !== 'none' },
-  { to: 'purchase-orders', label: 'Purchase orders', icon: 'checkSquare', show: (p, o) => business(o) && p.purchases.view !== 'none' },
-  { to: 'expense-claims', label: 'Expense claims', icon: 'dollar', show: (p, o) => business(o) && p.purchases.view !== 'none' },
-  { to: 'contacts', label: 'Customers and suppliers', icon: 'users', show: (p, o) => business(o) && p.contacts.view !== 'none' },
-  { to: 'reports', label: 'Reports', icon: 'chart', show: (p) => p.reports.view },
-  { to: 'budgets', label: 'Budgets', icon: 'target', show: (p) => p.budgets.view },
-  { to: 'goals', label: 'Savings goals', icon: 'trophy', show: (p) => p.budgets.view },
-  { to: 'recurring', label: 'Recurring', icon: 'refresh', show: (p) => p.banking.create || p.sales.create || p.purchases.create },
-  { to: 'documents', label: 'Documents', icon: 'folder', show: (p) => p.documents.view !== 'none' },
-  { to: 'accounting', label: 'Accounting', icon: 'layers', show: (p) => p.accounting.view },
-  { to: 'team', label: 'Team', icon: 'users' },
-  { to: 'settings', label: 'Settings', icon: 'settings' },
+/** The sidebar in sections. Only working modules are listed; a section with nothing for this role is left out. */
+const NAV: { title: string | null; items: NavEntry[] }[] = [
+  { title: null, items: [{ to: 'dashboard', label: 'Dashboard', icon: 'home' }] },
+  {
+    title: 'Sales',
+    items: [
+      { to: 'quotes', label: 'Quotes', icon: 'file', show: (p, o) => business(o) && p.sales.view !== 'none' },
+      { to: 'invoices', label: 'Invoices', icon: 'doc', show: (p, o) => business(o) && p.sales.view !== 'none' },
+      { to: 'credit-notes', label: 'Credit notes', icon: 'undo', show: (p, o) => business(o) && p.sales.view !== 'none' },
+      { to: 'contacts', label: 'Customers and suppliers', icon: 'users', show: (p, o) => business(o) && p.contacts.view !== 'none' },
+    ],
+  },
+  {
+    title: 'Purchases',
+    items: [
+      { to: 'bills', label: 'Bills', icon: 'file', show: (p, o) => business(o) && p.purchases.view !== 'none' },
+      { to: 'purchase-orders', label: 'Purchase orders', icon: 'checkSquare', show: (p, o) => business(o) && p.purchases.view !== 'none' },
+      { to: 'expense-claims', label: 'Expense claims', icon: 'dollar', show: (p, o) => business(o) && p.purchases.view !== 'none' },
+    ],
+  },
+  {
+    title: 'Banking',
+    items: [
+      { to: 'banking', label: 'Bank accounts', icon: 'building', show: (p) => p.banking.view !== 'none' },
+      { to: 'transactions', label: 'Transactions', icon: 'list', show: (p) => p.banking.view !== 'none' },
+    ],
+  },
+  {
+    title: 'Planning',
+    items: [
+      { to: 'budgets', label: 'Budgets', icon: 'target', show: (p) => p.budgets.view },
+      { to: 'goals', label: 'Savings goals', icon: 'trophy', show: (p) => p.budgets.view },
+      { to: 'recurring', label: 'Recurring', icon: 'refresh', show: (p) => p.banking.create || p.sales.create || p.purchases.create },
+    ],
+  },
+  {
+    title: 'Reports and accounting',
+    items: [
+      { to: 'reports', label: 'Reports', icon: 'chart', show: (p) => p.reports.view },
+      { to: 'accounting', label: 'Accounting', icon: 'layers', show: (p) => p.accounting.view },
+      { to: 'documents', label: 'Documents', icon: 'folder', show: (p) => p.documents.view !== 'none' },
+    ],
+  },
+  {
+    title: 'Workspace',
+    items: [
+      { to: 'team', label: 'Team', icon: 'users' },
+      { to: 'settings', label: 'Settings', icon: 'settings' },
+    ],
+  },
 ];
 
 function page(el: ReactNode) {
@@ -114,6 +151,10 @@ function OrgArea() {
         <Route path="transactions/:id" element={page(<TransactionPage />)} />
         <Route path="banking" element={page(<BankAccounts />)} />
         <Route path="banking/:accountId" element={page(<AccountPage />)} />
+        <Route path="quotes" element={page(<QuoteList />)} />
+        <Route path="quotes/:id" element={page(<QuotePage />)} />
+        <Route path="credit-notes" element={page(<CreditList />)} />
+        <Route path="credit-notes/:id" element={page(<CreditPage />)} />
         <Route path="invoices" element={page(<DocList kind="invoice" />)} />
         <Route path="invoices/:id" element={page(<DocPage kind="invoice" />)} />
         <Route path="bills" element={page(<DocList kind="bill" />)} />
@@ -166,11 +207,20 @@ function FinShell({ children }: { children: ReactNode }) {
         <Profile />
       </header>
       <nav className="sidebar" aria-label="Finance navigation">
-        {NAV.filter((n) => !n.show || n.show(org.perms, org)).map((n) => (
-          <NavLink key={n.to} to={`${base}/${n.to}`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
-            <Icon name={n.icon} /> {n.label}
-          </NavLink>
-        ))}
+        {NAV.map((section) => {
+          const items = section.items.filter((n) => !n.show || n.show(org.perms, org));
+          if (!items.length) return null;
+          return (
+            <div key={section.title ?? 'top'} role="group" aria-label={section.title ?? 'Overview'}>
+              {section.title ? <div className="nav-section">{section.title}</div> : null}
+              {items.map((n) => (
+                <NavLink key={n.to} to={`${base}/${n.to}`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
+                  <Icon name={n.icon} /> {n.label}
+                </NavLink>
+              ))}
+            </div>
+          );
+        })}
         <div className="nav-section">BIZOMAT</div>
         <a className="nav-item" href={PLATFORM_URLS.company}>
           <Icon name="building" /> Company

@@ -9,11 +9,12 @@ import { HttpError, body, clientIp, newId, notFound, now, placeholders } from '.
 import { rateLimit } from '../auth/rate-limit';
 import { SUBTYPES, SUBTYPE_KEYS } from '../../shared/fin/charts';
 import { BAS_ORDER, basOf } from '../../shared/fin/tax';
-import { DOC_KINDS, type DocKind } from '../../shared/fin/settings';
+import { NUMBERED_KINDS, type NumberedKind } from '../../shared/fin/settings';
 import { todayIn } from '../../shared/fin/dates';
 import { type FinAccess, assertRecord, deny, hasPerm, requireBusiness, requireOrg, requirePerm, scopeSql } from './access';
 import { type AccountRow, type LedgerLine, accountBalances, chartOf, forgetChart, journalStmts, natural, reversalStmts, side, validateJournal } from './ledger';
 import { auditStmt, csvOf, runBatch, searchText } from './util';
+import { type RenderDoc, pdfResponse, renderBasics, renderLine, renderPdf } from './render';
 
 export const setupRoutes = new Hono<AppEnv>();
 
@@ -526,7 +527,23 @@ setupRoutes.post('/orgs/:org/contacts/import', async (c) => {
 // ------------------------------------------------------------------ invoice templates
 
 function templateDTO(t: any) {
-  return { id: t.id, name: t.name, title: t.title, accent: t.accent, paymentInstructions: t.payment_instructions, footer: t.footer, isDefault: !!t.is_default };
+  return {
+    id: t.id,
+    name: t.name,
+    title: t.title,
+    accent: t.accent,
+    paymentInstructions: t.payment_instructions,
+    footer: t.footer,
+    isDefault: !!t.is_default,
+    layout: t.layout ?? 'portrait',
+    font: t.font ?? 'helvetica',
+    quoteTitle: t.quote_title ?? 'Quote',
+    creditNoteTitle: t.credit_note_title ?? 'Credit note',
+    quoteTerms: t.quote_terms ?? '',
+    invoiceTerms: t.invoice_terms ?? '',
+    showSignature: t.show_signature === undefined ? true : !!t.show_signature,
+    showRemittance: t.show_remittance === undefined ? true : !!t.show_remittance,
+  };
 }
 
 setupRoutes.get('/orgs/:org/templates', async (c) => {
@@ -535,36 +552,73 @@ setupRoutes.get('/orgs/:org/templates', async (c) => {
   return c.json(rows.results.map(templateDTO));
 });
 
-const templateInput = z.object({ name: text(80).min(1), title: text(40).optional(), accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(), paymentInstructions: text(1000).optional(), footer: text(1000).optional(), isDefault: z.boolean().optional() });
+const templateInput = z.object({
+  name: text(80).min(1),
+  title: text(40).optional(),
+  accent: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
+  paymentInstructions: text(1000).optional(),
+  footer: text(1000).optional(),
+  isDefault: z.boolean().optional(),
+  layout: z.enum(['portrait', 'landscape']).optional(),
+  font: z.enum(['helvetica', 'times', 'courier']).optional(),
+  quoteTitle: text(40).optional(),
+  creditNoteTitle: text(40).optional(),
+  quoteTerms: text(2000).optional(),
+  invoiceTerms: text(2000).optional(),
+  showSignature: z.boolean().optional(),
+  showRemittance: z.boolean().optional(),
+});
+
+/** The stored columns of a template, from its current values and a change. */
+function templateColumns(t: any, input: Partial<z.infer<typeof templateInput>>) {
+  const pick = <T,>(v: T | undefined, cur: T) => (v === undefined ? cur : v);
+  return {
+    name: pick(input.name, t.name),
+    title: pick(input.title, t.title ?? ''),
+    accent: pick(input.accent, t.accent ?? '#0f766e'),
+    payment_instructions: pick(input.paymentInstructions, t.payment_instructions ?? ''),
+    footer: pick(input.footer, t.footer ?? ''),
+    layout: pick(input.layout, t.layout ?? 'portrait'),
+    font: pick(input.font, t.font ?? 'helvetica'),
+    quote_title: pick(input.quoteTitle, t.quote_title ?? 'Quote') || 'Quote',
+    credit_note_title: pick(input.creditNoteTitle, t.credit_note_title ?? 'Credit note') || 'Credit note',
+    quote_terms: pick(input.quoteTerms, t.quote_terms ?? ''),
+    invoice_terms: pick(input.invoiceTerms, t.invoice_terms ?? ''),
+    show_signature: input.showSignature === undefined ? (t.show_signature ?? 1) : input.showSignature ? 1 : 0,
+    show_remittance: input.showRemittance === undefined ? (t.show_remittance ?? 1) : input.showRemittance ? 1 : 0,
+  };
+}
+
+const TEMPLATE_COLS = ['name', 'title', 'accent', 'payment_instructions', 'footer', 'layout', 'font', 'quote_title', 'credit_note_title', 'quote_terms', 'invoice_terms', 'show_signature', 'show_remittance'] as const;
 
 setupRoutes.post('/orgs/:org/templates', async (c) => {
   const a = await requireOrg(c);
   requireBusiness(a);
-  requirePerm(a, 'settings', 'manage', 'You cannot change invoice templates');
+  requirePerm(a, 'settings', 'manage', 'You cannot change document templates');
   const input = await body(c, templateInput);
   const tid = newId();
+  const cols = templateColumns({}, input);
   const stmts: D1PreparedStatement[] = [];
   if (input.isDefault) stmts.push(c.env.DB.prepare('UPDATE fin_doc_templates SET is_default = 0 WHERE org_id = ?').bind(a.orgId));
-  stmts.push(c.env.DB.prepare('INSERT INTO fin_doc_templates (id, org_id, name, title, accent, payment_instructions, footer, is_default, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(tid, a.orgId, input.name, input.title ?? '', input.accent ?? '#0f766e', input.paymentInstructions ?? '', input.footer ?? '', input.isDefault ? 1 : 0, now(), now()));
+  stmts.push(
+    c.env.DB.prepare(`INSERT INTO fin_doc_templates (id, org_id, ${TEMPLATE_COLS.join(', ')}, is_default, created_at, updated_at) VALUES (?, ?, ${TEMPLATE_COLS.map(() => '?').join(', ')}, ?, ?, ?)`).bind(tid, a.orgId, ...TEMPLATE_COLS.map((k) => cols[k]), input.isDefault ? 1 : 0, now(), now()),
+  );
   await c.env.DB.batch(stmts);
   return c.json({ id: tid }, 201);
 });
 
 setupRoutes.patch('/orgs/:org/templates/:id', async (c) => {
   const a = await requireOrg(c);
-  requirePerm(a, 'settings', 'manage', 'You cannot change invoice templates');
+  requirePerm(a, 'settings', 'manage', 'You cannot change document templates');
   const input = await body(c, templateInput.partial());
   const t = await c.env.DB.prepare('SELECT * FROM fin_doc_templates WHERE id = ? AND org_id = ?').bind(c.req.param('id'), a.orgId).first<any>();
   if (!t) throw notFound('Template');
+  const cols = templateColumns(t, input);
   const stmts: D1PreparedStatement[] = [];
   if (input.isDefault) stmts.push(c.env.DB.prepare('UPDATE fin_doc_templates SET is_default = 0 WHERE org_id = ?').bind(a.orgId));
   stmts.push(
-    c.env.DB.prepare('UPDATE fin_doc_templates SET name = ?, title = ?, accent = ?, payment_instructions = ?, footer = ?, is_default = ?, updated_at = ? WHERE id = ? AND org_id = ?').bind(
-      input.name ?? t.name,
-      input.title ?? t.title,
-      input.accent ?? t.accent,
-      input.paymentInstructions ?? t.payment_instructions,
-      input.footer ?? t.footer,
+    c.env.DB.prepare(`UPDATE fin_doc_templates SET ${TEMPLATE_COLS.map((k) => `${k} = ?`).join(', ')}, is_default = ?, updated_at = ? WHERE id = ? AND org_id = ?`).bind(
+      ...TEMPLATE_COLS.map((k) => cols[k]),
       input.isDefault !== undefined ? (input.isDefault ? 1 : 0) : t.is_default,
       now(),
       t.id,
@@ -575,13 +629,61 @@ setupRoutes.patch('/orgs/:org/templates/:id', async (c) => {
   return c.json({ ok: true });
 });
 
+/**
+ * How a template looks, before it is saved: an example invoice, quote or credit note drawn by the document engine,
+ * numbered "SAMPLE" and made out to "Example customer" so it cannot be mistaken for a real document.
+ */
+setupRoutes.post('/orgs/:org/templates/preview', async (c) => {
+  const a = await requireOrg(c);
+  requireBusiness(a);
+  const input = await body(c, templateInput.partial().extend({ kind: z.enum(['invoice', 'quote', 'credit_note']).default('invoice') }));
+  const tpl = templateColumns({}, input);
+  const basics = await renderBasics(c.env, a.orgId, a.org.logo_key, null);
+  const rate = a.gst ? 1000 : null;
+  const lines = [
+    { lineKind: 'heading', description: 'Example section' },
+    { itemCode: 'EX-1', description: 'Example service', quantity: 2, unit: 'hr', unitPrice: 12_000 },
+    { itemCode: 'EX-2', description: 'Example product', quantity: 1, unit: 'ea', unitPrice: 25_000 },
+  ].map((l) => ({ ...renderLine(l, basics.rates), taxRateBp: l.lineKind === 'heading' ? null : rate }));
+  const net = lines.reduce((n, l) => n + l.amount, 0);
+  const tax = rate ? Math.round((net * rate) / 10_000) : 0;
+  const today = todayIn(a.org.timezone);
+  const doc: RenderDoc = {
+    kind: input.kind,
+    number: 'SAMPLE',
+    status: 'approved',
+    issueDate: today,
+    dueDate: today,
+    reference: '',
+    salesRep: '',
+    taxMode: a.gst ? 'exclusive' : 'none',
+    discountBp: 0,
+    discountTotal: 0,
+    subtotal: net,
+    taxTotal: tax,
+    total: net + tax,
+    amountPaid: 0,
+    amountDue: net + tax,
+    notes: '',
+    terms: '',
+    deliveryAddress: '',
+    reason: input.kind === 'credit_note' ? 'Example reason' : undefined,
+    lines,
+  };
+  const bytes = await renderPdf(c.env, a, doc, { name: 'Example customer', address: 'Example address' }, { ...basics, template: { ...tpl, id: 'sample' } as any });
+  return pdfResponse(bytes, 'template-sample', true);
+});
+
 setupRoutes.delete('/orgs/:org/templates/:id', async (c) => {
   const a = await requireOrg(c);
-  requirePerm(a, 'settings', 'manage', 'You cannot change invoice templates');
+  requirePerm(a, 'settings', 'manage', 'You cannot change document templates');
   const t = await c.env.DB.prepare('SELECT * FROM fin_doc_templates WHERE id = ? AND org_id = ?').bind(c.req.param('id'), a.orgId).first<any>();
   if (!t) throw notFound('Template');
   if (t.is_default) throw new HttpError(400, 'Make another template the default first');
-  await c.env.DB.batch([c.env.DB.prepare('UPDATE fin_docs SET template_id = NULL WHERE org_id = ? AND template_id = ?').bind(a.orgId, t.id), c.env.DB.prepare('DELETE FROM fin_doc_templates WHERE id = ? AND org_id = ?').bind(t.id, a.orgId)]);
+  await c.env.DB.batch([
+    ...['fin_docs', 'fin_quotes', 'fin_credit_notes'].map((table) => c.env.DB.prepare(`UPDATE ${table} SET template_id = NULL WHERE org_id = ? AND template_id = ?`).bind(a.orgId, t.id)),
+    c.env.DB.prepare('DELETE FROM fin_doc_templates WHERE id = ? AND org_id = ?').bind(t.id, a.orgId),
+  ]);
   return c.json({ ok: true });
 });
 
@@ -639,14 +741,14 @@ setupRoutes.get('/orgs/:org/numbering', async (c) => {
   const a = await requireOrg(c);
   const rows = await c.env.DB.prepare('SELECT key, last_number FROM fin_counters WHERE org_id = ?').bind(a.orgId).all<{ key: string; last_number: number }>();
   const last = new Map(rows.results.map((r) => [r.key, r.last_number]));
-  return c.json(DOC_KINDS.map((k) => ({ kind: k, prefix: a.settings.prefixes[k], next: (last.get(k) ?? 0) + 1 })));
+  return c.json(NUMBERED_KINDS.map((k) => ({ kind: k, prefix: a.settings.prefixes[k], next: (last.get(k) ?? 0) + 1 })));
 });
 
 setupRoutes.put('/orgs/:org/numbering/:kind', async (c) => {
   const a = await requireOrg(c);
   requirePerm(a, 'settings', 'manage', 'You cannot change numbering');
-  const kind = c.req.param('kind') as DocKind;
-  if (!DOC_KINDS.includes(kind)) throw notFound('Document kind');
+  const kind = c.req.param('kind') as NumberedKind;
+  if (!NUMBERED_KINDS.includes(kind)) throw notFound('Document kind');
   const { next } = await body(c, z.object({ next: z.number().int().min(1).max(99_999_999) }));
   await c.env.DB.batch([
     c.env.DB.prepare('INSERT INTO fin_counters (org_id, key, last_number) VALUES (?, ?, ?) ON CONFLICT(org_id, key) DO UPDATE SET last_number = excluded.last_number').bind(a.orgId, kind, next - 1),
@@ -678,11 +780,15 @@ export async function journalDTOs(db: D1Database, orgId: string, ids: string[]) 
     db.prepare(`SELECT j.*, u.name AS created_by_name FROM fin_journals j LEFT JOIN users u ON u.id = j.created_by WHERE j.org_id = ? AND j.id IN (${placeholders(ids.length)}) ORDER BY j.date, j.number`).bind(orgId, ...ids).all<any>(),
     db.prepare(`SELECT l.*, a.code, a.name AS account_name FROM fin_journal_lines l JOIN fin_accounts a ON a.id = l.account_id WHERE l.org_id = ? AND l.journal_id IN (${placeholders(ids.length)}) ORDER BY l.line_no`).bind(orgId, ...ids).all<any>(),
   ]);
+  // Credit notes post as sales documents and their refunds as payments (the ledger's fixed source types): named here.
+  const sources = [...new Set(js.results.filter((j) => j.source_id && ['invoice', 'payment', 'reversal'].includes(j.source_type)).map((j) => j.source_id as string))];
+  const credits = sources.length ? new Set((await db.prepare(`SELECT id FROM fin_credit_notes WHERE org_id = ? AND id IN (${placeholders(sources.length)})`).bind(orgId, ...sources).all<{ id: string }>()).results.map((r) => r.id)) : new Set<string>();
+  const sourceType = (j: any) => (credits.has(j.source_id) ? (j.source_type === 'invoice' ? 'credit_note' : j.source_type === 'payment' ? 'credit_refund' : j.source_type) : j.source_type);
   return js.results.map((j) => ({
     id: j.id,
     number: j.number,
     date: j.date,
-    sourceType: j.source_type,
+    sourceType: sourceType(j),
     sourceId: j.source_id,
     memo: j.memo,
     reversesId: j.reverses_id,

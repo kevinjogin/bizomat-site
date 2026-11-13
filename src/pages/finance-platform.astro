@@ -22,7 +22,7 @@ const list = (xs: readonly string[]) => xs.join(', ').replace(/, ([^,]+)$/, ' an
 const workspaces = [
   { t: 'Personal', x: 'Your own accounts, spending, budgets and savings goals, with everyday categories such as Groceries and Fuel. Private to you unless you invite someone.' },
   { t: 'Household', x: 'Money shared at home. Everyone you invite sees the household accounts, budgets and reports, adds their own spending, and can see it by person or together.' },
-  { t: 'Business', x: 'A chart of accounts with codes, GST, customers and suppliers, invoices, bills, purchase orders, expense claims and financial reports. Run as many businesses as you need.' },
+  { t: 'Business', x: 'A chart of accounts with codes, GST, customers and suppliers, quotes, invoices, credit notes, bills, purchase orders, expense claims and financial reports. Run as many businesses as you need.' },
 ];
 const ledger = [
   { t: 'Every entry balances', x: 'Each transaction, invoice, bill and payment writes a journal whose debits equal its credits. The database itself refuses to post one that does not.' },
@@ -37,7 +37,9 @@ const banking = [
   { t: 'Approvals and duplicates', x: 'In a business, a contributor\'s spending waits for approval. Finance warns about a likely duplicate before you save it.' },
 ];
 const docs = [
-  { t: 'Invoices', x: 'Numbered automatically, with due dates from your terms, line discounts and GST. Download a PDF, record part payments and see what is overdue.' },
+  { t: 'Quotes', x: 'Headings, optional items and a discount on the whole quote. The customer opens a secure link and accepts or declines; each version sent is kept. An accepted quote becomes invoices, in full or in parts.' },
+  { t: 'Invoices', x: 'Numbered automatically, with due dates from your terms, line discounts and GST. A live A4 preview that is the PDF itself, a secure online copy, part payments and what is overdue.' },
+  { t: 'Credit notes', x: 'Credit all or part of an invoice. Approving one lowers income and GST; the credit is applied to the customer\'s invoices or recorded as refunded.' },
   { t: 'Bills and purchase orders', x: 'Record bills as they arrive and pay them in part or in full. Approve a purchase order and turn it into a bill when the goods arrive.' },
   { t: 'Expense claims', x: 'Staff claim what they paid for the business, with receipts. Approve and reimburse; the claim records who is owed.' },
   { t: 'Recurring', x: `Rent, subscriptions and regular invoices repeat ${list(FINANCE.frequencies.map((f) => f.toLowerCase()))}, posted automatically or left as drafts to check.` },
@@ -150,7 +152,7 @@ const steps = [
   <section class="pp-section pp-section--tint" id="invoices" aria-labelledby="inv-title">
     <Container>
       <div class="pp-head">
-        <p class="bz-eyebrow">Invoices, bills and claims</p>
+        <p class="bz-eyebrow">Quotes, invoices, bills and claims</p>
         <h2 id="inv-title">Know who owes you, and whom you owe</h2>
         <p>Recording a payment records money you have already received or paid. Finance does not take or send payments.</p>
       </div>

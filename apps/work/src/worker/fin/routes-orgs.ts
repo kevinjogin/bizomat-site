@@ -175,7 +175,7 @@ orgRoutes.get('/orgs/:org', async (c) => {
 
 const settingsPatch = z
   .object({
-    prefixes: z.object({ invoice: z.string(), bill: z.string(), purchase_order: z.string(), expense_claim: z.string() }).partial().optional(),
+    prefixes: z.object({ quote: z.string(), invoice: z.string(), credit_note: z.string(), bill: z.string(), purchase_order: z.string(), expense_claim: z.string() }).partial().optional(),
     termsDays: z.number().int().min(0).max(365).optional(),
     approvals: z.object({ transactions: z.boolean(), bills: z.boolean(), expenseClaims: z.boolean(), invoices: z.boolean() }).partial().optional(),
     alerts: z.object({ invoiceDueDays: z.number().int().min(0).max(60), overdueInvoices: z.boolean(), billDueDays: z.number().int().min(0).max(60), overdueBills: z.boolean(), budgets: z.boolean(), monthlySummary: z.boolean() }).partial().optional(),

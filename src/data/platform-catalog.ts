@@ -135,12 +135,12 @@ export const FINANCE = {
   name: 'Finance',
   headline: 'Personal, household and business money, on a proper ledger.',
   summary:
-    'BIZOMAT Finance keeps your accounts, transactions, invoices, bills, budgets and reports in one place, for personal, household and business money. Every entry is double-entry and balanced, with GST for Australian businesses.',
+    'BIZOMAT Finance keeps your accounts, transactions, quotes, invoices, credit notes, bills, budgets and reports in one place, for personal, household and business money. Every entry is double-entry and balanced, with GST for Australian businesses.',
   capabilities: [
     { title: 'Workspaces for every part of your money', text: 'Personal, household and business workspaces, as many businesses as you need. A personal workspace stays private until you invite someone; a household shares its accounts with the people you invite.' },
     { title: 'Double-entry underneath', text: 'Every transaction, invoice, bill and payment writes a balanced journal. Posted entries are never edited or deleted: a change reverses and reposts, and a locked period refuses anything dated inside it.' },
     { title: 'Transactions and bank statements', text: 'Money in, money out and transfers, split across categories, with GST, attachments, approvals and duplicate warnings. Import CSV, OFX or QIF statements, match each line and reconcile.' },
-    { title: 'Invoices, bills and claims', text: 'Numbered invoices with PDF, bills, purchase orders that become bills, and expense claims. Approvals, partial payments, overdue tracking and recurring invoices and bills.' },
+    { title: 'Quotes, invoices and credit notes', text: 'Quotes that customers accept online, kept version by version, then invoiced in full or in parts. Credit notes applied to invoices or refunded. A live A4 preview that is the PDF itself, secure online links and your own templates. Bills, purchase orders and expense claims too.' },
     { title: 'Reports from the ledger', text: 'Profit and loss, balance sheet, cash flow statement, trial balance, general ledger, budgets against actual, a cash forecast, aged receivables and payables, and a GST and BAS worksheet. CSV and PDF.' },
     { title: 'Budgets, goals and alerts', text: 'Monthly budgets by category, department or project, savings goals, and alerts for invoices and bills falling due, budgets nearly spent and a monthly summary.' },
   ],
@@ -256,7 +256,7 @@ export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
     keywords: 'double entry general ledger journal debit credit balanced chart of accounts reversal correction period lock audit trail trial balance' },
   { id: 'page:finance-banking', title: 'Finance: transactions, bank statement import and reconciliation', summary: FINANCE.capabilities[2].text, url: '/finance-platform/#banking', area: F, kind: 'Capability',
     keywords: 'transactions bank statement import csv ofx qif reconcile reconciliation match categorise categories split transfer duplicates receipts' },
-  { id: 'page:finance-invoices', title: 'Finance: invoices, bills, purchase orders and expense claims', summary: FINANCE.capabilities[3].text, url: '/finance-platform/#invoices', area: F, kind: 'Capability',
+  { id: 'page:finance-invoices', title: 'Finance: quotes, invoices, credit notes, bills and expense claims', summary: FINANCE.capabilities[3].text, url: '/finance-platform/#invoices', area: F, kind: 'Capability',
     keywords: 'invoice invoices invoicing tax invoice pdf bills accounts payable receivable purchase order expense claim reimbursement partial payment overdue recurring' },
   { id: 'page:finance-reports', title: 'Finance reports: profit and loss, balance sheet, cash flow and GST', summary: FINANCE.capabilities[4].text, url: '/finance-platform/#reports', area: F, kind: 'Capability',
     keywords: 'reports profit and loss p&l income statement balance sheet cash flow statement trial balance general ledger aged receivables payables gst bas worksheet budget forecast csv pdf export' },

@@ -40,7 +40,8 @@ export function ledgerError(e: unknown): never {
   if (msg.includes('FIN_LOCKED')) throw new HttpError(409, 'That date is in a locked period');
   if (msg.includes('FIN_UNBALANCED')) throw new HttpError(409, 'The journal does not balance');
   if (msg.includes('FIN_POSTED')) throw new HttpError(409, 'Posted entries cannot be changed; reverse them instead');
-  if (/UNIQUE constraint failed: fin_docs/.test(msg)) throw new HttpError(409, 'That number is already used');
+  if (/UNIQUE constraint failed: fin_(docs|quotes|credit_notes)/.test(msg)) throw new HttpError(409, 'That number is already used');
+  if (/CHECK constraint failed/i.test(msg)) throw new HttpError(409, 'That is more than is left, or another change was made at the same time. Refresh and try again.');
   if (/UNIQUE constraint failed: fin_accounts/.test(msg)) throw new HttpError(409, 'That account code is already used');
   if (/UNIQUE constraint failed: fin_tax_codes/.test(msg)) throw new HttpError(409, 'That tax code is already used');
   if (/FOREIGN KEY constraint failed/i.test(msg)) throw new HttpError(400, 'A record it refers to is not in this workspace');

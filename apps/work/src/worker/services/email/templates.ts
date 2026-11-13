@@ -24,6 +24,7 @@ export const EMAIL_TEMPLATES = [
   'crm_notification',
   'fin_invitation',
   'fin_notification',
+  'fin_document',
   'company_invitation',
   'company_email',
 ] as const;
@@ -164,6 +165,7 @@ export type TemplateData =
   | { template: 'crm_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
   | { template: 'fin_invitation'; organisation: string; inviter: string; role: string; expires: string; url: string; message?: string | null; existingUser: boolean }
   | { template: 'fin_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
+  | { template: 'fin_document'; organisation: string; replyEmail?: string | null; kind: 'quote' | 'invoice' | 'credit_note'; number: string; amount: string; dateLabel?: string | null; date?: string | null; url: string; message?: string | null }
   | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean }
   | { template: 'company_email'; organisation: string; email: string; url: string; expires: string };
 
@@ -442,6 +444,31 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         reason: 'You received this email because of your notification settings in BIZOMAT Finance.',
         preferencesUrl: d.preferencesUrl,
       });
+    case 'fin_document': {
+      const doc = d.kind === 'quote' ? 'Quote' : d.kind === 'invoice' ? 'Invoice' : 'Credit note';
+      const lower = doc.toLowerCase();
+      return layout({
+        product: 'Finance',
+        subject: `${doc} ${oneLine(d.number, 40)} from ${oneLine(d.organisation, 80)}`,
+        preheader: `${d.organisation} sent you ${d.kind === 'invoice' ? 'an' : 'a'} ${lower}: ${d.amount}.`,
+        heading: `${doc} ${d.number}`,
+        intro: [`${d.organisation} sent you ${d.kind === 'invoice' ? 'an' : 'a'} ${lower} through BIZOMAT Finance.`],
+        rows: [
+          ['From', d.organisation],
+          [d.kind === 'credit_note' ? 'Credit' : d.kind === 'quote' ? 'Total' : 'Amount due', d.amount],
+          ...(d.dateLabel && d.date ? ([[d.dateLabel, d.date]] as [string, string][]) : []),
+        ],
+        quote: d.message ? clip(d.message, 2000) : undefined,
+        button: { label: `View the ${lower}`, url: d.url },
+        after: [
+          d.kind === 'quote' ? 'You can read, download and print the quote online, and accept or decline it there.' : `You can read, download and print the ${lower} online.`,
+          ...(d.kind === 'invoice' ? ['Pay as the invoice describes. BIZOMAT does not take payments: opening the link does not pay the invoice.'] : []),
+          d.replyEmail ? `Questions? Contact ${d.organisation} at ${d.replyEmail}.` : `Questions? Contact ${d.organisation} directly.`,
+          'Anyone with this link can open the document, so forward it with care.',
+        ],
+        reason: `You received this email because ${d.organisation} sent this address a document through BIZOMAT Finance.`,
+      });
+    }
     case 'company_invitation':
       return layout({
         product: 'Company',

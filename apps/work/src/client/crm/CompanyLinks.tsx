@@ -10,7 +10,7 @@ import { useToast } from '../components/ui/overlays';
 interface DealLinks {
   company: { id: string; name: string } | null;
   deal?: { status: string; value: number; currency: string };
-  finance?: { access: boolean; canInvoice: boolean; sameCurrency: boolean; invoice: ({ id: string; number: string; status: string; total: number; currency: string; url: string } & { hidden?: undefined }) | { hidden: true } | null } | null;
+  finance?: { access: boolean; canInvoice: boolean; canQuote?: boolean; quotes?: { id: string; number: string; status: string; total: number; version: number; expiryDate: string | null; currency: string; url: string }[] | null; sameCurrency: boolean; invoice: ({ id: string; number: string; status: string; total: number; currency: string; url: string } & { hidden?: undefined }) | { hidden: true } | null } | null;
   tasks?: { access: boolean; canStart: boolean; project: ({ id: string; name: string; url: string } & { hidden?: undefined }) | { hidden: true } | null } | null;
 }
 
@@ -20,6 +20,7 @@ interface CompanyLinks {
 }
 
 const STATUS: Record<string, string> = { draft: 'Draft', submitted: 'Awaiting approval', approved: 'Approved', part_paid: 'Part paid', paid: 'Paid', void: 'Void' };
+const QUOTE_STATUS: Record<string, string> = { draft: 'Draft', sent: 'Sent', viewed: 'Viewed by the customer', accepted: 'Accepted', declined: 'Declined', expired: 'Expired', converted: 'Invoiced', cancelled: 'Cancelled' };
 
 export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: string }) {
   const toast = useToast();
@@ -27,11 +28,11 @@ export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: str
   const q = useQuery({ queryKey: ['crm-links', orgId, 'deal', dealId], queryFn: () => get<DealLinks>(`/company/links/crm/${orgId}/deals/${dealId}`), retry: false });
   if (!q.data?.company || (!q.data.finance && !q.data.tasks)) return null;
   const { finance, tasks } = q.data;
-  const act = async (what: 'invoice' | 'project') => {
+  const act = async (what: 'invoice' | 'project' | 'quote') => {
     setBusy(what);
     try {
       const r = await post<{ url: string }>(`/company/links/crm/${orgId}/deals/${dealId}/${what}`);
-      toast(what === 'invoice' ? 'Draft invoice made in Finance' : 'Project started in Project Management');
+      toast(what === 'invoice' ? 'Draft invoice made in Finance' : what === 'quote' ? 'Draft quote made in Finance' : 'Project started in Project Management');
       await q.refetch();
       if (r.url) window.open(r.url, '_self');
     } catch (e) {
@@ -46,6 +47,28 @@ export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: str
       {finance ? (
         <div className="stack">
           <strong className="small">Finance</strong>
+          {finance.quotes?.length ? (
+            <ul className="crm-mini-list">
+              {finance.quotes.map((qt) => (
+                <li key={qt.id}>
+                  <a href={qt.url}>
+                    Quote {qt.number}
+                    {qt.version > 1 ? ` (version ${qt.version})` : ''}
+                  </a>
+                  <span className="muted small">
+                    {' '}
+                    · {QUOTE_STATUS[qt.status] ?? qt.status} · {formatMoney(qt.total, qt.currency)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {finance.canQuote ? (
+            <div>
+              <button className="btn sm" disabled={busy !== null} onClick={() => act('quote')}>{busy === 'quote' ? 'Making…' : finance.quotes?.length ? 'Start another quote' : 'Start a quote'}</button>
+              <p className="muted small">A draft quote in Finance for this deal’s company, with the deal’s value to price in detail there. Its progress shows here and on the timeline.</p>
+            </div>
+          ) : null}
           {finance.invoice && !('hidden' in finance.invoice && finance.invoice.hidden) ? (
             <a href={(finance.invoice as { url: string }).url}>
               Invoice {(finance.invoice as { number: string }).number} · {STATUS[(finance.invoice as { status: string }).status] ?? (finance.invoice as { status: string }).status} · {formatMoney((finance.invoice as { total: number }).total, (finance.invoice as { currency: string }).currency)}

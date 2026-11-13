@@ -292,7 +292,7 @@ function Properties({ entity, r }: { entity: RecordEntity; r: AnyRecord }) {
 
 // ------------------------------------------------------------------ timeline
 
-const EVENT_ICON: Record<string, string> = { created: 'plus', updated: 'edit', assigned: 'user', status_changed: 'refresh', stage_changed: 'kanban', won: 'trophy', lost: 'x', reopened: 'restore', converted: 'check', file_uploaded: 'paperclip', file_deleted: 'trash', archive: 'archive', unarchive: 'restore', delete: 'trash', restore: 'restore', completed: 'checkSquare', flagged: 'flag', automation: 'bolt', project_task: 'grid' };
+const EVENT_ICON: Record<string, string> = { created: 'plus', updated: 'edit', assigned: 'user', status_changed: 'refresh', stage_changed: 'kanban', won: 'trophy', lost: 'x', reopened: 'restore', converted: 'check', file_uploaded: 'paperclip', file_deleted: 'trash', archive: 'archive', unarchive: 'restore', delete: 'trash', restore: 'restore', completed: 'checkSquare', flagged: 'flag', automation: 'bolt', project_task: 'grid', finance_quote: 'doc' };
 
 export function Timeline({ entity, id }: { entity: RecordEntity; id: string }) {
   const org = useCurrentOrg();
@@ -321,7 +321,7 @@ export function Timeline({ entity, id }: { entity: RecordEntity; id: string }) {
             </div>
             {i.body ? <div className="crm-text small">{i.kind === 'note' ? <NoteBody body={i.body} /> : i.body}</div> : null}
             <div className="muted small">
-              {i.actorName ?? 'Automation'} · <time dateTime={new Date(i.at).toISOString()} title={dateTime(i.at)}>{timeAgo(i.at)}</time>
+              {i.actorName ?? (i.type === 'finance_quote' ? 'Finance' : 'Automation')} · <time dateTime={new Date(i.at).toISOString()} title={dateTime(i.at)}>{timeAgo(i.at)}</time>
             </div>
           </div>
         </li>

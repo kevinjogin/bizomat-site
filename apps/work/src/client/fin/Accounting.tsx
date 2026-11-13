@@ -10,7 +10,7 @@ import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { Modal, useConfirm, useToast } from '../components/ui/overlays';
 import { BAS_LABELS, BAS_ORDER, SIMPLER_BAS, type BasLabel } from '../../shared/fin/tax';
-import { DOC_KINDS, DOC_LABELS, type DocKind } from '../../shared/fin/settings';
+import { NUMBERED_KINDS, NUMBERED_LABELS, type NumberedKind } from '../../shared/fin/settings';
 import { ACCOUNT_TYPES, type AccountType } from '../../shared/fin/charts';
 import {
   ACCOUNT_TYPE_LABELS,
@@ -484,6 +484,8 @@ const SOURCE_LABELS: Record<string, string> = {
   manual: 'Manual journal',
   transaction: 'Transaction',
   invoice: 'Invoice',
+  credit_note: 'Credit note',
+  credit_refund: 'Credit refund',
   bill: 'Bill',
   expense_claim: 'Expense claim',
   payment: 'Payment',
@@ -491,7 +493,7 @@ const SOURCE_LABELS: Record<string, string> = {
   reversal: 'Reversal',
 };
 
-const SOURCE_PATHS: Record<string, string> = { transaction: 'transactions', invoice: 'invoices', bill: 'bills', expense_claim: 'expense-claims' };
+const SOURCE_PATHS: Record<string, string> = { transaction: 'transactions', invoice: 'invoices', credit_note: 'credit-notes', credit_refund: 'credit-notes', bill: 'bills', expense_claim: 'expense-claims' };
 
 function Journals() {
   const org = useCurrentOrg();
@@ -1247,13 +1249,13 @@ function RuleDialog({ rule, nextPosition, onClose, onSaved }: { rule: RuleDTO | 
 
 function Numbering() {
   const org = useCurrentOrg();
-  const q = useQuery({ queryKey: ['fin', org.id, 'numbering'], queryFn: () => get<{ kind: DocKind; prefix: string; next: number }[]>(fin(org.id, '/numbering')) });
+  const q = useQuery({ queryKey: ['fin', org.id, 'numbering'], queryFn: () => get<{ kind: NumberedKind; prefix: string; next: number }[]>(fin(org.id, '/numbering')) });
   const can = org.perms.settings.manage;
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
   if (!q.data) return <Loading />;
   return (
     <div className="stack">
-      <Hint>New invoices, bills, purchase orders and expense claims are numbered in order: the prefix, then the number with four digits (INV-0001). A number can also be typed on a record; each is used once.</Hint>
+      <Hint>New quotes, invoices, credit notes, bills, purchase orders and expense claims are numbered in order: the prefix, then the number with four digits (INV-0001). A number can also be typed on a record; each is used once.</Hint>
       <div className="card">
         <div className="crm-table-scroll">
           <table className="data-table crm-table">
@@ -1267,7 +1269,7 @@ function Numbering() {
               </tr>
             </thead>
             <tbody>
-              {DOC_KINDS.map((k) => {
+              {NUMBERED_KINDS.map((k) => {
                 const row = q.data.find((r) => r.kind === k) ?? { kind: k, prefix: org.settings.prefixes[k], next: 1 };
                 return <NumberingRow key={k} row={row} can={can} onSaved={() => q.refetch()} />;
               })}
@@ -1280,7 +1282,7 @@ function Numbering() {
   );
 }
 
-function NumberingRow({ row, can, onSaved }: { row: { kind: DocKind; prefix: string; next: number }; can: boolean; onSaved: () => void }) {
+function NumberingRow({ row, can, onSaved }: { row: { kind: NumberedKind; prefix: string; next: number }; can: boolean; onSaved: () => void }) {
   const org = useCurrentOrg();
   const toast = useToast();
   const refresh = useRefresh();
@@ -1303,9 +1305,9 @@ function NumberingRow({ row, can, onSaved }: { row: { kind: DocKind; prefix: str
   };
   return (
     <tr>
-      <td>{DOC_LABELS[row.kind].many}</td>
-      <td>{can ? <input className="input mono" aria-label={`${DOC_LABELS[row.kind].one} prefix`} maxLength={12} value={prefix} onChange={(e) => setPrefix(e.target.value)} /> : <span className="mono">{row.prefix}</span>}</td>
-      <td>{can ? <input className="input" type="number" min={1} aria-label={`Next ${DOC_LABELS[row.kind].one.toLowerCase()} number`} value={next} onChange={(e) => setNext(e.target.value)} /> : row.next}</td>
+      <td>{NUMBERED_LABELS[row.kind].many}</td>
+      <td>{can ? <input className="input mono" aria-label={`${NUMBERED_LABELS[row.kind].one} prefix`} maxLength={12} value={prefix} onChange={(e) => setPrefix(e.target.value)} /> : <span className="mono">{row.prefix}</span>}</td>
+      <td>{can ? <input className="input" type="number" min={1} aria-label={`Next ${NUMBERED_LABELS[row.kind].one.toLowerCase()} number`} value={next} onChange={(e) => setNext(e.target.value)} /> : row.next}</td>
       <td className="mono">{valid ? `${prefix}${String(Number(next)).padStart(4, '0')}` : ''}</td>
       <td>{can && changed ? <button className="btn sm primary" disabled={!valid} onClick={save}>Save</button> : null}</td>
     </tr>

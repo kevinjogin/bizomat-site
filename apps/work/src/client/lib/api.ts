@@ -55,6 +55,24 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   return data as T;
 }
 
+/** POST and receive a file (a document preview): its bytes, or the error the server gave. */
+export async function postForBlob(path: string, body: unknown, signal?: AbortSignal): Promise<Blob> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', Accept: 'application/pdf, application/json' };
+  if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
+  const res = await fetch(appUrl(path.startsWith('/api') ? path : `/api${path}`), { method: 'POST', headers, body: JSON.stringify(body), credentials: 'same-origin', signal });
+  if (!res.ok) {
+    let message = `Request failed (${res.status})`;
+    try {
+      const data = await res.json();
+      if (data?.error) message = data.error;
+    } catch {
+      // not JSON
+    }
+    throw new ApiError(res.status, message);
+  }
+  return res.blob();
+}
+
 export const get = <T = any>(p: string, signal?: AbortSignal) => api<T>(p, { signal });
 export const post = <T = any>(p: string, body?: unknown) => api<T>(p, { method: 'POST', body: body ?? {} });
 export const patch = <T = any>(p: string, body: unknown) => api<T>(p, { method: 'PATCH', body });
