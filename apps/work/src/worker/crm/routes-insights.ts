@@ -15,6 +15,7 @@ import { clientIp } from '../lib/util';
 export const insightRoutes = new Hono<AppEnv>();
 
 const DAY = 86_400_000;
+const WEEK = 7 * DAY;
 
 interface Filters {
   from: number;
@@ -105,6 +106,9 @@ insightRoutes.get('/orgs/:org/dashboard', async (c) => {
   const converted = statusesOfKind(a.settings, 'converted');
   const q = placeholders(Math.max(1, qualified.length));
   const cv = placeholders(Math.max(1, converted.length));
+  // The activity trend's twelve weeks start on the Monday eleven weeks before this one, 00:00 UTC.
+  const midnight = Math.floor(Date.now() / DAY) * DAY;
+  const weeksFrom = midnight - ((new Date(midnight).getUTCDay() + 6) % 7) * DAY - 11 * WEEK;
 
   const [leads, contacts, companies, deals, period, monthly, stages, sources, team, overdue, meetings, recent, trend] = await Promise.all([
     one(
@@ -179,7 +183,8 @@ insightRoutes.get('/orgs/:org/dashboard', async (c) => {
        WHERE ${A.sql} ORDER BY COALESCE(x.done_at, x.created_at) DESC LIMIT 10`,
       A.args,
     ),
-    all(db, `SELECT strftime('%Y-%W', x.done_at / 1000, 'unixepoch') AS w, MIN(x.done_at) AS first_at, COUNT(*) AS n FROM crm_activities x WHERE ${A.sql} AND x.status = 'done' AND x.done_at >= ? GROUP BY w ORDER BY w`, [...A.args, Date.now() - 12 * 7 * DAY]),
+    // Completed activities per week for the last twelve weeks (Monday to Sunday, UTC), counted by week number from the first.
+    all(db, `SELECT CAST((x.done_at - ?) / ? AS INTEGER) AS b, COUNT(*) AS n FROM crm_activities x WHERE ${A.sql} AND x.status = 'done' AND x.done_at >= ? GROUP BY b`, [weeksFrom, WEEK, ...A.args, weeksFrom]),
   ]);
   const won = period?.won_count ?? 0;
   const lost = period?.lost_count ?? 0;
@@ -220,7 +225,11 @@ insightRoutes.get('/orgs/:org/dashboard', async (c) => {
     team: (team as any[]).map((t) => ({ userId: t.user_id, name: t.name, wonCount: t.won_count, wonValue: t.won_value, lostCount: t.lost_count, openValue: t.open_value, activitiesDone: t.activities_done, winRate: t.won_count + t.lost_count ? Math.round((t.won_count / (t.won_count + t.lost_count)) * 1000) / 10 : null })),
     upcomingMeetings: meetings,
     recentActivities: recent,
-    activityTrend: (trend as any[]).map((t) => ({ week: t.w, label: new Date(t.first_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'UTC' }), count: t.n })),
+    // Every week appears, an empty one as 0, so the line shows the gaps.
+    activityTrend: Array.from({ length: 12 }, (_, i) => {
+      const start = weeksFrom + i * WEEK;
+      return { week: new Date(start).toISOString().slice(0, 10), label: new Date(start).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'UTC' }), count: (trend as any[]).find((t) => t.b === i)?.n ?? 0 };
+    }),
   });
 });
 

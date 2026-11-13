@@ -87,7 +87,7 @@ export async function withBaseHref(res: Response, base: string): Promise<Respons
   if (!(res.headers.get('Content-Type') ?? '').includes('text/html')) return res;
   const tag = `<base href="${base}/">`;
   // Under /crm the page is BIZOMAT CRM: its title before the script sets the page's own.
-  const title = base === CRM_MOUNT ? 'BIZOMAT CRM' : null;
+  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : null;
   if (typeof HTMLRewriter === 'function') {
     let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
     if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });

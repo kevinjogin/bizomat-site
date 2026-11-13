@@ -35,7 +35,7 @@ export function fromMinor(minor: number | null | undefined, currency: string): s
   return neg ? `-${out}` : out;
 }
 
-/** For screens: "A$1,234.50", or "A$1.2M" when compact. */
+/** For screens: "$1,234.50", "$76,000" (whole amounts without cents, at any size), or "$1.2M" when compact. */
 export function formatMoney(minor: number | null | undefined, currency: string, opts: { compact?: boolean } = {}): string {
   if (minor === null || minor === undefined) return '';
   const digits = minorDigits(currency);
@@ -47,7 +47,7 @@ export function formatMoney(minor: number | null | undefined, currency: string, 
       currencyDisplay: 'narrowSymbol',
       notation: opts.compact ? 'compact' : 'standard',
       maximumFractionDigits: opts.compact ? 1 : digits,
-      minimumFractionDigits: opts.compact ? 0 : Math.abs(major) >= 100_000 ? 0 : digits,
+      minimumFractionDigits: opts.compact || minor % 10 ** digits === 0 ? 0 : digits,
     }).format(major);
   } catch {
     return `${currency} ${fromMinor(minor, currency)}`;

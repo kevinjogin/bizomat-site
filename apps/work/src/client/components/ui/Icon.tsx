@@ -162,13 +162,14 @@ export function Wordmark({ height = 16, className }: { height?: number; classNam
   );
 }
 
-/** Product lockup: the BIZOMAT wordmark with the product name beneath it ("Project Management"). */
+/** Product lockup: the BIZOMAT wordmark with the product name beneath it ("Project Management", "Customer Relationship
+ * Management"). */
 export function ProductLockup({ height = 15, className }: { height?: number; className?: string }) {
   return (
     <span className={`lockup${className ? ` ${className}` : ''}`}>
       <Wordmark height={height} />
       <span className="lockup-product" style={{ fontSize: Math.max(10, Math.round(height * 0.62 * 2) / 2) }}>
-        {BRAND.product}
+        {BRAND.lockup}
       </span>
     </span>
   );

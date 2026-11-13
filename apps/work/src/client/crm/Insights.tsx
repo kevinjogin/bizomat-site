@@ -169,7 +169,7 @@ export function Overview() {
             </section>
             <section className="card card-pad">
               <h2 className="crm-subhead">Completed activities per week</h2>
-              {d.activityTrend.length ? <LineChart data={d.activityTrend.map((t) => single(t.label, t.count, t.week))} height={180} /> : <p className="muted">No completed activities in the last twelve weeks.</p>}
+              {d.activityTrend.some((t) => t.count > 0) ? <LineChart data={d.activityTrend.map((t) => single(t.label, t.count, t.week))} height={180} /> : <p className="muted">No completed activities in the last twelve weeks.</p>}
             </section>
             <section className="card card-pad crm-span-2">
               <h2 className="crm-subhead">Team performance <span className="muted small">(in the period)</span></h2>

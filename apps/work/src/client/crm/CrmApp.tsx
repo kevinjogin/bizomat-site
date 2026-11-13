@@ -150,6 +150,9 @@ function CrmShell({ children }: { children: ReactNode }) {
         <a className="nav-item" href={PLATFORM_URLS.tasks}>
           <Icon name="grid" /> Project Management
         </a>
+        <a className="nav-item" href={PLATFORM_URLS.crmGuide}>
+          <Icon name="help" /> CRM user guide
+        </a>
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
@@ -345,7 +348,7 @@ function Start() {
         <span className="muted small">{session?.user.email}</span>
       </header>
       <div className="page crm-page">
-        <PageHeader title="Your CRM organisations" subtitle="Each organisation has its own customers, pipelines, team and settings. Use as many as you need with one BIZOMAT login." />
+        <PageHeader title="Your CRM organisations" subtitle="Customer Relationship Management (CRM) keeps your contacts, companies, leads, deals and follow-ups in one place, shared with your team. Each organisation has its own customers, pipelines, team and settings; use as many as you need with one BIZOMAT login." />
         {orgs.data?.invitations.length ? (
           <section className="card card-pad stack">
             <h2 className="crm-subhead">Invitations for {session?.user.email}</h2>
@@ -429,7 +432,7 @@ export function Join() {
         ) : (
           <>
             <h1>Join {p.orgName}</h1>
-            <p className="muted">{p.inviter ?? 'Someone'} invited {p.email} to {p.orgName} in BIZOMAT CRM as {p.roleLabel}.</p>
+            <p className="muted">{p.inviter ?? 'Someone'} invited {p.email} to {p.orgName} in {BRAND.full} (CRM) as {p.roleLabel}.</p>
             {p.message ? <blockquote className="crm-quote">{p.message}</blockquote> : null}
             {p.status !== 'pending' ? (
               <div className="error-box">This invitation is {p.status}.</div>
