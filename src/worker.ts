@@ -16,6 +16,7 @@
 //   /cad/...   → CAD Automation: the Worker bizomat-mcp (the CAD service binding); without it, the origin of the
 //                bizomat.ai record (Fly)
 //   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, the origin
+//   /crm/...   → BIZOMAT CRM, served by the same app as Project Management: the same binding, or the origin
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -54,14 +55,16 @@ const redirect = (location: string, status: number, cache = 'public, max-age=864
 /** The applications under bizomat.ai, or null when the request is for the website. */
 async function routeApps(request: Request, url: URL, env: Env): Promise<Response | null> {
   const read = request.method === 'GET' || request.method === 'HEAD';
-  // /CAD, /Tasks/...: one address per page, in lowercase (other methods are left alone and find nothing)
-  const app = /^\/(cad|tasks)(?=\/|$)/i.exec(url.pathname);
+  // /CAD, /Tasks/..., /CRM: one address per page, in lowercase (other methods are left alone and find nothing)
+  const app = /^\/(cad|tasks|crm)(?=\/|$)/i.exec(url.pathname);
   if (app && app[1] !== app[1].toLowerCase() && read) {
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
   if (CAD_PATHS.test(url.pathname)) return env.CAD ? env.CAD.fetch(request) : fetch(request);
   // without the binding, the origin of the bizomat.ai record (Fly, until it is retired), as for CAD_PATHS
   if (/^\/tasks(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
+  // BIZOMAT CRM is the same app as Project Management (apps/work, mounted at /crm too)
+  if (/^\/crm(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   return null;
 }
 

@@ -20,11 +20,13 @@ export const EMAIL_TEMPLATES = [
   'test',
   'notification',
   'verify_email',
+  'crm_invitation',
+  'crm_notification',
 ] as const;
 export type EmailTemplate = (typeof EMAIL_TEMPLATES)[number];
 
 /** Invitations and security messages are sent first and may use the reserve above the daily limit. */
-export const CRITICAL_TEMPLATES: EmailTemplate[] = ['invitation', 'test', 'verify_email'];
+export const CRITICAL_TEMPLATES: EmailTemplate[] = ['invitation', 'test', 'verify_email', 'crm_invitation'];
 
 export interface RenderedEmail {
   subject: string;
@@ -65,6 +67,8 @@ interface Block {
   /** Why the person received this message. */
   reason: string;
   preferencesUrl?: string;
+  /** The product named in the header (default: Project Management). */
+  product?: string;
 }
 
 function layout(b: Block): RenderedEmail {
@@ -89,7 +93,7 @@ function layout(b: Block): RenderedEmail {
 <div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(b.preheader)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1f5f9"><tr><td align="center" style="padding:24px 12px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
-<tr><td style="background:${NAVY};padding:18px 24px"><span style="font-size:20px;font-weight:700;letter-spacing:.06em;color:#ffffff">BIZOMAT</span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${MARK};margin-left:6px"></span><div style="font-size:12px;color:#cbd5e1;margin-top:2px">${esc(PRODUCT.name)}</div></td></tr>
+<tr><td style="background:${NAVY};padding:18px 24px"><span style="font-size:20px;font-weight:700;letter-spacing:.06em;color:#ffffff">BIZOMAT</span><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${MARK};margin-left:6px"></span><div style="font-size:12px;color:#cbd5e1;margin-top:2px">${esc(b.product ?? PRODUCT.name)}</div></td></tr>
 <tr><td style="padding:28px 24px 8px">
 <h1 style="margin:0 0 16px;font-size:21px;line-height:1.3;color:${NAVY}">${esc(b.heading)}</h1>
 ${b.intro.map(para).join('')}${rowsHtml}${quoteHtml}${buttonHtml}${(b.after ?? []).map(para).join('')}
@@ -151,7 +155,9 @@ export type TemplateData =
   | { template: 'report_generated'; organisation: string; project: string; report: string; period: string; by: string; url: string; preferencesUrl?: string }
   | { template: 'test'; organisation: string; sentBy: string; provider: string; at: string; url?: string }
   | { template: 'verify_email'; name: string; email: string; url: string; expires: string }
-  | { template: 'notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string };
+  | { template: 'notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
+  | { template: 'crm_invitation'; organisation: string; inviter: string; role: string; expires: string; url: string; message?: string | null; existingUser: boolean }
+  | { template: 'crm_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string };
 
 function taskRows(d: TaskEmailData): [string, string | null | undefined][] {
   return [
@@ -357,6 +363,41 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         button: { label: 'Confirm email address', url: d.url },
         after: [`The link works once, until ${d.expires}. After confirming, sign in with your email address and password.`, 'If you did not create a BIZOMAT account, ignore this email: nothing happens without the link.'],
         reason: 'You received this email because this address was used to create a BIZOMAT account.',
+      });
+    case 'crm_invitation':
+      return layout({
+        product: 'CRM',
+        subject: `You've been invited to join ${oneLine(d.organisation, 80)} on BIZOMAT CRM`,
+        preheader: `${d.inviter} invited you to ${d.organisation} as ${d.role}.`,
+        heading: `Join ${d.organisation} on BIZOMAT CRM`,
+        intro: [`${d.inviter} has invited you to work with them in ${d.organisation}, a CRM organisation in BIZOMAT CRM.`],
+        rows: [
+          ['Organisation', d.organisation],
+          ['Invited by', d.inviter],
+          ['Your role', d.role],
+          ['Invitation expires', d.expires],
+        ],
+        quote: d.message ? clip(d.message, 600) : null,
+        button: { label: 'View the invitation', url: d.url },
+        after: [
+          d.existingUser
+            ? 'You already have a BIZOMAT account with this email address: open the link, sign in, then accept or decline.'
+            : 'New to BIZOMAT? Open the link and create your account with this email address, then accept the invitation.',
+          'The link works only for this email address. If you were not expecting this invitation, you can ignore this email.',
+        ],
+        reason: `You received this email because ${d.inviter} invited this address to ${d.organisation}.`,
+      });
+    case 'crm_notification':
+      return layout({
+        product: 'CRM',
+        subject: d.title,
+        preheader: clip(d.body, 120),
+        heading: d.title,
+        intro: d.body ? [clip(d.body, 1000)] : [],
+        rows: [['Organisation', d.organisation]],
+        button: d.url ? { label: 'Open in BIZOMAT CRM', url: d.url } : undefined,
+        reason: 'You received this email because of your notification settings in BIZOMAT CRM.',
+        preferencesUrl: d.preferencesUrl,
       });
     case 'notification':
     default: {

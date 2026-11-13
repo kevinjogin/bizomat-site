@@ -14,7 +14,10 @@
 //   bizomat.ai                      /cad, /cad/... and CAD Automation's       proxy -> cad
 //                                   root paths (CAD_PATHS below)
 //                                   /tasks, /tasks/...                        proxy -> work
-//                                   GET, HEAD /CAD..., /Tasks/... (any case)  301 to the lowercase path, query kept
+//                                   /crm, /crm/...                            proxy -> work (BIZOMAT CRM, served by the
+//                                                                             same app as Project Management)
+//                                   GET, HEAD /CAD..., /Tasks/..., /CRM...    301 to the lowercase path, query kept
+//                                   (any case)
 //                                   GET, HEAD /login, /log-in, /signin,       301 /sign-in/ (the platform's sign-in page,
 //                                   /logon (any case, optional /)             which offers each application's)
 //                                   everything else                           proxy -> web
@@ -63,8 +66,11 @@ export const CAD_PATHS = /^\/cad(?:\/|$)|^\/(?:mcp|solidworks\/mcp)(?:\/|$)|^\/o
 /** The paths of bizomat.ai that belong to Project Management. */
 export const TASKS_PATHS = /^\/tasks(?:\/|$)/;
 
-// An application's path in another case (/CAD, /Tasks/...): one address per page, in lowercase.
-const APP_ANY_CASE = /^\/(cad|tasks)(?=\/|$)/i;
+/** The paths of bizomat.ai that belong to BIZOMAT CRM, which the Project Management app (work) also serves. */
+export const CRM_PATHS = /^\/crm(?:\/|$)/;
+
+// An application's path in another case (/CAD, /Tasks/..., /CRM): one address per page, in lowercase.
+const APP_ANY_CASE = /^\/(cad|tasks|crm)(?=\/|$)/i;
 
 /** The platform's sign-in page (the website's): it offers each application's own sign-in. */
 export const SIGN_IN_PATH = '/sign-in/';
@@ -148,11 +154,11 @@ export function routingPath(path) {
 export function platformUpstream(path) {
   const p = routingPath(path);
   if (CAD_PATHS.test(p)) return 'cad';
-  if (TASKS_PATHS.test(p)) return 'work';
+  if (TASKS_PATHS.test(p) || CRM_PATHS.test(p)) return 'work';
   return 'web';
 }
 
-/** For GET and HEAD of /CAD..., /Tasks/... (an application's path in another case): the lowercase path, else ''. */
+/** For GET and HEAD of /CAD..., /Tasks/..., /CRM... (an application's path in another case): the lowercase path, else ''. */
 export function lowercaseLocation(path, query, method) {
   if (method !== 'GET' && method !== 'HEAD') return '';
   const p = routingPath(path);
@@ -195,7 +201,8 @@ function byPath(base, path, query, method, preview, tasksOrigin) {
   const lower = lowercaseLocation(path, query, method);
   if (lower) return { ...base, action: 'redirect', status: 301, location: lower };
   const upstream = platformUpstream(path);
-  if (upstream === 'work' && tasksOrigin) return { ...base, ...tasksRedirect(tasksOrigin, path, query, method) };
+  // Only Project Management moves with TASKS_REDIRECT_ORIGIN; the CRM has no other address.
+  if (upstream === 'work' && tasksOrigin && TASKS_PATHS.test(routingPath(path))) return { ...base, ...tasksRedirect(tasksOrigin, path, query, method) };
   return { ...base, action: 'proxy', upstream, preview };
 }
 

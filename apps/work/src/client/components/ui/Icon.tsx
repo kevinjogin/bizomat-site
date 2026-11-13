@@ -87,6 +87,14 @@ const PATHS: Record<string, string> = {
   refresh: 'M20 11a8 8 0 0 0-14.3-4.9L4 8M4 4v4h4M4 13a8 8 0 0 0 14.3 4.9L20 16M20 20v-4h-4',
   folder: 'M3 6h6l2 2h10v11H3z',
   hash: 'M5 9h14M5 15h14M10 3 8 21M16 3l-2 18',
+  // BIZOMAT CRM
+  phone: 'M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z',
+  mail: 'M3 5h18v14H3zM3 6l9 7 9-7',
+  building: 'M4 21V4h11v17M15 9h5v12M2 21h20M8 8h3M8 12h3M8 16h3',
+  dollar: 'M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
+  funnel: 'M3 4h18l-7 8.5V19l-4 2v-8.5L3 4Z',
+  briefcase: 'M3 7h18v13H3zM8 7V4h8v3M3 13h18',
+  trophy: 'M8 4h8v5a4 4 0 0 1-8 0V4ZM8 6H4v1a4 4 0 0 0 4 4M16 6h4v1a4 4 0 0 1-4 4M12 13v4M8 21h8M9 17h6',
 };
 
 export type IconName = keyof typeof PATHS;

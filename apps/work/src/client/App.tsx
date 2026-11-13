@@ -8,7 +8,7 @@ import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
-import { BRAND } from './lib/brand';
+import { BRAND, IS_CRM } from './lib/brand';
 import { appPath } from './lib/base';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -34,6 +34,9 @@ const AdminApp = lazy(() => import('./admin/AdminApp'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const TaskPage = lazy(() => import('./pages/TaskPage'));
 const MyInvitations = lazy(() => import('./pages/MyInvitations'));
+// BIZOMAT CRM, when the app is served under /crm (src/client/crm): its own pages after the shared sign-in pages.
+const CrmRoutes = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.CrmRoutes })));
+const CrmJoin = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Join })));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, error, refresh } = useSession();
@@ -88,6 +91,20 @@ export function App() {
   // Setting it here would overwrite the first page's title, because a parent's effects run after its children's.
 
   const page = (el: ReactNode) => <Suspense fallback={<Loading />}>{el}</Suspense>;
+
+  // Under /crm the same sign-in pages, then the CRM (its own route table: Project Management's routes are not served).
+  if (IS_CRM) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/privacy" element={page(<Privacy />)} />
+        <Route path="/join/:token" element={page(<CrmJoin />)} />
+        <Route path="/*" element={<RequireAuth>{page(<CrmRoutes />)}</RequireAuth>} />
+      </Routes>
+    );
+  }
 
   return (
     <Routes>

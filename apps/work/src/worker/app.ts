@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
-import { getCookie } from 'hono/cookie';
+import { getCookie, setCookie } from 'hono/cookie';
 import type { AppEnv } from './env';
 import { HttpError } from './lib/util';
-import { requireAuth, resolveAuth, sessionCookieName } from './auth/session';
+import { isSecureEnv, requireAuth, resolveAuth, sessionCookieName } from './auth/session';
 import { authRoutes } from './routes/auth';
 import { workspaceRoutes } from './routes/workspaces';
 import { orgRoutes } from './routes/org';
@@ -30,7 +30,8 @@ import { folderRoutes } from './routes/folders';
 import { adminRoutes } from './routes/admin';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
-import { withBaseHref } from './mount';
+import { CRM_MOUNT, MOUNT, withBaseHref } from './mount';
+import { crmPublicRoutes, crmRoutes } from './crm';
 
 export const CSP = [
   "default-src 'self'",
@@ -92,6 +93,29 @@ export function createApp() {
   });
 
   app.route('/api/auth', authRoutes);
+  // CRM invitation previews and calendar feeds: no session, the token in the address is the secret.
+  app.route('/api/crm-public', crmPublicRoutes);
+
+  // Sessions from before the CRM existed have their cookie on /tasks only. A CRM page without a cookie comes here
+  // (under /tasks, where that cookie is sent): with a valid session, the same cookie is written for /crm too and the
+  // browser goes back; without one, to the CRM's sign-in page. A short marker cookie stops any loop.
+  app.get('/api/crm-carry', async (c) => {
+    const to = c.req.query('to') ?? '';
+    const safe = /^\/crm(\/[^\\\r\n]*)?(\?[^\r\n]*)?$/.test(to) && !to.startsWith('//') ? to : `${CRM_MOUNT}/`;
+    const marker = `crm_carry=1; Path=${CRM_MOUNT}; Max-Age=60; HttpOnly; SameSite=Lax${isSecureEnv(c.env) ? '; Secure' : ''}`;
+    const auth = c.env.BASE_PATH === MOUNT ? await resolveAuth(c) : null;
+    const token = getCookie(c, sessionCookieName(c.env));
+    if (auth?.session && token) {
+      setCookie(c, sessionCookieName(c.env), token, { httpOnly: true, secure: isSecureEnv(c.env), sameSite: 'Lax', path: '/', expires: new Date(auth.session.expiresAt) });
+      const res = c.redirect(safe, 302);
+      res.headers.append('Set-Cookie', marker);
+      return res;
+    }
+    const inner = safe.slice(CRM_MOUNT.length) || '/';
+    const res = c.redirect(`${CRM_MOUNT}/login${inner && inner !== '/' ? `?next=${encodeURIComponent(inner)}` : ''}`, 302);
+    res.headers.append('Set-Cookie', marker);
+    return res;
+  });
   // Provider callbacks: no session, their own authentication (src/worker/routes/email.ts).
   app.route('/api/email-webhooks', emailWebhookRoutes);
 
@@ -118,6 +142,8 @@ export function createApp() {
   api.route('/', integrationRoutes);
   api.route('/', templateRoutes);
   api.route('/', folderRoutes);
+  // BIZOMAT CRM (src/worker/crm): its own organisations, members and records, the same accounts and sessions.
+  api.route('/crm', crmRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
@@ -135,7 +161,7 @@ export function createApp() {
   app.get('*', async (c) => {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email'];
+    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(c.env.BASE_PATH === CRM_MOUNT ? ['/join/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));
@@ -146,6 +172,10 @@ export function createApp() {
         c.executionCtx.waitUntil(pv);
       } catch {
         void pv;
+      }
+      if (!auth && !isPublic && c.env.BASE_PATH === CRM_MOUNT && !hasCookie && !getCookie(c, 'crm_carry')) {
+        // Maybe signed in to Project Management with a cookie from before the CRM: see /api/crm-carry above.
+        return c.redirect(`${MOUNT}/api/crm-carry?to=${encodeURIComponent(CRM_MOUNT + url.pathname + url.search)}`, 302);
       }
       if (!auth && !isPublic) {
         const next = url.pathname + url.search;
