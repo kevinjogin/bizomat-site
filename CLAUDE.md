@@ -12,8 +12,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Delivered."; the corporate introduction, description and footer line there. The logo, layout, colours (navy and
   teal) and product names stay as they are (owner, 8 Nov 2026). Products: **CAD Automation** (formerly CADOS),
   **Project Management** (formerly KEVOS Work / WorkOS), **Resources** (formerly the kevos.com Tools and Library) and
-  **CRM** (13 Nov 2026, at `bizomat.ai/crm`, served by the Project Management app in `apps/work` with its accounts and
-  session; `docs/crm/README.md`).
+  **Customer Relationship Management** (the CRM; 13 Nov 2026, at `bizomat.ai/crm`, served by the Project Management app
+  in `apps/work` with its accounts and session; product page `/crm-platform/` and user guide `/crm-platform/guide/`;
+  `docs/crm/README.md`). The name is spelled out wherever there is room, so newcomers know what a CRM is (owner,
+  13 Nov 2026); "CRM" is its short form.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
@@ -153,10 +155,12 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 
 ## After any production change
 
-Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/resources/`, `/tools/`, `/reados/`,
+Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/crm-platform/`, `/crm-platform/guide/`,
+`/resources/`, `/tools/`, `/reados/`,
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`, and
 every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
-Resources, Engine Room** with **AI Search** and **Sign in**, that a new session opens in the light theme, and that AI
+Customer Relationship Management** ("CRM" where the header row is narrow), **Resources, Engine Room** with **AI Search**
+and **Sign in**, that a new session opens in the light theme, and that AI
 search answers. For the apps (`/cad/`, `/tasks/` and `/crm/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
 public URL has been checked.

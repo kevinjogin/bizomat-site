@@ -1,7 +1,10 @@
-# BIZOMAT CRM
+# BIZOMAT Customer Relationship Management (CRM)
 
-_Built 13 Nov 2026 on the owner's brief (branch `claude/keen-bardeen-tb2f86`). Not deployed: deploying is the owner's
-(`docs/deployment/fly-deployment.md`; GitHub Actions must run again first, `BIZOMAT-PROJECT-STATUS.md`, action 9)._
+_Built 13 Nov 2026 on the owner's brief; released in kevinjogin/bizomat-site#34 and deployed the same day (deploy run
+15). The product page and user guide followed on the owner's request the same day (below, "On the website")._
+
+The product's name is spelled out, **Customer Relationship Management**, wherever there is room (the app's lockup under
+the BIZOMAT wordmark, page titles, the website); "CRM" is its short form (owner, 13 Nov 2026).
 
 BIZOMAT CRM is a multi-organisation customer relationship manager for every BIZOMAT account: organisations with their
 own members and roles, leads, contacts, companies, pipelines and deals, activities and follow-ups, notes and documents,
@@ -178,5 +181,19 @@ Website: `tests/worker.test.ts`, `tests/navigation.test.ts`.
 - Merging two duplicate records (duplicates are detected and warned about; merging is by hand).
 - Real-time updates between people looking at the same board (lists refresh on focus and after each change).
 - Multi-currency deals within one organisation (one currency per organisation, so totals are never mixed).
-- A public product page on the website for the CRM (product claims need the owner's wording); the CRM is in the
-  website's Sign in menu, footer and `/sign-in/` page.
+
+## On the website
+
+- `/crm-platform/`: the product page (what it does, the pipeline, real screens, roles, activities, reports,
+  automations, integrations with their honest status, security, getting started). It cannot be `/crm/`, which is the
+  application.
+- `/crm-platform/guide/`: the user guide, fifteen steps from signing in to permissions, with the application's own
+  labels, and common questions. The app links to it from its sidebar ("CRM user guide").
+- Both read their facts from `src/data/platform-catalog.ts` (`CRM`); `tests/platform-catalog.test.ts` compares the
+  stages, lead statuses, activity types, custom field types, reports, automations and roles with this application's
+  code. Screens: `src/data/screenshots.ts` (`product: 'crm'`), captured from a local instance with a fictional
+  organisation.
+- The CRM is in the main navigation: "CRM" in the desktop header row, which has no room for the full name at any width
+  (it stays the item's accessible name and tooltip and heads its menu: the product page, the user guide, Open the CRM),
+  and spelled out in the phone menu. Also in the Sign in menu, the footer, the homepage products, `/products/`,
+  `/solutions/`, `/sign-in/`, the Engine Room and AI Search.
