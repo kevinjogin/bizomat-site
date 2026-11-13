@@ -7,7 +7,7 @@ import { AppShell } from './components/layout/AppShell';
 import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth';
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { useHeartbeat } from './lib/heartbeat';
-import { BRAND, IS_CRM, IS_FINANCE } from './lib/brand';
+import { BRAND, IS_COMPANY, IS_CRM, IS_FINANCE } from './lib/brand';
 import { appPath } from './lib/base';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -39,6 +39,10 @@ const CrmJoin = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Join
 // BIZOMAT Finance, when the app is served under /finance (src/client/fin), in the same way.
 const FinRoutes = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.FinRoutes })));
 const FinJoin = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.Join })));
+// The company area, when the app is served under /company (src/client/company).
+const CompanyRoutes = lazy(() => import('./company/CompanyApp').then((m) => ({ default: m.CompanyRoutes })));
+const CompanyJoin = lazy(() => import('./company/CompanyApp').then((m) => ({ default: m.Join })));
+const CompanyConfirm = lazy(() => import('./company/CompanyApp').then((m) => ({ default: m.ConfirmEmail })));
 // The super admin consoles of the CRM and Finance (platform admins only; the server answers 404 to everyone else).
 const CrmAdmin = lazy(() => import('./admin/products/CrmConsole'));
 const FinAdmin = lazy(() => import('./admin/products/FinConsole'));
@@ -121,6 +125,22 @@ export function App() {
         <Route path="/join/:token" element={page(<FinJoin />)} />
         <Route path="/admin/*" element={<RequireAuth>{page(<FinAdmin />)}</RequireAuth>} />
         <Route path="/*" element={<RequireAuth>{page(<FinRoutes />)}</RequireAuth>} />
+      </Routes>
+    );
+  }
+
+  // Under /company the same sign-in pages, then the company area (its own route table too). The invitation and the
+  // contact-address confirmation work before signing in.
+  if (IS_COMPANY) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/privacy" element={page(<Privacy />)} />
+        <Route path="/join/:token" element={page(<CompanyJoin />)} />
+        <Route path="/confirm-email" element={page(<CompanyConfirm />)} />
+        <Route path="/*" element={<RequireAuth>{page(<CompanyRoutes />)}</RequireAuth>} />
       </Routes>
     );
   }

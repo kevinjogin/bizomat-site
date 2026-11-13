@@ -58,16 +58,19 @@ describe('mount helpers', () => {
     const res = new Response(null, { status: 302, headers: [['Location', '/settings/security?linked=1'], ['Set-Cookie', 'a=1; Path=/; HttpOnly'], ['Set-Cookie', 'b=2; Path=/api/auth/oauth; Max-Age=600']] });
     const out = remount(res, '/tasks');
     expect(out.headers.get('Location')).toBe('/tasks/settings/security?linked=1');
-    // Each cookie is written for every path the app is served under (Project Management, the CRM and Finance share the
-    // session), the request's own first; nothing at the root of the host, so the website never receives it.
+    // Each cookie is written for every path the app is served under (Project Management, the CRM, Finance and the company
+    // area share the session), the request's own first; nothing at the root of the host, so the website never receives it.
     expect(out.headers.getSetCookie()).toEqual([
       'a=1; Path=/tasks; HttpOnly',
       'a=1; Path=/crm; HttpOnly',
       'a=1; Path=/finance; HttpOnly',
+      'a=1; Path=/company; HttpOnly',
       'b=2; Path=/tasks/api/auth/oauth; Max-Age=600',
       'b=2; Path=/crm/api/auth/oauth; Max-Age=600',
       'b=2; Path=/finance/api/auth/oauth; Max-Age=600',
+      'b=2; Path=/company/api/auth/oauth; Max-Age=600',
     ]);
+    expect(remount(res, '/company').headers.getSetCookie()[0]).toBe('a=1; Path=/company; HttpOnly');
     expect(remount(res, '/crm').headers.getSetCookie()[0]).toBe('a=1; Path=/crm; HttpOnly');
     expect(remount(res, '/finance').headers.getSetCookie()[0]).toBe('a=1; Path=/finance; HttpOnly');
     expect(addBase('/crm/o/1', '/tasks')).toBe('/crm/o/1');

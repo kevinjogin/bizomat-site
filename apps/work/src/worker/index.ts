@@ -3,10 +3,11 @@ import { apiFailureMetric, createApp, withSecurityHeaders } from './app';
 import { bumpMetric } from './services/analytics';
 import { systemSvc } from './services/context';
 import { notifyDueDates, retryFailedRuns, runScheduledAutomations } from './services/automations';
-import { CRM_MOUNT, FIN_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
+import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
 import { processOutbox } from './services/email/outbox';
 import { runCrmScheduled } from './crm';
 import { financeHousekeeping, runFinanceScheduled } from './fin';
+import { recheckPendingAbns } from './company/routes';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -29,6 +30,12 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.finance = await runFinanceScheduled(env, at, waitUntil);
   } catch (e) {
     results.finance = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // Companies: ABNs not yet looked up on the Australian Business Register (only when ABR_GUID is set), a few a run.
+  try {
+    results.companies = { abnsChecked: await recheckPendingAbns(env, 5) };
+  } catch (e) {
+    results.companies = { error: e instanceof Error ? e.message : 'failed' };
   }
   // Email: hand queued and delayed messages to the provider, within the daily limit.
   try {
@@ -73,7 +80,7 @@ export default {
       const moved = canonicalRedirect(request, env);
       if (moved) return withSecurityHeaders(moved, request);
     }
-    if (base === CRM_MOUNT || base === FIN_MOUNT) {
+    if (base === CRM_MOUNT || base === FIN_MOUNT || base === COMPANY_MOUNT) {
       const moved = crmCanonicalRedirect(request, env, base);
       if (moved) return withSecurityHeaders(moved, request);
     }

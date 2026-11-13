@@ -42,6 +42,17 @@ export interface Env {
    * creates one in the data folder when none is set (src/node/runtime.ts).
    */
   SETTINGS_ENCRYPTION_KEY?: string;
+  /**
+   * Secret, optional: the Australian Business Register web services GUID (free from abr.business.gov.au). With it,
+   * company registration looks the ABN up on the register; without it, only the ABN's check digits are checked
+   * (src/worker/company/verify.ts).
+   */
+  ABR_GUID?: string;
+  /**
+   * Secret, optional: the BIZOMAT applications that may use BIZOMAT sign-in (src/worker/company/id-provider.ts), as
+   * JSON: [{"id":"cad","name":"CAD Automation","secretSha256":"<hex>","redirectUris":["https://bizomat.ai/cad/..."]}].
+   */
+  BIZOMAT_ID_CLIENTS?: string;
 }
 
 export interface AuthUser {
