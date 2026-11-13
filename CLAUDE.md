@@ -135,7 +135,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 
 ## Rules for every page
 
-- Plain language, short sentences, no emojis. Light theme by default (dark only for the session).
+- Plain language, short sentences, no emojis. Theme (owner, 13 Nov 2026): every page and application opens in the
+  computer's system theme (light or dark); a choice made with the theme switch is remembered on that computer only
+  (localStorage `bizomat-theme`, shared by the website and the apps under bizomat.ai), never on the account, so the same
+  account on another computer follows that computer's system theme.
 - One design system: tokens and components from `shared/brand/` (navy `#0a1f33`, teal `#0f766e`, mark `#14b8a6`,
   Oxanium headings, Inter Tight body). No third-party fonts, scripts or trackers.
 - The CSP forbids inline styles: no `style=""`; scripts are hashed by `scripts/postbuild.mjs`.
@@ -164,7 +167,7 @@ Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`, and
 every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
-and **Sign in**, that a new session opens in the light theme, and that AI
+and **Sign in**, that a new visit opens in the computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/tasks/`, `/crm/` and `/finance/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
 public URL has been checked.
