@@ -1,5 +1,5 @@
 ---
-// BIZOMAT products overview: CAD Automation, Project Management, Customer Relationship Management and Resources
+// BIZOMAT products overview: CAD Automation, Project Management, Customer Relationship Management, Finance and Resources
 // (src/config/products.ts), and what is planned.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
@@ -14,12 +14,12 @@ const schema = [{
   '@type': 'ItemList', name: 'BIZOMAT products', url: `${SITE.url}/products/`,
   itemListElement: PRODUCTS.map((p, i) => ({
     '@type': 'ListItem', position: i + 1,
-    item: { '@type': p.id === 'resources' ? 'CollectionPage' : 'SoftwareApplication', name: p.fullName, url: `${SITE.url}${p.url}`, description: p.summary, ...(p.id === 'resources' ? {} : { applicationCategory: 'BusinessApplication' }), publisher: { '@id': `${SITE.url}/#organization` } },
+    item: { '@type': p.id === 'resources' ? 'CollectionPage' : 'SoftwareApplication', name: p.fullName, url: `${SITE.url}${p.url}`, description: p.summary, ...(p.id === 'resources' ? {} : { applicationCategory: p.id === 'finance' ? 'FinanceApplication' : 'BusinessApplication' }), publisher: { '@id': `${SITE.url}/#organization` } },
   })),
 }];
 ---
-<BaseLayout title="Products: CAD Automation, Project Management, CRM and Resources" description="BIZOMAT products: CAD Automation for SOLIDWORKS, Project Management for teams, Customer Relationship Management (CRM) for sales, and free Resources." breadcrumbs={crumbs} schema={schema}>
-  <Hero eyebrow="Products" title="One platform. <em>Four ways to get work done.</em>" lead="Each BIZOMAT product is built for one kind of work. Open the one that fits, or ask BIZOMAT AI Search on the homepage.">
+<BaseLayout title="Products: CAD Automation, Project Management, CRM, Finance and Resources" description="BIZOMAT products: CAD Automation for SOLIDWORKS, Project Management for teams, CRM for sales, Finance for your money, and free Resources." breadcrumbs={crumbs} schema={schema}>
+  <Hero eyebrow="Products" title="One platform. <em>Five ways to get work done.</em>" lead="Each BIZOMAT product is built for one kind of work. Open the one that fits, or ask BIZOMAT AI Search on the homepage.">
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
 

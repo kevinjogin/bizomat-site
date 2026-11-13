@@ -45,6 +45,8 @@ export const APP_URLS = {
   work: clean(env.PUBLIC_WORK_APP_URL, 'https://bizomat.ai/tasks'),
   /** BIZOMAT CRM, served by the same application as Project Management under its own path. */
   crm: clean(env.PUBLIC_CRM_APP_URL, 'https://bizomat.ai/crm'),
+  /** BIZOMAT Finance, served by the same application too, under its own path. */
+  finance: clean(env.PUBLIC_FINANCE_APP_URL, 'https://bizomat.ai/finance'),
 } as const;
 
 /** Links into the applications. Each sends a visitor who is not signed in to its sign-in page. */
@@ -52,4 +54,5 @@ export const APP_LINKS = {
   cad: { home: `${APP_URLS.cad}/`, signIn: `${APP_URLS.cad}/login`, dashboard: `${APP_URLS.cad}/dashboard`, docs: `${APP_URLS.cad}/docs`, download: `${APP_URLS.cad}/download/solidworks`, mcp: APP_URLS.cadMcp },
   work: { home: `${APP_URLS.work}/`, signIn: `${APP_URLS.work}/login`, dashboard: `${APP_URLS.work}/` },
   crm: { home: `${APP_URLS.crm}/`, signIn: `${APP_URLS.crm}/login`, dashboard: `${APP_URLS.crm}/` },
+  finance: { home: `${APP_URLS.finance}/`, signIn: `${APP_URLS.finance}/login`, dashboard: `${APP_URLS.finance}/` },
 } as const;
