@@ -16,9 +16,9 @@ test('the main navigation reads CAD Automation, Project Management, Resources, E
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('Engine Room'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests'], ['Products', '/products/'], ['Contact', '/contact/']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
-  assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation']);
+  assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation', 'CRM']);
   for (const s of SIGN_IN) assert.match(s.href, /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/login$/, `${s.label} signs in on its own application`);
-  assert.deepEqual(SIGN_IN.map((s) => s.href), ['https://bizomat.ai/tasks/login', 'https://bizomat.ai/cad/login'], 'both under bizomat.ai');
+  assert.deepEqual(SIGN_IN.map((s) => s.href), ['https://bizomat.ai/tasks/login', 'https://bizomat.ai/cad/login', 'https://bizomat.ai/crm/login'], 'all under bizomat.ai');
   assert.deepEqual(CRUMB, { tools: 'Tools', library: 'Library' });
   assert.deepEqual(QUOTE_CTA, { href: '/contact/', label: 'Contact' });
   // One list serves desktop, tablet and mobile; menus work without JavaScript (<details>).

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  CAD_PATHS, HOSTS, TASKS_PATHS, decide, isPreviewHost, isProductionHost, lowercaseLocation, normalizeHost, platformUpstream,
+  CAD_PATHS, CRM_PATHS, HOSTS, TASKS_PATHS, decide, isPreviewHost, isProductionHost, lowercaseLocation, normalizeHost, platformUpstream,
   previewCookieHeader, previewNext, routingPath, splitTarget,
 } from '../routes.mjs';
 
@@ -19,9 +19,10 @@ const CAD = [
   '/v2/bridge/update.json', '/healthz',
 ];
 const TASKS = ['/tasks', '/tasks/', '/tasks/login', '/tasks/b/7', '/tasks/api/health', '/tasks/api/live/boards/1', '/tasks/assets/index-a1.js'];
+const CRM = ['/crm', '/crm/', '/crm/login', '/crm/o/abc/deals', '/crm/api/crm/orgs', '/crm/join/t0k3n', '/crm/assets/index-a1.js'];
 const WEBSITE = [
   '/', '/cad-automation/', '/work/', '/tools/', '/reados/', '/engine-room/', '/cadx', '/cad.html', '/cadence', '/mcpx', '/oauthx',
-  '/oauth', '/tasksfoo', '/tasks.html', '/.well-known/security.txt', '/healthz/', '/v2', '/api/contact', '/api/discover',
+  '/oauth', '/tasksfoo', '/tasks.html', '/crmx', '/crm.html', '/.well-known/security.txt', '/healthz/', '/v2', '/api/contact', '/api/discover',
   '/insights/x/', '/__proxy/health', '/cad%2Fdocs', '/%63ad/', '//cad/docs',
 ];
 
@@ -73,6 +74,21 @@ test('bizomat.ai: /tasks and /tasks/... go to work', () => {
       assert.equal(d.production, true);
     }
   }
+});
+
+test('bizomat.ai: /crm and /crm/... (BIZOMAT CRM) go to work, the app that serves it with Project Management', () => {
+  assert.equal(CRM_PATHS.toString(), '/^\\/crm(?:\\/|$)/');
+  for (const path of CRM) {
+    for (const method of ['GET', 'POST', 'PATCH', 'DELETE']) {
+      const d = decide({ host: 'bizomat.ai', method, path });
+      assert.deepEqual(d, { host: 'bizomat.ai', production: true, action: 'proxy', upstream: 'work', preview: false }, `${method} ${path}`);
+    }
+  }
+  assert.equal(get('bizomat.ai', '/CRM/o/1', 'x=1').location, '/crm/o/1?x=1');
+  // TASKS_REDIRECT_ORIGIN moves Project Management only; the CRM keeps reaching work
+  assert.equal(decide({ host: 'bizomat.ai', method: 'GET', path: '/crm/o/1', query: '', tasksOrigin: 'https://work.kevos.com' }).upstream, 'work');
+  const worker = readFileSync(new URL('../../../src/worker.ts', import.meta.url), 'utf8');
+  assert.match(worker, /\/\^\\\/crm\(\?:\\\/\|\$\)\/\.test\(url\.pathname\)/, 'the Worker sends /crm and /crm/... to the same app');
 });
 
 test('bizomat.ai: everything else is the website, on every method', () => {

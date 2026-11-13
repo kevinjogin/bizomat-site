@@ -12,22 +12,24 @@ const host = (u: string) => { const x = new URL(u); return x.host + x.pathname.r
 const apps = [
   { name: 'Project Management', text: 'Projects, tasks, boards, documents and your team workspace.', signIn: APP_LINKS.work.signIn, home: APP_LINKS.work.dashboard, page: '/work/', host: host(APP_URLS.work) },
   { name: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/cad-automation/', host: host(APP_URLS.cad) },
+  // The same account and sign-in as Project Management.
+  { name: 'CRM', text: 'Customers, leads, deals, activities and follow-ups, with your team. Uses your Project Management account.', signIn: APP_LINKS.crm.signIn, home: APP_LINKS.crm.dashboard, page: null, host: host(APP_URLS.crm) },
 ];
 ---
-<BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management or BIZOMAT CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
+<BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management, CRM or CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
   <section class="pp-hero" aria-labelledby="signin-title">
     <Container>
       <p class="bz-eyebrow">BIZOMAT account</p>
       <h1 id="signin-title">Sign in to BIZOMAT</h1>
       <p class="pp-hero__lead">Choose the application you want to use. Your existing account and data work unchanged: sign in with the email and password you already use.</p>
-      <ul class="pp-cards pp-cards--2 signin" role="list">
+      <ul class="pp-cards signin" role="list">
         {apps.map((a) => (
           <li class="pp-card">
             <h2>{a.name}</h2>
             <p>{a.text}</p>
             <div class="pp-hero__actions">
-              <Button href={a.signIn} variant="accent" rel="noopener" data-cta={`signin-${a.page.replace(/\//g, '')}`}>Sign in to {a.name}</Button>
-              <Button href={a.page} variant="secondary">About {a.name}</Button>
+              <Button href={a.signIn} variant="accent" rel="noopener" data-cta={`signin-${(a.page ?? '/crm/').replace(/\//g, '')}`}>Sign in to {a.name}</Button>
+              {a.page ? <Button href={a.page} variant="secondary">About {a.name}</Button> : null}
             </div>
             <p class="signin__host">Signs in at <span class="bz-mono">{a.host}</span></p>
           </li>

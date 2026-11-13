@@ -407,6 +407,7 @@ async function workChecks() {
   if (opts.stub.has('work')) {
     await stubChecks('work', 'bizomat.ai', '/tasks/__stub/echo');
     await stubChecks('work', old, '/__stub/echo');
+    await stubChecks('work', 'bizomat.ai', '/crm/__stub/echo');
     await check('work', 'WebSocket upgrade under bizomat.ai/tasks reaches work through the proxy', async () => {
       const r = await wsHandshake(platformHost(), '/tasks/__stub/ws');
       return r.status === 101 || { fail: `HTTP ${r.status}` };
@@ -435,6 +436,24 @@ async function workChecks() {
     const r = await wsHandshake(platformHost(), '/tasks/api/live/boards/smoke-test', { Origin: `https://${platformHost()}` });
     if (r.status === 101) return { fail: 'accepted without a session' };
     return [401, 403, 404, 426].includes(r.status) || { fail: `HTTP ${r.status}` };
+  });
+  // bizomat.ai/crm: BIZOMAT CRM, served by the same app (work) under its own path
+  await check('work', 'bizomat.ai/crm/api/health (the same app)', async () => {
+    const r = await onPlatform({ path: '/crm/api/health' });
+    return r.status === 200 || { fail: describe(r) };
+  });
+  await check('work', 'bizomat.ai/crm/login: the CRM, its files under /crm/ (<base href>)', async () => {
+    const r = await onPlatform({ path: '/crm/login', headers: { Accept: 'text/html' } });
+    if (r.status !== 200) return { fail: describe(r) };
+    return (r.text.includes('<base href="/crm/">') && r.text.includes('<title>BIZOMAT CRM</title>')) || { fail: 'no <base href="/crm/"> or CRM title in the page' };
+  });
+  await check('work', 'bizomat.ai/crm: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/crm/o/smoke/overview', headers: { Accept: 'text/html' } });
+    return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/crm-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
+  });
+  await check('work', 'bizomat.ai/crm private API without a session: 401', async () => {
+    const r = await onPlatform({ path: '/crm/api/crm/orgs', headers: { Accept: 'application/json' } });
+    return r.status === 401 || { fail: describe(r) };
   });
   // work.kevos.com, the old address: the app at the root of its host
   await check('work', `${old} /api/health`, async () => {

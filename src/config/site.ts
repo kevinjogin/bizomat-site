@@ -103,10 +103,12 @@ export const NAV: readonly NavItem[] = [
   },
 ] as const;
 
-/** The header's sign-in menu: each application has its own sign-in; both send you to your dashboard afterwards. */
+/** The header's sign-in menu: each application has its own sign-in and sends you to your dashboard afterwards. The CRM
+ * shares Project Management's accounts and sign-in (one session for both). */
 export const SIGN_IN = [
   { label: 'Project Management', href: APP_LINKS.work.signIn, description: 'Projects, tasks and your team workspace.' },
   { label: 'CAD Automation', href: APP_LINKS.cad.signIn, description: 'Your AI assistant, computers and SOLIDWORKS.' },
+  { label: 'CRM', href: APP_LINKS.crm.signIn, description: 'Customers, leads, deals and follow-ups.' },
 ] as const;
 /** Breadcrumb labels for the two libraries. */
 export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
@@ -145,6 +147,7 @@ export const FOOTER_NAV = {
   apps: [
     { href: APP_LINKS.work.signIn, label: 'Sign in to Project Management' },
     { href: APP_LINKS.cad.signIn, label: 'Sign in to CAD Automation' },
+    { href: APP_LINKS.crm.signIn, label: 'Sign in to CRM' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy Policy' },
