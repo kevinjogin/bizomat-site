@@ -163,6 +163,9 @@ describe('automation, planning and documents', () => {
     expect(filled.lines).toBe(2);
     const detail = await me.json('GET', fin(ws, `/budgets/${b.id}`));
     expect(detail.lines).toEqual(expect.arrayContaining([{ accountId: groceries, month: '2026-10', amount: 55_000 }, { accountId: groceries, month: '2026-11', amount: 66_000 }]));
+    // Without dates, the budget's own months.
+    expect((await me.json('GET', `${fin(ws, '/reports/budget_actual')}?budget=${b.id}`)).summary.expenseBudget).toBe(121_000);
+    expect((await me.req('POST', fin(ws, '/report-schedules'), { reportKey: 'budget_actual', frequency: 'monthly', nextDate: '2026-12-01' })).status).toBe(400);
     const ba = await me.json('GET', `${fin(ws, '/reports/budget_actual')}?budget=${b.id}&from=2026-10-01&to=2026-10-31`);
     expect(ba.rows.find((r: any) => r.cells[0] === 'Groceries').cells.slice(1, 4)).toEqual([55_000, 45_000, 10_000]);
     // Goals: progress from a linked account, or an amount kept by hand.

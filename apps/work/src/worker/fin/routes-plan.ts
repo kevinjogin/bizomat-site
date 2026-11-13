@@ -318,10 +318,11 @@ planRoutes.get('/orgs/:org/report-schedules', async (c) => {
   return c.json(rows.results.map((r) => ({ id: r.id, reportKey: r.report_key, params: parseJson(r.params_json, {}), frequency: r.frequency, format: r.format, nextDate: r.next_date, active: !!r.active, lastRunAt: r.last_run_at })));
 });
 
+// Reports that need no choice beyond their dates (a schedule stores none: budget against actual needs its budget).
 planRoutes.post('/orgs/:org/report-schedules', async (c) => {
   const a = await requireOrg(c);
   requirePerm(a, 'reports', 'export', 'You cannot schedule reports');
-  const input = await body(c, z.object({ reportKey: z.enum(['profit_loss', 'balance_sheet', 'cash_flow', 'trial_balance', 'income_expenses', 'budget_actual', 'aged_receivables', 'aged_payables', 'gst']), frequency: z.enum(['monthly', 'quarterly']), format: z.enum(['pdf', 'csv']).optional(), nextDate: isoDate() }));
+  const input = await body(c, z.object({ reportKey: z.enum(['profit_loss', 'balance_sheet', 'cash_flow', 'trial_balance', 'income_expenses', 'aged_receivables', 'aged_payables', 'gst']), frequency: z.enum(['monthly', 'quarterly']), format: z.enum(['pdf', 'csv']).optional(), nextDate: isoDate() }));
   if (!isIsoDate(input.nextDate)) throw new HttpError(400, 'Use a valid date');
   const sid = newId();
   await c.env.DB.prepare('INSERT INTO fin_report_schedules (id, org_id, report_key, params_json, frequency, format, next_date, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(sid, a.orgId, input.reportKey, '{}', input.frequency, input.format ?? 'pdf', input.nextDate, a.userId, now()).run();

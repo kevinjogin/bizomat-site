@@ -12,7 +12,6 @@ export function MoneyInput({ value, onChange, id, placeholder, ariaLabel, signed
   const [error, setError] = useState(false);
   useEffect(() => {
     setText(plain(value));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, currency]);
   const commit = () => {
     try {

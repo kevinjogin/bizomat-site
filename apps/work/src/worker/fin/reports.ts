@@ -724,6 +724,8 @@ export function defaultParams(a: FinAccess, key: ReportKey, today: string): Repo
     return { from: qStart, to: endOfMonth(addMonths(qStart, 2)) };
   }
   if (key === 'income_expenses') return { from: addMonths(startOfMonth(today), -11), to: endOfMonth(today) };
+  // A budget's own months, unless dates are asked for (the financial year may lie outside the budget).
+  if (key === 'budget_actual') return {};
   return { from: fy, to: today };
 }
 
