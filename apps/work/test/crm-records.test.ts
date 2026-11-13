@@ -462,12 +462,12 @@ describe('CSV import and export', () => {
 });
 
 describe('the /crm address', () => {
-  it('serves the API and pages under /crm, with the session cookie written for /tasks, /crm and /finance', async () => {
+  it('serves the API and pages under /crm, with the session cookie written for /tasks, /crm, /finance and /company', async () => {
     const email = uniqueEmail('mount');
     const res = await raw('POST', '/crm/api/auth/signup', { body: { email, name: 'Crm Mount', password: PASSWORD } });
     expect(res.status).toBe(201);
     const cookies = res.headers.getSetCookie().filter((c) => c.startsWith('workos_sid='));
-    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/crm', '/tasks', '/finance']);
+    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/crm', '/tasks', '/finance', '/company']);
     const cookie = cookies[0].split(';')[0];
     const csrf = ((await res.json()) as any).csrfToken;
     const created = await raw('POST', '/crm/api/crm/orgs', { body: { name: 'Mounted Org' }, cookie, csrf });

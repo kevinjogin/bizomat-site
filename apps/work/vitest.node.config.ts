@@ -19,7 +19,10 @@ const here = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 export default defineConfig(async () => {
   const migrations = await readD1Migrations('migrations');
   const wrangler = unstable_readConfig({ config: here('./wrangler.jsonc') });
-  const vars = { ...(wrangler.vars as Record<string, string>), ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com', BREVO_WEBHOOK_TOKEN: 'test-webhook-token', SETTINGS_ENCRYPTION_KEY: 'BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=' };
+  const vars = { ...(wrangler.vars as Record<string, string>), ENVIRONMENT: 'test', ALLOW_SIGNUP: 'true', APP_URL: 'http://example.com', BREVO_WEBHOOK_TOKEN: 'test-webhook-token', SETTINGS_ENCRYPTION_KEY: 'BwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc=',
+    // The same BIZOMAT sign-in client as vitest.config.ts (test/company.test.ts; its secret is "test-client-secret").
+    BIZOMAT_ID_CLIENTS: JSON.stringify([{ id: 'cad-test', name: 'CAD Automation', secretSha256: '8ac950188678f9bb3524b275130332b511bf5092394da6975b5fb9e84302f026', redirectUris: ['https://cad.example.com/auth/bizomat/callback'] }]),
+  };
   return {
     // This app's own tsconfig for every transform (see vitest.config.ts).
     tsconfig: './tsconfig.node.json',

@@ -24,11 +24,13 @@ export const EMAIL_TEMPLATES = [
   'crm_notification',
   'fin_invitation',
   'fin_notification',
+  'company_invitation',
+  'company_email',
 ] as const;
 export type EmailTemplate = (typeof EMAIL_TEMPLATES)[number];
 
 /** Invitations and security messages are sent first and may use the reserve above the daily limit. */
-export const CRITICAL_TEMPLATES: EmailTemplate[] = ['invitation', 'test', 'verify_email', 'crm_invitation', 'fin_invitation'];
+export const CRITICAL_TEMPLATES: EmailTemplate[] = ['invitation', 'test', 'verify_email', 'crm_invitation', 'fin_invitation', 'company_invitation', 'company_email'];
 
 export interface RenderedEmail {
   subject: string;
@@ -161,7 +163,9 @@ export type TemplateData =
   | { template: 'crm_invitation'; organisation: string; inviter: string; role: string; expires: string; url: string; message?: string | null; existingUser: boolean }
   | { template: 'crm_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
   | { template: 'fin_invitation'; organisation: string; inviter: string; role: string; expires: string; url: string; message?: string | null; existingUser: boolean }
-  | { template: 'fin_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string };
+  | { template: 'fin_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
+  | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean }
+  | { template: 'company_email'; organisation: string; email: string; url: string; expires: string };
 
 function taskRows(d: TaskEmailData): [string, string | null | undefined][] {
   return [
@@ -437,6 +441,40 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         button: d.url ? { label: 'Open in BIZOMAT Finance', url: d.url } : undefined,
         reason: 'You received this email because of your notification settings in BIZOMAT Finance.',
         preferencesUrl: d.preferencesUrl,
+      });
+    case 'company_invitation':
+      return layout({
+        product: 'Company',
+        subject: `You've been invited to join ${oneLine(d.organisation, 80)} on BIZOMAT`,
+        preheader: `${d.inviter} invited you to ${d.organisation} as ${d.role}.`,
+        heading: `Join ${d.organisation} on BIZOMAT`,
+        intro: [`${d.inviter} has invited you to the company account of ${d.organisation} on BIZOMAT. One sign-in opens every tool the company gives you.`],
+        rows: [
+          ['Company', d.organisation],
+          ['Invited by', d.inviter],
+          ['Your role', d.role],
+          ['Tools', d.tools],
+          ['Invitation expires', d.expires],
+        ],
+        button: { label: 'View the invitation', url: d.url },
+        after: [
+          d.existingUser
+            ? 'You already have a BIZOMAT account with this email address: open the link, sign in, then accept or decline.'
+            : 'New to BIZOMAT? Open the link and create your account with this email address, then accept the invitation.',
+          'The link works only for this email address. If you were not expecting this invitation, you can ignore this email.',
+        ],
+        reason: `You received this email because ${d.inviter} invited this address to ${d.organisation}.`,
+      });
+    case 'company_email':
+      return layout({
+        product: 'Company',
+        subject: `Confirm the contact address of ${oneLine(d.organisation, 80)} on BIZOMAT`,
+        preheader: `Confirm that ${d.email} is the contact address of ${d.organisation}.`,
+        heading: 'Confirm the company’s contact address',
+        intro: [`${d.email} was given as the contact address of ${d.organisation} on BIZOMAT. Confirm it to show that the company receives mail here.`],
+        button: { label: 'Confirm the address', url: d.url },
+        after: [`The link works once, until ${d.expires}.`, 'If this is not your company, ignore this email: nothing is confirmed without the link.'],
+        reason: `You received this email because this address was given as the contact address of ${d.organisation}.`,
       });
     case 'notification':
     default: {

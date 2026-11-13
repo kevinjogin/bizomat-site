@@ -12,9 +12,10 @@
 // ("https://bizomat.ai/tasks"), a page asked for on another host answers 301 to the same path there; /api/ keeps
 // working on every host, for open tabs and anything that calls it.
 //
-// The same app also answers under /crm (BIZOMAT CRM, src/worker/crm and src/client/crm) and /finance (BIZOMAT Finance,
-// src/worker/fin and src/client/fin): one Worker, one database and one session for all three. The session cookie is
-// written for each path (Path=/tasks, /crm and /finance), so signing in to one signs in to all, while the website and CAD
+// The same app also answers under /crm (BIZOMAT CRM, src/worker/crm and src/client/crm), /finance (BIZOMAT Finance,
+// src/worker/fin and src/client/fin) and /company (company accounts and their control centre, src/worker/company and
+// src/client/company): one Worker, one database and one session for all four. The session cookie is written for each
+// path (Path=/tasks, /crm, /finance and /company), so signing in to one signs in to all, while the website and CAD
 // Automation, at other paths of bizomat.ai, still never receive it.
 import type { Env } from './env';
 
@@ -23,8 +24,10 @@ export const MOUNT = '/tasks';
 export const CRM_MOUNT = '/crm';
 /** BIZOMAT Finance, served by this app at https://bizomat.ai/finance. */
 export const FIN_MOUNT = '/finance';
+/** BIZOMAT company accounts and their control centre, served by this app at https://bizomat.ai/company. */
+export const COMPANY_MOUNT = '/company';
 /** Every path this app is served under on another site's address; the session cookie is written for each. */
-export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT] as const;
+export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT] as const;
 
 /** The path the request came in under: one of MOUNTS, or '' at the root of the host. */
 export function mountOf(url: URL): string {
@@ -89,8 +92,8 @@ export function remount(res: Response, base: string): Response {
 export async function withBaseHref(res: Response, base: string): Promise<Response> {
   if (!(res.headers.get('Content-Type') ?? '').includes('text/html')) return res;
   const tag = `<base href="${base}/">`;
-  // Under /crm and /finance the page is that product: its title before the script sets the page's own.
-  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : base === FIN_MOUNT ? 'BIZOMAT Finance' : null;
+  // Under /crm, /finance and /company the page is that product: its title before the script sets the page's own.
+  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : base === FIN_MOUNT ? 'BIZOMAT Finance' : base === COMPANY_MOUNT ? 'BIZOMAT Company' : null;
   if (typeof HTMLRewriter === 'function') {
     let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
     if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });
