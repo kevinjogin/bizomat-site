@@ -10,11 +10,20 @@ const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const 
 // BIZOMAT navigation (5 Nov 2026): CAD Automation | Project Management | Resources | Engine Room, with AI Search and a
 // Sign in menu (one entry per application) on the right. The Engine Room joins what were About and Proof of Work
 // (owner request, 5 Nov 2026). Customer Relationship Management joined on 13 Nov 2026 (owner request), spelled out, with
-// "CRM" only where the header row is too narrow. Finance joined on 13 Nov 2026 (owner request).
+// "CRM" only where the header row is too narrow. Finance joined on 13 Nov 2026 (owner request), and CAD Automation and
+// Project Management got menus like theirs the same day.
 test('the main navigation reads CAD Automation, Project Management, Customer Relationship Management, Finance, Resources, Engine Room', () => {
   assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Customer Relationship Management', '/crm-platform/'], ['Finance', '/finance-platform/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
   assert.deepEqual(NAV.map((n) => n.short), [undefined, undefined, 'CRM', undefined, undefined, undefined]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
+  // Every product has a menu (owner, 13 Nov 2026): its page, its main sections, its guide and its application.
+  assert.deepEqual(menu('CAD Automation'), [['CAD Automation', '/cad-automation/'], ['How it works', '/cad-automation/#how'], ['What it can build', '/cad-automation/#capabilities'], ['Tools your assistant can call', '/cad-automation/#tools'], ['Set up in four steps', '/cad-automation/#install'], ['User guide', 'https://bizomat.ai/cad/docs'], ['Open CAD Automation', 'https://bizomat.ai/cad/login']]);
+  assert.deepEqual(menu('Project Management'), [['Project Management', '/work/'], ['Plan and track work', '/work/#features'], ['Views', '/work/#views'], ['Teams and permissions', '/work/#teams'], ['Automations', '/work/#automations'], ['Dashboards', '/work/#dashboards'], ['Open Project Management', 'https://bizomat.ai/tasks/login']]);
+  // Each section a menu points to exists on its page.
+  for (const item of NAV) for (const c of item.children ?? []) {
+    const m = /^\/(cad-automation|work)\/#([a-z-]+)$/.exec(c.href ?? '');
+    if (m) assert.match(read(`src/pages/${m[1]}.astro`), new RegExp(`id="${m[2]}"`), `${c.href} exists`);
+  }
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('Customer Relationship Management'), [['Customer Relationship Management', '/crm-platform/'], ['User guide', '/crm-platform/guide/'], ['Open the CRM', 'https://bizomat.ai/crm/login']]);
   assert.deepEqual(menu('Finance'), [['Finance', '/finance-platform/'], ['User guide', '/finance-platform/guide/'], ['Open Finance', 'https://bizomat.ai/finance/login']]);

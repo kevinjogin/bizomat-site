@@ -5,13 +5,18 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { SessionProvider } from './lib/session';
 import { ConfirmProvider, ToastProvider } from './components/ui/overlays';
-import { applyTheme, storedTheme } from './lib/hooks';
+import { THEME_KEY, applyTheme, storedTheme } from './lib/hooks';
 import { ApiError } from './lib/api';
 import { BASE } from './lib/base';
 import './styles/app.css';
 
-applyTheme(storedTheme());
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyTheme(storedTheme()));
+// The theme of this computer (src/client/lib/hooks.ts): its system theme until a choice is made here.
+applyTheme(storedTheme(), false);
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => applyTheme(storedTheme(), false));
+// A choice made in another tab, or on the website, applies here too.
+window.addEventListener('storage', (e) => {
+  if (e.key === THEME_KEY || e.key === null) applyTheme(storedTheme(), false);
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {

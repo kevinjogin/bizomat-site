@@ -62,6 +62,10 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   }
   assert.match(page, /<ProofOfWork \/>/, 'the engineering record');
   assert.match(page, /Founder, BIZOMAT/, 'the founder letter is signed');
+  // The letter names the four tools that are built and opens each one (owner, 13 Nov 2026).
+  const letter = page.slice(page.indexOf('id="founder"'), page.indexOf('id="combines"'));
+  for (const tool of ['Project Management', 'Customer Relationship Management', 'Finance', 'CAD Automation']) assert.match(letter, new RegExp(`<strong>${tool}</strong>`), `the letter names ${tool}`);
+  for (const app of ['work', 'crm', 'finance', 'cad']) assert.match(letter, new RegExp(`href=\\{APP_LINKS\\.${app}\\.signIn\\}`), `the letter opens ${app}`);
   assert.match(page, /<FounderPortrait name=\{PLATFORM\.founder\} \/>/, 'the founder portrait sits under the founder heading');
   const portrait = read('src/components/visuals/FounderPortrait.astro');
   assert.match(portrait, /prefers-reduced-motion: no-preference/, 'the portrait animates only when motion is welcome');

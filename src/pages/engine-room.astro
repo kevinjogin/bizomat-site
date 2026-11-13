@@ -21,7 +21,7 @@ import FounderPortrait from '../components/visuals/FounderPortrait.astro';
 import ProofOfWork from '../components/ProofOfWork.astro';
 import '../styles/product.css';
 import { SITE } from '../config/site.ts';
-import { PLATFORM } from '../config/platform.ts';
+import { APP_LINKS, PLATFORM } from '../config/platform.ts';
 import { BACKGROUND, PRINCIPLES } from '../data/brand.ts';
 import { CAD, WORK } from '../data/platform-catalog.ts';
 import { CAD_TOOL_GROUPS } from '../data/cad-tools.ts';
@@ -127,11 +127,24 @@ const schema = [{
       </div>
       <figure class="founder__letter">
         <blockquote>
-          <p>I started my working life on the toolroom floor. Since then I have worked through design offices, production lines and engineering projects, and I kept seeing the same thing: capable people losing hours to work a computer should do for them. Redrawing a part because one size changed. Chasing the status of a task through emails and spreadsheets. Hunting for a method that sits in a textbook nobody has to hand.</p>
-          <p>BIZOMAT is my answer to that. It is practical software that takes the repetitive part of the job so people can spend their time on the part that needs judgement. CAD Automation lets an AI assistant build and check SOLIDWORKS models on your own computer. Project Management keeps projects, tasks and teams in one place. Resources gives anyone the calculators, books and guides that help when the method is not to hand, free and without an account.</p>
-          <p>I only put on this site what I can show working. The rest of this page shows how each product is built and how far it has been tested, and where something is still being proven, it says so.</p>
-          <p>If there is a process that eats your week, I want to hear about it. That is how the next part of BIZOMAT gets built.</p>
+          <p>I started my working life on the toolroom floor. Since then I have worked in design offices, on production lines and on engineering projects, and I kept seeing the same thing: capable people losing hours to work a computer should do for them. Redrawing a part because one size changed. Chasing a task through emails and spreadsheets. Keeping customers in one list and the money in another, and hoping the two agree.</p>
+          <p>BIZOMAT is my answer. It is business automation you can use today, in four tools built to work together:</p>
+          <ul class="founder__tools">
+            <li><strong>Project Management</strong> plans the work, shares the tasks and shows where every job stands.</li>
+            <li><strong>Customer Relationship Management</strong> keeps every customer, lead, deal and follow-up in one place.</li>
+            <li><strong>Finance</strong> runs accounts, invoices, bills, budgets and reports on a ledger that always balances.</li>
+            <li><strong>CAD Automation</strong> lets an AI assistant build and check SOLIDWORKS models on your own computer.</li>
+          </ul>
+          <p>Project Management, the CRM and Finance share one BIZOMAT account, so you sign in once and move between them. Resources stays free for everyone: calculators, books and guides, no account needed.</p>
+          <p>I only put on this site what I can show working. The rest of this page shows how each tool is built and tested, and where something is still being proven, it says so.</p>
+          <p>So do not take my word for it. Open a tool, bring in one real job and see how much of your week comes back. Then tell me what slows you down next: that is how the next part of BIZOMAT gets built.</p>
         </blockquote>
+        <div class="founder__actions">
+          <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="founder-open-project-management">Open Project Management</Button>
+          <Button href={APP_LINKS.crm.signIn} variant="secondary" rel="noopener" data-cta="founder-open-crm">Open the CRM</Button>
+          <Button href={APP_LINKS.finance.signIn} variant="secondary" rel="noopener" data-cta="founder-open-finance">Open Finance</Button>
+          <Button href={APP_LINKS.cad.signIn} variant="secondary" rel="noopener" data-cta="founder-open-cad">Open CAD Automation</Button>
+        </div>
         <figcaption><strong>{PLATFORM.founder}</strong><span>Founder, BIZOMAT</span></figcaption>
       </figure>
     </Container>
@@ -341,6 +354,10 @@ const schema = [{
   .founder__letter { margin: 0; padding: clamp(1.5rem, 3vw, 2.5rem); background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--brand-mark); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
   .founder__letter blockquote { margin: 0; font-family: var(--font-serif); font-size: clamp(1.08rem, 1rem + .35vw, 1.24rem); line-height: 1.7; color: var(--ink); }
   .founder__letter blockquote p { margin: 0 0 1.1em; }
+  .founder__tools { display: grid; gap: .55em; margin: 0 0 1.1em; padding-left: 1.2em; }
+  .founder__tools li { padding-left: .2em; }
+  .founder__tools strong { font-family: var(--font-display); font-weight: 650; }
+  .founder__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .4rem; }
   .founder__letter figcaption { display: grid; gap: .15rem; margin-top: 1.4rem; padding-top: 1.1rem; border-top: 1px solid var(--line); }
   .founder__letter figcaption strong { font: 650 1.15rem/1.2 var(--font-display); }
   .founder__letter figcaption span { color: var(--muted); font-size: .92rem; }

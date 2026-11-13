@@ -6,7 +6,6 @@ import { Loading, ErrorBox } from './components/ui/ui';
 import { AppShell } from './components/layout/AppShell';
 import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth';
 import { ChoosePasswordPage } from './pages/ChoosePassword';
-import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
 import { BRAND, IS_CRM, IS_FINANCE } from './lib/brand';
 import { appPath } from './lib/base';
@@ -87,9 +86,7 @@ export function App() {
     return () => window.removeEventListener('workos:unauthorized', onUnauthorized);
   }, [navigate, qc]);
 
-  useEffect(() => {
-    if (session?.user.theme) applyTheme(session.user.theme);
-  }, [session?.user.theme]);
+  // The theme belongs to this computer, not the account (src/client/lib/hooks.ts): main.tsx applies it.
 
   useHeartbeat(!!session);
 

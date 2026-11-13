@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { errorMessage, patch, upload } from '../../lib/api';
 import { useUser } from '../../lib/session';
-import { applyTheme, type ThemePref } from '../../lib/hooks';
+import { applyTheme, storedTheme, type ThemePref } from '../../lib/hooks';
 import { Avatar, Field } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { useToast } from '../../components/ui/overlays';
@@ -34,7 +34,8 @@ export function ProfileSettings() {
   const [name, setName] = useState(user.name);
   const [timezone, setTimezone] = useState(user.timezone);
   const [locale, setLocale] = useState(user.locale);
-  const [theme, setTheme] = useState<ThemePref>(user.theme);
+  // The theme is kept on this computer, not on the account (src/client/lib/hooks.ts).
+  const [theme, setTheme] = useState<ThemePref>(storedTheme());
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const zones = timeZones();
@@ -43,7 +44,7 @@ export function ProfileSettings() {
     e.preventDefault();
     setBusy(true);
     try {
-      await patch('/me', { name: name.trim(), timezone, locale, theme });
+      await patch('/me', { name: name.trim(), timezone, locale });
       applyTheme(theme);
       await qc.invalidateQueries({ queryKey: ['me'] });
       toast('Profile saved');
@@ -101,7 +102,7 @@ export function ProfileSettings() {
           {LOCALES.map((l) => <option key={l.id} value={l.id} disabled={!l.available}>{l.label}</option>)}
         </select>
       </Field>
-      <Field label="Theme" htmlFor="p-theme">
+      <Field label="Theme on this computer" htmlFor="p-theme" hint="Kept on this computer only. Other computers follow their own system theme until you choose there.">
         <select id="p-theme" className="select" value={theme} onChange={(e) => setTheme(e.target.value as ThemePref)}>
           <option value="system">Match system</option>
           <option value="light">Light</option>
