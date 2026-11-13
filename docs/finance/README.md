@@ -194,5 +194,9 @@ cover the ledger triggers. Proxy: `infrastructure/proxy/test/routes.test.mjs`. W
 - Both read their facts from `src/data/platform-catalog.ts` (`FINANCE`); `tests/platform-catalog.test.ts` compares the
   reports, roles, tax codes and frequencies with this application's code. Screens: `src/data/screenshots.ts`
   (`product: 'finance'`), captured from a local instance with fictional example data.
+- `/finance-platform/guide/` has sixteen steps and common questions; fifteen product screens were captured from a local
+  instance with a fictional business ("Harbourside Design").
 - Finance is in the main navigation, the Sign in menu, the footer, the homepage products, `/products/`, `/solutions/`,
-  `/sign-in/`, the Engine Room and AI Search.
+  `/sign-in/`, the Engine Room and AI Search. With six items the header row needs more room: the menu button now
+  takes over up to 1140 px (was 1000), and between 1141 and 1300 px the links sit closer and AI Search shows its icon
+  only (`src/components/Header.astro`), measured at every width from 1141 to 1920 px.
