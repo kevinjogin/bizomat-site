@@ -11,14 +11,25 @@
 // Without the path the app answers at the root of its host, as before (work.kevos.com). With CANONICAL_URL set
 // ("https://bizomat.ai/tasks"), a page asked for on another host answers 301 to the same path there; /api/ keeps
 // working on every host, for open tabs and anything that calls it.
+//
+// The same app also answers under /crm (BIZOMAT CRM, src/worker/crm and src/client/crm): one Worker, one database and
+// one session for both. The session cookie is written for both paths (Path=/tasks and Path=/crm), so signing in to
+// either signs in to both, while the website and CAD Automation, at other paths of bizomat.ai, still never receive it.
 import type { Env } from './env';
 
 export const MOUNT = '/tasks';
+/** BIZOMAT CRM, served by this app at https://bizomat.ai/crm. */
+export const CRM_MOUNT = '/crm';
+/** Every path this app is served under on another site's address; the session cookie is written for each. */
+export const MOUNTS = [MOUNT, CRM_MOUNT] as const;
 
-/** The path the request came in under: MOUNT, or '' at the root of the host. */
+/** The path the request came in under: one of MOUNTS, or '' at the root of the host. */
 export function mountOf(url: URL): string {
-  return url.pathname === MOUNT || url.pathname.startsWith(`${MOUNT}/`) ? MOUNT : '';
+  for (const m of MOUNTS) if (url.pathname === m || url.pathname.startsWith(`${m}/`)) return m;
+  return '';
 }
+
+const underMount = (value: string) => MOUNTS.some((m) => value === m || value.startsWith(`${m}/`) || value.startsWith(`${m}?`));
 
 /** The same request with the mount taken off its path (body, method and headers unchanged). */
 export function unmount(request: Request, base: string): Request {
@@ -30,12 +41,19 @@ export function unmount(request: Request, base: string): Request {
 /** A root path the app wrote, under the mount ("/login" -> "/tasks/login"); anything else as it is. */
 export function addBase(value: string, base: string): string {
   if (!base || !value.startsWith('/') || value.startsWith('//')) return value;
-  if (value === base || value.startsWith(`${base}/`) || value.startsWith(`${base}?`)) return value;
+  // Already an address of this app under one of its paths (/tasks/..., /crm/...): as it is.
+  if (underMount(value)) return value;
   return base + value;
 }
 
 function cookieUnder(header: string, base: string): string {
   return header.replace(/(;\s*path=)(\/[^;]*)/i, (_m, attr: string, path: string) => attr + (path === '/' ? base : addBase(path, base)));
+}
+
+/** A cookie the app wrote (Path=/...) for every mount, the request's own first. */
+function cookieForMounts(header: string, base: string): string[] {
+  if (!/;\s*path=\//i.test(header)) return [header];
+  return [base, ...MOUNTS.filter((m) => m !== base)].map((m) => cookieUnder(header, m));
 }
 
 /** Location headers and cookie paths under the mount. A WebSocket upgrade passes untouched. */
@@ -48,7 +66,14 @@ export function remount(res: Response, base: string): Response {
   if (location) out.headers.set('Location', addBase(location, base));
   if (cookies.length) {
     out.headers.delete('Set-Cookie');
-    for (const c of cookies) out.headers.append('Set-Cookie', cookieUnder(c, base));
+    const seen = new Set<string>();
+    for (const c of cookies) {
+      for (const each of cookieForMounts(c, base)) {
+        if (seen.has(each)) continue;
+        seen.add(each);
+        out.headers.append('Set-Cookie', each);
+      }
+    }
   }
   return out;
 }
@@ -61,16 +86,36 @@ export function remount(res: Response, base: string): Response {
 export async function withBaseHref(res: Response, base: string): Promise<Response> {
   if (!(res.headers.get('Content-Type') ?? '').includes('text/html')) return res;
   const tag = `<base href="${base}/">`;
+  // Under /crm the page is BIZOMAT CRM: its title before the script sets the page's own.
+  const title = base === CRM_MOUNT ? 'BIZOMAT CRM' : null;
   if (typeof HTMLRewriter === 'function') {
-    return new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) }).transform(res);
+    let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
+    if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });
+    return rw.transform(res);
   }
   if (!res.body || res.headers.has('Content-Encoding')) return res;
-  const html = await res.text();
+  let html = await res.text();
+  if (title) html = html.replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`);
   const head = /<head(?:\s[^>]*)?>/i.exec(html);
   const at = head ? head.index + head[0].length : -1;
   const headers = new Headers(res.headers);
   headers.delete('Content-Length');
   return new Response(at < 0 ? html : html.slice(0, at) + tag + html.slice(at), { status: res.status, statusText: res.statusText, headers });
+}
+
+/**
+ * A CRM page asked for on another host than the canonical one (work.kevos.com/crm, bizomat.fly.dev/crm): 301 to the same
+ * path on the canonical host (https://bizomat.ai/crm/...), so the session cookie and every link are on one address.
+ */
+export function crmCanonicalRedirect(request: Request, env: Pick<Env, 'CANONICAL_URL'>): Response | null {
+  const target = (env.CANONICAL_URL ?? '').trim();
+  if (!/^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i.test(target)) return null;
+  if (request.method !== 'GET' && request.method !== 'HEAD') return null;
+  const url = new URL(request.url);
+  const canon = new URL(target);
+  if (url.host === canon.host) return null;
+  if (url.pathname.startsWith(`${CRM_MOUNT}/api/`) || !(request.headers.get('Accept') ?? '').includes('text/html')) return null;
+  return new Response(null, { status: 301, headers: { Location: `${canon.origin}${url.pathname}${url.search}`, 'Cache-Control': 'public, max-age=3600' } });
 }
 
 /** The 301 to the canonical address for a page asked for on another host, or null. */

@@ -43,6 +43,9 @@ export default defineConfig({
       APP_URL: `http://localhost:${PORT}`,
       ALLOW_SIGNUP: 'true',
       WORK_CRON: '0',
+      // Addresses as behind the platform proxy: a spec may send its own (e2e/crm.spec.ts does, to have a sign-up rate
+      // limit of its own; the other specs send none and keep the socket address).
+      WORK_TRUST_PROXY: '1',
     },
     url: `http://localhost:${PORT}/api/health`,
     timeout: 180_000,

@@ -404,10 +404,14 @@ const sqlString = (s) => `'${String(s).replace(/'/g, "''")}'`;
  * values), z (NULL values), r (REAL values) and i (the sum of its integers, each modulo 1000003). The same SQL runs in
  * the copy here and in D1, so equal results mean the rows arrived whole. total() adds in floating point, which is
  * exact for these sums (whole numbers far below 2^53), and gives 0 for an empty table.
+ *
+ * Each measure is one aggregate over the row's columns added together (a NULL term counts 0, as total() skips NULLs),
+ * which gives the same sum as one total() per column: D1 refuses more than 100 aggregate terms in a statement, which
+ * one per column reached at 25 columns (the CRM tables have up to 38).
  */
 export function fingerprintSql(table, columns) {
   const q = columns.map(quoteIdent);
-  const sum = (expr) => (q.length ? q.map((c) => `total(${expr(c)})`).join('+') : '0');
+  const sum = (expr) => (q.length ? `total(${q.map((c) => `ifnull(${expr(c)}, 0)`).join('+')})` : '0');
   return (
     `SELECT ${sqlString(table)} AS t, count(*) AS n` +
     `, ${sum((c) => `(typeof(${c}) IN ('text','blob'))*length(CAST(${c} AS BLOB))`)} AS b` +
