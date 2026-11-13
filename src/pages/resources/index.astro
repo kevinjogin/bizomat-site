@@ -51,6 +51,8 @@ const fmt = (n: number) => n.toLocaleString('en-AU');
           <p>{primaryGuide.description}</p>
           <a href={`/library/${primaryGuide.slug}/`}>Read the guide <span aria-hidden="true">→</span></a>
         </div>
+      </div>
+
       <div class="res-ai">
         <div>
           <p class="eyebrow">AI Search</p>
@@ -59,7 +61,6 @@ const fmt = (n: number) => n.toLocaleString('en-AU');
           <a href="/#ai-search">Search with AI <span aria-hidden="true">→</span></a>
         </div>
         <SearchScan id="res-search" />
-      </div>
       </div>
     </Container>
   </section>
