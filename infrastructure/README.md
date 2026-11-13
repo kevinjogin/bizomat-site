@@ -139,10 +139,12 @@ cannot read the full environment from `/proc/1/environ` or any other root proces
 | all | `FLY_APP_NAME FLY_MACHINE_ID FLY_ALLOC_ID FLY_REGION FLY_PUBLIC_IP FLY_PRIVATE_IP FLY_IMAGE_REF FLY_MACHINE_VERSION FLY_PROCESS_GROUP FLY_VM_MEMORY_MB PRIMARY_REGION BIZOMAT_VERSION TZ` | Fly, the image |
 | proxy | `UPSTREAM_WEB UPSTREAM_WORK UPSTREAM_CAD BIZOMAT_PREVIEW_ROUTING PROXY_*` | `[env]` |
 | web | `CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WEB_*`; fixed `PORT=8003 HOST WEB_DIST_DIR=/app/web/dist WEB_TRUST_PROXY=1` | secrets |
-| work | `WORK_*`; `APP_URL APP_NAME ENVIRONMENT ALLOW_SIGNUP SESSION_TTL_HOURS` from `WORK_APP_URL ...`; `GOOGLE_CLIENT_ID/SECRET` from `WORK_GOOGLE_CLIENT_ID/SECRET`; fixed `PORT=8002 HOST WORK_DATA_DIR=/data/work WORK_STATIC_DIR WORK_TRUST_PROXY=1` | `[env]`, secrets, `/data/work/.secrets/` |
+| work | `WORK_*`; `APP_URL APP_NAME ENVIRONMENT ALLOW_SIGNUP SESSION_TTL_HOURS CANONICAL_URL` from `WORK_APP_URL ...`; `GOOGLE_CLIENT_ID/SECRET` from `WORK_GOOGLE_CLIENT_ID/SECRET`; the email settings (`BREVO_API_KEY`, `EMAIL_FROM_ADDRESS` ..., each named in `fly/entrypoint.sh`) from the same names with `WORK_`; `ABR_GUID` from `WORK_ABR_GUID` and `BIZOMAT_ID_CLIENTS` from `WORK_BIZOMAT_ID_CLIENTS` (company accounts); fixed `PORT=8002 HOST WORK_DATA_DIR=/data/work WORK_STATIC_DIR WORK_TRUST_PROXY=1` | `[env]`, secrets, `/data/work/.secrets/` (a file there may carry the app's own name, such as `ABR_GUID`) |
 | cad | `OPENSKETCH_*`; `GOOGLE_CLIENT_ID/SECRET` from `CAD_GOOGLE_CLIENT_ID/SECRET`; fixed `OPENSKETCH_DATA=/data/cad` | `[env]`, secrets, `/data/cad/.secrets/` (where `bizomat.ps1 move cad` writes the settings it moves from cados) |
 
-Both apps read `GOOGLE_CLIENT_ID`; the `WORK_` and `CAD_` prefixes keep their two Google clients apart.
+Both apps read `GOOGLE_CLIENT_ID`; the `WORK_` and `CAD_` prefixes keep their two Google clients apart. A Fly secret
+for the work app must carry the `WORK_` prefix (`WORK_ABR_GUID`, not `ABR_GUID`): the work role takes no unprefixed
+name from the environment.
 
 Set the secrets with flyctl (staged, applied by the next deploy). Values come from the owner; never paste them into
 files in the repository:
@@ -151,6 +153,7 @@ files in the repository:
 fly secrets set --stage --app bizomat CF_ACCOUNT_ID=... CF_AI_TOKEN=...          # or ANTHROPIC_API_KEY=...
 fly secrets set --stage --app bizomat TURNSTILE_SECRET_KEY=...                   # optional
 fly secrets set --stage --app bizomat WORK_GOOGLE_CLIENT_ID=... WORK_GOOGLE_CLIENT_SECRET=...   # optional
+fly secrets set --stage --app bizomat WORK_ABR_GUID=... WORK_BIZOMAT_ID_CLIENTS='[...]'    # optional (docs/company/README.md)
 fly secrets list --app bizomat                                                   # names only
 ```
 

@@ -102,9 +102,14 @@ and postcode rules.
 ### Turning on the register lookup
 
 1. Register for an ABR web services GUID (free) at `abr.business.gov.au` (Web services).
-2. Set it as the secret `ABR_GUID` on the Fly app `bizomat`, on the `work` process: the owner's step, with the laptop
-   tool or `fly secrets set`.
-   - Setting a secret restarts the Machines.
+2. Set it as the Fly secret `WORK_ABR_GUID` on the Fly app `bizomat`: the owner's step, with the laptop tool or
+   `fly secrets set --stage --app bizomat WORK_ABR_GUID=<the GUID>`, applied by the next run of the deploy workflow
+   (or `fly secrets deploy --app bizomat`).
+   - The platform entrypoint gives it to the `work` Machine alone, under the name the app reads, `ABR_GUID`. A secret
+     named `ABR_GUID`, without the prefix, never reaches the app.
+   - Or, to keep it off the other Machines too: a root-owned file `/data/work/.secrets/ABR_GUID` on the work volume,
+     then restart the work Machine (`infrastructure/README.md`, "Settings and secrets").
+   - Setting a secret without `--stage` restarts the Machines at once.
    - `fly.website.toml` does not change.
 3. Only the ABN is sent to the register, from the server, never from the browser.
 
@@ -113,8 +118,12 @@ and postcode rules.
 People who use CAD Automation can sign in there with their BIZOMAT account, so one login reaches every tool. This app
 is the sign-in provider: OAuth 2.0 authorization code with PKCE (`src/worker/company/id-provider.ts`).
 
-- **Clients:** configured only, in the secret `BIZOMAT_ID_CLIENTS`:
+- **Clients:** configured only, in the setting `BIZOMAT_ID_CLIENTS`:
   `[{"id":"cad","name":"CAD Automation","secretSha256":"<sha256 of the client secret>","redirectUris":["https://bizomat.ai/cad/auth/bizomat/callback"]}]`.
+  - On the Fly app `bizomat` it is the Fly secret `WORK_BIZOMAT_ID_CLIENTS` (the owner's step, as for
+    `WORK_ABR_GUID` above), or the work volume's secret file `/data/work/.secrets/BIZOMAT_ID_CLIENTS`. The entrypoint
+    gives it to the `work` Machine alone, as `BIZOMAT_ID_CLIENTS`; a secret without the `WORK_` prefix never reaches the
+    app.
   - Return addresses must match exactly.
   - Codes and tokens are stored as SHA-256 hashes.
 - **Authorize:** `https://bizomat.ai/company/authorize?client_id=…&redirect_uri=…&state=…&code_challenge=…&code_challenge_method=S256`.
