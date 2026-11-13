@@ -64,14 +64,14 @@ test('a new account creates a business workspace, records an expense and an invo
   await page.goto(`${ws}/transactions`);
   await page.getByRole('button', { name: 'New transaction' }).first().click();
   await page.getByRole('radio', { name: 'Money out' }).check();
-  await page.getByLabel('Paid to').fill('Officeworks');
+  await page.getByLabel('Paid to').fill('Paperbark Office Supplies');
   await choose(page, 'Category, line 1', '453 Office expenses');
   await choose(page, 'GST code, line 1', 'GSTP:');
   await page.getByLabel('Amount, line 1').fill('110');
   await page.getByLabel('Amount, line 1').press('Tab');
   await page.getByRole('button', { name: 'Save and post' }).click();
   await page.getByRole('button', { name: 'Save anyway' }).click({ timeout: 1500 }).catch(() => {});
-  await expect(page.getByText('Officeworks').first()).toBeVisible();
+  await expect(page.getByText('Paperbark Office Supplies').first()).toBeVisible();
 
   // An invoice for $500 plus GST (the Sales account's GST code fills in), approved, then paid in full.
   await page.goto(`${ws}/invoices/new`);
