@@ -1,0 +1,91 @@
+---
+// Scene: a sales pipeline in BIZOMAT Customer Relationship Management. A deal moves from Qualification to Proposal, the
+// ready-made automation "Follow up after a proposal" creates the owner's follow-up, and the dashboard figures follow.
+// Fictional example content; the stages, probabilities and the automation are the product's defaults
+// (src/data/platform-catalog.ts, CRM.stages and CRM.automations).
+import '../../styles/visuals.css';
+
+interface Props { id?: string }
+const { id = 'crmpipe' } = Astro.props;
+const cols = [
+  { name: 'Qualification', p: '10%' },
+  { name: 'Proposal', p: '50%' },
+  { name: 'Negotiation', p: '75%' },
+  { name: 'Won', p: '' },
+];
+const cards = [
+  { c: 's2', col: 0, row: 1, t: 'Workshop', v: '$76k', o: 'PN', oc: 'v-avatar--b' },
+  { c: 's2', col: 1, row: 1, t: 'Spare parts', v: '$56k', o: 'AM', oc: '' },
+  { c: 's3', col: 2, row: 0, t: 'Pump station', v: '$215k', o: 'ST', oc: 'v-avatar--c' },
+];
+const x = (col: number) => 24 + col * 100;
+const y = (row: number) => 104 + row * 54;
+---
+<figure class="viz" aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 660 290" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>A sales pipeline with the stages Qualification, Proposal, Negotiation and Won. The Conveyor deal moves from Qualification to Proposal; the automation Follow up after a proposal creates a follow-up for its owner, and the dashboard shows the open pipeline, the weighted forecast and the value won.</title>
+    <g class="seq s1">
+      <rect class="v-panel" x="14" y="14" width="416" height="262" rx="12" />
+      <text class="v-title" x="30" y="42">Sales pipeline</text>
+      <rect class="v-pill v-pill--done" x="134" y="29" width="70" height="18" rx="9" />
+      <text class="v-pill-text" x="169" y="41.5" text-anchor="middle">Board</text>
+      {cols.map((col, i) => (
+        <g>
+          <rect class="v-panel" x={x(i)} y="56" width="96" height="210" rx="10" />
+          <text class="v-sub" x={x(i) + 8} y="74">{col.name}</text>
+          {col.p ? <text class="v-mono" x={x(i) + 8} y="90">{col.p}</text> : <text class="v-accent-text" x={x(i) + 8} y="90">Closed</text>}
+        </g>
+      ))}
+    </g>
+    {cards.map((k) => (
+      <g class:list={['seq', k.c]}>
+        <rect class="v-card" x={x(k.col) + 4} y={y(k.row)} width="88" height="46" rx="7" />
+        <text class="v-text" x={x(k.col) + 12} y={y(k.row) + 18}>{k.t}</text>
+        <text class="v-mono" x={x(k.col) + 12} y={y(k.row) + 35}>{k.v}</text>
+        <circle class:list={['v-avatar', k.oc]} cx={x(k.col) + 78} cy={y(k.row) + 31} r="8" />
+        <text class="v-avatar-text" x={x(k.col) + 78} y={y(k.row) + 34} text-anchor="middle">{k.o}</text>
+      </g>
+    ))}
+    <g class="seq s4">
+      <rect class="v-card v-card--accent" x={x(3) + 4} y={y(0)} width="88" height="46" rx="7" />
+      <text class="v-text" x={x(3) + 12} y={y(0) + 18}>Valves</text>
+      <text class="v-mono" x={x(3) + 12} y={y(0) + 35}>$88k</text>
+      <rect class="v-pill v-pill--done" x={x(3) + 54} y={y(0) + 25} width="32" height="14" rx="7" />
+      <text class="v-pill-text" x={x(3) + 70} y={y(0) + 35} text-anchor="middle">Won</text>
+    </g>
+
+    <!-- The deal that moves: it appears in Qualification and ends in Proposal (the finished state). -->
+    <g class="cp__move">
+      <rect class="v-card v-card--accent" x={x(0) + 4} y={y(0)} width="88" height="46" rx="7" />
+      <text class="v-text" x={x(0) + 12} y={y(0) + 18}>Conveyor</text>
+      <text class="v-mono" x={x(0) + 12} y={y(0) + 35}>$120k</text>
+      <circle class="v-avatar" cx={x(0) + 78} cy={y(0) + 31} r="8" />
+      <text class="v-avatar-text" x={x(0) + 78} y={y(0) + 34} text-anchor="middle">AM</text>
+    </g>
+
+    <g class="seq s7">
+      <text class="v-sub" x="446" y="40">Automation</text>
+      <rect class="v-card v-card--accent" x="446" y="50" width="200" height="62" rx="9" />
+      <text class="v-text" x="460" y="72">Follow-up created</text>
+      <text class="v-mono" x="460" y="90">Follow up on the proposal</text>
+      <text class="v-mono" x="460" y="104">AM · due in 3 days</text>
+    </g>
+    <g class="seq s8">
+      <text class="v-sub" x="446" y="138">Dashboard</text>
+      <rect class="v-panel" x="446" y="148" width="200" height="118" rx="10" />
+      <text class="v-text" x="460" y="176">Open pipeline</text><text class="v-title" x="632" y="176" text-anchor="end">$467k</text>
+      <path class="v-edge" d="M460 188 H 632" />
+      <text class="v-text" x="460" y="212">Weighted forecast</text><text class="v-title" x="632" y="212" text-anchor="end">$257k</text>
+      <path class="v-edge" d="M460 224 H 632" />
+      <text class="v-text" x="460" y="248">Won</text><text class="v-title" x="632" y="248" text-anchor="end">$88k</text>
+    </g>
+  </svg>
+  <figcaption class="viz__caption" id={`${id}-cap`}><span>A deal reaches Proposal, its follow-up is created and the figures update. Example content; the stages and the automation are the product's defaults.</span><span class="viz__tag">Illustration</span></figcaption>
+</figure>
+
+<style>
+  /* The Conveyor deal moves from Qualification to Proposal and stays there (finished state: in Proposal). */
+  .cp__move { transform: translateX(100px); animation: cp-move 14s var(--ease) infinite both; animation-delay: -6.2s; }
+  @keyframes cp-move { 0%, 30% { transform: none; opacity: 0; } 34% { transform: none; opacity: 1; } 46%, 93% { transform: translateX(100px); opacity: 1; } 100% { transform: translateX(100px); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .cp__move { animation: none !important; transform: translateX(100px) !important; opacity: 1 !important; } }
+</style>

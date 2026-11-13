@@ -1,0 +1,279 @@
+---
+// /crm-platform/guide/: how to use BIZOMAT Customer Relationship Management (CRM), step by step. Every button and field
+// named here is the application's own label (apps/work/src/client/crm); the facts come from src/data/platform-catalog.ts
+// (CRM). Screens are real (src/data/screenshots.ts), captured with a fictional organisation.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import Button from '../../components/Button.astro';
+import '../../styles/product.css';
+import '../../styles/visuals.css';
+import { screenshots } from '../../data/screenshots.ts';
+import { SITE } from '../../config/site.ts';
+import { APP_LINKS } from '../../config/platform.ts';
+import { CRM } from '../../data/platform-catalog.ts';
+
+const PAGE = '/crm-platform/guide/';
+const shot = (name: string) => screenshots('crm').find((s) => s.src.endsWith(`/${name}.webp`));
+const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
+const description = 'How to use BIZOMAT Customer Relationship Management (CRM), step by step: organisations, your team, customers, leads, deals, follow-ups, reports and automations.';
+
+interface Step { t: string; x: string }
+interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
+const parts: Part[] = [
+  {
+    id: 'sign-in', title: 'Sign in or create an account',
+    steps: [
+      { t: 'Open the CRM', x: 'Go to bizomat.ai/crm, or choose Sign in, then Customer Relationship Management, at the top of any BIZOMAT page.' },
+      { t: 'Sign in', x: 'Use your BIZOMAT email and password. If you use Project Management, it is the same account, and signing in to one signs you in to both.' },
+      { t: 'New to BIZOMAT?', x: 'Choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+    ],
+  },
+  {
+    id: 'organisation', title: 'Create your organisation',
+    lead: 'An organisation is one business, or one team, that keeps its own customers, pipelines, people and settings. You can belong to several.',
+    steps: [
+      { t: 'Name it', x: 'The first time you sign in, the CRM asks you to create an organisation. Enter its name and, if you like, its industry, website and country.' },
+      { t: 'Choose its currency', x: 'Every amount in the organisation uses it. You can change it until the first deal is created.' },
+      { t: 'Create organisation', x: `You become its owner. It starts with a ${CRM.stages.length}-stage sales pipeline and ${CRM.automations.length} automations, and no sample records.` },
+      { t: 'Switch organisations', x: 'Open the organisation menu at the top left to move between your organisations, or choose Create or join an organisation.' },
+      { t: 'Details and logo', x: 'Settings, Organisation holds the organisation\'s details, its logo and its time zone.' },
+    ],
+  },
+  {
+    id: 'team', title: 'Invite your team and choose roles',
+    steps: [
+      { t: 'Invite someone', x: 'Open Team, then Invitations. Enter the person\'s email address, choose their role, add a message if you like, and choose Send invitation.' },
+      { t: 'Email or link', x: 'BIZOMAT emails the invitation when its email service is set up. Otherwise the CRM shows an Invitation link: copy it and send it yourself.' },
+      { t: 'Accepting', x: 'The person opens the link and signs in, or creates an account, with the invited email address, then accepts. An invitation works once and expires after 14 days. Send again makes a new link; Withdraw cancels it.' },
+      { t: 'Members', x: 'Under Members, change a person\'s role or remove them. When you remove someone, you can hand their records and open activities to a colleague.' },
+      { t: 'Teams', x: 'Under Teams, group people (by region or product, for example) and name a team lead. The dashboard and reports can then be filtered by team.' },
+    ],
+    roles: true,
+  },
+  {
+    id: 'set-up', title: 'Set the CRM up for your business',
+    lead: 'Everything here is in Settings. Owners, administrators and, for most of it, managers can change it.',
+    steps: [
+      { t: 'Pipelines and stages', x: 'Rename the stages, add your own, set each stage\'s probability, or add more pipelines, for example one for new business and one for renewals.' },
+      { t: 'Statuses and lists', x: 'Lead statuses, lead and contact sources, activity types, lost reasons, company and contact statuses, and industries.' },
+      { t: 'Custom fields', x: `Your own fields on leads, contacts, companies and deals, of ${CRM.customFieldTypes.length} types: ${list(CRM.customFieldTypes.map((t) => t.toLowerCase()))}.` },
+      { t: 'Tags', x: 'Coloured labels to put on any record, then filter by.' },
+      { t: 'Products and services', x: 'A catalogue with prices, to add to deals.' },
+      { t: 'Email templates', x: 'Reusable emails for logging an email to a contact.' },
+    ],
+  },
+  {
+    id: 'customers', title: 'Add contacts and companies',
+    steps: [
+      { t: 'A company', x: 'Open Companies and choose New company. Enter its name and anything else you know: website, industry, size, phone.' },
+      { t: 'A contact', x: 'Open Contacts and choose New contact. To link the person to a company, type part of its name in Company and pick it from the list. A contact can have more than one email address and phone number.' },
+      { t: 'Duplicates', x: 'If an email address, phone number or name matches someone you already have, the CRM warns you before you create a second record.' },
+      { t: 'Import from a CSV file', x: 'On Contacts, Companies or Leads, choose Import and pick the file. Match each column to a field, or leave it out, choose whether duplicates are skipped, updated or created, then import.' },
+    ],
+    shot: 'crm-contact',
+  },
+  {
+    id: 'leads', title: 'Capture, score and convert leads',
+    lead: 'A lead is someone who may become a customer: an enquiry, a referral, a name from a trade show.',
+    steps: [
+      { t: 'New lead', x: 'Open Leads and choose New lead. Record who it is, their company, how they found you (the source) and an estimated value.' },
+      { t: 'Work it through its statuses', x: `${list(CRM.leadStatuses.slice(0, 3))} while you work it, then ${CRM.leadStatuses[3]} or ${CRM.leadStatuses[4]}. Converted is set for you.` },
+      { t: 'Read the score', x: 'The lead score on the lead shows the points behind it. If you know better, set it by hand in Edit; clear it to let the CRM calculate it again.' },
+      { t: 'Convert', x: 'When the lead is ready, choose Convert. Choose a new or existing contact, a new or existing company (or none), and whether to create a deal with its title, value, expected close, pipeline and stage.' },
+      { t: 'Once only', x: 'A lead converts once, and its activities move to the new records. If a contact with the same email address exists, the CRM offers to use it instead.' },
+    ],
+    shot: 'crm-leads',
+  },
+  {
+    id: 'deals', title: 'Work deals on the pipeline board',
+    steps: [
+      { t: 'The board', x: 'Open Deals. Board shows each stage with its number of deals and their value; List shows the same deals as a table.' },
+      { t: 'New deal', x: 'Choose New deal, or the + at the top of a stage, and enter its title, value, company and expected close date.' },
+      { t: 'Move it', x: 'Drag a card to another stage. Without a mouse, open the card\'s menu and choose the stage.' },
+      { t: 'Win or lose it', x: 'Drag the card onto Won or Lost, which appear while you drag, or use the card\'s menu, or Won and Lost on the deal itself. A lost deal asks for the reason.' },
+      { t: 'Products and services', x: 'On the deal, add lines from your catalogue or new ones, with quantity and discount. The deal\'s value then becomes their total.' },
+      { t: 'People and history', x: 'Contacts on the deal shows who is involved. Stage history shows when the deal moved and how long it spent in each stage.' },
+    ],
+    shot: 'crm-board',
+  },
+  {
+    id: 'activities', title: 'Plan activities and follow-ups',
+    steps: [
+      { t: 'New activity', x: 'Open Activities and choose New activity, or use Plan an activity on a contact, company, lead or deal.' },
+      { t: 'What, when and who', x: `Choose the type (${list(CRM.activityTypes.map((t) => t.toLowerCase()))}), a title, the due date and time, a priority and who it is assigned to.` },
+      { t: 'Your lists', x: 'The tabs show My activities, Today\'s follow-ups, Overdue, Upcoming, Team activities and Completed.' },
+      { t: 'Complete it', x: 'Tick the box to complete an activity. Open it to record the outcome.' },
+      { t: 'Tasks and Calendar', x: 'Tasks lists tasks and follow-ups for you and your colleagues; Calendar shows activities by month.' },
+      { t: 'Elsewhere', x: 'An activity\'s menu has Add to my calendar (.ics) and Create a project task, which puts it in a Project Management project with a link back.' },
+    ],
+    shot: 'crm-activities',
+  },
+  {
+    id: 'records', title: 'Notes, documents and the timeline',
+    steps: [
+      { t: 'Write it down', x: 'On any record, write a note, an internal comment or meeting notes, and choose Add. Mention a colleague with @ to notify them.' },
+      { t: 'Pin what matters', x: 'Pin a note to keep it at the top.' },
+      { t: 'Documents', x: 'Upload a document and choose its kind: proposal, quote, contract or other. Upload a new version later; earlier versions are kept.' },
+      { t: 'The timeline', x: 'Timeline lists everything about the record, newest first: changes, activities, notes and documents. A company\'s timeline includes its contacts and deals.' },
+      { t: 'Archive and delete', x: 'Archive a record you no longer need, or delete it. Deleted records move to Deleted, where they can be restored.' },
+    ],
+    shot: 'crm-deal',
+  },
+  {
+    id: 'email', title: 'Log emails',
+    steps: [
+      { t: 'Write', x: 'On Activities choose Log an email, or Email on a record. Pick the contact, a template if you like, and write the email.' },
+      { t: 'Send from your own email', x: 'Choose Open in my email and log: your mail program opens with the email filled in, ready to send. Choose Log only to record an email you have already sent.' },
+      { t: 'What the CRM keeps', x: 'The email is logged on the contact\'s timeline. BIZOMAT does not send it, and it does not read your mailbox: Gmail and Microsoft 365 synchronisation is not available yet.' },
+    ],
+  },
+  {
+    id: 'lists', title: 'Search, filters, views and bulk changes',
+    steps: [
+      { t: 'Search', x: 'Search the CRM, at the top, looks through contacts, companies, leads, deals, activities and notes. Press Ctrl+K (Cmd+K on a Mac) to jump to it.' },
+      { t: 'Built-in views', x: 'The tabs above a list are ready-made views, such as Open leads, My leads, Closing soon or Won deals.' },
+      { t: 'Filters and columns', x: 'Filters narrows the list by any field, tag or custom field, matching all or any of your conditions. Columns chooses what the list shows; click a heading to sort.' },
+      { t: 'Save view', x: 'Keeps the filters, sort and columns under a name. Managers and administrators can share a view with everyone.' },
+      { t: 'Bulk changes', x: 'Tick records to change them together: assign, change status or priority, tag, archive, delete or restore.' },
+      { t: 'Export', x: 'Export downloads what the list shows as a CSV file, if your role allows export.' },
+    ],
+  },
+  {
+    id: 'reports', title: 'Read the dashboard and reports',
+    steps: [
+      { t: 'Overview', x: 'The dashboard: open pipeline, weighted forecast, value won, win rate, new leads, lead conversion, contacts and companies and overdue follow-ups, with charts below.' },
+      { t: 'Filter it', x: 'Choose a period or exact dates and a person; where you have them, a team and a pipeline.' },
+      { t: 'Reports', x: `${CRM.reports.length} reports: ${list(CRM.reports.map((r, i) => (i ? r.toLowerCase() : r)))}.` },
+      { t: 'Export', x: 'Each report shows its figures, a chart and a table. Export CSV downloads it.' },
+    ],
+    shot: 'crm-overview',
+  },
+  {
+    id: 'automations', title: 'Automate routine follow-ups',
+    steps: [
+      { t: 'The seven to start with', x: `Open Automations. Every organisation starts with: ${list(CRM.automations.map((a, i) => (i ? a.charAt(0).toLowerCase() + a.slice(1) : a)))}. Switch each on or off, or choose Edit.` },
+      { t: 'Your own', x: 'Choose New automation and start from a template or build your own: When (the trigger), Only if (optional conditions) and Then (one or more actions).' },
+      { t: 'When it runs', x: 'Most automations run straight after the change. Deals close to their expected close date and overdue activities are checked every 15 minutes, and each record fires once.' },
+      { t: 'History', x: 'Execution history lists every run and its result.' },
+    ],
+    shot: 'crm-automations',
+  },
+  {
+    id: 'notifications', title: 'Notifications and your calendar',
+    steps: [
+      { t: 'The bell', x: 'The bell shows your notifications in this organisation; the organisation menu shows how many are unread in the others.' },
+      { t: 'Choose what you get', x: 'Settings, My notifications sets each kind of notification In BIZOMAT, By email, or both.' },
+      { t: 'Calendar feed', x: 'Settings, Calendar feed: choose Make my calendar address and add it to your calendar app as a subscription. Make a new address or Stop the address at any time.' },
+    ],
+  },
+  {
+    id: 'permissions', title: 'Permissions, audit trail and leaving',
+    steps: [
+      { t: 'Permissions', x: 'Owners and administrators: Settings, Permissions. Choose a role, then for each area set View, Edit and Delete to All, Own or None and tick Create, Export and Import. Restore the defaults undoes your changes.' },
+      { t: 'Audit trail', x: 'Settings, Audit trail lists who changed what, including imports and exports.' },
+      { t: 'Transfer ownership', x: 'The owner can hand the organisation to another member on Team; the previous owner becomes an administrator.' },
+      { t: 'Leave', x: 'Anyone but the owner can leave an organisation from Team.' },
+      { t: 'Delete the organisation', x: 'The owner, in Settings, Organisation, after typing its name. Every member loses access at once.' },
+    ],
+    shot: 'crm-permissions',
+  },
+];
+const questions = [
+  { q: 'Is the CRM the same as Project Management?', a: 'No. They are two BIZOMAT products that share one account. The CRM is for customers and sales; Project Management is for projects and tasks. An activity in the CRM can become a task in Project Management.' },
+  { q: 'Can I belong to more than one organisation?', a: 'Yes. Create as many as you need, or accept invitations to others, and switch between them from the organisation menu. Each keeps its own customers, people and settings.' },
+  { q: 'Does the CRM send emails to my customers?', a: 'No. You send them from your own mail program and the CRM logs them. BIZOMAT only sends its own invitations and notifications.' },
+  { q: 'Can I bring my data from another CRM?', a: 'Yes, for contacts, companies and leads: export them from the other system as a CSV file and use Import. Deals and activities are added in the CRM itself.' },
+  { q: 'Who can see my organisation\'s customers?', a: 'Only its members, as their roles allow. People outside the organisation cannot see it or tell that it exists.' },
+];
+const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
+---
+<BaseLayout title="Customer Relationship Management user guide" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Customer Relationship Management', href: '/crm-platform/' }, { label: 'User guide', href: PAGE }]}
+  schema={[{ '@type': 'HowTo', name: 'How to use BIZOMAT Customer Relationship Management (CRM)', url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
+  <section class="pp-hero" aria-labelledby="guide-title">
+    <Container>
+      <p class="bz-eyebrow">BIZOMAT Customer Relationship Management (CRM)</p>
+      <h1 id="guide-title">How to use the CRM</h1>
+      <p class="pp-hero__lead">Step by step, from your first organisation to reports and automations. Every button and field is named as it appears in the application.</p>
+      <div class="pp-hero__actions">
+        <Button href={APP_LINKS.crm.signIn} variant="accent" rel="noopener" data-cta="crm-guide-start">Open the CRM</Button>
+        <Button href="/crm-platform/" variant="secondary" data-cta="crm-guide-product">About the CRM</Button>
+      </div>
+      <nav class="guide-toc" aria-label="In this guide">
+        <h2 class="guide-toc__title">In this guide</h2>
+        <ol>
+          {parts.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+          <li><a href="#questions">Common questions</a></li>
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  {parts.map((p, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
+      <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
+        <div>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          {p.lead && <p class="guide-lead">{p.lead}</p>}
+          <ol class="pp-steps guide-steps">
+            {p.steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+          </ol>
+          {p.roles && (
+            <div class="guide-roles">
+              <h3>The {CRM.roles.length} roles</h3>
+              <ul class="pp-list">{CRM.roles.map((r) => <li><strong>{r.name}:</strong> {r.text}</li>)}</ul>
+              <p class="pp-table-note">Owners and administrators can adjust the other four roles in Settings, Permissions (step {parts.findIndex((x) => x.id === 'permissions') + 1}).</p>
+            </div>
+          )}
+        </div>
+        {shots[p.id] && (
+          <figure class="pp-shot guide-shot">
+            <img src={shots[p.id]!.src} alt={`${shots[p.id]!.title}. ${shots[p.id]!.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+            <figcaption><span>{shots[p.id]!.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+          </figure>
+        )}
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="questions" aria-labelledby="questions-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Common questions</p>
+        <h2 id="questions-title">Before you ask</h2>
+      </div>
+      <dl class="guide-faq">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="guide-cta">
+    <Container class="pp-band">
+      <h2 id="guide-cta">Ready? Your first organisation takes a few fields.</h2>
+      <div class="pp-band__actions">
+        <Button href={APP_LINKS.crm.signIn} variant="accent" rel="noopener" data-cta="crm-guide-band-start">Open the CRM</Button>
+        <Button href="/crm-platform/" variant="secondary" data-cta="crm-guide-band-product">About the CRM</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .guide-toc { margin-top: 2rem; padding: 1.2rem 1.4rem; max-width: 52rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-toc__title { font-size: 1.02rem; margin-bottom: .7rem; }
+  .guide-toc ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 2rem; margin: 0; padding-left: 1.3rem; }
+  .guide-toc a { color: var(--ink-2); }
+  .guide-lead { margin: .8rem 0 0; max-width: 46rem; color: var(--ink-2); font-size: var(--step-1); line-height: 1.5; }
+  .guide-steps { margin-top: 1.4rem; }
+  .guide-roles { margin-top: 1.6rem; }
+  .guide-roles h3 { font-size: 1.02rem; margin-bottom: .7rem; }
+  .guide-shot { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+  .guide-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
+  .guide-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-faq dt { font-weight: 650; color: var(--ink); }
+  .guide-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
+  @media (max-width: 1000px) { .guide-shot { position: static; } }
+  @media (max-width: 640px) { .guide-toc ol { grid-template-columns: 1fr; } }
+</style>

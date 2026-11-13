@@ -4,7 +4,7 @@
 //  - Describe only what the products do today (src/data/platform-catalog.ts records where each fact comes from).
 //  - A product with status 'soon' has no URL and is never shown as a link or as available.
 //  - Links in solutions point only at pages that exist on this site or at a product's own address.
-import { CAD, RESOURCES, WORK } from '../data/platform-catalog.ts';
+import { CAD, CRM, RESOURCES, WORK } from '../data/platform-catalog.ts';
 
 export type ProductStatus = 'available' | 'soon';
 
@@ -52,6 +52,17 @@ export const PRODUCTS: readonly Product[] = [
     url: '/work/',
     signIn: true,
     action: 'Explore Project Management',
+  },
+  {
+    id: 'crm',
+    name: CRM.name,
+    fullName: `BIZOMAT ${CRM.name}`,
+    tagline: CRM.headline,
+    summary: CRM.summary,
+    status: 'available',
+    url: '/crm-platform/',
+    signIn: true,
+    action: 'Explore the CRM',
   },
   {
     id: 'resources',
@@ -102,6 +113,7 @@ export const SOLUTIONS: readonly Solution[] = [
     ],
     paths: [
       { label: 'Project Management', href: '/work/', note: 'Projects, tasks and teams in one workspace.' },
+      { label: 'Customer Relationship Management', href: '/crm-platform/', note: 'Customers, leads, deals and follow-ups with your team.' },
       { label: 'Business tools', href: '/tools/?topic=business-commercial', note: 'Costing, quoting and investment calculators.' },
       { label: 'Business books', href: '/reados/?topic=business', note: 'Finance, strategy and governance, chapter by chapter.' },
     ],
@@ -134,6 +146,7 @@ export const SOLUTIONS: readonly Solution[] = [
       { label: 'CAD Automation', href: '/cad-automation/', note: 'Automation for engineering and CAD work.' },
       { label: 'Technology books', href: '/reados/?topic=technology', note: 'AI, software and digital systems in practice.' },
       { label: 'Project Management automations', href: '/work/#automations', note: 'Let status changes and dates move routine work forward.' },
+      { label: 'CRM automations', href: '/crm-platform/#automations', note: 'Follow-ups, reminders and alerts when leads and deals change.' },
       { label: 'Talk to BIZOMAT', href: '/contact/', note: 'Turn a repeated spreadsheet or manual process into a focused tool.' },
     ],
   },

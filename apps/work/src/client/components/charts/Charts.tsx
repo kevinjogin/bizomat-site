@@ -18,10 +18,32 @@ function colorOf(d: ChartDatum, i: number) {
 }
 
 function fmt(n: number) {
-  if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (Math.abs(n) >= 1_000_000) return `${+(n / 1_000_000).toFixed(1)}M`;
   if (Math.abs(n) >= 10_000) return `${(n / 1000).toFixed(0)}k`;
-  if (Math.abs(n) >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  if (Math.abs(n) >= 1000) return `${+(n / 1000).toFixed(1)}k`;
   return Number.isInteger(n) ? String(n) : n.toFixed(1);
+}
+
+/**
+ * The top of a value axis, rounded so that its three ticks (0, half, top) read as round numbers: 152,000 -> 200,000,
+ * 669,000 -> 800,000, 3 -> 4. When every value is a whole number (counts), the half tick is whole too, so a count
+ * axis never shows 1.5.
+ */
+export function niceTop(max: number, whole: boolean): number {
+  if (!(max > 0)) return 1;
+  const exp = 10 ** Math.floor(Math.log10(max));
+  for (const m of [1, 2, 4, 5, 6, 8, 10]) {
+    const top = m * exp;
+    if (top >= max * (1 - 1e-9) && (!whole || Number.isInteger(top / 2))) return top;
+  }
+  return 10 * exp;
+}
+
+/** Axis scale for a set of values: the rounded top and the ticks; only the zero line when every value is zero. */
+function scale(data: ChartDatum[]) {
+  const max = Math.max(0, ...data.map((d) => d.value));
+  const top = niceTop(max, data.every((d) => Number.isInteger(d.value)));
+  return { top, ticks: max > 0 ? [0, top / 2, top] : [0] };
 }
 
 function summary(data: ChartDatum[], kind: string) {
@@ -76,12 +98,12 @@ export function BarChart({ data, height = 180, horizontal, showLegend = false }:
   const inner = W - pad.l - pad.r;
   const bw = inner / data.length;
   const ih = height - pad.b - pad.t;
-  const ticks = [0, 0.5, 1].map((f) => f * max);
+  const { top, ticks } = scale(data);
   return (
     <div className="chart">
       <svg className="chart-svg" role="img" aria-label={summary(data, 'Bar chart')} width="100%" height={height} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none">
         {ticks.map((t) => {
-          const y = pad.t + ih - (t / max) * ih;
+          const y = pad.t + ih - (t / top) * ih;
           return (
             <g key={t}>
               <line x1={pad.l} x2={W - pad.r} y1={y} y2={y} stroke="var(--border)" />
@@ -90,7 +112,7 @@ export function BarChart({ data, height = 180, horizontal, showLegend = false }:
           );
         })}
         {data.map((d, i) => {
-          const h = Math.max(1, (d.value / max) * ih);
+          const h = Math.max(1, (d.value / top) * ih);
           const x = pad.l + i * bw + bw * 0.15;
           return (
             <g key={d.key}>
@@ -155,22 +177,24 @@ export function LineChart({ data, height = 180 }: { data: ChartDatum[]; height?:
   if (!data.length) return <NoData />;
   const W = 400;
   const pad = { l: 30, b: 30, t: 10, r: 10 };
-  const max = Math.max(1, ...data.map((d) => d.value));
+  const { top, ticks } = scale(data);
   const ih = height - pad.t - pad.b;
   const step = data.length > 1 ? (W - pad.l - pad.r) / (data.length - 1) : 0;
-  const pts = data.map((d, i) => [pad.l + i * step, pad.t + ih - (d.value / max) * ih] as const);
+  // One point sits in the middle rather than on the axis.
+  const x0 = data.length > 1 ? pad.l : pad.l + (W - pad.l - pad.r) / 2;
+  const pts = data.map((d, i) => [x0 + i * step, pad.t + ih - (d.value / top) * ih] as const);
   const path = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]},${p[1]}`).join(' ');
   const color = data[0].color || FALLBACK[0];
   const labelEvery = Math.max(1, Math.ceil(data.length / 8));
   return (
     <div className="chart">
       <svg className="chart-svg" role="img" aria-label={summary(data, 'Line chart')} width="100%" height={height} viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none">
-        {[0, 0.5, 1].map((f) => {
-          const y = pad.t + ih - f * ih;
+        {ticks.map((t) => {
+          const y = pad.t + ih - (t / top) * ih;
           return (
-            <g key={f}>
+            <g key={t}>
               <line x1={pad.l} x2={W - pad.r} y1={y} y2={y} stroke="var(--border)" />
-              <text x={pad.l - 4} y={y + 4} textAnchor="end">{fmt(f * max)}</text>
+              <text x={pad.l - 4} y={y + 4} textAnchor="end">{fmt(t)}</text>
             </g>
           );
         })}

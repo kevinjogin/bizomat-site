@@ -9,14 +9,17 @@ const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const 
 
 // BIZOMAT navigation (5 Nov 2026): CAD Automation | Project Management | Resources | Engine Room, with AI Search and a
 // Sign in menu (one entry per application) on the right. The Engine Room joins what were About and Proof of Work
-// (owner request, 5 Nov 2026).
-test('the main navigation reads CAD Automation, Project Management, Resources, Engine Room', () => {
-  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
+// (owner request, 5 Nov 2026). Customer Relationship Management joined on 13 Nov 2026 (owner request), spelled out, with
+// "CRM" only where the header row is too narrow.
+test('the main navigation reads CAD Automation, Project Management, Customer Relationship Management, Resources, Engine Room', () => {
+  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Customer Relationship Management', '/crm-platform/'], ['Resources', '/resources/'], ['Engine Room', '/engine-room/']]);
+  assert.deepEqual(NAV.map((n) => n.short), [undefined, undefined, 'CRM', undefined, undefined]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
+  assert.deepEqual(menu('Customer Relationship Management'), [['Customer Relationship Management', '/crm-platform/'], ['User guide', '/crm-platform/guide/'], ['Open the CRM', 'https://bizomat.ai/crm/login']]);
   assert.deepEqual(menu('Engine Room'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests'], ['Products', '/products/'], ['Contact', '/contact/']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
-  assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation', 'CRM']);
+  assert.deepEqual(SIGN_IN.map((s) => s.label), ['Project Management', 'CAD Automation', 'Customer Relationship Management']);
   for (const s of SIGN_IN) assert.match(s.href, /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/login$/, `${s.label} signs in on its own application`);
   assert.deepEqual(SIGN_IN.map((s) => s.href), ['https://bizomat.ai/tasks/login', 'https://bizomat.ai/cad/login', 'https://bizomat.ai/crm/login'], 'all under bizomat.ai');
   assert.deepEqual(CRUMB, { tools: 'Tools', library: 'Library' });
@@ -27,13 +30,14 @@ test('the main navigation reads CAD Automation, Project Management, Resources, E
   assert.match(header, /<details class="nav-menu"/);
   assert.match(header, /<details class="nav-menu signin-menu" data-nav-menu>/);
   assert.match(header, /AI_SEARCH\.label/);
+  assert.match(header, /<abbr class="site-nav__short" title=\{item\.label\}>\{item\.short\}<\/abbr>/, 'a short form keeps the full label as its title');
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
-  for (const page of ['cad-automation.astro', 'work.astro', 'engine-room.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  for (const page of ['cad-automation.astro', 'work.astro', 'crm-platform.astro', 'crm-platform/guide.astro', 'engine-room.astro', 'sign-in.astro', 'products.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
 });
 
 test('the footer covers products, resources, company and the applications, with the legal pages on every page', () => {
   const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.apps, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
-  for (const pair of [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['Home', '/'], ['About', '/engine-room/'], ['Contact', '/contact/'], ['All products', '/products/'], ['Solutions', '/solutions/'], ['Privacy Policy', '/privacy/'], ['Terms of Use', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
+  for (const pair of [['CAD Automation', '/cad-automation/'], ['Project Management', '/work/'], ['Customer Relationship Management', '/crm-platform/'], ['Resources', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['Home', '/'], ['About', '/engine-room/'], ['Contact', '/contact/'], ['All products', '/products/'], ['Solutions', '/solutions/'], ['Privacy Policy', '/privacy/'], ['Terms of Use', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
   const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);

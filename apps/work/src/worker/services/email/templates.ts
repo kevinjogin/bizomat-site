@@ -366,11 +366,11 @@ export function renderEmail(d: TemplateData): RenderedEmail {
       });
     case 'crm_invitation':
       return layout({
-        product: 'CRM',
+        product: 'Customer Relationship Management',
         subject: `You've been invited to join ${oneLine(d.organisation, 80)} on BIZOMAT CRM`,
         preheader: `${d.inviter} invited you to ${d.organisation} as ${d.role}.`,
         heading: `Join ${d.organisation} on BIZOMAT CRM`,
-        intro: [`${d.inviter} has invited you to work with them in ${d.organisation}, a CRM organisation in BIZOMAT CRM.`],
+        intro: [`${d.inviter} has invited you to work with them in ${d.organisation} on BIZOMAT Customer Relationship Management (CRM), where a team keeps its contacts, companies, leads, deals and follow-ups in one place.`],
         rows: [
           ['Organisation', d.organisation],
           ['Invited by', d.inviter],
@@ -389,7 +389,7 @@ export function renderEmail(d: TemplateData): RenderedEmail {
       });
     case 'crm_notification':
       return layout({
-        product: 'CRM',
+        product: 'Customer Relationship Management',
         subject: d.title,
         preheader: clip(d.body, 120),
         heading: d.title,

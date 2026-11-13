@@ -1,16 +1,18 @@
 // The BIZOMAT platform catalogue: public facts about the two applications and the website's own sections.
 //
-// One source for the product pages (/cad-automation/, /work/), the homepage cards, the Engine Room (/engine-room/) and the AI search index
+// One source for the product pages (/cad-automation/, /work/, /crm-platform/ and its guide), the homepage cards, the Engine Room (/engine-room/) and the AI search index
 // (/discovery-index.json "pages"). Every entry is PUBLIC: product descriptions, documentation and page addresses.
 // Nothing here comes from, or points into, a customer's projects, files or account, so search over it cannot reveal
 // private data. Every capability is taken from the applications' own code and documentation in this repository:
 //   CAD Automation:      apps/cad/opensketch/site.py (claims checked against sw_tools.py, the feature registry,
 //                        auth.py, mcpauth.py, devicebridge.py), apps/cad/opensketch/catalog.py, apps/cad/docs/
 //   Project Management:  apps/work/README.md (feature table), apps/work/ARCHITECTURE.md, apps/work/src/shared/columns.ts
+//   Customer Relationship Management (CRM): apps/work/src/shared/crm/ (roles.ts, defaults.ts, fields.ts, automations.ts),
+//                        apps/work/src/worker/crm/routes-insights.ts (REPORTS), docs/crm/README.md
 // Keep it that way: when a capability changes in an app, change it here in the same commit.
 import { APP_LINKS } from '../config/platform.ts';
 
-export type PlatformArea = 'CAD Automation' | 'Project Management' | 'Resources' | 'BIZOMAT';
+export type PlatformArea = 'CAD Automation' | 'Project Management' | 'Customer Relationship Management' | 'Resources' | 'BIZOMAT';
 export type PlatformKind = 'Product' | 'Capability' | 'Documentation' | 'Integration' | 'Page';
 
 export interface PlatformEntry {
@@ -72,6 +74,57 @@ export const WORK = {
   integrations: 'Signed outgoing webhooks and incoming webhooks for Slack and Microsoft Teams. Personal API tokens. Google sign-in when it is configured.',
 } as const;
 
+// ---------- Customer Relationship Management (CRM, 13 Nov 2026) ----------
+// Served by the Project Management application at bizomat.ai/crm, with the same accounts. tests/platform-catalog.test.ts
+// compares the lists below with the application's code.
+export const CRM = {
+  name: 'Customer Relationship Management',
+  short: 'CRM',
+  headline: 'Customers, leads and deals, managed with your team.',
+  summary:
+    'BIZOMAT Customer Relationship Management (CRM) keeps your contacts, companies, leads, deals and follow-ups in one shared place. Work your pipeline on a board, plan every activity and see what is closing from live reports.',
+  capabilities: [
+    { title: 'Contacts and companies', text: 'Everyone you deal with and the businesses they work for: several emails and phone numbers, tags, custom fields, pictures and logos, and a warning before you add a duplicate.' },
+    { title: 'Leads you can qualify', text: 'Statuses from New to Converted, a lead score that explains itself, and conversion into a contact, a company and a deal in one step.' },
+    { title: 'Pipelines and deals', text: 'Your own pipelines, stages and probabilities. A board you drag deals across, Won and Lost, products and services on each deal, and its stage history.' },
+    { title: 'Activities and follow-ups', text: 'Calls, emails, meetings, visits, demonstrations, tasks and more, assigned with a due date and priority, on lists, a calendar and your own calendar app.' },
+    { title: 'Dashboard and reports', text: 'Open pipeline, weighted forecast, win rate and overdue follow-ups at a glance, and eleven reports with a chart, a table and CSV export.' },
+    { title: 'Automations', text: 'Seven ready-made automations in every new organisation, and your own: a trigger, conditions and actions such as notify, create a follow-up or flag a deal.' },
+  ],
+  roles: [
+    { name: 'Owner', text: 'Everything, including handing over ownership and deleting the organisation. Each organisation has exactly one.' },
+    { name: 'Administrator', text: 'Everything else: members, roles, permissions, settings and every record.' },
+    { name: 'Manager', text: 'All records, pipelines, fields, lists, products, automations and teams. Invites people but does not change roles.' },
+    { name: 'Sales Executive', text: 'Sees all records and adds new ones; edits and deletes the records they own; sees reports. No import or export.' },
+    { name: 'Member', text: 'Sees all records, adds new ones and edits the ones they own. Never deletes.' },
+    { name: 'Viewer', text: 'Reads everything their organisation allows, and changes nothing.' },
+  ],
+  /** The pipeline a new organisation starts with (apps/work/src/shared/crm/defaults.ts, DEFAULT_PIPELINE). */
+  stages: [
+    { name: 'Qualification', probability: 10 },
+    { name: 'Needs analysis', probability: 25 },
+    { name: 'Proposal', probability: 50 },
+    { name: 'Negotiation', probability: 75 },
+    { name: 'Contract sent', probability: 90 },
+  ],
+  leadStatuses: ['New', 'Contacted', 'Engaged', 'Qualified', 'Unqualified', 'Converted'],
+  activityTypes: ['Call', 'Email', 'Meeting', 'Appointment', 'Follow-up', 'Presentation', 'Demonstration', 'Proposal', 'Customer visit', 'Task', 'General'],
+  /** Custom field types, as the application labels them (CUSTOM_FIELD_TYPE_LABELS). */
+  customFieldTypes: ['Text', 'Long text', 'Number', 'Amount', 'Date', 'Dropdown', 'Multiple choice', 'Checkbox', 'Web address', 'Email', 'Phone'],
+  reports: ['Lead conversion', 'Sales pipeline', 'Revenue', 'Won and lost deals', 'Salesperson performance', 'Lead source performance', 'Activities', 'Monthly and quarterly trends', 'Forecast revenue', 'Deal ageing', 'Sales cycle duration'],
+  /** The automations every new organisation starts with (PRESETS). */
+  automations: [
+    'Tell the owner about a new lead',
+    'Remind about overdue follow-ups',
+    'Tell managers when a high-value deal moves',
+    'Follow up after a proposal',
+    'Tell people about tasks assigned to them',
+    'Flag deals close to their expected close date',
+    'Tell the team when a deal is won or lost',
+  ],
+  integrations: 'Email logging from your own mail program, a calendar file for every activity and a private calendar subscription, CSV import and export, and tasks in Project Management.',
+} as const;
+
 // ---------- Resources (formerly kevos.com Tools and Library) ----------
 export const RESOURCES = {
   name: 'Resources',
@@ -82,6 +135,7 @@ export const RESOURCES = {
 
 const C = 'CAD Automation';
 const W = 'Project Management';
+const M = 'Customer Relationship Management';
 const R = 'Resources';
 const P = 'BIZOMAT';
 
@@ -121,6 +175,26 @@ export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
     keywords: 'dashboard dashboards reporting reports widgets charts goals okr my work planner progress tracking kpi' },
   { id: 'int:work', title: 'Integrations: Slack, Microsoft Teams and webhooks', summary: WORK.integrations, url: '/work/#integrations', area: W, kind: 'Integration',
     keywords: 'integration integrations slack microsoft teams webhook webhooks api token google sign-in connect systems' },
+
+  // Customer Relationship Management (CRM)
+  { id: 'page:crm', title: 'BIZOMAT Customer Relationship Management (CRM)', summary: CRM.summary, url: '/crm-platform/', area: M, kind: 'Product',
+    keywords: 'crm customer relationship management customers clients contacts companies accounts leads prospects deals opportunities sales pipeline sales team selling follow ups hubspot pipedrive salesforce' },
+  { id: 'page:crm-pipeline', title: 'CRM pipelines and deals: a board you drag deals across', summary: 'Several pipelines with your own stages and probabilities, a drag-and-drop board with Won and Lost, products and services on each deal, weighted value and stage history.', url: '/crm-platform/#pipeline', area: M, kind: 'Capability',
+    keywords: 'pipeline pipelines deals deal board kanban stages probability weighted forecast won lost opportunity sales process products quote' },
+  { id: 'page:crm-leads', title: 'CRM leads: capture, score and convert', summary: 'Lead statuses from New to Converted, a lead score that explains itself, duplicate warnings, and conversion into a contact, a company and a deal in one step.', url: '/crm-platform/#records', area: M, kind: 'Capability',
+    keywords: 'leads lead management lead scoring qualify qualification convert conversion prospects enquiries contacts companies duplicates' },
+  { id: 'page:crm-activities', title: 'CRM activities, follow-ups and calendar', summary: 'Calls, emails, meetings, visits and tasks with due dates, priorities and outcomes; overdue follow-ups, a calendar and a subscription for your own calendar app.', url: '/crm-platform/#activities', area: M, kind: 'Capability',
+    keywords: 'activities follow ups follow-up reminders calls meetings appointments tasks calendar ics schedule visits overdue' },
+  { id: 'page:crm-reports', title: 'CRM dashboard and sales reports', summary: 'A dashboard and eleven reports computed from your records: pipeline, revenue, forecast, win and loss, lead sources, salesperson performance, deal ageing and sales cycle.', url: '/crm-platform/#reports', area: M, kind: 'Capability',
+    keywords: 'sales reports reporting dashboard forecast revenue win rate conversion funnel salesperson performance kpi analytics csv export' },
+  { id: 'page:crm-automations', title: 'CRM automations', summary: 'Seven ready-made automations and your own: a trigger, conditions and actions that notify people, create follow-ups, set priorities, flag deals or assign owners.', url: '/crm-platform/#automations', area: M, kind: 'Capability',
+    keywords: 'crm automation automations workflow triggers reminders notify follow up assign owner sales automation' },
+  { id: 'page:crm-roles', title: 'CRM organisations, roles and permissions', summary: 'Several organisations per account, six roles from Owner to Viewer, permissions per module and action, invitations, teams and an audit trail.', url: '/crm-platform/#roles', area: M, kind: 'Capability',
+    keywords: 'organisations roles permissions team members invite invitations owner administrator manager sales executive viewer access audit trail multi company' },
+  { id: 'doc:crm-guide', title: 'How to use BIZOMAT Customer Relationship Management: the user guide', summary: 'Step by step: create an organisation, invite your team, add customers, work leads and deals, plan follow-ups, read reports and set up automations.', url: '/crm-platform/guide/', area: M, kind: 'Documentation',
+    keywords: 'crm guide user guide how to help getting started tutorial manual instructions set up import contacts csv invite team' },
+  { id: 'int:crm', title: 'CRM integrations: email logging, calendar, CSV and Project Management', summary: CRM.integrations, url: '/crm-platform/#integrations', area: M, kind: 'Integration',
+    keywords: 'crm integrations email gmail outlook microsoft 365 calendar ics csv import export project management tasks' },
 
   // Resources
   { id: 'page:resources', title: 'BIZOMAT Resources', summary: RESOURCES.summary, url: '/resources/', area: R, kind: 'Page',

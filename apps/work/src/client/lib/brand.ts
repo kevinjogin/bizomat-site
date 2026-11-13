@@ -4,7 +4,8 @@ import { BRAND_COLORS } from './bizomat-brand';
 import { DEFAULT_COLOR, PRODUCT } from '../../shared/brand';
 import { BASE } from './base';
 
-/** Under /crm this app is BIZOMAT CRM (src/client/crm); everywhere else Project Management. */
+/** Under /crm this app is BIZOMAT Customer Relationship Management, the CRM (src/client/crm); everywhere else Project
+ * Management. */
 export const IS_CRM = BASE === '/crm';
 
 export const BRAND = {
@@ -15,10 +16,13 @@ export const BRAND = {
   statement: 'Connecting Intelligence. Empowering Progress.',
   /** The copyright line every BIZOMAT site carries. */
   copyright: `© ${new Date().getFullYear()} BIZOMAT. All rights reserved.`,
-  /** Short product name, used next to the BIZOMAT wordmark. */
+  /** Short product name, used in running text ("Search the CRM"). */
   product: IS_CRM ? 'CRM' : PRODUCT.name,
+  /** The name beneath the BIZOMAT wordmark, spelled out so that someone new to the tool knows what it is (owner,
+   * 13 Nov 2026). */
+  lockup: IS_CRM ? 'Customer Relationship Management' : PRODUCT.name,
   /** Full product name: page titles, metadata, screen readers. */
-  full: IS_CRM ? 'BIZOMAT CRM' : PRODUCT.full,
+  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : PRODUCT.full,
   description: IS_CRM ? 'Customers, leads, deals and follow-ups in one shared CRM.' : 'Projects, tasks and teams in one shared workspace.',
   colors: BRAND_COLORS,
   /** Colour for new workspaces and folders. */
@@ -39,7 +43,10 @@ export const PLATFORM_URLS = {
   about: 'https://bizomat.ai/engine-room/',
   products: 'https://bizomat.ai/products/',
   contact: 'https://bizomat.ai/contact/',
-  productPage: 'https://bizomat.ai/work/',
+  /** This product's page on the website. */
+  productPage: IS_CRM ? 'https://bizomat.ai/crm-platform/' : 'https://bizomat.ai/work/',
+  /** The CRM's user guide on the website. */
+  crmGuide: 'https://bizomat.ai/crm-platform/guide/',
   cad: 'https://bizomat.ai/cad/',
   tasks: 'https://bizomat.ai/tasks/',
   crm: 'https://bizomat.ai/crm/',
@@ -59,7 +66,7 @@ export const APP_HOSTS = ['bizomat.ai', 'work.kevos.com'] as const;
 export const PLATFORM_LINKS = {
   products: [
     { label: 'BIZOMAT', href: PLATFORM_URLS.website, title: 'The BIZOMAT website' },
-    IS_CRM ? { label: 'Project Management', href: PLATFORM_URLS.tasks, title: 'BIZOMAT Project Management' } : { label: 'CRM', href: PLATFORM_URLS.crm, title: 'BIZOMAT CRM' },
+    IS_CRM ? { label: 'Project Management', href: PLATFORM_URLS.tasks, title: 'BIZOMAT Project Management' } : { label: 'CRM', href: PLATFORM_URLS.crm, title: 'BIZOMAT Customer Relationship Management' },
     { label: 'CAD Automation', href: PLATFORM_URLS.cad, title: 'BIZOMAT CAD Automation' },
     { label: 'Resources', href: PLATFORM_URLS.resources, title: 'BIZOMAT Resources' },
   ],

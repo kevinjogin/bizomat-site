@@ -1,10 +1,10 @@
-// Real product screens for the Engine Room (/engine-room/), /cad-automation/ and /work/. Each was captured from the running application (a
+// Real product screens for the Engine Room (/engine-room/), /cad-automation/, /work/ and /crm-platform/ (with its guide). Each was captured from the running application (a
 // local instance with example data, never a customer's), in Chromium at 1440 x 900. A screen whose file is not in
 // public/ is skipped at build time, so a page never links a missing image.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-export interface Screenshot { src: string; product: 'cad' | 'work'; title: string; caption: string }
+export interface Screenshot { src: string; product: 'cad' | 'work' | 'crm'; title: string; caption: string }
 
 const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/cad-dashboard.webp', product: 'cad', title: 'CAD Automation: Home', caption: 'The signed-in home: connection status, set-up steps and recent activity.' },
@@ -20,6 +20,16 @@ const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/work-document.webp', product: 'work', title: 'Project Management: Document', caption: 'A rich-text document linked to the work.' },
   { src: '/proof-of-work/product/work-mywork.webp', product: 'work', title: 'Project Management: My Work', caption: 'Everything assigned to you, across boards.' },
   { src: '/proof-of-work/product/work-signin.webp', product: 'work', title: 'Project Management: sign in', caption: 'Sign in with an existing account.' },
+  // Customer Relationship Management (CRM), captured 13 Nov 2026 from a local instance with a fictional organisation.
+  { src: '/proof-of-work/product/crm-overview.webp', product: 'crm', title: 'Customer Relationship Management: Overview', caption: 'Open pipeline, forecast, win rate and follow-ups, computed from the records.' },
+  { src: '/proof-of-work/product/crm-board.webp', product: 'crm', title: 'Customer Relationship Management: Deals board', caption: 'Deals by stage with value, owner and expected close. Drag a card to move it.' },
+  { src: '/proof-of-work/product/crm-deal.webp', product: 'crm', title: 'Customer Relationship Management: a deal', caption: 'The stage path, details, notes, activities and stage history of one deal.' },
+  { src: '/proof-of-work/product/crm-contact.webp', product: 'crm', title: 'Customer Relationship Management: a contact', caption: 'Details and the timeline: notes, meeting notes and planned calls.' },
+  { src: '/proof-of-work/product/crm-leads.webp', product: 'crm', title: 'Customer Relationship Management: Leads', caption: 'Open leads with source, status, lead score and estimated value.' },
+  { src: '/proof-of-work/product/crm-activities.webp', product: 'crm', title: 'Customer Relationship Management: Activities', caption: 'Activities grouped by due date, completed with one click.' },
+  { src: '/proof-of-work/product/crm-report.webp', product: 'crm', title: 'Customer Relationship Management: Forecast report', caption: 'Open deals by expected close month: total, weighted and commit.' },
+  { src: '/proof-of-work/product/crm-automations.webp', product: 'crm', title: 'Customer Relationship Management: Automations', caption: 'The seven automations a new organisation starts with, and their runs.' },
+  { src: '/proof-of-work/product/crm-permissions.webp', product: 'crm', title: 'Customer Relationship Management: Permissions', caption: 'What each role may view, create, edit, delete, export and import.' },
 ];
 
 const exists = (src: string) => existsSync(join(process.cwd(), 'public', src));

@@ -478,7 +478,7 @@ describe('the /crm address', () => {
     expect(page.status).toBe(200);
     const html = await page.text();
     expect(html).toContain('<base href="/crm/">');
-    expect(html).toContain('<title>BIZOMAT CRM</title>');
+    expect(html).toContain('<title>BIZOMAT Customer Relationship Management</title>');
   });
 
   it('a CRM page without a cookie goes through /tasks once: a Project Management session carries over, else the CRM sign-in', async () => {
