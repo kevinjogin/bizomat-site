@@ -92,6 +92,12 @@ export default function AdminApp() {
           ))}
         </nav>
         <div className="ac-side-foot">
+          <a href="/crm/admin" className="ac-nav-item">
+            <Icon name="layers" size={17} /> CRM super admin
+          </a>
+          <a href="/finance/admin" className="ac-nav-item">
+            <Icon name="layers" size={17} /> Finance super admin
+          </a>
           <a href={appUrl('/')} className="ac-nav-item">
             <Icon name="chevronLeft" size={17} /> Back to {BRAND.product}
           </a>

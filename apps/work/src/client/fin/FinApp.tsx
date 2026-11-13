@@ -318,6 +318,7 @@ function Profile() {
           <MenuSep />
           <MenuItem icon="bell" onClick={() => { close(); navigate(`/o/${org.id}/settings/notifications`); }}>Notification settings</MenuItem>
           <MenuItem icon="user" onClick={() => { close(); window.location.href = '/tasks/settings/profile'; }}>Profile and security</MenuItem>
+          {session?.platformRole ? <MenuItem icon="chart" onClick={() => { close(); navigate('/admin'); }}>Super admin console</MenuItem> : null}
           <MenuSep />
           <MenuItem icon="logout" onClick={async () => {
             close();

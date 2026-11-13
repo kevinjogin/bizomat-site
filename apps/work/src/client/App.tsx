@@ -40,6 +40,9 @@ const CrmJoin = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Join
 // BIZOMAT Finance, when the app is served under /finance (src/client/fin), in the same way.
 const FinRoutes = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.FinRoutes })));
 const FinJoin = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.Join })));
+// The super admin consoles of the CRM and Finance (platform admins only; the server answers 404 to everyone else).
+const CrmAdmin = lazy(() => import('./admin/products/CrmConsole'));
+const FinAdmin = lazy(() => import('./admin/products/FinConsole'));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, error, refresh } = useSession();
@@ -104,6 +107,7 @@ export function App() {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
         <Route path="/join/:token" element={page(<CrmJoin />)} />
+        <Route path="/admin/*" element={<RequireAuth>{page(<CrmAdmin />)}</RequireAuth>} />
         <Route path="/*" element={<RequireAuth>{page(<CrmRoutes />)}</RequireAuth>} />
       </Routes>
     );
@@ -118,6 +122,7 @@ export function App() {
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
         <Route path="/join/:token" element={page(<FinJoin />)} />
+        <Route path="/admin/*" element={<RequireAuth>{page(<FinAdmin />)}</RequireAuth>} />
         <Route path="/*" element={<RequireAuth>{page(<FinRoutes />)}</RequireAuth>} />
       </Routes>
     );

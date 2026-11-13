@@ -28,6 +28,7 @@ import { templateRoutes } from './routes/templates';
 import { realtimeRoutes } from './routes/realtime';
 import { folderRoutes } from './routes/folders';
 import { adminRoutes } from './routes/admin';
+import { adminCrmRoutes, adminFinRoutes } from './routes/admin-products';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
 import { CRM_MOUNT, FIN_MOUNT, MOUNT, withBaseHref } from './mount';
@@ -160,6 +161,9 @@ export function createApp() {
   admin.route('/', adminRoutes);
   admin.route('/', adminEmailRoutes);
   admin.route('/', adminSignupRoutes);
+  // The same super admins, for the CRM and Finance (src/worker/routes/admin-products.ts).
+  admin.route('/crm', adminCrmRoutes);
+  admin.route('/fin', adminFinRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
