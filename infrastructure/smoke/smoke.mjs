@@ -409,6 +409,7 @@ async function workChecks() {
     await stubChecks('work', old, '/__stub/echo');
     await stubChecks('work', 'bizomat.ai', '/crm/__stub/echo');
     await stubChecks('work', 'bizomat.ai', '/finance/__stub/echo');
+    await stubChecks('work', 'bizomat.ai', '/company/__stub/echo');
     await check('work', 'WebSocket upgrade under bizomat.ai/tasks reaches work through the proxy', async () => {
       const r = await wsHandshake(platformHost(), '/tasks/__stub/ws');
       return r.status === 101 || { fail: `HTTP ${r.status}` };
@@ -472,6 +473,24 @@ async function workChecks() {
   });
   await check('work', 'bizomat.ai/finance private API without a session: 401', async () => {
     const r = await onPlatform({ path: '/finance/api/fin/orgs', headers: { Accept: 'application/json' } });
+    return r.status === 401 || { fail: describe(r) };
+  });
+  // bizomat.ai/company: BIZOMAT company accounts and their control centre, served by the same app (work)
+  await check('work', 'bizomat.ai/company/api/health (the same app)', async () => {
+    const r = await onPlatform({ path: '/company/api/health' });
+    return r.status === 200 || { fail: describe(r) };
+  });
+  await check('work', 'bizomat.ai/company/login: the company area, its files under /company/ (<base href>)', async () => {
+    const r = await onPlatform({ path: '/company/login', headers: { Accept: 'text/html' } });
+    if (r.status !== 200) return { fail: describe(r) };
+    return (r.text.includes('<base href="/company/">') && r.text.includes('<title>BIZOMAT Company</title>')) || { fail: 'no <base href="/company/"> or Company title in the page' };
+  });
+  await check('work', 'bizomat.ai/company: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/company/c/smoke', headers: { Accept: 'text/html' } });
+    return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/app-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
+  });
+  await check('work', 'bizomat.ai/company private API without a session: 401', async () => {
+    const r = await onPlatform({ path: '/company/api/company/mine', headers: { Accept: 'application/json' } });
     return r.status === 401 || { fail: describe(r) };
   });
   // work.kevos.com, the old address: the app at the root of its host

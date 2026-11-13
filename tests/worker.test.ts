@@ -101,7 +101,7 @@ test('the OAuth metadata and the program addresses CAD keeps at the root of bizo
 
 test('the rest of bizomat.ai is the website', async () => {
   await withOrigin(async (seen) => {
-    for (const path of ['/', '/cad-automation/', '/work/', '/cadx', '/cad.html', '/mcpx', '/oauthx', '/tasksfoo', '/crmx', '/crm.html', '/financex', '/finance.html', '/finance-platform/', '/finance-platform/guide/', '/.well-known/security.txt', '/healthz/', '/v2']) {
+    for (const path of ['/', '/cad-automation/', '/work/', '/cadx', '/cad.html', '/mcpx', '/oauthx', '/tasksfoo', '/crmx', '/crm.html', '/financex', '/finance.html', '/companyx', '/company.html', '/finance-platform/', '/finance-platform/guide/', '/.well-known/security.txt', '/healthz/', '/v2']) {
       const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
       assert.equal(await res.text(), `asset:${path}`, path);
       assert.ok(res.headers.get('X-Content-Type-Options'), `${path}: the website's headers`);
@@ -113,7 +113,7 @@ test('the rest of bizomat.ai is the website', async () => {
 
 test('an application path in another case answers 301 to the lowercase one', async () => {
   await withOrigin(async (seen) => {
-    for (const [from, to] of [['/CAD', '/cad'], ['/Cad/', '/cad/'], ['/CAD/docs?q=a%20b', '/cad/docs?q=a%20b'], ['/TASKS', '/tasks'], ['/Tasks/board/7?x=1', '/tasks/board/7?x=1'], ['/CRM', '/crm'], ['/Crm/o/1/deals?view=board', '/crm/o/1/deals?view=board'], ['/FINANCE', '/finance'], ['/Finance/o/1/transactions?q=a', '/finance/o/1/transactions?q=a']]) {
+    for (const [from, to] of [['/CAD', '/cad'], ['/Cad/', '/cad/'], ['/CAD/docs?q=a%20b', '/cad/docs?q=a%20b'], ['/TASKS', '/tasks'], ['/Tasks/board/7?x=1', '/tasks/board/7?x=1'], ['/CRM', '/crm'], ['/Crm/o/1/deals?view=board', '/crm/o/1/deals?view=board'], ['/FINANCE', '/finance'], ['/Finance/o/1/transactions?q=a', '/finance/o/1/transactions?q=a'], ['/Company/c/1?x=1', '/company/c/1?x=1']]) {
       const res = await worker.fetch(new Request(`https://bizomat.ai${from}`), env());
       assert.equal(res.status, 301, from);
       assert.equal(res.headers.get('Location'), to, from);
@@ -195,6 +195,21 @@ test('bizomat.ai/finance/... reaches the same app as Project Management (BIZOMAT
   assert.equal(got[0].method, 'POST');
 });
 
+test('bizomat.ai/company/... reaches the same app (BIZOMAT company accounts): its Worker once bound, the origin until then', async () => {
+  await withOrigin(async (seen) => {
+    for (const path of ['/company', '/company/', '/company/login', '/company/c/1/people', '/company/api/company/mine', '/company/api/id/token', '/company/join/t0k3n']) {
+      const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
+      assert.equal(await res.text(), `origin:${path}`, path);
+    }
+    assert.equal(seen.at(-1)?.url, 'https://bizomat.ai/company/join/t0k3n');
+  });
+  const got: Request[] = [];
+  const bound: Env = { ...env(), TASKS: { fetch: async (req) => (got.push(req), new Response('company app')) } };
+  const res = await worker.fetch(new Request('https://bizomat.ai/company/api/company/companies', { method: 'POST', body: '{}' }), bound);
+  assert.equal(await res.text(), 'company app');
+  assert.equal(got[0].method, 'POST');
+});
+
 test('www.bizomat.ai answers with bizomat.ai; plain HTTP is upgraded before the applications are reached', async () => {
   await withOrigin(async (seen) => {
     const page = await worker.fetch(new Request('http://www.bizomat.ai/cad/docs?x=1'), env());
@@ -236,7 +251,7 @@ test('no page or file of the website takes an application\'s path, so those path
   for (const root of ['src/pages', 'public']) {
     for (const file of taken(root)) {
       const path = file.slice(root.length).replace(/\.(astro|md|mdx|ts|js|html)$/, '').replace(/\/index$/, '') || '/';
-      assert.ok(!/^\/(cad|tasks|crm|finance)(\/|$)/i.test(path), `${file} would take an application's address`);
+      assert.ok(!/^\/(cad|tasks|crm|finance|company)(\/|$)/i.test(path), `${file} would take an application's address`);
       assert.ok(!CAD_PATHS.test(path) || path.startsWith('/.well-known/security'), `${file} is under a path CAD Automation keeps`);
     }
   }

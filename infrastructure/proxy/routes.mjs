@@ -74,8 +74,12 @@ export const CRM_PATHS = /^\/crm(?:\/|$)/;
 /** The paths of bizomat.ai that belong to BIZOMAT Finance, which the Project Management app (work) also serves. */
 export const FINANCE_PATHS = /^\/finance(?:\/|$)/;
 
-// An application's path in another case (/CAD, /Tasks/..., /CRM, /Finance): one address per page, in lowercase.
-const APP_ANY_CASE = /^\/(cad|tasks|crm|finance)(?=\/|$)/i;
+/** The paths of bizomat.ai that belong to BIZOMAT company accounts (the control centre over Project Management, the CRM
+ * and Finance), which the same app (work) serves. */
+export const COMPANY_PATHS = /^\/company(?:\/|$)/;
+
+// An application's path in another case (/CAD, /Tasks/..., /CRM, /Finance, /Company): one address per page, in lowercase.
+const APP_ANY_CASE = /^\/(cad|tasks|crm|finance|company)(?=\/|$)/i;
 
 /** The platform's sign-in page (the website's): it offers each application's own sign-in. */
 export const SIGN_IN_PATH = '/sign-in/';
@@ -159,7 +163,7 @@ export function routingPath(path) {
 export function platformUpstream(path) {
   const p = routingPath(path);
   if (CAD_PATHS.test(p)) return 'cad';
-  if (TASKS_PATHS.test(p) || CRM_PATHS.test(p) || FINANCE_PATHS.test(p)) return 'work';
+  if (TASKS_PATHS.test(p) || CRM_PATHS.test(p) || FINANCE_PATHS.test(p) || COMPANY_PATHS.test(p)) return 'work';
   return 'web';
 }
 

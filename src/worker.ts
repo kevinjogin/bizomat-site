@@ -56,8 +56,9 @@ const redirect = (location: string, status: number, cache = 'public, max-age=864
 /** The applications under bizomat.ai, or null when the request is for the website. */
 async function routeApps(request: Request, url: URL, env: Env): Promise<Response | null> {
   const read = request.method === 'GET' || request.method === 'HEAD';
-  // /CAD, /Tasks/..., /CRM, /Finance: one address per page, in lowercase (other methods are left alone and find nothing)
-  const app = /^\/(cad|tasks|crm|finance)(?=\/|$)/i.exec(url.pathname);
+  // /CAD, /Tasks/..., /CRM, /Finance, /Company: one address per page, in lowercase (other methods are left alone and find
+  // nothing)
+  const app = /^\/(cad|tasks|crm|finance|company)(?=\/|$)/i.exec(url.pathname);
   if (app && app[1] !== app[1].toLowerCase() && read) {
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
@@ -68,6 +69,8 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   if (/^\/crm(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   // BIZOMAT Finance too (apps/work, mounted at /finance)
   if (/^\/finance(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
+  // BIZOMAT company accounts too (apps/work, mounted at /company)
+  if (/^\/company(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   return null;
 }
 
