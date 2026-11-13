@@ -4,7 +4,7 @@ chapterSlug: evaluation-and-review
 order: 10
 title: "Evaluation and review"
 description: "Plan evaluation while you design the policy: a baseline, outcome measures and attribution, a sample you can defend, performance records and the reviews the law schedules."
-draft: true
+draft: false
 ---
 
 Every policy is a hypothesis: if government does this, that will change. Evaluation tests it. Without evaluation, the next decision about a program rests on the same estimates as the first, plus whatever people remember.

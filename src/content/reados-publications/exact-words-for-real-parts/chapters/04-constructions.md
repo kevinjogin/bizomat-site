@@ -4,7 +4,7 @@ chapterSlug: constructions-not-inferred-things
 order: 4
 title: "Constructions, not inferred things: building a hole's position from probe points"
 description: "Apply Russell's maxim on logical constructions to measurement: treat a hole centre and its position error as quantities built from probe points, and check how each was built."
-draft: true
+draft: false
 ---
 
 Nobody has ever touched the centre of a hole. A coordinate measuring machine touches the wall of the hole at a handful of points, and software calculates a centre from them. An inspector with pins and a height gauge measures to the edges of a pin and works out where its centre must be. The centre is never observed. It is built.

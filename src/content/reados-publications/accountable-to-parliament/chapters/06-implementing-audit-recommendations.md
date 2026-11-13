@@ -4,7 +4,7 @@ chapterSlug: implementing-audit-recommendations
 order: 6
 title: "Implementing audit recommendations"
 description: "Turn agreed audit recommendations into action plans with owners and dates, rate the risk of each open one, and close them only on evidence that they work."
-draft: true
+draft: false
 ---
 
 Agreeing to an audit recommendation takes one line in a letter. Implementing it takes months, several people and often money nobody budgeted for. In the gap, attention moves on, and a year later a committee, an auditor or a Senator asks what changed. The answer has to be on the record, and it has to be true.

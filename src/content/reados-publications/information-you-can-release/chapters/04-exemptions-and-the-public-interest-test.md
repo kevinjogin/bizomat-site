@@ -4,7 +4,7 @@ chapterSlug: exemptions-and-the-public-interest-test
 order: 4
 title: "Exemptions and the public interest test"
 description: "Apply FOI exemptions and conditional exemptions, weigh the public interest using only the factors the Act allows, and release edited copies, not whole refusals."
-draft: true
+draft: false
 ---
 
 The FOI Act starts from access. The agency must give access to a requested document in accordance with the Act (s11A(3)), and every refusal is an exception that has to be shown on the facts. The exceptions come in two kinds that work differently. Some documents are exempt once a test is met. Others are only conditionally exempt and must still be released unless release would, on balance, be contrary to the public interest.

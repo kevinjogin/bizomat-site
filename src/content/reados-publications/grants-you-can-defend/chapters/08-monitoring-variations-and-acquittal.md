@@ -4,7 +4,7 @@ chapterSlug: monitoring-variations-and-acquittal
 order: 8
 title: "Monitoring, variations and acquittal"
 description: "Monitor grantees in proportion to risk, decide variations within the delegation and the round's rules, deal with underspends and misuse, and close each grant."
-draft: true
+draft: false
 ---
 
 Once a grant agreement is signed, public money can spend many months in other people's hands: volunteer committees, council project teams and their builders. Monitoring tells the agency, early enough to act, whether the money is doing what it was approved for. Variations let an agreement follow real events without becoming a different grant. Acquittal ends the grant with evidence rather than an assumption.

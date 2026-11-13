@@ -4,7 +4,7 @@ chapterSlug: a-team-process-that-meets-the-deadlines
 order: 10
 title: "A team process that meets the deadlines"
 description: "Run an information access team that meets its time limits: intake and triage, a case register with alerts, templates, checks, staffing in FTE, escalation and learning."
-draft: true
+draft: false
 ---
 
 Every chapter of this book has had a date in it: 14 days to acknowledge a request, 30 days to decide it, 30 days to assess a data breach, 10 working days to publish a release. Teams rarely miss these limits through ignorance of the law. They miss them because a request sits in the wrong log, an extension stays in a phone call, or the one person who knows the date is away. The law sets the limits; only a process meets them.

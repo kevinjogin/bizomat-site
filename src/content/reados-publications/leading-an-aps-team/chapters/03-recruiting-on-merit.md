@@ -4,7 +4,7 @@ chapterSlug: recruiting-on-merit
 order: 3
 title: "Recruiting on merit"
 description: "How to fill an APS vacancy on merit: settle the job first, advertise it properly, run a fair panel, assess everyone the same way and record a decision that can be reviewed."
-draft: true
+draft: false
 ---
 
 A recruitment decision outlasts most decisions a team leader makes. The person chosen may stay for years, and the way they were chosen tells the rest of the team how decisions are made. In the Australian Public Service it is also a legal decision. It must be based on merit, it is made by someone who holds the power to make it, and some candidates can have it reviewed.

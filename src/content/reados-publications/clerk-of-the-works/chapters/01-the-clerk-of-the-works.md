@@ -4,7 +4,7 @@ chapterSlug: the-clerk-of-the-works
 order: 1
 title: "The clerk of the works: what Chaucer's office teaches about the owner's side of a project"
 description: "Describe the owner-side clerk of works role, set up the grandstand case and its budget, and put controls on money, records and handover in place in the first week."
-draft: true
+draft: false
 ---
 
 On 12 July 1389, Richard II appointed Geoffrey Chaucer clerk of the king's works. The post made him responsible for repairs and building at the Palace of Westminster, the Tower of London and a list of royal manors and lodges. He did not lay stone or cut timber. He bought materials, hired and paid workers, kept the accounts and answered for them to the Exchequer. Within months he was overseeing the scaffolds built for jousts at Smithfield, the medieval equivalent of temporary grandstands.

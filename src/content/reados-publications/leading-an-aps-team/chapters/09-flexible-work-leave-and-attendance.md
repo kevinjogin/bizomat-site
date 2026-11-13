@@ -4,7 +4,7 @@ chapterSlug: flexible-work-leave-and-attendance
 order: 9
 title: "Flexible work, leave and attendance"
 description: "Answer a flexible work request within the Fair Work Act's 21 days, test the roster with real numbers, plan leave as a team and handle attendance concerns fairly."
-draft: true
+draft: false
 ---
 
 Most people decisions in this book have no deadline set by law. A request for flexible working arrangements does. Under the Fair Work Act 2009, an employer must give an eligible employee who asks in writing a written response within 21 days, and the Act lists the only conditions under which the answer may be no. Leave and attendance carry rules too: some in the Act's National Employment Standards, more in your agency's enterprise agreement.

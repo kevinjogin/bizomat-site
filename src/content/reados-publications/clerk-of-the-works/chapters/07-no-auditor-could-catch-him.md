@@ -4,7 +4,7 @@ chapterSlug: no-auditor-could-catch-him
 order: 7
 title: "No auditor could catch him: measuring progress honestly and forecasting the final cost"
 description: "Use Chaucer's Reeve to look at progress reporting: measure earned value on the grandstand from objective milestones, compare it with claimed progress, and forecast cost and finish."
-draft: true
+draft: false
 ---
 
 The Reeve in the General Prologue manages a lord's farm, and he is very good at it. He can keep a granary and a bin. No auditor could ever find him in arrears. He knew, from the drought and the rain, how his seed and his grain would yield. He had kept the accounts since his lord was twenty, and the lord's sheep, cattle, dairy, pigs and horses were all under his control. And he had done well out of it: he could please his lord by lending him things that were already the lord's.

@@ -4,7 +4,7 @@ chapterSlug: vague-words-sharp-limits
 order: 6
 title: "Vague words, sharp limits: tolerance, uncertainty and the borderline part"
 description: "Apply Russell's 1923 account of vagueness to drawings and measurements: why a tolerance makes a requirement precise, why every reading stays vague, and how to decide a borderline part."
-draft: true
+draft: false
 ---
 
 The replacement brackets are machined from a new plate on the corrected set-up. Thickness is measured on every one, as before. Most read comfortably inside 12.00 ± 0.05 mm. One reads 12.047 mm. The inspector writes "12.05, in tolerance" and moves on.

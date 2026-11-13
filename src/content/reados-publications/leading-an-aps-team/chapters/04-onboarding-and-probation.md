@@ -4,7 +4,7 @@ chapterSlug: onboarding-and-probation
 order: 4
 title: "Onboarding and probation"
 description: "How to prepare a new APS employee's first weeks, run probation reviews that assess suitability fairly, keep the record and know when probation is the wrong tool."
-draft: true
+draft: false
 ---
 
 The first weeks in a job shape the next few years. A new employee learns what the work is, what good work looks like and whether it is safe to ask for help. The team learns whether the manager meant what the advertisement said. Probation sits on top of all that: a period in which the agency checks whether the person it engaged is suitable for the duties, and the person finds out whether the job suits them.
@@ -106,6 +106,7 @@ Fair probation tests the person against expectations they knew about, after the 
 ```figure
 type: compare
 title: Fair probation and probation in name only
+caption: Each row compares how one element of probation is handled. The left column describes a process that gives the new starter a fair chance and leaves a record that supports the decision.
 cols: Fair probation | Probation in name only
 best: 1
 rowhead: Element

@@ -4,7 +4,7 @@ chapterSlug: how-accountability-works
 order: 1
 title: "How accountability works"
 description: "Who answers to whom for an Australian Government agency, the duties officials bring to that system, and the year of Estimates, audits, complaints and reports."
-draft: true
+draft: false
 ---
 
 Accountability, in the Commonwealth sense, means having to explain and justify what was done with public power and public money to someone who can ask questions, test the answers and act on them. For an Australian Government agency that someone is not one body but several: the Minister, Parliament and its committees, the Auditor-General, the Commonwealth Ombudsman, and the courts and tribunals. Each asks different questions, on its own timetable, with its own powers.

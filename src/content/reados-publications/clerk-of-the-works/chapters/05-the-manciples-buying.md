@@ -4,7 +4,7 @@ chapterSlug: the-manciples-buying
 order: 5
 title: "The Manciple's buying: comparing suppliers on more than price, and watching the buyer"
 description: "Use Chaucer's Manciple to look at owner-side purchasing: compare two seat suppliers on price, lead time, quality and reliability, time the order, and control conflicts of interest."
-draft: true
+draft: false
 ---
 
 Among the pilgrims is a manciple, the buyer of provisions for one of the inns of court in London where lawyers lived and trained. Chaucer's portrait of him is brief and admiring on the surface. Other buyers, he says, could learn from this man. Whether he paid cash or bought on credit by tally, he timed his purchases so well that he was always ahead and in good shape. He served more than thirty masters, all expert in law, a dozen of them fit to manage a great lord's estates. And this unlearned man's wit, the portrait says with a straight face, outran the wisdom of that whole crowd of learned men: he fooled them all.

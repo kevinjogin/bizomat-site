@@ -4,7 +4,7 @@ chapterSlug: no-one-blocks-the-view
 order: 3
 title: "No one blocks the view: turning a functional brief into criteria you can check"
 description: "Use Theseus's theatre in the Knight's Tale to turn a functional brief into a measurable design criterion, and check grandstand riser heights row by row with the sightline equation."
-draft: true
+draft: false
 ---
 
 In the Knight's Tale, Duke Theseus orders a theatre built for a tournament between two rival knights. Chaucer describes it in loving detail: round, a mile about, walled in stone with a ditch outside, and with its seats rising in tiers so high that a spectator on one tier did not hinder the one behind from seeing. Theseus employs every craftsman in the land who knew geometry or arithmetic, every painter and every carver, to plan and build it.

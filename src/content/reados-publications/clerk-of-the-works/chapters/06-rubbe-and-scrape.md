@@ -4,7 +4,7 @@ chapterSlug: rub-and-scrape
 order: 6
 title: "Rub and scrape: drawing revisions, copies and the cost of a superseded document"
 description: "Use the poem to Adam the scribe to look at document control: trace how a superseded drawing reached a steel fabricator, what it cost, and the register and hold point that catch it."
-draft: true
+draft: false
 ---
 
 A seven-line poem, headed in the manuscript that preserves it as Chaucer's words to Adam, his own scribe, complains about copying. If Adam ever copies the *Boece* or *Troilus* again, the poet wishes him a scalp disease under his long hair unless he writes more truly to what the poet made. As it is, the poet must go over Adam's work many times a day, to correct it and "rubbe and scrape": to erase the ink from the parchment and write it again. And all of it comes from Adam's negligence and haste.

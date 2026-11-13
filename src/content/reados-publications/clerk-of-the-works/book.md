@@ -7,7 +7,7 @@ tags: [projects, quality, leadership, communication]
 author: BIZOMAT
 publisher: BIZOMAT Library
 language: en-AU
-status: draft
+status: published
 publishDate: 2026-11-13
 referencesChecked: 2026-11-13
 edition: "1"

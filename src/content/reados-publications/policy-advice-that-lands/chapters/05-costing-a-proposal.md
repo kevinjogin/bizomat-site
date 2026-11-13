@@ -4,7 +4,7 @@ chapterSlug: costing-a-proposal
 order: 5
 title: "Costing a proposal"
 description: "Cost a policy proposal from its drivers: unit rates, program and running costs, phasing over the Budget and forward years, and the assumptions behind each number."
-draft: true
+draft: false
 ---
 
 Impact analysis asks whether an option is worth doing. A costing asks a narrower question: what will it cost the government, in which year, and for what? A benefit–cost ratio can be right while the costing behind a Budget proposal is wrong, and ministers decide on the costing.

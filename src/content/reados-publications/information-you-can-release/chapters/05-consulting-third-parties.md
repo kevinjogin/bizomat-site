@@ -4,7 +4,7 @@ chapterSlug: consulting-third-parties
 order: 5
 title: "Consulting third parties"
 description: "When the FOI Act requires you to consult a State, a business or a person before releasing their information, how to run it, and when release can happen."
-draft: true
+draft: false
 ---
 
 Most FOI requests involve two parties, the applicant and the agency. That changes when a document holds information about someone else. The people concerned may have good reasons to argue against release. For some of them, the FOI Act provides three things: a chance to be heard before the agency decides, a written notice if it decides to release anyway, and time to seek review before anything goes out.

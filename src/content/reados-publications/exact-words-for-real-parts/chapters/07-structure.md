@@ -4,7 +4,7 @@ chapterSlug: structure-and-the-best-fit-trap
 order: 7
 title: "Structure is not enough: datum frames, best fits and Newman's objection"
 description: "Use Russell's structuralism and Newman's objection to see why a best-fit alignment can make any hole pattern look good, and why a drawing fixes the datum frame in advance."
-draft: true
+draft: false
 ---
 
 The measuring machine passed brackets 36, 48 and 60. All three came from the second set-up, and all three, it now turns out, have their four holes rotated half a degree from where the drawing puts them. The machine was calibrated. The probe points were well spaced. The centres were built correctly, as Chapter 4 described. Every number in the report was true. The report was still worthless for the question it was meant to answer.

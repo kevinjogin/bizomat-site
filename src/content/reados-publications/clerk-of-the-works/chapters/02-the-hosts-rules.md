@@ -4,7 +4,7 @@ chapterSlug: the-hosts-rules
 order: 2
 title: "The Host's rules: agreeing the terms, the judge and the contingency before the journey starts"
 description: "Read the Host's contest rules as a contract: find the vague criteria and the conflicted judge, tighten the grandstand contract's terms, and set and govern a contingency allowance."
-draft: true
+draft: false
 ---
 
 On the evening before the pilgrims leave Southwark, the innkeeper of the Tabard, Harry Bailly, proposes a game. Each pilgrim is to offer a pair of stories on the ride out and another pair on the ride home. Whoever tells the best will be given supper at the others' expense when they return to his inn. He will ride with them at his own cost and act as their guide. Anyone who disputes his judgement will pay everyone's expenses on the road. The pilgrims agree at once, and ask him to be their governor, judge and record keeper.

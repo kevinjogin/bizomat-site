@@ -4,7 +4,7 @@ chapterSlug: advising-the-minister
 order: 8
 title: "Advising the minister"
 description: "Give advice a minister can act on: the APS and ministerial roles, briefs that lead with the decision, frank advice under pressure, oral advice and spending approvals."
-draft: true
+draft: false
 ---
 
 Policy advice is written for one reader who has the power to decide. A minister reads it between many other briefs, often with an adviser's view beside it, and then agrees, asks for more or goes another way. Advice that buries the decision, softens the bad news or bends to what the office wants to hear fails that reader, however good the analysis behind it.

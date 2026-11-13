@@ -4,7 +4,7 @@ chapterSlug: the-rules-behind-every-people-decision
 order: 1
 title: "The rules behind every people decision"
 description: "Where an APS manager's authority over people comes from: the Public Service Act, its Regulations, the Directions, enterprise agreements, delegations and safety law."
-draft: true
+draft: false
 ---
 
 A new team leader in the Australian Public Service makes people decisions from the first morning: who answers the phones, whether leave can be approved, what to say when someone asks about pay. Each decision is made under a rule, by someone who holds the power to make it, and any of them may later be reviewed by someone who reads only the record.

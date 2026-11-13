@@ -4,7 +4,7 @@ chapterSlug: the-hidden-claims-in-the
 order: 2
 title: "The hidden claims in \"the\": definite descriptions in drawings, set-up sheets and records"
 description: "Use Russell's theory of descriptions to test every 'the' in a drawing, procedure or record for existence and uniqueness, and to read negative statements in the scope that was meant."
-draft: true
+draft: false
 ---
 
 The analysis in Chapter 1 pointed at the second set-up. The next step is to read the documents that governed it: the set-up sheet the machinist followed, the inspection plan, the drawing and the certificate. The quality lead reads them twice and finds nothing obviously wrong. Every instruction is clear, every requirement has a number, every signature is in place.

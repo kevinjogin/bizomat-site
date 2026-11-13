@@ -4,7 +4,7 @@ chapterSlug: decisions-reasons-and-review
 order: 6
 title: "Decisions, reasons and review"
 description: "Write an FOI statement of reasons that shows its findings, and follow a decision through internal review, IC review and the Administrative Review Tribunal."
-draft: true
+draft: false
 ---
 
 An FOI decision reaches the applicant as a letter, and the letter is all the applicant has. It says what they will not get, why not, and what they can do about it. Every reviewer starts with the same letter: the internal reviewer, the Information Commissioner and possibly the Administrative Review Tribunal. A decision may be right, but if its reasons do not show why, it is hard to defend and easy to challenge.

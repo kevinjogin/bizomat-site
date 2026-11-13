@@ -4,7 +4,7 @@ chapterSlug: planning-implementation
 order: 9
 title: "Planning implementation"
 description: "Design a policy for delivery from the start: an implementation plan with governance and milestones, measures that meet the PGPA Rule, and risks rated before they bite."
-draft: true
+draft: false
 ---
 
 A Budget decision turns advice into promises: so many bridges, by these dates, for this much money. Someone now has to keep them. Advice that reads well and then fails in delivery has not landed, however good the analysis behind it.

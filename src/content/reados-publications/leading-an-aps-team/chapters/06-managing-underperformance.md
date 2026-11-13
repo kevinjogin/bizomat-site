@@ -4,7 +4,7 @@ chapterSlug: managing-underperformance
 order: 6
 title: "Managing underperformance"
 description: "Raise underperformance early, privately and with evidence, offer support that fits the cause, follow your agency's formal process fairly and keep a sound record."
-draft: true
+draft: false
 ---
 
 Most underperformance is fixed in a conversation. The conversation works best when it comes early, in private, with specific examples and an honest question about what is getting in the way. It works worst when it comes late, as a surprise, or as the first page of a formal process.

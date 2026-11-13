@@ -281,7 +281,7 @@ const SPECIAL_COVERS: Record<string, Look> = {
   'the-love-of-system': { motif: 'compass', tone: 'carbon' },
   'tolerances-that-work': { motif: 'drawing', tone: 'graphite' },
   'grants-you-can-defend': { motif: 'handover', tone: 'ember' },
-  'leading-an-aps-team': { motif: 'compass', tone: 'graphite' },
+  'leading-an-aps-team': { motif: 'team', tone: 'ember' },
   'information-you-can-release': { motif: 'archive', tone: 'paper' },
   'accountable-to-parliament': { motif: 'summit', tone: 'carbon' },
   'policy-advice-that-lands': { motif: 'decision', tone: 'carbon' },

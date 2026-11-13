@@ -4,7 +4,7 @@ chapterSlug: planning-the-work-and-the-team
 order: 2
 title: "Planning the work and the team"
 description: "Turn demand into hours, FTE and a phone roster that meets a service standard, plan for peaks, match engagement to the work and ask for resources with numbers."
-draft: true
+draft: false
 ---
 
 Every staffing argument rests on a number someone believes. "We're flat out" is a feeling, and "calls are down" is half a fact. A workload plan turns demand into hours, hours into people and a service standard into a roster. It lets a manager show what the work needs, when, and what happens without it, before the queue makes the case for her.

@@ -4,7 +4,7 @@ chapterSlug: privacy-principles-in-daily-work
 order: 7
 title: "The privacy principles in daily work"
 description: "Apply the Australian Privacy Principles in daily agency work, from collection and use to security, access and correction, with the APP Code duties and the privacy tort."
-draft: true
+draft: false
 ---
 
 Most privacy decisions in an agency are small and quick. Does this form need a date of birth? May I send this list to another branch? What can I tell a caller about what we hold on her? Each has an answer in the Australian Privacy Principles (APPs), and the answer is easier to give before the question is urgent.

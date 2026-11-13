@@ -7,8 +7,8 @@ tags: [finance, projects, communication, leadership]
 author: BIZOMAT
 publisher: BIZOMAT Library
 language: en-AU
-status: draft
-publishDate: 2026-11-12
+status: published
+publishDate: 2026-11-13
 referencesChecked: 2026-11-12
 edition: "1"
 level: "Intermediate"

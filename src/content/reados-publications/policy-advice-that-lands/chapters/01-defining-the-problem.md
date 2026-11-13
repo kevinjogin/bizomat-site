@@ -4,7 +4,7 @@ chapterSlug: defining-the-problem
 order: 1
 title: "Defining the problem"
 description: "Turn a request for a solution into a defined problem: causes and effects, who is affected, why government should act, and objectives that leave the answer open."
-draft: true
+draft: false
 ---
 
 This is an illustration. On Tue 3 Aug 2027, the Minister's office sent the Northfield Regional Infrastructure Office (NRIO) a bundle of letters from councils and freight operators about bridges on council roads that were closed or carried load limits. The last harvest season had also brought media stories about grain trucks and livestock carriers taking long detours. The office asked NRIO for advice on "a fund to fix regional bridges".

@@ -4,7 +4,7 @@ chapterSlug: atomic-facts-and-certificates
 order: 8
 title: "One fact per line: atomic records and what a certificate of conformance asserts"
 description: "Apply Russell's logical atomism to inspection records: store atomic results, build conformance from them, and state the completeness claim every certificate of conformance makes."
-draft: true
+draft: false
 ---
 
 The workshop's original certificate was one sentence: "We certify that the 60 brackets supplied conform to drawing CB-12." It was signed in good faith, and it was false for half the brackets. The sentence was short, but it made a very large claim, and almost none of that claim was visible in it.

@@ -4,7 +4,7 @@ chapterSlug: measured-or-reported
 order: 3
 title: "Measured or reported: knowledge by acquaintance and knowledge by description"
 description: "Separate what someone measured directly from what is known only through a chain of records, count both for the bracket order, and find the link in the chain that broke."
-draft: true
+draft: false
 ---
 
 When the customer asks how the workshop knows its brackets conform, the honest answer has two parts. Some things the workshop knows because somebody put a gauge on a part and read a number. Most things it knows because a record says so, and that record rests on another record, which rests on an assumption that parts made the same way come out the same. Both kinds of knowledge are legitimate. They are not equally strong, and a certificate that blends them hides which is which.

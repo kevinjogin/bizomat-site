@@ -4,7 +4,7 @@ chapterSlug: generating-options
 order: 3
 title: "Generating options"
 description: "How to build a fair set of policy options from the objectives: the base case, the full range of instruments, grant against procurement, screening and a shortlist."
-draft: true
+draft: false
 ---
 
 A minister cannot choose an option that nobody wrote down. The options paper is where policy advice either opens a real choice or quietly closes it. A paper with one serious option and two decoys has made the decision for the minister, and a careful reader will notice.

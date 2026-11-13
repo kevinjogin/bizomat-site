@@ -4,7 +4,7 @@ chapterSlug: notifiable-data-breaches
 order: 8
 title: "Notifiable data breaches"
 description: "Assess a suspected data breach under Part IIIC of the Privacy Act: eligible data breaches, serious harm, remedial action, the 30-day assessment and notification."
-draft: true
+draft: false
 ---
 
 A data breach usually starts as a small mistake: an email to the wrong address, a lost laptop, a shared folder open to the wrong group. What happens in the first hours decides how much harm follows. What is written down in the following days decides whether the agency can show it met the law.

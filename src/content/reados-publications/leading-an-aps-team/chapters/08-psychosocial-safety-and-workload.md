@@ -4,7 +4,7 @@ chapterSlug: psychosocial-safety-and-workload
 order: 8
 title: "Psychosocial safety and workload"
 description: "Manage psychosocial risks in an APS team under the WHS Act and Regulations: an aggressive caller, workload as a hazard, controls by hierarchy, risk ratings and consultation."
-draft: true
+draft: false
 ---
 
 A threatening phone call can feel like the worst part of an ordinary day. In law it is a work health and safety matter. The Work Health and Safety Act 2011 says "health means physical and psychological health" (s 4). Abuse from callers and a workload that never eases are risks to health, not features of the job.

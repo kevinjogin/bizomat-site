@@ -4,7 +4,7 @@ chapterSlug: estimates-briefs-that-hold-up
 order: 2
 title: "Senate Estimates briefs that hold up"
 description: "Build an Estimates briefing pack whose issue briefs give exact, sourced numbers, mark the line officials do not cross and show when to take a question on notice."
-draft: true
+draft: false
 ---
 
 At Senate Estimates, officials answer questions in public and on the record, often with no warning of what will be asked. Every answer goes into the transcript. A wrong number said with confidence can follow an agency for months, and once the hearing is over, correcting it takes a letter.

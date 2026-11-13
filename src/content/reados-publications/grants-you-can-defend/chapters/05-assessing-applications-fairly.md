@@ -4,7 +4,7 @@ chapterSlug: assessing-applications-fairly
 order: 5
 title: "Assessing applications fairly"
 description: "Check eligibility, plan and staff the assessment, score with two assessors against anchors, moderate with reasons, manage conflicts and record every score."
-draft: true
+draft: false
 ---
 
 Assessment is where a grant round keeps or breaks the promise its guidelines made: that every applicant will be judged on the published criteria, in the same way as everyone else. Every applicant that misses out can ask why, and the only answer that holds is one the record can show: who scored the application, against what, for what reasons, and who checked.

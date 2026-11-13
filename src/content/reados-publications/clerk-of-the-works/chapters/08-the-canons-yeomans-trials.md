@@ -4,7 +4,7 @@ chapterSlug: the-canons-yeomans-trials
 order: 8
 title: "The Canon's Yeoman's trials: stopping a trial that will not work, and closing the account"
 description: "Use the Canon's Yeoman's failed experiments to decide on future cost alone whether to fund another trial, then close the grandstand project: completion, delay, retention and records."
-draft: true
+draft: false
 ---
 
 Late in the Canterbury Tales, two riders catch up with the pilgrims: a canon and his yeoman, his servant. The canon soon rides off in embarrassment, and the yeoman, freed to talk, explains what they do. For seven years he has served the canon in alchemy, trying to turn base metal into silver and gold. He describes the equipment, the materials and the endless work at the fire. Every attempt has failed. Once the pot cracks and the metal is lost; the assistants argue about whether the fire was too hot, the bellows wrongly worked or the mixture badly made; they sweep up what they can and resolve to try again. The yeoman has lost his money and his complexion to the work, and still, he admits, he hopes the next attempt will succeed.

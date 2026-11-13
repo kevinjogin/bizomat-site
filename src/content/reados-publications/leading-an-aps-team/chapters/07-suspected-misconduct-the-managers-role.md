@@ -4,7 +4,7 @@ chapterSlug: suspected-misconduct-the-managers-role
 order: 7
 title: "Suspected misconduct: what a manager does and does not do"
 description: "What a manager does when misconduct is suspected: listen, record and report, protect confidentiality and the team, and leave investigation and decisions to others."
-draft: true
+draft: false
 ---
 
 Suspected misconduct rarely arrives with a label. A team leader closes the door and says, "I don't know if this is anything, but…". What the manager does next matters more than most of what follows. A short note and a prompt report keep the matter fair. A quiet word or a little checking can make a fair process impossible.

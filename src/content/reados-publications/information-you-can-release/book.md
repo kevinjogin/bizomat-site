@@ -7,8 +7,8 @@ tags: [communication, operations, systems, quality]
 author: BIZOMAT
 publisher: BIZOMAT Library
 language: en-AU
-status: draft
-publishDate: 2026-11-11
+status: published
+publishDate: 2026-11-13
 referencesChecked: 2026-11-11
 edition: "1"
 level: "Intermediate"

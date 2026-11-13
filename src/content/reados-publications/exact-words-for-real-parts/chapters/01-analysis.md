@@ -4,7 +4,7 @@ chapterSlug: analyse-before-you-argue
 order: 1
 title: "Analyse before you argue: from a complaint to statements a measurement can settle"
 description: "Apply Russell's method of analysis to a customer complaint: break a vague, complex claim into simple statements, find what would settle each one, and set up the bracket case."
-draft: true
+draft: false
 ---
 
 The message from the customer's site supervisor is four words long: "Your brackets don't fit." It arrives with a photograph of a camera module hanging from one screw and a request for 30 replacement brackets by the end of the week. Within an hour, three people at the workshop have three different explanations. The machinist blames the customer's screws. The quality lead blames the coordinate measuring machine. The owner wants to know whether the customer is about to stop paying.

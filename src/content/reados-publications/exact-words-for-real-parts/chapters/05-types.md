@@ -4,7 +4,7 @@ chapterSlug: lists-that-contain-themselves
 order: 5
 title: "Lists that contain themselves: classes, types and loops in bills of materials and registers"
 description: "Use Russell's paradox and theory of types to keep items, collections, documents and registers at separate levels, and to find and remove a loop in a bill of materials."
-draft: true
+draft: false
 ---
 
 The workshop agrees to remake the 30 brackets from the second set-up. The customer asks for them as kits: each bracket bagged with its four screws, four washers and a printed inspection sheet, ready for the fitter. The planner sets up a kit in the business system, releases a works order for 30 kits, and goes home.

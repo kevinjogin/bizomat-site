@@ -4,7 +4,7 @@ chapterSlug: instructions-for-a-ten-year-old
 order: 4
 title: "Instructions for a ten-year-old: writing method statements and set-out checks a newcomer can follow"
 description: "Use Chaucer's Treatise on the Astrolabe as a model for procedures, then write and use a levelling check of grandstand base plates, including the arithmetic check and the error it cannot catch."
-draft: true
+draft: false
 ---
 
 Around 1391, Chaucer wrote an instruction manual. *A Treatise on the Astrolabe* explains how to use the astronomical instrument of that name, and it is addressed to a boy he calls "Lyte Lowys my sone", who was ten. Some scholars think Lewis was Chaucer's own son; others have suggested he was the son of a friend. It was written in English, not the Latin in which such treatises usually circulated, and it is often described as the oldest surviving technical manual in the English language. It was never finished. The surviving text stops partway through.
