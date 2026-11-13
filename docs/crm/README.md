@@ -152,6 +152,10 @@ their own role; removing a member can hand their records and open activities to 
 BIZOMAT does not send customer email itself: the platform's transactional quota (Brevo) is shared with invitations and
 security messages, and sending as a person needs their own mailbox.
 
+## Super admin console
+
+`https://bizomat.ai/crm/admin`, for platform admins only (the founder, who is the super admin, and the admins the founder adds): usage, people, activity and health of every organisation, never contact details, deal values, notes or files, and two audited support actions (restore a deleted organisation; hand over ownership, founder only). Everyone else gets 404. Details: `apps/work/docs/ADMIN.md`, "Super admin consoles for the CRM and Finance".
+
 ## Deployment and rollback
 
 1. Merge to `main` by pull request; deploy with **BIZOMAT deploy (bizomat)** (`confirm` = `DEPLOY`). One image carries

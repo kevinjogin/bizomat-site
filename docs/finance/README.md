@@ -152,6 +152,10 @@ listed above. The tax codes (`src/shared/fin/tax.ts`) map to those labels. The w
 rounds to whole dollars as the BAS form does and carries the disclaimers. Rules change: check the ATO before relying on
 it, and have a registered tax or BAS agent review a BAS.
 
+## Super admin console
+
+`https://bizomat.ai/finance/admin`, for platform admins only (the founder, who is the super admin, and the admins the founder adds): usage, people, activity and health of every workspace as counts, never amounts, balances or descriptions; personal and household workspaces are shown by their kind, not their name, and two audited support actions (restore a deleted workspace; hand over ownership, founder only). Everyone else gets 404. Details: `apps/work/docs/ADMIN.md`, "Super admin consoles for the CRM and Finance".
+
 ## Deployment and rollback
 
 1. Merge to `main` by pull request; deploy with **BIZOMAT deploy (bizomat)** (`confirm` = `DEPLOY`). One image carries

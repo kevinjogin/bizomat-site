@@ -20,6 +20,43 @@ Other ways to manage admins:
 
 All grants and revocations are written to `audit_log`.
 
+## Super admin consoles for the CRM and Finance
+
+The same people (the `platform_admins` table, roles `founder` and `admin`) also have a console for each of the other
+two products served by this app, added 13 Nov 2026 on the owner's request:
+
+| Console | Address | API |
+| --- | --- | --- |
+| Project Management (this page) | `https://bizomat.ai/tasks/admin` | `/api/admin/*` |
+| Customer Relationship Management | `https://bizomat.ai/crm/admin` | `/api/admin/crm/*` |
+| Finance | `https://bizomat.ai/finance/admin` | `/api/admin/fin/*` |
+
+Each has Overview (counts and daily charts for 7, 30 or 90 days or all time), the organisations or workspaces (search,
+filters, a detail page with members, invitations, counts and recent changes), Users, Activity (the product's audit trail:
+who, what kind of change, when) and System health (checks that should read zero, background work). The consoles link to
+one another, and the CRM and Finance profile menus show "Super admin console" to platform admins. Code:
+`src/worker/routes/admin-products.ts` and `src/client/admin/products/`. Tests: `test/admin-products.test.ts`.
+
+- **Same protection:** the server checks the platform role on every request (`requirePlatformAdmin`); everyone else,
+  including organisation owners, gets 404 from the API and from the `/crm/admin` and `/finance/admin` pages.
+- **Usage, not content.** The CRM console shows organisation names and settings, members and roles, counts of records
+  and audit actions; never contact details, deal values, notes or files. The Finance console shows counts and integrity
+  checks only: no amounts, balances, account names, payees or descriptions. A personal or household workspace is shown
+  as "Personal workspace" or "Household workspace", never by its name, and its name cannot be searched for.
+- **Finance ledger checks** (System health and each workspace): posted journals that do not balance, workspaces whose
+  debits and credits differ, journals left as drafts for over an hour, workspaces without an owner, recurring records
+  more than a day behind. Each is a count that should be zero.
+- **Support actions**, each written to the organisation's or workspace's audit trail and to the platform `audit_log`:
+  restore an organisation or workspace its owner deleted (any platform admin; a restored Finance workspace keeps its
+  recurring records and scheduled reports paused); hand over ownership to an existing member when the owner cannot
+  (founder only; the previous owner becomes an administrator).
+
+### The super admin
+
+"Super admin" is the `founder` role. Migration `0012_super_admin.sql` makes sure the confirmed, enabled account with the
+email `kevin@kevos.com` has it (upgrading an `admin` row), for all three consoles; an address nobody has confirmed gets
+nothing. It changes no table and does nothing on a database without that account.
+
 ## What is tracked
 
 | Signal | Where | Notes |
