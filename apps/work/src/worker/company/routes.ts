@@ -39,6 +39,7 @@ import { memberToolStmts, rolesOf, syncAllDepartments, syncDepartmentsOf, type T
 import { departmentRoutes } from './departments';
 import { overviewRoutes } from './overview';
 import { idAuthorizeRoutes } from './id-provider';
+import { companyProjects, linkRoutes } from './links';
 
 export const COMPANY_MOUNT = '/company';
 
@@ -1016,8 +1017,15 @@ one.get('/activity', async (c) => {
   return c.json(rows.results.map((r) => ({ id: r.id, action: r.action, actor: r.actor, targetType: r.target_type, targetId: r.target_id, metadata: JSON.parse(r.metadata_json || '{}'), at: r.created_at })));
 });
 
+/** The company's projects (Project Management boards) with their Finance figures, where the viewer may see them. */
+one.get('/projects', async (c) => {
+  const a = await requireCompany(c);
+  return c.json(await companyProjects(c.env.DB, a.tools, a.companyId, { id: a.userId, name: a.userName }));
+});
+
 one.route('/departments', departmentRoutes);
 one.route('/overview', overviewRoutes);
 
 companyRoutes.route('/c/:company', one);
 companyRoutes.route('/id', idAuthorizeRoutes);
+companyRoutes.route('/links', linkRoutes);
