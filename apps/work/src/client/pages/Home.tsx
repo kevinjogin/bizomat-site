@@ -12,6 +12,7 @@ import { CreateBoardDialog, CreateDashboardDialog, useCreateDocument } from '../
 import { useMyWork, WorkRow } from './MyWork';
 import { WorkspaceDot } from '../components/workspace/WorkspaceIdentity';
 import '../styles/admin.css';
+import { CompanyPrompt } from '../components/layout/CompanyPrompt';
 
 interface EntityRef {
   type: string;
@@ -80,6 +81,7 @@ export default function Home() {
 
   return (
     <div className="page">
+      <CompanyPrompt />
       <div className="page-header">
         <div className="grow">
           <h1>

@@ -5,9 +5,12 @@ import { DEFAULT_COLOR, PRODUCT } from '../../shared/brand';
 import { BASE } from './base';
 
 /** Under /crm this app is BIZOMAT Customer Relationship Management, the CRM (src/client/crm); under /finance BIZOMAT
- * Finance (src/client/fin); everywhere else Project Management. */
+ * Finance (src/client/fin); under /company the company account (src/client/company); everywhere else Project
+ * Management. */
 export const IS_CRM = BASE === '/crm';
 export const IS_FINANCE = BASE === '/finance';
+/** Under /company: the company account and its control centre over every tool (src/client/company). */
+export const IS_COMPANY = BASE === '/company';
 
 export const BRAND = {
   /** The platform this product belongs to. Never followed by a trade mark sign. */
@@ -18,17 +21,19 @@ export const BRAND = {
   /** The copyright line every BIZOMAT site carries. */
   copyright: `© ${new Date().getFullYear()} BIZOMAT. All rights reserved.`,
   /** Short product name, used in running text ("Search the CRM"). */
-  product: IS_CRM ? 'CRM' : IS_FINANCE ? 'Finance' : PRODUCT.name,
+  product: IS_CRM ? 'CRM' : IS_FINANCE ? 'Finance' : IS_COMPANY ? 'Company' : PRODUCT.name,
   /** The name beneath the BIZOMAT wordmark, spelled out so that someone new to the tool knows what it is (owner,
    * 13 Nov 2026). */
-  lockup: IS_CRM ? 'Customer Relationship Management' : IS_FINANCE ? 'Finance' : PRODUCT.name,
+  lockup: IS_CRM ? 'Customer Relationship Management' : IS_FINANCE ? 'Finance' : IS_COMPANY ? 'Company' : PRODUCT.name,
   /** Full product name: page titles, metadata, screen readers. */
-  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : IS_FINANCE ? 'BIZOMAT Finance' : PRODUCT.full,
+  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : IS_FINANCE ? 'BIZOMAT Finance' : IS_COMPANY ? 'BIZOMAT Company' : PRODUCT.full,
   description: IS_CRM
     ? 'Customers, leads, deals and follow-ups in one shared CRM.'
     : IS_FINANCE
       ? 'Accounts, transactions, invoices, bills, budgets and reports for personal, household and business money.'
-      : 'Projects, tasks and teams in one shared workspace.',
+      : IS_COMPANY
+        ? 'Your company account: its people, departments and tools in one place.'
+        : 'Projects, tasks and teams in one shared workspace.',
   colors: BRAND_COLORS,
   /** Colour for new workspaces and folders. */
   defaultColor: DEFAULT_COLOR,
@@ -49,7 +54,7 @@ export const PLATFORM_URLS = {
   products: 'https://bizomat.ai/products/',
   contact: 'https://bizomat.ai/contact/',
   /** This product's page on the website. */
-  productPage: IS_CRM ? 'https://bizomat.ai/crm-platform/' : IS_FINANCE ? 'https://bizomat.ai/finance-platform/' : 'https://bizomat.ai/work/',
+  productPage: IS_CRM ? 'https://bizomat.ai/crm-platform/' : IS_FINANCE ? 'https://bizomat.ai/finance-platform/' : IS_COMPANY ? 'https://bizomat.ai/products/' : 'https://bizomat.ai/work/',
   /** The CRM's user guide on the website. */
   crmGuide: 'https://bizomat.ai/crm-platform/guide/',
   /** Finance's user guide on the website. */
@@ -58,6 +63,7 @@ export const PLATFORM_URLS = {
   tasks: 'https://bizomat.ai/tasks/',
   crm: 'https://bizomat.ai/crm/',
   finance: 'https://bizomat.ai/finance/',
+  company: 'https://bizomat.ai/company/',
   resources: 'https://bizomat.ai/resources/',
   privacy: 'https://bizomat.ai/privacy/',
   terms: 'https://bizomat.ai/terms/',
@@ -79,6 +85,7 @@ export const PLATFORM_LINKS = {
       { label: 'Project Management', href: PLATFORM_URLS.tasks, title: 'BIZOMAT Project Management', self: !IS_CRM && !IS_FINANCE },
       { label: 'CRM', href: PLATFORM_URLS.crm, title: 'BIZOMAT Customer Relationship Management', self: IS_CRM },
       { label: 'Finance', href: PLATFORM_URLS.finance, title: 'BIZOMAT Finance', self: IS_FINANCE },
+      { label: 'Company', href: PLATFORM_URLS.company, title: 'Your BIZOMAT company account', self: IS_COMPANY },
     ]
       .filter((l) => !l.self)
       .map(({ label, href, title }) => ({ label, href, title })),

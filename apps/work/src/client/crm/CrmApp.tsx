@@ -13,6 +13,7 @@ import { BrandMark, Icon, ProductLockup } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading, PageHeader, Spinner } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, Popover, useToast } from '../components/ui/overlays';
 import { PlatformFooter } from '../components/layout/PlatformLinks';
+import { CompanyPrompt } from '../components/layout/CompanyPrompt';
 import { CURRENCIES } from '../../shared/money';
 import { CRM_ROLE_LABELS } from '../../shared/crm/roles';
 import type { CrmNotificationDTO } from '../../shared/crm/types';
@@ -147,6 +148,9 @@ function CrmShell({ children }: { children: ReactNode }) {
           </NavLink>
         ))}
         <div className="nav-section">BIZOMAT</div>
+        <a className="nav-item" href={PLATFORM_URLS.company}>
+          <Icon name="building" /> Company
+        </a>
         <a className="nav-item" href={PLATFORM_URLS.tasks}>
           <Icon name="grid" /> Project Management
         </a>
@@ -156,6 +160,7 @@ function CrmShell({ children }: { children: ReactNode }) {
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
+        <CompanyPrompt />
         {children}
       </main>
     </div>

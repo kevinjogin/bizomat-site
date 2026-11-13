@@ -13,6 +13,7 @@ import { BrandMark, Icon, ProductLockup } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, Popover, useToast } from '../components/ui/overlays';
 import { PlatformFooter } from '../components/layout/PlatformLinks';
+import { CompanyPrompt } from '../components/layout/CompanyPrompt';
 import { CURRENCIES } from '../../shared/money';
 import { FIN_ROLE_LABELS, WORKSPACE_KIND_LABELS, type FinPerms, type WorkspaceKind } from '../../shared/fin/roles';
 import { fin, lastOrg, rememberOrg, useFinOrg, useFinOrgs, type FinNotificationDTO, type FinOrgDTO } from './lib';
@@ -171,6 +172,9 @@ function FinShell({ children }: { children: ReactNode }) {
           </NavLink>
         ))}
         <div className="nav-section">BIZOMAT</div>
+        <a className="nav-item" href={PLATFORM_URLS.company}>
+          <Icon name="building" /> Company
+        </a>
         <a className="nav-item" href={PLATFORM_URLS.tasks}>
           <Icon name="grid" /> Project Management
         </a>
@@ -183,6 +187,7 @@ function FinShell({ children }: { children: ReactNode }) {
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
+        <CompanyPrompt />
         {children}
       </main>
     </div>
