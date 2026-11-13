@@ -113,7 +113,7 @@ export function checkStreet(line1: string, line2: string): Check {
 
 export function checkSuburb(suburb: string): Check {
   const s = suburb.trim();
-  if (s.length < 2 || s.length > 60 || !/^[A-Za-z][A-Za-z .'\-]*$/.test(s)) return { ok: false, field: 'suburb', message: 'Enter the suburb or town, in letters.' };
+  if (s.length < 2 || s.length > 60 || !/^[A-Za-z][A-Za-z .'-]*$/.test(s)) return { ok: false, field: 'suburb', message: 'Enter the suburb or town, in letters.' };
   return { ok: true };
 }
 
