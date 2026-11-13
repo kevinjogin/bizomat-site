@@ -19,7 +19,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the same accounts and session; product page `/finance-platform/` and user guide `/finance-platform/guide/`;
   `docs/finance/README.md`): personal, household and business workspaces on a double-entry ledger. It never connects to
   banks, processes payments or lodges with the ATO, and is not a certified tax, payroll or statutory accounting
-  product: never claim otherwise.
+  product: never claim otherwise. **Company accounts** (13 Nov 2026, at `bizomat.ai/company`, served by the same app;
+  `docs/company/README.md`): people work as a company (a person may register in their own name); a company runs one
+  Project Management workspace, one CRM organisation and one Finance business workspace, gives each person a role in
+  each, has departments that appear in every tool, and links them (customer record, won deal to draft invoice, deal to
+  project, project costs). Registration checks say what they prove: never call an ABN "confirmed with the register"
+  unless `ABR_GUID` is set and the lookup ran, or a phone number "verified" (no SMS provider).
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
@@ -168,6 +173,6 @@ Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/
 every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
 and **Sign in**, that a new visit opens in the computer's system theme, and that AI
-search answers. For the apps (`/cad/`, `/tasks/`, `/crm/` and `/finance/` on bizomat.ai, and their old hosts),
+search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/` and `/company/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
 public URL has been checked.
