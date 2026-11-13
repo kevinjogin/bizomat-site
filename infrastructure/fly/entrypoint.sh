@@ -35,7 +35,12 @@
 #   work       WORK_* ; and as the app's own names: APP_URL <- WORK_APP_URL, APP_NAME <- WORK_APP_NAME,
 #              ENVIRONMENT <- WORK_ENVIRONMENT, ALLOW_SIGNUP <- WORK_ALLOW_SIGNUP,
 #              SESSION_TTL_HOURS <- WORK_SESSION_TTL_HOURS, CANONICAL_URL <- WORK_CANONICAL_URL,
-#              GOOGLE_CLIENT_ID <- WORK_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- WORK_GOOGLE_CLIENT_SECRET
+#              GOOGLE_CLIENT_ID <- WORK_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- WORK_GOOGLE_CLIENT_SECRET,
+#              BREVO_API_KEY BREVO_WEBHOOK_TOKEN EMAIL_PROVIDER EMAIL_FROM_NAME EMAIL_FROM_ADDRESS EMAIL_REPLY_TO
+#              APP_BASE_URL EMAIL_DAILY_LIMIT EMAIL_CRITICAL_RESERVE EMAIL_SANDBOX <- the same names with WORK_,
+#              ABR_GUID <- WORK_ABR_GUID, BIZOMAT_ID_CLIENTS <- WORK_BIZOMAT_ID_CLIENTS
+#              (company accounts: the register lookup and BIZOMAT sign-in, docs/company/README.md);
+#              a secret file may also carry any of these app names directly
 #   cad        OPENSKETCH_* ; GOOGLE_CLIENT_ID <- CAD_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- CAD_GOOGLE_CLIENT_SECRET
 # The prefixed names keep the work and cad Google sign-in clients apart (both apps read GOOGLE_CLIENT_ID).
 # Fixed by this script (not overridable): PORT, HOST, the data and static directories, *_TRUST_PROXY, PATH,
@@ -200,7 +205,7 @@ case "$ROLE" in
   work)
     EXACT=(APP_URL APP_NAME ENVIRONMENT ALLOW_SIGNUP SESSION_TTL_HOURS CANONICAL_URL GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET
       BREVO_API_KEY BREVO_WEBHOOK_TOKEN EMAIL_PROVIDER EMAIL_FROM_NAME EMAIL_FROM_ADDRESS EMAIL_REPLY_TO APP_BASE_URL
-      EMAIL_DAILY_LIMIT EMAIL_CRITICAL_RESERVE EMAIL_SANDBOX)
+      EMAIL_DAILY_LIMIT EMAIL_CRITICAL_RESERVE EMAIL_SANDBOX ABR_GUID BIZOMAT_ID_CLIENTS)
     PREFIXES=(WORK_)
     pass_prefix "${PREFIXES[@]}"
     map WORK_APP_URL APP_URL "https://bizomat.ai/tasks"
@@ -223,6 +228,10 @@ case "$ROLE" in
     map WORK_EMAIL_DAILY_LIMIT EMAIL_DAILY_LIMIT
     map WORK_EMAIL_CRITICAL_RESERVE EMAIL_CRITICAL_RESERVE
     map WORK_EMAIL_SANDBOX EMAIL_SANDBOX
+    # Company accounts (docs/company/README.md): Fly secrets WORK_ABR_GUID (the Australian Business Register lookup) and
+    # WORK_BIZOMAT_ID_CLIENTS (the applications allowed to use BIZOMAT sign-in), under the names the app reads.
+    map WORK_ABR_GUID ABR_GUID
+    map WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS
     map WORK_VERSION WORK_VERSION "$VERSION"
     ;;
   cad)

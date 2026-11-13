@@ -26,6 +26,7 @@ bad() {
 }
 
 # what Fly gives every Machine of the app: [env] plus every secret
+ID_CLIENTS='[{"id":"throwaway-client","name":"CAD Automation","redirectUris":["https://example.test/cad/cb"]}]'
 APP_ENV=(
   -e UPSTREAM_WEB=http://web:8003 -e UPSTREAM_WORK=http://work:8002 -e UPSTREAM_CAD=http://cad:8001
   -e BIZOMAT_PREVIEW_ROUTING=1 -e WORK_APP_URL=https://work.example.test -e WORK_ALLOW_SIGNUP=false
@@ -33,6 +34,7 @@ APP_ENV=(
   -e OPENSKETCH_PUBLIC_URL=https://cad.example.test -e OPENSKETCH_KEY_SECRET=throwaway-cad-key
   -e WORK_GOOGLE_CLIENT_ID=work-id -e WORK_GOOGLE_CLIENT_SECRET=throwaway-work-secret
   -e WORK_BREVO_API_KEY=throwaway-brevo-key -e WORK_EMAIL_FROM_ADDRESS=notifications@example.test
+  -e WORK_ABR_GUID=throwaway-abr-guid -e "WORK_BIZOMAT_ID_CLIENTS=$ID_CLIENTS"
   -e CAD_GOOGLE_CLIENT_ID=cad-id -e CAD_GOOGLE_CLIENT_SECRET=throwaway-cad-secret
   -e CF_AI_TOKEN=throwaway-web-token -e WEB_EXTRA=web-setting -e PROXY_LOG=0
   -e GOOGLE_CLIENT_SECRET=ambiguous-app-wide -e LD_PRELOAD=/nope.so -e NODE_OPTIONS=--inspect
@@ -107,7 +109,8 @@ ok "cad starts an empty CAD server only with BIZOMAT_CAD_ALLOW_EMPTY=1, and says
 run_role proxy /app/proxy/server.mjs >"$tmp/proxy.json"
 [ "$(uid "$tmp/proxy.json")" = 10001 ] || bad "proxy uid"
 for n in UPSTREAM_WEB UPSTREAM_CAD BIZOMAT_PREVIEW_ROUTING PROXY_LOG FLY_APP_NAME PROXY_HOST; do has "$tmp/proxy.json" "$n" || bad "proxy lacks $n"; done
-for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET CF_AI_TOKEN WEB_EXTRA LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY; do
+for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET CF_AI_TOKEN WEB_EXTRA LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY \
+  WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS; do
   if has "$tmp/proxy.json" "$n"; then bad "proxy holds $n"; fi
 done
 ok "proxy: its own settings only, uid 10001"
@@ -117,7 +120,8 @@ run_role web /app/web/dist-server/server.mjs >"$tmp/web.json"
 [ "$(uid "$tmp/web.json")" = 10002 ] || bad "web uid"
 [ "$(val "$tmp/web.json" PORT)" = 8003 ] && [ "$(val "$tmp/web.json" WEB_DIST_DIR)" = /app/web/dist ] && [ "$(val "$tmp/web.json" WEB_TRUST_PROXY)" = 1 ] || bad "web fixed settings"
 [ "$(val "$tmp/web.json" CF_AI_TOKEN)" = throwaway-web-token ] && [ "$(val "$tmp/web.json" WEB_EXTRA)" = web-setting ] || bad "web settings"
-for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY; do
+for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY \
+  WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS; do
   if has "$tmp/web.json" "$n"; then bad "web holds $n"; fi
 done
 ok "web: PORT 8003, its own secrets only, uid 10002"
@@ -139,6 +143,8 @@ run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_SECRET)" = throwaway-work-secret ] || bad "GOOGLE_CLIENT_SECRET must be the work one"
 [ "$(val "$tmp/work.json" BREVO_API_KEY)" = throwaway-brevo-key ] || bad "BREVO_API_KEY from WORK_BREVO_API_KEY"
 [ "$(val "$tmp/work.json" EMAIL_FROM_ADDRESS)" = notifications@example.test ] || bad "EMAIL_FROM_ADDRESS from WORK_EMAIL_FROM_ADDRESS"
+[ "$(val "$tmp/work.json" ABR_GUID)" = throwaway-abr-guid ] || bad "ABR_GUID from WORK_ABR_GUID"
+[ "$(val "$tmp/work.json" BIZOMAT_ID_CLIENTS)" = "$ID_CLIENTS" ] || bad "BIZOMAT_ID_CLIENTS from WORK_BIZOMAT_ID_CLIENTS (unchanged JSON)"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_ID)" = work-id ] || bad "a linked secret file must be skipped"
 [ "$(val "$tmp/work.json" WORK_EXTRA_SECRET)" = from-the-volume ] || bad "secret file not read"
 [ "$(val "$tmp/work.json" WORK_DATA_DIR)" = /data/work ] && [ "$(val "$tmp/work.json" PORT)" = 8002 ] || bad "work fixed settings"
@@ -153,6 +159,19 @@ grep -q "secret file OPENSKETCH_KEY_SECRET skipped" "$tmp/stderr" || bad "anothe
 grep -q "secret file GOOGLE_CLIENT_ID skipped: not a regular file" "$tmp/stderr" || bad "link not reported"
 if grep -q "throwaway\|from-the-volume\|not-for-work" "$tmp/stderr"; then bad "a value reached the log"; fi
 ok "work: mapped names, its own Google client, secret files (links and other roles' names refused), volume prepared"
+
+# work: the company settings as secret files on its volume, under the names the app reads (they win over Fly secrets)
+as_root 'mkdir -p /t/workvol2/work/.secrets
+  printf %s from-the-volume-abr >/t/workvol2/work/.secrets/ABR_GUID
+  printf %s "[{\"id\":\"from-the-volume-client\"}]" >/t/workvol2/work/.secrets/BIZOMAT_ID_CLIENTS'
+run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol2:/data" >"$tmp/work2.json"
+[ "$(val "$tmp/work2.json" ABR_GUID)" = from-the-volume-abr ] || bad "ABR_GUID from a secret file"
+[ "$(val "$tmp/work2.json" BIZOMAT_ID_CLIENTS)" = '[{"id":"from-the-volume-client"}]' ] || bad "BIZOMAT_ID_CLIENTS from a secret file"
+for n in ABR_GUID BIZOMAT_ID_CLIENTS; do
+  grep -q "setting $n read from the work volume" "$tmp/stderr" || bad "secret file $n not accepted"
+done
+if grep -q "throwaway\|from-the-volume" "$tmp/stderr"; then bad "a value reached the log"; fi
+ok "work: ABR_GUID and BIZOMAT_ID_CLIENTS also from its volume's secret files, under the app's names"
 
 # cad: its own settings, the cad Google client, a setting from its volume, the CADOS commit as its version (the volume
 # holds CAD data, as after the data move)
@@ -171,7 +190,7 @@ docker run --rm --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=cad -v "$tmp
 pin="$(docker run --rm --entrypoint python3 "$IMAGE" -c 'import json; print(json.load(open("/app/cad/cad-source.json"))["commit"][:7])')"
 [ -n "$pin" ] && [ "$(val "$tmp/cad.json" OPENSKETCH_VERSION)" = "$pin" ] || bad "OPENSKETCH_VERSION must be the CADOS commit of apps/cad ($pin)"
 if grep -q "from-the-cad-volume\|throwaway" "$tmp/stderr"; then bad "a value reached the log"; fi
-for n in WORK_GOOGLE_CLIENT_SECRET CF_AI_TOKEN WORK_APP_URL UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS; do
+for n in WORK_GOOGLE_CLIENT_SECRET CF_AI_TOKEN WORK_APP_URL UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS; do
   if has "$tmp/cad.json" "$n"; then bad "cad holds $n"; fi
 done
 ok "cad: its own settings, its own Google client, its volume's settings, the CADOS commit as version, uid 10004"

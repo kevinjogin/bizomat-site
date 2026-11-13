@@ -37,11 +37,21 @@ migrations inside. A deployment needs `dist/node/server.mjs` and `dist/client/` 
 | `ALLOW_SIGNUP` | `false` | `true` lets anyone create an account. |
 | `SESSION_TTL_HOURS` | `336` | Session lifetime. |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | unset | Google sign-in, as on Cloudflare. |
+| `ABR_GUID` | unset | Secret. The Australian Business Register web services GUID: company registration then looks the ABN up on the register; without it only the ABN's check digits are checked (`src/worker/company/verify.ts`, `docs/company/README.md` at the repository root). |
+| `BIZOMAT_ID_CLIENTS` | unset | Secret. JSON list of the applications allowed to use BIZOMAT sign-in, for example CAD Automation (`src/worker/company/id-provider.ts`); without it no application can. |
 | `WORK_TRUST_PROXY` | unset | `1` behind the platform proxy: trust `X-Forwarded-Host`, `X-Forwarded-Proto` and `CF-Connecting-IP`. |
 | `WORK_VERSION` | unset | Version shown on the admin health page (in place of Cloudflare's version metadata). |
 | `WORK_CRON` | on | `0` turns the 15-minute maintenance off (tests). |
 | `WORK_MAX_BODY_BYTES` | 32 MiB | Largest request body (the Worker itself refuses uploads over 25 MB). |
 | `WORK_MIGRATIONS_DIR` | embedded | Only for running the TypeScript sources without the bundle. |
+
+The app's settings above (from `APP_URL` to `BIZOMAT_ID_CLIENTS`) and the email settings (`docs/email/brevo-setup.md`
+at the repository root) reach the Worker only because `configFromEnv()` (`src/node/config.ts`) copies them into its
+env: a setting the Worker reads but `configFromEnv()` leaves out is never set on Node. On the Fly app `bizomat`, set the Fly secrets with the `WORK_` prefix
+(`WORK_ABR_GUID`, `WORK_BIZOMAT_ID_CLIENTS`, `WORK_BREVO_API_KEY` ...): the platform entrypoint
+(`infrastructure/fly/entrypoint.sh`) gives them to this app alone, under the names above. A root-owned file
+`/data/work/.secrets/ABR_GUID` (or `BIZOMAT_ID_CLIENTS`) on the work volume does the same and keeps the value off the
+other Machines.
 
 Behind the platform proxy set `WORK_TRUST_PROXY=1`, and the proxy must set `X-Forwarded-Proto: https`,
 `X-Forwarded-Host: <public host>` and `CF-Connecting-IP: <client address>` (overwriting anything the client sent).
