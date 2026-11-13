@@ -4,7 +4,7 @@ chapterSlug: impact-analysis
 order: 4
 title: "Impact analysis"
 description: "Compare policy options by who pays and who gains: the base case, present values, benefit–cost ratios, net benefit, sensitivity tests and impacts you cannot price."
-draft: true
+draft: false
 ---
 
 A shortlist is not yet advice. A minister choosing between options needs to know what each would change, for whom and at what cost, and how far the numbers can be trusted. Impact analysis compares each option with the base case, turns future amounts into today's dollars, and tests the answer against its assumptions.

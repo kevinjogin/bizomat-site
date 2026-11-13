@@ -4,7 +4,7 @@ chapterSlug: internal-audit-and-the-audit-committee
 order: 7
 title: "Internal audit and the audit committee"
 description: "How the PGPA Act and Rule shape an agency's audit committee, how internal audit plans its work, and how managers report findings and progress honestly."
-draft: true
+draft: false
 ---
 
 Most of this book is about scrutiny that arrives from outside. The audit committee and internal audit work inside the agency. They can find a weak control, a doubtful number or a stalled action months before the Auditor-General, a Senate committee or the Ombudsman does. That early warning is worth only what management does with it: how quickly it fixes what was found, and how honestly it reports progress.

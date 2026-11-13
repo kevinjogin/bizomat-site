@@ -4,7 +4,7 @@ chapterSlug: writing-for-cabinet
 order: 7
 title: "Writing for Cabinet"
 description: "Write Cabinet material ministers can decide on: collective responsibility, recommendations that stand alone, other agencies' views, confidentiality and drafts."
-draft: true
+draft: false
 ---
 
 A Cabinet submission is often the last piece of advice a proposal gets before a decision. Its readers are ministers from other portfolios, busy, not specialists in the subject and reading it among many others. Whatever the earlier work found but the submission does not say clearly is, for that decision, lost.

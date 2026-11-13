@@ -4,7 +4,7 @@ chapterSlug: correcting-the-record
 order: 10
 title: "Correcting the record"
 description: "Spot an error in evidence, answers or reports early, know who corrects it and how, write a plain correcting letter, and fix the cause without looking for someone to blame."
-draft: true
+draft: false
 ---
 
 Every agency that answers to Parliament will sometimes put something wrong on the record. A witness joins two numbers under pressure, an answer uses last month's figure, a report counts something new without saying so. The error itself is rarely what does the damage. The damage comes from how long it stands, how often it is repeated and who finds it first.

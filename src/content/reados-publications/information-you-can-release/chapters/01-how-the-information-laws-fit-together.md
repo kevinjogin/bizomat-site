@@ -4,7 +4,7 @@ chapterSlug: how-the-information-laws-fit-together
 order: 1
 title: "How the information laws fit together"
 description: "How the FOI Act, the Privacy Act, the Archives Act, the Information Commissioner and the Tribunal fit together, and who in an agency may decide what."
-draft: true
+draft: false
 ---
 
 Information work in an Australian Government agency runs on several laws at once. The Freedom of Information Act 1982 gives people a right to documents. The Privacy Act 1988 governs personal information. The Archives Act 1983 decides how long records are kept and who may destroy them. Each has its own tests, time limits and reviewers, and most of the trouble happens where they meet: a request sent down the wrong path, a deadline nobody owns, a record deleted under one law while another still needed it.

@@ -4,7 +4,7 @@ chapterSlug: publishing-proactively
 order: 9
 title: "Publishing proactively"
 description: "Run the Information Publication Scheme and the disclosure log as the FOI Act requires, release information without a request, and know when old records open."
-draft: true
+draft: false
 ---
 
 Most of this book has dealt with information someone asked for. The FOI Act also expects agencies to publish without being asked. Part II requires every agency to run an Information Publication Scheme (IPS), and section 11C requires it to publish, on a website, most of what it releases in response to requests. The Archives Act adds a slower path: records that survive long enough are opened to everyone. Publishing well also saves work, because a document already on the website needs no request, no search and no decision.

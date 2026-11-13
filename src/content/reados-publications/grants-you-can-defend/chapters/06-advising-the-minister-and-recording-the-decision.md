@@ -4,7 +4,7 @@ chapterSlug: advising-the-minister-and-recording-the-decision
 order: 6
 title: "Advising the Minister and recording the decision"
 description: "What written advice to a minister must contain, how the decision and its reasons are recorded, and what must be reported when it departs from advice."
-draft: true
+draft: false
 ---
 
 A grant decision made by a minister rests on two documents: the advice officials gave and the record of what the minister decided. If either is missing or vague, the decision cannot be explained later, however sound it was. The CGRPs set out what each must contain, and what must be reported when a decision departs from the advice or falls in the minister's own electorate.

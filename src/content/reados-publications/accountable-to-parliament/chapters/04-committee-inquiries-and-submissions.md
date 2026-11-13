@@ -4,7 +4,7 @@ chapterSlug: committee-inquiries-and-submissions
 order: 4
 title: "Committee inquiries and submissions"
 description: "Decide whether to make a submission, draft and clear one that sticks to facts, appear as a witness, and understand parliamentary privilege and the JCPAA's duties."
-draft: true
+draft: false
 ---
 
 Estimates ranges across everything an agency does. An inquiry looks at one subject in depth: a committee receives terms of reference, invites submissions, holds hearings and reports to the Parliament, usually with recommendations. When an agency's program sits near the centre of an inquiry, the committee will want to know what the agency did, why and with what result: in writing first, then in person.

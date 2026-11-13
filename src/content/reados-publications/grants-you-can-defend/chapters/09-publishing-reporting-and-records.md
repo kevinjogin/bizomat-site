@@ -4,7 +4,7 @@ chapterSlug: publishing-reporting-and-records
 order: 9
 title: "Publishing, reporting and keeping the record"
 description: "Publish grants and variations on GrantConnect within 21 days, record ministerial decisions as required, and keep a grant file that can explain itself."
-draft: true
+draft: false
 ---
 
 A grant becomes public twice. The first time is on GrantConnect, where anyone can see who received money, how much and for what. The second is when someone opens the file: an auditor, a complaints officer, a person using freedom of information law, or the officer who inherits the program. Both records have to be right, and both have to be there.

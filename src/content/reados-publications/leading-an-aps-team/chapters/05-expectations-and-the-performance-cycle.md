@@ -4,7 +4,7 @@ chapterSlug: expectations-and-the-performance-cycle
 order: 5
 title: "Setting expectations and running the performance cycle"
 description: "Write performance agreements that trace to the business plan, set expectations two people could check, give timely feedback and run a fair mid-point review."
-draft: true
+draft: false
 ---
 
 A performance rating should contain no news. By the time a supervisor writes it, the employee should already know what was expected, how they were tracking and what the supervisor thought, because the two of them talked about it during the year. When a rating surprises someone, the failure happened months earlier, in an agreement nobody could measure or a conversation nobody had.

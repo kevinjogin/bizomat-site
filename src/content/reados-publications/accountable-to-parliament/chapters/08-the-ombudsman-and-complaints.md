@@ -4,7 +4,7 @@ chapterSlug: the-ombudsman-and-complaints
 order: 8
 title: "The Commonwealth Ombudsman and complaints"
 description: "Handle complaints well inside the agency first, then assist the Commonwealth Ombudsman: what it can investigate, its notices, the duty to assist and its reports."
-draft: true
+draft: false
 ---
 
 A complaint asks an agency to account for one decision to one person. Some complaints go on to the Commonwealth Ombudsman, who can examine the agency's administration from outside, require documents and answers, and report on what the agency did wrong. By then, how the agency handled the complaint the first time is part of what is examined.

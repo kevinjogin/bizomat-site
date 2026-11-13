@@ -4,7 +4,7 @@ chapterSlug: annual-reports-and-performance-statements
 order: 9
 title: "Annual reports and performance statements"
 description: "Plan, record and report an agency's performance under the PGPA framework, and meet the annual report's contents, deadline and tabling rules without overstating results."
-draft: true
+draft: false
 ---
 
 Most accountability work answers someone else's questions. The annual report is different: once a year the agency tells the Parliament, in its own words and from its own records, what it set out to do and what it achieved. Senators, committees and auditors then read it beside everything else the agency has said. A result that cannot be traced to its records, or that quietly measures something new, will be found.

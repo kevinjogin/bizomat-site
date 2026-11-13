@@ -4,7 +4,7 @@ chapterSlug: evidence-and-consultation
 order: 2
 title: "Evidence and consultation"
 description: "Gather evidence that can change the advice: judge its quality and limits, design consultation people can trust, record and report back, and meet the APS Values."
-draft: true
+draft: false
 ---
 
 This is an illustration. Grace Mitchell's brief of Fri 13 Aug 2027 promised the Minister an options paper by the end of October, built on evidence NRIO did not yet have. Its problem tree named three suspected causes: the cost of assessments, the shortage of bridge engineers and poor asset data. Nobody knew how many bridges were affected or what the limits cost.

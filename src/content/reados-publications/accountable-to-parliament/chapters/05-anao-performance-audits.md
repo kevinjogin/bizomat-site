@@ -4,7 +4,7 @@ chapterSlug: anao-performance-audits
 order: 5
 title: "ANAO performance audits, from fieldwork to response"
 description: "Work through a performance audit with an independent Auditor-General: access to records, the proposed report, the 28-day comment period, confidentiality and tabling."
-draft: true
+draft: false
 ---
 
 A performance audit is the closest look anyone outside an agency will take at how it runs a program. The auditors can read every file, ask any official to explain a decision, and report what they find to Parliament in words the agency does not write. What the agency controls is how well it gives access, how carefully it checks the facts, and how clearly it says what it will do.

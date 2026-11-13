@@ -4,7 +4,7 @@ chapterSlug: developing-people-and-planning-succession
 order: 10
 title: "Developing people and planning succession"
 description: "Hold career conversations, write development plans around real work, choose acting staff fairly and make sure no key role, including your own, depends on one person."
-draft: true
+draft: false
 ---
 
 A team can follow every rule in this book and still fail if what it knows sits in one person's head. Development is how people grow into bigger work. Succession is how the work carries on when someone takes leave, moves on or is promoted. They are the same job seen from two ends, and both belong to the manager.

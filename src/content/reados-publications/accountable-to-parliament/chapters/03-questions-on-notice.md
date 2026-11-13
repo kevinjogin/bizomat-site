@@ -4,7 +4,7 @@ chapterSlug: questions-on-notice
 order: 3
 title: "Questions on notice"
 description: "Log, own, triage, draft and clear answers to questions on notice so that each answers the question asked, matches the record and arrives by the committee's date."
-draft: true
+draft: false
 ---
 
 A question taken on notice is a promise made in the hearing room: the agency will answer in writing later. The written answer is evidence to the committee. Committees commonly publish answers, and Senators read them beside the transcript and against everything else the agency has said. A late answer invites a sharp question at the next hearing. A vague one invites three more. An answer that contradicts the transcript, or another answer, can become the story.

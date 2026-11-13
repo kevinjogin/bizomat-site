@@ -4,7 +4,7 @@ chapterSlug: grant-guidelines-applicants-can-rely-on
 order: 3
 title: "Grant opportunity guidelines applicants can rely on"
 description: "Write grant guidelines that meet the CGRPs: clear eligibility, weighted criteria, publication on GrantConnect, answers given to everyone and changes made fairly."
-draft: true
+draft: false
 ---
 
 Grant opportunity guidelines are a promise to every potential applicant. They say who can apply, what the money is for, how applications will be judged and who will decide. Applicants spend days preparing against that promise. An agency that later judges them by different rules has broken it, whatever it intended.

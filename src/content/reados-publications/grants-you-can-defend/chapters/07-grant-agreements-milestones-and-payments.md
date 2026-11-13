@@ -4,7 +4,7 @@ chapterSlug: grant-agreements-milestones-and-payments
 order: 7
 title: "Grant agreements, milestones and payments"
 description: "Turn a grant decision into an agreement: choose its form, write milestones and conditions, record the approval, confirm bank details and pay in the right year."
-draft: true
+draft: false
 ---
 
 This is an illustration. On Monday 31 May 2027 the Minister approved 31 Regional Community Facilities Program (RCFP) grants worth A$9.98 million. No money had moved, and no grantee had promised anything. A decision says who should receive public money and how much. The grant agreement says what each grantee will deliver, on what terms, and when each part of the money will be paid.

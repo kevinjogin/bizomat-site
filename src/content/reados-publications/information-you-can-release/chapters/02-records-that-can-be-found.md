@@ -4,7 +4,7 @@ chapterSlug: records-that-can-be-found
 order: 2
 title: "Records that can be found"
 description: "What a Commonwealth record is, when one may lawfully be destroyed, and how filing emails, chats and file notes decides whether an FOI search finds them."
-draft: true
+draft: false
 ---
 
 A freedom of information (FOI) request is a request for documents, and an agency can decide only on the documents it finds. Whether it finds them depends on choices made months earlier by people who were not thinking about FOI: where they saved an email, what they called a file, whether anyone wrote down a phone call.

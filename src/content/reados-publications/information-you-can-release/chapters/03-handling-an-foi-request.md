@@ -4,7 +4,7 @@ chapterSlug: handling-an-foi-request
 order: 3
 title: "Handling an FOI request"
 description: "Handle an FOI request from receipt to decision: a valid request, the 30-day clock, extensions, transfers, practical refusal, charges, searches and planning."
-draft: true
+draft: false
 ---
 
 A freedom of information (FOI) request starts a clock the day it arrives. The Freedom of Information Act 1982 (the FOI Act) sets the outer limit for a decision, the only ways to extend it and what happens when time runs out. It also says what an agency may charge and when it may refuse a request as too large. An officer who knows those rules plans the work in week one, not in week four.

@@ -4,7 +4,7 @@ chapterSlug: evaluating-whether-the-program-worked
 order: 10
 title: "Evaluating whether the program worked"
 description: "Evaluate a grant program against a baseline and a comparison group, measure use and cost per outcome, test a benefit–cost ratio and advise on what comes next."
-draft: true
+draft: false
 ---
 
 Payments made, reports approved and grants acquitted show that public money was handled properly. They do not show that anything changed for the people the program was meant to serve, or whether the money could have done more. That is the evaluation's job, and it is the step most often squeezed.

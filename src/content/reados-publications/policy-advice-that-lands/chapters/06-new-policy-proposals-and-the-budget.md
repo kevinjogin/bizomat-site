@@ -4,7 +4,7 @@ chapterSlug: new-policy-proposals-and-the-budget
 order: 6
 title: "New policy proposals and the Budget"
 description: "How a new policy proposal becomes money: appropriation, the Charter of Budget Honesty, the Budget cycle, what a proposal holds, and why decisions come back scaled."
-draft: true
+draft: false
 ---
 
 A costed option is not yet a program. It becomes one when the government decides to fund it and the Parliament appropriates the money. Between those two points sits the Budget process, in which every proposal competes with every other for a limited amount of money and ministers' attention.

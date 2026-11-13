@@ -4,7 +4,7 @@ chapterSlug: grant-or-procurement
 order: 1
 title: "Grant or procurement: the framework behind every grant"
 description: "What counts as a grant under the CGRPs 2024, how it differs from a procurement, who the rules bind, and the six steps every grant in this book follows."
-draft: true
+draft: false
 ---
 
 Sam Reid joined the Regional Programs Branch of the Northfield Regional Infrastructure Office (NRIO) in mid-2026 as its Grants Program Manager, an EL1 role. In policy he made the case for spending money. Now he has to spend it in a way that survives a complaint or an audit.

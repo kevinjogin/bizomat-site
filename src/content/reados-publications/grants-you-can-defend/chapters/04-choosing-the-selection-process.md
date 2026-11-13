@@ -4,7 +4,7 @@ chapterSlug: choosing-the-selection-process
 order: 4
 title: "Choosing the selection process"
 description: "Choose among the six selection processes in the CGRPs, know when a competitive, merit-based process should be used, and record the reasons for the choice."
-draft: true
+draft: false
 ---
 
 Every clause of the guidelines in Chapter 3 rested on an earlier choice: how grantees would be selected. That choice decides who may apply, whether applications are compared with each other, how long the round takes and how much work it needs. It is made early, and it is hard to defend later if nobody wrote down why.

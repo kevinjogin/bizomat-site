@@ -4,7 +4,7 @@ chapterSlug: designing-a-program-that-shows-results
 order: 2
 title: "Designing a program that can show results"
 description: "How to turn a policy objective into a program logic, eligibility rules, a funding profile and measures with baselines, so a grant program can show what changed."
-draft: true
+draft: false
 ---
 
 In 2029–30 someone will ask whether the RCFP worked: the Minister deciding whether it should continue, an auditor, or a council that missed out. What the evaluation can say then depends on decisions made in 2026, before a single application arrives. A program that never recorded where it started cannot show how far it moved.
