@@ -182,6 +182,7 @@ export function rowStatements(t, row) {
   const first = insert(lits);
   if (first.length <= STATEMENT_BYTES) return [first];
   if (!t.pk.length) throw new RowTooLarge(`a row of ${t.name} is too long for one D1 statement and the table has no primary key`);
+  if (t.noAppend) throw new RowTooLarge(`a row of ${t.name} is too long for one D1 statement, and an UPDATE trigger guards the table`);
   const pkIndex = new Set(t.pk.map((c) => t.columns.indexOf(c)));
   const longest = lits
     .map((l, i) => i)
@@ -363,9 +364,19 @@ export function writeParts(db, plan, outDir, { partBytes = DEFAULT_PART_BYTES } 
   return { parts, rows, inPieces, tooLarge };
 }
 
-/** Deletes the rows of every table of the plan, children first (the reverse of the load order). */
-export function clearSql(plan) {
-  return `${[DEFER, ...[...plan].reverse().map((t) => `DELETE FROM ${quoteIdent(t.name)};`)].join('\n')}\n`;
+/**
+ * Deletes the rows of every table of the plan, children first (the reverse of the load order). Triggers that guard
+ * rows against deletion (Finance's posted journals) are dropped first and created again, from their own one-line text,
+ * after the deletes: D1 runs the file as one transaction, so they are never missing for anyone else.
+ */
+export function clearSql(plan, triggers = []) {
+  for (const t of triggers) if (/[\r\n]/.test(t.sql)) throw new Error(`trigger ${t.name} spans more than one line: write it on one line in its migration`);
+  return `${[
+    DEFER,
+    ...triggers.map((t) => `DROP TRIGGER IF EXISTS ${quoteIdent(t.name)};`),
+    ...[...plan].reverse().map((t) => `DELETE FROM ${quoteIdent(t.name)};`),
+    ...triggers.map((t) => `${t.sql};`),
+  ].join('\n')}\n`;
 }
 
 function canonical(h, v) {

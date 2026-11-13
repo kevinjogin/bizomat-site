@@ -3,9 +3,10 @@ import { apiFailureMetric, createApp, withSecurityHeaders } from './app';
 import { bumpMetric } from './services/analytics';
 import { systemSvc } from './services/context';
 import { notifyDueDates, retryFailedRuns, runScheduledAutomations } from './services/automations';
-import { CRM_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
+import { CRM_MOUNT, FIN_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
 import { processOutbox } from './services/email/outbox';
 import { runCrmScheduled } from './crm';
+import { financeHousekeeping, runFinanceScheduled } from './fin';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -22,6 +23,12 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.crm = await runCrmScheduled(env, at, waitUntil);
   } catch (e) {
     results.crm = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // Finance: recurring records, reminders, budget warnings, monthly summaries and scheduled reports.
+  try {
+    results.finance = await runFinanceScheduled(env, at, waitUntil);
+  } catch (e) {
+    results.finance = { error: e instanceof Error ? e.message : 'failed' };
   }
   // Email: hand queued and delayed messages to the provider, within the daily limit.
   try {
@@ -49,6 +56,8 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     // CRM: read notifications are kept 180 days; automation runs (the execution history) 180 days.
     env.DB.prepare('DELETE FROM crm_notifications WHERE read_at IS NOT NULL AND read_at < ?').bind(wall - 180 * DAY),
     env.DB.prepare('DELETE FROM crm_automation_runs WHERE created_at < ?').bind(wall - 180 * DAY),
+    // Finance: read notifications are kept 180 days.
+    ...financeHousekeeping(env.DB, wall),
     // Email bodies are kept 30 days for diagnostics, then cleared; the delivery record stays.
     env.DB.prepare("UPDATE email_outbox SET html = '', text = '' WHERE created_at < ? AND status NOT IN ('queued','deferred','sending') AND (html != '' OR text != '')").bind(wall - 30 * DAY),
     env.DB.prepare("INSERT INTO system_kv (key, value, updated_at) VALUES ('last_maintenance', ?1, ?2) ON CONFLICT(key) DO UPDATE SET value = ?1, updated_at = ?2").bind(JSON.stringify({ at: wall, ...results }), wall),
@@ -64,8 +73,8 @@ export default {
       const moved = canonicalRedirect(request, env);
       if (moved) return withSecurityHeaders(moved, request);
     }
-    if (base === CRM_MOUNT) {
-      const moved = crmCanonicalRedirect(request, env);
+    if (base === CRM_MOUNT || base === FIN_MOUNT) {
+      const moved = crmCanonicalRedirect(request, env, base);
       if (moved) return withSecurityHeaders(moved, request);
     }
     const inner = base ? unmount(request, base) : request;

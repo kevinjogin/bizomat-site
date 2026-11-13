@@ -49,7 +49,7 @@ function d1Dump(db: DatabaseSync): string {
   }
   out.push('DELETE FROM sqlite_sequence;');
   for (const r of db.prepare('SELECT name, seq FROM sqlite_sequence').all() as { name: string; seq: number }[]) out.push(`INSERT INTO "sqlite_sequence" ("name","seq") VALUES('${r.name}',${r.seq});`);
-  for (const i of db.prepare("SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL ORDER BY name").all() as { sql: string }[]) out.push(`${i.sql};`);
+  for (const i of db.prepare("SELECT sql FROM sqlite_master WHERE type IN ('index', 'trigger') AND sql IS NOT NULL ORDER BY type = 'trigger', name").all() as { sql: string }[]) out.push(`${i.sql};`);
   return `${out.join('\n')}\n`;
 }
 

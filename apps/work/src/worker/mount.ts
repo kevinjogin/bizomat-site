@@ -12,16 +12,19 @@
 // ("https://bizomat.ai/tasks"), a page asked for on another host answers 301 to the same path there; /api/ keeps
 // working on every host, for open tabs and anything that calls it.
 //
-// The same app also answers under /crm (BIZOMAT CRM, src/worker/crm and src/client/crm): one Worker, one database and
-// one session for both. The session cookie is written for both paths (Path=/tasks and Path=/crm), so signing in to
-// either signs in to both, while the website and CAD Automation, at other paths of bizomat.ai, still never receive it.
+// The same app also answers under /crm (BIZOMAT CRM, src/worker/crm and src/client/crm) and /finance (BIZOMAT Finance,
+// src/worker/fin and src/client/fin): one Worker, one database and one session for all three. The session cookie is
+// written for each path (Path=/tasks, /crm and /finance), so signing in to one signs in to all, while the website and CAD
+// Automation, at other paths of bizomat.ai, still never receive it.
 import type { Env } from './env';
 
 export const MOUNT = '/tasks';
 /** BIZOMAT CRM, served by this app at https://bizomat.ai/crm. */
 export const CRM_MOUNT = '/crm';
+/** BIZOMAT Finance, served by this app at https://bizomat.ai/finance. */
+export const FIN_MOUNT = '/finance';
 /** Every path this app is served under on another site's address; the session cookie is written for each. */
-export const MOUNTS = [MOUNT, CRM_MOUNT] as const;
+export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT] as const;
 
 /** The path the request came in under: one of MOUNTS, or '' at the root of the host. */
 export function mountOf(url: URL): string {
@@ -86,8 +89,8 @@ export function remount(res: Response, base: string): Response {
 export async function withBaseHref(res: Response, base: string): Promise<Response> {
   if (!(res.headers.get('Content-Type') ?? '').includes('text/html')) return res;
   const tag = `<base href="${base}/">`;
-  // Under /crm the page is BIZOMAT CRM: its title before the script sets the page's own.
-  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : null;
+  // Under /crm and /finance the page is that product: its title before the script sets the page's own.
+  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : base === FIN_MOUNT ? 'BIZOMAT Finance' : null;
   if (typeof HTMLRewriter === 'function') {
     let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
     if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });
@@ -104,17 +107,18 @@ export async function withBaseHref(res: Response, base: string): Promise<Respons
 }
 
 /**
- * A CRM page asked for on another host than the canonical one (work.kevos.com/crm, bizomat.fly.dev/crm): 301 to the same
- * path on the canonical host (https://bizomat.ai/crm/...), so the session cookie and every link are on one address.
+ * A CRM or Finance page asked for on another host than the canonical one (work.kevos.com/crm, bizomat.fly.dev/finance):
+ * 301 to the same path on the canonical host (https://bizomat.ai/crm/...), so the session cookie and every link are on
+ * one address.
  */
-export function crmCanonicalRedirect(request: Request, env: Pick<Env, 'CANONICAL_URL'>): Response | null {
+export function crmCanonicalRedirect(request: Request, env: Pick<Env, 'CANONICAL_URL'>, base: string = CRM_MOUNT): Response | null {
   const target = (env.CANONICAL_URL ?? '').trim();
   if (!/^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i.test(target)) return null;
   if (request.method !== 'GET' && request.method !== 'HEAD') return null;
   const url = new URL(request.url);
   const canon = new URL(target);
   if (url.host === canon.host) return null;
-  if (url.pathname.startsWith(`${CRM_MOUNT}/api/`) || !(request.headers.get('Accept') ?? '').includes('text/html')) return null;
+  if (url.pathname.startsWith(`${base}/api/`) || !(request.headers.get('Accept') ?? '').includes('text/html')) return null;
   return new Response(null, { status: 301, headers: { Location: `${canon.origin}${url.pathname}${url.search}`, 'Cache-Control': 'public, max-age=3600' } });
 }
 
