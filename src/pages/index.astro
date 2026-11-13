@@ -1,7 +1,7 @@
 ---
 // BIZOMAT homepage: "Connecting Intelligence. Empowering Progress." (the corporate slogan, owner 8 Nov 2026)
 // 1. Hero: what BIZOMAT is, Explore Products and Explore AI Tools, and the connected-operations scene.
-// 2. Products: CAD Automation, Project Management and Resources (src/config/products.ts, facts from
+// 2. Products: CAD Automation, Project Management, Customer Relationship Management and Resources (src/config/products.ts, facts from
 //    src/data/platform-catalog.ts).
 // 3. AI Search: the discovery pipeline (/api/discover, /discovery-index.json) over public products, docs, tools and books.
 // 4. Proof: counts read from the code and the catalogues at build time, and a link to the Engine Room (/engine-room/).
@@ -21,7 +21,7 @@ import '../styles/library.css';
 import { SITE } from '../config/site.ts';
 import { PRODUCTS } from '../config/products.ts';
 import { APP_LINKS } from '../config/platform.ts';
-import { CAD, WORK } from '../data/platform-catalog.ts';
+import { CAD, CRM, WORK } from '../data/platform-catalog.ts';
 import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS } from '../config/home.ts';
 import { loadWorkosTools, hasStandaloneGuide, toolPageHref, toolAppHref } from '../utils/workos-tools.ts';
 import { groupToolsByTopic, subcategoryLabel } from '../utils/workos-topics.ts';
@@ -51,6 +51,7 @@ const toolHref = (id: string) => (hasStandaloneGuide(guides[id]) ? toolPageHref(
 const highlights: Record<string, string[]> = {
   cad: CAD.capabilities.slice(0, 3).map((c) => c.title),
   work: [`${WORK.views.length} views of one project`, 'Teams, roles and permissions', 'Automations and dashboards'],
+  crm: ['Contacts, leads and deals', 'A pipeline board with Won and Lost', `${CRM.reports.length} sales reports and automations`],
   resources: [`${fmt(tools.length)} tools and calculators`, `${fmt(bookTotal)} books, ${fmt(chapterTotal)} chapters`, 'No account needed'],
 };
 const proof = [
@@ -67,6 +68,7 @@ const schema = [{
   hasPart: [
     { '@type': 'SoftwareApplication', name: 'BIZOMAT CAD Automation', url: `${SITE.url}/cad-automation/`, description: CAD.headline, applicationCategory: 'DesignApplication', operatingSystem: 'Windows', publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'SoftwareApplication', name: 'BIZOMAT Project Management', url: `${SITE.url}/work/`, description: WORK.headline, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', publisher: { '@id': `${SITE.url}/#organization` } },
+    { '@type': 'SoftwareApplication', name: 'BIZOMAT Customer Relationship Management', alternateName: 'BIZOMAT CRM', url: `${SITE.url}/crm-platform/`, description: CRM.headline, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'CollectionPage', name: 'BIZOMAT Tools', url: `${SITE.url}/tools/`, description: 'Engineering, manufacturing and business tools.' },
     { '@type': 'CollectionPage', name: 'BIZOMAT Library', url: `${SITE.url}/reados/`, description: 'Technical books, engineering references and structured learning resources.' },
   ],
@@ -86,6 +88,7 @@ const schema = [{
         <ul class="home-hero__facts" role="list">
           <li><span class="dot"></span>CAD Automation for SOLIDWORKS</li>
           <li><span class="dot"></span>Project Management for teams</li>
+          <li><span class="dot"></span>Customer Relationship Management for sales</li>
           <li><span class="dot"></span>Resources, free without an account</li>
         </ul>
       </div>
@@ -97,8 +100,8 @@ const schema = [{
     <Container>
       <div class="home-head">
         <p class="bz-eyebrow">Products</p>
-        <h2 id="products-title">Three ways BIZOMAT gets work done</h2>
-        <p>Engineering automation, project delivery and the knowledge behind both, on one platform.</p>
+        <h2 id="products-title">Four ways BIZOMAT gets work done</h2>
+        <p>Engineering automation, project delivery, customer relationships and the knowledge behind them, on one platform.</p>
       </div>
       <ul class="product-grid" role="list">
         {PRODUCTS.map((p) => (
@@ -263,7 +266,7 @@ const schema = [{
   .home-more a { color: var(--accent); font-weight: 600; text-decoration: none; }
   .home-more a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-  .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
   .product-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.4rem, 2.5vw, 2rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
   .product-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; margin: 0 0 1.25rem; }
   .product-card__formerly { color: var(--muted); font-size: .8rem; }
@@ -329,7 +332,7 @@ const schema = [{
     .product-card__action { padding-top: 1.25rem; }
     :global(.home-split) { grid-template-columns: 1fr; }
   }
-  @media (min-width: 640px) and (max-width: 1000px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 640px) and (max-width: 1180px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px) {
     .topic-list { grid-template-columns: 1fr; }
     .proof-stats { grid-template-columns: 1fr; }

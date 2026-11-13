@@ -29,7 +29,7 @@ import https from 'node:https';
 import net from 'node:net';
 import tls from 'node:tls';
 
-const PAGES = ['/', '/cad-automation/', '/work/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+const PAGES = ['/', '/cad-automation/', '/work/', '/crm-platform/', '/crm-platform/guide/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room).
 const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/']];
 const HSTS = /max-age=\d{7,}/;
@@ -445,7 +445,7 @@ async function workChecks() {
   await check('work', 'bizomat.ai/crm/login: the CRM, its files under /crm/ (<base href>)', async () => {
     const r = await onPlatform({ path: '/crm/login', headers: { Accept: 'text/html' } });
     if (r.status !== 200) return { fail: describe(r) };
-    return (r.text.includes('<base href="/crm/">') && r.text.includes('<title>BIZOMAT CRM</title>')) || { fail: 'no <base href="/crm/"> or CRM title in the page' };
+    return (r.text.includes('<base href="/crm/">') && r.text.includes('<title>BIZOMAT Customer Relationship Management</title>')) || { fail: 'no <base href="/crm/"> or CRM title in the page' };
   });
   await check('work', 'bizomat.ai/crm: a page without a session goes through /tasks (a session there carries over)', async () => {
     const r = await onPlatform({ path: '/crm/o/smoke/overview', headers: { Accept: 'text/html' } });

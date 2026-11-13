@@ -1,5 +1,6 @@
 ---
-// BIZOMAT products overview: CAD Automation, Project Management and Resources (src/config/products.ts), and what is planned.
+// BIZOMAT products overview: CAD Automation, Project Management, Customer Relationship Management and Resources
+// (src/config/products.ts), and what is planned.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
@@ -17,8 +18,8 @@ const schema = [{
   })),
 }];
 ---
-<BaseLayout title="Products: CAD Automation, Project Management and Resources" description="BIZOMAT products: CAD Automation for SOLIDWORKS, Project Management for teams, and Resources: free engineering and business tools, books and guides." breadcrumbs={crumbs} schema={schema}>
-  <Hero eyebrow="Products" title="One platform. <em>Three ways to get work done.</em>" lead="Each BIZOMAT product is built for one kind of work. Open the one that fits, or ask BIZOMAT AI Search on the homepage.">
+<BaseLayout title="Products: CAD Automation, Project Management, CRM and Resources" description="BIZOMAT products: CAD Automation for SOLIDWORKS, Project Management for teams, Customer Relationship Management (CRM) for sales, and free Resources." breadcrumbs={crumbs} schema={schema}>
+  <Hero eyebrow="Products" title="One platform. <em>Four ways to get work done.</em>" lead="Each BIZOMAT product is built for one kind of work. Open the one that fits, or ask BIZOMAT AI Search on the homepage.">
     <Breadcrumb items={crumbs} slot="before" />
   </Hero>
 

@@ -78,11 +78,21 @@ export const SITE = {
  * the directory is "Tools" and the books are "Library"; URLs /tools/ and /reados/ are unchanged.
  */
 export type NavChild = { label: string; href?: string; description?: string; status?: string; external?: boolean };
-export type NavItem = { label: string; href: string; children?: readonly NavChild[] };
+/** `short`: a short form shown only where the full label does not fit in the header row (the full label stays its
+ * accessible name and tooltip). */
+export type NavItem = { label: string; short?: string; href: string; children?: readonly NavChild[] };
 
 export const NAV: readonly NavItem[] = [
   { label: 'CAD Automation', href: '/cad-automation/' },
   { label: 'Project Management', href: '/work/' },
+  // Spelled out so that someone new knows what a CRM is (owner, 13 Nov 2026); "CRM" only where the row is too narrow.
+  {
+    label: 'Customer Relationship Management', short: 'CRM', href: '/crm-platform/', children: [
+      { label: 'Customer Relationship Management', href: '/crm-platform/', description: 'Customers, leads, deals and follow-ups, shared with your team.' },
+      { label: 'User guide', href: '/crm-platform/guide/', description: 'How to use the CRM, step by step.' },
+      { label: 'Open the CRM', href: APP_LINKS.crm.signIn, description: 'Sign in with your BIZOMAT account.', external: true },
+    ],
+  },
   {
     label: 'Resources', href: '/resources/', children: [
       { label: 'Tools', href: '/tools/', description: 'Engineering, manufacturing and business calculators.' },
@@ -97,18 +107,18 @@ export const NAV: readonly NavItem[] = [
       { label: 'The Engine Room', href: '/engine-room/', description: 'Who builds BIZOMAT, and the proof that it works.' },
       { label: 'From the founder', href: '/engine-room/#founder', description: 'Why BIZOMAT exists, in its founder\'s words.' },
       { label: 'Test record', href: '/engine-room/#tests', description: 'Every suite that was run, with its result.' },
-      { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management and Resources.' },
+      { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management, Customer Relationship Management and Resources.' },
       { label: 'Contact', href: '/contact/', description: 'Ask a question or start a conversation.' },
     ],
   },
 ] as const;
 
-/** The header's sign-in menu: each application has its own sign-in and sends you to your dashboard afterwards. The CRM
- * shares Project Management's accounts and sign-in (one session for both). */
+/** The header's sign-in menu: each application has its own sign-in and sends you to your dashboard afterwards. Customer
+ * Relationship Management (the CRM) shares Project Management's accounts and sign-in (one session for both). */
 export const SIGN_IN = [
   { label: 'Project Management', href: APP_LINKS.work.signIn, description: 'Projects, tasks and your team workspace.' },
   { label: 'CAD Automation', href: APP_LINKS.cad.signIn, description: 'Your AI assistant, computers and SOLIDWORKS.' },
-  { label: 'CRM', href: APP_LINKS.crm.signIn, description: 'Customers, leads, deals and follow-ups.' },
+  { label: 'Customer Relationship Management', href: APP_LINKS.crm.signIn, description: 'The CRM: customers, leads, deals and follow-ups.' },
 ] as const;
 /** Breadcrumb labels for the two libraries. */
 export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
@@ -125,6 +135,7 @@ export const FOOTER_NAV = {
   products: [
     { href: '/cad-automation/', label: 'CAD Automation' },
     { href: '/work/', label: 'Project Management' },
+    { href: '/crm-platform/', label: 'Customer Relationship Management' },
     { href: '/resources/', label: 'Resources' },
     { href: '/products/', label: 'All products' },
     { href: '/solutions/', label: 'Solutions' },
@@ -147,7 +158,7 @@ export const FOOTER_NAV = {
   apps: [
     { href: APP_LINKS.work.signIn, label: 'Sign in to Project Management' },
     { href: APP_LINKS.cad.signIn, label: 'Sign in to CAD Automation' },
-    { href: APP_LINKS.crm.signIn, label: 'Sign in to CRM' },
+    { href: APP_LINKS.crm.signIn, label: 'Sign in to Customer Relationship Management' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy Policy' },

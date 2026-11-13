@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { CAD, PLATFORM_CATALOG, WORK } from '../src/data/platform-catalog.ts';
+import { CAD, CRM, PLATFORM_CATALOG, WORK } from '../src/data/platform-catalog.ts';
 import { CAD_TOOL_GROUPS } from '../src/data/cad-tools.ts';
 import { APP_URLS } from '../src/config/platform.ts';
 import { buildDiscoveryIndex } from '../src/utils/discovery-index.ts';
@@ -27,6 +27,23 @@ test('Project Management facts match the application', () => {
   assert.match(readme, /11 widget types/);
   for (const v of ['Table', 'Kanban', 'Calendar', 'Chart', 'Workload', 'Form', 'Map', 'Files']) assert.ok(readme.includes(v), `README lists the ${v} view`);
   assert.equal(WORK.views.length, 9);
+});
+
+test('Customer Relationship Management facts are the application\'s own lists, item for item', () => {
+  const block = (file: string, start: RegExp) => { const t = read(file); const i = t.search(start); assert.ok(i >= 0, `${file}: ${start}`); return t.slice(i, t.indexOf(']', i)); };
+  const objectBlock = (file: string, start: RegExp) => { const t = read(file); const i = t.search(start); assert.ok(i >= 0, `${file}: ${start}`); return t.slice(i, t.indexOf('}', i)); };
+  const defaults = 'apps/work/src/shared/crm/defaults.ts';
+  const labels = (text: string) => [...text.matchAll(/o\('[a-z_]+', '([^']+)'/g)].map((m) => m[1]);
+  assert.deepEqual(labels(block(defaults, /leadStatuses: \[/)), [...CRM.leadStatuses]);
+  assert.deepEqual(labels(block(defaults, /activityTypes: \[/)), [...CRM.activityTypes]);
+  const pipeline = read(defaults).slice(read(defaults).indexOf('DEFAULT_PIPELINE'));
+  assert.deepEqual([...pipeline.slice(0, pipeline.indexOf('};')).matchAll(/\{ name: '([^']+)', probability: (\d+) \}/g)].map((m) => ({ name: m[1], probability: Number(m[2]) })), CRM.stages.map((s) => ({ ...s })));
+  assert.deepEqual([...objectBlock('apps/work/src/shared/crm/fields.ts', /CUSTOM_FIELD_TYPE_LABELS/).matchAll(/: '([^']+)'/g)].map((m) => m[1]), [...CRM.customFieldTypes]);
+  assert.deepEqual([...objectBlock('apps/work/src/worker/crm/routes-insights.ts', /export const REPORTS = \{/).matchAll(/: '([^']+)'/g)].map((m) => m[1]), [...CRM.reports]);
+  const presets = read('apps/work/src/shared/crm/automations.ts');
+  assert.deepEqual([...presets.slice(presets.indexOf('PRESETS')).matchAll(/^ {4}name: '([^']+)'/gm)].map((m) => m[1]), [...CRM.automations]);
+  assert.deepEqual([...objectBlock('apps/work/src/shared/crm/roles.ts', /CRM_ROLE_LABELS: Record/).matchAll(/: '([^']+)'/g)].map((m) => m[1]), CRM.roles.map((r) => r.name));
+  assert.equal(CRM.capabilities.length, 6);
 });
 
 test('every catalogue entry is public and points at a real page or an application\'s public documentation', () => {
@@ -67,10 +84,13 @@ test('the example searches return relevant products, tools and readings, each wi
   assert.ok(cad.platform.some((h) => h.url === '/cad-automation/'), 'the CAD Automation page');
   const work = ask('Show me project management capabilities.');
   assert.equal(work.platform[0]?.url, '/work/');
+  const crm = ask('I need a CRM to manage leads and my sales pipeline.');
+  assert.equal(crm.platform[0]?.url, '/crm-platform/', 'the CRM page');
+  assert.ok(ask('Is there a guide to getting started with the CRM?').platform.some((h) => h.url === '/crm-platform/guide/'), 'the CRM user guide');
   const guides = ask('Find guides about business automation.');
   assert.ok(guides.platform.some((h) => h.url === '/library/'));
   assert.ok(guides.readings.length >= 1);
-  for (const o of [tools, cad, work, guides]) for (const h of [...o.platform, ...o.tools, ...o.readings]) assert.match(h.reason, /^(Matches|Related)/);
+  for (const o of [tools, cad, work, crm, guides]) for (const h of [...o.platform, ...o.tools, ...o.readings]) assert.match(h.reason, /^(Matches|Related)/);
   // A product page never crowds out the calculators: a plain engineering question still gets its tools first.
   const bolt = ask('bolt torque');
   assert.equal(bolt.platform.length, 0);

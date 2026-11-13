@@ -27,7 +27,7 @@ const inSection = (item: (typeof NAV)[number]) =>
           <li class="site-nav__item">
             <details class="nav-menu" data-nav-menu>
               <summary class:list={['site-nav__link', { 'is-current': inSection(item) }]}>
-                {item.label}
+                {item.short ? <><span class="site-nav__long">{item.label}</span><abbr class="site-nav__short" title={item.label}>{item.short}</abbr></> : item.label}
                 <svg class="nav-menu__chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
               </summary>
               <div class="nav-menu__panel">
@@ -53,7 +53,7 @@ const inSection = (item: (typeof NAV)[number]) =>
           </li>
         ) : (
           <li class="site-nav__item">
-            <a class:list={['site-nav__link', { 'is-current': inSection(item) }]} href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+            <a class:list={['site-nav__link', { 'is-current': inSection(item) }]} href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.short ? <><span class="site-nav__long">{item.label}</span><abbr class="site-nav__short" title={item.label}>{item.short}</abbr></> : item.label}</a>
           </li>
         ))}
       </ul>
@@ -147,7 +147,7 @@ const inSection = (item: (typeof NAV)[number]) =>
   .site-nav__item { position: relative; }
   .site-nav__link {
     display: inline-flex; align-items: center; gap: .3rem; min-height: 40px; padding: 0 .75rem; border-radius: 8px;
-    color: var(--ink-2); font-size: .94rem; font-weight: 540; text-decoration: none; cursor: pointer; list-style: none; user-select: none;
+    color: var(--ink-2); font-size: .94rem; font-weight: 540; text-decoration: none; cursor: pointer; list-style: none; user-select: none; white-space: nowrap;
     transition: color .15s var(--ease), background .15s var(--ease);
   }
   .site-nav__link::-webkit-details-marker { display: none; }
@@ -222,6 +222,19 @@ const inSection = (item: (typeof NAV)[number]) =>
   }
   @media (max-width: 1180px) and (min-width: 1001px) {
     .site-header__search span { display: none; }
+  }
+  /* A long label (Customer Relationship Management) shows its short form (CRM) in the desktop row, which has no room for
+     it at any width; the full label stays its accessible name and tooltip, heads its menu, and is shown in the phone
+     menu. Between 1001 and 1120 px the links sit closer so that the row stays on one line. */
+  .site-nav__short { display: none; text-decoration: none; }
+  @media (min-width: 1001px) {
+    .site-nav__long { display: none; }
+    .site-nav__short { display: inline; }
+  }
+  @media (max-width: 1120px) and (min-width: 1001px) {
+    .site-nav__list { gap: 0; }
+    .site-nav__link { padding: 0 .5rem; }
+    .site-nav__link.is-current::after { left: .5rem; right: .5rem; }
   }
   @media (max-width: 1000px) {
     :global(.js) .site-header .site-header__search { display: none; }
