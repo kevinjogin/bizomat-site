@@ -1,6 +1,7 @@
 ---
-// Light/dark switch. The site opens in the light theme (set in BaseLayout before first paint). Switching to dark
-// lasts only for the current browser session (sessionStorage); a new session opens in light again.
+// Light/dark switch. Pages open in this computer's system theme (set in BaseLayout before first paint). A choice made
+// here is remembered on this computer (localStorage "bizomat-theme", shared with the applications under bizomat.ai);
+// until one is made, the page follows the system theme as it changes.
 ---
 
 <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch colour theme">
@@ -15,6 +16,7 @@
 
 <script>
   const root = document.documentElement;
+  const KEY = 'bizomat-theme';
   const label = () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((b) => {
@@ -22,19 +24,40 @@
       b.title = `Switch to ${next} theme`;
     });
   };
+  const apply = (theme: 'light' | 'dark') => {
+    root.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0a111c' : '#f7f9fb');
+    label();
+  };
+  const chosen = () => {
+    try {
+      const v = localStorage.getItem(KEY);
+      return v === 'light' || v === 'dark' ? v : null;
+    } catch {
+      return null;
+    }
+  };
   document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) =>
     button.addEventListener('click', () => {
       const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-      root.dataset.theme = next;
       try {
-        sessionStorage.setItem('bizomat-theme', next);
+        localStorage.setItem(KEY, next);
       } catch {
         /* storage unavailable; the choice lasts for this page only */
       }
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'dark' ? '#0a111c' : '#f7f9fb');
-      label();
+      apply(next);
     }),
   );
+  // No choice made on this computer: follow the system theme when it changes (an evening switch to dark, say).
+  window.matchMedia?.('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!chosen()) apply(e.matches ? 'dark' : 'light');
+  });
+  // A choice made in another tab (or in an application) applies here too.
+  window.addEventListener('storage', (e) => {
+    if (e.key !== KEY) return;
+    const v = chosen();
+    apply(v ?? (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  });
   label();
 </script>
 

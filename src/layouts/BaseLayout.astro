@@ -24,13 +24,15 @@ const props = Astro.props;
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f7f9fb" />
     <script is:inline>
-      // BIZOMAT opens in the light theme (owner decision, 5 Nov 2026; kept for BIZOMAT). Dark applies only when the visitor switches to it,
-      // and only for the current browser session (sessionStorage), never permanently. The OS preference is not followed.
+      // Theme (owner, 13 Nov 2026): every page, here and in the applications, opens in this computer's system theme
+      // (light or dark). A choice made with the theme switch is remembered on this computer only (localStorage
+      // "bizomat-theme", shared with the applications under bizomat.ai), never on an account, so another computer
+      // signed in to the same account follows its own system theme.
       (function () {
-        var d = document.documentElement, t = 'light';
+        var d = document.documentElement, t = null;
         d.classList.add('js'); // scripts run: the header starts in its phone layout (Header.astro)
-        try { if (sessionStorage.getItem('bizomat-theme') === 'dark') t = 'dark'; sessionStorage.removeItem('kevos-theme'); } catch (e) {}
-        try { localStorage.removeItem('kevos-theme'); localStorage.removeItem('bizomat-theme'); } catch (e) {}
+        try { t = localStorage.getItem('bizomat-theme'); localStorage.removeItem('kevos-theme'); sessionStorage.removeItem('bizomat-theme'); sessionStorage.removeItem('kevos-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         d.dataset.theme = t;
         if (t === 'dark') { var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', '#0a111c'); }
       })();

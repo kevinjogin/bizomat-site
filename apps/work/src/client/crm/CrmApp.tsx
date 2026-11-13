@@ -3,7 +3,7 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiError, errorMessage, get, patch, post } from '../lib/api';
+import { ApiError, errorMessage, get, post } from '../lib/api';
 import { appUrl } from '../lib/base';
 import { useSession } from '../lib/session';
 import { applyTheme, storedTheme, useDebounced, usePageTitle, useShortcut, type ThemePref } from '../lib/hooks';
@@ -254,8 +254,6 @@ function Bell() {
 }
 
 function ThemeButton() {
-  const { session } = useSession();
-  const qc = useQueryClient();
   const [pref, setPref] = useState<ThemePref>(storedTheme());
   return (
     <Dropdown align="end" label="Theme" trigger={(open, ref) => <button ref={ref} className="btn ghost icon desktop-only" aria-label="Theme" onClick={open}><Icon name={document.documentElement.dataset.theme === 'dark' ? 'moon' : 'sun'} /></button>}>
@@ -265,11 +263,8 @@ function ThemeButton() {
             <MenuItem key={p} icon={p === 'light' ? 'sun' : p === 'dark' ? 'moon' : 'settings'} active={pref === p} onClick={async () => {
               close();
               setPref(p);
+              // On this computer only, never on the account.
               applyTheme(p);
-              if (session) {
-                await patch('/me', { theme: p }).catch(() => {});
-                qc.invalidateQueries({ queryKey: ['me'] });
-              }
             }}>
               {p[0].toUpperCase() + p.slice(1)}
             </MenuItem>

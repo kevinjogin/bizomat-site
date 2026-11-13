@@ -5,23 +5,35 @@ import { BASE } from './base';
 
 // ---------------------------------------------------------------- theme
 
-export type ThemePref = 'light' | 'dark' | 'system';
+// Owner, 13 Nov 2026: every BIZOMAT page and application opens in this computer's system theme. A choice of light or
+// dark is remembered on this computer only, in the same place the website keeps it (localStorage "bizomat-theme": the
+// website and the applications share the bizomat.ai origin), and never on the account: the same account on another
+// computer follows that computer's own system theme. "System" removes the choice.
 
-export function applyTheme(pref: ThemePref) {
+export type ThemePref = 'light' | 'dark' | 'system';
+export const THEME_KEY = 'bizomat-theme';
+
+/** Shows a theme; with `remember`, keeps the choice on this computer ('system': no choice, follow the system). */
+export function applyTheme(pref: ThemePref, remember = true) {
   const dark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? BRAND.themeColor.dark : BRAND.themeColor.light);
+  if (!remember) return;
   try {
-    localStorage.setItem('workos:theme', pref);
+    if (pref === 'system') localStorage.removeItem(THEME_KEY);
+    else localStorage.setItem(THEME_KEY, pref);
   } catch {
-    /* ignore */
+    /* storage unavailable: the choice lasts for this page */
   }
 }
 
+/** The choice made on this computer, or 'system'. */
 export function storedTheme(): ThemePref {
   try {
-    const v = localStorage.getItem('workos:theme');
-    if (v === 'light' || v === 'dark' || v === 'system') return v;
+    // The earlier key copied the account's setting onto every computer: it is retired.
+    localStorage.removeItem('workos:theme');
+    const v = localStorage.getItem(THEME_KEY);
+    if (v === 'light' || v === 'dark') return v;
   } catch {
     /* ignore */
   }

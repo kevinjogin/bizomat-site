@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { get, patch, post, errorMessage } from '../../lib/api';
+import { get, post, errorMessage } from '../../lib/api';
 import { canEdit, isAdmin, isGuest, useSession, useWorkspace } from '../../lib/session';
 import { applyTheme, storedTheme, useShortcut, useDebounced, type ThemePref } from '../../lib/hooks';
 import { timeAgo } from '../../lib/format';
@@ -343,15 +343,10 @@ function NotificationsBell() {
 
 function ThemeMenu() {
   const [pref, setPref] = useState<ThemePref>(storedTheme());
-  const { session } = useSession();
-  const qc = useQueryClient();
   const choose = async (p: ThemePref) => {
     setPref(p);
+    // On this computer only, never on the account (src/client/lib/hooks.ts).
     applyTheme(p);
-    if (session) {
-      await patch('/me', { theme: p }).catch(() => {});
-      qc.invalidateQueries({ queryKey: ['me'] });
-    }
   };
   return (
     <Dropdown
