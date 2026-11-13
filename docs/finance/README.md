@@ -104,8 +104,8 @@ see every transaction, the reports and the budgets. The server checks every perm
 
 ## Features
 
-- **Workspaces:** create (personal, household or business, with a starting chart of accounts; a GST-registered business
-  also gets the tax codes), switch, rename and settings, logo, invite by email (accept, decline, resend, withdraw; the
+- **Workspaces:** create (personal, household or business, with a starting chart of accounts; a business also starts
+  with the tax codes, used once it is registered for GST), switch, rename and settings, logo, invite by email (accept, decline, resend, withdraw; the
   invited address must match), roles, permissions, remove members, leave, transfer ownership, delete (owner).
 - **Chart of accounts:** assets, liabilities, equity, income, cost of goods sold, operating and other expenses, bank,
   cash, credit cards, loans, receivables, payables and GST; categories and subcategories; codes; rename, reorder,
