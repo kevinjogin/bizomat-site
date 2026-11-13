@@ -25,6 +25,7 @@ const Departments = lazy(() => import('./Pages').then((m) => ({ default: m.Depar
 const Tools = lazy(() => import('./Pages').then((m) => ({ default: m.Tools })));
 const Settings = lazy(() => import('./Pages').then((m) => ({ default: m.Settings })));
 const Activity = lazy(() => import('./Pages').then((m) => ({ default: m.Activity })));
+const Projects = lazy(() => import('./Pages').then((m) => ({ default: m.Projects })));
 
 function page(el: ReactNode) {
   return <Suspense fallback={<Loading />}>{el}</Suspense>;
@@ -118,6 +119,7 @@ const NAV: NavEntry[] = [
   { to: 'overview', label: 'Overview', icon: 'home' },
   { to: 'departments', label: 'Departments', icon: 'layers' },
   { to: 'people', label: 'People', icon: 'users' },
+  { to: 'projects', label: 'Projects', icon: 'target' },
   { to: 'tools', label: 'Tools', icon: 'grid' },
   { to: 'activity', label: 'Activity', icon: 'list', admin: true },
   { to: 'settings', label: 'Company settings', icon: 'settings' },
@@ -141,6 +143,7 @@ function CompanyArea() {
         <Route path="departments" element={page(<Departments />)} />
         <Route path="people" element={page(<People />)} />
         <Route path="tools" element={page(<Tools />)} />
+        <Route path="projects" element={page(<Projects />)} />
         <Route path="activity" element={page(<Activity />)} />
         <Route path="settings" element={page(<Settings />)} />
         <Route path="*" element={<Navigate to="overview" replace />} />

@@ -17,6 +17,7 @@ import type { ActivityDTO, CompanyDTO, ContactDTO, DealDTO, FileDTO, LeadDTO, Li
 import { lineTotal } from '../../shared/crm/money';
 import { Chip, MenuButton, MoneyInput, PersonChip, RecordLink, RecordPicker, TagChips } from './ui';
 import { RecordFormDialog } from './RecordForm';
+import { CustomerCompanyLinks, DealCompanyLinks } from './CompanyLinks';
 import { ActivityRow, EmailDialog, activityIcon } from './Activities';
 import { ENTITY_PATH, crm, dateTime, labelOf, optionsOf, recordPath, shortDate, useCurrentOrg, useCustomFields, useMembers, useMoney, usePeople, usePipelines, useRefreshOrg } from './lib';
 
@@ -130,6 +131,8 @@ export function RecordPage({ entity }: { entity: RecordEntity }) {
           {entity === 'deal' ? <DealContacts deal={r as DealDTO} onChange={() => q.refetch()} /> : null}
           {entity === 'company' ? <RelatedContacts companyId={r.id} /> : null}
           {entity === 'company' || entity === 'contact' ? <RelatedDeals entity={entity} id={r.id} /> : null}
+          {entity === 'deal' ? <DealCompanyLinks orgId={org.id} dealId={r.id} /> : null}
+          {entity === 'company' ? <CustomerCompanyLinks orgId={org.id} companyId={r.id} /> : null}
         </aside>
         <main className="stack">
           {!deleted && org.perms.activities.create ? (
