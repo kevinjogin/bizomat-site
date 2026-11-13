@@ -35,7 +35,7 @@ function d1Dump(): string {
     const cols = (db.prepare(`PRAGMA table_info("${tb.name}")`).all() as { name: string }[]).map((c) => `"${c.name}"`).join(',');
     for (const row of exactRows(db, tb.name, 'rowid') as Iterable<unknown[]>) out.push(`INSERT INTO "${tb.name}" (${cols}) VALUES(${row.map(lit).join(',')});`);
   }
-  for (const i of db.prepare("SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL ORDER BY name").all() as { sql: string }[]) out.push(`${i.sql};`);
+  for (const i of db.prepare("SELECT sql FROM sqlite_master WHERE type IN ('index', 'trigger') AND sql IS NOT NULL ORDER BY type = 'trigger', name").all() as { sql: string }[]) out.push(`${i.sql};`);
   db.close();
   return `${out.join('\n')}\n`;
 }

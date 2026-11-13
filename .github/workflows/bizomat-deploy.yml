@@ -148,5 +148,6 @@ jobs:
           wait_for "CAD Automation is reached over the private network (/cad/: 200)" '[ "$(code https://bizomat.ai/cad/)" = 200 ]' || fail=1
           wait_for "Project Management answers (/tasks/: 200 or 302)" 'c=$(code https://bizomat.ai/tasks/); [ "$c" = 200 ] || [ "$c" = 302 ]' || fail=1
           wait_for "BIZOMAT CRM answers (/crm/login: 200)" '[ "$(code https://bizomat.ai/crm/login)" = 200 ]' || fail=1
+          wait_for "BIZOMAT Finance answers (/finance/login: 200)" '[ "$(code https://bizomat.ai/finance/login)" = 200 ]' || fail=1
           echo "info: bizomat.ai/login -> $(code https://bizomat.ai/login) (301 expected); bizomat.fly.dev/ -> $(code https://bizomat.fly.dev/) (301 expected)" | tee -a "$GITHUB_STEP_SUMMARY"
           exit "$fail"

@@ -94,6 +94,13 @@ export const NAV: readonly NavItem[] = [
     ],
   },
   {
+    label: 'Finance', href: '/finance-platform/', children: [
+      { label: 'Finance', href: '/finance-platform/', description: 'Accounts, transactions, invoices, bills, budgets and reports.' },
+      { label: 'User guide', href: '/finance-platform/guide/', description: 'How to use Finance, step by step.' },
+      { label: 'Open Finance', href: APP_LINKS.finance.signIn, description: 'Sign in with your BIZOMAT account.', external: true },
+    ],
+  },
+  {
     label: 'Resources', href: '/resources/', children: [
       { label: 'Tools', href: '/tools/', description: 'Engineering, manufacturing and business calculators.' },
       { label: 'Library', href: '/reados/', description: 'Technical books in short, practical chapters.' },
@@ -107,18 +114,20 @@ export const NAV: readonly NavItem[] = [
       { label: 'The Engine Room', href: '/engine-room/', description: 'Who builds BIZOMAT, and the proof that it works.' },
       { label: 'From the founder', href: '/engine-room/#founder', description: 'Why BIZOMAT exists, in its founder\'s words.' },
       { label: 'Test record', href: '/engine-room/#tests', description: 'Every suite that was run, with its result.' },
-      { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management, Customer Relationship Management and Resources.' },
+      { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management, Customer Relationship Management, Finance and Resources.' },
       { label: 'Contact', href: '/contact/', description: 'Ask a question or start a conversation.' },
     ],
   },
 ] as const;
 
 /** The header's sign-in menu: each application has its own sign-in and sends you to your dashboard afterwards. Customer
- * Relationship Management (the CRM) shares Project Management's accounts and sign-in (one session for both). */
+ * Relationship Management (the CRM) and Finance share Project Management's accounts and sign-in (one session for all
+ * three). */
 export const SIGN_IN = [
   { label: 'Project Management', href: APP_LINKS.work.signIn, description: 'Projects, tasks and your team workspace.' },
   { label: 'CAD Automation', href: APP_LINKS.cad.signIn, description: 'Your AI assistant, computers and SOLIDWORKS.' },
   { label: 'Customer Relationship Management', href: APP_LINKS.crm.signIn, description: 'The CRM: customers, leads, deals and follow-ups.' },
+  { label: 'Finance', href: APP_LINKS.finance.signIn, description: 'Accounts, invoices, bills, budgets and reports.' },
 ] as const;
 /** Breadcrumb labels for the two libraries. */
 export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
@@ -136,6 +145,7 @@ export const FOOTER_NAV = {
     { href: '/cad-automation/', label: 'CAD Automation' },
     { href: '/work/', label: 'Project Management' },
     { href: '/crm-platform/', label: 'Customer Relationship Management' },
+    { href: '/finance-platform/', label: 'Finance' },
     { href: '/resources/', label: 'Resources' },
     { href: '/products/', label: 'All products' },
     { href: '/solutions/', label: 'Solutions' },
@@ -159,6 +169,7 @@ export const FOOTER_NAV = {
     { href: APP_LINKS.work.signIn, label: 'Sign in to Project Management' },
     { href: APP_LINKS.cad.signIn, label: 'Sign in to CAD Automation' },
     { href: APP_LINKS.crm.signIn, label: 'Sign in to Customer Relationship Management' },
+    { href: APP_LINKS.finance.signIn, label: 'Sign in to Finance' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy Policy' },

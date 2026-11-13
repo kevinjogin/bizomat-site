@@ -132,7 +132,7 @@ const inSection = (item: (typeof NAV)[number]) =>
     // A menu link to a place on the current page (for example /#ask on the homepage) closes the menus.
     header.querySelectorAll<HTMLAnchorElement>('a[href*="#"]').forEach((a) => a.addEventListener('click', () => setPanel(false)));
     // Back to the wide layout: the phone menu state no longer applies.
-    matchMedia('(min-width: 1001px)').addEventListener('change', (e) => { if (e.matches) setPanel(false); });
+    matchMedia('(min-width: 1141px)').addEventListener('change', (e) => { if (e.matches) setPanel(false); });
   }
 </script>
 <style>
@@ -154,7 +154,7 @@ const inSection = (item: (typeof NAV)[number]) =>
   .site-nav__link:hover, details[open] > .site-nav__link { color: var(--ink); background: var(--paper-2); }
   .site-nav__link.is-current { color: var(--ink); }
   .site-nav__link.is-current::after { content: ''; position: absolute; left: .75rem; right: .75rem; bottom: 2px; height: 2px; border-radius: 2px; background: var(--brand-orange); }
-  .nav-menu__chevron { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s var(--ease); }
+  .nav-menu__chevron { flex: none; width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s var(--ease); }
   details[open] .nav-menu__chevron { transform: rotate(180deg); }
 
   .nav-menu__panel {
@@ -199,10 +199,11 @@ const inSection = (item: (typeof NAV)[number]) =>
   .is-open .site-header__toggle .i-open { display: none; }
   .is-open .site-header__toggle .i-close { display: inline; }
 
-  /* Tablet and phone: the links move into a panel under the header, opened by the menu button. The `js` class is set on
+  /* Tablet, phone and narrow laptop windows (up to 1140 px, where six products and the tools no longer fit in one row):
+     the links move into a panel under the header, opened by the menu button. The `js` class is set on
      <html> by the inline script in BaseLayout's head, before the first paint, so the header never renders expanded and
      then collapses when this component's script runs (that was a layout shift of the whole page on slow phones). */
-  @media (max-width: 1000px) {
+  @media (max-width: 1140px) {
     :global(.js) .site-header .site-header__toggle { display: inline-grid; }
     :global(.js) .site-header .site-nav {
       display: none; position: absolute; left: 0; right: 0; top: 100%; margin: 0;
@@ -220,30 +221,31 @@ const inSection = (item: (typeof NAV)[number]) =>
     :global(.js) .site-header .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
     :global(.js) .site-header .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
   }
-  @media (max-width: 1180px) and (min-width: 1001px) {
+  @media (max-width: 1300px) and (min-width: 1141px) {
     .site-header__search span { display: none; }
   }
   /* A long label (Customer Relationship Management) shows its short form (CRM) in the desktop row, which has no room for
      it at any width; the full label stays its accessible name and tooltip, heads its menu, and is shown in the phone
-     menu. Between 1001 and 1120 px the links sit closer so that the row stays on one line. */
+     menu. Between 1141 and 1300 px the links sit closer, and AI Search shows its icon only, so that the row stays on one
+     line (measured with Finance added, 13 Nov 2026). */
   .site-nav__short { display: none; text-decoration: none; }
-  @media (min-width: 1001px) {
+  @media (min-width: 1141px) {
     .site-nav__long { display: none; }
     .site-nav__short { display: inline; }
   }
-  @media (max-width: 1120px) and (min-width: 1001px) {
+  @media (max-width: 1300px) and (min-width: 1141px) {
     .site-nav__list { gap: 0; }
     .site-nav__link { padding: 0 .5rem; }
     .site-nav__link.is-current::after { left: .5rem; right: .5rem; }
   }
-  @media (max-width: 1000px) {
+  @media (max-width: 1140px) {
     :global(.js) .site-header .site-header__search { display: none; }
   }
   @media (max-width: 560px) {
     :global(.js) .site-header .signin-menu { display: none; }
   }
   /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
-  @media (max-width: 1000px) {
+  @media (max-width: 1140px) {
     :global(html:not(.js)) .site-header :global(.site-header__inner) { flex-wrap: wrap; padding-block: .5rem; }
     :global(html:not(.js)) .site-header .site-nav { order: 3; flex: 1 0 100%; margin: 0; }
     :global(html:not(.js)) .site-header .site-nav__list { flex-wrap: wrap; }

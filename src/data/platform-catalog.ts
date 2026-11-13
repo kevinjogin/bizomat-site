@@ -1,6 +1,6 @@
-// The BIZOMAT platform catalogue: public facts about the two applications and the website's own sections.
+// The BIZOMAT platform catalogue: public facts about the applications and the website's own sections.
 //
-// One source for the product pages (/cad-automation/, /work/, /crm-platform/ and its guide), the homepage cards, the Engine Room (/engine-room/) and the AI search index
+// One source for the product pages (/cad-automation/, /work/, /crm-platform/, /finance-platform/ and their guides), the homepage cards, the Engine Room (/engine-room/) and the AI search index
 // (/discovery-index.json "pages"). Every entry is PUBLIC: product descriptions, documentation and page addresses.
 // Nothing here comes from, or points into, a customer's projects, files or account, so search over it cannot reveal
 // private data. Every capability is taken from the applications' own code and documentation in this repository:
@@ -9,10 +9,12 @@
 //   Project Management:  apps/work/README.md (feature table), apps/work/ARCHITECTURE.md, apps/work/src/shared/columns.ts
 //   Customer Relationship Management (CRM): apps/work/src/shared/crm/ (roles.ts, defaults.ts, fields.ts, automations.ts),
 //                        apps/work/src/worker/crm/routes-insights.ts (REPORTS), docs/crm/README.md
+//   Finance:             apps/work/src/shared/fin/ (roles.ts, tax.ts, charts.ts, dates.ts, statement.ts),
+//                        apps/work/src/worker/fin/ (reports.ts REPORTS, ledger.ts), migrations/0011_finance.sql, docs/finance/README.md
 // Keep it that way: when a capability changes in an app, change it here in the same commit.
 import { APP_LINKS } from '../config/platform.ts';
 
-export type PlatformArea = 'CAD Automation' | 'Project Management' | 'Customer Relationship Management' | 'Resources' | 'BIZOMAT';
+export type PlatformArea = 'CAD Automation' | 'Project Management' | 'Customer Relationship Management' | 'Finance' | 'Resources' | 'BIZOMAT';
 export type PlatformKind = 'Product' | 'Capability' | 'Documentation' | 'Integration' | 'Page';
 
 export interface PlatformEntry {
@@ -125,6 +127,54 @@ export const CRM = {
   integrations: 'Email logging from your own mail program, a calendar file for every activity and a private calendar subscription, CSV import and export, and tasks in Project Management.',
 } as const;
 
+// ---------- Finance (13 Nov 2026) ----------
+// Served by the Project Management application at bizomat.ai/finance, with the same accounts. tests/platform-catalog.test.ts
+// compares the lists below with the application's code. No bank connection, no payment processing, no lodgement: the
+// GST report is a worksheet to check (apps/work/src/worker/fin/reports.ts, gstReport notes).
+export const FINANCE = {
+  name: 'Finance',
+  headline: 'Personal, household and business money, on a proper ledger.',
+  summary:
+    'BIZOMAT Finance keeps your accounts, transactions, invoices, bills, budgets and reports in one place, for personal, household and business money. Every entry is double-entry and balanced, with GST for Australian businesses.',
+  capabilities: [
+    { title: 'Workspaces for every part of your money', text: 'Personal, household and business workspaces, as many businesses as you need. A personal workspace stays private until you invite someone; a household shares its accounts with the people you invite.' },
+    { title: 'Double-entry underneath', text: 'Every transaction, invoice, bill and payment writes a balanced journal. Posted entries are never edited or deleted: a change reverses and reposts, and a locked period refuses anything dated inside it.' },
+    { title: 'Transactions and bank statements', text: 'Money in, money out and transfers, split across categories, with GST, attachments, approvals and duplicate warnings. Import CSV, OFX or QIF statements, match each line and reconcile.' },
+    { title: 'Invoices, bills and claims', text: 'Numbered invoices with PDF, bills, purchase orders that become bills, and expense claims. Approvals, partial payments, overdue tracking and recurring invoices and bills.' },
+    { title: 'Reports from the ledger', text: 'Profit and loss, balance sheet, cash flow statement, trial balance, general ledger, budgets against actual, a cash forecast, aged receivables and payables, and a GST and BAS worksheet. CSV and PDF.' },
+    { title: 'Budgets, goals and alerts', text: 'Monthly budgets by category, department or project, savings goals, and alerts for invoices and bills falling due, budgets nearly spent and a monthly summary.' },
+  ],
+  roles: [
+    { name: 'Owner', text: 'Complete control of the workspace, including ownership and deletion.' },
+    { name: 'Administrator', text: 'Manages members, permissions, settings and every financial record.' },
+    { name: 'Accountant', text: 'Keeps the books: every record, the chart of accounts, tax codes, journals and the period lock.' },
+    { name: 'Finance Manager', text: 'Runs day-to-day finance: transactions, invoices, bills, approvals, budgets and reports.' },
+    { name: 'Contributor', text: 'Adds transactions, receipts, bills and expense claims, for approval where required.' },
+    { name: 'Viewer', text: 'Reads the records and reports the workspace allows, and changes nothing.' },
+  ],
+  /** The reports (apps/work/src/worker/fin/reports.ts, REPORTS). */
+  reports: ['Profit and loss', 'Balance sheet', 'Cash flow statement', 'General ledger', 'Trial balance', 'Account transactions', 'Income and expenses by month', 'Budget against actual', 'Cash flow forecast', 'Aged receivables', 'Aged payables', 'GST and BAS worksheet'],
+  /** The tax codes a GST-registered business starts with (apps/work/src/shared/fin/tax.ts, DEFAULT_TAX_CODES). */
+  taxCodes: [
+    { code: 'GST', name: 'GST on income' },
+    { code: 'FRE', name: 'GST-free income' },
+    { code: 'EXP', name: 'GST-free exports' },
+    { code: 'ITS', name: 'Input-taxed income' },
+    { code: 'GSTP', name: 'GST on expenses' },
+    { code: 'CAP', name: 'GST on capital purchases' },
+    { code: 'FREP', name: 'GST-free expenses' },
+    { code: 'CAPF', name: 'GST-free capital purchases' },
+    { code: 'ITP', name: 'Input-taxed expenses (no GST credit)' },
+    { code: 'BASX', name: 'BAS excluded' },
+  ],
+  /** Statement files it reads (apps/work/src/shared/fin/statement.ts). */
+  statementFormats: ['CSV', 'OFX', 'QIF'],
+  /** How often recurring records repeat (apps/work/src/shared/fin/dates.ts, FREQUENCIES). */
+  frequencies: ['Weekly', 'Fortnightly', 'Monthly', 'Quarterly', 'Yearly'],
+  limits:
+    'BIZOMAT Finance does not connect to banks and never asks for internet banking passwords: you import statements you download. It records payments; it does not make them. The GST report is a worksheet to check against your records before you lodge a BAS with the ATO; BIZOMAT does not lodge, and is not a certified tax, payroll or statutory accounting product.',
+} as const;
+
 // ---------- Resources (formerly kevos.com Tools and Library) ----------
 export const RESOURCES = {
   name: 'Resources',
@@ -136,6 +186,7 @@ export const RESOURCES = {
 const C = 'CAD Automation';
 const W = 'Project Management';
 const M = 'Customer Relationship Management';
+const F = 'Finance';
 const R = 'Resources';
 const P = 'BIZOMAT';
 
@@ -195,6 +246,24 @@ export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
     keywords: 'crm guide user guide how to help getting started tutorial manual instructions set up import contacts csv invite team' },
   { id: 'int:crm', title: 'CRM integrations: email logging, calendar, CSV and Project Management', summary: CRM.integrations, url: '/crm-platform/#integrations', area: M, kind: 'Integration',
     keywords: 'crm integrations email gmail outlook microsoft 365 calendar ics csv import export project management tasks' },
+
+  // Finance
+  { id: 'page:finance', title: 'BIZOMAT Finance: accounts, invoices, budgets and reports', summary: FINANCE.summary, url: '/finance-platform/', area: F, kind: 'Product',
+    keywords: 'finance accounting bookkeeping money budget budgeting personal finance household business accounts ledger double entry xero myob quickbooks invoices bills expenses income gst bas small business accounting software' },
+  { id: 'page:finance-workspaces', title: 'Finance workspaces: personal, household and business', summary: FINANCE.capabilities[0].text, url: '/finance-platform/#workspaces', area: F, kind: 'Capability',
+    keywords: 'personal household family business multiple businesses workspaces private shared partner invite members switch' },
+  { id: 'page:finance-ledger', title: 'Finance: double-entry ledger, reversals and period lock', summary: FINANCE.capabilities[1].text, url: '/finance-platform/#ledger', area: F, kind: 'Capability',
+    keywords: 'double entry general ledger journal debit credit balanced chart of accounts reversal correction period lock audit trail trial balance' },
+  { id: 'page:finance-banking', title: 'Finance: transactions, bank statement import and reconciliation', summary: FINANCE.capabilities[2].text, url: '/finance-platform/#banking', area: F, kind: 'Capability',
+    keywords: 'transactions bank statement import csv ofx qif reconcile reconciliation match categorise categories split transfer duplicates receipts' },
+  { id: 'page:finance-invoices', title: 'Finance: invoices, bills, purchase orders and expense claims', summary: FINANCE.capabilities[3].text, url: '/finance-platform/#invoices', area: F, kind: 'Capability',
+    keywords: 'invoice invoices invoicing tax invoice pdf bills accounts payable receivable purchase order expense claim reimbursement partial payment overdue recurring' },
+  { id: 'page:finance-reports', title: 'Finance reports: profit and loss, balance sheet, cash flow and GST', summary: FINANCE.capabilities[4].text, url: '/finance-platform/#reports', area: F, kind: 'Capability',
+    keywords: 'reports profit and loss p&l income statement balance sheet cash flow statement trial balance general ledger aged receivables payables gst bas worksheet budget forecast csv pdf export' },
+  { id: 'page:finance-gst', title: 'Finance: GST and BAS for Australian businesses', summary: 'Configurable GST codes (inclusive, exclusive, GST-free, input-taxed), cash or accrual basis, and a BAS worksheet with labels G1, 1A and 1B (and G2, G3, G10, G11 for full reporting). A worksheet to check, not a lodgement.', url: '/finance-platform/#gst', area: F, kind: 'Capability',
+    keywords: 'gst bas australia ato business activity statement tax codes gst free input taxed g1 1a 1b cash accrual financial year abn tax invoice' },
+  { id: 'doc:finance-guide', title: 'How to use BIZOMAT Finance: the user guide', summary: 'Step by step: create a workspace, set up accounts and categories, record and import transactions, reconcile, invoice, pay bills, budget, read reports and invite people.', url: '/finance-platform/guide/', area: F, kind: 'Documentation',
+    keywords: 'finance guide user guide how to help getting started tutorial manual instructions set up import statement reconcile invoice budget gst' },
 
   // Resources
   { id: 'page:resources', title: 'BIZOMAT Resources', summary: RESOURCES.summary, url: '/resources/', area: R, kind: 'Page',

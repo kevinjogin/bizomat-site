@@ -1,0 +1,287 @@
+---
+// /finance-platform/guide/: how to use BIZOMAT Finance, step by step. Every button and field named here is the
+// application's own label (apps/work/src/client/fin); the facts come from src/data/platform-catalog.ts (FINANCE).
+// Screens are real (src/data/screenshots.ts), captured with a fictional business and example data.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import Button from '../../components/Button.astro';
+import '../../styles/product.css';
+import '../../styles/visuals.css';
+import { screenshots } from '../../data/screenshots.ts';
+import { SITE } from '../../config/site.ts';
+import { APP_LINKS } from '../../config/platform.ts';
+import { FINANCE } from '../../data/platform-catalog.ts';
+
+const PAGE = '/finance-platform/guide/';
+const shot = (name: string) => screenshots('finance').find((s) => s.src.endsWith(`/${name}.webp`));
+const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
+const description = 'How to use BIZOMAT Finance, step by step: workspaces, accounts, transactions, bank statements, invoices, bills, reports, GST, budgets and your team.';
+
+interface Step { t: string; x: string }
+interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
+const parts: Part[] = [
+  {
+    id: 'sign-in', title: 'Sign in or create an account',
+    steps: [
+      { t: 'Open Finance', x: 'Go to bizomat.ai/finance, or choose Sign in, then Finance, at the top of any BIZOMAT page.' },
+      { t: 'Sign in', x: 'Use your BIZOMAT email and password. If you use Project Management or the CRM, it is the same account, and signing in to one signs you in to all three.' },
+      { t: 'New to BIZOMAT?', x: 'Choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+    ],
+  },
+  {
+    id: 'workspace', title: 'Create a workspace',
+    lead: 'A workspace keeps one set of books: its own accounts, records, members and settings. Keep personal, household and business money apart, and add as many businesses as you need.',
+    steps: [
+      { t: 'Choose the kind', x: 'Personal for your own money, Household for money shared at home, Business for a business. The kind decides the starting categories and which features appear.' },
+      { t: 'Name it', x: 'Enter the Workspace name, the Currency (Australian dollars unless you choose otherwise) and the month your Financial year starts in (July in Australia).' },
+      { t: 'For a business', x: 'Add the Legal name and ABN, and tick Registered for GST if the business is. The standard Australian tax codes are always there; GST is worked out once registration is on.' },
+      { t: 'Create workspace', x: 'You become its owner. It starts with a chart of accounts and no sample records.' },
+      { t: 'Switch workspaces', x: 'Open the workspace menu at the top left to move between workspaces, or choose Create or join a workspace.' },
+    ],
+    shot: 'finance-start',
+  },
+  {
+    id: 'accounts', title: 'Set up your accounts and categories',
+    lead: 'Money accounts are where money sits or is owed: bank accounts, cash, credit cards and loans. Categories (income and expense accounts) say what money was for.',
+    steps: [
+      { t: 'Add your bank accounts and cards', x: 'Open Bank accounts and choose Add an account. Choose the kind, name it, add the bank details if you like, and enter the balance on a starting date. For a card or loan, enter what is owed.' },
+      { t: 'Adjust the categories', x: 'Open Accounting, Chart of accounts (Categories and accounts in a personal or household workspace). Choose Add account, give it a code and a kind, or put it under a parent as a sub-category. Edit renames it or moves it.' },
+      { t: 'Archive what you do not use', x: 'Archive hides an account with a zero balance; an account never used can be deleted. Accounts the books need, such as GST and accounts receivable, are marked and kept.' },
+      { t: 'Departments and projects', x: 'In a business, Accounting, Departments and projects adds departments, projects and cost centres. Each line of a transaction or invoice can carry one, and reports can be filtered by them.' },
+    ],
+    shot: 'finance-chart',
+  },
+  {
+    id: 'transactions', title: 'Record money in, money out and transfers',
+    steps: [
+      { t: 'New transaction', x: 'Open Transactions and choose New transaction. Choose Money out, Money in or Transfer, the account it was Paid from or Paid into, the date and who it was Paid to or Received from.' },
+      { t: 'Category and amount', x: 'Choose the category and enter the amount. In a GST workspace, choose whether amounts include GST and the GST code of each line; the GST and total are worked out for you.' },
+      { t: 'Split it', x: 'One payment for several things? Choose Split: add a line and give each line its own category and amount.' },
+      { t: 'Suggestions', x: 'Suggest a category offers the category from your rules or from what you chose before for the same payee. Nothing is applied until you choose Use.' },
+      { t: 'Save', x: 'Save and post records it in the books. Save draft keeps it for later. In a business, a contributor\'s transaction is sent for approval instead (Submit for approval).' },
+      { t: 'Possible duplicates', x: 'If the same amount was recorded on the same account a few days either side, Finance shows it before saving. Choose Save anyway if it is not a duplicate.' },
+      { t: 'Receipts and changes', x: 'Open a transaction to attach a receipt, see its history, change it or void it. A posted transaction is never edited in place: the change reverses the old entry and posts the new one.' },
+    ],
+    shot: 'finance-transaction-form',
+  },
+  {
+    id: 'statements', title: 'Import a bank statement',
+    lead: 'Finance never connects to your bank and never asks for your internet banking password. You download the statement from your bank and upload it.',
+    steps: [
+      { t: 'Download it from your bank', x: `Most banks offer ${list(FINANCE.statementFormats)} files in internet banking. OFX and QIF need no setting up.` },
+      { t: 'Upload it', x: 'Open Bank accounts, choose Statement and reconcile on the account, then Import a statement. Choose the file.' },
+      { t: 'Check the columns', x: 'For a CSV file, Finance shows its columns and guesses which is the date, the amount (or money in and money out), the description and the reference. Change any that are wrong and choose the date format.' },
+      { t: 'Import', x: 'Lines already imported are skipped, so importing an overlapping statement again adds only the new lines.' },
+    ],
+  },
+  {
+    id: 'reconcile', title: 'Match the lines and reconcile',
+    steps: [
+      { t: 'To match', x: 'Statement lines, To match lists each line from the bank. When Finance finds a transaction or payment you already recorded with the same amount and a nearby date, choose Match.' },
+      { t: 'Record it', x: 'For a line not yet recorded, choose Record it: pick the category (or the other account of a transfer) and Finance records, posts and matches it in one step. Tick Remember to make a rule, so the next line from that payee is suggested the same category.' },
+      { t: 'Ignore', x: 'Ignore sets aside a line that should not be in the books; it can be restored. Unmatch undoes a match.' },
+      { t: 'Reconcile', x: 'On the Reconcile tab, enter the statement date and the closing balance on the statement, then Record the reconciliation. Finance shows the difference from the books and what is not yet reconciled.' },
+    ],
+    shot: 'finance-reconcile',
+  },
+  {
+    id: 'invoices', title: 'Invoice your customers',
+    steps: [
+      { t: 'Customers and suppliers', x: 'Open Customers and suppliers and choose New contact, or Import CSV to bring in a list. Payment terms set each customer\'s due dates; a default account and GST code fill in new lines.' },
+      { t: 'New invoice', x: 'Open Invoices and choose New invoice. Choose the customer; the number is given automatically unless you type one. Add lines with a description, quantity, unit price, discount and account; the account\'s GST code fills in.' },
+      { t: 'Approve', x: 'Save and approve (post to the ledger) records what the customer owes you. Save as draft keeps it for later.' },
+      { t: 'Send it', x: 'Choose PDF to download the invoice and send it from your own email, then Mark as sent. In a business registered for GST, the PDF is titled Tax invoice and shows your ABN and the GST.' },
+      { t: 'Get paid', x: 'When the money arrives, choose Record a payment: the date, the account it went into and the amount. A smaller amount records a part payment. Finance records payments; it does not collect them.' },
+      { t: 'Overdue', x: 'Invoices past their due date are marked Overdue, appear on the dashboard and in Aged receivables, and the people who look after sales are reminded.' },
+    ],
+    shot: 'finance-invoice',
+  },
+  {
+    id: 'bills', title: 'Bills, purchase orders and expense claims',
+    steps: [
+      { t: 'Bills', x: 'Open Bills and choose New bill when a supplier\'s bill arrives. Approve it to record what you owe, attach the bill, and Record a payment when you pay it.' },
+      { t: 'Purchase orders', x: 'Purchase orders record what you have ordered. Approve the order, and when the goods and bill arrive, choose Convert to bill.' },
+      { t: 'Expense claims', x: 'Staff record what they paid for the business under Expense claims, with the receipt. A claim waits for approval; once approved and reimbursed, Record a payment closes it.' },
+      { t: 'Approvals', x: 'In a business, a contributor\'s bills and claims wait for someone who may approve them. They see them under Awaiting approval and can approve or return them for changes with a note.' },
+    ],
+  },
+  {
+    id: 'reports', title: 'Read the dashboard and the reports',
+    lead: 'Every figure comes from the posted entries in the books, worked out when you open it.',
+    steps: [
+      { t: 'The dashboard', x: 'Income, expenses and net profit for the period you choose, cash, cards and loans, what is owed to you and what you owe, approvals waiting, statement lines to match, a 12-month chart, spending by category, the budget and what falls due soon.' },
+      { t: `${FINANCE.reports.length} reports`, x: `Open Reports: ${list(FINANCE.reports.map((r, i) => (i ? r.charAt(0).toLowerCase() + r.slice(1) : r)))}.` },
+      { t: 'Choose what to see', x: 'Each report has its own dates or as-at date, a comparison with the previous period or year, and filters for department, project and cost centre (and person, in a household).' },
+      { t: 'Export and schedule', x: 'CSV and PDF download the report. Schedule saves it each month or quarter in Documents, in the Reports folder.' },
+    ],
+    shot: 'finance-balance-sheet',
+  },
+  {
+    id: 'gst', title: 'GST and the BAS worksheet',
+    lead: 'For Australian businesses registered for GST.',
+    steps: [
+      { t: 'Settings', x: 'Settings, Workspace, GST: the accounting basis (cash: when paid; or accrual: when invoiced), the reporting period and the BAS reporting method (Simpler BAS with G1, 1A and 1B, or full reporting).' },
+      { t: 'Tax codes', x: `Accounting, Tax codes lists the codes: ${list(FINANCE.taxCodes.map((t) => t.code))}. Add your own or change their rates and BAS labels.` },
+      { t: 'The worksheet', x: 'Reports, GST and BAS worksheet adds up GST by tax code and the BAS labels for a period, in whole dollars.' },
+      { t: 'Before you lodge', x: 'It is a worksheet to check against your records. You or your registered tax or BAS agent lodge the BAS with the ATO; BIZOMAT does not lodge it.' },
+    ],
+    shot: 'finance-gst',
+  },
+  {
+    id: 'budgets', title: 'Budgets, savings goals and recurring payments',
+    steps: [
+      { t: 'New budget', x: 'Open Budgets and choose New budget: a name, the first month and how many months, and if you like a department, project or cost centre and the warning level.' },
+      { t: 'Fill it in', x: 'Type an amount for each category and month, or one month then Fill across. Fill from actuals copies what happened in the same months of an earlier year, with a percentage change. Save budget when you are done.' },
+      { t: 'Against actual', x: 'Against actual opens the budget against actual report. Finance warns the people who manage budgets when a category nears its budget for the month.' },
+      { t: 'Savings goals', x: 'Open Savings goals and choose New savings goal: a target, a date, and either the account the savings are in or the amount you keep track of yourself.' },
+      { t: 'Recurring', x: `Open Recurring and choose New recurring for rent, subscriptions or regular invoices and bills. They repeat ${list(FINANCE.frequencies.map((f) => f.toLowerCase()))}, posted automatically or left as drafts to check. Run now creates the next one at once.` },
+    ],
+    shot: 'finance-budget',
+  },
+  {
+    id: 'personal', title: 'Personal and household money',
+    steps: [
+      { t: 'Your own money', x: 'A personal workspace uses everyday categories such as Groceries, Fuel and Electricity and gas, and calls the reports Income and spending and Net worth. Nobody else can see it until you invite them.' },
+      { t: 'Shared at home', x: 'In a household workspace, everyone you invite sees the household accounts, budgets and reports and adds their own spending. Choose Whose money on a transaction, and filter reports by person to see each person\'s share or everyone\'s together.' },
+    ],
+    shot: 'finance-personal',
+  },
+  {
+    id: 'documents', title: 'Receipts and documents',
+    steps: [
+      { t: 'Upload', x: 'Open Documents and choose Upload documents. Put files in folders and link them to an account; search finds them by name and folder.' },
+      { t: 'Attached to records', x: 'Receipts attached to a transaction, invoice or bill appear with it and in Documents, with a link back. Only people who can see that record can open them.' },
+      { t: 'Versions', x: 'New version replaces a file and keeps the earlier ones; Versions lists them.' },
+    ],
+  },
+  {
+    id: 'team', title: 'Invite people and choose roles',
+    steps: [
+      { t: 'Invite someone', x: 'Open Team, then Invitations. Enter the person\'s email address, choose their role, add a message if you like, and choose Send invitation.' },
+      { t: 'Email or link', x: 'BIZOMAT emails the invitation when its email service is set up. Either way, Team shows the invitation link with Copy, so you can send it yourself. The link works once, for 14 days, and only for that address.' },
+      { t: 'Members', x: 'Under Members, change a person\'s role or remove them. The owner can Transfer ownership; anyone else can leave.' },
+      { t: 'Roles and permissions', x: 'Owners and administrators can change what Accountant, Finance Manager, Contributor and Viewer may do: for each area, View, Edit and Delete as All, Own or None, and Create, Approve and post, Import and Export. Restore the defaults undoes the changes.' },
+    ],
+    shot: 'finance-permissions',
+    roles: true,
+  },
+  {
+    id: 'closing', title: 'Correct mistakes and close a period',
+    steps: [
+      { t: 'Change or void', x: 'Open the transaction, invoice or bill and change it, or Void it. Finance reverses the original entry and posts the new one, so the books keep both.' },
+      { t: 'Manual journals', x: 'Accountants can post adjustments in Accounting, Journals with New manual journal. Debits must equal credits before Post journal works. Reverse undoes a manual journal on a date you choose.' },
+      { t: 'Lock a period', x: 'Accounting, Period lock sets the lock date, for example once a BAS is lodged or a year is closed. Nothing can be posted, changed or voided on or before it; a correction goes in a later period.' },
+    ],
+  },
+  {
+    id: 'settings', title: 'Settings, notifications and the audit trail',
+    steps: [
+      { t: 'Approvals and alerts', x: 'Settings, Approvals and alerts: whether contributors\' records wait for approval, reminders before invoices and bills fall due, overdue reminders, budget warnings, the monthly summary and default payment terms.' },
+      { t: 'My notifications', x: 'Choose for each kind of notification whether you get it In the app, By email, or both. The bell shows them in the workspace.' },
+      { t: 'Audit trail', x: 'Settings, Audit trail lists who changed what: records, approvals, imports, exports, members and permissions.' },
+      { t: 'Delete the workspace', x: 'The owner, in Settings, Delete workspace, after typing its name. Every member loses access at once.' },
+    ],
+  },
+];
+const questions = [
+  { q: 'Does Finance connect to my bank?', a: 'No. It never connects to a bank and never asks for your internet banking password. Download a statement from your bank and import it.' },
+  { q: 'Can I pay bills or take payments in Finance?', a: 'No. Record a payment notes money you have already received or paid. Finance does not move money.' },
+  { q: 'Can I lodge my BAS from Finance?', a: 'No. The GST and BAS worksheet helps you prepare it. Check it against your records, and lodge with the ATO yourself or through your registered tax or BAS agent.' },
+  { q: 'Is it a certified accounting or payroll product?', a: 'No. It is not certified for tax, payroll or statutory accounting, and it does not do payroll, PAYG withholding or superannuation.' },
+  { q: 'Who can see my personal workspace?', a: 'Only you, until you invite someone. People outside a workspace cannot see it or tell that it exists.' },
+  { q: 'Can I run more than one business?', a: 'Yes. Create a workspace for each, and switch between them from the workspace menu. Each keeps its own books, people and settings.' },
+  { q: 'Is it the same account as Project Management and the CRM?', a: 'Yes. One BIZOMAT account signs you in to all three, and each keeps its own data.' },
+  { q: 'Can a workspace use more than one currency?', a: 'No. Each workspace has one currency, chosen when you create it; it can be changed until anything is posted.' },
+];
+const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
+---
+<BaseLayout title="Finance user guide" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Finance', href: '/finance-platform/' }, { label: 'User guide', href: PAGE }]}
+  schema={[{ '@type': 'HowTo', name: 'How to use BIZOMAT Finance', url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
+  <section class="pp-hero" aria-labelledby="guide-title">
+    <Container>
+      <p class="bz-eyebrow">BIZOMAT Finance</p>
+      <h1 id="guide-title">How to use Finance</h1>
+      <p class="pp-hero__lead">Step by step, from your first workspace to reports, GST and your team. Every button and field is named as it appears in the application.</p>
+      <div class="pp-hero__actions">
+        <Button href={APP_LINKS.finance.signIn} variant="accent" rel="noopener" data-cta="finance-guide-start">Open Finance</Button>
+        <Button href="/finance-platform/" variant="secondary" data-cta="finance-guide-product">About Finance</Button>
+      </div>
+      <nav class="guide-toc" aria-label="In this guide">
+        <h2 class="guide-toc__title">In this guide</h2>
+        <ol>
+          {parts.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+          <li><a href="#questions">Common questions</a></li>
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  {parts.map((p, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
+      <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
+        <div>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          {p.lead && <p class="guide-lead">{p.lead}</p>}
+          <ol class="pp-steps guide-steps">
+            {p.steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+          </ol>
+          {p.roles && (
+            <div class="guide-roles">
+              <h3>The {FINANCE.roles.length} roles</h3>
+              <ul class="pp-list">{FINANCE.roles.map((r) => <li><strong>{r.name}:</strong> {r.text}</li>)}</ul>
+              <p class="pp-table-note">Owners and administrators always have every permission.</p>
+            </div>
+          )}
+        </div>
+        {shots[p.id] && (
+          <figure class="pp-shot guide-shot">
+            <img src={shots[p.id]!.src} alt={`${shots[p.id]!.title}. ${shots[p.id]!.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+            <figcaption><span>{shots[p.id]!.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+          </figure>
+        )}
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="questions" aria-labelledby="questions-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Common questions</p>
+        <h2 id="questions-title">Before you ask</h2>
+      </div>
+      <dl class="guide-faq">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="guide-cta">
+    <Container class="pp-band">
+      <h2 id="guide-cta">Ready? Your first workspace takes a few fields.</h2>
+      <div class="pp-band__actions">
+        <Button href={APP_LINKS.finance.signIn} variant="accent" rel="noopener" data-cta="finance-guide-band-start">Open Finance</Button>
+        <Button href="/finance-platform/" variant="secondary" data-cta="finance-guide-band-product">About Finance</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .guide-toc { margin-top: 2rem; padding: 1.2rem 1.4rem; max-width: 52rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-toc__title { font-size: 1.02rem; margin-bottom: .7rem; }
+  .guide-toc ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 2rem; margin: 0; padding-left: 1.3rem; }
+  .guide-toc a { color: var(--ink-2); }
+  .guide-lead { margin: .8rem 0 0; max-width: 46rem; color: var(--ink-2); font-size: var(--step-1); line-height: 1.5; }
+  .guide-steps { margin-top: 1.4rem; }
+  .guide-roles { margin-top: 1.6rem; }
+  .guide-roles h3 { font-size: 1.02rem; margin-bottom: .7rem; }
+  .guide-shot { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+  .guide-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
+  .guide-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-faq dt { font-weight: 650; color: var(--ink); }
+  .guide-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
+  @media (max-width: 1000px) { .guide-shot { position: static; } }
+  @media (max-width: 640px) { .guide-toc ol { grid-template-columns: 1fr; } }
+</style>

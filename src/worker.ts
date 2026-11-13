@@ -17,6 +17,7 @@
 //                bizomat.ai record (Fly)
 //   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, the origin
 //   /crm/...   → BIZOMAT CRM, served by the same app as Project Management: the same binding, or the origin
+//   /finance/... → BIZOMAT Finance, served by the same app too: the same binding, or the origin
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -55,8 +56,8 @@ const redirect = (location: string, status: number, cache = 'public, max-age=864
 /** The applications under bizomat.ai, or null when the request is for the website. */
 async function routeApps(request: Request, url: URL, env: Env): Promise<Response | null> {
   const read = request.method === 'GET' || request.method === 'HEAD';
-  // /CAD, /Tasks/..., /CRM: one address per page, in lowercase (other methods are left alone and find nothing)
-  const app = /^\/(cad|tasks|crm)(?=\/|$)/i.exec(url.pathname);
+  // /CAD, /Tasks/..., /CRM, /Finance: one address per page, in lowercase (other methods are left alone and find nothing)
+  const app = /^\/(cad|tasks|crm|finance)(?=\/|$)/i.exec(url.pathname);
   if (app && app[1] !== app[1].toLowerCase() && read) {
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
@@ -65,6 +66,8 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   if (/^\/tasks(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   // BIZOMAT CRM is the same app as Project Management (apps/work, mounted at /crm too)
   if (/^\/crm(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
+  // BIZOMAT Finance too (apps/work, mounted at /finance)
+  if (/^\/finance(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   return null;
 }
 

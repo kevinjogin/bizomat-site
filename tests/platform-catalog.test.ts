@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { CAD, CRM, PLATFORM_CATALOG, WORK } from '../src/data/platform-catalog.ts';
+import { CAD, CRM, FINANCE, PLATFORM_CATALOG, WORK } from '../src/data/platform-catalog.ts';
 import { CAD_TOOL_GROUPS } from '../src/data/cad-tools.ts';
 import { APP_URLS } from '../src/config/platform.ts';
 import { buildDiscoveryIndex } from '../src/utils/discovery-index.ts';
@@ -44,6 +44,28 @@ test('Customer Relationship Management facts are the application\'s own lists, i
   assert.deepEqual([...presets.slice(presets.indexOf('PRESETS')).matchAll(/^ {4}name: '([^']+)'/gm)].map((m) => m[1]), [...CRM.automations]);
   assert.deepEqual([...objectBlock('apps/work/src/shared/crm/roles.ts', /CRM_ROLE_LABELS: Record/).matchAll(/: '([^']+)'/g)].map((m) => m[1]), CRM.roles.map((r) => r.name));
   assert.equal(CRM.capabilities.length, 6);
+});
+
+test('Finance facts are the application\'s own lists, item for item', () => {
+  const objectBlock = (file: string, start: RegExp) => { const t = read(file); const i = t.search(start); assert.ok(i >= 0, `${file}: ${start}`); return t.slice(i, t.indexOf('}', i)); };
+  assert.deepEqual([...objectBlock('apps/work/src/worker/fin/reports.ts', /export const REPORTS = \{/).matchAll(/: '([^']+)'/g)].map((m) => m[1]), [...FINANCE.reports]);
+  assert.deepEqual([...objectBlock('apps/work/src/shared/fin/roles.ts', /FIN_ROLE_LABELS: Record/).matchAll(/: '([^']+)'/g)].map((m) => m[1]), FINANCE.roles.map((r) => r.name));
+  const descriptions = objectBlock('apps/work/src/shared/fin/roles.ts', /FIN_ROLE_DESCRIPTIONS: Record/);
+  for (const r of FINANCE.roles) assert.ok(descriptions.includes(`'${r.text}'`), `${r.name}: the application's own description`);
+  const tax = read('apps/work/src/shared/fin/tax.ts');
+  assert.deepEqual([...tax.slice(tax.indexOf('DEFAULT_TAX_CODES')).matchAll(/code: '([A-Z]+)', name: '([^']+)'/g)].map((m) => ({ code: m[1], name: m[2] })), FINANCE.taxCodes.map((t) => ({ ...t })));
+  const dates = read('apps/work/src/shared/fin/dates.ts');
+  const freq = /FREQUENCIES: Frequency\[\] = \[([^\]]+)\]/.exec(dates)![1];
+  assert.deepEqual([...freq.matchAll(/'([a-z]+)'/g)].map((m) => m[1][0].toUpperCase() + m[1].slice(1)), [...FINANCE.frequencies]);
+  const statement = read('apps/work/src/shared/fin/statement.ts');
+  for (const f of ['parseCsvStatement', 'parseOfx', 'parseQif']) assert.match(statement, new RegExp(`export function ${f}`));
+  assert.equal(FINANCE.capabilities.length, 6);
+  // What it does not do is said plainly, and nothing claims otherwise.
+  assert.match(FINANCE.limits, /does not connect to banks/);
+  assert.match(FINANCE.limits, /does not make them/);
+  assert.match(FINANCE.limits, /not a certified/);
+  const text = JSON.stringify(FINANCE);
+  for (const claim of [/certified (?!tax, payroll)/i, /lodge(s|ment)? (your|the) BAS/i, /bank feed/i, /process(es)? payments/i]) assert.doesNotMatch(text, claim);
 });
 
 test('every catalogue entry is public and points at a real page or an application\'s public documentation', () => {

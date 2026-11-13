@@ -4,9 +4,10 @@ import { BRAND_COLORS } from './bizomat-brand';
 import { DEFAULT_COLOR, PRODUCT } from '../../shared/brand';
 import { BASE } from './base';
 
-/** Under /crm this app is BIZOMAT Customer Relationship Management, the CRM (src/client/crm); everywhere else Project
- * Management. */
+/** Under /crm this app is BIZOMAT Customer Relationship Management, the CRM (src/client/crm); under /finance BIZOMAT
+ * Finance (src/client/fin); everywhere else Project Management. */
 export const IS_CRM = BASE === '/crm';
+export const IS_FINANCE = BASE === '/finance';
 
 export const BRAND = {
   /** The platform this product belongs to. Never followed by a trade mark sign. */
@@ -17,13 +18,17 @@ export const BRAND = {
   /** The copyright line every BIZOMAT site carries. */
   copyright: `© ${new Date().getFullYear()} BIZOMAT. All rights reserved.`,
   /** Short product name, used in running text ("Search the CRM"). */
-  product: IS_CRM ? 'CRM' : PRODUCT.name,
+  product: IS_CRM ? 'CRM' : IS_FINANCE ? 'Finance' : PRODUCT.name,
   /** The name beneath the BIZOMAT wordmark, spelled out so that someone new to the tool knows what it is (owner,
    * 13 Nov 2026). */
-  lockup: IS_CRM ? 'Customer Relationship Management' : PRODUCT.name,
+  lockup: IS_CRM ? 'Customer Relationship Management' : IS_FINANCE ? 'Finance' : PRODUCT.name,
   /** Full product name: page titles, metadata, screen readers. */
-  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : PRODUCT.full,
-  description: IS_CRM ? 'Customers, leads, deals and follow-ups in one shared CRM.' : 'Projects, tasks and teams in one shared workspace.',
+  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : IS_FINANCE ? 'BIZOMAT Finance' : PRODUCT.full,
+  description: IS_CRM
+    ? 'Customers, leads, deals and follow-ups in one shared CRM.'
+    : IS_FINANCE
+      ? 'Accounts, transactions, invoices, bills, budgets and reports for personal, household and business money.'
+      : 'Projects, tasks and teams in one shared workspace.',
   colors: BRAND_COLORS,
   /** Colour for new workspaces and folders. */
   defaultColor: DEFAULT_COLOR,
@@ -44,12 +49,15 @@ export const PLATFORM_URLS = {
   products: 'https://bizomat.ai/products/',
   contact: 'https://bizomat.ai/contact/',
   /** This product's page on the website. */
-  productPage: IS_CRM ? 'https://bizomat.ai/crm-platform/' : 'https://bizomat.ai/work/',
+  productPage: IS_CRM ? 'https://bizomat.ai/crm-platform/' : IS_FINANCE ? 'https://bizomat.ai/finance-platform/' : 'https://bizomat.ai/work/',
   /** The CRM's user guide on the website. */
   crmGuide: 'https://bizomat.ai/crm-platform/guide/',
+  /** Finance's user guide on the website. */
+  financeGuide: 'https://bizomat.ai/finance-platform/guide/',
   cad: 'https://bizomat.ai/cad/',
   tasks: 'https://bizomat.ai/tasks/',
   crm: 'https://bizomat.ai/crm/',
+  finance: 'https://bizomat.ai/finance/',
   resources: 'https://bizomat.ai/resources/',
   privacy: 'https://bizomat.ai/privacy/',
   terms: 'https://bizomat.ai/terms/',
@@ -66,7 +74,14 @@ export const APP_HOSTS = ['bizomat.ai', 'work.kevos.com'] as const;
 export const PLATFORM_LINKS = {
   products: [
     { label: 'BIZOMAT', href: PLATFORM_URLS.website, title: 'The BIZOMAT website' },
-    IS_CRM ? { label: 'Project Management', href: PLATFORM_URLS.tasks, title: 'BIZOMAT Project Management' } : { label: 'CRM', href: PLATFORM_URLS.crm, title: 'BIZOMAT Customer Relationship Management' },
+    // The other applications on the same BIZOMAT login (this one is where the person already is).
+    ...[
+      { label: 'Project Management', href: PLATFORM_URLS.tasks, title: 'BIZOMAT Project Management', self: !IS_CRM && !IS_FINANCE },
+      { label: 'CRM', href: PLATFORM_URLS.crm, title: 'BIZOMAT Customer Relationship Management', self: IS_CRM },
+      { label: 'Finance', href: PLATFORM_URLS.finance, title: 'BIZOMAT Finance', self: IS_FINANCE },
+    ]
+      .filter((l) => !l.self)
+      .map(({ label, href, title }) => ({ label, href, title })),
     { label: 'CAD Automation', href: PLATFORM_URLS.cad, title: 'BIZOMAT CAD Automation' },
     { label: 'Resources', href: PLATFORM_URLS.resources, title: 'BIZOMAT Resources' },
   ],

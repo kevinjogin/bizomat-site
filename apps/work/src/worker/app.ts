@@ -30,8 +30,9 @@ import { folderRoutes } from './routes/folders';
 import { adminRoutes } from './routes/admin';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
-import { CRM_MOUNT, MOUNT, withBaseHref } from './mount';
+import { CRM_MOUNT, FIN_MOUNT, MOUNT, withBaseHref } from './mount';
 import { crmPublicRoutes, crmRoutes } from './crm';
+import { finPublicRoutes, finRoutes } from './fin';
 
 export const CSP = [
   "default-src 'self'",
@@ -95,14 +96,19 @@ export function createApp() {
   app.route('/api/auth', authRoutes);
   // CRM invitation previews and calendar feeds: no session, the token in the address is the secret.
   app.route('/api/crm-public', crmPublicRoutes);
+  // Finance invitation previews: no session, the token in the address is the secret.
+  app.route('/api/fin-public', finPublicRoutes);
 
-  // Sessions from before the CRM existed have their cookie on /tasks only. A CRM page without a cookie comes here
-  // (under /tasks, where that cookie is sent): with a valid session, the same cookie is written for /crm too and the
-  // browser goes back; without one, to the CRM's sign-in page. A short marker cookie stops any loop.
-  app.get('/api/crm-carry', async (c) => {
+  // Sessions from before the CRM (or Finance) existed have their cookie on /tasks only (or /tasks and /crm). A CRM or
+  // Finance page without a cookie comes here (under /tasks, where that cookie is sent): with a valid session, the same
+  // cookie is written for every path and the browser goes back; without one, to that app's sign-in page. A short marker
+  // cookie stops any loop.
+  const carry = async (c: any) => {
     const to = c.req.query('to') ?? '';
-    const safe = /^\/crm(\/[^\\\r\n]*)?(\?[^\r\n]*)?$/.test(to) && !to.startsWith('//') ? to : `${CRM_MOUNT}/`;
-    const marker = `crm_carry=1; Path=${CRM_MOUNT}; Max-Age=60; HttpOnly; SameSite=Lax${isSecureEnv(c.env) ? '; Secure' : ''}`;
+    const target = /^\/finance(\/|\?|$)/.test(to) ? FIN_MOUNT : CRM_MOUNT;
+    const pattern = target === FIN_MOUNT ? /^\/finance(\/[^\\\r\n]*)?(\?[^\r\n]*)?$/ : /^\/crm(\/[^\\\r\n]*)?(\?[^\r\n]*)?$/;
+    const safe = pattern.test(to) && !to.startsWith('//') ? to : `${target}/`;
+    const marker = `${target === FIN_MOUNT ? 'fin' : 'crm'}_carry=1; Path=${target}; Max-Age=60; HttpOnly; SameSite=Lax${isSecureEnv(c.env) ? '; Secure' : ''}`;
     const auth = c.env.BASE_PATH === MOUNT ? await resolveAuth(c) : null;
     const token = getCookie(c, sessionCookieName(c.env));
     if (auth?.session && token) {
@@ -111,11 +117,13 @@ export function createApp() {
       res.headers.append('Set-Cookie', marker);
       return res;
     }
-    const inner = safe.slice(CRM_MOUNT.length) || '/';
-    const res = c.redirect(`${CRM_MOUNT}/login${inner && inner !== '/' ? `?next=${encodeURIComponent(inner)}` : ''}`, 302);
+    const inner = safe.slice(target.length) || '/';
+    const res = c.redirect(`${target}/login${inner && inner !== '/' ? `?next=${encodeURIComponent(inner)}` : ''}`, 302);
     res.headers.append('Set-Cookie', marker);
     return res;
-  });
+  };
+  app.get('/api/crm-carry', carry);
+  app.get('/api/app-carry', carry);
   // Provider callbacks: no session, their own authentication (src/worker/routes/email.ts).
   app.route('/api/email-webhooks', emailWebhookRoutes);
 
@@ -144,6 +152,8 @@ export function createApp() {
   api.route('/', folderRoutes);
   // BIZOMAT CRM (src/worker/crm): its own organisations, members and records, the same accounts and sessions.
   api.route('/crm', crmRoutes);
+  // BIZOMAT Finance (src/worker/fin): personal, household and business workspaces, the same accounts and sessions.
+  api.route('/fin', finRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
@@ -161,7 +171,8 @@ export function createApp() {
   app.get('*', async (c) => {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(c.env.BASE_PATH === CRM_MOUNT ? ['/join/'] : [])];
+    const otherApp = c.env.BASE_PATH === CRM_MOUNT || c.env.BASE_PATH === FIN_MOUNT;
+    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));
@@ -173,9 +184,9 @@ export function createApp() {
       } catch {
         void pv;
       }
-      if (!auth && !isPublic && c.env.BASE_PATH === CRM_MOUNT && !hasCookie && !getCookie(c, 'crm_carry')) {
-        // Maybe signed in to Project Management with a cookie from before the CRM: see /api/crm-carry above.
-        return c.redirect(`${MOUNT}/api/crm-carry?to=${encodeURIComponent(CRM_MOUNT + url.pathname + url.search)}`, 302);
+      if (!auth && !isPublic && otherApp && !hasCookie && !getCookie(c, c.env.BASE_PATH === FIN_MOUNT ? 'fin_carry' : 'crm_carry')) {
+        // Maybe signed in with a cookie from before this app existed: see the carry above.
+        return c.redirect(`${MOUNT}/api/${c.env.BASE_PATH === FIN_MOUNT ? 'app' : 'crm'}-carry?to=${encodeURIComponent(c.env.BASE_PATH + url.pathname + url.search)}`, 302);
       }
       if (!auth && !isPublic) {
         const next = url.pathname + url.search;

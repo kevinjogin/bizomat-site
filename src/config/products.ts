@@ -4,7 +4,7 @@
 //  - Describe only what the products do today (src/data/platform-catalog.ts records where each fact comes from).
 //  - A product with status 'soon' has no URL and is never shown as a link or as available.
 //  - Links in solutions point only at pages that exist on this site or at a product's own address.
-import { CAD, CRM, RESOURCES, WORK } from '../data/platform-catalog.ts';
+import { CAD, CRM, FINANCE, RESOURCES, WORK } from '../data/platform-catalog.ts';
 
 export type ProductStatus = 'available' | 'soon';
 
@@ -65,6 +65,17 @@ export const PRODUCTS: readonly Product[] = [
     action: 'Explore the CRM',
   },
   {
+    id: 'finance',
+    name: FINANCE.name,
+    fullName: `BIZOMAT ${FINANCE.name}`,
+    tagline: FINANCE.headline,
+    summary: FINANCE.summary,
+    status: 'available',
+    url: '/finance-platform/',
+    signIn: true,
+    action: 'Explore Finance',
+  },
+  {
     id: 'resources',
     name: 'Resources',
     fullName: 'BIZOMAT Resources',
@@ -114,6 +125,7 @@ export const SOLUTIONS: readonly Solution[] = [
     paths: [
       { label: 'Project Management', href: '/work/', note: 'Projects, tasks and teams in one workspace.' },
       { label: 'Customer Relationship Management', href: '/crm-platform/', note: 'Customers, leads, deals and follow-ups with your team.' },
+      { label: 'Finance', href: '/finance-platform/', note: 'Accounts, invoices, bills, budgets and reports on a double-entry ledger.' },
       { label: 'Business tools', href: '/tools/?topic=business-commercial', note: 'Costing, quoting and investment calculators.' },
       { label: 'Business books', href: '/reados/?topic=business', note: 'Finance, strategy and governance, chapter by chapter.' },
     ],

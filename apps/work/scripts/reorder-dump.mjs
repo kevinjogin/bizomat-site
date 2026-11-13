@@ -34,6 +34,8 @@ export function splitStatements(sql) {
       i = end - 1;
     } else if (ch === ';') {
       const s = cur.trim();
+      // A trigger's body holds statements of its own: it ends at END; (Finance's ledger guards).
+      if (/^CREATE\s+(?:TEMP\s+|TEMPORARY\s+)?TRIGGER\b/i.test(s.replace(/^(--[^\n]*\n\s*)+/, '')) && !/\bEND\s*;$/i.test(s)) continue;
       if (s && s !== ';') out.push(s);
       cur = '';
     }

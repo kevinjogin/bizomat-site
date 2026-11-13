@@ -14,9 +14,10 @@ const apps = [
   { name: 'CAD Automation', button: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/cad-automation/', host: host(APP_URLS.cad) },
   // The same account and sign-in as Project Management.
   { name: 'Customer Relationship Management (CRM)', button: 'the CRM', text: 'Customers, leads, deals, activities and follow-ups, with your team. Uses your Project Management account.', signIn: APP_LINKS.crm.signIn, home: APP_LINKS.crm.dashboard, page: '/crm-platform/', host: host(APP_URLS.crm) },
+  { name: 'Finance', button: 'Finance', text: 'Accounts, transactions, invoices, bills, budgets and reports for personal, household and business money. Uses your Project Management account.', signIn: APP_LINKS.finance.signIn, home: APP_LINKS.finance.dashboard, page: '/finance-platform/', host: host(APP_URLS.finance) },
 ];
 ---
-<BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management, CRM or CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
+<BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management, CRM, Finance or CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
   <section class="pp-hero" aria-labelledby="signin-title">
     <Container>
       <p class="bz-eyebrow">BIZOMAT account</p>

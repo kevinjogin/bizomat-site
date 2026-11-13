@@ -8,7 +8,7 @@ import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { applyTheme } from './lib/hooks';
 import { useHeartbeat } from './lib/heartbeat';
-import { BRAND, IS_CRM } from './lib/brand';
+import { BRAND, IS_CRM, IS_FINANCE } from './lib/brand';
 import { appPath } from './lib/base';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -37,6 +37,9 @@ const MyInvitations = lazy(() => import('./pages/MyInvitations'));
 // BIZOMAT CRM, when the app is served under /crm (src/client/crm): its own pages after the shared sign-in pages.
 const CrmRoutes = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.CrmRoutes })));
 const CrmJoin = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Join })));
+// BIZOMAT Finance, when the app is served under /finance (src/client/fin), in the same way.
+const FinRoutes = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.FinRoutes })));
+const FinJoin = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.Join })));
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session, loading, error, refresh } = useSession();
@@ -102,6 +105,20 @@ export function App() {
         <Route path="/privacy" element={page(<Privacy />)} />
         <Route path="/join/:token" element={page(<CrmJoin />)} />
         <Route path="/*" element={<RequireAuth>{page(<CrmRoutes />)}</RequireAuth>} />
+      </Routes>
+    );
+  }
+
+  // Under /finance the same sign-in pages, then Finance (its own route table too).
+  if (IS_FINANCE) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/privacy" element={page(<Privacy />)} />
+        <Route path="/join/:token" element={page(<FinJoin />)} />
+        <Route path="/*" element={<RequireAuth>{page(<FinRoutes />)}</RequireAuth>} />
       </Routes>
     );
   }

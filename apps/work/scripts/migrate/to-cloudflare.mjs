@@ -15,7 +15,7 @@
 // integrity and foreign key checks. It writes, in <folder>:
 //   snapshot/        the copy (db.sqlite, runtime.sqlite, files/): a data folder, as on the Machine
 //   migrations/      the migrations the copy was checked against; apply gives D1 exactly these
-//   sql/clear.sql    deletes the rows of every table, children first
+//   sql/clear.sql    deletes the rows of every table, children first (guard triggers dropped and created again)
 //   sql/part-*.sql   the rows (lib/d1-sql.mjs: exact values, parents first, statements under D1's 100,000 bytes,
 //                    each part under --part-bytes, 4 MiB by default), checked by loading them into an empty database
 //                    at the same migrations: equal rows in every table (SHA-256 per table)
@@ -53,6 +53,11 @@ import { APP_ROOT, MIGRATIONS_DIR, UsageError, parseArgs, referencedObjects } fr
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SNAPSHOT_SCRIPT = join(HERE, 'lib', 'snapshot-data-dir.mjs');
+/** The event a CREATE TRIGGER statement fires on: INSERT, UPDATE or DELETE. */
+function triggerEvent(sql) {
+  return /\b(?:BEFORE|AFTER|INSTEAD\s+OF)?\s*(INSERT|UPDATE|DELETE)\b(?:\s+OF\s+[^]*?)?\s+ON\b/i.exec(String(sql))?.[1]?.toUpperCase() ?? 'INSERT';
+}
+
 const WRANGLER = process.env.WRANGLER || join(APP_ROOT, 'node_modules', 'wrangler', 'bin', 'wrangler.js');
 const FLY = process.env.FLYCTL || 'fly';
 const TAR = process.env.TAR || 'tar';
@@ -417,6 +422,7 @@ async function prepare(o) {
   const db = new DatabaseSync(join(snap, 'db.sqlite'), { readOnly: true });
   let plan;
   let tables;
+  let triggers;
   let refs;
   try {
     const integrity = integrityProblems(db);
@@ -428,9 +434,13 @@ async function prepare(o) {
     }
     const diff = diffSchema(expectedSchema(repo), schemaSnapshot(db));
     if (diff.length) stop(`the schema differs from the one migrations/ make: ${diff.slice(0, 5).join('; ')}`);
-    const odd = db.prepare("SELECT type, name FROM sqlite_master WHERE type IN ('trigger', 'view') OR (type = 'table' AND sql LIKE 'CREATE VIRTUAL TABLE%')").all();
-    if (odd.length) stop(`the schema has ${odd.map((r) => `${r.type} ${r.name}`).join(', ')}: this tool writes plain rows only (triggers would run again in D1)`);
+    // Rows are written as plain INSERTs into a schema made by the migrations. Triggers on UPDATE or DELETE (Finance's
+    // ledger guards) never fire on an INSERT; a trigger on INSERT would run again in D1, so it is refused, as are views
+    // and virtual tables.
+    const odd = db.prepare("SELECT type, name, sql FROM sqlite_master WHERE type = 'view' OR (type = 'table' AND sql LIKE 'CREATE VIRTUAL TABLE%') OR type = 'trigger'").all().filter((r) => r.type !== 'trigger' || triggerEvent(r.sql) === 'INSERT');
+    if (odd.length) stop(`the schema has ${odd.map((r) => `${r.type} ${r.name}`).join(', ')}: this tool writes plain rows only (triggers on INSERT would run again in D1)`);
     tables = dataTables(db);
+    triggers = db.prepare("SELECT name, tbl_name, sql FROM sqlite_master WHERE type = 'trigger' ORDER BY name").all().filter((r) => tables.includes(String(r.tbl_name))).map((r) => ({ name: String(r.name), sql: String(r.sql) }));
     const seq = db.prepare("SELECT 1 FROM sqlite_master WHERE name = 'sqlite_sequence'").get() ? db.prepare('SELECT name FROM sqlite_sequence').all().map((r) => String(r.name)).filter((n) => tables.includes(n)) : [];
     if (seq.length) stop(`tables with AUTOINCREMENT (${seq.join(', ')}): their counters are not moved by this tool`);
     const fk = foreignKeyViolations(db);
@@ -441,6 +451,9 @@ async function prepare(o) {
     }
     try {
       plan = loadPlan(db, tables);
+      // A long row is inserted short and its long values appended by UPDATE: never on a table an UPDATE trigger guards.
+      const guarded = new Set(db.prepare("SELECT tbl_name, sql FROM sqlite_master WHERE type = 'trigger'").all().filter((r) => triggerEvent(r.sql) === 'UPDATE').map((r) => String(r.tbl_name)));
+      for (const t of plan) if (guarded.has(t.name)) t.noAppend = true;
     } catch (e) {
       stop(String(e.message));
     }
@@ -492,7 +505,11 @@ async function prepare(o) {
   } finally {
     src.close();
   }
-  writeFileSync(join(sqlDir, 'clear.sql'), clearSql(plan));
+  try {
+    writeFileSync(join(sqlDir, 'clear.sql'), clearSql(plan, triggers));
+  } catch (e) {
+    stop(String(e.message));
+  }
   const totalRows = Object.values(written.rows).reduce((s, n) => s + n, 0);
   const statements = written.parts.reduce((s, p) => s + p.statements, 0);
   say(`${count(tables.length, 'table')}, ${count(totalRows, 'row')}: ${count(written.parts.length, 'part')}, ${count(statements, 'statement')}, ${fmtBytes(written.parts.reduce((s, p) => s + p.bytes, 0))}${written.inPieces ? `; ${count(written.inPieces, 'long row')} appended in pieces` : ''}`);
