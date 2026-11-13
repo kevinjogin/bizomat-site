@@ -12,9 +12,18 @@ export const DOC_LABELS: Record<DocKind, { one: string; many: string; path: stri
   expense_claim: { one: 'Expense claim', many: 'Expense claims', path: 'expense-claims' },
 };
 
+/** Every numbered record: the documents above, quotes and credit notes. */
+export type NumberedKind = DocKind | 'quote' | 'credit_note';
+export const NUMBERED_KINDS: NumberedKind[] = ['quote', 'invoice', 'credit_note', 'bill', 'purchase_order', 'expense_claim'];
+export const NUMBERED_LABELS: Record<NumberedKind, { one: string; many: string; path: string }> = {
+  quote: { one: 'Quote', many: 'Quotes', path: 'quotes' },
+  credit_note: { one: 'Credit note', many: 'Credit notes', path: 'credit-notes' },
+  ...DOC_LABELS,
+};
+
 export interface FinSettings {
-  /** Number prefix per document kind ("INV-" gives INV-0001). */
-  prefixes: Record<DocKind, string>;
+  /** Number prefix per kind of record ("INV-" gives INV-0001). */
+  prefixes: Record<NumberedKind, string>;
   /** Days until an invoice or bill is due when no other terms apply. */
   termsDays: number;
   /** Records a contributor creates wait for approval before they are posted. */
@@ -35,7 +44,7 @@ export interface FinSettings {
 export function defaultSettings(kind: WorkspaceKind): FinSettings {
   const business = kind === 'business';
   return {
-    prefixes: { invoice: 'INV-', bill: 'BILL-', purchase_order: 'PO-', expense_claim: 'EXP-' },
+    prefixes: { quote: 'QU-', invoice: 'INV-', credit_note: 'CN-', bill: 'BILL-', purchase_order: 'PO-', expense_claim: 'EXP-' },
     termsDays: 14,
     approvals: { transactions: business, bills: business, expenseClaims: business, invoices: false },
     alerts: { invoiceDueDays: business ? 3 : 0, overdueInvoices: business, billDueDays: 3, overdueBills: true, budgets: true, monthlySummary: true },
@@ -54,7 +63,7 @@ export function finSettings(raw: unknown, kind: WorkspaceKind): FinSettings {
   const ap = r.approvals ?? {};
   const al = r.alerts ?? {};
   return {
-    prefixes: { invoice: prefix(p.invoice, d.prefixes.invoice), bill: prefix(p.bill, d.prefixes.bill), purchase_order: prefix(p.purchase_order, d.prefixes.purchase_order), expense_claim: prefix(p.expense_claim, d.prefixes.expense_claim) },
+    prefixes: Object.fromEntries(NUMBERED_KINDS.map((k) => [k, prefix(p[k], d.prefixes[k])])) as Record<NumberedKind, string>,
     termsDays: int(r.termsDays, d.termsDays, 0, 365),
     approvals: { transactions: bool(ap.transactions, d.approvals.transactions), bills: bool(ap.bills, d.approvals.bills), expenseClaims: bool(ap.expenseClaims, d.approvals.expenseClaims), invoices: bool(ap.invoices, d.approvals.invoices) },
     alerts: {

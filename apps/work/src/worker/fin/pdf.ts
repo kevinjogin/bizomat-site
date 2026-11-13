@@ -1,10 +1,10 @@
-// PDFs for BIZOMAT Finance: an invoice (or bill, purchase order, expense claim) and any report table. pdf-lib with the
-// standard Helvetica fonts (no external files); text the fonts cannot draw is replaced (pdfSafe).
+// Report PDFs for BIZOMAT Finance: any report table. pdf-lib with the standard Helvetica fonts (no external files); text
+// the fonts cannot draw is replaced (pdfSafe). Documents (quotes, invoices, credit notes and the rest) are drawn by
+// document.ts.
 
 import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage, type RGB } from 'pdf-lib';
 import { pdfSafe } from '../services/reports/pdf';
 import { formatMoney } from '../../shared/crm/money';
-import { DOC_LABELS } from '../../shared/fin/settings';
 
 const A4: [number, number] = [595.28, 841.89];
 const M = { left: 46, right: 46, top: 50, bottom: 56 };
@@ -13,11 +13,6 @@ const SLATE = rgb(0.392, 0.455, 0.545);
 const TEXT = rgb(0.118, 0.161, 0.231);
 const LINE = rgb(0.886, 0.91, 0.941);
 const HEAD_BG = rgb(0.945, 0.961, 0.976);
-
-function hex(color: string | null | undefined, fallback: RGB): RGB {
-  const m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(color ?? '');
-  return m ? rgb(parseInt(m[1], 16) / 255, parseInt(m[2], 16) / 255, parseInt(m[3], 16) / 255) : fallback;
-}
 
 class Pdf {
   doc!: PDFDocument;
@@ -94,149 +89,6 @@ class Pdf {
   }
 }
 
-const isPng = (b: Uint8Array) => b.length > 8 && b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47;
-const isJpeg = (b: Uint8Array) => b.length > 3 && b[0] === 0xff && b[1] === 0xd8;
-
-export interface InvoicePdfInput {
-  org: { name: string; legal_name: string; abn: string; address: string; email: string; phone: string; currency: string };
-  gst: boolean;
-  doc: any;
-  contact: any | null;
-  template: any | null;
-  taxCodes: { id: string; code: string; name: string; rate_bp: number }[];
-  logo: Uint8Array | null;
-  logoType?: string | null;
-}
-
-export async function invoicePdf(i: InvoicePdfInput): Promise<Uint8Array> {
-  const d = i.doc;
-  const accent = hex(i.template?.accent, rgb(0.059, 0.463, 0.431));
-  const money = (n: number) => formatMoney(n, i.org.currency);
-  const hasGst = i.gst && d.taxTotal !== 0;
-  const title = d.kind === 'invoice' ? i.template?.title || (hasGst ? 'Tax invoice' : 'Invoice') : DOC_LABELS[d.kind as keyof typeof DOC_LABELS].one;
-  const p = await Pdf.create(`${title} ${d.number}`);
-  p.footer = `${i.org.legal_name || i.org.name} | ${title} ${d.number}`;
-
-  // Header: logo or name on the left, title and number on the right.
-  let top = p.y;
-  if (i.logo && (isPng(i.logo) || isJpeg(i.logo))) {
-    const img = isPng(i.logo) ? await p.doc.embedPng(i.logo) : await p.doc.embedJpg(i.logo);
-    const scale = Math.min(150 / img.width, 56 / img.height, 1);
-    p.page.drawImage(img, { x: M.left, y: top - img.height * scale, width: img.width * scale, height: img.height * scale });
-    top -= img.height * scale + 10;
-  } else {
-    p.text(i.org.name, M.left, top - 16, { size: 16, bold: true, color: NAVY });
-    top -= 26;
-  }
-  p.text(title.toUpperCase(), M.left, p.y - 16, { size: 18, bold: true, color: accent, align: 'right', width: p.width });
-  p.text(d.number, M.left, p.y - 32, { size: 11, bold: true, align: 'right', width: p.width });
-
-  // Seller, then the customer or supplier.
-  let y = top - 4;
-  const seller = [i.org.legal_name || i.org.name, i.org.abn ? `ABN ${formatAbn(i.org.abn)}` : '', ...i.org.address.split('\n'), i.org.email, i.org.phone].filter(Boolean);
-  for (const s of seller) {
-    p.text(s, M.left, y, { size: 8.5, color: SLATE });
-    y -= 11;
-  }
-  const meta: [string, string][] = [
-    ['Date', fmtDate(d.issueDate)],
-    ...(d.dueDate ? ([[d.kind === 'purchase_order' ? 'Delivery' : 'Due', fmtDate(d.dueDate)]] as [string, string][]) : []),
-    ...(d.reference ? ([['Reference', d.reference]] as [string, string][]) : []),
-  ];
-  let my = p.y - 52;
-  for (const [k, v] of meta) {
-    p.text(k, A4[0] - M.right - 190, my, { size: 8.5, color: SLATE });
-    p.text(v, A4[0] - M.right - 120, my, { size: 9, align: 'right', width: 120 });
-    my -= 13;
-  }
-  y = Math.min(y, my) - 14;
-  const party = d.kind === 'invoice' ? 'Bill to' : d.kind === 'expense_claim' ? 'Claimed by' : 'Supplier';
-  p.text(party.toUpperCase(), M.left, y, { size: 7.5, bold: true, color: SLATE });
-  y -= 13;
-  const partyLines = d.kind === 'expense_claim' ? [d.claimantName ?? ''] : [i.contact?.name ?? d.contactName ?? '', i.contact?.abn ? `ABN ${formatAbn(i.contact.abn)}` : '', ...(i.contact?.address ?? '').split('\n'), i.contact?.email ?? ''].filter(Boolean);
-  for (const s of partyLines) {
-    p.text(s, M.left, y, { size: 9.5, bold: s === partyLines[0] });
-    y -= 12;
-  }
-  p.y = y - 14;
-
-  // Lines.
-  const cols = [
-    { label: 'Description', x: M.left, w: 230, align: 'left' as const },
-    { label: 'Qty', x: M.left + 232, w: 44, align: 'right' as const },
-    { label: 'Unit price', x: M.left + 278, w: 70, align: 'right' as const },
-    { label: 'Disc.', x: M.left + 350, w: 34, align: 'right' as const },
-    { label: i.gst ? 'GST' : '', x: M.left + 386, w: 46, align: 'right' as const },
-    { label: d.taxMode === 'inclusive' ? 'Amount incl.' : 'Amount', x: M.left + 434, w: p.width - 434, align: 'right' as const },
-  ];
-  const header = () => {
-    p.page.drawRectangle({ x: M.left, y: p.y - 6, width: p.width, height: 18, color: HEAD_BG });
-    for (const c of cols) p.text(c.label, c.x + 3, p.y, { size: 8, bold: true, color: SLATE, align: c.align, width: c.w - 6 });
-    p.y -= 20;
-  };
-  header();
-  const codeOf = (id: string | null) => i.taxCodes.find((t) => t.id === id);
-  for (const l of d.lines) {
-    const desc = p.wrap(l.description || '-', cols[0].w - 6, 9);
-    const h = desc.length * 11.5 + 6;
-    p.ensure(h + 6, header);
-    desc.forEach((s, k) => p.text(s, cols[0].x + 3, p.y - k * 11.5, { size: 9 }));
-    p.text(fmtQty(l.quantity), cols[1].x + 3, p.y, { size: 9, align: 'right', width: cols[1].w - 6 });
-    p.text(money(l.unitPrice), cols[2].x + 3, p.y, { size: 9, align: 'right', width: cols[2].w - 6 });
-    p.text(l.discountBp ? `${l.discountBp / 100}%` : '', cols[3].x + 3, p.y, { size: 9, align: 'right', width: cols[3].w - 6 });
-    if (i.gst) p.text(codeOf(l.taxCodeId)?.rate_bp ? `${codeOf(l.taxCodeId)!.rate_bp / 100}%` : l.taxCodeId ? '0%' : '', cols[4].x + 3, p.y, { size: 9, align: 'right', width: cols[4].w - 6 });
-    p.text(money(d.taxMode === 'inclusive' ? l.net + l.tax : l.net), cols[5].x + 3, p.y, { size: 9, align: 'right', width: cols[5].w - 6 });
-    p.y -= h;
-    p.rule(p.y + 8);
-  }
-
-  // Totals.
-  const totals: [string, string, boolean][] = [];
-  if (d.taxMode !== 'inclusive') totals.push(['Subtotal', money(d.subtotal), false]);
-  if (i.gst && d.taxMode !== 'none') totals.push([d.taxMode === 'inclusive' ? 'Includes GST' : 'GST', money(d.taxTotal), false]);
-  totals.push(['Total', money(d.total), true]);
-  if (d.amountPaid) totals.push(['Paid', money(-d.amountPaid), false], ['Amount due', money(d.amountDue), true]);
-  p.ensure(totals.length * 16 + 20);
-  p.y -= 6;
-  for (const [k, v, strong] of totals) {
-    p.text(k, A4[0] - M.right - 200, p.y, { size: strong ? 10.5 : 9.5, bold: strong });
-    p.text(v, A4[0] - M.right - 110, p.y, { size: strong ? 10.5 : 9.5, bold: strong, align: 'right', width: 110 });
-    p.y -= 16;
-  }
-  if (hasGst && d.taxMode === 'inclusive') {
-    p.text(`Total price includes GST of ${money(d.taxTotal)}.`, M.left, p.y, { size: 8.5, color: SLATE });
-    p.y -= 14;
-  }
-
-  const blocks: [string, string][] = [
-    ['Payment instructions', d.kind === 'invoice' ? (i.template?.payment_instructions ?? '') : ''],
-    ['Notes', d.notes],
-    ['Terms', d.terms],
-  ];
-  for (const [label, body] of blocks) {
-    if (!body) continue;
-    const lines = p.wrap(body, p.width, 9);
-    p.ensure(lines.length * 12 + 26);
-    p.y -= 10;
-    p.text(label.toUpperCase(), M.left, p.y, { size: 7.5, bold: true, color: SLATE });
-    p.y -= 13;
-    for (const s of lines) {
-      p.text(s, M.left, p.y, { size: 9 });
-      p.y -= 12;
-    }
-  }
-  if (i.template?.footer) {
-    const lines = p.wrap(i.template.footer, p.width, 8);
-    p.ensure(lines.length * 11 + 16);
-    p.y -= 12;
-    for (const s of lines) {
-      p.text(s, M.left, p.y, { size: 8, color: SLATE });
-      p.y -= 11;
-    }
-  }
-  return p.finish();
-}
-
 // ------------------------------------------------------------------ reports
 
 export interface ReportTable {
@@ -311,18 +163,4 @@ function clip(p: Pdf, s: string, width: number): string {
   let t = pdfSafe(s);
   while (t.length > 3 && p.font.widthOfTextAtSize(t, 8.8) > width) t = `${t.slice(0, -2)}…`.replace(/……$/, '…');
   return t;
-}
-
-function fmtDate(iso: string): string {
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-}
-
-function fmtQty(q: number): string {
-  return Number.isInteger(q) ? String(q) : q.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
-}
-
-export function formatAbn(abn: string): string {
-  const d = abn.replace(/\D/g, '');
-  return d.length === 11 ? `${d.slice(0, 2)} ${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8)}` : abn;
 }

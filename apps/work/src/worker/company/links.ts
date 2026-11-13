@@ -18,9 +18,10 @@ import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
-import { assertRecord, loadAccess as crmAccess, type OrgAccess } from '../crm/access';
+import { assertRecord, loadAccess as crmAccess, scopeSql as crmScopeSql, type OrgAccess } from '../crm/access';
 import { hasPerm, loadAccess as finAccess, type FinAccess } from '../fin/access';
 import { createDoc } from '../fin/docs';
+import { createQuote, dealEventStmt } from '../fin/sales';
 import { runBatch, searchText } from '../fin/util';
 import { fyStart, todayIn } from '../../shared/fin/dates';
 import { requireWorkspace } from '../services/permissions';
@@ -172,6 +173,8 @@ linkRoutes.get('/crm/:org/deals/:id', async (c) => {
           canInvoice: !!v.fa?.perms.sales.create && v.deal.status === 'won' && !v.link?.fin_invoice_id,
           sameCurrency: !v.fa || v.fa.org.currency === v.deal.currency,
           invoice: invoice ? { ...invoice, currency: v.fa!.org.currency, url: `/finance/o/${v.fa!.orgId}/invoices/${invoice.id}` } : v.link?.fin_invoice_id ? { hidden: true } : null,
+          canQuote: !!v.fa?.perms.sales.create && v.deal.status !== 'lost' && (!v.fa || v.fa.org.currency === v.deal.currency),
+          quotes: v.fa && hasPerm(v.fa, 'sales', 'view') ? await dealQuotes(db, v.fa, v.deal.id) : null,
         }
       : null,
     tasks: v.company.tools.tasks
@@ -227,6 +230,109 @@ linkRoutes.post('/crm/:org/deals/:id/invoice', async (c) => {
     coAuditStmt(db, { companyId: v.company.id, actorId: user.id, action: 'link.deal_invoice', targetType: 'crm_deal', targetId: v.deal.id, ip: clientIp(c) }),
   ]);
   return c.json({ invoiceId: doc.id, number: doc.number, url: `/finance/o/${v.fa.orgId}/invoices/${doc.id}` }, 201);
+});
+
+/** The deal's quotes in Finance (newest first), with their status: what the CRM shows on the deal. */
+async function dealQuotes(db: D1Database, fa: FinAccess, dealId: string) {
+  const rows = await db
+    .prepare("SELECT id, number, status, total, version, expiry_date, accepted_at, created_by FROM fin_quotes WHERE org_id = ? AND crm_deal_id = ? AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 20")
+    .bind(fa.orgId, dealId)
+    .all<{ id: string; number: string; status: string; total: number; version: number; expiry_date: string | null; accepted_at: number | null; created_by: string | null }>();
+  // A role that sees only its own sales records sees only its own quotes here too.
+  return rows.results
+    .filter((q) => fa.perms.sales.view === 'all' || q.created_by === fa.userId)
+    .map((q) => ({ id: q.id, number: q.number, status: q.status, total: q.total, version: q.version, expiryDate: q.expiry_date, currency: fa.org.currency, url: `/finance/o/${fa.orgId}/quotes/${q.id}` }));
+}
+
+/**
+ * A quote for the deal: a draft in the company's Finance, made out to the deal's company (its Finance customer, made
+ * once), with one line for the deal's value to change there. Its progress shows on the deal and its timeline.
+ */
+linkRoutes.post('/crm/:org/deals/:id/quote', async (c) => {
+  const db = c.env.DB;
+  const user = c.get('user');
+  await rateLimit(db, `co-link:${user.id}`, 60, 60_000);
+  const v = await dealView(c, c.req.param('org'), c.req.param('id'));
+  if (!v.company?.tools.finance) throw new HttpError(400, 'This CRM organisation does not belong to a company that runs Finance');
+  if (!v.fa) throw new HttpError(403, 'You have no access to the company’s Finance');
+  if (!v.fa.perms.sales.create) throw new HttpError(403, 'Your Finance role cannot create quotes');
+  if (v.deal.status === 'lost') throw new HttpError(400, 'This deal is lost');
+  if (v.fa.org.currency !== v.deal.currency) throw new HttpError(400, `The deal is in ${v.deal.currency} and Finance keeps ${v.fa.org.currency}: make the quote in Finance`);
+  if (!v.deal.company_id) throw new HttpError(400, 'Give the deal a company first: the quote is made out to it');
+  const crmCompany = await db.prepare('SELECT * FROM crm_companies WHERE id = ? AND org_id = ? AND deleted_at IS NULL').bind(v.deal.company_id, v.deal.org_id).first<any>();
+  if (!crmCompany) throw notFound('Company');
+  const contactId = await customerFor(c, v.company.id, v.fa, crmCompany, true);
+  const sales = await db.prepare("SELECT id, tax_code_id FROM fin_accounts WHERE org_id = ? AND type = 'revenue' AND archived_at IS NULL ORDER BY is_default DESC, position LIMIT 1").bind(v.fa.orgId).first<{ id: string; tax_code_id: string | null }>();
+  const today = todayIn(v.fa.org.timezone || 'Australia/Sydney');
+  const q = await createQuote(
+    c.env,
+    v.fa,
+    {
+      contactId,
+      issueDate: today,
+      reference: v.deal.title.slice(0, 200),
+      lines: [{ description: v.deal.title, quantity: 1, unitPrice: v.deal.value, accountId: sales?.id ?? null, taxCodeId: v.fa.gst ? (sales?.tax_code_id ?? null) : null }],
+    },
+    { crmDealId: v.deal.id, from: 'CRM deal' },
+  );
+  const ev = await dealEventStmt(db, v.fa.orgId, v.deal.id, user.id, `Quote ${q.number} started in Finance`, { quoteId: q.id, number: q.number });
+  await db.batch([...(ev ? [ev] : []), coAuditStmt(db, { companyId: v.company.id, actorId: user.id, action: 'link.deal_quote', targetType: 'crm_deal', targetId: v.deal.id, ip: clientIp(c) })]);
+  return c.json({ quoteId: q.id, number: q.number, url: `/finance/o/${v.fa.orgId}/quotes/${q.id}` }, 201);
+});
+
+// ------------------------------------------------------------------ Finance: customers from the CRM
+
+/**
+ * The CRM's companies, for choosing a customer in Finance: one customer record across the company. Each shows the
+ * Finance contact it is already billed as, so choosing it never makes a second record. Only companies the person may
+ * see in the CRM are listed.
+ */
+linkRoutes.get('/finance/:org/crm-customers', async (c) => {
+  const db = c.env.DB;
+  const user = c.get('user');
+  const orgId = c.req.param('org');
+  const fa = await finAccess(db, orgId, user);
+  const company = await companyOf(db, 'finance', orgId);
+  if (!company?.tools.crm) return c.json({ available: false, rows: [] });
+  let ca: OrgAccess;
+  try {
+    ca = await crmAccess(db, company.tools.crm, user);
+  } catch {
+    return c.json({ available: true, access: false, rows: [] });
+  }
+  if (ca.perms.companies.view === 'none') return c.json({ available: true, access: false, rows: [] });
+  const q = (c.req.query('q') ?? '').trim().toLowerCase().replace(/[%_]/g, '');
+  const scope = crmScopeSql(ca, 'companies', 'co');
+  const rows = await db
+    .prepare(
+      `SELECT co.id, co.name, co.email, co.phone, l.fin_contact_id
+       FROM crm_companies co LEFT JOIN co_customer_links l ON l.company_id = ? AND l.crm_company_id = co.id
+       WHERE co.org_id = ? AND co.deleted_at IS NULL ${q ? 'AND lower(co.name) LIKE ?' : ''} AND ${scope.sql}
+       ORDER BY co.name COLLATE NOCASE LIMIT 25`,
+    )
+    .bind(company.id, company.tools.crm, ...(q ? [`%${q}%`] : []), ...scope.args)
+    .all<any>();
+  const linked = rows.results.filter((r) => r.fin_contact_id).map((r) => r.fin_contact_id);
+  const live = linked.length ? new Set((await db.prepare(`SELECT id FROM fin_contacts WHERE org_id = ? AND id IN (${linked.map(() => '?').join(',')})`).bind(fa.orgId, ...linked).all<{ id: string }>()).results.map((r) => r.id)) : new Set<string>();
+  return c.json({
+    available: true,
+    access: true,
+    canCreate: !!fa.perms.contacts.create,
+    rows: rows.results.map((r) => ({ id: r.id, name: r.name, email: r.email ?? '', phone: r.phone ?? '', contactId: r.fin_contact_id && live.has(r.fin_contact_id) ? r.fin_contact_id : null })),
+  });
+});
+
+/** Choose a CRM company as a Finance customer: its linked contact, or a new one made from its details and linked. */
+linkRoutes.post('/finance/:org/crm-customers/:id', async (c) => {
+  const db = c.env.DB;
+  const user = c.get('user');
+  await rateLimit(db, `co-link:${user.id}`, 60, 60_000);
+  const orgId = c.req.param('org');
+  const fa = await finAccess(db, orgId, user);
+  const company = await companyOf(db, 'finance', orgId);
+  if (!company?.tools.crm) throw new HttpError(400, 'This Finance workspace does not belong to a company that runs the CRM');
+  const { row } = await crmRecord(c, company.tools.crm, 'crm_companies', c.req.param('id'), 'companies');
+  return c.json({ contactId: await customerFor(c, company.id, fa, row, true) });
 });
 
 linkRoutes.post('/crm/:org/deals/:id/project', async (c) => {

@@ -8,6 +8,8 @@ import { orgRoutes, publicInviteRoutes } from './routes-orgs';
 import { setupRoutes } from './routes-setup';
 import { moneyRoutes } from './routes-money';
 import { docRoutes } from './routes-docs';
+import { salesRoutes } from './routes-sales';
+import { publicDocRoutes } from './routes-public';
 import { bankingRoutes } from './routes-banking';
 import { planRoutes } from './routes-plan';
 import { fileRoutes } from './routes-files';
@@ -18,6 +20,7 @@ finRoutes.route('/', orgRoutes);
 finRoutes.route('/', setupRoutes);
 finRoutes.route('/', moneyRoutes);
 finRoutes.route('/', docRoutes);
+finRoutes.route('/', salesRoutes);
 finRoutes.route('/', bankingRoutes);
 finRoutes.route('/', planRoutes);
 finRoutes.route('/', fileRoutes);
@@ -25,5 +28,6 @@ finRoutes.route('/', reportRoutes);
 
 export const finPublicRoutes = new Hono<AppEnv>();
 finPublicRoutes.route('/', publicInviteRoutes);
+finPublicRoutes.route('/', publicDocRoutes);
 
 export { runFinanceScheduled, financeHousekeeping } from './scheduled';

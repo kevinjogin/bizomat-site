@@ -64,3 +64,41 @@ td.fin-num, th.fin-num { text-align: right; white-space: nowrap; font-variant-nu
 /* A list row inside a card (statement lines, invitations): padded on both sides, unlike the CRM's start page rows. */
 .fin-shell .card > .crm-invite-row, .fin-shell .crm-invite-row.crm-pad { padding: 10px 14px; }
 .fin-shell .card > .crm-invite-row:last-child { border-bottom: 0; }
+
+/* Sales documents: the editor beside its live preview (the PDF itself), heading and optional lines, notices. */
+.fin-editor-split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }
+@media (min-width: 1600px) {
+  .fin-editor-split { grid-template-columns: minmax(0, 1.6fr) minmax(380px, 1fr); }
+}
+.fin-preview-bar { position: sticky; bottom: 12px; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); box-shadow: var(--shadow-2); }
+.modal .fin-preview-frame { aspect-ratio: auto; height: 70vh; }
+.fin-preview { position: sticky; top: 12px; }
+.fin-preview-frame { display: block; width: 100%; aspect-ratio: 1 / 1.414; min-height: 420px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; margin-top: 8px; }
+.fin-preview-empty { display: flex; align-items: center; justify-content: center; text-align: center; padding: 16px; background: var(--surface-2); }
+.fin-span-2 { grid-column: span 2; }
+.fin-span-3 { grid-column: 1 / -1; }
+.fin-lines .fin-col-code { width: 96px; }
+.fin-lines .fin-col-qty { width: 80px; }
+.fin-lines .fin-col-unit { width: 72px; }
+/* The line table keeps usable widths and scrolls sideways on narrow screens rather than squeezing every field. */
+.fin-editor-split .fin-lines { min-width: 980px; }
+.fin-lines td .select { min-width: 150px; }
+.fin-lines td textarea.fin-desc { min-width: 200px; }
+.fin-lines .fin-in-code { min-width: 84px; }
+.fin-lines .fin-in-unit { min-width: 60px; }
+.fin-lines .fin-in-qty { min-width: 64px; }
+.fin-lines textarea.fin-desc { resize: vertical; min-height: 32px; }
+.fin-heading-row td { background: var(--surface-2); }
+.fin-heading-input { font-weight: 700; }
+.fin-optional-row td { color: var(--text-3); }
+.fin-center { text-align: center; }
+.fin-rot-up { transform: rotate(90deg); }
+.fin-line-actions .row { gap: 0; }
+.warn-box { padding: 12px 14px; border-radius: var(--radius); background: var(--warning-soft); color: var(--warning-text, var(--text)); font-size: 13px; }
+.ok-box { padding: 12px 14px; border-radius: var(--radius); background: var(--success-soft); color: var(--text); font-size: 13px; }
+.fin-public { max-width: 920px; margin: 0 auto; padding: 24px 16px 40px; }
+.fin-public-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+
+@media (max-width: 900px) {
+  .fin-span-2 { grid-column: auto; }
+}

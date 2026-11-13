@@ -160,6 +160,14 @@ const STATUS: Record<string, { label: string; tone?: 'accent' | 'success' | 'dan
   unmatched: { label: 'To match', tone: 'warning' },
   matched: { label: 'Matched', tone: 'success' },
   ignored: { label: 'Ignored' },
+  sent: { label: 'Sent', tone: 'accent' },
+  viewed: { label: 'Viewed', tone: 'accent' },
+  accepted: { label: 'Accepted', tone: 'success' },
+  declined: { label: 'Declined', tone: 'danger' },
+  expired: { label: 'Expired', tone: 'warning' },
+  converted: { label: 'Invoiced', tone: 'success' },
+  cancelled: { label: 'Cancelled' },
+  applied: { label: 'Used', tone: 'success' },
 };
 
 /** A record's status as a badge ("Awaiting approval", "Paid", "Overdue"). */

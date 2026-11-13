@@ -12,11 +12,11 @@ import { formatBytes, timeAgo } from '../lib/format';
 import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader, Spinner } from '../components/ui/ui';
 import { Modal, useConfirm, useToast } from '../components/ui/overlays';
-import { lineTotal } from '../../shared/crm/money';
-import { splitTax, TAX_MODE_LABELS, type TaxMode } from '../../shared/fin/tax';
+import { TAX_MODE_LABELS, type TaxMode } from '../../shared/fin/tax';
 import { DOC_LABELS, type DocKind } from '../../shared/fin/settings';
 import { accountLabel, addDaysIso, appUrl, dateTime, download, fin, longDate, shortDate, todayLocal, useAccounts, useContacts, useCurrentOrg, useMembers, useMoney, useRefresh, useTaxCodes, type FinOrgDTO } from './lib';
-import { AccountSelect, ContactSelect, Hint, Money, MoneyInput, Stat, StatusBadge, TaxCodeSelect, TrackingSelect, taxCodeName, useHasTracking } from './ui';
+import { AccountSelect, ContactSelect, Hint, Money, MoneyInput, Stat, StatusBadge, taxCodeName, useHasTracking } from './ui';
+import { CustomerField, DocumentFrame, LinesEditor, LivePreview, ShareActions, Totals, blankLine, isEmptyLine, lineBody, lineFromDto, percentBpOf, priceLines, type SalesLine } from './sales-ui';
 
 // ------------------------------------------------------------------ types and rules
 
@@ -24,6 +24,9 @@ type DocStatus = 'draft' | 'submitted' | 'approved' | 'part_paid' | 'paid' | 'bi
 
 interface DocLineDTO {
   id: string;
+  lineKind: 'item' | 'heading';
+  itemCode: string;
+  unit: string;
   description: string;
   quantity: number;
   unitPrice: number;
@@ -81,9 +84,18 @@ interface DocDTO {
   voidedAt: number | null;
   createdAt: number;
   fileCount: number;
+  deliveryAddress: string;
+  salesRepId: string | null;
+  discountBp: number;
+  quoteId: string | null;
+  quoteNumber: string | null;
+  quoteBp: number;
+  online: boolean;
+  viewedAt: number | null;
   lines: DocLineDTO[];
   payments: PaymentDTO[];
-  can: { edit: boolean; delete: boolean; approve: boolean; pay: boolean; void: boolean };
+  credits: { id: string; creditNoteId: string; creditNumber: string; date: string; amount: number; removed: boolean }[];
+  can: { edit: boolean; delete: boolean; approve: boolean; pay: boolean; void: boolean; credit: boolean; share: boolean };
 }
 
 interface FileDTO {
@@ -396,45 +408,6 @@ function ExistingDoc({ kind, org, id }: { kind: DocKind; org: FinOrgDTO; id: str
 
 // ------------------------------------------------------------------ editor
 
-interface LineState {
-  key: number;
-  description: string;
-  quantity: string;
-  unitPrice: number | null;
-  discount: string;
-  accountId: string | null;
-  taxCodeId: string | null;
-  departmentId: string | null;
-  projectId: string | null;
-  costCentreId: string | null;
-}
-
-let lineKey = 1;
-const blankLine = (accountId: string | null = null, taxCodeId: string | null = null): LineState => ({ key: lineKey++, description: '', quantity: '1', unitPrice: null, discount: '', accountId, taxCodeId, departmentId: null, projectId: null, costCentreId: null });
-
-const fromDto = (l: DocLineDTO): LineState => ({
-  key: lineKey++,
-  description: l.description,
-  quantity: String(l.quantity),
-  unitPrice: l.unitPrice,
-  discount: l.discountBp ? String(l.discountBp / 100) : '',
-  accountId: l.accountId,
-  taxCodeId: l.taxCodeId,
-  departmentId: l.departmentId,
-  projectId: l.projectId,
-  costCentreId: l.costCentreId,
-});
-
-const quantityOf = (s: string) => {
-  const n = Number(s.trim() === '' ? '1' : s.replace(',', '.'));
-  return Number.isFinite(n) ? n : NaN;
-};
-const discountBpOf = (s: string) => {
-  const n = Number(s.trim() === '' ? '0' : s.replace('%', '').replace(',', '.'));
-  return Number.isFinite(n) ? Math.round(n * 100) : NaN;
-};
-const isEmptyLine = (l: LineState) => !l.description.trim() && (l.unitPrice === null || l.unitPrice === 0);
-
 function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { kind: DocKind; org: FinOrgDTO; initial?: DocDTO; presetContact?: string | null; onSaved: (id: string) => void; onCancel: () => void }) {
   const toast = useToast();
   const refresh = useRefresh();
@@ -462,8 +435,14 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
   const [templateId, setTemplateId] = useState<string | null>(initial?.templateId ?? null);
   const [notes, setNotes] = useState(initial?.notes ?? '');
   const [terms, setTerms] = useState(initial?.terms ?? '');
-  const [lines, setLines] = useState<LineState[]>(() => (initial?.lines.length ? initial.lines.map(fromDto) : [blankLine()]));
+  const [lines, setLinesState] = useState<SalesLine[]>(() => (initial?.lines.length ? initial.lines.map(lineFromDto) : [blankLine()]));
+  const setLines = (f: (ls: SalesLine[]) => SalesLine[]) => setLinesState(f);
+  const [discount, setDiscount] = useState(initial?.discountBp ? String(initial.discountBp / 100) : '');
+  const [deliveryAddress, setDeliveryAddress] = useState(initial?.deliveryAddress ?? '');
+  const [salesRepId, setSalesRepId] = useState<string | null>(initial?.salesRepId ?? null);
   const [busy, setBusy] = useState(false);
+  // Invoices and purchase orders go to other businesses: item codes, units, a whole-document discount and a preview.
+  const outgoing = kind === 'invoice' || kind === 'purchase_order';
 
   const contact = contacts.find((c) => c.id === contactId);
   // The due date follows the date and the contact's terms (else the workspace's) until the person sets it.
@@ -481,35 +460,11 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
   }, [contact, gst]);
 
   const effectiveMode: TaxMode = gst ? taxMode : 'none';
-  const priced = useMemo(() => {
-    const out = lines.map((l) => {
-      const q = quantityOf(l.quantity);
-      const d = discountBpOf(l.discount);
-      if (!Number.isFinite(q) || !Number.isFinite(d) || d < 0 || d > 10_000) return { amount: 0, net: 0, tax: 0, valid: false };
-      const amount = lineTotal(l.unitPrice ?? 0, Math.round(q * 1000), d);
-      const rate = gst && l.taxCodeId ? (taxCodes?.find((t) => t.id === l.taxCodeId)?.rateBp ?? 0) : 0;
-      const s = splitTax(amount, rate, effectiveMode);
-      return { amount, net: s.net, tax: s.tax, valid: true };
-    });
-    const subtotal = out.reduce((n, x) => n + x.net, 0);
-    const tax = out.reduce((n, x) => n + x.tax, 0);
-    return { lines: out, subtotal, tax, total: subtotal + tax, valid: out.every((x) => x.valid) };
-  }, [lines, taxCodes, gst, effectiveMode]);
+  const discountBp = outgoing ? percentBpOf(discount) : 0;
+  const priced = useMemo(() => priceLines(lines, { gst, mode: effectiveMode, discountBp, taxCodes }), [lines, taxCodes, gst, effectiveMode, discountBp]);
 
-  const setLine = (key: number, patchLine: Partial<LineState>) => setLines((ls) => ls.map((l) => (l.key === key ? { ...l, ...patchLine } : l)));
-  const addLine = () => setLines((ls) => [...ls, blankLine(contact?.defaultAccountId ?? null, gst ? (contact?.defaultTaxCodeId ?? null) : null)]);
-  const removeLine = (key: number) => setLines((ls) => (ls.length > 1 ? ls.filter((l) => l.key !== key) : [blankLine()]));
-
-  const save = async (action: 'draft' | 'submit' | 'approve' | 'keep') => {
-    const kept = lines.filter((l) => !isEmptyLine(l));
-    if (!kept.length) {
-      toast('Add at least one line with a description or a price', 'error');
-      return;
-    }
-    if (!priced.valid) {
-      toast('Check the quantities and discounts: use numbers, and discounts from 0 to 100%', 'error');
-      return;
-    }
+  const kept = lines.filter((l) => !isEmptyLine(l));
+  const docBody = (): Record<string, unknown> => {
     const body: Record<string, unknown> = {
       contactId,
       issueDate,
@@ -518,18 +473,22 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
       taxMode: effectiveMode,
       notes,
       terms,
-      lines: kept.map((l) => ({
-        description: l.description.trim(),
-        quantity: quantityOf(l.quantity),
-        unitPrice: l.unitPrice ?? 0,
-        discountBp: discountBpOf(l.discount),
-        accountId: l.accountId,
-        taxCodeId: gst ? l.taxCodeId : null,
-        departmentId: l.departmentId,
-        projectId: l.projectId,
-        costCentreId: l.costCentreId,
-      })),
+      lines: kept.map((l) => lineBody(l, gst, false)),
     };
+    if (outgoing) Object.assign(body, { discountBp: Number.isFinite(discountBp) ? discountBp : 0, deliveryAddress: deliveryAddress.trim() });
+    if (kind === 'invoice') body.salesRepId = salesRepId;
+    return body;
+  };
+  const save = async (action: 'draft' | 'submit' | 'approve' | 'keep') => {
+    if (!kept.some((l) => l.lineKind === 'item')) {
+      toast('Add at least one line with a description or a price', 'error');
+      return;
+    }
+    if (!priced.valid) {
+      toast('Check the quantities and discounts: use numbers, and discounts from 0 to 100%', 'error');
+      return;
+    }
+    const body = docBody();
     if (number.trim()) body.number = number.trim();
     if (kind === 'expense_claim') body.claimantId = claimantId ?? me;
     if (kind === 'invoice') body.templateId = templateId;
@@ -559,17 +518,17 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
   // A document awaiting approval keeps that status when it is saved; an approved one is re-posted.
   const keepsStatus = approvedAlready || status === 'submitted';
   const canChooseClaimant = kind === 'expense_claim' && (perms.approve || perms.edit === 'all');
-  const lineDirection = kind === 'invoice' ? 'in' : 'out';
   const templateList = templates.data ?? [];
 
   return (
     <form
-      className="stack-lg"
+      className={outgoing ? 'fin-editor-split' : 'stack-lg'}
       onSubmit={(e) => {
         e.preventDefault();
         void save(keepsStatus ? 'keep' : 'draft');
       }}
     >
+      <div className="stack-lg">
       {initial?.rejectedNote && status === 'draft' ? (
         <div className="error-box" role="status">
           Returned for changes: {initial.rejectedNote}
@@ -596,7 +555,11 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
           ) : null}
           <div className="field">
             <label htmlFor="doc-contact">{kind === 'expense_claim' ? 'Paid to (optional)' : partyLabel(kind)}</label>
-            <ContactSelect id="doc-contact" value={contactId} onChange={setContactId} kind={kind === 'invoice' ? 'customer' : kind === 'expense_claim' ? 'any' : 'supplier'} emptyLabel={kind === 'expense_claim' ? 'Not recorded' : `Choose a ${partyLabel(kind).toLowerCase()}`} />
+            {kind === 'invoice' ? (
+              <CustomerField org={org} id="doc-contact" value={contactId} onChange={setContactId} required />
+            ) : (
+              <ContactSelect id="doc-contact" value={contactId} onChange={setContactId} kind={kind === 'expense_claim' ? 'any' : 'supplier'} emptyLabel={kind === 'expense_claim' ? 'Not recorded' : `Choose a ${partyLabel(kind).toLowerCase()}`} />
+            )}
             {!contacts.length && org.perms.contacts.create ? (
               <span className="muted small">
                 No {kind === 'invoice' ? 'customers' : 'suppliers'} yet: <Link to={`/o/${org.id}/contacts`}>add one</Link>.
@@ -642,6 +605,31 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
               </select>
             </div>
           ) : null}
+          {outgoing ? (
+            <div className="field">
+              <label htmlFor="doc-discount">Discount on the whole {kind === 'invoice' ? 'invoice' : 'order'} (%)</label>
+              <input id="doc-discount" className="input crm-num" inputMode="decimal" placeholder="0" value={discount} onChange={(e) => setDiscount(e.target.value)} />
+            </div>
+          ) : null}
+          {kind === 'invoice' ? (
+            <div className="field">
+              <label htmlFor="doc-rep">Salesperson</label>
+              <select id="doc-rep" className="select" value={salesRepId ?? ''} onChange={(e) => setSalesRepId(e.target.value || null)}>
+                <option value="">Not shown</option>
+                {members.map((m) => (
+                  <option key={m.userId} value={m.userId}>
+                    {m.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+          {outgoing ? (
+            <div className="field fin-span-3">
+              <label htmlFor="doc-delivery">{kind === 'invoice' ? 'Delivery or site address (optional)' : 'Deliver to (optional)'}</label>
+              <textarea id="doc-delivery" className="input" rows={2} maxLength={500} value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} />
+            </div>
+          ) : null}
           {kind === 'invoice' && templateList.length > 1 ? (
             <div className="field">
               <label htmlFor="doc-template">Template</label>
@@ -661,64 +649,8 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
 
       <section className="card card-pad">
         <h2 className="crm-subhead">Lines</h2>
-        <div className="crm-table-scroll">
-          <table className="fin-lines">
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th>Quantity</th>
-                <th>Unit price</th>
-                <th>Discount %</th>
-                <th>Account</th>
-                {gst ? <th>GST</th> : null}
-                <th className="fin-num">Amount</th>
-                <th>
-                  <span className="sr-only">Remove</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {lines.map((l, i) => (
-                <LineRows
-                  key={l.key}
-                  line={l}
-                  index={i}
-                  amount={priced.lines[i]?.amount ?? 0}
-                  gst={gst}
-                  direction={direction}
-                  lineDirection={lineDirection}
-                  tracking={anyTracking}
-                  onChange={(p) => setLine(l.key, p)}
-                  onRemove={() => removeLine(l.key)}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="row wrap">
-          <button type="button" className="btn sm" onClick={addLine} disabled={lines.length >= 200}>
-            <Icon name="plus" /> Add a line
-          </button>
-          <span className="grow" />
-          <dl className="fin-totals">
-            <dt>{gst && effectiveMode !== 'none' ? 'Subtotal (excluding GST)' : 'Subtotal'}</dt>
-            <dd>
-              <Money value={priced.subtotal} />
-            </dd>
-            {gst ? (
-              <>
-                <dt>GST</dt>
-                <dd>
-                  <Money value={priced.tax} />
-                </dd>
-              </>
-            ) : null}
-            <dt className="total">Total</dt>
-            <dd className="total">
-              <Money value={priced.total} />
-            </dd>
-          </dl>
-        </div>
+        <LinesEditor lines={lines} setLines={setLines} priced={priced} gst={gst} direction={direction} extended={outgoing} tracking={anyTracking} defaults={{ accountId: contact?.defaultAccountId ?? null, taxCodeId: contact?.defaultTaxCodeId ?? null }} />
+        <Totals priced={priced} gst={gst} discountBp={Number.isFinite(discountBp) ? discountBp : 0} />
         {kind !== 'purchase_order' ? <Hint>Every line needs an account before the document is approved: it decides where the amount goes in the ledger.</Hint> : null}
       </section>
 
@@ -769,58 +701,9 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
           Cancel
         </button>
       </div>
+      </div>
+      {outgoing ? <LivePreview path={fin(org.id, '/docs/preview')} body={kept.some((l) => l.lineKind === 'item') && priced.valid ? { kind, ...docBody(), ...(templateId ? { templateId } : {}), ...(number.trim() ? { number: number.trim() } : {}), ...(initial ? { docId: initial.id } : {}) } : null} label={DOC_LABELS[kind].one} /> : null}
     </form>
-  );
-}
-
-function LineRows({ line, index, amount, gst, direction, lineDirection, tracking, onChange, onRemove }: { line: LineState; index: number; amount: number; gst: boolean; direction: 'sales' | 'purchases'; lineDirection: 'in' | 'out'; tracking: boolean; onChange: (p: Partial<LineState>) => void; onRemove: () => void }) {
-  const n = index + 1;
-  // Choosing an account fills in its default GST code when the line has none yet, as the transaction form does.
-  const accounts = useAccounts().data ?? [];
-  return (
-    <>
-      <tr>
-        <td>
-          <input className="input" aria-label={`Line ${n} description`} maxLength={1000} value={line.description} onChange={(e) => onChange({ description: e.target.value })} />
-        </td>
-        <td>
-          <input className="input crm-num" aria-label={`Line ${n} quantity`} inputMode="decimal" value={line.quantity} onChange={(e) => onChange({ quantity: e.target.value })} />
-        </td>
-        <td>
-          <MoneyInput ariaLabel={`Line ${n} unit price`} value={line.unitPrice} onChange={(v) => onChange({ unitPrice: v })} signed />
-        </td>
-        <td>
-          <input className="input crm-num" aria-label={`Line ${n} discount percent`} inputMode="decimal" placeholder="0" value={line.discount} onChange={(e) => onChange({ discount: e.target.value })} />
-        </td>
-        <td>
-          <AccountSelect ariaLabel={`Line ${n} account`} kind="category" direction={lineDirection} allowEmpty emptyLabel="Choose an account" value={line.accountId} onChange={(v) => onChange({ accountId: v, ...(gst && !line.taxCodeId ? { taxCodeId: accounts.find((a) => a.id === v)?.taxCodeId ?? null } : {}) })} />
-        </td>
-        {gst ? (
-          <td>
-            <TaxCodeSelect ariaLabel={`Line ${n} GST code`} direction={direction} value={line.taxCodeId} onChange={(v) => onChange({ taxCodeId: v })} />
-          </td>
-        ) : null}
-        <td className="fin-num">
-          <Money value={amount} />
-        </td>
-        <td className="fin-line-actions">
-          <button type="button" className="btn ghost icon sm" aria-label={`Remove line ${n}`} onClick={onRemove}>
-            <Icon name="trash" />
-          </button>
-        </td>
-      </tr>
-      {tracking ? (
-        <tr>
-          <td colSpan={gst ? 8 : 7}>
-            <div className="row wrap small">
-              <TrackingSelect kind="department" value={line.departmentId} onChange={(v) => onChange({ departmentId: v })} />
-              <TrackingSelect kind="project" value={line.projectId} onChange={(v) => onChange({ projectId: v })} />
-              <TrackingSelect kind="cost_centre" value={line.costCentreId} onChange={(v) => onChange({ costCentreId: v })} />
-            </div>
-          </td>
-        </tr>
-      ) : null}
-    </>
   );
 }
 
@@ -840,7 +723,19 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
   const [paying, setPaying] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [voiding, setVoiding] = useState<null | { type: 'doc' } | { type: 'payment'; payment: PaymentDTO }>(null);
+  const [applying, setApplying] = useState(false);
+  const contacts = useContacts().data ?? [];
+  const refreshAll = useRefresh();
+  // Credit the customer has not used yet, to apply to this invoice.
+  const credits = useQuery({
+    queryKey: ['fin', org.id, 'credit-notes', 'open', d.contactId],
+    queryFn: () => get<{ rows: { id: string; number: string; remaining: number }[] }>(`${fin(org.id, '/credit-notes')}?status=open&contact=${d.contactId}`),
+    enabled: kind === 'invoice' && !!d.contactId && d.can.pay,
+  });
+  const openCredits = (credits.data?.rows ?? []).filter((c) => c.remaining > 0);
   const livePayments = d.payments.filter((p) => !p.voided);
+  const liveCredits = (d.credits ?? []).filter((c) => !c.removed).reduce((n, c) => n + c.amount, 0);
+  const members = useMembers().data ?? [];
   const approver = mayApprove(org, kind);
   const run = async (fn: () => Promise<unknown>, done: string) => {
     setBusy(true);
@@ -931,6 +826,17 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
             Convert to bill
           </button>
         ) : null}
+        {openCredits.length && d.can.pay ? (
+          <button className="btn" disabled={busy} onClick={() => setApplying(true)}>
+            Apply credit
+          </button>
+        ) : null}
+        {d.can.share ? <ShareActions org={org} kind="invoice" id={d.id} online={d.online} customerEmail={contacts.find((c) => c.id === d.contactId)?.email ?? null} disabled={busy} onChange={reload} /> : null}
+        {d.can.credit ? (
+          <button className="btn" disabled={busy} onClick={() => navigate(`/o/${org.id}/credit-notes/new?invoice=${d.id}`)}>
+            <Icon name="undo" /> Credit note
+          </button>
+        ) : null}
         <button className="btn" onClick={() => download(pdfUrl)}>
           <Icon name="download" /> PDF
         </button>
@@ -1010,6 +916,27 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
                   <dd>{TAX_MODE_LABELS[d.taxMode]}</dd>
                 </>
               ) : null}
+              {d.quoteId ? (
+                <>
+                  <dt>From quote</dt>
+                  <dd>
+                    <Link to={`/o/${org.id}/quotes/${d.quoteId}`}>{d.quoteNumber ?? 'The quote'}</Link>
+                    {d.quoteBp && d.quoteBp < 10_000 ? ` (${d.quoteBp / 100}% of it)` : ''}
+                  </dd>
+                </>
+              ) : null}
+              {d.deliveryAddress ? (
+                <>
+                  <dt>Delivery</dt>
+                  <dd className="crm-text">{d.deliveryAddress}</dd>
+                </>
+              ) : null}
+              {d.salesRepId ? (
+                <>
+                  <dt>Salesperson</dt>
+                  <dd>{members.find((m) => m.userId === d.salesRepId)?.name ?? 'Former member'}</dd>
+                </>
+              ) : null}
               {d.sourceDocId ? (
                 <>
                   <dt>From</dt>
@@ -1031,7 +958,11 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
               {d.sentAt ? (
                 <>
                   <dt>Sent</dt>
-                  <dd>Marked as sent {dateTime(d.sentAt)}</dd>
+                  <dd>
+                    Sent {dateTime(d.sentAt)}
+                    {d.online ? <span className="badge accent"> Online link active</span> : null}
+                    {d.viewedAt ? <div className="muted small">First opened by the customer {dateTime(d.viewedAt)}</div> : null}
+                  </dd>
                 </>
               ) : null}
               {d.voidedAt ? (
@@ -1062,10 +993,23 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
                   </tr>
                 </thead>
                 <tbody>
-                  {d.lines.map((l) => (
+                  {d.lines.map((l) =>
+                    l.lineKind === 'heading' ? (
+                      <tr key={l.id} className="fin-heading-row">
+                        <td colSpan={9}>
+                          <strong>{l.description}</strong>
+                        </td>
+                      </tr>
+                    ) : (
                     <tr key={l.id}>
-                      <td className="crm-text">{l.description || <span className="muted">No description</span>}</td>
-                      <td className="fin-num">{l.quantity}</td>
+                      <td className="crm-text">
+                        {l.itemCode ? <span className="mono small">{l.itemCode} </span> : null}
+                        {l.description || <span className="muted">No description</span>}
+                      </td>
+                      <td className="fin-num">
+                        {l.quantity}
+                        {l.unit ? ` ${l.unit}` : ''}
+                      </td>
                       <td className="fin-num">
                         <Money value={l.unitPrice} />
                       </td>
@@ -1082,7 +1026,8 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
                         </td>
                       ) : null}
                     </tr>
-                  ))}
+                    ),
+                  )}
                 </tbody>
               </table>
             </div>
@@ -1109,6 +1054,12 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
         <div className="stack-lg">
           <section className="card card-pad">
             <dl className="fin-totals">
+              {d.discountBp ? (
+                <>
+                  <dt>Discount</dt>
+                  <dd>{d.discountBp / 100}% on every line</dd>
+                </>
+              ) : null}
               <dt>{org.gst && d.taxMode !== 'none' ? 'Subtotal (excluding GST)' : 'Subtotal'}</dt>
               <dd>
                 <Money value={d.subtotal} />
@@ -1127,9 +1078,17 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
               </dd>
               {kind !== 'purchase_order' ? (
                 <>
+                  {kind === 'invoice' && liveCredits > 0 ? (
+                    <>
+                      <dt>Credited</dt>
+                      <dd>
+                        <Money value={liveCredits} />
+                      </dd>
+                    </>
+                  ) : null}
                   <dt>{kind === 'invoice' ? 'Received' : 'Paid'}</dt>
                   <dd>
-                    <Money value={d.amountPaid} />
+                    <Money value={d.amountPaid - (kind === 'invoice' ? liveCredits : 0)} />
                   </dd>
                   <dt className="total">{kind === 'invoice' ? 'Still to be received' : 'Still to be paid'}</dt>
                   <dd className="total">
@@ -1175,9 +1134,42 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
             </section>
           ) : null}
 
+          {kind === 'invoice' && d.credits?.length ? (
+            <section className="card card-pad">
+              <h2 className="crm-subhead">Credit applied</h2>
+              <ul className="crm-mini-list">
+                {d.credits.map((c) => (
+                  <li key={c.id}>
+                    <Icon name="undo" size={14} />
+                    <div className="grow">
+                      <Link to={`/o/${org.id}/credit-notes/${c.creditNoteId}`}>{c.creditNumber}</Link> {c.removed ? <span className="badge danger">Removed</span> : null}
+                      <div className="muted small">
+                        {shortDate(c.date)} · <Money value={c.amount} />
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           <Attachments org={org} doc={d} />
         </div>
       </div>
+      {kind === 'invoice' || kind === 'purchase_order' ? <DocumentFrame src={appUrl(`/api${fin(org.id, `/docs/${d.id}/pdf?inline=1`)}`)} label={label.one} stamp={`${d.status}-${d.amountPaid}-${d.total}`} /> : null}
+      {applying ? (
+        <ApplyCreditToInvoice
+          org={org}
+          doc={d}
+          credits={openCredits}
+          onClose={() => setApplying(false)}
+          onDone={() => {
+            setApplying(false);
+            refreshAll();
+            reload();
+          }}
+        />
+      ) : null}
 
       {paying ? <PaymentDialog org={org} doc={d} onClose={() => setPaying(false)} onDone={() => { setPaying(false); reload(); }} /> : null}
       {rejecting ? <RejectDialog org={org} doc={d} onClose={() => setRejecting(false)} onDone={() => { setRejecting(false); reload(); }} /> : null}
@@ -1204,6 +1196,75 @@ function DocView({ doc: d, org, onEdit, reload }: { doc: DocDTO; org: FinOrgDTO;
         />
       ) : null}
     </div>
+  );
+}
+
+/** Apply a customer's unused credit (from a credit note) to this invoice. */
+function ApplyCreditToInvoice({ org, doc, credits, onClose, onDone }: { org: FinOrgDTO; doc: DocDTO; credits: { id: string; number: string; remaining: number }[]; onClose: () => void; onDone: () => void }) {
+  const toast = useToast();
+  const { fmt } = useMoney();
+  const [creditId, setCreditId] = useState(credits[0]?.id ?? '');
+  const credit = credits.find((c) => c.id === creditId);
+  const [amount, setAmount] = useState<number | null>(credit ? Math.min(credit.remaining, doc.amountDue) : null);
+  const [busy, setBusy] = useState(false);
+  return (
+    <Modal
+      title={`Apply credit to ${doc.number}`}
+      onClose={onClose}
+      footer={
+        <>
+          <button className="btn" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            className="btn primary"
+            disabled={busy || !credit || !amount}
+            onClick={async () => {
+              setBusy(true);
+              try {
+                await post(fin(org.id, `/credit-notes/${creditId}/allocations`), { invoiceId: doc.id, amount });
+                toast('Credit applied');
+                onDone();
+              } catch (e) {
+                toast(errorMessage(e), 'error');
+              } finally {
+                setBusy(false);
+              }
+            }}
+          >
+            Apply
+          </button>
+        </>
+      }
+    >
+      <div className="stack">
+        <div className="field">
+          <label htmlFor="aci-credit">Credit note</label>
+          <select
+            id="aci-credit"
+            className="select"
+            value={creditId}
+            onChange={(e) => {
+              setCreditId(e.target.value);
+              const c = credits.find((x) => x.id === e.target.value);
+              setAmount(c ? Math.min(c.remaining, doc.amountDue) : null);
+            }}
+          >
+            {credits.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.number}: {fmt(c.remaining)} left
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="field">
+          <label htmlFor="aci-amount">Amount</label>
+          <MoneyInput id="aci-amount" value={amount} onChange={setAmount} />
+          <span className="muted small">Still owed on this invoice: {fmt(doc.amountDue)}</span>
+        </div>
+        <Hint>Applying credit lowers what the invoice owes. Nothing new is posted: the credit note already reduced the customer’s balance.</Hint>
+      </div>
+    </Modal>
   );
 }
 
@@ -1322,7 +1383,7 @@ function RejectDialog({ org, doc, onClose, onDone }: { org: FinOrgDTO; doc: DocD
   );
 }
 
-function VoidDialog({ title, message, posted, lockDate, onClose, onConfirm }: { title: string; message: string; posted: boolean; lockDate: string | null; onClose: () => void; onConfirm: (date: string) => Promise<void> }) {
+export function VoidDialog({ title, message, posted, lockDate, onClose, onConfirm }: { title: string; message: string; posted: boolean; lockDate: string | null; onClose: () => void; onConfirm: (date: string) => Promise<void> }) {
   const toast = useToast();
   const [date, setDate] = useState('');
   const [busy, setBusy] = useState(false);

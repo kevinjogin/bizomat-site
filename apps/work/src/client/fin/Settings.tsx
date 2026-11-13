@@ -13,8 +13,9 @@ import { WORKSPACE_KIND_LABELS } from '../../shared/fin/roles';
 import type { FinSettings } from '../../shared/fin/settings';
 import { dateTime, fin, useCurrentOrg, useRefresh } from './lib';
 import { Hint } from './ui';
+import { DocumentTemplates } from './Templates';
 
-type TabKey = 'workspace' | 'approvals' | 'notifications' | 'audit' | 'danger';
+type TabKey = 'workspace' | 'templates' | 'approvals' | 'notifications' | 'audit' | 'danger';
 
 export function Settings() {
   const org = useCurrentOrg();
@@ -23,6 +24,7 @@ export function Settings() {
   const audit = org.role === 'owner' || org.role === 'admin' || org.perms.accounting.manage;
   const tabs: { key: TabKey; label: string; icon: string; show: boolean }[] = [
     { key: 'workspace', label: 'Workspace', icon: 'building', show: true },
+    { key: 'templates', label: 'Document templates', icon: 'doc', show: org.kind === 'business' },
     { key: 'approvals', label: org.kind === 'business' ? 'Approvals and alerts' : 'Alerts', icon: 'checkSquare', show: manage },
     { key: 'notifications', label: 'My notifications', icon: 'bell', show: true },
     { key: 'audit', label: 'Audit trail', icon: 'history', show: audit },
@@ -43,6 +45,7 @@ export function Settings() {
         </nav>
         <div className="stack-lg crm-settings-body">
           {current === 'workspace' ? <WorkspaceSettings /> : null}
+          {current === 'templates' ? <DocumentTemplates /> : null}
           {current === 'approvals' ? <ApprovalsAndAlerts /> : null}
           {current === 'notifications' ? <NotificationPrefs /> : null}
           {current === 'audit' ? <AuditTrail /> : null}

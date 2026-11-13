@@ -15,6 +15,10 @@ import { auditStmt, finNotify, runBatch, searchText } from './util';
 export type DocStatus = 'draft' | 'submitted' | 'approved' | 'part_paid' | 'paid' | 'billed' | 'void';
 
 export interface DocLineInput {
+  /** 'heading': a title that groups the lines after it (no amount). */
+  lineKind?: 'item' | 'heading';
+  itemCode?: string;
+  unit?: string;
   description?: string;
   /** Up to three decimals. */
   quantity?: number;
@@ -43,6 +47,12 @@ export interface DocInput {
   action?: 'draft' | 'submit' | 'approve';
   recurringId?: string | null;
   sourceDocId?: string | null;
+  deliveryAddress?: string;
+  salesRepId?: string | null;
+  /** A discount on the whole document (basis points), applied to every line before tax. */
+  discountBp?: number;
+  /** The quote an invoice is made from (set by the server only). */
+  quoteId?: string | null;
 }
 
 export const moduleOf = (kind: DocKind) => (kind === 'invoice' ? 'sales' : 'purchases') as 'sales' | 'purchases';
@@ -54,19 +64,33 @@ export function mayApprove(a: FinAccess, kind: DocKind): boolean {
   return a.perms[m].approve || (a.perms[m].create && !a.settings.approvals[approvalKey(kind)]);
 }
 
-interface PricedDocLine extends DocLineInput {
+export interface PricedDocLine extends DocLineInput {
   quantityMilli: number;
   discountBp: number;
+  /** As entered, after the line's own discount and before the whole-document discount. */
   amount: number;
+  discounted: number;
   net: number;
   tax: number;
 }
 
-/** Net and tax per line (accounts are required only when the document is approved). */
-export function priceDocLines(a: FinAccess, chart: Chart, lines: DocLineInput[], mode: TaxMode, kind: DocKind, requireAccounts: boolean) {
+/** A share taken off an amount, rounded to the cent: the whole-document discount on one line. */
+export function lessDiscount(amount: number, bp: number): number {
+  return bp ? amount - Math.round((amount * bp) / 10_000) : amount;
+}
+
+/**
+ * Net and tax per line (accounts are required only when the document is approved). Headings carry no amount. The
+ * whole-document discount comes off each line before its tax is worked out, so the GST on every line is exact.
+ */
+export function priceDocLines(a: FinAccess, chart: Chart, lines: DocLineInput[], mode: TaxMode, kind: DocKind | 'quote' | 'credit_note', requireAccounts: boolean, docDiscountBp = 0) {
   const effective: TaxMode = a.gst ? mode : 'none';
-  const use = kind === 'invoice' ? 'sales' : 'purchases';
+  const use = kind === 'invoice' || kind === 'quote' || kind === 'credit_note' ? 'sales' : 'purchases';
+  if (!Number.isInteger(docDiscountBp) || docDiscountBp < 0 || docDiscountBp > 10_000) throw new HttpError(400, 'A discount is between 0% and 100%');
   const out: PricedDocLine[] = lines.map((l) => {
+    if (l.lineKind === 'heading') {
+      return { ...l, lineKind: 'heading' as const, unitPrice: 0, quantityMilli: 0, discountBp: 0, accountId: null, taxCodeId: null, amount: 0, discounted: 0, net: 0, tax: 0 };
+    }
     const quantityMilli = Math.round((l.quantity ?? 1) * 1000);
     if (!Number.isSafeInteger(quantityMilli) || Math.abs(quantityMilli) > 1e9) throw new HttpError(400, 'Use a sensible quantity');
     if (!Number.isSafeInteger(l.unitPrice) || Math.abs(l.unitPrice) > MAX_AMOUNT) throw new HttpError(400, 'Prices are whole cents');
@@ -85,12 +109,15 @@ export function priceDocLines(a: FinAccess, chart: Chart, lines: DocLineInput[],
       if (!codeFits(tc.direction, use)) throw new HttpError(400, `${tc.code} is not a ${use} tax code`);
       rate = tc.rate_bp;
     } else taxCodeId = null;
-    const s = splitTax(amount, rate, effective);
-    return { ...l, taxCodeId, quantityMilli, discountBp, amount, net: s.net, tax: s.tax };
+    const discounted = lessDiscount(amount, docDiscountBp);
+    const s = splitTax(discounted, rate, effective);
+    return { ...l, lineKind: 'item' as const, taxCodeId, quantityMilli, discountBp, amount, discounted, net: s.net, tax: s.tax };
   });
   const subtotal = out.reduce((n, l) => n + l.net, 0);
   const tax = out.reduce((n, l) => n + l.tax, 0);
-  return { lines: out, mode: effective, subtotal, tax, total: subtotal + tax };
+  const gross = out.reduce((n, l) => n + l.amount, 0);
+  const discountTotal = gross - out.reduce((n, l) => n + l.discounted, 0);
+  return { lines: out, mode: effective, subtotal, tax, total: subtotal + tax, discountTotal };
 }
 
 export interface DocRow {
@@ -126,6 +153,24 @@ export interface DocRow {
   created_at: number;
   updated_at: number;
   deleted_at: number | null;
+  delivery_address: string;
+  sales_rep_id: string | null;
+  discount_bp: number;
+  quote_id: string | null;
+  quote_bp: number;
+  public_nonce: string | null;
+  viewed_at: number | null;
+}
+
+/** An invoice made from a quote gives its share of the quote back when it is voided or deleted. */
+export function releaseQuoteStmts(db: D1Database, a: FinAccess, d: DocRow): D1PreparedStatement[] {
+  if (!d.quote_id || !d.quote_bp) return [];
+  const t = now();
+  return [
+    db.prepare("UPDATE fin_quotes SET invoiced_bp = MAX(0, invoiced_bp - ?), status = CASE WHEN status = 'converted' THEN 'accepted' ELSE status END, updated_at = ? WHERE id = ? AND org_id = ?").bind(d.quote_bp, t, d.quote_id, a.orgId),
+    db.prepare('UPDATE fin_docs SET quote_bp = 0 WHERE id = ? AND org_id = ?').bind(d.id, a.orgId),
+    db.prepare('INSERT INTO fin_quote_events (id, org_id, quote_id, action, actor_id, actor_name, detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.orgId, d.quote_id, 'invoice_removed', a.userId, a.userName.slice(0, 120), JSON.stringify({ invoiceId: d.id, number: d.number, bp: d.quote_bp }), t),
+  ];
 }
 
 export async function prepareDoc(db: D1Database, a: FinAccess, input: DocInput, approving: boolean) {
@@ -148,7 +193,8 @@ export async function prepareDoc(db: D1Database, a: FinAccess, input: DocInput, 
   }
   if (!input.lines.length) throw new HttpError(400, 'Add at least one line');
   if (input.lines.length > 200) throw new HttpError(400, 'At most 200 lines');
-  const priced = priceDocLines(a, chart, input.lines, input.taxMode ?? (a.gst ? 'exclusive' : 'none'), input.kind, approving && input.kind !== 'purchase_order');
+  if (input.salesRepId) await assertMember(db, a.orgId, input.salesRepId, 'The salesperson');
+  const priced = priceDocLines(a, chart, input.lines, input.taxMode ?? (a.gst ? 'exclusive' : 'none'), input.kind, approving && input.kind !== 'purchase_order', input.discountBp ?? 0);
   if (priced.total < 0) throw new HttpError(400, 'The total cannot be below zero');
   if (approving && priced.total === 0 && input.kind !== 'purchase_order') throw new HttpError(400, 'Approve a document with a total above zero');
   const due = input.dueDate ?? (input.kind === 'purchase_order' ? null : addDays(input.issueDate, contact?.terms_days ?? a.settings.termsDays));
@@ -158,8 +204,8 @@ export async function prepareDoc(db: D1Database, a: FinAccess, input: DocInput, 
 function lineStmts(db: D1Database, a: FinAccess, docId: string, lines: PricedDocLine[]) {
   return lines.map((l, i) =>
     db
-      .prepare('INSERT INTO fin_doc_lines (id, org_id, doc_id, line_no, description, quantity_milli, unit_price, discount_bp, account_id, tax_code_id, net, tax, department_id, project_id, cost_centre_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .bind(newId(), a.orgId, docId, i + 1, (l.description ?? '').slice(0, 1000), l.quantityMilli, l.unitPrice, l.discountBp, l.accountId ?? null, l.taxCodeId ?? null, l.net, l.tax, l.departmentId ?? null, l.projectId ?? null, l.costCentreId ?? null),
+      .prepare('INSERT INTO fin_doc_lines (id, org_id, doc_id, line_no, line_kind, item_code, unit, description, quantity_milli, unit_price, discount_bp, account_id, tax_code_id, net, tax, department_id, project_id, cost_centre_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(newId(), a.orgId, docId, i + 1, l.lineKind ?? 'item', (l.itemCode ?? '').slice(0, 40), (l.unit ?? '').slice(0, 20), (l.description ?? '').slice(0, 1000), l.quantityMilli, l.unitPrice, l.discountBp, l.accountId ?? null, l.taxCodeId ?? null, l.net, l.tax, l.departmentId ?? null, l.projectId ?? null, l.costCentreId ?? null),
   );
 }
 
@@ -196,10 +242,10 @@ export async function createDoc(env: Env, a: FinAccess, input: DocInput, waitUnt
   stmts.push(
     db
       .prepare(
-        `INSERT INTO fin_docs (id, org_id, kind, number, contact_id, claimant_id, issue_date, due_date, reference, tax_mode, subtotal, tax_total, total, status, template_id, notes, terms, recurring_id, source_doc_id, search, created_by, submitted_at, created_at, updated_at)
-         VALUES (?, ?, ?, ${numberSql}, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO fin_docs (id, org_id, kind, number, contact_id, claimant_id, issue_date, due_date, reference, tax_mode, subtotal, tax_total, total, status, template_id, notes, terms, recurring_id, source_doc_id, search, created_by, submitted_at, created_at, updated_at, delivery_address, sales_rep_id, discount_bp, quote_id)
+         VALUES (?, ?, ?, ${numberSql}, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
-      .bind(id, a.orgId, input.kind, ...numberArgs, input.contactId ?? null, claimant, input.issueDate, due, (input.reference ?? '').slice(0, 200), priced.mode, priced.subtotal, priced.tax, priced.total, input.templateId ?? null, (input.notes ?? '').slice(0, 4000), (input.terms ?? '').slice(0, 2000), input.recurringId ?? null, input.sourceDocId ?? null, '', a.userId, status === 'submitted' ? t : null, t, t),
+      .bind(id, a.orgId, input.kind, ...numberArgs, input.contactId ?? null, claimant, input.issueDate, due, (input.reference ?? '').slice(0, 200), priced.mode, priced.subtotal, priced.tax, priced.total, input.templateId ?? null, (input.notes ?? '').slice(0, 4000), (input.terms ?? '').slice(0, 2000), input.recurringId ?? null, input.sourceDocId ?? null, '', a.userId, status === 'submitted' ? t : null, t, t, (input.deliveryAddress ?? '').slice(0, 500), input.salesRepId ?? null, input.discountBp ?? 0, input.quoteId ?? null),
     ...lineStmts(db, a, id, priced.lines),
   );
   await runBatch(db, stmts);
@@ -241,7 +287,10 @@ export async function docInput(db: D1Database, d: DocRow): Promise<DocInput> {
     templateId: d.template_id,
     notes: d.notes,
     terms: d.terms,
-    lines: lines.results.map((l) => ({ description: l.description, quantity: l.quantity_milli / 1000, unitPrice: l.unit_price, discountBp: l.discount_bp, accountId: l.account_id, taxCodeId: l.tax_code_id, departmentId: l.department_id, projectId: l.project_id, costCentreId: l.cost_centre_id })),
+    deliveryAddress: d.delivery_address ?? '',
+    salesRepId: d.sales_rep_id ?? null,
+    discountBp: d.discount_bp ?? 0,
+    lines: lines.results.map((l) => ({ lineKind: l.line_kind ?? 'item', itemCode: l.item_code ?? '', unit: l.unit ?? '', description: l.description, quantity: l.quantity_milli / 1000, unitPrice: l.unit_price, discountBp: l.discount_bp, accountId: l.account_id, taxCodeId: l.tax_code_id, departmentId: l.department_id, projectId: l.project_id, costCentreId: l.cost_centre_id })),
   };
 }
 
@@ -278,7 +327,7 @@ export async function updateDoc(env: Env, a: FinAccess, d: DocRow, patch: Partia
   const db = env.DB;
   assertRecord(a, moduleOf(d.kind), 'edit', d, DOC_LABELS[d.kind].one);
   if (d.status === 'void' || d.status === 'billed') throw new HttpError(409, `This ${DOC_LABELS[d.kind].one.toLowerCase()} is ${d.status}`);
-  if (d.amount_paid > 0) throw new HttpError(409, 'Payments have been recorded: void them before changing the amounts');
+  if (d.amount_paid > 0) throw new HttpError(409, 'Payments or credits have been recorded: void or remove them before changing the amounts');
   const current = await docInput(db, d);
   const next: DocInput = { ...current, ...Object.fromEntries(Object.entries(patch).filter(([, v]) => v !== undefined)), kind: d.kind };
   const t = now();
@@ -299,8 +348,8 @@ export async function updateDoc(env: Env, a: FinAccess, d: DocRow, patch: Partia
     db.prepare('DELETE FROM fin_doc_lines WHERE doc_id = ? AND org_id = ?').bind(d.id, a.orgId),
     ...lineStmts(db, a, d.id, priced.lines),
     db
-      .prepare('UPDATE fin_docs SET number = ?, contact_id = ?, claimant_id = ?, issue_date = ?, due_date = ?, reference = ?, tax_mode = ?, subtotal = ?, tax_total = ?, total = ?, template_id = ?, notes = ?, terms = ?, journal_id = ?, search = ?, updated_at = ? WHERE id = ? AND org_id = ?')
-      .bind(number, next.contactId ?? null, d.kind === 'expense_claim' ? (next.claimantId ?? d.claimant_id) : null, next.issueDate, due, (next.reference ?? '').slice(0, 200), priced.mode, priced.subtotal, priced.tax, priced.total, next.templateId ?? null, (next.notes ?? '').slice(0, 4000), (next.terms ?? '').slice(0, 2000), journalId, searchText(number, contactName, next.reference), t, d.id, a.orgId),
+      .prepare('UPDATE fin_docs SET number = ?, contact_id = ?, claimant_id = ?, issue_date = ?, due_date = ?, reference = ?, tax_mode = ?, subtotal = ?, tax_total = ?, total = ?, template_id = ?, notes = ?, terms = ?, journal_id = ?, search = ?, delivery_address = ?, sales_rep_id = ?, discount_bp = ?, updated_at = ? WHERE id = ? AND org_id = ?')
+      .bind(number, next.contactId ?? null, d.kind === 'expense_claim' ? (next.claimantId ?? d.claimant_id) : null, next.issueDate, due, (next.reference ?? '').slice(0, 200), priced.mode, priced.subtotal, priced.tax, priced.total, next.templateId ?? null, (next.notes ?? '').slice(0, 4000), (next.terms ?? '').slice(0, 2000), journalId, searchText(number, contactName, next.reference), (next.deliveryAddress ?? '').slice(0, 500), next.salesRepId ?? null, next.discountBp ?? 0, t, d.id, a.orgId),
     auditStmt(db, { orgId: a.orgId, actorId: a.userId, action: `${d.kind}.updated`, targetType: 'doc', targetId: d.id, before: { total: d.total }, after: { total: priced.total, reposted: approved } }),
   );
   await runBatch(db, stmts);
@@ -322,6 +371,8 @@ export async function voidDoc(env: Env, a: FinAccess, d: DocRow, date?: string |
   if (d.status === 'billed') throw new HttpError(409, 'This purchase order has been turned into a bill');
   const live = await db.prepare('SELECT COUNT(*) AS n FROM fin_payments WHERE org_id = ? AND doc_id = ? AND voided_at IS NULL').bind(a.orgId, d.id).first<{ n: number }>();
   if (live?.n) throw new HttpError(409, 'Void its payments first');
+  const credits = await db.prepare('SELECT COUNT(*) AS n FROM fin_credit_allocations WHERE org_id = ? AND invoice_id = ? AND voided_at IS NULL').bind(a.orgId, d.id).first<{ n: number }>();
+  if (credits?.n) throw new HttpError(409, 'Remove the credit applied to it first');
   const stmts: D1PreparedStatement[] = [];
   let voidJournal: string | null = null;
   if (d.journal_id && d.status !== 'draft' && d.status !== 'submitted') {
@@ -332,7 +383,8 @@ export async function voidDoc(env: Env, a: FinAccess, d: DocRow, date?: string |
   }
   const t = now();
   stmts.push(
-    db.prepare("UPDATE fin_docs SET status = 'void', void_journal_id = ?, voided_at = ?, updated_at = ? WHERE id = ? AND org_id = ?").bind(voidJournal, t, t, d.id, a.orgId),
+    db.prepare("UPDATE fin_docs SET status = 'void', void_journal_id = ?, voided_at = ?, public_nonce = NULL, updated_at = ? WHERE id = ? AND org_id = ?").bind(voidJournal, t, t, d.id, a.orgId),
+    ...releaseQuoteStmts(db, a, d),
     auditStmt(db, { orgId: a.orgId, actorId: a.userId, action: `${d.kind}.voided`, targetType: 'doc', targetId: d.id, after: { reversal: voidJournal } }),
   );
   await runBatch(db, stmts);
@@ -388,12 +440,14 @@ export async function voidPayment(env: Env, a: FinAccess, d: DocRow, paymentId: 
 
 export async function docDTOs(db: D1Database, a: FinAccess, rows: any[], today: string, full = false) {
   const ids = rows.map((r) => r.id);
-  const [lines, payments] = full && ids.length
+  const [lines, payments, credits, quotes] = full && ids.length
     ? await Promise.all([
         db.prepare(`SELECT * FROM fin_doc_lines WHERE org_id = ? AND doc_id IN (${placeholders(ids.length)}) ORDER BY line_no`).bind(a.orgId, ...ids).all<any>(),
         db.prepare(`SELECT p.*, ac.name AS account_name FROM fin_payments p JOIN fin_accounts ac ON ac.id = p.account_id WHERE p.org_id = ? AND p.doc_id IN (${placeholders(ids.length)}) ORDER BY p.date`).bind(a.orgId, ...ids).all<any>(),
+        db.prepare(`SELECT al.*, cn.number AS credit_number FROM fin_credit_allocations al JOIN fin_credit_notes cn ON cn.id = al.credit_note_id WHERE al.org_id = ? AND al.invoice_id IN (${placeholders(ids.length)}) ORDER BY al.date`).bind(a.orgId, ...ids).all<any>(),
+        db.prepare(`SELECT q.id, q.number FROM fin_quotes q WHERE q.org_id = ? AND q.id IN (SELECT quote_id FROM fin_docs WHERE org_id = ? AND id IN (${placeholders(ids.length)}))`).bind(a.orgId, a.orgId, ...ids).all<any>(),
       ])
-    : [{ results: [] as any[] }, { results: [] as any[] }];
+    : [{ results: [] as any[] }, { results: [] as any[] }, { results: [] as any[] }, { results: [] as any[] }];
   return rows.map((r) => {
     const m = moduleOf(r.kind);
     const open = r.status === 'approved' || r.status === 'part_paid';
@@ -430,14 +484,25 @@ export async function docDTOs(db: D1Database, a: FinAccess, rows: any[], today: 
       voidedAt: r.voided_at,
       createdAt: r.created_at,
       fileCount: r.file_count ?? 0,
-      lines: lines.results.filter((l) => l.doc_id === r.id).map((l) => ({ id: l.id, description: l.description, quantity: l.quantity_milli / 1000, unitPrice: l.unit_price, discountBp: l.discount_bp, accountId: l.account_id, taxCodeId: l.tax_code_id, net: l.net, tax: l.tax, departmentId: l.department_id, projectId: l.project_id, costCentreId: l.cost_centre_id })),
+      deliveryAddress: r.delivery_address ?? '',
+      salesRepId: r.sales_rep_id ?? null,
+      discountBp: r.discount_bp ?? 0,
+      quoteId: r.quote_id ?? null,
+      online: !!r.public_nonce,
+      viewedAt: r.viewed_at ?? null,
+      lines: lines.results.filter((l) => l.doc_id === r.id).map((l) => ({ id: l.id, lineKind: l.line_kind ?? 'item', itemCode: l.item_code ?? '', unit: l.unit ?? '', description: l.description, quantity: l.quantity_milli / 1000, unitPrice: l.unit_price, discountBp: l.discount_bp, accountId: l.account_id, taxCodeId: l.tax_code_id, net: l.net, tax: l.tax, departmentId: l.department_id, projectId: l.project_id, costCentreId: l.cost_centre_id })),
       payments: payments.results.filter((p) => p.doc_id === r.id).map((p) => ({ id: p.id, accountId: p.account_id, accountName: p.account_name, date: p.date, amount: p.amount, reference: p.reference, voided: !!p.voided_at, reconciled: !!p.reconciled })),
+      credits: credits.results.filter((x) => x.invoice_id === r.id).map((x) => ({ id: x.id, creditNoteId: x.credit_note_id, creditNumber: x.credit_number, date: x.date, amount: x.amount, removed: !!x.voided_at })),
+      quoteNumber: quotes.results.find((x) => x.id === r.quote_id)?.number ?? null,
+      quoteBp: r.quote_bp ?? 0,
       can: {
         edit: canRecord(a, m, 'edit', r) && ['draft', 'submitted'].includes(r.status) || (r.status === 'approved' && r.amount_paid === 0 && mayApprove(a, r.kind) && canRecord(a, m, 'edit', r)),
         delete: canRecord(a, m, 'delete', r) && ['draft', 'submitted'].includes(r.status),
         approve: ['draft', 'submitted'].includes(r.status) && mayApprove(a, r.kind),
         pay: open && r.kind !== 'purchase_order' && mayApprove(a, r.kind),
         void: r.status !== 'void' && r.status !== 'billed' && canRecord(a, m, 'edit', r) && (['draft', 'submitted'].includes(r.status) || mayApprove(a, r.kind)),
+        credit: r.kind === 'invoice' && ['approved', 'part_paid', 'paid'].includes(r.status) && !!a.perms.sales.create,
+        share: r.kind === 'invoice' && ['approved', 'part_paid', 'paid'].includes(r.status) && canRecord(a, m, 'edit', r),
       },
     };
   });

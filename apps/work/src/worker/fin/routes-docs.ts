@@ -8,8 +8,9 @@ import { HttpError, body, now } from '../lib/util';
 import { todayIn } from '../../shared/fin/dates';
 import { DOC_KINDS, DOC_LABELS, type DocKind } from '../../shared/fin/settings';
 import { assertRecord, deny, requireBusiness, requireOrg, requirePerm, scopeSql } from './access';
-import { type DocInput, addPayment, approveDoc, createDoc, docDTOs, docInput, docLink, loadDoc, moduleOf, updateDoc, voidDoc, voidPayment } from './docs';
-import { invoicePdf } from './pdf';
+import { type DocInput, addPayment, approveDoc, createDoc, docDTOs, docInput, docLink, loadDoc, moduleOf, priceDocLines, releaseQuoteStmts, updateDoc, voidDoc, voidPayment } from './docs';
+import { chartOf } from './ledger';
+import { type PartyRow, docRender, pdfResponse, personName, renderBasics, renderPdf } from './render';
 import { auditStmt, csvOf, finNotify, runBatch } from './util';
 
 export const docRoutes = new Hono<AppEnv>();
@@ -19,6 +20,9 @@ const id = () => z.string().max(64);
 const isoDate = () => z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Use a date as YYYY-MM-DD');
 
 const docLine = z.object({
+  lineKind: z.enum(['item', 'heading']).optional(),
+  itemCode: text(40).optional(),
+  unit: text(20).optional(),
   description: text(1000).optional(),
   quantity: z.number().min(-1_000_000).max(1_000_000).optional(),
   unitPrice: z.number().int().min(-1_000_000_000_000).max(1_000_000_000_000),
@@ -42,6 +46,9 @@ const docSchema = z.object({
   templateId: id().nullable().optional(),
   notes: text(4000).optional(),
   terms: text(2000).optional(),
+  deliveryAddress: text(500).optional(),
+  salesRepId: id().nullable().optional(),
+  discountBp: z.number().int().min(0).max(10_000).optional(),
   lines: z.array(docLine).min(1).max(200),
   action: z.enum(['draft', 'submit', 'approve']).optional(),
 });
@@ -182,7 +189,8 @@ docRoutes.delete('/orgs/:org/docs/:id', async (c) => {
   assertRecord(a, moduleOf(d.kind), 'delete', d, DOC_LABELS[d.kind].one);
   if (d.status !== 'draft' && d.status !== 'submitted') throw new HttpError(409, 'Approved documents are voided, not deleted');
   await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE fin_docs SET deleted_at = ?, updated_at = ? WHERE id = ? AND org_id = ?').bind(now(), now(), d.id, a.orgId),
+    c.env.DB.prepare('UPDATE fin_docs SET deleted_at = ?, public_nonce = NULL, updated_at = ? WHERE id = ? AND org_id = ?').bind(now(), now(), d.id, a.orgId),
+    ...releaseQuoteStmts(c.env.DB, a, d),
     auditStmt(c.env.DB, { orgId: a.orgId, actorId: a.userId, action: `${d.kind}.deleted`, targetType: 'doc', targetId: d.id }),
   ]);
   return c.json({ ok: true });
@@ -227,18 +235,69 @@ docRoutes.post('/orgs/:org/docs/:id/sent', async (c) => {
   return c.json({ ok: true });
 });
 
+/** What a document's PDF names besides its own fields: the salesperson, the quote it came from, the credits applied. */
+async function docExtras(db: D1Database, orgId: string, d: { kind: string; id?: string; salesRepId?: string | null; quoteId?: string | null }) {
+  const salesRep = await personName(db, d.salesRepId);
+  const relatedNumber = d.quoteId ? ((await db.prepare('SELECT number FROM fin_quotes WHERE id = ? AND org_id = ?').bind(d.quoteId, orgId).first<{ number: string }>())?.number ?? undefined) : undefined;
+  const credited = d.kind === 'invoice' && d.id ? ((await db.prepare('SELECT COALESCE(SUM(amount), 0) AS n FROM fin_credit_allocations WHERE org_id = ? AND invoice_id = ? AND voided_at IS NULL').bind(orgId, d.id).first<{ n: number }>())?.n ?? 0) : 0;
+  return { salesRep, relatedNumber, credited };
+}
+
+const partyOf = (db: D1Database, orgId: string, contactId: string | null | undefined) =>
+  contactId ? db.prepare('SELECT name, abn, address, email FROM fin_contacts WHERE id = ? AND org_id = ?').bind(contactId, orgId).first<PartyRow>() : Promise.resolve(null);
+
+/** The PDF of a document (`?inline=1` to show it in the browser rather than download it). */
 docRoutes.get('/orgs/:org/docs/:id/pdf', async (c) => {
   const a = await requireOrg(c);
   const dto = await fullDoc(c, c.req.param('id'));
-  const tpl = await c.env.DB.prepare(dto.templateId ? 'SELECT * FROM fin_doc_templates WHERE id = ? AND org_id = ?' : 'SELECT * FROM fin_doc_templates WHERE org_id = ? ORDER BY is_default DESC LIMIT 1').bind(...(dto.templateId ? [dto.templateId, a.orgId] : [a.orgId])).first<any>();
-  const contact = dto.contactId ? await c.env.DB.prepare('SELECT * FROM fin_contacts WHERE id = ? AND org_id = ?').bind(dto.contactId, a.orgId).first<any>() : null;
-  const taxCodes = await c.env.DB.prepare('SELECT id, code, name, rate_bp FROM fin_tax_codes WHERE org_id = ?').bind(a.orgId).all<any>();
-  let logo: Uint8Array | null = null;
-  if (a.org.logo_key) {
-    const obj = await c.env.FILES.get(a.org.logo_key);
-    if (obj) logo = new Uint8Array(await obj.arrayBuffer());
-  }
-  const bytes = await invoicePdf({ org: a.org, gst: a.gst, doc: dto, contact, template: tpl, taxCodes: taxCodes.results, logo });
-  return new Response(bytes, { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${dto.number.replace(/[^A-Za-z0-9_-]/g, '_')}.pdf"`, 'Cache-Control': 'private, no-store' } });
+  const [basics, contact, extras] = await Promise.all([renderBasics(c.env, a.orgId, a.org.logo_key, dto.templateId), partyOf(c.env.DB, a.orgId, dto.contactId), docExtras(c.env.DB, a.orgId, dto)]);
+  const bytes = await renderPdf(c.env, a, docRender(dto, basics.rates, extras), contact, basics, dto.claimantName);
+  return pdfResponse(bytes, dto.number, c.req.query('inline') === '1');
 });
 
+/**
+ * The live preview: the document as it would be saved, drawn by the same engine as its PDF. Nothing is saved. With
+ * `docId`, the document being changed: its number, status and payments are used, so the preview is the PDF it will have.
+ */
+docRoutes.post('/orgs/:org/docs/preview', async (c) => {
+  const a = await requireOrg(c);
+  requireBusiness(a);
+  const input = await body(c, docSchema.extend({ docId: id().optional(), lines: z.array(docLine).max(200) }));
+  const m = moduleOf(input.kind);
+  let existing: Awaited<ReturnType<typeof fullDoc>> | null = null;
+  if (input.docId) {
+    existing = await fullDoc(c, input.docId);
+    if (existing.kind !== input.kind) throw new HttpError(400, 'That document is of another kind');
+  } else if (!a.perms[m].create) deny(`You cannot create ${DOC_LABELS[input.kind].many.toLowerCase()}`);
+  const chart = await chartOf(c.env.DB, a);
+  const priced = priceDocLines(a, chart, input.lines, input.taxMode ?? (a.gst ? 'exclusive' : 'none'), input.kind, false, input.discountBp ?? 0);
+  const [basics, contact, extras] = await Promise.all([
+    renderBasics(c.env, a.orgId, a.org.logo_key, input.templateId),
+    input.contactId ? partyOf(c.env.DB, a.orgId, input.contactId) : Promise.resolve(null),
+    docExtras(c.env.DB, a.orgId, { kind: input.kind, id: existing?.id, salesRepId: input.salesRepId, quoteId: existing?.quoteId }),
+  ]);
+  if (input.contactId && !contact) throw new HttpError(400, 'Choose a contact from this workspace');
+  const claimant = input.kind === 'expense_claim' ? await personName(c.env.DB, input.claimantId ?? existing?.claimantId ?? a.userId) : null;
+  const paid = existing?.amountPaid ?? 0;
+  const dto = {
+    kind: input.kind,
+    number: input.number?.trim() || existing?.number || 'Draft',
+    status: existing?.status ?? 'draft',
+    issueDate: input.issueDate,
+    dueDate: input.dueDate ?? existing?.dueDate ?? null,
+    reference: input.reference ?? '',
+    taxMode: priced.mode,
+    discountBp: input.discountBp ?? 0,
+    subtotal: priced.subtotal,
+    taxTotal: priced.tax,
+    total: priced.total,
+    amountPaid: paid,
+    amountDue: Math.max(0, priced.total - paid),
+    notes: input.notes ?? '',
+    terms: input.terms ?? '',
+    deliveryAddress: input.deliveryAddress ?? '',
+    lines: priced.lines.map((l) => ({ ...l, quantity: l.quantityMilli / 1000 })),
+  };
+  const bytes = await renderPdf(c.env, a, docRender(dto, basics.rates, extras), contact, basics, claimant);
+  return pdfResponse(bytes, dto.number, true);
+});

@@ -142,6 +142,74 @@ see every transaction, the reports and the budgets. The server checks every perm
   budget, upcoming payments, recent transactions, approvals waiting, statement lines to match, goals, a 12-month trend
   and spending by category.
 
+## Stage 1 of the accounting upgrade: quotes, credit notes and documents (13 Nov 2026)
+
+The owner's brief ("BIZOMAT Finance: complete accounting platform upgrade") is in stages. Stage 1 (core accounting and
+sales) is built and tested; the later stages are not started (below). Same app, database, Machines and sign-in: migration
+`0015_finance_sales.sql` is additive (new columns with constant defaults, new tables).
+
+- **One document engine** (`src/worker/fin/document.ts`, `render.ts`): quotes, invoices, credit notes, bills, purchase
+  orders and expense claims are drawn by one renderer (pdf-lib, standard PDF typefaces). The live preview in every
+  editor is the PDF itself: the editor posts its unsaved form to `.../preview`, the server prices it with the same code
+  that saves it and returns the PDF, shown in a frame from a `blob:` address (the app's CSP allows `frame-src 'self'
+  blob:`; inline PDFs may be framed by the same origin only). So the preview cannot differ from the PDF. A4 portrait or
+  landscape, headings, item codes, units, line and whole-document discounts, optional lines, delivery address,
+  salesperson, "Tax invoice" when GST applies, a DRAFT, VOID, CANCELLED, EXPIRED or DECLINED mark across every page,
+  page numbers, the quote's signature block and the invoice's remittance slip.
+- **Templates** (Settings, Document templates): layout, typeface, accent colour, titles for invoices, quotes and credit
+  notes, how to pay, default quote and invoice terms, footer, signature lines, remittance slip; a sample (numbered
+  SAMPLE, to "Example customer") drawn by the same engine.
+- **Quotes** (`fin_quotes`, `sales.ts`): draft, sent, viewed, accepted, declined, expired, invoiced (`converted`),
+  cancelled. Numbered `QU-0001` (prefix and next number under Accounting, Numbering). Valid for 30 days unless set.
+  Optional lines are priced but not counted. Sending (marked sent, emailed or shared by link) keeps that version exactly
+  as sent (`fin_quote_versions`, JSON snapshot; each version's PDF is drawn from it). Changing a sent quote starts the
+  next version as a draft and withdraws its link. An accepted quote is never changed (duplicate it instead). It is
+  invoiced in full or by percentage (progress invoicing): each part is a draft invoice; line by line, part *n* takes
+  `round(amount x to) - round(amount x from)` of the line after every discount (the whole quote's discount is carried
+  inside the part's lines), so the parts' amounts add up to the quote's exactly. GST is worked out on each invoice, so
+  with amounts excluding GST a part's GST can differ from a straight share by a cent. Voiding or deleting one gives
+  its share back. A quote posts nothing. History of every step (`fin_quote_events`).
+- **Credit notes** (`fin_credit_notes`): from an invoice (its lines, with the invoice's whole-document discount carried
+  into each line) or on their own. Approving posts the reverse of a sale: income and GST debited, the customer's
+  receivable credited. The ledger's source types are fixed by `0011_finance.sql` (a CHECK constraint that cannot be
+  widened without rebuilding the journal table), so a credit note posts with source type `invoice` and its refund with
+  `payment`, each with the credit note as the source; the journal list names them "Credit note" and "Credit refund".
+  Credit is applied to the customer's open invoices (posts nothing: both are in the same receivable; it raises the
+  invoice's `amount_paid` and the credit's `allocated`, and CHECK constraints refuse more than is left) or refunded
+  (Dr receivable, Cr the money account; recorded only). Never more credit for an invoice than the invoice. Void only
+  with no credit in use. An invoice with credit applied is voided only after the credit is removed.
+- **GST:** accrual basis takes the credit note's journal (G1 and 1A down) on its date. Cash basis: a refund lowers sales
+  when it is paid out, pro rata to the credit note's lines; credit applied to an unpaid invoice needs nothing, because
+  that part of the invoice is never received and so never counted. Reversals of credit notes and refunds are excluded
+  from the cash-basis journal fold, like those of invoices.
+- **Aged receivables:** credit applied counts as paid by its date; unused credit shows against the customer as a
+  negative current amount, so the report agrees with the receivable account.
+- **Secure online links** (`render.ts`, `routes-public.ts`): `/finance/view/<quote|invoice|credit-note>/<id>?k=<sig>`,
+  where the signature is an HMAC (key derived from `SETTINGS_ENCRYPTION_KEY`) over the kind, the record and a random
+  value stored with it; withdrawing the link (or voiding, deleting, cancelling) clears that value and every link stops
+  working. The customer reads and downloads the document without signing in; a quote is accepted (name and an explicit
+  confirmation) or declined there, recorded with the time and IP address. Opening a link records a view (a member's
+  visit is not counted) and never marks an invoice paid. `noindex`, `no-store`, rate limited.
+- **Email** (template `fin_document`, the existing outbox): the email carries the secure link, not the file. Without an
+  email provider the server says so and the app offers the link to send yourself. Sending never changes what is owed.
+- **CRM:** a quote can be started from a CRM deal ("Across your company", same company only, both tools' permissions);
+  the deal lists its quotes and their status, and its timeline gets each step (no amounts). Finance's customer field
+  offers "From the CRM": a CRM company is billed as one Finance contact (`co_customer_links`), made once, never a
+  second record; only companies the person may see in the CRM are listed.
+- **Navigation** in sections: Sales (Quotes, Invoices, Credit notes, Customers and suppliers), Purchases, Banking,
+  Planning, Reports and accounting, Workspace. Only working modules are listed.
+- **Permissions:** quotes and credit notes use the sales module's rights (view and edit scope, create, approve);
+  approving, applying and refunding credit follow the workspace's invoice approval setting, as invoices do.
+- **Known gap:** refunds of credit notes are not yet offered when matching bank statement lines (the statement table's
+  match types are fixed to transactions and payments); that comes with the banking stage.
+
+### Later stages of the brief (not started)
+
+Stage 2 (GST and BAS module with lodged-period snapshots, PAYG instalments), Stage 3 (bank feeds through an approved
+provider, fixed assets, inventory, management reporting) and Stage 4 (payroll and Single Touch Payroll, superannuation,
+multi-currency, ATO Standard Business Reporting) are not built. Nothing in the app or on the website presents them as
+available.
+
 ## Australian GST and BAS: what was checked
 
 Checked against the ATO's published guidance on 13 Nov 2026: GST is 1/11 of a taxable price that includes GST (10% of
@@ -170,6 +238,15 @@ The previous proxy sends `/finance` to the website again (404). No data needs re
 
 ## Tests
 
+Stage 1: `apps/work/test/fin-sales.test.ts` (workerd and Node): quote pricing (headings, optional lines, whole-quote
+discount), the PDF and the preview, the online link (wrong signature refused, viewed, accepted online, expired refused),
+versions kept as sent and links withdrawn on change, the lifecycle (expire, decline, cancel, duplicate, delete), progress
+invoices adding up exactly and shares given back on void, roles and other workspaces, email with and without a
+provider, credit notes (journal, GST on both bases, aged receivables, applying, refunds, voids, never over-credited),
+approvals, templates and numbering, the invoice preview, and quotes from a CRM deal with its timeline and one customer
+record. `apps/work/e2e/finance-sales.spec.ts` (browser): a quote with its preview, a signed-out customer accepting
+online, the invoice, a credit note, templates and numbering.
+
 `apps/work/test/fin-access.test.ts`, `fin-ledger.test.ts`, `fin-banking.test.ts` (workerd and Node): workspaces and
 their charts, isolation (404 to non-members, other workspaces' accounts refused, statement lines and files out of
 reach), invitations, roles and permission overrides, personal privacy and household views, GST splitting, balanced
@@ -188,7 +265,7 @@ cover the ledger triggers. Proxy: `infrastructure/proxy/test/routes.test.mjs`. W
 - Payroll, PAYG withholding, superannuation and Single Touch Payroll.
 - BAS lodgement (the worksheet is for checking).
 - Multi-currency within one workspace (one currency per workspace, so totals are never mixed).
-- Sending invoices to customers by email from BIZOMAT (download the PDF and send it from your own email; mark it sent).
+- Attaching the PDF to emails: an email carries the secure online link, where the customer reads and downloads it.
 
 ## On the website
 

@@ -44,6 +44,8 @@ export const CSP = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "connect-src 'self' wss: ws:",
+  // Finance's live document preview shows the PDF it fetched, from a blob: address, in a frame on the page.
+  "frame-src 'self' blob:",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self' https://accounts.google.com",
@@ -52,7 +54,8 @@ export const CSP = [
 
 function applySecurityHeaders(headers: Headers, isApi: boolean) {
   headers.set('X-Content-Type-Options', 'nosniff');
-  headers.set('X-Frame-Options', 'DENY');
+  // A PDF shown inside the app (the document preview) may be framed by the same origin; nothing else is framed.
+  if (!headers.has('X-Frame-Options')) headers.set('X-Frame-Options', 'DENY');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
   headers.set('Cross-Origin-Opener-Policy', 'same-origin');
@@ -190,7 +193,7 @@ export function createApp() {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
     const otherApp = c.env.BASE_PATH === CRM_MOUNT || c.env.BASE_PATH === FIN_MOUNT || c.env.BASE_PATH === COMPANY_MOUNT;
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(c.env.BASE_PATH === COMPANY_MOUNT ? ['/confirm-email'] : [])];
+    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(c.env.BASE_PATH === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(c.env.BASE_PATH === FIN_MOUNT ? ['/view/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));
@@ -219,6 +222,8 @@ export function createApp() {
     const res = await c.env.ASSETS.fetch(new Request(new URL(url.pathname, url.origin).toString(), { headers: c.req.raw.headers }));
     const out = new Response(res.body, res);
     if (url.pathname.startsWith('/assets/')) out.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    // A customer's online document: never indexed, never cached.
+    if (c.env.BASE_PATH === FIN_MOUNT && url.pathname.startsWith('/view/')) out.headers.set('X-Robots-Tag', 'noindex, nofollow');
     else if ((out.headers.get('Content-Type') ?? '').includes('text/html')) out.headers.set('Cache-Control', 'no-cache');
     // The client builds its addresses from <base href>: "/" here, "/tasks/" under bizomat.ai (src/worker/mount.ts).
     return withBaseHref(out, c.env.BASE_PATH ?? '');
