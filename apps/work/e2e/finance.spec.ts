@@ -9,6 +9,14 @@ const password = 'e2e-Password-123!';
 test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.45', 'X-Forwarded-For': '192.0.2.45' } });
 const EMAIL = 'e2e.finance.owner@example.com';
 
+/** Choose the option whose text contains `text` (option labels can carry an indent or a rate). */
+async function choose(page: Page, label: string, text: string) {
+  const select = label.startsWith('#') ? page.locator(label) : page.getByLabel(label, { exact: true });
+  const value = await select.evaluate((el, t) => [...(el as HTMLSelectElement).options].find((o) => o.textContent!.includes(t))?.value ?? '', text);
+  expect(value, `${label}: an option with "${text}"`).not.toBe('');
+  await select.selectOption(value);
+}
+
 async function signIn(page: Page) {
   await page.goto('/finance/');
   await expect(page).toHaveURL(/\/finance\/login/);
@@ -57,31 +65,36 @@ test('a new account creates a business workspace, records an expense and an invo
   await page.getByRole('button', { name: 'New transaction' }).first().click();
   await page.getByRole('radio', { name: 'Money out' }).check();
   await page.getByLabel('Paid to').fill('Officeworks');
-  await page.getByLabel('Category, line 1').selectOption({ label: '453 Office expenses' });
-  await page.getByLabel('GST code, line 1').selectOption({ label: /^GSTP:/ });
+  await choose(page, 'Category, line 1', '453 Office expenses');
+  await choose(page, 'GST code, line 1', 'GSTP:');
   await page.getByLabel('Amount, line 1').fill('110');
   await page.getByLabel('Amount, line 1').press('Tab');
   await page.getByRole('button', { name: 'Save and post' }).click();
   await page.getByRole('button', { name: 'Save anyway' }).click({ timeout: 1500 }).catch(() => {});
   await expect(page.getByText('Officeworks').first()).toBeVisible();
 
-  // An invoice for $550 including GST, approved, then paid in full.
+  // An invoice for $500 plus GST (the Sales account's GST code fills in), approved, then paid in full.
   await page.goto(`${ws}/invoices/new`);
-  await page.getByLabel('Customer').selectOption({ label: 'Harbour Cafe' });
+  await choose(page, '#doc-contact', 'Harbour Cafe');
   await page.getByLabel('Line 1 description').fill('Design work');
-  await page.getByLabel('Line 1 unit price').fill('550');
+  await page.getByLabel('Line 1 unit price').fill('500');
   await page.getByLabel('Line 1 unit price').press('Tab');
-  await page.getByLabel('Line 1 account').selectOption({ label: '200 Sales' });
+  await choose(page, 'Line 1 account', '200 Sales');
   await page.getByRole('button', { name: 'Save and approve (post to the ledger)' }).click();
   await expect(page.getByRole('heading', { name: /INV-0001/ })).toBeVisible();
+  await expect(page.getByText('$550').first()).toBeVisible();
   await page.getByRole('button', { name: 'Record a payment' }).click();
+  await choose(page, '#pay-account', 'Business bank account');
   await page.getByRole('dialog').getByRole('button', { name: 'Record payment' }).click();
   await expect(page.getByText('Paid', { exact: true }).first()).toBeVisible();
 
   // The reports read the ledger: the trial balance balances.
   await page.goto(`${ws}/reports/trial_balance`);
   await expect(page.getByRole('heading', { name: /Trial balance/ })).toBeVisible();
-  await expect(page.getByText('Balanced', { exact: false }).first()).toBeVisible();
+  await expect(page.getByText('Balances', { exact: true }).first()).toBeVisible();
+  // Bank 550 - 110, GST 50 - 10, sales 500, office 100: both sides 540.
+  await expect(page.getByRole('row', { name: /^Total/ })).toContainText('$540');
+  await expect(page.getByRole('row', { name: /090 Business bank account/ })).toContainText('$440');
   expect(errors).toEqual([]);
   expect(outside).toEqual([]);
 });
@@ -100,7 +113,7 @@ test('a personal workspace on a phone: the menu, a category and a transaction @m
   await page.getByRole('button', { name: 'New transaction' }).first().click();
   await page.getByRole('radio', { name: 'Money out' }).check();
   await page.getByLabel('Paid to').fill('Corner grocer');
-  await page.getByLabel('Category, line 1').selectOption({ label: /Groceries/ });
+  await choose(page, 'Category, line 1', 'Groceries');
   await page.getByLabel('Amount, line 1').fill('42.50');
   await page.getByLabel('Amount, line 1').press('Tab');
   await page.getByRole('button', { name: 'Save and post' }).click();

@@ -239,7 +239,7 @@ function Full({ d }: { d: DashFull }) {
                 <li key={m.id}>
                   <Icon name={m.subtype === 'credit_card' ? 'dollar' : m.subtype === 'loan' ? 'flag' : 'building'} size={14} />
                   <Link to={`${base}/banking/${m.id}`} className="grow ellipsis">{m.name}</Link>
-                  <Money value={m.subtype === 'credit_card' || m.subtype === 'loan' ? -m.balance : m.balance} tone />
+                  <Money value={m.subtype === 'credit_card' || m.subtype === 'loan' ? -m.balance || 0 : m.balance} tone />
                 </li>
               ))}
             </ul>

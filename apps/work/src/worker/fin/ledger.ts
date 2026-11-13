@@ -332,5 +332,6 @@ export async function accountBalances(db: D1Database, orgId: string, opts: { to?
 
 /** A balance as people read it: assets and expenses debit-positive, the rest credit-positive. */
 export function natural(type: AccountRow['type'], debitMinusCredit: number): number {
-  return type === 'asset' || type === 'expense' ? debitMinusCredit : -debitMinusCredit;
+  // `+ 0` turns -0 into 0, so a zero balance never reads "-$0".
+  return (type === 'asset' || type === 'expense' ? debitMinusCredit : -debitMinusCredit) + 0;
 }

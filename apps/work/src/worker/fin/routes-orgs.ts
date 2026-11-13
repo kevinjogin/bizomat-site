@@ -231,7 +231,16 @@ orgRoutes.patch('/orgs/:org', async (c) => {
   if (next.gst_registered && o.kind === 'business') {
     const has = await c.env.DB.prepare('SELECT COUNT(*) AS n FROM fin_tax_codes WHERE org_id = ?').bind(a.orgId).first<{ n: number }>();
     if (!has?.n) {
-      for (const tc of DEFAULT_TAX_CODES) stmts.push(c.env.DB.prepare('INSERT INTO fin_tax_codes (id, org_id, code, name, rate_bp, direction, bas_json, system_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.orgId, tc.code, tc.name, tc.rateBp, tc.direction, JSON.stringify(tc.bas), tc.key, now()));
+      const taxIds = new Map<string, string>();
+      for (const tc of DEFAULT_TAX_CODES) {
+        const tid = newId();
+        taxIds.set(tc.key, tid);
+        stmts.push(c.env.DB.prepare('INSERT INTO fin_tax_codes (id, org_id, code, name, rate_bp, direction, bas_json, system_key, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(tid, a.orgId, tc.code, tc.name, tc.rateBp, tc.direction, JSON.stringify(tc.bas), tc.key, now()));
+      }
+      // The starting chart's accounts get their usual GST code, as they do in a business registered from the start.
+      for (const acc of BUSINESS_CHART) {
+        if (acc.tax && taxIds.has(acc.tax)) stmts.push(c.env.DB.prepare('UPDATE fin_accounts SET tax_code_id = ? WHERE org_id = ? AND code = ? AND tax_code_id IS NULL').bind(taxIds.get(acc.tax), a.orgId, acc.code));
+      }
     }
   }
   await c.env.DB.batch(stmts);

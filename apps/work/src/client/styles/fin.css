@@ -60,3 +60,7 @@ td.fin-num, th.fin-num { text-align: right; white-space: nowrap; font-variant-nu
   .crm-span-2 { grid-column: auto; }
   .fin-totals { min-width: 0; width: 100%; }
 }
+
+/* A list row inside a card (statement lines, invitations): padded on both sides, unlike the CRM's start page rows. */
+.fin-shell .card > .crm-invite-row, .fin-shell .crm-invite-row.crm-pad { padding: 10px 14px; }
+.fin-shell .card > .crm-invite-row:last-child { border-bottom: 0; }

@@ -25,6 +25,16 @@ describe('workspaces', () => {
     for (const key of ['ar', 'ap', 'gst', 'claims', 'retained', 'opening']) expect(bAcc.some((x: any) => x.systemKey === key)).toBe(true);
     expect(Object.keys(await taxCodes(a, business)).sort()).toEqual(['BASX', 'CAP', 'CAPF', 'EXP', 'FRE', 'FREP', 'GST', 'GSTP', 'ITP', 'ITS']);
     expect(await a.json('GET', fin(personal, '/tax-codes'))).toEqual([]);
+    // A business that registers for GST later already has the tax codes, and its accounts their usual code.
+    const later = await createWs(a, 'business');
+    expect((await a.json('GET', fin(later))).gst).toBe(false);
+    await a.json('PATCH', fin(later), { gstRegistered: true });
+    expect((await a.json('GET', fin(later))).gst).toBe(true);
+    const lt = await taxCodes(a, later);
+    const la = await accounts(a, later);
+    expect(la.find((x: any) => x.code === '200').taxCodeId).toBe(lt.GST);
+    expect(la.find((x: any) => x.code === '453').taxCodeId).toBe(lt.GSTP);
+    expect(la.find((x: any) => x.code === '404').taxCodeId).toBe(lt.FREP);
     // Business features are refused in personal and household workspaces.
     expect((await a.req('GET', `${fin(household, '/docs')}?kind=invoice`)).status).toBe(400);
     void byCode;

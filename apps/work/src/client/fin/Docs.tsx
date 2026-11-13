@@ -775,6 +775,8 @@ function DocEditor({ kind, org, initial, presetContact, onSaved, onCancel }: { k
 
 function LineRows({ line, index, amount, gst, direction, lineDirection, tracking, onChange, onRemove }: { line: LineState; index: number; amount: number; gst: boolean; direction: 'sales' | 'purchases'; lineDirection: 'in' | 'out'; tracking: boolean; onChange: (p: Partial<LineState>) => void; onRemove: () => void }) {
   const n = index + 1;
+  // Choosing an account fills in its default GST code when the line has none yet, as the transaction form does.
+  const accounts = useAccounts().data ?? [];
   return (
     <>
       <tr>
@@ -791,7 +793,7 @@ function LineRows({ line, index, amount, gst, direction, lineDirection, tracking
           <input className="input crm-num" aria-label={`Line ${n} discount percent`} inputMode="decimal" placeholder="0" value={line.discount} onChange={(e) => onChange({ discount: e.target.value })} />
         </td>
         <td>
-          <AccountSelect ariaLabel={`Line ${n} account`} kind="category" direction={lineDirection} allowEmpty emptyLabel="Choose an account" value={line.accountId} onChange={(v) => onChange({ accountId: v })} />
+          <AccountSelect ariaLabel={`Line ${n} account`} kind="category" direction={lineDirection} allowEmpty emptyLabel="Choose an account" value={line.accountId} onChange={(v) => onChange({ accountId: v, ...(gst && !line.taxCodeId ? { taxCodeId: accounts.find((a) => a.id === v)?.taxCodeId ?? null } : {}) })} />
         </td>
         {gst ? (
           <td>

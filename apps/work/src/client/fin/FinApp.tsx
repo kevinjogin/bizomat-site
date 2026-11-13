@@ -420,11 +420,11 @@ function Start() {
               <>
                 <div className="field"><label htmlFor="ws-legal">Legal name</label><input id="ws-legal" className="input" maxLength={160} value={f.legalName} onChange={(e) => setF({ ...f, legalName: e.target.value })} /></div>
                 <div className="field"><label htmlFor="ws-abn">ABN</label><input id="ws-abn" className="input" inputMode="numeric" maxLength={20} value={f.abn} onChange={(e) => setF({ ...f, abn: e.target.value.replace(/[^0-9 ]/g, '') })} placeholder="11 digits" /></div>
-                <label className="row crm-span"><input type="checkbox" checked={f.gstRegistered} onChange={(e) => setF({ ...f, gstRegistered: e.target.checked })} /> Registered for GST (adds the standard Australian tax codes)</label>
+                <label className="row crm-span"><input type="checkbox" checked={f.gstRegistered} onChange={(e) => setF({ ...f, gstRegistered: e.target.checked })} /> Registered for GST (GST is worked out on each line, with the standard Australian tax codes)</label>
               </>
             ) : null}
           </div>
-          <p className="muted small">You become its owner. It starts with a chart of accounts {f.kind === 'business' ? 'for a business (with tax codes when registered for GST)' : 'of everyday categories'}; you can rename, add and archive categories. No sample records are added.</p>
+          <p className="muted small">You become its owner. It starts with a chart of accounts {f.kind === 'business' ? 'for a business, with the standard Australian tax codes' : 'of everyday categories'}; you can rename, add and archive categories. No sample records are added.</p>
           <div><button className="btn primary" type="submit" disabled={busy || !f.name.trim()}>{busy ? 'Creating…' : 'Create workspace'}</button></div>
         </form>
         <p className="muted small">BIZOMAT Finance never connects to your bank and never asks for internet banking passwords: you import statements you download yourself. It records payments; it does not make them.</p>
