@@ -1,0 +1,62 @@
+/* BIZOMAT Finance: layouts of its own on the app's design system (app.css variables from the BIZOMAT tokens) and the
+   CRM's layout classes (crm.css), which Finance imports too. Only Finance imports this file (src/client/fin/FinApp.tsx),
+   so Project Management's and the CRM's screens are unchanged. */
+
+.fin-hint { margin: 0 0 10px; max-width: 780px; }
+.fin-tabs { margin-bottom: 14px; }
+.fin-amount { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fin-amount.neg { color: var(--danger); }
+.fin-amount.pos { color: var(--success); }
+.fin-amount.strong { font-weight: 700; }
+td.fin-num, th.fin-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.fin-money { min-width: 120px; }
+.fin-money .input { text-align: right; }
+
+/* shell */
+.fin-kind { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.fin-org-initial.personal { background: var(--accent-fill, #0f766e); }
+.fin-org-initial.household { background: #5b5bd6; }
+
+/* start */
+.fin-kind-choice { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }
+.fin-kind-choice label { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); cursor: pointer; }
+.fin-kind-choice label:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.fin-kind-choice input { margin: 0 0 4px; }
+
+/* lists and line editors */
+.fin-lines { width: 100%; border-collapse: collapse; }
+.fin-lines th { color: var(--text-3); font-weight: 600; font-size: 12px; text-align: left; padding: 6px 6px; }
+.fin-lines td { padding: 4px 6px; vertical-align: top; }
+.fin-lines .select, .fin-lines .input { width: 100%; min-width: 0; }
+.fin-lines td.fin-line-actions { width: 36px; }
+.fin-totals { margin-left: auto; min-width: 260px; display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; font-variant-numeric: tabular-nums; }
+.fin-totals .total { font-weight: 700; border-top: 1px solid var(--border); padding-top: 4px; }
+.fin-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 14px; }
+.fin-detail { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+.fin-detail dt { color: var(--text-3); font-size: 12.5px; font-weight: 600; }
+.fin-detail dd { margin: 0; }
+.fin-row-link { color: inherit; text-decoration: none; }
+.fin-row-link:hover { text-decoration: underline; }
+.fin-bar { height: 8px; background: var(--surface-3); border-radius: 4px; overflow: hidden; }
+.fin-bar > span { display: block; height: 100%; background: var(--accent-fill); }
+.fin-bar.over > span { background: var(--danger); }
+.fin-toolbar { gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.fin-toolbar .input, .fin-toolbar .select { height: 32px; width: auto; }
+.fin-split { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+.fin-report-table td.indent-1 { padding-left: 24px; }
+.fin-report-table td.indent-2 { padding-left: 40px; }
+.fin-report-table tr.heading td { font-weight: 700; background: var(--surface-2); }
+.fin-report-table tr.subtotal td { font-weight: 600; border-top: 1px solid var(--border-strong, var(--border)); }
+.fin-report-table tr.total td { font-weight: 700; border-top: 2px solid var(--text-3); }
+.fin-notes { margin: 10px 0 0; padding-left: 18px; color: var(--text-3); font-size: 12.5px; }
+.fin-perm-table select { width: auto; min-width: 84px; }
+.fin-perm-table td, .fin-perm-table th { white-space: nowrap; }
+.fin-dropzone { border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 16px; text-align: center; background: var(--surface-2); }
+
+@media (max-width: 900px) {
+  .fin-form-grid, .fin-kind-choice { grid-template-columns: 1fr; }
+  .fin-split { grid-template-columns: 1fr; }
+  .crm-dash-grid { grid-template-columns: 1fr; }
+  .crm-span-2 { grid-column: auto; }
+  .fin-totals { min-width: 0; width: 100%; }
+}
