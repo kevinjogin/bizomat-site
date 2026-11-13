@@ -83,8 +83,29 @@ export type NavChild = { label: string; href?: string; description?: string; sta
 export type NavItem = { label: string; short?: string; href: string; children?: readonly NavChild[] };
 
 export const NAV: readonly NavItem[] = [
-  { label: 'CAD Automation', href: '/cad-automation/' },
-  { label: 'Project Management', href: '/work/' },
+  // Menus for every product (owner, 13 Nov 2026): the product page, its main sections, its guide, and the application.
+  {
+    label: 'CAD Automation', href: '/cad-automation/', children: [
+      { label: 'CAD Automation', href: '/cad-automation/', description: 'Your AI assistant builds and checks SOLIDWORKS models on your own computer.' },
+      { label: 'How it works', href: '/cad-automation/#how', description: 'Your assistant asks. Your SOLIDWORKS does the work.' },
+      { label: 'What it can build', href: '/cad-automation/#capabilities', description: 'Parts, assemblies and drawings, in plain language.' },
+      { label: 'Tools your assistant can call', href: '/cad-automation/#tools', description: 'Every CAD Automation tool, by group.' },
+      { label: 'Set up in four steps', href: '/cad-automation/#install', description: 'Sign in, install, pair your computer, connect your assistant.' },
+      { label: 'User guide', href: APP_LINKS.cad.docs, description: 'Install, pair, connect and check the set-up, step by step.', external: true },
+      { label: 'Open CAD Automation', href: APP_LINKS.cad.signIn, description: 'Sign in to your CAD Automation account.', external: true },
+    ],
+  },
+  {
+    label: 'Project Management', href: '/work/', children: [
+      { label: 'Project Management', href: '/work/', description: 'Projects, tasks and teams in one shared workspace.' },
+      { label: 'Plan and track work', href: '/work/#features', description: 'Plan it, assign it, track it, finish it.' },
+      { label: 'Views', href: '/work/#views', description: 'Table, Kanban, calendar, timeline and Gantt, and more.' },
+      { label: 'Teams and permissions', href: '/work/#teams', description: 'The right people on the right work.' },
+      { label: 'Automations', href: '/work/#automations', description: 'Routine steps that move work forward on their own.' },
+      { label: 'Dashboards', href: '/work/#dashboards', description: 'The whole portfolio at a glance.' },
+      { label: 'Open Project Management', href: APP_LINKS.work.signIn, description: 'Sign in with your BIZOMAT account.', external: true },
+    ],
+  },
   // Spelled out so that someone new knows what a CRM is (owner, 13 Nov 2026); "CRM" only where the row is too narrow.
   {
     label: 'Customer Relationship Management', short: 'CRM', href: '/crm-platform/', children: [

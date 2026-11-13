@@ -1,6 +1,7 @@
 ---
-// Global header: BIZOMAT wordmark (home), five top-level items (CAD Automation, Project Management, Resources, Proof of
-// Work, About), AI Search, a Sign in menu with one entry per application, and the theme switch.
+// Global header: BIZOMAT wordmark (home), a menu for each product (CAD Automation, Project Management, Customer
+// Relationship Management, Finance), Resources and Engine Room, AI Search, a Sign in menu with one entry per
+// application, and the theme switch.
 // Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
 // Escape and outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the
 // links as a wrapped row instead of a collapsed menu.
@@ -227,16 +228,17 @@ const inSection = (item: (typeof NAV)[number]) =>
   /* A long label (Customer Relationship Management) shows its short form (CRM) in the desktop row, which has no room for
      it at any width; the full label stays its accessible name and tooltip, heads its menu, and is shown in the phone
      menu. Between 1141 and 1300 px the links sit closer, and AI Search shows its icon only, so that the row stays on one
-     line (measured with Finance added, 13 Nov 2026). */
+     line (measured with menus on every product, 13 Nov 2026). */
   .site-nav__short { display: none; text-decoration: none; }
   @media (min-width: 1141px) {
     .site-nav__long { display: none; }
     .site-nav__short { display: inline; }
   }
   @media (max-width: 1300px) and (min-width: 1141px) {
+    .site-nav { margin-left: .5rem; }
     .site-nav__list { gap: 0; }
-    .site-nav__link { padding: 0 .5rem; }
-    .site-nav__link.is-current::after { left: .5rem; right: .5rem; }
+    .site-nav__link { padding: 0 .45rem; gap: .25rem; }
+    .site-nav__link.is-current::after { left: .45rem; right: .45rem; }
   }
   @media (max-width: 1140px) {
     :global(.js) .site-header .site-header__search { display: none; }
