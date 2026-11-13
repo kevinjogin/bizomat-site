@@ -797,3 +797,80 @@ export function Activity() {
     </div>
   );
 }
+
+// ------------------------------------------------------------------ projects
+
+interface ProjectRow {
+  id: string;
+  name: string;
+  url: string;
+  fromDeal: boolean;
+  linked: boolean;
+  finance: { currency: string; income: number; costs: number; incomeThisYear: number; costsThisYear: number; budget: number | null; remaining: number | null; overBudget: boolean } | null;
+}
+
+/** The company's projects with their income and costs from Finance, against a budget (src/worker/company/links.ts). */
+export function Projects() {
+  const view = useView();
+  usePageTitle('Projects');
+  const id = view.company.id;
+  const toast = useToast();
+  const q = useQuery({ queryKey: ['company', id, 'projects'], queryFn: () => get<ProjectRow[]>(co(id, '/projects')) });
+  const [editing, setEditing] = useState<string | null>(null);
+  const [budget, setBudget] = useState('');
+  const save = async (boardId: string) => {
+    const dollars = budget.trim() ? Number(budget.replace(/[,$\s]/g, '')) : null;
+    if (dollars !== null && (!Number.isFinite(dollars) || dollars < 0)) {
+      toast('Enter the budget as an amount, for example 25000', 'error');
+      return;
+    }
+    try {
+      await post(`/company/links/projects/${boardId}/finance`, { budget: dollars === null ? null : Math.round(dollars * 100) });
+      toast('Saved. Post income and costs to this project in Finance to see them here.');
+      setEditing(null);
+      await q.refetch();
+    } catch (e) {
+      toast(errorMessage(e), 'error');
+    }
+  };
+  if (!view.tools.tasks) return <div className="page crm-page"><PageHeader title="Projects" /><EmptyState icon="grid" title="No Project Management yet">The company’s projects show here once it runs Project Management.</EmptyState></div>;
+  return (
+    <div className="page crm-page">
+      <PageHeader title="Projects" subtitle="The company’s shared projects in Project Management. Track a project in Finance to see its income and costs here, against its budget." />
+      {q.error ? <p className="warning-text">{errorMessage(q.error)}</p> : !q.data ? <Loading /> : q.data.length ? (
+        <section className="card crm-table-card">
+          <div className="crm-table-scroll">
+            <table className="data-table crm-table">
+              <thead><tr><th>Project</th><th className="num">Budget</th><th className="num">Costs</th><th className="num">Remaining</th><th className="num">Income</th><th aria-label="Actions" /></tr></thead>
+              <tbody>
+                {q.data.map((p) => (
+                  <tr key={p.id}>
+                    <td><a href={p.url}><strong>{p.name}</strong></a>{p.fromDeal ? <div className="muted small">Started from a CRM deal</div> : null}</td>
+                    <td className="num">{p.finance?.budget != null ? formatMoney(p.finance.budget, p.finance.currency) : <span className="muted">—</span>}</td>
+                    <td className="num">{p.finance ? formatMoney(p.finance.costs, p.finance.currency) : <span className="muted">—</span>}</td>
+                    <td className="num">{p.finance?.remaining != null ? <span className={p.finance.overBudget ? 'warning-text' : ''}>{formatMoney(p.finance.remaining, p.finance.currency)}</span> : <span className="muted">—</span>}</td>
+                    <td className="num">{p.finance ? formatMoney(p.finance.income, p.finance.currency) : <span className="muted">—</span>}</td>
+                    <td>
+                      {view.tools.finance ? (
+                        editing === p.id ? (
+                          <span className="row">
+                            <input className="input" aria-label={`Budget for ${p.name}`} placeholder="Budget, e.g. 25000" inputMode="decimal" value={budget} onChange={(e) => setBudget(e.target.value)} />
+                            <button className="btn primary sm" onClick={() => save(p.id)}>Save</button>
+                            <button className="btn ghost sm" onClick={() => setEditing(null)}>Cancel</button>
+                          </span>
+                        ) : (
+                          <button className="btn ghost sm" onClick={() => { setEditing(p.id); setBudget(p.finance?.budget != null ? String(p.finance.budget / 100) : ''); }}>{p.linked ? 'Budget' : 'Track in Finance'}</button>
+                        )
+                      ) : null}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : <EmptyState icon="grid" title="No shared projects yet">Projects made in Project Management, or started from a CRM deal, show here.</EmptyState>}
+      <p className="muted small">Figures come from posted entries in Finance tagged with the project. A dash means the project is not tracked in Finance, or your Finance role does not show reports. Tracking a project needs a Finance role that manages accounting.</p>
+    </div>
+  );
+}

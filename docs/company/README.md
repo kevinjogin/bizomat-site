@@ -69,6 +69,20 @@ Who sees a tool's figures: someone who could see them in the tool, by the tool's
 - Finance: the company owner, and roles that may view reports (custom role settings included).
 - A department's head sees that department's figures in every tool (owner's decision).
 
+## Links between the tools
+
+The four links the owner chose first (`src/worker/company/links.ts`, migration `0014_company_links.sql`):
+- Each link joins records of two tools that belong to the same company.
+- Each one checks both tools' own permissions.
+- Links never copy money: figures are read from Finance when asked.
+
+| Link | Where | What it does |
+| --- | --- | --- |
+| One customer record | A CRM company, "In Finance" | Links the CRM company to the Finance contact it is billed as, or creates that contact from the CRM's name, email, phone and address. Its open invoices and the amount owed show in the CRM, to people whose Finance role sees sales. |
+| Won deal to invoice | A CRM deal, "Across your company" | A won deal becomes a draft invoice made out to the deal's company: one line with the deal's title and value, on the default sales account, with the account's GST code when the business is registered. A draft only, once per deal, same currency only. Needs a Finance role that creates invoices. |
+| Deal to project | A CRM deal, "Across your company" | Starts a project (a board) named after the deal in the company's Project Management workspace, once per deal. Needs a Project Management role of member or above. |
+| Project costs and budget | The company area, Projects | Gives a project a Finance tracking project. Income and costs posted to it show against a budget set there: costs, remaining and income, all time and this financial year. Tracking needs a Finance role that manages accounting; the figures show to roles that see reports. |
+
 ## Registration checks
 
 Each check says what it proves and nothing more (`src/worker/company/verify.ts`); what was checked is stored with the
@@ -146,3 +160,11 @@ for `/company/login`.
 - the email confirmation link;
 - the sign-in provider (code, PKCE, one use, token, userinfo, nothing stored in the clear);
 - the `/company` mount.
+
+`apps/work/test/company-links.test.ts` covers:
+- the customer record made once and found again;
+- a won deal to a draft invoice (refused before the deal is won and for roles that cannot invoice; nothing posted;
+  once only);
+- a deal to a project, once;
+- a project's Finance tracking, budget and posted costs, hidden from people without a Finance role;
+- no links across companies or for tools no company runs.
