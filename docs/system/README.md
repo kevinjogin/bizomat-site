@@ -1,4 +1,27 @@
-# BIZOMAT System (live at bizomat.ai/system)
+# BIZOMAT ERP (live at bizomat.ai/erp; BIZOMAT System at /system before)
+
+> **Update, 14 Nov 2026 (owner's "Systems consolidation and ERP-first" brief):** the workspace is **BIZOMAT ERP** at
+> `https://bizomat.ai/erp` (`ERP_MOUNT` in `apps/work/src/worker/mount.ts`). Pages at `/system/...` answer 302 to the
+> same page under `/erp/...`, and the tools open at `/erp/tasks`, `/erp/crm`, `/erp/finance` and `/erp/company`. The API
+> under `/system` still answers, for tabs opened before. The cookie is written for `/erp` too; the session-carry
+> marker there is `erp_carry`.
+>
+> - **Module rail:** Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and
+>   Engineering, Operations, Reports, Administration.
+> - **New ERP pages:**
+>   - My Work: the Projects and Tasks My Work of the workspace used last.
+>   - Operations: the planned modules, each labelled Planned.
+>   - Reports: every report of the company's tools, in its own module.
+>   - Administration: company, tool teams and settings, your profile, and the ERP console for platform admins.
+> - **Own companies for everyone:** migration `0017_system_everyone.sql` gives every existing active account its own
+>   company. The maintenance run makes any that are still missing, up to 5,000 a day.
+> - **The public website** describes the software as **Systems** at `/systems/` (`src/config/systems.ts`):
+>   - one page and one user guide per system;
+>   - Manufacturing and Operations is planned and has no guide;
+>   - the old product pages answer 301 there (`public/_redirects`).
+>
+> The sections below say "System" and `/system`; read them as "ERP" and `/erp`.
+
 
 Owner's request, 14 Nov 2026:
 - Bring the data of Project Management, the CRM, Finance and CAD Automation into the System, with a company for each

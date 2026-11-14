@@ -25,20 +25,29 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   each, has departments that appear in every tool, and links them (customer record, won deal to draft invoice, deal to
   project, project costs). Registration checks say what they prove: never call an ABN "confirmed with the register"
   unless `ABR_GUID` is set and the lookup ran, or a phone number "verified" (no SMS provider).
-  **BIZOMAT System** (owner, 14 Nov 2026; called ERP in the earlier plans and in `docs/erp/`): the one system that
-  brings every tool and the planned operations modules under one shell, CAD Automation included as its own section
-  (the same MCP connector, installer, add-in and Companion). **Live at `bizomat.ai/system`** (owner, 14 Nov 2026;
-  `docs/system/README.md`), served by the Project Management app with the same accounts and session. **One system**
-  (owner, 14 Nov 2026): every tool opens inside it, at `/system/tasks`, `/system/crm`, `/system/finance` and
-  `/system/company`, with the System's module rail at the left of every screen; a page at a tool's own address answers
-  302 there (the API, files and `/finance/view/` stay); links between tools stay inside (`toolUrl`). Every person's
-  tools grouped by company (registered companies, plus an own company per person, not registered, for the tools they
-  own outside one; tools are worked out, never copied; a tool shared with someone shows under its company as "Shared
-  with you"), CAD Automation's setup and company-scoped computers (owner and administrators see the company's, members
-  their own, other companies nothing), and the super admin console `/system/admin` (users, companies, activity across
-  the tools). CAD computers appear only once CAD Automation reports (`/company/api/id/cad-status`, client `cad`); until
-  then the page says so: never present them as live before. The planned operations modules are not built: the design
-  preview with demonstration data stays at `bizomat.ai/system-preview/`; never present those modules as working.
+  **BIZOMAT ERP** (owner, 14 Nov 2026; "BIZOMAT System" earlier that day, ERP in `docs/erp/`): the one workspace for
+  signed-in people, **live at `bizomat.ai/erp`** (`docs/system/README.md`), served by the Project Management app with
+  the same accounts and session. Every tool opens inside it, at `/erp/tasks`, `/erp/crm`, `/erp/finance` and
+  `/erp/company`, with its module rail on every screen (Dashboard, My Work, Sales and CRM, Finance and Accounting,
+  Projects and Tasks, Products and Engineering, Operations, Reports, Administration). A page at a tool's own address, or
+  at the earlier `/system`, answers 302 there (the API, files and `/finance/view/` stay); links between tools stay
+  inside (`toolUrl`). People's tools are grouped by company (registered companies, plus an own company per person, not
+  registered, made for every existing account by migration 0017; tools are worked out, never copied; a tool shared with
+  someone shows under its company as "Shared with you"). Products and Engineering is CAD Automation's setup and
+  company-scoped computers (owner and administrators see the company's, members their own, other companies nothing);
+  computers appear only once CAD Automation reports (`/company/api/id/cad-status`, client `cad`): never present them as
+  live before. **Operations** (procurement, inventory, manufacturing, quality, assets, maintenance, supply chain) and
+  product/engineering records are **planned, not built**: the Operations page lists them as Planned and the design
+  preview with demonstration data stays at `bizomat.ai/system-preview/`; never present them as working. The platform
+  console is `/erp/admin` (platform admins only).
+  **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
+  (`src/config/systems.ts`, one source), a page and a user guide per system: BIZOMAT ERP (Business Management System,
+  `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
+  System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
+  Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
+  for now) and BIZOMAT Manufacturing and Operations (planned, `/systems/manufacturing/`). The old product pages
+  (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
+  (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
@@ -181,14 +190,17 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 
 ## After any production change
 
-Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/crm-platform/`, `/crm-platform/guide/`,
-`/finance-platform/`, `/finance-platform/guide/`, `/resources/`, `/tools/`, `/reados/`,
+Check the public site, not just the build: `/`, `/systems/` and every system's page and guide (`/systems/erp/`,
+`/systems/crm/`, `/systems/finance/`, `/systems/projects/`, `/systems/engineering/`, each with `guide/`, and
+`/systems/manufacturing/`), that the old product pages answer 301 there, `/resources/`, `/tools/`, `/reados/` (open
+without signing in),
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
 `/system-preview/` (the BIZOMAT System preview, demonstration data, out of search; `/erp-design-preview/` answers 301
-there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), `/system/` (BIZOMAT System, signed in; the tools inside it
-at `/system/tasks/`, `/system/crm/`, `/system/finance/`, `/system/company/`), and every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
-Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
-and **Sign in**, that a new visit opens in the computer's system theme, and that AI
-search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/`, `/company/` and `/system/` on bizomat.ai, and their old hosts),
+there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), `/erp/` (BIZOMAT ERP, signed in; the tools inside it at
+`/erp/tasks/`, `/erp/crm/`, `/erp/finance/`, `/erp/company/`; `/system/` answers 302 there), and every new chapter URL.
+Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Resources, About, Contact** (owner,
+14 Nov 2026) with **AI Search** and **Sign in** (BIZOMAT ERP; Engineering Automation), that a new visit opens in the
+computer's system theme, and that AI
+search answers. For the apps (`/cad/`, `/erp/`, and `/tasks/`, `/crm/`, `/finance/`, `/company/`, `/system/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
 public URL has been checked.
