@@ -46,7 +46,7 @@ export const REQUEST_STATUS_LABELS: Record<RequestStatus, string> = {
 };
 
 export interface MtMe {
-  company: { id: string; name: string; kind: 'registered' | 'own' };
+  company: { id: string; name: string; kind: 'registered' | 'own' | 'demo' };
   user: { id: string; name: string };
   role: MtRole;
   roleIsDefault: boolean;

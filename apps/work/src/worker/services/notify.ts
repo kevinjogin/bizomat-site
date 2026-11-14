@@ -6,6 +6,7 @@ import { emailConfig } from './email/provider';
 import { emailEnv } from './email/settings';
 import { enqueueEmail, processOutbox } from './email/outbox';
 import type { TemplateData } from './email/templates';
+import { isExampleSpace } from '../system/example';
 
 /**
  * Email is on by default for what needs action (assignments, mentions, due dates, access changes) and off for the
@@ -104,7 +105,8 @@ export async function notify(svc: Svc, n: NotifyInput): Promise<number> {
       }
     });
   }
-  if (byEmail.length) await emailNotification(svc, n, byEmail, notificationIds).catch((e) => console.error('notify_email_failed', e instanceof Error ? e.message : e));
+  // The example company's notifications stay in the app: no email about invented data (system/example.ts).
+  if (byEmail.length && !(await isExampleSpace(svc.db, 'tasks', n.workspaceId))) await emailNotification(svc, n, byEmail, notificationIds).catch((e) => console.error('notify_email_failed', e instanceof Error ? e.message : e));
   return created;
 }
 

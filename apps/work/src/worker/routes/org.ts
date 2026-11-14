@@ -26,6 +26,7 @@ import {
 } from '../services/invitations';
 import { ROLE_LABELS } from '../../shared/permissions';
 import type { WorkspaceRole } from '../../shared/types';
+import { refuseExample } from '../system/example';
 
 export const orgRoutes = new Hono<AppEnv>();
 
@@ -275,6 +276,7 @@ orgRoutes.post('/workspaces/:ws/invitations', async (c) => {
   const user = c.get('user');
   const wsId = c.req.param('ws');
   const role = await requireWorkspace(c.env.DB, wsId, user.id, 'member');
+  await refuseExample(c.env.DB, 'tasks', wsId, 'invite');
   const ws = await wsName(c.env.DB, wsId);
   const settings = parseJson<{ allowMembersToInvite?: boolean }>(ws?.settings_json, {});
   const input = await body(

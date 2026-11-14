@@ -34,12 +34,14 @@ adminSystemRoutes.get('/overview', async (c) => {
     db.prepare(
       `SELECT (SELECT COUNT(*) FROM co_companies WHERE deleted_at IS NULL) AS registered,
               (SELECT COUNT(*) FROM co_companies WHERE deleted_at IS NULL AND suspended_at IS NOT NULL) AS suspended,
-              (SELECT COUNT(*) FROM sys_companies) AS own`,
+              (SELECT COUNT(*) FROM sys_companies) AS own,
+              (SELECT COUNT(*) FROM sys_demo WHERE status = 'ready') AS examples`,
     ),
+    // Real tools only: the example companies' spaces (system/example.ts) are counted apart, above.
     db.prepare(
-      `SELECT (SELECT COUNT(*) FROM workspaces WHERE deleted_at IS NULL) AS workspaces,
-              (SELECT COUNT(*) FROM crm_orgs WHERE deleted_at IS NULL) AS crm,
-              (SELECT COUNT(*) FROM fin_orgs WHERE deleted_at IS NULL) AS finance`,
+      `SELECT (SELECT COUNT(*) FROM workspaces WHERE deleted_at IS NULL AND id NOT IN (SELECT workspace_id FROM sys_demo WHERE workspace_id IS NOT NULL)) AS workspaces,
+              (SELECT COUNT(*) FROM crm_orgs WHERE deleted_at IS NULL AND id NOT IN (SELECT crm_org_id FROM sys_demo WHERE crm_org_id IS NOT NULL)) AS crm,
+              (SELECT COUNT(*) FROM fin_orgs WHERE deleted_at IS NULL AND id NOT IN (SELECT fin_org_id FROM sys_demo WHERE fin_org_id IS NOT NULL)) AS finance`,
     ),
     db.prepare('SELECT COUNT(*) AS accounts, MAX(reported_at) AS last FROM sys_cad_status'),
   ]);

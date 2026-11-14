@@ -7,6 +7,7 @@ import { HttpError, body, now } from '../lib/util';
 import { getPlatformRole } from '../services/platform-admin';
 import { idClients } from '../company/id-provider';
 import { cadFor, companiesFor, companyFor, toolNumbers } from './system';
+import { buildExample, exampleInfo, exampleOf, removeExample } from './example';
 
 export const systemRoutes = new Hono<AppEnv>();
 
@@ -19,7 +20,31 @@ systemRoutes.get('/me', async (c) => {
     companies: companies.map(({ tools, ...co }) => ({ ...co, toolCount: tools.length, apps: [...new Set(tools.map((t) => t.app))] })),
     // CAD Automation can report to the System once its BIZOMAT client is configured (company/id-provider.ts).
     cadConnected: idClients(c.env).some((x) => x.id === 'cad'),
+    // The person's example company: none (the client asks for one), building, ready, failed or removed.
+    example: exampleInfo(await exampleOf(c.env.DB, user.id)),
   });
+});
+
+/**
+ * Make the person's example company (invented data to learn with, only for them). The ERP asks for it on a first visit;
+ * `again: true` (Administration) makes it again after it was removed or could not be made.
+ */
+systemRoutes.post('/demo', async (c) => {
+  const user = c.get('user');
+  let again = false;
+  try {
+    again = ((await c.req.json()) as { again?: unknown } | null)?.again === true;
+  } catch {
+    again = false;
+  }
+  const r = await buildExample(c, user, again);
+  return c.json(r, r.built ? 201 : r.status === 'building' ? 202 : 200);
+});
+
+/** Remove the example company: its tools are deleted and its maintenance records erased. */
+systemRoutes.post('/demo/remove', async (c) => {
+  await removeExample(c, c.get('user'));
+  return c.json({ ok: true });
 });
 
 systemRoutes.get('/companies/:id', async (c) => {

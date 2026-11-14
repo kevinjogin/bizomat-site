@@ -18,11 +18,13 @@ import { newId, now, notFound, parseJson, placeholders } from '../lib/util';
 import { crmNumbers, financeNumbers, tasksNumbers, type CrmNumbers, type FinanceNumbers, type TasksNumbers } from '../company/summary';
 import { loadAccess as crmAccess } from '../crm/access';
 import { hasPerm, loadAccess as finAccess } from '../fin/access';
+import { exampleSpaces } from './example';
 
 export type SysApp = 'tasks' | 'crm' | 'finance';
 export const SYS_APPS: SysApp[] = ['tasks', 'crm', 'finance'];
 export type SysRole = 'owner' | 'admin' | 'member' | 'guest';
-export type SysKind = 'registered' | 'own';
+/** registered: co_companies; own: the person's own company; demo: their example company (system/example.ts). */
+export type SysKind = 'registered' | 'own' | 'demo';
 
 export interface SysTool {
   app: SysApp;
@@ -135,6 +137,8 @@ export async function companiesFor(db: D1Database, user: AuthUser): Promise<SysC
       .all<{ id: string; name: string; abn_status: string; email_verified_at: number | null; suspended_at: number | null; role: SysRole }>(),
   ]);
   const out = new Map<string, SysCompany>();
+  // The person's example company (invented data to learn with): its tools are listed there, never in a real company.
+  const example = await exampleSpaces(db, user.id);
   const registered = (r: { id: string; name: string; abn_status: string; email_verified_at: number | null; suspended_at: number | null }, role: SysRole): SysCompany => ({
     id: r.id,
     kind: 'registered',
@@ -146,6 +150,7 @@ export async function companiesFor(db: D1Database, user: AuthUser): Promise<SysC
   for (const r of memberships.results) out.set(r.id, registered(r, r.role));
   const own = await db.prepare('SELECT id, name FROM sys_companies WHERE id = ?').bind(ownId).first<{ id: string; name: string }>();
   out.set(ownId, { id: ownId, kind: 'own', name: own!.name, role: 'owner', tools: [] });
+  if (example) out.set(example.companyId, { id: example.companyId, kind: 'demo', name: example.name, role: 'owner', tools: [] });
 
   // Tools no registered company runs belong to their owner's own company.
   const owners = [...new Set(tools.filter((t) => !t.companyId && t.ownerId && t.ownerId !== user.id).map((t) => t.ownerId))];
@@ -167,6 +172,11 @@ export async function companiesFor(db: D1Database, user: AuthUser): Promise<SysC
     for (const r of rows.results) out.set(r.id, registered(r, 'guest'));
   }
   for (const t of tools) {
+    if (example && example.ids.has(t.id) && !t.companyId && t.ownerId === user.id) {
+      const { companyId: _c, ownerId: _o, ...tool } = t;
+      out.get(example.companyId)!.tools.push(tool);
+      continue;
+    }
     let holder = t.companyId ? out.get(t.companyId) : undefined;
     if (!holder) {
       const oc = ownerCompany.get(t.ownerId || user.id) ?? ownerCompany.get(user.id)!;
@@ -176,7 +186,8 @@ export async function companiesFor(db: D1Database, user: AuthUser): Promise<SysC
     const { companyId: _c, ownerId: _o, ...tool } = t;
     holder.tools.push(tool);
   }
-  const rank = (c: SysCompany) => (c.role === 'guest' ? 2 : c.kind === 'registered' ? 0 : 1);
+  // Registered companies first, then the person's own, then companies that shared tools, then the example company.
+  const rank = (c: SysCompany) => (c.kind === 'demo' ? 3 : c.role === 'guest' ? 2 : c.kind === 'registered' ? 0 : 1);
   return [...out.values()].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
 }
 
@@ -235,7 +246,7 @@ export interface CadPerson {
  * registered company, and the person's own in every other case. Nothing for a company they only share a tool with.
  */
 export async function cadFor(db: D1Database, user: AuthUser, company: SysCompany): Promise<{ scope: 'company' | 'self' | 'none'; people: CadPerson[] }> {
-  if (company.role === 'guest') return { scope: 'none', people: [] };
+  if (company.role === 'guest' || company.kind === 'demo') return { scope: 'none', people: [] };
   const everyone = company.kind === 'registered' && (company.role === 'owner' || company.role === 'admin');
   const ids = everyone
     ? (await db.prepare('SELECT user_id FROM co_members WHERE company_id = ?').bind(company.id).all<{ user_id: string }>()).results.map((r) => r.user_id)

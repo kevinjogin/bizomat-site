@@ -19,6 +19,7 @@ import { DEFAULT_TAX_CODES } from '../../shared/fin/tax';
 import { finSettings } from '../../shared/fin/settings';
 import { type FinAccess, type FinOrgRow, deny, requireOrg, requirePerm } from './access';
 import { FIN_NOTIFICATION_KEYS, FIN_NOTIFICATION_TYPES, auditStmt, finNotify, finUrl } from './util';
+import { refuseExample } from '../system/example';
 
 export const orgRoutes = new Hono<AppEnv>();
 
@@ -442,6 +443,7 @@ orgRoutes.get('/orgs/:org/invitations', async (c) => {
 orgRoutes.post('/orgs/:org/invitations', async (c) => {
   const a = await requireOrg(c);
   requirePerm(a, 'members', 'invite', 'You cannot invite people');
+  await refuseExample(c.env.DB, 'finance', a.orgId, 'invite');
   const input = await body(c, z.object({ email: z.string().trim().toLowerCase().email().max(320), role: z.enum(INVITABLE_ROLES).default('contributor'), message: text(600).optional() }));
   if (input.role === 'admin' && a.role !== 'owner' && a.role !== 'admin') deny('Only the owner and administrators can invite administrators');
   await rateLimit(c.env.DB, `fin-invite:user:${a.userId}`, 50, 3_600_000);

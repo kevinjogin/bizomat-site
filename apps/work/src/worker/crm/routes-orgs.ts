@@ -19,6 +19,7 @@ import type { CrmInvitationDTO, CrmMemberDTO, CrmOrgDTO, CrmOrgSummary, CrmTeamD
 import { type OrgAccess, type OrgRow, deny, requireOrg, requirePerm } from './access';
 import { CRM_NOTIFICATION_KEYS, CRM_NOTIFICATION_TYPES, crmNotify } from './notify';
 import { auditStmt, crmUrl } from './util';
+import { refuseExample } from '../system/example';
 
 export const orgRoutes = new Hono<AppEnv>();
 
@@ -481,6 +482,7 @@ orgRoutes.get('/orgs/:org/invitations', async (c) => {
 orgRoutes.post('/orgs/:org/invitations', async (c) => {
   const a = await requireOrg(c);
   requirePerm(a, 'members', 'invite', 'You cannot invite people');
+  await refuseExample(c.env.DB, 'crm', a.orgId, 'invite');
   const input = await body(c, z.object({ email: z.string().trim().toLowerCase().email().max(320), role: z.enum(INVITABLE_ROLES).default('member'), message: text(600).optional() }));
   if (input.role === 'admin' && a.role !== 'owner' && a.role !== 'admin') deny('Only the owner and administrators can invite administrators');
   if (input.role === 'manager' && !a.perms.members.manage) deny('Only administrators can invite managers');

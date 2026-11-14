@@ -21,7 +21,7 @@ function lastCompany(): string | null {
 }
 
 export default function ReportFault({ onClose }: { onClose: () => void }) {
-  const list = useQuery({ queryKey: ['mt', 'companies'], queryFn: () => get<{ companies: { id: string; name: string; kind: 'registered' | 'own'; role: MtRole }[] }>('/maintenance/companies') });
+  const list = useQuery({ queryKey: ['mt', 'companies'], queryFn: () => get<{ companies: { id: string; name: string; kind: 'registered' | 'own' | 'demo'; role: MtRole }[] }>('/maintenance/companies') });
   const companies = list.data?.companies ?? [];
   const [chosen, setChosen] = useState('');
   const companyId = chosen || (companies.find((c) => c.id === lastCompany()) ?? companies.find((c) => c.kind === 'registered') ?? companies[0])?.id || '';

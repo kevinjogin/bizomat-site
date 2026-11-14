@@ -14,3 +14,6 @@ a.sys-tool-card:hover { border-color: var(--accent); text-decoration: none; }
 .sys-search .input { flex: 1; }
 .sys-actions { white-space: nowrap; text-align: right; }
 .sys-gap { margin-left: 6px; }
+/* The example company (system/example.ts): the note while it is prepared and the banner on its pages. */
+.sys-example-note { grid-column: 1 / -1; margin: 0; padding: 6px 14px; font-size: 13px; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); }
+.sys-example-banner { border-left-color: var(--warning, #b45309); }

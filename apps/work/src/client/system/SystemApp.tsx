@@ -14,7 +14,7 @@ import { timeAgo } from '../lib/format';
 import { formatMoney } from '../../shared/crm/money';
 import { BrandMark, Icon, ProductLockup } from '../components/ui/Icon';
 import { Avatar, EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
-import { Dropdown, MenuItem, MenuSep, useToast } from '../components/ui/overlays';
+import { Dropdown, MenuItem, MenuSep, useConfirm, useToast } from '../components/ui/overlays';
 import { PlatformFooter } from '../components/layout/PlatformLinks';
 import { toolRoleLabel } from '../company/lib';
 import '../styles/crm.css';
@@ -32,7 +32,8 @@ type SysApp = 'tasks' | 'crm' | 'finance';
 type SysRole = 'owner' | 'admin' | 'member' | 'guest';
 interface CompanyLite {
   id: string;
-  kind: 'registered' | 'own';
+  /** demo: the person's example company (invented data, only for them). */
+  kind: 'registered' | 'own' | 'demo';
   name: string;
   role: SysRole;
   registration?: { abnStatus: string; emailConfirmed: boolean; suspended: boolean };
@@ -44,6 +45,7 @@ interface Me {
   platformRole: 'founder' | 'admin' | null;
   companies: CompanyLite[];
   cadConnected: boolean;
+  example: { status: 'none' | 'building' | 'ready' | 'failed' | 'removed'; companyId?: string; failed?: string };
 }
 interface Tool {
   app: SysApp;
@@ -108,6 +110,7 @@ function rememberCompany(id: string) {
 
 function kindLine(c: Pick<CompanyLite, 'kind' | 'role'>): string {
   if (c.role === 'guest') return 'Shared with you: only the tools you were added to';
+  if (c.kind === 'demo') return 'Example company: invented data to learn BIZOMAT, only for you';
   if (c.kind === 'own') return 'Your own company (not registered)';
   return `Registered company · ${ROLE_LABELS[c.role]}`;
 }
@@ -161,7 +164,7 @@ function MyWorkRedirect() {
 /** Maintenance: in the company used last when the person has maintenance there, else their first registered company. */
 function MaintenanceRedirect() {
   const location = useLocation();
-  const q = useQuery({ queryKey: ['mt', 'companies'], queryFn: () => get<{ companies: { id: string; kind: 'registered' | 'own' }[] }>('/maintenance/companies') });
+  const q = useQuery({ queryKey: ['mt', 'companies'], queryFn: () => get<{ companies: { id: string; kind: 'registered' | 'own' | 'demo' }[] }>('/maintenance/companies') });
   if (q.error) return <Shell><div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div></Shell>;
   if (!q.data) return <Loading label="Opening maintenance…" />;
   const list = q.data.companies;
@@ -176,7 +179,7 @@ function SystemHome({ page = 'home' }: { page?: 'home' | 'cad' }) {
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
   if (!q.data) return <Loading label={`Loading ${BRAND.full}…`} />;
   const list = q.data.companies;
-  const pick = list.find((c) => c.id === lastCompany()) ?? list[0];
+  const pick = list.find((c) => c.id === lastCompany()) ?? list.find((c) => c.kind !== 'demo') ?? list[0];
   if (!pick) return <Shell><div className="page"><EmptyState title="No company yet" icon="building">Reload the page to make your own company.</EmptyState></div></Shell>;
   return <Navigate to={`/c/${pick.id}/${page}`} replace />;
 }
@@ -217,6 +220,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
   return (
     <div className={`shell crm-shell co-shell sys-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
       <SuiteRail />
+      <ExamplePreparer />
       <header className="topbar">
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" aria-expanded={navOpen} onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />
@@ -272,12 +276,13 @@ function CompanySwitcher({ current }: { current?: string }) {
   const navigate = useNavigate();
   const list = me?.companies ?? [];
   const active = list.find((c) => c.id === current);
-  const yours = list.filter((c) => c.role !== 'guest');
+  const yours = list.filter((c) => c.role !== 'guest' && c.kind !== 'demo');
   const shared = list.filter((c) => c.role === 'guest');
+  const examples = list.filter((c) => c.kind === 'demo');
   const item = (c: CompanyLite, close: () => void) => (
     <MenuItem key={c.id} active={c.id === current} onClick={() => { close(); navigate(`/c/${c.id}/home`); }}>
       <span className="grow ellipsis">{c.name}</span>
-      <span className="muted small">{c.role === 'guest' ? `${c.toolCount} ${c.toolCount === 1 ? 'tool' : 'tools'}` : c.kind === 'own' ? 'Own' : ROLE_LABELS[c.role]}</span>
+      <span className="muted small">{c.role === 'guest' ? `${c.toolCount} ${c.toolCount === 1 ? 'tool' : 'tools'}` : c.kind === 'demo' ? 'Example' : c.kind === 'own' ? 'Own' : ROLE_LABELS[c.role]}</span>
     </MenuItem>
   );
   return (
@@ -301,6 +306,13 @@ function CompanySwitcher({ current }: { current?: string }) {
               <MenuSep />
               <div className="menu-label">Shared with you</div>
               {shared.map((c) => item(c, close))}
+            </>
+          ) : null}
+          {examples.length ? (
+            <>
+              <MenuSep />
+              <div className="menu-label">Example company</div>
+              {examples.map((c) => item(c, close))}
             </>
           ) : null}
           <MenuSep />
@@ -361,6 +373,102 @@ function Profile() {
   );
 }
 
+// ------------------------------------------------------------------ the example company
+
+/** Asks for the person's example company on their first visit (once per browser tab), never blocking the page. */
+let examplePrepared = false;
+function ExamplePreparer() {
+  const me = useMe().data;
+  const qc = useQueryClient();
+  const [busy, setBusy] = useState(false);
+  const status = me?.example?.status;
+  useEffect(() => {
+    if (status !== 'none' || examplePrepared) return;
+    examplePrepared = true;
+    setBusy(true);
+    post('/system/demo', {})
+      .catch(() => null)
+      .finally(() => {
+        setBusy(false);
+        void qc.invalidateQueries({ queryKey: ['system'] });
+        void qc.invalidateQueries({ queryKey: ['mt'] });
+      });
+  }, [status, qc]);
+  if (!busy && status !== 'building') return null;
+  return (
+    <p className="sys-example-note" role="status">
+      Preparing your example company, Acme Studio, with invented data to learn with…
+    </p>
+  );
+}
+
+/** Shown on the example company's pages: what it is, and where it is removed. */
+function ExampleBanner() {
+  return (
+    <section className="co-prompt sys-example-banner">
+      <p>
+        <strong>Example company.</strong> Acme Studio is invented data to learn BIZOMAT: projects, customers, finance and maintenance. Only you can see it, and
+        nothing you change here affects your own companies. It sends no email. Remove it any time in Administration.
+      </p>
+      <Link className="btn" to="/administration">Administration</Link>
+    </section>
+  );
+}
+
+/** Administration: remove the example company, or add it again. */
+function ExampleCard() {
+  const me = useMe();
+  const qc = useQueryClient();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const confirm = useConfirm();
+  const [busy, setBusy] = useState(false);
+  const ex = me.data?.example;
+  if (!ex) return null;
+  const run = async (what: 'remove' | 'again') => {
+    if (what === 'remove' && !(await confirm({ title: 'Remove the example company?', message: 'Its projects, customers, finance and maintenance records are deleted. You can add a new one later.', confirmLabel: 'Remove', danger: true }))) return;
+    setBusy(true);
+    try {
+      if (what === 'remove') {
+        await post('/system/demo/remove', {});
+        toast('Example company removed');
+        if (ex.companyId && lastCompany() === ex.companyId) rememberCompany('');
+        navigate('/administration', { replace: true });
+      } else {
+        await post('/system/demo', { again: true });
+        toast('Example company added');
+      }
+      await qc.invalidateQueries({ queryKey: ['system'] });
+      await qc.invalidateQueries({ queryKey: ['mt'] });
+    } catch (err) {
+      toast(errorMessage(err), 'error');
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <section className="card card-pad stack">
+      <h2 className="crm-subhead">Example company</h2>
+      {ex.status === 'ready' ? (
+        <>
+          <p className="muted">Acme Studio is invented data to learn BIZOMAT, only for you. Remove it when you no longer need it.</p>
+          <div className="row wrap">
+            {ex.companyId ? <Link className="btn" to={`/c/${ex.companyId}/home`}>Open the example company</Link> : null}
+            <button className="btn danger" disabled={busy} onClick={() => void run('remove')}>Remove the example company</button>
+          </div>
+        </>
+      ) : ex.status === 'building' || ex.status === 'none' ? (
+        <p className="muted">Your example company is being prepared.</p>
+      ) : (
+        <>
+          <p className="muted">{ex.status === 'failed' ? 'The example company could not be made.' : 'You removed the example company.'} Add a new one to learn with invented data. Only you can see it.</p>
+          <div className="row"><button className="btn primary" disabled={busy} onClick={() => void run('again')}>Add the example company again</button></div>
+        </>
+      )}
+    </section>
+  );
+}
+
 // ------------------------------------------------------------------ company pages
 
 function CompanyHome({ view }: { view: CompanyView }) {
@@ -370,6 +478,7 @@ function CompanyHome({ view }: { view: CompanyView }) {
   return (
     <div className="page crm-page">
       <PageHeader title={c.name} subtitle={kindLine(c)} />
+      {c.kind === 'demo' ? <ExampleBanner /> : null}
       {c.kind === 'own' && c.role === 'owner' ? (
         <section className="co-prompt">
           <p>This is your own company. It holds the tools you own that no registered company runs. Register your business to add its ABN, people and departments, and to give each person a role in each tool.</p>
@@ -391,11 +500,11 @@ function CompanyHome({ view }: { view: CompanyView }) {
             <p className="small">Report a fault, follow your requests, or plan and record the work.</p>
           </Link>
         ) : null}
-        <Link to={`/c/${c.id}/cad`} className="card card-pad co-tool-card sys-tool-card">
+        {c.kind !== 'demo' ? <Link to={`/c/${c.id}/cad`} className="card card-pad co-tool-card sys-tool-card">
           <div className="row"><Icon name="diamond" /> <strong>Products and Engineering</strong></div>
           <p className="muted small">SOLIDWORKS on your computers, driven by your AI assistant.</p>
           <p className="small">{me?.cadConnected ? 'See computers, AI apps and recent jobs.' : 'Set it up, then see its computers here.'}</p>
-        </Link>
+        </Link> : null}
       </div>
       {!view.tools.length && c.role !== 'guest' ? (
         <section className="card card-pad stack">
@@ -464,7 +573,9 @@ function CadPage({ view }: { view: CompanyView }) {
         ? c.kind === 'registered'
           ? `You see your own CAD computers. The owner and administrators of ${c.name} see everyone's in it.`
           : 'You see your own CAD computers. Nobody else sees them here.'
-        : `CAD computers are not shared with people who only share a tool with ${c.name}.`;
+        : c.kind === 'demo'
+          ? 'The example company has no CAD computers. Yours are listed under your own company.'
+          : `CAD computers are not shared with people who only share a tool with ${c.name}.`;
   const reported = (q.data?.people ?? []).filter((p) => p.status);
   return (
     <div className="page crm-page">
@@ -552,6 +663,7 @@ function CompanySettings({ view }: { view: CompanyView }) {
   return (
     <div className="page crm-page">
       <PageHeader title="Company" subtitle={kindLine(c)} />
+      {c.kind === 'demo' ? <ExampleBanner /> : null}
       {c.kind === 'own' && c.role === 'owner' ? (
         <form className="card card-pad stack crm-start-form" onSubmit={save}>
           <div className="field">
@@ -710,6 +822,8 @@ function Administration() {
             <a className="btn primary" href={toolUrl('/company/new')}>Register a company</a>
           </div>
         </section>
+      ) : c.kind === 'demo' ? (
+        <p className="muted">This is your example company: invented data, only for you. Its tools are below; remove it under Example company.</p>
       ) : (
         <p className="muted">You were added to tools of {c.name}. Its administration is done by its owner.</p>
       )}
@@ -723,6 +837,7 @@ function Administration() {
           </div>
         </section>
       ) : null}
+      <ExampleCard />
       <section className="card card-pad stack">
         <h2 className="crm-subhead">You</h2>
         <div className="row wrap"><a className="btn" href={toolUrl('/tasks/settings/profile')}><Icon name="user" /> Profile and security</a></div>
@@ -806,6 +921,7 @@ function AdminOverview({ founder }: { founder: boolean }) {
         <Tile label="Active in 7 days" value={n(users.active7 ?? 0)} hint={`${n(users.active30 ?? 0)} in 30 days`} />
         <Tile label="Registered companies" value={n(companies.registered)} hint={`${n(companies.suspended)} suspended`} />
         <Tile label="Own companies" value={n(companies.own)} hint={`${n(Math.max(0, (users.total ?? 0) - (companies.own ?? 0)))} accounts without one yet`} />
+        <Tile label="Example companies" value={n(companies.examples ?? 0)} hint="Invented data, one per person who opened the ERP; not counted below" />
         <Tile label="Project Management workspaces" value={n(tools.workspaces)} />
         <Tile label="CRM organisations" value={n(tools.crm)} />
         <Tile label="Finance workspaces" value={n(tools.finance)} />
