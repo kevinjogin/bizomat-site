@@ -90,7 +90,8 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       live('The CRM, Finance and Projects open inside it as modules.'),
       live("Products and Engineering shows CAD Automation's set-up steps."),
       building("Your company's CAD computers, reported by CAD Automation. Until it reports, the page says so."),
-      planned('Operations: procurement, inventory, manufacturing, quality, maintenance and supply chain.'),
+      building('Maintenance: asset register, maintenance requests and work orders. Not switched on yet.'),
+      planned('Operations: procurement, inventory, manufacturing, quality and supply chain.'),
     ],
     steps: [
       { t: 'Sign in.', x: 'Open bizomat.ai/erp and sign in, or create a BIZOMAT account.' },
@@ -212,7 +213,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     shot: shotOf('work', 'work-table'),
     benefits: [
       'Everyone works from the same plan, in the view that suits them.',
-      'Workspace roles (owner, admin, member and viewer), and private or shared boards.',
+      'Workspace roles from owner to viewer, and private or shared boards.',
       'Templates to start a new project quickly.',
       'Signed outgoing webhooks, and incoming webhooks for Slack and Microsoft Teams.',
     ],
@@ -279,7 +280,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     signIn: 'A CAD Automation account, for now',
   },
   manufacturing: {
-    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. It is planned: none of it is built, and nothing can be used or bought yet.',
+    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. None of it can be used or bought yet: Maintenance is being built, and the other modules are planned.',
     who: 'It is designed for manufacturers, workshops and businesses that buy, store and ship goods.',
     problems: [
       'Stock levels known only by counting.',
@@ -292,14 +293,15 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       planned('Inventory and warehouse'),
       planned('Manufacturing and production planning'),
       planned('Quality'),
-      planned('Asset management and maintenance'),
+      building('Maintenance, first stage: asset register, requests with approval, work orders, technicians, labour timer, photos and documents'),
+      planned('Preventive maintenance, inspections, spare parts and reliability reporting'),
       planned('Supply chain'),
     ],
     benefits: [
       'Purchase orders, receipts and supplier bills that match.',
       'Stock on hand by product and location, kept by its movements.',
       'Work orders planned against the capacity of each work centre.',
-      'Inspections, nonconformances and maintenance on record.',
+      'Inspections and nonconformances on record.',
     ],
     connects: [
       planned('Designed to work through Finance: purchase orders, bills and stock values.'),
@@ -312,7 +314,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       { t: 'See the design.', x: 'Explore the design preview, which uses demonstration data only.' },
     ],
     faqs: [
-      { q: 'Can I use it today?', a: 'No. It is planned and not built. There is nothing to sign up for or buy.' },
+      { q: 'Can I use it today?', a: 'No. Maintenance is being built and is not switched on yet; the other modules are planned and not built. There is nothing to sign up for or buy.' },
       { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data. Nothing you do there is saved.' },
     ],
     manages: 'Procurement, inventory, production, quality, maintenance and supply chain',
@@ -327,7 +329,7 @@ const platformFaqs = [
   { q: 'Can I manage more than one company?', a: 'Yes. Register more than one company, or accept invitations from others, and move between them with the company switcher. Everyone also has their own company in their own name, which is not registered.' },
   { q: 'Is my data copied between the systems?', a: 'No. Each tool keeps its own records and permissions. A link between tools, such as a won deal to a draft invoice, makes a record in the other tool only when you ask, and checks your role there first.' },
   { q: 'Does Finance connect to my bank or lodge my BAS?', a: 'No. Finance does not connect to banks, make payments or lodge with the ATO. You import statements you download, and the GST and BAS report is a worksheet to check before you lodge yourself.' },
-  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality, maintenance and supply chain) is planned and not built. A design preview with demonstration data shows how it is designed.' },
+  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality and supply chain) is planned and not built. A design preview with demonstration data shows how it is designed. Maintenance is being built inside BIZOMAT ERP and is not switched on yet.' },
   { q: 'What happened to the old addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into BIZOMAT ERP, so bookmarks and links in emails keep working.' },
 ];
 
@@ -439,14 +441,14 @@ const schema = [
             <div class="sys-planned">
               <p class="sys-planned__status"><StatusLabel status="planned" /> Not available yet</p>
               <h3>No screens to show</h3>
-              <p>{s.name} is not built, so there is no product screen. Its design can be explored in the <a href={PREVIEW} rel="noopener">design preview, demonstration data</a>.</p>
+              <p>{s.name} is not available yet, so there is no product screen. Its design can be explored in the <a href={PREVIEW} rel="noopener">design preview, demonstration data</a>.</p>
             </div>
           ) : null}
         </div>
 
         <div class="sys-entry__grid">
           <section class="sys-box" aria-labelledby={`${s.id}-cap`}>
-            <h3 id={`${s.id}-cap`}>{s.status === 'planned' ? 'Planned modules' : 'Main capabilities'}</h3>
+            <h3 id={`${s.id}-cap`}>{s.status === 'planned' ? 'Modules and their status' : 'Main capabilities'}</h3>
             <ul class="pp-list sys-items">{d.capabilities.map((c) => <li><span>{c.t}</span> <StatusLabel status={c.st} /></li>)}</ul>
             {d.limit && <p class="pp-table-note">{d.limit}</p>}
           </section>

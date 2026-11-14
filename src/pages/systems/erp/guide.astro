@@ -1,0 +1,246 @@
+---
+// /systems/erp/guide/: how to use BIZOMAT ERP, step by step. Buttons and fields are named as the application labels them
+// (apps/work/src/client/system/SystemApp.tsx, components/layout/SuiteRail.tsx, company/Register.tsx, company/Pages.tsx,
+// crm/CompanyLinks.tsx); facts come from docs/system/README.md and docs/company/README.md. Registration checks say only
+// what they prove (CLAUDE.md): the ABN is looked up on the register only when that lookup is switched on, and phone
+// numbers are checked against the numbering plan, never "verified". Screens are real (src/data/screenshots.ts); the
+// Operations screen shows the planned modules and is described as such. Markup follows the CRM guide.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import '../../../styles/systems.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { ERP_PREVIEW, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+
+const erp = systemById('erp');
+const PAGE = erp.guide ?? '/systems/erp/guide/';
+const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
+const access = erp.access!;
+const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }, { label: 'User guide', href: PAGE }];
+const description = 'How to use BIZOMAT ERP, step by step: sign in, choose or register a company, set up departments, invite people, set tool roles, link the tools and read reports.';
+
+interface Step { t: string; x: string; st?: FeatureStatus }
+interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
+const parts: Part[] = [
+  {
+    id: 'access', title: 'Open BIZOMAT ERP', st: 'live',
+    steps: [
+      { t: 'The address', x: 'Go to bizomat.ai/erp. Bookmark it: every module opens from there.' },
+      { t: 'From the website', x: 'Choose Sign in at the top of any BIZOMAT page, then BIZOMAT ERP.' },
+      { t: 'Old addresses', x: 'bizomat.ai/tasks, /crm, /finance and /company forward to the same page inside the ERP, so older bookmarks and links in emails still work.' },
+      { t: 'On a phone', x: 'The ERP works in the browser. The module rail moves to a bar along the bottom of the screen.' },
+    ],
+  },
+  {
+    id: 'sign-in', title: 'Sign in or create an account', st: 'live',
+    steps: [
+      { t: 'Sign in', x: 'Enter your BIZOMAT email and password and choose Sign in. It is the same account for Sales and CRM, Finance and Accounting, Projects and Tasks and your company.' },
+      { t: 'New to BIZOMAT?', x: 'Choose Create an account and enter your full name, work email and a password of at least 10 characters, with letters and a number or symbol.' },
+      { t: 'Confirm your email', x: 'If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+      { t: 'Engineering Automation', x: 'CAD Automation, the application of Engineering Automation, keeps its own sign-in for now, at bizomat.ai/cad.' },
+    ],
+  },
+  {
+    id: 'company', title: 'Choose or register a company', st: 'live',
+    lead: 'Everything in the ERP belongs to a company. Your own company, in your own name, is ready the first time you sign in.',
+    steps: [
+      { t: 'The company switcher', x: 'At the top of the screen. It lists your companies, then "Shared with you": companies where someone added you to a tool, with only those tools.' },
+      { t: 'Your own company', x: 'It is not registered and has no ABN. It holds the tools you own outside a registered company. You can rename it.' },
+      { t: 'Register a company', x: 'Choose Register a company in the switcher. Pick A business, registered with its ABN, or Myself, in my own name, where an ABN is optional.' },
+      { t: 'The details', x: 'Business name, ABN, contact email, phone, street address, suburb, state and postcode, and a website if you have one. Company accounts are for Australian businesses for now.' },
+      { t: 'What is checked', x: 'The ABN\'s check digits. When the Australian Business Register lookup is switched on, the ABN is also looked up there. The contact email gets a confirmation link, unless it is your own confirmed sign-in address. The phone number is checked against the Australian numbering plan but is never called or texted, and the postcode is checked against the state. Company checks shows what was checked.' },
+      { t: 'Its tools', x: 'Registering gives the company a Projects and Tasks workspace, a Sales and CRM organisation and a Finance business workspace. You can bring in tools you already own instead.' },
+    ],
+    shot: 'erp-dashboard',
+  },
+  {
+    id: 'configure', title: 'Set up departments and tools', st: 'live',
+    lead: 'Open Administration in the rail. For a registered company it links to the company area: Company overview, People and roles, Departments, Tools and Company settings.',
+    steps: [
+      { t: 'New department', x: 'In Departments, choose New department. Give it a name and a head, and under Part of choose the department it sits in, if any.' },
+      { t: 'In every tool', x: 'A department becomes a team in Projects and Tasks, a team in Sales and CRM led by its head, and a department in Finance tracking.', st: 'connected' },
+      { t: 'Tools', x: 'Tools lists the tools the company runs. The owner can bring in a tool they already own. Personal and household Finance workspaces stay private and are never offered.' },
+      { t: 'Each tool\'s settings', x: 'Administration also links to each tool\'s team, roles and settings: Sales and CRM, Finance, and the Projects and Tasks workspace.' },
+      { t: 'Company settings', x: 'The registered details and how they were checked. The owner can hand the company to an administrator, or close the company account; closing leaves the tools and their records as they are.' },
+    ],
+    shot: 'erp-administration',
+  },
+  {
+    id: 'first-record', title: 'Add your first records', st: 'live',
+    steps: [
+      { t: 'Sales and CRM', x: 'Choose Sales and CRM in the rail. Add a contact, a company or a lead, or import them from a CSV file, then add a deal.' },
+      { t: 'Finance and Accounting', x: 'Choose Finance and Accounting. In the company\'s business workspace, record a transaction, import a bank statement, or create a quote or an invoice.' },
+      { t: 'Projects and Tasks', x: 'Choose Projects and Tasks. Create a board, from a template or empty, and add items with an owner, a status and a date.' },
+      { t: 'Back to the dashboard', x: 'The dashboard shows each tool\'s figures the next time you open it.', st: 'connected' },
+    ],
+    shot: 'erp-crm',
+  },
+  {
+    id: 'invite', title: 'Invite your people', st: 'live',
+    steps: [
+      { t: 'Invite someone', x: 'In Administration, open People and roles. Under Invite someone, enter the person\'s email and, if you like, their job title.' },
+      { t: 'Company role', x: 'Member, or Administrator if you are the owner.' },
+      { t: 'A role in each tool', x: 'Choose their role in Projects and Tasks, Sales and CRM and Finance, or No access. Finance starts at No access, so choose a role only for people who should see the money.' },
+      { t: 'Departments', x: 'Tick the departments they belong to, then choose Send invitation.' },
+      { t: 'The link', x: 'BIZOMAT emails the invitation when its email service is connected, and shows the link either way, so you can send it yourself. It works only for the invited email address, for 14 days.' },
+      { t: 'Accepting', x: 'The person opens the link and signs in, or creates an account, with the invited address. Accepting confirms that address.' },
+      { t: 'Already in a tool?', x: 'People who joined a tool directly are listed under "In a tool, not in the company". An administrator can add them to the company, keeping their roles.' },
+    ],
+  },
+  {
+    id: 'permissions', title: 'Roles and permissions', st: 'live',
+    lead: 'Permissions are set for each person, in each tool. The ERP never gives access to anything: it shows what each tool allows.',
+    steps: [
+      { t: 'Company roles', x: 'Owner, administrator or member. The owner and administrators manage people, departments and tools; the owner alone can transfer or close the company.' },
+      { t: 'Tool roles', x: 'Projects and Tasks: Administrator, Project manager, Member or Viewer. Sales and CRM: Administrator, Manager, Sales Executive, Member or Viewer. Finance: Administrator, Accountant, Finance Manager, Contributor or Viewer.' },
+      { t: 'Change a role', x: 'In People, change a person\'s role in a tool and it changes in that tool. No access takes them out of it.' },
+      { t: 'Finer control', x: 'Sales and CRM and Finance each let owners and administrators adjust what a role may view, create, edit, delete, import and export, in that tool\'s settings.' },
+      { t: 'Departments', x: 'A department\'s head can change who is in it, and sees that department\'s figures in every tool. Departments do not carry permissions of their own.' },
+      { t: 'Figures on the dashboard', x: 'Each tool\'s figures show only to people whose role in that tool may see them. Everyone else sees a note instead.', st: 'connected' },
+      { t: 'CAD computers', x: 'In Products and Engineering, owners and administrators will see the computers of everyone in the company and members their own, once CAD Automation reports to the ERP.', st: 'in-development' },
+    ],
+    shot: 'erp-engineering',
+  },
+  {
+    id: 'workflows', title: 'Work across the modules', st: 'connected',
+    lead: 'These links work when the company runs both tools. Each makes a record in the other tool only when you ask, and checks your role there first.',
+    steps: [
+      { t: 'Lead to deal', x: 'In Sales and CRM, open a qualified lead and choose Convert: a contact, a company and a deal at once.', st: 'live' },
+      { t: 'Deal to quote', x: 'On the deal, choose Start a quote. A draft quote is made in Finance for the deal\'s company, to price in detail there. Its progress shows on the deal.', st: 'connected' },
+      { t: 'Won deal to invoice', x: 'When the deal is won, choose Make a draft invoice: one line with the deal\'s title and value. Check the amount, GST and account in Finance before approving. Once per deal, in the same currency.', st: 'connected' },
+      { t: 'Deal to project', x: 'On the deal, choose Start a project: a board named after the deal in the company\'s Projects and Tasks. Once per deal.', st: 'connected' },
+      { t: 'Activity to task', x: 'An activity\'s menu has Create a project task, which puts it in a project with a link back to the customer.', st: 'connected' },
+      { t: 'My Work', x: 'Choose My Work in the rail to see everything assigned to you in Projects and Tasks.', st: 'live' },
+    ],
+    shot: 'erp-finance',
+  },
+  {
+    id: 'reports', title: 'Read the dashboard and reports', st: 'live',
+    steps: [
+      { t: 'The dashboard', x: 'A card for each tool: open tasks, overdue, due in 7 days and projects; open deals, pipeline, won in 30 days and follow-ups due; income, expenses, owed to you and you owe, this financial year.', st: 'connected' },
+      { t: 'Reports', x: 'Choose Reports in the rail. It has a card for each tool: Sales and CRM reports, Finance and Accounting reports and Projects and Tasks dashboards.' },
+      { t: 'Open a report', x: 'Each card opens the report in its own module, with that module\'s permissions. CRM reports export to CSV; Finance reports to CSV and PDF.' },
+      { t: 'By department', x: 'Administration, Company overview shows totals for the company and for each department, from every tool.', st: 'connected' },
+    ],
+    shot: 'erp-reports',
+  },
+  {
+    id: 'integrations', title: 'Link the tools', st: 'connected',
+    steps: [
+      { t: 'One customer record', x: 'On a CRM company, under In Finance, link it to the Finance contact it is billed as, or create that contact. Its open invoices and what it owes show in the CRM to people whose Finance role sees sales.', st: 'connected' },
+      { t: 'Project costs and budget', x: 'In the company area, open Projects and give a project a Finance tracking project and a budget. Income and costs posted to it show against the budget. Tracking needs a Finance role that manages accounting.', st: 'connected' },
+      { t: 'Engineering Automation', x: 'Products and Engineering gives the four set-up steps: sign in to CAD Automation, install it, pair the computer and connect your AI assistant.', st: 'live' },
+      { t: 'CAD computers and sign-in', x: 'Listing the company\'s computers in the ERP, and signing in to CAD Automation with your BIZOMAT account, are being built. Until then the page says so and links to CAD Automation.', st: 'in-development' },
+    ],
+    shot: 'erp-projects',
+  },
+  {
+    id: 'planned', title: 'What is not built yet', st: 'planned',
+    lead: 'Operations in the rail lists the modules that are designed but not built. Nothing there works yet or keeps data. Maintenance is being built as its own module.',
+    steps: [
+      { t: 'Planned modules', x: 'Procurement, Inventory and Warehouse, Manufacturing, Quality, Supply Chain, and product and engineering records. Each is labelled Planned.', st: 'planned' },
+      { t: 'Maintenance', x: 'A maintenance management module is being built. Its first stage covers the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. It is not switched on yet.', st: 'in-development' },
+      { t: 'Later in Maintenance', x: 'Preventive maintenance, readings, inspections, prestart checklists, spare parts, scanning, several sites, workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, reliability reporting and offline field work.', st: 'planned' },
+      { t: 'What to use today', x: 'Suppliers, purchase orders and bills are kept in Finance. Production work can be planned on a board in Projects and Tasks.', st: 'live' },
+      { t: 'The design preview', x: 'Open the design preview from Operations to see how the planned modules are designed. It uses demonstration data only, and nothing you do there is saved.' },
+    ],
+    shot: 'erp-operations',
+  },
+];
+
+const questions = [
+  { q: 'Do I need to register a company to use the ERP?', a: 'No. Everyone has their own company in their own name. Register a company when you want to add people, departments and roles.' },
+  { q: 'Can I belong to more than one company?', a: 'Yes. Register more than one, or accept invitations, and switch between them with the company switcher.' },
+  { q: 'Why can I not see a tool\'s figures on the dashboard?', a: 'Your role in that tool does not show them. Ask the company\'s owner or an administrator to change your role in People.' },
+  { q: 'Why are no computers listed under Products and Engineering?', a: 'CAD Automation does not report its computers to the ERP yet. Until it does, see your computers in CAD Automation itself.' },
+  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'No. They are planned and not built. The design preview shows them with demonstration data only. Maintenance is being built and is not switched on yet.' },
+];
+
+const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
+const schema = [{
+  '@type': 'HowTo', name: 'How to use BIZOMAT ERP', url: `${SITE.url}${PAGE}`, description,
+  step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })),
+}];
+---
+<BaseLayout title="BIZOMAT ERP user guide" description={description} breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="guide-title">
+    <Container>
+      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+      <p class="bz-eyebrow">{erp.name} · User guide</p>
+      <h1 id="guide-title">How to use BIZOMAT ERP</h1>
+      <p class="pp-hero__lead">Step by step, from signing in and choosing a company to roles, linked tools and reports. Buttons and fields are named as they appear in the application.</p>
+      <div class="pp-hero__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-guide-start">{access.label}</Button>
+        <Button href={erp.url} variant="secondary" data-cta="erp-guide-about">About {erp.name}</Button>
+      </div>
+      <div class="sys-legend">
+        <h2 class="sys-subhead">What the labels mean</h2>
+        <p class="sys-note">Each part and some steps carry one of these labels.</p>
+        <StatusLegend />
+      </div>
+      <nav class="sys-toc" aria-label="In this guide">
+        <h2 class="sys-toc__title">In this guide</h2>
+        <ol>
+          {parts.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+          <li><a href="#questions">Common questions</a></li>
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  {parts.map((p, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
+      <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
+        <div>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          <p class="sys-guide-status"><StatusLabel status={p.st} /></p>
+          {p.lead && <p class="sys-lead">{p.lead}</p>}
+          <ol class="pp-steps sys-guide-steps">
+            {p.steps.map((s) => <li><h3>{s.t}{s.st && <> <StatusLabel status={s.st} /></>}</h3><p>{s.x}</p></li>)}
+          </ol>
+          {p.id === 'planned' && <p class="pp-table-note"><a href={PREVIEW} rel="noopener">Open the design preview, with demonstration data</a>.</p>}
+        </div>
+        {shots[p.id] && (
+          <figure class="pp-shot sys-guide-shot">
+            <img src={shots[p.id]!.src} alt={`${shots[p.id]!.title}. ${shots[p.id]!.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+            <figcaption>
+              <span>{shots[p.id]!.caption}</span>
+              {p.id === 'planned' ? <StatusLabel status="planned" /> : <span class="viz__tag viz__tag--real">Product screen</span>}
+            </figcaption>
+          </figure>
+        )}
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="questions" aria-labelledby="questions-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Common questions</p>
+        <h2 id="questions-title">Before you ask</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="guide-cta">
+    <Container class="pp-band">
+      <h2 id="guide-cta">Ready? Your own company is waiting.</h2>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-guide-band-start">{access.label}</Button>
+        <Button href={erp.url} variant="secondary" data-cta="erp-guide-band-about">About {erp.name}</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
