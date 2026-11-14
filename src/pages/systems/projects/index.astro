@@ -177,11 +177,11 @@ const faq = [
   { q: 'How do I see reports on progress?', a: `Dashboards are computed from live board data, with ${widgets.length} widget types such as task status, completion, workload, overdue work and project progress. People allowed to generate reports (project managers and administrators, by default) can also save project reports, such as a monthly progress or outstanding tasks report, as PDF, Excel, HTML and CSV.` },
   { q: 'Who can see my projects?', a: 'Only members of your workspace, as their roles allow. A board can be private to its members, and one task can be shared with a guest without the rest of the project. One workspace never sees another.' },
   { q: 'Is it the same account as the CRM and Finance?', a: 'Yes. Projects, Sales and CRM, and Finance and Accounting use one BIZOMAT account and open inside BIZOMAT ERP. Signing in once reaches every tool you have a role in.' },
-  { q: 'I used Project Management or KEVOS Work. Do I start again?', a: 'No. BIZOMAT Projects is the same application under its new name. Sign in with the email and password you already use; your workspaces and boards are where they were.' },
+  { q: 'I used BIZOMAT Project Management. Do I start again?', a: 'No. BIZOMAT Projects is the same application under its new name. Sign in with the email and password you already use; your workspaces and boards are where they were.' },
 ];
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: PAGE }];
 const schema = [
-  { '@type': 'SoftwareApplication', name: sys.name, alternateName: ['BIZOMAT Project Management', WORK.formerly], url: `${SITE.url}${PAGE}`, applicationCategory: 'BusinessApplication', applicationSubCategory: sys.kind, operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
+  { '@type': 'SoftwareApplication', name: sys.name, alternateName: 'BIZOMAT Project Management', url: `${SITE.url}${PAGE}`, applicationCategory: 'BusinessApplication', applicationSubCategory: sys.kind, operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
   { '@type': 'FAQPage', url: `${SITE.url}${PAGE}#faq`, mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---

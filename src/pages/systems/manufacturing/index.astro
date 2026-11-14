@@ -1,0 +1,227 @@
+---
+// /systems/manufacturing/: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
+// None of it can be used today. Maintenance (a CMMS inside the ERP, its own module in the rail) is being built: its
+// first stage is labelled In development until the lead switches it on; everything else is planned (the designs in
+// docs/erp/architecture/08 and 09) and labelled Planned. No product screens: nothing here is shown as working. The
+// design preview (demonstration data) is linked by its full address because it is built separately.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import '../../../styles/systems.css';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { ERP_PREVIEW, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+
+const sys = systemById('manufacturing');
+const erp = systemById('erp');
+const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }];
+const description = 'BIZOMAT Manufacturing and Operations: ERP modules for production, inventory, warehouses, procurement, quality, maintenance and supply chain. Not available yet.';
+
+interface Item { t: string; st: FeatureStatus }
+interface Module { id: string; name: string; st: FeatureStatus; x: string; items?: Item[]; today?: Item[] }
+const modules: Module[] = [
+  {
+    id: 'manufacturing', name: 'Manufacturing', st: 'planned',
+    x: 'Designed for work orders made from sales orders or for stock, released with a check that the components are available, with each operation reported (start, finish, quantity and scrap) from a shop-floor screen on a tablet.',
+  },
+  {
+    id: 'planning', name: 'Production planning', st: 'planned',
+    x: 'Designed for a planning board that shows the load on each work centre, where a work order can be dragged to a new date, and later for suggestions of what to make and what to buy.',
+    today: [{ t: 'Plan production work on a board and timeline in Projects', st: 'live' }],
+  },
+  {
+    id: 'inventory', name: 'Inventory', st: 'planned',
+    x: 'Designed for stock on hand by product, location and lot, kept by a ledger of stock movements that is never edited, with stock counts and the stock value posted to Finance.',
+  },
+  {
+    id: 'warehouse', name: 'Warehouse management', st: 'planned',
+    x: 'Designed for warehouses and their locations, goods received and put away, transfers between locations and sites, and barcode and QR scanning on phones.',
+  },
+  {
+    id: 'procurement', name: 'Procurement', st: 'planned',
+    x: 'Designed for supplier profiles, purchase requisitions with approval, requests for quotation, purchase orders with receiving, and checking each order against its receipt and bill.',
+    today: [{ t: 'Suppliers, purchase orders and bills in Finance', st: 'live' }],
+  },
+  {
+    id: 'quality', name: 'Quality management', st: 'planned',
+    x: 'Designed for inspection plans, incoming, in-process and final inspections, nonconformance reports with approval, and corrective actions with tasks in Projects.',
+  },
+  {
+    id: 'maintenance', name: 'Maintenance', st: 'in-development',
+    x: 'A maintenance management system (CMMS) inside BIZOMAT ERP, with its own module in the rail, called Maintenance. Its first stage is being built now. It is not switched on yet, so it cannot be used today.',
+    items: [
+      { t: 'Asset register and hierarchy', st: 'in-development' },
+      { t: 'Asset details', st: 'in-development' },
+      { t: 'Maintenance requests with approval', st: 'in-development' },
+      { t: 'Standard work orders', st: 'in-development' },
+      { t: 'Technician assignment', st: 'in-development' },
+      { t: 'A labour timer', st: 'in-development' },
+      { t: 'Photos and documents', st: 'in-development' },
+      { t: 'Preventive maintenance by time, usage or condition', st: 'planned' },
+      { t: 'Readings and thresholds', st: 'planned' },
+      { t: 'Inspections across several assets', st: 'planned' },
+      { t: 'Prestart checklists', st: 'planned' },
+      { t: 'Spare parts and stocktakes', st: 'planned' },
+      { t: 'Barcode and QR scanning', st: 'planned' },
+      { t: 'Several sites', st: 'planned' },
+      { t: 'Workload planning', st: 'planned' },
+      { t: 'An AI scheduling assistant that only proposes schedules, for a person to approve', st: 'planned' },
+      { t: 'Reliability reporting (MTBF and MTTR)', st: 'planned' },
+      { t: 'Offline field work', st: 'planned' },
+    ],
+  },
+  {
+    id: 'supply-chain', name: 'Supply chain', st: 'planned',
+    x: 'Designed for sales orders from accepted quotes or won deals, deliveries with picking and packing, carriers and shipments, a delivery schedule and returns.',
+    today: [{ t: 'Quotes in Finance, started from CRM deals', st: 'connected' }],
+  },
+];
+
+const today: { name: string; url: string; items: Item[] }[] = [
+  { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Suppliers, purchase orders, bills and expense claims', st: 'live' }, { t: 'Budgets by category, department or project', st: 'live' }, { t: 'Project costs against a budget', st: 'connected' }] },
+  { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Boards, timelines and workload to plan the work', st: 'live' }, { t: 'Tasks with owners, statuses and dates', st: 'live' }] },
+  { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'SOLIDWORKS parts and assemblies from your AI assistant', st: 'live' }, { t: 'Drawings with views, dimensions and a bill of materials', st: 'live' }] },
+  { name: 'BIZOMAT CRM', url: '/systems/crm/', items: [{ t: 'Customers, deals and follow-ups', st: 'live' }, { t: 'Quotes and draft invoices in Finance from deals', st: 'connected' }] },
+];
+
+// The designed flow (docs/erp/architecture/08, section 8.3): a concept, not a working process.
+const sellFlow = ['Accepted quote', 'Sales order', 'Work order', 'Final inspection', 'Delivery', 'Invoice in Finance'];
+const buyFlow = ['Requisition', 'Purchase order in Finance', 'Goods receipt', 'Incoming inspection', 'Supplier bill in Finance'];
+
+const faqs = [
+  { q: 'Can it manage manufacturing today?', a: 'No. Manufacturing, production planning, inventory, warehouse management, procurement, quality and supply chain are planned and not built.' },
+  { q: 'Is Maintenance available?', a: 'Not yet. Its first stage (the asset register, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents) is being built inside BIZOMAT ERP. It is not switched on yet. Preventive maintenance and the rest are planned.' },
+  { q: 'Can I sign up or pay for it now?', a: 'No. There is nothing to sign up for, download or buy.' },
+  { q: 'What can I use today instead?', a: 'BIZOMAT Finance for suppliers, purchase orders and bills; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
+  { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data only. Nothing you do there is saved, and it does not store your data.' },
+];
+
+const schema = [
+  { '@type': 'WebPage', name: `${sys.name} (planned)`, url: `${SITE.url}${sys.url}`, description, isPartOf: { '@id': `${SITE.url}/#website` }, publisher: { '@id': `${SITE.url}/#organization` } },
+  { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<BaseLayout title="Manufacturing and Operations (planned)" description={description} imageAlt="BIZOMAT Manufacturing and Operations: planned ERP modules" breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="mfg-title">
+    <Container>
+      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+      <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
+      <h1 id="mfg-title">Manufacturing and Operations</h1>
+      <p class="sys-planned__status sys-hero-status"><StatusLabel status="planned" /> Not available yet</p>
+      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. None of it can be used today: Maintenance is being built, and every other module is planned.</p>
+      <div class="pp-hero__actions">
+        <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-use-erp">Use BIZOMAT ERP today</Button>
+        <Button href={PREVIEW} variant="secondary" rel="noopener" data-cta="mfg-preview">Design preview with demonstration data</Button>
+      </div>
+      <p class="pp-hero__note">BIZOMAT ERP is where Sales and CRM, Finance and Accounting, Projects and Tasks and Products and Engineering work today. {sys.statusNote}</p>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="modules" aria-labelledby="modules-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">The modules</p>
+        <h2 id="modules-title">What each module is designed to do</h2>
+        <p>Every module below is labelled. None of them is Live: Maintenance is In development, and the others are Planned.</p>
+      </div>
+      <div class="sys-legend">
+        <h3 class="sys-subhead">What the labels mean</h3>
+        <StatusLegend />
+      </div>
+      <ul class="sys-features sys-features--spaced" role="list">
+        {modules.map((m) => (
+          <li class:list={['sys-feature', { 'sys-feature--planned': m.st === 'planned' }]} id={m.id}>
+            <div class="sys-feature__head"><h3>{m.name}</h3><StatusLabel status={m.st} /></div>
+            <p class="sys-feature__state">{m.st === 'planned' ? 'Planned: not available yet.' : 'In development: not available yet.'}</p>
+            <p>{m.x}</p>
+            {m.items && <ul class="pp-list sys-items sys-feature__items">{m.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>}
+            {m.today && (
+              <p class="sys-feature__today">Today: {m.today.map((i) => <><span>{i.t}</span> <StatusLabel status={i.st} /></>)}</p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="today" aria-labelledby="today-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What exists today</p>
+        <h2 id="today-title">What you can use now, in BIZOMAT ERP</h2>
+        <p>These systems work today. They do not track stock or production, but they hold the suppliers, money, plans and drawings around them.</p>
+      </div>
+      <div class="pp-tools">
+        {today.map((g) => (
+          <section aria-labelledby={`today-${g.url.split('/')[2]}`}>
+            <h3 id={`today-${g.url.split('/')[2]}`}><a href={g.url}>{g.name}</a></h3>
+            <ul class="pp-list sys-items">{g.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>
+          </section>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="design" aria-labelledby="design-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">How it is designed to fit together</p>
+        <h2 id="design-title">Designed to work through the systems you already use</h2>
+        <p>The planned modules are designed to use Finance for purchase orders, bills and stock values, Projects for the work of each operation, and the CRM for customers. Nothing is copied: each record stays in its own system. These flows are a design, not something that works today.</p>
+      </div>
+      <div class="sys-concepts">
+        <figure class="sys-concept">
+          <h3 class="sys-subhead">Selling and making</h3>
+          <ol aria-label="Planned flow for selling and making">{sellFlow.map((s) => <li><span>{s}</span></li>)}</ol>
+          <figcaption><span>Designed flow from an accepted quote to an invoice. Every step after the quote is planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
+        </figure>
+        <figure class="sys-concept">
+          <h3 class="sys-subhead">Buying and receiving</h3>
+          <ol aria-label="Planned flow for buying and receiving">{buyFlow.map((s) => <li><span>{s}</span></li>)}</ol>
+          <figcaption><span>Designed flow from a requisition to a supplier bill. Purchase orders and bills exist in Finance today; the rest is planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
+        </figure>
+      </div>
+      <div class="sys-planned sys-preview">
+        <p class="sys-planned__status"><StatusLabel status="planned" /> Design preview</p>
+        <h3>See the design</h3>
+        <p>The BIZOMAT ERP design preview shows how the planned modules are designed to look and work. It uses demonstration data only: nothing you do there is saved, and it never stores your data.</p>
+        <div class="sys-actions">
+          <Button href={PREVIEW} variant="secondary" rel="noopener" data-cta="mfg-preview-2">Open the design preview with demonstration data</Button>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Questions</p>
+        <h2 id="faq-title">About Manufacturing and Operations</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Would you use one of these modules? <a href="/contact/?service=feedback#enquiry">Tell us what you need it for</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="mfg-cta">
+    <Container class="pp-band">
+      <div>
+        <h2 id="mfg-cta">Use the modules that work today.</h2>
+        <p>{erp.access?.note}</p>
+      </div>
+      <div class="pp-band__actions">
+        <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-band-erp">Use BIZOMAT ERP today</Button>
+        <Button href={erp.url} variant="secondary" data-cta="mfg-band-about">About {erp.name}</Button>
+        <Button href={SYSTEMS_HOME} variant="secondary" data-cta="mfg-band-all">All systems</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

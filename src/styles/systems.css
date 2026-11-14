@@ -162,6 +162,18 @@
 .sys-walk h3 .bz-badge, .sys-feature__head .bz-badge { font-size: .64rem; }
 .pp-band p { margin: .6rem 0 0; max-width: 52ch; }
 
+/* ---------- Planned page and guide details ---------- */
+.sys-hero-status { margin-top: 1rem; }
+.sys-features--spaced { margin-top: 1.5rem; }
+.sys-feature__state { color: var(--ink) !important; font-weight: 600; font-size: .92rem !important; }
+.sys-feature__items { margin-top: .9rem; }
+.sys-feature__items li { font-size: .92rem; }
+.sys-feature p.sys-feature__today .bz-badge { margin-left: .3rem; font-size: .64rem; }
+.sys-concepts { display: grid; gap: 1rem; }
+.sys-concept .sys-subhead { margin-bottom: .9rem; }
+.sys-preview { margin-top: 1.5rem; }
+.sys-guide-status { margin: .7rem 0 0; }
+
 .sys-trademark { margin: 2.5rem 0 0; max-width: 80ch; color: var(--muted); font-size: .82rem; }
 
 @media (max-width: 1000px) {
