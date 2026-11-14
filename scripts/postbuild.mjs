@@ -89,12 +89,12 @@ ${Object.entries(securityHeaders).map(([k, v]) => `  ${k}: ${v}`).join('\n')}
 /pagefind/*
   Cache-Control: public, max-age=3600
 
-# The ERP design prototype (demonstration data; added to the image by infrastructure/fly/Dockerfile, not by this
+# The BIZOMAT System preview (demonstration data; added to the image by infrastructure/fly/Dockerfile, not by this
 # build): out of search engines, and its hashed files cached for good.
-/erp-design-preview/*
+/system-preview/*
   X-Robots-Tag: noindex, nofollow
 
-/erp-design-preview/assets/*
+/system-preview/assets/*
   Cache-Control: public, max-age=31536000, immutable
 
 # Keep the *.pages.dev address out of search engines; bizomat.ai is the canonical domain.

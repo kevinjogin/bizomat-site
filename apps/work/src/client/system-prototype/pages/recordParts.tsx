@@ -138,7 +138,7 @@ export function PaymentsPanel({ r, full }: { r: Row; full?: boolean }) {
     const paid = r.paid + a;
     const balance = Math.round((r.total - paid) * 100) / 100;
     const before = { paid: r.paid, balance: r.balance, status: r.status, payments: r.payments };
-    patchRecord('invoice', r.id, { paid, balance, status: balance <= 0 ? 'Paid' : 'Partly paid', payments: [...payments, { date, method, reference: 'Recorded in ERP', amount: a, by: 'Alex Morgan' }] });
+    patchRecord('invoice', r.id, { paid, balance, status: balance <= 0 ? 'Paid' : 'Partly paid', payments: [...payments, { date, method, reference: 'Recorded in the System', amount: a, by: 'Alex Morgan' }] });
     toast(`Payment of ${money(a, true)} recorded on ${r.id}.`, 'info', { label: 'Undo', run: () => patchRecord('invoice', r.id, before) });
     setError('');
   };
@@ -607,7 +607,7 @@ export function ProductDrawings({ r }: { r: Row }) {
   const rows = OP.drawings.filter((v) => v.product === r.id);
   return (
     <Panel title="Drawings and models" actions={<a className="btn sm" href="https://bizomat.ai/cad/" target="_blank" rel="noopener noreferrer">Open in CAD Automation <PIcon name="share" size={13} /><span className="sr-only">(opens in a new tab)</span></a>}>
-      <p className="muted small">CAD Automation holds the files and runs the automation. ERP keeps the link and the revision.</p>
+      <p className="muted small">CAD Automation holds the files and runs the automation. System keeps the link and the revision.</p>
       <MiniTable rows={rows} empty="No drawings linked." cols={[{ label: 'Number', get: (v) => <RecLink id={v.id} /> }, { label: 'Title', get: (v) => v.title }, { label: 'Revision', get: (v) => v.rev }, { label: 'Status', get: (v) => <StatusBadge status={v.status} /> }]} />
     </Panel>
   );
@@ -900,7 +900,7 @@ export function PoReceiving({ r }: { r: Row }) {
   const lines: Line[] = r.lines ?? [];
   return (
     <Panel title="Receiving">
-      <p className="muted small">Planned: ERP adds lines and receiving to the Finance purchase order.</p>
+      <p className="muted small">Planned: the System adds lines and receiving to the Finance purchase order.</p>
       <div className="erp-table-scroll">
         <table className="data-table erp-table">
           <thead>

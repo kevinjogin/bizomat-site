@@ -25,6 +25,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   each, has departments that appear in every tool, and links them (customer record, won deal to draft invoice, deal to
   project, project costs). Registration checks say what they prove: never call an ABN "confirmed with the register"
   unless `ABR_GUID` is set and the lookup ran, or a phone number "verified" (no SMS provider).
+  **BIZOMAT System** (owner, 14 Nov 2026; called ERP in the earlier plans and in `docs/erp/`): the one system that
+  brings every tool and the planned operations modules under one shell, CAD Automation included as its own section
+  (the same MCP connector, installer, add-in and Companion). Today it is a design preview with demonstration data at
+  `bizomat.ai/system-preview/`; nothing of it is built: never present it as working.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
@@ -170,8 +174,8 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/crm-platform/`, `/crm-platform/guide/`,
 `/finance-platform/`, `/finance-platform/guide/`, `/resources/`, `/tools/`, `/reados/`,
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
-`/erp-design-preview/` (the ERP design prototype, demonstration data, out of search; owner, 14 Nov 2026;
-`docs/erp/ux/08-prototype-guide.md`), and every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
+`/system-preview/` (the BIZOMAT System preview, demonstration data, out of search; `/erp-design-preview/` answers 301
+there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), and every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
 and **Sign in**, that a new visit opens in the computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/` and `/company/` on bizomat.ai, and their old hosts),

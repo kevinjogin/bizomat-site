@@ -5,6 +5,10 @@
 /proof-of-work /engine-room/ 301
 /proof-of-work/ /engine-room/ 301
 
+# The ERP design preview became the BIZOMAT System preview (owner, 14 Nov 2026).
+/erp-design-preview /system-preview/ 301
+/erp-design-preview/ /system-preview/ 301
+
 # READOS permanent redirects. Generated from the published collection and volume layouts before each
 # reorganisation; every old book and chapter URL points straight at its current page (no chains).
 # Regenerate when READOS books are renamed or chapters move, including the retired Insights section at the end.

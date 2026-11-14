@@ -1,4 +1,4 @@
-// The ERP shell (information architecture, section 2): the prototype banner, the header (brand, company and site,
+// The System shell (information architecture, section 2): the prototype banner, the header (brand, company and site,
 // search, quick create, notifications, help, user menu), the sidebar (Home, My Work, Favourites, Recent and the module
 // sections for the role) and, on phones, a drawer and a bottom bar.
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
@@ -24,10 +24,10 @@ const QUICK_CREATE: [string, string, string, string][] = [
   ['Quote', '/sales/quotes/new', 'file', 'Finance'],
   ['Invoice', '/finance/invoices/new', 'doc', 'Finance'],
   ['Bill', '/finance/bills/new', 'file', 'Finance'],
-  ['Product', '/products/products/new', 'box', 'ERP'],
-  ['Purchase requisition', '/procurement/requisitions/new', 'form', 'ERP'],
-  ['Work order', '/manufacturing/work-orders/new', 'factory', 'ERP'],
-  ['Inspection', '/quality/inspections/new', 'clipboard', 'ERP'],
+  ['Product', '/products/products/new', 'box', 'System'],
+  ['Purchase requisition', '/procurement/requisitions/new', 'form', 'System'],
+  ['Work order', '/manufacturing/work-orders/new', 'factory', 'System'],
+  ['Inspection', '/quality/inspections/new', 'clipboard', 'System'],
 ];
 const STANDALONE: ModuleId[] = ['CRM', 'Finance', 'Project Management', 'CAD Automation', 'Company'];
 
@@ -132,10 +132,10 @@ function Header() {
           <PIcon name="menu" />
         </button>
       ) : null}
-      <Link to="/" className="erp-brand" aria-label="BIZOMAT ERP home">
+      <Link to="/" className="erp-brand" aria-label="BIZOMAT System home">
         <BrandMark size={28} />
         {!phone ? <Wordmark height={15} /> : null}
-        <span className="erp-product">ERP</span>
+        <span className="erp-product">System</span>
       </Link>
       {!phone ? <ContextSelectors co={co} site={site} setCompany={setCompany} setSite={setSite} /> : null}
       <button type="button" className="erp-search-trigger" onClick={() => openSearch()} aria-label="Search everything (press slash)">
@@ -152,7 +152,7 @@ function Header() {
               <MenuEntry
                 key={label}
                 icon={icon}
-                hint={mod === 'ERP' ? 'ERP' : mod}
+                hint={mod === 'System' ? 'System' : mod}
                 onClick={() => {
                   close();
                   navigate(to);
@@ -304,8 +304,8 @@ function Header() {
             </dl>
           ) : (
             <div className="erp-about">
-              <p>This is a clickable design prototype of BIZOMAT ERP. Every figure, name and record is invented demonstration data. Nothing is saved on a server and nothing is sent.</p>
-              <p>Pages carry their state: Working (an existing BIZOMAT screen, shown here as a mock), Connected (an ERP screen over existing records) or Planned (a new module).</p>
+              <p>This is a clickable design prototype of BIZOMAT System. Every figure, name and record is invented demonstration data. Nothing is saved on a server and nothing is sent.</p>
+              <p>Pages carry their state: Working (an existing BIZOMAT screen, shown here as a mock), Connected (a System screen over existing records) or Planned (a new module).</p>
               <p>Layouts, favourites, saved views and saved reports are kept on this computer only.</p>
             </div>
           )}

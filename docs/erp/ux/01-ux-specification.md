@@ -92,6 +92,6 @@ Defined in `05-reusable-screens.md`; every module uses the same patterns.
 | 5 | Reusable screen designs | `05-reusable-screens.md` |
 | 6 | Design system and component library | `06-design-system.md` |
 | 7 | Responsive layouts | `07-responsive-layouts.md` |
-| 8 | Clickable prototype | `08-prototype-guide.md` and `apps/work/src/client/erp-prototype/` |
+| 8 | Clickable prototype | `08-prototype-guide.md` and `apps/work/src/client/system-prototype/` |
 | 9 | User journeys | `09-user-journeys.md` |
 | 10 | Implementation recommendations | `10-implementation-recommendations.md` |

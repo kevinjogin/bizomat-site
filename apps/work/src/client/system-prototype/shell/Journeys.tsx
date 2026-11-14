@@ -39,7 +39,7 @@ export const JOURNEYS: Journey[] = [
     n: 2,
     title: "Sales manager reviews a customer's quotation",
     role: 'sales',
-    shows: 'Global search grouped by type, a customer record with its own tabs, and a quote from Finance shown inside ERP.',
+    shows: 'Global search grouped by type, a customer record with its own tabs, and a quote from Finance shown inside the System.',
     steps: [
       { label: 'Search for "Harbour"', search: 'Harbour', role: 'sales' },
       { label: 'Open the customer Harbour Builders', to: '/sales/customers/CUS-001', hl: 'record-header' },
@@ -51,7 +51,7 @@ export const JOURNEYS: Journey[] = [
     n: 3,
     title: "Accountant checks an invoice's payment status",
     role: 'accountant',
-    shows: 'A Working Finance list inside ERP, the record pattern and the payments panel.',
+    shows: 'A Working Finance list inside the System, the record pattern and the payments panel.',
     steps: [
       { label: 'Open Finance, Invoices', to: '/finance/invoices', hl: 'INV-2291', role: 'accountant' },
       { label: 'Open INV-2291 and read the payments panel', to: '/finance/invoices/INV-2291', hl: 'payments-panel' },

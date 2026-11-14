@@ -183,25 +183,25 @@ const add = (id: string, title: string, kind: WidgetDef['kind'], module: string,
 add('ceo-revenue', 'Revenue this month', 'Figure', 'Finance', 's', () => <Kpi label="Revenue this month" value={compactMoney(revenueThisMonth)} note={`Month to date · target ${compactMoney(target(thisMonth))} for the month`} to="/reports/enterprise/company-performance" />);
 add('ceo-margin', 'Gross margin', 'Figure', 'Finance', 's', () => <Kpi label="Gross margin" value="31.8%" note="Last month 30.9%" tone="success" to="/reports/enterprise/company-performance" />);
 add('ceo-cash', 'Cash', 'Figure', 'Finance', 's', () => <Kpi label="Cash" value={compactMoney(cash)} note="Three accounts, from Finance" to="/finance/banking" />);
-add('ceo-late', 'Orders late', 'Figure', 'ERP', 's', () => <Kpi label="Orders late" value={String(lateOrders.length)} note="Promised date passed" tone="danger" to="/sales/orders?view=late" />);
+add('ceo-late', 'Orders late', 'Figure', 'System', 's', () => <Kpi label="Orders late" value={String(lateOrders.length)} note="Promised date passed" tone="danger" to="/sales/orders?view=late" />);
 add('ceo-revenue-target', 'Revenue against target', 'Chart', 'Finance', 'm', () => <RevenueTarget />);
-add('ceo-intake', 'Order intake by month', 'Chart', 'ERP', 'm', () => (
+add('ceo-intake', 'Order intake by month', 'Chart', 'System', 'm', () => (
   <ChartFrame headers={['Month', 'Order intake']} rows={months12.map((m, i) => [monthLabel(`${m}-01`), money(intakeByMonth[i])])}>
     <BarChart label="Order intake by month, last 12 months" labels={months12.map((m) => monthLabel(`${m}-01`))} series={[{ name: 'Order intake', values: intakeByMonth }]} format={compactMoney} />
   </ChartFrame>
 ));
-add('ceo-delayed', 'Delayed orders', 'List', 'ERP', 'm', () => <DelayedOrders />);
+add('ceo-delayed', 'Delayed orders', 'List', 'System', 'm', () => <DelayedOrders />);
 add('approvals', 'Approvals waiting', 'List', 'My Work', 'm', () => <ApprovalsWaiting />);
 add('ceo-top-customers', 'Top customers', 'List', 'CRM', 'm', () => (
   <WList items={[...SF.customers].sort((a, b) => b.ytdRevenue - a.ytdRevenue).slice(0, 5).map((c) => ({ id: c.id, title: c.name, meta: `${compactMoney(c.ytdRevenue)} this year` }))} more={{ to: '/sales/customers', label: 'All customers' }} />
 ));
 
 // Executive
-add('ex-otd', 'On-time delivery', 'Figure', 'ERP', 's', () => <Kpi label="On-time delivery" value="91.4%" note="Last 90 days · goal 95%" tone="warning" to="/sales/deliveries" />);
-add('ex-open-orders', 'Open orders', 'Figure', 'ERP', 's', () => <Kpi label="Open orders" value={String(openOrders.length)} note={`${compactMoney(openOrders.reduce((s, o) => s + o.total, 0))} to deliver`} to="/sales/orders?view=open" />);
-add('ex-utilisation', 'Utilisation', 'Figure', 'ERP', 's', () => <Kpi label="Utilisation" value={`${avgLoad}%`} note="Average load of work centres" to="/manufacturing/work-centres" />);
-add('ex-ncrs', 'Open nonconformances', 'Figure', 'ERP', 's', () => <Kpi label="Open nonconformances" value={String(openNcrs.length)} note="One for a late order" tone="warning" to="/quality/nonconformances?view=open" />);
-add('ex-throughput', 'Throughput by week', 'Chart', 'ERP', 'm', () => {
+add('ex-otd', 'On-time delivery', 'Figure', 'System', 's', () => <Kpi label="On-time delivery" value="91.4%" note="Last 90 days · goal 95%" tone="warning" to="/sales/deliveries" />);
+add('ex-open-orders', 'Open orders', 'Figure', 'System', 's', () => <Kpi label="Open orders" value={String(openOrders.length)} note={`${compactMoney(openOrders.reduce((s, o) => s + o.total, 0))} to deliver`} to="/sales/orders?view=open" />);
+add('ex-utilisation', 'Utilisation', 'Figure', 'System', 's', () => <Kpi label="Utilisation" value={`${avgLoad}%`} note="Average load of work centres" to="/manufacturing/work-centres" />);
+add('ex-ncrs', 'Open nonconformances', 'Figure', 'System', 's', () => <Kpi label="Open nonconformances" value={String(openNcrs.length)} note="One for a late order" tone="warning" to="/quality/nonconformances?view=open" />);
+add('ex-throughput', 'Throughput by week', 'Chart', 'System', 'm', () => {
   const vals = [11, 13, 12, 14, 10, 15, 12, 9];
   return (
     <ChartFrame headers={['Week', 'Work orders completed']} rows={weeks8.map((w, i) => [w, vals[i]])}>
@@ -209,7 +209,7 @@ add('ex-throughput', 'Throughput by week', 'Chart', 'ERP', 'm', () => {
     </ChartFrame>
   );
 });
-add('ex-escalations', 'Escalations', 'List', 'ERP', 'm', () => (
+add('ex-escalations', 'Escalations', 'List', 'System', 'm', () => (
   <WList
     items={[
       { id: 'NCR-0121', title: 'Weld rework holds SO-1048', meta: 'Quality · raised 11 Nov', status: 'Open' },
@@ -223,7 +223,7 @@ add('ex-escalations', 'Escalations', 'List', 'ERP', 'm', () => (
 add('sa-pipeline', 'Pipeline value', 'Figure', 'CRM', 's', () => <Kpi label="Pipeline value" value={compactMoney(openOpps.reduce((s, o) => s + o.value, 0))} note={`${openOpps.length} open opportunities`} to="/sales/opportunities" />);
 add('sa-winrate', 'Win rate', 'Figure', 'CRM', 's', () => <Kpi label="Win rate" value={`${Math.round((won / Math.max(1, won + lost)) * 100)}%`} note="Last 12 months" to="/sales/reports" />);
 add('sa-quotes', 'Quotes awaiting answer', 'Figure', 'Finance', 's', () => <Kpi label="Quotes awaiting answer" value={String(SF.quotes.filter((q) => q.status === 'Sent').length)} note="Sent, not yet accepted" to="/sales/quotes?view=awaiting" />);
-add('sa-orders', 'Orders this month', 'Figure', 'ERP', 's', () => <Kpi label="Orders this month" value={String(SF.salesOrders.filter((s) => s.ordered.startsWith(thisMonth)).length)} note={compactMoney(intakeByMonth[11])} to="/sales/orders" />);
+add('sa-orders', 'Orders this month', 'Figure', 'System', 's', () => <Kpi label="Orders this month" value={String(SF.salesOrders.filter((s) => s.ordered.startsWith(thisMonth)).length)} note={compactMoney(intakeByMonth[11])} to="/sales/orders" />);
 add('sa-pipeline-stage', 'Pipeline by stage', 'Chart', 'CRM', 'm', () => <PipelineByStage />);
 add('sa-expiring', 'Quotes expiring', 'List', 'Finance', 'm', () => (
   <WList items={SF.quotes.filter((q) => q.status === 'Sent').sort((a, b) => (a.expires < b.expires ? -1 : 1)).slice(0, 5).map((q) => ({ id: q.id, title: q.customer, meta: `Expires ${fmtDate(q.expires)} · ${compactMoney(q.total)}`, status: daysFrom(q.expires) <= 7 ? 'Expires soon' : 'Sent' }))} more={{ to: '/sales/quotes?view=expiring', label: 'All expiring quotes' }} />
@@ -252,7 +252,7 @@ add('fi-overdue', 'Overdue invoices', 'List', 'Finance', 'm', () => (
 add('fi-bills', 'Bills due', 'List', 'Finance', 'm', () => (
   <WList items={SF.bills.filter((b) => b.status !== 'Paid' && b.due <= addDays(TODAY, 14)).slice(0, 5).map((b) => ({ id: b.id, title: b.supplier, meta: `${money(b.total)} · due ${fmtDate(b.due)}`, status: b.status }))} more={{ to: '/finance/bills', label: 'All bills' }} />
 ));
-add('fi-approvals', 'Finance approvals', 'List', 'Finance', 'm', () => <ApprovalsWaiting modules={['Finance', 'ERP']} />);
+add('fi-approvals', 'Finance approvals', 'List', 'Finance', 'm', () => <ApprovalsWaiting modules={['Finance', 'System']} />);
 
 // Accountant
 add('ac-unrec', 'Unreconciled lines', 'Figure', 'Finance', 's', () => <Kpi label="Unreconciled lines" value={String(SF.statementLines.filter((l) => l.status === 'To match').length)} note="Operating account" tone="warning" to="/finance/banking" />);
@@ -279,42 +279,47 @@ add('ac-drafts', 'Draft documents', 'List', 'Finance', 'm', () => (
 ));
 
 // Engineer
-add('en-ecos', 'Open engineering changes', 'Figure', 'ERP', 's', () => <Kpi label="Open engineering changes" value={String(OP.ecos.filter((e) => !['Released', 'Rejected'].includes(e.status)).length)} note="ECO-0046 in review" to="/engineering/changes" />);
-add('en-boms', 'BOMs in review', 'Figure', 'ERP', 's', () => <Kpi label="BOMs in review" value={String(OP.boms.filter((b) => b.status === 'In review').length)} note="Revision C of PRD-1001" to="/products/boms?view=review" />);
+add('en-ecos', 'Open engineering changes', 'Figure', 'System', 's', () => <Kpi label="Open engineering changes" value={String(OP.ecos.filter((e) => !['Released', 'Rejected'].includes(e.status)).length)} note="ECO-0046 in review" to="/engineering/changes" />);
+add('en-boms', 'BOMs in review', 'Figure', 'System', 's', () => <Kpi label="BOMs in review" value={String(OP.boms.filter((b) => b.status === 'In review').length)} note="Revision C of PRD-1001" to="/products/boms?view=review" />);
 add('en-drawings', 'Drawings pending', 'Figure', 'CAD Automation', 's', () => <Kpi label="Drawings pending" value={String(OP.drawings.filter((d) => d.status === 'In review').length)} note="Waiting for approval" to="/engineering/drawings" />);
-add('en-changes', 'Changes by status', 'Chart', 'ERP', 'm', () => {
+add('en-changes', 'Changes by status', 'Chart', 'System', 'm', () => {
   const st = ['In review', 'Awaiting approval', 'Released', 'Rejected'];
   return <HBarChart label="Engineering changes by status" items={st.map((s) => ({ label: s, value: OP.ecos.filter((e) => e.status === s).length }))} format={(n) => String(Math.round(n))} />;
 });
 add('en-tasks', 'My engineering tasks', 'List', 'Project Management', 'm', () => (
   <WList items={OP.tasks.filter((t) => t.assignee === 'Tom Walsh' && t.status !== 'Done').map((t) => ({ id: t.id, title: t.title, meta: relDue(t.due), status: t.status }))} more={{ to: '/projects/my-tasks', label: 'All tasks' }} />
 ));
-add('en-cad', 'CAD jobs', 'List', 'CAD Automation', 'm', () => <WList items={OP.cadJobs.slice(0, 5).map((j) => ({ id: j.id, title: j.title, status: j.status }))} more={{ to: '/engineering/cad-jobs', label: 'All CAD jobs' }} />);
+add('cad-status', 'CAD Automation', 'Figure', 'CAD Automation', 's', () => {
+  const on = OP.cadComputers.filter((c) => c.status === 'Online').length;
+  const busy = OP.cadJobs.filter((j) => ['Running', 'Queued'].includes(j.status)).length;
+  return <Kpi label="CAD computers online" value={`${on} of ${OP.cadComputers.length}`} note={`computers online · ${busy} jobs in progress · ${OP.cadConnectors.length} AI connectors`} to="/cad/overview" />;
+});
+add('en-cad', 'CAD jobs', 'List', 'CAD Automation', 'm', () => <WList items={OP.cadJobs.slice(0, 5).map((j) => ({ id: j.id, title: j.title, status: j.status }))} more={{ to: '/cad/jobs', label: 'All CAD jobs' }} />);
 
 // Procurement manager
 add('pr-open', 'Open purchase orders', 'Figure', 'Finance', 's', () => <Kpi label="Open purchase orders" value={String(OP.purchaseOrders.filter((p) => !['Received', 'Closed'].includes(p.status)).length)} note={`${OP.purchaseOrders.filter((p) => p.status === 'Awaiting approval').length} awaiting approval`} to="/procurement/purchase-orders" />);
-add('pr-late', 'Late deliveries', 'Figure', 'ERP', 's', () => <Kpi label="Late deliveries" value={String(OP.purchaseOrders.filter((p) => ['Sent', 'Partly received'].includes(p.status) && p.expected < TODAY).length)} note="Expected date passed" tone="danger" to="/procurement/purchase-orders?view=receipt" />);
+add('pr-late', 'Late deliveries', 'Figure', 'System', 's', () => <Kpi label="Late deliveries" value={String(OP.purchaseOrders.filter((p) => ['Sent', 'Partly received'].includes(p.status) && p.expected < TODAY).length)} note="Expected date passed" tone="danger" to="/procurement/purchase-orders?view=receipt" />);
 add('pr-spend', 'Spend this month', 'Figure', 'Finance', 's', () => <Kpi label="Spend this month" value={compactMoney(OP.purchaseOrders.filter((p) => p.ordered.startsWith(thisMonth)).reduce((s, p) => s + p.total, 0))} note="Purchase orders raised" to="/procurement/performance" />);
-add('pr-spend-supplier', 'Spend by supplier', 'Chart', 'ERP', 'm', () => (
+add('pr-spend-supplier', 'Spend by supplier', 'Chart', 'System', 'm', () => (
   <HBarChart label="Spend by supplier this year" items={[...OP.suppliers].sort((a, b) => b.spendYtd - a.spendYtd).slice(0, 6).map((s) => ({ label: s.name, value: s.spendYtd }))} format={compactMoney} />
 ));
-add('pr-reqs', 'Requisitions to approve', 'List', 'ERP', 'm', () => (
+add('pr-reqs', 'Requisitions to approve', 'List', 'System', 'm', () => (
   <WList items={OP.requisitions.filter((r) => r.status === 'Awaiting approval').map((r) => ({ id: r.id, title: r.title, meta: `${r.requester} · needed ${fmtDate(r.needed)}`, status: r.status }))} more={{ to: '/procurement/requisitions?view=approval', label: 'All requisitions' }} />
 ));
-add('pr-receipt', 'Purchase orders awaiting receipt', 'List', 'ERP', 'm', () => (
+add('pr-receipt', 'Purchase orders awaiting receipt', 'List', 'System', 'm', () => (
   <WList items={OP.purchaseOrders.filter((p) => ['Sent', 'Partly received'].includes(p.status)).map((p) => ({ id: p.id, title: p.supplier, meta: `Expected ${fmtDate(p.expected)}`, status: p.expected < TODAY ? 'Late' : p.status }))} />
 ));
 
 // Production manager
-add('pm-wip', 'Work orders in progress', 'Figure', 'ERP', 's', () => <Kpi label="Work orders in progress" value={String(OP.workOrders.filter((w) => w.status === 'In progress').length)} note={`${OP.workOrders.filter((w) => w.status === 'Released').length} released, waiting to start`} to="/manufacturing/work-orders?view=active" />);
-add('pm-late', 'Late work orders', 'Figure', 'ERP', 's', () => <Kpi label="Late work orders" value={String(OP.workOrders.filter((w) => w.status === 'Delayed').length)} note="Past their due date" tone="danger" to="/manufacturing/work-orders?view=delayed" />);
-add('pm-yield', 'Yield', 'Figure', 'ERP', 's', () => <Kpi label="Yield" value="96.2%" note="First time through, this month" to="/reports/operations" />);
-add('pm-capacity', 'Capacity load', 'Figure', 'ERP', 's', () => <Kpi label="Capacity load" value={`${avgLoad}%`} note="Welding bay at 118%" tone="warning" to="/manufacturing/work-centres" />);
-add('pm-load', 'Load by work centre', 'Chart', 'ERP', 'm', () => <LoadByCentre />);
-add('pm-delayed', 'Delayed work orders', 'List', 'ERP', 'm', () => (
+add('pm-wip', 'Work orders in progress', 'Figure', 'System', 's', () => <Kpi label="Work orders in progress" value={String(OP.workOrders.filter((w) => w.status === 'In progress').length)} note={`${OP.workOrders.filter((w) => w.status === 'Released').length} released, waiting to start`} to="/manufacturing/work-orders?view=active" />);
+add('pm-late', 'Late work orders', 'Figure', 'System', 's', () => <Kpi label="Late work orders" value={String(OP.workOrders.filter((w) => w.status === 'Delayed').length)} note="Past their due date" tone="danger" to="/manufacturing/work-orders?view=delayed" />);
+add('pm-yield', 'Yield', 'Figure', 'System', 's', () => <Kpi label="Yield" value="96.2%" note="First time through, this month" to="/reports/operations" />);
+add('pm-capacity', 'Capacity load', 'Figure', 'System', 's', () => <Kpi label="Capacity load" value={`${avgLoad}%`} note="Welding bay at 118%" tone="warning" to="/manufacturing/work-centres" />);
+add('pm-load', 'Load by work centre', 'Chart', 'System', 'm', () => <LoadByCentre />);
+add('pm-delayed', 'Delayed work orders', 'List', 'System', 'm', () => (
   <WList items={OP.workOrders.filter((w) => w.status === 'Delayed').map((w) => ({ id: w.id, title: `${w.itemName} × ${w.qty}`, meta: `Due ${fmtDate(w.due)}${w.order ? ` · for ${w.order}` : ''}`, status: w.status }))} more={{ to: '/manufacturing/work-orders?view=delayed', label: 'All delayed work orders' }} />
 ));
-add('pm-shortages', 'Shortages', 'List', 'ERP', 'm', () => (
+add('pm-shortages', 'Shortages', 'List', 'System', 'm', () => (
   <WList
     items={[
       { id: 'RM-2001', title: 'Steel plate 10 mm: short 2 sheets for WO-1042', meta: 'PO-0388 expected 18 Nov', status: 'Short' },
@@ -324,11 +329,11 @@ add('pm-shortages', 'Shortages', 'List', 'ERP', 'm', () => (
 ));
 
 // Warehouse manager
-add('wh-receipts', 'Receipts today', 'Figure', 'ERP', 's', () => <Kpi label="Receipts today" value={String(OP.receipts.filter((g) => g.date === TODAY).length + 2)} note="Two more expected this afternoon" to="/inventory/receipts" />);
-add('wh-picks', 'Picks waiting', 'Figure', 'ERP', 's', () => <Kpi label="Picks waiting" value="6" note="For three sales orders" to="/sales/orders?view=open" />);
-add('wh-value', 'Stock value', 'Figure', 'ERP', 's', () => <Kpi label="Stock value" value={compactMoney(OP.stock.reduce((s, x) => s + x.value, 0))} note="Both warehouses" to="/inventory/stock" />);
-add('wh-counts', 'Counts due', 'Figure', 'ERP', 's', () => <Kpi label="Counts due" value={String(OP.counts.filter((c) => c.status === 'Scheduled').length)} note="Next: Zone B tomorrow" to="/inventory/counts" />);
-add('wh-movements', 'Movements by day', 'Chart', 'ERP', 'm', () => {
+add('wh-receipts', 'Receipts today', 'Figure', 'System', 's', () => <Kpi label="Receipts today" value={String(OP.receipts.filter((g) => g.date === TODAY).length + 2)} note="Two more expected this afternoon" to="/inventory/receipts" />);
+add('wh-picks', 'Picks waiting', 'Figure', 'System', 's', () => <Kpi label="Picks waiting" value="6" note="For three sales orders" to="/sales/orders?view=open" />);
+add('wh-value', 'Stock value', 'Figure', 'System', 's', () => <Kpi label="Stock value" value={compactMoney(OP.stock.reduce((s, x) => s + x.value, 0))} note="Both warehouses" to="/inventory/stock" />);
+add('wh-counts', 'Counts due', 'Figure', 'System', 's', () => <Kpi label="Counts due" value={String(OP.counts.filter((c) => c.status === 'Scheduled').length)} note="Next: Zone B tomorrow" to="/inventory/counts" />);
+add('wh-movements', 'Movements by day', 'Chart', 'System', 'm', () => {
   const days = Array.from({ length: 7 }, (_, i) => fmtDate(addDays(TODAY, i - 6)).slice(0, -5));
   const rec = [8, 5, 0, 0, 9, 7, 11];
   const iss = [12, 9, 0, 0, 14, 10, 8];
@@ -338,26 +343,26 @@ add('wh-movements', 'Movements by day', 'Chart', 'ERP', 'm', () => {
     </ChartFrame>
   );
 });
-add('wh-putaway', 'Goods received to put away', 'List', 'ERP', 'm', () => (
+add('wh-putaway', 'Goods received to put away', 'List', 'System', 'm', () => (
   <WList items={OP.receipts.filter((g) => g.status === 'Awaiting put-away').map((g) => ({ id: g.id, title: g.supplier, meta: `Received ${fmtDate(g.date)} · ${g.po}`, status: g.status }))} more={{ to: '/inventory/receipts?view=putaway', label: 'All receipts awaiting put-away' }} />
 ));
-add('wh-low', 'Low stock', 'List', 'ERP', 'm', () => (
+add('wh-low', 'Low stock', 'List', 'System', 'm', () => (
   <WList items={OP.stock.filter((s) => s.status !== 'In stock').slice(0, 5).map((s) => ({ id: s.id, title: s.name, meta: `${s.onHand} on hand · reorder at ${s.reorder}`, status: s.status }))} more={{ to: '/inventory/stock?view=low', label: 'All low stock' }} />
 ));
 
 // Quality manager
-add('qa-due', 'Inspections due', 'Figure', 'ERP', 's', () => <Kpi label="Inspections due" value={String(OP.inspections.filter((i) => ['Scheduled', 'Open', 'Awaiting review'].includes(i.status)).length)} note="Today and scheduled" to="/quality/inspections?view=today" />);
-add('qa-ncrs', 'Open nonconformances', 'Figure', 'ERP', 's', () => <Kpi label="Open nonconformances" value={String(openNcrs.length)} note="NCR-0121 holds a late order" tone="warning" to="/quality/nonconformances?view=open" />);
-add('qa-fpy', 'First-pass yield', 'Figure', 'ERP', 's', () => <Kpi label="First-pass yield" value={`${((passed / Math.max(1, passed + failed)) * 100).toFixed(1)}%`} note="Inspections passed first time" to="/quality/inspections" />);
-add('qa-capa', 'Corrective actions overdue', 'Figure', 'ERP', 's', () => <Kpi label="Corrective actions overdue" value={String(OP.capas.filter((c) => c.status === 'Overdue').length)} note="CAPA-029" tone="danger" to="/quality/corrective-actions" />);
-add('qa-causes', 'Nonconformances by cause', 'Chart', 'ERP', 'm', () => {
+add('qa-due', 'Inspections due', 'Figure', 'System', 's', () => <Kpi label="Inspections due" value={String(OP.inspections.filter((i) => ['Scheduled', 'Open', 'Awaiting review'].includes(i.status)).length)} note="Today and scheduled" to="/quality/inspections?view=today" />);
+add('qa-ncrs', 'Open nonconformances', 'Figure', 'System', 's', () => <Kpi label="Open nonconformances" value={String(openNcrs.length)} note="NCR-0121 holds a late order" tone="warning" to="/quality/nonconformances?view=open" />);
+add('qa-fpy', 'First-pass yield', 'Figure', 'System', 's', () => <Kpi label="First-pass yield" value={`${((passed / Math.max(1, passed + failed)) * 100).toFixed(1)}%`} note="Inspections passed first time" to="/quality/inspections" />);
+add('qa-capa', 'Corrective actions overdue', 'Figure', 'System', 's', () => <Kpi label="Corrective actions overdue" value={String(OP.capas.filter((c) => c.status === 'Overdue').length)} note="CAPA-029" tone="danger" to="/quality/corrective-actions" />);
+add('qa-causes', 'Nonconformances by cause', 'Chart', 'System', 'm', () => {
   const causes = Array.from(new Set(OP.ncrs.map((n) => n.cause)));
   return <HBarChart label="Nonconformances by cause, last 90 days" items={causes.map((c) => ({ label: c, value: OP.ncrs.filter((n) => n.cause === c).length })).sort((a, b) => b.value - a.value)} format={(n) => String(Math.round(n))} />;
 });
-add('qa-today', 'Inspections today', 'List', 'ERP', 'm', () => (
+add('qa-today', 'Inspections today', 'List', 'System', 'm', () => (
   <WList items={OP.inspections.filter((i) => ['Open', 'Awaiting review', 'Scheduled'].includes(i.status)).map((i) => ({ id: i.id, title: `${i.type} of ${i.subject}`, meta: `${fmtDate(i.date)} · ${i.inspector}`, status: i.status }))} more={{ to: '/quality/inspections?view=today', label: 'All open inspections' }} />
 ));
-add('qa-open-ncrs', 'Open nonconformances list', 'List', 'ERP', 'm', () => <WList items={openNcrs.map((n) => ({ id: n.id, title: n.title, meta: `${n.source} · ${n.disposition}`, status: n.status }))} />);
+add('qa-open-ncrs', 'Open nonconformances list', 'List', 'System', 'm', () => <WList items={openNcrs.map((n) => ({ id: n.id, title: n.title, meta: `${n.source} · ${n.disposition}`, status: n.status }))} />);
 
 // Project manager
 add('pj-active', 'Projects active', 'Figure', 'Project Management', 's', () => <Kpi label="Projects active" value={String(OP.projects.filter((p) => !['Completed', 'Not started'].includes(p.status)).length)} note="Two at risk or late" tone="warning" to="/projects/projects" />);
@@ -400,7 +405,7 @@ add('ad-requests', 'Access requests', 'List', 'Company', 'm', () => <WList items
 
 // Shared
 add('mywork', 'My Work summary', 'List', 'My Work', 's', () => <MyWorkSummary />);
-add('notices', 'Latest notifications', 'List', 'ERP', 'm', () => <Notices />);
+add('notices', 'Latest notifications', 'List', 'System', 'm', () => <Notices />);
 function Notices() {
   const { notices } = useErp();
   return (
@@ -424,16 +429,16 @@ export const WIDGET_LIST = W;
 
 const L = (...items: [string, Size?][]) => items.map(([id, size]) => ({ id, size: size ?? WIDGETS[id].size }));
 export const DEFAULT_LAYOUTS: Record<RoleId, { id: string; size: Size }[]> = {
-  ceo: L(['ceo-revenue'], ['ceo-margin'], ['ceo-cash'], ['ceo-late'], ['ceo-revenue-target'], ['ceo-delayed'], ['ceo-intake'], ['approvals'], ['ceo-top-customers', 'f']),
-  executive: L(['ex-otd'], ['ex-open-orders'], ['ex-utilisation'], ['ex-ncrs'], ['ex-throughput'], ['ceo-delayed'], ['ex-escalations', 'f']),
+  ceo: L(['ceo-revenue'], ['ceo-margin'], ['ceo-cash'], ['ceo-late'], ['ceo-revenue-target'], ['ceo-delayed'], ['ceo-intake'], ['approvals'], ['cad-status'], ['ceo-top-customers', 'f']),
+  executive: L(['ex-otd'], ['ex-open-orders'], ['ex-utilisation'], ['ex-ncrs'], ['ex-throughput'], ['ceo-delayed'], ['cad-status'], ['ex-escalations', 'f']),
   sales: L(['sa-pipeline'], ['sa-winrate'], ['sa-quotes'], ['sa-orders'], ['sa-pipeline-stage'], ['sa-expiring'], ['sa-followups', 'f']),
   finance: L(['fi-cash'], ['fi-ar'], ['fi-ap'], ['fi-gst'], ['fi-forecast'], ['fi-overdue'], ['fi-bills'], ['fi-approvals']),
   accountant: L(['ac-unrec'], ['ac-journals'], ['ac-lock'], ['mywork'], ['ac-ageing'], ['ac-match'], ['ac-drafts', 'f']),
-  engineer: L(['en-ecos'], ['en-boms'], ['en-drawings'], ['mywork'], ['en-changes'], ['en-tasks'], ['en-cad', 'f']),
+  engineer: L(['cad-status'], ['en-ecos'], ['en-boms'], ['en-drawings'], ['en-changes'], ['en-tasks'], ['mywork'], ['en-cad', 'f']),
   procurement: L(['pr-open'], ['pr-late'], ['pr-spend'], ['mywork'], ['pr-spend-supplier'], ['pr-reqs'], ['pr-receipt', 'f']),
   production: L(['pm-wip'], ['pm-late'], ['pm-yield'], ['pm-capacity'], ['pm-load'], ['pm-delayed'], ['pm-shortages', 'f']),
   warehouse: L(['wh-receipts'], ['wh-picks'], ['wh-value'], ['wh-counts'], ['wh-movements'], ['wh-putaway'], ['wh-low', 'f']),
   quality: L(['qa-due'], ['qa-ncrs'], ['qa-fpy'], ['qa-capa'], ['qa-causes'], ['qa-today'], ['qa-open-ncrs', 'f']),
   project: L(['pj-active'], ['pj-overdue'], ['pj-budget'], ['mywork'], ['pj-burndown'], ['pj-overdue-list'], ['pj-milestones', 'f']),
-  admin: L(['ad-people'], ['ad-invites'], ['ad-modules'], ['ad-failed'], ['ad-active'], ['ad-invitations'], ['ad-requests', 'f']),
+  admin: L(['ad-people'], ['ad-invites'], ['ad-modules'], ['cad-status'], ['ad-failed'], ['ad-active'], ['ad-invitations'], ['ad-requests', 'f']),
 };

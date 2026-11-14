@@ -1,6 +1,6 @@
-// The page header of every ERP page: breadcrumb, title, identifier and status for records, the state badges
+// The page header of every System page: breadcrumb, title, identifier and status for records, the state badges
 // (Working, Connected, Planned), the favourite star, primary actions and a secondary actions menu. Under it, a note
-// says what the page is: an existing BIZOMAT screen, a connected ERP screen or a planned module.
+// says what the page is: an existing BIZOMAT screen, a connected System screen or a planned module.
 import { useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { PIcon } from '../icons';
@@ -32,7 +32,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
 export function useVisit(path: string, label: string) {
   const { pushRecent } = useErp();
   useEffect(() => {
-    document.title = `${label} · BIZOMAT ERP design prototype`;
+    document.title = `${label} · BIZOMAT System preview`;
     pushRecent({ path, label });
   }, [path, label, pushRecent]);
 }
@@ -124,10 +124,17 @@ export function StateNote({ page, record }: { page: NavPage; record?: boolean })
   else if (st[0] === 'W')
     text = (
       <>
-        This {what} opens the working {page.module} screen <code>{page.opens}</code> inside ERP, with the same sign-in and data. The prototype shows a representative mock with demonstration data.
+        This {what} opens the working {page.module} screen <code>{page.opens}</code> inside the System, with the same sign-in and data. The prototype shows a representative mock with demonstration data.
       </>
     );
-  else if (st[0] === 'C') text = <>Connected: an ERP screen over records that already exist in Project Management, Finance and the CRM. {page.opens ? <>Source: {page.opens}.</> : null}</>;
+  else if (st[0] === 'C' && page.module === 'CAD Automation')
+    text = (
+      <>
+        A System screen over CAD Automation's own computers, AI connectors and jobs. {page.stateNote ? <>{page.stateNote} </> : null}
+        {page.opens ? <>Source: {page.opens}.</> : null}
+      </>
+    );
+  else if (st[0] === 'C') text = <>Connected: a System screen over records that already exist in Project Management, Finance and the CRM. {page.opens ? <>Source: {page.opens}.</> : null}</>;
   else text = <>Planned module: prototype screen. {page.opens}. Demonstration data only.</>;
   return (
     <div className={`erp-statenote s-${st[0]}`} role="note">

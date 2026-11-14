@@ -1,7 +1,7 @@
 # BIZOMAT ERP: responsive layouts
 
 Status: design for review. Desktop is the primary layout; tablets and phones get layouts of their own, not a squeezed
-desktop. The prototype (`apps/work/src/client/erp-prototype/erp.css`, section "responsive") implements every rule
+desktop. The prototype (`apps/work/src/client/system-prototype/erp.css`, section "responsive") implements every rule
 below; screenshots at 1440 × 900, 900 × 1100 and 390 × 844 are listed in `08-prototype-guide.md`.
 
 ## 1. Breakpoints

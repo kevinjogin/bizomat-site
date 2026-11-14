@@ -1,4 +1,4 @@
-// Icons of the ERP prototype: the app's own line icon set (components/ui/Icon.tsx) plus a few drawn here for the
+// Icons of the System prototype: the app's own line icon set (components/ui/Icon.tsx) plus a few drawn here for the
 // operations modules, on the same 24 x 24 grid and 1.8 stroke.
 import { Icon } from '../components/ui/Icon';
 

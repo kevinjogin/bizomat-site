@@ -1,6 +1,6 @@
 // The navigation map of docs/erp/ux/02-information-architecture.md, section 3, with the role table of section 5.
-// Every page carries its state: W (working: an existing BIZOMAT screen), C (connected: an ERP screen over existing
-// data), P (planned: a new ERP module, shown here with demonstration data).
+// Every page carries its state: W (working: an existing BIZOMAT screen), C (connected: a System screen over existing
+// data), P (planned: a new System module, shown here with demonstration data).
 import type { ModuleId, NavPage, NavSection, PageState, RoleId, SectionId } from './types';
 
 const p = (path: string, label: string, icon: string, state: PageState[], module: ModuleId, extra: Partial<NavPage> = {}): NavPage => ({ path, label, icon, state, module, ...extra });
@@ -18,8 +18,8 @@ export const SECTIONS: NavSection[] = [
       p('sales/opportunities', 'Opportunities and pipeline', 'kanban', ['W'], 'CRM', { opens: '/crm/o/:org/deals', entity: 'opportunity' }),
       p('sales/activities', 'Activities', 'calendar', ['W'], 'CRM', { opens: '/crm/o/:org/activities', entity: 'activity' }),
       p('sales/quotes', 'Quotes', 'file', ['W'], 'Finance', { opens: '/finance/o/:org/quotes', entity: 'quote' }),
-      p('sales/orders', 'Sales orders', 'cart', ['P'], 'ERP', { opens: 'ERP (new), from an accepted quote or a won deal', entity: 'salesOrder' }),
-      p('sales/deliveries', 'Deliveries', 'truck', ['P'], 'ERP', { opens: 'ERP (new), from a sales order', entity: 'delivery' }),
+      p('sales/orders', 'Sales orders', 'cart', ['P'], 'System', { opens: 'System (new), from an accepted quote or a won deal', entity: 'salesOrder' }),
+      p('sales/deliveries', 'Deliveries', 'truck', ['P'], 'System', { opens: 'System (new), from a sales order', entity: 'delivery' }),
       p('sales/reports', 'Sales reports', 'chart', ['W'], 'CRM', { opens: '/crm/o/:org/reports' }),
     ],
   },
@@ -58,14 +58,27 @@ export const SECTIONS: NavSection[] = [
     label: 'Products & Engineering',
     icon: 'pencilRuler',
     pages: [
-      p('products/products', 'Products', 'box', ['P'], 'ERP', { opens: 'ERP product master (new)', entity: 'product' }),
-      p('products/variants', 'Variants', 'copy', ['P'], 'ERP', { opens: 'Tab of the product', entity: 'variant' }),
-      p('products/boms', 'Bills of materials', 'tree', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'bom' }),
-      p('products/routings', 'Routings', 'route', ['P'], 'ERP', { opens: 'ERP (new), shared with Manufacturing', entity: 'routing' }),
-      p('engineering/changes', 'Engineering changes', 'edit', ['P'], 'ERP', { opens: 'ERP (new): change requests and orders', entity: 'eco' }),
-      p('products/revisions', 'Revisions', 'history', ['P'], 'ERP', { opens: 'Tab of the product and the BOM', entity: 'revision' }),
-      p('engineering/drawings', 'Drawings and models', 'image', ['W', 'P'], 'CAD Automation', { opens: '/cad/', stateNote: 'CAD Automation holds the files and the automation (working). ERP keeps the link and the revision (planned).', entity: 'drawing' }),
-      p('engineering/cad-jobs', 'CAD automation jobs', 'bolt', ['W'], 'CAD Automation', { opens: '/cad/ (SolidWorks MCP)', entity: 'cadJob' }),
+      p('products/products', 'Products', 'box', ['P'], 'System', { opens: 'System product master (new)', entity: 'product' }),
+      p('products/variants', 'Variants', 'copy', ['P'], 'System', { opens: 'Tab of the product', entity: 'variant' }),
+      p('products/boms', 'Bills of materials', 'tree', ['P'], 'System', { opens: 'System (new)', entity: 'bom' }),
+      p('products/routings', 'Routings', 'route', ['P'], 'System', { opens: 'System (new), shared with Manufacturing', entity: 'routing' }),
+      p('engineering/changes', 'Engineering changes', 'edit', ['P'], 'System', { opens: 'System (new): change requests and orders', entity: 'eco' }),
+      p('products/revisions', 'Revisions', 'history', ['P'], 'System', { opens: 'Tab of the product and the BOM', entity: 'revision' }),
+      p('engineering/drawings', 'Drawings and models', 'image', ['W', 'P'], 'CAD Automation', { opens: '/cad/', stateNote: 'CAD Automation holds the files and the automation (working). System keeps the link and the revision (planned).', entity: 'drawing' }),
+    ],
+  },
+  {
+    // CAD Automation inside the System (owner, 14 Nov 2026): the same MCP connector, installer, add-in and Companion;
+    // the System shows its setup, computers, AI connectors and jobs beside everything else.
+    id: 'cad',
+    label: 'CAD Automation',
+    icon: 'bolt',
+    pages: [
+      p('cad/overview', 'Overview', 'home', ['C'], 'CAD Automation', { opens: '/cad/dashboard', stateNote: 'CAD Automation keeps working as it is: the same connector, installer, add-in and Companion. The System shows its status beside your products, projects and orders.' }),
+      p('cad/setup', 'Set up', 'checkSquare', ['C'], 'CAD Automation', { opens: '/cad/solidworks and /cad/assistant', stateNote: 'The four steps of CAD Automation, in one place. The buttons open the real installer and connector address.' }),
+      p('cad/computers', 'Computers', 'plug', ['C'], 'CAD Automation', { opens: '/cad/solidworks#computers' }),
+      p('cad/connectors', 'AI connectors', 'link', ['C'], 'CAD Automation', { opens: '/cad/assistant#connect' }),
+      p('cad/jobs', 'Jobs', 'bolt', ['C'], 'CAD Automation', { opens: '/cad/history', entity: 'cadJob' }),
     ],
   },
   {
@@ -73,12 +86,12 @@ export const SECTIONS: NavSection[] = [
     label: 'Procurement',
     icon: 'cart',
     pages: [
-      p('procurement/suppliers', 'Suppliers', 'building', ['W', 'P'], 'Finance', { opens: '/finance/o/:org/contacts (kind supplier)', stateNote: 'The supplier contact works in Finance today. The ERP supplier profile is planned.', entity: 'supplier' }),
-      p('procurement/requisitions', 'Requisitions', 'form', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'requisition' }),
-      p('procurement/rfqs', 'Requests for quotation', 'message', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'rfq' }),
-      p('procurement/purchase-orders', 'Purchase orders', 'checkSquare', ['W', 'P'], 'Finance', { opens: '/finance/o/:org/purchase-orders', stateNote: 'The purchase order document works in Finance today. ERP lines and receiving are planned.', entity: 'purchaseOrder' }),
+      p('procurement/suppliers', 'Suppliers', 'building', ['W', 'P'], 'Finance', { opens: '/finance/o/:org/contacts (kind supplier)', stateNote: 'The supplier contact works in Finance today. The System supplier profile is planned.', entity: 'supplier' }),
+      p('procurement/requisitions', 'Requisitions', 'form', ['P'], 'System', { opens: 'System (new)', entity: 'requisition' }),
+      p('procurement/rfqs', 'Requests for quotation', 'message', ['P'], 'System', { opens: 'System (new)', entity: 'rfq' }),
+      p('procurement/purchase-orders', 'Purchase orders', 'checkSquare', ['W', 'P'], 'Finance', { opens: '/finance/o/:org/purchase-orders', stateNote: 'The purchase order document works in Finance today. System lines and receiving are planned.', entity: 'purchaseOrder' }),
       p('procurement/bills', 'Supplier bills', 'file', ['W'], 'Finance', { opens: '/finance/o/:org/bills', entity: 'bill' }),
-      p('procurement/performance', 'Supplier performance', 'trophy', ['P'], 'ERP', { opens: 'ERP report (new)' }),
+      p('procurement/performance', 'Supplier performance', 'trophy', ['P'], 'System', { opens: 'System report (new)' }),
     ],
   },
   {
@@ -86,13 +99,13 @@ export const SECTIONS: NavSection[] = [
     label: 'Inventory & Warehouse',
     icon: 'warehouse',
     pages: [
-      p('inventory/stock', 'Stock on hand', 'box', ['P'], 'ERP', { opens: 'ERP (new), valued in Finance through journals', entity: 'stock' }),
-      p('inventory/movements', 'Stock movements', 'refresh', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'movement' }),
-      p('inventory/receipts', 'Goods receipts', 'inbox', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'receipt' }),
-      p('inventory/transfers', 'Transfers', 'truck', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'transfer' }),
-      p('inventory/counts', 'Stock counts', 'listOrdered', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'count' }),
-      p('inventory/warehouses', 'Warehouses and locations', 'map', ['P'], 'ERP', { opens: 'ERP (new)' }),
-      p('inventory/scan', 'Scan', 'scan', ['P'], 'ERP', { opens: 'ERP (new), for phones' }),
+      p('inventory/stock', 'Stock on hand', 'box', ['P'], 'System', { opens: 'System (new), valued in Finance through journals', entity: 'stock' }),
+      p('inventory/movements', 'Stock movements', 'refresh', ['P'], 'System', { opens: 'System (new)', entity: 'movement' }),
+      p('inventory/receipts', 'Goods receipts', 'inbox', ['P'], 'System', { opens: 'System (new)', entity: 'receipt' }),
+      p('inventory/transfers', 'Transfers', 'truck', ['P'], 'System', { opens: 'System (new)', entity: 'transfer' }),
+      p('inventory/counts', 'Stock counts', 'listOrdered', ['P'], 'System', { opens: 'System (new)', entity: 'count' }),
+      p('inventory/warehouses', 'Warehouses and locations', 'map', ['P'], 'System', { opens: 'System (new)' }),
+      p('inventory/scan', 'Scan', 'scan', ['P'], 'System', { opens: 'System (new), for phones' }),
     ],
   },
   {
@@ -100,11 +113,11 @@ export const SECTIONS: NavSection[] = [
     label: 'Manufacturing',
     icon: 'factory',
     pages: [
-      p('manufacturing/work-orders', 'Production orders', 'factory', ['P'], 'ERP', { opens: 'ERP (new): work orders', entity: 'workOrder' }),
-      p('manufacturing/planning', 'Production planning', 'calendar', ['P'], 'ERP', { opens: 'ERP (new)' }),
-      p('manufacturing/work-centres', 'Work centres', 'gauge', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'workCentre' }),
-      p('manufacturing/routings', 'Routings', 'route', ['P'], 'ERP', { opens: 'Shared with Products & Engineering', entity: 'routing' }),
-      p('manufacturing/shop-floor', 'Shop floor', 'play', ['P'], 'ERP', { opens: 'ERP (new), for tablets and phones' }),
+      p('manufacturing/work-orders', 'Production orders', 'factory', ['P'], 'System', { opens: 'System (new): work orders', entity: 'workOrder' }),
+      p('manufacturing/planning', 'Production planning', 'calendar', ['P'], 'System', { opens: 'System (new)' }),
+      p('manufacturing/work-centres', 'Work centres', 'gauge', ['P'], 'System', { opens: 'System (new)', entity: 'workCentre' }),
+      p('manufacturing/routings', 'Routings', 'route', ['P'], 'System', { opens: 'Shared with Products & Engineering', entity: 'routing' }),
+      p('manufacturing/shop-floor', 'Shop floor', 'play', ['P'], 'System', { opens: 'System (new), for tablets and phones' }),
     ],
   },
   {
@@ -112,11 +125,11 @@ export const SECTIONS: NavSection[] = [
     label: 'Quality',
     icon: 'shield',
     pages: [
-      p('quality/inspections', 'Inspections', 'clipboard', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'inspection' }),
-      p('quality/nonconformances', 'Nonconformances', 'alert', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'ncr' }),
-      p('quality/corrective-actions', 'Corrective actions', 'check', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'capa' }),
-      p('quality/plans', 'Inspection plans', 'listOrdered', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'inspectionPlan' }),
-      p('quality/certificates', 'Certificates', 'doc', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'certificate' }),
+      p('quality/inspections', 'Inspections', 'clipboard', ['P'], 'System', { opens: 'System (new)', entity: 'inspection' }),
+      p('quality/nonconformances', 'Nonconformances', 'alert', ['P'], 'System', { opens: 'System (new)', entity: 'ncr' }),
+      p('quality/corrective-actions', 'Corrective actions', 'check', ['P'], 'System', { opens: 'System (new)', entity: 'capa' }),
+      p('quality/plans', 'Inspection plans', 'listOrdered', ['P'], 'System', { opens: 'System (new)', entity: 'inspectionPlan' }),
+      p('quality/certificates', 'Certificates', 'doc', ['P'], 'System', { opens: 'System (new)', entity: 'certificate' }),
     ],
   },
   {
@@ -124,11 +137,11 @@ export const SECTIONS: NavSection[] = [
     label: 'Assets & Maintenance',
     icon: 'wrench',
     pages: [
-      p('maintenance/assets', 'Assets', 'settings', ['P'], 'ERP', { opens: 'ERP (new); depreciation stays in Finance', entity: 'asset' }),
-      p('maintenance/plans', 'Maintenance plans', 'calendar', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'maintenancePlan' }),
-      p('maintenance/requests', 'Work requests', 'message', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'workRequest' }),
-      p('maintenance/orders', 'Maintenance orders', 'wrench', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'maintenanceOrder' }),
-      p('maintenance/downtime', 'Downtime', 'clock', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'downtime' }),
+      p('maintenance/assets', 'Assets', 'settings', ['P'], 'System', { opens: 'System (new); depreciation stays in Finance', entity: 'asset' }),
+      p('maintenance/plans', 'Maintenance plans', 'calendar', ['P'], 'System', { opens: 'System (new)', entity: 'maintenancePlan' }),
+      p('maintenance/requests', 'Work requests', 'message', ['P'], 'System', { opens: 'System (new)', entity: 'workRequest' }),
+      p('maintenance/orders', 'Maintenance orders', 'wrench', ['P'], 'System', { opens: 'System (new)', entity: 'maintenanceOrder' }),
+      p('maintenance/downtime', 'Downtime', 'clock', ['P'], 'System', { opens: 'System (new)', entity: 'downtime' }),
     ],
   },
   {
@@ -136,11 +149,11 @@ export const SECTIONS: NavSection[] = [
     label: 'Supply Chain',
     icon: 'truck',
     pages: [
-      p('supply-chain/shipments', 'Shipments', 'truck', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'shipment' }),
-      p('supply-chain/carriers', 'Carriers', 'building', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'carrier' }),
-      p('supply-chain/schedule', 'Delivery schedule', 'calendar', ['P'], 'ERP', { opens: 'ERP (new)' }),
-      p('supply-chain/returns', 'Returns', 'returnArrow', ['P'], 'ERP', { opens: 'ERP (new)', entity: 'return' }),
-      p('supply-chain/demand', 'Demand plan', 'workload', ['P'], 'ERP', { opens: 'ERP (new)' }),
+      p('supply-chain/shipments', 'Shipments', 'truck', ['P'], 'System', { opens: 'System (new)', entity: 'shipment' }),
+      p('supply-chain/carriers', 'Carriers', 'building', ['P'], 'System', { opens: 'System (new)', entity: 'carrier' }),
+      p('supply-chain/schedule', 'Delivery schedule', 'calendar', ['P'], 'System', { opens: 'System (new)' }),
+      p('supply-chain/returns', 'Returns', 'returnArrow', ['P'], 'System', { opens: 'System (new)', entity: 'return' }),
+      p('supply-chain/demand', 'Demand plan', 'workload', ['P'], 'System', { opens: 'System (new)' }),
     ],
   },
   {
@@ -148,12 +161,12 @@ export const SECTIONS: NavSection[] = [
     label: 'Reports & Analytics',
     icon: 'chart',
     pages: [
-      p('reports/enterprise', 'Enterprise dashboards', 'chart', ['C'], 'ERP', { opens: 'ERP (cross-module figures)' }),
+      p('reports/enterprise', 'Enterprise dashboards', 'chart', ['C'], 'System', { opens: 'System (cross-module figures)' }),
       p('reports/financial', 'Financial reports', 'dollar', ['W'], 'Finance', { opens: 'Finance reports' }),
       p('reports/sales', 'Sales reports', 'briefcase', ['W'], 'CRM', { opens: 'CRM reports' }),
       p('reports/projects', 'Project reports', 'grid', ['W'], 'Project Management', { opens: 'Project Management dashboards' }),
-      p('reports/operations', 'Operations reports', 'factory', ['P'], 'ERP', { opens: 'Inventory, production, quality, maintenance' }),
-      p('reports/saved', 'Saved and scheduled reports', 'star', ['W', 'P'], 'ERP', { opens: 'Finance and Project Management today; ERP saved reports planned', stateNote: 'Saved and scheduled reports work in Finance and Project Management today. ERP saved reports are planned.' }),
+      p('reports/operations', 'Operations reports', 'factory', ['P'], 'System', { opens: 'Inventory, production, quality, maintenance' }),
+      p('reports/saved', 'Saved and scheduled reports', 'star', ['W', 'P'], 'System', { opens: 'Finance and Project Management today; System saved reports planned', stateNote: 'Saved and scheduled reports work in Finance and Project Management today. System saved reports are planned.' }),
     ],
   },
   {
@@ -164,11 +177,11 @@ export const SECTIONS: NavSection[] = [
       p('administration/company', 'Company', 'building', ['W'], 'Company', { opens: '/company/c/:co/overview' }),
       p('administration/people', 'People and roles', 'users', ['W'], 'Company', { opens: '/company/c/:co/people' }),
       p('administration/departments', 'Departments', 'group', ['W'], 'Company', { opens: '/company/c/:co/departments' }),
-      p('administration/sites', 'Sites and branches', 'map', ['P'], 'ERP', { opens: 'New core entity (co_sites)' }),
-      p('administration/modules', 'Tools and modules', 'plug', ['W', 'P'], 'Company', { opens: '/company/c/:co/tools', stateNote: 'Tools work in Company today. Module access for ERP modules is planned.' }),
-      p('administration/workflows', 'Approval workflows', 'signature', ['P'], 'ERP', { opens: "ERP (new), reusing Finance's approval rules" }),
-      p('administration/numbering', 'Numbering', 'hash', ['W', 'P'], 'Finance', { opens: 'Finance numbering; ERP series for new records', stateNote: 'Finance numbering works today. ERP series for new records are planned.' }),
-      p('administration/audit', 'Audit trail', 'history', ['W', 'C'], 'ERP', { opens: 'Per tool today; an ERP view across them is connected', stateNote: 'Each tool keeps its own audit trail today. The ERP view across them is a connected screen.' }),
+      p('administration/sites', 'Sites and branches', 'map', ['P'], 'System', { opens: 'New core entity (co_sites)' }),
+      p('administration/modules', 'Tools and modules', 'plug', ['W', 'P'], 'Company', { opens: '/company/c/:co/tools', stateNote: 'Tools work in Company today. Module access for System modules is planned.' }),
+      p('administration/workflows', 'Approval workflows', 'signature', ['P'], 'System', { opens: "System (new), reusing Finance's approval rules" }),
+      p('administration/numbering', 'Numbering', 'hash', ['W', 'P'], 'Finance', { opens: 'Finance numbering; System series for new records', stateNote: 'Finance numbering works today. System series for new records are planned.' }),
+      p('administration/audit', 'Audit trail', 'history', ['W', 'C'], 'System', { opens: 'Per tool today; a System view across them is connected', stateNote: 'Each tool keeps its own audit trail today. The System view across them is a connected screen.' }),
     ],
   },
 ];
@@ -186,7 +199,7 @@ export const APP_URL: Record<ModuleId, string> = {
   'Project Management': 'https://bizomat.ai/tasks/',
   'CAD Automation': 'https://bizomat.ai/cad/',
   Company: 'https://bizomat.ai/company/',
-  ERP: '',
+  System: '',
 };
 
 // ------------------------------------------------------------------ roles
@@ -207,9 +220,9 @@ export const ROLES: RoleDef[] = [
   { id: 'sales', label: 'Sales manager', layout: 'Sales', person: 'Priya Nair', sections: { sales: 'full', finance: { pages: ['finance/invoices'], read: true }, projects: 'full', reports: 'full' } },
   { id: 'finance', label: 'Finance manager', layout: 'Finance', person: 'Daniel Okafor', sections: { finance: 'full', sales: 'read', procurement: 'read', reports: 'full' } },
   { id: 'accountant', label: 'Accountant', layout: 'Accounting', person: 'Mei Lin', sections: { finance: 'full', reports: 'full' } },
-  { id: 'engineer', label: 'Engineer', layout: 'Engineering', person: 'Tom Walsh', sections: { engineering: 'full', projects: 'full', quality: 'read' } },
+  { id: 'engineer', label: 'Engineer', layout: 'Engineering', person: 'Tom Walsh', sections: { engineering: 'full', cad: 'full', projects: 'full', quality: 'read' } },
   { id: 'procurement', label: 'Procurement manager', layout: 'Purchasing', person: 'Sara Haddad', sections: { procurement: 'full', inventory: 'read', finance: { pages: ['finance/bills'], read: true }, reports: 'full' } },
-  { id: 'production', label: 'Production manager', layout: 'Production', person: 'Ben Carter', sections: { manufacturing: 'full', inventory: 'full', quality: 'full', projects: 'full', reports: 'full' } },
+  { id: 'production', label: 'Production manager', layout: 'Production', person: 'Ben Carter', sections: { manufacturing: 'full', inventory: 'full', quality: 'full', projects: 'full', reports: 'full', cad: 'read' } },
   { id: 'warehouse', label: 'Warehouse manager', layout: 'Warehouse', person: 'Luca Romano', sections: { inventory: 'full', procurement: { pages: ['procurement/purchase-orders'], read: false }, 'supply-chain': 'full' } },
   { id: 'quality', label: 'Quality manager', layout: 'Quality', person: 'Grace Kim', sections: { quality: 'full', manufacturing: 'read', procurement: 'read' } },
   { id: 'project', label: 'Project manager', layout: 'Projects', person: 'Hannah Brooks', sections: { projects: 'full', sales: 'read', reports: 'full' } },

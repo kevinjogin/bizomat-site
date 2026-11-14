@@ -2,7 +2,7 @@
 
 Status: design for review (owner's briefs "Phase 0: discovery and design only" and "Enterprise UI/UX design and
 interactive prototype", 13 Nov 2026). Nothing here is built in the production application. The clickable prototype
-(`apps/work/src/client/erp-prototype/`, see `08-prototype-guide.md`) follows this map exactly.
+(`apps/work/src/client/system-prototype/`, see `08-prototype-guide.md`) follows this map exactly.
 
 ## 1. Principles
 

@@ -9,7 +9,7 @@ disturbing the working apps. Architecture context: `../architecture/03-modular-e
 | Recommendation | Detail |
 | --- | --- |
 | One React app, one more mount | Add `IS_ERP` in `apps/work/src/client/App.tsx` and an `ErpRoutes` lazy chunk; the shared sign-in pages stay as they are |
-| Promote the prototype's pieces, not its data | Move the shell, navigation, widget grid, list, record, form and report components from `src/client/erp-prototype/` into `src/client/erp/`; replace the mock data modules with React Query hooks on the real APIs; delete the prototype entry afterwards |
+| Promote the prototype's pieces, not its data | Move the shell, navigation, widget grid, list, record, form and report components from `src/client/system-prototype/` into `src/client/erp/`; replace the mock data modules with React Query hooks on the real APIs; delete the prototype entry afterwards |
 | Reuse the existing components | `components/ui/*` (Icon, PageHeader, Modal, toasts, confirm), Finance's `sales-ui.tsx` (line editor, live preview, sharing), `StatusBadge`, `Stat`, `.data-table`; lift shared ones into `components/` when ERP needs them, without changing their behaviour |
 | One set of tokens | Keep `bizomat-tokens.css` and `app.css` as the only source of colour, type and spacing; ERP-specific layout classes live in `erp.css` |
 | Existing pages inside ERP | Add a link-base context and an "embedded" flag to the CRM, Finance and Project Management shells (section 3.4 of the architecture), with tests that their standalone addresses are unchanged |

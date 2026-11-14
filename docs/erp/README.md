@@ -1,4 +1,10 @@
-# BIZOMAT ERP: Phase 0 blueprint and UX design
+# BIZOMAT System (formerly ERP): Phase 0 blueprint and UX design
+
+**Name (owner, 14 Nov 2026):** the planned ERP is now called **BIZOMAT System**, to feel like one complete system rather
+than a module set. These documents keep "ERP" as their working name for the planned modules and their tables
+(`erp_*`); the preview and everything people see say BIZOMAT System. The real application will be at `/system`.
+CAD Automation is part of the System as its own section (Overview, Set up, Computers, AI connectors, Jobs): it stays an
+MCP connector with the same installer, add-in and Companion, and the System shows its setup and status beside the rest.
 
 Owner's briefs of 13 Nov 2026: "Phase 0: discovery and design only" and "Enterprise UI/UX design and interactive
 prototype". A third brief ("Integrated application development") follows **only after this blueprint and the design
@@ -48,11 +54,11 @@ existing modules rather than copying them. No new Fly app, Machine, server, data
 | 5 | Reusable screen designs | `ux/05-reusable-screens.md` |
 | 6 | Design system and component library | `ux/06-design-system.md` |
 | 7 | Responsive layouts | `ux/07-responsive-layouts.md` |
-| 8 | Clickable prototype | `ux/08-prototype-guide.md`, code in `apps/work/src/client/erp-prototype/` |
+| 8 | Clickable prototype | `ux/08-prototype-guide.md`, code in `apps/work/src/client/system-prototype/` |
 | 9 | User journey demonstrations | `ux/09-user-journeys.md` |
 | 10 | Implementation recommendations | `ux/10-implementation-recommendations.md` |
 
 The prototype uses demonstration data only, never calls a BIZOMAT API and is built by its own Vite config. Since
-14 Nov 2026 (owner's decision) it is published for review at `https://bizomat.ai/erp-design-preview/`. It is added to
+14 Nov 2026 (owner's decision) it is published for review at `https://bizomat.ai/system-preview/`. It is added to
 the image as static files for the website, out of search engines and the navigation (`ux/08-prototype-guide.md`,
 section 1a). The applications' own builds do not include it.
