@@ -71,18 +71,19 @@ runs the regression suites unchanged (T-REG).
 | 7 | Inventory and warehousing | 0 | 0 | 0 | 17 | 17 |
 | 8 | Supply chain and logistics | 0 | 0 | 0 | 12 | 12 |
 | 9 | Quality management | 0 | 0 | 0 | 13 | 13 |
-| 10 | Asset management and maintenance | 0 | 0 | 10 | 25 | 35 |
+| 10 | Asset management and maintenance | 10 | 0 | 0 | 25 | 35 |
 | 11 | Project and portfolio management | 9 | 4 | 0 | 3 | 16 |
 | 12 | Service management | 0 | 0 | 0 | 10 | 10 |
 | 13 | Human capital management | 1 | 0 | 0 | 11 | 12 |
 | 14 | Governance and compliance | 3 | 0 | 0 | 7 | 10 |
 | 15 | Enterprise analytics and AI | 4 | 2 | 0 | 7 | 13 |
 | 16 | Enterprise integration platform | 7 | 0 | 1 | 4 | 12 |
-| | **All domains** | **64** | **10** | **12** | **173** | **259** |
+| | **All domains** | **74** | **10** | **2** | **173** | **259** |
 
 What this says in plain words: the commercial and financial core (customers, quotes, invoicing, the ledger, projects)
-and the company structure work today, joined by ten links. CAD Automation works for engineers in SOLIDWORKS. Two
-connections to CAD Automation and the first stage of maintenance management are being built. Operations (procurement
+and the company structure work today, joined by ten links. CAD Automation works for engineers in SOLIDWORKS. The first
+stage of maintenance management (assets, requests and work orders) is live in the ERP. Two connections to CAD Automation
+are being built. Operations (procurement
 beyond Finance's documents, inventory, manufacturing, quality, supply chain, service) and human resources are planned.
 
 ## 3. Matrix by domain
@@ -308,8 +309,9 @@ Served by BIZOMAT ERP Quality (planned module).
 ### 3.10 Asset management and maintenance (CMMS)
 
 Served by BIZOMAT ERP Asset Management and Maintenance. Owner's brief, 14 Nov 2026: a full maintenance management
-system (CMMS) inside BIZOMAT ERP, in four stages, with MEX as a functional reference only. Stage 1 is being built now;
-its features stay in-development until its tests pass, and the lead then marks them live. Stage 1 keeps its records in
+system (CMMS) inside BIZOMAT ERP, in four stages, with MEX as a functional reference only. Stage 1 is live (14 Nov
+2026): built, and its acceptance tests A to D and J pass on both runtimes (`apps/work/test/maintenance.test.ts`,
+`apps/work/test-node/maintenance.test.ts`). Stage 1 keeps its records in
 `mt_*` tables (`apps/work/migrations/0018_maintenance.sql`, code in `apps/work/src/worker/maintenance/`): additive, with
 `company_id` naming a registered or own company and composite keys inside a company. Names for later stages are
 proposals.
@@ -321,20 +323,20 @@ Rules this domain keeps:
   Automation. No record of another system is copied.
 - The AI scheduling assistant only proposes (T-AI). Offline field operation is never claimed before T-OFF passes.
 
-#### Stage M1: register, requests and work orders (in development)
+#### Stage M1: register, requests and work orders (live)
 
 | Feature | Status | Served by today | Owner | Data owner | Depends on | Phase | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Asset register | in-development | Being built | ERP Maintenance | `mt_assets` (numbered A-0001) | Company tenancy | M1 | T-ISO, T-PERM, T-MIG, owner's tests |
-| Asset hierarchy | in-development | Being built | ERP Maintenance | `mt_assets` parent, to any depth | Asset register | M1 | T-ISO (no loops, no links across companies) |
-| Equipment master and asset details | in-development | Being built | ERP Maintenance | `mt_assets` (make, model, serial, registration, specifications) | Asset register | M1 | T-ISO |
-| Maintenance requests with approval | in-development | Being built | ERP Maintenance | `mt_requests` (MR-0001); `mt_settings` (whether approval is required) | Asset register | M1 | T-PERM (maintenance roles), T-DUP (one work order per request), T-E2E |
-| Maintenance work orders | in-development | Being built | ERP Maintenance | `mt_work_orders` (WO-00001), `mt_wo_tasks`, `mt_wo_parts` (text lines), `mt_comments` | Requests | M1 | T-ISO, T-PERM, T-DUP, T-E2E |
-| Corrective maintenance | in-development | Being built | ERP Maintenance | `mt_work_orders` (job type corrective) | Work orders | M1 | T-E2E |
-| Breakdown maintenance | in-development | Being built | ERP Maintenance | `mt_work_orders` (job type breakdown) | Work orders | M1 | T-E2E |
-| Technician assignment | in-development | Being built | ERP Maintenance | the work order's assignee; `mt_roles` (administrator, supervisor, technician, requester) | Work orders, company people | M1 | T-PERM |
-| Labour timer | in-development | Being built | ERP Maintenance | `mt_labour` (one running timer per person and work order, by a unique index) | Work orders | M1 | T-QTY, T-E2E (phone) |
-| Photos and documents | in-development | Being built | ERP Maintenance, the existing file store | `mt_files`; history of every change in `mt_events` | Work orders, assets | M1 | T-ISO, document security (sandboxed downloads) |
+| Asset register | live | ERP Maintenance | ERP Maintenance | `mt_assets` (numbered A-0001) | Company tenancy | M1 | T-ISO, T-PERM, T-MIG, owner's tests |
+| Asset hierarchy | live | ERP Maintenance | ERP Maintenance | `mt_assets` parent, to any depth | Asset register | M1 | T-ISO (no loops, no links across companies) |
+| Equipment master and asset details | live | ERP Maintenance | ERP Maintenance | `mt_assets` (make, model, serial, registration, specifications) | Asset register | M1 | T-ISO |
+| Maintenance requests with approval | live | ERP Maintenance | ERP Maintenance | `mt_requests` (MR-0001); `mt_settings` (whether approval is required) | Asset register | M1 | T-PERM (maintenance roles), T-DUP (one work order per request), T-E2E |
+| Maintenance work orders | live | ERP Maintenance | ERP Maintenance | `mt_work_orders` (WO-00001), `mt_wo_tasks`, `mt_wo_parts` (text lines), `mt_comments` | Requests | M1 | T-ISO, T-PERM, T-DUP, T-E2E |
+| Corrective maintenance | live | ERP Maintenance | ERP Maintenance | `mt_work_orders` (job type corrective) | Work orders | M1 | T-E2E |
+| Breakdown maintenance | live | ERP Maintenance | ERP Maintenance | `mt_work_orders` (job type breakdown) | Work orders | M1 | T-E2E |
+| Technician assignment | live | ERP Maintenance | ERP Maintenance | the work order's assignee; `mt_roles` (administrator, supervisor, technician, requester) | Work orders, company people | M1 | T-PERM |
+| Labour timer | live | ERP Maintenance | ERP Maintenance | `mt_labour` (one running timer per person and work order, by a unique index) | Work orders | M1 | T-QTY, T-E2E (phone) |
+| Photos and documents | live | ERP Maintenance | ERP Maintenance, the existing file store | `mt_files`; history of every change in `mt_events` | Work orders, assets | M1 | T-ISO, document security (sandboxed downloads) |
 
 #### Stage M2: preventive maintenance and inspections (planned)
 
@@ -512,8 +514,9 @@ Served by the ERP platform: the shared API of the work app and the BIZOMAT sign-
   coverage read from it. This document explains it; when they differ, the code wins and both are corrected.
 - **Same commit.** When a feature's code changes status (built, merged, switched on, removed), the registry and this
   matrix change in the same pull request.
-- **Who flips a status.** in-development becomes live only after its tests pass on both runtimes and its public
-  address is checked (`CLAUDE.md`, "After any production change"). planned becomes in-development only when code for it
+- **Who flips a status.** in-development becomes live when its tests pass on both runtimes, in the release that
+  switches it on; its public address is then checked after the deploy (`CLAUDE.md`, "After any production change"),
+  and a failed check rolls the release back. planned becomes in-development only when code for it
   exists on a branch. connected needs both systems' permission checks and a same-company check in the code.
 - **A test should compare it with the code over time.** Proposed checks, in a website test beside
   `tests/platform-catalog.test.ts`:

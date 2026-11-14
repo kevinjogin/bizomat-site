@@ -7,10 +7,13 @@
 > marker there is `erp_carry`.
 >
 > - **Module rail:** Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and
->   Engineering, Operations, Reports, Administration.
+>   Engineering, Maintenance, Operations, Reports, Administration; "Report a fault" at its foot raises a maintenance
+>   request from any screen.
+> - **Maintenance** (Asset Management and Maintenance, Stage M1): the asset register, requests and work orders of
+>   each company, at `/erp/c/<company>/maintenance` (`docs/maintenance/README.md`, migration `0018_maintenance.sql`).
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
->   - Operations: the planned modules, each labelled Planned.
+>   - Operations: the planned modules, each labelled Planned, and what of Maintenance is live.
 >   - Reports: every report of the company's tools, in its own module.
 >   - Administration: company, tool teams and settings, your profile, and the ERP console for platform admins.
 > - **Own companies for everyone:** migration `0017_system_everyone.sql` gives every existing active account its own

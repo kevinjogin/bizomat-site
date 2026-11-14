@@ -29,14 +29,18 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   signed-in people, **live at `bizomat.ai/erp`** (`docs/system/README.md`), served by the Project Management app with
   the same accounts and session. Every tool opens inside it, at `/erp/tasks`, `/erp/crm`, `/erp/finance` and
   `/erp/company`, with its module rail on every screen (Dashboard, My Work, Sales and CRM, Finance and Accounting,
-  Projects and Tasks, Products and Engineering, Operations, Reports, Administration). A page at a tool's own address, or
+  Projects and Tasks, Products and Engineering, Maintenance, Operations, Reports, Administration, and "Report a fault"). A page at a tool's own address, or
   at the earlier `/system`, answers 302 there (the API, files and `/finance/view/` stay); links between tools stay
   inside (`toolUrl`). People's tools are grouped by company (registered companies, plus an own company per person, not
   registered, made for every existing account by migration 0017; tools are worked out, never copied; a tool shared with
   someone shows under its company as "Shared with you"). Products and Engineering is CAD Automation's setup and
   company-scoped computers (owner and administrators see the company's, members their own, other companies nothing);
   computers appear only once CAD Automation reports (`/company/api/id/cad-status`, client `cad`): never present them as
-  live before. **Operations** (procurement, inventory, manufacturing, quality, assets, maintenance, supply chain) and
+  live before. **Maintenance** (Asset Management and Maintenance, owner's CMMS brief of 14 Nov 2026, MEX a functional
+  reference only; `docs/maintenance/README.md`): Stage M1 (asset register and hierarchy, requests with approval, work
+  orders, technicians, labour timer, photos and documents) is built and tested at `/erp/c/<company>/maintenance`;
+  M2 to M4 (preventive maintenance, readings, inspections, parts, scanning, sites, AI scheduling, reliability, offline)
+  are planned. **Operations** (procurement, inventory, manufacturing, quality, supply chain) and
   product/engineering records are **planned, not built**: the Operations page lists them as Planned and the design
   preview with demonstration data stays at `bizomat.ai/system-preview/`; never present them as working. The platform
   console is `/erp/admin` (platform admins only).

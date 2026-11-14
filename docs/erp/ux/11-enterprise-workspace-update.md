@@ -94,7 +94,7 @@ ERP module levels and role templates come in S2; a first screen chosen by role c
 | Inventory | Operations card (Planned) | planned | Stock on hand, movements, receipts, counts, scanning (journey 6) | S6 |
 | Manufacturing | Operations card (Planned) | planned | Work orders, planning board, shop floor (journey 7) | S8 |
 | Quality | Operations card (Planned) | planned | Inspections, NCRs, corrective actions (journey 8) | S9 |
-| Maintenance | Operations card (Planned today) | M1 in-development | Requests and work orders first (section 8) | M1 to M4 |
+| Maintenance | Its own rail item, Maintenance, and "Report a fault" at the foot of the rail (owner's brief, 14 Nov 2026) | M1 live | Requests and work orders first (section 8) | M2 to M4 |
 | Supply Chain | Operations card (Planned) | planned | Shipments, carriers, delivery schedule, returns | S10 |
 | Reports | `/erp/reports` | live | Enterprise and operational reports, saved and scheduled (journey 10) | S13 |
 | Administration | `/erp/administration` | live | Sites, legal entities, module access, role templates, approval rules, numbering, one audit view | S2 |
@@ -123,8 +123,9 @@ W workflow or approval, M phone-first).
 | Reliability reports | Managers | Rp | Mean time between failures and to repair, failure frequency, downtime, preventive maintenance compliance, repeat failures, cost by asset and department, with exports | M4 | planned |
 | Maintenance administration | Administrators | F | Custom and mandatory fields, labels, categories, job types, priorities, approval rules, templates, field-level edit rights, and an audit of every configuration change | M2 to M4 | planned |
 
-Placement (proposal for the owner): Maintenance opens from the Operations page; once M1 is released its card there
-shows its real state. A rail item of its own is the owner's decision (section 2). Technicians reach their work orders
+Placement (built with M1): Maintenance has its own rail item, between Products and Engineering and Operations, and the
+Operations page lists what of it is live and what is planned. "Report a fault" at the foot of the rail raises a request
+from any ERP screen. Technicians reach their work orders
 from My Work once My Work gathers ERP items (S1 and M1).
 
 ## 9. Shared components and interaction patterns

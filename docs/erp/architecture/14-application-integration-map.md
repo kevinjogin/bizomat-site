@@ -29,7 +29,7 @@ page brings up to date.
 | System | Where | Tenant id | Owns (system of record) | Never owns |
 | --- | --- | --- | --- | --- |
 | Company accounts | `/company`, inside the ERP at `/erp/company` | `co_companies.id` | Companies, members and their tool roles, departments, invitations, the links between tools (`co_tools`, `co_customer_links`, `co_deal_links`, `co_project_links`), the BIZOMAT sign-in provider | Customers, money, tasks |
-| BIZOMAT ERP | `/erp` | `co_companies.id`, or `sys_companies.id` for a person's own company | Own companies, the CAD status reports (`sys_cad_status`); in development: maintenance (`mt_*`); planned: products, orders, stock, work orders and the other `erp_*` records | Anything a tool owns |
+| BIZOMAT ERP | `/erp` | `co_companies.id`, or `sys_companies.id` for a person's own company | Own companies, the CAD status reports (`sys_cad_status`), maintenance (`mt_*`, Stage M1); planned: products, orders, stock, work orders and the other `erp_*` records | Anything a tool owns |
 | CRM | `/crm`, `/erp/crm` | `crm_orgs.id` | Customers (companies), contacts, leads, deals, activities, CRM products until the product master exists | Invoices, amounts owed |
 | Finance | `/finance`, `/erp/finance` | `fin_orgs.id` (a business workspace for a company) | Ledger, accounts, tax codes, tracking, contacts as billed customers and suppliers, quotes, invoices, credit notes, bills, purchase orders, payments recorded | Stock quantities, production, CRM history |
 | Projects | `/tasks`, `/erp/tasks` | `workspaces.id` | Projects (boards), tasks (items), schedules, time and cost entries, documents | Posted costs (Finance owns them) |
@@ -192,7 +192,7 @@ this valuation path. Journals are posted only by Finance's service, so the lock 
 ## 5. Maintenance (CMMS) flows
 
 Owner's brief, 14 Nov 2026. Stage M1 (register, requests, standard work orders, technicians, labour timer, photos and
-documents) is being built in `apps/work/src/worker/maintenance/` with its own `mt_*` tables (migration
+documents) is live in `apps/work/src/worker/maintenance/` with its own `mt_*` tables (migration
 `0018_maintenance.sql`); everything else here is planned, and its table names are proposals.
 
 | # | Flow | System of record | Ids carried | API or event | Today |
