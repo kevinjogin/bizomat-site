@@ -1,0 +1,499 @@
+---
+// /systems/projects/: BIZOMAT Projects, the Project Management System (formerly BIZOMAT Project Management, and KEVOS
+// Work before that). It opens inside BIZOMAT ERP, in the Projects and Tasks module (src/config/systems.ts). Facts come
+// from src/data/platform-catalog.ts (WORK), which records its sources in apps/work, and from the application's code:
+// roles (apps/work/src/shared/permissions.ts), templates (src/worker/services/boards.ts), widgets
+// (src/client/pages/DashboardPage.tsx), project reports (src/shared/reports.ts), project finance
+// (src/client/board/FinancePanel.tsx), integrations (src/worker/services/integrations.ts), the ERP's dashboard and rail
+// (src/client/system/SystemApp.tsx, components/layout/SuiteRail.tsx) and the links between tools
+// (src/worker/company/links.ts, docs/company/README.md). Every feature carries its status (StatusLabel: Live,
+// Connected, In development, Planned). The user guide is /systems/projects/guide/.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import ProjectFlow from '../../../components/visuals/ProjectFlow.astro';
+import WorkflowPipeline from '../../../components/visuals/WorkflowPipeline.astro';
+import '../../../styles/product.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { SYSTEMS, STATUS_LABEL, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { WORK } from '../../../data/platform-catalog.ts';
+
+const sys = systemById('projects');
+const access = sys.access!;
+const GUIDE = sys.guide!;
+const PAGE = sys.url;
+const shots = screenshots('work');
+const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-projects.webp'));
+const related = SYSTEMS.filter((s) => s.id !== sys.id);
+const description = 'BIZOMAT Projects, the Project Management System: projects, tasks, teams, timelines, dashboards and documents in one workspace, inside BIZOMAT ERP.';
+
+interface Feature { t: string; x: string; s: FeatureStatus }
+
+const viewNotes: Record<string, string> = {
+  'Table': 'Sort, filter with AND/OR, group, resize and hide columns, select in bulk.',
+  'Kanban': 'Drag cards between statuses.',
+  'Calendar': 'Month, week and day.',
+  'Timeline and Gantt': 'Dependencies, milestones, drag to reschedule.',
+  'Chart': 'Counts and sums from live board data.',
+  'Workload': 'Who has how much, and when.',
+  'Form': 'Collect new items from a form.',
+  'Map': 'Items with locations.',
+  'Files': 'Every attachment on the board.',
+};
+// apps/work/src/shared/permissions.ts (ROLE_LABELS, ROLE_HELP).
+const roles = [
+  { t: 'Owner', x: 'Full control: workspace settings, members, finance settings, every project and report.' },
+  { t: 'Admin', x: 'Manages members and settings, creates and manages every project, sees every report.' },
+  { t: 'Project manager', x: 'Creates projects, manages the projects they are given, allocates tasks and generates project reports.' },
+  { t: 'Member', x: 'Works on the workspace\'s shared projects: updates tasks, comments and uploads files.' },
+  { t: 'Viewer', x: 'Reads and comments on the workspace\'s shared projects.' },
+  { t: 'Guest or contractor', x: 'Sees only the projects or tasks shared with them, and nothing workspace-wide.' },
+];
+const teams: Feature[] = [
+  { t: 'Workspaces and roles', x: `${roles.length} roles per workspace, from owner to guest, with board roles and private or shared boards.`, s: 'live' },
+  { t: 'Project and task access', x: 'On each project, a person can manage, edit or view, and rights such as assigning tasks, seeing financial data or generating reports can be switched on or off. One task can be shared without the rest of the project.', s: 'live' },
+  { t: 'Invitations and teams', x: 'Invite people with a link, group them into teams, and give each item an owner, a status and a date.', s: 'live' },
+  { t: 'Audit and export', x: 'An audit log of changes and a JSON export of a workspace for its administrators.', s: 'live' },
+];
+const collaboration: Feature[] = [
+  { t: 'Updates on every item', x: 'Updates and replies with @mentions, so the conversation stays with the work.', s: 'live' },
+  { t: 'Files and documents', x: 'Attachments on items, and rich-text documents with autosave, version history, comments and links to boards.', s: 'live' },
+  { t: 'Notifications', x: 'Assignment, mention, reply, status change, due soon and overdue, with your own preferences.', s: 'live' },
+  { t: 'Time and planning', x: 'Time tracking on items, My Work, My Day and a weekly planner.', s: 'live' },
+];
+// apps/work/src/client/pages/DashboardPage.tsx (WIDGET_TYPES).
+const widgets = ['Number', 'Chart', 'Task status', 'Priority distribution', 'Completion', 'Workload', 'Overdue work', 'Upcoming deadlines', 'Project progress', 'Activity', 'Time tracking'];
+if (widgets.length !== WORK.widgetTypes) throw new Error(`projects: ${widgets.length} widget types listed, WORK.widgetTypes says ${WORK.widgetTypes}`);
+const insight: Feature[] = [
+  { t: 'Dashboards', x: `${WORK.widgetTypes} widget types computed from live board data, with source boards, filters and date ranges.`, s: 'live' },
+  { t: 'Goals', x: 'Goals with progress set by hand or worked out from boards.', s: 'live' },
+  { t: 'Project reports', x: 'Saved reports on a project, from monthly progress and outstanding tasks to critical path and earned value, each kept with PDF, Excel, HTML and CSV files.', s: 'live' },
+  { t: 'Project controls', x: 'The critical path, baselines and earned value of a project.', s: 'live' },
+  { t: 'Project finance', x: 'Approved budget, estimated and actual cost, committed, remaining budget and variance from a board\'s money columns, to people allowed to see financial data.', s: 'live' },
+  { t: 'Planning for each person', x: 'My Work, My Day and a weekly planner.', s: 'live' },
+];
+const security = [
+  'Email and password sign-in with secure session cookies, CSRF protection, rate limits and lockout.',
+  'Google sign-in where it is configured, and personal API tokens for integrations.',
+  'Every query checks the workspace and board you belong to; one workspace never sees another.',
+  'Sessions you can list and end, and a founder console for the platform administrator.',
+];
+const who = [
+  { t: 'Project managers', x: 'Plan projects, allocate tasks, follow progress on timelines and dashboards, and produce project reports.' },
+  { t: 'Team members', x: 'See everything assigned to them in one list, plan the day, post updates and attach files where the work is.' },
+  { t: 'Owners and administrators', x: 'Run the workspace: people, roles, teams, settings, the audit trail and an export of the data.' },
+  { t: 'Guests and contractors', x: 'Work on the one project or task shared with them, and see nothing else.' },
+  { t: 'Companies on BIZOMAT ERP', x: 'Run one Projects workspace for the company, beside Sales and CRM and Finance and Accounting, with one sign-in.' },
+  { t: 'Sales and delivery teams', x: 'Hand a won deal to the people who deliver it, without retyping the customer or the scope.' },
+];
+const problems: Feature[] = [
+  { t: 'Work spread across spreadsheets, email and chat', x: 'Each project is one board: its tasks, owners, dates, files and updates in one place everyone can open.', s: 'live' },
+  { t: 'Nobody is sure who owns a task', x: 'Every item has an owner, a status and a date, and My Work shows each person what is theirs.', s: 'live' },
+  { t: 'Status meetings just to find out where things are', x: 'Dashboards and the timeline are computed from the live board, so the current position is always on screen.', s: 'live' },
+  { t: 'Deadlines that slip without warning', x: 'Due soon and overdue notifications, an overdue count on Home, and dependencies on the timeline.', s: 'live' },
+  { t: 'Routine steps that depend on someone remembering', x: 'Automations react to status changes, dates and schedules, and log every run.', s: 'live' },
+  { t: 'A messy hand-over from sales to delivery', x: 'In a company account, a CRM deal starts the project board, and a CRM follow-up can become a project task.', s: 'connected' },
+];
+const dashboardParts: Feature[] = [
+  { t: 'Home', x: 'Your start page in a workspace: what is overdue, due today, due in the next 7 days and planned today; a Needs your attention list; recent activity; My Day; favourites and recently visited places. New board, New doc and New dashboard are at the top.', s: 'live' },
+  { t: 'My Work and My Day', x: 'My Work lists everything assigned to you across the boards you can open, and the tasks shared with you. My Day is what you choose to focus on today, with a weekly planner.', s: 'live' },
+  { t: 'Dashboards', x: `Live overviews built from your boards. Add widgets (${widgets.length} types), choose their source boards, filters and date ranges, then resize and reorder them.`, s: 'live' },
+  { t: 'The BIZOMAT ERP Dashboard', x: 'The ERP\'s first page shows your company with a card for each tool. The Projects and Tasks card shows open tasks, overdue, due in 7 days and the number of projects, to people whose role may see them.', s: 'connected' },
+];
+const walkthrough = [
+  { t: 'Sign in', x: 'At bizomat.ai/erp, with your BIZOMAT email and password, or Google where it is configured.' },
+  { t: 'The ERP module rail', x: 'Projects and Tasks opens your workspace; My Work opens what is assigned to you. The rail stays at the left of every screen.' },
+  { t: 'Workspace Home', x: 'Counts of overdue and upcoming work, what needs your attention, recent activity and My Day.' },
+  { t: 'Boards', x: 'Every board you can open, in folders, with All, Personal and Archived tabs, New board and Personal board.' },
+  { t: 'A board', x: 'Groups, items and columns in the Table view. The header has Members, Activity, Automate, Project controls and, for people who may, Reports.' },
+  { t: 'Views', x: 'Tabs above the board add Kanban, Calendar, Timeline, Chart, Workload, Form, Map and Files views, shared or personal.' },
+  { t: 'An item', x: 'Opens beside the board with Updates, Details, Schedule, Subitems, Files, Activity, Time, Docs and Access.' },
+  { t: 'Documents and Goals', x: 'Rich-text documents linked to the work, and goals with progress set by hand or from boards.' },
+  { t: 'Dashboards', x: 'Widgets computed from the boards you choose.' },
+  { t: 'Automations and Integrations', x: 'The automations across your boards, switched on or off in one place, and webhooks to Slack, Microsoft Teams and other services.' },
+  { t: 'Settings', x: 'Your profile, notifications and security; the workspace, its members and teams; and, for administrators, finance settings, email, export and the audit trail.' },
+];
+const steps = [
+  { t: 'Sign in', x: 'Open BIZOMAT ERP and sign in with your BIZOMAT account, or create one on the sign-in page where it is offered.' },
+  { t: 'Open Projects and Tasks', x: 'Choose Projects and Tasks in the module rail on the left.' },
+  { t: 'Create a workspace', x: 'Name it and choose Create workspace. A registered company already has one: its owner gives you a role in it.' },
+  { t: 'Create a board', x: 'Choose New board, name it, and pick a template such as Project plan, or a blank board.' },
+  { t: 'Add the work', x: 'Add items, give each an owner, a status and dates, and break big ones into subitems.' },
+  { t: 'Invite your team', x: 'In Settings, Members, invite people by email and choose each person\'s role.' },
+  { t: 'Track it', x: 'Switch to the Timeline or Kanban view, and add a dashboard to follow progress across boards.' },
+];
+const workflows: { t: string; s: FeatureStatus; note?: string; steps: string[] }[] = [
+  {
+    t: 'From a won deal to a delivery project',
+    s: 'connected',
+    note: 'Needs a company account that runs Sales and CRM, Projects and Finance.',
+    steps: [
+      'In Sales and CRM, open the deal and choose Start a project, in the section headed Across and your company\'s name.',
+      'A board named after the deal is made in the company\'s Projects workspace.',
+      'Add the tasks, owners and dates, and set dependencies and milestones on the timeline.',
+      'In the company area, choose Track in Finance on the project and set its budget. Costs posted in Finance then show against it.',
+    ],
+  },
+  {
+    t: 'Requests through a form',
+    s: 'live',
+    steps: [
+      'Create a board from the Request intake template. It comes with a request form view and a Files view.',
+      'Requests entered through the form arrive as items in New requests.',
+      'Triage each one: set its priority, give it an owner and move it to Triaged.',
+      'Add an automation, for example to notify the owner when the due date arrives and the item is not done.',
+    ],
+  },
+  {
+    t: 'A monthly progress report',
+    s: 'live',
+    steps: [
+      'Keep statuses and dates current on the board, and log time on items.',
+      'Check progress, overdue work and workload on the project\'s dashboard.',
+      'Choose Reports on the project, pick Monthly progress report and the month, and add your commentary.',
+      'Preview it, then save it. The PDF, Excel, HTML and CSV files are kept as a version you can download later.',
+    ],
+  },
+];
+const bizomatLinks: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'BIZOMAT ERP', x: 'Projects opens inside the ERP, in Projects and Tasks, with My Work in the rail. The ERP Dashboard shows the workspace\'s open, overdue and upcoming tasks, and Reports lists its dashboards.', s: 'connected' },
+  { t: 'Sales and CRM: follow-up to task', x: 'A CRM follow-up becomes a task in a project you choose, linked back to the customer.', s: 'connected' },
+  { t: 'Sales and CRM: deal to project', x: 'In a company account, a deal starts a project board named after it, once per deal.', s: 'connected' },
+  { t: 'Finance: project costs and budget', x: 'In a company account, a project gets a Finance tracking project and a budget. Income and costs posted to it in Finance show against the budget, to people whose Finance role sees reports.', s: 'connected' },
+  { t: 'Company accounts', x: 'A company runs one Projects workspace. Each person\'s Projects role is set in the company, and each department appears as a team.', s: 'connected' },
+];
+const otherLinks: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'Webhooks', x: WORK.integrations, s: 'live' },
+  { t: 'Google Drive, Calendar, Gmail and GitHub', x: 'Listed in the app as "Requires setup". They cannot be switched on yet.', s: 'planned' },
+];
+const faq = [
+  { q: 'How do I create a project?', a: 'In BIZOMAT Projects a project is a board. Open Projects and Tasks in BIZOMAT ERP, choose New board, give it a name and pick a template (Project plan, Sprint board, Request intake and others) or a blank board, and choose who can see it. In a company account, a CRM deal can also start the project for you.' },
+  { q: 'How do I assign tasks?', a: 'Add an item to the board and set its owner in the person column, with a status and a due date. An automation can also assign items, for example every new item to a chosen person. The person is notified and the task appears in their My Work. A task can be shared with someone outside the project from its Access tab.' },
+  { q: 'How do team members collaborate?', a: 'Each item has updates and replies with @mentions, attachments, an activity history, time tracking and linked documents. Documents have autosave, version history and comments. Notifications cover assignments, mentions, replies, status changes and due dates.' },
+  { q: 'Can tasks depend on each other?', a: 'Yes. The Timeline and Gantt view supports dependencies and milestones, and you drag a task to reschedule it. Boards also have a Dependency column type.' },
+  { q: 'How do I see reports on progress?', a: `Dashboards are computed from live board data, with ${widgets.length} widget types such as task status, completion, workload, overdue work and project progress. People allowed to generate reports (project managers and administrators, by default) can also save project reports, such as a monthly progress or outstanding tasks report, as PDF, Excel, HTML and CSV.` },
+  { q: 'Who can see my projects?', a: 'Only members of your workspace, as their roles allow. A board can be private to its members, and one task can be shared with a guest without the rest of the project. One workspace never sees another.' },
+  { q: 'Is it the same account as the CRM and Finance?', a: 'Yes. Projects, Sales and CRM, and Finance and Accounting use one BIZOMAT account and open inside BIZOMAT ERP. Signing in once reaches every tool you have a role in.' },
+  { q: 'I used BIZOMAT Project Management. Do I start again?', a: 'No. BIZOMAT Projects is the same application under its new name. Sign in with the email and password you already use; your workspaces and boards are where they were.' },
+];
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: PAGE }];
+const schema = [
+  { '@type': 'SoftwareApplication', name: sys.name, alternateName: 'BIZOMAT Project Management', url: `${SITE.url}${PAGE}`, applicationCategory: 'BusinessApplication', applicationSubCategory: sys.kind, operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
+  { '@type': 'FAQPage', url: `${SITE.url}${PAGE}#faq`, mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<BaseLayout title={`${sys.name}: ${sys.kind}`} description={description} image="/brand/bizomat-social-work.png" imageAlt="BIZOMAT Projects: projects, tasks and teams in one shared workspace" breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="projects-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <p class="bz-eyebrow">{sys.name}<span class="pp-hero__formerly">Formerly {sys.formerly}, and {WORK.formerly} before that</span></p>
+        <h1 id="projects-title">{WORK.headline}</h1>
+        <p class="pp-hero__lead">{sys.name} is BIZOMAT's {sys.kind.toLowerCase()}. It brings your projects, tasks, documents and dashboards into one place: plan the work, assign it, track progress and automate the routine steps.</p>
+        <div class="pp-hero__actions">
+          <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-access">{access.label}</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="projects-guide">Read the user guide</Button>
+        </div>
+        <p class="pp-hero__note">{access.note} Sign in with your BIZOMAT account; existing accounts keep working with the email and password you already use.</p>
+      </div>
+      <ProjectFlow id="projects-hero" />
+    </Container>
+  </section>
+
+  <section class="pp-section" id="features" aria-labelledby="features-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What it does</p>
+        <h2 id="features-title">Plan it, assign it, track it, finish it</h2>
+        <p>A project management system keeps the plan, the people and the progress of each piece of work in one shared place. In {sys.name}, projects, tasks, teams and the conversation around them sit on one data model, so every view and dashboard shows the same work.</p>
+        <StatusLegend />
+      </div>
+      <ul class="pp-cards" role="list">
+        {WORK.capabilities.map((c) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{c.title}</h3><p>{c.text}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Who should use it</p>
+        <h2 id="who-title">For everyone who plans, does or oversees the work</h2>
+        <p>Each person gets a role, and sees and changes only what that role allows.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {who.map((w) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{w.t}</h3><p>{w.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Problems it solves</p>
+        <h2 id="problems-title">Less chasing, fewer surprises</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {problems.map((p) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={p.s} /></p><h3>{p.t}</h3><p>{p.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="views" aria-labelledby="views-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features: views and boards</p>
+        <h2 id="views-title">{WORK.views.length} views of the same work</h2>
+        <p>Change a status in the table and the Kanban, calendar and timeline follow, because every view reads the same items. Boards use {WORK.columnTypes} column types, from status and people to dates, numbers, dependencies and formulas, and start blank or from a template.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every view, column type and template below works today.</span></p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {WORK.views.map((v) => <li class="pp-card"><h3>{v}</h3><p>{viewNotes[v]}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="teams" aria-labelledby="teams-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features: teams, roles and permissions</p>
+        <h2 id="teams-title">The right people on the right work</h2>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {teams.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
+      </ul>
+      <h3 class="pp-subhead pp-gap">The {roles.length} workspace roles <StatusLabel status="live" /></h3>
+      <ul class="pp-list pp-list--cols">{roles.map((r) => <li><strong>{r.t}:</strong> {r.x}</li>)}</ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="collaboration" aria-labelledby="collab-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features: collaboration</p>
+        <h2 id="collab-title">The conversation stays with the work</h2>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {collaboration.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="automations" aria-labelledby="auto-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features: automations</p>
+        <h2 id="auto-title">Automations move routine work forward</h2>
+        <p>Choose a trigger, add conditions, pick actions. Status changes, dates and schedules start work for you; every run is logged once, failures are retried, and chains cannot loop.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Triggers, conditions, actions, recipes and run logs work today.</span></p>
+      </div>
+      <WorkflowPipeline id="projects-flow" />
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="dashboards" aria-labelledby="dash-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features: dashboards, goals and reports</p>
+        <h2 id="dash-title">See the whole portfolio at a glance</h2>
+        <p>Everything here is computed from the recorded work when you open it, and each person sees only what their role allows.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {insight.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
+      </ul>
+      <h3 class="pp-subhead pp-gap">The {widgets.length} dashboard widgets <StatusLabel status="live" /></h3>
+      <ul class="pp-list pp-list--cols pp-list--3">{widgets.map((w) => <li>{w}</li>)}</ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="security" aria-labelledby="sec-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features: accounts and security</p>
+        <h2 id="sec-title">Your projects are visible only to your workspace</h2>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every protection below is in place today.</span></p>
+      </div>
+      <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
+    </Container>
+  </section>
+
+  {(shots.length > 0 || erpShot) && (
+    <section class="pp-section pp-section--tint" id="screens" aria-labelledby="screens-title">
+      <Container>
+        <div class="pp-head">
+          <p class="bz-eyebrow">Screenshots</p>
+          <h2 id="screens-title">Boards, views, dashboards and documents</h2>
+          <p>Captured from the running application with example data. More screens are in the <a href={GUIDE}>user guide</a>.</p>
+        </div>
+        <div class="pp-shots">
+          {erpShot && (
+            <figure class="pp-shot">
+              <img src={erpShot.src} alt={`${erpShot.title}. ${erpShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>Inside BIZOMAT ERP. {erpShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          )}
+          {shots.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${sys.name}, ${s.title.replace(/^[^:]+: /, '')}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{s.title.replace(/^[^:]+: /, '').replace(/^./, (c) => c.toUpperCase())}. {s.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <section class="pp-section" id="dashboard" aria-labelledby="home-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">The main dashboard</p>
+        <h2 id="home-title">Where each day starts</h2>
+        <p>Four places answer "what needs doing, and how is it going?" Each counts only the work you are allowed to see.</p>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {dashboardParts.map((d) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={d.s} /></p><h3>{d.t}</h3><p>{d.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="walkthrough" aria-labelledby="walk-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Screen by screen</p>
+        <h2 id="walk-title">A walk through the application</h2>
+        <p>In the order you meet them. The <a href={GUIDE}>user guide</a> explains each one step by step.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in the application today.</span></p>
+      </div>
+      <ol class="pp-steps pp-steps--2">
+        {walkthrough.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+      </ol>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="start" aria-labelledby="start-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Getting started</p>
+        <h2 id="start-title">Start in {steps.length} steps</h2>
+        <p class="pp-head-lead">Most people have a first board with real work on it in one sitting. The <a href={GUIDE}>user guide</a> covers each step, and everything after it.</p>
+        <div class="pp-hero__actions">
+          <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-start-access">{access.label}</Button>
+        </div>
+      </div>
+      <ol class="pp-steps">
+        {steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+      </ol>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="workflows" aria-labelledby="flows-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Typical workflows</p>
+        <h2 id="flows-title">How the pieces fit in real work</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {workflows.map((w) => (
+          <li class="pp-card">
+            <p class="pp-card__status"><StatusLabel status={w.s} /></p>
+            <h3>{w.t}</h3>
+            <ol class="pp-flow">{w.steps.map((s) => <li>{s}</li>)}</ol>
+            {w.note && <p class="pp-table-note">{w.note}</p>}
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="integrations" aria-labelledby="int-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Integration with other BIZOMAT systems</p>
+        <h2 id="int-title">Connected to sales, finance and your company</h2>
+        <p>Projects works on its own, and inside a company account it links to the other systems. Each link checks both systems' own permissions, and money is read from Finance, never copied.</p>
+      </div>
+      <div class="pp-tools">
+        <section aria-labelledby="int-bizomat">
+          <h3 id="int-bizomat">With BIZOMAT systems</h3>
+          <dl>
+            {bizomatLinks.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
+          </dl>
+        </section>
+        <section aria-labelledby="int-other">
+          <h3 id="int-other">With other tools</h3>
+          <dl>
+            {otherLinks.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
+          </dl>
+        </section>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Frequently asked questions</p>
+        <h2 id="faq-title">Questions about {sys.name}</h2>
+      </div>
+      <dl class="pp-faq">
+        {faq.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>user guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="projects-cta">
+    <Container class="pp-band">
+      <div>
+        <h2 id="projects-cta">Bring your projects and your team into one place.</h2>
+        <p class="pp-band__note">{access.note}</p>
+      </div>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-band-access">{access.label}</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="projects-band-guide">Read the user guide</Button>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="related" aria-labelledby="related-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Related systems</p>
+        <h2 id="related-title">The rest of BIZOMAT</h2>
+        <p>Every BIZOMAT system is in the <a href={SYSTEMS_HOME}>Systems catalogue</a>.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {related.map((s) => (
+          <li class="pp-card">
+            <p class="pp-related__kind">{s.kind} · {STATUS_LABEL[s.status]}</p>
+            <h3><a href={s.url}>{s.name}</a></h3>
+            <p>{s.line}</p>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .pp-subhead { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: var(--step-1); margin-bottom: .9rem; }
+  .pp-gap { margin-top: clamp(2rem, 4vw, 3rem); }
+  .pp-list--cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
+  .pp-list--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .pp-steps--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pp-card__status { margin: 0 0 .75rem; }
+  .pp-status-line { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: .92rem; }
+  .pp-flow { margin: .7rem 0 0; padding-left: 1.2rem; display: grid; gap: .4rem; color: var(--ink-2); font-size: .95rem; }
+  .pp-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
+  .pp-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .pp-faq dt { font-weight: 650; color: var(--ink); }
+  .pp-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
+  .pp-band__note { margin: .6rem 0 0; max-width: 46ch; }
+  .pp-related__kind { margin: 0 0 .5rem; color: var(--muted); font-size: .82rem; }
+  .pp-card h3 a { color: inherit; }
+  @media (max-width: 1000px) { .pp-steps--2 { grid-template-columns: 1fr; } .pp-list--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .pp-list--cols, .pp-list--3 { grid-template-columns: 1fr; } }
+</style>

@@ -94,7 +94,7 @@ test('kevos.com and www hosts redirect with path and query; kevos.com API posts 
   assert.equal(insights.headers.location, 'https://bizomat.ai/insights/old-post/', 'sent as-is: the web app redirects it');
   const cadPage = await request(p.port, { host: 'kevos.com', path: '/cad/?ref=x' });
   assert.equal(cadPage.status, 301);
-  assert.equal(cadPage.headers.location, 'https://bizomat.ai/cad-automation/?ref=x', 'the old CAD page, not the app');
+  assert.equal(cadPage.headers.location, 'https://bizomat.ai/systems/engineering/?ref=x', 'the old CAD page, not the app');
   const www = await request(p.port, { host: 'www.bizomat.ai', path: '/about/?a=b' });
   assert.equal(www.status, 301);
   assert.equal(www.headers.location, 'https://bizomat.ai/about/?a=b');

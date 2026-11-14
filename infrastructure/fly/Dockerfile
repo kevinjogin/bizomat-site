@@ -55,7 +55,7 @@ FROM work-client AS work-build
 # dist/node/server.mjs (the Node server) next to dist/client; then only the production packages are kept
 RUN npm run build:node && test -f dist/node/server.mjs && npm prune --omit=dev
 
-# The BIZOMAT System preview (owner, 14 Nov 2026: the design of the whole system, ERP until renamed; published at
+# The BIZOMAT ERP design preview (owner, 14 Nov 2026; "BIZOMAT System" earlier that day; published at
 # bizomat.ai/system-preview/). Static files with demonstration data only, built from the work app's sources by its
 # own Vite config (relative addresses), and served by the web Machine from dist/system-preview under the website's
 # headers. Its own stage, so neither the work app's build nor its image folder changes.

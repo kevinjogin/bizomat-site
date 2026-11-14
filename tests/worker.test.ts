@@ -113,7 +113,7 @@ test('the rest of bizomat.ai is the website', async () => {
 
 test('an application path in another case answers 301 to the lowercase one', async () => {
   await withOrigin(async (seen) => {
-    for (const [from, to] of [['/CAD', '/cad'], ['/Cad/', '/cad/'], ['/CAD/docs?q=a%20b', '/cad/docs?q=a%20b'], ['/TASKS', '/tasks'], ['/Tasks/board/7?x=1', '/tasks/board/7?x=1'], ['/CRM', '/crm'], ['/Crm/o/1/deals?view=board', '/crm/o/1/deals?view=board'], ['/FINANCE', '/finance'], ['/Finance/o/1/transactions?q=a', '/finance/o/1/transactions?q=a'], ['/Company/c/1?x=1', '/company/c/1?x=1'], ['/SYSTEM', '/system'], ['/System/admin?x=1', '/system/admin?x=1']]) {
+    for (const [from, to] of [['/CAD', '/cad'], ['/Cad/', '/cad/'], ['/CAD/docs?q=a%20b', '/cad/docs?q=a%20b'], ['/TASKS', '/tasks'], ['/Tasks/board/7?x=1', '/tasks/board/7?x=1'], ['/CRM', '/crm'], ['/Crm/o/1/deals?view=board', '/crm/o/1/deals?view=board'], ['/FINANCE', '/finance'], ['/Finance/o/1/transactions?q=a', '/finance/o/1/transactions?q=a'], ['/Company/c/1?x=1', '/company/c/1?x=1'], ['/SYSTEM', '/system'], ['/System/admin?x=1', '/system/admin?x=1'], ['/ERP', '/erp'], ['/Erp/crm?x=1', '/erp/crm?x=1']]) {
       const res = await worker.fetch(new Request(`https://bizomat.ai${from}`), env());
       assert.equal(res.status, 301, from);
       assert.equal(res.headers.get('Location'), to, from);
@@ -233,6 +233,20 @@ test('bizomat.ai/system/... reaches the same app (BIZOMAT System): its Worker on
   assert.equal(got[0].method, 'POST');
 });
 
+test('bizomat.ai/erp/... reaches the same app (BIZOMAT ERP, the one workspace); /erp-design-preview stays the website\'s', async () => {
+  await withOrigin(async () => {
+    for (const path of ['/erp', '/erp/', '/erp/login', '/erp/crm/o/1/overview', '/erp/api/system/me', '/erp/assets/index-a1.js']) {
+      const res = await worker.fetch(new Request(`https://bizomat.ai${path}`), env());
+      assert.equal(await res.text(), `origin:${path}`, path);
+    }
+  });
+  const got: Request[] = [];
+  const bound: Env = { ...env(), TASKS: { fetch: async (req) => (got.push(req), new Response('erp app')) } };
+  const res = await worker.fetch(new Request('https://bizomat.ai/erp/finance/api/fin/orgs'), bound);
+  assert.equal(await res.text(), 'erp app');
+  assert.equal(got[0].url, 'https://bizomat.ai/erp/finance/api/fin/orgs');
+});
+
 test('www.bizomat.ai answers with bizomat.ai; plain HTTP is upgraded before the applications are reached', async () => {
   await withOrigin(async (seen) => {
     const page = await worker.fetch(new Request('http://www.bizomat.ai/cad/docs?x=1'), env());
@@ -256,7 +270,7 @@ test('the applications are reached only on bizomat.ai; elsewhere the old CAD pag
       for (const path of ['/cad', '/cad/']) {
         const res = await worker.fetch(new Request(`https://${host}${path}?ref=x`), env());
         assert.equal(res.status, 301, `${host}${path}`);
-        assert.equal(res.headers.get('Location'), '/cad-automation/?ref=x', `${host}${path}`);
+        assert.equal(res.headers.get('Location'), '/systems/engineering/?ref=x', `${host}${path}`);
       }
       assert.equal(await (await worker.fetch(new Request(`https://${host}/mcp`), env())).text(), 'asset:/mcp', host);
       assert.equal(await (await worker.fetch(new Request(`https://${host}/tasks/`), env())).text(), 'asset:/tasks/', host);
@@ -271,7 +285,7 @@ test('no page or file of the website takes an application\'s path, so those path
       const rel = `${dir}/${e.name}`;
       return e.isDirectory() ? [rel, ...taken(rel)] : [rel];
     });
-  const appPath = /^\/(cad|tasks|crm|finance|company|system)(\/|$)/i;
+  const appPath = /^\/(cad|tasks|crm|finance|company|system|erp)(\/|$)/i;
   // The BIZOMAT System preview (added to the image by infrastructure/fly/Dockerfile) is the website's, not /system's.
   for (const path of ['/system-preview', '/system-preview/index.html', '/system-preview/assets/index-a1.js', '/erp-design-preview']) assert.ok(!appPath.test(path), path);
   for (const root of ['src/pages', 'public']) {

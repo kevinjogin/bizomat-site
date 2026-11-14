@@ -1,12 +1,26 @@
-// Real product screens for the Engine Room (/engine-room/), /cad-automation/, /work/, /crm-platform/ and /finance-platform/ (with their guides). Each was captured from the running application (a
+// Real product screens for the Engine Room (/engine-room/) and the Systems pages (/systems/ and each system's page and guide). Each was captured from the running application (a
 // local instance with example data, never a customer's), in Chromium at 1440 x 900. A screen whose file is not in
 // public/ is skipped at build time, so a page never links a missing image.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-export interface Screenshot { src: string; product: 'cad' | 'work' | 'crm' | 'finance'; title: string; caption: string }
+export interface Screenshot { src: string; product: 'cad' | 'work' | 'crm' | 'finance' | 'erp'; title: string; caption: string }
 
 const ALL: readonly Screenshot[] = [
+  // BIZOMAT ERP, the one workspace, captured 14 Nov 2026 from a local instance with a fictional company ("Acme Studio")
+  // and example data (apps/work/scripts/seed-local.mjs and the capture script's own example records).
+  { src: '/proof-of-work/product/erp-dashboard.webp', product: 'erp', title: 'BIZOMAT ERP: Dashboard', caption: 'Your company and every tool in it, with the figures your role may see. The module rail is on the left.' },
+  { src: '/proof-of-work/product/erp-crm.webp', product: 'erp', title: 'BIZOMAT ERP: Sales and CRM', caption: 'The CRM opens inside the ERP: the same records and permissions, with the module rail beside it.' },
+  { src: '/proof-of-work/product/erp-finance.webp', product: 'erp', title: 'BIZOMAT ERP: Finance and Accounting', caption: 'Finance opens inside the ERP, in the company\'s business workspace.' },
+  { src: '/proof-of-work/product/erp-projects.webp', product: 'erp', title: 'BIZOMAT ERP: Projects and Tasks', caption: 'A project board inside the ERP: groups, owners, statuses and dates.' },
+  { src: '/proof-of-work/product/erp-engineering.webp', product: 'erp', title: 'BIZOMAT ERP: Products and Engineering', caption: 'CAD Automation\'s set-up steps and the computers this person may see.' },
+  { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'The operations modules: Asset Management and Maintenance partly live, with what works today, and the others labelled Planned.' },
+  { src: '/proof-of-work/product/erp-reports.webp', product: 'erp', title: 'BIZOMAT ERP: Reports', caption: 'Every report of the company\'s tools in one place; each opens in its module.' },
+  { src: '/proof-of-work/product/erp-administration.webp', product: 'erp', title: 'BIZOMAT ERP: Administration', caption: 'The company, each tool\'s team and settings, and your own profile.' },
+  { src: '/proof-of-work/product/erp-maintenance.webp', product: 'erp', title: 'BIZOMAT ERP: Maintenance', caption: 'The maintenance overview: requests awaiting approval, open and overdue work orders, your work and the asset register.' },
+  { src: '/proof-of-work/product/erp-maintenance-assets.webp', product: 'erp', title: 'BIZOMAT ERP: an asset', caption: 'An asset in its hierarchy, with its details, outstanding work, the assets under it, files and history.' },
+  { src: '/proof-of-work/product/erp-maintenance-requests.webp', product: 'erp', title: 'BIZOMAT ERP: maintenance requests', caption: 'Requests by status, with priority and asset, ready for a supervisor to approve, decline or ask for more.' },
+  { src: '/proof-of-work/product/erp-maintenance-work-order.webp', product: 'erp', title: 'BIZOMAT ERP: a work order', caption: 'A work order with the labour timer, Complete and Add a photo, safety requirements, instructions and tasks.' },
   { src: '/proof-of-work/product/cad-dashboard.webp', product: 'cad', title: 'CAD Automation: Home', caption: 'The signed-in home: connection status, set-up steps and recent activity.' },
   { src: '/proof-of-work/product/cad-assistant.webp', product: 'cad', title: 'CAD Automation: CAD Assistant', caption: 'The connector address for AI apps, connected apps and example requests.' },
   { src: '/proof-of-work/product/cad-solidworks.webp', product: 'cad', title: 'CAD Automation: SOLIDWORKS', caption: 'The installer, paired computers and how the add-in connects.' },

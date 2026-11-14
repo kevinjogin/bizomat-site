@@ -70,7 +70,7 @@ describe('own companies and tools by company', () => {
     const view = await a.json('GET', `/api/system/companies/${own.id}`);
     expect(view.tools.map((t: any) => `${t.app}:${t.id}`).sort()).toEqual([`crm:${crm}`, `finance:${fin}`, `tasks:${a.workspaceId}`].sort());
     const ws = view.tools.find((t: any) => t.app === 'tasks');
-    expect(ws.url).toBe(`/system/tasks/w/${a.workspaceId}/home`);
+    expect(ws.url).toBe(`/erp/tasks/w/${a.workspaceId}/home`);
     expect(ws.numbers).toMatchObject({ open: 0, projects: expect.any(Number) });
     // Someone added to the workspace as a member sees it under Ola's company, without the workspace's figures.
     const m = await signup('Max Member');
@@ -83,6 +83,24 @@ describe('own companies and tools by company', () => {
 
     await a.json('PATCH', `/api/system/companies/${own.id}`, { name: 'Ola Studio' });
     expect((await a.json('GET', '/api/system/me')).companies.find((c: any) => c.id === own.id).name).toBe('Ola Studio');
+  });
+
+  it('migration 0017 gives every existing active account its own company, once', async () => {
+    const migration = (env as unknown as { TEST_MIGRATIONS: { name: string; queries: string[] }[] }).TEST_MIGRATIONS.find((m) => m.name.startsWith('0017_'))!;
+    const run = async () => {
+      for (const q of migration.queries) await env.DB.prepare(q).run();
+    };
+    const a = await signup('Mo Migrated');
+    const off = await signup('Dee Disabled');
+    await env.DB.prepare("UPDATE users SET name = '  ' WHERE id = ?").bind(a.userId).run();
+    await env.DB.prepare('UPDATE users SET disabled_at = ? WHERE id = ?').bind(Date.now(), off.userId).run();
+    await env.DB.prepare('DELETE FROM sys_companies WHERE owner_id IN (?, ?)').bind(a.userId, off.userId).run();
+    await run();
+    const row = await env.DB.prepare('SELECT name, created_via FROM sys_companies WHERE owner_id = ?').bind(a.userId).first<any>();
+    expect(row).toMatchObject({ name: a.email.split('@')[0], created_via: 'migration' });
+    expect(await env.DB.prepare('SELECT 1 FROM sys_companies WHERE owner_id = ?').bind(off.userId).first()).toBeNull();
+    await run();
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM sys_companies WHERE owner_id = ?').bind(a.userId).first<{ n: number }>())?.n).toBe(1);
   });
 
   it('the maintenance backfill makes the missing own companies and is idempotent', async () => {
@@ -138,8 +156,8 @@ describe('own companies and tools by company', () => {
     expect((await b.json('GET', '/api/system/me')).companies.map((c: any) => c.id)).not.toContain(company.id);
     expect((await raw('GET', '/api/system/me')).status).toBe(401);
     // The same API under the System's own address.
-    expect((await raw('GET', '/system/api/system/me')).status).toBe(401);
-    expect((await SELF.fetch('http://example.com/system/login')).status).toBe(200);
+    expect((await raw('GET', '/erp/api/system/me')).status).toBe(401);
+    expect((await SELF.fetch('http://example.com/erp/login')).status).toBe(200);
   });
 });
 

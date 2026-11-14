@@ -61,7 +61,7 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   const read = request.method === 'GET' || request.method === 'HEAD';
   // /CAD, /Tasks/..., /CRM, /Finance, /Company, /System: one address per page, in lowercase (other methods are left alone
   // and find nothing)
-  const app = /^\/(cad|tasks|crm|finance|company|system)(?=\/|$)/i.exec(url.pathname);
+  const app = /^\/(cad|tasks|crm|finance|company|system|erp)(?=\/|$)/i.exec(url.pathname);
   if (app && app[1] !== app[1].toLowerCase() && read) {
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
@@ -76,6 +76,8 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   if (/^\/company(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   // BIZOMAT System too (apps/work, mounted at /system); /system-preview/ does not match and stays the website's
   if (/^\/system(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
+  // BIZOMAT ERP, the one workspace (apps/work, mounted at /erp); /erp-design-preview stays the website's redirect
+  if (/^\/erp(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   return null;
 }
 
@@ -119,7 +121,7 @@ export default {
     }
     // The CAD Automation page was /cad/; on bizomat.ai that address is the application itself.
     if ((url.pathname === '/cad' || url.pathname === '/cad/') && read) {
-      return withHeaders(redirect(`/cad-automation/${url.search}`, 301), url);
+      return withHeaders(redirect(`/systems/engineering/${url.search}`, 301), url);
     }
     // The Insights section is retired. public/_redirects sends each /insights/<slug>/ to its Library chapter;
     // anything those rules cannot match exactly reaches the Worker: add the missing trailing slash so the

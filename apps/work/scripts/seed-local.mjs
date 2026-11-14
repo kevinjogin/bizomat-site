@@ -170,9 +170,15 @@ async function main() {
   const people = { demo: demo.user.id };
   const sessions = { demo };
   for (const p of TEAM) {
-    await api(demo, 'POST', `/api/workspaces/${wsId}/invitations`, { email: p.email, role: 'member' });
+    const invitation = await api(demo, 'POST', `/api/workspaces/${wsId}/invitations`, { email: p.email, role: 'member' });
     const s = await signupOrLogin(p);
-    const inv = (await api(s, 'GET', '/api/auth/me')).workspaces.find((w) => w.id === wsId);
+    let inv = (await api(s, 'GET', '/api/auth/me')).workspaces.find((w) => w.id === wsId);
+    // Accounts made after the invitation join when they accept it with the link's token, as a person would.
+    const token = invitation?.inviteUrl ? decodeURIComponent(invitation.inviteUrl.split('/invite/')[1] ?? '') : '';
+    if (!inv && token) {
+      await api(s, 'POST', `/api/auth/invitations/${encodeURIComponent(token)}/accept`, {});
+      inv = (await api(s, 'GET', '/api/auth/me')).workspaces.find((w) => w.id === wsId);
+    }
     if (!inv) throw new Error(`${p.email} did not join the demo workspace`);
     people[p.key] = s.user.id;
     sessions[p.key] = s;

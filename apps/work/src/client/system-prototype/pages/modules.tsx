@@ -278,7 +278,7 @@ export function Accounting({ page }: { page: NavPage }) {
         ) : tab === 'journals' ? (
           <Panel title="Journals this month">
             <ul className="erp-plain-list">
-              <li>JNL-1184 · Stock valuation from System receipts (planned link) · {fmtDate('2026-11-12')}</li>
+              <li>JNL-1184 · Stock valuation from ERP receipts (planned link) · {fmtDate('2026-11-12')}</li>
               <li>JNL-1183 · Payroll, fortnight to 7 Nov · {fmtDate('2026-11-08')}</li>
               <li>JNL-1182 · Depreciation, October · {fmtDate('2026-11-01')}</li>
             </ul>

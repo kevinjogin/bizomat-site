@@ -1,42 +1,66 @@
 ---
-// /finance-platform/guide/: how to use BIZOMAT Finance, step by step. Every button and field named here is the
-// application's own label (apps/work/src/client/fin); the facts come from src/data/platform-catalog.ts (FINANCE).
-// Screens are real (src/data/screenshots.ts), captured with a fictional business and example data.
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Container from '../../components/Container.astro';
-import Button from '../../components/Button.astro';
-import '../../styles/product.css';
-import '../../styles/visuals.css';
-import { screenshots } from '../../data/screenshots.ts';
-import { SITE } from '../../config/site.ts';
-import { APP_LINKS } from '../../config/platform.ts';
-import { FINANCE } from '../../data/platform-catalog.ts';
+// /systems/finance/guide/: how to use BIZOMAT Finance (the Finance Management System), step by step. Every button and
+// field named here is the application's own label (apps/work/src/client/fin, and
+// src/client/components/layout/SuiteRail.tsx for BIZOMAT ERP's module rail); the facts come from
+// src/data/platform-catalog.ts (FINANCE), and the links to the CRM and Projects from
+// apps/work/src/worker/company/links.ts. Screens are real (src/data/screenshots.ts), captured with a fictional business
+// and example data.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { FINANCE } from '../../../data/platform-catalog.ts';
 
-const PAGE = '/finance-platform/guide/';
-const shot = (name: string) => screenshots('finance').find((s) => s.src.endsWith(`/${name}.webp`));
+const sys = systemById('finance');
+const access = sys.access!;
+const crm = systemById('crm');
+const projects = systemById('projects');
+const erp = systemById('erp');
+const PAGE = sys.guide!;
+const shot = (name: string) => screenshots().find((s) => s.src.endsWith(`/${name}.webp`));
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
-const description = 'How to use BIZOMAT Finance, step by step: workspaces, accounts, transactions, bank statements, quotes, invoices, credit notes, bills, reports, GST and budgets.';
+const description = 'How to use BIZOMAT Finance, step by step: open it in BIZOMAT ERP, create a workspace, record and import transactions, quote, invoice, report, prepare GST and invite people.';
+const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Operations', 'Reports', 'Administration'];
 
 interface Step { t: string; x: string }
-interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
+interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean; status?: FeatureStatus }
 const parts: Part[] = [
+  {
+    id: 'access', title: `Open ${sys.name} in ${erp.name}`,
+    lead: `${sys.name} opens inside ${erp.name}, BIZOMAT's one workspace for signed-in people, as its ${sys.module} module.`,
+    steps: [
+      { t: 'Go to BIZOMAT ERP', x: `Go to ${APP_LINKS.erp.signIn.replace('https://', '')}, or choose Sign in at the top of any BIZOMAT page.` },
+      { t: `Choose ${sys.module}`, x: `After you sign in, the ERP opens on its Dashboard. Choose ${sys.module} in the module rail at the left of the screen (a bar along the bottom on a phone).` },
+      { t: 'Move between modules', x: `The rail stays beside every screen: ${list(RAIL)}. Operations lists modules that are planned and not built yet.` },
+      { t: 'Old addresses', x: 'Bookmarks and links to bizomat.ai/finance still work: they open the same page inside the ERP. The secure links you send customers for quotes and invoices stay where they are, and need no sign-in.' },
+    ],
+    shot: 'erp-finance',
+  },
   {
     id: 'sign-in', title: 'Sign in or create an account',
     steps: [
-      { t: 'Open Finance', x: 'Go to bizomat.ai/finance, or choose Sign in, then Finance, at the top of any BIZOMAT page.' },
-      { t: 'Sign in', x: 'Use your BIZOMAT email and password. If you use Project Management or the CRM, it is the same account, and signing in to one signs you in to all three.' },
-      { t: 'New to BIZOMAT?', x: 'Choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+      { t: 'Sign in', x: `Use your BIZOMAT email and password. It is the same account for ${crm.name} and ${projects.name}, and signing in once opens every module of the ERP.` },
+      { t: 'New to BIZOMAT?', x: 'On the sign-in page, choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+      { t: 'Invited by someone?', x: 'Open the invitation link from the email or message, and sign in or create an account with the address it was sent to.' },
     ],
   },
   {
     id: 'workspace', title: 'Create a workspace',
     lead: 'A workspace keeps one set of books: its own accounts, records, members and settings. Keep personal, household and business money apart, and add as many businesses as you need.',
     steps: [
-      { t: 'Choose the kind', x: 'Personal for your own money, Household for money shared at home, Business for a business. The kind decides the starting categories and which features appear.' },
+      { t: 'Choose the kind', x: 'The first time you open Finance and Accounting, Finance asks you to create a workspace. Choose Personal for your own money, Household for money shared at home, Business for a business. The kind decides the starting categories and which features appear.' },
       { t: 'Name it', x: 'Enter the Workspace name, the Currency (Australian dollars unless you choose otherwise) and the month your Financial year starts in (July in Australia).' },
       { t: 'For a business', x: 'Add the Legal name and ABN, and tick Registered for GST if the business is. The standard Australian tax codes are always there; GST is worked out once registration is on.' },
       { t: 'Create workspace', x: 'You become its owner. It starts with a chart of accounts and no sample records.' },
       { t: 'Switch workspaces', x: 'Open the workspace menu at the top left to move between workspaces, or choose Create or join a workspace.' },
+      { t: 'Through your company', x: 'When a company registers in BIZOMAT (Register a company, from the ERP\'s company menu or Administration), it gets its own Finance business workspace, with the person who registered as its owner. Personal and household workspaces never join a company.' },
     ],
     shot: 'finance-start',
   },
@@ -127,6 +151,7 @@ const parts: Part[] = [
       { t: `${FINANCE.reports.length} reports`, x: `Open Reports: ${list(FINANCE.reports.map((r, i) => (i ? r.charAt(0).toLowerCase() + r.slice(1) : r)))}.` },
       { t: 'Choose what to see', x: 'Each report has its own dates or as-at date, a comparison with the previous period or year, and filters for department, project and cost centre (and person, in a household).' },
       { t: 'Export and schedule', x: 'CSV and PDF download the report. Schedule saves it each month or quarter in Documents, in the Reports folder.' },
+      { t: 'From the ERP', x: `In ${erp.name}, Reports lists Finance's reports with those of the other modules, and the Dashboard shows the financial year's income, expenses and net, and what is owed both ways, by company. Each opens here, with your Finance role's permissions.` },
     ],
     shot: 'finance-balance-sheet',
   },
@@ -171,13 +196,27 @@ const parts: Part[] = [
   {
     id: 'team', title: 'Invite people and choose roles',
     steps: [
-      { t: 'Invite someone', x: 'Open Team, then Invitations. Enter the person\'s email address, choose their role, add a message if you like, and choose Send invitation.' },
+      { t: 'Invite someone', x: 'Owners and administrators: open Team, then Invitations. Enter the person\'s email address, choose their role, add a message if you like, and choose Send invitation.' },
       { t: 'Email or link', x: 'BIZOMAT emails the invitation when its email service is set up. Either way, Team shows the invitation link with Copy, so you can send it yourself. The link works once, for 14 days, and only for that address.' },
+      { t: 'Your accountant', x: 'Choose the Accountant role for the person who keeps your books: every record, the chart of accounts, tax codes, journals and the period lock, but not the members. Someone invited to Finance alone sees only that workspace.' },
       { t: 'Members', x: 'Under Members, change a person\'s role or remove them. The owner can Transfer ownership; anyone else can leave.' },
       { t: 'Roles and permissions', x: 'Owners and administrators can change what Accountant, Finance Manager, Contributor and Viewer may do: for each area, View, Edit and Delete as All, Own or None, and Create, Approve and post, Import and Export. Restore the defaults undoes the changes.' },
+      { t: 'In a registered company', x: 'Company administrators can also invite from Administration, People and roles: Invite someone sets the person\'s company role, a role in each tool and their departments at once.' },
     ],
     shot: 'finance-permissions',
     roles: true,
+  },
+  {
+    id: 'integrations', title: `Use Finance with ${crm.name} and ${projects.name}`, status: 'connected',
+    lead: `These links work when your business workspace belongs to a company registered in BIZOMAT that also runs ${crm.short} or ${projects.short}. Each one follows the other system's own permissions and links only records of the same company.`,
+    steps: [
+      { t: 'A customer from the CRM', x: 'On a quote or invoice, choose From the CRM beside the customer. It lists the CRM\'s companies you may see there. Choosing one that is not in Finance yet adds it from the CRM\'s name, email, phone and address and links the two, so it is never added twice.' },
+      { t: 'Quotes started from a deal', x: 'A deal in the CRM can start a draft quote here, made out to the deal\'s company with one line for the deal\'s value. Price it in detail and send it as any other quote. The deal shows its status.' },
+      { t: 'Draft invoices from won deals', x: 'A won deal can become a draft invoice here, with one line for its title and value. Check the amount, GST and account, then Save and approve.' },
+      { t: 'What shows in the CRM', x: 'The customer\'s open invoices and the amount owed show on its CRM company, to people whose Finance role can see sales.' },
+      { t: 'Project costs and budget', x: 'In the company area, Projects lists the company\'s projects. Track in Finance gives a project a tracking project here; income and costs posted to it show there against a budget. It needs a Finance role that manages accounting.' },
+      { t: 'Departments', x: 'The company\'s departments appear in Accounting, Departments and projects, so lines and reports can carry them.' },
+    ],
   },
   {
     id: 'closing', title: 'Correct mistakes and close a period',
@@ -204,22 +243,26 @@ const questions = [
   { q: 'Is it a certified accounting or payroll product?', a: 'No. It is not certified for tax, payroll or statutory accounting, and it does not do payroll, PAYG withholding or superannuation.' },
   { q: 'Who can see my personal workspace?', a: 'Only you, until you invite someone. People outside a workspace cannot see it or tell that it exists.' },
   { q: 'Can I run more than one business?', a: 'Yes. Create a workspace for each, and switch between them from the workspace menu. Each keeps its own books, people and settings.' },
-  { q: 'Is it the same account as Project Management and the CRM?', a: 'Yes. One BIZOMAT account signs you in to all three, and each keeps its own data.' },
+  { q: `Is it the same account as ${crm.name} and ${projects.name}?`, a: `Yes. One BIZOMAT account signs you in to ${erp.name} and every module in it, and each keeps its own data and roles.` },
+  { q: 'Where do I find Finance after signing in?', a: `In ${erp.name}: choose ${sys.module} in the module rail. Links to bizomat.ai/finance open the same place.` },
+  { q: 'Can Finance use my CRM customers?', a: `Yes, when the business workspace and the ${crm.short} organisation belong to the same company: From the CRM brings in a CRM company as one Finance customer (step ${parts.findIndex((x) => x.id === 'integrations') + 1}).` },
   { q: 'Can a workspace use more than one currency?', a: 'No. Each workspace has one currency, chosen when you create it; it can be changed until anything is posted.' },
 ];
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
 ---
-<BaseLayout title="Finance user guide" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Finance', href: '/finance-platform/' }, { label: 'User guide', href: PAGE }]}
-  schema={[{ '@type': 'HowTo', name: 'How to use BIZOMAT Finance', url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
+<BaseLayout title={`${sys.name} user guide`} description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }, { label: 'User guide', href: PAGE }]}
+  schema={[{ '@type': 'HowTo', name: `How to use ${sys.name}`, url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
   <section class="pp-hero" aria-labelledby="guide-title">
     <Container>
-      <p class="bz-eyebrow">BIZOMAT Finance</p>
-      <h1 id="guide-title">How to use Finance</h1>
-      <p class="pp-hero__lead">Step by step, from your first workspace to reports, GST and your team. Every button and field is named as it appears in the application.</p>
+      <p class="bz-eyebrow">{sys.name} · {sys.kind} · User guide</p>
+      <h1 id="guide-title">How to use {sys.name}</h1>
+      <p class="pp-hero__lead">Step by step, from opening {sys.name} in {erp.name} to your first workspace, transactions, invoices, reports, GST, your team and the links to {crm.name} and {projects.name}. Every button and field is named as it appears in the application.</p>
       <div class="pp-hero__actions">
-        <Button href={APP_LINKS.finance.signIn} variant="accent" rel="noopener" data-cta="finance-guide-start">Open Finance</Button>
-        <Button href="/finance-platform/" variant="secondary" data-cta="finance-guide-product">About Finance</Button>
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="finance-guide-access">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="finance-guide-product">About {sys.name}</Button>
       </div>
+      <p class="pp-hero__note">{access.note} Sign-in required, with your BIZOMAT account.</p>
+      <StatusLegend />
       <nav class="guide-toc" aria-label="In this guide">
         <h2 class="guide-toc__title">In this guide</h2>
         <ol>
@@ -234,7 +277,7 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
     <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
       <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
         <div>
-          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length} <StatusLabel status={p.status ?? 'live'} /></p>
           <h2 id={`${p.id}-title`}>{p.title}</h2>
           {p.lead && <p class="guide-lead">{p.lead}</p>}
           <ol class="pp-steps guide-steps">
@@ -267,7 +310,7 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
       <dl class="guide-faq">
         {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+      <p class="pp-table-note">Something not covered here? Read the <a href={`${sys.url}#faq`}>questions on the {sys.name} page</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
     </Container>
   </section>
 
@@ -275,8 +318,8 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
     <Container class="pp-band">
       <h2 id="guide-cta">Ready? Your first workspace takes a few fields.</h2>
       <div class="pp-band__actions">
-        <Button href={APP_LINKS.finance.signIn} variant="accent" rel="noopener" data-cta="finance-guide-band-start">Open Finance</Button>
-        <Button href="/finance-platform/" variant="secondary" data-cta="finance-guide-band-product">About Finance</Button>
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="finance-guide-band-access">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="finance-guide-band-product">About {sys.name}</Button>
       </div>
     </Container>
   </section>

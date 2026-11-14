@@ -1,0 +1,9 @@
+---
+// A feature's status on the Systems pages (owner, 14 Nov 2026): Live, Connected, In development or Planned. Definitions
+// in src/config/systems.ts (FEATURE_STATUS). A planned feature is never described as working.
+import { FEATURE_STATUS, type FeatureStatus } from '../config/systems.ts';
+interface Props { status: FeatureStatus; class?: string }
+const { status, class: cls } = Astro.props;
+const s = FEATURE_STATUS[status];
+---
+<span class:list={['bz-badge', `bz-badge--${status}`, cls]} title={s.meaning}>{s.label}</span>

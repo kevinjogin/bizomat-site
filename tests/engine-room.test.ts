@@ -88,7 +88,7 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   assert.ok(home.includes("id.startsWith('case-') ? `/engine-room/#${id}`"), 'old /#case-<id> links open the case study');
   assert.ok(home.includes("work: '/engine-room/#engineering-record'"), 'old /#work links open the record');
   assert.ok(home.includes("about: '/engine-room/'"), 'old /#about links open the Engine Room');
-  for (const f of ['src/pages/index.astro', 'src/pages/cad-automation.astro', 'src/pages/work.astro', 'src/config/site.ts', 'src/data/platform-catalog.ts', 'src/pages/assistant-knowledge.json.ts', 'apps/cad/opensketch/brand.py']) {
+  for (const f of ['src/pages/index.astro', 'src/pages/systems/engineering/index.astro', 'src/pages/systems/projects/index.astro', 'src/config/site.ts', 'src/data/platform-catalog.ts', 'src/pages/assistant-knowledge.json.ts', 'apps/cad/opensketch/brand.py']) {
     assert.doesNotMatch(read(f), /["'`(]\/(about|proof-of-work)\//, `${f} links to the Engine Room, not the old pages`);
   }
   const component = read('src/components/ProofOfWork.astro');

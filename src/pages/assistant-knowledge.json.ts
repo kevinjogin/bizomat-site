@@ -178,7 +178,7 @@ export async function GET() {
   }
 
   for (const w of await getWork()) {
-    const url = hasWorkDetail(w) ? `/work/${w.id}/` : '/work/';
+    const url = hasWorkDetail(w) ? `/work/${w.id}/` : '/systems/projects/';
     chunks.push({ id: `work-${w.id}`, title: `Work: ${w.data.title}`, url, text: `${w.data.title} (${w.data.type}, status: ${w.data.status}). ${w.data.summary}` });
     sections(w.body).forEach((s, i) => chunks.push({ id: `work-${w.id}-${i}`, title: `${w.data.title}: ${s.heading}`, url, text: s.text }));
   }

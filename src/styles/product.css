@@ -64,3 +64,10 @@
 @media (max-width: 640px) {
   .pp-cards, .pp-cards--2 { grid-template-columns: 1fr; }
 }
+
+/* Feature status on the Systems pages (src/components/StatusLabel.astro): Live, Connected, In development, Planned. */
+.bz-badge--connected { background: var(--bz-info-soft); color: var(--bz-info); border-color: transparent; }
+.bz-badge--in-development { background: var(--bz-warning-soft); color: var(--bz-warning); border-color: transparent; }
+.bz-badge--planned { background: transparent; color: var(--muted); }
+.status-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .9rem; color: var(--ink-2); }
+.status-legend li { display: flex; align-items: center; gap: .5rem; }

@@ -1,0 +1,296 @@
+---
+// /systems/projects/guide/: how to use BIZOMAT Projects (the Project Management System, formerly BIZOMAT Project
+// Management), step by step. Every button and field named here is the application's own label (apps/work/src/client:
+// pages/, board/, components/layout/AppShell.tsx and CreateDialogs.tsx, components/automations/AutomationBuilder.tsx,
+// and components/layout/SuiteRail.tsx for BIZOMAT ERP's module rail). Roles come from src/shared/permissions.ts,
+// templates from src/worker/services/boards.ts, report types from src/shared/reports.ts, and the links to the CRM and
+// Finance from src/worker/company/links.ts (docs/company/README.md). Screens are real (src/data/screenshots.ts),
+// captured with example data.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { WORK } from '../../../data/platform-catalog.ts';
+
+const sys = systemById('projects');
+const access = sys.access!;
+const crm = systemById('crm');
+const finance = systemById('finance');
+const erp = systemById('erp');
+const PAGE = sys.guide!;
+const shot = (name: string) => screenshots().find((s) => s.src.endsWith(`/${name}.webp`));
+const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
+const description = 'How to use BIZOMAT Projects, step by step: open it in BIZOMAT ERP, create a workspace and board, assign tasks, invite your team, set permissions and build dashboards.';
+const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Operations', 'Reports', 'Administration'];
+const TEMPLATES = ['Blank board', 'Project plan', 'Sprint board', 'Sales pipeline', 'Content calendar', 'Request intake'];
+// apps/work/src/shared/reports.ts (REPORT_TYPE_LABELS).
+const REPORTS = ['Project inception to date', 'Previous month', 'Current month to date', 'Custom date range', 'Monthly progress report', 'Project completion report', 'Financial report', 'Outstanding tasks report', 'Project controls report', 'Critical path report', 'Baseline comparison report', 'Earned value report', 'Project completion forecast'];
+const WIDGETS = ['Number', 'Chart', 'Task status', 'Priority distribution', 'Completion', 'Workload', 'Overdue work', 'Upcoming deadlines', 'Project progress', 'Activity', 'Time tracking'];
+if (WIDGETS.length !== WORK.widgetTypes) throw new Error(`projects guide: ${WIDGETS.length} widget types listed, WORK.widgetTypes says ${WORK.widgetTypes}`);
+// apps/work/src/shared/permissions.ts (ROLE_LABELS, ROLE_HELP).
+const ROLES = [
+  { name: 'Owner', text: 'Full control: workspace settings, members, finance settings, every project and report.' },
+  { name: 'Admin', text: 'Manages members and settings, creates and manages every project, sees every report.' },
+  { name: 'Project manager', text: 'Creates projects, manages the projects they are given, allocates tasks and generates project reports.' },
+  { name: 'Member', text: 'Works on the workspace\'s shared projects: updates tasks, comments and uploads files.' },
+  { name: 'Viewer', text: 'Reads and comments on the workspace\'s shared projects.' },
+  { name: 'Guest / contractor', text: 'Sees only the projects or tasks shared with them, and nothing workspace-wide.' },
+];
+
+interface Step { t: string; x: string }
+interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean; status?: FeatureStatus }
+const parts: Part[] = [
+  {
+    id: 'access', title: `Open ${sys.name} in ${erp.name}`,
+    lead: `${sys.name} opens inside ${erp.name}, BIZOMAT's one workspace for signed-in people, as its ${sys.module} module.`,
+    steps: [
+      { t: 'Go to BIZOMAT ERP', x: `Go to ${APP_LINKS.erp.signIn.replace('https://', '')}, or choose Sign in at the top of any BIZOMAT page.` },
+      { t: `Choose ${sys.module}`, x: `After you sign in, the ERP opens on its Dashboard. Choose ${sys.module} in the module rail at the left of the screen (a bar along the bottom on a phone).` },
+      { t: 'My Work in the rail', x: 'My Work opens everything assigned to you, in the workspace you used last.' },
+      { t: 'Move between modules', x: `The rail stays beside every screen: ${list(RAIL)}. Operations lists modules that are planned and not built yet.` },
+      { t: 'Old addresses', x: 'Bookmarks and links to bizomat.ai/tasks still work: they open the same page inside the ERP.' },
+    ],
+    shot: 'erp-projects',
+  },
+  {
+    id: 'sign-in', title: 'Sign in or create an account',
+    steps: [
+      { t: 'Sign in', x: `Enter your BIZOMAT email and password. It is the same account for ${crm.name} and ${finance.name}, and signing in once opens every module of the ERP.` },
+      { t: 'Google', x: 'Continue with Google appears on the sign-in page where it is configured.' },
+      { t: 'New to BIZOMAT?', x: 'Where the sign-in page offers it, choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+      { t: 'Invited by someone?', x: 'Open the invitation link from the email or message, and sign in or create an account to join the workspace.' },
+      { t: 'Used Project Management before?', x: 'Sign in with the email and password you already use. Your workspaces, boards and documents are where they were.' },
+    ],
+    shot: 'work-signin',
+  },
+  {
+    id: 'workspace', title: 'Create your workspace',
+    lead: 'A workspace keeps its members, boards and data completely separate from every other workspace. You can belong to several.',
+    steps: [
+      { t: 'Your first workspace', x: 'If you are not in a workspace yet, the Welcome page asks you to create one. Enter the Workspace name and choose Create workspace. You become its owner.' },
+      { t: 'A company\'s workspace', x: 'When a company is registered in BIZOMAT, it gets a Projects workspace. Its owner or an administrator gives you a Projects role, and the workspace appears for you.' },
+      { t: 'More workspaces', x: 'Workspaces, in the sidebar, lists yours. New workspace makes another; you can also rename a workspace or leave it there.' },
+      { t: 'Home', x: 'Each workspace opens on Home: what is overdue, due today and due in the next 7 days, what needs your attention, recent activity and My Day.' },
+    ],
+  },
+  {
+    id: 'configure', title: 'Configure the workspace',
+    lead: 'Everything here is in Settings. Owners and administrators change the workspace settings; everyone sets their own profile and notifications.',
+    steps: [
+      { t: 'Workspace', x: 'Settings, Workspace: its name, description, logo and colour, whether members may invite people (Allow members to invite), and the Default role for new members.' },
+      { t: 'Teams', x: 'Settings, Teams: group people, for example by department or discipline.' },
+      { t: 'Finance', x: 'Administrators: Settings, Finance sets the Default currency and Who sees financial data by default on boards with money columns.' },
+      { t: 'Templates', x: 'On any board, Save as template (in the board\'s settings) keeps its groups, columns, views and automations for new boards. Templates lists them with the built-in ones.' },
+      { t: 'Your own settings', x: 'Settings, Profile, Notifications and Security: your name and photo, which notifications you get in the app and by email, your password, active sessions and personal API tokens.' },
+    ],
+  },
+  {
+    id: 'first-board', title: 'Create your first board and items',
+    lead: 'In BIZOMAT Projects a project is a board: groups of items (tasks) with columns for owner, status, dates and anything else you track.',
+    steps: [
+      { t: 'New board', x: `Choose New board on Home or Boards. Enter the Board name and pick a Template: ${list(TEMPLATES)}. A template can include sample items.` },
+      { t: 'Who can see it', x: 'Choose Everyone in the workspace, or Only board members for a private board. Then choose Create board.' },
+      { t: 'Add items', x: 'Type into + Add item at the bottom of a group, or choose New item. A blank board starts with the groups To do, In progress and Completed.' },
+      { t: 'Fill in the columns', x: 'Click a cell to set the owner, status, priority or dates. Add a column with Add column at the end of the headings, from 25 column types such as Person, Timeline, Dependency, Currency and Formula.' },
+      { t: 'Break it down', x: 'Use + Add subitem under an item for the steps inside a task.' },
+    ],
+    shot: 'work-table',
+  },
+  {
+    id: 'views', title: 'Plan the work in views',
+    steps: [
+      { t: 'Add a view', x: 'Choose + View beside the view tabs and pick one. A view can be shared with the board or kept personal.' },
+      { t: 'Kanban', x: 'Cards by status. Drag a card to change its status.' },
+      { t: 'Timeline and Gantt', x: 'Bars from each item\'s dates, with dependencies and milestones. Drag a bar to reschedule it.' },
+      { t: 'Calendar and Workload', x: 'Calendar shows items by month, week or day. Workload shows who has how much, and when.' },
+      { t: 'Chart, Form, Map and Files', x: 'Counts and sums from the board, a form that adds items, items with locations, and every attachment on the board.' },
+      { t: 'Filter and sort', x: 'Filter with AND/OR conditions, sort and group. The view keeps them.' },
+    ],
+    shot: 'work-timeline',
+  },
+  {
+    id: 'collaborate', title: 'Work together on items and documents',
+    steps: [
+      { t: 'Open an item', x: 'Click an item\'s name. It opens beside the board with Updates, Details, Schedule, Subitems, Files, Activity, Time, Docs and Access.' },
+      { t: 'Updates', x: 'Write an update and mention a colleague with @ to notify them. Replies keep the conversation with the task.' },
+      { t: 'Files and time', x: 'Attach files under Files. Start and stop a timer under Time to record the time spent.' },
+      { t: 'Documents', x: 'Choose New doc on Home, or open Documents. Documents save as you type, keep their version history and comments, and link to boards and items.' },
+      { t: 'Notifications', x: 'Inbox and Notifications show assignments, mentions, replies, status changes, and work due soon or overdue.' },
+    ],
+    shot: 'work-document',
+  },
+  {
+    id: 'invite', title: 'Invite people and build teams',
+    steps: [
+      { t: 'Invite someone', x: 'Open Settings, Members. Under Invite people, enter the Email address, choose the Role, add a Personal message if you like, and choose Invite.' },
+      { t: 'Email or link', x: 'BIZOMAT emails the invitation when its email service is set up. Otherwise it shows the link: copy it and send it yourself. An invitation is valid for 7 days and works once.' },
+      { t: 'Who may invite', x: 'Owners, admins and project managers, and members when the workspace allows members to invite.' },
+      { t: 'Pending invitations', x: 'Invitations lists the ones not yet accepted. Resend makes a new link, and the earlier one stops working; Revoke cancels an invitation.' },
+      { t: 'In a company', x: 'People in a registered company are invited from the company area instead (Administration in the ERP): one invitation sets their Projects role, their roles in the other tools and their departments.' },
+    ],
+  },
+  {
+    id: 'permissions', title: 'Manage roles and permissions',
+    lead: 'Access has three layers: the person\'s role in the workspace, their access to each project, and, where needed, access to a single task.',
+    steps: [
+      { t: 'Workspace roles', x: 'Settings, Members: change a person\'s role, suspend them (they keep their account but cannot open anything until restored) or remove them.' },
+      { t: 'Board members', x: 'Choose Members on a board to see and change who works on it. A private board is open only to its members.' },
+      { t: 'Project permissions', x: 'In the board\'s settings, Permissions sets each person\'s level (manage, edit or view) and switches rights on or off: View financial data, Edit financial data, Manage project members, Create tasks, Assign tasks, Delete tasks and Generate reports.' },
+      { t: 'One task only', x: 'An item\'s Access tab shares that task and its subitems with someone, such as a contractor, without the rest of the project, and sets what they may do.' },
+      { t: 'Audit', x: 'Administrators: Settings, Audit trail and Sign-in and settings log record who changed what. Overview & export downloads the workspace as JSON.' },
+    ],
+    roles: true,
+  },
+  {
+    id: 'my-work', title: 'Plan your own work',
+    steps: [
+      { t: 'My Work', x: 'Everything assigned to you across the boards you can open, grouped by when it is due, and the tasks shared with you.' },
+      { t: 'My Day', x: 'Add items to My Day to plan today, and use Weekly planning for the days ahead.' },
+      { t: 'Find anything', x: 'Press Ctrl+K (Cmd+K on a Mac) or / to search boards, items, documents and people. Favourites and Recent keep your usual places close.' },
+    ],
+    shot: 'work-mywork',
+  },
+  {
+    id: 'automations', title: 'Automate routine steps',
+    steps: [
+      { t: 'Open the board\'s automations', x: 'Choose Automate on the board, then Add automation, or Recipes for ready-made ones.' },
+      { t: 'When', x: 'Pick the trigger: an item is created, a status changes, a column value changes, an item moves to a group, an update is posted, a date arrives, or on a recurring schedule.' },
+      { t: 'Only if', x: 'Add conditions if the automation should run only for some items.' },
+      { t: 'Then', x: 'Pick one or more actions: set a column value, set a date to today, clear a column, assign someone, move the item to a group, send a notification, create an item or subitem, duplicate or archive the item, or send a webhook.' },
+      { t: 'Save and check', x: 'Save automation. Each run is logged on the board. Automations, in the sidebar, lists every automation across your boards and switches them on or off.' },
+    ],
+  },
+  {
+    id: 'reports', title: 'Dashboards and reports',
+    steps: [
+      { t: 'New dashboard', x: 'Choose New dashboard on Home or Dashboards, then Add a widget.' },
+      { t: 'Widgets', x: `${WIDGETS.length} types: ${list(WIDGETS.map((w, i) => (i ? w.toLowerCase() : w)))}. Choose each widget's source boards, filters and date range, then resize and reorder it.` },
+      { t: 'Project reports', x: 'On a board, choose Reports (shown to people who may generate reports). Pick the report type and period, choose the sections, add your commentary, and preview it.' },
+      { t: 'Report types', x: `${REPORTS.length} types: ${list(REPORTS.map((r, i) => (i ? r.toLowerCase() : r)))}.` },
+      { t: 'Save and download', x: 'Saving keeps the report as a version with its PDF, Excel, HTML and CSV files, ready to download later.' },
+      { t: 'In the ERP', x: 'Reports, in the ERP\'s rail, lists your Projects dashboards beside the reports of the company\'s other tools.' },
+    ],
+    shot: 'work-dashboard',
+  },
+  {
+    id: 'integrations', title: `Use it with ${crm.name}, ${finance.name} and your company`,
+    lead: 'Each link checks both systems\' own permissions. Links that need a company work when the tools belong to the same registered company.',
+    status: 'connected',
+    steps: [
+      { t: 'A CRM follow-up becomes a task', x: 'In Sales and CRM, open an activity\'s menu and choose Create a project task. Pick the project: the task links back to the CRM activity.' },
+      { t: 'A CRM deal starts a project', x: 'On a deal, in the section headed Across and your company\'s name, choose Start a project. A board named after the deal is made in the company\'s Projects workspace, once per deal. You need a Projects role of member or above.' },
+      { t: 'Project costs and budget', x: 'In the company area, open Projects and choose Track in Finance on a project, then set its budget. Income and costs posted to it in Finance show as costs, remaining and income, to people whose Finance role sees reports. Setting up the tracking needs a Finance role that manages accounting.' },
+      { t: 'Departments', x: 'A company\'s departments appear as teams in its Projects workspace.' },
+      { t: 'The ERP Dashboard', x: 'Its Projects and Tasks card shows open tasks, overdue, due in 7 days and the number of projects, to people whose role may see them.' },
+      { t: 'Other tools', x: 'Integrations, in the sidebar: signed outgoing webhooks, and Slack and Microsoft Teams incoming webhooks, shown as connected only after a delivery succeeds.' },
+    ],
+  },
+];
+const questions = [
+  { q: 'Where did Project Management go?', a: `It is now called ${sys.name}, and it opens inside ${erp.name} under ${sys.module}. It is the same application, with the same accounts and data.` },
+  { q: 'Do I need a company account?', a: 'No. Projects works on its own for anyone with a BIZOMAT account. The links to the CRM deals and to Finance tracking need the tools to belong to a registered company.' },
+  { q: 'Can I work with someone outside my workspace?', a: 'Yes. Invite them as a guest or contractor and share only the project or the single task they need. They see nothing else in the workspace.' },
+  { q: 'Can I get a deleted or finished board back?', a: 'Archive a board instead of deleting it: archived boards are read-only and hidden from lists, and you can restore them at any time from the Archived tab on Boards.' },
+  { q: 'How do I move between Projects and the other systems?', a: `Use the module rail on the left of every screen in ${erp.name}. Your sign-in carries across, and each system keeps its own permissions.` },
+];
+const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
+---
+<BaseLayout title={`${sys.name} user guide`} description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }, { label: 'User guide', href: PAGE }]}
+  schema={[{ '@type': 'HowTo', name: `How to use ${sys.name}`, url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
+  <section class="pp-hero" aria-labelledby="guide-title">
+    <Container>
+      <p class="bz-eyebrow">{sys.name} · {sys.kind} · User guide</p>
+      <h1 id="guide-title">How to use {sys.name}</h1>
+      <p class="pp-hero__lead">Step by step, from opening {sys.name} in {erp.name} to your first board, your team, dashboards, reports and the links to {crm.name} and {finance.name}. Every button and field is named as it appears in the application.</p>
+      <div class="pp-hero__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-guide-access">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="projects-guide-product">About {sys.name}</Button>
+      </div>
+      <p class="pp-hero__note">{access.note} Sign-in required, with your BIZOMAT account.</p>
+      <StatusLegend />
+      <nav class="guide-toc" aria-label="In this guide">
+        <h2 class="guide-toc__title">In this guide</h2>
+        <ol>
+          {parts.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+          <li><a href="#questions">Common questions</a></li>
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  {parts.map((p, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
+      <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
+        <div>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length} <StatusLabel status={p.status ?? 'live'} /></p>
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          {p.lead && <p class="guide-lead">{p.lead}</p>}
+          <ol class="pp-steps guide-steps">
+            {p.steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+          </ol>
+          {p.roles && (
+            <div class="guide-roles">
+              <h3>The {ROLES.length} workspace roles</h3>
+              <ul class="pp-list">{ROLES.map((r) => <li><strong>{r.name}:</strong> {r.text}</li>)}</ul>
+              <p class="pp-table-note">Owners and admins always have every right on every project. Rights on one project can be changed person by person in that board's Permissions.</p>
+            </div>
+          )}
+        </div>
+        {shots[p.id] && (
+          <figure class="pp-shot guide-shot">
+            <img src={shots[p.id]!.src} alt={`${shots[p.id]!.title}. ${shots[p.id]!.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+            <figcaption><span>{shots[p.id]!.product === 'erp' ? `Inside ${erp.name}. ` : ''}{shots[p.id]!.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+          </figure>
+        )}
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="questions" aria-labelledby="questions-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Common questions</p>
+        <h2 id="questions-title">Before you ask</h2>
+      </div>
+      <dl class="guide-faq">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? Read the <a href={`${sys.url}#faq`}>questions on the {sys.name} page</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="guide-cta">
+    <Container class="pp-band">
+      <h2 id="guide-cta">Ready? Your first board takes a name and a template.</h2>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-guide-band-access">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="projects-guide-band-product">About {sys.name}</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .guide-toc { margin-top: 2rem; padding: 1.2rem 1.4rem; max-width: 52rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-toc__title { font-size: 1.02rem; margin-bottom: .7rem; }
+  .guide-toc ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 2rem; margin: 0; padding-left: 1.3rem; }
+  .guide-toc a { color: var(--ink-2); }
+  .guide-lead { margin: .8rem 0 0; max-width: 46rem; color: var(--ink-2); font-size: var(--step-1); line-height: 1.5; }
+  .guide-steps { margin-top: 1.4rem; }
+  .guide-roles { margin-top: 1.6rem; }
+  .guide-roles h3 { font-size: 1.02rem; margin-bottom: .7rem; }
+  .guide-shot { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+  .guide-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
+  .guide-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-faq dt { font-weight: 650; color: var(--ink); }
+  .guide-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
+  @media (max-width: 1000px) { .guide-shot { position: static; } }
+  @media (max-width: 640px) { .guide-toc ol { grid-template-columns: 1fr; } }
+</style>

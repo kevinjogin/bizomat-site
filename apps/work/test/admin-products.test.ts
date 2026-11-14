@@ -25,10 +25,10 @@ describe('who can open the CRM and Finance super admin consoles', () => {
     const admin = await makeAdmin('admin', 'Support Admin');
     for (const p of GETS) expect((await admin.req('GET', p)).status, p).toBe(200);
     // The pages themselves are not served to non-admins either.
-    expect((await raw('GET', '/system/crm/admin', { cookie: owner.cookie, headers: { Accept: 'text/html' } })).status).toBe(404);
-    expect((await raw('GET', '/system/finance/admin/workspaces', { cookie: owner.cookie, headers: { Accept: 'text/html' } })).status).toBe(404);
-    expect((await raw('GET', '/system/finance/admin', { cookie: admin.cookie, headers: { Accept: 'text/html' } })).status).toBe(200);
-    expect((await raw('GET', '/crm/admin', { cookie: owner.cookie, headers: { Accept: 'text/html' } })).headers.get('Location')).toBe('/system/crm/admin');
+    expect((await raw('GET', '/erp/crm/admin', { cookie: owner.cookie, headers: { Accept: 'text/html' } })).status).toBe(404);
+    expect((await raw('GET', '/erp/finance/admin/workspaces', { cookie: owner.cookie, headers: { Accept: 'text/html' } })).status).toBe(404);
+    expect((await raw('GET', '/erp/finance/admin', { cookie: admin.cookie, headers: { Accept: 'text/html' } })).status).toBe(200);
+    expect((await raw('GET', '/crm/admin', { cookie: owner.cookie, headers: { Accept: 'text/html' } })).headers.get('Location')).toBe('/erp/crm/admin');
   });
 });
 

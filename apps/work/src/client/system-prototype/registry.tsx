@@ -85,7 +85,7 @@ def({
   actions: () => [{ label: 'Log activity', icon: 'plus', toast: 'Activity form opens in the CRM (prototype).' }, { label: 'New quote', primary: true, icon: 'file', to: '/sales/quotes/new' }],
   form: {
     title: 'New customer',
-    intro: 'Customers are kept in the Customer Relationship Management (CRM). This is its form, shown inside the System.',
+    intro: 'Customers are kept in the Customer Relationship Management (CRM). This is its form, shown inside the ERP.',
     groups: [
       { title: 'Company', description: 'The name customers know you by and how to reach them.', fields: [f('name', 'Company name', 'text', { required: true }), f('segment', 'Segment', 'select', { options: ['Construction', 'Mining', 'Rail', 'Utilities', 'Marine', 'Manufacturing', 'Logistics', 'Food'], default: 'Construction' }), f('site', 'Site', 'select', { options: SITES, default: 'Brisbane', description: 'The site that serves this customer.' })] },
       { title: 'Accounts', fields: [f('email', 'Accounts email', 'text', { description: 'Invoices and statements go here.' }), f('terms', 'Payment terms', 'select', { options: ['14 days', '30 days', '45 days'], default: '30 days' }), f('owner', 'Account owner', 'select', { options: ['Priya Nair', 'Ruby Fraser'], default: 'Priya Nair' })] },
@@ -137,7 +137,7 @@ def({
   actions: (r) => [{ label: 'Mark as won', primary: true, patch: { stage: 'Won', probability: 100 }, toast: `${r.id} marked as won.`, when: (x) => x.stage !== 'Won' }],
   form: {
     title: 'New opportunity',
-    intro: 'Opportunities are kept in the CRM. This is its form, shown inside the System.',
+    intro: 'Opportunities are kept in the CRM. This is its form, shown inside the ERP.',
     groups: [{ title: 'Opportunity', fields: [f('title', 'Title', 'text', { required: true }), f('customer', 'Customer', 'select', { options: CUSTOMER_NAMES, required: true }), f('value', 'Value (AUD, excluding GST)', 'money', { required: true, min: 1 }), f('close', 'Expected close', 'date', { default: addDays(TODAY, 30) }), f('stage', 'Stage', 'select', { options: ['Qualify', 'Proposal', 'Negotiation'], default: 'Qualify' })] }],
     toRow: (v) => ({ title: v.title, customer: v.customer, value: Number(v.value), close: v.close, stage: v.stage, probability: 20, owner: 'Alex Morgan', site: 'Brisbane' }),
   },
@@ -188,7 +188,7 @@ def({
   ],
   form: {
     title: 'New quote',
-    intro: 'Quotes are kept in Finance. This is its form, shown inside the System.',
+    intro: 'Quotes are kept in Finance. This is its form, shown inside the ERP.',
     groups: [
       { title: 'Customer', fields: [f('customer', 'Customer', 'select', { options: CUSTOMER_NAMES, required: true }), f('issued', 'Issue date', 'date', { default: TODAY }), f('expires', 'Expiry date', 'date', { default: addDays(TODAY, 30), description: 'Quotes are valid for 30 days by default.' })] },
       { title: 'Line', description: 'Add more lines on the quote after saving.', fields: [f('item', 'Product', 'select', { options: PRODUCT_OPTIONS, required: true }), f('qty', 'Quantity', 'number', { default: 1, min: 1, required: true })] },
@@ -233,7 +233,7 @@ def({
   bulk: [{ label: 'Mark as confirmed', patch: { status: 'Confirmed' }, toast: 'Orders marked as confirmed.' }],
   form: {
     title: 'New sales order',
-    intro: 'Planned System module. A sales order is usually created from an accepted quote or a won deal.',
+    intro: 'Planned ERP module. A sales order is usually created from an accepted quote or a won deal.',
     groups: [
       { title: 'Customer', fields: [f('customer', 'Customer', 'select', { options: CUSTOMER_NAMES, required: true }), f('reference', 'Customer reference', 'text', { description: 'Their purchase order number, printed on documents.' }), f('promised', 'Promised date', 'date', { default: addDays(TODAY, 21), required: true })] },
       { title: 'Line', fields: [f('item', 'Product', 'select', { options: PRODUCT_OPTIONS, required: true }), f('qty', 'Quantity', 'number', { default: 1, min: 1, required: true })] },
@@ -290,7 +290,7 @@ def({
   bulk: [{ label: 'Send reminders', toast: 'Reminders drafted (prototype: nothing is sent).' }],
   form: {
     title: 'New invoice',
-    intro: 'Invoices are kept in Finance. This is its form, shown inside the System.',
+    intro: 'Invoices are kept in Finance. This is its form, shown inside the ERP.',
     groups: [
       { title: 'Customer', fields: [f('customer', 'Customer', 'select', { options: CUSTOMER_NAMES, required: true }), f('issued', 'Issue date', 'date', { default: TODAY }), f('due', 'Due date', 'date', { default: addDays(TODAY, 30), description: 'From the customer’s payment terms.' })] },
       { title: 'Amount', fields: [f('total', 'Total including GST (AUD)', 'money', { required: true, min: 1 }), f('reference', 'Reference', 'text', { description: 'For example the sales order number.' })] },
@@ -328,7 +328,7 @@ def({
   workflow: (r) => approval(r, { submittedBy: 'Mei Lin', submittedAt: `${r.date}T09:30`, approver: 'Daniel Okafor', approveLabel: 'Approval', next: 'Pay in the next pay run', nextBy: 'Finance' }),
   form: {
     title: 'New bill',
-    intro: 'Bills are kept in Finance. This is its form, shown inside the System.',
+    intro: 'Bills are kept in Finance. This is its form, shown inside the ERP.',
     groups: [{ title: 'Supplier', fields: [f('supplier', 'Supplier', 'select', { options: SUPPLIER_NAMES, required: true }), f('reference', 'Supplier reference', 'text', { required: true }), f('date', 'Bill date', 'date', { default: TODAY }), f('due', 'Due date', 'date', { default: addDays(TODAY, 30) }), f('total', 'Total including GST (AUD)', 'money', { required: true, min: 1 })] }],
     toRow: (v) => ({ supplier: v.supplier, reference: v.reference, date: v.date, due: v.due, total: Number(v.total), site: 'Brisbane' }),
   },
@@ -385,7 +385,7 @@ def({
   bulk: [{ label: 'Complete', patch: { status: 'Done' }, toast: 'Tasks completed.' }],
   form: {
     title: 'New task',
-    intro: 'Tasks are kept in Project Management. This is its form, shown inside the System.',
+    intro: 'Tasks are kept in Project Management. This is its form, shown inside the ERP.',
     groups: [{ title: 'Task', fields: [f('title', 'Title', 'text', { required: true }), f('project', 'Project', 'select', { options: OP.projects.map((p) => p.id), default: 'PRJ-031' }), f('assignee', 'Assignee', 'select', { options: ['Alex Morgan', 'Hannah Brooks', 'Tom Walsh', 'Ben Carter'], default: 'Alex Morgan' }), f('due', 'Due date', 'date', { default: addDays(TODAY, 7) }), f('priority', 'Priority', 'select', { options: ['Low', 'Medium', 'High'], default: 'Medium' })] }],
     toRow: (v) => ({ title: v.title, project: v.project, assignee: v.assignee, due: v.due, priority: v.priority, status: 'To do', site: 'Brisbane' }),
   },
@@ -424,7 +424,7 @@ def({
   actions: () => [{ label: 'Start engineering change', primary: true, icon: 'edit', to: '/engineering/changes/new' }],
   form: {
     title: 'New product',
-    intro: 'Planned System module: the product master.',
+    intro: 'Planned ERP module: the product master.',
     groups: [
       { title: 'Identity', fields: [f('name', 'Name', 'text', { required: true }), f('type', 'Type', 'select', { options: ['Finished good', 'Sub-assembly', 'Raw material', 'Purchased part'], default: 'Finished good' }), f('uom', 'Unit of measure', 'select', { options: ['each', 'set', 'kit', 'pair', 'sheet', 'length', 'litre'], default: 'each' })] },
       { title: 'Costing', description: 'Used to value stock in Finance.', fields: [f('cost', 'Standard cost (AUD)', 'money', { required: true, min: 0.01 }), f('family', 'Family', 'select', { options: ['Conveyor', 'Access and guarding', 'Materials'], default: 'Conveyor' })] },
@@ -496,7 +496,7 @@ def({
     }),
   form: {
     title: 'New engineering change',
-    intro: 'Planned System module: change requests and orders.',
+    intro: 'Planned ERP module: change requests and orders.',
     groups: [{ title: 'Change', fields: [f('title', 'Title', 'text', { required: true }), f('product', 'Product', 'select', { options: PRODUCT_OPTIONS, required: true }), f('priority', 'Priority', 'select', { options: ['Low', 'Medium', 'High'], default: 'Medium' }), f('reason', 'Reason for the change', 'textarea', { required: true, wide: true, description: 'What is wrong today and what the change fixes.' })] }],
     toRow: (v) => ({ title: v.title, product: String(v.product).split(' ')[0], productName: itemName(String(v.product).split(' ')[0]), priority: v.priority, revision: 'next', owner: 'Alex Morgan', raised: TODAY, site: 'Brisbane' }),
   },
@@ -574,7 +574,7 @@ def({
   bulk: [{ label: 'Approve', patch: { status: 'Approved' }, toast: 'Requisitions approved.' }],
   form: {
     title: 'New purchase requisition',
-    intro: 'Planned System module. Ask procurement to buy something; it goes for approval first.',
+    intro: 'Planned ERP module. Ask procurement to buy something; it goes for approval first.',
     groups: [
       { title: 'What you need', fields: [f('item', 'Item', 'select', { options: PRODUCT_OPTIONS.filter((o) => o.startsWith('RM-')), required: true }), f('qty', 'Quantity', 'number', { required: true, min: 1, default: 1 }), f('needed', 'Needed by', 'date', { required: true, default: addDays(TODAY, 7) })] },
       { title: 'Why', fields: [f('title', 'Short description', 'text', { required: true, description: 'Shown to the approver.' }), f('job', 'Work order or project', 'text', { description: 'For example WO-1042 or PRJ-031.' })] },
@@ -732,7 +732,7 @@ def({
   bulk: [{ label: 'Release', patch: { status: 'Released' }, toast: 'Work orders released.' }],
   form: {
     title: 'New work order',
-    intro: 'Planned System module. Make products for a sales order or for stock.',
+    intro: 'Planned ERP module. Make products for a sales order or for stock.',
     groups: [
       { title: 'What to make', fields: [f('item', 'Product', 'select', { options: OP.sellable.map((p) => `${p.id} ${p.name}`), required: true }), f('qty', 'Quantity', 'number', { required: true, min: 1, default: 1 }), f('order', 'For sales order', 'text', { description: 'Leave empty to make for stock.' })] },
       { title: 'When', fields: [f('start', 'Start', 'date', { default: addDays(TODAY, 1), required: true }), f('due', 'Due', 'date', { default: addDays(TODAY, 8), required: true })] },
@@ -780,7 +780,7 @@ def({
   actions: () => [{ label: 'Mark as reviewed', primary: true, icon: 'check', patch: { status: 'Reviewed' }, toast: 'Inspection reviewed. NCR-0121 stays open for the rework.', when: (x) => x.status === 'Awaiting review' }],
   form: {
     title: 'New inspection',
-    intro: 'Planned System module. Schedule an inspection from a plan.',
+    intro: 'Planned ERP module. Schedule an inspection from a plan.',
     groups: [{ title: 'Inspection', fields: [f('type', 'Type', 'select', { options: ['Receiving inspection', 'In-process inspection', 'Final inspection'], default: 'In-process inspection' }), f('subject', 'Subject', 'text', { required: true, description: 'A goods receipt (GR-) or work order (WO-) number.' }), f('plan', 'Inspection plan', 'select', { options: OP.inspectionPlans.map((p) => p.id), default: 'IP-01' }), f('date', 'Date', 'date', { default: TODAY }), f('inspector', 'Inspector', 'select', { options: ['Grace Kim', 'Ava Singh'], default: 'Grace Kim' })] }],
     toRow: (v) => ({ type: v.type, subject: v.subject, plan: v.plan, date: v.date, inspector: v.inspector, item: 'PRD-1001', site: 'Brisbane' }),
   },
@@ -877,7 +877,7 @@ def({
   related: (r) => related([['asset', r.asset]]),
   form: {
     title: 'Report a fault',
-    intro: 'Planned System module. Tell maintenance what is wrong; a technician picks it up.',
+    intro: 'Planned ERP module. Tell maintenance what is wrong; a technician picks it up.',
     groups: [
       { title: 'What is wrong', fields: [f('asset', 'Asset', 'select', { options: OP.assets.map((a) => `${a.id} ${a.name}`), required: true }), f('title', 'Problem', 'text', { required: true, description: 'One line, for example "Fan noisy then stopped".' }), f('details', 'Details', 'textarea', { wide: true })] },
       { title: 'How urgent', fields: [f('priority', 'Priority', 'select', { options: ['Low', 'Medium', 'High'], default: 'Medium' }), f('stopped', 'The machine is stopped', 'checkbox', { default: false })] },

@@ -1,0 +1,9 @@
+---
+// The key to the feature statuses on a Systems page.
+import StatusLabel from './StatusLabel.astro';
+import { FEATURE_STATUS, type FeatureStatus } from '../config/systems.ts';
+const order: FeatureStatus[] = ['live', 'connected', 'in-development', 'planned'];
+---
+<ul class="status-legend" aria-label="What the labels mean">
+  {order.map((s) => <li><StatusLabel status={s} /> <span>{FEATURE_STATUS[s].meaning}</span></li>)}
+</ul>

@@ -141,7 +141,7 @@ export function StateBadges({ states, compact }: { states: PageState[]; compact?
   );
 }
 
-const MODULE_SHORT: Record<ModuleId, string> = { System: 'System', CRM: 'CRM', Finance: 'Finance', 'Project Management': 'Projects', 'CAD Automation': 'CAD', Company: 'Company' };
+const MODULE_SHORT: Record<ModuleId, string> = { System: 'ERP', CRM: 'CRM', Finance: 'Finance', 'Project Management': 'Projects', 'CAD Automation': 'CAD', Company: 'Company' };
 export function ModuleBadge({ module }: { module: ModuleId }) {
   return (
     <span className={`erp-module erp-module-${MODULE_SHORT[module].toLowerCase()}`} title={module}>

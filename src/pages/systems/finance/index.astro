@@ -1,0 +1,526 @@
+---
+// /systems/finance/: BIZOMAT Finance, the Finance Management System. Introduces the system and opens it inside
+// BIZOMAT ERP (Finance and Accounting, sign-in required; the same accounts as the CRM and Projects). The page cannot be
+// /finance/: that path is the application (tests/worker.test.ts). Facts come from src/data/platform-catalog.ts
+// (FINANCE), which records its sources in apps/work; tests/platform-catalog.test.ts compares them with the
+// application's code. The links to the CRM and Projects are apps/work/src/worker/company/links.ts
+// (docs/company/README.md); the ERP is docs/system/README.md; what is not built is docs/finance/README.md ("Not in this
+// release", "Later stages") and docs/erp/architecture/09-feature-matrix.md. The guide is /systems/finance/guide/.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import FinanceLedger from '../../../components/visuals/FinanceLedger.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { SYSTEMS, SYSTEMS_HOME, STATUS_LABEL, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { FINANCE } from '../../../data/platform-catalog.ts';
+
+const sys = systemById('finance');
+const access = sys.access!;
+const GUIDE = sys.guide!;
+const crm = systemById('crm');
+const projects = systemById('projects');
+const erp = systemById('erp');
+const related = SYSTEMS.filter((s) => s.id !== sys.id);
+const list = (xs: readonly string[]) => xs.join(', ').replace(/, ([^,]+)$/, ' and $1');
+
+const show = ['finance-dashboard', 'finance-transactions', 'finance-statement', 'finance-invoice', 'finance-report', 'finance-budget'];
+const shots = screenshots('finance').filter((s) => show.some((n) => s.src.endsWith(`/${n}.webp`)));
+const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-finance.webp'));
+const description = 'BIZOMAT Finance, the Finance Management System: accounts, transactions, quotes, invoices, bills, budgets, GST worksheets and reports on a double-entry ledger.';
+
+const audiences = [
+  { t: 'Business owners and sole traders', x: 'Quote, invoice and record bills, and see profit, cash and what is owed both ways, with GST worked out on every line.' },
+  { t: 'Bookkeepers and accountants', x: 'Keep the books with the Accountant role: the chart of accounts, tax codes, manual journals, reconciliation and the period lock.' },
+  { t: 'Finance managers', x: 'Run day-to-day finance with the Finance Manager role: transactions, invoices, bills, approvals, budgets and reports.' },
+  { t: 'Staff who spend for the business', x: 'Add transactions, receipts, bills and expense claims with the Contributor role, sent for approval where the business requires it.' },
+  { t: 'Partners and advisers who only look', x: 'The Viewer role reads the records and reports the workspace allows, and changes nothing.' },
+  { t: 'Individuals and households', x: 'Personal and household workspaces for your own money and money shared at home, kept apart from any business.' },
+];
+const problems: { s: FeatureStatus; t: string; x: string }[] = [
+  { s: 'live', t: 'Statements and receipts sit in folders, not in the books', x: `Import the statements you download from your bank (${list(FINANCE.statementFormats)}), match each line, record the rest in one step, and attach receipts to what they belong to.` },
+  { s: 'live', t: 'Spreadsheets that do not add up', x: 'Every entry is double-entry and balanced. The database itself refuses to post a journal whose debits and credits differ.' },
+  { s: 'live', t: 'Not knowing who owes you, and whom you owe', x: 'The dashboard shows what is owed both ways and what is overdue, and the aged receivables and payables reports list it by customer and supplier.' },
+  { s: 'live', t: 'Quotes typed again as invoices', x: 'An accepted quote becomes invoices, in full or in parts, and the parts add up to the quote exactly.' },
+  { s: 'live', t: 'Closed months that keep changing', x: 'A posted entry is never edited in place: a change reverses it and posts the new version. A lock date stops anything being posted on or before it.' },
+  { s: 'live', t: 'GST worked out by hand at the end of the quarter', x: 'Each line carries a tax code, and the GST and BAS worksheet adds up the BAS labels for the period. You check it, and you or your agent lodge it: BIZOMAT does not.' },
+  { s: 'live', t: 'Personal and business money mixed together', x: 'Separate personal, household and business workspaces, each with its own accounts, members and settings.' },
+  { s: 'connected', t: 'Customer details typed again from the CRM', x: `In a company that also runs ${crm.name}, a CRM company becomes one Finance customer, and deals start quotes and draft invoices.` },
+];
+const workspaces = [
+  { t: 'Personal', x: 'Your own accounts, spending, budgets and savings goals, with everyday categories such as Groceries and Fuel. Private to you unless you invite someone.' },
+  { t: 'Household', x: 'Money shared at home. Everyone you invite sees the household accounts, budgets and reports, adds their own spending, and can see it by person or together.' },
+  { t: 'Business', x: 'A chart of accounts with codes, GST, customers and suppliers, quotes, invoices, credit notes, bills, purchase orders, expense claims and financial reports. Run as many businesses as you need.' },
+];
+const ledger = [
+  { t: 'Every entry balances', x: 'Each transaction, invoice, bill and payment writes a journal whose debits equal its credits. The database itself refuses to post one that does not.' },
+  { t: 'Posted means posted', x: 'A posted entry is never edited or deleted. Changing it reverses it and posts the new version, so the history shows both.' },
+  { t: 'Lock a period', x: 'Set a lock date when a month or year is closed. Nothing dated on or before it can be posted; corrections go in a later period.' },
+  { t: 'Categories are accounts', x: 'Income and expense categories, with subcategories, are accounts in the chart. Rename, reorder, give them codes, archive them, and add departments, projects and cost centres.' },
+];
+const banking = [
+  { t: 'Money in, out and between accounts', x: 'Record income, spending and transfers. Split one payment across several categories, add GST, a note and a receipt.' },
+  { t: 'Import your statement', x: `Download a statement from your bank and upload it: ${list(FINANCE.statementFormats)}. A CSV file shows its columns so you can match them; lines already imported are skipped.` },
+  { t: 'Match and reconcile', x: 'Each line finds the transaction or payment it matches. Confirm it, or turn it into a new transaction in one step and let Finance remember the category. Then compare the statement balance with the ledger.' },
+  { t: 'Approvals and duplicates', x: 'In a business, a contributor\'s spending waits for approval. Finance warns about a likely duplicate before you save it.' },
+];
+const docs = [
+  { t: 'Quotes', x: 'Headings, optional items and a discount on the whole quote. The customer opens a secure link and accepts or declines; each version sent is kept. An accepted quote becomes invoices, in full or in parts.' },
+  { t: 'Invoices', x: 'Numbered automatically, with due dates from your terms, line discounts and GST. A live A4 preview that is the PDF itself, a secure online copy, part payments and what is overdue.' },
+  { t: 'Credit notes', x: 'Credit all or part of an invoice. Approving one lowers income and GST; the credit is applied to the customer\'s invoices or recorded as refunded.' },
+  { t: 'Bills and purchase orders', x: 'Record bills as they arrive and pay them in part or in full. Approve a purchase order and turn it into a bill when the goods arrive.' },
+  { t: 'Expense claims', x: 'Staff claim what they paid for the business, with receipts. Approve and reimburse; the claim records who is owed.' },
+  { t: 'Recurring', x: `Rent, subscriptions and regular invoices repeat ${list(FINANCE.frequencies.map((f) => f.toLowerCase()))}, posted automatically or left as drafts to check.` },
+];
+const security = [
+  `One BIZOMAT account for ${sys.name}, ${crm.name} and ${projects.name}, with the same protected sign-in.`,
+  'People outside a workspace cannot see it, or even tell that it exists. A personal workspace is private until you invite someone.',
+  'Every list, report and file is limited to its workspace, and the database refuses links between two workspaces.',
+  'The server checks every permission for every financial operation; the screens only hide what you cannot use.',
+  'Receipts and documents are served only to people who can see the record they belong to.',
+  'An audit trail records changes, approvals, imports, exports and permission changes. Your data is backed up with the rest of BIZOMAT.',
+];
+const planned = [
+  { t: 'Fixed assets', x: 'An asset register with depreciation. Not built.' },
+  { t: 'More than one currency in a workspace', x: 'Each workspace keeps one currency today, so totals are never mixed.' },
+  { t: 'Sales orders and deliveries', x: 'Sales orders from accepted quotes or won deals, and invoices from deliveries, as ERP modules. Not built.' },
+  { t: 'Inventory', x: 'Stock on hand and its valuation, as an ERP Operations module. Not built.' },
+];
+const figures = [
+  { t: 'Income', x: 'Sales and other income in the period (money earned, in a personal or household workspace).' },
+  { t: 'Expenses or Spending', x: 'Costs and operating expenses in the period, or everything spent.' },
+  { t: 'Net profit or Net loss', x: 'Income less expenses. In a personal or household workspace: Left over or Overspent.' },
+  { t: 'Cash in bank', x: 'What the bank and cash accounts hold today.' },
+  { t: 'Cards and loans owing', x: 'What credit cards and loans owe today, when you have them.' },
+  { t: 'Owed to you', x: 'What customers owe on open invoices, with how much of it is overdue.' },
+  { t: 'You owe', x: 'What you owe on open bills and claims, with how much of it is overdue.' },
+  { t: 'To approve', x: 'Transactions, and invoices, bills, orders and claims, waiting for someone who may approve them.' },
+  { t: 'Statement lines to match', x: 'Lines imported from your bank statements that are not matched yet.' },
+];
+const charts = [
+  { t: 'Income and expenses', x: 'Month by month, for the last 12 months.' },
+  { t: 'Expenses by category', x: 'Where the money went in the period.' },
+  { t: 'Cash at the end of each month', x: 'How the cash balance moved.' },
+  { t: 'Accounts', x: 'Each bank, cash, card and loan account with its balance.' },
+  { t: 'Coming up', x: 'What falls due in the next 14 days, money in and money out, with anything overdue marked.' },
+  { t: 'Budget', x: 'This month\'s spending against the budget, and the budget so far.' },
+  { t: 'Savings goals and recent transactions', x: 'Progress towards each goal, and the latest entries.' },
+];
+const screens = [
+  { t: 'Dashboard', see: 'The figures and charts above, for the period you choose.', do: 'Pick a period. Click a figure to open what is behind it.' },
+  { t: 'Quotes', see: 'Quotes by status: draft, sent, viewed, accepted, declined, expired and invoiced.', do: 'Write a quote with a live preview, send its secure link, and invoice it once accepted.' },
+  { t: 'Invoices and Credit notes', see: 'Invoices by status, with what is still to be received and what is overdue.', do: 'Invoice a customer, approve it, send it, record payments, or credit all or part of it.' },
+  { t: 'Customers and suppliers', see: 'Everyone you sell to and buy from, with their payment terms.', do: 'Add a contact or import a list. On a quote or invoice, a CRM company can be chosen too (Connected).' },
+  { t: 'Bills, Purchase orders and Expense claims', see: 'What you owe, what you have ordered and what staff have paid for.', do: 'Record a bill, approve an order and convert it to a bill, approve and reimburse a claim.' },
+  { t: 'Bank accounts', see: 'Each account with its balance, and its statement lines to match.', do: 'Add an account, import a statement, match lines and reconcile.' },
+  { t: 'Transactions', see: 'Money in, out and between accounts, with category, status and totals for the filters.', do: 'Record, split, attach a receipt, approve, change or void.' },
+  { t: 'Budgets, Savings goals and Recurring', see: 'Your plans, your goals and what repeats.', do: 'Set budgets by category and month, track goals, and schedule recurring records.' },
+  { t: 'Reports', see: `${FINANCE.reports.length} reports computed from the ledger.`, do: 'Choose dates and filters, compare periods, export CSV or PDF, or schedule a report.' },
+  { t: 'Accounting', see: 'The chart of accounts, journals, tax codes, departments and projects, rules, numbering and the period lock.', do: 'Keep the books in order: accounts, manual journals and the lock date.' },
+  { t: 'Documents', see: 'Receipts and files in folders, with their versions.', do: 'Upload files, link them to records, and find them by name.' },
+  { t: 'Team and Settings', see: 'Members, invitations, roles and permissions; workspace, templates, approvals and alerts, notifications and the audit trail.', do: 'Invite people, set what each role may do, and set the workspace up.' },
+];
+const steps = [
+  { t: 'Sign in to BIZOMAT ERP', x: `Go to ${APP_LINKS.erp.signIn.replace('https://', '')} and sign in with your BIZOMAT account, or create one on the sign-in page.` },
+  { t: `Choose ${sys.module}`, x: `In the module rail at the left of the ERP (a bar along the bottom on a phone), choose ${sys.module}.` },
+  { t: 'Create a workspace', x: 'Choose personal, household or business. It starts with a chart of accounts and no sample records; a business also starts with the standard GST tax codes, used once it is registered for GST. A company registered in BIZOMAT already has its business workspace.' },
+  { t: 'Set up your accounts', x: 'Add your bank accounts and cards with their opening balances, and adjust the categories.' },
+  { t: 'Bring in your transactions', x: 'Import a statement or record transactions by hand, then match and reconcile.' },
+  { t: 'Invite the people who share the work', x: 'In Team, invite your bookkeeper, accountant or staff by email and choose each person\'s role.' },
+  { t: 'Invoice, budget and report', x: 'Send quotes and invoices, record bills, set budgets, and read the reports.' },
+];
+const workflows: { s: FeatureStatus; t: string; steps: string[] }[] = [
+  {
+    s: 'live', t: 'From quote to payment',
+    steps: [
+      `Open Quotes and choose New quote. Or, on a deal in ${crm.name}, Start a quote (Connected).`,
+      'Add the lines, check the preview, and send the secure link.',
+      'The customer reads the quote and accepts it online, with their name.',
+      'On the accepted quote, choose Create invoice: all of it, or a percentage for progress invoicing.',
+      'Approve the invoice and send it by link, email or PDF.',
+      'When the money arrives, Record a payment, then match it to the line on your bank statement.',
+    ],
+  },
+  {
+    s: 'live', t: 'From bank statement to reconciled books',
+    steps: [
+      'Download the statement from your internet banking.',
+      'On the bank account, choose Statement and reconcile, then Import a statement.',
+      'Match each line to what you already recorded, or choose Record it, and tick Remember for next time.',
+      'On Reconcile, enter the statement date and closing balance, and record the reconciliation.',
+    ],
+  },
+  {
+    s: 'live', t: 'Bills and expense claims with approval',
+    steps: [
+      'A contributor records a bill or an expense claim and attaches the receipt.',
+      'It waits under Awaiting approval for someone who may approve it.',
+      'They approve it, or return it for changes with a note.',
+      'When it is paid, Record a payment closes it, and the bank statement line is matched.',
+    ],
+  },
+  {
+    s: 'live', t: 'Closing a GST quarter',
+    steps: [
+      'Reconcile every bank account to the end of the quarter.',
+      'Open Reports, GST and BAS worksheet, and choose the quarter.',
+      'Check the figures against your records.',
+      'You or your registered tax or BAS agent lodge the BAS with the ATO. BIZOMAT does not lodge it.',
+      'Set the lock date in Accounting, Period lock, so nothing more is posted in the quarter.',
+    ],
+  },
+];
+const integrations: { t: string; href: string | null; s: FeatureStatus | null; items: { s?: FeatureStatus; t: string; x: string }[] }[] = [
+  {
+    t: crm.name, href: crm.url, s: 'connected',
+    items: [
+      { t: 'One customer record', x: 'On a quote or invoice, From the CRM lists the CRM\'s companies you may see there. Choosing one adds it as a Finance customer from its name, email, phone and address, linked so it is never added twice.' },
+      { t: 'Quotes from deals', x: 'A deal in the CRM can start a draft quote here for the deal\'s company. The deal lists its quotes and their status, and its timeline records each step, without amounts.' },
+      { t: 'Draft invoices from won deals', x: 'A won deal can become a draft invoice here, with one line for its title and value, once per deal. Check the amount, GST and account before you approve it.' },
+      { t: 'What the customer owes', x: 'The customer\'s open invoices and amount owed show on the CRM company, to people whose Finance role can see sales.' },
+    ],
+  },
+  {
+    t: projects.name, href: projects.url, s: 'connected',
+    items: [
+      { t: 'Project costs and budget', x: 'On the company\'s Projects page, Track in Finance gives a project a Finance tracking project. Income and costs posted to it show against a budget set there: costs, remaining and income, all time and this financial year.' },
+      { t: 'Who sees it', x: 'Tracking needs a Finance role that manages accounting. The figures show to roles that may view reports.' },
+    ],
+  },
+  {
+    t: 'Company accounts', href: null, s: 'live',
+    items: [
+      { t: 'One business workspace per company', x: `A company registered in BIZOMAT runs one Finance business workspace, with one ${crm.short} organisation and one ${projects.short} workspace.` },
+      { t: 'A role in each tool', x: 'A company invitation sets each person\'s Finance role. No Finance role means no access to the company\'s Finance.' },
+      { t: 'Departments', x: 'The company\'s departments appear as departments in Finance\'s tracking, so lines and reports can carry them.' },
+      { t: 'Private workspaces stay private', x: 'Personal and household workspaces never join a company.' },
+    ],
+  },
+  {
+    t: erp.name, href: erp.url, s: null,
+    items: [
+      { s: 'live', t: 'Opens inside the ERP', x: `${sys.name} opens as ${sys.module} in ${erp.name}, with the module rail beside it. Its old address, bizomat.ai/finance, forwards there.` },
+      { s: 'connected', t: 'Dashboard and Reports', x: 'The ERP Dashboard shows the financial year\'s income, expenses and net, and what is owed both ways, to people whose Finance role may view reports. Its Reports page opens Finance\'s reports.' },
+      { s: 'live', t: 'Customers\' links keep working', x: 'The secure online links you send customers for quotes, invoices and credit notes stay at their own address and need no sign-in.' },
+      { s: 'live', t: 'Permissions stay in Finance', x: 'The ERP gives no extra access: it lists only the tools you belong to, with the role you have in each.' },
+    ],
+  },
+];
+const questions = [
+  { q: 'How do I create a quotation?', a: `Open Finance and Accounting in ${erp.name}, then Quotes, and choose New quote. Choose the customer (or From the CRM), set Valid until, add the lines, and check the live preview, which is the PDF itself. Then Get a link, Email it, or Mark as sent if you send it yourself. The customer can accept or decline online. A deal in ${crm.name} can also start a draft quote.` },
+  { q: 'How do I generate a tax invoice?', a: 'In a business workspace, record the ABN and tick Registered for GST (in Settings, Workspace). Open Invoices, choose New invoice, add lines with their GST codes, and choose Save and approve. An invoice with GST on it is titled Tax invoice on its PDF and online copy, and shows your ABN and the GST. Check each invoice before you send it.' },
+  { q: 'Can I prepare BAS?', a: 'You can prepare the figures. Reports, GST and BAS worksheet adds up GST by tax code and the BAS labels (G1, 1A and 1B, and G2, G3, G10 and G11 for full reporting) for a period, on the cash or accrual basis. It is a worksheet to check against your records. Finance does not lodge the BAS: you or your registered tax or BAS agent lodge it with the ATO.' },
+  { q: 'How do I invite an accountant?', a: 'Owners and administrators: open Team, then Invitations, enter your accountant\'s email address, choose the Accountant role and choose Send invitation. The Accountant role keeps the books: every record, the chart of accounts, tax codes, journals and the period lock, but not the members. An accountant invited to Finance alone sees only that workspace.' },
+  { q: 'Can Finance access CRM customer information?', a: `Only when the Finance business workspace and the ${crm.short} organisation belong to the same company, and only the CRM companies your CRM role lets you see. From the CRM brings in a company's name, email, phone and address as one Finance customer; the rest of the CRM record stays in the CRM.` },
+  { q: 'Does Finance connect to my bank?', a: 'No. It never connects to a bank and never asks for your internet banking password. Download a statement from your bank and import it.' },
+  { q: 'Can I pay bills or take payments in Finance?', a: 'No. Record a payment notes money you have already received or paid. Finance does not move money.' },
+  { q: 'Is it a certified accounting or payroll product?', a: 'No. It is not certified for tax, payroll or statutory accounting, and it does not do payroll, PAYG withholding or superannuation.' },
+  { q: 'Who can see my personal workspace?', a: 'Only you, until you invite someone. People outside a workspace cannot see it or tell that it exists.' },
+  { q: 'Can I run more than one business?', a: 'Yes. Create a workspace for each, and switch between them from the workspace menu. Each keeps its own books, people and settings.' },
+];
+---
+<BaseLayout title={`${sys.name}: ${sys.kind}`} description={description} imageAlt="BIZOMAT Finance: personal, household and business money on a proper ledger" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
+  schema={[
+    { '@type': 'SoftwareApplication', name: sys.name, alternateName: sys.kind, url: `${SITE.url}${sys.url}`, applicationCategory: 'FinanceApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
+    { '@type': 'FAQPage', url: `${SITE.url}${sys.url}#faq`, mainEntity: questions.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+  ]}>
+  <section class="pp-hero" aria-labelledby="fin-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
+        <h1 id="fin-title">{FINANCE.headline}</h1>
+        <p class="pp-hero__lead">{FINANCE.summary}</p>
+        <div class="pp-hero__actions">
+          <Button href={access.href} variant="accent" rel="noopener" data-cta="finance-access">{access.label}</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="finance-guide">Read the user guide</Button>
+        </div>
+        <p class="pp-hero__note">{access.note} Sign-in required: use your BIZOMAT account, the same one as {crm.name} and {projects.name}. New to BIZOMAT? Create an account on the sign-in page.</p>
+      </div>
+      <FinanceLedger id="fin-hero" />
+    </Container>
+  </section>
+
+  <section class="pp-section" id="what" aria-labelledby="what-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What it does</p>
+        <h2 id="what-title">Your money, in order, in one place</h2>
+        <p>Finance records where money comes from and where it goes, what you are owed and what you owe, and what you planned. Everything sits on a double-entry ledger, the method accountants use, so the reports always add up.</p>
+        <StatusLegend />
+      </div>
+      <ul class="pp-cards" role="list">
+        {FINANCE.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title} <StatusLabel status="live" /></h3><p>{c.text}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Who it is for</p>
+        <h2 id="who-title">Who should use it</h2>
+        <p>Australian businesses that want their books, invoices and GST in one place, the people who keep those books, and anyone keeping personal or household money in order.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {audiences.map((a) => <li class="pp-card"><h3>{a.t}</h3><p>{a.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Problems it solves</p>
+        <h2 id="problems-title">What changes when the books live in one place</h2>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {problems.map((p) => <li class="pp-card"><h3>{p.t} <StatusLabel status={p.s} /></h3><p>{p.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="features" aria-labelledby="features-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features</p>
+        <h2 id="features-title">Every feature, explained</h2>
+        <p>What {sys.name} does today, area by area, what it does not do, and what is planned. The <a href={GUIDE}>user guide</a> shows where each working feature is in the application.</p>
+      </div>
+      <div class="pp-tools">
+        <section id="workspaces" aria-labelledby="ws-title">
+          <h3 id="ws-title">Workspaces <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Kept apart</dt><dd>Each workspace has its own accounts, records, members and settings. Switch between them from the top of the screen.</dd></div>
+            {workspaces.map((w) => <div><dt>{w.t}</dt><dd>{w.x}</dd></div>)}
+          </dl>
+        </section>
+        <section id="ledger" aria-labelledby="ledger-title">
+          <h3 id="ledger-title">The double-entry ledger <StatusLabel status="live" /></h3>
+          <dl>{ledger.map((l) => <div><dt>{l.t}</dt><dd>{l.x}</dd></div>)}</dl>
+        </section>
+        <section id="banking" aria-labelledby="banking-title">
+          <h3 id="banking-title">Transactions and bank statements <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>No bank connection</dt><dd>Finance never connects to your bank and never asks for your internet banking password. You download the statement and upload it.</dd></div>
+            {banking.map((b) => <div><dt>{b.t}</dt><dd>{b.x}</dd></div>)}
+          </dl>
+        </section>
+        <section id="invoices" aria-labelledby="inv-title">
+          <h3 id="inv-title">Quotes, invoices, bills and claims <StatusLabel status="live" /></h3>
+          <dl>
+            {docs.map((d) => <div><dt>{d.t}</dt><dd>{d.x}</dd></div>)}
+            <div><dt>Payments</dt><dd>Recording a payment records money you have already received or paid. Finance does not take or send payments.</dd></div>
+          </dl>
+        </section>
+        <section id="reports" aria-labelledby="reports-title">
+          <h3 id="reports-title">Reports and budgets <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>{FINANCE.reports.length} reports</dt><dd>{list(FINANCE.reports.map((r, i) => (i ? r.charAt(0).toLowerCase() + r.slice(1) : r)))}. Computed from the ledger when you open them.</dd></div>
+            <div><dt>Filters and comparisons</dt><dd>Filter by dates, department, project or cost centre; in a household, by person. Compare with the previous period or year.</dd></div>
+            <div><dt>Export and schedule</dt><dd>Export CSV or PDF, or schedule a report each month or quarter.</dd></div>
+            <div><dt>Budgets</dt><dd>Set by category and month, for the whole workspace or a department or project, and can start from last year's figures.</dd></div>
+            <div><dt>Savings goals</dt><dd>Track an account or an amount you enter.</dd></div>
+            <div><dt>Alerts</dt><dd>Invoices and bills falling due, budgets nearly spent and a monthly summary.</dd></div>
+          </dl>
+        </section>
+        <section id="gst" aria-labelledby="gst-title">
+          <h3 id="gst-title">Australian GST and BAS <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Defaults</dt><dd>Australian dollars and a July to June financial year. Prices can include or exclude GST, and each line has a tax code: GST, GST-free, input-taxed or excluded.</dd></div>
+            <div><dt>Tax codes</dt><dd>A GST-registered business starts with {list(FINANCE.taxCodes.map((t) => `${t.code} (${t.name.charAt(0).toLowerCase() + t.name.slice(1)})`))}. Add your own codes or change their rates and BAS labels.</dd></div>
+            <div><dt>The worksheet</dt><dd>The GST and BAS worksheet adds up labels G1, 1A and 1B (and G2, G3, G10 and G11 for full reporting) on the cash or accrual basis. It is a worksheet to check against your records before you or your agent lodge with the ATO: BIZOMAT does not lodge, and is not a certified tax, payroll or statutory accounting product.</dd></div>
+          </dl>
+        </section>
+        <section id="roles" aria-labelledby="roles-title">
+          <h3 id="roles-title">Members, roles and permissions <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Invitations</dt><dd>Invite your partner, bookkeeper, accountant or staff by email and give each a role.</dd></div>
+            {FINANCE.roles.map((r) => <div><dt>{r.name}</dt><dd>{r.text}</dd></div>)}
+            <div><dt>Permissions</dt><dd>Owners and administrators can change what the other roles may view, create, edit, delete, approve, import and export, module by module.</dd></div>
+          </dl>
+        </section>
+        <section id="security" aria-labelledby="sec-title">
+          <h3 id="sec-title">Accounts and security <StatusLabel status="live" /></h3>
+          <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
+        </section>
+        <section id="limits" aria-labelledby="limits-title">
+          <h3 id="limits-title">What Finance does not do</h3>
+          <p class="int-note">{FINANCE.limits} It does not do payroll, PAYG withholding or superannuation.</p>
+          <p class="int-note">Category suggestions come from your own rules and history. Every posted entry and every figure is calculated by the application's own checked logic.</p>
+        </section>
+        <section id="planned" aria-labelledby="planned-title">
+          <h3 id="planned-title">Not built yet</h3>
+          <dl>{planned.map((w) => <div><dt>{w.t} <StatusLabel status="planned" /></dt><dd>{w.x}</dd></div>)}</dl>
+        </section>
+      </div>
+    </Container>
+  </section>
+
+  {(shots.length > 0 || erpShot) && (
+    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+      <Container>
+        <div class="pp-head">
+          <p class="bz-eyebrow">Screenshots</p>
+          <h2 id="screens-title">The real product</h2>
+          <p>Captured from the running application with a fictional business and example data. More screens are in the <a href={GUIDE}>user guide</a>.</p>
+        </div>
+        <div class="pp-shots">
+          {erpShot && (
+            <figure class="pp-shot">
+              <img src={erpShot.src} alt={`${erpShot.title}. ${erpShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>Inside {erp.name}. {erpShot.caption} Choose {sys.module} in the module rail to open it.</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          )}
+          {shots.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{s.title.replace(/^[^:]+: /, '').replace(/^a /, 'A ')}. {s.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <section class="pp-section pp-section--tint" id="dashboard" aria-labelledby="dashboard-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">The main dashboard</p>
+        <h2 id="dashboard-title">The Dashboard, figure by figure</h2>
+        <p>The Dashboard is the first screen of a workspace. Every figure comes from posted entries in the ledger: drafts and records waiting for approval are not counted until they are posted. Each figure opens what is behind it.</p>
+      </div>
+      <div class="pp-tools">
+        <section aria-labelledby="d-figures">
+          <h3 id="d-figures">The figures <StatusLabel status="live" /></h3>
+          <dl>{figures.map((f) => <div><dt>{f.t}</dt><dd>{f.x}</dd></div>)}</dl>
+        </section>
+        <section aria-labelledby="d-charts">
+          <h3 id="d-charts">Charts and lists <StatusLabel status="live" /></h3>
+          <dl>{charts.map((f) => <div><dt>{f.t}</dt><dd>{f.x}</dd></div>)}</dl>
+        </section>
+      </div>
+      <p class="pp-table-note">Choose the period: this month, last month, this quarter, last quarter, this financial year, last financial year or the last 12 months. A role that may not view reports (a business's contributors, by default) sees its own recent records and what waits for approval instead.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="walkthrough" aria-labelledby="walkthrough-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Screen by screen</p>
+        <h2 id="walkthrough-title">What each screen is for</h2>
+        <p><StatusLabel status="live" /> Finance's menu lists these screens in sections (Sales, Purchases, Banking, Planning, Reports and accounting, Workspace), and every one works today. Your role and the kind of workspace decide which ones you see.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {screens.map((s) => <li class="pp-card"><h3>{s.t}</h3><p><strong>You see:</strong> {s.see}</p><p><strong>You do:</strong> {s.do}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="start" aria-labelledby="start-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Getting started</p>
+        <h2 id="start-title">Start in {steps.length} steps</h2>
+        <p class="pp-head-lead">The <a href={GUIDE}>user guide</a> walks through each step, and everything after it, screen by screen.</p>
+      </div>
+      <ol class="pp-steps">
+        {steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+      </ol>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="workflows" aria-labelledby="workflows-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Typical workflows</p>
+        <h2 id="workflows-title">How the work flows through Finance</h2>
+        <p>Four common jobs in a business workspace, step by step.</p>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {workflows.map((w) => (
+          <li class="pp-card">
+            <h3>{w.t} <StatusLabel status={w.s} /></h3>
+            <ol class="flow-steps">{w.steps.map((s) => <li>{s}</li>)}</ol>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="integrations" aria-labelledby="int-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Integration</p>
+        <h2 id="int-title">How it works with the other BIZOMAT systems</h2>
+        <p>Every link checks both tools' own permissions, joins records of tools that belong to the same company, and never copies money: figures are read from Finance when asked.</p>
+      </div>
+      <div class="pp-tools">
+        {integrations.map((g, i) => (
+          <section aria-labelledby={`int-${i}`}>
+            <h3 id={`int-${i}`}>{g.href ? <a href={g.href}>{g.t}</a> : g.t} {g.s && <StatusLabel status={g.s} />}</h3>
+            <dl>{g.items.map((it) => <div><dt>{it.t} {!g.s && it.s && <StatusLabel status={it.s} />}</dt><dd>{it.x}</dd></div>)}</dl>
+          </section>
+        ))}
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Questions</p>
+        <h2 id="faq-title">Frequently asked questions</h2>
+      </div>
+      <dl class="guide-faq">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>user guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="fin-cta">
+    <Container class="pp-band">
+      <h2 id="fin-cta">Open {sys.name} in {erp.name}.</h2>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="finance-band-access">{access.label}</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="finance-band-guide">Read the user guide</Button>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="related" aria-labelledby="related-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Related systems</p>
+        <h2 id="related-title">The other BIZOMAT systems</h2>
+        <p>One BIZOMAT account opens {sys.short}, {crm.short} and {projects.short} inside {erp.name}. <a href={SYSTEMS_HOME}>See all systems</a>.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {related.map((s) => (
+          <li class="pp-card">
+            <p class="related-kind">{s.status === 'available' ? s.kind : `${s.kind} · ${STATUS_LABEL[s.status]}`}</p>
+            <h3><a href={s.url}>{s.name}</a></h3>
+            <p>{s.line}</p>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .pp-tools > section[id] { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .int-note { margin: 0 0 .6rem; color: var(--ink-2); font-size: .92rem; }
+  .flow-steps { display: grid; gap: .4rem; margin: .8rem 0 0; padding-left: 1.25rem; color: var(--ink-2); font-size: .96rem; }
+  .pp-card .related-kind { margin: 0 0 .5rem; color: var(--muted); font-size: .8rem; }
+  .guide-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
+  .guide-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-faq dt { font-weight: 650; color: var(--ink); }
+  .guide-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
+</style>
