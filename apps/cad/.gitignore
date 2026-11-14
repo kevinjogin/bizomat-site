@@ -16,3 +16,23 @@ installer/out/
 *.pfx
 *.p12
 *.pvk
+
+# Added 9 Nov 2026 (move to kevinjogin/bizomat-cad). Never commit secrets or data:
+# local settings and secret files
+.env
+.env.*
+!.env.example
+.dev.vars
+.secrets/
+# private keys (the public development certificate is a .cer file and stays tracked)
+*.key
+*.pem
+id_rsa*
+# the server's data folder and databases (accounts, OAuth grants, keys, bridge.sqlite, uploads)
+opensketch-data/
+/data/
+*.sqlite
+*.sqlite3
+*.sqlite-*
+*.db
+*.dump

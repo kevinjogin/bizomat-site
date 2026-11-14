@@ -1,160 +1,113 @@
-# Deploys BIZOMAT CAD Automation (the server in opensketch/; called CADOS by KEVOS until November 2026) to Fly.io from main, only after the tests pass (tests.yml, called below).
+# Deploy BIZOMAT CAD (the CAD MCP server in opensketch/: MCP, OAuth, the device bridge, installer and update
+# endpoints) to its Fly.io app `cados` (Amsterdam, ams).
+#
+# When it runs (owner's choice, 9 Nov 2026: automatic deploys on merge):
+# - automatically on every push to main (a merged pull request) that changes something the server is built from.
+#   Pushes that only change docs/, root *.md files or backups/ do not deploy. The tests always run first, and the
+#   preflight cannot be overridden on this path. A commit whose message contains [skip ci] is not deployed.
+# - by hand: Actions > Deploy to Fly.io (cados) > Run workflow on main, confirm = DEPLOY (to redeploy, to deploy a
+#   docs-only change, or with skip_tests / allow_machine_change for an exceptional deploy).
+# No other branch, tag or schedule deploys.
+#
+# It only ever targets the app `cados` (fixed below, not a variable). It never touches the app `bizomat`, DNS or
+# Cloudflare.
 #
 # Repository secrets (Settings > Secrets and variables > Actions):
-# - FLY_API_TOKEN: a deploy token for this app only: `fly tokens create deploy -a <app>` (or the Fly dashboard:
-#   the app > Tokens). Until it is set nothing is deployed. Only the steps that run flyctl see it.
-# - GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET (optional), OPENSKETCH_ACCESS_CODE (optional early access code): passed
-#   to Fly as the app's secrets. There is no server password: a server with no account answers only its setup page
-#   (auth.py, setup mode) until the first person creates the owner account.
-# A new app needs the app and its volume once: `fly apps create <app>` and
-# `fly volumes create opensketch_data -a <app> -r syd -s 1` (with an org token this workflow still makes them).
+# - FLY_CADOS_TOKEN: a deploy token for the cados app only (Fly dashboard > cados > Tokens > Create deploy token, or
+#   `fly tokens create deploy -a cados`). Until it is set nothing is deployed. Only the steps that run flyctl see it.
+# - GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET (optional), OPENSKETCH_ACCESS_CODE (optional): passed to Fly as the app's
+#   secrets when set. There is no server password.
 #
-# Pushes: the Fly app (cados) is linked to this repository and Fly deploys every push to main itself, so a push runs
-# only the tests here, unless the repository variable DEPLOY_ON_PUSH is "true" (then unlink the repo in Fly).
-# Run by hand, it deploys from here (and makes the volume if it is missing).
+# Steps: the tests (tests.yml; skip_tests applies to a deploy by hand only); the preflight (.github/scripts/fly-preflight.py) compares fly.toml
+# with the live Machines and stops when the deploy would add or remove a Machine or change its size, memory or region
+# (allow_machine_change = YES, by hand only, lets a deliberate change through); then the deploy (--ha=false: the one Machine is
+# replaced in place, CAD MCP is offline for about 15-90 s) and a check that https://cados.fly.dev/healthz reports the
+# new version within 3 minutes.
 #
-# What deploys: a push to main whose changes since the live version (the site's /healthz names its commit) touch
-# more than notes, tests and backups (root *.md, docs/, tests/, solidworks/tests/, backups/): each deploy restarts the
-# one server (~15 s offline). Afterwards the live /healthz must answer with the new version within 3 minutes, else the run fails.
-# Run by hand (Actions > Deploy to Fly.io > Run workflow) to redeploy; "skip tests" only to bring a stuck site back.
-name: Deploy to Fly.io
+# One deploy source: no GitHub repository is attached to the cados app in Fly (checked 9 Nov 2026; it used to build every
+# push to jogkev-creator/CADOS main). Never attach one: this workflow, with its preflight, is how cados is deployed.
+#
+# Rollback: `flyctl releases -a cados --image`, then `flyctl deploy -a cados --image <the previous image> --ha=false`
+# (README.md, "Recovery and maintenance"). Volume snapshots: Fly dashboard > cados > Volumes.
+name: Deploy to Fly.io (cados)
 
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "backups/**"
   workflow_dispatch:
     inputs:
+      confirm:
+        description: Type DEPLOY to deploy main to production (Fly app cados)
+        required: true
+        default: ""
       skip_tests:
         description: Deploy without running the tests first (only to bring a stuck site back quickly)
         type: boolean
         default: false
+      allow_machine_change:
+        description: Type YES only if the deploy is meant to change the Machines (count, size, memory, region)
+        required: false
+        default: ""
 
 permissions:
   contents: read
 
 env:
-  APP: ${{ vars.FLY_APP || 'cados' }}
+  APP: cados
+
+# One deploy at a time. A deploy that is running always finishes; when several merges wait, only the newest runs.
+concurrency:
+  group: deploy-cados
+  cancel-in-progress: false
 
 jobs:
-  plan:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      test: ${{ steps.plan.outputs.test }}
-      deploy: ${{ steps.plan.outputs.deploy }}
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - name: What changed
-        id: plan
-        env:
-          EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
-          SKIP_TESTS: ${{ inputs.skip_tests }}
-        run: |
-          not_tested='^docs/|^backups/|^[^/]+\.md$|^$'
-          not_deployed='^(docs|tests|solidworks/tests|backups)/|^[^/]+\.md$|^$'
-          changed() {  # files changed from commit $1 to this one; one placeholder line when $1 is unknown
-            if [ -n "$1" ] && git cat-file -e "$1^{commit}" 2>/dev/null; then
-              git diff --name-only "$1" "$GITHUB_SHA"
-            else
-              echo "(everything: no known base commit)"
-            fi
-          }
-          live=$(curl -fsS --max-time 30 "https://$APP.fly.dev/healthz" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)
-          if [ "$EVENT" = "workflow_dispatch" ]; then
-            deploy=true
-            if [ "$SKIP_TESTS" = "true" ]; then test=false; else test=true; fi
-          else
-            deploy=false; test=false
-            since_live=$(changed "$live")
-            since_before=$(changed "$BEFORE")
-            grep -Eqv "$not_deployed" <<<"$since_live" && deploy=true
-            grep -Eqv "$not_tested" <<<"$since_before" && test=true
-            [ "$deploy" = true ] && test=true  # nothing goes live untested
-          fi
-          echo "test=$test" >> "$GITHUB_OUTPUT"
-          echo "deploy=$deploy" >> "$GITHUB_OUTPUT"
-          echo "Live version: ${live:-unknown}. Run the tests: $test. Deploy ${GITHUB_SHA::7}: $deploy." | tee -a "$GITHUB_STEP_SUMMARY"
-
   test:
-    needs: plan
-    if: needs.plan.outputs.test == 'true'
+    if: github.event_name == 'push' || (inputs.confirm == 'DEPLOY' && !inputs.skip_tests)
     uses: ./.github/workflows/tests.yml
 
   deploy:
-    needs: [plan, test]
-    # a push deploys only after its tests passed; a manual run may skip them
+    needs: test
     if: >-
-      !cancelled() && needs.plan.outputs.deploy == 'true' &&
-      (needs.test.result == 'success' || (needs.test.result == 'skipped' && github.event_name == 'workflow_dispatch'))
+      !cancelled() && github.ref == 'refs/heads/main' &&
+      (github.event_name == 'push' || inputs.confirm == 'DEPLOY') &&
+      (needs.test.result == 'success' ||
+       (needs.test.result == 'skipped' && github.event_name == 'workflow_dispatch' && inputs.skip_tests))
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    concurrency:
-      group: deploy-fly
-      cancel-in-progress: false
     env:
-      ORG: ${{ vars.FLY_ORG || 'personal' }}
-      REGION: syd
-      # The public address (OAuth metadata, pairing and download links). The health checks below use <app>.fly.dev, the
-      # origin that always answers. Set the repository variable PUBLIC_URL to override it.
-      PUBLIC_URL: ${{ vars.PUBLIC_URL || 'https://bizomat.ai/cad' }}
+      # The public address (OAuth metadata, pairing and download links). The health checks use cados.fly.dev, the
+      # origin that always answers.
+      PUBLIC_URL: https://bizomat.ai/cad
     steps:
-      - name: Check setup
-        id: setup
+      - name: Check the token
         env:
-          HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
-          EVENT: ${{ github.event_name }}
-          DEPLOY_ON_PUSH: ${{ vars.DEPLOY_ON_PUSH }}
-          GH_TOKEN: ${{ github.token }}
+          HAS_TOKEN: ${{ secrets.FLY_CADOS_TOKEN != '' }}
         run: |
           if [ "$HAS_TOKEN" != "true" ]; then
-            echo "No FLY_API_TOKEN secret yet: not deploying."
-            echo "go=no" >> "$GITHUB_OUTPUT"
-          elif [ "$EVENT" = "push" ] && [ "$DEPLOY_ON_PUSH" != "true" ]; then
-            # the Fly app is linked to this repository and deploys each push itself; deploying here too would race it
-            echo "Fly deploys pushes itself (repository variable DEPLOY_ON_PUSH is not true): tests only." | tee -a "$GITHUB_STEP_SUMMARY"
-            echo "go=no" >> "$GITHUB_OUTPUT"
-          elif [ "$EVENT" = "push" ] && tip=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha) \
-               && [ -n "$tip" ] && [ "$tip" != "$GITHUB_SHA" ]; then
-            # tests of two pushes can finish in either order: never put an older commit over a newer one
-            echo "main has moved on to ${tip::7}; its own run deploys it." | tee -a "$GITHUB_STEP_SUMMARY"
-            echo "go=no" >> "$GITHUB_OUTPUT"
-          else
-            echo "go=yes" >> "$GITHUB_OUTPUT"
+            echo "::error::Add the repository secret FLY_CADOS_TOKEN (Fly dashboard > cados > Tokens > Create deploy token). Nothing was deployed."
+            exit 1
           fi
 
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-        if: steps.setup.outputs.go == 'yes'
         with:
           persist-credentials: false
 
       - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
-        if: steps.setup.outputs.go == 'yes'
 
-      - name: Create the app and its volume (first run only)
-        if: steps.setup.outputs.go == 'yes'
+      - name: Preflight (the deploy keeps the live Machines as they are)
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-        run: |
-          if ! flyctl status --app "$APP" >/dev/null 2>&1; then
-            flyctl apps create "$APP" --org "$ORG"
-          fi
-          if [ "$(flyctl volumes list --app "$APP" --json | jq 'map(select(.name == "opensketch_data")) | length')" = "0" ]; then
-            flyctl volumes create opensketch_data --app "$APP" --region "$REGION" --size 1 --yes
-          fi
-          # without public addresses <app>.fly.dev does not exist in DNS (an app made outside flyctl can have none)
-          if [ "$(flyctl ips list --app "$APP" --json | jq 'length')" = "0" ]; then
-            flyctl ips allocate-v6 --app "$APP"
-            flyctl ips allocate-v4 --shared --app "$APP"
-          fi
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
+          # only a deploy by hand can allow a change to the Machines; an automatic deploy never does
+          ALLOW_MACHINE_CHANGE: ${{ github.event_name == 'workflow_dispatch' && inputs.allow_machine_change || '' }}
+        run: python3 .github/scripts/fly-preflight.py --app "$APP" --config fly.toml
 
-      - name: Pass secrets to Fly
-        if: steps.setup.outputs.go == 'yes'
+      - name: Pass optional secrets to Fly
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
           OPENSKETCH_ACCESS_CODE: ${{ secrets.OPENSKETCH_ACCESS_CODE }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
@@ -167,27 +120,26 @@ jobs:
           if [ "${#args[@]}" -gt 0 ]; then flyctl secrets set --app "$APP" --stage "${args[@]}"; else echo "No optional secrets to pass."; fi
 
       - name: Deploy
-        if: steps.setup.outputs.go == 'yes'
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
         run: |
-          flyctl deploy --app "$APP" --remote-only --ha=false \
+          flyctl deploy --app "$APP" --config fly.toml --remote-only --ha=false \
             --build-arg OPENSKETCH_VERSION="${GITHUB_SHA::7}" \
-            --env OPENSKETCH_PUBLIC_URL="${PUBLIC_URL:-https://$APP.fly.dev}"
+            --env OPENSKETCH_PUBLIC_URL="$PUBLIC_URL"
 
       # flyctl reports success once the machine runs, even when the server inside never answers (the supervisor keeps
       # the machine alive for a while): ask the site itself which version it serves
       - name: Check the live site
-        if: steps.setup.outputs.go == 'yes'
         run: |
           want="${GITHUB_SHA::7}"
+          got=""
           for _ in $(seq 1 36); do
             got=$(curl -fsS --max-time 10 "https://$APP.fly.dev/healthz" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)
             if [ "$got" = "$want" ]; then
-              echo "CAD Automation $want is live at ${PUBLIC_URL:-https://$APP.fly.dev}" >> "$GITHUB_STEP_SUMMARY"
+              echo "CAD Automation $want is live at $PUBLIC_URL (origin https://$APP.fly.dev)" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
             sleep 5
           done
-          echo "::error::https://$APP.fly.dev/healthz did not answer with version $want within 3 minutes (last answer: ${got:-none}). See 'flyctl logs -a $APP'. To go back: 'flyctl releases -a $APP --image', then 'flyctl deploy -a $APP --image <the previous image>'."
+          echo "::error::https://$APP.fly.dev/healthz did not answer with version $want within 3 minutes (last answer: ${got:-none}). See 'flyctl logs -a $APP'. To go back: 'flyctl releases -a $APP --image', then 'flyctl deploy -a $APP --image <the previous image> --ha=false'."
           exit 1

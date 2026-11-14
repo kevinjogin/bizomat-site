@@ -42,8 +42,10 @@ def test_every_section_needs_sign_in_and_carries_the_brand():
         page = owner.get(path)
         assert page.status_code == 200 and heading in page.text, path
         t = page.text
-        assert "/ui/app.js" in t and "https://bizomat.ai/" in t and "https://bizomat.ai/tasks/" in t, path
-        assert "BIZOMAT CAD Automation" in t and 'class="product"' in t and "Project Management" in t, path
+        assert "/ui/app.js" in t and "https://bizomat.ai/" in t and 'href="https://bizomat.ai/systems/"' in t and ">Systems<" in t, path
+        assert "BIZOMAT CAD Automation" in t and 'class="product"' in t, path
+        # the way back to the platform is its Systems page, never Project Management's own address (owner, 14 Nov 2026)
+        assert "Project Management" not in t and "https://bizomat.ai/tasks" not in t, path
         for legal in ('href="/privacy"', "https://bizomat.ai/privacy/", "https://bizomat.ai/terms/", "https://bizomat.ai/disclaimer/"):
             assert legal in t, (path, legal)
         assert "\u00a9 " in t and " BIZOMAT. All rights reserved." in t, path  # the BIZOMAT copyright line
@@ -282,14 +284,13 @@ def test_a_suspended_persons_computer_is_refused_until_they_are_resumed(base, co
 
 
 def test_the_platform_links_follow_the_settings(monkeypatch):
-    """The BIZOMAT website and Project Management are settings (their domains go live separately); anything that is not
-    an http(s) address falls back to the default."""
+    """The BIZOMAT website is a setting (its domain goes live separately), and the Systems link follows it; anything
+    that is not an http(s) address falls back to the default."""
     monkeypatch.setenv("BIZOMAT_SITE_URL", "https://staging.bizomat.example/")
-    monkeypatch.setenv("BIZOMAT_WORK_URL", "https://work.staging.bizomat.example")
     owner = _owner()
     for page in (owner.get("/dashboard").text, TestClient(server.app).get("/overview").text):
         assert "https://staging.bizomat.example/terms/" in page and "https://staging.bizomat.example/disclaimer/" in page
-        assert "https://work.staging.bizomat.example/" in page and "https://bizomat.ai/" not in page
+        assert "https://staging.bizomat.example/systems/" in page and "https://bizomat.ai/" not in page
     login = TestClient(server.app).get("/login").text
     assert 'href="https://staging.bizomat.example/"' in login and "https://staging.bizomat.example/terms/" in login
     monkeypatch.setenv("BIZOMAT_SITE_URL", "javascript:alert(1)")
@@ -303,6 +304,8 @@ def test_public_pages_carry_the_bizomat_footer():
     page = TestClient(server.app).get("/overview").text
     assert brand.SLOGAN == "Connecting Intelligence. Empowering Progress." and brand.SLOGAN in page
     assert brand.CORPORATE in page
-    for href in ("https://bizomat.ai/engine-room/", "https://bizomat.ai/products/", "https://bizomat.ai/contact/"):
+    for href in ("https://bizomat.ai/engine-room/", "https://bizomat.ai/systems/", "https://bizomat.ai/contact/"):
         assert href in page, href
+    # Products became Systems (/products/ answers 301 there) and Project Management is reached through it
+    assert "https://bizomat.ai/products/" not in page and "Project Management" not in page and ">Systems<" in page
     assert brand.copyright_line() in page and ">Privacy Policy<" in page and ">Terms of Use<" in page

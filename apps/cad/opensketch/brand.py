@@ -6,8 +6,9 @@ The product was called CADOS by KEVOS until November 2026. Internal names stay a
 Python package, OPENSKETCH_* settings, cookies, the add-in's COM ids and file names, the MCP tool names, cados.css):
 only what people read changed.
 
-Links to the platform are settings, because its domains go live separately: BIZOMAT_SITE_URL (default
-https://bizomat.ai) and BIZOMAT_WORK_URL (default https://bizomat.ai/tasks).
+Links to the platform are a setting, because its domain goes live separately: BIZOMAT_SITE_URL (default
+https://bizomat.ai). The BIZOMAT menu and the footers link back to the platform's Systems page (/systems/), where people
+find BIZOMAT ERP and every other system (owner, 14 Nov 2026).
 """
 
 from __future__ import annotations
@@ -25,7 +26,6 @@ TAGLINE = "AI-powered CAD automation"
 HEADLINE = "Turn engineering intent into CAD."
 DESCRIPTION = ("BIZOMAT CAD Automation connects your AI assistant to SOLIDWORKS on your own computer. Create, change and "
                "check native parts, assemblies and drawings in plain language.")
-WORK_NAME = "Project Management"
 # The BIZOMAT corporate language (owner, 8 Nov 2026; the website's src/config/platform.ts is its source). This product
 # keeps its own name, headline and description; the footer carries the parent brand's slogan and short description.
 SLOGAN = "Connecting Intelligence. Empowering Progress."
@@ -52,14 +52,18 @@ def site_url() -> str:
     return _url("BIZOMAT_SITE_URL", "https://bizomat.ai")
 
 
-def work_url() -> str:
-    """BIZOMAT Project Management (BIZOMAT_WORK_URL)."""
-    return _url("BIZOMAT_WORK_URL", "https://bizomat.ai/tasks")
-
-
 def site_page(path: str) -> str:
     """A page of the platform website, e.g. site_page("terms") -> https://bizomat.ai/terms/."""
     return site_url() + "/" + (path.strip("/") + "/" if path.strip("/") else "")
+
+
+SYSTEMS_NAME = "Systems"
+
+
+def systems_url() -> str:
+    """The platform's Systems page (https://bizomat.ai/systems/): BIZOMAT ERP and every other system, the way back to
+    the rest of the platform from CAD Automation."""
+    return site_page("systems")
 
 
 def support_url() -> str:
@@ -130,7 +134,7 @@ APP_NAV = [("/dashboard", "Home", "home"), ("/assistant", "CAD Assistant", "assi
 
 def _ecosystem(here: str) -> list[tuple[str, str, bool]]:
     """The BIZOMAT products: (address, name, is this one)."""
-    return [(site_url() + "/", "BIZOMAT platform", False), (work_url() + "/", WORK_NAME, False), (here, PRODUCT, True)]
+    return [(site_url() + "/", "BIZOMAT platform", False), (systems_url(), SYSTEMS_NAME, False), (here, PRODUCT, True)]
 
 
 def _eco_menu(here: str) -> str:
@@ -143,7 +147,7 @@ def _eco_menu(here: str) -> str:
 def header(active: str = "", signed_in: bool = False, *, app: bool = False, user: str = "", sign_out: bool = True,
            admin: bool = False) -> str:
     """The site header. Product pages: product links, the BIZOMAT menu, Sign in or Dashboard. App pages: the sections,
-    the BIZOMAT menu (the platform, Project Management, CAD Automation), the person and Sign out."""
+    the BIZOMAT menu (the platform, Systems, CAD Automation), the person and Sign out."""
     def a(href, label, key=""):
         cur = ' aria-current="page"' if key and key == active else ""
         return f'<a href="{href}"{cur}>{label}</a>'
@@ -179,7 +183,7 @@ def app_footer() -> str:
     """The app's short footer: CAD Automation within the BIZOMAT platform, and the legal pages."""
     return (f'<footer class="app-footer"><div class="container"><span>{FULL} \u00b7 {copyright_line()}</span>'
             f'<nav aria-label="{PLATFORM}"><a href="{escape(site_url())}/" rel="noopener">bizomat.ai</a>'
-            f'<a href="{escape(work_url())}/" rel="noopener">{WORK_NAME}</a><a href="/docs">Documentation</a>'
+            f'<a href="{escape(systems_url())}" rel="noopener">{SYSTEMS_NAME}</a><a href="/docs">Documentation</a>'
             f'{legal_links()}<a href="{escape(support_url())}" rel="noopener">Support</a></nav></div></footer>')
 
 
@@ -193,7 +197,7 @@ def footer() -> str:
 <div><h4>Resources</h4><ul><li><a href="/docs">Documentation</a></li><li><a href="/docs#troubleshooting">Troubleshooting</a></li>
 <li><a href="/download/solidworks">Download for SOLIDWORKS</a></li><li><a href="/download/solidworks.sha256">Installer checksum</a></li><li><a href="{escape(support_url())}" rel="noopener">Support</a></li></ul></div>
 <div><h4>{PLATFORM}</h4><ul><li><a href="{site}/" rel="noopener">Home</a></li><li><a href="{escape(site_page("engine-room"))}" rel="noopener">About</a></li>
-<li><a href="{escape(site_page("products"))}" rel="noopener">Products</a></li><li><a href="{escape(work_url())}/" rel="noopener">{WORK_NAME}</a></li>
+<li><a href="{escape(systems_url())}" rel="noopener">{SYSTEMS_NAME}</a></li>
 <li><a href="{escape(site_page("contact"))}" rel="noopener">Contact</a></li></ul></div></div>
 <div class="footer-base"><span>{copyright_line()} {FULL} is part of the {PLATFORM} platform.</span>
 <nav class="footer-legal" aria-label="Legal">{legal_links()}</nav></div></div></footer>"""
