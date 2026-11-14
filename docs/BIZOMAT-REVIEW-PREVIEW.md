@@ -9,6 +9,8 @@ touching production.
 1. It builds the production image from the pull request.
 2. It starts the local stack (`infrastructure/local/compose.yml`: proxy, website, ERP, CAD Automation) with its own
    empty database.
+   In that database only, the founder's sign-up policy allows `example.com`. That is the reserved domain the demo
+   accounts use, and it has no mail server. Every other check stays as in production.
 3. It loads invented demo data (`infrastructure/preview/seed-demo.mjs`).
 4. It puts the gate in front (`infrastructure/preview/gate.mjs`).
 5. It opens a Cloudflare quick tunnel: an address like `https://<random words>.trycloudflare.com`.
