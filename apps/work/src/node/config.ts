@@ -27,10 +27,18 @@ export interface WorkerVars {
   EMAIL_SANDBOX?: string;
   /** Encrypts secrets saved in the founder console; without it, a random key file in the data folder is used. */
   SETTINGS_ENCRYPTION_KEY?: string;
+  // Company accounts (docs/company/README.md at the repository root): passed through when set.
+  /** The Australian Business Register web services GUID: with it, registration looks the ABN up on the register. */
+  ABR_GUID?: string;
+  /** JSON list of the applications allowed to use BIZOMAT sign-in (src/worker/company/id-provider.ts). */
+  BIZOMAT_ID_CLIENTS?: string;
 }
 
 /** Email settings copied from the environment into the Worker's env when present. */
 export const EMAIL_VARS = ['EMAIL_PROVIDER', 'BREVO_API_KEY', 'BREVO_WEBHOOK_TOKEN', 'EMAIL_FROM_NAME', 'EMAIL_FROM_ADDRESS', 'EMAIL_REPLY_TO', 'APP_BASE_URL', 'EMAIL_DAILY_LIMIT', 'EMAIL_CRITICAL_RESERVE', 'EMAIL_SANDBOX', 'SETTINGS_ENCRYPTION_KEY'] as const;
+
+/** Company account settings copied from the environment into the Worker's env when present. */
+export const COMPANY_VARS = ['ABR_GUID', 'BIZOMAT_ID_CLIENTS'] as const;
 
 /** An https address with an optional lowercase path, as canonicalRedirect (src/worker/mount.ts) accepts it. */
 const CANONICAL = /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i;
@@ -91,7 +99,7 @@ export function configFromEnv(env: Record<string, string | undefined> = process.
   if (canonical) vars.CANONICAL_URL = canonical;
   if (env.GOOGLE_CLIENT_ID) vars.GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
   if (env.GOOGLE_CLIENT_SECRET) vars.GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
-  for (const k of EMAIL_VARS) {
+  for (const k of [...EMAIL_VARS, ...COMPANY_VARS]) {
     const v = env[k]?.trim();
     if (v) vars[k] = v;
   }

@@ -79,8 +79,14 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
           names="$(flyctl secrets list --app "$APP" --json | jq -r '.[] | (.Name // .name)')"
-          for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET; do
-            grep -qx "$s" <<<"$names" || echo "::notice::Optional secret $s is not set on $APP"
+          # WORK_ABR_GUID and WORK_BIZOMAT_ID_CLIENTS: company accounts (docs/company/README.md)
+          for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET \
+            WORK_ABR_GUID WORK_BIZOMAT_ID_CLIENTS; do
+            if grep -qx "$s" <<<"$names"; then
+              echo "Optional secret $s is set on $APP"
+            else
+              echo "::notice::Optional secret $s is not set on $APP"
+            fi
           done
 
       # A restore point for Project Management's data before the new version starts (a new version can carry database

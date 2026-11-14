@@ -191,6 +191,8 @@ bizomat` shows names only); GitHub Actions secrets are repository secrets.
 | `WORK_GOOGLE_CLIENT_ID`, `WORK_GOOGLE_CLIENT_SECRET` | work | Google sign-in for Project Management |
 | `WORK_BREVO_API_KEY` | work | Brevo transactional email (invitations, assignments, reminders). Without it, invitations show a link to share |
 | `WORK_BREVO_WEBHOOK_TOKEN` | work | The bearer token Brevo sends with delivery events to `https://bizomat.ai/tasks/api/email-webhooks/brevo` |
+| `WORK_ABR_GUID` | work | The Australian Business Register web services GUID: company registration looks the ABN up on the register. Without it, only the ABN's check digits are checked. [docs/company/README.md](docs/company/README.md) |
+| `WORK_BIZOMAT_ID_CLIENTS` | work | The applications allowed to use BIZOMAT sign-in (JSON), such as CAD Automation. [docs/company/README.md](docs/company/README.md) |
 | `WORK_EMAIL_FROM_ADDRESS`, `WORK_EMAIL_FROM_NAME`, `WORK_EMAIL_REPLY_TO`, `WORK_APP_BASE_URL`, `WORK_EMAIL_DAILY_LIMIT`, `WORK_EMAIL_CRITICAL_RESERVE`, `WORK_EMAIL_PROVIDER`, `WORK_EMAIL_SANDBOX` | work | Email settings (not secret; defaults: `notifications@bizomat.ai`, `BIZOMAT`, none, `WORK_APP_URL`, 250, 40, `brevo` when a key is set, off). Setup: [docs/email/brevo-setup.md](docs/email/brevo-setup.md) |
 
 Which role receives which names, and the stronger per-volume secret files: [infrastructure/README.md](infrastructure/README.md),
