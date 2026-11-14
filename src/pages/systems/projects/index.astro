@@ -28,7 +28,7 @@ const PAGE = sys.url;
 const shots = screenshots('work');
 const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-projects.webp'));
 const related = SYSTEMS.filter((s) => s.id !== sys.id);
-const description = 'BIZOMAT Projects, the Project Management System: projects, tasks, teams, timelines, dashboards and documents in one workspace, inside BIZOMAT ERP.';
+const description = 'BIZOMAT Projects is project management software for teams: projects, tasks, timelines, boards, dashboards and documents, with task and team management inside BIZOMAT ERP.';
 
 interface Feature { t: string; x: string; s: FeatureStatus }
 
@@ -185,13 +185,13 @@ const schema = [
   { '@type': 'FAQPage', url: `${SITE.url}${PAGE}#faq`, mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title={`${sys.name}: ${sys.kind}`} description={description} image="/brand/bizomat-social-work.png" imageAlt="BIZOMAT Projects: projects, tasks and teams in one shared workspace" breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title={`${sys.name}: project management software`} description={description} image="/brand/bizomat-social-work.png" imageAlt="BIZOMAT Projects: projects, tasks and teams in one shared workspace" breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="projects-title">
     <Container class="pp-hero__inner">
       <div>
         <p class="bz-eyebrow">{sys.name}<span class="pp-hero__formerly">Formerly {sys.formerly}, and {WORK.formerly} before that</span></p>
         <h1 id="projects-title">{WORK.headline}</h1>
-        <p class="pp-hero__lead">{sys.name} is BIZOMAT's {sys.kind.toLowerCase()}. It brings your projects, tasks, documents and dashboards into one place: plan the work, assign it, track progress and automate the routine steps.</p>
+        <p class="pp-hero__lead">{sys.name} is project management software for teams. It brings your projects, tasks, documents and dashboards into one place: plan the work, assign it, track progress and automate the routine steps.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-access">{access.label}</Button>
           <Button href={GUIDE} variant="secondary" data-cta="projects-guide">Read the user guide</Button>

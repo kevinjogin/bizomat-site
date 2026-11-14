@@ -19,15 +19,14 @@ import '../../../styles/visuals.css';
 import '../../../styles/systems.css';
 import { screenshots } from '../../../data/screenshots.ts';
 import { SITE } from '../../../config/site.ts';
-import { ERP_PREVIEW, FEATURE_STATUS, SYSTEMS, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { FEATURE_STATUS, SYSTEMS, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
 import { CRM, FINANCE, WORK } from '../../../data/platform-catalog.ts';
 import { ERP_DOMAINS, capabilityCounts } from '../../../data/erp-capabilities.ts';
 
 const erp = systemById('erp');
 const GUIDE = erp.guide ?? '/systems/erp/guide/';
-const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }];
-const description = 'BIZOMAT ERP: one workspace for your company, with sales, finance, projects, engineering, reports and administration. What works today, and what is planned.';
+const description = 'BIZOMAT ERP is cloud ERP software for small and medium businesses: CRM, quoting and invoicing, projects, maintenance (CMMS), engineering and administration in one workspace.';
 const erpShots = screenshots('erp');
 const shot = (name: string) => erpShots.find((s) => s.src.endsWith(`/${name}.webp`));
 const dashboardShot = shot('erp-dashboard');
@@ -186,7 +185,7 @@ const walk: { t: string; st: FeatureStatus; x: string }[] = [
   { t: 'Projects and Tasks', st: 'live', x: 'Project Management, inside the ERP: boards, views, documents, dashboards and automations.' },
   { t: 'Products and Engineering', st: 'live', x: "CAD Automation's set-up steps and the computers you may see: owners and administrators see the company's, members their own. Computers are listed once CAD Automation reports (in development)." },
   { t: 'Maintenance', st: 'live', x: 'Overview, Assets, Requests, Work orders and Settings for the company. Register assets in a hierarchy, raise and approve requests, make work orders, assign technicians and record the work. "Report a fault", at the foot of the rail, raises a request from any screen.' },
-  { t: 'Operations', st: 'planned', x: 'A list of the planned modules, each labelled Planned, with a link to the design preview. Nothing here works yet or keeps data.' },
+  { t: 'Operations', st: 'planned', x: 'A list of the planned modules, each labelled Planned, beside what of Maintenance works today. Nothing planned works yet or keeps data.' },
   { t: 'Reports', st: 'live', x: "A card for each tool's reports. Each opens in its module, with that module's permissions." },
   { t: 'Administration', st: 'live', x: "Company overview, people and roles, departments, tools and company settings; each tool's team and settings; your profile. Platform administrators also see the ERP console." },
 ];
@@ -231,7 +230,7 @@ const faqs = [
   { q: 'Can it manage multiple companies?', a: 'Yes. You can belong to several companies and switch between them with the company switcher. It lists your registered companies, your own company in your own name, and companies whose tools were shared with you. Each company keeps its own tools and records.' },
   { q: 'Can different departments have separate permissions?', a: "Departments appear in every tool, but permissions are set for each person, not each department: every person has a role in each tool, set in the company area under People. A department's head can change who is in the department, and sees that department's figures in every tool." },
   { q: 'Does it connect with Finance and CRM?', a: 'Yes. Both open inside the ERP. When the company runs both, a CRM deal can start a draft quote in Finance and become a draft invoice once won, and a CRM company can be linked to its Finance customer. Each link checks your role in both tools.' },
-  { q: 'Can it manage manufacturing?', a: 'Not yet. Manufacturing, production planning, inventory, procurement, quality and supply chain are planned and not built. The Operations module lists them as Planned, and the design preview shows them with demonstration data only. Maintenance works today as its own module, for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can it manage manufacturing?', a: 'Not yet. Manufacturing, production planning, inventory, procurement, quality and supply chain are planned and not built. The Operations module lists them as Planned. Maintenance works today as its own module, for assets, requests and work orders; preventive maintenance is planned.' },
   { q: 'Is my data copied into the ERP?', a: 'No. The ERP shows each tool where it is. Nothing is copied or moved, and each tool keeps its own permissions.' },
   { q: 'Who sees our CAD computers?', a: "In a registered company, the owner and administrators see the computers of everyone in it, and members see their own. Nobody sees another company's. The computers appear once CAD Automation reports to the ERP, which is in development; until then the page says so." },
   { q: 'What happened to the old tool addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into the ERP, so bookmarks and links in emails keep working.' },
@@ -249,14 +248,14 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title={erp.name} description={description} imageAlt="BIZOMAT ERP: one workspace for your company" breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title={`${erp.name}: cloud ERP for small business`} description={description} imageAlt="BIZOMAT ERP: one workspace for your company" breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="erp-title">
     <Container class="pp-hero__inner">
       <div>
         <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
         <p class="bz-eyebrow">{erp.name} · {erp.kind}<span class="pp-hero__formerly">Formerly {erp.formerly}</span></p>
         <h1 id="erp-title">One workspace for your company</h1>
-        <p class="pp-hero__lead">Sales, finance, projects, engineering and administration, by company. Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
+        <p class="pp-hero__lead">Cloud ERP for small and medium businesses: sales, finance, projects, maintenance, engineering and administration, by company. Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-access">{access.label}</Button>
           <Button href={GUIDE} variant="secondary" data-cta="erp-guide">Read the user guide</Button>
@@ -342,7 +341,7 @@ const schema = [
           </li>
         ))}
       </ol>
-      <p class="pp-table-note">Inventory, production, quality and delivery have no BIZOMAT system today. The design of the planned stages can be explored in the <a href={PREVIEW} rel="noopener">design preview, which uses demonstration data</a>.</p>
+      <p class="pp-table-note">Inventory, production, quality and delivery have no BIZOMAT system today. They are planned, and each is labelled Planned until it is built and tested.</p>
     </Container>
   </section>
 

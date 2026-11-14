@@ -51,6 +51,12 @@ function errCode(err) {
  * @param {Function} [deps.resolve]  DNS lookup (tests)
  * @returns {{server: http.Server, upstreams: object, close: () => Promise<void>, stats: () => object}}
  */
+/** True when the answer comes from a signed-in application (BIZOMAT ERP and its tools, or CAD Automation): their pages
+ * are kept out of search engines (headers.mjs, clientResponseHeaders). The website (web) stays indexable. */
+export function isApp(d) {
+  return d.upstream === 'work' || d.upstream === 'cad';
+}
+
 export function createProxy(config, { log = defaultLog, resolve } = {}) {
   const upstreams = {};
   for (const name of UPSTREAM_NAMES) {
@@ -212,7 +218,7 @@ export function createProxy(config, { log = defaultLog, resolve } = {}) {
           upRes.resume();
           return;
         }
-        const out = clientResponseHeaders(upRes.rawHeaders, { production: d.production, preview: d.preview });
+        const out = clientResponseHeaders(upRes.rawHeaders, { production: d.production, preview: d.preview, app: isApp(d) });
         try {
           if (draining) res.shouldKeepAlive = false;
           res.writeHead(upRes.statusCode, upRes.statusMessage, out);
@@ -453,7 +459,7 @@ export function createProxy(config, { log = defaultLog, resolve } = {}) {
       upReq.on('response', (upRes) => {
         // the backend refused the upgrade (401, 403, 426...): pass its answer on, then close
         settled = true;
-        const out = clientResponseHeaders(upRes.rawHeaders, { production: d.production, preview: d.preview });
+        const out = clientResponseHeaders(upRes.rawHeaders, { production: d.production, preview: d.preview, app: isApp(d) });
         const lines = [`HTTP/1.1 ${upRes.statusCode} ${upRes.statusMessage || ''}`.trimEnd()];
         for (let i = 0; i < out.length; i += 2) {
           if (out[i].toLowerCase() === 'connection') continue;

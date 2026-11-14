@@ -46,10 +46,15 @@ export function checkSchema(doc) {
 export function checkRobots(text) {
   const problems = [];
   if (!new RegExp(`^Sitemap: ${SITE_RE}/sitemap-index\\.xml$`, 'm').test(text)) problems.push('robots.txt does not point to the sitemap index');
-  const star = text.split(/\n(?=User-agent:)/i).find((g) => /^User-agent:\s*\*\s*$/im.test(g)) ?? '';
-  if (/^Disallow:\s*\/\s*$/im.test(star)) problems.push('robots.txt blocks the whole site for all crawlers');
-  for (const p of ['/tools/', '/reados/', '/services/', '/contact/']) {
-    if (new RegExp(`^Disallow:\\s*${p.replace(/\//g, '\\/')}`, 'im').test(star)) problems.push(`robots.txt blocks ${p}`);
+  // Every group (all crawlers, and each crawler named on its own) must leave the public pages open.
+  const groups = text.split(/\n(?=User-agent:)/i).filter((g) => /^User-agent:/im.test(g));
+  if (!groups.some((g) => /^User-agent:\s*\*\s*$/im.test(g))) problems.push('robots.txt has no group for all crawlers');
+  for (const g of groups) {
+    const agent = (/^User-agent:\s*(.+)$/im.exec(g) ?? [])[1]?.trim() ?? '?';
+    if (/^Disallow:\s*\/\s*$/im.test(g)) problems.push(`robots.txt blocks the whole site for ${agent}`);
+    for (const p of ['/systems/', '/tools/', '/reados/', '/resources/', '/services/', '/contact/', '/engine-room/']) {
+      if (new RegExp(`^Disallow:\\s*${p.replace(/\//g, '\\/')}`, 'im').test(g)) problems.push(`robots.txt blocks ${p} for ${agent}`);
+    }
   }
   return problems;
 }

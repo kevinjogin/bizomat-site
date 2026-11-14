@@ -213,6 +213,17 @@ test('HSTS on production hosts when absent; the backend value wins; noindex on t
   assert.equal(preview.headers['x-robots-tag'], 'noindex');
 });
 
+test('application pages are kept out of search engines (noindex, nofollow); website pages are not', async () => {
+  for (const [host, path] of [['bizomat.ai', '/erp/echo'], ['bizomat.ai', '/tasks/echo'], ['bizomat.ai', '/crm/echo'], ['bizomat.ai', '/cad/echo'], ['cados.kevos.com', '/echo'], ['work.kevos.com', '/echo']]) {
+    const r = await request(p.port, { host, path });
+    assert.equal(r.headers['x-robots-tag'], 'noindex, nofollow', `${host}${path}`);
+  }
+  for (const path of ['/echo', '/systems/echo']) {
+    const r = await request(p.port, { host: 'bizomat.ai', path });
+    assert.equal(r.headers['x-robots-tag'], undefined, `the website stays indexable: ${path}`);
+  }
+});
+
 test('a slow chunked response is streamed, not buffered', async () => {
   const t0 = performance.now();
   const times = [];
