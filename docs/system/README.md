@@ -16,6 +16,46 @@ accounts:
 The design preview with demonstration data stays at `/system-preview/` (`docs/erp/`). The planned operations modules
 (inventory, procurement, manufacturing and the rest) are not built.
 
+## One system (owner, 14 Nov 2026)
+
+Owner's request: "I want one system and everything should work within it without leaving this environment, for all
+logged-in users and organisations."
+
+- **Every tool opens inside the System:**
+
+  | Tool | Address |
+  | --- | --- |
+  | Project Management | `/system/tasks/...` |
+  | The CRM | `/system/crm/...` |
+  | Finance | `/system/finance/...` |
+  | Company accounts | `/system/company/...` |
+
+  It is the same app and the same screens, under a longer path (`SUITE_MOUNTS` in `apps/work/src/worker/mount.ts`).
+- **The module rail:** every screen inside the System has it at its left (a bar along the bottom on a phone):
+  - Home, Project Management, CRM, Finance, CAD Automation, Company;
+  - Super admin, for platform admins only.
+
+  Each tool keeps its own navigation beside the rail (`apps/work/src/client/components/layout/SuiteRail.tsx`).
+- **Links stay inside the System:**
+  - Links between tools use `toolUrl` and `PLATFORM_URLS` (`apps/work/src/client/lib/base.ts`, `lib/brand.ts`).
+  - The System's tool cards point to `/system/<tool>/...`.
+- **The old addresses lead in.** A page at a tool's own address answers 302 to the same page inside the System (`suiteRedirect`):
+  - `/crm/o/x` goes to `/system/crm/o/x`.
+  - The website's Sign in (`/tasks/login` without a `next`) goes to `/system/login`.
+  - The API (`/<tool>/api/...`), the files and a customer's online document (`/finance/view/...`) stay where they are.
+  - Emails, bookmarks and the website keep working.
+- **One session.**
+  - Cookies are written for `/system` and the other paths, never for `/system/<tool>`.
+  - A page without a cookie goes through `/tasks/api/app-carry` as before; its marker is `sys_carry`.
+  - A sign-in provider returns to the tool's own address, the one registered with it (`appOf`).
+- **CAD Automation's own application** (computers, connector, installer) is a separate app and opens at `/cad`. The
+  System's CAD Automation page has the setup and the company's computers.
+- **Tests:**
+  - `apps/work/test/mount.test.ts` ("one system");
+  - the page tests in `company`, `crm-records` and `fin-access`;
+  - `test-node/server.test.ts`;
+  - the smoke test and the deploy's public checks (`/system/<tool>/login` 200, a page at `/crm/login` 302).
+
 ## Companies
 
 - **Registered companies.** These are the companies from Company accounts (`co_companies`). Each person keeps their
@@ -97,7 +137,7 @@ The console is for platform admins only (`platform_admins`, founder or admin). F
 
 ## Routing
 
-- `/system` and `/system/...` go to the work app:
+- `/system` and `/system/...` (the tools under `/system/<tool>` included) go to the work app:
   - in the proxy (`infrastructure/proxy/routes.mjs`, `SYSTEM_PATHS`);
   - in the website Worker (`src/worker.ts`).
 - `/system-preview/` stays with the website.
