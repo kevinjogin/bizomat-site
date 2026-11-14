@@ -1,10 +1,10 @@
-// Formatting and small helpers for the ERP prototype. The prototype's "today" is fixed so the demonstration data
+// Formatting and small helpers for the System prototype. The prototype's "today" is fixed so the demonstration data
 // always tells the same story.
 import { useEffect, useState } from 'react';
 import type { Tone } from './types';
 
 export const TODAY = '2026-11-13';
-export const STORAGE = 'bizomat-erp-prototype:';
+export const STORAGE = 'bizomat-system-preview:';
 
 const AUD0 = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
 const AUD2 = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', minimumFractionDigits: 2, maximumFractionDigits: 2 });

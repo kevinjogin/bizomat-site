@@ -214,7 +214,7 @@ function Details({ def, r }: { def: EntityDef; r: Row }) {
         </Panel>
       ))}
       <Panel title="Record">
-        <Facts columns={3} items={[['Company', COMPANIES[0].name], ['Site', r.site], ['Kept in', def.module === 'ERP' ? 'ERP (planned module)' : def.module]]} />
+        <Facts columns={3} items={[['Company', COMPANIES[0].name], ['Site', r.site], ['Kept in', def.module === 'System' ? 'System (planned module)' : def.module]]} />
       </Panel>
     </div>
   );

@@ -1,4 +1,4 @@
-// Routes of the ERP prototype (information architecture, section 4), as hash addresses so the prototype runs as
+// Routes of the System prototype (information architecture, section 4), as hash addresses so the prototype runs as
 // static files: #/ (Home), #/my-work, #/<section>/<page>, #/<section>/<page>/<record>, #/<section>/<page>/new.
 import type { ComponentType } from 'react';
 import { createHashRouter, Link, useParams } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { Dashboard } from './widgets/Dashboard';
 import { MyWork } from './pages/MyWork';
 import { EntityListPage } from './pages/common';
 import * as M from './pages/modules';
+import * as CAD from './pages/cad';
 import * as A from './pages/admin';
 import { NotificationsPage, QuickAccess, Scan, ShopFloor } from './pages/mobile';
 import { Enterprise, ProjectReports, ReportPage, SavedReports } from './pages/reports';
@@ -33,6 +34,10 @@ const CUSTOM: Record<string, ComponentType<{ page: NavPage }>> = {
   'projects/schedule': M.Schedule,
   'projects/dashboards': M.ProjectDashboards,
   'projects/costs': M.ProjectCosts,
+  'cad/overview': CAD.CadOverview,
+  'cad/setup': CAD.CadSetup,
+  'cad/computers': CAD.CadComputers,
+  'cad/connectors': CAD.CadConnectors,
   'procurement/performance': M.SupplierPerformancePage,
   'inventory/warehouses': M.Warehouses,
   'inventory/scan': Scan,

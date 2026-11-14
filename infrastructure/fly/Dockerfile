@@ -55,12 +55,13 @@ FROM work-client AS work-build
 # dist/node/server.mjs (the Node server) next to dist/client; then only the production packages are kept
 RUN npm run build:node && test -f dist/node/server.mjs && npm prune --omit=dev
 
-# The ERP design prototype (owner's decision, 14 Nov 2026: published at bizomat.ai/erp-design-preview/). Static files
-# with demonstration data only, built from the work app's sources by its own Vite config (relative addresses), and
-# served by the web Machine from dist/erp-design-preview under the website's headers. Its own stage, so neither the
-# work app's build nor its image folder changes. docs/erp/ux/08-prototype-guide.md
-FROM work-client AS erp-preview
-RUN npm run build:erp-preview && test -f dist/erp-design-preview/index.html
+# The BIZOMAT System preview (owner, 14 Nov 2026: the design of the whole system, ERP until renamed; published at
+# bizomat.ai/system-preview/). Static files with demonstration data only, built from the work app's sources by its
+# own Vite config (relative addresses), and served by the web Machine from dist/system-preview under the website's
+# headers. Its own stage, so neither the work app's build nor its image folder changes.
+# docs/erp/ux/08-prototype-guide.md
+FROM work-client AS system-preview
+RUN npm run build:system-preview && test -f dist/system-preview/index.html
 
 # ----------------------------------------------------------------------------------------------- cad
 # The SOLIDWORKS add-in, for the CAD server's download page. Best effort, as in apps/cad/Dockerfile: when the
@@ -141,7 +142,7 @@ FROM runtime-base AS runtime
 COPY --from=web-build /src/package.json /app/web/package.json
 COPY --from=web-build /src/dist-server /app/web/dist-server
 COPY --from=web-build /src/dist /app/web/dist
-COPY --from=erp-preview /src/apps/work/dist/erp-design-preview /app/web/dist/erp-design-preview
+COPY --from=system-preview /src/apps/work/dist/system-preview /app/web/dist/system-preview
 COPY --from=work-build /src/apps/work/package.json /app/work/package.json
 COPY --from=work-build /src/apps/work/migrations /app/work/migrations
 COPY --from=work-build /src/apps/work/node_modules /app/work/node_modules

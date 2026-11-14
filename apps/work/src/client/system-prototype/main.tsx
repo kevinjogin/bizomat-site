@@ -1,5 +1,5 @@
-// Entry of the BIZOMAT ERP design prototype (apps/work/erp-design-preview/index.html). Demonstration data only: no
-// server calls, no sign-in. Built by vite.erp-preview.config.ts, never by the app's own build.
+// Entry of the BIZOMAT System preview (apps/work/system-preview/index.html). Demonstration data only: no server calls,
+// no sign-in. Built by vite.system-preview.config.ts, never by the app's own build.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';

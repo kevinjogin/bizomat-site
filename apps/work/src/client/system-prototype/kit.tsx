@@ -1,4 +1,4 @@
-// Small building blocks of the ERP prototype, on the app's design system (app.css): menus, badges, tabs, drawers,
+// Small building blocks of the System prototype, on the app's design system (app.css): menus, badges, tabs, drawers,
 // key facts and states. Menus and tabs follow the WAI-ARIA keyboard patterns.
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
@@ -141,7 +141,7 @@ export function StateBadges({ states, compact }: { states: PageState[]; compact?
   );
 }
 
-const MODULE_SHORT: Record<ModuleId, string> = { ERP: 'ERP', CRM: 'CRM', Finance: 'Finance', 'Project Management': 'Projects', 'CAD Automation': 'CAD', Company: 'Company' };
+const MODULE_SHORT: Record<ModuleId, string> = { System: 'System', CRM: 'CRM', Finance: 'Finance', 'Project Management': 'Projects', 'CAD Automation': 'CAD', Company: 'Company' };
 export function ModuleBadge({ module }: { module: ModuleId }) {
   return (
     <span className={`erp-module erp-module-${MODULE_SHORT[module].toLowerCase()}`} title={module}>
@@ -152,7 +152,7 @@ export function ModuleBadge({ module }: { module: ModuleId }) {
 
 /** "Open in Finance": the real address of a working application. Never called by the prototype. */
 export function OpenInApp({ module, className = 'btn sm' }: { module: ModuleId; className?: string }) {
-  if (module === 'ERP') return null;
+  if (module === 'System') return null;
   return (
     <a className={className} href={APP_URL[module]} target="_blank" rel="noopener noreferrer">
       Open in {module}

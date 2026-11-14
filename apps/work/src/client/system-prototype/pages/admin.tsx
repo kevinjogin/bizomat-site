@@ -17,7 +17,7 @@ import { ModulePage } from './common';
 export function CompanyPage({ page }: { page: NavPage }) {
   const co = COMPANIES[0];
   return (
-    <ModulePage page={page} subtitle="The BIZOMAT company account that ERP belongs to.">
+    <ModulePage page={page} subtitle="The BIZOMAT company account that the System belongs to.">
       <div className="erp-two">
         <Panel title="Company">
           <Facts
@@ -265,7 +265,7 @@ export function PeoplePage({ page }: { page: NavPage }) {
 
 export function DepartmentsPage({ page }: { page: NavPage }) {
   return (
-    <ModulePage page={page} subtitle="Departments appear in every tool: Project Management, the CRM, Finance and ERP.">
+    <ModulePage page={page} subtitle="Departments appear in every tool: Project Management, the CRM, Finance and the System.">
       <Panel title="Departments">
         <ul className="erp-dept-list">
           {DEPARTMENTS.map((d) => (
@@ -384,14 +384,14 @@ export function ModulesPage({ page }: { page: NavPage }) {
 
 export function WorkflowsPage({ page }: { page: NavPage }) {
   const flows: { name: string; when: string; module: ModuleId; steps: { label: string; who: string }[] }[] = [
-    { name: 'Purchase orders over $10,000', when: 'Total including GST is more than $10,000', module: 'ERP', steps: [{ label: 'Budget check', who: 'BIZOMAT (automatic)' }, { label: 'Approval', who: 'Finance manager' }, { label: 'Send to supplier', who: 'Buyer' }] },
-    { name: 'Purchase requisitions', when: 'Every requisition', module: 'ERP', steps: [{ label: 'Approval', who: 'Procurement manager' }, { label: 'Convert to purchase order', who: 'Buyer' }] },
-    { name: 'Engineering changes', when: 'Every change to a released product', module: 'ERP', steps: [{ label: 'Engineering check', who: 'Another engineer' }, { label: 'Quality and production review', who: 'Quality manager' }, { label: 'Release', who: 'Engineer' }] },
-    { name: 'Nonconformance dispositions', when: 'Rework, scrap, use as is or return', module: 'ERP', steps: [{ label: 'Disposition', who: 'Quality manager' }, { label: 'Verify and close', who: 'Quality manager' }] },
+    { name: 'Purchase orders over $10,000', when: 'Total including GST is more than $10,000', module: 'System', steps: [{ label: 'Budget check', who: 'BIZOMAT (automatic)' }, { label: 'Approval', who: 'Finance manager' }, { label: 'Send to supplier', who: 'Buyer' }] },
+    { name: 'Purchase requisitions', when: 'Every requisition', module: 'System', steps: [{ label: 'Approval', who: 'Procurement manager' }, { label: 'Convert to purchase order', who: 'Buyer' }] },
+    { name: 'Engineering changes', when: 'Every change to a released product', module: 'System', steps: [{ label: 'Engineering check', who: 'Another engineer' }, { label: 'Quality and production review', who: 'Quality manager' }, { label: 'Release', who: 'Engineer' }] },
+    { name: 'Nonconformance dispositions', when: 'Rework, scrap, use as is or return', module: 'System', steps: [{ label: 'Disposition', who: 'Quality manager' }, { label: 'Verify and close', who: 'Quality manager' }] },
     { name: 'Bills, claims and credit notes', when: 'Finance approval rules (working today)', module: 'Finance', steps: [{ label: 'Approval', who: 'Finance manager' }] },
   ];
   return (
-    <ModulePage page={page} subtitle="Who approves what. ERP reuses Finance's approval rules for its own records.">
+    <ModulePage page={page} subtitle="Who approves what. System reuses Finance's approval rules for its own records.">
       <div className="erp-cardgrid">
         {flows.map((f) => (
           <Panel key={f.name} title={f.name} actions={<ModuleBadge module={f.module} />}>
@@ -453,7 +453,7 @@ export function AuditPage({ page }: { page: NavPage }) {
               Module
             </label>
             <select id="audit-mod" className="select sm erp-size" value={mod} onChange={(e) => setMod(e.target.value)}>
-              {['All', 'ERP', 'Finance', 'Company'].map((m) => (
+              {['All', 'System', 'Finance', 'Company'].map((m) => (
                 <option key={m}>{m}</option>
               ))}
             </select>

@@ -30,8 +30,9 @@ import net from 'node:net';
 import tls from 'node:tls';
 
 const PAGES = ['/', '/cad-automation/', '/work/', '/crm-platform/', '/crm-platform/guide/', '/finance-platform/', '/finance-platform/guide/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
-// Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room).
-const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/']];
+// Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
+// ERP design preview became the BIZOMAT System preview).
+const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/erp-design-preview/', '/system-preview/']];
 const HSTS = /max-age=\d{7,}/;
 
 function parseArgs(argv) {
@@ -304,17 +305,17 @@ async function webChecks() {
       return { fail: describe(r) };
     });
   }
-  // The ERP design prototype: static files the image adds to the website (infrastructure/fly/Dockerfile, stage
-  // erp-preview). In the image it must be there; against a site deployed before it, a 404 only warns.
-  await check('web', 'ERP design prototype /erp-design-preview/ (noindex, its script loads)', async () => {
-    const r = await onPlatform({ path: '/erp-design-preview/', headers: { Accept: 'text/html' } });
+  // The BIZOMAT System preview: static files the image adds to the website (infrastructure/fly/Dockerfile, stage
+  // system-preview). In the image it must be there; against a site deployed before it, a 404 only warns.
+  await check('web', 'BIZOMAT System preview /system-preview/ (noindex, its script loads)', async () => {
+    const r = await onPlatform({ path: '/system-preview/', headers: { Accept: 'text/html' } });
     if (r.status === 404) return opts.mode === 'hosts' ? { fail: '404: not in the image' } : { warn: '404: not deployed yet' };
     if (r.status !== 200) return { fail: describe(r) };
-    if (!/<title>BIZOMAT ERP design prototype<\/title>/.test(r.text)) return { fail: 'not the prototype page' };
+    if (!/<title>BIZOMAT System preview<\/title>/.test(r.text)) return { fail: 'not the System preview page' };
     if (!/noindex/.test(r.headers['x-robots-tag'] || '')) return { fail: 'no X-Robots-Tag: noindex' };
     const script = (r.text.match(/<script type="module"[^>]*src="\.\/(assets\/[^"]+\.js)"/) || [])[1];
     if (!script) return { fail: 'no module script' };
-    const js = await onPlatform({ path: `/erp-design-preview/${script}` });
+    const js = await onPlatform({ path: `/system-preview/${script}` });
     return js.status === 200 || { fail: `${script}: ${describe(js)}` };
   });
   await check('web', 'security headers on /', async () => {

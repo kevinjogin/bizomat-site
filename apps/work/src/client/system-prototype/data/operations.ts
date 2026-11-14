@@ -15,7 +15,7 @@ export const projects: Row[] = [
   ['PRJ-033', 'Summit Rail stair access', 'Summit Rail Maintenance', 'Hannah Brooks', '2026-10-06', '2027-02-12', 24, 198_000, 41_300, 'On track'],
   ['PRJ-034', 'Greenfield screen house guarding', 'Greenfield Water Utilities', 'Tom Walsh', '2026-07-14', '2026-11-07', 96, 134_000, 139_800, 'Late'],
   ['PRJ-035', 'Westbridge dock levellers', 'Westbridge Logistics', 'Hannah Brooks', '2026-11-02', '2027-01-30', 8, 162_000, 9_800, 'On track'],
-  ['PRJ-036', 'ERP rollout, Brisbane site', 'Example Engineering (internal)', 'Omar Siddiqui', '2026-10-01', '2027-03-31', 15, 90_000, 12_400, 'On track'],
+  ['PRJ-036', 'System rollout, Brisbane site', 'Example Engineering (internal)', 'Omar Siddiqui', '2026-10-01', '2027-03-31', 15, 90_000, 12_400, 'On track'],
   ['PRJ-030', 'Ridgeway site office stairs', 'Ridgeway Constructions', 'Hannah Brooks', '2026-05-04', '2026-09-26', 100, 76_000, 71_200, 'Completed'],
   ['PRJ-037', 'Coral Coast pump skids', 'Coral Coast Developments', 'Tom Walsh', '2026-11-16', '2027-02-26', 0, 214_000, 0, 'Not started'],
 ].map(([id, name, customer, manager, start, end, progress, budget, spent, status]) => ({ id: String(id), name, customer, manager, start, end, progress, budget, spent, status, site: String(customer).includes('Summit') || String(customer).includes('Westbridge') ? 'Sydney' : 'Brisbane' }));
@@ -187,6 +187,23 @@ export const cadJobs: Row[] = [
   ['CADJ-5103', 'Export STEP, PRD-1002 rev B', 'Completed', '2026-11-09T10:11', '1 min 10 s'],
   ['CADJ-5102', 'Configure variant 1600 mm, PRD-1001', 'Queued', '2026-11-13T09:05', ''],
 ].map(([id, title, status, started, duration]) => ({ id: String(id), title, status, started, duration, requestedBy: 'Tom Walsh', tool: 'CAD Automation (SolidWorks)' }));
+
+/** CAD Automation's paired computers and AI connectors, as its own pages show them (demonstration data). */
+export const CAD_CONNECTOR_URL = 'https://bizomat.ai/cad/mcp';
+export const CAD_INSTALLER_URL = 'https://bizomat.ai/cad/download/solidworks';
+export const CAD_APP_URL = 'https://bizomat.ai/cad/';
+export const CAD_ADDIN_LATEST = '0.12.3';
+
+export const cadComputers: Row[] = [
+  { id: 'ENG-WS-01', person: 'Tom Walsh', status: 'Online', solidworks: 'SOLIDWORKS 2024 SP2', addin: '0.12.3', lastSeen: '2026-11-13T09:04', isDefault: true, open: 'PRD-1001 rev C (assembly)' },
+  { id: 'ENG-LT-02', person: 'Zoe Martin', status: 'Online', solidworks: 'SOLIDWORKS 2023 SP5', addin: '0.12.1', lastSeen: '2026-11-13T08:58', isDefault: false, open: 'SA-3001 (part)' },
+  { id: 'DESIGN-03', person: 'Tom Walsh', status: 'Offline', solidworks: 'SOLIDWORKS 2024 SP1', addin: '0.12.3', lastSeen: '2026-11-12T17:40', isDefault: false, open: '' },
+];
+
+export const cadConnectors: Row[] = [
+  { id: 'AI-01', app: 'Claude', person: 'Tom Walsh', connected: '2026-11-03', lastUsed: '2026-11-13T09:02' },
+  { id: 'AI-02', app: 'ChatGPT', person: 'Zoe Martin', connected: '2026-11-07', lastUsed: '2026-11-12T15:31' },
+];
 
 // ------------------------------------------------------------------ procurement
 

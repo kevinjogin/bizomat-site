@@ -93,7 +93,7 @@ export function MyWork() {
   const counts = Object.fromEntries(TABS.map((t) => [t.id, openWork(work).filter((w) => inTab(w, t.id)).length]));
   return (
     <div className="erp-page erp-mywork">
-      <PageHeader crumbs={[{ label: 'Home', to: '/' }, { label: 'My Work' }]} title="My Work" states={['C']} pinPath="/my-work" pinLabel="My Work" subtitle="Tasks from Project Management, approvals from Finance and ERP, follow-ups from the CRM, reviews and mentions. Demonstration items." />
+      <PageHeader crumbs={[{ label: 'Home', to: '/' }, { label: 'My Work' }]} title="My Work" states={['C']} pinPath="/my-work" pinLabel="My Work" subtitle="Tasks from Project Management, approvals from Finance and the System, follow-ups from the CRM, reviews and mentions. Demonstration items." />
       <Tabs tabs={TABS.map((t) => ({ ...t, count: counts[t.id] }))} active={tab} onChange={(t) => setParams(t === 'all' ? {} : { tab: t }, { replace: true })} label="My Work filters" />
       <div className="erp-toolbar">
         <label htmlFor="mw-group" className="small muted">
@@ -162,9 +162,9 @@ export function MyWork() {
                               Undo
                             </button>
                           )}
-                          {w.module === 'ERP' ? (
+                          {w.module === 'System' ? (
                             <Link className="btn ghost sm" to={w.to}>
-                              Open in ERP
+                              Open in the System
                             </Link>
                           ) : (
                             <OpenInApp module={w.module} className="btn ghost sm" />

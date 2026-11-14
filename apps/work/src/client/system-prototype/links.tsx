@@ -24,7 +24,7 @@ export const ENTITY_PATH: Record<string, string> = {
   eco: 'engineering/changes',
   revision: 'products/revisions',
   drawing: 'engineering/drawings',
-  cadJob: 'engineering/cad-jobs',
+  cadJob: 'cad/jobs',
   supplier: 'procurement/suppliers',
   requisition: 'procurement/requisitions',
   rfq: 'procurement/rfqs',

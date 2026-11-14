@@ -1,14 +1,15 @@
-// Shared types of the BIZOMAT ERP design prototype. Demonstration data only: nothing here talks to a server.
+// Shared types of the BIZOMAT System design prototype. Demonstration data only: nothing here talks to a server.
 import type { ReactNode } from 'react';
 
 export type Tone = 'success' | 'warning' | 'danger' | 'accent' | 'info' | 'neutral';
 export type PageState = 'W' | 'C' | 'P';
-export type ModuleId = 'ERP' | 'CRM' | 'Finance' | 'Project Management' | 'CAD Automation' | 'Company';
+export type ModuleId = 'System' | 'CRM' | 'Finance' | 'Project Management' | 'CAD Automation' | 'Company';
 export type SectionId =
   | 'sales'
   | 'finance'
   | 'projects'
   | 'engineering'
+  | 'cad'
   | 'procurement'
   | 'inventory'
   | 'manufacturing'
