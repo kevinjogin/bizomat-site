@@ -209,8 +209,15 @@ export function upstreamRequestHeaders(rawHeaders, ctx) {
 /**
  * Response headers for the client, as a flat raw list: hop-by-hop headers removed; HSTS added on production
  * hosts and X-Robots-Tag: noindex on the preview host when the backend did not send them.
+ *
+ * `app`: the answer comes from a signed-in application (work: BIZOMAT ERP and its tools; cad: CAD Automation). Those
+ * pages are not for search engines (the public pages about them are /systems/...), so they get X-Robots-Tag: noindex,
+ * nofollow unless the app sent its own. A header, not a robots.txt Disallow: Google only sees noindex on pages it may
+ * crawl, and a disallowed address can still be listed (without its content) when something links to it. robots.txt
+ * keeps crawlers away from the apps' APIs only (src/pages/robots.txt.ts).
  */
-export function clientResponseHeaders(rawHeaders, { production = false, preview = false, keepUpgrade = false } = {}) {
+export const APP_ROBOTS = 'noindex, nofollow';
+export function clientResponseHeaders(rawHeaders, { production = false, preview = false, app = false, keepUpgrade = false } = {}) {
   const hop = connectionTokens(rawHeaders);
   const out = [];
   let hasHsts = false;
@@ -228,7 +235,7 @@ export function clientResponseHeaders(rawHeaders, { production = false, preview 
     out.push(name, rawHeaders[i + 1]);
   }
   if (production && !hasHsts) out.push('Strict-Transport-Security', HSTS_VALUE);
-  if (preview && !hasRobots) out.push('X-Robots-Tag', 'noindex');
+  if (!hasRobots && (app || preview)) out.push('X-Robots-Tag', app ? APP_ROBOTS : 'noindex');
   return out;
 }
 

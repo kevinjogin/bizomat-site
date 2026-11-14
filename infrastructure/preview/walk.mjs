@@ -15,7 +15,7 @@ const [origin, password] = process.argv.slice(2);
 if (!origin) throw new Error('Usage: walk.mjs <preview origin> [review password]');
 const PRODUCTION = /^https?:\/\/(www\.)?bizomat\.ai(\/|$)/i;
 
-const SITE = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/contact/', '/privacy/', '/system-preview/'];
+const SITE = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/contact/', '/privacy/'];
 const problems = [];
 const browser = await chromium.launch();
 

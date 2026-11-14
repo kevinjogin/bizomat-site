@@ -5,9 +5,13 @@
 /proof-of-work /engine-room/ 301
 /proof-of-work/ /engine-room/ 301
 
-# The ERP design preview became the BIZOMAT System preview (owner, 14 Nov 2026).
-/erp-design-preview /system-preview/ 301
-/erp-design-preview/ /system-preview/ 301
+# The design preview (demonstration data) is retired (owner, 14 Nov 2026: "remove direct links to all previews including
+# direct demo link"): its addresses, and every file that was under them, answer 301 to the BIZOMAT ERP page in one hop.
+# The website's server applies these before looking for a file (src/node/assets.ts), so nothing left there is served.
+/system-preview /systems/erp/ 301
+/system-preview/* /systems/erp/ 301
+/erp-design-preview /systems/erp/ 301
+/erp-design-preview/* /systems/erp/ 301
 
 # Systems (owner, 14 Nov 2026): BIZOMAT's business software is one catalogue at /systems/, each product with its page and
 # guide there; the applications open inside BIZOMAT ERP (/erp/). The product pages moved here, with their in-page parts.

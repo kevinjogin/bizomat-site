@@ -31,8 +31,8 @@ import tls from 'node:tls';
 
 const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
-// ERP design preview moved to /system-preview/; the product pages became the Systems pages).
-const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/erp-design-preview/', '/system-preview/'],
+// design preview was retired, owner 14 Nov 2026; the product pages became the Systems pages).
+const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/erp-design-preview/', '/systems/erp/'],
   // The product pages became the Systems pages (owner, 14 Nov 2026).
   ['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/systems/crm/guide/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/systems/finance/guide/']];
 const HSTS = /max-age=\d{7,}/;
@@ -307,18 +307,10 @@ async function webChecks() {
       return { fail: describe(r) };
     });
   }
-  // The BIZOMAT System preview: static files the image adds to the website (infrastructure/fly/Dockerfile, stage
-  // system-preview). In the image it must be there; against a site deployed before it, a 404 only warns.
-  await check('web', 'BIZOMAT ERP design preview /system-preview/ (noindex, its script loads)', async () => {
-    const r = await onPlatform({ path: '/system-preview/', headers: { Accept: 'text/html' } });
-    if (r.status === 404) return opts.mode === 'hosts' ? { fail: '404: not in the image' } : { warn: '404: not deployed yet' };
-    if (r.status !== 200) return { fail: describe(r) };
-    if (!/<title>BIZOMAT ERP preview<\/title>/.test(r.text)) return { fail: 'not the ERP design preview page' };
-    if (!/noindex/.test(r.headers['x-robots-tag'] || '')) return { fail: 'no X-Robots-Tag: noindex' };
-    const script = (r.text.match(/<script type="module"[^>]*src="\.\/(assets\/[^"]+\.js)"/) || [])[1];
-    if (!script) return { fail: 'no module script' };
-    const js = await onPlatform({ path: `/system-preview/${script}` });
-    return js.status === 200 || { fail: `${script}: ${describe(js)}` };
+  // The retired design preview: none of its old files is served (every address under it answers 301 to /systems/erp/).
+  await check('web', 'the retired design preview serves nothing (/system-preview/assets/...: 301 to /systems/erp/)', async () => {
+    const r = await onPlatform({ path: '/system-preview/assets/index.js' });
+    return (r.status === 301 && /\/systems\/erp\/$/.test(r.headers.location || '')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('web', 'security headers on /', async () => {
     const r = await onPlatform({ path: '/', headers: { Accept: 'text/html' } });
@@ -537,7 +529,7 @@ async function workChecks() {
     return r.status === 401 || { fail: describe(r) };
   });
   // bizomat.ai/erp: BIZOMAT ERP, one shell over every tool, served by the same app (work); /system-preview/ is
-  // the website's (checked with the web pages above)
+  // the website's, retired (checked with the moved pages above)
   await check('work', 'bizomat.ai/erp/api/health (the same app)', async () => {
     const r = await onPlatform({ path: '/erp/api/health' });
     return r.status === 200 || { fail: describe(r) };

@@ -32,7 +32,7 @@ const list = (xs: readonly string[]) => xs.join(', ').replace(/, ([^,]+)$/, ' an
 const show = ['finance-dashboard', 'finance-transactions', 'finance-statement', 'finance-invoice', 'finance-report', 'finance-budget'];
 const shots = screenshots('finance').filter((s) => show.some((n) => s.src.endsWith(`/${n}.webp`)));
 const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-finance.webp'));
-const description = 'BIZOMAT Finance, the Finance Management System: accounts, transactions, quotes, invoices, bills, budgets, GST worksheets and reports on a double-entry ledger.';
+const description = 'BIZOMAT Finance: quoting, invoicing, bills, budgets and reports on a double-entry ledger, with a GST and BAS worksheet to check before you lodge. For Australian small business.';
 
 const audiences = [
   { t: 'Business owners and sole traders', x: 'Quote, invoice and record bills, and see profit, cash and what is owed both ways, with GST worked out on every line.' },
@@ -224,7 +224,7 @@ const questions = [
   { q: 'Can I run more than one business?', a: 'Yes. Create a workspace for each, and switch between them from the workspace menu. Each keeps its own books, people and settings.' },
 ];
 ---
-<BaseLayout title={`${sys.name}: ${sys.kind}`} description={description} imageAlt="BIZOMAT Finance: personal, household and business money on a proper ledger" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
+<BaseLayout title={`${sys.name}: quoting, invoicing and bookkeeping`} description={description} imageAlt="BIZOMAT Finance: personal, household and business money on a proper ledger" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
   schema={[
     { '@type': 'SoftwareApplication', name: sys.name, alternateName: sys.kind, url: `${SITE.url}${sys.url}`, applicationCategory: 'FinanceApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'FAQPage', url: `${SITE.url}${sys.url}#faq`, mainEntity: questions.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },

@@ -44,8 +44,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   gets its own "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own
   API; only its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it
   is removed (and made again only on request) in Administration. **Operations** (procurement, inventory, manufacturing, quality, supply chain) and
-  product/engineering records are **planned, not built**: the Operations page lists them as Planned and the design
-  preview with demonstration data stays at `bizomat.ai/system-preview/`; never present them as working. The platform
+  product/engineering records are **planned, not built**: the Operations page lists them as Planned; never present them
+  as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
+  the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
   **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
   (`src/config/systems.ts`, one source), a page and a user guide per system: BIZOMAT ERP (Business Management System,
@@ -202,8 +203,8 @@ Check the public site, not just the build: `/`, `/systems/` and every system's p
 `/systems/manufacturing/`), that the old product pages answer 301 there, `/resources/`, `/tools/`, `/reados/` (open
 without signing in),
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
-`/system-preview/` (the BIZOMAT System preview, demonstration data, out of search; `/erp-design-preview/` answers 301
-there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), `/erp/` (BIZOMAT ERP, signed in; the tools inside it at
+that `/system-preview/` (the retired design preview) answers 301 to `/systems/erp/`, `/robots.txt` and `/llms.txt`
+(`docs/seo/README.md`), `/erp/` (BIZOMAT ERP, signed in, answering X-Robots-Tag noindex; the tools inside it at
 `/erp/tasks/`, `/erp/crm/`, `/erp/finance/`, `/erp/company/`; `/system/` answers 302 there), and every new chapter URL.
 Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Resources, About, Contact** (owner,
 14 Nov 2026) with **AI Search** and **Sign in** (BIZOMAT ERP; Engineering Automation), that a new visit opens in the

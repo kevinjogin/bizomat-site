@@ -73,6 +73,25 @@ export const SEEDS = [
   ['BIZOMAT READOS', 'branded', 'navigational', '/reados/', 8, 9, 'READOS library'],
   ['BIZOMAT MAKEOS', 'branded', 'navigational', '/tools/', 7, 7, 'MAKEOS is a collection inside WORKOS with no page of its own'],
   ['BIZOMAT engineering calculators', 'branded', 'navigational', '/tools/', 8, 8, 'WORKOS directory'],
+  // Systems (owner, 14 Nov 2026: target the audience, Australian small and medium businesses, manufacturers, workshops
+  // and engineers using SOLIDWORKS). One canonical page per phrase; readiness reflects what the page covers today.
+  ['business software for small business Australia', 'systems', 'commercial', '/systems/', 9, 7, 'Systems catalogue: every system with its status'],
+  ['ERP software for small business Australia', 'systems', 'commercial', '/systems/erp/', 10, 7, 'BIZOMAT ERP page; operations modules are labelled Planned'],
+  ['cloud ERP for small business', 'systems', 'commercial', '/systems/erp/', 9, 7, 'BIZOMAT ERP page'],
+  ['ERP for manufacturers', 'systems', 'commercial', '/systems/manufacturing/', 7, 3, 'Manufacturing and inventory are planned; only Maintenance works today'],
+  ['CRM for small business', 'systems', 'commercial', '/systems/crm/', 10, 8, 'BIZOMAT CRM page with guide'],
+  ['sales pipeline software', 'systems', 'commercial', '/systems/crm/', 8, 8, 'Pipeline board, deals and reports'],
+  ['quoting and invoicing software', 'systems', 'commercial', '/systems/finance/', 9, 8, 'Quotes, invoices and credit notes in Finance'],
+  ['GST and BAS worksheet', 'systems', 'informational', '/systems/finance/guide/', 7, 7, 'A worksheet to check before lodging; Finance never lodges with the ATO'],
+  ['project management software for teams', 'systems', 'commercial', '/systems/projects/', 9, 8, 'BIZOMAT Projects page with guide'],
+  ['task and team management software', 'systems', 'commercial', '/systems/projects/', 8, 8, 'Tasks, assignees, timelines and dashboards'],
+  ['maintenance management software CMMS', 'systems', 'commercial', '/systems/manufacturing/', 9, 6, 'Maintenance Stage 1 works today; preventive maintenance is planned'],
+  ['asset register and work order software', 'systems', 'commercial', '/systems/manufacturing/', 8, 6, 'Asset register, requests and work orders in BIZOMAT ERP'],
+  ['preventive maintenance software', 'systems', 'commercial', '/systems/manufacturing/', 7, 2, 'Planned, not built: the page says so'],
+  ['SOLIDWORKS automation with AI', 'systems', 'commercial', '/systems/engineering/', 10, 8, 'Engineering Automation page'],
+  ['SOLIDWORKS MCP', 'systems', 'commercial', '/systems/engineering/', 9, 8, 'CAD Automation is an MCP server for SOLIDWORKS'],
+  ['AI CAD assistant for SOLIDWORKS', 'systems', 'commercial', '/systems/engineering/', 9, 8, 'Claude, ChatGPT or another MCP assistant working in SOLIDWORKS'],
+  ['BIZOMAT ERP', 'branded', 'navigational', '/systems/erp/', 10, 9, 'The ERP page; signed-in people open bizomat.ai/erp'],
 ];
 
 /** Weighted score over the components that are known; unknown components are excluded, not counted as zero. */

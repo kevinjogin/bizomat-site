@@ -16,7 +16,7 @@ in-development, planned); the full matrix is `../architecture/13-enterprise-capa
 | Existing apps rendered inside the ERP shell with a link base and an "embedded" flag (`../architecture/03-modular-erp-architecture.md` 3.4) | Every tool opens inside the ERP at `/erp/tasks`, `/erp/crm`, `/erp/finance` and `/erp/company`, the same screens under a longer path; links between tools stay inside (`toolUrl`) | Done differently and more simply: the same app is served under each suite path |
 | Role dashboards (`04-role-dashboards.md`) | The Dashboard is by company: one card per tool with its figures, read on request under each tool's own rules | Role layouts come with S1 (first screen by role) and S13 (widgets across modules) |
 | My Work across every module (`01-ux-specification.md` 4.4) | My Work opens Projects' My Work for the workspace used last | Across tools in S1 |
-| Planned modules visible with demonstration data | The Operations page lists them with a Planned badge and links to the design preview at `/system-preview/` | The preview stays demonstration data and out of search |
+| Planned modules visible | The Operations page lists them with a Planned badge (the design preview was retired on 14 Nov 2026, owner: no links to previews) | Nothing planned is presented as working |
 
 ## 2. The module rail as built
 

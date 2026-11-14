@@ -89,14 +89,6 @@ ${Object.entries(securityHeaders).map(([k, v]) => `  ${k}: ${v}`).join('\n')}
 /pagefind/*
   Cache-Control: public, max-age=3600
 
-# The BIZOMAT System preview (demonstration data; added to the image by infrastructure/fly/Dockerfile, not by this
-# build): out of search engines, and its hashed files cached for good.
-/system-preview/*
-  X-Robots-Tag: noindex, nofollow
-
-/system-preview/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
 # Keep the *.pages.dev address out of search engines; bizomat.ai is the canonical domain.
 https://:project.pages.dev/*
   X-Robots-Tag: noindex

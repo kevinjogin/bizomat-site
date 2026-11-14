@@ -31,7 +31,7 @@ const list = (xs: readonly string[]) => xs.join(', ').replace(/, ([^,]+)$/, ' an
 const show = ['crm-overview', 'crm-board', 'crm-deal', 'crm-contact', 'crm-leads', 'crm-report'];
 const shots = screenshots('crm').filter((s) => show.some((n) => s.src.endsWith(`/${n}.webp`)));
 const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-crm.webp'));
-const description = 'BIZOMAT CRM, the Customer Management System: contacts, companies, leads, deals and follow-ups for your team, with a pipeline board, reports, automations and Finance links.';
+const description = 'BIZOMAT CRM is CRM software for small business: contacts, companies, leads, a sales pipeline board, follow-ups, reports and automations, linked to quotes and invoices in Finance.';
 
 const audiences = [
   { t: 'Business owners', x: 'See every customer, every open deal and every follow-up in one place, and what is likely to close.' },
@@ -223,7 +223,7 @@ const questions = [
   { q: 'Do I need a separate account?', a: `No. One BIZOMAT account signs you in to ${erp.name}, and with it to ${sys.name}, ${finance.name} and ${projects.name}. Each keeps its own data and its own roles.` },
 ];
 ---
-<BaseLayout title={`${sys.name}: ${sys.kind}`} description={description} imageAlt="BIZOMAT CRM: customers, leads and deals in one shared place" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
+<BaseLayout title={`${sys.name}: CRM software for small business`} description={description} imageAlt="BIZOMAT CRM: customers, leads and deals in one shared place" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
   schema={[
     { '@type': 'SoftwareApplication', name: sys.name, alternateName: ['BIZOMAT Customer Relationship Management', sys.kind], url: `${SITE.url}${sys.url}`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
     { '@type': 'FAQPage', url: `${SITE.url}${sys.url}#faq`, mainEntity: questions.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
@@ -233,7 +233,7 @@ const questions = [
       <div>
         <p class="bz-eyebrow">{sys.name} · {sys.kind}<span class="pp-hero__formerly">Formerly {sys.formerly}</span></p>
         <h1 id="crm-title">{CRM.headline}</h1>
-        <p class="pp-hero__lead">{sys.name} is a Customer Relationship Management (CRM) system: one shared place for your contacts, companies, leads, deals and follow-ups. Work your pipeline on a board, plan every activity and see what is closing from live reports.</p>
+        <p class="pp-hero__lead">{sys.name} is a Customer Relationship Management (CRM) system for small businesses and their teams: one shared place for your contacts, companies, leads, deals and follow-ups. Work your pipeline on a board, plan every activity and see what is closing from live reports.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-access">{access.label}</Button>
           <Button href={GUIDE} variant="secondary" data-cta="crm-guide">Read the user guide</Button>

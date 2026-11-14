@@ -57,10 +57,12 @@ const jump = [
   { href: '#limits', label: 'Limits' },
 ];
 const combines = [
-  { t: 'Engineering automation', x: 'CAD Automation puts an AI assistant to work in SOLIDWORKS, on your own computer, with checks before every change.', href: '/systems/engineering/' },
-  { t: 'Project and task management', x: 'Project Management keeps projects, tasks, teams, documents and dashboards in one shared workspace.', href: '/systems/projects/' },
-  { t: 'Customer relationships', x: 'Customer Relationship Management (CRM) keeps contacts, leads, deals and follow-ups in one place for a sales team.', href: '/systems/crm/' },
-  { t: 'Money and accounts', x: 'Finance keeps personal, household and business accounts, invoices, bills, budgets and reports on a balanced double-entry ledger.', href: '/systems/finance/' },
+  { t: 'One workspace', x: 'BIZOMAT ERP brings every module into one workspace, by company: dashboard, sales, finance, projects, engineering, maintenance, reports and administration.', href: '/systems/erp/' },
+  { t: 'Customer relationships', x: 'BIZOMAT CRM keeps contacts, leads, deals and follow-ups in one place for a sales team.', href: '/systems/crm/' },
+  { t: 'Money and accounts', x: 'BIZOMAT Finance keeps quotes, invoices, bills, budgets and reports on a balanced double-entry ledger, for a business, a household or a person.', href: '/systems/finance/' },
+  { t: 'Projects and tasks', x: 'BIZOMAT Projects keeps projects, tasks, teams, documents and dashboards in one shared workspace.', href: '/systems/projects/' },
+  { t: 'Engineering automation', x: 'BIZOMAT Engineering Automation puts an AI assistant to work in SOLIDWORKS, on your own computer, with checks before every change.', href: '/systems/engineering/' },
+  { t: 'Maintenance', x: 'The asset register, fault reports and work orders, the first module of Manufacturing and Operations. The rest of Operations is planned.', href: '/systems/manufacturing/' },
   { t: 'Useful tools', x: 'Engineering, manufacturing and business calculators that show their method and run in your browser.', href: '/tools/' },
   { t: 'Knowledge resources', x: 'A library of technical books in short chapters, guides and learning paths, free to read.', href: '/resources/' },
   { t: 'AI-powered productivity', x: 'AI search across all of it, and assistants that do the repetitive part of the job while people make the decisions.', href: '/#ai-search' },
@@ -128,21 +130,24 @@ const schema = [{
       <figure class="founder__letter">
         <blockquote>
           <p>I started my working life on the toolroom floor. Since then I have worked in design offices, on production lines and on engineering projects, and I kept seeing the same thing: capable people losing hours to work a computer should do for them. Redrawing a part because one size changed. Chasing a task through emails and spreadsheets. Keeping customers in one list and the money in another, and hoping the two agree.</p>
-          <p>BIZOMAT is my answer. It is business automation you can use today, in four tools built to work together:</p>
+          <p>As the person responsible for a business, I wanted one place to run it. Not five subscriptions that do not talk to each other, and not a system so large it needs a consultant to switch on. So BIZOMAT is built as a set of Systems that share one account, one set of companies and people, and one workspace:</p>
           <ul class="founder__tools">
-            <li><strong>Project Management</strong> plans the work, shares the tasks and shows where every job stands.</li>
-            <li><strong>Customer Relationship Management</strong> keeps every customer, lead, deal and follow-up in one place.</li>
-            <li><strong>Finance</strong> runs accounts, invoices, bills, budgets and reports on a ledger that always balances.</li>
-            <li><strong>CAD Automation</strong> lets an AI assistant build and check SOLIDWORKS models on your own computer.</li>
+            <li><strong>BIZOMAT ERP</strong> is that workspace. Sign in once and every module sits in one menu, by company: your dashboard, your work, sales, finance, projects, engineering, maintenance, reports and administration.</li>
+            <li><strong>BIZOMAT CRM</strong> keeps every customer, lead, deal and follow-up, so sales is a pipeline your team can see, not a memory.</li>
+            <li><strong>BIZOMAT Finance</strong> runs quotes, invoices, bills, budgets and reports on a double-entry ledger that always balances, with a GST and BAS worksheet to check before you lodge.</li>
+            <li><strong>BIZOMAT Projects</strong> plans the work, shares the tasks and shows where every job stands.</li>
+            <li><strong>BIZOMAT Engineering Automation</strong> lets an AI assistant build and check SOLIDWORKS parts, assemblies and drawings on your own computer.</li>
+            <li><strong>Maintenance</strong>, the first module of Manufacturing and Operations, keeps the asset register, fault reports and work orders, with a timer for the technician on the job.</li>
           </ul>
-          <p>Project Management, the CRM and Finance share one BIZOMAT account, so you sign in once and move between them. Resources stays free for everyone: calculators, books and guides, no account needed.</p>
-          <p>I only put on this site what I can show working. The rest of this page shows how each tool is built and tested, and where something is still being proven, it says so.</p>
-          <p>So do not take my word for it. Open a tool, bring in one real job and see how much of your week comes back. Then tell me what slows you down next: that is how the next part of BIZOMAT gets built.</p>
+          <p>They are joined where a business needs them joined. A won deal can become a draft invoice and a project. A project's costs show against its budget. Departments appear in every tool, and each person gets the role they need in each one: the owner sees the whole business, a technician sees the jobs assigned to them.</p>
+          <p>Every account comes with Acme Studio, an example company filled with invented data. Try anything there first. Only you can see it, nothing you do in it touches your real records, and it sends no email.</p>
+          <p>I am just as clear about what is not built yet. Procurement, inventory, manufacturing, quality and supply chain are planned, and this site labels them Planned until they work. Resources stay free for everyone: calculators, books and guides, no account needed.</p>
+          <p>I only put on this site what I can show working. The rest of this page shows how it is built and tested, and where something is still being proven, it says so.</p>
+          <p>So do not take my word for it. Open BIZOMAT ERP, try the example company, then bring in one real job and see how much of your week comes back. Tell me what slows you down next: that is how the next part of BIZOMAT gets built.</p>
         </blockquote>
         <div class="founder__actions">
-          <Button href={APP_LINKS.work.signIn} variant="accent" rel="noopener" data-cta="founder-open-project-management">Open Project Management</Button>
-          <Button href={APP_LINKS.crm.signIn} variant="secondary" rel="noopener" data-cta="founder-open-crm">Open the CRM</Button>
-          <Button href={APP_LINKS.finance.signIn} variant="secondary" rel="noopener" data-cta="founder-open-finance">Open Finance</Button>
+          <Button href={APP_LINKS.erp.signIn} variant="accent" rel="noopener" data-cta="founder-open-erp">Open BIZOMAT ERP</Button>
+          <Button href="/systems/" variant="secondary" data-cta="founder-systems">Explore the Systems</Button>
           <Button href={APP_LINKS.cad.signIn} variant="secondary" rel="noopener" data-cta="founder-open-cad">Open CAD Automation</Button>
         </div>
         <figcaption><strong>{PLATFORM.founder}</strong><span>Founder, BIZOMAT</span></figcaption>

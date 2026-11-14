@@ -16,15 +16,14 @@ import '../../../styles/visuals.css';
 import '../../../styles/systems.css';
 import { screenshots } from '../../../data/screenshots.ts';
 import { SITE } from '../../../config/site.ts';
-import { ERP_PREVIEW, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
 
 const erp = systemById('erp');
 const PAGE = erp.guide ?? '/systems/erp/guide/';
-const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
 const access = erp.access!;
 const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }, { label: 'User guide', href: PAGE }];
-const description = 'How to use BIZOMAT ERP, step by step: sign in, choose or register a company, set up departments, invite people, set tool roles, link the tools and read reports.';
+const description = 'How to use BIZOMAT ERP, step by step: companies, people and roles, sales, invoicing, projects, maintenance work orders and reports, with an example company to practise on.';
 
 interface Step { t: string; x: string; st?: FeatureStatus }
 interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
@@ -174,7 +173,6 @@ const parts: Part[] = [
       { t: 'Planned modules', x: 'Procurement, Inventory and Warehouse, Manufacturing, Quality, Supply Chain, and product and engineering records. Each is labelled Planned.', st: 'planned' },
       { t: 'Later in Maintenance', x: 'Preventive maintenance, readings, inspections, prestart checklists, spare parts, scanning, several sites, workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, reliability reporting and offline field work.', st: 'planned' },
       { t: 'What to use today', x: 'Suppliers, purchase orders and bills are kept in Finance. Production work can be planned on a board in Projects and Tasks.', st: 'live' },
-      { t: 'The design preview', x: 'Open the design preview from Operations to see how the planned modules are designed. It uses demonstration data only, and nothing you do there is saved.' },
     ],
     shot: 'erp-operations',
   },
@@ -188,7 +186,7 @@ const questions = [
   { q: 'Why are no computers listed under Products and Engineering?', a: 'CAD Automation does not report its computers to the ERP yet. Until it does, see your computers in CAD Automation itself.' },
   { q: 'Who can raise a maintenance request?', a: 'Everyone in a registered company: choose Report a fault at the foot of the rail. In your own company, you are its only person. People who were only shared a tool with the company cannot see its maintenance.' },
   { q: 'Can a technician see every work order?', a: 'No. A technician sees the work orders assigned to them. Supervisors and administrators see them all; a requester sees the work order made from their own request.' },
-  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'No. They are planned and not built. The design preview shows them with demonstration data only. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'No. They are planned and not built. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
 ];
 
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
@@ -197,7 +195,7 @@ const schema = [{
   step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })),
 }];
 ---
-<BaseLayout title="BIZOMAT ERP user guide" description={description} breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title="BIZOMAT ERP user guide: step by step" description={description} breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="guide-title">
     <Container>
       <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
@@ -234,7 +232,6 @@ const schema = [{
           <ol class="pp-steps sys-guide-steps">
             {p.steps.map((s) => <li><h3>{s.t}{s.st && <> <StatusLabel status={s.st} /></>}</h3><p>{s.x}</p></li>)}
           </ol>
-          {p.id === 'planned' && <p class="pp-table-note"><a href={PREVIEW} rel="noopener">Open the design preview, with demonstration data</a>.</p>}
         </div>
         {shots[p.id] && (
           <figure class="pp-shot sys-guide-shot">

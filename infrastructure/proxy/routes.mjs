@@ -19,7 +19,7 @@
 //                                   /finance, /finance/...                    proxy -> work (BIZOMAT Finance, the same app)
 //                                   /company, /company/...                    proxy -> work (company accounts, the same app)
 //                                   /system, /system/...                      proxy -> work (BIZOMAT System, the same app;
-//                                                                             /system-preview/ stays with web)
+//                                                                             /system-preview/, retired, stays with web: 301)
 //                                   GET, HEAD /CAD..., /Tasks/..., /CRM...,   301 to the lowercase path, query kept
 //                                   /Finance..., /Company..., /System...
 //                                   (any case)
@@ -82,7 +82,7 @@ export const FINANCE_PATHS = /^\/finance(?:\/|$)/;
 export const COMPANY_PATHS = /^\/company(?:\/|$)/;
 
 /** The paths of bizomat.ai that belong to BIZOMAT System (one shell over every tool), which the same app (work) serves.
- * /system-preview/ (the website's static design preview) is not one of them: it stays with web. */
+ * /system-preview/ (the retired design preview, which the website answers with a 301) is not one of them: it stays with web. */
 export const SYSTEM_PATHS = /^\/system(?:\/|$)/;
 // BIZOMAT ERP, the one workspace for signed-in people (the same app); /erp-design-preview/ does not match
 export const ERP_PATHS = /^\/erp(?:\/|$)/;

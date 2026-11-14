@@ -177,6 +177,15 @@ test('client response headers: hop-by-hop removed, Set-Cookie repeats kept, HSTS
   assert.deepEqual(all(preview, 'x-robots-tag'), ['noindex']);
 });
 
+test('client response headers: application pages are kept out of search engines, the website is not', () => {
+  const app = clientResponseHeaders(['Content-Type', 'text/html'], { production: true, app: true });
+  assert.deepEqual(all(app, 'x-robots-tag'), ['noindex, nofollow']);
+  const own = clientResponseHeaders(['Content-Type', 'text/html', 'X-Robots-Tag', 'noindex'], { production: true, app: true });
+  assert.deepEqual(all(own, 'x-robots-tag'), ['noindex'], 'the app\'s own header wins');
+  const site = clientResponseHeaders(['Content-Type', 'text/html'], { production: true });
+  assert.deepEqual(all(site, 'x-robots-tag'), [], 'website pages stay indexable');
+});
+
 test('hasRequestBody', () => {
   assert.equal(hasRequestBody({}), false);
   assert.equal(hasRequestBody({ 'content-length': '0' }), false);

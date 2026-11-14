@@ -21,7 +21,7 @@ import '../../styles/systems.css';
 import { screenshots, type Screenshot } from '../../data/screenshots.ts';
 import { SITE } from '../../config/site.ts';
 import { APP_LINKS } from '../../config/platform.ts';
-import { ERP_PREVIEW, STATUS_LABEL, SYSTEMS, SYSTEMS_HOME, type FeatureStatus, type SystemInfo } from '../../config/systems.ts';
+import { STATUS_LABEL, SYSTEMS, SYSTEMS_HOME, type FeatureStatus, type SystemInfo } from '../../config/systems.ts';
 import { CAD, CRM, FINANCE, WORK } from '../../data/platform-catalog.ts';
 
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
@@ -31,10 +31,8 @@ const pageExists = (url: string) => {
   const base = join(process.cwd(), 'src', 'pages', url.replace(/^\/|\/$/g, ''));
   return existsSync(`${base}.astro`) || existsSync(join(base, 'index.astro'));
 };
-// The design preview is built separately (infrastructure/fly/Dockerfile), so it is linked by its full address.
-const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }];
-const description = 'BIZOMAT Systems: one connected platform to manage your business. ERP, CRM, Finance, Projects and Engineering Automation on one sign-in. Resources stay free.';
+const description = 'Business software for Australian small businesses, manufacturers and engineers: cloud ERP, CRM, quoting and invoicing, project management, maintenance (CMMS) and SOLIDWORKS AI.';
 
 /** A feature and its status (src/config/systems.ts, FEATURE_STATUS): every feature or module listed carries one. */
 interface Item { t: string; st: FeatureStatus }
@@ -311,14 +309,15 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     steps: [
       { t: 'Suppliers and bills.', x: 'Keep suppliers, purchase orders and bills in Finance today.' },
       { t: 'Plan the work.', x: 'Plan production work and tasks on a board in Projects.' },
-      { t: 'See the design.', x: 'Explore the design preview, which uses demonstration data only.' },
+      { t: 'Look after your assets.', x: 'Use Maintenance in BIZOMAT ERP for your asset register, maintenance requests and work orders.' },
     ],
     faqs: [
       { q: 'Can I use it today?', a: 'Maintenance, yes: it works inside BIZOMAT ERP. The other modules are planned and not built; there is nothing to sign up for or buy.' },
-      { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data. Nothing you do there is saved.' },
+      { q: 'When will the other modules be ready?', a: 'There is no date yet. Each module is labelled Planned until it is built and tested, and only then is it called Live.' },
     ],
+    shot: shotOf('erp', 'erp-maintenance'),
     manages: 'Procurement, inventory, production, quality, maintenance and supply chain',
-    opens: 'Not available. A design preview with demonstration data only.',
+    opens: 'Maintenance opens inside BIZOMAT ERP. The other modules are not available yet.',
     signIn: 'Nobody yet: not available',
   },
 };
@@ -329,7 +328,7 @@ const platformFaqs = [
   { q: 'Can I manage more than one company?', a: 'Yes. Register more than one company, or accept invitations from others, and move between them with the company switcher. Everyone also has their own company in their own name, which is not registered.' },
   { q: 'Is my data copied between the systems?', a: 'No. Each tool keeps its own records and permissions. A link between tools, such as a won deal to a draft invoice, makes a record in the other tool only when you ask, and checks your role there first.' },
   { q: 'Does Finance connect to my bank or lodge my BAS?', a: 'No. Finance does not connect to banks, make payments or lodge with the ATO. You import statements you download, and the GST and BAS report is a worksheet to check before you lodge yourself.' },
-  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality and supply chain) is planned and not built. A design preview with demonstration data shows how it is designed. Maintenance works today inside BIZOMAT ERP, for assets, requests and work orders.' },
+  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality and supply chain) is planned and not built. Maintenance works today inside BIZOMAT ERP, for assets, requests and work orders.' },
   { q: 'What happened to the old addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into BIZOMAT ERP, so bookmarks and links in emails keep working.' },
 ];
 
@@ -356,14 +355,14 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: platformFaqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title="Systems" description={description} imageAlt="BIZOMAT Systems: one connected platform to manage your business" breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title="Business software: ERP, CRM, finance and projects" description={description} imageAlt="BIZOMAT Systems: one connected platform to manage your business" breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="systems-title">
     <Container class="pp-hero__inner">
       <div>
         <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
         <p class="bz-eyebrow">BIZOMAT Systems</p>
         <h1 id="systems-title">One connected platform to manage your business</h1>
-        <p class="pp-hero__lead">BIZOMAT's business software in one catalogue. Sign in once to BIZOMAT ERP, choose your company, and open the CRM, Finance and Projects inside it. Engineering Automation drives SOLIDWORKS on your own computer.</p>
+        <p class="pp-hero__lead">Business software for small and medium businesses, manufacturers, workshops and engineering teams, in one catalogue. Sign in once to BIZOMAT ERP, choose your company, and open the CRM, Finance and Projects inside it. Engineering Automation drives SOLIDWORKS on your own computer.</p>
         <div class="pp-hero__actions">
           <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-open-erp">Open BIZOMAT ERP</Button>
           <Button href="#compare" variant="secondary" data-cta="systems-compare">Compare the systems</Button>
@@ -441,7 +440,7 @@ const schema = [
             <div class="sys-planned">
               <p class="sys-planned__status"><StatusLabel status="planned" /> Not available yet</p>
               <h3>No screens to show</h3>
-              <p>{s.name} is not available yet, so there is no product screen. Its design can be explored in the <a href={PREVIEW} rel="noopener">design preview, demonstration data</a>.</p>
+              <p>{s.name} is not available yet, so there is no product screen.</p>
             </div>
           ) : null}
         </div>
@@ -477,7 +476,6 @@ const schema = [
           {s.access && <Button href={s.access.href} variant="accent" rel="noopener" data-cta={`systems-${s.id}-access`}>{s.access.label}</Button>}
           <Button href={s.url} variant="secondary" data-cta={`systems-${s.id}-about`}>About {s.name}</Button>
           {guide && <Button href={guide} variant="text" data-cta={`systems-${s.id}-guide`}>User guide</Button>}
-          {!s.access && <Button href={PREVIEW} variant="text" rel="noopener" data-cta={`systems-${s.id}-preview`}>Design preview, demonstration data</Button>}
           {s.access ? <p class="sys-actions__note">{s.access.note}</p> : <p class="sys-actions__note">Not available yet: there is no application to open.</p>}
         </div>
       </Container>

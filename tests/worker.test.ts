@@ -286,7 +286,7 @@ test('no page or file of the website takes an application\'s path, so those path
       return e.isDirectory() ? [rel, ...taken(rel)] : [rel];
     });
   const appPath = /^\/(cad|tasks|crm|finance|company|system|erp)(\/|$)/i;
-  // The BIZOMAT System preview (added to the image by infrastructure/fly/Dockerfile) is the website's, not /system's.
+  // The retired design preview's addresses (301 to /systems/erp/, public/_redirects) are the website's, not /system's.
   for (const path of ['/system-preview', '/system-preview/index.html', '/system-preview/assets/index-a1.js', '/erp-design-preview']) assert.ok(!appPath.test(path), path);
   for (const root of ['src/pages', 'public']) {
     for (const file of taken(root)) {

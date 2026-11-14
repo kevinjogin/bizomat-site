@@ -1,13 +1,17 @@
 # BIZOMAT platform CI: the website, both apps, the edge proxy, the platform image and the local stack.
-# Runs on every push and pull request. Read-only: no secrets, nothing deployed, nothing pushed.
+# Runs on pull requests and on main after a merge. Read-only: no secrets, nothing deployed, nothing pushed.
 #
 # Jobs: website (brand copies, verify), work (lint, types, tests, builds incl. the Node server), cad (pytest in two
 # parts, npm test), proxy (tests, script and config checks), image (Docker build of infrastructure/fly/Dockerfile,
 # a migration round trip inside it, then the compose stack with the smoke test and the secret-isolation check).
 name: BIZOMAT CI
 
+# Pull requests run it, and main runs it after a merge. A push to a branch with an open pull request used to run every
+# job twice (once for the push, once for the pull request), which doubled the Actions minutes (owner, 14 Nov 2026:
+# "reduce my bills"). A branch without a pull request can still run it by hand (workflow_dispatch).
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 

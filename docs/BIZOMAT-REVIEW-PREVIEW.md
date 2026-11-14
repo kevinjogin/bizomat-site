@@ -17,7 +17,7 @@ touching production.
 6. Before sharing the address, it checks it in a browser (`infrastructure/preview/walk.mjs`), then posts it on the
    pull request.
 
-The preview stays up for the time chosen (3 hours by default, at most 330 minutes). Then the stack and its data are
+The preview stays up for the time chosen (1 hour by default, at most 330 minutes). Then the stack and its data are
 deleted.
 
 - **Start:** add the label `preview` to the pull request. Remove the label and add it again for a fresh preview. Once
@@ -26,7 +26,7 @@ deleted.
 - **Sign in:** `demo@example.com`, with the demo password in `apps/work/scripts/seed-local.mjs`.
 - **Protect it (optional):** set the repository secret `PREVIEW_PASSWORD`. Every request then needs HTTP Basic sign-in
   (user `review`). Without it, the address is random and noindex but open while it runs. The demo data is invented.
-- **Cost:** GitHub Actions minutes only, about 15 to start plus the time it stays up. Nothing is created in Fly.io or
+- **Cost:** GitHub Actions minutes only, about 15 to start plus the time it stays up (cancel the run when the review is done). Nothing is created in Fly.io or
   Cloudflare, and quick tunnels need no Cloudflare account.
 
 ## What the gate does

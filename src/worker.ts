@@ -19,8 +19,8 @@
 //   /crm/...   → BIZOMAT CRM, served by the same app as Project Management: the same binding, or the origin
 //   /finance/... → BIZOMAT Finance, served by the same app too: the same binding, or the origin
 //   /company/... → BIZOMAT company accounts, served by the same app too: the same binding, or the origin
-//   /system/...  → BIZOMAT System, served by the same app too: the same binding, or the origin (/system-preview/ is
-//                  the website's)
+//   /system/...  → BIZOMAT System, served by the same app too: the same binding, or the origin (/system-preview/, the
+//                  retired design preview, is the website's: it answers 301 to /systems/erp/)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -74,7 +74,7 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   if (/^\/finance(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   // BIZOMAT company accounts too (apps/work, mounted at /company)
   if (/^\/company(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
-  // BIZOMAT System too (apps/work, mounted at /system); /system-preview/ does not match and stays the website's
+  // BIZOMAT System too (apps/work, mounted at /system); /system-preview/ (retired, 301) does not match and stays the website's
   if (/^\/system(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   // BIZOMAT ERP, the one workspace (apps/work, mounted at /erp); /erp-design-preview stays the website's redirect
   if (/^\/erp(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);

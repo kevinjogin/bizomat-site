@@ -731,10 +731,6 @@ function Operations() {
   return (
     <div className="page crm-page">
       <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Asset Management and Maintenance is partly live; the other modules are planned: they are not built yet and keep no data." />
-      <section className="co-prompt">
-        <p>You can see how the planned modules are designed in the BIZOMAT ERP preview, which runs on demonstration data only. Nothing you do there is saved.</p>
-        <a className="btn" href="https://bizomat.ai/system-preview/">Open the design preview</a>
-      </section>
       <div className="co-tools-grid">
         {PLANNED.map((m) => (
           <section key={m.name} className="card card-pad co-tool-card">

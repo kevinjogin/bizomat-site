@@ -1,7 +1,7 @@
 # Review preview: a temporary, browser-accessible copy of a pull request, for the owner to see and test the website and
 # BIZOMAT ERP before approving a release (owner's request, 14 Nov 2026).
 #
-# How it works, on a GitHub-hosted runner, for the time chosen (default 3 hours):
+# How it works, on a GitHub-hosted runner, for the time chosen (default 1 hour, to keep Actions minutes down):
 #   1. builds the production image from the pull request (infrastructure/fly/Dockerfile) and starts the local stack
 #      (infrastructure/local/compose.yml: proxy, website, ERP and CAD Automation), exactly as the CI job does;
 #   2. loads invented demo data (infrastructure/preview/seed-demo.mjs) into the stack's own, empty database;
@@ -17,7 +17,8 @@
 # Start: add the label "preview" to a pull request (remove and add it again for a fresh preview), or run it by hand
 # from Actions once this file is on main. Optional repository secret PREVIEW_PASSWORD: every request then needs HTTP
 # Basic sign-in (user "review"). Without it the address is unlisted (random, noindex) but open while it runs.
-# Cost: GitHub Actions minutes only (about 15 minutes to start, plus the time it stays up).
+# Cost: GitHub Actions minutes only (about 15 minutes to start, plus the time it stays up: 1 hour unless asked).
+# Cancel the run as soon as the review is done; every minute it stays up counts against the account's Actions minutes.
 name: Review preview
 
 on:
@@ -28,7 +29,7 @@ on:
       minutes:
         description: "How long the preview stays up, in minutes (30 to 330)"
         required: false
-        default: "180"
+        default: "60"
 
 permissions:
   contents: read
@@ -49,7 +50,7 @@ jobs:
       COMPOSE_PROJECT_NAME: bizomat-preview
       PR: ${{ github.event.pull_request.number }}
       HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
-      MINUTES: ${{ github.event.inputs.minutes || '180' }}
+      MINUTES: ${{ github.event.inputs.minutes || '60' }}
       PREVIEW_PASSWORD: ${{ secrets.PREVIEW_PASSWORD }}
       GH_TOKEN: ${{ github.token }}
     steps:

@@ -31,7 +31,7 @@ if (toolCount !== CAD.toolCount) throw new Error(`engineering: ${toolCount} tool
 const shots = screenshots('cad');
 const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-engineering.webp'));
 const related = SYSTEMS.filter((s) => s.id !== sys.id);
-const description = 'BIZOMAT Engineering Automation connects Claude, ChatGPT or another MCP assistant to SOLIDWORKS on your own computer: native parts, assemblies and drawings.';
+const description = 'AI automation for SOLIDWORKS: connect Claude, ChatGPT or another MCP assistant to SOLIDWORKS on your own PC to build native, editable parts, assemblies and drawings.';
 
 const security = [
   { t: 'Signed commands', x: 'Every command to your computer is signed by BIZOMAT (ES256) and checked by the Companion before it runs. Replayed, expired or altered commands are refused.' },
@@ -148,13 +148,13 @@ const schema = [
   { '@type': 'FAQPage', url: `${SITE.url}${PAGE}#faq`, mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title={`${sys.name} for SOLIDWORKS`} description={description} image="/brand/bizomat-social-cad.png" imageAlt="BIZOMAT Engineering Automation: your AI assistant, working in SOLIDWORKS on your own computer" breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title="SOLIDWORKS AI automation: Engineering Automation" description={description} image="/brand/bizomat-social-cad.png" imageAlt="BIZOMAT Engineering Automation: your AI assistant, working in SOLIDWORKS on your own computer" breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="eng-title">
     <Container class="pp-hero__inner">
       <div>
         <p class="bz-eyebrow">{sys.name}<span class="pp-hero__formerly">Formerly {sys.formerly}</span></p>
         <h1 id="eng-title">{CAD.headline}</h1>
-        <p class="pp-hero__lead">{sys.name} is BIZOMAT's {sys.kind.toLowerCase()}. It connects Claude, ChatGPT or another assistant that supports MCP connectors to SOLIDWORKS on your PC. You describe the part, the change or the check; it builds native, editable features in your own files.</p>
+        <p class="pp-hero__lead">{sys.name} brings AI automation to SOLIDWORKS: an AI CAD assistant that works in your own files. It connects Claude, ChatGPT or another assistant that supports MCP connectors to SOLIDWORKS on your PC. You describe the part, the change or the check; it builds native, editable features in your own files.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="eng-access">{access.label}</Button>
           <Button href={GUIDE} variant="secondary" data-cta="eng-guide">Read the user guide</Button>

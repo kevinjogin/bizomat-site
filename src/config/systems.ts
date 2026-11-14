@@ -109,7 +109,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     short: 'Manufacturing and Operations',
     line: 'Procurement, inventory, manufacturing, quality, maintenance and supply chain, as ERP modules.',
     status: 'planned',
-    statusNote: 'Planned, not built, except the first stage of Maintenance (assets, requests and work orders), which works today inside BIZOMAT ERP. The design can be explored in the BIZOMAT ERP design preview, which uses demonstration data only.',
+    statusNote: 'Planned, not built, except the first stage of Maintenance (assets, requests and work orders), which works today inside BIZOMAT ERP.',
     url: '/systems/manufacturing/',
     module: 'Operations',
   },
@@ -120,8 +120,6 @@ export const systemById = (id: SystemInfo['id']): SystemInfo => SYSTEMS.find((s)
 /** The public pages of the Systems section. */
 export const SYSTEMS_HOME = '/systems/';
 
-/** The design preview of the planned ERP modules (demonstration data). */
-export const ERP_PREVIEW = '/system-preview/';
 
 export const STATUS_LABEL: Record<SystemStatus, string> = { available: 'Available', partial: 'Available, some modules planned', planned: 'Planned' };
 
