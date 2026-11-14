@@ -376,7 +376,7 @@ const schema = [
               <a href={`#${s.id}`}>
                 <strong>{s.name}</strong>
                 <span class="sys-glance__kind">{s.kind}</span>
-                <span class:list={['sys-badge', `sys-badge--${s.status}`]}>{s.status === 'partial' ? 'Partly planned' : STATUS_LABEL[s.status]}</span>
+                <span class:list={['sys-badge', `sys-badge--${s.status}`]}>{s.status === 'partial' ? 'Available · some planned' : STATUS_LABEL[s.status]}</span>
               </a>
             </li>
           ))}

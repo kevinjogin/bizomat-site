@@ -14,6 +14,14 @@
 .sys-badge--partial { border-color: transparent; background: var(--bz-info-soft); color: var(--bz-info); }
 .sys-badge--planned { border-color: transparent; background: var(--bz-warning-soft); color: var(--bz-warning); }
 
+/* ---------- Feature status labels (src/components/StatusLabel.astro) in lists and cards ---------- */
+.sys-items li > .bz-badge { margin-left: .3rem; vertical-align: .08em; font-size: .64rem; }
+.sys-card-title { margin-top: .8rem; }
+.sys-legend { margin-top: clamp(1.5rem, 3vw, 2rem); padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-legend .sys-subhead { margin-bottom: .2rem; }
+.sys-legend .sys-note { margin-top: 0; }
+.sys-planned__status { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 0; color: var(--ink-2); font-weight: 600; }
+
 /* ---------- Hero: the systems at a glance ---------- */
 .sys-glance { margin: 0; padding: 1.1rem 1.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
 .sys-glance h2 { font-size: 1.02rem; margin-bottom: .6rem; }
@@ -74,7 +82,7 @@
 .sys-table tbody th a { color: var(--ink); }
 .sys-table td { color: var(--ink-2); }
 .sys-table tbody tr:last-child > * { border-bottom: 0; }
-.sys-table--planned th, .sys-table tr.is-planned > * { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+.sys-table tr.is-planned > * { background: var(--paper-2); }
 
 /* ---------- Resources are free ---------- */
 .sys-free { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
@@ -130,6 +138,29 @@
 .sys-related a:hover { border-color: var(--line-strong); }
 .sys-related .sys-related__kind { color: var(--muted); font: 500 .74rem/1.4 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
 .sys-related .sys-related__line { color: var(--ink-2); font-size: .92rem; }
+
+/* ---------- ERP: enterprise overview, departments, lifecycle and capability matrix ---------- */
+.sys-section-sub { margin: clamp(2rem, 4vw, 2.8rem) 0 1rem; font-size: var(--step-2); }
+.sys-dept { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.sys-dept > li { padding: 1.1rem 1.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-dept h4 { margin: .7rem 0 0; font-size: 1rem; }
+.sys-dept p { margin: .4rem 0 0; color: var(--ink-2); font-size: .93rem; }
+.sys-cycle { counter-reset: stage; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; margin: 1.2rem 0 0; padding: 0; list-style: none; }
+.sys-cycle__stage { counter-increment: stage; position: relative; padding: 1rem 1.1rem 1.1rem; background: var(--surface); border: 1px solid var(--line); border-top: 3px solid var(--brand-mark); border-radius: var(--radius-lg); }
+.sys-cycle__stage--planned { border-style: dashed; border-top-style: solid; border-top-color: var(--line-strong); background: var(--paper-2); }
+.sys-cycle__stage h4 { font-size: 1.02rem; }
+.sys-cycle__stage h4::before { content: counter(stage) '. '; color: var(--muted); font-family: var(--font-display); }
+.sys-cycle__serves { margin: .3rem 0 .7rem; color: var(--muted); font-size: .84rem; }
+.sys-cycle__stage ul { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.sys-cycle__stage ul li { display: grid; justify-items: start; gap: .25rem; color: var(--ink-2); font-size: .9rem; }
+.sys-matrix { display: grid; gap: clamp(1.5rem, 3vw, 2.2rem); }
+.sys-matrix__domain h3 { font-size: var(--step-1); }
+.sys-matrix__domain .sys-body { margin-bottom: 1rem; }
+.sys-walk--plain { margin-top: 1.4rem; }
+.sys-walk--plain > li { grid-template-columns: minmax(0, 1fr); }
+.sys-walk--plain > li::before { display: none; }
+.sys-walk h3 .bz-badge, .sys-feature__head .bz-badge { font-size: .64rem; }
+.pp-band p { margin: .6rem 0 0; max-width: 52ch; }
 
 .sys-trademark { margin: 2.5rem 0 0; max-width: 80ch; color: var(--muted); font-size: .82rem; }
 

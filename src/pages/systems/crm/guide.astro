@@ -34,7 +34,7 @@ interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?:
 const parts: Part[] = [
   {
     id: 'access', title: `Open ${sys.name} in ${erp.name}`,
-    lead: `${sys.name} opens inside ${erp.name}, the one workspace for every BIZOMAT system you use, as its ${sys.module} module.`,
+    lead: `${sys.name} opens inside ${erp.name}, BIZOMAT's one workspace for signed-in people, as its ${sys.module} module.`,
     steps: [
       { t: 'Go to BIZOMAT ERP', x: `Go to ${APP_LINKS.erp.signIn.replace('https://', '')}, or choose Sign in at the top of any BIZOMAT page.` },
       { t: `Choose ${sys.module}`, x: `After you sign in, the ERP opens on its Dashboard. Choose ${sys.module} in the module rail at the left of the screen (a bar along the bottom on a phone).` },
@@ -55,7 +55,7 @@ const parts: Part[] = [
     id: 'organisation', title: 'Create your organisation',
     lead: 'An organisation is one business, or one team, that keeps its own customers, pipelines, people and settings. You can belong to several.',
     steps: [
-      { t: 'Name it', x: 'The first time you sign in, the CRM asks you to create an organisation. Enter its name and, if you like, its industry, website and country.' },
+      { t: 'Name it', x: 'The first time you open Sales and CRM, the CRM asks you to create an organisation. Enter its name and, if you like, its industry, website and country.' },
       { t: 'Choose its currency', x: 'Every amount in the organisation uses it. You can change it until the first deal is created.' },
       { t: 'Create organisation', x: `You become its owner. It starts with a ${CRM.stages.length}-stage sales pipeline and ${CRM.automations.length} automations, and no sample records.` },
       { t: 'Switch organisations', x: 'Open the organisation menu at the top left to move between your organisations, or choose Create or join an organisation.' },

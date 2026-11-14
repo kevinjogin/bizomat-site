@@ -1,0 +1,542 @@
+---
+// /systems/erp/: BIZOMAT ERP, the Business Management System (src/config/systems.ts). The workspace itself runs at
+// bizomat.ai/erp (apps/work, docs/system/README.md): one sign-in, a company switcher and the module rail
+// (apps/work/src/client/components/layout/SuiteRail.tsx). Every feature carries one of the four labels of
+// FEATURE_STATUS: Live, Connected, In development or Planned. The Operations modules and product records are planned
+// (docs/erp/architecture/08 and 09) and never described as working; CAD computers in the ERP wait for CAD Automation's
+// reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows the planned list.
+// The capability matrix renders src/data/erp-capabilities.ts (ERP_DOMAINS) when that file exists.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import SystemsMap from '../../../components/visuals/SystemsMap.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import '../../../styles/systems.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { ERP_PREVIEW, SYSTEMS, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { CRM, FINANCE, WORK } from '../../../data/platform-catalog.ts';
+
+const erp = systemById('erp');
+const GUIDE = erp.guide ?? '/systems/erp/guide/';
+const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }];
+const description = 'BIZOMAT ERP: one workspace for your company, with sales, finance, projects, engineering, reports and administration. What works today, and what is planned.';
+const erpShots = screenshots('erp');
+const shot = (name: string) => erpShots.find((s) => s.src.endsWith(`/${name}.webp`));
+const dashboardShot = shot('erp-dashboard');
+const gallery = erpShots.filter((s) => s !== dashboardShot);
+
+// The enterprise capability matrix, written by another file when it exists (an empty glob when it does not).
+interface Domain { id: string; name: string; summary: string; features: { name: string; status: FeatureStatus; servedBy?: string }[] }
+const capabilityFiles = import.meta.glob<{ ERP_DOMAINS?: Domain[] }>('../../../data/erp-capabilities.ts', { eager: true });
+const domains: Domain[] = Object.values(capabilityFiles)[0]?.ERP_DOMAINS ?? [];
+
+const does = [
+  { t: 'One sign-in', st: 'live', x: 'Your BIZOMAT account opens the ERP and every module in it. Signing in once is enough.' },
+  { t: 'Work by company', st: 'live', x: 'The company switcher holds your registered companies, your own company and the companies that shared a tool with you.' },
+  { t: 'A dashboard for the company', st: 'connected', x: "Each of the company's tools on one screen, with the figures your role in that tool may see." },
+  { t: 'Every tool in one place', st: 'live', x: 'Sales and CRM, Finance and Accounting and Projects and Tasks open inside the ERP, with the module rail beside them.' },
+  { t: 'Reports in one place', st: 'live', x: "Every report of the company's tools, each opening in its module with that module's permissions." },
+  { t: 'Company administration', st: 'live', x: 'Company, people, departments, tool roles and settings, managed once for every tool.' },
+] as const;
+
+const who = [
+  'Owners and managers who want one view of sales, money and projects.',
+  'Administrators who set up people, departments and access for every tool.',
+  'Sales, finance and project staff who work in more than one tool.',
+  'Bookkeepers, consultants and contractors who work for more than one company.',
+  'Engineering teams that use CAD Automation with SOLIDWORKS and want its set-up beside the rest.',
+];
+
+const problems = [
+  { p: 'Separate logins and addresses for every tool.', a: 'One BIZOMAT account and one address, bizomat.ai/erp. The old tool addresses forward there.' },
+  { p: 'Records of two businesses mixed together.', a: 'Every tool belongs to a company, and the company switcher keeps them apart. People outside a company cannot see it.' },
+  { p: 'Access set tool by tool, and forgotten when people leave.', a: "Invite a person once, with a role in each tool and their departments. Taking a role away takes them out of that tool." },
+  { p: 'Typing the same customer into sales and accounts.', a: 'Link a CRM company to its Finance customer, and turn a won deal into a draft invoice, without copying records.' },
+  { p: 'No single view of how the business is going.', a: "The dashboard shows each tool's figures, and Reports gathers every tool's reports." },
+];
+
+// Who works where: the company's teams and the module each works in.
+const teams = [
+  { team: 'Sales and account management', where: 'Sales and CRM', st: 'live' },
+  { team: 'Finance and bookkeeping', where: 'Finance and Accounting', st: 'live' },
+  { team: 'Project and operations teams', where: 'Projects and Tasks, and My Work', st: 'live' },
+  { team: 'Engineering and design', where: 'Products and Engineering, and the CAD Automation application', st: 'live' },
+  { team: 'Owners and managers', where: "Dashboard and Reports, with each tool's figures", st: 'connected' },
+  { team: 'Administration', where: 'Administration: company, people, departments and tool roles', st: 'live' },
+  { team: 'Purchasing, stores, production, quality and maintenance', where: 'Operations', st: 'planned' },
+] as const;
+
+// A department is made once and appears in every tool the company runs (docs/company/README.md).
+const departments = [
+  { t: 'Made once, in Administration', st: 'live', x: 'Create a department, choose its head, and place it under another department if you like, to any depth.' },
+  { t: 'A team in Projects and Tasks', st: 'connected', x: 'The same people, ready to assign work to and to filter by.' },
+  { t: 'A team in Sales and CRM', st: 'connected', x: "Led by the department's head. The CRM's dashboard and reports can be filtered by team." },
+  { t: 'A department in Finance tracking', st: 'connected', x: 'Tag income and costs to it, and set budgets by department.' },
+  { t: 'Totals on the company overview', st: 'connected', x: "Open tasks, open deals and income for each department, from every tool. A department's head sees that department's figures." },
+] as const;
+
+// The complete business lifecycle, in order, with what serves each stage today.
+const lifecycle: { name: string; serves: string; items: { t: string; st: FeatureStatus }[] }[] = [
+  { name: 'Product development', serves: 'BIZOMAT Engineering Automation', items: [{ t: 'CAD Automation in SOLIDWORKS', st: 'live' }, { t: 'Product records and bills of materials', st: 'planned' }] },
+  { name: 'Sales', serves: 'BIZOMAT CRM', items: [{ t: 'Leads, deals and follow-ups', st: 'live' }, { t: 'Quotes in Finance from a deal', st: 'connected' }] },
+  { name: 'Procurement', serves: 'Planned; Finance today', items: [{ t: 'Requisitions, RFQs and receiving', st: 'planned' }, { t: 'Suppliers, purchase orders and bills in Finance', st: 'live' }] },
+  { name: 'Inventory', serves: 'Planned', items: [{ t: 'Stock on hand, movements and counts', st: 'planned' }] },
+  { name: 'Production', serves: 'Planned', items: [{ t: 'Work orders and planning', st: 'planned' }] },
+  { name: 'Quality', serves: 'Planned', items: [{ t: 'Inspections and nonconformances', st: 'planned' }] },
+  { name: 'Delivery', serves: 'Planned', items: [{ t: 'Sales orders, deliveries and shipments', st: 'planned' }] },
+  { name: 'Finance', serves: 'BIZOMAT Finance', items: [{ t: 'Invoices, bills, ledger and reports', st: 'live' }, { t: 'Draft invoices from won deals', st: 'connected' }] },
+  { name: 'Customer service', serves: 'Planned; the CRM today', items: [{ t: 'Customer returns', st: 'planned' }, { t: "The CRM's activities and customer history", st: 'live' }] },
+];
+
+// Every feature of the ERP, explained, with its status.
+const features: { t: string; st: FeatureStatus; x: string; today?: string }[] = [
+  { t: 'Enterprise dashboard', st: 'connected', x: "The company's tools on one screen: open tasks, overdue, due in 7 days and projects from Projects; open deals, pipeline, won in 30 days and follow-ups due from the CRM; income, expenses and what is owed both ways from Finance. Each tool's figures show only to people whose role in that tool may see them.", today: 'Executive dashboards with widgets from every module are planned.' },
+  { t: 'Company and department management', st: 'live', x: 'Register a business with its ABN, or yourself in your own name. Give each person a company role (owner, administrator or member) and a role in each tool. Departments are made once, can sit under one another, and appear in every tool.', today: 'Sites, branches, approval rules and numbering are planned.' },
+  { t: 'Products and engineering', st: 'live', x: "CAD Automation's four set-up steps: sign in, install, pair the computer and connect your AI assistant. CAD Automation itself builds SOLIDWORKS parts, assemblies and drawings on your own computer.", today: "The company's computers appear here once CAD Automation reports to the ERP (in development). Product records with revisions and bills of materials are planned." },
+  { t: 'Procurement', st: 'planned', x: 'Designed for supplier profiles, purchase requisitions with approval, requests for quotation, purchase orders with receiving, and supplier performance.', today: 'Today: suppliers, purchase orders and bills are kept in Finance and Accounting.' },
+  { t: 'Inventory and warehouse', st: 'planned', x: 'Designed for stock on hand by product, location and lot, stock movements, goods receipts, transfers, counts and valuation.', today: 'Not available today.' },
+  { t: 'Manufacturing', st: 'planned', x: 'Designed for work orders with operations and materials, a planning board by work centre, and a shop-floor screen for quantities and scrap.', today: 'Not available today.' },
+  { t: 'Quality', st: 'planned', x: 'Designed for inspection plans and checklists, inspections, nonconformance reports and corrective actions.', today: 'Not available today.' },
+  { t: 'Asset management and maintenance', st: 'planned', x: 'Designed for an asset register, maintenance plans and orders, work requests and downtime.', today: 'Not available today.' },
+  { t: 'Reports', st: 'live', x: `Sales and CRM reports (${CRM.reports.length} of them), Finance and Accounting reports (${FINANCE.reports.length}, including the GST and BAS worksheet) and Projects and Tasks dashboards, gathered on one page. Each opens in its module, with that module's permissions.`, today: 'Company performance and operational reports across modules are planned.' },
+  { t: 'CRM and Finance connections', st: 'connected', x: "When the company runs both: a CRM deal starts a draft quote in Finance; a won deal becomes a draft invoice; a CRM company is linked to its Finance customer, so its open invoices show in the CRM to people whose Finance role sees sales. Links never copy money: figures are read from Finance when asked." },
+];
+
+// Working and planned modules, one row each.
+const modules: { m: string; st: FeatureStatus; today: string }[] = [
+  { m: 'Dashboard', st: 'connected', today: "Each of the company's tools with the figures your role may see." },
+  { m: 'My Work', st: 'live', today: 'Opens everything assigned to you in Projects and Tasks.' },
+  { m: 'Sales and CRM', st: 'live', today: 'Customers, leads, deals, activities, reports and automations.' },
+  { m: 'Finance and Accounting', st: 'live', today: 'Ledger, quotes, invoices, bills, statements, budgets, reports and the GST worksheet.' },
+  { m: 'Projects and Tasks', st: 'live', today: `Boards, ${WORK.views.length} views, documents, dashboards and automations.` },
+  { m: 'Products and Engineering: CAD set-up', st: 'live', today: 'The set-up steps, with links into CAD Automation.' },
+  { m: "Products and Engineering: the company's computers", st: 'in-development', today: 'Shown once CAD Automation reports to the ERP. Until then the page says so and links to CAD Automation.' },
+  { m: 'Reports', st: 'live', today: "Every tool's reports in one place." },
+  { m: 'Administration', st: 'live', today: 'Company, people, departments, tool roles and settings.' },
+  { m: 'Links between tools', st: 'connected', today: 'Deal to quote and draft invoice, deal to project, project costs, and a CRM company as a Finance customer.' },
+  { m: 'Product and engineering records', st: 'planned', today: 'Not available.' },
+  { m: 'Procurement', st: 'planned', today: 'Not available. Suppliers, purchase orders and bills are in Finance today.' },
+  { m: 'Inventory and Warehouse', st: 'planned', today: 'Not available.' },
+  { m: 'Manufacturing', st: 'planned', today: 'Not available.' },
+  { m: 'Quality', st: 'planned', today: 'Not available.' },
+  { m: 'Asset Management and Maintenance', st: 'planned', today: 'Not available.' },
+  { m: 'Supply Chain', st: 'planned', today: 'Not available.' },
+  { m: 'Search across every module', st: 'planned', today: 'Not available. Each tool has its own search.' },
+  { m: 'Executive dashboards across modules', st: 'planned', today: "Not available beyond today's company dashboard." },
+];
+
+// The dashboard, part by part (apps/work/src/client/system/SystemApp.tsx).
+const dashboardParts = [
+  { t: 'The company switcher', st: 'live', x: 'At the top. Your companies first, then "Shared with you". Register a company starts a new one.' },
+  { t: "The company's kind and your role", st: 'live', x: 'Under its name: a registered company with your role, your own company (not registered), or shared with you, with only the tools you were added to.' },
+  { t: 'A card for each tool', st: 'connected', x: "Its name, your role and Open. Projects: open tasks, overdue, due in 7 days, projects. CRM: open deals, pipeline, won in 30 days, follow-ups due. Finance: income, expenses, owed to you and you owe, this financial year from posted entries. A role that may not see the figures sees a note instead." },
+  { t: 'The CAD Automation card', st: 'live', x: 'Opens Products and Engineering: the set-up steps, then the computers once CAD Automation reports.' },
+  { t: 'People and the rail', st: 'live', x: 'How many people are in the company. The module rail sits at the left (along the bottom on a phone); the side menu lists the company\'s tools.' },
+] as const;
+
+// Screen by screen, in the order of the module rail.
+const walk: { t: string; st: FeatureStatus; x: string }[] = [
+  { t: 'Dashboard', st: 'connected', x: "Opens on the company you used last. See its tools and figures, and open any of them." },
+  { t: 'My Work', st: 'live', x: 'Opens My Work in Projects and Tasks, for the workspace you used last: everything assigned to you.' },
+  { t: 'Sales and CRM', st: 'live', x: 'The CRM, inside the ERP: the same records, roles and settings. When the company runs Finance or Projects too, a deal shows what it is linked to there.' },
+  { t: 'Finance and Accounting', st: 'live', x: "Finance, inside the ERP, in the company's business workspace: transactions, quotes, invoices, bills, banking, budgets and reports." },
+  { t: 'Projects and Tasks', st: 'live', x: 'Project Management, inside the ERP: boards, views, documents, dashboards and automations.' },
+  { t: 'Products and Engineering', st: 'live', x: "CAD Automation's set-up steps and the computers you may see: owners and administrators see the company's, members their own. Computers are listed once CAD Automation reports (in development)." },
+  { t: 'Operations', st: 'planned', x: 'A list of the planned modules, each labelled Planned, with a link to the design preview. Nothing here works yet or keeps data.' },
+  { t: 'Reports', st: 'live', x: "A card for each tool's reports. Each opens in its module, with that module's permissions." },
+  { t: 'Administration', st: 'live', x: "Company overview, people and roles, departments, tools and company settings; each tool's team and settings; your profile. Platform administrators also see the ERP console." },
+];
+
+const steps = [
+  { t: 'Open BIZOMAT ERP', x: 'Go to bizomat.ai/erp, or choose Sign in, then BIZOMAT ERP, at the top of any BIZOMAT page.' },
+  { t: 'Sign in or create an account', x: 'Use your BIZOMAT email and password. New to BIZOMAT? Choose Create an account: your full name, work email and a password of at least 10 characters.' },
+  { t: 'Choose or register a company', x: 'Your own company is ready. To work as a business, choose Register a company in the switcher: a business with its ABN, or yourself in your own name.' },
+  { t: 'Set up departments', x: 'In Administration, open Departments, choose New department and pick its head. It appears in every tool.' },
+  { t: 'Invite your people', x: 'In People, invite each person with a company role, a role in each tool and their departments.' },
+  { t: 'Open a module', x: 'Choose Sales and CRM, Finance and Accounting or Projects and Tasks in the rail and add your first record.' },
+];
+
+const flows: { t: string; path: string[]; x: string; st: FeatureStatus }[] = [
+  {
+    t: 'Lead to deal to quote to invoice', st: 'connected',
+    path: ['Lead in the CRM', 'Convert to a deal', 'Start a quote', 'Deal won', 'Draft invoice in Finance'],
+    x: "Convert a qualified lead into a contact, a company and a deal. On the deal, Start a quote makes a draft quote in Finance for the deal's company, to price in detail there; the customer can accept it online. When the deal is won, Make a draft invoice creates one line with the deal's title and value. It is a draft: check the amount, GST and account before approving.",
+  },
+  {
+    t: 'Deal to project, with its costs', st: 'connected',
+    path: ['Deal in the CRM', 'Start a project', 'Tasks on the board', 'Track in Finance', 'Costs against budget'],
+    x: "Start a project makes a board named after the deal in the company's Projects and Tasks. In the company area, give the project a Finance tracking project and a budget: income and costs posted to it show against the budget, all time and this financial year.",
+  },
+  {
+    t: 'A company with departments and roles', st: 'live',
+    path: ['Register the company', 'Add departments', 'Invite people', 'Roles in each tool', 'One sign-in'],
+    x: "Registering gives the company a Projects workspace, a CRM organisation and a Finance business workspace, or brings in ones you already own. Each invitation sets a company role, a role in each tool and departments. The person signs in once and sees what each role allows.",
+  },
+];
+
+const integrations: { name: string; url: string; items: { t: string; st: FeatureStatus }[] }[] = [
+  { name: 'BIZOMAT CRM', url: '/systems/crm/', items: [{ t: 'Opens inside the ERP as Sales and CRM', st: 'live' }, { t: 'Deals start quotes, draft invoices and projects', st: 'connected' }, { t: 'A CRM company as a Finance customer', st: 'connected' }] },
+  { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Opens inside the ERP as Finance and Accounting', st: 'live' }, { t: 'Project costs and budgets', st: 'connected' }, { t: 'Departments in tracking', st: 'connected' }] },
+  { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Opens inside the ERP as Projects and Tasks', st: 'live' }, { t: 'My Work in the rail', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
+  { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'Set-up steps in Products and Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
+  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/manufacturing/', items: [{ t: 'Procurement, inventory, production, quality, maintenance and supply chain', st: 'planned' }] },
+];
+
+const faqs = [
+  { q: 'What does BIZOMAT ERP manage?', a: 'Your company and its tools: the dashboard, your assigned work, sales and customers (the CRM), finance and accounting, projects and tasks, the set-up of CAD Automation, reports, and the company\'s people, departments and roles. Procurement, inventory, manufacturing, quality, maintenance and supply chain are planned and not built.' },
+  { q: 'Can it manage multiple companies?', a: 'Yes. You can belong to several companies and switch between them with the company switcher. It lists your registered companies, your own company in your own name, and companies whose tools were shared with you. Each company keeps its own tools and records.' },
+  { q: 'Can different departments have separate permissions?', a: "Departments appear in every tool, but permissions are set for each person, not each department: every person has a role in each tool, set in the company area under People. A department's head can change who is in the department, and sees that department's figures in every tool." },
+  { q: 'Does it connect with Finance and CRM?', a: 'Yes. Both open inside the ERP. When the company runs both, a CRM deal can start a draft quote in Finance and become a draft invoice once won, and a CRM company can be linked to its Finance customer. Each link checks your role in both tools.' },
+  { q: 'Can it manage manufacturing?', a: 'Not yet. Manufacturing, production planning, inventory, procurement, quality, maintenance and supply chain are planned and not built. The Operations module lists them as Planned, and the design preview shows them with demonstration data only.' },
+  { q: 'Is my data copied into the ERP?', a: 'No. The ERP shows each tool where it is. Nothing is copied or moved, and each tool keeps its own permissions.' },
+  { q: 'Who sees our CAD computers?', a: "In a registered company, the owner and administrators see the computers of everyone in it, and members see their own. Nobody sees another company's. The computers appear once CAD Automation reports to the ERP, which is in development; until then the page says so." },
+  { q: 'What happened to the old tool addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into the ERP, so bookmarks and links in emails keep working.' },
+];
+
+const related = SYSTEMS.filter((s) => s.id !== 'erp');
+const access = erp.access!;
+
+const schema = [
+  {
+    '@type': 'SoftwareApplication', name: erp.name, alternateName: erp.formerly, url: `${SITE.url}${erp.url}`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', description,
+    featureList: modules.filter((m) => m.st !== 'planned').map((m) => m.m),
+    publisher: { '@id': `${SITE.url}/#organization` },
+  },
+  { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<BaseLayout title={erp.name} description={description} imageAlt="BIZOMAT ERP: one workspace for your company" breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="erp-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+        <p class="bz-eyebrow">{erp.name} · {erp.kind}<span class="pp-hero__formerly">Formerly {erp.formerly}</span></p>
+        <h1 id="erp-title">One workspace for your company</h1>
+        <p class="pp-hero__lead">{erp.line} Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
+        <div class="pp-hero__actions">
+          <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-access">{access.label}</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="erp-guide">Read the user guide</Button>
+        </div>
+        <p class="pp-hero__note">{access.note}</p>
+        <p class="pp-hero__note">{erp.statusNote}</p>
+      </div>
+      {dashboardShot ? (
+        <figure class="pp-shot">
+          <img src={dashboardShot.src} alt={`${dashboardShot.title}. ${dashboardShot.caption}`} width="1440" height="900" decoding="async" />
+          <figcaption><span>{dashboardShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+        </figure>
+      ) : (
+        <SystemsMap id="erp-hero-map" />
+      )}
+    </Container>
+  </section>
+
+  <section class="pp-section" id="what" aria-labelledby="what-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">What it does</p>
+        <h2 id="what-title">Your company, its people and its tools, on one screen</h2>
+        <p>ERP (enterprise resource planning) is software that runs a business's main work in one system. BIZOMAT ERP brings BIZOMAT's tools together by company: each tool keeps its own records and permissions, and the ERP shows them side by side.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {does.map((d) => <li class="pp-card"><StatusLabel status={d.st} /><h3 class="sys-card-title">{d.t}</h3><p>{d.x}</p></li>)}
+      </ul>
+      <div class="sys-legend">
+        <h3 class="sys-subhead">What the labels mean</h3>
+        <p class="sys-note">Every feature and module on this page carries one of these four labels.</p>
+        <StatusLegend />
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Who should use it</p>
+        <h2 id="who-title">For everyone who runs, or works in, the business</h2>
+        <p class="sys-lead">Anyone with a BIZOMAT account can use it. What each person sees depends on their role in each tool.</p>
+      </div>
+      <ul class="pp-list">{who.map((w) => <li>{w}</li>)}</ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Problems it solves</p>
+        <h2 id="problems-title">What changes when the tools work as one</h2>
+      </div>
+      <ul class="pp-cards" role="list">
+        {problems.map((p) => <li class="pp-card"><h3>{p.p}</h3><p>{p.a}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="enterprise" aria-labelledby="enterprise-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Enterprise overview</p>
+        <h2 id="enterprise-title">How each department connects</h2>
+        <p>Each team works in its own module, and the company's departments appear in every tool. What works today is labelled Live or Connected; what is planned is labelled Planned.</p>
+      </div>
+      <div class="sys-table-wrap">
+        <table class="sys-table">
+          <caption>Who works where in BIZOMAT ERP</caption>
+          <thead><tr><th scope="col">Team</th><th scope="col">Where it works</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            {teams.map((t) => <tr class:list={[{ 'is-planned': t.st === 'planned' }]}><th scope="row">{t.team}</th><td>{t.where}</td><td><StatusLabel status={t.st} /></td></tr>)}
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="sys-section-sub">A department, in every tool</h3>
+      <ul class="sys-dept" role="list">
+        {departments.map((d) => <li><StatusLabel status={d.st} /><h4>{d.t}</h4><p>{d.x}</p></li>)}
+      </ul>
+
+      <h3 class="sys-section-sub" id="lifecycle">The business lifecycle, stage by stage</h3>
+      <p class="sys-body">From product development to customer service, in order, with the system that serves each stage today.</p>
+      <ol class="sys-cycle">
+        {lifecycle.map((c) => (
+          <li class:list={['sys-cycle__stage', { 'sys-cycle__stage--planned': c.items.every((i) => i.st === 'planned') }]}>
+            <h4>{c.name}</h4>
+            <p class="sys-cycle__serves">{c.serves}</p>
+            <ul role="list">{c.items.map((i) => <li><StatusLabel status={i.st} /> <span>{i.t}</span></li>)}</ul>
+          </li>
+        ))}
+      </ol>
+      <p class="pp-table-note">Inventory, production, quality and delivery have no BIZOMAT system today. The design of the planned stages can be explored in the <a href={PREVIEW} rel="noopener">design preview, which uses demonstration data</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="features" aria-labelledby="features-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Every feature, explained</p>
+        <h2 id="features-title">What each part does, and what is planned</h2>
+      </div>
+      <ul class="sys-features" role="list">
+        {features.map((f) => (
+          <li class:list={['sys-feature', { 'sys-feature--planned': f.st === 'planned' }]}>
+            <div class="sys-feature__head"><h3>{f.t}</h3><StatusLabel status={f.st} /></div>
+            <p>{f.x}</p>
+            {f.today && <p class="sys-feature__today">{f.today}</p>}
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="status" aria-labelledby="status-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Working and planned</p>
+        <h2 id="status-title">Every module and its status</h2>
+        <p>Live and Connected work today. In development is being built. Planned is designed, not built, and cannot be used.</p>
+      </div>
+      <div class="sys-table-wrap">
+        <table class="sys-table">
+          <thead><tr><th scope="col">Module</th><th scope="col">Status</th><th scope="col">What you can do today</th></tr></thead>
+          <tbody>
+            {modules.map((m) => <tr class:list={[{ 'is-planned': m.st === 'planned' }]}><th scope="row">{m.m}</th><td><StatusLabel status={m.st} /></td><td>{m.today}</td></tr>)}
+          </tbody>
+        </table>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="capabilities" aria-labelledby="capabilities-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">By business area</p>
+        <h2 id="capabilities-title">Enterprise capability matrix</h2>
+        {domains.length > 0 && <p>Each business area, its features and their status, with the system that serves each one today.</p>}
+      </div>
+      {domains.length > 0 ? (
+        <div class="sys-matrix">
+          {domains.map((d) => (
+            <section class="sys-matrix__domain" aria-labelledby={`cap-${d.id}`}>
+              <h3 id={`cap-${d.id}`}>{d.name}</h3>
+              <p class="sys-body">{d.summary}</p>
+              <div class="sys-table-wrap">
+                <table class="sys-table">
+                  <thead><tr><th scope="col">Feature</th><th scope="col">Status</th><th scope="col">Served by</th></tr></thead>
+                  <tbody>
+                    {d.features.map((f) => <tr class:list={[{ 'is-planned': f.status === 'planned' }]}><th scope="row">{f.name}</th><td><StatusLabel status={f.status} /></td><td>{f.servedBy ?? 'Not available yet'}</td></tr>)}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <p class="sys-body">The full matrix of capabilities by business area is being prepared. Until it is published here, the <a href="#status">module table</a> above lists every module and its status.</p>
+      )}
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="dashboard" aria-labelledby="dashboard-title">
+    <Container class:list={[{ 'pp-split': Boolean(dashboardShot) }]}>
+      <div>
+        <p class="bz-eyebrow">The main dashboard</p>
+        <h2 id="dashboard-title">What the dashboard shows</h2>
+        <p class="sys-lead">The first screen after you sign in. It opens on the company you used last.</p>
+        <ul class="sys-walk sys-walk--plain">
+          {dashboardParts.map((d) => <li><div><h3>{d.t} <StatusLabel status={d.st} /></h3><p>{d.x}</p></div></li>)}
+        </ul>
+      </div>
+      {dashboardShot && (
+        <figure class="pp-shot sys-guide-shot">
+          <img src={dashboardShot.src} alt={`${dashboardShot.title}. ${dashboardShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+          <figcaption><span>{dashboardShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+        </figure>
+      )}
+    </Container>
+  </section>
+
+  {gallery.length > 0 && (
+    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+      <Container>
+        <div class="pp-head">
+          <p class="bz-eyebrow">What it looks like</p>
+          <h2 id="screens-title">The real product</h2>
+          <p>Captured from the running application with a fictional company and example data. The Operations screen lists the planned modules: it shows what is planned, not features that work.</p>
+        </div>
+        <div class="pp-shots">
+          {gallery.map((s) => (
+            <figure class="pp-shot">
+              <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption>
+                <span>{s.title.replace(/^[^:]+: /, '')}. {s.caption}</span>
+                {s.src.endsWith('/erp-operations.webp') ? <StatusLabel status="planned" /> : <span class="viz__tag viz__tag--real">Product screen</span>}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )}
+
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="walkthrough" aria-labelledby="walk-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Screen by screen</p>
+        <h2 id="walk-title">The module rail, from top to bottom</h2>
+        <p>The rail is at the left of every screen inside the ERP, and along the bottom on a phone. Each module keeps its own menu beside it.</p>
+      </div>
+      <ol class="sys-walk">
+        {walk.map((w) => <li><div><h3>{w.t} <StatusLabel status={w.st} /></h3><p>{w.x}</p></div></li>)}
+      </ol>
+    </Container>
+  </section>
+
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length === 0 }]} id="start" aria-labelledby="start-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Getting started</p>
+        <h2 id="start-title">Start in six steps</h2>
+        <p class="sys-lead">The <a href={GUIDE}>user guide</a> covers each step, and everything after it, screen by screen.</p>
+      </div>
+      <ol class="pp-steps">
+        {steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
+      </ol>
+    </Container>
+  </section>
+
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="workflows" aria-labelledby="flows-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Typical workflows</p>
+        <h2 id="flows-title">How work moves between the modules</h2>
+        <p>Each step makes a record in the next tool only when you ask, and checks your role there.</p>
+      </div>
+      <ul class="sys-flows" role="list">
+        {flows.map((f) => (
+          <li class="sys-flow">
+            <div class="sys-feature__head"><h3>{f.t}</h3><StatusLabel status={f.st} /></div>
+            <ol class="sys-flow__path">{f.path.map((p) => <li><span>{p}</span></li>)}</ol>
+            <p>{f.x}</p>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length === 0 }]} id="integration" aria-labelledby="int-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Integration with other systems</p>
+        <h2 id="int-title">How the other systems fit in</h2>
+      </div>
+      <div class="pp-tools">
+        {integrations.map((g) => (
+          <section aria-labelledby={`int-${g.url.split('/')[2]}`}>
+            <h3 id={`int-${g.url.split('/')[2]}`}><a href={g.url}>{g.name}</a></h3>
+            <ul class="pp-list sys-items">{g.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>
+          </section>
+        ))}
+      </div>
+      <p class="pp-table-note">Resources (tools, the Library and guides) are not part of the ERP. They stay free and open to everyone, without signing in: <a href="/resources/">see the Resources</a>.</p>
+    </Container>
+  </section>
+
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Questions</p>
+        <h2 id="faq-title">About BIZOMAT ERP</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="access-title">
+    <Container class="pp-band">
+      <div>
+        <h2 id="access-title">Open your company's workspace.</h2>
+        <p>{access.note}</p>
+      </div>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-band-access">{access.label}</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="erp-band-guide">Read the user guide</Button>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="related" aria-labelledby="related-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Related systems</p>
+        <h2 id="related-title">The other BIZOMAT systems</h2>
+      </div>
+      <ul class="sys-related" role="list">
+        {related.map((s) => (
+          <li>
+            <a href={s.url}>
+              <span class="sys-related__kind">{s.kind}</span>
+              <strong>{s.name}</strong>
+              <span class="sys-related__line">{s.line}</span>
+              {s.status === 'planned' && <StatusLabel status="planned" />}
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href={SYSTEMS_HOME}>
+            <span class="sys-related__kind">Catalogue</span>
+            <strong>All systems</strong>
+            <span class="sys-related__line">Every BIZOMAT system side by side, and the free Resources.</span>
+          </a>
+        </li>
+      </ul>
+    </Container>
+  </section>
+</BaseLayout>

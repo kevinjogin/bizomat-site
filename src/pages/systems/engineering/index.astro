@@ -5,17 +5,20 @@
 // src/data/platform-catalog.ts (CAD) and src/data/cad-tools.ts, which record their sources in apps/cad, and from the CAD
 // application itself: requirements and versions (apps/cad/opensketch/site.py docs page, apps/cad/docs/KEVOS-INSTALL.md,
 // KEVOS-VERSIONS.md), its pages (apps/cad/opensketch/app_pages.py), and BIZOMAT ERP's Products and Engineering page
-// (apps/work/src/client/system/SystemApp.tsx, docs/system/README.md). The user guide is /systems/engineering/guide/.
+// (apps/work/src/client/system/SystemApp.tsx, docs/system/README.md). Every feature carries its status (StatusLabel:
+// Live, Connected, In development, Planned). The user guide is /systems/engineering/guide/.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
 import AiToCad from '../../../components/visuals/AiToCad.astro';
 import CommandFlow from '../../../components/visuals/CommandFlow.astro';
 import '../../../styles/product.css';
 import { screenshots } from '../../../data/screenshots.ts';
 import { SITE } from '../../../config/site.ts';
 import { APP_LINKS } from '../../../config/platform.ts';
-import { SYSTEMS, STATUS_LABEL, SYSTEMS_HOME, systemById } from '../../../config/systems.ts';
+import { SYSTEMS, STATUS_LABEL, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
 import { CAD } from '../../../data/platform-catalog.ts';
 import { CAD_EXAMPLES, CAD_TOOL_GROUPS } from '../../../data/cad-tools.ts';
 
@@ -61,11 +64,11 @@ const problems = [
   { t: 'Assistants that can talk about CAD but not touch it', x: `The assistant gets ${toolCount} tools that act in your own SOLIDWORKS session, with your templates and file locations.` },
   { t: 'Files and licences that must stay in-house', x: 'SOLIDWORKS runs on your computer with your licence. Only commands and their results travel; model files are read and saved where they are.' },
 ];
-const dashboardParts = [
-  { t: 'CAD Automation Home', x: '"Engineering, made intelligent." Start an engineering task: describe it, copy it and open Claude or ChatGPT. The Connection panel shows SOLIDWORKS, your computers, your AI assistants and current activity. Get set up lists four steps, and Recent activity lists the latest commands.' },
-  { t: 'Connection states', x: 'Connected, Disconnected, Checking connection, Authentication required, Installation required or Connection error. The page updates every few seconds while it is open.' },
-  { t: 'BIZOMAT ERP: Products and Engineering', x: 'The same four set-up steps, with links into CAD Automation, and the computers of your company: the owner and administrators see everyone\'s, members their own, and other companies nothing.' },
-  { t: 'Until CAD Automation reports to the ERP', x: 'Live computer status in the ERP needs CAD Automation to report to it, which is not switched on yet. Until then the ERP page says so and links to your computers in CAD Automation.' },
+const dashboardParts: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'CAD Automation Home', x: '"Engineering, made intelligent." Start an engineering task: describe it, copy it and open Claude or ChatGPT. The Connection panel shows SOLIDWORKS, your computers, your AI assistants and current activity. Get set up lists four steps, and Recent activity lists the latest commands.', s: 'live' },
+  { t: 'Connection states', x: 'Connected, Disconnected, Checking connection, Authentication required, Installation required or Connection error. The page updates every few seconds while it is open.', s: 'live' },
+  { t: 'BIZOMAT ERP: Products and Engineering', x: 'The same four set-up steps, with links into CAD Automation, and the computers of your company: the owner and administrators see everyone\'s, members their own, and other companies nothing.', s: 'connected' },
+  { t: 'Your computers\' status in the ERP', x: 'Live computer status in the ERP needs CAD Automation to report to it, which is not switched on yet. Until then the ERP page says so and links to your computers in CAD Automation.', s: 'in-development' },
 ];
 const walkthrough = [
   { t: 'Sign in', x: 'At bizomat.ai/cad, with your CAD Automation email and password, or Google where your administrator turned it on.' },
@@ -79,7 +82,7 @@ const walkthrough = [
   { t: 'In SOLIDWORKS', x: 'The add-in\'s tab, menu and task pane show the connection, prompts to copy, the confirmation setting and live activity. A confirm window appears before destructive changes.' },
   { t: 'The Companion', x: 'A tray app that starts with Windows. It pairs the computer, holds the signed link to BIZOMAT, and can be paused from its menu.' },
 ];
-const workflows = [
+const workflows: { t: string; steps: string[] }[] = [
   {
     t: 'A new part from a request',
     steps: [
@@ -117,6 +120,16 @@ const workflows = [
     ],
   },
 ];
+const linksNow: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'BIZOMAT ERP: set-up', x: 'Products and Engineering in the ERP\'s module rail gives CAD Automation\'s four set-up steps, with links into the application.', s: 'connected' },
+  { t: 'AI assistants', x: 'Claude, ChatGPT where your plan allows custom connectors, and other assistants that support remote MCP servers.', s: 'live' },
+  { t: 'SOLIDWORKS', x: 'A native add-in with a tab, menu and task pane, built against the SOLIDWORKS 2022 API.', s: 'live' },
+];
+const linksLater: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'BIZOMAT ERP: your computers', x: 'The ERP lists a company\'s computers (the owner and administrators see everyone\'s, members their own, other companies nothing) once CAD Automation reports to it. That reporting is not switched on yet; until it is, the ERP page says so and links to your computers in CAD Automation.', s: 'in-development' },
+  { t: 'Sign in with BIZOMAT', x: 'One BIZOMAT account for CAD Automation too. Until it is switched on, CAD Automation keeps its own sign-in.', s: 'in-development' },
+  { t: 'Product and engineering records', x: 'Products with revisions and bills of materials, and engineering changes, in the ERP, linked to CAD Automation drawings.', s: 'planned' },
+];
 const faq = [
   { q: 'How do I connect SOLIDWORKS?', a: 'Install BIZOMAT CAD Automation for SOLIDWORKS on the Windows computer where SOLIDWORKS runs. One installer adds the SOLIDWORKS add-in and the Companion. Pair the computer with your CAD Automation account in the Companion\'s pairing window, then open SOLIDWORKS: the add-in loads by itself and connects through the Companion. Nothing has to connect in to your computer.' },
   { q: 'What is MCP?', a: `MCP, the Model Context Protocol, is an open protocol that lets an AI assistant call tools in other software. CAD Automation is an MCP server: it gives your assistant ${toolCount} SOLIDWORKS tools. You add its connector address to your assistant once and sign in; the assistant then decides which tools to call for your request.` },
@@ -125,7 +138,7 @@ const faq = [
   { q: 'Which AI assistants work with it?', a: 'Any assistant that supports remote MCP servers over Streamable HTTP. In Claude, add it as a custom connector. In ChatGPT, add it where your plan allows custom connectors; your workspace administrator may need to allow them first. Sign-in for AI apps has been tested with the MCP Python SDK client and Claude Desktop; ChatGPT\'s connector is not tested yet.' },
   { q: 'Does BIZOMAT run its own AI?', a: 'No. CAD Automation runs no AI of its own. Your assistant does the reasoning; CAD Automation gives it the tools, checks each step and runs it in SOLIDWORKS.' },
   { q: 'Do my models leave my computer?', a: 'SOLIDWORKS saves your models on your computer. To check and measure, BIZOMAT works on a copy of the current body held briefly in memory, and exports you ask for are kept for one hour.' },
-  { q: 'Is it the same account as BIZOMAT ERP?', a: 'Not yet. CAD Automation keeps its own sign-in for now, so your CAD Automation account is separate from the BIZOMAT account you use for BIZOMAT ERP, Projects, the CRM and Finance. The ERP shows CAD Automation\'s set-up steps under Products and Engineering.' },
+  { q: 'Is it the same account as BIZOMAT ERP?', a: 'Not yet. CAD Automation keeps its own sign-in for now, so your CAD Automation account is separate from the BIZOMAT account you use for BIZOMAT ERP, Projects, the CRM and Finance. Sign in with BIZOMAT for CAD Automation is in development. Meanwhile the ERP shows CAD Automation\'s set-up steps under Products and Engineering.' },
   { q: 'How far has it been tested?', a: `${CAD.status} The add-in is built against the SOLIDWORKS 2022 API and has not yet been run on many real SOLIDWORKS installations, so run the self test on each computer and SOLIDWORKS version you use.` },
   { q: 'Can I use more than one computer?', a: 'Yes. Install and pair each one; each gets its own key. When more than one is online, the assistant asks which one to use, and you can make one the default.' },
 ];
@@ -158,6 +171,7 @@ const schema = [
         <p class="bz-eyebrow">What it does</p>
         <h2 id="how-title">Your assistant asks. Your SOLIDWORKS does the work.</h2>
         <p>An engineering automation system takes repeated design work off your hands. Here, your AI assistant calls BIZOMAT's tools over MCP; BIZOMAT checks each step and sends it to your computer, where the add-in makes native features in your SOLIDWORKS session.</p>
+        <StatusLegend />
       </div>
       <CommandFlow id="eng-flow" />
       <div class="pp-split pp-section__after">
@@ -165,7 +179,7 @@ const schema = [
           {CAD.steps.map((s) => <li><h3>{s.title}</h3><p>{s.text}</p></li>)}
         </ol>
         <div class="bz-stack">
-          <h3>Local execution, by design</h3>
+          <h3 class="pp-subhead">Local execution, by design <StatusLabel status="live" /></h3>
           <ul class="pp-list">
             <li>SOLIDWORKS runs on your computer, with your licence, templates and file locations.</li>
             <li>Only commands and their results travel. Model files are read and saved where they are.</li>
@@ -199,7 +213,7 @@ const schema = [
         <h2 id="problems-title">Less repetition, more checking</h2>
       </div>
       <ul class="pp-cards" role="list">
-        {problems.map((p) => <li class="pp-card"><h3>{p.t}</h3><p>{p.x}</p></li>)}
+        {problems.map((p) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{p.t}</h3><p>{p.x}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -212,8 +226,9 @@ const schema = [
         <p>Everything it makes is a native SOLIDWORKS feature you can edit like any other.</p>
       </div>
       <ul class="pp-cards" role="list">
-        {CAD.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title}</h3><p>{c.text}</p></li>)}
+        {CAD.capabilities.map((c) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{c.title}</h3><p>{c.text}</p></li>)}
       </ul>
+      <p class="pp-table-note">Live means available in CAD Automation today. Testing on real SOLIDWORKS installations is still under way: see <a href="#security">Where it stands</a>.</p>
     </Container>
   </section>
 
@@ -227,7 +242,7 @@ const schema = [
       <div class="pp-tools">
         {CAD_TOOL_GROUPS.map((g) => (
           <section aria-label={g.group}>
-            <h3>{g.group}</h3>
+            <h3 class="pp-subhead">{g.group} <StatusLabel status="live" /></h3>
             <dl>{g.tools.map((t) => <div><dt>{t.name}</dt><dd><strong>{t.title}.</strong> {t.text}</dd></div>)}</dl>
           </section>
         ))}
@@ -246,7 +261,7 @@ const schema = [
         <h2 id="security-title">Built to keep your CAD environment yours</h2>
       </div>
       <ul class="pp-cards" role="list">
-        {security.map((s) => <li class="pp-card"><h3>{s.t}</h3><p>{s.x}</p></li>)}
+        {security.map((s) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{s.t}</h3><p>{s.x}</p></li>)}
       </ul>
       <div class="bz-alert bz-alert--info pp-status" role="note">
         <strong>Where it stands</strong>
@@ -289,7 +304,7 @@ const schema = [
         <p>CAD Automation's own Home is where you work. BIZOMAT ERP shows the same set-up for your company, beside its other systems.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
-        {dashboardParts.map((d) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{d.t}</h3><p>{d.x}</p></li>)}
+        {dashboardParts.map((d) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={d.s} /></p><h3>{d.t}</h3><p>{d.x}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -300,6 +315,7 @@ const schema = [
         <p class="bz-eyebrow">Screen by screen</p>
         <h2 id="walk-title">A walk through CAD Automation</h2>
         <p>The application's pages, then what you see on your own computer. The <a href={GUIDE}>user guide</a> explains each step.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in CAD Automation and its installer today.</span></p>
       </div>
       <ol class="pp-steps pp-steps--2">
         {walkthrough.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
@@ -343,7 +359,7 @@ const schema = [
       <ul class="pp-cards pp-cards--2" role="list">
         {workflows.map((w) => (
           <li class="pp-card">
-            <span class="pp-card__mark"></span>
+            <p class="pp-card__status"><StatusLabel status="live" /></p>
             <h3>{w.t}</h3>
             <ol class="pp-flow">{w.steps.map((s) => <li>{s}</li>)}</ol>
           </li>
@@ -356,27 +372,23 @@ const schema = [
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Integration with other BIZOMAT systems</p>
-        <h2 id="int-title">What connects today, and what is planned</h2>
+        <h2 id="int-title">What connects today, and what comes next</h2>
       </div>
       <div class="pp-tools">
         <section aria-labelledby="int-now">
           <h3 id="int-now">Works today</h3>
           <dl>
-            <div><dt>BIZOMAT ERP</dt><dd>Products and Engineering in the ERP's module rail gives CAD Automation's four set-up steps, with links into the application, and lists your company's computers: the owner and administrators see everyone's, members their own, other companies nothing.</dd></div>
-            <div><dt>AI assistants</dt><dd>Claude, ChatGPT where your plan allows custom connectors, and other assistants that support remote MCP servers.</dd></div>
-            <div><dt>SOLIDWORKS</dt><dd>A native add-in with a tab, menu and task pane, built against the SOLIDWORKS 2022 API.</dd></div>
+            {linksNow.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
         </section>
         <section aria-labelledby="int-not">
           <h3 id="int-not">Not yet</h3>
           <dl>
-            <div><dt>Live status in the ERP</dt><dd>Computers show in the ERP only once CAD Automation reports to it, which is not switched on yet. Until then the ERP page says so and links to your computers in CAD Automation.</dd></div>
-            <div><dt>One BIZOMAT sign-in</dt><dd>CAD Automation keeps its own sign-in for now, separate from your BIZOMAT account.</dd></div>
-            <div><dt>Product and engineering records</dt><dd>Products, revisions and bills of materials in the ERP, linked to CAD Automation drawings, are planned, not built.</dd></div>
-            <div><dt>Projects, CRM and Finance</dt><dd>There is no automatic link between CAD Automation and these systems yet.</dd></div>
+            {linksLater.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
         </section>
       </div>
+      <p class="pp-table-note">There is no automatic link between CAD Automation and Projects, the CRM or Finance today.</p>
     </Container>
   </section>
 
@@ -440,5 +452,9 @@ const schema = [
   .pp-band__note { margin: .6rem 0 0; max-width: 46ch; }
   .pp-related__kind { margin: 0 0 .5rem; color: var(--muted); font-size: .82rem; }
   .pp-card h3 a { color: inherit; }
+  .pp-card__status { margin: 0 0 .75rem; }
+  .pp-status-line { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: .92rem; }
+  .pp-subhead { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+  .bz-stack .pp-subhead { font-size: var(--step-1); }
   @media (max-width: 1000px) { .pp-steps--2 { grid-template-columns: 1fr; } }
 </style>

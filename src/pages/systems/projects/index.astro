@@ -3,19 +3,22 @@
 // Work before that). It opens inside BIZOMAT ERP, in the Projects and Tasks module (src/config/systems.ts). Facts come
 // from src/data/platform-catalog.ts (WORK), which records its sources in apps/work, and from the application's code:
 // roles (apps/work/src/shared/permissions.ts), templates (src/worker/services/boards.ts), widgets
-// (src/client/pages/DashboardPage.tsx), project reports (src/shared/reports.ts), the ERP's dashboard and rail
+// (src/client/pages/DashboardPage.tsx), project reports (src/shared/reports.ts), project finance
+// (src/client/board/FinancePanel.tsx), integrations (src/worker/services/integrations.ts), the ERP's dashboard and rail
 // (src/client/system/SystemApp.tsx, components/layout/SuiteRail.tsx) and the links between tools
-// (src/worker/company/links.ts, docs/company/README.md). The user guide is /systems/projects/guide/.
+// (src/worker/company/links.ts, docs/company/README.md). Every feature carries its status (StatusLabel: Live,
+// Connected, In development, Planned). The user guide is /systems/projects/guide/.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
 import ProjectFlow from '../../../components/visuals/ProjectFlow.astro';
 import WorkflowPipeline from '../../../components/visuals/WorkflowPipeline.astro';
 import '../../../styles/product.css';
 import { screenshots } from '../../../data/screenshots.ts';
 import { SITE } from '../../../config/site.ts';
-import { APP_LINKS } from '../../../config/platform.ts';
-import { SYSTEMS, STATUS_LABEL, SYSTEMS_HOME, systemById } from '../../../config/systems.ts';
+import { SYSTEMS, STATUS_LABEL, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
 import { WORK } from '../../../data/platform-catalog.ts';
 
 const sys = systemById('projects');
@@ -26,6 +29,8 @@ const shots = screenshots('work');
 const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-projects.webp'));
 const related = SYSTEMS.filter((s) => s.id !== sys.id);
 const description = 'BIZOMAT Projects, the Project Management System: projects, tasks, teams, timelines, dashboards and documents in one workspace, inside BIZOMAT ERP.';
+
+interface Feature { t: string; x: string; s: FeatureStatus }
 
 const viewNotes: Record<string, string> = {
   'Table': 'Sort, filter with AND/OR, group, resize and hide columns, select in bulk.',
@@ -47,21 +52,29 @@ const roles = [
   { t: 'Viewer', x: 'Reads and comments on the workspace\'s shared projects.' },
   { t: 'Guest or contractor', x: 'Sees only the projects or tasks shared with them, and nothing workspace-wide.' },
 ];
-const teams = [
-  { t: 'Workspaces and roles', x: `${roles.length} roles per workspace, from owner to guest, with board roles and private or shared boards.` },
-  { t: 'Project and task access', x: 'On each project, a person can manage, edit or view, and rights such as assigning tasks, seeing financial data or generating reports can be switched on or off. One task can be shared without the rest of the project.' },
-  { t: 'Invitations and teams', x: 'Invite people with a link, group them into teams, and give each item an owner, a status and a date.' },
-  { t: 'Audit and export', x: 'An audit log of changes and a JSON export of a workspace for its administrators.' },
+const teams: Feature[] = [
+  { t: 'Workspaces and roles', x: `${roles.length} roles per workspace, from owner to guest, with board roles and private or shared boards.`, s: 'live' },
+  { t: 'Project and task access', x: 'On each project, a person can manage, edit or view, and rights such as assigning tasks, seeing financial data or generating reports can be switched on or off. One task can be shared without the rest of the project.', s: 'live' },
+  { t: 'Invitations and teams', x: 'Invite people with a link, group them into teams, and give each item an owner, a status and a date.', s: 'live' },
+  { t: 'Audit and export', x: 'An audit log of changes and a JSON export of a workspace for its administrators.', s: 'live' },
 ];
-const collaboration = [
-  { t: 'Updates on every item', x: 'Updates and replies with @mentions, so the conversation stays with the work.' },
-  { t: 'Files and documents', x: 'Attachments on items, and rich-text documents with autosave, version history, comments and links to boards.' },
-  { t: 'Notifications', x: 'Assignment, mention, reply, status change, due soon and overdue, with your own preferences.' },
-  { t: 'Time and planning', x: 'Time tracking on items, My Work, My Day and a weekly planner.' },
+const collaboration: Feature[] = [
+  { t: 'Updates on every item', x: 'Updates and replies with @mentions, so the conversation stays with the work.', s: 'live' },
+  { t: 'Files and documents', x: 'Attachments on items, and rich-text documents with autosave, version history, comments and links to boards.', s: 'live' },
+  { t: 'Notifications', x: 'Assignment, mention, reply, status change, due soon and overdue, with your own preferences.', s: 'live' },
+  { t: 'Time and planning', x: 'Time tracking on items, My Work, My Day and a weekly planner.', s: 'live' },
 ];
 // apps/work/src/client/pages/DashboardPage.tsx (WIDGET_TYPES).
 const widgets = ['Number', 'Chart', 'Task status', 'Priority distribution', 'Completion', 'Workload', 'Overdue work', 'Upcoming deadlines', 'Project progress', 'Activity', 'Time tracking'];
 if (widgets.length !== WORK.widgetTypes) throw new Error(`projects: ${widgets.length} widget types listed, WORK.widgetTypes says ${WORK.widgetTypes}`);
+const insight: Feature[] = [
+  { t: 'Dashboards', x: `${WORK.widgetTypes} widget types computed from live board data, with source boards, filters and date ranges.`, s: 'live' },
+  { t: 'Goals', x: 'Goals with progress set by hand or worked out from boards.', s: 'live' },
+  { t: 'Project reports', x: 'Saved reports on a project, from monthly progress and outstanding tasks to critical path and earned value, each kept with PDF, Excel, HTML and CSV files.', s: 'live' },
+  { t: 'Project controls', x: 'The critical path, baselines and earned value of a project.', s: 'live' },
+  { t: 'Project finance', x: 'Approved budget, estimated and actual cost, committed, remaining budget and variance from a board\'s money columns, to people allowed to see financial data.', s: 'live' },
+  { t: 'Planning for each person', x: 'My Work, My Day and a weekly planner.', s: 'live' },
+];
 const security = [
   'Email and password sign-in with secure session cookies, CSRF protection, rate limits and lockout.',
   'Google sign-in where it is configured, and personal API tokens for integrations.',
@@ -76,19 +89,19 @@ const who = [
   { t: 'Companies on BIZOMAT ERP', x: 'Run one Projects workspace for the company, beside Sales and CRM and Finance and Accounting, with one sign-in.' },
   { t: 'Sales and delivery teams', x: 'Hand a won deal to the people who deliver it, without retyping the customer or the scope.' },
 ];
-const problems = [
-  { t: 'Work spread across spreadsheets, email and chat', x: 'Each project is one board: its tasks, owners, dates, files and updates in one place everyone can open.' },
-  { t: 'Nobody is sure who owns a task', x: 'Every item has an owner, a status and a date, and My Work shows each person what is theirs.' },
-  { t: 'Status meetings just to find out where things are', x: 'Dashboards and the timeline are computed from the live board, so the current position is always on screen.' },
-  { t: 'Deadlines that slip without warning', x: 'Due soon and overdue notifications, an overdue count on Home, and dependencies on the timeline.' },
-  { t: 'Routine steps that depend on someone remembering', x: 'Automations react to status changes, dates and schedules, and log every run.' },
-  { t: 'A messy hand-over from sales to delivery', x: 'In a company account, a CRM deal starts the project board, and a CRM follow-up can become a project task.' },
+const problems: Feature[] = [
+  { t: 'Work spread across spreadsheets, email and chat', x: 'Each project is one board: its tasks, owners, dates, files and updates in one place everyone can open.', s: 'live' },
+  { t: 'Nobody is sure who owns a task', x: 'Every item has an owner, a status and a date, and My Work shows each person what is theirs.', s: 'live' },
+  { t: 'Status meetings just to find out where things are', x: 'Dashboards and the timeline are computed from the live board, so the current position is always on screen.', s: 'live' },
+  { t: 'Deadlines that slip without warning', x: 'Due soon and overdue notifications, an overdue count on Home, and dependencies on the timeline.', s: 'live' },
+  { t: 'Routine steps that depend on someone remembering', x: 'Automations react to status changes, dates and schedules, and log every run.', s: 'live' },
+  { t: 'A messy hand-over from sales to delivery', x: 'In a company account, a CRM deal starts the project board, and a CRM follow-up can become a project task.', s: 'connected' },
 ];
-const dashboardParts = [
-  { t: 'Home', x: 'Your start page in a workspace: what is overdue, due today, due in the next 7 days and planned today; a Needs your attention list; recent activity; My Day; favourites and recently visited places. New board, New doc and New dashboard are at the top.' },
-  { t: 'My Work and My Day', x: 'My Work lists everything assigned to you across the boards you can open, and the tasks shared with you. My Day is what you choose to focus on today, with a weekly planner.' },
-  { t: 'Dashboards', x: `Live overviews built from your boards. Add widgets (${widgets.length} types), choose their source boards, filters and date ranges, then resize and reorder them.` },
-  { t: 'The BIZOMAT ERP Dashboard', x: 'The ERP\'s first page shows your company with a card for each tool. The Projects and Tasks card shows open tasks, overdue, due in 7 days and the number of projects, to people whose role may see them.' },
+const dashboardParts: Feature[] = [
+  { t: 'Home', x: 'Your start page in a workspace: what is overdue, due today, due in the next 7 days and planned today; a Needs your attention list; recent activity; My Day; favourites and recently visited places. New board, New doc and New dashboard are at the top.', s: 'live' },
+  { t: 'My Work and My Day', x: 'My Work lists everything assigned to you across the boards you can open, and the tasks shared with you. My Day is what you choose to focus on today, with a weekly planner.', s: 'live' },
+  { t: 'Dashboards', x: `Live overviews built from your boards. Add widgets (${widgets.length} types), choose their source boards, filters and date ranges, then resize and reorder them.`, s: 'live' },
+  { t: 'The BIZOMAT ERP Dashboard', x: 'The ERP\'s first page shows your company with a card for each tool. The Projects and Tasks card shows open tasks, overdue, due in 7 days and the number of projects, to people whose role may see them.', s: 'connected' },
 ];
 const walkthrough = [
   { t: 'Sign in', x: 'At bizomat.ai/erp, with your BIZOMAT email and password, or Google where it is configured.' },
@@ -112,9 +125,10 @@ const steps = [
   { t: 'Invite your team', x: 'In Settings, Members, invite people by email and choose each person\'s role.' },
   { t: 'Track it', x: 'Switch to the Timeline or Kanban view, and add a dashboard to follow progress across boards.' },
 ];
-const workflows = [
+const workflows: { t: string; s: FeatureStatus; note?: string; steps: string[] }[] = [
   {
     t: 'From a won deal to a delivery project',
+    s: 'connected',
     note: 'Needs a company account that runs Sales and CRM, Projects and Finance.',
     steps: [
       'In Sales and CRM, open the deal and choose Start a project, in the section headed Across and your company\'s name.',
@@ -125,6 +139,7 @@ const workflows = [
   },
   {
     t: 'Requests through a form',
+    s: 'live',
     steps: [
       'Create a board from the Request intake template. It comes with a request form view and a Files view.',
       'Requests entered through the form arrive as items in New requests.',
@@ -134,6 +149,7 @@ const workflows = [
   },
   {
     t: 'A monthly progress report',
+    s: 'live',
     steps: [
       'Keep statuses and dates current on the board, and log time on items.',
       'Check progress, overdue work and workload on the project\'s dashboard.',
@@ -141,6 +157,17 @@ const workflows = [
       'Preview it, then save it. The PDF, Excel, HTML and CSV files are kept as a version you can download later.',
     ],
   },
+];
+const bizomatLinks: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'BIZOMAT ERP', x: 'Projects opens inside the ERP, in Projects and Tasks, with My Work in the rail. The ERP Dashboard shows the workspace\'s open, overdue and upcoming tasks, and Reports lists its dashboards.', s: 'connected' },
+  { t: 'Sales and CRM: follow-up to task', x: 'A CRM follow-up becomes a task in a project you choose, linked back to the customer.', s: 'connected' },
+  { t: 'Sales and CRM: deal to project', x: 'In a company account, a deal starts a project board named after it, once per deal.', s: 'connected' },
+  { t: 'Finance: project costs and budget', x: 'In a company account, a project gets a Finance tracking project and a budget. Income and costs posted to it in Finance show against the budget, to people whose Finance role sees reports.', s: 'connected' },
+  { t: 'Company accounts', x: 'A company runs one Projects workspace. Each person\'s Projects role is set in the company, and each department appears as a team.', s: 'connected' },
+];
+const otherLinks: { t: string; x: string; s: FeatureStatus }[] = [
+  { t: 'Webhooks', x: WORK.integrations, s: 'live' },
+  { t: 'Google Drive, Calendar, Gmail and GitHub', x: 'Listed in the app as "Requires setup". They cannot be switched on yet.', s: 'planned' },
 ];
 const faq = [
   { q: 'How do I create a project?', a: 'In BIZOMAT Projects a project is a board. Open Projects and Tasks in BIZOMAT ERP, choose New board, give it a name and pick a template (Project plan, Sprint board, Request intake and others) or a blank board, and choose who can see it. In a company account, a CRM deal can also start the project for you.' },
@@ -181,9 +208,10 @@ const schema = [
         <p class="bz-eyebrow">What it does</p>
         <h2 id="features-title">Plan it, assign it, track it, finish it</h2>
         <p>A project management system keeps the plan, the people and the progress of each piece of work in one shared place. In {sys.name}, projects, tasks, teams and the conversation around them sit on one data model, so every view and dashboard shows the same work.</p>
+        <StatusLegend />
       </div>
       <ul class="pp-cards" role="list">
-        {WORK.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title}</h3><p>{c.text}</p></li>)}
+        {WORK.capabilities.map((c) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{c.title}</h3><p>{c.text}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -196,7 +224,7 @@ const schema = [
         <p>Each person gets a role, and sees and changes only what that role allows.</p>
       </div>
       <ul class="pp-cards" role="list">
-        {who.map((w) => <li class="pp-card"><h3>{w.t}</h3><p>{w.x}</p></li>)}
+        {who.map((w) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{w.t}</h3><p>{w.x}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -208,7 +236,7 @@ const schema = [
         <h2 id="problems-title">Less chasing, fewer surprises</h2>
       </div>
       <ul class="pp-cards" role="list">
-        {problems.map((p) => <li class="pp-card"><h3>{p.t}</h3><p>{p.x}</p></li>)}
+        {problems.map((p) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={p.s} /></p><h3>{p.t}</h3><p>{p.x}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -219,6 +247,7 @@ const schema = [
         <p class="bz-eyebrow">Features: views and boards</p>
         <h2 id="views-title">{WORK.views.length} views of the same work</h2>
         <p>Change a status in the table and the Kanban, calendar and timeline follow, because every view reads the same items. Boards use {WORK.columnTypes} column types, from status and people to dates, numbers, dependencies and formulas, and start blank or from a template.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every view, column type and template below works today.</span></p>
       </div>
       <ul class="pp-cards" role="list">
         {WORK.views.map((v) => <li class="pp-card"><h3>{v}</h3><p>{viewNotes[v]}</p></li>)}
@@ -233,9 +262,9 @@ const schema = [
         <h2 id="teams-title">The right people on the right work</h2>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
-        {teams.map((t) => <li class="pp-card"><h3>{t.t}</h3><p>{t.x}</p></li>)}
+        {teams.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
       </ul>
-      <h3 class="pp-subhead pp-gap">The {roles.length} workspace roles</h3>
+      <h3 class="pp-subhead pp-gap">The {roles.length} workspace roles <StatusLabel status="live" /></h3>
       <ul class="pp-list pp-list--cols">{roles.map((r) => <li><strong>{r.t}:</strong> {r.x}</li>)}</ul>
     </Container>
   </section>
@@ -247,7 +276,7 @@ const schema = [
         <h2 id="collab-title">The conversation stays with the work</h2>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
-        {collaboration.map((t) => <li class="pp-card"><h3>{t.t}</h3><p>{t.x}</p></li>)}
+        {collaboration.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -258,23 +287,24 @@ const schema = [
         <p class="bz-eyebrow">Features: automations</p>
         <h2 id="auto-title">Automations move routine work forward</h2>
         <p>Choose a trigger, add conditions, pick actions. Status changes, dates and schedules start work for you; every run is logged once, failures are retried, and chains cannot loop.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Triggers, conditions, actions, recipes and run logs work today.</span></p>
       </div>
       <WorkflowPipeline id="projects-flow" />
     </Container>
   </section>
 
   <section class="pp-section pp-section--tint" id="dashboards" aria-labelledby="dash-title">
-    <Container class="pp-split">
-      <div>
+    <Container>
+      <div class="pp-head">
         <p class="bz-eyebrow">Features: dashboards, goals and reports</p>
         <h2 id="dash-title">See the whole portfolio at a glance</h2>
-        <p class="pp-head-lead">{WORK.widgetTypes} dashboard widget types compute from live board data, with filters and date ranges. Goals track progress by hand or from boards.</p>
-        <p class="pp-body">On a project, people who may generate reports choose Reports for saved project reports, from monthly progress and outstanding tasks to critical path and earned value, with PDF, Excel, HTML and CSV files. Project controls show the critical path, baselines and earned value.</p>
+        <p>Everything here is computed from the recorded work when you open it, and each person sees only what their role allows.</p>
       </div>
-      <div>
-        <h3 class="pp-subhead">Dashboard widgets</h3>
-        <ul class="pp-list pp-list--cols">{widgets.map((w) => <li>{w}</li>)}</ul>
-      </div>
+      <ul class="pp-cards" role="list">
+        {insight.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
+      </ul>
+      <h3 class="pp-subhead pp-gap">The {widgets.length} dashboard widgets <StatusLabel status="live" /></h3>
+      <ul class="pp-list pp-list--cols pp-list--3">{widgets.map((w) => <li>{w}</li>)}</ul>
     </Container>
   </section>
 
@@ -283,6 +313,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">Features: accounts and security</p>
         <h2 id="sec-title">Your projects are visible only to your workspace</h2>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every protection below is in place today.</span></p>
       </div>
       <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
     </Container>
@@ -322,7 +353,7 @@ const schema = [
         <p>Four places answer "what needs doing, and how is it going?" Each counts only the work you are allowed to see.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
-        {dashboardParts.map((d) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{d.t}</h3><p>{d.x}</p></li>)}
+        {dashboardParts.map((d) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={d.s} /></p><h3>{d.t}</h3><p>{d.x}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -333,6 +364,7 @@ const schema = [
         <p class="bz-eyebrow">Screen by screen</p>
         <h2 id="walk-title">A walk through the application</h2>
         <p>In the order you meet them. The <a href={GUIDE}>user guide</a> explains each one step by step.</p>
+        <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in the application today.</span></p>
       </div>
       <ol class="pp-steps pp-steps--2">
         {walkthrough.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
@@ -365,7 +397,7 @@ const schema = [
       <ul class="pp-cards" role="list">
         {workflows.map((w) => (
           <li class="pp-card">
-            <span class="pp-card__mark"></span>
+            <p class="pp-card__status"><StatusLabel status={w.s} /></p>
             <h3>{w.t}</h3>
             <ol class="pp-flow">{w.steps.map((s) => <li>{s}</li>)}</ol>
             {w.note && <p class="pp-table-note">{w.note}</p>}
@@ -386,17 +418,13 @@ const schema = [
         <section aria-labelledby="int-bizomat">
           <h3 id="int-bizomat">With BIZOMAT systems</h3>
           <dl>
-            <div><dt>BIZOMAT ERP</dt><dd>Projects opens inside the ERP, in Projects and Tasks, with My Work in the rail. The ERP Dashboard shows the workspace's open, overdue and upcoming tasks, and Reports lists its dashboards.</dd></div>
-            <div><dt>Sales and CRM</dt><dd>A CRM follow-up becomes a task in a project you choose, linked back to the customer. In a company account, a deal starts a project board named after it, once per deal.</dd></div>
-            <div><dt>Finance and Accounting</dt><dd>In a company account, a project gets a Finance tracking project and a budget. Income and costs posted to it in Finance show against the budget, to people whose Finance role sees reports.</dd></div>
-            <div><dt>Company accounts</dt><dd>A company runs one Projects workspace. Each person's Projects role is set in the company, and each department appears as a team.</dd></div>
+            {bizomatLinks.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
         </section>
         <section aria-labelledby="int-other">
           <h3 id="int-other">With other tools</h3>
           <dl>
-            <div><dt>Webhooks</dt><dd>{WORK.integrations}</dd></div>
-            <div><dt>Requires setup</dt><dd>Google Drive, Calendar, Gmail and GitHub appear in the app as "requires setup": they are not connected until they are configured.</dd></div>
+            {otherLinks.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
         </section>
       </div>
@@ -451,11 +479,13 @@ const schema = [
 
 <style>
   .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
-  .pp-body { margin: .9rem 0 0; color: var(--ink-2); }
-  .pp-subhead { font-size: var(--step-1); margin-bottom: .9rem; }
+  .pp-subhead { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: var(--step-1); margin-bottom: .9rem; }
   .pp-gap { margin-top: clamp(2rem, 4vw, 3rem); }
   .pp-list--cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
+  .pp-list--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .pp-steps--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pp-card__status { margin: 0 0 .75rem; }
+  .pp-status-line { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: .92rem; }
   .pp-flow { margin: .7rem 0 0; padding-left: 1.2rem; display: grid; gap: .4rem; color: var(--ink-2); font-size: .95rem; }
   .pp-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
   .pp-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
@@ -464,6 +494,6 @@ const schema = [
   .pp-band__note { margin: .6rem 0 0; max-width: 46ch; }
   .pp-related__kind { margin: 0 0 .5rem; color: var(--muted); font-size: .82rem; }
   .pp-card h3 a { color: inherit; }
-  @media (max-width: 1000px) { .pp-steps--2 { grid-template-columns: 1fr; } }
-  @media (max-width: 640px) { .pp-list--cols { grid-template-columns: 1fr; } }
+  @media (max-width: 1000px) { .pp-steps--2 { grid-template-columns: 1fr; } .pp-list--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px) { .pp-list--cols, .pp-list--3 { grid-template-columns: 1fr; } }
 </style>
