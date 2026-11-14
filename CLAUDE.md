@@ -83,9 +83,11 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
 ## Source of truth
 
 - **GitHub `kevinjogin/bizomat-site`, branch `main`** (since 9 Nov 2026; its history is `jogkev-creator/gocore-website`,
-  which is kept unchanged as an archive: never push there). Every repository is
-  private (owner, 7 Nov 2026): nothing public may link to GitHub, the laptop works from its signed-in clones, and public
-  files are published on bizomat.ai (`/downloads/`, the R2 bucket `bizomat-downloads`, `src/server/downloads.ts`). Before any work:
+  which is kept unchanged as an archive: never push there). `kevinjogin/bizomat-site` and `kevinjogin/bizomat-cad`
+  are public since 14 Nov 2026 (owner; private from 7 Nov): everything committed is readable by anyone, so never commit
+  a secret, a token, personal data or a data dump (GitHub's secret scanning watches both; a history scan for keys and
+  tokens found none that day). Public Actions minutes are free. Downloads stay on bizomat.ai (`/downloads/`, the R2
+  bucket `bizomat-downloads`, `src/server/downloads.ts`), not GitHub releases. Before any work:
   `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
   Preserve uncommitted work on a backup branch before anything else.
 - `kevinjogin/bizomat-cad` (formerly `jogkev-creator/CADOS`, same commits) is where CAD Automation is changed and
