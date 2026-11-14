@@ -21,6 +21,7 @@ import '../styles/crm.css';
 import '../styles/fin.css';
 import '../styles/company.css';
 import '../styles/system.css';
+import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
 // ------------------------------------------------------------------ data
 
@@ -116,20 +117,36 @@ export function SystemRoutes() {
       <Route path="/" element={<SystemHome />} />
       <Route path="/c/:companyId/*" element={<CompanyArea />} />
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
+      {/* The module rail's CAD Automation: the CAD page of the company used last. */}
+      <Route path="/cad" element={<SystemHome page="cad" />} />
+      {/* A tool's address reached from here (/crm/..., /tasks/...): open it inside the System with a page load. */}
+      <Route path="/tasks/*" element={<OpenTool />} />
+      <Route path="/crm/*" element={<OpenTool />} />
+      <Route path="/finance/*" element={<OpenTool />} />
+      <Route path="/company/*" element={<OpenTool />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }
 
-/** "/": the company used last, else the first (registered, then the person's own). */
-function SystemHome() {
+/** Another tool of the System: its own application, at /system/<tool>/..., is a page load away. */
+function OpenTool() {
+  const location = useLocation();
+  useEffect(() => {
+    window.location.replace(`/system${location.pathname}${location.search}${location.hash}`);
+  }, [location]);
+  return <Loading label="Opening…" />;
+}
+
+/** "/": the company used last, else the first (registered, then the person's own). "/cad": its CAD page. */
+function SystemHome({ page = 'home' }: { page?: 'home' | 'cad' }) {
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
   if (!q.data) return <Loading label={`Loading ${BRAND.full}…`} />;
   const list = q.data.companies;
   const pick = list.find((c) => c.id === lastCompany()) ?? list[0];
   if (!pick) return <Shell><div className="page"><EmptyState title="No company yet" icon="building">Reload the page to make your own company.</EmptyState></div></Shell>;
-  return <Navigate to={`/c/${pick.id}/home`} replace />;
+  return <Navigate to={`/c/${pick.id}/${page}`} replace />;
 }
 
 function CompanyArea() {
@@ -165,7 +182,8 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
   const id = view?.company.id ?? lastCompany() ?? me?.companies[0]?.id;
   const base = id ? `/c/${id}` : '';
   return (
-    <div className={`shell crm-shell co-shell sys-shell${navOpen ? ' nav-open' : ''}`}>
+    <div className={`shell crm-shell co-shell sys-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
+      <SuiteRail />
       <header className="topbar">
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" aria-expanded={navOpen} onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />
@@ -197,18 +215,15 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             ))}
           </>
         ) : null}
-        <div className="nav-section">All tools</div>
-        <a className="nav-item" href={PLATFORM_URLS.tasks}><Icon name="grid" /> Project Management</a>
-        <a className="nav-item" href={PLATFORM_URLS.crm}><Icon name="briefcase" /> Customer Relationship Management</a>
-        <a className="nav-item" href={PLATFORM_URLS.finance}><Icon name="dollar" /> Finance</a>
-        <a className="nav-item" href={CAD.app}><Icon name="diamond" /> CAD Automation</a>
-        <a className="nav-item" href={PLATFORM_URLS.company}><Icon name="building" /> Company accounts</a>
         {me?.platformRole ? (
           <>
             <div className="nav-section">Super admin</div>
             <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> System console</NavLink>
           </>
         ) : null}
+        {/* Every tool is in the module rail (SuiteRail); CAD Automation's own application opens at /cad. */}
+        <div className="nav-section">CAD Automation application</div>
+        <a className="nav-item" href={CAD.app}><Icon name="diamond" /> Open CAD Automation</a>
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
@@ -303,7 +318,7 @@ function Profile() {
             <div className="muted small ellipsis">{user.email}</div>
             {me?.platformRole ? <div className="muted small">{me.platformRole === 'founder' ? 'Founder (super admin)' : 'Platform administrator'}</div> : null}
           </div>
-          <MenuItem icon="user" onClick={() => { close(); window.location.href = '/tasks/settings/profile'; }}>Profile and security</MenuItem>
+          <MenuItem icon="user" onClick={() => { close(); window.location.href = '/system/tasks/settings/profile'; }}>Profile and security</MenuItem>
           <MenuSep />
           <MenuItem icon="logout" onClick={() => { close(); void signOut(); }}>Sign out</MenuItem>
         </>
@@ -609,9 +624,9 @@ function AdminOverview({ founder }: { founder: boolean }) {
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Each tool's own console</h2>
         <div className="row wrap">
-          <a className="btn" href="/tasks/admin">Project Management console</a>
-          <a className="btn" href="/crm/admin">CRM console</a>
-          <a className="btn" href="/finance/admin">Finance console</a>
+          <a className="btn" href="/system/tasks/admin">Project Management console</a>
+          <a className="btn" href="/system/crm/admin">CRM console</a>
+          <a className="btn" href="/system/finance/admin">Finance console</a>
         </div>
       </section>
     </div>

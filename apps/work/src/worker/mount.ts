@@ -17,6 +17,11 @@
 // src/client/company): one Worker, one database and one session for all four. The session cookie is written for each
 // path (Path=/tasks, /crm, /finance and /company), so signing in to one signs in to all, while the website and CAD
 // Automation, at other paths of bizomat.ai, still never receive it.
+//
+// One system (owner, 14 Nov 2026): every tool also opens inside BIZOMAT System, under /system/tasks, /system/crm,
+// /system/finance and /system/company, with the System's module rail around it (src/client/components/layout/SuiteRail.tsx).
+// Those are the same app with a longer path taken off; their cookies are written for /system (and the other paths).
+// A page asked for at a tool's own address answers 302 to the same page inside the System (suiteRedirect).
 import type { Env } from './env';
 
 export const MOUNT = '/tasks';
@@ -30,12 +35,22 @@ export const COMPANY_MOUNT = '/company';
 export const SYSTEM_MOUNT = '/system';
 /** Every path this app is served under on another site's address; the session cookie is written for each. */
 export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT, SYSTEM_MOUNT] as const;
+/** The tools that also open inside BIZOMAT System, at /system/<tool>. */
+export const SUITE_APPS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT] as const;
+/** /system/tasks, /system/crm, /system/finance and /system/company. */
+export const SUITE_MOUNTS = SUITE_APPS.map((m) => `${SYSTEM_MOUNT}${m}`);
+const ALL_MOUNTS = [...SUITE_MOUNTS, ...MOUNTS];
 
-/** The path the request came in under: one of MOUNTS, or '' at the root of the host. */
+/** The path the request came in under: one of MOUNTS or SUITE_MOUNTS (the longest that fits), or '' at the root. */
 export function mountOf(url: URL): string {
-  for (const m of MOUNTS) if (url.pathname === m || url.pathname.startsWith(`${m}/`)) return m;
+  for (const m of ALL_MOUNTS) if (url.pathname === m || url.pathname.startsWith(`${m}/`)) return m;
   return '';
 }
+
+/** The tool a path serves: '/system/crm' -> '/crm'; any other path as it is. */
+export const appOf = (base: string): string => (base.startsWith(`${SYSTEM_MOUNT}/`) ? base.slice(SYSTEM_MOUNT.length) : base);
+/** The path its cookies are written for: '/system/crm' -> '/system'; any other path as it is. */
+export const topOf = (base: string): string => (base.startsWith(`${SYSTEM_MOUNT}/`) ? SYSTEM_MOUNT : base);
 
 const underMount = (value: string) => MOUNTS.some((m) => value === m || value.startsWith(`${m}/`) || value.startsWith(`${m}?`));
 
@@ -58,10 +73,11 @@ function cookieUnder(header: string, base: string): string {
   return header.replace(/(;\s*path=)(\/[^;]*)/i, (_m, attr: string, path: string) => attr + (path === '/' ? base : addBase(path, base)));
 }
 
-/** A cookie the app wrote (Path=/...) for every mount, the request's own first. */
+/** A cookie the app wrote (Path=/...) for every mount, the request's own first (under the System: /system). */
 function cookieForMounts(header: string, base: string): string[] {
   if (!/;\s*path=\//i.test(header)) return [header];
-  return [base, ...MOUNTS.filter((m) => m !== base)].map((m) => cookieUnder(header, m));
+  const own = topOf(base);
+  return [own, ...MOUNTS.filter((m) => m !== own)].map((m) => cookieUnder(header, m));
 }
 
 /** Location headers and cookie paths under the mount. A WebSocket upgrade passes untouched. */
@@ -95,7 +111,8 @@ export async function withBaseHref(res: Response, base: string): Promise<Respons
   if (!(res.headers.get('Content-Type') ?? '').includes('text/html')) return res;
   const tag = `<base href="${base}/">`;
   // Under /crm, /finance, /company and /system the page is that product: its title before the script sets the page's own.
-  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : base === FIN_MOUNT ? 'BIZOMAT Finance' : base === COMPANY_MOUNT ? 'BIZOMAT Company' : base === SYSTEM_MOUNT ? 'BIZOMAT System' : null;
+  const app = appOf(base);
+  const title = base.startsWith(SYSTEM_MOUNT) ? 'BIZOMAT System' : app === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : app === FIN_MOUNT ? 'BIZOMAT Finance' : app === COMPANY_MOUNT ? 'BIZOMAT Company' : null;
   if (typeof HTMLRewriter === 'function') {
     let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
     if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });
@@ -125,6 +142,25 @@ export function crmCanonicalRedirect(request: Request, env: Pick<Env, 'CANONICAL
   if (url.host === canon.host) return null;
   if (url.pathname.startsWith(`${base}/api/`) || !(request.headers.get('Accept') ?? '').includes('text/html')) return null;
   return new Response(null, { status: 301, headers: { Location: `${canon.origin}${url.pathname}${url.search}`, 'Cache-Control': 'public, max-age=3600' } });
+}
+
+/**
+ * One system: a page asked for at a tool's own address (bizomat.ai/crm/o/x) answers 302 to the same page inside
+ * BIZOMAT System (/system/crm/o/x), so every signed-in person works in one place. The API, files and a customer's
+ * online document (/finance/view/...) stay where they are. Project Management's sign-in and sign-up pages without a
+ * `next` (the website's Sign in) open the System's own, so people land on the System's home.
+ */
+export function suiteRedirect(request: Request, base: string): Response | null {
+  if (!(SUITE_APPS as readonly string[]).includes(base)) return null;
+  if (request.method !== 'GET' && request.method !== 'HEAD') return null;
+  if (!(request.headers.get('Accept') ?? '').includes('text/html')) return null;
+  const url = new URL(request.url);
+  const rest = url.pathname.slice(base.length) || '/';
+  if (rest === '/api' || rest.startsWith('/api/') || rest.startsWith('/assets/') || /\.[a-z0-9]+$/i.test(rest)) return null;
+  if (base === FIN_MOUNT && rest.startsWith('/view/')) return null;
+  const front = base === MOUNT && (rest === '/login' || rest === '/signup') && !url.searchParams.has('next');
+  const to = front ? `${SYSTEM_MOUNT}${rest}${url.search}` : `${SYSTEM_MOUNT}${base}${rest}${url.search}`;
+  return new Response(null, { status: 302, headers: { Location: to, 'Cache-Control': 'no-store' } });
 }
 
 /** The 301 to the canonical address for a page asked for on another host, or null. */

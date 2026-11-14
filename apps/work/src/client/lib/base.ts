@@ -9,3 +9,12 @@ export const appUrl = (path: string): string => BASE + path;
 
 /** The current page's path inside the app, without BASE: what the router calls the pathname. */
 export const appPath = (): string => (BASE && location.pathname.startsWith(BASE) ? location.pathname.slice(BASE.length) : location.pathname) || '/';
+
+/** BIZOMAT System: every tool opens inside it, at /system/<tool> (one system; src/worker/mount.ts). '' elsewhere. */
+export const SUITE = BASE === '/system' || BASE.startsWith('/system/') ? '/system' : '';
+
+/** The tool this page is: '/crm' at /crm and at /system/crm; '/system' for the System's own pages. */
+export const APP_BASE = SUITE && BASE !== SUITE ? BASE.slice(SUITE.length) : BASE;
+
+/** An address of a BIZOMAT tool ('/crm/o/x'): inside the System when this page is ('/system/crm/o/x'). */
+export const toolUrl = (path: string): string => (SUITE && /^\/(tasks|crm|finance|company)(\/|\?|$)/.test(path) ? SUITE + path : path);

@@ -3,7 +3,7 @@ import { apiFailureMetric, createApp, withSecurityHeaders } from './app';
 import { bumpMetric } from './services/analytics';
 import { systemSvc } from './services/context';
 import { notifyDueDates, retryFailedRuns, runScheduledAutomations } from './services/automations';
-import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, SYSTEM_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
+import { MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, suiteRedirect, unmount } from './mount';
 import { backfillOwnCompanies } from './system/system';
 import { processOutbox } from './services/email/outbox';
 import { runCrmScheduled } from './crm';
@@ -87,10 +87,13 @@ export default {
       const moved = canonicalRedirect(request, env);
       if (moved) return withSecurityHeaders(moved, request);
     }
-    if (base === CRM_MOUNT || base === FIN_MOUNT || base === COMPANY_MOUNT || base === SYSTEM_MOUNT) {
+    if (base && base !== MOUNT) {
       const moved = crmCanonicalRedirect(request, env, base);
       if (moved) return withSecurityHeaders(moved, request);
     }
+    // One system: a tool's page at its own address opens inside BIZOMAT System (/system/<tool>/...).
+    const inSystem = suiteRedirect(request, base);
+    if (inSystem) return withSecurityHeaders(inSystem, request);
     const inner = base ? unmount(request, base) : request;
     const res = await app.fetch(inner, { ...env, BASE_PATH: base }, ctx);
     const metric = apiFailureMetric(inner, res.status);

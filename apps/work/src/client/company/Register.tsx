@@ -12,6 +12,7 @@ import { PageHeader } from '../components/ui/ui';
 import { useToast } from '../components/ui/overlays';
 import { ProductLockup } from '../components/ui/Icon';
 import { STATES, TOOL_APPS, TOOL_NAMES, useMine, type AbnStatus, type CompanyDTO, type ToolApp } from './lib';
+import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
 export interface Details {
   kind: 'business' | 'individual';
@@ -209,7 +210,8 @@ export function Register() {
   };
 
   return (
-    <div className="crm-start">
+    <div className={`crm-start${SUITE_SHELL ? ' in-suite' : ''}`}>
+      <SuiteRail />
       <header className="row crm-start-head">
         <ProductLockup height={18} />
         <span className="grow" />

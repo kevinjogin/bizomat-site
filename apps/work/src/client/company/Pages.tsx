@@ -30,6 +30,7 @@ import {
   type ToolApp,
 } from './lib';
 import { DetailsFields, useDetailsEditor } from './Register';
+import { toolUrl } from '../lib/base';
 
 const n = (v: number) => v.toLocaleString('en-AU');
 
@@ -845,7 +846,7 @@ export function Projects() {
               <tbody>
                 {q.data.map((p) => (
                   <tr key={p.id}>
-                    <td><a href={p.url}><strong>{p.name}</strong></a>{p.fromDeal ? <div className="muted small">Started from a CRM deal</div> : null}</td>
+                    <td><a href={toolUrl(p.url)}><strong>{p.name}</strong></a>{p.fromDeal ? <div className="muted small">Started from a CRM deal</div> : null}</td>
                     <td className="num">{p.finance?.budget != null ? formatMoney(p.finance.budget, p.finance.currency) : <span className="muted">—</span>}</td>
                     <td className="num">{p.finance ? formatMoney(p.finance.costs, p.finance.currency) : <span className="muted">—</span>}</td>
                     <td className="num">{p.finance?.remaining != null ? <span className={p.finance.overBudget ? 'warning-text' : ''}>{formatMoney(p.finance.remaining, p.finance.currency)}</span> : <span className="muted">—</span>}</td>

@@ -3,6 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { get } from '../lib/api';
+import { toolUrl } from '../lib/base';
 
 export type CompanyRole = 'owner' | 'admin' | 'member';
 export type ToolApp = 'tasks' | 'crm' | 'finance';
@@ -44,9 +45,9 @@ export function toolRoleLabel(app: ToolApp, role: string | null | undefined): st
 
 /** Where each tool opens, on this host (the tools are served by this app under their own paths). */
 export function toolHref(app: ToolApp, id: string): string {
-  if (app === 'tasks') return `/tasks/w/${encodeURIComponent(id)}/home`;
-  if (app === 'crm') return `/crm/o/${encodeURIComponent(id)}/overview`;
-  return `/finance/o/${encodeURIComponent(id)}/dashboard`;
+  if (app === 'tasks') return toolUrl(`/tasks/w/${encodeURIComponent(id)}/home`);
+  if (app === 'crm') return toolUrl(`/crm/o/${encodeURIComponent(id)}/overview`);
+  return toolUrl(`/finance/o/${encodeURIComponent(id)}/dashboard`);
 }
 
 export const STATES = [

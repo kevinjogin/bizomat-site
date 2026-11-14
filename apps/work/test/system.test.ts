@@ -70,7 +70,7 @@ describe('own companies and tools by company', () => {
     const view = await a.json('GET', `/api/system/companies/${own.id}`);
     expect(view.tools.map((t: any) => `${t.app}:${t.id}`).sort()).toEqual([`crm:${crm}`, `finance:${fin}`, `tasks:${a.workspaceId}`].sort());
     const ws = view.tools.find((t: any) => t.app === 'tasks');
-    expect(ws.url).toBe(`/tasks/w/${a.workspaceId}/home`);
+    expect(ws.url).toBe(`/system/tasks/w/${a.workspaceId}/home`);
     expect(ws.numbers).toMatchObject({ open: 0, projects: expect.any(Number) });
     // Someone added to the workspace as a member sees it under Ola's company, without the workspace's figures.
     const m = await signup('Max Member');

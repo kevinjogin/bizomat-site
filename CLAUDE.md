@@ -28,7 +28,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   **BIZOMAT System** (owner, 14 Nov 2026; called ERP in the earlier plans and in `docs/erp/`): the one system that
   brings every tool and the planned operations modules under one shell, CAD Automation included as its own section
   (the same MCP connector, installer, add-in and Companion). **Live at `bizomat.ai/system`** (owner, 14 Nov 2026;
-  `docs/system/README.md`), served by the Project Management app with the same accounts and session: every person's
+  `docs/system/README.md`), served by the Project Management app with the same accounts and session. **One system**
+  (owner, 14 Nov 2026): every tool opens inside it, at `/system/tasks`, `/system/crm`, `/system/finance` and
+  `/system/company`, with the System's module rail at the left of every screen; a page at a tool's own address answers
+  302 there (the API, files and `/finance/view/` stay); links between tools stay inside (`toolUrl`). Every person's
   tools grouped by company (registered companies, plus an own company per person, not registered, for the tools they
   own outside one; tools are worked out, never copied; a tool shared with someone shows under its company as "Shared
   with you"), CAD Automation's setup and company-scoped computers (owner and administrators see the company's, members
@@ -182,8 +185,8 @@ Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/
 `/finance-platform/`, `/finance-platform/guide/`, `/resources/`, `/tools/`, `/reados/`,
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
 `/system-preview/` (the BIZOMAT System preview, demonstration data, out of search; `/erp-design-preview/` answers 301
-there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), `/system/` (BIZOMAT System, signed in), and every new
-chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
+there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), `/system/` (BIZOMAT System, signed in; the tools inside it
+at `/system/tasks/`, `/system/crm/`, `/system/finance/`, `/system/company/`), and every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
 and **Sign in**, that a new visit opens in the computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/`, `/company/` and `/system/` on bizomat.ai, and their old hosts),

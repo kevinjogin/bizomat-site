@@ -7,7 +7,7 @@ import { Avatar, ErrorBox } from '../components/ui/ui';
 import { useAdmin } from './api';
 import { PageSkeleton } from './ui';
 import '../styles/admin-console.css';
-import { appUrl } from '../lib/base';
+import { appUrl, toolUrl } from '../lib/base';
 
 const Overview = lazy(() => import('./pages/Overview'));
 const Users = lazy(() => import('./pages/Users'));
@@ -92,10 +92,10 @@ export default function AdminApp() {
           ))}
         </nav>
         <div className="ac-side-foot">
-          <a href="/crm/admin" className="ac-nav-item">
+          <a href={toolUrl('/crm/admin')} className="ac-nav-item">
             <Icon name="layers" size={17} /> CRM super admin
           </a>
-          <a href="/finance/admin" className="ac-nav-item">
+          <a href={toolUrl('/finance/admin')} className="ac-nav-item">
             <Icon name="layers" size={17} /> Finance super admin
           </a>
           <a href={appUrl('/')} className="ac-nav-item">

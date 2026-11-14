@@ -7,7 +7,8 @@ Owner's request, 13 Nov 2026:
 - Departments are made once and appear in every tool, and can sit under one another.
 - Registration is checked: the business number, email, phone number, and address with its postcode.
 
-Served at `https://bizomat.ai/company` by the Project Management app (`apps/work`). It shares the app's accounts, session,
+Served at `https://bizomat.ai/company` by the Project Management app (`apps/work`); since 14 Nov 2026 its pages open
+inside BIZOMAT System at `https://bizomat.ai/system/company` (one system, `docs/system/README.md`). It shares the app's accounts, session,
 database and Machine with the other tools; no new app, Machine, database or volume. Code: `apps/work/src/worker/company`
 (server) and `apps/work/src/client/company` (pages). Migration: `apps/work/migrations/0013_company.sql`, additive
 (`co_*` and `id_*` tables only).

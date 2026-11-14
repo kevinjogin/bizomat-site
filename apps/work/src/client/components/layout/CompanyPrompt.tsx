@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { get } from '../../lib/api';
 import '../../styles/company.css';
+import { toolUrl } from '../../lib/base';
 
 const KEY = 'bizomat:company-prompt-hidden';
 
@@ -26,7 +27,7 @@ export function CompanyPrompt() {
           ? 'You have an invitation to join a company on BIZOMAT. Open it to work with its people, departments and tools on this same sign-in.'
           : 'BIZOMAT works as a company. Register your business, or yourself if you work in your own name, to bring your people, departments, Project Management, CRM and Finance together.'}
       </p>
-      <a className="btn primary sm" href={invited ? '/company/' : '/company/new'}>
+      <a className="btn primary sm" href={toolUrl(invited ? '/company/' : '/company/new')}>
         {invited ? 'See the invitation' : 'Register your company'}
       </a>
       <button

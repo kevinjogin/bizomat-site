@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { del, errorMessage, get, patch, post } from '../lib/api';
-import { appUrl } from '../lib/base';
+import { appUrl, toolUrl } from '../lib/base';
 import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader, Spinner } from '../components/ui/ui';
 import { Modal, useConfirm, useToast } from '../components/ui/overlays';
@@ -60,7 +60,7 @@ export function ActivityRow({ a, showLinks = true, onChanged }: { a: ActivityDTO
           <span className="muted small">{labelOf(org.settings.activityTypes, a.type)}</span>
           {a.priority === 'high' || a.priority === 'urgent' ? <Chip list={PRIORITIES} value={a.priority} /> : null}
           {a.emailDirection ? <span className="badge">{a.emailDirection === 'outbound' ? 'Email sent' : 'Email received'} (logged)</span> : null}
-          {a.pmItem ? <a className="badge accent" href={`/tasks/w/${a.pmItem.workspaceId}/tasks/${a.pmItem.itemId}`}>Project task</a> : null}
+          {a.pmItem ? <a className="badge accent" href={toolUrl(`/tasks/w/${a.pmItem.workspaceId}/tasks/${a.pmItem.itemId}`)}>Project task</a> : null}
         </div>
         <div className="row wrap small muted">
           {a.dueDate ? (
@@ -416,12 +416,12 @@ function ProjectTaskDialog({ activity, onClose }: { activity: ActivityDTO; onClo
       {done ? (
         <div className="stack">
           <p>The task is in Project Management and links back here.</p>
-          <a className="btn primary" href={done.path}>Open the task</a>
+          <a className="btn primary" href={toolUrl(done.path)}>Open the task</a>
         </div>
       ) : targets.isLoading ? (
         <Loading />
       ) : !targets.data?.length ? (
-        <p>You have no project in Project Management where you can add tasks. <a href="/tasks/">Open Project Management</a>.</p>
+        <p>You have no project in Project Management where you can add tasks. <a href={toolUrl('/tasks/')}>Open Project Management</a>.</p>
       ) : (
         <form
           className="stack"
