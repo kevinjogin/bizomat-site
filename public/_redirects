@@ -9,6 +9,23 @@
 /erp-design-preview /system-preview/ 301
 /erp-design-preview/ /system-preview/ 301
 
+# Systems (owner, 14 Nov 2026): BIZOMAT's business software is one catalogue at /systems/, each product with its page and
+# guide there; the applications open inside BIZOMAT ERP (/erp/). The product pages moved here, with their in-page parts.
+/products /systems/ 301
+/products/ /systems/ 301
+/work /systems/projects/ 301
+/work/ /systems/projects/ 301
+/cad-automation /systems/engineering/ 301
+/cad-automation/ /systems/engineering/ 301
+/crm-platform /systems/crm/ 301
+/crm-platform/ /systems/crm/ 301
+/crm-platform/guide /systems/crm/guide/ 301
+/crm-platform/guide/ /systems/crm/guide/ 301
+/finance-platform /systems/finance/ 301
+/finance-platform/ /systems/finance/ 301
+/finance-platform/guide /systems/finance/guide/ 301
+/finance-platform/guide/ /systems/finance/guide/ 301
+
 # READOS permanent redirects. Generated from the published collection and volume layouts before each
 # reorganisation; every old book and chapter URL points straight at its current page (no chains).
 # Regenerate when READOS books are renamed or chapters move, including the retired Insights section at the end.

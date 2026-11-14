@@ -132,10 +132,10 @@ function Header() {
           <PIcon name="menu" />
         </button>
       ) : null}
-      <Link to="/" className="erp-brand" aria-label="BIZOMAT System home">
+      <Link to="/" className="erp-brand" aria-label="BIZOMAT ERP preview home">
         <BrandMark size={28} />
         {!phone ? <Wordmark height={15} /> : null}
-        <span className="erp-product">System</span>
+        <span className="erp-product">ERP</span>
       </Link>
       {!phone ? <ContextSelectors co={co} site={site} setCompany={setCompany} setSite={setSite} /> : null}
       <button type="button" className="erp-search-trigger" onClick={() => openSearch()} aria-label="Search everything (press slash)">
@@ -152,7 +152,7 @@ function Header() {
               <MenuEntry
                 key={label}
                 icon={icon}
-                hint={mod === 'System' ? 'System' : mod}
+                hint={mod === 'System' ? 'ERP' : mod}
                 onClick={() => {
                   close();
                   navigate(to);
@@ -304,7 +304,7 @@ function Header() {
             </dl>
           ) : (
             <div className="erp-about">
-              <p>This is a clickable design prototype of BIZOMAT System. Every figure, name and record is invented demonstration data. Nothing is saved on a server and nothing is sent.</p>
+              <p>This is a clickable design prototype of BIZOMAT ERP. Every figure, name and record is invented demonstration data. Nothing is saved on a server and nothing is sent.</p>
               <p>Pages carry their state: Working (an existing BIZOMAT screen, shown here as a mock), Connected (a System screen over existing records) or Planned (a new module).</p>
               <p>Layouts, favourites, saved views and saved reports are kept on this computer only.</p>
             </div>

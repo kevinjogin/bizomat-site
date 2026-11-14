@@ -1,25 +1,56 @@
 ---
-// /crm-platform/: BIZOMAT Customer Relationship Management (CRM). Introduces the product and opens the application at
-// bizomat.ai/crm (sign-in required; the same accounts as Project Management). The page cannot be /crm/: that path is
-// the application (tests/worker.test.ts). Facts come from src/data/platform-catalog.ts (CRM), which records its sources
-// in apps/work; tests/platform-catalog.test.ts compares them with the application's code. The guide is
-// /crm-platform/guide/.
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Container from '../components/Container.astro';
-import Button from '../components/Button.astro';
-import CrmPipeline from '../components/visuals/CrmPipeline.astro';
-import '../styles/product.css';
-import { screenshots } from '../data/screenshots.ts';
-import { SITE } from '../config/site.ts';
-import { APP_LINKS } from '../config/platform.ts';
-import { CRM } from '../data/platform-catalog.ts';
+// /systems/crm/: BIZOMAT CRM, the Customer Management System (formerly BIZOMAT Customer Relationship Management).
+// Introduces the system and opens it inside BIZOMAT ERP (Sales and CRM, sign-in required; the same accounts as Finance
+// and Projects). The page cannot be /crm/: that path is the application (tests/worker.test.ts). Facts come from
+// src/data/platform-catalog.ts (CRM), which records its sources in apps/work; tests/platform-catalog.test.ts compares
+// them with the application's code. The links to Finance and Projects are apps/work/src/worker/company/links.ts
+// (docs/company/README.md); the ERP is docs/system/README.md. The guide is /systems/crm/guide/.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import CrmPipeline from '../../../components/visuals/CrmPipeline.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { SYSTEMS, SYSTEMS_HOME, STATUS_LABEL, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { CRM } from '../../../data/platform-catalog.ts';
 
-const GUIDE = '/crm-platform/guide/';
+const sys = systemById('crm');
+const access = sys.access!;
+const GUIDE = sys.guide!;
+const finance = systemById('finance');
+const projects = systemById('projects');
+const erp = systemById('erp');
+const related = SYSTEMS.filter((s) => s.id !== sys.id);
+const list = (xs: readonly string[]) => xs.join(', ').replace(/, ([^,]+)$/, ' and $1');
+
 const show = ['crm-overview', 'crm-board', 'crm-deal', 'crm-contact', 'crm-leads', 'crm-report'];
 const shots = screenshots('crm').filter((s) => show.some((n) => s.src.endsWith(`/${n}.webp`)));
-const description = 'BIZOMAT Customer Relationship Management (CRM): contacts, companies, leads, deals and follow-ups for your team, with a pipeline board, reports and automations.';
+const erpShot = screenshots('erp').find((s) => s.src.endsWith('/erp-crm.webp'));
+const description = 'BIZOMAT CRM, the Customer Management System: contacts, companies, leads, deals and follow-ups for your team, with a pipeline board, reports, automations and Finance links.';
+
+const audiences = [
+  { t: 'Business owners', x: 'See every customer, every open deal and every follow-up in one place, and what is likely to close.' },
+  { t: 'Sales people', x: 'Work your own leads and deals, plan calls and meetings, and keep a record of what was said. The Sales Executive role is made for this.' },
+  { t: 'Sales managers', x: 'Set up pipelines, lists and automations, and read the forecast, win rate and each person\'s results, by person and by team.' },
+  { t: 'Account and service staff', x: 'Keep notes, meeting notes and documents on each customer, so whoever picks up the next call knows the history.' },
+  { t: 'Administrators', x: 'Invite people, choose each person\'s role, and adjust what each role may view, create, edit, delete, import and export.' },
+  { t: 'Companies on BIZOMAT', x: `A company that also runs ${finance.name} and ${projects.name} turns deals into quotes, invoices and projects without typing them again.` },
+];
+const problems: { s: FeatureStatus; t: string; x: string }[] = [
+  { s: 'live', t: 'Customer details are spread across inboxes, spreadsheets and phones', x: 'Contacts, companies, leads and deals sit on shared records. Each has one timeline of changes, activities, notes and documents, newest first.' },
+  { s: 'live', t: 'Follow-ups slip', x: 'Every call, meeting and visit is an activity with an owner and a due date. Overdue follow-ups show on the Overview and in their own list, and an automation reminds people.' },
+  { s: 'live', t: 'Nobody knows what will close', x: 'The pipeline board shows the deals and their value at each stage. The weighted forecast multiplies each deal\'s value by its probability.' },
+  { s: 'live', t: 'The same customer is entered twice', x: 'While you type, the CRM warns you when an email address, phone number, name or website matches a record you already have.' },
+  { s: 'live', t: 'Work is lost when someone leaves', x: 'When you remove a member, you can hand their records and open activities to a colleague. The timeline keeps the history.' },
+  { s: 'connected', t: 'Quotes and invoices are typed again', x: `In a company that also runs ${finance.name}, the CRM company becomes the Finance customer once, and a deal starts a quote or, once won, a draft invoice.` },
+];
 const records = [
-  { t: 'Capture leads', x: `Record each enquiry with its source and estimated value. Statuses run ${CRM.leadStatuses.join(', ').replace(/, ([^,]+)$/, ' and $1')}, and you can change them.` },
+  { t: 'Capture leads', x: `Record each enquiry with its source and estimated value. Statuses run ${list(CRM.leadStatuses)}, and you can change them.` },
   { t: 'Score and qualify', x: 'Each lead gets a score from its details and its activity, and the lead shows how the score was reached. Set it by hand when you know better.' },
   { t: 'Convert in one step', x: 'Turn a qualified lead into a contact, a company and a deal at once, new or existing. Its activities move with it, and a lead converts only once.' },
   { t: 'One history per customer', x: 'Every record has a timeline of changes, activities, notes and documents, newest first. A company\'s timeline includes its contacts and deals.' },
@@ -27,7 +58,7 @@ const records = [
   { t: 'Your own fields and lists', x: `Add custom fields of ${CRM.customFieldTypes.length} types, tags, and your own lists of statuses, sources, industries and lost reasons.` },
 ];
 const activities = [
-  { t: `${CRM.activityTypes.length} activity types`, x: `${CRM.activityTypes.join(', ').replace(/, ([^,]+)$/, ' and $1')}. Rename them or add your own.` },
+  { t: `${CRM.activityTypes.length} activity types`, x: `${list(CRM.activityTypes)}. Rename them or add your own.` },
   { t: 'Your day in one list', x: 'My activities, Overdue, Upcoming, Team activities and Completed. Tick an activity to complete it, and record the outcome.' },
   { t: 'A calendar, and yours', x: 'A month calendar of activities, a calendar file for any activity, and a private address your own calendar app can subscribe to.' },
   { t: 'Notes, comments and documents', x: 'Notes, internal comments and meeting notes on any record, with @mentions that notify a colleague. Proposals, quotes and contracts are kept with their versions.' },
@@ -38,77 +69,306 @@ const data = [
   { t: 'Bulk changes', x: 'Select records to assign them, change their status or priority, tag, archive, delete or restore them at once.' },
   { t: 'Import and export', x: 'Bring contacts, companies and leads in from a CSV file, matching its columns and deciding what happens to duplicates. Export what you can see.' },
 ];
+const works = [
+  { t: 'Logging emails', x: 'Write to a contact from a template; the CRM opens your own mail program with it filled in and logs the email on the record.' },
+  { t: 'Invitations and notifications', x: 'Sent by email when the platform\'s email service is set up. Otherwise the CRM gives you an invitation link to share, and notifications appear in the app.' },
+  { t: 'Calendar', x: 'A calendar file (.ics) for any activity, and a private subscription address for your calendar app, which you can replace or stop at any time.' },
+  { t: 'CSV', x: 'Import contacts, companies and leads; export lists and reports.' },
+];
+const planned = [
+  { t: 'Gmail and Microsoft 365', x: 'Mailbox synchronisation, and sending from your own mailbox, are not built: the CRM does not read your mailbox or send from it. Settings, Integrations in the app says the same. Until then, emails to customers go from your own mail program and the CRM logs them as logged, never as sent.' },
+  { t: 'Sales orders', x: 'Sales orders made from accepted quotes or won deals, as an ERP module.' },
+  { t: 'Deliveries', x: 'Deliveries with picking and packing, and their history on the CRM timeline.' },
+  { t: 'Pricing rules and rebates', x: 'Not built. Today a deal\'s products and services carry a price, a quantity and a discount.' },
+  { t: 'Credit management', x: 'Not built. What a customer owes is shown from Finance on the CRM company (Connected).' },
+  { t: 'Service contracts', x: 'Not built.' },
+];
 const security = [
-  'One BIZOMAT account for Project Management and the CRM, with the same protected sign-in.',
+  `One BIZOMAT account for ${sys.name}, ${finance.name} and ${projects.name}, with the same protected sign-in.`,
   'People outside an organisation cannot see it, or even tell that it exists.',
   'Every list, search and report is limited to your organisation, and the database itself refuses links between two organisations.',
   'The server checks every permission; the screens only hide what you cannot use.',
   'Documents are served only to people who can see the record they belong to.',
   'An audit trail records changes, imports and exports. Archived and deleted records can be restored.',
 ];
+const figures = [
+  { t: 'Open pipeline', x: 'The value of every open deal, and how many there are.' },
+  { t: 'Weighted forecast', x: 'Each open deal\'s value times its probability (the deal\'s own, or its stage\'s), added up.' },
+  { t: 'Won', x: 'The value of the deals won in the period, and how many.' },
+  { t: 'Win rate', x: 'Deals won as a share of the deals won or lost in the period. Below it: how many were lost, and their value.' },
+  { t: 'New leads', x: 'Leads created in the period, with the number of leads in total and how many are qualified.' },
+  { t: 'Lead conversion', x: 'The share of the period\'s new leads that have been converted.' },
+  { t: 'Contacts and companies', x: 'How many active contacts and companies the organisation has.' },
+  { t: 'Overdue follow-ups', x: 'Open activities past their due date, marked as a warning when there are any.' },
+];
+const charts = [
+  { t: 'Revenue by month', x: 'The value of the deals won each month, over the last twelve months.' },
+  { t: 'Open deals by stage', x: 'How many open deals each stage of the pipeline holds, and their value.' },
+  { t: 'Conversion funnel', x: 'For the period: new leads, qualified, converted, deals created and deals won.' },
+  { t: 'Lead sources', x: 'Where the period\'s new leads came from.' },
+  { t: 'Completed activities per week', x: 'The last twelve weeks of finished calls, meetings and other activities.' },
+  { t: 'Team performance', x: 'For each person in the period: deals won, revenue, deals lost, win rate, open pipeline and activities done.' },
+  { t: 'Upcoming meetings and calls', x: 'Meetings, calls, visits and demonstrations due in the next 14 days.' },
+];
+const screens = [
+  { t: 'Overview', see: 'The figures and charts above, for the period you choose.', do: 'Pick dates, a person, a team or a pipeline. Click a figure to open the list or report behind it.' },
+  { t: 'Leads', see: 'Open leads with their source, status, lead score and estimated value.', do: 'Add a lead, import a CSV file, move leads through their statuses, then Convert.' },
+  { t: 'Contacts and Companies', see: 'Everyone you deal with and the businesses they work for, in lists you can filter, sort and save as views.', do: 'Add or import records, tag them, open one to see its timeline.' },
+  { t: 'Deals', see: 'Board: each stage with its deals and their value. List: the same deals as a table.', do: 'Add a deal, drag it to the next stage, or onto Won or Lost.' },
+  { t: 'A record', see: 'A deal\'s stage path, or a contact\'s details, with notes, activities, documents and the timeline.', do: 'Edit it, write a note, plan an activity, upload a document, or archive it.' },
+  { t: 'Activities', see: 'My activities, Today\'s follow-ups, Overdue, Upcoming, Team activities and Completed.', do: 'Plan an activity, tick it to complete it, or log an email.' },
+  { t: 'Calendar and Tasks', see: 'Activities by month, and the tasks and follow-ups for you and your colleagues.', do: 'Open an activity, or add one on a day.' },
+  { t: 'Reports', see: `${CRM.reports.length} reports, each with its figures, a chart and a table.`, do: 'Filter by dates, person, team and pipeline, then Export CSV if your role allows it.' },
+  { t: 'Automations', see: 'Each automation with its trigger and whether it is on, and its execution history.', do: 'Switch one on or off, edit it, or build your own.' },
+  { t: 'Team', see: 'Members, Invitations and Teams.', do: 'Invite people, change roles, group people into teams, or hand over records.' },
+  { t: 'Settings', see: 'Organisation, pipelines and stages, custom fields, statuses and lists, tags, products, email templates, permissions, notifications, calendar feed and audit trail.', do: 'Set the CRM up for the way your business sells.' },
+];
 const steps = [
-  { t: 'Sign in', x: 'Use your BIZOMAT account (the same email and password as Project Management), or create one on the sign-in page.' },
-  { t: 'Create your organisation', x: `Give it a name and a currency. It starts with a ${CRM.stages.length}-stage sales pipeline and ${CRM.automations.length} automations, and no sample records.` },
-  { t: 'Invite your team', x: 'Invite colleagues by email and choose each person\'s role.' },
+  { t: 'Sign in to BIZOMAT ERP', x: `Go to ${APP_LINKS.erp.signIn.replace('https://', '')} and sign in with your BIZOMAT account, or create one on the sign-in page.` },
+  { t: `Choose ${sys.module}`, x: `In the module rail at the left of the ERP (a bar along the bottom on a phone), choose ${sys.module}.` },
+  { t: 'Create your organisation', x: `Give it a name and a currency. It starts with a ${CRM.stages.length}-stage sales pipeline and ${CRM.automations.length} automations, and no sample records. A company registered in BIZOMAT already has one.` },
+  { t: 'Set it up', x: 'In Settings, adjust the pipeline stages, statuses, lists and custom fields to the way you sell.' },
   { t: 'Add your customers', x: 'Create contacts, companies and leads, or import them from a CSV file.' },
-  { t: 'Work your pipeline', x: 'Add deals, move them across the board, plan follow-ups, and watch the dashboard.' },
+  { t: 'Invite your team', x: 'In Team, invite colleagues by email and choose each person\'s role.' },
+  { t: 'Work your pipeline', x: 'Add deals, move them across the board, plan follow-ups, and watch the Overview.' },
+];
+const workflows: { s: FeatureStatus; t: string; steps: string[] }[] = [
+  {
+    s: 'connected', t: 'From first enquiry to an invoice',
+    steps: [
+      'Record the enquiry as a lead, with its source and estimated value.',
+      'Plan a call as an activity, and move the lead to Contacted, then Engaged.',
+      'When it is Qualified, choose Convert: a contact, a company and a deal at once.',
+      `On the deal, Start a quote makes a draft quote in ${finance.name} for the deal's company.`,
+      'Price the quote in detail in Finance and send it. The customer accepts it online, and the deal shows its status.',
+      'Move the deal across the board. When it is won, drag it onto Won.',
+      'Create the invoice from the accepted quote in Finance, or choose Make a draft invoice on the won deal.',
+      'Check the amount, GST and account in Finance and approve it. What is owed shows on the CRM company.',
+    ],
+  },
+  {
+    s: 'live', t: 'A week of follow-ups',
+    steps: [
+      'Each morning, open Activities: My activities and Today\'s follow-ups.',
+      'Tick each activity as you finish it, and record the outcome.',
+      'Plan the next step straight away, against the same contact or deal.',
+      'Check Overdue. The automation "Remind about overdue follow-ups" does the same for everyone.',
+      'Subscribe your calendar app to your calendar feed, so the week shows there too.',
+    ],
+  },
+  {
+    s: 'connected', t: 'From a won deal to a project',
+    steps: [
+      `On the won deal, Start a project creates a project board named after it in the company's ${projects.name} workspace.`,
+      'Turn the activities that belong to delivery into project tasks with Create a project task.',
+      'Each task links back to the CRM, so the team can see the customer\'s history.',
+      `To follow the project's costs, track it in ${finance.name} from the company's Projects page.`,
+    ],
+  },
+  {
+    s: 'live', t: 'Bringing in your existing customers',
+    steps: [
+      'Export your contacts, companies or leads from your spreadsheet or old system as a CSV file.',
+      'On Contacts, Companies or Leads, choose Import and pick the file.',
+      'Match each column to a field, and choose whether duplicates are skipped, updated or created.',
+      'Select the new records to tag them or assign them to people in one step.',
+      'Save the filters you use most as a view.',
+    ],
+  },
+];
+const integrations: { t: string; href: string | null; s: FeatureStatus | null; items: { s?: FeatureStatus; t: string; x: string }[] }[] = [
+  {
+    t: finance.name, href: finance.url, s: 'connected',
+    items: [
+      { t: 'One customer record', x: 'On a CRM company, In Finance shows the Finance customer it is billed as. Add as a customer in Finance creates it once, from the company\'s name, email, phone and address. Finance\'s From the CRM uses the same link, so a customer is never entered twice.' },
+      { t: 'What the customer owes', x: 'The company\'s open invoices and the amount owed show on the CRM company, to people whose Finance role can see sales.' },
+      { t: 'A deal starts a quote', x: 'Start a quote on a deal makes a draft quote in Finance for the deal\'s company, with the deal\'s value to price in detail there. The deal lists its quotes and their status, and its timeline records each step.' },
+      { t: 'A won deal becomes a draft invoice', x: 'Make a draft invoice puts one line with the deal\'s title and value on a draft invoice, once per deal. Finance\'s own approval posts it, after someone checks the amount, GST and account.' },
+      { t: 'What it needs', x: 'The CRM and Finance run by the same company, a company on the deal, the same currency in both, and a Finance role that may create quotes and invoices.' },
+    ],
+  },
+  {
+    t: projects.name, href: projects.url, s: 'connected',
+    items: [
+      { t: 'A deal starts a project', x: 'Start a project on a deal creates a project board named after it in the company\'s Projects workspace, once per deal. It needs a Projects role of member or above.' },
+      { t: 'An activity becomes a task', x: 'Create a project task puts any CRM activity in a project you can add tasks to, with a link back to the CRM.' },
+    ],
+  },
+  {
+    t: 'Company accounts', href: null, s: 'live',
+    items: [
+      { t: 'One company, one of each tool', x: `A company registered in BIZOMAT runs one CRM organisation, one ${finance.short} business workspace and one ${projects.short} workspace.` },
+      { t: 'A role in each tool', x: 'Each person has a company role and a role in each tool. No role in the CRM means no access to it.' },
+      { t: 'Departments in every tool', x: 'Departments are made once for the company. In the CRM, each one is a team, led by the department\'s head.' },
+    ],
+  },
+  {
+    t: erp.name, href: erp.url, s: null,
+    items: [
+      { s: 'live', t: 'Opens inside the ERP', x: `${sys.name} opens as ${sys.module} in ${erp.name}, with the module rail beside it. The CRM's old address, bizomat.ai/crm, forwards there.` },
+      { s: 'connected', t: 'Dashboard and Reports', x: 'The ERP Dashboard shows the CRM\'s open deals, deals won in 30 days, open leads and follow-ups due, to people who may see every deal. Its Reports page opens the CRM\'s reports.' },
+      { s: 'live', t: 'Permissions stay in the CRM', x: 'The ERP gives no extra access: it lists only the tools you belong to, with the role you have in each.' },
+    ],
+  },
+];
+const questions = [
+  { q: 'What is a CRM?', a: 'A Customer Relationship Management (CRM) system keeps track of the people and businesses you sell to, and everything said and agreed with them. BIZOMAT CRM keeps contacts, companies, leads, deals and follow-ups on records your team shares.' },
+  { q: 'How do I create an organisation?', a: `Sign in to ${erp.name} and choose ${sys.module} in the module rail. The first time, the CRM asks you to create an organisation: enter its name and currency (industry, website and country if you like), then choose Create organisation. Later, use Create or join an organisation in the organisation menu. A company registered in BIZOMAT gets its CRM organisation when it registers.` },
+  { q: 'Can I invite team members?', a: 'Yes. In Team, then Invitations, enter the person\'s email address, choose their role and choose Send invitation. Owners, administrators and managers can invite. The invitation is emailed when email is set up; otherwise copy the invitation link and send it yourself. It works once and expires after 14 days. In a registered company, its administrators can also invite people with a role in each tool at once.' },
+  { q: 'How do I manage sales opportunities (deals)?', a: `Open Deals. The board shows each stage with its deals and their value. Add a deal with its value, company and expected close date, drag it from stage to stage, and drag it onto Won or Lost when it closes; a lost deal records why. A new organisation starts with ${CRM.stages.length} stages that you can rename, add to and give your own probabilities, and you can add more pipelines.` },
+  { q: 'Can CRM customers be used in Finance?', a: `Yes, when the CRM organisation and the ${finance.short} business workspace belong to the same company. A CRM company becomes one Finance customer, made from its name, email, phone and address and linked so it is never entered twice. A deal can start a draft quote, and a won deal can become a draft invoice. The customer's open invoices and amount owed then show on the CRM company, to people whose Finance role can see sales.` },
+  { q: 'Does the CRM send emails to my customers?', a: 'No. You send them from your own mail program and the CRM logs them. BIZOMAT only sends its own invitations and notifications.' },
+  { q: 'Can I bring my data from another CRM?', a: 'Yes, for contacts, companies and leads: export them from the other system as a CSV file and use Import. Deals and activities are added in the CRM itself.' },
+  { q: 'Who can see my organisation\'s customers?', a: 'Only its members, as their roles allow. People outside the organisation cannot see it or tell that it exists.' },
+  { q: 'Do I need a separate account?', a: `No. One BIZOMAT account signs you in to ${erp.name}, and with it to ${sys.name}, ${finance.name} and ${projects.name}. Each keeps its own data and its own roles.` },
 ];
 ---
-<BaseLayout title="Customer Relationship Management (CRM)" description={description} imageAlt="BIZOMAT Customer Relationship Management: customers, leads and deals in one shared place" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Customer Relationship Management', href: '/crm-platform/' }]}
-  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT Customer Relationship Management', alternateName: 'BIZOMAT CRM', url: `${SITE.url}/crm-platform/`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
+<BaseLayout title={`${sys.name}: ${sys.kind}`} description={description} imageAlt="BIZOMAT CRM: customers, leads and deals in one shared place" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
+  schema={[
+    { '@type': 'SoftwareApplication', name: sys.name, alternateName: ['BIZOMAT Customer Relationship Management', sys.kind], url: `${SITE.url}${sys.url}`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
+    { '@type': 'FAQPage', url: `${SITE.url}${sys.url}#faq`, mainEntity: questions.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+  ]}>
   <section class="pp-hero" aria-labelledby="crm-title">
     <Container class="pp-hero__inner">
       <div>
-        <p class="bz-eyebrow">BIZOMAT Customer Relationship Management<span class="pp-hero__formerly">CRM for short</span></p>
+        <p class="bz-eyebrow">{sys.name} · {sys.kind}<span class="pp-hero__formerly">Formerly {sys.formerly}</span></p>
         <h1 id="crm-title">{CRM.headline}</h1>
-        <p class="pp-hero__lead">{CRM.summary}</p>
+        <p class="pp-hero__lead">{sys.name} is a Customer Relationship Management (CRM) system: one shared place for your contacts, companies, leads, deals and follow-ups. Work your pipeline on a board, plan every activity and see what is closing from live reports.</p>
         <div class="pp-hero__actions">
-          <Button href={APP_LINKS.crm.signIn} variant="accent" rel="noopener" data-cta="crm-start">Open the CRM</Button>
+          <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-access">{access.label}</Button>
           <Button href={GUIDE} variant="secondary" data-cta="crm-guide">Read the user guide</Button>
         </div>
-        <p class="pp-hero__note">Sign-in required. It uses your BIZOMAT account: the same email and password as Project Management. New to BIZOMAT? Create an account on the sign-in page.</p>
+        <p class="pp-hero__note">{access.note} Sign-in required: use your BIZOMAT account, the same one as {finance.name} and {projects.name}. New to BIZOMAT? Create an account on the sign-in page.</p>
       </div>
       <CrmPipeline id="crm-hero" />
     </Container>
   </section>
 
-  <section class="pp-section" id="features" aria-labelledby="features-title">
+  <section class="pp-section" id="what" aria-labelledby="what-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">What it does</p>
-        <h2 id="features-title">Every customer, and every conversation with them, in one place</h2>
-        <p>Customer relationship management (CRM) is how a business keeps track of the people it sells to and everything said and agreed with them. BIZOMAT keeps contacts, companies, leads, deals and activities on shared records, so anyone on the team can pick up where a colleague left off.</p>
+        <h2 id="what-title">Every customer, and every conversation with them, in one place</h2>
+        <p>Customer relationship management is how a business keeps track of the people it sells to and everything said and agreed with them. {sys.name} keeps contacts, companies, leads, deals and activities on shared records, so anyone on the team can pick up where a colleague left off.</p>
+        <StatusLegend />
       </div>
       <ul class="pp-cards" role="list">
-        {CRM.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title}</h3><p>{c.text}</p></li>)}
+        {CRM.capabilities.map((c) => <li class="pp-card"><span class="pp-card__mark"></span><h3>{c.title} <StatusLabel status="live" /></h3><p>{c.text}</p></li>)}
       </ul>
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="pipeline" aria-labelledby="pipeline-title">
-    <Container class="pp-split">
-      <div>
-        <p class="bz-eyebrow">Pipelines and deals</p>
-        <h2 id="pipeline-title">A pipeline you can see and move</h2>
-        <p class="pp-head-lead">A new organisation starts with a sales pipeline of {CRM.stages.length} stages. Rename them, add your own, set each stage's probability, or add more pipelines.</p>
-        <p class="pp-body">Drag a deal to the next stage, or onto Won or Lost; a menu on each card does the same from the keyboard. A deal keeps its value, products and services, contacts, competitors and the time it spent in each stage. Its weighted value (value times probability) feeds the forecast.</p>
+  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Who it is for</p>
+        <h2 id="who-title">Who should use it</h2>
+        <p>Any business that sells to other people and wants one shared record of its customers. Someone working alone can use it too: register in your own name.</p>
       </div>
-      <ol class="pp-steps" aria-label="The stages a new pipeline starts with">
-        {CRM.stages.map((s) => <li><h3>{s.name}</h3><p>{s.probability}% probability</p></li>)}
-        <li><h3>Won or Lost</h3><p>Closed deals leave the board and count in the reports. A lost deal records why.</p></li>
-      </ol>
+      <ul class="pp-cards" role="list">
+        {audiences.map((a) => <li class="pp-card"><h3>{a.t}</h3><p>{a.x}</p></li>)}
+      </ul>
     </Container>
   </section>
 
-  {shots.length > 0 && (
+  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Problems it solves</p>
+        <h2 id="problems-title">What changes when the team shares one CRM</h2>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {problems.map((p) => <li class="pp-card"><h3>{p.t} <StatusLabel status={p.s} /></h3><p>{p.x}</p></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="features" aria-labelledby="features-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Features</p>
+        <h2 id="features-title">Every feature, explained</h2>
+        <p>What {sys.name} does today, area by area, and what is planned. The <a href={GUIDE}>user guide</a> shows where each working feature is in the application.</p>
+      </div>
+      <div class="pp-tools">
+        <section id="records" aria-labelledby="records-title">
+          <h3 id="records-title">Leads, contacts and companies <StatusLabel status="live" /></h3>
+          <dl>{records.map((r) => <div><dt>{r.t}</dt><dd>{r.x}</dd></div>)}</dl>
+        </section>
+        <section id="pipeline" aria-labelledby="pipeline-title">
+          <h3 id="pipeline-title">Pipelines and deals <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Stages</dt><dd>A new organisation starts with a sales pipeline of {CRM.stages.length} stages: {list(CRM.stages.map((s) => `${s.name} (${s.probability}%)`))}. Rename them, add your own, set each stage's probability, or add more pipelines.</dd></div>
+            <div><dt>The board</dt><dd>Drag a deal to the next stage, or onto Won or Lost; a menu on each card does the same from the keyboard.</dd></div>
+            <div><dt>Each deal</dt><dd>Keeps its value, products and services, contacts, competitors and the time it spent in each stage.</dd></div>
+            <div><dt>Weighted value</dt><dd>Value times probability. It feeds the forecast.</dd></div>
+            <div><dt>Won or Lost</dt><dd>Closed deals leave the board and count in the reports. A lost deal records why.</dd></div>
+          </dl>
+        </section>
+        <section id="activities" aria-labelledby="activities-title">
+          <h3 id="activities-title">Activities and follow-ups <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Plan every follow-up</dt><dd>Plan every call, meeting and visit against the customer and the deal, and assign it with a due date and a priority.</dd></div>
+            {activities.map((a) => <div><dt>{a.t}</dt><dd>{a.x}</dd></div>)}
+            <div><dt>Log emails</dt><dd>Write to a contact from a template. Your own mail program sends it, and the CRM logs it on the record (<a href="#integrations">more below</a>).</dd></div>
+          </dl>
+        </section>
+        <section id="reports" aria-labelledby="reports-title">
+          <h3 id="reports-title">Dashboard and reports <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Overview</dt><dd>Open pipeline, weighted forecast, value won, win rate, new leads, lead conversion, contacts and companies, and overdue follow-ups, with charts below. Computed from your records when you open it (<a href="#dashboard">figure by figure</a>).</dd></div>
+            <div><dt>{CRM.reports.length} reports</dt><dd>{list(CRM.reports.map((r, i) => (i ? r.toLowerCase() : r)))}.</dd></div>
+            <div><dt>Each report</dt><dd>Its figures, a chart, a table and CSV export. Filter by dates, owner, team and pipeline.</dd></div>
+          </dl>
+        </section>
+        <section id="automations" aria-labelledby="auto-title">
+          <h3 id="auto-title">Automations <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>How they work</dt><dd>An automation is a trigger, conditions and actions. Each event runs an automation once, and every run is kept in its history.</dd></div>
+            <div><dt>Triggers</dt><dd>A new or reassigned lead, a lead changing status, a new contact, a deal being created, entering a stage, won, lost or close to its expected close date, and an activity being assigned or becoming overdue.</dd></div>
+            <div><dt>Actions</dt><dd>Notify people, create a follow-up, set a priority, flag a deal or assign an owner.</dd></div>
+            <div><dt>Ready-made</dt><dd>Every new organisation starts with these {CRM.automations.length}: {list(CRM.automations.map((a, i) => (i ? a.charAt(0).toLowerCase() + a.slice(1) : a)))}. Switch any of them off, change them, or add your own.</dd></div>
+          </dl>
+        </section>
+        <section id="roles" aria-labelledby="roles-title">
+          <h3 id="roles-title">Organisations, teams and roles <StatusLabel status="live" /></h3>
+          <dl>
+            <div><dt>Organisations</dt><dd>Create one for each business you run, belong to several, and switch between them. Invite colleagues and group them into teams.</dd></div>
+            {CRM.roles.map((r) => <div><dt>{r.name}</dt><dd>{r.text}</dd></div>)}
+            <div><dt>Permissions</dt><dd>Owners and administrators can fine-tune what the other roles may view, create, edit, delete, import and export.</dd></div>
+          </dl>
+        </section>
+        <section id="data" aria-labelledby="data-title">
+          <h3 id="data-title">Search, views and your data <StatusLabel status="live" /></h3>
+          <dl>{data.map((d) => <div><dt>{d.t}</dt><dd>{d.x}</dd></div>)}</dl>
+        </section>
+        <section id="security" aria-labelledby="sec-title">
+          <h3 id="sec-title">Accounts and security <StatusLabel status="live" /></h3>
+          <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
+        </section>
+        <section id="planned" aria-labelledby="planned-title">
+          <h3 id="planned-title">Not built yet</h3>
+          <dl>{planned.map((w) => <div><dt>{w.t} <StatusLabel status="planned" /></dt><dd>{w.x}</dd></div>)}</dl>
+        </section>
+      </div>
+    </Container>
+  </section>
+
+  {(shots.length > 0 || erpShot) && (
     <section class="pp-section" id="screens" aria-labelledby="screens-title">
       <Container>
         <div class="pp-head">
-          <p class="bz-eyebrow">What it looks like</p>
+          <p class="bz-eyebrow">Screenshots</p>
           <h2 id="screens-title">The real product</h2>
           <p>Captured from the running application with a fictional organisation and example data. More screens are in the <a href={GUIDE}>user guide</a>.</p>
         </div>
         <div class="pp-shots">
+          {erpShot && (
+            <figure class="pp-shot">
+              <img src={erpShot.src} alt={`${erpShot.title}. ${erpShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>Inside {erp.name}. {erpShot.caption} Choose {sys.module} in the module rail to open it.</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          )}
           {shots.map((s) => (
             <figure class="pp-shot">
               <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
@@ -120,123 +380,37 @@ const steps = [
     </section>
   )}
 
-  <section class="pp-section pp-section--tint" id="records" aria-labelledby="records-title">
+  <section class="pp-section pp-section--tint" id="dashboard" aria-labelledby="dashboard-title">
     <Container>
       <div class="pp-head">
-        <p class="bz-eyebrow">Leads, contacts and companies</p>
-        <h2 id="records-title">From first enquiry to loyal customer</h2>
-      </div>
-      <ul class="pp-cards" role="list">
-        {records.map((r) => <li class="pp-card"><h3>{r.t}</h3><p>{r.x}</p></li>)}
-      </ul>
-    </Container>
-  </section>
-
-  <section class="pp-section" id="activities" aria-labelledby="activities-title">
-    <Container>
-      <div class="pp-head">
-        <p class="bz-eyebrow">Activities and follow-ups</p>
-        <h2 id="activities-title">Follow-ups that do not slip</h2>
-        <p>Plan every call, meeting and visit against the customer and the deal, assign it with a due date and a priority, and see what is overdue.</p>
-      </div>
-      <ul class="pp-cards pp-cards--2" role="list">
-        {activities.map((a) => <li class="pp-card"><h3>{a.t}</h3><p>{a.x}</p></li>)}
-      </ul>
-    </Container>
-  </section>
-
-  <section class="pp-section pp-section--tint" id="reports" aria-labelledby="reports-title">
-    <Container class="pp-split">
-      <div>
-        <p class="bz-eyebrow">Dashboard and reports</p>
-        <h2 id="reports-title">Know what is closing, and why deals are won or lost</h2>
-        <p class="pp-head-lead">The dashboard shows open pipeline, weighted forecast, value won, win rate, new leads, lead conversion, contacts and companies, and overdue follow-ups.</p>
-        <p class="pp-body">Charts show revenue by month, open deals by stage, the conversion funnel, lead sources and completed activities per week. Filter by dates, owner, team and pipeline. Everything is computed from your records when you open it.</p>
-      </div>
-      <div>
-        <h3 class="pp-subhead">{CRM.reports.length} reports</h3>
-        <ul class="pp-list pp-list--cols">{CRM.reports.map((r) => <li>{r}</li>)}</ul>
-        <p class="pp-table-note">Each report has its figures, a chart, a table and CSV export.</p>
-      </div>
-    </Container>
-  </section>
-
-  <section class="pp-section" id="automations" aria-labelledby="auto-title">
-    <Container class="pp-split">
-      <div>
-        <p class="bz-eyebrow">Automations</p>
-        <h2 id="auto-title">Routine follow-ups happen by themselves</h2>
-        <p class="pp-head-lead">An automation is a trigger, conditions and actions.</p>
-        <p class="pp-body">Triggers include a new or reassigned lead, a lead changing status, a new contact, a deal being created, entering a stage, won, lost or close to its expected close date, and an activity being assigned or becoming overdue. Actions notify people, create a follow-up, set a priority, flag a deal or assign an owner. Each event runs an automation once, and every run is kept in its history.</p>
-      </div>
-      <div>
-        <h3 class="pp-subhead">Every new organisation starts with these {CRM.automations.length}</h3>
-        <ul class="pp-list">{CRM.automations.map((a) => <li>{a}</li>)}</ul>
-        <p class="pp-table-note">Switch any of them off, change them, or add your own.</p>
-      </div>
-    </Container>
-  </section>
-
-  <section class="pp-section pp-section--tint" id="roles" aria-labelledby="roles-title">
-    <Container>
-      <div class="pp-head">
-        <p class="bz-eyebrow">Organisations, roles and permissions</p>
-        <h2 id="roles-title">The right access for everyone on the team</h2>
-        <p>Create an organisation for each business you run, belong to several, and switch between them. Invite colleagues, group them into teams and give each a role. Owners and administrators can fine-tune what the other roles may view, create, edit, delete, import and export.</p>
-      </div>
-      <ul class="pp-cards" role="list">
-        {CRM.roles.map((r) => <li class="pp-card"><h3>{r.name}</h3><p>{r.text}</p></li>)}
-      </ul>
-    </Container>
-  </section>
-
-  <section class="pp-section" id="data" aria-labelledby="data-title">
-    <Container>
-      <div class="pp-head">
-        <p class="bz-eyebrow">Search, views and your data</p>
-        <h2 id="data-title">Find anything, and take your data with you</h2>
-      </div>
-      <ul class="pp-cards pp-cards--2" role="list">
-        {data.map((d) => <li class="pp-card"><h3>{d.t}</h3><p>{d.x}</p></li>)}
-      </ul>
-    </Container>
-  </section>
-
-  <section class="pp-section pp-section--tint" id="integrations" aria-labelledby="int-title">
-    <Container>
-      <div class="pp-head">
-        <p class="bz-eyebrow">Email, calendar and other tools</p>
-        <h2 id="int-title">What connects today, and what does not yet</h2>
+        <p class="bz-eyebrow">The main dashboard</p>
+        <h2 id="dashboard-title">The Overview, figure by figure</h2>
+        <p>The Overview is the CRM's dashboard. Every figure is computed from your records when you open it, and each one opens the list or report behind it.</p>
       </div>
       <div class="pp-tools">
-        <section aria-labelledby="int-works">
-          <h3 id="int-works">Works today</h3>
-          <dl>
-            <div><dt>Logging emails</dt><dd>Write to a contact from a template; the CRM opens your own mail program with it filled in and logs the email on the record.</dd></div>
-            <div><dt>Invitations and notifications</dt><dd>Sent by email when the platform's email service is set up. Otherwise the CRM gives you an invitation link to share, and notifications appear in the app.</dd></div>
-            <div><dt>Calendar</dt><dd>A calendar file (.ics) for any activity, and a private subscription address for your calendar app, which you can replace or stop at any time.</dd></div>
-            <div><dt>Project Management</dt><dd>Turn any activity into a task in a Project Management project; the task links back to the customer.</dd></div>
-            <div><dt>CSV</dt><dd>Import contacts, companies and leads; export lists and reports.</dd></div>
-          </dl>
+        <section aria-labelledby="d-figures">
+          <h3 id="d-figures">The figures <StatusLabel status="live" /></h3>
+          <dl>{figures.map((f) => <div><dt>{f.t}</dt><dd>{f.x}</dd></div>)}</dl>
         </section>
-        <section aria-labelledby="int-not">
-          <h3 id="int-not">Not available yet</h3>
-          <dl>
-            <div><dt>Gmail and Microsoft 365</dt><dd>Mailbox synchronisation is not switched on: the CRM does not read your mailbox or send from it. Settings, Integrations in the app says the same.</dd></div>
-            <div><dt>Email to customers from BIZOMAT</dt><dd>Emails to customers go from your own mail program, and the CRM logs them as logged, never as sent.</dd></div>
-          </dl>
+        <section aria-labelledby="d-charts">
+          <h3 id="d-charts">Charts and lists <StatusLabel status="live" /></h3>
+          <dl>{charts.map((f) => <div><dt>{f.t}</dt><dd>{f.x}</dd></div>)}</dl>
         </section>
       </div>
+      <p class="pp-table-note">Choose a period or exact dates and a person (Everyone, Me or a colleague); where you have them, a team and a pipeline. Every role sees the Overview by default; owners and administrators can change that in Settings, Permissions.</p>
     </Container>
   </section>
 
-  <section class="pp-section" id="security" aria-labelledby="sec-title">
+  <section class="pp-section" id="walkthrough" aria-labelledby="walkthrough-title">
     <Container>
       <div class="pp-head">
-        <p class="bz-eyebrow">Accounts and security</p>
-        <h2 id="sec-title">Your customers are visible only to your organisation</h2>
+        <p class="bz-eyebrow">Screen by screen</p>
+        <h2 id="walkthrough-title">What each screen is for</h2>
+        <p><StatusLabel status="live" /> The CRM's menu lists these screens, and every one works today. Your role decides which ones you see.</p>
       </div>
-      <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
+      <ul class="pp-cards" role="list">
+        {screens.map((s) => <li class="pp-card"><h3>{s.t}</h3><p><strong>You see:</strong> {s.see}</p><p><strong>You do:</strong> {s.do}</p></li>)}
+      </ul>
     </Container>
   </section>
 
@@ -244,7 +418,7 @@ const steps = [
     <Container class="pp-split">
       <div>
         <p class="bz-eyebrow">Getting started</p>
-        <h2 id="start-title">Start in five steps</h2>
+        <h2 id="start-title">Start in {steps.length} steps</h2>
         <p class="pp-head-lead">The <a href={GUIDE}>user guide</a> walks through each step, and everything after it, screen by screen.</p>
       </div>
       <ol class="pp-steps">
@@ -253,21 +427,101 @@ const steps = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" aria-labelledby="crm-cta">
+  <section class="pp-section" id="workflows" aria-labelledby="workflows-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Typical workflows</p>
+        <h2 id="workflows-title">How the work flows through the CRM</h2>
+        <p>Four common jobs, step by step. The steps that reach {finance.name} and {projects.name} need a company that runs them.</p>
+      </div>
+      <ul class="pp-cards pp-cards--2" role="list">
+        {workflows.map((w) => (
+          <li class="pp-card">
+            <h3>{w.t} <StatusLabel status={w.s} /></h3>
+            <ol class="flow-steps">{w.steps.map((s) => <li>{s}</li>)}</ol>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="integrations" aria-labelledby="int-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Integration</p>
+        <h2 id="int-title">How it works with the other BIZOMAT systems</h2>
+        <p>Every link between BIZOMAT systems checks both tools' own permissions, joins records of tools that belong to the same company, and never copies money: figures are read from Finance when asked. Email, your calendar and CSV files connect too.</p>
+      </div>
+      <div class="pp-tools">
+        {integrations.map((g, i) => (
+          <section aria-labelledby={`int-${i}`}>
+            <h3 id={`int-${i}`}>{g.href ? <a href={g.href}>{g.t}</a> : g.t} {g.s && <StatusLabel status={g.s} />}</h3>
+            <dl>{g.items.map((it) => <div><dt>{it.t} {!g.s && it.s && <StatusLabel status={it.s} />}</dt><dd>{it.x}</dd></div>)}</dl>
+          </section>
+        ))}
+        <section aria-labelledby="int-works">
+          <h3 id="int-works">Email, calendar and CSV <StatusLabel status="live" /></h3>
+          <dl>{works.map((w) => <div><dt>{w.t}</dt><dd>{w.x}</dd></div>)}</dl>
+        </section>
+        <section aria-labelledby="int-not">
+          <h3 id="int-not">Gmail and Microsoft 365 <StatusLabel status="planned" /></h3>
+          <p class="int-note">{planned[0].x}</p>
+        </section>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Questions</p>
+        <h2 id="faq-title">Frequently asked questions</h2>
+      </div>
+      <dl class="guide-faq">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>user guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="crm-cta">
     <Container class="pp-band">
-      <h2 id="crm-cta">Bring your customers and your sales team into one place.</h2>
+      <h2 id="crm-cta">Open {sys.name} in {erp.name}.</h2>
       <div class="pp-band__actions">
-        <Button href={APP_LINKS.crm.signIn} variant="accent" rel="noopener" data-cta="crm-band-start">Open the CRM</Button>
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-band-access">{access.label}</Button>
         <Button href={GUIDE} variant="secondary" data-cta="crm-band-guide">Read the user guide</Button>
       </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="related" aria-labelledby="related-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Related systems</p>
+        <h2 id="related-title">The other BIZOMAT systems</h2>
+        <p>One BIZOMAT account opens {sys.short}, {finance.short} and {projects.short} inside {erp.name}. <a href={SYSTEMS_HOME}>See all systems</a>.</p>
+      </div>
+      <ul class="pp-cards" role="list">
+        {related.map((s) => (
+          <li class="pp-card">
+            <p class="related-kind">{s.status === 'available' ? s.kind : `${s.kind} · ${STATUS_LABEL[s.status]}`}</p>
+            <h3><a href={s.url}>{s.name}</a></h3>
+            <p>{s.line}</p>
+          </li>
+        ))}
+      </ul>
     </Container>
   </section>
 </BaseLayout>
 
 <style>
   .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
-  .pp-body { margin: .9rem 0 0; color: var(--ink-2); }
-  .pp-subhead { font-size: var(--step-1); margin-bottom: .9rem; }
-  .pp-list--cols { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1.5rem; }
-  @media (max-width: 640px) { .pp-list--cols { grid-template-columns: 1fr; } }
+  .pp-tools > section[id] { scroll-margin-top: calc(var(--header-h) + 1rem); }
+  .int-note { margin: 0; color: var(--ink-2); font-size: .92rem; }
+  .flow-steps { display: grid; gap: .4rem; margin: .8rem 0 0; padding-left: 1.25rem; color: var(--ink-2); font-size: .96rem; }
+  .pp-card .related-kind { margin: 0 0 .5rem; color: var(--muted); font-size: .8rem; }
+  .guide-faq { display: grid; gap: 1rem; margin: 0; max-width: 52rem; }
+  .guide-faq > div { padding: 1.1rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+  .guide-faq dt { font-weight: 650; color: var(--ink); }
+  .guide-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
 </style>

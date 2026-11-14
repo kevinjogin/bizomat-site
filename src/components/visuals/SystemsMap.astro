@@ -1,0 +1,104 @@
+---
+// Diagram: how BIZOMAT's systems connect (src/config/systems.ts). BIZOMAT ERP is the one workspace: one sign-in, a
+// company switcher and the module rail. The CRM, Finance and Projects open inside it, joined by the links that work
+// today (a CRM deal starts a draft quote in Finance, becomes a draft invoice once won and starts a project; a project's
+// costs and budget are tracked in Finance: apps/work/src/worker/company/links.ts). Products and Engineering shows CAD
+// Automation's set-up and computers; CAD Automation itself is its own application with its own sign-in, reaching
+// SOLIDWORKS through the Companion on the person's Windows computer. Operations is planned and drawn as planned.
+// A conceptual illustration, labelled as one. Static apart from the pulses along the links, which reduced motion
+// removes (src/styles/visuals.css).
+import '../../styles/visuals.css';
+
+interface Props { id?: string; caption?: boolean }
+const { id = 'systems-map', caption = true } = Astro.props;
+
+// The module rail, in its order (apps/work/src/client/components/layout/SuiteRail.tsx), shortened to fit.
+const rail = [
+  { t: 'Dashboard' }, { t: 'My Work' }, { t: 'Sales and CRM' }, { t: 'Finance' }, { t: 'Projects' },
+  { t: 'Engineering' }, { t: 'Operations', planned: true }, { t: 'Reports' }, { t: 'Administration' },
+];
+const cards = [
+  { x: 162, y: 50, t: 'BIZOMAT CRM', s: 'Sales and CRM' },
+  { x: 422, y: 50, t: 'BIZOMAT Finance', s: 'Finance and Accounting' },
+  { x: 162, y: 176, t: 'BIZOMAT Projects', s: 'Projects and Tasks' },
+  { x: 422, y: 176, t: 'Engineering', s: 'Set-up and computers' },
+];
+// The links between tools that work today, each labelled on the line.
+const links = [
+  { d: 'M332 82 H 422', label: 'quote, invoice', x: 377, y: 82, w: 86 },
+  { d: 'M247 114 V 176', label: 'project', x: 247, y: 145, w: 52 },
+  { d: 'M332 176 L 422 114', label: 'costs', x: 377, y: 145, w: 42 },
+];
+const cad = [
+  { y: 50, t: 'CAD Automation', s: 'Own sign-in' },
+  { y: 176, t: 'Companion', s: 'Your Windows PC' },
+  { y: 302, t: 'SOLIDWORKS', s: 'Your licence' },
+];
+---
+<figure class:list={['viz', 'smap']} aria-labelledby={`${id}-cap`}>
+  <svg viewBox="0 0 788 452" role="img" aria-labelledby={`${id}-title`}>
+    <title id={`${id}-title`}>BIZOMAT ERP is one workspace with one sign-in, a company switcher and a module rail: Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Operations, Reports and Administration. Inside it, a CRM deal can start a quote in Finance, become a draft invoice once it is won, and start a project; a project's costs and budget are tracked in Finance. Administration holds the company, its people, departments and tool roles. Operations is planned and not built. CAD Automation is its own application with its own sign-in; it reaches SOLIDWORKS through the Companion on your Windows computer, and the ERP shows its set-up and computers.</title>
+    <text class="v-sub" x="16" y="24">BIZOMAT ERP · one sign-in · company switcher</text>
+    <text class="v-sub" x="628" y="24">Own application</text>
+
+    <rect class="v-panel" x="12" y="36" width="598" height="404" rx="14" />
+
+    <rect class="v-card" x="26" y="50" width="124" height="376" rx="10" />
+    <text class="v-sub" x="40" y="72">Module rail</text>
+    {rail.map((r, i) => (
+      <g>
+        <circle class:list={[r.planned ? 'v-dot--muted' : 'v-dot']} cx="42" cy={96 + i * 36} r="3" />
+        <text class:list={['v-text', { 'smap__muted': r.planned }]} x="52" y={100 + i * 36}>{r.t}</text>
+      </g>
+    ))}
+
+    {links.map((l) => <path class="v-edge v-edge--strong" d={l.d} />)}
+    {links.map((l, i) => <path class:list={['v-pulse', `d${i + 1}`]} d={l.d} pathLength="100" />)}
+
+    {cards.map((c) => (
+      <g>
+        <rect class="v-card" x={c.x} y={c.y} width="170" height="64" rx="10" />
+        <text class="v-title" x={c.x + 14} y={c.y + 27}>{c.t}</text>
+        <text class="v-sub" x={c.x + 14} y={c.y + 45}>{c.s}</text>
+      </g>
+    ))}
+
+    {links.map((l) => (
+      <g>
+        <rect class="v-pill" x={l.x - l.w / 2} y={l.y - 9} width={l.w} height="18" rx="9" />
+        <text class="v-pill-text" x={l.x} y={l.y + 3.5} text-anchor="middle">{l.label}</text>
+      </g>
+    ))}
+
+    <rect class="v-card smap__planned" x="162" y="290" width="430" height="56" rx="10" />
+    <text class="v-title smap__muted" x="176" y="314">Operations</text>
+    <text class="v-sub" x="176" y="332">Procurement · inventory · manufacturing · more</text>
+    <rect class="v-pill v-pill--working" x="520" y="302" width="60" height="18" rx="9" />
+    <text class="v-pill-text" x="550" y="314.5" text-anchor="middle">Planned</text>
+
+    <rect class="v-card v-card--accent" x="162" y="362" width="430" height="64" rx="10" />
+    <text class="v-title" x="176" y="389">Administration</text>
+    <text class="v-sub" x="176" y="407">Company · people · departments · tool roles</text>
+
+    <rect class="v-panel" x="624" y="36" width="152" height="404" rx="14" />
+    {cad.map((n) => (
+      <g>
+        <rect class="v-card" x="636" y={n.y} width="128" height="56" rx="10" />
+        <text class="v-title" x="648" y={n.y + 24}>{n.t}</text>
+        <text class="v-sub" x="648" y={n.y + 41}>{n.s}</text>
+      </g>
+    ))}
+    <path class="v-edge" d="M700 106 V 176" />
+    <path class="v-edge" d="M700 232 V 302" />
+    <path class="v-edge v-edge--strong smap__dashed" d="M592 208 C 616 208, 612 78, 636 78" />
+    <path class="v-pulse d4" d="M592 208 C 616 208, 612 78, 636 78" pathLength="100" />
+  </svg>
+  {caption && <figcaption class="viz__caption" id={`${id}-cap`}><span>How the systems connect: one sign-in and one company, with each tool keeping its own records and permissions.</span><span class="viz__tag">Illustration</span></figcaption>}
+</figure>
+
+<style>
+  .smap { max-width: 900px; margin-inline: auto; }
+  .smap__planned { fill: var(--paper-2); stroke-dasharray: 5 4; }
+  .smap__dashed { stroke-dasharray: 4 4; }
+  .smap__muted { fill: var(--muted); }
+</style>

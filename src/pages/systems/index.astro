@@ -1,92 +1,572 @@
 ---
-// BIZOMAT products overview: CAD Automation, Project Management, Customer Relationship Management, Finance and Resources
-// (src/config/products.ts), and what is planned.
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import Breadcrumb from '../components/Breadcrumb.astro';
-import Container from '../components/Container.astro';
-import Button from '../components/Button.astro';
-import { SITE } from '../config/site.ts';
-import { PRODUCTS, PLANNED } from '../config/products.ts';
+// /systems/: BIZOMAT Systems, the public catalogue of BIZOMAT's business software (owner, 14 Nov 2026: "One connected
+// platform to manage your business"). Every system's name, kind, line, status, page, guide and access link comes from
+// src/config/systems.ts; product facts come from src/data/platform-catalog.ts, which records their sources in the
+// applications. Screens are real (src/data/screenshots.ts). Systems are the software people sign in to; Resources are
+// free learning materials and stay open to every visitor without signing in (said plainly on this page).
+// Rules (CLAUDE.md): describe only what works today as working; Manufacturing and Operations is planned and is never
+// shown as working; no prices, customers, statistics or results.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import Button from '../../components/Button.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import SystemsMap from '../../components/visuals/SystemsMap.astro';
+import StatusLabel from '../../components/StatusLabel.astro';
+import StatusLegend from '../../components/StatusLegend.astro';
+import '../../styles/product.css';
+import '../../styles/visuals.css';
+import '../../styles/systems.css';
+import { screenshots, type Screenshot } from '../../data/screenshots.ts';
+import { SITE } from '../../config/site.ts';
+import { APP_LINKS } from '../../config/platform.ts';
+import { ERP_PREVIEW, STATUS_LABEL, SYSTEMS, SYSTEMS_HOME, type FeatureStatus, type SystemInfo } from '../../config/systems.ts';
+import { CAD, CRM, FINANCE, WORK } from '../../data/platform-catalog.ts';
 
-const crumbs = [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products/' }];
-const schema = [{
-  '@type': 'ItemList', name: 'BIZOMAT products', url: `${SITE.url}/products/`,
-  itemListElement: PRODUCTS.map((p, i) => ({
-    '@type': 'ListItem', position: i + 1,
-    item: { '@type': p.id === 'resources' ? 'CollectionPage' : 'SoftwareApplication', name: p.fullName, url: `${SITE.url}${p.url}`, description: p.summary, ...(p.id === 'resources' ? {} : { applicationCategory: p.id === 'finance' ? 'FinanceApplication' : 'BusinessApplication' }), publisher: { '@id': `${SITE.url}/#organization` } },
-  })),
-}];
+const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
+const shotOf = (product: Screenshot['product'], name: string) => screenshots(product).find((s) => s.src.endsWith(`/${name}.webp`));
+// A system's guide is linked only once its page exists, so the catalogue never links a page that is not built.
+const pageExists = (url: string) => {
+  const base = join(process.cwd(), 'src', 'pages', url.replace(/^\/|\/$/g, ''));
+  return existsSync(`${base}.astro`) || existsSync(join(base, 'index.astro'));
+};
+// The design preview is built separately (infrastructure/fly/Dockerfile), so it is linked by its full address.
+const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }];
+const description = 'BIZOMAT Systems: one connected platform to manage your business. ERP, CRM, Finance, Projects and Engineering Automation on one sign-in. Resources stay free.';
+
+/** A feature and its status (src/config/systems.ts, FEATURE_STATUS): every feature or module listed carries one. */
+interface Item { t: string; st: FeatureStatus }
+const live = (t: string): Item => ({ t, st: 'live' });
+const connected = (t: string): Item => ({ t, st: 'connected' });
+const building = (t: string): Item => ({ t, st: 'in-development' });
+const planned = (t: string): Item => ({ t, st: 'planned' });
+
+interface Detail {
+  description: string;
+  who: string;
+  problems: string[];
+  capabilities: Item[];
+  /** A fact the reader must not miss (a limit), shown under the capabilities. */
+  limit?: string;
+  shot?: Screenshot;
+  benefits: string[];
+  connects: Item[];
+  steps: { t: string; x: string }[];
+  faqs: { q: string; a: string }[];
+  /** For the comparison table. */
+  manages: string;
+  opens: string;
+  signIn: string;
+}
+
+const DETAILS: Record<SystemInfo['id'], Detail> = {
+  erp: {
+    description: 'BIZOMAT ERP is the workspace you sign in to. Choose a company at the top, then open any module from the rail at the left of every screen: the dashboard, your work, sales, finance, projects, engineering, reports and administration.',
+    who: 'Owners and administrators who run sales, money and projects in one place, people who work in more than one tool, and anyone who works for more than one company.',
+    problems: [
+      'A separate address and login for every tool.',
+      'No single view of how the business is going across sales, money and projects.',
+      'Giving each person the right access, tool by tool, as people join and leave.',
+      'Mixing up the records of two businesses when you work for both.',
+    ],
+    capabilities: [
+      live('One sign-in with your BIZOMAT account.'),
+      live('A company switcher: your registered companies, your own company and the companies that shared tools with you.'),
+      connected("A dashboard of the company's tools, with the figures your role in each tool may see."),
+      live('Sales and CRM, Finance and Accounting and Projects and Tasks, opened inside the ERP.'),
+      live("Reports: every tool's reports in one place."),
+      live('Administration: company, people, departments, tool roles and settings.'),
+    ],
+    shot: shotOf('erp', 'erp-dashboard'),
+    benefits: [
+      'Move between tools without signing in again.',
+      'Each tool keeps its own records and permissions. Nothing is copied between them.',
+      'Departments are made once and appear in every tool.',
+      'The old addresses (/tasks, /crm, /finance and /company) forward into the ERP, so bookmarks keep working.',
+    ],
+    connects: [
+      live('The CRM, Finance and Projects open inside it as modules.'),
+      live("Products and Engineering shows CAD Automation's set-up steps."),
+      building("Your company's CAD computers, reported by CAD Automation. Until it reports, the page says so."),
+      planned('Operations: procurement, inventory, manufacturing, quality, maintenance and supply chain.'),
+    ],
+    steps: [
+      { t: 'Sign in.', x: 'Open bizomat.ai/erp and sign in, or create a BIZOMAT account.' },
+      { t: 'Choose a company.', x: 'Your own company is there already. Register your business to add its people and departments.' },
+      { t: 'Open a module.', x: 'Choose Sales and CRM, Finance and Accounting or Projects and Tasks in the rail.' },
+    ],
+    faqs: [
+      { q: 'Do I need a separate account for each tool?', a: 'No. One BIZOMAT account opens the ERP and every tool inside it. Engineering Automation (CAD Automation) keeps its own sign-in for now.' },
+      { q: 'What is my own company?', a: 'Everyone has one, in their own name. It is not registered, and it holds the tools you own outside a registered company.' },
+    ],
+    manages: 'Your company: its tools, dashboard, reports, people, departments and roles',
+    opens: 'bizomat.ai/erp',
+    signIn: 'Your BIZOMAT account',
+  },
+  crm: {
+    description: CRM.summary,
+    who: 'Sales teams, owners who do their own selling, account managers, and anyone who follows up enquiries.',
+    problems: [
+      'Enquiries that sit in an inbox and are forgotten.',
+      'No shared history of what was said and agreed with a customer.',
+      'Follow-ups that slip when someone is away.',
+      'No clear view of what is likely to close.',
+    ],
+    capabilities: [
+      live('Contacts and companies, with a warning before you add a duplicate.'),
+      live('Leads with statuses, a lead score that explains itself, and conversion in one step.'),
+      live('Pipelines you drag deals across, with Won and Lost.'),
+      live('Activities and follow-ups on lists, a calendar and your own calendar app.'),
+      live(`A dashboard and ${CRM.reports.length} reports with CSV export.`),
+      live(`${CRM.automations.length} ready-made automations, and your own.`),
+    ],
+    shot: shotOf('crm', 'crm-overview'),
+    benefits: [
+      'Anyone on the team can pick up where a colleague left off.',
+      `${CRM.roles.length} roles decide who may view, create, edit, delete, import and export.`,
+      'Contacts, companies and leads come in from a CSV file.',
+      'Emails are logged from your own mail program. BIZOMAT does not read your mailbox.',
+    ],
+    connects: [
+      connected('When your company runs Finance too, a deal can start a draft quote there, and becomes a draft invoice once it is won.'),
+      connected('A deal can start a project in Projects, and an activity can become a project task.'),
+      connected('A CRM company can be linked to its customer record in Finance, so its open invoices show in the CRM to people whose Finance role sees sales.'),
+      connected("Your company's departments appear as CRM teams."),
+    ],
+    steps: [
+      { t: 'Open Sales and CRM.', x: 'Sign in to BIZOMAT ERP and choose Sales and CRM in the rail.' },
+      { t: 'Use your organisation.', x: "Your company's CRM organisation is ready, or create one with a name and a currency." },
+      { t: 'Add customers and deals.', x: 'Add contacts, companies and leads, or import a CSV file, then work deals on the board.' },
+    ],
+    faqs: [
+      { q: 'Does the CRM send emails to my customers?', a: 'No. You send them from your own mail program and the CRM logs them. Gmail and Microsoft 365 synchronisation is not available yet.' },
+      { q: 'Can I bring my data from another CRM?', a: 'Yes, for contacts, companies and leads: export them from the other system as a CSV file and use Import. Deals and activities are added in the CRM itself.' },
+    ],
+    manages: 'Customers, contacts, leads, deals, activities and follow-ups',
+    opens: 'Inside BIZOMAT ERP, in Sales and CRM',
+    signIn: 'Your BIZOMAT account',
+  },
+  finance: {
+    description: FINANCE.summary,
+    who: 'Business owners, bookkeepers, accountants and finance managers. Also individuals and households, in personal and household workspaces.',
+    problems: [
+      'Spreadsheets that do not balance, or that only one person understands.',
+      'Invoices and bills that are hard to follow up.',
+      'GST figures put together by hand each quarter.',
+      'Not knowing what you are owed, and what you owe, today.',
+    ],
+    capabilities: [
+      live('Personal, household and business workspaces.'),
+      live('A double-entry ledger: posted entries are never edited, only reversed and posted again.'),
+      live(`Transactions, and bank statements imported from ${list(FINANCE.statementFormats)} files and reconciled.`),
+      live('Quotes customers accept online, invoices, credit notes, bills, purchase orders and expense claims.'),
+      live(`${FINANCE.reports.length} reports, from profit and loss and the balance sheet to a GST and BAS worksheet.`),
+      live('Budgets, goals and alerts.'),
+    ],
+    limit: FINANCE.limits,
+    shot: shotOf('finance', 'finance-dashboard'),
+    benefits: [
+      'Every entry balances, so the reports agree with each other.',
+      'Roles for accountants, finance managers and contributors, with approvals where you want them.',
+      'A locked period refuses anything dated inside it.',
+      'CSV and PDF for every report.',
+    ],
+    connects: [
+      connected('Quotes and draft invoices can start from CRM deals.'),
+      connected('A Finance customer can be linked to its CRM company.'),
+      connected('A project can be tracked in Finance, so its income and costs show against a budget.'),
+      connected("Your company's departments appear in Finance's tracking."),
+    ],
+    steps: [
+      { t: 'Open Finance and Accounting.', x: 'Sign in to BIZOMAT ERP and choose Finance and Accounting in the rail.' },
+      { t: 'Choose a workspace.', x: "Your company's business workspace, or a personal or household workspace of your own." },
+      { t: 'Record your money.', x: 'Import a bank statement, record transactions and create your first invoice.' },
+    ],
+    faqs: [
+      { q: 'Does Finance connect to my bank?', a: `No, and it never asks for internet banking passwords. Download statements from your bank and import them as ${list(FINANCE.statementFormats)} files.` },
+      { q: 'Does it lodge my BAS with the ATO?', a: 'No. The GST and BAS report is a worksheet to check against your records before you lodge. BIZOMAT is not a certified tax, payroll or statutory accounting product.' },
+    ],
+    manages: 'Accounts, transactions, quotes, invoices, bills, budgets, reports and a GST worksheet',
+    opens: 'Inside BIZOMAT ERP, in Finance and Accounting',
+    signIn: 'Your BIZOMAT account',
+  },
+  projects: {
+    description: 'BIZOMAT Projects brings your projects, tasks, documents and dashboards into one place. Plan the work, assign it, track progress and automate the routine steps.',
+    who: 'Project teams and managers, operations and office teams, and anyone who shares work with colleagues.',
+    problems: [
+      'Work tracked in emails, chats and spreadsheets.',
+      'Tasks without a clear owner or due date.',
+      'Status meetings held only to find out where things are.',
+      'Documents kept apart from the work they describe.',
+    ],
+    capabilities: [
+      live(`Boards with groups, items, subitems and ${WORK.columnTypes} column types.`),
+      live(`${WORK.views.length} views of the same work, from a table and a Kanban board to a Gantt timeline.`),
+      live('Updates with @mentions, attachments, time tracking and linked documents.'),
+      live('Automations with run logs.'),
+      live(`Dashboards with ${WORK.widgetTypes} widget types, documents and goals.`),
+      live('My Work: everything assigned to you, in one list.'),
+    ],
+    shot: shotOf('work', 'work-table'),
+    benefits: [
+      'Everyone works from the same plan, in the view that suits them.',
+      'Workspace roles (owner, admin, member and viewer), and private or shared boards.',
+      'Templates to start a new project quickly.',
+      'Signed outgoing webhooks, and incoming webhooks for Slack and Microsoft Teams.',
+    ],
+    connects: [
+      connected('A CRM deal can start a project, and a CRM activity can become a task.'),
+      connected('A project can be tracked in Finance, so its income and costs show against a budget.'),
+      connected("Your company's departments appear as teams."),
+      live('My Work in BIZOMAT ERP opens what is assigned to you here.'),
+    ],
+    steps: [
+      { t: 'Open Projects and Tasks.', x: 'Sign in to BIZOMAT ERP and choose Projects and Tasks in the rail.' },
+      { t: 'Create a board.', x: 'Start from a template or an empty board, then add groups and items.' },
+      { t: 'Assign and track.', x: 'Give each item an owner, a status and a date, and switch views as you need.' },
+    ],
+    faqs: [
+      { q: 'Which views are there?', a: `${list(WORK.views)}, all showing the same items.` },
+      { q: 'Who can see my boards?', a: "People in the workspace, as their role allows. A private board is seen only by the people added to it and the workspace's owners and administrators." },
+    ],
+    manages: 'Projects, tasks, timelines, documents and dashboards',
+    opens: 'Inside BIZOMAT ERP, in Projects and Tasks',
+    signIn: 'Your BIZOMAT account',
+  },
+  engineering: {
+    description: 'Its application, CAD Automation, connects Claude, ChatGPT or another assistant that supports MCP connectors to SOLIDWORKS on your own Windows computer. You describe the part, the change or the check; it builds native, editable features in your own files.',
+    who: 'Mechanical designers, engineers and drafters who use SOLIDWORKS on Windows, alone or in a small team.',
+    problems: [
+      'Repetitive modelling of parts that differ only in size.',
+      'Drawings that take a long time to set out.',
+      'Checking sizes, volumes and interference by hand.',
+    ],
+    capabilities: [
+      live('Parts: sketches, extrudes, revolves, holes, fillets, patterns and more.'),
+      live('Assemblies: components, mates and interference checks.'),
+      live('Drawings: native .SLDDRW files with views, dimensions and a bill of materials.'),
+      live('Your existing parts and assemblies: read, measure and change them.'),
+      live('Import STEP, IGES and Parasolid files; export STEP, STL, PDF, DWG and DXF.'),
+      live(`${CAD.toolCount} tools your assistant can call.`),
+    ],
+    shot: shotOf('cad', 'cad-dashboard'),
+    benefits: [
+      'Everything it makes is a real SOLIDWORKS feature you can edit.',
+      'Each feature is checked on a CAD kernel before SOLIDWORKS is touched.',
+      'Deletions ask you to confirm on your computer.',
+      'SOLIDWORKS saves your models on your computer, and the link to it is outgoing HTTPS only.',
+    ],
+    connects: [
+      live("In BIZOMAT ERP, Products and Engineering shows CAD Automation's set-up steps."),
+      building("Your company's computers in the ERP, reported by CAD Automation: owners and administrators see the company's, members their own. Until it reports, the page says so and links to CAD Automation."),
+      building('Sign in with your BIZOMAT account. CAD Automation keeps its own sign-in for now.'),
+      planned('Product records with revisions and bills of materials, linked to CAD drawings.'),
+    ],
+    steps: [
+      { t: 'Sign in and install.', x: 'Sign in to CAD Automation and download the installer: the SOLIDWORKS add-in and the Companion.' },
+      { t: 'Pair the computer.', x: 'Sign in once from the Companion. The computer gets its own key.' },
+      { t: 'Connect your assistant.', x: 'Add the connector address in Claude, ChatGPT or another MCP app, then ask in plain language.' },
+    ],
+    faqs: [
+      { q: 'What do I need?', a: 'SOLIDWORKS on your own Windows computer, the BIZOMAT add-in and Companion (one installer), and an AI assistant that supports MCP connectors.' },
+      { q: 'Does SOLIDWORKS run in the cloud?', a: 'No. It runs on your own computer with your own licence. Commands reach it through the Companion, over a connection your computer makes.' },
+      { q: 'How far has it been tested?', a: CAD.status },
+    ],
+    manages: 'SOLIDWORKS parts, assemblies and drawings, through your AI assistant',
+    opens: 'Its own application, CAD Automation, at bizomat.ai/cad. Set-up and computers also show in the ERP.',
+    signIn: 'A CAD Automation account, for now',
+  },
+  manufacturing: {
+    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. It is planned: none of it is built, and nothing can be used or bought yet.',
+    who: 'It is designed for manufacturers, workshops and businesses that buy, store and ship goods.',
+    problems: [
+      'Stock levels known only by counting.',
+      'Purchases, deliveries and bills that do not match.',
+      'Production planned on whiteboards and spreadsheets.',
+      'Quality and maintenance records kept on paper.',
+    ],
+    capabilities: [
+      planned('Procurement'),
+      planned('Inventory and warehouse'),
+      planned('Manufacturing and production planning'),
+      planned('Quality'),
+      planned('Asset management and maintenance'),
+      planned('Supply chain'),
+    ],
+    benefits: [
+      'Purchase orders, receipts and supplier bills that match.',
+      'Stock on hand by product and location, kept by its movements.',
+      'Work orders planned against the capacity of each work centre.',
+      'Inspections, nonconformances and maintenance on record.',
+    ],
+    connects: [
+      planned('Designed to work through Finance: purchase orders, bills and stock values.'),
+      planned('Designed to put the work of each operation on a Projects board.'),
+      planned('Designed to turn accepted quotes and won deals into sales orders.'),
+    ],
+    steps: [
+      { t: 'Suppliers and bills.', x: 'Keep suppliers, purchase orders and bills in Finance today.' },
+      { t: 'Plan the work.', x: 'Plan production work and tasks on a board in Projects.' },
+      { t: 'See the design.', x: 'Explore the design preview, which uses demonstration data only.' },
+    ],
+    faqs: [
+      { q: 'Can I use it today?', a: 'No. It is planned and not built. There is nothing to sign up for or buy.' },
+      { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data. Nothing you do there is saved.' },
+    ],
+    manages: 'Procurement, inventory, production, quality, maintenance and supply chain',
+    opens: 'Not available. A design preview with demonstration data only.',
+    signIn: 'Nobody yet: it is not built',
+  },
+};
+
+const platformFaqs = [
+  { q: 'What is the difference between Systems and Resources?', a: "Systems are BIZOMAT's business software: you sign in to use them. Resources are free learning materials (calculators, the Library and guides), open to every visitor without signing in. Resources are not part of any system, and they stay free." },
+  { q: 'Do I need a separate account for each system?', a: 'No. One BIZOMAT account opens BIZOMAT ERP, and the CRM, Finance and Projects open inside it. Engineering Automation (the CAD Automation application) keeps its own sign-in for now.' },
+  { q: 'Can I manage more than one company?', a: 'Yes. Register more than one company, or accept invitations from others, and move between them with the company switcher. Everyone also has their own company in their own name, which is not registered.' },
+  { q: 'Is my data copied between the systems?', a: 'No. Each tool keeps its own records and permissions. A link between tools, such as a won deal to a draft invoice, makes a record in the other tool only when you ask, and checks your role there first.' },
+  { q: 'Does Finance connect to my bank or lodge my BAS?', a: 'No. Finance does not connect to banks, make payments or lodge with the ATO. You import statements you download, and the GST and BAS report is a worksheet to check before you lodge yourself.' },
+  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality, maintenance and supply chain) is planned and not built. A design preview with demonstration data shows how it is designed.' },
+  { q: 'What happened to the old addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into BIZOMAT ERP, so bookmarks and links in emails keep working.' },
+];
+
+const start = [
+  { t: 'Create your BIZOMAT account', x: 'Open BIZOMAT ERP and choose Create an account: your full name, work email and a password.' },
+  { t: 'Register your company', x: 'Register your business with its ABN, or yourself in your own name. It gets a Projects workspace, a CRM organisation and a Finance business workspace, or brings in ones you already own.' },
+  { t: 'Invite your people', x: 'Invite each person with a company role, a role in each tool and their departments.' },
+  { t: 'Work from the rail', x: 'Open Sales and CRM, Finance and Accounting or Projects and Tasks. Set up Engineering Automation from Products and Engineering.' },
+];
+
+const entries = SYSTEMS.map((s) => ({ s, d: DETAILS[s.id], guide: s.guide && pageExists(s.guide) ? s.guide : undefined }));
+
+const schema = [
+  {
+    '@type': 'CollectionPage', name: 'BIZOMAT Systems', url: `${SITE.url}${SYSTEMS_HOME}`, description, isPartOf: { '@id': `${SITE.url}/#website` },
+    mainEntity: {
+      '@type': 'ItemList', name: 'BIZOMAT systems',
+      itemListElement: SYSTEMS.map((s, i) => ({
+        '@type': 'ListItem', position: i + 1, url: `${SITE.url}${s.url}`, name: s.name,
+        ...(s.status === 'planned' ? {} : { item: { '@type': 'SoftwareApplication', name: s.name, url: `${SITE.url}${s.url}`, description: s.line, applicationCategory: s.id === 'finance' ? 'FinanceApplication' : 'BusinessApplication', operatingSystem: s.id === 'engineering' ? 'Windows, web browser' : 'Web browser', publisher: { '@id': `${SITE.url}/#organization` } } }),
+      })),
+    },
+  },
+  { '@type': 'FAQPage', mainEntity: platformFaqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
 ---
-<BaseLayout title="Products: CAD Automation, Project Management, CRM, Finance and Resources" description="BIZOMAT products: CAD Automation for SOLIDWORKS, Project Management for teams, CRM for sales, Finance for your money, and free Resources." breadcrumbs={crumbs} schema={schema}>
-  <Hero eyebrow="Products" title="One platform. <em>Five ways to get work done.</em>" lead="Each BIZOMAT product is built for one kind of work. Open the one that fits, or ask BIZOMAT AI Search on the homepage.">
-    <Breadcrumb items={crumbs} slot="before" />
-  </Hero>
-
-  <section class="products" aria-label="BIZOMAT products">
-    <Container>
-      <ol class="product-rows" role="list">
-        {PRODUCTS.map((p) => (
-          <li class:list={['product-row', `product-row--${p.status}`]} id={p.id}>
-            <div class="product-row__head">
-              <p class:list={['status', `status--${p.status}`]}>{p.signIn ? 'Available · sign-in' : 'Available · free, no sign-in'}</p>
-              <h2><span>BIZOMAT</span> {p.name}</h2>
-              {p.formerly && <p class="product-row__formerly">Formerly {p.formerly}</p>}
-            </div>
-            <div class="product-row__body">
-              <p class="product-row__tagline">{p.tagline}</p>
-              <p>{p.summary}</p>
-              {p.url ? (
-                <div class="product-row__actions">
-                  <Button href={p.url} arrow data-cta={`products-${p.id}`}>{p.action}</Button>
-                </div>
-              ) : (
-                <p class="product-row__soon">{p.name} is not available yet, so there is nothing to sign up for or download. <a href="/contact/?service=feedback#enquiry">Tell us what you would use it for</a>.</p>
-              )}
-            </div>
-          </li>
-        ))}
-      </ol>
-      {PLANNED.length > 0 && <p class="products-planned">Planned: {PLANNED.map((p) => <span><strong>{p.fullName}</strong>, {p.summary.toLowerCase().replace(/\.$/, '')}.</span>)}</p>}
-      <div class="products-also">
-        <h2>Also from BIZOMAT</h2>
-        <ul role="list">
-          <li><a href="/tools/"><strong>Tools</strong><span>Engineering, manufacturing and business tools that run in your browser.</span></a></li>
-          <li><a href="/reados/"><strong>Library</strong><span>Technical books in short, practical chapters.</span></a></li>
-          <li><a href="/services/"><strong>Engineering services</strong><span>Defined engineering, CAD and improvement assignments.</span></a></li>
-        </ul>
+<BaseLayout title="Systems" description={description} imageAlt="BIZOMAT Systems: one connected platform to manage your business" breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="systems-title">
+    <Container class="pp-hero__inner">
+      <div>
+        <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+        <p class="bz-eyebrow">BIZOMAT Systems</p>
+        <h1 id="systems-title">One connected platform to manage your business</h1>
+        <p class="pp-hero__lead">BIZOMAT's business software in one catalogue. Sign in once to BIZOMAT ERP, choose your company, and open the CRM, Finance and Projects inside it. Engineering Automation drives SOLIDWORKS on your own computer.</p>
+        <div class="pp-hero__actions">
+          <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-open-erp">Open BIZOMAT ERP</Button>
+          <Button href="#compare" variant="secondary" data-cta="systems-compare">Compare the systems</Button>
+        </div>
+        <p class="pp-hero__note">Systems are software you sign in to. <a href="#resources-free">Resources</a> (tools, the Library and guides) are separate: free and open to everyone, without signing in.</p>
       </div>
-      <p class="products-note">SOLIDWORKS® is a registered trade mark of Dassault Systèmes SolidWorks Corporation. BIZOMAT is not affiliated with or endorsed by Dassault Systèmes.</p>
+      <nav class="sys-glance" aria-labelledby="glance-title">
+        <h2 id="glance-title">The systems at a glance</h2>
+        <ol>
+          {SYSTEMS.map((s) => (
+            <li>
+              <a href={`#${s.id}`}>
+                <strong>{s.name}</strong>
+                <span class="sys-glance__kind">{s.kind}</span>
+                <span class:list={['sys-badge', `sys-badge--${s.status}`]}>{s.status === 'partial' ? 'Partly planned' : STATUS_LABEL[s.status]}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="connected" aria-labelledby="connected-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">How the systems connect</p>
+        <h2 id="connected-title">One sign-in, one company, every tool</h2>
+        <p>BIZOMAT ERP is the workspace. The CRM, Finance and Projects open inside it, each keeping its own records and permissions. Where your company runs more than one of them, they link: a deal starts a quote, becomes a draft invoice once it is won, and starts a project whose costs Finance tracks.</p>
+      </div>
+      <SystemsMap id="systems-map" />
+      <ul class="pp-cards pp-status" role="list">
+        <li class="pp-card"><StatusLabel status="live" /><h3 class="sys-card-title">One sign-in</h3><p>Your BIZOMAT account opens the ERP and every module in it. The old addresses of the tools forward there.</p></li>
+        <li class="pp-card"><StatusLabel status="live" /><h3 class="sys-card-title">By company</h3><p>Switch between your registered companies, your own company and the companies that shared a tool with you.</p></li>
+        <li class="pp-card"><StatusLabel status="connected" /><h3 class="sys-card-title">Links between tools</h3><p>Each tool keeps its own records and roles. A link makes a record in another tool only when you ask, and checks your role there.</p></li>
+      </ul>
+      <div class="sys-legend">
+        <h3 class="sys-subhead">What the labels mean</h3>
+        <p class="sys-note">Every feature and module on this page carries one of these four labels.</p>
+        <StatusLegend />
+      </div>
+    </Container>
+  </section>
+
+  {entries.map(({ s, d, guide }, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 0 }]} id={s.id} aria-labelledby={`${s.id}-title`}>
+      <Container>
+        <div class="sys-entry__head">
+          <div>
+            <p class="bz-eyebrow sys-entry__kind">{s.kind}</p>
+            <h2 id={`${s.id}-title`}>{s.name}</h2>
+            {s.formerly && <p class="sys-entry__formerly">Formerly {s.formerly}</p>}
+            <p class="sys-entry__line">{s.line}</p>
+          </div>
+          <div class="sys-entry__status">
+            <span class:list={['sys-badge', `sys-badge--${s.status}`]}>{STATUS_LABEL[s.status]}</span>
+            {s.statusNote && <p>{s.statusNote}</p>}
+          </div>
+        </div>
+
+        <div class="sys-entry__intro">
+          <div>
+            <p class="sys-lead">{d.description}</p>
+            <h3>Who it is for</h3>
+            <p class="sys-body">{d.who}</p>
+            <h3>{s.status === 'planned' ? 'Problems it is designed to solve' : 'Problems it solves'}</h3>
+            <ul class="pp-list">{d.problems.map((p) => <li>{p}</li>)}</ul>
+          </div>
+          {d.shot ? (
+            <figure class="pp-shot">
+              <img src={d.shot.src} alt={`${d.shot.title}. ${d.shot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+              <figcaption><span>{d.shot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+            </figure>
+          ) : s.status === 'planned' ? (
+            <div class="sys-planned">
+              <p class="sys-planned__status"><StatusLabel status="planned" /> Not available yet</p>
+              <h3>No screens to show</h3>
+              <p>{s.name} is not built, so there is no product screen. Its design can be explored in the <a href={PREVIEW} rel="noopener">design preview, demonstration data</a>.</p>
+            </div>
+          ) : null}
+        </div>
+
+        <div class="sys-entry__grid">
+          <section class="sys-box" aria-labelledby={`${s.id}-cap`}>
+            <h3 id={`${s.id}-cap`}>{s.status === 'planned' ? 'Planned modules' : 'Main capabilities'}</h3>
+            <ul class="pp-list sys-items">{d.capabilities.map((c) => <li><span>{c.t}</span> <StatusLabel status={c.st} /></li>)}</ul>
+            {d.limit && <p class="pp-table-note">{d.limit}</p>}
+          </section>
+          <section class="sys-box" aria-labelledby={`${s.id}-ben`}>
+            <h3 id={`${s.id}-ben`}>{s.status === 'planned' ? 'What it is designed to do' : 'Key benefits'}</h3>
+            <ul class:list={['pp-list', { 'sys-items': s.status === 'planned' }]}>{d.benefits.map((b) => <li><span>{b}</span>{s.status === 'planned' && <> <StatusLabel status="planned" /></>}</li>)}</ul>
+          </section>
+          <section class="sys-box" aria-labelledby={`${s.id}-con`}>
+            <h3 id={`${s.id}-con`}>{s.status === 'planned' ? 'How it is designed to connect' : 'How it connects'}</h3>
+            <ul class="pp-list sys-items">{d.connects.map((c) => <li><span>{c.t}</span> <StatusLabel status={c.st} /></li>)}</ul>
+          </section>
+        </div>
+
+        <div class="sys-entry__foot">
+          <section class="sys-box" aria-labelledby={`${s.id}-start`}>
+            <h3 id={`${s.id}-start`}>{s.status === 'planned' ? 'What you can do today' : 'Getting started'}</h3>
+            <ol class="sys-mini-steps">{d.steps.map((st) => <li><strong>{st.t}</strong> {st.x}</li>)}</ol>
+          </section>
+          <section class="sys-box" aria-labelledby={`${s.id}-faq`}>
+            <h3 id={`${s.id}-faq`}>Questions</h3>
+            <dl class="sys-faq">{d.faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}</dl>
+          </section>
+        </div>
+
+        <div class="sys-actions">
+          {s.access && <Button href={s.access.href} variant="accent" rel="noopener" data-cta={`systems-${s.id}-access`}>{s.access.label}</Button>}
+          <Button href={s.url} variant="secondary" data-cta={`systems-${s.id}-about`}>About {s.name}</Button>
+          {guide && <Button href={guide} variant="text" data-cta={`systems-${s.id}-guide`}>User guide</Button>}
+          {!s.access && <Button href={PREVIEW} variant="text" rel="noopener" data-cta={`systems-${s.id}-preview`}>Design preview, demonstration data</Button>}
+          {s.access ? <p class="sys-actions__note">{s.access.note}</p> : <p class="sys-actions__note">Planned: there is no application to open yet.</p>}
+        </div>
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="compare" aria-labelledby="compare-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Compare</p>
+        <h2 id="compare-title">The systems side by side</h2>
+        <p>What each system manages, whether it works today, where it opens and which account signs in.</p>
+      </div>
+      <div class="sys-table-wrap">
+        <table class="sys-table">
+          <thead>
+            <tr><th scope="col">System</th><th scope="col">What it manages</th><th scope="col">Status</th><th scope="col">Where it opens</th><th scope="col">Who signs in</th></tr>
+          </thead>
+          <tbody>
+            {entries.map(({ s, d }) => (
+              <tr class:list={[{ 'is-planned': s.status === 'planned' }]}>
+                <th scope="row"><a href={s.url}>{s.name}</a><br /><span class="pp-table-note">{s.kind}</span></th>
+                <td>{d.manages}</td>
+                <td><span class:list={['sys-badge', `sys-badge--${s.status}`]}>{STATUS_LABEL[s.status]}</span></td>
+                <td>{d.opens}</td>
+                <td>{d.signIn}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="pp-table-note">Available, some modules planned: BIZOMAT ERP works today, and its Operations modules are planned. Resources are not in this table: they are not a system, and they are free.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="start" aria-labelledby="start-title">
+    <Container class="pp-split">
+      <div>
+        <p class="bz-eyebrow">Getting started</p>
+        <h2 id="start-title">Start in four steps</h2>
+        <p class="sys-lead">The <a href="/systems/erp/guide/">BIZOMAT ERP user guide</a> walks through each step, screen by screen.</p>
+        <div class="sys-actions">
+          <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-start-erp">Open BIZOMAT ERP</Button>
+        </div>
+      </div>
+      <ol class="pp-steps">
+        {start.map((st) => <li><h3>{st.t}</h3><p>{st.x}</p></li>)}
+      </ol>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Questions</p>
+        <h2 id="faq-title">About the platform</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {platformFaqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="resources-free" aria-labelledby="free-title">
+    <Container>
+      <div class="sys-free-lead">
+        <div>
+          <p class="bz-eyebrow">Resources</p>
+          <h2 id="free-title">Resources are free, and stay free</h2>
+        </div>
+        <div>
+          <p class="sys-body">Systems are BIZOMAT's business software and applications, used with a sign-in. Resources are free public learning materials: calculators, the Library and guides. They are open to every visitor, with no account and no sign-in, and they are not part of any system.</p>
+        </div>
+      </div>
+      <ul class="sys-free" role="list">
+        <li><a href="/tools/"><strong>Tools</strong><span>Engineering, manufacturing, operations and business calculators that show their method.</span></a></li>
+        <li><a href="/reados/"><strong>Library</strong><span>Technical books in short, practical chapters.</span></a></li>
+        <li><a href="/resources/"><strong>All resources</strong><span>Tools, the Library, guides and learning paths in one place. Free for everyone, no sign-in.</span></a></li>
+      </ul>
+      <p class="sys-trademark">SOLIDWORKS® is a registered trade mark of Dassault Systèmes SolidWorks Corporation. BIZOMAT is not affiliated with or endorsed by Dassault Systèmes.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="systems-cta">
+    <Container class="pp-band">
+      <h2 id="systems-cta">Your company, its people and its tools, on one sign-in.</h2>
+      <div class="pp-band__actions">
+        <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-band-erp">Open BIZOMAT ERP</Button>
+        <Button href="/systems/erp/" variant="secondary" data-cta="systems-band-about">About BIZOMAT ERP</Button>
+      </div>
     </Container>
   </section>
 </BaseLayout>
-
-<style>
-  .products { padding-bottom: var(--space-section); }
-  .product-rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line-strong); }
-  .product-row { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 1rem 4rem; padding: clamp(2rem, 4vw, 3rem) 0; border-bottom: 1px solid var(--line); scroll-margin-top: calc(var(--header-h) + 1rem); }
-  .product-row h2 { font-size: var(--step-3); }
-  .product-row h2 span { color: var(--muted); font-weight: 500; }
-  .product-row__tagline { margin: 0 0 .6rem; font-size: var(--step-1); font-weight: 580; color: var(--ink); }
-  .product-row__body > p:not(.product-row__tagline) { color: var(--ink-2); max-width: 54ch; }
-  .product-row__actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; margin-top: 1.5rem; }
-  .product-row__formerly { margin: .4rem 0 0; color: var(--muted); font-size: .86rem; }
-  .product-row__soon { margin-top: 1rem; color: var(--muted) !important; }
-  .product-row__soon a { color: var(--ink-2); }
-  .status { display: inline-flex; align-items: center; gap: .4rem; margin: 0 0 .9rem; font-size: .76rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-  .status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
-  .status--available { color: var(--success); }
-  .status--available::before { background: var(--success); }
-  .products-also { margin-top: clamp(3rem, 6vw, 4.5rem); }
-  .products-also h2 { font-size: var(--step-2); margin-bottom: 1.25rem; }
-  .products-also ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
-  .products-also a { display: grid; gap: .3rem; height: 100%; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-decoration: none; }
-  .products-also a:hover { border-color: var(--line-strong); }
-  .products-also span { color: var(--muted); font-size: .92rem; }
-  .products-note { margin: 2.5rem 0 0; color: var(--muted); font-size: .82rem; max-width: 80ch; }
-  .products-planned { margin: 2rem 0 0; padding: 1rem 1.2rem; border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); color: var(--muted); }
-  @media (max-width: 860px) {
-    .product-row { grid-template-columns: 1fr; }
-    .products-also ul { grid-template-columns: 1fr; }
-  }
-</style>

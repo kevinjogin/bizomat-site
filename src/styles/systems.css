@@ -1,0 +1,147 @@
+/* BIZOMAT Systems pages (/systems/, /systems/erp/ and its guide, /systems/manufacturing/): the catalogue's own classes,
+   on top of product.css and the shared tokens. Nothing inline (the Content-Security-Policy forbids style attributes). */
+
+.sys-crumbs { margin-bottom: 1.4rem; }
+.sys-lead { margin: .9rem 0 0; max-width: 46rem; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+.sys-body { margin: .9rem 0 0; max-width: 64ch; color: var(--ink-2); }
+.sys-note { margin: .9rem 0 0; color: var(--muted); font-size: .9rem; max-width: 64ch; }
+.sys-subhead { font-size: 1.02rem; margin-bottom: .7rem; }
+
+/* ---------- Status badges: Available, Working, Partly available, Planned ---------- */
+.sys-badge { display: inline-flex; align-items: center; gap: .4rem; padding: .16rem .6rem; border-radius: 999px; border: 1px solid var(--line); background: var(--paper-2); color: var(--muted); font: 600 .7rem/1.5 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+.sys-badge::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.sys-badge--available, .sys-badge--working { border-color: transparent; background: var(--bz-success-soft); color: var(--bz-success); }
+.sys-badge--partial { border-color: transparent; background: var(--bz-info-soft); color: var(--bz-info); }
+.sys-badge--planned { border-color: transparent; background: var(--bz-warning-soft); color: var(--bz-warning); }
+
+/* ---------- Hero: the systems at a glance ---------- */
+.sys-glance { margin: 0; padding: 1.1rem 1.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+.sys-glance h2 { font-size: 1.02rem; margin-bottom: .6rem; }
+.sys-glance ol { display: grid; gap: .1rem; margin: 0; padding: 0; list-style: none; }
+.sys-glance a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .2rem 1rem; padding: .65rem .2rem; border-bottom: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.sys-glance li:last-child a { border-bottom: 0; }
+.sys-glance a:hover strong { color: var(--accent); }
+.sys-glance span.sys-glance__kind { grid-column: 1; color: var(--muted); font-size: .84rem; }
+.sys-glance .sys-badge { grid-row: 1 / span 2; grid-column: 2; }
+
+/* ---------- A system in the catalogue ---------- */
+.sys-entry__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; margin-bottom: clamp(1.5rem, 3vw, 2.2rem); }
+.sys-entry__head h2 { font-size: var(--step-4); line-height: 1.08; }
+.sys-entry__kind { margin: 0 0 .5rem; }
+.sys-entry__line { margin: .7rem 0 0; max-width: 54ch; font-size: var(--step-1); line-height: 1.45; color: var(--ink-2); }
+.sys-entry__formerly { margin: .45rem 0 0; color: var(--muted); font-size: .86rem; }
+.sys-entry__status { display: grid; justify-items: end; gap: .5rem; max-width: 30rem; }
+.sys-entry__status p { margin: 0; color: var(--muted); font-size: .86rem; text-align: right; }
+.sys-entry__intro { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
+.sys-entry__intro h3 { font-size: 1.02rem; margin: 1.4rem 0 .6rem; }
+.sys-entry__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin-top: clamp(1.5rem, 3vw, 2.2rem); }
+.sys-entry__foot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; margin-top: 1rem; }
+
+.sys-box { padding: 1.15rem 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-box h3 { font-size: 1.02rem; margin-bottom: .75rem; }
+.sys-box .pp-list li { font-size: .95rem; }
+
+.sys-mini-steps { counter-reset: step; display: grid; gap: .55rem; margin: 0; padding: 0; list-style: none; }
+.sys-mini-steps li { counter-increment: step; position: relative; padding-left: 2.2rem; color: var(--ink-2); font-size: .95rem; }
+.sys-mini-steps li::before { content: counter(step); position: absolute; left: 0; top: .05rem; display: grid; place-items: center; width: 1.45rem; height: 1.45rem; border-radius: 6px; background: var(--brand-navy); color: #fff; font: 650 .8rem/1 var(--font-display); }
+.sys-mini-steps strong { color: var(--ink); }
+
+.sys-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-top: 1.5rem; }
+.sys-actions__note { flex-basis: 100%; margin: .2rem 0 0; color: var(--muted); font-size: .88rem; }
+
+/* A planned system or module: no screenshot, a dashed panel instead. */
+.sys-planned { padding: clamp(1.25rem, 3vw, 1.8rem); border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); background: var(--paper-2); }
+.sys-planned h3 { font-size: 1.05rem; margin: .8rem 0 .5rem; }
+.sys-planned p { margin: .5rem 0 0; color: var(--ink-2); }
+.sys-planned a { color: var(--ink); }
+
+/* ---------- Questions ---------- */
+.sys-faq { display: grid; gap: .8rem; margin: 0; }
+.sys-faq > div { padding: 1rem 1.15rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-faq dt { font-weight: 650; color: var(--ink); }
+.sys-faq dd { margin: .4rem 0 0; color: var(--ink-2); font-size: .96rem; }
+.sys-faq--wide { max-width: 54rem; }
+.sys-box .sys-faq > div { padding: 0; border: 0; background: transparent; }
+.sys-box .sys-faq { gap: .9rem; }
+
+/* ---------- Tables ---------- */
+.sys-table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: .93rem; line-height: 1.5; }
+.sys-table caption { padding: .9rem 1rem .2rem; text-align: left; color: var(--muted); font-size: .86rem; }
+.sys-table th, .sys-table td { padding: .8rem 1rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.sys-table thead th { background: var(--paper-2); color: var(--muted); font: 600 .72rem/1.4 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+.sys-table tbody th { color: var(--ink); font-weight: 650; }
+.sys-table tbody th a { color: var(--ink); }
+.sys-table td { color: var(--ink-2); }
+.sys-table tbody tr:last-child > * { border-bottom: 0; }
+.sys-table--planned th, .sys-table tr.is-planned > * { background: color-mix(in srgb, var(--paper-2) 60%, transparent); }
+
+/* ---------- Resources are free ---------- */
+.sys-free { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.sys-free a { display: grid; gap: .3rem; height: 100%; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-decoration: none; }
+.sys-free a:hover { border-color: var(--line-strong); }
+.sys-free span { color: var(--muted); font-size: .92rem; }
+.sys-free-lead { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem 3rem; margin-bottom: 2rem; }
+
+/* ---------- ERP features and modules ---------- */
+.sys-features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.sys-feature { padding: 1.2rem 1.3rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-feature__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem 1rem; margin-bottom: .6rem; }
+.sys-feature h3 { font-size: var(--step-1); }
+.sys-feature p { margin: .5rem 0 0; color: var(--ink-2); font-size: .96rem; }
+.sys-feature p.sys-feature__today { color: var(--muted); font-size: .9rem; }
+.sys-feature--planned { border-style: dashed; background: var(--paper-2); }
+
+/* ---------- Workflows ---------- */
+.sys-flows { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.sys-flow { padding: 1.2rem 1.3rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-flow h3 { font-size: var(--step-1); }
+.sys-flow__path { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .8rem 0 0; padding: 0; list-style: none; }
+.sys-flow__path li { display: inline-flex; align-items: center; gap: .4rem; color: var(--ink); font-size: .88rem; font-weight: 560; }
+.sys-flow__path li > span { padding: .25rem .65rem; border-radius: 999px; background: var(--accent-soft); }
+.sys-flow__path li + li::before { content: '→'; color: var(--muted); }
+.sys-flow p { margin: .8rem 0 0; color: var(--ink-2); font-size: .96rem; }
+
+/* ---------- Walkthrough and guide ---------- */
+.sys-walk { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; counter-reset: screen; }
+.sys-walk > li { counter-increment: screen; display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: .2rem 1rem; padding: 1.1rem 1.2rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-walk > li::before { content: counter(screen); display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 8px; background: var(--brand-navy); color: #fff; font: 650 .95rem/1 var(--font-display); }
+.sys-walk h3 { font-size: 1.05rem; }
+.sys-walk p { margin: .35rem 0 0; color: var(--ink-2); font-size: .95rem; }
+.sys-walk .sys-badge { margin-left: .5rem; vertical-align: middle; }
+
+.sys-toc { margin-top: 2rem; padding: 1.2rem 1.4rem; max-width: 52rem; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.sys-toc__title { font-size: 1.02rem; margin-bottom: .7rem; }
+.sys-toc ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem 2rem; margin: 0; padding-left: 1.3rem; }
+.sys-toc a { color: var(--ink-2); }
+.sys-guide-steps { margin-top: 1.4rem; }
+.sys-guide-shot { position: sticky; top: calc(var(--header-h) + 1.5rem); }
+
+/* ---------- Planned page: the concept flow ---------- */
+.sys-concept { margin: 0; padding: clamp(1.2rem, 3vw, 1.6rem); border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); background: var(--paper-2); }
+.sys-concept ol { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.sys-concept li { display: inline-flex; align-items: center; gap: .5rem; }
+.sys-concept li > span { padding: .45rem .8rem; border: 1px dashed var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink-2); font-size: .9rem; }
+.sys-concept li + li::before { content: '→'; color: var(--muted); }
+.sys-concept figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; margin-top: 1rem; color: var(--muted); font-size: .84rem; }
+
+.sys-related { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.sys-related a { display: grid; gap: .3rem; height: 100%; padding: 1.15rem 1.25rem; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); color: var(--ink); text-decoration: none; }
+.sys-related a:hover { border-color: var(--line-strong); }
+.sys-related .sys-related__kind { color: var(--muted); font: 500 .74rem/1.4 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+.sys-related .sys-related__line { color: var(--ink-2); font-size: .92rem; }
+
+.sys-trademark { margin: 2.5rem 0 0; max-width: 80ch; color: var(--muted); font-size: .82rem; }
+
+@media (max-width: 1000px) {
+  .sys-entry__intro, .sys-entry__foot, .sys-free-lead { grid-template-columns: 1fr; }
+  .sys-entry__grid { grid-template-columns: 1fr; }
+  .sys-entry__status { justify-items: start; }
+  .sys-entry__status p { text-align: left; }
+  .sys-features, .sys-related { grid-template-columns: 1fr; }
+  .sys-guide-shot { position: static; }
+}
+@media (max-width: 760px) {
+  .sys-free { grid-template-columns: 1fr; }
+  .sys-toc ol { grid-template-columns: 1fr; }
+}

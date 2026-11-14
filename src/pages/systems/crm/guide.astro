@@ -1,31 +1,54 @@
 ---
-// /crm-platform/guide/: how to use BIZOMAT Customer Relationship Management (CRM), step by step. Every button and field
-// named here is the application's own label (apps/work/src/client/crm); the facts come from src/data/platform-catalog.ts
-// (CRM). Screens are real (src/data/screenshots.ts), captured with a fictional organisation.
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Container from '../../components/Container.astro';
-import Button from '../../components/Button.astro';
-import '../../styles/product.css';
-import '../../styles/visuals.css';
-import { screenshots } from '../../data/screenshots.ts';
-import { SITE } from '../../config/site.ts';
-import { APP_LINKS } from '../../config/platform.ts';
-import { CRM } from '../../data/platform-catalog.ts';
+// /systems/crm/guide/: how to use BIZOMAT CRM (the Customer Management System, formerly BIZOMAT Customer Relationship
+// Management), step by step. Every button and field named here is the application's own label
+// (apps/work/src/client/crm, and src/client/components/layout/SuiteRail.tsx for BIZOMAT ERP's module rail); the facts
+// come from src/data/platform-catalog.ts (CRM), and the links to Finance and Projects from
+// apps/work/src/worker/company/links.ts. Screens are real (src/data/screenshots.ts), captured with a fictional
+// organisation.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { CRM } from '../../../data/platform-catalog.ts';
 
-const PAGE = '/crm-platform/guide/';
-const shot = (name: string) => screenshots('crm').find((s) => s.src.endsWith(`/${name}.webp`));
+const sys = systemById('crm');
+const access = sys.access!;
+const finance = systemById('finance');
+const projects = systemById('projects');
+const erp = systemById('erp');
+const PAGE = sys.guide!;
+const shot = (name: string) => screenshots().find((s) => s.src.endsWith(`/${name}.webp`));
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
-const description = 'How to use BIZOMAT Customer Relationship Management (CRM), step by step: organisations, your team, customers, leads, deals, follow-ups, reports and automations.';
+const description = 'How to use BIZOMAT CRM, step by step: open it in BIZOMAT ERP, create your organisation, add customers, work leads and deals, invite your team, run reports and link Finance.';
+const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Operations', 'Reports', 'Administration'];
 
 interface Step { t: string; x: string }
-interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
+interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean; status?: FeatureStatus }
 const parts: Part[] = [
+  {
+    id: 'access', title: `Open ${sys.name} in ${erp.name}`,
+    lead: `${sys.name} opens inside ${erp.name}, the one workspace for every BIZOMAT system you use, as its ${sys.module} module.`,
+    steps: [
+      { t: 'Go to BIZOMAT ERP', x: `Go to ${APP_LINKS.erp.signIn.replace('https://', '')}, or choose Sign in at the top of any BIZOMAT page.` },
+      { t: `Choose ${sys.module}`, x: `After you sign in, the ERP opens on its Dashboard. Choose ${sys.module} in the module rail at the left of the screen (a bar along the bottom on a phone).` },
+      { t: 'Move between modules', x: `The rail stays beside every screen: ${list(RAIL)}. Operations lists modules that are planned and not built yet.` },
+      { t: 'Old addresses', x: 'Bookmarks and links to bizomat.ai/crm still work: they open the same page inside the ERP.' },
+    ],
+    shot: 'erp-crm',
+  },
   {
     id: 'sign-in', title: 'Sign in or create an account',
     steps: [
-      { t: 'Open the CRM', x: 'Go to bizomat.ai/crm, or choose Sign in, then Customer Relationship Management, at the top of any BIZOMAT page.' },
-      { t: 'Sign in', x: 'Use your BIZOMAT email and password. If you use Project Management, it is the same account, and signing in to one signs you in to both.' },
-      { t: 'New to BIZOMAT?', x: 'Choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+      { t: 'Sign in', x: `Use your BIZOMAT email and password. It is the same account for ${finance.name} and ${projects.name}, and signing in once opens every module of the ERP.` },
+      { t: 'New to BIZOMAT?', x: 'On the sign-in page, choose Create an account and enter your full name, work email and a password. If BIZOMAT asks you to confirm your email address, open the link in the email it sends, then sign in.' },
+      { t: 'Invited by someone?', x: 'Open the invitation link from the email or message, and sign in or create an account with the address it was sent to.' },
     ],
   },
   {
@@ -37,18 +60,8 @@ const parts: Part[] = [
       { t: 'Create organisation', x: `You become its owner. It starts with a ${CRM.stages.length}-stage sales pipeline and ${CRM.automations.length} automations, and no sample records.` },
       { t: 'Switch organisations', x: 'Open the organisation menu at the top left to move between your organisations, or choose Create or join an organisation.' },
       { t: 'Details and logo', x: 'Settings, Organisation holds the organisation\'s details, its logo and its time zone.' },
+      { t: 'Through your company', x: 'When a company registers in BIZOMAT (Register a company, from the ERP\'s company menu or Administration), it gets its own CRM organisation, with the person who registered as its owner.' },
     ],
-  },
-  {
-    id: 'team', title: 'Invite your team and choose roles',
-    steps: [
-      { t: 'Invite someone', x: 'Open Team, then Invitations. Enter the person\'s email address, choose their role, add a message if you like, and choose Send invitation.' },
-      { t: 'Email or link', x: 'BIZOMAT emails the invitation when its email service is set up. Otherwise the CRM shows an Invitation link: copy it and send it yourself.' },
-      { t: 'Accepting', x: 'The person opens the link and signs in, or creates an account, with the invited email address, then accepts. An invitation works once and expires after 14 days. Send again makes a new link; Withdraw cancels it.' },
-      { t: 'Members', x: 'Under Members, change a person\'s role or remove them. When you remove someone, you can hand their records and open activities to a colleague.' },
-      { t: 'Teams', x: 'Under Teams, group people (by region or product, for example) and name a team lead. The dashboard and reports can then be filtered by team.' },
-    ],
-    roles: true,
   },
   {
     id: 'set-up', title: 'Set the CRM up for your business',
@@ -71,6 +84,18 @@ const parts: Part[] = [
       { t: 'Import from a CSV file', x: 'On Contacts, Companies or Leads, choose Import and pick the file. Match each column to a field, or leave it out, choose whether duplicates are skipped, updated or created, then import.' },
     ],
     shot: 'crm-contact',
+  },
+  {
+    id: 'team', title: 'Invite your team and choose roles',
+    steps: [
+      { t: 'Invite someone', x: 'Owners, administrators and managers: open Team, then Invitations. Enter the person\'s email address, choose their role, add a message if you like, and choose Send invitation.' },
+      { t: 'Email or link', x: 'BIZOMAT emails the invitation when its email service is set up. Otherwise the CRM shows an Invitation link: copy it and send it yourself.' },
+      { t: 'Accepting', x: 'The person opens the link and signs in, or creates an account, with the invited email address, then accepts. An invitation works once and expires after 14 days. Send again makes a new link; Withdraw cancels it.' },
+      { t: 'Members', x: 'Under Members, change a person\'s role or remove them. When you remove someone, you can hand their records and open activities to a colleague.' },
+      { t: 'Teams', x: 'Under Teams, group people (by region or product, for example) and name a team lead. The dashboard and reports can then be filtered by team.' },
+      { t: 'In a registered company', x: 'Company administrators can also invite from Administration, People and roles: Invite someone sets the person\'s company role, a role in each tool and their departments at once. Each department is a CRM team, led by the department\'s head.' },
+    ],
+    roles: true,
   },
   {
     id: 'leads', title: 'Capture, score and convert leads',
@@ -104,7 +129,7 @@ const parts: Part[] = [
       { t: 'Your lists', x: 'The tabs show My activities, Today\'s follow-ups, Overdue, Upcoming, Team activities and Completed.' },
       { t: 'Complete it', x: 'Tick the box to complete an activity. Open it to record the outcome.' },
       { t: 'Tasks and Calendar', x: 'Tasks lists tasks and follow-ups for you and your colleagues; Calendar shows activities by month.' },
-      { t: 'Elsewhere', x: 'An activity\'s menu has Add to my calendar (.ics) and Create a project task, which puts it in a Project Management project with a link back.' },
+      { t: 'Elsewhere', x: 'An activity\'s menu has Add to my calendar (.ics) and Create a project task, which puts it in a project in BIZOMAT Projects with a link back.' },
     ],
     shot: 'crm-activities',
   },
@@ -144,7 +169,8 @@ const parts: Part[] = [
       { t: 'Overview', x: 'The dashboard: open pipeline, weighted forecast, value won, win rate, new leads, lead conversion, contacts and companies and overdue follow-ups, with charts below.' },
       { t: 'Filter it', x: 'Choose a period or exact dates and a person; where you have them, a team and a pipeline.' },
       { t: 'Reports', x: `${CRM.reports.length} reports: ${list(CRM.reports.map((r, i) => (i ? r.toLowerCase() : r)))}.` },
-      { t: 'Export', x: 'Each report shows its figures, a chart and a table. Export CSV downloads it.' },
+      { t: 'Export', x: 'Each report shows its figures, a chart and a table. Export CSV downloads it, if your role allows export.' },
+      { t: 'From the ERP', x: `In ${erp.name}, Reports lists the CRM's reports with those of the other modules, and the Dashboard shows the CRM's main figures by company. Each opens here, with your CRM role's permissions.` },
     ],
     shot: 'crm-overview',
   },
@@ -157,6 +183,18 @@ const parts: Part[] = [
       { t: 'History', x: 'Execution history lists every run and its result.' },
     ],
     shot: 'crm-automations',
+  },
+  {
+    id: 'integrations', title: `Use the CRM with ${finance.name} and ${projects.name}`, status: 'connected',
+    lead: `These links appear when your CRM organisation belongs to a company registered in BIZOMAT that also runs ${finance.short} or ${projects.short}. Each one follows the other system's own permissions and links only records of the same company.`,
+    steps: [
+      { t: 'One customer record', x: 'On a company, In Finance shows the Finance customer it is billed as. Choose Add as a customer in Finance to create it from the company\'s name, email, phone and address. Its open invoices and the amount owed then show here, to people whose Finance role can see sales.' },
+      { t: 'Start a quote', x: 'On a deal, the Across panel (named after your company) has Start a quote: a draft quote in Finance for the deal\'s company, with the deal\'s value to price in detail there. The deal lists each quote and its status, and the timeline records each step.' },
+      { t: 'Make a draft invoice', x: 'When the deal is won, Make a draft invoice puts one line with its title and value on a draft invoice in Finance, once per deal. Check the amount, GST and account in Finance before approving it.' },
+      { t: 'What quotes and invoices need', x: 'The deal needs a company and the same currency as Finance, and your Finance role must allow you to create quotes and invoices.' },
+      { t: 'Start a project', x: 'Start a project creates a project board named after the deal in the company\'s Projects workspace, once per deal. You need a Projects role of member or above.' },
+      { t: 'Create a project task', x: 'On any activity, the menu\'s Create a project task puts it in a project you choose, with a link back to the CRM. This works without a company too, in any project where you can add tasks.' },
+    ],
   },
   {
     id: 'notifications', title: 'Notifications and your calendar',
@@ -179,25 +217,29 @@ const parts: Part[] = [
   },
 ];
 const questions = [
-  { q: 'Is the CRM the same as Project Management?', a: 'No. They are two BIZOMAT products that share one account. The CRM is for customers and sales; Project Management is for projects and tasks. An activity in the CRM can become a task in Project Management.' },
+  { q: `Is the CRM the same as ${projects.name}?`, a: `No. They are two BIZOMAT systems that share one account. The CRM is for customers and sales; ${projects.name} is for projects and tasks. An activity in the CRM can become a project task, and in a company a deal can start a project.` },
+  { q: 'Where do I find the CRM after signing in?', a: `In ${erp.name}: choose ${sys.module} in the module rail. Links to bizomat.ai/crm open the same place.` },
   { q: 'Can I belong to more than one organisation?', a: 'Yes. Create as many as you need, or accept invitations to others, and switch between them from the organisation menu. Each keeps its own customers, people and settings.' },
+  { q: 'Can CRM customers be used in Finance?', a: `Yes, when the CRM organisation and the ${finance.short} business workspace belong to the same company. A CRM company becomes one Finance customer, never two, and deals can start quotes and draft invoices (step ${parts.findIndex((x) => x.id === 'integrations') + 1}).` },
   { q: 'Does the CRM send emails to my customers?', a: 'No. You send them from your own mail program and the CRM logs them. BIZOMAT only sends its own invitations and notifications.' },
   { q: 'Can I bring my data from another CRM?', a: 'Yes, for contacts, companies and leads: export them from the other system as a CSV file and use Import. Deals and activities are added in the CRM itself.' },
   { q: 'Who can see my organisation\'s customers?', a: 'Only its members, as their roles allow. People outside the organisation cannot see it or tell that it exists.' },
 ];
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
 ---
-<BaseLayout title="Customer Relationship Management user guide" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Customer Relationship Management', href: '/crm-platform/' }, { label: 'User guide', href: PAGE }]}
-  schema={[{ '@type': 'HowTo', name: 'How to use BIZOMAT Customer Relationship Management (CRM)', url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
+<BaseLayout title={`${sys.name} user guide`} description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }, { label: 'User guide', href: PAGE }]}
+  schema={[{ '@type': 'HowTo', name: `How to use ${sys.name}`, url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
   <section class="pp-hero" aria-labelledby="guide-title">
     <Container>
-      <p class="bz-eyebrow">BIZOMAT Customer Relationship Management (CRM)</p>
-      <h1 id="guide-title">How to use the CRM</h1>
-      <p class="pp-hero__lead">Step by step, from your first organisation to reports and automations. Every button and field is named as it appears in the application.</p>
+      <p class="bz-eyebrow">{sys.name} · {sys.kind} · User guide</p>
+      <h1 id="guide-title">How to use {sys.name}</h1>
+      <p class="pp-hero__lead">Step by step, from opening {sys.name} in {erp.name} to your first organisation, your customers, reports, automations and the links to {finance.name} and {projects.name}. Every button and field is named as it appears in the application.</p>
       <div class="pp-hero__actions">
-        <Button href={APP_LINKS.crm.signIn} variant="accent" rel="noopener" data-cta="crm-guide-start">Open the CRM</Button>
-        <Button href="/crm-platform/" variant="secondary" data-cta="crm-guide-product">About the CRM</Button>
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-guide-access">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="crm-guide-product">About {sys.name}</Button>
       </div>
+      <p class="pp-hero__note">{access.note} Sign-in required, with your BIZOMAT account.</p>
+      <StatusLegend />
       <nav class="guide-toc" aria-label="In this guide">
         <h2 class="guide-toc__title">In this guide</h2>
         <ol>
@@ -212,7 +254,7 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
     <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
       <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
         <div>
-          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length} <StatusLabel status={p.status ?? 'live'} /></p>
           <h2 id={`${p.id}-title`}>{p.title}</h2>
           {p.lead && <p class="guide-lead">{p.lead}</p>}
           <ol class="pp-steps guide-steps">
@@ -245,7 +287,7 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
       <dl class="guide-faq">
         {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Something not covered here? <a href="/contact/">Contact BIZOMAT</a>.</p>
+      <p class="pp-table-note">Something not covered here? Read the <a href={`${sys.url}#faq`}>questions on the {sys.name} page</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
     </Container>
   </section>
 
@@ -253,8 +295,8 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
     <Container class="pp-band">
       <h2 id="guide-cta">Ready? Your first organisation takes a few fields.</h2>
       <div class="pp-band__actions">
-        <Button href={APP_LINKS.crm.signIn} variant="accent" rel="noopener" data-cta="crm-guide-band-start">Open the CRM</Button>
-        <Button href="/crm-platform/" variant="secondary" data-cta="crm-guide-band-product">About the CRM</Button>
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-guide-band-access">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="crm-guide-band-product">About {sys.name}</Button>
       </div>
     </Container>
   </section>

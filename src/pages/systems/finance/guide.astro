@@ -1,18 +1,18 @@
 ---
-// /finance-platform/guide/: how to use BIZOMAT Finance, step by step. Every button and field named here is the
+// /systems/finance/guide/: how to use BIZOMAT Finance, step by step. Every button and field named here is the
 // application's own label (apps/work/src/client/fin); the facts come from src/data/platform-catalog.ts (FINANCE).
 // Screens are real (src/data/screenshots.ts), captured with a fictional business and example data.
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Container from '../../components/Container.astro';
-import Button from '../../components/Button.astro';
-import '../../styles/product.css';
-import '../../styles/visuals.css';
-import { screenshots } from '../../data/screenshots.ts';
-import { SITE } from '../../config/site.ts';
-import { APP_LINKS } from '../../config/platform.ts';
-import { FINANCE } from '../../data/platform-catalog.ts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { FINANCE } from '../../../data/platform-catalog.ts';
 
-const PAGE = '/finance-platform/guide/';
+const PAGE = '/systems/finance/guide/';
 const shot = (name: string) => screenshots('finance').find((s) => s.src.endsWith(`/${name}.webp`));
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
 const description = 'How to use BIZOMAT Finance, step by step: workspaces, accounts, transactions, bank statements, quotes, invoices, credit notes, bills, reports, GST and budgets.';
@@ -209,7 +209,7 @@ const questions = [
 ];
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
 ---
-<BaseLayout title="Finance user guide" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Finance', href: '/finance-platform/' }, { label: 'User guide', href: PAGE }]}
+<BaseLayout title="Finance user guide" description={description} breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Finance', href: '/systems/finance/' }, { label: 'User guide', href: PAGE }]}
   schema={[{ '@type': 'HowTo', name: 'How to use BIZOMAT Finance', url: `${SITE.url}${PAGE}`, description, step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })) }]}>
   <section class="pp-hero" aria-labelledby="guide-title">
     <Container>
@@ -218,7 +218,7 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
       <p class="pp-hero__lead">Step by step, from your first workspace to reports, GST and your team. Every button and field is named as it appears in the application.</p>
       <div class="pp-hero__actions">
         <Button href={APP_LINKS.finance.signIn} variant="accent" rel="noopener" data-cta="finance-guide-start">Open Finance</Button>
-        <Button href="/finance-platform/" variant="secondary" data-cta="finance-guide-product">About Finance</Button>
+        <Button href="/systems/finance/" variant="secondary" data-cta="finance-guide-product">About Finance</Button>
       </div>
       <nav class="guide-toc" aria-label="In this guide">
         <h2 class="guide-toc__title">In this guide</h2>
@@ -276,7 +276,7 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
       <h2 id="guide-cta">Ready? Your first workspace takes a few fields.</h2>
       <div class="pp-band__actions">
         <Button href={APP_LINKS.finance.signIn} variant="accent" rel="noopener" data-cta="finance-guide-band-start">Open Finance</Button>
-        <Button href="/finance-platform/" variant="secondary" data-cta="finance-guide-band-product">About Finance</Button>
+        <Button href="/systems/finance/" variant="secondary" data-cta="finance-guide-band-product">About Finance</Button>
       </div>
     </Container>
   </section>

@@ -103,12 +103,12 @@ test('the example searches return relevant products, tools and readings, each wi
   assert.equal(tools.platform[0]?.url, '/tools/');
   assert.ok(tools.tools.length >= 3);
   const cad = ask('How can I automate SolidWorks?');
-  assert.ok(cad.platform.some((h) => h.url === '/cad-automation/'), 'the CAD Automation page');
+  assert.ok(cad.platform.some((h) => h.url === '/systems/engineering/'), 'the Engineering Automation page');
   const work = ask('Show me project management capabilities.');
-  assert.equal(work.platform[0]?.url, '/work/');
+  assert.equal(work.platform[0]?.url, '/systems/projects/');
   const crm = ask('I need a CRM to manage leads and my sales pipeline.');
-  assert.equal(crm.platform[0]?.url, '/crm-platform/', 'the CRM page');
-  assert.ok(ask('Is there a guide to getting started with the CRM?').platform.some((h) => h.url === '/crm-platform/guide/'), 'the CRM user guide');
+  assert.equal(crm.platform[0]?.url, '/systems/crm/', 'the CRM page');
+  assert.ok(ask('Is there a guide to getting started with the CRM?').platform.some((h) => h.url === '/systems/crm/guide/'), 'the CRM user guide');
   const guides = ask('Find guides about business automation.');
   assert.ok(guides.platform.some((h) => h.url === '/library/'));
   assert.ok(guides.readings.length >= 1);

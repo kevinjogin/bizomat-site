@@ -1,20 +1,20 @@
 ---
-// /finance-platform/: BIZOMAT Finance. Introduces the product and opens the application at bizomat.ai/finance (sign-in
+// /systems/finance/: BIZOMAT Finance. Introduces the product and opens the application at bizomat.ai/finance (sign-in
 // required; the same accounts as Project Management and the CRM). The page cannot be /finance/: that path is the
 // application (tests/worker.test.ts). Facts come from src/data/platform-catalog.ts (FINANCE), which records its sources
 // in apps/work; tests/platform-catalog.test.ts compares them with the application's code. The guide is
-// /finance-platform/guide/.
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Container from '../components/Container.astro';
-import Button from '../components/Button.astro';
-import FinanceLedger from '../components/visuals/FinanceLedger.astro';
-import '../styles/product.css';
-import { screenshots } from '../data/screenshots.ts';
-import { SITE } from '../config/site.ts';
-import { APP_LINKS } from '../config/platform.ts';
-import { FINANCE } from '../data/platform-catalog.ts';
+// /systems/finance/guide/.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import FinanceLedger from '../../../components/visuals/FinanceLedger.astro';
+import '../../../styles/product.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { APP_LINKS } from '../../../config/platform.ts';
+import { FINANCE } from '../../../data/platform-catalog.ts';
 
-const GUIDE = '/finance-platform/guide/';
+const GUIDE = '/systems/finance/guide/';
 const show = ['finance-dashboard', 'finance-transactions', 'finance-statement', 'finance-invoice', 'finance-report', 'finance-budget'];
 const shots = screenshots('finance').filter((s) => show.some((n) => s.src.endsWith(`/${n}.webp`)));
 const description = 'BIZOMAT Finance: accounts, transactions, invoices, bills, budgets and reports for personal, household and business money, on a double-entry ledger.';
@@ -60,8 +60,8 @@ const steps = [
   { t: 'Invoice, budget and report', x: 'Send invoices, record bills, set budgets, and read the reports. Invite the people who should share the work.' },
 ];
 ---
-<BaseLayout title="Finance: accounts, invoices, budgets and reports" description={description} imageAlt="BIZOMAT Finance: personal, household and business money on a proper ledger" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Finance', href: '/finance-platform/' }]}
-  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT Finance', url: `${SITE.url}/finance-platform/`, applicationCategory: 'FinanceApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
+<BaseLayout title="Finance: accounts, invoices, budgets and reports" description={description} imageAlt="BIZOMAT Finance: personal, household and business money on a proper ledger" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Finance', href: '/systems/finance/' }]}
+  schema={[{ '@type': 'SoftwareApplication', name: 'BIZOMAT Finance', url: `${SITE.url}/systems/finance/`, applicationCategory: 'FinanceApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } }]}>
   <section class="pp-hero" aria-labelledby="fin-title">
     <Container class="pp-hero__inner">
       <div>

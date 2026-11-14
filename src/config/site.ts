@@ -1,6 +1,7 @@
 // Site-wide settings. Change branding, navigation and contact details here.
 import { PRODUCTS, SOLUTIONS } from './products.ts';
 import { APP_LINKS, PLATFORM } from './platform.ts';
+import { SYSTEMS, SYSTEMS_HOME } from './systems.ts';
 
 const env = (import.meta as { env?: Record<string, string | undefined> }).env ?? {};
 const siteUrl = /^https:\/\/[a-z0-9.-]+$/i.test(env.PUBLIC_SITE_URL ?? '') ? (env.PUBLIC_SITE_URL as string) : 'https://bizomat.ai';
@@ -83,42 +84,14 @@ export type NavChild = { label: string; href?: string; description?: string; sta
 export type NavItem = { label: string; short?: string; href: string; children?: readonly NavChild[] };
 
 export const NAV: readonly NavItem[] = [
-  // Menus for every product (owner, 13 Nov 2026): the product page, its main sections, its guide, and the application.
+  // Home | Systems | Resources | About | Contact (owner, 14 Nov 2026). Systems is BIZOMAT's business software, as one
+  // catalogue (src/config/systems.ts); the applications open inside BIZOMAT ERP. Resources stay free and public.
+  { label: 'Home', href: '/' },
   {
-    label: 'CAD Automation', href: '/cad-automation/', children: [
-      { label: 'CAD Automation', href: '/cad-automation/', description: 'Your AI assistant builds and checks SOLIDWORKS models on your own computer.' },
-      { label: 'How it works', href: '/cad-automation/#how', description: 'Your assistant asks. Your SOLIDWORKS does the work.' },
-      { label: 'What it can build', href: '/cad-automation/#capabilities', description: 'Parts, assemblies and drawings, in plain language.' },
-      { label: 'Tools your assistant can call', href: '/cad-automation/#tools', description: 'Every CAD Automation tool, by group.' },
-      { label: 'Set up in four steps', href: '/cad-automation/#install', description: 'Sign in, install, pair your computer, connect your assistant.' },
-      { label: 'User guide', href: APP_LINKS.cad.docs, description: 'Install, pair, connect and check the set-up, step by step.', external: true },
-      { label: 'Open CAD Automation', href: APP_LINKS.cad.signIn, description: 'Sign in to your CAD Automation account.', external: true },
-    ],
-  },
-  {
-    label: 'Project Management', href: '/work/', children: [
-      { label: 'Project Management', href: '/work/', description: 'Projects, tasks and teams in one shared workspace.' },
-      { label: 'Plan and track work', href: '/work/#features', description: 'Plan it, assign it, track it, finish it.' },
-      { label: 'Views', href: '/work/#views', description: 'Table, Kanban, calendar, timeline and Gantt, and more.' },
-      { label: 'Teams and permissions', href: '/work/#teams', description: 'The right people on the right work.' },
-      { label: 'Automations', href: '/work/#automations', description: 'Routine steps that move work forward on their own.' },
-      { label: 'Dashboards', href: '/work/#dashboards', description: 'The whole portfolio at a glance.' },
-      { label: 'Open Project Management', href: APP_LINKS.work.signIn, description: 'Sign in with your BIZOMAT account.', external: true },
-    ],
-  },
-  // Spelled out so that someone new knows what a CRM is (owner, 13 Nov 2026); "CRM" only where the row is too narrow.
-  {
-    label: 'Customer Relationship Management', short: 'CRM', href: '/crm-platform/', children: [
-      { label: 'Customer Relationship Management', href: '/crm-platform/', description: 'Customers, leads, deals and follow-ups, shared with your team.' },
-      { label: 'User guide', href: '/crm-platform/guide/', description: 'How to use the CRM, step by step.' },
-      { label: 'Open the CRM', href: APP_LINKS.crm.signIn, description: 'Sign in with your BIZOMAT account.', external: true },
-    ],
-  },
-  {
-    label: 'Finance', href: '/finance-platform/', children: [
-      { label: 'Finance', href: '/finance-platform/', description: 'Accounts, transactions, invoices, bills, budgets and reports.' },
-      { label: 'User guide', href: '/finance-platform/guide/', description: 'How to use Finance, step by step.' },
-      { label: 'Open Finance', href: APP_LINKS.finance.signIn, description: 'Sign in with your BIZOMAT account.', external: true },
+    label: 'Systems', href: SYSTEMS_HOME, children: [
+      { label: 'All systems', href: SYSTEMS_HOME, description: 'One connected platform to manage your business.' },
+      ...SYSTEMS.map((s) => ({ label: s.name, href: s.url, description: s.status === 'planned' ? `${s.kind}. Planned.` : s.line, status: s.status === 'planned' ? 'Planned' : undefined })),
+      { label: 'Open BIZOMAT ERP', href: APP_LINKS.erp.home, description: 'Sign in to your company\'s workspace.', external: true },
     ],
   },
   {
@@ -127,28 +100,24 @@ export const NAV: readonly NavItem[] = [
       { label: 'Library', href: '/reados/', description: 'Technical books in short, practical chapters.' },
       { label: 'Guides and articles', href: '/library/', description: 'Longer guides with worked examples.' },
       { label: 'Learning paths', href: '/resources/#pathways', description: 'A structured route through a subject.' },
-      { label: 'All resources', href: '/resources/' },
+      { label: 'All resources', href: '/resources/', description: 'Free for everyone, no sign-in.' },
     ],
   },
   {
-    label: 'Engine Room', href: '/engine-room/', children: [
+    label: 'About', href: '/engine-room/', children: [
       { label: 'The Engine Room', href: '/engine-room/', description: 'Who builds BIZOMAT, and the proof that it works.' },
       { label: 'From the founder', href: '/engine-room/#founder', description: 'Why BIZOMAT exists, in its founder\'s words.' },
       { label: 'Test record', href: '/engine-room/#tests', description: 'Every suite that was run, with its result.' },
-      { label: 'Products', href: '/products/', description: 'CAD Automation, Project Management, Customer Relationship Management, Finance and Resources.' },
-      { label: 'Contact', href: '/contact/', description: 'Ask a question or start a conversation.' },
     ],
   },
+  { label: 'Contact', href: '/contact/' },
 ] as const;
 
-/** The header's sign-in menu: each application has its own sign-in and sends you to your dashboard afterwards. Customer
- * Relationship Management (the CRM) and Finance share Project Management's accounts and sign-in (one session for all
- * three). */
+/** The header's sign-in menu: BIZOMAT ERP is the one sign-in for the CRM, Finance, Projects and company accounts.
+ * Engineering Automation (CAD Automation) keeps its own sign-in for now. */
 export const SIGN_IN = [
-  { label: 'Project Management', href: APP_LINKS.work.signIn, description: 'Projects, tasks and your team workspace.' },
-  { label: 'CAD Automation', href: APP_LINKS.cad.signIn, description: 'Your AI assistant, computers and SOLIDWORKS.' },
-  { label: 'Customer Relationship Management', href: APP_LINKS.crm.signIn, description: 'The CRM: customers, leads, deals and follow-ups.' },
-  { label: 'Finance', href: APP_LINKS.finance.signIn, description: 'Accounts, invoices, bills, budgets and reports.' },
+  { label: 'BIZOMAT ERP', href: APP_LINKS.erp.signIn, description: 'One sign-in for the CRM, Finance, Projects and your company.' },
+  { label: 'Engineering Automation', href: APP_LINKS.cad.signIn, description: 'CAD Automation: your AI assistant and SOLIDWORKS. Its own sign-in for now.' },
 ] as const;
 /** Breadcrumb labels for the two libraries. */
 export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
@@ -163,12 +132,9 @@ export const QUOTE_CTA = { href: '/contact/', label: 'Contact' } as const;
 
 export const FOOTER_NAV = {
   products: [
-    { href: '/cad-automation/', label: 'CAD Automation' },
-    { href: '/work/', label: 'Project Management' },
-    { href: '/crm-platform/', label: 'Customer Relationship Management' },
-    { href: '/finance-platform/', label: 'Finance' },
-    { href: '/resources/', label: 'Resources' },
-    { href: '/products/', label: 'All products' },
+    { href: SYSTEMS_HOME, label: 'All systems' },
+    ...SYSTEMS.map((x) => ({ href: x.url, label: x.name })),
+    { href: '/resources/', label: 'Resources (free)' },
     { href: '/solutions/', label: 'Solutions' },
   ],
   resources: [
@@ -187,10 +153,8 @@ export const FOOTER_NAV = {
     { href: '/how-it-works/', label: 'How It Works' },
   ],
   apps: [
-    { href: APP_LINKS.work.signIn, label: 'Sign in to Project Management' },
-    { href: APP_LINKS.cad.signIn, label: 'Sign in to CAD Automation' },
-    { href: APP_LINKS.crm.signIn, label: 'Sign in to Customer Relationship Management' },
-    { href: APP_LINKS.finance.signIn, label: 'Sign in to Finance' },
+    { href: APP_LINKS.erp.signIn, label: 'Sign in to BIZOMAT ERP' },
+    { href: APP_LINKS.cad.signIn, label: 'Sign in to Engineering Automation' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy Policy' },

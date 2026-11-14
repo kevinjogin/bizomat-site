@@ -26,7 +26,7 @@ export const REPORTS: Record<string, ReportDef & { page: string; blurb: string }
     id: 'company-performance',
     page: 'reports/enterprise',
     title: 'Company performance',
-    blurb: 'Revenue against target, margin and the invoices behind them, across Finance and the System.',
+    blurb: 'Revenue against target, margin and the invoices behind them, across Finance and the ERP.',
     valueLabel: 'Revenue',
     breakdownLabel: 'Customer',
     breakdown: (x) => x.label,
@@ -104,7 +104,7 @@ export function Enterprise({ page }: { page: NavPage }) {
     { id: 'financial', to: '/reports/financial', title: 'Revenue and margin', text: REPORTS.financial.blurb, state: 'W' as const },
   ];
   return (
-    <ModulePage page={page} subtitle="Cross-module figures: Finance, CRM, Project Management and the System modules together.">
+    <ModulePage page={page} subtitle="Cross-module figures: Finance, CRM, Project Management and the ERP modules together.">
       <div className="erp-cardgrid">
         {cards.map((c) => (
           <Link key={c.id} to={c.to} className="card erp-linkcard" data-hl={`report-${c.id}`}>
@@ -208,7 +208,7 @@ export function SavedReports({ page }: { page: NavPage }) {
               </li>
             ))}
             <li>
-              <strong>Company performance, weekly</strong> <span className="muted small">· System ({STATE_LABEL.P}) · scheduling is planned</span>
+              <strong>Company performance, weekly</strong> <span className="muted small">· ERP ({STATE_LABEL.P}) · scheduling is planned</span>
             </li>
           </ul>
         </Panel>

@@ -1,4 +1,4 @@
-// Entry of the BIZOMAT System preview (apps/work/system-preview/index.html). Demonstration data only: no server calls,
+// Entry of the BIZOMAT ERP preview (apps/work/system-preview/index.html). Demonstration data only: no server calls,
 // no sign-in. Built by vite.system-preview.config.ts, never by the app's own build.
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

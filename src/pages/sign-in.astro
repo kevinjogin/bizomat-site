@@ -1,7 +1,7 @@
 ---
-// /sign-in/: the one place to start signing in to BIZOMAT. Each application keeps its own accounts and secure sign-in
-// (Project Management: email and password or Google; CAD Automation: email and password or Google, plus OAuth for AI
-// apps), so this page sends each person to the right one. Existing accounts work unchanged.
+// /sign-in/: the one place to start signing in to BIZOMAT. BIZOMAT ERP is the one sign-in for the CRM, Finance, Projects
+// and company accounts (email and password, or Google where configured); CAD Automation keeps its own accounts and
+// sign-in for now (plus OAuth for AI apps). Existing accounts work unchanged.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import Button from '../components/Button.astro';
@@ -10,19 +10,17 @@ import { APP_LINKS, APP_URLS } from '../config/platform.ts';
 
 const host = (u: string) => { const x = new URL(u); return x.host + x.pathname.replace(/\/$/, ''); };
 const apps = [
-  { name: 'Project Management', button: 'Project Management', text: 'Projects, tasks, boards, documents and your team workspace.', signIn: APP_LINKS.work.signIn, home: APP_LINKS.work.dashboard, page: '/work/', host: host(APP_URLS.work) },
-  { name: 'CAD Automation', button: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/cad-automation/', host: host(APP_URLS.cad) },
-  // The same account and sign-in as Project Management.
-  { name: 'Customer Relationship Management (CRM)', button: 'the CRM', text: 'Customers, leads, deals, activities and follow-ups, with your team. Uses your Project Management account.', signIn: APP_LINKS.crm.signIn, home: APP_LINKS.crm.dashboard, page: '/crm-platform/', host: host(APP_URLS.crm) },
-  { name: 'Finance', button: 'Finance', text: 'Accounts, transactions, invoices, bills, budgets and reports for personal, household and business money. Uses your Project Management account.', signIn: APP_LINKS.finance.signIn, home: APP_LINKS.finance.dashboard, page: '/finance-platform/', host: host(APP_URLS.finance) },
+  // One sign-in for the CRM, Finance, Projects and company accounts: BIZOMAT ERP (owner, 14 Nov 2026).
+  { name: 'BIZOMAT ERP', button: 'BIZOMAT ERP', text: 'One workspace and one sign-in for Sales and CRM, Finance and Accounting, Projects and Tasks, your company, Reports and Administration.', signIn: APP_LINKS.erp.signIn, home: APP_LINKS.erp.dashboard, page: '/systems/erp/', host: host(APP_URLS.erp) },
+  { name: 'Engineering Automation (CAD Automation)', button: 'CAD Automation', text: 'Your AI assistant connector, paired computers and SOLIDWORKS commands. It keeps its own sign-in for now.', signIn: APP_LINKS.cad.signIn, home: APP_LINKS.cad.dashboard, page: '/systems/engineering/', host: host(APP_URLS.cad) },
 ];
 ---
-<BaseLayout title="Sign in" description="Sign in to BIZOMAT Project Management, CRM, Finance or CAD Automation with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
+<BaseLayout title="Sign in" description="Sign in to BIZOMAT ERP, one workspace for the CRM, Finance and Projects, or to CAD Automation, with your existing account." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
   <section class="pp-hero" aria-labelledby="signin-title">
     <Container>
       <p class="bz-eyebrow">BIZOMAT account</p>
       <h1 id="signin-title">Sign in to BIZOMAT</h1>
-      <p class="pp-hero__lead">Choose the application you want to use. Your existing account and data work unchanged: sign in with the email and password you already use.</p>
+      <p class="pp-hero__lead">One sign-in opens BIZOMAT ERP, where the CRM, Finance and Projects work together. Your existing account and data work unchanged: sign in with the email and password you already use.</p>
       <ul class="pp-cards signin" role="list">
         {apps.map((a) => (
           <li class="pp-card">

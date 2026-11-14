@@ -309,11 +309,11 @@ async function webChecks() {
   }
   // The BIZOMAT System preview: static files the image adds to the website (infrastructure/fly/Dockerfile, stage
   // system-preview). In the image it must be there; against a site deployed before it, a 404 only warns.
-  await check('web', 'BIZOMAT System preview /system-preview/ (noindex, its script loads)', async () => {
+  await check('web', 'BIZOMAT ERP design preview /system-preview/ (noindex, its script loads)', async () => {
     const r = await onPlatform({ path: '/system-preview/', headers: { Accept: 'text/html' } });
     if (r.status === 404) return opts.mode === 'hosts' ? { fail: '404: not in the image' } : { warn: '404: not deployed yet' };
     if (r.status !== 200) return { fail: describe(r) };
-    if (!/<title>BIZOMAT System preview<\/title>/.test(r.text)) return { fail: 'not the System preview page' };
+    if (!/<title>BIZOMAT ERP preview<\/title>/.test(r.text)) return { fail: 'not the ERP design preview page' };
     if (!/noindex/.test(r.headers['x-robots-tag'] || '')) return { fail: 'no X-Robots-Tag: noindex' };
     const script = (r.text.match(/<script type="module"[^>]*src="\.\/(assets\/[^"]+\.js)"/) || [])[1];
     if (!script) return { fail: 'no module script' };

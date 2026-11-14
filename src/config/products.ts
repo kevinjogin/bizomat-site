@@ -1,4 +1,4 @@
-// BIZOMAT products and solution areas: one source for the homepage, /products/ and /solutions/.
+// BIZOMAT products and solution areas: one source for the homepage, /systems/ and /solutions/.
 //
 // Rules:
 //  - Describe only what the products do today (src/data/platform-catalog.ts records where each fact comes from).
@@ -17,7 +17,7 @@ export interface Product {
   formerly?: string;
   /** One line, used in menus and cards. */
   tagline: string;
-  /** Two or three plain sentences for the product card and /products/. */
+  /** Two or three plain sentences for the product card and /systems/. */
   summary: string;
   status: ProductStatus;
   /** The product's page on this site. Omitted for products that are not yet available. */
@@ -28,39 +28,53 @@ export interface Product {
   action?: string;
 }
 
+// The Systems (owner, 14 Nov 2026): the products are presented as BIZOMAT's systems, each with its page under /systems/
+// (src/config/systems.ts), and the applications open inside BIZOMAT ERP. Resources stay free and public.
 export const PRODUCTS: readonly Product[] = [
   {
+    id: 'erp',
+    name: 'ERP',
+    fullName: 'BIZOMAT ERP',
+    formerly: 'BIZOMAT System',
+    tagline: 'One workspace for your company, with every system inside it.',
+    summary: 'Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Reports and Administration in one workspace, by company, with one sign-in. Operations modules such as inventory and manufacturing are planned.',
+    status: 'available',
+    url: '/systems/erp/',
+    signIn: true,
+    action: 'Explore BIZOMAT ERP',
+  },
+  {
     id: 'cad',
-    name: 'CAD Automation',
-    fullName: 'BIZOMAT CAD Automation',
-    formerly: CAD.formerly,
+    name: 'Engineering Automation',
+    fullName: 'BIZOMAT Engineering Automation',
+    formerly: `CAD Automation (${CAD.formerly})`,
     tagline: CAD.headline,
     summary: CAD.summary,
     status: 'available',
-    url: '/cad-automation/',
+    url: '/systems/engineering/',
     signIn: true,
-    action: 'Explore CAD Automation',
+    action: 'Explore Engineering Automation',
   },
   {
     id: 'work',
-    name: 'Project Management',
-    fullName: 'BIZOMAT Project Management',
-    formerly: WORK.formerly,
+    name: 'Projects',
+    fullName: 'BIZOMAT Projects',
+    formerly: `Project Management (${WORK.formerly})`,
     tagline: WORK.headline,
     summary: WORK.summary,
     status: 'available',
-    url: '/work/',
+    url: '/systems/projects/',
     signIn: true,
-    action: 'Explore Project Management',
+    action: 'Explore Projects',
   },
   {
     id: 'crm',
     name: CRM.name,
-    fullName: `BIZOMAT ${CRM.name}`,
+    fullName: 'BIZOMAT CRM',
     tagline: CRM.headline,
     summary: CRM.summary,
     status: 'available',
-    url: '/crm-platform/',
+    url: '/systems/crm/',
     signIn: true,
     action: 'Explore the CRM',
   },
@@ -71,7 +85,7 @@ export const PRODUCTS: readonly Product[] = [
     tagline: FINANCE.headline,
     summary: FINANCE.summary,
     status: 'available',
-    url: '/finance-platform/',
+    url: '/systems/finance/',
     signIn: true,
     action: 'Explore Finance',
   },
@@ -123,9 +137,9 @@ export const SOLUTIONS: readonly Solution[] = [
       'Teams need a clear method for a business case or a project plan, not another blank page.',
     ],
     paths: [
-      { label: 'Project Management', href: '/work/', note: 'Projects, tasks and teams in one workspace.' },
-      { label: 'Customer Relationship Management', href: '/crm-platform/', note: 'Customers, leads, deals and follow-ups with your team.' },
-      { label: 'Finance', href: '/finance-platform/', note: 'Accounts, invoices, bills, budgets and reports on a double-entry ledger.' },
+      { label: 'BIZOMAT Projects', href: '/systems/projects/', note: 'Projects, tasks and teams in one workspace.' },
+      { label: 'BIZOMAT CRM', href: '/systems/crm/', note: 'Customers, leads, deals and follow-ups with your team.' },
+      { label: 'BIZOMAT Finance', href: '/systems/finance/', note: 'Accounts, invoices, bills, budgets and reports on a double-entry ledger.' },
       { label: 'Business tools', href: '/tools/?topic=business-commercial', note: 'Costing, quoting and investment calculators.' },
       { label: 'Business books', href: '/reados/?topic=business', note: 'Finance, strategy and governance, chapter by chapter.' },
     ],
@@ -140,7 +154,7 @@ export const SOLUTIONS: readonly Solution[] = [
       'The method you need is buried in a textbook you do not have to hand.',
     ],
     paths: [
-      { label: 'CAD Automation', href: '/cad-automation/', note: 'Your AI assistant, working in SOLIDWORKS.' },
+      { label: 'Engineering Automation', href: '/systems/engineering/', note: 'Your AI assistant, working in SOLIDWORKS.' },
       { label: 'Engineering tools', href: '/tools/?topic=engineering-design', note: 'Design checks that show their method.' },
       { label: 'Engineering books', href: '/reados/?topic=engineering', note: 'Practical methods with worked numbers.' },
     ],
@@ -155,10 +169,10 @@ export const SOLUTIONS: readonly Solution[] = [
       'It is not clear which processes are worth automating first.',
     ],
     paths: [
-      { label: 'CAD Automation', href: '/cad-automation/', note: 'Automation for engineering and CAD work.' },
+      { label: 'Engineering Automation', href: '/systems/engineering/', note: 'Automation for engineering and CAD work.' },
       { label: 'Technology books', href: '/reados/?topic=technology', note: 'AI, software and digital systems in practice.' },
-      { label: 'Project Management automations', href: '/work/#automations', note: 'Let status changes and dates move routine work forward.' },
-      { label: 'CRM automations', href: '/crm-platform/#automations', note: 'Follow-ups, reminders and alerts when leads and deals change.' },
+      { label: 'Projects automations', href: '/systems/projects/#automations', note: 'Let status changes and dates move routine work forward.' },
+      { label: 'CRM automations', href: '/systems/crm/#automations', note: 'Follow-ups, reminders and alerts when leads and deals change.' },
       { label: 'Talk to BIZOMAT', href: '/contact/', note: 'Turn a repeated spreadsheet or manual process into a focused tool.' },
     ],
   },
