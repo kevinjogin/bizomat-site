@@ -2,9 +2,8 @@
 // /systems/manufacturing/: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
 // Maintenance (a CMMS inside the ERP, its own module in the rail) works today: its first stage is Live (assets, requests
 // and work orders; apps/work/src/worker/maintenance, tested by apps/work/test/maintenance.test.ts); everything else is
-// planned (the designs in docs/erp/architecture/08 and 09) and labelled Planned. Maintenance's screens are on the ERP
-// page and guide; no screen here shows a planned module as working.
-// The design preview (demonstration data) is linked by its full address because it is built separately.
+// planned (the designs in docs/erp/architecture/08 and 09) and labelled Planned. The one product screen is Maintenance's
+// (a working module); no screen here shows a planned module as working.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -16,13 +15,15 @@ import '../../../styles/visuals.css';
 import '../../../styles/systems.css';
 import { SITE } from '../../../config/site.ts';
 import { APP_LINKS } from '../../../config/platform.ts';
-import { ERP_PREVIEW, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { screenshots } from '../../../data/screenshots.ts';
 
 const sys = systemById('manufacturing');
 const erp = systemById('erp');
-const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
+// The one product screen here is Maintenance's, the module that works today.
+const maintenanceShot = screenshots('erp').find((s) => s.src.endsWith('/erp-maintenance.webp'));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }];
-const description = 'BIZOMAT Manufacturing and Operations: ERP modules for production, inventory, warehouses, procurement, quality, maintenance and supply chain. Maintenance works today; the rest is planned.';
+const description = 'Maintenance management software (CMMS) in BIZOMAT ERP: asset register, maintenance requests and work orders today. Preventive maintenance, inventory and manufacturing are planned.';
 
 interface Item { t: string; st: FeatureStatus }
 interface Module { id: string; name: string; st: FeatureStatus; x: string; items?: Item[]; today?: Item[] }
@@ -100,10 +101,10 @@ const buyFlow = ['Requisition', 'Purchase order in Finance', 'Goods receipt', 'I
 
 const faqs = [
   { q: 'Can it manage manufacturing today?', a: 'No. Manufacturing, production planning, inventory, warehouse management, procurement, quality and supply chain are planned and not built.' },
-  { q: 'Is Maintenance available?', a: 'Not yet. Its first stage (the asset register, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents) is being built inside BIZOMAT ERP. It is not switched on yet. Preventive maintenance and the rest are planned.' },
+  { q: 'Is Maintenance available?', a: 'Yes. Its first stage works today inside BIZOMAT ERP: the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. Preventive maintenance and the rest are planned.' },
   { q: 'Can I sign up or pay for it now?', a: 'Maintenance comes with BIZOMAT ERP: sign in and choose Maintenance in the rail. For the planned modules there is nothing to sign up for, download or buy.' },
   { q: 'What can I use today instead?', a: 'BIZOMAT Finance for suppliers, purchase orders and bills; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
-  { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data only. Nothing you do there is saved, and it does not store your data.' },
+  { q: 'When will the other modules be ready?', a: 'There is no date yet. Each module is labelled Planned until it is built and tested, and only then is it called Live.' },
 ];
 
 const schema = [
@@ -111,17 +112,17 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title="Manufacturing and Operations (planned)" description={description} imageAlt="BIZOMAT Manufacturing and Operations: planned ERP modules" breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title="Maintenance (CMMS) and planned manufacturing ERP" description={description} imageAlt="BIZOMAT Manufacturing and Operations: planned ERP modules" breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="mfg-title">
     <Container>
       <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
       <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
       <h1 id="mfg-title">Manufacturing and Operations</h1>
       <p class="sys-planned__status sys-hero-status"><StatusLabel status="planned" /> Mostly planned. Maintenance works today in BIZOMAT ERP.</p>
-      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Maintenance works today, inside BIZOMAT ERP, for assets, requests and work orders. Every other module is planned.</p>
+      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Maintenance, a maintenance management system (CMMS), works today inside BIZOMAT ERP: the asset register, maintenance requests and work orders. Every other module is planned.</p>
       <div class="pp-hero__actions">
         <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-use-erp">Use BIZOMAT ERP today</Button>
-        <Button href={PREVIEW} variant="secondary" rel="noopener" data-cta="mfg-preview">Design preview with demonstration data</Button>
+        <Button href="/systems/erp/guide/#maintenance" variant="secondary" data-cta="mfg-maintenance-guide">How Maintenance works</Button>
       </div>
       <p class="pp-hero__note">BIZOMAT ERP is where Sales and CRM, Finance and Accounting, Projects and Tasks and Products and Engineering work today. {sys.statusNote}</p>
     </Container>
@@ -191,14 +192,12 @@ const schema = [
           <figcaption><span>Designed flow from a requisition to a supplier bill. Purchase orders and bills exist in Finance today; the rest is planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
         </figure>
       </div>
-      <div class="sys-planned sys-preview">
-        <p class="sys-planned__status"><StatusLabel status="planned" /> Design preview</p>
-        <h3>See the design</h3>
-        <p>The BIZOMAT ERP design preview shows how the planned modules are designed to look and work. It uses demonstration data only: nothing you do there is saved, and it never stores your data.</p>
-        <div class="sys-actions">
-          <Button href={PREVIEW} variant="secondary" rel="noopener" data-cta="mfg-preview-2">Open the design preview</Button>
-        </div>
-      </div>
+      {maintenanceShot && (
+        <figure class="pp-shot sys-preview">
+          <img src={maintenanceShot.src} alt={`${maintenanceShot.title}. ${maintenanceShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+          <figcaption><span>Maintenance, the module that works today. {maintenanceShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+        </figure>
+      )}
     </Container>
   </section>
 

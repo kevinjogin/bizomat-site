@@ -39,8 +39,9 @@ accounts:
 - Code: `apps/work/src/worker/system` (server) and `apps/work/src/client/system` (pages).
 - Migration: `apps/work/migrations/0016_system.sql`. It is additive: two new tables, nothing else changed.
 
-The design preview with demonstration data stays at `/system-preview/` (`docs/erp/`). The planned operations modules
-(inventory, procurement, manufacturing and the rest) are not built.
+The design preview with demonstration data is retired (owner, 14 Nov 2026): it is no longer built or linked, and
+`/system-preview/` answers 301 to `/systems/erp/`. The planned operations modules (inventory, procurement,
+manufacturing and the rest) are not built.
 
 ## One system (owner, 14 Nov 2026)
 
@@ -204,7 +205,7 @@ The console is for platform admins only (`platform_admins`, founder or admin). F
 - `/system` and `/system/...` (the tools under `/system/<tool>` included) go to the work app:
   - in the proxy (`infrastructure/proxy/routes.mjs`, `SYSTEM_PATHS`);
   - in the website Worker (`src/worker.ts`).
-- `/system-preview/` stays with the website.
+- `/system-preview/` stays with the website, which answers 301 to `/systems/erp/` (the preview is retired).
 - The session cookie is written for `/system` too (`apps/work/src/worker/mount.ts`).
 - Checks:
   - the smoke test: `/system/api/health`, `/system/login`, carrying the session and 401 for the API when signed out;

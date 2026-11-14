@@ -64,7 +64,7 @@ existing modules rather than copying them. No new Fly app, Machine, server, data
 | 10 | Implementation recommendations | `ux/10-implementation-recommendations.md` |
 | 11 | Enterprise workspace update (the live `/erp`) | `ux/11-enterprise-workspace-update.md` |
 
-The prototype uses demonstration data only, never calls a BIZOMAT API and is built by its own Vite config. Since
-14 Nov 2026 (owner's decision) it is published for review at `https://bizomat.ai/system-preview/`. It is added to
-the image as static files for the website, out of search engines and the navigation (`ux/08-prototype-guide.md`,
-section 1a). The applications' own builds do not include it.
+The prototype uses demonstration data only, never calls a BIZOMAT API and is built by its own Vite config. It was
+published for review at `https://bizomat.ai/system-preview/` on 14 Nov 2026 and retired the same day (owner: no links
+to previews or demos): it is no longer built into the image, and its addresses answer 301 to `/systems/erp/`. Its
+source stays here as design history (`npm run build:system-preview` in `apps/work` builds it locally).
