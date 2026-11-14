@@ -173,7 +173,7 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
 // ------------------------------------------------------------------ settings: roles and the approval rule
 
 interface RolesData {
-  kind: 'registered' | 'own';
+  kind: 'registered' | 'own' | 'demo';
   people: { id: string; name: string; email: string; companyRole: 'owner' | 'admin' | 'member'; role: MtRole; roleIsDefault: boolean }[];
 }
 
@@ -222,7 +222,7 @@ function Settings({ companyId, me }: { companyId: string; me: MtMe }) {
           <ul className="mt-docs small">
             {(['admin', 'supervisor', 'technician', 'requester'] as MtRole[]).map((r) => <li key={r}><strong>{ROLE_LABELS[r]}</strong>: {ROLE_HINTS[r]}</li>)}
           </ul>
-          {me.company.kind === 'own' ? <p className="muted small">This is your own company, so you are its only person and its administrator. Register a company to work with others.</p> : <p className="muted small">The company’s owner and administrators are maintenance administrators unless you choose otherwise; other people are requesters. The owner is always an administrator. People are added in the company area.</p>}
+          {me.company.kind === 'demo' ? <p className="muted small">This is your example company: invented data, only for you, so you are its only person and its administrator.</p> : me.company.kind === 'own' ? <p className="muted small">This is your own company, so you are its only person and its administrator. Register a company to work with others.</p> : <p className="muted small">The company’s owner and administrators are maintenance administrators unless you choose otherwise; other people are requesters. The owner is always an administrator. People are added in the company area.</p>}
           {roles.error ? <ErrorBox error={roles.error} retry={() => roles.refetch()} /> : !roles.data ? <Loading /> : (
             <table className="data-table mt-table mt-roles">
               <thead><tr><th>Person</th><th>In the company</th><th>Maintenance role</th></tr></thead>

@@ -7,6 +7,7 @@ import { enqueueEmail, processOutbox } from '../services/email/outbox';
 import { emailConfig } from '../services/email/provider';
 import { emailEnv } from '../services/email/settings';
 import { crmUrl } from './util';
+import { isExampleSpace } from '../system/example';
 
 export const CRM_NOTIFICATION_TYPES = {
   assignment: { label: 'Records assigned to me', email: true },
@@ -77,7 +78,8 @@ export async function crmNotify(env: Env, n: CrmNotifyInput, waitUntil?: (p: Pro
     const res = await db.batch(stmts);
     created = res.reduce((s, r) => s + (r.meta.changes ?? 0), 0);
   }
-  if (emailTo.length) {
+  // The example company's notifications stay in the app: no email about invented data (system/example.ts).
+  if (emailTo.length && !(await isExampleSpace(db, 'crm', n.orgId))) {
     const cfg = emailConfig(await emailEnv(env));
     if (cfg.provider !== 'none') {
       let link: string | null = null;

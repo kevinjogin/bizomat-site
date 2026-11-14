@@ -24,7 +24,7 @@ export const MT_ROLES = ['admin', 'supervisor', 'technician', 'requester'] as co
 export type MtRole = (typeof MT_ROLES)[number];
 const RANK: Record<MtRole, number> = { requester: 1, technician: 2, supervisor: 3, admin: 4 };
 
-export type CompanyKind = 'registered' | 'own';
+export type CompanyKind = 'registered' | 'own' | 'demo';
 export type CompanyRole = 'owner' | 'admin' | 'member';
 
 export interface MtAccess {
@@ -67,6 +67,9 @@ export async function loadMtAccess(db: D1Database, companyId: string, user: { id
   }
   const own = await db.prepare('SELECT id, name FROM sys_companies WHERE id = ? AND owner_id = ?').bind(companyId, user.id).first<{ id: string; name: string }>();
   if (own) return { companyId: own.id, kind: 'own', companyName: own.name, companyRole: 'owner', userId: user.id, userName: user.name, role: 'admin', roleIsDefault: true };
+  // The person's example company (system/example.ts): theirs alone, while it is being made and once it is ready.
+  const example = await db.prepare("SELECT company_id, name FROM sys_demo WHERE company_id = ? AND user_id = ? AND status IN ('building', 'ready')").bind(companyId, user.id).first<{ company_id: string; name: string }>();
+  if (example) return { companyId: example.company_id, kind: 'demo', companyName: example.name, companyRole: 'owner', userId: user.id, userName: user.name, role: 'admin', roleIsDefault: true };
   throw notFound('Company');
 }
 
@@ -129,6 +132,10 @@ export async function companyPeople(db: D1Database, a: Pick<MtAccess, 'companyId
     const r = await db.prepare('SELECT u.id, u.name, u.email FROM sys_companies s JOIN users u ON u.id = s.owner_id WHERE s.id = ?').bind(a.companyId).first<{ id: string; name: string; email: string }>();
     return r ? [{ ...r, companyRole: 'owner', role: 'admin', roleIsDefault: true }] : [];
   }
+  if (a.kind === 'demo') {
+    const r = await db.prepare('SELECT u.id, u.name, u.email FROM sys_demo s JOIN users u ON u.id = s.user_id WHERE s.company_id = ?').bind(a.companyId).first<{ id: string; name: string; email: string }>();
+    return r ? [{ ...r, companyRole: 'owner', role: 'admin', roleIsDefault: true }] : [];
+  }
   const rows = await db
     .prepare(
       `SELECT u.id, u.name, u.email, m.role AS company_role, r.role AS mt_role FROM co_members m
@@ -167,5 +174,7 @@ export async function mtCompanies(db: D1Database, user: { id: string }): Promise
   ]);
   const out: { id: string; name: string; kind: CompanyKind; role: MtRole }[] = (reg.results as any[]).map((r) => ({ id: r.id, name: r.name, kind: 'registered', role: effectiveRole(r.role, r.mt_role).role }));
   for (const r of own.results as any[]) out.push({ id: r.id, name: r.name, kind: 'own', role: 'admin' });
+  const example = await db.prepare("SELECT company_id, name FROM sys_demo WHERE user_id = ? AND status = 'ready'").bind(user.id).first<{ company_id: string; name: string }>();
+  if (example) out.push({ id: example.company_id, name: example.name, kind: 'demo', role: 'admin' });
   return out;
 }

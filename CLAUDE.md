@@ -40,7 +40,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   reference only; `docs/maintenance/README.md`): Stage M1 (asset register and hierarchy, requests with approval, work
   orders, technicians, labour timer, photos and documents) is built and tested at `/erp/c/<company>/maintenance`;
   M2 to M4 (preventive maintenance, readings, inspections, parts, scanning, sites, AI scheduling, reliability, offline)
-  are planned. **Operations** (procurement, inventory, manufacturing, quality, supply chain) and
+  are planned. **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account
+  gets its own "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own
+  API; only its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it
+  is removed (and made again only on request) in Administration. **Operations** (procurement, inventory, manufacturing, quality, supply chain) and
   product/engineering records are **planned, not built**: the Operations page lists them as Planned and the design
   preview with demonstration data stays at `bizomat.ai/system-preview/`; never present them as working. The platform
   console is `/erp/admin` (platform admins only).

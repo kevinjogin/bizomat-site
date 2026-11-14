@@ -7,6 +7,7 @@ import { enqueueEmail, processOutbox } from '../services/email/outbox';
 import { toCsv } from '../../shared/crm/csv';
 import { emailConfig } from '../services/email/provider';
 import { emailEnv } from '../services/email/settings';
+import { isExampleSpace } from '../system/example';
 
 /** Finance is served at /finance on the same host as the app (https://bizomat.ai/finance in production). */
 export const FIN_MOUNT = '/finance';
@@ -120,7 +121,8 @@ export async function finNotify(env: Env, n: FinNotifyInput, waitUntil?: (p: Pro
   let created = 0;
   if (stmts.length) created = (await db.batch(stmts)).reduce((s, r) => s + (r.meta.changes ?? 0), 0);
   // Email only for notifications that are new (a repeat with the same key sends nothing).
-  if (emailTo.length && created > 0) {
+  // The example company's notifications stay in the app: no email about invented data (system/example.ts).
+  if (emailTo.length && created > 0 && !(await isExampleSpace(db, 'finance', n.orgId))) {
     const cfg = emailConfig(await emailEnv(env));
     if (cfg.provider !== 'none') {
       let link: string | null = null;

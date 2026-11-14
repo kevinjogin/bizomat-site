@@ -40,6 +40,7 @@ import { departmentRoutes } from './departments';
 import { overviewRoutes } from './overview';
 import { idAuthorizeRoutes } from './id-provider';
 import { companyProjects, linkRoutes } from './links';
+import { refuseExample } from '../system/example';
 
 export const COMPANY_MOUNT = '/company';
 
@@ -315,6 +316,7 @@ async function assertLinkable(db: D1Database, app: ToolApp, refId: string, userI
         ? await db.prepare("SELECT 1 FROM crm_orgs o JOIN crm_members m ON m.org_id = o.id WHERE o.id = ? AND m.user_id = ? AND m.role = 'owner' AND o.deleted_at IS NULL").bind(refId, userId).first()
         : await db.prepare("SELECT o.kind FROM fin_orgs o JOIN fin_members m ON m.org_id = o.id WHERE o.id = ? AND m.user_id = ? AND m.role = 'owner' AND o.deleted_at IS NULL").bind(refId, userId).first<{ kind: string }>();
   if (!owned) throw new HttpError(400, `You can link only a ${TOOL_LABELS[app]} ${app === 'tasks' ? 'workspace' : app === 'crm' ? 'organisation' : 'workspace'} you own.`);
+  await refuseExample(db, app, refId, 'link');
   if (app === 'finance' && (owned as { kind: string }).kind !== 'business') throw new HttpError(400, 'Only a business workspace can belong to a company. Personal and household workspaces stay private.');
   if (await db.prepare('SELECT 1 FROM co_tools WHERE app = ? AND ref_id = ?').bind(app, refId).first()) throw new HttpError(409, `That ${TOOL_LABELS[app]} space already belongs to a company.`);
 }

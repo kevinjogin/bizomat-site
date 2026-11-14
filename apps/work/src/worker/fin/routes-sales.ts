@@ -52,6 +52,7 @@ import {
 } from './sales';
 import { auditStmt, csvOf, finUrl } from './util';
 import { queueAndKick } from '../services/email/outbox';
+import { refuseExample } from '../system/example';
 
 export const salesRoutes = new Hono<AppEnv>();
 
@@ -565,6 +566,7 @@ for (const [path, kind] of Object.entries(KIND_PATH)) {
   salesRoutes.post(`/orgs/:org/${path}/:id/email`, async (c) => {
     const a = await requireOrg(c);
     requireBusiness(a);
+    await refuseExample(c.env.DB, 'finance', a.orgId, 'email');
     await rateLimit(c.env.DB, `fin-doc-email:${a.userId}`, 30, 60 * 60_000);
     const s = await loadShared(c, a, kind, c.req.param('id'));
     assertShareable(a, s);
