@@ -1,9 +1,9 @@
 # BIZOMAT ERP: clickable prototype guide
 
 Status: design work only. The prototype runs on demonstration data in the browser. It makes no server calls, has no
-sign-in, is not deployed, and changes no existing screen of Project Management, the Customer Relationship Management
-(CRM), Finance or Company. Every screen carries the banner "Design prototype: demonstration data, not connected to
-BIZOMAT."
+sign-in, and changes no existing screen of Project Management, the Customer Relationship Management (CRM), Finance or
+Company. Every screen carries the banner "Design prototype: demonstration data, not connected to BIZOMAT." Since
+14 Nov 2026 (owner's decision) it is published at `https://bizomat.ai/erp-design-preview/` for review (section 1a).
 
 ## 1. Run it
 
@@ -27,6 +27,26 @@ banner and class names).
 
 Checks used during the work (the same as the app's): `npx tsc -p tsconfig.json --noEmit` and
 `npx eslint src/client/erp-prototype vite.erp-preview.config.ts`.
+
+## 1a. Published on bizomat.ai
+
+The owner asked on 14 Nov 2026 for the prototype to be on bizomat.ai. It is at `https://bizomat.ai/erp-design-preview/`,
+with no new app, Machine, process or route:
+
+- **Build:** `infrastructure/fly/Dockerfile`, stage `erp-preview`, runs `npm run build:erp-preview` from the work app's
+  sources. The final image copies `dist/erp-design-preview` into the website's static folder
+  (`/app/web/dist/erp-design-preview`). The work app's build and its image folder do not change, and the website's own
+  build (`npm run build`) does not include it.
+- **Serving:** the web Machine serves the files as it serves the website, under the website's headers, including its
+  strict Content-Security-Policy. Before release, every screen was walked in a browser under that policy (desktop,
+  phone and the dark theme), with no policy violation, script error or failed request.
+- **Out of search:** `scripts/postbuild.mjs` adds `X-Robots-Tag: noindex, nofollow` for `/erp-design-preview/*`, and
+  the page has `robots: noindex, nofollow`. It is not in the sitemap, the site search or the navigation.
+- **Checks:** the smoke test (`infrastructure/smoke/smoke.mjs`) checks the page, the header and its script. In the image
+  (CI, the compose stack) a 404 fails; against a site deployed before it, a 404 only warns.
+- **What it is not:** the banner on every screen says so; the companies, people and figures are fictional examples.
+  It is not a product claim: ERP is not built (`docs/erp/README.md`).
+- **Removing it:** delete the `erp-preview` stage and its `COPY` line in the Dockerfile, then run the deploy workflow.
 
 ## 2. Where the files are
 

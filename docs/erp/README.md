@@ -52,5 +52,7 @@ existing modules rather than copying them. No new Fly app, Machine, server, data
 | 9 | User journey demonstrations | `ux/09-user-journeys.md` |
 | 10 | Implementation recommendations | `ux/10-implementation-recommendations.md` |
 
-The prototype uses demonstration data only, never calls a BIZOMAT API, is built by its own Vite config and is not part
-of the production build or deployment.
+The prototype uses demonstration data only, never calls a BIZOMAT API and is built by its own Vite config. Since
+14 Nov 2026 (owner's decision) it is published for review at `https://bizomat.ai/erp-design-preview/`. It is added to
+the image as static files for the website, out of search engines and the navigation (`ux/08-prototype-guide.md`,
+section 1a). The applications' own builds do not include it.

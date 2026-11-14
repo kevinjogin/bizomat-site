@@ -64,4 +64,6 @@ Status: assessment and recommendations for review; nothing here is implemented. 
 - No staging environment without the owner's approval (verification stays local: both runtimes, the compose stack,
   browser tests, then the live checks).
 - No DNS change (ERP is a path on bizomat.ai).
-- No deployment of the design prototype: it is built by its own Vite config and is not in the production image's build.
+- The design prototype is not part of any application. Since 14 Nov 2026 (owner's decision) it is published as static
+  files at `bizomat.ai/erp-design-preview/`, built by its own Dockerfile stage and served by the web Machine
+  (`../ux/08-prototype-guide.md`, section 1a). The real ERP will be at `/erp`, a different path.

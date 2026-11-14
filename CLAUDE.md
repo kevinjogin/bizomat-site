@@ -169,8 +169,9 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 
 Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/crm-platform/`, `/crm-platform/guide/`,
 `/finance-platform/`, `/finance-platform/guide/`, `/resources/`, `/tools/`, `/reados/`,
-`/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`, and
-every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
+`/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
+`/erp-design-preview/` (the ERP design prototype, demonstration data, out of search; owner, 14 Nov 2026;
+`docs/erp/ux/08-prototype-guide.md`), and every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
 and **Sign in**, that a new visit opens in the computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/` and `/company/` on bizomat.ai, and their old hosts),
