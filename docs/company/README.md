@@ -133,6 +133,9 @@ is the sign-in provider: OAuth 2.0 authorization code with PKCE (`src/worker/com
   verifier. Gives a one-hour access token. Each code works once, for 10 minutes.
 - **Userinfo:** `GET https://bizomat.ai/company/api/id/userinfo` with `Authorization: Bearer`. Returns `sub`, `email`,
   `email_verified`, `name` and the person's companies.
+- **CAD status** (14 Nov 2026, for BIZOMAT System): `POST https://bizomat.ai/company/api/id/cad-status`, HTTP Basic with
+  the client `cad` and its secret (any other client: 403). CAD Automation reports each account's computers, AI apps and
+  recent jobs; the System shows them by company (`docs/system/README.md`).
 - **Linking accounts:** CAD Automation should link an existing CAD account only by a confirmed email
   (`email_verified: true`), as it does for Google. Its MCP connectors and paired computers then keep working.
 
