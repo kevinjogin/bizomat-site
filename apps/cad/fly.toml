@@ -37,9 +37,14 @@ kill_timeout = '15s'
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = 'suspend'
+  # Always on (14 Nov 2026). bizomat.ai/cad reaches this app over Fly's private network (cados.internal:8080 from the
+  # Fly app bizomat), which neither counts as traffic for auto-stop nor wakes a stopped Machine: with 'suspend' the
+  # Machine slept at 22:33 UTC while a paired computer was polling through bizomat.ai, and bizomat.ai/cad answered 502
+  # until something reached cados.fly.dev. Same Machine, same size: only the sleep is off. Letting it sleep again needs
+  # the router to reach it through Flycast (a private Flycast address for cados, then UPSTREAM_CAD on bizomat).
+  auto_stop_machines = 'off'
   auto_start_machines = true
-  min_machines_running = 0
+  min_machines_running = 1
 
   [http_service.concurrency]
     type = 'requests'
