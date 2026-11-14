@@ -26,8 +26,10 @@ export const CRM_MOUNT = '/crm';
 export const FIN_MOUNT = '/finance';
 /** BIZOMAT company accounts and their control centre, served by this app at https://bizomat.ai/company. */
 export const COMPANY_MOUNT = '/company';
+/** BIZOMAT System, every tool in one place by company, served by this app at https://bizomat.ai/system. */
+export const SYSTEM_MOUNT = '/system';
 /** Every path this app is served under on another site's address; the session cookie is written for each. */
-export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT] as const;
+export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT, SYSTEM_MOUNT] as const;
 
 /** The path the request came in under: one of MOUNTS, or '' at the root of the host. */
 export function mountOf(url: URL): string {
@@ -92,8 +94,8 @@ export function remount(res: Response, base: string): Response {
 export async function withBaseHref(res: Response, base: string): Promise<Response> {
   if (!(res.headers.get('Content-Type') ?? '').includes('text/html')) return res;
   const tag = `<base href="${base}/">`;
-  // Under /crm, /finance and /company the page is that product: its title before the script sets the page's own.
-  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : base === FIN_MOUNT ? 'BIZOMAT Finance' : base === COMPANY_MOUNT ? 'BIZOMAT Company' : null;
+  // Under /crm, /finance, /company and /system the page is that product: its title before the script sets the page's own.
+  const title = base === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : base === FIN_MOUNT ? 'BIZOMAT Finance' : base === COMPANY_MOUNT ? 'BIZOMAT Company' : base === SYSTEM_MOUNT ? 'BIZOMAT System' : null;
   if (typeof HTMLRewriter === 'function') {
     let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
     if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });

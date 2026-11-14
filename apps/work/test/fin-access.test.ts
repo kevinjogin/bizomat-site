@@ -166,7 +166,7 @@ describe('the /finance address', () => {
     const res = await raw('POST', '/finance/api/auth/signup', { body: { email, name: 'Fin Mount', password: PASSWORD } });
     expect(res.status).toBe(201);
     const cookies = res.headers.getSetCookie().filter((c) => c.startsWith('workos_sid='));
-    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/finance', '/tasks', '/crm', '/company']);
+    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/finance', '/tasks', '/crm', '/company', '/system']);
     const cookie = cookies[0].split(';')[0];
     const csrf = ((await res.json()) as any).csrfToken;
     expect((await raw('POST', '/finance/api/fin/orgs', { body: { name: 'Mounted books', kind: 'personal' }, cookie, csrf })).status).toBe(201);

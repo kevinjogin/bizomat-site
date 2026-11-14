@@ -103,9 +103,8 @@ const tokenError = (c: any, error: string, description: string, status = 400) =>
   return c.json({ error, error_description: description }, status);
 };
 
-idPublicRoutes.post('/token', async (c) => {
-  await rateLimit(c.env.DB, `id-token:${clientIp(c)}`, 120, 60_000);
-  const form = (await c.req.parseBody().catch(() => ({}))) as Record<string, string>;
+/** The client from HTTP Basic (or the form's client_id and client_secret), or null when unknown or the secret is wrong. */
+async function clientFrom(c: any, form: Record<string, string>): Promise<IdClient | null | 'malformed'> {
   let clientId = String(form.client_id ?? '');
   let secret = String(form.client_secret ?? '');
   const basic = c.req.header('Authorization') ?? '';
@@ -115,11 +114,20 @@ idPublicRoutes.post('/token', async (c) => {
       clientId = decodeURIComponent(id ?? '');
       secret = decodeURIComponent(sec ?? '');
     } catch {
-      return tokenError(c, 'invalid_client', 'Malformed client credentials', 401);
+      return 'malformed';
     }
   }
   const client = idClients(c.env).find((x) => x.id === clientId);
-  if (!client || !secret || !timingSafeEqual(await sha256Hex(secret), client.secretSha256)) return tokenError(c, 'invalid_client', 'Unknown client or wrong secret', 401);
+  if (!client || !secret || !timingSafeEqual(await sha256Hex(secret), client.secretSha256)) return null;
+  return client;
+}
+
+idPublicRoutes.post('/token', async (c) => {
+  await rateLimit(c.env.DB, `id-token:${clientIp(c)}`, 120, 60_000);
+  const form = (await c.req.parseBody().catch(() => ({}))) as Record<string, string>;
+  const client = await clientFrom(c, form);
+  if (client === 'malformed') return tokenError(c, 'invalid_client', 'Malformed client credentials', 401);
+  if (!client) return tokenError(c, 'invalid_client', 'Unknown client or wrong secret', 401);
   if (form.grant_type !== 'authorization_code') return tokenError(c, 'unsupported_grant_type', 'Only authorization_code is supported');
   const code = String(form.code ?? '');
   const verifier = String(form.code_verifier ?? '');
@@ -162,4 +170,43 @@ idPublicRoutes.get('/userinfo', async (c) => {
     name: user.name,
     companies: companies.results.map((x) => ({ id: x.id, name: x.name, role: x.role, abn_status: x.abn_status })),
   });
+});
+
+// CAD Automation reports the status of its accounts to BIZOMAT System (system/system.ts shows it in each company):
+// POST /company/api/id/cad-status with the client "cad"'s credentials (HTTP Basic), a JSON body
+// { accounts: [{ email, emailVerified, sub?, computers, jobs, assistants }] }. Each account replaces its earlier report.
+const short = (n: number) => z.string().trim().max(n);
+const when = z.number().int().nonnegative().max(4_102_444_800_000).nullish();
+const cadReport = z.object({
+  accounts: z
+    .array(
+      z.object({
+        email: z.string().trim().email().max(254),
+        emailVerified: z.boolean(),
+        sub: short(64).nullish(),
+        computers: z.array(z.object({ name: short(100), online: z.boolean(), solidworks: short(60).optional(), addin: short(20).optional(), lastSeen: when, open: short(200).optional() })).max(20),
+        jobs: z.array(z.object({ id: short(64), tool: short(60), status: short(30), at: z.number().int().nonnegative().max(4_102_444_800_000) })).max(20),
+        assistants: z.array(z.object({ app: short(60), connectedAt: when, lastUsed: when })).max(20),
+      }),
+    )
+    .max(500),
+});
+
+idPublicRoutes.post('/cad-status', async (c) => {
+  await rateLimit(c.env.DB, `id-cad-status:${clientIp(c)}`, 60, 60_000);
+  const client = await clientFrom(c, {});
+  if (client === 'malformed' || !client) return tokenError(c, 'invalid_client', 'Unknown client or wrong secret', 401);
+  if (client.id !== 'cad') return tokenError(c, 'unauthorized_client', 'Only CAD Automation reports CAD status', 403);
+  const input = await body(c, cadReport);
+  const t = now();
+  const stmts = input.accounts.map((a) =>
+    c.env.DB.prepare(
+      `INSERT INTO sys_cad_status (email, bizomat_sub, email_verified, computers_json, jobs_json, assistants_json, reported_at) VALUES (?, ?, ?, ?, ?, ?, ?)
+       ON CONFLICT(email) DO UPDATE SET bizomat_sub = excluded.bizomat_sub, email_verified = excluded.email_verified, computers_json = excluded.computers_json,
+         jobs_json = excluded.jobs_json, assistants_json = excluded.assistants_json, reported_at = excluded.reported_at`,
+    ).bind(a.email.toLowerCase(), a.sub ?? null, a.emailVerified ? 1 : 0, JSON.stringify(a.computers), JSON.stringify(a.jobs), JSON.stringify(a.assistants), t),
+  );
+  for (let i = 0; i < stmts.length; i += 50) await c.env.DB.batch(stmts.slice(i, i + 50));
+  c.header('Cache-Control', 'no-store');
+  return c.json({ ok: true, accounts: input.accounts.length });
 });

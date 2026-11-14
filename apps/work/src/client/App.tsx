@@ -7,7 +7,7 @@ import { AppShell } from './components/layout/AppShell';
 import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth';
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { useHeartbeat } from './lib/heartbeat';
-import { BRAND, IS_COMPANY, IS_CRM, IS_FINANCE } from './lib/brand';
+import { BRAND, IS_COMPANY, IS_CRM, IS_FINANCE, IS_SYSTEM } from './lib/brand';
 import { appPath } from './lib/base';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -38,6 +38,7 @@ const CrmRoutes = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Cr
 const CrmJoin = lazy(() => import('./crm/CrmApp').then((m) => ({ default: m.Join })));
 // BIZOMAT Finance, when the app is served under /finance (src/client/fin), in the same way.
 const FinRoutes = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.FinRoutes })));
+const SystemRoutes = lazy(() => import('./system/SystemApp').then((m) => ({ default: m.SystemRoutes })));
 const FinJoin = lazy(() => import('./fin/FinApp').then((m) => ({ default: m.Join })));
 const FinPublicView = lazy(() => import('./fin/PublicView').then((m) => ({ default: m.FinPublicView })));
 // The company area, when the app is served under /company (src/client/company).
@@ -127,6 +128,19 @@ export function App() {
         <Route path="/view/:kind/:id" element={page(<FinPublicView />)} />
         <Route path="/admin/*" element={<RequireAuth>{page(<FinAdmin />)}</RequireAuth>} />
         <Route path="/*" element={<RequireAuth>{page(<FinRoutes />)}</RequireAuth>} />
+      </Routes>
+    );
+  }
+
+  // Under /system the same sign-in pages, then BIZOMAT System (src/client/system): every tool in one place, by company.
+  if (IS_SYSTEM) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/privacy" element={page(<Privacy />)} />
+        <Route path="/*" element={<RequireAuth>{page(<SystemRoutes />)}</RequireAuth>} />
       </Routes>
     );
   }

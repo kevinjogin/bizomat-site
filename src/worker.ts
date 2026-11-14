@@ -18,6 +18,9 @@
 //   /tasks/... → Project Management: the Worker bizomat-tasks (the TASKS service binding); without it, the origin
 //   /crm/...   → BIZOMAT CRM, served by the same app as Project Management: the same binding, or the origin
 //   /finance/... → BIZOMAT Finance, served by the same app too: the same binding, or the origin
+//   /company/... → BIZOMAT company accounts, served by the same app too: the same binding, or the origin
+//   /system/...  → BIZOMAT System, served by the same app too: the same binding, or the origin (/system-preview/ is
+//                  the website's)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -56,9 +59,9 @@ const redirect = (location: string, status: number, cache = 'public, max-age=864
 /** The applications under bizomat.ai, or null when the request is for the website. */
 async function routeApps(request: Request, url: URL, env: Env): Promise<Response | null> {
   const read = request.method === 'GET' || request.method === 'HEAD';
-  // /CAD, /Tasks/..., /CRM, /Finance, /Company: one address per page, in lowercase (other methods are left alone and find
-  // nothing)
-  const app = /^\/(cad|tasks|crm|finance|company)(?=\/|$)/i.exec(url.pathname);
+  // /CAD, /Tasks/..., /CRM, /Finance, /Company, /System: one address per page, in lowercase (other methods are left alone
+  // and find nothing)
+  const app = /^\/(cad|tasks|crm|finance|company|system)(?=\/|$)/i.exec(url.pathname);
   if (app && app[1] !== app[1].toLowerCase() && read) {
     return redirect(`/${app[1].toLowerCase()}${url.pathname.slice(app[0].length)}${url.search}`, 301);
   }
@@ -71,6 +74,8 @@ async function routeApps(request: Request, url: URL, env: Env): Promise<Response
   if (/^\/finance(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   // BIZOMAT company accounts too (apps/work, mounted at /company)
   if (/^\/company(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
+  // BIZOMAT System too (apps/work, mounted at /system); /system-preview/ does not match and stays the website's
+  if (/^\/system(?:\/|$)/.test(url.pathname)) return env.TASKS ? env.TASKS.fetch(request) : fetch(request);
   return null;
 }
 

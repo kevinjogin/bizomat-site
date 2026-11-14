@@ -31,7 +31,9 @@ import { adminRoutes } from './routes/admin';
 import { adminCrmRoutes, adminFinRoutes } from './routes/admin-products';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
-import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, MOUNT, withBaseHref } from './mount';
+import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, MOUNT, SYSTEM_MOUNT, withBaseHref } from './mount';
+import { systemRoutes } from './system/routes';
+import { adminSystemRoutes } from './system/admin';
 import { crmPublicRoutes, crmRoutes } from './crm';
 import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
@@ -68,7 +70,7 @@ export const VERSION = '0.1.0';
 
 /** The short-lived marker cookie of the session carry (below), per application. */
 function carryCookie(mount: string): string {
-  return mount === FIN_MOUNT ? 'fin_carry' : mount === COMPANY_MOUNT ? 'co_carry' : 'crm_carry';
+  return mount === FIN_MOUNT ? 'fin_carry' : mount === COMPANY_MOUNT ? 'co_carry' : mount === SYSTEM_MOUNT ? 'sys_carry' : 'crm_carry';
 }
 
 export function createApp() {
@@ -121,7 +123,7 @@ export function createApp() {
   // cookie stops any loop.
   const carry = async (c: any) => {
     const to = c.req.query('to') ?? '';
-    const target = /^\/finance(\/|\?|$)/.test(to) ? FIN_MOUNT : /^\/company(\/|\?|$)/.test(to) ? COMPANY_MOUNT : CRM_MOUNT;
+    const target = /^\/finance(\/|\?|$)/.test(to) ? FIN_MOUNT : /^\/company(\/|\?|$)/.test(to) ? COMPANY_MOUNT : /^\/system(\/|\?|$)/.test(to) ? SYSTEM_MOUNT : CRM_MOUNT;
     const pattern = new RegExp(`^${target}(\\/[^\\\\\\r\\n]*)?(\\?[^\\r\\n]*)?$`);
     const safe = pattern.test(to) && !to.startsWith('//') ? to : `${target}/`;
     const marker = `${carryCookie(target)}=1; Path=${target}; Max-Age=60; HttpOnly; SameSite=Lax${isSecureEnv(c.env) ? '; Secure' : ''}`;
@@ -172,6 +174,8 @@ export function createApp() {
   api.route('/fin', finRoutes);
   // BIZOMAT company accounts, the control centre at /company (src/worker/company).
   api.route('/company', companyRoutes);
+  // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
+  api.route('/system', systemRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
@@ -181,6 +185,8 @@ export function createApp() {
   // The same super admins, for the CRM and Finance (src/worker/routes/admin-products.ts).
   admin.route('/crm', adminCrmRoutes);
   admin.route('/fin', adminFinRoutes);
+  // The System console: every account and company, activity across the tools (src/worker/system/admin.ts).
+  admin.route('/system', adminSystemRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
@@ -192,7 +198,7 @@ export function createApp() {
   app.get('*', async (c) => {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
-    const otherApp = c.env.BASE_PATH === CRM_MOUNT || c.env.BASE_PATH === FIN_MOUNT || c.env.BASE_PATH === COMPANY_MOUNT;
+    const otherApp = c.env.BASE_PATH === CRM_MOUNT || c.env.BASE_PATH === FIN_MOUNT || c.env.BASE_PATH === COMPANY_MOUNT || c.env.BASE_PATH === SYSTEM_MOUNT;
     const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(c.env.BASE_PATH === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(c.env.BASE_PATH === FIN_MOUNT ? ['/view/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {

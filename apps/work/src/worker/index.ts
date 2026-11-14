@@ -3,7 +3,8 @@ import { apiFailureMetric, createApp, withSecurityHeaders } from './app';
 import { bumpMetric } from './services/analytics';
 import { systemSvc } from './services/context';
 import { notifyDueDates, retryFailedRuns, runScheduledAutomations } from './services/automations';
-import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
+import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, SYSTEM_MOUNT, canonicalRedirect, crmCanonicalRedirect, mountOf, remount, unmount } from './mount';
+import { backfillOwnCompanies } from './system/system';
 import { processOutbox } from './services/email/outbox';
 import { runCrmScheduled } from './crm';
 import { financeHousekeeping, runFinanceScheduled } from './fin';
@@ -36,6 +37,12 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.companies = { abnsChecked: await recheckPendingAbns(env, 5) };
   } catch (e) {
     results.companies = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // BIZOMAT System: a company of their own for every account that has none yet (system/system.ts), a batch a run.
+  try {
+    results.system = { ownCompaniesMade: await backfillOwnCompanies(env.DB, 200) };
+  } catch (e) {
+    results.system = { error: e instanceof Error ? e.message : 'failed' };
   }
   // Email: hand queued and delayed messages to the provider, within the daily limit.
   try {
@@ -80,7 +87,7 @@ export default {
       const moved = canonicalRedirect(request, env);
       if (moved) return withSecurityHeaders(moved, request);
     }
-    if (base === CRM_MOUNT || base === FIN_MOUNT || base === COMPANY_MOUNT) {
+    if (base === CRM_MOUNT || base === FIN_MOUNT || base === COMPANY_MOUNT || base === SYSTEM_MOUNT) {
       const moved = crmCanonicalRedirect(request, env, base);
       if (moved) return withSecurityHeaders(moved, request);
     }
