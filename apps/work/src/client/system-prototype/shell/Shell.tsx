@@ -203,10 +203,10 @@ function Header() {
               About this prototype
             </MenuEntry>
             <div className="menu-sep" role="separator" />
-            <MenuLink icon="help" href="https://bizomat.ai/finance-platform/guide/" external onNavigate={close}>
+            <MenuLink icon="help" href="https://bizomat.ai/systems/finance/guide/" external onNavigate={close}>
               Finance user guide
             </MenuLink>
-            <MenuLink icon="help" href="https://bizomat.ai/crm-platform/guide/" external onNavigate={close}>
+            <MenuLink icon="help" href="https://bizomat.ai/systems/crm/guide/" external onNavigate={close}>
               CRM user guide
             </MenuLink>
           </>

@@ -6,8 +6,8 @@ import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, errorMessage, get, patch, post } from '../lib/api';
-import { useSession } from '../lib/session';
-import { appUrl } from '../lib/base';
+import { lastWorkspace, useSession } from '../lib/session';
+import { SUITE, appUrl, toolUrl } from '../lib/base';
 import { applyTheme, storedTheme, usePageTitle, type ThemePref } from '../lib/hooks';
 import { BRAND, PLATFORM_URLS } from '../lib/brand';
 import { timeAgo } from '../lib/format';
@@ -69,7 +69,8 @@ interface CadPerson {
   } | null;
 }
 
-const APP_NAMES: Record<SysApp, string> = { tasks: 'Project Management', crm: 'Customer Relationship Management', finance: 'Finance' };
+// The ERP's module names (the tools underneath keep their own names).
+const APP_NAMES: Record<SysApp, string> = { tasks: 'Projects and Tasks', crm: 'Sales and CRM', finance: 'Finance and Accounting' };
 const APP_ICONS: Record<SysApp, string> = { tasks: 'grid', crm: 'briefcase', finance: 'dollar' };
 const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member', guest: 'Shared with you' };
 const CAD = {
@@ -110,16 +111,20 @@ function kindLine(c: Pick<CompanyLite, 'kind' | 'role'>): string {
 
 // ------------------------------------------------------------------ routes
 
-/** BIZOMAT System's routes for signed-in people (App.tsx gives the sign-in pages and the session gate). */
+/** BIZOMAT ERP's routes for signed-in people (App.tsx gives the sign-in pages and the session gate). */
 export function SystemRoutes() {
   return (
     <Routes>
       <Route path="/" element={<SystemHome />} />
       <Route path="/c/:companyId/*" element={<CompanyArea />} />
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
-      {/* The module rail's CAD Automation: the CAD page of the company used last. */}
+      {/* The module rail's Products and Engineering: the CAD page of the company used last. */}
       <Route path="/cad" element={<SystemHome page="cad" />} />
-      {/* A tool's address reached from here (/crm/..., /tasks/...): open it inside the System with a page load. */}
+      <Route path="/my-work" element={<MyWorkRedirect />} />
+      <Route path="/operations" element={<Shell><Operations /></Shell>} />
+      <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
+      <Route path="/administration" element={<Shell><Administration /></Shell>} />
+      {/* A tool's address reached from here (/crm/..., /tasks/...): open it inside the ERP with a page load. */}
       <Route path="/tasks/*" element={<OpenTool />} />
       <Route path="/crm/*" element={<OpenTool />} />
       <Route path="/finance/*" element={<OpenTool />} />
@@ -129,13 +134,23 @@ export function SystemRoutes() {
   );
 }
 
-/** Another tool of the System: its own application, at /system/<tool>/..., is a page load away. */
+/** Another module of the ERP: its own application, at /erp/<tool>/..., is a page load away. */
 function OpenTool() {
   const location = useLocation();
   useEffect(() => {
-    window.location.replace(`/system${location.pathname}${location.search}${location.hash}`);
+    window.location.replace(`${SUITE || '/erp'}${location.pathname}${location.search}${location.hash}`);
   }, [location]);
   return <Loading label="Opening…" />;
+}
+
+/** My Work: everything assigned to you, in the Projects and Tasks workspace used last. */
+function MyWorkRedirect() {
+  const { session } = useSession();
+  const ws = session?.workspaces.find((w) => w.id === lastWorkspace()) ?? session?.workspaces[0];
+  useEffect(() => {
+    window.location.replace(toolUrl(ws ? `/tasks/w/${encodeURIComponent(ws.id)}/my-work` : '/tasks/'));
+  }, [ws]);
+  return <Loading label="Opening My Work…" />;
 }
 
 /** "/": the company used last, else the first (registered, then the person's own). "/cad": its CAD page. */
@@ -197,11 +212,11 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         <ThemeButton />
         <Profile />
       </header>
-      <nav className="sidebar" aria-label="System navigation">
+      <nav className="sidebar" aria-label="ERP navigation">
         {base ? (
           <>
-            <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Home</NavLink>
-            <NavLink to={`${base}/cad`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> CAD Automation</NavLink>
+            <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Dashboard</NavLink>
+            <NavLink to={`${base}/cad`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
           </>
         ) : null}
@@ -210,7 +225,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <div className="nav-section">Open a tool</div>
             {view.tools.map((t) => (
               <a key={`${t.app}:${t.id}`} className="nav-item" href={t.url} title={`${APP_NAMES[t.app]}: ${t.name}`}>
-                <Icon name={APP_ICONS[t.app]} /> <span className="ellipsis">{t.name}</span>
+                <Icon name={APP_ICONS[t.app]} /> <span className="ellipsis">{APP_NAMES[t.app]}</span>
               </a>
             ))}
           </>
@@ -218,7 +233,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         {me?.platformRole ? (
           <>
             <div className="nav-section">Super admin</div>
-            <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> System console</NavLink>
+            <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
           </>
         ) : null}
         {/* Every tool is in the module rail (SuiteRail); CAD Automation's own application opens at /cad. */}
@@ -318,7 +333,7 @@ function Profile() {
             <div className="muted small ellipsis">{user.email}</div>
             {me?.platformRole ? <div className="muted small">{me.platformRole === 'founder' ? 'Founder (super admin)' : 'Platform administrator'}</div> : null}
           </div>
-          <MenuItem icon="user" onClick={() => { close(); window.location.href = '/system/tasks/settings/profile'; }}>Profile and security</MenuItem>
+          <MenuItem icon="user" onClick={() => { close(); window.location.href = toolUrl('/tasks/settings/profile'); }}>Profile and security</MenuItem>
           <MenuSep />
           <MenuItem icon="logout" onClick={() => { close(); void signOut(); }}>Sign out</MenuItem>
         </>
@@ -351,7 +366,7 @@ function CompanyHome({ view }: { view: CompanyView }) {
       <div className="co-tools-grid">
         {(['tasks', 'crm', 'finance'] as SysApp[]).flatMap((app) => byApp(app).map((t) => <ToolCard key={`${t.app}:${t.id}`} tool={t} />))}
         <Link to={`/c/${c.id}/cad`} className="card card-pad co-tool-card sys-tool-card">
-          <div className="row"><Icon name="diamond" /> <strong>CAD Automation</strong></div>
+          <div className="row"><Icon name="diamond" /> <strong>Products and Engineering</strong></div>
           <p className="muted small">SOLIDWORKS on your computers, driven by your AI assistant.</p>
           <p className="small">{me?.cadConnected ? 'See computers, AI apps and recent jobs.' : 'Set it up, then see its computers here.'}</p>
         </Link>
@@ -427,7 +442,7 @@ function CadPage({ view }: { view: CompanyView }) {
   const reported = (q.data?.people ?? []).filter((p) => p.status);
   return (
     <div className="page crm-page">
-      <PageHeader title="CAD Automation" subtitle="Your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." actions={<a className="btn primary" href={CAD.app}>Open CAD Automation</a>} />
+      <PageHeader title="Products and Engineering" subtitle="CAD Automation: your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." actions={<a className="btn primary" href={CAD.app}>Open CAD Automation</a>} />
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Set it up in four steps</h2>
         <ol className="sys-steps">
@@ -446,7 +461,7 @@ function CadPage({ view }: { view: CompanyView }) {
         <p className="muted small">{scopeNote}</p>
         {!me?.cadConnected ? (
           <div className="co-prompt">
-            <p>CAD Automation is not reporting to the System yet, so its computers are not listed here. Until it is, see your computers and AI apps in CAD Automation itself.</p>
+            <p>CAD Automation is not reporting to the ERP yet, so its computers are not listed here. Until it is, see your computers and AI apps in CAD Automation itself.</p>
             <a className="btn" href={CAD.computers}>See my computers</a>
           </div>
         ) : null}
@@ -543,6 +558,150 @@ function CompanySettings({ view }: { view: CompanyView }) {
   );
 }
 
+// ------------------------------------------------------------------ ERP pages: operations, reports, administration
+
+/** The company the ERP pages work in: the one used last, else the first. */
+function useCurrentCompany() {
+  const me = useMe();
+  const id = me.data ? (me.data.companies.find((c) => c.id === lastCompany()) ?? me.data.companies[0])?.id ?? '' : '';
+  const view = useQuery({ queryKey: ['system', 'company', id], queryFn: () => get<CompanyView>(`/system/companies/${encodeURIComponent(id)}`), enabled: !!id, retry: false });
+  return { me, id, view };
+}
+
+/** The ERP modules that are designed but not built. Shown as planned, never as working (docs/erp/architecture/08). */
+const PLANNED: { name: string; icon: string; covers: string; today?: string }[] = [
+  { name: 'Procurement', icon: 'inbox', covers: 'Suppliers, purchase requisitions with approval, requests for quotation, purchase orders and receiving, and supplier performance.', today: 'Today: suppliers and bills are kept in Finance and Accounting.' },
+  { name: 'Inventory and Warehouse', icon: 'archive', covers: 'Stock on hand by product, location and lot, movements, goods receipts, transfers, stock counts and valuation.' },
+  { name: 'Manufacturing', icon: 'settings', covers: 'Work orders with operations and materials, a planning board by work centre, and a shop-floor screen for reporting quantities and scrap.' },
+  { name: 'Quality', icon: 'checkSquare', covers: 'Inspection plans and checklists, inspections, nonconformances and corrective actions.' },
+  { name: 'Asset Management and Maintenance', icon: 'key', covers: 'An asset register, maintenance plans and orders, work requests and downtime reporting.' },
+  { name: 'Supply Chain', icon: 'globe', covers: 'Shipments, carriers, a delivery schedule and returns.' },
+  { name: 'Products and Engineering records', icon: 'diamond', covers: 'Products with variants, revisions, bills of materials and routings, and engineering changes, linked to CAD Automation drawings.', today: 'Today: CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant (Products and Engineering).' },
+];
+
+function Operations() {
+  usePageTitle('Operations');
+  return (
+    <div className="page crm-page">
+      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. These modules are planned: they are not built yet and keep no data." />
+      <section className="co-prompt">
+        <p>You can see how they are designed in the BIZOMAT ERP preview, which runs on demonstration data only. Nothing you do there is saved.</p>
+        <a className="btn" href="https://bizomat.ai/system-preview/">Open the design preview</a>
+      </section>
+      <div className="co-tools-grid">
+        {PLANNED.map((m) => (
+          <section key={m.name} className="card card-pad co-tool-card">
+            <div className="row"><Icon name={m.icon} /> <strong className="grow">{m.name}</strong><span className="badge">Planned</span></div>
+            <p className="small">{m.covers}</p>
+            {m.today ? <p className="muted small">{m.today}</p> : null}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReportsPage() {
+  usePageTitle('Reports');
+  const { me, view } = useCurrentCompany();
+  if (me.error) return <div className="page"><ErrorBox error={me.error} retry={() => me.refetch()} /></div>;
+  if (!view.data) return <Loading />;
+  const c = view.data.company;
+  const tools = view.data.tools;
+  const one = (app: SysApp) => tools.filter((t) => t.app === app);
+  const links: { app: SysApp; label: string; what: string; href: (id: string) => string }[] = [
+    { app: 'crm', label: 'Sales and CRM reports', what: 'Pipeline, forecast, won and lost deals, lead sources and team activity.', href: (id) => toolUrl(`/crm/o/${encodeURIComponent(id)}/reports`) },
+    { app: 'finance', label: 'Finance and Accounting reports', what: 'Profit and loss, balance sheet, cash, what is owed both ways, budgets and the GST and BAS worksheet.', href: (id) => toolUrl(`/finance/o/${encodeURIComponent(id)}/reports`) },
+    { app: 'tasks', label: 'Projects and Tasks dashboards', what: 'Dashboards built from live board data: counts, progress, workload and dates.', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/dashboards`) },
+  ];
+  return (
+    <div className="page crm-page">
+      <PageHeader title="Reports" subtitle={`Every report of ${c.name}'s tools in one place. Each opens in its module, with that module's permissions.`} />
+      <p className="muted small">The figures on the <Link to={`/c/${c.id}/home`}>Dashboard</Link> come from these tools.</p>
+      <div className="co-tools-grid">
+        {links.flatMap((l) =>
+          one(l.app).map((t) => (
+            <a key={`${l.app}:${t.id}`} href={l.href(t.id)} className="card card-pad co-tool-card sys-tool-card">
+              <div className="row"><Icon name={APP_ICONS[l.app]} /> <strong className="grow">{l.label}</strong></div>
+              <p className="muted small">{t.name} · Your role: {toolRoleLabel(t.app, t.role)}</p>
+              <p className="small">{l.what}</p>
+            </a>
+          )),
+        )}
+      </div>
+      {!tools.length ? <p className="muted">No tools in {c.name} yet, so there are no reports. Start Sales and CRM, Finance and Accounting or Projects and Tasks from the rail.</p> : null}
+    </div>
+  );
+}
+
+function Administration() {
+  usePageTitle('Administration');
+  const { me, view } = useCurrentCompany();
+  if (me.error) return <div className="page"><ErrorBox error={me.error} retry={() => me.refetch()} /></div>;
+  if (!view.data || !me.data) return <Loading />;
+  const c = view.data.company;
+  const tools = view.data.tools;
+  const companyLinks = c.kind === 'registered' && c.role !== 'guest'
+    ? [
+        { label: 'Company overview', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/overview`), icon: 'home' },
+        { label: 'People and roles', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/people`), icon: 'users' },
+        { label: 'Departments', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/departments`), icon: 'layers' },
+        { label: 'Tools', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/tools`), icon: 'grid' },
+        { label: 'Company settings', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/settings`), icon: 'settings' },
+      ]
+    : [];
+  const toolAdmin: { app: SysApp; label: string; href: (id: string) => string }[] = [
+    { app: 'crm', label: 'Sales and CRM: team, roles and settings', href: (id) => toolUrl(`/crm/o/${encodeURIComponent(id)}/team`) },
+    { app: 'finance', label: 'Finance: team, roles and settings', href: (id) => toolUrl(`/finance/o/${encodeURIComponent(id)}/team`) },
+    { app: 'tasks', label: 'Projects and Tasks: workspace settings', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/settings`) },
+  ];
+  return (
+    <div className="page crm-page">
+      <PageHeader title="Administration" subtitle={`${c.name}: its people, departments, tools and permissions. Each tool keeps its own roles; the server checks them.`} />
+      {companyLinks.length ? (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Company</h2>
+          <div className="row wrap">
+            {companyLinks.map((l) => <a key={l.label} className="btn" href={l.href}><Icon name={l.icon} /> {l.label}</a>)}
+          </div>
+        </section>
+      ) : c.kind === 'own' && c.role === 'owner' ? (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Your own company</h2>
+          <p className="muted">It is not registered, so it has no people or departments of its own. Register your business to add them and to give each person a role in each tool.</p>
+          <div className="row wrap">
+            <Link className="btn" to={`/c/${c.id}/settings`}>Rename it</Link>
+            <a className="btn primary" href={toolUrl('/company/new')}>Register a company</a>
+          </div>
+        </section>
+      ) : (
+        <p className="muted">You were added to tools of {c.name}. Its administration is done by its owner.</p>
+      )}
+      {tools.length ? (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Tools</h2>
+          <div className="stack">
+            {toolAdmin.flatMap((l) => tools.filter((t) => t.app === l.app).map((t) => (
+              <a key={`${l.app}:${t.id}`} className="nav-item" href={l.href(t.id)}><Icon name={APP_ICONS[l.app]} /> {l.label} <span className="muted small">({t.name})</span></a>
+            )))}
+          </div>
+        </section>
+      ) : null}
+      <section className="card card-pad stack">
+        <h2 className="crm-subhead">You</h2>
+        <div className="row wrap"><a className="btn" href={toolUrl('/tasks/settings/profile')}><Icon name="user" /> Profile and security</a></div>
+      </section>
+      {me.data.platformRole ? (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Platform administration</h2>
+          <p className="muted small">Every account and company on BIZOMAT, with activity across the tools.</p>
+          <div className="row wrap"><Link className="btn" to="/admin/overview"><Icon name="shield" /> ERP console</Link></div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
 // ------------------------------------------------------------------ super admin
 
 const ADMIN_NAV = [
@@ -560,7 +719,7 @@ function AdminArea() {
   const founder = me.data.platformRole === 'founder';
   return (
     <div className="page crm-page">
-      <PageHeader title="System console" subtitle="Every account and company on BIZOMAT, with their activity across the tools. Usage only: never the contents of anyone's records." />
+      <PageHeader title="ERP console" subtitle="Every account and company on BIZOMAT, with their activity across the tools. Usage only: never the contents of anyone's records." />
       <nav className="tabs sys-tabs" aria-label="Console sections">
         {ADMIN_NAV.map((x) => <NavLink key={x.to} to={`/admin/${x.to}`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{x.label}</NavLink>)}
       </nav>
@@ -618,15 +777,15 @@ function AdminOverview({ founder }: { founder: boolean }) {
       </div>
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Own companies</h2>
-        <p className="muted">Every account gets a company of its own the first time it opens the System, and the daily maintenance run makes the rest. Each holds the tools that person owns outside a registered company. Nothing is copied: the tools stay where they are.</p>
+        <p className="muted">Every account gets a company of its own the first time it opens the ERP (and every account that existed on 14 Nov 2026 got one then), and the daily maintenance run makes the rest. Each holds the tools that person owns outside a registered company. Nothing is copied: the tools stay where they are.</p>
         {founder ? <div className="row"><button className="btn" disabled={busy} onClick={backfill}>{busy ? 'Working…' : 'Make the missing own companies now'}</button></div> : <p className="muted small">Only the founder can run this.</p>}
       </section>
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Each tool's own console</h2>
         <div className="row wrap">
-          <a className="btn" href="/system/tasks/admin">Project Management console</a>
-          <a className="btn" href="/system/crm/admin">CRM console</a>
-          <a className="btn" href="/system/finance/admin">Finance console</a>
+          <a className="btn" href={toolUrl('/tasks/admin')}>Projects and Tasks console</a>
+          <a className="btn" href={toolUrl('/crm/admin')}>Sales and CRM console</a>
+          <a className="btn" href={toolUrl('/finance/admin')}>Finance console</a>
         </div>
       </section>
     </div>

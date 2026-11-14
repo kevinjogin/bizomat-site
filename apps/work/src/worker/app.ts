@@ -31,7 +31,7 @@ import { adminRoutes } from './routes/admin';
 import { adminCrmRoutes, adminFinRoutes } from './routes/admin-products';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
-import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, MOUNT, SYSTEM_MOUNT, appOf, topOf, withBaseHref } from './mount';
+import { COMPANY_MOUNT, CRM_MOUNT, ERP_MOUNT, FIN_MOUNT, MOUNT, SYSTEM_MOUNT, appOf, topOf, withBaseHref } from './mount';
 import { systemRoutes } from './system/routes';
 import { adminSystemRoutes } from './system/admin';
 import { crmPublicRoutes, crmRoutes } from './crm';
@@ -72,7 +72,7 @@ export const VERSION = '0.1.0';
 function carryCookie(base: string): string {
   // Inside the System (/system/crm, ...) the marker is the System's own (Path=/system).
   const mount = topOf(base);
-  return mount === FIN_MOUNT ? 'fin_carry' : mount === COMPANY_MOUNT ? 'co_carry' : mount === SYSTEM_MOUNT ? 'sys_carry' : 'crm_carry';
+  return mount === FIN_MOUNT ? 'fin_carry' : mount === COMPANY_MOUNT ? 'co_carry' : mount === SYSTEM_MOUNT ? 'sys_carry' : mount === ERP_MOUNT ? 'erp_carry' : 'crm_carry';
 }
 
 export function createApp() {
@@ -125,7 +125,7 @@ export function createApp() {
   // cookie stops any loop.
   const carry = async (c: any) => {
     const to = c.req.query('to') ?? '';
-    const target = /^\/finance(\/|\?|$)/.test(to) ? FIN_MOUNT : /^\/company(\/|\?|$)/.test(to) ? COMPANY_MOUNT : /^\/system(\/|\?|$)/.test(to) ? SYSTEM_MOUNT : CRM_MOUNT;
+    const target = /^\/finance(\/|\?|$)/.test(to) ? FIN_MOUNT : /^\/company(\/|\?|$)/.test(to) ? COMPANY_MOUNT : /^\/system(\/|\?|$)/.test(to) ? SYSTEM_MOUNT : /^\/erp(\/|\?|$)/.test(to) ? ERP_MOUNT : CRM_MOUNT;
     const pattern = new RegExp(`^${target}(\\/[^\\\\\\r\\n]*)?(\\?[^\\r\\n]*)?$`);
     const safe = pattern.test(to) && !to.startsWith('//') ? to : `${target}/`;
     const marker = `${carryCookie(target)}=1; Path=${target}; Max-Age=60; HttpOnly; SameSite=Lax${isSecureEnv(c.env) ? '; Secure' : ''}`;

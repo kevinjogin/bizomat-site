@@ -11,9 +11,9 @@ export const IS_CRM = APP_BASE === '/crm';
 export const IS_FINANCE = APP_BASE === '/finance';
 /** Under /company: the company account and its control centre over every tool (src/client/company). */
 export const IS_COMPANY = APP_BASE === '/company';
-/** Under /system: BIZOMAT System's own pages, every tool in one place by company (src/client/system). */
-export const IS_SYSTEM = BASE === '/system';
-/** Inside BIZOMAT System: the System's own pages and every tool under /system/<tool> (one system). */
+/** Under /erp: BIZOMAT ERP's own pages, every tool in one place by company (src/client/system; /system before). */
+export const IS_SYSTEM = BASE === '/erp' || BASE === '/system';
+/** Inside BIZOMAT ERP: its own pages and every tool under /erp/<tool> (one workspace). */
 export const IN_SYSTEM = SUITE !== '';
 
 export const BRAND = {
@@ -25,12 +25,12 @@ export const BRAND = {
   /** The copyright line every BIZOMAT site carries. */
   copyright: `© ${new Date().getFullYear()} BIZOMAT. All rights reserved.`,
   /** Short product name, used in running text ("Search the CRM"). */
-  product: IS_CRM ? 'CRM' : IS_FINANCE ? 'Finance' : IS_COMPANY ? 'Company' : IS_SYSTEM ? 'System' : PRODUCT.name,
+  product: IS_CRM ? 'CRM' : IS_FINANCE ? 'Finance' : IS_COMPANY ? 'Company' : IS_SYSTEM ? 'ERP' : PRODUCT.name,
   /** The name beneath the BIZOMAT wordmark, spelled out so that someone new to the tool knows what it is (owner,
    * 13 Nov 2026). */
-  lockup: IS_CRM ? 'Customer Relationship Management' : IS_FINANCE ? 'Finance' : IS_COMPANY ? 'Company' : IS_SYSTEM ? 'System' : PRODUCT.name,
+  lockup: IS_CRM ? 'Customer Relationship Management' : IS_FINANCE ? 'Finance' : IS_COMPANY ? 'Company' : IS_SYSTEM ? 'ERP' : PRODUCT.name,
   /** Full product name: page titles, metadata, screen readers. */
-  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : IS_FINANCE ? 'BIZOMAT Finance' : IS_COMPANY ? 'BIZOMAT Company' : IS_SYSTEM ? 'BIZOMAT System' : PRODUCT.full,
+  full: IS_CRM ? 'BIZOMAT Customer Relationship Management' : IS_FINANCE ? 'BIZOMAT Finance' : IS_COMPANY ? 'BIZOMAT Company' : IS_SYSTEM ? 'BIZOMAT ERP' : PRODUCT.full,
   description: IS_CRM
     ? 'Customers, leads, deals and follow-ups in one shared CRM.'
     : IS_FINANCE
@@ -38,7 +38,7 @@ export const BRAND = {
       : IS_COMPANY
         ? 'Your company account: its people, departments and tools in one place.'
         : IS_SYSTEM
-          ? 'Every BIZOMAT tool you use, in one place, by company.'
+          ? 'Your business in one workspace: sales, finance, projects and engineering, by company.'
           : 'Projects, tasks and teams in one shared workspace.',
   colors: BRAND_COLORS,
   /** Colour for new workspaces and folders. */
@@ -57,21 +57,22 @@ export const BRAND = {
 export const PLATFORM_URLS = {
   website: 'https://bizomat.ai/',
   about: 'https://bizomat.ai/engine-room/',
-  products: 'https://bizomat.ai/products/',
+  products: 'https://bizomat.ai/systems/',
   contact: 'https://bizomat.ai/contact/',
   /** This product's page on the website. */
-  productPage: IS_CRM ? 'https://bizomat.ai/crm-platform/' : IS_FINANCE ? 'https://bizomat.ai/finance-platform/' : IS_COMPANY || IS_SYSTEM ? 'https://bizomat.ai/products/' : 'https://bizomat.ai/work/',
+  // The website explains every system at /systems/ (owner, 14 Nov 2026).
+  productPage: IS_CRM ? 'https://bizomat.ai/systems/crm/' : IS_FINANCE ? 'https://bizomat.ai/systems/finance/' : IS_COMPANY ? 'https://bizomat.ai/systems/erp/' : IS_SYSTEM ? 'https://bizomat.ai/systems/erp/' : 'https://bizomat.ai/systems/projects/',
   /** The CRM's user guide on the website. */
-  crmGuide: 'https://bizomat.ai/crm-platform/guide/',
+  crmGuide: 'https://bizomat.ai/systems/crm/guide/',
   /** Finance's user guide on the website. */
-  financeGuide: 'https://bizomat.ai/finance-platform/guide/',
+  financeGuide: 'https://bizomat.ai/systems/finance/guide/',
   cad: 'https://bizomat.ai/cad/',
   // Inside the System, every tool opens inside it too (one system).
   tasks: `https://bizomat.ai${SUITE}/tasks/`,
   crm: `https://bizomat.ai${SUITE}/crm/`,
   finance: `https://bizomat.ai${SUITE}/finance/`,
   company: `https://bizomat.ai${SUITE}/company/`,
-  system: 'https://bizomat.ai/system/',
+  system: 'https://bizomat.ai/erp/',
   resources: 'https://bizomat.ai/resources/',
   privacy: 'https://bizomat.ai/privacy/',
   terms: 'https://bizomat.ai/terms/',
@@ -94,7 +95,7 @@ export const PLATFORM_LINKS = {
       { label: 'CRM', href: PLATFORM_URLS.crm, title: 'BIZOMAT Customer Relationship Management', self: IS_CRM },
       { label: 'Finance', href: PLATFORM_URLS.finance, title: 'BIZOMAT Finance', self: IS_FINANCE },
       { label: 'Company', href: PLATFORM_URLS.company, title: 'Your BIZOMAT company account', self: IS_COMPANY },
-      { label: 'System', href: PLATFORM_URLS.system, title: 'BIZOMAT System: every tool you use, in one place', self: IS_SYSTEM },
+      { label: 'ERP', href: PLATFORM_URLS.system, title: 'BIZOMAT ERP: your business in one workspace', self: IS_SYSTEM },
     ]
       .filter((l) => !l.self)
       .map(({ label, href, title }) => ({ label, href, title })),
@@ -103,7 +104,7 @@ export const PLATFORM_LINKS = {
   ],
   company: [
     { label: 'About', href: PLATFORM_URLS.about, title: 'About BIZOMAT' },
-    { label: 'Products', href: PLATFORM_URLS.products, title: 'BIZOMAT products' },
+    { label: 'Systems', href: PLATFORM_URLS.products, title: 'BIZOMAT Systems: what each one does and how to use it' },
     { label: 'Contact', href: PLATFORM_URLS.contact, title: 'Contact BIZOMAT' },
   ],
   legal: [

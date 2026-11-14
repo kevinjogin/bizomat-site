@@ -29,10 +29,12 @@ import https from 'node:https';
 import net from 'node:net';
 import tls from 'node:tls';
 
-const PAGES = ['/', '/cad-automation/', '/work/', '/crm-platform/', '/crm-platform/guide/', '/finance-platform/', '/finance-platform/guide/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
-// ERP design preview became the BIZOMAT System preview).
-const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/erp-design-preview/', '/system-preview/']];
+// ERP design preview moved to /system-preview/; the product pages became the Systems pages).
+const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/erp-design-preview/', '/system-preview/'],
+  // The product pages became the Systems pages (owner, 14 Nov 2026).
+  ['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/systems/crm/guide/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/systems/finance/guide/']];
 const HSTS = /max-age=\d{7,}/;
 
 function parseArgs(argv) {
@@ -264,7 +266,7 @@ async function proxyChecks() {
     ['kevos.com', '/', 'HEAD', '/'],
     ['www.kevos.com', '/engine-room/', 'GET', '/engine-room/'],
     // kevos.com/cad/ was the CAD Automation page; on bizomat.ai /cad is the application itself
-    ['kevos.com', '/cad/?smoke=1', 'GET', '/cad-automation/?smoke=1'],
+    ['kevos.com', '/cad/?smoke=1', 'GET', '/systems/engineering/?smoke=1'],
   ];
   for (const [host, path, method, to] of moves) {
     await check('proxy', `${method} ${host}${path} -> 301 https://bizomat.ai${to}`, async () => {
@@ -425,6 +427,7 @@ async function workChecks() {
     await stubChecks('work', 'bizomat.ai', '/finance/__stub/echo');
     await stubChecks('work', 'bizomat.ai', '/company/__stub/echo');
     await stubChecks('work', 'bizomat.ai', '/system/__stub/echo');
+    await stubChecks('work', 'bizomat.ai', '/erp/__stub/echo');
     await check('work', 'WebSocket upgrade under bizomat.ai/tasks reaches work through the proxy', async () => {
       const r = await wsHandshake(platformHost(), '/tasks/__stub/ws');
       return r.status === 101 || { fail: `HTTP ${r.status}` };
@@ -436,22 +439,22 @@ async function workChecks() {
     const r = await onPlatform({ path: '/tasks/api/health' });
     return r.status === 200 || { fail: describe(r) };
   });
-  // One system (14 Nov 2026): every tool's pages open inside BIZOMAT System, at /system/<tool>; the API stays.
-  await check('work', 'bizomat.ai/tasks/login (the website\'s Sign in) opens the System\'s sign-in page', async () => {
+  // One system (14 Nov 2026): every tool's pages open inside BIZOMAT ERP, at /erp/<tool>; the API stays.
+  await check('work', 'bizomat.ai/tasks/login (the website\'s Sign in) opens the ERP\'s sign-in page', async () => {
     const r = await onPlatform({ path: '/tasks/login', headers: { Accept: 'text/html' } });
-    return (r.status === 302 && r.headers.location === '/system/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 302 && r.headers.location === '/erp/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
-  await check('work', 'bizomat.ai/system/tasks/login: Project Management inside the System, its files under /system/tasks/', async () => {
-    const r = await onPlatform({ path: '/system/tasks/login', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/tasks/login: Project Management inside the ERP, its files under /erp/tasks/', async () => {
+    const r = await onPlatform({ path: '/erp/tasks/login', headers: { Accept: 'text/html' } });
     if (r.status !== 200 || !/text\/html/.test(r.headers['content-type'] || '')) return { fail: describe(r) };
-    return r.text.includes('<base href="/system/tasks/">') || { fail: 'no <base href="/system/tasks/"> in the page' };
+    return r.text.includes('<base href="/erp/tasks/">') || { fail: 'no <base href="/erp/tasks/"> in the page' };
   });
-  await check('work', 'bizomat.ai/tasks pages open inside the System (302 to /system/tasks/...)', async () => {
+  await check('work', 'bizomat.ai/tasks pages open inside the ERP (302 to /erp/tasks/...)', async () => {
     const r = await onPlatform({ path: '/tasks/w/smoke/home', headers: { Accept: 'text/html' } });
-    return (r.status === 302 && r.headers.location === '/system/tasks/w/smoke/home') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 302 && r.headers.location === '/erp/tasks/w/smoke/home') || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
-  await check('work', 'bizomat.ai/system/tasks: a page without a session goes through /tasks (a session there carries over)', async () => {
-    const r = await onPlatform({ path: '/system/tasks/w/smoke/home', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/tasks: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/erp/tasks/w/smoke/home', headers: { Accept: 'text/html' } });
     return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/app-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('work', 'bizomat.ai/tasks private API without a session: 401', async () => {
@@ -468,17 +471,17 @@ async function workChecks() {
     const r = await onPlatform({ path: '/crm/api/health' });
     return r.status === 200 || { fail: describe(r) };
   });
-  await check('work', 'bizomat.ai/crm/login opens inside the System (302 to /system/crm/login)', async () => {
+  await check('work', 'bizomat.ai/crm/login opens inside the ERP (302 to /erp/crm/login)', async () => {
     const r = await onPlatform({ path: '/crm/login', headers: { Accept: 'text/html' } });
-    return (r.status === 302 && r.headers.location === '/system/crm/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 302 && r.headers.location === '/erp/crm/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
-  await check('work', 'bizomat.ai/system/crm/login: the CRM inside the System, its files under /system/crm/', async () => {
-    const r = await onPlatform({ path: '/system/crm/login', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/crm/login: the CRM inside the ERP, its files under /erp/crm/', async () => {
+    const r = await onPlatform({ path: '/erp/crm/login', headers: { Accept: 'text/html' } });
     if (r.status !== 200) return { fail: describe(r) };
-    return (r.text.includes('<base href="/system/crm/">') && r.text.includes('<title>BIZOMAT System</title>')) || { fail: 'no <base href="/system/crm/"> or System title in the page' };
+    return (r.text.includes('<base href="/erp/crm/">') && r.text.includes('<title>BIZOMAT ERP</title>')) || { fail: 'no <base href="/erp/crm/"> or ERP title in the page' };
   });
-  await check('work', 'bizomat.ai/system/crm: a page without a session goes through /tasks (a session there carries over)', async () => {
-    const r = await onPlatform({ path: '/system/crm/o/smoke/overview', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/crm: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/erp/crm/o/smoke/overview', headers: { Accept: 'text/html' } });
     return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/app-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('work', 'bizomat.ai/crm private API without a session: 401', async () => {
@@ -490,17 +493,17 @@ async function workChecks() {
     const r = await onPlatform({ path: '/finance/api/health' });
     return r.status === 200 || { fail: describe(r) };
   });
-  await check('work', 'bizomat.ai/finance/login opens inside the System (302 to /system/finance/login)', async () => {
+  await check('work', 'bizomat.ai/finance/login opens inside the ERP (302 to /erp/finance/login)', async () => {
     const r = await onPlatform({ path: '/finance/login', headers: { Accept: 'text/html' } });
-    return (r.status === 302 && r.headers.location === '/system/finance/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 302 && r.headers.location === '/erp/finance/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
-  await check('work', 'bizomat.ai/system/finance/login: Finance inside the System, its files under /system/finance/', async () => {
-    const r = await onPlatform({ path: '/system/finance/login', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/finance/login: Finance inside the ERP, its files under /erp/finance/', async () => {
+    const r = await onPlatform({ path: '/erp/finance/login', headers: { Accept: 'text/html' } });
     if (r.status !== 200) return { fail: describe(r) };
-    return (r.text.includes('<base href="/system/finance/">') && r.text.includes('<title>BIZOMAT System</title>')) || { fail: 'no <base href="/system/finance/"> or System title in the page' };
+    return (r.text.includes('<base href="/erp/finance/">') && r.text.includes('<title>BIZOMAT ERP</title>')) || { fail: 'no <base href="/erp/finance/"> or ERP title in the page' };
   });
-  await check('work', 'bizomat.ai/system/finance: a page without a session goes through /tasks (a session there carries over)', async () => {
-    const r = await onPlatform({ path: '/system/finance/o/smoke/dashboard', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/finance: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/erp/finance/o/smoke/dashboard', headers: { Accept: 'text/html' } });
     return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/app-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('work', 'bizomat.ai/finance private API without a session: 401', async () => {
@@ -512,41 +515,45 @@ async function workChecks() {
     const r = await onPlatform({ path: '/company/api/health' });
     return r.status === 200 || { fail: describe(r) };
   });
-  await check('work', 'bizomat.ai/company/login opens inside the System (302 to /system/company/login)', async () => {
+  await check('work', 'bizomat.ai/company/login opens inside the ERP (302 to /erp/company/login)', async () => {
     const r = await onPlatform({ path: '/company/login', headers: { Accept: 'text/html' } });
-    return (r.status === 302 && r.headers.location === '/system/company/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 302 && r.headers.location === '/erp/company/login') || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
-  await check('work', 'bizomat.ai/system/company/login: the company area inside the System, its files under /system/company/', async () => {
-    const r = await onPlatform({ path: '/system/company/login', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/company/login: the company area inside the ERP, its files under /erp/company/', async () => {
+    const r = await onPlatform({ path: '/erp/company/login', headers: { Accept: 'text/html' } });
     if (r.status !== 200) return { fail: describe(r) };
-    return (r.text.includes('<base href="/system/company/">') && r.text.includes('<title>BIZOMAT System</title>')) || { fail: 'no <base href="/system/company/"> or System title in the page' };
+    return (r.text.includes('<base href="/erp/company/">') && r.text.includes('<title>BIZOMAT ERP</title>')) || { fail: 'no <base href="/erp/company/"> or ERP title in the page' };
   });
-  await check('work', 'bizomat.ai/system/company: a page without a session goes through /tasks (a session there carries over)', async () => {
-    const r = await onPlatform({ path: '/system/company/c/smoke', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/company: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/erp/company/c/smoke', headers: { Accept: 'text/html' } });
     return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/app-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('work', 'bizomat.ai/company private API without a session: 401', async () => {
     const r = await onPlatform({ path: '/company/api/company/mine', headers: { Accept: 'application/json' } });
     return r.status === 401 || { fail: describe(r) };
   });
-  // bizomat.ai/system: BIZOMAT System, one shell over every tool, served by the same app (work); /system-preview/ is
+  // bizomat.ai/erp: BIZOMAT ERP, one shell over every tool, served by the same app (work); /system-preview/ is
   // the website's (checked with the web pages above)
-  await check('work', 'bizomat.ai/system/api/health (the same app)', async () => {
-    const r = await onPlatform({ path: '/system/api/health' });
+  await check('work', 'bizomat.ai/erp/api/health (the same app)', async () => {
+    const r = await onPlatform({ path: '/erp/api/health' });
     return r.status === 200 || { fail: describe(r) };
   });
-  await check('work', 'bizomat.ai/system/login: BIZOMAT System, its files under /system/ (<base href>)', async () => {
-    const r = await onPlatform({ path: '/system/login', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp/login: BIZOMAT ERP, its files under /erp/ (<base href>)', async () => {
+    const r = await onPlatform({ path: '/erp/login', headers: { Accept: 'text/html' } });
     if (r.status !== 200) return { fail: describe(r) };
-    return (r.text.includes('<base href="/system/">') && r.text.includes('<title>BIZOMAT System</title>')) || { fail: 'no <base href="/system/"> or System title in the page' };
+    return (r.text.includes('<base href="/erp/">') && r.text.includes('<title>BIZOMAT ERP</title>')) || { fail: 'no <base href="/erp/"> or ERP title in the page' };
   });
-  await check('work', 'bizomat.ai/system: a page without a session goes through /tasks (a session there carries over)', async () => {
-    const r = await onPlatform({ path: '/system/smoke', headers: { Accept: 'text/html' } });
+  await check('work', 'bizomat.ai/erp: a page without a session goes through /tasks (a session there carries over)', async () => {
+    const r = await onPlatform({ path: '/erp/smoke', headers: { Accept: 'text/html' } });
     return (r.status === 302 && (r.headers.location || '').startsWith('/tasks/api/app-carry?to=')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
-  await check('work', 'bizomat.ai/system private API without a session: 401', async () => {
-    const r = await onPlatform({ path: '/system/api/system/me', headers: { Accept: 'application/json' } });
+  await check('work', 'bizomat.ai/erp private API without a session: 401', async () => {
+    const r = await onPlatform({ path: '/erp/api/system/me', headers: { Accept: 'application/json' } });
     return r.status === 401 || { fail: describe(r) };
+  });
+  await check('work', 'bizomat.ai/system (the workspace\'s earlier address) leads to /erp', async () => {
+    const r = await onPlatform({ path: '/system/c/smoke/home', headers: { Accept: 'text/html' } });
+    return (r.status === 302 && r.headers.location === '/erp/c/smoke/home') || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   // work.kevos.com, the old address: the app at the root of its host
   await check('work', `${old} /api/health`, async () => {

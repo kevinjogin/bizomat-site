@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  CAD_PATHS, COMPANY_PATHS, CRM_PATHS, FINANCE_PATHS, HOSTS, SYSTEM_PATHS, TASKS_PATHS, decide, isPreviewHost, isProductionHost, lowercaseLocation, normalizeHost, platformUpstream,
+  CAD_PATHS, COMPANY_PATHS, CRM_PATHS, ERP_PATHS, FINANCE_PATHS, HOSTS, SYSTEM_PATHS, TASKS_PATHS, decide, isPreviewHost, isProductionHost, lowercaseLocation, normalizeHost, platformUpstream,
   previewCookieHeader, previewNext, routingPath, splitTarget,
 } from '../routes.mjs';
 
@@ -128,6 +128,22 @@ test('bizomat.ai: /system and /system/... (BIZOMAT System) go to work, the app t
   assert.match(worker, /\/\^\\\/system\(\?:\\\/\|\$\)\/\.test\(url\.pathname\)/, 'the Worker sends /system and /system/... to the same app');
 });
 
+test('bizomat.ai: /erp and /erp/... (BIZOMAT ERP, the one workspace) go to work; /erp-design-preview/ stays the website\'s', () => {
+  assert.equal(ERP_PATHS.toString(), '/^\\/erp(?:\\/|$)/');
+  for (const path of ['/erp', '/erp/', '/erp/login', '/erp/crm/o/1', '/erp/tasks/api/health', '/erp/api/system/me', '/erp/assets/index-a1.js']) {
+    for (const method of ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']) {
+      const d = decide({ host: 'bizomat.ai', method, path });
+      assert.deepEqual(d, { host: 'bizomat.ai', production: true, action: 'proxy', upstream: 'work', preview: false }, `${method} ${path}`);
+    }
+  }
+  assert.equal(get('bizomat.ai', '/ERP/crm', 'x=1').location, '/erp/crm?x=1');
+  for (const path of ['/erp-design-preview/', '/erpx', '/erp.html']) {
+    assert.equal(platformUpstream(path), 'web', path);
+  }
+  const worker = readFileSync(new URL('../../../src/worker.ts', import.meta.url), 'utf8');
+  assert.match(worker, /\/\^\\\/erp\(\?:\\\/\|\$\)\/\.test\(url\.pathname\)/, 'the Worker sends /erp and /erp/... to the same app');
+});
+
 test('bizomat.ai: /finance and /finance/... (BIZOMAT Finance) go to work, the app that serves it with Project Management', () => {
   assert.equal(FINANCE_PATHS.toString(), '/^\\/finance(?:\\/|$)/');
   for (const path of FINANCE) {
@@ -235,11 +251,11 @@ test('kevos.com and www.kevos.com: GET and HEAD move to bizomat.ai with the same
   }
 });
 
-test('kevos.com/cad/ was the CAD Automation page: it moves to /cad-automation/, because bizomat.ai/cad is the app', () => {
+test('kevos.com/cad/ was the CAD Automation page: it moves to /systems/engineering/, because bizomat.ai/cad is the app', () => {
   for (const host of ['kevos.com', 'www.kevos.com']) {
     for (const path of ['/cad', '/cad/']) {
-      assert.equal(get(host, path, 'ref=x').location, 'https://bizomat.ai/cad-automation/?ref=x', `${host}${path}`);
-      assert.equal(decide({ host, method: 'HEAD', path }).location, 'https://bizomat.ai/cad-automation/');
+      assert.equal(get(host, path, 'ref=x').location, 'https://bizomat.ai/systems/engineering/?ref=x', `${host}${path}`);
+      assert.equal(decide({ host, method: 'HEAD', path }).location, 'https://bizomat.ai/systems/engineering/');
     }
     assert.equal(decide({ host, method: 'POST', path: '/cad/' }).status, 308, 'a POST keeps its method and address');
   }

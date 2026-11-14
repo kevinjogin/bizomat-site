@@ -467,23 +467,23 @@ describe('the /crm address', () => {
     const res = await raw('POST', '/crm/api/auth/signup', { body: { email, name: 'Crm Mount', password: PASSWORD } });
     expect(res.status).toBe(201);
     const cookies = res.headers.getSetCookie().filter((c) => c.startsWith('workos_sid='));
-    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/crm', '/tasks', '/finance', '/company', '/system']);
+    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/crm', '/tasks', '/finance', '/company', '/system', '/erp']);
     const cookie = cookies[0].split(';')[0];
     const csrf = ((await res.json()) as any).csrfToken;
     const created = await raw('POST', '/crm/api/crm/orgs', { body: { name: 'Mounted Org' }, cookie, csrf });
     expect(created.status).toBe(201);
     // The same session works for Project Management.
     expect((await raw('GET', '/tasks/api/auth/me', { cookie })).status).toBe(200);
-    // One system: the CRM's pages open inside BIZOMAT System, at /system/crm.
+    // One system: the CRM's pages open inside BIZOMAT System, at /erp/crm.
     const old = await raw('GET', '/crm/o/x/overview', { cookie, headers: { Accept: 'text/html' } });
     expect(old.status).toBe(302);
-    expect(old.headers.get('Location')).toBe('/system/crm/o/x/overview');
-    const page = await raw('GET', '/system/crm/o/x/overview', { cookie, headers: { Accept: 'text/html' } });
+    expect(old.headers.get('Location')).toBe('/erp/crm/o/x/overview');
+    const page = await raw('GET', '/erp/crm/o/x/overview', { cookie, headers: { Accept: 'text/html' } });
     expect(page.status).toBe(200);
     const html = await page.text();
-    expect(html).toContain('<base href="/system/crm/">');
-    expect(html).toContain('<title>BIZOMAT System</title>');
-    expect((await raw('GET', '/system/crm/api/crm/orgs', { cookie })).status).toBe(200);
+    expect(html).toContain('<base href="/erp/crm/">');
+    expect(html).toContain('<title>BIZOMAT ERP</title>');
+    expect((await raw('GET', '/erp/crm/api/crm/orgs', { cookie })).status).toBe(200);
   });
 
   it('a CRM page without a cookie goes through /tasks once: a Project Management session carries over, else the sign-in', async () => {
@@ -491,30 +491,30 @@ describe('the /crm address', () => {
     const before = await raw('GET', `/tasks/api/crm-carry?to=${encodeURIComponent('/crm/o/abc/deals?view=board')}`);
     expect(before.headers.get('Location')).toBe(`/crm/login?next=${encodeURIComponent('/o/abc/deals?view=board')}`);
     const old = await raw('GET', '/crm/o/abc/deals?view=board', { headers: { Accept: 'text/html' } });
-    expect(old.headers.get('Location')).toBe('/system/crm/o/abc/deals?view=board');
-    const res = await raw('GET', '/system/crm/o/abc/deals?view=board', { headers: { Accept: 'text/html' } });
+    expect(old.headers.get('Location')).toBe('/erp/crm/o/abc/deals?view=board');
+    const res = await raw('GET', '/erp/crm/o/abc/deals?view=board', { headers: { Accept: 'text/html' } });
     expect(res.status).toBe(302);
     const carry = res.headers.get('Location')!;
-    expect(carry).toBe(`/tasks/api/app-carry?to=${encodeURIComponent('/system/crm/o/abc/deals?view=board')}`);
+    expect(carry).toBe(`/tasks/api/app-carry?to=${encodeURIComponent('/erp/crm/o/abc/deals?view=board')}`);
     // Signed in to Project Management (a cookie on /tasks only, as before the CRM existed)
     const pm = await raw('POST', '/tasks/api/auth/signup', { body: { email: uniqueEmail('carry'), name: 'Carry Over', password: PASSWORD } });
     const tasksCookie = pm.headers.getSetCookie().find((c) => /path=\/tasks/i.test(c))!.split(';')[0];
     const carried = await raw('GET', carry, { cookie: tasksCookie });
     expect(carried.status).toBe(302);
-    expect(carried.headers.get('Location')).toBe('/system/crm/o/abc/deals?view=board');
+    expect(carried.headers.get('Location')).toBe('/erp/crm/o/abc/deals?view=board');
     const set = carried.headers.getSetCookie();
-    expect(set.some((c) => c.startsWith('workos_sid=') && /path=\/system(;|$)/i.test(c))).toBe(true);
-    expect(set.some((c) => c.startsWith('sys_carry=1'))).toBe(true);
+    expect(set.some((c) => c.startsWith('workos_sid=') && /path=\/erp(;|$)/i.test(c))).toBe(true);
+    expect(set.some((c) => c.startsWith('erp_carry=1'))).toBe(true);
     // Not signed in: the System's sign-in page, and the marker stops a loop.
     const anon = await raw('GET', carry);
-    expect(anon.headers.get('Location')).toBe(`/system/login?next=${encodeURIComponent('/crm/o/abc/deals?view=board')}`);
-    const again = await raw('GET', '/system/crm/o/abc/deals', { headers: { Accept: 'text/html', Cookie: 'sys_carry=1' } });
-    expect(again.headers.get('Location')).toBe(`/system/crm/login?next=${encodeURIComponent('/o/abc/deals')}`);
+    expect(anon.headers.get('Location')).toBe(`/erp/login?next=${encodeURIComponent('/crm/o/abc/deals?view=board')}`);
+    const again = await raw('GET', '/erp/crm/o/abc/deals', { headers: { Accept: 'text/html', Cookie: 'erp_carry=1' } });
+    expect(again.headers.get('Location')).toBe(`/erp/crm/login?next=${encodeURIComponent('/o/abc/deals')}`);
     // The carry address only ever sends people into the CRM.
     const evil = await raw('GET', `/tasks/api/crm-carry?to=${encodeURIComponent('//evil.example.com/x')}`, { cookie: tasksCookie });
     expect(evil.headers.get('Location')).toBe('/crm/');
     // The invitation page is public inside the System.
-    expect((await raw('GET', '/system/crm/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
+    expect((await raw('GET', '/erp/crm/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
     void ORIGIN;
   });
 });

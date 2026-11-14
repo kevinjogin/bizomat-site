@@ -11,7 +11,7 @@ import { createHash } from 'node:crypto';
 
 const name = process.env.STUB_NAME || 'stub';
 const port = Number(process.env.PORT || 8000);
-const ownPath = (path) => path.replace(/^\/(?:cad|tasks|crm|finance|company|system)(?=\/)/, '');
+const ownPath = (path) => path.replace(/^\/(?:cad|tasks|crm|finance|company|system|erp)(?=\/)/, '');
 
 const server = http.createServer((req, res) => {
   const url = new URL(ownPath(req.url), 'http://stub');

@@ -18,10 +18,11 @@
 // path (Path=/tasks, /crm, /finance and /company), so signing in to one signs in to all, while the website and CAD
 // Automation, at other paths of bizomat.ai, still never receive it.
 //
-// One system (owner, 14 Nov 2026): every tool also opens inside BIZOMAT System, under /system/tasks, /system/crm,
-// /system/finance and /system/company, with the System's module rail around it (src/client/components/layout/SuiteRail.tsx).
-// Those are the same app with a longer path taken off; their cookies are written for /system (and the other paths).
-// A page asked for at a tool's own address answers 302 to the same page inside the System (suiteRedirect).
+// One workspace (owner, 14 Nov 2026): every tool also opens inside BIZOMAT ERP, under /erp/tasks, /erp/crm, /erp/finance
+// and /erp/company, with the ERP's module rail around it (src/client/components/layout/SuiteRail.tsx). Those are the same
+// app with a longer path taken off; their cookies are written for /erp (and the other paths). A page asked for at a
+// tool's own address, or at the workspace's earlier address /system, answers 302 to the same page inside the ERP
+// (suiteRedirect).
 import type { Env } from './env';
 
 export const MOUNT = '/tasks';
@@ -31,15 +32,22 @@ export const CRM_MOUNT = '/crm';
 export const FIN_MOUNT = '/finance';
 /** BIZOMAT company accounts and their control centre, served by this app at https://bizomat.ai/company. */
 export const COMPANY_MOUNT = '/company';
-/** BIZOMAT System, every tool in one place by company, served by this app at https://bizomat.ai/system. */
+/**
+ * BIZOMAT ERP, the one workspace for signed-in people (owner, 14 Nov 2026), served by this app at https://bizomat.ai/erp:
+ * every tool by company, with every tool inside it at /erp/<tool>.
+ */
+export const ERP_MOUNT = '/erp';
+/** BIZOMAT System, the ERP workspace's earlier address (14 Nov 2026): its pages answer 302 to /erp; its API still answers. */
 export const SYSTEM_MOUNT = '/system';
 /** Every path this app is served under on another site's address; the session cookie is written for each. */
-export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT, SYSTEM_MOUNT] as const;
-/** The tools that also open inside BIZOMAT System, at /system/<tool>. */
+export const MOUNTS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT, SYSTEM_MOUNT, ERP_MOUNT] as const;
+/** The tools that also open inside the ERP workspace, at /erp/<tool> (and the earlier /system/<tool>). */
 export const SUITE_APPS = [MOUNT, CRM_MOUNT, FIN_MOUNT, COMPANY_MOUNT] as const;
-/** /system/tasks, /system/crm, /system/finance and /system/company. */
-export const SUITE_MOUNTS = SUITE_APPS.map((m) => `${SYSTEM_MOUNT}${m}`);
+const SUITES = [ERP_MOUNT, SYSTEM_MOUNT] as const;
+/** /erp/tasks, /erp/crm, /erp/finance, /erp/company, and the same under /system. */
+export const SUITE_MOUNTS = SUITES.flatMap((s) => SUITE_APPS.map((m) => `${s}${m}`));
 const ALL_MOUNTS = [...SUITE_MOUNTS, ...MOUNTS];
+const suiteOf = (base: string): string | null => SUITES.find((s) => base.startsWith(`${s}/`)) ?? null;
 
 /** The path the request came in under: one of MOUNTS or SUITE_MOUNTS (the longest that fits), or '' at the root. */
 export function mountOf(url: URL): string {
@@ -47,10 +55,15 @@ export function mountOf(url: URL): string {
   return '';
 }
 
-/** The tool a path serves: '/system/crm' -> '/crm'; any other path as it is. */
-export const appOf = (base: string): string => (base.startsWith(`${SYSTEM_MOUNT}/`) ? base.slice(SYSTEM_MOUNT.length) : base);
-/** The path its cookies are written for: '/system/crm' -> '/system'; any other path as it is. */
-export const topOf = (base: string): string => (base.startsWith(`${SYSTEM_MOUNT}/`) ? SYSTEM_MOUNT : base);
+/** The tool a path serves: '/erp/crm' -> '/crm'; any other path as it is. */
+export const appOf = (base: string): string => {
+  const suite = suiteOf(base);
+  return suite ? base.slice(suite.length) : base;
+};
+/** The path its cookies are written for: '/erp/crm' -> '/erp'; any other path as it is. */
+export const topOf = (base: string): string => suiteOf(base) ?? base;
+/** The ERP workspace or one of its tools (or the System's earlier address). */
+export const inSuite = (base: string): boolean => (SUITES as readonly string[]).includes(base) || suiteOf(base) !== null;
 
 const underMount = (value: string) => MOUNTS.some((m) => value === m || value.startsWith(`${m}/`) || value.startsWith(`${m}?`));
 
@@ -112,7 +125,7 @@ export async function withBaseHref(res: Response, base: string): Promise<Respons
   const tag = `<base href="${base}/">`;
   // Under /crm, /finance, /company and /system the page is that product: its title before the script sets the page's own.
   const app = appOf(base);
-  const title = base.startsWith(SYSTEM_MOUNT) ? 'BIZOMAT System' : app === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : app === FIN_MOUNT ? 'BIZOMAT Finance' : app === COMPANY_MOUNT ? 'BIZOMAT Company' : null;
+  const title = inSuite(base) ? 'BIZOMAT ERP' : app === CRM_MOUNT ? 'BIZOMAT Customer Relationship Management' : app === FIN_MOUNT ? 'BIZOMAT Finance' : app === COMPANY_MOUNT ? 'BIZOMAT Company' : null;
   if (typeof HTMLRewriter === 'function') {
     let rw = new HTMLRewriter().on('head', { element: (e) => void e.prepend(tag, { html: true }) });
     if (title) rw = rw.on('title', { element: (e) => void e.setInnerContent(title) });
@@ -145,13 +158,15 @@ export function crmCanonicalRedirect(request: Request, env: Pick<Env, 'CANONICAL
 }
 
 /**
- * One system: a page asked for at a tool's own address (bizomat.ai/crm/o/x) answers 302 to the same page inside
- * BIZOMAT System (/system/crm/o/x), so every signed-in person works in one place. The API, files and a customer's
- * online document (/finance/view/...) stay where they are. Project Management's sign-in and sign-up pages without a
- * `next` (the website's Sign in) open the System's own, so people land on the System's home.
+ * One workspace: a page asked for at a tool's own address (bizomat.ai/crm/o/x) answers 302 to the same page inside
+ * BIZOMAT ERP (/erp/crm/o/x), so every signed-in person works in one place; so does a page at the System's earlier
+ * address (/system/... to /erp/...). The API, files and a customer's online document (/finance/view/...) stay where
+ * they are. Project Management's sign-in and sign-up pages without a `next` (the website's Sign in) open the ERP's own,
+ * so people land on its dashboard.
  */
 export function suiteRedirect(request: Request, base: string): Response | null {
-  if (!(SUITE_APPS as readonly string[]).includes(base)) return null;
+  const earlier = base === SYSTEM_MOUNT || base.startsWith(`${SYSTEM_MOUNT}/`);
+  if (!earlier && !(SUITE_APPS as readonly string[]).includes(base)) return null;
   if (request.method !== 'GET' && request.method !== 'HEAD') return null;
   if (!(request.headers.get('Accept') ?? '').includes('text/html')) return null;
   const url = new URL(request.url);
@@ -159,7 +174,11 @@ export function suiteRedirect(request: Request, base: string): Response | null {
   if (rest === '/api' || rest.startsWith('/api/') || rest.startsWith('/assets/') || /\.[a-z0-9]+$/i.test(rest)) return null;
   if (base === FIN_MOUNT && rest.startsWith('/view/')) return null;
   const front = base === MOUNT && (rest === '/login' || rest === '/signup') && !url.searchParams.has('next');
-  const to = front ? `${SYSTEM_MOUNT}${rest}${url.search}` : `${SYSTEM_MOUNT}${base}${rest}${url.search}`;
+  const to = earlier
+    ? `${ERP_MOUNT}${base.slice(SYSTEM_MOUNT.length)}${rest}${url.search}`
+    : front
+      ? `${ERP_MOUNT}${rest}${url.search}`
+      : `${ERP_MOUNT}${base}${rest}${url.search}`;
   return new Response(null, { status: 302, headers: { Location: to, 'Cache-Control': 'no-store' } });
 }
 

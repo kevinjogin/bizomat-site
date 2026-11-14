@@ -280,7 +280,7 @@ function Profile() {
             <div className="muted small">{view.me.roleLabel} of {view.company.name}</div>
           </div>
           <MenuItem icon="user" onClick={() => { close(); window.location.href = toolUrl('/tasks/settings/profile'); }}>Profile and security</MenuItem>
-          {session?.platformRole ? <MenuItem icon="chart" onClick={() => { close(); window.location.href = SUITE ? '/system/admin/overview' : '/tasks/admin'; }}>Super admin console</MenuItem> : null}
+          {session?.platformRole ? <MenuItem icon="chart" onClick={() => { close(); window.location.href = SUITE ? `${SUITE}/admin/overview` : '/tasks/admin'; }}>Super admin console</MenuItem> : null}
           <MenuSep />
           <MenuItem icon="logout" onClick={() => { close(); void signOut(); }}>Sign out</MenuItem>
         </>

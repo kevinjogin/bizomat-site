@@ -400,39 +400,39 @@ describe('the /company address', () => {
     const res = await raw('POST', '/company/api/auth/signup', { body: { email, name: 'Co Mount', password: PASSWORD } });
     expect(res.status).toBe(201);
     const cookies = res.headers.getSetCookie().filter((c) => c.startsWith('workos_sid='));
-    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/company', '/tasks', '/crm', '/finance', '/system']);
+    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/company', '/tasks', '/crm', '/finance', '/system', '/erp']);
     const cookie = cookies[0].split(';')[0];
     const csrf = ((await res.json()) as any).csrfToken;
     expect((await raw('GET', '/company/api/company/mine', { cookie, csrf })).status).toBe(200);
-    // One system: the company area's pages open inside BIZOMAT System, at /system/company.
+    // One system: the company area's pages open inside BIZOMAT System, at /erp/company.
     const old = await raw('GET', '/company/c/x', { cookie, headers: { Accept: 'text/html' } });
     expect(old.status).toBe(302);
-    expect(old.headers.get('Location')).toBe('/system/company/c/x');
-    const page = await raw('GET', '/system/company/c/x', { cookie, headers: { Accept: 'text/html' } });
+    expect(old.headers.get('Location')).toBe('/erp/company/c/x');
+    const page = await raw('GET', '/erp/company/c/x', { cookie, headers: { Accept: 'text/html' } });
     expect(page.status).toBe(200);
     const html = await page.text();
-    expect(html).toContain('<base href="/system/company/">');
-    expect(html).toContain('<title>BIZOMAT System</title>');
-    expect((await raw('GET', '/system/company/api/company/mine', { cookie, csrf })).status).toBe(200);
+    expect(html).toContain('<base href="/erp/company/">');
+    expect(html).toContain('<title>BIZOMAT ERP</title>');
+    expect((await raw('GET', '/erp/company/api/company/mine', { cookie, csrf })).status).toBe(200);
     // Without a cookie: through /tasks, where a session from before the System existed carries over.
-    const anon = await raw('GET', '/system/company/c/abc/people', { headers: { Accept: 'text/html' } });
+    const anon = await raw('GET', '/erp/company/c/abc/people', { headers: { Accept: 'text/html' } });
     expect(anon.status).toBe(302);
     const carry = anon.headers.get('Location')!;
-    expect(carry).toBe(`/tasks/api/app-carry?to=${encodeURIComponent('/system/company/c/abc/people')}`);
+    expect(carry).toBe(`/tasks/api/app-carry?to=${encodeURIComponent('/erp/company/c/abc/people')}`);
     const pm = await raw('POST', '/tasks/api/auth/signup', { body: { email: uniqueEmail('cocarry'), name: 'Co Carry', password: PASSWORD } });
     const tasksCookie = pm.headers.getSetCookie().find((c) => /path=\/tasks/i.test(c))!.split(';')[0];
     const carried = await raw('GET', carry, { cookie: tasksCookie });
-    expect(carried.headers.get('Location')).toBe('/system/company/c/abc/people');
-    expect(carried.headers.getSetCookie().some((c) => c.startsWith('sys_carry=1'))).toBe(true);
-    expect((await raw('GET', carry)).headers.get('Location')).toBe(`/system/login?next=${encodeURIComponent('/company/c/abc/people')}`);
+    expect(carried.headers.get('Location')).toBe('/erp/company/c/abc/people');
+    expect(carried.headers.getSetCookie().some((c) => c.startsWith('erp_carry=1'))).toBe(true);
+    expect((await raw('GET', carry)).headers.get('Location')).toBe(`/erp/login?next=${encodeURIComponent('/company/c/abc/people')}`);
     for (const to of ['//evil.example.com/x', 'https://evil.example.com/company/', '/company\\evil']) {
       const loc = (await raw('GET', `/tasks/api/app-carry?to=${encodeURIComponent(to)}`, { cookie: tasksCookie })).headers.get('Location')!;
       expect(loc.startsWith('/') && !loc.startsWith('//') && !loc.includes('evil.example')).toBe(true);
     }
     // Invitation and confirmation pages are public inside the System; their old addresses lead there.
-    expect((await raw('GET', '/company/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).headers.get('Location')).toBe('/system/company/join/abcdefghijklmnopqrstuvwxyz');
-    expect((await raw('GET', '/system/company/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
-    expect((await raw('GET', '/system/company/confirm-email?token=abc', { headers: { Accept: 'text/html' } })).status).toBe(200);
+    expect((await raw('GET', '/company/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).headers.get('Location')).toBe('/erp/company/join/abcdefghijklmnopqrstuvwxyz');
+    expect((await raw('GET', '/erp/company/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
+    expect((await raw('GET', '/erp/company/confirm-email?token=abc', { headers: { Accept: 'text/html' } })).status).toBe(200);
     // The sign-in provider's server endpoints answer without a session under /company.
     expect((await raw('GET', '/company/api/id/userinfo')).status).toBe(401);
   });

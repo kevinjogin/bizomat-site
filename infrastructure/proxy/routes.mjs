@@ -30,7 +30,7 @@
 //                                   other methods                             308 https://bizomat.ai<path>?<query>
 //   cados.kevos.com                 all (all paths, upgrades)                 proxy -> cad (CAD Automation's old address)
 //   work.kevos.com                  all (all paths, WebSockets)               proxy -> work (Project Management's old address)
-//   kevos.com, www.kevos.com        GET, HEAD /cad, /cad/                     301 https://bizomat.ai/cad-automation/?<query>
+//   kevos.com, www.kevos.com        GET, HEAD /cad, /cad/                     301 https://bizomat.ai/systems/engineering/?<query>
 //                                                                             (the old CAD Automation page: /cad is the app)
 //                                   GET, HEAD                                 301 https://bizomat.ai<path>?<query>
 //                                   other methods to /api or /api/*           proxy -> web (old cached pages still post forms)
@@ -84,10 +84,12 @@ export const COMPANY_PATHS = /^\/company(?:\/|$)/;
 /** The paths of bizomat.ai that belong to BIZOMAT System (one shell over every tool), which the same app (work) serves.
  * /system-preview/ (the website's static design preview) is not one of them: it stays with web. */
 export const SYSTEM_PATHS = /^\/system(?:\/|$)/;
+// BIZOMAT ERP, the one workspace for signed-in people (the same app); /erp-design-preview/ does not match
+export const ERP_PATHS = /^\/erp(?:\/|$)/;
 
 // An application's path in another case (/CAD, /Tasks/..., /CRM, /Finance, /Company, /System): one address per page, in
 // lowercase.
-const APP_ANY_CASE = /^\/(cad|tasks|crm|finance|company|system)(?=\/|$)/i;
+const APP_ANY_CASE = /^\/(cad|tasks|crm|finance|company|system|erp)(?=\/|$)/i;
 
 /** The platform's sign-in page (the website's): it offers each application's own sign-in. */
 export const SIGN_IN_PATH = '/sign-in/';
@@ -171,7 +173,7 @@ export function routingPath(path) {
 export function platformUpstream(path) {
   const p = routingPath(path);
   if (CAD_PATHS.test(p)) return 'cad';
-  if (TASKS_PATHS.test(p) || CRM_PATHS.test(p) || FINANCE_PATHS.test(p) || COMPANY_PATHS.test(p) || SYSTEM_PATHS.test(p)) return 'work';
+  if (TASKS_PATHS.test(p) || CRM_PATHS.test(p) || FINANCE_PATHS.test(p) || COMPANY_PATHS.test(p) || SYSTEM_PATHS.test(p) || ERP_PATHS.test(p)) return 'work';
   return 'web';
 }
 
@@ -252,7 +254,7 @@ export function decide({ host, method, path, query = '', previewCookie = '', pre
     // legacy: kevos.com and www.kevos.com moved to bizomat.ai
     const read = method === 'GET' || method === 'HEAD';
     const p = routingPath(path);
-    if (read && (p === '/cad' || p === '/cad/')) return { ...base, ...redirectTo(rule.origin, '/cad-automation/', query, method) };
+    if (read && (p === '/cad' || p === '/cad/')) return { ...base, ...redirectTo(rule.origin, '/systems/engineering/', query, method) };
     if (read || !isApiPath(path)) {
       return { ...base, ...redirectTo(rule.origin, path, query, method) };
     }

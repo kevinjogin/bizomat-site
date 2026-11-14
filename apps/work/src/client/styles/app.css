@@ -515,7 +515,7 @@ tr:hover .name-cell .open-btn { opacity: 1; }
 
 /* ------------------------------------------------------------- BIZOMAT System's module rail */
 /* One system (src/client/components/layout/SuiteRail.tsx): inside /system every tool has the rail at its left. */
-:root { --rail-w: 84px; --rail-h: 60px; }
+:root { --rail-w: 96px; --rail-h: 60px; }
 .shell.in-suite { grid-template-columns: var(--rail-w) var(--sidebar-w) 1fr; }
 .shell.in-suite > .suite-rail { grid-column: 1; grid-row: 1 / -1; }
 .shell.in-suite > .topbar { grid-column: 2 / -1; grid-row: 1; }
@@ -527,7 +527,7 @@ tr:hover .name-cell .open-btn { opacity: 1; }
 .suite-item:hover { background: rgb(255 255 255 / 0.08); color: var(--bz-inverse-ink); text-decoration: none; }
 .suite-item.active { background: rgb(45 212 191 / 0.16); color: var(--bz-inverse-ink); box-shadow: inset 3px 0 0 var(--bz-teal-bright); }
 .suite-item.active svg { color: var(--bz-teal-bright); }
-.suite-label { overflow-wrap: anywhere; }
+.suite-label { overflow-wrap: break-word; hyphens: auto; }
 .suite-home:focus-visible, .suite-item:focus-visible { outline: 2px solid var(--bz-teal-bright); outline-offset: 1px; }
 @media (max-width: 760px) {
   .shell.in-suite { grid-template-columns: 1fr; }

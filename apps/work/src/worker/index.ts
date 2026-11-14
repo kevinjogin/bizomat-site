@@ -40,7 +40,14 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
   }
   // BIZOMAT System: a company of their own for every account that has none yet (system/system.ts), a batch a run.
   try {
-    results.system = { ownCompaniesMade: await backfillOwnCompanies(env.DB, 200) };
+    // Every account has its own company in the System (migration 0017 made them for the accounts that existed then).
+    let made = 0;
+    for (let i = 0; i < 10; i++) {
+      const n = await backfillOwnCompanies(env.DB, 500);
+      made += n;
+      if (n < 500) break;
+    }
+    results.system = { ownCompaniesMade: made };
   } catch (e) {
     results.system = { error: e instanceof Error ? e.message : 'failed' };
   }
