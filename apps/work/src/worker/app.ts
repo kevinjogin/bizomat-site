@@ -38,6 +38,7 @@ import { crmPublicRoutes, crmRoutes } from './crm';
 import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
 import { idPublicRoutes } from './company/id-provider';
+import { maintenanceRoutes } from './maintenance';
 
 export const CSP = [
   "default-src 'self'",
@@ -178,6 +179,8 @@ export function createApp() {
   api.route('/company', companyRoutes);
   // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
   api.route('/system', systemRoutes);
+  // BIZOMAT ERP's Asset Management and Maintenance, Stage 1 (src/worker/maintenance): assets, requests, work orders.
+  api.route('/maintenance', maintenanceRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
