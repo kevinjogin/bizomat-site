@@ -2,7 +2,7 @@
 // uses, in one place, organised by company, with CAD Automation as its own section and, for the super admin, every
 // account and company with their activity. The server (src/worker/system) decides what each person may see; this
 // screen only shows it. Routes (inside the /system base): /, /c/:companyId/<home|cad|settings>, /admin/<section>.
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, errorMessage, get, patch, post } from '../lib/api';
@@ -22,6 +22,9 @@ import '../styles/fin.css';
 import '../styles/company.css';
 import '../styles/system.css';
 import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
+
+// Asset Management and Maintenance (Stage 1), inside a company at /c/<company>/maintenance; loaded when it is opened.
+const MaintenanceArea = lazy(() => import('./maintenance/Maintenance').then((m) => ({ default: m.MaintenanceArea })));
 
 // ------------------------------------------------------------------ data
 
@@ -121,6 +124,8 @@ export function SystemRoutes() {
       {/* The module rail's Products and Engineering: the CAD page of the company used last. */}
       <Route path="/cad" element={<SystemHome page="cad" />} />
       <Route path="/my-work" element={<MyWorkRedirect />} />
+      {/* The module rail's Maintenance: the maintenance of the company used last. */}
+      <Route path="/maintenance/*" element={<MaintenanceRedirect />} />
       <Route path="/operations" element={<Shell><Operations /></Shell>} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
@@ -153,6 +158,18 @@ function MyWorkRedirect() {
   return <Loading label="Opening My Work…" />;
 }
 
+/** Maintenance: in the company used last when the person has maintenance there, else their first registered company. */
+function MaintenanceRedirect() {
+  const location = useLocation();
+  const q = useQuery({ queryKey: ['mt', 'companies'], queryFn: () => get<{ companies: { id: string; kind: 'registered' | 'own' }[] }>('/maintenance/companies') });
+  if (q.error) return <Shell><div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div></Shell>;
+  if (!q.data) return <Loading label="Opening maintenance…" />;
+  const list = q.data.companies;
+  const pick = list.find((c) => c.id === lastCompany()) ?? list.find((c) => c.kind === 'registered') ?? list[0];
+  if (!pick) return <Shell><div className="page"><EmptyState title="No company yet" icon="building">Reload the page to make your own company.</EmptyState></div></Shell>;
+  return <Navigate to={`/c/${pick.id}/maintenance${location.pathname.replace(/^\/maintenance/, '')}${location.search}`} replace />;
+}
+
 /** "/": the company used last, else the first (registered, then the person's own). "/cad": its CAD page. */
 function SystemHome({ page = 'home' }: { page?: 'home' | 'cad' }) {
   const q = useMe();
@@ -181,6 +198,7 @@ function CompanyArea() {
         <Route path="home" element={<CompanyHome view={q.data} />} />
         <Route path="cad" element={<CadPage view={q.data} />} />
         <Route path="settings" element={<CompanySettings view={q.data} />} />
+        <Route path="maintenance/*" element={<Suspense fallback={<Loading />}><MaintenanceArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -217,6 +235,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
           <>
             <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Dashboard</NavLink>
             <NavLink to={`${base}/cad`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
+            <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
           </>
         ) : null}
@@ -365,6 +384,13 @@ function CompanyHome({ view }: { view: CompanyView }) {
       {c.registration?.suspended ? <p className="warning-text">This company is suspended. Its tools stay as they are; ask BIZOMAT support for details.</p> : null}
       <div className="co-tools-grid">
         {(['tasks', 'crm', 'finance'] as SysApp[]).flatMap((app) => byApp(app).map((t) => <ToolCard key={`${t.app}:${t.id}`} tool={t} />))}
+        {c.role !== 'guest' ? (
+          <Link to={`/c/${c.id}/maintenance`} className="card card-pad co-tool-card sys-tool-card">
+            <div className="row"><Icon name="wrench" /> <strong>Maintenance</strong></div>
+            <p className="muted small">Asset Management and Maintenance: the asset register, requests and work orders.</p>
+            <p className="small">Report a fault, follow your requests, or plan and record the work.</p>
+          </Link>
+        ) : null}
         <Link to={`/c/${c.id}/cad`} className="card card-pad co-tool-card sys-tool-card">
           <div className="row"><Icon name="diamond" /> <strong>Products and Engineering</strong></div>
           <p className="muted small">SOLIDWORKS on your computers, driven by your AI assistant.</p>
@@ -568,13 +594,22 @@ function useCurrentCompany() {
   return { me, id, view };
 }
 
-/** The ERP modules that are designed but not built. Shown as planned, never as working (docs/erp/architecture/08). */
-const PLANNED: { name: string; icon: string; covers: string; today?: string }[] = [
+/**
+ * The ERP's operations modules (docs/erp/architecture/08). Planned ones are shown as planned, never as working. Asset
+ * Management and Maintenance is partly live (Stage 1): exactly what is live is said, and the rest is labelled planned.
+ */
+const PLANNED: { name: string; icon: string; covers: string; today?: string; live?: { to: string; label: string } }[] = [
   { name: 'Procurement', icon: 'inbox', covers: 'Suppliers, purchase requisitions with approval, requests for quotation, purchase orders and receiving, and supplier performance.', today: 'Today: suppliers and bills are kept in Finance and Accounting.' },
   { name: 'Inventory and Warehouse', icon: 'archive', covers: 'Stock on hand by product, location and lot, movements, goods receipts, transfers, stock counts and valuation.' },
   { name: 'Manufacturing', icon: 'settings', covers: 'Work orders with operations and materials, a planning board by work centre, and a shop-floor screen for reporting quantities and scrap.' },
   { name: 'Quality', icon: 'checkSquare', covers: 'Inspection plans and checklists, inspections, nonconformances and corrective actions.' },
-  { name: 'Asset Management and Maintenance', icon: 'key', covers: 'An asset register, maintenance plans and orders, work requests and downtime reporting.' },
+  {
+    name: 'Asset Management and Maintenance',
+    icon: 'wrench',
+    covers: 'Live now: the asset register with its hierarchy, CSV import and files; maintenance requests with approval; standard work orders with tasks, parts lines, a labour timer, photos, completion and reopening; maintenance roles per company; and the history of every change.',
+    today: 'Planned: preventive maintenance, meter readings, inspections, prestart checks, spare parts and stocktakes, more than one site, QR code and barcode labels, and AI scheduling.',
+    live: { to: '/maintenance', label: 'Open Maintenance' },
+  },
   { name: 'Supply Chain', icon: 'globe', covers: 'Shipments, carriers, a delivery schedule and returns.' },
   { name: 'Products and Engineering records', icon: 'diamond', covers: 'Products with variants, revisions, bills of materials and routings, and engineering changes, linked to CAD Automation drawings.', today: 'Today: CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant (Products and Engineering).' },
 ];
@@ -583,17 +618,18 @@ function Operations() {
   usePageTitle('Operations');
   return (
     <div className="page crm-page">
-      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. These modules are planned: they are not built yet and keep no data." />
+      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Asset Management and Maintenance is partly live; the other modules are planned: they are not built yet and keep no data." />
       <section className="co-prompt">
-        <p>You can see how they are designed in the BIZOMAT ERP preview, which runs on demonstration data only. Nothing you do there is saved.</p>
+        <p>You can see how the planned modules are designed in the BIZOMAT ERP preview, which runs on demonstration data only. Nothing you do there is saved.</p>
         <a className="btn" href="https://bizomat.ai/system-preview/">Open the design preview</a>
       </section>
       <div className="co-tools-grid">
         {PLANNED.map((m) => (
           <section key={m.name} className="card card-pad co-tool-card">
-            <div className="row"><Icon name={m.icon} /> <strong className="grow">{m.name}</strong><span className="badge">Planned</span></div>
+            <div className="row"><Icon name={m.icon} /> <strong className="grow">{m.name}</strong>{m.live ? <span className="badge success">Partly live</span> : <span className="badge">Planned</span>}</div>
             <p className="small">{m.covers}</p>
             {m.today ? <p className="muted small">{m.today}</p> : null}
+            {m.live ? <div className="row"><Link className="btn sm" to={m.live.to}>{m.live.label}</Link></div> : null}
           </section>
         ))}
       </div>

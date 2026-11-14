@@ -529,6 +529,9 @@ tr:hover .name-cell .open-btn { opacity: 1; }
 .suite-item.active svg { color: var(--bz-teal-bright); }
 .suite-label { overflow-wrap: break-word; hyphens: auto; }
 .suite-home:focus-visible, .suite-item:focus-visible { outline: 2px solid var(--bz-teal-bright); outline-offset: 1px; }
+/* The quick fault report at the foot of the rail (Asset Management and Maintenance). */
+.suite-item.suite-fault { margin-top: auto; border: 0; background: rgb(255 255 255 / 0.06); cursor: pointer; font: inherit; font-size: 11px; font-weight: 600; color: var(--bz-inverse-muted); }
+.suite-item.suite-fault svg { color: var(--bz-teal-bright); }
 @media (max-width: 760px) {
   .shell.in-suite { grid-template-columns: 1fr; }
   .shell.in-suite > .topbar, .shell.in-suite > .main { grid-column: 1; }
@@ -538,6 +541,7 @@ tr:hover .name-cell .open-btn { opacity: 1; }
   .suite-home { display: none; }
   .suite-item { flex: 1 0 64px; padding: 6px 2px; font-size: 10px; }
   .suite-item.active { box-shadow: inset 0 3px 0 var(--bz-teal-bright); }
+  .suite-item.suite-fault { margin-top: 0; font-size: 10px; }
 }
 /* The start pages of a tool (no organisation or company chosen yet) have the rail too. */
 .crm-start.in-suite { padding-left: var(--rail-w); }

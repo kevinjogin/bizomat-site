@@ -1,0 +1,105 @@
+/* Asset Management and Maintenance in BIZOMAT ERP (src/client/system/maintenance): on top of crm.css, fin.css,
+   company.css and system.css. Phones: lists become cards, the timer and complete buttons are full width and tall. */
+.mt-tabs { margin: 0 0 16px; }
+.mt-toolbar { gap: 8px; margin-bottom: 12px; }
+.mt-toolbar .select, .mt-toolbar .input[type='date'] { width: auto; max-width: 100%; }
+.mt-toolbar .checkbox { white-space: nowrap; font-size: 13px; }
+.mt-filters { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px 12px; margin-bottom: 12px; }
+.mt-filters .field { margin: 0; }
+.mt-filters .crm-span .field { margin-bottom: 4px; }
+.mt-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mt-primary { font-weight: 600; }
+.mt-table td { vertical-align: top; }
+.mt-table .mt-desc { max-width: 360px; overflow-wrap: anywhere; }
+.mt-overdue { color: var(--danger); font-weight: 600; }
+.mt-pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.mt-safety { border-left: 3px solid var(--warning); padding: 10px 14px; background: var(--warning-soft); border-radius: var(--radius); }
+.mt-locked { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.mt-path { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 13px; margin: -10px 0 14px; }
+.mt-path a { text-decoration: none; }
+.mt-path .sep { color: var(--text-3); }
+.mt-head { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 14px; }
+.mt-head .mt-title { margin: 0; font-size: 24px; }
+.mt-head .mt-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.mt-head-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.mt-grid { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 16px; align-items: start; }
+.mt-grid > * { min-width: 0; }
+
+/* The asset tree. */
+.mt-tree, .mt-tree ul { list-style: none; margin: 0; padding: 0; }
+.mt-tree ul { padding-left: 22px; border-left: 1px dashed var(--border); margin-left: 12px; }
+.mt-tree-row { display: flex; align-items: center; gap: 6px; padding: 4px 0; min-height: 34px; }
+.mt-tree-row .mt-toggle { width: 26px; height: 26px; padding: 0; justify-content: center; }
+.mt-tree-row .mt-toggle-gap { display: inline-block; width: 26px; flex: none; }
+.mt-tree-row a { text-decoration: none; color: inherit; display: inline-flex; gap: 8px; align-items: baseline; min-width: 0; }
+.mt-tree-row a:hover .mt-tree-name { text-decoration: underline; }
+.mt-tree-row .mt-num { color: var(--text-3); font-size: 12px; }
+.mt-tree-name { overflow-wrap: anywhere; }
+.mt-tree-row.match .mt-tree-name { font-weight: 700; }
+
+/* History, notes, files. */
+.mt-history { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mt-history > li { border-left: 2px solid var(--border); padding-left: 10px; }
+.mt-changes { margin: 4px 0 0; padding-left: 16px; overflow-wrap: anywhere; }
+.mt-comments { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mt-comments > li { padding: 8px 10px; border-radius: var(--radius); background: var(--surface-2); }
+.mt-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.mt-photo { margin: 0; display: grid; gap: 4px; }
+.mt-photo img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2); }
+.mt-photo figcaption { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.mt-docs { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mt-docs li { min-width: 0; }
+
+/* Work order: tasks, parts, time. */
+.mt-tasks { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.mt-task { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.mt-task input[type='checkbox'] { width: 22px; height: 22px; margin-top: 1px; accent-color: var(--accent); flex: none; }
+.mt-task.done .mt-task-text { text-decoration: line-through; color: var(--text-3); }
+.mt-task-meta { font-size: 12px; color: var(--text-3); }
+.mt-add-line { display: flex; gap: 8px; flex-wrap: wrap; }
+.mt-add-line .input { flex: 1 1 200px; }
+.mt-add-line .mt-qty { flex: 0 0 90px; }
+.mt-lines { display: grid; gap: 6px; }
+.mt-line { display: grid; grid-template-columns: minmax(0, 1fr) 90px auto; gap: 6px; align-items: center; }
+.mt-spec-line { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; gap: 6px; align-items: center; }
+.mt-timer { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.mt-timer .mt-clock { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.mt-big-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.mt-big-actions .btn { height: 48px; padding: 0 20px; font-size: 16px; }
+.mt-meter { width: 100%; height: 10px; }
+
+/* Import preview. */
+.mt-import-table td { vertical-align: top; }
+.mt-import-table tr.mt-row-error td { background: var(--danger-soft); }
+.mt-import-table tr.mt-row-duplicate td { background: var(--warning-soft); }
+.mt-csv { font-family: var(--mono); font-size: 12px; min-height: 160px; }
+
+/* Pickers. */
+.mt-picker { display: grid; gap: 6px; }
+.mt-picker-list { list-style: none; margin: 0; padding: 0; max-height: 220px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+.mt-picker-list button { width: 100%; text-align: left; border: 0; background: none; padding: 8px 10px; cursor: pointer; color: var(--text); display: flex; gap: 8px; }
+.mt-picker-list button:hover, .mt-picker-list button:focus-visible { background: var(--surface-2); }
+.mt-picked { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); }
+.mt-form-section { border: 0; padding: 0; margin: 0 0 6px; min-width: 0; }
+.mt-form-section legend { font-weight: 700; font-size: 13px; margin-bottom: 8px; padding: 0; }
+.mt-roles td { vertical-align: middle; }
+
+@media (max-width: 900px) {
+  .mt-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .mt-head .mt-title { font-size: 20px; }
+  .mt-filters-closed { display: none; }
+  .mt-head-actions { margin-left: 0; width: 100%; }
+  .mt-big-actions .btn { flex: 1 1 100%; justify-content: center; height: 54px; }
+  .mt-filters { grid-template-columns: 1fr 1fr; }
+  /* Tables become cards: each cell on its own line with its column name. */
+  .mt-table thead { display: none; }
+  .mt-table, .mt-table tbody, .mt-table tr, .mt-table td { display: block; width: 100%; }
+  .mt-table { min-width: 0; }
+  .mt-table tr { border-bottom: 1px solid var(--border); padding: 8px 0; }
+  .mt-table td { border: 0; padding: 2px 12px; }
+  .mt-table td[data-label]::before { content: attr(data-label) ': '; color: var(--text-3); font-size: 12px; }
+  .mt-table td:empty { display: none; }
+  .mt-table .mt-desc { max-width: none; }
+}
