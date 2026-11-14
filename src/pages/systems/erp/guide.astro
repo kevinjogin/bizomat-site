@@ -61,6 +61,16 @@ const parts: Part[] = [
     shot: 'erp-dashboard',
   },
   {
+    id: 'example', title: 'Explore the example company', st: 'live',
+    lead: 'Every account has an example company, Acme Studio, with invented data to learn BIZOMAT before using your own.',
+    steps: [
+      { t: 'Find it', x: 'Open the company switcher. Acme Studio (example) is listed last, under Example company. It is made the first time you open the ERP.' },
+      { t: 'What is in it', x: 'Two example projects with a dashboard and a brief, customers and deals in Sales and CRM, transactions and a draft quote in Finance, and an asset register with requests and work orders in Maintenance.' },
+      { t: 'Try anything', x: 'Change, add or delete what you like. Only you can see it, nobody can be invited to it, it sends no email, and nothing in it affects your own companies.' },
+      { t: 'Remove it', x: 'In Administration, choose Remove the example company. You can add a new one there later.' },
+    ],
+  },
+  {
     id: 'configure', title: 'Set up departments and tools', st: 'live',
     lead: 'Open Administration in the rail. For a registered company it links to the company area: Company overview, People and roles, Departments, Tools and Company settings.',
     steps: [
@@ -171,6 +181,7 @@ const parts: Part[] = [
 ];
 
 const questions = [
+  { q: 'What is the example company?', a: 'Acme Studio (example) is invented data that every account gets, to learn BIZOMAT safely. Only you can see it, it sends no email, and you can remove it in Administration.' },
   { q: 'Do I need to register a company to use the ERP?', a: 'No. Everyone has their own company in their own name. Register a company when you want to add people, departments and roles.' },
   { q: 'Can I belong to more than one company?', a: 'Yes. Register more than one, or accept invitations, and switch between them with the company switcher.' },
   { q: 'Why can I not see a tool\'s figures on the dashboard?', a: 'Your role in that tool does not show them. Ask the company\'s owner or an administrator to change your role in People.' },
