@@ -18,8 +18,9 @@ import '../../../styles/visuals.css';
 import '../../../styles/systems.css';
 import { screenshots } from '../../../data/screenshots.ts';
 import { SITE } from '../../../config/site.ts';
-import { ERP_PREVIEW, SYSTEMS, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+import { ERP_PREVIEW, FEATURE_STATUS, SYSTEMS, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
 import { CRM, FINANCE, WORK } from '../../../data/platform-catalog.ts';
+import { ERP_DOMAINS, capabilityCounts } from '../../../data/erp-capabilities.ts';
 
 const erp = systemById('erp');
 const GUIDE = erp.guide ?? '/systems/erp/guide/';
@@ -31,10 +32,11 @@ const shot = (name: string) => erpShots.find((s) => s.src.endsWith(`/${name}.web
 const dashboardShot = shot('erp-dashboard');
 const gallery = erpShots.filter((s) => s !== dashboardShot);
 
-// The enterprise capability matrix, written by another file when it exists (an empty glob when it does not).
-interface Domain { id: string; name: string; summary: string; features: { name: string; status: FeatureStatus; servedBy?: string }[] }
-const capabilityFiles = import.meta.glob<{ ERP_DOMAINS?: Domain[] }>('../../../data/erp-capabilities.ts', { eager: true });
-const domains: Domain[] = Object.values(capabilityFiles)[0]?.ERP_DOMAINS ?? [];
+// The enterprise capability matrix: every business area and feature with its status (src/data/erp-capabilities.ts).
+const domains = ERP_DOMAINS;
+const totals = capabilityCounts();
+const STATUS_ORDER = ['live', 'connected', 'in-development', 'planned'] as const;
+const countLine = (c: Record<FeatureStatus, number>) => STATUS_ORDER.filter((k) => c[k] > 0).map((k) => `${c[k]} ${FEATURE_STATUS[k].label.toLowerCase()}`).join(', ');
 
 // Maintenance (owner, 14 Nov 2026): a CMMS inside the ERP, the rail's Maintenance module. Stage 1 is being built
 // (in development until its tests pass); the rest is planned. Never presented as live.
@@ -58,12 +60,12 @@ const who = [
   'Engineering teams that use CAD Automation with SOLIDWORKS and want its set-up beside the rest.',
 ];
 
-const problems = [
-  { p: 'Separate logins and addresses for every tool.', a: 'One BIZOMAT account and one address, bizomat.ai/erp. The old tool addresses forward there.' },
-  { p: 'Records of two businesses mixed together.', a: 'Every tool belongs to a company, and the company switcher keeps them apart. People outside a company cannot see it.' },
-  { p: 'Access set tool by tool, and forgotten when people leave.', a: "Invite a person once, with a role in each tool and their departments. Taking a role away takes them out of that tool." },
-  { p: 'Typing the same customer into sales and accounts.', a: 'Link a CRM company to its Finance customer, and turn a won deal into a draft invoice, without copying records.' },
-  { p: 'No single view of how the business is going.', a: "The dashboard shows each tool's figures, and Reports gathers every tool's reports." },
+const problems: { p: string; a: string; st: FeatureStatus }[] = [
+  { st: 'live', p: 'Separate logins and addresses for every tool.', a: 'One BIZOMAT account and one address, bizomat.ai/erp. The old tool addresses forward there.' },
+  { st: 'live', p: 'Records of two businesses mixed together.', a: 'Every tool belongs to a company, and the company switcher keeps them apart. People outside a company cannot see it.' },
+  { st: 'live', p: 'Access set tool by tool, and forgotten when people leave.', a: "Invite a person once, with a role in each tool and their departments. Taking a role away takes them out of that tool." },
+  { st: 'connected', p: 'Typing the same customer into sales and accounts.', a: 'Link a CRM company to its Finance customer, and turn a won deal into a draft invoice, without copying records.' },
+  { st: 'connected', p: 'No single view of how the business is going.', a: "The dashboard shows each tool's figures, and Reports gathers every tool's reports." },
 ];
 
 // Who works where: the company's teams and the module each works in.
@@ -91,7 +93,7 @@ const departments = [
 const lifecycle: { name: string; serves: string; items: { t: string; st: FeatureStatus }[] }[] = [
   { name: 'Product development', serves: 'BIZOMAT Engineering Automation', items: [{ t: 'CAD Automation in SOLIDWORKS', st: 'live' }, { t: 'Product records and bills of materials', st: 'planned' }] },
   { name: 'Sales', serves: 'BIZOMAT CRM', items: [{ t: 'Leads, deals and follow-ups', st: 'live' }, { t: 'Quotes in Finance from a deal', st: 'connected' }] },
-  { name: 'Procurement', serves: 'Planned; Finance today', items: [{ t: 'Requisitions, RFQs and receiving', st: 'planned' }, { t: 'Suppliers, purchase orders and bills in Finance', st: 'live' }] },
+  { name: 'Procurement', serves: 'Planned; Finance today', items: [{ t: 'Requisitions, quotations and receiving', st: 'planned' }, { t: 'Suppliers, purchase orders and bills in Finance', st: 'live' }] },
   { name: 'Inventory', serves: 'Planned', items: [{ t: 'Stock on hand, movements and counts', st: 'planned' }] },
   { name: 'Production', serves: 'Planned', items: [{ t: 'Work orders and planning', st: 'planned' }] },
   { name: 'Quality', serves: 'Planned', items: [{ t: 'Inspections and nonconformances', st: 'planned' }] },
@@ -102,16 +104,41 @@ const lifecycle: { name: string; serves: string; items: { t: string; st: Feature
 
 // Every feature of the ERP, explained, with its status.
 const features: { t: string; st: FeatureStatus; x: string; today?: string; items?: { t: string; st: FeatureStatus }[] }[] = [
-  { t: 'Enterprise dashboard', st: 'connected', x: "The company's tools on one screen: open tasks, overdue, due in 7 days and projects from Projects; open deals, pipeline, won in 30 days and follow-ups due from the CRM; income, expenses and what is owed both ways from Finance. Each tool's figures show only to people whose role in that tool may see them.", today: 'Executive dashboards with widgets from every module are planned.' },
-  { t: 'Company and department management', st: 'live', x: 'Register a business with its ABN, or yourself in your own name. Give each person a company role (owner, administrator or member) and a role in each tool. Departments are made once, can sit under one another, and appear in every tool.', today: 'Sites, branches, approval rules and numbering are planned.' },
-  { t: 'Products and engineering', st: 'live', x: "CAD Automation's four set-up steps: sign in, install, pair the computer and connect your AI assistant. CAD Automation itself builds SOLIDWORKS parts, assemblies and drawings on your own computer.", today: "The company's computers appear here once CAD Automation reports to the ERP (in development). Product records with revisions and bills of materials are planned." },
-  { t: 'Procurement', st: 'planned', x: 'Designed for supplier profiles, purchase requisitions with approval, requests for quotation, purchase orders with receiving, and supplier performance.', today: 'Today: suppliers, purchase orders and bills are kept in Finance and Accounting.' },
-  { t: 'Inventory and warehouse', st: 'planned', x: 'Designed for stock on hand by product, location and lot, stock movements, goods receipts, transfers, counts and valuation.', today: 'Not available today.' },
-  { t: 'Manufacturing', st: 'planned', x: 'Designed for work orders with operations and materials, a planning board by work centre, and a shop-floor screen for quantities and scrap.', today: 'Not available today.' },
-  { t: 'Quality', st: 'planned', x: 'Designed for inspection plans and checklists, inspections, nonconformance reports and corrective actions.', today: 'Not available today.' },
+  {
+    t: 'Enterprise dashboard', st: 'connected',
+    x: "The company's tools on one screen: open tasks, overdue, due in 7 days and projects from Projects; open deals, pipeline, won in 30 days and follow-ups due from the CRM; income, expenses and what is owed both ways from Finance. Each tool's figures show only to people whose role in that tool may see them.",
+    items: [{ t: 'Company dashboard with figures from each tool', st: 'connected' }, { t: 'Executive dashboards with widgets from every module', st: 'planned' }],
+  },
+  {
+    t: 'Company and department management', st: 'live',
+    x: 'Register a business with its ABN, or yourself in your own name. Give each person a company role (owner, administrator or member) and a role in each tool. Departments are made once, can sit under one another, and appear in every tool.',
+    items: [{ t: 'Companies, people, roles and departments', st: 'live' }, { t: 'Departments in every tool', st: 'connected' }, { t: 'Sites, branches, approval rules and numbering', st: 'planned' }],
+  },
+  {
+    t: 'Products and engineering', st: 'live',
+    x: 'CAD Automation builds SOLIDWORKS parts, assemblies and drawings on your own computer, from your AI assistant. Products and Engineering in the ERP gives its four set-up steps: sign in, install, pair the computer and connect the assistant.',
+    items: [{ t: 'CAD Automation set-up steps', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in to CAD Automation with your BIZOMAT account', st: 'in-development' }, { t: 'Product records with revisions and bills of materials', st: 'planned' }],
+  },
+  {
+    t: 'Procurement', st: 'planned',
+    x: 'Designed for supplier profiles, purchase requisitions with approval, requests for quotation, purchase orders with receiving, and supplier performance.',
+    items: [{ t: 'Suppliers, purchase orders and bills in Finance, today', st: 'live' }, { t: 'Requisitions, quotations and receiving', st: 'planned' }],
+  },
+  { t: 'Inventory and warehouse', st: 'planned', x: 'Designed for stock on hand by product, location and lot, stock movements, goods receipts, transfers, counts and valuation. Not available today.' },
+  { t: 'Manufacturing', st: 'planned', x: 'Designed for work orders with operations and materials, a planning board by work centre, and a shop-floor screen for quantities and scrap. Not available today.' },
+  { t: 'Quality', st: 'planned', x: 'Designed for inspection plans and checklists, inspections, nonconformance reports and corrective actions. Not available today.' },
+  { t: 'Supply chain', st: 'planned', x: 'Designed for sales orders from accepted quotes or won deals, deliveries with picking and packing, carriers, shipments and returns. Not available today.' },
   { t: 'Maintenance (asset management)', st: 'in-development', x: 'A maintenance management system (CMMS) inside the ERP, with its own module in the rail, called Maintenance. Its first stage is being built now and is not switched on yet; the rest is planned.', items: [...MAINT_BUILDING.map((t) => ({ t, st: 'in-development' as const })), ...MAINT_PLANNED.map((t) => ({ t, st: 'planned' as const }))] },
-  { t: 'Reports', st: 'live', x: `Sales and CRM reports (${CRM.reports.length} of them), Finance and Accounting reports (${FINANCE.reports.length}, including the GST and BAS worksheet) and Projects and Tasks dashboards, gathered on one page. Each opens in its module, with that module's permissions.`, today: 'Company performance and operational reports across modules are planned.' },
-  { t: 'CRM and Finance connections', st: 'connected', x: "When the company runs both: a CRM deal starts a draft quote in Finance; a won deal becomes a draft invoice; a CRM company is linked to its Finance customer, so its open invoices show in the CRM to people whose Finance role sees sales. Links never copy money: figures are read from Finance when asked." },
+  {
+    t: 'Reports', st: 'live',
+    x: `Sales and CRM reports (${CRM.reports.length} of them), Finance and Accounting reports (${FINANCE.reports.length}, including the GST and BAS worksheet) and Projects and Tasks dashboards, gathered on one page. Each opens in its module, with that module's permissions.`,
+    items: [{ t: "Every tool's reports in one place", st: 'live' }, { t: 'Company performance and operational reports across modules', st: 'planned' }],
+  },
+  {
+    t: 'CRM and Finance connections', st: 'connected',
+    x: 'These work when the company runs both tools. Links never copy money: figures are read from Finance when asked.',
+    items: [{ t: 'A CRM deal starts a draft quote in Finance', st: 'connected' }, { t: 'A won deal becomes a draft invoice', st: 'connected' }, { t: 'A CRM company is linked to its Finance customer, with its open invoices shown in the CRM', st: 'connected' }],
+  },
 ];
 
 // Working and planned modules, one row each.
@@ -123,6 +150,7 @@ const modules: { m: string; st: FeatureStatus; today: string }[] = [
   { m: 'Projects and Tasks', st: 'live', today: `Boards, ${WORK.views.length} views, documents, dashboards and automations.` },
   { m: 'Products and Engineering: CAD set-up', st: 'live', today: 'The set-up steps, with links into CAD Automation.' },
   { m: "Products and Engineering: the company's computers", st: 'in-development', today: 'Shown once CAD Automation reports to the ERP. Until then the page says so and links to CAD Automation.' },
+  { m: 'CAD Automation: sign in with your BIZOMAT account', st: 'in-development', today: 'CAD Automation keeps its own sign-in for now.' },
   { m: 'Reports', st: 'live', today: "Every tool's reports in one place." },
   { m: 'Administration', st: 'live', today: 'Company, people, departments, tool roles and settings.' },
   { m: 'Links between tools', st: 'connected', today: 'Deal to quote and draft invoice, deal to project, project costs, and a CRM company as a Finance customer.' },
@@ -226,7 +254,7 @@ const schema = [
         <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
         <p class="bz-eyebrow">{erp.name} · {erp.kind}<span class="pp-hero__formerly">Formerly {erp.formerly}</span></p>
         <h1 id="erp-title">One workspace for your company</h1>
-        <p class="pp-hero__lead">{erp.line} Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
+        <p class="pp-hero__lead">Sales, finance, projects, engineering and administration, by company. Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-access">{access.label}</Button>
           <Button href={GUIDE} variant="secondary" data-cta="erp-guide">Read the user guide</Button>
@@ -234,14 +262,7 @@ const schema = [
         <p class="pp-hero__note">{access.note}</p>
         <p class="pp-hero__note">{erp.statusNote}</p>
       </div>
-      {dashboardShot ? (
-        <figure class="pp-shot">
-          <img src={dashboardShot.src} alt={`${dashboardShot.title}. ${dashboardShot.caption}`} width="1440" height="900" decoding="async" />
-          <figcaption><span>{dashboardShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
-        </figure>
-      ) : (
-        <SystemsMap id="erp-hero-map" />
-      )}
+      <SystemsMap id="erp-hero-map" />
     </Container>
   </section>
 
@@ -281,7 +302,7 @@ const schema = [
         <h2 id="problems-title">What changes when the tools work as one</h2>
       </div>
       <ul class="pp-cards" role="list">
-        {problems.map((p) => <li class="pp-card"><h3>{p.p}</h3><p>{p.a}</p></li>)}
+        {problems.map((p) => <li class="pp-card"><StatusLabel status={p.st} /><h3 class="sys-card-title">{p.p}</h3><p>{p.a}</p></li>)}
       </ul>
     </Container>
   </section>
@@ -291,7 +312,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">Enterprise overview</p>
         <h2 id="enterprise-title">How each department connects</h2>
-        <p>Each team works in its own module, and the company's departments appear in every tool. What works today is labelled Live or Connected; what is planned is labelled Planned.</p>
+        <p>Each team works in its own module, and the company's departments appear in every tool. What works today is labelled Live or Connected, what is being built In development, and what is designed but not built Planned.</p>
       </div>
       <div class="sys-table-wrap">
         <table class="sys-table">
@@ -365,25 +386,38 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">By business area</p>
         <h2 id="capabilities-title">Enterprise capability matrix</h2>
-        {domains.length > 0 && <p>Each business area, its features and their status, with the system that serves each one today.</p>}
+        <p>Every business area an ERP covers, each feature with its status, and the BIZOMAT system that serves it. An area with no BIZOMAT system yet shows every feature as Planned.</p>
       </div>
       {domains.length > 0 ? (
-        <div class="sys-matrix">
-          {domains.map((d) => (
-            <section class="sys-matrix__domain" aria-labelledby={`cap-${d.id}`}>
-              <h3 id={`cap-${d.id}`}>{d.name}</h3>
-              <p class="sys-body">{d.summary}</p>
-              <div class="sys-table-wrap">
-                <table class="sys-table">
-                  <thead><tr><th scope="col">Feature</th><th scope="col">Status</th><th scope="col">Served by</th></tr></thead>
-                  <tbody>
-                    {d.features.map((f) => <tr class:list={[{ 'is-planned': f.status === 'planned' }]}><th scope="row">{f.name}</th><td><StatusLabel status={f.status} /></td><td>{f.servedBy ?? 'Not available yet'}</td></tr>)}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          ))}
-        </div>
+        <>
+          <p class="sys-body">{domains.length} business areas and {domains.reduce((n, d) => n + d.features.length, 0)} features: {countLine(totals)}. Open an area to see each feature, its status and what it means today.</p>
+          <div class="sys-matrix">
+            {domains.map((d) => {
+              const c = capabilityCounts(d.features);
+              return (
+                <details class="sys-matrix__domain" id={`cap-${d.id}`}>
+                  <summary>
+                    <span class="sys-matrix__name">{d.name}</span>
+                    <span class="sys-matrix__counts">{countLine(c)}</span>
+                  </summary>
+                  <div class="sys-matrix__body">
+                    <p class="sys-body">{d.summary}</p>
+                    <p class="sys-note">Served by: {d.servedBy}</p>
+                    <div class="sys-table-wrap">
+                      <table class="sys-table">
+                        <caption>{d.name}: features and their status</caption>
+                        <thead><tr><th scope="col">Feature</th><th scope="col">Status</th><th scope="col">Today</th></tr></thead>
+                        <tbody>
+                          {d.features.map((f) => <tr class:list={[{ 'is-planned': f.status === 'planned' }]}><th scope="row">{f.name}</th><td><StatusLabel status={f.status} /></td><td>{f.note ?? FEATURE_STATUS[f.status].meaning}</td></tr>)}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </details>
+              );
+            })}
+          </div>
+        </>
       ) : (
         <p class="sys-body">The full matrix of capabilities by business area is being prepared. Until it is published here, the <a href="#status">module table</a> above lists every module and its status.</p>
       )}

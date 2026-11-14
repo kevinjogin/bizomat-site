@@ -319,7 +319,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     ],
     manages: 'Procurement, inventory, production, quality, maintenance and supply chain',
     opens: 'Not available. A design preview with demonstration data only.',
-    signIn: 'Nobody yet: it is not built',
+    signIn: 'Nobody yet: not available',
   },
 };
 
@@ -424,7 +424,7 @@ const schema = [
           </div>
         </div>
 
-        <div class="sys-entry__intro">
+        <div class:list={['sys-entry__intro', { 'sys-entry__intro--single': !d.shot && s.status !== 'planned' }]}>
           <div>
             <p class="sys-lead">{d.description}</p>
             <h3>Who it is for</h3>
@@ -478,7 +478,7 @@ const schema = [
           <Button href={s.url} variant="secondary" data-cta={`systems-${s.id}-about`}>About {s.name}</Button>
           {guide && <Button href={guide} variant="text" data-cta={`systems-${s.id}-guide`}>User guide</Button>}
           {!s.access && <Button href={PREVIEW} variant="text" rel="noopener" data-cta={`systems-${s.id}-preview`}>Design preview, demonstration data</Button>}
-          {s.access ? <p class="sys-actions__note">{s.access.note}</p> : <p class="sys-actions__note">Planned: there is no application to open yet.</p>}
+          {s.access ? <p class="sys-actions__note">{s.access.note}</p> : <p class="sys-actions__note">Not available yet: there is no application to open.</p>}
         </div>
       </Container>
     </section>
