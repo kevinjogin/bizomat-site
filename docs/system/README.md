@@ -82,6 +82,44 @@ logged-in users and organisations."
   - `test-node/server.test.ts`;
   - the smoke test and the deploy's public checks (`/system/<tool>/login` 200, a page at `/crm/login` 302).
 
+## Example company (owner, 14 Nov 2026)
+
+Owner's request: "add example site (Acme) to all users so they can learn and ensure its demo site only for accounts".
+
+- **What:** every account gets its own company of invented data, "Acme Studio (example)". It has:
+  - a Projects and Tasks workspace: two example projects, a dashboard, a brief and favourites;
+  - a Sales and CRM organisation: three companies, contacts, deals, two leads and two activities;
+  - a Finance business workspace: an opening balance, four transactions, a customer and a draft quote;
+  - Maintenance: a seven-asset hierarchy, three requests and two work orders.
+
+  Every name is invented, and every address is on example.com. No other accounts are made.
+- **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.3 s on Node,
+  and the dashboard never waits for it.
+  - Once removed, it is never made again automatically. Administration offers "Add the example company again"
+    (`{ again: true }`).
+  - Concurrent requests make one company.
+  - A build that stopped is retried after five minutes.
+- **How it is made:** through the app's own API (`src/worker/system/example.ts`). A personal API token exists for the
+  build only and is deleted in a `finally` block. Every record therefore goes through the same checks, ledger,
+  numbering, search and audit as a person's own.
+- **Where it shows:**
+  - Its tools are grouped under a company of kind `demo` (`sys_demo`, migration `0019_example_company.sql`, additive),
+    never under the person's own company.
+  - It is listed last, and the dashboard opens on a real company first.
+  - Its pages carry an "Example company" banner.
+  - Maintenance gives its owner the administrator role, with nobody else in it.
+- **Private and quiet:**
+  - Only its owner sees it: another account gets 404 for the company, its maintenance and its tools.
+  - Invitations into its tools answer 409 (`EXAMPLE_COMPANY`), and its tools cannot join a registered company.
+  - Its notifications stay in the app, with no email from Projects, CRM or Finance.
+  - Its Finance documents are not emailed (409).
+- **Remove:** `POST /api/system/demo/remove`, from Administration. It soft-deletes its workspace, CRM organisation and
+  Finance workspace, as a person's delete does. It also erases its `mt_*` records and maintenance files.
+- **Console:** the super admin console counts example companies apart ("Example companies"), and its tool totals
+  exclude them.
+- **Tests:** `apps/work/test/example-company.test.ts` (workerd) and `apps/work/test-node/example-company.test.ts` (Node,
+  real HTTP).
+
 ## Companies
 
 - **Registered companies.** These are the companies from Company accounts (`co_companies`). Each person keeps their
