@@ -94,3 +94,33 @@ and uses the same accounts, session, database, file store and Machine. There is 
   - a supervisor making a work order from a request awaiting approval approves it;
   - cancelling a work order leaves its requests at "Work order made", for a supervisor to close;
   - a work order's status does not change the asset's operating status.
+
+## Upgrade rehearsal (14 Nov 2026)
+
+Before release, the upgrade from production (`origin/main`, which runs migrations 0001 to 0016) to this release was
+rehearsed on a local copy, with invented data made through production's own API. It was never run against the
+production volume.
+- **The data:**
+  - every tool: Projects with a file, CRM, Finance;
+  - a registered company running the existing Projects workspace, with two members and two departments;
+  - sessions made by production (cookies for `/tasks`, `/crm`, `/finance`, `/company` and `/system` only);
+  - one account that already had its own company, and one disabled account.
+- **Upgrade:**
+  - The copy of the database was written to `pre-migration-backups/` first, then 0017 and 0018 applied.
+  - No table was removed, and every existing table except two was byte for byte unchanged.
+  - `d1_migrations` gained two rows.
+  - `sys_companies` gained one own company for each active account that had none. The existing one was kept, and the
+    disabled account got none.
+  - The twelve `mt_*` tables were added, empty.
+  - The integrity and foreign key checks were clean.
+- **After the upgrade** (24 checks in a browser, all passed):
+  - Production's sessions followed every old address into `/erp`, signed in, and gained the `/erp` cookie.
+  - A file from before the upgrade downloaded unchanged.
+  - The existing company, its departments and its members appeared in Maintenance with their default roles.
+  - A member raised a request, which became a work order with a running timer.
+  - Someone who only shares a tool with the company got 404.
+- **Rollback:** production's build started on the upgraded database, maintenance records included. Its sessions,
+  every tool's API, the earlier file and sign-in all worked. Upgrading again applied nothing and kept the
+  maintenance records.
+- **Deploy check:** `bizomat-deploy.yml` now also checks that the maintenance API refuses calls without a session. Today
+  production answers 404 there; after this release, 401.
