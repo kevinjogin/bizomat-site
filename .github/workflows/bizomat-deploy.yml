@@ -156,6 +156,7 @@ jobs:
           wait_for "BIZOMAT CRM answers (/crm/login: 200)" '[ "$(code https://bizomat.ai/crm/login)" = 200 ]' || fail=1
           wait_for "BIZOMAT Finance answers (/finance/login: 200)" '[ "$(code https://bizomat.ai/finance/login)" = 200 ]' || fail=1
           wait_for "BIZOMAT company accounts answer (/company/login: 200)" '[ "$(code https://bizomat.ai/company/login)" = 200 ]' || fail=1
+          wait_for "BIZOMAT System answers (/system/login: 200)" '[ "$(code https://bizomat.ai/system/login)" = 200 ]' || fail=1
           wait_for "the BIZOMAT System preview answers (/system-preview/: 200)" '[ "$(code https://bizomat.ai/system-preview/)" = 200 ]' || fail=1
           echo "info: bizomat.ai/login -> $(code https://bizomat.ai/login) (301 expected); bizomat.fly.dev/ -> $(code https://bizomat.fly.dev/) (301 expected)" | tee -a "$GITHUB_STEP_SUMMARY"
           exit "$fail"

@@ -400,7 +400,7 @@ describe('the /company address', () => {
     const res = await raw('POST', '/company/api/auth/signup', { body: { email, name: 'Co Mount', password: PASSWORD } });
     expect(res.status).toBe(201);
     const cookies = res.headers.getSetCookie().filter((c) => c.startsWith('workos_sid='));
-    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/company', '/tasks', '/crm', '/finance']);
+    expect(cookies.map((c) => /;\s*path=([^;]+)/i.exec(c)?.[1])).toEqual(['/company', '/tasks', '/crm', '/finance', '/system']);
     const cookie = cookies[0].split(';')[0];
     const csrf = ((await res.json()) as any).csrfToken;
     expect((await raw('GET', '/company/api/company/mine', { cookie, csrf })).status).toBe(200);

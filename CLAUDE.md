@@ -27,8 +27,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   unless `ABR_GUID` is set and the lookup ran, or a phone number "verified" (no SMS provider).
   **BIZOMAT System** (owner, 14 Nov 2026; called ERP in the earlier plans and in `docs/erp/`): the one system that
   brings every tool and the planned operations modules under one shell, CAD Automation included as its own section
-  (the same MCP connector, installer, add-in and Companion). Today it is a design preview with demonstration data at
-  `bizomat.ai/system-preview/`; nothing of it is built: never present it as working.
+  (the same MCP connector, installer, add-in and Companion). **Live at `bizomat.ai/system`** (owner, 14 Nov 2026;
+  `docs/system/README.md`), served by the Project Management app with the same accounts and session: every person's
+  tools grouped by company (registered companies, plus an own company per person, not registered, for the tools they
+  own outside one; tools are worked out, never copied; a tool shared with someone shows under its company as "Shared
+  with you"), CAD Automation's setup and company-scoped computers (owner and administrators see the company's, members
+  their own, other companies nothing), and the super admin console `/system/admin` (users, companies, activity across
+  the tools). CAD computers appear only once CAD Automation reports (`/company/api/id/cad-status`, client `cad`); until
+  then the page says so: never present them as live before. The planned operations modules are not built: the design
+  preview with demonstration data stays at `bizomat.ai/system-preview/`; never present those modules as working.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
@@ -175,9 +182,10 @@ Check the public site, not just the build: `/`, `/cad-automation/`, `/work/`, `/
 `/finance-platform/`, `/finance-platform/guide/`, `/resources/`, `/tools/`, `/reados/`,
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
 `/system-preview/` (the BIZOMAT System preview, demonstration data, out of search; `/erp-design-preview/` answers 301
-there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), and every new chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
+there; owner, 14 Nov 2026; `docs/erp/ux/08-prototype-guide.md`), `/system/` (BIZOMAT System, signed in), and every new
+chapter URL. Confirm the BIZOMAT wordmark and favicon, the navigation **CAD Automation, Project Management,
 Customer Relationship Management** ("CRM" where the header row is narrow), **Finance, Resources, Engine Room** with **AI Search**
 and **Sign in**, that a new visit opens in the computer's system theme, and that AI
-search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/` and `/company/` on bizomat.ai, and their old hosts),
+search answers. For the apps (`/cad/`, `/tasks/`, `/crm/`, `/finance/`, `/company/` and `/system/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
 public URL has been checked.

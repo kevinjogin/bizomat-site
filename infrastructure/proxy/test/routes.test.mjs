@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  CAD_PATHS, COMPANY_PATHS, CRM_PATHS, FINANCE_PATHS, HOSTS, TASKS_PATHS, decide, isPreviewHost, isProductionHost, lowercaseLocation, normalizeHost, platformUpstream,
+  CAD_PATHS, COMPANY_PATHS, CRM_PATHS, FINANCE_PATHS, HOSTS, SYSTEM_PATHS, TASKS_PATHS, decide, isPreviewHost, isProductionHost, lowercaseLocation, normalizeHost, platformUpstream,
   previewCookieHeader, previewNext, routingPath, splitTarget,
 } from '../routes.mjs';
 
@@ -22,9 +22,10 @@ const TASKS = ['/tasks', '/tasks/', '/tasks/login', '/tasks/b/7', '/tasks/api/he
 const CRM = ['/crm', '/crm/', '/crm/login', '/crm/o/abc/deals', '/crm/api/crm/orgs', '/crm/join/t0k3n', '/crm/assets/index-a1.js'];
 const FINANCE = ['/finance', '/finance/', '/finance/login', '/finance/o/abc/transactions', '/finance/api/fin/orgs', '/finance/api/fin-public/invitations/t0k3n', '/finance/join/t0k3n', '/finance/assets/index-a1.js'];
 const COMPANY = ['/company', '/company/', '/company/login', '/company/c/abc/people', '/company/api/company/mine', '/company/api/company-public/invitations/t0k3n', '/company/api/id/token', '/company/join/t0k3n', '/company/authorize', '/company/assets/index-a1.js'];
+const SYSTEM = ['/system', '/system/', '/system/login', '/system/admin', '/system/api/system/me', '/system/assets/index-a1.js'];
 const WEBSITE = [
   '/', '/cad-automation/', '/work/', '/tools/', '/reados/', '/engine-room/', '/cadx', '/cad.html', '/cadence', '/mcpx', '/oauthx',
-  '/oauth', '/tasksfoo', '/tasks.html', '/crmx', '/crm.html', '/financex', '/finance.html', '/companyx', '/company.html', '/finance-platform/', '/finance-platform/guide/', '/.well-known/security.txt', '/healthz/', '/v2', '/api/contact', '/api/discover',
+  '/oauth', '/tasksfoo', '/tasks.html', '/crmx', '/crm.html', '/financex', '/finance.html', '/companyx', '/company.html', '/systemx', '/system.html', '/system-preview/', '/system-preview/assets/index-a1.js', '/erp-design-preview/', '/finance-platform/', '/finance-platform/guide/', '/.well-known/security.txt', '/healthz/', '/v2', '/api/contact', '/api/discover',
   '/insights/x/', '/__proxy/health', '/cad%2Fdocs', '/%63ad/', '//cad/docs',
 ];
 
@@ -105,6 +106,26 @@ test('bizomat.ai: /company and /company/... (BIZOMAT company accounts) go to wor
   assert.equal(decide({ host: 'bizomat.ai', method: 'GET', path: '/company/c/1', query: '', tasksOrigin: 'https://work.kevos.com' }).upstream, 'work');
   const worker = readFileSync(new URL('../../../src/worker.ts', import.meta.url), 'utf8');
   assert.match(worker, /\/\^\\\/company\(\?:\\\/\|\$\)\/\.test\(url\.pathname\)/, 'the Worker sends /company and /company/... to the same app');
+});
+
+test('bizomat.ai: /system and /system/... (BIZOMAT System) go to work, the app that serves it; /system-preview/ stays the website\'s', () => {
+  assert.equal(SYSTEM_PATHS.toString(), '/^\\/system(?:\\/|$)/');
+  for (const path of SYSTEM) {
+    for (const method of ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']) {
+      const d = decide({ host: 'bizomat.ai', method, path });
+      assert.deepEqual(d, { host: 'bizomat.ai', production: true, action: 'proxy', upstream: 'work', preview: false }, `${method} ${path}`);
+    }
+  }
+  assert.equal(get('bizomat.ai', '/System/admin', 'x=1').location, '/system/admin?x=1');
+  assert.equal(get('bizomat.ai', '/SYSTEM', '').location, '/system');
+  // the design preview is a static page of the website, in any case: no lowercase redirect, no app
+  for (const path of ['/system-preview/', '/System-Preview/', '/erp-design-preview/']) {
+    assert.equal(lowercaseLocation(path, '', 'GET'), '', path);
+    assert.equal(platformUpstream(path), 'web', path);
+  }
+  assert.equal(decide({ host: 'bizomat.ai', method: 'GET', path: '/system/admin', query: '', tasksOrigin: 'https://work.kevos.com' }).upstream, 'work');
+  const worker = readFileSync(new URL('../../../src/worker.ts', import.meta.url), 'utf8');
+  assert.match(worker, /\/\^\\\/system\(\?:\\\/\|\$\)\/\.test\(url\.pathname\)/, 'the Worker sends /system and /system/... to the same app');
 });
 
 test('bizomat.ai: /finance and /finance/... (BIZOMAT Finance) go to work, the app that serves it with Project Management', () => {

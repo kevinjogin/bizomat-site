@@ -2,7 +2,9 @@
 
 **Name (owner, 14 Nov 2026):** the planned ERP is now called **BIZOMAT System**, to feel like one complete system rather
 than a module set. These documents keep "ERP" as their working name for the planned modules and their tables
-(`erp_*`); the preview and everything people see say BIZOMAT System. The real application will be at `/system`.
+(`erp_*`); the preview and everything people see say BIZOMAT System. The real application is live at `/system`
+(14 Nov 2026, `docs/system/README.md`): every tool by company, CAD Automation and the super admin console. The
+operations modules planned here are not built yet.
 CAD Automation is part of the System as its own section (Overview, Set up, Computers, AI connectors, Jobs): it stays an
 MCP connector with the same installer, add-in and Companion, and the System shows its setup and status beside the rest.
 
