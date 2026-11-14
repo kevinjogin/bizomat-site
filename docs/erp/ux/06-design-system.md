@@ -4,7 +4,7 @@ Status: design for review. The ERP uses the design system that BIZOMAT Project M
 Management (CRM) and Finance already share. Nothing here is new branding: the tokens come from
 `shared/brand/` (copied into `apps/work/src/client/styles/bizomat-tokens.css`), the components from
 `apps/work/src/client/styles/app.css`. The prototype adds its own layout classes in
-`apps/work/src/client/erp-prototype/erp.css` (all start with `erp-`), and changes no existing file.
+`apps/work/src/client/system-prototype/erp.css` (all start with `erp-`), and changes no existing file.
 
 Rules that never change (CLAUDE.md): navy `#0a1f33`, teal `#0f766e`, mark `#14b8a6`; Oxanium headings, Inter Tight
 body; no third-party fonts, scripts or trackers; no inline `style=""` in the real app (the CSP forbids it; the
@@ -99,7 +99,7 @@ The dashboard grid has four tracks; widget sizes span 1, 2, 3 or 4 of them. This
 ## 2. Components
 
 Each component lists its states and what implements it. "app.css" classes and `components/ui/*` components exist in
-the working applications; "erp.css" classes and `erp-prototype/*` files are the prototype's.
+the working applications; "erp.css" classes and `system-prototype/*` files are the prototype's.
 
 ### 2.1 Buttons
 
