@@ -170,32 +170,36 @@ describe('the /finance address', () => {
     const cookie = cookies[0].split(';')[0];
     const csrf = ((await res.json()) as any).csrfToken;
     expect((await raw('POST', '/finance/api/fin/orgs', { body: { name: 'Mounted books', kind: 'personal' }, cookie, csrf })).status).toBe(201);
-    const page = await raw('GET', '/finance/o/x/dashboard', { cookie, headers: { Accept: 'text/html' } });
+    // One system: Finance's pages open inside BIZOMAT System, at /system/finance.
+    const old = await raw('GET', '/finance/o/x/dashboard', { cookie, headers: { Accept: 'text/html' } });
+    expect(old.headers.get('Location')).toBe('/system/finance/o/x/dashboard');
+    const page = await raw('GET', '/system/finance/o/x/dashboard', { cookie, headers: { Accept: 'text/html' } });
     expect(page.status).toBe(200);
     const html = await page.text();
-    expect(html).toContain('<base href="/finance/">');
-    expect(html).toContain('<title>BIZOMAT Finance</title>');
+    expect(html).toContain('<base href="/system/finance/">');
+    expect(html).toContain('<title>BIZOMAT System</title>');
     // Without a cookie: through /tasks, where a Project Management session carries over.
-    const anon = await raw('GET', '/finance/o/abc/transactions?q=rent', { headers: { Accept: 'text/html' } });
+    const anon = await raw('GET', '/system/finance/o/abc/transactions?q=rent', { headers: { Accept: 'text/html' } });
     expect(anon.status).toBe(302);
     const carry = anon.headers.get('Location')!;
-    expect(carry).toBe(`/tasks/api/app-carry?to=${encodeURIComponent('/finance/o/abc/transactions?q=rent')}`);
+    expect(carry).toBe(`/tasks/api/app-carry?to=${encodeURIComponent('/system/finance/o/abc/transactions?q=rent')}`);
     const pm = await raw('POST', '/tasks/api/auth/signup', { body: { email: uniqueEmail('fincarry'), name: 'Fin Carry', password: PASSWORD } });
     const tasksCookie = pm.headers.getSetCookie().find((c) => /path=\/tasks/i.test(c))!.split(';')[0];
     const carried = await raw('GET', carry, { cookie: tasksCookie });
-    expect(carried.headers.get('Location')).toBe('/finance/o/abc/transactions?q=rent');
+    expect(carried.headers.get('Location')).toBe('/system/finance/o/abc/transactions?q=rent');
     const set = carried.headers.getSetCookie();
-    expect(set.some((c) => c.startsWith('workos_sid=') && /path=\/finance(;|$)/i.test(c))).toBe(true);
-    expect(set.some((c) => c.startsWith('fin_carry=1'))).toBe(true);
-    // Not signed in: Finance's sign-in page; the marker stops a loop; the carry only ever leads into Finance.
-    expect((await raw('GET', carry)).headers.get('Location')).toBe(`/finance/login?next=${encodeURIComponent('/o/abc/transactions?q=rent')}`);
-    const again = await raw('GET', '/finance/o/abc', { headers: { Accept: 'text/html', Cookie: 'fin_carry=1' } });
-    expect(again.headers.get('Location')).toBe(`/finance/login?next=${encodeURIComponent('/o/abc')}`);
+    expect(set.some((c) => c.startsWith('workos_sid=') && /path=\/system(;|$)/i.test(c))).toBe(true);
+    expect(set.some((c) => c.startsWith('sys_carry=1'))).toBe(true);
+    // Not signed in: the System's sign-in page; the marker stops a loop; the carry never leads off this site.
+    expect((await raw('GET', carry)).headers.get('Location')).toBe(`/system/login?next=${encodeURIComponent('/finance/o/abc/transactions?q=rent')}`);
+    const again = await raw('GET', '/system/finance/o/abc', { headers: { Accept: 'text/html', Cookie: 'sys_carry=1' } });
+    expect(again.headers.get('Location')).toBe(`/system/finance/login?next=${encodeURIComponent('/o/abc')}`);
     for (const to of ['//evil.example.com/x', 'https://evil.example.com/finance/', '/finance\\evil']) {
       const loc = (await raw('GET', `/tasks/api/app-carry?to=${encodeURIComponent(to)}`, { cookie: tasksCookie })).headers.get('Location')!;
       expect(loc.startsWith('/') && !loc.startsWith('//') && !loc.includes('evil.example')).toBe(true);
     }
-    // The invitation page is public under /finance.
-    expect((await raw('GET', '/finance/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
+    // The invitation page is public inside the System; a customer's online document stays at its own address.
+    expect((await raw('GET', '/system/finance/join/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
+    expect((await raw('GET', '/finance/view/abcdefghijklmnopqrstuvwxyz', { headers: { Accept: 'text/html' } })).status).toBe(200);
   });
 });

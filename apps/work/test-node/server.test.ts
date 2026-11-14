@@ -279,18 +279,26 @@ describe('Node server: under /tasks, as the platform proxy sends bizomat.ai/task
   });
 
   it('starts each page with <base href> for its path, and serves the files under it', async () => {
-    for (const [path, base] of [['/tasks/login', '/tasks/'], ['/tasks/', '/tasks/'], ['/login', '/']]) {
+    // One system: Project Management's pages open inside BIZOMAT System (/tasks/... answers 302 to /system/tasks/...).
+    // Signed out, /system/tasks/ ends on the System's sign-in page (through the session carry).
+    for (const [path, base] of [['/system/tasks/login', '/system/tasks/'], ['/system/tasks/', '/system/'], ['/system/login', '/system/'], ['/login', '/']]) {
       const res = await fetch(`${app.url}${path}`, { headers: { Accept: 'text/html', 'Accept-Encoding': 'br, gzip' } });
       expect(res.status, path).toBe(200);
       expect(res.headers.get('content-encoding'), path).toBeNull();
-      expect(await res.text(), path).toBe(page.replace('<head>', `<head><base href="${base}">`));
+      const html = page.replace('<head>', `<head><base href="${base}">`);
+      // Inside the System the page carries its title.
+      expect(await res.text(), path).toBe(base.startsWith('/system/') ? html.replace('<title>Work</title>', '<title>BIZOMAT System</title>') : html);
     }
     const js = await fetch(`${app.url}/tasks/assets/app-abc.js`, { headers: { 'Accept-Encoding': 'br' } });
     expect(js.status).toBe(200);
     expect(js.headers.get('content-encoding')).toBe('br');
-    const away = await fetch(`${app.url}/tasks/w/abc/home`, { headers: { Accept: 'text/html' }, redirect: 'manual' });
+    expect((await fetch(`${app.url}/system/tasks/assets/app-abc.js`)).status).toBe(200);
+    const inside = await fetch(`${app.url}/tasks/w/abc/home`, { headers: { Accept: 'text/html' }, redirect: 'manual' });
+    expect(inside.status).toBe(302);
+    expect(inside.headers.get('location')).toBe('/system/tasks/w/abc/home');
+    const away = await fetch(`${app.url}/system/tasks/w/abc/home`, { headers: { Accept: 'text/html', Cookie: 'sys_carry=1' }, redirect: 'manual' });
     expect(away.status).toBe(302);
-    expect(away.headers.get('location')).toBe(`/tasks/login?next=${encodeURIComponent('/w/abc/home')}`);
+    expect(away.headers.get('location')).toBe(`/system/tasks/login?next=${encodeURIComponent('/w/abc/home')}`);
   });
 
   it('scopes the session to /tasks and upgrades the live board socket there', async () => {

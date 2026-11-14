@@ -4,7 +4,7 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, errorMessage, get, post } from '../lib/api';
-import { appUrl } from '../lib/base';
+import { appUrl, toolUrl } from '../lib/base';
 import { useSession } from '../lib/session';
 import { applyTheme, storedTheme, usePageTitle, type ThemePref } from '../lib/hooks';
 import { timeAgo } from '../lib/format';
@@ -19,6 +19,7 @@ import { FIN_ROLE_LABELS, WORKSPACE_KIND_LABELS, type FinPerms, type WorkspaceKi
 import { fin, lastOrg, rememberOrg, useFinOrg, useFinOrgs, type FinNotificationDTO, type FinOrgDTO } from './lib';
 import '../styles/crm.css';
 import '../styles/fin.css';
+import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
 const Dashboard = lazy(() => import('./Dashboard').then((m) => ({ default: m.Dashboard })));
 const Transactions = lazy(() => import('./Transactions').then((m) => ({ default: m.Transactions })));
@@ -191,7 +192,8 @@ function FinShell({ children }: { children: ReactNode }) {
   const base = `/o/${org.id}`;
   useEffect(() => setNavOpen(false), [location.pathname]);
   return (
-    <div className={`shell crm-shell fin-shell${navOpen ? ' nav-open' : ''}`}>
+    <div className={`shell crm-shell fin-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
+      <SuiteRail />
       <header className="topbar">
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" aria-expanded={navOpen} onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />
@@ -367,7 +369,7 @@ function Profile() {
           </div>
           <MenuSep />
           <MenuItem icon="bell" onClick={() => { close(); navigate(`/o/${org.id}/settings/notifications`); }}>Notification settings</MenuItem>
-          <MenuItem icon="user" onClick={() => { close(); window.location.href = '/tasks/settings/profile'; }}>Profile and security</MenuItem>
+          <MenuItem icon="user" onClick={() => { close(); window.location.href = toolUrl('/tasks/settings/profile'); }}>Profile and security</MenuItem>
           {session?.platformRole ? <MenuItem icon="chart" onClick={() => { close(); navigate('/admin'); }}>Super admin console</MenuItem> : null}
           <MenuSep />
           <MenuItem icon="logout" onClick={async () => {
@@ -420,7 +422,8 @@ function Start() {
   };
   const months = Array.from({ length: 12 }, (_, i) => new Date(2026, i, 1).toLocaleDateString('en-AU', { month: 'long' }));
   return (
-    <div className="crm-start">
+    <div className={`crm-start${SUITE_SHELL ? ' in-suite' : ''}`}>
+      <SuiteRail />
       <header className="row crm-start-head">
         <ProductLockup height={18} />
         <span className="grow" />

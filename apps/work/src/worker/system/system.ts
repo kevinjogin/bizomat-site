@@ -46,10 +46,11 @@ export interface SysCompany {
   tools: SysTool[];
 }
 
+// Every tool opens inside the System (src/worker/mount.ts, one system).
 const TOOL_URL: Record<SysApp, (id: string) => string> = {
-  tasks: (id) => `/tasks/w/${id}/home`,
-  crm: (id) => `/crm/o/${id}/overview`,
-  finance: (id) => `/finance/o/${id}/dashboard`,
+  tasks: (id) => `/system/tasks/w/${id}/home`,
+  crm: (id) => `/system/crm/o/${id}/overview`,
+  finance: (id) => `/system/finance/o/${id}/dashboard`,
 };
 
 const ownName = (u: { name?: string | null; email?: string | null }) => (u.name ?? '').trim().slice(0, 100) || (u.email ?? '').split('@')[0] || 'My company';

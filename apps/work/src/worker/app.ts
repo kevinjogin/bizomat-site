@@ -31,7 +31,7 @@ import { adminRoutes } from './routes/admin';
 import { adminCrmRoutes, adminFinRoutes } from './routes/admin-products';
 import { requirePlatformAdmin, getPlatformRole } from './services/platform-admin';
 import { bumpMetric, recordError } from './services/analytics';
-import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, MOUNT, SYSTEM_MOUNT, withBaseHref } from './mount';
+import { COMPANY_MOUNT, CRM_MOUNT, FIN_MOUNT, MOUNT, SYSTEM_MOUNT, appOf, topOf, withBaseHref } from './mount';
 import { systemRoutes } from './system/routes';
 import { adminSystemRoutes } from './system/admin';
 import { crmPublicRoutes, crmRoutes } from './crm';
@@ -69,7 +69,9 @@ function applySecurityHeaders(headers: Headers, isApi: boolean) {
 export const VERSION = '0.1.0';
 
 /** The short-lived marker cookie of the session carry (below), per application. */
-function carryCookie(mount: string): string {
+function carryCookie(base: string): string {
+  // Inside the System (/system/crm, ...) the marker is the System's own (Path=/system).
+  const mount = topOf(base);
   return mount === FIN_MOUNT ? 'fin_carry' : mount === COMPANY_MOUNT ? 'co_carry' : mount === SYSTEM_MOUNT ? 'sys_carry' : 'crm_carry';
 }
 
@@ -198,8 +200,10 @@ export function createApp() {
   app.get('*', async (c) => {
     const url = new URL(c.req.url);
     const isNavigation = (c.req.header('Accept') ?? '').includes('text/html');
-    const otherApp = c.env.BASE_PATH === CRM_MOUNT || c.env.BASE_PATH === FIN_MOUNT || c.env.BASE_PATH === COMPANY_MOUNT || c.env.BASE_PATH === SYSTEM_MOUNT;
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(c.env.BASE_PATH === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(c.env.BASE_PATH === FIN_MOUNT ? ['/view/'] : [])];
+    // The tool this page is: under the System (/system/crm, ...) the same as at its own address (/crm).
+    const tool = appOf(c.env.BASE_PATH ?? '');
+    const otherApp = !!c.env.BASE_PATH && c.env.BASE_PATH !== MOUNT;
+    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(tool === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(tool === FIN_MOUNT ? ['/view/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));
@@ -229,7 +233,7 @@ export function createApp() {
     const out = new Response(res.body, res);
     if (url.pathname.startsWith('/assets/')) out.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
     // A customer's online document: never indexed, never cached.
-    if (c.env.BASE_PATH === FIN_MOUNT && url.pathname.startsWith('/view/')) out.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    if (tool === FIN_MOUNT && url.pathname.startsWith('/view/')) out.headers.set('X-Robots-Tag', 'noindex, nofollow');
     else if ((out.headers.get('Content-Type') ?? '').includes('text/html')) out.headers.set('Cache-Control', 'no-cache');
     // The client builds its addresses from <base href>: "/" here, "/tasks/" under bizomat.ai (src/worker/mount.ts).
     return withBaseHref(out, c.env.BASE_PATH ?? '');

@@ -512,3 +512,37 @@ tr:hover .name-cell .open-btn { opacity: 1; }
   .folder-more { opacity: 1; }
 }
 .auth-gap { height: 12px; }
+
+/* ------------------------------------------------------------- BIZOMAT System's module rail */
+/* One system (src/client/components/layout/SuiteRail.tsx): inside /system every tool has the rail at its left. */
+:root { --rail-w: 84px; --rail-h: 60px; }
+.shell.in-suite { grid-template-columns: var(--rail-w) var(--sidebar-w) 1fr; }
+.shell.in-suite > .suite-rail { grid-column: 1; grid-row: 1 / -1; }
+.shell.in-suite > .topbar { grid-column: 2 / -1; grid-row: 1; }
+.shell.in-suite > .sidebar { grid-column: 2; grid-row: 2; }
+.shell.in-suite > .main { grid-column: 3; grid-row: 2; }
+.suite-rail { display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 8px 6px 12px; background: var(--bz-inverse-bg); color: var(--bz-inverse-muted); overflow-y: auto; z-index: 60; }
+.suite-home { display: flex; justify-content: center; align-items: center; height: calc(var(--topbar-h) - 12px); margin-bottom: 6px; border-radius: var(--radius-sm); }
+.suite-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border-radius: var(--radius-sm); color: var(--bz-inverse-muted); text-decoration: none; font-size: 11px; font-weight: 600; line-height: 1.2; text-align: center; }
+.suite-item:hover { background: rgb(255 255 255 / 0.08); color: var(--bz-inverse-ink); text-decoration: none; }
+.suite-item.active { background: rgb(45 212 191 / 0.16); color: var(--bz-inverse-ink); box-shadow: inset 3px 0 0 var(--bz-teal-bright); }
+.suite-item.active svg { color: var(--bz-teal-bright); }
+.suite-label { overflow-wrap: anywhere; }
+.suite-home:focus-visible, .suite-item:focus-visible { outline: 2px solid var(--bz-teal-bright); outline-offset: 1px; }
+@media (max-width: 760px) {
+  .shell.in-suite { grid-template-columns: 1fr; }
+  .shell.in-suite > .topbar, .shell.in-suite > .main { grid-column: 1; }
+  .shell.in-suite > .main { padding-bottom: var(--rail-h); }
+  .shell.in-suite .sidebar { bottom: var(--rail-h); }
+  .suite-rail { position: fixed; left: 0; right: 0; bottom: 0; height: var(--rail-h); flex-direction: row; gap: 0; padding: 4px; overflow-x: auto; overflow-y: hidden; z-index: 650; }
+  .suite-home { display: none; }
+  .suite-item { flex: 1 0 64px; padding: 6px 2px; font-size: 10px; }
+  .suite-item.active { box-shadow: inset 0 3px 0 var(--bz-teal-bright); }
+}
+/* The start pages of a tool (no organisation or company chosen yet) have the rail too. */
+.crm-start.in-suite { padding-left: var(--rail-w); }
+.crm-start.in-suite > .suite-rail { position: fixed; top: 0; bottom: 0; left: 0; width: var(--rail-w); }
+@media (max-width: 760px) {
+  .crm-start.in-suite { padding-left: 0; padding-bottom: var(--rail-h); }
+  .crm-start.in-suite > .suite-rail { top: auto; right: 0; width: auto; }
+}

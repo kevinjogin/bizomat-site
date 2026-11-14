@@ -6,7 +6,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ApiError } from '../../lib/api';
 import { Icon, Wordmark } from '../../components/ui/Icon';
 import { pageTitle } from '../../lib/brand';
-import { appUrl } from '../../lib/base';
+import { appUrl, toolUrl } from '../../lib/base';
 import { Avatar, ErrorBox } from '../../components/ui/ui';
 import { useAdmin } from '../api';
 import { PageSkeleton, num } from '../ui';
@@ -27,9 +27,9 @@ export interface ConsoleNav {
 
 /** The three consoles, by product. Paths are absolute on bizomat.ai (each product is its own mount of the app). */
 const CONSOLES = [
-  { key: 'tasks', label: 'Project Management console', href: '/tasks/admin' },
-  { key: 'crm', label: 'CRM super admin', href: '/crm/admin' },
-  { key: 'finance', label: 'Finance super admin', href: '/finance/admin' },
+  { key: 'tasks', label: 'Project Management console', href: toolUrl('/tasks/admin') },
+  { key: 'crm', label: 'CRM super admin', href: toolUrl('/crm/admin') },
+  { key: 'finance', label: 'Finance super admin', href: toolUrl('/finance/admin') },
 ] as const;
 
 export function ConsoleShell({ product, productKey, nav, privacy, children }: { product: string; productKey: 'crm' | 'finance'; nav: ConsoleNav[]; privacy: ReactNode; children: (me: AdminMe) => ReactNode }) {

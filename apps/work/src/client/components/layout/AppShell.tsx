@@ -15,6 +15,7 @@ import { PlatformFooter } from './PlatformLinks';
 import { WorkspaceDot, WorkspaceIdentityDialog } from '../workspace/WorkspaceIdentity';
 import { BRAND, PLATFORM_URLS, platformLinkProps } from '../../lib/brand';
 import { appUrl } from '../../lib/base';
+import { SUITE_SHELL, SuiteRail } from './SuiteRail';
 
 /** What a guest's navigation shows: their own work and what is shared with them. */
 const GUEST_NAV = new Set(['home', 'my-work', 'my-day', 'inbox', 'notifications', 'workspaces', 'boards', 'favourites', 'recent', 'settings/profile']);
@@ -66,7 +67,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className={`shell${navOpen ? ' nav-open' : ''}`}>
+    <div className={`shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
+      <SuiteRail />
       <header className="topbar">
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />

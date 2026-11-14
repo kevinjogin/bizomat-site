@@ -153,10 +153,13 @@ jobs:
           wait_for "its APIs answer (/api/chat with an empty body: 422, no AI call made)" '[ "$(code https://bizomat.ai/api/chat "{}")" = 422 ]' || fail=1
           wait_for "CAD Automation is reached over the private network (/cad/: 200)" '[ "$(code https://bizomat.ai/cad/)" = 200 ]' || fail=1
           wait_for "Project Management answers (/tasks/: 200 or 302)" 'c=$(code https://bizomat.ai/tasks/); [ "$c" = 200 ] || [ "$c" = 302 ]' || fail=1
-          wait_for "BIZOMAT CRM answers (/crm/login: 200)" '[ "$(code https://bizomat.ai/crm/login)" = 200 ]' || fail=1
-          wait_for "BIZOMAT Finance answers (/finance/login: 200)" '[ "$(code https://bizomat.ai/finance/login)" = 200 ]' || fail=1
-          wait_for "BIZOMAT company accounts answer (/company/login: 200)" '[ "$(code https://bizomat.ai/company/login)" = 200 ]' || fail=1
           wait_for "BIZOMAT System answers (/system/login: 200)" '[ "$(code https://bizomat.ai/system/login)" = 200 ]' || fail=1
+          # One system: every tool opens inside the System (/system/<tool>); its own address answers 302 there.
+          wait_for "Project Management inside the System (/system/tasks/login: 200)" '[ "$(code https://bizomat.ai/system/tasks/login)" = 200 ]' || fail=1
+          wait_for "BIZOMAT CRM inside the System (/system/crm/login: 200)" '[ "$(code https://bizomat.ai/system/crm/login)" = 200 ]' || fail=1
+          wait_for "BIZOMAT Finance inside the System (/system/finance/login: 200)" '[ "$(code https://bizomat.ai/system/finance/login)" = 200 ]' || fail=1
+          wait_for "BIZOMAT company accounts inside the System (/system/company/login: 200)" '[ "$(code https://bizomat.ai/system/company/login)" = 200 ]' || fail=1
+          wait_for "the CRM's own address leads into the System (a page at /crm/login: 302)" '[ "$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 -H "Accept: text/html" https://bizomat.ai/crm/login)" = 302 ]' || fail=1
           wait_for "the BIZOMAT System preview answers (/system-preview/: 200)" '[ "$(code https://bizomat.ai/system-preview/)" = 200 ]' || fail=1
           echo "info: bizomat.ai/login -> $(code https://bizomat.ai/login) (301 expected); bizomat.fly.dev/ -> $(code https://bizomat.fly.dev/) (301 expected)" | tee -a "$GITHUB_STEP_SUMMARY"
           exit "$fail"

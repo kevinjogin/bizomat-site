@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { errorMessage, get, post } from '../lib/api';
 import { formatMoney } from '../../shared/crm/money';
 import { useToast } from '../components/ui/overlays';
+import { toolUrl } from '../lib/base';
 
 interface DealLinks {
   company: { id: string; name: string } | null;
@@ -34,7 +35,7 @@ export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: str
       const r = await post<{ url: string }>(`/company/links/crm/${orgId}/deals/${dealId}/${what}`);
       toast(what === 'invoice' ? 'Draft invoice made in Finance' : what === 'quote' ? 'Draft quote made in Finance' : 'Project started in Project Management');
       await q.refetch();
-      if (r.url) window.open(r.url, '_self');
+      if (r.url) window.open(toolUrl(r.url), '_self');
     } catch (e) {
       toast(errorMessage(e), 'error');
     } finally {
@@ -51,7 +52,7 @@ export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: str
             <ul className="crm-mini-list">
               {finance.quotes.map((qt) => (
                 <li key={qt.id}>
-                  <a href={qt.url}>
+                  <a href={toolUrl(qt.url)}>
                     Quote {qt.number}
                     {qt.version > 1 ? ` (version ${qt.version})` : ''}
                   </a>
@@ -70,7 +71,7 @@ export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: str
             </div>
           ) : null}
           {finance.invoice && !('hidden' in finance.invoice && finance.invoice.hidden) ? (
-            <a href={(finance.invoice as { url: string }).url}>
+            <a href={toolUrl((finance.invoice as { url: string }).url)}>
               Invoice {(finance.invoice as { number: string }).number} · {STATUS[(finance.invoice as { status: string }).status] ?? (finance.invoice as { status: string }).status} · {formatMoney((finance.invoice as { total: number }).total, (finance.invoice as { currency: string }).currency)}
             </a>
           ) : finance.invoice ? (
@@ -95,7 +96,7 @@ export function DealCompanyLinks({ orgId, dealId }: { orgId: string; dealId: str
         <div className="stack">
           <strong className="small">Project Management</strong>
           {tasks.project && !('hidden' in tasks.project && tasks.project.hidden) ? (
-            <a href={(tasks.project as { url: string }).url}>Project: {(tasks.project as { name: string }).name}</a>
+            <a href={toolUrl((tasks.project as { url: string }).url)}>Project: {(tasks.project as { name: string }).name}</a>
           ) : tasks.project ? (
             <span className="muted small">This deal has a project.</span>
           ) : tasks.canStart ? (
@@ -125,7 +126,7 @@ export function CustomerCompanyLinks({ orgId, companyId }: { orgId: string; comp
         <span className="muted small">You have no access to {q.data.company.name}’s Finance.</span>
       ) : f.contact ? (
         <>
-          <a href={f.contact.url}>Customer: {f.contact.name}</a>
+          <a href={toolUrl(f.contact.url)}>Customer: {f.contact.name}</a>
           {f.receivables ? (
             <span className="small">
               {f.receivables.openInvoices ? `${f.receivables.openInvoices} open ${f.receivables.openInvoices === 1 ? 'invoice' : 'invoices'}, ${formatMoney(f.receivables.owed, f.receivables.currency)} owed` : 'Nothing owed'}

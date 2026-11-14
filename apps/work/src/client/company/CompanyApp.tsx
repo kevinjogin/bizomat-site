@@ -6,7 +6,7 @@ import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, usePa
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, errorMessage, get, post } from '../lib/api';
 import { useSession } from '../lib/session';
-import { appUrl } from '../lib/base';
+import { appUrl, SUITE, toolUrl } from '../lib/base';
 import { applyTheme, storedTheme, usePageTitle, type ThemePref } from '../lib/hooks';
 import { BRAND, PLATFORM_URLS } from '../lib/brand';
 import { BrandMark, Icon, ProductLockup } from '../components/ui/Icon';
@@ -18,6 +18,7 @@ import { Register } from './Register';
 import '../styles/crm.css';
 import '../styles/fin.css';
 import '../styles/company.css';
+import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
 const Overview = lazy(() => import('./Pages').then((m) => ({ default: m.Overview })));
 const People = lazy(() => import('./Pages').then((m) => ({ default: m.People })));
@@ -56,7 +57,8 @@ function CompanyHome() {
   const last = companies.find((c) => c.id === lastCompany());
   if (!invitations.length && (last || companies.length === 1)) return <Navigate to={`/c/${(last ?? companies[0]).id}/overview`} replace />;
   return (
-    <div className="crm-start">
+    <div className={`crm-start${SUITE_SHELL ? ' in-suite' : ''}`}>
+      <SuiteRail />
       <header className="row crm-start-head">
         <ProductLockup height={18} />
         <span className="grow" />
@@ -160,7 +162,8 @@ function CompanyShell({ children }: { children: ReactNode }) {
   const admin = view.me.role !== 'member';
   useEffect(() => setNavOpen(false), [location.pathname]);
   return (
-    <div className={`shell crm-shell co-shell${navOpen ? ' nav-open' : ''}`}>
+    <div className={`shell crm-shell co-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
+      <SuiteRail />
       <header className="topbar">
         <button className="btn ghost icon mobile-only" aria-label="Toggle navigation" aria-expanded={navOpen} onClick={() => setNavOpen((o) => !o)}>
           <Icon name="menu" />
@@ -276,8 +279,8 @@ function Profile() {
             <div className="muted small ellipsis">{user.email}</div>
             <div className="muted small">{view.me.roleLabel} of {view.company.name}</div>
           </div>
-          <MenuItem icon="user" onClick={() => { close(); window.location.href = '/tasks/settings/profile'; }}>Profile and security</MenuItem>
-          {session?.platformRole ? <MenuItem icon="chart" onClick={() => { close(); window.location.href = '/tasks/admin'; }}>Super admin console</MenuItem> : null}
+          <MenuItem icon="user" onClick={() => { close(); window.location.href = toolUrl('/tasks/settings/profile'); }}>Profile and security</MenuItem>
+          {session?.platformRole ? <MenuItem icon="chart" onClick={() => { close(); window.location.href = SUITE ? '/system/admin/overview' : '/tasks/admin'; }}>Super admin console</MenuItem> : null}
           <MenuSep />
           <MenuItem icon="logout" onClick={() => { close(); void signOut(); }}>Sign out</MenuItem>
         </>
@@ -409,7 +412,8 @@ function Authorize() {
     }
   };
   return (
-    <div className="crm-start">
+    <div className={`crm-start${SUITE_SHELL ? ' in-suite' : ''}`}>
+      <SuiteRail />
       <header className="row crm-start-head"><ProductLockup height={18} /></header>
       <div className="page crm-page">
         <section className="card card-pad stack crm-start-form">

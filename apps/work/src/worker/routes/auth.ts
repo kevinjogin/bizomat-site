@@ -8,6 +8,8 @@ import { HttpError, body, clientIp, newId, now, randomToken, sha256Hex } from '.
 import { hashPassword, passwordProblems, verifyPassword } from '../auth/password';
 import { rateLimit, resetRateLimit } from '../auth/rate-limit';
 import { checkOrigin, createSession, destroySession, isSecureEnv, requireAuth, resolveAuth } from '../auth/session';
+// Inside the System (/system/tasks, ...) a provider returns to the tool's own address, the one registered with it.
+import { appOf } from '../mount';
 import { getProvider, pkceChallenge, providers } from '../auth/providers';
 import { audit } from '../services/audit';
 import { bumpMetric, eventStmt } from '../services/analytics';
@@ -259,7 +261,7 @@ authRoutes.get('/oauth/:provider/start', async (c) => {
     .bind(state, provider.id, verifier, safeNext, linkUserId, t, t + 10 * 60_000)
     .run();
   setCookie(c, STATE_COOKIE, state, { httpOnly: true, secure: isSecureEnv(c.env), sameSite: 'Lax', path: '/api/auth/oauth', maxAge: 600 });
-  const redirectUri = `${new URL(c.req.url).origin}${c.env.BASE_PATH ?? ''}/api/auth/oauth/${provider.id}/callback`;
+  const redirectUri = `${new URL(c.req.url).origin}${appOf(c.env.BASE_PATH ?? '')}/api/auth/oauth/${provider.id}/callback`;
   return c.redirect(provider.authorizeUrl(c.env, { state, codeChallenge: await pkceChallenge(verifier), redirectUri }), 302);
 });
 
@@ -278,7 +280,7 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
   if (!row || row.expires_at < now()) return fail('expired_state');
   let profile;
   try {
-    profile = await provider.exchange(c.env, { code, codeVerifier: row.code_verifier, redirectUri: `${new URL(c.req.url).origin}${c.env.BASE_PATH ?? ''}/api/auth/oauth/${provider.id}/callback` });
+    profile = await provider.exchange(c.env, { code, codeVerifier: row.code_verifier, redirectUri: `${new URL(c.req.url).origin}${appOf(c.env.BASE_PATH ?? '')}/api/auth/oauth/${provider.id}/callback` });
   } catch (e) {
     console.warn('oauth exchange failed', e);
     return fail('exchange_failed');
