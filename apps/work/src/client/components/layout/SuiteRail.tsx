@@ -2,9 +2,10 @@
 // at /erp/<tool> (src/worker/mount.ts), and this rail sits at the left of each one (Projects and Tasks, Sales and CRM,
 // Finance and Accounting, Administration and the ERP's own pages), so moving between them never leaves the ERP. On a
 // phone it is a bar along the bottom. Maintenance (Asset Management and Maintenance, Stage 1) is live; its "Report a
-// fault" button sits at the foot of the rail on every screen. Each tool keeps its own navigation beside it; nothing here changes who may see
-// what. The modules that are planned but not built (procurement, inventory, manufacturing and the rest) are listed on
-// the Operations page as planned, never as working.
+// fault" button sits at the foot of the rail on every screen. Products and Engineering (ERP Release 1) opens the product
+// master, and Procurement's suppliers open from Operations. Each tool keeps its own navigation beside it; nothing here
+// changes who may see what. The modules that are planned but not built (purchase orders, inventory, manufacturing and the
+// rest) are listed on the Operations page as planned, never as working.
 import { lazy, Suspense, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { APP_BASE, SUITE } from '../../lib/base';
@@ -26,7 +27,7 @@ interface Module {
 }
 
 const own = (re: RegExp) => (p: string) => IS_SYSTEM && re.test(p);
-const ERP_PAGES = /^\/(my-work|cad|maintenance|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|settings|maintenance)(\/|$)/;
+const ERP_PAGES = /^\/(my-work|cad|products|procurement|maintenance|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|products|procurement|erp-roles|erp-reports|settings|maintenance)(\/|$)/;
 
 const MODULES: Module[] = [
   { id: 'home', label: 'Dashboard', title: 'Dashboard: your company, its tools and their figures', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
@@ -34,11 +35,11 @@ const MODULES: Module[] = [
   { id: 'crm', label: 'Sales and CRM', title: 'Sales and CRM: customers, leads, deals and follow-ups', icon: 'briefcase', to: '/crm/', active: () => APP_BASE === '/crm' },
   { id: 'finance', label: 'Finance and Accounting', title: 'Finance and Accounting: quotes, invoices, bills, banking, GST and reports', icon: 'dollar', to: '/finance/', active: () => APP_BASE === '/finance' },
   { id: 'tasks', label: 'Projects and Tasks', title: 'Projects and Tasks: boards, timelines, documents and dashboards', icon: 'grid', to: '/tasks/', active: (p) => APP_BASE === '/tasks' && !/\/my-work(\/|$)/.test(p) },
-  { id: 'cad', label: 'Products and Engineering', title: 'Products and Engineering: CAD Automation setup and computers', icon: 'diamond', to: '/cad', active: own(/^\/(c\/[^/]+\/)?cad(\/|$)/) },
+  { id: 'cad', label: 'Products and Engineering', title: 'Products and Engineering: products, bills of materials, revisions, engineering changes, documents and CAD Automation', icon: 'diamond', to: '/products', active: own(/^\/(c\/[^/]+\/)?(cad|products)(\/|$)/) },
   { id: 'maintenance', label: 'Maintenance', title: 'Asset Management and Maintenance', icon: 'wrench', to: '/maintenance', active: own(/^\/(c\/[^/]+\/)?maintenance(\/|$)/) },
-  { id: 'operations', label: 'Operations', title: 'Operations: procurement, inventory, manufacturing, quality and supply chain (planned), and what is live of Asset Management and Maintenance', icon: 'layers', to: '/operations', active: own(/^\/operations(\/|$)/) },
-  { id: 'reports', label: 'Reports', title: 'Reports: every report of your tools in one place', icon: 'chart', to: '/reports', active: own(/^\/reports(\/|$)/) },
-  { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/settings/.test(p)) },
+  { id: 'operations', label: 'Operations', title: 'Operations: procurement (suppliers live), inventory, manufacturing, quality and supply chain (planned), and what is live of Asset Management and Maintenance', icon: 'layers', to: '/operations', active: own(/^\/(c\/[^/]+\/)?(operations|procurement)(\/|$)/) },
+  { id: 'reports', label: 'Reports', title: 'Reports: every report of your tools in one place', icon: 'chart', to: '/reports', active: own(/^\/reports(\/|$)|^\/c\/[^/]+\/erp-reports(\/|$)/) },
+  { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools, ERP roles and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/(settings|erp-roles)/.test(p)) },
 ];
 
 /** True inside the ERP: the rail is shown and the shell makes room for it (class "in-suite"). */

@@ -2,9 +2,10 @@
 // and ensure its demo site only for accounts"). Table: migrations/0019_example_company.sql.
 //
 // Every person gets a company of invented example data of their own, "Acme Studio (example)": a Projects workspace, a
-// CRM organisation, a Finance business workspace and Maintenance records, all named for it and owned by that person
-// alone. It is made the first time they open the ERP (the client asks for it), and again only when they ask after
-// removing it.
+// CRM organisation, a Finance business workspace, Maintenance records and Products and Engineering and supplier records
+// (ERP Release 1), all named for it and owned by that person alone. It is made the first time they open the ERP (the
+// client asks for it), and again only when they ask after removing it. Example companies made before Release 1 keep
+// what they had: nothing is added to them.
 //
 // Rules:
 // - Private: only its owner sees it. Nobody can be invited into it, and its tools cannot join a registered company.
@@ -129,7 +130,7 @@ export async function buildExample(c: Context<AppEnv>, user: AuthUser, again = f
   }
 }
 
-/** Removes the example company: its spaces are deleted (soft, as a person's delete is) and its maintenance records erased. */
+/** Removes the example company: its spaces are deleted (soft, as a person's delete is) and its maintenance and ERP records erased. */
 export async function removeExample(c: Context<AppEnv>, user: AuthUser): Promise<void> {
   const db = c.env.DB;
   const row = await exampleOf(db, user.id);
@@ -143,7 +144,7 @@ export async function removeExample(c: Context<AppEnv>, user: AuthUser): Promise
   ]);
 }
 
-/** Deletes the example's spaces the person still owns, and its maintenance records and files. */
+/** Deletes the example's spaces the person still owns, and its maintenance and ERP records and files. */
 async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string) {
   const db = c.env.DB;
   const row = await exampleOf(db, userId);
@@ -170,6 +171,17 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   // Assets point at their parents: the deepest first.
   stmts.push(db.prepare('UPDATE mt_assets SET parent_id = NULL WHERE company_id = ?').bind(companyId));
   for (const table of ['mt_assets', 'mt_roles', 'mt_settings', 'mt_counters']) stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  // ERP Release 1 records (migrations/0020_erp_engineering_procurement.sql), children before parents.
+  const erpFiles = await db
+    .prepare("SELECT r2_key FROM erp_files WHERE company_id = ? UNION ALL SELECT r2_key FROM erp_document_versions WHERE company_id = ? AND r2_key IS NOT NULL")
+    .bind(companyId, companyId)
+    .all<{ r2_key: string }>();
+  files.results.push(...erpFiles.results);
+  for (const table of ['erp_events', 'erp_files', 'erp_document_versions', 'erp_documents', 'erp_product_suppliers', 'erp_supplier_contacts', 'erp_suppliers', 'erp_bom_lines', 'erp_revisions', 'erp_change_request_products', 'erp_change_orders', 'erp_change_requests']) {
+    stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  }
+  stmts.push(db.prepare('UPDATE erp_products SET variant_of = NULL WHERE company_id = ?').bind(companyId));
+  for (const table of ['erp_products', 'erp_user_roles', 'erp_counters']) stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   await db.batch(stmts);
   for (const f of files.results) {
     const p = c.env.FILES.delete(f.r2_key).catch(() => null);
@@ -341,6 +353,49 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
       parts: [{ part: 'Chiller filter cartridge', quantity: 1 }],
     });
     await api('Maintenance', 'POST', mt('/work-orders'), { assetId: brake.id, description: 'Quarterly check of the press brake hydraulics', jobType: 'inspection', priority: 'medium', dueFinish: d(6), assignedTo: user.id, estimatedHours: 2 });
+
+    // ---------------------------------------------------------------- Products and Engineering, Procurement (ERP Release 1)
+    // A kit with a two-level bill of materials, released through a change order (the one-person company exception is
+    // recorded), a second change order still in draft, a CAD reference, and two suppliers, one approved. No ABNs: an
+    // invented number that passes the check could belong to a real business.
+    const e = (p: string) => `/api/erp/c/${companyId}${p}`;
+    const prod = (b: Record<string, unknown>) => api('Products', 'POST', e('/products'), b);
+    const kit = await prod({ name: 'Shelf bracket kit', type: 'finished_product', category: 'Brackets', sku: 'SBK-100', priceCents: 3900, lifecycle: 'active', description: 'Two powder-coated shelf brackets with fixings.', weight: 1.4, weightUnit: 'kg' });
+    const weld = await prod({ name: 'Bracket weldment', type: 'subassembly', category: 'Brackets', material: 'Mild steel' });
+    const arm = await prod({ name: 'Bracket arm, laser cut', type: 'manufactured_part', category: 'Brackets', standardCostCents: 420, material: 'Mild steel 3 mm' });
+    const gusset = await prod({ name: 'Gusset plate', type: 'manufactured_part', category: 'Brackets', standardCostCents: 120, material: 'Mild steel 3 mm' });
+    const bolt = await prod({ name: 'Hex bolt M8 x 30', type: 'purchased_item', category: 'Fasteners', standardCostCents: 18 });
+    const plug = await prod({ name: 'Wall plug 10 mm', type: 'purchased_item', category: 'Fasteners', standardCostCents: 9 });
+    const coat = await prod({ name: 'Powder coat, black', type: 'consumable', category: 'Finishing', standardCostCents: 150, uom: 'kit' });
+    await api('Products', 'POST', e(`/products/${kit.id}/variants`), { variantAttributes: { finish: 'White' } });
+    const firstRev = async (id: string) => (await api('Products', 'GET', e(`/products/${id}`))).revisions[0].id as string;
+    const weldRev = await firstRev(weld.id);
+    await api('Products', 'POST', e(`/revisions/${weldRev}/lines`), { componentId: arm.id, quantity: 1 });
+    await api('Products', 'POST', e(`/revisions/${weldRev}/lines`), { componentId: gusset.id, quantity: 2, scrapPct: 5 });
+    const kitRev = await firstRev(kit.id);
+    for (const [componentId, quantity] of [
+      [weld.id, 2],
+      [bolt.id, 4],
+      [plug.id, 4],
+      [coat.id, 1],
+    ] as const) {
+      await api('Products', 'POST', e(`/revisions/${kitRev}/lines`), { componentId, quantity });
+    }
+    const first = await api('Products', 'POST', e('/change-orders'), { title: 'First release of the shelf bracket kit', reason: 'Ready for production', productIds: [kit.id, weld.id] });
+    await api('Products', 'POST', e(`/change-orders/${first.id}/submit`), {});
+    await api('Products', 'POST', e(`/change-orders/${first.id}/approve`), { note: 'Checked against the drawings' });
+    await api('Products', 'POST', e(`/change-orders/${first.id}/release`), {});
+    await api('Products', 'POST', e('/change-requests'), { title: 'Thicker gusset plate', reason: 'A customer reported flex under heavy loads.', productIds: [weld.id] });
+    const draft = await api('Products', 'POST', e('/change-orders'), { title: 'Gusset plate from 4 mm steel', reason: 'Stiffer bracket under heavy loads', productIds: [gusset.id] });
+    const draftRev = (await api('Products', 'GET', e(`/change-orders/${draft.id}`))).revisions[0];
+    await api('Products', 'PATCH', e(`/revisions/${draftRev.id}`), { description: 'Gusset plate cut from 4 mm mild steel', changeReason: 'Stiffer bracket under heavy loads' });
+    await api('Products', 'POST', e('/documents'), { productId: arm.id, title: 'Bracket arm model', kind: 'model', docRevision: 'A', cadPath: 'C:\\Users\\You\\Documents\\Acme\\Bracket-arm.SLDPRT', cadConfig: 'Default', note: 'Example CAD reference: the file is on the engineer’s computer, not on the server.' });
+    const steel = await api('Procurement', 'POST', e('/suppliers'), { legalName: 'Example Steel Supplies', category: 'Steel', email: 'orders@steel.example.com', paymentTermsDays: 30, leadTimeDays: 10, deliveryTerms: 'Delivered to the workshop' });
+    await api('Procurement', 'POST', e(`/suppliers/${steel.id}/contacts`), { name: 'Robin Sales', role: 'Account manager', email: 'robin@steel.example.com' });
+    await api('Procurement', 'POST', e(`/suppliers/${steel.id}/status`), { status: 'approved', note: 'Approved for steel plate' });
+    const fasteners = await api('Procurement', 'POST', e('/suppliers'), { legalName: 'Example Fasteners', category: 'Fasteners', email: 'sales@fasteners.example.com', paymentTermsDays: 14, leadTimeDays: 5 });
+    await api('Procurement', 'PUT', e(`/products/${arm.id}/suppliers/${steel.id}`), { supplierPartNumber: 'PL3-2412', priceCents: 380, leadTimeDays: 10, preferred: true });
+    await api('Procurement', 'PUT', e(`/products/${bolt.id}/suppliers/${fasteners.id}`), { supplierPartNumber: 'M8X30-ZP', priceCents: 15, moq: 100, preferred: true });
   });
 }
 
