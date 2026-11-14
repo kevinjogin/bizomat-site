@@ -44,6 +44,9 @@ existing modules rather than copying them. No new Fly app, Machine, server, data
 | 10 | Development roadmap and dependencies | `architecture/10-roadmap-and-dependencies.md` |
 | 11 | Testing and migration strategy | `architecture/11-testing-and-migration-strategy.md` |
 | 12 | Deployment and infrastructure strategy | `architecture/12-deployment-and-infrastructure.md` |
+| 13 | Enterprise capability matrix (16 domains, 259 features with status; public source `src/data/erp-capabilities.ts`) | `architecture/13-enterprise-capability-matrix.md` |
+| 14 | Application integration map | `architecture/14-application-integration-map.md` |
+| 15 | ERP roadmap (stages S1 to S13, maintenance M1 to M4) | `architecture/15-erp-roadmap-2026.md` |
 
 ## UX design (design brief deliverables)
 
@@ -59,6 +62,7 @@ existing modules rather than copying them. No new Fly app, Machine, server, data
 | 8 | Clickable prototype | `ux/08-prototype-guide.md`, code in `apps/work/src/client/system-prototype/` |
 | 9 | User journey demonstrations | `ux/09-user-journeys.md` |
 | 10 | Implementation recommendations | `ux/10-implementation-recommendations.md` |
+| 11 | Enterprise workspace update (the live `/erp`) | `ux/11-enterprise-workspace-update.md` |
 
 The prototype uses demonstration data only, never calls a BIZOMAT API and is built by its own Vite config. Since
 14 Nov 2026 (owner's decision) it is published for review at `https://bizomat.ai/system-preview/`. It is added to

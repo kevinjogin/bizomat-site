@@ -29,7 +29,7 @@ page brings up to date.
 | System | Where | Tenant id | Owns (system of record) | Never owns |
 | --- | --- | --- | --- | --- |
 | Company accounts | `/company`, inside the ERP at `/erp/company` | `co_companies.id` | Companies, members and their tool roles, departments, invitations, the links between tools (`co_tools`, `co_customer_links`, `co_deal_links`, `co_project_links`), the BIZOMAT sign-in provider | Customers, money, tasks |
-| BIZOMAT ERP | `/erp` | `co_companies.id`, or `sys_companies.id` for a person's own company | Own companies, the CAD status reports (`sys_cad_status`); planned: products, orders, stock, work orders, maintenance and the other `erp_*` records | Anything a tool owns |
+| BIZOMAT ERP | `/erp` | `co_companies.id`, or `sys_companies.id` for a person's own company | Own companies, the CAD status reports (`sys_cad_status`); in development: maintenance (`mt_*`); planned: products, orders, stock, work orders and the other `erp_*` records | Anything a tool owns |
 | CRM | `/crm`, `/erp/crm` | `crm_orgs.id` | Customers (companies), contacts, leads, deals, activities, CRM products until the product master exists | Invoices, amounts owed |
 | Finance | `/finance`, `/erp/finance` | `fin_orgs.id` (a business workspace for a company) | Ledger, accounts, tax codes, tracking, contacts as billed customers and suppliers, quotes, invoices, credit notes, bills, purchase orders, payments recorded | Stock quantities, production, CRM history |
 | Projects | `/tasks`, `/erp/tasks` | `workspaces.id` | Projects (boards), tasks (items), schedules, time and cost entries, documents | Posted costs (Finance owns them) |
@@ -41,7 +41,7 @@ page brings up to date.
 | --- | --- | --- |
 | Company id | `co_companies.id` | Every link; the ERP's company switcher; proposed ERP API paths `/api/erp/c/:company/...` |
 | Tool tenant ids | `co_tools` (the company's workspace, CRM organisation and Finance business workspace) | Every link checks both ids belong to the same company |
-| Record ids | Each owner's table | Stored in link tables; proposed typed references `<app>:<kind>:<id>`, such as `crm:deal:...`, `fin:quote:...`, `fin:doc:...`, `tasks:item:...`, `erp:so:...`, `erp:wo:...`, `erp:asset:...`, `erp:mwo:...`, `cad:command:...` |
+| Record ids | Each owner's table | Stored in link tables; proposed typed references `<app>:<kind>:<id>`, such as `crm:deal:...`, `fin:quote:...`, `fin:doc:...`, `tasks:item:...`, `erp:so:...`, `erp:wo:...`, `mt:asset:...`, `mt:wo:...`, `cad:command:...` |
 | Person | `users.id` | Every request (session cookie or personal API token) |
 | BIZOMAT account to CAD Automation | `sub` from `/company/api/id/userinfo`, or an email confirmed on both sides | CAD status reports; Sign in with BIZOMAT (in development) |
 | People-facing numbers | Each owner's numbering (`QU-0107`, `INV-0042`, `PO-0388`) | Shown beside links; never used as keys |
@@ -192,17 +192,17 @@ this valuation path. Journals are posted only by Finance's service, so the lock 
 ## 5. Maintenance (CMMS) flows
 
 Owner's brief, 14 Nov 2026. Stage M1 (register, requests, standard work orders, technicians, labour timer, photos and
-documents) is being built; everything else here is planned. Table names follow `04-master-data-ownership.md`; the M1
-build decides the final names.
+documents) is being built in `apps/work/src/worker/maintenance/` with its own `mt_*` tables (migration
+`0018_maintenance.sql`); everything else here is planned, and its table names are proposals.
 
 | # | Flow | System of record | Ids carried | API or event | Today |
 | --- | --- | --- | --- | --- | --- |
-| 5.1 | Request → approval → work order → technician → completion | ERP Maintenance (`erp_assets`, `erp_maintenance_requests`, `erp_maintenance_orders`, labour entries, `erp_documents`) | company id, `erp:asset:<id>`, `erp:mreq:<id>`, `erp:mwo:<id>`, requester, approver and technician user ids | ERP maintenance API (being built) | in-development |
+| 5.1 | Request → approval → work order → technician → completion | ERP Maintenance (`mt_assets`, `mt_requests`, `mt_work_orders`, `mt_wo_tasks`, `mt_wo_parts`, `mt_labour`, `mt_comments`, `mt_files`, history in `mt_events`) | company id (registered or own company), `mt:asset:<id>`, `mt:request:<id>`, `mt:wo:<id>`, the request's department (`co_departments`), requester, approver and technician user ids | ERP maintenance API (being built); approval when the company's setting requires it, by a supervisor or administrator | in-development |
 | 5.2 | Preventive plan or failed inspection answer → work order | ERP Maintenance (plans, readings, inspection answers) | plan id, reading id, answer id | **proposed** events `plan.due`, `reading.threshold`, `inspection.failed` → one request or work order each (idempotent) | planned (M2) |
-| 5.3 | Work order costs → Finance | Finance (`fin_journals`, bills); ERP holds the source | `erp:mwo:<id>`, asset id, the work order's Finance tracking (department, project or cost centre) | Labour: **proposed** `postJournal` with `origin = 'erp_maintenance'` (hours times the company's rate, an internal cost allocation; no payroll). Parts: the issue journal of flow 4.5. Contractors: a Finance bill whose lines carry the work order reference (**proposed** additive column). Fixed asset reference: **proposed** link from Finance's fixed asset register to `erp_assets` once Finance builds it (F3) | planned (M3) |
-| 5.4 | Parts → Inventory | ERP Inventory (stock moves, reservations); ERP Maintenance uses them | product id (a part is a product), store location, `erp:mwo:<id>` | **proposed** inventory service calls: reserve when scheduled, issue when used, return what is left; events `stock.reserved`, `stock.issued`. Stocktakes are inventory counts with approval | planned (M3) |
+| 5.3 | Work order costs → Finance | Finance (`fin_journals`, bills); ERP holds the source | `mt:wo:<id>`, asset id, the work order's Finance tracking (department, project or cost centre) | Labour: **proposed** `postJournal` with `origin = 'erp_maintenance'` (hours times the company's rate, an internal cost allocation; no payroll). Parts: the issue journal of flow 4.5. Contractors: a Finance bill whose lines carry the work order reference (**proposed** additive column). Fixed asset reference: **proposed** link from Finance's fixed asset register to `mt_assets` once Finance builds it (F3) | planned (M3) |
+| 5.4 | Parts → Inventory | ERP Inventory (stock moves, reservations); ERP Maintenance uses them | product id (a part is a product), store location, `mt:wo:<id>`; replaces M1's text part lines | **proposed** inventory service calls: reserve when scheduled, issue when used, return what is left; events `stock.reserved`, `stock.issued`. Stocktakes are inventory counts with approval | planned (M3) |
 | 5.5 | Reorder → Procurement | ERP Procurement (requisition), Finance (purchase order), ERP Inventory (receipt into the store) | product id, store, requisition id, `fin:doc:<po id>` | **proposed** reorder-point check creates one requisition; then flow 4.3 | planned (M3) |
-| 5.6 | Shutdown → Projects | Projects (board and tasks); ERP keeps the work orders | shutdown id, `erp:mwo:<id>`, `tasks:item:<id>` | **proposed** `POST /api/erp/c/:company/maintenance/shutdowns/:id/project`; Projects' `createItem`; as flow 4.4 | planned (M2) |
+| 5.6 | Shutdown → Projects | Projects (board and tasks); ERP keeps the work orders | shutdown id, `mt:wo:<id>`, `tasks:item:<id>` | **proposed** `POST /api/erp/c/:company/maintenance/shutdowns/:id/project`; Projects' `createItem`; as flow 4.4 | planned (M2) |
 | 5.7 | Drawings and manuals from Engineering | ERP Engineering (`erp_documents`, `erp_cad_links`); the SOLIDWORKS files stay on the engineer's computer | asset id, product and revision ids | **proposed** document links on the asset; until engineering records exist, M1's own photos and documents (upload) | planned (M4) |
 | 5.8 | Readings from devices | ERP Maintenance | asset id, device id | **proposed** through the integration platform (event processing, scoped tokens) | planned (M4) |
 | 5.9 | AI scheduling proposals | ERP Maintenance (proposals and decisions) | proposal id, work order ids | **proposed**: the assistant writes a proposal only; a person previews, edits, accepts or rejects; history kept | planned (M4) |

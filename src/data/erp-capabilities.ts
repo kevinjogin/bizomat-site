@@ -26,7 +26,8 @@
 //     (/company/api/id/cad-status) is built but CAD Automation's reporter is not merged, and Sign in with BIZOMAT for
 //     CAD Automation is built but not merged (docs/BIZOMAT-PROJECT-STATUS.md, 14 Nov 2026): both in-development.
 //   Asset management and maintenance (CMMS): owner's brief of 14 Nov 2026 (MEX used as a functional reference only).
-//     Its Stage 1 is being built and is in-development here until its tests pass; the rest is planned.
+//     Its Stage 1 is being built (apps/work/src/worker/maintenance, migration 0018_maintenance.sql) and is
+//     in-development here until its tests pass; the rest is planned.
 //   Everything else (sales orders, procurement beyond Finance's documents, inventory, manufacturing, quality, supply
 //     chain, service, human capital): docs/erp/architecture/02 to 10. Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
@@ -290,11 +291,11 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Asset register', 'in-development'),
       cap('Asset hierarchy', 'in-development', 'Assets within assets and locations.'),
       cap('Equipment master and asset details', 'in-development'),
-      cap('Maintenance requests with approval', 'in-development'),
-      cap('Maintenance work orders', 'in-development', 'Standard work orders. Recurring work orders from plans are planned.'),
-      cap('Corrective maintenance', 'in-development', 'A request or a standard work order raised for a fault.'),
-      cap('Breakdown maintenance', 'in-development', 'A request or a standard work order raised for a breakdown.'),
-      cap('Technician assignment', 'in-development'),
+      cap('Maintenance requests with approval', 'in-development', 'Approval by a supervisor or administrator when the company requires it.'),
+      cap('Maintenance work orders', 'in-development', 'Standard work orders with tasks, required parts as text lines, labour and notes. Recurring work orders from plans are planned.'),
+      cap('Corrective maintenance', 'in-development', 'A standard work order of the corrective job type.'),
+      cap('Breakdown maintenance', 'in-development', 'A standard work order of the breakdown job type.'),
+      cap('Technician assignment', 'in-development', 'Maintenance roles per company: administrator, supervisor, technician and requester.'),
       cap('Labour timer', 'in-development'),
       cap('Photos and documents', 'in-development', 'On assets and work orders.'),
       // CMMS Stage 2.
@@ -307,7 +308,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Work order inspections', 'planned', 'Checklists across several assets: pass, fail, observation, not applicable, number, text, photo and signature. A failed answer can raise a request or a work order by rule.'),
       // CMMS Stage 3.
       cap('Digital prestart checklists', 'planned'),
-      cap('Spare parts and stores', 'planned', 'Through ERP Inventory and Procurement: minimum and maximum, reorder points, reservations, issues and returns to work orders.'),
+      cap('Spare parts and stores', 'planned', 'Through ERP Inventory and Procurement: minimum and maximum, reorder points, reservations, issues and returns to work orders. Stage 1 records required parts as text only.'),
       cap('Maintenance stocktakes', 'planned', 'With approval, through the central inventory service.'),
       cap('Barcode and QR scanning', 'planned', 'For assets and parts.'),
       cap('Multi-site maintenance', 'planned'),
@@ -322,7 +323,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Offline field operation', 'planned', 'Not offered until the offline queue, reconnection, conflict resolution and audit are tested.'),
       cap('Lifecycle costs', 'planned', 'Labour, parts and contractor costs per asset over its life.'),
       // Administration and links to the other systems.
-      cap('Maintenance administration centre', 'planned', 'Custom and mandatory fields, labels, categories, job types, priorities, approval rules, templates, field-level edit rights and an audit of configuration changes.'),
+      cap('Maintenance administration centre', 'planned', 'Custom and mandatory fields, labels, categories, job types, priorities, approval rules, templates, field-level edit rights and an audit of configuration changes. Stage 1 has maintenance roles and one approval setting.'),
       cap('Maintenance costs in Finance', 'planned', 'Labour, parts and contractor costs as expense allocations, with references to fixed assets.'),
       cap('Shutdown projects in Projects', 'planned'),
       cap('Drawings and manuals from Engineering', 'planned'),

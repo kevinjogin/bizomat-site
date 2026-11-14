@@ -123,7 +123,7 @@ Served by BIZOMAT Finance. Finance owns every posted figure; other systems read 
 | Accounts payable | live | Finance bills | Finance | `fin_docs` (bill, purchase order), `fin_payments` | - | S0 | `fin-*.test.ts`, T-HON |
 | Accounts receivable | live | Finance invoices, credit notes | Finance | `fin_docs` (invoice), `fin_credit_notes`, `fin_payments` | - | S0 | `fin-*.test.ts`, T-HON |
 | Expense claims | live | Finance | Finance | `fin_docs` (expense claim) | - | S0 | `fin-*.test.ts` |
-| Asset accounting | planned | - | Finance | fixed asset register (new), linked to `erp_assets` | Finance brief Stage 3; CMMS asset register for the link | F3 | T-LED |
+| Asset accounting | planned | - | Finance | fixed asset register (new), linked to `mt_assets` | Finance brief Stage 3; CMMS asset register for the link | F3 | T-LED |
 | Cash management | live | Finance banking | Finance | `fin_transactions`, `fin_statement_*`, `fin_reconciliations`, `fin_rules` | - | S0 | `fin-banking.test.ts` |
 | Bank feeds | planned | - | Finance | `fin_statement_lines` | An approved provider (owner decision, security review) | F3 | T-HON |
 | Treasury | planned | - | Finance | - | Bank feeds; owner decision | F5 | T-HON |
@@ -299,7 +299,7 @@ Served by BIZOMAT ERP Quality (planned module).
 | Nonconformance reports (NCR) | planned | - | ERP Quality | `erp_ncrs` (new) | Inspections, approval engine | S9 | T-PERM |
 | Corrective and preventive actions (CAPA) | planned | - | ERP Quality; actions as tasks in Projects | `erp_capas` (new); tasks in Projects | NCRs | S9 | T-OWN |
 | Statistical process control (SPC) | planned | - | ERP Quality | measurements (new) | In-process inspection | S9.2 | T-E2E |
-| Calibration | planned | - | ERP Quality with CMMS | instruments as `erp_assets` (new) | CMMS asset register (M1), plans (M2) | S9 | T-ISO |
+| Calibration | planned | - | ERP Quality with CMMS | instruments as `mt_assets` | CMMS asset register (M1), plans (M2) | S9 | T-ISO |
 | Quality audits | planned | - | ERP Quality | new | Approval engine | S9 | T-PERM |
 | Traceability | planned | - | ERP Quality with Inventory | lots and serials | Batch and lot tracking | S9 | T-QTY |
 | Product compliance | planned | - | ERP Quality | new | Product master, documents | S9 | T-ISO |
@@ -309,8 +309,10 @@ Served by BIZOMAT ERP Quality (planned module).
 
 Served by BIZOMAT ERP Asset Management and Maintenance. Owner's brief, 14 Nov 2026: a full maintenance management
 system (CMMS) inside BIZOMAT ERP, in four stages, with MEX as a functional reference only. Stage 1 is being built now;
-its features stay in-development until its tests pass, and the lead then marks them live. The table names below follow
-`04-master-data-ownership.md`; the Stage 1 build decides the final names.
+its features stay in-development until its tests pass, and the lead then marks them live. Stage 1 keeps its records in
+`mt_*` tables (`apps/work/migrations/0018_maintenance.sql`, code in `apps/work/src/worker/maintenance/`): additive, with
+`company_id` naming a registered or own company and composite keys inside a company. Names for later stages are
+proposals.
 
 Rules this domain keeps:
 - ERP Maintenance owns assets, requests, work orders, plans, readings and inspections. Parts are stock in the central
@@ -323,24 +325,24 @@ Rules this domain keeps:
 
 | Feature | Status | Served by today | Owner | Data owner | Depends on | Phase | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Asset register | in-development | Being built | ERP Maintenance | `erp_assets` (new) | Company tenancy | M1 | T-ISO, T-PERM, T-MIG, owner's tests |
-| Asset hierarchy | in-development | Being built | ERP Maintenance | parent asset and location on `erp_assets` (new) | Asset register | M1 | T-ISO (no loops, no links across companies) |
-| Equipment master and asset details | in-development | Being built | ERP Maintenance | `erp_assets` (new) | Asset register | M1 | T-ISO |
-| Maintenance requests with approval | in-development | Being built | ERP Maintenance | `erp_maintenance_requests` (new) | Asset register | M1 | T-PERM (no self-approval), T-DUP, T-E2E |
-| Maintenance work orders | in-development | Being built | ERP Maintenance | `erp_maintenance_orders` (new) | Requests | M1 | T-ISO, T-PERM, T-DUP, T-E2E |
-| Corrective maintenance | in-development | Being built | ERP Maintenance | `erp_maintenance_orders` (new) | Work orders | M1 | T-E2E |
-| Breakdown maintenance | in-development | Being built | ERP Maintenance | `erp_maintenance_orders` (new) | Work orders | M1 | T-E2E |
-| Technician assignment | in-development | Being built | ERP Maintenance | assignee on the work order | Work orders, company people | M1 | T-PERM |
-| Labour timer | in-development | Being built | ERP Maintenance | labour entries (new) | Work orders | M1 | T-QTY (one running timer per person and order), T-E2E (phone) |
-| Photos and documents | in-development | Being built | ERP Maintenance, Core file store | `erp_documents` (new) | Work orders, assets | M1 | T-ISO, document security (sandboxed downloads) |
+| Asset register | in-development | Being built | ERP Maintenance | `mt_assets` (numbered A-0001) | Company tenancy | M1 | T-ISO, T-PERM, T-MIG, owner's tests |
+| Asset hierarchy | in-development | Being built | ERP Maintenance | `mt_assets` parent, to any depth | Asset register | M1 | T-ISO (no loops, no links across companies) |
+| Equipment master and asset details | in-development | Being built | ERP Maintenance | `mt_assets` (make, model, serial, registration, specifications) | Asset register | M1 | T-ISO |
+| Maintenance requests with approval | in-development | Being built | ERP Maintenance | `mt_requests` (MR-0001); `mt_settings` (whether approval is required) | Asset register | M1 | T-PERM (maintenance roles), T-DUP (one work order per request), T-E2E |
+| Maintenance work orders | in-development | Being built | ERP Maintenance | `mt_work_orders` (WO-00001), `mt_wo_tasks`, `mt_wo_parts` (text lines), `mt_comments` | Requests | M1 | T-ISO, T-PERM, T-DUP, T-E2E |
+| Corrective maintenance | in-development | Being built | ERP Maintenance | `mt_work_orders` (job type corrective) | Work orders | M1 | T-E2E |
+| Breakdown maintenance | in-development | Being built | ERP Maintenance | `mt_work_orders` (job type breakdown) | Work orders | M1 | T-E2E |
+| Technician assignment | in-development | Being built | ERP Maintenance | the work order's assignee; `mt_roles` (administrator, supervisor, technician, requester) | Work orders, company people | M1 | T-PERM |
+| Labour timer | in-development | Being built | ERP Maintenance | `mt_labour` (one running timer per person and work order, by a unique index) | Work orders | M1 | T-QTY, T-E2E (phone) |
+| Photos and documents | in-development | Being built | ERP Maintenance, the existing file store | `mt_files`; history of every change in `mt_events` | Work orders, assets | M1 | T-ISO, document security (sandboxed downloads) |
 
 #### Stage M2: preventive maintenance and inspections (planned)
 
 | Feature | Status | Served by today | Owner | Data owner | Depends on | Phase | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Preventive maintenance plans | planned | - | ERP Maintenance | `erp_maintenance_plans` (new) | Work orders | M2 | T-DUP (a trigger makes one work order) |
+| Preventive maintenance plans | planned | - | ERP Maintenance | maintenance plans (new) | Work orders | M2 | T-DUP (a trigger makes one work order) |
 | Maintenance planning and calendar | planned | - | ERP Maintenance | worked out from plans and orders | Plans | M2 | T-E2E |
-| Recurring work orders | planned | - | ERP Maintenance | `erp_maintenance_orders` (new) | Plans | M2 | T-DUP |
+| Recurring work orders | planned | - | ERP Maintenance | `mt_work_orders` | Plans | M2 | T-DUP |
 | Asset readings and meters | planned | - | ERP Maintenance | asset readings (new) | Asset register | M2 | T-ISO |
 | Condition monitoring | planned | - | ERP Maintenance | readings and thresholds (new) | Readings | M2 | T-E2E |
 | Threshold alerts | planned | - | ERP Maintenance; notifications | alert rules (new) | Readings | M2 | T-DUP (one alert per crossing) |
@@ -351,10 +353,10 @@ Rules this domain keeps:
 | Feature | Status | Served by today | Owner | Data owner | Depends on | Phase | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Digital prestart checklists | planned | - | ERP Maintenance | prestart templates and answers (new) | Inspections (M2) | M3 | T-E2E (phone) |
-| Spare parts and stores | planned | - | ERP Inventory (stock), ERP Maintenance (use) | `erp_stock_moves`, reservations; parts are products | Inventory core (S6), procurement (S5), product master (S3) | M3 | T-QTY, T-OWN, T-LED |
+| Spare parts and stores | planned | In M1 (in development): required parts as text lines (`mt_wo_parts`) | ERP Inventory (stock), ERP Maintenance (use) | `erp_stock_moves`, reservations; parts are products | Inventory core (S6), procurement (S5), product master (S3) | M3 | T-QTY, T-OWN, T-LED |
 | Maintenance stocktakes | planned | - | ERP Inventory | inventory counts | Cycle counts (S6), approval engine | M3 | T-PERM, T-LED |
 | Barcode and QR scanning | planned | - | ERP Inventory and Maintenance | codes on assets, parts and locations | Barcodes (S6.2) | M3 | T-E2E (phone) |
-| Multi-site maintenance | planned | - | ERP Maintenance | site on assets and orders | Sites (S2) | M3 | T-ISO (site scope) |
+| Multi-site maintenance | planned | In M1 (in development): a free-text location on assets and requests | ERP Maintenance | site on assets and orders | Sites (S2) | M3 | T-ISO (site scope) |
 | Fuel records | planned | - | ERP Maintenance | fuel records (new); cost in Finance | Readings | M3 | T-LED |
 
 #### Stage M4: planning, AI assistance and reliability (planned)
@@ -374,7 +376,7 @@ Rules this domain keeps:
 
 | Feature | Status | Served by today | Owner | Data owner | Depends on | Phase | Tests |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Maintenance administration centre | planned | - | ERP Maintenance | field definitions and settings (new); configuration audit in `erp_audit_log` (new) | Module access (S2) | M2 to M4, growing with each stage | T-PERM (field-level edit rights), audit of every configuration change |
+| Maintenance administration centre | planned | In M1 (in development): maintenance roles and one approval setting | ERP Maintenance | `mt_settings`, `mt_roles`; field definitions (new); configuration audit | Module access (S2) | M2 to M4, growing with each stage | T-PERM (field-level edit rights), audit of every configuration change |
 | Maintenance costs in Finance | planned | - | Finance (journals), ERP Maintenance (source) | `fin_journals` with an origin; fixed asset reference | Finance journal service (F1); fixed assets (F3) for the reference | M3 | T-LED, T-OWN |
 | Shutdown projects in Projects | planned | - | Projects (tasks), ERP Maintenance (orders) | tasks in Projects linked to work orders | Work orders; Projects item service | M2 | T-OWN, T-DUP |
 | Drawings and manuals from Engineering | planned | - | ERP Engineering and CAD Automation | `erp_documents`, `erp_cad_links` (new) | Engineering records (S7) | M4 | T-ISO, T-OWN |
@@ -382,8 +384,12 @@ Rules this domain keeps:
 #### Owner's acceptance tests A to J
 
 The owner's CMMS brief sets acceptance tests A to J. They are the exit criteria of the CMMS stages
-(`15-erp-roadmap-2026.md`, section 5). Their wording is not yet recorded in this repository: copy it here from the
-brief before Stage M1 is marked live, and note against each test the stage it closes.
+(`15-erp-roadmap-2026.md`, section 5.1, which records their wording and the stage each closes): A and B (asset
+hierarchy; a request with a photograph approved into a work order), C and D (a work order with instructions, tasks,
+labour and parts; the technician's timer, work, photographs and completion) and J (two organisations and the
+maintenance roles) close M1; E and F (a usage-based plan triggered by a reading; a failed inspection answer) close M2;
+G and H (a failed prestart safety check; a stocktake through the central inventory service) close M3; I (cost and
+reliability reports) closes M4.
 
 ### 3.11 Project and portfolio management
 
