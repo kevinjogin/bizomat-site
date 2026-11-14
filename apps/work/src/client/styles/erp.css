@@ -1,0 +1,54 @@
+/* BIZOMAT ERP, Release 1 (src/client/system/erp): Products and Engineering, Procurement, ERP roles and reports. On top
+   of crm.css, fin.css, company.css, system.css and maintenance.css. Phones: tables become cards, one cell a line. */
+.erp-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.erp-stats .crm-stat-value { font-size: 22px; }
+.erp-pager { align-items: center; gap: 8px; }
+.erp-not-yet { display: flex; gap: 6px; align-items: flex-start; margin: 0; }
+.erp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.erp-list > li { min-width: 0; overflow-wrap: anywhere; }
+.erp-h3 { font-size: 14px; margin: 0 0 6px; }
+.erp-actions { white-space: nowrap; text-align: right; }
+.data-table td.num, .data-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* The bill of materials tree. */
+.erp-bom td { vertical-align: top; }
+.erp-bom tr.erp-sub td { background: var(--surface-2); }
+.erp-indent { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-width: 0; }
+.erp-indent a { text-decoration: none; }
+.erp-indent a:hover { text-decoration: underline; }
+.erp-indent .mt-toggle { width: 26px; height: 26px; padding: 0; justify-content: center; }
+.erp-indent .mt-toggle-gap { display: inline-block; width: 26px; flex: none; }
+.erp-d1 { padding-left: 22px; }
+.erp-d2 { padding-left: 44px; }
+.erp-d3 { padding-left: 66px; }
+.erp-d4 { padding-left: 88px; }
+.erp-d5 { padding-left: 110px; }
+.erp-d6 { padding-left: 132px; }
+
+/* Revision comparison. */
+.erp-diff { margin: 0; padding-left: 18px; display: grid; gap: 4px; overflow-wrap: anywhere; }
+.erp-diff.added li::marker { color: var(--success); content: '+ '; }
+.erp-diff.removed li::marker { color: var(--danger); content: '- '; }
+
+/* Document versions. */
+.erp-versions { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.erp-versions > li { border-left: 2px solid var(--border); padding-left: 10px; display: grid; gap: 4px; }
+.erp-path { font-family: var(--mono); font-size: 12px; overflow-wrap: anywhere; background: var(--surface-2); padding: 1px 4px; border-radius: 4px; }
+
+/* ERP roles. */
+.erp-role-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 12px; }
+.erp-roles td { vertical-align: top; }
+.erp-report-tabs { overflow-x: auto; }
+
+@media (max-width: 760px) {
+  .erp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .data-table.responsive thead { display: none; }
+  .data-table.responsive, .data-table.responsive tbody, .data-table.responsive tr, .data-table.responsive td { display: block; width: 100%; }
+  .data-table.responsive { min-width: 0; }
+  .data-table.responsive tr { border-bottom: 1px solid var(--border); padding: 8px 0; }
+  .data-table.responsive td { border: 0; padding: 2px 12px; text-align: left; }
+  .data-table.responsive td[data-label]::before { content: attr(data-label) ': '; color: var(--text-3); font-size: 12px; }
+  .data-table.responsive td:empty { display: none; }
+  .erp-d1, .erp-d2, .erp-d3, .erp-d4, .erp-d5, .erp-d6 { padding-left: 12px; }
+  .erp-bom td.num { text-align: left; }
+}

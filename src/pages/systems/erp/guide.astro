@@ -23,7 +23,7 @@ const PAGE = erp.guide ?? '/systems/erp/guide/';
 const access = erp.access!;
 const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }, { label: 'User guide', href: PAGE }];
-const description = 'How to use BIZOMAT ERP, step by step: companies, people and roles, sales, invoicing, projects, maintenance work orders and reports, with an example company to practise on.';
+const description = 'How to use BIZOMAT ERP, step by step: companies, roles, sales, invoicing, projects, products and bills of materials, suppliers, maintenance and reports.';
 
 interface Step { t: string; x: string; st?: FeatureStatus }
 interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
@@ -145,7 +145,8 @@ const parts: Part[] = [
     steps: [
       { t: 'One customer record', x: 'On a CRM company, under In Finance, link it to the Finance contact it is billed as, or create that contact. Its open invoices and what it owes show in the CRM to people whose Finance role sees sales.', st: 'connected' },
       { t: 'Project costs and budget', x: 'In the company area, open Projects and give a project a Finance tracking project and a budget. Income and costs posted to it show against the budget. Tracking needs a Finance role that manages accounting.', st: 'connected' },
-      { t: 'Engineering Automation', x: 'Products and Engineering gives the four set-up steps: sign in to CAD Automation, install it, pair the computer and connect your AI assistant.', st: 'live' },
+      { t: 'Engineering Automation', x: 'The CAD Automation tab of Products and Engineering gives the four set-up steps: sign in to CAD Automation, install it, pair the computer and connect your AI assistant.', st: 'live' },
+      { t: 'A supplier and Finance', x: 'On a supplier in Procurement, under Finance, link it to the supplier it is paid as in the company\'s Finance, or create that supplier there. Linking checks your role in Finance; nothing is copied.', st: 'connected' },
       { t: 'CAD computers and sign-in', x: 'Listing the company\'s computers in the ERP, and signing in to CAD Automation with your BIZOMAT account, are being built. Until then the page says so and links to CAD Automation.', st: 'in-development' },
     ],
     shot: 'erp-projects',
@@ -167,12 +168,39 @@ const parts: Part[] = [
     shot: 'erp-maintenance',
   },
   {
-    id: 'planned', title: 'What is not built yet', st: 'planned',
-    lead: 'Operations in the rail lists the modules that are designed but not built. Nothing there works yet or keeps data. The first stage of Maintenance works today, in its own module.',
+    id: 'products', title: 'Products, bills of materials and engineering changes', st: 'live',
+    lead: 'Products and Engineering in the rail opens the company\'s products, changes, documents and CAD Automation. What each person may do comes from their ERP roles, set in Administration, ERP roles.',
     steps: [
-      { t: 'Planned modules', x: 'Procurement, Inventory and Warehouse, Manufacturing, Quality, Supply Chain, and product and engineering records. Each is labelled Planned.', st: 'planned' },
+      { t: 'ERP roles', x: 'In Administration, choose ERP roles and give each person one or more: Engineer, Engineering approver, Buyer, Procurement manager, Executive or Viewer. The company\'s owner and administrators are ERP administrators; everyone else is a viewer until given a role.' },
+      { t: 'Add a product', x: 'In Products, choose New product. Give its name and type; the number is given for you (PRD-00001) unless you type one. Add its category, unit, costs, price, physical details, lifecycle and effective dates. It starts with revision A as a draft.' },
+      { t: 'Add a variant', x: 'On a product, choose New variant and say what sets it apart: size, model, configuration, material, finish or options. The variant is a product of its own.' },
+      { t: 'Build the bill of materials', x: 'Open the product\'s Bill of materials and choose Add a line: the component, quantity per one, unit, scrap allowance, reference designators, alternatives and effective dates. A component that would contain the product itself is refused.' },
+      { t: 'See every level', x: 'Structure expands each component\'s released bill of materials. All levels lists every level with extended quantities and exports CSV. Cost roll-up gives the material cost of one and lists any missing costs or other currencies.' },
+      { t: 'Request a change', x: 'Choose Request a change on a product, or New change request in Changes. An engineering approver takes it under review and approves or rejects it.' },
+      { t: 'Change order', x: 'A change order carries a new revision of each product it changes, with the lines of the released revision to edit. Submit it when the revisions are ready: they lock.' },
+      { t: 'Approve and release', x: 'An engineering approver who did not draft the change order approves and releases it. Release makes its revisions released and the earlier ones superseded, in one step. Released revisions cannot change.' },
+      { t: 'Compare and trace', x: 'Revisions compares any two revisions line by line. Where used lists every product that uses a component.' },
+      { t: 'Engineering documents', x: 'In Documents, add a drawing, model, PDF or specification to a product and revision: upload a file, or reference a CAD file on your own computer by its path and configuration. Each new version is kept; an engineering approver approves it.' },
+    ],
+  },
+  {
+    id: 'procurement', title: 'Suppliers in Procurement', st: 'live',
+    lead: 'Operations, Procurement opens the supplier master. Purchase requisitions, requests for quotation, purchase orders and receiving in the ERP come with Release 2; purchase orders and bills are in Finance today.',
+    steps: [
+      { t: 'Add a supplier', x: 'Choose New supplier. Give the legal name, ABN, contact details, addresses, payment terms, currency and usual lead time. The ABN is checked for its form only; it is not looked up on the register.' },
+      { t: 'Approve it', x: 'A procurement manager who did not add the supplier chooses Approve. Put on hold and Block need a reason. A blocked supplier cannot be added to a product.' },
+      { t: 'Contacts and documents', x: 'Add the supplier\'s contacts (one is primary) and documents such as certificates.' },
+      { t: 'Who supplies a product', x: 'On a product, Suppliers, choose Add a supplier: their part number, price, lead time, minimum order and whether they are preferred.' },
+      { t: 'Performance', x: 'Supplier performance is measured from purchase orders and receipts, so it comes with Release 2. The supplier page says so and shows no figures.', st: 'planned' },
+    ],
+  },
+  {
+    id: 'planned', title: 'What is not built yet', st: 'planned',
+    lead: 'Operations in the rail lists the modules that are designed but not built. Nothing there works yet or keeps data. The first stage of Maintenance, the supplier master and the product and engineering records work today.',
+    steps: [
+      { t: 'Planned modules', x: 'Purchase requisitions, quotations, purchase orders and receiving in the ERP, Inventory and Warehouse, Manufacturing (with routings), Quality and Supply Chain. Each is labelled Planned.', st: 'planned' },
       { t: 'Later in Maintenance', x: 'Preventive maintenance, readings, inspections, prestart checklists, spare parts, scanning, several sites, workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, reliability reporting and offline field work.', st: 'planned' },
-      { t: 'What to use today', x: 'Suppliers, purchase orders and bills are kept in Finance. Production work can be planned on a board in Projects and Tasks.', st: 'live' },
+      { t: 'What to use today', x: 'Purchase orders and bills are kept in Finance. Production work can be planned on a board in Projects and Tasks.', st: 'live' },
     ],
     shot: 'erp-operations',
   },
@@ -184,9 +212,11 @@ const questions = [
   { q: 'Can I belong to more than one company?', a: 'Yes. Register more than one, or accept invitations, and switch between them with the company switcher.' },
   { q: 'Why can I not see a tool\'s figures on the dashboard?', a: 'Your role in that tool does not show them. Ask the company\'s owner or an administrator to change your role in People.' },
   { q: 'Why are no computers listed under Products and Engineering?', a: 'CAD Automation does not report its computers to the ERP yet. Until it does, see your computers in CAD Automation itself.' },
+  { q: 'Can I approve my own change order?', a: 'Not in a company of several people: someone else with the Engineering approver role must approve and release it. In your own company, where you are the only person, you may, and the exception is recorded on the change order.' },
+  { q: 'Does the ERP keep my SOLIDWORKS files?', a: 'No. An engineering document can reference a CAD file by its path on your own computer; the file stays there. Uploaded PDF, DXF and STEP files are kept as attachments.' },
   { q: 'Who can raise a maintenance request?', a: 'Everyone in a registered company: choose Report a fault at the foot of the rail. In your own company, you are its only person. People who were only shared a tool with the company cannot see its maintenance.' },
   { q: 'Can a technician see every work order?', a: 'No. A technician sees the work orders assigned to them. Supervisors and administrators see them all; a requester sees the work order made from their own request.' },
-  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'No. They are planned and not built. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'Procurement\'s supplier master works today. Purchase orders and receiving in the ERP, Inventory and Manufacturing are planned and not built. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
 ];
 
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
