@@ -1,0 +1,158 @@
+# Review preview: a temporary, browser-accessible copy of a pull request, for the owner to see and test the website and
+# BIZOMAT ERP before approving a release (owner's request, 14 Nov 2026).
+#
+# How it works, on a GitHub-hosted runner, for the time chosen (default 3 hours):
+#   1. builds the production image from the pull request (infrastructure/fly/Dockerfile) and starts the local stack
+#      (infrastructure/local/compose.yml: proxy, website, ERP and CAD Automation), exactly as the CI job does;
+#   2. loads invented demo data (infrastructure/preview/seed-demo.mjs) into the stack's own, empty database;
+#   3. puts the gate in front (infrastructure/preview/gate.mjs): links stay on the preview, noindex, optional password;
+#   4. opens a Cloudflare quick tunnel (https://<random>.trycloudflare.com: no Cloudflare account, nothing created in
+#      Cloudflare), checks the address in a browser (infrastructure/preview/walk.mjs) and posts it on the pull request;
+#   5. keeps it up, then stops the stack and deletes its data. Cancelling the run ends the preview at once.
+#
+# It never touches production: no Fly.io app, Machine, volume or secret, no Cloudflare resource, no production data,
+# and no deploy. The stack holds placeholder secrets only (compose.yml). Emails are not sent, AI search and the contact
+# form need production keys and do not answer, and CAD Automation's SOLIDWORKS link needs a real computer.
+#
+# Start: add the label "preview" to a pull request (remove and add it again for a fresh preview), or run it by hand
+# from Actions once this file is on main. Optional repository secret PREVIEW_PASSWORD: every request then needs HTTP
+# Basic sign-in (user "review"). Without it the address is unlisted (random, noindex) but open while it runs.
+# Cost: GitHub Actions minutes only (about 15 minutes to start, plus the time it stays up).
+name: Review preview
+
+on:
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: "How long the preview stays up, in minutes (30 to 330)"
+        required: false
+        default: "180"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: review-preview-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'preview'
+    name: review preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      BIZOMAT_IMAGE: bizomat:preview
+      COMPOSE_PROJECT_NAME: bizomat-preview
+      PR: ${{ github.event.pull_request.number }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      MINUTES: ${{ github.event.inputs.minutes || '180' }}
+      PREVIEW_PASSWORD: ${{ secrets.PREVIEW_PASSWORD }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+      - name: Check the time asked for
+        run: |
+          case "$MINUTES" in (''|*[!0-9]*) echo "::error::minutes must be a number"; exit 1;; esac
+          if [ "$MINUTES" -lt 30 ] || [ "$MINUTES" -gt 330 ]; then echo "::error::minutes must be 30 to 330"; exit 1; fi
+      - name: Make room on the runner
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
+      - name: Build the platform image from this pull request (nothing is pushed)
+        run: docker build -f infrastructure/fly/Dockerfile -t "$BIZOMAT_IMAGE" --build-arg BIZOMAT_VERSION="preview-${HEAD_SHA::7}" .
+      - name: Start the stack (the same image, its own empty data)
+        run: docker compose -f infrastructure/local/compose.yml up -d --wait --wait-timeout 300 --no-build
+      - name: Start the gate
+        run: |
+          nohup node infrastructure/preview/gate.mjs > "$RUNNER_TEMP/gate.log" 2>&1 &
+          for _ in $(seq 1 30); do curl -fsS -o /dev/null http://127.0.0.1:8090/__gate/health && exit 0; sleep 1; done
+          cat "$RUNNER_TEMP/gate.log"; exit 1
+      - name: Load the demo data (invented, through the apps' own API)
+        run: node infrastructure/preview/seed-demo.mjs http://127.0.0.1:8090
+      - name: Install cloudflared (Cloudflare's signed package repository)
+        run: |
+          sudo mkdir -p --mode=0755 /usr/share/keyrings
+          curl -fsSL https://pkg.cloudflare.com/cloudflare-main.gpg | sudo tee /usr/share/keyrings/cloudflare-main.gpg > /dev/null
+          echo 'deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main' | sudo tee /etc/apt/sources.list.d/cloudflared.list
+          sudo apt-get update -qq && sudo apt-get install -y -qq cloudflared
+          cloudflared --version
+      - name: Open the quick tunnel
+        id: tunnel
+        run: |
+          nohup cloudflared tunnel --no-autoupdate --url http://127.0.0.1:8090 > "$RUNNER_TEMP/tunnel.log" 2>&1 &
+          url=""
+          for _ in $(seq 1 60); do
+            url=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' "$RUNNER_TEMP/tunnel.log" | head -n1 || true)
+            [ -n "$url" ] && break; sleep 2
+          done
+          [ -n "$url" ] || { cat "$RUNNER_TEMP/tunnel.log"; echo "::error::the tunnel gave no address"; exit 1; }
+          for _ in $(seq 1 60); do curl -fsS -o /dev/null "$url/__gate/health" && break; sleep 3; done
+          curl -fsS -o /dev/null "$url/__gate/health"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "until=$(date -u -d "+$MINUTES minutes" +%Y-%m-%dT%H:%MZ)" >> "$GITHUB_OUTPUT"
+          echo "until_syd=$(TZ=Australia/Sydney date -d "+$MINUTES minutes" '+%-d %b %Y, %-I:%M %p %Z')" >> "$GITHUB_OUTPUT"
+      - name: Check the preview in a browser (website on desktop and phone, sign-in, every ERP module)
+        id: walk
+        continue-on-error: true
+        env:
+          URL: ${{ steps.tunnel.outputs.url }}
+        run: |
+          set -o pipefail
+          (cd apps/work && npm ci --no-audit --no-fund && npx playwright install --with-deps chromium) > "$RUNNER_TEMP/playwright.log" 2>&1
+          cd apps/work && node ../../infrastructure/preview/walk.mjs "$URL" "$PREVIEW_PASSWORD" | tee "$RUNNER_TEMP/walk.txt"
+      - name: Share the address
+        env:
+          URL: ${{ steps.tunnel.outputs.url }}
+          UNTIL: ${{ steps.tunnel.outputs.until_syd }}
+          WALK: ${{ steps.walk.outcome }}
+        run: |
+          if [ -n "$PREVIEW_PASSWORD" ]; then access="Protected: sign in to the browser prompt as **review** with the repository secret PREVIEW_PASSWORD."; else access="Unlisted: the address is random and kept out of search, but anyone with it can open it while it runs. Add the repository secret PREVIEW_PASSWORD to protect the next preview."; fi
+          if [ "$WALK" = success ]; then check="Checked in a browser before sharing: every website page on desktop and phone, sign-in, and every ERP module, with no error and no link to production."; else check="The browser check found problems: see the run's log."; fi
+          run="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          {
+            echo "### Review preview of this pull request"
+            echo
+            echo "**$URL**"
+            echo
+            echo "- Up until about $UNTIL. Cancel [the run]($run) to end it sooner."
+            echo "- Built from \`${HEAD_SHA::7}\` with the production image, its own empty database and invented demo data. Production is not touched."
+            echo "- $access"
+            echo "- BIZOMAT ERP: open $URL/erp/login and sign in as \`demo@example.com\` with the demo password in \`apps/work/scripts/seed-local.mjs\`. Maintenance is under Maintenance in the rail."
+            echo "- Not in a preview: emails, AI search and the contact form (they need production keys), and a SOLIDWORKS computer for CAD Automation."
+            echo "- $check"
+          } > "$RUNNER_TEMP/comment.md"
+          cat "$RUNNER_TEMP/comment.md" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$PR" ]; then gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"; fi
+      - name: Keep the preview up
+        env:
+          URL: ${{ steps.tunnel.outputs.url }}
+        run: |
+          end=$(( $(date +%s) + MINUTES * 60 ))
+          while [ "$(date +%s)" -lt "$end" ]; do
+            curl -fsS -o /dev/null --max-time 10 http://127.0.0.1:8090/__gate/health || echo "::warning::the gate did not answer at $(date -u +%H:%M)"
+            pgrep -x cloudflared > /dev/null || { echo "::error::the tunnel stopped"; exit 1; }
+            sleep 60
+          done
+      - name: Service logs
+        if: failure()
+        run: |
+          docker compose -f infrastructure/local/compose.yml logs --no-color --tail 200 || true
+          tail -n 50 "$RUNNER_TEMP/gate.log" "$RUNNER_TEMP/tunnel.log" 2>/dev/null || true
+      - name: Stop the stack and delete its data
+        if: always()
+        env:
+          URL: ${{ steps.tunnel.outputs.url }}
+        run: |
+          pkill -x cloudflared || true
+          docker compose -f infrastructure/local/compose.yml down -v || true
+          if [ -n "$PR" ] && [ -n "$URL" ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "The review preview at $URL has ended. Add the label \`preview\` again for a new one." || true
+          fi
