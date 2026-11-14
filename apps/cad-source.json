@@ -1,7 +1,7 @@
 {
   "repository": "kevinjogin/bizomat-cad",
-  "commit": "e669cc642e49df5814ffec1ebcd0d7764568e02f",
-  "tree": "e97f6f4ce10d2da0d966eb87b7c64dee50ee2b68",
-  "subject": "BIZOMAT corporate footer on CAD Automation's pages (#33)",
-  "note": "apps/cad is this commit of kevinjogin/bizomat-cad (formerly jogkev-creator/CADOS; same commit ids) byte for byte (scripts/sync-cad.mjs). Change CAD Automation in bizomat-cad, then sync."
+  "commit": "9fe29c0948f8aaf01b99d461a9a86d42048f9931",
+  "tree": "c553bb4cfc21a7c8ed53ce8815279ee5d636b290",
+  "subject": "BIZOMAT menu and footers: Systems instead of Project Management (#5)",
+  "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }

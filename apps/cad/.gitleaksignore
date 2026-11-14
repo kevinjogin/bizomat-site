@@ -1,0 +1,8 @@
+# gitleaks findings reviewed on 9 Nov 2026, when this repository was created. None is a secret.
+# Each line is a finding's fingerprint (commit:file:rule:line); the comment above it gives the reason.
+# A new finding is NOT covered by this file: review it, and rotate the secret if it is real.
+
+# tests/test_aikeys.py: test fixture: made-up keys used to check that keys are never echoed back
+7a9aa72b3d4271e1e20fee1c9ce74a10f646703e:tests/test_aikeys.py:generic-api-key:59
+# tests/test_aikeys.py: test fixture: made-up keys used to check that keys are never echoed back
+7a9aa72b3d4271e1e20fee1c9ce74a10f646703e:tests/test_aikeys.py:generic-api-key:139

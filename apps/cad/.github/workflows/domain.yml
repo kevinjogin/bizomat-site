@@ -3,7 +3,7 @@
 # Actions > Domain > Run workflow, with the host name (for example bridge.example.com).
 #
 # Repository secrets it needs: CLOUDFLARE_API_TOKEN (Cloudflare > My Profile > API Tokens > Create Token > "Edit zone
-# DNS", limited to that one domain) and FLY_API_TOKEN (a deploy token for the app). Nothing else is changed in
+# DNS", limited to that one domain) and FLY_CADOS_TOKEN (a deploy token for the cados app). Nothing else is changed in
 # Cloudflare; records of another kind under the same name are never replaced.
 name: Domain
 
@@ -14,9 +14,6 @@ on:
         description: "The gateway's own address (the domain must be in your Cloudflare account)"
         required: true
         default: "cados.kevos.com"
-      app:
-        description: "Fly app"
-        default: "cados"
       replace_existing:
         description: "Replace a CNAME that already exists under that name and points elsewhere"
         type: boolean
@@ -37,8 +34,8 @@ jobs:
       - name: DNS record, certificate, validation record, public address
         env:
           HOST: ${{ inputs.hostname }}
-          APP: ${{ inputs.app }}
+          APP: cados  # fixed: this repository only manages the cados app
           REPLACE: ${{ inputs.replace_existing && 'yes' || 'no' }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
         run: bash .github/scripts/kevos-domain.sh

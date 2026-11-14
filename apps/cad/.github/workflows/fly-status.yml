@@ -1,6 +1,6 @@
 # Reads the Fly app's state, so it can be checked from GitHub (Actions > Fly status > Run workflow): the app, its
 # machines, volumes, secret names (never values), releases, recent logs and what /healthz answers.
-# Changes nothing. Needs the repository secret FLY_API_TOKEN (Fly: the app > Tokens > a deploy token).
+# Changes nothing. Needs the repository secret FLY_CADOS_TOKEN (Fly: the app > Tokens > a deploy token).
 name: Fly status
 
 on:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  APP: ${{ vars.FLY_APP || 'cados' }}
+  APP: cados  # this repository deploys and inspects only the cados app
 
 jobs:
   status:
@@ -19,10 +19,10 @@ jobs:
     steps:
       - name: Check setup
         env:
-          HAS_TOKEN: ${{ secrets.FLY_API_TOKEN != '' }}
+          HAS_TOKEN: ${{ secrets.FLY_CADOS_TOKEN != '' }}
         run: |
           if [ "$HAS_TOKEN" != "true" ]; then
-            echo "::error::Add the repository secret FLY_API_TOKEN (Fly: the app > Tokens > Create deploy token)."
+            echo "::error::Add the repository secret FLY_CADOS_TOKEN (Fly: the app > Tokens > Create deploy token)."
             exit 1
           fi
 
@@ -30,7 +30,7 @@ jobs:
 
       - name: App, machines, volumes, secrets, releases
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
         run: |
           set +e
           for cmd in "status" "machines list" "volumes list" "secrets list" "releases" "certs list" "ips list"; do
@@ -43,7 +43,7 @@ jobs:
 
       - name: Recent logs
         env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
         run: flyctl logs --app "$APP" --no-tail | tail -n 300 || true
 
       - name: What the site answers

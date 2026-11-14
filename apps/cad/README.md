@@ -1,149 +1,341 @@
-# CADOS by KEVOS
+# BIZOMAT – CAD
 
-**Turn engineering intent into CAD.** CADOS connects your AI assistant (Claude, ChatGPT and other
-[MCP](https://modelcontextprotocol.io) clients) to SOLIDWORKS on your own computer. Describe a part or a change, and
-the assistant builds it as native SOLIDWORKS features in your own files: fully defined sketches, extrudes, cuts,
-revolves, holes, fillets, patterns, components, mates and drawings.
+BIZOMAT CAD Automation: the SOLIDWORKS MCP server, the CAD automation engine, the BIZOMAT CAD add-in for SOLIDWORKS,
+the Companion and the Windows installer. AI apps (Claude, ChatGPT and other MCP clients) call its `sw_` tools; the
+server checks each sketch and feature with its own CAD kernel and sends the work to SOLIDWORKS on the person's own
+computer, where the add-in builds native SOLIDWORKS features. It runs on the Fly.io app **`cados`** in Amsterdam (`ams`).
 
-CADOS is a product from [KEVOS](https://kevos.com/). Website: https://bizomat.ai/cad (formerly https://cados.kevos.com). Code names inside the
-repository (the `opensketch` Python package, `OPENSKETCH_*` settings, the add-in's file names) are kept for
-compatibility.
+Formerly CADOS by KEVOS; the code keeps OpenSketch as its internal name (the `opensketch` package, `OPENSKETCH_*`
+settings, the add-in's COM ids and file names). The BIZOMAT website and Project Management are in a separate
+repository, [`kevinjogin/bizomat-site`](https://github.com/kevinjogin/bizomat-site), on the Fly app `bizomat`. How the
+two work together: [docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md).
 
-> **Status: early.** The server side is tested end to end against a stand-in for SOLIDWORKS; the add-in is
-> compiled against the SOLIDWORKS 2022 API and its link is tested against a real server, but it has not yet been
-> run against many real SOLIDWORKS installs. Run the self test (below) on a new PC first, and please report
-> what you find.
+- Repository: `kevinjogin/bizomat-cad` (private). Default branch `main`.
+- Production: Fly app `cados`, region `ams` (Amsterdam), one Machine, deployed by hand from `main` with `fly.toml`.
+- Public address: <https://bizomat.ai/cad> (through the `bizomat` router). Origin: <https://cados.fly.dev> (every CAD
+  path; connectors and paired computers use it). Old hosts kept for programs: `cados.kevos.com`, `cad.bizomat.ai`.
+- Versions on `main` (9 Nov 2026): server 0.8.0 (`pyproject.toml`), add-in and installer 0.13.0
+  (`solidworks/Directory.Build.props`).
+- Project instructions for AI coding agents: [CLAUDE.md](CLAUDE.md). The earlier product README (what the AI can do,
+  install and use): [docs/README-cad-guide.md](docs/README-cad-guide.md).
 
-## How it works
+## Contents
+
+1. [Product purpose](#1-product-purpose)
+2. [Architecture](#2-architecture)
+3. [How the Site and CAD communicate](#3-how-the-site-and-cad-communicate)
+4. [Folder structure](#4-folder-structure)
+5. [Dependencies](#5-dependencies)
+6. [Local setup](#6-local-setup)
+7. [Environment variables and secrets](#7-environment-variables-and-secrets)
+8. [Testing](#8-testing)
+9. [Fly.io deployment](#9-flyio-deployment)
+10. [The add-in, the installer and releases](#10-the-add-in-the-installer-and-releases)
+11. [GitHub Actions](#11-github-actions)
+12. [Recovery and maintenance](#12-recovery-and-maintenance)
+13. [Repository history](#13-repository-history)
+14. [Security rules](#14-security-rules)
+
+## 1. Product purpose
+
+- **SOLIDWORKS MCP server** (`opensketch/mcp_server.py`, `sw_tools.py`): one MCP server with 31 tools at `/mcp` (and
+  the older `/solidworks/mcp`), signed in with OAuth (`mcpauth.py`): sketches, features, assemblies, drawings,
+  exports, previews, measurements, the self test.
+- **CAD automation engine**: the feature registry (`opensketch/features/`), the build123d/OpenCascade kernel
+  (`geometry.py`, `assembly.py`, `inspection.py`, `measure.py`, `preview.py`, `importer.py`) and the sketch solver
+  (`opensketch/solver/`, JavaScript). Every feature is checked and its result predicted before SOLIDWORKS sees it.
+- **Device bridge** (`swbridge.py`, `devicebridge.py`): the link that paired Windows computers poll over outgoing HTTPS
+  (`/v2/device/*`, signed both ways), with every command recorded in `bridge.sqlite`.
+- **Accounts and pages**: sign-in, Google sign-in, invites, the owner's Admin page, the signed-in app (Home, CAD
+  Assistant, SOLIDWORKS, Tools, History, Settings) and the public product pages under `/cad`.
+- **BIZOMAT CAD for Windows** (`solidworks/`): the SOLIDWORKS add-in (C#, .NET Framework 4.8, COM `ISwAddin`), the
+  Companion tray app (`KEVOS.Companion.exe`) that holds the signed link and hands commands to the add-in over a
+  local named pipe, and `OpenSketchSW.exe`.
+- **Windows installer** (`installer/`): one WiX 5 MSI, "BIZOMAT CAD Automation for SOLIDWORKS", that installs the
+  add-in and the Companion; its build, development signing and release.
+
+## 2. Architecture
 
 ```
-AI app (Claude, ChatGPT)  --MCP-->  CADOS gateway  <--outbound HTTPS--  KEVOS Companion + add-in in SOLIDWORKS (your PC)
+AI app (Claude, ChatGPT, ...) --MCP over https--> /mcp  (bizomat.ai/cad, cados.fly.dev)
+                                                    |
+  Fly app cados (ams), one Machine ---------------------------------------------------------------
+  |  python -m opensketch --supervise   :8080 (listens on ::, public through Fly and private as cados.internal)
+  |    MCP tools -> feature checks (kernel, solver) -> command queue (swbridge / devicebridge)
+  |    volume opensketch_data at /data: accounts, OAuth grants, keys, bridge.sqlite, uploads
+  ------------------------------------------------------------------------------------------------
+                                                    ^
+                     outgoing https long poll       |  signed commands and results
+                                                    |
+  Windows computer: KEVOS Companion (tray, paired) --named pipe--> BIZOMAT CAD add-in inside SOLIDWORKS
 ```
 
-- The AI app adds one connector address (`https://mcp.bizomat.ai/mcp` for BIZOMAT; `https://<server>/mcp` for a server of your own) and signs in once (OAuth).
-- The add-in on the SOLIDWORKS PC connects out to the server, so the PC needs no open ports, and runs each
-  command in SOLIDWORKS through its API.
-- Before anything reaches SOLIDWORKS, the server checks it with its own CAD kernel
-  ([build123d](https://github.com/gumyr/build123d) / OpenCascade): every sketch is solved, every feature is built
-  on SOLIDWORKS' current body, and the add-in compares what SOLIDWORKS made with that prediction (and remakes a
-  feature the other way round if SOLIDWORKS read a direction differently).
-- SOLIDWORKS is the master copy. You can edit the same file by hand between the AI's steps; the AI reads the
-  file again before it writes.
+- **One process, supervised.** The image's CMD is `python -m opensketch --host :: --port 8080 --no-browser
+  --supervise`: `supervisor.py` restarts the server after 120 s without a health answer.
+- **CAD work** runs in worker processes (`cadworker.py`), at most `OPENSKETCH_CAD_LANES` at once, or in threads with
+  `OPENSKETCH_CAD_WORKERS=0`.
+- **SOLIDWORKS is the master copy.** The server keeps no SOLIDWORKS document; reads export a STEP of the bodies that
+  changed.
+- **Contracts:** the feature format (`docs/DOCUMENT.md`) between the AI, the kernel and the add-in; the bridge
+  protocol (`docs/BRIDGE-PROTOCOL.md`) between the server, the Companion and the add-in. Change the document first.
+- **Production, read from Fly on 9 Nov 2026 (`fly scale show`, `fly volumes list`):** one Machine in **Amsterdam
+  (`ams`)**, shared CPU, 2 vCPUs, 2048 MB, and the volume `opensketch_data` (1 GB) in `ams`. `fly.toml` matches it:
+  `primary_region = 'ams'`, `[[vm]] size = 'shared-cpu-2x'`, `memory = '2gb'`, the volume at `/data`,
+  `auto_stop_machines = 'suspend'`, `min_machines_running = 0`. (Until 9 Nov 2026 the file said `syd` and
+  performance-1x; the app was never in Sydney.)
+- **The app is far from Sydney.** The `bizomat` router (in `syd`) reaches it in Amsterdam, which adds roughly a quarter
+  of a second to each `bizomat.ai/cad` request. Moving it to `syd` means a new volume made from a snapshot: a planned
+  production change of its own, never part of a deploy ([docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md)).
+- **Not deployed:** `cloudflare/mcp` (a Cloudflare Worker and Container to host CAD on Cloudflare; rehearsed locally on
+  7 Nov 2026, never deployed) and `windows/` (running the server on one Windows PC).
 
-## KEVOS Bridge: install once per computer
+## 3. How the Site and CAD communicate
 
-For everyday use on Windows: install **KEVOS Bridge** (one MSI) on each SOLIDWORKS computer and pair it once with
-your account. The KEVOS Companion starts with Windows and connects by itself; the add-in loads with SOLIDWORKS. No
-command prompt, no macro, no address or key to paste. Several computers per account; destructive changes are
-confirmed in SOLIDWORKS. See [docs/KEVOS-INSTALL.md](docs/KEVOS-INSTALL.md), and for the server side
-[docs/KEVOS-CLOUDFLARE.md](docs/KEVOS-CLOUDFLARE.md), [docs/KEVOS-SECURITY.md](docs/KEVOS-SECURITY.md),
-[docs/BRIDGE-PROTOCOL.md](docs/BRIDGE-PROTOCOL.md). Status: built and tested up to the add-in's command dispatcher;
-not yet run in a real SOLIDWORKS ([test report](docs/KEVOS-TEST-REPORT.md)).
+In short (the full contract, with a change checklist: [docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md)):
 
-## What the AI can do
+- The `bizomat` app's router sends CAD's requests on bizomat.ai to this app over Fly's private network,
+  `http://cados.internal:8080`. Keep this app in the same Fly organization as `bizomat`, listening on `::` port 8080.
+- Its public address is `OPENSKETCH_PUBLIC_URL = https://bizomat.ai/cad`. `opensketch/canonical.py` takes the `/cad`
+  prefix off and writes it back into links, redirects and cookies; the OAuth issuer is `https://bizomat.ai/cad`.
+- The root paths it keeps on bizomat.ai (`/mcp`, `/solidworks/mcp`, `/oauth/...`, `/v2/...`, `/healthz`, the OAuth
+  `/.well-known/` documents) are listed in the site's `CAD_PATHS` and in `canonical.py` (`KEEP_PREFIXES`). Never
+  change the MCP endpoints, OAuth paths or the device API without the site repository: AI apps and paired computers
+  depend on them.
+- The two apps share no database, queue or secret. The footer text and brand follow the website's
+  `src/config/platform.ts` and `shared/brand/` (`opensketch/brand.py` repeats them).
+- The site repository holds a pinned, read-only copy of one commit of this repository (`apps/cad`, commit `e669cc6`).
+  Change CAD only here.
+- A suspended `cados` Machine is not woken by the router's private-network requests; see the integration document
+  (the unmerged branch `claude/practical-lovelace-hi2nio` proposes keeping it always on).
 
-| Tool | What it does |
-|---|---|
-| `sw_status`, `sw_get_guide` | Is SOLIDWORKS connected, which files are open; the workflow and feature format |
-| `sw_create_document`, `sw_open_document`, `sw_save`, `sw_get_document` | Make, open, save and read parts and assemblies |
-| `sw_add_features`, `sw_batch` | Build features (a batch is all or nothing) |
-| `sw_delete_items`, `sw_undo` | Remove features, components or mates; undo |
-| `sw_set_parameter`, `sw_set_equation` | SOLIDWORKS global variables and equations |
-| `sw_insert_component`, `sw_add_mate`, `sw_find_mate_candidates` | Assemblies |
-| `sw_body_topology`, `sw_measure_items`, `sw_inspect_design`, `sw_preview`, `sw_check_interference` | Look, measure and check |
-| `sw_create_drawing` | A SOLIDWORKS drawing of a part or assembly: standard views (third or first angle) and an isometric, a scale that fits, the model's dimensions, title block fields |
-| `sw_get_drawing`, `sw_edit_drawing` | Read a drawing, and change it step by step: model, projected, section and detail views, move, scale and display style, model dimensions, centre marks, notes, title block, sheet, parts list with balloons |
-| `sw_export`, `sw_import`, `request_upload` | STEP, STL, Parasolid, IGES, SOLIDWORKS files, PDF out; drawings as PDF, DWG or DXF; files in |
-| `sw_standard_part` | ISO screws, nuts, washers and ball bearings, made to size |
-| `sw_selftest` | Checks a new install, step by step |
-| `sw_list_devices`, `sw_command_status`, `sw_cancel_command` | Registered computers (KEVOS); a long command's state and late result; cancel |
+## 4. Folder structure
 
-The feature format is in [docs/DOCUMENT.md](docs/DOCUMENT.md).
+| Path | What |
+| --- | --- |
+| `opensketch/` | The server: `server.py` (app, routes), `mcp_server.py`, `sw_tools.py`, `sw_selftest.py` (MCP), `swbridge.py`, `devicebridge.py` (computers), `auth.py`, `accounts.py`, `oauth.py`, `mcpauth.py` (sign-in), `canonical.py` (the `/cad` prefix), `site.py`, `app_pages.py`, `brand.py` (pages), the kernel modules, `features/`, `solver/`, `cadworker.py`, `supervisor.py`, `persist.py`, `store.py`, `static/` |
+| `tests/` | Python tests (`pytest`), including the stand-in Companion `bridge_fakes.py` and the slow end-to-end tests |
+| `solidworks/` | BIZOMAT CAD for Windows: `src/Addin` (the SOLIDWORKS add-in), `src/Companion`, `src/App` (`OpenSketchSW.exe`), `src/Core`, `src/Shared`; `tests/`; `package/` (manual package, launcher macro); `build.sh`; `Directory.Build.props` (the version) |
+| `installer/` | The MSI: `KEVOS-Bridge.wxs` (WiX 5), `build.ps1`, `sign-development.ps1`, `signing/` (the public development certificate and its notes) |
+| `backups/installer/` | Released installers kept as they were: `original/2026-11-07` (0.13.0, the released MSI) and `development-signed/`. Never overwritten |
+| `docs/` | The feature format, the bridge protocol, add-in architecture, install, build, signing, security, versions, release notes, test report, troubleshooting; the integration contract; the earlier README |
+| `windows/` | Running the server on one Windows PC: `setup.ps1`, `start.ps1`, `update-addin.ps1`, `connect-claude.ps1` |
+| `tools/laptop/` | The owner's laptop tools: `bizomat.ps1` (setup, deploys, status), `cloudflare.ps1` (publishing installers, the Cloudflare plan) |
+| `cloudflare/mcp/` | The Cloudflare Worker and Container for CAD (not deployed) |
+| `.github/workflows/`, `.github/scripts/` | CI, the add-in and installer builds, releases, the deploy (section 11); `fly-preflight.py`, `kevos-domain.sh`, `test-install.ps1` |
+| `Dockerfile`, `fly.toml` | The production image (Python 3.12, with the add-in built in a .NET 8 stage) and the Fly configuration |
+| `pyproject.toml`, `requirements.txt`, `requirements-dev.txt`, `package.json` | Python package and pinned dependencies (with hashes); the solver's Node package |
 
-## Use it
+## 5. Dependencies
 
-1. **Sign in** at https://bizomat.ai/cad (or your own server, see below) and open the dashboard.
-2. **Install BIZOMAT CAD Automation** on the SOLIDWORKS computer (SOLIDWORKS 2022 or newer, Windows 64-bit): the Windows
-   installer (`BIZOMAT-CAD-Automation-x64.msi`, "Download for SOLIDWORKS" on the website) adds the add-in and the BIZOMAT Companion; see
-   [docs/KEVOS-INSTALL.md](docs/KEVOS-INSTALL.md). Without the installer: download the add-in package from the
-   dashboard, unzip it, run `OpenSketchSW.exe` and click Install for me (per Windows user).
-3. **Pair the computer** when the KEVOS Companion asks, then open SOLIDWORKS: the CADOS tab and task pane show the link. (Direct
-   link without the Companion: CADOS > Status in SOLIDWORKS, then paste the address and add-in key from the
-   dashboard; or run the macro `Documents\OpenSketch\OpenSketch.swb`.)
-4. **Add the connector** in your AI app: a custom connector with the address from the dashboard. Apps that cannot
-   sign in can use the private address shown under "Assistant cannot sign in?".
-5. **Run the self test** the first time: ask "Run the SOLIDWORKS self test, all three stages." It builds test
-   files in `Documents\OpenSketch\selftest` and reports every step as ok, check or failed. The add-in's log is
-   `%LOCALAPPDATA%\OpenSketch\SolidWorks\log.txt`.
+- **Python 3.12** with the pinned packages in `requirements.txt` (the image) and `requirements-dev.txt` (tests),
+  installed with hashes. Main libraries: FastAPI/Starlette, the MCP SDK, build123d and OpenCascade (OCP), uvicorn.
+- **Node.js 20 or newer** for the sketch solver (`npm test`); Node 22 for `cloudflare/mcp`.
+- **.NET 8 SDK** to build and test the add-in and Companion (`bash solidworks/build.sh test`, on Linux or Windows; the
+  targets are .NET Framework 4.8 with the SOLIDWORKS 2022 interop embedded).
+- **Windows with WiX 5** to build the MSI (`installer/build.ps1`; CI does it on `windows-latest`). SignTool from the
+  Windows SDK for signing.
+- **Docker** for the production image; `flyctl` for deploys and operations.
+- **On each user's computer:** Windows x64 and SOLIDWORKS (built against the 2022 interop).
+- **External services:** Fly.io (hosting), Google sign-in (optional), Cloudflare R2 for public installer downloads
+  (`bizomat-downloads`, published from the laptop), Cloudflare DNS for the old hosts.
 
-Then ask for real work, for example: "In SOLIDWORKS, make a 60 x 40 x 8 mm mounting plate with four M5
-clearance holes."
-
-## Run your own server
-
-### Locally
+## 6. Local setup
 
 ```bash
+git clone https://github.com/kevinjogin/bizomat-cad.git
+cd bizomat-cad
+python3.12 -m venv .venv && . .venv/bin/activate
 pip install -r requirements-dev.txt && pip install --no-deps -e .
+npm ci
 python -m opensketch --no-browser      # http://127.0.0.1:8000
 ```
 
-Needs Python 3.12 and Node.js 20 or newer (the sketch solver runs in node). There is no server password. Until the
-first account exists, the server is open only to this machine itself; any other request (another address, a proxy
-or a tunnel, or any request once `OPENSKETCH_PUBLIC_URL` is set) gets only the setup page, where the first person to
-create an account becomes the owner. Create it right after you start a public server.
-An AI app needs a public https address to reach the server, so for real use, host it.
+There is no server password. Until the first account exists the server is open only to this machine; a public server
+(`OPENSKETCH_PUBLIC_URL` set, or any outside request) shows only the setup page, where the first person to create an
+account becomes the owner.
 
-### Docker
+The production image:
 
 ```bash
-docker build -t opensketch .
-docker run -p 8080:8080 -e OPENSKETCH_PUBLIC_URL=https://cados.example.com -v opensketch-data:/data opensketch
+docker build -t bizomat-cad .
+docker run -p 8080:8080 -e OPENSKETCH_PUBLIC_URL=http://localhost:8080 -v bizomat-cad-data:/data bizomat-cad
 ```
 
-The image also builds the add-in, so the home page can offer it for download.
+The add-in and Companion: `bash solidworks/build.sh test` (.NET 8 SDK). The MSI, on Windows: `installer/build.ps1`
+(steps and options in [docs/KEVOS-BUILD.md](docs/KEVOS-BUILD.md)). The Windows PC server: [windows/README.md](windows/README.md).
 
-### Fly.io
+## 7. Environment variables and secrets
 
-`fly.toml` and `.github/workflows/deploy.yml` deploy it on every push to `main` once the tests pass. Set the
-repository secret `FLY_API_TOKEN` (optionally `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` for Sign in with Google), and the repository variable `FLY_APP` to your app's name. For your
-own domain, add a certificate in the Fly dashboard and set the variable `PUBLIC_URL`.
+Values are never in the repository. Production secrets are Fly secrets of the app `cados` (`fly secrets list -a cados`
+shows names only).
 
-### Settings
+**Server settings** (`[env]` in `fly.toml`, Fly secrets, or the environment of a local run)
 
-| Variable | Meaning |
-|---|---|
-| `OPENSKETCH_DATA` | Data folder: accounts, connections, keys, short-lived uploads (default `~/opensketch-data`) |
-| `OPENSKETCH_PUBLIC_URL` | The server's public address. Set it on any public server: until the owner account exists, only the setup page answers |
-| `OPENSKETCH_REQUIRE_SIGNIN` | Any value: treat the server as public (setup page first) even without a public address |
-| `OPENSKETCH_ACCESS_CODE` | Optional early access code: people who type it skip sign-up |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional Sign in with Google (redirect `https://<server>/auth/google/callback`) |
-| `OPENSKETCH_KEY_SECRET` | Optional key for the secrets stored on the server (else a random one in the data folder) |
+| Name | Meaning |
+| --- | --- |
+| `OPENSKETCH_DATA` | Data folder: accounts, OAuth grants, keys, `bridge.sqlite`, uploads (`/data` on Fly) |
+| `OPENSKETCH_PUBLIC_URL` | The public address: `https://bizomat.ai/cad` in production |
+| `OPENSKETCH_REDIRECT_HOSTS` | Old hosts that keep working for programs and send pages to the public address |
+| `OPENSKETCH_ALIAS_HOSTS`, `OPENSKETCH_MCP_URL` | Other addresses of the same server; the connector address shown to people |
+| `OPENSKETCH_REQUIRE_SIGNIN` | Treat the server as public (setup page first) even without a public address |
+| `OPENSKETCH_ACCESS_CODE` | Optional early access code (secret) |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional Google sign-in (secret; callback `https://bizomat.ai/cad/auth/google/callback`) |
+| `OPENSKETCH_KEY_SECRET` | Optional key for the secrets the server stores (secret; else a random key in the data folder) |
+| `OPENSKETCH_MCP_TOKEN`, `OPENSKETCH_PASSWORD` | Legacy: the seed of an old owner's private address. No server password is used |
+| `OPENSKETCH_INSTALLER_URL`, `OPENSKETCH_ADDIN_URL`, `OPENSKETCH_SW_ZIP` | Where the installer, the add-in update and the manual package come from |
+| `OPENSKETCH_CAD_WORKERS`, `OPENSKETCH_CAD_LANES`, `OPENSKETCH_CAD_LIMIT`, `OPENSKETCH_WORKER_MAX_MB`, `OPENSKETCH_JOB_ROOM_MB`, `OPENSKETCH_BUILT_CACHE_MB` | CAD worker processes and memory limits |
+| `OPENSKETCH_MIN_FREE_MB`, `OPENSKETCH_DISK_RESERVE_MB` | Disk space guards |
+| `OPENSKETCH_BOOT_SECONDS`, `OPENSKETCH_HANG_SECONDS` | The supervisor's start and hang limits |
+| `OPENSKETCH_CLIENT_IP_HEADER` | The header that carries the visitor's address behind a trusted proxy |
+| `OPENSKETCH_MAX_TESTERS` | Limit on early access accounts |
+| `OPENSKETCH_PERSIST_URL`, `OPENSKETCH_PERSIST_SECONDS`, `OPENSKETCH_PERSIST_EMPTY_OK` | Copying the data folder to an object store (the Cloudflare plan only) |
+| `OPENSKETCH_VERSION` | Set at build time (`--build-arg`); reported by `/healthz` |
 
-## Develop
+**GitHub Actions (Settings > Secrets and variables > Actions)**
+
+| Name | Used by |
+| --- | --- |
+| `FLY_CADOS_TOKEN` | `deploy.yml`, `fly-status.yml`, `domain.yml`: a deploy token for the `cados` app only |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENSKETCH_ACCESS_CODE` | `deploy.yml`, optional: passed to Fly as the app's secrets |
+| `KEVOS_SIGN_PFX_BASE64`, `KEVOS_SIGN_PASSWORD` | `solidworks.yml`, optional: a code-signing certificate (.pfx, base64) and its password. Without them the MSI is built unsigned |
+| `CLOUDFLARE_API_TOKEN` | `domain.yml` only (DNS for an extra host) |
+
+**On the Windows development computer**: `KEVOS_SIGN_THUMBPRINT` (the certificate in the Windows certificate store
+that `installer/build.ps1` signs with). The private key never leaves that store.
+
+## 8. Testing
 
 ```bash
-pytest -q          # Python tests (needs node)
-npm test           # the sketch solver
-bash solidworks/build.sh test   # the add-in (.NET 8 SDK, on Linux or Windows)
+pytest -q                          # Python tests (needs node for the sketch solver)
+pytest -q -m slow                  # the slow end-to-end tests (the C# Companion and add-in link need the .NET 8 SDK)
+npm test                           # the sketch solver
+bash solidworks/build.sh test      # the add-in and Companion (.NET 8 SDK)
+cd cloudflare/mcp && npm ci && npm run check   # the Cloudflare Worker (not deployed)
 ```
 
-Layout:
+On Windows: `installer-test.yml` builds the MSI, signs it with a throwaway certificate and installs and removes it
+(`.github/scripts/test-install.ps1`). The checklist for a real SOLIDWORKS computer is in
+[docs/KEVOS-TEST-REPORT.md](docs/KEVOS-TEST-REPORT.md), section 4.
 
-- `opensketch/mcp_server.py`, `sw_tools.py`, `sw_selftest.py`: the MCP server and the SOLIDWORKS tools.
-- `opensketch/swbridge.py`: the link the add-in polls.
-- `opensketch/sw_page.py`: the home page. `auth.py`, `accounts.py`, `oauth.py`, `mcpauth.py`: sign-in.
-- `opensketch/geometry.py`, `features/`, `assembly.py`, `naming.py`, `params.py`, `inspection.py`, `measure.py`,
-  `preview.py`, `importer.py`: the kernel that checks features and reads SOLIDWORKS' geometry.
-- `opensketch/solver/`: the sketch solver (JavaScript).
-- `solidworks/`: the add-in (C#, .NET Framework 4.8).
+## 9. Fly.io deployment
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to send changes, and [SECURITY.md](SECURITY.md) for reporting a
-security problem.
+**Production is the Fly app `cados`, one Machine, deployed from `main` with `fly.toml`.** Since 9 Nov 2026 (the
+owner's choice) **every merge to `main` deploys automatically**, after the tests and the preflight pass, unless the
+change only touches `docs/`, root `*.md` files or `backups/`. Keep `main` releasable. To merge without deploying, put
+`[skip ci]` in the merge commit's message (for example `gh pr merge <n> --merge --subject "... [skip ci]"`). No other
+branch, tag or schedule deploys.
 
-## License
+**One-time setup**
 
-[GNU Affero General Public License v3.0](LICENSE). You can use, change and share CADOS. If you run a changed
-version as a service for others, you must offer them its source code.
+1. Fly dashboard > `cados` > Tokens > Create deploy token. GitHub: Settings > Secrets and variables > Actions > New
+   repository secret `FLY_CADOS_TOKEN`.
+2. Settings > Actions > General: allow Actions (they were turned off for the move, so that copying the branches
+   started no workflow).
+3. **One deploy source.** The `cados` app has no GitHub repository attached in Fly (Fly dashboard > `cados` >
+   Settings shows "Attach existing repository", checked 9 Nov 2026; it used to build every push to
+   `jogkev-creator/CADOS` `main`). Keep it that way: never attach a repository there, because deploys go through the
+   workflow below, with its preflight.
 
-SOLIDWORKS is a trademark of Dassault Systemes. CADOS and KEVOS are not affiliated with or endorsed by Dassault Systemes.
+**Deploy**: automatically on a merge to `main`, or by hand: Actions > **Deploy to Fly.io (cados)** > Run workflow on
+`main`, `confirm` = `DEPLOY` (to redeploy, or to deploy a docs-only change). Either way it:
+
+1. runs the tests (`tests.yml`); only a deploy by hand can skip them (`skip_tests`);
+2. runs the **preflight** (`.github/scripts/fly-preflight.py`): reads the live Machine and compares it with
+   `fly.toml`. It stops, deploying nothing, when the deploy would add or remove a Machine or change its size, memory or
+   region. Only a deploy by hand can let a deliberate change through (`allow_machine_change` = `YES`);
+3. passes the optional secrets to Fly;
+4. deploys: `flyctl deploy --app cados --config fly.toml --remote-only --ha=false --build-arg
+   OPENSKETCH_VERSION=<commit> --env OPENSKETCH_PUBLIC_URL=https://bizomat.ai/cad` (the one Machine is replaced in
+   place; CAD MCP is offline for about 15-90 s; add-ins and Companions reconnect by themselves);
+5. checks that `https://cados.fly.dev/healthz` reports the new version within 3 minutes.
+
+**`fly.toml` matches production** (9 Nov 2026): the preflight passes for it, so a deploy ships new code onto the same
+Machine in `ams`. A change to the Machine (size, memory or region) is a decision of its own: change `fly.toml` in a
+pull request, then deploy with `allow_machine_change` = `YES`. (Each CAD worker process uses about 400 MB; with less
+than 2 GB set `OPENSKETCH_CAD_WORKERS = "0"`.)
+
+`fly-status.yml` (by hand) prints the Machines, volumes, secret names, releases, logs and `/healthz` and changes
+nothing. `domain.yml` (by hand) gives the app an extra host on a Cloudflare domain. Neither touches `bizomat`.
+
+## 10. The add-in, the installer and releases
+
+- **Version:** `solidworks/Directory.Build.props` (0.13.0 on `main`). Bump it whenever the add-in learns a command;
+  the server tells people when their add-in is too old (`swbridge.addin_too_old`).
+- **Build:** `solidworks.yml` builds and tests the add-in on Linux and keeps the package as an artifact; its
+  `installer` job builds the MSI on Windows (`installer/build.ps1`) as `BIZOMAT-CAD-Automation-<version>-x64.msi`,
+  the stable `BIZOMAT-CAD-Automation-x64.msi` and the 0.12 name `CADOS-for-SOLIDWORKS-x64.msi`, each with a
+  `.sha256` file and `release.json`. The UpgradeCode never changes, so a new MSI upgrades CADOS for SOLIDWORKS and
+  KEVOS Bridge installs.
+- **Signing:** with the repository secrets `KEVOS_SIGN_PFX_BASE64` and `KEVOS_SIGN_PASSWORD` the MSI and the three
+  own binaries are signed in CI; without them it is unsigned. Development signing runs on the Windows development
+  computer with a self-signed `CN=BIZOMAT Development` certificate from its certificate store
+  (`installer/sign-development.ps1`, [docs/BIZOMAT-DEV-SIGNING.md](docs/BIZOMAT-DEV-SIGNING.md)). Only the public
+  certificate (`installer/signing/BIZOMAT-Development.cer`) is in the repository.
+- **Releases (private, for the owner):** a push to `main` that changes `solidworks/` or `installer/` replaces the
+  `addin-latest` and `bridge-latest` releases; a tag `bridge-v<version>` makes a versioned release. The tags
+  `addin-latest` and `bridge-latest` were copied from CADOS. The release files of `jogkev-creator/CADOS` stay there;
+  the 0.13.0 MSI it released is also in `backups/installer/original/2026-11-07` (same SHA-256).
+- **Public downloads:** `tools/laptop/cloudflare.ps1 publish installer -File <msi>` copies the MSI, its checksum and
+  the release record to bizomat.ai downloads (R2 bucket `bizomat-downloads`). Signed-in people download through
+  `/cad/download/solidworks`.
+- **Backups:** `backups/installer/` keeps every released and development-signed MSI as it was. Never overwrite or
+  delete them.
+
+## 11. GitHub Actions
+
+| Workflow | Starts on | Does |
+| --- | --- | --- |
+| `tests.yml` Tests | pull request, push to a branch other than `main`, by hand, called by the deploy | `pytest` (main and slow), `npm test`, the Cloudflare Worker's check |
+| `solidworks.yml` SOLIDWORKS add-in | push of `solidworks/`, `installer/` or itself (any branch), tags, pull request, by hand | Add-in build and tests; the MSI on Windows; releases on `main` and on tags |
+| `installer-test.yml` Installer test | pull request and push (not `main`) touching the installer, by hand | Builds, test-signs, installs and removes the MSI on Windows |
+| `deploy.yml` Deploy to Fly.io (cados) | push to `main` (not docs-only), by hand (`DEPLOY`) | Tests, preflight, deploy to `cados` (section 9) |
+| `fly-status.yml` | by hand | Read-only status of `cados` |
+| `domain.yml` | by hand | An extra host for `cados` on a Cloudflare domain |
+| `live-tls.yml` Live TLS | daily 07:41 Sydney, by hand | Checks the certificates of the public addresses (read-only) |
+
+Windows jobs count double against GitHub Free's monthly minutes for private repositories. When the minutes run out
+every job fails at once with a billing message (seen on 7-8 Nov 2026).
+
+## 12. Recovery and maintenance
+
+- **A bad release:** `flyctl releases -a cados --image`, then `flyctl deploy -a cados --image <the previous image>
+  --ha=false`.
+- **Data:** the volume `opensketch_data` holds accounts, OAuth grants, the bridge signing key and `bridge.sqlite`.
+  Take a snapshot before risky work (Fly dashboard > `cados` > Volumes > Snapshot). To restore, make a new volume from
+  a snapshot and move the Machine onto it; never delete the old volume until the restored one is checked. Losing the
+  bridge signing key means every computer must pair again.
+- **Logs and state:** `flyctl status -a cados`, `flyctl logs -a cados`, or Actions > `fly-status.yml`.
+- **Owner password:** there is no reset page. The owner resets other people on Admin, and their own password with
+  `python -m opensketch --reset-password EMAIL` on the server (`fly ssh console -a cados`).
+- **A stuck server:** the supervisor restarts it after 120 s without a health answer. A Machine restart:
+  `flyctl machine restart <id> -a cados`.
+- **Troubleshooting:** [docs/KEVOS-TROUBLESHOOTING.md](docs/KEVOS-TROUBLESHOOTING.md); security notes:
+  [docs/KEVOS-SECURITY.md](docs/KEVOS-SECURITY.md), [SECURITY.md](SECURITY.md).
+- **Dependencies:** Python pins with hashes in `requirements*.txt`; review Dependabot pull requests with the tests.
+
+## 13. Repository history
+
+This repository was created on 9 Nov 2026 from the source of the live `cados` app:
+
+- **`main` and every other branch and tag** are `jogkev-creator/CADOS` exactly as it was on 9 Nov 2026 (formerly
+  `jogkev-creator/opensketchyz`): 9 branches, the tags `addin-latest` and `bridge-latest`, the full history with the
+  same commit ids. `main` continues it with the move's own commits. The site's pin (`e669cc6`) is a commit here.
+- **`archive/bizomat-repo/*`**: the CAD part of `jogkev-creator/bizomat` (8-9 Nov 2026, never deployed), with
+  `apps/cad` as the repository root and the installer backups kept. Each commit keeps its author, date and message,
+  with an `Archived-From:` line naming the original commit. `archive/bizomat-repo/main` has the 0.14.0 rename and the
+  TLS 1.2 fix; `archive/bizomat-repo/claude/vigilant-johnson-g8ecmi` (the newest, 9 Nov 2026) adds the drafting
+  intelligence engine and tools, add-in 0.15, the task pane Connect fix and the Pack and Go test copies. Review and
+  test before merging: it changes the add-in, the installer names and the MCP tools.
+- The old repositories (`jogkev-creator/CADOS`, `jogkev-creator/bizomat`, `jogkev-creator/gocore-website`) were not
+  changed or deleted.
+
+## 14. Security rules
+
+- Never commit `.env` files, Fly or Cloudflare tokens, signing certificates with private keys (`.pfx`, `.p12`,
+  `.pvk`, private `.pem`/`.key`), passwords, the data folder, databases, uploads or personal data. `.gitignore`
+  covers the usual names; check `git diff --cached --stat` before every commit.
+- History was scanned with gitleaks on 9 Nov 2026: no secret. The only findings are fake keys in a test, listed with
+  the reason in `.gitleaksignore`. Run `gitleaks git . --redact` before pushing anything unusual.
+- The tests check that the signing scripts never export a private key and that the repository holds none.
+- Report a security problem as [SECURITY.md](SECURITY.md) says; never in a public place.
+- License: AGPL-3.0-only ([LICENSE](LICENSE)).
