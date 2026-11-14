@@ -1,6 +1,7 @@
 // Builds the BIZOMAT ERP design prototype on its own: entry erp-design-preview/index.html, output
 // dist/erp-design-preview, relative addresses (base './') so the files open from any folder or path. The app's own
-// build (vite.config.ts) never includes it. Design work only: demonstration data, no server calls, nothing deployed.
+// build (vite.config.ts) never includes it. Design work only: demonstration data, no server calls. Published on
+// bizomat.ai/erp-design-preview/ by infrastructure/fly/Dockerfile (stage erp-preview) as static files for the website.
 //   npm run dev:erp-preview     http://localhost:5174/erp-design-preview/
 //   npm run build:erp-preview   dist/erp-design-preview/
 //   npx vite preview --config vite.erp-preview.config.ts   http://localhost:4174/erp-design-preview/
