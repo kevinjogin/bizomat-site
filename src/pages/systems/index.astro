@@ -90,7 +90,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       live('The CRM, Finance and Projects open inside it as modules.'),
       live("Products and Engineering shows CAD Automation's set-up steps."),
       building("Your company's CAD computers, reported by CAD Automation. Until it reports, the page says so."),
-      building('Maintenance: asset register, maintenance requests and work orders. Not switched on yet.'),
+      live('Maintenance: asset register, maintenance requests and work orders.'),
       planned('Operations: procurement, inventory, manufacturing, quality and supply chain.'),
     ],
     steps: [
@@ -280,7 +280,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     signIn: 'A CAD Automation account, for now',
   },
   manufacturing: {
-    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. None of it can be used or bought yet: Maintenance is being built, and the other modules are planned.',
+    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. Maintenance works today inside BIZOMAT ERP; the other modules are planned and cannot be used or bought yet.',
     who: 'It is designed for manufacturers, workshops and businesses that buy, store and ship goods.',
     problems: [
       'Stock levels known only by counting.',
@@ -293,7 +293,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       planned('Inventory and warehouse'),
       planned('Manufacturing and production planning'),
       planned('Quality'),
-      building('Maintenance, first stage: asset register, requests with approval, work orders, technicians, labour timer, photos and documents'),
+      live('Maintenance, first stage, in BIZOMAT ERP: asset register, requests with approval, work orders, technicians, labour timer, photos and documents'),
       planned('Preventive maintenance, inspections, spare parts and reliability reporting'),
       planned('Supply chain'),
     ],
@@ -314,7 +314,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       { t: 'See the design.', x: 'Explore the design preview, which uses demonstration data only.' },
     ],
     faqs: [
-      { q: 'Can I use it today?', a: 'No. Maintenance is being built and is not switched on yet; the other modules are planned and not built. There is nothing to sign up for or buy.' },
+      { q: 'Can I use it today?', a: 'Maintenance, yes: it works inside BIZOMAT ERP. The other modules are planned and not built; there is nothing to sign up for or buy.' },
       { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data. Nothing you do there is saved.' },
     ],
     manages: 'Procurement, inventory, production, quality, maintenance and supply chain',
@@ -329,7 +329,7 @@ const platformFaqs = [
   { q: 'Can I manage more than one company?', a: 'Yes. Register more than one company, or accept invitations from others, and move between them with the company switcher. Everyone also has their own company in their own name, which is not registered.' },
   { q: 'Is my data copied between the systems?', a: 'No. Each tool keeps its own records and permissions. A link between tools, such as a won deal to a draft invoice, makes a record in the other tool only when you ask, and checks your role there first.' },
   { q: 'Does Finance connect to my bank or lodge my BAS?', a: 'No. Finance does not connect to banks, make payments or lodge with the ATO. You import statements you download, and the GST and BAS report is a worksheet to check before you lodge yourself.' },
-  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality and supply chain) is planned and not built. A design preview with demonstration data shows how it is designed. Maintenance is being built inside BIZOMAT ERP and is not switched on yet.' },
+  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Not yet. Manufacturing and Operations (procurement, inventory, production, quality and supply chain) is planned and not built. A design preview with demonstration data shows how it is designed. Maintenance works today inside BIZOMAT ERP, for assets, requests and work orders.' },
   { q: 'What happened to the old addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into BIZOMAT ERP, so bookmarks and links in emails keep working.' },
 ];
 

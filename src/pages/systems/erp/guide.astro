@@ -142,11 +142,26 @@ const parts: Part[] = [
     shot: 'erp-projects',
   },
   {
+    id: 'maintenance', title: 'Look after assets in Maintenance', st: 'live',
+    lead: 'Maintenance in the rail opens the company\'s asset register, maintenance requests and work orders. Everyone in a registered company can raise a request; the company\'s owner and administrators give the other maintenance roles.',
+    steps: [
+      { t: 'Maintenance roles', x: 'In Maintenance, Settings, give each person a role: Administrator, Supervisor, Technician or Requester. The company\'s owner and administrators start as maintenance administrators, everyone else as requesters. Settings also says whether new requests need approval.' },
+      { t: 'Register assets', x: 'In Assets, choose New asset. Give it a number and a name, and put it under another asset to build the hierarchy: a site, an area, a line, a machine, a part. Add its make, model, serial number, location, criticality and specifications.' },
+      { t: 'Import a register', x: 'Administrators can choose Import CSV. A preview shows each row as ready, a duplicate or an error before anything is saved.' },
+      { t: 'Report a fault', x: 'Choose Report a fault at the foot of the rail, on any screen of the ERP. Say what is wrong, pick the asset if you know it, set the priority and add a photo. You can follow the request under My requests.' },
+      { t: 'Approve the request', x: 'A supervisor opens the request in Requests, Awaiting approval, and chooses Approve, Decline (with a reason) or Ask for more information.' },
+      { t: 'Make a work order', x: 'On the request, choose Make a work order, or attach the request to a work order already open on the same asset. Give the job type, priority, technician, due dates, instructions, safety requirements, tasks and required parts. A request makes one work order, never two.' },
+      { t: 'Do the work', x: 'The technician opens the work order, chooses Start timer, ticks the tasks, adds the parts used, notes and photos, then Stop timer. Time recorded is shown against the estimate.' },
+      { t: 'Complete and close', x: 'Choose Complete and say what was done and what was found. A completed work order is locked; a supervisor closes it, or reopens it with a reason that is kept in the history.' },
+      { t: 'Find the history', x: 'An asset\'s page shows the assets under it, its outstanding work, open requests, files and every change, with who made it and when. Work order lists can include the assets under the one you choose.' },
+    ],
+    shot: 'erp-maintenance',
+  },
+  {
     id: 'planned', title: 'What is not built yet', st: 'planned',
-    lead: 'Operations in the rail lists the modules that are designed but not built. Nothing there works yet or keeps data. Maintenance is being built as its own module.',
+    lead: 'Operations in the rail lists the modules that are designed but not built. Nothing there works yet or keeps data. The first stage of Maintenance works today, in its own module.',
     steps: [
       { t: 'Planned modules', x: 'Procurement, Inventory and Warehouse, Manufacturing, Quality, Supply Chain, and product and engineering records. Each is labelled Planned.', st: 'planned' },
-      { t: 'Maintenance', x: 'A maintenance management module is being built. Its first stage covers the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. It is not switched on yet.', st: 'in-development' },
       { t: 'Later in Maintenance', x: 'Preventive maintenance, readings, inspections, prestart checklists, spare parts, scanning, several sites, workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, reliability reporting and offline field work.', st: 'planned' },
       { t: 'What to use today', x: 'Suppliers, purchase orders and bills are kept in Finance. Production work can be planned on a board in Projects and Tasks.', st: 'live' },
       { t: 'The design preview', x: 'Open the design preview from Operations to see how the planned modules are designed. It uses demonstration data only, and nothing you do there is saved.' },
@@ -160,7 +175,9 @@ const questions = [
   { q: 'Can I belong to more than one company?', a: 'Yes. Register more than one, or accept invitations, and switch between them with the company switcher.' },
   { q: 'Why can I not see a tool\'s figures on the dashboard?', a: 'Your role in that tool does not show them. Ask the company\'s owner or an administrator to change your role in People.' },
   { q: 'Why are no computers listed under Products and Engineering?', a: 'CAD Automation does not report its computers to the ERP yet. Until it does, see your computers in CAD Automation itself.' },
-  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'No. They are planned and not built. The design preview shows them with demonstration data only. Maintenance is being built and is not switched on yet.' },
+  { q: 'Who can raise a maintenance request?', a: 'Everyone in a registered company: choose Report a fault at the foot of the rail. In your own company, you are its only person. People who were only shared a tool with the company cannot see its maintenance.' },
+  { q: 'Can a technician see every work order?', a: 'No. A technician sees the work orders assigned to them. Supervisors and administrators see them all; a requester sees the work order made from their own request.' },
+  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'No. They are planned and not built. The design preview shows them with demonstration data only. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
 ];
 
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));

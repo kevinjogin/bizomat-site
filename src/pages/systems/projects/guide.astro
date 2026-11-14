@@ -28,7 +28,7 @@ const PAGE = sys.guide!;
 const shot = (name: string) => screenshots().find((s) => s.src.endsWith(`/${name}.webp`));
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
 const description = 'How to use BIZOMAT Projects, step by step: open it in BIZOMAT ERP, create a workspace and board, assign tasks, invite your team, set permissions and build dashboards.';
-const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Operations', 'Reports', 'Administration'];
+const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Operations', 'Reports', 'Administration'];
 const TEMPLATES = ['Blank board', 'Project plan', 'Sprint board', 'Sales pipeline', 'Content calendar', 'Request intake'];
 // apps/work/src/shared/reports.ts (REPORT_TYPE_LABELS).
 const REPORTS = ['Project inception to date', 'Previous month', 'Current month to date', 'Custom date range', 'Monthly progress report', 'Project completion report', 'Financial report', 'Outstanding tasks report', 'Project controls report', 'Critical path report', 'Baseline comparison report', 'Earned value report', 'Project completion forecast'];

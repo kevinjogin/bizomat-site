@@ -1,9 +1,10 @@
 ---
 // /systems/manufacturing/: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
-// None of it can be used today. Maintenance (a CMMS inside the ERP, its own module in the rail) is being built: its
-// first stage is labelled In development until the lead switches it on; everything else is planned (the designs in
-// docs/erp/architecture/08 and 09) and labelled Planned. No product screens: nothing here is shown as working. The
-// design preview (demonstration data) is linked by its full address because it is built separately.
+// Maintenance (a CMMS inside the ERP, its own module in the rail) works today: its first stage is Live (assets, requests
+// and work orders; apps/work/src/worker/maintenance, tested by apps/work/test/maintenance.test.ts); everything else is
+// planned (the designs in docs/erp/architecture/08 and 09) and labelled Planned. Maintenance's screens are on the ERP
+// page and guide; no screen here shows a planned module as working.
+// The design preview (demonstration data) is linked by its full address because it is built separately.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -21,7 +22,7 @@ const sys = systemById('manufacturing');
 const erp = systemById('erp');
 const PREVIEW = `${SITE.url}${ERP_PREVIEW}`;
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }];
-const description = 'BIZOMAT Manufacturing and Operations: ERP modules for production, inventory, warehouses, procurement, quality, maintenance and supply chain. Not available yet.';
+const description = 'BIZOMAT Manufacturing and Operations: ERP modules for production, inventory, warehouses, procurement, quality, maintenance and supply chain. Maintenance works today; the rest is planned.';
 
 interface Item { t: string; st: FeatureStatus }
 interface Module { id: string; name: string; st: FeatureStatus; x: string; items?: Item[]; today?: Item[] }
@@ -53,16 +54,19 @@ const modules: Module[] = [
     x: 'Designed for inspection plans, incoming, in-process and final inspections, nonconformance reports with approval, and corrective actions with tasks in Projects.',
   },
   {
-    id: 'maintenance', name: 'Maintenance', st: 'in-development',
-    x: 'A maintenance management system (CMMS) inside BIZOMAT ERP, with its own module in the rail, called Maintenance. Its first stage is being built now. It is not switched on yet, so it cannot be used today.',
+    id: 'maintenance', name: 'Maintenance', st: 'live',
+    x: 'A maintenance management system (CMMS) inside BIZOMAT ERP, with its own module in the rail, called Maintenance. Its first stage works today: the asset register, maintenance requests and work orders. Preventive maintenance and the rest are planned.',
     items: [
-      { t: 'Asset register and hierarchy', st: 'in-development' },
-      { t: 'Asset details', st: 'in-development' },
-      { t: 'Maintenance requests with approval', st: 'in-development' },
-      { t: 'Standard work orders', st: 'in-development' },
-      { t: 'Technician assignment', st: 'in-development' },
-      { t: 'A labour timer', st: 'in-development' },
-      { t: 'Photos and documents', st: 'in-development' },
+      { t: 'Asset register and hierarchy', st: 'live' },
+      { t: 'Asset details and specifications', st: 'live' },
+      { t: 'Asset import from a CSV file, with a preview', st: 'live' },
+      { t: 'Maintenance requests with approval', st: 'live' },
+      { t: '"Report a fault" from any ERP screen', st: 'live' },
+      { t: 'Work orders with tasks, parts and safety notes', st: 'live' },
+      { t: 'Technician assignment and maintenance roles', st: 'live' },
+      { t: 'A labour timer against the estimate', st: 'live' },
+      { t: 'Photos and documents', st: 'live' },
+      { t: 'A history of every change', st: 'live' },
       { t: 'Preventive maintenance by time, usage or condition', st: 'planned' },
       { t: 'Readings and thresholds', st: 'planned' },
       { t: 'Inspections across several assets', st: 'planned' },
@@ -97,7 +101,7 @@ const buyFlow = ['Requisition', 'Purchase order in Finance', 'Goods receipt', 'I
 const faqs = [
   { q: 'Can it manage manufacturing today?', a: 'No. Manufacturing, production planning, inventory, warehouse management, procurement, quality and supply chain are planned and not built.' },
   { q: 'Is Maintenance available?', a: 'Not yet. Its first stage (the asset register, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents) is being built inside BIZOMAT ERP. It is not switched on yet. Preventive maintenance and the rest are planned.' },
-  { q: 'Can I sign up or pay for it now?', a: 'No. There is nothing to sign up for, download or buy.' },
+  { q: 'Can I sign up or pay for it now?', a: 'Maintenance comes with BIZOMAT ERP: sign in and choose Maintenance in the rail. For the planned modules there is nothing to sign up for, download or buy.' },
   { q: 'What can I use today instead?', a: 'BIZOMAT Finance for suppliers, purchase orders and bills; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
   { q: 'Is the design preview the real product?', a: 'No. It shows the planned design with demonstration data only. Nothing you do there is saved, and it does not store your data.' },
 ];
@@ -113,8 +117,8 @@ const schema = [
       <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
       <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
       <h1 id="mfg-title">Manufacturing and Operations</h1>
-      <p class="sys-planned__status sys-hero-status"><StatusLabel status="planned" /> Not available yet</p>
-      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. None of it can be used today: Maintenance is being built, and every other module is planned.</p>
+      <p class="sys-planned__status sys-hero-status"><StatusLabel status="planned" /> Mostly planned. Maintenance works today in BIZOMAT ERP.</p>
+      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Maintenance works today, inside BIZOMAT ERP, for assets, requests and work orders. Every other module is planned.</p>
       <div class="pp-hero__actions">
         <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-use-erp">Use BIZOMAT ERP today</Button>
         <Button href={PREVIEW} variant="secondary" rel="noopener" data-cta="mfg-preview">Design preview with demonstration data</Button>
@@ -128,7 +132,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">The modules</p>
         <h2 id="modules-title">What each module is designed to do</h2>
-        <p>Every module below is labelled. None of them is Live: Maintenance is In development, and the others are Planned.</p>
+        <p>Every module below is labelled. Maintenance is Live in its first stage; the others are Planned.</p>
       </div>
       <div class="sys-legend">
         <h3 class="sys-subhead">What the labels mean</h3>
@@ -138,7 +142,7 @@ const schema = [
         {modules.map((m) => (
           <li class:list={['sys-feature', { 'sys-feature--planned': m.st === 'planned' }]} id={m.id}>
             <div class="sys-feature__head"><h3>{m.name}</h3><StatusLabel status={m.st} /></div>
-            <p class="sys-feature__state">{m.st === 'planned' ? 'Planned: not available yet.' : 'In development: not available yet.'}</p>
+            <p class="sys-feature__state">{m.st === 'planned' ? 'Planned: not available yet.' : m.st === 'live' ? 'Live: works today in BIZOMAT ERP, under Maintenance.' : 'In development: not available yet.'}</p>
             <p>{m.x}</p>
             {m.items && <ul class="pp-list sys-items sys-feature__items">{m.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>}
             {m.today && (

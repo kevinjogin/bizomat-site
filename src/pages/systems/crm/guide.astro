@@ -27,7 +27,7 @@ const PAGE = sys.guide!;
 const shot = (name: string) => screenshots().find((s) => s.src.endsWith(`/${name}.webp`));
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
 const description = 'How to use BIZOMAT CRM, step by step: open it in BIZOMAT ERP, create your organisation, add customers, work leads and deals, invite your team, run reports and link Finance.';
-const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Operations', 'Reports', 'Administration'];
+const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Operations', 'Reports', 'Administration'];
 
 interface Step { t: string; x: string }
 interface Part { id: string; title: string; lead?: string; steps: Step[]; shot?: string; roles?: boolean; status?: FeatureStatus }

@@ -461,6 +461,10 @@ async function workChecks() {
     const r = await onPlatform({ path: '/tasks/api/workspaces', headers: { Accept: 'application/json' } });
     return r.status === 401 || { fail: describe(r) };
   });
+  await check('work', 'bizomat.ai/erp maintenance API without a session: 401', async () => {
+    const r = await onPlatform({ path: '/erp/api/maintenance/companies', headers: { Accept: 'application/json' } });
+    return r.status === 401 || { fail: describe(r) };
+  });
   await check('work', 'bizomat.ai/tasks WebSocket upgrade without a session is refused', async () => {
     const r = await wsHandshake(platformHost(), '/tasks/api/live/boards/smoke-test', { Origin: `https://${platformHost()}` });
     if (r.status === 101) return { fail: 'accepted without a session' };

@@ -26,8 +26,8 @@
 //     (/company/api/id/cad-status) is built but CAD Automation's reporter is not merged, and Sign in with BIZOMAT for
 //     CAD Automation is built but not merged (docs/BIZOMAT-PROJECT-STATUS.md, 14 Nov 2026): both in-development.
 //   Asset management and maintenance (CMMS): owner's brief of 14 Nov 2026 (MEX used as a functional reference only).
-//     Its Stage 1 is being built (apps/work/src/worker/maintenance, migration 0018_maintenance.sql) and is
-//     in-development here until its tests pass; the rest is planned.
+//     Its Stage 1 is live (apps/work/src/worker/maintenance, migration 0018_maintenance.sql; acceptance tests A to D and J
+//     in apps/work/test/maintenance.test.ts and test-node/maintenance.test.ts); the rest is planned.
 //   Everything else (sales orders, procurement beyond Finance's documents, inventory, manufacturing, quality, supply
 //     chain, service, human capital): docs/erp/architecture/02 to 10. Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
@@ -285,19 +285,19 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'assets',
     name: 'Asset management and maintenance',
     summary: 'A maintenance management system (CMMS): assets, requests, work orders, technicians, preventive plans, parts and reliability.',
-    servedBy: 'BIZOMAT ERP Asset Management and Maintenance (Stage 1 being built); depreciation in BIZOMAT Finance (planned)',
+    servedBy: 'BIZOMAT ERP Asset Management and Maintenance (Stage 1 live); depreciation in BIZOMAT Finance (planned)',
     features: [
-      // CMMS Stage 1: being built (owner, 14 Nov 2026). In development until its tests pass.
-      cap('Asset register', 'in-development'),
-      cap('Asset hierarchy', 'in-development', 'Assets within assets and locations.'),
-      cap('Equipment master and asset details', 'in-development'),
-      cap('Maintenance requests with approval', 'in-development', 'Approval by a supervisor or administrator when the company requires it.'),
-      cap('Maintenance work orders', 'in-development', 'Standard work orders with tasks, required parts as text lines, labour and notes. Recurring work orders from plans are planned.'),
-      cap('Corrective maintenance', 'in-development', 'A standard work order of the corrective job type.'),
-      cap('Breakdown maintenance', 'in-development', 'A standard work order of the breakdown job type.'),
-      cap('Technician assignment', 'in-development', 'Maintenance roles per company: administrator, supervisor, technician and requester.'),
-      cap('Labour timer', 'in-development'),
-      cap('Photos and documents', 'in-development', 'On assets and work orders.'),
+      // CMMS Stage 1: live (owner, 14 Nov 2026), tested by apps/work/test/maintenance.test.ts.
+      cap('Asset register', 'live'),
+      cap('Asset hierarchy', 'live', 'Assets within assets and locations.'),
+      cap('Equipment master and asset details', 'live'),
+      cap('Maintenance requests with approval', 'live', 'Approval by a supervisor or administrator when the company requires it.'),
+      cap('Maintenance work orders', 'live', 'Standard work orders with tasks, required parts as text lines, labour and notes. Recurring work orders from plans are planned.'),
+      cap('Corrective maintenance', 'live', 'A standard work order of the corrective job type.'),
+      cap('Breakdown maintenance', 'live', 'A standard work order of the breakdown job type.'),
+      cap('Technician assignment', 'live', 'Maintenance roles per company: administrator, supervisor, technician and requester.'),
+      cap('Labour timer', 'live'),
+      cap('Photos and documents', 'live', 'On assets, requests and work orders.'),
       // CMMS Stage 2.
       cap('Preventive maintenance plans', 'planned', 'Triggered by time, usage or condition.'),
       cap('Maintenance planning and calendar', 'planned'),

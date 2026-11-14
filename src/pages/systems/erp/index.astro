@@ -4,7 +4,8 @@
 // (apps/work/src/client/components/layout/SuiteRail.tsx). Every feature carries one of the four labels of
 // FEATURE_STATUS: Live, Connected, In development or Planned. The Operations modules and product records are planned
 // (docs/erp/architecture/08 and 09) and never described as working; CAD computers in the ERP wait for CAD Automation's
-// reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows the planned list.
+// reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows the planned list and
+// what of Maintenance is live.
 // The capability matrix renders src/data/erp-capabilities.ts (ERP_DOMAINS) when that file exists.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
@@ -38,9 +39,10 @@ const totals = capabilityCounts();
 const STATUS_ORDER = ['live', 'connected', 'in-development', 'planned'] as const;
 const countLine = (c: Record<FeatureStatus, number>) => STATUS_ORDER.filter((k) => c[k] > 0).map((k) => `${c[k]} ${FEATURE_STATUS[k].label.toLowerCase()}`).join(', ');
 
-// Maintenance (owner, 14 Nov 2026): a CMMS inside the ERP, the rail's Maintenance module. Stage 1 is being built
-// (in development until its tests pass); the rest is planned. Never presented as live.
-const MAINT_BUILDING = ['Asset register and hierarchy', 'Asset details', 'Maintenance requests with approval', 'Standard work orders', 'Technician assignment', 'A labour timer', 'Photos and documents'];
+// Maintenance (owner, 14 Nov 2026): a CMMS inside the ERP, the rail's Maintenance module. Stage 1 is live (built and
+// tested: apps/work/src/worker/maintenance, apps/work/test/maintenance.test.ts, acceptance tests A to D and J); the rest
+// is planned and never presented as live.
+const MAINT_LIVE = ['Asset register and hierarchy', 'Asset details and specifications', 'Asset import from a CSV file, with a preview', 'Maintenance requests with approval', '"Report a fault" from any ERP screen', 'Work orders with tasks, parts and safety notes', 'Technician assignment and maintenance roles', 'A labour timer against the estimate', 'Photos and documents', 'A history of every change'];
 const MAINT_PLANNED = ['Preventive maintenance by time, usage or condition', 'Readings and thresholds', 'Inspections across several assets', 'Prestart checklists', 'Spare parts and stocktakes', 'Barcode and QR scanning', 'Several sites', 'Workload planning', 'An AI scheduling assistant that only proposes schedules for a person to approve', 'Reliability reporting (MTBF and MTTR)', 'Offline field work'];
 
 const does = [
@@ -76,7 +78,7 @@ const teams = [
   { team: 'Engineering and design', where: 'Products and Engineering, and the CAD Automation application', st: 'live' },
   { team: 'Owners and managers', where: "Dashboard and Reports, with each tool's figures", st: 'connected' },
   { team: 'Administration', where: 'Administration: company, people, departments and tool roles', st: 'live' },
-  { team: 'Maintenance teams and technicians', where: 'Maintenance: asset register, requests and work orders', st: 'in-development' },
+  { team: 'Maintenance teams and technicians', where: 'Maintenance: asset register, requests and work orders', st: 'live' },
   { team: 'Purchasing, stores, production and quality', where: 'Operations', st: 'planned' },
 ] as const;
 
@@ -128,7 +130,7 @@ const features: { t: string; st: FeatureStatus; x: string; today?: string; items
   { t: 'Manufacturing', st: 'planned', x: 'Designed for work orders with operations and materials, a planning board by work centre, and a shop-floor screen for quantities and scrap. Not available today.' },
   { t: 'Quality', st: 'planned', x: 'Designed for inspection plans and checklists, inspections, nonconformance reports and corrective actions. Not available today.' },
   { t: 'Supply chain', st: 'planned', x: 'Designed for sales orders from accepted quotes or won deals, deliveries with picking and packing, carriers, shipments and returns. Not available today.' },
-  { t: 'Maintenance (asset management)', st: 'in-development', x: 'A maintenance management system (CMMS) inside the ERP, with its own module in the rail, called Maintenance. Its first stage is being built now and is not switched on yet; the rest is planned.', items: [...MAINT_BUILDING.map((t) => ({ t, st: 'in-development' as const })), ...MAINT_PLANNED.map((t) => ({ t, st: 'planned' as const }))] },
+  { t: 'Maintenance (asset management)', st: 'live', x: 'A maintenance management system (CMMS) inside the ERP, with its own module in the rail, called Maintenance. Its first stage works today: assets, requests and work orders. Preventive maintenance and the rest are planned.', items: [...MAINT_LIVE.map((t) => ({ t, st: 'live' as const })), ...MAINT_PLANNED.map((t) => ({ t, st: 'planned' as const }))] },
   {
     t: 'Reports', st: 'live',
     x: `Sales and CRM reports (${CRM.reports.length} of them), Finance and Accounting reports (${FINANCE.reports.length}, including the GST and BAS worksheet) and Projects and Tasks dashboards, gathered on one page. Each opens in its module, with that module's permissions.`,
@@ -159,7 +161,7 @@ const modules: { m: string; st: FeatureStatus; today: string }[] = [
   { m: 'Inventory and Warehouse', st: 'planned', today: 'Not available.' },
   { m: 'Manufacturing', st: 'planned', today: 'Not available.' },
   { m: 'Quality', st: 'planned', today: 'Not available.' },
-  { m: 'Maintenance: asset register, requests and work orders', st: 'in-development', today: 'Being built, not switched on yet: the asset register, maintenance requests with approval, work orders, technicians, labour timer, photos and documents.' },
+  { m: 'Maintenance: asset register, requests and work orders', st: 'live', today: 'The asset register and hierarchy, maintenance requests with approval, work orders with tasks and parts, technicians, a labour timer, photos and documents.' },
   { m: 'Maintenance: preventive maintenance and the rest', st: 'planned', today: 'Not available. Preventive maintenance, readings, inspections, checklists, spare parts, scanning, multi-site, scheduling and reliability reporting.' },
   { m: 'Supply Chain', st: 'planned', today: 'Not available.' },
   { m: 'Search across every module', st: 'planned', today: 'Not available. Each tool has its own search.' },
@@ -183,7 +185,7 @@ const walk: { t: string; st: FeatureStatus; x: string }[] = [
   { t: 'Finance and Accounting', st: 'live', x: "Finance, inside the ERP, in the company's business workspace: transactions, quotes, invoices, bills, banking, budgets and reports." },
   { t: 'Projects and Tasks', st: 'live', x: 'Project Management, inside the ERP: boards, views, documents, dashboards and automations.' },
   { t: 'Products and Engineering', st: 'live', x: "CAD Automation's set-up steps and the computers you may see: owners and administrators see the company's, members their own. Computers are listed once CAD Automation reports (in development)." },
-  { t: 'Maintenance', st: 'in-development', x: 'Being built: the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. Not switched on yet.' },
+  { t: 'Maintenance', st: 'live', x: 'Overview, Assets, Requests, Work orders and Settings for the company. Register assets in a hierarchy, raise and approve requests, make work orders, assign technicians and record the work. "Report a fault", at the foot of the rail, raises a request from any screen.' },
   { t: 'Operations', st: 'planned', x: 'A list of the planned modules, each labelled Planned, with a link to the design preview. Nothing here works yet or keeps data.' },
   { t: 'Reports', st: 'live', x: "A card for each tool's reports. Each opens in its module, with that module's permissions." },
   { t: 'Administration', st: 'live', x: "Company overview, people and roles, departments, tools and company settings; each tool's team and settings; your profile. Platform administrators also see the ERP console." },
@@ -221,15 +223,15 @@ const integrations: { name: string; url: string; items: { t: string; st: Feature
   { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Opens inside the ERP as Finance and Accounting', st: 'live' }, { t: 'Project costs and budgets', st: 'connected' }, { t: 'Departments in tracking', st: 'connected' }] },
   { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Opens inside the ERP as Projects and Tasks', st: 'live' }, { t: 'My Work in the rail', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
   { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'Set-up steps in Products and Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
-  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/manufacturing/', items: [{ t: 'Maintenance: asset register, requests and work orders', st: 'in-development' }, { t: 'Procurement, inventory, production, quality and supply chain', st: 'planned' }] },
+  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/manufacturing/', items: [{ t: 'Maintenance: asset register, requests and work orders', st: 'live' }, { t: 'Procurement, inventory, production, quality and supply chain', st: 'planned' }] },
 ];
 
 const faqs = [
-  { q: 'What does BIZOMAT ERP manage?', a: 'Your company and its tools: the dashboard, your assigned work, sales and customers (the CRM), finance and accounting, projects and tasks, the set-up of CAD Automation, reports, and the company\'s people, departments and roles. Maintenance is being built (in development); procurement, inventory, manufacturing, quality and supply chain are planned and not built.' },
+  { q: 'What does BIZOMAT ERP manage?', a: 'Your company and its tools: the dashboard, your assigned work, sales and customers (the CRM), finance and accounting, projects and tasks, the set-up of CAD Automation, reports, and the company\'s people, departments and roles. Maintenance covers assets, requests and work orders; procurement, inventory, manufacturing, quality and supply chain are planned and not built.' },
   { q: 'Can it manage multiple companies?', a: 'Yes. You can belong to several companies and switch between them with the company switcher. It lists your registered companies, your own company in your own name, and companies whose tools were shared with you. Each company keeps its own tools and records.' },
   { q: 'Can different departments have separate permissions?', a: "Departments appear in every tool, but permissions are set for each person, not each department: every person has a role in each tool, set in the company area under People. A department's head can change who is in the department, and sees that department's figures in every tool." },
   { q: 'Does it connect with Finance and CRM?', a: 'Yes. Both open inside the ERP. When the company runs both, a CRM deal can start a draft quote in Finance and become a draft invoice once won, and a CRM company can be linked to its Finance customer. Each link checks your role in both tools.' },
-  { q: 'Can it manage manufacturing?', a: 'Not yet. Manufacturing, production planning, inventory, procurement, quality and supply chain are planned and not built. The Operations module lists them as Planned, and the design preview shows them with demonstration data only. Maintenance is being built as its own module; it is not switched on yet.' },
+  { q: 'Can it manage manufacturing?', a: 'Not yet. Manufacturing, production planning, inventory, procurement, quality and supply chain are planned and not built. The Operations module lists them as Planned, and the design preview shows them with demonstration data only. Maintenance works today as its own module, for assets, requests and work orders; preventive maintenance is planned.' },
   { q: 'Is my data copied into the ERP?', a: 'No. The ERP shows each tool where it is. Nothing is copied or moved, and each tool keeps its own permissions.' },
   { q: 'Who sees our CAD computers?', a: "In a registered company, the owner and administrators see the computers of everyone in it, and members see their own. Nobody sees another company's. The computers appear once CAD Automation reports to the ERP, which is in development; until then the page says so." },
   { q: 'What happened to the old tool addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into the ERP, so bookmarks and links in emails keep working.' },
@@ -449,7 +451,7 @@ const schema = [
         <div class="pp-head">
           <p class="bz-eyebrow">What it looks like</p>
           <h2 id="screens-title">The real product</h2>
-          <p>Captured from the running application with a fictional company and example data. The Operations screen lists the planned modules: it shows what is planned, not features that work.</p>
+          <p>Captured from the running application with a fictional company and example data. The Operations screen lists the planned modules, each labelled Planned, beside what of Maintenance works today.</p>
         </div>
         <div class="pp-shots">
           {gallery.map((s) => (
@@ -457,7 +459,7 @@ const schema = [
               <img src={s.src} alt={`${s.title}. ${s.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
               <figcaption>
                 <span>{s.title.replace(/^[^:]+: /, '')}. {s.caption}</span>
-                {s.src.endsWith('/erp-operations.webp') ? <StatusLabel status="planned" /> : <span class="viz__tag viz__tag--real">Product screen</span>}
+                <span class="viz__tag viz__tag--real">Product screen</span>
               </figcaption>
             </figure>
           ))}
