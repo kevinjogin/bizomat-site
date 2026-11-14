@@ -2,9 +2,11 @@
 // /systems/erp/: BIZOMAT ERP, the Business Management System (src/config/systems.ts). The workspace itself runs at
 // bizomat.ai/erp (apps/work, docs/system/README.md): one sign-in, a company switcher and the module rail
 // (apps/work/src/client/components/layout/SuiteRail.tsx). Every feature carries one of the four labels of
-// FEATURE_STATUS: Live, Connected, In development or Planned. The Operations modules and product records are planned
-// (docs/erp/architecture/08 and 09) and never described as working; CAD computers in the ERP wait for CAD Automation's
-// reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows the planned list and
+// FEATURE_STATUS: Live, Connected, In development or Planned. ERP Release 1 (products, bills of materials, revisions,
+// engineering changes, engineering documents and the supplier master) is live (apps/work/src/worker/erp, its tests in
+// apps/work/test/erp.test.ts); purchase orders and receiving in the ERP, inventory, manufacturing, quality and supply
+// chain are planned (docs/erp/architecture/08 and 09) and never described as working; CAD computers in the ERP wait
+// for CAD Automation's reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows the planned list and
 // what of Maintenance is live.
 // The capability matrix renders src/data/erp-capabilities.ts (ERP_DOMAINS) when that file exists.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
@@ -78,7 +80,8 @@ const teams = [
   { team: 'Owners and managers', where: "Dashboard and Reports, with each tool's figures", st: 'connected' },
   { team: 'Administration', where: 'Administration: company, people, departments and tool roles', st: 'live' },
   { team: 'Maintenance teams and technicians', where: 'Maintenance: asset register, requests and work orders', st: 'live' },
-  { team: 'Purchasing, stores, production and quality', where: 'Operations', st: 'planned' },
+  { team: 'Purchasing', where: 'Procurement: suppliers and their approval; purchase orders and bills in Finance and Accounting', st: 'live' },
+  { team: 'Stores, production and quality', where: 'Operations', st: 'planned' },
 ] as const;
 
 // A department is made once and appears in every tool the company runs (docs/company/README.md).
@@ -92,9 +95,9 @@ const departments = [
 
 // The complete business lifecycle, in order, with what serves each stage today.
 const lifecycle: { name: string; serves: string; items: { t: string; st: FeatureStatus }[] }[] = [
-  { name: 'Product development', serves: 'BIZOMAT Engineering Automation', items: [{ t: 'CAD Automation in SOLIDWORKS', st: 'live' }, { t: 'Product records and bills of materials', st: 'planned' }] },
+  { name: 'Product development', serves: 'BIZOMAT ERP Products and Engineering; BIZOMAT Engineering Automation', items: [{ t: 'CAD Automation in SOLIDWORKS', st: 'live' }, { t: 'Product records, revisions, changes and bills of materials', st: 'live' }] },
   { name: 'Sales', serves: 'BIZOMAT CRM', items: [{ t: 'Leads, deals and follow-ups', st: 'live' }, { t: 'Quotes in Finance from a deal', st: 'connected' }] },
-  { name: 'Procurement', serves: 'Planned; Finance today', items: [{ t: 'Requisitions, quotations and receiving', st: 'planned' }, { t: 'Suppliers, purchase orders and bills in Finance', st: 'live' }] },
+  { name: 'Procurement', serves: 'BIZOMAT ERP Procurement (suppliers); Finance', items: [{ t: 'Suppliers with approval, linked to Finance', st: 'live' }, { t: 'Purchase orders and bills in Finance', st: 'live' }, { t: 'Requisitions, quotations and receiving', st: 'planned' }] },
   { name: 'Inventory', serves: 'Planned', items: [{ t: 'Stock on hand, movements and counts', st: 'planned' }] },
   { name: 'Production', serves: 'Planned', items: [{ t: 'Work orders and planning', st: 'planned' }] },
   { name: 'Quality', serves: 'Planned', items: [{ t: 'Inspections and nonconformances', st: 'planned' }] },
@@ -117,13 +120,13 @@ const features: { t: string; st: FeatureStatus; x: string; today?: string; items
   },
   {
     t: 'Products and engineering', st: 'live',
-    x: 'CAD Automation builds SOLIDWORKS parts, assemblies and drawings on your own computer, from your AI assistant. Products and Engineering in the ERP gives its four set-up steps: sign in, install, pair the computer and connect the assistant.',
-    items: [{ t: 'CAD Automation set-up steps', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in to CAD Automation with your BIZOMAT account', st: 'in-development' }, { t: 'Product records with revisions and bills of materials', st: 'planned' }],
+    x: 'The product master with variants; multi-level bills of materials with where-used, revision comparison and cost roll-up; revisions released through change requests and change orders, approved by someone other than the person who drafted them; and engineering documents with versions, as files or as references to CAD files on the engineer\'s own computer. CAD Automation builds SOLIDWORKS parts, assemblies and drawings there, from your AI assistant.',
+    items: [{ t: 'Products, variants and lifecycle', st: 'live' }, { t: 'Multi-level bills of materials, where-used and cost roll-up', st: 'live' }, { t: 'Revisions, change requests and change orders', st: 'live' }, { t: 'Engineering documents with versions and CAD references', st: 'live' }, { t: 'CAD Automation set-up steps', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in to CAD Automation with your BIZOMAT account', st: 'in-development' }, { t: 'Routings and stock availability', st: 'planned' }],
   },
   {
-    t: 'Procurement', st: 'planned',
-    x: 'Designed for supplier profiles, purchase requisitions with approval, requests for quotation, purchase orders with receiving, and supplier performance.',
-    items: [{ t: 'Suppliers, purchase orders and bills in Finance, today', st: 'live' }, { t: 'Requisitions, quotations and receiving', st: 'planned' }],
+    t: 'Procurement', st: 'live',
+    x: 'Partly live: the supplier master. Suppliers are approved, put on hold or blocked by a procurement manager who did not create them, with contacts, documents, terms and the products each supplies, and are linked to the supplier they are paid as in Finance. Purchase requisitions, requests for quotation, purchase orders with receiving and supplier performance are designed for Release 2.',
+    items: [{ t: 'Supplier master with approval', st: 'live' }, { t: 'Purchase orders and bills in Finance', st: 'live' }, { t: 'Requisitions, quotations, receiving and supplier performance', st: 'planned' }],
   },
   { t: 'Inventory and warehouse', st: 'planned', x: 'Designed for stock on hand by product, location and lot, stock movements, goods receipts, transfers, counts and valuation. Not available today.' },
   { t: 'Manufacturing', st: 'planned', x: 'Designed for work orders with operations and materials, a planning board by work centre, and a shop-floor screen for quantities and scrap. Not available today.' },
@@ -155,8 +158,11 @@ const modules: { m: string; st: FeatureStatus; today: string }[] = [
   { m: 'Reports', st: 'live', today: "Every tool's reports in one place." },
   { m: 'Administration', st: 'live', today: 'Company, people, departments, tool roles and settings.' },
   { m: 'Links between tools', st: 'connected', today: 'Deal to quote and draft invoice, deal to project, project costs, and a CRM company as a Finance customer.' },
-  { m: 'Product and engineering records', st: 'planned', today: 'Not available.' },
-  { m: 'Procurement', st: 'planned', today: 'Not available. Suppliers, purchase orders and bills are in Finance today.' },
+  { m: 'Products and Engineering: products and bills of materials', st: 'live', today: 'Products and variants, multi-level bills of materials, where-used, revision comparison and cost roll-up, with CSV exports.' },
+  { m: 'Products and Engineering: revisions and changes', st: 'live', today: 'Change requests and change orders, approved and released by an engineering approver who did not draft them.' },
+  { m: 'Products and Engineering: documents', st: 'live', today: 'Versions of drawings, models and specifications, as files or as references to CAD files on your own computer.' },
+  { m: 'Procurement: suppliers', st: 'live', today: 'The supplier master with approval, contacts, documents, the products each supplies and the link to Finance.' },
+  { m: 'Procurement: requisitions, quotations, purchase orders and receiving', st: 'planned', today: 'Not available in the ERP. Purchase orders and bills are in Finance today.' },
   { m: 'Inventory and Warehouse', st: 'planned', today: 'Not available.' },
   { m: 'Manufacturing', st: 'planned', today: 'Not available.' },
   { m: 'Quality', st: 'planned', today: 'Not available.' },
@@ -172,7 +178,7 @@ const dashboardParts = [
   { t: 'The company switcher', st: 'live', x: 'At the top. Your companies first, then "Shared with you". Register a company starts a new one.' },
   { t: "The company's kind and your role", st: 'live', x: 'Under its name: a registered company with your role, your own company (not registered), or shared with you, with only the tools you were added to.' },
   { t: 'A card for each tool', st: 'connected', x: "Its name, your role and Open. Projects: open tasks, overdue, due in 7 days, projects. CRM: open deals, pipeline, won in 30 days, follow-ups due. Finance: income, expenses, owed to you and you owe, this financial year from posted entries. A role that may not see the figures sees a note instead." },
-  { t: 'The CAD Automation card', st: 'live', x: 'Opens Products and Engineering: the set-up steps, then the computers once CAD Automation reports.' },
+  { t: 'The Products and Engineering and Procurement cards', st: 'live', x: 'Open the product master and the suppliers. CAD Automation\'s set-up steps are a tab of Products and Engineering, with the computers once CAD Automation reports.' },
   { t: 'People and the rail', st: 'live', x: 'How many people are in the company. The module rail sits at the left (along the bottom on a phone); the side menu lists the company\'s tools.' },
 ] as const;
 
@@ -183,9 +189,9 @@ const walk: { t: string; st: FeatureStatus; x: string }[] = [
   { t: 'Sales and CRM', st: 'live', x: 'The CRM, inside the ERP: the same records, roles and settings. When the company runs Finance or Projects too, a deal shows what it is linked to there.' },
   { t: 'Finance and Accounting', st: 'live', x: "Finance, inside the ERP, in the company's business workspace: transactions, quotes, invoices, bills, banking, budgets and reports." },
   { t: 'Projects and Tasks', st: 'live', x: 'Project Management, inside the ERP: boards, views, documents, dashboards and automations.' },
-  { t: 'Products and Engineering', st: 'live', x: "CAD Automation's set-up steps and the computers you may see: owners and administrators see the company's, members their own. Computers are listed once CAD Automation reports (in development)." },
+  { t: 'Products and Engineering', st: 'live', x: "Products, Changes, Documents and CAD Automation. A product opens on its details, bill of materials (structure, every level, cost roll-up), revisions with comparison, where used, documents, suppliers and history. The CAD Automation tab has its set-up steps and the computers you may see; computers are listed once CAD Automation reports (in development)." },
   { t: 'Maintenance', st: 'live', x: 'Overview, Assets, Requests, Work orders and Settings for the company. Register assets in a hierarchy, raise and approve requests, make work orders, assign technicians and record the work. "Report a fault", at the foot of the rail, raises a request from any screen.' },
-  { t: 'Operations', st: 'planned', x: 'A list of the planned modules, each labelled Planned, beside what of Maintenance works today. Nothing planned works yet or keeps data.' },
+  { t: 'Operations', st: 'planned', x: 'The operations modules: Procurement (partly live: suppliers) and Products and Engineering records open from here, beside what of Maintenance works today; the rest are labelled Planned. Nothing planned works yet or keeps data.' },
   { t: 'Reports', st: 'live', x: "A card for each tool's reports. Each opens in its module, with that module's permissions." },
   { t: 'Administration', st: 'live', x: "Company overview, people and roles, departments, tools and company settings; each tool's team and settings; your profile. Platform administrators also see the ERP console." },
 ];
@@ -222,15 +228,15 @@ const integrations: { name: string; url: string; items: { t: string; st: Feature
   { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Opens inside the ERP as Finance and Accounting', st: 'live' }, { t: 'Project costs and budgets', st: 'connected' }, { t: 'Departments in tracking', st: 'connected' }] },
   { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Opens inside the ERP as Projects and Tasks', st: 'live' }, { t: 'My Work in the rail', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
   { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'Set-up steps in Products and Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
-  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/manufacturing/', items: [{ t: 'Maintenance: asset register, requests and work orders', st: 'live' }, { t: 'Procurement, inventory, production, quality and supply chain', st: 'planned' }] },
+  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/manufacturing/', items: [{ t: 'Maintenance: asset register, requests and work orders', st: 'live' }, { t: 'Procurement: the supplier master', st: 'live' }, { t: 'Purchase orders and receiving, inventory, production, quality and supply chain', st: 'planned' }] },
 ];
 
 const faqs = [
-  { q: 'What does BIZOMAT ERP manage?', a: 'Your company and its tools: the dashboard, your assigned work, sales and customers (the CRM), finance and accounting, projects and tasks, the set-up of CAD Automation, reports, and the company\'s people, departments and roles. Maintenance covers assets, requests and work orders; procurement, inventory, manufacturing, quality and supply chain are planned and not built.' },
+  { q: 'What does BIZOMAT ERP manage?', a: 'Your company and its tools: the dashboard, your assigned work, sales and customers (the CRM), finance and accounting, projects and tasks, products with their bills of materials, revisions, engineering changes and documents, suppliers, the set-up of CAD Automation, reports, and the company\'s people, departments and roles. Maintenance covers assets, requests and work orders; purchase orders and receiving in the ERP, inventory, manufacturing, quality and supply chain are planned and not built.' },
   { q: 'Can it manage multiple companies?', a: 'Yes. You can belong to several companies and switch between them with the company switcher. It lists your registered companies, your own company in your own name, and companies whose tools were shared with you. Each company keeps its own tools and records.' },
   { q: 'Can different departments have separate permissions?', a: "Departments appear in every tool, but permissions are set for each person, not each department: every person has a role in each tool, set in the company area under People. A department's head can change who is in the department, and sees that department's figures in every tool." },
   { q: 'Does it connect with Finance and CRM?', a: 'Yes. Both open inside the ERP. When the company runs both, a CRM deal can start a draft quote in Finance and become a draft invoice once won, and a CRM company can be linked to its Finance customer. Each link checks your role in both tools.' },
-  { q: 'Can it manage manufacturing?', a: 'Not yet. Manufacturing, production planning, inventory, procurement, quality and supply chain are planned and not built. The Operations module lists them as Planned. Maintenance works today as its own module, for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can it manage manufacturing?', a: 'Not yet. Products, bills of materials, revisions, engineering changes and suppliers work today; manufacturing, production planning, inventory, purchase orders and receiving in the ERP, quality and supply chain are planned and not built. The Operations module lists them as Planned. Maintenance works today as its own module, for assets, requests and work orders; preventive maintenance is planned.' },
   { q: 'Is my data copied into the ERP?', a: 'No. The ERP shows each tool where it is. Nothing is copied or moved, and each tool keeps its own permissions.' },
   { q: 'Who sees our CAD computers?', a: "In a registered company, the owner and administrators see the computers of everyone in it, and members see their own. Nobody sees another company's. The computers appear once CAD Automation reports to the ERP, which is in development; until then the page says so." },
   { q: 'What happened to the old tool addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into the ERP, so bookmarks and links in emails keep working.' },

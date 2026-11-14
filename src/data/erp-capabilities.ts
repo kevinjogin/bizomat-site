@@ -28,8 +28,14 @@
 //   Asset management and maintenance (CMMS): owner's brief of 14 Nov 2026 (MEX used as a functional reference only).
 //     Its Stage 1 is live (apps/work/src/worker/maintenance, migration 0018_maintenance.sql; acceptance tests A to D and J
 //     in apps/work/test/maintenance.test.ts and test-node/maintenance.test.ts); the rest is planned.
-//   Everything else (sales orders, procurement beyond Finance's documents, inventory, manufacturing, quality, supply
-//     chain, service, human capital): docs/erp/architecture/02 to 10. Nothing of it is built, so it is planned.
+//   ERP Release 1 (owner's brief of 14 Nov 2026, Release 1): the product master with variants, revisions with change
+//     requests and change orders, multi-level bills of materials, engineering documents and the supplier master
+//     (apps/work/src/worker/erp, migration 0020_erp_engineering_procurement.sql; Scenario A and the rule tests in
+//     apps/work/test/erp.test.ts and test-node/erp.test.ts). Purchase orders beyond Finance's, receiving and supplier
+//     performance are Release 2: planned.
+//   Everything else (sales orders, procurement beyond the supplier master and Finance's documents, inventory,
+//     manufacturing, quality, supply chain, service, human capital): docs/erp/architecture/02 to 10. Nothing of it is
+//     built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
 // language, no file paths, no repository names.
 //
@@ -142,9 +148,9 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'procurement',
     name: 'Sourcing and procurement',
     summary: 'Choosing suppliers, asking for prices, ordering, receiving and matching what was ordered, received and billed.',
-    servedBy: 'BIZOMAT Finance (suppliers, purchase orders, bills); BIZOMAT ERP Procurement (planned module)',
+    servedBy: 'BIZOMAT ERP Procurement (the supplier master); BIZOMAT Finance (purchase orders, bills)',
     features: [
-      cap('Supplier master', 'live', 'Finance contacts of kind supplier, with payment terms. The procurement profile (lead times, approval status) is planned.'),
+      cap('Supplier master', 'live', 'Suppliers with approval, hold and block by a procurement manager who did not create them, contacts, documents, payment terms, lead times and the products each supplies. Linked, not copied, to the Finance supplier they are paid as. An ABN is checked for its form only.'),
       cap('Supplier qualification', 'planned'),
       cap('Requests for quotation (RFQs)', 'planned'),
       cap('Supplier comparisons', 'planned'),
@@ -156,18 +162,18 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Goods receipts', 'planned'),
       cap('Three-way matching', 'planned', 'Needs goods receipts.'),
       cap('Supplier invoices', 'live', 'Finance bills with approval and payments recorded. No payment is made from BIZOMAT.'),
-      cap('Supplier performance', 'planned'),
+      cap('Supplier performance', 'planned', 'Measured from purchase orders and receipts (Release 2).'),
     ],
   },
   {
     id: 'engineering',
     name: 'Product lifecycle and engineering',
     summary: 'Products from design to release: product records, CAD models and drawings, bills of materials, revisions and changes.',
-    servedBy: 'BIZOMAT Engineering Automation (CAD Automation); BIZOMAT ERP Products and Engineering records (planned module)',
+    servedBy: 'BIZOMAT ERP Products and Engineering; BIZOMAT Engineering Automation (CAD Automation)',
     features: [
-      cap('Product master', 'planned', 'The CRM product catalogue serves deals today.'),
+      cap('Product master', 'live', 'Numbered products with type, category, unit, costs, price, physical details, lifecycle stage and effective dates, images and attachments. The CRM product catalogue still serves deals on its own.'),
       cap('Product classification', 'planned'),
-      cap('Variants and configurations', 'planned'),
+      cap('Variants and configurations', 'live', 'A variant is a product of its own that records what sets it apart: size, model, configuration, material, finish or options.'),
       cap('Specifications', 'planned'),
       cap('Parts and assemblies in SOLIDWORKS', 'live', 'CAD Automation builds native features on the engineer\'s own computer from an AI assistant. Tested through a simulated SOLIDWORKS; field testing on Windows with SOLIDWORKS 2022 is the next milestone.'),
       cap('Engineering drawings', 'live', 'Native SOLIDWORKS drawings through CAD Automation, exported as PDF, DWG or DXF. Released drawings are not kept as ERP records yet.'),
@@ -175,16 +181,16 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('CAD computers and jobs in the ERP', 'in-development', 'The ERP side is built. CAD Automation does not report yet, and the ERP page says so.'),
       cap('Design checks', 'live', 'Measuring, inspection and interference checks through CAD Automation.'),
       cap('Model import and export', 'live', 'STEP, IGES and Parasolid in; STEP, STL, Parasolid and IGES out.'),
-      cap('Bill of materials (BOM) management', 'planned', 'A SOLIDWORKS drawing can carry a parts list. BOM records are planned.'),
-      cap('Multi-level BOM', 'planned'),
+      cap('Bill of materials (BOM) management', 'live', 'Lines with quantity, unit, scrap allowance, reference designators, position, effective dates, optional lines and alternatives. A bill of materials belongs to a revision and locks when it is released.'),
+      cap('Multi-level BOM', 'live', 'Explosion through every level, where-used, comparison of two revisions and material cost roll-up, with missing costs flagged. Loops are refused. Availability needs Inventory (planned).'),
       cap('Routings', 'planned'),
-      cap('Engineering revisions', 'planned'),
-      cap('Engineering change requests and orders (ECR and ECO)', 'planned'),
-      cap('Document management', 'planned', 'Each system keeps its own documents with versions. Engineering document control and release is planned.'),
+      cap('Engineering revisions', 'live', 'Draft, in a change order, released and superseded. A release supersedes the previous revision in the same step.'),
+      cap('Engineering change requests and orders (ECR and ECO)', 'live', 'Approved and released by an engineering approver who did not draft the change order; in a company of one, the exception is recorded.'),
+      cap('Document management', 'live', 'Engineering documents per product and revision, with versions and approval: an uploaded file, or a reference to a CAD file on the engineer\'s own computer. DXF and STEP files are checked and only ever downloaded.'),
       cap('Product costing', 'planned'),
       cap('Lifecycle status', 'planned'),
       cap('Compliance', 'planned'),
-      cap('Drawing generated from an ERP product', 'planned', 'Needs Sign in with BIZOMAT in CAD Automation and the product master.'),
+      cap('Drawing generated from an ERP product', 'planned', 'Needs Sign in with BIZOMAT in CAD Automation. Engineering documents can reference a CAD file today.'),
     ],
   },
   {

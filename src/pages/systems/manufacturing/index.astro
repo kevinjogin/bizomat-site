@@ -47,8 +47,8 @@ const modules: Module[] = [
   },
   {
     id: 'procurement', name: 'Procurement', st: 'planned',
-    x: 'Designed for supplier profiles, purchase requisitions with approval, requests for quotation, purchase orders with receiving, and checking each order against its receipt and bill.',
-    today: [{ t: 'Suppliers, purchase orders and bills in Finance', st: 'live' }],
+    x: 'Designed for purchase requisitions with approval, requests for quotation, purchase orders with receiving, and checking each order against its receipt and bill. The supplier master works today in BIZOMAT ERP.',
+    today: [{ t: 'Supplier master with approval, in BIZOMAT ERP', st: 'live' }, { t: 'Purchase orders and bills in Finance', st: 'live' }],
   },
   {
     id: 'quality', name: 'Quality management', st: 'planned',
@@ -100,10 +100,10 @@ const sellFlow = ['Accepted quote', 'Sales order', 'Work order', 'Final inspecti
 const buyFlow = ['Requisition', 'Purchase order in Finance', 'Goods receipt', 'Incoming inspection', 'Supplier bill in Finance'];
 
 const faqs = [
-  { q: 'Can it manage manufacturing today?', a: 'No. Manufacturing, production planning, inventory, warehouse management, procurement, quality and supply chain are planned and not built.' },
+  { q: 'Can it manage manufacturing today?', a: 'No. Manufacturing, production planning, inventory, warehouse management, purchasing beyond the supplier master, quality and supply chain are planned and not built. Products, bills of materials, revisions and suppliers work today in BIZOMAT ERP.' },
   { q: 'Is Maintenance available?', a: 'Yes. Its first stage works today inside BIZOMAT ERP: the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. Preventive maintenance and the rest are planned.' },
   { q: 'Can I sign up or pay for it now?', a: 'Maintenance comes with BIZOMAT ERP: sign in and choose Maintenance in the rail. For the planned modules there is nothing to sign up for, download or buy.' },
-  { q: 'What can I use today instead?', a: 'BIZOMAT Finance for suppliers, purchase orders and bills; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
+  { q: 'What can I use today instead?', a: 'BIZOMAT ERP for products, bills of materials, engineering changes and the supplier master; BIZOMAT Finance for purchase orders and bills; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
   { q: 'When will the other modules be ready?', a: 'There is no date yet. Each module is labelled Planned until it is built and tested, and only then is it called Live.' },
 ];
 
