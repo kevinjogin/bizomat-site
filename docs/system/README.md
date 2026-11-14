@@ -9,11 +9,20 @@
 > - **Module rail:** Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and
 >   Engineering, Maintenance, Operations, Reports, Administration; "Report a fault" at its foot raises a maintenance
 >   request from any screen.
+>   Products and Engineering opens `/erp/products` (the company used last).
 > - **Maintenance** (Asset Management and Maintenance, Stage M1): the asset register, requests and work orders of
 >   each company, at `/erp/c/<company>/maintenance` (`docs/maintenance/README.md`, migration `0018_maintenance.sql`).
+> - **ERP Release 1** (built on the branch `erp-release-1`, not deployed yet; `docs/erp/release-1.md`, status by
+>   release in `docs/erp/STATUS.md`, migration `0020_erp_engineering_procurement.sql`, API `/api/erp`):
+>   - Products and Engineering at `/erp/c/<company>/products`: products and variants, multi-level bills of materials,
+>     revisions, change requests and change orders, engineering documents, and the CAD Automation set-up as a tab;
+>   - Procurement's supplier master at `/erp/c/<company>/procurement`, opened from Operations;
+>   - ERP roles at `/erp/c/<company>/erp-roles` (Administration) and six reports at `/erp/c/<company>/erp-reports`
+>     (Reports).
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
->   - Operations: the planned modules, each labelled Planned, and what of Maintenance is live.
+>   - Operations: the planned modules, each labelled Planned, and what is live of Maintenance, Procurement
+>     (suppliers) and Products and Engineering records.
 >   - Reports: every report of the company's tools, in its own module.
 >   - Administration: company, tool teams and settings, your profile, and the ERP console for platform admins.
 > - **Own companies for everyone:** migration `0017_system_everyone.sql` gives every existing active account its own
@@ -91,11 +100,14 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - a Projects and Tasks workspace: two example projects, a dashboard, a brief and favourites;
   - a Sales and CRM organisation: three companies, contacts, deals, two leads and two activities;
   - a Finance business workspace: an opening balance, four transactions, a customer and a draft quote;
-  - Maintenance: a seven-asset hierarchy, three requests and two work orders.
+  - Maintenance: a seven-asset hierarchy, three requests and two work orders;
+  - Products and Engineering and Procurement (ERP Release 1): a shelf bracket kit with a variant and a two-level bill of
+    materials released through a change order (the one-person exception recorded), a change request, a draft change
+    order, a CAD reference and two suppliers, one approved. Example companies made before Release 1 are not changed.
 
   Every name is invented, and every address is on example.com. No other accounts are made.
-- **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.3 s on Node,
-  and the dashboard never waits for it.
+- **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.5 s on Node
+  with the Release 1 records (0.3 s before), and the dashboard never waits for it.
   - Once removed, it is never made again automatically. Administration offers "Add the example company again"
     (`{ again: true }`).
   - Concurrent requests make one company.
@@ -115,7 +127,7 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - Its notifications stay in the app, with no email from Projects, CRM or Finance.
   - Its Finance documents are not emailed (409).
 - **Remove:** `POST /api/system/demo/remove`, from Administration. It soft-deletes its workspace, CRM organisation and
-  Finance workspace, as a person's delete does. It also erases its `mt_*` records and maintenance files.
+  Finance workspace, as a person's delete does. It also erases its `mt_*` and `erp_*` records and their files.
 - **Console:** the super admin console counts example companies apart ("Example companies"), and its tool totals
   exclude them.
 - **Tests:** `apps/work/test/example-company.test.ts` (workerd) and `apps/work/test-node/example-company.test.ts` (Node,

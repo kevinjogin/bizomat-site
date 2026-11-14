@@ -40,12 +40,18 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   reference only; `docs/maintenance/README.md`): Stage M1 (asset register and hierarchy, requests with approval, work
   orders, technicians, labour timer, photos and documents) is built and tested at `/erp/c/<company>/maintenance`;
   M2 to M4 (preventive maintenance, readings, inspections, parts, scanning, sites, AI scheduling, reliability, offline)
-  are planned. **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account
-  gets its own "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own
-  API; only its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it
-  is removed (and made again only on request) in Administration. **Operations** (procurement, inventory, manufacturing, quality, supply chain) and
-  product/engineering records are **planned, not built**: the Operations page lists them as Planned; never present them
-  as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
+  are planned. **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
+  `docs/erp/STATUS.md`; built on the branch `erp-release-1`, live only once merged and deployed): the product master
+  with variants, revisions with change requests and change orders (approval and release with segregation of duties),
+  multi-level bills of materials, engineering documents (files or CAD references, never claimed to be on the server),
+  the supplier master (ABN "format checked", linked to Finance, never copied) and their reports, at
+  `/erp/c/<company>/products` and `/procurement`; purchase orders, receiving and supplier performance are Release 2.
+  **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
+  "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
+  its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
+  removed (and made again only on request) in Administration. **Operations** beyond Release 1 (purchase orders and
+  receiving, inventory, manufacturing, routings, quality, supply chain) is **planned, not built**: the Operations page
+  lists it as Planned; never present it as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
   the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
   **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
