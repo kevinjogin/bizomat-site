@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "npm run build:client && wrangler dev --local --port 8787",
     "dev:client": "vite",
+    "dev:erp-preview": "vite --config vite.erp-preview.config.ts",
+    "build:erp-preview": "vite build --config vite.erp-preview.config.ts",
     "build": "npm run build:client && npm run build:worker && npm run build:node",
     "build:client": "vite build",
     "build:worker": "wrangler deploy --dry-run --outdir dist/worker",
