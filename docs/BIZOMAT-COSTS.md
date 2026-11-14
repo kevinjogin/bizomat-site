@@ -7,7 +7,8 @@ reduce my bills."
 
 These were checked on 14 Nov 2026 from the configuration in both repositories and the Fly organisation:
 - There are no managed Postgres clusters and no Sprites.
-- The bills are the two Fly apps and GitHub Actions minutes.
+- The bills are the two Fly apps. GitHub Actions is free since both repositories became public (14 Nov 2026); before that,
+  the private repositories' included minutes ran out on 14 Nov and stopped the CAD repository's CI.
 
 | Item | Size | Runs | Notes |
 | --- | --- | --- | --- |
@@ -17,7 +18,7 @@ These were checked on 14 Nov 2026 from the configuration in both repositories an
 | `work_data` volume | 3 GB | always | Daily snapshots, kept 30 days |
 | `cados` (ams) | shared-cpu-2x, 2 GB | suspends when idle | CAD Automation. A paired computer's Companion keeps it awake while that computer is on |
 | `opensketch_data` volume | 1 GB | always | |
-| GitHub Actions | runner minutes | per push | CI, the SEO jobs, deploys and review previews |
+| GitHub Actions | runner minutes | per push | Free for public repositories (both are public since 14 Nov 2026) |
 
 **Approximate cost.** On Fly's list prices, memory is the main driver. Expect roughly US$9 a month for `bizomat`'s
 three Machines and its volume, and up to about US$11 a month for `cados` while it is awake. The Fly billing page is
