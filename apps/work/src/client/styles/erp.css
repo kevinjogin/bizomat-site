@@ -157,3 +157,17 @@ button.erp-stat { text-align: left; font: inherit; color: inherit; cursor: point
   .qc-samples { grid-template-columns: 1fr; }
   .in-suite .qc-save-bar { bottom: var(--rail-h); }
 }
+
+/* Release 5 part A: supply chain (SupplyChain.tsx). The shipment screen is made for a phone: one card per pick line,
+   large inputs and buttons, a signature pad, and the proof of delivery as thumbnails. */
+.erp-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; counter-reset: erp-step; }
+.erp-steps li { counter-increment: erp-step; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); font-size: 12px; color: var(--text-3); }
+.erp-steps li::before { content: counter(erp-step) '. '; }
+.erp-steps li.done { color: var(--text); border-color: color-mix(in srgb, var(--success) 50%, var(--border)); }
+.erp-shipment { max-width: 980px; }
+.erp-pick { margin: 0; gap: 6px; }
+.erp-pick-loc { font-family: var(--mono); font-size: 18px; overflow-wrap: anywhere; }
+.erp-signature { display: block; width: 100%; max-width: 520px; height: 160px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; touch-action: none; cursor: crosshair; }
+.erp-pod { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+.erp-pod img { width: 100%; height: 110px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); }
+.erp-pod li { min-width: 0; overflow-wrap: anywhere; }

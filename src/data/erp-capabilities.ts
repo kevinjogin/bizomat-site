@@ -59,8 +59,16 @@
 //     (apps/work/src/worker/erp/quality.ts, ncr.ts, quality-reports.ts, migration 0023_erp_quality.sql; Scenario E and the
 //     rule tests in apps/work/test/erp-r4-quality.test.ts and test-node/erp-r4-quality.test.ts). SPC, calibration,
 //     quality audits and product compliance: planned.
-//   Everything else (sales orders, supply chain, service, human capital): docs/erp/architecture/02 to 10.
-//     Nothing of it is built, so it is planned.
+//   ERP Release 5 part A (owner's brief of 14 Nov 2026, section 9, supply chain and logistics; built on the branch
+//     erp-release-5-supply-chain, live once merged and deployed): sales orders for the company's CRM and Finance customer
+//     record, allocation, make to order through a linked manufacturing order, MRP demand from confirmed orders, job
+//     profitability, carriers, shipments with pick lists, packages, dispatch and delivery confirmation with proof of
+//     delivery, the dispatch email, the delivery schedule, returns, one draft invoice per shipment and one draft credit
+//     note per return in Finance, traceability to the delivery and seven reports (apps/work/src/worker/erp/sales.ts,
+//     logistics.ts, returns.ts, supply-reports.ts, migration 0025_erp_supply_chain.sql; Scenario G and the rule tests in
+//     apps/work/test/erp-r5-supply-chain.test.ts and test-node/erp-r5-supply-chain.test.ts). Stock value postings to
+//     Finance's ledger, carrier connections, demand and supply planning, landed costs and backorder automation: planned.
+//   Everything else (service, human capital): docs/erp/architecture/02 to 10. Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
 // language, no file paths, no repository names.
 //
@@ -146,7 +154,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'sales',
     name: 'Sales and distribution',
     summary: 'From the first lead to the paid invoice: customers, opportunities, quotes, orders, deliveries and billing.',
-    servedBy: 'BIZOMAT CRM and BIZOMAT Finance; sales orders, deliveries and returns in BIZOMAT ERP (planned module)',
+    servedBy: 'BIZOMAT CRM and BIZOMAT Finance; sales orders, deliveries and returns in BIZOMAT ERP Supply Chain',
     features: [
       cap('Customer relationship management (CRM)', 'live', 'Organisations, companies, contacts, activities, timelines, automations, search and saved views.'),
       cap('Leads', 'live', 'Statuses, an explainable score and conversion to a contact, company and deal in one step.'),
@@ -157,13 +165,15 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Sales product and service catalogue', 'live', 'CRM products with code and unit price, used on deals.'),
       cap('Pricing', 'planned', 'Prices are entered per line or come from the CRM catalogue. Price lists and pricing rules are planned.'),
       cap('Sales contracts', 'planned'),
-      cap('Sales orders', 'planned'),
-      cap('Order management', 'planned'),
+      cap('Sales orders', 'live', 'For the company\'s one customer record (the CRM company and the Finance customer it is billed as), priced as Finance prices lines, confirmed, allocated, shipped and invoiced.'),
+      cap('Won deal to sales order', 'connected', 'A won CRM deal becomes a draft sales order for its customer, once; the deal\'s items become lines where their code matches a product.'),
+      cap('Order management', 'live', 'Statuses from draft to invoiced worked out from the lines, shipments and invoices; amendments with the earlier versions kept; cancelling and closing with a reason; the open orders report.'),
       cap('Credit management', 'planned', 'Payment terms and aged receivables exist in Finance. Credit limits and holds are planned.'),
-      cap('Deliveries', 'planned'),
+      cap('Deliveries', 'live', 'Shipments with a pick list, packages, dispatch from a phone and delivery confirmation with proof of delivery.'),
       cap('Billing', 'live', 'Finance invoices, progress invoices from quotes, recurring invoices and secure online links.'),
       cap('Won deal to draft invoice', 'connected', 'A draft only, once per deal. Finance approval posts it.'),
-      cap('Returns', 'planned', 'Finance credit notes are live. Returns of goods are planned.'),
+      cap('Shipment to draft invoice', 'connected', 'One draft invoice in Finance per shipment: what was shipped at the order\'s prices, with the freight charge as a line. Made once; Finance approval posts it.'),
+      cap('Returns', 'live', 'Authorised by a sales manager, received back into stock (into quarantine to inspect it), with one draft credit note in Finance per return.'),
       cap('Rebates', 'planned'),
       cap('Customer service', 'planned', 'CRM activities and timelines record contact with customers. Cases and service levels are planned.'),
       cap('Sales forecast and reports', 'live', 'CRM dashboard and 11 reports, including the weighted and commit forecast.'),
@@ -228,11 +238,11 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Process manufacturing', 'planned', 'After discrete manufacturing: needs formulas and batch records.'),
       cap('Repetitive manufacturing', 'planned', 'An order can be marked repetitive; rate-based schedules are planned.'),
       cap('Make to stock', 'live', 'Orders for stock, planned by MRP from the master production schedule, stock and reorder points.'),
-      cap('Make to order', 'live', 'An order carries its customer or job as a reference, and confirmed demand is entered in the master production schedule. Links to sales orders come with Release 5.'),
+      cap('Make to order', 'live', 'A manufacturing order made from a sales order line, linked both ways, with the customer\'s order as its reference.'),
       cap('Engineer to order', 'planned', 'An order can be marked engineer to order with a job reference. Engineering and costing tied to a project are planned.'),
       cap('Project manufacturing', 'planned'),
       cap('Master production scheduling', 'live', 'Forecast or confirmed demand per product, quantity and due date, with a reference.'),
-      cap('Material requirements planning (MRP)', 'live', 'Level by level through released bills of materials, from confirmed demand, stock less reservations, open purchase and manufacturing orders, lead times, safety stock, reorder points and order sizes. Suggestions to make (a draft order), buy (a requisition) or expedite, marked late or overdue. Each run is kept with its inputs.'),
+      cap('Material requirements planning (MRP)', 'live', 'Level by level through released bills of materials, from confirmed sales orders and the schedule\'s demand, stock less reservations, open purchase and manufacturing orders, lead times, safety stock, reorder points and order sizes. Suggestions to make (a draft order), buy (a requisition) or expedite, marked late or overdue. Each run is kept with its inputs.'),
       cap('Capacity planning', 'live', 'Rough-cut: load per work centre per week against its available hours, with overloads flagged. Finite scheduling is planned.'),
       cap('Advanced planning and scheduling', 'planned'),
       cap('Production orders', 'live', 'Draft, released, in progress, completed and closed, or cancelled; materials with the scrap allowance, operations copied from the routing, estimated cost, assigned people, and amendments with their history.'),
@@ -242,7 +252,8 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Labour and machine tracking', 'live'),
       cap('Work in progress (WIP)', 'live', 'The cost of each open order to date. Posting it to Finance\'s ledger is planned: nothing is posted.'),
       cap('Scrap and rework', 'live', 'Scrap with a reason at each operation and materials scrapped against an order; rework quantities and rework time.'),
-      cap('Production costing', 'live', 'Estimated against actual by element (materials, labour, machine, outsourcing, overheads, scrap, rework), finished goods valued at actual cost, and variances recorded at close. Job profitability is planned: it needs sales orders.'),
+      cap('Production costing', 'live', 'Estimated against actual by element (materials, labour, machine, outsourcing, overheads, scrap, rework), finished goods valued at actual cost, and variances recorded at close.'),
+      cap('Job profitability', 'live', 'For orders made to order: the sales order line\'s revenue before tax against the order\'s actual cost, on the order and in a report.'),
       cap('Overall equipment effectiveness (OEE)', 'planned', 'Downtime and output are recorded; the OEE measure is planned.'),
     ],
   },
@@ -267,9 +278,9 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Reservations', 'live'),
       cap('Stock valuation', 'live', 'Weighted average or first in, first out, chosen before the first movement and then locked. Posting stock value to Finance\'s ledger is planned: nothing is posted today.'),
       cap('Cycle counts', 'live', 'Stocktakes and cycle counts with count sheets and variances, approved by a warehouse manager who did not count, then posted as movements.'),
-      cap('Picking and packing', 'planned', 'Issues from a location work today; pick lists and packing are planned.'),
+      cap('Picking and packing', 'live', 'Pick lists from the stock allocated to a sales order (soonest expiry first, then the oldest), and packages with weight, size and contents, on a phone.'),
       cap('Receiving', 'live', 'Against purchase orders, on a computer or a phone.'),
-      cap('Dispatch', 'planned', 'Dispatch locations exist; deliveries come with Supply Chain.'),
+      cap('Dispatch', 'live', 'The picked stock leaves once, never beyond what is there, and its allocation is used up.'),
       cap('Replenishment', 'planned', 'Reorder points, minimums, maximums and a shortages report work today; replenishment orders are not made automatically.'),
     ],
   },
@@ -277,19 +288,27 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'supply-chain',
     name: 'Supply chain and logistics',
     summary: 'Planning demand and supply, and moving goods between suppliers, sites and customers.',
-    servedBy: 'BIZOMAT ERP Supply Chain (planned module)',
+    servedBy: 'BIZOMAT ERP Supply Chain',
     features: [
-      cap('Demand planning', 'planned'),
+      cap('Demand planning', 'planned', 'Confirmed sales orders and the schedule\'s demand drive MRP today; forecasting demand from history is planned.'),
       cap('Supply planning', 'planned'),
-      cap('Material planning', 'live', 'MRP in Manufacturing: what to make and buy, from confirmed demand, stock and open orders.'),
+      cap('Material planning', 'live', 'MRP in Manufacturing: what to make and buy, from confirmed sales orders and demand, stock and open orders.'),
       cap('Inventory optimisation', 'planned'),
-      cap('Warehouse management', 'planned', 'The warehouse operations of Inventory and Warehouse.'),
-      cap('Transportation management', 'planned'),
-      cap('Freight', 'planned'),
-      cap('Shipment tracking', 'planned', 'Tracking references first; connections to carriers come later.'),
+      cap('Stock allocation', 'live', 'Stock reserved for each sales order line, soonest expiry first, then the oldest, outside quarantine; released when an order is cancelled or closed.'),
+      cap('Warehouse management', 'planned', 'The warehouse operations of Inventory and Warehouse, and picking, packing and dispatch, work today. Advanced warehouse management is planned.'),
+      cap('Carrier management', 'live', 'Carriers with their services and the address of their tracking page.'),
+      cap('Transportation management', 'planned', 'Carriers and shipments work today; route and load planning, and bookings in a carrier\'s own system, are planned.'),
+      cap('Freight', 'live', 'Freight cost and charge per shipment, the charge a line on the draft invoice, and a report of cost against charge.'),
+      cap('Shipment tracking', 'live', 'The carrier\'s tracking number with a link to its own tracking page. Connections to carriers\' systems are planned.'),
+      cap('Delivery scheduling', 'live', 'Ship dates and delivery windows on a schedule, with the orders due that have no shipment yet.'),
+      cap('Proof of delivery', 'live', 'Who received it and when, with a photo, a signature drawn on the phone or a document.'),
+      cap('Customer notifications', 'live', 'An optional email to the customer on dispatch, with the tracking link, where email is set up on the service. The example company sends none.'),
+      cap('Returns logistics', 'live', 'Returns authorised, received back into stock or quarantine, and linked to a Quality inspection or nonconformance.'),
+      cap('Traceability to the customer', 'live', 'From the supplier, order and receipt of a lot, through the manufacturing order, to the shipment and the customer who received it.'),
+      cap('Supply chain reports', 'live', 'Open orders, delivery on time and in full, shipments by carrier, freight, returns, sales by product and customer, and job profitability, each with CSV.'),
       cap('Landed costs', 'planned'),
       cap('Distribution', 'planned'),
-      cap('Backorders', 'planned'),
+      cap('Backorders', 'planned', 'What is not shipped stays open on the order and in the open orders report; allocating it automatically as stock arrives is planned.'),
       cap('Inter-site transfers', 'planned'),
     ],
   },

@@ -27,6 +27,7 @@ export const EMAIL_TEMPLATES = [
   'fin_document',
   'company_invitation',
   'company_email',
+  'erp_dispatch',
 ] as const;
 export type EmailTemplate = (typeof EMAIL_TEMPLATES)[number];
 
@@ -167,7 +168,8 @@ export type TemplateData =
   | { template: 'fin_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
   | { template: 'fin_document'; organisation: string; replyEmail?: string | null; kind: 'quote' | 'invoice' | 'credit_note'; number: string; amount: string; dateLabel?: string | null; date?: string | null; url: string; message?: string | null }
   | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean }
-  | { template: 'company_email'; organisation: string; email: string; url: string; expires: string };
+  | { template: 'company_email'; organisation: string; email: string; url: string; expires: string }
+  | { template: 'erp_dispatch'; organisation: string; order: string; shipment: string; customerPo?: string | null; carrier?: string | null; service?: string | null; tracking?: string | null; trackingUrl?: string | null; window?: string | null; packages?: string | null };
 
 function taskRows(d: TaskEmailData): [string, string | null | undefined][] {
   return [
@@ -469,6 +471,26 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         reason: `You received this email because ${d.organisation} sent this address a document through BIZOMAT Finance.`,
       });
     }
+    case 'erp_dispatch':
+      return layout({
+        product: 'ERP',
+        subject: `Your order ${oneLine(d.order, 40)} from ${oneLine(d.organisation, 80)} is on its way`,
+        preheader: `${d.organisation} dispatched shipment ${d.shipment}${d.carrier ? ` with ${d.carrier}` : ''}.`,
+        heading: `Your order is on its way`,
+        intro: [`${d.organisation} dispatched your order ${d.order}.`],
+        rows: [
+          ['Shipment', d.shipment],
+          ['Your order number', d.customerPo],
+          ['Carrier', d.carrier],
+          ['Service', d.service],
+          ['Tracking number', d.tracking],
+          ['Expected delivery', d.window],
+          ['Packages', d.packages],
+        ],
+        button: d.trackingUrl ? { label: 'Track the delivery', url: d.trackingUrl } : undefined,
+        after: [d.trackingUrl ? 'The tracking page is the carrier’s own.' : `Questions about the delivery? Contact ${d.organisation} directly.`],
+        reason: `You received this email because ${d.organisation} asked BIZOMAT to tell you when your order was dispatched.`,
+      });
     case 'company_invitation':
       return layout({
         product: 'Company',

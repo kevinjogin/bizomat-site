@@ -28,6 +28,7 @@ import {
   productsPage,
   qty,
   qualityPage,
+  supplyPage,
   toCents,
   useErpMe,
   type CostView,
@@ -261,6 +262,8 @@ export interface OrderView {
   // Release 4: full inspections and nonconformances of the order
   inspections?: { id: string; number: string; status: string; result: string | null; operationId: string | null; kind: string }[];
   ncrs?: { id: string; number: string; title: string; status: string }[];
+  // Release 5: the sales order lines it is made for (make to order)
+  salesOrders?: { id: string; number: string; customerName: string; status: string; linePosition: number; quantity: number }[];
   can: { plan: boolean; edit: boolean; release: boolean; execute: boolean; issue: boolean; returnMaterials: boolean; receive: boolean; complete: boolean; close: boolean; cancel: boolean };
 }
 
@@ -317,6 +320,7 @@ function OrderDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
             ['Required by', dateText(o.requiredDate)],
             ['Method', `${o.methodLabel}, ${o.productionTypeLabel.toLowerCase()}`],
             ['Customer or job', o.customerRef],
+            ['Made for', v.salesOrders?.length ? v.salesOrders.map((x) => <span key={x.id} className="qc-inline"><Link to={supplyPage(companyId, `/orders/${x.id}`)}>{x.number}</Link> line {x.linePosition} ({x.customerName}), {qty(x.quantity)}</span>) : ''],
             ['Finished goods go to', o.fgLocationCode ?? 'The company’s default location'],
             ['Assigned', v.assignees.map((x) => x.name).join(', ')],
             ['Notes', o.notes],
@@ -441,7 +445,18 @@ export function CostTable({ costs }: { costs: CostView }) {
           </tbody>
         </table>
       </div>
-      <Props items={[['Estimated per unit', costs.estimatedUnitCents === null ? '' : money(costs.estimatedUnitCents, cur)], ['Actual per good unit', costs.actualUnitCents === null ? '' : money(costs.actualUnitCents, cur)], ['Taken into stock', money(costs.receivedValueCents, cur)], ['Not taken into stock', costs.unabsorbedCents ? money(costs.unabsorbedCents, cur) : ''], ['Job profitability', costs.profitability]]} />
+      <Props items={[['Estimated per unit', costs.estimatedUnitCents === null ? '' : money(costs.estimatedUnitCents, cur)], ['Actual per good unit', costs.actualUnitCents === null ? '' : money(costs.actualUnitCents, cur)], ['Taken into stock', money(costs.receivedValueCents, cur)], ['Not taken into stock', costs.unabsorbedCents ? money(costs.unabsorbedCents, cur) : '']]} />
+      <h3 className="erp-h3">Job profitability</h3>
+      {costs.profitability.linked ? (
+        <>
+          <dl className="co-figures">
+            <div><dt>Revenue</dt><dd>{money(costs.profitability.revenueCents, cur)}</dd></div>
+            <div><dt>Actual cost{costs.final ? '' : ' so far'}</dt><dd>{money(costs.profitability.costCents, cur)}</dd></div>
+            <div><dt>Margin</dt><dd className={costs.profitability.marginCents < 0 ? 'erp-neg' : ''}>{money(costs.profitability.marginCents, cur)}{costs.profitability.marginPct !== null ? ` (${costs.profitability.marginPct}%)` : ''}</dd></div>
+          </dl>
+          <p className="muted small">{costs.profitability.lines.map((l) => `${l.salesOrderNumber} line ${l.linePosition} (${l.customerName}): ${qty(l.quantity)} at ${money(l.revenueCents, cur)}`).join('; ')}. {costs.profitability.note}</p>
+        </>
+      ) : <p className="muted small">{costs.profitability.note}</p>}
       {costs.missing.length ? <p className="warn-box small"><Icon name="alert" size={14} /> No cost for {costs.missing.join(', ')}: the estimate counts them at zero.</p> : null}
       <p className="muted small">{costs.note}</p>
     </div>

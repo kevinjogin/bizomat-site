@@ -14,8 +14,9 @@ test('the main navigation reads Home, Systems, Resources, About, Contact', () =>
   assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Home', '/'], ['Systems', '/systems/'], ['Resources', '/resources/'], ['About', '/engine-room/'], ['Contact', '/contact/']]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
   assert.deepEqual(menu('Systems'), [['All systems', '/systems/'], ['BIZOMAT ERP', '/systems/erp/'], ['BIZOMAT CRM', '/systems/crm/'], ['BIZOMAT Finance', '/systems/finance/'], ['BIZOMAT Projects', '/systems/projects/'], ['BIZOMAT Engineering Automation', '/systems/engineering/'], ['BIZOMAT Manufacturing and Operations', '/systems/manufacturing/'], ['Open BIZOMAT ERP', 'https://bizomat.ai/erp/']]);
-  // A planned system says so in its menu entry.
-  assert.equal(NAV.find((n) => n.label === 'Systems')!.children!.find((c) => c.href === '/systems/manufacturing/')!.status, 'Planned');
+  // A planned system says so in its menu entry. Manufacturing and Operations became Available with ERP Release 5 part A
+  // (supply chain), the last of its modules: no system is labelled Planned now.
+  assert.equal(NAV.find((n) => n.label === 'Systems')!.children!.find((c) => c.href === '/systems/manufacturing/')!.status, undefined);
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('About'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
@@ -30,7 +31,7 @@ test('the main navigation reads Home, Systems, Resources, About, Contact', () =>
   assert.match(header, /<details class="nav-menu signin-menu" data-nav-menu>/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
-  for (const page of ['systems/index.astro', 'systems/erp/index.astro', 'systems/erp/guide.astro', 'systems/crm/index.astro', 'systems/crm/guide.astro', 'systems/finance/index.astro', 'systems/finance/guide.astro', 'systems/projects/index.astro', 'systems/projects/guide.astro', 'systems/engineering/index.astro', 'systems/engineering/guide.astro', 'systems/manufacturing/index.astro', 'engine-room.astro', 'sign-in.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  for (const page of ['systems/index.astro', 'systems/erp/index.astro', 'systems/erp/guide.astro', 'systems/crm/index.astro', 'systems/crm/guide.astro', 'systems/finance/index.astro', 'systems/finance/guide.astro', 'systems/projects/index.astro', 'systems/projects/guide.astro', 'systems/engineering/index.astro', 'systems/engineering/guide.astro', 'systems/manufacturing/index.astro', 'systems/manufacturing/guide.astro', 'engine-room.astro', 'sign-in.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
   // The product pages moved under /systems/ with permanent redirects (their old addresses keep working).
   const redirects = read('public/_redirects');
   for (const [from, to] of [['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/systems/crm/guide/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/systems/finance/guide/']]) {

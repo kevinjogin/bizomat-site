@@ -1,0 +1,256 @@
+---
+// /systems/manufacturing/guide/: how to use BIZOMAT Manufacturing and Operations, step by step. Its modules are part of
+// BIZOMAT ERP, so buttons and fields are named as the ERP labels them (apps/work/src/client/system/SystemApp.tsx and
+// system/erp/*.tsx, maintenance/*.tsx). Facts come from docs/erp/release-2.md (Procurement and Inventory),
+// release-3.md (Manufacturing and planning), release-4-quality.md (Quality), release-5-supply-chain.md (Supply Chain)
+// and docs/maintenance/README.md (Maintenance). What is not built is labelled Planned. Screens are real
+// (src/data/screenshots.ts), of the example company's invented data. Markup follows the ERP guide.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import '../../../styles/systems.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+
+const sys = systemById('manufacturing');
+const erp = systemById('erp');
+const PAGE = sys.guide ?? '/systems/manufacturing/guide/';
+const access = sys.access!;
+const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }, { label: 'User guide', href: PAGE }];
+const description = 'How to use BIZOMAT Manufacturing and Operations, step by step: procurement, inventory, manufacturing, quality, maintenance and supply chain.';
+
+interface Step { t: string; x: string; st?: FeatureStatus }
+interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string }
+const parts: Part[] = [
+  {
+    id: 'start', title: 'Open Operations and give the roles', st: 'live',
+    lead: 'Manufacturing and Operations is a set of modules inside BIZOMAT ERP. Sign in, choose your company, then choose Operations in the rail: it shows what waits for you, and opens each module.',
+    steps: [
+      { t: 'Sign in', x: 'Sign in to BIZOMAT ERP with your BIZOMAT account. Your own company is ready; register a company when you want to add people.' },
+      { t: 'Try the example company', x: 'Acme Studio (example) has invented suppliers, stock, orders, inspections, assets, sales orders and shipments to explore. Only you see it, and it sends no email.' },
+      { t: 'Open Operations', x: 'Operations shows the counts that wait in your company (approvals, goods to receive, orders in production, inspections, shipments to pick and returns), each linked to its list, then a card for each module with Open.' },
+      { t: 'Give ERP roles', x: 'In Administration, ERP roles, the company\'s owner or an administrator gives each person one or more roles: Buyer, Procurement manager, Warehouse manager, Warehouse operator, Production manager, Production operator, Quality manager, Quality inspector, Sales manager, Engineer, Engineering approver, Executive or Viewer. Everyone else is a viewer until given a role.' },
+      { t: 'Give maintenance roles', x: 'In Maintenance, Settings, give each person Administrator, Supervisor, Technician or Requester. Everyone in a registered company can report a fault.' },
+      { t: 'What a role may not do', x: 'Every action is checked on the server. When your role does not allow it, the message says which roles can.' },
+    ],
+    shot: 'erp-operations',
+  },
+  {
+    id: 'procurement', title: 'Buy in Procurement', st: 'live',
+    lead: 'Procurement has five tabs: Suppliers, Requisitions, Quotations, Purchase orders and Receipts.',
+    steps: [
+      { t: 'Add and approve a supplier', x: 'Choose New supplier: legal name, ABN, contacts, addresses, payment terms, currency and lead time. The ABN is checked for its form only. A procurement manager who did not add the supplier approves it.' },
+      { t: 'Raise a requisition', x: 'In Requisitions, choose New requisition: what you need, how many, by when and why. Submit it; a procurement manager who did not raise it approves or rejects it.' },
+      { t: 'Ask for quotations', x: 'On an approved requisition, choose Request quotations and tick approved suppliers. Download each PDF, send it from your own email, and choose Record as sent. Sending it from BIZOMAT is not built yet.' },
+      { t: 'Compare and choose', x: 'Record each quotation. The comparison marks the cheapest and the fastest. Choose Select a supplier with the reason; a procurement manager who did not select it approves the choice.' },
+      { t: 'Purchase order', x: 'Choose Make the purchase order. Within the company\'s approval limit a buyer\'s order is approved when submitted; above it a procurement manager who did not submit it approves. Download the PDF, send it, and choose Record as sent.' },
+      { t: 'Receive goods', x: 'Choose Receive goods (or use the warehouse screen on a phone): how many arrived, damaged or rejected, where they go, and lots, serial numbers and expiry dates. Accepted goods go into stock at once.' },
+      { t: 'The bill', x: 'On a receipt, choose Make a draft bill in Finance. It is made once, by someone whose Finance role may create bills. Finance approves and pays it.', st: 'connected' },
+    ],
+    shot: 'erp-procurement',
+  },
+  {
+    id: 'inventory', title: 'Keep stock in Inventory', st: 'live',
+    lead: 'Inventory shows what is where and every movement of it. Movements are kept and never changed.',
+    steps: [
+      { t: 'Set up a warehouse', x: 'In Warehouses, choose New warehouse and add its locations as a tree: store, zone, rack, shelf and bin. Mark quarantine, receiving, dispatch, work-in-progress and finished-goods locations, and print their QR labels.' },
+      { t: 'Product stock settings', x: 'On a product\'s stock page, choose Stock settings: lot numbers, serial numbers, expiry dates, inspection on receipt, reorder point, minimum, maximum and its usual location.' },
+      { t: 'Move stock', x: 'Choose Act on a location: issue, move, reserve, quarantine, release, return to the supplier or scrap. Stock never goes below zero unless the company allows it.' },
+      { t: 'The warehouse screen', x: 'On a phone, open Warehouse screen, choose Receive, Issue, Move or Count, and scan or type the location and product codes.' },
+      { t: 'Adjust and count', x: 'Adjustments need a reason, and approval above the company\'s threshold. In Counts, enter what is on the shelves; a warehouse manager who did not count approves the variances.' },
+      { t: 'Value and trace', x: 'Valuation shows quantity, unit cost and value, by weighted average or first in, first out. Click a lot or serial number to trace it from its supplier to where it went, up to the customer who received it.' },
+      { t: 'Finance postings', x: 'Stock value is kept in the ERP. Posting it to Finance\'s ledger is planned: each movement records it as planned, and nothing is posted.', st: 'planned' },
+    ],
+    shot: 'erp-inventory',
+  },
+  {
+    id: 'manufacturing', title: 'Make products in Manufacturing', st: 'live',
+    lead: 'Manufacturing has five tabs: Orders, Shop floor, Planning, Work centres and Routings. A production manager plans and releases orders; production operators run them.',
+    steps: [
+      { t: 'Work centres', x: 'In Work centres, choose New work centre: working days and hours, efficiency, machines and rates. A machine can be linked to its Maintenance asset, and shows as down while that asset has an open breakdown.' },
+      { t: 'Routings', x: 'In Routings, choose New routing and add its operations: work centre, set-up and run time, crew, an inspection point or an outsourced step. An engineering approver who did not draft it chooses Release.' },
+      { t: 'Draft and release an order', x: 'In Orders, choose New order: the product (with a released bill of materials and routing), quantity and date. Choose Release: shortages are shown, materials are reserved and the operations are scheduled.' },
+      { t: 'Issue materials', x: 'Choose Issue materials: reservations are taken first, and two people cannot both take the last unit. Return what was not used.' },
+      { t: 'The shop floor on a phone', x: 'Open Shop floor and choose your work centre. Start a job, run your timer, and report good output, scrap or downtime. An inspection point needs a pass or fail before the operation completes.' },
+      { t: 'Receive, complete and close', x: 'Choose Receive finished goods: they enter stock at the order\'s actual cost. Complete the order, then Close it: the costs become final and the variances are recorded.' },
+      { t: 'Costs and job profitability', x: 'Costs compares estimated and actual cost by element. An order made for a sales order line also shows its job profitability: the line\'s revenue before tax against the order\'s actual cost.' },
+    ],
+    shot: 'erp-shop-floor',
+  },
+  {
+    id: 'planning', title: 'Plan with MRP', st: 'live',
+    lead: 'Manufacturing, Planning holds the master production schedule, MRP and capacity. Confirmed sales orders are demand of their own.',
+    steps: [
+      { t: 'Enter demand', x: 'Choose Add demand for what is not on a sales order, such as a forecast: a product, quantity and due date.' },
+      { t: 'Planning data', x: 'For each product, set whether it is made or bought, its lead times, safety stock, minimum order and order multiple.' },
+      { t: 'Run MRP', x: 'Choose Run MRP. It plans level by level from what confirmed sales orders still need, the schedule\'s demand, stock, open orders and safety stock. Each run is kept with its inputs.' },
+      { t: 'Act on the suggestions', x: 'Make suggestions become draft manufacturing orders and buy suggestions requisitions, through the usual approval. Expedite suggestions name an order needed sooner.' },
+      { t: 'Check capacity', x: 'Capacity shows the hours planned on each work centre each week against the hours it has, and flags overloads.' },
+    ],
+    shot: 'erp-mrp',
+  },
+  {
+    id: 'quality', title: 'Check quality', st: 'live',
+    lead: 'Quality has five tabs: Overview, Inspections, Nonconformances, Corrective actions and Inspection plans.',
+    steps: [
+      { t: 'Inspection plans', x: 'Choose New inspection plan: incoming, first article, in-process, final, supplier or product, with its characteristics (a measured value with limits, pass or fail, or a visual check), samples and photos. A quality manager releases it.' },
+      { t: 'Inspect on a phone', x: 'Choose Start inspection, type each reading or choose Conforms or Does not, and add photos. Each reading is checked against its limits on the server.' },
+      { t: 'Complete it', x: 'Choose Complete: the result is worked out from the readings. A failed lot can go into quarantine in the same step.' },
+      { t: 'Nonconformances', x: 'From a failed inspection, choose Raise a nonconformance. Record containment and the root cause, then a quality manager decides the disposition once and carries it out through Inventory.' },
+      { t: 'Corrective actions', x: 'Choose Propose an action. A quality manager who neither proposed it nor is to do it approves it, and one who did not do it closes it once it is verified.' },
+    ],
+    shot: 'erp-quality-inspection',
+  },
+  {
+    id: 'maintenance', title: 'Look after assets in Maintenance', st: 'live',
+    lead: 'Maintenance opens the asset register, requests, work orders, preventive schedules, checklists and reports.',
+    steps: [
+      { t: 'Register assets', x: 'In Assets, choose New asset and put it under another to build the hierarchy: site, area, line, machine, part. Administrators can import a register from CSV.' },
+      { t: 'Report a fault', x: 'Choose Report a fault at the foot of the rail, on any screen of the ERP. A supervisor approves, declines or asks for more.' },
+      { t: 'Work orders', x: 'Make a work order from the request: technician, dates, instructions, safety, tasks and parts. The technician starts the timer, ticks the tasks, adds photos and completes it.' },
+      { t: 'Parts and downtime', x: 'Issue parts from the maintenance stores through Inventory, and record downtime and meter readings on the work order.' },
+      { t: 'Preventive maintenance', x: 'In Preventive, choose New schedule by time, meter or condition. Work orders are made when due, once each; Calendar shows what is coming.' },
+      { t: 'Prestart checks', x: 'On a phone, scan an asset\'s QR label and answer its checklist. A failure raises a request; a failed critical item sets the asset out of service.' },
+      { t: 'Finance postings', x: 'Maintenance costs are recorded on each work order. Posting them to Finance is planned.', st: 'planned' },
+    ],
+    shot: 'erp-maintenance-preventive',
+  },
+  {
+    id: 'supply-chain', title: 'Sell and ship in Supply Chain', st: 'live',
+    lead: 'Supply Chain has seven tabs: Overview, Sales orders, Pick and dispatch, Shipments, Delivery schedule, Returns and Carriers. A sales manager takes orders and authorises returns; the warehouse picks, packs and dispatches.',
+    steps: [
+      { t: 'Add a carrier', x: 'In Carriers, choose New carrier: its name, services, and the address of its tracking page with {tracking} where the tracking number goes.' },
+      { t: 'Make the sales order', x: 'In Sales orders, choose New sales order. The customer is a CRM company with the Finance customer it is billed as: nothing is copied. Add products, quantities, prices and tax codes, the dates, delivery address and the customer\'s order number. Save and confirm it.' },
+      { t: 'From a won deal', x: 'A won deal can become a draft sales order: its items become lines where their code matches a product.', st: 'connected' },
+      { t: 'Allocate the stock', x: 'Choose Allocate stock: stock is reserved for each line, soonest expiry first, then the oldest, outside quarantine. What is short is shown.' },
+      { t: 'Make to order', x: 'On a line, a production manager chooses Make to order: a manufacturing order linked both ways. Allocate its finished goods to the line when they are received.' },
+      { t: 'Plan the shipment', x: 'Choose Plan a shipment: carrier, service, ship date, delivery window, freight cost and charge, and whether the customer gets an email when it leaves.' },
+      { t: 'Pick, pack and dispatch on a phone', x: 'Open Pick and dispatch. Choose Picked as listed, add the packages with weight, size and contents, choose Packed, type the tracking number and choose Dispatch. Stock leaves once, never beyond what is there.' },
+      { t: 'Confirm the delivery', x: 'Add a photo, a document or the receiver\'s signature drawn on the phone, type who received it and choose Confirm the delivery.' },
+      { t: 'Invoice and returns', x: 'Choose Make the draft invoice in Finance: once per shipment, with the freight charge. Record a return on the order; a sales manager authorises it, the warehouse receives it, and a draft credit note is made in Finance once.', st: 'connected' },
+      { t: 'Finance postings', x: 'The value of stock sold is not posted to Finance\'s ledger: each dispatch records it as planned.', st: 'planned' },
+    ],
+    shot: 'erp-shipment',
+  },
+  {
+    id: 'reports', title: 'Read the reports', st: 'live',
+    lead: 'Reports in the rail lists the procurement, inventory, manufacturing, quality and supply chain reports; Maintenance has its own Reports tab. Each report opens with your role\'s permissions, links to its records and downloads as CSV.',
+    steps: [
+      { t: 'Procurement and inventory', x: 'Purchase commitments, supplier spend, purchase price variance, supplier delivery, stock on hand, stock valuation, stock movements, stock ageing, slow-moving stock and shortages.' },
+      { t: 'Manufacturing', x: 'Production output, work order progress, material consumption, labour utilisation, production variance, machine downtime, MRP suggestions and capacity load.' },
+      { t: 'Quality', x: 'Inspection results, rejection rates, supplier defects, the NCR register, corrective actions, rework and the cost of poor quality.' },
+      { t: 'Supply Chain', x: 'Open orders, delivery to customers on time and in full, shipments by carrier, freight cost and charge, returns, sales by product and customer, and job profitability.' },
+      { t: 'Maintenance', x: 'Supervisors and administrators open Maintenance, Reports: reliability (MTBF, MTTR, downtime and availability), backlog, PM compliance, breakdown trends and asset costs.' },
+    ],
+    shot: 'erp-supply-reports',
+  },
+  {
+    id: 'planned', title: 'What is not built yet', st: 'planned',
+    lead: 'Every module above works today. What is not built within them is listed here, and labelled Planned in the application.',
+    steps: [
+      { t: 'Postings to Finance\'s ledger', x: 'Posting stock, production, stock sold and maintenance value to Finance\'s ledger. Each is recorded as planned; nothing is posted.', st: 'planned' },
+      { t: 'Supply Chain', x: 'Bookings and labels in a carrier\'s own system, landed costs, demand forecasting, automatic backorder allocation and service lines on sales orders.', st: 'planned' },
+      { t: 'Procurement', x: 'Emailing purchase orders and requests for quotation with the PDF attached.', st: 'planned' },
+      { t: 'Manufacturing', x: 'Finite scheduling and a drag-and-drop planning board.', st: 'planned' },
+      { t: 'Quality', x: 'Statistical process control, calibration and quality audits.', st: 'planned' },
+      { t: 'Maintenance', x: 'Workload planning, an AI scheduling assistant that only proposes for a person to approve, and offline field work.', st: 'planned' },
+    ],
+  },
+];
+
+const questions = [
+  { q: 'Do I need a separate sign-in?', a: `No. Manufacturing and Operations is part of ${erp.name}, with the same account, companies and roles.` },
+  { q: 'Can I try it without my own data?', a: 'Yes. Acme Studio (example) has invented data in every module. Only you can see it, it sends no email, and you can remove it in Administration.' },
+  { q: 'Can two people dispatch the last unit?', a: 'No. A dispatch, like an issue of materials, takes stock out once. If two people try at the same moment, one succeeds and the other is told there is not enough stock.' },
+  { q: 'Does it post to my ledger?', a: 'Not yet. Bills, invoices and credit notes are made as drafts in Finance through Finance itself. Stock, production and maintenance value is recorded as planned; nothing is posted.' },
+  { q: 'Does it book my carrier?', a: 'No. Book with your carrier, then type its service and tracking number on the shipment. The tracking link is built from the carrier\'s address.' },
+  { q: 'Can I approve my own purchase order or change?', a: 'Not in a company of several people: someone else with the right role approves. In your own company, where you are the only person, you may, and the exception is recorded.' },
+];
+
+const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
+const schema = [{
+  '@type': 'HowTo', name: 'How to use BIZOMAT Manufacturing and Operations', url: `${SITE.url}${PAGE}`, description,
+  step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })),
+}];
+---
+<BaseLayout title="BIZOMAT Manufacturing and Operations user guide" description={description} breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="guide-title">
+    <Container>
+      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+      <p class="bz-eyebrow">{sys.name} · User guide</p>
+      <h1 id="guide-title">How to use Manufacturing and Operations</h1>
+      <p class="pp-hero__lead">Step by step, from roles to buying, stock, production, inspections, maintenance and shipping. Buttons and fields are named as they appear in {erp.name}.</p>
+      <div class="pp-hero__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="mfg-guide-start">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="mfg-guide-about">About {sys.short}</Button>
+      </div>
+      <div class="sys-legend">
+        <h2 class="sys-subhead">What the labels mean</h2>
+        <p class="sys-note">Each part and some steps carry one of these labels.</p>
+        <StatusLegend />
+      </div>
+      <nav class="sys-toc" aria-label="In this guide">
+        <h2 class="sys-toc__title">In this guide</h2>
+        <ol>
+          {parts.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+          <li><a href="#questions">Common questions</a></li>
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  {parts.map((p, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
+      <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
+        <div>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          <p class="sys-guide-status"><StatusLabel status={p.st} /></p>
+          {p.lead && <p class="sys-lead">{p.lead}</p>}
+          <ol class="pp-steps sys-guide-steps">
+            {p.steps.map((s) => <li><h3>{s.t}{s.st && <> <StatusLabel status={s.st} /></>}</h3><p>{s.x}</p></li>)}
+          </ol>
+        </div>
+        {shots[p.id] && (
+          <figure class="pp-shot sys-guide-shot">
+            <img src={shots[p.id]!.src} alt={`${shots[p.id]!.title}. ${shots[p.id]!.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+            <figcaption>
+              <span>{shots[p.id]!.caption}</span>
+              <span class="viz__tag viz__tag--real">Product screen</span>
+            </figcaption>
+          </figure>
+        )}
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="questions" aria-labelledby="questions-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Common questions</p>
+        <h2 id="questions-title">Before you ask</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">More on the whole ERP: the <a href={erp.guide}>{erp.name} user guide</a>. Something not covered? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="guide-cta">
+    <Container class="pp-band">
+      <h2 id="guide-cta">Ready? Open Operations in your own company.</h2>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="mfg-guide-band-start">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="mfg-guide-band-about">About {sys.short}</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

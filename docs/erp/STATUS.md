@@ -9,11 +9,12 @@ Updated 15 Nov 2026. Release 1 was merged and deployed on 14 Nov 2026; Release 2
 15 Nov 2026 (kevinjogin/bizomat-site#65, deploy run 33, version 9ce599e, migration 0022); Release 4 part A (quality) on
 15 Nov 2026 (kevinjogin/bizomat-site#67, deploy run 34, version 930cd57, migration 0023) and part B (Maintenance stages M2
 and M3) on 15 Nov 2026 (kevinjogin/bizomat-site#68, deploy run 35, version 41848e4, migration 0024). Each migration was
-applied at start-up.
+applied at start-up. Release 5 part A (supply chain and logistics, migration 0025) is built and tested on the branch
+`erp-release-5-supply-chain`, not merged or deployed: its rows say "(not deployed)".
 
 ## Working
 
-Built, tested and live at `bizomat.ai/erp`.
+Built, tested and live at `bizomat.ai/erp`, except the rows marked "(not deployed)".
 
 | Area | What | Evidence |
 | --- | --- | --- |
@@ -68,6 +69,16 @@ Built, tested and live at `bizomat.ai/erp`.
 | **Release 4 Maintenance**: Trades, labour costs, downtime, sites, QR | Trades and rates, time entered by hand, labour priced when recorded; downtime; sites with site filters; QR labels and the scan lookup | Scenario F (exact costs); sites test; scan test |
 | **Release 4 Maintenance**: Reports | Reliability (MTBF, MTTR, downtime, availability), backlog, PM compliance, breakdown trends, asset costs; drill-down, site and period filters, CSV | Exact-number tests |
 | **Release 4 Maintenance**: Example company | A site, rates, a meter with readings, a schedule that made and completed its work order, an inspection with a failed item, a store with a part issued, a breakdown with downtime and a prestart | Example company tests (workerd and Node) |
+| **Release 5 Supply chain** (not deployed): foundations | Sales manager role, the capability matrix for sales, shipping and returns, SO, SHP and RMA numbering, files on orders, shipments, returns and proof of delivery, history | `docs/erp/release-5-supply-chain.md`; `apps/work/test/erp-r5-supply-chain.test.ts` (roles, isolation) |
+| **Release 5 Supply chain** (not deployed): sales orders | For the company's one customer record (a CRM company and its Finance customer, nothing copied), priced as Finance prices lines, dates, delivery address, shipping terms, customer order number; statuses worked out from the lines; amendments with their history; cancel and close; a draft order from a won CRM deal, once | Scenario G; amendment, cancel and won-deal tests |
+| **Release 5 Supply chain** (not deployed): allocation and make to order | Stock reserved through StockOps soonest expiry first, then oldest, outside quarantine, once per key; allocated reservations protected in Inventory; a manufacturing order from a line, linked both ways | Scenario G |
+| **Release 5 Supply chain** (not deployed): MRP demand | Confirmed orders' outstanding, unallocated quantities as demand, at the promised or requested date | MRP test with exact numbers |
+| **Release 5 Supply chain** (not deployed): job profitability | A made-to-order manufacturing order's revenue (the line before tax, for the quantity made) against its actual cost, in the costing view and a report | Scenario G (exact numbers, workerd and Node) |
+| **Release 5 Supply chain** (not deployed): shipping | Carriers with a tracking address; shipments with a pick list (soonest expiry, then oldest), packages, dispatch through StockOps (`sales_dispatch`, once per shipment, a concurrent last unit refused), delivery with a photo, document or drawn signature; the delivery schedule; an optional dispatch email through the outbox (never for the example company) | Scenario G; concurrency tests (workerd and Node); Chromium at 390 |
+| **Release 5 Supply chain** (not deployed): draft invoice in Finance | One draft invoice per shipment through Finance's own `createDoc`, with freight as a line, by someone whose Finance role may create invoices; made once under repeated and simultaneous requests; a failure recorded and retried | Scenario G; failed-integration retry test; Node test |
+| **Release 5 Supply chain** (not deployed): returns | Raised up to what was shipped, authorised by a sales manager, received through StockOps (`customer_return`, optionally into quarantine) at the dispatched cost, linked to a Quality inspection or NCR, one draft credit note through Finance's `createCredit` | Scenario G |
+| **Release 5 Supply chain** (not deployed): traceability and reports | A lot's trace to the shipment and customer; open orders, delivery to customers, shipments by carrier, freight, returns, sales by product and customer, job profitability; drill-down and CSV; Supply Chain overview and Operations counts | Reports with exact numbers and CSV |
+| **Release 5 Supply chain** (not deployed): example company | A carrier, a sales order with a made-to-order line, a delivered shipment with its draft invoice, a return with its draft credit note; no email | Example company tests (workerd and Node) |
 
 ## In development
 
@@ -81,9 +92,8 @@ Built, tested and live at `bizomat.ai/erp`.
 | What | Blocked by |
 | --- | --- |
 | Drawings generated from an ERP product | Sign in with BIZOMAT in CAD Automation (above). Engineering documents can reference a CAD file today. |
-| Stock value posted to Finance's ledger | Finance has no inventory or cost-of-goods accounts or journal source for it. Release 2 records each posting as "Planned: Finance posting (Release 3)" and posts nothing. |
+| Stock value posted to Finance's ledger | Finance has no inventory or cost-of-goods accounts or journal source for it. Release 2 records each posting as "Planned: Finance posting (Release 3)" and posts nothing; Release 5's dispatches and customer returns record theirs the same way. |
 | Production value posted to Finance's ledger (Release 3) | The same, plus work-in-progress, finished-goods, absorption and variance accounts. Each posting is recorded as planned ("Planned: Finance posting, not built yet", which Release 3 also writes for stock); nothing is posted. Options and their risks: `docs/erp/release-3.md`, "Posting to Finance". |
-| Job profitability | Sales orders (Release 5): no revenue can be linked to a manufacturing order honestly before them. |
 | Sending purchase orders and requests for quotation by email with the PDF | The email outbox has no attachments. They are downloaded, sent by hand and recorded as sent. |
 
 ## Planned
@@ -92,10 +102,10 @@ Built, tested and live at `bizomat.ai/erp`.
 | --- | --- |
 | Release 3 | Live: see Working. Posting stock and production value to Finance's ledger waits for the owner's decision (Blocked) |
 | Release 4 | Part A, quality: live, see Working; statistical process control, calibration, quality audits, product compliance and the appraisal and external failure costs of poor quality stay planned. Part B, Maintenance stages M2 and M3: live, see Working; Maintenance M4 stays planned: the AI scheduling assistant, workload planning, offline field work, predictive maintenance and IoT feeds, and maintenance costs posted to Finance |
-| Release 5 | Supply chain (sales orders, deliveries, shipments, returns) and the cross-module analytics and AI listed in `docs/erp/architecture/15-erp-roadmap-2026.md` |
+| Release 5 | Part A, supply chain and logistics: built, not deployed, see Working. Still planned: bookings and labels in carriers' own systems, landed costs, demand forecasting and inventory optimisation, automatic backorder allocation, transfers between sites, distribution planning, service lines on sales orders, posting the value of stock sold to Finance's ledger, and the cross-module analytics and AI listed in `docs/erp/architecture/15-erp-roadmap-2026.md` |
 
-Also planned, not in a numbered release yet: three-way matching against the supplier's own invoice, pick lists, packing
-and dispatch, replenishment orders, more than one stock currency, routings in the cost roll-up, sharing the CRM's
+Also planned, not in a numbered release yet: three-way matching against the supplier's own invoice, replenishment
+orders, more than one stock currency, routings in the cost roll-up, sharing the CRM's
 product catalogue with the product master; in manufacturing, finite scheduling and a drag-and-drop planning board, work
 in progress held as stock in work-in-progress locations, an OEE measure, process (formula and batch) manufacturing and
 rate-based repetitive schedules.
@@ -107,9 +117,9 @@ rate-based repetitive schedules.
 - Stock value postings to Finance: which accounts (inventory, cost of goods, stock adjustments) and when (Release 3).
 - Production value postings to Finance (Release 3): which accounts, and which option of `docs/erp/release-3.md`
   ("Posting to Finance"); the recommendation is a side table naming each journal's ERP source, with periodic summaries.
-- Whether BIZOMAT Manufacturing and Operations should change from Planned to "Available, some modules planned" now that
-  Release 3 is deployed (Procurement, Inventory, Manufacturing and Maintenance's first stage work). It stays
-  Planned in `src/config/systems.ts` until the owner says so.
+- BIZOMAT Manufacturing and Operations: the owner asked (15 Nov 2026) for it to turn green once every tool works.
+  With Release 5 part A it is Available in `src/config/systems.ts` on the Release 5 branch, so the website says so only
+  once that branch is deployed; the status note lists what stays planned.
 - Existing example companies are not changed: their owners can remove and remake them in Administration to see
   Release 3's example records. Say if they should be offered that more visibly.
 - The over-completion tolerance is 0% by default (completing more than the order is refused). Say if another default
@@ -135,8 +145,19 @@ rate-based repetitive schedules.
   actions do. Say if the person who decided the disposition should not also close it.
 - Release 4 part A: the founder's letter on The Engine Room now says "Supply chain is planned", and its Maintenance
   card lists quality beside procurement, inventory and manufacturing. Say if the letter should be worded otherwise.
-- BIZOMAT Manufacturing and Operations still says Planned in `src/config/systems.ts`, now with Quality and
-  Maintenance stages M2 and M3 also working inside the ERP.
 - Release 4 Maintenance: its own decisions are in `docs/maintenance/README.md` ("Decisions to confirm with the owner"): the automatic out-of-service on
   a failed critical prestart item, who may record prestarts and readings, one outstanding preventive work order per
   schedule, how labour rates resolve, parts only from marked stores, and maintenance costs in Finance.
+- Release 5 part A (supply chain): merge and deploy it (branch `erp-release-5-supply-chain`, one additive migration,
+  0025; the deploy's pre-migration backup covers it).
+- Release 5 part A: the dispatch email is sent only where email is set up on the service; say whether it is in
+  production. The shipment screen says when it cannot be sent.
+- Release 5 part A: the founder's letter on The Engine Room now names posting stock, production and maintenance costs
+  to Finance's ledger as what is planned (it said supply chain), and its Maintenance card lists supply chain beside the
+  other modules. Say if the letter should be worded otherwise.
+- Release 5 part A: one draft invoice per shipment (what was shipped, at the order's prices, with the freight charge),
+  and a credit note linked to that invoice only once the invoice is approved. Say if invoicing per order, or on
+  delivery instead of dispatch, is wanted.
+- Release 5 part A: sales orders take products only. Service lines (installation, freight as its own product) would
+  need a product type or Finance items on the order: say if wanted.
+- Release 5 part A: existing example companies are not changed; removing and remaking one adds the supply chain records.

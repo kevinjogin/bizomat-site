@@ -4,7 +4,9 @@
 // crm/CompanyLinks.tsx); facts come from docs/system/README.md and docs/company/README.md. Registration checks say only
 // what they prove (CLAUDE.md): the ABN is looked up on the register only when that lookup is switched on, and phone
 // numbers are checked against the numbering plan, never "verified". Screens are real (src/data/screenshots.ts); the
-// Operations screen shows the planned modules and is described as such. Quality (Release 4 part A): docs/erp/release-4-quality.md. Markup follows the CRM guide.
+// Operations screen shows the planned modules and is described as such. Quality (Release 4 part A): docs/erp/release-4-quality.md.
+// Supply Chain (Release 5 part A): docs/erp/release-5-supply-chain.md, apps/work/src/client/system/erp/SupplyChain.tsx.
+// Markup follows the CRM guide.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -23,7 +25,7 @@ const PAGE = erp.guide ?? '/systems/erp/guide/';
 const access = erp.access!;
 const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }, { label: 'User guide', href: PAGE }];
-const description = 'How to use BIZOMAT ERP, step by step: companies, roles, sales, invoicing, projects, products, purchasing, stock and warehouses, maintenance and reports.';
+const description = 'How to use BIZOMAT ERP, step by step: companies, roles, sales, projects, products, purchasing, stock, manufacturing, quality, shipping, maintenance and reports.';
 
 interface Step { t: string; x: string; st?: FeatureStatus }
 interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
@@ -64,7 +66,7 @@ const parts: Part[] = [
     lead: 'Every account has an example company, Acme Studio, with invented data to learn BIZOMAT before using your own.',
     steps: [
       { t: 'Find it', x: 'Open the company switcher. Acme Studio (example) is listed last, under Example company. It is made the first time you open the ERP.' },
-      { t: 'What is in it', x: 'Two example projects with a dashboard and a brief, customers and deals in Sales and CRM, transactions and a draft quote in Finance, and an asset register with requests, work orders, preventive schedules, readings, an inspection, a prestart check and a part issued from the store in Maintenance.' },
+      { t: 'What is in it', x: 'Two example projects with a dashboard and a brief, customers and deals in Sales and CRM, transactions and a draft quote in Finance, an asset register with requests, work orders, preventive schedules, readings, an inspection, a prestart check and a part issued from the store in Maintenance, and in Operations purchasing, stock, manufacturing, quality and a sales order shipped to a customer with its draft invoice and a return.' },
       { t: 'Try anything', x: 'Change, add or delete what you like. Only you can see it, nobody can be invited to it, it sends no email, and nothing in it affects your own companies.' },
       { t: 'Remove it', x: 'In Administration, choose Remove the example company. You can add a new one there later.' },
     ],
@@ -177,7 +179,7 @@ const parts: Part[] = [
     id: 'products', title: 'Products, bills of materials and engineering changes', st: 'live',
     lead: 'Products and Engineering in the rail opens the company\'s products, changes, documents and CAD Automation. What each person may do comes from their ERP roles, set in Administration, ERP roles.',
     steps: [
-      { t: 'ERP roles', x: 'In Administration, choose ERP roles and give each person one or more: Engineer, Engineering approver, Buyer, Procurement manager, Warehouse manager, Warehouse operator, Executive or Viewer. The company\'s owner and administrators are ERP administrators; everyone else is a viewer until given a role.' },
+      { t: 'ERP roles', x: 'In Administration, choose ERP roles and give each person one or more: Engineer, Engineering approver, Buyer, Procurement manager, Warehouse manager, Warehouse operator, Production manager, Production operator, Quality manager, Quality inspector, Sales manager, Executive or Viewer. The company\'s owner and administrators are ERP administrators; everyone else is a viewer until given a role.' },
       { t: 'Add a product', x: 'In Products, choose New product. Give its name and type; the number is given for you (PRD-00001) unless you type one. Add its category, unit, costs, price, physical details, lifecycle and effective dates. It starts with revision A as a draft.' },
       { t: 'Add a variant', x: 'On a product, choose New variant and say what sets it apart: size, model, configuration, material, finish or options. The variant is a product of its own.' },
       { t: 'Build the bill of materials', x: 'Open the product\'s Bill of materials and choose Add a line: the component, quantity per one, unit, scrap allowance, reference designators, alternatives and effective dates. A component that would contain the product itself is refused.' },
@@ -235,17 +237,18 @@ const parts: Part[] = [
       { t: 'Issue materials', x: 'Choose Issue materials and where each comes from: the order\'s reservations are taken first. Two people cannot both take the last unit. Return unused materials at the cost they went out at.' },
       { t: 'Run the shop floor', x: 'On a phone, open Shop floor and choose your work centre. Start a job, run your timer, and report good output, scrap or downtime with a reason. An inspection point needs a pass or fail before the operation completes: record it here, or choose Full inspection to inspect to a plan in Quality, which records it when completed.', st: 'live' },
       { t: 'Receive and close', x: 'Choose Receive finished goods once the last operation reports them good: they enter stock at the order\'s actual cost, never more than the order allows. Complete the order, then Close it: the costs become final and the variances are recorded.' },
-      { t: 'Costs and Finance', x: 'Costs compares estimated and actual by element: materials, labour, machine, outsourcing, overheads, scrap and rework. Production value is not posted to Finance\'s ledger: each posting is recorded as planned. Job profitability waits for sales orders.', st: 'planned' },
+      { t: 'Costs and profitability', x: 'Costs compares estimated and actual by element: materials, labour, machine, outsourcing, overheads, scrap and rework. An order made to order for a sales order line also shows its job profitability: the line\'s revenue before tax against the order\'s actual cost.' },
+      { t: 'Finance postings', x: 'Production value is not posted to Finance\'s ledger: each posting is recorded as planned.', st: 'planned' },
     ],
     shot: 'erp-shop-floor',
   },
   {
     id: 'planning', title: 'Planning with MRP', st: 'live',
-    lead: 'Manufacturing, Planning holds the master production schedule, MRP and the capacity of each work centre. There are no sales orders yet: enter confirmed demand in the schedule, with the customer or job as its reference.',
+    lead: 'Manufacturing, Planning holds the master production schedule, MRP and the capacity of each work centre. Confirmed sales orders are demand of their own: enter in the schedule only demand that is not on a sales order, such as a forecast.',
     steps: [
       { t: 'Enter demand', x: 'Choose Add demand: a product, quantity, due date and whether it is confirmed or a forecast.' },
       { t: 'Planning data', x: 'For each product, set whether it is made or bought, its lead times, safety stock, minimum order and order multiple. A product supplier\'s lead time comes before the product\'s, and a routing\'s before the product\'s.' },
-      { t: 'Run MRP', x: 'Choose Run MRP. It plans level by level through the released bills of materials, from stock less reservations, open purchase and manufacturing orders, safety stock and reorder points. Each run is kept with its inputs.' },
+      { t: 'Run MRP', x: 'Choose Run MRP. It plans level by level through the released bills of materials, from what confirmed sales orders still need, the schedule\'s demand, stock less reservations, open purchase and manufacturing orders, safety stock and reorder points. Each run is kept with its inputs.' },
       { t: 'Act on the suggestions', x: 'Make suggestions become draft orders, buy suggestions requisitions, through the usual approval. Expedite suggestions name an open order needed sooner. Late means it should already have been ordered or started; overdue means it was needed before today.' },
       { t: 'Check capacity', x: 'Capacity shows the hours planned on each work centre each week against the hours it has, and flags overloads.' },
     ],
@@ -268,13 +271,35 @@ const parts: Part[] = [
     shot: 'erp-quality-inspection',
   },
   {
-    id: 'planned', title: 'What is not built yet', st: 'planned',
-    lead: 'Operations in the rail shows what waits for you, then lists the modules. Those labelled Planned are designed but not built: they do not work yet or keep data. Procurement, Inventory, Manufacturing, Quality, Maintenance and the product and engineering records work today.',
+    id: 'supply-chain', title: 'Selling and shipping in Supply Chain', st: 'live',
+    lead: 'Supply Chain (in the side menu, or from Operations) has seven tabs: Overview, Sales orders, Pick and dispatch, Shipments, Delivery schedule, Returns and Carriers. A sales manager takes the order and authorises returns; the warehouse picks, packs and dispatches; a production manager makes to order.',
     steps: [
-      { t: 'Planned modules', x: 'Supply Chain. It is labelled Planned.', st: 'planned' },
+      { t: 'Give the roles', x: 'In Administration, ERP roles, give Sales manager to the people who take orders. Warehouse managers and operators pick, pack and dispatch; production managers make to order.' },
+      { t: 'Add a carrier', x: 'In Carriers, choose New carrier: its name, its services, and the address of its tracking page with {tracking} where the tracking number goes.' },
+      { t: 'Make the sales order', x: 'In Sales orders, choose New sales order. The customer is a company of your CRM with the Finance customer it is billed as: nothing is copied. Add the products, quantities, prices, discounts and tax codes, the requested and promised dates, the delivery address, shipping terms and the customer\'s order number. Save and confirm it.' },
+      { t: 'From a won deal', x: 'A won deal in the CRM can become a draft sales order for its customer: the deal\'s items become lines where their code matches a product.', st: 'connected' },
+      { t: 'Allocate the stock', x: 'On the order, choose Allocate stock. Stock is reserved for each line, soonest expiry first, then the oldest, outside quarantine. What is short is shown.' },
+      { t: 'Make to order', x: 'On a line, a production manager chooses Make to order: a manufacturing order for it, linked both ways. When its finished goods are received, allocate them to the line.' },
+      { t: 'Amend, cancel or close', x: 'Amend a confirmed order with a reason: the earlier version is kept. Cancelling releases its stock; closing with a reason ends an order before everything is shipped.' },
+      { t: 'Plan the shipment', x: 'Choose Plan a shipment: the carrier and service, the ship date, the delivery window, the freight cost and what the customer is charged for it, and whether the customer gets an email when it leaves. It carries everything allocated, with a pick list.' },
+      { t: 'Pick, pack and dispatch on a phone', x: 'Open Pick and dispatch. On a shipment, take each line from its location and choose Picked as listed (or type less). Add its packages with weight, size and contents and choose Packed. Type the tracking number and choose Dispatch: the stock leaves once, and its allocation is used up.' },
+      { t: 'Confirm the delivery', x: 'On the shipment, add a photo, a document, or the receiver\'s signature drawn on the phone, type who received it and choose Confirm the delivery.' },
+      { t: 'The dispatch email', x: 'When it was asked for, the customer gets an email with the tracking link as the shipment leaves, where email is set up on the service. The shipment says what happened to it. The example company sends none.' },
+      { t: 'The invoice', x: 'On a dispatched shipment, a sales manager whose Finance role may create invoices chooses Make the draft invoice in Finance: what was shipped at the order\'s prices, with the freight charge. It is made once; Finance\'s approval posts it.', st: 'connected' },
+      { t: 'Returns', x: 'On the order, choose Record a return: what comes back and why. A sales manager authorises it; the warehouse receives it into a location (a quarantine location to inspect it first). Link it to a Quality inspection or nonconformance, then make its draft credit note in Finance, once.' },
+      { t: 'Schedule, trace and report', x: 'Delivery schedule shows shipments by date with their windows, and orders due with no shipment. A lot\'s traceability now reaches the customer who received it. Reports has open orders, delivery on time and in full, shipments by carrier, freight, returns, sales by product and customer, and job profitability.' },
+      { t: 'Finance postings', x: 'The value of stock sold is not posted to Finance\'s ledger: each dispatch records it as planned.', st: 'planned' },
+    ],
+    shot: 'erp-shipment',
+  },
+  {
+    id: 'planned', title: 'What is not built yet', st: 'planned',
+    lead: 'Operations in the rail shows what waits for you, then lists the modules with their status. Procurement, Inventory, Manufacturing, Quality, Supply Chain, Maintenance and the product and engineering records work today; what is not built within them is listed here.',
+    steps: [
+      { t: 'Not yet in Supply Chain', x: 'Bookings and labels in a carrier\'s own system, landed costs, demand forecasting, allocating backorders automatically as stock arrives, service lines on sales orders, and posting the value of stock sold to Finance\'s ledger.', st: 'planned' },
       { t: 'Not yet in Quality', x: 'Statistical process control, calibration, quality audits, product compliance, and the appraisal and external failure costs of poor quality.', st: 'planned' },
       { t: 'Later in Maintenance', x: 'Workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, offline field work, and posting maintenance costs to Finance.', st: 'planned' },
-      { t: 'Not yet in Manufacturing', x: 'Posting production value to Finance\'s ledger, job profitability, finite scheduling and a drag-and-drop planning board.', st: 'planned' },
+      { t: 'Not yet in Manufacturing', x: 'Posting production value to Finance\'s ledger, finite scheduling and a drag-and-drop planning board.', st: 'planned' },
     ],
     shot: 'erp-operations',
   },
@@ -290,7 +315,7 @@ const questions = [
   { q: 'Does the ERP keep my SOLIDWORKS files?', a: 'No. An engineering document can reference a CAD file by its path on your own computer; the file stays there. Uploaded PDF, DXF and STEP files are kept as attachments.' },
   { q: 'Who can raise a maintenance request?', a: 'Everyone in a registered company: choose Report a fault at the foot of the rail. In your own company, you are its only person. People who were only shared a tool with the company cannot see its maintenance.' },
   { q: 'Can a technician see every work order?', a: 'No. A technician sees the work orders assigned to them. Supervisors and administrators see them all; a requester sees the work order made from their own request.' },
-  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'Yes: requisitions, quotations, purchase orders, goods receipts, warehouses, stock, counts and valuation work today, and so do manufacturing orders, routings, the shop floor, MRP and job costing. Maintenance works today for assets, requests, work orders, preventive maintenance, inspections, prestart checks, spare parts and reliability reports.' },
+  { q: 'Can I use Procurement, Inventory, Manufacturing or Supply Chain?', a: 'Yes: requisitions, quotations, purchase orders, goods receipts, warehouses, stock, counts and valuation work today, and so do manufacturing orders, routings, the shop floor, MRP and job costing, and sales orders, shipments, deliveries and returns. Maintenance works today for assets, requests, work orders, preventive maintenance, inspections, prestart checks, spare parts and reliability reports.' },
   { q: 'Can I approve my own corrective action?', a: 'Not in a company of several people: a quality manager who neither proposed it nor is responsible for it approves it, and one who did not carry it out closes it. In your own company, where you are the only person, you may, and the exception is recorded on the action.' },
   { q: 'Can I approve my own purchase order?', a: 'Within the company\'s approval limit a buyer\'s order is approved when submitted. Above it, someone else with the Procurement manager role approves. In your own company, where you are the only person, you may, and the exception is recorded on the order.' },
 ];

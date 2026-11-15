@@ -1,4 +1,4 @@
-// Small pieces shared by the ERP's screens (Releases 1 to 4): status badges, CSV links, a pager, file upload and the history.
+// Small pieces shared by the ERP's screens (Releases 1 to 5): status badges, CSV links, a pager, file upload and the history.
 // Lists, property lists, sections and filters reuse the maintenance screens' pieces.
 import { useRef, useState, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -60,7 +60,7 @@ export function Pager({ offset, limit, total, setOffset }: { offset: number; lim
 }
 
 /** Upload files to a purchasing record: a requisition, request for quotation, quotation, purchase order or receipt. */
-export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a file', accept, big }: { companyId: string; kind: 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'inspection_char' | 'ncr' | 'capa'; id: string; onDone: () => void; label?: string; accept?: string; big?: boolean }) {
+export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a file', accept, big }: { companyId: string; kind: 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'inspection_char' | 'ncr' | 'capa' | 'sales_order' | 'shipment' | 'delivery' | 'rma'; id: string; onDone: () => void; label?: string; accept?: string; big?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const toast = useToast();

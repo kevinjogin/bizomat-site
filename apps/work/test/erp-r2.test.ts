@@ -685,7 +685,8 @@ describe('the example company', () => {
     const pos = await ex.json('GET', erp(co, '/purchase-orders'));
     expect(pos.purchaseOrders).toMatchObject([{ status: 'received', approvalRule: 'within_limit' }]);
     const stock = await ex.json('GET', erp(co, '/stock?filter=in_stock'));
-    expect(stock.rows).toMatchObject([{ onHand: 40, valueCents: 15_200 }]);
+    // Release 5 adds packed kits (shipped, one back in quarantine): the bracket arms are as Release 2 left them.
+    expect(stock.rows.find((r: any) => r.name === 'Bracket arm, laser cut')).toMatchObject({ onHand: 40, valueCents: 15_200 });
     expect((await ex.json('GET', erp(co, '/requisitions'))).requisitions).toMatchObject([{ status: 'converted' }]);
     const rfqs = await ex.json('GET', erp(co, '/rfqs'));
     expect(rfqs.rfqs).toMatchObject([{ status: 'sent', quotationCount: 2 }]);
