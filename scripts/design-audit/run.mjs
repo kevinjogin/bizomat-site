@@ -41,9 +41,9 @@ const outDir = resolve(root, opt('out', '.design-audit'));
 const shots = flag('shots') || (!ci && !flag('no-shots'));
 const checkLinks = !flag('no-links');
 const checkFocus = !flag('no-focus');
-const jobs = Number(opt('jobs', '6'));
+const jobs = Number(opt('jobs', ci ? '4' : '6')); // tabs at once (CI's runners have four cores)
 // The CI check fails on these: each is a flaw a visitor sees. Contrast, focus and the rest are in the full report.
-const FAIL_ON = new Set(list(opt('fail-on', 'page-horizontal-scroll,page-content-cut,outside-its-box,text-clipped,text-outside-its-element,button-label-overflows,button-wider-than-parent,button-label-3-lines,items-overlap,text-overlap,img-stretched,contrast,focus-not-visible,focus-low-contrast,h1-count,link-missing-anchor,broken-link,console-error,csp-violation,page-status')));
+const FAIL_ON = new Set(list(opt('fail-on', 'audit-failed,page-horizontal-scroll,page-content-cut,outside-its-box,text-clipped,text-outside-its-element,button-label-overflows,button-wider-than-parent,button-label-3-lines,items-overlap,text-overlap,img-stretched,contrast,focus-not-visible,focus-low-contrast,h1-count,link-missing-anchor,broken-link,console-error,csp-violation,page-status')));
 
 const freePort = () => new Promise((ok) => { const s = createServer(); s.listen(0, '127.0.0.1', () => { const { port } = s.address(); s.close(() => ok(port)); }); });
 
@@ -89,11 +89,13 @@ async function auditOne(page, base, p, width, theme, state) {
     const res = await page.goto(base + p.path, { waitUntil: 'load', timeout: 60000 });
     const status = res?.status() ?? 0;
     if (status !== (p.status ?? 200)) findings.push({ type: 'page-status', severity: 'error', sel: '', text: `HTTP ${status}` });
-    await page.evaluate(() => document.fonts.ready);
+    // the web fonts, or five seconds (a font that never settles must not hold the page)
+    await page.evaluate(() => Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 5000))]));
     // scroll through once, so lazy images load and scroll-triggered content is shown, then back to the top
     await page.evaluate(async () => {
-      const step = innerHeight * 0.9;
-      for (let y = 0; y < document.documentElement.scrollHeight; y += step) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); }
+      // at most 80 steps of at least 400 px (a window height read as 0 during a resize must not loop for ever)
+      const step = Math.max(400, innerHeight * 0.9);
+      for (let y = 0, i = 0; y < document.documentElement.scrollHeight && i < 80; y += step, i++) { scrollTo(0, y); await new Promise((r) => setTimeout(r, 40)); }
       scrollTo(0, 0);
       await new Promise((r) => setTimeout(r, 150));
     });
@@ -218,10 +220,23 @@ const run = async () => {
     window.__bzCsp = [];
     document.addEventListener('securitypolicyviolation', (e) => window.__bzCsp.push(`${e.violatedDirective} blocked ${e.blockedURI || 'inline'} (${(e.sourceFile || '').split('/').pop()}:${e.lineNumber})`));
   });
-  const page = await context.newPage();
+  let page = await context.newPage();
   while (queue.length) {
     const job = queue.shift();
-    all.push(...(await auditOne(page, server.base, job.p, job.width, job.theme, state)));
+    // A page that never settles would hold page.evaluate for ever: after three minutes the tab is replaced and the
+    // page tried once more (a busy machine can be that slow once); a second time it is reported, so one page cannot
+    // stall the run.
+    let timer;
+    const limit = new Promise((resolve) => { timer = setTimeout(() => resolve(null), 180_000); });
+    const result = await Promise.race([auditOne(page, server.base, job.p, job.width, job.theme, state), limit]);
+    clearTimeout(timer);
+    if (result) all.push(...result);
+    else {
+      await page.close().catch(() => {});
+      page = await context.newPage();
+      if (!job.retried) queue.push({ ...job, retried: true });
+      else all.push({ type: 'audit-failed', severity: 'error', sel: '', text: 'the page did not finish in 3 minutes, twice', page: job.p.path, name: job.p.name, width: job.width, theme: job.theme, where: `${job.p.path} @${job.width} ${job.theme}` });
+    }
     done++;
     if (!ci && done % 20 === 0) console.log(`${done} page loads, ${Math.round((Date.now() - started) / 1000)} s`);
   }
