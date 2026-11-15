@@ -12,7 +12,7 @@
 //   GET  /c/:company/settings                      risk matrix, sites and jurisdictions, hours worked, company policies
 //   PUT  /c/:company/settings/matrix               a new version of the risk matrix (WHS managers)
 //   PUT  /c/:company/sites/:site/jurisdictions     the packs of a site (WHS managers)
-//   PUT  /c/:company/hours                         hours worked per site and month (WHS managers)
+//   PUT  /c/:company/hours                         hours worked per site and month, with a reason to change one (hours.ts)
 //   POST /c/:company/policies, PATCH /policies/:id company policies (WHS managers)
 //   POST /c/:company/files, GET/DELETE /files/:id  photos and documents (each served only to who may see its record)
 //   POST /c/:company/comments                      notes and consultation comments
@@ -34,6 +34,7 @@ import { riskRoutes } from './risk';
 import { incidentRoutes } from './incidents';
 import { ensureSeed, legalRoutes, packDTO, VERIFY_NOTICE } from './legal';
 import { dashboard, filtersFrom } from './dashboard';
+import { hoursRoutes, hoursView } from './hours';
 import {
   ACTION_KINDS,
   ACTION_SOURCES,
@@ -65,7 +66,6 @@ import {
   validMatrix,
   zDate,
   zLong,
-  zMonth,
   zText,
   zUrl,
   nextNumber,
@@ -75,6 +75,7 @@ import { ensureOwnCompany } from '../system/system';
 export const whsRoutes = new Hono<AppEnv>();
 
 whsRoutes.route('/', legalRoutes);
+whsRoutes.route('/', hoursRoutes);
 
 /** The fixed lists with their labels, so the screens never keep their own copies. */
 export const LISTS = {
@@ -250,9 +251,8 @@ whsRoutes.get('/c/:company/settings', async (c) => {
   const db = c.env.DB;
   await ensureSeed(db);
   const { matrix, version } = await currentMatrix(db, a.companyId, a.userId);
-  const [packs, hours, policies, versions] = await db.batch([
+  const [packs, policies, versions] = await db.batch([
     db.prepare("SELECT p.*, (SELECT COUNT(*) FROM whs_rules r WHERE r.pack_id = p.id AND r.status = 'active') AS rules, (SELECT COUNT(*) FROM whs_rules r WHERE r.pack_id = p.id AND r.status = 'active' AND r.verification = 'verified') AS verified_rules, 0 AS instruments, 0 AS verified_instruments FROM whs_packs p WHERE p.assignable = 1 ORDER BY p.sort, p.name"),
-    db.prepare('SELECT h.*, s.name AS site_name FROM whs_hours h LEFT JOIN mt_sites s ON s.company_id = h.company_id AND s.id = h.site_id WHERE h.company_id = ? ORDER BY h.month DESC, s.name LIMIT 600').bind(a.companyId),
     db.prepare('SELECT p.*, k.name AS pack_name, u.name AS approved_by_name FROM whs_policies p LEFT JOIN whs_packs k ON k.id = p.pack_id LEFT JOIN users u ON u.id = p.approved_by WHERE p.company_id = ? ORDER BY p.status, p.number').bind(a.companyId),
     db.prepare('SELECT m.version, m.created_at, u.name AS by_name FROM whs_matrices m LEFT JOIN users u ON u.id = m.created_by WHERE m.company_id = ? ORDER BY m.version DESC LIMIT 20').bind(a.companyId),
   ]);
@@ -262,7 +262,8 @@ whsRoutes.get('/c/:company/settings', async (c) => {
     matrixVersions: (versions.results as any[]).map((v) => ({ version: v.version, at: v.created_at, byName: v.by_name ?? null })),
     sites: await sitesWithPacks(db, a.companyId),
     packs: (packs.results as any[]).map(packDTO),
-    hours: (hours.results as any[]).map((h) => ({ siteId: h.site_id || null, siteName: h.site_id ? (h.site_name ?? null) : null, month: h.month, hours: Number(h.hours) })),
+    // hours worked and their history only for people who read the WHS registers (hours.ts)
+    ...(await hoursView(db, a)),
     policies: (policies.results as any[]).map(policyDTO),
     can: { manage: a.can.manage },
     notice: VERIFY_NOTICE,
@@ -316,23 +317,6 @@ whsRoutes.put('/c/:company/sites/:site/jurisdictions', async (c) => {
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'site.jurisdictions', entityType: 'site', entityId: site.id, summary: `${site.name}: jurisdictions ${packs.length ? packs.map((p) => p.name).join(', ') : 'none'}`, before: { packs: before }, after: { packs: ids }, at: t }),
   ]);
   return c.json({ sites: await sitesWithPacks(db, a.companyId) });
-});
-
-whsRoutes.put('/c/:company/hours', async (c) => {
-  const a = await requireWhs(c, 'manage');
-  const db = c.env.DB;
-  const input = await body(c, z.object({ entries: z.array(z.object({ siteId: z.string().max(64).nullable(), month: zMonth, hours: z.number().min(0).max(100_000_000).nullable() })).min(1).max(120) }));
-  for (const e of input.entries) if (e.siteId && !(await db.prepare('SELECT 1 FROM mt_sites WHERE company_id = ? AND id = ?').bind(a.companyId, e.siteId).first())) throw new HttpError(400, 'Choose a site of this company');
-  const t = now();
-  await db.batch([
-    ...input.entries.map((e) =>
-      e.hours === null
-        ? db.prepare('DELETE FROM whs_hours WHERE company_id = ? AND site_id = ? AND month = ?').bind(a.companyId, e.siteId ?? '', e.month)
-        : db.prepare('INSERT INTO whs_hours (company_id, site_id, month, hours, entered_by, entered_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(company_id, site_id, month) DO UPDATE SET hours = excluded.hours, entered_by = excluded.entered_by, entered_at = excluded.entered_at').bind(a.companyId, e.siteId ?? '', e.month, e.hours, a.userId, t),
-    ),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'settings.hours', entityType: 'settings', entityId: a.companyId, summary: `Hours worked entered for ${input.entries.length} site-month${input.entries.length === 1 ? '' : 's'}`, after: { entries: input.entries }, at: t }),
-  ]);
-  return c.json({ ok: true });
 });
 
 const zPolicy = z.object({ title: zText(300).min(1), packId: z.string().max(40).nullable().optional(), summary: zLong(3000).optional(), sourceUrl: z.union([zUrl, z.literal('')]).optional(), effectiveFrom: zDate.optional(), reviewDate: zDate.optional() });

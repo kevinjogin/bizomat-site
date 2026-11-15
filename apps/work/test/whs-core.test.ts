@@ -489,11 +489,14 @@ describe('BIZOMAT WHS rules', () => {
     expect(dash.actions).toMatchObject({ open: 1, overdue: 1 });
     expect(dash.rates.available).toBe(false);
     expect(dash.rates.note).toMatch(/hours worked/);
-    // with hours worked for every month of the period, the rates are worked out
+    // with hours worked for every month of the period, the rates are worked out over its whole months (the current
+    // month, still running, is left out unless the period ends on its last day)
     const months = dash.trend.map((x: any) => x.month);
     await t.manager.json('PUT', w(t.co, '/hours'), { entries: months.map((m: string) => ({ siteId: null, month: m, hours: 1000 })) });
     const withHours = await t.manager.json('GET', w(t.co, '/dashboard'));
-    expect(withHours.rates).toMatchObject({ available: true, hours: 1000 * months.length, ltifr: 0, trifr: 0 });
+    expect(withHours.rates).toMatchObject({ available: true, ltifr: 0, trifr: 0, period: { from: months[0] } });
+    expect(withHours.rates.hours).toBe(1000 * withHours.rates.period.months);
+    expect([months.length - 1, months.length]).toContain(withHours.rates.period.months);
   });
 });
 
@@ -523,7 +526,8 @@ describe('the example company in BIZOMAT WHS', () => {
     expect(actions.length).toBe(5);
     expect(actions.filter((x: any) => x.overdue).length).toBe(1);
     const dash = await a.json('GET', w(co, '/dashboard'));
-    expect(dash.rates).toMatchObject({ available: true, hours: 1520 * 12, ltifr: 0 });
+    expect(dash.rates).toMatchObject({ available: true, ltifr: 0 });
+    expect(dash.rates.hours).toBe(1520 * dash.rates.period.months);
     expect((await a.json('GET', w(co, `/incidents/${injury.id}/health`))).health.treatment).toMatch(/^Example only/);
     // no email from the example company's alerts
     expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM whs_alerts WHERE company_id = ? AND emailed = 1').bind(co).first<any>()).n).toBe(0);

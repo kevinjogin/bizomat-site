@@ -9,7 +9,7 @@ import { usePageTitle } from '../../lib/hooks';
 import { Icon } from '../../components/ui/Icon';
 import { ErrorBox, Loading } from '../../components/ui/ui';
 import { Modal } from '../../components/ui/overlays';
-import { dateText, dayText, whsPage, whsPath, type Instrument, type Matrix, type Pack, type Rule, type WhsMe } from './api';
+import { dateText, dateTimeText, dayText, whsPage, whsPath, type Instrument, type Matrix, type Pack, type Rule, type WhsMe } from './api';
 import { LegalNotice, Props, RiskBadge, Section, useWhsAct } from './common';
 
 export const VerifyBadge = ({ verified, label }: { verified: boolean; label?: string }) => <span className={`badge ${verified ? 'success' : 'warning'}`}>{label ?? (verified ? 'Verified' : 'Not verified')}</span>;
@@ -37,7 +37,11 @@ interface SettingsView {
   matrixVersions: { version: number; at: number; byName: string | null }[];
   sites: { id: string; code: string; name: string; packs: { id: string; name: string; regulator: string; rules: number; verifiedRules: number }[] }[];
   packs: Pack[];
-  hours: { siteId: string | null; siteName: string | null; month: string; hours: number }[];
+  hours: { siteId: string | null; siteName: string | null; month: string; hours: number; enteredByName: string | null; enteredAt: number }[];
+  hoursHistory: { id: string; siteId: string | null; siteName: string | null; month: string; before: number | null; after: number | null; reason: string; byName: string | null; at: number }[];
+  hoursSites: { id: string; name: string; archived: boolean }[];
+  hoursLimits: { latestMonth: string; firstMonth: string; maxHours: number };
+  hoursVisible: boolean;
   policies: Policy[];
   can: { manage: boolean };
   notice: string;
@@ -225,7 +229,7 @@ export function WhsSettings({ companyId, me }: { companyId: string; me: WhsMe })
       {!s.can.manage ? <p className="muted small">Only WHS managers and ERP administrators change these settings.</p> : null}
       <SitesSection companyId={companyId} view={s} />
       <MatrixSection companyId={companyId} view={s} />
-      <HoursSection companyId={companyId} me={me} view={s} />
+      <HoursSection companyId={companyId} view={s} />
       <Section title="Roles">
         <p className="small">WHS roles are ERP roles: WHS manager, WHS officer or supervisor, incident investigator, health and safety representative, and health officer. Everyone in the company reports hazards and incidents without a role.</p>
         <p className="muted small">Only health officers read medical details. Confidential reports are read by WHS managers and health officers.</p>
@@ -367,32 +371,71 @@ function MatrixDialog({ companyId, matrix, onClose }: { companyId: string; matri
   );
 }
 
-function HoursSection({ companyId, me, view }: { companyId: string; me: WhsMe; view: SettingsView }) {
+const hoursText = (h: number | null) => (h === null ? 'none' : h.toLocaleString());
+
+/** The month before the latest one: hours are usually entered once a month has ended. */
+const previousMonth = (m: string) => {
+  const y = Number(m.slice(0, 4));
+  const n = Number(m.slice(5, 7));
+  return n === 1 ? `${y - 1}-12` : `${y}-${String(n - 1).padStart(2, '0')}`;
+};
+
+function HoursSection({ companyId, view }: { companyId: string; view: SettingsView }) {
   const [site, setSite] = useState('');
-  const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
+  const [month, setMonth] = useState(previousMonth(view.hoursLimits.latestMonth));
   const [hours, setHours] = useState('');
+  const [reason, setReason] = useState('');
   const act = useWhsAct(companyId);
-  const save = async () => {
-    if (await act(() => put(whsPath(companyId, '/hours'), { entries: [{ siteId: site || null, month, hours: hours === '' ? null : Number(hours) }] }), hours === '' ? 'Removed' : 'Hours saved')) setHours('');
+  if (!view.hoursVisible) return null;
+  const recorded = view.hours.find((h) => (h.siteId ?? '') === site && h.month === month) ?? null;
+  const save = async (remove: boolean) => {
+    const value = remove ? null : Number(hours);
+    if (await act(() => put(whsPath(companyId, '/hours'), { entries: [{ siteId: site || null, month, hours: value }], reason: reason.trim() || undefined }), remove ? 'Hours removed' : recorded ? 'Hours changed' : 'Hours saved')) {
+      setHours('');
+      setReason('');
+    }
   };
+  const invalid = hours === '' || !Number.isFinite(Number(hours)) || Number(hours) < 0 || Number(hours) > view.hoursLimits.maxHours;
   return (
-    <Section title="Hours worked">
-      <p className="muted small">BIZOMAT does not track hours worked. Enter them per site and month, and the dashboard works out lost-time and recordable injury frequency rates (per million hours) for any period whose every month has hours. Without them it shows counts only.</p>
-      {view.can.manage ? (
-        <div className="row wrap whs-hours-form">
-          <div className="field"><label htmlFor="hr-site">Site</label><select id="hr-site" className="select" value={site} onChange={(e) => setSite(e.target.value)}><option value="">Whole company (not split by site)</option>{me.sites.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></div>
-          <div className="field"><label htmlFor="hr-month">Month</label><input id="hr-month" type="month" className="input" value={month} onChange={(e) => setMonth(e.target.value)} /></div>
-          <div className="field"><label htmlFor="hr-hours">Hours</label><input id="hr-hours" type="number" min={0} step={1} className="input" value={hours} onChange={(e) => setHours(e.target.value)} placeholder="Leave empty to remove" /></div>
-          <button className="btn mt-field-end" disabled={!month} onClick={() => void save()}>Save</button>
-        </div>
-      ) : null}
-      {view.hours.length ? (
-        <table className="data-table responsive">
-          <thead><tr><th>Month</th><th>Site</th><th className="num">Hours</th></tr></thead>
-          <tbody>{view.hours.slice(0, 36).map((h) => <tr key={`${h.siteId}-${h.month}`}><td data-label="Month">{h.month}</td><td data-label="Site">{h.siteName ?? 'Whole company'}</td><td className="num" data-label="Hours">{h.hours.toLocaleString()}</td></tr>)}</tbody>
-        </table>
-      ) : <p className="muted small">No hours entered.</p>}
-    </Section>
+    <>
+      <Section title="Hours worked">
+        <p className="muted small">BIZOMAT does not track hours worked and has no payroll link. Enter them per site and month, and the dashboard works out lost time and recordable injury frequency rates (per million hours) over whole months whose every site has hours. Without them it shows counts only and says which months and sites are missing.</p>
+        <p className="muted small">A month has either one figure for the whole company or a figure for each site, never both, so no hours are counted twice. Every site in use needs a figure for each month, so enter 0 for a site that did not operate that month; an archived site needs one for the months it was in use. Changing or removing a figure needs a reason, and every change is kept below.</p>
+        {view.can.manage ? (
+          <div className="stack">
+            <div className="row wrap whs-hours-form">
+              <div className="field"><label htmlFor="hr-site">Site</label><select id="hr-site" className="select" value={site} onChange={(e) => setSite(e.target.value)}><option value="">Whole company (not split by site)</option>{view.hoursSites.map((x) => <option key={x.id} value={x.id}>{x.name}{x.archived ? ' (archived)' : ''}</option>)}</select></div>
+              <div className="field"><label htmlFor="hr-month">Month</label><input id="hr-month" type="month" className="input" min={view.hoursLimits.firstMonth} max={view.hoursLimits.latestMonth} value={month} onChange={(e) => setMonth(e.target.value)} /></div>
+              <div className="field"><label htmlFor="hr-hours">Hours worked</label><input id="hr-hours" type="number" min={0} max={view.hoursLimits.maxHours} step="0.01" inputMode="decimal" className="input" value={hours} onChange={(e) => setHours(e.target.value)} /></div>
+            </div>
+            {recorded ? (
+              <>
+                <p className="small">Recorded for this site and month: <strong>{recorded.hours.toLocaleString()} hours</strong>{recorded.enteredByName ? `, by ${recorded.enteredByName}` : ''}{recorded.enteredAt ? ` on ${dayText(recorded.enteredAt)}` : ''}. A reason is needed to change or remove it.</p>
+                <div className="field"><label htmlFor="hr-reason">Reason for the change</label><input id="hr-reason" className="input" maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="For example: payroll figures corrected" /></div>
+              </>
+            ) : null}
+            <div className="row wrap">
+              <button className="btn primary" disabled={!month || invalid || (!!recorded && reason.trim().length < 3)} onClick={() => void save(false)}>{recorded ? 'Change hours' : 'Save hours'}</button>
+              {recorded ? <button className="btn" disabled={reason.trim().length < 3} onClick={() => void save(true)}>Remove this figure</button> : null}
+            </div>
+          </div>
+        ) : null}
+        {view.hours.length ? (
+          <table className="data-table responsive">
+            <thead><tr><th>Month</th><th>Site</th><th className="num">Hours</th><th>Entered by</th></tr></thead>
+            <tbody>{view.hours.slice(0, 36).map((h) => <tr key={`${h.siteId}-${h.month}`}><td data-label="Month">{h.month}</td><td data-label="Site">{h.siteName ?? 'Whole company'}</td><td className="num" data-label="Hours">{h.hours.toLocaleString()}</td><td data-label="Entered by">{h.enteredByName ?? ''}</td></tr>)}</tbody>
+          </table>
+        ) : <p className="muted small">No hours entered.</p>}
+      </Section>
+      <Section title="Changes to hours worked">
+        {view.hoursHistory.length ? (
+          <table className="data-table responsive">
+            <thead><tr><th>When</th><th>By</th><th>Site</th><th>Month</th><th className="num">Before</th><th className="num">After</th><th>Reason</th></tr></thead>
+            <tbody>{view.hoursHistory.slice(0, 50).map((r) => <tr key={r.id}><td data-label="When">{dateTimeText(r.at)}</td><td data-label="By">{r.byName ?? ''}</td><td data-label="Site">{r.siteName ?? 'Whole company'}</td><td data-label="Month">{r.month}</td><td className="num" data-label="Before">{hoursText(r.before)}</td><td className="num" data-label="After">{r.after === null ? 'removed' : hoursText(r.after)}</td><td data-label="Reason">{r.reason || (r.before === null ? 'First entry' : '')}</td></tr>)}</tbody>
+          </table>
+        ) : <p className="muted small">No changes yet. Every entry, change and removal is kept here and cannot be edited.</p>}
+      </Section>
+    </>
   );
 }
 
