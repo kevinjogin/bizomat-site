@@ -91,6 +91,11 @@ case "$ROLE" in
   work) RUN_USER=bzwork ;;
   cad) RUN_USER=bzcad ;;
 esac
+# The image the Fly app bizomat deploys (Dockerfile target runtime-website) has no CAD Automation in it: the app cados
+# serves /cad. Only the target runtime (fly.toml, the local compose stack) can run the cad role.
+if [ "$ROLE" = cad ] && [ ! -x /opt/cad/venv/bin/python ]; then
+  die "this image has no CAD Automation (Dockerfile target runtime-website); build the target runtime for the cad role"
+fi
 RUN_UID="$(id -u "$RUN_USER")" || die "user $RUN_USER is missing from the image"
 RUN_GID="$(id -g "$RUN_USER")"
 ROLE_DIR="$DATA/$ROLE"
