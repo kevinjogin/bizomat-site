@@ -11,6 +11,8 @@
     "build": "node shared/brand/build.mjs && astro build && pagefind --site dist && node scripts/postbuild.mjs",
     "preview": "npm run build && wrangler dev",
     "build:server": "node scripts/build-server.mjs",
+    "audit:design": "node scripts/design-audit/run.mjs",
+    "audit:layout": "node scripts/design-audit/run.mjs --ci",
     "start": "node dist-server/server.mjs",
     "check": "astro check",
     "test": "node --test \"tests/**/*.test.ts\"",
@@ -40,6 +42,7 @@
     "@astrojs/check": "^0.9.10",
     "esbuild": "^0.28.2",
     "pagefind": "^1.5.2",
+    "playwright": "1.63.0",
     "typescript": "^6.0.3",
     "wrangler": "^4.147.0"
   },
