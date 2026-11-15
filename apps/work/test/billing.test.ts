@@ -338,6 +338,8 @@ describe('billing configuration', () => {
     expect(ok).toMatchObject({ enabled: true, environment: 'test', keyKind: 'rk', proration: 'create_prorations', automaticTax: false, graceDays: 14 });
     const bad = (over: Record<string, string>) => billingConfig({ ...BILLING, ...over } as any) as any;
     expect(bad({ STRIPE_ENVIRONMENT: 'production' }).enabled).toBe(false);
+    // Production never runs test-mode billing, whatever keys it is given.
+    expect(bad({ ENVIRONMENT: 'production' }).reason).toMatch(/production takes live Stripe settings only/);
     expect(bad({ STRIPE_SECRET_KEY: fakeKey('sk', 'live') }).reason).toMatch(/live Stripe key is set in the test environment/);
     expect(bad({ STRIPE_ENVIRONMENT: 'live', STRIPE_PUBLISHABLE_KEY: fakeKey('pk', 'live') }).reason).toMatch(/test Stripe key is set in the live environment/);
     expect(bad({ STRIPE_PUBLISHABLE_KEY: fakeKey('pk', 'live') }).reason).toMatch(/publishable key is for the other/);
@@ -345,7 +347,9 @@ describe('billing configuration', () => {
     expect(bad({ STRIPE_PRICE_SEAT_MONTHLY: '1000' }).reason).toMatch(/not a Stripe Price id/);
     expect(bad({ STRIPE_PRICE_SEAT_ANNUAL: 'price_vitestSeatMonth' }).reason).toMatch(/same Price/);
     expect(bad({ STRIPE_PRORATION: 'sometimes' }).enabled).toBe(false);
-    expect(bad({ STRIPE_API_BASE: 'http://127.0.0.1:12111', ENVIRONMENT: 'production' }).reason).toMatch(/only for development/);
+    expect(bad({ STRIPE_API_BASE: 'http://127.0.0.1:12111', STRIPE_ENVIRONMENT: 'live', STRIPE_SECRET_KEY: fakeKey('rk', 'live'), STRIPE_PUBLISHABLE_KEY: fakeKey('pk', 'live') }).reason).toMatch(/only for development/);
+    // Live settings in production are accepted.
+    expect(bad({ ENVIRONMENT: 'production', STRIPE_ENVIRONMENT: 'live', STRIPE_SECRET_KEY: fakeKey('rk', 'live'), STRIPE_PUBLISHABLE_KEY: fakeKey('pk', 'live') }).enabled).toBe(true);
     for (const over of [{ STRIPE_SECRET_KEY: fakeKey('sk', 'live') }, { STRIPE_WEBHOOK_SECRET: '' }, {}] as Record<string, string>[]) {
       const r = JSON.stringify(bad(over).reason ?? '');
       expect(r).not.toMatch(/vitestNotA/);

@@ -5,9 +5,9 @@
 #
 #   BIZOMAT_ID_CLIENT_SECRET     the CAD sign-in shared secret (docs/cad/SIGN-IN-SETUP.md): only its SHA-256 reaches
 #                                this app, as WORK_BIZOMAT_ID_CLIENTS; the secret itself goes to the app cados
-#   WORK_STRIPE_SECRET_KEY       billing (docs/billing/README.md): a restricted key of the environment named by
-#   WORK_STRIPE_PUBLISHABLE_KEY  WORK_STRIPE_ENVIRONMENT in fly.website.toml; a key of the other environment stops
-#   WORK_STRIPE_WEBHOOK_SECRET   the deploy before anything is staged
+#   WORK_STRIPE_SECRET_KEY       billing (docs/billing/README.md): staged only when WORK_STRIPE_ENVIRONMENT in
+#   WORK_STRIPE_PUBLISHABLE_KEY  fly.website.toml is "live", and only live keys (a test key stops the deploy before
+#   WORK_STRIPE_WEBHOOK_SECRET   anything is staged); otherwise they stay in GitHub and billing stays off
 #
 # Environment: APP, CONFIG, FLY_API_TOKEN, and the secrets above as CAD_CLIENT_SECRET, STRIPE_SECRET,
 # STRIPE_PUBLISHABLE, STRIPE_WEBHOOK.
@@ -27,8 +27,14 @@ if [ -n "${CAD_CLIENT_SECRET:-}" ]; then
 fi
 
 mode="$(python3 -c 'import sys, tomllib; print(tomllib.load(open(sys.argv[1], "rb")).get("env", {}).get("WORK_STRIPE_ENVIRONMENT", ""))' "$CONFIG")"
+# Production takes live Stripe settings only (owner, 15 Nov 2026): sandbox keys are never staged here. Until the
+# configuration says live, Stripe secrets in GitHub are left where they are and billing stays off.
+if [ -n "${STRIPE_SECRET:-}${STRIPE_PUBLISHABLE:-}${STRIPE_WEBHOOK:-}" ] && [ "$mode" != live ]; then
+  summary "Billing: Stripe secrets in GitHub were NOT staged: production billing is not set to live (WORK_STRIPE_ENVIRONMENT in $CONFIG is '${mode:-unset}'), so billing stays off"
+  STRIPE_SECRET="" STRIPE_PUBLISHABLE="" STRIPE_WEBHOOK=""
+fi
 if [ -n "${STRIPE_SECRET:-}${STRIPE_PUBLISHABLE:-}${STRIPE_WEBHOOK:-}" ]; then
-  [ "$mode" = test ] || [ "$mode" = live ] || fail "Stripe secrets are set in GitHub but WORK_STRIPE_ENVIRONMENT in $CONFIG is not test or live."
+  [ "$mode" = live ] || fail "Stripe secrets can only be staged for live billing."
   if [ -n "${STRIPE_SECRET:-}" ]; then
     [[ "$STRIPE_SECRET" =~ ^(rk|sk)_${mode}_[A-Za-z0-9]+$ ]] || fail "WORK_STRIPE_SECRET_KEY is not a Stripe secret or restricted key for the $mode environment."
     lines+=("WORK_STRIPE_SECRET_KEY=$STRIPE_SECRET")

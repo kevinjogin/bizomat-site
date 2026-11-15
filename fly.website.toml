@@ -67,13 +67,10 @@ kill_timeout = 15
   # Its address: a page asked for on another host (work.kevos.com once it points here, bizomat.fly.dev) answers 301 to
   # the same path under it; /api/ and the files keep answering there for open tabs.
   WORK_CANONICAL_URL = "https://bizomat.ai/tasks"
-  # Billing (docs/billing/README.md): Stripe's test environment. Going live needs the owner's explicit approval and a
-  # reviewed change here, beside live keys. Billing stays off until the keys, the webhook secret and the price are set
-  # too (the keys are Fly secrets staged by the deploy workflow from GitHub repository secrets).
-  WORK_STRIPE_ENVIRONMENT = "test"
-  # The per-user price in Stripe's sandbox (not a secret): BIZOMAT ERP, per active user, A$10.00 a month, GST
-  # exclusive, licensed, per unit (lookup key bizomat_seat_monthly_aud). The server checks it with Stripe before use.
-  WORK_STRIPE_PRICE_SEAT_MONTHLY = "price_1Uc2bqRymx2K9qJ1EVaxV6Hd"
+  # Billing (docs/billing/README.md): off in production until the owner approves live billing. Production takes live
+  # Stripe settings only (the app refuses test mode when ENVIRONMENT is production, and the deploy stages Stripe keys
+  # only for live). To go live, with approval: WORK_STRIPE_ENVIRONMENT = "live" and WORK_STRIPE_PRICE_SEAT_MONTHLY =
+  # the approved live price here, and the live keys and webhook secret as repository secrets.
   # On SIGTERM the router gives open requests 3 s (it was 10 s), then closes long polls and WebSockets, which reconnect
   # (docs/deployment/DOWNTIME-REVIEW.md, recommendation 5). kill_timeout stays 15 s.
   PROXY_SHUTDOWN_GRACE_MS = "3000"

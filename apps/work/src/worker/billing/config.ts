@@ -67,6 +67,9 @@ export function billingConfig(env: BillingEnv): BillingConfig {
   if (!environment) return off('Billing is not set up: STRIPE_ENVIRONMENT is not set.');
   if (environment !== 'test' && environment !== 'live') return off('Billing is off: STRIPE_ENVIRONMENT must be "test" or "live".');
   const mode = environment as StripeEnvironment;
+  // Production takes live Stripe settings only: sandbox keys and test checkout never run on the public site (owner,
+  // 15 Nov 2026). Test mode is for development, tests and a sandbox run.
+  if (env.ENVIRONMENT === 'production' && mode !== 'live') return off('Billing is off: production takes live Stripe settings only (STRIPE_ENVIRONMENT is "test").', mode);
   const secretKey = (env.STRIPE_SECRET_KEY ?? '').trim();
   if (!secretKey) return off('Billing is off: no Stripe API key is set.', mode);
   const s = SECRET.exec(secretKey);
