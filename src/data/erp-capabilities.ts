@@ -38,9 +38,16 @@
 //     movement ledger, reservations, returns, quarantine, scrap, adjustments, counts, weighted average and FIFO
 //     valuation, traceability, QR labels and the warehouse screen (apps/work/src/worker/erp, migration
 //     0021_erp_purchasing_inventory.sql; Scenarios B and C and the rule tests in apps/work/test/erp-r2.test.ts and
-//     test-node/erp-r2.test.ts). Inventory postings to Finance's ledger are Release 3: planned.
-//   Everything else (sales orders, manufacturing, quality, supply chain, service, human capital): docs/erp/architecture/02
-//     to 10. Nothing of it is built, so it is planned.
+//     test-node/erp-r2.test.ts). Inventory postings to Finance's ledger: planned.
+//   ERP Release 3 (owner's brief of 14 Nov 2026, Release 3; built on the branch erp-release-3, live once merged and
+//     deployed): work centres and machines, routings with revisions, manufacturing orders with materials, operations,
+//     labour and machine time, output, scrap, rework, downtime and inspection points, finished-goods receipts at actual
+//     cost, the shop floor, the master production schedule, MRP, rough-cut capacity, job costing by element and the
+//     manufacturing reports (apps/work/src/worker/erp, migration 0022_erp_manufacturing.sql; Scenario D and the rule
+//     tests in apps/work/test/erp-r3.test.ts and test-node/erp-r3.test.ts). Production value postings to Finance's
+//     ledger, job profitability, finite scheduling and full Quality: planned.
+//   Everything else (sales orders, quality, supply chain, service, human capital): docs/erp/architecture/02 to 10.
+//     Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
 // language, no file paths, no repository names.
 //
@@ -188,7 +195,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Model import and export', 'live', 'STEP, IGES and Parasolid in; STEP, STL, Parasolid and IGES out.'),
       cap('Bill of materials (BOM) management', 'live', 'Lines with quantity, unit, scrap allowance, reference designators, position, effective dates, optional lines and alternatives. A bill of materials belongs to a revision and locks when it is released.'),
       cap('Multi-level BOM', 'live', 'Explosion through every level, where-used, comparison of two revisions and material cost roll-up, with missing costs flagged. Loops are refused. Each component\'s available stock, and shortages for a build quantity.'),
-      cap('Routings', 'planned'),
+      cap('Routings', 'live', 'Revisions of a product\'s routing: operations at work centres and machines with set-up and run times, crew, inspection points, outsourced steps and predecessors. Released by an engineering approver who did not draft them; copied to a new draft.'),
       cap('Engineering revisions', 'live', 'Draft, in a change order, released and superseded. A release supersedes the previous revision in the same step.'),
       cap('Engineering change requests and orders (ECR and ECO)', 'live', 'Approved and released by an engineering approver who did not draft the change order; in a company of one, the exception is recorded.'),
       cap('Document management', 'live', 'Engineering documents per product and revision, with versions and approval: an uploaded file, or a reference to a CAD file on the engineer\'s own computer. DXF and STEP files are checked and only ever downloaded.'),
@@ -202,28 +209,28 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'manufacturing',
     name: 'Manufacturing',
     summary: 'Planning and making products: production orders, materials, capacity, the shop floor and production cost.',
-    servedBy: 'BIZOMAT ERP Manufacturing (planned module)',
+    servedBy: 'BIZOMAT ERP Manufacturing',
     features: [
-      cap('Discrete manufacturing', 'planned'),
+      cap('Discrete manufacturing', 'live', 'Manufacturing orders made from a released bill of materials and a released routing.'),
       cap('Process manufacturing', 'planned', 'After discrete manufacturing: needs formulas and batch records.'),
-      cap('Repetitive manufacturing', 'planned'),
-      cap('Make to stock', 'planned'),
-      cap('Make to order', 'planned'),
-      cap('Engineer to order', 'planned', 'Today a deal can start a project in Projects to track the work, without production records.'),
+      cap('Repetitive manufacturing', 'planned', 'An order can be marked repetitive; rate-based schedules are planned.'),
+      cap('Make to stock', 'live', 'Orders for stock, planned by MRP from the master production schedule, stock and reorder points.'),
+      cap('Make to order', 'live', 'An order carries its customer or job as a reference, and confirmed demand is entered in the master production schedule. Links to sales orders come with Release 5.'),
+      cap('Engineer to order', 'planned', 'An order can be marked engineer to order with a job reference. Engineering and costing tied to a project are planned.'),
       cap('Project manufacturing', 'planned'),
-      cap('Master production scheduling', 'planned'),
-      cap('Material requirements planning (MRP)', 'planned'),
-      cap('Capacity planning', 'planned'),
+      cap('Master production scheduling', 'live', 'Forecast or confirmed demand per product, quantity and due date, with a reference.'),
+      cap('Material requirements planning (MRP)', 'live', 'Level by level through released bills of materials, from confirmed demand, stock less reservations, open purchase and manufacturing orders, lead times, safety stock, reorder points and order sizes. Suggestions to make (a draft order), buy (a requisition) or expedite, marked late or overdue. Each run is kept with its inputs.'),
+      cap('Capacity planning', 'live', 'Rough-cut: load per work centre per week against its available hours, with overloads flagged. Finite scheduling is planned.'),
       cap('Advanced planning and scheduling', 'planned'),
-      cap('Production orders', 'planned'),
-      cap('Job management', 'planned'),
-      cap('Shop-floor control', 'planned'),
-      cap('Manufacturing execution (MES)', 'planned'),
-      cap('Labour and machine tracking', 'planned'),
-      cap('Work in progress (WIP)', 'planned'),
-      cap('Scrap and rework', 'planned'),
-      cap('Production costing', 'planned'),
-      cap('Overall equipment effectiveness (OEE)', 'planned'),
+      cap('Production orders', 'live', 'Draft, released, in progress, completed and closed, or cancelled; materials with the scrap allowance, operations copied from the routing, estimated cost, assigned people, and amendments with their history.'),
+      cap('Job management', 'planned', 'Orders carry a job reference, assigned people and priorities. Job boards are planned.'),
+      cap('Shop-floor control', 'live', 'A screen for phones: jobs ready and in progress per work centre, progress, shortages, outstanding inspections and machines down.'),
+      cap('Manufacturing execution (MES)', 'live', 'Operations started in order (or overlapping where allowed), labour per person by timer or minutes, machine time, output, scrap, rework, downtime and inspection results, then completed. Connections to machines are planned.'),
+      cap('Labour and machine tracking', 'live'),
+      cap('Work in progress (WIP)', 'live', 'The cost of each open order to date. Posting it to Finance\'s ledger is planned: nothing is posted.'),
+      cap('Scrap and rework', 'live', 'Scrap with a reason at each operation and materials scrapped against an order; rework quantities and rework time.'),
+      cap('Production costing', 'live', 'Estimated against actual by element (materials, labour, machine, outsourcing, overheads, scrap, rework), finished goods valued at actual cost, and variances recorded at close. Job profitability is planned: it needs sales orders.'),
+      cap('Overall equipment effectiveness (OEE)', 'planned', 'Downtime and output are recorded; the OEE measure is planned.'),
     ],
   },
   {
@@ -235,8 +242,8 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Multi-warehouse', 'live'),
       cap('Bins and locations', 'live', 'A tree of store, zone, rack, shelf and bin, with quarantine, receiving, dispatch, work-in-progress and finished-goods locations.'),
       cap('Raw materials', 'live', 'Any product but a service can be kept in stock.'),
-      cap('Work in progress stock', 'planned', 'Work-in-progress locations exist; stock moving through production comes with Manufacturing.'),
-      cap('Finished goods', 'live', 'Kept, moved and counted like any stock. Production into stock comes with Manufacturing.'),
+      cap('Work in progress stock', 'planned', 'Work-in-progress locations exist. Materials issued to a manufacturing order leave stock and their cost is carried on the order until finished goods are received.'),
+      cap('Finished goods', 'live', 'Kept, moved and counted like any stock, and received from manufacturing orders at actual cost.'),
       cap('Stock movements', 'live', 'An append-only ledger: every movement with its document, never changed or deleted.'),
       cap('Batch and lot tracking', 'live', 'With expiry dates, and traceability from the supplier, order and receipt to every later move.'),
       cap('Serial numbers', 'live', 'One unit each, never in stock twice.'),
@@ -245,7 +252,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Barcodes', 'live', 'Product numbers, SKUs and location codes typed on the warehouse screen, or read by the phone\'s camera where the browser can read codes. Not every browser can.'),
       cap('QR scanning', 'live', 'QR labels for products and locations, made by BIZOMAT itself, to print and scan.'),
       cap('Reservations', 'live'),
-      cap('Stock valuation', 'live', 'Weighted average or first in, first out, chosen before the first movement and then locked. Posting stock value to Finance\'s ledger is planned (Release 3): nothing is posted today.'),
+      cap('Stock valuation', 'live', 'Weighted average or first in, first out, chosen before the first movement and then locked. Posting stock value to Finance\'s ledger is planned: nothing is posted today.'),
       cap('Cycle counts', 'live', 'Stocktakes and cycle counts with count sheets and variances, approved by a warehouse manager who did not count, then posted as movements.'),
       cap('Picking and packing', 'planned', 'Issues from a location work today; pick lists and packing are planned.'),
       cap('Receiving', 'live', 'Against purchase orders, on a computer or a phone.'),
@@ -261,7 +268,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     features: [
       cap('Demand planning', 'planned'),
       cap('Supply planning', 'planned'),
-      cap('Material planning', 'planned'),
+      cap('Material planning', 'live', 'MRP in Manufacturing: what to make and buy, from confirmed demand, stock and open orders.'),
       cap('Inventory optimisation', 'planned'),
       cap('Warehouse management', 'planned', 'The warehouse operations of Inventory and Warehouse.'),
       cap('Transportation management', 'planned'),
@@ -281,7 +288,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     features: [
       cap('Supplier quality', 'planned'),
       cap('Incoming inspection', 'planned'),
-      cap('In-process inspection', 'planned'),
+      cap('In-process inspection', 'planned', 'A routing operation can be an inspection point recording a pass or fail with a note. Inspection plans, results by characteristic and nonconformances come with Quality.'),
       cap('Final inspection', 'planned'),
       cap('Quality plans', 'planned'),
       cap('Nonconformance reports (NCR)', 'planned'),
@@ -434,7 +441,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Operational KPIs', 'planned', 'Each tool\'s own dashboard is live. Measures across modules, such as on-time delivery, are planned.'),
       cap('Financial analytics', 'live', 'The Finance dashboard and reports.'),
       cap('Sales analytics', 'live', 'The CRM dashboard and reports.'),
-      cap('Production analytics', 'planned'),
+      cap('Production analytics', 'live', 'Manufacturing reports: production output, work order progress, material consumption, labour utilisation, production variance, machine downtime, MRP suggestions and capacity load.'),
       cap('Predictive forecasting', 'planned'),
       cap('Exception detection', 'planned', 'Rule-based alerts exist in Finance (due, overdue, budgets nearly spent) and the CRM (overdue follow-ups).'),
       cap('AI business assistant', 'planned', 'AI apps work in SOLIDWORKS through CAD Automation, and AI Search covers the public website. An assistant over ERP records is planned.'),

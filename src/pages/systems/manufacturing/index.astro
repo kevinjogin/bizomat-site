@@ -1,9 +1,10 @@
 ---
 // /systems/manufacturing/: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
-// Live: Maintenance's first stage (apps/work/src/worker/maintenance, apps/work/test/maintenance.test.ts), and ERP
-// Release 2's Procurement and Inventory (apps/work/src/worker/erp, apps/work/test/erp-r2.test.ts). Manufacturing,
-// production planning, quality and supply chain are planned (docs/erp/architecture/08 and 09) and labelled Planned.
-// The product screen is Maintenance's (a working module); no screen here shows a planned module as working.
+// Live: Maintenance's first stage (apps/work/src/worker/maintenance, apps/work/test/maintenance.test.ts), ERP Release 2's
+// Procurement and Inventory (apps/work/src/worker/erp, apps/work/test/erp-r2.test.ts) and ERP Release 3's Manufacturing
+// and production planning (apps/work/src/worker/erp, apps/work/test/erp-r3.test.ts; live once Release 3 is deployed).
+// Quality and supply chain are planned (docs/erp/architecture/08 and 09) and labelled Planned. The product screens are
+// of working modules (Manufacturing's and Maintenance's); no screen here shows a planned module as working.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -20,22 +21,39 @@ import { screenshots } from '../../../data/screenshots.ts';
 
 const sys = systemById('manufacturing');
 const erp = systemById('erp');
-// The one product screen here is Maintenance's, the module that works today.
+// Product screens of modules that work today: Manufacturing's shop floor and Maintenance's overview.
 const maintenanceShot = screenshots('erp').find((s) => s.src.endsWith('/erp-maintenance.webp'));
+const floorShot = screenshots('erp').find((s) => s.src.endsWith('/erp-shop-floor.webp'));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }];
-const description = 'Procurement, inventory and maintenance (CMMS) in BIZOMAT ERP today: purchasing, stock and warehouses, assets and work orders. Manufacturing is planned.';
+const description = 'Procurement, inventory, manufacturing and maintenance in BIZOMAT ERP today: purchasing, stock, production orders, MRP and work orders. Quality is planned.';
 
 interface Item { t: string; st: FeatureStatus }
 interface Module { id: string; name: string; st: FeatureStatus; x: string; items?: Item[]; today?: Item[]; where?: string }
 const modules: Module[] = [
   {
-    id: 'manufacturing', name: 'Manufacturing', st: 'planned',
-    x: 'Designed for work orders made from sales orders or for stock, released with a check that the components are available, with each operation reported (start, finish, quantity and scrap) from a shop-floor screen on a tablet.',
+    id: 'manufacturing', name: 'Manufacturing', st: 'live', where: 'Manufacturing',
+    x: 'Work centres and machines with a capacity calendar and cost rates, routings with revisions, and manufacturing orders made from a released bill of materials and routing: materials reserved and issued from stock, each operation started, timed and reported (output, scrap, rework, downtime and inspection results) from a shop-floor screen for phones, and finished goods received at actual cost.',
+    items: [
+      { t: 'Work centres and machines, linked to their Maintenance assets', st: 'live' },
+      { t: 'Routings with revisions, released by someone other than their author', st: 'live' },
+      { t: 'Manufacturing orders with materials, operations and amendments', st: 'live' },
+      { t: 'Labour and machine time, output, scrap, rework and downtime', st: 'live' },
+      { t: 'A shop-floor screen for phones', st: 'live' },
+      { t: 'Estimated against actual cost by element, with variances', st: 'live' },
+      { t: 'Production value posted to Finance', st: 'planned' },
+      { t: 'Job profitability (needs sales orders)', st: 'planned' },
+    ],
   },
   {
-    id: 'planning', name: 'Production planning', st: 'planned',
-    x: 'Designed for a planning board that shows the load on each work centre, where a work order can be dragged to a new date, and later for suggestions of what to make and what to buy.',
-    today: [{ t: 'Plan production work on a board and timeline in Projects', st: 'live' }],
+    id: 'planning', name: 'Production planning', st: 'live', where: 'Manufacturing, Planning',
+    x: 'A master production schedule of forecast and confirmed demand, MRP that plans level by level through the bills of materials with lead times, open orders, reservations, safety stock and reorder points, and rough-cut capacity per work centre per week.',
+    items: [
+      { t: 'Master production schedule', st: 'live' },
+      { t: 'MRP: make, buy and expedite suggestions, marked late or overdue', st: 'live' },
+      { t: 'Suggestions turned into requisitions and draft orders', st: 'live' },
+      { t: 'Rough-cut capacity with overloads flagged', st: 'live' },
+      { t: 'Finite scheduling and a drag-and-drop planning board', st: 'planned' },
+    ],
   },
   {
     id: 'inventory', name: 'Inventory', st: 'live', where: 'Inventory',
@@ -91,7 +109,7 @@ const modules: Module[] = [
 ];
 
 const today: { name: string; url: string; items: Item[] }[] = [
-  { name: 'BIZOMAT ERP', url: '/systems/erp/', items: [{ t: 'Procurement: requisitions, quotations, purchase orders and receipts', st: 'live' }, { t: 'Inventory: warehouses, stock, counts and valuation', st: 'live' }, { t: 'Bills of materials with stock availability', st: 'live' }] },
+  { name: 'BIZOMAT ERP', url: '/systems/erp/', items: [{ t: 'Procurement: requisitions, quotations, purchase orders and receipts', st: 'live' }, { t: 'Inventory: warehouses, stock, counts and valuation', st: 'live' }, { t: 'Manufacturing: orders, routings, the shop floor, MRP and job costing', st: 'live' }, { t: 'Bills of materials with stock availability', st: 'live' }] },
   { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Supplier bills, approved and paid', st: 'live' }, { t: 'A draft bill from each goods receipt', st: 'connected' }, { t: 'Budgets by category, department or project', st: 'live' }] },
   { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Boards, timelines and workload to plan the work', st: 'live' }, { t: 'Tasks with owners, statuses and dates', st: 'live' }] },
   { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'SOLIDWORKS parts and assemblies from your AI assistant', st: 'live' }, { t: 'Drawings with views, dimensions and a bill of materials', st: 'live' }] },
@@ -103,10 +121,10 @@ const sellFlow = ['Accepted quote', 'Sales order', 'Work order', 'Final inspecti
 const buyFlow = ['Requisition', 'Purchase order', 'Goods receipt', 'Incoming inspection', 'Supplier bill in Finance'];
 
 const faqs = [
-  { q: 'Can it manage manufacturing today?', a: 'Not production itself. Purchasing, inventory and warehouses work today in BIZOMAT ERP, with products, bills of materials (showing available stock), revisions and suppliers. Manufacturing, production planning, quality and supply chain are planned and not built.' },
+  { q: 'Can it manage manufacturing today?', a: 'Yes. Manufacturing orders, routings and work centres, a shop-floor screen, the master production schedule, MRP, rough-cut capacity and job costing work inside BIZOMAT ERP, with purchasing, inventory and warehouses. Production value is not posted to Finance\'s ledger yet, and quality and supply chain are planned.' },
   { q: 'Is Inventory available?', a: 'Yes. Warehouses and locations, stock by lot and serial, every movement, reservations, returns, adjustments, stocktakes, cycle counts, weighted average or FIFO valuation, QR labels and a warehouse screen for phones work today inside BIZOMAT ERP. Posting stock value to Finance\'s ledger is planned.' },
   { q: 'Is Maintenance available?', a: 'Yes. Its first stage works today inside BIZOMAT ERP: the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. Preventive maintenance and the rest are planned.' },
-  { q: 'Can I sign up or pay for it now?', a: 'Procurement, Inventory and Maintenance come with BIZOMAT ERP: sign in and open them from Operations. For the planned modules there is nothing to sign up for, download or buy.' },
+  { q: 'Can I sign up or pay for it now?', a: 'Procurement, Inventory, Manufacturing and Maintenance come with BIZOMAT ERP: sign in and open them from Operations. For the planned modules there is nothing to sign up for, download or buy.' },
   { q: 'What can I use today instead?', a: 'BIZOMAT ERP for products, bills of materials, engineering changes, purchasing and stock; BIZOMAT Finance for bills and payments; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
   { q: 'When will the other modules be ready?', a: 'There is no date yet. Each module is labelled Planned until it is built and tested, and only then is it called Live.' },
 ];
@@ -116,19 +134,20 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title="Procurement, inventory and maintenance ERP; manufacturing planned" description={description} imageAlt="BIZOMAT Manufacturing and Operations: ERP modules, some live and some planned" breadcrumbs={crumbs} schema={schema}>
+<BaseLayout title="Manufacturing, procurement, inventory and maintenance ERP" description={description} imageAlt="BIZOMAT Manufacturing and Operations: ERP modules, some live and some planned" breadcrumbs={crumbs} schema={schema}>
   <section class="pp-hero" aria-labelledby="mfg-title">
     <Container>
       <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
       <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
       <h1 id="mfg-title">Manufacturing and Operations</h1>
-      <p class="sys-planned__status sys-hero-status"><StatusLabel status="live" /> Procurement, Inventory and Maintenance work today in BIZOMAT ERP. <StatusLabel status="planned" /> Manufacturing, quality and supply chain.</p>
-      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Procurement (requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, counts and valuation) and Maintenance, a maintenance management system (CMMS), work today inside BIZOMAT ERP. Manufacturing, quality and supply chain are planned.</p>
+      <p class="sys-planned__status sys-hero-status"><StatusLabel status="live" /> Procurement, Inventory, Manufacturing and Maintenance work today in BIZOMAT ERP. <StatusLabel status="planned" /> Quality and supply chain.</p>
+      <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Procurement (requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, counts and valuation), Manufacturing (orders, routings, the shop floor, MRP and job costing) and Maintenance, a maintenance management system (CMMS), work today inside BIZOMAT ERP. Quality and supply chain are planned.</p>
       <div class="pp-hero__actions">
         <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-use-erp">Use BIZOMAT ERP today</Button>
+        <Button href="/systems/erp/guide/#manufacturing" variant="secondary" data-cta="mfg-manufacturing-guide">How Manufacturing works</Button>
         <Button href="/systems/erp/guide/#maintenance" variant="secondary" data-cta="mfg-maintenance-guide">How Maintenance works</Button>
       </div>
-      <p class="pp-hero__note">BIZOMAT ERP is where Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Procurement and Inventory work today. {sys.statusNote}</p>
+      <p class="pp-hero__note">BIZOMAT ERP is where Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Procurement, Inventory and Manufacturing work today. {sys.statusNote}</p>
     </Container>
   </section>
 
@@ -137,7 +156,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">The modules</p>
         <h2 id="modules-title">What each module is designed to do</h2>
-        <p>Every module below is labelled. Procurement, Inventory, Warehouse management and Maintenance (its first stage) are Live; the others are Planned.</p>
+        <p>Every module below is labelled. Manufacturing, Production planning, Procurement, Inventory, Warehouse management and Maintenance (its first stage) are Live; the others are Planned.</p>
       </div>
       <div class="sys-legend">
         <h3 class="sys-subhead">What the labels mean</h3>
@@ -164,7 +183,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">What exists today</p>
         <h2 id="today-title">What you can use now, in BIZOMAT ERP</h2>
-        <p>These systems work today. They do not run production yet, but they hold the purchasing, stock, money, plans and drawings around it.</p>
+        <p>These systems work today: production, purchasing and stock in the ERP, with the money, plans and drawings around them.</p>
       </div>
       <div class="pp-tools">
         {today.map((g) => (
@@ -182,20 +201,26 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">How it is designed to fit together</p>
         <h2 id="design-title">Designed to work through the systems you already use</h2>
-        <p>The planned modules are designed to use Finance for purchase orders, bills and stock values, Projects for the work of each operation, and the CRM for customers. Nothing is copied: each record stays in its own system. These flows are a design, not something that works today.</p>
+        <p>The planned modules are designed to use Finance for bills and stock values, Projects for the work around an order, and the CRM for customers. Nothing is copied: each record stays in its own system. These flows are a design: the steps marked below as working are live, the others are not.</p>
       </div>
       <div class="sys-concepts">
         <figure class="sys-concept">
           <h3 class="sys-subhead">Selling and making</h3>
           <ol aria-label="Planned flow for selling and making">{sellFlow.map((s) => <li><span>{s}</span></li>)}</ol>
-          <figcaption><span>Designed flow from an accepted quote to an invoice. Every step after the quote is planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
+          <figcaption><span>Designed flow from an accepted quote to an invoice. Manufacturing orders (the work order) work today; sales orders, final inspection and deliveries are planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
         </figure>
         <figure class="sys-concept">
           <h3 class="sys-subhead">Buying and receiving</h3>
           <ol aria-label="Planned flow for buying and receiving">{buyFlow.map((s) => <li><span>{s}</span></li>)}</ol>
-          <figcaption><span>Designed flow from a requisition to a supplier bill. Purchase orders and bills exist in Finance today; the rest is planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
+          <figcaption><span>Designed flow from a requisition to a supplier bill. Requisitions, purchase orders, goods receipts and a draft bill in Finance work today; incoming inspection is planned.</span><span class="viz__tag">Concept illustration</span></figcaption>
         </figure>
       </div>
+      {floorShot && (
+        <figure class="pp-shot sys-preview">
+          <img src={floorShot.src} alt={`${floorShot.title}. ${floorShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+          <figcaption><span>Manufacturing, which works today. {floorShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+        </figure>
+      )}
       {maintenanceShot && (
         <figure class="pp-shot sys-preview">
           <img src={maintenanceShot.src} alt={`${maintenanceShot.title}. ${maintenanceShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
