@@ -27,7 +27,12 @@
 //     CAD Automation is built but not merged (docs/BIZOMAT-PROJECT-STATUS.md, 14 Nov 2026): both in-development.
 //   Asset management and maintenance (CMMS): owner's brief of 14 Nov 2026 (MEX used as a functional reference only).
 //     Its Stage 1 is live (apps/work/src/worker/maintenance, migration 0018_maintenance.sql; acceptance tests A to D and J
-//     in apps/work/test/maintenance.test.ts and test-node/maintenance.test.ts); the rest is planned.
+//     in apps/work/test/maintenance.test.ts and test-node/maintenance.test.ts). Stages M2 and M3 (ERP Release 4, part B;
+//     built on the branch erp-release-4-maintenance, live once merged and deployed): preventive maintenance, readings,
+//     inspections, prestarts, parts through ERP Inventory, trades and labour costs, downtime, sites, QR labels and the
+//     reliability reports (migration 0024_maintenance_m2_m3.sql; Scenario F and the rule tests in
+//     apps/work/test/maintenance-m2-m3.test.ts and test-node/maintenance-m2-m3.test.ts). The AI scheduling assistant,
+//     offline field work and maintenance costs posted to Finance: planned.
 //   ERP Release 1 (owner's brief of 14 Nov 2026, Release 1): the product master with variants, revisions with change
 //     requests and change orders, multi-level bills of materials, engineering documents and the supplier master
 //     (apps/work/src/worker/erp, migration 0020_erp_engineering_procurement.sql; Scenario A and the rule tests in
@@ -305,46 +310,47 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'assets',
     name: 'Asset management and maintenance',
     summary: 'A maintenance management system (CMMS): assets, requests, work orders, technicians, preventive plans, parts and reliability.',
-    servedBy: 'BIZOMAT ERP Asset Management and Maintenance (Stage 1 live); depreciation in BIZOMAT Finance (planned)',
+    servedBy: 'BIZOMAT ERP Asset Management and Maintenance (stages 1 to 3 working; AI scheduling and offline work planned); depreciation in BIZOMAT Finance (planned)',
     features: [
       // CMMS Stage 1: live (owner, 14 Nov 2026), tested by apps/work/test/maintenance.test.ts.
       cap('Asset register', 'live'),
       cap('Asset hierarchy', 'live', 'Assets within assets and locations.'),
       cap('Equipment master and asset details', 'live'),
       cap('Maintenance requests with approval', 'live', 'Approval by a supervisor or administrator when the company requires it.'),
-      cap('Maintenance work orders', 'live', 'Standard work orders with tasks, required parts as text lines, labour and notes. Recurring work orders from plans are planned.'),
+      cap('Maintenance work orders', 'live', 'Work orders with tasks, required parts, parts issued from the stores, labour by timer or entered by hand with its cost, downtime, inspections, readings and notes.'),
       cap('Corrective maintenance', 'live', 'A standard work order of the corrective job type.'),
       cap('Breakdown maintenance', 'live', 'A standard work order of the breakdown job type.'),
       cap('Technician assignment', 'live', 'Maintenance roles per company: administrator, supervisor, technician and requester.'),
       cap('Labour timer', 'live'),
       cap('Photos and documents', 'live', 'On assets, requests and work orders.'),
-      // CMMS Stage 2.
-      cap('Preventive maintenance plans', 'planned', 'Triggered by time, usage or condition.'),
-      cap('Maintenance planning and calendar', 'planned'),
-      cap('Recurring work orders', 'planned'),
-      cap('Asset readings and meters', 'planned', 'Readings with thresholds and trend charts.'),
-      cap('Condition monitoring', 'planned', 'From readings and thresholds first; sensor feeds come with IoT integrations.'),
-      cap('Threshold alerts', 'planned'),
-      cap('Work order inspections', 'planned', 'Checklists across several assets: pass, fail, observation, not applicable, number, text, photo and signature. A failed answer can raise a request or a work order by rule.'),
-      // CMMS Stage 3.
-      cap('Digital prestart checklists', 'planned'),
-      cap('Spare parts and stores', 'planned', 'Through ERP Inventory and Procurement: minimum and maximum, reorder points, reservations, issues and returns to work orders. Stage 1 records required parts as text only.'),
-      cap('Maintenance stocktakes', 'planned', 'With approval, through the central inventory service.'),
-      cap('Barcode and QR scanning', 'planned', 'For assets and parts.'),
-      cap('Multi-site maintenance', 'planned'),
+      // CMMS Stage 2 (ERP Release 4, part B): built and tested, live once deployed.
+      cap('Preventive maintenance plans', 'live', 'Schedules per asset, or per class of assets through a template: every so many days, weeks or months (from the last completion or on fixed dates), every so many meter units, or when a reading is outside its limits. Paused or active.'),
+      cap('Maintenance planning and calendar', 'live', 'A calendar of what is due: open preventive work orders, the next due dates and those after them, and meter-based work projected from the meter\'s daily use.'),
+      cap('Recurring work orders', 'live', 'Made by the schedules when due, once per due date, meter value or reading, by the scheduler every 15 minutes or a supervisor\'s button. The next due date moves on when the work order is completed.'),
+      cap('Asset readings and meters', 'live', 'Meters and gauges with an expected range; readings by hand, from a work order or in a prestart check; a lower meter reading only as a reset, with rollovers counted on. Trend charts are planned.'),
+      cap('Condition monitoring', 'live', 'From readings and limits: a reading outside them makes a work order. Sensor feeds come with IoT integrations (planned).'),
+      cap('Threshold alerts', 'planned', 'Readings outside the limits are flagged and can make a work order today; notifications are planned.'),
+      cap('Work order inspections', 'live', 'Inspection templates of pass or fail, number (with limits) and text items, recorded on the work order. A failed inspection makes one corrective work order or one request. Photo and signature answers and checklists across several assets are planned.'),
+      // CMMS Stage 3 (ERP Release 4, part B): built and tested, live once deployed.
+      cap('Digital prestart checklists', 'live', 'A phone screen for a quick check of an asset before use. A failure raises a request; a failed critical item also sets the asset out of service, recorded with the status before.'),
+      cap('Spare parts and stores', 'live', 'Parts are ERP Inventory products kept in warehouses marked as maintenance stores, issued to and returned from work orders with their cost; never below zero. Minimum, maximum and reorder points are Inventory\'s. Reserving parts for a work order is planned.'),
+      cap('Maintenance stocktakes', 'live', 'Stocktakes of the maintenance stores are ERP Inventory\'s counts, with approval.'),
+      cap('Barcode and QR scanning', 'live', 'QR labels for assets; scan or type a code on a phone to open an asset, its prestart check or a fault report. The camera is used where the browser can read codes.'),
+      cap('Multi-site maintenance', 'live', 'Sites per company, with assets placed in them, and site filters on lists, the calendar and the reports.'),
       cap('Fuel records', 'planned'),
       // CMMS Stage 4.
-      cap('Trades and technician workload planning', 'planned'),
+      cap('Trades and technicians', 'live', 'Trades with hourly rates, people linked to trades, and a labour rate per person; labour is priced when it is recorded.'),
+      cap('Technician workload planning', 'planned'),
       cap('AI scheduling assistant', 'planned', 'Proposes schedules only, with a preview, an explanation and a comparison. A person edits, accepts or rejects each one, and the history is kept.'),
-      cap('Reliability reporting', 'planned', 'Mean time between failures and to repair, failure frequency, preventive maintenance compliance, repeat failures and cost by asset and department, with exports.'),
-      cap('Downtime', 'planned'),
+      cap('Reliability reporting', 'live', 'Mean time between failures and to repair, downtime and availability per asset, preventive maintenance compliance, breakdown trends, backlog by priority and age, and asset costs, with drill-down and CSV. Repeat failures and department breakdowns are planned.'),
+      cap('Downtime', 'live', 'When the asset was down, recorded on its work order.'),
       cap('Predictive maintenance', 'planned'),
       cap('IoT integrations', 'planned'),
       cap('Offline field operation', 'planned', 'Not offered until the offline queue, reconnection, conflict resolution and audit are tested.'),
-      cap('Lifecycle costs', 'planned', 'Labour, parts and contractor costs per asset over its life.'),
+      cap('Lifecycle costs', 'planned', 'Labour, parts and contractor costs per asset over its life. Labour and parts per asset over any period work today (asset costs report).'),
       // Administration and links to the other systems.
-      cap('Maintenance administration centre', 'planned', 'Custom and mandatory fields, labels, categories, job types, priorities, approval rules, templates, field-level edit rights and an audit of configuration changes. Stage 1 has maintenance roles and one approval setting.'),
-      cap('Maintenance costs in Finance', 'planned', 'Labour, parts and contractor costs as expense allocations, with references to fixed assets.'),
+      cap('Maintenance administration centre', 'planned', 'Custom and mandatory fields, labels, categories, job types, priorities, approval rules, field-level edit rights and an audit of configuration changes. Maintenance roles, the approval setting, sites, trades and rates and the stores are set today.'),
+      cap('Maintenance costs in Finance', 'planned', 'Labour, parts and contractor costs as expense allocations, with references to fixed assets. Costs are recorded on each work order and in the reports today; nothing is posted to Finance.'),
       cap('Shutdown projects in Projects', 'planned'),
       cap('Drawings and manuals from Engineering', 'planned'),
     ],

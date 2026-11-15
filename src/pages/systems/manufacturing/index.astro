@@ -1,6 +1,7 @@
 ---
 // /systems/manufacturing/: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
-// Live: Maintenance's first stage (apps/work/src/worker/maintenance, apps/work/test/maintenance.test.ts), ERP Release 2's
+// Live: Maintenance (stage 1 in production; stages 2 and 3, ERP Release 4 part B, live once deployed:
+// apps/work/src/worker/maintenance, apps/work/test/maintenance.test.ts and maintenance-m2-m3.test.ts), ERP Release 2's
 // Procurement and Inventory (apps/work/src/worker/erp, apps/work/test/erp-r2.test.ts) and ERP Release 3's Manufacturing
 // and production planning (apps/work/src/worker/erp, apps/work/test/erp-r3.test.ts; live once Release 3 is deployed).
 // Quality and supply chain are planned (docs/erp/architecture/08 and 09) and labelled Planned. The product screens are
@@ -21,8 +22,9 @@ import { screenshots } from '../../../data/screenshots.ts';
 
 const sys = systemById('manufacturing');
 const erp = systemById('erp');
-// Product screens of modules that work today: Manufacturing's shop floor and Maintenance's overview.
+// Product screens of modules that work today: Manufacturing's shop floor and Maintenance's overview, calendar and work order.
 const maintenanceShot = screenshots('erp').find((s) => s.src.endsWith('/erp-maintenance.webp'));
+const pmShots = screenshots('erp').filter((s) => s.src.endsWith('/erp-maintenance-preventive.webp') || s.src.endsWith('/erp-maintenance-inspection.webp'));
 const floorShot = screenshots('erp').find((s) => s.src.endsWith('/erp-shop-floor.webp'));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }];
 const description = 'Procurement, inventory, manufacturing and maintenance in BIZOMAT ERP today: purchasing, stock, production orders, MRP and work orders. Quality is planned.';
@@ -76,28 +78,24 @@ const modules: Module[] = [
   },
   {
     id: 'maintenance', name: 'Maintenance', st: 'live', where: 'Maintenance',
-    x: 'A maintenance management system (CMMS) inside BIZOMAT ERP, with its own module in the rail, called Maintenance. Its first stage works today: the asset register, maintenance requests and work orders. Preventive maintenance and the rest are planned.',
+    x: 'A maintenance management system (CMMS) inside BIZOMAT ERP, with its own module in the rail, called Maintenance. The asset register, requests, work orders, preventive maintenance, readings, inspections, prestart checks, parts from Inventory, sites and reliability reports work today. An AI scheduling assistant and offline field work are planned.',
     items: [
-      { t: 'Asset register and hierarchy', st: 'live' },
-      { t: 'Asset details and specifications', st: 'live' },
+      { t: 'Asset register and hierarchy, in several sites', st: 'live' },
       { t: 'Asset import from a CSV file, with a preview', st: 'live' },
-      { t: 'Maintenance requests with approval', st: 'live' },
-      { t: '"Report a fault" from any ERP screen', st: 'live' },
-      { t: 'Work orders with tasks, parts and safety notes', st: 'live' },
-      { t: 'Technician assignment and maintenance roles', st: 'live' },
-      { t: 'A labour timer against the estimate', st: 'live' },
-      { t: 'Photos and documents', st: 'live' },
-      { t: 'A history of every change', st: 'live' },
-      { t: 'Preventive maintenance by time, usage or condition', st: 'planned' },
-      { t: 'Readings and thresholds', st: 'planned' },
-      { t: 'Inspections across several assets', st: 'planned' },
-      { t: 'Prestart checklists', st: 'planned' },
-      { t: 'Spare parts and stocktakes', st: 'planned' },
-      { t: 'Barcode and QR scanning', st: 'planned' },
-      { t: 'Several sites', st: 'planned' },
+      { t: 'Maintenance requests with approval, and "Report a fault" from any ERP screen', st: 'live' },
+      { t: 'Work orders with tasks, parts, safety notes, photos and documents', st: 'live' },
+      { t: 'Technicians, trades and labour rates; a labour timer and time entered by hand, with its cost', st: 'live' },
+      { t: 'Preventive maintenance by time, meter or condition, with templates for classes of assets', st: 'live' },
+      { t: 'A calendar of preventive work, made into work orders when due, once', st: 'live' },
+      { t: 'Meters and gauges with readings and expected ranges', st: 'live' },
+      { t: 'Inspection templates on work orders; a failure makes its follow-up', st: 'live' },
+      { t: 'Prestart checks on a phone; a critical failure sets the asset out of service', st: 'live' },
+      { t: 'Spare parts issued from maintenance stores through Inventory, and stocktakes', st: 'live' },
+      { t: 'QR labels and scanning', st: 'live' },
+      { t: 'Downtime, MTBF, MTTR, PM compliance, backlog, breakdown trends and asset costs', st: 'live' },
+      { t: 'Maintenance costs posted to Finance', st: 'planned' },
       { t: 'Workload planning', st: 'planned' },
       { t: 'An AI scheduling assistant that only proposes schedules, for a person to approve', st: 'planned' },
-      { t: 'Reliability reporting (MTBF and MTTR)', st: 'planned' },
       { t: 'Offline field work', st: 'planned' },
     ],
   },
@@ -123,7 +121,7 @@ const buyFlow = ['Requisition', 'Purchase order', 'Goods receipt', 'Incoming ins
 const faqs = [
   { q: 'Can it manage manufacturing today?', a: 'Yes. Manufacturing orders, routings and work centres, a shop-floor screen, the master production schedule, MRP, rough-cut capacity and job costing work inside BIZOMAT ERP, with purchasing, inventory and warehouses. Production value is not posted to Finance\'s ledger yet, and quality and supply chain are planned.' },
   { q: 'Is Inventory available?', a: 'Yes. Warehouses and locations, stock by lot and serial, every movement, reservations, returns, adjustments, stocktakes, cycle counts, weighted average or FIFO valuation, QR labels and a warehouse screen for phones work today inside BIZOMAT ERP. Posting stock value to Finance\'s ledger is planned.' },
-  { q: 'Is Maintenance available?', a: 'Yes. Its first stage works today inside BIZOMAT ERP: the asset register and hierarchy, maintenance requests with approval, work orders, technicians, a labour timer, photos and documents. Preventive maintenance and the rest are planned.' },
+  { q: 'Is Maintenance available?', a: 'Yes, inside BIZOMAT ERP: the asset register and hierarchy in several sites, maintenance requests with approval, work orders, technicians and labour costs, preventive maintenance by time, meter or condition, readings, inspections, prestart checks on a phone, spare parts from Inventory, QR labels and the reliability reports. An AI scheduling assistant and offline field work are planned.' },
   { q: 'Can I sign up or pay for it now?', a: 'Procurement, Inventory, Manufacturing and Maintenance come with BIZOMAT ERP: sign in and open them from Operations. For the planned modules there is nothing to sign up for, download or buy.' },
   { q: 'What can I use today instead?', a: 'BIZOMAT ERP for products, bills of materials, engineering changes, purchasing and stock; BIZOMAT Finance for bills and payments; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
   { q: 'When will the other modules be ready?', a: 'There is no date yet. Each module is labelled Planned until it is built and tested, and only then is it called Live.' },
@@ -156,7 +154,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">The modules</p>
         <h2 id="modules-title">What each module is designed to do</h2>
-        <p>Every module below is labelled. Manufacturing, Production planning, Procurement, Inventory, Warehouse management and Maintenance (its first stage) are Live; the others are Planned.</p>
+        <p>Every module below is labelled. Manufacturing, Production planning, Procurement, Inventory, Warehouse management and Maintenance are Live; the others are Planned. Within a module, what is not built yet is labelled Planned too.</p>
       </div>
       <div class="sys-legend">
         <h3 class="sys-subhead">What the labels mean</h3>
@@ -224,9 +222,15 @@ const schema = [
       {maintenanceShot && (
         <figure class="pp-shot sys-preview">
           <img src={maintenanceShot.src} alt={`${maintenanceShot.title}. ${maintenanceShot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
-          <figcaption><span>Maintenance, the module that works today. {maintenanceShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+          <figcaption><span>Maintenance, which works today. {maintenanceShot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
         </figure>
       )}
+      {pmShots.map((shot) => (
+        <figure class="pp-shot sys-preview">
+          <img src={shot.src} alt={`${shot.title}. ${shot.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+          <figcaption><span>Maintenance, with the example company's invented data. {shot.caption}</span><span class="viz__tag viz__tag--real">Product screen</span></figcaption>
+        </figure>
+      ))}
     </Container>
   </section>
 

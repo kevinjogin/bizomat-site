@@ -5,7 +5,7 @@
 // applications. Screens are real (src/data/screenshots.ts). Systems are the software people sign in to; Resources are
 // free learning materials and stay open to every visitor without signing in (said plainly on this page).
 // Rules (CLAUDE.md): describe only what works today as working; Manufacturing and Operations keeps the status Planned,
-// and only its modules that work (Procurement, Inventory, Manufacturing, Maintenance's first stage) are shown as working;
+// and only its modules that work (Procurement, Inventory, Manufacturing, Maintenance) are shown as working;
 // no prices, customers, statistics or results.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -294,8 +294,8 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       live('Inventory and warehouse, in BIZOMAT ERP: locations, stock by lot and serial, movements, reservations, counts, valuation, QR labels and a warehouse screen for phones'),
       live('Manufacturing and production planning, in BIZOMAT ERP: work centres, routings, manufacturing orders, a shop-floor screen, the master production schedule, MRP, capacity and job costing'),
       planned('Quality'),
-      live('Maintenance, first stage, in BIZOMAT ERP: asset register, requests with approval, work orders, technicians, labour timer, photos and documents'),
-      planned('Preventive maintenance, inspections, spare parts and reliability reporting'),
+      live('Maintenance, in BIZOMAT ERP: assets in sites, requests, work orders, preventive maintenance by time, meter or condition, readings, inspections, prestart checks, spare parts from Inventory, QR labels and reliability reporting'),
+      planned('An AI maintenance scheduling assistant and offline field work'),
       planned('Supply chain'),
     ],
     benefits: [
