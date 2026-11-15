@@ -73,8 +73,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   key, corrective and preventive actions with segregation of duties, traceability and seven reports; quality manager
   and inspector roles. Rework under an NCR is a note, not a manufacturing order; overdue actions show on the Quality
   overview, not in My Work. SPC, calibration and audits are planned.
-  **ERP Release 5 part A** (`docs/erp/release-5-supply-chain.md`; migration 0025; built on the branch
-  `erp-release-5-supply-chain`, live only once merged and deployed): supply chain at `/erp/c/<company>/supply-chain`:
+  **ERP Release 5 part A** (`docs/erp/release-5-supply-chain.md`; migration 0025; merged and deployed
+  15 Nov 2026): supply chain at `/erp/c/<company>/supply-chain`:
   sales orders for the company's one customer record (a CRM company and its Finance customer, never copied), priced as
   Finance prices lines, with amendments and a draft order from a won deal; stock allocated through StockOps (soonest
   expiry first); make to order through a linked manufacturing order with job profitability; confirmed orders as MRP
@@ -100,7 +100,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/systems/manufacturing/guide/`:
   Maintenance, Procurement and Inventory work in the ERP today, Manufacturing since Release 3, Quality and Maintenance
   M2 and M3 since Release 4, and Supply Chain with Release 5 part A; the owner asked for it to turn green once every
-  tool works, so it is Available once Release 5 part A is deployed, with what is not built inside it labelled Planned). The old product pages
+  tool works, so it is Available since Release 5 part A was deployed (15 Nov 2026), with what is not built inside it labelled Planned). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
