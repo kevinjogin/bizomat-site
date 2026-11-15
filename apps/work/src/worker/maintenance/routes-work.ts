@@ -11,6 +11,12 @@ import { HttpError, body, newId, notFound, now } from '../lib/util';
 import { assertPerson, deny, isManager, requestScope, requireMt, workOrderScope, type MtAccess } from './access';
 import { SUBTREE_SQL, assetPath } from './routes-assets';
 import { requestDTO, workOrderDTO } from './dto';
+// Stages M2 and M3: preventive maintenance follows its work orders, labour lines are priced when recorded, and the
+// work order shows its inspections, parts, costs, downtime and readings.
+import { pmCancelStmts, pmCompleteStmts, pmReopenStmts } from './pm';
+import { priceLabourStmt } from './routes-setup';
+import { workOrderExtras } from './routes-parts';
+import { inSiteSql } from './m2util';
 import {
   JOB_TYPES,
   LOCKED,
@@ -253,6 +259,10 @@ workRoutes.get('/c/:company/work-orders', async (c) => {
     where.push('(w.search LIKE ? OR a.search LIKE ?)');
     args.push(likeOf(qp('q')), likeOf(qp('q')));
   }
+  if (qp('siteId')) {
+    where.push(inSiteSql('a'));
+    args.push(qp('siteId').slice(0, 64));
+  }
   const sort = SORTS[qp('sort')] ?? SORTS.due;
   const dir = qp('dir') === 'desc' ? 'DESC' : 'ASC';
   const limit = Math.min(Math.max(Number(qp('limit')) || 100, 1), 500);
@@ -309,8 +319,10 @@ workRoutes.get('/c/:company/work-orders/:id', async (c) => {
     comments: await commentsOf(db, a.companyId, 'work_order_id', w.id),
     files: await filesOf(db, a.companyId, 'work_order_id', w.id),
     history: (events.results as any[]).map(eventDTO),
+    ...(await workOrderExtras(db, a, w)),
     locked,
     can: {
+      seeCosts: isManager(a),
       edit: isManager(a) && !locked,
       work: work && !locked,
       complete: work && (OUTSTANDING as string[]).includes(w.status),
@@ -392,10 +404,13 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   const res = await db.batch([
     db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, a.companyId, w.id),
     stopAllTimers(db, a.companyId, w.id, t),
+    priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
     // Completing a work order completes the requests it was made from.
     db.prepare("UPDATE mt_requests SET status = 'completed', completed_at = ?, updated_at = ? WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(t, t, a.companyId, w.id),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed`, before: { status: w.status }, after: { status: 'completed', notes: input.notes }, at: t }),
     ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
+    // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
+    ...(await pmCompleteStmts(db, a.companyId, w, t, a.userId)),
   ]);
   if (!res[0].meta.changes) throw new HttpError(409, `${w.number} is not open any more`);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
@@ -416,6 +431,7 @@ workRoutes.post('/c/:company/work-orders/:id/reopen', async (c) => {
     commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Reopened: ${input.reason}`, at: t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.reopened', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} reopened: ${input.reason}`, before: { status: w.status, completedAt: w.completed_at, completedBy: w.completed_by, closedAt: w.closed_at, cancelledAt: w.cancelled_at }, after: { status, reason: input.reason }, at: t }),
     ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.reopened', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} is open again: work order ${w.number} was reopened`, before: { status: 'completed' }, after: { status: 'converted' }, at: t })),
+    ...(await pmReopenStmts(db, a.companyId, w, t)),
   ]);
   if (!res[0].meta.changes) throw new HttpError(409, `${w.number} changed while you were reopening it`);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
@@ -444,8 +460,10 @@ workRoutes.post('/c/:company/work-orders/:id/cancel', async (c) => {
   await db.batch([
     db.prepare(`UPDATE mt_work_orders SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(t, t, a.companyId, w.id),
     stopAllTimers(db, a.companyId, w.id, t),
+    priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
     commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Cancelled: ${input.reason}`, at: t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.cancelled', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} cancelled: ${input.reason}`, before: { status: w.status }, after: { status: 'cancelled', reason: input.reason }, at: t }),
+    ...(await pmCancelStmts(db, a.companyId, w, t, a.userId)),
   ]);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
@@ -583,6 +601,7 @@ workRoutes.post('/c/:company/work-orders/:id/timer/stop', async (c) => {
   const minutes = Math.max(0, Math.round((t - run.started_at) / 60000));
   await db.batch([
     db.prepare('UPDATE mt_labour SET ended_at = ?, minutes = ? WHERE id = ? AND ended_at IS NULL').bind(t, minutes, run.id),
+    priceLabourStmt(db, a.companyId, w.id, { labourId: run.id }, { entry: 'timer', t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'labour.recorded', assetId: w.asset_id, workOrderId: w.id, summary: `Timer stopped: ${minutes} min recorded`, after: { minutes }, at: t }),
   ]);
   return c.json({ id: run.id, startedAt: run.started_at, endedAt: t, minutes });

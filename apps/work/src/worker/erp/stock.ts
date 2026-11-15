@@ -21,9 +21,15 @@ import { HttpError, newId, now } from '../lib/util';
 import type { ErpAccess } from './access';
 import type { ErpSettings } from './settings';
 
-export type InType = 'receipt' | 'customer_return' | 'adjust_in' | 'count_in' | 'production_receipt' | 'production_return';
-export type OutType = 'issue' | 'supplier_return' | 'adjust_out' | 'count_out' | 'scrap' | 'production_issue' | 'production_scrap';
-export type SourceType = 'receipt' | 'issue' | 'transfer' | 'reservation' | 'adjustment' | 'customer_return' | 'supplier_return' | 'count' | 'quarantine' | 'scrap' | 'manufacturing_order';
+export type InType = 'receipt' | 'customer_return' | 'adjust_in' | 'count_in' | 'production_receipt' | 'production_return' | MaintenanceInType;
+export type OutType = 'issue' | 'supplier_return' | 'adjust_out' | 'count_out' | 'scrap' | 'production_issue' | 'production_scrap' | MaintenanceOutType;
+export type SourceType = 'receipt' | 'issue' | 'transfer' | 'reservation' | 'adjustment' | 'customer_return' | 'supplier_return' | 'count' | 'quarantine' | 'scrap' | 'manufacturing_order' | MaintenanceSourceType;
+
+// Release 4 (Maintenance, stage M3): spare parts issued to a maintenance work order and returned from it
+// (src/worker/maintenance/routes-parts.ts). Kept in their own block.
+export type MaintenanceInType = 'maintenance_return';
+export type MaintenanceOutType = 'maintenance_issue';
+export type MaintenanceSourceType = 'work_order';
 
 /** The note on a Finance posting recorded as planned (nothing is posted to Finance's ledger). */
 export const PLANNED_POSTING = 'Planned: Finance posting, not built yet';
@@ -50,6 +56,9 @@ export const MOVE_LABELS: Record<string, string> = {
   production_return: 'Returned from production',
   production_receipt: 'Finished goods from production',
   production_scrap: 'Scrapped in production',
+  // Release 4 (Maintenance)
+  maintenance_issue: 'Issued to maintenance',
+  maintenance_return: 'Returned from maintenance',
 };
 
 export interface StockKey {
