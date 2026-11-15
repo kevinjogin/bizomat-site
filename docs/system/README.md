@@ -55,8 +55,7 @@
 >   - goods receipts, manufacturing orders, traceability and the supplier page show their inspections and NCRs;
 >   - nothing is written to Finance: scrap and returns under an NCR record their posting as planned, as every stock
 >     movement does.
-> - **ERP Release 5 part A, supply chain and logistics** (built on the branch `erp-release-5-supply-chain`, not
->   deployed; `docs/erp/release-5-supply-chain.md`, migration `0025_erp_supply_chain.sql`, the same API):
+> - **ERP Release 5 part A, supply chain and logistics** (live since 15 Nov 2026, kevinjogin/bizomat-site#70; `docs/erp/release-5-supply-chain.md`, migration `0025_erp_supply_chain.sql`, the same API):
 >   - Supply Chain at `/erp/c/<company>/supply-chain`, in the company's side menu and on the Operations page: the
 >     overview, sales orders (for the company's CRM and Finance customer record, nothing copied), pick and dispatch for
 >     phones, shipments, the delivery schedule, returns and carriers;
@@ -77,7 +76,7 @@
 >   company. The maintenance run makes any that are still missing, up to 5,000 a day.
 > - **The public website** describes the software as **Systems** at `/systems/` (`src/config/systems.ts`):
 >   - one page and one user guide per system;
->   - Manufacturing and Operations is Available once Release 5 part A is deployed (every module works; what is not
+>   - Manufacturing and Operations is Available since Release 5 part A was deployed (every module works; what is not
 >     built inside them is labelled Planned), with its own guide at `/systems/manufacturing/guide/`;
 >   - the old product pages answer 301 there (`public/_redirects`).
 >
