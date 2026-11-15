@@ -95,8 +95,6 @@ rate-based repetitive schedules.
 - Whether BIZOMAT Manufacturing and Operations should change from Planned to "Available, some modules planned" once
   Release 3 is deployed (Procurement, Inventory, Manufacturing and Maintenance's first stage would then work). It stays
   Planned in `src/config/systems.ts` until the owner says so.
-- The Engine Room's "What it combines" card for Maintenance says "The rest of Operations is planned", which has not been
-  true since Release 2. It is outside the founder's letter and was left as it is.
 - Existing example companies are not changed: their owners can remove and remake them in Administration to see
   Release 3's example records. Say if they should be offered that more visibly.
 - The over-completion tolerance is 0% by default (completing more than the order is refused). Say if another default
