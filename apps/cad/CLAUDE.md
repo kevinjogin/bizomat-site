@@ -309,8 +309,10 @@ released; development-signed), never overwritten.
   No password secret is needed on Fly (fly.toml sets OPENSKETCH_PUBLIC_URL, so a fresh server waits in setup mode);
   an old OPENSKETCH_PASSWORD secret can be unset. The Windows PC server (`windows/`) is the other way to run it.
 - fly.toml: app `cados`, `primary_region = 'ams'`, shared-cpu-2x with 2 GB (the live Machine; it said syd and performance-1x
-  until 9 Nov 2026), `auto_stop_machines = "suspend"`, kill_timeout 15, volume
-  `opensketch_data` at /data. The add-in's long poll keeps the machine awake while SOLIDWORKS is linked.
+  until 9 Nov 2026), always on since 14 Nov 2026 (`auto_stop_machines = "off"`, `min_machines_running = 1`), kill_timeout 15,
+  volume `opensketch_data` at /data. It was `suspend` before: bizomat.ai/cad and the computers' long polls reach it over
+  Fly's private network from the app bizomat, which does not count as traffic and cannot wake it, so it slept and
+  bizomat.ai/cad answered 502. Sleeping again needs Flycast between the router and this app.
 - `supervisor.py` (`python -m opensketch --supervise`, the image's CMD): asks /healthz every 5 s, restarts the server
   after 120 s without an answer (stacks to the log first), tells a suspended machine from a hang. With
   OPENSKETCH_PERSIST_URL it first restores the data folder from an object store and copies changes back

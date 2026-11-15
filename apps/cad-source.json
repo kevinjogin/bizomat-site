@@ -1,7 +1,7 @@
 {
   "repository": "kevinjogin/bizomat-cad",
-  "commit": "9fe29c0948f8aaf01b99d461a9a86d42048f9931",
-  "tree": "c553bb4cfc21a7c8ed53ce8815279ee5d636b290",
-  "subject": "BIZOMAT menu and footers: Systems instead of Project Management (#5)",
+  "commit": "f61adba94bb690f1c7d8f820c4f3e32e7514defd",
+  "tree": "7e48574d756c0a0458720afd655603ef26519261",
+  "subject": "cados stays on: bizomat.ai/cad reaches it over the private network, which cannot wake it (#6)",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }
