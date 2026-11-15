@@ -103,3 +103,70 @@
   .mt-table td:empty { display: none; }
   .mt-table .mt-desc { max-width: none; }
 }
+
+/* Stages M2 and M3: preventive calendar, checklists, inspections, prestarts, scanning, labels, parts, labour, meters. */
+.mt-linkbtn { border: 0; background: none; padding: 0; color: var(--accent); cursor: pointer; text-align: left; font: inherit; font-weight: 600; }
+.mt-linkbtn:hover { text-decoration: underline; }
+.mt-field-end { align-self: end; }
+.mt-pm-note { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: -6px 0 6px; }
+.mt-cal { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mt-cal-row { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.mt-cal-date { flex: 0 0 110px; font-variant-numeric: tabular-nums; font-weight: 600; }
+.mt-items { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mt-item { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; display: grid; gap: 6px; }
+.mt-item-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(120px, 1fr) repeat(3, minmax(80px, 0.7fr)); gap: 8px; align-items: end; }
+.mt-item-grid .field { margin: 0; }
+.mt-item-tools { margin-left: auto; gap: 2px; }
+.mt-flip { transform: rotate(180deg); }
+.mt-insp { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; display: grid; gap: 8px; margin-bottom: 10px; }
+.mt-insp.failed { border-color: var(--danger); }
+.mt-insp.passed { border-color: var(--success, var(--accent)); }
+.mt-insp-items { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.mt-insp-items li.failed > .row { color: var(--danger); }
+.mt-passfail { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.mt-issue { display: grid; gap: 8px; margin-top: 8px; }
+.mt-labour-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; align-items: end; margin-top: 8px; }
+.mt-labour-form .field { margin: 0; }
+.mt-labour-form .mt-labour-note { grid-column: span 2; }
+.mt-qr { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-top: 8px; }
+.mt-qr img { width: 120px; height: auto; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
+.mt-meters { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mt-meter-row { display: grid; gap: 4px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.mt-bar { width: 80px; height: 8px; vertical-align: middle; }
+
+/* Phone screens: prestart and scan. Large targets, one column. */
+.mt-phone { max-width: 640px; }
+.mt-scan-row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+.mt-scan-row .field { margin: 0; flex: 1 1 220px; }
+.mt-scan-input { font-size: 18px; height: 48px; }
+.mt-camera { width: 100%; max-height: 50vh; border-radius: var(--radius); background: #000; object-fit: cover; }
+.mt-check { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mt-check-item { display: grid; gap: 10px; border-left: 4px solid var(--border); }
+.mt-check-item.passed { border-left-color: var(--success, var(--accent)); }
+.mt-check-item.failed { border-left-color: var(--danger); }
+.mt-check-label { font-weight: 600; display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+.mt-check .mt-passfail .btn { min-height: 48px; min-width: 120px; font-size: 16px; justify-content: center; }
+.mt-reading-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 8px; }
+.mt-result.failed { border-left: 4px solid var(--danger); }
+.mt-result.passed { border-left: 4px solid var(--success, var(--accent)); }
+
+/* QR label sheet: prints without the app around it. */
+.mt-labels { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.mt-label { margin: 0; border: 1px dashed var(--border); border-radius: var(--radius); padding: 8px; display: grid; gap: 4px; justify-items: center; text-align: center; break-inside: avoid; background: #fff; color: #0a1f33; }
+.mt-label img { width: 140px; height: auto; }
+.mt-label figcaption { display: grid; gap: 2px; overflow-wrap: anywhere; }
+@media print {
+  .mt-no-print, .mt-tabs, .page-header { display: none !important; }
+  .mt-labels { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .mt-item-grid { grid-template-columns: 1fr 1fr; }
+  .mt-item-grid .mt-item-label { grid-column: 1 / -1; }
+  .mt-check .mt-passfail { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .mt-check .mt-passfail .btn { min-width: 0; }
+  .mt-reading-row { grid-template-columns: 1fr; }
+  .mt-labour-form { grid-template-columns: 1fr 1fr; }
+  .mt-cal-date { flex-basis: 100%; }
+  .mt-scan-row .btn { flex: 1 1 auto; height: 48px; }
+}

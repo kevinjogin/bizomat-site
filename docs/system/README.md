@@ -12,6 +12,10 @@
 >   Products and Engineering opens `/erp/products` (the company used last).
 > - **Maintenance** (Asset Management and Maintenance, Stage M1): the asset register, requests and work orders of
 >   each company, at `/erp/c/<company>/maintenance` (`docs/maintenance/README.md`, migration `0018_maintenance.sql`).
+>   Stages M2 and M3 (Release 4, part B; migration `0024_maintenance_m2_m3.sql`; built on the branch
+>   `erp-release-4-maintenance`, **not deployed**) add the tabs Preventive, Checklists, Prestart, Scan and Reports:
+>   preventive maintenance made into work orders by the 15-minute run, readings, inspections, prestart checks, parts
+>   through ERP Inventory, labour costs, downtime, sites, QR labels and the reliability reports.
 > - **ERP Release 1** (live since 14 Nov 2026; `docs/erp/release-1.md`, status by release in `docs/erp/STATUS.md`,
 >   migration `0020_erp_engineering_procurement.sql`, API `/api/erp`):
 >   - Products and Engineering at `/erp/c/<company>/products`: products and variants, multi-level bills of materials,
@@ -134,7 +138,10 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - a Projects and Tasks workspace: two example projects, a dashboard, a brief and favourites;
   - a Sales and CRM organisation: three companies, contacts, deals, two leads and two activities;
   - a Finance business workspace: an opening balance, four transactions, a customer and a draft quote;
-  - Maintenance: a seven-asset hierarchy, three requests and two work orders;
+  - Maintenance: a seven-asset hierarchy, three requests and two work orders; with stages M2 and M3 (not deployed), a
+    site, trades and a rate, a meter and a gauge with readings, schedules (one that made and completed its work order),
+    an inspection with a failed item, a store with spare bolts issued, a breakdown with downtime and a prestart.
+    Example companies made before them are not changed;
   - Products and Engineering and Procurement (ERP Release 1): a shelf bracket kit with a variant and a two-level bill of
     materials released through a change order (the one-person exception recorded), a change request, a draft change
     order, a CAD reference and two suppliers, one approved. Example companies made before Release 1 are not changed.

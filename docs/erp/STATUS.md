@@ -13,6 +13,10 @@ Release 4 part A (quality) is built on the branch `erp-release-4-quality` (migra
 production does not have it until it is reviewed, merged and deployed. Rows marked "Release 4 (not deployed)" work in
 that branch, with their tests passing.
 
+Release 4 part B (Maintenance stages M2 and M3) is built and tested on the branch `erp-release-4-maintenance`
+(migration 0024) and is **not deployed**: rows marked "Release 4 Maintenance (not deployed)" work in that branch only,
+until it is reviewed, merged and deployed.
+
 ## Working
 
 Built, tested and live at `bizomat.ai/erp`, unless marked "(not deployed)".
@@ -63,6 +67,13 @@ Built, tested and live at `bizomat.ai/erp`, unless marked "(not deployed)".
 | **Release 4 (not deployed)**: Traceability | A lot's or serial's inspections and NCRs in its trace | Scenario E |
 | **Release 4 (not deployed)**: Reports | Inspection results, rejection rates by product and supplier, supplier defects (also on the supplier page, read only), NCR register and ageing, corrective actions and overdue, rework, cost of poor quality from scrap and rework records; Operations hub counts | Reports with exact numbers and CSV (workerd and Node) |
 | **Release 4 (not deployed)**: Example company | A released incoming plan, a failed inspection, an NCR with containment and root cause, a corrective action in progress | Example company tests (workerd and Node) |
+| **Release 4 Maintenance (not deployed)**: Preventive maintenance | Schedules per asset and templates per asset class; time (from completion or fixed dates), meter and condition triggers; one work order per due occurrence, unique in the database, from the cron, the button and readings; the next due moves on at completion; the calendar | Scenario F; idempotency (cron twice, three runs at once), meter, condition and compliance tests (workerd and Node) |
+| **Release 4 Maintenance (not deployed)**: Meters and readings | Meters and gauges with expected ranges and rollover; readings by hand, from a work order or a prestart; backwards only as a reset; life totals | Meter and condition trigger tests |
+| **Release 4 Maintenance (not deployed)**: Inspections and prestarts | Inspection templates; inspections on work orders; a failed inspection's follow-up made once; prestart checks on a phone; a failed critical item sets the asset out of service (recorded) and raises a request | Follow-up concurrency test; prestart test; Chromium at 390 |
+| **Release 4 Maintenance (not deployed)**: Parts through Inventory | Maintenance stores are ERP warehouses; parts issued and returned through StockOps (`maintenance_issue`, `maintenance_return`); a concurrent last-unit issue refused; technicians issue to their own work orders only; parts cost on the work order; Finance posting recorded as planned | Parts tests (workerd and Node) |
+| **Release 4 Maintenance (not deployed)**: Trades, labour costs, downtime, sites, QR | Trades and rates, time entered by hand, labour priced when recorded; downtime; sites with site filters; QR labels and the scan lookup | Scenario F (exact costs); sites test; scan test |
+| **Release 4 Maintenance (not deployed)**: Reports | Reliability (MTBF, MTTR, downtime, availability), backlog, PM compliance, breakdown trends, asset costs; drill-down, site and period filters, CSV | Exact-number tests |
+| **Release 4 Maintenance (not deployed)**: Example company | A site, rates, a meter with readings, a schedule that made and completed its work order, an inspection with a failed item, a store with a part issued, a breakdown with downtime and a prestart | Example company tests (workerd and Node) |
 
 ## In development
 
@@ -86,7 +97,7 @@ Built, tested and live at `bizomat.ai/erp`, unless marked "(not deployed)".
 | Release | What |
 | --- | --- |
 | Release 3 | Live: see Working. Posting stock and production value to Finance's ledger waits for the owner's decision (Blocked) |
-| Release 4 | Part A, quality: built (not deployed), see Working; statistical process control, calibration, quality audits, product compliance and the appraisal and external failure costs of poor quality stay planned. The later Maintenance stages (M2 to M4) |
+| Release 4 | Part A, quality: built (not deployed), see Working; statistical process control, calibration, quality audits, product compliance and the appraisal and external failure costs of poor quality stay planned. Part B, Maintenance stages M2 and M3: built (not deployed), see Working; Maintenance M4 stays planned: the AI scheduling assistant, workload planning, offline field work, predictive maintenance and IoT feeds, and maintenance costs posted to Finance |
 | Release 5 | Supply chain (sales orders, deliveries, shipments, returns) and the cross-module analytics and AI listed in `docs/erp/architecture/15-erp-roadmap-2026.md` |
 
 Also planned, not in a numbered release yet: three-way matching against the supplier's own invoice, pick lists, packing
@@ -132,3 +143,7 @@ rate-based repetitive schedules.
   card lists quality beside procurement, inventory and manufacturing. Say if the letter should be worded otherwise.
 - BIZOMAT Manufacturing and Operations still says Planned in `src/config/systems.ts`, now with Quality also working
   inside the ERP once Release 4 is deployed.
+- Release 4 Maintenance (branch `erp-release-4-maintenance`, migration 0024, additive): merge and deploy. Its own
+  decisions are in `docs/maintenance/README.md` ("Decisions to confirm with the owner"): the automatic out-of-service on
+  a failed critical prestart item, who may record prestarts and readings, one outstanding preventive work order per
+  schedule, how labour rates resolve, parts only from marked stores, and maintenance costs in Finance.

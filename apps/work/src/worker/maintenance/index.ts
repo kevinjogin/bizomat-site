@@ -9,6 +9,8 @@
 //   GET   /c/:company/roles, PUT /roles/:user maintenance roles (administrators)
 //   PATCH /c/:company/settings                the approval rule (administrators)
 //   assets, requests, work orders and files:  routes-assets.ts, routes-requests.ts, routes-work.ts, routes-files.ts
+//   stages M2 and M3: pm.ts (preventive maintenance), routes-meters.ts, routes-inspections.ts (templates, inspections,
+//   prestarts), routes-parts.ts (parts, labour, downtime), routes-setup.ts (sites, trades, stores, QR, scan), reports.ts
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -20,6 +22,14 @@ import { assetRoutes } from './routes-assets';
 import { requestRoutes, requireApproval } from './routes-requests';
 import { workRoutes } from './routes-work';
 import { fileRoutes } from './routes-files';
+// Stages M2 and M3 (ERP Release 4, part B): preventive maintenance, meters and readings, inspections and prestarts,
+// parts from ERP Inventory, labour costs and downtime, sites, trades, stores, QR labels and reports.
+import { pmRoutes } from './pm';
+import { meterRoutes } from './routes-meters';
+import { inspectionRoutes } from './routes-inspections';
+import { partsRoutes } from './routes-parts';
+import { setupRoutes } from './routes-setup';
+import { reportRoutes } from './reports';
 import { OPEN_REQUESTS, OUTSTANDING, eventDTO, eventStmt, sqlList, todayFrom } from './util';
 
 export const maintenanceRoutes = new Hono<AppEnv>();
@@ -54,6 +64,13 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
       manageWork: isManager(a),
       decide: isManager(a),
       roles: a.role === 'admin',
+      // stages M2 and M3
+      managePm: isManager(a),
+      manageSetup: isManager(a),
+      manageStores: a.role === 'admin',
+      reports: isManager(a),
+      readings: true,
+      prestart: true,
     },
   });
 });
@@ -92,6 +109,13 @@ maintenanceRoutes.get('/c/:company/overview', async (c) => {
   const w = (counts.results[0] ?? {}) as any;
   const r = (reqs.results[0] ?? {}) as any;
   const s = (assets.results[0] ?? {}) as any;
+  // Stages M2 and M3: preventive work outstanding and overdue, assets down now, prestart checks failed in the last day.
+  const [pm, down] = await db.batch([
+    db.prepare(`SELECT COUNT(*) AS open, SUM(CASE WHEN w.due_finish IS NOT NULL AND w.due_finish < ? THEN 1 ELSE 0 END) AS overdue FROM mt_pm_occurrences o JOIN mt_work_orders w ON w.company_id = o.company_id AND w.id = o.work_order_id WHERE o.company_id = ? AND o.open_slot = 1 AND ${wo.sql}`).bind(today, a.companyId, ...wo.args),
+    db.prepare("SELECT (SELECT COUNT(DISTINCT asset_id) FROM mt_downtime WHERE company_id = ?1 AND ended_at IS NULL) AS down, (SELECT COUNT(*) FROM mt_prestarts WHERE company_id = ?1 AND result = 'failed' AND performed_at > ?2) AS failed").bind(a.companyId, Date.now() - 86_400_000),
+  ]);
+  const pmRow = (pm.results[0] ?? {}) as any;
+  const downRow = (down.results[0] ?? {}) as any;
   const running = await db
     .prepare('SELECT l.work_order_id, l.started_at, w.number FROM mt_labour l JOIN mt_work_orders w ON w.company_id = l.company_id AND w.id = l.work_order_id WHERE l.company_id = ? AND l.user_id = ? AND l.ended_at IS NULL ORDER BY l.started_at')
     .bind(a.companyId, a.userId)
@@ -112,6 +136,10 @@ maintenanceRoutes.get('/c/:company/overview', async (c) => {
     assets: s.n ?? 0,
     assetsDown: s.down ?? 0,
     myTimers: running.results.map((x) => ({ workOrderId: x.work_order_id, number: x.number, startedAt: x.started_at })),
+    preventiveOpen: pmRow.open ?? 0,
+    preventiveOverdue: pmRow.overdue ?? 0,
+    assetsDownNow: downRow.down ?? 0,
+    prestartsFailed: downRow.failed ?? 0,
   });
 });
 
@@ -164,3 +192,9 @@ maintenanceRoutes.route('/', assetRoutes);
 maintenanceRoutes.route('/', requestRoutes);
 maintenanceRoutes.route('/', workRoutes);
 maintenanceRoutes.route('/', fileRoutes);
+maintenanceRoutes.route('/', pmRoutes);
+maintenanceRoutes.route('/', meterRoutes);
+maintenanceRoutes.route('/', inspectionRoutes);
+maintenanceRoutes.route('/', partsRoutes);
+maintenanceRoutes.route('/', setupRoutes);
+maintenanceRoutes.route('/', reportRoutes);

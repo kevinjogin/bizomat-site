@@ -9,6 +9,7 @@ import { processOutbox } from './services/email/outbox';
 import { runCrmScheduled } from './crm';
 import { financeHousekeeping, runFinanceScheduled } from './fin';
 import { recheckPendingAbns } from './company/routes';
+import { generateDue } from './maintenance/pm';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -31,6 +32,14 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.finance = await runFinanceScheduled(env, at, waitUntil);
   } catch (e) {
     results.finance = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // Maintenance: preventive maintenance work orders that have come due, in every company (idempotent: one work order per
+  // schedule and due occurrence, however often or concurrently this runs).
+  try {
+    const pm = await generateDue(env.DB, { today: new Date(at).toISOString().slice(0, 10), actorId: null });
+    results.maintenancePm = { made: pm.made.length, skipped: pm.skipped };
+  } catch (e) {
+    results.maintenancePm = { error: e instanceof Error ? e.message : 'failed' };
   }
   // Companies: ABNs not yet looked up on the Australian Business Register (only when ABR_GUID is set), a few a run.
   try {
