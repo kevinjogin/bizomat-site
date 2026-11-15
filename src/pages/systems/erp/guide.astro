@@ -4,7 +4,7 @@
 // crm/CompanyLinks.tsx); facts come from docs/system/README.md and docs/company/README.md. Registration checks say only
 // what they prove (CLAUDE.md): the ABN is looked up on the register only when that lookup is switched on, and phone
 // numbers are checked against the numbering plan, never "verified". Screens are real (src/data/screenshots.ts); the
-// Operations screen shows the planned modules and is described as such. Markup follows the CRM guide.
+// Operations screen shows the planned modules and is described as such. Quality (Release 4 part A): docs/erp/release-4-quality.md. Markup follows the CRM guide.
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -227,7 +227,7 @@ const parts: Part[] = [
       { t: 'Draft the order', x: 'In Orders, choose New order: the product (it needs a released bill of materials and routing), quantity, required date, method, priority and the customer or job. The order lists its materials with their scrap allowance, its operations, and its estimated cost by element.' },
       { t: 'Release it', x: 'Choose Release. Shortages are shown, materials are reserved as far as stock allows, and the operations are scheduled over each work centre\'s calendar. Amend a released order with a reason: the version before is kept.' },
       { t: 'Issue materials', x: 'Choose Issue materials and where each comes from: the order\'s reservations are taken first. Two people cannot both take the last unit. Return unused materials at the cost they went out at.' },
-      { t: 'Run the shop floor', x: 'On a phone, open Shop floor and choose your work centre. Start a job, run your timer, and report good output, scrap or downtime with a reason. An inspection point needs a pass or fail before the operation completes; full Quality is planned.', st: 'live' },
+      { t: 'Run the shop floor', x: 'On a phone, open Shop floor and choose your work centre. Start a job, run your timer, and report good output, scrap or downtime with a reason. An inspection point needs a pass or fail before the operation completes: record it here, or choose Full inspection to inspect to a plan in Quality, which records it when completed.', st: 'live' },
       { t: 'Receive and close', x: 'Choose Receive finished goods once the last operation reports them good: they enter stock at the order\'s actual cost, never more than the order allows. Complete the order, then Close it: the costs become final and the variances are recorded.' },
       { t: 'Costs and Finance', x: 'Costs compares estimated and actual by element: materials, labour, machine, outsourcing, overheads, scrap and rework. Production value is not posted to Finance\'s ledger: each posting is recorded as planned. Job profitability waits for sales orders.', st: 'planned' },
     ],
@@ -246,10 +246,27 @@ const parts: Part[] = [
     shot: 'erp-mrp',
   },
   {
-    id: 'planned', title: 'What is not built yet', st: 'planned',
-    lead: 'Operations in the rail shows what waits for you, then lists the modules. Those labelled Planned are designed but not built: they do not work yet or keep data. Procurement, Inventory, Manufacturing, the first stage of Maintenance and the product and engineering records work today.',
+    id: 'quality', title: 'Checking quality', st: 'live',
+    lead: 'Quality (in the side menu, or from Operations) has five tabs: Overview, Inspections, Nonconformances, Corrective actions and Inspection plans. Quality inspectors record inspections; a quality manager releases plans, decides dispositions, and approves and closes corrective actions.',
     steps: [
-      { t: 'Planned modules', x: 'Quality (with inspection of goods flagged on receipt, and inspection plans and nonconformances for production) and Supply Chain. Each is labelled Planned.', st: 'planned' },
+      { t: 'Write an inspection plan', x: 'In Inspection plans, choose New inspection plan: its kind (incoming, first article, in-process, final, supplier or product) and what it applies to: a product, a supplier, or an operation of a routing. Add its characteristics: a dimension or measured value with its unit, nominal and tolerance or minimum and maximum, an attribute (pass or fail) or a visual check, how many samples, and whether a photo is needed. A quality manager chooses Release; New version starts the next one.' },
+      { t: 'Mark what needs checking', x: 'On a product\'s stock page, Stock settings, tick inspection on receipt. Its goods receipts then wait on the Quality overview, with inspection points of operations in progress and finished goods of products with a released final plan.' },
+      { t: 'Inspect on a phone', x: 'Choose Start inspection. The best released plan for it is used: each characteristic is a card with a box for each sample. Type each reading, or choose Conforms or Does not, add a photo where asked, and choose Save. Each reading is checked against its limits on the server.' },
+      { t: 'Complete it', x: 'Choose Complete. The result is worked out from the readings: passed, or failed when any reading is outside its limits. A failed lot can go into quarantine in the same step. A quality manager can accept a failed lot on condition, with the reason, and release it.' },
+      { t: 'Raise a nonconformance', x: 'From a failed inspection choose Raise a nonconformance, or raise one by hand: the product, lot, quantity, supplier, order, a Maintenance asset or a process, and how severe it is. Record the containment, and the root cause by five whys or in your own words.' },
+      { t: 'Decide the disposition', x: 'A quality manager decides once how much is used as is, reworked, repaired, scrapped, returned to the supplier or regraded, then carries it out: scrap and returns leave stock, a release moves it out of quarantine, rework is written as a note. Two people cannot carry out the same part twice.' },
+      { t: 'Corrective and preventive actions', x: 'Choose Propose an action: what to do, who does it and by when. A quality manager who neither proposed it nor is to do it approves it. The responsible person starts it, adds evidence and marks it done; a quality manager checks it worked and closes it. Overdue actions show on the Quality overview.' },
+      { t: 'Verify and close', x: 'Once the disposition is carried out and its actions are verified, choose Ready for verification, then Verify and close, saying how the fix was checked.' },
+      { t: 'Trace and report', x: 'A lot\'s traceability lists its inspections and nonconformances. Reports has inspection results, rejection rates by product and supplier, supplier defects, the NCR register with its ageing, corrective actions, rework and the cost of poor quality.' },
+    ],
+    shot: 'erp-quality-inspection',
+  },
+  {
+    id: 'planned', title: 'What is not built yet', st: 'planned',
+    lead: 'Operations in the rail shows what waits for you, then lists the modules. Those labelled Planned are designed but not built: they do not work yet or keep data. Procurement, Inventory, Manufacturing, Quality, the first stage of Maintenance and the product and engineering records work today.',
+    steps: [
+      { t: 'Planned modules', x: 'Supply Chain. It is labelled Planned.', st: 'planned' },
+      { t: 'Not yet in Quality', x: 'Statistical process control, calibration, quality audits, product compliance, and the appraisal and external failure costs of poor quality.', st: 'planned' },
       { t: 'Later in Maintenance', x: 'Preventive maintenance, readings, inspections, prestart checklists, spare parts, scanning, several sites, workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, reliability reporting and offline field work.', st: 'planned' },
       { t: 'Not yet in Manufacturing', x: 'Posting production value to Finance\'s ledger, job profitability, finite scheduling and a drag-and-drop planning board.', st: 'planned' },
     ],
@@ -268,6 +285,7 @@ const questions = [
   { q: 'Who can raise a maintenance request?', a: 'Everyone in a registered company: choose Report a fault at the foot of the rail. In your own company, you are its only person. People who were only shared a tool with the company cannot see its maintenance.' },
   { q: 'Can a technician see every work order?', a: 'No. A technician sees the work orders assigned to them. Supervisors and administrators see them all; a requester sees the work order made from their own request.' },
   { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'Yes: requisitions, quotations, purchase orders, goods receipts, warehouses, stock, counts and valuation work today, and so do manufacturing orders, routings, the shop floor, MRP and job costing. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can I approve my own corrective action?', a: 'Not in a company of several people: a quality manager who neither proposed it nor is responsible for it approves it, and one who did not carry it out closes it. In your own company, where you are the only person, you may, and the exception is recorded on the action.' },
   { q: 'Can I approve my own purchase order?', a: 'Within the company\'s approval limit a buyer\'s order is approved when submitted. Above it, someone else with the Procurement manager role approves. In your own company, where you are the only person, you may, and the exception is recorded on the order.' },
 ];
 

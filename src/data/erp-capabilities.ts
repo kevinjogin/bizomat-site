@@ -45,8 +45,16 @@
 //     cost, the shop floor, the master production schedule, MRP, rough-cut capacity, job costing by element and the
 //     manufacturing reports (apps/work/src/worker/erp, migration 0022_erp_manufacturing.sql; Scenario D and the rule
 //     tests in apps/work/test/erp-r3.test.ts and test-node/erp-r3.test.ts). Production value postings to Finance's
-//     ledger, job profitability, finite scheduling and full Quality: planned.
-//   Everything else (sales orders, quality, supply chain, service, human capital): docs/erp/architecture/02 to 10.
+//     ledger, job profitability and finite scheduling: planned.
+//   ERP Release 4 part A (owner's brief of 14 Nov 2026, Release 4, quality management; built on the branch
+//     erp-release-4-quality, live once merged and deployed): inspection plans with versions and characteristics,
+//     inspections of goods receipts, manufacturing operations, finished goods and suppliers with the result worked out
+//     from the limits, quarantine and release, nonconformance reports with containment, root cause and dispositions,
+//     corrective and preventive actions, traceability of a lot's inspections and NCRs, and seven quality reports
+//     (apps/work/src/worker/erp/quality.ts, ncr.ts, quality-reports.ts, migration 0023_erp_quality.sql; Scenario E and the
+//     rule tests in apps/work/test/erp-r4-quality.test.ts and test-node/erp-r4-quality.test.ts). SPC, calibration,
+//     quality audits and product compliance: planned.
+//   Everything else (sales orders, supply chain, service, human capital): docs/erp/architecture/02 to 10.
 //     Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
 // language, no file paths, no repository names.
@@ -284,21 +292,21 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'quality',
     name: 'Quality management',
     summary: 'Inspections, nonconformances and corrective actions, from suppliers to finished products.',
-    servedBy: 'BIZOMAT ERP Quality (planned module)',
+    servedBy: 'BIZOMAT ERP Quality',
     features: [
-      cap('Supplier quality', 'planned'),
-      cap('Incoming inspection', 'planned'),
-      cap('In-process inspection', 'planned', 'A routing operation can be an inspection point recording a pass or fail with a note. Inspection plans, results by characteristic and nonconformances come with Quality.'),
-      cap('Final inspection', 'planned'),
-      cap('Quality plans', 'planned'),
-      cap('Nonconformance reports (NCR)', 'planned'),
-      cap('Corrective and preventive actions (CAPA)', 'planned', 'Actions will be tasks in Projects.'),
+      cap('Supplier quality', 'live', 'Supplier inspections, failed incoming inspections and nonconformances per supplier, goods returned to it, and its quality shown on the supplier page.'),
+      cap('Incoming inspection', 'live', 'Goods received for products that need inspection wait for it. Readings per characteristic and sample; a failed lot can go into quarantine in the same step.'),
+      cap('In-process inspection', 'live', 'An inspection point of a manufacturing operation can be a full inspection to a plan; completing it records the operation\'s pass or fail.'),
+      cap('Final inspection', 'live', 'Finished goods received from a manufacturing order wait for a final inspection when the product has a released final plan.'),
+      cap('Quality plans', 'live', 'Inspection plans with versions, released by a quality manager: dimensions and measured values with limits, attributes, visual checks, sample sizes and photos.'),
+      cap('Nonconformance reports (NCR)', 'live', 'Containment, root cause by five whys or free text, a disposition decided once by a quality manager and carried out through stock (scrap, return to supplier, release), verification and closure.'),
+      cap('Corrective and preventive actions (CAPA)', 'live', 'A responsible person, a due date and evidence; approved and closed by a quality manager who did not propose or do it. Overdue actions show on the Quality overview.'),
       cap('Statistical process control (SPC)', 'planned'),
       cap('Calibration', 'planned'),
       cap('Quality audits', 'planned'),
-      cap('Traceability', 'planned'),
+      cap('Traceability', 'live', 'A lot or serial number\'s inspections and nonconformances, beside where it came from and every movement.'),
       cap('Product compliance', 'planned'),
-      cap('Quality reporting', 'planned'),
+      cap('Quality reporting', 'live', 'Inspection results, rejection rates by product and supplier, supplier defects, the NCR register and ageing, corrective actions, rework, and the cost of poor quality from scrap and rework records.'),
     ],
   },
   {
