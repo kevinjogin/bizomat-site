@@ -16,7 +16,7 @@ These were checked on 14 Nov 2026 from the configuration in both repositories an
 | `bizomat` web (syd) | shared-cpu-1x, 512 MB | always | The website, a static Node server |
 | `bizomat` work (syd) | shared-cpu-1x, 512 MB | always | The ERP and every tool, SQLite on the volume |
 | `work_data` volume | 3 GB | always | Daily snapshots, kept 30 days |
-| `cados` (ams) | shared-cpu-2x, 2 GB | suspends when idle | CAD Automation. A paired computer's Companion keeps it awake while that computer is on |
+| `cados` (ams) | shared-cpu-2x, 2 GB | always on (since 14 Nov 2026) | CAD Automation. It used to suspend when idle, but bizomat.ai reaches it over Fly's private network, which cannot wake it: it slept at 22:33 UTC on 14 Nov and bizomat.ai/cad answered 502 (kevinjogin/bizomat-cad#6) |
 | `opensketch_data` volume | 1 GB | always | |
 | GitHub Actions | runner minutes | per push | Free for public repositories (both are public since 14 Nov 2026) |
 
@@ -37,13 +37,17 @@ the authority.
 
 ## Options, by saving (each needs the owner's go-ahead: CLAUDE.md forbids Machine changes without it)
 
-1. **CAD Automation suspends whenever SOLIDWORKS is closed.**
-   - **Today:** the Companion long-polls the gateway whenever the computer is on, so `cados` never suspends during
-     the day.
-   - **Change:** if the Companion holds the link only while SOLIDWORKS is running, the Machine sleeps the rest of the
-     time.
-   - **Saving:** in proportion to the hours SOLIDWORKS is closed.
-   - **Where:** a change in kevinjogin/bizomat-cad (the Companion and the gateway); no infrastructure change.
+1. **Let CAD Automation sleep safely when nobody uses it.**
+   - **Today:** always on, because bizomat.ai/cad reaches it over Fly's private network (`cados.internal`), which
+     neither counts as traffic nor wakes a suspended Machine.
+   - **Change:**
+     1. The owner allocates a private Flycast address for cados (`fly ips allocate-v6 --private -a cados`).
+     2. `UPSTREAM_CAD` on bizomat points at it.
+     3. cados goes back to `suspend`. Traffic through Flycast passes Fly's proxy, so it counts and wakes the Machine.
+     4. Then the Companion holds its link only while SOLIDWORKS runs, so the Machine can sleep the rest of the time.
+   - **Saving:** in proportion to the hours nobody uses CAD Automation.
+   - **Where:** an address the owner allocates once, a setting in `fly.website.toml`, cados's `fly.toml`, and later
+     the Companion in kevinjogin/bizomat-cad.
 2. **`cados` from 2 GB to 1 GB.**
    - **Saving:** about half of its running cost.
    - **Risk:** each CAD geometry worker may use up to 800 MB, and large models could run out of memory.
