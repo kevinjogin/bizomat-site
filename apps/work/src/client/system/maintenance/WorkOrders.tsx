@@ -30,6 +30,7 @@ import {
 import { Comments, FileList, FilterPanel, History, PriorityBadge, Props, RequestBadge, Section, UploadButton, WoBadge, options } from './common';
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
 import { ReasonDialog } from './Requests';
+import { DowntimeSection, InspectionsSection, LabourSection, PartsSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
 
 const OUTSTANDING = ['open', 'assigned', 'in_progress', 'on_hold'];
 
@@ -283,8 +284,10 @@ interface WoView {
   files: MtFile[];
   history: MtEvent[];
   locked: boolean;
-  can: { edit: boolean; work: boolean; complete: boolean; reopen: boolean; close: boolean; cancel: boolean };
+  can: { edit: boolean; work: boolean; complete: boolean; reopen: boolean; close: boolean; cancel: boolean; seeCosts?: boolean };
 }
+
+type WoDetail = WoView & WoExtras;
 
 function useTick(on: boolean) {
   const [, set] = useState(0);
@@ -305,7 +308,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   const qc = useQueryClient();
   const toast = useToast();
   const confirm = useConfirm();
-  const q = useQuery({ queryKey: ['mt', companyId, 'work-order', workOrderId], queryFn: () => get<WoView>(mtPath(companyId, `/work-orders/${workOrderId}`)), retry: false });
+  const q = useQuery({ queryKey: ['mt', companyId, 'work-order', workOrderId], queryFn: () => get<WoDetail>(mtPath(companyId, `/work-orders/${workOrderId}`)), retry: false });
   const [dialog, setDialog] = useState<null | 'complete' | 'reopen' | 'cancel' | 'edit' | 'hold'>(null);
   const [newTask, setNewTask] = useState('');
   const [newPart, setNewPart] = useState({ part: '', quantity: '1' });
@@ -331,6 +334,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   };
   const est = d.totals.estimatedMinutes;
   const actual = d.totals.actualMinutes;
+  const extras = { companyId, me, woId: w.id, assetId: w.assetId, d, canWork: d.can.work, seeCosts: !!d.can.seeCosts, act };
   return (
     <div className="stack">
       <div className="mt-head">
@@ -364,6 +368,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
         </div>
       ) : null}
 
+      <PreventiveNote companyId={companyId} d={d} />
       {d.can.work || d.can.complete ? (
         <section className="card card-pad stack" aria-label="Time and completion">
           <div className="mt-timer">
@@ -499,8 +504,13 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
                 <button className="btn" disabled={!newPart.part.trim()}>Add</button>
               </form>
             ) : null}
-            <p className="muted small">Issuing parts from stores comes in a later stage.</p>
+            <p className="muted small">A list of what the job needs. Parts taken from the maintenance stores are under Parts used.</p>
           </Section>
+          <InspectionsSection {...extras} />
+          <PartsSection {...extras} />
+          <LabourSection {...extras} />
+          <DowntimeSection key={`dt-${d.downtime?.startedAt ?? 0}-${d.downtime?.endedAt ?? 0}`} {...extras} />
+          <ReadingsSection {...extras} />
           <Section title="Photos and documents" actions={d.can.work ? <UploadButton companyId={companyId} target={{ workOrderId: w.id }} onDone={refresh} /> : null}>
             <FileList files={d.files} canRemove={(f) => d.can.work && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
           </Section>

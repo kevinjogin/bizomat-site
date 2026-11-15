@@ -30,14 +30,19 @@ import {
   zText,
 } from './util';
 import { requestDTO, workOrderDTO } from './dto';
+// Stages M2 and M3: the site of each asset (side table mt_asset_sites) and what its page adds.
+import { assertSite, inSiteSql } from './m2util';
+import { assetExtras } from './asset-extras';
 
 export const assetRoutes = new Hono<AppEnv>();
 
-const SELECT = `SELECT a.*, d.name AS department_name, u.name AS responsible_name, p.number AS parent_number, p.name AS parent_name
+const SELECT = `SELECT a.*, d.name AS department_name, u.name AS responsible_name, p.number AS parent_number, p.name AS parent_name, xs.site_id, st.code AS site_code, st.name AS site_name
   FROM mt_assets a
   LEFT JOIN co_departments d ON d.id = a.department_id
   LEFT JOIN users u ON u.id = a.responsible_id
-  LEFT JOIN mt_assets p ON p.company_id = a.company_id AND p.id = a.parent_id`;
+  LEFT JOIN mt_assets p ON p.company_id = a.company_id AND p.id = a.parent_id
+  LEFT JOIN mt_asset_sites xs ON xs.company_id = a.company_id AND xs.asset_id = a.id
+  LEFT JOIN mt_sites st ON st.company_id = xs.company_id AND st.id = xs.site_id`;
 
 export function assetDTO(r: any) {
   return {
@@ -72,6 +77,9 @@ export function assetDTO(r: any) {
     parentName: r.parent_name ?? null,
     archived: !!r.archived_at,
     archivedAt: r.archived_at,
+    siteId: r.site_id ?? null,
+    siteCode: r.site_code ?? null,
+    siteName: r.site_name ?? null,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
   };
@@ -132,8 +140,8 @@ const fields = {
   specs: z.array(spec).max(60).optional(),
   parentId: zId.nullable().optional(),
 };
-const createSchema = z.object(fields);
-const updateSchema = z.object({ ...fields, name: zText(200).min(1).optional() });
+const createSchema = z.object({ ...fields, siteId: zId.nullable().optional() });
+const updateSchema = z.object({ ...fields, name: zText(200).min(1).optional(), siteId: zId.nullable().optional() });
 type AssetInput = z.infer<typeof updateSchema>;
 
 /** Column values from the input (only the fields given). */
@@ -235,6 +243,12 @@ assetRoutes.get('/c/:company/assets', async (c) => {
     where.push('a.category = ? COLLATE NOCASE');
     args.push(category.slice(0, 80));
   }
+  const siteId = c.req.query('siteId');
+  if (siteId === 'none') where.push('NOT EXISTS (SELECT 1 FROM mt_asset_sites ns WHERE ns.company_id = a.company_id AND ns.asset_id = a.id)');
+  else if (siteId) {
+    where.push(inSiteSql('a'));
+    args.push(siteId.slice(0, 64));
+  }
   const parent = c.req.query('parent');
   if (parent === 'root') where.push('a.parent_id IS NULL');
   else if (parent) {
@@ -281,9 +295,12 @@ assetRoutes.post('/c/:company/assets', async (c) => {
   const t = now();
   const row = { ...cols, id, company_id: a.companyId, search: searchOf(cols), created_by: a.userId, created_at: t, updated_at: t };
   const keys = Object.keys(row);
+  // The site given, else the parent's site.
+  const site = input.siteId !== undefined ? await assertSite(c.env.DB, a.companyId, input.siteId) : cols.parent_id ? await c.env.DB.prepare('SELECT site_id AS id FROM mt_asset_sites WHERE company_id = ? AND asset_id = ?').bind(a.companyId, cols.parent_id).first<{ id: string }>() : null;
   await c.env.DB.batch([
     c.env.DB.prepare(`INSERT INTO mt_assets (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => (row as any)[k])),
-    eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'asset.created', assetId: id, summary: `Asset ${cols.number} ${input.name} created`, after: cols }),
+    ...(site ? [c.env.DB.prepare('INSERT INTO mt_asset_sites (company_id, asset_id, site_id, set_by, set_at) VALUES (?, ?, ?, ?, ?)').bind(a.companyId, id, site.id, a.userId, t)] : []),
+    eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'asset.created', assetId: id, summary: `Asset ${cols.number} ${input.name} created`, after: site ? { ...cols, siteId: site.id } : cols }),
   ]);
   return c.json(assetDTO(await loadAsset(c.env.DB, a.companyId, id)), 201);
 });
@@ -324,6 +341,7 @@ assetRoutes.get('/c/:company/assets/:id', async (c) => {
     openRequests: (requests.results as any[]).map(requestDTO),
     history: (events.results as any[]).map(eventDTO),
     files: await filesOf(db, a.companyId, 'asset_id', r.id),
+    ...(await assetExtras(db, a, r.id)),
     can: { edit: isManager(a), upload: isManager(a) },
   });
 });
@@ -335,8 +353,17 @@ assetRoutes.patch('/c/:company/assets/:id', async (c) => {
   const cols = columnsOf(input);
   if (cols.number === '') delete cols.number;
   await validate(c.env.DB, a, cols, before);
+  if (input.siteId !== undefined && (input.siteId ?? null) !== (before.site_id ?? null)) {
+    const site = await assertSite(c.env.DB, a.companyId, input.siteId);
+    await c.env.DB.batch([
+      site
+        ? c.env.DB.prepare('INSERT INTO mt_asset_sites (company_id, asset_id, site_id, set_by, set_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(company_id, asset_id) DO UPDATE SET site_id = excluded.site_id, set_by = excluded.set_by, set_at = excluded.set_at').bind(a.companyId, before.id, site.id, a.userId, now())
+        : c.env.DB.prepare('DELETE FROM mt_asset_sites WHERE company_id = ? AND asset_id = ?').bind(a.companyId, before.id),
+      eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'asset.site', assetId: before.id, summary: site ? `Placed in site ${site.code} ${site.name}` : 'Taken out of its site', before: { siteId: before.site_id ?? null }, after: { siteId: site?.id ?? null } }),
+    ]);
+  }
   const diff = changes(before, cols);
-  if (!diff) return c.json(assetDTO(before));
+  if (!diff) return c.json(assetDTO(await loadAsset(c.env.DB, a.companyId, before.id)));
   const merged = { ...before, ...cols };
   const set = { ...cols, search: searchOf(merged), updated_at: now() };
   const keys = Object.keys(set);

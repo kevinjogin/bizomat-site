@@ -25,6 +25,8 @@ import {
   type MtRequest,
   type WorkOrder,
 } from './api';
+import { useSites } from './api';
+import { MetersSection, PrestartOfAsset, PreventiveOfAsset, QrLabel, SiteField, type AssetExtrasData } from './AssetExtras';
 import { AssetStatusBadge, CriticalityBadge, FileList, FilterPanel, History, PriorityBadge, Props, RequestBadge, Section, UploadButton, WoBadge, options } from './common';
 import { AssetPicker, DepartmentField, PersonSelect, type PickedAsset } from './pickers';
 
@@ -152,12 +154,14 @@ function AssetTree({ companyId, q, setQ }: { companyId: string; q: string; setQ:
 
 function AssetList({ companyId, params, set }: { companyId: string; params: URLSearchParams; set: (k: string, v: string) => void }) {
   const g = (k: string) => params.get(k) ?? '';
+  const sites = useSites(companyId);
   const query = new URLSearchParams();
-  for (const k of ['q', 'status', 'criticality', 'strategy', 'category', 'archived', 'sort']) if (g(k)) query.set(k, g(k));
+  for (const k of ['q', 'status', 'criticality', 'strategy', 'category', 'archived', 'sort', 'siteId']) if (g(k)) query.set(k, g(k));
   const list = useQuery({ queryKey: ['mt', companyId, 'assets', query.toString()], queryFn: () => get<{ assets: Asset[]; total: number; categories: string[] }>(mtPath(companyId, `/assets?${query}`)) });
   return (
     <div className="stack">
-      <FilterPanel active={['q', 'status', 'criticality', 'strategy', 'category', 'archived'].filter((k) => g(k)).length}>
+      <FilterPanel active={['q', 'status', 'criticality', 'strategy', 'category', 'archived', 'siteId'].filter((k) => g(k)).length}>
+        <div className="field"><label htmlFor="mta-site">Site</label><select id="mta-site" className="select" value={g('siteId')} onChange={(e) => set('siteId', e.target.value)}><option value="">Any</option><option value="none">Not in a site</option>{(sites.data?.sites ?? []).map((s) => <option key={s.id} value={s.id}>{s.code} {s.name}</option>)}</select></div>
         <div className="field"><label htmlFor="mta-q">Search</label><input id="mta-q" className="input" type="search" value={g('q')} onChange={(e) => set('q', e.target.value)} placeholder="Number, name, serial, location" /></div>
         <div className="field"><label htmlFor="mta-cat">Category</label><select id="mta-cat" className="select" value={g('category')} onChange={(e) => set('category', e.target.value)}><option value="">Any</option>{(list.data?.categories ?? []).map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
         <div className="field"><label htmlFor="mta-status">Status</label><select id="mta-status" className="select" value={g('status')} onChange={(e) => set('status', e.target.value)}><option value="">Any</option>{options(ASSET_STATUS_LABELS)}</select></div>
@@ -171,7 +175,7 @@ function AssetList({ companyId, params, set }: { companyId: string; params: URLS
         {!list.data ? <Loading /> : !list.data.assets.length ? <EmptyState icon="layers" title="No assets match">Try other words or remove a filter.</EmptyState> : (
           <div className="crm-table-scroll">
             <table className="data-table mt-table">
-              <thead><tr><th>Number</th><th>Name</th><th>Category</th><th>Make and model</th><th>Location</th><th>Status</th><th>Criticality</th><th>Under</th></tr></thead>
+              <thead><tr><th>Number</th><th>Name</th><th>Category</th><th>Make and model</th><th>Site and location</th><th>Status</th><th>Criticality</th><th>Under</th></tr></thead>
               <tbody>
                 {list.data.assets.map((a) => (
                   <tr key={a.id}>
@@ -179,7 +183,7 @@ function AssetList({ companyId, params, set }: { companyId: string; params: URLS
                     <td data-label="Name">{a.name}{a.archived ? <> <span className="badge">Archived</span></> : null}</td>
                     <td data-label="Category">{a.category}</td>
                     <td data-label="Make and model">{[a.manufacturer, a.model].filter(Boolean).join(' ')}</td>
-                    <td data-label="Location">{a.location}</td>
+                    <td data-label="Site and location">{[a.siteCode, a.location].filter(Boolean).join(' · ')}</td>
                     <td data-label="Status"><AssetStatusBadge value={a.status} /></td>
                     <td data-label="Criticality"><CriticalityBadge value={a.criticality} /></td>
                     <td data-label="Under">{a.parentId ? <Link to={mtPage(companyId, `/assets/${a.parentId}`)}>{a.parentNumber}</Link> : <span className="muted">Top level</span>}</td>
@@ -209,12 +213,14 @@ interface AssetView {
   can: { edit: boolean; upload: boolean };
 }
 
+type AssetDetailData = AssetView & AssetExtrasData;
+
 export function AssetDetail({ companyId, me }: { companyId: string; me: MtMe }) {
   const { assetId = '' } = useParams();
   const qc = useQueryClient();
   const toast = useToast();
   const confirm = useConfirm();
-  const q = useQuery({ queryKey: ['mt', companyId, 'asset', assetId], queryFn: () => get<AssetView>(mtPath(companyId, `/assets/${assetId}`)), retry: false });
+  const q = useQuery({ queryKey: ['mt', companyId, 'asset', assetId], queryFn: () => get<AssetDetailData>(mtPath(companyId, `/assets/${assetId}`)), retry: false });
   const [editing, setEditing] = useState(false);
   const [addingChild, setAddingChild] = useState(false);
   usePageTitle(q.data ? `${q.data.asset.number} ${q.data.asset.name}` : 'Asset');
@@ -274,8 +280,12 @@ export function AssetDetail({ companyId, me }: { companyId: string; me: MtMe }) 
                 ['Under', a.parentId ? <Link key="p" to={mtPage(companyId, `/assets/${a.parentId}`)}>{a.parentNumber} {a.parentName}</Link> : 'Top level'],
               ]}
             />
-            <p className="muted small">Label it with the asset number {a.number}. Printing and scanning QR codes and barcodes comes in a later stage.</p>
           </Section>
+          <Section title="Site and label">
+            <SiteField companyId={companyId} assetId={a.id} siteId={a.siteId} siteName={a.siteName} canEdit={can.edit && !a.archived} hasChildren={q.data.children.length > 0} />
+            <QrLabel companyId={companyId} assetId={a.id} number={a.number} qrUrl={q.data.qrUrl} />
+          </Section>
+          <MetersSection companyId={companyId} assetId={a.id} meters={q.data.meters} canManage={can.edit} archived={a.archived} />
           <Section title="Purchase and warranty">
             <Props
               items={[
@@ -308,6 +318,8 @@ export function AssetDetail({ companyId, me }: { companyId: string; me: MtMe }) 
               </ul>
             ) : <p className="muted small">No outstanding work orders{me.can.manageWork ? '' : ' you can see'}.</p>}
           </Section>
+          <PreventiveOfAsset companyId={companyId} assetId={a.id} schedules={q.data.schedules} canManage={me.can.managePm} archived={a.archived} />
+          <PrestartOfAsset companyId={companyId} assetId={a.id} data={q.data} canManage={me.can.managePm} archived={a.archived} />
           <Section title="Open requests">
             {q.data.openRequests.length ? (
               <ul className="mt-docs">

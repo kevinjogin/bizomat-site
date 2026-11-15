@@ -23,7 +23,7 @@ import '../styles/company.css';
 import '../styles/system.css';
 import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
-// Asset Management and Maintenance (Stage 1), inside a company at /c/<company>/maintenance; loaded when it is opened.
+// Asset Management and Maintenance (stages M1 to M3), inside a company at /c/<company>/maintenance; loaded when it is opened.
 const MaintenanceArea = lazy(() => import('./maintenance/Maintenance').then((m) => ({ default: m.MaintenanceArea })));
 // ERP Release 1 (src/client/system/erp): Products and Engineering at /c/<company>/products, Procurement (suppliers) at
 // /c/<company>/procurement, ERP roles and the products, engineering and supplier reports; loaded when opened.
@@ -825,7 +825,7 @@ function useCurrentCompany() {
 
 /**
  * The ERP's operations modules (docs/erp/architecture/08). Planned ones are shown as planned, never as working. Asset
- * Management and Maintenance is partly live (Stage 1): exactly what is live is said, and the rest is labelled planned.
+ * Management and Maintenance is partly live (stages M1 to M3): exactly what is live is said, and the rest is labelled planned.
  */
 const PLANNED: { name: string; icon: string; covers: string; today?: string; badge?: string; live?: { to: string; label: string } }[] = [
   {
@@ -863,8 +863,8 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
   {
     name: 'Asset Management and Maintenance',
     icon: 'wrench',
-    covers: 'Live now: the asset register with its hierarchy, CSV import and files; maintenance requests with approval; standard work orders with tasks, parts lines, a labour timer, photos, completion and reopening; maintenance roles per company; and the history of every change.',
-    today: 'Planned: preventive maintenance, meter readings, inspections, prestart checks, spare parts and stocktakes, more than one site, QR code and barcode labels, and AI scheduling.',
+    covers: 'Live now: the asset register with its hierarchy, sites, CSV import and files; maintenance requests with approval; work orders with tasks, parts issued from maintenance stores through Inventory, a labour timer and time entered by hand with its cost, downtime, inspections, photos, completion and reopening; preventive maintenance by time, meter or condition, with templates and a calendar; meters, gauges and readings; prestart checks on a phone; trades and labour rates; QR labels and scanning; reliability reports (MTBF, MTTR, downtime, PM compliance, backlog, breakdown trends and asset costs); maintenance roles per company; and the history of every change.',
+    today: 'Planned: an AI scheduling assistant (it would only propose; a person would approve), workload planning, offline field work, and posting maintenance costs to Finance (costs are recorded; nothing is posted).',
     live: { to: '/maintenance', label: 'Open Maintenance' },
   },
   { name: 'Supply Chain', icon: 'globe', covers: 'Shipments, carriers, a delivery schedule and returns.' },

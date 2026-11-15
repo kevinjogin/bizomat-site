@@ -32,6 +32,11 @@ const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/erp-maintenance-assets.webp', product: 'erp', title: 'BIZOMAT ERP: an asset', caption: 'An asset in its hierarchy, with its details, outstanding work, the assets under it, files and history.' },
   { src: '/proof-of-work/product/erp-maintenance-requests.webp', product: 'erp', title: 'BIZOMAT ERP: maintenance requests', caption: 'Requests by status, with priority and asset, ready for a supervisor to approve, decline or ask for more.' },
   { src: '/proof-of-work/product/erp-maintenance-work-order.webp', product: 'erp', title: 'BIZOMAT ERP: a work order', caption: 'A work order with the labour timer, Complete and Add a photo, safety requirements, instructions and tasks.' },
+  // ERP Release 4, Maintenance stages M2 and M3, captured 15 Nov 2026 from a local instance with the example company's
+  // invented data.
+  { src: '/proof-of-work/product/erp-maintenance-preventive.webp', product: 'erp', title: 'BIZOMAT ERP: the preventive maintenance calendar', caption: 'What is due by month: open preventive work orders, the next due dates and those after them, and a meter-based service projected from the meter\'s daily use.' },
+  { src: '/proof-of-work/product/erp-maintenance-inspection.webp', product: 'erp', title: 'BIZOMAT ERP: an inspection and labour costs on a work order', caption: 'A failed inspection item with the request it raised, then parts used and labour priced at the person\'s rate.' },
+  { src: '/proof-of-work/product/erp-maintenance-reliability.webp', product: 'erp', title: 'BIZOMAT ERP: the reliability report', caption: 'Failures, downtime, mean time to repair, mean time between failures and availability per asset, each linked to its work orders.' },
   { src: '/proof-of-work/product/cad-dashboard.webp', product: 'cad', title: 'CAD Automation: Home', caption: 'The signed-in home: connection status, set-up steps and recent activity.' },
   { src: '/proof-of-work/product/cad-assistant.webp', product: 'cad', title: 'CAD Automation: CAD Assistant', caption: 'The connector address for AI apps, connected apps and example requests.' },
   { src: '/proof-of-work/product/cad-solidworks.webp', product: 'cad', title: 'CAD Automation: SOLIDWORKS', caption: 'The installer, paired computers and how the add-in connects.' },
