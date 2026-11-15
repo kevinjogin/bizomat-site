@@ -1,6 +1,9 @@
 ---
 // Pop-out window for the BIZOMAT Assistant. Opened from the floating widget's "pop out" button.
 import '@fontsource-variable/inter-tight';
+// the platform tokens and components first, as BaseLayout loads them: global.css and the widget are built on them
+import '../styles/bizomat/tokens.css';
+import '../styles/bizomat/components.css';
 import '../styles/global.css';
 import SEO from '../components/SEO.astro';
 import ChatWidget from '../components/ChatWidget.astro';

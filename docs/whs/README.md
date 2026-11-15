@@ -4,8 +4,7 @@ Owner's WHS brief (15 Nov 2026). BIZOMAT WHS is the **Health and Safety** module
 Project Management app (`apps/work`): the same accounts, session, companies, database and Machine. No new server,
 Machine, database, login or dependency.
 
-**Status: built and tested on the branch `whs-release-1`, not merged or deployed.** Nothing here is live until the
-owner merges and deploys it. The public page says "Available, some modules planned" (`src/config/systems.ts`, status
+**Status: live since 15 Nov 2026** (kevinjogin/bizomat-site#74, deploy run 37, version e0cad51, migration 0026). The public page says "Available, some modules planned" (`src/config/systems.ts`, status
 `partial`), so the website should go out with the application.
 
 ## What BIZOMAT WHS does not do

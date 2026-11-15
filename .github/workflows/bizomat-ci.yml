@@ -1,9 +1,10 @@
 # BIZOMAT platform CI: the website, both apps, the edge proxy, the platform image and the local stack.
 # Runs on pull requests and on main after a merge. Read-only: no secrets, nothing deployed, nothing pushed.
 #
-# Jobs: website (brand copies, verify), work (lint, types, tests, builds incl. the Node server), cad (pytest in two
-# parts, npm test), proxy (tests, script and config checks), image (Docker build of infrastructure/fly/Dockerfile,
-# a migration round trip inside it, then the compose stack with the smoke test and the secret-isolation check).
+# Jobs: website (brand copies, verify, the design audit's layout check), work (lint, types, tests, builds incl. the
+# Node server), cad (pytest in two parts, npm test), proxy (tests, script and config checks), image (Docker build of
+# infrastructure/fly/Dockerfile, a migration round trip inside it, then the compose stack with the smoke test and the
+# secret-isolation check).
 name: BIZOMAT CI
 
 # Pull requests run it, and main runs it after a merge. A push to a branch with an open pull request used to run every
@@ -45,6 +46,23 @@ jobs:
         run: npm run verify
       - name: Build the website's Node server (the Fly web process)
         run: npm run build:server
+      # The design audit's layout check (scripts/design-audit, docs/design/AUDIT-2026-11-15.md): the main page templates
+      # at 1440 and 390 px in light and dark, in Chromium, on the built site served by the Node server above. It fails on
+      # a page wider than the screen, content outside its card, cut-off text, an overflowing button, text below WCAG AA,
+      # a missing focus ring, an H1 count other than one, a broken internal link or anchor, or a console or CSP error.
+      - name: Chromium for the design audit
+        run: npx playwright install --with-deps --only-shell chromium
+      - name: Design audit (layout check)
+        run: npm run audit:layout
+      - name: Keep the design audit report when it fails
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: design-audit
+          path: .design-audit/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7
 
   work:
     name: work

@@ -1,5 +1,7 @@
 # build output
 dist/
+# design audit reports and screenshots (npm run audit:design, audit:layout)
+.design-audit/
 .astro/
 
 # dependencies

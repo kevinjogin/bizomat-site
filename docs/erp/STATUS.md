@@ -80,9 +80,9 @@ Built, tested and live at `bizomat.ai/erp`.
 | **Release 5 Supply chain**: traceability and reports | A lot's trace to the shipment and customer; open orders, delivery to customers, shipments by carrier, freight, returns, sales by product and customer, job profitability; drill-down and CSV; Supply Chain overview and Operations counts | Reports with exact numbers and CSV |
 | **Release 5 Supply chain**: example company | A carrier, a sales order with a made-to-order line, a delivered shipment with its draft invoice, a return with its draft credit note; no email | Example company tests (workerd and Node) |
 
-## BIZOMAT WHS, Release 1 (not deployed)
+## BIZOMAT WHS, Release 1
 
-Built and tested on the branch `whs-release-1` (migration 0026); not merged or deployed. Details, sources checked and
+Live since 15 Nov 2026 (kevinjogin/bizomat-site#74, deploy run 37, version e0cad51, migration 0026). Details, sources checked and
 decisions: `docs/whs/README.md`. Every legal pack is Not verified until a platform administrator verifies it in the
 application; BIZOMAT does not submit notifications to regulators.
 
@@ -179,6 +179,6 @@ rate-based repetitive schedules.
 - Release 5 part A: sales orders take products only. Service lines (installation, freight as its own product) would
   need a product type or Finance items on the order: say if wanted.
 - Release 5 part A: existing example companies are not changed; removing and remaking one adds the supply chain records.
-- BIZOMAT WHS (not deployed): its decisions are in `docs/whs/README.md` ("Decisions for the owner"): who reads medical
+- BIZOMAT WHS: its decisions are in `docs/whs/README.md` ("Decisions for the owner"): who reads medical
   details and confidential reports, hours worked for injury rates, Health and Safety in My Work and in the rail, and who
   verifies the legal packs.
