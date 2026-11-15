@@ -1,0 +1,27 @@
+# Checks the three live Stripe secrets (WORK_STRIPE_SECRET_KEY, WORK_STRIPE_PUBLISHABLE_KEY, WORK_STRIPE_WEBHOOK_SECRET)
+# before a deploy stages them (.github/scripts/stripe-check.sh): present, live, the secret key on the account that owns
+# the configured price and holding every permission the app uses. Run it by hand (Actions > Stripe live settings check).
+# It creates, changes and charges nothing in Stripe, touches nothing on Fly and prints no value: names and Stripe's
+# answers only. The webhook signing secret is checked for its form only; a delivery from the live webhook proves it.
+name: Stripe live settings check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Check the live Stripe secrets (values never printed)
+        env:
+          STRIPE_SECRET: ${{ secrets.WORK_STRIPE_SECRET_KEY }}
+          STRIPE_PUBLISHABLE: ${{ secrets.WORK_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK: ${{ secrets.WORK_STRIPE_WEBHOOK_SECRET }}
+        run: bash .github/scripts/stripe-check.sh
