@@ -233,7 +233,7 @@ export async function workOrderExtras(db: D1Database, a: MtAccess, w: any) {
   return {
     inspections: await inspectionsOf(db, a.companyId, w.id),
     stock: {
-      moves: mv.map((m) => ({ id: m.id, type: m.move_type, typeLabel: MOVE_NAMES[m.move_type] ?? m.move_type, productId: m.product_id, productNumber: m.product_number, productName: m.product_name, uom: m.uom, location: `${m.warehouse_code}/${m.location_code}`, lot: m.lot, serial: m.serial, quantity: q6(-m.on_hand_delta), unitCostCents: manager ? m.unit_cost_cents : undefined, valueCents: manager ? -m.value_delta_cents : undefined, byName: m.by_name ?? null, at: m.created_at })),
+      moves: mv.map((m) => ({ id: m.id, type: m.move_type, typeLabel: MOVE_NAMES[m.move_type] ?? m.move_type, productId: m.product_id, productNumber: m.product_number, productName: m.product_name, uom: m.uom, locationId: m.location_id, location: `${m.warehouse_code}/${m.location_code}`, lot: m.lot, serial: m.serial, quantity: q6(-m.on_hand_delta), unitCostCents: manager ? m.unit_cost_cents : undefined, valueCents: manager ? -m.value_delta_cents : undefined, byName: m.by_name ?? null, at: m.created_at })),
       byProduct: [...byProduct.values()].filter((p) => Math.abs(p.issued) > 1e-9 || p.costCents).map((p) => ({ ...p, costCents: manager ? p.costCents : undefined })),
       costCents: manager ? mv.reduce((s, m) => s - m.value_delta_cents, 0) : undefined,
       financePosting: 'Planned: the parts cost is in the stock ledger and on this work order; posting it to Finance is not built yet.',

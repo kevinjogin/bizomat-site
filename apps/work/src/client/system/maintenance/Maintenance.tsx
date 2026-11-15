@@ -1,5 +1,7 @@
-// Asset Management and Maintenance in BIZOMAT ERP (Stage 1): the section inside a company, at /erp/c/<company>/maintenance.
-// Overview, Assets, Requests, Work orders and Settings (roles and the approval rule). The server
+// Asset Management and Maintenance in BIZOMAT ERP (stages M1 to M3): the section inside a company, at
+// /erp/c/<company>/maintenance. Overview, Assets, Requests, Work orders, Preventive (schedules, calendar, templates),
+// Checklists (inspection templates), Prestart and Scan (phone screens), Reports, and Settings (roles, the approval rule,
+// sites, trades and rates, maintenance stores). The server
 // (src/worker/maintenance) decides who may see and do what; these screens follow its answers.
 import { useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
@@ -15,6 +17,11 @@ import { PriorityBadge, RequestBadge, Section, WoBadge } from './common';
 import { AssetDetail, AssetsPage } from './Assets';
 import { NewRequestPage, RequestDetail, RequestsPage } from './Requests';
 import { NewWorkOrderPage, WorkOrderDetail, WorkOrdersPage } from './WorkOrders';
+import { NewSchedulePage, NewTemplatePage, PreventivePage, ScheduleDetail, TemplateDetail } from './Preventive';
+import { ChecklistEditor, ChecklistsPage } from './Checklists';
+import { LabelsPage, PrestartPage, ScanPage } from './Field';
+import { ReportsPage } from './MtReports';
+import { SitesSection, StoresSection, TradesSection } from './Setup';
 
 export function MaintenanceArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   const me = useMtMe(companyId);
@@ -38,6 +45,11 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
     ['/assets', 'Assets', 'layers'],
     ['/requests', 'Requests', 'inbox'],
     ['/work-orders', 'Work orders', 'wrench'],
+    ['/preventive', 'Preventive', 'calendar'],
+    ['/checklists', 'Checklists', 'list'],
+    ['/prestart', 'Prestart', 'checkSquare'],
+    ['/scan', 'Scan', 'eye'],
+    ...(m.can.reports ? ([['/reports', 'Reports', 'chart']] as [string, string, string][]) : []),
     ['/settings', 'Settings', 'settings'],
   ];
   return (
@@ -60,6 +72,18 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
         <Route path="work-orders" element={<WorkOrdersPage companyId={companyId} me={m} />} />
         <Route path="work-orders/new" element={<NewWorkOrderPage companyId={companyId} me={m} />} />
         <Route path="work-orders/:workOrderId" element={<WorkOrderDetail companyId={companyId} me={m} />} />
+        <Route path="preventive" element={<PreventivePage companyId={companyId} me={m} />} />
+        <Route path="preventive/new" element={<NewSchedulePage companyId={companyId} me={m} />} />
+        <Route path="preventive/templates/new" element={<NewTemplatePage companyId={companyId} me={m} />} />
+        <Route path="preventive/templates/:templateId" element={<TemplateDetail companyId={companyId} me={m} />} />
+        <Route path="preventive/:scheduleId" element={<ScheduleDetail companyId={companyId} me={m} />} />
+        <Route path="checklists" element={<ChecklistsPage companyId={companyId} me={m} />} />
+        <Route path="checklists/:templateId" element={<ChecklistEditor companyId={companyId} me={m} />} />
+        <Route path="prestart" element={<PrestartPage companyId={companyId} me={m} />} />
+        <Route path="prestart/:assetId" element={<PrestartPage companyId={companyId} me={m} />} />
+        <Route path="scan" element={<ScanPage companyId={companyId} me={m} />} />
+        <Route path="labels" element={<LabelsPage companyId={companyId} me={m} />} />
+        <Route path="reports" element={<ReportsPage companyId={companyId} me={m} />} />
         <Route path="settings" element={<Settings companyId={companyId} me={m} />} />
         <Route path="*" element={<Navigate to={mtPage(companyId)} replace />} />
       </Routes>
@@ -84,6 +108,10 @@ interface OverviewData {
   assets: number;
   assetsDown: number;
   myTimers: { workOrderId: string; number: string; startedAt: number }[];
+  preventiveOpen: number;
+  preventiveOverdue: number;
+  assetsDownNow: number;
+  prestartsFailed: number;
 }
 
 function Stat({ label, value, to, hint, tone }: { label: string; value: number; to: string; hint?: string; tone?: 'danger' }) {
@@ -112,6 +140,8 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
         <Link className="btn primary lg" to={mtPage(companyId, '/requests/new')}><Icon name="alert" /> Report a fault</Link>
         {me.can.manageWork ? <Link className="btn lg" to={mtPage(companyId, '/work-orders/new')}><Icon name="wrench" /> New work order</Link> : null}
         {me.can.manageAssets ? <Link className="btn lg" to={mtPage(companyId, '/assets')}><Icon name="layers" /> Assets</Link> : null}
+        <Link className="btn lg" to={mtPage(companyId, '/prestart')}><Icon name="checkSquare" /> Prestart check</Link>
+        <Link className="btn lg" to={mtPage(companyId, '/scan')}><Icon name="eye" /> Scan an asset</Link>
       </div>
       {o.myTimers.length ? (
         <div className="warn-box row wrap">
@@ -127,6 +157,9 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
         {me.role !== 'requester' ? <Stat label="My work" value={o.myWork} to={mtPage(companyId, '/work-orders?view=mine')} hint="Assigned to you" /> : null}
         {manager ? <Stat label="Completed, not closed" value={o.completedNotClosed} to={mtPage(companyId, '/work-orders?view=all&status=completed')} /> : null}
         <Stat label="Assets in the register" value={o.assets} to={mtPage(companyId, '/assets')} hint={o.assetsDown ? `${o.assetsDown} under maintenance or out of service` : undefined} />
+        <Stat label="Preventive work open" value={o.preventiveOpen} to={mtPage(companyId, '/preventive?view=calendar')} hint={o.preventiveOverdue ? `${o.preventiveOverdue} overdue` : 'From the schedules'} />
+        {o.assetsDownNow ? <Stat label="Assets down now" value={o.assetsDownNow} tone="danger" to={mtPage(companyId, me.can.reports ? '/reports?report=reliability' : '/work-orders')} hint="Downtime not ended" /> : null}
+        {o.prestartsFailed ? <Stat label="Failed prestarts today" value={o.prestartsFailed} tone="danger" to={mtPage(companyId, '/prestart')} hint="In the last 24 hours" /> : null}
       </div>
       <div className="mt-grid">
         {manager ? (
@@ -246,8 +279,11 @@ function Settings({ companyId, me }: { companyId: string; me: MtMe }) {
           )}
         </Section>
       ) : null}
-      <Section title="Coming in later stages">
-        <p className="small">Preventive maintenance plans, meter readings, inspections and prestart checks, spare parts and stocktakes, more than one site, QR code and barcode labels, and AI scheduling are planned. They are not built yet.</p>
+      <SitesSection companyId={companyId} me={me} />
+      <TradesSection companyId={companyId} me={me} />
+      <StoresSection companyId={companyId} me={me} />
+      <Section title="Planned">
+        <p className="small">An AI scheduling assistant (it would only propose; a person would approve) and offline field work are planned. They are not built yet.</p>
       </Section>
     </div>
   );
