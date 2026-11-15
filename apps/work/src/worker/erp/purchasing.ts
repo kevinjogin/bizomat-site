@@ -15,8 +15,8 @@
 // reasons, lot and serial numbers and expiry dates. Accepted product quantities enter stock through the inventory
 // service in the same transaction as the receipt and the order's received quantities, whose CHECK refuses receiving
 // more than ordered (two people receiving the last units at once cannot both succeed). A client key (requestKey) makes
-// a double submission return the first receipt. Products marked "inspection required" are flagged (Quality screens
-// are Release 4).
+// a double submission return the first receipt. Products marked "inspection required" are flagged, and their lines wait
+// for an inspection in Quality (Release 4, quality.ts).
 //
 // Draft bill: one draft supplier bill per receipt, made by Finance's own createDoc in the company's Finance business
 // workspace, for the supplier's Finance contact, by someone whose Finance role may create bills. erp_integration_events
@@ -902,7 +902,11 @@ purchasingRoutes.get('/c/:company/receipts/:id', async (c) => {
     bill: billView,
     files: await recordFiles(db, a.companyId, 'receipt', r.id),
     history: await historyOf(db, a.companyId, { entityType: 'receipt', entityId: r.id }),
-    inspectionNote: r.inspection_required ? 'Inspection required: inspection screens come with Quality (Release 4). The goods are in stock where they were received.' : null,
+    inspectionNote: r.inspection_required ? 'Inspection required: inspect the flagged lines in Quality. The goods stay in stock where they were received unless a failed inspection puts them into quarantine.' : null,
+    // Release 4: inspections of this receipt's lines
+    inspections: (
+      await db.prepare("SELECT id, number, status, result, receipt_line_id FROM erp_qc_inspections WHERE company_id = ? AND receipt_id = ? AND status <> 'cancelled' ORDER BY created_at").bind(a.companyId, r.id).all<any>()
+    ).results.map((i) => ({ id: i.id, number: i.number, status: i.status, result: i.result, receiptLineId: i.receipt_line_id })),
   });
 });
 

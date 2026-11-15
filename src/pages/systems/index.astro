@@ -92,7 +92,8 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       live('Maintenance: asset register, maintenance requests and work orders.'),
       live('Operations: procurement (requisitions, quotations, purchase orders and goods receipts) and inventory (warehouses, stock, counts and valuation).'),
       live('Operations: manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity and job costing).'),
-      planned('Operations: quality and supply chain.'),
+      live('Operations: quality (inspection plans, inspections, nonconformances and corrective actions).'),
+      planned('Operations: supply chain.'),
     ],
     steps: [
       { t: 'Sign in.', x: 'Open bizomat.ai/erp and sign in, or create a BIZOMAT account.' },
@@ -281,7 +282,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     signIn: 'A CAD Automation account, for now',
   },
   manufacturing: {
-    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. Procurement, Inventory, Manufacturing and Maintenance work today inside BIZOMAT ERP; quality and supply chain are planned and cannot be used or bought yet.',
+    description: 'A family of BIZOMAT ERP modules for buying, storing, making, checking, maintaining and shipping goods. Procurement, Inventory, Manufacturing, Quality and Maintenance work today inside BIZOMAT ERP; supply chain is planned and cannot be used or bought yet.',
     who: 'It is designed for manufacturers, workshops and businesses that buy, store and ship goods.',
     problems: [
       'Stock levels known only by counting.',
@@ -293,7 +294,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       live('Procurement, in BIZOMAT ERP: requisitions, requests for quotation with a comparison, purchase orders with approval limits, goods receipts and supplier performance'),
       live('Inventory and warehouse, in BIZOMAT ERP: locations, stock by lot and serial, movements, reservations, counts, valuation, QR labels and a warehouse screen for phones'),
       live('Manufacturing and production planning, in BIZOMAT ERP: work centres, routings, manufacturing orders, a shop-floor screen, the master production schedule, MRP, capacity and job costing'),
-      planned('Quality'),
+      live('Quality, in BIZOMAT ERP: inspection plans, inspections of receipts, operations, finished goods and suppliers, nonconformance reports and corrective actions'),
       live('Maintenance, in BIZOMAT ERP: assets in sites, requests, work orders, preventive maintenance by time, meter or condition, readings, inspections, prestart checks, spare parts from Inventory, QR labels and reliability reporting'),
       planned('An AI maintenance scheduling assistant and offline field work'),
       planned('Supply chain'),
@@ -312,15 +313,16 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     steps: [
       { t: 'Buy and store.', x: 'Use Procurement and Inventory in BIZOMAT ERP: requisitions, quotations, purchase orders, goods receipts and stock.' },
       { t: 'Make it.', x: 'Use Manufacturing in BIZOMAT ERP: routings, manufacturing orders, the shop floor and MRP.' },
+      { t: 'Check it.', x: 'Use Quality in BIZOMAT ERP: inspect goods, operations and finished goods, and follow up nonconformances with corrective actions.' },
       { t: 'Look after your assets.', x: 'Use Maintenance in BIZOMAT ERP for your asset register, maintenance requests and work orders.' },
     ],
     faqs: [
-      { q: 'Can I use it today?', a: 'Procurement, Inventory, Manufacturing and Maintenance, yes: they work inside BIZOMAT ERP. Quality and supply chain are planned and not built; there is nothing to sign up for or buy for them.' },
+      { q: 'Can I use it today?', a: 'Procurement, Inventory, Manufacturing, Quality and Maintenance, yes: they work inside BIZOMAT ERP. Supply chain is planned and not built; there is nothing to sign up for or buy for it.' },
       { q: 'When will the other modules be ready?', a: 'There is no date yet. Each module is labelled Planned until it is built and tested, and only then is it called Live.' },
     ],
     shot: shotOf('erp', 'erp-shop-floor'),
     manages: 'Procurement, inventory, production, quality, maintenance and supply chain',
-    opens: 'Procurement, Inventory and Maintenance open inside BIZOMAT ERP. The other modules are not available yet.',
+    opens: 'Procurement, Inventory, Manufacturing, Quality and Maintenance open inside BIZOMAT ERP. Supply chain is not available yet.',
     signIn: 'Your BIZOMAT account, in BIZOMAT ERP, for the modules that work today',
   },
 };
@@ -331,7 +333,7 @@ const platformFaqs = [
   { q: 'Can I manage more than one company?', a: 'Yes. Register more than one company, or accept invitations from others, and move between them with the company switcher. Everyone also has their own company in their own name, which is not registered.' },
   { q: 'Is my data copied between the systems?', a: 'No. Each tool keeps its own records and permissions. A link between tools, such as a won deal to a draft invoice, makes a record in the other tool only when you ask, and checks your role there first.' },
   { q: 'Does Finance connect to my bank or lodge my BAS?', a: 'No. Finance does not connect to banks, make payments or lodge with the ATO. You import statements you download, and the GST and BAS report is a worksheet to check before you lodge yourself.' },
-  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Inventory, yes; manufacturing, not yet. Procurement (requisitions, quotations, purchase orders and goods receipts) and Inventory (warehouses, stock by lot and serial, counts and valuation) work today inside BIZOMAT ERP, as does Maintenance for assets, requests and work orders. Production, quality and supply chain are planned and not built.' },
+  { q: 'Can BIZOMAT manage manufacturing or inventory?', a: 'Yes. Procurement (requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock by lot and serial, counts and valuation), Manufacturing (orders, routings, the shop floor, MRP and job costing) and Quality (inspections, nonconformances and corrective actions) work today inside BIZOMAT ERP, as does Maintenance for assets, requests and work orders. Supply chain is planned and not built.' },
   { q: 'What happened to the old addresses?', a: 'bizomat.ai/tasks, /crm, /finance and /company forward into BIZOMAT ERP, so bookmarks and links in emails keep working.' },
 ];
 

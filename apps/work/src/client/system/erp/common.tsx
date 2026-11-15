@@ -1,4 +1,4 @@
-// Small pieces shared by the ERP's screens (Releases 1 to 3): status badges, CSV links, a pager, file upload and the history.
+// Small pieces shared by the ERP's screens (Releases 1 to 4): status badges, CSV links, a pager, file upload and the history.
 // Lists, property lists, sections and filters reuse the maintenance screens' pieces.
 import { useRef, useState, type ReactNode } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -60,7 +60,7 @@ export function Pager({ offset, limit, total, setOffset }: { offset: number; lim
 }
 
 /** Upload files to a purchasing record: a requisition, request for quotation, quotation, purchase order or receipt. */
-export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a file' }: { companyId: string; kind: 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order'; id: string; onDone: () => void; label?: string }) {
+export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a file', accept, big }: { companyId: string; kind: 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'inspection_char' | 'ncr' | 'capa'; id: string; onDone: () => void; label?: string; accept?: string; big?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const toast = useToast();
@@ -86,9 +86,9 @@ export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a fi
   };
   return (
     <>
-      <input ref={input} type="file" multiple className="sr-only" accept="image/*,.pdf,.txt,.csv,.docx,.xlsx,.pptx,.odt,.ods,.zip,.md" onChange={(e) => void pick(e.target.files)} aria-label={label} tabIndex={-1} />
-      <button type="button" className="btn sm" disabled={busy} onClick={() => input.current?.click()}>
-        <Icon name="paperclip" size={14} /> {busy ? 'Uploading…' : label}
+      <input ref={input} type="file" multiple className="sr-only" accept={accept ?? 'image/*,.pdf,.txt,.csv,.docx,.xlsx,.pptx,.odt,.ods,.zip,.md'} onChange={(e) => void pick(e.target.files)} aria-label={label} tabIndex={-1} />
+      <button type="button" className={big ? 'btn erp-big' : 'btn sm'} disabled={busy} onClick={() => input.current?.click()}>
+        <Icon name={big ? 'image' : 'paperclip'} size={big ? 18 : 14} /> {busy ? 'Uploading…' : label}
       </button>
     </>
   );

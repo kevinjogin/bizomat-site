@@ -9,9 +9,13 @@ Updated 15 Nov 2026. Release 1 was merged and deployed on 14 Nov 2026; Release 2
 15 Nov 2026 (kevinjogin/bizomat-site#65, deploy run 33, version 9ce599e, migration 0022). Each migration was applied at
 start-up.
 
-Release 4, part B (Maintenance stages M2 and M3) is built and tested on the branch `erp-release-4-maintenance`
-(migration 0024) and is **not deployed**: rows marked "(not deployed)" work in that branch only, until it is reviewed,
-merged and deployed. Release 4, part A (Quality) is built separately.
+Release 4 part A (quality) is built on the branch `erp-release-4-quality` (migration 0023) and is not merged or deployed:
+production does not have it until it is reviewed, merged and deployed. Rows marked "Release 4 (not deployed)" work in
+that branch, with their tests passing.
+
+Release 4 part B (Maintenance stages M2 and M3) is built and tested on the branch `erp-release-4-maintenance`
+(migration 0024) and is **not deployed**: rows marked "Release 4 Maintenance (not deployed)" work in that branch only,
+until it is reviewed, merged and deployed.
 
 ## Working
 
@@ -54,6 +58,15 @@ Built, tested and live at `bizomat.ai/erp`, unless marked "(not deployed)".
 | **Release 3**: Job costing | Estimated against actual by element, variances at close, the costing view | Scenario D (exact numbers, workerd and Node) |
 | **Release 3**: Reports | Production output, work order progress, material consumption, labour utilisation, production variance, machine downtime, MRP suggestions, capacity load; Operations hub counts | Reports and CSV tests |
 | **Release 3**: Example company | Work centres, released routings, an order in progress with labour and an issue, a schedule and an MRP run with suggestions | Example company tests (workerd and Node) |
+| **Release 4 (not deployed)**: Quality foundations | Quality manager and inspector roles, the capability matrix for quality, segregation of duties on corrective actions with the recorded one-person exception, QP, QI, NCR and CA numbering, files on plans, inspections, characteristics, NCRs and actions | `docs/erp/release-4-quality.md`; `apps/work/test/erp-r4-quality.test.ts` (roles, isolation, segregation) |
+| **Release 4 (not deployed)**: Inspection plans | Versions (draft, released, superseded) released by a quality manager; incoming, first article, in-process, final, supplier and product plans for a product, revision, supplier or routing operation; dimensions and measured values with limits, attributes, visual checks, samples and photos | Scenario E; plan version test |
+| **Release 4 (not deployed)**: Inspections | Offered from goods receipt lines needing inspection, inspection points and finished goods with a final plan, or made by hand; the best released plan copied on; readings per characteristic and sample checked against the limits on the server; result worked out; completed once; a full inspection records a Release 3 inspection point's result | Scenario E; in-process and final test; concurrency test (workerd and Node) |
+| **Release 4 (not deployed)**: Quarantine and release | A failed lot into quarantine through StockOps in the same step or later, once per key; accepted on condition by a quality manager and released, never more than was quarantined | Quarantine and release test; CHECK tests (workerd and Node) |
+| **Release 4 (not deployed)**: Nonconformance | NCRs from inspections or by hand (a Maintenance asset read only), containment, five whys or free text, a disposition decided once, carried out through StockOps (scrap, return to supplier, release) or as a rework note, once per key and never beyond the decision, verification and closure | Scenario E; disposition concurrency tests (workerd and Node) |
+| **Release 4 (not deployed)**: Corrective and preventive actions | Responsible person, due date, evidence; approval and closure with segregation of duties; effectiveness check; overdue actions on the Quality overview (My Work has no place for ERP records) | Scenario E; segregation test |
+| **Release 4 (not deployed)**: Traceability | A lot's or serial's inspections and NCRs in its trace | Scenario E |
+| **Release 4 (not deployed)**: Reports | Inspection results, rejection rates by product and supplier, supplier defects (also on the supplier page, read only), NCR register and ageing, corrective actions and overdue, rework, cost of poor quality from scrap and rework records; Operations hub counts | Reports with exact numbers and CSV (workerd and Node) |
+| **Release 4 (not deployed)**: Example company | A released incoming plan, a failed inspection, an NCR with containment and root cause, a corrective action in progress | Example company tests (workerd and Node) |
 | **Release 4 Maintenance (not deployed)**: Preventive maintenance | Schedules per asset and templates per asset class; time (from completion or fixed dates), meter and condition triggers; one work order per due occurrence, unique in the database, from the cron, the button and readings; the next due moves on at completion; the calendar | Scenario F; idempotency (cron twice, three runs at once), meter, condition and compliance tests (workerd and Node) |
 | **Release 4 Maintenance (not deployed)**: Meters and readings | Meters and gauges with expected ranges and rollover; readings by hand, from a work order or a prestart; backwards only as a reset; life totals | Meter and condition trigger tests |
 | **Release 4 Maintenance (not deployed)**: Inspections and prestarts | Inspection templates; inspections on work orders; a failed inspection's follow-up made once; prestart checks on a phone; a failed critical item sets the asset out of service (recorded) and raises a request | Follow-up concurrency test; prestart test; Chromium at 390 |
@@ -84,7 +97,7 @@ Built, tested and live at `bizomat.ai/erp`, unless marked "(not deployed)".
 | Release | What |
 | --- | --- |
 | Release 3 | Live: see Working. Posting stock and production value to Finance's ledger waits for the owner's decision (Blocked) |
-| Release 4 | Quality (inspections, nonconformances, corrective actions): part A. Maintenance stages M2 and M3: part B, built (not deployed), see Working. Maintenance M4 stays planned: the AI scheduling assistant, workload planning, offline field work, predictive maintenance and IoT feeds; maintenance costs posted to Finance |
+| Release 4 | Part A, quality: built (not deployed), see Working; statistical process control, calibration, quality audits, product compliance and the appraisal and external failure costs of poor quality stay planned. Part B, Maintenance stages M2 and M3: built (not deployed), see Working; Maintenance M4 stays planned: the AI scheduling assistant, workload planning, offline field work, predictive maintenance and IoT feeds, and maintenance costs posted to Finance |
 | Release 5 | Supply chain (sales orders, deliveries, shipments, returns) and the cross-module analytics and AI listed in `docs/erp/architecture/15-erp-roadmap-2026.md` |
 
 Also planned, not in a numbered release yet: three-way matching against the supplier's own invoice, pick lists, packing
@@ -118,6 +131,18 @@ rate-based repetitive schedules.
   change each, if wanted.
 - Whether a registered company of one person should keep the recorded segregation-of-duties exception (today: yes, as
   for own and example companies).
+- Release 4 part A (quality): merge and deploy it (branch `erp-release-4-quality`, one additive migration, 0023; the
+  deploy's pre-migration backup covers it).
+- Release 4 part A: rework under an NCR is a rework note, not a draft manufacturing order (an order would issue new
+  materials). Say if a rework order type is wanted; it would need its own design.
+- Release 4 part A: overdue corrective actions show on the Quality overview, not in My Work, which lists Projects and
+  Tasks items only. Showing ERP actions in My Work would change Projects and Tasks: say if wanted.
+- Release 4 part A: closing a nonconformance has no segregation of duties (a quality manager closes it); corrective
+  actions do. Say if the person who decided the disposition should not also close it.
+- Release 4 part A: the founder's letter on The Engine Room now says "Supply chain is planned", and its Maintenance
+  card lists quality beside procurement, inventory and manufacturing. Say if the letter should be worded otherwise.
+- BIZOMAT Manufacturing and Operations still says Planned in `src/config/systems.ts`, now with Quality also working
+  inside the ERP once Release 4 is deployed.
 - Release 4 Maintenance (branch `erp-release-4-maintenance`, migration 0024, additive): merge and deploy. Its own
   decisions are in `docs/maintenance/README.md` ("Decisions to confirm with the owner"): the automatic out-of-service on
   a failed critical prestart item, who may record prestarts and readings, one outstanding preventive work order per

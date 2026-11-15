@@ -45,6 +45,16 @@
 >     `/erp/c/<company>/erp-reports`;
 >   - stock and production value are not posted to Finance's ledger: each posting is recorded as planned, with the
 >     note "Planned: Finance posting, not built yet"; the options are in `docs/erp/release-3.md`.
+> - **ERP Release 4 part A, quality** (built on the branch `erp-release-4-quality`, not deployed;
+>   `docs/erp/release-4-quality.md`, migration `0023_erp_quality.sql`, the same API):
+>   - Quality at `/erp/c/<company>/quality`, in the company's side menu and on the Operations page: the overview (what
+>     waits for inspection, open nonconformances, corrective actions due and overdue), inspections recorded on a phone
+>     with the result worked out from the limits, quarantine and release, nonconformances with their disposition, and
+>     corrective and preventive actions; inspection plans with versions;
+>   - quality manager and quality inspector roles; seven more reports at `/erp/c/<company>/erp-reports`;
+>   - goods receipts, manufacturing orders, traceability and the supplier page show their inspections and NCRs;
+>   - nothing is written to Finance: scrap and returns under an NCR record their posting as planned, as every stock
+>     movement does.
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
 >   - Operations: what waits in the company (approvals, orders to receive, products to reorder, adjustments and counts),
@@ -142,6 +152,9 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
     assets, released routings, a manufacturing order for ten weldments in progress (materials reserved, gusset plates
     issued, laser cutting done with its time, welding started), confirmed and forecast demand for kits, and an MRP run
     with open suggestions. Example companies made before Release 3 are not changed; removing and remaking one adds them.
+  - Quality (ERP Release 4 part A, not deployed): a released incoming inspection plan for the bracket arms, their
+    failed incoming inspection, a nonconformance with containment and root cause, and a corrective action in progress.
+    No stock moves. Example companies made before Release 4 are not changed; removing and remaking one adds them.
 
   Every name is invented, and every address is on example.com. No other accounts are made.
 - **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.5 s on Node
