@@ -11,7 +11,7 @@
 // How MRP plans (docs/erp/release-3.md, "MRP"): products are planned level by level down the released bills of
 // materials (low-level codes). For each product, from its available stock (on hand outside quarantine, less
 // reservations) and in date order: receipts expected (open purchase orders at their line's or order's required date;
-// open manufacturing orders' remaining output at their planned finish) come in; requirements (confirmed demand in the
+// open manufacturing orders' remaining output at their required date, else their planned finish) come in; requirements (confirmed demand in the
 // schedule, forecasts if asked, open manufacturing orders' materials not yet issued or reserved, and the materials of
 // the orders MRP plans for the products above) go out. When stock would fall below the safety stock, a later receipt is
 // pulled in first (expedite); otherwise an order is planned for the shortfall, sized by the minimum order and the
@@ -330,7 +330,7 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
   }
   for (const m of mos) {
     const out = Math.max(0, q6(m.quantity - m.completed_qty));
-    const date = m.finish_date ?? m.required_date ?? today;
+    const date = m.required_date ?? m.finish_date ?? today;
     if (out > 0) add(m.product_id, { date, qty: out, kind: 'receipt', ref: `Manufacturing order ${m.number}`, supply: { type: 'manufacturing_order', id: m.id, number: m.number, date } });
   }
 

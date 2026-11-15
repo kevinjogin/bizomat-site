@@ -1143,7 +1143,7 @@ productionRoutes.post('/c/:company/mos/:id/operations/:opId/:action{start|pause|
   const mo = await openMo(db, a, c.req.param('id'));
   const { o, ops } = await loadOp(db, a.companyId, mo.id, c.req.param('opId'));
   const action = c.req.param('action');
-  const input = await body(c, z.object({ timer: z.boolean().optional(), actualOutsourceCents: z.number().int().min(0).max(1e13).optional(), note: zText(500).optional() }));
+  const input = await body(c, z.object({ timer: z.boolean().optional(), actualOutsourceCents: z.number().int().min(0).max(1e13).optional(), goodQty: z.number().min(0).max(1e9).optional(), note: zText(500).optional() }));
   const t = now();
   const stmts: D1PreparedStatement[] = [];
   let summary: string;
@@ -1171,18 +1171,24 @@ productionRoutes.post('/c/:company/mos/:id/operations/:opId/:action{start|pause|
     if (o.status === 'pending' && !o.outsourced) badState(`Start operation ${o.op_no} first`);
     if (o.inspection && !o.inspection_result) badState(`Operation ${o.op_no} is an inspection point: record a pass or fail first`);
     if (o.outsourced && input.actualOutsourceCents === undefined) throw new HttpError(400, 'Enter what the outsourced operation actually cost');
+    // an outsourced operation comes back with what the supplier returned good: given, else what went out to it
+    let good = Number(o.good_qty);
     if (o.outsourced) {
       const preds = predecessorsOf(o, ops);
-      const open = ops.filter((x) => preds.includes(x.op_no) && x.status !== 'completed' && !(o.overlap && x.status !== 'pending'));
+      const predOps = ops.filter((x) => preds.includes(x.op_no));
+      const open = predOps.filter((x) => x.status !== 'completed' && !(o.overlap && x.status !== 'pending'));
       if (open.length) badState(`Operation ${open[0].op_no} must be completed first`);
+      const unitsIn = predOps.length ? Math.min(...predOps.map((x) => Number(x.good_qty))) : Number(mo.quantity);
+      if (input.goodQty !== undefined && input.goodQty > unitsIn + 1e-9) throw new HttpError(400, `Only ${q6(unitsIn)} went out to the supplier`);
+      if (good <= 1e-9) good = q6(input.goodQty ?? unitsIn);
     }
     stmts.push(
       ...(await stopTimers(db, a.companyId, o, t)),
       db
-        .prepare("UPDATE erp_mo_operations SET status = 'completed', started_at = COALESCE(started_at, ?), completed_at = ?, completed_by = ?, actual_outsource_cents = COALESCE(?, actual_outsource_cents) WHERE company_id = ? AND id = ? AND status <> 'completed'")
-        .bind(t, t, a.userId, o.outsourced ? input.actualOutsourceCents : null, a.companyId, o.id),
+        .prepare("UPDATE erp_mo_operations SET status = 'completed', good_qty = ?, started_at = COALESCE(started_at, ?), completed_at = ?, completed_by = ?, actual_outsource_cents = COALESCE(?, actual_outsource_cents) WHERE company_id = ? AND id = ? AND status <> 'completed'")
+        .bind(good, t, t, a.userId, o.outsourced ? input.actualOutsourceCents : null, a.companyId, o.id),
     );
-    summary = `Operation ${o.op_no} ${o.name} completed: ${q6(o.good_qty)} good${o.scrap_qty ? `, ${q6(o.scrap_qty)} scrapped` : ''}${o.outsourced ? `; outsourced cost ${dollars(input.actualOutsourceCents)}` : ''}`;
+    summary = `Operation ${o.op_no} ${o.name} completed: ${q6(good)} good${o.scrap_qty ? `, ${q6(o.scrap_qty)} scrapped` : ''}${o.outsourced ? `; outsourced cost ${dollars(input.actualOutsourceCents)}` : ''}`;
   }
   stmts.push(startedStmt(db, a.companyId, mo.id, t), eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: `mo.operation_${action}`, entityType: 'manufacturing_order', entityId: mo.id, productId: mo.product_id, summary: `${mo.number}: ${summary}`, at: t }));
   try {
