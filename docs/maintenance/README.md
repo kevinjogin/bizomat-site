@@ -5,11 +5,10 @@ maintenance management system (CMMS) inside BIZOMAT ERP, in four stages (M1 to M
 no MEX branding, interface designs, source code or content are used.
 
 - **Stage M1** is live in production: the asset register, maintenance requests and work orders.
-- **Stages M2 and M3** (ERP Release 4, part B, owner's ERP brief of 14 Nov 2026, section 8) are built and tested on the
-  branch `erp-release-4-maintenance`, with migration `0024_maintenance_m2_m3.sql`. They are **not deployed**: production
-  has them only once that branch is merged and deployed. They cover preventive maintenance, meters and readings,
-  inspections, prestart checks, parts through ERP Inventory, trades and labour costs, downtime, sites, QR labels and
-  scanning, and the reliability reports.
+- **Stages M2 and M3** (ERP Release 4, part B, owner's ERP brief of 14 Nov 2026, section 8) are live in production since
+  15 Nov 2026 (kevinjogin/bizomat-site#68, migration `0024_maintenance_m2_m3.sql`). They cover preventive maintenance,
+  meters and readings, inspections, prestart checks, parts through ERP Inventory, trades and labour costs, downtime,
+  sites, QR labels and scanning, and the reliability reports.
 - **Planned** (labelled Planned on every page): the AI scheduling assistant, technician workload planning, offline field
   work, maintenance costs posted to Finance, and the rest of M4 (predictive maintenance, IoT feeds, fuel records).
 
@@ -94,7 +93,7 @@ and uses the same accounts, session, database, file store and Machine. There is 
   belongs to.
 - **History** (`mt_events`): every create, change and decision, with who made it and when.
 
-## What stages M2 and M3 do (not deployed)
+## What stages M2 and M3 do
 
 ### Preventive maintenance (`pm.ts`, tab Preventive)
 
