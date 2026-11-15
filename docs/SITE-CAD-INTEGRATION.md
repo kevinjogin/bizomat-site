@@ -119,10 +119,11 @@ repository with its image and entrypoint tests.
   answers 404 (as on 15 Nov 2026). The web process's `/healthz` says `downloads: true` once it is on.
 - `/cad/download/solidworks` (signed in) is served by the CAD app: `OPENSKETCH_INSTALLER_URL`, else the file
   `/data/downloads/BIZOMAT-CAD-Automation-x64.msi` on the `cados` volume, else the `msi_url` of `/data/bridge-release.json`,
-  else `https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi`. Read on 15 Nov 2026 (CAD `fly-status.yml`,
-  read only): the volume holds the development-signed 0.13.0 (1,323,008 bytes, 7 Nov), there is no
-  `bridge-release.json` and `OPENSKETCH_INSTALLER_URL` is not set, so signed-in people get 0.13.0 until a 0.13.1 file
-  replaces it there or the R2 route serves one.
+  else `https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi`. Since 15 Nov 2026 22:45 UTC the volume holds
+  the development-signed 0.13.1 (1,323,008 bytes, SHA-256 `cc8f04ecb1ee20fdcc96261ea100ef48fa03850db454f29908b032aa10c7d1a2`,
+  signer `CB6DBE74...`, a self-signed certificate only the owner's PC trusts), put there by the CAD repository's
+  `installer-volume.yml` with every check passed; the development-signed 0.13.0 before it is kept beside it. There is
+  no `bridge-release.json` and `OPENSKETCH_INSTALLER_URL` is not set.
 - The Companion's update manifest is `/v2/bridge/update.json` on the CAD app, signed by the gateway, from
   `/data/bridge-release.json` (absent today, so the Companion offers no update).
 
@@ -132,10 +133,15 @@ repository with its image and entrypoint tests.
    bucket `bizomat-downloads` only, no expiry or one you will renew. R2 shows an Access Key ID and a Secret Access Key
    once.
 2. In kevinjogin/bizomat-site > Settings > Secrets and variables > Actions, add `WEB_DOWNLOADS_R2_ACCESS_KEY_ID`,
-   `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY` and, unless `CF_ACCOUNT_ID` is already a Fly secret on `bizomat`,
-   `WEB_DOWNLOADS_R2_ACCOUNT_ID` (the 32-character account id). Never paste them anywhere else.
+   `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY` and `WEB_DOWNLOADS_R2_ACCOUNT_ID` (the 32-character account id: the part before
+   `.r2.cloudflarestorage.com` in the S3 address R2 shows with the token). The account id is needed because
+   `CF_ACCOUNT_ID` is not a Fly secret on `bizomat` (deploy run 40, 15 Nov 2026). Never paste them anywhere else.
 3. Publish the installer into the bucket from the laptop (`tools/laptop/cloudflare.ps1 publish installer -File <msi>`:
-   the versioned and stable names, their `.sha256` files and `cad/release.json`).
+   the versioned and stable names, their `.sha256` files and `cad/release.json`). A development-signed file
+   (`...-x64-DEV.msi`) needs `-Version 0.13.1`, as the tool reads the version only from `...-<version>-x64.msi`; the tool
+   also expects the laptop's folder layout (`bizomat.ps1 setup`: `CADOS` beside `gocore-website`), and a clone made
+   elsewhere (for example `D:\BIZOMAT\BIZOMAT-CAD`) does not match it. What is in the bucket today could not be read from
+   here (no Cloudflare access in this session): the dashboard's R2 page lists it.
 4. The next website deploy stages the token and applies it; its summary reports the download's answer.
 
 ## 7. Checklist when one side changes
