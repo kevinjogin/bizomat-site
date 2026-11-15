@@ -20,10 +20,23 @@ SHA-256.
 
 ## 2. Where it stands today
 
-Checked on 15 Nov 2026 with read-only requests:
+**Live since 15 Nov 2026** (the owner's repository secret in both repositories):
+- **bizomat:** deploy run 40 (d5ae6ca) staged `WORK_BIZOMAT_ID_CLIENTS`. Its check "CAD sign-in client" passed: a made-up
+  code with the repository secret was refused as `invalid_grant`.
+- **cados:** deploy run 4 of kevinjogin/bizomat-cad (2428934, release v30) staged `BIZOMAT_ID_CLIENT_SECRET` and passed
+  its new check. The sign-in page offers Sign in with BIZOMAT, and BIZOMAT holds the same secret.
+- **Sign-in start:** "Continue with BIZOMAT" sends the browser to `https://bizomat.ai/company/authorize` with
+  `client_id=cad`, the registered return address and PKCE S256.
+- **Status reporting:** CAD's log (Fly status run 4) says "ERP status: on", then the POST to
+  `/company/api/id/cad-status` answered 200: "reported 1 accounts".
+- **Not yet checked:** a real sign-in with "Continue with BIZOMAT", and the computers shown on a company's Products and
+  Engineering page. Both need the owner's own sign-in (section 7, step 8). The website keeps both features labelled In
+  development until then.
 
-- Both features are off. `https://bizomat.ai/cad/login` shows no "Continue with BIZOMAT" button, so
-  `BIZOMAT_ID_CLIENT_SECRET` is not set on `cados`.
+Before (checked on 15 Nov 2026 with read-only requests):
+
+- Both features were off. `https://bizomat.ai/cad/login` showed no "Continue with BIZOMAT" button, so
+  `BIZOMAT_ID_CLIENT_SECRET` was not set on `cados`.
 - The provider endpoints on bizomat.ai are deployed and answer 401 without credentials
   (`POST /company/api/id/token`, `POST /company/api/id/cad-status`).
 - The ERP's Products and Engineering page says "CAD Automation is not reporting to the ERP yet". That box shows

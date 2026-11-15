@@ -5,7 +5,9 @@ describes what is built, the live and sandbox configuration in Stripe, the owner
 needs a decision. `PLAN.md` stays as the discovery record; where the two differ, this page is the current design.
 
 **Status (15 Nov 2026):**
-- Built and tested; kevinjogin/bizomat-site#77.
+- Built and tested; kevinjogin/bizomat-site#77 and #78, **deployed** (deploy run 40, d5ae6ca). Production billing is
+  **off**: the run's summary says `WORK_STRIPE_SECRET_KEY`, `WORK_STRIPE_PUBLISHABLE_KEY` and
+  `WORK_STRIPE_WEBHOOK_SECRET` are not set in GitHub, and the webhook answers 503.
 - **The live price** was created by the owner in Stripe's live mode, and read here with a read-only key:
 
   | | Live Stripe |
