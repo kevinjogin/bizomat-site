@@ -1,5 +1,9 @@
 # BIZOMAT Billing: Phase 1 plan (discovery and planning)
 
+> **15 Nov 2026:** the owner's later brief replaced the four plans below with one price per active user (A$10 per user
+> per month, annual optional). What is built, the test-mode setup and the open decisions are in `docs/billing/README.md`;
+> this plan stays as the discovery record.
+
 _Written 15 Nov 2026 on the branch `billing-plan` (from `035e6062`). This is a plan only. No billing code exists, nothing
 is deployed, and no call was made to `api.stripe.com` while writing it. Sources are listed at the end ([S1] and so on)._
 

@@ -92,7 +92,17 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   administrator verifies it in the app: never call the product, its rules or a business using it compliant, certified
   or legally verified (`tests/whs-claims.test.ts`). BIZOMAT never decides reportability and does not submit to
   regulators. Inspections, permits, contractors, training, chemicals, PPE, emergency management, consultation, health
-  surveillance and the compliance register are planned.
+  surveillance and the compliance register are planned. Hours worked by site and month (reasoned, append-only history)
+  and LTIFR/TRIFR, which show "Cannot be calculated" when hours are missing, are built on the working branch
+  (migration 0028), not deployed.
+  **Billing** (owner's brief of 15 Nov 2026; `docs/billing/README.md`; built on the working branch, migration 0027,
+  **not deployed**): one Stripe customer and subscription per registered company, charged per active member (A$10 per
+  user per month proposed; prices only from Stripe Price ids in `WORK_STRIPE_*`), embedded Checkout on the ERP's billing
+  page, signed idempotent webhook, seat changes after every membership change, entitlements on the server (off by
+  default). Billing stays off until every `STRIPE_*` setting is present and of one environment. Stripe test mode only
+  until the owner approves live; never create Stripe products or prices without the owner's approval of the proposed
+  configuration; never call BIZOMAT's invoices tax invoices or its billing tax compliant. The example company, own
+  companies, CAD Automation and the public Resources are never billed.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
