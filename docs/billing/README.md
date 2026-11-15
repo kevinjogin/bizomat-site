@@ -4,8 +4,17 @@ The owner's brief of 15 Nov 2026 replaced the four-plan model in `docs/billing/P
 describes what is built, how to set it up in Stripe's test mode, and what still needs a decision. `PLAN.md` stays as the
 discovery record; where the two differ, this page is the current design.
 
-**Status:** built and tested on the working branch, not merged to `main`, not deployed. Billing is **off** in every
-environment until all the settings below are present. No Stripe product, price, key or webhook has been created.
+**Status (15 Nov 2026):**
+- Built and tested; in kevinjogin/bizomat-site#77.
+- **Production billing is off:** production takes live Stripe settings only, and no live price or live keys are
+  approved yet.
+- **The price per user is not approved.** The public page `/pricing/` says it is being finalised and names no amount.
+- **Stripe sandbox objects, made for testing only** (owner's approval):
+  - the product "BIZOMAT ERP, per active user";
+  - a monthly AUD 10.00 price, GST exclusive, `price_1Uc2bqRymx2K9qJ1EVaxV6Hd`, lookup key `bizomat_seat_monthly_aud`.
+    This test amount is not the approved commercial price;
+  - a webhook `we_1Uc2bxRymx2K9qJ1iPRF5jUV`, now **disabled**: it points at bizomat.ai, which takes live events
+    only.
 
 ## What it does
 
@@ -86,6 +95,13 @@ The work role receives `WORK_STRIPE_*` under these names (`infrastructure/fly/en
 reason shown to platform admins (never a key), until all the required settings are present and belong to one Stripe
 environment. A live key in a test environment, or the reverse, turns billing off.
 
+**Production takes live settings only** (owner, 15 Nov 2026):
+- The app refuses `STRIPE_ENVIRONMENT=test` when `ENVIRONMENT=production`.
+- The deploy workflow (`.github/scripts/stage-secrets.sh`) stages the Stripe repository secrets only when
+  `fly.website.toml` sets `WORK_STRIPE_ENVIRONMENT = "live"`, and only live keys.
+- Sandbox keys kept in GitHub are left there, and billing stays off.
+- Test mode runs in development, in the tests and in a sandbox run, never on bizomat.ai.
+
 | Fly secret | App reads | Required | Notes |
 | --- | --- | --- | --- |
 | `WORK_STRIPE_ENVIRONMENT` | `STRIPE_ENVIRONMENT` | yes | `test` or `live`. Live only after the owner's explicit approval. |
@@ -100,15 +116,22 @@ environment. A live key in a test environment, or the reverse, turns billing off
 | `WORK_STRIPE_GRACE_DAYS` | `STRIPE_GRACE_DAYS` | no | 0 to 60, default 14. |
 | none | `STRIPE_API_BASE` | no | Development and tests only (a stand-in for Stripe). Refused in production and live. The Node server's outbound guard (`apps/work/src/node/outbound.ts`) only reaches public https addresses, so a stand-in on this computer is not reachable from it; the tests replace `fetch` instead. |
 
-**Restricted key permissions** (nothing else):
-- Customers: write.
-- Checkout Sessions: write.
-- Subscriptions: write.
-- Invoices: write (preview and pay).
-- Setup Intents: read.
-- Prices and Products: read.
-- Charges, Disputes, Radar early fraud warnings: read.
-- Payment Methods: read.
+**Restricted key permissions**, traced from every Stripe call in `apps/work/src/worker/billing/` (nothing else is
+called):
+
+| Call | Permission |
+| --- | --- |
+| `prices.retrieve` (with the product expanded) | Prices: read; Products: read |
+| `customers.create` (with the company's ABN as `au_abn`), `customers.update` (default payment method) | Customers: write (if the Dashboard lists customer tax IDs separately, write there too) |
+| `checkout.sessions.create`, `.retrieve`, `.expire` | Checkout Sessions: write |
+| `subscriptions.retrieve`, `.update` (seats, frequency, cancel, payment method; `default_payment_method` expanded) | Subscriptions: write; Payment Methods: read |
+| `invoices.retrieve`, `invoices.createPreview`, `invoices.pay` | Invoices: write |
+| `setupIntents.retrieve` | SetupIntents: read |
+| `charges.retrieve`, `disputes.retrieve`, `radar.earlyFraudWarnings.retrieve` | Charges: read; Disputes: read; Radar early fraud warnings: read |
+| `webhooks.constructEventAsync` | none (local signature check) |
+
+The sandbox run below used a full sandbox secret key. Before live, run the same flow once with the restricted key: a
+missing permission shows as a 403 in the billing page's message, and nothing is half applied.
 
 ## Proposed Stripe configuration (for the owner's approval; not created)
 
@@ -256,8 +279,32 @@ Also checked: the billing page rendered by the built server at 1440 and 390 px (
 errors, the billing security policy applied, the Administration link a full page load), with the per-user prices taken
 from the server's verified-price record.
 
-Not tested yet (needs a sandbox key): a real Stripe sandbox run of the same flows, the embedded Checkout in a browser,
-wallets, 3D Secure, and Stripe's real proration amounts.
+**Against the real Stripe sandbox** (15 Nov 2026, the app's own code through the work app's Node runtime; temporary
+test, not committed; objects cleaned up):
+- the price was read and checked: A$10.00 per user per month, exclusive;
+- an embedded Checkout session was created. It took the server's seat count (1) when the request asked for 99, and
+  the same session was shown again on a repeat;
+- the Australian customer was created with its ABN (`au_abn`, pending Stripe's check);
+- a signed `customer.subscription.created` was recorded once (the second delivery was not processed again);
+- the first invoice was recorded as paid;
+- a member added: Stripe's quantity went from 1 to 2, and the next-invoice preview shows Stripe's proration lines;
+- a member removed: the scheduled reconciliation brought the quantity back to 1;
+- cancel at period end, then keep;
+- a cancellation in Stripe was recorded;
+- **a declined renewal** (test clock moved 36 days, card `pm_card_chargeCustomerFail`): Stripe's subscription went
+  `past_due`, the invoice was open after 2 attempts, the app recorded `past_due` with the failure in the history, and
+  with enforcement on the company stayed entitled during the grace period.
+
+What that run showed: Stripe holds a new invoice until every enabled webhook endpoint has accepted `invoice.created`
+(up to 72 hours). A webhook must therefore point at a host that accepts that environment's events, which is why the
+sandbox webhook is disabled.
+
+Not tested yet:
+- completing Stripe's embedded Checkout in a browser with a test card (it needs the sandbox publishable key on a page
+  that may use test mode, and production never does);
+- wallets and 3D Secure;
+- a delivery signed by Stripe itself (the run signed events with Stripe's own test helper);
+- a restricted key with the permissions above.
 
 ## Decisions still open (from `PLAN.md` section 12, updated for the per-user model)
 
@@ -282,8 +329,8 @@ Open:
 | 10 | Own (unregistered) companies | Not billed today. Billing them would need a customer per person |
 | 14 | Which Stripe emails | Stripe: receipts and invoices. BIZOMAT sends none yet |
 | 17 | Payment methods | Cards and wallets first |
-| 18 | Test mode on production | Admins only, after the deploy is approved |
-| 19 | A public pricing page | Not built. Needs the owner's request (CLAUDE.md) |
+| 18 | Test mode on production | Settled: never (owner, 15 Nov 2026). Production takes live settings only |
+| 19 | A public pricing page | Built: `/pricing/` (owner's request, 15 Nov 2026), linked from the footer, `/systems/` and `/systems/erp/`; it names no price until one is approved |
 | 21 | Invoice numbering | Account-level sequence, accountant to confirm |
 | 23 | The live key in this environment | Replace it with a sandbox key, then roll it |
 | new | Proration on removal | Credit (default) or no credit (`STRIPE_PRORATION=none` charges changes from the next period) |
