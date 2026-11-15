@@ -13,13 +13,19 @@ needs a decision. `PLAN.md` stays as the discovery record; where the two differ,
   | Product | `prod_VdED2AiKMDhIgM`, "BIZOMAT Business Subscription", active, tax code `txcd_10103001` |
   | Price | `price_1UbyE5Rs74vQph6MdBU51OeG` (the product's default price), active, lookup key `bizomat_user_monthly_aud` |
   | Amount | AUD 10.00 per unit, monthly, licensed, per unit |
-  | Tax behaviour | **unspecified**: Stripe does not say whether GST is included or added |
+  | Tax behaviour | **unspecified** when read; to be set to **exclusive** (owner, 15 Nov 2026) |
+  | Annual price | `price_1UbyE6Rs74vQph6MNviG9cbJ`, AUD 100.00 a year, active: exists, **not offered** (monthly only) |
+  | Stripe Tax | Active; head office AU; an **active Australian registration**; default tax behaviour exclusive |
+  | Live webhook | `we_1Uc3Z4Rs74vQph6MS0nSGbCs`, `https://bizomat.ai/erp/api/billing/stripe-webhook`, API version `2026-10-28.endive`; 259 events when created, to be cut to the 25 in `HANDLED_EVENTS` |
 
   `fly.website.toml` sets `WORK_STRIPE_ENVIRONMENT = "live"` and this price; `src/config/pricing.ts` names the same
   id and amount for the pages, and `tests/pricing.test.ts` keeps the two equal.
-- **GST gate:** the app sells a live price only when its tax behaviour is inclusive or exclusive
-  (`checkPrice` in `apps/work/src/worker/billing/stripe.ts`). Until the owner sets it, the billing page shows the
-  price with "GST being confirmed", and "Start subscription" stays disabled.
+- **GST: exclusive** (owner, 15 Nov 2026).
+  - Production sets `WORK_STRIPE_AUTOMATIC_TAX = "on"`, so Stripe Tax adds GST at Checkout and on each invoice,
+    from the Australian registration and the billing address Checkout collects.
+  - The pages say "plus GST" and give A$11.00 including 10% GST for a customer in Australia.
+  - The app sells a live price only when its tax behaviour is inclusive or exclusive (`checkPrice` in
+    `apps/work/src/worker/billing/stripe.ts`), so the live price must be set to exclusive in Stripe first.
 - **Billing on or off in production:**
   - It is on only when the live secret key, publishable key and webhook signing secret are on Fly. They come from
     repository secrets at each deploy, and the deploy summary names any that is missing.
@@ -195,7 +201,9 @@ With GST-inclusive prices, the totals are the first column, and Stripe shows the
   - each price's tax behaviour as Stripe holds it;
   - whether Stripe calculates GST (`STRIPE_AUTOMATIC_TAX`);
   - the GST on each invoice and on the estimate, as Stripe charged or calculated it.
-- **The live price's tax behaviour is unspecified** (15 Nov 2026), so the app does not sell it yet (Going live, step 1).
+- **GST exclusive** (owner, 15 Nov 2026): Stripe Tax has an active Australian registration, and production turns on
+  automatic tax. The live price's tax behaviour, unspecified when read, is set to exclusive; until it is, the app does
+  not sell it.
 - **Stripe Tax stays off until** the owner confirms BIZOMAT's GST registration and records it in Stripe (Tax >
   Registrations). Without a registration, Stripe charges no tax and gives no error.
 - **No claims:** nothing in BIZOMAT says its invoices are tax invoices or that its billing is tax compliant.
@@ -250,10 +258,9 @@ With GST-inclusive prices, the totals are the first column, and Stripe shows the
 
 Done: the live product and price (owner); `WORK_STRIPE_ENVIRONMENT = "live"` and the price id in `fly.website.toml`.
 
-1. **GST:** decide, with the accountant, whether A$10.00 includes GST or has GST added (Stripe cannot change it once
-   set), then set it on the live price: Product catalogue > BIZOMAT Business Subscription > the price > Tax behaviour.
-   If BIZOMAT is registered for GST, add the Australian registration in Stripe Tax and set `WORK_STRIPE_AUTOMATIC_TAX`
-   to `on`, so invoices carry the GST. Then change `gst` in `src/config/pricing.ts`, so the pages say the same.
+1. **GST (decided: exclusive).** Stripe Tax holds the Australian registration. The live monthly price's tax behaviour
+   is set to exclusive (Stripe allows it once on an unspecified price; the amount does not change), and production
+   sets `WORK_STRIPE_AUTOMATIC_TAX = "on"`.
 2. **The app's key:** in live mode, Developers > API keys > Create restricted key `bizomat-work-billing-live`, with the
    permissions in the table above. Save it as the repository secret `WORK_STRIPE_SECRET_KEY` of
    kevinjogin/bizomat-site (Settings > Secrets and variables > Actions).
