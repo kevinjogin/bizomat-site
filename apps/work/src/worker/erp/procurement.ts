@@ -209,10 +209,13 @@ procurementRoutes.get('/c/:company/requisitions', async (c) => {
   return c.json({ requisitions: list, total: total?.n ?? 0, limit, offset, can: { raise: can(a, 'requisitions.raise'), approve: can(a, 'requisitions.approve') } });
 });
 
-procurementRoutes.post('/c/:company/requisitions', async (c) => {
-  const a = await requireErp(c, 'requisitions.raise');
-  const db = c.env.DB;
-  const input = await body(c, z.object({ ...reqFields, submit: z.boolean().optional() }));
+const zRequisitionIn = z.object({ ...reqFields, submit: z.boolean().optional() });
+
+/**
+ * Raises a requisition (draft, or submitted for approval). The route below and MRP's purchase suggestions (planning.ts)
+ * both come through here; the caller checks that the person may raise requisitions.
+ */
+export async function createRequisition(db: D1Database, a: ErpAccess, input: z.infer<typeof zRequisitionIn>, note = '') {
   const lines = (await checkLines(db, a.companyId, input.lines ?? [])).map((l, i) => ({ ...l, estUnitCostCents: input.lines![i].estUnitCostCents ?? null }));
   const department = await checkDepartment(db, a, input.departmentId);
   const id = newId();
@@ -226,9 +229,15 @@ procurementRoutes.post('/c/:company/requisitions', async (c) => {
       )
       .bind(id, a.companyId, number, input.title ?? '', a.userId, department, input.requiredDate ?? null, input.budgetRef ?? '', input.reason ?? '', status, estimate(lines), input.currency ?? 'AUD', input.submit ? t : null, searchText(number, input.title, input.reason, ...lines.map((l) => l.item)), a.userId, t, t),
     ...reqLineStmts(db, a.companyId, id, lines),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: input.submit ? 'requisition.submitted' : 'requisition.created', entityType: 'requisition', entityId: id, summary: `${number} ${input.submit ? 'raised and submitted' : 'drafted'}: ${lines.length} line${lines.length === 1 ? '' : 's'}`, at: t }),
+    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: input.submit ? 'requisition.submitted' : 'requisition.created', entityType: 'requisition', entityId: id, summary: `${number} ${input.submit ? 'raised and submitted' : 'drafted'}: ${lines.length} line${lines.length === 1 ? '' : 's'}${note ? ` (${note})` : ''}`, at: t }),
   ]);
-  return c.json({ id, number, status }, 201);
+  return { id, number, status };
+}
+
+procurementRoutes.post('/c/:company/requisitions', async (c) => {
+  const a = await requireErp(c, 'requisitions.raise');
+  const input = await body(c, zRequisitionIn);
+  return c.json(await createRequisition(c.env.DB, a, input), 201);
 });
 
 procurementRoutes.get('/c/:company/requisitions/:id', async (c) => {

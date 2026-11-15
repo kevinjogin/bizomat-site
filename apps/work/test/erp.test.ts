@@ -683,7 +683,7 @@ describe('isolation and roles', () => {
     ];
     for (const [who, m, path, b, status] of checks) expect((await who.req(m, erp(co, path), b)).status, `${who.name} ${m} ${path}`).toBe(status);
     const rolesView = await owner.json('GET', erp(co, '/roles'));
-    expect(rolesView.roles.map((r: any) => r.value)).toEqual(['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'viewer']);
+    expect(rolesView.roles.map((r: any) => r.value)).toEqual(['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'viewer']);
     expect(rolesView.people.find((x: any) => x.id === viewer.userId)).toMatchObject({ roles: ['viewer'], rolesAreDefault: true });
     const ev = (await owner.json('GET', erp(co, '/events'))).events.find((e: any) => e.action === 'role.changed');
     expect(ev.before).toBeTruthy();
@@ -785,8 +785,8 @@ describe('the example company', () => {
       ['ECO-0002', 'draft', false],
     ]);
     const suppliers = await ex.json('GET', erp(co, '/suppliers'));
-    // Release 1's two suppliers, and Release 2's two approved fastener suppliers.
-    expect(suppliers.suppliers.map((s: any) => s.status).sort()).toEqual(['approved', 'approved', 'approved', 'pending']);
+    // Release 1's two suppliers, Release 2's two approved fastener suppliers and Release 3's approved coating supplier.
+    expect(suppliers.suppliers.map((s: any) => s.status).sort()).toEqual(['approved', 'approved', 'approved', 'approved', 'pending']);
     expect(suppliers.suppliers.every((s: any) => s.abn === '')).toBe(true);
     expect((await ex.json('GET', erp(co, '/documents'))).documents[0]).toMatchObject({ latestSource: 'cad_reference' });
     // The example's Finance workspace is the one a supplier may link to.

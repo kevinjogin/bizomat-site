@@ -11,6 +11,7 @@
 //   GET  /c/:company/operations           counts for the Operations hub (purchasing and inventory)
 //   products.ts, engineering.ts, changes.ts, documents.ts, suppliers.ts, files.ts, reports.ts: the records (Release 1)
 //   settings.ts, procurement.ts, purchasing.ts, record-files.ts, inventory.ts, stock-reports.ts: Release 2
+//   manufacturing.ts, production.ts, planning.ts, mfg-reports.ts: Release 3 (manufacturing)
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -31,6 +32,10 @@ import { procurementRoutes } from './procurement';
 import { purchasingRoutes } from './purchasing';
 import { recordFileRoutes } from './record-files';
 import { stockReportRoutes } from './stock-reports';
+import { manufacturingRoutes } from './manufacturing';
+import { productionRoutes } from './production';
+import { planningRoutes } from './planning';
+import { mfgReportRoutes } from './mfg-reports';
 
 export const erpRoutes = new Hono<AppEnv>();
 
@@ -76,7 +81,8 @@ erpRoutes.get('/c/:company/overview', async (c) => {
 erpRoutes.get('/c/:company/operations', async (c) => {
   const a = await requireErp(c, 'products.view');
   const db = c.env.DB;
-  const [req, rfq, po, rec, low, adj, cnt, wh] = await db.batch([
+  const today = new Date().toISOString().slice(0, 10);
+  const [req, rfq, po, rec, low, adj, cnt, wh, mo, insp, mrp] = await db.batch([
     db.prepare("SELECT SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) AS submitted, SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS approved, SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft FROM erp_requisitions WHERE company_id = ?").bind(a.companyId),
     db.prepare("SELECT SUM(CASE WHEN status IN ('draft','sent') THEN 1 ELSE 0 END) AS open, SUM(CASE WHEN status = 'awarded' THEN 1 ELSE 0 END) AS awarded FROM erp_rfqs WHERE company_id = ?").bind(a.companyId),
     db.prepare("SELECT SUM(CASE WHEN status = 'awaiting_approval' THEN 1 ELSE 0 END) AS awaiting, SUM(CASE WHEN status IN ('approved','sent','partially_received') THEN 1 ELSE 0 END) AS to_receive, SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft FROM erp_purchase_orders WHERE company_id = ?").bind(a.companyId),
@@ -91,6 +97,22 @@ erpRoutes.get('/c/:company/operations', async (c) => {
     db.prepare("SELECT COUNT(*) AS n FROM erp_adjustments WHERE company_id = ? AND status = 'pending'").bind(a.companyId),
     db.prepare("SELECT SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) AS open, SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) AS submitted FROM erp_counts WHERE company_id = ?").bind(a.companyId),
     db.prepare('SELECT (SELECT COUNT(*) FROM erp_warehouses WHERE company_id = ?1 AND archived_at IS NULL) AS warehouses, (SELECT COALESCE(SUM(value_cents), 0) FROM erp_valuation WHERE company_id = ?1) AS value').bind(a.companyId),
+    // Release 3: manufacturing orders, outstanding inspections and the latest MRP run's open suggestions
+    db
+      .prepare(
+        `SELECT SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft, SUM(CASE WHEN status = 'released' THEN 1 ELSE 0 END) AS released, SUM(CASE WHEN status = 'in_progress' THEN 1 ELSE 0 END) AS in_progress,
+                SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+                SUM(CASE WHEN status IN ('draft','released','in_progress') AND required_date IS NOT NULL AND (required_date < ?2 OR finish_date > required_date) THEN 1 ELSE 0 END) AS late
+           FROM erp_mfg_orders WHERE company_id = ?1`,
+      )
+      .bind(a.companyId, today),
+    db.prepare("SELECT COUNT(*) AS n FROM erp_mo_operations o JOIN erp_mfg_orders mo ON mo.company_id = o.company_id AND mo.id = o.mo_id WHERE o.company_id = ? AND o.inspection = 1 AND o.inspection_result IS NULL AND o.status IN ('in_progress','paused') AND mo.status IN ('released','in_progress')").bind(a.companyId),
+    db
+      .prepare(
+        `SELECT SUM(CASE WHEN s.kind = 'make' THEN 1 ELSE 0 END) AS make, SUM(CASE WHEN s.kind = 'buy' THEN 1 ELSE 0 END) AS buy, SUM(CASE WHEN s.kind = 'expedite' THEN 1 ELSE 0 END) AS expedite
+           FROM erp_mrp_suggestions s WHERE s.company_id = ?1 AND s.status = 'open' AND s.run_id = (SELECT id FROM erp_mrp_runs WHERE company_id = ?1 ORDER BY created_at DESC, rowid DESC LIMIT 1)`,
+      )
+      .bind(a.companyId),
   ]);
   const one = (r: D1Result) => (r.results[0] ?? {}) as Record<string, number | null>;
   return c.json({
@@ -99,6 +121,15 @@ erpRoutes.get('/c/:company/operations', async (c) => {
     purchaseOrders: { draft: one(po).draft ?? 0, awaitingApproval: one(po).awaiting ?? 0, toReceive: one(po).to_receive ?? 0 },
     receipts: { last30Days: one(rec).n ?? 0, inspection: one(rec).inspection ?? 0 },
     stock: { belowReorder: one(low).n ?? 0, pendingAdjustments: one(adj).n ?? 0, openCounts: one(cnt).open ?? 0, countsToApprove: one(cnt).submitted ?? 0, warehouses: one(wh).warehouses ?? 0, valueCents: one(wh).value ?? 0 },
+    manufacturing: {
+      draft: one(mo).draft ?? 0,
+      released: one(mo).released ?? 0,
+      inProgress: one(mo).in_progress ?? 0,
+      toClose: one(mo).completed ?? 0,
+      late: one(mo).late ?? 0,
+      inspections: one(insp).n ?? 0,
+      suggestions: { make: one(mrp).make ?? 0, buy: one(mrp).buy ?? 0, expedite: one(mrp).expedite ?? 0 },
+    },
     can: capabilities(a),
   });
 });
@@ -113,8 +144,10 @@ const ROLE_HELP: Record<string, string> = {
   buyer: 'Suppliers and their prices, requests for quotation, quotations and purchase orders',
   procurement_manager: 'Approves requisitions, quotation choices, purchase orders over the limit and suppliers, and does a buyer’s work',
   warehouse_manager: 'Warehouses and locations, stock settings, approves adjustments and counts, and does an operator’s work',
-  warehouse_operator: 'Receives goods; issues, transfers, reserves, returns, quarantines and counts stock',
-  viewer: 'Reads products, engineering records, suppliers, purchasing and stock',
+  warehouse_operator: 'Receives goods; issues, transfers, reserves, returns, quarantines and counts stock; issues materials to manufacturing orders',
+  production_manager: 'Work centres, machines and routings; plans, releases, completes and closes manufacturing orders; the master production schedule and MRP; and does an operator’s work',
+  production_operator: 'Runs operations on the shop floor: start, stop, time, output, scrap, rework, downtime and inspections; issues materials and receives finished goods',
+  viewer: 'Reads products, engineering records, suppliers, purchasing, stock and manufacturing',
 };
 
 erpRoutes.get('/c/:company/roles', async (c) => {
@@ -182,3 +215,8 @@ erpRoutes.route('/', purchasingRoutes);
 erpRoutes.route('/', recordFileRoutes);
 erpRoutes.route('/', inventoryRoutes);
 erpRoutes.route('/', stockReportRoutes);
+// Release 3: manufacturing
+erpRoutes.route('/', manufacturingRoutes);
+erpRoutes.route('/', productionRoutes);
+erpRoutes.route('/', planningRoutes);
+erpRoutes.route('/', mfgReportRoutes);

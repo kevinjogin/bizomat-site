@@ -1,6 +1,7 @@
-// Small pieces shared by the ERP's screens (Releases 1 and 2): status badges, CSV links, a pager, file upload and the history.
+// Small pieces shared by the ERP's screens (Releases 1 to 3): status badges, CSV links, a pager, file upload and the history.
 // Lists, property lists, sections and filters reuse the maintenance screens' pieces.
 import { useRef, useState, type ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { api, errorMessage } from '../../lib/api';
 import { Icon } from '../../components/ui/Icon';
 import { useToast } from '../../components/ui/overlays';
@@ -59,7 +60,7 @@ export function Pager({ offset, limit, total, setOffset }: { offset: number; lim
 }
 
 /** Upload files to a purchasing record: a requisition, request for quotation, quotation, purchase order or receipt. */
-export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a file' }: { companyId: string; kind: 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt'; id: string; onDone: () => void; label?: string }) {
+export function RecordUpload({ companyId, kind, id, onDone, label = 'Attach a file' }: { companyId: string; kind: 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order'; id: string; onDone: () => void; label?: string }) {
   const input = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const toast = useToast();
@@ -140,3 +141,23 @@ export function NotYet({ children }: { children: ReactNode }) {
     </p>
   );
 }
+
+/** Runs an action, says how it went, and refreshes the company's ERP data; the action's answer (or true), else null. */
+export function useAct(companyId: string) {
+  const qc = useQueryClient();
+  const toast = useToast();
+  return async (fn: () => Promise<unknown>, done: string) => {
+    try {
+      const r = await fn();
+      toast(done);
+      await qc.invalidateQueries({ queryKey: ['erp', companyId] });
+      return r ?? true;
+    } catch (err) {
+      toast(errorMessage(err), 'error');
+      return null;
+    }
+  };
+}
+
+/** A key for one submission, so a double tap or a retry is done once. */
+export const requestKey = () => (globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}-key`);

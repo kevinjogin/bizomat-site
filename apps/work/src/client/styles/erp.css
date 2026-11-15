@@ -99,3 +99,22 @@
   .erp-lines .erp-qty-input, .erp-lines .erp-money-input, .erp-lines .erp-unit-input { width: 100%; text-align: left; }
   .data-table.responsive td.num { text-align: left; }
 }
+
+/* Release 3: manufacturing */
+.erp-progress { width: 96px; height: 8px; vertical-align: middle; accent-color: var(--accent, #0f766e); }
+.erp-ops { gap: 10px; }
+.erp-op { margin: 0; }
+.erp-capacity td, .erp-capacity th { white-space: nowrap; }
+.erp-capacity td.erp-over { background: color-mix(in srgb, var(--danger) 10%, transparent); }
+.erp-floor { max-width: 760px; }
+.erp-centre { gap: 10px; }
+.erp-centre .erp-h3 { margin-top: 8px; }
+.erp-floor-figures { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+.erp-job { margin: 0; gap: 8px; border-left: 4px solid var(--border); }
+.erp-job-late { border-left-color: var(--danger); }
+.erp-job-title { font-weight: 600; font-size: 16px; text-decoration: none; min-width: 0; overflow-wrap: anywhere; }
+.erp-job-progress { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.erp-job-progress .erp-progress { width: 100%; max-width: 260px; height: 12px; }
+.erp-job-actions { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.erp-job-actions .btn { justify-content: center; }
+button.erp-stat { text-align: left; font: inherit; color: inherit; cursor: pointer; }

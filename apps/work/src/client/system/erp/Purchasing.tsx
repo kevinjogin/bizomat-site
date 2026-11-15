@@ -1284,7 +1284,7 @@ export function ReceiptDetail({ companyId, me }: { companyId: string; me: ErpMe 
   if (!q.data) return <Loading />;
   const v = q.data;
   const r = v.receipt;
-  const integrationStatus = (s: string): ReactNode => (s === 'done' ? <span className="badge success">Done</span> : s === 'planned' ? <span className="badge">Planned (Release 3)</span> : s === 'failed' ? <span className="badge danger">Failed</span> : <span className="badge warning">Pending</span>);
+  const integrationStatus = (s: string): ReactNode => (s === 'done' ? <span className="badge success">Done</span> : s === 'planned' ? <span className="badge">Planned</span> : s === 'failed' ? <span className="badge danger">Failed</span> : <span className="badge warning">Pending</span>);
   return (
     <div className="stack">
       <Crumbs companyId={companyId} list="/receipts" label="Receipts" here={r.number} />
@@ -1327,7 +1327,7 @@ export function ReceiptDetail({ companyId, me }: { companyId: string; me: ErpMe 
             {v.bill.lastError ? <p className="warn-box small">The last attempt failed: {v.bill.lastError}</p> : null}
             {v.integration.length ? (
               <ul className="erp-list">
-                {v.integration.map((e) => <li key={e.id} className="small">{e.kindLabel}: {integrationStatus(e.status)}{e.amountCents !== null && e.kind === 'finance.inventory_posting' ? ` ${money(e.amountCents)}` : ''}{e.status === 'planned' ? <span className="muted"> Inventory postings to Finance’s ledger come with Release 3: nothing is posted now.</span> : null}</li>)}
+                {v.integration.map((e) => <li key={e.id} className="small">{e.kindLabel}: {integrationStatus(e.status)}{e.amountCents !== null && e.kind === 'finance.inventory_posting' ? ` ${money(e.amountCents)}` : ''}{e.status === 'planned' ? <span className="muted"> Inventory postings to Finance’s ledger are not built: nothing is posted.</span> : null}</li>)}
               </ul>
             ) : null}
           </Section>

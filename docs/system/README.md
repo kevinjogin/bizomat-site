@@ -30,6 +30,17 @@
 >   - Purchasing and inventory settings at `/erp/c/<company>/erp-settings` (Administration) and ten more reports at
 >     `/erp/c/<company>/erp-reports`;
 >   - stock value is not posted to Finance's ledger: each posting is recorded as planned (Release 3).
+> - **ERP Release 3** (built on the branch `erp-release-3`, not deployed: live only once merged and deployed;
+>   `docs/erp/release-3.md`, migration `0022_erp_manufacturing.sql`, the same API):
+>   - Manufacturing at `/erp/c/<company>/manufacturing`, in the company's side menu and on the Operations page: orders
+>     (materials, operations, time, output, inspections, finished-goods receipts, costs), the shop floor for phones,
+>     planning (master production schedule, MRP, rough-cut capacity, planning data), work centres and machines, and
+>     routings with revisions;
+>   - production manager and production operator roles; manufacturing settings with the purchasing and inventory
+>     settings (Administration, "Purchasing, inventory and manufacturing settings"); eight more reports at
+>     `/erp/c/<company>/erp-reports`;
+>   - stock and production value are not posted to Finance's ledger: each posting is recorded as planned, with the
+>     note "Planned: Finance posting, not built yet"; the options are in `docs/erp/release-3.md`.
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
 >   - Operations: what waits in the company (approvals, orders to receive, products to reorder, adjustments and counts),
@@ -120,6 +131,10 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - Purchasing and inventory (ERP Release 2): a warehouse with a location tree, two more approved suppliers, an
     approved requisition, a request for quotation with two quotations to compare, and a purchase order received into
     stock. Example companies made before Release 2 are not changed.
+  - Manufacturing (ERP Release 3, not deployed): three work centres with two machines linked to the Maintenance
+    assets, released routings, a manufacturing order for ten weldments in progress (materials reserved, gusset plates
+    issued, laser cutting done with its time, welding started), confirmed and forecast demand for kits, and an MRP run
+    with open suggestions. Example companies made before Release 3 are not changed; removing and remaking one adds them.
 
   Every name is invented, and every address is on example.com. No other accounts are made.
 - **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.5 s on Node

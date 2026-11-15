@@ -223,7 +223,7 @@ describe('Scenario B: requisition, quotations, purchase order, receipts and the 
     expect((await onHand(viewer, co, plate.id)).valueCents).toBe(42_500);
     const rv = await buyer.json('GET', erp(co, `/receipts/${r1.id}`));
     expect(rv.inspectionNote).toMatch(/Release 4/);
-    expect(rv.integration.find((e: any) => e.kind === 'finance.inventory_posting')).toMatchObject({ status: 'planned', lastError: 'Planned: Finance posting (Release 3)' });
+    expect(rv.integration.find((e: any) => e.kind === 'finance.inventory_posting')).toMatchObject({ status: 'planned', lastError: 'Planned: Finance posting, not built yet' });
 
     // 6. Supplier performance, measured from the receipts: the first on time (day 2, required day 20), the second late
     // (day 25); not in full (damaged plates, and a second delivery); two days from the order to its first receipt.

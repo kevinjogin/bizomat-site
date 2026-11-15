@@ -1,7 +1,7 @@
 // BIZOMAT ERP reports, inside a company at /erp/c/<company>/erp-reports/<report>. Release 1: product catalogue,
 // lifecycle, bill of materials cost, where-used, revisions and changes, and suppliers. Release 2 (StockReports.tsx):
-// purchasing and stock. Each filters, links every row to its record and exports CSV. Figures come only from the
-// company's own records.
+// purchasing and stock. Release 3 (MfgReports.tsx): manufacturing. Each filters, links every row to its record and
+// exports CSV. Figures come only from the company's own records.
 import type { ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import '../../styles/erp.css';
 import { ECO_STATUS, LIFECYCLE, PRODUCT_TYPES, SUPPLIER_STATUS, dateText, dayText, erpPath, money, procurementPage, productsPage, reportPage } from './api';
 import { CsvLink, EcoBadge, LifecycleBadge, Section, SupplierBadge, options } from './common';
 import { PriceVariance, PurchaseCommitments, STOCK_REPORTS, Shortages, SlowMoving, StockAgeing, StockMovementsReport, StockOnHand, StockValuationReport, SupplierDelivery, SupplierSpend } from './StockReports';
+import { CapacityLoad, LabourUtilisation, MFG_REPORTS, MachineDowntime, MaterialConsumption, MrpSuggestions, ProductionOutput, ProductionVariance, WorkOrderProgress } from './MfgReports';
 
 export const ERP_REPORTS: { key: string; label: string; what: string }[] = [
   { key: 'catalogue', label: 'Product catalogue', what: 'Every product by type and category, with its released revision, costs and suppliers.' },
@@ -26,12 +27,15 @@ export const ERP_REPORTS: { key: string; label: string; what: string }[] = [
 export function ErpReportsArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   return (
     <div className="page crm-page">
-      <PageHeader title="ERP reports" subtitle={`${companyName}: products, engineering, suppliers, purchasing and stock. Each row opens its record; each report exports CSV.`} />
+      <PageHeader title="ERP reports" subtitle={`${companyName}: products, engineering, suppliers, purchasing, stock and manufacturing. Each row opens its record; each report exports CSV.`} />
       <nav className="tabs mt-tabs erp-report-tabs" aria-label="Products and engineering reports">
         {ERP_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
       </nav>
       <nav className="tabs mt-tabs erp-report-tabs" aria-label="Purchasing and stock reports">
         {STOCK_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
+      </nav>
+      <nav className="tabs mt-tabs erp-report-tabs" aria-label="Manufacturing reports">
+        {MFG_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
       </nav>
       <Routes>
         <Route path="catalogue" element={<Catalogue companyId={companyId} />} />
@@ -50,6 +54,14 @@ export function ErpReportsArea({ companyId, companyName }: { companyId: string; 
         <Route path="stock-ageing" element={<StockAgeing companyId={companyId} />} />
         <Route path="slow-moving" element={<SlowMoving companyId={companyId} />} />
         <Route path="shortages" element={<Shortages companyId={companyId} />} />
+        <Route path="production-output" element={<ProductionOutput companyId={companyId} />} />
+        <Route path="work-order-progress" element={<WorkOrderProgress companyId={companyId} />} />
+        <Route path="material-consumption" element={<MaterialConsumption companyId={companyId} />} />
+        <Route path="labour-utilisation" element={<LabourUtilisation companyId={companyId} />} />
+        <Route path="production-variance" element={<ProductionVariance companyId={companyId} />} />
+        <Route path="machine-downtime" element={<MachineDowntime companyId={companyId} />} />
+        <Route path="mrp-suggestions" element={<MrpSuggestions companyId={companyId} />} />
+        <Route path="capacity-load" element={<CapacityLoad companyId={companyId} />} />
         <Route path="*" element={<Navigate to={reportPage(companyId, 'catalogue')} replace />} />
       </Routes>
     </div>
