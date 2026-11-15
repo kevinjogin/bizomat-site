@@ -95,7 +95,12 @@ jobs:
             WORK_ABR_GUID WORK_BIZOMAT_ID_CLIENTS WORK_STRIPE_ENVIRONMENT WORK_STRIPE_SECRET_KEY WORK_STRIPE_PUBLISHABLE_KEY \
             WORK_STRIPE_WEBHOOK_SECRET WORK_STRIPE_PRICE_SEAT_MONTHLY WORK_STRIPE_PRICE_SEAT_ANNUAL; do
             if grep -qx "$s" <<<"$names"; then
-              echo "Optional secret $s is set on $APP"
+              case "$s" in
+                # Set in fly.website.toml since 15 Nov 2026; a Fly secret of the same name would override it.
+                WORK_STRIPE_ENVIRONMENT|WORK_STRIPE_PRICE_SEAT_MONTHLY)
+                  echo "::warning::$s is also a Fly secret on $APP and overrides fly.website.toml: unset it (flyctl secrets unset $s --stage)" ;;
+                *) echo "Optional secret $s is set on $APP" ;;
+              esac
             else
               echo "::notice::Optional secret $s is not set on $APP"
             fi
@@ -248,8 +253,41 @@ jobs:
           wait_for "the retired design preview answers 301 to the ERP page (/system-preview/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/system-preview/)" = "301 https://bizomat.ai/systems/erp/" ]' || fail=1
           wait_for "the public Systems pages answer (/systems/: 200)" '[ "$(code https://bizomat.ai/systems/)" = 200 ]' || fail=1
           wait_for "Resources stay public (/resources/: 200, no sign-in)" '[ "$(code https://bizomat.ai/resources/)" = 200 ]' || fail=1
+          wait_for "the pricing page answers (/pricing/: 200)" '[ "$(code https://bizomat.ai/pricing/)" = 200 ]' || fail=1
+          # Billing (docs/billing/README.md): an unsigned webhook delivery says only whether billing is configured (503:
+          # off; 400: on, the signature refused). Nothing is processed and nothing is charged.
+          case "$(code https://bizomat.ai/erp/api/billing/stripe-webhook "{}")" in
+            503) echo "info: billing is off in production (the webhook answers 503)" | tee -a "$GITHUB_STEP_SUMMARY" ;;
+            400) echo "info: billing is configured in production (the webhook refuses an unsigned delivery: 400); subscriptions open only when the founder opens them in the console" | tee -a "$GITHUB_STEP_SUMMARY" ;;
+            *) echo "FAIL the billing webhook gave an unexpected answer"; echo "- FAILED: the billing webhook gave an unexpected answer" >> "$GITHUB_STEP_SUMMARY"; fail=1 ;;
+          esac
           echo "info: bizomat.ai/login -> $(code https://bizomat.ai/login) (301 expected); bizomat.fly.dev/ -> $(code https://bizomat.fly.dev/) (301 expected)" | tee -a "$GITHUB_STEP_SUMMARY"
           exit "$fail"
+
+      # CAD sign-in (docs/cad/SIGN-IN-SETUP.md): proves that this app holds the SHA-256 of the same secret the repository
+      # holds, without printing it: the token endpoint is asked to swap a made-up code with the client cad's credentials.
+      # The same secret answers invalid_grant (400: the client and secret are right, the code is not); a different one,
+      # or no client, answers invalid_client (401). Nothing is written but a rate-limit count. The secret reaches curl on
+      # standard input, never on a command line.
+      - name: CAD sign-in client (the secret is never printed)
+        env:
+          CAD_CLIENT_SECRET: ${{ secrets.BIZOMAT_ID_CLIENT_SECRET }}
+        run: |
+          if [ -z "$CAD_CLIENT_SECRET" ]; then
+            echo "info: BIZOMAT_ID_CLIENT_SECRET is not set in this repository; CAD sign-in is not checked" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
+          code="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
+          verifier="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+          answer="$(printf 'user = "cad:%s"\n' "$CAD_CLIENT_SECRET" | curl -s -K - --max-time 15 -w '\n%{http_code}' \
+            --data-urlencode grant_type=authorization_code --data-urlencode "code=$code" --data-urlencode "code_verifier=$verifier" \
+            --data-urlencode redirect_uri=https://bizomat.ai/cad/auth/bizomat/callback https://bizomat.ai/company/api/id/token)"
+          status="$(tail -n1 <<<"$answer")"; error="$(head -n -1 <<<"$answer" | jq -r '.error // empty' 2>/dev/null || true)"
+          if [ "$status" = 400 ] && [ "$error" = invalid_grant ]; then
+            echo "- ok: CAD sign-in: the client cad is configured here with the repository secret's SHA-256 (a made-up code was refused as invalid_grant)" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::CAD sign-in: the client cad does not take the repository secret (HTTP $status, ${error:-no error code}): WORK_BIZOMAT_ID_CLIENTS on $APP and BIZOMAT_ID_CLIENT_SECRET differ, or the client is missing"
+            echo "- FAILED: CAD sign-in client check (HTTP $status, ${error:-no error code})" >> "$GITHUB_STEP_SUMMARY"; exit 1
+          fi
 
       - name: What visitors saw during the deploy
         if: always()

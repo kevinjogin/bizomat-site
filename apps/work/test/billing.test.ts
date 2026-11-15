@@ -16,6 +16,7 @@ import { billingConfig, redact } from '../src/worker/billing/config';
 import { countBillableSeats, syncSeats } from '../src/worker/billing/seats';
 import { registeredCompanyOf } from '../src/worker/billing/entitlements';
 import { processDueEvents } from '../src/worker/billing/webhook';
+import { checkPrice } from '../src/worker/billing/stripe';
 import { BILLING_CSP } from '../src/worker/app';
 
 // Not keys: shaped like Stripe's so the configuration checks accept them, and useless anywhere else. Built at run time
@@ -355,6 +356,23 @@ describe('billing configuration', () => {
       expect(r).not.toMatch(/vitestNotA/);
     }
     expect(redact(`Invalid API Key provided: ${fakeKey('rk', 'test')} and ${fakeWhsec('abcDEF=')} Bearer abc.def`)).toBe('Invalid API Key provided: rk_test_[redacted] and whsec_[redacted] Bearer [redacted]');
+  });
+
+  it('sells a live price only once it says whether GST is included or added', () => {
+    const live = billingConfig({ ...BILLING, ENVIRONMENT: 'production', STRIPE_ENVIRONMENT: 'live', STRIPE_SECRET_KEY: fakeKey('rk', 'live'), STRIPE_PUBLISHABLE_KEY: fakeKey('pk', 'live') } as any);
+    const test = billingConfig(BILLING as any);
+    if (!live.enabled || !test.enabled) throw new Error('billing should be configured');
+    const livePrice = (over: Obj) => price('price_vitestLive', 'month', 1000, { livemode: true, ...over }) as any;
+    // As the owner's live price stands on 15 Nov 2026: A$10.00 a month, tax behaviour not set.
+    const unset = checkPrice(live, 'month', livePrice({ tax_behavior: 'unspecified' }));
+    expect(unset).toMatchObject({ ok: false, unitAmount: 1000, currency: 'aud', taxBehavior: 'unspecified' });
+    expect(unset.problem).toMatch(/GST is included or added/);
+    expect(checkPrice(live, 'month', livePrice({ tax_behavior: null })).ok).toBe(false);
+    expect(checkPrice(live, 'month', livePrice({ tax_behavior: 'exclusive' })).ok).toBe(true);
+    expect(checkPrice(live, 'month', livePrice({ tax_behavior: 'inclusive' })).ok).toBe(true);
+    // The sandbox may test either way; a price from the other environment is never sold.
+    expect(checkPrice(test, 'month', price('price_vitestSand', 'month', 1000, { tax_behavior: 'unspecified' }) as any).ok).toBe(true);
+    expect(checkPrice(live, 'month', price('price_vitestSand', 'month', 1000) as any).problem).toMatch(/other Stripe environment/);
   });
 
   it('sends the browser the publishable key only, and the reason billing is off only to platform admins', async () => {

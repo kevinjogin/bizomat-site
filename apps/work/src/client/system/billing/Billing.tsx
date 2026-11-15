@@ -160,9 +160,9 @@ export function BillingPage({ companyId }: { companyId: string; companyName: str
       {!d.billing.enabled ? (
         <section className="card card-pad stack">
           <h2 className="crm-subhead">Subscriptions are not open yet</h2>
-          <p>Nothing is charged today: your company keeps using BIZOMAT ERP as it does now. The price per user is being finalised and will be shown here before anyone can subscribe.</p>
+          <p>Nothing is charged today: your company keeps using BIZOMAT ERP as it does now. The price per user is on the pricing page, and is shown here, with how GST applies, before anyone can subscribe.</p>
           <ul className="billing-notes">
-            <li>One subscription per registered company, priced per active user, billed monthly in Australian dollars. GST is added to the price per user where it applies.</li>
+            <li>One subscription per registered company, priced per active user, billed monthly in Australian dollars.</li>
             <li>Every active member counts once, the owner and administrators included. Pending invitations and disabled or removed accounts are not counted.</li>
             <li>When someone joins, the time left in the month is charged on the next invoice; when someone leaves, the unused time is credited.</li>
             <li>Owners and administrators can cancel at any time; the company keeps full use until the end of the paid month.</li>
@@ -185,7 +185,7 @@ export function BillingPage({ companyId }: { companyId: string; companyName: str
         <div className="card crm-stat">
           <span className="crm-stat-label">Price per user</span>
           <span className="crm-stat-value billing-stat-text">{open && sub?.unitAmount ? `${aud(sub.unitAmount, sub.currency ?? 'aud')}` : price?.unitAmount ? aud(price.unitAmount, price.currency ?? 'aud') : 'Not set'}</span>
-          <span className="crm-stat-hint">per user per {per(open ? sub!.interval : interval)}{price ? `; ${price.taxBehavior === 'inclusive' ? 'GST included' : price.taxBehavior === 'exclusive' ? 'plus GST where it applies' : 'GST treatment not set'}` : ''}</span>
+          <span className="crm-stat-hint">per user per {per(open ? sub!.interval : interval)}{price ? `; ${price.taxBehavior === 'inclusive' ? 'GST included' : price.taxBehavior === 'exclusive' ? 'plus GST where it applies' : 'GST being confirmed'}` : ''}</span>
         </div>
         <div className="card crm-stat">
           <span className="crm-stat-label">Billing frequency</span>

@@ -33,6 +33,12 @@ if [ -n "${STRIPE_SECRET:-}${STRIPE_PUBLISHABLE:-}${STRIPE_WEBHOOK:-}" ] && [ "$
   summary "Billing: Stripe secrets in GitHub were NOT staged: production billing is not set to live (WORK_STRIPE_ENVIRONMENT in $CONFIG is '${mode:-unset}'), so billing stays off"
   STRIPE_SECRET="" STRIPE_PUBLISHABLE="" STRIPE_WEBHOOK=""
 fi
+if [ "$mode" = live ]; then
+  # Names only: which live settings the repository does not hold. Billing stays off until all three are on Fly.
+  for pair in "WORK_STRIPE_SECRET_KEY:${STRIPE_SECRET:-}" "WORK_STRIPE_PUBLISHABLE_KEY:${STRIPE_PUBLISHABLE:-}" "WORK_STRIPE_WEBHOOK_SECRET:${STRIPE_WEBHOOK:-}"; do
+    [ -n "${pair#*:}" ] || summary "Billing: ${pair%%:*} is not set in GitHub, so nothing is staged for it (a value already on Fly is kept; without one, billing stays off)"
+  done
+fi
 if [ -n "${STRIPE_SECRET:-}${STRIPE_PUBLISHABLE:-}${STRIPE_WEBHOOK:-}" ]; then
   [ "$mode" = live ] || fail "Stripe secrets can only be staged for live billing."
   if [ -n "${STRIPE_SECRET:-}" ]; then

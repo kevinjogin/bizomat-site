@@ -103,6 +103,10 @@ export function checkPrice(cfg: BillingOn, interval: Interval, p: Stripe.Price):
                     ? 'This price has no amount per user.'
                     : product && !product.active
                       ? 'The product of this price is archived in Stripe.'
-                      : null;
+                      : // Nobody is charged real money until the owner has decided how GST applies: a live price must say
+                        // whether GST is included in it or added to it (Stripe's tax behaviour; set once, then fixed).
+                        cfg.environment === 'live' && p.tax_behavior !== 'inclusive' && p.tax_behavior !== 'exclusive'
+                        ? 'This price does not say whether GST is included or added (its tax behaviour in Stripe is not set).'
+                        : null;
   return { ...base, ok: !problem, problem };
 }

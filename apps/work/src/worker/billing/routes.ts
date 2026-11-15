@@ -51,7 +51,7 @@ function priceView(p: VerifiedPrice | null, cfg: BillingOn) {
       ? 'GST is included in this price.'
       : p.taxBehavior === 'exclusive'
         ? 'GST is added to this price where it applies.'
-        : 'This price has no tax setting in Stripe yet (inclusive or exclusive of GST must be chosen before launch).';
+        : 'How GST applies to this price is being confirmed. Subscriptions open once it is.';
   return {
     interval: p.interval,
     ok: p.ok,
