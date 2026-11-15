@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { ERP_PRICE, GST_LINE, PRICE_LINE, PRICE_PER_USER, example } from '../src/config/pricing.ts';
+import { ERP_PRICE, GST_LINE, PRICE_LINE, PRICE_LINE_GST, PRICE_PER_USER, PRICE_WITH_AU_GST, example } from '../src/config/pricing.ts';
 
 const read = (path: string) => readFileSync(path, 'utf8');
 
@@ -31,7 +31,9 @@ test('the amount is written once and formatted the same everywhere', () => {
   assert.ok(Number.isInteger(ERP_PRICE.unitAmount) && ERP_PRICE.unitAmount > 0);
   assert.equal(PRICE_PER_USER, 'A$10.00');
   assert.equal(PRICE_LINE, 'A$10.00 per active user per month');
-  assert.equal(example(5), '5 × A$10.00 = A$50.00 a month');
+  assert.equal(example(5), '5 × A$10.00 = A$50.00 a month, plus GST');
+  assert.equal(PRICE_WITH_AU_GST, 'A$11.00');
+  assert.equal(PRICE_LINE_GST, 'A$10.00 per active user per month, plus GST');
   for (const page of ['src/pages/pricing.astro', 'src/pages/systems/erp/index.astro']) {
     const src = read(page);
     assert.match(src, /config\/pricing\.ts/, `${page} takes the price from src/config/pricing.ts`);
@@ -43,17 +45,23 @@ test('the amount is written once and formatted the same everywhere', () => {
   }
 });
 
-test('no page says how GST applies until it is recorded', () => {
-  if (ERP_PRICE.gst !== 'unconfirmed') return;
-  assert.match(GST_LINE.unconfirmed, /being confirmed/);
-  const claims = /GST (is )?(added|additional|included)|plus GST|includes GST|excludes GST|GST-(in|ex)clusive/i;
+test('GST is exclusive everywhere: Stripe Tax on in production, and no page says it is included', () => {
+  // The owner's decision of 15 Nov 2026; the live price is set to exclusive in Stripe, and the work app refuses a live
+  // price whose tax behaviour is not set (checkPrice).
+  assert.equal(ERP_PRICE.gst, 'exclusive');
+  assert.equal(flyEnv('WORK_STRIPE_AUTOMATIC_TAX'), 'on');
+  assert.match(GST_LINE.exclusive, /excludes GST/);
+  const page = read('src/pages/pricing.astro');
+  assert.match(page, /GST_LINE\[ERP_PRICE\.gst\]/, 'the pricing page states GST from the config');
+  assert.match(page, /PRICE_LINE_GST/, 'the pricing page names the price with its GST treatment');
+  const inclusive = /includes GST|GST included|GST-inclusive|inc(l)?\.? GST/i;
   for (const file of [
     'src/pages/pricing.astro',
     'src/pages/systems/erp/index.astro',
     'src/pages/systems/index.astro',
     'apps/work/src/client/company/Register.tsx',
   ]) {
-    assert.doesNotMatch(read(file), claims, `${file} claims a GST treatment`);
+    assert.doesNotMatch(read(file), inclusive, `${file} says GST is included`);
   }
 });
 

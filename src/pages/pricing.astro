@@ -3,8 +3,8 @@
 // Every statement comes from the billing code (apps/work/src/worker/billing, docs/billing/README.md): one subscription
 // per registered company, charged per active member, monthly, in Australian dollars. The price is the owner's live
 // Stripe price, from one source (src/config/pricing.ts, checked against fly.website.toml by tests/pricing.test.ts).
-// How GST applies is not recorded yet, so this page makes no statement about GST beyond that; subscriptions are not open
-// yet. No claim here about BIZOMAT's GST registration, tax invoices or refund terms: none is recorded yet.
+// GST: as src/config/pricing.ts records it (exclusive, owner 15 Nov 2026). Subscriptions are not open yet. No claim here
+// about tax invoices, tax compliance or refund terms.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
 import Button from '../components/Button.astro';
@@ -15,17 +15,17 @@ import '../styles/systems.css';
 import { SITE } from '../config/site.ts';
 import { APP_LINKS } from '../config/platform.ts';
 import { SYSTEMS_HOME } from '../config/systems.ts';
-import { ERP_PRICE, GST_LINE, PRICE_LINE, PRICE_PER_USER, example } from '../config/pricing.ts';
+import { ERP_PRICE, GST_LINE, PRICE_LINE_GST, PRICE_PER_USER, example } from '../config/pricing.ts';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Pricing and billing', href: '/pricing/' }];
-const description = `What is free on BIZOMAT, and how BIZOMAT ERP is billed: ${PRICE_LINE} (AUD), one subscription per registered company.`;
+const description = `What is free on BIZOMAT, and how BIZOMAT ERP is billed: ${PRICE_LINE_GST} (AUD), one subscription per registered company.`;
 const gst = GST_LINE[ERP_PRICE.gst];
 const openNote = ERP_PRICE.open ? '' : ' Subscriptions are not open yet and nothing is charged today.';
 
 const faqs = [
   {
     q: 'How much does BIZOMAT ERP cost?',
-    a: `${PRICE_LINE}, in Australian dollars, for one subscription per registered company.${openNote}`,
+    a: `${PRICE_LINE_GST}, in Australian dollars, for one subscription per registered company.${openNote}`,
   },
   {
     q: 'Who counts as a billable user?',
@@ -52,7 +52,7 @@ const schema = [
       <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
       <p class="bz-eyebrow">Pricing and billing</p>
       <h1 id="pricing-title">What is free, and how BIZOMAT ERP is billed</h1>
-      <p class="pricing-price"><strong>{PRICE_PER_USER}</strong> <span>per active user per month, in Australian dollars</span></p>
+      <p class="pricing-price"><strong>{PRICE_PER_USER}</strong> <span>per active user per month, in Australian dollars{ERP_PRICE.gst === 'exclusive' ? ', plus GST' : ''}</span></p>
       {ERP_PRICE.open ? null : <p class="sys-planned__status sys-hero-status"><StatusLabel status="planned" /> Subscriptions are not open yet, and nothing is charged today.</p>}
       <p class="pp-hero__lead">BIZOMAT ERP is one subscription per registered company, charged for each active user, every month. {gst}</p>
       <div class="pp-hero__actions">

@@ -26,7 +26,7 @@ import { SITE } from '../../../config/site.ts';
 import { FEATURE_STATUS, SYSTEMS, SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
 import { CRM, FINANCE, WORK } from '../../../data/platform-catalog.ts';
 import { ERP_DOMAINS, capabilityCounts } from '../../../data/erp-capabilities.ts';
-import { ERP_PRICE, PRICE_LINE } from '../../../config/pricing.ts';
+import { ERP_PRICE, PRICE_LINE_GST } from '../../../config/pricing.ts';
 
 const erp = systemById('erp');
 const GUIDE = erp.guide ?? '/systems/erp/guide/';
@@ -292,7 +292,7 @@ const schema = [
         </div>
         <p class="pp-hero__note">{access.note}</p>
         <p class="pp-hero__note">{erp.statusNote}</p>
-        <p class="pp-hero__note"><a href="/pricing/">Pricing and billing</a>: {PRICE_LINE}, one subscription per registered company.{ERP_PRICE.open ? '' : ' Subscriptions are not open yet; nothing is charged today.'}</p>
+        <p class="pp-hero__note"><a href="/pricing/">Pricing and billing</a>: {PRICE_LINE_GST}, one subscription per registered company.{ERP_PRICE.open ? '' : ' Subscriptions are not open yet; nothing is charged today.'}</p>
       </div>
       <SystemsMap id="erp-hero-map" />
     </Container>

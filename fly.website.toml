@@ -72,9 +72,12 @@ kill_timeout = 15
   # month, read from Stripe on 15 Nov 2026; src/config/pricing.ts must name the same id, tests/pricing.test.ts). Billing
   # stays off until the live secret key, publishable key and webhook signing secret are set as repository secrets
   # (.github/scripts/stage-secrets.sh); even then nobody can subscribe until the founder opens subscriptions in the
-  # console, and the app sells a live price only once its GST treatment (tax behaviour) is set in Stripe.
+  # console, and the app sells a live price only once its GST treatment (tax behaviour) is set in Stripe (exclusive).
   WORK_STRIPE_ENVIRONMENT = "live"
   WORK_STRIPE_PRICE_SEAT_MONTHLY = "price_1UbyE5Rs74vQph6MdBU51OeG"
+  # GST exclusive (owner, 15 Nov 2026): Stripe Tax calculates GST at Checkout and on every invoice, from the Australian
+  # registration recorded in Stripe Tax and the billing address Checkout collects.
+  WORK_STRIPE_AUTOMATIC_TAX = "on"
   # On SIGTERM the router gives open requests 3 s (it was 10 s), then closes long polls and WebSockets, which reconnect
   # (docs/deployment/DOWNTIME-REVIEW.md, recommendation 5). kill_timeout stays 15 s.
   PROXY_SHUTDOWN_GRACE_MS = "3000"
