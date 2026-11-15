@@ -103,9 +103,11 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Stripe keys only for live; never put sandbox keys or test checkout on bizomat.ai. **The price** is the owner's live
   Stripe price (created by the owner, 15 Nov 2026): product `prod_VdED2AiKMDhIgM` "BIZOMAT Business Subscription",
   price `price_1UbyE5Rs74vQph6MdBU51OeG`, AUD 10.00 per user per month; `fly.website.toml` names it and sets live, and
-  `src/config/pricing.ts` (the pages' one source) must name the same id (`tests/pricing.test.ts`). Its GST treatment
-  (tax behaviour) is **not set** in Stripe, so no page says GST is included or added, and the app refuses to sell a
-  live price until it is set (`checkPrice`). Billing is on only once the live secret key, publishable key and webhook
+  `src/config/pricing.ts` (the pages' one source) must name the same id (`tests/pricing.test.ts`). **GST exclusive**
+  (owner, 15 Nov 2026): Stripe Tax holds an active Australian registration (default exclusive), production sets
+  `WORK_STRIPE_AUTOMATIC_TAX = "on"`, and the pages say "plus GST" (A$11.00 including 10% GST in Australia). The app
+  refuses to sell a live price whose tax behaviour is not set (`checkPrice`): the live price must say exclusive in
+  Stripe. An annual price (`price_1UbyE6Rs74vQph6MNviG9cbJ`, AUD 100.00 a year) exists in Stripe and is not offered. Billing is on only once the live secret key, publishable key and webhook
   signing secret are repository secrets; even then nobody can subscribe until the founder opens subscriptions in the
   console. Never create or change Stripe products or prices without the owner's approval; never charge a real card in
   testing without it; never call BIZOMAT's invoices tax invoices or its billing tax compliant. The example company,
