@@ -156,7 +156,7 @@ Nothing below exists in Stripe yet. Create it only after the owner approves it, 
 | | Smart Retries | Stripe's default, and after the last retry: mark the subscription unpaid | Confirm |
 | | Payment methods | Cards and wallets (dynamic payment methods; the code never names payment method types) | BECS Direct Debit later if wanted |
 
-Example amounts at A$10 per user per month, before GST (with GST-exclusive prices, 10% is added where it applies):
+Example amounts at the proposed (not approved) A$10 per user per month, before GST (with GST-exclusive prices, 10% is added where it applies):
 
 | Users | Per month | GST (if registered and exclusive) | Total |
 | --- | --- | --- | --- |
@@ -281,7 +281,7 @@ from the server's verified-price record.
 
 **Against the real Stripe sandbox** (15 Nov 2026, the app's own code through the work app's Node runtime; temporary
 test, not committed; objects cleaned up):
-- the price was read and checked: A$10.00 per user per month, exclusive;
+- the sandbox price was read and checked: A$10.00 per user per month (a test amount, not the approved price), exclusive;
 - an embedded Checkout session was created. It took the server's seat count (1) when the request asked for 99, and
   the same session was shown again on a repeat;
 - the Australian customer was created with its ABN (`au_abn`, pending Stripe's check);
@@ -309,7 +309,7 @@ Not tested yet:
 ## Decisions still open (from `PLAN.md` section 12, updated for the per-user model)
 
 Settled by the brief of 15 Nov 2026:
-- **#2 Prices:** A$10 per user per month, and an optional annual price with no assumed discount.
+- **#2 Prices:** one price per active user per month (the amount is **not approved yet**; A$10 is a proposal, used in the sandbox only), and an optional annual price with no assumed discount.
 - **#3 Modules per plan:** one price covers everything paid.
 - **#11 What a user is:** active company members.
 - **#12 Over the allowance:** the quantity follows membership, with proration.
