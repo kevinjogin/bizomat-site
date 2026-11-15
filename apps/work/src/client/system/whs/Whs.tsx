@@ -188,7 +188,7 @@ function DashboardView({ companyId, me }: { companyId: string; me: WhsMe }) {
           <p className="muted small whs-actual"><Icon name="info" size={14} /> {d.actual} Period: {d.filters.from} to {d.filters.to}.</p>
           <div className="erp-stats">
             <Stat label="Active hazards" value={d.hazards.active} to={list('/hazards?status=open')} hint={d.hazards.toAssess ? `${d.hazards.toAssess} to assess` : undefined} />
-            <Stat label={`${d.hazards.highLabel} risks`} value={d.hazards.high} to={list('/risk/register')} tone="warning" />
+            <Stat label={`${d.hazards.highLabel.charAt(0).toUpperCase()}${d.hazards.highLabel.slice(1).toLowerCase()} risks`} value={d.hazards.high} to={list('/risk/register')} tone="warning" />
             <Stat label="Open incidents" value={d.incidents.open} to={list('/incidents?status=open')} hint={`${d.incidents.inPeriod} in the period`} />
             <Stat label="Near misses" value={d.incidents.nearMisses} to={list('/incidents?kind=near_miss')} hint="In the period" />
             <Stat label="Incidents to investigate" value={d.incidents.toInvestigate} to={list('/incidents?investigate=1')} tone="warning" />

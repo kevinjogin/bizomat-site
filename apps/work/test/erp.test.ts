@@ -683,7 +683,7 @@ describe('isolation and roles', () => {
     ];
     for (const [who, m, path, b, status] of checks) expect((await who.req(m, erp(co, path), b)).status, `${who.name} ${m} ${path}`).toBe(status);
     const rolesView = await owner.json('GET', erp(co, '/roles'));
-    expect(rolesView.roles.map((r: any) => r.value)).toEqual(['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'viewer']);
+    expect(rolesView.roles.map((r: any) => r.value)).toEqual(['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'whs_manager', 'whs_officer', 'whs_investigator', 'whs_hsr', 'health_officer', 'viewer']);
     expect(rolesView.people.find((x: any) => x.id === viewer.userId)).toMatchObject({ roles: ['viewer'], rolesAreDefault: true });
     const ev = (await owner.json('GET', erp(co, '/events'))).events.find((e: any) => e.action === 'role.changed');
     expect(ev.before).toBeTruthy();

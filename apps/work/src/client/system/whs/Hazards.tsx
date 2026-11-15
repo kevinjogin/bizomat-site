@@ -112,7 +112,7 @@ export function HazardDetail({ companyId, me }: { companyId: string; me: WhsMe }
           <div className="mt-badges"><StatusBadge status={h.status} label={h.statusLabel} /><RiskBadge level={h.riskLevel} label={h.riskLabel} rank={h.riskRank} high={h.high} /><span className="badge">{h.categoryLabel}</span>{h.confidential ? <ConfidentialBadge /> : null}{h.overdue ? <span className="badge danger">Overdue</span> : null}</div>
         </div>
         <div className="mt-head-actions">
-          {v.can.assess ? <button className="btn primary" onClick={() => setDialog('assess')}>{h.riskLevel ? 'Rate again' : 'Assess the risk'}</button> : null}
+          {v.can.assess ? <button className={`btn${h.riskLevel ? '' : ' primary'}`} onClick={() => setDialog('assess')}>{h.riskLevel ? 'Rate again' : 'Assess the risk'}</button> : null}
           {v.can.assess && ['assessment', 'controls_assigned', 'implementation'].includes(h.status) ? <button className="btn" onClick={() => setDialog('controls')}>Assign controls</button> : null}
           {v.can.advance && h.status === 'controls_assigned' ? <button className="btn" onClick={() => void advance('implementation', 'Implementation started')}>Start implementation</button> : null}
           {v.can.advance && ['controls_assigned', 'implementation'].includes(h.status) ? <button className="btn" onClick={() => void advance('verification', 'Ready for verification')}>Ready for verification</button> : null}

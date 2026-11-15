@@ -39,7 +39,7 @@ const STATUS_TONE: Record<string, string> = {
   not_notifiable: '',
   assessing: 'warning',
 };
-export const StatusBadge = ({ status, label }: { status: string; label: string }) => <span className={`badge ${STATUS_TONE[status] ?? ''}`}>{label}</span>;
+export const StatusBadge = ({ status, label, tone }: { status: string; label: string; tone?: string }) => <span className={`badge ${tone ?? STATUS_TONE[status] ?? ''}`}>{label}</span>;
 
 /** A risk level: the darker the higher, with its name in words (never colour alone). */
 export function RiskBadge({ level, label, rank, high }: { level: string | null; label: string; rank?: number | null; high?: boolean }) {

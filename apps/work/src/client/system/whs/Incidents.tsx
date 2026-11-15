@@ -518,7 +518,7 @@ function NotificationTab({ companyId, me, incidentId }: { companyId: string; me:
               <div className="stack">
                 {notice.example ? <p className="whs-example small"><Icon name="info" size={14} /> Example data: this record shows how a notification is kept. No regulator was contacted.</p> : null}
                 <Props items={[
-                  ['Status', <StatusBadge status={notice.status} label={notice.statusLabel} />],
+                  ['Status', <StatusBadge status={notice.status} label={notice.statusLabel} tone={notice.status === 'submitted' ? 'success' : notice.status === 'to_submit' ? 'danger' : undefined} />],
                   ['Decision', notice.decision ? `${notice.decision === 'notifiable' ? 'Notifiable' : 'Not notifiable'}, by ${notice.decidedByName ?? 'an authorised person'} on ${dateTimeText(notice.decidedAt)}` : 'Being assessed'],
                   ['Reasons', notice.decisionReasons],
                   ['Responsible for notifying', notice.responsibleName],
