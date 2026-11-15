@@ -13,16 +13,20 @@
 //                     that took the same layer makes this transaction fail whole instead of valuing it twice.
 //
 // The costing method is locked by the first movement (weighted average if none was chosen). Each operation that
-// changes stock value also records a Finance posting event as "planned": inventory postings to Finance's ledger are
-// Release 3 (docs/erp/release-2.md); nothing is posted.
+// changes stock value also records a Finance posting event as "planned": postings to Finance's ledger are not built
+// (docs/erp/release-3.md, "Posting to Finance"); nothing is posted. Release 3 adds the production movements: materials
+// issued to a manufacturing order, returned from it or scrapped against it, and finished goods received from it.
 
 import { HttpError, newId, now } from '../lib/util';
 import type { ErpAccess } from './access';
 import type { ErpSettings } from './settings';
 
-export type InType = 'receipt' | 'customer_return' | 'adjust_in' | 'count_in';
-export type OutType = 'issue' | 'supplier_return' | 'adjust_out' | 'count_out' | 'scrap';
-export type SourceType = 'receipt' | 'issue' | 'transfer' | 'reservation' | 'adjustment' | 'customer_return' | 'supplier_return' | 'count' | 'quarantine' | 'scrap';
+export type InType = 'receipt' | 'customer_return' | 'adjust_in' | 'count_in' | 'production_receipt' | 'production_return';
+export type OutType = 'issue' | 'supplier_return' | 'adjust_out' | 'count_out' | 'scrap' | 'production_issue' | 'production_scrap';
+export type SourceType = 'receipt' | 'issue' | 'transfer' | 'reservation' | 'adjustment' | 'customer_return' | 'supplier_return' | 'count' | 'quarantine' | 'scrap' | 'manufacturing_order';
+
+/** The note on a Finance posting recorded as planned (nothing is posted to Finance's ledger). */
+export const PLANNED_POSTING = 'Planned: Finance posting, not built yet';
 
 export const MOVE_LABELS: Record<string, string> = {
   receipt: 'Goods receipt',
@@ -42,6 +46,10 @@ export const MOVE_LABELS: Record<string, string> = {
   release_out: 'Released from quarantine (out)',
   release_in: 'Released from quarantine (in)',
   scrap: 'Scrap',
+  production_issue: 'Issued to production',
+  production_return: 'Returned from production',
+  production_receipt: 'Finished goods from production',
+  production_scrap: 'Scrapped in production',
 };
 
 export interface StockKey {
@@ -71,6 +79,26 @@ export function stockError(e: unknown): never {
   if (/CHECK constraint failed/i.test(msg)) throw new HttpError(409, 'Not enough stock, or someone changed it at the same moment. Refresh and try again.');
   if (/ERP_LEDGER/.test(msg)) throw new HttpError(409, 'The stock movement ledger cannot be changed');
   throw e;
+}
+
+/** A product's cost per unit now: the average held, else the last price paid, else the standard cost, else 0. */
+export async function currentUnitCost(db: D1Database, companyId: string, productId: string): Promise<number> {
+  return (await unitCostOrNull(db, companyId, productId)) ?? 0;
+}
+
+/** The same cost, or null when the product has none of the three (an estimate then says it is missing). */
+export async function unitCostOrNull(db: D1Database, companyId: string, productId: string): Promise<number | null> {
+  const r = await db
+    .prepare(
+      `SELECT (SELECT CASE WHEN v.qty > 1e-9 THEN v.value_cents * 1.0 / v.qty END FROM erp_valuation v WHERE v.company_id = p.company_id AND v.product_id = p.id) AS avg,
+              (SELECT m.unit_cost_cents FROM erp_stock_moves m WHERE m.company_id = p.company_id AND m.product_id = p.id AND m.on_hand_delta > 0 AND m.unit_cost_cents IS NOT NULL ORDER BY m.created_at DESC, m.rowid DESC LIMIT 1) AS last,
+              p.standard_cost_cents AS standard
+         FROM erp_products p WHERE p.company_id = ? AND p.id = ?`,
+    )
+    .bind(companyId, productId)
+    .first<{ avg: number | null; last: number | null; standard: number | null }>();
+  const v = r?.avg ?? r?.last ?? r?.standard ?? null;
+  return v === null ? null : Number(v);
 }
 
 export async function runStock(db: D1Database, stmts: D1PreparedStatement[]) {
@@ -144,16 +172,7 @@ export class StockOps {
 
   /** The cost of a unit coming in without a price: the average held, else the last price paid, else the standard cost. */
   async currentCost(productId: string): Promise<number> {
-    const r = await this.db
-      .prepare(
-        `SELECT (SELECT CASE WHEN v.qty > 1e-9 THEN v.value_cents * 1.0 / v.qty END FROM erp_valuation v WHERE v.company_id = p.company_id AND v.product_id = p.id) AS avg,
-                (SELECT m.unit_cost_cents FROM erp_stock_moves m WHERE m.company_id = p.company_id AND m.product_id = p.id AND m.on_hand_delta > 0 AND m.unit_cost_cents IS NOT NULL ORDER BY m.created_at DESC, m.rowid DESC LIMIT 1) AS last,
-                p.standard_cost_cents AS standard
-           FROM erp_products p WHERE p.company_id = ? AND p.id = ?`,
-      )
-      .bind(this.a.companyId, productId)
-      .first<{ avg: number | null; last: number | null; standard: number | null }>();
-    return Number(r?.avg ?? r?.last ?? r?.standard ?? 0);
+    return currentUnitCost(this.db, this.a.companyId, productId);
   }
 
   private async openLayers(productId: string) {
@@ -264,8 +283,11 @@ export class StockOps {
     this.kinds.add('reserve');
   }
 
-  /** The closing statements: the costing method locked, and the Finance posting recorded as planned (Release 3). */
-  finish(source: { type: string; id: string }): D1PreparedStatement[] {
+  /**
+   * The closing statements: the costing method locked, and the Finance posting recorded as planned (nothing is posted).
+   * Manufacturing records its postings as finance.production_posting (work in progress and finished goods).
+   */
+  finish(source: { type: string; id: string; kind?: string }): D1PreparedStatement[] {
     const out = [
       this.db
         .prepare(
@@ -279,18 +301,18 @@ export class StockOps {
         this.db
           .prepare(
             `INSERT INTO erp_integration_events (id, company_id, kind, source_type, source_id, target, idempotency_key, status, attempts, last_error, amount_cents, created_by, created_at, updated_at)
-             SELECT ?1, ?2, 'finance.inventory_posting', ?3, ?4, 'finance', ?5, 'planned', 0, 'Planned: Finance posting (Release 3)',
+             SELECT ?1, ?2, ?9, ?3, ?4, 'finance', ?5, 'planned', 0, ?10,
                     (SELECT COALESCE(SUM(value_delta_cents), 0) FROM erp_stock_moves WHERE company_id = ?2 AND group_id = ?6), ?7, ?8, ?8
               WHERE EXISTS (SELECT 1 FROM erp_stock_moves WHERE company_id = ?2 AND group_id = ?6 AND value_delta_cents <> 0)`,
           )
-          .bind(newId(), this.a.companyId, source.type, source.id, `inv:${this.a.companyId}:${this.groupId}`, this.groupId, this.a.userId, this.t),
+          .bind(newId(), this.a.companyId, source.type, source.id, `inv:${this.a.companyId}:${this.groupId}`, this.groupId, this.a.userId, this.t, source.kind ?? 'finance.inventory_posting', PLANNED_POSTING),
       );
     }
     return out;
   }
 
   /** Everything, in order: the operation's own statements first, then the stock statements, then the closing ones. */
-  all(before: D1PreparedStatement[], after: D1PreparedStatement[], source: { type: string; id: string }) {
+  all(before: D1PreparedStatement[], after: D1PreparedStatement[], source: { type: string; id: string; kind?: string }) {
     return [...before, ...this.stmts, ...this.finish(source), ...after];
   }
 }

@@ -1,4 +1,4 @@
-// Shared pieces of the ERP's modules (Releases 1 and 2): fixed lists with their labels, numbering, the history (erp_events),
+// Shared pieces of the ERP's modules (Releases 1 to 3): fixed lists with their labels, numbering, the history (erp_events),
 // list paging, CSV answers and small DTO helpers.
 
 import { z } from 'zod';
@@ -48,6 +48,10 @@ const NUMBERING = {
   receipt: { table: 'erp_receipts', prefix: 'GR-', width: 5, counters: 'erp_sequences' },
   count: { table: 'erp_counts', prefix: 'CNT-', width: 5, counters: 'erp_sequences' },
   adjustment: { table: 'erp_adjustments', prefix: 'ADJ-', width: 5, counters: 'erp_sequences' },
+  // Release 3
+  manufacturing_order: { table: 'erp_mfg_orders', prefix: 'MO-', width: 5, counters: 'erp_sequences' },
+  fg_receipt: { table: 'erp_mo_receipts', prefix: 'FGR-', width: 5, counters: 'erp_sequences' },
+  mrp_run: { table: 'erp_mrp_runs', prefix: 'MRP-', width: 5, counters: 'erp_sequences' },
 } as const;
 export type NumberKind = keyof typeof NUMBERING;
 
@@ -98,7 +102,13 @@ export interface ErpEvent {
     | 'adjustment'
     | 'count'
     | 'settings'
-    | 'integration';
+    | 'integration'
+    | 'work_centre'
+    | 'machine'
+    | 'routing'
+    | 'manufacturing_order'
+    | 'mps'
+    | 'mrp_run';
   entityId?: string | null;
   productId?: string | null;
   summary: string;
