@@ -8,7 +8,7 @@
 //   stock (per product, or per location, lot and serial), movements, scan (a typed or scanned code to its record)
 //   stock/:op   issue, transfer, quarantine, release, customer-return, supplier-return, scrap
 //   reservations, adjustments (approval above the company's threshold), counts (stocktakes and cycle counts)
-//   valuation, trace (a lot or serial from its supplier and order to every later move)
+//   valuation, trace (a lot or serial from its supplier and order to every later move, with its inspections and NCRs)
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -1207,9 +1207,20 @@ inventoryRoutes.get('/c/:company/trace', async (c) => {
     )
     .bind(a.companyId, ...(productId ? [productId] : []), ...(lot ? [lot] : []), ...(serial ? [serial] : []))
     .all<any>();
+  // Release 4: the lot's or serial's inspections and nonconformances (quality.ts, ncr.ts)
+  const qArgs = [a.companyId, ...(productId ? [productId] : []), ...(lot ? [lot] : []), ...(serial ? [serial] : [])];
+  const qWhere = (t: string) => `${t}.company_id = ? ${productId ? `AND ${t}.product_id = ?` : ''} ${lot ? `AND ${t}.lot = ?` : ''} ${serial ? `AND ${t}.serial = ?` : ''}`;
+  const [qInsp, qNcr] = await db.batch([
+    db.prepare(`SELECT i.id, i.number, i.kind, i.status, i.result, i.completed_at, i.created_at, i.quantity, p.number AS product_number FROM erp_qc_inspections i LEFT JOIN erp_products p ON p.company_id = i.company_id AND p.id = i.product_id WHERE ${qWhere('i')} AND i.status <> 'cancelled' ORDER BY i.created_at LIMIT 500`).bind(...qArgs),
+    db.prepare(`SELECT n.id, n.number, n.title, n.status, n.severity, n.quantity, n.created_at, p.number AS product_number FROM erp_qc_ncrs n LEFT JOIN erp_products p ON p.company_id = n.company_id AND p.id = n.product_id WHERE ${qWhere('n')} ORDER BY n.created_at LIMIT 500`).bind(...qArgs),
+  ]);
   return c.json({
     lot,
     serial,
+    quality: {
+      inspections: (qInsp.results as any[]).map((i) => ({ id: i.id, number: i.number, kind: i.kind, status: i.status, result: i.result, productNumber: i.product_number, quantity: i.quantity, at: i.completed_at ?? i.created_at })),
+      ncrs: (qNcr.results as any[]).map((n) => ({ id: n.id, number: n.number, title: n.title, status: n.status, severity: n.severity, productNumber: n.product_number, quantity: n.quantity, at: n.created_at })),
+    },
     origins: receipts.map((r) => ({ receiptId: r.id, receiptNumber: r.number, receivedDate: r.received_date, deliveryRef: r.delivery_ref, poId: r.po_id, poNumber: r.po_number, supplierId: r.supplier_id, supplierNumber: r.supplier_number, supplierName: r.supplier_name })),
     moves: moves.results.map(moveDTO),
     current: now_.results.map(stockRowDTO),

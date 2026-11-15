@@ -222,7 +222,8 @@ describe('Scenario B: requisition, quotations, purchase order, receipts and the 
     expect((await onHand(viewer, co, bolt.id)).valueCents).toBe(18_000);
     expect((await onHand(viewer, co, plate.id)).valueCents).toBe(42_500);
     const rv = await buyer.json('GET', erp(co, `/receipts/${r1.id}`));
-    expect(rv.inspectionNote).toMatch(/Release 4/);
+    // Release 4 made the inspection real: the note points at Quality (test/erp-r4-quality.test.ts covers it).
+    expect(rv.inspectionNote).toMatch(/inspect the flagged lines in Quality/);
     expect(rv.integration.find((e: any) => e.kind === 'finance.inventory_posting')).toMatchObject({ status: 'planned', lastError: 'Planned: Finance posting, not built yet' });
 
     // 6. Supplier performance, measured from the receipts: the first on time (day 2, required day 20), the second late
