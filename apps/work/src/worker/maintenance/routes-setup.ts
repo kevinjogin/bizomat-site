@@ -139,7 +139,7 @@ setupRoutes.get('/c/:company/trades', async (c) => {
   return c.json({
     // Rates are shown to supervisors and administrators only.
     trades: trades.results.map((t) => ({ ...tradeDTO(t), rateCents: manager ? t.rate_cents : undefined })),
-    technicians: people.map((p) => ({ id: p.id, name: p.name, role: p.role, rateCents: manager ? (rate.get(p.id) ?? null) : undefined, tradeIds: tradesOf.get(p.id) ?? [] })),
+    technicians: people.map((p) => ({ id: p.id, name: p.name, role: manager ? p.role : undefined, rateCents: manager ? (rate.get(p.id) ?? null) : undefined, tradeIds: tradesOf.get(p.id) ?? [] })),
     can: { manage: manager },
   });
 });
@@ -239,9 +239,9 @@ setupRoutes.put('/c/:company/stores/:warehouseId', async (c) => {
   return c.json({ warehouseId: wh.id, store: input.store });
 });
 
-/** Stock in the maintenance stores (outside quarantine), for issuing parts to work orders. */
+/** Stock in the maintenance stores (outside quarantine), for issuing parts to work orders (technicians and above; costs for supervisors and administrators). */
 setupRoutes.get('/c/:company/stores/stock', async (c) => {
-  const a = await requireMt(c);
+  const a = await requireMt(c, 'technician');
   const q = (c.req.query('q') ?? '').trim();
   const productId = c.req.query('productId') ?? '';
   const rows = await c.env.DB.prepare(
@@ -270,7 +270,7 @@ setupRoutes.get('/c/:company/stores/stock', async (c) => {
       serial: r.serial,
       onHand: r.on_hand,
       available: Math.max(0, Math.round((r.on_hand - r.reserved) * 1e6) / 1e6),
-      unitCostCents: r.avg_cost === null ? null : Math.round(r.avg_cost * 100) / 100,
+      unitCostCents: !isManager(a) || r.avg_cost === null ? null : Math.round(r.avg_cost * 100) / 100,
     })),
   });
 });

@@ -158,7 +158,10 @@ describe('Scenario F: create asset, schedule preventive maintenance, generate th
 
     // Record parts: two filters issued from the maintenance store through ERP Inventory.
     const stock = await tech.json('GET', mt(co, `/stores/stock?productId=${product.id}`));
-    expect(stock.stock).toEqual([expect.objectContaining({ productId: product.id, locationId: bin.id, onHand: 10, available: 10, unitCostCents: 1250 })]);
+    expect(stock.stock).toEqual([expect.objectContaining({ productId: product.id, locationId: bin.id, onHand: 10, available: 10, unitCostCents: null })]);
+    expect((await supervisor.json('GET', mt(co, `/stores/stock?productId=${product.id}`))).stock[0].unitCostCents).toBe(1250);
+    expect((await requester.req('GET', mt(co, '/stores/stock'))).status).toBe(403);
+    expect((await requester.json('GET', mt(co, '/trades'))).technicians.every((p: any) => p.role === undefined && p.rateCents === undefined)).toBe(true);
     expect((await tech.req('POST', mt(co, `/work-orders/${woId}/stock/issue`), { lines: [{ productId: product.id, locationId: bin.id, quantity: 2 }] })).status).toBe(201);
     expect(await onHand(owner, co, product.id)).toBe(8);
 

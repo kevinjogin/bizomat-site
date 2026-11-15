@@ -70,7 +70,7 @@ export function SitesSection({ companyId, me }: { companyId: string; me: MtMe })
 
 interface TradesData {
   trades: { id: string; name: string; rateCents?: number | null; archived: boolean; people: number }[];
-  technicians: { id: string; name: string; role: MtRole; rateCents?: number | null; tradeIds: string[] }[];
+  technicians: { id: string; name: string; role?: MtRole; rateCents?: number | null; tradeIds: string[] }[];
   can: { manage: boolean };
 }
 
@@ -82,7 +82,8 @@ export function TradesSection({ companyId }: { companyId: string; me: MtMe }) {
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
   if (!q.data) return <Loading />;
   const manage = q.data.can.manage;
-  const people = q.data.technicians.filter((p) => p.role !== 'requester');
+  // Roles are shown to supervisors and administrators; others see who works in which trade.
+  const people = q.data.technicians.filter((p) => (p.role ? p.role !== 'requester' : p.tradeIds.length > 0));
   return (
     <Section title="Trades and technicians">
       <p className="muted small">Labour is priced when its time is recorded: the person’s own hourly rate, else the rate of the work order’s trade, else the highest rate of the person’s trades. A later change of rate never changes past costs. Rates are shown to supervisors and administrators only.</p>
@@ -122,7 +123,7 @@ export function TradesSection({ companyId }: { companyId: string; me: MtMe }) {
             {people.map((p) => (
               <tr key={p.id}>
                 <td data-label="Person">{p.name}</td>
-                <td data-label="Role">{ROLE_LABELS[p.role]}</td>
+                <td data-label="Role">{p.role ? ROLE_LABELS[p.role] : ''}</td>
                 {manage ? (
                   <td data-label="Own hourly rate">
                     <form className="row" onSubmit={(e) => { e.preventDefault(); void run(() => put(mtPath(companyId, `/technicians/${p.id}`), { rateCents: cents(rates[`p-${p.id}`] ?? dollarsText(p.rateCents)) }), 'Rate saved'); }}>
