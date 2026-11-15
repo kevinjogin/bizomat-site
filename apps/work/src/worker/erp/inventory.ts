@@ -612,7 +612,7 @@ function overThreshold(s: ErpSettings, valueCents: number) {
 
 inventoryRoutes.post('/c/:company/stock/:op', async (c) => {
   const op = c.req.param('op') as Op;
-  if (!(op in OPS)) throw notFound('Operation');
+  if (!Object.hasOwn(OPS, op)) throw notFound('Operation');
   const a = await requireErp(c, 'inventory.operate');
   const db = c.env.DB;
   const input: any = await body(c, OPS[op]);

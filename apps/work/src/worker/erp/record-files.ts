@@ -49,7 +49,7 @@ recordFileRoutes.post('/c/:company/record-files', async (c) => {
   const file = form?.get('file');
   if (!(file instanceof File)) throw new HttpError(400, 'Missing file');
   const kind = String(form!.get('kind') ?? '') as RecordKind;
-  if (!(kind in KINDS)) throw new HttpError(400, 'Say what the file belongs to');
+  if (!Object.hasOwn(KINDS, kind)) throw new HttpError(400, 'Say what the file belongs to');
   // a requisition's files: whoever may raise requisitions; the rest: buyers, and the warehouse for receipts
   if (kind === 'requisition') assertCan(a, 'requisitions.raise');
   else if (kind === 'receipt') assertCan(a, 'receiving.post');
