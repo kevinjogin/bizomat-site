@@ -12,8 +12,8 @@
 >   Products and Engineering opens `/erp/products` (the company used last).
 > - **Maintenance** (Asset Management and Maintenance, Stage M1): the asset register, requests and work orders of
 >   each company, at `/erp/c/<company>/maintenance` (`docs/maintenance/README.md`, migration `0018_maintenance.sql`).
->   Stages M2 and M3 (Release 4, part B; migration `0024_maintenance_m2_m3.sql`; built on the branch
->   `erp-release-4-maintenance`, **not deployed**) add the tabs Preventive, Checklists, Prestart, Scan and Reports:
+>   Stages M2 and M3 (Release 4, part B; migration `0024_maintenance_m2_m3.sql`; live since 15 Nov 2026,
+>   kevinjogin/bizomat-site#68) add the tabs Preventive, Checklists, Prestart, Scan and Reports:
 >   preventive maintenance made into work orders by the 15-minute run, readings, inspections, prestart checks, parts
 >   through ERP Inventory, labour costs, downtime, sites, QR labels and the reliability reports.
 > - **ERP Release 1** (live since 14 Nov 2026; `docs/erp/release-1.md`, status by release in `docs/erp/STATUS.md`,
@@ -45,7 +45,7 @@
 >     `/erp/c/<company>/erp-reports`;
 >   - stock and production value are not posted to Finance's ledger: each posting is recorded as planned, with the
 >     note "Planned: Finance posting, not built yet"; the options are in `docs/erp/release-3.md`.
-> - **ERP Release 4 part A, quality** (built on the branch `erp-release-4-quality`, not deployed;
+> - **ERP Release 4 part A, quality** (live since 15 Nov 2026, kevinjogin/bizomat-site#67;
 >   `docs/erp/release-4-quality.md`, migration `0023_erp_quality.sql`, the same API):
 >   - Quality at `/erp/c/<company>/quality`, in the company's side menu and on the Operations page: the overview (what
 >     waits for inspection, open nonconformances, corrective actions due and overdue), inspections recorded on a phone
@@ -138,7 +138,7 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - a Projects and Tasks workspace: two example projects, a dashboard, a brief and favourites;
   - a Sales and CRM organisation: three companies, contacts, deals, two leads and two activities;
   - a Finance business workspace: an opening balance, four transactions, a customer and a draft quote;
-  - Maintenance: a seven-asset hierarchy, three requests and two work orders; with stages M2 and M3 (not deployed), a
+  - Maintenance: a seven-asset hierarchy, three requests and two work orders; with stages M2 and M3, a
     site, trades and a rate, a meter and a gauge with readings, schedules (one that made and completed its work order),
     an inspection with a failed item, a store with spare bolts issued, a breakdown with downtime and a prestart.
     Example companies made before them are not changed;
@@ -152,7 +152,7 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
     assets, released routings, a manufacturing order for ten weldments in progress (materials reserved, gusset plates
     issued, laser cutting done with its time, welding started), confirmed and forecast demand for kits, and an MRP run
     with open suggestions. Example companies made before Release 3 are not changed; removing and remaking one adds them.
-  - Quality (ERP Release 4 part A, not deployed): a released incoming inspection plan for the bracket arms, their
+  - Quality (ERP Release 4 part A): a released incoming inspection plan for the bracket arms, their
     failed incoming inspection, a nonconformance with containment and root cause, and a corrective action in progress.
     No stock moves. Example companies made before Release 4 are not changed; removing and remaking one adds them.
 

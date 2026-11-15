@@ -42,7 +42,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (ERP Release 4, part B: preventive maintenance by time, meter or condition with idempotent generation by the cron,
   readings, inspections with follow-ups, prestart checks that can set an asset out of service, parts issued through
   ERP Inventory's StockOps, trades and labour costs, downtime, sites, QR scanning and reliability reports; migration
-  0024) are built and tested on the branch `erp-release-4-maintenance`, **not deployed**. M4's AI scheduling assistant
+  0024) are live since 15 Nov 2026. M4's AI scheduling assistant
   and offline field work are planned; maintenance costs are not posted to Finance.
   **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
   `docs/erp/STATUS.md`; merged and deployed 14 Nov 2026): the product master
@@ -65,8 +65,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   production schedule, MRP (suggestions converted to requisitions and draft orders), rough-cut capacity, job costing by
   element and eight reports; production manager and operator roles. Stock and production value are **not** posted to
   Finance's ledger: each posting is recorded as planned; never call them posted. Job profitability is planned (no sales
-  orders before Release 5). **ERP Release 4 part A** (`docs/erp/release-4-quality.md`; built on the branch
-  `erp-release-4-quality`, live only once merged and deployed; migration 0023): quality at `/erp/c/<company>/quality`:
+  orders before Release 5). **ERP Release 4 part A** (`docs/erp/release-4-quality.md`; merged and deployed
+  15 Nov 2026; migration 0023): quality at `/erp/c/<company>/quality`:
   inspection plans with versions, inspections of receipts, operations, finished goods and suppliers recorded on a phone
   (the pass or fail worked out on the server from the limits), quarantine and release through StockOps, nonconformance
   reports (a Maintenance asset read only) with a disposition decided once and carried out through StockOps once per
@@ -87,7 +87,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
   for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance, Procurement and Inventory work in the
-  ERP today, Manufacturing since Release 3, and Quality once Release 4 is deployed; supply chain is planned; the system itself stays
+  ERP today, Manufacturing since Release 3, and Quality and Maintenance M2 and M3 since Release 4; supply chain is planned; the system itself stays
   labelled Planned until the owner decides). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
