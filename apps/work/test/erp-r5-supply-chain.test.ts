@@ -367,7 +367,7 @@ describe('Scenario G: customer order, manufacture or allocate stock, dispatch, F
     ] as const) {
       const res = await viewer.req('GET', erp(co, path));
       expect(res.status, path).toBe(200);
-      expect((await res.text()).split('\n')[0].replace(/^﻿/, '').trim(), path).toBe(header);
+      expect((await res.text()).split('\n')[0].replace(/^\uFEFF/, '').trim(), path).toBe(header);
     }
     // the hub and the Operations page count what waits
     const ops = await viewer.json('GET', erp(co, '/operations'));

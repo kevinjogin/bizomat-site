@@ -4,7 +4,9 @@
 // Every person gets a company of invented example data of their own, "Acme Studio (example)": a Projects workspace, a
 // CRM organisation, a Finance business workspace, Maintenance records, Products and Engineering and supplier records
 // (ERP Release 1) and purchasing and inventory records (ERP Release 2), all named for it and owned by that person alone.
-// From ERP Release 4 part A, quality records too (an inspection plan, a failed inspection, an NCR and a corrective action).
+// From ERP Release 4 part A, quality records too (an inspection plan, a failed inspection, an NCR and a corrective action),
+// and from Release 5 part A supply chain records (a carrier, a sales order shipped and invoiced, a line made to order, a
+// return).
 // It is made the first time they open the ERP (the client asks for it), and again only when they ask after removing it.
 // Example companies made before a release keep what they had: nothing is added to them.
 //
@@ -209,6 +211,11 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   const r2Files = await db.prepare('SELECT r2_key FROM erp_record_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
   files.results.push(...r2Files.results);
   stmts.push(db.prepare('INSERT INTO erp_purges (company_id, started_at) VALUES (?, ?) ON CONFLICT(company_id) DO NOTHING').bind(companyId, t));
+  // ERP Release 5 part A records (migrations/0025_erp_supply_chain.sql) first: they point at Release 4's inspections and
+  // NCRs, Release 3's orders and Release 2's reservations, locations and products. Their files are erp_record_files.
+  for (const table of ['erp_pick_lines', 'erp_packages', 'erp_shipment_lines', 'erp_rma_lines', 'erp_rmas', 'erp_shipments', 'erp_so_allocations', 'erp_so_mo_links', 'erp_so_revisions', 'erp_so_lines', 'erp_sales_orders', 'erp_carriers']) {
+    stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  }
   // ERP Release 4 part A records (migrations/0023_erp_quality.sql) before Release 3's and 2's: they point at their orders,
   // receipts, locations and suppliers. Their files are erp_record_files, collected above.
   for (const table of ['erp_qc_ncr_actions', 'erp_qc_dispositions', 'erp_qc_ncr_inspections', 'erp_qc_capas', 'erp_qc_ncrs', 'erp_qc_readings', 'erp_qc_insp_chars', 'erp_qc_inspections', 'erp_qc_plan_chars', 'erp_qc_plans']) {
@@ -504,7 +511,7 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     const binArms = await loc({ code: 'A1-1-01', name: 'Bin 01', level: 'bin', parentId: shelf.id });
     await loc({ code: 'A1-1-02', name: 'Bin 02', level: 'bin', parentId: shelf.id });
     await loc({ code: 'RECV', name: 'Receiving bay', level: 'zone', kind: 'receiving', parentId: store.id });
-    await loc({ code: 'QUAR', name: 'Quarantine cage', level: 'zone', kind: 'quarantine', parentId: store.id });
+    const quarLoc = await loc({ code: 'QUAR', name: 'Quarantine cage', level: 'zone', kind: 'quarantine', parentId: store.id });
     await loc({ code: 'DISP', name: 'Dispatch bay', level: 'zone', kind: 'dispatch', parentId: store.id });
     await api('Inventory', 'PUT', e(`/products/${arm.id}/stock-settings`), { reorderPoint: 20, minQty: 10, maxQty: 80, defaultLocationId: binArms.id });
     await api('Inventory', 'PUT', e(`/products/${bolt.id}/stock-settings`), { reorderPoint: 200, minQty: 100, maxQty: 1000 });
@@ -742,6 +749,47 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     });
     await api('Quality', 'POST', e(`/capas/${capa.id}/approve`), { note: 'Approved' });
     await api('Quality', 'POST', e(`/capas/${capa.id}/start`), {});
+
+    // ---------------------------------------------------------------- Supply chain (ERP Release 5 part A)
+    // A carrier; a sales order for Harbour Cafe (the CRM company and its contact, billed as the Finance customer above):
+    // six shelf bracket kits from stock (opening stock in the finished goods location), allocated, picked, packed,
+    // dispatched with the dispatch email asked for (the example company sends none, and the shipment says so), delivered,
+    // and its draft invoice in Finance; ten bracket weldments made to order through a draft manufacturing order; and a
+    // return of one kit, authorised, received into quarantine, with its draft credit note. The bracket arms stay as they
+    // were.
+    const carrier = await api('Supply chain', 'POST', e('/carriers'), { code: 'EXFR', name: 'Example Freight', services: ['Road', 'Overnight'], trackingUrl: 'https://track.example.com/?n={tracking}', email: 'bookings@freight.example.com', notes: 'Invented carrier for the example company.' });
+    await api('Supply chain', 'POST', e('/adjustments'), { productId: kit.id, locationId: fgLoc.id, quantity: 6, unitCostCents: 2450, reason: 'Opening stock of packed kits' });
+    const so = await api('Supply chain', 'POST', e('/sales-orders'), {
+      crmCompanyId: companies.harbour,
+      crmContactId: contacts.dana,
+      finContactId: customer.id,
+      requestedDate: d(5),
+      promisedDate: d(7),
+      customerPo: 'HC-2041',
+      shippingTerms: 'Delivered to the cafe',
+      deliveryAddress: 'Harbour Cafe, 2 Example Wharf, Exampleville',
+      lines: [
+        { productId: kit.id, quantity: 6, taxCode: 'GST' },
+        { productId: weld.id, quantity: 10, unitPriceCents: 1500, taxCode: 'GST', fulfil: 'make', description: 'Bracket weldment, powder coated (made to order)' },
+      ],
+      confirm: true,
+    });
+    await api('Supply chain', 'POST', e(`/sales-orders/${so.id}/allocate`), {});
+    const soView = await api('Supply chain', 'GET', e(`/sales-orders/${so.id}`));
+    await api('Supply chain', 'POST', e(`/sales-orders/${so.id}/lines/${soView.lines[1].id}/make`), {});
+    const shp = await api('Supply chain', 'POST', e(`/sales-orders/${so.id}/shipments`), { carrierId: carrier.id, service: 'Road', freightCostCents: 1800, freightChargeCents: 2500, plannedDate: d(0), windowStart: d(0), windowEnd: d(1), notify: true });
+    const shpView = await api('Supply chain', 'GET', e(`/shipments/${shp.id}`));
+    await api('Supply chain', 'POST', e(`/shipments/${shp.id}/pick`), { lines: shpView.picks.map((k: any) => ({ pickLineId: k.id, pickedQty: k.suggestedQty })) });
+    await api('Supply chain', 'POST', e(`/shipments/${shp.id}/packages`), { kind: 'carton', weightKg: 9.6, lengthCm: 60, widthCm: 40, heightCm: 25, contents: [{ soLineId: soView.lines[0].id, quantity: 6 }], notes: 'Six kits, taped and labelled' });
+    await api('Supply chain', 'POST', e(`/shipments/${shp.id}/packed`), {});
+    await api('Supply chain', 'POST', e(`/shipments/${shp.id}/dispatch`), { trackingNumber: 'EXF000123' });
+    await api('Supply chain', 'POST', e(`/shipments/${shp.id}/deliver`), { receivedBy: 'Dana Webb', note: 'Signed at the counter' });
+    await api('Supply chain', 'POST', e(`/shipments/${shp.id}/invoice`));
+    const rma = await api('Supply chain', 'POST', e('/rmas'), { soId: so.id, shipmentId: shp.id, reason: 'damaged', details: 'One kit box crushed in transit', lines: [{ soLineId: soView.lines[0].id, quantity: 1 }] });
+    await api('Supply chain', 'POST', e(`/rmas/${rma.id}/authorise`), { note: 'Photo of the box checked' });
+    const rmaView = await api('Supply chain', 'GET', e(`/rmas/${rma.id}`));
+    await api('Supply chain', 'POST', e(`/rmas/${rma.id}/receive`), { lines: [{ lineId: rmaView.lines[0].id, quantity: 1, locationId: quarLoc.id }], note: 'Box crushed; kit to be inspected' });
+    await api('Supply chain', 'POST', e(`/rmas/${rma.id}/credit-note`));
   });
 }
 

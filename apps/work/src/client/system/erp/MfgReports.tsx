@@ -1,7 +1,7 @@
 // BIZOMAT ERP, Release 3 reports, inside a company at /erp/c/<company>/erp-reports/<report>: production output, work
 // order progress, material consumption, labour utilisation, production variance, machine downtime, MRP suggestions and
 // capacity load. Each filters as fits it, links every row to its record and exports CSV (src/worker/erp/mfg-reports.ts).
-// Job profitability is planned: there are no sales orders before Release 5.
+// Job profitability (Release 5) is its own report: SupplyReports.tsx.
 import type { ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -9,7 +9,7 @@ import { get } from '../../lib/api';
 import { usePageTitle } from '../../lib/hooks';
 import { ErrorBox, Loading } from '../../components/ui/ui';
 import { MESSAGE_LABELS, dateText, erpPath, inventoryPage, manufacturingPage, money, qty, type Suggestion } from './api';
-import { CsvLink, NotYet, Section } from './common';
+import { CsvLink, Section } from './common';
 
 export const MFG_REPORTS: { key: string; label: string; what: string }[] = [
   { key: 'production-output', label: 'Production output', what: 'Finished goods received from manufacturing orders, at actual cost.' },
@@ -149,7 +149,7 @@ export function ProductionVariance({ companyId }: { companyId: string }) {
           </div>
         </>
       ) : null}
-      <NotYet>Job profitability: {q.data?.profitability ?? 'planned.'}</NotYet>
+      <p className="muted small">{q.data?.profitability}</p>
     </Shell>
   );
 }

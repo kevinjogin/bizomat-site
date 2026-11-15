@@ -24,6 +24,8 @@ import {
   procurementPage,
   productsPage,
   qualityPage,
+  manufacturingPage,
+  supplyPage,
   qty,
   toCents,
   useErpMe,
@@ -1027,6 +1029,26 @@ function ValuationPage({ companyId }: { companyId: string }) {
   );
 }
 
+interface TraceDelivery {
+  id: string;
+  number: string;
+  status: string;
+  salesOrderId: string;
+  salesOrderNumber: string;
+  customerName: string;
+  carrierName: string | null;
+  trackingNumber: string;
+  dispatchedAt: number | null;
+  deliveredAt: number | null;
+  receivedBy: string;
+}
+
+const TraceShipment = ({ companyId, s }: { companyId: string; s: TraceDelivery }) => (
+  <>
+    Shipped on <Link className="mt-num" to={supplyPage(companyId, `/shipments/${s.id}`)}>{s.number}</Link> to {s.customerName} (<Link to={supplyPage(companyId, `/orders/${s.salesOrderId}`)}>{s.salesOrderNumber}</Link>){s.carrierName ? ` with ${s.carrierName}` : ''}{s.trackingNumber ? `, tracking ${s.trackingNumber}` : ''}{s.dispatchedAt ? `, dispatched ${dayText(s.dispatchedAt)}` : ''}{s.deliveredAt ? `, delivered ${dayText(s.deliveredAt)} to ${s.receivedBy}` : ''}
+  </>
+);
+
 function TracePage({ companyId }: { companyId: string }) {
   const [params, setParams] = useSearchParams();
   const productId = params.get('productId') ?? '';
@@ -1034,7 +1056,7 @@ function TracePage({ companyId }: { companyId: string }) {
   const serial = params.get('serial') ?? '';
   const [f, setF] = useState({ lot, serial });
   usePageTitle('Traceability');
-  const q = useQuery({ queryKey: ['erp', companyId, 'trace', productId, lot, serial], queryFn: () => get<{ origins: { receiptId: string; receiptNumber: string; receivedDate: string; deliveryRef: string; poId: string; poNumber: string; supplierId: string; supplierNumber: string; supplierName: string }[]; moves: Move[]; current: StockRow[]; quality?: { inspections: { id: string; number: string; kind: string; status: string; result: string | null; productNumber: string | null; quantity: number | null; at: number }[]; ncrs: { id: string; number: string; title: string; status: string; severity: string; productNumber: string | null; at: number }[] } }>(erpPath(companyId, `/trace?${new URLSearchParams({ ...(productId ? { productId } : {}), ...(lot ? { lot } : {}), ...(serial ? { serial } : {}) })}`)), enabled: !!(lot || serial) });
+  const q = useQuery({ queryKey: ['erp', companyId, 'trace', productId, lot, serial], queryFn: () => get<{ origins: { receiptId: string; receiptNumber: string; receivedDate: string; deliveryRef: string; poId: string; poNumber: string; supplierId: string; supplierNumber: string; supplierName: string }[]; moves: Move[]; current: StockRow[]; quality?: { inspections: { id: string; number: string; kind: string; status: string; result: string | null; productNumber: string | null; quantity: number | null; at: number }[]; ncrs: { id: string; number: string; title: string; status: string; severity: string; productNumber: string | null; at: number }[] }; deliveries?: TraceDelivery[]; downstream?: { moId: string; moNumber: string; moStatus: string; productNumber: string; productName: string; finishedLots: string[]; shipments: TraceDelivery[] }[] }>(erpPath(companyId, `/trace?${new URLSearchParams({ ...(productId ? { productId } : {}), ...(lot ? { lot } : {}), ...(serial ? { serial } : {}) })}`)), enabled: !!(lot || serial) });
   return (
     <div className="stack">
       <form className="row wrap" onSubmit={(e) => { e.preventDefault(); const n = new URLSearchParams(); if (productId) n.set('productId', productId); if (f.lot) n.set('lot', f.lot); if (f.serial) n.set('serial', f.serial); setParams(n); }}>
@@ -1061,6 +1083,20 @@ function TracePage({ companyId }: { companyId: string }) {
               <ul className="erp-list">
                 {q.data.quality?.inspections.map((i) => <li key={i.id} className="small"><Link className="mt-num" to={qualityPage(companyId, `/inspections/${i.id}`)}>{i.number}</Link> inspection{i.productNumber ? ` of ${i.productNumber}` : ''}: <span className={`badge ${i.result === 'failed' ? 'danger' : i.result ? 'success' : ''}`}>{i.result === 'conditional' ? 'accepted on condition' : (i.result ?? i.status)}</span> <span className="muted">{dayText(i.at)}</span></li>)}
                 {q.data.quality?.ncrs.map((n) => <li key={n.id} className="small"><Link className="mt-num" to={qualityPage(companyId, `/ncrs/${n.id}`)}>{n.number}</Link> {n.title} <span className="badge">{n.status}</span> <span className="muted">{dayText(n.at)}</span></li>)}
+              </ul>
+            )}
+          </Section>
+          {/* Release 5: where it went: the deliveries that took it, and what was made of it and delivered */}
+          <Section title="Where it went">
+            {!q.data.deliveries?.length && !q.data.downstream?.length ? <p className="muted small">Not shipped to a customer, and not used in a manufacturing order.</p> : (
+              <ul className="erp-list">
+                {q.data.deliveries?.map((s) => <li key={s.id} className="small"><TraceShipment companyId={companyId} s={s} /></li>)}
+                {q.data.downstream?.map((d) => (
+                  <li key={d.moId} className="small">
+                    Used in <Link className="mt-num" to={manufacturingPage(companyId, `/orders/${d.moId}`)}>{d.moNumber}</Link> to make {d.productNumber} {d.productName}{d.finishedLots.length ? ` (lot ${d.finishedLots.join(', ')})` : ''}
+                    {d.shipments.length ? <ul className="erp-list">{d.shipments.map((s) => <li key={s.id}><TraceShipment companyId={companyId} s={s} /></li>)}</ul> : <span className="muted">: not delivered yet</span>}
+                  </li>
+                ))}
               </ul>
             )}
           </Section>

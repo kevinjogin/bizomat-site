@@ -1,4 +1,4 @@
-// BIZOMAT ERP, Releases 1 to 4 (Products and Engineering, Procurement, Inventory, Manufacturing, Quality): the shapes the API returns (src/worker/erp), the fixed
+// BIZOMAT ERP, Releases 1 to 5 (Products and Engineering, Procurement, Inventory, Manufacturing, Quality, Supply Chain): the shapes the API returns (src/worker/erp), the fixed
 // lists with their plain-language labels, and the data hooks. The server decides what each person may see and do; the
 // screens only show it.
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +6,7 @@ import { get } from '../../lib/api';
 import { appUrl } from '../../lib/base';
 import { formatMoney } from '../../../shared/crm/money';
 
-export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'quality_manager' | 'quality_inspector' | 'viewer';
+export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'quality_manager' | 'quality_inspector' | 'sales_manager' | 'viewer';
 export type Capability =
   | 'products.view'
   | 'products.edit'
@@ -49,7 +49,21 @@ export type Capability =
   | 'quality.raise'
   | 'quality.disposition'
   | 'capa.propose'
-  | 'capa.approve';
+  | 'capa.approve'
+  // Release 5: supply chain
+  | 'sales.view'
+  | 'sales.edit'
+  | 'sales.confirm'
+  | 'sales.allocate'
+  | 'shipping.plan'
+  | 'shipping.pick'
+  | 'shipping.pack'
+  | 'shipping.dispatch'
+  | 'shipping.deliver'
+  | 'carriers.setup'
+  | 'returns.raise'
+  | 'returns.authorise'
+  | 'returns.receive';
 
 export interface ErpMe {
   company: { id: string; name: string; kind: 'registered' | 'own' | 'demo' };
@@ -94,6 +108,7 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   production_operator: 'Production operator',
   quality_manager: 'Quality manager',
   quality_inspector: 'Quality inspector',
+  sales_manager: 'Sales manager',
   viewer: 'Viewer',
 };
 
@@ -562,6 +577,7 @@ export const procurementPage = (companyId: string, path = '') => `/c/${encodeURI
 export const inventoryPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/inventory${path}`;
 export const manufacturingPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/manufacturing${path}`;
 export const qualityPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/quality${path}`;
+export const supplyPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/supply-chain${path}`;
 /** A file or picture served by the API (QR labels, PDFs), at its address under the app. */
 export const apiHref = (companyId: string, path: string) => appUrl(`/api${erpPath(companyId, path)}`);
 export const reportPage = (companyId: string, key = '') => `/c/${encodeURIComponent(companyId)}/erp-reports${key ? `/${key}` : ''}`;
@@ -769,7 +785,8 @@ export interface CostView {
   receivedValueCents: number;
   unabsorbedCents: number;
   missing: string[];
-  profitability: string;
+  // Release 5: job profitability of an order made to order for sales order lines (revenue less actual cost)
+  profitability: { linked: false; note: string } | { linked: true; lines: { salesOrderId: string; salesOrderNumber: string; customerName: string; linePosition: number; quantity: number; revenueCents: number }[]; revenueCents: number; costCents: number; marginCents: number; marginPct: number | null; note: string };
   note: string;
 }
 
@@ -1015,3 +1032,244 @@ export interface QualityOptions {
 }
 
 export const useQualityOptions = (companyId: string) => useQuery({ queryKey: ['erp', companyId, 'quality-options'], queryFn: () => get<QualityOptions>(erpPath(companyId, '/quality-options')) });
+
+// ------------------------------------------------------------------ Release 5 part A: supply chain and logistics
+
+export const SO_STATUS = { draft: 'Draft', confirmed: 'Confirmed', partially_allocated: 'Partly allocated', allocated: 'Allocated', partially_shipped: 'Partly shipped', shipped: 'Shipped', invoiced: 'Invoiced', closed: 'Closed', cancelled: 'Cancelled' } as const;
+export const SHIPMENT_STATUS = { planned: 'Planned', picking: 'Picking', picked: 'Picked', packed: 'Packed', dispatched: 'Dispatched', delivered: 'Delivered', cancelled: 'Cancelled' } as const;
+export const RMA_STATUS = { requested: 'Requested', authorised: 'Authorised', received: 'Received', closed: 'Closed', rejected: 'Rejected', cancelled: 'Cancelled' } as const;
+export const RMA_REASONS = { damaged: 'Damaged in transit', wrong_item: 'Wrong item sent', faulty: 'Faulty', not_needed: 'No longer needed', other: 'Other' } as const;
+export const PACKAGE_KINDS = { box: 'Box', carton: 'Carton', pallet: 'Pallet', crate: 'Crate', envelope: 'Envelope', other: 'Other' } as const;
+
+export interface SalesOrder {
+  id: string;
+  number: string;
+  revision: number;
+  status: keyof typeof SO_STATUS;
+  statusLabel: string;
+  customerName: string;
+  contactName: string;
+  crmOrgId: string | null;
+  crmCompanyId: string | null;
+  crmContactId: string | null;
+  crmDealId: string | null;
+  finOrgId: string | null;
+  finContactId: string | null;
+  orderDate: string;
+  requestedDate: string | null;
+  promisedDate: string | null;
+  deliveryAddress: string;
+  shippingTerms: string;
+  customerPo: string;
+  currency: string;
+  taxMode: 'exclusive' | 'inclusive' | 'none';
+  notes: string;
+  subtotalCents: number;
+  taxCents: number;
+  totalCents: number;
+  late: boolean;
+  confirmedByName: string | null;
+  confirmedAt: number | null;
+  cancelReason: string;
+  closeReason: string;
+  createdByName: string | null;
+  createdAt: number;
+}
+
+export interface SoLine {
+  id: string;
+  position: number;
+  productId: string;
+  productNumber: string;
+  productName: string;
+  description: string;
+  quantity: number;
+  uom: string;
+  unitPriceCents: number;
+  discountBp: number;
+  taxCode: string;
+  taxRateBp: number;
+  netCents: number;
+  taxCents: number;
+  promisedDate: string | null;
+  fulfil: 'stock' | 'make';
+  fulfilLabel: string;
+  allocatedQty: number;
+  shippedQty: number;
+  returnedQty: number;
+  onShipmentQty: number;
+  toAllocateQty: number;
+  makingQty: number;
+  availableQty: number;
+  shortQty: number;
+  allocations: { reservationId: string; location: string; lot: string; serial: string; expiry: string | null; quantity: number; onShipment: number }[];
+  manufacturingOrders: { id: string; number: string; status: string; statusLabel: string; quantity: number; completedQty: number; requiredDate: string | null; finishDate: string | null }[];
+}
+
+export interface SalesOrderView {
+  order: SalesOrder;
+  lines: SoLine[];
+  shipments: { id: string; number: string; status: keyof typeof SHIPMENT_STATUS; carrierName: string | null; trackingNumber: string; plannedDate: string | null; dispatchedAt: number | null; deliveredAt: number | null; invoice: { status: string; invoiceId: string | null } | null }[];
+  returns: { id: string; number: string; status: keyof typeof RMA_STATUS; reason: string; createdAt: number }[];
+  revisions: { revision: number; reason: string; byName: string | null; changedAt: number; snapshot: { lines?: { position: number; product: string; quantity: number; netCents: number }[] } }[];
+  files: RecordFile[];
+  history: ErpEvent[];
+  finance: { linked: boolean; note: string | null };
+  can: { edit: boolean; confirm: boolean; amend: boolean; cancel: boolean; close: boolean; allocate: boolean; make: boolean; ship: boolean; returns: boolean };
+}
+
+export interface SalesOrderOptions {
+  linkKind: 'link' | 'separate';
+  note: string;
+  gstRegistered: boolean | null;
+  taxNote: string | null;
+  crm: { orgId: string; name: string; access: boolean; companies: { id: string; name: string; email: string; address: string; finContactId: string | null; contacts: { id: string; name: string; email: string }[] }[] }[];
+  finance: { orgId: string; name: string; access: boolean; contacts: { id: string; name: string; email: string; address: string }[] } | null;
+  taxCodes: { value: string; label: string; rateBp: number }[];
+  defaultTaxCode: string;
+  currency: string;
+  products: { id: string; number: string; name: string; uom: string; priceCents: number | null }[];
+}
+
+export interface Shipment {
+  id: string;
+  number: string;
+  salesOrderId: string;
+  salesOrderNumber: string;
+  customerName: string;
+  customerPo: string;
+  status: keyof typeof SHIPMENT_STATUS;
+  statusLabel: string;
+  carrierId: string | null;
+  carrierCode: string | null;
+  carrierName: string | null;
+  service: string;
+  trackingNumber: string;
+  trackingUrl: string | null;
+  freightCostCents: number;
+  freightChargeCents: number;
+  freightTaxCode: string;
+  currency: string;
+  plannedDate: string | null;
+  windowStart: string | null;
+  windowEnd: string | null;
+  shipTo: string;
+  notes: string;
+  notify: boolean;
+  notifyEmail: string;
+  notifyStatus: string;
+  notifyLabel: string;
+  packages: number;
+  weightKg?: number;
+  dispatchedAt: number | null;
+  dispatchedByName: string | null;
+  deliveredAt: number | null;
+  receivedBy: string;
+  deliveryNote: string;
+  deliveryRecordedByName: string | null;
+  cancelReason: string;
+  invoiceStatus: string;
+  late: boolean;
+  createdAt: number;
+}
+
+export interface PickLine {
+  id: string;
+  shipmentLineId: string;
+  productId: string;
+  productNumber: string;
+  productName: string;
+  uom: string;
+  locationId: string;
+  location: string;
+  locationName: string;
+  lot: string;
+  serial: string;
+  expiry: string | null;
+  suggestedQty: number;
+  pickedQty: number | null;
+  pickedByName: string | null;
+  pickedAt: number | null;
+}
+
+export interface ShipmentView {
+  shipment: Shipment;
+  lines: { id: string; soLineId: string; position: number; productId: string; productNumber: string; productName: string; description: string; uom: string; quantity: number; pickedQty: number; shippedQty: number; orderedQty: number; unitPriceCents: number }[];
+  picks: PickLine[];
+  packages: { id: string; seq: number; kind: string; kindLabel: string; weightKg: number | null; lengthCm: number | null; widthCm: number | null; heightCm: number | null; contents: { soLineId: string; productNumber: string; quantity: number }[]; notes: string; createdAt: number }[];
+  invoice: { status: string; invoiceId: string | null; url: string | null; canCreate: boolean; reason: string | null; lastError: string | null; attempts: number };
+  integration: { id: string; kind: string; kindLabel: string; status: string; note: string; amountCents: number | null; createdAt: number }[];
+  notifyNote: string | null;
+  files: RecordFile[];
+  proofOfDelivery: RecordFile[];
+  history: ErpEvent[];
+  can: { plan: boolean; pick: boolean; pack: boolean; dispatch: boolean; deliver: boolean; proof: boolean; cancel: boolean; tracking: boolean };
+}
+
+export interface Carrier {
+  id: string;
+  code: string;
+  name: string;
+  services: string[];
+  trackingUrl: string;
+  phone: string;
+  email: string;
+  accountRef: string;
+  notes: string;
+  archived: boolean;
+  shipments?: number;
+}
+
+export interface Rma {
+  id: string;
+  number: string;
+  salesOrderId: string;
+  salesOrderNumber: string;
+  shipmentId: string | null;
+  shipmentNumber: string | null;
+  customerName: string;
+  status: keyof typeof RMA_STATUS;
+  statusLabel: string;
+  reason: string;
+  reasonLabel: string;
+  details: string;
+  authorisedByName: string | null;
+  authorisedAt: number | null;
+  decisionNote: string;
+  receivedByName: string | null;
+  receivedAt: number | null;
+  inspectionId: string | null;
+  inspectionNumber: string | null;
+  ncrId: string | null;
+  ncrNumber: string | null;
+  creditStatus: string;
+  createdByName: string | null;
+  createdAt: number;
+}
+
+export interface RmaView {
+  rma: Rma;
+  lines: { id: string; soLineId: string; position: number; productId: string; productNumber: string; productName: string; uom: string; quantity: number; receivedQty: number; location: string | null; quarantine: boolean; lot: string; serial: string; unitCostCents: number | null; unitPriceCents: number }[];
+  credit: { status: string; creditNoteId: string | null; url: string | null; canCreate: boolean; reason: string | null; lastError: string | null };
+  files: RecordFile[];
+  history: ErpEvent[];
+  can: { authorise: boolean; receive: boolean; cancel: boolean; close: boolean; quality: boolean };
+}
+
+export interface SupplyCounts {
+  ordersDraft: number;
+  ordersToAllocate: number;
+  ordersOpen: number;
+  ordersLate: number;
+  toPick: number;
+  toPack: number;
+  toDispatch: number;
+  inTransit: number;
+  shippingToday: number;
+  toInvoice: number;
+  returnsToAuthorise: number;
+  returnsToReceive: number;
+}
+
+export const useSalesOrderOptions = (companyId: string) => useQuery({ queryKey: ['erp', companyId, 'sales-order-options'], queryFn: () => get<SalesOrderOptions>(erpPath(companyId, '/sales-order-options')) });
+export const useCarriers = (companyId: string, archived = false) => useQuery({ queryKey: ['erp', companyId, 'carriers', archived], queryFn: () => get<{ carriers: Carrier[]; can: { setup: boolean } }>(erpPath(companyId, `/carriers${archived ? '?archived=1' : ''}`)) });

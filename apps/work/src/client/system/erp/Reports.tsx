@@ -1,6 +1,7 @@
 // BIZOMAT ERP reports, inside a company at /erp/c/<company>/erp-reports/<report>. Release 1: product catalogue,
 // lifecycle, bill of materials cost, where-used, revisions and changes, and suppliers. Release 2 (StockReports.tsx):
-// purchasing and stock. Release 3 (MfgReports.tsx): manufacturing. Release 4 (QualityReports.tsx): quality. Each filters, links every row to its record and
+// purchasing and stock. Release 3 (MfgReports.tsx): manufacturing. Release 4 (QualityReports.tsx): quality. Release 5
+// (SupplyReports.tsx): supply chain. Each filters, links every row to its record and
 // exports CSV. Figures come only from the company's own records.
 import type { ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
@@ -16,6 +17,8 @@ import { PriceVariance, PurchaseCommitments, STOCK_REPORTS, Shortages, SlowMovin
 import { CapacityLoad, LabourUtilisation, MFG_REPORTS, MachineDowntime, MaterialConsumption, MrpSuggestions, ProductionOutput, ProductionVariance, WorkOrderProgress } from './MfgReports';
 // Release 4 part A: quality
 import { CapaStatus, CostOfPoorQuality, InspectionResults, NcrRegister, QUALITY_REPORTS, RejectionRates, Rework, SupplierDefects } from './QualityReports';
+// Release 5 part A: supply chain
+import { CustomerDelivery, Freight, JobProfitability, OpenOrders, ReturnsReport, SUPPLY_REPORTS, SalesReport, ShipmentsByCarrier } from './SupplyReports';
 
 export const ERP_REPORTS: { key: string; label: string; what: string }[] = [
   { key: 'catalogue', label: 'Product catalogue', what: 'Every product by type and category, with its released revision, costs and suppliers.' },
@@ -29,7 +32,7 @@ export const ERP_REPORTS: { key: string; label: string; what: string }[] = [
 export function ErpReportsArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   return (
     <div className="page crm-page">
-      <PageHeader title="ERP reports" subtitle={`${companyName}: products, engineering, suppliers, purchasing, stock, manufacturing and quality. Each row opens its record; each report exports CSV.`} />
+      <PageHeader title="ERP reports" subtitle={`${companyName}: products, engineering, suppliers, purchasing, stock, manufacturing, quality and supply chain. Each row opens its record; each report exports CSV.`} />
       <nav className="tabs mt-tabs erp-report-tabs" aria-label="Products and engineering reports">
         {ERP_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
       </nav>
@@ -41,6 +44,9 @@ export function ErpReportsArea({ companyId, companyName }: { companyId: string; 
       </nav>
       <nav className="tabs mt-tabs erp-report-tabs" aria-label="Quality reports">
         {QUALITY_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
+      </nav>
+      <nav className="tabs mt-tabs erp-report-tabs" aria-label="Supply chain reports">
+        {SUPPLY_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
       </nav>
       <Routes>
         <Route path="catalogue" element={<Catalogue companyId={companyId} />} />
@@ -74,6 +80,13 @@ export function ErpReportsArea({ companyId, companyName }: { companyId: string; 
         <Route path="capa-status" element={<CapaStatus companyId={companyId} />} />
         <Route path="rework" element={<Rework companyId={companyId} />} />
         <Route path="cost-of-poor-quality" element={<CostOfPoorQuality companyId={companyId} />} />
+        <Route path="open-orders" element={<OpenOrders companyId={companyId} />} />
+        <Route path="customer-delivery" element={<CustomerDelivery companyId={companyId} />} />
+        <Route path="shipments-by-carrier" element={<ShipmentsByCarrier companyId={companyId} />} />
+        <Route path="freight" element={<Freight companyId={companyId} />} />
+        <Route path="returns" element={<ReturnsReport companyId={companyId} />} />
+        <Route path="sales" element={<SalesReport companyId={companyId} />} />
+        <Route path="job-profitability" element={<JobProfitability companyId={companyId} />} />
         <Route path="*" element={<Navigate to={reportPage(companyId, 'catalogue')} replace />} />
       </Routes>
     </div>

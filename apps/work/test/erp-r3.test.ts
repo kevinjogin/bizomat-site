@@ -613,8 +613,9 @@ describe('the example company', () => {
     expect(routings.routings).toHaveLength(2);
     expect(routings.routings.every((r: any) => r.sodException)).toBe(true);
     const mos = await ex.json('GET', erp(co, '/mos'));
-    expect(mos.orders).toMatchObject([{ number: 'MO-00001', status: 'in_progress', quantity: 10 }]);
-    const mo = await ex.json('GET', erp(co, `/mos/${mos.orders[0].id}`));
+    // Release 5 adds MO-00002, made to order for the example sales order.
+    expect(mos.orders.find((o: any) => o.number === 'MO-00001')).toMatchObject({ status: 'in_progress', quantity: 10 });
+    const mo = await ex.json('GET', erp(co, `/mos/${mos.orders.find((o: any) => o.number === 'MO-00001').id}`));
     expect(mo.time.length).toBeGreaterThanOrEqual(3);
     expect(mo.materials.find((m: any) => m.issuedQty > 0)).toMatchObject({ issuedQty: 21 });
     expect(mo.operations.map((o: any) => o.status)).toEqual(['completed', 'in_progress', 'pending']);
@@ -624,7 +625,7 @@ describe('the example company', () => {
     expect(run.suggestions.filter((s: any) => s.kind === 'buy').length).toBeGreaterThan(0);
     // Release 2's example records are as they were: the bracket arms are still all on hand (ten reserved for the order).
     const stock = await ex.json('GET', erp(co, '/stock?filter=in_stock'));
-    expect(stock.rows).toMatchObject([{ onHand: 40, reserved: 10, valueCents: 15_200 }]);
+    expect(stock.rows.find((r: any) => r.name === 'Bracket arm, laser cut')).toMatchObject({ onHand: 40, reserved: 10, valueCents: 15_200 });
     await ex.json('POST', '/api/system/demo/remove', {});
     for (const table of ['erp_work_centres', 'erp_machines', 'erp_routings', 'erp_routing_operations', 'erp_mfg_orders', 'erp_mo_materials', 'erp_mo_operations', 'erp_mo_time', 'erp_mo_reports', 'erp_mo_reservations', 'erp_mps_entries', 'erp_mrp_runs', 'erp_mrp_suggestions', 'erp_mfg_settings', 'erp_product_planning', 'erp_stock_moves', 'erp_reservations']) {
       const n = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE company_id = ?`).bind(co).first<{ n: number }>();
