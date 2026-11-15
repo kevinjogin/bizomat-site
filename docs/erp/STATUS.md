@@ -4,15 +4,14 @@ Owner's brief "BIZOMAT ERP — full enterprise functionality implementation" (14
 its acceptance tests pass; nothing is labelled live to look further along than it is. The public statuses are
 `src/data/erp-capabilities.ts` and `src/config/systems.ts`; this file is the engineering view behind them.
 
-Updated 15 Nov 2026. Release 1 was merged and deployed on 14 Nov 2026, Release 2 (purchasing and inventory) on
-15 Nov 2026 (kevinjogin/bizomat-site#63, deploy run 32, version 85db8c2, migration 0021 applied at start-up). Release 3
-(manufacturing) is built on the branch `erp-release-3` and is not merged or deployed: production does not have it until
-it is reviewed, merged and deployed. Rows marked "Release 3 (not deployed)" work in that branch, with their tests
-passing.
+Updated 15 Nov 2026. Release 1 was merged and deployed on 14 Nov 2026; Release 2 (purchasing and inventory) on
+15 Nov 2026 (kevinjogin/bizomat-site#63, deploy run 32, version 85db8c2, migration 0021); Release 3 (manufacturing) on
+15 Nov 2026 (kevinjogin/bizomat-site#65, deploy run 33, version 9ce599e, migration 0022). Each migration was applied at
+start-up.
 
 ## Working
 
-Built, tested and live at `bizomat.ai/erp`, unless marked "Release 3 (not deployed)".
+Built, tested and live at `bizomat.ai/erp`.
 
 | Area | What | Evidence |
 | --- | --- | --- |
@@ -41,16 +40,16 @@ Built, tested and live at `bizomat.ai/erp`, unless marked "Release 3 (not deploy
 | **Release 2**: Availability in bills of materials | Available stock per component, required and shortages for a build quantity | BOM availability test |
 | **Release 2**: Reports | Purchase commitments, supplier spend, price variance, supplier delivery, stock on hand, valuation, movements, ageing, slow-moving, shortages; filters and CSV | Reports and CSV tests |
 | **Release 2**: Example company | A warehouse with locations, stock received from a purchase order, a requisition, a request for quotation with two quotations | Example company tests (workerd and Node) |
-| **Release 3 (not deployed)**: Foundations | Production manager and operator roles, the capability matrix for manufacturing, MO, FGR and MRP numbering, manufacturing settings (over-completion tolerance, reserving on release, finished-goods location, MRP horizon), planning data per product, files on routings and orders | `docs/erp/release-3.md`; `apps/work/test/erp-r3.test.ts` (roles, isolation) |
-| **Release 3 (not deployed)**: Work centres and machines | Capacity calendar, cost rates, status; machines linked read only to Maintenance assets, down while an open breakdown work order exists | Scenario D; machine-down test |
-| **Release 3 (not deployed)**: Routings | Revisions (draft, released, superseded) released by an engineering approver who did not draft them, copied to a new draft; operations with work centre, machine, times, crew, inspection point, outsourcing and predecessors with overlap | Scenario D; segregation test |
-| **Release 3 (not deployed)**: Manufacturing orders | From released revisions; materials with the scrap allowance; scheduled operations; estimated cost by element; release with shortages and reservations; amendments with their history; cancel, complete, close | Scenario D; cancel and amendment tests |
-| **Release 3 (not deployed)**: Execution | Issue, return and scrap materials through StockOps (the last unit cannot be issued twice); predecessors enforced; labour by timer or minutes per person, machine time, output, scrap, rework, downtime; inspection points; finished goods at actual cost, once per key, never beyond the tolerance | Scenario C's last step; Scenario D; concurrency tests (workerd and Node) |
-| **Release 3 (not deployed)**: Shop floor | A phone screen per work centre: ready and current jobs, progress, shortages, inspections, machines down, planned against actual output; start, timer, report, pause, complete | Shop floor test; Chromium run at phone width |
-| **Release 3 (not deployed)**: Planning | Master production schedule; MRP level by level with lead times, open orders, reservations, safety stock, reorder points and order sizes, stored with its inputs; make, buy and expedite suggestions converted to draft orders and requisitions; rough-cut capacity | MRP and capacity tests with exact numbers |
-| **Release 3 (not deployed)**: Job costing | Estimated against actual by element, variances at close, the costing view | Scenario D (exact numbers, workerd and Node) |
-| **Release 3 (not deployed)**: Reports | Production output, work order progress, material consumption, labour utilisation, production variance, machine downtime, MRP suggestions, capacity load; Operations hub counts | Reports and CSV tests |
-| **Release 3 (not deployed)**: Example company | Work centres, released routings, an order in progress with labour and an issue, a schedule and an MRP run with suggestions | Example company tests (workerd and Node) |
+| **Release 3**: Foundations | Production manager and operator roles, the capability matrix for manufacturing, MO, FGR and MRP numbering, manufacturing settings (over-completion tolerance, reserving on release, finished-goods location, MRP horizon), planning data per product, files on routings and orders | `docs/erp/release-3.md`; `apps/work/test/erp-r3.test.ts` (roles, isolation) |
+| **Release 3**: Work centres and machines | Capacity calendar, cost rates, status; machines linked read only to Maintenance assets, down while an open breakdown work order exists | Scenario D; machine-down test |
+| **Release 3**: Routings | Revisions (draft, released, superseded) released by an engineering approver who did not draft them, copied to a new draft; operations with work centre, machine, times, crew, inspection point, outsourcing and predecessors with overlap | Scenario D; segregation test |
+| **Release 3**: Manufacturing orders | From released revisions; materials with the scrap allowance; scheduled operations; estimated cost by element; release with shortages and reservations; amendments with their history; cancel, complete, close | Scenario D; cancel and amendment tests |
+| **Release 3**: Execution | Issue, return and scrap materials through StockOps (the last unit cannot be issued twice); predecessors enforced; labour by timer or minutes per person, machine time, output, scrap, rework, downtime; inspection points; finished goods at actual cost, once per key, never beyond the tolerance | Scenario C's last step; Scenario D; concurrency tests (workerd and Node) |
+| **Release 3**: Shop floor | A phone screen per work centre: ready and current jobs, progress, shortages, inspections, machines down, planned against actual output; start, timer, report, pause, complete | Shop floor test; Chromium run at phone width |
+| **Release 3**: Planning | Master production schedule; MRP level by level with lead times, open orders, reservations, safety stock, reorder points and order sizes, stored with its inputs; make, buy and expedite suggestions converted to draft orders and requisitions; rough-cut capacity | MRP and capacity tests with exact numbers |
+| **Release 3**: Job costing | Estimated against actual by element, variances at close, the costing view | Scenario D (exact numbers, workerd and Node) |
+| **Release 3**: Reports | Production output, work order progress, material consumption, labour utilisation, production variance, machine downtime, MRP suggestions, capacity load; Operations hub counts | Reports and CSV tests |
+| **Release 3**: Example company | Work centres, released routings, an order in progress with labour and an issue, a schedule and an MRP run with suggestions | Example company tests (workerd and Node) |
 
 ## In development
 
@@ -73,7 +72,7 @@ Built, tested and live at `bizomat.ai/erp`, unless marked "Release 3 (not deploy
 
 | Release | What |
 | --- | --- |
-| Release 3 | Built (not deployed): see Working. Posting stock and production value to Finance's ledger waits for the owner's decision (Blocked) |
+| Release 3 | Live: see Working. Posting stock and production value to Finance's ledger waits for the owner's decision (Blocked) |
 | Release 4 | Quality (inspections, nonconformances, corrective actions) and the later Maintenance stages (M2 to M4) |
 | Release 5 | Supply chain (sales orders, deliveries, shipments, returns) and the cross-module analytics and AI listed in `docs/erp/architecture/15-erp-roadmap-2026.md` |
 
@@ -88,12 +87,10 @@ rate-based repetitive schedules.
 - Email of purchase orders and requests for quotation with the PDF attached needs attachments in the email outbox: a
   change to the email service, not built.
 - Stock value postings to Finance: which accounts (inventory, cost of goods, stock adjustments) and when (Release 3).
-- Merge and deploy Release 3 (branch `erp-release-3`, one additive migration, 0022; the deploy's pre-migration backup
-  covers it).
 - Production value postings to Finance (Release 3): which accounts, and which option of `docs/erp/release-3.md`
   ("Posting to Finance"); the recommendation is a side table naming each journal's ERP source, with periodic summaries.
-- Whether BIZOMAT Manufacturing and Operations should change from Planned to "Available, some modules planned" once
-  Release 3 is deployed (Procurement, Inventory, Manufacturing and Maintenance's first stage would then work). It stays
+- Whether BIZOMAT Manufacturing and Operations should change from Planned to "Available, some modules planned" now that
+  Release 3 is deployed (Procurement, Inventory, Manufacturing and Maintenance's first stage work). It stays
   Planned in `src/config/systems.ts` until the owner says so.
 - Existing example companies are not changed: their owners can remove and remake them in Administration to see
   Release 3's example records. Say if they should be offered that more visibly.
