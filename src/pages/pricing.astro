@@ -1,0 +1,138 @@
+---
+// /pricing/: what is free, what will be paid, and how BIZOMAT ERP subscriptions are billed (owner's request,
+// 15 Nov 2026). Every statement comes from the billing code (apps/work/src/worker/billing, docs/billing/README.md):
+// one subscription per registered company, charged per active member, monthly, in Australian dollars, GST added to the
+// displayed price where it applies. The price per user is not approved yet, so this page names no amount and says that
+// subscriptions are not open; production billing stays off until live billing is approved. No claim here about BIZOMAT's
+// GST registration, tax invoices or refund terms: none is recorded yet.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Container from '../components/Container.astro';
+import Button from '../components/Button.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import StatusLabel from '../components/StatusLabel.astro';
+import '../styles/product.css';
+import '../styles/systems.css';
+import { SITE } from '../config/site.ts';
+import { APP_LINKS } from '../config/platform.ts';
+import { SYSTEMS_HOME } from '../config/systems.ts';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Pricing and billing', href: '/pricing/' }];
+const description = 'What is free on BIZOMAT, what will be paid, and how BIZOMAT ERP subscriptions are billed: per active user, monthly, in AUD, GST added.';
+
+const faqs = [
+  {
+    q: 'How much does BIZOMAT ERP cost?',
+    a: 'The price per active user is being finalised. Subscriptions are not open yet and nothing is charged today. The price will be shown on this page and on the billing page before anyone can subscribe.',
+  },
+  {
+    q: 'Who counts as a billable user?',
+    a: 'Each active member of a registered company: its owner, administrators and members. Pending invitations, people removed from the company and disabled accounts are not billed, and each person is counted once.',
+  },
+  {
+    q: 'Is GST included?',
+    a: 'No. GST is added to the displayed price per user where it applies.',
+  },
+  {
+    q: 'What stays free?',
+    a: 'The public Resources (tools, the Library and guides), CAD Automation, and each person’s example company, Acme Studio (example).',
+  },
+];
+
+const schema = [
+  { '@type': 'WebPage', name: 'Pricing and billing', url: `${SITE.url}/pricing/`, description, isPartOf: { '@id': `${SITE.url}/#website` }, publisher: { '@id': `${SITE.url}/#organization` } },
+  { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<BaseLayout title="Pricing and billing" description={description} imageAlt="BIZOMAT pricing and billing" breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="pricing-title">
+    <Container>
+      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+      <p class="bz-eyebrow">Pricing and billing</p>
+      <h1 id="pricing-title">What is free, and how BIZOMAT ERP will be billed</h1>
+      <p class="sys-planned__status sys-hero-status"><StatusLabel status="planned" /> Subscriptions are not open yet. The price per user is being finalised, and nothing is charged today.</p>
+      <p class="pp-hero__lead">BIZOMAT ERP will be one subscription per registered company, charged for each active user, every month, in Australian dollars, with GST added where it applies. The price per user will be shown here and on the billing page before anyone can subscribe.</p>
+      <div class="pp-hero__actions">
+        <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="pricing-open-erp">Open BIZOMAT ERP</Button>
+        <Button href="/contact/" variant="secondary" data-cta="pricing-contact">Ask about billing</Button>
+      </div>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="free" aria-labelledby="free-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">No charge</p>
+        <h2 id="free-title">What is free</h2>
+      </div>
+      <ul class="pp-list sys-items">
+        <li><span><strong>Resources:</strong> the engineering tools and calculators, the Library and the guides. Free and open to everyone, without signing in. <a href="/resources/">Browse the Resources</a>.</span></li>
+        <li><span><strong>CAD Automation:</strong> free to use. It is not part of the BIZOMAT ERP subscription. <a href="/systems/engineering/">About Engineering Automation</a>.</span></li>
+        <li><span><strong>The example company:</strong> every account gets its own Acme Studio (example), with invented data in every tool, to try BIZOMAT ERP. It is never billed and only you see it.</span></li>
+        <li><span><strong>BIZOMAT ERP today:</strong> until subscriptions open, companies use BIZOMAT ERP without charge.</span></li>
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="paid" aria-labelledby="paid-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">The subscription</p>
+        <h2 id="paid-title">What will be paid</h2>
+      </div>
+      <ul class="pp-list sys-items">
+        <li><span><strong>BIZOMAT ERP</strong> for a registered company: the business management workspace with its tools (<a href={SYSTEMS_HOME}>see the Systems</a>).</span></li>
+        <li><span><strong>Priced per active user</strong> in the company.</span></li>
+        <li><span><strong>Billed monthly</strong>, in <strong>Australian dollars (AUD)</strong>.</span></li>
+        <li><span><strong>GST is additional</strong> to the displayed price per user, where it applies.</span></li>
+        <li><span><strong>Price per user:</strong> being finalised. No subscription can be started until it is published.</span></li>
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="users" aria-labelledby="users-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Billable users</p>
+        <h2 id="users-title">How users are counted</h2>
+      </div>
+      <ul class="pp-list sys-items">
+        <li><span>One subscription per registered company.</span></li>
+        <li><span>Each active member of the company is one user, counted once: the owner and administrators count too.</span></li>
+        <li><span>Pending invitations are not counted until they are accepted.</span></li>
+        <li><span>People removed from the company, and disabled accounts, are not counted.</span></li>
+        <li><span>When someone joins, the number of users goes up the same day, and the time left in the current month is charged on the next invoice.</span></li>
+        <li><span>When someone leaves or is removed, the number goes down, and the unused time is credited on the next invoice.</span></li>
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="before" aria-labelledby="before-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Before you pay</p>
+        <h2 id="before-title">What you will see, and how it works</h2>
+      </div>
+      <ul class="pp-list sys-items">
+        <li><span><strong>Before paying,</strong> the billing page shows the price per user, that GST is additional, that billing is monthly, how many users are counted (and who they are), and the total before GST.</span></li>
+        <li><span><strong>Who can subscribe:</strong> the company’s owner or an administrator, under Administration, Billing, in BIZOMAT ERP.</span></li>
+        <li><span><strong>Payment:</strong> by card, on the billing page, through Stripe. Card details go to Stripe and never reach BIZOMAT.</span></li>
+        <li><span><strong>Cancelling:</strong> the owner or an administrator can cancel at any time. The cancellation takes effect at the end of the month already paid, and the company keeps full use until then. Its records are kept.</span></li>
+        <li><span><strong>Invoices and payments:</strong> every invoice, with its GST, and the payment history are on the billing page for the owner and administrators.</span></li>
+        <li><span><strong>Questions about billing:</strong> <a href="/contact/">contact BIZOMAT</a>.</span></li>
+        <li><span>Nothing on this page limits any rights you have under the Australian Consumer Law.</span></li>
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Questions</p>
+        <h2 id="faq-title">Common questions</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+    </Container>
+  </section>
+</BaseLayout>

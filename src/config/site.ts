@@ -148,6 +148,7 @@ export const FOOTER_NAV = {
     { href: '/', label: 'Home' },
     { href: '/engine-room/', label: 'About' },
     { href: '/contact/', label: 'Contact' },
+    { href: '/pricing/', label: 'Pricing and billing' },
     { href: '/services/', label: 'Engineering services' },
     { href: '/assessment/', label: 'Problem Assessment' },
     { href: '/how-it-works/', label: 'How It Works' },

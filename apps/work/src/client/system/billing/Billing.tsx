@@ -159,8 +159,15 @@ export function BillingPage({ companyId }: { companyId: string; companyName: str
       {returning ? <p className="billing-banner info" role="status">{returning}</p> : null}
       {!d.billing.enabled ? (
         <section className="card card-pad stack">
-          <h2 className="crm-subhead">Billing is not available yet</h2>
-          <p className="muted">Subscriptions are not open. Your company keeps using BIZOMAT as it does today.</p>
+          <h2 className="crm-subhead">Subscriptions are not open yet</h2>
+          <p>Nothing is charged today: your company keeps using BIZOMAT ERP as it does now. The price per user is being finalised and will be shown here before anyone can subscribe.</p>
+          <ul className="billing-notes">
+            <li>One subscription per registered company, priced per active user, billed monthly in Australian dollars. GST is added to the price per user where it applies.</li>
+            <li>Every active member counts once, the owner and administrators included. Pending invitations and disabled or removed accounts are not counted.</li>
+            <li>When someone joins, the time left in the month is charged on the next invoice; when someone leaves, the unused time is credited.</li>
+            <li>Owners and administrators can cancel at any time; the company keeps full use until the end of the paid month.</li>
+          </ul>
+          <p className="small muted">The example company, CAD Automation and the public Resources stay free. <a href="https://bizomat.ai/pricing/">Pricing and billing</a> · <a href="https://bizomat.ai/contact/">Questions about billing</a></p>
           {d.billing.reason ? <p className="small muted">For platform administrators: {d.billing.reason}</p> : null}
         </section>
       ) : null}
