@@ -107,11 +107,36 @@ repository with its image and entrypoint tests.
 ## 6. Installer downloads and updates
 
 - The Windows installer (MSI) is built by the CAD repository (`solidworks.yml`, `installer/`), published as GitHub
-  releases there (private: for the owner) and copied for the public to bizomat.ai downloads with
-  `tools/laptop/cloudflare.ps1 publish installer` (R2 bucket `bizomat-downloads`).
-- `/cad/download/solidworks` (signed in) is served by the CAD app: `OPENSKETCH_INSTALLER_URL`, else a file on the
-  `cados` volume (`/data/downloads/`), else the published release record.
-- The Companion's update manifest is `/v2/bridge/update.json` on the CAD app, signed by the gateway.
+  releases there (`bridge-latest`, `bridge-v<version>`: for the owner; people are never sent to GitHub) and copied for
+  the public to bizomat.ai downloads with `tools/laptop/cloudflare.ps1 publish installer` (R2 bucket
+  `bizomat-downloads`).
+- `https://bizomat.ai/downloads/<folder>/<file>` (public) is `src/server/downloads.ts`. On a Worker it reads the R2
+  binding `DOWNLOADS`; on Fly (today) the website reads the same bucket through R2's S3 API (`src/node/bindings.ts`
+  `r2Downloads`) once the Fly app has an R2 API token with **Object Read only, for the bucket `bizomat-downloads`
+  alone**: `WEB_DOWNLOADS_R2_ACCESS_KEY_ID` and `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY`, with the account id in
+  `WEB_DOWNLOADS_R2_ACCOUNT_ID` (or the Workers AI `CF_ACCOUNT_ID`). The deploy stages them from repository secrets
+  of the same names (never printed) and reports whether the installer download answers. Without the token the route
+  answers 404 (as on 15 Nov 2026). The web process's `/healthz` says `downloads: true` once it is on.
+- `/cad/download/solidworks` (signed in) is served by the CAD app: `OPENSKETCH_INSTALLER_URL`, else the file
+  `/data/downloads/BIZOMAT-CAD-Automation-x64.msi` on the `cados` volume, else the `msi_url` of `/data/bridge-release.json`,
+  else `https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi`. Read on 15 Nov 2026 (CAD `fly-status.yml`,
+  read only): the volume holds the development-signed 0.13.0 (1,323,008 bytes, 7 Nov), there is no
+  `bridge-release.json` and `OPENSKETCH_INSTALLER_URL` is not set, so signed-in people get 0.13.0 until a 0.13.1 file
+  replaces it there or the R2 route serves one.
+- The Companion's update manifest is `/v2/bridge/update.json` on the CAD app, signed by the gateway, from
+  `/data/bridge-release.json` (absent today, so the Companion offers no update).
+
+### Owner steps to turn the public downloads on (no new cost: R2's free allowance covers a few installers)
+
+1. Cloudflare dashboard > R2 > Manage API tokens > Create API token: permission **Object Read only**, applied to the
+   bucket `bizomat-downloads` only, no expiry or one you will renew. R2 shows an Access Key ID and a Secret Access Key
+   once.
+2. In kevinjogin/bizomat-site > Settings > Secrets and variables > Actions, add `WEB_DOWNLOADS_R2_ACCESS_KEY_ID`,
+   `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY` and, unless `CF_ACCOUNT_ID` is already a Fly secret on `bizomat`,
+   `WEB_DOWNLOADS_R2_ACCOUNT_ID` (the 32-character account id). Never paste them anywhere else.
+3. Publish the installer into the bucket from the laptop (`tools/laptop/cloudflare.ps1 publish installer -File <msi>`:
+   the versioned and stable names, their `.sha256` files and `cad/release.json`).
+4. The next website deploy stages the token and applies it; its summary reports the download's answer.
 
 ## 7. Checklist when one side changes
 

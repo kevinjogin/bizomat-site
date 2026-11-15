@@ -186,6 +186,7 @@ bizomat` shows names only); GitHub Actions secrets are repository secrets.
 | Name | Used by | Meaning |
 | --- | --- | --- |
 | `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | web | Cloudflare Workers AI for the AI chat |
+| `WEB_DOWNLOADS_R2_ACCESS_KEY_ID`, `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY` (`WEB_DOWNLOADS_R2_ACCOUNT_ID`) | web | The public downloads at `/downloads/` from the R2 bucket `bizomat-downloads` (an Object Read only token for that bucket) |
 | `ANTHROPIC_API_KEY` | web | Anthropic for the AI chat (instead of Workers AI) |
 | `TURNSTILE_SECRET_KEY` | web | Cloudflare Turnstile check on forms |
 | `WORK_GOOGLE_CLIENT_ID`, `WORK_GOOGLE_CLIENT_SECRET` | work | Google sign-in for Project Management |

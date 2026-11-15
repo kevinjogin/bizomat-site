@@ -164,7 +164,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   are public since 14 Nov 2026 (owner; private from 7 Nov): everything committed is readable by anyone, so never commit
   a secret, a token, personal data or a data dump (GitHub's secret scanning watches both; a history scan for keys and
   tokens found none that day). Public Actions minutes are free. Downloads stay on bizomat.ai (`/downloads/`, the R2
-  bucket `bizomat-downloads`, `src/server/downloads.ts`), not GitHub releases. Before any work:
+  bucket `bizomat-downloads`, `src/server/downloads.ts`; on Fly read with an Object Read only R2 token, 404 until the
+  owner adds it: `docs/SITE-CAD-INTEGRATION.md` section 6), not GitHub releases. Before any work:
   `git fetch origin`, and confirm the working branch is at or ahead of `origin/main` with no unexplained local changes.
   Preserve uncommitted work on a backup branch before anything else.
 - `kevinjogin/bizomat-cad` (formerly `jogkev-creator/CADOS`, same commits) is where CAD Automation is changed and
