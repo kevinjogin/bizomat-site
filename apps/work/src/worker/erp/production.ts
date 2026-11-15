@@ -12,7 +12,7 @@
 // (from the order's reservations first; lots and serials; partial) and return what is unused; operations started (their
 // predecessors done, or started where overlap is allowed), labour (a timer per person, or minutes entered) and machine
 // time, good output, scrap with a reason, rework, downtime with a reason, an inspection result where the routing asks for
-// one (full Quality is Release 4), completed; finished goods received into stock, valued at the order's actual cost,
+// one (or a full inspection in Quality, Release 4, which records it), completed; finished goods received into stock, valued at the order's actual cost,
 // once per client key, never beyond the over-completion tolerance (the CHECK on erp_mfg_orders). Completed, then
 // closed: costs final by element, variances recorded, the Finance posting recorded as planned (nothing is posted).
 //
@@ -660,7 +660,12 @@ productionRoutes.get('/c/:company/mos/:id', async (c) => {
     integration: integration.results.map((e) => ({ id: e.id, kind: e.kind, kindLabel: e.kind === 'finance.production_variance' ? 'Production variance to Finance' : 'Production posting to Finance', status: e.status, note: e.last_error, amountCents: e.amount_cents, createdAt: e.created_at })),
     files: await recordFiles(db, a.companyId, 'manufacturing_order', mo.id),
     history: await historyOf(db, a.companyId, { entityType: 'manufacturing_order', entityId: mo.id }),
-    qualityNote: 'Inspection points record a pass or fail with a note. Full Quality (inspection plans, nonconformances, corrective actions) is Release 4.',
+    qualityNote: 'An inspection point needs a pass or fail before the operation completes: record it here, or run a full inspection in Quality, which records it when completed.',
+    // Release 4: full inspections and nonconformances of this order (quality.ts, ncr.ts)
+    inspections: (
+      await db.prepare("SELECT id, number, status, result, mo_operation_id, kind FROM erp_qc_inspections WHERE company_id = ? AND mo_id = ? AND status <> 'cancelled' ORDER BY created_at").bind(a.companyId, mo.id).all<any>()
+    ).results.map((i) => ({ id: i.id, number: i.number, status: i.status, result: i.result, operationId: i.mo_operation_id, kind: i.kind })),
+    ncrs: (await db.prepare("SELECT id, number, title, status FROM erp_qc_ncrs WHERE company_id = ? AND mo_id = ? ORDER BY created_at").bind(a.companyId, mo.id).all<any>()).results.map((n) => ({ id: n.id, number: n.number, title: n.title, status: n.status })),
     can: {
       plan: can(a, 'production.plan'),
       edit: can(a, 'production.plan') && ['draft', 'released', 'in_progress'].includes(mo.status),

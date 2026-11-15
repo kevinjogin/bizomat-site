@@ -1,4 +1,4 @@
-// BIZOMAT ERP, Releases 1 to 3 (Products and Engineering, Procurement, Inventory, Manufacturing): the shapes the API returns (src/worker/erp), the fixed
+// BIZOMAT ERP, Releases 1 to 4 (Products and Engineering, Procurement, Inventory, Manufacturing, Quality): the shapes the API returns (src/worker/erp), the fixed
 // lists with their plain-language labels, and the data hooks. The server decides what each person may see and do; the
 // screens only show it.
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +6,7 @@ import { get } from '../../lib/api';
 import { appUrl } from '../../lib/base';
 import { formatMoney } from '../../../shared/crm/money';
 
-export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'viewer';
+export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'quality_manager' | 'quality_inspector' | 'viewer';
 export type Capability =
   | 'products.view'
   | 'products.edit'
@@ -40,7 +40,16 @@ export type Capability =
   | 'production.issue'
   | 'production.receive'
   | 'mrp.run'
-  | 'mrp.buy';
+  | 'mrp.buy'
+  // Release 4: quality
+  | 'quality.view'
+  | 'quality.plan'
+  | 'quality.plan_release'
+  | 'quality.inspect'
+  | 'quality.raise'
+  | 'quality.disposition'
+  | 'capa.propose'
+  | 'capa.approve';
 
 export interface ErpMe {
   company: { id: string; name: string; kind: 'registered' | 'own' | 'demo' };
@@ -83,6 +92,8 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   warehouse_operator: 'Warehouse operator',
   production_manager: 'Production manager',
   production_operator: 'Production operator',
+  quality_manager: 'Quality manager',
+  quality_inspector: 'Quality inspector',
   viewer: 'Viewer',
 };
 
@@ -550,6 +561,7 @@ export const productsPage = (companyId: string, path = '') => `/c/${encodeURICom
 export const procurementPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/procurement${path}`;
 export const inventoryPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/inventory${path}`;
 export const manufacturingPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/manufacturing${path}`;
+export const qualityPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/quality${path}`;
 /** A file or picture served by the API (QR labels, PDFs), at its address under the app. */
 export const apiHref = (companyId: string, path: string) => appUrl(`/api${erpPath(companyId, path)}`);
 export const reportPage = (companyId: string, key = '') => `/c/${encodeURIComponent(companyId)}/erp-reports${key ? `/${key}` : ''}`;
@@ -787,3 +799,219 @@ export interface Suggestion {
 }
 
 export const MESSAGE_LABELS: Record<string, string> = { late: 'Late', overdue: 'Overdue', expedite: 'Expedite' };
+
+// ------------------------------------------------------------------ Release 4: quality
+
+export const PLAN_KINDS = { incoming: 'Incoming', first_article: 'First article', in_process: 'In-process', final: 'Final', supplier: 'Supplier', product: 'Product' } as const;
+export const CHAR_KINDS = { dimension: 'Dimension', measured: 'Measured value', attribute: 'Attribute (pass or fail)', visual: 'Visual' } as const;
+export const PLAN_STATUS = { draft: 'Draft', released: 'Released', superseded: 'Superseded' } as const;
+export const INSPECTION_STATUS = { open: 'Open', completed: 'Completed', cancelled: 'Cancelled' } as const;
+export const RESULTS = { passed: 'Passed', failed: 'Failed', conditional: 'Accepted on condition' } as const;
+export const NCR_STATUS = { open: 'Open', contained: 'Contained', investigating: 'Under investigation', dispositioned: 'Dispositioned', capa: 'Corrective action', verification: 'Verification', closed: 'Closed', cancelled: 'Cancelled' } as const;
+export const SEVERITIES = { minor: 'Minor', major: 'Major', critical: 'Critical' } as const;
+export const DISPOSITIONS = { use_as_is: 'Use as is', rework: 'Rework', repair: 'Repair', scrap: 'Scrap', return_to_supplier: 'Return to supplier', regrade: 'Regrade' } as const;
+export const ACTIONS = { scrap: 'Scrap', supplier_return: 'Return to supplier', release: 'Release from quarantine', rework_note: 'Rework or repair note', done: 'Done where it stands' } as const;
+export const CAPA_STATUS = { proposed: 'Proposed', approved: 'Approved', in_progress: 'In progress', done: 'Done', verified: 'Verified effective', closed: 'Closed', cancelled: 'Cancelled' } as const;
+export const CAPA_KINDS = { corrective: 'Corrective', preventive: 'Preventive' } as const;
+
+export interface QcPlan {
+  id: string;
+  number: string;
+  version: number;
+  label: string;
+  name: string;
+  kind: string;
+  kindLabel: string;
+  status: string;
+  statusLabel: string;
+  description: string;
+  productId: string | null;
+  productNumber: string | null;
+  productName: string | null;
+  revisionId: string | null;
+  revisionLabel: string | null;
+  supplierId: string | null;
+  supplierName: string | null;
+  routingId: string | null;
+  routingRevision: string | null;
+  opNo: number | null;
+  appliesTo: string;
+  characteristics: number;
+  releasedByName: string | null;
+  releasedAt: number | null;
+  releaseNote: string;
+  createdByName: string | null;
+  createdAt: number;
+}
+
+export interface QcChar {
+  id: string;
+  position: number;
+  name: string;
+  kind: string;
+  kindLabel: string;
+  measured: boolean;
+  unit: string;
+  nominal: number | null;
+  tolerance: number | null;
+  min: number | null;
+  max: number | null;
+  lowerLimit: number | null;
+  upperLimit: number | null;
+  sampleSize: number;
+  photoRequired: boolean;
+  instructions: string;
+  limits: string;
+}
+
+export interface QcReading {
+  id: string;
+  sampleNo: number;
+  value: number | null;
+  conforming: boolean | null;
+  ok: boolean;
+  note: string;
+  byName: string | null;
+  at: number;
+}
+
+export interface Inspection {
+  id: string;
+  number: string;
+  kind: string;
+  kindLabel: string;
+  status: string;
+  statusLabel: string;
+  result: 'passed' | 'failed' | 'conditional' | null;
+  resultLabel: string | null;
+  planId: string | null;
+  planLabel: string;
+  sourceType: string;
+  sourceLabel: string;
+  productId: string | null;
+  productNumber: string | null;
+  productName: string | null;
+  uom: string;
+  supplierId: string | null;
+  supplierName: string | null;
+  receiptId: string | null;
+  receiptNumber: string | null;
+  moId: string | null;
+  moNumber: string | null;
+  opNo: number | null;
+  opName: string | null;
+  fgNumber: string | null;
+  locationId: string | null;
+  locationCode: string | null;
+  lot: string;
+  serial: string;
+  quantity: number | null;
+  quarantinedQty: number;
+  releasedQty: number;
+  notes: string;
+  concessionNote: string;
+  concessionByName: string | null;
+  inspectorName: string | null;
+  completedAt: number | null;
+  cancelReason: string;
+  createdByName: string | null;
+  createdAt: number;
+}
+
+export interface Ncr {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
+  severity: string;
+  severityLabel: string;
+  status: string;
+  statusLabel: string;
+  productId: string | null;
+  productNumber: string | null;
+  productName: string | null;
+  uom: string;
+  lot: string;
+  serial: string;
+  quantity: number | null;
+  receiptId: string | null;
+  receiptNumber: string | null;
+  moId: string | null;
+  moNumber: string | null;
+  supplierId: string | null;
+  supplierName: string | null;
+  assetId: string | null;
+  assetNumber: string | null;
+  assetName: string | null;
+  process: string;
+  locationId: string | null;
+  locationCode: string | null;
+  locationIsQuarantine: boolean;
+  containment: string;
+  containedByName: string | null;
+  rootCauseMethod: string;
+  whys: string[];
+  rootCause: string;
+  investigatedByName: string | null;
+  dispositionNote: string;
+  dispositionedByName: string | null;
+  dispositionedAt: number | null;
+  verificationNote: string;
+  verifiedByName: string | null;
+  closedByName: string | null;
+  closedAt: number | null;
+  cancelReason: string;
+  raisedByName: string | null;
+  createdAt: number;
+  ageDays: number;
+}
+
+export interface Capa {
+  id: string;
+  number: string;
+  kind: string;
+  kindLabel: string;
+  title: string;
+  description: string;
+  ncrId: string | null;
+  ncrNumber: string | null;
+  responsibleId: string | null;
+  responsibleName: string | null;
+  dueDate: string | null;
+  overdue: boolean;
+  daysOverdue: number;
+  status: string;
+  statusLabel: string;
+  createdByName: string | null;
+  approvedByName: string | null;
+  approvedAt: number | null;
+  approvalNote: string;
+  approvalSodException: boolean;
+  doneByName: string | null;
+  doneAt: number | null;
+  doneNote: string;
+  verifiedByName: string | null;
+  verifiedAt: number | null;
+  verificationNote: string;
+  effective: boolean | null;
+  closedByName: string | null;
+  closedAt: number | null;
+  closureNote: string;
+  closureSodException: boolean;
+  cancelReason: string;
+  createdAt: number;
+}
+
+export interface QualityOptions {
+  products: { id: string; number: string; name: string; uom: string }[];
+  suppliers: { id: string; number: string; name: string; status: string }[];
+  locations: { id: string; code: string; name: string; kind: string; quarantine: boolean }[];
+  plans: QcPlan[];
+  routings: { id: string; productId: string; revision: string; status: string; operations: { opNo: number; name: string }[] }[];
+  assets: { id: string; number: string; name: string }[];
+  people: { id: string; name: string }[];
+  planKinds: { value: string; label: string }[];
+  charKinds: { value: string; label: string }[];
+}
+
+export const useQualityOptions = (companyId: string) => useQuery({ queryKey: ['erp', companyId, 'quality-options'], queryFn: () => get<QualityOptions>(erpPath(companyId, '/quality-options')) });

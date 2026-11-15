@@ -25,6 +25,8 @@ import { can, requireErp, segregation, type ErpAccess } from './access';
 import { NUMBER_RE, SUPPLIER_STATUS, badState, changed, csvResponse, eventStmt, historyOf, likeOf, nextNumber, paging, searchText, wantsCsv, zCurrency, zText } from './util';
 import { filesOf } from './files';
 import { PERFORMANCE_HELP, supplierPerformance } from './performance';
+// Release 4: the supplier's quality figures (read only)
+import { supplierQuality } from './quality-reports';
 
 export const supplierRoutes = new Hono<AppEnv>();
 
@@ -246,6 +248,7 @@ supplierRoutes.get('/c/:company/suppliers/:id', async (c) => {
     products,
     files: await filesOf(db, a.companyId, 'supplier_id', s.id),
     finance: await financeView(db, a, s, c.get('user')),
+    quality: can(a, 'quality.view') ? await supplierQuality(db, a.companyId, s.id) : null,
     performance: { measured: true, note: PERFORMANCE_HELP, ...((await supplierPerformance(db, a.companyId, s.id))[0] ?? { orders: 0, receipts: 0, onTimeRate: null, onTimeMeasured: 0, inFullRate: null, inFullMeasured: 0, avgLeadTimeDays: null, rejectedQty: 0, receivedQty: 0 }) },
     history: await historyOf(db, a.companyId, { entityType: 'supplier', entityId: s.id }, 100),
     can: {

@@ -61,12 +61,19 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   production schedule, MRP (suggestions converted to requisitions and draft orders), rough-cut capacity, job costing by
   element and eight reports; production manager and operator roles. Stock and production value are **not** posted to
   Finance's ledger: each posting is recorded as planned; never call them posted. Job profitability is planned (no sales
-  orders before Release 5).
+  orders before Release 5). **ERP Release 4 part A** (`docs/erp/release-4-quality.md`; built on the branch
+  `erp-release-4-quality`, live only once merged and deployed; migration 0023): quality at `/erp/c/<company>/quality`:
+  inspection plans with versions, inspections of receipts, operations, finished goods and suppliers recorded on a phone
+  (the pass or fail worked out on the server from the limits), quarantine and release through StockOps, nonconformance
+  reports (a Maintenance asset read only) with a disposition decided once and carried out through StockOps once per
+  key, corrective and preventive actions with segregation of duties, traceability and seven reports; quality manager
+  and inspector roles. Rework under an NCR is a note, not a manufacturing order; overdue actions show on the Quality
+  overview, not in My Work. SPC, calibration and audits are planned.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
-  removed (and made again only on request) in Administration. **Operations** beyond Releases 1 to 3 (quality,
-  supply chain, stock and production postings to Finance) is **planned, not built**: the Operations page lists it
+  removed (and made again only on request) in Administration. **Operations** beyond Releases 1 to 3 and Release 4's
+  quality (supply chain, stock and production postings to Finance) is **planned, not built**: the Operations page lists it
   as Planned; never present it as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
   the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
@@ -76,7 +83,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
   for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance, Procurement and Inventory work in the
-  ERP today, and Manufacturing since Release 3; quality and supply chain are planned; the system itself stays
+  ERP today, Manufacturing since Release 3, and Quality once Release 4 is deployed; supply chain is planned; the system itself stays
   labelled Planned until the owner decides). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.

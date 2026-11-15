@@ -13,7 +13,7 @@ import { EmptyState, ErrorBox, Loading, PageHeader } from '../../components/ui/u
 import { Modal, useConfirm, useToast } from '../../components/ui/overlays';
 import '../../styles/maintenance.css';
 import '../../styles/erp.css';
-import { SUPPLIER_STATUS, dayText, erpPath, money, numOrNull, procurementPage, productsPage, useErpMe, type ErpEvent, type ErpFile, type ErpMe, type Supplier } from './api';
+import { SUPPLIER_STATUS, dayText, erpPath, money, numOrNull, procurementPage, productsPage, qualityPage, useErpMe, type ErpEvent, type ErpFile, type ErpMe, type Supplier } from './api';
 import { CsvLink, ErpFiles, ErpUpload, FilterPanel, History, Pager, Props, Section, SupplierBadge, options } from './common';
 import { NoteDialog } from './Changes';
 import { PoEditor, PurchaseOrderDetail, PurchaseOrdersPage, ReceiptDetail, ReceiptsPage, RequisitionDetail, RequisitionsPage, RfqDetail, RfqsPage } from './Purchasing';
@@ -229,6 +229,8 @@ interface SupplierView {
   products: { productId: string; number: string; name: string; supplierPartNumber: string; priceCents: number | null; currency: string; leadTimeDays: number | null; preferred: boolean }[];
   files: ErpFile[];
   finance: FinanceView;
+  // Release 4: quality figures over the last year, read only (null without quality access)
+  quality?: { inspections: number; failedInspections: number; inspectionFailRatePct: number | null; rejectedQty: number; ncrs: number; openNcrs: number; returnedQty: number; note: string } | null;
   performance: { measured: true; note: string; orders: number; receipts: number; onTimeRate: number | null; onTimeMeasured: number; inFullRate: number | null; inFullMeasured: number; avgLeadTimeDays: number | null; rejectedQty: number; receivedQty: number };
   history: ErpEvent[];
   can: { edit: boolean; approve: boolean; hold: boolean; block: boolean; segregation: string | null };
@@ -352,6 +354,22 @@ function SupplierDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
               />
             )}
             <p className="muted small">{v.performance.note}</p>
+            {v.quality ? (
+              <>
+                <h3 className="erp-h3">Quality</h3>
+                {!v.quality.inspections && !v.quality.ncrs ? <p className="muted small">No inspections or nonconformances in the last year.</p> : (
+                  <Props
+                    items={[
+                      ['Inspections failed', `${v.quality.failedInspections} of ${v.quality.inspections}${v.quality.inspectionFailRatePct !== null ? ` (${v.quality.inspectionFailRatePct}%)` : ''}`],
+                      ['Quantity rejected', v.quality.rejectedQty ? String(v.quality.rejectedQty) : ''],
+                      ['Nonconformances', v.quality.ncrs ? <Link to={`${qualityPage(companyId, '/ncrs')}?q=${encodeURIComponent(s.legalName)}`}>{v.quality.ncrs}{v.quality.openNcrs ? ` (${v.quality.openNcrs} open)` : ''}</Link> : ''],
+                      ['Returned to the supplier', v.quality.returnedQty ? String(v.quality.returnedQty) : ''],
+                    ]}
+                  />
+                )}
+                <p className="muted small">{v.quality.note}</p>
+              </>
+            ) : null}
           </Section>
         </div>
         <div className="stack">
