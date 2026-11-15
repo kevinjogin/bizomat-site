@@ -27,6 +27,7 @@ import {
   procurementPage,
   productsPage,
   qty,
+  qualityPage,
   toCents,
   useErpMe,
   type CostView,
@@ -257,14 +258,18 @@ export interface OrderView {
   files: RecordFile[];
   history: ErpEvent[];
   qualityNote: string;
+  // Release 4: full inspections and nonconformances of the order
+  inspections?: { id: string; number: string; status: string; result: string | null; operationId: string | null; kind: string }[];
+  ncrs?: { id: string; number: string; title: string; status: string }[];
   can: { plan: boolean; edit: boolean; release: boolean; execute: boolean; issue: boolean; returnMaterials: boolean; receive: boolean; complete: boolean; close: boolean; cancel: boolean };
 }
 
 type Dialog = null | { kind: 'issue' | 'return' | 'receive' | 'amend' | 'cancel' | 'release' | 'close' } | { kind: 'report' | 'time' | 'inspection' | 'complete'; op: MoOperation };
 
-function OrderDetail({ companyId }: { companyId: string; me: ErpMe }) {
+function OrderDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
   const { id = '' } = useParams();
   const act = useAct(companyId);
+  const navigate = useNavigate();
   const q = useQuery({ queryKey: ['erp', companyId, 'mo', id], queryFn: () => get<OrderView>(erpPath(companyId, `/mos/${id}`)), retry: false });
   const [dialog, setDialog] = useState<Dialog>(null);
   usePageTitle(q.data ? q.data.order.number : 'Manufacturing order');
@@ -350,6 +355,7 @@ function OrderDetail({ companyId }: { companyId: string; me: ErpMe }) {
                   <OpBadge value={op.status} label={op.statusLabel} />
                   {op.inspection ? <span className={`badge ${op.inspectionResult === 'pass' ? 'success' : op.inspectionResult === 'fail' ? 'danger' : 'warning'}`}>{op.inspectionResult ? `Inspection: ${op.inspectionResult}` : 'Inspection point'}</span> : null}
                   {op.machineDown ? <span className="badge danger">Machine down{op.breakdown ? ` (${op.breakdown.number})` : ''}</span> : null}
+                  {v.inspections?.filter((x) => x.operationId === op.id).map((x) => <Link key={x.id} className={`badge ${x.result === 'failed' ? 'danger' : x.result ? 'success' : 'accent'}`} to={qualityPage(companyId, `/inspections/${x.id}`)}>{x.number}{x.result ? '' : ': open'}</Link>)}
                 </div>
                 <p className="small muted">
                   {op.outsourced ? `Outsourced to ${op.supplierName ?? 'a supplier'}${op.outsourceCostCents !== null ? `, estimated ${money(op.outsourceCostCents, cur)} each` : ''}` : `${op.workCentreCode ?? ''} ${op.workCentreName ?? ''}${op.machineCode ? `, machine ${op.machineCode}` : ''}; set-up ${op.setupMinutes} min, ${op.runMinutes} min each, crew ${op.crew}`}
@@ -371,6 +377,7 @@ function OrderDetail({ companyId }: { companyId: string; me: ErpMe }) {
                     {op.status !== 'pending' ? <button className="btn sm" onClick={() => setDialog({ kind: 'report', op })}>Report</button> : null}
                     {op.status !== 'pending' && !op.outsourced ? <button className="btn sm" onClick={() => setDialog({ kind: 'time', op })}><Icon name="clock" size={14} /> Time</button> : null}
                     {op.inspection && op.status !== 'pending' ? <button className="btn sm" onClick={() => setDialog({ kind: 'inspection', op })}>Inspection</button> : null}
+                    {op.inspection && op.status !== 'pending' && !op.inspectionResult && me.can['quality.inspect'] && !v.inspections?.some((x) => x.operationId === op.id) ? <button className="btn sm" onClick={() => void act(() => post<{ id: string }>(erpPath(companyId, '/inspections'), { sourceType: 'mo_operation', sourceId: op.id }), 'Inspection started').then((r) => { if (r && typeof r === 'object') navigate(qualityPage(companyId, `/inspections/${(r as { id: string }).id}`)); })}>Full inspection</button> : null}
                     {op.status !== 'pending' || op.outsourced ? <button className="btn sm" onClick={() => setDialog({ kind: 'complete', op })}><Icon name="check" size={14} /> Complete</button> : null}
                   </div>
                 ) : null}
@@ -379,6 +386,7 @@ function OrderDetail({ companyId }: { companyId: string; me: ErpMe }) {
           </ol>
         )}
         <p className="muted small"><Icon name="info" size={14} /> {v.qualityNote}</p>
+        {v.ncrs?.length ? <p className="small">Nonconformances: {v.ncrs.map((n) => <Link key={n.id} className="qc-inline" to={qualityPage(companyId, `/ncrs/${n.id}`)}><span className="mt-num">{n.number}</span> {n.title}</Link>)}</p> : null}
       </Section>
       <Section title="Costs" actions={<CsvLink companyId={companyId} path={`/mos/${o.id}/costs`} />}>
         <CostTable costs={v.costs} />
