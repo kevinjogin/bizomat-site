@@ -585,9 +585,10 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     // A site holding every asset, trades and a labour rate, a meter with readings and a gauge, an inspection template and
     // a prestart checklist, a monthly service schedule that made its work order (inspected with a failed item that
     // raised a request, labour and a part recorded, then completed, so its next due date moved on), a meter-based and a
-    // condition-based schedule, a template for the class of machines, the workshop store as a maintenance store with a
-    // spare part issued to the chiller work order, a breakdown with its downtime, and a passed prestart. Stage 1's
-    // figures stay as they were: seven assets and two open work orders.
+    // condition-based schedule, a template for the class of machines, the workshop store as a maintenance store with
+    // spare bolts issued to the chiller work order, a breakdown with its downtime, and a passed prestart. The earlier
+    // releases' figures stay as they were: seven assets, two open work orders, eight products, and only the bracket arms
+    // in stock (the spare bolts received into the store are all issued).
     const mtSite = await api('Maintenance', 'POST', mt('/sites'), { code: 'RIVERSIDE', name: 'Riverside workshop', address: '12 Example Street' });
     await api('Maintenance', 'PUT', mt(`/assets/${site.id}/site`), { siteId: mtSite.id, includeChildren: true });
     const fitter = await api('Maintenance', 'POST', mt('/trades'), { name: 'Mechanical fitter', rateCents: 8500 });
@@ -623,11 +624,8 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Maintenance', 'PUT', mt(`/assets/${laser.id}/prestart`), { templateId: prestartList.id });
     await api('Maintenance', 'PUT', mt(`/stores/${wh.id}`), { store: true });
     const spares = await loc({ code: 'MNT', name: 'Maintenance spares', level: 'zone', parentId: store.id });
-    const filter = await prod({ name: 'Chiller filter cartridge', type: 'consumable', category: 'Maintenance spares', standardCostCents: 4500 });
-    const lensKit = await prod({ name: 'Laser lens cleaning kit', type: 'consumable', category: 'Maintenance spares', standardCostCents: 2800 });
-    await api('Inventory', 'POST', e('/adjustments'), { productId: filter.id, locationId: spares.id, quantity: 4, unitCostCents: 4500, reason: 'Opening stock of maintenance spares' });
-    await api('Inventory', 'POST', e('/adjustments'), { productId: lensKit.id, locationId: spares.id, quantity: 6, unitCostCents: 2800, reason: 'Opening stock of maintenance spares' });
-    await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/stock/issue`), { lines: [{ productId: filter.id, locationId: spares.id, quantity: 1 }] });
+    await api('Inventory', 'POST', e('/adjustments'), { productId: bolt.id, locationId: spares.id, quantity: 4, unitCostCents: 18, reason: 'Spare bolts for the maintenance store' });
+    await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/stock/issue`), { lines: [{ productId: bolt.id, locationId: spares.id, quantity: 4 }] });
     await api('Maintenance', 'PUT', mt(`/work-orders/${chillerWo.workOrder.id}/downtime`), { startedAt: at(-1, 14), endedAt: null, cause: 'Laser stopped on the chiller alarm' });
     // The monthly service: made by its schedule, inspected, labour and a part recorded, completed.
     const monthly = await api('Maintenance', 'POST', mt(`/pm/schedules?today=${d(0)}`), {
@@ -663,7 +661,6 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
       });
       await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/inspections/${insp.id}/complete`), {});
       await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/labour`), { date: d(0), minutes: 75, note: 'Monthly service' });
-      await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/stock/issue`), { lines: [{ productId: lensKit.id, locationId: spares.id, quantity: 1 }] });
       await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/complete`), { notes: 'Service done. The fume extraction filter needs replacing: request raised by the inspection.' });
     }
     await api('Maintenance', 'POST', mt('/pm/schedules'), { assetId: laser.id, name: '500-hour laser service', triggerKind: 'meter', meterId: laserHours.id, meterInterval: 500, leadDays: 5, priority: 'high', tasks: ['Replace the nozzle', 'Check the beam alignment'], estimatedHours: 3, assignedTo: user.id });
